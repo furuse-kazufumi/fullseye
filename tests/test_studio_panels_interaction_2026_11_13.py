@@ -1118,3 +1118,73 @@ def test_stage_count_of_an_empty_pipeline_is_zero_also_after_a_language_switch(t
         assert win._stage_list.count() == 2 and read() == "Stages: 2"
     finally:
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# D58 — Esc in a separate panel window: first the text of its search box, then the window
+# D134 — tabs: right-click = that panel's menu, never closable, vertical ones turned, one panel = no tab row
+# --------------------------------------------------------------------------- #
+def test_floating_panel_esc_clears_search_first(tmp_path, monkeypatch):
+    from PySide6 import QtCore, QtWidgets
+    from PySide6.QtTest import QTest
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        dock = win._docks["operators"]
+        studio_panels.toggle_float(win, "operators", True); _pump(app, 0.3)
+        assert dock.isFloating() and dock.isVisible()
+        boxes = [b for b in dock.findChildren(QtWidgets.QLineEdit) if b.isVisible() and not b.isReadOnly()
+                 and not isinstance(b.parentWidget(), (QtWidgets.QAbstractSpinBox, QtWidgets.QComboBox))]
+        assert len(boxes) >= 1
+        box = boxes[0]
+        box.setFocus(); box.setText("gauss"); _pump(app, 0.4)               # the search of Operators, with text
+        assert dock.focusWidget() is box
+        QTest.keyClick(box, QtCore.Qt.Key_Escape); _pump(app, 0.2)          # through the real key path
+        assert box.text() == "" and dock.isVisible() and dock.isFloating()  # 1st Esc: the text only
+        assert not win._layout_state.focus_image                            # the window's own Esc did not fire
+        QTest.keyClick(box, QtCore.Qt.Key_Escape); _pump(app, 0.2)
+        assert dock.isHidden()                                              # 2nd Esc: the window
+        dock.show(); _pump(app, 0.2)                                        # an empty box: one Esc is enough
+        assert dock.isFloating() and box.text() == ""
+        QTest.keyClick(box, QtCore.Qt.Key_Escape); _pump(app, 0.2)
+        assert dock.isHidden()
+        studio_panels.toggle_float(win, "operators", False); _pump(app, 0.3)   # docked: Esc is not the panel's
+        box.setFocus(); box.setText("otsu"); _pump(app, 0.4)
+        QTest.keyClick(box, QtCore.Qt.Key_Escape); _pump(app, 0.2)
+        assert dock.isVisible() and box.text() == "otsu"
+    finally:
+        _close(app, win)
+
+
+def test_tabs_context_menu_is_panel_menu_and_not_closable(tmp_path, monkeypatch):
+    from PySide6 import QtCore, QtGui, QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        win.resize(1280, 720); _pump(app, 0.2)
+        checked = turned = 0
+        for make in (_right_column_tabs, _bottom_tabs):
+            bar = make(app, win)
+            row = _tab_row(win, bar)
+            assert not bar.tabsClosable() and len(row.tabs) >= 3
+            assert not bar.findChildren(QtWidgets.QAbstractButton, "qt_tabbar_closebutton")   # no x on a tab
+            for i, tab in enumerate(row.tabs):
+                if tab.vertical:                                            # turned 90 degrees: taller than wide
+                    assert tab.sizeHint().height() > tab.sizeHint().width(), tab.label
+                    turned += 1
+                key = row.key_at(i)
+                ev = QtGui.QContextMenuEvent(QtGui.QContextMenuEvent.Mouse, QtCore.QPoint(2, 2),
+                                             tab.mapToGlobal(QtCore.QPoint(2, 2)))
+                QtCore.QCoreApplication.sendEvent(tab, ev); _pump(app, 0.03)
+                menu = win._panels["open_menu"]
+                assert key is not None and menu is win._panels["titles"][key].b_menu.menu(), key
+                assert win._panels["float_actions"][key] in menu.actions(), key
+                menu.close()
+                checked += 1
+        assert checked >= 6 and turned >= 3
+        keys = ("variables", "compare", "ab")                               # one panel left: no tab row at all
+        for k in keys[1:]:
+            win._docks[k].hide()
+        _pump(app, 0.4)
+        assert win._docks["variables"].isVisible()
+        assert _shown_tab_bars(win) == []
+    finally:
+        _close(app, win)

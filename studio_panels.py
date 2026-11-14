@@ -2601,7 +2601,9 @@ def install(win, tr, settings=None):
             self.b_float.setToolTip(tip); self.b_float.setAccessibleName(tip)
 
     class EscCloses(QtCore.QObject):
-        """Esc in a separate panel window closes it (a docked panel is left alone).
+        """Esc in a separate panel window closes it (a docked panel is left alone). When the keyboard is in
+        a box that holds text (the search of Operators, a watch expression), the first Esc clears the box
+        and the next one closes the window (D58, the Esc ladder's step 3).
 
         The main window has an Esc shortcut of its own (leave image focus) that would take the key
         first, so the ShortcutOverride is claimed here; the key press that follows closes the window.
@@ -2612,7 +2614,12 @@ def install(win, tr, settings=None):
                     and ev.key() == QtCore.Qt.Key_Escape and ev.modifiers() == QtCore.Qt.NoModifier
                     and isinstance(obj, QtWidgets.QDockWidget) and obj.isFloating()):
                 if ev.type() == QtCore.QEvent.KeyPress:
-                    obj.hide()
+                    fw = obj.focusWidget()
+                    if (isinstance(fw, QtWidgets.QLineEdit) and fw.text() and not fw.isReadOnly()
+                            and fw.isVisible() and obj.isAncestorOf(fw)):
+                        fw.clear()                   # D58: a box with text in it - the first Esc only clears it
+                    else:
+                        obj.hide()
                 ev.accept()
                 return True
             return False
