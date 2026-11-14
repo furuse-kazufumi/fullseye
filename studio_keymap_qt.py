@@ -729,6 +729,7 @@ class KeyboardDialog(QtWidgets.QDialog):
         for col in (1, 2, 3):
             hh.setSectionResizeMode(col, QtWidgets.QHeaderView.ResizeToContents)
         self.table.itemSelectionChanged.connect(self._on_select)
+        self.table.itemActivated.connect(self._on_activated)        # 行の Enter / ダブルクリック = キーを変える
         lay.addWidget(self.table, 1)
         self.no_match = QtWidgets.QLabel()                         # 検索が 0 件の時の例
         self.no_match.setObjectName("keymapNoMatch")
@@ -803,6 +804,11 @@ class KeyboardDialog(QtWidgets.QDialog):
         self.b_close.clicked.connect(self.close)
         row2.addWidget(self.b_close)
         lay.addLayout(row2)
+        # 道具の窓: Enter でボタンを押さない(設計書 P02-4)。QDialog は最初の QPushButton(「消す」)を既定にするので、
+        # 検索の欄や表で Enter を押すと記録したキーが消えていた
+        for b in self.findChildren(QtWidgets.QPushButton):
+            b.setAutoDefault(False)
+            b.setDefault(False)
         self.resize(820, 600)
 
     def retranslate(self) -> None:
@@ -824,6 +830,18 @@ class KeyboardDialog(QtWidgets.QDialog):
                      (self.b_literal, km.BTN_LITERAL)):
             b.setText(tr(s))
         self.refill()
+
+    def keyPressEvent(self, ev):                               # noqa: N802 (Qt の名前)
+        """Esc の段(設計書 P13-3 ③): 検索に文字があれば 1 回目は文字だけ消す。無ければ窓を閉じる(QDialog の既定)。"""
+        if ev.key() == _K.Key_Escape and self.search.text():
+            self.search.clear()
+            ev.accept()
+            return
+        super().keyPressEvent(ev)
+
+    def _on_activated(self, _item=None) -> None:
+        if self.recorder.isEnabled():
+            self.recorder.setFocus()
 
     def eventFilter(self, obj, ev):                             # noqa: N802 (Qt の名前)
         if obj is self.preset and ev.type() == QtCore.QEvent.Wheel and not self.preset.hasFocus():

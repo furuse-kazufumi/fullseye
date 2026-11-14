@@ -2319,3 +2319,65 @@ def test_the_edit_menu_has_one_duplicate_and_one_comment_and_they_go_by_focus(wi
     rows = {x.objectName() for a in win._editops.build_context_menu().actions() if a.menu() is not None
             for x in a.menu().actions() if x.isVisible()}
     assert {"editops:line.duplicate", "editops:line.comment"} <= rows
+
+
+# --------------------------------------------------------------------------- #
+# 2026-11-15 設定の窓 = 道具の窓(設計書 P02-4・P13-3): Enter でボタンを押さない、Esc は先に検索を消す
+# --------------------------------------------------------------------------- #
+def test_enter_in_the_settings_window_does_not_press_a_button(win, ctl):
+    """直す前は「消す」が既定のボタンで、検索の欄や表で Enter を押すと記録したキーが消えた。"""
+    _QtCore, _QtGui, QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    K = QtCore.Qt
+    dlg = ctl.open_dialog()
+    dlg.activateWindow()
+    _pump(0.1)
+    buttons = dlg.findChildren(QtWidgets.QPushButton)
+    assert len(buttons) == 10 and [b.text() for b in buttons if b.isDefault() or b.autoDefault()] == []
+    assert dlg.select("fit")
+    dlg.recorder.setFocus()
+    _pump(0.05)
+    QTest.keyClick(dlg.recorder, K.Key_F12, K.ControlModifier | K.ShiftModifier)
+    assert dlg.recorder.sequence() == "Ctrl+Shift+F12"
+    dlg.search.setFocus()
+    _pump(0.05)
+    QTest.keyClick(dlg.search, K.Key_Return)
+    _pump(0.05)
+    assert dlg.recorder.sequence() == "Ctrl+Shift+F12" and ctl.keymap.keys("fit") == ("Ctrl+0",)   # 消えない・決めない
+    dlg.b_import.setFocus()                                               # フォーカスのあるボタンも「既定」にならない
+    _pump(0.05)
+    assert not dlg.b_import.isDefault()
+    dlg.table.setFocus()
+    _pump(0.05)
+    QTest.keyClick(dlg.table, K.Key_Return)                               # 表の行の Enter = 主の操作(キーを変える)
+    _pump(0.05)
+    assert QtWidgets.QApplication.focusWidget() is dlg.recorder
+    assert dlg.recorder.sequence() == "Ctrl+Shift+F12" and dlg.isVisible()
+
+
+def test_escape_in_the_settings_window_clears_the_search_first(win, ctl):
+    _QtCore, _QtGui, _QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    K = QtCore.Qt
+    dlg = ctl.open_dialog()
+    dlg.activateWindow()
+    _pump(0.1)
+    total = len(dlg.visible_ids())
+    dlg.search.setFocus()
+    QTest.keyClicks(dlg.search, "zoom")
+    _pump(0.05)
+    assert 0 < len(dlg.visible_ids()) < total
+    QTest.keyClick(dlg.search, K.Key_Escape)                              # 1 回目: 検索の文字だけ消える
+    _pump(0.05)
+    assert dlg.isVisible() and dlg.search.text() == "" and len(dlg.visible_ids()) == total
+    QTest.keyClick(dlg.search, K.Key_Escape)                              # 2 回目: 窓を閉じる
+    _pump(0.05)
+    assert not dlg.isVisible()
+    dlg = ctl.open_dialog()                                               # 表にフォーカスがあっても同じ段
+    dlg.activateWindow()
+    dlg.search.setText("zoom")
+    dlg.table.setFocus()
+    _pump(0.05)
+    QTest.keyClick(dlg.table, K.Key_Escape)
+    _pump(0.05)
+    assert dlg.isVisible() and dlg.search.text() == ""
