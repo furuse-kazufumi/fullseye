@@ -418,28 +418,21 @@ def _module_name(v) -> str:
 
 
 def _static_signature(f, bound: bool) -> str:
-    """利用者の関数 *f* の引数の並びを ``__code__`` から作る。**既定値は文字にしない**(``…`` と書く。``__repr__`` を
-    呼ばない)。*bound* = 束縛メソッド(先頭の引数を書かない)。"""
-    code = _FUNC["__code__"].__get__(f)
-    n_default = len(_FUNC["__defaults__"].__get__(f) or ())
-    kw_default = _FUNC["__kwdefaults__"].__get__(f) or {}
-    names = code.co_varnames
-    npos, nkw = code.co_argcount, code.co_kwonlyargcount
+    """利用者の関数 *f* の引数の並びを ``__code__`` から作る(:func:`studio_pyedit_safe.static_parameters`)。
+    **既定値は文字にしない**(``…`` と書く。``__repr__`` を呼ばない)。*bound* = 束縛メソッド(先頭の引数を書かない)。"""
+    params = safe.static_parameters(f, bound)
+    if params is None:
+        raise TypeError("not a function")
     parts = []
-    for i, name in enumerate(names[:npos]):
-        if not (bound and i == 0):
-            parts.append(name + ("=…" if i >= npos - n_default else ""))
-        if code.co_posonlyargcount and i == code.co_posonlyargcount - 1:
+    kinds = [k for _n, _t, k in params]
+    last_only = max((i for i, k in enumerate(kinds) if k == "positional_only"), default=-1)
+    star = "var_positional" in kinds
+    for i, (_n, text, kind) in enumerate(params):
+        if kind == "keyword" and not star and (i == 0 or kinds[i - 1] != "keyword"):
+            parts.append("*")
+        parts.append(text)
+        if i == last_only:
             parts.append("/")
-    i = npos + nkw
-    if code.co_flags & 0x04:                                 # CO_VARARGS
-        parts.append("*" + names[i])
-        i += 1
-    elif nkw:
-        parts.append("*")
-    parts.extend(name + ("=…" if name in kw_default else "") for name in names[npos:npos + nkw])
-    if code.co_flags & 0x08:                                 # CO_VARKEYWORDS
-        parts.append("**" + names[i])
     return "(" + ", ".join(parts) + ")"
 
 
@@ -654,6 +647,9 @@ def path_to_expression(path: Sequence) -> str:
     return out
 
 
+_NO_ATTR = object()
+
+
 def resolve_path(ns: Mapping, path: Sequence):
     """路をたどって値を返す(プロパティは呼ばない)。たどれなければ ``KeyError``。"""
     if not path or path[0][0] != "name":
@@ -667,7 +663,9 @@ def resolve_path(ns: Mapping, path: Sequence):
             if d is not None and key in d:
                 cur = d[key]
             else:
-                cur = inspect.getattr_static(cur, key)
+                cur = safe.static_getattr(cur, key, _NO_ATTR)   # メタクラスの __getattribute__ も呼ばない
+                if cur is _NO_ATTR:
+                    raise AttributeError(key)
                 if safe.type_name(cur) == "member_descriptor":
                     raise KeyError(key)
         elif kind == "field":

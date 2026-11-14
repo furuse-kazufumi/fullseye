@@ -1151,8 +1151,10 @@ def test_s4_library_wrappers_do_not_carry_user_code_onto_the_gui_thread(use_jedi
         safe.static_names(ns[name])
         V.children(ns[name])
         assert S4_CALLED == [], (name, S4_CALLED[:6])
-    assert comp.signature_of_object("part", ns["part"]) is None and comp.signature_of_object("ufunc", ns["ufunc"]) is None
-    assert comp._sig_text(ns["managed"]) == "" and comp._doc_of(ns["proxy"]) == ""
+    assert comp.signature_of_object("part", ns["part"]) is None
+    # 利用者の関数は __code__ から(既定値は =…、__repr__ は呼ばない。2026-11-15 第 4 回の確かめで戻した)
+    assert [p.text for p in comp.signature_of_object("ufunc", ns["ufunc"]).params] == ["a", "b=…"]
+    assert comp._sig_text(ns["managed"]) == "(a, b=…)" and comp._doc_of(ns["proxy"]) == ""
     assert "a" not in safe.static_names(ns["planted"])                    # __dir__ の嘘の名前は出ない
     assert S4_CALLED == []
 

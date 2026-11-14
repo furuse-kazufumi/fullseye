@@ -785,8 +785,11 @@ def _kind_of_obj(obj) -> str:
 
 
 def _sig_text(obj) -> str:
+    if not callable(obj):
+        return ""                                           # 呼べない物の inspect.signature は、誤りの文に repr を使う
     if not safe.is_inert(obj):
-        return ""                                           # 許す型の一覧に無い物は調べない(__signature__ / __getattr__ / 既定値の __repr__ を呼ばない)
+        sig = _static_signature_of("", obj)                 # 利用者の関数: __code__ から(既定値は =…)
+        return "(" + ", ".join(p.text for p in sig.params) + ")" if sig is not None else ""
     try:
         return str(inspect.signature(obj))
     except (TypeError, ValueError):
@@ -816,11 +819,10 @@ def _describe_obj(name: str, obj) -> tuple:
 
 
 def _static_attr(obj, name: str):
-    """プロパティを呼ばずに属性を取る。取れなければ ``None``(``_MISSING``)。"""
-    try:
-        return inspect.getattr_static(obj, name)
-    except AttributeError:
-        return _MISSING
+    """プロパティも、利用者の ``__getattribute__`` / ``__getattr__``(メタクラスの物も)も呼ばずに属性を取る
+    (:func:`studio_pyedit_safe.static_getattr`。``inspect.getattr_static`` は 3.11 でメタクラスの
+    ``__getattribute__`` を呼ぶ。2026-11-15 第 4 回の確かめ)。取れなければ ``_MISSING``。"""
+    return safe.static_getattr(obj, name, _MISSING)
 
 
 _MISSING = object()
@@ -1192,11 +1194,29 @@ class FallbackProvider:
         return None
 
 
+def _static_signature_of(name: str, obj) -> Signature | None:
+    """利用者の関数と、その束縛メソッド(``__self__`` は見ない)のシグネチャを ``__code__`` から作る(既定値は ``=…``。
+    ``__repr__`` を呼ばない。2026-11-15 第 4 回の確かめ: S4 の直しで、プログラムの中の関数のヒントとホバーが
+    出なくなっていた)。それ以外の利用者の物は None。"""
+    if type(obj) is types.MethodType:
+        params = safe.static_parameters(safe._METHOD_FUNC.__get__(obj), bound=True)
+    else:
+        params = safe.static_parameters(obj)
+    if params is None:
+        return None
+    return Signature(name, tuple(ParamInfo(n, text, "", "positional" if kind == "positional_only" else kind)
+                                 for n, text, kind in params), "")
+
+
 def signature_of_object(name: str, obj) -> Signature | None:
     """``inspect.signature``、取れなければ docstring の 1 行目(``zeros(shape, dtype=float, ...)``)から。
-    利用者のクラスとその物は調べない(None)。"""
-    if not safe.is_inert(obj):
+    呼べない物は None(``inspect.signature`` は呼べない物の ``repr`` を誤りの文に入れる = list・dict・object の配列の
+    要素の ``__repr__``。2026-11-15 第 4 回の確かめ)。利用者の関数・束縛メソッドは ``__code__`` から
+    (:func:`_static_signature_of`)。ほかの利用者の物は調べない(None)。"""
+    if not callable(obj):
         return None
+    if not safe.is_inert(obj):
+        return _static_signature_of(name, obj)
     try:
         sig = inspect.signature(obj)
     except (TypeError, ValueError):

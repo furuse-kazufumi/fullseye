@@ -561,3 +561,207 @@ def test_s7b_ordinary_relative_import_module_and_str_subclass_names_still_work(t
     assert r.ok, r.errors
     assert r.values["d"] == "JSONDecoder" and r.values["h"] == 42 and r.values["j"] == "[2]"
     assert r.values["k"] == os.sep and r.values["t"] == "TypeError" and r.values["u"] == "ImportError"
+
+
+# --------------------------------------------------------------------------- #
+# S4b〜S4f: 補完・ホバー・シグネチャ・変数の欄の残りの道                          #
+# --------------------------------------------------------------------------- #
+_S4_PROG = r'''
+CALLED = []
+import threading
+def _hit(what):
+    CALLED.append("%s@%s" % (what, threading.current_thread().name))
+class Obj:
+    def __repr__(self):
+        _hit("Obj.__repr__"); return "Obj"
+class Cfg:
+    def __repr__(self):
+        _hit("Cfg.__repr__"); return "Cfg()"
+class L(list):
+    def __getattribute__(self, n):
+        _hit("L." + n); return list.__getattribute__(self, n)
+class Evil:
+    def __getattribute__(self, n):
+        _hit("Evil." + n); return object.__getattribute__(self, n)
+class Meta(type):
+    def __getattribute__(cls, n):
+        _hit("Meta." + n); return type.__getattribute__(cls, n)
+class C(metaclass=Meta):
+    alpha = 1
+    def beta(self, x, y=2):
+        return x
+def f(alpha, beta=2, *rest, cfg=Cfg(), **kw):
+    return alpha
+def g(a, b, /, c=Cfg(), *, d, e=Cfg()):
+    return a
+class U:
+    def method(self, gamma, delta=Cfg()):
+        return gamma
+u = U()
+m_bound = u.method
+oa = np.array([Obj(), Obj()], dtype=object)
+ol = [Obj(), {"k": Obj()}]
+od = {"k": Obj()}
+na = np.zeros((3, 2))
+push = L().append
+m = Evil().__sizeof__
+w = Evil().__str__
+c = C()
+ok_join = "ab".join
+ok_append = [1].append
+'''
+
+
+def _s4_ns():
+    r = sp.run_program(_S4_PROG, IMG, time_limit_s=30)
+    assert r.errors == [], r.errors
+    ns = r.namespace
+    del ns["CALLED"][:]                                                 # 実行の間(作業スレッド)の呼び出しは数えない
+    return ns
+
+
+def _s4_providers(ns):
+    pm_mod._configure_jedi()
+    provs = [("fallback", comp.default_provider(namespace=lambda: ns, catalog=None, use_jedi=False))]
+    if comp.jedi_available():
+        provs.append(("jedi", comp.default_provider(namespace=lambda: ns, catalog=None, use_jedi=True)))
+    return provs
+
+
+def _s4_sig(prov, text):
+    got = prov.signature(text, 0, len(text))
+    return None if got is None else "".join(s for s, _b in got[0].segments(None))
+
+
+def test_s4b_hover_and_signature_of_lists_dicts_and_object_arrays_call_no_element_repr():
+    """確かめ v09 / v09b: 利用者の物を入れた list・dict・object の配列にマウスを置くと、呼べない物を渡した
+    ``inspect.signature`` が誤りの文を作る所で、要素の ``__repr__`` が GUI のスレッドで走った(2 s 寝る __repr__ が
+    2 つで 4 s 止まった)。"""
+    assert threading.current_thread().name == "MainThread"
+    ns = _s4_ns()
+    called = ns["CALLED"]
+    assert safe.is_inert(ns["oa"]) is False and safe.is_plain_value(ns["oa"]) is False   # object の配列は調べない
+    assert safe.is_inert(ns["na"]) is True and safe.is_plain_value(ns["na"]) is True     # 数の配列は今までどおり
+    for name in ("oa", "ol", "od", "na"):
+        assert comp.signature_of_object(name, ns[name]) is None and comp._sig_text(ns[name]) == ""
+    provs = _s4_providers(ns)
+    assert len(provs) >= 1
+    for _label, prov in provs:
+        for name in ("oa", "ol", "od"):
+            prov.hover(name, 0, 1)
+            prov.signature(name + "(", 0, len(name) + 1)
+            prov.complete(name + ".", 0, len(name) + 1)
+            V.summarize(ns[name])
+    assert called == [], called[:6]
+    _l, fb = provs[0]
+    assert "shape" in [c.name for c in fb.complete("oa.sha", 0, 6)]        # 補完は静的な名前で今までどおり出る
+    assert fb.hover("oa", 0, 1).title == "oa: ndarray"
+
+
+def test_s4c_signatures_and_hovers_of_the_programs_own_functions_and_methods_come_back():
+    """確かめ v07: S4 の直しで、プログラムの中の関数・メソッドのシグネチャのヒントとホバーが出なくなった(jedi の
+    あり・なし両方)。``__code__`` から引数の並びを作り、既定値は ``=…`` と書く(既定値の ``__repr__`` は呼ばない)。"""
+    ns = _s4_ns()
+    called = ns["CALLED"]
+    sig = comp.signature_of_object("f", ns["f"])
+    assert sig is not None
+    assert [(p.name, p.text, p.kind) for p in sig.params] == [
+        ("alpha", "alpha", "positional"), ("beta", "beta=…", "positional"), ("rest", "*rest", "var_positional"),
+        ("cfg", "cfg=…", "keyword"), ("kw", "**kw", "var_keyword")]
+    assert [p.text for p in comp.signature_of_object("g", ns["g"]).params] == ["a", "b", "c=…", "d", "e=…"]
+    assert [p.text for p in comp.signature_of_object("m_bound", ns["m_bound"]).params] == ["gamma", "delta=…"]
+    assert comp._sig_text(ns["f"]) == "(alpha, beta=…, *rest, cfg=…, **kw)"
+    for label, prov in _s4_providers(ns):
+        assert _s4_sig(prov, "f(") == "f(alpha, beta=…, *rest, cfg=…, **kw)", label
+        assert _s4_sig(prov, "u.method(") == "method(self, gamma, delta=…)", label
+        assert _s4_sig(prov, "m_bound(") == "m_bound(gamma, delta=…)", label
+        assert prov.hover("f", 0, 1).title == "f(alpha, beta=…, *rest, cfg=…, **kw)", label
+        assert prov.hover("u.method", 0, 3).title.startswith("method(self, gamma"), label
+    assert V.summarize(ns["g"]).text == "g(a, b, /, c=…, *, d, e=…)"          # 変数の欄の書き方は今までどおり
+    assert V.summarize(ns["m_bound"]).text == "method(gamma, delta=…)"
+    assert called == [], called[:6]
+
+
+def test_s4d_c_methods_bound_to_the_programs_objects_are_not_inspected_on_the_gui_thread():
+    """確かめ v01 / v10: ``push = stack.append``(list の派生)・``x.__sizeof__``・``x.__str__``(method-wrapper)は
+    「調べてよい」になっていた。``inspect.signature`` が ``__self__`` の ``__class__`` を読むので、利用者の
+    ``__getattribute__`` が GUI のスレッドで走った(変数の欄は実行のたびに自動で)。"""
+    ns = _s4_ns()
+    called = ns["CALLED"]
+    for name in ("push", "m", "w"):
+        assert safe.is_inert(ns[name]) is False, name
+    import math
+    for v in (ns["ok_join"], ns["ok_append"], len, np.zeros, math.sqrt, int.from_bytes, (1).__add__, np.zeros(2).sum):
+        assert safe.is_inert(v) is True, v                                # ライブラリの物に束縛された物は今までどおり
+    for name in ("push", "m", "w"):
+        V.summarize(ns[name])
+        assert comp.signature_of_object(name, ns[name]) is None
+    for _label, prov in _s4_providers(ns):
+        for name in ("push", "m", "w"):
+            prov.hover(name, 0, 1)
+            prov.signature(name + "(", 0, len(name) + 1)
+            prov.complete(name + ".", 0, len(name) + 1)
+    assert called == [], called[:6]
+    assert V.summarize(ns["push"]).text == "append(…)"
+    assert comp.signature_of_object("ok_join", ns["ok_join"]) is not None
+
+
+def test_s4e_a_metaclass_getattribute_is_not_called_by_completion_hover_or_signature():
+    """確かめ v01: 一覧に無い物の静的な道(``inspect.getattr_static``)は、Python 3.11 でクラスの ``__dict__`` を普通の
+    属性の読み出しで読み、利用者のメタクラスの ``__getattribute__`` を GUI のスレッドで呼んだ(名前 1 つに 1 回)。"""
+    ns = _s4_ns()
+    called = ns["CALLED"]
+    C = ns["C"]
+    assert safe.static_getattr(ns["c"], "alpha") == 1 and safe.static_getattr(C, "alpha") == 1
+    assert safe.static_getattr(ns["c"], "beta") is safe.class_dict(C)["beta"]
+    assert safe.static_getattr(C, "mro") is not None                      # メタクラス(type)の側の名前
+    assert safe.static_getattr(ns["c"], "no_such_name", 7) == 7
+    for label, prov in _s4_providers(ns):
+        names = [x.name for x in prov.complete("c.", 0, 2)]
+        assert "alpha" in names and "beta" in names, (label, names)
+        assert "alpha" in [x.name for x in prov.complete("C.", 0, 2)], label
+        assert _s4_sig(prov, "c.beta(") == "beta(self, x, y=…)", label
+        prov.hover("c.beta", 0, 3)
+    assert called == [], called[:6]
+
+
+def test_s4e_static_getattr_finds_what_getattr_static_finds_for_plain_objects():
+    """``safe.static_getattr`` は ``inspect.getattr_static`` と同じ物を返す(データ記述子はインスタンスの
+    ``__dict__`` より先、クラスはメタクラスまで、モジュールは ``__dict__``)。"""
+    import inspect
+    import json
+    import pathlib
+
+    class D:
+        k = 1
+        prop = property(lambda self: 1)
+
+        def meth(self):
+            return 1
+    d = D()
+    d.__dict__["prop"] = "shadow"                                       # データ記述子が勝つ
+    d.inst = 2
+    cases = [(d, "k"), (d, "prop"), (d, "meth"), (d, "inst"), (D, "k"), (D, "mro"), (json, "dumps"),
+             (pathlib.Path("."), "exists"), (np.zeros(2), "shape"), (3, "real"), ("s", "join"), (D, "__dict__")]
+    for obj, name in cases:
+        assert safe.static_getattr(obj, name) is inspect.getattr_static(obj, name), (obj, name)
+    assert safe.static_getattr(d, "missing", None) is None
+
+
+def test_s4f_a_program_saved_next_to_studio_is_not_treated_as_library_code():
+    """確かめ v08: Studio のフォルダに直接置いたプログラム(従来のエディタの「名前を付けて保存」の始めの場所)の
+    関数を「ライブラリ」として扱い、その既定値の ``__repr__`` が GUI のスレッドで走った。木の中の判定は、配布する
+    モジュール(``pyproject.toml`` の ``py-modules``)だけを許す。"""
+    text = ("CALLED = []\nclass Cfg:\n    def __repr__(self):\n        CALLED.append(1)\n        return 'Cfg()'\n"
+            "def f(x, cfg=Cfg()):\n    return x\n")
+    where = os.path.join(ROOT, "my_try_s4f_2026_11_15.py")
+    assert not os.path.exists(where)                                    # 木にファイルは作らない(名前だけ)
+    for fn in (None, where):
+        r = sp.run_program(text, IMG, filename=fn)
+        assert r.errors == [], r.errors
+        f = r.namespace["f"]
+        del r.namespace["CALLED"][:]
+        assert safe.is_inert(f) is False, fn
+        assert V.summarize(f).text == "f(x, cfg=…)" and r.namespace["CALLED"] == [], fn
+    assert safe.is_inert(sp.program_digest) and safe.is_inert(safe.is_inert)     # Studio 自身の関数は今までどおり
+    assert safe.is_library_module_name("studio_program") and safe.is_library_module_name("studio_pyedit_safe")

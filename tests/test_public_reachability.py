@@ -127,7 +127,7 @@ _INTERNAL = {
     #   studio_pyedit_values 30 → 31(stray_threads: 残った __repr__ 用のスレッドの一覧)。
     "studio_project": 23, "studio_pymode": 22, "studio_pyedit_syntax": 22, "studio_pyedit_complete": 35,
     "studio_pyedit_values": 31, "studio_pyedit_i18n": 5, "studio_pyedit_qt": 9, "studio_pyedit_vars_qt": 14,
-    "studio_program_i18n": 4, "studio_pyedit_safe": 15,
+    "studio_program_i18n": 4, "studio_pyedit_safe": 17,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -367,7 +367,10 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-13 同じ枝の 4 便目(確認の窓・Undo・自動保存): 1313 → 1317(+4)。studio.CONFIRM_ACTION_HOOK(差し替え口。既定の窓の関数を指す)・studio.confirm_action(やり直しの効かない
 #   操作の前に聞く入口)・studio.studio_pymode_autosave_range(設定の画面の範囲)・studio_batch.existing_outputs
 #   (一括処理が上書きする既存のファイルの数。確認の文に使う)。どれも GUI の内側。
-_HIDDEN_FUNCTIONS_TODAY = 1319
+# 2026-11-15 同じ枝(第 3 回レビューの直しの確かめ): 1319 → 1321(+2)。studio_pyedit_safe 15 → 17: static_getattr
+#   (型の記述子だけで属性を引く。補完・ホバーがメタクラスの __getattribute__ を呼ばない)・static_parameters
+#   (利用者の関数の引数の並びを __code__ から。既定値を文字にしない)。どちらも補完と変数の欄の内側。
+_HIDDEN_FUNCTIONS_TODAY = 1321
 
 
 def _hidden_total():

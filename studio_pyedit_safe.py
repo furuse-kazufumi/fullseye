@@ -20,8 +20,15 @@
 * それ以外(利用者のクラスとその物、**一覧に無いライブラリのクラスのインスタンス**)は、**静的な情報だけ**を使う
   (:func:`static_names` = 型の MRO の ``__dict__`` の名前と、インスタンスの ``__dict__`` の名前)。値は読まない。
 
+2026-11-15 第 4 回の確かめで足した事: 呼べない物は ``inspect.signature`` に渡さない(呼び出し側)。object の要素を持つ
+numpy の配列は調べない(``repr`` が要素の ``__repr__`` を呼ぶ)。C の関数・method-wrapper は、束縛した相手
+(``__self__``。C の記述子で読む)も調べてよい物の時だけ。静的な属性の引き方は :func:`static_getattr`(型の記述子
+だけで読む。``inspect.getattr_static`` は 3.11 でメタクラスの ``__getattribute__`` を呼ぶ)。利用者の関数の
+引数の並びは :func:`static_parameters`(``__code__`` から。既定値は文字にしない)。源の木(``studio.py`` の
+フォルダ)では、配布するモジュール(``pyproject.toml`` の ``py-modules``)だけをライブラリとして扱う。
+
 限界(正直に): 一覧にある物については、ライブラリのコードを呼ぶ(numpy・標準ライブラリを信用する)。
-``inspect.getattr_static`` は標準ライブラリの約束の範囲で静的。利用者が site-packages に入れたパッケージは
+利用者が site-packages に入れたパッケージは
 「ライブラリ」として扱う。一覧に無いライブラリのクラスのインスタンス(``pathlib.Path``・pandas の表など)は、
 ``__dir__`` が足す動的な名前(表の列の名前など)が補完に出ない。
 """
@@ -29,6 +36,7 @@ from __future__ import annotations
 
 import functools
 import os
+import re
 import sys
 import sysconfig
 import types
@@ -37,6 +45,7 @@ _STDLIB = frozenset(getattr(sys, "stdlib_module_names", ())) | {"builtins"}
 _HERE = os.path.normcase(os.path.dirname(os.path.abspath(__file__)))
 _MODULE_VERDICT: dict = {}
 _LIB_DIRS: list | None = None
+_TREE_MODULES: frozenset | None = None
 
 #: そのまま値を見てよい型(完全一致)。派生した型は :func:`is_library_type` で決める。
 EXACT_SAFE_SCALARS = (bool, int, float, complex, str, bytes, type(None))
@@ -64,6 +73,35 @@ def _lib_dirs() -> list:
     return _LIB_DIRS
 
 
+def _tree_modules() -> frozenset:
+    """源の木(このファイルのフォルダ)から動かしている時の、配布するモジュールの名前(木の ``pyproject.toml`` の
+    ``py-modules``。大文字小文字は OS に合わせる)。読めなければ空(木のファイルをライブラリとして扱わない側)。
+    wheel で入れた時は、モジュールは site-packages にあるので :func:`_lib_dirs` で決まる。"""
+    global _TREE_MODULES
+    if _TREE_MODULES is None:
+        names: set = set()
+        try:
+            with open(os.path.join(_HERE, "pyproject.toml"), encoding="utf-8") as fh:
+                src = re.sub(r"#.*", "", fh.read(4_000_000))
+            body = re.search(r"py-modules\s*=\s*\[(.*?)\]", src, re.S)
+            if body:
+                names = {os.path.normcase(n) for n in re.findall(r'"([A-Za-z_][A-Za-z0-9_]*)"', body.group(1))}
+        except (OSError, UnicodeDecodeError):
+            names = set()
+        _TREE_MODULES = frozenset(names)
+    return _TREE_MODULES
+
+
+def _is_tree_module_file(p: str) -> bool:
+    """*p*(``normcase`` した絶対の道)が、源の木に直接置かれた**配布するモジュール**(``studio.py`` など)か。木に
+    利用者が置いたプログラム(従来の Python エディタの「名前を付けて保存」の始めの場所は木)は偽
+    (2026-11-15 第 4 回の確かめ: その関数の既定値の ``__repr__`` が GUI のスレッドで走った)。"""
+    if os.path.dirname(p) != _HERE:
+        return False
+    stem, ext = os.path.splitext(os.path.basename(p))
+    return ext == ".py" and stem in _tree_modules()
+
+
 def is_library_module_name(name) -> bool:
     """モジュール名 *name* が、標準ライブラリ・site-packages・Studio 自身のモジュールか。分からなければ False
     (利用者の物として扱う側 = fail-closed)。"""
@@ -85,7 +123,7 @@ def is_library_module_name(name) -> bool:
             if type(f) is str:
                 path = os.path.normcase(os.path.abspath(f))
                 d = os.path.dirname(path)
-                verdict = d == _HERE or any(path.startswith(root + os.sep) for root in _lib_dirs())
+                verdict = _is_tree_module_file(path) or any(path.startswith(root + os.sep) for root in _lib_dirs())
     if len(_MODULE_VERDICT) > 4000:
         _MODULE_VERDICT.clear()
     _MODULE_VERDICT[name] = verdict
@@ -206,6 +244,12 @@ _C_CALLABLES = (types.BuiltinFunctionType, types.WrapperDescriptorType, types.Me
                 types.ClassMethodDescriptorType)
 _FUNC_CODE = types.FunctionType.__dict__["__code__"]
 _FUNC_DICT = types.FunctionType.__dict__["__dict__"]
+_FUNC_DEFAULTS = types.FunctionType.__dict__["__defaults__"]
+_FUNC_KWDEFAULTS = types.FunctionType.__dict__["__kwdefaults__"]
+_METHOD_FUNC = types.MethodType.__dict__["__func__"]
+#: C の関数・method-wrapper が束縛した相手(``__self__``)を読む C の記述子(相手の ``__class__`` などを読まない)。
+_BUILTIN_SELF = types.BuiltinFunctionType.__dict__["__self__"]
+_WRAPPER_SELF = types.MethodWrapperType.__dict__["__self__"]
 _PATH_VERDICT: dict = {}
 #: 包みの型の中身を辿る深さの上限(越えたら偽 = 調べない側)と、入れ物の中身を見る個数の上限。
 _MAX_WRAP_DEPTH = 8
@@ -224,7 +268,7 @@ def _is_library_path(path) -> bool:
         hit = False
         if os.path.isabs(path):
             p = os.path.normcase(os.path.abspath(path))
-            hit = os.path.dirname(p) == _HERE or any(p.startswith(root + os.sep) for root in _lib_dirs())
+            hit = _is_tree_module_file(p) or any(p.startswith(root + os.sep) for root in _lib_dirs())
         if len(_PATH_VERDICT) > 4000:
             _PATH_VERDICT.clear()
         _PATH_VERDICT[path] = hit
@@ -256,15 +300,25 @@ def _plain_repr(obj, depth: int) -> bool:
     if t is dict:
         return len(obj) <= _MAX_ITEMS and all(_plain_repr(k, depth + 1) and _plain_repr(v, depth + 1)
                                               for k, v in obj.items())
-    if _is_numpy_static(t) and name_of(t) == "ndarray":
-        return not obj.dtype.hasobject                       # object の配列の repr は要素の __repr__ を呼ぶ
+    if _holds_objects(obj, t):
+        return False                                         # object の配列の repr は要素の __repr__ を呼ぶ
     return _inert(obj, depth + 1)
+
+
+def _holds_objects(obj, t) -> bool:
+    """numpy の配列(C の型そのもの)で、要素が Python の物(dtype が object を含む)か。"""
+    return _is_numpy_static(t) and name_of(t) == "ndarray" and bool(obj.dtype.hasobject)
 
 
 def _inert(obj, depth: int) -> bool:
     if depth > _MAX_WRAP_DEPTH:
         return False
     t = type(obj)
+    if t is types.BuiltinFunctionType or t is types.MethodWrapperType:
+        # 束縛した相手まで見る: inspect.signature は __self__ の __class__ を読む(push = stack.append の stack が
+        # 利用者の list の派生なら、その __getattribute__ が GUI のスレッドで走った。2026-11-15 第 4 回の確かめ)
+        owner = (_BUILTIN_SELF if t is types.BuiltinFunctionType else _WRAPPER_SELF).__get__(obj)
+        return owner is None or _inert(owner, depth + 1)
     if tin(t, EXACT_SAFE_SCALARS) or tin(t, _INERT_EXACT) or tin(t, _C_CALLABLES):
         return True
     if issubclass(t, type):
@@ -280,7 +334,7 @@ def _inert(obj, depth: int) -> bool:
         code = _FUNC_CODE.__get__(obj)
         if not _is_library_path(code.co_filename):
             return False
-        wrapped = _FUNC_DICT.__get__(obj).get("__wrapped__")
+        wrapped = dict.get(_FUNC_DICT.__get__(obj), "__wrapped__")   # 関数の __dict__ の派生の get を通さない
         return wrapped is None or _inert(wrapped, depth + 1)
     if t is types.MethodType:
         return _inert(obj.__self__, depth + 1) and _inert(obj.__func__, depth + 1)
@@ -304,7 +358,7 @@ def _inert(obj, depth: int) -> bool:
         return (type(args) is tuple and len(args) <= _MAX_ITEMS and all(_plain_repr(a, depth + 1) for a in args)
                 and type(kw) is dict and len(kw) <= _MAX_ITEMS
                 and all(type(k) is str and _plain_repr(v, depth + 1) for k, v in kw.items()))
-    return _is_numpy_static(t)                               # numpy の配列・スカラ・dtype・ufunc。ほかは偽
+    return _is_numpy_static(t) and not _holds_objects(obj, t)   # numpy の数の配列・スカラ・dtype・ufunc。ほかは偽
 
 
 def is_inert(obj) -> bool:
@@ -338,7 +392,7 @@ def is_plain_value(obj) -> bool:
     if t is types.FunctionType or t is types.BuiltinFunctionType or t is types.ModuleType or issubclass(t, type):
         return is_inert(obj)                                 # 関数はコードの置き場で決める(__module__ は書き換えられる)
     mod = module_of(t)
-    return type(mod) is str and mod.split(".")[0] == "numpy" and is_library_type(t)
+    return type(mod) is str and mod.split(".")[0] == "numpy" and is_library_type(t) and not _holds_objects(obj, t)
 
 
 def instance_dict(obj):
@@ -356,6 +410,87 @@ def instance_dict(obj):
         return d if type(d) is dict else None
     except Exception:                                        # noqa: BLE001
         return None
+
+
+_NOT_FOUND = object()
+
+
+def _mro_lookup(cls, name):
+    """*cls* の MRO の ``__dict__`` から *name* を引く(型の記述子だけで読む)。無ければ :data:`_NOT_FOUND`。"""
+    for c in mro_of(cls):
+        d = class_dict(c)
+        if name in d:
+            return d[name]
+    return _NOT_FOUND
+
+
+def static_getattr(obj, name, default=None):
+    """``inspect.getattr_static(obj, name)`` と同じ物を、**型の記述子だけで**引く(2026-11-15 第 4 回の確かめ:
+    3.11 の ``getattr_static`` はクラスの ``__dict__`` を ``entry.__dict__`` で読むので、利用者のメタクラスの
+    ``__getattribute__`` が GUI のスレッドで走った)。値は読まない(記述子・プロパティはそのまま返す)。
+
+    * クラス: そのクラスの MRO の ``__dict__``、無ければメタクラスの MRO の ``__dict__``。
+    * それ以外(モジュールも): 型の MRO の ``__dict__`` と、インスタンスの ``__dict__``(:func:`instance_dict`)。
+      型の側がデータ記述子(型に ``__get__`` と ``__set__`` / ``__delete__`` がある)なら、それが先。
+    無ければ *default*。"""
+    try:
+        t = type(obj)
+        if issubclass(t, type):
+            got = _mro_lookup(obj, name)
+            if got is _NOT_FOUND:
+                got = _mro_lookup(t, name)
+            return default if got is _NOT_FOUND else got
+        klass = _mro_lookup(t, name)
+        d = instance_dict(obj)
+        inst = d[name] if (d is not None and name in d) else _NOT_FOUND
+        if inst is not _NOT_FOUND and klass is not _NOT_FOUND:
+            kt = type(klass)
+            if _mro_lookup(kt, "__get__") is not _NOT_FOUND and (
+                    _mro_lookup(kt, "__set__") is not _NOT_FOUND or _mro_lookup(kt, "__delete__") is not _NOT_FOUND):
+                return klass
+        if inst is not _NOT_FOUND:
+            return inst
+        return default if klass is _NOT_FOUND else klass
+    except Exception:                                        # noqa: BLE001 -- 引けない物は無い物として扱う
+        return default
+
+
+def static_parameters(func, bound: bool = False):
+    """関数 *func*(``def`` / ``lambda``)の引数の並び ``[(名前, 表示の形, 種類)]`` を ``__code__`` から作る
+    (``inspect.signature`` を使わない: あれは既定値を ``repr`` で文字にし、``__signature__`` を読む = 利用者のコード)。
+    **既定値は文字にしない**(``=…``)。``functools.wraps`` の ``__wrapped__``(関数の ``__dict__`` から読む)が
+    関数なら、その先を使う(``inspect.signature`` と同じ)。*bound* = 束縛メソッド(先頭の引数を書かない)。
+    種類は ``positional_only`` / ``positional`` / ``var_positional`` / ``keyword`` / ``var_keyword``。
+    関数でない・辿れない物は None。"""
+    f = func
+    for _depth in range(_MAX_WRAP_DEPTH):
+        if type(f) is not types.FunctionType:
+            return None
+        wrapped = dict.get(_FUNC_DICT.__get__(f), "__wrapped__")
+        if wrapped is None:
+            break
+        f = wrapped
+    else:
+        return None
+    code = _FUNC_CODE.__get__(f)
+    n_default = len(_FUNC_DEFAULTS.__get__(f) or ())
+    kw_default = _FUNC_KWDEFAULTS.__get__(f) or {}
+    names = code.co_varnames
+    npos, nkw, nonly = code.co_argcount, code.co_kwonlyargcount, code.co_posonlyargcount
+    out = []
+    for i, n in enumerate(names[:npos]):
+        if bound and i == 0:
+            continue
+        out.append((n, n + ("=…" if i >= npos - n_default else ""), "positional_only" if i < nonly else "positional"))
+    i = npos + nkw
+    if code.co_flags & 0x04:                                 # CO_VARARGS
+        out.append((names[i], "*" + names[i], "var_positional"))
+        i += 1
+    for n in names[npos:npos + nkw]:
+        out.append((n, n + ("=…" if type(kw_default) is dict and dict.__contains__(kw_default, n) else ""), "keyword"))
+    if code.co_flags & 0x08:                                 # CO_VARKEYWORDS
+        out.append((names[i], "**" + names[i], "var_keyword"))
+    return out
 
 
 def static_names(obj) -> list:
