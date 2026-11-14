@@ -1120,6 +1120,13 @@
    "tw": "先前的快速鍵無法使用(未做任何變更):",
    "ko": "이전 단축키를 쓸 수 없었습니다(아무것도 바꾸지 않았습니다):",
    "de": "Die vorherigen Tastenkürzel konnten nicht verwendet werden (nichts wurde geändert):"
+  },
+  "Switched to %s. Your own changes are kept.": {
+   "ja": "「%s」に切り替えた。自分で変えたキーは残してある。",
+   "zh": "已切换到“%s”。您自己更改的按键已保留。",
+   "tw": "已切換到「%s」。您自己變更的按鍵已保留。",
+   "ko": "'%s'(으)로 전환했습니다. 직접 바꾼 키는 유지됩니다.",
+   "de": "Zu „%s“ gewechselt. Eigene Änderungen bleiben erhalten."
   }
  }
 }

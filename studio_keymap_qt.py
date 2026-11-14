@@ -1110,7 +1110,7 @@ class KeyboardDialog(QtWidgets.QDialog):
             self.refill()                                      # 断った: 元の型の表示へ
 
     def switch_preset(self, name: str) -> bool:
-        """型を切り替える(確認の窓で、外れる上書きを先に知らせる)。"""
+        """型を切り替える。外れる上書きがある時だけ確認の窓で先に知らせる(無ければ聞かずに切り替えて状態の欄に 1 行)。"""
         tr = self.ctl.tr
         if name == self.ctl.keymap.preset:
             return True
@@ -1118,6 +1118,10 @@ class KeyboardDialog(QtWidgets.QDialog):
             return False
         trial = self.ctl.keymap.copy()
         dropped = trial.switch_preset(name, self.ctl.fixed_entries(), self.ctl.places)
+        if not dropped:                                        # 何も失わない(同じ箱で戻せる): 聞かずに切り替えて 1 行(P09-1)
+            self.ctl.switch_preset(name)
+            self.status.setText(html.escape(tr(km.MSG_PRESET_SWITCHED) % tr(km.PRESET_TITLES[name])))
+            return True
         text = tr(km.ASK_PRESET) % tr(km.PRESET_TITLES[name])
         if dropped:
             text += "\n\n" + tr(km.ASK_PRESET_DROP) % len(dropped) + "\n" + "\n".join(

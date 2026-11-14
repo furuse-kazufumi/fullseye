@@ -1298,6 +1298,7 @@ ASK_RESET_ALL = "Reset all %d changed shortcuts to the preset? This cannot be un
 TTL_PRESET = "Switch preset"
 ASK_PRESET = "Switch to %s? Your own changes are kept."
 ASK_PRESET_DROP = "%d of your changes conflict with this preset and will be dropped:"
+MSG_PRESET_SWITCHED = "Switched to %s. Your own changes are kept."
 MSG_IMPORTED = "Imported %d changed shortcuts"
 MSG_IMPORT_FAILED = "The file was not imported (nothing was changed):"
 MSG_EXPORTED = "Saved %d changed shortcuts to %s"
@@ -1420,7 +1421,7 @@ def ui_strings() -> tuple:
              MSG_LANG_HEADER, HINT_KEYS, BTN_LITERAL, PH_LITERAL, BTN_REMOVE_ONE, BTN_CANCEL, BTN_RESET_ALL_DO,
              BTN_SWITCH, BTN_REPLACE, TTL_IMPORT, ASK_IMPORT, ASK_IMPORT_PRESET, ASK_IMPORT_LOST, MSG_EXPORT_FAILED,
              MSG_NO_MATCH, MSG_NOTHING_TO_SAVE, ACT_DUPLICATE, TTL_NEWER, ASK_NEWER, BTN_NEWER_DO, BTN_RESTORE,
-             TTL_RESTORE, ASK_RESTORE, BTN_RESTORE_DO, MSG_RESTORED, MSG_RESTORE_FAILED]
+             TTL_RESTORE, ASK_RESTORE, BTN_RESTORE_DO, MSG_RESTORED, MSG_RESTORE_FAILED, MSG_PRESET_SWITCHED]
     fixed += list(PRESET_TITLES.values()) + [s.title for s in SCOPES.values()] + [t for t, _s in PLACES.values()]
     fixed += list(MESSAGES.values()) + [c.title for c in COMMANDS if c.own_title]
     seen, out = set(), []

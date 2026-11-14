@@ -355,7 +355,7 @@ def test_every_own_string_has_five_translations_and_nothing_else():
     table = km.load_table()
     assert km.missing() == []
     assert sorted(table) == sorted(km.ui_strings())
-    assert len(table) == 160
+    assert len(table) == 161
     ph = re.compile(r"%\(\w+\)s|%[sd]")
     for en, row in table.items():
         for lang in km.LANGS[1:]:
@@ -1437,30 +1437,32 @@ def test_the_default_keys_of_the_program_editor_do_not_change(win, ctl):
 # 2026-11-13 独立レビュー 1 回目の直し(C4: 設定の窓の使い勝手)
 # --------------------------------------------------------------------------- #
 def _answer_next_box(key_name="Key_Return", after_ms=80):
-    """次に出るモーダルの窓へ 1 打送る(3 秒で出なければ、出ていれば閉じて「時間切れ」を記録)。"""
+    """次に出るモーダルの窓へ 1 打送る。箱が見えて、フォーカスが箱の中に来るまで待ってから送る(時刻に頼らない。
+    確かめの担当 2 回目: 負荷の高い時に Enter が箱の外の部品に届き、見張りが箱を閉じて 1 回落ちた)。10 秒たっても
+    送れていなければ、出ている箱を閉じて「時間切れ」を記録する。"""
     from PySide6 import QtCore, QtWidgets  # noqa: PLC0415
     from PySide6.QtTest import QTest  # noqa: PLC0415
     seen = {"sent": 0, "timeout": 0, "focus": None, "tries": 0}
 
     def poke():
         box = QtWidgets.QApplication.activeModalWidget()
-        if box is None:
+        fw = QtWidgets.QApplication.focusWidget()
+        if box is None or not box.isVisible() or fw is None or not (fw is box or box.isAncestorOf(fw)):
             seen["tries"] += 1
-            if seen["tries"] < 60:
-                QtCore.QTimer.singleShot(50, poke)
+            if seen["tries"] < 400:
+                QtCore.QTimer.singleShot(20, poke)
             return
-        target = QtWidgets.QApplication.focusWidget() or box
-        seen["focus"] = target
-        QTest.keyClick(target, getattr(QtCore.Qt, key_name))
+        seen["focus"] = fw
+        QTest.keyClick(fw, getattr(QtCore.Qt, key_name))
         seen["sent"] += 1
 
     def guard():
         box = QtWidgets.QApplication.activeModalWidget()
-        if box is not None:
+        if seen["sent"] == 0 and box is not None:
             seen["timeout"] += 1
             box.close()
     QtCore.QTimer.singleShot(after_ms, poke)
-    QtCore.QTimer.singleShot(3000, guard)
+    QtCore.QTimer.singleShot(10000, guard)
     return seen
 
 
@@ -1474,7 +1476,8 @@ def test_confirmations_default_to_cancel_and_enter_does_not_do_it(win, ctl):
         assert ok.text() == "Reset all"
     finally:
         box.deleteLater()
-    assert ctl.assign("fit", ("Ctrl+Shift+F12",)) == [] and ctl.assign("export", ("Ctrl+Shift+F11",)) == []
+    assert ctl.assign("fit", ("Ctrl+Shift+F12",)) == []
+    assert [p.code for p in ctl.assign("export", ("F10",))] == ["warn_menu_key"]   # VS Code 風では外れる(聞く)
     seen = _answer_next_box()
     assert dlg.do_reset_all() is False
     assert seen["sent"] == 1 and seen["timeout"] == 0
@@ -1486,6 +1489,21 @@ def test_confirmations_default_to_cancel_and_enter_does_not_do_it(win, ctl):
     seen = _answer_next_box("Key_Escape")
     assert dlg.do_reset_all() is False and len(ctl.keymap.overrides()) == 2
     assert seen["sent"] == 1 and seen["timeout"] == 0
+
+
+def test_switching_the_preset_without_losing_a_change_does_not_ask(win, ctl):
+    """確かめの担当 2 回目(設計書 P09-1): 外れる上書きが 0 でも確認の窓を出していた。同じ箱で元に戻せるので聞かない。"""
+    dlg = ctl.open_dialog()
+    asked = []
+    dlg.confirm = lambda title, text, *_a: asked.append(text) or False
+    assert ctl.assign("fit", ("Ctrl+Shift+F12",)) == []
+    assert dlg.switch_preset("vscode") is True and asked == []
+    assert ctl.keymap.preset == "vscode" and ctl.keymap.overrides() == {"fit": ("Ctrl+Shift+F12",)}
+    assert dlg.preset.currentData() == "vscode" and "Switched to VS Code style" in dlg.status.text()
+    assert dlg.switch_preset("visual_studio") is True and asked == [] and ctl.keymap.preset == "visual_studio"
+    assert [p.code for p in ctl.assign("export", ("F10",))] == ["warn_menu_key"]
+    assert dlg.switch_preset("vscode") is False and len(asked) == 1 and "F10" in asked[0]   # 外れる物があれば聞く
+    assert ctl.keymap.preset == "visual_studio" and set(ctl.keymap.overrides()) == {"fit", "export"}
 
 
 def test_the_dialog_opens_on_the_search_and_the_preset_box_ignores_the_wheel(win, ctl):
