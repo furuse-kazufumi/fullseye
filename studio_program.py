@@ -1578,8 +1578,9 @@ class _ImportGuard:
     """実行の間だけ効く見張り(設計書 §15、2026-11-13 第 2 回レビュー R3):
 
     * **プログラムの作業スレッド**からの GUI の部品(:data:`GUI_TOOLKIT_MODULES`、matplotlib の窓を出す backend)の
-      import を ``ImportError`` で断る。``import`` 文・``__import__``・``importlib.import_module``・``exec`` した
-      文字列の中の import、ライブラリ(matplotlib)の中からの import を拾う。``sys.modules`` から直接引く道と、
+      import を ``ImportError`` で断る。``import`` 文(相対 import も: ``__package__`` / ``__spec__`` / ``__name__``
+      から絶対の名前にして調べる)・``__import__``・``importlib.import_module``・``importlib.__import__``・``exec``
+      した文字列の中の import、ライブラリ(matplotlib)の中からの import を拾う。``sys.modules`` から直接引く道と、
       プログラムが起こした別のスレッドは拾えない(既知の制約)。他のスレッド(Studio の GUI)の import は通す。
     * matplotlib は Agg(窓を出さない)で動かし、``plt.show()`` は今の図を画像の欄へ出す。
 
@@ -1597,6 +1598,7 @@ class _ImportGuard:
         self.tid = None                              # プログラムの作業スレッド(_guarded_user_call が入れる)
         self.orig_import = None
         self.orig_import_module = None
+        self.orig_importlib_import = None            # importlib.__import__(builtins.__import__ の Python 版)
         self.plt_show = None                         # (pyplot, 元の show, 差し替えた show)
         self.mpl_env = None
         self.shown_figures = 0
@@ -1618,21 +1620,70 @@ class _ImportGuard:
         if self.refused(name):
             raise ImportError(GUI_IMPORT_REFUSED % name)
 
+    @staticmethod
+    def _absolute(name, globals_, level):
+        """import 文の名前を絶対の名前にする。相対 import(*level* > 0)は、import 文と同じ決まりで親のパッケージを
+        決める(``__package__`` → ``__spec__.parent`` → ``__name__``)。決められなければ None(本物の import が
+        同じ理由で ``ImportError`` にする)。前は ``level != 0`` を調べずに通していたので、
+        ``__package__ = "PySide6"`` と ``from . import QtWidgets`` で見張りを抜けた(2026-11-13 第 3 回レビュー S7)。"""
+        if type(name) is not str:
+            return None
+        if not level:
+            return name
+        try:
+            if type(globals_) is not dict:
+                return None
+            pkg = globals_.get("__package__")
+            if type(pkg) is not str:
+                spec = globals_.get("__spec__")
+                pkg = getattr(spec, "parent", None) if spec is not None else None
+            if type(pkg) is not str:
+                pkg = globals_.get("__name__")
+                if type(pkg) is str and "__path__" not in globals_:
+                    pkg = pkg.rpartition(".")[0]
+            if type(pkg) is not str or not pkg:
+                return None
+            bits = pkg.rsplit(".", int(level) - 1)
+            if len(bits) < int(level):
+                return None
+            return "%s.%s" % (bits[0], name) if name else bits[0]
+        except ProgramStopped:
+            raise
+        except Exception:                            # noqa: BLE001 -- 決められない名前は本物の import に任せる
+            return None
+
+    def _check_import(self, name, globals_, fromlist, level):
+        """``__import__(name, globals, locals, fromlist, level)`` の形の呼び出しを調べる。"""
+        full = self._absolute(name, globals_, level)
+        if full is None:
+            return
+        self._check(full)
+        for sub in (fromlist or ()):                 # from matplotlib.backends import backend_qtagg
+            if type(sub) is str:
+                self._check("%s.%s" % (full, sub))
+
     # ---- 付ける・外す(呼び出し側のスレッド) ----
     def install(self):
         import importlib
         guard = self
         self.orig_import = builtins.__import__
         self.orig_import_module = importlib.import_module
+        self.orig_importlib_import = importlib.__import__
 
         def guarded_import(name, globals=None, locals=None, fromlist=(), level=0):
             mine = threading.get_ident() == guard.tid
-            if mine and not level:
-                guard._check(name)
-                for sub in (fromlist or ()):         # from matplotlib.backends import backend_qtagg
-                    if type(sub) is str:
-                        guard._check("%s.%s" % (name, sub))
+            if mine:
+                guard._check_import(name, globals, fromlist, level)
             mod = guard.orig_import(name, globals, locals, fromlist, level)
+            if mine:
+                guard._after_import()
+            return mod
+
+        def guarded_importlib_import(name, globals=None, locals=None, fromlist=(), level=0):
+            mine = threading.get_ident() == guard.tid
+            if mine:
+                guard._check_import(name, globals, fromlist, level)
+            mod = guard.orig_importlib_import(name, globals, locals, fromlist, level)
             if mine:
                 guard._after_import()
             return mod
@@ -1648,7 +1699,8 @@ class _ImportGuard:
 
         builtins.__import__ = guarded_import
         importlib.import_module = guarded_import_module
-        self._mine = (guarded_import, guarded_import_module)
+        importlib.__import__ = guarded_importlib_import
+        self._mine = (guarded_import, guarded_import_module, guarded_importlib_import)
         # matplotlib: 窓を出さない backend に固定する(利用者の環境の MPLBACKEND=QtAgg も、実行の間だけ Agg にする。
         # 写し(_GlobalState)はこの後に取るので、戻しはこの値を保ち、外す時(uninstall)に実行の前の値へ戻す)
         self.mpl_env = os.environ.get("MPLBACKEND")
@@ -1691,6 +1743,8 @@ class _ImportGuard:
             builtins.__import__ = self.orig_import
         if self.orig_import_module is not None and importlib.import_module is self._mine[1]:
             importlib.import_module = self.orig_import_module
+        if self.orig_importlib_import is not None and importlib.__import__ is self._mine[2]:
+            importlib.__import__ = self.orig_importlib_import
         if self.plt_show is not None:
             plt, orig, mine = self.plt_show
             if getattr(plt, "show", None) is mine:

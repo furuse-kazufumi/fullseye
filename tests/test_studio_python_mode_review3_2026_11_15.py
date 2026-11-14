@@ -482,3 +482,59 @@ done()
     detached = [n for n in got["notes"] if n == sp.MPL_DETACHED_NOTE % 1]
     assert len(detached) == 1 and sp.MPL_SHOWN_NOTE in got["notes"], got["notes"]
     assert got["errors2"] == [] and [n for n in got["notes2"] if "pyplot" in n] == []
+
+
+# --------------------------------------------------------------------------- #
+# S7: import の見張りは、相対 import と importlib.__import__ も見る               #
+# --------------------------------------------------------------------------- #
+_S7_DOORS = {
+    "relative import of the package": "__package__ = 'PySide6'\nfrom . import QtWidgets\n",
+    "relative import of a submodule": "__package__ = 'PySide6'\nfrom .QtWidgets import QLabel\n",
+    "relative import two levels up": "__package__ = 'PySide6.QtCore'\nfrom .. import QtWidgets\n",
+    "relative import by __name__": "__name__ = 'PySide6.mine'\nfrom . import QtWidgets\n",
+    "relative import of a matplotlib window backend": "__package__ = 'matplotlib.backends'\nfrom . import backend_qtagg\n",
+    "importlib.__import__": "import importlib\nm = importlib.__import__('PySide6.QtWidgets', fromlist=['QLabel'])\n",
+    "importlib.__import__ of a name in fromlist": "import importlib\nm = importlib.__import__('PySide6', "
+                                                  "fromlist=['QtWidgets'])\n",
+    "importlib.__import__ relative": "import importlib\nm = importlib.__import__('QtWidgets', {'__package__': "
+                                     "'PySide6'}, None, ['QLabel'], 1)\n",
+}
+
+
+@pytest.mark.parametrize("door", sorted(_S7_DOORS))
+def test_s7_relative_imports_and_importlib_import_are_refused_on_the_worker_thread(door, monkeypatch):
+    """探針 r06 7a / 7b: 見張りは ``level != 0`` の import と ``importlib.__import__`` を見ていなかった
+    (作業スレッドで QLabel が作られた)。ここでは import だけを試す(窓は作らない)。"""
+    import builtins
+    import importlib
+    monkeypatch.setattr(sp, "GUI_BRIDGE", None)
+    before = (builtins.__import__, importlib.import_module, importlib.__import__)
+    r = sp.run_program("# python\nx = 1\n" + _S7_DOORS[door] + "after = 1\n", IMG)
+    assert not r.ok and len(r.errors) == 1
+    assert "ImportError: Studio does not let a running program import" in r.errors[0], r.errors
+    assert r.values["x"] == 1 and "after" not in r.values and "m" not in r.values and "QtWidgets" not in r.values
+    assert (builtins.__import__, importlib.import_module, importlib.__import__) == before   # 見張りは実行の間だけ
+    e = sp.evaluate(_S7_DOORS[door] + "after = 1\n", sp.run_program("# python\nx = 1\n", IMG), time_limit_s=10.0)
+    assert e["error"] and "Studio does not let a running program import" in e["error"], e   # 選んだ行でも同じ
+    assert (builtins.__import__, importlib.import_module, importlib.__import__) == before
+
+
+def test_s7_ordinary_relative_imports_and_importlib_import_still_work(tmp_path, monkeypatch):
+    """断るのは GUI の部品だけ: 利用者のパッケージの中の相対 import と、``importlib.__import__`` の普通の使い方は通る。"""
+    monkeypatch.setattr(sp, "GUI_BRIDGE", None)
+    pkg = tmp_path / "s7pkg"
+    pkg.mkdir()
+    (pkg / "__init__.py").write_text("from . import helper\nfrom .helper import twice\nfrom .sub import deep\n",
+                                     encoding="utf-8")
+    (pkg / "helper.py").write_text("def twice(v):\n    return 2 * v\n", encoding="utf-8")
+    sub = pkg / "sub"
+    sub.mkdir()
+    (sub / "__init__.py").write_text("from .. import helper as up\ndeep = up.twice(4)\n", encoding="utf-8")
+    prog = tmp_path / "main.py"
+    text = ("# python\nimport importlib\nimport s7pkg\na = s7pkg.twice(3)\nb = s7pkg.deep\n"
+            "j = importlib.__import__('json').dumps([1])\nk = importlib.__import__('os.path', fromlist=['join']).sep\n")
+    prog.write_text(text, encoding="utf-8")
+    r = sp.run_program(text, IMG, filename=str(prog))
+    assert r.ok, r.errors
+    assert r.values["a"] == 6 and r.values["b"] == 8 and r.values["j"] == "[1]" and r.values["k"] == os.sep
+    assert "s7pkg" not in sys.modules                                     # 利用者のモジュールは実行の後に外す
