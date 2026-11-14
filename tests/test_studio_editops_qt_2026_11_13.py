@@ -1252,8 +1252,9 @@ def test_retranslate_follows_the_language_and_the_keys_in_a_kept_menu(app):
     assert _menu_rows(menu)["editops:menu.line"][0][1] == table["Duplicate line"]["ja"] + "\tCtrl+D"
     box = ops.show_howto()
     _pump(0.05)
-    assert [b.text() for b in box.buttons()] == [table[eo.BTN_CLOSE]["ja"]]          # 「Close」のままにしない
-    assert not any(b.isDefault() or b.autoDefault() for b in box.buttons())          # Enter でボタンを押さない
+    buttons = box.buttons()
+    assert [b.text() for b in buttons] == [table[eo.BTN_CLOSE]["ja"]]                # 「Close」のままにしない
+    assert len(buttons) == 1 and not (buttons[0].isDefault() or buttons[0].autoDefault())   # Enter でボタンを押さない
     lang["code"] = "de"
     ops.retranslate()                                                # 出ている「使い方」の窓も付け直す
     assert box.windowTitle() == table[eo.HOWTO_TITLE]["de"] and box.text() == table[eo.HOWTO_TEXT]["de"]
