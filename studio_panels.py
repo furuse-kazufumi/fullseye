@@ -1479,6 +1479,7 @@ def declare_strip(win, key, row, body=None, shape=None, root=None):
 def adopt_image_strip(win, view, key=None):
     """An image window's own tool strip (the small one over its top-left corner) becomes a FlowStrip that
     turns and scrolls like every other. Safe to call twice; returns the strip or None (no strip)."""
+    from PySide6 import QtCore   # noqa: PLC0415
     st = getattr(win, "_panels", None)
     old = getattr(view, "_tools", None)
     if st is None or old is None:
@@ -1501,6 +1502,9 @@ def adopt_image_strip(win, view, key=None):
     old.hide()
     old.setParent(None)
     old.deleteLater()
+    # ... and it goes NOW, not when the event loop turns again: left alive without its buttons, a display
+    # run in the same call (open a window, then apply / run) ended in an access violation
+    QtCore.QCoreApplication.sendPostedEvents(old, int(QtCore.QEvent.DeferredDelete))
     view._tools = strip
     strip.move(6, 6)
     strip.show()

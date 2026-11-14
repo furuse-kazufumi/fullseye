@@ -1121,6 +1121,32 @@ def test_stage_count_of_an_empty_pipeline_is_zero_also_after_a_language_switch(t
 
 
 # --------------------------------------------------------------------------- #
+# a second image window: its old strip widget is gone at once (left to deleteLater it crashed the next run)
+# --------------------------------------------------------------------------- #
+def test_new_image_window_leaves_no_old_strip_behind_and_a_run_in_the_same_call_is_safe(tmp_path, monkeypatch):
+    from PySide6 import QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        sub = win._new_graphics_window()                                    # no event loop turn after this
+        left = [w for w in QtWidgets.QApplication.allWidgets() if w.objectName() == "view_tools"]
+        assert left == [], left                                             # the strip the window was built with
+        view = sub.widget()
+        assert view._tools.objectName() == "flow_strip" and len(view._tools.items()) == 5
+        assert [b.parentWidget() is view._tools for b in view._tools.items()] == [True] * 5
+        prog = win._program                                                 # ... and a program applied in the same call
+        prog["edit"].setPlainText("gaussian 0.4 0.5\nsobel_mag 0.5 0.5\notsu")
+        prog["apply"]()
+        assert [s[0] for s in win._test_model.stages] == ["gaussian", "sobel_mag", "otsu"]
+        sub3 = win._new_graphics_window()
+        win._do_run_all(); _pump(app, 0.5)
+        assert sub3.widget()._tools.objectName() == "flow_strip"
+        assert [w for w in QtWidgets.QApplication.allWidgets() if w.objectName() == "view_tools"] == []
+        assert len([r for r in studio_panels.panel_ledger(win) if r["kind"] == "image"]) == 3
+    finally:
+        _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
 # D58 — Esc in a separate panel window: first the text of its search box, then the window
 # D134 — tabs: right-click = that panel's menu, never closable, vertical ones turned, one panel = no tab row
 # --------------------------------------------------------------------------- #
