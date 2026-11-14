@@ -495,3 +495,69 @@ def test_s1d_the_selection_does_not_use_a_recorder_object_put_in_the_namespace_b
     n0 = len(real.calls)
     e = sp.evaluate("h = gaussian(img, 0.4)\n", r, time_limit_s=10)
     assert e["error"] is None and [c.op for c in e["calls"]] == ["gaussian"] and len(real.calls) == n0 + 1
+
+
+# --------------------------------------------------------------------------- #
+# S7b: import_module の相対の名前・dict の派生の globals・str の派生の名前も見る   #
+# --------------------------------------------------------------------------- #
+_S7B_DOORS = {
+    "import_module with a relative name": "import importlib\nm = importlib.import_module('.QtWidgets', 'PySide6')\n",
+    "import_module of the package itself by '.'": "import importlib\nm = importlib.import_module('.', 'PySide6')\n",
+    "import_module relative, a matplotlib window backend": "import importlib\n"
+                                                           "m = importlib.import_module('.backend_qtagg', "
+                                                           "'matplotlib.backends')\n",
+    "importlib.__import__ with a dict subclass as globals": "import importlib\nclass G(dict):\n    pass\n"
+                                                            "m = importlib.__import__('QtWidgets', "
+                                                            "G(__package__='PySide6'), None, ['QLabel'], 1)\n",
+    "__import__ with a dict subclass as globals": "class G(dict):\n    pass\n"
+                                                  "m = __import__('QtWidgets', G(__package__='PySide6'), None, "
+                                                  "['QLabel'], 1)\n",
+    "__import__ of a str subclass name": "class S(str):\n    pass\nm = __import__(S('PySide6.QtWidgets'))\n",
+    "relative import with a str subclass __package__": "class S(str):\n    pass\n__package__ = S('PySide6')\n"
+                                                       "from . import QtWidgets\n",
+    "import_module of a str subclass name": "import importlib\nclass S(str):\n    pass\n"
+                                            "m = importlib.import_module(S('PySide6.QtWidgets'))\n",
+}
+_S7B_REFUSALS = ("ImportError: Studio does not let a running program import",
+                 "ImportError: Studio cannot check the relative import")
+
+
+@pytest.mark.parametrize("door", sorted(_S7B_DOORS))
+def test_s7b_more_ways_to_import_a_gui_toolkit_are_refused_on_the_worker_thread(door, monkeypatch):
+    """確かめ v01 / v05: ``importlib.import_module('.QtWidgets', 'PySide6')`` と、dict の派生を globals にした
+    ``importlib.__import__`` は、F5 でも選んだ行でも断られず、作業スレッドで QLabel ができた。名前・``__package__``
+    が str の派生の時も、見張りは調べずに通していた(C の import は中身の文字列をそのまま使う)。"""
+    monkeypatch.setattr(sp, "GUI_BRIDGE", None)
+    before = (builtins.__import__, importlib.import_module, importlib.__import__)
+    r = sp.run_program("# python\nx = 1\n" + _S7B_DOORS[door] + "after = 1\n", IMG)
+    assert not r.ok and len(r.errors) == 1
+    assert any(s in r.errors[0] for s in _S7B_REFUSALS), r.errors
+    assert r.values["x"] == 1 and "after" not in r.values and "m" not in r.values and "QtWidgets" not in r.values
+    assert (builtins.__import__, importlib.import_module, importlib.__import__) == before
+    e = sp.evaluate(_S7B_DOORS[door] + "after = 1\n", sp.run_program("# python\nx = 1\n", IMG), time_limit_s=10.0)
+    assert e["error"] and any(s in e["error"] for s in _S7B_REFUSALS), e     # 選んだ行でも同じ
+    assert (builtins.__import__, importlib.import_module, importlib.__import__) == before
+
+
+def test_s7b_ordinary_relative_import_module_and_str_subclass_names_still_work(tmp_path, monkeypatch):
+    """断りすぎない: GUI の部品でない物の相対の ``import_module``(標準ライブラリ・利用者のパッケージ)と、str の派生の
+    名前の普通の import は通る。決められない相対の名前は、本物と同じ誤りになる。"""
+    monkeypatch.setattr(sp, "GUI_BRIDGE", None)
+    pkg = tmp_path / "s7bpkg"
+    pkg.mkdir()
+    (pkg / "__init__.py").write_text("", encoding="utf-8")
+    (pkg / "helper.py").write_text("VALUE = 42\n", encoding="utf-8")
+    prog = tmp_path / "main.py"
+    text = ("# python\nimport importlib\n"
+            "d = importlib.import_module('.decoder', 'json').JSONDecoder.__name__\n"
+            "h = importlib.import_module('.helper', 's7bpkg').VALUE\n"
+            "class S(str):\n    pass\n"
+            "j = __import__(S('json')).dumps([2])\n"
+            "k = importlib.import_module(S('os.path')).sep\n"
+            "try:\n    importlib.import_module('.x')\nexcept TypeError:\n    t = 'TypeError'\n"
+            "try:\n    importlib.import_module('...x', 'json')\nexcept ImportError:\n    u = 'ImportError'\n")
+    prog.write_text(text, encoding="utf-8")
+    r = sp.run_program(text, IMG, filename=str(prog))
+    assert r.ok, r.errors
+    assert r.values["d"] == "JSONDecoder" and r.values["h"] == 42 and r.values["j"] == "[2]"
+    assert r.values["k"] == os.sep and r.values["t"] == "TypeError" and r.values["u"] == "ImportError"

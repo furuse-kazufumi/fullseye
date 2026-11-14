@@ -89,6 +89,8 @@ ERROR_TEXT_TEMPLATES = (
     "matplotlib backends) only work on Studio's own GUI thread — draw with matplotlib as usual; "
     "plt.show() and show(fig) put the figure in the image pane",
     "<the text of this %s is not available: its __str__ did not return in time>",
+    "Studio cannot check the relative import of %r from a running program: the globals given to __import__ are "
+    "not a plain dict — use an absolute import",
     "<the text of this %s is not available: its __str__ raised %s>",
 )
 

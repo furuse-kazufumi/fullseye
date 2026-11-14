@@ -1569,6 +1569,9 @@ MPL_DETACHED_NOTE = ("%d matplotlib figure(s) made with a window backend were st
 #: 外した図の管理役(Qt の窓を持つ)。**消さない**ために持ち続ける: 持ち主でないスレッドから Qt の窓を消すと、
 #: Studio 全体が固まる(2026-11-13 第 3 回レビュー S1-d)。
 _DETACHED_FIGURES: list = []
+#: 作業スレッドからの相対 import で、globals が dict そのものでなく親のパッケージを決められない時の文(``%r`` = 名前)。
+RELATIVE_IMPORT_UNCHECKED = ("Studio cannot check the relative import of %r from a running program: the globals given "
+                             "to __import__ are not a plain dict — use an absolute import")
 #: 作業スレッドから呼ばれた、Qt を直接 import する文面を断る時の文(``%d`` = その import の行)。
 QT_PROGRAM_REFUSED = ("line %d: not run: this program imports Qt directly, and Qt widgets can only be "
                       "made on the GUI thread — this version of Studio cannot run Qt programs from the "
@@ -1648,27 +1651,39 @@ class _ImportGuard:
             raise ImportError(GUI_IMPORT_REFUSED % name)
 
     @staticmethod
+    def _plain_str(x):
+        """*x* が文字列(派生した型も)なら中身の素の ``str``(派生した型のメソッドは呼ばない。C の import は派生した
+        型の文字列を中身のまま使う)。文字列でなければ None。"""
+        return str.__str__(x) if issubclass(type(x), str) else None
+
+    @staticmethod
     def _absolute(name, globals_, level):
         """import 文の名前を絶対の名前にする。相対 import(*level* > 0)は、import 文と同じ決まりで親のパッケージを
         決める(``__package__`` → ``__spec__.parent`` → ``__name__``)。決められなければ None(本物の import が
         同じ理由で ``ImportError`` にする)。前は ``level != 0`` を調べずに通していたので、
         ``__package__ = "PySide6"`` と ``from . import QtWidgets`` で見張りを抜けた(2026-11-13 第 3 回レビュー S7)。"""
-        if type(name) is not str:
+        name = _ImportGuard._plain_str(name)
+        if name is None:
             return None
         if not level:
             return name
+        if globals_ is not None and type(globals_) is not dict:
+            # dict の派生・dict でない物: 親のパッケージを読むと派生した型の get などを通る(読むたびに違う値を返せる)。
+            # 決められない相対 import は断る(2026-11-15 第 4 回の確かめ: importlib.__import__ に dict の派生を渡すと
+            # 見張りを抜けた)
+            raise ImportError(RELATIVE_IMPORT_UNCHECKED % name)
         try:
-            if type(globals_) is not dict:
-                return None
-            pkg = globals_.get("__package__")
-            if type(pkg) is not str:
+            if globals_ is None:
+                return None                          # 本物が誤りにする(親のパッケージが無い)
+            pkg = _ImportGuard._plain_str(globals_.get("__package__"))
+            if pkg is None:
                 spec = globals_.get("__spec__")
-                pkg = getattr(spec, "parent", None) if spec is not None else None
-            if type(pkg) is not str:
-                pkg = globals_.get("__name__")
-                if type(pkg) is str and "__path__" not in globals_:
+                pkg = _ImportGuard._plain_str(getattr(spec, "parent", None)) if spec is not None else None
+            if pkg is None:
+                pkg = _ImportGuard._plain_str(globals_.get("__name__"))
+                if pkg is not None and "__path__" not in globals_:
                     pkg = pkg.rpartition(".")[0]
-            if type(pkg) is not str or not pkg:
+            if not pkg:
                 return None
             bits = pkg.rsplit(".", int(level) - 1)
             if len(bits) < int(level):
@@ -1686,8 +1701,24 @@ class _ImportGuard:
             return
         self._check(full)
         for sub in (fromlist or ()):                 # from matplotlib.backends import backend_qtagg
-            if type(sub) is str:
+            sub = self._plain_str(sub)
+            if sub is not None:
                 self._check("%s.%s" % (full, sub))
+
+    def _check_import_module(self, name, package):
+        """``importlib.import_module(name, package)`` を調べる。相対の名前(``.`` で始まる)は
+        ``importlib.util.resolve_name`` で絶対の名前にしてから調べる(前は調べずに通していた:
+        ``import_module('.QtWidgets', 'PySide6')`` で作業スレッドに QLabel ができた。2026-11-15 第 4 回の確かめ)。
+        *package* が無い・文字列でない時は、本物の ``import_module`` が同じ誤り(``TypeError``)にする。上の階層を
+        越える名前は、本物と同じ ``ImportError``。"""
+        if name is None:
+            return
+        if name.startswith("."):
+            if not package:
+                return
+            import importlib.util
+            name = importlib.util.resolve_name(name, package)
+        self._check(name)
 
     # ---- 付ける・外す(呼び出し側のスレッド) ----
     def install(self):
@@ -1717,8 +1748,11 @@ class _ImportGuard:
 
         def guarded_import_module(name, package=None):
             mine = threading.get_ident() in guard.recs
-            if mine and type(name) is str and not name.startswith("."):
-                guard._check(name)
+            if mine:                                 # 調べた名前そのもの(派生した型でない str)を本物に渡す
+                n, p = guard._plain_str(name), guard._plain_str(package)
+                name = name if n is None else n
+                package = package if p is None else p
+                guard._check_import_module(n, p)
             mod = (guard.orig_import_module or _REAL_IMPORTS[1])(name, package)
             if mine:
                 guard._after_import()

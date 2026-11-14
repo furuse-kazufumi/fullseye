@@ -1,6 +1,13 @@
 {
  "_note": "Python editor parts (color, completion, variables, watch): English is the source text; 5 languages. Merge into studio_assets/i18n.json 'strings' with studio_pyedit_i18n.merge_into().",
  "strings": {
+  "Studio cannot check the relative import of %r from a running program: the globals given to __import__ are not a plain dict — use an absolute import": {
+   "ja": "Studio は、実行中のプログラムからの %r の相対 import を確かめられません: __import__ に渡した globals が素の dict ではありません — 絶対の import を使ってください",
+   "zh": "Studio 无法检查运行中的程序对 %r 的相对 import:传给 __import__ 的 globals 不是普通的 dict — 请使用绝对 import",
+   "tw": "Studio 無法檢查執行中的程式對 %r 的相對 import:傳給 __import__ 的 globals 不是一般的 dict — 請使用絕對 import",
+   "ko": "Studio는 실행 중인 프로그램의 %r 상대 import를 확인할 수 없습니다: __import__에 넘긴 globals가 보통의 dict가 아닙니다 — 절대 import를 쓰십시오",
+   "de": "Studio kann den relativen Import von %r aus einem laufenden Programm nicht prüfen: die an __import__ übergebenen globals sind kein einfaches dict — verwenden Sie einen absoluten Import"
+  },
   "not run: another run of the program is in progress — wait until it ends or stop it (selected lines can run while a Debug run waits at a breakpoint)": {
    "ja": "実行しませんでした: プログラムの別の実行が走っています — 終わるまで待つか、止めてください(選んだ行は、Debug の実行がブレークポイントで止まって待っている間なら実行できます)",
    "zh": "未运行:程序的另一次运行正在进行 — 请等待其结束或停止它(Debug 运行在断点处等待时,可以运行所选的行)",
