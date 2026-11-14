@@ -320,10 +320,18 @@ def _file_stamp(path) -> tuple | None:
     return n, h.hexdigest()
 
 
-def _default_trust(parent, title, text):                     # pragma: no cover - GUI
+def _default_trust(parent, title, text):
+    """信頼の確認の窓(「ファイルから来たプログラムを実行しますか」)。**既定のボタンも Esc もキャンセル**
+    (2026-11-13 第 3 回レビュー S6: 既定を決めていなかったので、Qt が「Run it」にフォーカスを置き、F5 の直後に
+    反射的に Enter を押すと確認していないコードが走った)。画面の無い実行(offscreen)では窓を出せないので、
+    安全な側(実行しない)を返す。"""
+    if os.environ.get("QT_QPA_PLATFORM") == "offscreen":
+        return False
     box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, title, text, QtWidgets.QMessageBox.NoButton, parent)
     run = box.addButton(_TR["fn"]("Run it"), QtWidgets.QMessageBox.AcceptRole)
-    box.addButton(_TR["fn"]("Cancel"), QtWidgets.QMessageBox.RejectRole)
+    cancel = box.addButton(_TR["fn"]("Cancel"), QtWidgets.QMessageBox.RejectRole)
+    box.setDefaultButton(cancel)
+    box.setEscapeButton(cancel)
     box.exec()
     return box.clickedButton() is run
 

@@ -434,16 +434,19 @@ def _default_error(parent, title, text):                      # pragma: no cover
     QtWidgets.QMessageBox.critical(parent, title, text)
 
 
-def _default_confirm(parent, title, text):                    # pragma: no cover - GUI
+def _default_confirm(parent, title, text):
+    """「捨てますか」の確認の窓(Discard / Cancel)。**既定のボタンも Esc も Cancel**。``QMessageBox.question`` の
+    1 回の呼び出しでなく、窓を作ってから出す(試験が、利用者が見る窓の既定のボタンを見られるように)。"""
     from PySide6 import QtWidgets
-    btn = QtWidgets.QMessageBox.question(
-        parent, title, text,
-        QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel,
-        QtWidgets.QMessageBox.Cancel)
-    return btn == QtWidgets.QMessageBox.Discard
+    box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Question, title, text,
+                                QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel, parent)
+    box.setDefaultButton(QtWidgets.QMessageBox.Cancel)
+    box.setEscapeButton(QtWidgets.QMessageBox.Cancel)
+    box.exec()
+    return box.standardButton(box.clickedButton()) == QtWidgets.QMessageBox.Discard
 
 
-def _default_confirm_action(parent, title, text, action):     # pragma: no cover - GUI
+def _default_confirm_action(parent, title, text, action):
     """「やり直しの効かない操作」の確認の窓: 何が失われるかを *text* に書き、押せるのは *action*(実行する)と
     キャンセル。**既定のボタンはキャンセル**(Enter・Esc のどちらでも何も起きない)。「次から聞かない」は付けない。
     画面の無い実行(offscreen)では窓を出せないので、安全な側(実行しない)を返す。"""
@@ -12270,11 +12273,10 @@ def build_window(model=None, start_mode="pipeline"):
             if ed is None:
                 return
             if ed._dirty and ed.toPlainText().strip():
-                r = QtWidgets.QMessageBox.question(
-                    dlg, "Discard changes?",
-                    "'%s' has unsaved changes — close anyway?" % _tab_title(ed),
-                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                if r != QtWidgets.QMessageBox.Yes:
+                # ★2026-11-13(第 3 回レビュー S6): 前は QMessageBox.question(Yes | No) で既定を渡しておらず、Enter で
+                #   「Yes(捨てる)」だった。終了の時と同じ確認(CONFIRM_HOOK = Discard / Cancel。既定も Esc も Cancel)を通す
+                if not CONFIRM_HOOK(dlg, "Discard changes?",
+                                    "'%s' has unsaved changes — close anyway?" % _tab_title(ed)):
                     return
             tabs_ed.removeTab(i); ed.deleteLater()
         tabs_ed.tabCloseRequested.connect(close_tab)

@@ -867,3 +867,92 @@ def test_s5_cancel_keeps_the_unapplied_edits(tmp_path, monkeypatch):
         assert ed.toPlainText() == "median (5)\nthreshold (0.5)\n" and pm.state.get("code_dirty") is True
     finally:
         _close(win)
+
+
+# --------------------------------------------------------------------------- #
+# S6: 確認の窓の既定のボタンはキャンセル側(Enter で取り返しのつかない事を起こさない)  #
+# --------------------------------------------------------------------------- #
+def _press_a_key_instead_of_exec(monkeypatch, key):
+    """``QMessageBox.exec`` の代わりに、窓を出して *key* を押す。押す前の ``(既定のボタン, Esc のボタン, フォーカスの
+    あるボタン)`` の役割を覚える。既定の窓そのもの(試験用の差し替えでなく、利用者が見る窓)を試すための道具。"""
+    from PySide6 import QtWidgets
+    from PySide6.QtTest import QTest
+    seen = []
+
+    def fake_exec(box):
+        box.show()
+        _pump(0.2)
+        focus = QtWidgets.QApplication.focusWidget()
+        seen.append(tuple(box.buttonRole(b) if isinstance(b, QtWidgets.QAbstractButton) else None
+                          for b in (box.defaultButton(), box.escapeButton(), focus)))
+        QTest.keyClick(box, key)
+        _pump(0.05)
+        box.hide()
+        return 0
+
+    def no_static_question(*_a, **_k):
+        raise AssertionError("QMessageBox.question() builds and runs the window in one call: its default button "
+                             "cannot be checked — build the box, set the default button, then exec()")
+    monkeypatch.setattr(QtWidgets.QMessageBox, "exec", fake_exec)
+    monkeypatch.setattr(QtWidgets.QMessageBox, "question", staticmethod(no_static_question))
+    # 既定の窓は、画面の無い実行(offscreen)では出さずに「実行しない」を返す。その先(窓そのもの)を試す
+    monkeypatch.setenv("QT_QPA_PLATFORM", "s6-not-offscreen")
+    return seen
+
+
+@pytest.mark.parametrize("key", ["Key_Return", "Key_Enter", "Key_Escape"])
+def test_s6_enter_and_escape_on_every_default_confirmation_window_choose_the_safe_side(key, monkeypatch):
+    """探針 r08: 信頼の確認(「ファイルから来たプログラムを実行しますか」)は、既定のボタンを決めていなかったので
+    Enter で「Run it」が押された。F5 の直後に出る窓で反射的に Enter を押すと、確認していないコードが走る。"""
+    from PySide6 import QtCore, QtWidgets
+    _app()
+    seen = _press_a_key_instead_of_exec(monkeypatch, getattr(QtCore.Qt, key))
+    reject = QtWidgets.QMessageBox.RejectRole
+    assert pm_mod._default_trust(None, "Run this Python program?", "text") is False          # 実行しない
+    assert seen[-1] == (reject, reject, reject), seen[-1]
+    assert studio._default_confirm_action(None, "Overwrite", "what is lost", "Overwrite the file") is False
+    assert seen[-1] == (reject, reject, reject), seen[-1]
+    assert studio._default_confirm(None, "Open pipeline", "Discard them?") is False          # 捨てない
+    assert seen[-1] == (reject, reject, reject), seen[-1]
+    assert len(seen) == 3
+    monkeypatch.setenv("QT_QPA_PLATFORM", "offscreen")                    # 画面が無ければ、窓を出さずに安全な側
+    assert pm_mod._default_trust(None, "t", "x") is False
+    assert studio._default_confirm_action(None, "t", "x", "go") is False
+    assert len(seen) == 3
+
+
+def test_s6_closing_a_changed_tab_of_the_python_editor_asks_with_the_safe_default(tmp_path, monkeypatch):
+    """従来の Python エディタのタブを閉じる窓は ``QMessageBox.question(Yes | No)`` で既定を渡しておらず、Enter で
+    「Yes(捨てる)」だった。終了の時と同じ確認(CONFIRM_HOOK = Discard / Cancel、既定は Cancel)を通す。"""
+    from PySide6 import QtWidgets
+    asked = []
+    answer = {"go": False}
+    monkeypatch.setattr(studio, "CONFIRM_HOOK", lambda parent, title, text: asked.append((title, text)) or answer["go"])
+    static_calls = []
+    monkeypatch.setattr(QtWidgets.QMessageBox, "question",
+                        staticmethod(lambda *a, **k: static_calls.append(a[1:3]) or QtWidgets.QMessageBox.Yes))
+    script = tmp_path / "s6.py"
+    script.write_bytes(b"print(1)\n")
+    win, _model = _launch(tmp_path, monkeypatch, start_mode="auto")
+    try:
+        win.drop_handler([str(script)])                                  # 従来の Python エディタのタブで開く
+        _pump(0.3)
+        pe = win._pyedit
+        tabs = pe["tabs"]
+        n = tabs.count()
+        assert n >= 1
+        pe["editor"]().setPlainText("print(2)  # not saved\n")
+        tabs.tabCloseRequested.emit(tabs.currentIndex())
+        _pump(0.1)
+        assert static_calls == []                                        # 既定のボタンを見られない窓は使わない
+        assert len(asked) == 1 and "unsaved changes" in asked[0][1] and tabs.count() == n     # キャンセル: 閉じない
+        answer["go"] = True
+        tabs.tabCloseRequested.emit(tabs.currentIndex())
+        _pump(0.1)
+        assert len(asked) == 2 and tabs.count() == n - 1                 # 「捨てる」と答えた時だけ閉じる
+    finally:
+        try:
+            win._pyedit["dlg"].close()
+        except Exception:                                                 # noqa: BLE001
+            pass
+        _close(win)
