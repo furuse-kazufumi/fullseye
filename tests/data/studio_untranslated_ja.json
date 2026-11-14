@@ -60,8 +60,6 @@
   ["flash", "viewer: not an image — %s"],
   ["flash", "volume %s -> shell %s pts (thr %.4g%s)"],
   ["flash", "‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: fullseye algo run %s"],
-  ["question", "'%s' has unsaved changes — close anyway?"],
-  ["question", "Discard changes?"],
   ["report_error", "2-D examples"],
   ["report_error", "3-D examples"],
   ["report_error", "3-D operators"],

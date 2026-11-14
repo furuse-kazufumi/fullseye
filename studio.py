@@ -469,6 +469,17 @@ def _default_close_confirm(parent, title, text, can_save):    # pragma: no cover
     return "discard" if hit is b_discard else "cancel"
 
 
+def _fmt_or_english(translated, english, *args):
+    """``translated % args``; when the translated row's format does not fit the arguments, ``english % args``.
+
+    ★2026-11-15(PR #316 の独立レビュー): 終了の確認の文が翻訳の表を通るようになり、表の行から %d が落ちると文の
+    組み立てが TypeError になった(確認が出ない)。壊れた訳より原文。"""
+    try:
+        return translated % args
+    except (TypeError, ValueError):
+        return english % args
+
+
 ERROR_HOOK = _default_error       # (parent, title, text) -> None
 CONFIRM_HOOK = _default_confirm   # (parent, title, text) -> bool (True = go ahead)
 #: (parent, title, text, can_save) -> "save" | "discard" | "cancel"(終了の確認だけが使う)
@@ -7071,11 +7082,37 @@ def build_window(model=None):
                 # 表示直後(寸法が確定してから)に 1 回だけ。保存済みレイアウトがある起動では立てない(P-01 を壊さない)
                 QtCore.QTimer.singleShot(0, self.apply_first_layout)
 
+        _close_guard_failures = 0
+
+        def _ask_close_after_guard_failure(self, exc):
+            """The unsaved-work check itself failed: ask in plain English (no translation table). True = close.
+
+            聞く事もできなかった時は閉じない。2 回続けてどちらも失敗した時だけ閉じる(閉じられない窓にしない)。"""
+            try:
+                answer = CLOSE_CONFIRM_HOOK(
+                    self, "Quit Fullseye Studio",
+                    "The check for unsaved work failed (%s: %s).\nClose without saving?"
+                    % (type(exc).__name__, truncate(exc, 120)), False)
+            except Exception as e2:                        # noqa: BLE001 -- 聞く事もできない
+                _log_soft_failure("the fallback close confirmation failed too", e2)
+                self._close_guard_failures += 1
+                return self._close_guard_failures >= 2
+            self._close_guard_failures = 0
+            return answer == "discard"
+
         def closeEvent(self, ev):
             guard = self.close_guard
-            if guard is not None and not guard():
-                ev.ignore()
-                return
+            if guard is not None:
+                try:
+                    ok = guard()
+                except Exception as e:                     # noqa: BLE001 -- 確認が壊れても、聞かずに閉じない
+                    # ★2026-11-15(PR #316 の独立レビュー): 従来は例外が Qt の仮想関数の外へ出て、確認を出さずに
+                    # Python ごと落ちた(access violation)。閉じない側に倒し、表を通らない英語の文で聞き直す。
+                    _log_soft_failure("the close confirmation failed", e)
+                    ok = self._ask_close_after_guard_failure(e)
+                if not ok:
+                    ev.ignore()
+                    return
             # ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が
             # 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
             q = self.quiesce
@@ -7701,11 +7738,12 @@ def build_window(model=None):
         if idx <= 0:
             flash(tr("This sample is not available here: %s") % name)
             return False
-        want = [st[0] for st in (recipes.stages(name) or [])]
         samples.blockSignals(True); samples.setCurrentIndex(idx); samples.blockSignals(False)
-        load_sample(idx)                                   # 確認・元に戻す・Program の欄は欄と同じ
-        if [s[0] for s in model.stages] != want:
-            return False                                   # 取り消された / 読めなかった
+        # ★2026-11-15(PR #316 の独立レビュー): 読めたかは load_sample の返り値で決める。従来は「段の op 名の並びが
+        # 見本と同じか」で推測し、同じ見本を開いてつまみだけ調整していた人が破棄の確認をキャンセルしても、
+        # 「読めた」と見なして画像を見本の画像に置き換えていた。
+        if not load_sample(idx):                           # 確認・元に戻す・Program の欄は欄と同じ
+            return False                                   # 取り消された / 読めなかった: 画像にも触らない
         image = (recipes.get(name) or {}).get("image")
         if image:
             load_sample_image(image)
@@ -8784,15 +8822,25 @@ def build_window(model=None):
         state["dirty"] = True
         _set_title()
 
+    def _pipeline_saved_form():
+        """処理手順のうち、ファイルに保存され、利用者が変えられる物: 段(名前・a・b・バイパス)・dev_* / set_system
+        の行・固定した結果(``model.to_dict()`` の stages / directives / pinned と同じ中身。入力の参照は含めない)。"""
+        return ([[st[0], st[1], st[2], _is_bypassed(st)] for st in model.stages],
+                list(model.directives), [p.to_dict() for p in model.pins])
+
     def _pipeline_unsaved():
         """段に、保存していない変更があるか。
 
-        ★2026-11-13(初回起動の点検 M10): 見本を読んだだけ(段が読んだ時のまま)なら無い事にする —— 見本の後に
-        別の見本を選ぶ・終了するたびに「破棄しますか」と聞かれていた。見本の段は ``state["sample_stages"]`` に覚える。"""
+        ★2026-11-13(初回起動の点検 M10): 見本を読んだだけ(読んだ時のまま)なら無い事にする —— 見本の後に
+        別の見本を選ぶ・終了するたびに「破棄しますか」と聞かれていた。読んだ時の形は ``state["sample_stages"]`` に覚える。
+
+        ★2026-11-15(PR #316 の独立レビュー 2 本): 比べるのは保存される形の全部(``_pipeline_saved_form``)。段の名前・
+        a・b だけを比べていた為、見本の後の段のバイパス・dev_* の行の Apply・Pin as A が「見本のまま」と見なされ、
+        聞かずに捨てられた。保存・ファイルから開いた後は、ファイルが基準(覚えた形は捨てる)。"""
         if not (state.get("dirty") and model.stages):
             return False
         pristine = state.get("sample_stages")
-        return not (pristine is not None and [list(s) for s in model.stages] == pristine)
+        return not (pristine is not None and _pipeline_saved_form() == pristine)
 
     def _set_title():
         """Window title = <pipeline>* — <image> — Fullseye Studio (star = unsaved)."""
@@ -8847,15 +8895,16 @@ def build_window(model=None):
                                if getattr(tabs.widget(i), "_dirty", False))
         parts = []
         if pipe_dirty:
-            parts.append(tr("%d unsaved stage(s)") % len(model.stages))
+            parts.append(_fmt_or_english(tr("%d unsaved stage(s)"), "%d unsaved stage(s)", len(model.stages)))
         if code_dirty:
             parts.append(tr("unapplied Program edits"))
         if ed_dirty:
-            parts.append(tr("%d unsaved editor tab(s)") % ed_dirty)
+            parts.append(_fmt_or_english(tr("%d unsaved editor tab(s)"), "%d unsaved editor tab(s)", ed_dirty))
         return pipe_dirty, code_dirty, ed_dirty, parts
 
     def _unsaved_sentence(what, parts):
-        return tr("%s has %s.") % (tr(what[:1].upper() + what[1:]), tr(" and ").join(parts))
+        return _fmt_or_english(tr("%s has %s."), "%s has %s.",
+                               tr(what[:1].upper() + what[1:]), tr(" and ").join(parts))
 
     def confirm_discard(title, what="the current pipeline"):
         """True if it is OK to throw away unsaved work — unsaved pipeline stages OR
@@ -10622,22 +10671,24 @@ def build_window(model=None):
             stage_list.setCurrentRow(-1)                    # currentRowChanged -> on_stage_selected
 
     def load_sample(idx):
+        """Load the sample pipeline at *idx* of the combo. True when it was loaded; False when the discard prompt
+        was cancelled or the sample could not be read (the caller must not go on as if it had been loaded)."""
         if idx <= 0:
-            return
+            return False
         if not confirm_discard("Load sample pipeline"):
             samples.blockSignals(True); samples.setCurrentIndex(0); samples.blockSignals(False)
-            return
+            return False
         try:
             snap = [_copy_stage(st) for st in model.stages]
             model.load_recipe(samples.itemText(idx))
         except Exception as e:
-            report_error("Sample pipeline", e); return
+            report_error("Sample pipeline", e); return False
         win._undo_stack.append(snap)          # only a SUCCESSFUL load forks history
         if len(win._undo_stack) > _UNDO_CAP:
             del win._undo_stack[0]
         win._redo_stack.clear(); _sync_undo_actions()
         mark_dirty()
-        state["sample_stages"] = [list(s) for s in model.stages]     # M10: 見本のままなら未保存と言わない
+        state["sample_stages"] = _pipeline_saved_form()              # M10: 見本のままなら未保存と言わない
         _set_title()
         refresh_stage_list(select=len(model.stages) - 1)
         show_result()
@@ -10646,6 +10697,7 @@ def build_window(model=None):
             win._docks["program"].show(); win._docks["program"].raise_()
         except Exception:
             pass
+        return True
 
     def remove():
         i = selected_index()
@@ -11428,7 +11480,7 @@ def build_window(model=None):
             except Exception as e:
                 report_error("Sample pipeline", e); return
             mark_dirty()
-            state["sample_stages"] = [list(s) for s in model.stages]     # M10: 見本のままなら未保存と言わない
+            state["sample_stages"] = _pipeline_saved_form()              # M10: 見本のままなら未保存と言わない
             _set_title()
             refresh_stage_list(select=len(model.stages) - 1); show_result()
             flash(tr("loaded sample '%s' — the gallery stays open") % it.text())
@@ -12236,11 +12288,11 @@ def build_window(model=None):
             if ed is None:
                 return
             if ed._dirty and ed.toPlainText().strip():
-                r = QtWidgets.QMessageBox.question(
-                    dlg, "Discard changes?",
-                    "'%s' has unsaved changes — close anyway?" % _tab_title(ed),
-                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                if r != QtWidgets.QMessageBox.Yes:
+                # ★2026-11-15(PR #316 の独立レビュー): 「破棄 / キャンセル」の確認(既定と Esc はキャンセル、字は UI の
+                # 言語)。従来は QMessageBox.question(Yes | No) で既定のボタンの指定が無く、Enter = Yes = 未保存の
+                # コードを捨てて閉じた。
+                if not CONFIRM_HOOK(dlg, tr("Discard changes?"),
+                                    tr("'%s' has unsaved changes — close anyway?") % _tab_title(ed)):
                     return
             tabs_ed.removeTab(i); ed.deleteLater()
         tabs_ed.tabCloseRequested.connect(close_tab)
@@ -13003,6 +13055,7 @@ def build_window(model=None):
         state["dev_lines"] = [ln.rstrip() for ln in text.splitlines()
                               if ln.strip().startswith(_DIRECTIVE_PREFIXES)]
         model.directives = list(state["dev_lines"])      # persisted with the pipeline (F11)
+        _set_title()                          # 題の * は dev_* の行も見る(上の mark_dirty の時点では、まだ前の行)
         _set_stage_lines(src_lines)           # gutter <-> stage map for THIS text
         code_edit.clear_exec()                # 旧実行位置は新パイプラインと不整合 — Continue の誤表示防止
         code_status.setText("applied %d stage(s)" % len(stages))
@@ -15260,6 +15313,7 @@ def build_window(model=None):
         except Exception as e:                                # permission / bad path / full disk
             report_error("Could not save pipeline", "%s\n\n%s" % (path, e)); return
         state["dirty"] = False                                # now matches a file on disk
+        state["sample_stages"] = None                         # 以後の基準はファイル(見本の形に戻しても未保存)
         state["pipe_path"] = os.path.abspath(path)
         _push_recent(path); _set_title()
         flash(tr("saved %s") % os.path.basename(path))
@@ -15283,6 +15337,7 @@ def build_window(model=None):
             report_error("Could not open pipeline", "%s\n\n%s" % (path, e)); return
         state["pipe_path"] = os.path.abspath(path)
         state["dirty"] = False                            # freshly loaded == matches the file
+        state["sample_stages"] = None                     # 基準はファイル
         # the file's directives (or none) replace the previous program's dev_* lines —
         # they never leak from one pipeline into the next (F11 review finding)
         state["dev_lines"] = list(model.directives)

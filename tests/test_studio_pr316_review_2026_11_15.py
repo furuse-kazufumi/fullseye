@@ -348,3 +348,269 @@ def test_the_first_thermal_staple_changes_the_bundled_image(launch):
         out = np.asarray(api.find_op(first).fn(img, 0.5, 0.5), float)
         assert out.shape == img.shape
         assert float(np.abs(out - img).mean()) > 0.01, (word, first)
+
+
+# --------------------------------------------------------------------------- #
+# M10: 見本を読んだ後の編集は、保存していない変更                                    #
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("edit", ["bypass", "directive", "pin"])
+def test_an_edit_after_loading_a_sample_is_unsaved_work(launch, monkeypatch, edit):
+    """直す前: 見本を読んだ後に 段のバイパス / dev_* の行の Apply / Pin as A のどれをしても、題に * が付かず、終了も
+    別の見本の読み込みも聞かずに捨てた(比べていたのは段の名前・a・b だけ。3 つとも保存される物)。"""
+    win, model = launch(lang="en")
+    asked = []
+    monkeypatch.setattr(studio, "CONFIRM_HOOK", lambda p, t, txt: (asked.append(t), False)[1])
+    monkeypatch.setattr(studio, "CLOSE_CONFIRM_HOOK", lambda p, t, txt, can_save: (asked.append(t), "cancel")[1])
+    combo = _sample_combo(win)
+    combo.setCurrentIndex(1); _pump(0.3)
+    names = [s[0] for s in model.stages]
+    assert names and not asked and "*" not in win.windowTitle() and win.close_guard() is True
+    if edit == "bypass":
+        win._stage_list.setCurrentRow(0); _pump(0.05)
+        win._toggle_bypass()
+        saved = lambda d: any(len(st) == 4 and st[3] is True for st in d["stages"])        # noqa: E731
+    elif edit == "directive":
+        ed = win._program["edit"]
+        ed.setPlainText(ed.toPlainText().rstrip("\n") + "\ndev_set_color ('red')\n")
+        win._program["apply"]()
+        saved = lambda d: d.get("directives") == ["dev_set_color ('red')"]                  # noqa: E731
+    else:
+        win._pin_a()
+        saved = lambda d: len(d.get("pinned") or []) == 1                                   # noqa: E731
+    _pump(0.3)
+    assert saved(model.to_dict()), model.to_dict()                 # 保存される形が、見本と違う
+    assert [s[0] for s in model.stages] == names
+    assert "*" in win.windowTitle(), win.windowTitle()
+    assert win.close_guard() is False and asked == ["Quit Fullseye Studio"]
+    combo.setCurrentIndex(2); _pump(0.3)                           # 別の見本: 聞く。「いいえ」なら何も変わらない
+    assert asked == ["Quit Fullseye Studio", "Load sample pipeline"]
+    assert [s[0] for s in model.stages] == names and saved(model.to_dict())
+
+
+def test_a_sample_brought_back_to_as_loaded_is_not_unsaved(launch, monkeypatch):
+    win, model = launch(lang="en")
+    asked = []
+    monkeypatch.setattr(studio, "CONFIRM_HOOK", lambda p, t, txt: (asked.append(t), True)[1])
+    monkeypatch.setattr(studio, "CLOSE_CONFIRM_HOOK", lambda p, t, txt, can_save: (asked.append(t), "cancel")[1])
+    combo = _sample_combo(win)
+    combo.setCurrentIndex(1); _pump(0.3)
+    win._stage_list.setCurrentRow(0); _pump(0.05)
+    win._toggle_bypass(); _pump(0.1)
+    assert "*" in win.windowTitle()
+    win._stage_list.setCurrentRow(0); _pump(0.05)
+    win._toggle_bypass(); _pump(0.1)                               # 元に戻した: 読んだ時と同じ
+    assert "*" not in win.windowTitle()
+    assert win.close_guard() is True and not asked
+
+
+def test_after_saving_the_file_is_the_baseline_not_the_sample(launch, monkeypatch, tmp_path):
+    """見本 + 段 → 保存 → 足した段を消す。メモリの中身は見本と同じに戻るが、ファイルとは違うので未保存。
+    直す前は「見本のまま」と見なして、題に * が付かず、聞かずに閉じた。"""
+    from PySide6 import QtCore, QtWidgets
+    win, model = launch(lang="en")
+    monkeypatch.setattr(studio, "CONFIRM_HOOK", lambda p, t, txt: True)
+    combo = _sample_combo(win)
+    combo.setCurrentIndex(1); _pump(0.3)
+    n = len(model.stages)
+    lst = win._op_list
+    win._docks["operators"].raise_(); _pump(0.1)
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    assert names, "op の一覧が空"
+    pick = next(x for x in names if x and studio.op_insertable(x)[0])
+    lst.setCurrentRow(names.index(pick)); win._op_buttons["insert"].click(); _pump(0.2)
+    assert len(model.stages) == n + 1 and "*" in win.windowTitle()
+    out = tmp_path / "mine.json"
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName", staticmethod(lambda *a, **k: (str(out), "")))
+    win._actions["save_pipeline"].trigger(); _pump(0.2)
+    assert out.exists() and "*" not in win.windowTitle()
+    added = next(i for i in range(len(model.stages)) if model.stages[i][0] == api.find_op(pick).name
+                 and i == win._stage_list.currentRow())
+    win._stage_list.setCurrentRow(added); _pump(0.05)
+    win._actions["remove"].trigger(); _pump(0.2)
+    assert len(model.stages) == n
+    assert "*" in win.windowTitle(), win.windowTitle()
+    asked = []
+    monkeypatch.setattr(studio, "CLOSE_CONFIRM_HOOK", lambda p, t, txt, can_save: (asked.append(t), "cancel")[1])
+    assert win.close_guard() is False and asked == ["Quit Fullseye Studio"]
+
+
+def test_cancelling_open_sample_keeps_the_users_image(launch, monkeypatch, tmp_path):
+    """直す前: 検索の「見本を開く」で破棄の確認をキャンセルしても、段の op 名の並びが見本と同じ(同じ見本を開いて
+    つまみだけ調整していた)なら「読めた」と見なし、利用者の画像を見本の画像に置き換えた(image_path も None)。"""
+    import fullseye
+    win, model = launch(lang="en")
+    name = "FA — scratch on hairline metal"
+    answers = [True]
+    asked = []
+    monkeypatch.setattr(studio, "CONFIRM_HOOK", lambda p, t, txt: (asked.append(t), answers[-1])[1])
+    assert win._open_search_sample(name) is True
+    _pump(0.3)
+    stages0 = [s[0] for s in model.stages]
+    win._stage_list.setCurrentRow(0); _pump(0.1)
+    raw = win._knob_rows[0].raw
+    raw.setValue(0.83 if abs(raw.value() - 0.83) > 0.01 else 0.21); _pump(0.5)       # つまみを調整 → 未保存
+    assert "*" in win.windowTitle()
+    knob = model.stages[0][1]
+    mine = tmp_path / "my_part.png"
+    rng = np.random.default_rng(3)
+    fullseye.write_image(str(mine), np.clip(rng.random((48, 64)), 0, 1))
+    assert win._load_image_path(str(mine)) is True
+    _pump(0.2)
+    before = np.array(model.image, copy=True)
+    assert before.shape == (48, 64) and win._state["image_path"] == os.path.abspath(str(mine))
+    answers.append(False)                                          # 破棄の確認に「キャンセル」
+    n_asked = len(asked)
+    assert win._open_search_sample(name) is False
+    _pump(0.3)
+    assert len(asked) == n_asked + 1
+    assert np.array_equal(model.image, before), "キャンセルしたのに、画像が見本の画像に替わった"
+    assert win._state["image_path"] == os.path.abspath(str(mine))
+    assert [s[0] for s in model.stages] == stages0 and model.stages[0][1] == knob
+
+
+# --------------------------------------------------------------------------- #
+# 確認の窓: 既定はキャンセル、確認が壊れても聞かずに閉じない                          #
+# --------------------------------------------------------------------------- #
+def test_discard_confirmation_defaults_to_cancel_in_the_ui_language(launch, monkeypatch):
+    """「破棄 / キャンセル」の本物の窓。既定のボタンと Esc はキャンセル(Enter で取り返しのつかない事を起こさない)。
+    書き直した ``_default_confirm`` には本物の窓を確かめる試験が無かった(直す前も通る)。"""
+    from PySide6 import QtCore, QtWidgets
+    win, model = launch(lang="ja")
+    seen = {}
+    timer = QtCore.QTimer(); timer.setInterval(50)
+
+    def _inspect():
+        box = QtWidgets.QApplication.activeModalWidget()
+        if not isinstance(box, QtWidgets.QMessageBox):
+            return
+        timer.stop()
+        seen["buttons"] = sorted(b.text() for b in box.buttons())
+        seen["default"] = box.defaultButton().text()
+        seen["escape"] = box.escapeButton().text()
+        box.defaultButton().click()                                # Enter と同じ
+    timer.timeout.connect(_inspect); timer.start()
+    answer = studio._default_confirm(win, "題", "本文")
+    assert answer is False                                         # Enter = キャンセル = 捨てない
+    assert seen["buttons"] == sorted(["破棄", "キャンセル"]), seen
+    assert seen["default"] == seen["escape"] == "キャンセル"
+
+
+def test_closing_an_edited_editor_tab_asks_through_the_cancel_by_default_confirmation(launch, monkeypatch):
+    """直す前: Python エディタのタブを閉じる確認は ``QMessageBox.question(Yes | No)`` で既定のボタンの指定が無く、
+    Enter で「はい」= 未保存のコードを捨てて閉じた。字も英語のまま(&Yes / &No)。"""
+    from PySide6 import QtWidgets
+    win, model = launch(lang="ja")
+    old_style = []
+    monkeypatch.setattr(QtWidgets.QMessageBox, "question",
+                        staticmethod(lambda *a, **k: (old_style.append(a[1:3]), QtWidgets.QMessageBox.No)[1]))
+    asked = []
+    answers = [False]
+    monkeypatch.setattr(studio, "CONFIRM_HOOK", lambda p, t, txt: (asked.append((t, txt)), answers[-1])[1])
+    win._act_pyedit.trigger(); _pump(0.3)
+    pe = win._pyedit
+    try:
+        ed = pe["open_tab"]("x = 1\n", "mine.py")
+        ed.insertPlainText("y = 2\n"); _pump(0.1)
+        assert ed._dirty
+        tabs = pe["tabs"]
+        n = tabs.count()
+        pe["close_tab"](tabs.indexOf(ed)); _pump(0.1)
+        assert not old_style, "既定のボタンを指定しない Yes / No の窓がまだ出る: %s" % old_style
+        assert tabs.count() == n and len(asked) == 1               # 「キャンセル」: タブは残る
+        title, text = asked[0]
+        assert _CJK.search(title) and _CJK.search(text) and "mine.py" in text, asked
+        answers.append(True)
+        pe["close_tab"](tabs.indexOf(ed)); _pump(0.1)
+        assert tabs.count() == n - 1 and len(asked) == 2
+    finally:
+        for i in range(pe["tabs"].count()):
+            pe["tabs"].widget(i)._dirty = False
+        pe["dlg"].close()
+
+
+def _one_unsaved_stage(win, model):
+    from PySide6 import QtCore
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("gaussian")); _pump(0.05)
+    win._op_buttons["insert"].click(); _pump(0.2)
+    assert [s[0] for s in model.stages] == ["gaussian"]
+
+
+def test_a_broken_translation_row_does_not_break_the_quit_confirmation(launch, monkeypatch):
+    """終了の確認の文は翻訳の表を通る。表の日本語の行から %d が落ちていても、確認は(英語の文で)出る。
+    直す前は ``tr("%d unsaved stage(s)") % n`` が TypeError になり、確認は出なかった。"""
+    win, model = launch(lang="ja")
+    _one_unsaved_stage(win, model)
+    row = dict(studio.STRINGS_I18N["%d unsaved stage(s)"]); row["ja"] = "未保存の段"
+    monkeypatch.setitem(studio.STRINGS_I18N, "%d unsaved stage(s)", row)
+    asked = []
+    monkeypatch.setattr(studio, "CLOSE_CONFIRM_HOOK", lambda p, t, txt, can_save: (asked.append(txt), "cancel")[1])
+    assert _close(win) is False
+    assert len(asked) == 1 and "1 unsaved stage(s)" in asked[0], asked
+
+
+_CLOSE_GUARD_RAISES = r'''
+import os, sys
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
+import studio
+from PySide6 import QtGui, QtWidgets
+app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+win, model = studio.build_window()
+win.show(); app.processEvents()
+model.add_stage("gaussian"); win._state["dirty"] = True
+asked = []
+studio.CLOSE_CONFIRM_HOOK = lambda p, t, txt, can_save: (asked.append(txt), "cancel")[1]
+def boom():
+    raise RuntimeError("guard broke")
+win.close_guard = boom
+ev = QtGui.QCloseEvent(); ev.accept()
+QtWidgets.QApplication.sendEvent(win, ev)
+print("FIRST accepted=%s asked=%d english=%s" % (ev.isAccepted(), len(asked), "unsaved work failed" in "".join(asked)))
+studio.CLOSE_CONFIRM_HOOK = lambda p, t, txt, can_save: (asked.append(txt), "discard")[1]
+ev = QtGui.QCloseEvent(); ev.accept()
+QtWidgets.QApplication.sendEvent(win, ev)
+print("SECOND accepted=%s asked=%d" % (ev.isAccepted(), len(asked)))
+sys.stdout.flush()
+os._exit(0)
+'''
+
+
+def test_a_close_confirmation_that_raises_keeps_the_window_open_and_asks_in_plain_english(tmp_path):
+    """終了の確認(close_guard)が例外を出しても、聞かずに閉じない・落ちない。別プロセスで走らせる:
+    直す前は、例外が closeEvent の外へ出て Python ごと落ちた(access violation)。"""
+    import subprocess
+    import sys
+    env = dict(os.environ, QT_QPA_PLATFORM="offscreen", PYTHONUTF8="1",
+               FULLSEYE_STUDIO_SETTINGS=str(tmp_path / "s.ini"),
+               PYTHONPATH=ROOT + os.pathsep + os.environ.get("PYTHONPATH", ""))
+    r = subprocess.run([sys.executable, "-c", _CLOSE_GUARD_RAISES], cwd=str(tmp_path), env=env,
+                       capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=300)
+    assert r.returncode == 0, (r.returncode, r.stdout[-400:], r.stderr[-800:])
+    assert "FIRST accepted=False asked=1 english=True" in r.stdout, r.stdout     # 閉じない側に倒し、英語で聞き直す
+    assert "SECOND accepted=True asked=2" in r.stdout, r.stdout                  # 「保存せずに閉じる」なら閉じる
+
+
+def test_every_translation_row_keeps_the_format_fields_of_its_english_key():
+    """訳の行は、英語の原文と同じ書式(%s・%d …)を同じ数だけ持つ —— 持たないと ``tr(…) % 値`` が実行時に落ちる。
+    従来の門は pending の日本語の %s と %d だけを見ていた。ここは strings・pending・ツールヒント・表の外の行の全言語。
+    (今の表は 0 件。直す前も通る。)"""
+    from collections import Counter
+    with open(os.path.join(ROOT, "studio_assets", "i18n.json"), encoding="utf-8") as f:
+        d = json.load(f)
+    fmt = re.compile(r"%(?:\.\d+)?[sdrfg]|%%")
+    sections = {s: d[s] for s in ("strings", "pending_translation", "tooltips")}
+    sections["top"] = {k: v for k, v in d.items()
+                       if isinstance(v, dict) and k not in ("languages", "guide") and k not in sections}
+    checked, bad = 0, []
+    for sect, rows in sections.items():
+        for key, row in rows.items():
+            if key == "_note":
+                continue
+            for lang, text in row.items():
+                checked += 1
+                if Counter(fmt.findall(key)) != Counter(fmt.findall(text)):
+                    bad.append((sect, lang, key))
+    assert checked >= 2000, checked                                # 走査が空を通していない
+    assert sum(1 for k in d["strings"] if "%" in k) >= 20
+    assert not bad, bad[:10]
