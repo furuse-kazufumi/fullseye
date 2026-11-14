@@ -1535,6 +1535,11 @@ class PyModeController(QtCore.QObject):
         r = job.result or {}
         if r.get("stdout"):
             self._out(r["stdout"].rstrip("\n"))
+        for n in r.get("notes") or ():                        # F5 と同じ知らせ(戻した状態・plt.show()・残ったスレッド)
+            self._out("ℹ " + self._loc(n))
+        shown = r.get("shown")
+        if shown is not None:                                 # 選んだ行の show() / plt.show() は、F5 と同じく画像の欄へ
+            self._show_value(shown)
         if r.get("error"):
             l1 = job.meta["lines"][0]
             err = r["error"]
@@ -1549,7 +1554,7 @@ class PyModeController(QtCore.QObject):
             if v is not None:
                 kind, shape, summ = sp.describe_value(v)
                 self._out("= " + summ)
-                if _is_image(v):
+                if shown is None and _is_image(v):
                     self._show_value(v)
             self._status(self.tr("ran lines %d–%d") % job.meta["lines"])
         self._refresh_variables(self.namespace)

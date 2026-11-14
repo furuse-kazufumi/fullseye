@@ -1513,6 +1513,13 @@
    "ko": "plt.show(): 그림을 이미지 창에 넣었습니다(Studio 안의 프로그램은 창을 열지 않습니다)",
    "de": "plt.show(): die Abbildung wurde in das Bildfeld gelegt (ein Programm öffnet in Studio keine Fenster)"
   },
+  "%d matplotlib figure(s) made with a window backend were still open: they were taken off pyplot's list (a program in Studio draws on Agg and cannot use or close a GUI window)": {
+   "ja": "窓を出す backend で作られた matplotlib の図が %d 個、開いたままでした: pyplot の一覧から外しました(Studio の中のプログラムは Agg で描きます。GUI の窓は使えず、閉じる事もできません)",
+   "zh": "有 %d 个用窗口后端创建的 matplotlib 图仍然打开:已将它们从 pyplot 的列表中移除(Studio 中的程序用 Agg 绘图,不能使用或关闭 GUI 窗口)",
+   "tw": "有 %d 個以視窗後端建立的 matplotlib 圖仍然開啟:已將它們從 pyplot 的清單中移除(Studio 中的程式以 Agg 繪圖,無法使用或關閉 GUI 視窗)",
+   "ko": "창을 띄우는 백엔드로 만든 matplotlib 그림 %d개가 열린 채로 남아 있었습니다: pyplot의 목록에서 뺐습니다(Studio 안의 프로그램은 Agg로 그리며, GUI 창을 쓰거나 닫을 수 없습니다)",
+   "de": "%d mit einem Fenster-Backend erzeugte matplotlib-Abbildung(en) waren noch offen: sie wurden aus der Liste von pyplot genommen (ein Programm in Studio zeichnet mit Agg und kann ein GUI-Fenster weder benutzen noch schließen)"
+  },
   "the program started %d thread(s) that are still running after it ended: %s — they keep running in Studio and can change files, the environment and the working folder; what they change is not restored": {
    "ja": "プログラムが起こしたスレッド %d 本が、終わった後も動いています: %s — Studio の中で動き続け、ファイル・環境変数・作業フォルダを書き換える可能性があります。書き換えた物は元へ戻しません",
    "zh": "程序启动的 %d 个线程在结束后仍在运行:%s — 它们会在 Studio 中继续运行,可能修改文件、环境变量和工作文件夹;它们改动的内容不会被恢复",

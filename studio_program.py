@@ -469,6 +469,8 @@ class Recorder:
         self.shown = None
         self.shown_set = False
         self.shown_line = 0
+        #: ``show`` が呼ばれた回数(:func:`evaluate` が「この呼び出しの間に見せた物」を見分ける)。
+        self.shown_n = 0
         self.current_stages: list = []
         #: show_window で開いた窓(実行の終わり・停止で close_program_windows が閉じる)
         self.windows: list = []
@@ -646,6 +648,7 @@ class Recorder:
 
     def show(self, x):
         self.shown, self.shown_set, self.shown_line = x, True, self.caller_line()
+        self.shown_n += 1
         return x
 
     def directive(self, name: str, args: tuple):
@@ -1541,6 +1544,16 @@ GUI_IMPORT_REFUSED = ("Studio does not let a running program import %s: GUI tool
                       "matplotlib backends) only work on Studio's own GUI thread — draw with matplotlib as usual; "
                       "plt.show() and show(fig) put the figure in the image pane")
 MPL_SHOWN_NOTE = "plt.show(): the figure was put in the image pane (a program does not open windows in Studio)"
+#: 窓を出す backend(QtAgg など)で作られた図が残っていて、pyplot の一覧から外した時の知らせ(``%d`` = 外した数)。
+MPL_DETACHED_NOTE = ("%d matplotlib figure(s) made with a window backend were still open: they were taken off "
+                     "pyplot's list (a program in Studio draws on Agg and cannot use or close a GUI window)")
+#: 外した図の管理役(Qt の窓を持つ)。**消さない**ために持ち続ける: 持ち主でないスレッドから Qt の窓を消すと、
+#: Studio 全体が固まる(2026-11-13 第 3 回レビュー S1-d)。
+_DETACHED_FIGURES: list = []
+#: 作業スレッドから呼ばれた、Qt を直接 import する文面を断る時の文(``%d`` = その import の行)。
+QT_PROGRAM_REFUSED = ("line %d: not run: this program imports Qt directly, and Qt widgets can only be "
+                      "made on the GUI thread — this version of Studio cannot run Qt programs from the "
+                      "Program (use the Python Editor window, or run it outside Studio)")
 
 
 def _figure_to_array(fig):
@@ -1571,16 +1584,23 @@ class _ImportGuard:
     * matplotlib は Agg(窓を出さない)で動かし、``plt.show()`` は今の図を画像の欄へ出す。
 
     Studio は PySide6 を読み込み済みなので、何もしないと matplotlib は QtAgg を選び、``plt.show()`` の 1 行が
-    作業スレッドで Qt の窓を作る(図を閉じた所で Studio 全体が固まった)。"""
+    作業スレッドで Qt の窓を作る(図を閉じた所で Studio 全体が固まった)。
+
+    **図が残っていても Agg にする**(2026-11-13 第 3 回レビュー S1-d)。前は「図が 1 つでもあれば backend を
+    変えない」だったので、窓を出す backend の図が 1 つ残っているだけで、次の実行の ``plt.figure()`` が作業スレッドで
+    Qt の窓を作った。窓を出す backend で作られた図は、作業スレッドからは使えず、閉じる事もできない(持ち主でない
+    スレッドから Qt の窓を消すと固まる)ので、pyplot の一覧から外して(:data:`_DETACHED_FIGURES` が持ち続ける。
+    窓は消さない)、結果の ``notes`` に :data:`MPL_DETACHED_NOTE` を入れる。"""
 
     def __init__(self, recorder):
         self.rec = recorder
-        self.tid = None                              # プログラムの作業スレッド(body の先頭で入れる)
+        self.tid = None                              # プログラムの作業スレッド(_guarded_user_call が入れる)
         self.orig_import = None
         self.orig_import_module = None
         self.plt_show = None                         # (pyplot, 元の show, 差し替えた show)
         self.mpl_env = None
         self.shown_figures = 0
+        self.detached_figures = 0                    # pyplot の一覧から外した、窓を出す backend の図の数
 
     # ---- 断る名前 ----
     @staticmethod
@@ -1636,13 +1656,34 @@ class _ImportGuard:
         mpl = sys.modules.get("matplotlib")
         if mpl is not None:
             try:
-                plt = sys.modules.get("matplotlib.pyplot")
+                if sys.modules.get("matplotlib.pyplot") is not None:
+                    self.detached_figures = self._detach_window_figures()
                 now = dict.__getitem__(mpl.rcParams, "backend")       # 自動の選択を起こさずに今の設定だけ読む
-                if (plt is None or not plt.get_fignums()) and not (type(now) is str and now.lower() == "agg"):
-                    mpl.use("Agg", force=True)
+                if not (type(now) is str and now.lower() == "agg"):
+                    mpl.use("Agg", force=True)       # 残っている図は窓を持たない物だけ(閉じられても固まらない)
             except Exception:                        # noqa: BLE001 -- matplotlib の都合で実行を止めない
                 pass
         self._after_import()
+
+    @staticmethod
+    def _detach_window_figures() -> int:
+        """pyplot が持っている図のうち、窓を出す backend(Qt・Tk など)で作られた物を pyplot の一覧から外す。
+        外した数を返す。**窓は消さない**(管理役を :data:`_DETACHED_FIGURES` が持ち続ける)。図そのもの
+        (``Figure``)は名前空間に残っていれば ``show(fig)`` で画像の欄へ出せる(Agg で描き直す)。"""
+        try:
+            from matplotlib import _pylab_helpers
+            figs = _pylab_helpers.Gcf.figs
+        except Exception:                            # noqa: BLE001 -- matplotlib の版の違い
+            return 0
+        n = 0
+        for num, manager in list(figs.items()):
+            canvas = getattr(manager, "canvas", None)
+            if getattr(type(canvas), "required_interactive_framework", None) is None:
+                continue                             # Agg・pdf・svg など、窓を持たない図はそのまま
+            if figs.pop(num, None) is not None:
+                _DETACHED_FIGURES.append(manager)
+                n += 1
+        return n
 
     def uninstall(self):
         import importlib
@@ -1926,6 +1967,108 @@ def _pop_sys_path(token) -> None:
             del sys.modules[name]
 
 
+class _Guarded:
+    """:func:`_guarded_user_call` の結果。"""
+
+    def __init__(self):
+        #: 走らせなかった理由(走らせたなら None)と、その行(Qt の import の行。行に結び付かない理由なら None)。
+        self.refused: str | None = None
+        self.refused_line: int | None = None
+        #: 止められずに残した(その実行が終わった所で、状態の取り戻しと見張りの取り外しをもう一度行う)。
+        self.abandoned = False
+        #: 見張りが戻った時刻(``time.perf_counter()``)。
+        self.ended = 0.0
+        #: 結果に足す知らせ(外した図・``plt.show()``・残ったスレッド・戻した状態、の順)。
+        self.notes: list = []
+
+
+def _refusal(text: str):
+    """利用者のコード *text* を**今は走らせない**理由 ``(文, 行か None)``。走らせてよければ None。
+
+    * 止められずに残した実行が生きている(:data:`ABANDONED_BLOCKS_RUN`。残った実行は状態を書き換え続ける。H3)。
+    * 変数・ウォッチの欄の ``__repr__`` 用のスレッドが残っている(:data:`STRAY_BLOCKS_RUN`。R5)。
+    * 作業スレッドから呼ばれていて、文面が Qt を直接 import する(:data:`QT_PROGRAM_REFUSED`)。Qt の窓は GUI(main)
+      スレッドでしか作れない。橋(:data:`GUI_BRIDGE`)が無いまま作業スレッドで走らせると未定義の動作になる(M1)。"""
+    left = abandoned_runs()
+    if left:
+        return ABANDONED_BLOCKS_RUN % len(left), None
+    stray = _stray_value_threads()
+    if stray:
+        return STRAY_BLOCKS_RUN % stray, None
+    if GUI_BRIDGE is None and threading.current_thread() is not threading.main_thread() and needs_gui_thread(text):
+        ln = _first_qt_import_line(text) or 1
+        return QT_PROGRAM_REFUSED % ln, ln
+    return None
+
+
+def _runs_in_caller(text: str) -> bool:
+    """*text* を呼び出し側のスレッドで回すか: Qt を直接 import する文面を main スレッドから呼んだ時だけ
+    (設計書 §15 の案 C)。それ以外は作業スレッドで回す。"""
+    return needs_gui_thread(text) and threading.current_thread() is threading.main_thread()
+
+
+def _guarded_user_call(fn, text: str, *, recorder, outcome: dict, time_limit_s: float | None = None,
+                       slack_s: float = 0.0, stop_event=None, clock=None, user_dirs=()) -> _Guarded:
+    """利用者のコードを回す**ただ 1 つの入口**。F5・続行・1 行実行(:func:`run_program`)も、選んだ行
+    (:func:`evaluate`)も、この先に足す入口(対話の窓など)も、必ずここを通す(2026-11-13 第 3 回レビュー S1:
+    選んだ行だけが守りを通らず、作業スレッドに Qt の窓ができて Studio 全体が固まった)。
+
+    *fn* = 利用者のコード *text* を走らせる関数(引数なし。例外は自分で受ける)。ここがする事:
+
+    1. 断る(:func:`_refusal`): 残した実行・残ったスレッドがある間、作業スレッドからの Qt。
+    2. GUI の部品の import の見張り(:class:`_ImportGuard`。*recorder* は ``plt.show()`` の図の出し先)を付け、
+       matplotlib を Agg にする。作業スレッドで回す時だけ(橋があれば、窓は橋が GUI スレッドで作る)。
+    3. プロセス全体の状態の写し(:class:`_GlobalState`)を取り、*user_dirs* を ``sys.path`` の先頭に足す。
+    4. *fn* を見張りつきで回す(:func:`_run_with_watchdog`。上限 = *time_limit_s* + *slack_s*、*stop_event*、
+       待っている間を除く時計 *clock*)。始めた時刻と上限を ``outcome["t0"]`` / ``outcome["deadline"]`` に入れる。
+    5. 終わったら(例外でも)足した道を外し、状態を戻し、見張りを外す。止められずに残した時は、見張りを
+       付けたまま、残した実行が終わった所でもう一度戻して外す(:func:`_restore_when_done`)。
+    6. 知らせ(外した図・``plt.show()``・プログラムが起こして残したスレッド・戻した状態)を ``notes`` に入れる。"""
+    run = _Guarded()
+    why = _refusal(text)
+    if why is not None:
+        run.refused, run.refused_line = why
+        return run
+    in_caller = _runs_in_caller(text)
+    guard = _ImportGuard(recorder) if (GUI_BRIDGE is None and not in_caller) else None
+    if guard is not None:
+        guard.install()                              # 写しを取る前に付ける(戻しの後で自分で外す)
+    snapshot = _GlobalState.take()
+    threads_before = set(threading.enumerate())
+    path_token = _push_sys_path(user_dirs)
+
+    def worker():
+        if guard is not None:
+            guard.tid = threading.get_ident()        # 見張りが断るのは、このスレッドからの import だけ
+        fn()
+
+    t0 = time.perf_counter()
+    outcome["t0"] = t0
+    deadline = outcome["deadline"] = None if time_limit_s is None else t0 + time_limit_s + slack_s
+    try:
+        run.abandoned = _run_with_watchdog(worker, outcome, deadline, stop_event, in_caller=in_caller, clock=clock)
+    finally:
+        run.ended = time.perf_counter()
+        if run.abandoned:
+            _restore_when_done(_ABANDONED[-1], snapshot, guard)
+        if guard is not None and guard.detached_figures:
+            run.notes.append(MPL_DETACHED_NOTE % guard.detached_figures)
+        if guard is not None and guard.shown_figures:
+            run.notes.append(MPL_SHOWN_NOTE)
+        left_threads = _program_threads_alive(threads_before) if not run.abandoned else []
+        if left_threads:
+            _PROGRAM_THREADS.extend(left_threads)
+            names = ", ".join(str(t.name) for t in left_threads[:5]) + (" …" if len(left_threads) > 5 else "")
+            run.notes.append(PROGRAM_THREADS_NOTE % (len(left_threads), names))
+        _pop_sys_path(path_token)
+        restored = snapshot.restore()
+        if guard is not None and not run.abandoned:
+            guard.uninstall()                        # 残した実行が生きている間は付けたまま(終わった所で外す)
+        if restored:
+            run.notes.append("restored after the run: " + ", ".join(restored))
+    return run
+
+
 def run_file(path: str, image, **kw) -> ProgramResult:
     """ファイルを実行の対象にする(:func:`run_program` の ``filename=`` と同じ)。本文はファイルから読む。"""
     with open(path, encoding="utf-8") as fh:
@@ -1936,22 +2079,34 @@ def run_file(path: str, image, **kw) -> ProgramResult:
 def evaluate(source: str, namespace, *, trusted: bool = True, time_limit_s: float | None = None,
              stop_event: threading.Event | None = None) -> dict:
     """実行後の名前空間 *namespace*(``ProgramResult`` か ``ProgramResult.namespace``)で式か文を評価する
-    (対話の窓の入口)。``{"value", "stdout", "error", "calls"}`` を返す。op の呼び出しはその実行の記録に足る。
-    式なら値を返し、文(代入など)なら実行して ``value`` は None。誤りは ``"line N: Type: msg"``。
+    (選んだ行の実行・対話の窓の入口)。``{"value", "stdout", "error", "calls", "notes", "shown"}`` を返す。op の
+    呼び出しはその実行の記録に足る。式なら値を返し、文(代入など)なら実行して ``value`` は None。誤りは
+    ``"line N: Type: msg"``。``shown`` = この呼び出しの間に ``show()`` / ``plt.show()`` が見せた物(無ければ None)。
 
-    ``time_limit_s`` / ``stop_event`` を渡すと :func:`run_program` と同じ見張りで止める(2026-11-13、選んだ行の実行)。
-    止めたら ``error`` は ``"stopped: …"``、止められなければ ``"could not stop …"``(結果は捨てる)。"""
+    **:func:`run_program` と同じ入口(:func:`_guarded_user_call`)を通る**(2026-11-13 第 3 回レビュー S1):
+    作業スレッドからの Qt を断り、GUI の部品の import を見張り、matplotlib は Agg、変えたプロセスの状態
+    (``sys.stdout``・環境変数・作業フォルダ …)は戻して ``notes`` に「restored after the run: …」と入れ、
+    残した実行・残ったスレッドがある間は始めない。``time_limit_s`` / ``stop_event`` は見張りと op の呼び出しの
+    境目の両方で効く。止めたら ``error`` は ``"stopped: …"``、止められなければ ``"could not stop …"``
+    (結果は捨て、終わった所でもう一度状態を戻す)。どちらも渡さなければ、終わるまで待つ。"""
     ns = getattr(namespace, "namespace", namespace)
     if ns is None:
         return {"value": None, "stdout": "", "error": "no namespace: run the program first (keep_namespace=True)",
-                "calls": []}
+                "calls": [], "notes": [], "shown": None}
     if not trusted:
-        return {"value": None, "stdout": "", "error": "not run: untrusted input", "calls": []}
+        return {"value": None, "stdout": "", "error": "not run: untrusted input", "calls": [], "notes": [],
+                "shown": None}
     rec = ns.get("__studio_recorder__") or Recorder()
     out = _BoundedOutput()
     ns["print"] = _capture_print(out)
     n0 = len(rec.calls)
+    shown0 = rec.shown_n
     box: dict = {}
+    # op の呼び出しの境目で見る停止の要求と時間の上限は、**この呼び出しの物**にする。記録は前の実行の物を
+    # 使い回すので、そのままだと Release の実行の上限が残り、その後の選んだ行の op が「時間切れ」で止まった
+    before = (rec.stop_event, rec.time_limit_s, rec.deadline)
+    rec.stop_event, rec.time_limit_s = stop_event, time_limit_s
+    rec.deadline = None if time_limit_s is None else time.perf_counter() + time_limit_s
 
     def body():
         token = _ACTIVE.set(rec)
@@ -1978,23 +2133,25 @@ def evaluate(source: str, namespace, *, trusted: bool = True, time_limit_s: floa
             except BaseException:                    # noqa: BLE001 -- 遅れて届いた止めの例外
                 pass
 
-    if time_limit_s is None and stop_event is None:
-        body()
-    else:
-        def guarded():
-            try:
-                body()
-            except BaseException:                    # noqa: BLE001 -- body の外で届いた止めの例外
-                box.setdefault("err", "stopped")
-        deadline = None if time_limit_s is None else time.perf_counter() + time_limit_s
-        left = abandoned_runs()
-        if left:
-            return {"value": None, "stdout": "", "calls": [], "error": ABANDONED_BLOCKS_RUN % len(left)}
-        if _run_with_watchdog(guarded, {}, deadline, stop_event, in_caller=False):
-            return {"value": None, "stdout": out.getvalue(), "calls": [],
-                    "error": "could not stop the selected lines within %.1f s — they go on running in the background "
-                             "and their results are ignored" % _STOP_GRACE_S}
-    return {"value": box.get("value"), "stdout": out.getvalue(), "error": box.get("err"), "calls": rec.calls[n0:]}
+    def guarded():
+        try:
+            body()
+        except BaseException:                        # noqa: BLE001 -- body の外で届いた止めの例外
+            box.setdefault("err", "stopped")
+
+    try:
+        run = _guarded_user_call(guarded, source, recorder=rec, outcome={}, time_limit_s=time_limit_s,
+                                 stop_event=stop_event)
+    finally:
+        rec.stop_event, rec.time_limit_s, rec.deadline = before
+    if run.refused is not None:
+        return {"value": None, "stdout": "", "calls": [], "error": run.refused, "notes": [], "shown": None}
+    if run.abandoned:
+        return {"value": None, "stdout": out.getvalue(), "calls": [], "notes": run.notes, "shown": None,
+                "error": "could not stop the selected lines within %.1f s — they go on running in the background "
+                         "and their results are ignored" % _STOP_GRACE_S}
+    return {"value": box.get("value"), "stdout": out.getvalue(), "error": box.get("err"), "calls": rec.calls[n0:],
+            "notes": run.notes, "shown": rec.shown if rec.shown_n != shown0 else None}
 
 
 #: 取り込む標準出力の上限(文字数)。越えたら**古い方から**捨て、捨てた事を先頭に書く(50 MB の print で
@@ -2202,26 +2359,17 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
         result.errors = ["line 1: a Python program needs an input image"]
         result.error_line = 1
         return result
-    left = abandoned_runs()
-    if left:                                         # 残った実行が状態を書き換え続ける間は、次を始めない(H3)
-        result.not_run_reason = ABANDONED_BLOCKS_RUN % len(left)
+    def refuse(why) -> ProgramResult:
+        """「ran」と報告しない: 残した実行・残ったスレッドがある、作業スレッドからの Qt(H3 / R5 / M1)。"""
+        result.not_run_reason, ln = why
         result.errors = [result.not_run_reason]
+        if ln is not None:
+            result.error_line = ln
         return result
-    stray = _stray_value_threads()
-    if stray:                                        # 変数の欄の __repr__ のスレッドが残っている間も始めない(R5)
-        result.not_run_reason = STRAY_BLOCKS_RUN % stray
-        result.errors = [result.not_run_reason]
-        return result
-    if GUI_BRIDGE is None and threading.current_thread() is not threading.main_thread() and needs_gui_thread(text):
-        # Qt の窓は GUI(main)スレッドでしか作れない。橋(GUI_BRIDGE)が無いまま作業スレッドで走らせると
-        # 未定義の動作になる(「ran」と報告しない。2026-11-13 レビュー M1)。
-        ln = _first_qt_import_line(text) or 1
-        result.not_run_reason = ("line %d: not run: this program imports Qt directly, and Qt widgets can only be "
-                                 "made on the GUI thread — this version of Studio cannot run Qt programs from the "
-                                 "Program (use the Python Editor window, or run it outside Studio)" % ln)
-        result.errors = [result.not_run_reason]
-        result.error_line = ln
-        return result
+
+    why = _refusal(text)                             # 先に断る(構文の誤りより前。入口の中でももう一度確かめる)
+    if why is not None:
+        return refuse(why)
     code_name = os.path.abspath(filename) if filename else PROGRAM_FILENAME
     result.filename = code_name
     if filename and program_dir is None:
@@ -2268,21 +2416,12 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
     # Studio 本体や他のスレッドの出力まで取り込んでしまう)。file= を渡した print はそのまま。
     ns["print"] = _capture_print(out)
     hits0 = memo.hits if memo is not None else 0
-    in_caller = needs_gui_thread(text) and threading.current_thread() is threading.main_thread()
-    # GUI の部品の import の見張りは、プログラムを作業スレッドで回す時だけ(橋があれば、窓は橋が GUI スレッドで作る)
-    guard = _ImportGuard(rec) if (GUI_BRIDGE is None and not in_caller) else None
-    if guard is not None:
-        guard.install()                              # 写しを取る前に付ける(戻しの後で自分で外す)
-    snapshot = _GlobalState.take()
-    threads_before = set(threading.enumerate())
-    path_token = _push_sys_path(user_dirs)
+    in_caller = _runs_in_caller(text)
     outcome: dict = {}
-    t0 = time.perf_counter()
+    t_call = time.perf_counter()
 
     def body():
         """作業スレッドの中身: contextvar・settrace はこのスレッドだけに付ける。"""
-        if guard is not None:
-            guard.tid = threading.get_ident()
         token = _ACTIVE.set(rec)
         try:
             if not release:
@@ -2367,7 +2506,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
         """実行の状態を *res* へ写す(終わった時の結果と、止まって待つ時の途中の結果で同じ)。*live* = 途中:
         記録は写しを渡す(続きの実行が足しても、渡した結果は変わらない)。型の判定は同一性だけ(利用者のコードを
         呼ばない)。*values* = False: 値に触らない(結果を文字にする段が終わらなかった時の最小の埋め方)。"""
-        res.elapsed_s = time.perf_counter() - t0 - clock.paused_s
+        res.elapsed_s = time.perf_counter() - outcome.get("t0", t_call) - clock.paused_s
         res.lines_run = tracer.lines
         res.notes.extend(tracer.notes)
         res.stdout = out.getvalue()
@@ -2400,22 +2539,22 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
             clock.paused_s += time.perf_counter() - t_wait   # 先に足してから「待ち」を解く(見張りが誤って撃たない)
             clock.paused = False
 
-    deadline = None if time_limit_s is None else t0 + time_limit_s
-    if not release and deadline is not None:
-        deadline += _WATCHDOG_DEBUG_SLACK_S          # Debug は行フックが先に止める(行番号つきの文)。見張りは保険
-    if in_caller:
-        # Qt を直接使うプログラムは GUI(main)スレッドで回す(設計書 §15 の案 C)。見張りは別スレッドから撃つ
-        abandoned = _run_with_watchdog(guarded, outcome, deadline, stop_event, in_caller=True, clock=clock)
-    else:
-        if pause_hook is not None and not release:
-            tracer.on_pause = on_pause
-        abandoned = _run_with_watchdog(guarded, outcome, deadline, stop_event, in_caller=False, clock=clock)
+    if pause_hook is not None and not release and not in_caller:
+        tracer.on_pause = on_pause                   # Qt を直接使うプログラムを main スレッドで回す形(§15)では待てない
+    # 守りの全部(断り・import の見張り・状態の写しと戻し・残した実行の後始末)は、選んだ行と共通の入口の中。
+    # Debug は行フックが先に止める(行番号つきの文)ので、見張りの上限は少し遅らせる(見張りは保険)
+    run = _guarded_user_call(guarded, text, recorder=rec, outcome=outcome, time_limit_s=time_limit_s,
+                             slack_s=0.0 if release else _WATCHDOG_DEBUG_SLACK_S, stop_event=stop_event,
+                             clock=clock, user_dirs=user_dirs)
+    if run.refused is not None:                      # 上で確かめた後に、残した実行・残ったスレッドが増えていた
+        return refuse((run.refused, run.refused_line))
+    abandoned, deadline = run.abandoned, outcome.get("deadline")
     result.ran = True
     kind = outcome.get("kind")
     texts = outcome.get("texts") if not abandoned else None      # 作業スレッドが作り終えた文と表(無ければ None)
     if abandoned:
         reason = "time limit %.3g s" % time_limit_s \
-            if (deadline is not None and time.perf_counter() - clock.paused_s > deadline) else "a stop request"
+            if (deadline is not None and run.ended - clock.paused_s > deadline) else "a stop request"
         result.stopped = "unstoppable"
         result.errors = ["could not stop the program after %s within %.1f s — it is inside a long call "
                          "(C code, time.sleep, a big numpy operation) or keeps catching the stop; it goes on "
@@ -2423,7 +2562,6 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
         result.notes.append("abandoned run: see studio_program.abandoned_runs()")
         result.notes.append("until the abandoned run ends, new runs are refused; the process state is restored "
                             "again when it ends")
-        _restore_when_done(_ABANDONED[-1], snapshot, guard)
     elif kind == "stopped":
         reason, ln = outcome.get("reason", "stop_requested"), outcome.get("line", 0)
         result.stopped, result.stopped_line = reason, ln
@@ -2460,19 +2598,7 @@ def run_program(text: str, image=None, *, trusted: bool = True, syntax: str | No
             msg = "line %d: the program raised an error, but its text could not be made in time" % ln
         result.errors = [msg]
         result.error_line = ln
-    if guard is not None and guard.shown_figures:
-        result.notes.append(MPL_SHOWN_NOTE)
-    left_threads = _program_threads_alive(threads_before) if not abandoned else []
-    if left_threads:
-        _PROGRAM_THREADS.extend(left_threads)
-        names = ", ".join(str(t.name) for t in left_threads[:5]) + (" …" if len(left_threads) > 5 else "")
-        result.notes.append(PROGRAM_THREADS_NOTE % (len(left_threads), names))
-    _pop_sys_path(path_token)
-    restored = snapshot.restore()
-    if guard is not None and not abandoned:
-        guard.uninstall()                            # 残した実行が生きている間は付けたまま(終わった所で外す)
-    if restored:
-        result.notes.append("restored after the run: " + ", ".join(restored))
+    result.notes.extend(run.notes)                   # 外した図・plt.show()・残ったスレッド・戻した状態(入口が作る)
     if texts:                                        # 作業スレッドが作り終えた表を写す(呼び出し側は値に触らない)
         f = texts["filled"]
         for name in ("elapsed_s", "lines_run", "stdout", "stdout_total", "calls", "clamped", "directives",

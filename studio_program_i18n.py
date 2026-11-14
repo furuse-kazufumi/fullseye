@@ -67,6 +67,8 @@ RUN_TEMPLATES = (
     "not run: a value shown in the Variables or Watch panel is still running its own code in the background "
     "(%d) — wait until it ends or restart Studio",
     "plt.show(): the figure was put in the image pane (a program does not open windows in Studio)",
+    "%d matplotlib figure(s) made with a window backend were still open: they were taken off pyplot's list "
+    "(a program in Studio draws on Agg and cannot use or close a GUI window)",
     "the program started %d thread(s) that are still running after it ended: %s — they keep running "
     "in Studio and can change files, the environment and the working folder; what they change is not "
     "restored",
