@@ -355,7 +355,7 @@ def test_every_own_string_has_five_translations_and_nothing_else():
     table = km.load_table()
     assert km.missing() == []
     assert sorted(table) == sorted(km.ui_strings())
-    assert len(table) == 151
+    assert len(table) == 154
     ph = re.compile(r"%\(\w+\)s|%[sd]")
     for en, row in table.items():
         for lang in km.LANGS[1:]:
@@ -1073,15 +1073,76 @@ def test_a_newer_setting_is_kept_and_backed_up_before_a_change(win, ctl, studio_
     ctl.apply()
 
 
+def test_a_newer_setting_asks_before_the_first_change_and_its_backup_is_kept(win, ctl, studio_mod):
+    """確かめの担当 2 回目 #5: 新しい版の設定は「そのまま残す」と知らせるのに、キーを 1 つ変えると知らせ無しで
+    keymap/user が版 1 に置き換わり、版 2 の文字列は backup の 1 枠にしか残らなかった(次の壊れた読み込みで潰れ得た)。"""
+    from PySide6 import QtCore  # noqa: PLC0415
+    K = QtCore.Qt
+    newer = json.dumps({"format": km.FORMAT, "version": 2, "preset": "vscode", "bindings": {"undo": ["Ctrl+Alt+Z"]}})
+    _set_saved(studio_mod, newer)
+    w9, ctl9 = _build(studio_mod)
+    try:
+        dlg = ctl9.open_dialog()
+        asked = []
+        dlg.confirm = lambda title, text, *_a: asked.append(text) or False
+        assert dlg.select("zoom_in")
+        dlg.recorder.setFocus()
+        _press(dlg.recorder, K.Key_F11, K.ControlModifier)
+        assert dlg.do_assign() == []                                          # 断った: 何も変えない・書かない
+        assert len(asked) == 1 and "keymap/user.backup" in asked[0]
+        s = studio_mod._settings()
+        assert s.value(km.SETTINGS_KEY) == newer and s.value(km.BACKUP_KEY) is None
+        assert ctl9.keymap.keys("zoom_in") == ("Ctrl+=", "Ctrl++")
+        assert dlg.switch_preset("vscode") is False and ctl9.keymap.preset == "visual_studio"
+        dlg.do_remove()
+        assert len(asked) == 3 and ctl9.keymap.keys("zoom_in") == ("Ctrl+=", "Ctrl++")   # 変える操作はどれも先に聞く
+        dlg.confirm = lambda title, text, *_a: asked.append(text) or True
+        assert dlg.do_assign() == [] and ctl9.keymap.keys("zoom_in") == ("Ctrl+F11",)
+        assert len(asked) == 4
+        s = studio_mod._settings()
+        assert s.value(km.BACKUP_KEY) == newer                               # 新しい版の設定は控えへ
+        assert json.loads(s.value(km.SETTINGS_KEY))["version"] == 1
+        assert ctl9.assign("fit", ("Ctrl+Shift+F12",)) == [] and dlg.do_remove() is None
+        assert len(asked) == 4                                                # 聞くのは最初の 1 回だけ
+        dlg.close()
+    finally:
+        _close(w9)
+    s = studio_mod._settings()
+    s.setValue(km.SETTINGS_KEY, "{broken")                                    # 次は壊れた設定で起動して変える
+    s.sync()
+    w10, ctl10 = _build(studio_mod)
+    try:
+        assert ctl10.keymap == km.Keymap() and ctl10.assign("fit", ("Ctrl+Shift+F12",)) == []
+        assert studio_mod._settings().value(km.BACKUP_KEY) == newer           # 新しい版の控えは潰さない
+    finally:
+        _close(w10)
+        _set_saved(studio_mod, None)
+    ctl.apply()
+
+
 def test_warnings_only_settings_are_used_quietly_and_not_rewritten(win, ctl, studio_mod):
     saved = json.dumps({"format": km.FORMAT, "version": 1, "preset": "visual_studio", "bindings": {"fit": ["Ctrl+Alt+F"]}})
     _set_saved(studio_mod, saved)
+    s = studio_mod._settings()
+    s.setValue(km.BACKUP_KEY, "PRECIOUS-EARLIER-BACKUP")                # 前からある控え(潰さない)
+    s.sync()
     said = []
     w6, ctl6 = _build(studio_mod, flash=said.append)
     try:
         assert ctl6.keymap.keys("fit") == ("Ctrl+Alt+F",) and said == []
         assert _keys_of(w6._actions["fit"]) == ("Ctrl+Alt+F",)
         assert studio_mod._settings().value(km.SETTINGS_KEY) == saved
+        # 確かめの担当 2 回目 F7: 使っている設定を「起動の時に使えなかった」に出さない。注意は行を選んだ時に出る
+        assert ctl6.load_problems == []
+        dlg = ctl6.open_dialog()
+        _pump(0.1)
+        assert dlg.load_note.isHidden()
+        assert dlg.select("fit") and "AltGr" in dlg.status.text()
+        assert ctl6.assign("zoom_in", ("Ctrl+F11",)) == []                  # キーを 1 つ変えても
+        s = studio_mod._settings()
+        assert s.value(km.BACKUP_KEY) == "PRECIOUS-EARLIER-BACKUP"          # 控えは元のまま
+        assert json.loads(s.value(km.SETTINGS_KEY))["bindings"] == {"fit": ["Ctrl+Alt+F"], "zoom_in": ["Ctrl+F11"]}
+        dlg.close()
     finally:
         _close(w6)
         _set_saved(studio_mod, None)
@@ -1101,6 +1162,11 @@ def test_the_start_message_counts_the_dropped_overrides_and_the_dialog_lists_the
         note = dlg.load_note
         assert not note.isHidden()
         assert "no_such" in note.text() and "Open image" in note.text()
+        lines = note.text().splitlines()
+        assert len(lines) == 3 and lines[0] == km.MSG_LOAD_HEADER
+        head = "  Export…: Ctrl+O is also used by Open image… (Main window)"
+        assert [ln for ln in lines if ln.startswith(head)] == [lines[2]]      # 捨てた側の名前が行の頭に
+        assert "  Unknown command: no_such" in lines                         # 名前が文にある物は重ねない
         ctl7.reset_all()                                                     # 変えたら知らせは消える
         assert note.isHidden()
         dlg.close()

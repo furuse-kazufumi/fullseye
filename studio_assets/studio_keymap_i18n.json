@@ -1057,6 +1057,27 @@
    "tw": "按一個鍵: Tab、Esc、Enter 和 Backspace 也會被錄製",
    "ko": "키 하나를 누르세요: Tab·Esc·Enter·Backspace 도 기록됩니다",
    "de": "Eine Taste drücken: auch Tab, Esc, Eingabe und Rücktaste werden aufgenommen"
+  },
+  "Settings from a newer Studio": {
+   "ja": "新しい版の Studio の設定",
+   "zh": "来自更新版本 Studio 的设置",
+   "tw": "來自較新版本 Studio 的設定",
+   "ko": "더 새로운 Studio의 설정",
+   "de": "Einstellungen aus einem neueren Studio"
+  },
+  "The saved shortcuts are from a newer Studio and are not used here. If you change them now, this version saves its own shortcuts and moves the newer settings to keymap/user.backup (the newer Studio does not read them from there). Continue?": {
+   "ja": "保存してあったショートカットは新しい版の Studio の物で、ここでは使っていません。いま変えると、この版のショートカットを保存し、新しい版の設定は keymap/user.backup へ移します(新しい版の Studio はそこからは読みません)。続けますか?",
+   "zh": "已保存的快捷键来自更新版本的 Studio，此处没有使用。现在更改，会保存此版本的快捷键，并把更新版本的设置移到 keymap/user.backup(更新版本的 Studio 不会从那里读取)。要继续吗?",
+   "tw": "已儲存的快速鍵來自較新版本的 Studio，此處沒有使用。現在變更，會儲存此版本的快速鍵，並把較新版本的設定移到 keymap/user.backup(較新版本的 Studio 不會從那裡讀取)。要繼續嗎?",
+   "ko": "저장된 단축키는 더 새로운 Studio의 것이라 여기서는 쓰지 않습니다. 지금 바꾸면 이 버전의 단축키를 저장하고, 새 버전의 설정은 keymap/user.backup 으로 옮깁니다(새 버전의 Studio는 거기서 읽지 않습니다). 계속할까요?",
+   "de": "Die gespeicherten Tastenkürzel stammen aus einem neueren Studio und werden hier nicht verwendet. Wenn Sie sie jetzt ändern, speichert diese Version ihre eigenen Tastenkürzel und verschiebt die neueren Einstellungen nach keymap/user.backup (das neuere Studio liest sie dort nicht). Fortfahren?"
+  },
+  "Change anyway": {
+   "ja": "それでも変える",
+   "zh": "仍然更改",
+   "tw": "仍然變更",
+   "ko": "그래도 바꾸기",
+   "de": "Trotzdem ändern"
   }
  }
 }

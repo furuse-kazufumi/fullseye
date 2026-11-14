@@ -894,13 +894,22 @@ class KeyboardDialog(QtWidgets.QDialog):
         self.b_reset_all.setEnabled(bool(ctl.keymap.overrides()))
         self.select(keep) if keep else self._show_detail()
 
+    def _note_line(self, p: km.Problem) -> str:
+        """起動・言語の知らせの 1 行。捨てた / 効かないコマンドの名前を頭に付ける(当たりの文は相手の名前しか書かない。
+        確かめの担当 2 回目 #11)。文がコマンドの名前を書く物(Unknown command など)は重ねない。"""
+        text = self.ctl.describe(p)
+        c = km.BY_ID.get(p.command)
+        if c is not None and "%(command)s" not in km.MESSAGES.get(p.code, ""):
+            text = "%s: %s" % (self.ctl.tr(c.title), text)
+        return "  " + text
+
     def _show_load_note(self) -> None:
         tr = self.ctl.tr
         parts = []
         for header, probs in ((km.MSG_LOAD_HEADER, [p for p in self.ctl.load_problems if p.level != "info"]),
                               (km.MSG_LANG_HEADER, list(self.ctl.lang_problems))):
             if probs:
-                parts.append(tr(header) + "\n" + "\n".join("  " + self.ctl.describe(p) for p in probs[:12]))
+                parts.append(tr(header) + "\n" + "\n".join(self._note_line(p) for p in probs[:12]))
         if not parts:
             self.load_note.hide()
             return
@@ -1026,9 +1035,19 @@ class KeyboardDialog(QtWidgets.QDialog):
         self.b_add.setEnabled(seq not in self.ctl.keymap.keys(c.id) and not any(p.level == "error" for p in add_probs))
 
     # ---- 操作 -------------------------------------------------------------- #
+    def _ok_to_change(self) -> bool:
+        """保存してあった設定が新しい版なら、最初に変える前に聞く(既定はキャンセル。確かめの担当 2 回目 #5)。"""
+        if not self.ctl.newer_kept:
+            return True
+        tr = self.ctl.tr
+        if not self.confirm(tr(km.TTL_NEWER), tr(km.ASK_NEWER), tr(km.BTN_NEWER_DO)):
+            return False
+        self.ctl.newer_kept = False
+        return True
+
     def do_assign(self) -> list:
         c, seq = self._cmd(), self.recorder.sequence()
-        if c is None or not seq:
+        if c is None or not seq or not self._ok_to_change():
             return []
         probs = self.ctl.assign(c.id, (seq,))
         self._after(probs)
@@ -1036,7 +1055,7 @@ class KeyboardDialog(QtWidgets.QDialog):
 
     def do_add(self) -> list:
         c, seq = self._cmd(), self.recorder.sequence()
-        if c is None or not seq:
+        if c is None or not seq or not self._ok_to_change():
             return []
         probs = self.ctl.assign(c.id, tuple(self.ctl.keymap.keys(c.id)) + (seq,))
         self._after(probs)
@@ -1049,14 +1068,14 @@ class KeyboardDialog(QtWidgets.QDialog):
 
     def do_remove(self) -> None:
         c = self._cmd()
-        if c is not None and not c.fixed:
+        if c is not None and not c.fixed and self._ok_to_change():
             one = self._removal(self.recorder.sequence())
             keys = tuple(k for k in self.ctl.keymap.keys(c.id) if k != one) if one else ()
             self._after(self.ctl.assign(c.id, keys))
 
     def do_reset(self) -> list:
         c = self._cmd()
-        if c is None or c.fixed:
+        if c is None or c.fixed or not self._ok_to_change():
             return []
         probs = self.ctl.reset(c.id)                           # 当たるなら戻さずに相手を示す
         self._after(probs)
@@ -1075,7 +1094,7 @@ class KeyboardDialog(QtWidgets.QDialog):
     def do_reset_all(self) -> bool:
         tr = self.ctl.tr
         n = len(self.ctl.keymap.overrides())
-        if not n:
+        if not n or not self._ok_to_change():
             return False
         if not self.confirm(tr(km.TTL_RESET_ALL), tr(km.ASK_RESET_ALL) % n, tr(km.BTN_RESET_ALL_DO)):
             return False
@@ -1092,6 +1111,8 @@ class KeyboardDialog(QtWidgets.QDialog):
         tr = self.ctl.tr
         if name == self.ctl.keymap.preset:
             return True
+        if not self._ok_to_change():
+            return False
         trial = self.ctl.keymap.copy()
         dropped = trial.switch_preset(name, self.ctl.fixed_entries(), self.ctl.places)
         text = tr(km.ASK_PRESET) % tr(km.PRESET_TITLES[name])
@@ -1112,6 +1133,8 @@ class KeyboardDialog(QtWidgets.QDialog):
         if new is None:
             self.inform(tr(km.BTN_IMPORT), tr(km.MSG_IMPORT_FAILED) + "\n" + "\n".join(
                 "  " + self.ctl.describe(p) for p in probs if p.level == "error"))
+            return False
+        if not self._ok_to_change():
             return False
         cur = self.ctl.keymap
         if cur.overrides() or cur.preset != km.DEFAULT_PRESET:   # 今の変更が消える: 置き換える前に聞く
@@ -1183,6 +1206,20 @@ class KeyboardDialog(QtWidgets.QDialog):
 # --------------------------------------------------------------------------- #
 # 制御役(読み込み・保存・配る・設定の窓)
 # --------------------------------------------------------------------------- #
+#: 起動の時に「使えなかった」と数える問題(error のほか)。注意だけの物は当てているので数えない。
+_NOT_USED = ("settings_broken", "settings_newer")
+
+
+def _is_newer(value) -> bool:
+    """設定の文字列 ``value`` が新しい版の Studio の物か(控えの枠を潰さないため)。"""
+    if not isinstance(value, str) or not value:
+        return False
+    try:
+        return any(p.code == "settings_newer" for p in km.from_settings_text(value)[1])
+    except Exception:                                          # noqa: BLE001 -- 読めない物は新しい版ではない
+        return False
+
+
 class KeymapController(QtCore.QObject):
     """窓 1 つのキーの割り当ての持ち主(``win._keymap``)。変えたら保存して配る。"""
 
@@ -1201,6 +1238,7 @@ class KeymapController(QtCore.QObject):
         self.keymap = km.Keymap()
         self.load_problems: list = []
         self._loaded_raw: str | None = None                     # 起動の時に使えなかった元の文字列(保存の前に残す)
+        self.newer_kept = False                                # 保存してあった設定が新しい版(設定の窓が変える前に聞く)
         self.dialog: KeyboardDialog | None = None
 
     # ---- 設定 -------------------------------------------------------------- #
@@ -1216,7 +1254,8 @@ class KeymapController(QtCore.QObject):
         """保存してあった上書きを読む。壊れた分は捨てて状態行に 1 行(数えるのは捨てた上書き)。何が来ても例外を出さない。
 
         起動では設定を書き直さない(版を戻した・新しい版の設定を消さない)。利用者が変えて保存する時に、使えなかった
-        元の文字列を ``keymap/user.backup`` に残す。
+        元の文字列を ``keymap/user.backup`` に残す。「使えなかった」は error と settings_broken / settings_newer だけ
+        (注意だけの上書きは当てている。設定の窓の行を選んだ時の状態の欄が出す。2026-11-15 確かめの担当 2 回目 F7)。
         """
         s = self.store()
         try:
@@ -1229,8 +1268,9 @@ class KeymapController(QtCore.QObject):
             self.keymap, probs = km.from_settings_text(value, self.fixed_entries(), self.places)
         except Exception as exc:                               # noqa: BLE001 -- 何が来ても既定で起動する
             self.keymap, probs = km.Keymap(), [km.Problem("warning", "settings_broken", detail=type(exc).__name__)]
-        self.load_problems = [p for p in probs if p.level != "info"]
+        self.load_problems = [p for p in probs if p.level == "error" or p.code in _NOT_USED]
         self._loaded_raw = value if self.load_problems else None
+        self.newer_kept = any(p.code == "settings_newer" for p in probs)
         text = self._load_message(probs)
         if text and self.flash:
             try:
@@ -1257,9 +1297,12 @@ class KeymapController(QtCore.QObject):
         if s is None:
             return False
         if self._loaded_raw is not None:                       # 起動の時に使えなかった元の文字列を 1 つ残してから書く
-            s.setValue(km.BACKUP_KEY, self._loaded_raw)
+            old = s.value(km.BACKUP_KEY)
+            if not (old != self._loaded_raw and _is_newer(old)):   # 新しい版の設定が残っている控えは潰さない(#5)
+                s.setValue(km.BACKUP_KEY, self._loaded_raw)
             self._loaded_raw = None
         self.load_problems = []
+        self.newer_kept = False                                # 新しい版の設定は控えへ移った
         if self.keymap.overrides() or self.keymap.preset != km.DEFAULT_PRESET:
             s.setValue(km.SETTINGS_KEY, self.keymap.to_json())
         else:
