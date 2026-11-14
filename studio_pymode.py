@@ -478,6 +478,10 @@ class PyModeController(QtCore.QObject):
         #: Python の文面を置き換えて「手で打った物」にするが、Ctrl+Z で前の文面(確認していないファイル)が戻る。
         #: 今の文面がこの表にある文面そのものになったら、由来と信頼をそのファイルの物に戻す(:meth:`_sync_trust`)。
         self._unconfirmed: dict = {}
+        #: 変換・移すで置き換えた前後の文面の由来 {文面の SHA-256: (origin, 出どころ, 信頼)}。Undo / Redo でその文面に
+        #: 戻った時に戻す(手で打った文面を「ファイルから来た」と言わない)。確認していないファイルの文面
+        #: (:attr:`_unconfirmed`)が常に先(2026-11-15 第 4 回の確かめ)。
+        self._origin_of: dict = {}
         self.saved_digest: str | None = None
         self.breakpoints_py: set = set()
         self.breakpoints_pipe: set = set()
@@ -1100,9 +1104,11 @@ class PyModeController(QtCore.QObject):
             # (ファイルはデータとして確認なしに開かれる。2026-11-13 レビュー H1)
             self.file, self.origin, self.session_trusted, self.saved_digest = None, "file", False, None
             self.origin_path = self.pipe_source
+            self._note_unconfirmed(self.edit.toPlainText(), "file", self.pipe_source)   # Redo で戻っても確認する
         else:
             self.file, self.origin, self.session_trusted, self.saved_digest = None, "typed", True, None
             self.origin_path = None
+        self._note_origin(self.edit.toPlainText())
         self.last = None
         self._update_labels()
         self.update_badge()
@@ -1115,19 +1121,36 @@ class PyModeController(QtCore.QObject):
         self._unconfirmed[sp.program_digest(text)] = (origin, where)
 
     def _note_python_text(self) -> None:
-        """Python の文書の今の文面が確認していない物なら覚える(その文面を 1 回の編集で置き換える直前に呼ぶ)。"""
-        if self.active and self.origin != "typed" and not self.session_trusted:
-            self._note_unconfirmed(self.edit.toPlainText(), self.origin, self.file or self.origin_path)
+        """Python の文書の今の文面が確認していない物なら覚える(その文面を 1 回の編集で置き換える直前に呼ぶ)。
+        由来と信頼も覚える(Undo で戻った時に戻す)。"""
+        if not self.active:
+            return
+        text = self.edit.toPlainText()
+        if self.origin != "typed" and not self.session_trusted:
+            self._note_unconfirmed(text, self.origin, self.file or self.origin_path)
+        self._note_origin(text)
+
+    def _note_origin(self, text: str) -> None:
+        """文面 *text* の今の由来と信頼を覚える(多すぎれば古い方から捨てる)。"""
+        if len(self._origin_of) > 256:
+            self._origin_of.pop(next(iter(self._origin_of)))
+        self._origin_of[sp.program_digest(text)] = (self.origin, self.file or self.origin_path,
+                                                   bool(self.session_trusted))
 
     def _sync_trust(self, text: str) -> None:
         """今の文面 *text* が「確認していないファイルの文面」そのものなら、由来と信頼をそのファイルの物に戻す。
         文面が変わるたび(Undo / Redo も)と、実行の前に呼ぶ。戻した後に直した文面は、今までどおり確認するまで
         「ファイルから来た物」のまま(``origin`` が file / project で ``session_trusted`` が偽)。"""
-        if not self._unconfirmed:
+        if not self._unconfirmed and not self._origin_of:
             return
         d = sp.program_digest(text)
         hit = self._unconfirmed.get(d)
         if hit is None:
+            known = self._origin_of.get(d)                    # 変換・移すで置き換えた前後の文面: その時の由来へ
+            if known is not None:
+                self.origin, where, self.session_trusted = known
+                if not self.file:
+                    self.origin_path = where if self.origin != "typed" else None
             return
         origin, where = hit
         if self.trust.is_trusted(text, origin):               # 別の入口(従来のエディタなど)で確認済みになった
@@ -1145,6 +1168,8 @@ class PyModeController(QtCore.QObject):
         d, where = sp.program_digest(text), (self.file or self.origin_path)
         self._unconfirmed = {k: v for k, v in self._unconfirmed.items()
                              if k != d and (where is None or v[1] != where)}
+        self._origin_of = {k: v for k, v in self._origin_of.items()
+                           if k != d and (where is None or v[1] != where)}
 
     def title_segment(self) -> str | None:
         """窓の題の先頭(Python のモードのときだけ。プログラムの名前と未保存の印)。"""
@@ -1271,7 +1296,7 @@ class PyModeController(QtCore.QObject):
             self.edit.set_timings({})
         if self.active and self.file and self.autosave_file_mode() == "idle":
             self._file_save_timer.start(int(self.autosave_idle_s() * 1000))   # 打つたびに数え直す
-        if self.active and self._unconfirmed:                 # Ctrl+Z で確認していないファイルの文面に戻ったか
+        if self.active and (self._unconfirmed or self._origin_of):   # Ctrl+Z / Ctrl+Y で覚えた文面に戻ったか
             self._sync_trust(self.edit.toPlainText())
         self._update_labels()
 

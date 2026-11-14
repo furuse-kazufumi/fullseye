@@ -869,3 +869,85 @@ def test_s3c_a_file_that_cannot_be_read_at_start_does_not_drop_the_kept_text(tmp
         assert str(pm2.settings().value("pymode/buffer")) == "a = 1\nb = 2  # an hour of unsaved work\n"
     finally:
         _close(win2)
+
+
+# --------------------------------------------------------------------------- #
+# S2b: Undo / Redo で戻った文面の由来は、その文面が置き換えられた時の物             #
+# --------------------------------------------------------------------------- #
+def _s2_f5(pm, prompts) -> int:
+    n0 = len(prompts)
+    pm.run()
+    pm.wait_idle(15)
+    _pump(0.2)
+    return len(prompts) - n0
+
+
+def test_s2b_redo_back_to_a_converted_pipeline_does_not_ask_as_if_it_came_from_the_file(tmp_path, monkeypatch):
+    """確かめ v05 T7: 確認していない X.py を開く → パイプラインの 1 行を変換 → Ctrl+Z → Ctrl+Y で、変換した文面
+    (手で打ったパイプラインから作った物)が「X.py から来た・未確認」になり、確認の窓が出た。X.py の文面に戻った
+    時(Ctrl+Z)は、今までどおり確認する。"""
+    prompts = []
+    monkeypatch.setattr(pm_mod, "TRUST_HOOK", lambda *a: (prompts.append(a[2] if len(a) > 2 else a), False)[1])
+    X = tmp_path / "t7.py"
+    X.write_text("print('ran t7')\n", encoding="utf-8")
+    win, _model = _launch(tmp_path, monkeypatch)
+    try:
+        pm = win._pymode
+        assert pm.open_program(str(X)) is True
+        assert _s2_f5(pm, prompts) == 1                                 # 確認しない(Cancel)
+        pm.set_mode("pipeline")
+        _pump(0.2)
+        _set_text(win, "gaussian (0.5, 0.5)\n")
+        assert pm.convert_to_python() is True
+        _pump(0.2)
+        converted = pm.edit.toPlainText()
+        assert pm.origin == "typed" and _s2_f5(pm, prompts) == 0
+        pm.edit.undo()
+        _pump(0.3)
+        assert pm.edit.toPlainText() == "print('ran t7')\n" and pm.origin == "file" and pm.session_trusted is False
+        assert _s2_f5(pm, prompts) == 1                                 # X.py の文面: 確認する(Cancel)
+        pm.edit.redo()
+        _pump(0.3)
+        assert pm.edit.toPlainText() == converted
+        assert (pm.origin, pm.session_trusted) == ("typed", True)
+        assert _s2_f5(pm, prompts) == 0
+        pm.edit.undo()
+        _pump(0.3)
+        assert pm.origin == "file" and _s2_f5(pm, prompts) == 1          # 何度戻っても X.py の文面は確認する
+    finally:
+        _close(win)
+
+
+def test_s2b_undo_back_to_typed_text_after_converting_a_pipeline_file_is_typed_again(tmp_path, monkeypatch):
+    """確かめ v05 T6: 手で打った文面 → パイプラインのファイル(p.json)を開く → 変換 → Ctrl+Z で、手で打った文面が
+    「p.json から来た」になり、確認の窓は「This program came from …p.json」と言った。Ctrl+Y で変換した文面
+    (p.json から作った物)に戻れば、今までどおり確認する。"""
+    prompts = []
+    monkeypatch.setattr(pm_mod, "TRUST_HOOK", lambda *a: (prompts.append(a[2] if len(a) > 2 else a), False)[1])
+    pipe = tmp_path / "p.json"
+    pipe.write_text(json.dumps({"fullseye_pipeline": 1, "stages": [["gaussian", 0.3, 0.5]], "directives": []}),
+                    encoding="utf-8")
+    win, _model = _launch(tmp_path, monkeypatch)
+    try:
+        pm = win._pymode
+        pm.new_program()
+        _pump(0.2)
+        _set_text(win, "print('typed by hand T6')\n")
+        assert pm.origin == "typed"
+        win._open_pipe_path(str(pipe))
+        _pump(0.3)
+        assert pm.convert_to_python() is True
+        _pump(0.2)
+        converted = pm.edit.toPlainText()
+        assert pm.origin == "file" and pm.session_trusted is False
+        pm.edit.undo()
+        _pump(0.3)
+        assert pm.edit.toPlainText() == "print('typed by hand T6')\n"
+        assert (pm.origin, pm.session_trusted) == ("typed", True)
+        assert _s2_f5(pm, prompts) == 0
+        pm.edit.redo()
+        _pump(0.3)
+        assert pm.edit.toPlainText() == converted and pm.origin == "file" and pm.session_trusted is False
+        assert _s2_f5(pm, prompts) == 1 and "p.json" in prompts[-1]      # p.json から作った文面は確認する
+    finally:
+        _close(win)
