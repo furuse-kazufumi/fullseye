@@ -1623,8 +1623,9 @@ class PyModeController(QtCore.QObject):
         for n in r.get("notes") or ():                        # F5 と同じ知らせ(戻した状態・plt.show()・残ったスレッド)
             self._out("ℹ " + self._loc(n))
         shown = r.get("shown")
+        not_shown = None
         if shown is not None:                                 # 選んだ行の show() / plt.show() は、F5 と同じく画像の欄へ
-            self._show_value(shown)
+            not_shown = self._show_value(shown)
         if r.get("error"):
             l1 = job.meta["lines"][0]
             err = r["error"]
@@ -1643,7 +1644,7 @@ class PyModeController(QtCore.QObject):
                     self._show_value(v)
             self._status(self.tr("ran lines %d–%d") % job.meta["lines"])
         self._refresh_variables(self.namespace)
-        self.flash(self.tr("ran lines %d–%d") % job.meta["lines"])
+        self.flash(not_shown or self.tr("ran lines %d–%d") % job.meta["lines"])
 
     def _loc(self, text: str) -> str:
         """実行系・検査の英語の文を UI の言語へ(型に当たらない文 = Python 自身の例外の文などはそのまま)。"""
@@ -1672,8 +1673,9 @@ class PyModeController(QtCore.QObject):
             self._out("✕ " + self._loc(e))
         # 記録・絵・変数
         self._fill_record(res)
+        not_shown = None
         if res.ran and res.output is not None and not res.not_run_reason:
-            self._show_value(res.output)
+            not_shown = self._show_value(res.output)
         paused = res.stopped in ("breakpoint", "step")
         self._refresh_variables(res.namespace, res.locals if paused else None)
         self.edit.set_timings(per_line_ms(res.calls))
@@ -1711,6 +1713,8 @@ class PyModeController(QtCore.QObject):
                 break
         else:
             self.flash(msg)
+        if not_shown:                                         # 「画像ではないので出していない」は状態の帯にも出す
+            self.flash(not_shown)
         self.check_now()                                      # 実行時の誤りの行を Problems・波線へ
 
     def _fill_record(self, res):
@@ -1766,19 +1770,26 @@ class PyModeController(QtCore.QObject):
             self.state["pymode_vars_shown"] = True
             self.ctx.get("show_panel", lambda _n: None)("variables")
 
-    def _show_value(self, v):
+    def _show_value(self, v) -> str | None:
+        """値を画像の欄へ出す。出さなかった時は、その理由の 1 行(出力の欄に書いた文)を返す(呼び出し側が状態の帯にも
+        出す)。出した時・値が None の時は None。"""
         import numpy as np
-        if type(v) is not np.ndarray:
-            # 画面の側(GUI のスレッド)は素の配列だけを受け取る。それ以外(利用者のクラスの物・派生した配列)を表示の
-            # 処理へ渡すと、その ``__class__`` / ``__array__`` などが GUI のスレッドで走る(第 2 回レビュー R1)
-            if v is not None:
-                self._out("ℹ " + self.tr("The shown value is not an image (%s): nothing is displayed")
-                          % sp.describe_value(v)[2])
-            return
+        if type(v) is not np.ndarray or v.dtype.kind not in _DISPLAYABLE_KINDS:
+            # 画面の側(GUI のスレッド)は**数の素の配列**だけを受け取る。
+            # * 利用者のクラスの物・派生した配列を表示の処理へ渡すと、その ``__class__`` / ``__array__`` などが GUI の
+            #   スレッドで走る(第 2 回レビュー R1)。
+            # * 数でない配列(object・文字列・日付・構造体)は、表示の処理が ``np.isfinite`` などで落ち、毎回
+            #   「Display error」のモーダルの窓が出た(第 3 回レビュー S8)。窓は出さず、1 行で言う。
+            if v is None:
+                return None
+            note = self.tr("The shown value is not an image (%s): nothing is displayed") % sp.describe_value(v)[2]
+            self._out("ℹ " + note)
+            return note
         try:
             self.ctx["show_value"](v)
         except Exception as e:                                # noqa: BLE001 -- 表示の失敗で実行の結果を失わない
             self._out("⚠ " + self.tr("could not display the result: %s") % e)
+        return None
 
     def goto_line(self, ln: int):
         self.edit.goto_line(int(ln))
@@ -2373,9 +2384,16 @@ class PyModeController(QtCore.QObject):
 # --------------------------------------------------------------------------- #
 # 小物                                                                          #
 # --------------------------------------------------------------------------- #
+#: 画像の欄へ渡してよい配列の dtype の種類(bool・整数・実数・複素数)。object・文字列・日付・構造体の配列は渡さない
+#: (表示の処理が落ちてモーダルの窓が出た。object の配列は要素ごとに利用者のコードを呼びうる)。
+_DISPLAYABLE_KINDS = "biufc"
+
+
 def _is_image(v) -> bool:
     import numpy as np
     if type(v) is not np.ndarray:                             # 型だけで決める(v.__class__ を読まない。派生した型は画像として扱わない)
+        return False
+    if v.dtype.kind not in _DISPLAYABLE_KINDS:                # 数でない配列は絵にしない
         return False
     return v.ndim in (2, 3) and v.shape[0] > 1 and v.shape[1] > 1 and (v.ndim == 2 or v.shape[2] in (1, 3, 4))
 

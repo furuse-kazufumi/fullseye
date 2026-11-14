@@ -956,3 +956,64 @@ def test_s6_closing_a_changed_tab_of_the_python_editor_asks_with_the_safe_defaul
         except Exception:                                                 # noqa: BLE001
             pass
         _close(win)
+
+
+# --------------------------------------------------------------------------- #
+# S8: 数でない配列を show() しても、モーダルの窓は出ない                            #
+# --------------------------------------------------------------------------- #
+_S8_NOT_PICTURES = {
+    "object": "a = np.empty((8, 8), dtype=object)\na[:] = Probe()\n",
+    "str": "a = np.full((8, 8), 'ab')\n",
+    "datetime": "a = np.zeros((8, 8), dtype='M8[s]')\n",
+    "struct": "a = np.zeros((8, 8), dtype=[('x', 'f4'), ('y', 'i4')])\n",
+}
+_S8_PROBE = ("CALLED = []\nclass Probe:\n    def __float__(self):\n        CALLED.append('float')\n        return 0.5\n"
+             "    def __lt__(self, o):\n        CALLED.append('lt')\n        return False\n"
+             "    def __add__(self, o):\n        CALLED.append('add')\n        return self\n    __radd__ = __add__\n")
+
+
+@pytest.mark.parametrize("kind", sorted(_S8_NOT_PICTURES))
+def test_s8_showing_an_array_that_is_not_numbers_says_so_without_a_modal_window(kind, tmp_path, monkeypatch):
+    """探針 r01: object の配列を ``show()`` する・選んだ行の値にすると、表示の処理が ``np.isfinite`` で落ち、
+    毎回「Display error / The step could not run」のモーダルの窓が出た(画面の無い実行では GUI がそこで止まった)。"""
+    modals = []
+    monkeypatch.setattr(studio, "ERROR_HOOK", lambda parent, title, text: modals.append((title, str(text)[:200])))
+    win, _model = _launch(tmp_path, monkeypatch, time_limit=10)
+    try:
+        pm = win._pymode
+        errors0 = len(pm.state.get("errors", []))
+        _set_text(win, "# python\n" + _S8_PROBE + _S8_NOT_PICTURES[kind] + "show(a)\n")
+        res = _run(win)
+        assert res.ok and modals == []                                   # 実行は成功。窓は出ない
+        assert len(pm.state.get("errors", [])) == errors0                # 「表示の誤り」としても数えない
+        out = _output(win)
+        assert out.count("The shown value is not an image (") == 1 and "8×8" in out, out
+        assert "not an image" in win.statusBar().currentMessage()        # 断りは状態の帯にも出す
+        last = pm.edit.document().blockCount()
+        _set_text(win, pm.edit.toPlainText() + "a\n")
+        pm.output.clear()
+        _run_selection(win, last, last)                                  # 選んだ行の値が、その配列
+        assert modals == [] and "8×8" in _output(win) and "not an image" not in _output(win)   # 値の要約だけ。絵にしない
+        assert pm.namespace["CALLED"] == []                              # 利用者の __float__ / 比べる演算は呼ばない
+        assert pm_mod._is_image(pm.namespace["a"]) is False
+    finally:
+        _close(win)
+
+
+def test_s8_numeric_arrays_are_still_displayed(tmp_path, monkeypatch):
+    """数の配列(bool・整数・実数・複素数)は今までどおり画像の欄へ出る。"""
+    modals = []
+    monkeypatch.setattr(studio, "ERROR_HOOK", lambda parent, title, text: modals.append((title, str(text)[:200])))
+    win, _model = _launch(tmp_path, monkeypatch, time_limit=10)
+    try:
+        pm = win._pymode
+        for src, dtype in (("bool", np.bool_), ("np.uint8", np.uint8), ("np.float32", np.float32),
+                           ("complex", np.complex128)):
+            _set_text(win, "# python\na = np.ones((8, 8), dtype=%s)\nshow(a)\n" % src)
+            res = _run(win)
+            assert res.ok and modals == [] and "not an image" not in _output(win), src
+            assert res.output.dtype == np.dtype(dtype) and pm_mod._is_image(res.output), src
+            if src != "complex":                                         # 複素数は見せ方を選ぶ(絵そのものではない)
+                assert win._state.get("raw") is res.output, src
+    finally:
+        _close(win)
