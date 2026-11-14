@@ -93,7 +93,7 @@ def test_every_bar_string_is_translated_into_every_language():
     with open(path, encoding="utf-8") as fh:
         data = json.load(fh)
     langs = set(data["languages"]) - {"en"}
-    assert len(langs) == 6 and len(studio_panels.STRINGS) == 43
+    assert len(langs) == 6 and len(studio_panels.STRINGS) == 46
     for text in studio_panels.STRINGS:
         row = data["strings"].get(text)
         assert row is not None, "no i18n row for %r" % text
@@ -903,18 +903,20 @@ def test_status_items_follow_the_panel(tmp_path, monkeypatch):
         assert 0 < shown < total or win._op_list.count() < total
         assert ops["now"] != before and ops["label"].text() == ops["now"]
         stages = [i for i in st["titles"]["pipeline"].status if i["id"] == "stages"][0]
-        n = win._stage_list.count()
-        assert stages["now"] == "Stages: %d" % n
+        n = sum(1 for i in range(win._stage_list.count()) if win._stage_list.item(i).flags())
+        assert win._stage_list.count() >= 1 and stages["now"] == "Stages: %d" % n    # the hint row is not a stage
         win._stage_list.addItem("extra row"); _pump(app, 0.6)       # the read-out counts the list's own rows
         assert stages["now"] == "Stages: %d" % (n + 1) and stages["label"].text() == stages["now"]
         err = [i for i in st["titles"]["pipeline"].status if i["id"] == "errors"][0]
         assert err["now"] == "" and err["label"].isHidden()                  # nothing wrong: the item is not there at all
         win._state["errors"] = ["boom"]; _pump(app, 0.6)
-        assert err["now"] == "✕ Errors: 1" and not err["label"].isHidden()
+        assert err["now"] == "Errors: 1" and not err["label"].isHidden()
+        assert err["mark"] is not None and not err["mark"].isHidden() and not err["mark"].pixmap().isNull()   # D130: drawn
         win._state["errors"] = []; _pump(app, 0.6)
         assert err["now"] == "" and err["label"].isHidden()
         win._apply_language("ja"); _pump(app, 0.6)
-        assert stages["now"] == "段 %d" % win._stage_list.count()     # (the language change rebuilt the list)
+        assert stages["now"] == "段 %d" % sum(                        # (the language change rebuilt the list)
+            1 for i in range(win._stage_list.count()) if win._stage_list.item(i).flags())
     finally:
         win._apply_language("en")
         _close(app, win)
@@ -1034,7 +1036,7 @@ def test_brand_begin_update_end_changes_text_and_band_but_never_the_frame(monkey
     assert state[:2] == ("busy", "Running 3/7 otsu") and state[2] == pytest.approx(3 / 7.0)
     assert b.toolTip() == "Running 3/7 otsu" and b.accessibleDescription() == "Running 3/7 otsu 43%"
     b.grab()
-    assert b.shown_text == "▶ Running 3/7 otsu"                        # a shape and words, not colour alone
+    assert (b.shown_mark, b.shown_text) == ("mark_run", "Running 3/7 otsu")   # a drawn shape and words, not colour alone
     assert (b.width(), b.height()) == size
     b.update_job(tok, done=99); _pump(app, 0.05)
     assert b.current()[2] == 1.0                                            # never beyond the frame
@@ -1073,7 +1075,8 @@ def test_brand_short_jobs_do_not_flicker_but_a_failure_is_always_said(monkeypatc
     tok = b.begin("save"); b.end(tok, ok=False, text="Could not save: disk full"); _pump(app, 0.05)
     assert b.current() == ("failed", "Could not save: disk full")           # short, but a failure
     b.grab()
-    assert b.shown_text.startswith("▲ ")
+    assert b.shown_mark == "mark_fail" and b.shown_text.startswith("Could not save")
+    assert b.toolTip() == "Could not save: disk full"                       # the whole text, whatever the frame cut
     host.close()
 
 
@@ -1207,7 +1210,7 @@ def test_the_flip_book_turns_only_while_a_job_is_shown_and_the_window_is_seen(mo
         b.frame = studio_panels.BRAND_FRAMES // 2
         assert _changed(_icon_part(b), idle) > 0                                     # the painted icon moves
         b.grab()
-        assert b.shown_text.startswith("▶ Running 2 / 5")                       # the words stay beside it
+        assert b.shown_mark == "mark_run" and b.shown_text.startswith("Running 2 / 5")   # the words stay beside it
         host.hide(); _pump(app, 0.05)
         before = b.frames_advanced
         _pump(app, 0.5)

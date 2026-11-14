@@ -223,6 +223,18 @@ def _glyph(name, colour, px=16):
         rect(2.5, 2.5, 11, 11); rect(2.5, 9.5, 11, 4, fill=True)
     elif name == "close":
         line(4, 4, 12, 12); line(12, 4, 4, 12)
+    elif name == "menu":                       # three lines: a panel's menu button (D130: drawn)
+        line(3, 4.5, 13, 4.5); line(3, 8, 13, 8); line(3, 11.5, 13, 11.5)
+    elif name == "mark_run":                   # the state marks (D130): running = a filled triangle
+        p.setBrush(col)
+        p.drawPolygon(QtGui.QPolygonF([QtCore.QPointF(4.5 * s, 3 * s), QtCore.QPointF(13 * s, 8 * s),
+                                       QtCore.QPointF(4.5 * s, 13 * s)]))
+        p.setBrush(QtCore.Qt.NoBrush)
+    elif name == "mark_done":                  # ended (done / stopped) = a filled square
+        rect(4, 4, 8, 8, fill=True)
+    elif name == "mark_fail":                  # failed = a cross
+        pen.setWidthF(2.2 * s); p.setPen(pen)
+        line(4, 4, 12, 12); line(12, 4, 4, 12)
     elif name == "image_focus":                # the image alone: four corners around a picture (D01)
         path([(2, 6), (2, 3), (5, 3)]); path([(11, 3), (14, 3), (14, 6)])
         path([(14, 10), (14, 13), (11, 13)]); path([(5, 13), (2, 13), (2, 10)])
@@ -1679,6 +1691,21 @@ def all_strips(win):
 # end(token, ok=True, text=None); safe from any thread. Division of labour with the status bar at
 # the bottom: here = what is running and how far; there = results and the longer sentences.
 # --------------------------------------------------------------------------- #
+#: how a job can end (D99). The corner shows a mark and a word for each: a square + "Done", a square +
+#: "Stopped", a cross in the error colour + "Failed".
+BRAND_END = ("done", "stopped", "failed")
+BRAND_MARKS = {"busy": "mark_run", "done": "mark_done", "stopped": "mark_done", "failed": "mark_fail"}
+S_DONE, S_STOPPED, S_FAILED = "Done", "Stopped", "Failed"
+STRINGS = STRINGS + (S_DONE, S_STOPPED, S_FAILED)
+
+
+def end_state(ok):
+    """How a job ended, from what its caller says: True / "done", "stopped", False / "failed"."""
+    if isinstance(ok, str) and ok in BRAND_END:
+        return ok
+    return "done" if ok else "failed"
+
+
 BRAND_SHOW_AFTER_MS = 300        # shorter jobs never show (no flicker)
 BRAND_DONE_MS = 800              # how long "done" / the failure text stays
 BRAND_STALE_MS = 120000          # a job nobody updated or ended for this long is dropped (and logged)
@@ -1870,6 +1897,7 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
             w = QtGui.QFontMetrics(f).horizontalAdvance(name) + (30 if icon is not None else 0) + 20
             self.setFixedSize(max(w, 210), 24)       # the frame is the same idle and busy
             self.setAccessibleName(name)
+            self.shown_text, self.shown_mark = name, None    # what the last paint wrote / which mark it drew
 
         # ---- the door (any thread) ---------------------------------------- #
         def begin(self, text, total=None):
@@ -1881,7 +1909,8 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
             self._call.emit("update", (token, done, text))
 
         def end(self, token, ok=True, text=None):
-            self._call.emit("end", (token, bool(ok), text))
+            """``ok``: True / False, or how it ended - "done", "stopped", "failed" (BRAND_END)."""
+            self._call.emit("end", (token, end_state(ok), text))
 
         # ---- GUI thread ----------------------------------------------------- #
         def _on_call(self, what, args):
@@ -1906,13 +1935,14 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
                     job["text"] = str(text)
                 job["seen"] = now
             elif what == "end":
-                token, ok, text = args
+                token, how, text = args
                 job = self.jobs.pop(token, None)
                 if job is None:
                     return
                 shown = (now - job["t0"]) * 1000.0 >= self.show_after_ms
-                if not self.jobs and (shown or not ok):          # a failure is always said, however short
-                    self.flash = (text or (self.tr("Done") if ok else self.tr("Failed")), ok)
+                if not self.jobs and (shown or how != "done"):   # a stop and a failure are always said, however short
+                    word = {"done": S_DONE, "stopped": S_STOPPED, "failed": S_FAILED}[how]
+                    self.flash = (text or self.tr(word), how)
                     self.flash_timer.start(self.done_ms)
                 if not self.jobs:
                     self.frame = 0
@@ -1954,7 +1984,8 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
             self._sync()
 
         def current(self):
-            """What the frame shows now: ("idle", name) / ("busy", text, fraction or None, others) / ("done" | "failed", text)."""
+            """What the frame shows now: ("idle", name) / ("busy", text, fraction or None, others) /
+            ("done" | "stopped" | "failed", text)."""
             now = _time.monotonic()
             live = [(t, j) for t, j in self.jobs.items() if (now - j["t0"]) * 1000.0 >= self.show_after_ms]
             if live:
@@ -1964,7 +1995,7 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
                     frac = max(0.0, min(1.0, float(job["done"]) / float(job["total"])))
                 return ("busy", job["text"], frac, len(live) - 1)
             if self.flash is not None:
-                return ("done" if self.flash[1] else "failed", self.flash[0])
+                return (self.flash[1], self.flash[0])
             return ("idle", self.name)
 
         def _sync(self):
@@ -2002,19 +2033,23 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
                         painter.fillRect(QtCore.QRect(sx, 0, 12, r.height()), band)
                     painter.setClipping(False)
                 painter.fillRect(QtCore.QRect(0, r.height() - 2, r.width(), 2), QtGui.QColor(p["line"]))
-            elif cur[0] == "failed":
-                painter.fillRect(r, QtGui.QColor(p["warn_bg"]))
+            elif cur[0] == "failed":                             # the error colour as a line, never an amber ground (D99)
+                painter.fillRect(QtCore.QRect(0, r.height() - 2, r.width(), 2), QtGui.QColor(p["err"]))
             pm = self.icon_frame(self.frame if cur[0] == "busy" else 0)
             if pm is not None:                                   # the icon stays; while busy it is the flip book
                 painter.drawPixmap(QtCore.QRect(6, (r.height() - 22) // 2, 22, 22), pm)
                 x = 34
+            self.shown_mark = None
             if cur[0] == "idle":
                 painter.setFont(self.name_font); painter.setPen(QtGui.QColor(p["brand"]))
                 text = cur[1]
-            else:
-                painter.setFont(self.job_font); painter.setPen(QtGui.QColor(p["text"]))
-                mark = {"busy": "▶ ", "done": "■ ", "failed": "▲ "}[cur[0]]     # shape + word, not colour alone
-                text = mark + cur[1]
+            else:                                                # shape + word, not colour alone; the shape is
+                painter.setFont(self.job_font); painter.setPen(QtGui.QColor(p["text"]))   # drawn, not a character (D130)
+                self.shown_mark = BRAND_MARKS[cur[0]]
+                painter.drawPixmap(QtCore.QRect(x, (r.height() - 12) // 2, 12, 12),
+                                   _glyph(self.shown_mark, p["err"] if cur[0] == "failed" else p["text"], 12))
+                x += 16
+                text = cur[1]
             fm = painter.fontMetrics()
             more = " (+%d)" % cur[3] if cur[0] == "busy" and cur[3] else ""     # the count of other jobs is never cut
             text = fm.elidedText(text, QtCore.Qt.ElideRight, r.width() - x - 6 - fm.horizontalAdvance(more)) + more
@@ -2085,10 +2120,11 @@ def reduce_motion_action(win, menu, settings, tr):
     return act
 
 
-def follow_progress(brand, bar, label=None):
+def follow_progress(brand, bar, label=None, outcome=None):
     """Let the brand corner follow an existing QProgressBar (shown = a job begins, value = how far,
-    hidden = it ended) and, when given, the label that says what is running. The code that drives
-    the bar is not touched. Returns the filter (keep a reference)."""
+    hidden = it ended) and, when given, the label that says what is running. ``outcome``: a callable
+    asked when the bar hides - "done", "stopped" or "failed" (D99: the corner says how the job really
+    ended; without one, or when it fails, the job counts as done). Returns the filter (keep a reference)."""
     from PySide6 import QtCore   # noqa: PLC0415
 
     class Follow(QtCore.QObject):
@@ -2104,7 +2140,11 @@ def follow_progress(brand, bar, label=None):
                 self.token = brand.begin(self.text(), bar.maximum() or None)
             elif ev.type() == QtCore.QEvent.Hide and self.token is not None:
                 token, self.token = self.token, None
-                brand.end(token, True, self.text() or None)
+                try:
+                    how = end_state(outcome()) if outcome is not None else "done"
+                except Exception:                    # noqa: BLE001 - no answer: as before
+                    how = "done"
+                brand.end(token, how)                # the word of the outcome ("Stopped"), not the last progress text
             return False
 
         def moved(self, _value=None):
@@ -2285,7 +2325,7 @@ def _default_registrations(win):
     def errors():
         state = getattr(win, "_state", None) or {}
         n = len(state.get("errors") or []) + len(state.get("structured_errors") or [])
-        return ("\u2715 " + tr(S_ST_ERRORS) % n) if n else ""
+        return (tr(S_ST_ERRORS) % n) if n else ""              # its cross is drawn (the item's glyph, D130)
 
     def variables():
         lst = (getattr(win, "_variables", None) or {}).get("list")
@@ -2316,7 +2356,7 @@ def _default_registrations(win):
                    + btn("program", "apply", "sync") + [None] + pick("export", "verify_exported"))
     register_panel(win, "operators", [{"id": "shown", "text": shown_ops, "priority": 1}],
                    pick("focus_search", "op_reference", "samples"))
-    register_panel(win, "pipeline", [{"id": "errors", "text": errors, "priority": 2},
+    register_panel(win, "pipeline", [{"id": "errors", "text": errors, "priority": 2, "glyph": ("mark_fail", "err")},
                                      {"id": "stages", "text": stages, "priority": 1}],
                    pick("run_all", "step", "reset") + [None]
                    + pick("remove", "move_up", "move_down", "duplicate_stage", "bypass"))
@@ -2441,7 +2481,7 @@ def install(win, tr, settings=None):
             self.status_box.setSpacing(10)
             self.b_menu = QtWidgets.QToolButton(); self.b_menu.setObjectName("dock_title_menu")
             self.b_menu.setAutoRaise(True); self.b_menu.setProperty("keepSize", True)
-            self.b_menu.setText("\u2261"); self.b_menu.setCursor(QtCore.Qt.PointingHandCursor)
+            self.b_menu.setCursor(QtCore.Qt.PointingHandCursor)      # its three lines are drawn in restyle (D130)
             self.b_menu.setFocusPolicy(QtCore.Qt.TabFocus)
             self.b_menu.setPopupMode(QtWidgets.QToolButton.InstantPopup)
             self.b_menu.setMenu(QtWidgets.QMenu(self.b_menu))
@@ -2483,13 +2523,21 @@ def install(win, tr, settings=None):
         def set_registration(self, status, actions):
             for item in self.status:
                 item["label"].deleteLater()
+                if item["mark"] is not None:
+                    item["mark"].deleteLater()
             self.status, self.actions = [], actions
             for spec in status:
+                mark = None
+                if spec.get("glyph"):                # a drawn mark before the words: (glyph name, colour role)
+                    mark = QtWidgets.QLabel(); mark.setObjectName("dock_title_mark_" + str(spec["id"]))
+                    mark.setFixedSize(12, 12); mark.setScaledContents(True)
+                    self.status_box.addWidget(mark)
                 lab = QtWidgets.QLabel(""); lab.setObjectName("dock_title_status_" + str(spec["id"]))
                 lab.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
                 self.status_box.addWidget(lab)
                 self.status.append({"id": str(spec["id"]), "text": spec["text"], "tip": spec.get("tip", ""),
-                                    "priority": int(spec.get("priority", 0)), "label": lab, "now": ""})
+                                    "priority": int(spec.get("priority", 0)), "label": lab, "now": "",
+                                    "mark": mark, "glyph": spec.get("glyph")})
             self.update_status()
 
         def update_status(self):
@@ -2519,7 +2567,8 @@ def install(win, tr, settings=None):
             room = self.width() - fixed - 8
             keep, self.dropped = [], []
             for item in sorted(self.status, key=lambda it: -it["priority"]):
-                need = item["label"].fontMetrics().horizontalAdvance(item["now"]) + 10
+                need = item["label"].fontMetrics().horizontalAdvance(item["now"]) + 10 + (
+                    16 if item["mark"] is not None else 0)
                 if item["now"] and need <= room:
                     room -= need
                     keep.append(item["id"])
@@ -2527,6 +2576,8 @@ def install(win, tr, settings=None):
                     self.dropped.append(item)
             for item in self.status:
                 item["label"].setVisible(item["id"] in keep)
+                if item["mark"] is not None:
+                    item["mark"].setVisible(item["id"] in keep)
             names = [self.dock.windowTitle()] + [it["now"] for it in self.dropped]
             self.label.setToolTip("\n".join(names) if self.dropped else "")
 
@@ -2571,12 +2622,16 @@ def install(win, tr, settings=None):
             self.label.setText(text.upper() if st["lang"] in ("en", "de") else text)
             for b in self.buttons():
                 b.setFixedSize(side, side); b.setIconSize(QtCore.QSize(12, 12))
+            self.b_menu.setIcon(_icon("menu", p["muted"]))
             name = "%s \u2014 %s (Alt+M)" % (text, _tr(S_MENU))
             self.b_menu.setToolTip(name); self.b_menu.setAccessibleName("%s \u2014 %s" % (text, _tr(S_MENU)))
             self.key_menu.setText(label_text("%s \u2014 %s" % (text, _tr(S_MENU))))
             self.label.setAccessibleName(text)
             for item in self.status:
                 item["now"] = None                   # texts are in the language of the moment: ask again
+                if item["mark"] is not None:
+                    name, role = item["glyph"]
+                    item["mark"].setPixmap(_glyph(name, p[role], 12))
             self.update_status()
             if self.b_close is not None:
                 self.b_close.setIcon(_icon("close", p["muted"]))

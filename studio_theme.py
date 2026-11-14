@@ -218,9 +218,18 @@ def contrast_report(name):
 # Style sheet
 # --------------------------------------------------------------------------- #
 
+#: Faces asked for the symbols a sentence may hold (arrows, a cross, a triangle) when the language's
+#: own UI faces lack them (D130: Segoe UI has no U+2715; without a fallback it is a hollow box).
+SYMBOL_FONTS = ("Segoe UI Symbol",)
+
+
+def ui_families(lang):
+    """The UI font families of one language, in the order they are asked: its own, then the symbol face."""
+    return tuple(UI_FONTS.get(lang, UI_FONTS["en"])) + SYMBOL_FONTS
+
+
 def font_stack(lang):
-    fams = UI_FONTS.get(lang, UI_FONTS["en"])
-    return ",".join('"%s"' % f for f in fams) + ",system-ui,sans-serif"
+    return ",".join('"%s"' % f for f in ui_families(lang)) + ",system-ui,sans-serif"
 
 
 def mono_stack():

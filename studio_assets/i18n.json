@@ -499,6 +499,14 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "Stopped": {
+   "ja": "止めました",
+   "zh": "已停止",
+   "tw": "已停止",
+   "ko": "멈췄습니다",
+   "de": "Angehalten",
+   "hi": "रोका गया"
+  },
   "No panel by that name": {
    "ja": "その名前のパネルはありません",
    "zh": "没有这个名称的面板",

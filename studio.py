@@ -8811,6 +8811,7 @@ def build_window(model=None):
             return
         n = len(run_snapshots[gen]["stages"])
         done = run_completed.get(gen, 0)
+        win._run_outcome = "stopped" if stopped else ("done" if done == n else "failed")   # D99: read when the bar hides
         run_stop.setEnabled(False); run_progress.hide(); run_stop.hide()
         if stopped:
             text = tr("Stopped (%d/%d stages completed)") % (done, n)
@@ -9012,6 +9013,7 @@ def build_window(model=None):
             if gen != run_ctl.latest_generation:
                 run_ctl.history.append((gen, "batch-dropped", result.done))
                 return
+            win._run_outcome = "stopped" if result.stopped else ("failed" if result.failed else "done")   # D99
             run_progress.hide(); run_stop.hide(); run_stop.setEnabled(False)
             win._last_batch_result = result
             skipped = sum(status_name == "skipped" for status_name in result.statuses.values())
@@ -15810,7 +15812,8 @@ def build_window(model=None):
         "variables": (vrow, None), "ab": (_abbtn, None), "graphics_1": (itop, view)}
     studio_panels.install(win, tr, _settings)   # panel bar + title bands + first-run arrangement (image + code)
     studio_theme.watch_code_fonts(QtWidgets.QApplication.instance())   # dialogs / editor tabs built later
-    win._brand_follow = studio_panels.follow_progress(win._brand, run_progress, run_status)   # runs / batches
+    win._brand_follow = studio_panels.follow_progress(      # runs / batches; D99: how the run really ended
+        win._brand, run_progress, run_status, outcome=lambda: getattr(win, "_run_outcome", "done"))
     apply_theme(save=False)                  # scheme + density on every widget built above (2026-11-12)
     # Default (factory) panel layout — captured before any saved layout is applied,
     # so "Reset panel layout" always has somewhere to go back to.

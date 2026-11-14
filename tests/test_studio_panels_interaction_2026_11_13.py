@@ -1188,3 +1188,229 @@ def test_tabs_context_menu_is_panel_menu_and_not_closable(tmp_path, monkeypatch)
         assert _shown_tab_bars(win) == []
     finally:
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# D99 — the corner says how a job really ended; D130 — the shapes of states and of the title band are drawn
+# --------------------------------------------------------------------------- #
+def _wait_for(app, predicate, sec=8.0):
+    end = time.monotonic() + sec
+    while time.monotonic() < end:
+        app.processEvents()
+        if predicate():
+            return True
+        time.sleep(0.01)
+    return bool(predicate())
+
+
+def _px(widget, x, y):
+    return widget.grab().toImage().pixelColor(x, y).name()
+
+
+def test_brand_end_states_done_stopped_failed(tmp_path, monkeypatch):
+    import threading
+    import numpy as np
+    from PySide6 import QtWidgets
+    assert [studio_panels.end_state(v) for v in (True, False, "done", "stopped", "failed", "nonsense", None, 1)] == [
+        "done", "failed", "done", "stopped", "failed", "done", "failed", "done"]
+    monkeypatch.setenv("QT_QPA_PLATFORM", "offscreen")
+    monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / "s.ini"))
+    app = _app()
+    studio_theme.set_current(studio_theme.DEFAULT_THEME, studio_theme.DEFAULT_DENSITY)
+    p = studio_theme.PALETTES[studio_theme.current_name()]
+    # 1. the part alone: a mark and a word for each end, the cross in the error colour, no amber ground
+    host = QtWidgets.QWidget(); host.resize(400, 60)
+    b = studio_panels.make_brand_status(host, "Fullseye Studio")
+    b.show_after_ms = 0
+    host.show(); _pump(app, 0.05)
+    seen = {}
+    for how, word, mark in (("done", "Done", "mark_done"), ("stopped", "Stopped", "mark_done"),
+                            ("failed", "Failed", "mark_fail")):
+        tok = b.begin("job"); _pump(app, 0.03)
+        b.end(tok, how); _pump(app, 0.05)
+        assert b.current() == (how, word), how
+        img = b.grab().toImage()
+        assert (b.shown_mark, b.shown_text) == (mark, word), how           # a drawn mark + the word, no character
+        seen[how] = {img.pixelColor(x, y).name() for x in range(img.width()) for y in range(img.height())}
+        b.flash_timer.stop(); b._flash_over()
+    assert p["warn_bg"] not in seen["failed"] and p["warn"] not in seen["failed"]   # never amber (D99)
+    assert p["err"] in seen["failed"] and p["err"] not in seen["done"] and p["err"] not in seen["stopped"]
+    tok = b.begin("quick"); b.end(tok, "stopped"); _pump(app, 0.05)        # a stop is always said, however short
+    b2 = studio_panels.make_brand_status(host, "Fullseye Studio")           # (the default 300 ms rule)
+    tok = b2.begin("quick"); b2.end(tok, "stopped"); _pump(app, 0.05)
+    assert b2.current() == ("stopped", "Stopped")
+    tok = b2.begin("quick"); b2.end(tok, "done"); _pump(app, 0.05)
+    b2.flash_timer.stop(); b2._flash_over()
+    assert b2.current()[0] == "idle"                                        # a short success is not flashed
+    # follow_progress: the outcome is asked when the bar hides; no answer / a broken one = done
+    bar = QtWidgets.QProgressBar(host); bar.hide()
+    lab = QtWidgets.QLabel("Run in progress 2/3 stages: otsu", host)
+    box = {"how": "stopped"}
+    keep = studio_panels.follow_progress(b, bar, lab, outcome=lambda: box["how"])
+    for how, word in (("stopped", "Stopped"), ("failed", "Failed"), ("done", "Done")):
+        box["how"] = how
+        bar.show(); _pump(app, 0.05)
+        assert b.current()[0] == "busy"
+        bar.hide(); _pump(app, 0.05)
+        assert b.current() == (how, word), how                              # the word of the end, not "in progress"
+        b.flash_timer.stop(); b._flash_over()
+    box["how"] = None
+    bar.show(); _pump(app, 0.05); bar.hide(); _pump(app, 0.05)
+    assert b.current()[0] == "failed"                                       # None is falsy: not a success
+    b.flash_timer.stop(); b._flash_over()
+    del keep
+    host.close()
+    # 2. the real window: stop a run, let one fail, let one finish
+    import studio
+    monkeypatch.setattr(studio, "ERROR_HOOK", lambda *_a: None)
+    model = studio.PipelineModel(studio.demo_image(32))
+    model.stages = [["gaussian", 0.2 + i * 0.1, 0.5] for i in range(3)]
+    win, _m = studio.build_window(model)
+    win.resize(1280, 673); win.show(); _pump(app, 0.3)
+    try:
+        brand = win._brand
+        brand.show_after_ms = 0
+        gate = {"entered": threading.Event(), "release": threading.Event(), "mode": "slow", "calls": 0}
+
+        def run_pipeline(value, stages, **_kw):
+            gate["calls"] += 1
+            if gate["mode"] == "slow" and gate["calls"] == 1:
+                gate["entered"].set()
+                assert gate["release"].wait(8)
+            if gate["mode"] == "fail":
+                raise ValueError("boom")
+            return np.asarray(value)
+
+        monkeypatch.setattr(studio.api, "run_pipeline", run_pipeline)
+        win._start_run_async()
+        assert _wait_for(app, gate["entered"].is_set)
+        assert brand.current()[0] == "busy"
+        win._run_ui["stop"].click(); gate["release"].set()
+        assert _wait_for(app, lambda: not win._run_controller.running)
+        _pump(app, 0.1)
+        assert brand.current() == ("stopped", "Stopped"), brand.current()   # not a square that says "done"
+        brand.grab()
+        assert (brand.shown_mark, brand.shown_text) == ("mark_done", "Stopped")
+        brand.flash_timer.stop(); brand._flash_over()
+        gate.update(mode="fail", calls=0)
+        win._start_run_async()
+        assert _wait_for(app, lambda: not win._run_controller.running)
+        _pump(app, 0.1)
+        assert brand.current() == ("failed", "Failed"), brand.current()
+        brand.grab()
+        assert brand.shown_mark == "mark_fail"
+        brand.flash_timer.stop(); brand._flash_over()
+        gate.update(mode="ok", calls=0)
+        win._start_run_async()
+        assert _wait_for(app, lambda: not win._run_controller.running)
+        _pump(app, 0.1)
+        assert brand.current() == ("done", "Done"), brand.current()
+        brand.flash_timer.stop(); brand._flash_over()
+        win._apply_language("ja"); _pump(app, 0.3)                          # the word follows the language
+        try:
+            gate.update(mode="slow", calls=0)
+            gate["entered"].clear(); gate["release"].clear()
+            win._start_run_async()
+            assert _wait_for(app, gate["entered"].is_set)
+            win._run_ui["stop"].click(); gate["release"].set()
+            assert _wait_for(app, lambda: not win._run_controller.running)
+            _pump(app, 0.1)
+            assert brand.current() == ("stopped", "止めました"), brand.current()
+        finally:
+            win._apply_language("en"); _pump(app, 0.2)
+    finally:
+        _close(app, win)
+
+
+def _lend_windows_fonts():
+    """The offscreen platform starts without the Windows fonts: lend it the UI and symbol faces (application
+    fonts, nothing is installed). Returns the families now known, or skips where the files are not there."""
+    import os
+    from PySide6 import QtGui
+    folder = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
+    files = ("segoeui.ttf", "seguisym.ttf", "YuGothR.ttc", "YuGothM.ttc", "meiryo.ttc", "msyh.ttc", "msjh.ttc",
+             "malgun.ttf", "Nirmala.ttc")
+    have = [f for f in files if os.path.isfile(os.path.join(folder, f))]
+    if "segoeui.ttf" not in have or "seguisym.ttf" not in have:
+        pytest.skip("the Windows UI faces (segoeui.ttf / seguisym.ttf) are not on this machine: the glyph "
+                    "coverage of the UI font stack cannot be measured here")
+    for f in have:
+        QtGui.QFontDatabase.addApplicationFont(os.path.join(folder, f))
+    return set(QtGui.QFontDatabase.families())
+
+
+def _symbols(text):
+    """The characters of ``text`` that are shapes, arrows or signs (not letters of any script, not CJK
+    punctuation): the ones a UI face may lack."""
+    out = set()
+    for ch in text or "":
+        o = ord(ch)
+        if 0x2190 <= o <= 0x2BFF or 0x2000 <= o <= 0x206F and ch in "\u2022\u2026":
+            out.add(ch)
+    return out
+
+
+def test_state_glyphs_have_a_font_or_are_drawn(tmp_path, monkeypatch):
+    from PySide6 import QtGui, QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        st = win._panels
+        # 1. buttons and state marks are pictures: no character to be missing
+        band_buttons = [(key, b) for key, bar in st["titles"].items() for b in bar.buttons()]
+        assert len(band_buttons) == 7 * 3 - 1                               # float, x, menu; the code has no x
+        for key, b in band_buttons:
+            assert b.text() == "" and not b.icon().isNull(), (key, b.objectName(), b.text())
+        for name in ("menu", "mark_run", "mark_done", "mark_fail", "close", "float", "dock"):
+            img = studio_panels._glyph(name, "#ffffff", 16).toImage()
+            inked = sum(1 for x in range(img.width()) for y in range(img.height()) if img.pixelColor(x, y).alpha() > 60)
+            assert inked >= 40, (name, inked)                               # something is drawn
+        shapes = {n: studio_panels._glyph(n, "#ffffff", 16).toImage() for n in ("mark_run", "mark_done", "mark_fail")}
+        assert shapes["mark_run"] != shapes["mark_done"] != shapes["mark_fail"] != shapes["mark_run"]
+        assert set(studio_panels.BRAND_MARKS) == {"busy", "done", "stopped", "failed"}
+        marks = [it for bar in st["titles"].values() for it in bar.status if it["mark"] is not None]
+        assert len(marks) >= 1                                              # the error count of Pipeline
+        for it in marks:
+            assert not it["mark"].pixmap().isNull() and not _symbols(it["text"]() or "")
+        win._state.setdefault("errors", []).append("x"); _pump(app, 0.4)    # an error: mark and words appear together
+        win._docks["pipeline"].show(); _pump(app, 0.5)
+        err = [it for it in st["titles"]["pipeline"].status if it["id"] == "errors"][0]
+        assert err["now"] == "Errors: 1" and err["label"].isVisible() == err["mark"].isVisible()
+        win._state["errors"].clear(); _pump(app, 0.4)
+        # 2. symbols that stay inside sentences: some face of the UI stack has each of them
+        known = _lend_windows_fonts()
+        checked = 0
+        for lang in ("en", "ja"):
+            win._apply_language(lang); _pump(app, 0.4)
+            for d in win._docks.values():
+                d.show()
+            _pump(app, 0.4)
+            used = {}
+            for w in win.findChildren(QtWidgets.QWidget):
+                texts = [w.toolTip()]
+                if isinstance(w, (QtWidgets.QLabel, QtWidgets.QAbstractButton)):
+                    texts.append(w.text())
+                for t in texts:
+                    for ch in _symbols(t):
+                        used.setdefault(ch, t[:40])
+            for a in win.findChildren(QtGui.QAction):
+                for ch in _symbols(a.text()) | _symbols(a.toolTip()):
+                    used.setdefault(ch, a.text()[:40])
+            for text in studio_panels.STRINGS:
+                for ch in _symbols(win._panels["tr"](text)):
+                    used.setdefault(ch, text[:40])
+            assert len(used) >= 5, used
+            fams = [f for f in studio_theme.ui_families(lang) if f in known]
+            assert "Segoe UI" in fams and "Segoe UI Symbol" in fams
+            raws = [QtGui.QRawFont.fromFont(QtGui.QFont(f)) for f in fams]  # each face by itself, no system fallback
+            assert len(raws) >= 2
+            assert [r.familyName() for r in raws] == fams
+            missing = {ch: where for ch, where in used.items() if not any(r.supportsCharacter(ord(ch)) for r in raws)}
+            assert not missing, (lang, {"U+%04X" % ord(c): w for c, w in missing.items()})
+            checked += len(used)
+        assert checked >= 10
+        for lang in studio_theme.UI_FONTS:                                  # the symbol face is in every stack
+            assert studio_theme.ui_families(lang)[-1] == "Segoe UI Symbol"
+            assert '"Segoe UI Symbol"' in studio_theme.font_stack(lang)
+    finally:
+        win._apply_language("en")
+        _close(app, win)
