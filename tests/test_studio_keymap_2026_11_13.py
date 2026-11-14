@@ -469,7 +469,7 @@ def _build(studio_mod, flash=None):
     studio_mod.PALETTE_WORDS.update(eo.PALETTE_WORDS)
     ctl = kq.install(w, settings=studio_mod._settings, tr=studio_mod.tr,
                      lang=lambda: studio_mod._UI_LANG.get("code", "en"), flash=flash,
-                     palette_words=studio_mod.PALETTE_WORDS)
+                     palette_words=studio_mod.PALETTE_WORDS, model=_model)
     # ---- ここまで ----
     w._editops = ops
     return w, ctl
@@ -2050,3 +2050,31 @@ def test_brackets_inside_strings_are_not_nesting():
     assert km._depth('"\\"' + "[" * 40) == 0                              # "\" の後ろの " は文字列の中: 括弧も文字列の中
     assert km._depth("]" * 50 + "[" * 20) == 0                            # 先に閉じる形は json.loads が 1 字目で断る
     assert km._depth("") == 0 and km._depth("{}") == 1 and km._depth('{"a": [1, {"b": []}]}') == 4
+
+
+# --------------------------------------------------------------------------- #
+# 2026-11-15 D127 の続き: 段の一覧の F1 は、モデルに届かない配線でも選んだ段の op(初回の枝の窓と同じ答え)
+# --------------------------------------------------------------------------- #
+def test_f1_in_the_stage_list_finds_the_stage_without_a_model(app, studio_mod, monkeypatch):
+    """初回の枝だけの窓(win._pymode が無い)に model を渡さずに取り付けた形。直す前は op の一覧の op(median)を出した。"""
+    from PySide6 import QtCore  # noqa: PLC0415
+    import studio_editops_qt as eq  # noqa: PLC0415
+    w, c = _with_a_stage(studio_mod)                                      # 段は gaussian の 1 つ
+    try:
+        assert c.model is not None and c.model.stages[0][0] == "gaussian"   # _build は配線どおり model を渡している
+        lst, sl = w._op_list, w._stage_list
+        names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+        lst.setCurrentRow(names.index("median"))
+        sl.setCurrentRow(0)
+        assert c._stage_or_op(sl) == "gaussian" and c._stage_or_op(lst) == "median"
+        monkeypatch.setattr(c, "model", None)
+        monkeypatch.setattr(w, "_pymode", None)                           # モデルに届かない窓
+        assert c._stage_or_op(sl) == "gaussian"                           # 行の文「1. gaussian (…)」から
+        assert c._stage_or_op(lst) == "median"                            # フォーカスが段の一覧でなければ op の一覧の op
+        lst.setCurrentRow(-1)
+        assert lst.currentItem() is None and c._stage_or_op(w._search) == "gaussian"   # 選んだ op が無ければ選んだ段
+        sl.setCurrentRow(-1)
+        assert c._stage_or_op(sl) is None                                 # 何も選んでいない → キーの一覧へ
+    finally:
+        _close(w)
+        eq.apply_bindings(None)

@@ -26,6 +26,7 @@ from __future__ import annotations
 import html
 import json
 import os
+import re
 import sys
 
 from PySide6 import QtCore, QtGui, QtWidgets
@@ -45,6 +46,8 @@ KEY_FONT_FAMILIES = ("BIZ UDGothic", "Consolas", "monospace")
 #: Studio の THEME は ``QWidget { font-family: … }`` を全体に掛けるので、setFont だけでは書体が変わらない。
 _KEY_FONT_QSS = "font-family: 'BIZ UDGothic', Consolas, monospace;"
 _ERR, _WARN, _INFO = "#e5534b", "#d29922", "#8b98a9"
+#: 段の一覧の行の文「3. gaussian (sigma=1.0)  ->  …」の op の名前(モデルに届かない配線で F1 が使う)。
+_STAGE_ROW = re.compile(r"\s*\d+\.\s+([A-Za-z_][A-Za-z0-9_]*)\s+\(")
 
 
 def _valid(obj) -> bool:
@@ -1378,6 +1381,9 @@ class KeymapController(QtCore.QObject):
             idx = idx if isinstance(idx, int) else row
             if 0 <= idx < len(stages):
                 stage_op = stages[idx][0]
+            elif model is None and item is not None:           # モデルに届かない配線(model を渡さず win._pymode も
+                m = _STAGE_ROW.match(item.text())              # 無い窓): 行の文から引く。黙って別の op を出さない
+                stage_op = m.group(1) if m else None
         if sl is not None and stage_op and (focus is sl or (focus is not None and sl.isAncestorOf(focus))):
             return stage_op
         if ol is not None and ol.currentItem() is not None:
