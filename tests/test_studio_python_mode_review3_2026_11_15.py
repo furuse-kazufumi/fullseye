@@ -538,3 +538,114 @@ def test_s7_ordinary_relative_imports_and_importlib_import_still_work(tmp_path, 
     assert r.ok, r.errors
     assert r.values["a"] == 6 and r.values["b"] == 8 and r.values["j"] == "[1]" and r.values["k"] == os.sep
     assert "s7pkg" not in sys.modules                                     # 利用者のモジュールは実行の後に外す
+
+
+# --------------------------------------------------------------------------- #
+# S2: 信頼は文面に結び付く(変換・移す → Ctrl+Z)                                  #
+# --------------------------------------------------------------------------- #
+def _marker_program(tmp_path, name):
+    """走ったら印のファイルを書く .py(確認していないコードが走ったかを、印の有無で見る)。"""
+    mark = tmp_path / ("MARK_" + name)
+    p = tmp_path / (name + ".py")
+    p.write_text("open(r'%s', 'w').write('ran')\nprint('X ran')\n" % str(mark), encoding="utf-8")
+    return p, mark
+
+
+def _trust_hooks(monkeypatch, answer):
+    asked = []
+    monkeypatch.setattr(pm_mod, "TRUST_HOOK", lambda *a: asked.append(a[2]) or answer)
+    monkeypatch.setattr(pm_mod, "SAVE_HOOK", lambda *a: "discard")
+    return asked
+
+
+@pytest.mark.parametrize("how", ["convert", "move"])
+@pytest.mark.parametrize("then", ["undo", "undo and edit", "undo, redo, undo"])
+def test_s2_undo_after_convert_or_move_does_not_run_an_unconfirmed_file_without_asking(how, then, tmp_path, monkeypatch):
+    """探針 r02 a / b: X.py を開く(未確認)→ パイプラインのモードで打つ →「Python に変換」か札の「Python の
+    モードへ移す」→ Ctrl+Z で X の文面が戻る → F5。確認の窓が出ずに X が走った。Ctrl+Z の後に 1 字直しても同じ。"""
+    asked = _trust_hooks(monkeypatch, False)
+    win, _model = _launch(tmp_path, monkeypatch)
+    try:
+        pm = win._pymode
+        ed = win._program["edit"]
+        path, mark = _marker_program(tmp_path, "x_" + how)
+        assert pm.open_program(str(path)) is True
+        x_text = ed.toPlainText()
+        assert pm.origin == "file" and pm.session_trusted is False
+        pm.set_mode("pipeline")
+        if how == "convert":
+            _set_text(win, "gaussian (0.5, 0.5)\n")
+            assert pm.convert_to_python() is True
+        else:
+            _set_text(win, "k = 1\nprint(k)\n")
+            pm.update_badge()
+            assert pm.move_text_to_python() is True
+        assert pm.active and ed.toPlainText() != x_text
+        ed.undo()
+        _pump(0.1)
+        assert ed.toPlainText() == x_text                                # Ctrl+Z で X の文面が戻った
+        if then == "undo and edit":
+            _set_text(win, x_text + "# one more line\n")
+        elif then == "undo, redo, undo":
+            ed.redo()
+            _pump(0.1)
+            assert ed.toPlainText() != x_text
+            ed.undo()
+            _pump(0.1)
+            assert ed.toPlainText() == x_text
+        assert pm.origin == "file" and pm.session_trusted is False       # 由来と信頼も、X の物に戻る
+        assert pm.run() is False
+        _pump(0.2)
+        assert len(asked) == 1 and str(path) in asked[0]                  # 確認の窓が出て、どのファイルから来たかを言う
+        assert not mark.exists() and "X ran" not in _output(win)
+        assert "was not confirmed" in _output(win)
+        _select_lines(win, 1, 1)
+        assert pm.run_selection() is False                                # 選んだ行でも同じ
+        assert len(asked) == 2 and not mark.exists()
+    finally:
+        _close(win)
+
+
+def test_s2_confirming_once_is_remembered_and_typed_text_is_never_asked_about(tmp_path, monkeypatch):
+    """確認すれば走る。確認した後は、Undo / Redo で同じ文面に戻っても聞き直さない。自分で打った文面の変換は聞かない。"""
+    asked = _trust_hooks(monkeypatch, True)
+    win, _model = _launch(tmp_path, monkeypatch)
+    try:
+        pm = win._pymode
+        ed = win._program["edit"]
+        # 自分で打った文面 → パイプラインのモードで打つ → 変換 → Ctrl+Z → F5: 聞かない
+        _set_text(win, "# python\nmine = 1\n")
+        pm.set_mode("pipeline")
+        _set_text(win, "gaussian (0.5, 0.5)\n")
+        assert pm.convert_to_python() is True
+        ed.undo()
+        _pump(0.1)
+        assert ed.toPlainText() == "# python\nmine = 1\n"
+        res = _run(win)
+        assert res.ok and asked == [] and pm.origin == "typed"
+        # ファイル → 変換 → Ctrl+Z → F5: 1 回聞き、「実行する」で走る。その後は聞かない
+        path, mark = _marker_program(tmp_path, "y")
+        assert pm.open_program(str(path)) is True
+        x_text = ed.toPlainText()
+        pm.set_mode("pipeline")
+        _set_text(win, "gaussian (0.5, 0.5)\n")
+        assert pm.convert_to_python() is True
+        converted = ed.toPlainText()
+        res = _run(win)
+        assert res.ok and asked == []                                    # 変換した文面は利用者が打った物: 聞かない
+        ed.undo()
+        _pump(0.1)
+        assert ed.toPlainText() == x_text
+        res = _run(win)
+        assert len(asked) == 1 and res.ok and mark.exists()
+        ed.redo()
+        _pump(0.1)
+        assert ed.toPlainText() == converted
+        ed.undo()
+        _pump(0.1)
+        assert ed.toPlainText() == x_text
+        mark.unlink()
+        res = _run(win)
+        assert len(asked) == 1 and res.ok and mark.exists()              # 確認済みの文面: 聞き直さない
+    finally:
+        _close(win)

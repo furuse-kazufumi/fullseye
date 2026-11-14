@@ -421,6 +421,11 @@ class PyModeController(QtCore.QObject):
         self._frame_local_names: set = set()
         self._autosaved_digest: str | None = None
         self.session_trusted = True
+        #: ファイル・プロジェクトから来て、まだ確認していない文面 ``{中身の SHA-256: (由来, どこから来たか)}``。
+        #: 信頼は**文面に結び付く**(2026-11-13 第 3 回レビュー S2): 「Python に変換」「Python のモードへ移す」は
+        #: Python の文面を置き換えて「手で打った物」にするが、Ctrl+Z で前の文面(確認していないファイル)が戻る。
+        #: 今の文面がこの表にある文面そのものになったら、由来と信頼をそのファイルの物に戻す(:meth:`_sync_trust`)。
+        self._unconfirmed: dict = {}
         self.saved_digest: str | None = None
         self.breakpoints_py: set = set()
         self.breakpoints_pipe: set = set()
@@ -1014,6 +1019,7 @@ class PyModeController(QtCore.QObject):
         self.set_mode(MODE_PYTHON, announce=False)
         if not self.active:
             return False
+        self._note_python_text()                              # 前の文面が未確認なら覚える(Ctrl+Z で戻る)
         self._replace_python_text(text)
         self._after_text_adopted()
         self.flash(self.tr("Moved the text to Python mode (Ctrl+Z restores the previous Python text)"))
@@ -1034,8 +1040,12 @@ class PyModeController(QtCore.QObject):
         return True
 
     def _after_text_adopted(self):
-        """パイプラインの側から来た文面を Python の文面にした後の、由来と信頼の付け方(``convert_to_python`` と同じ)。"""
+        """パイプラインの側から来た文面を Python の文面にした後の、由来と信頼の付け方(「Python に変換」と札の
+        「Python のモードへ移す」の両方がここを通る)。置き換える**前**に :meth:`_note_python_text` を呼んでおくこと
+        (前の文面が確認していないファイルの物なら、Ctrl+Z で戻った時にそう扱う)。"""
         if self.pipe_source:
+            # 開いたパイプラインのファイルから作った文面: 「手で打った」扱いにしない。初回の実行の前に確認する
+            # (ファイルはデータとして確認なしに開かれる。2026-11-13 レビュー H1)
             self.file, self.origin, self.session_trusted, self.saved_digest = None, "file", False, None
             self.origin_path = self.pipe_source
         else:
@@ -1044,6 +1054,45 @@ class PyModeController(QtCore.QObject):
         self.last = None
         self._update_labels()
         self.update_badge()
+
+    # ---- 信頼は文面に結び付く ----
+    def _note_unconfirmed(self, text: str, origin: str, where: str | None) -> None:
+        """ファイル・プロジェクトから来て、まだ確認していない文面 *text* を覚える(中身の SHA-256 で)。"""
+        if origin == "typed" or self.trust.is_trusted(text, origin):
+            return
+        self._unconfirmed[sp.program_digest(text)] = (origin, where)
+
+    def _note_python_text(self) -> None:
+        """Python の文書の今の文面が確認していない物なら覚える(その文面を 1 回の編集で置き換える直前に呼ぶ)。"""
+        if self.active and self.origin != "typed" and not self.session_trusted:
+            self._note_unconfirmed(self.edit.toPlainText(), self.origin, self.file or self.origin_path)
+
+    def _sync_trust(self, text: str) -> None:
+        """今の文面 *text* が「確認していないファイルの文面」そのものなら、由来と信頼をそのファイルの物に戻す。
+        文面が変わるたび(Undo / Redo も)と、実行の前に呼ぶ。戻した後に直した文面は、今までどおり確認するまで
+        「ファイルから来た物」のまま(``origin`` が file / project で ``session_trusted`` が偽)。"""
+        if not self._unconfirmed:
+            return
+        d = sp.program_digest(text)
+        hit = self._unconfirmed.get(d)
+        if hit is None:
+            return
+        origin, where = hit
+        if self.trust.is_trusted(text, origin):               # 別の入口(従来のエディタなど)で確認済みになった
+            del self._unconfirmed[d]
+            return
+        if self.origin == "typed" or self.session_trusted:
+            self.origin, self.session_trusted = origin, False
+            if not self.file:
+                self.origin_path = where
+
+    def _trust_confirmed(self, text: str) -> None:
+        """文面 *text* を確認した(台帳にあった・確認の窓で「実行する」)。この文面と、同じ所から来た文面の覚えを
+        消す(確認した後は、Undo / Redo で同じファイルの文面に戻っても聞き直さない)。"""
+        self.session_trusted = True
+        d, where = sp.program_digest(text), (self.file or self.origin_path)
+        self._unconfirmed = {k: v for k, v in self._unconfirmed.items()
+                             if k != d and (where is None or v[1] != where)}
 
     def title_segment(self) -> str | None:
         """窓の題の先頭(Python のモードのときだけ。プログラムの名前と未保存の印)。"""
@@ -1139,20 +1188,11 @@ class PyModeController(QtCore.QObject):
             self.flash(self.tr("Could not convert to Python: %s") % "; ".join(self._loc(e) for e in errs[:2]))
             return False
         self.set_mode(MODE_PYTHON, announce=False)
-        cur = QtGui.QTextCursor(self.edit.document())
-        cur.select(QtGui.QTextCursor.Document)
-        cur.insertText(py)                                    # 1 回の Undo で前の Python の文面に戻る
-        if self.pipe_source:
-            # 開いたパイプラインのファイルから作った文面: 「手で打った」扱いにしない。初回の実行の前に確認する
-            # (ファイルはデータとして確認なしに開かれる。2026-11-13 レビュー H1)
-            self.file, self.origin, self.session_trusted, self.saved_digest = None, "file", False, None
-            self.origin_path = self.pipe_source
-        else:
-            self.file, self.origin, self.session_trusted, self.saved_digest = None, "typed", True, None
-            self.origin_path = None
-        self.last = None
-        self._update_labels()
-        self.update_badge()
+        if not self.active:
+            return False
+        self._note_python_text()                              # 前の文面が未確認なら覚える(Ctrl+Z で戻る)
+        self._replace_python_text(py)                         # 1 回の Undo で前の Python の文面に戻る
+        self._after_text_adopted()
         self.flash(self.tr("Converted the pipeline to Python (Ctrl+Z restores the previous Python text)"))
         return True
 
@@ -1173,6 +1213,8 @@ class PyModeController(QtCore.QObject):
             self.edit.set_timings({})
         if self.active and self.file and self.autosave_file_mode() == "idle":
             self._file_save_timer.start(int(self.autosave_idle_s() * 1000))   # 打つたびに数え直す
+        if self.active and self._unconfirmed:                 # Ctrl+Z で確認していないファイルの文面に戻ったか
+            self._sync_trust(self.edit.toPlainText())
         self._update_labels()
 
     # ---- 検査(打っている最中) ----
@@ -1273,17 +1315,18 @@ class PyModeController(QtCore.QObject):
         return img
 
     def _check_trust(self, text: str) -> bool:
+        self._sync_trust(text)                                # 文面そのものが未確認のファイルの物なら、由来に関わらず確認する
         if self.origin == "typed" or self.session_trusted:
             return True
         if self.trust.is_trusted(text, self.origin):
-            self.session_trusted = True
+            self._trust_confirmed(text)
             return True
         where = self.file or (self.origin_path if self.origin_path and os.path.isabs(self.origin_path)
                               else None)
         if not self.confirm_file_program(text, where):
             self._out(self.tr("Not run: this program came from a file and was not confirmed."))
             return False
-        self.session_trusted = True
+        self._trust_confirmed(text)
         return True
 
     def confirm_file_program(self, text: str, where: str | None = None) -> bool:
@@ -1822,6 +1865,7 @@ class PyModeController(QtCore.QObject):
         self.origin_path = None
         self.origin = origin
         self.session_trusted = origin == "typed"
+        self._note_unconfirmed(text, origin, path)            # 確認するまで、この文面そのものは「ファイルから来た物」
         self.saved_digest = sp.program_digest(text) if path else None
         self.edit.breakpoints = set()
         self.conditions = {}
@@ -2073,6 +2117,8 @@ class PyModeController(QtCore.QObject):
             self.py_text = text
             self.origin = origin
             self.session_trusted = trusted or origin == "typed"
+            if not self.session_trusted:
+                self._note_unconfirmed(text, origin, self.file)
         try:
             self.breakpoints_py = set(int(x) for x in json.loads(str(self._get("breakpoints", "[]"))))
             self.conditions = {int(k): str(v) for k, v in json.loads(str(self._get("conditions", "{}"))).items()}
