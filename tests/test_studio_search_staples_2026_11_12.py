@@ -294,12 +294,16 @@ def test_knobs_shown_as_unused_really_do_nothing():
         for letter, role in zip("ab", roles):
             if role == "":
                 claims.setdefault(name, set()).add(letter)
-    for name in param_specs.PARAM_SPECS:
+    for name in list(param_specs.PARAM_SPECS) + list(param_specs.UNUSED_KNOBS):
         sp = param_specs.spec_for(name)
         for letter in "ab":
             if sp[letter].get("kind") == "unused":
                 claims.setdefault(name, set()).add(letter)
     assert len(claims) >= 50
+    # 2026-11-15(PR #316 の独立レビュー): 定番の op の 49 本(param_specs.UNUSED_KNOBS)も同じ測り方で確かめる
+    assert sum(len(v) for v in param_specs.UNUSED_KNOBS.values()) == 49
+    assert all(set(v) <= claims.get(n, set()) for n, v in param_specs.UNUSED_KNOBS.items())
+    assert not set(param_specs.UNUSED_KNOBS) & set(param_specs.PARAM_SPECS), "手書きの行がある op は PARAM_SPECS の側に書く"
     checked, moved = 0, []
     for name, letters in sorted(claims.items()):
         for letter in sorted(letters):
@@ -316,7 +320,7 @@ def test_knobs_shown_as_unused_really_do_nothing():
                 if any(o.shape != outs[2].shape or not np.array_equal(o, outs[2], equal_nan=True) for o in outs):
                     moved.append((name, letter))
                 break
-    assert checked >= 45, checked                                   # 走った件数に下限(空を通さない)
+    assert checked >= 90, checked                                   # 走った件数に下限(空を通さない)
     assert not moved, moved
 
 
@@ -401,8 +405,14 @@ def _close_window(studio, win):
     win.quiesce(); win.close(); _pump(0.1)
 
 
-def test_enter_inserts_the_top_search_hit_not_a_staple(tmp_path, monkeypatch):
-    """定番の欄を先頭に出しても、Enter が入れるのは検索の 1 位(「blur」で Enter → 定番の gaussian ではなく 1 位)。"""
+def test_enter_inserts_the_first_row_on_screen_staples_included(tmp_path, monkeypatch):
+    """Enter が入れるのは、見えている先頭の行(「blur」→ 定番の gaussian)。その行は押す前から選択状態。
+
+    ★2026-11-13(初回起動の点検 M1)で約束を変えた。11/12 は「canny edge」で定番の sobel_amp が入った為に定番を
+    外したが、op 名を含む問い合わせには定番が出ない(test_staples_do_not_fire_on_unrelated_or_name_queries)ので、
+    「canny edge」は検索の 1 位(canny の op)のまま。外したままだと、先頭に gaussian が見えているのに
+    下の欄の 1 位(xkor_bilateral)が入っていた。
+    """
     studio, win, model = _studio_window(tmp_path, monkeypatch)
     try:
         ui = win._search_ui
@@ -410,18 +420,21 @@ def test_enter_inserts_the_top_search_hit_not_a_staple(tmp_path, monkeypatch):
         ui["edit"].setText("blur"); ui["search_now"]("blur"); _pump(0.3)
         rows = ui["rows"]()
         assert rows["staples"], "この試験は定番が出る語で行う"
-        ranked = [r["name"] for g in ("applicable", "needs_preprocessing", "other") for r in rows[g]]
+        first = rows["staples"][0]["name"]
+        assert first == "gaussian"
+        assert ui["list"].currentItem() is rows["staples"][0]["item"]        # 押す前から見えている
         n0 = len(model.stages)
-        ui["list"].setCurrentItem(None)
+        ui["list"].setCurrentItem(None)                                     # 選択を外しても同じ行
         ui["edit"].returnPressed.emit(); _pump(0.3)
         assert len(model.stages) == n0 + 1
-        # 1 位が、この環境に無い op(optional backend が未導入)の事がある(CI の py3.12 / py3.14 で
-        # 「blur」の 1 位が xkor_bilateral だった)。その時は、入れられる最初の行が入る。
-        addable = [n for n in ranked if studio.api.find_op(n) is not None]
-        assert addable, ranked[:5]
-        assert model.stages[-1][0] == studio.api.find_op(addable[0]).name, (
-            model.stages[-1][0], ranked[:3], rows["staples"][0]["name"])
-        assert model.stages[-1][0] != rows["staples"][0]["name"] or addable[0] == rows["staples"][0]["name"]
+        assert model.stages[-1][0] == studio.api.find_op(first).name
+        # op 名を含む問い合わせ: 定番は出ず、先頭は canny の op(11/12 の sobel_amp の取り違えが戻らない)
+        ui["edit"].setText("canny edge"); ui["search_now"]("canny edge"); _pump(0.3)
+        assert ui["rows"]()["staples"] == []
+        n1 = len(model.stages)
+        ui["edit"].returnPressed.emit(); _pump(0.3)
+        assert len(model.stages) == n1 + 1
+        assert "canny" in model.stages[-1][0] and model.stages[-1][0] != "sobel_amp", model.stages[-1][0]
     finally:
         _close_window(studio, win)
 
@@ -434,11 +447,12 @@ def test_enter_skips_a_top_hit_that_is_not_installed_here(tmp_path, monkeypatch,
         win._ops_fit["check"].setChecked(False)
         ui["edit"].setText("blur"); ui["search_now"]("blur"); _pump(0.3)
         rows = ui["rows"]()
-        ranked = [r["name"] for g in ("applicable", "needs_preprocessing", "other") for r in rows[g]]
+        ranked = list(dict.fromkeys(r["name"] for g in ("staples", "applicable", "needs_preprocessing", "other")
+                                    for r in rows[g]))
         real = studio.api.find_op
         addable = [n for n in ranked if real(n) is not None]
         assert len(addable) >= 2, ranked[:5]
-        gone = addable[0]                                   # 1 位が「未導入」だった事にする
+        gone = addable[0]                                   # 先頭の行が「未導入」だった事にする(M1: 定番を含む)
         monkeypatch.setattr(studio.api, "find_op", lambda name, *a, **k: None if name == gone else real(name, *a, **k))
         n0 = len(model.stages)
         ui["list"].setCurrentItem(None)

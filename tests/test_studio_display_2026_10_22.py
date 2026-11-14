@@ -97,7 +97,8 @@ def test_gui_controls_are_view_only(monkeypatch):
     assert win._run_controller.generation == before_generation
     text = win._format_display_readout(
         np.array([[0.4213]], dtype=np.float64), display.DisplayRange("manual", 0, 1), 0, 0)
-    assert text == "値 0.4213 (float64) / 表示 108 / レンジ 0〜1"
+    # 2026-11-13(初回起動の点検 M5): 座標を先頭に、文は UI の言語(従来は英語の UI でも日本語で、座標が無かった)
+    assert text == "x=0  y=0   value 0.4213 (float64) / shown 108 / range 0 to 1"
     win.quiesce(); win.close_guard = lambda: True; win.close(); app.processEvents()
 
 

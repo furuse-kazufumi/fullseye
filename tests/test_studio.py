@@ -240,6 +240,9 @@ def test_op_browser_general_tier_is_readonly_offscreen():
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
     win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     op_list, btns = win._op_list, win._op_buttons
+    # 2026-11-13(S2): 「前段の出力を受けられる op だけ表示」が入っていると、最初の段でも画像を受けない
+    # 一般アルゴリズムの op は隠れる。スイッチを切れば並ぶ(読み取り専用のまま)。
+    win._ops_fit["check"].setChecked(False)
     names = [op_list.item(i).data(QtCore.Qt.UserRole) for i in range(op_list.count())]
     assert "gaussian" in names                   # image ops present
     assert "strfind" in names and "gauss_solve" in names   # general tier shown in the browser
@@ -383,7 +386,8 @@ def test_program_editor_and_help_exclude_general_tier_offscreen():
     import algo
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
     win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
-    # the browser SHOWS the general tier (read-only) ...
+    # the browser SHOWS the general tier (read-only) when the type switch is off (2026-11-13, S2) ...
+    win._ops_fit["check"].setChecked(False)
     shown = [win._op_list.item(i).data(QtCore.Qt.UserRole) for i in range(win._op_list.count())]
     assert set(algo.algo_names()) <= set(shown)
     # ... but the code parser / autocomplete / Help picker names EXCLUDE it
@@ -552,11 +556,11 @@ def test_remove_keeps_a_neighbour_selected():
     m = studio.PipelineModel(studio.demo_image(48))
     m.add_stage("gaussian"); m.add_stage("otsu")
     win, model = studio.build_window(m)
-    win._stage_list.setCurrentRow(1)                     # select the last stage -> knobs live
-    # the raw 0..1 spins are live for any selected stage (a slider is greyed for a
-    # knob the op's spec marks unused — otsu reads neither — so test the spins)
+    win._stage_list.setCurrentRow(1)                     # select the last stage (otsu)
+    # 2026-11-13(初回起動の点検 M3): otsu は a も b も読まないので、生の 0..1 の欄も含めて止まる
+    # (以前は生の欄だけ動かせた)。残った段(gaussian)を選ぶと動く。
     sa, sb = (r.raw for r in win._knob_rows)
-    assert sa.isEnabled() and sb.isEnabled()
+    assert not sa.isEnabled() and not sb.isEnabled()
     win._actions["remove"].trigger()                     # remove it
     # neighbour (now the last, index 0) stays selected; knobs describe it
     assert win._stage_list.currentRow() == 0
@@ -643,7 +647,9 @@ def test_shortcuts_help_action_wired():
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert "shortcuts" in win._actions
-    assert win._actions["shortcuts"].shortcut().toString() == "F1"
+    # 2026-11-13(初回起動の点検): F1 は選んでいる op のヘルプ。ショートカットの一覧は Ctrl+F1
+    assert win._actions["shortcuts"].shortcut().toString() == "Ctrl+F1"
+    assert win._actions["selected_help"].shortcut().toString() == "F1"
 
 
 def test_sample_code_helper():
@@ -820,7 +826,10 @@ def test_knob_tick_costs_one_pipeline_evaluation():
     sa.setValue(sa.value() + 7)
     assert calls["n"] == 1, "expected 1 pipeline evaluation per knob tick, got %d" % calls["n"]
     # the slider spans gaussian's DISPLAYED σ range (param_specs); map its position back
-    assert model.stages[3][1] == pytest.approx(win._knob_rows[0].pos_to_knob(sa.value()))
+    # 2026-11-13(L6): スライダの値は、同じ目盛り・同じ表示になる最短の小数で持つ(コードに 0.8466666666666667 と出ない)
+    ka = win._knob_rows[0]
+    assert model.stages[3][1] == ka.short_knob(ka.pos_to_knob(sa.value()))
+    assert model.stages[3][1] == pytest.approx(ka.pos_to_knob(sa.value()), abs=0.005)
     assert win._state["dirty"] is True
     # the debounce timer carries the (expensive) per-stage summary refresh
     assert win._knob_timer.isActive()
@@ -1591,9 +1600,13 @@ def test_operator_arg_labels_reflect_selected_op():
     select("otsu")                         # curated as both-unused
     assert lbl_a.text() == "a (–)" and lbl_b.text() == "b (–)"
     assert not sa.isEnabled() and not sb.isEnabled()
-    # an un-curated op keeps the plain letters and both knobs enabled
+    # an un-curated op keeps the plain letters and both knobs enabled (one with no knob spec either:
+    # 2026-11-13 the list starts from the staples, and sobel_amp now has a source-checked "unused" spec)
+    import param_specs
     noncur = next(ol.item(i).data(QtCore.Qt.UserRole) for i in range(ol.count())
-                  if ol.item(i).data(QtCore.Qt.UserRole) not in studio._ARG_ROLES)
+                  if ol.item(i).data(QtCore.Qt.UserRole) not in studio._ARG_ROLES
+                  and all(param_specs.is_generic(param_specs.spec_for(ol.item(i).data(QtCore.Qt.UserRole))[k])
+                          for k in "ab"))
     select(noncur)
     assert lbl_a.text() == "a" and lbl_b.text() == "b"
     assert sa.isEnabled() and sb.isEnabled()
