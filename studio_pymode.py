@@ -301,6 +301,22 @@ def _bytes_stamp(data: bytes) -> tuple:
     return len(data), hashlib.sha256(data).hexdigest()
 
 
+#: 設定に残す「比べる元が無い(外で変わった・読めなかった)」の印。
+_STAMP_CHANGED = "changed"
+
+
+def _stamp_from_setting(value):
+    """設定の ``file_stamp``(``"大きさ:SHA-256"`` か ``"changed"``)を印へ。空(前の版の設定)なら None。
+    ``"changed"`` と読めない値は、どの印とも等しくない物(= 変わった)。"""
+    s = str(value or "")
+    if not s:
+        return None
+    size, _sep, digest = s.partition(":")
+    if s == _STAMP_CHANGED or not size.isdigit() or len(digest) != 64:
+        return (-1, _STAMP_CHANGED)
+    return int(size), digest
+
+
 def _file_stamp(path) -> tuple | None:
     """ファイルの今の中身の印 ``(大きさ, 生のバイトの SHA-256)``。**読めなければ None**(呼び出し側は「変わった」
     として扱う)。文字にしない(UTF-8 で解けない中身も、4 MB を越える中身も、そのまま比べられる)。"""
@@ -2154,21 +2170,48 @@ class PyModeController(QtCore.QObject):
         origin = str(self._get("origin", "typed"))
         trusted = str(self._get("session_trusted", "true")).lower() in ("true", "1")
         text = None
+        kept = buf if isinstance(buf, str) and buf else None
         if path and os.path.isfile(path):
             try:
                 with open(path, "rb") as fh:
                     raw = fh.read()
                 disk = raw.decode("utf-8-sig").replace("\r\n", "\n").replace("\r", "\n")
             except (OSError, UnicodeDecodeError):
-                disk = None
+                raw = disk = None
+            name = os.path.basename(path)
             if disk is not None:
                 self.file = os.path.abspath(path)
                 self.saved_digest = sp.program_digest(disk)
-                self._disk_stamp = _bytes_stamp(raw)          # 文面と同じ 1 回の読みから作る
-                text = buf if isinstance(buf, str) and buf else disk
-                if sp.program_digest(disk) != str(self._get("file_digest", "")):
+                stamp = _bytes_stamp(raw)                     # 文面と同じ 1 回の読みから作る
+                known = _stamp_from_setting(self._get("file_stamp", ""))
+                if known is None:                             # 前の版の設定(生のバイトの印が無い): 文面で比べる
+                    unchanged = sp.program_digest(disk) == str(self._get("file_digest", ""))
+                else:
+                    unchanged = known == stamp                # "changed" の印は、どの印とも等しくない
+                text = kept or disk
+                if not unchanged:
                     trusted = False                           # ファイルが外で変わった: 確認し直す
+                # 退避した文面を出すのに、ファイルが外で変わっていた: 比べる元は無い(= 変わった。自動保存は書かず、
+                # Ctrl+S は聞く。2026-11-15 第 4 回の確かめ: 前は変わった中身を比べる元にして、聞かずに上書きした)
+                self._disk_stamp = stamp if (unchanged or not kept) else None
+                if kept and not unchanged:
+                    note = self.tr("%s was changed by another program while Studio was closed: the Program shows "
+                                   "your unsaved text; saving asks before it replaces the file") % name
+                    self._status(note)
+                    self.flash(note)
                 origin = origin if origin in ("file", "project") else "file"
+            elif kept:
+                # 読めない(cp932 に書き換わった・ロック中): 退避した文面を捨てない。ファイルは付けるが比べる元は無し
+                # (= 変わった: 自動保存は書かず、Ctrl+S は聞く)。確認はやり直す(2026-11-15 第 4 回の確かめ)
+                self.file = os.path.abspath(path)
+                self.saved_digest = None
+                self._disk_stamp = None
+                text, trusted = kept, False
+                origin = origin if origin in ("file", "project") else "file"
+                note = self.tr("Could not read %s: the Program shows the unsaved text kept from the last session; "
+                               "saving asks before it replaces the file") % name
+                self._status(note)
+                self.flash(note)
         elif isinstance(buf, str) and buf and buf not in sp.STARTER_PROGRAMS.values():
             text = buf                                        # 手を付けていない例は残さず、今の言語の例を出す
         if text is not None:
@@ -2206,6 +2249,10 @@ class PyModeController(QtCore.QObject):
         self._set("config", self.config)
         self._set("file", self.file or "")
         self._set("file_digest", self.saved_digest or "")
+        # 生のバイトの印(次の起動で「外で変わったか」を比べる元)。比べる元が無い(外で変わった・読めなかった)
+        # 事も残す: 残さないと、次の起動で今のディスクが比べる元になり、聞かずに上書きする
+        self._set("file_stamp", "" if not self.file else (
+            "%d:%s" % self._disk_stamp if self._disk_stamp else _STAMP_CHANGED))
         self._set("buffer", text if (self.unsaved() or not self.file) else "")
         self._set("origin", self.origin)
         self._set("session_trusted", "true" if self.session_trusted else "false")

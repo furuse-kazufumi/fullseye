@@ -1,6 +1,20 @@
 {
  "_note": "Python editor parts (color, completion, variables, watch): English is the source text; 5 languages. Merge into studio_assets/i18n.json 'strings' with studio_pyedit_i18n.merge_into().",
  "strings": {
+  "%s was changed by another program while Studio was closed: the Program shows your unsaved text; saving asks before it replaces the file": {
+   "ja": "%s は、Studio を閉じている間に別のプログラムが書き換えました: Program 欄には保存していない文面を出しています。保存すると、ファイルを置き換える前に確認します",
+   "zh": "%s 在 Studio 关闭期间被其他程序修改:Program 栏显示的是未保存的文本;保存时会在替换文件前询问",
+   "tw": "%s 在 Studio 關閉期間被其他程式修改:Program 欄顯示的是未儲存的文字;儲存時會在取代檔案前詢問",
+   "ko": "%s 은(는) Studio가 닫혀 있는 동안 다른 프로그램이 바꾸었습니다: Program 칸에는 저장하지 않은 글을 보여 줍니다. 저장하면 파일을 바꾸기 전에 묻습니다",
+   "de": "%s wurde von einem anderen Programm geändert, während Studio geschlossen war: das Programm-Feld zeigt Ihren nicht gespeicherten Text; beim Speichern wird vor dem Ersetzen der Datei gefragt"
+  },
+  "Could not read %s: the Program shows the unsaved text kept from the last session; saving asks before it replaces the file": {
+   "ja": "%s を読めませんでした: Program 欄には、前回の保存していない文面を出しています。保存すると、ファイルを置き換える前に確認します",
+   "zh": "无法读取 %s:Program 栏显示的是上次保留的未保存文本;保存时会在替换文件前询问",
+   "tw": "無法讀取 %s:Program 欄顯示的是上次保留的未儲存文字;儲存時會在取代檔案前詢問",
+   "ko": "%s 을(를) 읽을 수 없었습니다: Program 칸에는 지난번에 저장하지 않은 글을 보여 줍니다. 저장하면 파일을 바꾸기 전에 묻습니다",
+   "de": "%s konnte nicht gelesen werden: das Programm-Feld zeigt den nicht gespeicherten Text der letzten Sitzung; beim Speichern wird vor dem Ersetzen der Datei gefragt"
+  },
   "Studio cannot check the relative import of %r from a running program: the globals given to __import__ are not a plain dict — use an absolute import": {
    "ja": "Studio は、実行中のプログラムからの %r の相対 import を確かめられません: __import__ に渡した globals が素の dict ではありません — 絶対の import を使ってください",
    "zh": "Studio 无法检查运行中的程序对 %r 的相对 import:传给 __import__ 的 globals 不是普通的 dict — 请使用绝对 import",

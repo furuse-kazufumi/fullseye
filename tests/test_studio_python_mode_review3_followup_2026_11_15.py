@@ -765,3 +765,107 @@ def test_s4f_a_program_saved_next_to_studio_is_not_treated_as_library_code():
         assert V.summarize(f).text == "f(x, cfg=…)" and r.namespace["CALLED"] == [], fn
     assert safe.is_inert(sp.program_digest) and safe.is_inert(safe.is_inert)     # Studio 自身の関数は今までどおり
     assert safe.is_library_module_name("studio_program") and safe.is_library_module_name("studio_pyedit_safe")
+
+
+# --------------------------------------------------------------------------- #
+# S3b / S3c: 起動し直した時の、外で変わった・読めないファイル                      #
+# --------------------------------------------------------------------------- #
+def _s3_first_run(tmp_path, monkeypatch, first_text, typed):
+    """1 回目の起動: X.py を開き、*typed* を打って保存せずに状態を退避する(閉じる時・落ちた時と同じ)。ファイルへの
+    自動保存は切のまま(閉じても書かない)。"""
+    X = tmp_path / "X.py"
+    X.write_text(first_text, encoding="utf-8")
+    monkeypatch.setattr(pm_mod, "TRUST_HOOK", lambda *a: False)
+    win, _model = _launch(tmp_path, monkeypatch)
+    pm = win._pymode
+    assert pm.autosave_file_mode() == "off"
+    assert pm.open_program(str(X)) is True
+    _type_at_end(pm, typed)
+    assert pm.unsaved()
+    pm.save_state()
+    _close(win)
+    return X
+
+
+def test_s3b_after_a_restart_an_outside_change_is_not_overwritten_by_the_kept_text(tmp_path, monkeypatch):
+    """確かめ v04: 退避した未保存の文面を起動時に戻す時、外で書き換わったファイルをそのまま比べる元にした。自動保存も
+    Ctrl+S も聞かずに外の変更を上書きした(外で変わった事は分かっていて、信頼は外していた)。"""
+    X = _s3_first_run(tmp_path, monkeypatch, "a = 1  # A\n", "b = 2  # B, not saved\n")
+    X.write_text("c = 3  # C, written by another editor while Studio was closed\n", encoding="utf-8")
+    win2, _m = _launch(tmp_path, monkeypatch)
+    asked = []
+    try:
+        pm2 = win2._pymode
+        pm2.ctx["confirm_action"] = lambda *a: (asked.append(a[0]), False)[1]       # 確認の窓は Cancel
+        pm2.set_autosave_file("focus")
+        assert pm2.edit.toPlainText() == "a = 1  # A\nb = 2  # B, not saved\n"
+        assert os.path.normcase(pm2.file) == os.path.normcase(str(X)) and pm2.session_trusted is False
+        assert pm2.disk_changed() is True
+        assert pm2.autosave_file("focus") is False
+        assert X.read_text(encoding="utf-8").startswith("c = 3")
+        assert pm2.save() is False and len(asked) == 1                  # Ctrl+S は聞く(Cancel なら書かない)
+        assert X.read_text(encoding="utf-8").startswith("c = 3")
+        pm2.save_state()                                                # 「外で変わった」は次の起動にも残る
+    finally:
+        _close(win2)
+    win3, _m = _launch(tmp_path, monkeypatch)
+    try:
+        pm3 = win3._pymode
+        assert pm3.edit.toPlainText().startswith("a = 1") and pm3.disk_changed() is True
+        assert pm3.autosave_file("focus") is False and X.read_text(encoding="utf-8").startswith("c = 3")
+    finally:
+        _close(win3)
+
+
+def test_s3b_after_a_restart_an_unchanged_file_is_still_autosaved(tmp_path, monkeypatch):
+    """断りすぎない: 外で変わっていなければ、戻した文面は今までどおり自動保存される。設定に生のバイトの印が無い
+    (前の版の設定)時は、今までどおり文面で比べる。"""
+    X = _s3_first_run(tmp_path, monkeypatch, "a = 1\n", "b = 2\n")
+    win2, _m = _launch(tmp_path, monkeypatch)
+    try:
+        pm2 = win2._pymode
+        pm2.set_autosave_file("focus")
+        assert pm2.disk_changed() is False and pm2.autosave_file("focus") is True
+        assert X.read_text(encoding="utf-8") == "a = 1\nb = 2\n"
+        _type_at_end(pm2, "c = 3\n")
+        pm2.save_state()
+    finally:
+        _close(win2)
+    from PySide6 import QtCore
+    s = QtCore.QSettings(str(tmp_path / "s.ini"), QtCore.QSettings.IniFormat)
+    s.remove("pymode/file_stamp")                                       # 前の版の設定(印が無い)
+    s.sync()
+    assert s.value("pymode/file_stamp") is None and str(s.value("pymode/buffer")).endswith("c = 3\n")
+    win3, _m = _launch(tmp_path, monkeypatch)
+    try:
+        pm3 = win3._pymode
+        assert pm3.edit.toPlainText() == "a = 1\nb = 2\nc = 3\n"
+        assert pm3.disk_changed() is False and pm3.autosave_file("focus") is True
+        assert X.read_text(encoding="utf-8") == "a = 1\nb = 2\nc = 3\n"
+    finally:
+        _close(win3)
+
+
+def test_s3c_a_file_that_cannot_be_read_at_start_does_not_drop_the_kept_text(tmp_path, monkeypatch):
+    """確かめ v07: 起動時にファイルが読めない(cp932 に書き換わった)と、退避した未保存の文面を黙って捨て、次の
+    save_state で設定からも消した。文面を戻し(由来はファイル・未確認)、ファイルは上書きせず(自動保存しない・Ctrl+S
+    は聞く)、状態の帯で言う。"""
+    X = _s3_first_run(tmp_path, monkeypatch, "a = 1\n", "b = 2  # an hour of unsaved work\n")
+    other = "# 別のエディタが cp932 で保存\na = 1\n".encode("cp932")
+    X.write_bytes(other)
+    win2, _m = _launch(tmp_path, monkeypatch)
+    asked = []
+    try:
+        pm2 = win2._pymode
+        pm2.ctx["confirm_action"] = lambda *a: (asked.append(a[0]), False)[1]
+        pm2.set_autosave_file("focus")
+        assert pm2.edit.toPlainText() == "a = 1\nb = 2  # an hour of unsaved work\n"
+        assert pm2.origin == "file" and pm2.session_trusted is False
+        assert "could not read" in pm2.ctx["status"].toolTip().lower()
+        assert pm2.disk_changed() is True and pm2.autosave_file("focus") is False
+        assert pm2.save() is False and len(asked) == 1
+        assert X.read_bytes() == other
+        pm2.save_state()
+        assert str(pm2.settings().value("pymode/buffer")) == "a = 1\nb = 2  # an hour of unsaved work\n"
+    finally:
+        _close(win2)
