@@ -1854,6 +1854,57 @@ def test_f1_is_help_here_ctrl_f1_is_key_list_agrees_with_firstrun(app, studio_mo
         eq.apply_bindings(None)
 
 
+def test_f1_in_the_code_off_an_operator_falls_back_like_the_window(app, studio_mod):
+    """確かめの担当 2 回目: コードの欄の F1 の「次の答え」(カーソルの下が op でない時は、選んだ段 → 選んだ op →
+    キーの一覧)を守る試験が無かった(コードの欄の F1 を古い語のヘルプへ戻す変異 q11 と、op でなければ先へ進まない
+    変異 q20 が、どちらも全部通った)。"""
+    _QtCore, _QtGui, _QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    import studio_editops_qt as eq  # noqa: PLC0415
+    K = QtCore.Qt
+    w, c = _with_a_stage(studio_mod)                                      # 段 = gaussian
+    shown = []
+    w._help["show"] = lambda name: shown.append("op:" + name)
+    pm = w._pymode
+    sl, lst = w._stage_list, w._op_list
+
+    def press_f1_on(text, word, stage_row):
+        ed = _program(w, text)
+        ed.on_open_help = lambda name: shown.append("code:" + name)
+        lst.setCurrentRow(-1)
+        lst.clearSelection()
+        sl.setCurrentRow(stage_row)
+        if stage_row < 0:
+            sl.clearSelection()
+        cur = ed.textCursor()
+        cur.setPosition(ed.toPlainText().index(word) + 1)
+        ed.setTextCursor(cur)
+        ed.setFocus()
+        _pump(0.1)
+        assert ed.word_under_cursor() == word and (word in ed._words) == (word == "gaussian")   # op か、op でない語
+        assert lst.currentItem() is None and sl.currentRow() == stage_row
+        del shown[:]
+        QTest.keyClick(ed, K.Key_F1)
+        _pump(0.3)
+        return list(shown)
+
+    try:
+        assert press_f1_on("gaussian (0.5, 0.5)\n# a remark\n", "gaussian", 0) == ["code:gaussian"]   # op の上
+        assert press_f1_on("gaussian (0.5, 0.5)\n# a remark\n", "remark", 0) == ["op:gaussian"]       # (1) 選んだ段
+        guard = _modal_guard()
+        assert press_f1_on("gaussian (0.5, 0.5)\n# a remark\n", "remark", -1) == []                    # (2) 何も無い
+        assert guard["modal"] == 0 and c.dialog is not None and c.dialog.isVisible() and not c.dialog.isModal()
+        c.dialog.close()
+        pm.set_mode("python")
+        _pump(0.2)
+        assert pm.active
+        assert press_f1_on("import fullseye as fs\n# a remark\n", "remark", 0) == ["op:gaussian"]    # (3) Python
+    finally:
+        pm.set_mode("pipeline")
+        _close(w)
+        eq.apply_bindings(None)
+
+
 def test_ctrl_f1_opens_the_key_list_and_shift_f1_in_the_code_is_the_operator_reference(win, ctl, monkeypatch):
     _QtCore, _QtGui, QtWidgets, QTest = _qt()
     from PySide6 import QtCore  # noqa: PLC0415
@@ -2170,7 +2221,17 @@ def test_same_key_different_family_is_zero():
 
 
 def test_same_key_different_family_is_zero_on_the_real_window(win, ctl):
-    assert km.same_key_different_family(ctl.keymap, ctl.fixed_entries(), ctl.places) == []
+    from collections import Counter  # noqa: PLC0415
+    fixed = ctl.fixed_entries()
+    kinds = Counter(e.command.split(":")[0] for e in fixed)
+    # 突き合わせる相手が空でも通る門にしない(確かめの担当 2 回目: collect_fixed が [] の変異でも通った)
+    assert kinds["menu"] == 7 and kinds["menu_other"] >= 1 and kinds["text"] >= 30, kinds
+    assert len(ctl.places) == len(km.PLACES) >= 9
+    assert km.same_key_different_family(ctl.keymap, fixed, ctl.places) == []
+    seeded = ctl.keymap.copy()
+    seeded._set("zoom_in", ("Ctrl+C",))                                   # 窓の拡大 と 欄のコピー = 意味が違う
+    got = [(k, a, b) for k, a, b, _p in km.same_key_different_family(seeded, fixed, ctl.places)]
+    assert ("Ctrl+C", "zoom_in", "text:Copy") in got                     # 本物の相手で数えている
 
 
 _MENUS = ("&File", "&Edit", "&View", "&Run", "&Window", "&Tools", "&Help")
