@@ -9,8 +9,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### 直し — ViEW2026 の目玉の PoC: 作者と独立の敵対的レビュー 2 本(2026-11-13)の、PoC のコードと記録の側
 
-展示ページの文(`docs/view2026/`)は別の便で直す。ここは PoC の出力・門・図と、数字の正本
-`docs/articles/exhibits/poc_captions.json`。数字はどれも実行の出力か記録から取り直した。
+ここは PoC の出力・門・図と、数字の正本 `docs/articles/exhibits/poc_captions.json`。数字はどれも実行の出力か記録から取り直した。
+展示ページ(`docs/view2026/`)は、台帳を引いている所だけを道具で作り直した(`tools/build_view2026_featured_batch.py` →
+`tools/gen_view2026_story_gifs.py` → `tools/gen_view2026_pages.py`): 目玉のカード 5 枚(OCT・機材選びの地図・テレセン・光弾性・仮想 SEM)の
+lead と説明、図を差し替えた 6 本(AI の採点・瓶・光弾性・ステレオ・TUM・クルミ)の story GIF と台帳、8 言語のページ。説明の see / num の
+切れ目は前と同じ文の頭のまま。ページの題・並び・手で書いた文は別の便(ViEW2026 の本ページ)で直す。
 
 - `poc_ai_built_inspection_scored`: ひび割れは画像の統計 1 つ(中央値 − 1 パーセンタイル)で解ける(AUROC 0.999)。開発用 6 枚で
   閾値を決めた自明な基準線(検出 0.995・誤報 0.045)を記録・表・図・要約に足した。AI のどのレシピもこれを超えない。要約は主の実験
