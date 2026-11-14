@@ -1153,6 +1153,26 @@ def test_text_keys_the_field_takes_first_and_the_ones_it_would_lose():
                                                                         extra=_TEXT))
 
 
+def test_backspace_in_editors_is_a_text_key_even_where_qt_lists_none():
+    """2026-11-15 確かめの担当 2 回目: Windows の QKeySequence.keyBindings(Backspace) は空なので、エディタの範囲の
+    コマンドに修飾なしの Backspace を付けても当たりも注意も無かった(行の複製が文字の削除を奪う)。"""
+    k = km.Keymap()
+    cids = ("editops_line_duplicate", "editops_line_delete", "editops_multi_add_next", "program_find", "program_comment")
+    seen = 0
+    for cid in cids:
+        for key in ("Backspace", "Shift+Backspace"):
+            got = _codes(k.check(cid, (key,)))
+            assert ("warning", "steals_text", "text:Backspace") in got, (cid, key, got)
+            seen += 1
+    assert seen == 10
+    assert ("error", "nav_key", "") in _codes(k.check("zoom_in", ("Backspace",)))   # 窓全体は前と同じく断る
+    assert [(e.command, e.key, e.scope) for e in km.TEXT_FIELD_KEYS] == [
+        ("text:Backspace", "Backspace", "text"), ("text:Backspace", "Shift+Backspace", "text")]
+    entries = [e for e in k.entries() if e.command == "text:Backspace"]
+    assert len(entries) == 2                                              # Qt なしの表にも入る(1 つずつ)
+    assert len([e for e in k.entries(km.TEXT_FIELD_KEYS) if e.command == "text:Backspace"]) == 2   # 重ねない
+
+
 def test_menu_bar_keys_of_this_and_the_other_languages():
     menus = [km.Entry("menu:File", "Alt+F", "menu_bar", None, True, "Menu bar: File"),
              km.Entry("menu_other:Datei (de)", "Alt+D", "menu_bar_other", None, True, "Datei (de)")]
@@ -1442,6 +1462,50 @@ def test_import_asks_before_replacing_and_keeps_the_previous_map(win, ctl, studi
     assert dlg.do_import() is True and ctl.keymap.overrides() == {"zoom_in": ("Ctrl+F11",)}
     prev = json.loads(studio_mod._settings().value(km.PREVIOUS_KEY))
     assert prev["bindings"] == {"export": ["Ctrl+Shift+F11"], "fit": ["Ctrl+Shift+F12"]}   # 前の表を 1 世代残す
+
+
+def test_backspace_in_the_recorder_clears_and_the_editor_keeps_deleting(win, ctl):
+    """確かめの担当 2 回目 T2 / T3: 打ち間違い → Backspace(消すつもり)→ Enter で、行の複製に Backspace が付き
+    Program 欄の Backspace が文字を消さなくなった(窓全体のコマンドでは 2 打目の Backspace になった)。"""
+    _QtCore, _QtGui, _QtWidgets, QTest = _qt()
+    from PySide6 import QtCore, QtGui  # noqa: PLC0415
+    import studio_keymap_qt as kq  # noqa: PLC0415
+    K = QtCore.Qt
+    fixed = {(e.command, e.key): e.scope for e in kq.collect_fixed(win)}
+    assert fixed[("text:Backspace", "Backspace")] == "text" and fixed[("text:Backspace", "Shift+Backspace")] == "text"
+    assert kq._field_takes("Backspace") and kq._field_takes("Shift+Backspace")   # 本物の欄が先に取る(実測)
+    probs = ctl.check("editops_line_duplicate", ("Backspace",))
+    assert [(p.level, p.code, p.other) for p in probs] == [("warning", "steals_text", "text:Backspace")]
+    assert ctl.describe(probs[0]).endswith("instead of Text fields: Backspace")
+    dlg = ctl.open_dialog()
+    dlg.activateWindow()
+    rec = dlg.recorder
+    tried = 0
+    for cid, first, want in (("editops_line_duplicate", (K.Key_E, K.ControlModifier | K.ShiftModifier), ("Ctrl+D",)),
+                             ("fit", (K.Key_F12, K.ControlModifier | K.ShiftModifier), ("Ctrl+0",))):
+        assert dlg.select(cid)
+        rec.setFocus()
+        _press(rec, *first)
+        assert rec.sequence() not in ("", "Backspace")                    # 打ち間違いが記録された
+        _press(rec, K.Key_Backspace)                                      # 消すつもりの Backspace
+        assert rec.sequence() == "" and rec.text() == "", (cid, rec.sequence())
+        _press(rec, K.Key_Return)
+        assert ctl.keymap.keys(cid) == want, cid                          # 何も割り当てない
+        tried += 1
+    assert tried == 2
+    assert dlg.select("editops_line_duplicate")
+    dlg.b_literal.click()
+    _press(rec, K.Key_Backspace)                                          # 付けたい時は「そのまま記録」から
+    assert rec.sequence() == "Backspace" and dlg.b_assign.isEnabled()
+    assert "instead of Text fields: Backspace" in dlg.status.text()      # 割り当てる前に注意が見える
+    rec.clear_keys()
+    dlg.close()
+    ed = _program(win, "abc")
+    cur = ed.textCursor()
+    cur.movePosition(QtGui.QTextCursor.End)
+    ed.setTextCursor(cur)
+    QTest.keyClick(ed, K.Key_Backspace)
+    assert ed.toPlainText() == "ab"                                       # Program 欄の Backspace は文字を消す
 
 
 def test_the_recorder_enter_assigns_esc_stops_and_tab_moves_on(win, ctl):

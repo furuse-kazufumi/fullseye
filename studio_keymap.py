@@ -586,6 +586,13 @@ class Entry(NamedTuple):
     family: str = ""
 
 
+#: テキスト欄が標準の表(QKeySequence.StandardKey)を通さずに自分で受けるキー。QWidgetTextControl と QLineEdit は
+#: Key_Backspace を修飾なしか Shift だけで直接見るので、Windows・Linux の QKeySequence.keyBindings(Backspace) は空
+#: (2026-11-15 確かめの担当 2 回目: 本物の欄から集める collect_fixed に入らず、エディタのコマンドに Backspace を付けても
+#: 注意が出なかった。Del は標準の表にあるので注意が出ていた)。Keymap.entries がいつも足す(Qt なしの検査でも同じ答え)。
+TEXT_FIELD_KEYS = (Entry("text:Backspace", "Backspace", "text", None, True, "Text fields: Backspace", "delete"),
+                   Entry("text:Backspace", "Shift+Backspace", "text", None, True, "Text fields: Backspace", "delete"))
+
 _OS_TAKEN = {"Alt+Tab", "Alt+Shift+Tab", "Alt+Esc", "Ctrl+Esc", "Ctrl+Alt+Del", "Ctrl+Shift+Esc"}
 _WARN_EXACT = {"Alt+F4": "warn_close", "Alt+Space": "warn_window_menu", "F10": "warn_menu_key",
                "Shift+F10": "warn_menu_key", "Print": "warn_print", "Alt+Print": "warn_print",
@@ -815,14 +822,17 @@ class Keymap:
         return dict(self._over)
 
     def entries(self, extra: Iterable = ()) -> list:
-        """当たりの検査に渡す全部の行(組み込みと ``extra`` を含む)。"""
+        """当たりの検査に渡す全部の行(組み込み・テキスト欄が自分で受けるキー ``TEXT_FIELD_KEYS``・``extra``)。"""
         out = []
         for c in COMMANDS:
             for k in self.keys(c.id):
                 out.append(Entry(c.id, k, c.scope, c.when, c.fixed, c.title))
                 if c.ide and c.scope != "program_editor":      # Program 欄では欄の部品が同じ意味で先に受ける
                     out.append(Entry(c.id, k, "program_editor", c.when, c.fixed, c.title))
+        extra = list(extra)
         out.extend(extra)
+        have = {(e.command, e.key) for e in extra}             # 本物の窓から集めた行(collect_fixed)が先
+        out.extend(e for e in TEXT_FIELD_KEYS if (e.command, e.key) not in have)
         return out
 
     def problems(self, extra: Iterable = (), places: dict | None = None) -> list:
@@ -1255,9 +1265,9 @@ LBL_RECORD = "New key"
 PH_RECORD = "Click here, then press the keys"
 HINT_CHORD = "A second key right after the first makes a two-stroke key. Clear starts over."
 HINT_NO_CHORD = "One key at a time here (no two-stroke keys in editors)."
-HINT_KEYS = "Enter assigns, Esc stops recording, Tab moves on."
-BTN_LITERAL = "Record Tab / Esc / Enter"
-PH_LITERAL = "Press one key: Tab, Esc and Enter are recorded too"
+HINT_KEYS = "Enter assigns, Backspace clears, Esc stops recording, Tab moves on."
+BTN_LITERAL = "Record Tab / Esc / Enter / Backspace"
+PH_LITERAL = "Press one key: Tab, Esc, Enter and Backspace are recorded too"
 BTN_REMOVE_ONE = "Remove %s"
 BTN_CANCEL = "Cancel"
 BTN_RESET_ALL_DO = "Reset all"

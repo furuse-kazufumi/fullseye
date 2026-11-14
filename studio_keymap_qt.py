@@ -551,6 +551,10 @@ def collect_fixed(win, strings: dict | None = None) -> list:
         name = owner.split(".")[-1]
         scope = "text" if _field_takes(t) else "text_lost"
         out.append(km.Entry("text:" + name, t, scope, None, True, km.MSG_TEXT_KEY % name))
+    for e in km.TEXT_FIELD_KEYS:                               # 標準の表に無いが欄が自分で受けるキー(Windows の Backspace)
+        if e.key not in seen:
+            seen.add(e.key)
+            out.append(e._replace(scope="text" if _field_takes(e.key) else "text_lost"))
     return out
 
 
@@ -562,7 +566,8 @@ class KeyRecorder(QtWidgets.QLineEdit):
 
     ``allow_chords`` の時、続けて押したもう 1 打は 2 打鍵のキー(3 打目で始めから)。そうでなければ毎回置き換える。
     修飾なしの Enter = 決める(``commit``)、Esc = 記録をやめる(空なら ``leave``)、Tab / Shift+Tab = フォーカス移動
-    (VS Code のキーの記録と同じ)。``record_literally`` の後の 1 打だけは、Tab・Esc・Enter もそのまま記録する。
+    (VS Code のキーの記録と同じ)、Backspace = 記録を消す(打ち間違いを消すつもりの Backspace をキーにしない。
+    2026-11-15 確かめの担当 2 回目)。``record_literally`` の後の 1 打だけは、Tab・Esc・Enter・Backspace もそのまま記録する。
     """
 
     recorded = QtCore.Signal(str)
@@ -609,6 +614,9 @@ class KeyRecorder(QtWidgets.QLineEdit):
                 self.clear_keys()
             else:
                 self.leave.emit()
+            return True
+        if key == int(_K.Key_Backspace):                       # 記録を消す(Backspace 自体は「そのまま記録」から)
+            self.clear_keys()
             return True
         return False
 
