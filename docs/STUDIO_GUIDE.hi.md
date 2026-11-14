@@ -158,7 +158,7 @@ Qt से स्वतंत्र रूप से unit-tested)। Actions (ज
 
 ## Keyboard shortcuts
 
-App के अंदर **Help ▸ Keyboard shortcuts (F1)** पूरी list एक table में दिखाता है
+App के अंदर **Help ▸ Keyboard shortcuts (Ctrl+F1)** पूरी list एक table में दिखाता है
 (self-documenting)। मुख्य shortcuts (`studio.py` की `act_*` definitions से):
 
 | Action | Shortcut | Action | Shortcut |
@@ -171,9 +171,10 @@ App के अंदर **Help ▸ Keyboard shortcuts (F1)** पूरी list �
 | Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
-| Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
+| Keyboard shortcuts | `Ctrl+F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
-| Pipeline as code → editor | `Ctrl+Shift+E` | | |
+| Pipeline as code → editor | `Ctrl+Shift+E` | Help for the selected operator | `F1` |
+| Undo | `Ctrl+Z` | Redo | `Ctrl+Shift+Z` / `Ctrl+Y` |
 
 हर action एक ही handler से चलता है, चाहे menu से हो, toolbar से या button से (एक
 action, कई entry points)।

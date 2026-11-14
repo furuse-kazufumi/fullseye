@@ -263,8 +263,10 @@ def test_new_hints_are_not_just_the_part_name_repeated(win):
             assert tip != text, "ヒントが部品名の繰り返し: %r" % text
 
 
-#: 日本語モードで、英語のままのツールチップ件数の上限(従来から英語だけだったヒント。実測 2026-11-12)
-JA_MODE_ENGLISH_TIP_CEILING = 123
+#: 日本語モードで、英語のままのツールチップ件数の上限(従来から英語だけだったヒント)。
+#: 実測 2026-11-12 は 123。2026-11-13 の直し(M9)で 26 になったのに上限が 123 のままで、97 件戻っても落ちなかった
+#: (PR #316 の独立レビュー)。実測の 26 に下げた。1 件ずつの中身は tests/data/studio_untranslated_ja.json の tooltips。
+JA_MODE_ENGLISH_TIP_CEILING = 26
 
 
 def test_japanese_mode_english_only_tips_are_counted(win):

@@ -152,7 +152,7 @@ Operatoren allein über die Tastatur erledigen.
 
 ## Tastenkürzel
 
-In der Anwendung zeigt **Help ▸ Keyboard shortcuts (F1)** die vollständige Liste als Tabelle (selbstdokumentierend).
+In der Anwendung zeigt **Help ▸ Keyboard shortcuts (Ctrl+F1)** die vollständige Liste als Tabelle (selbstdokumentierend).
 Die wichtigsten (aus den `act_*`-Definitionen in `studio.py`):
 
 | Aktion | Tastenkürzel | Aktion | Tastenkürzel |
@@ -165,9 +165,10 @@ Die wichtigsten (aus den `act_*`-Definitionen in `studio.py`):
 | Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
-| Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
+| Keyboard shortcuts | `Ctrl+F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
-| Pipeline as code → editor | `Ctrl+Shift+E` | | |
+| Pipeline as code → editor | `Ctrl+Shift+E` | Help for the selected operator | `F1` |
+| Undo | `Ctrl+Z` | Redo | `Ctrl+Shift+Z` / `Ctrl+Y` |
 
 Jede Aktion ruft, egal ob über Menü, Werkzeugleiste oder Schaltfläche ausgelöst, denselben Handler auf (eine
 Aktion, mehrere Zugänge).

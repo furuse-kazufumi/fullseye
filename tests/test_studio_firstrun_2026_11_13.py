@@ -843,7 +843,7 @@ def test_f1_opens_the_selected_ops_help_and_no_key_does_two_things(launch):
     from PySide6.QtTest import QTest
     win, model = launch(lang="ja")
     keys = _window_shortcuts(win)
-    assert len(keys) >= 40                                            # 数え方が空になっていない
+    assert len(keys) >= 45, len(keys)                                 # 数え方が空になっていない(実数 47。QAction 全体では 56)
     dup = {k: v for k, v in keys.items() if len(v) > 1}
     assert not dup, dup
     assert keys["F1"] == ["選んでいる op のヘルプ"] and keys["Ctrl+F1"] and keys["Shift+F1"]
@@ -878,7 +878,12 @@ def test_entrances_python_label_and_band_links(launch):
     import examples2d
     assert links["examples"].text() == "作例(%d)" % len(examples2d.names()) and len(examples2d.names()) > 100
     assert links["drop"].text() == "ファイルを落とせます"
-    assert links["examples"].isVisibleTo(links["column"]) and links["drop"].isVisibleTo(links["column"])
+    # ★2026-11-15(PR #316 の独立レビュー): 以前は「列を基準に見えている」事を確かめていて、列そのものが窓に出て
+    # いなくても通った(この大きさ 1366 では出ていなかった)。列は、手順の文を切らずに置ける幅の時だけ出る。字の幅は
+    # 環境のフォントで変わるので、窓を広げていき、出た所で「窓に見えている」事と押せる事を確かめる。
+    shown_at = _widen_until_the_links_show(win)
+    assert shown_at is not None, "どの幅でも作例・ファイルの列が出ない"
+    assert links["examples"].isVisibleTo(win) and links["drop"].isVisibleTo(win)
     links["drop"].click(); _pump(0.3)
     assert win._last_formats_help.isVisible(); win._last_formats_help.close()
     links["examples"].click(); _pump(0.5)
@@ -888,26 +893,41 @@ def test_entrances_python_label_and_band_links(launch):
     assert links["drop"].text() == "You can drop files here"
 
 
+def _widen_until_the_links_show(win):
+    """窓を広げていき、帯の作例・ファイルの列が窓に見えた最初の幅(どの幅でも出なければ None)。"""
+    col = win._first_steps_links["column"]
+    for width in (1366, 1920, 2560, 3200, 3840, 5120):
+        win.resize(width, 900); _pump(0.3)
+        if col.isVisibleTo(win):
+            return width
+    return None
+
+
 @pytest.mark.parametrize("lang", ["ja", "en"])
-@pytest.mark.parametrize("size", [(1366, 768), (1920, 1080)])
-def test_entrances_never_cut_the_first_steps(launch, lang, size):
-    """帯の作例・ファイルの列は、手順の文を切らずに置ける時だけ出る(手順の文が先)。"""
+def test_entrances_never_cut_the_first_steps(launch, lang):
+    """帯の作例・ファイルの列は、手順の文を切らずに置ける時だけ出る(手順の文が先)。
+
+    ★2026-11-15(PR #316 の独立レビュー): 以前の主の表明は、実装と同じ式を同じ入力で計算して比べていた(実装が
+    間違っていても通る)。手順の文が切れていない事の確かめは列が見える時だけで、4 通り中 3 通りは何も確かめて
+    いなかった。ここでは式を写さず、狭い幅から順に広げて、(1) 列が出る幅が少なくとも 1 つある (2) 列が出ている幅
+    では手順の文 3 つが切れていない (3) 列が 1 度出たら、それより広い幅でも出ている、を確かめる。
+    offscreen の既定のフォントでの実測: 日本語は 1920 以上、英語は 3200 以上で出る(1366 ではどちらも出ない)。"""
     from PySide6 import QtWidgets
-    win, model = launch(lang=lang, size=size)
-    win.resize(*size); _pump(0.3)
+    win, model = launch(lang=lang)
     band = win._first_steps
     steps = [lbl for lbl in band.findChildren(QtWidgets.QLabel) if lbl.text()[:2] in ("1.", "2.", "3.")]
     assert len(steps) == 3
     col = win._first_steps_links["column"]
-    lay = band.layout()
-    m = lay.contentsMargins()
-    parts = [w for w in band.findChildren(QtWidgets.QWidget) if w.parent() is band and w is not col]
-    need = m.left() + m.right() + sum(w.sizeHint().width() for w in parts) + lay.spacing() * len(parts)
-    # 規則そのもの(字の幅は環境のフォントで変わるので、寸法ではなく規則を確かめる)
-    assert col.isVisibleTo(band) == (band.width() >= need + col.sizeHint().width()), (lang, size, band.width(), need)
-    if col.isVisibleTo(band):
-        for lbl in steps:
-            assert lbl.width() >= lbl.sizeHint().width(), (lang, size, lbl.text(), lbl.width(), lbl.sizeHint().width())
+    seen = []
+    for width in (1366, 1920, 2560, 3200, 3840, 5120):
+        win.resize(width, 900); _pump(0.3)
+        shown = col.isVisibleTo(win)
+        seen.append(shown)
+        if shown:
+            for lbl in steps:
+                assert lbl.width() >= lbl.sizeHint().width(), (lang, width, lbl.text(), lbl.width(), lbl.sizeHint().width())
+    assert any(seen), (lang, seen)                                    # 空では通らない: 列が出る幅がある
+    assert seen == sorted(seen), (lang, seen)                         # 1 度出たら、広げても出ている
 
 
 def test_entrance_a_region_result_offers_its_table(launch):

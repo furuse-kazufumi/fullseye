@@ -158,7 +158,7 @@ keyboard alone.
 
 ## Keyboard shortcuts
 
-Inside the app, **Help ▸ Keyboard shortcuts (F1)** shows the full list in a table
+Inside the app, **Help ▸ Keyboard shortcuts (Ctrl+F1)** shows the full list in a table
 (self-documenting). The main ones (from the `act_*` definitions in `studio.py`):
 
 | Action | Shortcut | Action | Shortcut |
@@ -171,9 +171,10 @@ Inside the app, **Help ▸ Keyboard shortcuts (F1)** shows the full list in a ta
 | Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
-| Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
+| Keyboard shortcuts | `Ctrl+F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
-| Pipeline as code → editor | `Ctrl+Shift+E` | | |
+| Pipeline as code → editor | `Ctrl+Shift+E` | Help for the selected operator | `F1` |
+| Undo | `Ctrl+Z` | Redo | `Ctrl+Shift+Z` / `Ctrl+Y` |
 
 Each action is invoked by the same handler whether from the menu, the toolbar or a button (one
 action, several entry points).

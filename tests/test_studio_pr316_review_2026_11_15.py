@@ -823,3 +823,75 @@ def test_the_type_filter_switch_explains_itself_in_japanese(launch):
     assert len(paragraphs) == 2 and all(_CJK.search(p) for p in paragraphs), tip
     win._apply_language("en"); _pump(0.2)
     assert win._ops_fit["check"].toolTip().startswith("On: operators whose input type does not match")
+
+
+# --------------------------------------------------------------------------- #
+# docs のショートカットの表 = 実際の割り当て                                        #
+# --------------------------------------------------------------------------- #
+#: 表の書き方 → Qt のキーの名前
+_KEY_NAMES = {"Ctrl+↑": "Ctrl+Up", "Ctrl+↓": "Ctrl+Down", "Ctrl+→": "Ctrl+Right", "Ctrl+←": "Ctrl+Left",
+              "Ctrl+Enter": "Ctrl+Return"}
+
+
+def _guide_shortcut_rows(text):
+    """STUDIO_GUIDE の「Help ▸ Keyboard shortcuts」の文の後に続く最初の表の (操作の名前, [キー …])。"""
+    lines = text.splitlines()
+    start = next(i for i, ln in enumerate(lines) if "Help ▸ Keyboard shortcuts" in ln)
+    rows, in_table = [], False
+    for ln in lines[start:]:
+        if ln.startswith("|"):
+            in_table = True
+            cells = [c.strip() for c in ln.strip().strip("|").split("|")]
+            for name, keys in zip(cells[0::2], cells[1::2]):
+                found = re.findall(r"`([^`]+)`", keys)
+                if name and found:
+                    rows.append((name, found))
+        elif in_table:
+            break
+    return rows
+
+
+def test_the_guides_shortcut_tables_match_the_real_key_bindings(launch):
+    """直す前: F1 を「選んでいる op のヘルプ」に変えた(一覧は Ctrl+F1)のに、STUDIO_GUIDE の 7 言語と STUDIO_UX の
+    15 か所が「Keyboard shortcuts = F1」のままだった。11/12 に足した門は、決まった 3 つの誤りの形しか探さない。
+    ここでは、表の行のうち窓の QAction の名前と一致する物を全部、実際の割り当てと突き合わせる。"""
+    from PySide6 import QtGui
+    win, model = launch(lang="en")
+    bound = {}
+    for a in win.findChildren(QtGui.QAction):
+        name = a.text().replace("&", "").replace("…", "").strip().lower()
+        if name and a.shortcuts():
+            bound.setdefault(name, set()).update(k.toString() for k in a.shortcuts())
+    assert len(bound) >= 40, len(bound)
+    paths = sorted(glob.glob(os.path.join(ROOT, "docs", "STUDIO_GUIDE*.md")))
+    assert len(paths) == 7, paths
+    list_key = win._actions["shortcuts"].shortcut().toString()
+    assert list_key == "Ctrl+F1" and win._actions["selected_help"].shortcut().toString() == "F1"
+    for p in paths:
+        with open(p, encoding="utf-8") as f:
+            text = f.read()
+        rows = _guide_shortcut_rows(text)
+        assert len(rows) >= 20, (os.path.basename(p), len(rows))
+        assert {"Keyboard shortcuts", "Help for the selected operator", "Undo", "Redo"} <= {n for n, _k in rows}
+        matched = 0
+        for name, keys in rows:
+            have = bound.get(name.lower())
+            if have is None:
+                continue                     # 「Zoom in / out」のように 2 つの操作をまとめた行は、名前では引けない
+            matched += 1
+            for k in keys:
+                want = QtGui.QKeySequence(_KEY_NAMES.get(k, k)).toString()
+                assert want and want in have, (os.path.basename(p), name, k, sorted(have))
+        assert matched >= 18, (os.path.basename(p), matched)
+    for p in paths + [os.path.join(ROOT, "docs", "STUDIO_UX.md")]:
+        with open(p, encoding="utf-8") as f:
+            said = re.findall("Help ▸ Keyboard shortcuts\\s*[(（]([^)）]+)[)）]", f.read())
+        assert said and set(said) == {list_key}, (os.path.basename(p), said)
+
+
+def test_the_changelog_tells_the_user_about_the_keys_that_moved():
+    with open(os.path.join(ROOT, "CHANGELOG.md"), encoding="utf-8") as f:
+        text = f.read()
+    head = text[:text.index("## 1.1.1")]
+    for word in ("`F1`", "`Ctrl+F1`", "`Ctrl+Y`", "coins", "保存して閉じる"):
+        assert word in head, word

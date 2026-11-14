@@ -113,7 +113,7 @@ fullseye-studio             # pip install -e . 済みなら、コンソールス
 
 ## キーボードショートカット
 
-アプリ内では **Help ▸ Keyboard shortcuts（F1）** で全一覧が表で出ます（自己文書化）。主なもの（`studio.py` の `act_*` 定義より）:
+アプリ内では **Help ▸ Keyboard shortcuts（Ctrl+F1）** で全一覧が表で出ます（自己文書化）。主なもの（`studio.py` の `act_*` 定義より）:
 
 | 操作 | ショートカット | 操作 | ショートカット |
 |---|---|---|---|
@@ -125,9 +125,10 @@ fullseye-studio             # pip install -e . 済みなら、コンソールス
 | Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
-| Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
+| Keyboard shortcuts | `Ctrl+F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
-| Pipeline as code → editor | `Ctrl+Shift+E` | | |
+| Pipeline as code → editor | `Ctrl+Shift+E` | Help for the selected operator | `F1` |
+| Undo | `Ctrl+Z` | Redo | `Ctrl+Shift+Z` / `Ctrl+Y` |
 
 各アクションはメニュー・ツールバー・ボタンのいずれからも同じハンドラで呼ばれます（1 動作・複数入口）。
 

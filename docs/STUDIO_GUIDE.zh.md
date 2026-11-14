@@ -115,7 +115,7 @@ fullseye-studio             # 若已 pip install -e .，可用控制台脚本
 
 ## 键盘快捷键
 
-应用内可通过 **Help ▸ Keyboard shortcuts（F1）** 以表格形式查看全部快捷键（自文档化）。主要的（来自 `studio.py` 的 `act_*` 定义）:
+应用内可通过 **Help ▸ Keyboard shortcuts（Ctrl+F1）** 以表格形式查看全部快捷键（自文档化）。主要的（来自 `studio.py` 的 `act_*` 定义）:
 
 | 操作 | 快捷键 | 操作 | 快捷键 |
 |---|---|---|---|
@@ -127,9 +127,10 @@ fullseye-studio             # 若已 pip install -e .，可用控制台脚本
 | Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
-| Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
+| Keyboard shortcuts | `Ctrl+F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
-| Pipeline as code → editor | `Ctrl+Shift+E` | | |
+| Pipeline as code → editor | `Ctrl+Shift+E` | Help for the selected operator | `F1` |
+| Undo | `Ctrl+Z` | Redo | `Ctrl+Shift+Z` / `Ctrl+Y` |
 
 每个操作无论从菜单、工具栏还是按钮触发，都会调用同一个处理函数（一个动作、多个入口）。
 

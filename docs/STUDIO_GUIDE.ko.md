@@ -115,7 +115,7 @@ fullseye-studio             # pip install -e .가 되어 있다면 콘솔 스크
 
 ## 키보드 단축키
 
-앱 내에서는 **Help ▸ Keyboard shortcuts(F1)**로 전체 목록이 표로 표시됩니다(자체 문서화). 주요 항목(`studio.py`의 `act_*` 정의 기준):
+앱 내에서는 **Help ▸ Keyboard shortcuts(Ctrl+F1)**로 전체 목록이 표로 표시됩니다(자체 문서화). 주요 항목(`studio.py`의 `act_*` 정의 기준):
 
 | 동작 | 단축키 | 동작 | 단축키 |
 |---|---|---|---|
@@ -127,9 +127,10 @@ fullseye-studio             # pip install -e .가 되어 있다면 콘솔 스크
 | Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
-| Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
+| Keyboard shortcuts | `Ctrl+F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
-| Pipeline as code → editor | `Ctrl+Shift+E` | | |
+| Pipeline as code → editor | `Ctrl+Shift+E` | Help for the selected operator | `F1` |
+| Undo | `Ctrl+Z` | Redo | `Ctrl+Shift+Z` / `Ctrl+Y` |
 
 각 동작은 메뉴·툴바·버튼 중 어느 것에서 호출하든 동일한 핸들러가 실행됩니다(하나의 동작, 여러 개의 입구).
 
