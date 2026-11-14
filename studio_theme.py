@@ -289,6 +289,7 @@ QGroupBox {{ background:{p['bg1']}; border:1px solid {p['line']}; border-radius:
     margin-top:{d['inner'] + 8}px; padding:0px; }}
 QGroupBox::title {{ subcontrol-origin:margin; subcontrol-position:top left; left:8px; top:0px;
     padding:0px 6px; color:{p['title']}; font-size:11px; font-weight:700; {gcaps} }}
+QGroupBox[untitled="true"] {{ margin-top:0px; }}
 
 QLineEdit,QComboBox,QPlainTextEdit,QTextEdit,QTextBrowser,QListWidget,QTreeWidget,QTableWidget,QSpinBox {{
     background:{p['bg2']}; border:1px solid {p['line']}; border-radius:{r}px; padding:0px {u + 2}px;

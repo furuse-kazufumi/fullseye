@@ -499,6 +499,102 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "Run the code": {
+   "ja": "コードを実行",
+   "zh": "运行代码",
+   "tw": "執行程式碼",
+   "ko": "코드 실행",
+   "de": "Code ausführen",
+   "hi": "कोड चलाएँ"
+  },
+  "Continue to the next breakpoint": {
+   "ja": "次のブレークポイントまで続ける",
+   "zh": "继续到下一个断点",
+   "tw": "繼續到下一個中斷點",
+   "ko": "다음 중단점까지 계속",
+   "de": "Bis zum nächsten Haltepunkt fortsetzen",
+   "hi": "अगले ब्रेकपॉइंट तक जारी रखें"
+  },
+  "Step one line": {
+   "ja": "1 行進める",
+   "zh": "单步执行一行",
+   "tw": "逐行執行一行",
+   "ko": "한 줄 진행",
+   "de": "Eine Zeile weiter",
+   "hi": "एक पंक्ति आगे बढ़ें"
+  },
+  "Clear the run marks": {
+   "ja": "実行の印を消す",
+   "zh": "清除运行标记",
+   "tw": "清除執行標記",
+   "ko": "실행 표시 지우기",
+   "de": "Laufmarkierungen löschen",
+   "hi": "रन के निशान हटाएँ"
+  },
+  "Apply the code to the pipeline": {
+   "ja": "コードを処理手順に適用",
+   "zh": "把代码应用到处理流程",
+   "tw": "把程式碼套用到處理流程",
+   "ko": "코드를 처리 순서에 적용",
+   "de": "Code auf die Pipeline anwenden",
+   "hi": "कोड को pipeline पर लागू करें"
+  },
+  "Regenerate the code from the pipeline": {
+   "ja": "処理手順からコードを作り直す",
+   "zh": "根据处理流程重新生成代码",
+   "tw": "依處理流程重新產生程式碼",
+   "ko": "처리 순서에서 코드를 다시 만들기",
+   "de": "Code aus der Pipeline neu erzeugen",
+   "hi": "pipeline से कोड फिर से बनाएँ"
+  },
+  "Display in a new window": {
+   "ja": "新しい窓に表示",
+   "zh": "在新窗口中显示",
+   "tw": "在新視窗中顯示",
+   "ko": "새 창에 표시",
+   "de": "In neuem Fenster anzeigen",
+   "hi": "नई विंडो में दिखाएँ"
+  },
+  "Display in the current window": {
+   "ja": "今の窓に表示",
+   "zh": "在当前窗口中显示",
+   "tw": "在目前視窗中顯示",
+   "ko": "현재 창에 표시",
+   "de": "Im aktuellen Fenster anzeigen",
+   "hi": "मौजूदा विंडो में दिखाएँ"
+  },
+  "Remove the watch row": {
+   "ja": "監視式の行を消す",
+   "zh": "删除监视行",
+   "tw": "刪除監看列",
+   "ko": "감시 행 지우기",
+   "de": "Überwachungszeile entfernen",
+   "hi": "वॉच की पंक्ति हटाएँ"
+  },
+  "Insert into the pipeline": {
+   "ja": "処理手順に追加",
+   "zh": "插入处理流程",
+   "tw": "插入處理流程",
+   "ko": "처리 순서에 추가",
+   "de": "In die Pipeline einfügen",
+   "hi": "pipeline में जोड़ें"
+  },
+  "Run once (pipeline unchanged)": {
+   "ja": "1 回だけ実行(処理手順は変えない)",
+   "zh": "只运行一次(不改变处理流程)",
+   "tw": "只執行一次(不改變處理流程)",
+   "ko": "한 번만 실행(처리 순서는 그대로)",
+   "de": "Einmal ausführen (Pipeline unverändert)",
+   "hi": "एक बार चलाएँ (pipeline नहीं बदलता)"
+  },
+  "Operator help": {
+   "ja": "op のヘルプ",
+   "zh": "算子帮助",
+   "tw": "運算子說明",
+   "ko": "연산자 도움말",
+   "de": "Operatorhilfe",
+   "hi": "operator सहायता"
+  },
   "Work mode": {
    "ja": "作業モード",
    "zh": "工作模式",

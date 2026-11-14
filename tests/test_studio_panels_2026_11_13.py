@@ -93,7 +93,7 @@ def test_every_bar_string_is_translated_into_every_language():
     with open(path, encoding="utf-8") as fh:
         data = json.load(fh)
     langs = set(data["languages"]) - {"en"}
-    assert len(langs) == 6 and len(studio_panels.STRINGS) == 31
+    assert len(langs) == 6 and len(studio_panels.STRINGS) == 43
     for text in studio_panels.STRINGS:
         row = data["strings"].get(text)
         assert row is not None, "no i18n row for %r" % text
@@ -272,11 +272,11 @@ def test_every_panel_becomes_a_separate_window_and_docks_back(tmp_path, monkeypa
         # right-click menu of a bar button: two entries, the second one floats / docks
         menu = st["panel_menu"]("operators", st["buttons"]["operators"], QtCore.QPoint(3, 3))
         texts = [a.text() for a in menu.actions()]
-        assert texts == ["Hide", "Separate window"]
+        assert texts == ["Hide: Operators", "Separate window: Operators"]          # D111: which panel
         menu.actions()[1].trigger(); _pump(app, 0.1); menu.close()
         assert win._docks["operators"].isFloating()
         menu = st["panel_menu"]("operators", st["buttons"]["operators"], QtCore.QPoint(3, 3))
-        assert [a.text() for a in menu.actions()] == ["Hide", "Dock in the main window"]
+        assert [a.text() for a in menu.actions()] == ["Hide: Operators", "Dock in the main window: Operators"]
         menu.actions()[0].trigger(); _pump(app, 0.1); menu.close()
         assert win._docks["operators"].isHidden()
         # "Dock all panels" from the layout button
@@ -764,13 +764,15 @@ def test_every_panel_has_a_title_band_with_a_menu_button_one_line_high(tmp_path,
             assert bar.b_menu.focusPolicy() == QtCore.Qt.TabFocus, key                 # reachable with Tab
             assert bar.key_menu.shortcut().toString() == "Alt+M", key
             assert bar.key_menu.shortcutContext() == QtCore.Qt.WidgetWithChildrenShortcut, key  # only inside this panel
-            assert bar.key_menu in win._docks[key].actions() and bar.key_menu.text() == title + " \u2014 Panel menu", key
+            assert bar.key_menu in win._docks[key].actions(), key
+            assert bar.key_menu.text() == (title + " \u2014 Panel menu").replace("&", "&&"), key   # D14: '&' is shown
             # order on the band: name, [status], separate window, hide, menu at the right end (D105)
             xs = [bar.label.x()] + [b.x() for b in bar.buttons()]
             assert xs == sorted(xs) and len(set(xs)) == len(xs) and xs[-1] == bar.b_menu.x(), key
+            left = -1 if bar.label.isHidden() else bar.label.x()       # D59: tabbed = the tab carries the name
             for item in bar.status:
                 if not item["label"].isHidden():
-                    assert bar.label.x() < item["label"].x() < bar.buttons()[0].x(), (key, item["id"])
+                    assert left < item["label"].x() < bar.buttons()[0].x(), (key, item["id"])
     finally:
         _close(app, win)
 
@@ -792,10 +794,11 @@ def test_the_menu_holds_what_the_panel_registered_then_the_common_entries(tmp_pa
             acts = bar.b_menu.menu().actions()
             own = [a for a in acts if a in [win._actions[n] for n in names if n]]
             assert own == [win._actions[n] for n in names if n], key                  # the SAME QAction objects, in order
-            tail = acts[-7:]                                                          # what every panel has
-            assert tail[0:3] == [st["strip_actions"][m] for m in studio_panels.STRIP_MODES], key
-            assert tail[3].isSeparator() and tail[4] is st["float_actions"][key], key
-            assert tail[5].text() == "Hide" and tail[6] is st["layout_actions"][0][1], key
+            tail = acts[-3:]                                                          # what every panel has: its own two
+            assert tail[0].isSeparator() and tail[1] is st["float_actions"][key], key
+            assert tail[2].text() == "Hide" and tail[2] is bar.a_hide, key
+            everywhere = list(st["strip_actions"].values()) + [st["layout_actions"][0][1]]   # D98: not in a panel's menu
+            assert not [a for a in acts if a in everywhere], key
             total += len(own)
         assert total == 3 + 8 + 5 + 3
         ops = st["titles"]["operators"].actions                                   # the strip's buttons follow (A2)
@@ -849,7 +852,8 @@ def test_every_panel_menu_offers_three_to_eight_of_its_own_and_one_qaction_per_f
         act.trigger(); _pump(app, 0.05)
         assert clicks == [1]                                                         # a disabled button is not pressed
         name = studio_panels.button_action(win, pb["program"]["apply"]).text()
-        assert name == "Apply" and len(studio_panels.button_action(win, pb["program"]["continue"]).text()) <= 32
+        assert name == "Apply the code to the pipeline"                              # D98: the function's own short name
+        assert len(studio_panels.button_action(win, pb["program"]["continue"]).text()) <= 32
         # one function, one QAction: the bar's layout menu uses the Window menu's own actions
         layout = dict(st["layout_actions"])
         assert layout[studio_panels.S_RESET] is win._actions["reset_layout"]
@@ -862,7 +866,7 @@ def test_every_panel_menu_offers_three_to_eight_of_its_own_and_one_qaction_per_f
             return [a for a in b.b_menu.menu().actions() if not a.isSeparator()][len(b.dropped):]
         bar.fill_menu(); first = kept(bar)
         bar.fill_menu(); second = kept(bar)
-        assert len(second) >= 3 + 5 and first == second and bar.a_hide in second       # Hide is made once, not per opening
+        assert len(second) >= 5 + 2 and first == second and bar.a_hide in second       # Hide is made once, not per opening
         # "Reset panel layout" from a panel menu really resets (image + code)
         win._docks["pipeline"].show(); _pump(app, 0.1)
         layout[studio_panels.S_RESET].trigger(); _pump(app, 0.3)
@@ -874,7 +878,7 @@ def test_every_panel_menu_offers_three_to_eight_of_its_own_and_one_qaction_per_f
         assert len(names) >= 7 * studio_panels.MENU_OWN_MIN
         english = [n for n in names if all(ord(ch) < 128 for ch in n)]
         assert english == [], english                                                 # no English left in the Japanese menus
-        assert studio_panels.button_action(win, pb["program"]["apply"]).text() == "\u9069\u7528"     # cut by columns
+        assert studio_panels.button_action(win, pb["program"]["apply"]).text() == "コードを処理手順に適用"
     finally:
         win._apply_language("en")
         _close(app, win)

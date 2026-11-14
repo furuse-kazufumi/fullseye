@@ -63,10 +63,15 @@ def _show_all(app, win):
 
 
 def _menu_actions(menu):
+    """Every entry of ``menu`` and of its submenus. The submenus are found as the menu's children, never
+    through QAction.menu(): with PySide6 6.11.1 that call lets go of the submenu when the action's wrapper
+    is collected, and the window's own reference to it (View > Colour scheme ...) is dead afterwards."""
+    from PySide6 import QtWidgets
+    subs = {m.menuAction(): m for m in menu.findChildren(QtWidgets.QMenu)}
     out = []
     for a in menu.actions():
-        if a.menu() is not None:
-            out += _menu_actions(a.menu())
+        if a in subs:
+            out += _menu_actions(subs[a])
         elif not a.isSeparator():
             out.append(a)
     return out
@@ -824,5 +829,180 @@ def test_top_band_text_buttons_only_run_and_examples(tmp_path, monkeypatch):
             assert all(a.toolTip().count("—") == 1 for a, _n in drawn)
         finally:
             win._apply_language("en"); _pump(app, 0.2)
+    finally:
+        _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# 1.2-B of the panel frame, part 1 — the title band and the menus: D14 D59 D98 D100 D111
+# --------------------------------------------------------------------------- #
+def _shown_tab_bars(win):
+    """The tab rows of tabbed panels that are on screen (Qt parks an unused one outside the window)."""
+    from PySide6 import QtWidgets
+    return [b for b in win.findChildren(QtWidgets.QTabBar)
+            if b.parentWidget() is win and b.isVisible() and win.rect().intersects(b.geometry())]
+
+
+def test_ampersand_is_shown_in_menus_tabs_bands_and_group_titles(tmp_path, monkeypatch):
+    from PySide6 import QtWidgets
+    assert studio_panels.label_text("A & B") == "A && B" and studio_panels.label_text(None) == ""
+    assert studio_panels.plain_text("Separate window: Variables && Objects") == "Separate window: Variables & Objects"
+    assert studio_panels.plain_text("&File") == "File" and studio_panels.plain_text("A && &B") == "A & B"
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        st = win._panels
+        amp = [k for k, d in win._docks.items() if "&" in d.windowTitle()]
+        assert amp == ["variables"]                                         # Variables & Objects (en)
+        for k in amp:
+            title = win._docks[k].windowTitle()
+            assert win._docks[k].toggleViewAction().text() == title.replace("&", "&&")
+            assert st["float_actions"][k].text().endswith(title.replace("&", "&&"))
+            assert st["titles"][k].key_menu.text().startswith(title.replace("&", "&&"))
+            assert "&" in st["titles"][k].label.text()                      # the band's label shows it
+        shown = [a.text() for a in _menu_actions(win._menu_panels)]
+        assert len(shown) >= 14
+        assert not [t for t in shown if t.startswith("Float: ")], shown   # D100: the old five are gone
+        assert len([t for t in shown if t.startswith("Separate window: ")]) == len(win._docks) == 7   # one word
+        assert all("& " not in t.replace("&&", "") for t in shown), shown  # no lone '&' left to be eaten
+        groups = [g.title() for d in win._docks.values() for g in d.findChildren(QtWidgets.QGroupBox)]
+        lone = [t for t in groups if "& " in t.replace("&&", "")]
+        assert len(groups) >= 6 and not lone, lone                          # EXPORT & I/O, DISPLAY & PERCEPTION
+        assert sum("&&" in t for t in groups) >= 2
+        win._apply_language("ja"); win._apply_language("en"); _pump(app, 0.3)   # the language pass writes them again
+        groups = [g.title() for d in win._docks.values() for g in d.findChildren(QtWidgets.QGroupBox)]
+        assert sum("&&" in t for t in groups) >= 2 and not [t for t in groups if "& " in t.replace("&&", "")]
+        got = {}
+
+        def look():                                                         # the palette is modal: read it, close it
+            got["labels"] = list(win._palette["labels"])
+            for d in win.findChildren(QtWidgets.QDialog):
+                if d.isVisible():
+                    d.reject()
+        from PySide6 import QtCore
+        QtCore.QTimer.singleShot(300, look)
+        win._actions["palette"].trigger()                                   # returns when look() closed it
+        hit = [r for r in got["labels"] if "Variables" in r and "Objects" in r]
+        assert hit and all("Variables & Objects" in r for r in hit), hit    # what the menu shows, not "&&"
+        assert len(got["labels"]) >= 100
+    finally:
+        _close(app, win)
+
+
+def test_tabbed_panel_band_drops_the_name_the_tab_carries_it(tmp_path, monkeypatch):
+    from PySide6 import QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        for k in ("operators", "pipeline", "variables"):
+            win._docks[k].show()
+        _pump(app, 0.4)
+        st = win._panels
+        tabbed = [k for k in ("operators", "pipeline", "variables") if win.tabifiedDockWidgets(win._docks[k])]
+        assert len(tabbed) == 3
+        for k in tabbed:
+            assert st["titles"][k].label.isHidden(), k                      # D59: the tab says the name
+        assert not st["titles"]["program"].label.isHidden()                 # alone: the band names it
+        studio_panels.toggle_float(win, "variables", True); _pump(app, 0.3)
+        assert not st["titles"]["variables"].label.isHidden()               # a separate window has no tab
+        win._docks["variables"].hide(); win._docks["pipeline"].hide(); _pump(app, 0.4)
+        assert _shown_tab_bars(win) == []
+        assert not st["titles"]["operators"].label.isHidden()               # no tab row any more: the band names it again
+        # a group title that only repeats the panel's name is gone (band + tab + frame said it three times)
+        ops = {g.property("fsTitleWas"): g for g in win._docks["operators"].findChildren(QtWidgets.QGroupBox)
+               if g.property("fsTitleWas")}
+        assert list(ops) == ["OPERATORS"] and ops["OPERATORS"].title() == "" and ops["OPERATORS"].property("untitled")
+        titles = [g.title() for d in win._docks.values() for g in d.findChildren(QtWidgets.QGroupBox)]
+        names = {"".join(c for c in d.windowTitle().casefold() if c.isalnum()) for d in win._docks.values()}
+        assert len(titles) >= 6 and not [t for t in titles if "".join(c for c in t.casefold() if c.isalnum()) in names]
+        assert sum(1 for t in titles if t) >= 5                             # the others keep theirs
+        win._apply_language("ja"); _pump(app, 0.4)                          # ja: the group says something else
+        try:
+            assert ops["OPERATORS"].title() and ops["OPERATORS"].title() != win._docks["operators"].windowTitle()
+            assert not ops["OPERATORS"].property("untitled")
+        finally:
+            win._apply_language("en"); _pump(app, 0.3)
+        assert ops["OPERATORS"].title() == ""
+    finally:
+        _close(app, win)
+
+
+def test_panel_menu_holds_only_this_panels_things_under_short_names(tmp_path, monkeypatch):
+    import re
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        st = win._panels
+        common = set(st["strip_actions"].values()) | set(st["overflow_actions"].values()) | {
+            a for _t, a in st["layout_actions"]}
+        assert len(common) >= 7
+        for key, bar in st["titles"].items():
+            bar.fill_menu()
+            acts = _menu_actions(bar.b_menu.menu())
+            assert not (set(acts) & common), key                            # D98: the window-wide ones are elsewhere
+            assert acts[-2:] == [st["float_actions"][key], bar.a_hide], key
+        every = list(st["strip_actions"].values()) + list(st["overflow_actions"].values())
+        view = _menu_actions(win._menus["view"])
+        assert all(a in view for a in every)
+        layout = win._layouts_menu                                          # Window > Layout: the settings for all
+        assert all(a in layout.actions() for a in every)
+        win._rebuild_layouts_menu()                                         # studio.py refills that menu ...
+        assert not any(a in layout.actions() for a in every)
+        layout.aboutToShow.emit()                                           # ... and they are back when it opens
+        assert all(a in layout.actions() for a in every)
+        assert len([a for a in layout.actions() if a in every]) == len(every)   # once each
+        # entries made from buttons carry the function's own short name, not the button's whole hint
+        named = 0
+        for (panel, name), text in studio_panels.BUTTON_NAMES.items():
+            button = win._panel_buttons[panel][name]
+            act = st["button_actions"].get(button)
+            if act is None:                                                 # the window has a QAction of its own for it
+                assert st["strip_action_of"][button].text().strip(), (panel, name)
+                continue
+            assert act.text() == text.replace("&", "&&"), (panel, name, act.text())
+            assert act.text() != button.toolTip().split("\n")[0] and len(act.text()) <= 40
+            assert button.toolTip() and act.toolTip() == button.toolTip()   # the whole hint stays the entry's hint
+            bar = st["titles"][panel]
+            bar.fill_menu()
+            assert act in _menu_actions(bar.b_menu.menu()), (panel, name)
+            named += 1
+        assert named >= 9
+        made = [a for a in st["button_of"] if a.text()]
+        assert len(made) >= 12 and all(len(a.text()) <= 40 and len(a.text().split()) >= 2 for a in made), [
+            a.text() for a in made]                                         # no bare "Apply" / "Sync", no sentence
+        win._apply_language("ja"); _pump(app, 0.4)
+        try:
+            for (panel, name), _text in studio_panels.BUTTON_NAMES.items():
+                act = st["button_actions"].get(win._panel_buttons[panel][name])
+                if act is not None:
+                    assert re.search(r"[぀-ヿ一-鿿]", act.text()), (panel, name, act.text())
+        finally:
+            win._apply_language("en"); _pump(app, 0.3)
+    finally:
+        _close(app, win)
+
+
+def test_bar_right_click_names_the_panel_and_never_hides_the_code(tmp_path, monkeypatch):
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        st = win._panels
+        seen = 0
+        for key in ("variables", "program"):
+            st["panel_menu"](key, st["buttons"][key], st["buttons"][key].rect().center())
+            menu = st["open_menu"]
+            texts = [a.text() for a in menu.actions()]
+            name = win._docks[key].windowTitle().replace("&", "&&")
+            assert len(texts) == 2 and all(t.endswith(": " + name) for t in texts), texts   # D111
+            if key == "program":
+                assert texts[0].startswith("Show")                         # D104: never "Hide" on the code
+                menu.actions()[0].trigger(); _pump(app, 0.1)
+                assert win._docks["program"].isVisible()
+            else:
+                assert texts[0].startswith("Show") and win._docks[key].isHidden()
+                menu.actions()[0].trigger(); _pump(app, 0.2)                # it does what it says
+                assert win._docks[key].isVisible()
+                st["panel_menu"](key, st["buttons"][key], st["buttons"][key].rect().center())
+                assert st["open_menu"].actions()[0].text() == "Hide: " + name
+                st["open_menu"].close()
+            menu.close()
+            seen += 1
+        assert seen == 2
     finally:
         _close(app, win)

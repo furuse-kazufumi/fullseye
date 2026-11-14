@@ -21,6 +21,7 @@ Qt is imported inside the functions, so the table and geometry helpers work with
 from __future__ import annotations
 
 import os
+import re
 
 import studio_layout
 import studio_theme
@@ -251,6 +252,17 @@ def _glyph(name, colour, px=16):
     return pm
 
 
+def label_text(text):
+    """A text for a menu entry / button label: '&' is shown, not taken as the key letter (D14, P15-3)."""
+    return (text or "").replace("&", "&&")
+
+
+def plain_text(text):
+    """What a menu entry's text shows: the key-letter marks gone, '&&' read as '&' (for lists that show
+    an action's name outside a menu: the palette)."""
+    return (text or "").replace("&&", "\0").replace("&", "").replace("\0", "&")
+
+
 def tool_tip(name, effect, key=""):
     """The one shape of a hint (P04-5): "name — what happens (key)". The key comes from the action."""
     name = (name or "").replace("&", "").replace("\u2026", "").strip()
@@ -340,6 +352,36 @@ def fix_hand(button):
             button.unsetCursor()
     except RuntimeError:                         # going away with its window
         pass
+
+
+_LONE_AMP = re.compile(r"(?<!&)&(?=\s)")       # an '&' written as a word ("A & B"): never a key letter
+
+
+def drop_repeated_titles(win):
+    """D59: a group box whose title only repeats its panel's name loses the title (band + tab + frame
+    said the same thing three times). D14: a title's lone '&' is shown. Called by refresh, after the
+    language pass wrote the titles. Returns the number of groups without a title now."""
+    from PySide6 import QtWidgets   # noqa: PLC0415
+
+    def norm(text):
+        return "".join(ch for ch in (text or "").casefold() if ch.isalnum())
+
+    n = 0
+    for dock in win._docks.values():
+        name = norm(dock.windowTitle())
+        for box in dock.findChildren(QtWidgets.QGroupBox):
+            title = box.title()
+            if title and _LONE_AMP.search(title):      # D14: "EXPORT & I/O" - a word, not a key letter
+                box.setTitle(_LONE_AMP.sub("&&", title))
+            if title and norm(title) == name:
+                box.setProperty("fsTitleWas", title)
+                box.setTitle("")
+            bare = not box.title() and bool(box.property("fsTitleWas"))
+            if bool(box.property("untitled")) != bare:
+                box.setProperty("untitled", bare)      # the style sheet takes the title's room away
+                box.style().unpolish(box); box.style().polish(box)
+            n += 1 if bare else 0
+    return n
 
 
 def _icon(name, off, on=None):
@@ -1572,6 +1614,8 @@ def relayout(win):
                 row = rows[id(bar)] = TabRow(win, bar)
             row.place()
     st["tab_sides"] = areas
+    for bar in st["titles"].values():               # tabbed or not: the band's name follows (D59)
+        bar.follow()
     again = st.pop("restore_again", None) if win.isVisible() else None
     if again is not None:                        # the sizes as saved, now that every strip has its side
         win._applying_layout = True
@@ -2083,7 +2127,7 @@ def button_action(win, button):
         act.triggered.connect(lambda _c=False, b=button: b.click() if b.isEnabled() else None)
         cache[button] = act
         st.setdefault("button_of", {})[act] = button
-    _copy_button(button, act)
+    _copy_button(button, act, st.get("tr"))
     return act
 
 
@@ -2102,12 +2146,15 @@ def short_name(tip, limit=32):
     return line[:min(cuts)].strip() if cuts else line
 
 
-def _copy_button(button, act):
+def _copy_button(button, act, tr=None):
     text = (button.text() or "").replace("&", "").strip()
     tip = (button.toolTip() or "").strip()
-    if not text or text in ("\u2026", "+", "\u2212", "-"):           # an icon / a sign: the tool tip names it
+    own = button.property("fsName")              # D98: the function's own short name (BUTTON_NAMES)
+    if own:
+        text = (tr or (lambda s: s))(str(own))
+    elif not text or text in ("\u2026", "+", "\u2212", "-"):         # an icon / a sign: the tool tip names it
         text = short_name(tip) or button.accessibleName() or text
-    act.setText(text)
+    act.setText(label_text(text))
     act.setToolTip(tip or text)
     act.setStatusTip(tip.split("\n")[0] if tip else text)
     if button.property("accent"):              # drawn for the accent ground: no icon in a menu (it would vanish)
@@ -2122,14 +2169,33 @@ def sync_button_actions(win):
     """Copy name / tip / icon / enabled state from every button into its action (a menu is about to
     show them; the language or the state may have changed). Returns the number of actions synced."""
     n = 0
+    tr = _state(win).get("tr")
     for act, button in list((_state(win).get("button_of") or {}).items()):
         try:
-            _copy_button(button, act)
+            _copy_button(button, act, tr)
             n += 1
         except RuntimeError:                     # the button was destroyed with its panel
             pass
     return n
 
+
+#: D98: the name of the menu entry made from a panel button that has no QAction (P15-4: one name per
+#: function - not the button's whole hint, not one bare word). {(panel, button name in win._panel_buttons): name}
+BUTTON_NAMES = {
+    ("program", "run"): "Run the code",
+    ("program", "continue"): "Continue to the next breakpoint",
+    ("program", "step"): "Step one line",
+    ("program", "reset"): "Clear the run marks",
+    ("program", "apply"): "Apply the code to the pipeline",
+    ("program", "sync"): "Regenerate the code from the pipeline",
+    ("variables", "display_new"): "Display in a new window",
+    ("variables", "display_here"): "Display in the current window",
+    ("variables", "watch_remove"): "Remove the watch row",
+    ("operators", "insert"): "Insert into the pipeline",
+    ("operators", "run_once"): "Run once (pipeline unchanged)",
+    ("operators", "help"): "Operator help",
+}
+STRINGS = STRINGS + tuple(BUTTON_NAMES.values())
 
 #: How many of its own functions a panel's menu offers (user, 2026-11-13: "3 to 8")
 MENU_OWN_MIN, MENU_OWN_MAX = 3, 8
@@ -2213,6 +2279,10 @@ def _default_registrations(win):
 
     strips = getattr(win, "_panel_strips", None) or {}         # {key: (row, body)} - studio.py declares them
     own_buttons = getattr(win, "_panel_buttons", None) or {}
+    for (panel, name), text in BUTTON_NAMES.items():           # D98: the short name of each button's menu entry
+        b = (own_buttons.get(panel) or {}).get(name)
+        if b is not None:
+            b.setProperty("fsName", text)
 
     def equiv(key):
         """A strip button whose function the window already has as a QAction (same name in win._actions)."""
@@ -2285,9 +2355,12 @@ def refresh(win, tr, lang="en"):
         if action not in st.get("shared_actions", ()):      # the Window menu's own are named by studio.py
             action.setText(tr(text))
     for key, action in st["float_actions"].items():
-        action.setText("%s: %s" % (tr(S_FLOAT), win._docks[key].windowTitle()))
+        action.setText("%s: %s" % (tr(S_FLOAT), label_text(win._docks[key].windowTitle())))
     for key, action in (st.get("principal_actions") or {}).items():
-        action.setText(win._docks[key].windowTitle())
+        action.setText(label_text(win._docks[key].windowTitle()))
+    for key, dock in win._docks.items():        # Qt names the show / hide entry after the title: keep its '&'
+        dock.toggleViewAction().setText(label_text(dock.windowTitle()))
+    drop_repeated_titles(win)
     for bar in st["titles"].values():
         bar.restyle()
     for mode, action in st["strip_actions"].items():
@@ -2426,7 +2499,7 @@ def install(win, tr, settings=None):
             """Too narrow for everything: whole status items go, lowest priority first. The name and
             the buttons stay to the last."""
             gap = self.layout().spacing()
-            fixed = self.label.sizeHint().width() + 10 + 2 + 1
+            fixed = (0 if self.label.isHidden() else self.label.sizeHint().width()) + 10 + 2 + 1
             for b in self.buttons():
                 fixed += b.width() + gap
             room = self.width() - fixed - 8
@@ -2466,12 +2539,10 @@ def install(win, tr, settings=None):
                     menu.addAction(act)
             if self.actions:
                 menu.addSeparator()
-            for mode in STRIP_MODES:
-                menu.addAction(st["strip_actions"][mode])
-            menu.addSeparator()
+            # D98: only what is this panel's. The settings for every panel (tools and tabs, when they do not
+            # fit, reset the layout) are in View, in Window > Layout, in the bar's layout menu and the palette
             menu.addAction(st["float_actions"][self.key])
             menu.addAction(self.a_hide)
-            menu.addAction(st["layout_actions"][0][1])           # Reset panel layout
 
         def restyle(self):
             st = win._panels
@@ -2488,7 +2559,7 @@ def install(win, tr, settings=None):
                 b.setFixedSize(side, side); b.setIconSize(QtCore.QSize(12, 12))
             name = "%s \u2014 %s (Alt+M)" % (text, _tr(S_MENU))
             self.b_menu.setToolTip(name); self.b_menu.setAccessibleName("%s \u2014 %s" % (text, _tr(S_MENU)))
-            self.key_menu.setText("%s \u2014 %s" % (text, _tr(S_MENU)))
+            self.key_menu.setText(label_text("%s \u2014 %s" % (text, _tr(S_MENU))))
             self.label.setAccessibleName(text)
             for item in self.status:
                 item["now"] = None                   # texts are in the language of the moment: ask again
@@ -2504,6 +2575,13 @@ def install(win, tr, settings=None):
             st = win._panels
             p = studio_theme.PALETTES[studio_theme.current_name()]
             floating = self.dock.isFloating()
+            # D59: behind / beside a tab that is SHOWN the tab names the panel, the band does not. (Qt also
+            # lists the hidden panels of the group: with those alone there is no tab row, so the band names it.)
+            tabbed = (not floating and not self.dock.isHidden() and any(
+                not d.isHidden() and not d.isFloating() for d in win.tabifiedDockWidgets(self.dock)))
+            if self.label.isHidden() != tabbed:
+                self.label.setVisible(not tabbed)
+                self.fit()
             self.b_float.setIcon(_icon("dock" if floating else "float", p["muted"]))
             tip = st["tr"](S_DOCK if floating else S_FLOAT)
             self.b_float.setToolTip(tip); self.b_float.setAccessibleName(tip)
@@ -2559,13 +2637,20 @@ def install(win, tr, settings=None):
         _tr = win._panels["tr"]
         dock = win._docks[key]
         menu = QtWidgets.QMenu(button)
-        a_vis = menu.addAction(_tr(S_SHOW if dock.isHidden() else S_HIDE))
-        a_float = menu.addAction(_tr(S_DOCK if dock.isFloating() else S_FLOAT))
+        name = label_text(dock.windowTitle())
+        if key in PRINCIPAL:                         # D104: a principal is only brought forward
+            a_vis = menu.addAction("%s: %s" % (_tr(S_SHOW), name))
+        else:
+            a_vis = menu.addAction("%s: %s" % (_tr(S_SHOW if dock.isHidden() else S_HIDE), name))
+        a_float = menu.addAction("%s: %s" % (_tr(S_DOCK if dock.isFloating() else S_FLOAT), name))
 
         def flip():
-            dock.setVisible(dock.isHidden())
-            if not dock.isHidden():
-                dock.raise_()
+            if key in PRINCIPAL:
+                show_principal(win, key)
+            else:
+                dock.setVisible(dock.isHidden())
+                if not dock.isHidden():
+                    dock.raise_()
             sync(win)
         a_vis.triggered.connect(lambda _c=False: flip())
         a_float.triggered.connect(lambda _c=False: (toggle_float(win, key), sync(win)))
@@ -2663,6 +2748,17 @@ def install(win, tr, settings=None):
         view_menu.addSeparator()
         for a in list(st["strip_actions"].values()) + [None] + list(st["overflow_actions"].values()):
             view_menu.addSeparator() if a is None else view_menu.addAction(a)
+    layouts = getattr(win, "_layouts_menu", None)
+    if layouts is not None:                      # D98: the settings for every panel live in Window > Layout
+
+        def settle(menu=layouts):
+            if st["strip_actions"]["auto"] in menu.actions():
+                return
+            for a in [None] + list(st["strip_actions"].values()) + [None] + list(st["overflow_actions"].values()):
+                menu.addSeparator() if a is None else menu.addAction(a)
+        layouts.aboutToShow.connect(settle)
+        settle()
+        st["settle_layout_menu"] = settle
 
     class Follow(QtCore.QObject):
         """A panel or the window changed size / place: look again, once per event-loop turn."""

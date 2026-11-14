@@ -11966,7 +11966,7 @@ def build_window(model=None):
         # actions first, then samples, recent files, then every operator — run by name,
         # keyboard-only. Disabled (context-unavailable) actions are skipped so the palette
         # never offers a command that would silently no-op.
-        items = [("▸ " + a.text().replace("…", "").strip(), a.trigger)
+        items = [("▸ " + studio_panels.plain_text(a.text()).replace("…", "").strip(), a.trigger)
                  for a in win._actions.values() if a is not act_palette and a.isEnabled()]
         items += [("sample: " + nm, (lambda idx=i + 1: load_sample(idx)))
                   for i, nm in enumerate(recipes.names())]
@@ -15131,13 +15131,7 @@ def build_window(model=None):
     win._rebuild_layouts_menu = _rebuild_layouts_menu
     win._layouts_menu = layouts_menu
 
-    # per-panel float as flat items in Panels (avoids a 3rd nesting level) + reset
-    menu_panels.addSeparator()
-    for _k, _lbl in (("operators", "Operators"), ("pipeline", "Pipeline · Parameters"),
-                     ("display", "Display · Analysis"), ("program", "Program (code)"),
-                     ("variables", "Variables & Objects")):
-        menu_panels.addAction("Float: %s" % _lbl).triggered.connect(
-            lambda _=False, k=_k: float_panel(k, True))
+    # (D100: the per-panel "Separate window: X" entries are studio_panels' - one per panel, one word)
     menu_panels.addSeparator()
     menu_panels.addAction(act_reset_layout)
     # graphics detach/reattach live under the Graphics windows submenu
