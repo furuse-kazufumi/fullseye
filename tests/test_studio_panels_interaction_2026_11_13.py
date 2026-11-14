@@ -178,7 +178,8 @@ def test_title_band_order_menu_is_rightmost(tmp_path, monkeypatch):
                     else ["dock_title_float", "dock_title_close", "dock_title_menu"])
             assert names == want, (key, names)
             last = [lay.itemAt(i).widget() for i in range(lay.count()) if lay.itemAt(i).widget() is not None][-1]
-            assert last is bar.b_menu and last.text() == "≡", key
+            assert last is bar.b_menu and last.text() == "" and not last.icon().isNull(), key   # D130: drawn
+            assert last.accessibleName().endswith(win._panels["tr"](studio_panels.S_MENU)), key
             win._docks[key].raise_(); _pump(app, 0.15)                          # a tab in front, to measure it
             if not win._docks[key].visibleRegion().isEmpty():
                 xs = [b.x() for b in bar.buttons()]
