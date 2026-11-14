@@ -137,7 +137,7 @@ _INTERNAL = {
     #   一覧と検索・対訳)、studio_keymap_qt 8(install / apply_keymap / get / 設定の窓と記録の欄 / 制御役 /
     #   窓の組み込みのキーを集める collect_fixed / キーの出来事の読み方 event_keys)。
     "studio_editops": 43, "studio_editops_qt": 8,
-    "studio_keymap": 28, "studio_keymap_qt": 8,
+    "studio_keymap": 29, "studio_keymap_qt": 8,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -380,7 +380,9 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-13 feat/studio-keymap レビュー 1 回目の直し C1(dropped_commands: 起動で捨てた上書きを数える): 1389 → 1390(+1、この機械の実測)。studio_keymap 25 → 26・studio_keymap_qt 8 → 8。
 #   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1390
 # 2026-11-13 feat/studio-keymap B5 1.2-B(family / same_key_different_family: 同じキー・違う意味を数える G13(b')): 1390 → 1392(+2、この機械の実測)。studio_keymap 26 → 28・studio_keymap_qt 8 → 8。
-_HIDDEN_FUNCTIONS_TODAY = 1392
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1392
+# 2026-11-15 キーの設定(D123: tooltip_text): 1392 → 1393(+1、この機械の実測)。studio_keymap 28 → 29・studio_keymap_qt 8 → 8。
+_HIDDEN_FUNCTIONS_TODAY = 1393
 
 
 def _hidden_total():

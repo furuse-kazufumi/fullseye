@@ -1140,6 +1140,25 @@ def retarget_text(text: str, pairs: Iterable, lang: str = "en") -> str:
     return "".join(out)
 
 
+def tooltip_text(name: str, effect: str = "", keys: Sequence = (), lang: str = "en") -> str:
+    """ボタンのツールヒント「名前 — 何が起きるか (キー)」(設計書 P04-5・門 G04(e')。キーは文に書かず、ここで付ける)。
+
+    ``name`` の末尾の ``…`` と、末尾に括弧で書いてある同じキー(``Run all (F5 / Ctrl+R)``)は外す。``effect`` が無い・
+    名前と同じなら「名前 (キー)」、キーが無ければ括弧を付けない。``effect`` が同じキーの括弧で終わっていれば重ねない。
+    """
+    shown = " / ".join(display_key(k, lang) for k in keys)
+    tail = "(%s)" % shown
+    name = (name or "").replace("...", "…").strip()
+    if shown and name.endswith(tail):
+        name = name[:-len(tail)].rstrip()
+    name = name.rstrip("…").rstrip()
+    effect = (effect or "").strip()
+    text = "%s — %s" % (name, effect) if effect and effect != name else name
+    if not shown or text.endswith(tail):
+        return text
+    return "%s %s" % (text, tail)
+
+
 def text_pairs(keymap: Keymap, cid: str) -> list:
     """コマンド ``cid`` の表示の文に当てる ``(既定のキー, 今のキー)`` の組(自分の分と ``mentions`` の分)。"""
     c = BY_ID[cid]

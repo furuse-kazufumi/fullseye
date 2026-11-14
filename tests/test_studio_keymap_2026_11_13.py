@@ -745,7 +745,9 @@ def test_switching_the_language_keeps_the_keys_and_rewrites_the_texts(win, ctl, 
     assert _keys_of(a) == ("F8",) and "F8" in a.text() and "F5" not in a.text()
     assert a.text() == km.retarget_text(ja_default, [(("F5", "Ctrl+R"), ("F8",))], "ja")
     assert win._actions["keyboard_settings"].text() == km.load_table()[km.ACT_SETTINGS]["ja"]
-    assert "F8" in win._actions["run_all"].toolTip() and "Ctrl+R" not in win._actions["run_all"].toolTip()
+    tip = win._actions["run_all"].toolTip()                               # 帯のボタン: 末尾に自分のキー(D123)
+    assert "F8" in tip and "F5" not in tip and not re.search(r"Ctrl\+R(?!eturn)", tip)   # 相手(dbg_run)のキーは今のキー
+    assert tip.endswith(" (Ctrl+Return)")
     win._lang_actions["en"].trigger()
     _pump(0.05)
     assert a.text() == "Run all (F8)"
@@ -2078,3 +2080,84 @@ def test_f1_in_the_stage_list_finds_the_stage_without_a_model(app, studio_mod, m
     finally:
         _close(w)
         eq.apply_bindings(None)
+
+
+# --------------------------------------------------------------------------- #
+# B5 [キー] 1.2-B D123(門 G04(e')): 帯のボタンのツールヒント =「名前 — 何が起きるか (キー)」。キーは登録簿から
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("name, effect, keys, lang, want", [
+    ("Open image…", "Load an image file", ("Ctrl+O",), "en", "Open image — Load an image file (Ctrl+O)"),
+    ("Export...", "Export as code", ("Ctrl+E", "F12"), "de", "Export — Export as code (Strg+E / F12)"),
+    ("Synthetic demo", "Load the demo", (), "en", "Synthetic demo — Load the demo"),
+    ("Run all (F5 / Ctrl+R)", "Show the result", ("F5", "Ctrl+R"), "en", "Run all — Show the result (F5 / Ctrl+R)"),
+    ("Fit", "", ("Ctrl+0",), "en", "Fit (Ctrl+0)"),
+    ("Fit", "Fit", ("Ctrl+0",), "en", "Fit (Ctrl+0)"),
+    ("Zoom in", "Make it bigger (Ctrl+=)", ("Ctrl+=",), "en", "Zoom in — Make it bigger (Ctrl+=)"),
+    ("Fit", "", (), "en", "Fit"),
+])
+def test_tooltip_text(name, effect, keys, lang, want):
+    assert km.tooltip_text(name, effect, keys, lang) == want
+
+
+_TIP_FORM = re.compile(r"^[^—]+ — .+$")                                    # 設計書 G04(e') の形
+
+
+def _strip_buttons(win):
+    """帯(QToolBar)に載っている、登録簿のコマンドのボタン ``[(cid, QToolButton)]``。"""
+    import studio_keymap_qt as kq  # noqa: PLC0415
+    from PySide6 import QtWidgets  # noqa: PLC0415
+    st = kq._state(win)
+    by_obj = {id(o): cid for cid, objs in st.targets.items() for o in objs}
+    out = []
+    for tb in win.findChildren(QtWidgets.QToolBar):
+        for a in tb.actions():
+            b = tb.widgetForAction(a)
+            if id(a) in by_obj and isinstance(b, QtWidgets.QToolButton):
+                out.append((by_obj[id(a)], b))
+    return out
+
+
+def test_tooltips_name_dash_effect_and_key(win, ctl, studio_mod):
+    import studio_keymap_qt as kq  # noqa: PLC0415
+    buttons = _strip_buttons(win)
+    by_id = dict(buttons)
+    keyed = ("open_image", "run_all", "export", "pin_a", "work_mode_build", "work_mode_compare", "work_mode_inspect",
+             "work_mode_code", "image_focus", "find_panel")                # 設計書 D123 の 10 個(上の帯・作業モード・Find panel)
+    assert sorted(by_id) == sorted(keyed + ("demo", "batch_apply")) and len(buttons) == 12
+
+    def check(lang):
+        seen = 0
+        for cid in sorted(by_id):
+            tip = by_id[cid].toolTip()                                    # ボタンに出る文(QAction の文ではなく)
+            name = kq._qt_stripped(win._actions[cid].text()).rstrip("…")
+            assert _TIP_FORM.match(tip) and tip.startswith(name + " — "), (lang, cid, tip)
+            keys = ctl.keymap.keys(cid)
+            shown = " (%s)" % " / ".join(km.display_key(k, lang) for k in keys)
+            assert tip.endswith(shown) if keys else not re.search(r"\((Ctrl|Strg|F\d)[^()]*\)$", tip), (lang, cid, tip)
+            seen += bool(keys)
+        return seen
+
+    assert check("en") == 10                                              # キーを持つ 10 個は今のキーを含む
+    assert by_id["open_image"].toolTip() == "Open image — Load an image file as the base frame (Ctrl+O)"
+    assert by_id["demo"].toolTip() == "Synthetic demo — Load the built-in synthetic demo scene"
+    assert not [p for p in ctl.assign("open_image", ("Ctrl+Shift+F12",)) if p.level == "error"]
+    assert by_id["open_image"].toolTip() == "Open image — Load an image file as the base frame (Ctrl+Shift+F12)"
+    assert ctl.assign("export", ()) == []                                  # キーを外すと括弧ごと無くなる
+    assert by_id["export"].toolTip() == "Export — Export as an --ops string and Python code"
+    assert check("en") == 9
+    english = {cid: b.toolTip() for cid, b in buttons}
+    win._apply_language("ja")                                             # 言語を変えても形とキーは保つ
+    _pump(0.2)
+    assert check("ja") == 9
+    assert by_id["open_image"].toolTip().endswith(" (Ctrl+Shift+F12)")
+    assert sum(by_id[cid].toolTip() != english[cid] for cid in by_id) == 12   # 12 個とも訳した文になった
+    win._apply_language("de")
+    _pump(0.2)
+    assert check("de") == 9 and by_id["pin_a"].toolTip().endswith(" (Strg+Umschalt+A)")
+    win._apply_language("en")
+    _pump(0.2)
+    assert {cid: b.toolTip() for cid, b in buttons} == english            # 戻すと 1 字も違わない(重ねて付けない)
+    ctl.keymap = km.Keymap()
+    ctl._commit()
+    assert by_id["export"].toolTip() == "Export — Export as an --ops string and Python code (Ctrl+E)"
+    assert win._actions["export"].statusTip() == "Export as an --ops string and Python code"   # 状態行の文は変えない

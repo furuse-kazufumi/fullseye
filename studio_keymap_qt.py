@@ -320,7 +320,17 @@ def _lang_code(st: _State, win) -> str:
         return "en"
 
 
-def _retarget(st: _State, obj: QtGui.QAction, pairs: list, lang: str) -> None:
+def _on_button(action: QtGui.QAction) -> bool:
+    """帯(QToolBar)かボタンに載っている QAction か(ツールヒントが利用者に見える所)。"""
+    try:
+        return any(isinstance(w, (QtWidgets.QToolBar, QtWidgets.QAbstractButton)) for w in action.associatedObjects())
+    except RuntimeError:
+        return False
+
+
+def _retarget(st: _State, obj: QtGui.QAction, pairs: list, lang: str, tip_keys: tuple | None = None) -> None:
+    """``obj`` の文・ツールヒント・状態行の文に書いたキーを今のキーへ。``tip_keys`` を渡すと(帯のボタンの QAction)、
+    ツールヒントを「名前 — 何が起きるか (キー)」の形にする(D123。元の文は覚えておき、重ねて付けない)。"""
     try:
         cur = (obj.text(), obj.toolTip(), obj.statusTip())
     except RuntimeError:
@@ -328,8 +338,11 @@ def _retarget(st: _State, obj: QtGui.QAction, pairs: list, lang: str) -> None:
     rec = st.text_base.get(id(obj))
     base = rec[1] if (rec is not None and rec[0] is obj and cur == rec[2]) else cur
     implicit_tip = base[1] == _qt_stripped(base[0])
-    new = (km.retarget_text(base[0], pairs, lang), base[1] if implicit_tip else km.retarget_text(base[1], pairs, lang),
-           km.retarget_text(base[2], pairs, lang))
+    text = km.retarget_text(base[0], pairs, lang)
+    tip = base[1] if implicit_tip else km.retarget_text(base[1], pairs, lang)
+    if tip_keys is not None and not implicit_tip:
+        tip = km.tooltip_text(_qt_stripped(text), tip, tip_keys, lang)
+    new = (text, tip, km.retarget_text(base[2], pairs, lang))
     if new[0] != cur[0]:
         obj.setText(new[0])
     if not implicit_tip and new[1] != cur[1]:
@@ -345,8 +358,11 @@ def _retarget_all(win, st: _State) -> None:
         pairs = km.text_pairs(st.keymap, c.id) if not c.fixed else []
         changed = any(tuple(a) != tuple(b) for a, b in pairs)
         for obj in st.targets.get(c.id, ()):
-            if isinstance(obj, QtGui.QAction) and _valid(obj) and (changed or id(obj) in st.text_base):
-                _retarget(st, obj, pairs, lang)
+            if not (isinstance(obj, QtGui.QAction) and _valid(obj)):
+                continue
+            button = not c.fixed and _on_button(obj)           # 帯のボタン: 名前とキーをツールヒントに付ける
+            if changed or button or id(obj) in st.text_base:
+                _retarget(st, obj, pairs, lang, st.keymap.keys(c.id) if button else None)
 
 
 def apply_keymap(win, keymap: km.Keymap, lang=None) -> dict:
