@@ -2785,12 +2785,52 @@ def demo() -> int:
     return 0 if rc == 0 else 1
 
 
+def _arg_parser():
+    """``python -m fullseye.mcp`` の引数(使い方の文は ASCII だけ: cp932 のパイプでも同じ文で出る)。
+
+    ★2026-11-13(配布物の検証 M7): ``--coverage`` / ``--demo`` しか見ておらず、``--help`` を付けても stdio サーバとして
+    入力を待った(端末で打つと黙って止まる)。``-h`` / ``--help`` は使い方を出して 0、知らない引数は使い方と理由を
+    標準エラーに出して 2(argparse の約束)。引数なしは従来どおり stdio サーバ。
+    """
+    import argparse
+    ap = argparse.ArgumentParser(
+        prog="python -m fullseye.mcp",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=("Fullseye MCP server (Model Context Protocol: JSON-RPC 2.0 over stdio).\n\n"
+                     "With no arguments it runs as an MCP stdio server: it waits for messages on stdin\n"
+                     "(newline-delimited JSON, or Content-Length framing) and answers on stdout until EOF.\n"
+                     "An MCP client starts it; typed at a terminal it just waits for input."),
+        epilog=("register it with Claude Code:\n"
+                '  claude mcp add fullseye -- "%s" -m fullseye.mcp\n'
+                "try it without a client:\n"
+                "  python -m fullseye.mcp --demo" % (sys.executable or "python")))
+    g = ap.add_mutually_exclusive_group()
+    g.add_argument("--demo", action="store_true",
+                   help="start a server, run a short scripted session against it, print it and exit")
+    g.add_argument("--coverage", action="store_true",
+                   help="print the coverage of the catalog layers as JSON and exit (no server)")
+    return ap
+
+
 def main(argv: list[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
-    if "--coverage" in argv:
+    if argv:
+        # 人が読む文を出す道だけ(引数なし = stdio サーバの道では stdout はプロトコル専用なので触らない)
+        for name, handler in (("stdout", "replace"), ("stderr", "backslashreplace")):
+            stream = getattr(sys, name, None)
+            if stream is not None and getattr(stream, "errors", None) in ("strict", "surrogateescape"):
+                try:
+                    stream.reconfigure(errors=handler)
+                except (AttributeError, ValueError, OSError):
+                    pass
+    try:
+        ns = _arg_parser().parse_args(argv)
+    except SystemExit as e:              # -h / --help は 0、知らない引数は 2(使い方は argparse が出した)
+        return e.code if isinstance(e.code, int) else 2
+    if ns.coverage:
         # 起動せずに被覆だけ標準出力へ(人が読む用。プロトコルではない)
         print(json.dumps(Catalog.load().coverage(), ensure_ascii=False, indent=1))
         return 0
-    if "--demo" in argv:
+    if ns.demo:
         return demo()
     return run_stdio_server()
