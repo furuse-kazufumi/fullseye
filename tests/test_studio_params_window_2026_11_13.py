@@ -2741,3 +2741,71 @@ def test_params_strip_follows_the_side_rule(qapp, fusion, ini, tmp_path):
     _pump(qapp)
     assert p.strip_side() == "left" and len(asked) == n
     _close_quietly(win)
+
+
+#: 見た目の枝の studio_theme.DENSITY の写し(この窓が使う鍵と、使わない鍵 1 つ)。
+_DENSITY = {
+    "compact": {"row_pad": 4, "icon_btn": 24, "icon": 16, "click_gap": 4, "group_gap": 8, "title_band": 22},
+    "standard": {"row_pad": 8, "icon_btn": 28, "icon": 18, "click_gap": 4, "group_gap": 10, "title_band": 28},
+}
+
+
+def _sizes(p) -> dict:
+    """窓の密度の数を実物から測る: 行・ボタン・絵・間・検索の欄・状態の行・見出し。"""
+    fm = p.tree.fontMetrics()
+    keys = _visible_keys(p)
+    btns = [p.buttons[k] for k in BUTTONS]
+    assert len(keys) == 9 and len(btns) == 10
+    return {"row_pad": {p.tree.visualRect(p.index_of(0, k)).height() - fm.height() for k in keys},
+            "button": {(b.width(), b.height()) for b in btns}, "icon": {b.iconSize().width() for b in btns},
+            "gaps": [btns[i + 1].geometry().left() - btns[i].geometry().right() - 1 for i in range(9)],
+            "search": p.search.height(), "status": p.status.height() - p.fontMetrics().height(),
+            "header": p.tree.header().height() - p.fontMetrics().height()}
+
+
+def test_params_sizes_come_from_the_theme_density(qapp, fusion, ini, tmp_path, monkeypatch):
+    """確かめの指摘(low): px は直書きでなく studio_theme の密度の表から(設計書 P14-1・B0)。密度を「標準」にした
+    Studio で開くと、行 = 文字 + 8・絵だけのボタン 28 px(絵 18)・群の間 10 px。直す前は窓だけ詰めたまま(20・24・8)だった。
+    密度を変えて theme を読み直すと(apply_theme。様式が変わった時はパネルが自分で呼ぶ)その場で変わり、戻すと戻る。
+    theme の無い木では窓の定数(詰めると同じ値)。"""
+    compact = {"row_pad": {4}, "button": {(24, 24)}, "icon": {16}, "gaps": [4, 4, 8, 4, 4, 8, 4, 4, 8], "search": 24,
+               "status": 4, "header": 6}
+    standard = {"row_pad": {8}, "button": {(28, 28)}, "icon": {18}, "gaps": [4, 4, 10, 4, 4, 10, 4, 4, 10], "search": 28,
+                "status": 8, "header": 10}
+    state = {"density": "standard"}
+    fake = types.ModuleType("studio_theme")
+    fake.colour = lambda role: _THEME_ROLES["instrument"][role]
+    fake.density = lambda: dict(_DENSITY[state["density"]])
+    monkeypatch.setitem(sys.modules, "studio_theme", fake)
+    assert Q._density() == {k: v for k, v in _DENSITY["standard"].items() if k != "title_band"}
+    win = _window(qapp, _three_files(tmp_path))
+    p = win.panel
+    assert _sizes(p) == standard and p.row_height() == p.fontMetrics().height() + 8
+    switched = 0
+    for name, want in (("compact", compact), ("standard", standard), ("compact", compact)):
+        state["density"] = name
+        p.apply_theme()
+        _pump(qapp)
+        assert _sizes(p) == want, name
+        assert all(_whole(p.buttons[k]) for k in BUTTONS) and _whole(p.search), name
+        switched += 1
+    assert switched == 3
+    p.set_strip_side("left")                                             # 縦の 1 列でも同じ数
+    state["density"] = "standard"
+    p.apply_theme()
+    _pump(qapp)
+    rects = _button_rects(win)
+    assert len({r.x() for r in rects}) == 1 and {(r.width(), r.height()) for r in rects} == {(28, 28)}
+    assert [rects[i + 1].top() - rects[i].bottom() - 1 for i in range(9)] == [4, 4, 10, 4, 4, 10, 4, 4, 10]
+    _close_quietly(win)
+    # 壊れた表(鍵が無い・正の整数でない)は、その数だけ窓の定数に倒す
+    fake.density = lambda: {"row_pad": "8", "icon_btn": 0, "icon": True, "group_gap": 12}
+    assert Q._density() == {"row_pad": 4, "icon_btn": 24, "icon": 16, "click_gap": 4, "group_gap": 12}
+    # theme の無い木: 窓の定数(詰めると同じ値)
+    monkeypatch.setitem(sys.modules, "studio_theme", None)
+    assert Q._density() == {k: v for k, v in _DENSITY["compact"].items() if k != "title_band"}
+    plain = tmp_path / "plain"
+    plain.mkdir()
+    win = _window(qapp, _three_files(plain))
+    assert _sizes(win.panel) == compact
+    _close_quietly(win)

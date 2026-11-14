@@ -87,6 +87,24 @@ def _state_colour(role: str) -> QtGui.QColor:
     return c if c is not None else QtGui.QColor(*_STATE_RGB[role])
 
 
+def _density() -> dict[str, int]:
+    """密度の数(px): 行の余白 row_pad・絵だけのボタンの一辺 icon_btn・絵 icon・隣との間 click_gap・群の間 group_gap。
+
+    studio_theme が import できればその密度の表(詰める / 標準。設計書 P14-1「数は DENSITY の 1 つの表だけ」)、できなければ
+    この窓の定数(詰めると同じ値)。表に無い鍵・正の整数でない値は定数のまま。"""
+    out = {"row_pad": ROW_EXTRA_PX, "icon_btn": BUTTON_PX, "icon": _ICON_PX, "click_gap": GAP_PX, "group_gap": 2 * GAP_PX}
+    try:
+        import studio_theme  # noqa: PLC0415  (見た目の枝の密度の表。無い木でも窓は動く)
+        table = studio_theme.density()
+        for key in out:
+            v = table.get(key)
+            if isinstance(v, int) and not isinstance(v, bool) and v > 0:
+                out[key] = v
+    except (ImportError, AttributeError, TypeError):
+        pass
+    return out
+
+
 def _mix(a: QtGui.QColor, b: QtGui.QColor, t: float) -> QtGui.QColor:
     return QtGui.QColor(round(a.red() + (b.red() - a.red()) * t), round(a.green() + (b.green() - a.green()) * t),
                         round(a.blue() + (b.blue() - a.blue()) * t))
@@ -834,9 +852,12 @@ class _Delegate(QtWidgets.QStyledItemDelegate):
                     Qt.Key_Tab: QtWidgets.QAbstractItemDelegate.EditNextItem,
                     Qt.Key_Backtab: QtWidgets.QAbstractItemDelegate.EditPreviousItem}
 
+    #: 行の高さ = 文字の高さ + これ(パネルが密度の表の値を入れる)。
+    row_extra = ROW_EXTRA_PX
+
     def sizeHint(self, option: QtWidgets.QStyleOptionViewItem, index: QtCore.QModelIndex) -> QtCore.QSize:
         sz = super().sizeHint(option, index)
-        return QtCore.QSize(sz.width(), option.fontMetrics.height() + ROW_EXTRA_PX)
+        return QtCore.QSize(sz.width(), option.fontMetrics.height() + self.row_extra)
 
     def createEditor(self, parent: QtWidgets.QWidget, option: QtWidgets.QStyleOptionViewItem,
                      index: QtCore.QModelIndex) -> QtWidgets.QWidget:
@@ -929,6 +950,8 @@ class ParamsPanel(QtWidgets.QWidget):
         self.pick_save: Callable[[int], str] = self._pick_save_dialog
         #: 親(Studio)の confirm_action(``set_confirm``)。None = 自前の箱(同じ形)。
         self._confirm_fn: Callable[..., Any] | None = None
+        #: 密度の数(studio_theme の表、無ければ定数)。theme を読み直す時に読み直す。
+        self._dens = _density()
         self._build()
         self.setAcceptDrops(True)
         self.refresh()
@@ -949,7 +972,7 @@ class ParamsPanel(QtWidgets.QWidget):
         self.bar = QtWidgets.QWidget(self)
         self._bar_lay = QtWidgets.QGridLayout(self.bar)
         self._bar_lay.setContentsMargins(0, 0, 0, 0)
-        self._bar_lay.setHorizontalSpacing(GAP_PX)
+        self._bar_lay.setHorizontalSpacing(self._dens["click_gap"])
         self._bar_lay.setVerticalSpacing(2)
         color, off = self._icon_colours()
         #: 道具(1 機能 1 QAction)。鍵 → QAction。列の部品・キー・パネルの ≡ はどれもこの QAction を使う。
@@ -964,7 +987,7 @@ class ParamsPanel(QtWidgets.QWidget):
                    checkable: bool = False) -> QtGui.QAction:
             a = QtGui.QAction(self)
             a.setObjectName("params_" + key)
-            a.setIcon(_draw_icon(icon, color, off=off))
+            a.setIcon(_draw_icon(icon, color, self._dens["icon"], off=off))
             a.setCheckable(checkable)
             if shortcut:
                 a.setShortcut(QtGui.QKeySequence(shortcut))
@@ -1013,12 +1036,13 @@ class ParamsPanel(QtWidgets.QWidget):
         self._strip_api: Any = self.strip
         self._strip_flows = False                       # 部品が「送る / 折り返す」を持つ(場所を全部渡して任せる)
         self.strip.setObjectName(STRIP_NAME)
+        self._strip_api.set_metrics(*self._strip_metrics())
         self._strip_api.set_actions(self._strip_items)
         #: 鍵 → 今の列の部品のボタン(部品が button_for を持つ時。試験と古い呼び出しの口。状態は QAction が正本)。
         self.buttons: dict[str, QtWidgets.QAbstractButton] = {}
         self.search = QtWidgets.QLineEdit(self.bar)
         self.search.setClearButtonEnabled(True)
-        self.search.setFixedHeight(BUTTON_PX)
+        self.search.setFixedHeight(self._dens["icon_btn"])
         self._search_icon = self.search.addAction(_draw_icon("search", color, off=off),
                                                   QtWidgets.QLineEdit.LeadingPosition)
         self._apply_search_texts()
@@ -1043,7 +1067,7 @@ class ParamsPanel(QtWidgets.QWidget):
         self.empty_label.setAlignment(Qt.AlignCenter)
         el.addWidget(self.empty_label)
         row = QtWidgets.QHBoxLayout()
-        row.setSpacing(GAP_PX)
+        row.setSpacing(self._dens["click_gap"])
         row.addStretch(1)
         self.empty_open = QtWidgets.QPushButton(self.empty)
         self.empty_open.clicked.connect(self.open_files)
@@ -1083,7 +1107,9 @@ class ParamsPanel(QtWidgets.QWidget):
         self.tmodel = ParamsTreeModel(self.model, tr, self)
         self.tmodel.set_palette(self.palette(), self.font())
         self.tree.setModel(self.tmodel)
-        self.tree.setItemDelegate(_Delegate(self.tree))
+        self._delegate = _Delegate(self.tree)
+        self._delegate.row_extra = self._dens["row_pad"]
+        self.tree.setItemDelegate(self._delegate)
         self.tree.setUniformRowHeights(True)
         self.tree.setIndentation(_INDENT_PX)
         self.tree.setAlternatingRowColors(False)
@@ -1187,13 +1213,39 @@ class ParamsPanel(QtWidgets.QWidget):
 
         外から呼ばなくてよい: 初めて見える時と、様式・パレットが変わった時(親の窓の QSS の差し替え = theme の切り替え)に
         パネルが自分で呼ぶ。作った時点では親の QSS がまだ当たっておらず、その時の白い地で色を決めると暗い theme で読めない。"""
+        dens = _density()
+        resized = dens != self._dens
+        self._dens = dens
         color, off = self._icon_colours()
         for key, icon in self._action_icons.items():
-            self.tool_actions[key].setIcon(_draw_icon(icon, color, off=off))
+            self.tool_actions[key].setIcon(_draw_icon(icon, color, dens["icon"], off=off))
         self._search_icon.setIcon(_draw_icon("search", color, off=off))
+        if resized:
+            self._apply_density()
         self.tmodel.set_palette(self.tree.palette(), self.tree.font())
         self.tmodel.sync()
         self._render_message()
+
+    def _strip_metrics(self) -> tuple[int, int, int, int]:
+        """列の部品に渡す数: ボタンの一辺・絵・隣との間・群の間。"""
+        d = self._dens
+        return d["icon_btn"], d["icon"], d["click_gap"], d["group_gap"]
+
+    def _apply_density(self) -> None:
+        """密度の数(:func:`_density`)を、もう作ってある部品に当て直す(密度の設定が変わった時)。"""
+        d = self._dens
+        if callable(getattr(self._strip_api, "set_metrics", None)):
+            self._strip_api.set_metrics(*self._strip_metrics())
+        self._bar_lay.setHorizontalSpacing(d["click_gap"])
+        self.search.setFixedHeight(d["icon_btn"])
+        row = self.row_height()
+        self._delegate.row_extra = d["row_pad"]
+        self.tree.setStyleSheet("QTreeView::item { height: %dpx; padding: 0px; }" % row)
+        self.tree.header().setFixedHeight(row + 2)
+        self.tree.scheduleDelayedItemsLayout()
+        self._fit_search()
+        self._place_strip()
+        self._layout_status()
 
     def showEvent(self, ev: QtGui.QShowEvent) -> None:
         super().showEvent(ev)
@@ -1301,6 +1353,8 @@ class ParamsPanel(QtWidgets.QWidget):
         self.strip = widget
         self._strip_api = _FlowPort(widget) if flow else widget
         self._strip_flows = flow
+        if callable(getattr(self._strip_api, "set_metrics", None)):
+            self._strip_api.set_metrics(*self._strip_metrics())
         self._strip_api.set_actions(self._strip_items)
         self._place_strip()
         widget.show()
@@ -1357,7 +1411,7 @@ class ParamsPanel(QtWidgets.QWidget):
     def _search_needs_own_row(self) -> bool:
         """横の道具の列の隣に、検索の欄が最小幅で収まらないか。"""
         room = self.width() - 4                          # 枠の内側(左右 2 px)
-        need = self.strip.sizeHint().width() + GAP_PX + self.search.minimumWidth()
+        need = self.strip.sizeHint().width() + self._dens["click_gap"] + self.search.minimumWidth()
         return room < need
 
     def _placement_is_stale(self) -> bool:
@@ -1379,8 +1433,8 @@ class ParamsPanel(QtWidgets.QWidget):
             self._place_strip()
 
     def row_height(self) -> int:
-        """行の高さ(px)= 文字の高さ + ``ROW_EXTRA_PX``。"""
-        return self.fontMetrics().height() + ROW_EXTRA_PX
+        """行の高さ(px)= 文字の高さ + 密度の行の余白(theme が無ければ ``ROW_EXTRA_PX``)。"""
+        return self.fontMetrics().height() + self._dens["row_pad"]
 
     # ---- 状態の表示 ----
     def title(self) -> str:
