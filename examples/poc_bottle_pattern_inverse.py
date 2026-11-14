@@ -15,7 +15,11 @@
 【観測と当てはめが共有する仮定(inverse crime の残り)】追跡と閉形式は別の導出だが、**同じ世界**を仮定している: (1) 内円と外円が同心で壁厚が一様(偏肉・偏心なし)、
 (2) 水平の 2 次元断面だけ(縦の屈折・縦に傾いた光線なし)、(3) 理想の針穴カメラ(レンズ歪み・開口なし)、(4) 背景は完全な平面で縞は正確に既知、(5) カメラ距離・背景距離・画素ピッチは既知で誤差なし、
 (6) 屈折率は波長に依らず(分散なし)、(7) 液面は水平な平面(メニスカス・気泡なし)、(8) 画素は点の標本(開口で縞が平均されない)。この 8 つが崩れる分は、観測を作る側が崩しても当てはめ側は知らないので、
-**推定値に黙って乗る**。章 5b で (1) を実測した: 内円を 0.3 mm ずらした観測(壁厚 1.5 mm の 20 %)を当てはめると、n_glass が 0.05 超動くのに、残差は雑音の床と同程度で、`separated`・`converged` も真のまま ―― **検出できない**。
+**推定値に黙って乗る**。章 5b で (1) を実測した(液だけの満の瓶、内円を視線の奥行きに 0.3 mm = 壁厚 1.5 mm の 20 % ずらす)。**同じ雑音の条件どうしで比べる**(2026-11-13、作者と独立の検証の指摘で直した。
+前の版は、雑音なしの当てはめの n_glass のずれ −0.095 と、雑音ありの瓶の残差の床を並べて「−0.095 動くのに残差も旗も気づかない」と書いていた ―― そういう 1 つの観測は存在しない):
+雑音なしどうしでは n_glass が −0.095 動くが、残差も 0 から 0.008 mm に増えるので、雑音が無ければ残差で見える。雑音あり(1.5 階調)どうしでは、残差は同心と区別できず(比 1.0)、
+n_glass の偏り(60 回の平均で +0.02)は 1 回の当てはめの雑音の σ(0.017)に埋もれ(満の瓶では `separated` が同心でも偏心でも偽 = n_glass はそもそも分けられていない)、
+**壁厚の推定が −0.20 mm(雑音の σ の 2.6 倍)偏る** ―― 残差は知らない。
 【真値の開示(「異常に良い結果は内訳を疑う」)】真値は**自分で作ったシミュレーションの入力**(R = 30 mm・壁 1.5 mm・n_glass 1.52・水 1.333 / 油 1.47・充填 5 通り)であって、
 実物の瓶の測定ではない。観測も当てはめも、理想の針穴カメラ・完全な円筒・分散なし・既知のカメラ距離と背景距離・点の標本化(画素の開口で縞が平均化されない)を仮定する。
 雑音なしで 1e-6 以下に戻るのは、2 つの独立な導出が同じ幾何光学の式に同じ入力を渡した結果であり、「実物でそうなる」ことの証拠ではない。
@@ -29,7 +33,7 @@
      「2 つの読み出しが行の切り替わりを拾えること」の確認にとどまる(液面はちょうど行境界で、差 0 は構成上のもの)。`bottle_image` にはメニスカスがあり、3 mm で明暗の 2 読みが割れる(下記)が、
      `bottle_background_map` にはメニスカスが無く、縞の側で検証できない。
   5. **分けられない量**: 壁厚と n_glass の相関、使える窓を狭めたときの標準偏差、薄い壁、背景距離と n_liquid の縮退、較正の誤差が引き起こす偏り(背景距離 +1 mm で n_glass 0.011、
-     カメラ距離 +1 mm で 0.0029)、**偏心(モデル誤差)が残差にも旗にも出ないこと**(5b)。`separated` 旗は「雑音だけの誤差」の目安で保証ではない(しきい値 1 % は 1600 試行を見てから置いた。
+     カメラ距離 +1 mm で 0.0029)、**偏心(モデル誤差)が、満の瓶では同じ雑音の下で残差に出ず、壁厚を偏らせること**(5b)。`separated` 旗は「雑音だけの誤差」の目安で保証ではない(しきい値 1 % は 1600 試行を見てから置いた。
      0.25 のときは壁が外れた回の 15〜20 %、n_glass が 0.02 外れた回の 73〜76 % を「分けられた」と言っていた)。
   6. **壊して確かめる**: n_glass を 1.4 に固定する / スネルの式の向きを逆にする → 残差が雑音床を越えて門が赤になる。
 
@@ -70,6 +74,7 @@ BAND_ROWS = 40                     # 雑音の試行は液面を挟む 40 行の
 N_TRIALS = 150 if REDUCED else 300      # 各区間 1 行で使う雑音の試行数(水・油)
 N_TRIALS_ALL = 40 if REDUCED else 60   # 各区間の全行(約 18 行)で使う試行数
 N_SWEEP = 8 if REDUCED else 20          # 壁厚の掃引の 1 点あたりの試行数
+N_ECC = 60                              # 偏心(5b)を同じ雑音どうしで比べる試行数(同心・偏心で同じ雑音の実現。縮小版でも同じ)
 
 
 def gate(name: str, ok: bool, detail: str = "") -> None:
@@ -406,7 +411,7 @@ def chapter_level(keep):
 
 
 # --------------------------------------------------------------------------- #
-# 5b. モデル誤差(偏心)は残差にも旗にも出ない                                        #
+# 5b. モデル誤差(偏心): 同じ雑音の条件どうしで、残差と旗に出るかを比べる               #
 # --------------------------------------------------------------------------- #
 def chapter_model_error():
     print("\n5b. 偏心(内円のずれ)= 観測と当てはめが共有する「同心」の仮定が崩れたとき(観測は別に書いたスカラー追跡、各区間 1 行)")
@@ -437,15 +442,50 @@ def chapter_model_error():
         print("   %s mm: ΔR %+.4f  Δ壁 %+.4f  Δn_g %+.4f  残差 %.4f mm(同心は %.4f)  converged %s  separated %s  雑音だけの σ(n_g) %.1e" % (
             label, rows[-1][1], rows[-1][2], rows[-1][3], r["residual_rms_mm"], base[kind]["residual_rms_mm"], rows[-1][5], rows[-1][6], rows[-1][7]))
     byl = {r_[0]: r_ for r_ in rows}
-    f3, h3, l3 = byl["満(雑音なし)・奥行き 0.30"], byl["半分・奥行き 0.30"], byl["半分・横 0.30"]
-    bf, bh = base["満"]["residual_rms_mm"], base["半分"]["residual_rms_mm"]          # 雑音ありの残差の床
-    gate("満の瓶(液面なし・雑音なし)で奥行き方向の偏心 0.3 mm(壁厚の 20 %)は n_glass を 0.05 超動かすのに、残差は雑音の床(同じ瓶の雑音あり)の 2 倍以内で converged も separated も真のまま = 検出できない(限界の実測)",
-         abs(f3[3]) > 0.05 and f3[4] < 2.0 * bf and f3[5] and f3[6], "Δn_g %+.3f、残差 %.4f / %.4f mm" % (f3[3], f3[4], bf))
+    f0, f3, h3, l3 = byl["満(雑音なし)・同心"], byl["満(雑音なし)・奥行き 0.30"], byl["半分・奥行き 0.30"], byl["半分・横 0.30"]
+    bh = base["半分"]["residual_rms_mm"]                                                # 雑音ありの残差の床(半分の瓶)
+
+    # ★同じ雑音の条件どうし(2026-11-13): 満の瓶を、同心と奥行き 0.3 mm の偏心で、同じ雑音の実現 N_ECC 回ずつ当てはめる。
+    #   前の版は「雑音なしの当てはめのずれ」と「雑音ありの残差の床」を 1 つの門に混ぜていた(そういう観測は存在しない)。
+    def _full_trials(ex_):
+        ul_ = np.array([eccentric_u(xx, ex_, 0.0, 1.333) for xx in x])
+        U_ = np.tile(ul_, (BAND_ROWS, 1))
+        mm_ = {"u_mm": U_, "weight": np.ones(U_.shape), "valid": np.isfinite(U_), "x_mm": x}
+        out = []
+        for i in range(N_ECC):                                   # 種は試行の番号で決める = 同心と偏心で同じ雑音の実現
+            r_ = fit(observe(mm_, np.random.default_rng(5000 + i)), x, restarts=3, rows_per_section=1)
+            out.append((r_["n_glass"] - N_G, r_["wall_mm"] - T_B, r_["residual_rms_mm"], float(bool(r_["separated"])),
+                        float(bool(r_["converged"]))))
+        return np.array(out)
+
+    t0_, t3_ = _full_trials(0.0), _full_trials(0.3)
+    sig_g, sig_w = float(t0_[:, 0].std(ddof=1)), float(t0_[:, 1].std(ddof=1))      # 同心・雑音だけの 1 回の当てはめの σ
+    sh_g, sh_w = float((t3_[:, 0] - t0_[:, 0]).mean()), float((t3_[:, 1] - t0_[:, 1]).mean())
+    res_ratio = float(t3_[:, 2].mean() / t0_[:, 2].mean())
+    sep0, sep3 = float(t0_[:, 3].mean()), float(t3_[:, 3].mean())
+    print("   ★同じ雑音どうし(満の瓶、雑音 %.1f 階調、同じ雑音の実現 %d 回ずつ):" % (SIGMA_DN, N_ECC))
+    for lab_, t_ in (("同心", t0_), ("奥行き 0.30 mm", t3_)):
+        print("     %-12s Δn_g 平均 %+.4f(1 回の σ %.4f)  Δ壁 平均 %+.4f mm(σ %.4f)  残差 平均 %.4f mm  separated %d / %d  converged %d / %d" % (
+            lab_, t_[:, 0].mean(), t_[:, 0].std(ddof=1), t_[:, 1].mean(), t_[:, 1].std(ddof=1), t_[:, 2].mean(),
+            int(t_[:, 3].sum()), N_ECC, int(t_[:, 4].sum()), N_ECC))
+    print("     偏心 − 同心(同じ雑音の実現の差の平均): Δn_g %+.4f(σ の %.1f 倍)、Δ壁 %+.4f mm(σ の %.1f 倍)、残差の比 %.3f" % (
+        sh_g, abs(sh_g) / sig_g, sh_w, abs(sh_w) / sig_w, res_ratio))
+    gate("雑音なしどうし: 満の瓶の奥行き方向の偏心 0.3 mm(壁厚の 20 %)は n_glass を 0.05 超動かし、converged・separated は真のままだが、残差は同心の 10 倍超に増える = 雑音が無ければ残差で見える",
+         abs(f3[3]) > 0.05 and f3[5] and f3[6] and f3[4] > 10.0 * max(f0[4], 1e-5), "Δn_g %+.3f、残差 %.4f mm(同心は %.1e mm)" % (f3[3], f3[4], f0[4]))
+    gate("同じ雑音どうし: 満の瓶の同じ偏心は、残差では同心と区別できない(残差の比が 1.1 未満)= 残差では検出できない(限界の実測)",
+         res_ratio < 1.1, "残差の比 %.3f(%d 回ずつ)" % (res_ratio, N_ECC))
+    gate("同じ雑音どうし: n_glass の偏り(%d 回の平均)は 1 回の当てはめの雑音の σ の 2 倍未満 = 1 回の観測では σ に埋もれる(雑音なしの %+.3f は、雑音ありでは現れない)。separated は同心でも偏心でも大半が偽(満の瓶では n_glass を分けられないと旗が言っている)" % (N_ECC, f3[3]),
+         abs(sh_g) < 2.0 * sig_g and sep0 < 0.5 and sep3 < 0.5, "Δn_g %+.4f、σ %.4f、separated %.0f %% / %.0f %%" % (sh_g, sig_g, 100 * sep0, 100 * sep3))
+    gate("同じ雑音どうし: 壁厚の推定は偏心で雑音の σ の 2 倍超偏る(残差は変わらないので、この偏りには気づけない)",
+         abs(sh_w) > 2.0 * sig_w, "Δ壁 %+.4f mm、σ %.4f mm(%.1f 倍)" % (sh_w, sig_w, abs(sh_w) / sig_w))
     gate("半分の瓶(空の区間もある)では同じ偏心の残差は同心の 3 倍以上に増えて気づけるが、n_glass は 0.02 超動き separated は真のまま(旗は偏心を知らない)",
          abs(h3[3]) > 0.02 and h3[4] > 3.0 * bh and h3[6], "Δn_g %+.3f、残差 %.4f / %.4f mm" % (h3[3], h3[4], bh))
     gate("横方向の偏心 0.3 mm は左右非対称なので残差が同心の 5 倍を越えて見える(検出できる偏心と、できない偏心がある)", l3[4] > 5.0 * bh, "残差 %.4f / %.4f mm" % (l3[4], bh))
     NUMBERS["ecc_full03_dng"], NUMBERS["ecc_full01_dng"] = f3[3], byl["満(雑音なし)・奥行き 0.10"][3]
-    NUMBERS["ecc_half03_ratio"], NUMBERS["ecc_lateral03_ratio"], NUMBERS["ecc_full03_ratio"] = h3[4] / bh, l3[4] / bh, f3[4] / bf
+    NUMBERS["ecc_half03_ratio"], NUMBERS["ecc_lateral03_ratio"] = h3[4] / bh, l3[4] / bh
+    NUMBERS.update({"ecc_full03_noiseless_resid": f3[4], "ecc_full03_noisy_ratio": res_ratio, "ecc_full03_noisy_dng": sh_g,
+                    "ecc_full_noise_sigma_ng": sig_g, "ecc_full03_noisy_dwall": sh_w, "ecc_full_noise_sigma_wall": sig_w,
+                    "ecc_full_sep_concentric": sep0, "ecc_full_sep_eccentric": sep3})
     return rows
 
 
@@ -728,10 +768,15 @@ def make_figures(maps, keep, trials, ident, lrows, merr):
     # 10 偏心(モデル誤差)
     header = ["内円のずれ [mm]", "Δ壁 [mm]", "Δn_glass", "残差 [mm]", "converged", "separated"]
     trs = [[e_, "%+.4f" % dW, "%+.4f" % dG, "%.4f" % rms, str(cv), str(sp)] for e_, dR, dW, dG, rms, cv, sp, sg, kd in merr]
-    figs.save_table("eccentric_model_error", header, trs, title="モデル誤差(偏心)は残差にも旗にも出ない(シミュレーション)",
-                    caption="内円をずらした瓶を別に書いたスカラー追跡で作り、同心円の当てはめに渡した(各区間 1 行)。液だけの満の瓶で視線の奥行き方向に 0.3 mm(壁厚の 20 %%)ずらすと n_glass が %+.3f 動くのに、残差は雑音の床の %.1f 倍で、converged も separated も True のまま ―― 検出できない。"
+    figs.save_table("eccentric_model_error", header, trs, title="モデル誤差(偏心): 満の瓶では、同じ雑音の下で残差に出ない(シミュレーション)",
+                    caption="内円をずらした瓶を別に書いたスカラー追跡で作り、同心円の当てはめに渡した(各区間 1 行。表の雑音ありの行は 1 回の実現)。同じ条件どうしで読む: "
+                            "液だけの満の瓶で視線の奥行き方向に 0.3 mm(壁厚の 20 %%)ずらすと、雑音なしどうしでは n_glass が %+.3f 動き、残差も 0 から %.4f mm に増える(雑音が無ければ見える)。"
+                            "雑音 1.5 階調どうし(同じ雑音の実現 %d 回ずつ)では、残差の比は %.2f で同心と区別できず、n_glass のずれ %+.3f は 1 回の当てはめの σ %.3f に埋もれ"
+                            "(separated は同心でも偏心でもほぼ False)、壁厚だけが %+.2f mm(σ %.2f mm)偏る。"
                             "半分の瓶では残差が %.0f 倍に増えて気づけるが、separated は True のまま。画像の横にずらすと左右非対称で %.0f 倍になる。" % (
-                                NUMBERS["ecc_full03_dng"], NUMBERS["ecc_full03_ratio"], NUMBERS["ecc_half03_ratio"], NUMBERS["ecc_lateral03_ratio"]))
+                                NUMBERS["ecc_full03_dng"], NUMBERS["ecc_full03_noiseless_resid"], N_ECC, NUMBERS["ecc_full03_noisy_ratio"],
+                                NUMBERS["ecc_full03_noisy_dng"], NUMBERS["ecc_full_noise_sigma_ng"], NUMBERS["ecc_full03_noisy_dwall"],
+                                NUMBERS["ecc_full_noise_sigma_wall"], NUMBERS["ecc_half03_ratio"], NUMBERS["ecc_lateral03_ratio"]))
 
 
 def main():

@@ -1562,7 +1562,7 @@ py -3.11 examples/poc_real_typewritten_ocr.py
 
 ## No.2026.310 —— 混載デパレタイズ: 継ぎ目が詰まると深度の段差では箱を分けられない —— 深度の V 字の溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の深さ・すき間・テープで入れ替わる(地図)
 
-計算で作った場面で、詰めて並んだ同じ柄の段ボールを、天井の深度カメラとカラーで見分けて下ろす。深度の段差では同じ柄の箱を分けられず、深度の浅い溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の作り 28 通りの地図で入れ替わった。勝ち負けは、縁の丸みや合わせ目といった場面の作りに強く依存する。
+合成の場面で、詰めて並んだ同じ柄の段ボールを、天井の深度カメラとカラーで見分けて下ろす。深度の段差では同じ柄の箱を分けられず、深度の浅い溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の作り 28 通りの地図で入れ替わった。同じ柄では合わせ目が深いとカラー、切り口が広く開きテープが無く溝が浅いときだけ深度の溝が上になる。
 
 [![混載デパレタイズ: 継ぎ目が詰まると深度の段差では箱を分けられない —— 深度の V 字の溝とカラーの暗い溝の勝ち負けは、天面の合わせ目の深さ・すき間・テープで入れ替わる(地図)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png)
 
@@ -1602,15 +1602,15 @@ py -3.11 examples/poc_mixed_case_depalletizing.py
 
 使用 op(ノートへ): [`bilateral_filter_depth`](https://furuse.work/ops/3d/depth_denoise/bilateral_filter_depth.html) · [`crop_rectangle2`](https://furuse.work/ops/mv/resample/crop_rectangle2.html) · [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`fill_holes`](https://furuse.work/ops/2d/region/fill_holes.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`normals_from_depth`](https://furuse.work/ops/3d/range_image/normals_from_depth.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`ransac_plane`](https://furuse.work/ops/3d/robust_fit/ransac_plane.html) · [`srgb_to_linear`](https://furuse.work/ops/gfx2d/colorspace/srgb_to_linear.html) · [`watersheds_marker`](https://furuse.work/ops/segmentation/watershed/watersheds_marker.html)
 
-## No.2026.308 —— AI が組んだ検査を公開実データの真値で採点する ―― 失敗を道具・MCP・模型に分け、直す前と後を並べる(ローカル LLM のひび割れは 20 回に 1〜3 本で再現せず、クラウド LLM は 3 本とも偶然を超えるが既存レシピに届かない)
+## No.2026.308 —— AI が組んだ検査を公開実データの真値で採点する ―― ローカル LLM がひび割れで偶然を超える検査を組めたのは 60 回中 5 回、ろうそくは 0 回。ひび割れは画像の統計 1 つ(自明な基準線、AUROC 0.999)で解け、AI のどのレシピもそれに届かない
 
 課題を自然言語で渡し、ローカルの LLM に MCP だけで検査のレシピを組ませた。公開のひび割れ画像 400 枚を配布元のラベルで画像ごとに採点すると、選り分けるレシピを組めた回はごくわずかで、ろうそくの汚れでは一度も組めなかった。クラウドの LLM は条件のそろわない参考で、どれも既存のレシピに届かなかった。
 
-[![AI が組んだ検査を公開実データの真値で採点する ―― 失敗を道具・MCP・模型に分け、直す前と後を並べる(ローカル LLM のひび割れは 20 回に 1〜3 本で再現せず、クラウド LLM は 3 本とも偶然を超えるが既存レシピに届かない)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png)
+[![AI が組んだ検査を公開実データの真値で採点する ―― ローカル LLM がひび割れで偶然を超える検査を組めたのは 60 回中 5 回、ろうそくは 0 回。ひび割れは画像の統計 1 つ(自明な基準線、AUROC 0.999)で解け、AI のどのレシピもそれに届かない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png)
 
-*↑ **AI が組んだ検査を公開実データの真値で採点する ―― 失敗を道具・MCP・模型に分け、直す前と後を並べる(ローカル LLM のひび割れは 20 回に 1〜3 本で再現せず、クラウド LLM は 3 本とも偶然を超えるが既存レシピに届かない)** ―― コンクリート壁の試験画像 3 枚(上 2 段 = ひび割れあり、下 = 試験の最初の良品)に、開発側の手組み・ローカル LLM 最良(MCP を直した後)・クラウド LLM 最良・既存の良品学習の検出(塗り)を重ねた。○ = 判定が真値と一致、× = 不一致。出典表示: Özgenel 2019, CC BY 4.0。*
+*↑ **AI が組んだ検査を公開実データの真値で採点する ―― ローカル LLM がひび割れで偶然を超える検査を組めたのは 60 回中 5 回、ろうそくは 0 回。ひび割れは画像の統計 1 つ(自明な基準線、AUROC 0.999)で解け、AI のどのレシピもそれに届かない** ―― コンクリート壁の試験画像 3 枚(上 2 段 = ひび割れあり、下 = 試験の最初の良品)に、開発側の手組み・ローカル LLM 最良(MCP を直した後)・クラウド LLM 最良・既存の良品学習の検出(塗り)を重ねた。○ = 画像単位の判定(NG / OK)が真値と一致、× = 不一致 —— ひび割れは画像単位の採点で、塗りがひびの場所に乗っているかは採点していない(汚れに反応して NG になっても ○)。なお、この課題は画像の統計 1 つ(中央値 − 1 パーセンタイル)で検出 0.995・誤報 0.045 まで解ける。出典表示: Özgenel 2019, CC BY 4.0。*
 
-用語: MCP — AI のアプリが外部の道具やデータを呼び出すための公開の取り決め。道具の名前・引数の形・返り値を AI に渡し、AI はそれを呼んで結果を読む。; LLM — 大量の文章で学習し、指示に応じて文やプログラムを書く大きなニューラルネット。手元の計算機で動かす小さめのものをローカル LLM と呼ぶ。
+用語: LLM — 大量の文章で学習し、指示に応じて文やプログラムを書く大きなニューラルネット。手元の計算機で動かす小さめのものをローカル LLM と呼ぶ。; AUROC — 判定しきい値を動かしたときの偽陽性率と真陽性率の曲線下面積で、順位付け性能を0から1で表す指標。; MCP — AI のアプリが外部の道具やデータを呼び出すための公開の取り決め。道具の名前・引数の形・返り値を AI に渡し、AI はそれを呼んで結果を読む。
 
 [![ろうそくの汚れ・欠け(試験画像、塗り = 検出、輪郭 = 真値の欠陥)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/02_candle_real.png)
 
@@ -1624,9 +1624,9 @@ py -3.11 examples/poc_mixed_case_depalletizing.py
 
 *↑ 左上ほど良い。*
 
-[![選り分けた = 平衡正解率の 95 % 区間の下限が 0.5 を超える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/05_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/05_summary.png)
+[![偶然を超えた = 平衡正解率の 95 % 区間の下限が 0.5 を超える(低い線。使える検査という意味ではない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/05_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/05_summary.png)
 
-*↑ 選り分けた = 平衡正解率の 95 % 区間の下限が 0.5 を超える。*
+*↑ 偶然を超えた = 平衡正解率の 95 % 区間の下限が 0.5 を超える(低い線。使える検査という意味ではない)。*
 
 [![第 1 便 = 道具が文脈長を渡していなかった(古い発言が捨てられた疑い)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/06_attribution_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ai_built_inspection_scored/06_attribution.png)
 
@@ -1642,13 +1642,13 @@ py -3.11 examples/poc_ai_built_inspection_scored.py
 
 使用 op(ノートへ): [`anomaly_image_auroc`](https://furuse.work/ops/spc/anomaly_eval/anomaly_image_auroc.html) · [`anomaly_region_overlap`](https://furuse.work/ops/spc/anomaly_eval/anomaly_region_overlap.html) · [`bothat`](https://furuse.work/ops/2d/morphology/bothat.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`hx_plane_deviation`](https://furuse.work/ops/2d/halcon_ext/hx_plane_deviation.html) · [`invert`](https://furuse.work/ops/2d/gray/invert.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`patchbank_fit`](https://furuse.work/ops/spc/anomaly_patch/patchbank_fit.html) · [`patchbank_score`](https://furuse.work/ops/spc/anomaly_patch/patchbank_score.html) · [`select_shape`](https://furuse.work/ops/2d/region/select_shape.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
 
-## No.2026.307 —— 機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする
+## No.2026.307 —— 機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする(合成の試験)
 
 外観検査の機材選びを、同じ傷で事前に試した。照明・カメラ・レンズの 60 通りで撮り、何 µm の傷から見つかるかを揺れの幅つきで地図にした。合成の試験なので、実機の性能ではない。
 
-[![機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png)
+[![機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする(合成の試験)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png)
 
-*↑ **機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする** ―― 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大)。棒が短いほど小さい傷まで見つかる。灰色の斜線 = 試した範囲で見つからない、破線 = 種の組で揺れる。見本の下に表示倍率を書いた。凹みの見本は 80 倍に広げ判定の大きさでならしたので、実際よりはっきり見える(雑音なしの陰影は最大 0.8 %)。合成の試験。*
+*↑ **機材選びの事前試験 ―― 照明 × カメラ × レンズの 60 通りで同じ傷を撮り、何 µm から見つかるかを揺れの幅つきで地図にする(合成の試験)** ―― 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大)。棒が短いほど小さい傷まで見つかる。灰色の斜線 = 試した範囲で見つからない、破線 = 種の組で揺れる。見本の下に表示倍率を書いた。凹みの見本は 80 倍に広げ判定の大きさでならしたので、実際よりはっきり見える(雑音なしの陰影は最大 0.8 %)。合成の試験。*
 
 用語: SWIR — おおむね1〜3 µm付近の短波赤外域で、可視光では似た材料の吸収差を捉えられる波長帯。; a90/95 — POD曲線で検出確率90%を、片側95%信頼下限でも満たす欠陥寸法。
 
@@ -2204,19 +2204,19 @@ py -3.11 examples/poc_particle_sizing.py
 
 使用 op(ノートへ): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`blob_region`](https://furuse.work/ops/blob/extract/blob_region.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`circularity`](https://furuse.work/ops/2d/features/circularity.html) · [`distance_transform`](https://furuse.work/ops/2d/region/distance_transform.html)
 
-## No.2026.031 —— 光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性
+## No.2026.031 —— 光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが既知の符号のあいまいさ
 
-透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。巻き戻した後に外れた画素の多くは、光弾性でよく知られた符号の二義性によるものだった。
+透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。巻き戻した後に外れた画素の大半は巻きではなく、位相シフト光弾性で以前から知られた符号のあいまいさと同じ画素だった。
 
-[![光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
+[![光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが既知の符号のあいまいさ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 
-*↑ **光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが符号の二義性** ―― 円板圧縮の閉形式応力場(中心 4.2441 MPa、縞次数 2.380)を光弾性の族の op で偏光像にし、縞から応力へ戻す図。偏光系は Mueller 行列(偏光変化を表す4×4行列)の素子を並べた鎖で検算し、教科書式と 125 通りで最大差 2.2e-16。縞次数が 0.5 を超える 84.2 % の画素で位相が巻く。巻き戻した後に外れる 2.98 % の画素の 93.7 % は、巻きではなく (δ,θ)↔(-δ,θ+90°) の符号の二義性で外れていて、符号が正しければ外れは 0.13 %(測定の符号だけ直すと 0.22 %)で、荷重点のそばの縞が細かい所だけ。符号が反転した入力では、低変調の画素をマスクで外しても一致率は上がらず 97.0 % から 81.9 % に下がる(符号が正しい入力では下がらず、機構は未解明)。*
+*↑ **光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが既知の符号のあいまいさ** ―― 円板圧縮の閉形式応力場(中心 4.2441 MPa、縞次数 2.380)を光弾性の族の op で偏光像にし、縞から応力へ戻す図。偏光系は Mueller 行列(偏光変化を表す4×4行列)の素子を並べた鎖で検算し、教科書式と 125 通りで最大差 2.2e-16。縞次数が 0.5 を超える 84.2 % の画素で位相が巻く。巻き戻した後に外れる 2.98 % の画素の 93.7 % は、巻きではなく (δ,θ)↔(-δ,θ+90°) の符号の二義性で外れていて、符号が正しければ外れは 0.13 %(測定の符号だけ直すと 0.22 %)で、荷重点のそばの縞が細かい所だけ。この符号のあいまいさは、等傾角が π/2 の周期でしか決まらないために位相シフト光弾性で以前から知られた問題(等色線と等傾線の相互作用。Ramji & Ramesh, J. Aerospace Sci. Technol. 60(1), 5-15, 2008, doi:10.61653/joast.v60i1.2008.811 / Ramesh, Kasimayan & Neethi Simon, J. Strain Anal. 46(4), 245-266, 2011, doi:10.1177/0309324711401501)で、この PoC の発見ではない。この PoC がしたのは、それが Fullseye の op の鎖でも巻き戻しの外れの 9 割超を占めることを、閉形式の真値で画素を数えて確かめたことまで(等傾角を先に巻き戻す既知の対策は実装していない)。符号が反転した入力では、低変調の画素をマスクで外しても一致率は上がらず 97.0 % から 81.9 % に下がる(符号が正しい入力では下がらず、機構は未解明)。*
 
 用語: Mueller matrix — 偏光状態を表すストークスベクトルに作用し、光学素子や試料による偏光変化を記述する4×4実行列。
 
 [![右下が外れの場所。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/02_unwrap.png)
 
-*↑ 測定の図 ―― 右下が外れの場所。ほとんどが 4 節の符号の二義性で、符号が正しければ外すのは荷重点のそばの縞が細かい所だけ。低変調の帯(右上の暗い帯)は外れの原因ではない。*
+*↑ 測定の図 ―― 右下が外れの場所。ほとんどが 4 節の符号の二義性(位相シフト光弾性で既知の問題。出典は PoC の冒頭)で、符号が正しければ外すのは荷重点のそばの縞が細かい所だけ。低変調の帯(右上の暗い帯)は外れの原因ではない。*
 
 [![動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/03_load_and_isoclinics.gif)
 
@@ -3222,7 +3222,7 @@ py -3.11 examples/poc_moire_alignment.py
 
 [![テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate.png)
 
-*↑ **テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える** ―― 主役は実画像: 論文(Stark ほか, Sci. Rep. 15, 28690, 2025、CC BY 4.0)のテレセン生画像を Fullseye の計測 op で測り、論文の値と突き合わせる。29.5° 傾いたアライメント板(円の間隔 1 mm)の 8 本のリングを、放射状の測定線(measure_pos)で取った線の中心へ「中心と形を共有する楕円の族」で当てると、長軸の伸びは 252.13 ± 0.04 px/mm で論文の K1 = 252.0 px/mm と +0.05 %(論文自身の K1・K2 が ±0.25 % 散っているので、それより細かい一致とは読まない)。★テレセンの証拠: 傾いた板の同心円の中心は r² に比例してずれない(β = 0.0035 ± 0.0034 px/mm²。同じ板を通常 f=25 で写すと 1.40 で、外側のリングの中心が 101 px ずれる)—— 入射瞳は 10.5 m より遠い。★リングごとに自由な楕円を当てると、影で弧が 36〜180° しか見えない外側のリングの長半径が外挿で狂う(弧 36° のリングで 768 px、正しくは 2142 px)。★樹脂の 3D プリント球(公称半径 2.5 mm)は輪郭の閾値で半径が 8 % 動き、真値にならない(2.400 / 2.452 mm。論文の計量級の球の生画像は公開データに無い)。以下は合成の章で、失敗条件を掃引する補助。ダイのボンディングやコネクタのピンは、高さの違う面の寸法を 1 枚の画像で測る。通常のレンズは近い面ほど大きく写すので段差の上と下で同じ寸法が違って写り、テレセントリックレンズは絞りを焦点に置いて主光線を光軸に平行にしてこれを消す。新 op 7 本(`telecentric`、`opsoptics` の `telecentric`): `telecentric_lens`(同じ BK7 相当の単レンズ f = 100 mm の絞りの位置だけを変えた通常 / 物体側 / 両側テレセン)/ `chief_ray_angle`(光線を入射瞳でなく絞りへ Newton 法で狙うので、入射瞳が無限遠でも動く —— `raytrace.chief_ray` はここで止まる)/ `magnification_vs_depth` / `telecentricity_error` / `defocus_spot_vs_depth` / `vignetting_vs_field` / `lens_equivalent_pinhole`(入射瞳に置いた `render3d` のピンホール)。像面を固定して物体を +5 mm 近づけると、作動距離 75 mm の FA レンズ(f = 25 mm)は倍率 +6.9 %、通常 f = 100 mm は +1.7 %、テレセンは −0.013 % で、実光線は閉形式 L/(L − Δz) と 7e-5 で一致する。オートフォーカスで合わせ直しても m = −f/(s − f) で +2.6 % 動き、戻らない。ピン(高さ 5 mm)・電極つきのダイ・穴(深さ 5 mm)を 3 種のレンズで描くと、FA レンズは画像から測ったピン上面の径を 6.9 % 大きく読み(閉形式と 7e-4)、ワークが 6 mm 上下すると読みが 8.6 % 動き、穴の内壁が 2,053 画素見えて底が 0.948 しか見えない(円の重なりの閉形式 0.949)。両側テレセンでは底が全部見え、内壁は 0 画素。部品はアルミの治具プレート・金めっきのピン・黒い樹脂モールドと銀色のリードの質感で描き(metalfinish の削り目と金属の複素屈折率の色、surfacelib の上塗り、影と AO)、照明を同軸落射・ドーム・低角リングに変えても、描いた画像から円の計測モデル(metrology)で測ったピン上面の径は閉形式と 0.33 % 以内、6 mm の上下で通常 f=25 は +8.3〜8.4 %、両側テレセンは ±0.16 % 以内。★物体で 47 µm/画素に粗くすると低角リングでは 2 % 外れた(暗視野で上面の縁が弱い)。★テレセンでも残る: 単レンズは瞳の球面収差で物高 8 mm のテレセン度が 0.05°(h³ で育つ)、物体側テレセンの歪曲は 3 %(両側の対称な配置では 0.005 %)。絞りのずれ δ は Newton の式で入射瞳を −f²/δ に動かし、物高 0.5 mm では閉形式と 0.04 %、8 mm では 11.8 % 大きい。テレセン度 0.1° が残ると段差 5 mm で 9.2 µm ずれる(閉形式 8.7 µm)。視野は前玉で決まり、50 % 点 11.6 mm は近軸の閉形式 12.4 mm より 0.8 mm 手前(瞳収差で光束が外へずれて太る)。ぼけの RMS の傾きは |m|·NA/√2 と 0.5 % 以内で、22 µm を回折で潰さない NA 0.033 では被写界深度は 0.68 mm が上限。第二の実装として OSS の optiland(MIT)と主光線の像の高さが 9e-8 mm で一致(屈折率は同じ公開の硝材カタログの係数なので、見ているのは光線追跡と狙いの実装)。学習 0、較正 0、門 29 件。数字の出どころ: 実画像の数字は取得した画像(キャッシュ)での実行の値で、ネットの無い CI は記録値を印字する(2026-11-13 にキャッシュの画像で作者と独立に再実行して 252.13 px/mm を確認)。合成の章の数は full の実行の値。*
+*↑ **テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える** ―― 主役は実画像: 論文(Stark ほか, Sci. Rep. 15, 28690, 2025、CC BY 4.0)のテレセン生画像を Fullseye の計測 op で測り、論文の値と突き合わせる。29.5° 傾いたアライメント板(円の間隔 1 mm)の 8 本のリングを、放射状の測定線(measure_pos)で取った線の中心へ「中心と形を共有する楕円の族」で当てると、長軸の伸びは 252.13 ± 0.04 px/mm で論文の K1 = 252.0 px/mm と +0.05 %(論文自身の K1・K2 が ±0.25 % 散っているので、それより細かい一致とは読まない。板の間隔 1 mm は公称値)。当てた楕円が線の中心に乗っていることは、測定線と独立の読み(楕円の法線に沿った明るさの断面の半値中点)でも数えた: リングごとの中央値で最大 0.99 px(最も外のリングの長半径の 0.046 %、線の半値幅は 30〜45 px)。線が影に入る境や画像の端では局所的に最大 8.5 px 外れ、縮めた図で楕円が線の縁に寄って見えるのはそういう所(2026-11-13、作者と独立の検証の指摘を数で切り分けた)。★テレセンの証拠: 傾いた板の同心円の中心は r² に比例してずれない(β = 0.0035 ± 0.0034 px/mm²。同じ板を通常 f=25 で写すと 1.40 で、外側のリングの中心が 101 px ずれる)—— 入射瞳は 10.5 m より遠い。★リングごとに自由な楕円を当てると、影で弧が 36〜180° しか見えない外側のリングの長半径が外挿で狂う(弧 36° のリングで 768 px、正しくは 2142 px)。★樹脂の 3D プリント球(公称半径 2.5 mm)は輪郭の閾値で半径が 8 % 動き、真値にならない(2.400 / 2.452 mm。論文の計量級の球の生画像は公開データに無い)。以下は合成の章で、失敗条件を掃引する補助。ダイのボンディングやコネクタのピンは、高さの違う面の寸法を 1 枚の画像で測る。通常のレンズは近い面ほど大きく写すので段差の上と下で同じ寸法が違って写り、テレセントリックレンズは絞りを焦点に置いて主光線を光軸に平行にしてこれを消す。新 op 7 本(`telecentric`、`opsoptics` の `telecentric`): `telecentric_lens`(同じ BK7 相当の単レンズ f = 100 mm の絞りの位置だけを変えた通常 / 物体側 / 両側テレセン)/ `chief_ray_angle`(光線を入射瞳でなく絞りへ Newton 法で狙うので、入射瞳が無限遠でも動く —— `raytrace.chief_ray` はここで止まる)/ `magnification_vs_depth` / `telecentricity_error` / `defocus_spot_vs_depth` / `vignetting_vs_field` / `lens_equivalent_pinhole`(入射瞳に置いた `render3d` のピンホール)。像面を固定して物体を +5 mm 近づけると、作動距離 75 mm の FA レンズ(f = 25 mm)は倍率 +6.9 %、通常 f = 100 mm は +1.7 %、テレセンは −0.013 % で、実光線は閉形式 L/(L − Δz) と 7e-5 で一致する。オートフォーカスで合わせ直しても m = −f/(s − f) で +2.6 % 動き、戻らない。ピン(高さ 5 mm)・電極つきのダイ・穴(深さ 5 mm)を 3 種のレンズで描くと、FA レンズは画像から測ったピン上面の径を 6.9 % 大きく読み(閉形式と 7e-4)、ワークが 6 mm 上下すると読みが 8.6 % 動き、穴の内壁が 2,053 画素見えて底が 0.948 しか見えない(円の重なりの閉形式 0.949)。両側テレセンでは底が全部見え、内壁は 0 画素。部品はアルミの治具プレート・金めっきのピン・黒い樹脂モールドと銀色のリードの質感で描き(metalfinish の削り目と金属の複素屈折率の色、surfacelib の上塗り、影と AO)、照明を同軸落射・ドーム・低角リングに変えても、描いた画像から円の計測モデル(metrology)で測ったピン上面の径は閉形式と 0.33 % 以内、6 mm の上下で通常 f=25 は +8.3〜8.4 %、両側テレセンは ±0.16 % 以内。★物体で 47 µm/画素に粗くすると低角リングでは 2 % 外れた(暗視野で上面の縁が弱い)。★テレセンでも残る: 単レンズは瞳の球面収差で物高 8 mm のテレセン度が 0.05°(h³ で育つ)、物体側テレセンの歪曲は 3 %(両側の対称な配置では 0.005 %)。絞りのずれ δ は Newton の式で入射瞳を −f²/δ に動かし、物高 0.5 mm では閉形式と 0.04 %、8 mm では 11.8 % 大きい。テレセン度 0.1° が残ると段差 5 mm で 9.2 µm ずれる(閉形式 8.7 µm)。視野は前玉で決まり、50 % 点 11.6 mm は近軸の閉形式 12.4 mm より 0.8 mm 手前(瞳収差で光束が外へずれて太る)。ぼけの RMS の傾きは |m|·NA/√2 と 0.5 % 以内で、22 µm を回折で潰さない NA 0.033 では被写界深度は 0.68 mm が上限。第二の実装として OSS の optiland(MIT)と主光線の像の高さが 9e-8 mm で一致(屈折率は同じ公開の硝材カタログの係数なので、見ているのは光線追跡と狙いの実装)。学習 0、較正 0、門 31 件。数字の出どころ: 実画像の数字は取得した画像(キャッシュ)での実行の値で、ネットの無い CI は記録値を印字する(2026-11-13 にキャッシュの画像で作者と独立に再実行して 252.13 px/mm を確認)。合成の章の数は full の実行の値。*
 
 [![同じ BK7 相当の等凸レンズ(f = 100 mm)で、絞り(赤)の位置だけを変えた 3 種。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/01_lens_layouts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/01_lens_layouts.png)
 

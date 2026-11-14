@@ -2339,6 +2339,9 @@ def _main():
     print("=" * 78)
     print("PoC: 機材選びの事前試験 —— 照明 × カメラ × レンズの地図(予算 %s)" % ("reduced" if REDUCED else "full"))
     print("=" * 78)
+    print("★数字の出どころ: 説明文・キャプション・図の µm は full の予算(FULLSEYE_POC_BUDGET=full)の値。既定と CI は縮小版で、"
+          "部位の数が少ないぶん a90/95 が数 µm〜10 µm 動く(門はどちらでも通る幅)。この実行は%s。合成の試験で、実機の性能ではない。"
+          % ("縮小版 = 説明文の数字とは一致しない" if REDUCED else "full = 説明文の数字の元"))
     chapter_physics()
     grid = chapter_map()
     design = chapter_design(grid)
