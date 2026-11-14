@@ -59,7 +59,7 @@ FORMATS: dict[str, str] = {".json": "json", ".toml": "toml", ".yaml": "yaml", ".
 WRITABLE_FORMATS: tuple[str, ...] = ("json", "yaml", "xml")
 WRITE_EXTS: dict[str, str] = {".json": "json", ".yaml": "yaml", ".yml": "yaml", ".xml": "xml"}
 #: 対訳を持つ言語(en は原文)。
-LANGS: tuple[str, ...] = ("en", "ja", "zh", "tw", "ko", "de")
+LANGS: tuple[str, ...] = ("en", "ja", "zh", "tw", "ko", "de", "hi")
 
 _XML_ROOT = "params"
 _XML_KIND = "params"
@@ -87,7 +87,7 @@ MESSAGES: dict[str, str] = {
     "edit.str_quantity": "%s: this field holds text; %r would be read back as a number with a unit",
     "edit.list": "%s: this field holds a list such as [1, 2, 3]; %r is not a list of plain values",
     "edit.list_kind": "%s: this list holds %s values; %r would add %s",
-    "edit.gate": "%s",
+    "edit.gate": "the bundle does not allow this change (%s)",   # 束の門(ParamBundle)の英語の理由は括弧で後ろに
     "edit.same": "%s: the value is unchanged",
     "copy.missing": "%s: %s has no value to copy",
     "copy.same": "%s: both columns already hold the same value",
@@ -150,16 +150,25 @@ def load_i18n_table(path: str | None = None) -> dict:
     return strings
 
 
-def make_tr(lang: str = "en", table: dict | None = None) -> Callable[[str], str]:
-    """言語 ``lang`` の ``tr``(英語の文 → その言語の文)。表に無い文は英語のまま。知らない言語は ``ValueError``。"""
-    if lang not in LANGS:
+def make_tr(lang: str = "en", table: dict | None = None,
+            fallback: Callable[[str], str] | None = None) -> Callable[[str], str]:
+    """言語 ``lang`` の ``tr``(英語の文 → その言語の文)。表に無い文は英語のまま。知らない言語は ``ValueError``。
+
+    ``fallback`` = この表に無い文を任せる先(Studio の ``tr`` など、ほかの表を引く関数)。Studio の ``tr`` は束の文を
+    知らないので、Studio から窓を開く時は ``make_tr(Studio の言語, fallback=Studio の tr)`` を渡す(窓の入口の ``lang=`` が
+    これをする)。``fallback`` がある時は、この表が持たない言語でも断らず、全部を ``fallback`` に任せる。"""
+    known = lang in LANGS
+    if not known and fallback is None:
         raise ValueError("language must be one of %s (got %r)" % (" / ".join(LANGS), lang))
     tab = load_i18n_table() if table is None else table
 
     def tr(text: str) -> str:
-        if lang == "en" or not text:
+        if not text:
             return text
-        return tab.get(text, {}).get(lang, text)
+        row = tab.get(text) if known else None
+        if row is not None:                              # この表の文: その言語の訳(en と訳の無い所は英語のまま)
+            return text if lang == "en" else row.get(lang, text)
+        return fallback(text) if fallback is not None else text
 
     tr.lang = lang  # type: ignore[attr-defined]
     return tr

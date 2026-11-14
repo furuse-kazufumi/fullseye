@@ -668,22 +668,28 @@ def _placeholders(text: str) -> list[str]:
     return re.findall(r"%[sdr]", text)
 
 
-def test_every_message_is_translated_into_five_languages():
-    """対訳の表: 画面の文の型は全部 5 言語(ja・zh・tw・ko・de)に訳があり、% の並びが英語と同じ。使わない行は無い。"""
+def test_every_message_is_translated_into_six_languages():
+    """対訳の表: 画面の文の型は全部 6 言語(ja・zh・tw・ko・de・hi)に訳があり、% の並びが英語と同じ。使わない行は無い。
+    理由だけを素通しにする型("%s")は無い(束の門の理由も UI の言語の文 + 括弧)。"""
     table = M.load_i18n_table()
-    assert len(table) >= 110 and "Could not open %s (%s)" in table
-    templates = [t for t in M.MESSAGES.values() if t != "%s"]
-    assert len(templates) == len(M.MESSAGES) - 1 == 44
+    assert len(table) >= 128 and "Could not open %s (%s)" in table
+    assert M.LANGS == ("en", "ja", "zh", "tw", "ko", "de", "hi")
+    templates = list(M.MESSAGES.values())
+    assert len(templates) == 45 and [t for t in templates if not re.search(r"[A-Za-z]{3}", t)] == []
     missing = [t for t in templates if t not in table]
     assert missing == []
     cells = 0
     for en, row in table.items():
+        assert sorted(row) == sorted(M.LANGS[1:]), en
         for lang in M.LANGS[1:]:
             text = row.get(lang, "")
             assert text.strip(), (en, lang)
             assert _placeholders(text) == _placeholders(en), (en, lang, text)
             cells += 1
-    assert cells == len(table) * 5
+    assert cells == len(table) * 6
+    # hi はデーヴァナーガリーで書いてある(英語の写しで埋めた行は無い)
+    latin_only = [en for en, row in table.items() if not re.search("[\u0900-\u097f]", row["hi"])]
+    assert latin_only == [], latin_only
     literals: set[str] = set()
     for name in ("studio_params_model.py", "studio_params_qt.py"):
         tree = ast.parse(io.open(os.path.join(ROOT, name), encoding="utf-8").read())
@@ -705,7 +711,7 @@ def test_the_name_is_the_same_as_the_project_panel():
         studio = json.load(fh)["strings"]["Parameters"]
     mine = M.load_i18n_table()["Parameters"]
     same = [lang for lang in M.LANGS[1:] if mine[lang] == studio[lang]]
-    assert same == ["ja", "zh", "tw", "ko", "de"]
+    assert same == ["ja", "zh", "tw", "ko", "de", "hi"]
 
 
 def test_example_bundles_show_every_kind_of_row():
@@ -1834,6 +1840,19 @@ def test_params_os_reason_goes_in_brackets_at_the_end(qapp, ini, tmp_path):
     assert M.MESSAGES["save.failed"].endswith("(%s)") and M.MESSAGES["load.refused"].endswith("(%s)")
     assert m.add_file(str(tmp_path / "nope.json")).text(tr).startswith("nope.json を開けません(")
     _close_quietly(win)
+    # 束の門(値と節がぶつかる写し)が断った時も同じ形: UI の言語の文の後ろに、門の英語の理由を括弧で
+    assert M.MESSAGES["edit.gate"].endswith("(%s)") and tr(M.MESSAGES["edit.gate"]) != M.MESSAGES["edit.gate"]
+    win = _window(qapp, lang="ja")
+    p = win.panel
+    for name, data in (("flat", {"a": 1, "b": 2}), ("nested", {"a": {"x": 1}, "b": 2})):
+        assert p.model.add_bundle(data, name).ok
+    p.refresh()
+    out = p.copy_cell("a", 0, 1)
+    assert not out.ok and out.code == "edit.gate" and "both a value and a section" in out.reason
+    msg = p.message_label.full_text()
+    assert msg == "\u2715 " + tr(M.MESSAGES["edit.gate"]) % out.args and p.message_level == "error"
+    assert msg.startswith("\u2715 束の決まりで") and msg.endswith(")") and "both a value and a section" in msg
+    _close_quietly(win)
 
 
 def test_params_compact_counts_keep_shown_of_all(qapp, ini, tmp_path):
@@ -2291,3 +2310,82 @@ def test_params_rejected_cell_survives_redraw_and_is_resolved_first(qapp, fusion
     QTest.keyClick(p.tree, Qt.Key_Escape)                               # 残っている欄が無ければ、Esc は窓を閉じる
     _pump(qapp)
     assert not win.isVisible()
+
+
+#: Studio の i18n.json の strings が知っている、束の窓の文(9 行だけ。studio.tr はこの表しか引かない)。
+_STUDIO_KNOWS = ("Parameters", "Open", "Save", "Cancel", "Close", "Open the example", "read-only", "saved %s",
+                 "not saved to a file yet")
+
+
+def _studio_like_tr(lang: str):
+    """Studio の tr の代役: Studio の i18n.json の strings だけを引く(束の対訳の表は知らない)。"""
+    with io.open(os.path.join(ROOT, "studio_assets", "i18n.json"), encoding="utf-8") as fh:
+        strings = json.load(fh)["strings"]
+    assert all(k in strings for k in _STUDIO_KNOWS)
+
+    def tr(text):
+        return text if lang == "en" or not text else strings.get(text, {}).get(lang, text)
+
+    return tr
+
+
+@pytest.mark.parametrize("lang", ["ja", "hi", "de"])
+def test_params_studio_entry_speaks_the_ui_language(qapp, ini, tmp_path, lang):
+    """D87 の引き継ぎ(確かめの指摘): Studio は言語コードを ``lang=`` で渡して開く。Studio の tr は束の文を 9 行しか
+    知らないので、tr だけを渡した窓はほぼ英語になる(その事も数える)。``lang=`` で開いた窓は、その言語で作った窓と全部の文が
+    同じで、英語の窓と違う文が 45 以上。言語の切り替えは set_lang、既にある窓は入口が切り替える。知らない言語でも落ちない。"""
+    paths = _three_files(tmp_path)
+    host = _studio_like_tr(lang)
+    english = _window(qapp, paths, lang="en")
+    _same_state(qapp, english, paths)
+    en = _window_texts(english)
+    _close_quietly(english)
+    fresh = _window(qapp, paths, lang=lang)
+    _same_state(qapp, fresh, paths)
+    want = _window_texts(fresh)
+    _close_quietly(fresh)
+    translated = [k for k in want if want[k] != en[k]]
+    assert len(want) >= 55 and len(translated) >= 45, (lang, len(want), len(translated))
+    # 対照: Studio の tr だけを渡した窓(引き継ぎの前の文どおり)は、ほとんど英語のまま
+    bare = Q.ParamsWindow(None, host)
+    bare.resize(720, 420)
+    bare.panel.add_paths(paths)
+    bare.show()
+    _pump(qapp)
+    _same_state(qapp, bare, paths)
+    got = _window_texts(bare)
+    assert len([k for k in got if got[k] != en[k]]) <= len(translated) // 2
+    _close_quietly(bare)
+    # 入口: lang= で開く(tr は Studio の tr のまま渡してよい)
+    parent = QtWidgets.QWidget()
+    win = Q.show_params_window(parent, paths, host, lang=lang)
+    win.resize(720, 420)
+    _pump(qapp)
+    _same_state(qapp, win, paths)
+    got = _window_texts(win)
+    assert {k: (got[k], want[k]) for k in want if got[k] != want[k]} == {} and sorted(got) == sorted(want)
+    # 言語の切り替え: set_lang。en → 全部英語、もう一度その言語 → 全部戻る
+    win.set_lang("en")
+    _pump(qapp)
+    back = _window_texts(win)
+    assert {k: (back[k], en[k]) for k in en if back[k] != en[k]} == {}
+    assert Q.show_params_window(parent, (), host, lang=lang) is win       # 既にある窓: 入口が言語を切り替える
+    _pump(qapp)
+    again = _window_texts(win)
+    assert {k: (again[k], want[k]) for k in want if again[k] != want[k]} == {}
+    _close_quietly(win)
+    parent.deleteLater()
+    # 束の表が持たない言語(Studio が後から足した言語): 落ちずに開き、束の文は英語。表にある言語へ切り替えれば訳される
+    other = Q.ParamsWindow(None, _studio_like_tr("xx"), lang="xx")
+    assert other.windowTitle() == "Parameters" and other.panel.search.placeholderText() == "Search keys"
+    other.set_lang(lang)
+    assert other.panel.search.placeholderText() == M.make_tr(lang)("Search keys") != "Search keys"
+    _close_quietly(other)
+    # 束の表に無い文は fallback(Studio の tr)へ。fallback が無い時、知らない言語は断る(前からの決まり)
+    seen = []
+    tr = M.make_tr(lang, fallback=lambda s: (seen.append(s), "<" + s + ">")[1])
+    assert tr("Search keys") == M.make_tr(lang)("Search keys") != "Search keys" and seen == []
+    assert tr("a text of Studio") == "<a text of Studio>" and seen == ["a text of Studio"] and tr("") == ""
+    assert M.make_tr("xx", fallback=lambda s: s.upper())("Search keys") == "SEARCH KEYS"
+    with pytest.raises(ValueError):
+        M.make_tr("xx")

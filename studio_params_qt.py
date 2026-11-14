@@ -14,7 +14,8 @@
 
 見た目の決まり: 行の高さ = 文字 + 4 px、アイコンだけのボタンは 24 px の正方形で間は 4 px、色は Qt のパレットから
 出す。差のあるセルは色を付けるが、**色だけに頼らない**(行の印 ≠ / ◌ / ≈、セルの小さな印、片方に無いセルは斜線)。
-画面の文は全部 ``tr`` を通す(対訳は ``studio_assets/studio_params_i18n.json``。Studio の ``tr`` を渡してもよい)。
+画面の文は全部 ``tr`` を通す(対訳は ``studio_assets/studio_params_i18n.json``)。Studio の ``tr`` は束の文を知らないので、
+Studio からは言語コードを ``lang=`` で渡す(束の表をその言語で引き、表に無い文だけを Studio の ``tr`` に任せる)。
 """
 from __future__ import annotations
 
@@ -1863,11 +1864,15 @@ class ParamsWindow(QtWidgets.QDialog):
 
     def __init__(self, parent: QtWidgets.QWidget | None = None, tr: Callable[[str], str] | None = None,
                  settings: Callable[[], Any] | None = None, model: M.ParamsModel | None = None,
-                 confirm: Callable[..., Any] | None = None) -> None:
+                 confirm: Callable[..., Any] | None = None, lang: str | None = None) -> None:
         super().__init__(parent, Qt.Window | Qt.WindowCloseButtonHint | Qt.WindowMinMaxButtonsHint)
         self.setModal(False)
         self.setAttribute(Qt.WA_DeleteOnClose, False)
         self._settings = settings or _default_settings
+        #: 開いた側の tr(Studio の tr など)。``lang`` で開いた時は、束の表に無い文をここへ任せる。
+        self._host_tr = tr
+        if lang is not None:
+            tr = self._tr_for(lang)
         self.panel = ParamsPanel(tr, self, model, self._settings)
         self.panel.set_confirm(confirm)
         lay = QtWidgets.QVBoxLayout(self)
@@ -1879,10 +1884,20 @@ class ParamsWindow(QtWidgets.QDialog):
         self.setMinimumSize(320, 160)
         self._restore()
 
+    def _tr_for(self, lang: str) -> Callable[[str], str]:
+        """言語コードから窓の tr を作る: 束の対訳の表をその言語で引き、表に無い文は開いた側の tr に任せる。
+        表が持たない言語は断らず、束の文は英語になる(開いた側の tr があれば、それが知っている文は訳される)。"""
+        return M.make_tr(lang, fallback=self._host_tr or (lambda s: s))
+
     def set_tr(self, tr: Callable[[str], str]) -> None:
-        """言語を切り替える(窓の題と、パネルの全部の文)。"""
+        """言語を切り替える(窓の題と、パネルの全部の文)。``tr`` は束の文を訳せる関数(``make_tr`` の物)。"""
         self.panel.set_tr(tr)
         self.setWindowTitle(self.panel.title())
+
+    def set_lang(self, lang: str) -> None:
+        """言語を言語コードで切り替える(Studio の言語の切り替えから呼ぶ。Studio の tr は束の文を知らないので、
+        ``set_tr(Studio の tr)`` ではなくこちら)。"""
+        self.set_tr(self._tr_for(lang))
 
     # ---- 位置と大きさ・絞り込みの状態 ----
     def _restore(self) -> None:
@@ -1959,17 +1974,27 @@ class ParamsWindow(QtWidgets.QDialog):
 
 def show_params_window(parent: QtWidgets.QWidget | None = None, paths: Sequence[str] = (),
                        tr: Callable[[str], str] | None = None, settings: Callable[[], Any] | None = None,
-                       confirm: Callable[..., Any] | None = None) -> ParamsWindow:
+                       confirm: Callable[..., Any] | None = None, lang: str | None = None) -> ParamsWindow:
     """Studio から呼ぶ入口。同じ親の窓が既にあれば 2 枚目を作らず、``paths`` を列に足して前に出す。
+
+    ``lang`` = Studio の今の言語コード。**Studio からはこれを渡す**: Studio の ``tr`` は Studio の表(i18n.json)だけを引き、
+    束の窓の文をほとんど知らないので、``tr`` だけを渡すと窓がほぼ英語になる。``lang`` を渡すと束の対訳の表をその言語で引き、
+    表に無い文だけを ``tr`` に任せる。既にある窓は、渡した言語へ切り替える。言語の切り替えでは
+    :meth:`ParamsWindow.set_lang` を呼ぶ。``lang`` を渡さない時は ``tr`` をそのまま使う(``make_tr`` の物を渡す)。
 
     ``confirm`` = Studio の ``confirm_action``(確認の窓を Studio と同じ形にする。:meth:`ParamsPanel.set_confirm`)。"""
     win = getattr(parent, "_params_window", None) if parent is not None else None
     if not isinstance(win, ParamsWindow):
-        win = ParamsWindow(parent, tr, settings, confirm=confirm)
+        win = ParamsWindow(parent, tr, settings, confirm=confirm, lang=lang)
         if parent is not None:
             parent._params_window = win             # type: ignore[attr-defined]
-    elif confirm is not None:
-        win.panel.set_confirm(confirm)
+    else:
+        if confirm is not None:
+            win.panel.set_confirm(confirm)
+        if lang is not None and getattr(win.panel.tr_, "lang", None) != lang:
+            if tr is not None:
+                win._host_tr = tr
+            win.set_lang(lang)
     if paths:
         win.panel.add_paths(list(paths))
     win.show()
