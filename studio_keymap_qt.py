@@ -803,9 +803,11 @@ class KeyboardDialog(QtWidgets.QDialog):
         self.b_import.setObjectName("keymapImport")
         self.b_export = QtWidgets.QPushButton()
         self.b_export.setObjectName("keymapExport")
+        self.b_restore = QtWidgets.QPushButton()               # 前の表(読み込みで置き換える前)へ戻す
+        self.b_restore.setObjectName("keymapRestore")
         self.b_close = QtWidgets.QPushButton()
         for b, fn in ((self.b_reset_all, self.do_reset_all), (self.b_import, self.do_import),
-                      (self.b_export, self.do_export)):
+                      (self.b_restore, self.do_restore), (self.b_export, self.do_export)):
             b.clicked.connect(lambda _=False, f=fn: f())
             row2.addWidget(b)
         row2.addStretch(1)
@@ -835,7 +837,7 @@ class KeyboardDialog(QtWidgets.QDialog):
         for b, s in ((self.b_clear, km.BTN_CLEAR), (self.b_assign, km.BTN_ASSIGN), (self.b_add, km.BTN_ADD),
                      (self.b_remove, km.BTN_REMOVE), (self.b_reset, km.BTN_RESET), (self.b_reset_all, km.BTN_RESET_ALL),
                      (self.b_import, km.BTN_IMPORT), (self.b_export, km.BTN_EXPORT), (self.b_close, km.BTN_CLOSE),
-                     (self.b_literal, km.BTN_LITERAL)):
+                     (self.b_literal, km.BTN_LITERAL), (self.b_restore, km.BTN_RESTORE)):
             b.setText(tr(s))
         self.refill()
 
@@ -892,6 +894,7 @@ class KeyboardDialog(QtWidgets.QDialog):
         self._filter()
         self._show_load_note()
         self.b_reset_all.setEnabled(bool(ctl.keymap.overrides()))
+        self.b_restore.setEnabled(ctl.previous_text() is not None)
         self.select(keep) if keep else self._show_detail()
 
     def _note_line(self, p: km.Problem) -> str:
@@ -1152,6 +1155,25 @@ class KeyboardDialog(QtWidgets.QDialog):
         self.ctl.use_import(new)
         self.status.setText(html.escape(tr(km.MSG_IMPORTED) % len(self.ctl.keymap.overrides())))
         return True
+
+    def do_restore(self) -> bool:
+        """前の表(keymap/user.previous)へ戻す。今の表と入れ替えるので、もう一度押せば元へ(確かめの担当 2 回目 #3)。"""
+        tr = self.ctl.tr
+        text = self.ctl.previous_text()
+        if text is None or not self._ok_to_change():
+            return False
+        new, probs = km.import_text(text, self.ctl.fixed_entries(), self.ctl.places)
+        if new is None:
+            self.inform(tr(km.TTL_RESTORE), tr(km.MSG_RESTORE_FAILED) + "\n" + "\n".join(
+                "  " + self.ctl.describe(p) for p in probs if p.level == "error"))
+            return False
+        ask = tr(km.ASK_RESTORE) % (len(new.overrides()), len(self.ctl.keymap.overrides()))
+        if not self.confirm(tr(km.TTL_RESTORE), ask, tr(km.BTN_RESTORE_DO)):
+            return False
+        ok, _probs = self.ctl.restore_previous()
+        if ok:
+            self.status.setText(html.escape(tr(km.MSG_RESTORED) % len(self.ctl.keymap.overrides())))
+        return ok
 
     def do_export(self) -> bool:
         tr = self.ctl.tr
@@ -1427,6 +1449,31 @@ class KeymapController(QtCore.QObject):
             s.setValue(km.PREVIOUS_KEY, self.keymap.to_json())
         self.keymap = new
         self._commit()
+
+    def previous_text(self) -> str | None:
+        """``keymap/user.previous``(読み込み・前の表へ戻すで置き換える前の表、1 世代)。無ければ None。"""
+        s = self.store()
+        try:
+            value = s.value(km.PREVIOUS_KEY) if s is not None else None
+        except Exception:                                      # noqa: BLE001 -- 設定が読めなくてもキーは動く
+            value = None
+        return value if isinstance(value, str) and value else None
+
+    def restore_previous(self) -> tuple:
+        """前の表へ戻す。今の表を ``keymap/user.previous`` に入れ替える(もう一度で元へ)。前の表も読み込みと同じ検査を
+        通し、駄目なら何も変えず ``(False, problems)``。"""
+        text = self.previous_text()
+        if text is None:
+            return False, []
+        new, probs = km.import_text(text, self.fixed_entries(), self.places)
+        if new is None:
+            return False, probs
+        s = self.store()
+        if s is not None:
+            s.setValue(km.PREVIOUS_KEY, self.keymap.to_json())
+        self.keymap = new
+        self._commit()
+        return True, probs
 
     def read_import(self, path: str) -> tuple:
         """JSON を読んで検査する(まだ当てない)。``(Keymap, 警告)`` か ``(None, problems)``。"""

@@ -355,7 +355,7 @@ def test_every_own_string_has_five_translations_and_nothing_else():
     table = km.load_table()
     assert km.missing() == []
     assert sorted(table) == sorted(km.ui_strings())
-    assert len(table) == 154
+    assert len(table) == 160
     ph = re.compile(r"%\(\w+\)s|%[sd]")
     for en, row in table.items():
         for lang in km.LANGS[1:]:
@@ -1574,6 +1574,45 @@ def test_backspace_in_the_recorder_clears_and_the_editor_keeps_deleting(win, ctl
     assert ed.toPlainText() == "ab"                                       # Program 欄の Backspace は文字を消す
 
 
+def test_the_previous_map_can_be_restored_and_restoring_again_comes_back(win, ctl, studio_mod, tmp_path):
+    """確かめの担当 2 回目 #3: 置き換える前の表は keymap/user.previous に残るが、戻す入口が画面にも文書にも無かった。"""
+    s = studio_mod._settings()
+    s.remove(km.PREVIOUS_KEY)
+    s.sync()
+    dlg = ctl.open_dialog()
+    try:
+        assert dlg.b_restore.text() == "Restore previous…" and not dlg.b_restore.isEnabled()   # 前の表が無ければ押せない
+        assert ctl.assign("fit", ("Ctrl+Shift+F12",)) == []
+        path = str(tmp_path / "other.json")
+        _write_keys(path, {"zoom_in": ["Ctrl+F11"]}, preset="vscode")
+        dlg.ask_open = lambda: path
+        dlg.confirm = lambda *a: True
+        assert dlg.do_import() is True and ctl.keymap.overrides() == {"zoom_in": ("Ctrl+F11",)}
+        assert dlg.b_restore.isEnabled()
+        asked = []
+        dlg.confirm = lambda title, text, *_a: asked.append((title, text)) or False
+        assert dlg.do_restore() is False and ctl.keymap.preset == "vscode"   # 断った: 何も変えない
+        assert len(asked) == 1 and "(1 changed)" in asked[0][1]
+        dlg.confirm = lambda *a: True
+        assert dlg.do_restore() is True
+        assert ctl.keymap.preset == "visual_studio" and ctl.keymap.overrides() == {"fit": ("Ctrl+Shift+F12",)}
+        assert _keys_of(win._actions["fit"]) == ("Ctrl+Shift+F12",)          # 窓のキーも戻る
+        prev = json.loads(studio_mod._settings().value(km.PREVIOUS_KEY))
+        assert prev["preset"] == "vscode" and prev["bindings"] == {"zoom_in": ["Ctrl+F11"]}   # 入れ替わりに残る
+        assert dlg.do_restore() is True and ctl.keymap.overrides() == {"zoom_in": ("Ctrl+F11",)}   # もう一度で元へ
+        s = studio_mod._settings()
+        s.setValue(km.PREVIOUS_KEY, json.dumps({"format": km.FORMAT, "version": 1, "bindings": {"no_such": ["F12"]}}))
+        s.sync()
+        said = []
+        dlg.inform = lambda title, text: said.append(text)
+        assert dlg.do_restore() is False and len(said) == 1 and "no_such" in said[0]   # 使えない前の表: 何も変えない
+        assert ctl.keymap.overrides() == {"zoom_in": ("Ctrl+F11",)} and ctl.keymap.preset == "vscode"
+    finally:
+        s = studio_mod._settings()
+        s.remove(km.PREVIOUS_KEY)
+        s.sync()
+
+
 def test_the_recorder_enter_assigns_esc_stops_and_tab_moves_on(win, ctl):
     from PySide6 import QtCore, QtWidgets  # noqa: PLC0415
     K = QtCore.Qt
@@ -2468,7 +2507,7 @@ def test_enter_in_the_settings_window_does_not_press_a_button(win, ctl):
     dlg.activateWindow()
     _pump(0.1)
     buttons = dlg.findChildren(QtWidgets.QPushButton)
-    assert len(buttons) == 10 and [b.text() for b in buttons if b.isDefault() or b.autoDefault()] == []
+    assert len(buttons) == 11 and [b.text() for b in buttons if b.isDefault() or b.autoDefault()] == []
     assert dlg.select("fit")
     dlg.recorder.setFocus()
     _pump(0.05)

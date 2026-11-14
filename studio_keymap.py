@@ -1313,6 +1313,14 @@ ASK_NEWER = ("The saved shortcuts are from a newer Studio and are not used here.
              "saves its own shortcuts and moves the newer settings to keymap/user.backup (the newer Studio does not "
              "read them from there). Continue?")
 BTN_NEWER_DO = "Change anyway"
+#: 前の表(keymap/user.previous)へ戻す(今の表と入れ替える)。
+BTN_RESTORE = "Restore previous…"
+TTL_RESTORE = "Restore the previous shortcuts"
+ASK_RESTORE = ("Go back to the previous shortcuts (%d changed)? Your current ones (%d changed) take their place, so this "
+               "button can bring them back.")
+BTN_RESTORE_DO = "Restore"
+MSG_RESTORED = "Restored the previous shortcuts (%d changed)"
+MSG_RESTORE_FAILED = "The previous shortcuts could not be used (nothing was changed):"
 FILE_FILTER = "Fullseye Studio keys (*.json)"
 #: 登録簿に無い組み込みの相手(当たりの文と一覧): メニューバーのニーモニック / テキスト欄の標準のキー。
 MSG_MENU_BAR = "Menu bar: %s"
@@ -1411,7 +1419,8 @@ def ui_strings() -> tuple:
              MSG_LOAD_PART, MSG_LOAD_BROKEN, MSG_LOAD_NEWER, MSG_LOAD_HEADER, MSG_MENU_OTHER, MSG_LANG_PROBLEM,
              MSG_LANG_HEADER, HINT_KEYS, BTN_LITERAL, PH_LITERAL, BTN_REMOVE_ONE, BTN_CANCEL, BTN_RESET_ALL_DO,
              BTN_SWITCH, BTN_REPLACE, TTL_IMPORT, ASK_IMPORT, ASK_IMPORT_PRESET, ASK_IMPORT_LOST, MSG_EXPORT_FAILED,
-             MSG_NO_MATCH, MSG_NOTHING_TO_SAVE, ACT_DUPLICATE, TTL_NEWER, ASK_NEWER, BTN_NEWER_DO]
+             MSG_NO_MATCH, MSG_NOTHING_TO_SAVE, ACT_DUPLICATE, TTL_NEWER, ASK_NEWER, BTN_NEWER_DO, BTN_RESTORE,
+             TTL_RESTORE, ASK_RESTORE, BTN_RESTORE_DO, MSG_RESTORED, MSG_RESTORE_FAILED]
     fixed += list(PRESET_TITLES.values()) + [s.title for s in SCOPES.values()] + [t for t, _s in PLACES.values()]
     fixed += list(MESSAGES.values()) + [c.title for c in COMMANDS if c.own_title]
     seen, out = set(), []

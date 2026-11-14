@@ -1078,6 +1078,48 @@
    "tw": "仍然變更",
    "ko": "그래도 바꾸기",
    "de": "Trotzdem ändern"
+  },
+  "Restore previous…": {
+   "ja": "前の表に戻す…",
+   "zh": "恢复上一个…",
+   "tw": "還原上一個…",
+   "ko": "이전 표로 되돌리기…",
+   "de": "Vorherige wiederherstellen…"
+  },
+  "Restore the previous shortcuts": {
+   "ja": "前のショートカットに戻す",
+   "zh": "恢复之前的快捷键",
+   "tw": "還原先前的快速鍵",
+   "ko": "이전 단축키로 되돌리기",
+   "de": "Vorherige Tastenkürzel wiederherstellen"
+  },
+  "Go back to the previous shortcuts (%d changed)? Your current ones (%d changed) take their place, so this button can bring them back.": {
+   "ja": "前のショートカット(変えた物 %d 個)に戻しますか? 今の物(変えた物 %d 個)が入れ替わりに残るので、このボタンでまた戻せます。",
+   "zh": "要恢复到之前的快捷键(%d 项更改)吗? 当前的快捷键(%d 项更改)会互换保留，可用此按钮再换回来。",
+   "tw": "要還原到先前的快速鍵(%d 項變更)嗎? 目前的快速鍵(%d 項變更)會互換保留，可用此按鈕再換回來。",
+   "ko": "이전 단축키(바꾼 것 %d개)로 되돌릴까요? 지금 단축키(바꾼 것 %d개)는 맞바꿔 남으므로 이 버튼으로 다시 돌아올 수 있습니다.",
+   "de": "Zu den vorherigen Tastenkürzeln zurückkehren (%d geändert)? Die aktuellen (%d geändert) werden dafür aufbewahrt, sodass diese Schaltfläche sie zurückholen kann."
+  },
+  "Restore": {
+   "ja": "戻す",
+   "zh": "恢复",
+   "tw": "還原",
+   "ko": "되돌리기",
+   "de": "Wiederherstellen"
+  },
+  "Restored the previous shortcuts (%d changed)": {
+   "ja": "前のショートカットに戻した(変えた物 %d 個)",
+   "zh": "已恢复之前的快捷键(%d 项更改)",
+   "tw": "已還原先前的快速鍵(%d 項變更)",
+   "ko": "이전 단축키로 되돌렸습니다(바꾼 것 %d개)",
+   "de": "Vorherige Tastenkürzel wiederhergestellt (%d geändert)"
+  },
+  "The previous shortcuts could not be used (nothing was changed):": {
+   "ja": "前のショートカットは使えなかった(何も変えていない):",
+   "zh": "之前的快捷键无法使用(未做任何更改):",
+   "tw": "先前的快速鍵無法使用(未做任何變更):",
+   "ko": "이전 단축키를 쓸 수 없었습니다(아무것도 바꾸지 않았습니다):",
+   "de": "Die vorherigen Tastenkürzel konnten nicht verwendet werden (nichts wurde geändert):"
   }
  }
 }
