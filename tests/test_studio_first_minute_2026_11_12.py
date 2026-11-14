@@ -148,7 +148,16 @@ def test_work_mode_and_panel_names_equal_the_layout_models_japanese_labels():
 def test_rows_without_a_full_translation_are_counted_not_hidden():
     """日本語だけの行は ``pending_translation`` に置く(``strings`` の全言語テストを嘘にしない)。
 
-    他言語は未訳で、UI は英語のまま。機械訳を「訳済み」として入れていない。件数は減らす方向にだけ動かす。
+    他言語は未訳で、UI は英語のまま。機械訳を「訳済み」として入れていない。
+
+    ★約束(2026-11-15 に書き直した。PR #316 の独立レビュー): 以前はここに「件数は減らす方向にだけ動かす」と書いて
+    いたが、実際には 2 日で 210 → 293 → 294 → 468 と増えていた(画面の英語の文を ``tr()`` に通すたびに、日本語だけの
+    行が 1 つ増える。他の 5 言語は、その文について前も後も英語のまま = 悪くはなっていない)。約束はこう:
+
+    * 行が増えてよいのは、英語のまま出ていた文を ``tr()`` に通して日本語の行を足した時だけ。増やす時は下の
+      ``PENDING_ROWS`` に、何の文を何行足したかを 1 行ずつ書く(件数は**ちょうど**で比べる —— 書かずに増やせない)。
+    * 行が減るのは、他の言語の訳が付いて ``strings`` へ移した時(その時も下の数を引く)。
+    * 2026-11-15 の時点で、``tr()`` の表のうち日本語だけの行が約 7 割。他の言語の訳は別の作業。
     """
     with open(os.path.join(ROOT, "studio_assets", "i18n.json"), encoding="utf-8") as f:
         d = json.load(f)
@@ -157,27 +166,30 @@ def test_rows_without_a_full_translation_are_counted_not_hidden():
     pending = {c: sum(1 for v in rows.values() if not v.get(c)) for c in langs}
     assert all(v.get("ja") for v in rows.values()), "pending 行は少なくとも日本語を持つ"
     assert not set(rows) & set(d["strings"]), "同じ行が strings と pending の両方にある"
-    assert len(rows) <= PENDING_ROWS_CEILING, "pending 行が増えた: %d" % len(rows)
+    assert len(rows) == PENDING_ROWS, ("pending 行の数が台帳と違う: %d 行(台帳 %d)。足した / 移した行を PENDING_ROWS の"
+                                       "下に 1 行ずつ書く" % (len(rows), PENDING_ROWS))
     assert all(n == len(rows) for n in pending.values()), pending     # いまは全て日本語だけ
 
 
 #: 2026-11-12 の画像欄の直し(日本語モードに残る英語)で、日本語だけの行を 83 本足した(210 → 293)。他言語は未訳のまま
-PENDING_ROWS_CEILING = 294   # +1: 「impl: %s」(2 回目の直し)
+PENDING_ROWS = 294   # +1: 「impl: %s」(2 回目の直し)
 # 2026-11-13 初回起動の点検の直し: 入れられない op の理由 3 文・行の印・最初の段の注記(S2)
-PENDING_ROWS_CEILING += 5
-PENDING_ROWS_CEILING += 1    # M5: 座標つきの画素の読み取りの 1 行
-PENDING_ROWS_CEILING += 5    # M12: 検索の「見本」の群(見出し・行・ボタン・ツールチップ・使えない時の文)
-PENDING_ROWS_CEILING += 18   # M10 / M9: 終了と破棄の確認の文・ボタン・題、見本を読んだ時の文
-PENDING_ROWS_CEILING += 124  # M9: 窓のツールヒント 95(英語のまま 99 → 4)、ステータスの文・エラーと窓の題 29
-PENDING_ROWS_CEILING += 3    # M3 / M4: 「実装を見る」とそのツールヒント、実測で出力が変わらなかったつまみの文
-PENDING_ROWS_CEILING += 1    # L10: 空のパイプラインで実行した時の 1 行
-PENDING_ROWS_CEILING += 2    # M15: ヘルプの検索で当たらない時・別の名前に寄せた時の文
-PENDING_ROWS_CEILING += 2    # M13: 台帳の op の理由の文とボタン
-PENDING_ROWS_CEILING += 1    # L9: 開けないファイルを落とした時の 1 行
-PENDING_ROWS_CEILING += 3    # L11: op の一覧の右クリックのメニュー
-PENDING_ROWS_CEILING += 2    # F1 = 選んでいる op のヘルプ(メニューの字とツールヒント)
-PENDING_ROWS_CEILING += 5    # 気づける入口: 帯の「作例(N)」「ファイルを落とせます」とそのツールヒント
-PENDING_ROWS_CEILING += 2    # 気づける入口: 結果が領域の時の「表で見る(N 個)」とそのツールヒント
+PENDING_ROWS += 5
+PENDING_ROWS += 1    # M5: 座標つきの画素の読み取りの 1 行
+PENDING_ROWS += 5    # M12: 検索の「見本」の群(見出し・行・ボタン・ツールチップ・使えない時の文)
+PENDING_ROWS += 18   # M10 / M9: 終了と破棄の確認の文・ボタン・題、見本を読んだ時の文
+PENDING_ROWS += 124  # M9: 窓のツールヒント 95(英語のまま 99 → 4)、ステータスの文・エラーと窓の題 29
+PENDING_ROWS += 3    # M3 / M4: 「実装を見る」とそのツールヒント、実測で出力が変わらなかったつまみの文
+PENDING_ROWS += 1    # L10: 空のパイプラインで実行した時の 1 行
+PENDING_ROWS += 2    # M15: ヘルプの検索で当たらない時・別の名前に寄せた時の文
+PENDING_ROWS += 2    # M13: 台帳の op の理由の文とボタン
+PENDING_ROWS += 1    # L9: 開けないファイルを落とした時の 1 行
+PENDING_ROWS += 3    # L11: op の一覧の右クリックのメニュー
+PENDING_ROWS += 2    # F1 = 選んでいる op のヘルプ(メニューの字とツールヒント)
+PENDING_ROWS += 5    # 気づける入口: 帯の「作例(N)」「ファイルを落とせます」とそのツールヒント
+PENDING_ROWS += 2    # 気づける入口: 結果が領域の時の「表で見る(N 個)」とそのツールヒント
+# ---- ここまでで 468(2026-11-13、PR #316 の最初の版)。以下は 2026-11-15 の独立レビューの直し ----
+PENDING_ROWS += 1    # 検索の Enter: 一覧のどの op も前の段の出力を受けられない時の 1 行
 
 
 # --------------------------------------------------------------------------- #

@@ -7712,20 +7712,60 @@ def build_window(model=None):
         return True
     win._open_search_sample = open_search_sample
 
+    def _search_row_takes_upstream(name):
+        """Would op *name*, put in at the insertion point, be accepted by the stage before it?
+
+        The rule the runtime refuses a chain by (declared sorts, ``engine._compatible`` — the one the type filter
+        of the browse list uses). The first stage is matched at the entry and an open ('any') upstream takes
+        everything, so neither narrows; an op the registry does not know is not judged here.
+
+        ★2026-11-15(PR #316 の独立レビュー): M1 で「定番」を Enter の対象に戻した時、この確かめが無かった。前の段が
+        領域(otsu の後)で「ノイズ」+ Enter を押すと、定番の median(image を取る)が入り、段は type mismatch の
+        ERROR になった(otsu の後の 1 語 + Enter で ERROR の段: 日本語 35 語中 34・英語 40 語中 36)。"""
+        try:
+            fit_sort, _prev = _ops_upstream()
+        except Exception as exc:                            # noqa: BLE001 -- 型が読めない時は絞らない
+            _log_soft_failure("could not tell the upstream sort for the search", exc)
+            return True
+        if fit_sort in (None, engine._ANY):
+            return True
+        row = _op_row(name)
+        return row is None or engine._compatible(fit_sort, row.get("in_sort") or "")
+
+    def _search_exact_row():
+        """The row whose op name is exactly what is typed (case-insensitive; spaces count as ``_``), or None."""
+        q = "_".join(search.text().strip().lower().split())
+        if not q:
+            return None
+        for i in range(op_list.count()):
+            item = op_list.item(i)
+            nm = item.data(QtCore.Qt.UserRole)
+            if nm and not item.isHidden() and nm.lower() == q:
+                return item
+        return None
+
     def _search_enter_target():
-        """The row Enter inserts: the first row on screen, top to bottom, that can be inserted here.
+        """The row Enter acts on: the row named exactly like the query, else the first row on screen, top to
+        bottom, that can be inserted here AND takes the output of the stage before the insertion point.
 
         ★2026-11-13(初回起動の点検 M1): 「定番」の欄も含めて、見えている順の最初の行。11/12 は「canny edge」で
         Enter を押すと定番の sobel_amp が入った為に定番を外していたが、op 名を含む問い合わせ(canny edge・median blur)
         では ``studio_search.staples_for`` が定番を出さない(先頭は検索の 1 位 = canny の op)ので、外す理由が無くなった。
         外したままだと「blur」で先頭に見える gaussian ではなく下の欄の 1 位(xkor_bilateral)が入っていた。
-        畳んだ群の行・この環境で入れられない行(2 入力・未導入)は飛ばす。"""
+        畳んだ群の行・この環境で入れられない行(2 入力・未導入)・前の段の出力を受けられない行は飛ばす。
+
+        ★2026-11-15(PR #316 の独立レビュー): op 名を正確に打った時は、その行(入れられない op でも)。従来は
+        ``abs_diff_image`` + Enter で 1 行目(2 入力なので入らない)を黙って飛ばし、2 行目の別の op が入っていた。
+        入れられない行は ``_insert_searched_op`` が理由を言う(台帳の op は実行の窓を開く)。"""
+        exact = _search_exact_row()
+        if exact is not None:
+            return exact
         for i in range(op_list.count()):
             item = op_list.item(i)
             nm = item.data(QtCore.Qt.UserRole)
             if not nm or item.isHidden() or not (item.flags() & QtCore.Qt.ItemIsEnabled):
                 continue
-            if op_insertable(nm)[0]:
+            if op_insertable(nm)[0] and _search_row_takes_upstream(nm):
                 return item
         return None
 
@@ -7779,7 +7819,7 @@ def build_window(model=None):
             _add_search_samples(_sample_names)
         _target = _search_enter_target()          # M1: Enter で入る行を、押す前から選択状態で見せる
         if _target is not None:
-            op_list.setCurrentItem(_target)
+            op_list.setCurrentItem(_target)      # 無ければ何も選ばない(Enter は入れずに理由を言う)
         return result
 
     def _ops_insert_position():
@@ -10343,7 +10383,9 @@ def build_window(model=None):
     win._redo = redo
     win._push_undo = push_undo
 
-    def add_op(item):
+    def add_op(item, raise_tab=True):
+        """Insert the op of *item* after the insertion point. ``raise_tab=False`` (Enter in the search box)
+        leaves the tabs as they are — see ``_show_pipeline_tab_once``."""
         name = item.data(QtCore.Qt.UserRole)
         if not name:
             return
@@ -10390,17 +10432,26 @@ def build_window(model=None):
         refresh_stage_list(select=newpos)
         show_result()
         _place_program_cursor(_stage_line(newpos))
-        _show_pipeline_tab_once()
+        if raise_tab:
+            _show_pipeline_tab_once()
 
     def _show_pipeline_tab_once():
         """気づける入口(2026-11-13、初回起動の点検): この窓で最初の op を入れた時に 1 度だけ、段ごとの途中の絵・個数・
-        時間・メモリとつまみのある「処理手順と調整」のタブを前へ(op の一覧と同じ所にタブで重なり、隠れている時だけ)。"""
+        時間・メモリとつまみのある「処理手順と調整」のタブを前へ(op の一覧と同じ所にタブで重なり、隠れている時だけ)。
+
+        ★2026-11-15(PR #316 の独立レビュー): 前へ出す時は、キーボードの焦点も段の一覧へ移す。従来は焦点が隠れた
+        op の一覧の側(検索欄・一覧・+ ボタン)に残り、続けて打った字や Enter が見えない所で op を足していた。
+        検索欄の Enter で入れた時はタブを切り替えない(``add_op(..., raise_tab=False)``)—— 検索欄は見えたまま、
+        続けて打つ字はそこに入る。"""
         if state.get("pipeline_tab_shown") or len(model.stages) != 1:
             return
         state["pipeline_tab_shown"] = True
         try:
             if dock_pipe in win.tabifiedDockWidgets(dock_ops) and dock_pipe.visibleRegion().isEmpty():
                 dock_pipe.raise_()
+                _fw = win.focusWidget()
+                if _fw is not None and (_fw is dock_ops or dock_ops.isAncestorOf(_fw)):
+                    stage_list.setFocus(QtCore.Qt.OtherFocusReason)
         except Exception as exc:                            # noqa: BLE001 -- 入口のために段の追加を落とさない
             _log_soft_failure("could not bring the pipeline tab forward", exc)
 
@@ -12649,15 +12700,34 @@ def build_window(model=None):
             grouped_search(search.text().strip())
         it = op_list.currentItem()
         if it is None or not it.data(QtCore.Qt.UserRole) or it.isHidden():
-            # ★2026-11-12 / 11-13: 選んでいない時は、見えている順で最初の「この環境で入れられる」行
-            # (定番の欄を含む。経緯は _search_enter_target)。入れられる行が 1 つも無ければ先頭の op の行を渡し、
-            # add_op が理由を UI の言語で言う。
+            # ★2026-11-12 / 11-13: 選んでいない時は、見えている順で最初の「この環境で入れられ、前の段の出力を
+            # 受けられる」行(定番の欄を含む。経緯は _search_enter_target)。
             it = _search_enter_target()
             if it is None:
-                it = next((op_list.item(i) for i in range(op_list.count())
-                           if op_list.item(i).data(QtCore.Qt.UserRole)), None)
-        if it is not None:
-            add_op(it)
+                _rows = [op_list.item(i) for i in range(op_list.count())
+                         if op_list.item(i).data(QtCore.Qt.UserRole) and not op_list.item(i).isHidden()]
+                if any(op_insertable(r.data(QtCore.Qt.UserRole))[0] for r in _rows):
+                    # ★2026-11-15: 入れられる行はあるが、どれも前の段の出力を受けられない。黙って ERROR の段を
+                    # 作らず、入れずに理由を言う(行をクリックで選べば、従来どおりその行が入る)。
+                    _sort, _prev = _ops_upstream()
+                    _say = (tr("None of the listed operators takes '%s' (the output of stage %d, %s). "
+                               "Click a row to add it anyway, or add the step its card names first.")
+                            % (_sort, _prev[0] + 1, _prev[1]))
+                    flash(_say); op_param.setText(_say); op_param_fit.refresh()
+                    return
+                # 入れられる行が 1 つも無い: 先頭の op の行を渡し、add_op が理由を UI の言語で言う
+                it = _rows[0] if _rows else None
+        if it is None:
+            return
+        _nm = it.data(QtCore.Qt.UserRole)
+        if op_insertable(_nm)[1] == "ledger" and it is _search_exact_row():
+            # ★2026-11-15: 台帳の op の名前を正確に打って Enter。段には入らないので、行のボタンと同じ
+            # 「台帳の op を実行」の窓を今の画像で開き、理由を 1 行で言う(従来は隣の別の op が黙って入った)。
+            _say = not_insertable_text(_nm, "ledger")
+            flash(_say); op_param.setText(_say); op_param_fit.refresh()
+            win._open_ledger_runner(_nm, prefer_image=True)
+            return
+        add_op(it, raise_tab=False)             # 検索欄は見えたまま(キーは見えている欄に入る)
     search.returnPressed.connect(_insert_searched_op)
     win._search_ui = {
         "edit": search, "list": op_list, "timer": search_timer, "search_now": grouped_search,
