@@ -786,7 +786,7 @@ def _kind_of_obj(obj) -> str:
 
 def _sig_text(obj) -> str:
     if not safe.is_inert(obj):
-        return ""                                           # 利用者のクラスの物は調べない(__signature__ / __getattr__ を呼ばない)
+        return ""                                           # 許す型の一覧に無い物は調べない(__signature__ / __getattr__ / 既定値の __repr__ を呼ばない)
     try:
         return str(inspect.signature(obj))
     except (TypeError, ValueError):

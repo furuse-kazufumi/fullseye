@@ -397,16 +397,78 @@ def _summarize(v, lim: Limits, tr) -> Summary:
         return Summary(kind, tn, _clip("%s[%d] " % (safe.name_of(t), n) + br % (body + more), lim.max_text),
                        length=n, expandable=n > 0)
     if _isinst(v, types.ModuleType):
-        return Summary("module", "module", "module " + str(getattr(v, "__name__", "?")))
+        return Summary("module", "module", "module " + _module_name(v))
     if _isinst(v, type):
-        return Summary("class", "type", "class " + getattr(v, "__name__", "?"), expandable=False)
+        return Summary("class", "type", "class " + safe.name_of(v), expandable=False)
     if _isinst(v, (types.FunctionType, types.BuiltinFunctionType, types.MethodType)):
-        try:
-            sig = str(inspect.signature(v))
-        except Exception:                                    # noqa: BLE001
-            sig = "(…)"
-        return Summary("function", tn, _clip("%s%s" % (getattr(v, "__name__", "function"), sig), lim.max_text))
+        return Summary("function", tn, _clip(_callable_text(v), lim.max_text))
     return _summarize_object(v, lim, tr, tn)
+
+
+_FUNC = types.FunctionType.__dict__
+
+
+def _module_name(v) -> str:
+    """モジュールの名前(モジュールの ``__dict__`` から読む。派生した型の ``__getattribute__`` を通さない)。"""
+    try:
+        n = types.ModuleType.__dict__["__dict__"].__get__(v).get("__name__")
+    except Exception:                                        # noqa: BLE001
+        n = None
+    return n if type(n) is str else "?"
+
+
+def _static_signature(f, bound: bool) -> str:
+    """利用者の関数 *f* の引数の並びを ``__code__`` から作る。**既定値は文字にしない**(``…`` と書く。``__repr__`` を
+    呼ばない)。*bound* = 束縛メソッド(先頭の引数を書かない)。"""
+    code = _FUNC["__code__"].__get__(f)
+    n_default = len(_FUNC["__defaults__"].__get__(f) or ())
+    kw_default = _FUNC["__kwdefaults__"].__get__(f) or {}
+    names = code.co_varnames
+    npos, nkw = code.co_argcount, code.co_kwonlyargcount
+    parts = []
+    for i, name in enumerate(names[:npos]):
+        if not (bound and i == 0):
+            parts.append(name + ("=…" if i >= npos - n_default else ""))
+        if code.co_posonlyargcount and i == code.co_posonlyargcount - 1:
+            parts.append("/")
+    i = npos + nkw
+    if code.co_flags & 0x04:                                 # CO_VARARGS
+        parts.append("*" + names[i])
+        i += 1
+    elif nkw:
+        parts.append("*")
+    parts.extend(name + ("=…" if name in kw_default else "") for name in names[npos:npos + nkw])
+    if code.co_flags & 0x08:                                 # CO_VARKEYWORDS
+        parts.append("**" + names[i])
+    return "(" + ", ".join(parts) + ")"
+
+
+def _callable_text(v) -> str:
+    """関数・メソッドの「名前(引数)」。ライブラリの関数(:func:`studio_pyedit_safe.is_inert`)は
+    ``inspect.signature``、それ以外(プログラムの中の関数)は :func:`_static_signature`。
+
+    前はどの関数にも ``str(inspect.signature(v))`` を呼んでいた。これは既定値を ``repr`` で文字にするので、
+    ``def f(x, cfg=Config()):`` のような普通の書き方で、利用者の ``__repr__`` が GUI のスレッドで走った
+    (2026-11-13 第 3 回レビュー S4 を直す途中で見つけた)。"""
+    f = v.__func__ if type(v) is types.MethodType else v
+    name = None
+    try:
+        if type(f) is types.FunctionType:
+            name = _FUNC["__name__"].__get__(f)
+        elif type(f) is types.BuiltinFunctionType:
+            name = f.__name__
+    except Exception:                                        # noqa: BLE001
+        name = None
+    if type(name) is not str:
+        name = "function"
+    try:
+        if safe.is_inert(v):
+            return name + str(inspect.signature(v))
+        if type(f) is types.FunctionType:
+            return name + _static_signature(f, bound=type(v) is types.MethodType)
+    except Exception:                                        # noqa: BLE001 -- シグネチャの無い C の関数など
+        pass
+    return name + "(…)"
 
 
 def _object_dict(v):

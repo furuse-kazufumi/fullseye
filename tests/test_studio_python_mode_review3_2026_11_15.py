@@ -1017,3 +1017,201 @@ def test_s8_numeric_arrays_are_still_displayed(tmp_path, monkeypatch):
                 assert win._state.get("raw") is res.output, src
     finally:
         _close(win)
+
+
+# --------------------------------------------------------------------------- #
+# S4: 補完・ホバー・シグネチャが調べてよい物は、許す型の一覧で決める               #
+# --------------------------------------------------------------------------- #
+S4_CALLED = []
+
+
+def _s4_hit(what):
+    """利用者のコードが呼ばれた事を、呼んだスレッドの名前つきで記録する。"""
+    S4_CALLED.append("%s@%s" % (what, threading.current_thread().name))
+
+
+class _S4Watched:
+    """属性を読まれるたびに記録する、利用者の物(``__getattribute__``)。"""
+
+    def __getattribute__(self, name):
+        _s4_hit("__getattribute__ " + name)
+        return object.__getattribute__(self, name)
+
+
+class _S4Callable:
+    """呼べる利用者の物。無い属性を読まれるたびに記録する(``__getattr__``)。"""
+
+    def __call__(self, a, b=1):
+        return a
+
+    def __getattr__(self, name):
+        _s4_hit("__getattr__ " + name)
+        raise AttributeError(name)
+
+
+class _S4Repr:
+    def __repr__(self):
+        _s4_hit("__repr__")
+        return "<S4Repr>"
+
+
+class _S4Meta(type):
+    @property
+    def __name__(cls):
+        _s4_hit("Meta.__name__")
+        return "Fake"
+
+
+class _S4WithMeta(metaclass=_S4Meta):
+    def method(self, a, b=_S4Repr(), *rest, key=_S4Repr(), **more):
+        return a
+
+
+class _S4Module(type(sys)):
+    def __getattribute__(self, name):
+        _s4_hit("Module.__getattribute__ " + name)
+        return type(sys).__getattribute__(self, name)
+
+
+class _S4Planted:
+    """ライブラリのモジュールへ差し込む、利用者のクラス(``json._S4Planted`` として辿れるようにする)。"""
+
+    def __dir__(self):
+        _s4_hit("__dir__")
+        return ["a"]
+
+    def __getattr__(self, name):
+        _s4_hit("__getattr__ " + name)
+        return 1
+
+
+def _s4_user_function(a, b=_S4Repr()):
+    return a
+
+
+def _s4_namespace(monkeypatch):
+    import contextlib
+    import functools
+    import json
+    import weakref
+    _S4Planted.__module__ = "json"
+    _S4Planted.__qualname__ = "_S4Planted"
+    monkeypatch.setattr(json, "_S4Planted", _S4Planted, raising=False)
+    keep = [_S4Watched(), _S4Callable()]                                  # 弱参照の先を生かしておく
+
+    @contextlib.contextmanager
+    def managed(a, b=_S4Repr()):
+        yield a
+
+    @functools.lru_cache(maxsize=None)
+    def cached(a, b=_S4Repr()):
+        return a
+    return {
+        "proxy": weakref.proxy(keep[0]),
+        "cproxy": weakref.proxy(keep[1]),
+        "part": functools.partial(_S4Callable(), 1),
+        "part_arg": functools.partial(sorted, _S4Repr()),
+        "part_kw": functools.partial(sorted, key=_S4Callable()),
+        "pmeth": functools.partialmethod(_S4Callable(), 1),
+        "planted": _S4Planted(),
+        "ufunc": _s4_user_function,
+        "managed": managed,
+        "cached": cached,
+        "bound": _S4Callable().__call__,
+        "_keep": keep,
+    }
+
+
+@pytest.mark.parametrize("use_jedi", [False, True])
+def test_s4_library_wrappers_do_not_carry_user_code_onto_the_gui_thread(use_jedi, monkeypatch):
+    """探針 r07: ``weakref.proxy``・``functools.partial``・ライブラリのモジュールへ差し込んだクラスを通して、補完・
+    ホバー・シグネチャが GUI のスレッドで利用者の ``__getattribute__`` / ``__getattr__`` / ``__dir__`` を呼んだ
+    (ホバーはマウスを置くだけで起きる)。既定値の ``__repr__`` も、シグネチャを文字にする所で呼ばれた。"""
+    import studio_pyedit_complete as comp
+    import studio_pyedit_safe as safe
+    import studio_pyedit_values as V
+    assert threading.current_thread().name == "MainThread"
+    if use_jedi and not comp.jedi_available():
+        pytest.skip("jedi is not installed")
+    pm_mod._configure_jedi()
+    ns = _s4_namespace(monkeypatch)
+    prov = comp.default_provider(namespace=lambda: ns, catalog=None, use_jedi=use_jedi)
+    names = sorted(k for k in ns if not k.startswith("_"))
+    assert len(names) == 11
+    S4_CALLED.clear()
+    for name in names:
+        assert safe.is_inert(ns[name]) is False, name                     # どれも「調べてよい物」ではない
+        assert safe.is_plain_value(ns[name]) is False, name               # jedi にも生きた値として渡さない
+        prov.complete(name + ".", 0, len(name) + 1)
+        prov.complete(name, 0, len(name))
+        prov.hover(name, 0, 1)
+        prov.signature(name + "(", 0, len(name) + 1)
+        for c in prov.complete(name[:3], 0, 3):                           # 候補の説明(選んだ時に作られる)
+            c.full_doc()
+        safe.static_names(ns[name])
+        V.children(ns[name])
+        assert S4_CALLED == [], (name, S4_CALLED[:6])
+    assert comp.signature_of_object("part", ns["part"]) is None and comp.signature_of_object("ufunc", ns["ufunc"]) is None
+    assert comp._sig_text(ns["managed"]) == "" and comp._doc_of(ns["proxy"]) == ""
+    assert "a" not in safe.static_names(ns["planted"])                    # __dir__ の嘘の名前は出ない
+    assert S4_CALLED == []
+
+
+def test_s4_the_allow_list_still_covers_what_a_program_uses_every_day():
+    """断りすぎない事: ライブラリの関数・クラス・モジュール・numpy の物は今までどおり調べる(シグネチャと説明が出る)。
+    一覧に無いライブラリのクラスのインスタンスは、静的な名前で補完する(``dir`` とほぼ同じ名前が出る)。"""
+    import functools
+    import json
+    import pathlib
+    import studio_pyedit_complete as comp
+    import studio_pyedit_safe as safe
+    inert = {"module": np, "list": [], "dict": {}, "int": 3, "str": "s", "None": None, "array": np.zeros(2),
+             "scalar": np.float64(1.5), "dtype": np.dtype("f8"), "ufunc": np.sin, "numpy function": np.linspace,
+             "python function": json.dumps, "frozen stdlib function": os.path.join, "builtin": len,
+             "method descriptor": str.join, "class": json.JSONEncoder, "bound method of a class": pathlib.Path.cwd,
+             "partial of library parts": functools.partial(np.linspace, 0, 1, num=5),
+             "partial with a list": functools.partial(sorted, [3, 1, 2]),
+             "staticmethod": staticmethod(json.dumps), "property": property(json.dumps)}
+    refused = [k for k, v in sorted(inert.items()) if not safe.is_inert(v)]
+    assert refused == [] and len(inert) == 21
+    p = pathlib.Path(".")
+    assert safe.is_inert(p) is False                                      # 一覧に無いライブラリのクラスのインスタンス
+    static = set(safe.static_names(p))
+    assert {"exists", "name", "parent", "read_text", "with_suffix"} <= static
+    assert len([n for n in dir(p) if n not in static]) <= 3               # dir() とほぼ同じ名前
+    sig = comp.signature_of_object("linspace", np.linspace)
+    assert sig is not None and [q.name for q in sig.params][:3] == ["start", "stop", "num"]
+    sig = comp.signature_of_object("part", inert["partial of library parts"])
+    assert sig is not None and "endpoint" in [q.name for q in sig.params]
+    assert comp._sig_text(json.dumps).startswith("(obj") and "Serialize" in comp._doc_of(json.dumps)
+    ns = {"p": p, "np": np, "arr": np.zeros((2, 2))}
+    prov = comp.default_provider(namespace=lambda: ns, catalog=None, use_jedi=False)
+    assert "exists" in [c.name for c in prov.complete("p.ex", 0, 4)]
+    assert "zeros" in [c.name for c in prov.complete("np.ze", 0, 5)]
+    assert "shape" in [c.name for c in prov.complete("arr.sha", 0, 7)]
+    assert prov.signature("np.linspace(", 0, 12) is not None
+    assert safe.is_plain_value(json.dumps) and safe.is_plain_value(np) and not safe.is_plain_value(p)
+
+
+def test_s4_the_variables_summary_of_functions_classes_and_modules_calls_no_user_code(monkeypatch):
+    """S4 を直す途中で見つけた同じ型の穴: 変数の欄の要約(GUI のスレッド)が、利用者の関数の既定値の ``__repr__``
+    (``inspect.signature`` を文字にする所)、メタクラスの ``__name__``、モジュールの ``__getattribute__`` を呼んだ。
+    ``def f(x, cfg=Config()):`` のような普通の書き方で、``__repr__`` が重ければ実行のたびに画面が止まる。"""
+    import json
+    import studio_pyedit_values as V
+    assert threading.current_thread().name == "MainThread"
+    ns = _s4_namespace(monkeypatch)
+    values = {"function": _s4_user_function, "bound method": _S4WithMeta().method, "class": _S4WithMeta,
+              "module": _S4Module("s4mod"), "wrapped": ns["managed"], "proxy": ns["proxy"], "planted": ns["planted"],
+              "partial": ns["part_arg"]}
+    S4_CALLED.clear()
+    text = {k: V.summarize(v).text for k, v in values.items()}
+    on_gui = [c for c in S4_CALLED if c.endswith("@MainThread")]
+    assert on_gui == [], on_gui                                           # GUI のスレッドでは 1 つも呼ばない
+    assert text["function"] == "_s4_user_function(a, b=…)"           # 既定値は文字にしない(…)
+    assert text["bound method"] == "method(a, b=…, *rest, key=…, **more)"
+    assert text["class"] == "class _S4WithMeta" and text["module"] == "module s4mod"
+    assert text["wrapped"].startswith("managed(")
+    # ライブラリの関数は今までどおり、既定値つきのシグネチャが出る
+    assert V.summarize(json.dumps).text.startswith("dumps(obj, *, skipkeys=False")
+    assert V.summarize(len).text.startswith("len(")

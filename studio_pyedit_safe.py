@@ -9,16 +9,25 @@
 ここの決まり:
 
 * 値の種類は **``type(x)`` だけ**で決める(:func:`isinst`)。``x.__class__`` は読まない。
-* 「ライブラリの型」(:func:`is_library_type` = 標準ライブラリ・site-packages・Studio 自身のモジュールで
-  定義された型)の物だけ、その型のメソッド(``dir``・``repr``・属性の読み出し)を使ってよい(:func:`is_inert`)。
-* それ以外(プログラムの中・利用者のフォルダで定義された型とその派生)は、**静的な情報だけ**を使う
+* ``dir``・``inspect.signature``・``inspect.getdoc`` で調べてよい物(:func:`is_inert`)は、**許す型の一覧**で決める
+  (2026-11-13 第 3 回レビュー S4): 数・文字列・素の入れ物・numpy の C の型の物・ライブラリのモジュール・
+  ライブラリのクラスそのもの・C の関数と記述子・ライブラリのコードから作られた関数。包みの型
+  (``functools.partial`` / ``partialmethod``・束縛メソッド・``staticmethod`` / ``classmethod`` / ``property``・
+  ``functools.wraps`` の ``__wrapped__``)は、**包んでいる中身まで**同じ基準で見る。``weakref.proxy`` は常に偽
+  (属性の読み出しを全部、指している物へ回す)。前は「ライブラリの型のインスタンスなら何でも真」で、
+  ライブラリの包みの型を通して利用者の ``__getattr__`` / ``__getattribute__`` / ``__dir__`` / ``__repr__`` が
+  GUI のスレッドで走った。
+* それ以外(利用者のクラスとその物、**一覧に無いライブラリのクラスのインスタンス**)は、**静的な情報だけ**を使う
   (:func:`static_names` = 型の MRO の ``__dict__`` の名前と、インスタンスの ``__dict__`` の名前)。値は読まない。
 
-限界(正直に): ライブラリの型のメソッドは呼ぶ(numpy・標準ライブラリを信用する)。``inspect.getattr_static`` は
-標準ライブラリの約束の範囲で静的。利用者が site-packages に入れたパッケージは「ライブラリ」として扱う。
+限界(正直に): 一覧にある物については、ライブラリのコードを呼ぶ(numpy・標準ライブラリを信用する)。
+``inspect.getattr_static`` は標準ライブラリの約束の範囲で静的。利用者が site-packages に入れたパッケージは
+「ライブラリ」として扱う。一覧に無いライブラリのクラスのインスタンス(``pathlib.Path``・pandas の表など)は、
+``__dir__`` が足す動的な名前(表の列の名前など)が補完に出ない。
 """
 from __future__ import annotations
 
+import functools
 import os
 import sys
 import sysconfig
@@ -189,23 +198,133 @@ def isinst(obj, cls) -> bool:
     return issubclass(type(obj), cls)
 
 
-def is_inert(obj) -> bool:
-    """*obj* を ``dir``・``repr``・属性の読み出しで調べても、利用者のコードが走らないか。
+#: そのまま調べてよい素の入れ物など(完全一致)。入れ物の**中身は別に**確かめること。
+_INERT_EXACT = (list, tuple, dict, set, frozenset, bytearray, range, slice, type(Ellipsis), type(NotImplemented))
+#: C で書かれた関数と記述子(``len``・``str.join``・``ndarray.shape`` …)。シグネチャと説明は型の中の文字列から読む。
+_C_CALLABLES = (types.BuiltinFunctionType, types.WrapperDescriptorType, types.MethodDescriptorType,
+                types.MethodWrapperType, types.GetSetDescriptorType, types.MemberDescriptorType,
+                types.ClassMethodDescriptorType)
+_FUNC_CODE = types.FunctionType.__dict__["__code__"]
+_FUNC_DICT = types.FunctionType.__dict__["__dict__"]
+_PATH_VERDICT: dict = {}
+#: 包みの型の中身を辿る深さの上限(越えたら偽 = 調べない側)と、入れ物の中身を見る個数の上限。
+_MAX_WRAP_DEPTH = 8
+_MAX_ITEMS = 64
 
-    ライブラリの型のインスタンス、ライブラリのクラス、ライブラリのモジュール、関数(``def`` で作った物)が真。
-    利用者のクラスとそのインスタンス、利用者のモジュール(``__getattr__`` / ``__dir__`` を持てる)は偽。
-    入れ物(list など)は真だが、**中身は別に**確かめること。"""
-    t = type(obj)
-    if not is_library_type(t):
+
+def _is_library_path(path) -> bool:
+    """コードの置き場 *path*(``co_filename``)が、標準ライブラリ・site-packages・Studio 自身のフォルダか。
+    ``<studio-program>`` や ``<string>`` のような名前、相対の道は偽(利用者のコードとして扱う側)。"""
+    if type(path) is not str or not path:
         return False
+    if path.startswith("<"):
+        return path.startswith("<frozen ") and path.endswith(">")       # 標準ライブラリの凍結モジュール(os・ntpath …)
+    hit = _PATH_VERDICT.get(path)
+    if hit is None:
+        hit = False
+        if os.path.isabs(path):
+            p = os.path.normcase(os.path.abspath(path))
+            hit = os.path.dirname(p) == _HERE or any(p.startswith(root + os.sep) for root in _lib_dirs())
+        if len(_PATH_VERDICT) > 4000:
+            _PATH_VERDICT.clear()
+        _PATH_VERDICT[path] = hit
+    return hit
+
+
+def _is_numpy_static(t) -> bool:
+    """*t* が numpy の、C で定義された静的な型か(``ndarray``・スカラ・``dtype``・``ufunc`` …)。Python の
+    プログラムからは作れないので、名前を偽った型は入らない。``dir`` / 説明 / シグネチャは要素に触らない。"""
+    try:
+        if _T["__flags__"].__get__(t) & _HEAPTYPE:
+            return False
+        mod = module_of(t)
+        return type(mod) is str and mod.split(".")[0] == "numpy"
+    except Exception:                                        # noqa: BLE001
+        return False
+
+
+def _plain_repr(obj, depth: int) -> bool:
+    """*obj* の ``repr`` が利用者のコードを呼ばないか(シグネチャの中で既定値として文字にされる物を確かめる)。
+    入れ物は中身まで見る(:data:`_MAX_ITEMS` 個まで。越えたら偽)。"""
+    if depth > _MAX_WRAP_DEPTH:
+        return False
+    t = type(obj)
+    if tin(t, EXACT_SAFE_SCALARS):
+        return True
+    if tin(t, (list, tuple, set, frozenset)):
+        return len(obj) <= _MAX_ITEMS and all(_plain_repr(x, depth + 1) for x in obj)
+    if t is dict:
+        return len(obj) <= _MAX_ITEMS and all(_plain_repr(k, depth + 1) and _plain_repr(v, depth + 1)
+                                              for k, v in obj.items())
+    if _is_numpy_static(t) and name_of(t) == "ndarray":
+        return not obj.dtype.hasobject                       # object の配列の repr は要素の __repr__ を呼ぶ
+    return _inert(obj, depth + 1)
+
+
+def _inert(obj, depth: int) -> bool:
+    if depth > _MAX_WRAP_DEPTH:
+        return False
+    t = type(obj)
+    if tin(t, EXACT_SAFE_SCALARS) or tin(t, _INERT_EXACT) or tin(t, _C_CALLABLES):
+        return True
     if issubclass(t, type):
         return is_library_type(obj)
     if issubclass(t, types.ModuleType):
+        if not is_library_type(t):
+            return False
         name = _module_dict(obj).get("__name__")             # 名前を偽っていないか: sys.modules のその名前がこの物か
         return is_library_module_name(name) and sys.modules.get(name) is obj
+    if t is types.FunctionType:
+        # def / lambda で作った関数: **コードの置き場**で決める(``__module__`` / ``__qualname__`` は書き換えられる)。
+        # ``functools.wraps`` で包んでいる物(``__wrapped__``)まで見る: ``inspect.signature`` はそこへ降りる
+        code = _FUNC_CODE.__get__(obj)
+        if not _is_library_path(code.co_filename):
+            return False
+        wrapped = _FUNC_DICT.__get__(obj).get("__wrapped__")
+        return wrapped is None or _inert(wrapped, depth + 1)
     if t is types.MethodType:
-        return is_inert(obj.__self__) and is_inert(obj.__func__)
-    return True
+        return _inert(obj.__self__, depth + 1) and _inert(obj.__func__, depth + 1)
+    if t is staticmethod or t is classmethod:
+        return _inert(obj.__func__, depth + 1)
+    if t is property:
+        return all(fn is None or _inert(fn, depth + 1) for fn in (obj.fget, obj.fset, obj.fdel))
+    if t is functools.partial:
+        # 包んでいる関数のシグネチャを作り、渡してある引数を既定値として文字にする: どちらも確かめる
+        if not _inert(obj.func, depth + 1):
+            return False
+        kw = obj.keywords
+        return (len(obj.args) <= _MAX_ITEMS and all(_plain_repr(a, depth + 1) for a in obj.args)
+                and type(kw) is dict and len(kw) <= _MAX_ITEMS
+                and all(type(k) is str and _plain_repr(v, depth + 1) for k, v in kw.items()))
+    if t is functools.partialmethod:
+        d = instance_dict(obj)
+        if not d or not _inert(d.get("func"), depth + 1):
+            return False
+        args, kw = d.get("args", ()), d.get("keywords", {})
+        return (type(args) is tuple and len(args) <= _MAX_ITEMS and all(_plain_repr(a, depth + 1) for a in args)
+                and type(kw) is dict and len(kw) <= _MAX_ITEMS
+                and all(type(k) is str and _plain_repr(v, depth + 1) for k, v in kw.items()))
+    return _is_numpy_static(t)                               # numpy の配列・スカラ・dtype・ufunc。ほかは偽
+
+
+def is_inert(obj) -> bool:
+    """*obj* を ``dir``・``inspect.signature``・``inspect.getdoc`` で調べても、利用者のコードが走らないか。
+    **許す型の一覧**で決める(一覧に無い物は偽 = 静的な情報だけを使う側):
+
+    * 数・文字列・``None``、素の入れ物(list / tuple / dict / set …。**中身は別に**確かめること)
+    * numpy の C の型の物(配列・スカラ・dtype・ufunc)
+    * ライブラリのモジュール、ライブラリのクラスそのもの(:func:`is_library_type`)
+    * C の関数と記述子(``len``・``str.join`` …)、ライブラリのコードから作られた関数(``__code__`` の置き場で決める)
+    * 包みの型は**中身まで**: 束縛メソッド(``__self__`` と ``__func__``)、``staticmethod`` / ``classmethod`` /
+      ``property``、``functools.partial`` / ``partialmethod``(関数と、渡してある引数)、``__wrapped__``
+
+    偽になる物: 利用者のクラスとそのインスタンス、利用者のモジュール、プログラムの中で作った関数、
+    ``weakref.proxy``(常に)、**一覧に無いライブラリのクラスのインスタンス**(``pathlib.Path`` など。ライブラリの
+    モジュールへ差し込んだ利用者のクラスのインスタンスも、ここで偽になる)。"""
+    try:
+        return _inert(obj, 0)
+    except Exception:                                        # noqa: BLE001 -- 分からない物は調べない側
+        return False
 
 
 def is_plain_value(obj) -> bool:
@@ -216,21 +335,21 @@ def is_plain_value(obj) -> bool:
         return True
     if tin(t, (list, tuple, dict, set, frozenset)):
         return False
-    if t is types.FunctionType:
-        return is_library_module_name(obj.__module__)
-    if t is types.BuiltinFunctionType or t is types.ModuleType or issubclass(t, type):
-        return is_inert(obj)
+    if t is types.FunctionType or t is types.BuiltinFunctionType or t is types.ModuleType or issubclass(t, type):
+        return is_inert(obj)                                 # 関数はコードの置き場で決める(__module__ は書き換えられる)
     mod = module_of(t)
     return type(mod) is str and mod.split(".")[0] == "numpy" and is_library_type(t)
 
 
 def instance_dict(obj):
-    """インスタンスの ``__dict__``(利用者の ``__getattribute__`` / ``__dict__`` のプロパティを通さない)。無ければ None。"""
+    """インスタンスの ``__dict__``(利用者の ``__getattribute__`` / ``__dict__`` のプロパティを通さない)。無ければ None。
+    ``__dict__`` の記述子は、``class`` 文の型なら getset、C の型(``types.SimpleNamespace`` など)なら member。
+    どちらも C の記述子なので読んでよい。それ以外(プロパティなど)は利用者が作り替えた物: 読まない。"""
     try:
         for c in _mro(type(obj)):
             d = _class_dict(c).get("__dict__")
             if d is not None:
-                if type(d) is not types.GetSetDescriptorType:
+                if type(d) is not types.GetSetDescriptorType and type(d) is not types.MemberDescriptorType:
                     return None                              # 利用者が __dict__ を作り替えている: 読まない
                 break
         d = object.__getattribute__(obj, "__dict__")
