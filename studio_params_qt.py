@@ -929,6 +929,8 @@ class ParamsPanel(QtWidgets.QWidget):
     #: 空の状態の案内(何をする場所か 1 行)。
     EMPTY_TEXT = ("Parameter bundles side by side: rows are keys, columns are files. Open JSON, TOML, YAML or XML "
                   "files, or drop them here.")
+    _why: dict[str, str] = {}                            # 今は押せない道具 → 理由(_update_actions が入れる)
+    _search_has = False                                  # 検索の欄のツールヒントを作った時に、束が開いていたか
     _theme_read = False                                  # 見える時に一度、theme の色を読んだか
     _theme_pending = False                               # 様式 / パレットが変わった後の読み直しを予約したか
 
@@ -1052,33 +1054,41 @@ class ParamsPanel(QtWidgets.QWidget):
         self.search.textChanged.connect(self.set_query)
         sc = QtGui.QShortcut(QtGui.QKeySequence("Ctrl+F"), self)
         sc.setContext(Qt.WidgetWithChildrenShortcut)
-        sc.activated.connect(lambda: (self.search.setFocus(), self.search.selectAll()))
+        sc.activated.connect(self.focus_search)
+        self._search_icon.triggered.connect(self.focus_search)   # 欄の中の虫眼鏡も同じ(押して何も起きないボタンにしない)
         self._column.addWidget(self.bar)
 
         self.stack = QtWidgets.QStackedWidget(self)
         # 空の状態: 何をする場所か 1 行、最初の一手 1 つ、例 1 つ。
-        self.empty = QtWidgets.QWidget(self.stack)
-        el = QtWidgets.QVBoxLayout(self.empty)
+        # 窓の最小の大きさ(320x160)では文が収まらない言語があるので、頁は「収まらない時だけ縦に送れる」(文を切らない)。
+        self.empty = QtWidgets.QScrollArea(self.stack)
+        self.empty.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.empty.setWidgetResizable(True)
+        self.empty.viewport().setAutoFillBackground(False)        # 地はパネルの地のまま(一覧の白にしない)
+        body = QtWidgets.QWidget()
+        body.setAutoFillBackground(False)
+        el = QtWidgets.QVBoxLayout(body)
         el.setContentsMargins(6, 6, 6, 6)
         el.setSpacing(8)
         el.addStretch(1)
-        self.empty_label = QtWidgets.QLabel(self.empty)
+        self.empty_label = QtWidgets.QLabel(body)
         self.empty_label.setWordWrap(True)
         self.empty_label.setAlignment(Qt.AlignCenter)
         el.addWidget(self.empty_label)
-        row = QtWidgets.QHBoxLayout()
+        row = self._empty_row = QtWidgets.QBoxLayout(QtWidgets.QBoxLayout.LeftToRight)
         row.setSpacing(self._dens["click_gap"])
         row.addStretch(1)
-        self.empty_open = QtWidgets.QPushButton(self.empty)
+        self.empty_open = self._plain_button(body)
         self.empty_open.clicked.connect(self.open_files)
-        self.empty_example = QtWidgets.QPushButton(self.empty)
+        self.empty_example = self._plain_button(body)
         self.empty_example.clicked.connect(self.open_example)
         self._apply_empty_texts()
-        row.addWidget(self.empty_open)
-        row.addWidget(self.empty_example)
+        row.addWidget(self.empty_open, 0, Qt.AlignCenter)
+        row.addWidget(self.empty_example, 0, Qt.AlignCenter)
         row.addStretch(1)
         el.addLayout(row)
         el.addStretch(1)
+        self.empty.setWidget(body)
         self.stack.addWidget(self.empty)
         # 絞り込みで 0 行: 一覧の場所に「該当なし: "語"」と次の一手(設計書 P07-3)。
         self.no_match = QtWidgets.QWidget(self.stack)
@@ -1095,7 +1105,7 @@ class ParamsPanel(QtWidgets.QWidget):
         nl.addWidget(self.no_match_label)
         nrow = QtWidgets.QHBoxLayout()
         nrow.addStretch(1)
-        self.no_match_button = QtWidgets.QPushButton(self.no_match)
+        self.no_match_button = self._plain_button(self.no_match)
         self.no_match_button.clicked.connect(self._no_match_step)
         nrow.addWidget(self.no_match_button)
         nrow.addStretch(1)
@@ -1127,9 +1137,11 @@ class ParamsPanel(QtWidgets.QWidget):
         hdr.setStretchLastSection(True)
         hdr.setSectionsMovable(False)
         hdr.setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        hdr.setTextElideMode(Qt.ElideRight)              # 狭くて入らない見出しは … で見せる(黙って切らない。全文はツールヒント)
         hdr.setFixedHeight(self.row_height() + 2)
         hdr.installEventFilter(self)
         self.tree.viewport().installEventFilter(self)
+        self.empty.viewport().installEventFilter(self)            # 幅が変わったら、空の案内のボタンの並べ方を選び直す
         self.tree.setIconSize(QtCore.QSize(_CELL_MARK_PX, _CELL_MARK_PX))
         self.tree.selectionModel().currentChanged.connect(lambda *_: self._update_actions())
         self.tmodel.rejected.connect(self._on_rejected)
@@ -1165,20 +1177,74 @@ class ParamsPanel(QtWidgets.QWidget):
         lay.addWidget(self.status)
 
     # ---- 道具の列(1 つの部品。向きと部品は外から変えられる) ----
+    @staticmethod
+    def _plain_button(parent: QtWidgets.QWidget) -> QtWidgets.QPushButton:
+        """文字のボタン。Enter で押される既定のボタンにしない(設計書 P02-4: 道具の窓の QPushButton は autoDefault と
+        default を切る。Enter は欄の確定だけ)。"""
+        b = QtWidgets.QPushButton(parent)
+        b.setAutoDefault(False)
+        b.setDefault(False)
+        return b
+
     def _apply_action_texts(self) -> None:
-        """道具の名前とツールヒント(「名前 — 何をするか (キー)」)を今の言語で入れ直す。"""
+        """道具の名前とツールヒント(「名前 — 何をするか (キー)」)を今の言語で入れ直す。押せない道具は、ツールヒントに
+        理由を足す(「… · 今は押せません: 理由 (キー)」。設計書 P04-4「無効にして黙らせない」)。"""
         tr = self.tr_
         for key, (name, what, shortcut) in self._action_texts.items():
             a = self.tool_actions[key]
             a.setText(_label(tr(name)))
             keys = a.shortcut().toString(QtGui.QKeySequence.NativeText) if shortcut else ""
-            a.setToolTip("%s — %s" % (tr(name), tr(what)) + (" (%s)" % keys if keys else ""))
+            tip = "%s — %s" % (tr(name), tr(what))
+            if key in self._why:
+                tip += " · " + tr("not available now: %s") % tr(self._why[key])
+            a.setToolTip(tip + (" (%s)" % keys if keys else ""))
 
     def _apply_search_texts(self) -> None:
         tr = self.tr_
+        tip = tr("Search keys") + " — " + tr("show only the keys that contain this text")
+        if not self.model.columns:                       # 何も開いていない間は押せない: 理由を言う
+            tip += " · " + tr("not available now: %s") % tr("open a file first")
+        tip += " (Ctrl+F)"
         self.search.setPlaceholderText(tr("Search keys"))
-        self.search.setToolTip(tr("Search keys") + " — " + tr("show only the keys that contain this text") + " (Ctrl+F)")
+        self.search.setToolTip(tip)
         self.search.setAccessibleName(tr("Search keys"))
+        # 欄の中のボタン 2 つ(前の虫眼鏡 = 欄へ行く、後ろの × = 検索を消す)にも名前とツールヒント
+        self._search_icon.setText(_label(tr("Search keys")))
+        self._search_icon.setToolTip(tip)
+        clear = self.search.findChild(QtGui.QAction, "_q_qlineeditclearaction")
+        if clear is not None:
+            clear.setText(_label(tr("Clear the search")))
+            clear.setToolTip(tr("Clear the search"))
+
+    def focus_search(self) -> None:
+        """検索の欄へ行く(Ctrl+F・欄の中の虫眼鏡)。"""
+        self.search.setFocus(Qt.ShortcutFocusReason)
+        self.search.selectAll()
+
+    def _fit_empty_row(self) -> None:
+        """空の案内の 2 つのボタン: 横に並べる幅があれば横、無ければ縦(はみ出させない)。"""
+        need = (self.empty_open.sizeHint().width() + self.empty_example.sizeHint().width()
+                + self._empty_row.spacing() + 12)                        # 頁の枠の内側 6 + 6
+        box = QtWidgets.QBoxLayout
+        want = box.LeftToRight if need <= self.empty.viewport().width() else box.TopToBottom
+        if self._empty_row.direction() != want:
+            self._empty_row.setDirection(want)
+
+    def focus_first(self) -> None:
+        """開いた時のフォーカスを置く: 束があれば表、無ければパネルそのもの。ボタンには置かない(設計書 P02-5。
+        Enter や Space でボタンが押されない・キーは表へ届く)。"""
+        (self.tree if self.stack.currentWidget() is self.tree else self).setFocus(Qt.OtherFocusReason)
+
+    def _show_page(self, page: QtWidgets.QWidget) -> None:
+        """一覧の場所の頁を替える。フォーカスが、隠れる前の頁の中かパネルそのものにあったら置き直す(空の案内の「例を開く」を
+        押した後は表へ、全部の列を外した後はパネルへ。Qt に任せると隣のボタンへ移る)。"""
+        was = self.stack.currentWidget()
+        if page is was:
+            return
+        held = self.window().focusWidget()               # 替える前に見る(替えた後は Qt がもう移している)
+        self.stack.setCurrentWidget(page)
+        if held is None or held is self or held is was or was.isAncestorOf(held):
+            self.focus_first()
 
     def _apply_empty_texts(self) -> None:
         tr = self.tr_
@@ -1186,6 +1252,8 @@ class ParamsPanel(QtWidgets.QWidget):
         self.empty_open.setText(_label(tr("Open files")))
         self.empty_example.setText(_label(tr("Open the example")))
         self.empty_example.setToolTip(tr("Two bundles of the same rig (day and night) to try comparing and copying"))
+        if hasattr(self, "_empty_row") and hasattr(self, "empty"):       # 言語が変わるとボタンの幅が変わる
+            self._fit_empty_row()
 
     def set_tr(self, tr: Callable[[str], str]) -> None:
         """言語を切り替える: 窓に出ている文を全部、その言語で作り直す(設計書 P15-2)。中身(列・絞り込み・未保存)は変えない。"""
@@ -1566,7 +1634,7 @@ class ParamsPanel(QtWidgets.QWidget):
         walk(QtCore.QModelIndex())
         if cur is not None:
             self.select_cell(cur[0], cur[1])
-        self.stack.setCurrentWidget(self._current_page())
+        self._show_page(self._current_page())
         if ncols != self.tmodel.columnCount() or not self._user_sized:
             self._fit_columns()
         self._update_status()
@@ -1664,26 +1732,46 @@ class ParamsPanel(QtWidgets.QWidget):
         self.titleChanged.emit(t)
         self.changed.emit()
 
-    def _update_actions(self) -> None:
+    def _unavailable(self) -> dict[str, str]:
+        """今は押せない道具 → 理由(英語の元の文。ツールヒントに出す)。押せる道具は入らない。"""
         cur = self.current_column()
         col = self.model.columns[cur] if cur is not None else None
+        n = len(self.model.columns)
+        why: dict[str, str] = {}
+        if col is None:
+            why["remove"] = why["saveas"] = why["reload"] = "select a column first" if n else "open a file first"
+        elif col.path is None:
+            why["reload"] = "the selected bundle has no file yet"
+        if not self.model.is_dirty():
+            why["save"] = "nothing has changed" if n else "open a file first"
+        if not self.model.can_undo():
+            why["undo"] = M.MESSAGES["undo.empty"]
+        if not self.model.can_redo():
+            why["redo"] = M.MESSAGES["redo.empty"]
+        if n < 2:
+            why["copy"] = "open two or more bundles first"
+        if not n:
+            why["diff"] = "open a file first"
+        return why
+
+    def _update_actions(self) -> None:
+        why = self._unavailable()
         has = bool(self.model.columns)
-        a = self.tool_actions
-        a["remove"].setEnabled(col is not None)
-        a["saveas"].setEnabled(col is not None)
-        a["reload"].setEnabled(col is not None and col.path is not None)
-        a["save"].setEnabled(self.model.is_dirty())
-        a["undo"].setEnabled(self.model.can_undo())
-        a["redo"].setEnabled(self.model.can_redo())
-        a["copy"].setEnabled(len(self.model.columns) >= 2)
-        a["diff"].setEnabled(has)
+        for key, a in self.tool_actions.items():
+            a.setEnabled(key not in why)
         self.search.setEnabled(has)
+        if why != self._why or has != self._search_has:  # 押せない理由が変わった: ツールヒントを入れ直す
+            self._why, self._search_has = why, has
+            self._apply_action_texts()
+            self._apply_search_texts()
 
     def eventFilter(self, obj: QtCore.QObject, ev: QtCore.QEvent) -> bool:
         if obj is self.tree.header() and ev.type() == QtCore.QEvent.MouseButtonPress:
             self._user_sized = True                      # 見出しを掴んだ = 幅を自分で決めた。以後は等分に戻さない
         elif obj is self.status and ev.type() == QtCore.QEvent.Resize:
             self._layout_status()
+        elif obj is self.empty.viewport() and ev.type() == QtCore.QEvent.Resize:
+            self._fit_empty_row()
         elif obj is self.tree.viewport() and ev.type() == QtCore.QEvent.Resize and not self._user_sized:
             if not self._fit_pending:                    # 見出しの幅が決まってから(この通知の後)等分し直す
                 self._fit_pending = True
@@ -2213,6 +2301,12 @@ class ParamsWindow(QtWidgets.QDialog):
         if ev.key() in (Qt.Key_Return, Qt.Key_Enter):
             return                                       # QDialog の既定(Enter で閉じる)を止める
         super().keyPressEvent(ev)
+
+    def showEvent(self, ev: QtGui.QShowEvent) -> None:
+        super().showEvent(ev)
+        fw = self.focusWidget()
+        if fw is None or isinstance(fw, QtWidgets.QAbstractButton):
+            self.panel.focus_first()                     # 開いた時のフォーカスはボタンに置かない(束があれば表)
 
     def changeEvent(self, ev: QtCore.QEvent) -> None:
         super().changeEvent(ev)

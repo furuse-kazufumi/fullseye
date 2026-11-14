@@ -1024,6 +1024,54 @@
    "ko": "묶음의 규칙상 이 변경은 할 수 없습니다(%s)",
    "de": "Die Regeln des Bündels lassen diese Änderung nicht zu (%s)",
    "hi": "बंडल के नियम यह बदलाव नहीं होने देते (%s)"
+  },
+  "not available now: %s": {
+   "ja": "今は押せません: %s",
+   "zh": "现在不可用: %s",
+   "tw": "目前無法使用: %s",
+   "ko": "지금은 사용할 수 없습니다: %s",
+   "de": "Zurzeit nicht verfügbar: %s",
+   "hi": "अभी उपलब्ध नहीं: %s"
+  },
+  "open a file first": {
+   "ja": "先にファイルを開きます",
+   "zh": "请先打开文件",
+   "tw": "請先開啟檔案",
+   "ko": "먼저 파일을 여세요",
+   "de": "Zuerst eine Datei öffnen",
+   "hi": "पहले कोई फ़ाइल खोलें"
+  },
+  "select a column first": {
+   "ja": "先に列を選びます",
+   "zh": "请先选择一列",
+   "tw": "請先選擇一欄",
+   "ko": "먼저 열을 선택하세요",
+   "de": "Zuerst eine Spalte auswählen",
+   "hi": "पहले कोई स्तंभ चुनें"
+  },
+  "the selected bundle has no file yet": {
+   "ja": "選んでいる束にはまだファイルがありません",
+   "zh": "所选参数组还没有文件",
+   "tw": "所選參數組還沒有檔案",
+   "ko": "선택한 묶음에는 아직 파일이 없습니다",
+   "de": "Das gewählte Bündel hat noch keine Datei",
+   "hi": "चुने हुए बंडल की अभी कोई फ़ाइल नहीं है"
+  },
+  "nothing has changed": {
+   "ja": "変更がありません",
+   "zh": "没有更改",
+   "tw": "沒有變更",
+   "ko": "변경된 내용이 없습니다",
+   "de": "Nichts wurde geändert",
+   "hi": "कुछ नहीं बदला है"
+  },
+  "open two or more bundles first": {
+   "ja": "先に束を 2 つ以上開きます",
+   "zh": "请先打开两个或更多参数组",
+   "tw": "請先開啟兩個以上的參數組",
+   "ko": "먼저 묶음을 둘 이상 여세요",
+   "de": "Zuerst zwei oder mehr Bündel öffnen",
+   "hi": "पहले दो या अधिक बंडल खोलें"
   }
  }
 }

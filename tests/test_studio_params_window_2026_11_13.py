@@ -2809,3 +2809,153 @@ def test_params_sizes_come_from_the_theme_density(qapp, fusion, ini, tmp_path, m
     win = _window(qapp, _three_files(plain))
     assert _sizes(win.panel) == compact
     _close_quietly(win)
+
+
+@pytest.mark.parametrize("files", [True, False], ids=["with bundles", "empty"])
+def test_params_opens_with_focus_off_the_buttons_and_no_default_button(qapp, fusion, ini, tmp_path, files):
+    """確かめの指摘(low)/ 設計書 P02-4・P02-5・G02(f)(g): 開いた直後のフォーカスはボタンに無い(束があれば表、無ければ
+    パネルそのもの。直す前は「開く」のボタン)。窓の中の QPushButton は全部 autoDefault も default も偽(直す前は 3 個とも
+    autoDefault で、「ファイルを開く」は既定の青い枠)。どこにフォーカスがあっても Enter でボタンは押されない。空の案内から
+    例を開くと表へ、全部の列を外すとパネルへフォーカスが移る(隣のボタンへ流れない)。Studio の入口から開いても同じ。"""
+    paths = _three_files(tmp_path) if files else []
+    win = _window(qapp, paths)
+    win.activateWindow()
+    _pump(qapp)
+    p = win.panel
+    p.pick_open = lambda: []                                            # 本物のファイルの窓を出さない
+    fw = win.focusWidget()
+    assert fw is not None and not isinstance(fw, QtWidgets.QAbstractButton), fw
+    assert fw is (p.tree if files else p)
+    pushes = win.findChildren(QtWidgets.QPushButton)
+    assert len(pushes) == 3 and {p.empty_open, p.empty_example, p.no_match_button} == set(pushes)
+    assert [b.text() for b in pushes if b.autoDefault() or b.isDefault()] == []
+    fired = []
+    for b in win.findChildren(QtWidgets.QAbstractButton):
+        b.clicked.connect(lambda _c=False, b=b: fired.append(b))
+    pressed = 0
+    for w in (p, p.tree, p.search, win):
+        if not (w.isEnabled() and w.isVisible()):
+            continue
+        w.setFocus()
+        for key in (Qt.Key_Return, Qt.Key_Enter):
+            QTest.keyClick(w, key)
+            pressed += 1
+    _pump(qapp)
+    assert pressed >= 4 and fired == [] and win.isVisible()
+    if not files:
+        p.empty_example.setFocus()                                      # 押したボタンは、頁が替わると隠れる
+        p.empty_example.click()
+        _pump(qapp)
+        assert p.stack.currentWidget() is p.tree and win.focusWidget() is p.tree
+        while p.model.columns:
+            p.model.remove_column(0)
+        p.refresh()
+        _pump(qapp)
+        assert p.stack.currentWidget() is p.empty and win.focusWidget() is p
+    _close_quietly(win)
+    parent = QtWidgets.QWidget()
+    w2 = Q.show_params_window(parent, paths, M.make_tr("en"))
+    _pump(qapp)
+    fw = w2.focusWidget()
+    assert fw is (w2.panel.tree if files else w2.panel) and not isinstance(fw, QtWidgets.QAbstractButton)
+    _close_quietly(w2)
+    parent.deleteLater()
+
+
+_TIP_FORM = re.compile(r"^[^\u2014]+ \u2014 .+$")
+
+
+@pytest.mark.parametrize("lang", ["en", "ja"])
+def test_params_every_button_has_a_tooltip_and_disabled_ones_say_why(qapp, fusion, ini, tmp_path, lang):
+    """確かめの指摘(low)/ 設計書 P04-4・P04-5: 窓の木の中の絵だけのボタン(QToolButton)は全部ツールヒントと読み上げの名前を
+    持つ(直す前は検索の欄の中の虫眼鏡と × が空)。虫眼鏡は Ctrl+F と同じ(欄へ行く)、× は「検索を消す」。押せない道具は
+    ツールヒントに理由を言い(直す前は押せる時と同じ文)、押せるようになれば理由は消える。形は「名前 — 何が起きるか (キー)」のまま。"""
+    tr = M.make_tr(lang)
+    lead = tr("not available now: %s").split("%s")[0]
+    assert lead.strip() and (lang == "en" or lead != "not available now: ")
+    win = _window(qapp, lang=lang)
+    p = win.panel
+    tools = win.findChildren(QtWidgets.QToolButton)
+    assert len(tools) == 12                                             # 道具 10 + 検索の欄の中の 2
+    assert [b for b in tools if not b.toolTip().strip()] == []
+    assert [b for b in tools if not (b.accessibleName().strip() or b.text().strip())] == []
+
+    def reasons() -> dict:
+        out = {}
+        for k in BUTTONS:
+            b = p.buttons[k]
+            tip = b.toolTip()
+            assert _TIP_FORM.match(tip) and "\n" not in tip, (k, tip)
+            keys = p.tool_actions[k].shortcut().toString(QtGui.QKeySequence.NativeText)
+            assert not keys or tip.endswith(" (%s)" % keys), (k, tip)              # キーは末尾のまま
+            assert (lead in tip) == (not b.isEnabled()), (k, tip, b.isEnabled())   # 押せない時だけ理由
+            if lead in tip:
+                out[k] = tip.split(lead, 1)[1].split(" (")[0]
+        return out
+
+    first = tr("open a file first")
+    assert reasons() == {"remove": first, "save": first, "saveas": first, "reload": first, "copy": tr("open two or more bundles first"),
+                         "diff": first, "undo": tr("nothing to undo"), "redo": tr("nothing to redo")}
+    assert not p.search.isEnabled() and (lead + first) in p.search.toolTip() and p.search.toolTip().endswith("(Ctrl+F)")
+    assert p.add_paths(_three_files(tmp_path)) and p.search.isEnabled() and lead not in p.search.toolTip()
+    column = tr("select a column first")
+    assert reasons() == {"remove": column, "saveas": column, "reload": column, "save": tr("nothing has changed"),
+                         "undo": tr("nothing to undo"), "redo": tr("nothing to redo")}
+    assert p.select_cell(0, "camera.fx") and p.edit_cell(0, "camera.fx", "900").ok
+    assert reasons() == {"redo": tr("nothing to redo")}
+    p.undo()
+    assert reasons() == {"save": tr("nothing has changed"), "undo": tr("nothing to undo")}
+    assert p.model.add_bundle({"a": 1}, "memo").ok                     # ファイルの無い束
+    p.refresh()
+    assert p.select_cell(3, "a") and reasons()["reload"] == tr("the selected bundle has no file yet")
+    # 検索の欄の中の 2 つ: 虫眼鏡 = 欄へ行く(Ctrl+F と同じ)、× = 検索を消す
+    inner = p.search.findChildren(QtWidgets.QToolButton)
+    assert len(inner) == 2
+    clear = [b for b in inner if b.defaultAction().objectName() == "_q_qlineeditclearaction"]
+    glass = [b for b in inner if b not in clear]
+    assert len(clear) == 1 and clear[0].toolTip() == tr("Clear the search")
+    assert len(glass) == 1 and glass[0].toolTip() == p.search.toolTip() and _TIP_FORM.match(glass[0].toolTip())
+    p.search.setText("fx")
+    p.tree.setFocus()
+    glass[0].defaultAction().trigger()
+    assert win.focusWidget() is p.search and p.search.selectedText() == "fx"
+    p.ask_unsaved = lambda names: "discard"
+    _close_quietly(win)
+
+
+@pytest.mark.parametrize("lang", M.LANGS)
+def test_params_empty_guide_is_not_cut_at_the_smallest_window(qapp, fusion, ini, lang):
+    """確かめの指摘(low): 窓の最小の大きさ(320x160)でも、空の案内の文が切れない(直す前は 48 px 要る所が 38 px で 3 行目が
+    半分切れた)。収まらない分は頁が縦に送れる(横には送らない)。広い窓では送りは出ない。"""
+    win = _window(qapp, lang=lang, size=(320, 160))
+    p = win.panel
+    assert (win.width(), win.height()) == (320, 160) and p.stack.currentWidget() is p.empty
+    lab = p.empty_label
+    assert lab.text() == M.make_tr(lang)(Q.ParamsPanel.EMPTY_TEXT)
+    assert lab.height() >= lab.heightForWidth(lab.width()) > 0, (lang, lab.height(), lab.heightForWidth(lab.width()))
+    body = p.empty.widget()
+    for w in (lab, p.empty_open, p.empty_example):                      # 頁の中身は全部、頁の内側にある(送れば届く)
+        assert body.rect().contains(QtCore.QRect(w.mapTo(body, QtCore.QPoint(0, 0)), w.size())), (lang, w)
+    over = body.height() - p.empty.viewport().height()                 # 収まらない分(0 なら全部見えている)
+    assert over >= 0 and p.empty.verticalScrollBar().maximum() == over, (lang, over)
+    assert p.empty.horizontalScrollBar().maximum() == 0 and body.width() <= p.empty.viewport().width()
+    win.resize(720, 420)
+    _pump(qapp)
+    assert p.empty.verticalScrollBar().maximum() == 0 and not p.empty.verticalScrollBar().isVisible()
+    assert lab.height() >= lab.heightForWidth(lab.width()) > 0
+    _close_quietly(win)
+
+
+def test_params_narrow_headers_show_an_ellipsis(qapp, fusion, ini, tmp_path):
+    """確かめの指摘(low): 列が細くて入らない見出し(330 px・道具の列が左)は、黙って切らずに末尾を … にする。全部の名前と
+    場所は見出しのツールヒントにある。"""
+    paths = _three_files(tmp_path)
+    win = _window(qapp, paths, size=(330, 700))
+    p = win.panel
+    p.set_strip_side("left")
+    _pump(qapp)
+    hdr = p.tree.header()
+    assert hdr.textElideMode() == Qt.ElideRight
+    tips = [p.tmodel.headerData(2 + i, Qt.Horizontal, Qt.ToolTipRole) for i in range(3)]
+    assert [os.path.normcase(t.split("\n")[0]) for t in tips] == [os.path.normcase(x) for x in paths]
+    _close_quietly(win)
