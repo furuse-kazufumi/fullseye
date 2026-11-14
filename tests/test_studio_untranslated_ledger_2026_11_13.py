@@ -6,6 +6,8 @@
 
 1. **ツールヒント**(実際に Studio を起動し、日本語に切り替えて数える)。起動した窓に在る部品の全部(隠れている
    部品も含む)と QAction。後から開く窓(3-D ビューア・設定 …)の部品は、起動時には無いので入らない。
+   **op の一覧の行(QListWidgetItem)のツールヒントは数えない**(部品ではない。op 名・HALCON の別名・category・
+   sort の英語で、2026-11-15 に日本語の UI で 706 行の全部が英語のまま。直す前も 1003 行の全部)。
 2. **書いた所で tr() を通らない文**(studio.py の構文木から): ステータスの文 ``flash(...)``、エラーの窓の題
    ``report_error(題, ...)`` / ``ERROR_HOOK``、確認 ``CONFIRM_HOOK``、``QMessageBox.*`` の題と文、窓の題
    ``setWindowTitle(...)``、部品の字 ``setText`` / ``setPlainText`` / ``setPlaceholderText`` / ``set_message`` /
@@ -16,14 +18,15 @@
 ★この門が見ない物(2026-11-15、PR #316 の独立レビューで分かった範囲。下の試験
 ``test_what_the_gate_does_not_see_is_written_down`` に同じ形を書いてある): 変数に入れてから渡した文
 (``msg = "..."; flash(msg)``)、``"...".format(x)``、条件式(``"a" if c else "b"``)、表に無い名前の呼び出し。
-「全部」ではなく「この 16 種の呼び出しに直書きした文」の台帳。
+「全部」ではなく「この 16 種の呼び出しに直書きした文」の台帳。ツールヒントの側は、op の一覧の行のツールヒントを
+見ない(``test_english_tooltips_in_japanese_match_the_ledger`` が、見ていない事と件数を確かめる)。
 
 残っている物は台帳 ``tests/data/studio_untranslated_ja.json`` に全部並べる。
 
 * 台帳に無い英語の文が増えたら落ちる(``tr()`` を通して表に行を足すか、意図して残すなら台帳に足す)。
 * 台帳にあるのに訳された(または消えた)ら落ちる(台帳から外す。台帳を古い言い訳の置き場にしない)。
 
-2026-11-13 の直しの前後: ツールヒント 99 → 4(見えている部品だけの数え方。残りは Program 欄の 4 つ)、
+2026-11-13 の直しの前後: 部品のツールヒント 99 → 4(見えている部品だけの数え方。残りは Program 欄の 4 つ)、
 書いた所で tr() を通らない文 161 → 113(10 種の呼び出し)。2026-11-15: 隠れている部品のヒントも数えて 17、
 部品の字の呼び出しを足して台帳の件数。
 """
@@ -104,7 +107,10 @@ def untranslated_literals(src=None, table=None):
 
 
 def english_tooltips_in_japanese():
-    """日本語に切り替えた Studio の窓で、英語のまま出るツールヒント(重複なし、並べ替え済み)。"""
+    """日本語に切り替えた Studio の窓で、英語のまま出るツールヒント(重複なし、並べ替え済み)。
+
+    ``(数えたツールヒントの数, 英語のままの物, op の一覧の行のツールヒント)``。3 つ目は門の範囲外(数えない物の
+    件数を確かめる為だけに返す)。"""
     from PySide6 import QtGui, QtWidgets
     import studio
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
@@ -125,8 +131,10 @@ def english_tooltips_in_japanese():
         tips += [a.toolTip() for a in win.findChildren(QtGui.QAction)
                  if a not in qt_own and a.toolTip() and a.toolTip() != a.text().replace("&", "")]
         tips = sorted({t.strip() for t in tips if t.strip()})
+        lst = win._op_list
+        rows = [lst.item(i).toolTip() for i in range(lst.count()) if lst.item(i).toolTip()]
         return len(tips), [t for t in tips if _english(t) and not re.fullmatch(r"[a-z][a-z0-9_]*", t)
-                           and t != "Fullseye Studio"]
+                           and t != "Fullseye Studio"], rows
     finally:
         studio._UI_LANG["code"] = "en"
         win.close_guard = lambda: True
@@ -157,8 +165,13 @@ def test_english_tooltips_in_japanese_match_the_ledger(monkeypatch, tmp_path):
     pytest.importorskip("PySide6")
     monkeypatch.setenv("QT_QPA_PLATFORM", "offscreen")
     monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / "s.ini"))
-    shown, eng = english_tooltips_in_japanese()
+    shown, eng, rows = english_tooltips_in_japanese()
     assert shown > 150, shown                              # 窓のツールヒントを実際に読めている(隠れた部品も)
+    # ★範囲外(2026-11-15、PR #316 の独立レビュー 3 回目): op の一覧の行のツールヒントは、ほぼ全部が英語のまま
+    # (op 名・HALCON の別名・category・sort)。台帳は数えない。訳し始めたら、ここを台帳の件数に替える。
+    assert len(rows) >= 500, len(rows)
+    assert sum(1 for t in rows if _english(t)) >= 0.9 * len(rows)
+    assert not set(t.strip() for t in rows) & set(eng)
     want = sorted(_ledger()["tooltips"])
     assert eng == want, ("日本語の UI で英語のままのツールヒントが台帳と違う。増えた: %s / 訳された: %s"
                          % (sorted(set(eng) - set(want))[:5], sorted(set(want) - set(eng))[:5]))

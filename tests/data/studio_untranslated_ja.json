@@ -1,5 +1,5 @@
 {
- "_note": "日本語の UI で英語のまま出る文の台帳(tests/test_studio_untranslated_ledger_2026_11_13.py が数える)。literals = studio.py の中で、16 種の呼び出し(flash・report_error・ERROR_HOOK・CONFIRM_HOOK・QMessageBox の 5 つ・setWindowTitle・setText・setPlainText・setPlaceholderText・set_message・showMessage・addButton)に直書きした、tr() を通らない文 [呼び出し, 文の先頭]。変数に入れてから渡した文・.format・条件式は見ない(全部ではない)。tooltips = 起動した窓を日本語に切り替えた時に英語のままのツールヒント(隠れている部品も含む。後から開く窓の部品は入らない)。訳したら台帳から外す。2026-11-13: ツールヒント 99 → 4(見えている部品だけ)、文 161 → 113。2026-11-15: 隠れている部品も数えて 17、部品の字の呼び出しを足して文 175。",
+ "_note": "日本語の UI で英語のまま出る文の台帳(tests/test_studio_untranslated_ledger_2026_11_13.py が数える)。literals = studio.py の中で、16 種の呼び出し(flash・report_error・ERROR_HOOK・CONFIRM_HOOK・QMessageBox の 5 つ・setWindowTitle・setText・setPlainText・setPlaceholderText・set_message・showMessage・addButton)に直書きした、tr() を通らない文 [呼び出し, 文の先頭]。変数に入れてから渡した文・.format・条件式は見ない(全部ではない)。tooltips = 起動した窓を日本語に切り替えた時に英語のままのツールヒント(隠れている部品も含む。後から開く窓の部品は入らない。op の一覧の行(QListWidgetItem、部品ではない)のツールヒントも入らない: op 名・HALCON の別名・category・sort の英語で、2026-11-15 に日本語の UI で 706 行の全部が英語のまま)。訳したら台帳から外す。2026-11-13: ツールヒント 99 → 4(見えている部品だけ)、文 161 → 113。2026-11-15: 隠れている部品も数えて 17、部品の字の呼び出しを足して文 175。",
  "tooltips": [
   "Add the expression as a watch (Enter in the box does the same)",
   "Apply → parse the code and replace the pipeline",

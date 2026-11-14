@@ -583,6 +583,7 @@ def test_m3_unused_knobs_are_greyed_out_in_both_panels(launch, name, dead):
     lst = win._op_list
     names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
     lst.setCurrentRow(names.index(name)); _pump(0.1)
+    assert len(win._op_arg_spins) == 2 and len(win._knob_rows) == 2      # zip が空になって素通りしない
     for spin, letter in zip(win._op_arg_spins, "ab"):                   # + の上の欄
         assert spin.isEnabled() == (letter not in dead), (name, letter)
     win._op_buttons["insert"].click(); _pump(0.3)
