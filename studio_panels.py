@@ -1579,6 +1579,10 @@ def declare_strip(win, key, row, body=None, shape=None, root=None):
     return strip
 
 
+#: D24: the zoom tools of every image window, in this order (then a group gap, then save)
+IMAGE_ZOOM_ORDER = ("zoom_in", "zoom_out", "fit", "actual_size")
+
+
 def adopt_image_strip(win, view, key=None):
     """An image window's own tool strip (the small one over its top-left corner) becomes a FlowStrip that
     turns and scrolls like every other. Safe to call twice; returns the strip or None (no strip)."""
@@ -1596,6 +1600,8 @@ def adopt_image_strip(win, view, key=None):
         return None
     save = [b for b in order if buttons.get("save") is b]
     look = [b for b in order if b not in save]
+    rank = {buttons.get(name): i for i, name in enumerate(IMAGE_ZOOM_ORDER)}
+    look.sort(key=lambda b: rank.get(b, len(rank)))   # D24: the main image's order, in every image window
     st["image_seq"] = st.get("image_seq", 1) + 1
     key = key or "graphics_%d" % st["image_seq"]
     FlowStrip = flow_classes()["FlowStrip"]

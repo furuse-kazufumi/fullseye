@@ -1679,3 +1679,37 @@ def test_work_mode_marked_modified_after_rearrange(tmp_path, monkeypatch):
         assert sw.text() == name
     finally:
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# D24 — the tool strip of every image window: 24 px buttons, zoom in / zoom out / fit / 1:1, then save
+# --------------------------------------------------------------------------- #
+def test_image_strips_are_icon_button_size_and_in_one_order(tmp_path, monkeypatch):
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        side = studio_theme.density()["icon_btn"]
+        assert side == 24 and studio_panels.IMAGE_ZOOM_ORDER == ("zoom_in", "zoom_out", "fit", "actual_size")
+        win._new_graphics_window(); _pump(app, 0.3)
+        win._new_graphics_window(); _pump(app, 0.3)
+        rows = [r for r in studio_panels.panel_ledger(win) if r["kind"] == "image"]
+        assert len(rows) == 3                                               # the main image and two more
+        counted = 0
+        for r in rows:
+            strip = r["strip"]
+            names = (win._panel_buttons["graphics_1"] if r["key"] == "graphics_1" else r["shape"].tool_buttons)
+            by_button = {b: n for n, b in names.items()}
+            items = strip.items()
+            assert len(items) >= 5
+            small = [(by_button.get(b), b.width(), b.height()) for b in items if b.height() != side or b.width() < side]
+            assert small == [], (r["key"], small)                          # 24 px, never smaller
+            order = [by_button[b] for b in items if by_button.get(b) in studio_panels.IMAGE_ZOOM_ORDER]
+            assert order == list(studio_panels.IMAGE_ZOOM_ORDER), (r["key"], order)
+            zoom = [g for g in strip.groups if by_button.get(g[0]) == "zoom_in"]
+            assert len(zoom) == 1 and len(zoom[0]) == 4, r["key"]           # one group, in that order
+            if r["key"] != "graphics_1":                                    # then a group gap, then save
+                assert [by_button.get(b) for b in strip.groups[-1]] == ["save"], r["key"]
+                assert strip.groups.index(zoom[0]) == len(strip.groups) - 2
+            counted += len(items)
+        assert counted >= 17
+    finally:
+        _close(app, win)
