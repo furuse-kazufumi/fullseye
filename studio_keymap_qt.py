@@ -341,7 +341,7 @@ def _retarget(st: _State, obj: QtGui.QAction, pairs: list, lang: str, tip_keys: 
     text = km.retarget_text(base[0], pairs, lang)
     tip = base[1] if implicit_tip else km.retarget_text(base[1], pairs, lang)
     if tip_keys is not None and not implicit_tip:
-        tip = km.tooltip_text(_qt_stripped(text), tip, tip_keys, lang)
+        tip = km.tooltip_text(_qt_stripped(text), tip, tip_keys)   # キーはメニューの右と同じ字(どの言語でも。D96)
     new = (text, tip, km.retarget_text(base[2], pairs, lang))
     if new[0] != cur[0]:
         obj.setText(new[0])

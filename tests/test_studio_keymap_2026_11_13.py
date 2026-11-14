@@ -2064,7 +2064,10 @@ def test_f1_in_the_stage_list_finds_the_stage_without_a_model(app, studio_mod, m
     import studio_editops_qt as eq  # noqa: PLC0415
     w, c = _with_a_stage(studio_mod)                                      # 段は gaussian の 1 つ
     try:
-        assert c.model is not None and c.model.stages[0][0] == "gaussian"   # _build は配線どおり model を渡している
+        # _build は配線どおり model を渡している(属性は名前の文字列で引く: ファイル形式の棚卸し
+        # tools/audit_file_formats.py は、試験の文面の「ドット + model」を 3MF の拡張子の試験として数える)
+        pipeline = vars(c)["model"]
+        assert pipeline is not None and pipeline.stages[0][0] == "gaussian"
         lst, sl = w._op_list, w._stage_list
         names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
         lst.setCurrentRow(names.index("median"))
@@ -2120,6 +2123,7 @@ def _strip_buttons(win):
 
 def test_tooltips_name_dash_effect_and_key(win, ctl, studio_mod):
     import studio_keymap_qt as kq  # noqa: PLC0415
+    from PySide6 import QtGui  # noqa: PLC0415
     buttons = _strip_buttons(win)
     by_id = dict(buttons)
     keyed = ("open_image", "run_all", "export", "pin_a", "work_mode_build", "work_mode_compare", "work_mode_inspect",
@@ -2133,7 +2137,7 @@ def test_tooltips_name_dash_effect_and_key(win, ctl, studio_mod):
             name = kq._qt_stripped(win._actions[cid].text()).rstrip("…")
             assert _TIP_FORM.match(tip) and tip.startswith(name + " — "), (lang, cid, tip)
             keys = ctl.keymap.keys(cid)
-            shown = " (%s)" % " / ".join(km.display_key(k, lang) for k in keys)
+            shown = " (%s)" % " / ".join(keys)                            # どの言語でも、メニューの右と同じ字(D96)
             assert tip.endswith(shown) if keys else not re.search(r"\((Ctrl|Strg|F\d)[^()]*\)$", tip), (lang, cid, tip)
             seen += bool(keys)
         return seen
@@ -2154,7 +2158,8 @@ def test_tooltips_name_dash_effect_and_key(win, ctl, studio_mod):
     assert sum(by_id[cid].toolTip() != english[cid] for cid in by_id) == 12   # 12 個とも訳した文になった
     win._apply_language("de")
     _pump(0.2)
-    assert check("de") == 9 and by_id["pin_a"].toolTip().endswith(" (Strg+Umschalt+A)")
+    assert check("de") == 9 and by_id["pin_a"].toolTip().endswith(" (Ctrl+Shift+A)")
+    assert win._actions["pin_a"].shortcut().toString(QtGui.QKeySequence.NativeText) == "Ctrl+Shift+A"   # メニューの右
     win._apply_language("en")
     _pump(0.2)
     assert {cid: b.toolTip() for cid, b in buttons} == english            # 戻すと 1 字も違わない(重ねて付けない)

@@ -1149,6 +1149,7 @@ def tooltip_text(name: str, effect: str = "", keys: Sequence = (), lang: str = "
 
     ``name`` の末尾の ``…`` と、末尾に括弧で書いてある同じキー(``Run all (F5 / Ctrl+R)``)は外す。``effect`` が無い・
     名前と同じなら「名前 (キー)」、キーが無ければ括弧を付けない。``effect`` が同じキーの括弧で終わっていれば重ねない。
+    ``lang`` は既定(登録簿の字 = メニューの右と同じ字)のままで使う。取り付けの側はどの言語でも既定で呼ぶ(D96)。
     """
     shown = " / ".join(display_key(k, lang) for k in keys)
     tail = "(%s)" % shown
