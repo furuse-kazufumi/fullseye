@@ -2007,3 +2007,46 @@ def test_the_selected_row_is_scrolled_into_view(win, ctl):
         r = [row[0] for row in dlg._rows].index(cid)
         rect = dlg.table.visualItemRect(dlg.table.item(r, 0))
         assert dlg.table.viewport().rect().contains(rect.center()), cid      # 選んだ行が見えている
+
+
+# --------------------------------------------------------------------------- #
+# 2026-11-15: 深い入れ子は読む前に数えて断る(RecursionError に頼らない。Python 3.14 の json.loads は 10 万段でも
+# RecursionError を出さずに読む = 「深い JSON で例外が出ない」だけの試験は 3.11 でしか意味が無い)
+# --------------------------------------------------------------------------- #
+def _nested(depth, inner='"Ctrl+F12"'):
+    return "[" * depth + inner + "]" * depth
+
+
+def test_nesting_is_counted_before_reading_and_not_left_to_the_recursion_limit(monkeypatch):
+    real = json.loads
+    over = km.MAX_DEPTH + 1                                               # 33 段: どの版の json.loads も平気で読む深さ
+    assert km.MAX_DEPTH == 32 and real(_nested(over)) != []               # (この深さで RecursionError は出ない)
+    called = []
+    monkeypatch.setattr(km.json, "loads", lambda *a, **k: called.append(1) or real(*a, **k))
+    want = "nested more than %d levels" % km.MAX_DEPTH
+    got, probs = km.import_text(_nested(over))
+    assert got is None and [(p.level, p.code, p.detail) for p in probs] == [("error", "bad_json", want)]
+    k, probs = km.from_settings_text(_nested(over))
+    assert k == km.Keymap() and [(p.code, p.detail) for p in probs] == [("settings_broken", want)]
+    inside = '{"format": "%s", "version": 1, "bindings": {"fit": %s}}' % (km.FORMAT, _nested(over - 2))
+    assert km._depth(inside) == over                                      # 外の 2 段 + 中の 31 段 = 33 段
+    got, probs = km.import_text(inside)
+    assert got is None and [(p.code, p.detail) for p in probs] == [("bad_json", want)]
+    assert called == []                                                   # 断ったのは読む前(json.loads を呼んでいない)
+    # 上限ちょうど(32 段)は読む。断る理由は入れ子ではなく形(一番外が並び)
+    got, probs = km.import_text(_nested(km.MAX_DEPTH))
+    assert got is None and [(p.code, p.detail) for p in probs] == [("bad_type", "(top)")] and called == [1]
+
+
+def test_brackets_inside_strings_are_not_nesting():
+    junk = "[" * 500 + '\\"' + "{" * 500                                  # 文字列の中の括弧と、エスケープした引用符
+    data = ('{"format": "%s", "version": 1, "preset": "visual_studio", "bindings": {}, "note": "%s"}'
+            % (km.FORMAT, junk))
+    assert km._depth(data) == 2                                           # 文字列の中は数えない
+    got, probs = km.import_text(data)
+    assert got is None and [p.code for p in probs] == ["bad_type"]        # 断る理由は「知らない項目 note」
+    assert "nested" not in probs[0].detail and "note" in probs[0].detail
+    assert km._depth('"\\\\"' + "[" * 40) > km.MAX_DEPTH                  # "\\" は閉じた文字列: 後ろの括弧は入れ子
+    assert km._depth('"\\"' + "[" * 40) == 0                              # "\" の後ろの " は文字列の中: 括弧も文字列の中
+    assert km._depth("]" * 50 + "[" * 20) == 0                            # 先に閉じる形は json.loads が 1 字目で断る
+    assert km._depth("") == 0 and km._depth("{}") == 1 and km._depth('{"a": [1, {"b": []}]}') == 4
