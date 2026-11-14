@@ -22,10 +22,12 @@
 """
 from __future__ import annotations
 
+import itertools
 import json
 import math
 import os
 import pathlib
+import re
 import sys
 import time
 from typing import Any
@@ -591,9 +593,33 @@ FRAMING_HEADERS = "content-length"
 #: 改行区切りの 1 通の上限(バイト)。これを超える行は読み捨てずに断る(メモリを相手に握らせない)。
 MAX_LINE_BYTES = 64 * 1024 * 1024
 
+#: 1 通の JSON の入れ子の深さの上限(配列と辞書の段の数)。MCP の 1 通は深くても十数段(tools/call の
+#: arguments の中の処理列で 6〜8 段)。これを超える本文は、読む前に断る(→ -32700)。
+MAX_JSON_DEPTH = 64
+
+_JSON_STRING = re.compile(rb'"(?:[^"\\]|\\[\s\S])*"')
+_NOT_BRACKET = re.compile(rb"[^\[\]{}]+")
+_DEPTH_STEP = [0] * 256
+_DEPTH_STEP[ord("[")] = _DEPTH_STEP[ord("{")] = 1
+_DEPTH_STEP[ord("]")] = _DEPTH_STEP[ord("}")] = -1
+
+
+def json_depth(body: bytes) -> int:
+    """本文の入れ子の深さの最大(文字列の中の括弧は数えない)。JSON として正しいかは見ない。"""
+    brackets = _NOT_BRACKET.sub(b"", _JSON_STRING.sub(b"", body))
+    return max(itertools.accumulate(map(_DEPTH_STEP.__getitem__, brackets)), default=0)
+
 
 def _loads_body(body: bytes):
     """本文を JSON として読む。読めない・深すぎる入れ子は FramingError(→ -32700)。"""
+    # ★2026-11-15: 深い入れ子を「json.loads の RecursionError を受ける」で断っていたが、Python 3.14 の json.loads は
+    #   10 万段でも RecursionError を出さずに読む(同じ 1 通が 3.11 では -32700、3.14 では巨大な入れ子の値として
+    #   先へ進み -32602 になった —— master の CI の py3.14 で発覚)。版に頼らず、読む前に深さを数えて断る。
+    #   開き括弧の総数が上限以下なら深さも上限以下なので、数えない(普通の 1 通はここで終わる)。
+    if isinstance(body, str):
+        body = body.encode("utf-8", "surrogatepass")
+    if body.count(b"[") + body.count(b"{") > MAX_JSON_DEPTH and json_depth(body) > MAX_JSON_DEPTH:
+        raise FramingError("本文の入れ子が深すぎる(上限 %d 段)" % MAX_JSON_DEPTH)
     try:
         return json.loads(body)
     except json.JSONDecodeError as exc:
