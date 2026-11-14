@@ -2512,6 +2512,7 @@
   "None of the listed operators takes '%s' (the output of stage %d, %s). Click a row to add it anyway, or add the step its card names first.": {"ja": "一覧の op は、どれも '%s'(段 %d、%s の出力)を受けられません。それでも入れる時は行をクリックして選ぶか、行に出ている「先に: …」の op を先に入れてください。"},
   "Discard changes?": {"ja": "変更を破棄しますか?"},
   "'%s' has unsaved changes — close anyway?": {"ja": "「%s」に保存していない変更があります。閉じますか?"},
-  "‘%s’ takes '%s', not '%s' (the output of stage %d, %s) — it was not added. Click its row to add it anyway.": {"ja": "‘%s’ は '%s' を受けます。前の段の出力は '%s'(段 %d、%s)なので、入れませんでした。それでも入れる時は、その行をクリックして選んでください。"}
+  "‘%s’ takes '%s', not '%s' (the output of stage %d, %s) — it was not added. Click its row to add it anyway.": {"ja": "‘%s’ は '%s' を受けます。前の段の出力は '%s'(段 %d、%s)なので、入れませんでした。それでも入れる時は、その行をクリックして選んでください。"},
+  "On: operators whose input type does not match the output of the stage before the insertion point are hidden (they would be refused before running). Nothing is converted. Off: list every operator.": {"ja": "オン: 入力の型が、挿入位置の前の段の出力と合わない op を隠します(入れても実行の前に断られる op です)。型の変換はしません。オフ: すべての op を並べます。"}
  }
 }

@@ -294,12 +294,16 @@ def test_knobs_shown_as_unused_really_do_nothing():
         for letter, role in zip("ab", roles):
             if role == "":
                 claims.setdefault(name, set()).add(letter)
-    for name in param_specs.PARAM_SPECS:
+    for name in list(param_specs.PARAM_SPECS) + list(param_specs.UNUSED_KNOBS):
         sp = param_specs.spec_for(name)
         for letter in "ab":
             if sp[letter].get("kind") == "unused":
                 claims.setdefault(name, set()).add(letter)
     assert len(claims) >= 50
+    # 2026-11-15(PR #316 の独立レビュー): 定番の op の 49 本(param_specs.UNUSED_KNOBS)も同じ測り方で確かめる
+    assert sum(len(v) for v in param_specs.UNUSED_KNOBS.values()) == 49
+    assert all(set(v) <= claims.get(n, set()) for n, v in param_specs.UNUSED_KNOBS.items())
+    assert not set(param_specs.UNUSED_KNOBS) & set(param_specs.PARAM_SPECS), "手書きの行がある op は PARAM_SPECS の側に書く"
     checked, moved = 0, []
     for name, letters in sorted(claims.items()):
         for letter in sorted(letters):
@@ -316,7 +320,7 @@ def test_knobs_shown_as_unused_really_do_nothing():
                 if any(o.shape != outs[2].shape or not np.array_equal(o, outs[2], equal_nan=True) for o in outs):
                     moved.append((name, letter))
                 break
-    assert checked >= 45, checked                                   # 走った件数に下限(空を通さない)
+    assert checked >= 90, checked                                   # 走った件数に下限(空を通さない)
     assert not moved, moved
 
 

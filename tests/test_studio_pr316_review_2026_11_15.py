@@ -634,3 +634,192 @@ def test_every_translation_row_keeps_the_format_fields_of_its_english_key():
     assert checked >= 2000, checked                                # 走査が空を通していない
     assert sum(1 for k in d["strings"] if "%" in k) >= 20
     assert not bad, bad[:10]
+
+
+# --------------------------------------------------------------------------- #
+# 「表で見る(N 個)」の N = 開く表の行の数                                           #
+# --------------------------------------------------------------------------- #
+def test_see_as_a_table_names_the_number_of_rows_the_table_shows(launch):
+    """直す前: coins + otsu で「表で見る(96 個)」、押して開く表は 63 行(表は小さな粒を落とすのに、ボタンは
+    ラベル付けの個数をそのまま出していた)。"""
+    from PySide6 import QtCore, QtWidgets
+    from scipy import ndimage
+    win, model = launch(lang="ja", user=True)
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("otsu")); win._op_buttons["insert"].click(); _pump(0.2)
+    win._actions["run_all"].trigger(); _pump(0.8)
+    b = win._b_regions
+    assert b.isVisibleTo(win)
+    n = int(re.search(r"(\d+)", b.text()).group(1))
+    out = np.asarray(model.result_upto(0)) > 0.5
+    labelled = ndimage.label(out, structure=np.ones((3, 3), bool))[1]
+    assert labelled > n > 10, (labelled, n)                        # 2 つの数え方が違う絵で確かめている
+    assert n == studio._region_table_count(out)
+    b.click(); _pump(0.6)
+    dlg = win._feat_dlg
+    assert dlg is not None and dlg.isVisible()
+    tables = [t for t in dlg.findChildren(QtWidgets.QTableWidget)
+              if "area" in [t.horizontalHeaderItem(c).text() for c in range(t.columnCount())]]
+    assert len(tables) == 1, len(tables)                           # 2-D の領域の表
+    assert tables[0].rowCount() == n, (tables[0].rowCount(), b.text())
+    dlg.close(); _pump(0.1)
+
+
+def test_the_table_count_follows_the_tables_own_limits():
+    """行の上限と面積の下限は、表と同じ物を使う(別々に書かない)。"""
+    speckle = np.zeros((400, 400))
+    for i in range(30):
+        for j in range(30):
+            speckle[4 + 12 * i: 6 + 12 * i, 4 + 12 * j: 6 + 12 * j] = 1.0     # 4 画素の粒が 900 個
+    n = studio._region_table_count(speckle)
+    objs, _mode = studio.region_feature_objects(speckle, min_area=studio._region_table_min_area(speckle.size))
+    assert len(objs) > studio.REGION_TABLE_MAX and n == studio.REGION_TABLE_MAX
+    small = np.zeros((300, 300)); small[10:20, 10:20] = 1; small[100, 100] = 1    # 1 画素の粒は落ちる(下限 2 画素)
+    assert studio._region_table_min_area(small.size) == 2
+    assert studio._region_table_count(small) == 1
+    assert len(studio.region_feature_objects(small, min_area=2)[0]) == 1
+    assert studio._region_table_count(np.zeros((50, 50))) == 0
+
+
+# --------------------------------------------------------------------------- #
+# 「実装を見る」: 選んだ op の枝                                                    #
+# --------------------------------------------------------------------------- #
+def test_show_the_implementation_is_the_selected_ops_own_branch():
+    """直す前: sobel_amp で押すと、族で共有する関数の全文(sobel_dir・prewitt・roberts・kirsch・frei の枝と内部の検証
+    メモまで 1,738 字)、rotate_image・zoom_image_factor・mirror_image は 6,026 字が 1 段落で出た。"""
+    sob = studio.op_impl_source("sobel_amp", None)
+    assert "ndimage.sobel" in sob and "prewitt" not in sob and "kirsch" not in sob and "敵対的検証" not in sob, sob
+    assert len(sob) < 200, len(sob)
+    inv = studio.op_impl_source("invert_image", None)
+    assert "1.0 - x" in inv and "gamma" not in inv and "equalize" not in inv and len(inv) < 200, inv
+    rot = studio.op_impl_source("rotate_image", None)
+    assert "ndimage.rotate" in rot and "affine_transform" not in rot and len(rot) < 300, rot
+    # 族で共有していない関数は、従来どおり(最初の return の式)
+    assert studio.op_impl_source("gaussian", None) == "ndimage.gaussian_filter(v, sigma=0.3 + 2.7 * a, mode=_border(b))"
+    assert studio.op_impl_source("no_such_op_xyz") == ""
+    # 全部の op: 族で共有する関数のうち、枝を取り出せた割合(取り出せない物は従来の全文に戻る)
+    names = [r["name"] for r in api.list_ops()]
+    assert len(names) > 500
+    shared = [n for n in names if studio._impl_function(n) is not None
+              and studio._dispatch_vars(*studio._impl_function(n))]
+    assert len(shared) >= 100, len(shared)
+    isolated = [n for n in shared if studio._kind_branch(*studio._impl_function(n))]
+    assert len(isolated) >= 0.9 * len(shared), (len(isolated), len(shared))
+    longer = [n for n in isolated if len(studio.op_impl_source(n, None)) > 1200]
+    assert len(longer) <= 0.2 * len(isolated), longer[:10]          # 枝そのものが長い op は残る(上限で切る)
+    # 長い実装は、開いた時も上限で切って印を付ける(つまみの欄を押し出さない)
+    long = [n for n in names if len(studio.op_impl_source(n, None)) > studio.IMPL_OPEN_LIMIT]
+    assert long, "上限を超える実装が 1 つも無いなら、この確かめは要らない"
+    cut = studio.op_impl_source(long[0], studio.IMPL_OPEN_LIMIT, True)
+    assert cut.endswith(" …") and len(cut) == studio.IMPL_OPEN_LIMIT + 2
+    assert studio.op_impl_source(long[0], studio.IMPL_OPEN_LIMIT) == cut[:-2]
+
+
+def test_opening_the_implementation_shows_one_branch_in_the_stage_panel(launch):
+    from PySide6 import QtCore
+    win, model = launch(lang="ja")
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index("rotate_image")); win._op_buttons["insert"].click(); _pump(0.3)
+    win._stage_list.setCurrentRow(0); _pump(0.2)
+    win._impl_toggle.setChecked(True); _pump(0.2)
+    text = win._stage_detail.text()
+    assert "ndimage.rotate" in text and "affine_transform" not in text and "zoom" not in text, text
+    assert len(text) < 700, len(text)                              # 直す前は 6,000 字を超えた
+
+
+# --------------------------------------------------------------------------- #
+# 定番の op の、実装が読まないつまみ                                                #
+# --------------------------------------------------------------------------- #
+def test_starter_and_staple_knobs_the_code_never_reads_are_shown_as_unused():
+    """直す前: 検索が空の時の一覧と「定番」の欄に出る op のうち 33 op・50 本のつまみが、動かしても何も変わらないのに
+    動かせた(invert_image・fill_up・skeleton の a・b など)。実装が引数を 1 度も読まないつまみは「未使用」。"""
+    import param_specs
+    import studio_search as ss
+    names = list(dict.fromkeys(list(studio.starter_ops()) + [n for _t, ops_ in ss.STAPLES for n in ops_]))
+    names = [n for n in names if api.find_op(n) is not None]
+    assert len(names) >= 30, len(names)
+    verdict = {(n, k): studio._impl_reads_knob(n, k) for n in names for k in "ab"}
+    never = sorted(key for key, v in verdict.items() if v is False)
+    assert len(never) >= 30, len(never)                            # 全部の extra が入った環境で 62
+    movable = [key for key in never if studio.knob_use(*key)[0] != "unused"]
+    assert not movable, movable
+    # 読み取りが盲目でない事: 効くと分かっているつまみは「読む」と出る
+    for n, k in (("gaussian", "a"), ("gaussian", "b"), ("threshold", "a"), ("rotate_image", "a"), ("mirror_image", "a"),
+                 ("scale_image", "a"), ("scale_image", "b"), ("select_shape", "a"), ("dilation_circle", "a")):
+        assert studio._impl_reads_knob(n, k) is True, (n, k)
+    # 表(param_specs.UNUSED_KNOBS)は、実装が読むつまみを止めていない(otsu に渡すだけの 4 本を除く)
+    passed_on = {("auto_threshold", "a"), ("auto_threshold", "b"), ("binary_threshold", "a"), ("binary_threshold", "b")}
+    listed = [(n, k) for n, ks in param_specs.UNUSED_KNOBS.items() for k in ks if api.find_op(n) is not None]
+    assert len(listed) >= 30
+    for n, k in listed:
+        assert studio.knob_use(n, k) == ("unused", "spec"), (n, k)
+        assert studio._impl_reads_knob(n, k) is False or (n, k) in passed_on, (n, k)
+
+
+@pytest.mark.parametrize("name,dead", [("invert_image", "ab"), ("fill_up", "ab"), ("rotate_image", "b"),
+                                       ("dilation_circle", "b")])
+def test_the_dead_knobs_of_a_starter_op_cannot_be_moved(launch, name, dead):
+    from PySide6 import QtCore
+    win, model = launch()
+    lst = win._op_list
+    names = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    lst.setCurrentRow(names.index(name)); _pump(0.1)
+    for spin, letter in zip(win._op_arg_spins, "ab"):               # + の上の欄
+        assert spin.isEnabled() == (letter not in dead), (name, letter)
+    win._op_buttons["insert"].click(); _pump(0.3)
+    win._stage_list.setCurrentRow(0); _pump(0.2)
+    for krow, letter in zip(win._knob_rows, "ab"):
+        assert krow.raw.isEnabled() == (letter not in dead), (name, letter)
+
+
+# --------------------------------------------------------------------------- #
+# 検索のカード・書き出しのボタン・型で絞るスイッチのヒント                              #
+# --------------------------------------------------------------------------- #
+def test_search_cards_are_whole_when_the_lists_style_changes_the_font(launch):
+    """直す前: 領域を出す段の後に「ぼかす」と打つと、カードに「先に: cv_dist → gaussian」の行が付いて 4 行になり、
+    ラベルの高さが要る高さより低かった(下線と「p」「y」の下が欠けた)。カードの高さを、行を一覧に入れる前(様式の字の
+    大きさが効く前)に 1 度だけ求めていた為。Windows のフォントでは直す前は 32 枚中 32 枚が欠け、直した後は 0 枚
+    (C:/Windows/Fonts を読む設定での実測)。offscreen の既定のフォントは様式の字と同じなので差が出ない —— ここでは
+    一覧の様式で字を大きくして、同じ状況(入れる前と後で字の大きさが違う)を作る。"""
+    win, model = launch(lang="ja", user=True)
+    _search(win, "otsu"); _enter(win)
+    win._docks["operators"].raise_(); _pump(0.2)
+    lst = win._search_ui["list"]
+    lst.setStyleSheet("QLabel { font-size: 15pt; }"); _pump(0.1)
+    _search(win, "ぼかす"); _pump(0.2)
+    rows = [r for g in win._search_ui["rows"]().values() for r in g]
+    four = [r for r in rows if len(r["text"].splitlines()) >= 3]
+    assert len(four) >= 3, [r["text"] for r in rows][:3]            # 「先に: …」の付くカードが出ている
+    cut = []
+    for r in rows:
+        lst.scrollToItem(r["item"]); _pump(0.05)
+        label = r["label_widget"]
+        need = label.heightForWidth(label.width())
+        if label.height() < need:
+            cut.append((r["name"], label.height(), need))
+    assert not cut, cut[:5]
+
+
+def test_the_docks_export_button_shows_its_label(launch):
+    """直す前: 処理手順の dock の書き出しのボタンは、作った時点の sizeHint で幅を固定していて、表示後の字の幅に足りず
+    「Python」が「…」になった(固定 61 px、表示後の sizeHint 89 px)。"""
+    win, model = launch(lang="ja", user=True)
+    win._docks["pipeline"].raise_(); _pump(0.3)
+    b = win._buttons["export"]
+    assert b.text() == "Python" and b.isVisibleTo(win)
+    assert b.width() >= b.sizeHint().width(), (b.width(), b.sizeHint().width())
+    assert b.maximumWidth() > 1000                                 # 幅を固定していない(字の幅に従う)
+
+
+def test_the_type_filter_switch_explains_itself_in_japanese(launch):
+    """直す前: 「前段の出力を受けられる op だけ表示」のヒントは、日本語の UI でも英語の文 + 日本語の注記だった
+    (表に行が無かった。合成したヒントなので、英語だけのヒントを数える門にも掛からなかった)。"""
+    win, model = launch(lang="ja", user=True)
+    tip = win._ops_fit["check"].toolTip()
+    assert "operators whose input" not in tip and "Nothing is converted" not in tip, tip
+    paragraphs = [p for p in tip.split("\n\n") if p.strip()]
+    assert len(paragraphs) == 2 and all(_CJK.search(p) for p in paragraphs), tip
+    win._apply_language("en"); _pump(0.2)
+    assert win._ops_fit["check"].toolTip().startswith("On: operators whose input type does not match")

@@ -2864,6 +2864,27 @@ def region_feature_objects(result, min_area=1):
     return detect.segment_objects(arr, threshold=thr, min_area=int(min_area)), mode
 
 
+#: 特徴量の検査の表に出す領域の上限(大きい順に。表と絵の上の印が固まらないように)
+REGION_TABLE_MAX = 500
+
+
+def _region_table_min_area(size):
+    """特徴量の検査の表から落とす小さな粒の面積の下限: 画像の約 20 ppm、1 画素以上(雑音の多い二値化で、1 画素の
+    領域が何千と並んで表が固まらないように)。"""
+    return max(1, int(round(size * 2e-5)))
+
+
+def _region_table_count(raw):
+    """特徴量の検査の表が、二値の結果 *raw* に出す行の数(``region_feature_objects`` と同じ 8 連結・0.5 より上、
+    上の面積の下限と行の上限も同じ)。領域ごとの特徴は計算しない(ラベル付けと画素数の集計だけ)。"""
+    from scipy import ndimage as _ndi
+    lab, n = _ndi.label(np.asarray(raw) > 0.5, structure=np.ones((3, 3), bool))
+    if not n:
+        return 0
+    areas = np.bincount(lab.ravel(), minlength=n + 1)[1:]
+    return int(min(REGION_TABLE_MAX, np.count_nonzero(areas >= _region_table_min_area(lab.size))))
+
+
 def region_feature_table(objs, names, image=None):
     """Build the feature table for segmented regions -> ``(headers, rows)``.
 
@@ -3703,24 +3724,194 @@ def knob_role_text(name, letter, role=None):
     return tr("see impl")
 
 
-def op_impl_source(name, limit=220):
+#: 「実装を見る」を開いた時に出す字数の上限(超えた分は「…」。つまみの欄を画面の外へ押し出さない)
+IMPL_OPEN_LIMIT = 600
+
+
+def _impl_callable(name):
+    """The function that implements op *name*, under the safety wrapper (None for an unknown op)."""
+    op = api.find_op(name)
+    if op is None:
+        return None
+    try:
+        return inspect.unwrap(op.fn)
+    except ValueError:                                      # a wrapper cycle
+        return op.fn
+
+
+def _impl_function(name):
+    """``(func_def, selectors)``: the parsed implementation of op *name* and the string-valued variables of its
+    closure (``{"kind": "sobel"}`` — what a function shared by a family of ops switches on). None when the source
+    cannot be read or parsed as one function (a lambda inside a table, a C extension)."""
+    import ast
+    import textwrap
+    fn = _impl_callable(name)
+    if fn is None:
+        return None
+    try:
+        tree = ast.parse(textwrap.dedent(inspect.getsource(fn)))
+    except (OSError, TypeError, SyntaxError, ValueError):
+        return None
+    func = tree.body[0] if tree.body else None
+    if not isinstance(func, ast.FunctionDef):
+        return None
+    selectors = {}
+    code, cells = getattr(fn, "__code__", None), getattr(fn, "__closure__", None)
+    if code is not None and cells:
+        for var, cell in zip(code.co_freevars, cells):
+            try:
+                value = cell.cell_contents
+            except ValueError:                              # an empty cell
+                continue
+            if isinstance(value, str):
+                selectors[var] = value
+    return func, selectors
+
+
+def _kind_test(test, selectors):
+    """None when *test* is not a plain ``kind == "x"`` / ``kind in ("x", …)`` on one of *selectors*; else
+    ``(variable, holds)``."""
+    import ast
+    if not (isinstance(test, ast.Compare) and len(test.ops) == 1 and isinstance(test.left, ast.Name)
+            and test.left.id in selectors):
+        return None
+    value, comp = selectors[test.left.id], test.comparators[0]
+    if isinstance(test.ops[0], ast.Eq) and isinstance(comp, ast.Constant):
+        return test.left.id, comp.value == value
+    if (isinstance(test.ops[0], ast.In) and isinstance(comp, (ast.Tuple, ast.List, ast.Set))
+            and all(isinstance(e, ast.Constant) for e in comp.elts)):
+        return test.left.id, any(e.value == value for e in comp.elts)
+    return None
+
+
+def _impl_body(func):
+    import ast
+    body = list(func.body)
+    if (body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant)
+            and isinstance(body[0].value.value, str)):
+        body = body[1:]                                     # the docstring
+    return body
+
+
+def _dispatch_vars(func, selectors):
+    """The closure variables *func* switches on at its top level (``{"kind"}``; empty for a plain function)."""
+    import ast
+    found = set()
+    for stmt in _impl_body(func):
+        node = stmt
+        while isinstance(node, ast.If):
+            got = _kind_test(node.test, selectors)
+            if got is not None:
+                found.add(got[0])
+            node = node.orelse[0] if len(node.orelse) == 1 else None
+    return found
+
+
+def _kind_branch(func, selectors):
+    """The statements of a shared dispatcher that may run for this op: everything before the ``if kind == …`` test
+    that holds and ends in ``return`` / ``raise`` — minus the bodies of the plain tests that do not hold — and
+    that test's body. None when *func* is not such a dispatcher or no such test is found (then the whole function
+    is the honest answer). Only branches proven not to run are dropped; a test this reader does not understand
+    stays, as written.
+
+    Most 2-D ops are one branch of a function shared by a family (``sobel_amp`` is ``kind == "sobel"`` of the
+    function that also holds prewitt / roberts / kirsch / frei; ``auto_threshold`` is ``method == "otsu"``)."""
+    import ast
+    switch = _dispatch_vars(func, selectors)
+    if not switch:
+        return None
+
+    pre = []
+    for stmt in _impl_body(func):
+        if not isinstance(stmt, ast.If) or _kind_test(stmt.test, selectors) is None:
+            pre.append(stmt)                                # 振り分けでない文(読み切れない形の if も)はそのまま残す
+            continue
+        node = stmt
+        while True:
+            got = _kind_test(node.test, selectors)
+            if got is None:
+                return None                                 # elif の途中に読み切れない条件: 追わない
+            if got[1]:
+                if isinstance(node.body[-1], (ast.Return, ast.Raise)):
+                    return pre + list(node.body)
+                pre.extend(node.body)                       # 成り立つが下へ抜ける枝(前置きの検査など): 続きへ
+                break
+            if len(node.orelse) == 1 and isinstance(node.orelse[0], ast.If):
+                node = node.orelse[0]
+                continue
+            if node.orelse:
+                return None                                 # 最後の else(既定の枝): 追わない
+            break
+    return None
+
+
+def _impl_reads_knob(name, letter):
+    """Does the implementation of op *name* read knob *letter* (``"a"`` / ``"b"``)? True / False, or None when it
+    cannot be told (``*args``, a shared dispatcher whose branch cannot be isolated).
+
+    For one branch of a shared dispatcher: does the set-up or the op's own branch name the parameter. For any other
+    function (a plain ``def``, a lambda): does its bytecode load the parameter. A parameter the code never names
+    cannot change the output; one that is passed on (``_otsu(v, a, b)``) counts as read here even when the callee
+    ignores it."""
+    import ast
+    import dis
+    fn = _impl_callable(name)
+    code = getattr(fn, "__code__", None)
+    index = 1 if letter == "a" else 2
+    if code is None or code.co_flags & (inspect.CO_VARARGS | inspect.CO_VARKEYWORDS) or code.co_argcount <= index:
+        return None
+    param = code.co_varnames[index]
+    parsed = _impl_function(name)
+    if parsed is not None and _dispatch_vars(*parsed):
+        stmts = _kind_branch(*parsed)
+        if stmts is None:
+            return None
+        return any(isinstance(n, ast.Name) and n.id == param for s in stmts for n in ast.walk(s))
+    if param in code.co_cellvars:
+        return True                                         # an inner function captures it
+    for ins in dis.get_instructions(code):
+        if ins.argval == param or (isinstance(ins.argval, tuple) and param in ins.argval):
+            return True
+    return False
+
+
+def op_impl_source(name, limit=220, mark_cut=False):
     """The operative expression of an op's implementation (honest, universal answer
     to 'what do a and b do'): e.g. gaussian -> 'gaussian_filter(v, sigma=0.3 + 2.7 * a)'.
     Empty string if the source is unavailable (C-extension, lambda without source).
-    ``limit`` cuts the text (None = the whole expression, for the opened "Show the implementation")."""
+    ``limit`` cuts the text (None = everything); ``mark_cut`` appends " …" where it was cut.
+
+    ★2026-11-15(PR #316 の独立レビュー): 族で共有する振り分け関数の op は、その op の枝だけを出す(前置きの文 +
+    ``if kind == "…"`` の中身。注釈は落ちる)。従来は最初の ``return`` より後ろを全部出していて、sobel_amp に
+    prewitt・roberts・kirsch・frei の枝と内部の検証メモまで 1,738 字、rotate_image に 6,026 字が出た。"""
+    import ast
     op = api.find_op(name)
     if op is None:
         return ""
-    try:
-        src = " ".join(inspect.getsource(op.fn).split())
-    except (OSError, TypeError):
-        return ""
-    body = src.split("return ", 1)
-    text = body[1] if len(body) == 2 else src
-    return text[:limit] if limit else text
+    text = ""
+    parsed = _impl_function(name)
+    stmts = _kind_branch(*parsed) if parsed is not None else None
+    if stmts:                                               # 族で共有する関数の、この op の枝
+        try:
+            if len(stmts) == 1 and isinstance(stmts[0], ast.Return) and stmts[0].value is not None:
+                text = ast.unparse(stmts[0].value)
+            else:
+                text = "; ".join(" ".join(ast.unparse(s).split()) for s in stmts)
+        except Exception:                                   # noqa: BLE001 -- 取り出せない時は下の従来の道
+            text = ""
+    if not text:
+        try:
+            src = " ".join(inspect.getsource(op.fn).split())
+        except (OSError, TypeError):
+            return ""
+        body = src.split("return ", 1)
+        text = body[1] if len(body) == 2 else src
+    if limit and len(text) > limit:
+        return text[:limit] + (" …" if mark_cut else "")
+    return text
 
 
-def op_signature_detail(row, impl_limit=220) -> str:
+def op_signature_detail(row, impl_limit=220, mark_cut=False) -> str:
     """Rich multi-line signature for the operator panel: the sort/category/HALCON
     line, each knob's role, and the implementation expression. Answers the user's
     'the arguments can't be judged' by showing exactly what a and b control."""
@@ -3736,7 +3927,7 @@ def op_signature_detail(row, impl_limit=220) -> str:
     a_role, b_role = op_arg_roles(row["name"])
     lines.append(tr("knob a — %s") % knob_role_text(row["name"], "a", a_role))     # M3: 表に無い op を「未使用」と言わない
     lines.append(tr("knob b — %s") % knob_role_text(row["name"], "b", b_role))
-    src = op_impl_source(row["name"], impl_limit)
+    src = op_impl_source(row["name"], impl_limit, mark_cut)
     if src:
         lines.append(tr("impl: %s") % src)
     return "\n".join(lines)
@@ -7654,6 +7845,7 @@ def build_window(model=None):
         entry = dict(row, text=text_, item=it, try_button=run, help_button=help_, label_widget=label, box=box)
         _fit_search_row(entry)
         op_list.setItemWidget(it, box)
+        _fit_search_row(entry)        # 一覧に入った後(様式の字の大きさが決まった後)にもう一度(下の注記)
         search_state["rows"][group].append(entry)
 
     def _fit_search_head(head):
@@ -7676,10 +7868,16 @@ def build_window(model=None):
                 b.setMinimumWidth(0)
                 b.setSizePolicy(QtWidgets.QSizePolicy.Maximum if b.sizeHint().width() * 2 < lw
                                 else QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Fixed)
+            # ★2026-11-15(PR #316 の独立レビュー): 高さは、一覧に入って様式(字の大きさ)が決まった後の値で求める。
+            # 行を一覧に入れる前に 1 度だけ求めていた為、様式の適用の前の字の高さで計算され、行が増えるほど足りなく
+            # なった(3 行のカードは余白で足りたが、「先に: …」の付く 4 行のカードは下が 4 px 欠けた)。
+            for _w in (box, label, run, entry["help_button"]):
+                _w.ensurePolished()
             hh = label.heightForWidth(lw) + run.sizeHint().height() + 2 + 8
             # L3(2026-11-13): 3 行目の下が欠けた。箱の配置そのものが要る高さ(余白・間隔込み)も見て、字の下がりの分を足す
             _lay = box.layout()
             if _lay is not None and _lay.hasHeightForWidth():
+                _lay.invalidate()
                 hh = max(hh, _lay.heightForWidth(vw - 2))
             hh += label.fontMetrics().descent() + 2
             box.setFixedWidth(vw - 2)
@@ -7730,6 +7928,7 @@ def build_window(model=None):
                      "label_widget": label, "box": box}
             _fit_search_row(entry)
             op_list.setItemWidget(it, box)
+            _fit_search_row(entry)
             search_state["rows"]["samples"].append(entry)
 
     def open_search_sample(name):
@@ -8104,7 +8303,10 @@ def build_window(model=None):
 
     b_export = _tbtn("export", "Export this pipeline as an --ops string and Python (Ctrl+E)")
     b_export.setText("Python"); b_export.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)   # 気づける入口
-    b_export.setFixedSize(max(30, b_export.sizeHint().width()), 28)
+    # ★2026-11-15(PR #316 の独立レビュー): 幅は固定しない。作った時点(表示の前・様式の適用の前)の sizeHint で固定
+    # していた為、表示後の字の幅に足りず「Python」が「…」になった(固定 61 px、表示後の sizeHint 89 px)。
+    b_export.setMinimumWidth(30); b_export.setMaximumWidth(16777215)
+    b_export.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
     b_savep = _tbtn("save", "Save pipeline to JSON (Ctrl+Shift+S)")
     b_openp = _tbtn("open", "Open a pipeline from JSON (Ctrl+Shift+O)")
     xrow = QtWidgets.QHBoxLayout()
@@ -10156,13 +10358,15 @@ def build_window(model=None):
     ab_restore.clicked.connect(restore_a); ab_adopt.clicked.connect(adopt_b); ab_keep.clicked.connect(keep_both)
 
     def _update_region_table_button():
-        """結果が 2-D の領域(0 / 1)なら「表で見る(N 個)」を出す。N は特徴量の検査と同じ数え方(8 連結、0.5 より上)。"""
+        """結果が 2-D の領域(0 / 1)なら「表で見る(N 個)」を出す。N は押して開く表の行の数(``_region_table_count``)。
+
+        ★2026-11-15(PR #316 の独立レビュー): 従来はラベル付けの個数をそのまま出していて、表が落とす小さな粒
+        (面積の下限)と行の上限を見ていなかった(coins + otsu で「表で見る(96 個)」→ 開く表は 63 行)。"""
         raw = state.get("raw")
         n = 0
         try:
             if isinstance(raw, np.ndarray) and raw.ndim == 2 and raw.size and _cheap_is_binary(raw):
-                from scipy import ndimage as _ndi
-                n = int(_ndi.label(np.asarray(raw) > 0.5, structure=np.ones((3, 3), bool))[1])
+                n = _region_table_count(raw)
         except Exception as exc:                            # noqa: BLE001 -- 入口の数え間違いで表示を止めない
             _log_soft_failure("could not count the regions of the result", exc)
             n = 0
@@ -10271,9 +10475,10 @@ def build_window(model=None):
         update_actions()
 
     def _stage_detail_text(row):
-        """M4: 選んだ段の説明。実装の式は「Show the implementation」を押した時だけ(全文)。"""
+        """M4: 選んだ段の説明。実装の式は「Show the implementation」を押した時だけ(その op の枝。長い実装は
+        :data:`IMPL_OPEN_LIMIT` 字で切って「…」を付ける —— つまみの欄を画面の外へ押し出さない)。"""
         if impl_toggle.isChecked():
-            return op_signature_detail(row, impl_limit=None)
+            return op_signature_detail(row, impl_limit=IMPL_OPEN_LIMIT, mark_cut=True)
         return op_panel_signature(row)
 
     def _refresh_stage_detail(_on=None):
@@ -14110,7 +14315,7 @@ def build_window(model=None):
             table.setSortingEnabled(True)
             table.resizeColumnsToContents()
 
-        MAX_REGIONS = 500                        # table/HUD runaway guard (freeze prevention)
+        MAX_REGIONS = REGION_TABLE_MAX           # table/HUD runaway guard (freeze prevention)
 
         def _refresh_2d():
             raw = state.get("raw")
@@ -14119,7 +14324,7 @@ def build_window(model=None):
                     # speckle guard: scale the minimum region area with the image
                     # (~20 ppm, floor 1 px) so a noisy segmentation cannot flood
                     # the table with thousands of 1-px regions and freeze the UI
-                    min_area = max(1, int(round(raw.size * 2e-5)))
+                    min_area = _region_table_min_area(raw.size)
                     objs, seg = region_feature_objects(raw, min_area=min_area)
                 except Exception as e:
                     objs, seg = [], "error: %s" % truncate(e, 60)

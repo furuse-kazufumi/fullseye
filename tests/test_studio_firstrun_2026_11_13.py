@@ -911,7 +911,7 @@ def test_entrances_never_cut_the_first_steps(launch, lang, size):
 
 
 def test_entrance_a_region_result_offers_its_table(launch):
-    from PySide6 import QtCore
+    from PySide6 import QtCore, QtWidgets
     from scipy import ndimage
     win, model = launch(lang="ja", user=True)
     b = win._b_regions
@@ -921,12 +921,16 @@ def test_entrance_a_region_result_offers_its_table(launch):
     lst.setCurrentRow(names.index("otsu")); win._op_buttons["insert"].click(); _pump(0.2)
     win._actions["run_all"].trigger(); _pump(0.8)
     out = np.asarray(model.result_upto(0)) > 0.5
-    n = ndimage.label(out, structure=np.ones((3, 3), bool))[1]
-    assert n > 10
+    # ★2026-11-15(PR #316 の独立レビュー): N は押して開く表の行の数。以前はラベル付けの個数(96)を出していて、
+    # 表(小さな粒を落とす)は 63 行だった。この試験も、表を開く事だけを見て行の数と比べていなかった。
+    n = studio._region_table_count(out)
+    assert 10 < n <= ndimage.label(out, structure=np.ones((3, 3), bool))[1]
     assert b.isVisibleTo(win) and b.text() == "表で見る(%d 個)" % n, b.text()
     b.click(); _pump(0.6)
     dlg = win._feat_dlg
     assert dlg is not None and dlg.isVisible()
+    tables = [t for t in dlg.findChildren(QtWidgets.QTableWidget) if t.rowCount()]
+    assert tables and tables[0].rowCount() == n, [t.rowCount() for t in tables]
     dlg.close(); _pump(0.1)
 
 
