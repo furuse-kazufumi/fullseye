@@ -144,6 +144,7 @@ def test_principal_has_no_close_and_rail_never_hides_it(tmp_path, monkeypatch):
             listed = _menu_actions(win._menu_panels)
             assert pa in listed and dock.toggleViewAction() not in listed       # not a check box
             assert dock.toggleViewAction() not in _menu_actions(win._more_menu_panels)
+        assert len(others) >= 6
         for key in others:                                                   # the others keep their x
             assert st["titles"][key].b_close is not None, key
         st["buttons"]["variables"].click(); _pump(app, 0.15)               # and their bar button still hides
@@ -621,6 +622,7 @@ def test_vertical_tabs_never_cut_a_name_in_any_language(tmp_path, monkeypatch):
             row = _tab_row(win, bar)
             row.place(); _pump(app, 0.1)
             assert [t.label for t in row.tabs] == [bar.tabText(i) for i in range(bar.count())], lang
+            assert len(row.tabs) >= 3
             for t in row.tabs:
                 need = t.fontMetrics().horizontalAdvance(t.label) + 2
                 assert t.vertical and t.height() >= need, (lang, t.label, t.height(), need)   # the whole name
@@ -646,6 +648,7 @@ def test_wrap_mode_reaches_every_tool_and_tab_and_one_switch_reaches_every_panel
         n = studio_panels.set_overflow_mode(win, "wrap"); _pump(app, 0.3)  # one switch ...
         every = studio_panels.all_strips(win)
         assert n == len(every) >= len(_strip_rows(win)) + 1                # ... reaches every strip and tab row
+        assert len(every) >= 7                                             # 5 panels + the main image + the tab row
         assert all(s.mode == "wrap" for s in every)
         assert win._panels["overflow_actions"]["wrap"].isChecked()
         assert bar.currentIndex() == current                               # the chosen tab and the pressed state stay
@@ -709,5 +712,117 @@ def test_the_overflow_setting_is_saved_and_back_after_a_restart(tmp_path, monkey
     try:
         assert win._panels["overflow_mode"] == "wrap" and win._panels["overflow_actions"]["wrap"].isChecked()
         assert all(s.mode == "wrap" for s in studio_panels.all_strips(win))
+    finally:
+        _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# D01 D02 D03 — the top band
+# --------------------------------------------------------------------------- #
+def _qss_rules(qss):
+    """{selector: {property: value}} from a style sheet (enough for the theme's flat rules)."""
+    import re
+    out = {}
+    for sel, body in re.findall(r"([^{}]+)\{([^{}]*)\}", qss):
+        props = {}
+        for part in body.split(";"):
+            if ":" in part:
+                k, v = part.split(":", 1)
+                props[k.strip()] = v.strip()
+        for s in sel.split(","):
+            out.setdefault(s.strip(), {}).update(props)
+    return out
+
+
+def test_qss_has_checked_and_disabled_rules_for_toolbutton(tmp_path, monkeypatch):
+    for theme in studio_theme.THEMES:
+        p = studio_theme.PALETTES[theme]
+        rules = _qss_rules(studio_theme.build_qss(theme))
+        base, on, off = rules["QToolButton"], rules["QToolButton:checked"], rules["QToolButton:disabled"]
+        assert on["background"] != base["background"] and p["accent"] in on["border"]       # pressed: its own look
+        assert off["color"] == p["off"] != base["color"]                                   # disabled: the off colour
+        assert off["background"] != base["background"]
+        assert rules["QPushButton:disabled"]["color"] == p["off"]
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    from PySide6 import QtCore
+    try:
+        sw = win._mode_switch                                               # D02: "code" pressed at start
+        assert win._work_mode_actions["code"].isChecked() and sw.isChecked()
+        assert sw.text() == win._work_mode_actions["code"].text()
+        hand = [b for b in win.findChildren(type(sw)) if b.property("iconOnly")]
+        assert len(hand) >= 20
+        b = win._panel_buttons["program"]["run"]                             # D03: no pointing hand when disabled
+        assert b.cursor().shape() == QtCore.Qt.PointingHandCursor
+        b.setEnabled(False); _pump(app, 0.05)
+        assert b.cursor().shape() != QtCore.Qt.PointingHandCursor
+        b.setEnabled(True); _pump(app, 0.05)
+        assert b.cursor().shape() == QtCore.Qt.PointingHandCursor
+        disabled = [x for x in hand if not x.isEnabled()]
+        assert disabled and all(x.cursor().shape() != QtCore.Qt.PointingHandCursor for x in disabled)
+    finally:
+        _close(app, win)
+
+
+def test_top_band_text_buttons_only_run_and_examples(tmp_path, monkeypatch):
+    import re
+    from PySide6 import QtCore, QtGui, QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        bars = [win.findChild(QtWidgets.QToolBar, n) for n in ("main_tools", "work_modes")]
+        assert all(b is not None for b in bars)
+        buttons = [w for b in bars for w in b.findChildren(QtWidgets.QToolButton)
+                   if w.isVisible() and w.objectName() != "qt_toolbar_ext_button"]
+        assert len(buttons) >= 8
+        texty = [w for w in buttons if w.icon().isNull() or w.toolButtonStyle() == QtCore.Qt.ToolButtonTextOnly]
+        allowed = {"Run", "Examples", "実行", "例を開く"}
+        assert [w.objectName() for w in texty if w.text() not in allowed] == ["work_mode_switch"], \
+            [(w.objectName(), w.text()) for w in texty]
+        sw = win._mode_switch                                               # one switch for the four modes
+        modes = list(win._work_mode_actions.values())
+        assert len(modes) == 4
+        assert sw.menu().actions() == modes
+        assert sw.popupMode() == QtWidgets.QToolButton.InstantPopup
+        group = {a.actionGroup() for a in modes}
+        assert len(group) == 1 and next(iter(group)).isExclusive()
+        assert not any(a in bars[1].actions() for a in modes)              # not four buttons any more
+        for a in modes:                                                     # the keys still work from the window
+            assert a in win.actions() and a.shortcut().toString()
+        modes[1].trigger(); _pump(app, 0.2)
+        assert sw.text() == modes[1].text() and sw.isChecked()
+        modes[3].trigger(); _pump(app, 0.2)
+        assert sw.text() == modes[3].text()
+        drawn = win._fs_glyph_actions                                       # Auto-update, Image focus, Find panel
+        assert sorted(n for _a, n in drawn) == ["auto_update", "find_panel", "image_focus"]
+        for act, _n in drawn:
+            assert not act.icon().isNull()
+            tip = act.toolTip()
+            assert re.match(r"^[^—]+ — .+$", tip), tip                # name — what happens (key)
+            key = act.shortcut().toString(QtGui.QKeySequence.NativeText)
+            assert (tip.endswith("(%s)" % key) if key else not tip.endswith(")")), tip
+        def switch_tip():
+            """The switch's hint: what it is (no key typed by hand), then every mode with ITS key."""
+            lines = sw.toolTip().split("\n")
+            assert re.match(r"^[^—]+ — .+$", lines[0]) and "Ctrl" not in lines[0], lines
+            assert lines[1:] == ["%s (%s)" % (a.text(), a.shortcut().toString(QtGui.QKeySequence.NativeText))
+                                 for a in modes], lines
+            assert len(lines) == 5
+            return lines
+        switch_tip()
+        modes[1].trigger(); _pump(app, 0.2)                                 # not the mode the window started with
+        win._apply_language("ja"); _pump(app, 0.3)                          # hints follow the language
+        try:
+            for a, _n in drawn:                                             # the name AND what happens
+                name, _dash, effect = a.toolTip().partition(" — ")
+                assert re.search(r"[぀-ヿ一-鿿]", name) and re.search(r"[぀-ヿ]", effect), a.toolTip()
+                assert "—" not in effect, a.toolTip()                  # composed once, not on top of itself
+            assert modes[1].isChecked() and sw.text() == modes[1].text()    # still the mode in use, in Japanese
+            assert re.search(r"[぀-ヿ一-鿿]", sw.text()) and sw.isChecked()
+            lines = switch_tip()
+            assert len(lines) == 5
+            assert all(re.search(r"[぀-ヿ一-鿿]", line) for line in lines)
+            win._apply_theme(save=False); _pump(app, 0.2)                   # composing again changes nothing
+            assert all(a.toolTip().count("—") == 1 for a, _n in drawn)
+        finally:
+            win._apply_language("en"); _pump(app, 0.2)
     finally:
         _close(app, win)

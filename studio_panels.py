@@ -63,11 +63,13 @@ S_ST_SHOWN = "Shown: %d / %d"
 S_ST_STAGES = "Stages: %d"
 S_ST_ERRORS = "Errors: %d"
 S_ST_VARS = "Variables: %d"
+S_WORK_MODE = "Work mode"
+S_WORK_MODE_TIP = "choose which panels are shown; the name on the button is the mode in use"
 S_STRIP = {"auto": "Tools and tabs: automatic (on the left when the panel is wide)",
            "top": "Tools and tabs: on top",
            "left": "Tools and tabs: on the left"}
 STRINGS = (S_BAR, S_HINT, S_FLOAT, S_DOCK, S_HIDE, S_SHOW, S_LAYOUT, S_RESET, S_CODE_LEFT,
-           S_CODE_BOTTOM, S_DOCK_ALL, S_MENU, S_MORE, S_REDUCE, S_REDUCE_TIP, S_OPENING, S_SAMPLE, S_SEARCHING, S_ST_SHOWN, S_ST_STAGES, S_ST_ERRORS, S_ST_VARS) + tuple(S_STRIP.values())
+           S_CODE_BOTTOM, S_DOCK_ALL, S_MENU, S_MORE, S_REDUCE, S_REDUCE_TIP, S_OPENING, S_SAMPLE, S_SEARCHING, S_ST_SHOWN, S_ST_STAGES, S_ST_ERRORS, S_ST_VARS) + tuple(S_STRIP.values()) + (S_WORK_MODE, S_WORK_MODE_TIP)
 # (the strings of the strip - S_OVERFLOW, S_SCROLL_BACK, S_SCROLL_ON - are added below, where they are defined)
 
 _QWIDGETSIZE_MAX = 16777215
@@ -220,6 +222,19 @@ def _glyph(name, colour, px=16):
         rect(2.5, 2.5, 11, 11); rect(2.5, 9.5, 11, 4, fill=True)
     elif name == "close":
         line(4, 4, 12, 12); line(12, 4, 4, 12)
+    elif name == "image_focus":                # the image alone: four corners around a picture (D01)
+        path([(2, 6), (2, 3), (5, 3)]); path([(11, 3), (14, 3), (14, 6)])
+        path([(14, 10), (14, 13), (11, 13)]); path([(5, 13), (2, 13), (2, 10)])
+        rect(5.5, 6, 5, 4, fill=True)
+    elif name == "find_panel":                 # a panel and a magnifier (D01)
+        rect(1.5, 2.5, 9, 8); line(1.5, 5, 10.5, 5)
+        p.drawEllipse(QtCore.QPointF(10.5 * s, 10.5 * s), 2.6 * s, 2.6 * s); line(12.4, 12.4, 14.6, 14.6)
+    elif name == "auto_update":                # a circle of arrows: the display follows every change (D01)
+        import math   # noqa: PLC0415
+        pts = [(8 + 5.2 * math.cos(math.radians(a)), 8 - 5.2 * math.sin(math.radians(a))) for a in range(40, 330, 10)]
+        path(pts)
+        hx, hy = pts[-1]
+        path([(hx - 3.0, hy - 1.2), (hx, hy), (hx + 0.6, hy - 3.1)])
     elif name == "scroll_back_h":              # the scroll buttons of a strip (A2): chevrons
         path([(10, 3.5), (5.5, 8), (10, 12.5)])
     elif name == "scroll_on_h":
@@ -234,6 +249,97 @@ def _glyph(name, colour, px=16):
     p.end()
     _GLYPH_CACHE[key] = pm
     return pm
+
+
+def tool_tip(name, effect, key=""):
+    """The one shape of a hint (P04-5): "name — what happens (key)". The key comes from the action."""
+    name = (name or "").replace("&", "").replace("\u2026", "").strip()
+    effect = (effect or "").strip()
+    text = "%s \u2014 %s" % (name, effect) if effect and effect != name else name
+    return "%s (%s)" % (text, key) if key else text
+
+
+def mode_switch(win, bar, actions):
+    """D01: the four work modes as ONE button of the top band. Its menu holds the modes (an exclusive
+    group: always one); its text is the mode in use and it is shown pressed (D02: "code" at start). The
+    modes stay window actions, so Ctrl+1 .. Ctrl+4 keep working. Returns the button (``win._mode_switch``)."""
+    from PySide6 import QtCore, QtWidgets   # noqa: PLC0415
+    menu = QtWidgets.QMenu(win)
+    for a in actions.values():
+        menu.addAction(a)
+        win.addAction(a)                     # the keys work although the actions left the bar
+    b = QtWidgets.QToolButton(bar)
+    b.setObjectName("work_mode_switch")
+    b.setMenu(menu)
+    b.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+    b.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+    b.setCheckable(True)
+    b.setFocusPolicy(QtCore.Qt.TabFocus)
+    b.setCursor(QtCore.Qt.PointingHandCursor)
+
+    def follow(*_a):
+        on = [a for a in actions.values() if a.isChecked()]
+        b.setText((on[0].text() if on else "").replace("&", "&&"))
+        b.setChecked(True)                   # pressed = the mode in use is named on it
+    for a in actions.values():
+        a.toggled.connect(follow)
+        a.changed.connect(follow)
+    bar.addWidget(b)
+    win._mode_switch = b
+    win._mode_switch_menu = menu
+    b._fs_follow = follow                    # refresh() calls it: the language pass rewrites button texts
+    follow()
+    return b
+
+
+def compose_top_tips(win, tr):
+    """Hints of the top band's drawn buttons: "name — what happens (key)", in the language of the moment.
+    The words come from the action's own status tip (the one the language switch translates)."""
+    from PySide6 import QtGui   # noqa: PLC0415
+    for act, _glyph_name in getattr(win, "_fs_glyph_actions", None) or []:
+        try:
+            base = act.statusTip() or act.toolTip()
+            if not act.statusTip():
+                act.setStatusTip(base)
+            key = act.shortcut().toString(QtGui.QKeySequence.NativeText)
+            act.setToolTip(tool_tip(act.text(), base, key))
+        except RuntimeError:
+            pass
+    b = getattr(win, "_mode_switch", None)
+    if b is not None:                            # the switch: what it is, then every mode with its own key
+        b._fs_follow()                           # its text = the mode in use, in the language of the moment
+        lines = [tool_tip(tr(S_WORK_MODE), tr(S_WORK_MODE_TIP))]
+        for a in b.menu().actions():
+            lines.append(tool_tip(a.text(), "", a.shortcut().toString(QtGui.QKeySequence.NativeText)))
+        b.setToolTip("\n".join(lines))
+        b.setAccessibleName(tr(S_WORK_MODE))
+
+
+def glyph_action(win, action, name):
+    """Give a top-band action a drawn icon (re-tinted with the scheme by refresh)."""
+    lst = getattr(win, "_fs_glyph_actions", None)
+    if lst is None:
+        lst = []
+        win._fs_glyph_actions = lst
+    lst.append((action, name))
+    p = studio_theme.PALETTES[studio_theme.current_name()]
+    action.setIcon(_icon(name, p["text"], p["accent"]))
+    return action
+
+
+def fix_hand(button):
+    """D03: the pointing hand only on a button that can be pressed now."""
+    from PySide6 import QtCore   # noqa: PLC0415
+    try:
+        if button.isEnabled():
+            if button.property("fsHand"):
+                button.setCursor(QtCore.Qt.PointingHandCursor)
+                button.setProperty("fsHand", False)
+        elif button.cursor().shape() == QtCore.Qt.PointingHandCursor:
+            button.setProperty("fsHand", True)
+            button.unsetCursor()
+    except RuntimeError:                         # going away with its window
+        pass
 
 
 def _icon(name, off, on=None):
@@ -2192,6 +2298,13 @@ def refresh(win, tr, lang="en"):
         rm.setText(tr(S_REDUCE)); rm.setToolTip(tr(S_REDUCE_TIP)); rm.setStatusTip(tr(S_REDUCE_TIP))
     for mode, action in (st.get("overflow_actions") or {}).items():
         action.setText(tr(S_OVERFLOW[mode]))
+    p = studio_theme.PALETTES[studio_theme.current_name()]
+    for act, name in getattr(win, "_fs_glyph_actions", None) or []:
+        try:
+            act.setIcon(_icon(name, p["text"], p["accent"]))
+        except RuntimeError:
+            pass
+    compose_top_tips(win, tr)
     for entry in st["strips"]:                  # every tool strip: its scroll buttons' look and words
         if _alive(entry["strip"]):
             entry["strip"].restyle(tr)
@@ -2202,6 +2315,10 @@ def refresh(win, tr, lang="en"):
     tighten(win)
     relayout(win)
     sync(win)
+    from PySide6 import QtWidgets   # noqa: PLC0415
+    for b in win.findChildren(QtWidgets.QAbstractButton):    # D03: buttons disabled before the filter came
+        if not b.isEnabled():
+            fix_hand(b)
 
 
 def install(win, tr, settings=None):
@@ -2408,6 +2525,20 @@ def install(win, tr, settings=None):
                 return True
             return False
 
+    class HandFollowsEnabled(QtCore.QObject):
+        """D03: a disabled button does not show the pointing hand (it cannot be pressed); enabled again,
+        it gets the hand back. Only buttons that were given the hand are touched."""
+
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.EnabledChange and isinstance(obj, QtWidgets.QAbstractButton):
+                fix_hand(obj)
+            return False
+
+    hand = HandFollowsEnabled(win)
+    app = QtWidgets.QApplication.instance()
+    if app is not None:
+        app.installEventFilter(hand)
+
     rail = QtWidgets.QToolBar(tr(S_BAR), win)
     rail.setObjectName(RAIL_NAME)
     rail.setMovable(False); rail.setFloatable(False)
@@ -2442,6 +2573,7 @@ def install(win, tr, settings=None):
         menu.popup(button.mapToGlobal(pos))
         return menu
     st["panel_menu"] = panel_menu
+    st["hand_filter"] = hand
 
     for key in RAIL_ORDER:
         dock = win._docks.get(key)

@@ -273,6 +273,8 @@ QToolButton:checked {{ background:{p['bg1']}; border:1px solid {p['accent']}; co
 QToolButton[accent="true"] {{ background:{p['accent']}; color:{p['accent_ink']}; border:none; font-weight:700; }}
 QToolButton[accent="true"]:hover {{ background:{p['accent_hi']}; }}
 QToolButton:focus {{ border:1px solid {p['accent_hi']}; }}
+QToolButton:disabled {{ background:{p['bg1']}; border:1px solid {p['line']}; color:{p['off']}; }}
+QToolButton[accent="true"]:disabled {{ background:{p['bg2']}; color:{p['off']}; }}
 
 QDockWidget {{ titlebar-close-icon:none; titlebar-normal-icon:none; font-size:11px; color:{p['muted']}; }}
 QDockWidget::title {{ background:{p['chrome']}; padding:{tpad}px 8px {tpad}px 10px; border:none;

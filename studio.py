@@ -8071,8 +8071,10 @@ def build_window(model=None):
     win.addToolBar(QtCore.Qt.TopToolBarArea, mode_bar)
     mode_group = QtGui.QActionGroup(win); mode_group.setExclusive(True)
     for _mode_id, _action in work_mode_actions.items():
-        mode_group.addAction(_action); mode_bar.addAction(_action)
-    mode_bar.addSeparator(); mode_bar.addAction(act_focus_image); mode_bar.addAction(act_find_panel)
+        mode_group.addAction(_action)
+    studio_panels.mode_switch(win, mode_bar, work_mode_actions)   # D01: one switch for the four work modes
+    mode_bar.addSeparator(); mode_bar.addAction(studio_panels.glyph_action(win, act_focus_image, "image_focus"))
+    mode_bar.addAction(studio_panels.glyph_action(win, act_find_panel, "find_panel"))
 
     def _save_layout_state():
         try:
@@ -13665,7 +13667,7 @@ def build_window(model=None):
     act_upd.setToolTip("Auto-update the display (HDevelop dev_update). Uncheck to edit / run "
                        "without the display cost, then check to refresh.")
     act_upd.triggered.connect(lambda on: set_dev_update("all", on))
-    tb.addAction(act_upd); win._dev_update_actions["_toolbar"] = act_upd
+    tb.addAction(studio_panels.glyph_action(win, act_upd, "auto_update")); win._dev_update_actions["_toolbar"] = act_upd
 
     def _set_part(r1, c1, r2, c2):
         """dev_set_part: set the displayed image part of the CURRENT graphics window."""

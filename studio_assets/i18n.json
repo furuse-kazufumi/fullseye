@@ -112,6 +112,14 @@
   "hi": "हिन्दी"
  },
  "tooltips": {
+  "Auto-update the display (HDevelop dev_update). Uncheck to edit / run without the display cost, then check to refresh.": {
+   "ja": "表示を自動で更新します(HDevelop の dev_update)。外すと表示の手間なしに編集・実行でき、入れ直すと表示が追いつきます。",
+   "zh": "自动更新显示(HDevelop 的 dev_update)。取消勾选后编辑和运行不再花时间刷新显示,重新勾选即刷新。",
+   "tw": "自動更新顯示(HDevelop 的 dev_update)。取消勾選後編輯與執行不再花時間重繪顯示,重新勾選即更新。",
+   "ko": "표시를 자동으로 갱신합니다(HDevelop의 dev_update). 끄면 표시 비용 없이 편집·실행하고, 다시 켜면 표시가 갱신됩니다.",
+   "de": "Anzeige automatisch aktualisieren (dev_update in HDevelop). Abwählen, um ohne Anzeigeaufwand zu bearbeiten / auszuführen; wieder anwählen aktualisiert die Anzeige.",
+   "hi": "डिस्प्ले अपने-आप अपडेट होता है (HDevelop का dev_update)। हटाने पर डिस्प्ले के खर्च के बिना संपादन / रन कर सकते हैं; फिर चुनने पर डिस्प्ले ताज़ा होता है।"
+  },
   "Insert operator into the pipeline with a, b (Enter / double-click)": {
    "ja": "a, b で処理手順に op を追加 (Enter / ダブルクリック)",
    "zh": "用 a, b 把算子插入处理流程 (Enter / 双击)",
@@ -491,6 +499,22 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "Work mode": {
+   "ja": "作業モード",
+   "zh": "工作模式",
+   "tw": "工作模式",
+   "ko": "작업 모드",
+   "de": "Arbeitsmodus",
+   "hi": "कार्य मोड"
+  },
+  "choose which panels are shown; the name on the button is the mode in use": {
+   "ja": "どのパネルを出すかを選ぶ。ボタンの名前が今のモード",
+   "zh": "选择显示哪些面板;按钮上的名称就是当前模式",
+   "tw": "選擇顯示哪些面板;按鈕上的名稱就是目前模式",
+   "ko": "어떤 패널을 보일지 고릅니다. 버튼의 이름이 지금의 모드",
+   "de": "wählen, welche Bereiche gezeigt werden; der Name auf der Schaltfläche ist der aktuelle Modus",
+   "hi": "कौन-से पैनल दिखें चुनें; बटन पर लिखा नाम ही अभी का मोड है"
+  },
   "When they do not fit: scroll": {
    "ja": "収まらない時: 送る",
    "zh": "放不下时: 滚动",

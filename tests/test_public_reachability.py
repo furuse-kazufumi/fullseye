@@ -93,7 +93,8 @@ _INTERNAL = {
     #   ツールチップからメニューの項目名を切る short_name。
     # studio_panels +5 2026-11-13(要件 8): 処理中のアイコンのコマ送り(icon_frames)、動きを減らす設定
     #   (system_reduces_motion / reduce_motion / reduce_motion_action)、同期の仕事を左上に出す brand_wrap。
-    "studio_panels": 33,
+    # studio_panels +16 2026-11-15: A1〜A3・D104 の便(11 本: show_principal / normalise_overflow_mode / scroll_arrow / flow_plan / scroll_reach / flow_classes / declare_strip / adopt_image_strip / panel_ledger / set_overflow_mode / all_strips。その便で台帳を上げていなかった)と D01〜D03 の上の帯(5 本: tool_tip / mode_switch / compose_top_tips / glyph_action / fix_hand)。Studio の窓の内側の部品で op ではない
+    "studio_panels": 49,
     "studio": 91, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
@@ -342,7 +343,8 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-13 要件 8(左上のコマ送り): 1155 + 5 = 1160。studio_panels の icon_frames / system_reduces_motion /
 #   reduce_motion / reduce_motion_action / brand_wrap。
 # 2026-11-13 要件 7(コードの色の表): 1160 + 2 = 1162。studio_theme の code_colour_table / ground_report。
-_HIDDEN_FUNCTIONS_TODAY = 1162
+# 2026-11-15 A1〜A3・D104 の便(11 本: show_principal / normalise_overflow_mode / scroll_arrow / flow_plan / scroll_reach / flow_classes / declare_strip / adopt_image_strip / panel_ledger / set_overflow_mode / all_strips。その便で台帳を上げていなかった)と D01〜D03 の上の帯(5 本: tool_tip / mode_switch / compose_top_tips / glyph_action / fix_hand)。Studio の窓の内側の部品で op ではない: 1162 + 16 = 1178。実測 1178。
+_HIDDEN_FUNCTIONS_TODAY = 1178
 
 
 def _hidden_total():

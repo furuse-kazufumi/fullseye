@@ -93,7 +93,7 @@ def test_every_bar_string_is_translated_into_every_language():
     with open(path, encoding="utf-8") as fh:
         data = json.load(fh)
     langs = set(data["languages"]) - {"en"}
-    assert len(langs) == 6 and len(studio_panels.STRINGS) == 29
+    assert len(langs) == 6 and len(studio_panels.STRINGS) == 31
     for text in studio_panels.STRINGS:
         row = data["strings"].get(text)
         assert row is not None, "no i18n row for %r" % text
