@@ -7797,7 +7797,10 @@ def build_window(model=None):
         入れられない行は ``_insert_searched_op`` が理由を言う(台帳の op は実行の窓を開く)。"""
         exact = _search_exact_row()
         if exact is not None:
-            return exact
+            nm = exact.data(QtCore.Qt.UserRole)
+            if not op_insertable(nm)[0] or _search_row_takes_upstream(nm):
+                return exact
+            return None        # 名前は合うが、前の段の出力を受けられない: 選ばない(隣の op も入れない。Enter は理由を言う)
         for i in range(op_list.count()):
             item = op_list.item(i)
             nm = item.data(QtCore.Qt.UserRole)
@@ -12759,12 +12762,20 @@ def build_window(model=None):
                 _rows = [op_list.item(i) for i in range(op_list.count())
                          if op_list.item(i).data(QtCore.Qt.UserRole) and not op_list.item(i).isHidden()]
                 if any(op_insertable(r.data(QtCore.Qt.UserRole))[0] for r in _rows):
-                    # ★2026-11-15: 入れられる行はあるが、どれも前の段の出力を受けられない。黙って ERROR の段を
-                    # 作らず、入れずに理由を言う(行をクリックで選べば、従来どおりその行が入る)。
+                    # ★2026-11-15: 入れられる行はあるが、どれも前の段の出力を受けられない(または、名前を正確に
+                    # 打った op が受けられない)。黙って ERROR の段を作らず、入れずに理由を言う(行をクリックで
+                    # 選べば、従来どおりその行が入る)。
                     _sort, _prev = _ops_upstream()
-                    _say = (tr("None of the listed operators takes '%s' (the output of stage %d, %s). "
-                               "Click a row to add it anyway, or add the step its card names first.")
-                            % (_sort, _prev[0] + 1, _prev[1]))
+                    _exact = _search_exact_row()
+                    if _exact is not None:
+                        _xn = _exact.data(QtCore.Qt.UserRole)
+                        _say = (tr("‘%s’ takes '%s', not '%s' (the output of stage %d, %s) — it was not added. "
+                                   "Click its row to add it anyway.")
+                                % (_xn, (_op_row(_xn) or {}).get("in_sort") or "?", _sort, _prev[0] + 1, _prev[1]))
+                    else:
+                        _say = (tr("None of the listed operators takes '%s' (the output of stage %d, %s). "
+                                   "Click a row to add it anyway, or add the step its card names first.")
+                                % (_sort, _prev[0] + 1, _prev[1]))
                     flash(_say); op_param.setText(_say); op_param_fit.refresh()
                     return
                 # 入れられる行が 1 つも無い: 先頭の op の行を渡し、add_op が理由を UI の言語で言う

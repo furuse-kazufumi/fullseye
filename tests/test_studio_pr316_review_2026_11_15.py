@@ -212,6 +212,26 @@ def test_an_exact_name_still_wins_over_everything_else(launch):
     assert [s[0] for s in model.stages] == ["median"]
 
 
+def test_exact_name_that_cannot_take_the_previous_output_is_not_added_and_says_why(launch):
+    """otsu の後に「gaussian」と正確に打って Enter(gaussian は image を取る)。ERROR の段を作らず、隣の op も入れず、
+    理由を言う。行をクリックで選べば入る。最初の検索の直しの後に残っていた 2 件(英語 40 語中 gaussian・threshold)。"""
+    from PySide6 import QtCore
+    win, model = launch(lang="en", user=True)
+    _first_stage_otsu(win, model)
+    _search(win, "gaussian")
+    assert "gaussian" in _row_names(win)
+    assert _picked(win) is None
+    _enter(win)
+    assert [s[0] for s in model.stages] == ["otsu"]
+    said = win.statusBar().currentMessage()
+    assert "gaussian" in said and "'image'" in said and "'region'" in said and "otsu" in said, said
+    lst = win._search_ui["list"]
+    item = next(lst.item(i) for i in range(lst.count()) if lst.item(i).data(QtCore.Qt.UserRole) == "gaussian")
+    lst.setCurrentItem(item); _pump(0.05)                          # 利用者が行を選ぶ
+    _enter(win)
+    assert [s[0] for s in model.stages] == ["otsu", "gaussian"]
+
+
 # --------------------------------------------------------------------------- #
 # 最初の op の後のタブと、キーボードの焦点                                           #
 # --------------------------------------------------------------------------- #

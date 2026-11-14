@@ -2511,6 +2511,7 @@
   "Feature inspection: area, centre, circularity … of every region in a table; a row lights its region up in the image (Ctrl+F5)": {"ja": "特徴量の検査: 領域ごとの面積・重心・円形度 … を表に。行を押すと、その領域が絵の上で光ります(Ctrl+F5)"},
   "None of the listed operators takes '%s' (the output of stage %d, %s). Click a row to add it anyway, or add the step its card names first.": {"ja": "一覧の op は、どれも '%s'(段 %d、%s の出力)を受けられません。それでも入れる時は行をクリックして選ぶか、行に出ている「先に: …」の op を先に入れてください。"},
   "Discard changes?": {"ja": "変更を破棄しますか?"},
-  "'%s' has unsaved changes — close anyway?": {"ja": "「%s」に保存していない変更があります。閉じますか?"}
+  "'%s' has unsaved changes — close anyway?": {"ja": "「%s」に保存していない変更があります。閉じますか?"},
+  "‘%s’ takes '%s', not '%s' (the output of stage %d, %s) — it was not added. Click its row to add it anyway.": {"ja": "‘%s’ は '%s' を受けます。前の段の出力は '%s'(段 %d、%s)なので、入れませんでした。それでも入れる時は、その行をクリックして選んでください。"}
  }
 }
