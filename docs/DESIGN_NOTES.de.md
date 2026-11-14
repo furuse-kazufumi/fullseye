@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1968. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1975. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -1782,28 +1782,30 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L997** _(ja)_ — ★2026-11-13: 台帳にある op にも「registry 層に無い」とだけ返し、「近い名前」に同じ名前を出していた。
 - **L1397** _(ja)_ — 判定 ok の範囲(★2026-11-13、C)。同じ画像に 4 通りの処理で 1.0 / 46.3 / 75.0 / 1285.0 が全部 ok で返り、 ok が「値が正しい」と読まれていた。判定は出力の形だけを見る。
 - **L1673** _(ja)_ — ★2026-11-08: a/b を params の中に入れた形は、知らない引数として断るだけでは直し方が分からない
-- **L1730** _(ja)_ — ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、 pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
-- **L1805** _(ja)_ — ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の 台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。 印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
-- **L1916** _(ja)_ — ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、 値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
-- **L1995** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)も fullseye_apply から呼べる(pipeline と同じ経路)
-- **L2231** _(ja)_ — ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、 extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。 全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
-- **L2321** _(ja)_ — ★2026-11-13: 複素数の配列(Jones ベクトルなど)をそのまま tolist すると JSON にできず、道具ごと落ちた
-- **L2416** _(ja)_ — 本文は段ごとに 1 行(★2026-11-13: 以前は結果の JSON を丸ごと 1 行に繋いでいて、どの段がなぜ 止まったかを本文から読めなかった)。
-- **L2488** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
-- **L2663** _(ja)_ — ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
-- **L2666** _(ja)_ — ★2026-11-13(報告 10 / S6): NaN・Infinity(JSON の決まりに無い定数、または封筒の中の非有限の数)を受けていた。 取り込みの前に断る(他の入口と同じく、非有限は受けない)。
-- **L3046** _(ja)_ — ★2026-11-10(独立レビュー第 4 巡): pass_fail / coarse では、双子で落ちたことを返り値で区別しない (reason は out_of_tolerance、形も許容外の不合格と同じ)。区別すると「本体には合っていた」ことが分かり、 本体と双子の探索を 2 回に分けられた(計数の 13/20 が 20 回以内に合格)。区別は監査記録にだけ残す。 coarse で見せる段階は、落ちた側(双子)の指標から作る。
-- **L3053** _(ja)_ — ★2026-11-10(独立レビュー第 2 巡 N2): 以前は stderr の score-audit 行に誤差を書いていた。MCP の クライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が pass_fail の 上限を迂回して誤差を読めた。
-- **L3117** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal=" " が search_ops の ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
-- **L3142** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
-- **L3180** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
-- **L3208** _(ja)_ — ★2026-11-13(報告 6): proposals は ops / retry_ops / recipes の行を丸ごと写していて、応答の半分が重複だった (検証の 1 回で ops 2.6 KB に proposals 4.3 KB)。順番と種類だけの参照にする(中身は元の一覧を読む)。
-- **L3287** _(ja)_ — ★2026-11-13(報告 5): 落とした名前が structuredContent の奥にしか無かった。本文の先頭に 1 行で書く
-- **L3295** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
-- **L3318** _(ja)_ — ★2026-11-13(報告 13): 名前だけで、来歴・ライセンス・何が写っているかが分からなかった。 samples(名前の一覧)は従来どおり、詳しい行は sample_details に足す(ホストのパスは出さない)。
-- **L3371** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
-- **L3418** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
-- **L3432** _(ja)_ — ★2026-11-13: 本文が null の 1 通で黙って終了していた。要求の形でない本文は -32600 を返して続ける (配列 = JSON-RPC のバッチは受け付けない)。
+- **L1731** _(ja)_ — ★2026-11-15: 台帳 op(隔離して走る)は、profile から引いた値も台帳の仕様で検査する。 直に書いた値だけを検査していて、profile を経た値は型も大きさも見ずに作業プロセスへ渡っていた (数の引数に文字列の profile を渡すと検証は通り、走らせてから op が断った)。
+- **L1739** _(ja)_ — ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、 pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
+- **L1814** _(ja)_ — ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の 台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。 印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
+- **L1925** _(ja)_ — ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、 値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
+- **L2004** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)も fullseye_apply から呼べる(pipeline と同じ経路)
+- **L2202** _(ja)_ — ★2026-11-15: 解決した後の値を必ず検査する(以前は {"ref"} / {"profile"} で書いた引数を飛ばしていた)。 profile の値は仕様に合えば通る。ref の先(配列・表)は台帳 op の引数にできないので、ここで断る (数 1 個の入力は上の literal_inputs の道で受ける)。
+- **L2241** _(ja)_ — ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、 extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。 全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
+- **L2331** _(ja)_ — ★2026-11-13: 複素数の配列(Jones ベクトルなど)をそのまま tolist すると JSON にできず、道具ごと落ちた
+- **L2426** _(ja)_ — 本文は段ごとに 1 行(★2026-11-13: 以前は結果の JSON を丸ごと 1 行に繋いでいて、どの段がなぜ 止まったかを本文から読めなかった)。
+- **L2498** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
+- **L2673** _(ja)_ — ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
+- **L2676** _(ja)_ — ★2026-11-13(報告 10 / S6): NaN・Infinity(JSON の決まりに無い定数、または封筒の中の非有限の数)を受けていた。 取り込みの前に断る(他の入口と同じく、非有限は受けない)。
+- **L3056** _(ja)_ — ★2026-11-10(独立レビュー第 4 巡): pass_fail / coarse では、双子で落ちたことを返り値で区別しない (reason は out_of_tolerance、形も許容外の不合格と同じ)。区別すると「本体には合っていた」ことが分かり、 本体と双子の探索を 2 回に分けられた(計数の 13/20 が 20 回以内に合格)。区別は監査記録にだけ残す。 coarse で見せる段階は、落ちた側(双子)の指標から作る。
+- **L3063** _(ja)_ — ★2026-11-10(独立レビュー第 2 巡 N2): 以前は stderr の score-audit 行に誤差を書いていた。MCP の クライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が pass_fail の 上限を迂回して誤差を読めた。
+- **L3127** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal=" " が search_ops の ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
+- **L3152** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
+- **L3190** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
+- **L3218** _(ja)_ — ★2026-11-13(報告 6): proposals は ops / retry_ops / recipes の行を丸ごと写していて、応答の半分が重複だった (検証の 1 回で ops 2.6 KB に proposals 4.3 KB)。順番と種類だけの参照にする(中身は元の一覧を読む)。
+- **L3297** _(ja)_ — ★2026-11-13(報告 5): 落とした名前が structuredContent の奥にしか無かった。本文の先頭に 1 行で書く
+- **L3305** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
+- **L3328** _(ja)_ — ★2026-11-13(報告 13): 名前だけで、来歴・ライセンス・何が写っているかが分からなかった。 samples(名前の一覧)は従来どおり、詳しい行は sample_details に足す(ホストのパスは出さない)。
+- **L3381** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
+- **L3428** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
+- **L3442** _(ja)_ — ★2026-11-13: 本文が null の 1 通で黙って終了していた。要求の形でない本文は -32600 を返して続ける (配列 = JSON-RPC のバッチは受け付けない)。
 
 ## `fullseye/opsearch.py`
 
@@ -2885,6 +2887,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L90** — ★PYTHONPATH nicht übergeben (der ganze Sinn dieses Gates). Nutzer setzen keine Umgebungsvariablen.
 - **L129** _(ja)_ — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
 
+## `tests/test_explain_pipeline.py`
+
+- **L145** _(ja)_ — ★2026-11-15: handle は必須でなくなった(2026-11-13: 入力の無い台帳 op だけの処理列は handle を持たない)。 必須を外すのは広げるだけ(以前の呼び出しは全部そのまま通る)。入力の要る段に handle が無ければ型の門が断る。
+
 ## `tests/test_fallback_names_identify_the_op.py`
 
 - **L60** _(ja)_ — ★2026-10-07: 台帳は 256 件の環状バッファ。溢れると ``fallbacks()`` は新しい 256 件しか返さず、 下の「名前が潰れていない」「実在の op 名」は**一部だけ**を見て緑になる(実測 186 件・溢れ 0)。
@@ -3019,6 +3025,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L331** _(ja)_ — ★最初 `ones + inf` にしていて、有限部が定数なので免除 op でも「定数」判定になり 落ちた —— それは診断器が正しい。確かめたいのは「免除 op なら非有限を異常と 言わない」だけなので、有限部に変化のある入力にする。
 - **L367** _(ja)_ — ★2026-11-13: 入力の無い台帳 op(照明の設計・合成の入口)だけの pipeline は handle を要らないので、 required から handle を外した(受ける要求を広げるだけ。handle を渡す従来の要求はそのまま通る)。
 
+## `tests/test_mcp_isolated_ops_2026_11_13.py`
+
+- **L331** _(ja)_ — ★2026-11-15: 実測の台帳を作った機械には zxing-cpp(extras の symbols)が入っていた。CI の test ジョブの extras にも、 素の `pip install fullseye` にも無い。無い環境では「走る」を求めず、依存の名前を言って断る事を見る (黙って読み飛ばさない: ここに名指しした op だけ、依存が本当に import できない時だけ、誤り文まで確かめる)。
+
 ## `tests/test_mcp_server.py`
 
 - **L160** _(ja)_ — ★引数名を `name` にしていて `_call(4, "fullseye_op_help", name="gaussian")` が TypeError になり、**subprocess の実 stdio 往復が 1 度も走らないまま** 23 件が緑だった(2026-09-15)。走らなかった検査は無いのと同じ。
@@ -3029,10 +3039,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L510** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
 - **L555** _(ja)_ — ★2026-11-13: 応答の出どころはホストの絶対パスでなく、パッケージ・リポジトリの中の相対の場所
 
+## `tests/test_mcp_usability_fixes_2026_11_13.py`
+
+- **L250** _(ja)_ — ★2026-11-15: NUL が装置名なのは Windows だけ(根の外)。他の OS ではただの名前で、根の中の「読めない拡張子」 として断る(Linux で `<outside>/` を期待して落ちた)。どちらでも -32603 にせず、ホストのパスを出さない。
+
 ## `tests/test_mcp_wheel.py`
 
-- **L215** _(ja)_ — ★数を直書きしない。9 本目(fullseye_fix_text)を足したとき、この門は CI の core ジョブでしか走らず、手元のスイートは緑のまま CI だけ赤になった(2026-09-18)。 正本は checkout の TOOLS —— wheel が同じ集合を名乗ることを見る。
-- **L225** _(ja)_ — ★順位を 3 位までに固定していた門は、新しい op(gauss_quadrature、2026-10-03)が「gauss」に正しく当たっただけで CI の core ジョブ(ここでしか走らない)を赤にした。見たいのは「2-D レジストリの op が索引の層から出る」こと。
+- **L219** _(ja)_ — ★数を直書きしない。9 本目(fullseye_fix_text)を足したとき、この門は CI の core ジョブでしか走らず、手元のスイートは緑のまま CI だけ赤になった(2026-09-18)。 正本は checkout の TOOLS —— wheel が同じ集合を名乗ることを見る。
+- **L229** _(ja)_ — ★順位を 3 位までに固定していた門は、新しい op(gauss_quadrature、2026-10-03)が「gauss」に正しく当たっただけで CI の core ジョブ(ここでしか走らない)を赤にした。見たいのは「2-D レジストリの op が索引の層から出る」こと。
+- **L255** _(ja)_ — ★2026-11-15: 既定の応答は件数だけになった(2026-11-13、報告 9)。名前の一覧まで見るこの検査は detail=true で呼ぶ (既定のまま `== []` と比べていて、件数の 0 を添字で読んで TypeError —— この門は CI の core でしか走らない)。
+- **L280** _(ja)_ — ★2026-11-15: 台帳 op(照明の設計・レンズの仕様)が wheel からも走る。OP_GRAPH の executor、fullseye/mcp/opworker.py、 台帳のモジュール(opsoptics …)が配布物に入っていて、隔離した作業プロセスが site-packages から読めること。 checkout の試験(tests/test_mcp_isolated_ops_2026_11_13.py)は source dir が sys.path に載るので、ここが欠けても緑。
 
 ## `tests/test_meshres.py`
 
