@@ -1537,6 +1537,96 @@ def _install_image_focus(win, st: _State) -> None:
     focus.toggled.connect(lambda on: leave.setEnabled(bool(on)) if _valid(leave) else None)
 
 
+class _EditMenu(QtCore.QObject):
+    """Edit メニューの「同じ意味の項目は 1 つ、範囲で振り分ける」(設計書 P13-2・D94)。
+
+    * 複製: 本体の「Duplicate stage」(段の一覧の Ctrl+D)と矩形選択の部品の「Duplicate line」(コードの欄の Ctrl+D)を、
+      「Duplicate」1 項目にする。コードの欄にフォーカスがあった時は行、それ以外は段(本体の QAction を撃つ)。右に出す
+      キー・ツールヒント・有効 / 無効は、メニューを開く時にその場面の物にする。本体の QAction はメニューから外すだけ
+      (段の一覧のキーとパレットは今までどおり)。部品の項目は Edit メニューでは出さない(右クリックには出る)。
+    * コメント: 本体の「Comment / uncomment lines」が同じメニューにあれば、部品の「Toggle line comment」は出さない
+      (Program 欄は自分の Ctrl+/ を持つので、部品のキーはこのエディタでは効かない)。
+    """
+
+    def __init__(self, win, ctl: "KeymapController"):
+        super().__init__(win)
+        self.win, self.ctl = win, ctl
+        self.code_focus = False                                # 最後にフォーカスがあったのがコードの欄か(メニューを除く)
+        self.action: QtGui.QAction | None = None
+        self.stage: QtGui.QAction | None = None
+
+    def editor(self):
+        prog = getattr(self.win, "_program", None)
+        ed = prog.get("edit") if isinstance(prog, dict) else None
+        return ed if ed is not None and _valid(ed) else None
+
+    def install(self) -> bool:
+        """メニューを直す。「Duplicate」1 項目を置けたら True(部品が Edit メニューに無い窓では何もしない)。"""
+        win = self.win
+        edit = (getattr(win, "_menus", None) or {}).get("edit")
+        acts = getattr(win, "_actions", None)
+        if edit is None or not isinstance(acts, dict):
+            return False
+        items = {a.objectName(): a for a in edit.findChildren(QtGui.QAction) if a.objectName().startswith("editops:")}
+        comment, line_comment = acts.get("program_comment"), items.get("editops:line.comment")
+        if line_comment is not None and isinstance(comment, QtGui.QAction) and comment in edit.actions():
+            line_comment.setVisible(False)
+        stage, line_dup = acts.get("duplicate_stage"), items.get("editops:line.duplicate")
+        if line_dup is None or not isinstance(stage, QtGui.QAction) or stage not in edit.actions():
+            return False
+        a = QtGui.QAction(win)
+        a.setObjectName("keymap-menu:duplicate")
+        edit.insertAction(stage, a)
+        edit.removeAction(stage)
+        line_dup.setVisible(False)
+        self.action, self.stage = a, stage
+        a.triggered.connect(self.dispatch)
+        edit.aboutToShow.connect(self.refresh)
+        self.ctl.changed.connect(self.refresh)
+        app = QtWidgets.QApplication.instance()
+        app.focusChanged.connect(self.on_focus)
+        self.on_focus(None, app.focusWidget())
+        self.refresh()
+        return True
+
+    def on_focus(self, _old, now) -> None:
+        if now is None or isinstance(now, (QtWidgets.QMenu, QtWidgets.QMenuBar)):
+            return                                             # メニューを開いている間は、開く前の場所のまま
+        try:
+            if now.window() is not self.win:
+                return
+            ed = self.editor()
+            self.code_focus = ed is not None and (now is ed or ed.isAncestorOf(now))
+        except RuntimeError:                                   # 消えかけの部品
+            pass
+
+    def target(self) -> str:
+        ed = self.editor()
+        return "line" if self.code_focus and ed is not None and eq.get(ed) is not None else "stage"
+
+    def refresh(self) -> None:
+        a = self.action
+        if a is None or not _valid(a) or self.stage is None or not _valid(self.stage):
+            return
+        tr = self.ctl.tr
+        line = self.target() == "line"
+        cid = "editops_line_duplicate" if line else "duplicate_stage"
+        keys = self.ctl.keymap.keys(cid)
+        a.setText(tr(km.ACT_DUPLICATE) + ("\t" + keys[0] if keys else ""))
+        tip = tr(km.BY_ID[cid].title)                          # どちらに効くか(行を複製 / 段を複製)
+        a.setToolTip(tip)
+        a.setStatusTip(tip)
+        a.setEnabled(True if line else self.stage.isEnabled())
+
+    def dispatch(self, *_a) -> None:
+        if self.target() == "line":
+            ed = self.editor()
+            ed.setFocus()
+            eq.get(ed).run("line.duplicate")
+        elif self.stage is not None and _valid(self.stage):
+            self.stage.trigger()
+
+
 def install(win, settings=None, tr=None, lang=None, flash=None, palette_words: dict | None = None,
             python_editor_editops: bool | None = None, model=None) -> KeymapController:
     """窓 ``win`` にキーの割り当てを取り付ける(2 度呼んでも 1 つ)。保存してあった上書きを読み、配る。
@@ -1574,4 +1664,7 @@ def install(win, settings=None, tr=None, lang=None, flash=None, palette_words: d
     ctl.load()
     ctl.apply()
     _install_image_focus(win, st)
+    menu = _EditMenu(win, ctl)
+    if menu.install():                                         # Edit メニュー: 同じ意味の項目は 1 つ(D94)
+        st.on_lang.append(menu.refresh)
     return ctl

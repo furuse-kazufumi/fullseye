@@ -1237,6 +1237,8 @@ def search(rows: Sequence, query: str) -> list:
 # 画面の文と対訳
 # --------------------------------------------------------------------------- #
 ACT_SETTINGS = "Customize keyboard shortcuts…"
+#: Edit メニューの「複製」1 項目(コードの欄にフォーカスがあれば行、ほかは段。設計書 D94)。
+ACT_DUPLICATE = "Duplicate"
 TIP_HELP_HERE = ("Help for what you are on: the operator under the code cursor, the selected stage or operator; "
                  "with nothing selected, the keyboard shortcuts")
 DLG_TITLE = "Customize keyboard shortcuts"
@@ -1392,7 +1394,7 @@ def ui_strings() -> tuple:
              MSG_LOAD_PART, MSG_LOAD_BROKEN, MSG_LOAD_NEWER, MSG_LOAD_HEADER, MSG_MENU_OTHER, MSG_LANG_PROBLEM,
              MSG_LANG_HEADER, HINT_KEYS, BTN_LITERAL, PH_LITERAL, BTN_REMOVE_ONE, BTN_CANCEL, BTN_RESET_ALL_DO,
              BTN_SWITCH, BTN_REPLACE, TTL_IMPORT, ASK_IMPORT, ASK_IMPORT_PRESET, ASK_IMPORT_LOST, MSG_EXPORT_FAILED,
-             MSG_NO_MATCH, MSG_NOTHING_TO_SAVE]
+             MSG_NO_MATCH, MSG_NOTHING_TO_SAVE, ACT_DUPLICATE]
     fixed += list(PRESET_TITLES.values()) + [s.title for s in SCOPES.values()] + [t for t, _s in PLACES.values()]
     fixed += list(MESSAGES.values()) + [c.title for c in COMMANDS if c.own_title]
     seen, out = set(), []

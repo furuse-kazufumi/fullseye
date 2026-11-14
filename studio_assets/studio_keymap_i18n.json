@@ -1050,6 +1050,13 @@
    "tw": "還沒有可儲存的內容: 管線中沒有階段",
    "ko": "아직 저장할 것이 없습니다: 파이프라인에 단계가 없습니다",
    "de": "Noch nichts zu speichern: die Pipeline hat keine Stufe"
+  },
+  "Duplicate": {
+   "ja": "複製",
+   "zh": "复制",
+   "tw": "複製",
+   "ko": "복제",
+   "de": "Duplizieren"
   }
  }
 }

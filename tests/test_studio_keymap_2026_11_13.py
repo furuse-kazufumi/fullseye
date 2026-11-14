@@ -355,7 +355,7 @@ def test_every_own_string_has_five_translations_and_nothing_else():
     table = km.load_table()
     assert km.missing() == []
     assert sorted(table) == sorted(km.ui_strings())
-    assert len(table) == 150
+    assert len(table) == 151
     ph = re.compile(r"%\(\w+\)s|%[sd]")
     for en, row in table.items():
         for lang in km.LANGS[1:]:
@@ -2252,3 +2252,70 @@ def test_menus_and_the_settings_window_show_one_spelling(win, ctl):
     assert dlg.current.text().endswith("Alt+Shift+.")
     probs = ctl.check("fit", ("Shift+Alt+.",))                             # 当たりの文も同じ字
     assert [p.key for p in probs] and {p.key for p in probs} == {"Alt+Shift+."}
+
+
+# --------------------------------------------------------------------------- #
+# B5 [キー] 1.2-B D94(設計書 P13-2): Edit メニューの同じ意味の項目は 1 つ、範囲(フォーカス)で振り分ける
+# --------------------------------------------------------------------------- #
+def _edit_menu_keys(win):
+    """Edit メニュー(サブメニューの中も)で見えている項目の ``[(右に出るキー, objectName)]``。"""
+    out = []
+    for a in win._menus["edit"].actions():
+        for x in ([a] if a.menu() is None else a.menu().actions()):
+            if x.isSeparator() or not x.isVisible():
+                continue
+            key = x.text().split("\t")[1] if "\t" in x.text() else x.shortcut().toString()
+            if key:
+                out.append((key, x.objectName()))
+    return out
+
+
+def test_the_edit_menu_has_one_duplicate_and_one_comment_and_they_go_by_focus(win, ctl):
+    from PySide6 import QtGui  # noqa: PLC0415
+    edit = win._menus["edit"]
+    keys = _edit_menu_keys(win)
+    assert len(keys) >= 25
+    assert [n for k, n in keys if k == "Ctrl+D"] == ["keymap-menu:duplicate"]      # 直す前: 段を複製 と 行を複製 の 2 つ
+    assert [n for k, n in keys if k == "Ctrl+/"] == ["keymap:program_comment"]     # 直す前: 2 つ(片方はここでは効かない)
+    twice = sorted({k for k, _n in keys if [x for x, _m in keys].count(k) > 1})
+    assert twice == ["Ctrl+F"]                                            # 残り(検索の 2 項目)は 1.3(設計書 D11)
+    found = [a for a in edit.actions() if a.objectName() == "keymap-menu:duplicate"]
+    stage = win._actions["duplicate_stage"]
+    assert len(found) == 1 and isinstance(found[0], QtGui.QAction) and stage not in edit.actions()
+    dup = found[0]
+    assert _keys_of(stage) == ("Ctrl+D",) and stage.isVisible()            # 段の一覧の Ctrl+D とパレットはそのまま
+    hits = []
+
+    def spy(*_a):
+        hits.append(1)
+    stage.triggered.connect(spy)
+    try:
+        _activate(win)
+        win._stage_list.setFocus()
+        _pump(0.05)
+        edit.aboutToShow.emit()                                           # メニューを開く時に、その場面の物にする
+        assert dup.text() == "Duplicate\tCtrl+D" and dup.toolTip() == "Duplicate stage"
+        assert dup.isEnabled() == stage.isEnabled() and stage.isEnabled()
+        dup.trigger()
+        assert hits == [1]                                                # 段の一覧(ほか)→ 段の複製
+        ed = _program(win, "a\nb")
+        edit.aboutToShow.emit()
+        assert dup.text() == "Duplicate\tCtrl+D" and dup.toolTip() == "Duplicate line" and dup.isEnabled()
+        dup.trigger()
+        assert hits == [1] and ed.toPlainText() == "a\na\nb"             # コードの欄 → 行の複製
+        assert not [p for p in ctl.assign("editops_line_duplicate", ("F8",)) if p.level == "error"]
+        assert dup.text() == "Duplicate\tF8"                              # 2 つのキーが違えば、その場面のキーを出す
+        win._search.setFocus()
+        _pump(0.05)
+        edit.aboutToShow.emit()
+        assert dup.text() == "Duplicate\tCtrl+D" and dup.toolTip() == "Duplicate stage"
+        win._apply_language("ja")
+        _pump(0.2)
+        assert dup.text() == km.load_table()[km.ACT_DUPLICATE]["ja"] + "\tCtrl+D"
+        assert dup.toolTip() == win._actions["duplicate_stage"].text() != "Duplicate stage"
+    finally:
+        stage.triggered.disconnect(spy)
+    # 右クリックのメニュー(その場で作る)には、行の複製とコメントが今までどおり出る
+    rows = {x.objectName() for a in win._editops.build_context_menu().actions() if a.menu() is not None
+            for x in a.menu().actions() if x.isVisible()}
+    assert {"editops:line.duplicate", "editops:line.comment"} <= rows
