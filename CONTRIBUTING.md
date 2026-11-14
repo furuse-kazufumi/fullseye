@@ -245,11 +245,13 @@ or environment error (for example, no clone).
    (GitHub's limit; the summary prints what is left, in MiB and %);
 3. fewer HTML pages or fewer kept assets than the floor in the workflow (so an empty or wrong directory
    cannot pass).
-4. a page's `<link rel="stylesheet">` or `<script src>` that points into the site does not exist, any page
+4. a page's `<link rel="stylesheet">`, `<script src>` or icon `<link>` (`rel` containing `icon`,
+   `apple-touch-icon` or `apple-touch-icon-precomposed`) that points into the site does not exist, any page
    has a root-relative reference starting with `/fullseye/` (the sign that `baseurl` fell back to the
    repository name), or the site has no internal stylesheet at all. `docs/_config.yml` pins `url` and
-   `baseurl` so this should not happen; the summary also prints the stylesheet, canonical, `og:url`,
-   title and generator of `index.html` and `view2026/index.html` to compare with the legacy build.
+   `baseurl` so this should not happen; the summary also prints the stylesheet, icon links, canonical,
+   `og:url`, title and generator of `index.html` and `view2026/index.html` to compare with the legacy
+   build. Icon links have no floor (the summary prints how many there are).
 5. a reference points under `articles/assets/` to a file that exists nowhere, not even in `docs/` (the
    summary lists the count and the first pages → references). Each reference is counted once: removed
    by `prune` → gate 1; in `docs/` but never built → listed only; in neither → gate 5.
@@ -273,6 +275,14 @@ If gate 1 fails, the page refers to the asset in a form the loose reader of `pru
 the reader in `tools/pages_site.py` (and add the form to `tests/test_pages_site_tool_2026_11_11.py`),
 not the page. If gate 2 fails, look at `kept_largest` in `pages-prune.json` (the
 `pages-reports` artifact of the run).
+
+The site icons are generated, not edited by hand: `py -3.11 assets/make_icon.py` writes
+`docs/favicon.ico` (16/32/48 px), `docs/apple-touch-icon.png` (180 px, opaque) and
+`docs/assets/img/fullseye_256.png` (the same bytes as `assets/fullseye_256.png`, also the logo under the
+title of each `docs/README*.md`) next to its files in `assets/`. `docs/_includes/head-custom.html` links
+them from every page that uses the theme; it is a copy of the theme's own `head-custom.html`
+(`jekyll-theme-primer` 0.6.0, the `github-pages` default) with the favicon lines added. Static HTML pages
+that do not use the theme (the viewers) still get `/favicon.ico`, which browsers request by default.
 
 ## Dev quickstart
 

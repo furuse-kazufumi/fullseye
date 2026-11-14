@@ -12,6 +12,8 @@ Fullseye — the name comes from 'bullseye', the centre of a target.
 
 Fullseye is a development platform project for Physical AI, industrial robotics, and industrial machine vision. It connects the construction of image-processing and geometric-measurement algorithms with their execution, visualisation, and evaluation.
 
+![One 3-D scene rendered as image, depth, normals, shadow and edges, each then processed](../thumbs/fullseye_intro.jpg)
+
 ### From “working code” to development assets that can be understood and verified
 
 AI can generate image-processing code, but that alone is not enough for sustained research and development or industrial use. We also need to understand the assumptions under which the processing works, where it fails, and what a change has improved. The final result by itself cannot fully reveal whether a problem lies in the input conditions, choice of operations, parameters, or coordinate transformations.
@@ -29,7 +31,7 @@ The same operator system also includes operators that computationally reproduce 
 
 At the core of Fullseye is a design in which visual editing, code generation, execution, evaluation, and AI assistance share a system of operators (ops) with mathematical specifications and typed interfaces. GUI nodes, operations called by generated code, and processing candidates selected by AI are all handled under a common specification. This makes it possible to associate the intent at editing time with the processing at execution time and the evidence used in evaluation.
 
-More than 3,600 operators are currently registered (3,810 as of November 2026). Priority areas include preprocessing, feature and contour extraction, geometric model fitting, calibration, and coordinate transformation. We envisage a platform on which the same processing can be constructed and inspected through both visual editing and code editing.
+More than 3,600 operators are currently registered (3,838 as of November 2026). Priority areas include preprocessing, feature and contour extraction, geometric model fitting, calibration, and coordinate transformation. We envisage a platform on which the same processing can be constructed and inspected through both visual editing and code editing.
 
 | Key requirement | Design approach |
 |---|---|
@@ -88,6 +90,8 @@ Value ranges and geometric constraints that types alone cannot capture are suppl
 
 For AI integration, we envisage collaborative development in which generated processing is expressed through the common operator system and a verifiable execution structure. The scope extends beyond code generation to improvement through observation and evaluation of execution results.
 
+![Figure from the exhibit that scores an AI-built inspection on public crack images with the distributor's labels](../../articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real_720.jpg)
+
 ### Generate → execute → observe → evaluate → revise
 
 - **Specification-based generation:** AI refers to operator types, mathematical specifications, and parameter conditions to compose processing candidates.
@@ -120,6 +124,8 @@ The aim of this development flow is to treat not only the final position and pos
 ### About the exhibits on this page
 
 Each exhibit on this page is an example in which processing was assembled from Fullseye operators and its results checked against ground truth or public data. Many exhibits show not only the conditions under which a method succeeds, but also those under which it begins to break down.
+
+![Figure from the exhibit that measures a published real telecentric-lens image with Fullseye operators](../../articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate_720.jpg)
 
 ### From iterative PoCs to research results that third parties can verify
 

@@ -22,6 +22,21 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 日本語の画面に残っていた英語: 起動時に見えるツールヒント 99 → 4、ステータスの文・エラーの題・確認の文。訳していない文は台帳(`tests/data/studio_untranslated_ja.json`: 文 175・ツールヒント 17)で数える。中国語・韓国語・ドイツ語・ヒンディー語の画面では、今回日本語を足した文は英語のまま(日本語だけの行 294 → 473)。
 - 終了の確認そのものが例外を出した時(翻訳の表の行の書式が壊れている等)に、確認を出さずにプロセスが落ちる道を塞いだ(閉じない側に倒し、英語の文で聞き直す)。
 
+### 追加 — PoC「置かれたタオルの角・辺・折り線を古典の画像処理で見つける」(収蔵 2026.317)
+
+- `examples/poc_cloth_towel_corners_synth.py`: 0〜2 回折ったタオルを**自前の幾何で描き**(MuJoCo の布は台を貫通して不採用)、`gaussian` / `otsu` / `fill_up` / `sk_find_contours` / `xg_gen_polygons` と辺の直線の交点で隅・辺を出す。真値は描画側(隅の高さで投影)。データは自作の合成で、新 op なし。
+- 基準線: Harris のみ・凸包の頂点のみ・重心から最遠の 4 点・最小外接長方形。誤差の中央値(種 20 本 x 4 折り方): 提案(色度)1.08 mm・最小外接長方形 1.14 mm・提案(RGB)1.55 mm・Harris 3.62 mm・凸包 4.16 mm。
+- 所見(限界): 長方形の前提が使える範囲では単純な最小外接長方形が提案(RGB)に勝つ。再現率 0.9 に届く最低の ΔE は RGB の方法 46・色度の方法 32・Harris 57。しわでは 2〜3 mm で 0.9 を割る(提案(RGB)と Harris は 2 mm)。つかむ隅の順位は描いた裾の縫い目だけが手がかり(0.917、縫い目なしで 0.267。種の組 10 組を合わせると 0.348)。
+- 門 179 本(帯は種の組 8 つで測り、決定に使わない 2 組で通ることを確認)。登録: examples2d・exhibit_numbers(2026.317)・poc_captions・view2026 exhibits・tests/test_poc_cloth_towel_corners_synth.py。
+
+### 文書 — ViEW2026 の本ページ(docs/view2026、パッケージの中身は変わらない)
+
+- 本ページは 8 言語とも同じ目玉 20 本を同じ順で出す(残りは各言語の `more.md`)。目玉の X 線 CT は `poc_real_walnut_cbct` の 1 本だけで、`poc_ct_casting_sparse_views` の代わりに `poc_itof_multifreq` を入れた。
+- 作者と独立の 2 回のレビュー(前半・後半 10 本ずつ)を受けて、題・lead を PoC 自身の注意書きと食い違わない文にした。数の範囲(RGB-D の 0.45〜0.82、実写の地の 2.03〜3.47 倍、AI の採点の 60 回中 5 回)は題に、数字がどの実行(full / CI の縮小 / 手元の記録値)から来たかは 20 本すべての「数字の出どころ」の 1 文に書いた(台帳 `poc_captions.json` のキャプションの末尾。展示館の記事の生成物にも同じ文が入る)。
+- 展示のタイル(画像)の左下に真値の種類(自作合成・実データ・公表値・実写の地)の印を重ねる。
+- ja/en 以外の 6 言語: 目玉の題と説明は英語で出し、その節の頭に「この節の題と説明は英語」の断りを置く(本ページと、おまけページの詳細の節)。訳は ja/en だけの方針。
+- サーモグラフィの「触って見る」とビューア・おまけページの数字を、論文・ポスターと同じ「小さい欠陥 8 個の最悪値 +612 % → −14 %」にした(+627 % は深さの表の全コマの値で、定義の違いを注記)。
+
 ## 1.1.1 — 2026-11-13
 
 1.1.1。1.1.0 の後の直しをまとめた patch 版(`CONTRIBUTING.md` の「直しは溜めずに、短い間隔の patch で出す」)。op の追加・削除・改名はなく、索引の op 数は 1.1.0 と同じ 3,838(うち型付き台帳 2,874)。
@@ -32,6 +47,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - MCP サーバの stdio: 改行区切りの JSON(MCP の stdio の決まり。Claude Code・Claude Desktop・公式の Python SDK が使う形)に応えるようにした。1.1.0 までは Content-Length 枠しか読まず、公式のクライアントの `initialize` が時間切れになっていた(`claude mcp add fullseye -- python -m fullseye.mcp` で繋がらない)。相手が使った枠で返すので、従来の Content-Length 枠のクライアントもそのまま動く。あわせて、深い入れ子の JSON 1 通でサーバが落ちる件と、本文が `null` の 1 通で黙って終了する件を直した(それぞれ -32700 と -32600 を返して続ける)。公式のクライアントでの接続を試験に足した。
 - Studio の検索: 1 位が、この環境に無い op(optional backend が未導入。例: kornia が無い時の `xkor_bilateral`)の時、Enter が何も入れずに黙っていた。入れられる最初の行を入れ、無い op を自分で選んだ時は理由を表示する(master の定時 CI の py3.12 / py3.14 で見つかった)。
 - Studio: 「最近開いた画像」が 1 件だけの時、設定の読み戻しが文字列を返すと、パスが 1 文字ずつの項目になっていた。2 入力の op(`abs_diff_image` など)を段に入れようとした時は、入らない理由(2 つ以上の入力を取る)を表示する(初回の体験の点検で見つかった)。
+- MCP サーバ: 入れ子の深すぎる 1 通を断る判定が Python の版に依存していた(`json.loads` の RecursionError を受ける形。Python 3.14 は 10 万段の入れ子でも RecursionError を出さずに読むので、同じ 1 通が 3.11 では -32700、3.14 では -32602 になった —— master の CI の py3.14 で発覚)。読む前に入れ子の深さを数え、64 段(`MAX_JSON_DEPTH`)を超える本文はどの版でも -32700 で断る。文字列の中の括弧は数えない。
 - 配布物(wheel)から入れると、MCP の `fullseye_find_ops` / `fullseye_plan` が毎回 -32603 で落ちていた(`fullseye/data/TUNING_CARDS.json` が package-data の列挙に無く、1.1.0 の wheel にも無かった)。足した上で、`tools/ci_wheel_check.py --package-data` が git で追跡している `fullseye/` の .py 以外の全部と、組んだ wheel の中身を突き合わせる(CI の `Wheel completeness` の段。列挙ではなくファイルの側から数える)。列挙にあったがどこにも無い 3 つの名前(`data/OP_DEVICE.json`・`data/OP_SORTS.json`・`data/OP_PATTERNS.json`)は外した。
 - README の勧める `pip install "fullseye[gui]"` で Pillow が入らず、Studio の「最初の 3 手」の 1 手目(見本の画像を開く)が失敗していた。`gui` の extra に `Pillow>=13.0`(`pil` と同じ下限)を足した。op の外で依存が無い時のダイアログの原因の文の主語が「?」だった(`? needs the optional package Pillow`)のも直した。
 - 日本語の Windows で `fullseye` の出力をパイプやファイルへ回すと、cp932 に無い字(「—」など)で `UnicodeEncodeError`(終了コード 1)になっていた(`fullseye --help > h.txt`・`fullseye has <無い名前>`・`fullseye samples list`)。符号化は変えずに、書けない字だけを置き換える(端末での見た目は変わらない)。
