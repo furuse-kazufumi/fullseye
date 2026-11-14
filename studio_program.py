@@ -1458,6 +1458,9 @@ _ABANDONED: list = []
 #: 作業スレッドのスタック(深い再帰で RecursionError より先にスタックが尽きないように)。
 _WORKER_STACK_BYTES = 64 * 1024 * 1024
 _STACK_LOCK = threading.Lock()
+#: このモジュールを読み込んだ時の本物の import の入口(``builtins.__import__``・``importlib.import_module``・
+#: ``importlib.__import__``)。見張りの「元の物」が無い時の行き先(外した見張りが鉤の列に残っても None を呼ばない)。
+_REAL_IMPORTS = (builtins.__import__, importlib.import_module, importlib.__import__)
 
 
 class _AsyncTimeLimit(ProgramStopped):
@@ -1513,18 +1516,31 @@ def _stray_value_threads() -> int:
         return 0
 
 
-def _restore_when_done(entry, snapshot, guard=None) -> None:
-    """止められずに残した実行が終わった所で、プロセスの状態をもう一度戻す(残った実行は、諦めて戻した**後**にも
-    環境変数や作業フォルダを書き換える。2026-11-13 レビュー H3)。その間、次の実行は始めない
+def _restore_when_done(waits, snapshot, guard=None) -> None:
+    """止められずに残した実行が終わった所で、プロセスの状態をもう一度戻し、import の見張りを外す(残った実行は、
+    諦めて戻した**後**にも環境変数や作業フォルダを書き換える。2026-11-13 レビュー H3)。その間、次の実行は始めない
     (:data:`ABANDONED_BLOCKS_RUN`)ので、戻す相手は必ずこの実行の前の状態。
 
-    *entry* = ``_ABANDONED`` の行。**戻し終えるまで**を「残っている」に数える(行のスレッドを、この後始末の
-    スレッドに差し替える)。残した実行のスレッドが終わった瞬間に次の実行を通すと、その実行の途中で状態と import の
-    見張りが戻されてしまう。"""
-    thread = entry["thread"]
+    *waits* = 待つ物の列: ``_ABANDONED`` の行(そのスレッドが終わるまで)と、止まって待っている間に始めた「選んだ行」の
+    入口(:class:`_Entry`。呼び出しが戻り、止められずに残したスレッドがあればそれも終わるまで)。**外側の入口だけが
+    呼ぶ**。入れ子の入口(止まっている間の選んだ行)は、自分の写しへ遅れて戻さない(2026-11-15 第 4 回の確かめ:
+    止まっている間の選んだ行を残した後で Debug の実行が終わると、選んだ行の遅れた戻しが「止まっていた時の写し」=
+    プログラムが変えた環境変数と作業フォルダと、外した見張りを戻し、Studio の中の import が全部 TypeError になった)。
+
+    **戻し終えるまで**を「残っている」に数える(行のスレッドを、この後始末のスレッドに差し替える。行が無ければ、
+    後始末のスレッドの行を足す)。残した実行のスレッドが終わった瞬間に次の実行を通すと、その実行の途中で状態と
+    import の見張りが戻されてしまう。"""
+    inner = [w for w in waits if type(w) is _Entry]
+    rows = [w for w in waits if type(w) is dict] + [e.left_row for e in inner if e.left_row is not None]
+    threads = [r["thread"] for r in rows]
 
     def body():
-        thread.join()
+        for th in threads:
+            th.join()
+        for e in inner:
+            e.done.wait()
+            if e.left_thread is not None:
+                e.left_thread.join()
         try:
             snapshot.restore()
             if guard is not None:
@@ -1533,7 +1549,10 @@ def _restore_when_done(entry, snapshot, guard=None) -> None:
             pass
     reaper = threading.Thread(target=body, name="studio-program-late-restore", daemon=True)
     reaper.start()
-    entry["thread"] = reaper                         # 始めてから差し替える(始める前は is_alive() が偽で、行が消される)
+    for r in rows:                                   # 始めてから差し替える(始める前は is_alive() が偽で、行が消される)
+        r["thread"] = reaper
+    if not rows:
+        _ABANDONED.append({"thread": reaper, "started": time.time()})
 
 
 #: 作業スレッドからの import を断る GUI の部品(Qt の束ね・tkinter)。Qt の窓は GUI(main)スレッドでしか作れない。
@@ -1591,14 +1610,22 @@ class _ImportGuard:
     変えない」だったので、窓を出す backend の図が 1 つ残っているだけで、次の実行の ``plt.figure()`` が作業スレッドで
     Qt の窓を作った。窓を出す backend で作られた図は、作業スレッドからは使えず、閉じる事もできない(持ち主でない
     スレッドから Qt の窓を消すと固まる)ので、pyplot の一覧から外して(:data:`_DETACHED_FIGURES` が持ち続ける。
-    窓は消さない)、結果の ``notes`` に :data:`MPL_DETACHED_NOTE` を入れる。"""
+    窓は消さない)、結果の ``notes`` に :data:`MPL_DETACHED_NOTE` を入れる。
 
-    def __init__(self, recorder):
-        self.rec = recorder
-        self.tid = None                              # プログラムの作業スレッド(_guarded_user_call が入れる)
+    **付いている見張りは 1 つだけ**(2026-11-15 第 4 回の確かめ): 止まって待っている Debug の実行の間の「選んだ行」は、
+    自分の見張りを重ねず、そのスレッドを外側の見張りの :attr:`recs` に足す。外す時は先に :attr:`recs` を空にし、
+    元の物は持ち続ける: 上に別の鉤が重なっていて元へ戻せなかった鉤が残っても、何も断らずに元の物へ素通しする
+    (前は外す時に元の物を None にしたので、残った鉤が None を呼び、Studio の中の import が全部 TypeError になった)。"""
+
+    def __init__(self):
+        #: 見張りが断る作業スレッド → そのスレッドの ``plt.show()`` の図の出し先(:class:`Recorder`)。
+        #: :func:`_guarded_user_call` が入れる(外側の実行のスレッドと、止まっている間の選んだ行のスレッド)。
+        self.recs: dict = {}
+        self.installed = False
         self.orig_import = None
         self.orig_import_module = None
         self.orig_importlib_import = None            # importlib.__import__(builtins.__import__ の Python 版)
+        self._mine = (None, None, None)
         self.plt_show = None                         # (pyplot, 元の show, 差し替えた show)
         self.mpl_env = None
         self.shown_figures = 0
@@ -1671,28 +1698,28 @@ class _ImportGuard:
         self.orig_importlib_import = importlib.__import__
 
         def guarded_import(name, globals=None, locals=None, fromlist=(), level=0):
-            mine = threading.get_ident() == guard.tid
+            mine = threading.get_ident() in guard.recs
             if mine:
                 guard._check_import(name, globals, fromlist, level)
-            mod = guard.orig_import(name, globals, locals, fromlist, level)
+            mod = (guard.orig_import or _REAL_IMPORTS[0])(name, globals, locals, fromlist, level)
             if mine:
                 guard._after_import()
             return mod
 
         def guarded_importlib_import(name, globals=None, locals=None, fromlist=(), level=0):
-            mine = threading.get_ident() == guard.tid
+            mine = threading.get_ident() in guard.recs
             if mine:
                 guard._check_import(name, globals, fromlist, level)
-            mod = guard.orig_importlib_import(name, globals, locals, fromlist, level)
+            mod = (guard.orig_importlib_import or _REAL_IMPORTS[2])(name, globals, locals, fromlist, level)
             if mine:
                 guard._after_import()
             return mod
 
         def guarded_import_module(name, package=None):
-            mine = threading.get_ident() == guard.tid
+            mine = threading.get_ident() in guard.recs
             if mine and type(name) is str and not name.startswith("."):
                 guard._check(name)
-            mod = guard.orig_import_module(name, package)
+            mod = (guard.orig_import_module or _REAL_IMPORTS[1])(name, package)
             if mine:
                 guard._after_import()
             return mod
@@ -1701,6 +1728,7 @@ class _ImportGuard:
         importlib.import_module = guarded_import_module
         importlib.__import__ = guarded_importlib_import
         self._mine = (guarded_import, guarded_import_module, guarded_importlib_import)
+        self.installed = True
         # matplotlib: 窓を出さない backend に固定する(利用者の環境の MPLBACKEND=QtAgg も、実行の間だけ Agg にする。
         # 写し(_GlobalState)はこの後に取るので、戻しはこの値を保ち、外す時(uninstall)に実行の前の値へ戻す)
         self.mpl_env = os.environ.get("MPLBACKEND")
@@ -1738,24 +1766,28 @@ class _ImportGuard:
         return n
 
     def uninstall(self):
+        """外す(呼び出し側のスレッド)。先に :attr:`recs` を空にする(残った鉤は何も断らない)。元の物は None に
+        しない(上に別の鉤が重なっていて戻せなかった鉤は、元の物へ素通しする)。2 回目からは何もしない。"""
         import importlib
-        if self.orig_import is not None and builtins.__import__ is self._mine[0]:
+        self.recs.clear()
+        if not self.installed:
+            return
+        self.installed = False
+        if builtins.__import__ is self._mine[0]:
             builtins.__import__ = self.orig_import
-        if self.orig_import_module is not None and importlib.import_module is self._mine[1]:
+        if importlib.import_module is self._mine[1]:
             importlib.import_module = self.orig_import_module
-        if self.orig_importlib_import is not None and importlib.__import__ is self._mine[2]:
+        if importlib.__import__ is self._mine[2]:
             importlib.__import__ = self.orig_importlib_import
         if self.plt_show is not None:
             plt, orig, mine = self.plt_show
             if getattr(plt, "show", None) is mine:
                 plt.show = orig
             self.plt_show = None
-        if self.orig_import is not None:             # 実行の間だけの MPLBACKEND=Agg を、実行の前の値へ
-            if self.mpl_env is None:
-                os.environ.pop("MPLBACKEND", None)
-            else:
-                os.environ["MPLBACKEND"] = self.mpl_env
-            self.orig_import = None
+        if self.mpl_env is None:                     # 実行の間だけの MPLBACKEND=Agg を、実行の前の値へ
+            os.environ.pop("MPLBACKEND", None)
+        else:
+            os.environ["MPLBACKEND"] = self.mpl_env
 
     # ---- matplotlib の show ----
     def _after_import(self):
@@ -1769,12 +1801,13 @@ class _ImportGuard:
 
         def show(*args, **kwargs):
             """Studio の中の ``plt.show()``: 窓は開かず、今の図を画像の欄へ出す(Studio の ``show(fig)`` と同じ)。"""
-            if threading.get_ident() != guard.tid:
+            rec = guard.recs.get(threading.get_ident())
+            if rec is None:
                 return orig(*args, **kwargs)
             nums = plt.get_fignums()
             if not nums:
                 return None
-            guard.rec.show(_figure_to_array(plt.gcf()))
+            rec.show(_figure_to_array(plt.gcf()))
             guard.shown_figures += 1
             return None
         plt.show = show
@@ -2036,6 +2069,34 @@ class _Guarded:
         self.notes: list = []
 
 
+class _Entry:
+    """利用者のコードを回している入口(:func:`_guarded_user_call`)の 1 回分(2026-11-15 第 4 回の確かめ)。
+
+    入口は**入れ子にしない**: Debug の実行がブレークポイントで止まって待っている間の「選んだ行」(:func:`evaluate`)は、
+    その実行(外側の入口)の import の見張りの下で回す(作業スレッドを外側の見張りに足すだけ。見張りを重ねず、自分の
+    写しは「止まっている実行の状態」へ戻すのにだけ使い、遅れた戻しはしない)。外側が終わる時に、まだ終わって
+    いない・止められずに残した内側があれば、外側の後始末(:func:`_restore_when_done`)がそれを待ってから、外側の
+    写しへ戻して見張りを外す。"""
+
+    def __init__(self, guard, clock, outer=None):
+        self.guard = guard                           # import の見張り(内側は外側の物を共有する。無ければ None)
+        self.clock = clock                           # 外側: 止まって待っているかを見る時計(無ければ None)
+        self.outer = outer                           # 内側: 外側の入口(外側なら None)
+        self.closed = False                          # 外側: 終わった(戻して外す段に入った)
+        self.children: list = []                     # 外側: 止まっている間に始めた内側の入口
+        self.done = threading.Event()                # 呼び出しが戻った(後始末を済ませた)
+        self.left_thread = None                      # 内側: 止められずに残したスレッド
+        self.left_row = None                         # 内側: その ``_ABANDONED`` の行(外側の後始末が引き継ぐ)
+
+
+#: 今、利用者のコードを回している外側の入口(無ければ None)。:data:`_ENTRY_LOCK` の下で読み書きする。
+_OUTER_ENTRY = None
+_ENTRY_LOCK = threading.Lock()
+#: 実行が走っている(ブレークポイントで止まって待っていない)間に、別の入口から利用者のコードを始めようとした時の文。
+ANOTHER_RUN_BLOCKS_RUN = ("not run: another run of the program is in progress — wait until it ends or stop it "
+                          "(selected lines can run while a Debug run waits at a breakpoint)")
+
+
 def _refusal(text: str):
     """利用者のコード *text* を**今は走らせない**理由 ``(文, 行か None)``。走らせてよければ None。
 
@@ -2069,31 +2130,52 @@ def _guarded_user_call(fn, text: str, *, recorder, outcome: dict, time_limit_s: 
 
     *fn* = 利用者のコード *text* を走らせる関数(引数なし。例外は自分で受ける)。ここがする事:
 
-    1. 断る(:func:`_refusal`): 残した実行・残ったスレッドがある間、作業スレッドからの Qt。
+    1. 断る(:func:`_refusal`): 残した実行・残ったスレッドがある間、作業スレッドからの Qt。別の実行が**走っている**
+       (ブレークポイントで止まって待っていない)間も断る(:data:`ANOTHER_RUN_BLOCKS_RUN`)。
     2. GUI の部品の import の見張り(:class:`_ImportGuard`。*recorder* は ``plt.show()`` の図の出し先)を付け、
        matplotlib を Agg にする。作業スレッドで回す時だけ(橋があれば、窓は橋が GUI スレッドで作る)。
+       **入れ子にしない**(2026-11-15 第 4 回の確かめ): 止まって待っている実行の間の選んだ行は、見張りを付けず、
+       作業スレッドを外側の見張りに足す(:class:`_Entry`)。
     3. プロセス全体の状態の写し(:class:`_GlobalState`)を取り、*user_dirs* を ``sys.path`` の先頭に足す。
     4. *fn* を見張りつきで回す(:func:`_run_with_watchdog`。上限 = *time_limit_s* + *slack_s*、*stop_event*、
        待っている間を除く時計 *clock*)。始めた時刻と上限を ``outcome["t0"]`` / ``outcome["deadline"]`` に入れる。
-    5. 終わったら(例外でも)足した道を外し、状態を戻し、見張りを外す。止められずに残した時は、見張りを
-       付けたまま、残した実行が終わった所でもう一度戻して外す(:func:`_restore_when_done`)。
+    5. 終わったら(例外でも)足した道を外し、状態を戻し、見張りを外す。止められずに残した時と、止まっている間に始めた
+       選んだ行がまだ終わっていない・残した時は、見張りを付けたまま、それらが終わった所でもう一度戻して外す
+       (:func:`_restore_when_done`。外側の入口だけ)。内側(選んだ行)は自分の写し(= 止まっている実行の状態)へ
+       戻すだけで、外側が先に終わっていれば戻さない。
     6. 知らせ(外した図・``plt.show()``・プログラムが起こして残したスレッド・戻した状態)を ``notes`` に入れる。"""
+    global _OUTER_ENTRY
     run = _Guarded()
-    why = _refusal(text)
-    if why is not None:
-        run.refused, run.refused_line = why
-        return run
     in_caller = _runs_in_caller(text)
-    guard = _ImportGuard(recorder) if (GUI_BRIDGE is None and not in_caller) else None
-    if guard is not None:
-        guard.install()                              # 写しを取る前に付ける(戻しの後で自分で外す)
-    snapshot = _GlobalState.take()
+    with _ENTRY_LOCK:                                # 断り・見張り・写しを、外側の入口の出入りと重ねない
+        why = _refusal(text)
+        outer = _OUTER_ENTRY
+        if why is None and outer is not None and (
+                outer.clock is None or not outer.clock.paused
+                or (outer.guard is None and GUI_BRIDGE is None and not in_caller)):
+            why = ANOTHER_RUN_BLOCKS_RUN, None
+        if why is not None:
+            run.refused, run.refused_line = why
+            return run
+        if outer is None:
+            guard = _ImportGuard() if (GUI_BRIDGE is None and not in_caller) else None
+            if guard is not None:
+                guard.install()                      # 写しを取る前に付ける(戻しの後で自分で外す)
+            entry = _OUTER_ENTRY = _Entry(guard, clock)
+        else:
+            guard = outer.guard                      # 止まっている実行の見張りの下で回す(見張りを重ねない)
+            entry = _Entry(guard, None, outer)
+            outer.children.append(entry)
+        snapshot = _GlobalState.take()
+        shown0 = guard.shown_figures if guard is not None else 0
     threads_before = set(threading.enumerate())
     path_token = _push_sys_path(user_dirs)
+    me: list = []
 
     def worker():
-        if guard is not None:
-            guard.tid = threading.get_ident()        # 見張りが断るのは、このスレッドからの import だけ
+        me.append(threading.get_ident())
+        if guard is not None and not in_caller:      # 呼び出し側(main)のスレッドは見張らない(Studio の GUI の import)
+            guard.recs[me[0]] = recorder             # 見張りが断るのは、入口の作業スレッドからの import だけ
         fn()
 
     t0 = time.perf_counter()
@@ -2103,11 +2185,13 @@ def _guarded_user_call(fn, text: str, *, recorder, outcome: dict, time_limit_s: 
         run.abandoned = _run_with_watchdog(worker, outcome, deadline, stop_event, in_caller=in_caller, clock=clock)
     finally:
         run.ended = time.perf_counter()
-        if run.abandoned:
-            _restore_when_done(_ABANDONED[-1], snapshot, guard)
-        if guard is not None and guard.detached_figures:
+        left = None
+        if run.abandoned:                            # この入口の作業スレッドの行(無ければ最後の行)
+            left = next((r for r in reversed(_ABANDONED) if me and r["thread"].ident == me[0]), None) \
+                or (_ABANDONED[-1] if _ABANDONED else None)
+        if guard is not None and outer is None and guard.detached_figures:
             run.notes.append(MPL_DETACHED_NOTE % guard.detached_figures)
-        if guard is not None and guard.shown_figures:
+        if guard is not None and guard.shown_figures != shown0:
             run.notes.append(MPL_SHOWN_NOTE)
         left_threads = _program_threads_alive(threads_before) if not run.abandoned else []
         if left_threads:
@@ -2115,9 +2199,28 @@ def _guarded_user_call(fn, text: str, *, recorder, outcome: dict, time_limit_s: 
             names = ", ".join(str(t.name) for t in left_threads[:5]) + (" …" if len(left_threads) > 5 else "")
             run.notes.append(PROGRAM_THREADS_NOTE % (len(left_threads), names))
         _pop_sys_path(path_token)
-        restored = snapshot.restore()
-        if guard is not None and not run.abandoned:
-            guard.uninstall()                        # 残した実行が生きている間は付けたまま(終わった所で外す)
+        with _ENTRY_LOCK:
+            waits: list = []
+            if outer is None:
+                entry.closed = True
+                if _OUTER_ENTRY is entry:
+                    _OUTER_ENTRY = None
+                if left is not None:
+                    waits.append(left)
+                waits += [c for c in entry.children if not c.done.is_set() or c.left_thread is not None]
+            else:
+                entry.left_row = left
+                entry.left_thread = left["thread"] if left is not None else None
+                if left is None and guard is not None and me and not in_caller:
+                    guard.recs.pop(me[0], None)      # 残したスレッドは、外側が外すまで見張る
+            # 内側: 外側がまだ終わっていなければ、自分の写し(= 止まっている実行の状態)へ戻す。外側が先に終わって
+            # いれば戻さない(外側の後始末が、これが終わるのを待って外側の写しへ戻す)
+            restored = snapshot.restore() if (outer is None or not outer.closed) else []
+            if waits:
+                _restore_when_done(waits, snapshot, guard)    # 残した物が終わった所で、もう一度戻して外す
+            elif outer is None and guard is not None:
+                guard.uninstall()
+            entry.done.set()
         if restored:
             run.notes.append("restored after the run: " + ", ".join(restored))
     return run

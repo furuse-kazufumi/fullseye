@@ -78,6 +78,8 @@ RUN_TEMPLATES = (
     "Studio",
     "until the abandoned run ends, new runs are refused; the process state is restored again when it "
     "ends",
+    "not run: another run of the program is in progress — wait until it ends or stop it "
+    "(selected lines can run while a Debug run waits at a breakpoint)",
     "… (%d earlier characters of output dropped)",
 )
 

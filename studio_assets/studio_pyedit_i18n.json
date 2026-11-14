@@ -1,6 +1,13 @@
 {
  "_note": "Python editor parts (color, completion, variables, watch): English is the source text; 5 languages. Merge into studio_assets/i18n.json 'strings' with studio_pyedit_i18n.merge_into().",
  "strings": {
+  "not run: another run of the program is in progress — wait until it ends or stop it (selected lines can run while a Debug run waits at a breakpoint)": {
+   "ja": "実行しませんでした: プログラムの別の実行が走っています — 終わるまで待つか、止めてください(選んだ行は、Debug の実行がブレークポイントで止まって待っている間なら実行できます)",
+   "zh": "未运行:程序的另一次运行正在进行 — 请等待其结束或停止它(Debug 运行在断点处等待时,可以运行所选的行)",
+   "tw": "未執行:程式的另一次執行正在進行 — 請等待其結束或停止它(Debug 執行在中斷點等待時,可以執行所選的行)",
+   "ko": "실행하지 않았습니다: 프로그램의 다른 실행이 진행 중입니다 — 끝날 때까지 기다리거나 멈추십시오(선택한 줄은 Debug 실행이 중단점에서 기다리는 동안 실행할 수 있습니다)",
+   "de": "nicht ausgeführt: ein anderer Lauf des Programms ist im Gang — warten Sie, bis er endet, oder halten Sie ihn an (ausgewählte Zeilen laufen, während ein Debug-Lauf an einem Haltepunkt wartet)"
+  },
   "op": {
    "ja": "処理(op)",
    "zh": "算子",
