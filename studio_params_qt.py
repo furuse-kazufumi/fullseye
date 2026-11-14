@@ -68,8 +68,8 @@ def _default_settings() -> QtCore.QSettings:
 _STATE_RGB = {"warn": (232, 163, 61), "err": (217, 83, 79)}
 
 
-def _state_colour(role: str) -> QtGui.QColor:
-    """状態の色(``"warn"`` / ``"err"``)。studio_theme が import できればその役割の色、できなければ予備の色。"""
+def _theme_colour(role: str) -> QtGui.QColor | None:
+    """studio_theme の役割の色。import できない木・その役割が無い時は None。"""
     try:
         import studio_theme  # noqa: PLC0415  (見た目の枝の役割の表。無い木でも窓は動く)
         c = QtGui.QColor(studio_theme.colour(role))
@@ -77,7 +77,13 @@ def _state_colour(role: str) -> QtGui.QColor:
             return c
     except (ImportError, AttributeError, KeyError, TypeError, ValueError):
         pass
-    return QtGui.QColor(*_STATE_RGB[role])
+    return None
+
+
+def _state_colour(role: str) -> QtGui.QColor:
+    """状態の色(``"warn"`` / ``"err"``)。studio_theme が import できればその役割の色、できなければ予備の色。"""
+    c = _theme_colour(role)
+    return c if c is not None else QtGui.QColor(*_STATE_RGB[role])
 
 
 def _mix(a: QtGui.QColor, b: QtGui.QColor, t: float) -> QtGui.QColor:
@@ -88,7 +94,7 @@ def _mix(a: QtGui.QColor, b: QtGui.QColor, t: float) -> QtGui.QColor:
 # --------------------------------------------------------------------------- #
 # アイコン(資産ファイルなし。パレットの文字の色で線を引く)
 # --------------------------------------------------------------------------- #
-def _draw_icon(name: str, color: QtGui.QColor, px: int = _ICON_PX) -> QtGui.QIcon:
+def _draw_pixmap(name: str, color: QtGui.QColor, px: int = _ICON_PX) -> QtGui.QPixmap:
     r = 2
     pm = QtGui.QPixmap(px * r, px * r)
     pm.setDevicePixelRatio(r)
@@ -163,7 +169,15 @@ def _draw_icon(name: str, color: QtGui.QColor, px: int = _ICON_PX) -> QtGui.QIco
     else:
         raise ValueError("unknown icon %r" % name)
     p.end()
-    return QtGui.QIcon(pm)
+    return pm
+
+
+def _draw_icon(name: str, color: QtGui.QColor, px: int = _ICON_PX, off: QtGui.QColor | None = None) -> QtGui.QIcon:
+    """絵 1 つの QIcon。``off`` を渡すと、押せない時の絵をその色で持つ(設計書 P04-4: 無効は絵を off の色)。"""
+    ic = QtGui.QIcon(_draw_pixmap(name, color, px))
+    if off is not None:
+        ic.addPixmap(_draw_pixmap(name, off, px), QtGui.QIcon.Disabled)
+    return ic
 
 
 # --------------------------------------------------------------------------- #
@@ -267,6 +281,9 @@ class _StripButton(QtWidgets.QToolButton):
         self.setIconSize(QtCore.QSize(_ICON_PX, _ICON_PX))
         self.setFixedSize(BUTTON_PX, BUTTON_PX)
         self.setAutoRaise(True)
+        # theme の QSS は QToolButton に左右 8 px の余白を置き、絵だけのボタンはこの宣言で余白を詰める(無いと絵が 4〜6 px に潰れる)。
+        self.setProperty("iconOnly", True)
+        self.setProperty("keepSize", True)             # 大きさは固定(theme の側で変えない)
         if action.menu() is not None:                  # メニューは QAction の menu() から出る(setMenu は既定の QAction を外す)
             self.setPopupMode(QtWidgets.QToolButton.InstantPopup)
         action.changed.connect(self._sync)
@@ -732,6 +749,8 @@ class ParamsPanel(QtWidgets.QWidget):
     #: 空の状態の案内(何をする場所か 1 行)。
     EMPTY_TEXT = ("Parameter bundles side by side: rows are keys, columns are files. Open JSON, TOML, YAML or XML "
                   "files, or drop them here.")
+    _theme_read = False                                  # 見える時に一度、theme の色を読んだか
+    _theme_pending = False                               # 様式 / パレットが変わった後の読み直しを予約したか
 
     def __init__(self, tr: Callable[[str], str] | None = None, parent: QtWidgets.QWidget | None = None,
                  model: M.ParamsModel | None = None, settings: Callable[[], Any] | None = None) -> None:
@@ -773,7 +792,7 @@ class ParamsPanel(QtWidgets.QWidget):
         self._bar_lay.setContentsMargins(0, 0, 0, 0)
         self._bar_lay.setHorizontalSpacing(GAP_PX)
         self._bar_lay.setVerticalSpacing(2)
-        color = self.palette().color(QtGui.QPalette.ButtonText)
+        color, off = self._icon_colours()
         #: 道具(1 機能 1 QAction)。鍵 → QAction。列の部品・キー・パネルの ≡ はどれもこの QAction を使う。
         self.tool_actions: dict[str, QtGui.QAction] = {}
         self._action_texts: dict[str, tuple[str, str, str]] = {}
@@ -786,7 +805,7 @@ class ParamsPanel(QtWidgets.QWidget):
                    checkable: bool = False) -> QtGui.QAction:
             a = QtGui.QAction(self)
             a.setObjectName("params_" + key)
-            a.setIcon(_draw_icon(icon, color))
+            a.setIcon(_draw_icon(icon, color, off=off))
             a.setCheckable(checkable)
             if shortcut:
                 a.setShortcut(QtGui.QKeySequence(shortcut))
@@ -836,7 +855,8 @@ class ParamsPanel(QtWidgets.QWidget):
         self.search = QtWidgets.QLineEdit(self.bar)
         self.search.setClearButtonEnabled(True)
         self.search.setFixedHeight(BUTTON_PX)
-        self._search_icon = self.search.addAction(_draw_icon("search", color), QtWidgets.QLineEdit.LeadingPosition)
+        self._search_icon = self.search.addAction(_draw_icon("search", color, off=off),
+                                                  QtWidgets.QLineEdit.LeadingPosition)
         self._apply_search_texts()
         self._search_below = False
         self._replace_pending = False
@@ -980,15 +1000,42 @@ class ParamsPanel(QtWidgets.QWidget):
         self.refresh()                                   # 数え方・題・該当なし・列の幅
         self._render_message()
 
+    def _icon_colours(self) -> tuple[QtGui.QColor, QtGui.QColor]:
+        """道具の絵の色(押せる時, 押せない時)。押せない時 = theme の役割 off、無ければ文字の色を地へ寄せた色。"""
+        pal = self.palette()
+        on = pal.color(QtGui.QPalette.ButtonText)
+        off = _theme_colour("off")
+        return on, off if off is not None else _mix(on, pal.color(QtGui.QPalette.Window), 0.55)
+
     def apply_theme(self) -> None:
-        """theme を切り替えた後に呼ぶ: 状態の色(違うセル・注意・誤り)とアイコンの色を読み直す(設計書 P14-2)。"""
-        color = self.palette().color(QtGui.QPalette.ButtonText)
+        """状態の色(違うセル・注意・誤り)とアイコンの色を、今の theme とパレットから読み直す(設計書 P14-2)。
+
+        外から呼ばなくてよい: 初めて見える時と、様式・パレットが変わった時(親の窓の QSS の差し替え = theme の切り替え)に
+        パネルが自分で呼ぶ。作った時点では親の QSS がまだ当たっておらず、その時の白い地で色を決めると暗い theme で読めない。"""
+        color, off = self._icon_colours()
         for key, icon in self._action_icons.items():
-            self.tool_actions[key].setIcon(_draw_icon(icon, color))
-        self._search_icon.setIcon(_draw_icon("search", color))
-        self.tmodel.set_palette(self.palette(), self.font())
+            self.tool_actions[key].setIcon(_draw_icon(icon, color, off=off))
+        self._search_icon.setIcon(_draw_icon("search", color, off=off))
+        self.tmodel.set_palette(self.tree.palette(), self.tree.font())
         self.tmodel.sync()
         self._render_message()
+
+    def showEvent(self, ev: QtGui.QShowEvent) -> None:
+        super().showEvent(ev)
+        if not self._theme_read:                         # 子の部品まで磨かれた後(親の QSS の色がパレットに入っている)
+            self._theme_read = True
+            self.apply_theme()
+
+    def changeEvent(self, ev: QtCore.QEvent) -> None:
+        super().changeEvent(ev)
+        if (ev.type() in (QtCore.QEvent.StyleChange, QtCore.QEvent.PaletteChange) and self._theme_read
+                and not self._theme_pending):
+            self._theme_pending = True                   # 子の部品の磨き直しが済んでから(この通知の後)1 回だけ読み直す
+            QtCore.QTimer.singleShot(0, self, self._theme_changed)  # self が消えたら呼ばない
+
+    def _theme_changed(self) -> None:
+        self._theme_pending = False
+        self.apply_theme()
 
     def _sync_buttons(self) -> None:
         find = getattr(self.strip, "button_for", None)
@@ -1151,6 +1198,9 @@ class ParamsPanel(QtWidgets.QWidget):
                 "error": _mix(base, _state_colour("err"), 0.7)}[level]
         pal.setColor(QtGui.QPalette.WindowText, tone)
         self.message_label.setPalette(pal)
+        # 親の窓の QSS(QLabel { color })はパレットに勝つので、状態の色はラベル自身の QSS でも言う(info は theme の文字の色)。
+        self.message_label.setStyleSheet(
+            "" if level == "info" else "QLabel { color: rgb(%d, %d, %d); }" % (tone.red(), tone.green(), tone.blue()))
 
     def _outcome(self, out: M.Outcome) -> M.Outcome:
         if not out.ok:

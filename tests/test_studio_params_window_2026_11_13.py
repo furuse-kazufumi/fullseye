@@ -1950,3 +1950,216 @@ def test_params_colours_come_from_theme_roles(qapp, ini, tmp_path, monkeypatch):
     new = p.index_of(0, "camera.fx").data(Qt.BackgroundRole).color().getRgb()[:3]
     assert old != new == Q._mix(p.palette().color(QtGui.QPalette.Base), QtGui.QColor(0, 192, 0), 0.30).getRgb()[:3]
     _close_quietly(win)
+
+
+# ============================================================================================== #
+# 確かめの担当 2 人の指摘(2026-11-15)の門: 本物の theme の下・フォーカス・狭い窓・窓の木の全部を歩く
+# ============================================================================================== #
+import sys  # noqa: E402
+import types  # noqa: E402
+
+#: 見た目の枝(B1 の studio_theme)の役割の色のうち、この窓が使う物(instrument = 暗い配色、panel = 明るい配色)。
+_THEME_ROLES = {
+    "instrument": {"bg0": "#1a1d22", "bg1": "#20242a", "bg2": "#272c33", "line": "#363c45", "text": "#e4e7eb",
+                   "warn": "#e8b04a", "err": "#f0646a", "off": "#7d8590"},
+    "panel": {"bg0": "#dfe2e6", "bg1": "#eceef1", "bg2": "#ffffff", "line": "#a9b0b9", "text": "#15191e",
+              "warn": "#8a5a00", "err": "#b3261e", "off": "#646c76"},
+}
+
+
+def _theme_qss(name: str) -> str:
+    """studio_theme.build_qss の決まりのうち、この窓に効く物の写し(QToolButton の余白と iconOnly、QLabel の色、無効の色)。"""
+    return ("QWidget { background:%(bg0)s; color:%(text)s; }\n"
+            "QLabel { color:%(text)s; background:transparent; }\n"
+            "QToolButton { background:%(bg2)s; border:1px solid %(line)s; border-radius:3px; padding:2px 8px; "
+            "color:%(text)s; }\n"
+            'QToolButton[iconOnly="true"] { padding:3px; }\n'
+            "QToolButton:disabled { background:%(bg1)s; border:1px solid %(line)s; color:%(off)s; }\n"
+            "QPushButton { background:%(bg2)s; border:1px solid %(line)s; border-radius:3px; padding:3px 10px; "
+            "color:%(text)s; }\n"
+            "QLineEdit { background:%(bg2)s; border:1px solid %(line)s; border-radius:3px; padding:0px 6px; }\n"
+            % _THEME_ROLES[name])
+
+
+@pytest.fixture(params=["stand-in", "studio_theme"])
+def themed(request, monkeypatch):
+    """(配色を選んで QSS を返す関数, 配色 → 役割の色の表)。stand-in = 上の写し + 偽の studio_theme(どの木でも回る)、
+    studio_theme = 本物の build_qss(見た目の枝が入った木だけ。この木には無いので理由つきで skip)。"""
+    if request.param == "stand-in":
+        state = {"name": "instrument"}
+        fake = types.ModuleType("studio_theme")
+        fake.colour = lambda role: _THEME_ROLES[state["name"]][role]
+        monkeypatch.setitem(sys.modules, "studio_theme", fake)
+
+        def choose(name):
+            state["name"] = name
+            return _theme_qss(name)
+
+        return choose, (lambda name: _THEME_ROLES[name])
+    st = pytest.importorskip("studio_theme", reason="the look branch (studio_theme) is not in this tree")
+    before = st.current_name()
+    request.addfinalizer(lambda: st.set_current(theme=before))
+
+    def choose(name):
+        st.set_current(theme=name)
+        return st.build_qss(name, "en", None, 16)
+
+    return choose, (lambda name: st.PALETTES[name])
+
+
+def _rect_in(w, anc) -> QtCore.QRect:
+    return QtCore.QRect(w.mapTo(anc, QtCore.QPoint(0, 0)), w.size())
+
+
+def _lum(c) -> float:
+    def lin(v):
+        v = v / 255.0
+        return v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4
+    return 0.2126 * lin(c.red()) + 0.7152 * lin(c.green()) + 0.0722 * lin(c.blue())
+
+
+def _contrast(a, b) -> float:
+    la, lb = _lum(QtGui.QColor(a)), _lum(QtGui.QColor(b))
+    return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+
+
+def _far(a, b) -> int:
+    a, b = QtGui.QColor(a), QtGui.QColor(b)
+    return abs(a.red() - b.red()) + abs(a.green() - b.green()) + abs(a.blue() - b.blue())
+
+
+def _ink(img, rect, margin: int = 2):
+    """``rect`` の中で、地の色(いちばん多い色)から遠い画素の外接の (幅, 高さ, いちばん遠い色, 地の色)。描かれた物が無ければ幅 0。"""
+    span = [(x, y) for x in range(rect.left() + margin, rect.right() - margin + 1)
+            for y in range(rect.top() + margin, rect.bottom() - margin + 1)]
+    count: dict[int, int] = {}
+    for x, y in span:
+        v = img.pixel(x, y)
+        count[v] = count.get(v, 0) + 1
+    ground = QtGui.QColor(max(count, key=lambda v: count[v]))
+    xs, ys, far, best = [], [], -1, ground
+    for x, y in span:
+        c = QtGui.QColor(img.pixel(x, y))
+        d = _far(c, ground)
+        if d > 60:
+            xs.append(x)
+            ys.append(y)
+        if d > far:
+            far, best = d, c
+    if not xs:
+        return 0, 0, best, ground
+    return max(xs) - min(xs) + 1, max(ys) - min(ys) + 1, best, ground
+
+
+_DIFF_KEYS = ("camera.fx", "optics.f_number", "exposure.mode")
+
+
+def _theme_cells_and_icons(qapp, win, roles) -> int:
+    """theme の下の窓を数える(数えた物の数を返す): 違うセルの地と字・道具の絵(押せる / 押せない)。書体に頼らない。"""
+    p = win.panel
+    text = QtGui.QColor(roles["text"])
+    counted = 0
+    # 違うセル: 地 = 表の地に warn を 3 割、字とのコントラスト 4.5 以上。描かれた地の画素も同じ色。
+    base = p.tree.palette().color(QtGui.QPalette.Base)
+    assert _far(base, roles["bg0"]) <= 3, (base.name(), roles["bg0"])
+    want = Q._mix(base, QtGui.QColor(roles["warn"]), 0.30)
+    img = win.grab().toImage()
+    for key in _DIFF_KEYS:
+        for col in range(3):
+            idx = p.index_of(col, key)
+            brush = idx.data(Qt.BackgroundRole).color()
+            assert _far(brush, want) <= 3, (key, col, brush.name(), want.name())
+            assert _contrast(text, brush) >= 4.5, (key, col, brush.name(), _contrast(text, brush))
+            r = p.tree.visualRect(idx)
+            at = p.tree.viewport().mapTo(win, QtCore.QPoint(r.right() - 1, r.bottom() - 1))
+            assert _far(QtGui.QColor(img.pixel(at)), brush) <= 6, (key, col, QtGui.QColor(img.pixel(at)).name())
+            counted += 1
+    # 道具の絵: 押せる時は長い辺 10 px 以上で地から浮く。押せない時は off の色(押せる時より沈み、それでも見える)。
+    seen = {}
+    for state in (True, False):
+        for k in BUTTONS:
+            p.tool_actions[k].setEnabled(state)
+        _pump(qapp)
+        img = win.grab().toImage()
+        for k in BUTTONS:
+            b = p.buttons[k]
+            assert b.property("iconOnly") is True and (b.width(), b.height()) == (24, 24), k
+            w, h, ink, ground = _ink(img, _rect_in(b, win))
+            assert max(w, h) >= 10 and min(w, h) >= 6, (k, state, w, h)
+            seen[(k, state)] = _contrast(ink, ground)
+            counted += 1
+    for k in BUTTONS:
+        on, off = seen[(k, True)], seen[(k, False)]
+        assert on >= 4.5 and 2.0 <= off <= on / 1.5, (k, on, off)
+    p._update_actions()
+    return counted
+
+
+def _theme_notice(qapp, win, roles) -> int:
+    """知らせの字の**描かれた**色: ▲ / ✕ は役割の色を混ぜた色(本文の色のままではない)、印なしは本文の色。字の画素を読む。"""
+    p = win.panel
+    text = QtGui.QColor(roles["text"])
+    counted = 0
+    body = p.palette().color(QtGui.QPalette.WindowText)
+    assert _far(body, text) <= 3
+    for level, role, t in (("warn", "warn", 0.6), ("error", "err", 0.7), ("info", None, 0.0)):
+        p.show_message("xxxxxxxx", level)
+        _pump(qapp)
+        tone = Q._mix(body, QtGui.QColor(roles[role]), t) if role else body
+        ml = p.message_label
+        assert ml.isVisible() and _far(ml.palette().color(QtGui.QPalette.WindowText), tone) <= 3, level
+        w, _h, ink, ground = _ink(win.grab().toImage(), _rect_in(ml, win), 0)
+        if w == 0:                                    # 字を描ける書体が無い環境(字の画素が無い)
+            pytest.skip("no font draws text on this platform: the painted colour of the notice cannot be read")
+        assert _far(ink, tone) <= 24, (level, ink.name(), tone.name())
+        if role:
+            assert _far(ink, body) >= 60, (level, ink.name(), body.name())
+        counted += 1
+    p.show_message("", "info")
+    return counted
+
+
+def _open_under_theme(qapp, tmp_path, qss: str):
+    """theme の QSS を当てた親(Studio の代わり)から、Studio と同じ入口 show_params_window で開く。"""
+    parent = QtWidgets.QMainWindow()
+    parent.setStyleSheet(qss)
+    parent.resize(900, 600)
+    parent.show()
+    _pump(qapp)
+    win = Q.show_params_window(parent, _three_files(tmp_path), M.make_tr("en"))
+    win.resize(720, 360)
+    _pump(qapp)
+    return parent, win
+
+
+def test_params_opened_under_a_theme_is_readable(qapp, fusion, ini, tmp_path, themed):
+    """確かめの指摘(high): theme の QSS を当てた親(Studio)から show_params_window で開いた**直後**に、違う行の値が読め
+    (地と字のコントラスト 4.5 以上)、道具 10 個の絵が潰れず(長い辺 10 px 以上)、押せない絵は off の色で沈む。
+    apply_theme() を外から呼ばない。親の QSS を別の配色に差し替えても(theme の切り替え)パネルが自分で読み直す。"""
+    choose, roles = themed
+    parent, win = _open_under_theme(qapp, tmp_path, choose("instrument"))
+    counted = _theme_cells_and_icons(qapp, win, roles("instrument"))
+    dark = win.panel.index_of(0, "camera.fx").data(Qt.BackgroundRole).color().name()
+    parent.setStyleSheet(choose("panel"))                               # theme の切り替え(apply_theme は呼ばない)
+    _pump(qapp)
+    counted += _theme_cells_and_icons(qapp, win, roles("panel"))
+    assert win.panel.index_of(0, "camera.fx").data(Qt.BackgroundRole).color().name() != dark
+    assert counted == 2 * (9 + 20)
+    _close_quietly(win)
+    parent.close()
+    parent.deleteLater()
+
+
+def test_params_notice_is_painted_in_the_state_colour_under_a_theme(qapp, fusion, ini, tmp_path, themed):
+    """確かめの指摘(medium): theme の QSS(QLabel { color })の下でも、▲ / ✕ の知らせの字が役割の色で**描かれる**
+    (パレットに入れただけでは QSS に負けて本文の色になる)。字の画素を読むので、字を描ける書体が無い環境では skip。"""
+    choose, roles = themed
+    parent, win = _open_under_theme(qapp, tmp_path, choose("instrument"))
+    counted = _theme_notice(qapp, win, roles("instrument"))
+    parent.setStyleSheet(choose("panel"))
+    _pump(qapp)
+    counted += _theme_notice(qapp, win, roles("panel"))
+    assert counted == 2 * 3
+    _close_quietly(win)
+    parent.close()
+    parent.deleteLater()
