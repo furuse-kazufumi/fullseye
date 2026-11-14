@@ -737,6 +737,16 @@ from PySide6 import QtCore, QtGui  # noqa: E402
 
 import studio_params_qt as Q  # noqa: E402
 
+# 写し(確かめ用のコピー)で回す時の罠を止める: fullseye/__init__ は自分の木を sys.path の先頭に入れるので、写しの
+# studio_params_model を読んだ後(それが fullseye を読む)の import は、作業木の studio_params_qt を黙って読む。そうなると
+# 「直す前のコードで落ちる」を写しで確かめても、試験は作業木(直した後)のコードを回して緑になる(2026-11-15 の確かめで
+# 実際に起きた: 3 failed / 12 passed、写しの ROOT を先頭へ戻すと 62 failed)。窓の 2 つのモジュールが、この試験と同じ木から
+# 読まれていなければ、どの試験も回さずに止める(skip でなく収集の誤り)。
+_WINDOW_TREES = {os.path.normcase(os.path.dirname(os.path.realpath(m.__file__))) for m in (M, Q)}
+if _WINDOW_TREES != {os.path.normcase(os.path.realpath(ROOT))}:
+    raise ImportError("the window modules were not read from this test's tree %s: studio_params_model=%s, "
+                      "studio_params_qt=%s (another tree is earlier on sys.path)" % (ROOT, M.__file__, Q.__file__))
+
 Qt = QtCore.Qt
 BUTTONS = ("open", "add", "remove", "save", "saveas", "reload", "undo", "redo", "copy", "diff")
 
@@ -1387,7 +1397,7 @@ def test_params_boxes_default_and_escape_cancel_real_box(qapp, fusion, ini, tmp_
     _close_quietly(win)
 
 
-def test_params_set_confirm_takes_the_parents_confirm_action(qapp, ini, tmp_path, monkeypatch):
+def test_params_set_confirm_takes_the_parents_confirm_action(qapp, fusion, ini, tmp_path, monkeypatch):
     """D88: 親(Studio)の confirm_action を set_confirm で受け取る。新しい形(kind・buttons)は役割の鍵・役割・真偽のどれで
     答えてもよく、知らない答えはキャンセル(fail-closed)。古い形(4 つの引数 → 真偽)は 2 択だけを任せ、3 択は自前の箱で聞く。"""
     own = _collect_real_boxes(monkeypatch, Qt.Key_Escape)
@@ -1615,7 +1625,7 @@ def _window_keys(win) -> list[str]:
     return keys
 
 
-def test_params_no_ctrl_d_binding(qapp, ini, tmp_path):
+def test_params_no_ctrl_d_binding(qapp, fusion, ini, tmp_path):
     """D90 / G13: 「違う行だけ」は帯のトグルだけ(Ctrl+D は Studio では「複製」。キーは [キー] の登録簿で決める)。
     窓の全部の QAction と QShortcut のキーを数え(7 個以上)、Ctrl+D が 0。キーが表に届く事を Ctrl+Z で確かめてから、
     Ctrl+D を押しても絞り込みが変わらない事を見る。トグルは押せば効く。"""
@@ -1721,7 +1731,7 @@ def _mime(urls=(), text=None):
     return m
 
 
-def test_params_drop_reject_says_why(qapp, ini, tmp_path):
+def test_params_drop_reject_says_why(qapp, fusion, ini, tmp_path):
     """D91 / G12(c): 対象外の物(画像・フォルダ・ネットの URL・ただの文字)を落としても黙らず、下の行に理由(何が・開ける種類)。
     束のファイルと混ぜて落とせば、束は足し、対象外の物の理由を言う。どの言語でも訳がある。"""
     png = _raw(tmp_path, "photo.png", b"\x89PNG")
@@ -1757,7 +1767,7 @@ def test_params_drop_reject_says_why(qapp, ini, tmp_path):
     _close_quietly(win)
 
 
-def test_params_deferred_calls_do_not_outlive_the_window(qapp, ini, tmp_path):
+def test_params_deferred_calls_do_not_outlive_the_window(qapp, fusion, ini, tmp_path):
     """直し(既存): 遅らせた呼び出し(列の幅の等分・表の作り直し・段と向きの組み替え・theme の読み直し)が、窓が消えた後に
     走らない。直す前は消えた表に触って RuntimeError か access violation(2 つ続けて窓を作る試験で数回に 1 回落ちた)。
     呼び出しを予約してから窓を消し、次の回で何も起きない事を、予約の種類ごとに数える。予約の書き方は構文木でも数える:
@@ -1846,7 +1856,7 @@ def test_params_search_zero_hits_says_no_match(qapp, fusion, ini, tmp_path, lang
     _close_quietly(win)
 
 
-def test_params_os_reason_goes_in_brackets_at_the_end(qapp, ini, tmp_path):
+def test_params_os_reason_goes_in_brackets_at_the_end(qapp, fusion, ini, tmp_path):
     """D112: 読み手・OS が返す英語の理由は、UI の言語の文の後ろに括弧で付ける(「x を開けません(<理由>)」)。"""
     win = _window(qapp, lang="ja")
     p = win.panel
@@ -1876,7 +1886,7 @@ def test_params_os_reason_goes_in_brackets_at_the_end(qapp, ini, tmp_path):
     _close_quietly(win)
 
 
-def test_params_compact_counts_keep_shown_of_all(qapp, ini, tmp_path):
+def test_params_compact_counts_keep_shown_of_all(qapp, fusion, ini, tmp_path):
     """D112 / G07(a): 狭い窓の短い数え方でも、絞っている時は「見えている行 / 全部の行」が出る(0 件なら 0 / 9)。"""
     win = _window(qapp, _three_files(tmp_path), size=(330, 300))
     p = win.panel
@@ -1948,7 +1958,7 @@ def _same_state(qapp, win, paths):
     assert p.copy_column(1, 0).ok
 
 
-def test_params_language_switch_rebuilds_every_text(qapp, ini, tmp_path):
+def test_params_language_switch_rebuilds_every_text(qapp, fusion, ini, tmp_path):
     """D92 / G15: en で開いた窓を ja・de に切り替えると、窓の文が全部、最初からその言語で作った窓と同じになる(数えた文は
     50 以上)。知らせの行も作り直す。切り替えの前後で中身(列・絞り込み・未保存)は変わらない。"""
     paths = _three_files(tmp_path)
@@ -1978,7 +1988,7 @@ def test_params_language_switch_rebuilds_every_text(qapp, ini, tmp_path):
     _close_quietly(win)
 
 
-def test_params_colours_come_from_theme_roles(qapp, ini, tmp_path, monkeypatch):
+def test_params_colours_come_from_theme_roles(qapp, fusion, ini, tmp_path, monkeypatch):
     """D92 / P14-2: 状態の色(違うセルの地・注意・誤り・断った欄の枠)は studio_theme の役割(warn / err)から。theme が
     import できなければ今の色(琥珀 232,163,61・赤 217,83,79)。apply_theme() で読み直す。"""
     import sys
@@ -2398,7 +2408,7 @@ def _studio_like_tr(lang: str):
 
 
 @pytest.mark.parametrize("lang", ["ja", "hi", "de"])
-def test_params_studio_entry_speaks_the_ui_language(qapp, ini, tmp_path, lang):
+def test_params_studio_entry_speaks_the_ui_language(qapp, fusion, ini, tmp_path, lang):
     """D87 の引き継ぎ(確かめの指摘): Studio は言語コードを ``lang=`` で渡して開く。Studio の tr は束の文を 9 行しか
     知らないので、tr だけを渡した窓はほぼ英語になる(その事も数える)。``lang=`` で開いた窓は、その言語で作った窓と全部の文が
     同じで、英語の窓と違う文が 45 以上。言語の切り替えは set_lang、既にある窓は入口が切り替える。知らない言語でも落ちない。"""
@@ -3098,7 +3108,7 @@ def test_params_search_field_is_wide_enough_at_every_width(qapp, fusion, ini, tm
     _close_quietly(win)
 
 
-def test_params_filter_change_clears_the_old_notice(qapp, ini, tmp_path):
+def test_params_filter_change_clears_the_old_notice(qapp, fusion, ini, tmp_path):
     """D112(確かめの指摘): 絞り込みを変えたら、前の表についての知らせを消す。検索の語を変えた時だけでなく、
     「違う行だけ」を入れた時も切った時も(前の門は検索だけを見ていた)。"""
     win = _window(qapp, _three_files(tmp_path))
@@ -3343,3 +3353,95 @@ def test_params_studio_entry_takes_the_strip_rule_and_overflow(qapp, fusion, ini
     assert plain.panel.strip_widget().objectName() == "panelStrip" and plain.panel.strip_side_shown() == "top"
     _close_quietly(plain)
     other.deleteLater()
+
+
+#: 確認の箱で使わない物: QMessageBox の静的な箱(決まったボタン・既定のボタンを持つ)と標準ボタン(設計書 P09・B0)。
+_MB_STATIC = ("question", "warning", "information", "critical", "about", "aboutQt")
+_MB_STANDARD = ("Ok", "Save", "SaveAll", "Open", "Yes", "YesToAll", "No", "NoToAll", "Abort", "Retry", "Ignore", "Close",
+                "Cancel", "Discard", "Help", "Apply", "Reset", "RestoreDefaults", "StandardButton", "StandardButtons",
+                "setStandardButtons", "standardButton")
+
+
+def _tail(node) -> str | None:
+    """``a.b.C`` / ``C`` の最後の名前(それ以外は None)。"""
+    if isinstance(node, ast.Attribute):
+        return node.attr
+    if isinstance(node, ast.Name):
+        return node.id
+    return None
+
+
+def _nodes_in_functions(tree) -> list:
+    """(節, それを含む一番内側の関数の名前)の並び。モジュールの直下は "<module>"。"""
+    out = []
+
+    def go(node, fn):
+        for ch in ast.iter_child_nodes(node):
+            out.append((ch, fn))
+            go(ch, ch.name if isinstance(ch, (ast.FunctionDef, ast.AsyncFunctionDef)) else fn)
+
+    go(tree, "<module>")
+    return out
+
+
+def test_params_confirm_boxes_are_built_in_one_place():
+    """確かめの指摘(low): G09(a) を構文木で数える。D88 の門は決まった 6 つの入口を動かして本物の箱を数えるので、試験が
+    動かさない道に QMessageBox.question のような箱(既定のボタンが「はい」)を足しても緑のままだった。
+    窓のモジュールで QMessageBox を作るのは _build_confirm_box の 1 か所だけ・静的な箱と標準ボタンと別名は 0。作る関数と
+    見せる関数を呼ぶのは聞く所 _confirm だけで、_confirm を呼ぶのは 4 つの聞く関数(6 つの入口は全部ここを通る)。
+    束のモデルは Qt を持たない。"""
+    with io.open(os.path.join(os.path.dirname(os.path.abspath(Q.__file__)), "studio_params_qt.py"), encoding="utf-8") as fh:
+        nodes = _nodes_in_functions(ast.parse(fh.read()))
+    calls = [(n, fn) for n, fn in nodes if isinstance(n, ast.Call)]
+    assert len(nodes) >= 10000 and len(calls) >= 1000, (len(nodes), len(calls))       # 木を全部歩いた
+    assert [fn for n, fn in calls if _tail(n.func) == "QMessageBox"] == ["_build_confirm_box"]
+    on_box = [(n.attr, fn) for n, fn in nodes if isinstance(n, ast.Attribute) and _tail(n.value) == "QMessageBox"]
+    assert len(on_box) >= 12, on_box                                    # 役割の表・アイコン・NoButton を数えている
+    banned = [(a, fn) for a, fn in on_box if a in _MB_STATIC or a in _MB_STANDARD]
+    banned += [(n.attr, fn) for n, fn in nodes if isinstance(n, ast.Attribute) and n.attr in _MB_STANDARD[-2:]]
+    assert banned == [], banned
+    aliases = [fn for n, fn in nodes if isinstance(n, (ast.Assign, ast.AnnAssign, ast.NamedExpr))
+               and isinstance(n.value, (ast.Name, ast.Attribute)) and _tail(n.value) == "QMessageBox"]
+    assert aliases == [], aliases
+    for name in ("_build_confirm_box", "_exec_confirm_box"):
+        assert [fn for n, fn in calls if _tail(n.func) == name] == ["_confirm"], name
+    asking = sorted(fn for n, fn in calls if _tail(n.func) == "_confirm")
+    assert asking == ["_ask_losses_box", "_ask_overwrite_box", "_ask_unsaved_box", "_ask_unsaved_box"], asking
+    assert len(_BOX_SHAPES) >= 6                                        # D88 の門が本物の箱で動かす入口
+    assert {k for _title, buttons in _BOX_SHAPES.values() for k, _s in buttons} == set(Q._CONFIRM_ROLES)
+    with io.open(os.path.join(os.path.dirname(os.path.abspath(M.__file__)), "studio_params_model.py"), encoding="utf-8") as fh:
+        model = fh.read()
+    assert len(model) > 10000 and "QMessageBox" not in model and "PySide6" not in model
+
+
+def test_params_window_modules_come_from_this_tree():
+    """確かめの指摘(low): 写しで試すと fullseye/__init__ が作業木を sys.path の先頭に入れ、写しの試験が作業木の
+    studio_params_qt を黙って読んだ。この試験のファイルは読み込みの時に、窓の 2 つのモジュールがこの試験と同じ木から
+    読まれた事を確かめて、違えば収集の誤りで止める(上の _WINDOW_TREES)。ここでは止め金そのものが効いている事を数える。"""
+    here = os.path.normcase(os.path.realpath(ROOT))
+    assert _WINDOW_TREES == {here} and len({M.__file__, Q.__file__}) == 2
+    for m in (M, Q):
+        assert os.path.normcase(os.path.dirname(os.path.realpath(m.__file__))) == here, m.__file__
+
+
+#: 依頼文 B6 の門の試験(5 本)。
+_BRIEF_GATES = ("test_params_boxes_default_and_escape_cancel_real_box", "test_params_rejected_cell_keeps_text_and_marks_invalid",
+                "test_params_no_ctrl_d_binding", "test_params_drop_reject_says_why", "test_params_search_zero_hits_says_no_match")
+
+
+def test_params_qt_tests_fix_the_style_to_fusion():
+    """確かめの指摘(low): B0「試験の書き方: Qt の様式は Fusion に固定」。1.2.0 の節(fusion の fixture から後ろ)で qapp を
+    受ける試験は、どれも fusion も受ける。依頼文 B6 の門 5 本は全部その中にある。直す前は D90・D91 の門を含む 10 本に
+    無かった(中身が様式に左右されない試験でも、決まりに揃える)。"""
+    with io.open(os.path.abspath(__file__), encoding="utf-8") as fh:
+        body = ast.parse(fh.read()).body
+    start = [i for i, n in enumerate(body) if isinstance(n, ast.FunctionDef) and n.name == "fusion"]
+    assert len(start) == 1
+    tests = {}
+    for n in body[start[0]:]:
+        if isinstance(n, ast.FunctionDef) and n.name.startswith("test_"):
+            args = [a.arg for a in n.args.args]
+            if "qapp" in args:
+                tests[n.name] = args
+    assert len(tests) >= 35 and set(_BRIEF_GATES) <= set(tests), (len(tests), sorted(set(_BRIEF_GATES) - set(tests)))
+    assert sorted(k for k, v in tests.items() if "fusion" not in v) == []
