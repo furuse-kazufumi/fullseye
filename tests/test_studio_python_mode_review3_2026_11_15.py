@@ -649,3 +649,140 @@ def test_s2_confirming_once_is_remembered_and_typed_text_is_never_asked_about(tm
         assert len(asked) == 1 and res.ok and mark.exists()              # 確認済みの文面: 聞き直さない
     finally:
         _close(win)
+
+
+# --------------------------------------------------------------------------- #
+# S3: 「外で変わったか」は生のバイトで決める(読めない・解けない・大きすぎる = 変わった)  #
+# --------------------------------------------------------------------------- #
+class _Asker:
+    """やり直しの効かない操作の確認の窓の差し替え: 聞かれた文を覚え、``answer`` を返す。"""
+
+    def __init__(self, monkeypatch, answer=False):
+        self.calls = []
+        self.answer = answer
+        monkeypatch.setattr(studio, "CONFIRM_ACTION_HOOK", self)
+
+    def __call__(self, parent, title, text, action):
+        self.calls.append((title, text, action))
+        return self.answer
+
+
+def _type_at_end(win, text):
+    from PySide6 import QtGui
+    ed = win._program["edit"]
+    c = ed.textCursor()
+    c.movePosition(QtGui.QTextCursor.End)
+    c.insertText(text)
+    ed.setTextCursor(c)
+    _pump(0.05)
+
+
+_S3_OUTSIDE = {
+    "utf-8": "print('changed outside, utf-8 日本語')\n".encode("utf-8"),
+    "cp932": "print('外で書き換えた (cp932)')\n".encode("cp932"),
+    "latin-1": "print('geändert')\n".encode("latin-1"),
+    "larger than 4 MB": ("#" + "あ" * 1_500_000 + "\nprint(1)\n").encode("utf-8"),
+    "utf-16": "print('utf-16')\n".encode("utf-16"),
+}
+
+
+@pytest.mark.parametrize("kind", sorted(_S3_OUTSIDE))
+def test_s3_a_file_changed_outside_is_never_overwritten_without_asking(kind, tmp_path, monkeypatch):
+    """探針 r05 b / c / d: 外で cp932 で書き換えられた・4 MB を越えたファイルは「読めない = 変わっていない」になり、
+    自動保存が聞かずに上書きし、保存(Ctrl+S)も聞かなかった。書き換えた中身は戻せない。"""
+    ask = _Asker(monkeypatch, answer=False)
+    monkeypatch.setattr(pm_mod, "SAVE_HOOK", lambda *_a: "discard")
+    win, _model = _launch(tmp_path, monkeypatch)
+    try:
+        pm = win._pymode
+        p = tmp_path / "a.py"
+        p.write_bytes(b"print('original')\n")
+        assert pm.open_program(str(p)) is True
+        pm.set_autosave_file("idle", 0.5)
+        _type_at_end(win, "# typed in Studio\n")
+        outside = _S3_OUTSIDE[kind]
+        p.write_bytes(outside)                                            # Studio の外の書き換え
+        assert pm.disk_changed() is True
+        assert pm.autosave_file("idle") is False and p.read_bytes() == outside
+        assert "not autosaved" in pm.autosave_note.text()
+        _pump(1.0)                                                        # 待っていた自動保存の時計が鳴っても同じ
+        assert p.read_bytes() == outside
+        assert pm.save() is False                                         # 保存は聞く。キャンセルなら書かない
+        assert len(ask.calls) == 1 and "changed on disk" in ask.calls[0][1] and p.read_bytes() == outside
+        ask.answer = True
+        assert pm.save() is True and len(ask.calls) == 2                  # 「上書きする」と答えた時だけ書く
+        assert p.read_bytes() == b"print('original')\n# typed in Studio\n"
+        assert pm.disk_changed() is False and pm.save() is True and len(ask.calls) == 2
+    finally:
+        _close(win)
+
+
+def test_s3_the_same_bytes_are_not_a_change_and_an_unreadable_file_is(tmp_path, monkeypatch):
+    """同じ中身を書き直しただけなら「変わっていない」(自動保存は続く)。読めない時は「変わった」(上書きしない側)。
+    外で消されたファイルは、保存で作り直す(上書きする相手が無い)。CRLF のファイルも、開いた時のバイトで比べる。"""
+    ask = _Asker(monkeypatch, answer=False)
+    monkeypatch.setattr(pm_mod, "SAVE_HOOK", lambda *_a: "discard")
+    win, _model = _launch(tmp_path, monkeypatch)
+    try:
+        pm = win._pymode
+        p = tmp_path / "b.py"
+        original = b"print('original')\r\nx = 1\r\n"
+        p.write_bytes(original)
+        assert pm.open_program(str(p)) is True
+        pm.set_autosave_file("idle", 0.5)
+        assert pm.disk_changed() is False
+        p.write_bytes(original)                                           # 同じ中身の書き直し
+        assert pm.disk_changed() is False
+        _type_at_end(win, "# mine\n")
+        assert pm.autosave_file("idle") is True and b"# mine" in p.read_bytes()
+        assert pm.disk_changed() is False                                 # 自分で書いた中身
+        _type_at_end(win, "# more\n")
+        real = getattr(pm_mod, "_file_stamp", None)
+        monkeypatch.setattr(pm_mod, "_file_stamp", lambda path: None, raising=False)   # 読めない(権限・壊れた媒体)
+        assert pm.disk_changed() is True
+        assert pm.autosave_file("idle") is False and b"# more" not in p.read_bytes()
+        assert pm.save() is False and len(ask.calls) == 1 and b"# more" not in p.read_bytes()
+        monkeypatch.setattr(pm_mod, "_file_stamp", real, raising=False)
+        assert pm.disk_changed() is False
+        os.remove(str(p))                                                 # 外で消された
+        assert pm.disk_changed() is False and pm.save() is True and len(ask.calls) == 1
+        assert b"# more" in p.read_bytes()
+    finally:
+        _close(win)
+
+
+def test_s3_the_python_editor_window_asks_before_saving_over_bytes_it_cannot_read(tmp_path, monkeypatch):
+    """従来の Python エディタの保存も同じ形だった: 外で cp932 に書き換えられると、聞かずに上書きした。"""
+    from PySide6 import QtWidgets
+    script = tmp_path / "legacy.py"
+    script.write_bytes(b"print(1)\n")
+    win, _model = _launch(tmp_path, monkeypatch, start_mode="auto")
+    try:
+        ask = _Asker(monkeypatch, answer=False)
+        win.drop_handler([str(script)])
+        _pump(0.3)
+        pe = win._pyedit
+        ed = pe["editor"]()
+        saves = [b for b in pe["dlg"].findChildren(QtWidgets.QAbstractButton) if b.text().replace("&", "") == "Save"]
+        assert len(saves) == 1
+        ed.setPlainText("print(2)\n")
+        saves[0].click()
+        assert ask.calls == [] and script.read_text(encoding="utf-8") == "print(2)\n"     # 変わっていなければ聞かない
+        ed.setPlainText("print(3)\n")
+        for outside in (_S3_OUTSIDE["cp932"], _S3_OUTSIDE["utf-8"]):
+            n0 = len(ask.calls)
+            script.write_bytes(outside)
+            ask.answer = False
+            saves[0].click()
+            assert len(ask.calls) == n0 + 1 and script.read_bytes() == outside
+            ask.answer = True
+            saves[0].click()
+            assert len(ask.calls) == n0 + 2 and script.read_text(encoding="utf-8") == "print(3)\n"
+            saves[0].click()
+            assert len(ask.calls) == n0 + 2                               # 自分で保存した後は聞かない
+    finally:
+        try:
+            win._pyedit["dlg"].close()
+        except Exception:                                                 # noqa: BLE001
+            pass
+        _close(win)

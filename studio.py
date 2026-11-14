@@ -12254,6 +12254,7 @@ def build_window(model=None, start_mode="pipeline"):
             ed._hl = Highlighter(ed.document())
             ed._path = path; ed._hint = hint; ed._dirty = False
             ed._disk_text = text if path else None    # 開いた時のディスクの中身
+            ed._disk_stamp = None                     # 開いた時のディスクの生のバイトの印(open_path が入れる)
             ed.setPlainText(text)
             ed.textChanged.connect(lambda ed=ed: _mark_dirty(ed))
             tabs_ed.setCurrentIndex(tabs_ed.addTab(ed, _tab_title(ed)))
@@ -12302,6 +12303,7 @@ def build_window(model=None, start_mode="pipeline"):
                 report_error("save", e); return False
             ed._path = path; ed._dirty = False; _sync_tab(ed)
             ed._disk_text = ed.toPlainText()          # 今ディスクに在る中身(外で変わったかの基準)
+            ed._disk_stamp = studio_pymode._file_stamp(path)   # 書いた直後のバイトの印(大きさ, SHA-256)
             flash("saved " + os.path.basename(path))
             return True
 
@@ -12320,12 +12322,15 @@ def build_window(model=None, start_mode="pipeline"):
             if ed is None:
                 return
             if ed._path:
-                try:
-                    with open(ed._path, "r", encoding="utf-8") as f:
-                        on_disk = f.read()
-                except (OSError, UnicodeDecodeError):
-                    on_disk = None
-                if on_disk is not None and on_disk != getattr(ed, "_disk_text", on_disk) and not confirm_action(
+                # ★2026-11-13(第 3 回レビュー S3): 外で変わったかは**生のバイト**の印で決める。前は UTF-8 の文字として
+                #   読み、読めない(cp932 など)と「変わっていない」として聞かずに上書きした。読めない・印が無い時は
+                #   「変わった」(聞く側)。外で消されたファイルは作り直すだけなので聞かない
+                changed = False
+                if os.path.isfile(ed._path):
+                    now = studio_pymode._file_stamp(ed._path)
+                    known = getattr(ed, "_disk_stamp", None)
+                    changed = now is None or known is None or now != known
+                if changed and not confirm_action(
                         dlg, tr("Save Python file"),
                         tr("%s was changed on disk by another program after it was opened here. Saving replaces "
                            "that version with the text of this tab; it cannot be brought back.")
@@ -12337,11 +12342,13 @@ def build_window(model=None, start_mode="pipeline"):
 
         def open_path(path):
             try:
-                with open(path, "r", encoding="utf-8") as f:
-                    text = f.read()
+                with open(path, "rb") as f:
+                    raw = f.read()
+                text = raw.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n")   # 今までの読み方(改行を揃える)
             except Exception as e:
                 report_error("open", e); return
             ed = open_tab(text, os.path.basename(path), path=path)
+            ed._disk_stamp = studio_pymode._bytes_stamp(raw)   # 文面と同じ 1 回の読みから作る
             # ★2026-11-13(レビュー M5): ファイルから開いた Python は、初回の実行の前に確認する(run_code)。
             #   Python のモードの「ファイルから開いた Python」と同じ約束を、ドラッグ&ドロップと「開く」にも効かせる
             ed._from_file = True

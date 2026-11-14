@@ -295,6 +295,31 @@ def atomic_write_text(path: str, text: str) -> None:
         raise
 
 
+def _bytes_stamp(data: bytes) -> tuple:
+    """バイト列の印 ``(大きさ, SHA-256)``。ファイルに書いた・ファイルから読んだ、そのバイト列から作る。"""
+    import hashlib
+    return len(data), hashlib.sha256(data).hexdigest()
+
+
+def _file_stamp(path) -> tuple | None:
+    """ファイルの今の中身の印 ``(大きさ, 生のバイトの SHA-256)``。**読めなければ None**(呼び出し側は「変わった」
+    として扱う)。文字にしない(UTF-8 で解けない中身も、4 MB を越える中身も、そのまま比べられる)。"""
+    import hashlib
+    h = hashlib.sha256()
+    n = 0
+    try:
+        with open(path, "rb") as fh:
+            while True:
+                chunk = fh.read(1 << 20)
+                if not chunk:
+                    break
+                h.update(chunk)
+                n += len(chunk)
+    except (OSError, TypeError, ValueError):
+        return None
+    return n, h.hexdigest()
+
+
 def _default_trust(parent, title, text):                     # pragma: no cover - GUI
     box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, title, text, QtWidgets.QMessageBox.NoButton, parent)
     run = box.addButton(_TR["fn"]("Run it"), QtWidgets.QMessageBox.AcceptRole)
@@ -421,6 +446,9 @@ class PyModeController(QtCore.QObject):
         self._frame_local_names: set = set()
         self._autosaved_digest: str | None = None
         self.session_trusted = True
+        #: 開いた(か最後に保存した)時の、ファイルの生のバイトの印 ``(大きさ, SHA-256)``。「Studio の外で書き換え
+        #: られたか」はこれと今のディスクの印を比べて決める(:meth:`disk_changed`。2026-11-13 第 3 回レビュー S3)。
+        self._disk_stamp: tuple | None = None
         #: ファイル・プロジェクトから来て、まだ確認していない文面 ``{中身の SHA-256: (由来, どこから来たか)}``。
         #: 信頼は**文面に結び付く**(2026-11-13 第 3 回レビュー S2): 「Python に変換」「Python のモードへ移す」は
         #: Python の文面を置き換えて「手で打った物」にするが、Ctrl+Z で前の文面(確認していないファイル)が戻る。
@@ -456,7 +484,7 @@ class PyModeController(QtCore.QObject):
         self._file_save_timer = QtCore.QTimer(self)           # ファイルへの自動保存(打つのを止めてから)
         self._file_save_timer.setSingleShot(True)
         self._file_save_timer.timeout.connect(lambda: self.autosave_file("idle"))
-        self._conflict_told: str | None = None                # 「外で変わったので自動保存しない」と言った時のディスクの中身
+        self._conflict_told = None                            # 「外で変わったので自動保存しない」と言った時のディスクの印
         self._autosave_actions: dict = {}
         self.assist = None
         with self._quiet_text():
@@ -1843,11 +1871,12 @@ class PyModeController(QtCore.QObject):
             root = self.ctx.get("project_root", lambda: None)()
             inside = root and os.path.normcase(os.path.abspath(path)).startswith(os.path.normcase(os.path.abspath(root)) + os.sep)
             origin = "project" if inside else "file"
-        self._load_text(text.replace("\r\n", "\n"), os.path.abspath(path), origin)
+        self._load_text(text.replace("\r\n", "\n"), os.path.abspath(path), origin, stamp=_bytes_stamp(raw))
         self.flash(self.tr("opened %s (not run: F5 runs it after you confirm it once)") % os.path.basename(path))
         return True
 
-    def _load_text(self, text, path, origin):
+    def _load_text(self, text, path, origin, stamp=None):
+        """文面を Program 欄に入れる。*stamp* = *path* から読んだ生のバイトの印(:func:`_bytes_stamp`)。"""
         if not self.active:
             self.set_mode(MODE_PYTHON, announce=False)
         self._end_session()
@@ -1858,6 +1887,7 @@ class PyModeController(QtCore.QObject):
             self._suspend_text = False
         self.py_text = text
         self.file = path
+        self._disk_stamp = stamp if path else None
         self._file_save_timer.stop()
         self._conflict_told = None
         self.autosave_note.setText("")
@@ -1912,6 +1942,7 @@ class PyModeController(QtCore.QObject):
             return False
         self.file = os.path.abspath(path)
         self.saved_digest = sp.program_digest(text)
+        self._disk_stamp = _bytes_stamp(text.encode("utf-8"))   # 今ディスクに在るのは、自分で書いたこのバイト列
         if self.session_trusted:
             self.trust.trust(text)                            # 自分で保存した中身は、次に開いても確認しない
         self._set("file", self.file)
@@ -2100,13 +2131,15 @@ class PyModeController(QtCore.QObject):
         text = None
         if path and os.path.isfile(path):
             try:
-                with open(path, encoding="utf-8-sig") as fh:
-                    disk = fh.read().replace("\r\n", "\n")
+                with open(path, "rb") as fh:
+                    raw = fh.read()
+                disk = raw.decode("utf-8-sig").replace("\r\n", "\n").replace("\r", "\n")
             except (OSError, UnicodeDecodeError):
                 disk = None
             if disk is not None:
                 self.file = os.path.abspath(path)
                 self.saved_digest = sp.program_digest(disk)
+                self._disk_stamp = _bytes_stamp(raw)          # 文面と同じ 1 回の読みから作る
                 text = buf if isinstance(buf, str) and buf else disk
                 if sp.program_digest(disk) != str(self._get("file_digest", "")):
                     trusted = False                           # ファイルが外で変わった: 確認し直す
@@ -2194,21 +2227,28 @@ class PyModeController(QtCore.QObject):
         for m, a in self._autosave_actions.items():
             a.setChecked(m == mode)
 
-    def _disk_digest(self) -> str | None:
-        """ファイルの今の中身の SHA-256(読めなければ None = 無い・壊れている)。"""
+    def _disk_now(self) -> tuple | None:
+        """ディスクのファイルの今の印 ``(大きさ, SHA-256)``。読めなければ None。大きさが覚えている物と違えば、
+        中身は読まない(巨大なファイルに書き換えられていても待たせない)。"""
         try:
-            with open(self.file, "rb") as fh:
-                raw = fh.read(4 * 1024 * 1024 + 1)
-            return sp.program_digest(raw.decode("utf-8-sig").replace("\r\n", "\n"))
-        except (OSError, UnicodeDecodeError, TypeError):
+            size = os.path.getsize(self.file)
+        except (OSError, TypeError):
             return None
+        known = self._disk_stamp
+        if known is not None and size != known[0]:
+            return size, ""
+        return _file_stamp(self.file)
 
     def disk_changed(self) -> bool:
-        """開いた(か最後に保存した)後で、ファイルが Studio の外で書き換えられたか。"""
+        """開いた(か最後に保存した)後で、ファイルが Studio の外で書き換えられたか。**生のバイト**の大きさと
+        SHA-256 で比べる(文字にしない)。読めない時・比べる元の印が無い時は「変わった」(上書きしない側。
+        2026-11-13 第 3 回レビュー S3: 前は UTF-8 で解けない中身 = cp932 など・4 MB を越えた中身を
+        「変わっていない」として、自動保存が聞かずに上書きした)。外で消されたファイルは「変わっていない」
+        (保存は作り直すだけで、上書きする相手が無い)。"""
         if not self.file or not os.path.isfile(self.file):
             return False
-        d = self._disk_digest()
-        return d is not None and d != self.saved_digest
+        now = self._disk_now()
+        return now is None or self._disk_stamp is None or now != self._disk_stamp
 
     def autosave_file(self, why: str = "idle") -> bool:
         """設定が入っていれば、Python のファイルへ今の文面を保存する(窓は出さない。状態の欄に小さく出す)。
@@ -2224,7 +2264,7 @@ class PyModeController(QtCore.QObject):
         if digest == self.saved_digest:
             return False
         if self.disk_changed():
-            disk = self._disk_digest()
+            disk = self._disk_now() or "unreadable"
             if self._conflict_told != disk:
                 self._conflict_told = disk
                 msg = self.tr("Not autosaved: %s was changed on disk by another program — Save (Ctrl+Alt+S) asks "
@@ -2240,6 +2280,7 @@ class PyModeController(QtCore.QObject):
             self.autosave_note.setToolTip(self.tr("Could not autosave %s: %s") % (os.path.basename(self.file), e))
             return False
         self.saved_digest = digest
+        self._disk_stamp = _bytes_stamp(text.encode("utf-8"))
         self._conflict_told = None
         self.autosave_note.setText(self.tr("autosaved %s") % time.strftime("%H:%M:%S"))
         self.autosave_note.setToolTip(self.tr("Saved to %s automatically (%s)") % (
