@@ -2470,3 +2470,274 @@ def test_params_refusal_reason_is_readable_in_a_narrow_window(qapp, fusion, ini,
     _pump(qapp)
     assert not p.message_wrap.isHidden() and p.message_shown() == p.message_label.full_text() and p.status.height() > row
     _close_quietly(win)
+
+
+def _whole(w) -> bool:
+    """部品が親に切られずに全部見えているか。"""
+    if not w.isVisible():
+        return False
+    r = w.visibleRegion().boundingRect()
+    return (r.width(), r.height()) == (w.width(), w.height())
+
+
+def _button_rects(win) -> list:
+    return [_rect_in(win.panel.buttons[k], win) for k in BUTTONS]
+
+
+@pytest.mark.parametrize("size", [(1024, 240), (1024, 160), (1280, 280), (320, 160)])
+def test_params_left_strip_never_squeezes_or_cuts_its_buttons(qapp, fusion, ini, tmp_path, size):
+    """確かめの指摘(medium): 道具の列を左に縦にした窓を低くしても(横長・低い形 = 左に縦の規則が当たる形そのもの)、
+    10 個のボタンが詰まらず・重ならず・切れない。直す前は 1024x240 で 6 個が前のボタンと重なり最後が切れ、1024x160 で 9 個が
+    重なった。既定の列の部品は送りも折り返しも持たないので、縦に収まらない高さでは上の横 1 行へ戻る(頼まれた向きは left の
+    まま覚えていて、高さが戻れば左の縦 1 列へ戻る)。"""
+    win = _window(qapp, _three_files(tmp_path), size=(1024, 700))
+    p = win.panel
+    p.set_strip_side("left")
+    _pump(qapp)
+    assert len({r.x() for r in _button_rects(win)}) == 1                 # 高い窓では左に縦 1 列
+    win.resize(*size)
+    _pump(qapp)
+    _pump(qapp)
+    assert (win.width(), win.height()) == size
+    rects = _button_rects(win)
+    status = _rect_in(p.status, win)
+    checked = 0
+    for k, r in zip(BUTTONS, rects):
+        assert _whole(p.buttons[k]) and win.rect().contains(r) and (r.width(), r.height()) == (24, 24), (size, k, r)
+        assert not r.intersects(status), (size, k)
+        checked += 1
+    assert checked == 10
+    assert [(i, j) for i in range(10) for j in range(i + 1, 10) if rects[i].intersects(rects[j])] == [], size
+    assert p.strip_side() == "left" and p.strip_side_shown() == "top"
+    assert len({r.y() for r in rects}) == 1                              # 上の横 1 行(間は決まりどおり)
+    assert [rects[i + 1].left() - rects[i].right() - 1 for i in range(9)] == [4, 4, 8, 4, 4, 8, 4, 4, 8]
+    assert _whole(p.search) and win.rect().contains(_rect_in(p.search, win))
+    win.resize(1024, 700)                                                # 高さが戻れば左へ戻る
+    _pump(qapp)
+    _pump(qapp)
+    rects = _button_rects(win)
+    assert p.strip_side_shown() == "left" and len({r.x() for r in rects}) == 1 and len({r.y() for r in rects}) == 10
+    _close_quietly(win)
+
+
+def test_params_strip_draws_a_line_between_groups(qapp, fusion, ini, tmp_path):
+    """設計書 P04-2: 群の間(8 px)に細い線が 1 本、隣り合うボタンの間(4 px)には何も無い。横の 1 行でも縦の 1 列でも。
+    線は描かれた画素で数える(間の帯の中の、地と違う画素の外接: 幅 1 px・長さ 12 px 以上)。"""
+    win = _window(qapp, _three_files(tmp_path), size=(720, 420))
+    p = win.panel
+    lines = plain = 0
+    for side in ("top", "left"):
+        p.set_strip_side(side)
+        _pump(qapp)
+        img = win.grab().toImage()
+        rects = _button_rects(win)
+        for i in range(9):
+            a, b = rects[i], rects[i + 1]
+            if side == "top":
+                between = QtCore.QRect(a.right() + 1, a.top(), b.left() - a.right() - 1, a.height())
+            else:
+                between = QtCore.QRect(a.left(), a.bottom() + 1, a.width(), b.top() - a.bottom() - 1)
+            w, h, _ink_colour, _ground = _ink(img, between, 0)
+            if i in (2, 5, 8):                                           # 群の境
+                assert min(w, h) == 1 and max(w, h) >= 12, (side, i, w, h)
+                lines += 1
+            else:
+                assert (w, h) == (0, 0), (side, i, w, h)
+                plain += 1
+    assert (lines, plain) == (6, 12)
+    _close_quietly(win)
+
+
+class _FlowLike(QtWidgets.QWidget):
+    """見た目の枝の studio_panels.FlowStrip と同じ口の代役(この木に studio_panels が無くても門が回るように)。
+    ボタンの群を受け取り(set_groups)、向きは "h" / "v" の文字(それ以外は本物と同じく黙って "h")、objectName は "flow_strip"。
+    収まらなければ両端に送りのボタン(b_back / b_on)が出て、1 回押すと 1 個送る。端では無効。"""
+
+    def __init__(self):
+        super().__init__()
+        self.setObjectName("flow_strip")
+        self.orientation = "h"
+        self.groups: list = []
+        self.first = self.last_first = 0
+        self.b_back, self.b_on = QtWidgets.QToolButton(self), QtWidgets.QToolButton(self)
+        self.b_back.clicked.connect(lambda: self.scroll_by(-1))
+        self.b_on.clicked.connect(lambda: self.scroll_by(1))
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+
+    def set_groups(self, groups):
+        self.groups = [list(g) for g in groups if g]
+        for w in self.items():
+            w.setParent(self)
+            w.show()
+        self.first = 0
+        self.updateGeometry()
+        self.relayout()
+
+    def items(self):
+        return [w for g in self.groups for w in g]
+
+    def set_orientation(self, orientation):
+        self.orientation = "v" if orientation == "v" else "h"
+        pol = QtWidgets.QSizePolicy
+        if self.orientation == "h":
+            self.setSizePolicy(pol.Preferred, pol.Fixed)
+        else:
+            self.setSizePolicy(pol.Fixed, pol.Preferred)
+        self.first = 0
+        self.updateGeometry()
+        self.relayout()
+
+    def _need(self) -> int:
+        n = len(self.items())
+        return n * 24 + max(0, n - 1) * 4
+
+    def sizeHint(self):
+        return QtCore.QSize(self._need(), 24) if self.orientation == "h" else QtCore.QSize(24, self._need())
+
+    def minimumSizeHint(self):
+        return QtCore.QSize(48, 24) if self.orientation == "h" else QtCore.QSize(24, 48)
+
+    def scroll_by(self, step):
+        self.first = max(0, min(self.first + step, self.last_first))
+        self.relayout()
+
+    def relayout(self):
+        h = self.orientation == "h"
+        items = self.items()
+        length = self.width() if h else self.height()
+        fits = self._need() <= length
+        arrow = 0 if fits else 12
+        per = max(1, (length - 2 * arrow + 4) // 28)
+        self.last_first = 0 if fits else max(0, len(items) - per)
+        self.first = min(self.first, self.last_first)
+        pos = arrow
+        for i, w in enumerate(items):
+            if fits or self.first <= i < self.first + per:
+                w.setGeometry(pos, 0, 24, 24) if h else w.setGeometry(0, pos, 24, 24)
+                pos += 28
+            else:
+                w.move(-30000, -30000)
+        for b, at in ((self.b_back, 0), (self.b_on, length - 12)):
+            b.setVisible(not fits)
+            b.setGeometry(at, 0, 12, 24) if h else b.setGeometry(0, at, 24, 12)
+        self.b_back.setEnabled(self.first > 0)
+        self.b_on.setEnabled(self.first < self.last_first)
+
+    def resizeEvent(self, ev):
+        super().resizeEvent(ev)
+        self.relayout()
+
+
+@pytest.fixture(params=["stand-in", "studio_panels"])
+def flow_strip(request):
+    """FlowStrip の形の部品。stand-in = 上の代役(どの木でも回る)、studio_panels = 見た目の枝の本物(入っている木だけ)。"""
+    if request.param == "stand-in":
+        return _FlowLike()
+    sp = pytest.importorskip("studio_panels", reason="the look branch (studio_panels) is not in this tree")
+    return sp.flow_classes()["FlowStrip"]("tools", "params")
+
+
+def _reach_by_arrows(qapp, p, strip) -> tuple[set, int]:
+    """送りのボタンを**押して**届いたボタンの鍵の集まりと、押した回数(先頭まで戻してから、端で無効になるまで進む)。"""
+    for _ in range(40):
+        if not (strip.b_back.isVisible() and strip.b_back.isEnabled()):
+            break
+        strip.b_back.click()
+        _pump(qapp)
+    seen, presses = set(), 0
+    for _ in range(40):
+        seen |= {k for k in BUTTONS if _whole(p.buttons[k])}
+        if not (strip.b_on.isVisible() and strip.b_on.isEnabled()):
+            break
+        strip.b_on.click()
+        presses += 1
+        _pump(qapp)
+    return seen, presses
+
+
+def test_params_strip_takes_the_flow_strip_of_the_look_branch(qapp, fusion, ini, tmp_path, flow_strip):
+    """確かめの指摘(medium / low): 差し替えの口 set_strip_widget は、見た目の枝の本物の部品 FlowStrip の形(set_groups・
+    向きは "h" / "v"・objectName "flow_strip")をそのまま受ける。直す前は TypeError(set_actions が無い)で、試験の代役でしか
+    確かめていなかった。差し込んだ列は、高い窓では左に縦 1 列で全部見え、低い窓(1024x240・1024x160)では左のまま送りのボタンが
+    出て、**押して** 10 個全部に届き、端で無効になり、広げると消える。同じ QAction 10 個が 3・3・3・1 の群で入り、有効・押した
+    状態が通る。名前は付け替えない。"""
+    win = _window(qapp, _three_files(tmp_path), size=(1024, 700))
+    p = win.panel
+    old = p.strip_widget()
+    fs = flow_strip
+    p.set_strip_widget(fs)
+    _pump(qapp)
+    assert p.strip_widget() is fs and p.isAncestorOf(fs) and fs.objectName() == "flow_strip"
+    assert old.parent() is None and not old.isVisible() and _strips(p) == []
+    acts = [a for a in p.strip_actions() if a is not None]
+    inside = [b for g in fs.groups for b in g]
+    assert [len(g) for g in fs.groups] == [3, 3, 3, 1] and [b.defaultAction() for b in inside] == acts
+    assert [p.buttons[k] for k in BUTTONS] == inside and all(b.parent() is fs for b in inside)
+    steps = 0
+    for side, size, orient, scrolls in (("left", (1024, 700), "v", False), ("left", (1024, 240), "v", True),
+                                        ("left", (1024, 160), "v", True), ("left", (1024, 700), "v", False),
+                                        ("top", (1024, 700), "h", False)):
+        p.set_strip_side(side)
+        win.resize(*size)
+        _pump(qapp)
+        _pump(qapp)
+        assert fs.orientation == orient and p.strip_side_shown() == side, (side, size)   # 送る部品は低い窓でも左のまま
+        assert (fs.b_back.isVisible(), fs.b_on.isVisible()) == (scrolls, scrolls), (side, size)
+        assert win.rect().contains(_rect_in(fs, win)) and not _rect_in(fs, win).intersects(_rect_in(p.status, win))
+        seen, presses = _reach_by_arrows(qapp, p, fs)
+        assert seen == set(BUTTONS), (side, size, sorted(set(BUTTONS) - seen))
+        if scrolls:
+            assert presses >= 3 and not fs.b_on.isEnabled() and fs.b_back.isEnabled()    # 端まで送った
+            assert len([k for k in BUTTONS if _whole(p.buttons[k])]) < 10                # 一度には見えていない
+        else:
+            assert presses == 0
+        steps += 1
+    assert steps == 5
+    assert not p.buttons["redo"].isEnabled() and not p.buttons["diff"].isChecked()
+    assert p.edit_cell(0, "camera.fx", "900").ok
+    p.undo()
+    assert p.buttons["redo"].isEnabled()
+    p.buttons["diff"].click()
+    assert p.tmodel.diff_only and p.buttons["diff"].isChecked()
+    with pytest.raises(TypeError):
+        p.set_strip_widget(QtWidgets.QLabel("no"))
+    assert p.strip_widget() is fs
+    _close_quietly(win)
+
+
+def test_params_strip_follows_the_side_rule(qapp, fusion, ini, tmp_path):
+    """確かめの指摘(medium): 「横長なら道具の列を左へ縦に」の規則(全部のパネルで 1 つ = studio_panels.strip_side)を
+    set_strip_rule で受け取り、パネルの大きさが変わるたびに聞いて向きを変える。規則は幅 / 高さ 2.2 以上で左・1.6 以下で上・
+    間は今のまま(同じ式を写した)。既定の部品が縦に収まらない高さでは、頼まれた向きは left のまま、置くのは上。"""
+    asked = []
+
+    def rule(w, h, now):
+        asked.append((w, h, now))
+        ratio = w / h
+        return "left" if ratio >= 2.2 else ("top" if ratio <= 1.6 else now)
+
+    win = _window(qapp, _three_files(tmp_path), size=(720, 420))
+    p = win.panel
+    p.set_strip_rule(rule)
+    assert (p.strip_side(), p.strip_side_shown()) == ("top", "top") and asked == [(720, 420, "top")]   # 1.71 = 間
+    turns = 0
+    for size, want, shown in (((1280, 500), "left", "left"), ((1024, 560), "left", "left"), ((600, 600), "top", "top"),
+                              ((1024, 560), "top", "top"), ((1280, 280), "left", "top"), ((1280, 500), "left", "left")):
+        win.resize(*size)
+        _pump(qapp)
+        _pump(qapp)
+        assert (p.strip_side(), p.strip_side_shown()) == (want, shown), size
+        rects = _button_rects(win)
+        assert (len({r.x() for r in rects}) == 1) == (shown == "left") and all(_whole(p.buttons[k]) for k in BUTTONS), size
+        turns += 1
+    assert turns == 6 and len(asked) >= 7 and {now for _w, _h, now in asked} == {"top", "left"}
+    p.set_strip_rule(lambda w, h, now: "bottom")                         # 知らない答えは聞かなかった事にする
+    win.resize(600, 600)
+    _pump(qapp)
+    assert p.strip_side() == "left"
+    p.set_strip_rule(None)                                               # 外す: 向きは今のまま、大きさを変えても変わらない
+    n = len(asked)
+    win.resize(700, 600)
+    _pump(qapp)
+    assert p.strip_side() == "left" and len(asked) == n
+    _close_quietly(win)

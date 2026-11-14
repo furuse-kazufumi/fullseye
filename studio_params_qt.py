@@ -275,12 +275,13 @@ def _answer_key(got: Any, buttons: Sequence[tuple[str, str]]) -> str:
 class _StripButton(QtWidgets.QToolButton):
     """列の 1 つのボタン(QAction を押す)。読み上げの名前は QAction の名前に追従する。"""
 
-    def __init__(self, action: QtGui.QAction, parent: QtWidgets.QWidget) -> None:
+    def __init__(self, action: QtGui.QAction, parent: QtWidgets.QWidget, px: int = BUTTON_PX,
+                 icon_px: int = _ICON_PX) -> None:
         super().__init__(parent)
         self.setDefaultAction(action)
         self.setToolButtonStyle(Qt.ToolButtonIconOnly)
-        self.setIconSize(QtCore.QSize(_ICON_PX, _ICON_PX))
-        self.setFixedSize(BUTTON_PX, BUTTON_PX)
+        self.setIconSize(QtCore.QSize(icon_px, icon_px))
+        self.setFixedSize(px, px)
         self.setAutoRaise(True)
         # theme の QSS は QToolButton に左右 8 px の余白を置き、絵だけのボタンはこの宣言で余白を詰める(無いと絵が 4〜6 px に潰れる)。
         self.setProperty("iconOnly", True)
@@ -297,42 +298,67 @@ class _StripButton(QtWidgets.QToolButton):
 
 
 class _ToolStrip(QtWidgets.QWidget):
-    """道具の列の既定の部品: QAction の並びを、アイコンだけのボタンの横の 1 行か縦の 1 列にする。
+    """道具の列の既定の部品: QAction の並びを、アイコンだけのボタンの横の 1 行か縦の 1 列にする。群の間には細い線。
 
-    外の部品(収まらない時に送る ScrollStrip・折り返す列など)へ差し替える時の約束(:meth:`ParamsPanel.set_strip_widget`):
+    外の部品へ差し替える時の約束(:meth:`ParamsPanel.set_strip_widget`)は 2 つの形のどちらか:
 
-    * ``set_actions(items)`` — ``items`` = ``QAction`` か ``None``(群の区切り)の並び。同じ QAction を使う(複製しない。
-      有効・押した状態・ツールヒント・キーは QAction が正本)。
-    * ``set_orientation(o)`` — ``Qt.Horizontal`` = 横の 1 行、``Qt.Vertical`` = 縦の 1 列。
-    * ``button_for(action)``(任意)— その QAction を押すボタン(試験と ``ParamsPanel.buttons`` の元)。
+    * この部品と同じ形 — ``set_actions(items)``(``items`` = ``QAction`` か ``None``(群の区切り)の並び。同じ QAction を
+      使う。有効・押した状態・ツールヒント・キーは QAction が正本)、``set_orientation(o)``(``Qt.Horizontal`` = 横の 1 行、
+      ``Qt.Vertical`` = 縦の 1 列)、任意で ``button_for(action)``(その QAction を押すボタン)。
+    * 見た目の枝の ``studio_panels`` の ``FlowStrip`` の形 — ``set_groups(ボタンの群)`` と ``set_orientation("h" | "v")``。
+      パネルが QAction からボタンを作って群で渡す(:class:`_FlowPort`)。
 
-    この既定の部品は収まらない時の扱いを持たない(全部のボタンが見える長さを最小の大きさにする = 隠さない)。"""
+    この既定の部品は「送る」「折り返す」を持たない(全部のボタンが見える長さが要る)。縦に置く高さが足りない時は、
+    パネルが上の横 1 行へ戻す(:meth:`ParamsPanel.strip_side_shown`)。"""
 
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent)
         self._lay = QtWidgets.QBoxLayout(QtWidgets.QBoxLayout.LeftToRight, self)
         self._lay.setContentsMargins(0, 0, 0, 0)
+        #: ボタンの一辺・絵・隣との間・群の間(px)。
+        self._metrics = (BUTTON_PX, _ICON_PX, GAP_PX, 2 * GAP_PX)
         self._lay.setSpacing(GAP_PX)
+        self._items: list[QtGui.QAction | None] = []
         self._buttons: dict[int, _StripButton] = {}
+        self._heads: list[_StripButton] = []           # 2 つ目からの群の先頭のボタン(その手前に線を引く)
         self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
 
+    def set_metrics(self, button_px: int, icon_px: int, gap: int, group_gap: int) -> None:
+        """密度の数(ボタンの一辺・絵・隣との間・群の間)を変えて並べ直す。"""
+        m = (int(button_px), int(icon_px), int(gap), int(group_gap))
+        if m != self._metrics:
+            self._metrics = m
+            self.set_actions(self._items)
+
     def set_actions(self, items: Sequence[QtGui.QAction | None]) -> None:
+        px, icon_px, gap, group_gap = self._metrics
+        items = list(items)
         while self._lay.count():
             w = self._lay.takeAt(0).widget()
             if w is not None:
                 w.setParent(None)
                 w.deleteLater()
+        self._lay.setSpacing(gap)
+        self._items = items
         self._buttons = {}
+        self._heads = []
+        head = False
         for a in items:
             if a is None:
-                self._lay.addSpacing(GAP_PX)            # 群の間 = 4 + 4 = 8 px
+                self._lay.addSpacing(max(0, group_gap - gap))   # 群の間 = 隣との間 + この分(4 + 4 = 8 px)
+                head = bool(self._buttons)
                 continue
-            b = _StripButton(a, self)
+            b = _StripButton(a, self, px, icon_px)
             self._lay.addWidget(b)
             self._buttons[id(a)] = b
+            if head:
+                self._heads.append(b)
+                head = False
+        self.update()
 
     def set_orientation(self, o: Qt.Orientation) -> None:
         self._lay.setDirection(QtWidgets.QBoxLayout.TopToBottom if o == Qt.Vertical else QtWidgets.QBoxLayout.LeftToRight)
+        self.update()
 
     def orientation(self) -> Qt.Orientation:
         return Qt.Vertical if self._lay.direction() == QtWidgets.QBoxLayout.TopToBottom else Qt.Horizontal
@@ -340,10 +366,74 @@ class _ToolStrip(QtWidgets.QWidget):
     def button_for(self, action: QtGui.QAction) -> QtWidgets.QToolButton | None:
         return self._buttons.get(id(action))
 
+    def length(self) -> int:
+        """全部のボタンを 1 行(1 列)に並べるのに要る長さ(px)。"""
+        px, _icon, gap, group_gap = self._metrics
+        n = len(self._buttons)
+        return n * px + (n - 1 - len(self._heads)) * gap + len(self._heads) * group_gap if n else 0
 
-#: 道具の列の向き(外から set_strip_side で選ぶ。自動で選ぶ規則は studio_panels の strip_side が持つ)。
+    def paintEvent(self, ev: QtGui.QPaintEvent) -> None:
+        """群の間に細い線を 1 本(設計書 P04-2)。色は theme の役割 line、無ければパレットの Mid。"""
+        if not self._heads:
+            return
+        half = self._metrics[3] // 2
+        painter = QtGui.QPainter(self)
+        painter.setPen(QtGui.QPen(_theme_colour("line") or self.palette().color(QtGui.QPalette.Mid), 1))
+        for b in self._heads:
+            g = b.geometry()
+            if self.orientation() == Qt.Vertical:
+                painter.drawLine(3, g.top() - half, self.width() - 4, g.top() - half)
+            else:
+                painter.drawLine(g.left() - half, 3, g.left() - half, self.height() - 4)
+        painter.end()
+
+
+class _FlowPort:
+    """見た目の枝(``studio_panels``)の ``FlowStrip`` の形の部品を、列の約束(set_actions / set_orientation / button_for)で
+    使う仲立ち。``FlowStrip`` は QAction でなく「ボタンの群」を受け取り(``set_groups``)、向きは ``"h"`` / ``"v"`` の文字で言う
+    (``Qt.Vertical`` を渡すと黙って ``"h"`` になる)。収まらない時の「送る」「折り返す」はその部品が受け持つ。"""
+
+    def __init__(self, widget: QtWidgets.QWidget) -> None:
+        self.widget = widget
+        self._metrics = (BUTTON_PX, _ICON_PX)
+        self._items: list[QtGui.QAction | None] = []
+        self._buttons: dict[int, _StripButton] = {}
+
+    def set_metrics(self, button_px: int, icon_px: int, gap: int, group_gap: int) -> None:
+        """ボタンの一辺と絵の大きさ(間は部品が studio_theme の密度から取る)。"""
+        m = (int(button_px), int(icon_px))
+        if m != self._metrics:
+            self._metrics = m
+            self.set_actions(self._items)
+
+    def set_actions(self, items: Sequence[QtGui.QAction | None]) -> None:
+        old = list(self._buttons.values())
+        self._items = list(items)
+        self._buttons = {}
+        groups: list[list[_StripButton]] = [[]]
+        for a in self._items:
+            if a is None:
+                groups.append([])
+                continue
+            b = _StripButton(a, self.widget, *self._metrics)
+            groups[-1].append(b)
+            self._buttons[id(a)] = b
+        self.widget.set_groups([g for g in groups if g])    # type: ignore[attr-defined]
+        for b in old:
+            b.setParent(None)
+            b.deleteLater()
+
+    def set_orientation(self, o: Qt.Orientation) -> None:
+        self.widget.set_orientation("v" if o == Qt.Vertical else "h")   # type: ignore[attr-defined]
+
+    def button_for(self, action: QtGui.QAction) -> QtWidgets.QToolButton | None:
+        return self._buttons.get(id(action))
+
+
+#: 道具の列の向き(外から set_strip_side で選ぶ。自動で選ぶ規則は set_strip_rule で受け取る = studio_panels の strip_side)。
 STRIP_SIDES = ("top", "left")
-#: 列の部品の objectName(全部のパネルで同じ名前で数える)。
+#: 列の部品の objectName: この窓の既定の部品と、set_actions の約束で差し込んだ部品に付ける。見た目の枝の FlowStrip を
+#: 差し込んだ時は付け替えない(その部品の名前 "flow_strip" と property flowKind / flowKey が、見た目の枝の門の数える印)。
 STRIP_NAME = "panelStrip"
 
 
@@ -915,10 +1005,15 @@ class ParamsPanel(QtWidgets.QWidget):
                checkable=True)
         self._strip_items = items
         self._apply_action_texts()
-        self._strip_side = "top"
+        self._strip_side = "top"                        # 頼まれた側
+        self._side_shown = "top"                        # 今置いている側(既定の部品は、縦に収まらない高さでは top)
+        self._strip_rule: Callable[[int, int, str], str] | None = None
         self.strip: QtWidgets.QWidget = _ToolStrip(self)
+        #: 列の約束(set_actions / set_orientation / button_for)を持つ物: 部品そのものか、FlowStrip の形の部品の仲立ち。
+        self._strip_api: Any = self.strip
+        self._strip_flows = False                       # 部品が「送る / 折り返す」を持つ(場所を全部渡して任せる)
         self.strip.setObjectName(STRIP_NAME)
-        self.strip.set_actions(self._strip_items)    # type: ignore[attr-defined]
+        self._strip_api.set_actions(self._strip_items)
         #: 鍵 → 今の列の部品のボタン(部品が button_for を持つ時。試験と古い呼び出しの口。状態は QAction が正本)。
         self.buttons: dict[str, QtWidgets.QAbstractButton] = {}
         self.search = QtWidgets.QLineEdit(self.bar)
@@ -1118,7 +1213,7 @@ class ParamsPanel(QtWidgets.QWidget):
         self.apply_theme()
 
     def _sync_buttons(self) -> None:
-        find = getattr(self.strip, "button_for", None)
+        find = getattr(self._strip_api, "button_for", None)
         self.buttons = {}
         if callable(find):
             for key, a in self.tool_actions.items():
@@ -1131,15 +1226,20 @@ class ParamsPanel(QtWidgets.QWidget):
         return list(self._strip_items)
 
     def strip_widget(self) -> QtWidgets.QWidget:
-        """今の道具の列の部品(objectName ``"panelStrip"``)。"""
+        """今の道具の列の部品(既定の部品と set_actions の形の部品は objectName ``"panelStrip"``)。"""
         return self.strip
 
     def strip_side(self) -> str:
-        """道具の列の向き: ``"top"``(表の上に横の 1 行)/ ``"left"``(表の左に縦の 1 列)。"""
+        """道具の列の、頼まれた向き: ``"top"``(表の上に横の 1 行)/ ``"left"``(表の左に縦の 1 列)。"""
         return self._strip_side
 
+    def strip_side_shown(self) -> str:
+        """道具の列が今置かれている側。頼まれた向きが ``"left"`` でも、既定の部品(送りも折り返しも持たない)が縦に収まらない
+        高さでは ``"top"``(ボタンを詰めたり重ねたり切ったりしない)。高さが戻れば左へ戻る。"""
+        return self._side_shown
+
     def set_strip_side(self, side: str) -> str:
-        """道具の列の向きを外から変える(自動で選ぶ規則は呼ぶ側 = studio_panels の strip_side)。知らない向きは ValueError。"""
+        """道具の列の向きを外から変える。知らない向きは ValueError。自動で選ばせるなら :meth:`set_strip_rule`。"""
         if side not in STRIP_SIDES:
             raise ValueError("strip side must be one of %s (got %r)" % (" / ".join(STRIP_SIDES), side))
         if side != self._strip_side:
@@ -1147,14 +1247,48 @@ class ParamsPanel(QtWidgets.QWidget):
             self._place_strip()
         return side
 
+    def set_strip_rule(self, rule: Callable[[int, int, str], str] | None) -> None:
+        """道具の列の向きを自動で選ぶ規則を受け取る(全部のパネルで 1 つの規則 = ``studio_panels.strip_side``)。
+
+        ``rule(幅, 高さ, 今の向き)`` が ``"top"`` / ``"left"`` を返す。パネルの大きさが変わるたびに聞く(それ以外の答えは
+        聞かなかった事にする)。``None`` で外す(向きは今のまま)。例::
+
+            panel.set_strip_rule(lambda w, h, now: studio_panels.strip_side(w, h, now, mode))
+        """
+        self._strip_rule = rule
+        if self._ask_strip_rule():
+            self._place_strip()
+
+    def _ask_strip_rule(self) -> bool:
+        """規則に聞いて、頼まれた向きが変わったら真(置き直しは呼んだ側)。"""
+        if self._strip_rule is None:
+            return False
+        side = self._strip_rule(self.width(), self.height(), self._strip_side)
+        if side not in STRIP_SIDES or side == self._strip_side:
+            return False
+        self._strip_side = side
+        return True
+
     def set_strip_widget(self, widget: QtWidgets.QWidget) -> None:
         """道具の列の部品を差し替える(収まらない時に送る型・折り返す型を外の部品に任せる口)。
 
-        ``widget`` は QWidget で ``set_actions`` と ``set_orientation`` を持つ事(:class:`_ToolStrip` の約束)。満たさなければ
-        TypeError(黙って受けない)。前の部品はパネルから外して隠す(親なし。捨てるか使い直すかは呼ぶ側)。"""
-        if not isinstance(widget, QtWidgets.QWidget) or not all(
-                callable(getattr(widget, name, None)) for name in ("set_actions", "set_orientation")):
-            raise TypeError("a strip must be a QWidget with set_actions(items) and set_orientation(o): %r" % (widget,))
+        ``widget`` は QWidget で、次のどちらかの形(:class:`_ToolStrip` の説明)。満たさなければ TypeError(黙って受けない)。
+
+        * ``set_actions(items)`` と ``set_orientation(Qt.Orientation)`` — objectName を ``"panelStrip"`` にする。
+        * ``set_groups(ボタンの群)`` と ``set_orientation("h" | "v")`` — 見た目の枝の ``FlowStrip``。そのまま差し込める::
+
+              panel.set_strip_widget(studio_panels.flow_classes()["FlowStrip"]("tools", "params"))
+
+          名前(``"flow_strip"``)は変えない。本体の高さ(幅)を全部渡すので、収まらない分は部品が送る / 折り返す。
+
+        前の部品はパネルから外して隠す(親なし。捨てるか使い直すかは呼ぶ側)。"""
+        def has(name: str) -> bool:
+            return callable(getattr(widget, name, None))
+
+        flow = not has("set_actions") and has("set_groups")
+        if not isinstance(widget, QtWidgets.QWidget) or not has("set_orientation") or not (has("set_actions") or flow):
+            raise TypeError("a strip must be a QWidget with set_orientation and either set_actions(items) or "
+                            "set_groups(groups) (the look branch's FlowStrip): %r" % (widget,))
         old = self.strip
         if widget is old:
             return
@@ -1162,9 +1296,12 @@ class ParamsPanel(QtWidgets.QWidget):
         old.hide()
         old.setParent(None)
         widget.setParent(self)
-        widget.setObjectName(STRIP_NAME)
-        widget.set_actions(self._strip_items)        # type: ignore[attr-defined]
+        if not flow:
+            widget.setObjectName(STRIP_NAME)
         self.strip = widget
+        self._strip_api = _FlowPort(widget) if flow else widget
+        self._strip_flows = flow
+        self._strip_api.set_actions(self._strip_items)
         self._place_strip()
         widget.show()
 
@@ -1173,17 +1310,35 @@ class ParamsPanel(QtWidgets.QWidget):
             self._bar_lay.removeWidget(w)
         self._body.removeWidget(self.strip)
 
+    def _side_that_fits(self) -> str:
+        """今置くべき側: 頼まれた側。ただし既定の部品を左に縦に置くには高さが足りない時は top。
+
+        要る高さ = 全部のボタンの長さ + 枠と間 + 状態の行(折り返した知らせの分も先に取っておく。知らせが出るたびに列の
+        向きが変わらないように)。"""
+        if self._strip_side != "left" or not isinstance(self.strip, _ToolStrip):
+            return self._strip_side
+        fm = self.fontMetrics()
+        room = self.height() - 4 - 2 - self.row_height() - self.WRAP_LINES * fm.lineSpacing()
+        return "left" if self.strip.length() <= room else "top"
+
     def _place_strip(self) -> None:
         """道具の列と検索の欄を、今の向きの場所へ置く。"""
         self._unplace_strip()
-        if self._strip_side == "left":
-            self.strip.set_orientation(Qt.Vertical)   # type: ignore[attr-defined]
-            self._body.insertWidget(0, self.strip, 0, Qt.AlignTop)
+        self._side_shown = self._side_that_fits()
+        if self._side_shown == "left":
+            self._strip_api.set_orientation(Qt.Vertical)
+            if self._strip_flows:                        # 高さを全部渡す(収まらない分は部品が送る / 折り返す)
+                self._body.insertWidget(0, self.strip, 0)
+            else:
+                self._body.insertWidget(0, self.strip, 0, Qt.AlignTop)
             self._bar_lay.addWidget(self.search, 0, 0, 1, 2)
             self._search_below = False
         else:
-            self.strip.set_orientation(Qt.Horizontal)  # type: ignore[attr-defined]
-            self._bar_lay.addWidget(self.strip, 0, 0, Qt.AlignLeft | Qt.AlignVCenter)
+            self._strip_api.set_orientation(Qt.Horizontal)
+            if self._strip_flows:
+                self._bar_lay.addWidget(self.strip, 0, 0)
+            else:
+                self._bar_lay.addWidget(self.strip, 0, 0, Qt.AlignLeft | Qt.AlignVCenter)
             self._search_below = self._search_needs_own_row()
             if self._search_below:                       # 狭い窓: 検索の欄は次の段に全幅で(切らない。D112)
                 self._bar_lay.addWidget(self.search, 1, 0, 1, 2)
@@ -1205,16 +1360,22 @@ class ParamsPanel(QtWidgets.QWidget):
         need = self.strip.sizeHint().width() + GAP_PX + self.search.minimumWidth()
         return room < need
 
+    def _placement_is_stale(self) -> bool:
+        """今の大きさだと、道具の列の側か検索の欄の段が、置いてある物と違うか。"""
+        side = self._side_that_fits()
+        return side != self._side_shown or (side == "top" and self._search_needs_own_row() != self._search_below)
+
     def resizeEvent(self, ev: QtGui.QResizeEvent) -> None:
         super().resizeEvent(ev)
+        self._ask_strip_rule()                           # 自動の向き(横長なら左)。置き直しは下の予約で
         # 配置を当てている途中で中身を組み替えると Qt が落ちるので、組み替えは通知の後に 1 回だけ。
-        if self._strip_side == "top" and self._search_needs_own_row() != self._search_below and not self._replace_pending:
+        if self._placement_is_stale() and not self._replace_pending:
             self._replace_pending = True
             QtCore.QTimer.singleShot(0, self, self._replace_after_resize)  # self が消えたら呼ばない
 
     def _replace_after_resize(self) -> None:
         self._replace_pending = False
-        if self._strip_side == "top" and self._search_needs_own_row() != self._search_below:
+        if self._placement_is_stale():
             self._place_strip()
 
     def row_height(self) -> int:
