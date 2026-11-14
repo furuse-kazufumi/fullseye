@@ -42,6 +42,7 @@ def _launch(monkeypatch, ini):
     import studio
     studio_theme.set_current(studio_theme.DEFAULT_THEME, studio_theme.DEFAULT_DENSITY)
     win, _model = studio.build_window()
+    win._test_model = _model                     # for the tests that add stages
     win.resize(1280, 673)
     win.show()
     _pump(app)
@@ -1092,5 +1093,28 @@ def test_float_near_the_window_and_float_all_only_what_is_shown(tmp_path, monkey
         g = win._docks[key].frameGeometry()
         assert win._docks[key].isFloating() and any(s.intersects(g) for s in screens), (key, g)
         studio_panels.toggle_float(win, key, False); _pump(app, 0.2)
+    finally:
+        _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# the "Stages: N" read-out counts stages, not the hint row of an empty pipeline
+# --------------------------------------------------------------------------- #
+def test_stage_count_of_an_empty_pipeline_is_zero_also_after_a_language_switch(tmp_path, monkeypatch):
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        item = [it for it in win._panels["titles"]["pipeline"].status if it["id"] == "stages"]
+        assert len(item) == 1
+        read = item[0]["text"]
+        assert win._stage_list.count() == 1 and not win._stage_list.item(0).flags()   # the hint row, not a stage
+        assert read() == "Stages: 0"
+        win._apply_language("ja"); win._apply_language("en"); _pump(app, 0.3)        # the read-out is asked again
+        assert read() == "Stages: 0" and item[0]["now"] == "Stages: 0"
+        win._docks["pipeline"].show(); _pump(app, 0.5)                              # and while the panel is shown
+        assert item[0]["now"] == "Stages: 0"
+        for op in ("median", "otsu"):
+            win._test_model.add_stage(op, 0.5, 0.5)
+        win._refresh_stage_list(); _pump(app, 0.5)
+        assert win._stage_list.count() == 2 and read() == "Stages: 2"
     finally:
         _close(app, win)

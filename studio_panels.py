@@ -2257,6 +2257,7 @@ def register_panel(win, key, status=None, actions=None, strip=None, no_strip=Non
 
 def _default_registrations(win):
     """The panels that exist today. Values are read from the live widgets; a missing one is skipped."""
+    from PySide6 import QtCore   # noqa: PLC0415
     tr = lambda s: _state(win)["tr"](s)   # noqa: E731 - the language can change after registration
     acts = getattr(win, "_actions", None) or {}
 
@@ -2276,7 +2277,10 @@ def _default_registrations(win):
 
     def stages():
         sl = getattr(win, "_stage_list", None)
-        return tr(S_ST_STAGES) % sl.count() if sl is not None else ""
+        if sl is None:
+            return ""
+        rows = [sl.item(i) for i in range(sl.count())]       # the hint row of an empty pipeline is not a stage
+        return tr(S_ST_STAGES) % sum(1 for it in rows if it is not None and it.flags() != QtCore.Qt.NoItemFlags)
 
     def errors():
         state = getattr(win, "_state", None) or {}
