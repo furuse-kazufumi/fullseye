@@ -533,3 +533,34 @@ def test_profile_values_for_a_ledger_op_are_checked_against_its_parameter_spec(c
     assert late["isError"] and called == [], (called, late["content"][0]["text"][:300])
     failed = late["structuredContent"]["stages"][0]
     assert failed["status"] == "failed" and "failed re-validation" in failed["error"]["message"], failed
+
+
+def test_array_results_of_ledger_ops_are_readable_in_the_text(cat, store):
+    """★2026-11-15: 配列を返す台帳 op の本文が「判定=ok value=None」だけで、値も handle も structuredContent にしか
+    無かった(公式クライアントでの再生: lighting_sweep の角度とコントラストの組が本文から読めない)。
+    表を返す op と同じく、op の意味・型・形・範囲を本文に書き、小さい配列は値も、残る handle も書く。"""
+    r = _run(cat, store, [{"op": "lighting_sweep"}])
+    text, sc = r["content"][0]["text"], r["structuredContent"]
+    pairs = np.asarray(sc["stages"][0]["value"], dtype=np.float64)
+    assert pairs.ndim == 2 and pairs.shape[1] == 2 and len(pairs) >= 5
+    assert "段 1 lighting_sweep: " in text and "pairs shape=[%d, 2]" % len(pairs) in text, text
+    assert "handle=%s" % sc["handle"] in text, text
+    line = next(ln.strip() for ln in text.splitlines() if ln.strip().startswith("values = "))
+    assert np.allclose(np.asarray(json.loads(line.split("=", 1)[1])), pairs, atol=1e-6), line
+    assert "判定 ok は出力の形" in text and sc["verdict_scope"] == "shape_only"       # 判定の範囲は従来どおり書く
+    assert not [key for stage in sc["stages"] for key in stage if key.startswith("_")], sc["stages"]
+    # 大きい配列は値を載せない(形・範囲・handle だけ)
+    big = _run(cat, store, [{"op": "airy_pattern"}])
+    big_text = big["content"][0]["text"]
+    assert "image shape=[64, 64] min=" in big_text and "values = " not in big_text, big_text
+    assert "handle=%s" % big["structuredContent"]["handle"] in big_text
+    # 配列の段の後に registry の計測が続く: 途中の段の handle は書かず(捨てられる)、最後の値と判定の範囲が残る
+    chain = _run(cat, store, [{"op": "airy_pattern"}, {"op": "otsu"}, {"op": "count_obj"}])
+    chain_text = chain["content"][0]["text"]
+    assert "段 1 airy_pattern: " in chain_text and "image shape=[64, 64]" in chain_text, chain_text
+    assert "handle=" not in chain_text.split("判定=ok")[0], chain_text
+    assert "判定=ok value=%s" % chain["structuredContent"]["value"] in chain_text and "値の意味(段 3 count_obj)" in chain_text
+    # 失敗した pipeline の structuredContent にも、内部の鍵を残さない
+    failed = _run(cat, store, [{"op": "airy_pattern"}, {"op": "airy_pattern", "params": {"size": 40000}}])
+    assert failed["isError"]
+    assert not [key for stage in failed["structuredContent"]["stages"] for key in stage if key.startswith("_")]

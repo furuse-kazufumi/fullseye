@@ -1349,6 +1349,25 @@ def _summary_lines(summary: dict, limit: int = 40) -> list[str]:
     return lines[:limit]
 
 
+#: 本文に値を書く配列の大きさの上限(要素の数)。これより大きい配列は形と範囲だけを書く。
+_ARRAY_TEXT_MAX_VALUES = 128
+
+
+def _array_lines(out: np.ndarray, sort: str) -> list[str]:
+    """配列を返した台帳 op の結果の本文の行: 型・形・値の範囲、小さい配列は値(6 桁)も。
+
+    ★2026-11-15: 配列の結果の本文は「判定=ok value=None」だけで、値は structuredContent にしか無かった
+    (lighting_sweep の角度とコントラストの組が本文から読めない)。handle は呼ぶ側が、残る物にだけ書き足す。"""
+    head = "%s shape=%s" % (sort, list(out.shape))
+    numeric = out.dtype.kind in "biuf"
+    if numeric and out.size:
+        head += " min=%.6g max=%.6g" % (float(out.min()), float(out.max()))
+    lines = [head]
+    if numeric and 0 < out.size <= _ARRAY_TEXT_MAX_VALUES:
+        lines.append("values = %s" % json.dumps(np.round(out.astype(np.float64), 6).tolist(), separators=(",", ":")))
+    return lines
+
+
 #: 数 1 個を返す台帳 op の値の単位(鍵の名前から読めない物)。
 _ISOLATED_VALUE_UNITS = {"pixel_to_world": "mm", "mm_per_px_from_reference": "mm/px"}
 #: registry の計測 op の値の単位(OP_CARDS の要約の言い方から読む。読めなければ書かない)。
@@ -2369,6 +2388,8 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                     rec["value"]=normalized
                 if edge["executor"]["kind"] == "registry" and out_sort in ("feature", "measurement"):
                     rec.update(_measure_note(edge["op"], args))
+        elif isolated_info is not None:
+            rec["_array_lines"] = _array_lines(out, out_sort)
         records.append(rec)
         release(refs + param_refs)
         if remaining[ref] <= 0:
@@ -2422,6 +2443,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
     if failed:
         for r in records:
             r.pop("_lines", None)
+            r.pop("_array_lines", None)
         bad=next(r for r in records if r.get("status")=="failed")
         # 本文は段ごとに 1 行(★2026-11-13: 以前は結果の JSON を丸ごと 1 行に繋いでいて、どの段がなぜ
         #   止まったかを本文から読めなかった)。
@@ -2446,14 +2468,26 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
     text=(("パイプライン %d 段 完走: "%sum(r.get("status")=="ok" for r in records)) +
           " -> ".join(r["op"] for r in records if r.get("status")=="ok"))
     table_lines = []
+    # 配列の結果に書く handle は、応答の後も残る物だけ(最後の出力と、名指しした outputs)。途中の段の handle は捨てられる
+    kept = {row["handle"] for row in output_rows} | {result.get("handle")}
+    last_ok = next((r for r in reversed(records) if r.get("status") == "ok"), None)
+    summarized_last = bool(last_ok and last_ok.get("_lines"))       # 最後の段が表・数の要約(本文に全部出る)
     for r in records:
         lines = r.pop("_lines", None)
-        if lines and r.get("status") == "ok":
-            table_lines.append("段 %d %s%s" % (r["stage"], r["op"], (": " + r["meaning"]) if r.get("meaning") else ""))
+        array_lines = r.pop("_array_lines", None)
+        if r.get("status") != "ok" or not (lines or array_lines):
+            continue
+        table_lines.append("段 %d %s%s" % (r["stage"], r["op"], (": " + r["meaning"]) if r.get("meaning") else ""))
+        if lines:
             table_lines.extend("  " + ln for ln in lines)
+        else:
+            table_lines.append("  " + array_lines[0] + ((" handle=%s" % r["handle"]) if r.get("handle") in kept else ""))
+            table_lines.extend("  " + ln for ln in array_lines[1:])
     if table_lines:
         text += "\n" + "\n".join(table_lines)
-    else:
+    if not summarized_last:
+        # 最後の段が配列か registry の値: 従来どおり、判定とその範囲を書く(★2026-11-15: 以前は、途中に表を返す
+        #   台帳 op が 1 つでもあると、最後の値と判定の範囲が本文から落ちた)。
         text += "\n判定=ok value=%s" % result.get("value")
         text += "\n" + VERDICT_SCOPE_TEXT
         result["verdict_scope"] = "shape_only"

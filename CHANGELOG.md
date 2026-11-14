@@ -52,6 +52,9 @@ AI の役で MCP を使った検証(2026-11-13)で、optics の op は MCP か�
   `lens_spec`)が作業プロセスで走る事と、`fullseye_catalog_coverage` の既定(件数だけ・相対の出どころ)を足した。
 - 結果: 表・数は上限つきの要約と単位(鍵の名前の `_mm`・`_deg` など)、op の 1 行の意味、使った引数の単位を返す。
   表の中の 2-D 配列は `image` のハンドルになり、次の pipeline に渡せる。複素数は `re` / `im` に分ける。
+  配列を返す op(`lighting_sweep` の角度とコントラストの組など)は、本文に op の意味・型・形・値の範囲と、128 要素までなら
+  値、応答の後も残る handle を書く(2026-11-15。以前は本文が「判定=ok value=None」だけで、値は structuredContent にしか
+  無かった)。途中に表を返す台帳 op がある pipeline でも、最後の値と判定の範囲を本文に書く(以前は落ちた)。
 - 実行できない op の誤り文(`fullseye_validate_pipeline` / `fullseye_pipeline` / `fullseye_apply` / find_ops の骨格)に、
   理由の 1 文と、代わりの手(`fullseye_op_help` で読む・Python からの呼び方・同じ分類で MCP が走らせられる op)を付けた。
   `fullseye_apply` の「近い名前」に同じ名前を出さない。
