@@ -6988,7 +6988,7 @@ def build_window(model=None):
     act_undo.setEnabled(False); act_redo.setEnabled(False)
     act_pin = _act("Pin as A", "Ctrl+Shift+A",
                    "Freeze the current pipeline and its result as A, then compare it with what you change next "
-                   "(Window > Panels > A / B)")
+                   "(the A / B panel shows both)")
     act_zin = _act("Zoom in", "Ctrl+=", "Zoom the image in")
     act_zout = _act("Zoom out", "Ctrl+-", "Zoom the image out")
     act_fit = _act("Fit to window", "Ctrl+0", "Fit the image to the view")
@@ -8117,23 +8117,38 @@ def build_window(model=None):
             _apply_layout_state(); _save_layout_state()
 
     def find_panel_dialog():
+        old = getattr(win, "_panel_search_dialog", None)   # D20: one window; asked again, it comes forward
+        try:
+            if old is not None and old.isVisible():
+                old.raise_(); old.activateWindow()
+                return old
+        except RuntimeError:
+            pass
         dialog = QtWidgets.QDialog(win); dialog.setWindowTitle(tr("Find panel"))
         layout = QtWidgets.QVBoxLayout(dialog)
         query = QtWidgets.QLineEdit(); query.setPlaceholderText(tr("Type a panel name…"))
         found = QtWidgets.QListWidget(); layout.addWidget(query); layout.addWidget(found)
         def refill(text=""):
             found.clear()
-            for panel in studio_layout.find_panels(text):
-                item = QtWidgets.QListWidgetItem(tr(PANEL_NAME_EN[panel]))
+            for panel in studio_panels.panel_order(win, studio_layout.find_panels(text)):   # D21: the bar's order
+                item = QtWidgets.QListWidgetItem(win._docks[panel].windowTitle())
                 item.setData(QtCore.Qt.UserRole, panel); found.addItem(item)
+            if found.count():
+                found.setCurrentRow(0)                     # Enter in the box opens the first one
+            else:
+                item = QtWidgets.QListWidgetItem(tr("No panel by that name"))
+                item.setFlags(QtCore.Qt.NoItemFlags); found.addItem(item)
         def reveal(item):
-            panel = item.data(QtCore.Qt.UserRole)
+            panel = item.data(QtCore.Qt.UserRole) if item is not None else None
+            if panel is None:
+                return
             if panel != "result":
                 win._layout_state = studio_layout.set_override(
                     win._layout_state, panel, visible=True, collapsed=False)
                 _apply_layout_state(); win._docks[panel].raise_(); _save_layout_state()
             dialog.accept()
         query.textChanged.connect(refill); found.itemActivated.connect(reveal)
+        query.returnPressed.connect(lambda: reveal(found.currentItem()))
         refill(); dialog.resize(380, 300); query.setFocus(); dialog.show()
         win._panel_search_dialog = dialog
         return dialog
@@ -14913,8 +14928,13 @@ def build_window(model=None):
     win.addAction(act_focus_search)          # app-wide Ctrl+F -> operator search
     # -- multi-monitor: pop every tool panel out as its own top-level window --- #
     def float_all_panels(floating=True):
-        for d in win._docks.values():
-            d.setFloating(floating)
+        for _k, d in win._docks.items():
+            if floating and d.isHidden():
+                continue                          # D60: only the panels that are shown become windows
+            if floating:
+                studio_panels.toggle_float(win, _k, True)     # by the main window, on a screen
+            else:
+                d.setFloating(False)
         if win._flash:
             win._flash("panels floated for multi-display" if floating else "panels re-docked")
     act_float_all = _act("Float all panels (multi-display)", None,

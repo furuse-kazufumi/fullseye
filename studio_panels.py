@@ -263,6 +263,13 @@ def plain_text(text):
     return (text or "").replace("&&", "\0").replace("&", "").replace("\0", "&")
 
 
+def panel_order(win, keys):
+    """``keys`` in the one order of the panel bar (RAIL_ORDER), only panels this window has (D21: the
+    bar, Window > Panels, More > Panels and Find panel list the same set in the same order)."""
+    have = set(getattr(win, "_docks", {}) or {})
+    return [k for k in RAIL_ORDER if k in keys and k in have]
+
+
 def tool_tip(name, effect, key=""):
     """The one shape of a hint (P04-5): "name — what happens (key)". The key comes from the action."""
     name = (name or "").replace("&", "").replace("\u2026", "").strip()
@@ -447,6 +454,9 @@ def toggle_float(win, key, floating=None):
     dock.show()
     if want != dock.isFloating():
         dock.setFloating(want)
+        if want and win.isVisible() and not win.frameGeometry().intersects(dock.frameGeometry()):
+            near = win.frameGeometry().topLeft()     # D60: by the main window, not where Qt left it
+            dock.move(near.x() + 60, near.y() + 90)
     if want:
         _keep_on_screen(win, dock)
         dock.raise_(); dock.activateWindow()
@@ -2833,6 +2843,26 @@ def install(win, tr, settings=None):
             elif pa not in m.actions():
                 m.insertAction(m.actions()[0] if m.actions() else None, pa)
 
+    def order_entries(m):
+        """D21: the panel entries of ``m`` (show / hide, or a principal's bring-forward) in RAIL_ORDER,
+        where the first of them was."""
+        entry = {k: (st["principal_actions"].get(k) if k in PRINCIPAL else d.toggleViewAction())
+                 for k, d in win._docks.items()}
+        acts = m.actions()
+        mine = [a for a in acts if a in entry.values()]
+        if not mine:
+            return 0
+        after = acts[acts.index(mine[-1]) + 1:]
+        anchor = after[0] if after else None
+        for a in mine:
+            m.removeAction(a)
+        n = 0
+        for k in panel_order(win, list(entry)):
+            if entry[k] is not None:
+                m.insertAction(anchor, entry[k])
+                n += 1
+        return n
+
     # menus + command palette: every panel has a show / hide entry and a separate-window entry
     menu = getattr(win, "_menu_panels", None)
     if menu is not None:
@@ -2844,9 +2874,17 @@ def install(win, tr, settings=None):
             if tva is not None and tva not in listed:
                 before = next((a for a in menu.actions() if a.isSeparator()), None)
                 menu.insertAction(before, tva)
+        order_entries(menu)
         menu.addSeparator()
-        for fa in st["float_actions"].values():
-            menu.addAction(fa)
+        for key in panel_order(win, list(st["float_actions"])):
+            menu.addAction(st["float_actions"][key])
+    more = getattr(win, "_more_menu_panels", None)
+    if more is not None:
+        listed = set(more.actions())
+        for key in RAIL_ORDER:                       # every panel, also those studio.py did not list there
+            if key in win._docks and key not in PRINCIPAL and win._docks[key].toggleViewAction() not in listed:
+                more.addAction(win._docks[key].toggleViewAction())
+        order_entries(more)
     actions = getattr(win, "_actions", None)
     if isinstance(actions, dict):
         for key, fa in st["float_actions"].items():

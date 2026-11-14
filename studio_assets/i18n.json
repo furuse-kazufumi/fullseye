@@ -480,13 +480,13 @@
    "de": "HTML-Hilfe des gewählten Operators anzeigen (Details zur Bildverarbeitung)",
    "hi": "चुने गए operator की HTML help दिखाएँ (image-processing का विवरण)"
   },
-  "Freeze the current pipeline and its result as A, then compare it with what you change next (Window > Panels > A / B)": {
-   "ja": "いまの処理列とその結果を A として固定し、このあと変えたものと比べます(Window > Panels > A / B)",
-   "zh": "把当前流水线及其结果固定为 A,与之后的修改作比较(Window > Panels > A / B)",
-   "tw": "把目前流程及其結果固定為 A,與之後的修改作比較(Window > Panels > A / B)",
-   "ko": "현재 파이프라인과 그 결과를 A로 고정하고 이후의 변경과 비교합니다(Window > Panels > A / B)",
-   "de": "Heftet die aktuelle Pipeline samt Ergebnis als A an und vergleicht sie mit dem, was Sie danach ändern (Window > Panels > A / B)",
-   "hi": "वर्तमान पाइपलाइन और उसके परिणाम को A के रूप में पिन करें, फिर आगे के बदलावों से तुलना करें (Window > Panels > A / B)"
+  "Freeze the current pipeline and its result as A, then compare it with what you change next (the A / B panel shows both)": {
+   "ja": "いまの処理列とその結果を A として固定し、このあと変えたものと比べます(「A/B 比較」のパネルに並びます)",
+   "zh": "把当前流水线及其结果固定为 A,与之后的修改作比较(两者并排显示在 A / B 面板中)",
+   "tw": "把目前流程及其結果固定為 A,與之後的修改作比較(兩者並排顯示在 A / B 面板中)",
+   "ko": "현재 파이프라인과 그 결과를 A로 고정하고 이후의 변경과 비교합니다(A / B 패널에 나란히 표시됩니다)",
+   "de": "Heftet die aktuelle Pipeline samt Ergebnis als A an und vergleicht sie mit dem, was Sie danach ändern (der Bereich A / B zeigt beide)",
+   "hi": "वर्तमान पाइपलाइन और उसके परिणाम को A के रूप में पिन करें, फिर आगे के बदलावों से तुलना करें (A / B पैनल दोनों दिखाता है)"
   }
  },
  "guide": {
@@ -499,6 +499,14 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "No panel by that name": {
+   "ja": "その名前のパネルはありません",
+   "zh": "没有这个名称的面板",
+   "tw": "沒有這個名稱的面板",
+   "ko": "그 이름의 패널이 없습니다",
+   "de": "Kein Bereich mit diesem Namen",
+   "hi": "इस नाम का कोई पैनल नहीं"
+  },
   "Run the code": {
    "ja": "コードを実行",
    "zh": "运行代码",

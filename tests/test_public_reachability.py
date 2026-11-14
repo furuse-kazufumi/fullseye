@@ -95,7 +95,8 @@ _INTERNAL = {
     #   (system_reduces_motion / reduce_motion / reduce_motion_action)、同期の仕事を左上に出す brand_wrap。
     # studio_panels +16 2026-11-15: A1〜A3・D104 の便(11 本: show_principal / normalise_overflow_mode / scroll_arrow / flow_plan / scroll_reach / flow_classes / declare_strip / adopt_image_strip / panel_ledger / set_overflow_mode / all_strips。その便で台帳を上げていなかった)と D01〜D03 の上の帯(5 本: tool_tip / mode_switch / compose_top_tips / glyph_action / fix_hand)。Studio の窓の内側の部品で op ではない
     # studio_panels +3 2026-11-15: 題の帯とメニューの便(D14 D59 D98 D100 D111): label_text / plain_text / drop_repeated_titles。Studio の窓の内側の部品で op ではない
-    "studio_panels": 52,
+    # studio_panels +1 2026-11-15: パネルの一覧の便(D20 D21 D60): panel_order。Studio の窓の内側の部品で op ではない
+    "studio_panels": 53,
     "studio": 91, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
@@ -346,7 +347,8 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-13 要件 7(コードの色の表): 1160 + 2 = 1162。studio_theme の code_colour_table / ground_report。
 # 2026-11-15 A1〜A3・D104 の便(11 本: show_principal / normalise_overflow_mode / scroll_arrow / flow_plan / scroll_reach / flow_classes / declare_strip / adopt_image_strip / panel_ledger / set_overflow_mode / all_strips。その便で台帳を上げていなかった)と D01〜D03 の上の帯(5 本: tool_tip / mode_switch / compose_top_tips / glyph_action / fix_hand)。Studio の窓の内側の部品で op ではない: 1162 + 16 = 1178。実測 1178。
 # 2026-11-15 題の帯とメニューの便(D14 D59 D98 D100 D111): label_text / plain_text / drop_repeated_titles。Studio の窓の内側の部品で op ではない: 1178 + 3 = 1181。実測 1181。
-_HIDDEN_FUNCTIONS_TODAY = 1181
+# 2026-11-15 パネルの一覧の便(D20 D21 D60): panel_order。Studio の窓の内側の部品で op ではない: 1181 + 1 = 1182。実測 1182。
+_HIDDEN_FUNCTIONS_TODAY = 1182
 
 
 def _hidden_total():

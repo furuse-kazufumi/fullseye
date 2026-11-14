@@ -1006,3 +1006,91 @@ def test_bar_right_click_names_the_panel_and_never_hides_the_code(tmp_path, monk
         assert seen == 2
     finally:
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# 1.2-B of the panel frame, part 2 — every list of panels is the same list: D20 D21 D60
+# --------------------------------------------------------------------------- #
+def _panel_keys_in(win, menu):
+    entry = {}
+    for k, d in win._docks.items():
+        entry[win._panels["principal_actions"][k] if k in studio_panels.PRINCIPAL else d.toggleViewAction()] = k
+    return [entry[a] for a in menu.actions() if a in entry]
+
+
+def test_panel_lists_same_set_and_order(tmp_path, monkeypatch):
+    import json
+    import os
+    from PySide6 import QtCore, QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        want = [k for k in studio_panels.RAIL_ORDER if k in win._docks]
+        assert len(want) == len(win._docks) == 7
+        assert studio_panels.panel_order(win, ["ab", "result", "program", "nope"]) == ["program", "ab"]
+        rail = sorted(win._panels["buttons"], key=lambda k: win._panels["buttons"][k].y())
+        assert rail == want
+        assert _panel_keys_in(win, win._menu_panels) == want                # Window > Panels
+        assert _panel_keys_in(win, win._more_menu_panels) == want           # More > Panels
+        floats = [a for a in win._menu_panels.actions() if a in win._panels["float_actions"].values()]
+        assert floats == [win._panels["float_actions"][k] for k in want]
+        dlg = win._find_panel_dialog(); _pump(app, 0.2)                    # Find panel (D20: one window)
+        try:
+            found = dlg.findChild(QtWidgets.QListWidget)
+            query = dlg.findChild(QtWidgets.QLineEdit)
+            keys = [found.item(i).data(QtCore.Qt.UserRole) for i in range(found.count())]
+            assert keys == want and "result" not in keys                    # the same set, the same order
+            assert [found.item(i).text() for i in range(found.count())] == [win._docks[k].windowTitle() for k in want]
+            assert found.currentRow() == 0                                 # the first one is chosen
+            assert win._find_panel_dialog() is dlg                         # asked again: the same window
+            assert len([d for d in win.findChildren(QtWidgets.QDialog) if d.isVisible()]) == 1
+            query.setText("zzzz-no-such-panel"); _pump(app, 0.1)
+            assert found.count() == 1 and found.item(0).data(QtCore.Qt.UserRole) is None
+            assert found.item(0).text() == "No panel by that name" and not found.item(0).flags()
+            query.returnPressed.emit(); _pump(app, 0.1)                    # Enter on "nothing": nothing happens
+            assert dlg.isVisible()
+            win._docks["variables"].hide(); _pump(app, 0.1)
+            assert win._docks["variables"].isHidden()
+            query.setText(win._docks["variables"].windowTitle()[:6]); _pump(app, 0.1)
+            assert found.count() == 1 and found.item(0).data(QtCore.Qt.UserRole) == "variables"
+            query.returnPressed.emit(); _pump(app, 0.3)                    # Enter in the box opens the first one
+            assert win._docks["variables"].isVisible() and not dlg.isVisible()
+        finally:
+            dlg.close()
+        # the hint of "Pin as A" names the panel; no hint sends the reader down a menu path that is not there
+        tips = [a.toolTip() for a in win._actions.values()]
+        assert len(tips) >= 40 and not [t for t in tips if "Window > Panels" in t]
+        assert "A / B panel" in win._actions["pin_a"].toolTip()
+        path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "studio_assets", "i18n.json")
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+        row = data["tooltips"][win._tt_en[win._actions["pin_a"]]]
+        assert len(row) == 6 and not [v for v in row.values() if "Window >" in v]
+    finally:
+        _close(app, win)
+
+
+def test_float_near_the_window_and_float_all_only_what_is_shown(tmp_path, monkeypatch):
+    from PySide6 import QtGui
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        hidden = [k for k, d in win._docks.items() if d.isHidden()]
+        assert len(hidden) >= 5
+        win._float_all_panels(True); _pump(app, 0.3)                       # D60
+        assert [k for k in hidden if not win._docks[k].isHidden() or win._docks[k].isFloating()] == []
+        shown = [k for k, d in win._docks.items() if not d.isHidden()]
+        assert len(shown) >= 1
+        assert [k for k in shown if not win._docks[k].isFloating()] == []
+        screens = [s.availableGeometry() for s in QtGui.QGuiApplication.screens()]
+        assert len(screens) >= 1
+        off = [k for k in shown if not any(s.intersects(win._docks[k].frameGeometry()) for s in screens)]
+        assert off == []                                                    # on a screen, by the window
+        win._float_all_panels(False); _pump(app, 0.3)
+        assert [k for k, d in win._docks.items() if d.isFloating()] == []
+        # a panel that was never shown: made separate, it lands by the main window (not where Qt left it)
+        key = hidden[-1]
+        studio_panels.toggle_float(win, key, True); _pump(app, 0.3)
+        g = win._docks[key].frameGeometry()
+        assert win._docks[key].isFloating() and any(s.intersects(g) for s in screens), (key, g)
+        studio_panels.toggle_float(win, key, False); _pump(app, 0.2)
+    finally:
+        _close(app, win)

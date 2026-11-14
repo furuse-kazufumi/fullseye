@@ -1775,7 +1775,8 @@ def test_window_menu_is_grouped_into_submenus():
     assert list(sub_by_title) == ["Panels", "Graphics windows", "Layout"]
     assert not [a for a in wmenu.actions() if not a.menu() and not a.isSeparator()]  # nothing flat
     panel_items = [a.text() for a in sub_by_title["Panels"].actions()]
-    assert "Float: Operators" in panel_items and "Float all panels (multi-display)" in panel_items
+    assert "Separate window: Operators" in panel_items and "Float all panels (multi-display)" in panel_items
+    assert not [t for t in panel_items if t.startswith("Float: ")]      # D100: one word, one entry per panel
     assert "Reset panel layout" in panel_items
     gfx_items = [a.text() for a in sub_by_title["Graphics windows"].actions()]
     assert "New graphics window" in gfx_items and "Detach graphics window" in gfx_items
