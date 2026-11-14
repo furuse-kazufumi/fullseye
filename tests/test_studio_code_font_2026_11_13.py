@@ -408,12 +408,20 @@ def test_every_code_surface_of_the_window_is_fixed_pitch(win, qapp):
     plains = win.findChildren(QtWidgets.QPlainTextEdit)
     assert len(plains) >= 3 and all(id(p) in listed for p in plains)
     assert win._op_list.count() > 50 and id(win._op_list) in listed
-    # the hint labels (status read-outs) take the same stack from the window sheet
+    # the read-outs of figures and signatures take the same stack from the window sheet; the hint labels
+    # that hold a sentence do not (D121: prose is in the UI face, never fixed pitch)
     hints = [lab for lab in win.findChildren(QtWidgets.QLabel) if lab.property("hint")]
-    assert len(hints) >= 3
-    for lab in hints:
+    figures = [lab for lab in hints if lab.property("figures")]
+    prose = [lab for lab in hints if lab.property("prose")]
+    assert len(figures) >= 4
+    assert len(prose) >= 3
+    assert len(figures) + len(prose) == len(hints)
+    for lab in figures:
         lab.ensurePolished()
         assert _resolved(lab)[:2] == (family, True), lab.text()
+    for lab in prose:
+        lab.ensurePolished()
+        assert _resolved(lab)[0] != family and not _resolved(lab)[1], lab.text()
 
 
 def test_surfaces_built_later_get_it_when_first_shown(win, qapp):

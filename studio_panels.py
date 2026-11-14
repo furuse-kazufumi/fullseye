@@ -403,6 +403,34 @@ def drop_repeated_titles(win):
     return n
 
 
+def theme_mdi(win):
+    """D17: the ground of the image area is the neutral surround (never Qt's grey), and the title band of
+    an image window that is not maximised takes role colours through its palette (Qt's own is light blue):
+    in front = the panel bar's band with the body text colour; behind = the panel ground, which the window's
+    style sheet already gives it. Safe to call often; returns the windows reached."""
+    from PySide6 import QtGui   # noqa: PLC0415
+    mdi = getattr(win, "_mdi", None)
+    if mdi is None:
+        return 0
+    name = studio_theme.current_name()
+    p = studio_theme.PALETTES[name]
+    if mdi.property("fsGround") != name:
+        mdi.setBackground(QtGui.QBrush(QtGui.QColor(p["surround"])))
+        mdi.setProperty("fsGround", name)
+    n = 0
+    for sub in mdi.subWindowList():
+        n += 1
+        if sub.property("fsTitleTheme") == name:
+            continue
+        pal = sub.palette()
+        for group in (QtGui.QPalette.Active, QtGui.QPalette.Inactive, QtGui.QPalette.Disabled):
+            pal.setColor(group, QtGui.QPalette.Highlight, QtGui.QColor(p["rail"]))
+            pal.setColor(group, QtGui.QPalette.HighlightedText, QtGui.QColor(p["text"]))
+        sub.setPalette(pal)
+        sub.setProperty("fsTitleTheme", name)
+    return n
+
+
 def _icon(name, off, on=None):
     from PySide6 import QtGui   # noqa: PLC0415
     ic = QtGui.QIcon()
@@ -1592,6 +1620,7 @@ def relayout(win):
     if st is None:
         return {}
     mode, overflow = st["strip_mode"], st.get("overflow_mode", "scroll")
+    theme_mdi(win)                               # an image window made since: its title in role colours (D17)
     for view in win.findChildren(QtWidgets.QGraphicsView):          # image windows made since (or detached)
         tools = getattr(view, "_tools", None)
         if tools is not None and _alive(tools) and tools.objectName() != "flow_strip":

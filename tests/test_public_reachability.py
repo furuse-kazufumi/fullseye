@@ -87,7 +87,8 @@ _INTERNAL = {
     #   怪しい文字の検出と印(suspicious_chars / mark_code)、色の見分けの門(lab / delta_e / simulate_cvd / distinct_report)。
     # studio_theme +2 2026-11-13(要件 7): コードの色の表(code_colour_table)と下地の見分けの門(ground_report)。
     # studio_theme +1 2026-11-15: 左上の終わり方と絵の印の便(D99 D130): studio_panels.end_state・studio_theme.ui_families。Studio の窓の内側の部品で op ではない
-    "studio_theme": 43,
+    # studio_theme +1 2026-11-15: 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない
+    "studio_theme": 44,
     # studio_panels 2026-11-13(第 2 段): パネルの帯・dock ⇔ 別ウィンドウ・配置の保存と復元・横長のパネルで
     #   道具とタブを左へ・題の帯へ状態と ≡ を登録する口・左上の進捗の表示 25 本。Studio の窓の内側の部品で op ではない(studio.py からは短い呼び出しだけ。試験が直接呼ぶ)。
     # studio_panels +3 2026-11-13(要件 5): パネルのボタンの QAction(button_action / sync_button_actions)と、
@@ -98,7 +99,8 @@ _INTERNAL = {
     # studio_panels +3 2026-11-15: 題の帯とメニューの便(D14 D59 D98 D100 D111): label_text / plain_text / drop_repeated_titles。Studio の窓の内側の部品で op ではない
     # studio_panels +1 2026-11-15: パネルの一覧の便(D20 D21 D60): panel_order。Studio の窓の内側の部品で op ではない
     # studio_panels +1 2026-11-15: 左上の終わり方と絵の印の便(D99 D130): studio_panels.end_state・studio_theme.ui_families。Studio の窓の内側の部品で op ではない
-    "studio_panels": 54,
+    # studio_panels +1 2026-11-15: 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない
+    "studio_panels": 55,
     "studio": 91, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
@@ -351,7 +353,8 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-15 題の帯とメニューの便(D14 D59 D98 D100 D111): label_text / plain_text / drop_repeated_titles。Studio の窓の内側の部品で op ではない: 1178 + 3 = 1181。実測 1181。
 # 2026-11-15 パネルの一覧の便(D20 D21 D60): panel_order。Studio の窓の内側の部品で op ではない: 1181 + 1 = 1182。実測 1182。
 # 2026-11-15 左上の終わり方と絵の印の便(D99 D130): studio_panels.end_state・studio_theme.ui_families。Studio の窓の内側の部品で op ではない: 1182 + 2 = 1184。実測 1184。
-_HIDDEN_FUNCTIONS_TODAY = 1184
+# 2026-11-15 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない: 1184 + 2 = 1186。実測 1186。
+_HIDDEN_FUNCTIONS_TODAY = 1186
 
 
 def _hidden_total():

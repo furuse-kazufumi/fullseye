@@ -263,7 +263,8 @@ QWidget {{ background:{p['bg0']}; color:{p['text']}; font-size:12px; font-family
 QMainWindow, QDialog {{ background:{p['bg0']}; }}
 QLabel {{ color:{p['text']}; background:transparent; }}
 QLabel[muted="true"] {{ color:{p['muted']}; }}
-QLabel[hint="true"] {{ color:{p['muted']}; font-family:{mono_stack()}; }}
+QLabel[hint="true"] {{ color:{p['muted']}; }}
+QLabel[figures="true"] {{ font-family:{mono_stack()}; }}
 
 QMenuBar {{ background:{p['chrome']}; color:{p['text']}; border-bottom:1px solid {p['line']}; padding:1px 4px; }}
 QMenuBar::item {{ background:transparent; padding:3px 9px; border-radius:{r}px; }}
@@ -312,6 +313,14 @@ QTreeWidget::item, QTreeView::item {{ height:{row}px; }}
 QComboBox QAbstractItemView::item {{ height:{row}px; }}
 QListWidget::item:hover {{ background:{p['hover']}; }}
 QListWidget::item:selected {{ background:{p['accent']}; color:{p['accent_ink']}; }}
+QTreeView, QTableView {{ selection-background-color:{p['accent']}; selection-color:{p['accent_ink']};
+    alternate-background-color:{p['bg1']}; gridline-color:{p['line']}; }}
+QTreeView::item:selected, QTableView::item:selected {{ background:{p['accent']}; color:{p['accent_ink']}; }}
+QHeaderView::section {{ background:{p['chrome']}; color:{p['muted']}; border:none;
+    border-right:1px solid {p['line']}; border-bottom:1px solid {p['line']}; padding:0px {u + 2}px; min-height:{row}px; }}
+QHeaderView::section:checked {{ color:{p['text']}; }}
+QTableCornerButton::section {{ background:{p['chrome']}; border:none;
+    border-right:1px solid {p['line']}; border-bottom:1px solid {p['line']}; }}
 QComboBox::drop-down {{ border:none; width:18px; }}
 QComboBox QAbstractItemView {{ background:{p['bg1']}; border:1px solid {p['line']}; border-radius:{r}px;
     selection-background-color:{p['accent']}; selection-color:{p['accent_ink']}; outline:none; }}
@@ -735,10 +744,25 @@ def code_surfaces(root):
     return out
 
 
-def apply_code_fonts(root, pt=None):
-    """Code font on every code surface under ``root`` and on the code inside its help pages.
-    Returns (surfaces, help fragments)."""
+def mark_prose(root):
+    """D121: every hint label under ``root`` that is not marked as figures is a sentence: it carries the
+    property "prose" (the UI face, never a fixed-pitch one). Returns the labels marked now or before."""
     from PySide6 import QtWidgets   # noqa: PLC0415
+    out = []
+    for lab in ([root] if isinstance(root, QtWidgets.QLabel) else []) + root.findChildren(QtWidgets.QLabel):
+        prose = bool(lab.property("hint")) and not lab.property("figures")
+        if bool(lab.property("prose")) != prose:      # also taken back: marked as figures after an earlier sweep
+            lab.setProperty("prose", prose)
+        if prose:
+            out.append(lab)
+    return out
+
+
+def apply_code_fonts(root, pt=None):
+    """Code font on every code surface under ``root`` and on the code inside its help pages; the
+    sentences under it are marked as prose (the other half of the same rule). Returns (surfaces, help fragments)."""
+    from PySide6 import QtWidgets   # noqa: PLC0415
+    mark_prose(root)
     n = 0
     for _kind, w in code_surfaces(root):
         apply_code_font(w, pt)

@@ -1440,3 +1440,177 @@ def test_state_glyphs_have_a_font_or_are_drawn(tmp_path, monkeypatch):
     finally:
         win._apply_language("en")
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# the look, 1.2-B: D17 (image area), D120 (trees / tables / headers), D121 (prose), D122 (titles not amber)
+# --------------------------------------------------------------------------- #
+def test_prose_labels_not_monospace(tmp_path, monkeypatch):
+    from PySide6 import QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        code = set(studio_theme.CODE_FONTS)
+        ui = studio_theme.UI_FONTS["en"][0]
+        hints = [lab for lab in win.findChildren(QtWidgets.QLabel) if lab.property("hint")]
+        figures = [lab for lab in hints if lab.property("figures")]
+        prose = [lab for lab in win.findChildren(QtWidgets.QLabel) if lab.property("prose")]
+        assert len(hints) >= 9
+        assert len(figures) == 4                                            # pixel read-out, image info, 2 signatures
+        assert win._img_info in figures
+        assert {"select an operator to see its signature", "select a stage to tune its knobs"} <= {
+            lab.text() for lab in figures}
+        assert len(prose) >= 5
+        assert {id(x) for x in prose} == {id(x) for x in hints} - {id(x) for x in figures}
+        for lab in prose:                                                   # a sentence: the UI face, never fixed pitch
+            lab.ensurePolished()
+            fams = lab.font().families()
+            assert fams[0] == ui and not (set(fams) & code), (lab.text()[:30], fams)
+        for lab in figures:                                                 # figures and signatures: the code face
+            lab.ensurePolished()
+            assert lab.font().families()[0] == studio_theme.CODE_FONTS[0], lab.text()[:30]
+        texts = {lab.text() for lab in prose}
+        assert "ready" in texts and any(t.startswith("current: ") for t in texts)
+        # a window built later: its sentences are prose too (the same sweep that gives code its face)
+        dlg = QtWidgets.QDialog(win)
+        late = QtWidgets.QLabel("loading the demo clip", dlg); late.setProperty("hint", True)
+        fig = QtWidgets.QLabel("12 x 34", dlg); fig.setProperty("hint", True); fig.setProperty("figures", True)
+        dlg.show(); _pump(app, 0.3)
+        try:
+            late.ensurePolished(); fig.ensurePolished()
+            assert late.property("prose") and late.font().families()[0] == ui
+            assert not fig.property("prose") and fig.font().families()[0] == studio_theme.CODE_FONTS[0]
+            assert studio_theme.mark_prose(dlg) == [late]
+        finally:
+            dlg.close()
+    finally:
+        _close(app, win)
+
+
+def test_group_title_and_brand_not_warn_colour(tmp_path, monkeypatch):
+    from PySide6 import QtGui, QtWidgets
+    for theme in studio_theme.THEMES:
+        p = studio_theme.PALETTES[theme]
+        rules = _qss_rules(studio_theme.build_qss(theme))
+        assert rules["QGroupBox::title"]["color"] == p["title"] != p["warn"]
+        assert p["brand"] != p["warn"] and p["title"] != p["warn"]
+        assert p["warn"] not in rules["QDockWidget::title"].values()
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        p = studio_theme.PALETTES[studio_theme.current_name()]
+        for d in win._docks.values():
+            d.show()
+        _pump(app, 0.4)
+        groups = [g for d in win._docks.values() for g in d.findChildren(QtWidgets.QGroupBox) if g.title() and g.isVisible()]
+        assert len(groups) >= 3
+        amber = QtGui.QColor(p["warn"])
+        painted = 0
+        for g in groups:                                                    # the painted title: no amber pixel
+            img = g.grab(g.rect().adjusted(0, 0, 0, -(g.height() - 16))).toImage()
+            near = sum(1 for x in range(img.width()) for y in range(img.height())
+                       if abs(img.pixelColor(x, y).red() - amber.red()) < 24
+                       and abs(img.pixelColor(x, y).green() - amber.green()) < 24
+                       and abs(img.pixelColor(x, y).blue() - amber.blue()) < 24)
+            assert near == 0, (g.title(), near)
+            painted += 1
+        assert painted >= 3
+        img = win._brand.grab().toImage()                                   # the product name, idle
+        cols = {img.pixelColor(x, y).name() for x in range(40, img.width()) for y in range(img.height())}
+        assert p["brand"] in cols and p["warn"] not in cols
+    finally:
+        _close(app, win)
+
+
+def test_trees_tables_and_headers_select_in_the_accent(tmp_path, monkeypatch):
+    from PySide6 import QtCore, QtGui, QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        p = studio_theme.PALETTES[studio_theme.current_name()]
+        rules = _qss_rules(studio_theme.build_qss(studio_theme.current_name()))
+        for sel in ("QTreeView::item:selected", "QTableView::item:selected"):
+            assert rules[sel]["background"] == p["accent"] and rules[sel]["color"] == p["accent_ink"], sel
+        assert rules["QHeaderView::section"]["background"] == p["chrome"]
+        dlg = QtWidgets.QDialog(win); dlg.resize(520, 300)                  # a window made later, under the same sheet
+        lay = QtWidgets.QHBoxLayout(dlg)
+        model = QtGui.QStandardItemModel(3, 2, dlg)
+        model.setHorizontalHeaderLabels(["name", "value"])
+        for r in range(3):
+            for c in range(2):
+                model.setItem(r, c, QtGui.QStandardItem("item %d %d" % (r, c)))
+        tree = QtWidgets.QTreeView(); tree.setModel(model); tree.setRootIsDecorated(False)
+        table = QtWidgets.QTableView(); table.setModel(model)
+        widget = QtWidgets.QTreeWidget(); widget.setHeaderLabels(["a", "b"])
+        for r in range(3):
+            QtWidgets.QTreeWidgetItem(widget, ["row %d" % r, "x"])
+        for v in (tree, table, widget):
+            lay.addWidget(v)
+        dlg.show(); _pump(app, 0.3)
+        try:
+            tree.setCurrentIndex(model.index(1, 0)); table.setCurrentIndex(model.index(1, 1))
+            widget.setCurrentItem(widget.topLevelItem(1)); _pump(app, 0.2)
+            seen = 0
+            accent, qt_blue = QtGui.QColor(p["accent"]), QtGui.QColor("#308cc6")
+
+            def near(c, ref, tol=14):                                       # the style lays a faint sheen over a selected row
+                return max(abs(c.red() - ref.red()), abs(c.green() - ref.green()), abs(c.blue() - ref.blue())) <= tol
+
+            assert not near(accent, qt_blue, 30)                            # the two can be told apart at all
+            for view, index in ((tree, model.index(1, 0)), (table, model.index(1, 1)),
+                                (widget, widget.indexFromItem(widget.topLevelItem(1)))):
+                r = view.visualRect(index)
+                assert r.height() >= 20, (type(view).__name__, r.height())  # a row is never under 20 px
+                img = view.viewport().grab().toImage()
+                got = img.pixelColor(r.right() - 6, r.center().y())
+                assert near(got, accent) and not near(got, qt_blue), (type(view).__name__, got.name())
+                other = view.visualRect(index.sibling(0, index.column()))
+                assert not near(img.pixelColor(other.right() - 6, other.center().y()), accent)
+                head = view.header() if hasattr(view, "header") else view.horizontalHeader()
+                himg = head.grab().toImage()
+                assert himg.pixelColor(head.width() // 4, 3).name() == p["chrome"], type(view).__name__
+                seen += 1
+            assert seen == 3
+        finally:
+            dlg.close()
+    finally:
+        _close(app, win)
+
+
+def test_image_area_ground_and_title_take_role_colours(tmp_path, monkeypatch):
+    from PySide6 import QtGui
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        p = studio_theme.PALETTES[studio_theme.current_name()]
+        mdi = win._mdi
+        assert mdi.background().color().name() == p["surround"]             # not Qt's grey
+        sub2 = win._new_graphics_window(); _pump(app, 0.4)
+        subs = mdi.subWindowList()
+        assert len(subs) == 2
+        assert sub2 in subs
+        assert studio_panels.theme_mdi(win) == 2
+        for sub in subs:
+            pal = sub.palette()
+            assert pal.color(QtGui.QPalette.Active, QtGui.QPalette.Highlight).name() == p["rail"], sub.windowTitle()
+            assert pal.color(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText).name() == p["text"]
+            assert pal.color(QtGui.QPalette.Inactive, QtGui.QPalette.Window).name() == p["bg1"]   # behind: the sheet's
+        for sub in subs:
+            sub.showNormal()
+        subs[0].setGeometry(10, 10, 360, 240); subs[1].setGeometry(420, 30, 360, 240); _pump(app, 0.4)
+        mdi.setActiveSubWindow(subs[1]); _pump(app, 0.3)
+        img = mdi.grab().toImage()
+        assert img.pixelColor(400, 200).name() == p["surround"]             # the ground between the two windows
+        blue = QtGui.QColor("#308cc6")                                      # Fusion's own active title
+        for sub in subs:                                                    # no light-blue title band
+            g = sub.geometry()
+            band = [img.pixelColor(x, g.top() + 10) for x in range(g.left() + 40, g.right() - 80, 7)]
+            assert len(band) >= 20
+            assert not [c for c in band if abs(c.red() - blue.red()) < 40 and abs(c.green() - blue.green()) < 40
+                        and abs(c.blue() - blue.blue()) < 40], sub.windowTitle()
+            assert not [c for c in band if c.blue() > 180 and c.blue() - c.red() > 60], sub.windowTitle()
+        win._apply_theme(theme="panel", save=False); _pump(app, 0.4)        # the other scheme: both follow
+        try:
+            q = studio_theme.PALETTES["panel"]
+            assert mdi.background().color().name() == q["surround"]
+            assert subs[0].palette().color(QtGui.QPalette.Active, QtGui.QPalette.Highlight).name() == q["rail"]
+        finally:
+            win._apply_theme(theme=studio_theme.DEFAULT_THEME, save=False); _pump(app, 0.3)
+    finally:
+        _close(app, win)
