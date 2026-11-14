@@ -786,3 +786,84 @@ def test_s3_the_python_editor_window_asks_before_saving_over_bytes_it_cannot_rea
         except Exception:                                                 # noqa: BLE001
             pass
         _close(win)
+
+
+# --------------------------------------------------------------------------- #
+# S5: パイプラインのファイルを開いたら、未適用の編集の状態を全部消す                 #
+# --------------------------------------------------------------------------- #
+def _pipeline_file(tmp_path):
+    p = tmp_path / "opened.json"
+    p.write_text(json.dumps({"fullseye_pipeline": 1, "stages": [["gaussian", 0.3, 0.5]], "directives": []}),
+                 encoding="utf-8")
+    return p
+
+
+def _stages(model):
+    return [list(s)[:3] for s in model.stages]
+
+
+def _discard_hook(monkeypatch, answer):
+    asked = []
+    monkeypatch.setattr(studio, "CONFIRM_HOOK", lambda parent, title, text: asked.append((title, text)) or answer)
+    return asked
+
+
+@pytest.mark.parametrize("start", ["python mode", "pipeline mode with the focus in the Program"])
+def test_s5_opening_a_pipeline_file_drops_every_trace_of_the_discarded_edits(start, tmp_path, monkeypatch):
+    """探針 r03: パイプラインのモードで未適用の編集 → Python のモード → パイプラインのファイルを開く(「捨てる」と
+    答える)。捨てたはずの文面が Program に残り、Apply すると開いたパイプラインがその文面で置き換わった。
+    パイプラインのモードのままでも、Program にフォーカスがあると同じ文面が残った。"""
+    asked = _discard_hook(monkeypatch, True)
+    win, model = _launch(tmp_path, monkeypatch, start_mode="pipeline")
+    try:
+        pm = win._pymode
+        ed = win._program["edit"]
+        _set_text(win, "median (5)\nthreshold (0.5)\n")                  # 打っただけ(未適用)
+        ed.breakpoints.add(2)
+        assert pm.state.get("code_dirty") is True and _stages(model) == []
+        if start == "python mode":
+            pm.set_mode("python")
+            _pump(0.2)
+            assert pm.pipe_dirty is True
+            pm.toggle_breakpoint(2)                                      # Python の文面のブレークポイント
+        else:
+            monkeypatch.setattr(ed, "hasFocus", lambda: True)            # 打っている最中(Program にフォーカス)
+        win._open_pipe_path(str(_pipeline_file(tmp_path)))
+        _pump(0.4)
+        assert len(asked) == 1 and "unapplied Program edits" in asked[0][1]
+        assert pm.mode == "pipeline" and _stages(model) == [["gaussian", 0.3, 0.5]]
+        text = ed.toPlainText()
+        assert "median" not in text and "threshold" not in text and "gaussian" in text    # 開いた段の列から作り直す
+        assert text.strip() == pm.ctx["generated_text"]().strip()
+        assert pm.state.get("code_dirty") is False and pm.pipe_dirty is False
+        assert "unapplied" not in win._program["status"]().text()
+        assert ed.breakpoints == set()                                   # 捨てた文面のブレークポイントも残さない
+        assert not ed.document().isUndoAvailable()                       # Ctrl+Z で捨てた文面は戻らない
+        assert pm.mode_mismatch() is None
+        if start == "python mode":
+            assert pm.breakpoints_py == {2}                              # Python の文面の物は消さない
+        win._program["apply"]()
+        _pump(0.3)
+        assert _stages(model) == [["gaussian", 0.3, 0.5]]                # Apply しても、開いたパイプラインのまま
+    finally:
+        _close(win)
+
+
+def test_s5_cancel_keeps_the_unapplied_edits(tmp_path, monkeypatch):
+    """「捨てますか」でキャンセルなら何も変わらない: 開かない。未適用の文面と印は、モードを戻せばそのまま在る。"""
+    asked = _discard_hook(monkeypatch, False)
+    win, model = _launch(tmp_path, monkeypatch, start_mode="pipeline")
+    try:
+        pm = win._pymode
+        ed = win._program["edit"]
+        _set_text(win, "median (5)\nthreshold (0.5)\n")
+        pm.set_mode("python")
+        _pump(0.2)
+        win._open_pipe_path(str(_pipeline_file(tmp_path)))
+        _pump(0.3)
+        assert len(asked) == 1 and pm.mode == "python" and _stages(model) == [] and pm.pipe_dirty is True
+        pm.set_mode("pipeline")
+        _pump(0.2)
+        assert ed.toPlainText() == "median (5)\nthreshold (0.5)\n" and pm.state.get("code_dirty") is True
+    finally:
+        _close(win)

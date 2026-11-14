@@ -15487,7 +15487,9 @@ def build_window(model=None, start_mode="pipeline"):
         # they never leak from one pipeline into the next (F11 review finding)
         state["dev_lines"] = list(model.directives)
         state["code_dirty"] = False
-        code_edit.breakpoints.clear()
+        _pm = getattr(win, "_pymode", None)
+        if _pm is None or not _pm.active:                 # Python のモードの間、編集欄の印は Python の文面の物(消さない。
+            code_edit.breakpoints.clear()                 # パイプラインの文面の印は on_pipeline_opened が消す)
         state["input_notes"] = []
         if model.input_ref:                               # the input the project was saved with
             res = resolve_input_ref(model.input_ref, os.path.dirname(os.path.abspath(path)))
@@ -15511,9 +15513,14 @@ def build_window(model=None, start_mode="pipeline"):
             apply_text_directives("\n".join(model.directives))
         _push_recent(path); _set_title()
         flash("loaded " + os.path.basename(path))
-        _pm = getattr(win, "_pymode", None)
         if _pm is not None:                                  # パイプラインのファイルはパイプラインのモードで見せる
             _pm.on_pipeline_opened(path)
+        # ★2026-11-13(第 3 回レビュー S5): 開く前の Program の文面(未適用の編集)は、上の確認で「捨てる」と答えた物。
+        #   編集欄にフォーカスがあっても、開いた段の列から文面を作り直す(作り直さないと、捨てたはずの文面が残り、
+        #   Apply で開いたパイプラインがその文面に置き換わった)。setPlainText なので Undo の履歴も空になる。
+        sync_program(force=True)
+        if _pm is None or not _pm.active:
+            code_status.setText("ready")                     # 「未適用の編集があります」の表示も残さない
     win._open_pipe_path = _open_pipe_path
     win._refresh_stage_list = refresh_stage_list
 

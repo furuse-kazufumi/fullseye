@@ -1228,8 +1228,14 @@ class PyModeController(QtCore.QObject):
         """パイプラインのファイルを開いた: パイプラインのモードで見せる(開いた物に合わせる)。開いたファイルを
         覚える(そこから「Python に変換」した文面は、初回の実行の前に確認する)。"""
         self.pipe_source = os.path.abspath(path) if path else "a pipeline file"
+        # 開く前のパイプラインの文面への未適用の編集は、「捨てますか」に「捨てる」と答えた物: その状態を全部消す
+        # (2026-11-13 第 3 回レビュー S5。残すと、モードを戻した所で捨てたはずの文面と「未適用」の印が戻った)
+        self.pipe_dirty = False
+        self.pipe_text = None
+        self.breakpoints_pipe = set()
+        self.state["code_dirty"] = False
         if self.active:
-            self.set_mode(MODE_PIPELINE, announce=False)
+            self.set_mode(MODE_PIPELINE, announce=False)      # 未適用ではないので、段の列から文面を作り直す
 
     # ---- 文面の変化 ----
     def on_text_changed(self):

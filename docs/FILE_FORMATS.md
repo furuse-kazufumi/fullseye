@@ -20,7 +20,7 @@
 | IMG | `.img` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+4 | — |
 | JPEG | `.jpeg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_imgforensics.py`<br>+3 | — |
 | JPEG | `.jpg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_help_rendering.py`<br>+14 | — |
-| JSON | `.json` | `backends_auto.load_specs`<br>`defs_io.read_json`<br>`engine.load_pipeline`<br>`fullseye.jsonio.load_json` | `defs_io.write_json_atomic`<br>`fullseye.jsonio.save_json`<br>`fullseye.parambundle.save_params` | — | optional: cv2, skimage | `tests/test_accel_bridge.py`<br>`tests/test_accel_label.py`<br>+173 | — |
+| JSON | `.json` | `backends_auto.load_specs`<br>`defs_io.read_json`<br>`engine.load_pipeline`<br>`fullseye.jsonio.load_json` | `defs_io.write_json_atomic`<br>`fullseye.jsonio.save_json`<br>`fullseye.parambundle.save_params` | — | optional: cv2, skimage | `tests/test_accel_bridge.py`<br>`tests/test_accel_label.py`<br>+174 | — |
 | LAS | `.las` | `meshio_opt.read_las` | — | — | stdlib / core | `tests/test_accel_label.py`<br>`tests/test_backends.py`<br>+16 | — |
 | M4V | `.m4v` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | MetaImage | `.mha` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
