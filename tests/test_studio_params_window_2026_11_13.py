@@ -12,6 +12,7 @@ import io
 import json
 import os
 import re
+import sys
 
 import pytest
 
@@ -2628,7 +2629,9 @@ def test_params_strip_draws_a_line_between_groups(qapp, fusion, ini, tmp_path):
 class _FlowLike(QtWidgets.QWidget):
     """見た目の枝の studio_panels.FlowStrip と同じ口の代役(この木に studio_panels が無くても門が回るように)。
     ボタンの群を受け取り(set_groups)、向きは "h" / "v" の文字(それ以外は本物と同じく黙って "h")、objectName は "flow_strip"。
-    収まらなければ両端に送りのボタン(b_back / b_on)が出て、1 回押すと 1 個送る。端では無効。"""
+    収まらなければ両端に送りのボタン(b_back / b_on)が出て、1 回押すと 1 個送る。端では無効。
+    restyle(tr) は送りのボタンのツールヒントを tr で作り直し(本物と同じく、作った時にも 1 回)、set_mode は収まらない時の形
+    "scroll" / "wrap" を覚える(知らない形は本物と同じく "scroll"。この代役は折り返しまでは描かない)。"""
 
     def __init__(self):
         super().__init__()
@@ -2640,6 +2643,23 @@ class _FlowLike(QtWidgets.QWidget):
         self.b_back.clicked.connect(lambda: self.scroll_by(-1))
         self.b_on.clicked.connect(lambda: self.scroll_by(1))
         self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        self.tr = lambda s: s
+        self.mode = "scroll"
+        self.restyle()
+
+    def restyle(self, tr=None):
+        if tr is not None:
+            self.tr = tr
+        for b, text in zip((self.b_back, self.b_on), _SCROLL_TIPS):
+            b.setToolTip(self.tr(text))
+
+    def set_mode(self, mode):
+        mode = mode if mode in ("scroll", "wrap") else "scroll"
+        if mode != self.mode:
+            self.mode = mode
+            self.first = 0
+            self.updateGeometry()
+            self.relayout()
 
     def set_groups(self, groups):
         self.groups = [list(g) for g in groups if g]
@@ -2703,6 +2723,16 @@ class _FlowLike(QtWidgets.QWidget):
     def resizeEvent(self, ev):
         super().resizeEvent(ev)
         self.relayout()
+
+
+#: 見た目の枝の FlowStrip の送りのボタンのツールヒント(studio_panels.S_SCROLL_BACK / S_SCROLL_ON と同じ英語の元の文)。
+_SCROLL_TIPS = ("Scroll back \u2014 show the ones before (or turn the mouse wheel)",
+                "Scroll on \u2014 show the ones after (or turn the mouse wheel)")
+
+
+def _another_flow_strip(fs):
+    """``fs`` と同じ種類の FlowStrip をもう 1 つ(代役なら代役、本物なら本物)。"""
+    return _FlowLike() if isinstance(fs, _FlowLike) else type(fs)("tools", "params")
 
 
 @pytest.fixture(params=["stand-in", "studio_panels"])
@@ -3179,3 +3209,137 @@ def test_params_panel_in_a_host_window_does_not_take_the_focus(qapp, fusion, ini
     assert kept == 3
     host.close()
     host.deleteLater()
+
+
+def _scroll_tips(fs) -> tuple[str, str]:
+    """``fs`` の送りのボタンのツールヒントの英語の元の文(本物なら studio_panels の定数、代役なら _SCROLL_TIPS)。"""
+    sp = sys.modules.get(type(fs).__module__)
+    return getattr(sp, "S_SCROLL_BACK", _SCROLL_TIPS[0]), getattr(sp, "S_SCROLL_ON", _SCROLL_TIPS[1])
+
+
+def test_params_flow_strip_hears_the_language_theme_and_overflow(qapp, fusion, ini, tmp_path, flow_strip):
+    """確かめの指摘(medium): 差し込んだ FlowStrip に、Studio の言語・theme・「収まらない時: 送る / 折り返す」が届く。
+    見た目の枝は言語と theme を restyle(tr)、送る / 折り返すを set_mode で当てるが、台帳(st["strips"])に載った列にしか
+    当てず、この窓は台帳に載らない。直す前は ja の窓でも送りのボタンのツールヒントが英語のまま(set_lang の後も)で、
+    パネルに送る / 折り返すを渡す口(set_overflow)が無かった。
+
+    Studio の tr の代役は「今の UI の言語」で引く関数(Studio の tr と同じく、言語は外の状態)。束の表に無い送りの文は、
+    窓の tr(make_tr(lang, fallback=Studio の tr))から Studio の tr へ流れて訳される。"""
+    fs = flow_strip
+    tips = _scroll_tips(fs)
+    ui = {"lang": "en"}
+
+    def host(text):
+        return text if ui["lang"] == "en" or not text else "[%s] %s" % (ui["lang"], text)
+
+    def shown(strip) -> tuple[str, str]:
+        return strip.b_back.toolTip(), strip.b_on.toolTip()
+
+    win = Q.ParamsWindow(None, host, lang="en")
+    win.resize(1024, 240)
+    p = win.panel
+    p.add_paths(_three_files(tmp_path))
+    win.show()
+    _pump(qapp)
+    p.set_strip_widget(fs)
+    _pump(qapp)
+    assert shown(fs) == tips                                            # en: 元の文のまま
+    open_en = p.tool_actions["open"].toolTip()
+    checked = 0
+    for lang in ("ja", "de", "en", "hi"):                               # Studio の言語の切り替え = set_lang
+        ui["lang"] = lang
+        win.set_lang(lang)
+        _pump(qapp)
+        want = tips if lang == "en" else tuple("[%s] %s" % (lang, t) for t in tips)
+        assert shown(fs) == want, (lang, shown(fs))
+        assert (p.tool_actions["open"].toolTip() == open_en) == (lang == "en"), lang    # 対照: 道具の文も変わる
+        checked += 1
+    assert checked == 4
+    ui["lang"] = "ja"                                                   # ja の窓に後から差し込んだ列も、差した時に ja
+    win.set_lang("ja")
+    second = _another_flow_strip(fs)
+    p.set_strip_widget(second)
+    _pump(qapp)
+    assert shown(second) == tuple("[ja] " + t for t in tips), shown(second)
+    # theme: 親の QSS の差し替え(Studio の theme の切り替え)で、列にも restyle が届く
+    calls = []
+    real = second.restyle
+    second.restyle = lambda tr=None: (calls.append(tr), real(tr))[1]
+    win.setStyleSheet("QLabel { color: #203040; }")
+    _pump(qapp)
+    _pump(qapp)
+    assert len(calls) >= 1 and calls[-1] is p.tr_, calls
+    n = len(calls)
+    p.apply_theme()
+    assert len(calls) == n + 1
+    # 送る / 折り返す: set_overflow で渡し、後から差し込んだ列にも当てる。知らない形は断り、今の形のまま
+    assert p.overflow() is None and second.mode == "scroll"
+    assert p.set_overflow("wrap") == "wrap" and second.mode == "wrap" and p.overflow() == "wrap"
+    assert p.set_overflow("scroll") == "scroll" and second.mode == "scroll"
+    with pytest.raises(ValueError):
+        p.set_overflow("fold")
+    assert p.overflow() == "scroll" and second.mode == "scroll"
+    p.set_overflow("wrap")
+    third = _another_flow_strip(fs)
+    assert third.mode == "scroll"
+    p.set_strip_widget(third)
+    assert third.mode == "wrap" and shown(third) == tuple("[ja] " + t for t in tips)
+    _close_quietly(win)
+    # 既定の部品(送りも折り返しも持たない)の窓でも、形は覚えるだけで落ちない
+    plain = _window(qapp)
+    assert plain.panel.set_overflow("wrap") == "wrap" and plain.panel.overflow() == "wrap"
+    assert plain.panel.strip_widget().objectName() == "panelStrip"
+    _close_quietly(plain)
+
+
+def test_params_studio_entry_takes_the_strip_rule_and_overflow(qapp, fusion, ini, tmp_path, flow_strip):
+    """確かめの指摘(medium): Studio の入口(show_params_window)から、道具の列の部品・向きの規則・収まらない時の形を渡せる。
+    D87 の引き継ぎの繋ぎ方 show_params_window(win, paths, tr, lang=, confirm=) で開いた窓は、規則も送る部品も持たず、
+    横長の窓(1280x280)でも道具の列が上のままだった(直す前は strip= / strip_rule= / overflow= が無く TypeError)。
+    渡して開いた窓は 1280x280 で左に縦 1 列、送りのボタンを押して 10 個全部に届く。同じ親から入口をもう一度通っても、
+    部品は作り直さない(1 つのまま)。知らない形は窓に触る前に断る。"""
+    paths = _three_files(tmp_path)
+    parent = QtWidgets.QWidget()
+    made = []
+
+    def make():
+        made.append(flow_strip if not made else _another_flow_strip(flow_strip))
+        return made[-1]
+
+    asked = []
+
+    def rule(w, h, now):                                                # studio_panels.strip_side(w, h, now, "auto") と同じ式
+        asked.append((w, h, now))
+        ratio = w / h
+        return "left" if ratio >= 2.2 else ("top" if ratio <= 1.6 else now)
+
+    win = Q.show_params_window(parent, paths, M.make_tr("en"), lang="ja", strip=make, strip_rule=rule,
+                               overflow="scroll")
+    p = win.panel
+    assert parent._params_window is win and made == [flow_strip] and p.strip_widget() is flow_strip
+    assert p.overflow() == "scroll" and flow_strip.mode == "scroll" and len(asked) >= 1
+    win.resize(1280, 280)
+    _pump(qapp)
+    _pump(qapp)
+    assert (p.strip_side(), p.strip_side_shown(), flow_strip.orientation) == ("left", "left", "v")
+    assert flow_strip.b_on.isVisible()                                  # 縦に入りきらない: 送る
+    seen, presses = _reach_by_arrows(qapp, p, flow_strip)
+    assert seen == set(BUTTONS) and len(seen) == 10 and presses >= 1, (sorted(set(BUTTONS) - seen), presses)
+    assert win.rect().contains(_rect_in(flow_strip, win)) and not _rect_in(flow_strip, win).intersects(_rect_in(p.status, win))
+    # 2 回目: 部品は作らない・形は変えられる
+    again = Q.show_params_window(parent, (), M.make_tr("en"), lang="ja", strip=make, overflow="wrap")
+    assert again is win and len(made) == 1 and p.strip_widget() is flow_strip and flow_strip.mode == "wrap"
+    with pytest.raises(ValueError):                                     # 知らない形: 窓に触る前に断る
+        Q.show_params_window(parent, (), M.make_tr("en"), lang="ja", overflow="fold")
+    assert p.overflow() == "wrap" and flow_strip.mode == "wrap"
+    _close_quietly(win)
+    parent.deleteLater()
+    # 対照: 部品も規則も渡さない入口(元の引き継ぎの形)は、既定の部品・規則なしで 1280x280 でも上の 1 行
+    other = QtWidgets.QWidget()
+    plain = Q.show_params_window(other, paths, M.make_tr("en"), lang="ja")
+    plain.resize(1280, 280)
+    _pump(qapp)
+    _pump(qapp)
+    assert plain.panel.strip_widget().objectName() == "panelStrip" and plain.panel.strip_side_shown() == "top"
+    _close_quietly(plain)
+    other.deleteLater()

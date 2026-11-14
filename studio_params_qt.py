@@ -326,6 +326,9 @@ class _ToolStrip(QtWidgets.QWidget):
     * 見た目の枝の ``studio_panels`` の ``FlowStrip`` の形 — ``set_groups(ボタンの群)`` と ``set_orientation("h" | "v")``。
       パネルが QAction からボタンを作って群で渡す(:class:`_FlowPort`)。
 
+    どちらの形も、任意で ``restyle(tr)``(言語と theme で描き直す。パネルが差し込んだ時・言語の切り替え・theme の読み直しで
+    パネルの tr を渡して呼ぶ)と ``set_mode("scroll" | "wrap")``(収まらない時の形。:meth:`ParamsPanel.set_overflow`)。
+
     この既定の部品は「送る」「折り返す」を持たない(全部のボタンが見える長さが要る)。縦に置く高さが足りない時は、
     パネルが上の横 1 行へ戻す(:meth:`ParamsPanel.strip_side_shown`)。"""
 
@@ -450,6 +453,8 @@ class _FlowPort:
 
 #: 道具の列の向き(外から set_strip_side で選ぶ。自動で選ぶ規則は set_strip_rule で受け取る = studio_panels の strip_side)。
 STRIP_SIDES = ("top", "left")
+#: 道具の列が収まらない時の形(Studio の設定「収まらない時: 送る / 折り返す」= studio_panels の OVERFLOW_MODES と同じ)。
+STRIP_OVERFLOWS = ("scroll", "wrap")
 #: 列の部品の objectName: この窓の既定の部品と、set_actions の約束で差し込んだ部品に付ける。見た目の枝の FlowStrip を
 #: 差し込んだ時は付け替えない(その部品の名前 "flow_strip" と property flowKind / flowKey が、見た目の枝の門の数える印)。
 STRIP_NAME = "panelStrip"
@@ -1033,6 +1038,8 @@ class ParamsPanel(QtWidgets.QWidget):
         self._strip_side = "top"                        # 頼まれた側
         self._side_shown = "top"                        # 今置いている側(既定の部品は、縦に収まらない高さでは top)
         self._strip_rule: Callable[[int, int, str], str] | None = None
+        #: 収まらない時の形(set_overflow)。None = 列の部品の既定のまま。
+        self._overflow: str | None = None
         self.strip: QtWidgets.QWidget = _ToolStrip(self)
         #: 列の約束(set_actions / set_orientation / button_for)を持つ物: 部品そのものか、FlowStrip の形の部品の仲立ち。
         self._strip_api: Any = self.strip
@@ -1261,6 +1268,7 @@ class ParamsPanel(QtWidgets.QWidget):
         self.tr_ = tr
         self.tmodel.tr = tr
         self._apply_action_texts()
+        self._restyle_strip()                            # 差し込んだ FlowStrip の送りのボタンの文も
         self._apply_search_texts()
         self._fit_search()
         self._apply_empty_texts()
@@ -1289,6 +1297,7 @@ class ParamsPanel(QtWidgets.QWidget):
         for key, icon in self._action_icons.items():
             self.tool_actions[key].setIcon(_draw_icon(icon, color, dens["icon"], off=off))
         self._search_icon.setIcon(_draw_icon("search", color, off=off))
+        self._restyle_strip()                            # 差し込んだ FlowStrip の送りのボタンの色(と文)
         if resized:
             self._apply_density()
         self.tmodel.set_palette(self.tree.palette(), self.tree.font())
@@ -1402,6 +1411,10 @@ class ParamsPanel(QtWidgets.QWidget):
 
           名前(``"flow_strip"``)は変えない。本体の高さ(幅)を全部渡すので、収まらない分は部品が送る / 折り返す。
 
+        部品が ``set_mode`` を持てば :meth:`set_overflow` で覚えた形を、``restyle(tr)`` を持てば今の言語(パネルの tr)を
+        差し込んだ時に当てる。見た目の枝は言語・theme・形の切り替えを台帳(``st["strips"]``)の列にしか当てず、この窓は
+        台帳に載らないので、以後もパネルが当てる(言語 = :meth:`set_tr`、theme = :meth:`apply_theme`、形 = :meth:`set_overflow`)。
+
         前の部品はパネルから外して隠す(親なし。捨てるか使い直すかは呼ぶ側)。"""
         def has(name: str) -> bool:
             return callable(getattr(widget, name, None))
@@ -1425,8 +1438,39 @@ class ParamsPanel(QtWidgets.QWidget):
         if callable(getattr(self._strip_api, "set_metrics", None)):
             self._strip_api.set_metrics(*self._strip_metrics())
         self._strip_api.set_actions(self._strip_items)
+        self._tell_strip_overflow()
+        self._restyle_strip()
         self._place_strip()
         widget.show()
+
+    def set_overflow(self, mode: str) -> str:
+        """道具の列が収まらない時の形を外から変える: ``"scroll"``(両端の送りのボタン)/ ``"wrap"``(段 / 列を足す)。
+
+        Studio の設定「収まらない時: 送る / 折り返す」(``studio_panels.set_overflow_mode``)は台帳の列にしか届かず、この窓は
+        台帳に載らないので、Studio からこれを呼ぶ(:func:`show_params_window` の ``overflow=`` も同じ)。覚えた形は、後から
+        差し込んだ列の部品にも当てる。部品が ``set_mode`` を持たなければ(既定の部品は送りも折り返しも持たない)覚えるだけ。
+        知らない形は ValueError(今の形は変えない)。"""
+        if mode not in STRIP_OVERFLOWS:
+            raise ValueError("overflow must be one of %s (got %r)" % (" / ".join(STRIP_OVERFLOWS), mode))
+        self._overflow = mode
+        self._tell_strip_overflow()
+        return mode
+
+    def overflow(self) -> str | None:
+        """:meth:`set_overflow` で受け取った形(まだ受け取っていなければ ``None`` = 列の部品の既定のまま)。"""
+        return self._overflow
+
+    def _tell_strip_overflow(self) -> None:
+        fn = getattr(self.strip, "set_mode", None)
+        if self._overflow is not None and callable(fn):
+            fn(self._overflow)
+
+    def _restyle_strip(self) -> None:
+        """列の部品が ``restyle(tr)`` を持てば、今の言語(パネルの tr)と theme で描き直させる(FlowStrip の送りのボタンの
+        ツールヒントと色。送りの文は束の表に無いので、Studio から ``lang=`` で開いた窓では fallback = Studio の tr が訳す)。"""
+        fn = getattr(self.strip, "restyle", None)
+        if callable(fn):
+            fn(self.tr_)
 
     def _unplace_strip(self) -> None:
         for w in (self.strip, self.search):
@@ -2336,7 +2380,10 @@ class ParamsWindow(QtWidgets.QDialog):
 
 def show_params_window(parent: QtWidgets.QWidget | None = None, paths: Sequence[str] = (),
                        tr: Callable[[str], str] | None = None, settings: Callable[[], Any] | None = None,
-                       confirm: Callable[..., Any] | None = None, lang: str | None = None) -> ParamsWindow:
+                       confirm: Callable[..., Any] | None = None, lang: str | None = None, *,
+                       strip: Callable[[], QtWidgets.QWidget] | None = None,
+                       strip_rule: Callable[[int, int, str], str] | None = None,
+                       overflow: str | None = None) -> ParamsWindow:
     """Studio から呼ぶ入口。同じ親の窓が既にあれば 2 枚目を作らず、``paths`` を列に足して前に出す。
 
     ``lang`` = Studio の今の言語コード。**Studio からはこれを渡す**: Studio の ``tr`` は Studio の表(i18n.json)だけを引き、
@@ -2344,7 +2391,19 @@ def show_params_window(parent: QtWidgets.QWidget | None = None, paths: Sequence[
     表に無い文だけを ``tr`` に任せる。既にある窓は、渡した言語へ切り替える。言語の切り替えでは
     :meth:`ParamsWindow.set_lang` を呼ぶ。``lang`` を渡さない時は ``tr`` をそのまま使う(``make_tr`` の物を渡す)。
 
-    ``confirm`` = Studio の ``confirm_action``(確認の窓を Studio と同じ形にする。:meth:`ParamsPanel.set_confirm`)。"""
+    ``confirm`` = Studio の ``confirm_action``(確認の窓を Studio と同じ形にする。:meth:`ParamsPanel.set_confirm`)。
+
+    道具の列を Studio の全部のパネルと同じ動きにするには、次の 3 つも渡す(渡さなければ既定の部品 = 送りも折り返しも
+    持たず、縦に収まらない高さでは上の 1 行。規則が無いので横長の窓でも上のまま)。
+
+    * ``strip`` = 列の部品を作る関数(``lambda: studio_panels.flow_classes()["FlowStrip"]("tools", "params")``)。窓が
+      まだ既定の部品を使っている時だけ作って差し込む(同じ入口を何度通っても部品は 1 つ)。
+    * ``strip_rule`` = 向きの規則 ``fn(幅, 高さ, 今の向き)``(:meth:`ParamsPanel.set_strip_rule`。全部のパネルで 1 つの
+      ``studio_panels.strip_side``)。
+    * ``overflow`` = 収まらない時の形 ``"scroll"`` / ``"wrap"``(:meth:`ParamsPanel.set_overflow`)。知らない形は、窓を作る前・
+      窓に触る前に ValueError。"""
+    if overflow is not None and overflow not in STRIP_OVERFLOWS:
+        raise ValueError("overflow must be one of %s (got %r)" % (" / ".join(STRIP_OVERFLOWS), overflow))
     win = getattr(parent, "_params_window", None) if parent is not None else None
     if not isinstance(win, ParamsWindow):
         win = ParamsWindow(parent, tr, settings, confirm=confirm, lang=lang)
@@ -2357,6 +2416,12 @@ def show_params_window(parent: QtWidgets.QWidget | None = None, paths: Sequence[
             if tr is not None:
                 win._host_tr = tr
             win.set_lang(lang)
+    if strip is not None and isinstance(win.panel.strip_widget(), _ToolStrip):
+        win.panel.set_strip_widget(strip())
+    if overflow is not None:
+        win.panel.set_overflow(overflow)
+    if strip_rule is not None:
+        win.panel.set_strip_rule(strip_rule)
     if paths:
         win.panel.add_paths(list(paths))
     win.show()
