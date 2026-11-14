@@ -411,3 +411,21 @@ def test_input_independence_generator_reads_this_tree_not_another_fullseye(tmp_p
     assert done.returncode == 0, done.stderr[-600:]
     seen = done.stdout.strip().splitlines()[-1]
     assert os.path.normcase(seen) == os.path.normcase(os.path.join(root, "fullseye", "__init__.py")), seen
+
+
+@pytest.mark.parametrize("depth", [65, 2000, 100000])
+def test_import_json_refuses_deep_nesting_inside_the_json_string(cat, store, depth):
+    """★2026-11-15: fullseye_import_json の json(文字列)の中の深い入れ子。1 通の枠の深さの上限(MAX_JSON_DEPTH)は
+    文字列の中の括弧を数えないので、ここは別に数える。直す前は版で答えが割れた: py3.11 は約 1,000 段から
+    RecursionError、py3.14 は 10 万段で Stack overflow —— どちらも -32603(内部エラー)。読む前に数えて -32602 で断る。"""
+    deep = "[" * depth + "1" + "]" * depth
+    for payload in (deep, '{"fullseye_sort": "signal", "data": %s}' % deep):
+        with pytest.raises(S.ArgError, match="入れ子が深すぎる"):
+            S.call_tool("fullseye_import_json", {"json": payload}, cat, store)
+    reply = S.dispatch({"jsonrpc": "2.0", "id": 1, "method": "tools/call",
+                        "params": {"name": "fullseye_import_json", "arguments": {"json": deep}}}, cat, store)
+    assert reply["error"]["code"] == -32602 and "入れ子が深すぎる" in reply["error"]["message"], reply
+    # 上限の内側は従来どおり読む(深さ 64 の配列は封筒ではないので、封筒の誤りとして断る = 深さでは断らない)
+    edge = "[" * S.MAX_JSON_DEPTH + "1" + "]" * S.MAX_JSON_DEPTH
+    with pytest.raises(S.ArgError, match="JSON 封筒が読めない"):
+        S.call_tool("fullseye_import_json", {"json": edge}, cat, store)

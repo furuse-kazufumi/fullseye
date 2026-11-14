@@ -2736,6 +2736,12 @@ def _import_json(a: dict, store: HandleStore) -> dict:
     # ★2026-11-13(報告 10 / S6): NaN・Infinity(JSON の決まりに無い定数、または封筒の中の非有限の数)を受けていた。
     #   取り込みの前に断る(他の入口と同じく、非有限は受けない)。
     if has_json and isinstance(a["json"], str):
+        # ★2026-11-15: json(文字列)の中の深い入れ子。1 通の枠の深さの上限(MAX_JSON_DEPTH)は文字列の中の括弧を
+        #   数えないので、同じ上限をここでも読む前に当てる。当てる前は版で答えが割れ、どちらも -32603(内部エラー)
+        #   だった: py3.11 は約 1,000 段から RecursionError、py3.14 は 10 万段で Stack overflow(実測)。
+        if json_depth(a["json"].encode("utf-8", "surrogatepass")) > MAX_JSON_DEPTH:
+            raise ArgError("json の入れ子が深すぎる(上限 %d 段)" % MAX_JSON_DEPTH)
+
         def _no_constants(token):
             raise ArgError("json に %s がある(JSON の決まりに無い非有限の定数は取り込まない)" % token)
         try:

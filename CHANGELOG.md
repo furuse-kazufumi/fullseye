@@ -18,6 +18,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 計測値に単位と意味: registry の計測 op の値に `meaning`(op の要約)・`unit`(要約から読める物だけ: px / count)・`measured`(`diameter_region` など 26 op は入力の領域の**最大の連結成分 1 つだけ**を測る。その時は成分の数も)を付け、本文にも書く。`pixel_to_world` の値に mm、`mm_per_px_from_reference` に mm/px。
 - **挙動が変わる点**: `fullseye_catalog_coverage` の既定は件数だけ(`index_without_note` などの名前の一覧は `detail=true` の時だけ)。`index_source` / `notes_source` はホストの絶対パスでなく、パッケージ・リポジトリの中の相対の場所(例 `package:fullseye/data/OP_INDEX.json`)。
 - 読み込みの境界: `fullseye_load_image` は見出し(PNG の IHDR・Pillow の遅延の open・npy の見出し)で画素数を先に見て、上限を超える画像を復号しない(以前は 20,000×20,000 を復号してから断った)。`fullseye_list_samples` は根の中のジャンクション・リンクの先(根の外)の名前を並べない。`path=NUL` などで -32603 にせず、根の外として断る(ホストのパスを出さない)。`fullseye_import_json` は NaN・Infinity(JSON の定数・封筒の中の数・配列の中の値)を断る。サーバが自分で作った一時フォルダは置き場が捨てられる時に消す。
+- `fullseye_import_json`: `json`(文字列)の中の入れ子が深すぎる物(1 通の枠と同じ上限 64 段)を、読む前に数えて断る
+  (2026-11-15。以前は py3.11 で約 1,000 段から RecursionError、py3.14 で 10 万段から Stack overflow になり、
+  どちらも -32603 = 内部エラーで返った。サーバは落ちない)。
 - `fullseye_score_pipeline`: 型の門まで(入力の縛り・引数・入力を読まない op・型の検査)で断った試行は採点の回数に数えない(`attempt_counted: false`)。走らせる前で真値に触れないため。出力の型の検査から先は従来どおり数える。
 - 日本語の検索: 依頼の言い回し(「見つけたい」「測りたい」「どの〜が要るか」など)を検索語から外し、現場の日本語(照明・液面・瓶・ステレオ・視差・レンズ・サーモグラフィ …)を英語の術語へ橋渡しする表 `JA_TERMS` を足した(optics の要約は英語だけの物が多い)。橋渡しした片仮名の語は 2 文字の切れ端で引かない(「サーモグラフィ」が「ホモグラフィ」に当たっていた)。検証の find_ops 23 回で「上位 5 件に関係する op」14 → 19、「関係して MCP で実行できる op」5 → 16(A の前後を含む。関係するかは依頼ごとの名前の型で数えた)。
 - `fullseye_list_samples`: `sample_details`(何が写っているか・来歴・ライセンス・真値の有無)を足し、本文にも 1 行ずつ書く。`samples`(名前の一覧)は従来どおり。
