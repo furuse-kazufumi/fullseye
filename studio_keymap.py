@@ -20,7 +20,10 @@ Qt の側(``studio_keymap_qt``)は、ここで決めたキーを本物の ``QAct
 * 窓全体の範囲では、修飾なしの矢印・PgUp/PgDown・Home/End・Backspace/Del/Ins/Esc を付けない(一覧と入力欄の
   移動・削除・取り消しが効かなくなる)。型の既定(段の一覧の Home・Del)は許す。
 * **型(プリセット)** は 2 つ。``visual_studio`` = Studio の既定(今までのキーそのまま)、``vscode`` = VS Code の
-  慣例(エディタの Ctrl+D = 次の一致を足す、行の複製 = Shift+Alt+Down など)。型は既定の差分として持つ。
+  慣例(エディタの Ctrl+D = 次の一致を足す、行の複製 = Alt+Shift+Down など)。型は既定の差分として持つ。
+* **キーの書き方は 1 つ**: Qt がメニューの右に出す書き方(``QKeySequence`` の NativeText。修飾は Meta・Ctrl・Alt・
+  Shift の順 = ``Alt+Shift+Up``)。登録簿・設定の窓・当たりの文・文書の表・保存の形が同じ字になる(設計書 P13-6)。
+  読む時はどの順で書いてあっても読む(古い ``Shift+Alt+Up`` の設定も)。
 * **保存するのは利用者の上書きだけ**(型との差分)。キーを外した事は空の並びで明示する。設定の 1 つの鍵
   (``SETTINGS_KEY``)に JSON で書く。読めない・壊れた分は捨てて知らせ、起動は止めない(型違い・深い入れ子・
   重なった鍵でも例外を出さない)。**起動では書き直さない**: 利用者が変えて保存する時に、使えなかった元の文字列を
@@ -125,7 +128,8 @@ class KeyParseError(ValueError):
         self.key = key
 
 
-_MOD_ORDER = ("Ctrl", "Shift", "Alt", "Meta")
+#: 修飾を書く順。Qt(``QKeySequence.toString``)と同じ = メニューの右のキーと 1 字も違わない(D96)。
+_MOD_ORDER = ("Meta", "Ctrl", "Alt", "Shift")
 _MOD_NAMES = {"ctrl": "Ctrl", "control": "Ctrl", "strg": "Ctrl", "shift": "Shift", "umschalt": "Shift",
               "alt": "Alt", "meta": "Meta", "win": "Meta", "super": "Meta"}
 _NAMED = {"esc": "Esc", "escape": "Esc", "tab": "Tab", "backspace": "Backspace", "return": "Return",
@@ -538,12 +542,12 @@ PRESETS = {
         "shortcuts": ("Ctrl+K, Ctrl+R",),
         "help_here": ("Ctrl+F1",),                              # F1 は VS Code の慣例どおりコマンドパレット
         "dbg_step": ("F10",),
-        "editops_box_up": ("Ctrl+Shift+Alt+Up", "Ctrl+Alt+Up"),
-        "editops_box_down": ("Ctrl+Shift+Alt+Down", "Ctrl+Alt+Down"),
-        "editops_box_left": ("Ctrl+Shift+Alt+Left",),
-        "editops_box_right": ("Ctrl+Shift+Alt+Right",),
+        "editops_box_up": ("Ctrl+Alt+Shift+Up", "Ctrl+Alt+Up"),
+        "editops_box_down": ("Ctrl+Alt+Shift+Down", "Ctrl+Alt+Down"),
+        "editops_box_left": ("Ctrl+Alt+Shift+Left",),
+        "editops_box_right": ("Ctrl+Alt+Shift+Right",),
         "editops_multi_add_next": ("Ctrl+D",),
-        "editops_line_duplicate": ("Shift+Alt+Down",),
+        "editops_line_duplicate": ("Alt+Shift+Down",),
         "editops_bracket_jump": ("Ctrl+Shift+\\",),
     },
 }
@@ -582,7 +586,7 @@ class Entry(NamedTuple):
     family: str = ""
 
 
-_OS_TAKEN = {"Alt+Tab", "Shift+Alt+Tab", "Alt+Esc", "Ctrl+Esc", "Ctrl+Alt+Del", "Ctrl+Shift+Esc"}
+_OS_TAKEN = {"Alt+Tab", "Alt+Shift+Tab", "Alt+Esc", "Ctrl+Esc", "Ctrl+Alt+Del", "Ctrl+Shift+Esc"}
 _WARN_EXACT = {"Alt+F4": "warn_close", "Alt+Space": "warn_window_menu", "F10": "warn_menu_key",
                "Shift+F10": "warn_menu_key", "Print": "warn_print", "Alt+Print": "warn_print",
                "Ctrl+Alt+T": "warn_terminal", "Ctrl+Space": "warn_ime", "Shift+Space": "warn_ime",

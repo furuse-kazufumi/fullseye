@@ -71,8 +71,8 @@ def _seq_text(seq: QtGui.QKeySequence) -> str | None:
 def event_keys(ev) -> list:
     """キーの出来事 → 当てはまり得るキーの書き方(先頭が記録に使う形)。
 
-    Shift で変わる記号は元のキーに Shift を付けた形(``Shift+Alt+.``)を先に、Qt の届けた形
-    (``Shift+Alt+>``)、Shift を除いた形(配列で Shift が要る ``Ctrl++``)も返す。テンキーの Enter は Return も。
+    Shift で変わる記号は元のキーに Shift を付けた形(``Alt+Shift+.``)を先に、Qt の届けた形
+    (``Alt+Shift+>``)、Shift を除いた形(配列で Shift が要る ``Ctrl++``)も返す。テンキーの Enter は Return も。
     Shift を除いた形は **Shift で変わる記号が届いた時だけ**(2026-11-13 レビュー F4: F キーや ``/`` にも付けていたので、
     ``F2`` に変えたキーが ``Shift+F2`` も奪い、既定の表でも ``Ctrl+Shift+/`` が行をコメントにしていた)。
     """

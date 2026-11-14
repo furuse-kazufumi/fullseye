@@ -828,7 +828,7 @@ def test_the_context_menu_has_the_three_groups_with_the_keys_shown(app):
     assert len(rows["editops:menu.display"]) == 2
     texts = dict(rows["editops:menu.box"] + rows["editops:menu.line"])
     assert texts["editops:line.duplicate"] == "Duplicate line\tCtrl+D"
-    assert texts["editops:box.down"] == "Extend box selection down\tShift+Alt+Down"
+    assert texts["editops:box.down"] == "Extend box selection down\tAlt+Shift+Down"
     assert texts["editops:howto"] == "How to use box selection…"
     standard = [a.text() for a in menu.actions() if a.menu() is None and not a.isSeparator()]
     assert len(standard) >= 5, standard                             # 元の項目(元に戻す・コピー・貼り付け …)は残る
@@ -876,7 +876,7 @@ def test_menus_and_the_how_to_follow_the_language(app, lang):
     english = {b.title for b in eo.KEYMAP} | {eo.ACT_HOWTO, eo.ACT_RULERS, eo.ACT_TRIM_ON_SAVE}
     left_in_english = [t for t in items if t.split("\t")[0] in english]
     assert left_in_english == []
-    assert table[eo.KEYMAP[0].title][lang] + "\tShift+Alt+Up" in items
+    assert table[eo.KEYMAP[0].title][lang] + "\tAlt+Shift+Up" in items
     assert ops.howto_text() == table[eo.HOWTO_TEXT][lang] and "Alt" in ops.howto_text()
     acts = ops.command_actions()
     assert len(acts) == 16 and sorted(acts) == sorted(eo.PALETTE_WORDS)
@@ -1263,3 +1263,18 @@ def test_retranslate_follows_the_language_and_the_keys_in_a_kept_menu(app):
     assert not box.isVisible()
     shiboken6.delete(menu)                                           # 消えたメニューの入口は忘れる
     assert ops.retranslate() == 0 and ops._menu_items == []
+
+
+def test_menu_keys_are_written_the_way_qt_writes_them(app):
+    """設計書 D96: どう書いて渡しても、メニュー・ツールヒント・「使い方」に出す字は Qt の書き方(NativeText)。"""
+    native = QtGui.QKeySequence.NativeText
+    raw = [k for b in eo.KEYMAP for k in b.keys]
+    assert len(raw) >= 15 and [k for k in raw if QtGui.QKeySequence(k).toString(native) != k] == []   # 表の字も同じ
+    ed, ops, _clip = _plain(app, TEXT)
+    ops.set_bindings({"line.duplicate": ("shift+alt+d", "Ctrl+D")})
+    texts = dict(_menu_rows(ops.build_context_menu())["editops:menu.line"])
+    assert texts["editops:line.duplicate"] == "Duplicate line\tAlt+Shift+D"
+    assert ops.command_actions()["editops_line_duplicate"].toolTip() == "Duplicate line (Alt+Shift+D / Ctrl+D)"
+    assert "Duplicate line: Alt+Shift+D / Ctrl+D" in ops.howto_text()
+    ops.set_bindings(None)
+    assert "Alt + Shift + arrow keys" in ops.howto_text() and "Shift + Alt" not in ops.howto_text()

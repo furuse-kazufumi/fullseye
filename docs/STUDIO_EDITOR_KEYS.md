@@ -19,13 +19,13 @@ Fullseye Studio のコードエディタ(Program 欄、Python エディタ)に�
 | したい事 | キー・マウス |
 |---|---|
 | 箱で選ぶ | Alt + ドラッグ |
-| カーソルからクリックした所までを箱にする | Shift + Alt + クリック |
-| 箱を上へ広げる・縮める | `Shift+Alt+Up`(`Ctrl+Alt+Up` も同じ) |
-| 箱を下へ広げる・縮める | `Shift+Alt+Down`(`Ctrl+Alt+Down` も同じ) |
-| 箱を左へ広げる・縮める | `Shift+Alt+Left` |
-| 箱を右へ広げる・縮める | `Shift+Alt+Right` |
+| カーソルからクリックした所までを箱にする | Alt + Shift + クリック |
+| 箱を上へ広げる・縮める | `Alt+Shift+Up`(`Ctrl+Alt+Up` も同じ) |
+| 箱を下へ広げる・縮める | `Alt+Shift+Down`(`Ctrl+Alt+Down` も同じ) |
+| 箱を左へ広げる・縮める | `Alt+Shift+Left` |
+| 箱を右へ広げる・縮める | `Alt+Shift+Right` |
 | 上・下にカーソルを足す(幅 0 の箱) | `Ctrl+Alt+Up` / `Ctrl+Alt+Down` |
-| 選んでいる語の次の一致を選択に足す | `Shift+Alt+.`(選びが無ければ、まずカーソルの語を選ぶ) |
+| 選んでいる語の次の一致を選択に足す | `Alt+Shift+.`(選びが無ければ、まずカーソルの語を選ぶ) |
 | やめてカーソル 1 つへ戻る | `Esc`、または普通のクリック |
 
 箱がある間に効く操作(どれも 1 回の操作 = 1 回の Undo):
@@ -97,15 +97,15 @@ Fullseye Studio のコードエディタ(Program 欄、Python エディタ)に�
 
 | キー | Studio の既存の割り当て | 決めた事 |
 |---|---|---|
-| `Ctrl+D` | 段の一覧の「Duplicate stage(段の複製)」。段の一覧にフォーカスがある時だけ効く | エディタでは「行を複製」。同じ窓の中で Ctrl+D = 複製にそろえた(Visual Studio 2017 以降も同じ)。VS Code の Ctrl+D(次の一致を足す)は `Shift+Alt+.`(Visual Studio の割り当て)にした |
+| `Ctrl+D` | 段の一覧の「Duplicate stage(段の複製)」。段の一覧にフォーカスがある時だけ効く | エディタでは「行を複製」。同じ窓の中で Ctrl+D = 複製にそろえた(Visual Studio 2017 以降も同じ)。VS Code の Ctrl+D(次の一致を足す)は `Alt+Shift+.`(Visual Studio の割り当て)にした |
 | `Ctrl+Shift+D` | Detach graphics window(窓全体) | 使わない |
-| `Shift+Alt+Down` | なし | 矩形選択(Visual Studio)。VS Code の「行を下へ複製」には使わない |
+| `Alt+Shift+Down` | なし | 矩形選択(Visual Studio)。VS Code の「行を下へ複製」には使わない |
 | `Ctrl+/` | Program 欄の Comment / uncomment lines | Program 欄では元の物をそのまま使う |
 | `Ctrl+F` `Ctrl+H` `F3` `Shift+F3` `Shift+F1` `Ctrl++` `Ctrl+-` `Ctrl+Return` `Ctrl+Space` | Program 欄・補完 | 使わない |
 | `F5` `F6` `F9` `Ctrl+S` ほか窓全体のキー | 実行・保存など | 使わない |
 
-「VS Code 風」の型では、エディタの `Ctrl+D` が「次の一致を選択に足す」、「行を複製」が `Shift+Alt+Down`、
-矩形選択が `Ctrl+Shift+Alt+矢印`(と `Ctrl+Alt+Up` / `Ctrl+Alt+Down`)、対応する括弧が `Ctrl+Shift+\` になります
+「VS Code 風」の型では、エディタの `Ctrl+D` が「次の一致を選択に足す」、「行を複製」が `Alt+Shift+Down`、
+矩形選択が `Ctrl+Alt+Shift+矢印`(と `Ctrl+Alt+Up` / `Ctrl+Alt+Down`)、対応する括弧が `Ctrl+Shift+\` になります
 (VS Code の既定と同じ)。段の一覧の `Ctrl+D`(段の複製)はどちらの型でも同じです。
 
 確かめ方: `studio_editops_qt.check_conflicts(窓, エディタ)` が、窓の中の全部の `QAction` と `QShortcut` のキーと

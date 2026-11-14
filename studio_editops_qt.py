@@ -37,7 +37,7 @@ _PURE_MODIFIER_KEYS = (_K.Key_Shift, _K.Key_Control, _K.Key_Alt, _K.Key_Meta, _K
                        _K.Key_NumLock, _K.Key_ScrollLock)
 _POPUP_KEYS = (_K.Key_Tab, _K.Key_Backtab, _K.Key_Return, _K.Key_Enter, _K.Key_Escape, _K.Key_Up, _K.Key_Down,
                _K.Key_PageUp, _K.Key_PageDown)
-#: Shift を押すと別の記号になるキー(``Shift+Alt+.`` は ``>`` として届く)。US 配列の対。JIS などは要実機確認。
+#: Shift を押すと別の記号になるキー(``Alt+Shift+.`` は ``>`` として届く)。US 配列の対。JIS などは要実機確認。
 _SHIFTED = {_K.Key_Period: _K.Key_Greater, _K.Key_Slash: _K.Key_Question, _K.Key_BracketRight: _K.Key_BraceRight,
             _K.Key_BracketLeft: _K.Key_BraceLeft, _K.Key_Backslash: _K.Key_Bar, _K.Key_Comma: _K.Key_Less,
             _K.Key_Semicolon: _K.Key_Colon, _K.Key_Apostrophe: _K.Key_QuoteDbl, _K.Key_Minus: _K.Key_Underscore,
@@ -115,6 +115,13 @@ def _alive(obj) -> bool:
         return obj is not None and shiboken6.isValid(obj)
     except ImportError:                                         # pragma: no cover
         return obj is not None
+
+
+def _native(key: str) -> str:
+    """キーを出す時の字 = Qt がメニューの右に出す書き方(``QKeySequence`` の NativeText。設計書 D96)。
+    読めないキーはそのまま返す。"""
+    seq = QtGui.QKeySequence(key)
+    return key if seq.isEmpty() else seq.toString(QtGui.QKeySequence.NativeText)
 
 
 def _key_table(bindings: dict | None = None) -> dict:
@@ -491,7 +498,7 @@ class EditOps(QtCore.QObject):
                       self._rect[2], eo.col_of(t, c.pos, self.cols))
 
     def box_move(self, dline: int, dcol: int) -> None:
-        """箱の動く角を動かす(Shift+Alt+矢印)。箱が無ければ、今のカーソル(1 行の中の選び)から始める。"""
+        """箱の動く角を動かす(Alt+Shift+矢印)。箱が無ければ、今のカーソル(1 行の中の選び)から始める。"""
         lines = self._lines()
         if self._rect is None:
             c = self._carets[self._primary] if self._carets else self._cursor_caret()
@@ -1209,11 +1216,13 @@ class EditOps(QtCore.QObject):
     def _label(self, binding: eo.Binding) -> str:
         text = self.tr(binding.title)
         keys = self.keys_for(binding.command)
-        return text + "\t" + keys[0] if keys else text
+        return text + "\t" + _native(keys[0]) if keys else text
 
     def _tip(self, binding: eo.Binding) -> str:
         keys = self.keys_for(binding.command)
-        return "%s (%s)" % (self.tr(binding.title), " / ".join(keys)) if keys else self.tr(binding.title)
+        if not keys:
+            return self.tr(binding.title)
+        return "%s (%s)" % (self.tr(binding.title), " / ".join(_native(k) for k in keys))
 
     def _command_action(self, menu, binding: eo.Binding, follow: bool = False) -> QtGui.QAction:
         a = QtGui.QAction(self._label(binding), menu)
@@ -1315,9 +1324,8 @@ class EditOps(QtCore.QObject):
         for b in eo.KEYMAP:
             a = QtGui.QAction(self.tr(b.title), parent or self)
             a.setObjectName("editops:" + b.command)
-            keys = self.keys_for(b.command)
-            if keys:
-                a.setToolTip("%s (%s)" % (self.tr(b.title), " / ".join(keys)))
+            if self.keys_for(b.command):
+                a.setToolTip(self._tip(b))
             a.triggered.connect(lambda _=False, c=b.command: (self.editor.setFocus(), self.run(c)))
             out["editops_" + b.command.replace(".", "_")] = a
             self._palette_actions[b.command] = a
@@ -1335,7 +1343,8 @@ class EditOps(QtCore.QObject):
         changed = [b for b in eo.KEYMAP if self.keys_for(b.command) != tuple(b.keys)]
         if changed:
             text += "\n\n" + self.tr(eo.MSG_KEYS_CHANGED) + "\n" + "\n".join(
-                "%s: %s" % (self.tr(b.title), " / ".join(self.keys_for(b.command)) or "—") for b in changed)
+                "%s: %s" % (self.tr(b.title), " / ".join(_native(k) for k in self.keys_for(b.command)) or "—")
+                for b in changed)
         return text
 
     def _fill_howto(self) -> None:

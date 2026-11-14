@@ -461,7 +461,7 @@ def test_unbalanced_brackets_have_no_partner_and_pipeline_comment_lines_are_skip
 # キーの表
 # --------------------------------------------------------------------------- #
 @pytest.mark.parametrize("raw,want", [
-    ("shift+ctrl+k", "Ctrl+Shift+K"), ("Alt+Shift+.", "Shift+Alt+."), ("Ctrl++", "Ctrl++"), ("Ctrl+=", "Ctrl+="),
+    ("shift+ctrl+k", "Ctrl+Shift+K"), ("Shift+Alt+.", "Alt+Shift+."), ("Ctrl++", "Ctrl++"), ("Ctrl+=", "Ctrl+="),
     ("Escape", "Esc"), ("Shift+Backtab", "Shift+Tab"), ("Ctrl+K, Ctrl+C", "Ctrl+K"), ("ctrl+]", "Ctrl+]"),
     ("Ctrl+Enter", "Ctrl+Return"), ("Alt+Up", "Alt+Up"), ("F5", "F5"), ("", ""),
 ])

@@ -129,8 +129,8 @@ Fullseye Studio のショートカットキーは、利用者が自分で決め�
 (2026-11-13: `F1` = ここのヘルプ、`Ctrl+F1` = キーの一覧、`Shift+F1` = op の一覧、コードの欄の `Ctrl+S` =
 プログラム / パイプラインの保存、やり直しの表示は `Ctrl+Y`(`Ctrl+Shift+Z` も効く)、拡大は `Ctrl+=` と `Ctrl++`、
 holdout の検証は `Ctrl+Alt+H`(`Ctrl+H` はコードの欄の置換だけ)、画像だけを抜ける `Esc` は画像だけの間だけ)。
-Visual Studio と同じなのは、エディタの `Ctrl+D` = 行の複製、`Shift+Alt+.` = 次の一致を選択に足す、
-`Shift+Alt+矢印` = 矩形選択、`Ctrl+]` = 対応する括弧、`F1` = ヘルプ、`F5` = 実行、`F9` = ブレークポイント、
+Visual Studio と同じなのは、エディタの `Ctrl+D` = 行の複製、`Alt+Shift+.` = 次の一致を選択に足す、
+`Alt+Shift+矢印` = 矩形選択、`Ctrl+]` = 対応する括弧、`F1` = ヘルプ、`F5` = 実行、`F9` = ブレークポイント、
 `Ctrl+Y` = やり直し、`Ctrl+,` = 設定などです。Visual Studio と違う所もあります
 (1 段進むは `F6`。Visual Studio の「ステップ オーバー」は `F10`)。名前は「Visual Studio の流儀に寄せた
 Studio の既定」という意味で、Visual Studio のキーを全部写した物ではありません。
@@ -145,12 +145,12 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `shortcuts` | キーボードショートカット | `Ctrl+F1` | `Ctrl+K, Ctrl+R` |
 | `help_here` | ここのヘルプ | `F1` | `Ctrl+F1` |
 | `dbg_step` | 1 段進む(どの欄からでも) | `F6` | `F10` |
-| `editops_box_up` | 矩形選択を上へ広げる | `Shift+Alt+Up` / `Ctrl+Alt+Up` | `Ctrl+Shift+Alt+Up` / `Ctrl+Alt+Up` |
-| `editops_box_down` | 矩形選択を下へ広げる | `Shift+Alt+Down` / `Ctrl+Alt+Down` | `Ctrl+Shift+Alt+Down` / `Ctrl+Alt+Down` |
-| `editops_box_left` | 矩形選択を左へ広げる | `Shift+Alt+Left` | `Ctrl+Shift+Alt+Left` |
-| `editops_box_right` | 矩形選択を右へ広げる | `Shift+Alt+Right` | `Ctrl+Shift+Alt+Right` |
-| `editops_multi_add_next` | 次の一致を選択に足す | `Shift+Alt+.` | `Ctrl+D` |
-| `editops_line_duplicate` | 行を複製 | `Ctrl+D` | `Shift+Alt+Down` |
+| `editops_box_up` | 矩形選択を上へ広げる | `Alt+Shift+Up` / `Ctrl+Alt+Up` | `Ctrl+Alt+Shift+Up` / `Ctrl+Alt+Up` |
+| `editops_box_down` | 矩形選択を下へ広げる | `Alt+Shift+Down` / `Ctrl+Alt+Down` | `Ctrl+Alt+Shift+Down` / `Ctrl+Alt+Down` |
+| `editops_box_left` | 矩形選択を左へ広げる | `Alt+Shift+Left` | `Ctrl+Alt+Shift+Left` |
+| `editops_box_right` | 矩形選択を右へ広げる | `Alt+Shift+Right` | `Ctrl+Alt+Shift+Right` |
+| `editops_multi_add_next` | 次の一致を選択に足す | `Alt+Shift+.` | `Ctrl+D` |
+| `editops_line_duplicate` | 行を複製 | `Ctrl+D` | `Alt+Shift+Down` |
 | `editops_bracket_jump` | 対応する括弧へ移動 | `Ctrl+]` | `Ctrl+Shift+\` |
 
 全部のコマンド(112 個。★ は 2 つの型で違う行。「—」はキー無し = 自分で割り当てられる):
@@ -175,7 +175,7 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `pymode_new` | 新しい Python のプログラム | 窓全体 | `Ctrl+N` | `Ctrl+N` |
 | `pymode_open` | Python のプログラムを開く… | 窓全体 | `Ctrl+Alt+O` | `Ctrl+Alt+O` |
 | `pymode_save` | Python のプログラムを保存 | 窓全体 | `Ctrl+Alt+S` | `Ctrl+Alt+S` |
-| `pymode_save_as` | 名前を付けて Python のプログラムを保存… | 窓全体 | `Ctrl+Shift+Alt+S` | `Ctrl+Shift+Alt+S` |
+| `pymode_save_as` | 名前を付けて Python のプログラムを保存… | 窓全体 | `Ctrl+Alt+Shift+S` | `Ctrl+Alt+Shift+S` |
 | `undo` | 元に戻す | 窓全体 | `Ctrl+Z` | `Ctrl+Z` |
 | `redo` | やり直す | 窓全体 | `Ctrl+Y` / `Ctrl+Shift+Z` | `Ctrl+Y` / `Ctrl+Shift+Z` |
 | `pin_a` | A として固定 | 窓全体 | `Ctrl+Shift+A` | `Ctrl+Shift+A` |
@@ -247,13 +247,13 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `program_font_bigger` | エディタの文字を大きく | Program 欄 | `Ctrl++` / `Ctrl+=` | `Ctrl++` / `Ctrl+=` |
 | `program_font_smaller` | エディタの文字を小さく | Program 欄 | `Ctrl+-` | `Ctrl+-` |
 | `program_save` | プログラムを保存(コードの欄) | Program 欄 | `Ctrl+S` | `Ctrl+S` |
-| `editops_box_up` | 矩形選択を上へ広げる ★ | コードエディタ | `Shift+Alt+Up` / `Ctrl+Alt+Up` | `Ctrl+Shift+Alt+Up` / `Ctrl+Alt+Up` |
-| `editops_box_down` | 矩形選択を下へ広げる ★ | コードエディタ | `Shift+Alt+Down` / `Ctrl+Alt+Down` | `Ctrl+Shift+Alt+Down` / `Ctrl+Alt+Down` |
-| `editops_box_left` | 矩形選択を左へ広げる ★ | コードエディタ | `Shift+Alt+Left` | `Ctrl+Shift+Alt+Left` |
-| `editops_box_right` | 矩形選択を右へ広げる ★ | コードエディタ | `Shift+Alt+Right` | `Ctrl+Shift+Alt+Right` |
-| `editops_multi_add_next` | 次の一致を選択に足す ★ | コードエディタ | `Shift+Alt+.` | `Ctrl+D` |
+| `editops_box_up` | 矩形選択を上へ広げる ★ | コードエディタ | `Alt+Shift+Up` / `Ctrl+Alt+Up` | `Ctrl+Alt+Shift+Up` / `Ctrl+Alt+Up` |
+| `editops_box_down` | 矩形選択を下へ広げる ★ | コードエディタ | `Alt+Shift+Down` / `Ctrl+Alt+Down` | `Ctrl+Alt+Shift+Down` / `Ctrl+Alt+Down` |
+| `editops_box_left` | 矩形選択を左へ広げる ★ | コードエディタ | `Alt+Shift+Left` | `Ctrl+Alt+Shift+Left` |
+| `editops_box_right` | 矩形選択を右へ広げる ★ | コードエディタ | `Alt+Shift+Right` | `Ctrl+Alt+Shift+Right` |
+| `editops_multi_add_next` | 次の一致を選択に足す ★ | コードエディタ | `Alt+Shift+.` | `Ctrl+D` |
 | `editops_box_cancel` | 矩形選択をやめる | コードエディタ(矩形選択の間) | `Esc` | `Esc` |
-| `editops_line_duplicate` | 行を複製 ★ | コードエディタ | `Ctrl+D` | `Shift+Alt+Down` |
+| `editops_line_duplicate` | 行を複製 ★ | コードエディタ | `Ctrl+D` | `Alt+Shift+Down` |
 | `editops_line_move_up` | 行を上へ移動 | コードエディタ | `Alt+Up` | `Alt+Up` |
 | `editops_line_move_down` | 行を下へ移動 | コードエディタ | `Alt+Down` | `Alt+Down` |
 | `editops_line_delete` | 行を削除 | コードエディタ | `Ctrl+Shift+K` | `Ctrl+Shift+K` |
@@ -311,7 +311,9 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 }
 ```
 
-  キーは Qt の書き方(`Ctrl+Shift+K`。修飾は Ctrl・Shift・Alt・Meta の順にそろえる。2 打鍵は `, ` で区切る)。
+  キーの書き方は 1 つで、Qt がメニューの右に出す書き方です(`Ctrl+Shift+K`・`Alt+Shift+Up`。修飾は Meta・Ctrl・Alt・
+  Shift の順。2 打鍵は `, ` で区切る)。設定の窓・当たりの文・この文書の表・保存の形が同じ字です。読む時はどの順で
+  書いてあっても読みます(`Shift+Alt+Up` と書いた古いファイルも)。
   言語や OS で変わる表示用の書き方(ドイツ語の `Strg` など)は保存に使いません(読む時は `Strg` も読めます)。
 * **壊れていた時**: 起動は止めません(型の違う値・深すぎる入れ子・重なった鍵でも)。読めない設定は型の既定で
   起動し、読めない分(知らない ID・読めないキー・当たる物)だけを使わずに、状態行に 1 行で知らせます(数は使えな
@@ -341,7 +343,7 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 * まだしていない事(1.3): 窓全体の `Ctrl+S` の意味(前にある文書を保存)、`Tab`・`Ctrl+Tab`・`Alt+F7`、
   Visual Studio 風の型の実行・デバッグのキーを本物の Visual Studio に合わせる事、Edit メニューの「段を複製」と
   「行を複製」を 1 項目にする事、キーの書き方を Qt の表示の 1 つにそろえる事。
-* 配列: `Shift+Alt+.` のような記号のキーは US 配列の位置で数えています。JIS 配列では `=` `+` `\` などの
+* 配列: `Alt+Shift+.` のような記号のキーは US 配列の位置で数えています。JIS 配列では `=` `+` `\` などの
   Shift の要否が違い、ドイツ語の配列では `/` が `Shift+7`、`]` が `AltGr+9` です。実機の配列での確認は
   まだしていません(試験は offscreen で、キーの番号を直接送っています)。
 * 入力方式(IME): 記録の欄は IME を受けません(変換中の文字はキーとして記録しません)。IME がオンでテキスト欄に

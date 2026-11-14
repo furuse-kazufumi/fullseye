@@ -639,11 +639,11 @@ class Binding(NamedTuple):
 
 
 KEYMAP = (
-    Binding("box.up", ("Shift+Alt+Up", "Ctrl+Alt+Up"), "Extend box selection up", "box"),
-    Binding("box.down", ("Shift+Alt+Down", "Ctrl+Alt+Down"), "Extend box selection down", "box"),
-    Binding("box.left", ("Shift+Alt+Left",), "Extend box selection left", "box"),
-    Binding("box.right", ("Shift+Alt+Right",), "Extend box selection right", "box"),
-    Binding("multi.add_next", ("Shift+Alt+.",), "Add next occurrence to the selection", "box"),
+    Binding("box.up", ("Alt+Shift+Up", "Ctrl+Alt+Up"), "Extend box selection up", "box"),
+    Binding("box.down", ("Alt+Shift+Down", "Ctrl+Alt+Down"), "Extend box selection down", "box"),
+    Binding("box.left", ("Alt+Shift+Left",), "Extend box selection left", "box"),
+    Binding("box.right", ("Alt+Shift+Right",), "Extend box selection right", "box"),
+    Binding("multi.add_next", ("Alt+Shift+.",), "Add next occurrence to the selection", "box"),
     Binding("box.cancel", ("Esc",), "Cancel box selection", "box", "box"),
     Binding("line.duplicate", ("Ctrl+D",), "Duplicate line", "line"),
     Binding("line.move_up", ("Alt+Up",), "Move line up", "line"),
@@ -680,12 +680,12 @@ HOWTO_TEXT = (
     "Box (column) selection\n"
     "\n"
     "Alt + drag: select a box\n"
-    "Shift + Alt + arrow keys: grow or shrink the box\n"
-    "Shift + Alt + click: a box from the cursor to the click\n"
+    "Alt + Shift + arrow keys: grow or shrink the box\n"
+    "Alt + Shift + click: a box from the cursor to the click\n"
     "Ctrl + Alt + Up / Down: add a cursor above / below\n"
     "Typing, Delete, Backspace, Tab: applied to every line of the box\n"
     "Ctrl + C / X / V: copy, cut and paste row by row\n"
-    "Shift + Alt + . : add the next occurrence of the selected word\n"
+    "Alt + Shift + . : add the next occurrence of the selected word\n"
     "Esc or a plain click: back to one cursor\n"
     "\n"
     "Columns are counted as they look: a full-width character is 2 columns and a tab runs to the next "
@@ -726,7 +726,8 @@ def ui_strings() -> tuple:
     return tuple(out)
 
 
-_MOD_ORDER = ("Ctrl", "Shift", "Alt", "Meta")
+#: 修飾を書く順は Qt(``QKeySequence.toString``)と同じ = メニューの右のキーと同じ字(設計書 D96)。
+_MOD_ORDER = ("Meta", "Ctrl", "Alt", "Shift")
 _KEY_ALIASES = {"escape": "Esc", "esc": "Esc", "return": "Return", "enter": "Return", "del": "Del",
                 "delete": "Del", "ins": "Ins", "insert": "Ins", "backtab": "Tab", "pgup": "PgUp",
                 "pgdown": "PgDown", "pageup": "PgUp", "pagedown": "PgDown"}

@@ -86,9 +86,9 @@ def test_presets_have_no_conflict_and_no_key_the_os_takes(preset):
 
 def test_the_two_presets_differ_where_the_ides_differ():
     vs, code = km.Keymap("visual_studio"), km.Keymap("vscode")
-    assert vs.keys("editops_line_duplicate") == ("Ctrl+D",) and vs.keys("editops_multi_add_next") == ("Shift+Alt+.",)
-    assert code.keys("editops_multi_add_next") == ("Ctrl+D",) and code.keys("editops_line_duplicate") == ("Shift+Alt+Down",)
-    assert code.keys("editops_box_down") == ("Ctrl+Shift+Alt+Down", "Ctrl+Alt+Down")
+    assert vs.keys("editops_line_duplicate") == ("Ctrl+D",) and vs.keys("editops_multi_add_next") == ("Alt+Shift+.",)
+    assert code.keys("editops_multi_add_next") == ("Ctrl+D",) and code.keys("editops_line_duplicate") == ("Alt+Shift+Down",)
+    assert code.keys("editops_box_down") == ("Ctrl+Alt+Shift+Down", "Ctrl+Alt+Down")
     assert code.keys("palette") == ("Ctrl+Shift+P", "F1") and code.keys("find_panel") == ("Ctrl+P",)
     assert vs.keys("duplicate_stage") == code.keys("duplicate_stage") == ("Ctrl+D",)  # 段の一覧はどちらも段の複製
     differ = [c.id for c in km.COMMANDS if not c.fixed and vs.keys(c.id) != code.keys(c.id)]
@@ -101,7 +101,8 @@ def test_the_two_presets_differ_where_the_ides_differ():
 @pytest.mark.parametrize("raw, want", [
     ("shift+ctrl+k", "Ctrl+Shift+K"), ("Ctrl+K, Ctrl+S", "Ctrl+K, Ctrl+S"), ("ctrl+k ctrl+s", "Ctrl+K, Ctrl+S"),
     ("Ctrl++", "Ctrl++"), ("Ctrl + =", "Ctrl+="), ("Ctrl+,", "Ctrl+,"), ("Ctrl+,, Ctrl+S", "Ctrl+,, Ctrl+S"),
-    ("Alt+Shift+.", "Shift+Alt+."), ("backtab", "Shift+Tab"), ("Strg+Umschalt+a", "Ctrl+Shift+A"),
+    ("Shift+Alt+.", "Alt+Shift+."), ("backtab", "Shift+Tab"), ("Strg+Umschalt+a", "Ctrl+Shift+A"),
+    ("shift+ctrl+alt+meta+k", "Meta+Ctrl+Alt+Shift+K"), ("Ctrl+Shift+Alt+Down", "Ctrl+Alt+Shift+Down"),
     ("escape", "Esc"), ("delete", "Del"), ("pagedown", "PgDown"), ("f12", "F12"), ("Ctrl+Shift+\\", "Ctrl+Shift+\\"),
     ("Enter", "Enter"), ("Return", "Return"), ("+", "+"),
 ])
@@ -917,7 +918,7 @@ def test_the_recorder_ignores_the_ime_and_records_two_strokes(win, ctl):
     _press(rec, K.Key_G, K.ControlModifier)
     assert rec.sequence() == "Ctrl+G"                                     # エディタは 1 打ずつ
     _press(rec, K.Key_Greater, K.ShiftModifier | K.AltModifier)
-    assert rec.sequence() == "Shift+Alt+."                                # Shift で変わる記号は元のキーで
+    assert rec.sequence() == "Alt+Shift+."                                # Shift で変わる記号は元のキーで
 
 
 def test_separate_window_shortcuts_follow_the_keymap(win, ctl):
@@ -1299,7 +1300,7 @@ def test_event_keys_drop_shift_only_for_symbols_that_need_shift(app):
     assert kq.event_keys(_key_event(K.Key_Slash, K.ShiftModifier | K.ControlModifier)) == ["Ctrl+Shift+/"]
     plus = kq.event_keys(_key_event(K.Key_Plus, K.ShiftModifier | K.ControlModifier))
     assert plus[0] == "Ctrl+Shift+=" and "Ctrl++" in plus                     # 配列で Shift が要る記号: Ctrl++ も
-    assert kq.event_keys(_key_event(K.Key_Greater, K.ShiftModifier | K.AltModifier))[0] == "Shift+Alt+."
+    assert kq.event_keys(_key_event(K.Key_Greater, K.ShiftModifier | K.AltModifier))[0] == "Alt+Shift+."
 
 
 def test_shift_with_a_changed_program_key_still_reaches_the_window(win, ctl, monkeypatch):
@@ -2213,3 +2214,41 @@ def test_the_editor_entries_in_the_edit_menu_follow_the_language_and_the_keys(wi
     _pump(0.2)
     rows = _edit_menu_rows(win)
     assert rows["editops:menu.line"] == eo.MENU_LINE and rows["editops:line.duplicate"] == "Duplicate line\tF8"
+
+
+# --------------------------------------------------------------------------- #
+# B5 [キー] 1.2-B D96(設計書 P13-6): キーの書き方は 1 つ = Qt がメニューの右に出す書き方(QKeySequence の NativeText)
+# --------------------------------------------------------------------------- #
+def test_the_registry_spelling_is_the_qt_spelling(app):
+    from PySide6 import QtGui  # noqa: PLC0415
+    native = QtGui.QKeySequence.NativeText
+    keys = sorted({k for preset in km.PRESETS for c in km.COMMANDS for k in km.preset_keys(preset, c.id)})
+    assert len(keys) >= 90
+    assert [k for k in keys if QtGui.QKeySequence(k).toString(native) != k] == []   # 直す前: Shift+Alt+Up など
+    written = [k for over in km.PRESETS.values() for ks in over.values() for k in ks]
+    assert len(written) >= 14 and [k for k in written if km.normalize_sequence(k) != k] == []   # 型の表は正規の字で書く
+    taken = [(p.level, p.code) for p in km.Keymap().check("fit", ("Shift+Alt+Tab",))]
+    assert ("error", "os_taken") in taken                                  # OS が取るキーの表も同じ字で引ける
+    # 古い書き方(Shift+Alt+…)で保存した設定・書き出したファイルも読める(読む時に並べ直す)
+    old = json.dumps({"format": km.FORMAT, "version": 1, "bindings": {"editops_line_duplicate": ["Shift+Alt+D"]}})
+    k, probs = km.from_settings_text(old)
+    assert k.keys("editops_line_duplicate") == ("Alt+Shift+D",) and [p for p in probs if p.level == "error"] == []
+    got, _warn = km.import_text(old)
+    assert got is not None and json.loads(got.to_json())["bindings"] == {"editops_line_duplicate": ["Alt+Shift+D"]}
+
+
+def test_menus_and_the_settings_window_show_one_spelling(win, ctl):
+    from PySide6 import QtGui  # noqa: PLC0415
+    native = QtGui.QKeySequence.NativeText
+    assert _edit_menu_rows(win)["editops:box.up"] == "Extend box selection up\tAlt+Shift+Up"   # 直す前は Shift+Alt+Up
+    full = {r[0]: r[2] for r in ctl.rows()}
+    assert full["editops_box_up"] == "Alt+Shift+Up / Ctrl+Alt+Up" and full["pymode_save_as"] == "Ctrl+Alt+Shift+S"
+    shown = {cid: " / ".join(s.toString(native) for s in a.shortcuts()) for cid, a in win._actions.items()
+             if isinstance(a, QtGui.QAction) and cid in full and not a.shortcut().isEmpty()}
+    assert len(shown) >= 60                                                # 本体のメニューの右(Qt が出す字)…
+    assert {cid: t for cid, t in shown.items() if t != full[cid]} == {}    # … = 設定の窓の表の字
+    dlg = ctl.open_dialog()
+    dlg.select("editops_multi_add_next")
+    assert dlg.current.text().endswith("Alt+Shift+.")
+    probs = ctl.check("fit", ("Shift+Alt+.",))                             # 当たりの文も同じ字
+    assert [p.key for p in probs] and {p.key for p in probs} == {"Alt+Shift+."}
