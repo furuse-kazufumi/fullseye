@@ -360,16 +360,27 @@ def test_mirror_and_invert_are_told_apart():
     assert "sobel_amp" not in ss.staples_for("エッジ保存平滑")
 
 
-def test_first_search_with_staples_is_not_slow():
-    """定番の行は索引から直接組む(op ごとに検索を呼ぶと最初の検索が約 1 秒かかった)。"""
-    import time
+def test_first_search_with_staples_is_not_slow(monkeypatch):
+    """定番の行は索引から直接組む(op ごとに検索を呼ぶと最初の検索が約 1 秒かかった)。
+
+    ★2026-11-15: 以前は経過時間(< 0.6 s)で見ていた。共有の CI の機械(py3.12 の片 2)で 0.90 s になり、master の
+    CI が 2 回続けて落ちた。その時間は索引と tier の表の作り直しの分で、定番の作り方とは関係が無い。守りたい事
+    そのもの(定番の op ごとに ``search_ops`` を呼ばない)を、呼び出しの回数で数える。"""
+    from fullseye import opsearch
     ss.search_grouped("ぼかし", _image(), k=10, lang="ja")              # 索引を温める
     ss.clear_caches()
-    t0 = time.perf_counter()
+    calls = []
+    real = opsearch.search_ops
+
+    def counted(query, *args, **kwargs):
+        calls.append(query)
+        return real(query, *args, **kwargs)
+
+    monkeypatch.setattr(opsearch, "search_ops", counted)
     res = ss.search_grouped("二値化", _image(), k=10, lang="ja")
-    dt = time.perf_counter() - t0
-    assert res["staples"] and res["staples"][0]["label"] != "otsu"       # 日本語の要約は付いている
-    assert dt < 0.6, dt
+    assert len(res["staples"]) >= 2, res["staples"]                      # 定番が 2 つ以上出る語で数える
+    assert res["staples"][0]["label"] != "otsu"                          # 日本語の要約は付いている
+    assert calls == ["二値化"], calls                                    # 検索は 1 回(定番の op ごとには呼ばない)
 
 
 def _studio_window(tmp_path, monkeypatch):

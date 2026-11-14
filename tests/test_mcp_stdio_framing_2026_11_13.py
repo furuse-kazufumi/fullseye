@@ -101,13 +101,49 @@ def test_a_body_that_is_not_an_object_is_refused_and_the_server_keeps_running(ca
 
 @pytest.mark.parametrize("wrap", [_line, _framed], ids=["lines", "content-length"])
 def test_a_deeply_nested_body_is_a_parse_error_not_a_crash(catalog, wrap):
-    """3,000 段の入れ子 1 通で RecursionError のままサーバが落ちていた。"""
+    """3,000 段の入れ子 1 通で RecursionError のままサーバが落ちていた。
+
+    ★2026-11-15: Python 3.14 の json.loads は 10 万段でも RecursionError を出さない(この試験が py3.14 でだけ
+    -32602 になった)。サーバは読む前に深さを数えて断るので、どの版でも -32700。"""
     deep = b'{"jsonrpc":"2.0","id":9,"method":"tools/call","params":' + b"[" * 100000 + b"]" * 100000 + b"}"
     raw = (deep + b"\n") if wrap is _line else (b"Content-Length: %d\r\n\r\n" % len(deep) + deep)
     replies = _read_all(_serve(raw + wrap(LIST), catalog))
     assert len(replies) == 2, replies
     assert replies[0][0]["error"]["code"] == -32700
     assert replies[1][0]["id"] == 2
+
+
+def _nested(depth: int) -> bytes:
+    """params が depth 段の配列の 1 通(全体の深さは depth + 1: 外側の辞書の分)。"""
+    return b'{"jsonrpc":"2.0","id":9,"method":"tools/list","params":' + b"[" * depth + b"]" * depth + b"}"
+
+
+def test_the_depth_limit_is_exact_and_does_not_depend_on_the_interpreter(catalog):
+    """上限ちょうどの深さは読み、1 段深いと -32700。json.loads の再帰の限界(版で違う)には頼らない。"""
+    ok = _nested(S.MAX_JSON_DEPTH - 1)                    # 外側の辞書と合わせて、ちょうど上限
+    deep = _nested(S.MAX_JSON_DEPTH)                      # 1 段深い
+    assert S.json_depth(ok) == S.MAX_JSON_DEPTH and S.json_depth(deep) == S.MAX_JSON_DEPTH + 1
+    assert isinstance(S._loads_body(ok), dict)
+    with pytest.raises(S.FramingError):
+        S._loads_body(deep)
+    replies = _read_all(_serve(deep + b"\n" + ok + b"\n" + _line(LIST), catalog))
+    assert len(replies) == 3, replies
+    assert replies[0][0]["error"]["code"] == -32700
+    assert replies[1][0].get("error", {}).get("code") != -32700       # 上限ちょうどは JSON として読まれる
+    assert replies[2][0]["id"] == 2 and "tools" in replies[2][0]["result"]
+
+
+def test_brackets_inside_strings_do_not_count_as_depth(catalog):
+    """文字列の中の括弧(と、逃がした引用符の後ろの括弧)は深さに数えない。"""
+    text = "[" * 500 + '\\" {{{{ \\\\' + "{" * 500
+    msg = dict(LIST, id=5, params={"note": text, "list": [[1, 2], {"a": [3]}]})
+    body = json.dumps(msg).encode("utf-8")
+    assert body.count(b"[") + body.count(b"{") > S.MAX_JSON_DEPTH       # 早い道(総数が上限以下)を通らない
+    assert S.json_depth(body) == 5                                      # 外の辞書・params・list・その中の辞書・[3]
+    assert S._loads_body(body) == msg
+    replies = _read_all(_serve(body + b"\n", catalog))
+    assert len(replies) == 1 and replies[0][0]["id"] == 5
+    assert replies[0][0].get("error", {}).get("code") != -32700         # JSON として読まれた(深すぎるとは言わない)
 
 
 def test_broken_json_on_a_line_is_a_parse_error_and_the_next_line_is_served(catalog):
