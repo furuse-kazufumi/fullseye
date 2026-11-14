@@ -327,6 +327,22 @@ def _with_sample_handles(stages, isolated, store):
 
 
 _SHARDS = 8
+#: 見本が optional の依存を要る op → (import する名前, 誤り文に出る配布物の名前)。
+#: ★2026-11-15: 実測の台帳を作った機械には zxing-cpp(extras の symbols)が入っていた。CI の test ジョブの extras にも、
+#:   素の `pip install fullseye` にも無い。無い環境では「走る」を求めず、依存の名前を言って断る事を見る
+#:   (黙って読み飛ばさない: ここに名指しした op だけ、依存が本当に import できない時だけ、誤り文まで確かめる)。
+_OPTIONAL_DEPENDENCY = {"read_symbols_zxing": ("zxingcpp", "zxing-cpp")}
+
+
+def _missing_optional_dependency(name: str, bad: dict) -> bool:
+    """*name* の見本が落ちた理由が「名指しした optional の依存が、この環境に無い」で、op がそう言って断ったか。"""
+    import importlib.util
+    need = _OPTIONAL_DEPENDENCY.get(name)
+    if need is None or importlib.util.find_spec(need[0]) is not None:
+        return False
+    error = bad.get("error") or {}
+    return (bad.get("reason") == "execution_failed" and error.get("type") == "ImportError"
+            and need[1] in str(error.get("message")))
 
 
 @pytest.mark.parametrize("shard", range(_SHARDS))
@@ -334,6 +350,7 @@ def test_every_isolated_op_runs_its_recorded_example_through_the_pipeline_tool(c
     """OP_GRAPH に「隔離して走らせる」と書いた op を**全部**(8 片に分けて)、記録した見本のとおりに道具から走らせる。"""
     isolated = _isolated_edges()
     assert len(isolated) >= 300
+    assert set(_OPTIONAL_DEPENDENCY) <= set(isolated), sorted(set(_OPTIONAL_DEPENDENCY) - set(isolated))
     names = sorted(isolated)[shard::_SHARDS]
     assert len(names) >= len(isolated) // _SHARDS
     failures = []
@@ -348,9 +365,40 @@ def test_every_isolated_op_runs_its_recorded_example_through_the_pipeline_tool(c
             continue
         if r["isError"]:
             bad = next((s for s in r["structuredContent"].get("stages", []) if s.get("status") == "failed"), {})
+            if bad.get("op") == name and _missing_optional_dependency(name, bad):
+                continue                              # 依存が無い環境: 依存の名前を言って断った(見本つき)
             failures.append((name, bad.get("reason"), json.dumps(bad.get("error") or r["structuredContent"].get("errors"),
                                                                  ensure_ascii=False)[:200]))
     assert not failures, "%d of %d: %s" % (len(failures), len(names), failures[:8])
+
+
+def test_an_op_whose_optional_dependency_is_missing_says_which_one(cat, store, monkeypatch):
+    """optional の依存が無い環境での台帳 op の断り方: 失敗した段に ImportError と依存の名前、動く見本が付く。
+    (依存のある環境でも確かめられるように、作業プロセスが返す誤りを差し替えて見る。)"""
+    import fullseye.mcp.opworker as W
+    message = "read_symbols_zxing: needs the optional dependency zxing-cpp (pip install zxing-cpp, or fullseye[symbols])"
+
+    def no_dependency(job, args, kwargs, *, time_limit_s, max_rss):
+        raise OpWorkerError("op_error", message, error_type="ImportError")
+
+    monkeypatch.setattr(W, "run_isolated", no_dependency)
+    isolated = _isolated_edges()
+    stages = _with_sample_handles(isolated["read_symbols_zxing"]["example"]["stages"], isolated, store)
+    r = _run(cat, store, stages, vision="none")
+    assert r["isError"]
+    bad = next(s for s in r["structuredContent"]["stages"] if s.get("status") == "failed")
+    assert bad["op"] == "read_symbols_zxing" and bad["reason"] == "execution_failed", bad
+    assert bad["error"] == {"type": "ImportError", "message": message} and bad["example"]["stages"], bad
+    assert "zxing-cpp" in r["content"][0]["text"] and "動く見本" in r["content"][0]["text"], r["content"][0]["text"]
+    import importlib.util
+    # 依存が import できる環境では見逃さない(走るはずの op が ImportError を出したら、それは失敗)
+    assert _missing_optional_dependency(bad["op"], bad) is (importlib.util.find_spec("zxingcpp") is None)
+    monkeypatch.setattr(importlib.util, "find_spec", lambda name, *a, **k: None)     # 依存が無い環境の役
+    assert _missing_optional_dependency(bad["op"], bad)
+    # 名指ししていない op の ImportError・名指しした op の別の失敗は、見逃さない
+    assert not _missing_optional_dependency("illumination_design", bad)
+    assert not _missing_optional_dependency("read_symbols_zxing", dict(bad, reason="resource_limit"))
+    assert not _missing_optional_dependency("read_symbols_zxing", dict(bad, error={"type": "ValueError", "message": message}))
 
 
 # --------------------------------------------------------------------------- 2026-11-13 の続き
@@ -446,3 +494,42 @@ def test_ops_mcp_cannot_run_say_why_and_what_to_do_instead(cat, store):
     codes = {e.get("mcp_probe") or e.get("not_executable_in_mcp") for e in _edges().values()
              if not e.get("verified_executable")}
     assert len(codes) >= 5 and not (codes - set(MCP_UNAVAILABLE_REASONS)), codes - set(MCP_UNAVAILABLE_REASONS)
+
+
+def test_profile_values_for_a_ledger_op_are_checked_against_its_parameter_spec(cat, store, monkeypatch):
+    """★2026-11-15: profile から引いた値も台帳の仕様で検査する。直に書いた値だけを見ていて、数の引数に文字列の
+    profile を渡すと検証を通り、検査なしで作業プロセスへ渡っていた(op が自分で断るまで走った)。"""
+    import fssystem
+
+    def stages(value):
+        return [{"op": "illumination_design", "params": {"slope_deg": value}}]
+
+    good = _run(cat, store, stages({"profile": "product_default.tolerance_mm"}))      # 0.1(数)は仕様に合う
+    assert not good["isError"], good["content"][0]["text"][:300]
+    called = []
+    monkeypatch.setattr(S, "_run_isolated_stage", lambda edge, args, params: called.append(edge["op"]) or (
+        {"ranking": []}, dict(S._isolated_limits(), elapsed_s=0.0)))
+    for profile in ("product_default.material", "deflectometry_rig.orientation"):      # どちらも文字列
+        checked = S.validate_pipeline(stages({"profile": profile}), None, cat, store=store)
+        assert not checked["valid"], profile
+        assert [(e["reason"], e["value"], e.get("profile")) for e in checked["errors"]] == [
+            ("parameter_type_mismatch", "slope_deg", profile)], checked["errors"]
+        refused = _run(cat, store, stages({"profile": profile}))
+        assert refused["isError"] and "parameter_type_mismatch" in refused["content"][0]["text"], refused["content"]
+    assert called == [], called                                                        # 1 回も走らせていない
+    # 検証の後で値が変わっても(検証の時は数、走らせる時は文字列)、境界を越える直前の検査が断る
+    real_validate, phase = S.validate_pipeline, {"validating": False}
+
+    def validate(*args, **kwargs):
+        phase["validating"] = True
+        try:
+            return real_validate(*args, **kwargs)
+        finally:
+            phase["validating"] = False
+
+    monkeypatch.setattr(S, "validate_pipeline", validate)
+    monkeypatch.setattr(fssystem, "resolve_profile", lambda ref: 0.1 if phase["validating"] else "generic_glass")
+    late = _run(cat, store, stages({"profile": "product_default.tolerance_mm"}))
+    assert late["isError"] and called == [], (called, late["content"][0]["text"][:300])
+    failed = late["structuredContent"]["stages"][0]
+    assert failed["status"] == "failed" and "failed re-validation" in failed["error"]["message"], failed

@@ -89,6 +89,11 @@ asyncio.run(main())
   `mcp_op_memory_limit_bytes`(既定 2 GiB、作業プロセスのメモリの増分)で、CPU だけ。作業プロセスは一時フォルダの外へ
   書けず、Python と fullseye の外を読めず、ネットにも繋がらない。上限を超えた段は `resource_limit` で失敗する。
 - 引数は台帳の仕様(数・整数・真偽・選択肢・短い名前)で検査し、合わなければ 1 段も走らせずに断る(丸めない)。
+  `{"profile": "<名前>.<項目>"}` で書いた引数も、引いた値を同じ仕様で検査する。
+- **optional の依存**: 2,456 は optional の依存(scikit-image・Pillow・OpenCV …)を入れた環境での数。素の
+  `pip install fullseye`(numpy と scipy だけ)では、隔離して走る 1,500 op のうち 1,478 が見本のとおりに走り、22 は
+  依存が無いので失敗した段で断る(scikit-image 15・Pillow 6・zxing-cpp 1。2026-11-15 に wheel だけを入れた venv で実測。
+  registry の側は数えていない)。誤り文の多くは入れる物の名前を言う(例 `needs the optional dependency zxing-cpp`)。
 - 入力の無い op だけの pipeline は handle が要らない(上の例)。結果は単位つきの表(`ranking`・`recommended` …)で、
   表の中の 2-D の配列は `image` のハンドルになり、次の pipeline に渡せる。
 - どの op を載せるかは実測の台帳(`docs/mcp_isolated_ops.json`、`tools/mcp_isolated_probe.py`)が決める。載せなかった

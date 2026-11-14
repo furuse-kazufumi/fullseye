@@ -1723,10 +1723,19 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                                        "value":actual_sort,"expected":expected,"candidates":[]})
                 elif isinstance(pvalue,dict) and "profile" in pvalue:
                     from fssystem import resolve_profile
-                    try: resolve_profile(pvalue["profile"])
+                    try: profile_value=resolve_profile(pvalue["profile"])
                     except (TypeError,ValueError) as exc:
                         errors.append({"layer":"stage","stage":i,"reason":"unknown_profile",
                                        "value":pvalue.get("profile"),"detail":str(exc),"candidates":[]})
+                    else:
+                        # ★2026-11-15: 台帳 op(隔離して走る)は、profile から引いた値も台帳の仕様で検査する。
+                        #   直に書いた値だけを検査していて、profile を経た値は型も大きさも見ずに作業プロセスへ渡っていた
+                        #   (数の引数に文字列の profile を渡すと検証は通り、走らせてから op が断った)。
+                        problem = (_check_isolated_param(name, schema[pname], profile_value)
+                                   if isolated and pname in schema else None)
+                        if problem:
+                            errors.append({"layer":"stage","stage":i,"reason":"parameter_type_mismatch","value":pname,
+                                           "detail":problem,"profile":pvalue.get("profile"),"candidates":[]})
             # ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、
             #   pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
             knob_bad = {}
@@ -2190,9 +2199,10 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                         literal[pname] = _scalar_of(pvalue, "%s.%s" % (edge["op"], pname))
                         continue
                     row = next((r for r in edge.get("parameter_schema", []) if r["name"] == pname), None)
-                    raw = spec.get("params", {}).get(pname)
-                    if row is None or (not (isinstance(raw, dict) and ("ref" in raw or "profile" in raw))
-                                       and _check_isolated_param(edge["op"], row, pvalue)):
+                    # ★2026-11-15: 解決した後の値を必ず検査する(以前は {"ref"} / {"profile"} で書いた引数を飛ばしていた)。
+                    #   profile の値は仕様に合えば通る。ref の先(配列・表)は台帳 op の引数にできないので、ここで断る
+                    #   (数 1 個の入力は上の literal_inputs の道で受ける)。
+                    if row is None or _check_isolated_param(edge["op"], row, pvalue):
                         raise ArgError("stage %d (%s): parameter %r failed re-validation" % (i, edge["op"], pname))
                     if pname in executor.get("array_params", ()) and isinstance(pvalue, list):
                         # 見本で配列だった引数(K など)は、JSON の list のままでは op が添字で読めない

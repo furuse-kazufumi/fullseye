@@ -42,6 +42,14 @@ AI の役で MCP を使った検証(2026-11-13)で、optics の op は MCP か�
   ソケット・子プロセスを断る。値の受け渡しは JSON の木と数値配列だけ(pickle を使わない)。
 - 引数: 台帳の仕様(数・整数・真偽・選択肢・短い名前)で検査し、合わない値は 1 段も走らせずに断る(丸めない)。
   文字列の引数はパスの区切り・ドライブ名・`..` を書けない。`device` は `cpu` だけ(GPU のメモリは上限で縛れない)。
+  `{"profile": …}` で書いた引数も、引いた値を同じ仕様で検査する(検証と、作業プロセスへ渡す直前の両方。2026-11-15:
+  直に書いた値だけを検査していて、数の引数に文字列の profile を渡すと検証を通り、op が自分で断るまで走った)。
+- optional の依存(正直な内訳、2026-11-15 に wheel だけを入れた venv で実測): 2,456 は optional の依存を入れた環境での数。
+  素の `pip install fullseye`(numpy と scipy だけ)では、隔離して走る 1,500 op のうち 1,478 が見本のとおりに走り、
+  22 は依存が無いので失敗した段で断る(scikit-image 15・Pillow 6・zxing-cpp 1。Pillow の 3 つ = `carla_scene_synthetic`・
+  `carla_scene_world`・`lead_truth_depth` は誤り文が依存の名前を言わない)。registry の側は数えていない。
+- 配布物の側の門(`tests/test_mcp_wheel.py`、CI の core)に、wheel を入れた venv から台帳 op(`illumination_design`・
+  `lens_spec`)が作業プロセスで走る事と、`fullseye_catalog_coverage` の既定(件数だけ・相対の出どころ)を足した。
 - 結果: 表・数は上限つきの要約と単位(鍵の名前の `_mm`・`_deg` など)、op の 1 行の意味、使った引数の単位を返す。
   表の中の 2-D 配列は `image` のハンドルになり、次の pipeline に渡せる。複素数は `re` / `im` に分ける。
 - 実行できない op の誤り文(`fullseye_validate_pipeline` / `fullseye_pipeline` / `fullseye_apply` / find_ops の骨格)に、
