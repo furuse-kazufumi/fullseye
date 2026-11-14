@@ -2163,3 +2163,131 @@ def test_params_notice_is_painted_in_the_state_colour_under_a_theme(qapp, fusion
     _close_quietly(win)
     parent.close()
     parent.deleteLater()
+
+
+def _start_edit(qapp, p, text: str, col: int = 0, key: str = "camera.fx"):
+    """セルの編集を始めて、欄に ``text`` を入れる(まだ確定しない)。"""
+    ed = _open_editor(qapp, p, col, key)
+    ed.setFocus()
+    ed.setText(text)
+    return ed
+
+
+def _held(p) -> list:
+    """表の中で開いている編集の欄(閉じて消されるのを待っている物は数えない)。"""
+    return [w for w in p.tree.viewport().findChildren(QtWidgets.QLineEdit) if not w.isHidden()]
+
+
+@pytest.mark.parametrize("how", ["enter", "tab", "shift+tab", "click another cell", "focus to the search",
+                                 "another window"])
+def test_params_rejected_cell_stays_whatever_ends_the_edit(qapp, fusion, ini, tmp_path, how):
+    """D89(確かめの指摘): 断った欄は、確定を試みる道がどれでも閉じない。Enter・Tab・Shift+Tab(確定キー)だけでなく、
+    他のセルを押す・検索の欄へフォーカスを移す・別の窓へ移る(欄からフォーカスが外れる)でも、欄は開いたまま、打った文字と
+    赤枠(property invalid)と理由 + 例が残り、値は変わらない。Esc で取り消せる。"""
+    import shiboken6
+
+    win = _window(qapp, _three_files(tmp_path))
+    p = win.panel
+    win.activateWindow()
+    ed = _start_edit(qapp, p, "fast")
+    other = None
+    if how == "enter":
+        QTest.keyClick(ed, Qt.Key_Return)
+    elif how == "tab":
+        QTest.keyClick(ed, Qt.Key_Tab)
+    elif how == "shift+tab":
+        QTest.keyClick(ed, Qt.Key_Backtab, Qt.ShiftModifier)
+    elif how == "click another cell":
+        at = p.tree.visualRect(p.index_of(1, "camera.fy")).center()
+        QTest.mouseClick(p.tree.viewport(), Qt.LeftButton, Qt.NoModifier, at)
+    elif how == "focus to the search":
+        p.search.setFocus(Qt.MouseFocusReason)
+    else:
+        other = QtWidgets.QWidget()
+        other.show()
+        other.activateWindow()
+        other.setFocus()
+    _pump(qapp)
+    assert shiboken6.isValid(ed) and _held(p) == [ed], how
+    assert ed.isVisible() and ed.text() == "fast" and ed.property("invalid") is True, how
+    assert "border" in ed.styleSheet() and p.model.value(0, "camera.fx") == 812.5, how
+    assert p.message_level == "error" and ed.toolTip() == p.message_label.full_text()[2:], how
+    assert "'fast'" in ed.toolTip() and "example: 812.5" in ed.toolTip(), how
+    if how == "click another cell":
+        assert p.current_cell() == (1, "camera.fy")                    # 選択は動く。欄は残る
+    elif how == "focus to the search":
+        assert qapp.focusWidget() is p.search
+    ed.setFocus()
+    QTest.keyClick(ed, Qt.Key_Escape)                                   # 取り消し: 欄は閉じ、値はそのまま
+    _pump(qapp)
+    assert _held(p) == [] and p.model.value(0, "camera.fx") == 812.5 and win.isVisible(), how
+    if other is not None:
+        other.close()
+        other.deleteLater()
+    _close_quietly(win)
+
+
+def test_params_rejected_cell_survives_redraw_and_is_resolved_first(qapp, fusion, ini, tmp_path):
+    """D89 の続き: 断って残った欄は、表の描き直し(チェックの切り替え・実行の印・theme の読み直し)で文字を失わない。
+    残っている間に他のセルを編集しようとすると(編集の開始・ダブルクリック)、2 つ目の欄は開かず、断った欄へフォーカスが戻る。
+    表にフォーカスがある時の Esc は、まず断った欄を取り消し(窓は閉じない)、次の Esc で窓が閉じる。直してフォーカスを
+    外せば確定して閉じる。打っている途中の文字も描き直しで消えない。"""
+    win = _window(qapp, _three_files(tmp_path))
+    p = win.panel
+    p.ask_unsaved = lambda names: "discard"
+    win.activateWindow()
+    ed = _start_edit(qapp, p, "fast")
+    p.search.setFocus(Qt.MouseFocusReason)
+    _pump(qapp)
+    assert _held(p) == [ed] and ed.property("invalid") is True
+    redraws = 0
+    assert p.tmodel.setData(p.index_of(0, "exposure.auto"), Qt.Unchecked, Qt.CheckStateRole)   # 他のセルが変わる
+    redraws += 1
+    p.mark_used(["camera.fx"], 0)                                       # 実行の印
+    redraws += 1
+    p.apply_theme()                                                     # theme の読み直し
+    redraws += 1
+    _pump(qapp)
+    assert redraws == 3 and p.model.value(0, "exposure.auto") is False
+    assert _held(p) == [ed] and ed.text() == "fast" and ed.property("invalid") is True
+    other = p.index_of(2, "camera.cx")
+    tried = 0
+    p.tree.setFocus()
+    p.tree.setCurrentIndex(other)
+    p.tree.edit(other)                                                  # 編集の開始(F2・打ち始めと同じ入口)
+    _pump(qapp)
+    assert _held(p) == [ed] and qapp.focusWidget() is ed and ed.text() == "fast"
+    tried += 1
+    p.tree.setFocus()
+    QTest.mouseDClick(p.tree.viewport(), Qt.LeftButton, Qt.NoModifier, p.tree.visualRect(other).center())
+    _pump(qapp)
+    assert _held(p) == [ed] and qapp.focusWidget() is ed and ed.text() == "fast"
+    tried += 1
+    assert tried == 2
+    p.tree.setFocus()
+    QTest.keyClick(p.tree, Qt.Key_Escape)                               # Esc の 1 段目: 断った欄を取り消す
+    _pump(qapp)
+    assert win.isVisible() and _held(p) == [] and p.model.value(0, "camera.fx") == 812.5
+    ed2 = _open_editor(qapp, p, 2, "camera.cx")                         # 取り消した後は他のセルを編集できる
+    assert ed2.text() == "320"
+    ed2.setText("32")                                                   # 打っている途中(まだ確定していない)
+    p.apply_theme()
+    _pump(qapp)
+    assert ed2.text() == "32" and p.model.value(2, "camera.cx") == 320
+    QTest.keyClick(ed2, Qt.Key_Escape)
+    _pump(qapp)
+    assert _held(p) == [] and p.model.value(2, "camera.cx") == 320
+    ed = _start_edit(qapp, p, "fast")                                   # 直してフォーカスを外すと確定して閉じる
+    p.search.setFocus(Qt.MouseFocusReason)
+    _pump(qapp)
+    assert _held(p) == [ed] and ed.property("invalid") is True
+    ed.setFocus()
+    ed.setText("820")
+    assert ed.property("invalid") is False
+    p.search.setFocus(Qt.MouseFocusReason)
+    _pump(qapp)
+    assert _held(p) == [] and p.model.value(0, "camera.fx") == 820.0
+    p.tree.setFocus()
+    QTest.keyClick(p.tree, Qt.Key_Escape)                               # 残っている欄が無ければ、Esc は窓を閉じる
+    _pump(qapp)
+    assert not win.isVisible()

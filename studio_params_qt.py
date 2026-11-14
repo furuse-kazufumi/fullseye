@@ -673,11 +673,70 @@ class ParamsTreeModel(QtCore.QAbstractItemModel):
         return True
 
 
+class _Tree(QtWidgets.QTreeView):
+    """木つきの表。断った欄(property ``invalid`` = 真)は閉じない(設計書 P08-5「打った文字を消さずに欄に残す」)。
+
+    確定を試みる道は 3 つある: 確定キー(Enter / Tab)、欄からフォーカスが外れた時(Qt の委譲の既定)、他のセルを選んだ時
+    (表の currentChanged)。どの道も最後にここを通るので、ここで止める。閉じるのは Esc(取り消し)と、直して確定できた時。"""
+
+    _ATTEMPTS = (QtWidgets.QAbstractItemView.DoubleClicked, QtWidgets.QAbstractItemView.EditKeyPressed,
+                 QtWidgets.QAbstractItemView.AnyKeyPressed, QtWidgets.QAbstractItemView.AllEditTriggers)
+
+    def closeEditor(self, editor: QtWidgets.QWidget, hint: QtWidgets.QAbstractItemDelegate.EndEditHint) -> None:
+        if editor is not None and bool(editor.property("invalid")):
+            if hint != QtWidgets.QAbstractItemDelegate.RevertModelCache:
+                return
+            editor.setProperty("invalid", False)        # 閉じた欄(消されるまで木に残る)を「断ったまま」に数えない
+        super().closeEditor(editor, hint)
+
+    def rejected_editors(self) -> list[QtWidgets.QLineEdit]:
+        """断ったまま開いている欄(畳んだ節の中で見えない物も含む)。"""
+        return [w for w in self.viewport().findChildren(QtWidgets.QLineEdit) if bool(w.property("invalid"))]
+
+    def cancel_rejected(self) -> int:
+        """断ったまま開いている欄を取り消して閉じる(値はそのまま)。閉じた数。"""
+        eds = self.rejected_editors()
+        for ed in eds:
+            self.closeEditor(ed, QtWidgets.QAbstractItemDelegate.RevertModelCache)
+        return len(eds)
+
+    def _back_to_rejected(self, index: QtCore.QModelIndex) -> bool:
+        """``index`` を編集しようとした時に、別のセルの断った欄が残っていれば、そこへフォーカスを戻して理由を出す(真)。
+        見えない所(畳んだ節の中)に残った欄は取り消して、偽を返す(進んでよい)。"""
+        held = self.rejected_editors()
+        shown = [e for e in held if e.isVisible()]
+        if not shown:
+            if held:
+                self.cancel_rejected()
+            return False
+        at = getattr(shown[0], "_fs_index", None)
+        if at is not None and (at.row(), at.column(), at.parent()) == (index.row(), index.column(), index.parent()):
+            return False
+        shown[0].setFocus()
+        QtWidgets.QToolTip.showText(shown[0].mapToGlobal(QtCore.QPoint(0, shown[0].height())), shown[0].toolTip(), shown[0])
+        return True
+
+    def edit(self, index: QtCore.QModelIndex,                                    # type: ignore[override]
+             trigger: QtWidgets.QAbstractItemView.EditTrigger = QtWidgets.QAbstractItemView.AllEditTriggers,
+             event: QtCore.QEvent | None = None) -> bool:
+        """他のセルを編集しようとした時に断った欄が残っていれば、そこへ戻す(黙って始まらないままにしない)。"""
+        if trigger in self._ATTEMPTS and self._back_to_rejected(index):
+            return True
+        return super().edit(index, trigger, event)
+
+    def mouseDoubleClickEvent(self, ev: QtGui.QMouseEvent) -> None:
+        # QTreeView は編集中の状態ではダブルクリックを捨てる(edit まで来ない)ので、ここでも戻す。
+        if self._back_to_rejected(self.indexAt(ev.position().toPoint())):
+            return
+        super().mouseDoubleClickEvent(ev)
+
+
 class _Delegate(QtWidgets.QStyledItemDelegate):
     """行の高さ = 文字 + 4 px。編集は枠なしの文字の欄(数もスピンでなく文字 + 検査)。
 
-    Enter / Tab では自分で確定を試み、断られたら欄を閉じない: 打った文字はそのまま、property ``invalid`` = 真で赤枠、
-    ツールヒントに理由 + 例(設計書 P08-5)。打ち直すと印は消える。Esc は取り消し。"""
+    確定(Enter / Tab・フォーカスが外れた時・他のセルを選んだ時)は ``setModelData`` の 1 か所。断られたら欄を閉じない:
+    打った文字はそのまま、property ``invalid`` = 真で赤枠、ツールヒントに理由 + 例(設計書 P08-5。閉じないのは
+    :class:`_Tree`)。打ち直すと印は消える。Esc は取り消し。"""
 
     _COMMIT_KEYS = {Qt.Key_Return: QtWidgets.QAbstractItemDelegate.NoHint,
                     Qt.Key_Enter: QtWidgets.QAbstractItemDelegate.NoHint,
@@ -719,22 +778,31 @@ class _Delegate(QtWidgets.QStyledItemDelegate):
             idx = getattr(obj, "_fs_index", None)
             model = idx.model() if idx is not None and idx.isValid() else None
             if isinstance(model, ParamsTreeModel):
-                index = model.index(idx.row(), idx.column(), idx.parent())
-                model.setData(index, obj.text(), Qt.EditRole)
-                if model.last_refusal is not None:
-                    self._mark(obj, model.last_refusal)
-                    QtWidgets.QToolTip.showText(obj.mapToGlobal(QtCore.QPoint(0, obj.height())), model.last_refusal, obj)
+                self.setModelData(obj, model, model.index(idx.row(), idx.column(), idx.parent()))
+                if bool(obj.property("invalid")):
+                    QtWidgets.QToolTip.showText(obj.mapToGlobal(QtCore.QPoint(0, obj.height())), obj.toolTip(), obj)
                     return True                                  # 欄を閉じない(打った文字を残す)
                 self.closeEditor.emit(obj, self._COMMIT_KEYS[ev.key()])
                 return True
-        return super().eventFilter(obj, ev)
+        return super().eventFilter(obj, ev)                      # フォーカスが外れた時は Qt の既定が setModelData を呼ぶ
 
     def setEditorData(self, editor: QtWidgets.QWidget, index: QtCore.QModelIndex) -> None:
-        editor.setText(index.data(Qt.EditRole) or "")      # type: ignore[attr-defined]
+        """欄に表の値を入れる。表の描き直しでもう一度呼ばれた時、利用者が文字を変えた欄(打っている途中・断って残した
+        文字)は上書きしない。"""
+        text = index.data(Qt.EditRole) or ""
+        loaded = getattr(editor, "_fs_loaded", None)
+        if loaded is not None and editor.text() != loaded:  # type: ignore[attr-defined]
+            return
+        editor._fs_loaded = text                            # type: ignore[attr-defined]
+        editor.setText(text)                                # type: ignore[attr-defined]
         editor.selectAll()                                  # type: ignore[attr-defined]
 
     def setModelData(self, editor: QtWidgets.QWidget, model: QtCore.QAbstractItemModel, index: QtCore.QModelIndex) -> None:
+        """欄の文字で確定を試みる。断られたら欄に印(赤枠 + 理由)を付ける = その欄は閉じられない。"""
         model.setData(index, editor.text(), Qt.EditRole)    # type: ignore[attr-defined]
+        refusal = model.last_refusal if isinstance(model, ParamsTreeModel) else None
+        if refusal is not None and isinstance(editor, QtWidgets.QLineEdit):
+            self._mark(editor, refusal)
 
 
 # --------------------------------------------------------------------------- #
@@ -915,7 +983,7 @@ class ParamsPanel(QtWidgets.QWidget):
         nl.addStretch(1)
         self.stack.addWidget(self.no_match)
 
-        self.tree = QtWidgets.QTreeView(self.stack)
+        self.tree = _Tree(self.stack)
         self.tmodel = ParamsTreeModel(self.model, tr, self)
         self.tmodel.set_palette(self.palette(), self.font())
         self.tree.setModel(self.tmodel)
@@ -1858,7 +1926,9 @@ class ParamsWindow(QtWidgets.QDialog):
 
     def keyPressEvent(self, ev: QtGui.QKeyEvent) -> None:
         if ev.key() == Qt.Key_Escape:
-            if self.panel.search.text():                 # 1 回目の Esc は検索を消す、2 回目で閉じる
+            if self.panel.tree.cancel_rejected():        # 断ったまま残っている欄があれば、まずそれを取り消す
+                return
+            if self.panel.search.text():                 # 次の Esc は検索を消す、その次で閉じる
                 self.panel.search.clear()
                 return
             self.reject()
