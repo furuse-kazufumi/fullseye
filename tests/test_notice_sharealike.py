@@ -63,12 +63,14 @@ def test_notice_lists_only_existing_files():
 
 
 def _pages() -> list[Path]:
-    return [VIEW / "index.md"] + sorted(VIEW.glob("*/index.md"))
+    # ja/en の継承条件つきの展示は、本ページに載らなければおまけページ(more.md)に載る。
+    return ([VIEW / "index.md", VIEW / "more.md"] + sorted(VIEW.glob("*/index.md"))
+            + sorted(VIEW.glob("*/more.md")))
 
 
 def test_view2026_pages_show_the_attribution():
     pages = _pages()
-    assert len(pages) >= 8
+    assert len(pages) >= 10
     checked = 0
     for page in pages:
         text = page.read_text(encoding="utf-8")

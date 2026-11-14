@@ -18,7 +18,7 @@
   "crop_title_band_fraction": 0.12,
   "min_laplacian_density": 0.0005,
   "min_content_fraction": 0.36,
-  "manual_thumbnail_spec_count": 33,
+  "manual_thumbnail_spec_count": 34,
   "entries": {
     "poc_phase_measuring_deflectometry": {
       "representative": "03_photo_vs_pmd.png",
@@ -234,7 +234,7 @@
       "still": "articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png",
       "alt": {
         "ja": "写真の欠陥の信号は最大 0.00066(8 bit の 1 段 = 0.0039 より小さい)。縞の鏡像は凹みで縞がわずかに曲がる(1 周期の 1 割弱)だけだが、位相 → 勾配 → 曲率と進むほどはっきりする。曲率マップの SNR は凹み A で 110、B で 57。",
-        "en": "A very shallow dent in glossy paint is practically invisible in an ordinary photograph. Projecting fringes on a screen in front of the surface and reading how their mirror image bends gives curvature, and a dent 3 µm deep stands out clearly. The flat-looking photo sits next to curvature maps in which the dents appear."
+        "en": "A very shallow dent in glossy paint barely shows in a photograph under diffuse light. Projecting fringes on a screen facing the surface and reading how their mirror image bends gives curvature, and a planted dent 3 µm deep stands out. This is a synthetic scene, and photographs under oblique light were not compared."
       }
     },
     "poc_industrial_oct": {
@@ -434,7 +434,7 @@
       "still": "articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png",
       "alt": {
         "ja": "生の干渉スペクトル(CC BY 4.0、Liverpool Research Data Catalogue 126)を Fullseye の op だけで k 線形化・FFT し、界面を動的計画法で辿った。横 1 mm(100 本)、縦は表面の 40 µm 上から光路 260 µm。白の見本は着色層が強く散乱し、下の面が立たない。III-B の表面の下の水平な線は自己相関の幽霊。",
-        "en": "We want to see the layers of paint and multilayer film in depth without cutting them. Clear-coat thicknesses computed from public raw interference spectra of automotive paint agree with the paper's OCT values within 1.5 µm. Layers too thin to separate are reported as unmeasurable instead of guessed."
+        "en": "We want to see paint and film layers in depth without cutting. Clear-coat thicknesses from public raw interference spectra of automotive paint agree within 3.6 µm with microscope measurements of the same panels. Agreement with the paper's own values only reproduces the same data, and the panel matching is inferred."
       }
     },
     "poc_hyperspectral_foreign_matter": {
@@ -647,7 +647,7 @@
       "still": "articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png",
       "alt": {
         "ja": "実データ: 破砕した樹脂片(0.3〜4 cm)を 400〜2500 nm の分光カメラで撮った場面(46 x 92 px、1100〜2400 nm)。左半分の画素のクラス平均で学び、右半分を採点: クラス平均の再現率 0.816(生の反射率の SAM は 0.439)。出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。改変: 試験ヘッダの fwhm を 360 帯に切り詰め、1100〜2400 nm を切り出し、連続体除去。",
-        "en": "Foreign matter the same colour as meat or kernels cannot be told apart by a colour camera. Classifying public real images as spectral data detected debris on pork belly with 1.1 % false alarms. With fewer bands the false alarms grew, so a band set that sufficed on synthetic data did not suffice on real data."
+        "en": "Public real images were used as near-infrared spectral data to classify debris lying on pork belly. Scored per pixel on separate captures, most of it was detected at 1.1 % false alarms. With fewer bands the false alarms grew, and that a colour camera fails on same-coloured matter is shown only on synthetic data."
       }
     },
     "poc_thin_film_reflectometry": {
@@ -852,7 +852,7 @@
       "still": "articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness.png",
       "alt": {
         "ja": "実物の顕微鏡のカラー写真(左が裸の Si、右が Si 上の SiO₂)から、裸の Si の領域で色を材料表の Si に合わせ、film_thickness_map(RGB)で画素ごとの膜厚を出した。SiO₂ 側の中央値 87.4 nm、基準 98.5 nm(-11 %)。カメラの分光感度は不明で、CIE の等色関数で代用している。視野の周辺減光(-9 %)は裸の Si の側だけで当てはめて割った(SiO₂ 側の明るさの傾き -11 % → -1 %)。Si 側は中央値 0.0 nm だが 95 パーセンタイル 12 nm —— 0 nm 付近では反射率が膜厚の 2 乗でしか変わらないので、写真の明るさの揺れが数 nm に化ける(補正前は減光で Si 側が 2 段に分かれていた)。出典: Schwarz ら, Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502、データ Zenodo 10.5281/zenodo.13753754(CC BY 4.0)。改変: 1920×1080 → 640×360 に縮小し JPEG で保存、右に計算した膜厚の図を並べた。",
-        "en": "Oxide thickness on silicon can be read from interference fringes and colours in reflected light. From a real micrograph published by other researchers, a per-pixel thickness map was drawn, centred on 87.4 nm. It stays below the reference value, and the camera's colour sensitivity is unknown."
+        "en": "Oxide thickness on silicon can be read from interference fringes and colours in reflected light. Read per pixel from a real micrograph published by others, the central value was 87.4 nm. That is about a tenth below the reference derived from the paper, and the camera's colour sensitivity is unknown."
       }
     },
     "poc_cad_scan_deviation": {
@@ -1065,7 +1065,7 @@
       "still": "articles/assets/poc/poc_cad_scan_deviation/01_scene.png",
       "alt": {
         "ja": "主図(動画、640 × 360・30 fps・12 秒): 前半は実測点群(だいだい)が CAD の参照点(灰)に重なるまで —— 位置合わせなし → FPFH 粗合わせ → 点-面 ICP の推定姿勢の間を補間して動かす(偏差 RMS 18285.3 → 105.4 → 81.7 µm)。後半は重なった点群を一周し、符号付き偏差(±0.40 mm、だいだい = 足りない / 青 = 余る)で塗る(形が読めるよう陰影を薄く足した)。公差 ±0.10 mm を外れた面積は推定 2300.6 mm²、真値 2514.5 mm²。左手前の 3 本の線は CAD の x・y・z 軸。",
-        "en": "Aligning a scan to its design can absorb a defect or move it elsewhere. Known dents and warps were added to a part; even the defect-free control produced 66.5 square mm of false rejected area. Rigid-like deviations shrink, while nearest points jump across edges and create a fictitious dent."
+        "en": "Aligning a scan to its design absorbs part of the deviation and moves where it looks out of tolerance. On a part with a known warp, a reading 121 µm deep appears at the centre where the true deviation is tiny. This is synthetic, and a point-sampled design shows out-of-tolerance edges even without a defect."
       }
     },
     "poc_telecentric_metrology": {
@@ -1270,7 +1270,7 @@
       "still": "articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate.png",
       "alt": {
         "ja": "【実画像】テレセンで撮ったアライメント板(円の間隔 1 mm)の生画像に、中心から放射状の測定線(measure_pos)で取ったリングの中心線へ当てた、同心の相似な楕円の族を重ねた(1/2 に縮小。検分は次の等倍の図で)。板は 29.5° 傾いて楕円に写り、右上は影でリングが見えない。長軸の伸びは 252.13 px/mm で、論文の K1 = 252.0 px/mm と +0.05 %。A. W. Stark, A. Osadare, M. Guo, G. J. Gentsch, D. Boettger, G. Brehm, C. Franke, \"Telecentric stereo 3D imaging with isotropic micrometer resolution bridges macro- and microscale in small Lepidopterans\", Scientific Reports 15, 28690 (2025), doi:10.1038/s41598-025-13795-6. 画像: figshare collection doi:10.6084/m9.figshare.c.7652423(item 28322132 / 28322006 / 28322036、A. Stark)。CC BY 4.0。改変: グレースケール化・縮小・計測の線の描き込み。",
-        "en": "Measured in one image, a stepped part looks larger where it is nearer, so an ordinary lens misreads its dimensions. On the published real images from a telecentric lens, the magnification matched the paper within 0.05 %. In the synthetic chapter, telecentric magnification barely moves with object height."
+        "en": "In one image, a stepped part looks larger where it is nearer through an ordinary lens. The magnification measured on public real images from a telecentric lens agrees with the paper, whose own values spread by ±0.25 %, so the match is not read as finer. Ring centres on a tilted plate that do not drift are evidence."
       }
     },
     "poc_tem_ctf_thon_rings": {
@@ -1692,7 +1692,7 @@
       "still": "articles/assets/poc/poc_virtual_sem_kv_cd_bse/05_sem_same_part_3kv_3detectors.png",
       "alt": {
         "ja": "行 = 加速電圧、列 = 検出器。SE の 2 列はパネルごとにコントラストを合わせた(実機の調整と同じ。SE の総量は 1 → 20 kV で 1 桁落ちる)。反射電子の列は 3 電圧で共通の濃淡。1 kV のレンズ内 SE は PMMA の上面が明るい。5 / 20 kV では線の縁だけが明るい帯になる。側方の SE は検出器(右)を向く縁が明るい。反射電子は W の粒が 1 kV で最も浮き、電圧を上げると電子が粒を突き抜けて薄まる。PMMA の線は反射電子ではほぼ消える(細い線は側壁から電子が抜け、溝の Si は影になるので η の差が相殺する)。1 画素 2.4 nm、画素あたり 90 電子(雑音は撃った電子の数そのもの)。",
-        "en": "An SEM image is not a photo of the surface but a tally of electrons escaping after scattering inside the solid. A model that tracks each electron was checked against measured backscatter data for 7 elements. On the same line, the beam energy decides which sidewall height is read as the linewidth."
+        "en": "An SEM image is not a photo of the surface but a tally of electrons escaping after scattering in the solid. A model that tracks each electron was checked against measured backscatter data for 7 elements. With no real images of known linewidth, the shift of the linewidth reading with beam energy stays inside the model."
       }
     },
     "poc_dual_energy_xray": {
@@ -2828,7 +2828,7 @@
       "still": "articles/assets/poc/poc_photoelasticity/01_polariscope.png",
       "alt": {
         "ja": "動画(230 コマ、円板 φ50 mm を 361 画素で描画、半径 0.9R の外は描かない): 前半は荷重を 0 → 500 N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して中心へ寄る。中心の縞次数は荷重に比例して 2.38 まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 2 回)。後半は荷重 500 N のまま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点で、中央の真値 θ の図で白く塗った点と重なる。応力場と偏光像は光弾性の族の op(brazilian_disc_stress / principal_stress / photoelastic_retardation / polariscope_intensity)。",
-        "en": "Viewed through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the sign ambiguity, not the wrapping."
+        "en": "Through polarisers, a loaded transparent plastic shows its internal stress as fringes. Stress in a squeezed disc was recovered from polarisation images, including pixels where the fringe order exceeds 0.5 and the phase wraps. Most errors left after unwrapping came from the well-known sign ambiguity, not the wrapping."
       }
     },
     "walker2d_terrain_vision": {
@@ -6127,7 +6127,7 @@
       "still": "articles/assets/poc/poc_thermography_ndt/01_depth_table.png",
       "alt": {
         "ja": "右下三角(直径が深さの 4 倍以上)は数 %。左上は横拡散で壊れる。",
-        "en": "A flash warms the surface, and the cooling thermal images reveal how deep a hidden delamination lies. For a small, shallow defect, cutting the fitting window to 4 s restored a correct depth. The error came not from heat spreading sideways but from the choice of window."
+        "en": "In this synthetic experiment a flash warms the surface, and the cooling thermal images reveal how deep a delamination lies. The depth of small defects, far off with a long fit window, came back near the truth when the window was cut to 4 s. Too short a window fails on deep defects, so the window must follow the depth."
       }
     },
     "poc_veiling_glare": {
@@ -11041,7 +11041,7 @@
       "still": "articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase.png",
       "alt": {
         "ja": "150 MHz、受信雑音 1.5e-3。誘電体の中の小さなボイドは振幅の像で背景と同じ明るさ(直交の背景に反転のエコーが直角に足される)。位相の像ではボイドだけが +1 側に光り、無傷のパッドと誘電体は 0 付近(±90°)。パッドの縁の逆向きの輪は、+80° のパッドと −90° の誘電体のエコーが PSF の中で打ち消し合って位相が 0° 付近へ回ったもの(振幅の像でパッドの縁が暗い輪になるのも同じ理由)。",
-        "en": "Small voids in the bonding plane of stacked chips are searched for with a scanning acoustic microscope. Every void of 16 um or more appeared inverted and bright in the echo-phase image. In the brightness image many small voids hide among good pixels."
+        "en": "This simulation searches for small voids in the bonding plane of stacked chips with a scanning acoustic microscope. The voids of 16 um or more appeared inverted and bright in the echo-phase image. In the brightness image many small voids hide among good pixels."
       }
     },
     "poc_zernike_aberrations": {
@@ -18255,7 +18255,7 @@
       "still": "articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap.png",
       "alt": {
         "ja": "倉庫の通路を 3 周波の間接 ToF で撮る。120 MHz の位相は 1.25 m ごとに折り返す。3 周波の剰余を全部の次数の仮説で採点すると 18.7 m まで一意になるが、遠い棚ほど信号が弱く、次数を丸ごと誤った画素が点状に出る(誤差の図)。周波数の最大公約数が 20 MHz の組では 7.49 m より奥が何の警告も無く手前に折り返して映る(右下)。",
-        "en": "An indirect ToF camera measures distance from the phase delay of modulated light. Combining three frequencies keeps the distance unambiguous out to 18.7 m. Multipath and object edges make the distance jump without any warning."
+        "en": "An indirect ToF camera measures distance from the phase delay of modulated light. On synthetic signals, combining three frequencies keeps the distance unambiguous out to 18.7 m. Multipath and object edges make the distance jump without any warning."
       }
     },
     "poc_pigment_unmixing": {
@@ -18489,17 +18489,17 @@
             1600,
             1600
           ],
-          "bytes": 728672,
+          "bytes": 742525,
           "color_mad": [
-            0.52,
+            0.6116,
             0.0,
             0.0362,
             0.1151,
             0.091,
             0.0304
           ],
-          "max_color_mad": 0.52,
-          "source_sha256": "3838e4bfb622e18a826062861acb5f3d69d3f05de181ac5e2c7e6c33e3480bd1"
+          "max_color_mad": 0.6116,
+          "source_sha256": "b804d778674601cf88fa94ceab5a6dee1228079b4118249c14e496c236c989f6"
         },
         "en": {
           "path": "articles/assets/poc/poc_polarization_specular/story.en.gif",
@@ -18581,17 +18581,17 @@
             1600,
             1600
           ],
-          "bytes": 728672,
+          "bytes": 742525,
           "color_mad": [
-            0.52,
+            0.6116,
             0.0,
             0.0362,
             0.1151,
             0.091,
             0.0304
           ],
-          "max_color_mad": 0.52,
-          "source_sha256": "c80343526f685751031440a668e89ae77d652607886091ddc47d9ae723d80269"
+          "max_color_mad": 0.6116,
+          "source_sha256": "ba18c660ed41f224d278d2fca48ffdcfac779b87a5907369d710a959cde9978d"
         }
       },
       "thumbnail": {
@@ -27877,10 +27877,17 @@
               "file": "01_checker_through_bottle.png",
               "content_box": [
                 0,
-                21,
+                0,
                 720,
-                647
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_bottle_pattern_inverse.jpg"
+              }
             },
             {
               "file": "02_profile_fit.png",
@@ -27941,17 +27948,17 @@
             1600,
             1600
           ],
-          "bytes": 425634,
+          "bytes": 702368,
           "color_mad": [
-            0.1201,
+            0.1481,
             0.0988,
             0.0347,
             0.0417,
             0.0287,
             0.0349
           ],
-          "max_color_mad": 0.1201,
-          "source_sha256": "2fc299d7a23b122be5aed1b8789420f9a15ee5277451d22b6cf77c7a467c08f3"
+          "max_color_mad": 0.1481,
+          "source_sha256": "e9cf7c40f215ede3aa685fb21fc9d9f992fa83cda1ba66b2b71a692fc28fe2bc"
         },
         "en": {
           "path": "articles/assets/poc/poc_bottle_pattern_inverse/story.en.gif",
@@ -27960,10 +27967,17 @@
               "file": "01_checker_through_bottle.png",
               "content_box": [
                 0,
-                21,
+                0,
                 720,
-                647
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_bottle_pattern_inverse.jpg"
+              }
             },
             {
               "file": "02_profile_fit.png",
@@ -28024,25 +28038,32 @@
             1600,
             1600
           ],
-          "bytes": 425634,
+          "bytes": 702368,
           "color_mad": [
-            0.1201,
+            0.1481,
             0.0988,
             0.0347,
             0.0417,
             0.0287,
             0.0349
           ],
-          "max_color_mad": 0.1201,
-          "source_sha256": "374839f7a35d24f852348d0ac79bac3c905cfbecbcca8705fca40ea3e85f268e"
+          "max_color_mad": 0.1481,
+          "source_sha256": "fb1a77b69e1f94d2e4d7348fcd4ee5aa0bdebca1f93decebf216e7f8780d8067"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_bottle_pattern_inverse.jpg"
       },
       "reason": null,
       "cover": "01_checker_through_bottle.png",
       "still": "articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png",
       "alt": {
         "ja": "R 30 mm・壁 1.5 mm・n 1.52 の瓶、水 1.333。各画素の光線を追跡して背景のどこを見ているか(u)を求め、そこの市松を描いた。逆から見ると、この歪みが瓶を測る手がかり。",
-        "en": "Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and What Cannot Be Detected"
+        "en": "A transparent bottle distorts the stripes behind it. For each pixel we find where the background is seen, fit the bottle geometry and indices backwards, and score 5 fill states against the true values of the simulation. Quantities that are inseparable are reported too, and nothing was checked on a real bottle."
       }
     },
     "poc_lens_global_search": {
@@ -31650,10 +31671,17 @@
               "file": "01_caltab_chain.png",
               "content_box": [
                 0,
-                265,
+                0,
                 720,
-                160
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_caltab_chain_truth.jpg"
+              }
             },
             {
               "file": "02_caltab_chain_params.png",
@@ -31682,14 +31710,14 @@
             1600,
             1600
           ],
-          "bytes": 148348,
+          "bytes": 165155,
           "color_mad": [
-            0.9083,
+            0.323,
             0.031,
             0.0607
           ],
-          "max_color_mad": 0.9083,
-          "source_sha256": "a5052eb07600311f928e6e446582acf480890a5ce31ea083bb91c3e71ede7d32"
+          "max_color_mad": 0.323,
+          "source_sha256": "bafbfc7e2258fdf21f3abd0bfe394f97cbfb14f9eb074f4fd16604ea6275a5ab"
         },
         "en": {
           "path": "articles/assets/poc/poc_caltab_chain_truth/story.en.gif",
@@ -31698,10 +31726,17 @@
               "file": "01_caltab_chain.png",
               "content_box": [
                 0,
-                265,
+                0,
                 720,
-                160
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_caltab_chain_truth.jpg"
+              }
             },
             {
               "file": "02_caltab_chain_params.png",
@@ -31730,22 +31765,29 @@
             1600,
             1600
           ],
-          "bytes": 148348,
+          "bytes": 165155,
           "color_mad": [
-            0.9083,
+            0.323,
             0.031,
             0.0607
           ],
-          "max_color_mad": 0.9083,
-          "source_sha256": "d9f1d018f0db494fe81927ba78b63052284c6753b9fdb0ded05f1eb78806b505"
+          "max_color_mad": 0.323,
+          "source_sha256": "7d143a7a4d4f60dd90be679e9ac368a3b34f87cdda2cec075cd95604b109eb9d"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_caltab_chain_truth.jpg"
       },
       "reason": null,
       "cover": "01_caltab_chain.png",
       "still": "articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png",
       "alt": {
         "ja": "create_caltab -> rendered camera -> find_caltab -> camera_calibration_lm",
-        "en": "A Circle-Mark Calibration Plate End to End (Synthetic Imaging): Binary-Centroid Quantisation Sets an fx Floor of About 0.2 % rms (−0.45 to +0.33 % Without Noise, Depending on the Layout)"
+        "en": "A calibration plate with circular marks is imaged and taken from point detection to camera calibration, then scored against the true camera. Even without noise the focal length is off by 0.45 %. That floor is set by the centroid of the binarised marks."
       }
     },
     "poc_real_tum_rgbd_slam": {
@@ -31767,10 +31809,17 @@
               "file": "02_trajectory.png",
               "content_box": [
                 0,
-                113,
+                0,
                 720,
-                463
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_real_tum_rgbd_slam.jpg"
+              }
             },
             {
               "file": "01_depth_and_tiles.png",
@@ -31821,16 +31870,16 @@
             1600,
             1600
           ],
-          "bytes": 285230,
+          "bytes": 348123,
           "color_mad": [
-            0.1169,
+            0.5392,
             1.1696,
             0.2455,
             0.0926,
             0.0221
           ],
           "max_color_mad": 1.1696,
-          "source_sha256": "e94fb114bd7d855c0299bf52cd13fb2eab223d1e7678d64ce4e8d714d3ca195a"
+          "source_sha256": "c00a8f55a1cdff002d775388cad69613dcd933d12550177263bbf79173c6fe5f"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_tum_rgbd_slam/story.en.gif",
@@ -31839,10 +31888,17 @@
               "file": "02_trajectory.png",
               "content_box": [
                 0,
-                113,
+                0,
                 720,
-                463
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_real_tum_rgbd_slam.jpg"
+              }
             },
             {
               "file": "01_depth_and_tiles.png",
@@ -31893,24 +31949,31 @@
             1600,
             1600
           ],
-          "bytes": 285230,
+          "bytes": 348123,
           "color_mad": [
-            0.1169,
+            0.5392,
             1.1696,
             0.2455,
             0.0926,
             0.0221
           ],
           "max_color_mad": 1.1696,
-          "source_sha256": "ab88089c80fe326fc9f2f97be34c0354754fd942c139eea47dbc95f387062cf4"
+          "source_sha256": "205baecaa858ec36b838bd9efcbdd3ce32023820745615df3f45f8c05ca8393b"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_real_tum_rgbd_slam.jpg"
       },
       "reason": null,
       "cover": "02_trajectory.png",
       "still": "articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png",
       "alt": {
         "ja": "カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。",
-        "en": "On public depth images of a desk, frame-to-frame alignment was checked against motion-capture truth. Error fell to 0.42 of no alignment, yet it was no better than assuming steady speed. Small-window plane residuals grew with distance, but quantisation and window size blur whether the law is a square."
+        "en": "On one public desk depth sequence, frame-to-frame alignment was checked against motion-capture truth. Error fell below no alignment, but the gain over a steady-speed guess hinged on outlier trimming and on which of 8 splits was used. Plane residuals in small windows grew with distance, but no square law was confirmed."
       }
     },
     "poc_light_section_step_weld_floor": {
@@ -32897,11 +32960,18 @@
             {
               "file": "02_failure_map.png",
               "content_box": [
-                135,
                 0,
-                450,
-                690
-              ]
+                0,
+                720,
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_real_stereo_multiscanline.jpg"
+              }
             },
             {
               "file": "01_scene.png",
@@ -32962,9 +33032,9 @@
             1600,
             1600
           ],
-          "bytes": 1094287,
+          "bytes": 1104962,
           "color_mad": [
-            1.7706,
+            1.4636,
             1.8243,
             0.4845,
             0.6191,
@@ -32972,7 +33042,7 @@
             0.0265
           ],
           "max_color_mad": 1.8243,
-          "source_sha256": "198bf079132d9d820d36a6652b1d4f9e9b95816964c33219a2c6fe2d0b5791a0"
+          "source_sha256": "259d6a29f8e24a5333bf8061513fb0b9e2eb82908e0e96d183e67542a64aa92e"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_stereo_multiscanline/story.en.gif",
@@ -32980,11 +33050,18 @@
             {
               "file": "02_failure_map.png",
               "content_box": [
-                135,
                 0,
-                450,
-                690
-              ]
+                0,
+                720,
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_real_stereo_multiscanline.jpg"
+              }
             },
             {
               "file": "01_scene.png",
@@ -33045,9 +33122,9 @@
             1600,
             1600
           ],
-          "bytes": 1094287,
+          "bytes": 1104962,
           "color_mad": [
-            1.7706,
+            1.4636,
             1.8243,
             0.4845,
             0.6191,
@@ -33055,15 +33132,22 @@
             0.0265
           ],
           "max_color_mad": 1.8243,
-          "source_sha256": "45b34332535da12e093681c0fd4da55f704cc973ef924c4edbfe4652986ab400"
+          "source_sha256": "6ff87b580ecd2ba72e2429b86848075600d89bd9db77ec1c64b443abd44dc166"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_real_stereo_multiscanline.jpg"
       },
       "reason": null,
       "cover": "02_failure_map.png",
       "still": "articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png",
       "alt": {
         "ja": "遮蔽は左右一致で無効に落ち、誤りは段差の近くと見え方が変わる面(光沢)に残る。無地では SGBM に負け、両方が有効な画素の平均誤差も SGBM がわずかに小さい(0.918 対 0.912 px)。処理時間は SGBM の数十倍(機械と負荷で変わる)。 遮蔽 bad2 71.5 % 無効 57.0 % / 段差の近く bad2 14.1 % 無効 9.7 % / 無地 bad2 4.1 % 無効 14.5 % / 見え方が変わる面 bad2 11.5 % 無効 20.7 % / それ以外 bad2 0.8 % 無効 5.7 %",
-        "en": "Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks"
+        "en": "Using a real pair of stereo images, we compute disparity, distance, surfaces and even the pose of a circle. The result is scored with the true disparity that Middlebury 2014 supplies and compared with OpenCV. On pixels valid in both, the two are about equal, and most of the gap is which pixels each invalidates."
       }
     },
     "poc_real_chessboard_undistort": {
@@ -33197,10 +33281,17 @@
               "file": "07_geometry_mistakes.png",
               "content_box": [
                 0,
-                171,
+                0,
                 720,
-                348
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_real_walnut_cbct.jpg"
+              }
             },
             {
               "file": "01_methods_sparse_limited.png",
@@ -33263,17 +33354,17 @@
             1600,
             1600
           ],
-          "bytes": 724763,
+          "bytes": 741445,
           "color_mad": [
-            0.5556,
+            0.6983,
             0.4104,
             0.0649,
             0.1148,
             0.144,
             0.0374
           ],
-          "max_color_mad": 0.5556,
-          "source_sha256": "df491b51b436bc688c030a8f5cd127a83973202581ea3e0e7fd1e675f56c6cd6"
+          "max_color_mad": 0.6983,
+          "source_sha256": "459228ea35a0b7c2deef69e01672a5b18617d3c9d251baac271074ec9f4198fc"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_walnut_cbct/story.en.gif",
@@ -33282,10 +33373,17 @@
               "file": "07_geometry_mistakes.png",
               "content_box": [
                 0,
-                171,
+                0,
                 720,
-                348
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_real_walnut_cbct.jpg"
+              }
             },
             {
               "file": "01_methods_sparse_limited.png",
@@ -33348,25 +33446,32 @@
             1600,
             1600
           ],
-          "bytes": 724763,
+          "bytes": 741445,
           "color_mad": [
-            0.5556,
+            0.6983,
             0.4104,
             0.0649,
             0.1148,
             0.144,
             0.0374
           ],
-          "max_color_mad": 0.5556,
-          "source_sha256": "02fe9fb4d05162248e5adf4deba850c2ec88d112e8b8ba02b14ffaf51d0d2246"
+          "max_color_mad": 0.6983,
+          "source_sha256": "9fe19aecf2c5556b9057ab6807e740c5b41ce10f5c5e4b13a8cfbef5883d7775"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_real_walnut_cbct.jpg"
       },
       "reason": null,
       "cover": "07_geometry_mistakes.png",
       "still": "articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png",
       "alt": {
         "ja": "中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差。★ = 残差が正しい幾何以下)、左から 正しい / 面内回転 0.5° を無視 / 縦ずれ 7.2 画素を無視 / 横に 0.3 mm ずらす / 回転の向きを逆に。下段 = 差 ±0.03 /mm。縦ずれを無視したデータも、それ自体は矛盾の無いデータなので、再構成した像を投影し直すとデータによく合う —— 残差では幾何の誤りが見えない。参照(外の真値)と比べて初めて分かる。横ずれと回転の向きの取り違えは残差にも出る。隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。",
-        "en": "Reconstructing a Measured Cone-Beam CT Scan of a Walnut and Scoring It Against the Providers' Reference — Ignoring the Vertical Offset Puts It 2.6 Times Farther from the Reference, yet the Reprojection Residual Cannot Tell (2.3 % Apart)"
+        "en": "A walnut was really scanned in a cone beam and reconstructed with FDK and iterative methods. With 300 projections scored against the authors' reference, neglecting the vertical shift rebuilds a different slice, further away. Those data are self-consistent, so the residual after reprojecting cannot change."
       }
     },
     "poc_real_typewritten_ocr": {
@@ -33577,10 +33682,17 @@
               "file": "01_overview_same_pattern.png",
               "content_box": [
                 0,
-                162,
+                0,
                 720,
-                366
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.gif",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_mixed_case_depalletizing.jpg"
+              }
             },
             {
               "file": "02_difficulty_ladder.png",
@@ -33645,9 +33757,9 @@
             1600,
             1600
           ],
-          "bytes": 476766,
+          "bytes": 449690,
           "color_mad": [
-            1.4267,
+            0.6638,
             1.8501,
             0.0206,
             0.0199,
@@ -33655,7 +33767,7 @@
             0.6475
           ],
           "max_color_mad": 1.8501,
-          "source_sha256": "fef66ab76a2c23908b2ddeb5db51f5519c9972d28e00e0fe22e80f7f6676b2cd"
+          "source_sha256": "b464e7ca4b1f3c2b3ac62ded04c758ac2f16d47fbd27140d21c7b587036babe9"
         },
         "en": {
           "path": "articles/assets/poc/poc_mixed_case_depalletizing/story.en.gif",
@@ -33664,10 +33776,17 @@
               "file": "01_overview_same_pattern.png",
               "content_box": [
                 0,
-                162,
+                0,
                 720,
-                366
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.gif",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_mixed_case_depalletizing.jpg"
+              }
             },
             {
               "file": "02_difficulty_ladder.png",
@@ -33732,9 +33851,9 @@
             1600,
             1600
           ],
-          "bytes": 476766,
+          "bytes": 449690,
           "color_mad": [
-            1.4267,
+            0.6638,
             1.8501,
             0.0206,
             0.0199,
@@ -33742,15 +33861,22 @@
             0.6475
           ],
           "max_color_mad": 1.8501,
-          "source_sha256": "1e0153d0dd6da74a333b8308460abb7438994594877d61a362f1ff3608732c3d"
+          "source_sha256": "491f102b910a94163f42cb3693f309c74a9cb6835f7414b7dbed8bf7281ce772"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_mixed_case_depalletizing/08_depal_robot_video.gif",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_mixed_case_depalletizing.jpg"
       },
       "reason": null,
       "cover": "01_overview_same_pattern.png",
       "still": "articles/assets/poc/poc_mixed_case_depalletizing/01_overview_same_pattern.png",
       "alt": {
         "ja": "同じ柄の箱が詰めて並んだパレット(種 0)を、5 通りの手がかりで切り分けた天面。種 0 は V 字に有利な種(図の下の注)。",
-        "en": "Packed cartons with identical prints are told apart from overhead depth and colour, then unloaded. A depth step splits none, and whether depth dips or dark colour lines win flips across 28 flap-seam builds. With identical prints, deep grooves favour colour; only wide, untaped cuts over shallow grooves favour depth."
+        "en": "In a rendered scene, packed cartons with identical prints are told apart from overhead depth and colour, then unloaded. A depth step splits none, and whether depth dips or dark colour lines win flips across 28 flap-seam builds. The outcome depends strongly on how the scene is built, such as edge rounding and the seams."
       }
     },
     "poc_3d_sensor_modalities": {
@@ -33777,11 +33903,18 @@
             {
               "file": "01_map.png",
               "content_box": [
-                44,
                 0,
-                631,
-                690
-              ]
+                0,
+                720,
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_3d_sensor_modalities/01_map.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_3d_sensor_modalities.jpg"
+              }
             },
             {
               "file": "02_raw.png",
@@ -33836,16 +33969,16 @@
             1600,
             1600
           ],
-          "bytes": 546173,
+          "bytes": 632251,
           "color_mad": [
-            0.8281,
+            1.658,
             0.2389,
             0.0218,
             0.0358,
             0.8082
           ],
-          "max_color_mad": 0.8281,
-          "source_sha256": "05a428c5176279b1961eb8a6035f7199b6a2535b9a886d0a5b8de5f334ee3a5e"
+          "max_color_mad": 1.658,
+          "source_sha256": "2ea1f062097844a5353932e36cc71f48571878648613505a1ad80232b8a58c1c"
         },
         "en": {
           "path": "articles/assets/poc/poc_3d_sensor_modalities/story.en.gif",
@@ -33853,11 +33986,18 @@
             {
               "file": "01_map.png",
               "content_box": [
-                44,
                 0,
-                631,
-                690
-              ]
+                0,
+                720,
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_3d_sensor_modalities/01_map.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_3d_sensor_modalities.jpg"
+              }
             },
             {
               "file": "02_raw.png",
@@ -33912,24 +34052,31 @@
             1600,
             1600
           ],
-          "bytes": 546173,
+          "bytes": 632251,
           "color_mad": [
-            0.8281,
+            1.658,
             0.2389,
             0.0218,
             0.0358,
             0.8082
           ],
-          "max_color_mad": 0.8281,
-          "source_sha256": "a29eb869e4d1d12e69f5ca51217e6bae45635945b943d353c844b65387a0f683"
+          "max_color_mad": 1.658,
+          "source_sha256": "d9ee5c945b1b980e9042eb6601587b249c6287fbbcf7b281cc9257ea2706fb79"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_3d_sensor_modalities/01_map.png",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_3d_sensor_modalities.jpg"
       },
       "reason": null,
       "cover": "01_map.png",
       "still": "articles/assets/poc/poc_3d_sensor_modalities/01_map.png",
       "alt": {
         "ja": "同じ部品(段差・止まり穴・斜面・V 溝・リブ・浅い打痕)を 4 つの材質で、ステレオ・縞投影・間接 ToF・光切断・照度差ステレオの 5 方式で測った形。灰 = 欠測、橙 = 全方式共通の 0.1 mm を超える外れ。三角測量の角はステレオ・縞投影・光切断とも 30°。撮像は物理で描き、高さへの戻しは Fullseye の op。照度差ステレオの高さの定数は真値に合わせた(形の外れは偏りを引いて数えるので、合わせ方に依らない)。",
-        "en": "One Part, Five 3-D Sensing Methods — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material"
+        "en": "In this simulation, models of several depth-sensing methods measure one part in matte, glossy metal, translucent and black materials. Shape errors were counted with a common 0.1 mm yardstick and compared with the dimension table. Their resolutions differ by orders of magnitude, so read where each breaks, not a ranking."
       }
     },
     "poc_ai_built_inspection_scored": {
@@ -33952,10 +34099,17 @@
               "file": "01_crack_real.png",
               "content_box": [
                 0,
-                86,
+                0,
                 720,
-                517
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_ai_built_inspection_scored.jpg"
+              }
             },
             {
               "file": "02_candle_real.png",
@@ -34020,17 +34174,17 @@
             1600,
             1600
           ],
-          "bytes": 541482,
+          "bytes": 542770,
           "color_mad": [
-            0.5169,
+            0.9635,
             0.945,
             0.0551,
             0.0547,
             0.0177,
             0.0196
           ],
-          "max_color_mad": 0.945,
-          "source_sha256": "44670da235d546f9b6e625300267d5bda8d053c6994c0d7ef8b54f614b20eb0a"
+          "max_color_mad": 0.9635,
+          "source_sha256": "29c41fd1c0ff7b2e9da97807b829722ee484448ec2a2e9d911f5d7058fbe7a94"
         },
         "en": {
           "path": "articles/assets/poc/poc_ai_built_inspection_scored/story.en.gif",
@@ -34039,10 +34193,17 @@
               "file": "01_crack_real.png",
               "content_box": [
                 0,
-                86,
+                0,
                 720,
-                517
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_ai_built_inspection_scored.jpg"
+              }
             },
             {
               "file": "02_candle_real.png",
@@ -34107,25 +34268,32 @@
             1600,
             1600
           ],
-          "bytes": 541482,
+          "bytes": 542770,
           "color_mad": [
-            0.5169,
+            0.9635,
             0.945,
             0.0551,
             0.0547,
             0.0177,
             0.0196
           ],
-          "max_color_mad": 0.945,
-          "source_sha256": "7e20b7cf764185268c3cc256961535283593d27af29d7761a4b24fc5bfd21bf4"
+          "max_color_mad": 0.9635,
+          "source_sha256": "a7e67a1f0c532b8bfc693535acf46de09f480cb502bf8c796cd0ad5425ba3016"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_ai_built_inspection_scored.jpg"
       },
       "reason": null,
       "cover": "01_crack_real.png",
       "still": "articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png",
       "alt": {
         "ja": "コンクリートのひび割れ(試験画像、塗り = 検出)。欠陥の画像は NG なら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも寄せていない)。検出は表示のため 2 画素太らせた。出典表示: Özgenel, Ç. F. (2019). Concrete Crack Images for Classification. Mendeley Data, v2. doi:10.17632/5y9wdsg2zt.2. CC BY 4.0; converted to gray",
-        "en": "Scoring Inspections Built by an AI Against the Ground Truth of Public Real Data — Failures Split into Tooling, MCP and Model, Before and After the Fixes (Local LLMs Sort Cracks in 1-3 of 20 Runs and Do Not Repeat It; a Cloud LLM Beats Chance on Cracks in All 3 Runs Yet Stays Below an Existing Recipe)"
+        "en": "A local LLM got a task in natural language and assembled inspection recipes through MCP alone. Scored per image on 400 public crack images with their source labels, very few of its runs sorted them, and none managed the candle stains. Cloud LLM runs had unmatched conditions, and none reached the existing recipes."
       }
     },
     "poc_equipment_selection_map": {
@@ -34334,7 +34502,7 @@
       "still": "articles/assets/poc/poc_equipment_selection_map/02_equipment_at_a_glance.png",
       "alt": {
         "ja": "ViEW の入口用: 題材ごとに、傷が目で分かる見本 1 枚と、照明 6 種のそれぞれで最良のカメラ・レンズの a90/95(種の組 3 つの中央値と最小〜最大。どの組でも見つかるものだけ)。見つからない照明は灰色の斜線の全長の棒、種の組で揺れる照明は破線の全長の棒。線傷は同軸(視野の 2 倍)+テレセン、浅い凹みは縞照明と斜光、黒い焼けは縞照明以外のどの照明でも、白い PE 片は分光だけ。見本の表示は図 03 と同じ(地で割った濃淡を題材ごとに同じ倍率で広げ、倍率は見本の下に書いた。PE 片は分光の 1210 nm の帯を両隣で割った吸収の深さ)。凹みの見本は 80 倍に広げて判定の大きさでならしたので、実際よりはっきり見える(雑音なしの陰影は最大 0.8 %)。",
-        "en": "Equipment Selection Before Purchase — Imaging the Same Flaws with 60 Lighting × Camera × Lens Combinations and Mapping the Size Found 90 % of the Time, with Its Spread"
+        "en": "We pre-tested visual inspection equipment on the same flaw. With 60 combinations of lighting, camera and lens we mapped how small a flaw is found, with the spread across repeats. It is a synthetic test, not the performance of real equipment."
       }
     },
     "poc_ct_casting_sparse_views": {
@@ -34355,10 +34523,17 @@
               "file": "01_slices.png",
               "content_box": [
                 0,
-                91,
+                0,
                 720,
-                508
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_ct_casting_sparse_views.jpg"
+              }
             },
             {
               "file": "02_ranking.png",
@@ -34399,15 +34574,15 @@
             1600,
             1600
           ],
-          "bytes": 312458,
+          "bytes": 228641,
           "color_mad": [
-            0.1023,
+            0.1014,
             0.0258,
             0.1502,
             0.0718
           ],
           "max_color_mad": 0.1502,
-          "source_sha256": "3301925a7cba176cfae5f26c99e977b95506a23ff4e5bc962d0d21c3b9bdcab1"
+          "source_sha256": "ab38eafe51e81a402c06f2911e4262a5c5103d388ed411267eaff291f7e0650f"
         },
         "en": {
           "path": "articles/assets/poc/poc_ct_casting_sparse_views/story.en.gif",
@@ -34416,10 +34591,17 @@
               "file": "01_slices.png",
               "content_box": [
                 0,
-                91,
+                0,
                 720,
-                508
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_ct_casting_sparse_views.jpg"
+              }
             },
             {
               "file": "02_ranking.png",
@@ -34460,23 +34642,30 @@
             1600,
             1600
           ],
-          "bytes": 312458,
+          "bytes": 228641,
           "color_mad": [
-            0.1023,
+            0.1014,
             0.0258,
             0.1502,
             0.0718
           ],
           "max_color_mad": 0.1502,
-          "source_sha256": "2ee5fa37ea7048e81624ef2e7f03d31add71d804045c0121f79633d654bd3ac2"
+          "source_sha256": "66bc08a071d7dd11962ca7f75bd5b284e1a2f4bffb8fde51775bf24a3b26dac0"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_ct_casting_sparse_views/04_dual_energy.png",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_ct_casting_sparse_views.jpg"
       },
       "reason": null,
       "cover": "01_slices.png",
       "still": "articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png",
       "alt": {
         "ja": "360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。",
-        "en": "CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume"
+        "en": "Voids in a synthetic aluminium casting were scanned with cone-beam CT, rebuilt by several methods, and scored on exact ellipsoids. With 12 views, the classic method that ranks last by image error sized the voids better than the best iterative one. The best-looking reconstruction is not always the best measurement."
       }
     },
     "poc_surface_defect_classifiers": {
@@ -34499,10 +34688,17 @@
               "file": "01_defect_patches.png",
               "content_box": [
                 0,
-                160,
+                0,
                 720,
-                369
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_surface_defect_classifiers.jpg"
+              }
             },
             {
               "file": "02_stain_pixels.png",
@@ -34567,17 +34763,17 @@
             1600,
             1600
           ],
-          "bytes": 350630,
+          "bytes": 320057,
           "color_mad": [
-            0.4347,
+            0.2608,
             0.255,
             0.0356,
             0.0375,
             0.0242,
             0.0998
           ],
-          "max_color_mad": 0.4347,
-          "source_sha256": "c1823ff11a09656f842873f09415759ee4d67717cbb3246b19eaad2f6d67d354"
+          "max_color_mad": 0.2608,
+          "source_sha256": "02bc511a33d37a5a26cc1ed0a4657850b6c3bff5a298b30db3987b4f2ed022e1"
         },
         "en": {
           "path": "articles/assets/poc/poc_surface_defect_classifiers/story.en.gif",
@@ -34586,10 +34782,17 @@
               "file": "01_defect_patches.png",
               "content_box": [
                 0,
-                160,
+                0,
                 720,
-                369
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
+                "frame": 0.5,
+                "crop": null,
+                "mode": "contain",
+                "rendered": "view2026/thumbs/poc_surface_defect_classifiers.jpg"
+              }
             },
             {
               "file": "02_stain_pixels.png",
@@ -34654,18 +34857,25 @@
             1600,
             1600
           ],
-          "bytes": 350630,
+          "bytes": 320057,
           "color_mad": [
-            0.4347,
+            0.2608,
             0.255,
             0.0356,
             0.0375,
             0.0242,
             0.0998
           ],
-          "max_color_mad": 0.4347,
-          "source_sha256": "5ef45275bee67d64f11b28162af2082887281805eb47b9726379167ca5f6fd11"
+          "max_color_mad": 0.2608,
+          "source_sha256": "d997d5b2a040c8a61af71658806f09bcc1af5de4cfa082a339b91d8b67f0b42f"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_surface_defect_classifiers/01_defect_patches.png",
+        "frame": 0.5,
+        "crop": null,
+        "mode": "contain",
+        "rendered": "view2026/thumbs/poc_surface_defect_classifiers.jpg"
       },
       "reason": null,
       "cover": "01_defect_patches.png",

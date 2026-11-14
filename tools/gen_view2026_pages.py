@@ -10,12 +10,14 @@
 
 * ``docs/view2026/index.md``        → https://furuse.work/view2026/      (ja、QR の行き先)
 * ``docs/view2026/<lang>/index.md`` → https://furuse.work/view2026/<lang>/ (exhibits.json の langs の ja 以外)
+* ``docs/view2026/more.md`` / ``en/more.md`` → ja/en の「おまけ」(本ページに載せない展示・できること・ぜんぶ見る)
 
 ページの並び(スマートフォンで開かれる前提):
 
-0. 触って見る —— ``viewers``(``docs/view2026/viewers/*.html``、``tools/build_view2026_viewers.py`` が各 PoC を
+0. 触って見る —— ja/en は ``field_viewers``(場を掃引する動く 3-D)を先頭に置き、その後に ``viewers``(``docs/view2026/viewers/*.html``、``tools/build_view2026_viewers.py`` が各 PoC を
    走らせて作る自己完結の HTML)への 7 本。リンクは ``?lang=<そのページの言語>`` 付きで、ビューアが同じ言語で開く。
-1. 見どころ —— 手で選んだ展示のサムネイルの格子(``exhibits``)。押すと動画・GIF・原寸の図。
+1. 見どころ —— ja/en は ``tier`` が showcase / featured の展示(合わせて 20 本まで)だけ。ほかの 6 言語は
+   従来どおり門を通った ``exhibits`` の全部。押すと動画・GIF・原寸の図。
 2. シリーズ記事 —— 大きいタイル(``series``)。各シリーズの Qiita 記事(公開のもの)へ。
 3. できること —— ``docs/capabilities/*.md`` の全件を分類ごとに。各行から説明のページと走る例へ。
    その下に PoC 以外の使用例の一覧(``examples/README.md``)へのリンクと本数。
@@ -47,6 +49,8 @@ HTML が 8 言語そろっていない(``"langs"`` に足りない言語があ�
 from __future__ import annotations
 
 import argparse
+import copy
+import html
 import json
 import re
 import sys
@@ -57,6 +61,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / "tools") not in sys.path:
     sys.path.insert(0, str(ROOT / "tools"))
 from exhibit_glossary import LEDGER as GLOSSARY_LEDGER, glossary_line, load_glossary
+from view2026_fullseye_gate import inspect_catalog, withdrawn_ids
 import share_alike
 
 DOCS = ROOT / "docs"
@@ -94,6 +99,33 @@ STYLE = """<style>
 details.vall { margin: 6px 0; }
 details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 .vl li { margin-bottom: 8px; }
+li, p, code { overflow-wrap: anywhere; }
+.vintro { display: flex; gap: 20px; align-items: flex-start; margin: 14px 0; }
+.vintro img { flex: 0 0 300px; width: 300px; max-width: 100%; height: auto; border-radius: 6px; }
+.vintro .vt p { margin: 0 0 8px; }
+.vc { display: flex; gap: 16px; align-items: flex-start; margin: 18px 0; }
+.vc > a:first-child { flex: 0 0 260px; position: relative; display: block; text-decoration: none; color: inherit; }
+.vc > a img { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 6px; background: #222; }
+.vc > a picture { display: block; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 6px; background: #fff; }
+.vc > a picture img { height: 100%; aspect-ratio: auto; object-fit: contain; border-radius: 0; background: #fff; }
+.vc > a b { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.6); color: #fff; font-size: 12px; padding: 1px 6px; border-radius: 9px; }
+.vc > a .vtb { position: absolute; left: 6px; bottom: 6px; max-width: calc(100% - 12px); background: rgba(0,0,0,.66); color: #fff; font-size: 12px; font-style: normal; line-height: 1.4; padding: 1px 7px; border-radius: 9px; }
+.vt { flex: 1 1 auto; min-width: 0; }
+.vt .vh { font-size: 17px; font-weight: 600; line-height: 1.4; margin: 0 0 6px; }
+.vt p { margin: 0 0 6px; }
+.vt .vm { font-size: 14px; color: #57606a; }
+.vt details { font-size: 14px; margin: 4px 0; }
+.vt summary { cursor: pointer; }
+.vc.vv { margin: 10px 0; }
+.vc.vv > a:first-child { flex-basis: 96px; }
+@media (max-width: 600px) {
+  .vintro { flex-direction: column-reverse; gap: 8px; }
+  .vintro img { flex: 0 0 auto; width: 100%; max-width: 240px; }
+  .vc { flex-direction: column; gap: 8px; }
+  .vc > a:first-child { flex: 0 0 auto; width: 240px; max-width: 100%; }
+  .vc.vv { flex-direction: row; gap: 12px; }
+  .vc.vv > a:first-child { width: 80px; flex: 0 0 80px; }
+}
 </style>"""
 
 #: 「ぜんぶ見る」の群を開いたときに data-src を src へ移す(全ページ)。無くても読める。
@@ -137,6 +169,35 @@ def load(path: Path = DATA) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+_GATE_CACHE: dict[tuple, dict] = {}
+
+
+def _gate_key(d: dict) -> tuple:
+    items = {item["id"]: item for item in d["all"]}
+    items.update({item["id"]: item for item in d["exhibits"]})
+    return tuple(sorted((item_id, str(item.get("source_url", ""))) for item_id, item in items.items()))
+
+
+def gate_results(d: dict) -> dict:
+    """展示ごとの Fullseye 使用門(例のスクリプトを静的に読み、Fullseye の計算の呼び出しを数える)。"""
+    key = _gate_key(d)
+    if key not in _GATE_CACHE:
+        _GATE_CACHE[key] = inspect_catalog(d)
+    return _GATE_CACHE[key]
+
+
+def public_data(d: dict) -> dict:
+    """取り下げと Fullseye 計算 0 件を、正本(exhibits.json)を変えずに生成対象から外す。"""
+    public = copy.deepcopy(d)
+    withdrawn = withdrawn_ids()
+    results = gate_results(d)
+    allowed = {item_id for item_id, result in results.items()
+               if item_id not in withdrawn and result.count >= 1}
+    public["exhibits"] = [item for item in public["exhibits"] if item["id"] in allowed]
+    public["all"] = [item for item in public["all"] if item["id"] in allowed]
+    return public
+
+
 def _glossary_inputs() -> tuple[dict, dict]:
     rows = json.loads(GLOSSARY_LEDGER.read_text(encoding="utf-8"))["exhibits"]
     return {row["id"]: row for row in rows}, load_glossary()
@@ -148,18 +209,18 @@ def _media_rel(d: dict, e: dict) -> str:
 
 
 def _representative_img(d: dict, e: dict, lang: str, up: str, docs: str,
-                        width: int, lazy_all: bool = False) -> str:
+                        width: int, lazy_all: bool = False, alt: str | None = None) -> str:
     """台帳に GIF があればそれを使い、動きを減らす環境では元の代表図に戻す。"""
     story = STORIES.get(e["id"], {})
     if story.get("status") == "gif":
         label_lang = "ja" if lang == "ja" else "en"
         gif = docs + story["variants"][label_lang]["path"]
         still = docs + story["still"]
-        alt = story["alt"][label_lang].replace('"', "&quot;")
+        alt = (alt if alt is not None else story["alt"][label_lang]).replace('"', "&quot;")
         return ('<picture><source media="(prefers-reduced-motion: reduce)" srcset="%s">'
                 '<img src="%s" alt="%s" loading="lazy" width="%d" height="%d"></picture>'
                 % (still, gif, alt, width, width))
-    alt = e["label"][lang].replace('"', "&quot;")
+    alt = (alt if alt is not None else e["label"][lang]).replace('"', "&quot;")
     if lazy_all:
         return '<img src="%s" data-src="%sthumbs/all/%s.jpg" alt="%s" width="%d" height="%d">' % (
             PIXEL, up, e["id"], alt, width, width)
@@ -238,6 +299,31 @@ def validate(d: dict) -> list[str]:
             if got != ref:
                 bad.append("viewers.%s [%s]: 数の並びが日本語と違う(日本語のみ %s / %s のみ %s)" % (
                     it["id"], l, sorted((ref - got).elements()), l, sorted((got - ref).elements())))
+    field_ids = []
+    withdrawn_media = set()
+    for path in sorted(BASE.glob("withdrawn_*.json")):
+        withdrawn_media.update(x.get("media_path", "") for x in json.loads(path.read_text(encoding="utf-8"))["exhibits"])
+    for it in d.get("field_viewers", {}).get("items", []):
+        field_ids.append(it["id"])
+        for field in ("title", "line"):
+            for lang in ("ja", "en"):
+                text = str(it.get(field, {}).get(lang, "")).strip()
+                if not text:
+                    bad.append("field_viewers.%s.%s: 訳が無い言語 [%s]" % (it["id"], field, lang))
+                match = _GARBLE.search(text)
+                if match:
+                    bad.append("field_viewers.%s.%s [%s]: 文字化け(%r)" % (it["id"], field, lang, match.group(0)))
+        if not (BASE / it["path"]).is_file():
+            bad.append("field_viewers.%s: リンク先が無い (%s)" % (it["id"], it["path"]))
+        elif any(l not in _viewer_langs(BASE / it["path"]) for l in ("ja", "en")):
+            bad.append("field_viewers.%s: ビューアに ja/en が無い" % it["id"])
+        if "view2026/" + it["path"] in withdrawn_media:
+            bad.append("field_viewers.%s: 取り下げた展示のビューアを指している (%s)" % (it["id"], it["path"]))
+    if not field_ids or len(field_ids) != len(set(field_ids)):
+        bad.append("field_viewers は 1 本以上で、重複してはならない")
+    overlap = sorted(set(field_ids) & withdrawn_ids())
+    if overlap:
+        bad.append("field_viewers の id が取り下げ台帳と重なる: %s" % overlap)
     cats = {c["id"] for c in d["categories"]}
     for c in d["categories"]:
         full("categories." + c["id"], c)
@@ -254,6 +340,32 @@ def validate(d: dict) -> list[str]:
     # ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
     if d.get("featured_ids") != ids:
         bad.append("featured_ids(目玉の正本)と exhibits の id の並びが違う —— どちらかを直すこと")
+    # ★2026-11-12: 本ページ(ja/en)に載せるのは tier が showcase / featured の展示だけ(MAIN_LIMIT 本まで)。
+    tiers = Counter(e.get("tier") for e in d["exhibits"])
+    invalid_tiers = sorted(str(tier) for tier in tiers if tier not in {"showcase", "featured", "more"})
+    if invalid_tiers:
+        bad.append("tier は showcase / featured / more のいずれか: %s" % invalid_tiers)
+    n_main = tiers["showcase"] + tiers["featured"]
+    if not tiers["showcase"] or not tiers["featured"] or n_main > MAIN_LIMIT:
+        bad.append("本ページの展示の数が合わない(showcase=%d / featured=%d、合計 %d 本以下・各 1 本以上)" %
+                   (tiers["showcase"], tiers["featured"], MAIN_LIMIT))
+    gate = gate_results(d)
+    vids = [i["id"] for i in vw["items"]]
+    main_viewers = vw.get("main_ids", [])
+    if len(main_viewers) != len(set(main_viewers)) or [i for i in main_viewers if i not in vids]:
+        bad.append("viewers.main_ids が重複しているか、viewers.items に無い id を含む: %s" % main_viewers)
+    if len(main_viewers) + len(d.get("field_viewers", {}).get("items", [])) > MAIN_VIEWERS_LIMIT:
+        bad.append("本ページの「触って見る」が %d 本を超えている" % MAIN_VIEWERS_LIMIT)
+    for e in d["exhibits"]:
+        if e.get("tier") not in MAIN_TIERS:
+            continue
+        for lang in d["langs"]:
+            if not str(e.get("truth", {}).get(lang, "")).strip():
+                bad.append("%s: 真値の種類(truth.%s)が無い" % (e["id"], lang))
+        if not e.get("ops"):
+            bad.append("%s: 本ページの展示に使った Fullseye の op が無い" % e["id"])
+        if e["id"] in withdrawn_ids() or gate[e["id"]].count < 1:
+            bad.append("%s: 本ページの展示が取り下げ済み、または Fullseye の計算を呼ばない(門が 0 件)" % e["id"])
     for e in d["exhibits"]:
         pid = e["id"]
         for f in ("label", "lead", "see"):
@@ -404,69 +516,358 @@ def counts(d: dict) -> tuple[int, int]:
     return n_poc, len(d["all"]) - n_poc
 
 
-def build(d: dict, lang: str) -> str:
-    ui = {k: v.get(lang, "") for k, v in d["ui"].items()}
-    glossary_ledger, glossary = _glossary_inputs()
-    up = "" if lang == "ja" else "../"            # ページから docs/view2026/ への相対
-    docs = up + "../"                              # ページから docs/ への相対
-    def media(e):                                  # 動く 3-D の HTML はそのページの言語で開く
-        if e.get("youtube_url"):                   # YouTube に本編があれば、タイルと行はそこへ飛ぶ(抜粋はタイルの絵だけ)
+MAIN_TIERS = ("showcase", "featured")
+MAIN_VIEWERS_LIMIT = 6   # 本ページ(ja/en)の「触って見る」の本数(field_viewers + viewers.main_ids)
+MAIN_LIMIT = 20          # 本ページ(ja/en)に載せる展示の上限。質が足りなければ減らしてよい
+
+MAIN_TEXT = {
+    "ja": {
+        "showcase": "目玉",
+        "featured": "準目玉",
+        "more_top": "本ページには展示 {n} 本だけを載せています。そのほかの展示 {m} 本は[おまけページ](more.md)にあります。",
+        "more": "[おまけ:そのほかの PoC](more.md)も見る。",
+        "about_link": "[Fullseye について、もう少し詳しく読む](about.md)",
+        "truth": "真値",
+        "detail": "くわしく",
+        "detail_h": "本ページの展示の詳細(全文)",
+        "viewers_more": "触って見る(そのほか)",
+    },
+    "en": {
+        "showcase": "Showcase",
+        "featured": "Featured",
+        "more_top": "This page shows only {n} exhibits. The other {m} are on the [Extras page](more.md).",
+        "more": "See [Extras: more PoCs](more.md), too.",
+        "about_link": "[Read more about Fullseye](about.md)",
+        "truth": "Ground truth",
+        "detail": "Details",
+        "detail_h": "Details of the exhibits on the main page (full text)",
+        "viewers_more": "Try it yourself (more)",
+    },
+    "zh": {
+        "showcase": "重点展示",
+        "featured": "推荐展示",
+        "more_top": "本页只展示 {n} 件展品。其余 {m} 件在[附加页](more.md)。",
+        "more": "也请看[附加页:其他 PoC](more.md)。",
+        "truth": "真值",
+        "detail": "详情",
+        "detail_h": "本页展品的详情(全文)",
+        "viewers_more": "亲手试试(其他)",
+    },
+    "tw": {
+        "showcase": "重點展示",
+        "featured": "推薦展示",
+        "more_top": "本頁只展示 {n} 件展品。其餘 {m} 件在[附加頁](more.md)。",
+        "more": "也請看[附加頁:其他 PoC](more.md)。",
+        "truth": "真值",
+        "detail": "詳情",
+        "detail_h": "本頁展品的詳情(全文)",
+        "viewers_more": "親手試試(其他)",
+    },
+    "ko": {
+        "showcase": "주요 전시",
+        "featured": "추천 전시",
+        "more_top": "이 페이지에는 전시 {n}건만 실었습니다. 나머지 {m}건은 [덤 페이지](more.md)에 있습니다.",
+        "more": "[덤: 그 밖의 PoC](more.md)도 보세요.",
+        "truth": "참값",
+        "detail": "자세히",
+        "detail_h": "본 페이지 전시의 자세한 설명(전문)",
+        "viewers_more": "직접 만져 보기(그 밖)",
+    },
+    "de": {
+        "showcase": "Im Mittelpunkt",
+        "featured": "Weitere Empfehlungen",
+        "more_top": "Diese Seite zeigt nur {n} Exponate. Die übrigen {m} stehen auf der [Zusatzseite](more.md).",
+        "more": "Siehe auch die [Zusatzseite: weitere PoCs](more.md).",
+        "truth": "Ground Truth",
+        "detail": "Details",
+        "detail_h": "Details zu den Exponaten der Hauptseite (Volltext)",
+        "viewers_more": "Selbst ausprobieren (weitere)",
+    },
+    "hi": {
+        "showcase": "मुख्य प्रदर्शन",
+        "featured": "चुने हुए प्रदर्शन",
+        "more_top": "इस पृष्ठ पर केवल {n} प्रदर्शन हैं। बाकी {m} [अतिरिक्त पृष्ठ](more.md) पर हैं।",
+        "more": "[अतिरिक्त पृष्ठ: और PoC](more.md) भी देखें।",
+        "truth": "Ground truth",
+        "detail": "विवरण",
+        "detail_h": "मुख्य पृष्ठ के प्रदर्शनों का विवरण (पूरा पाठ)",
+        "viewers_more": "खुद आज़माएँ (और)",
+    },
+    "fr": {
+        "showcase": "À la une",
+        "featured": "Sélection",
+        "more_top": "Cette page ne présente que {n} démonstrations. Les {m} autres se trouvent sur la [page des suppléments](more.md).",
+        "more": "Voir aussi la [page des suppléments : autres PoC](more.md).",
+        "truth": "Vérité terrain",
+        "detail": "Détails",
+        "detail_h": "Détails des démonstrations de la page principale (texte intégral)",
+        "viewers_more": "Essayez par vous-même (autres)",
+    },
+}
+#: 場を掃引する動く 3-D(field_viewers)を「触って見る」の先頭に置く言語。ビューアの HTML がこの 2 言語だけなので、ほかの言語には置かない。
+FIELD_VIEWER_LANGS = ("ja", "en")
+#: 展示の題と lead が訳してある言語。ほかの言語のページでは、目玉のかたまりの題と lead を英語で出し、
+#: その節の頭に「説明は英語」の 1 行を添える(訳は ja/en だけ、ほかは後回しの方針。2026-11-13)。
+CONTENT_LANGS = ("ja", "en")
+
+
+def _content_lang(lang: str) -> str:
+    return lang if lang in CONTENT_LANGS else "en"
+
+
+#: 読み物(about.md、手書き)がある言語。
+ABOUT_LANGS = ("ja", "en")
+MORE_TEXT = {
+    "ja": {
+        "title": "おまけ:そのほかの PoC",
+        "intro": "本ページの展示ほど仕上げていない作例も含みます。各展示の数字は PoC の実行記録から採りました。",
+        "back": "[本ページへ戻る](index.md)",
+    },
+    "en": {
+        "title": "Extras: more PoCs",
+        "intro": "This page also includes examples that are less polished than the exhibits on the main page. The figures for each exhibit come from its PoC run record.",
+        "back": "[Back to the main page](index.md)",
+    },
+    "zh": {
+        "title": "附加页:其他 PoC",
+        "intro": "本页也包含不如主页展品完善的示例。各展品的数字取自其 PoC 的运行记录。",
+        "back": "[返回主页](index.md)",
+    },
+    "tw": {
+        "title": "附加頁:其他 PoC",
+        "intro": "本頁也包含不如主頁展品完善的範例。各展品的數字取自其 PoC 的執行記錄。",
+        "back": "[返回主頁](index.md)",
+    },
+    "ko": {
+        "title": "덤: 그 밖의 PoC",
+        "intro": "이 페이지에는 본 페이지의 전시만큼 다듬지 않은 예도 들어 있습니다. 각 전시의 숫자는 해당 PoC의 실행 기록에서 가져왔습니다.",
+        "back": "[본 페이지로 돌아가기](index.md)",
+    },
+    "de": {
+        "title": "Zusatzseite: weitere PoCs",
+        "intro": "Diese Seite enthält auch Beispiele, die weniger ausgearbeitet sind als die Exponate der Hauptseite. Die Zahlen jedes Exponats stammen aus dem Ausführungsprotokoll seines PoC.",
+        "back": "[Zurück zur Hauptseite](index.md)",
+    },
+    "hi": {
+        "title": "अतिरिक्त पृष्ठ: और PoC",
+        "intro": "इस पृष्ठ पर ऐसे उदाहरण भी हैं जो मुख्य पृष्ठ के प्रदर्शनों जितने परिष्कृत नहीं हैं। हर प्रदर्शन की संख्याएँ उसके PoC के run record से ली गई हैं।",
+        "back": "[मुख्य पृष्ठ पर वापस](index.md)",
+    },
+    "fr": {
+        "title": "Suppléments : autres PoC",
+        "intro": "Cette page contient aussi des exemples moins aboutis que les démonstrations de la page principale. Les valeurs de chaque démonstration proviennent du journal d'exécution de son PoC.",
+        "back": "[Retour à la page principale](index.md)",
+    },
+}
+
+
+def _media_fn(d: dict, lang: str, docs: str):
+    """タイルと行のリンク先。YouTube に本編があればそこへ、動く 3-D の HTML はそのページの言語で開く。"""
+    def media(e):
+        if e.get("youtube_url"):
             return e["youtube_url"]
         return docs + _media_rel(d, e) + ("?lang=" + lang if _is_viewer(d, e) else "")
+    return media
 
-    sw = []
-    for l in d["langs"]:
-        name = d["ui"]["lang_name"][l]
-        sw.append("**%s**" % name if l == lang else
-                  "[%s](%s)" % (name, up + ("index.md" if l == "ja" else l + "/index.md")))
-    out = ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
-           "# Fullseye — ViEW2026", "", ui["tagline"], "", ui["session"], "", ui["tap"], ""]
-    if lang == "ja":
-        out += ["[Fullseye とは(読み物)](about.md)", ""]
-    elif lang == "en":
-        out += ["[About Fullseye (reading)](about.md)", ""]
-    out += [STYLE, ""]
-    if lang == "ja":
-        # 送り先の言語は exhibits.json の langs から(zh / tw は上の行で別に分ける)。
-        out += [REDIRECT.replace("@LATIN@", "|".join(
-            l for l in d["langs"] if l not in ("ja", "zh", "tw"))), ""]
 
-    # 0. 触って見る(docs/view2026/viewers/*.html。各ページは自分の言語で開く)
-    vw = d["viewers"]
-    out += ["## " + vw["h"][lang], "", vw["intro"][lang], ""]
-    for it in vw["items"]:
-        title = it["title"].get(lang, it["title"]["en"])
-        line = it["line"].get(lang, it["line"]["en"])
-        out.append("- **[%s](%sviewers/%s.html?lang=%s)**: %s" % (title, up, it["id"], lang, line))
-    out.append("")
-
-    # 1. 見どころ
-    out += ["## " + ui["h_highlights"], ""]
-    if lang != "ja" and any("numbers_source" in e for e in d["exhibits"]):
-        out += [ui["poc_caption_lang_note"], ""]
-    out += ['<div class="vg">']
-    for e in d["exhibits"]:
+def _tiles(d: dict, rows: list[dict], lang: str, up: str, docs: str, media) -> list[str]:
+    """見どころのタイルの格子。"""
+    out = ['<div class="vg">']
+    for e in rows:
         lab = e["label"][lang]
         mark = "<b>&#9654;</b>" if e["motion"] else ""
         cap = "%s · %s" % (lab, _viewer_mb(d, e)) if _is_viewer(d, e) else lab
         out.append('<a href="%s">%s%s<span>%s%s</span></a>'
                    % (media(e), _representative_img(d, e, lang, up, docs, 320), mark, cap, _sa_small(e, lang)))
-    out += ["</div>", ""]
+    return out + ["</div>", ""]
 
-    # 2. シリーズ記事
-    out += ["## " + ui["h_series"] + (" " + ui["series_lang_note"] if ui["series_lang_note"] else ""), "",
-            '<div class="vser">']
-    for s in d["series"]:
-        url = s["url"]["ja"] if lang == "ja" else s["url"].get("en", s["url"]["ja"])
-        out.append('<a href="%s"><img src="%sthumbs/%s" alt="%s" loading="lazy" width="480" height="270"><strong>%s</strong><span>%s</span></a>'
-                   % (url, up, s["thumb"], s["label"][lang], s["label"][lang], s["desc"][lang]))
-    out += ["</div>", ""]
 
-    # 3. できること(docs/capabilities の全件)
+def _anchor(pid: str) -> str:
+    """おまけページの詳細の項目の錨(本ページの「くわしく」の行き先)。"""
+    return "d-" + pid.replace("_", "-")
+
+
+def _brief_lines(d: dict, rows: list[dict], lang: str, media) -> list[str]:
+    """本ページの展示 1 本の短い説明: 題(リンク)+ lead + 真値の種類 + 「くわしく」(おまけページの全文へ)。"""
+    text = MAIN_TEXT[lang]
+    out = []
+    for e in rows:
+        out.append("- **[%s](%s)**: %s" % (e["label"][lang], media(e), e["lead"][lang]))
+        out.append("  %s: %s · [%s](more.md#%s)" % (text["truth"], e["truth"][lang], text["detail"], _anchor(e["id"])))
+    return out + [""]
+
+
+def _esc(text: str) -> str:
+    return html.escape(text, quote=False)
+
+
+#: コードらしい語 = 下線でつないだ識別子(op の名前 find_caltab、変数名 n_glass、例のファイル名 poc_dem_terrain)と、
+#: ライブラリの名前から点でつないだ呼び出し(np.nanmedian)。
+#: 台帳の説明文には記法なしで書かれているので、ページへ出すときに等幅にする(2026-11-13、利用者の決まり:
+#: プログラムのコード・op の名前・ファイル名は等幅)。下線の無い op 名(gaussian など)は文からは見分けられないので、
+#: 「使った op」の行(元からコード記法)に任せる。
+_CODE_WORD = re.compile(r"(?<![\w`/.\-])(?:(?:np|fs|cv2|scipy|skimage|fullseye)(?:\.[A-Za-z_][A-Za-z0-9_]*)+"
+                        r"|[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+)(?![\w`])")
+#: 手を付けない区間: 既にコード記法の中、リンクの行き先、URL。
+_CODE_SKIP = re.compile(r"(`[^`]*`|\]\([^)]*\)|https?://\S+)")
+
+
+def _code_md(text: str) -> str:
+    """Markdown の文の中のコードらしい語を `...` で囲む(既に囲ってある所・リンク先・URL は触らない)。"""
+    parts = _CODE_SKIP.split(text)
+    return "".join(p if i % 2 else _CODE_WORD.sub(lambda m: "`%s`" % m.group(0), p) for i, p in enumerate(parts))
+
+
+def _code_html(escaped: str) -> str:
+    """HTML のかたまりの中(Markdown が効かない所)の文のコードらしい語を <code> で囲む。渡すのは _esc 済みの文。"""
+    return _CODE_WORD.sub(lambda m: "<code>%s</code>" % m.group(0), escaped)
+
+
+INTRO_IMG = ("thumbs/fullseye_intro.jpg", 640, 468)   # tools/gen_view2026_thumbs.py の build_intro が作る(元は docs/articles/assets/hero_channels.png)
+
+
+def _intro(d: dict, lang: str, up: str, ui: dict) -> list[str]:
+    """題と発表の日時のすぐ下: Fullseye とは(段落 + 画像 + 読み物へのリンク)。標語はこの段落に含める(同じ事を 2 回言わない)。"""
+    src, w, h = INTRO_IMG
+    link = ""
+    if lang in ABOUT_LANGS:
+        link = '<p><a href="about.md">%s</a></p>' % ("Fullseye とは(読み物)" if lang == "ja" else "About Fullseye (reading)")
+    alt = html.escape(ui["intro_alt"], quote=True)
+    return ['<div class="vintro"><img src="%s%s" alt="%s" width="%d" height="%d">'
+            '<div class="vt"><p>%s</p>%s</div></div>' % (up, src, alt, w, h, _esc(ui["about"]), link), ""]
+
+
+def _card(d: dict, e: dict, lang: str, up: str, docs: str, media, body: str, label: str | None = None,
+          badge: str = "") -> str:
+    """展示 1 本 = 画像 + 題 + 本文 の 1 かたまり(PC は画像が左、スマホは画像が上)。題は 1 回だけ出す(画像の alt は題と同じ文)。
+    ``badge`` はタイル(画像)の左下に重ねる短い印(本ページでは真値の種類)。"""
+    lab = label or e["label"][lang]
+    url = media(e)
+    mark = "<b>&#9654;</b>" if e["motion"] else ""
+    img = _representative_img(d, e, lang, up, docs, 260, alt=lab)
+    head = '<div class="vh"><a href="%s">%s</a>%s</div>' % (url, _esc(lab), _sa_small(e, lang))
+    return '<div class="vc"><a href="%s">%s%s%s</a><div class="vt">%s%s</div></div>' % (url, img, mark, badge, head, body)
+
+
+def truth_badge(e: dict, lang: str) -> str:
+    """タイルに重ねる真値の印(2026-11-13、独立レビューの指摘: 合成の展示は、画像と題だけを見る人にも合成と分かるように)。
+    本文の「真値: …」と同じ文を、全部の展示に同じ形で出す(合成だけに付けると、印の無い展示が実データに見える)。"""
+    return '<i class="vtb">%s: %s</i>' % (MAIN_TEXT[lang]["truth"], _esc(e["truth"][lang]))
+
+
+def _main_cards(d: dict, rows: list[dict], lang: str, up: str, docs: str, media) -> list[str]:
+    """本ページ(8 言語とも同じ形): 展示 1 本 = 画像 + 題 + lead + 真値 + くわしく。"""
+    text = MAIN_TEXT[lang]
+    cl = _content_lang(lang)
+    out = []
+    for e in rows:
+        body = '<p>%s</p><p class="vm">%s: %s · <a href="more.md#%s">%s</a></p>' % (
+            _code_html(_esc(e["lead"][cl])), text["truth"], _esc(e["truth"][lang]), _anchor(e["id"]), text["detail"])
+        out += [_card(d, e, lang, up, docs, media, body, label=e["label"][cl], badge=truth_badge(e, lang)), ""]
+    return out
+
+
+def _viewer_thumb(d: dict, it: dict, up: str, docs: str) -> str:
+    """「触って見る」の 1 本に添える小さな画像(その展示のサムネイル。新しい画像は作らない)。"""
+    base = it["id"][:-len("_field")] if it["id"].endswith("_field") else it["id"]
+    for cand in (base, "poc_" + base):
+        for sub in ("", "all/"):
+            if (BASE / "thumbs" / (sub + cand + ".jpg")).is_file():
+                return "%sthumbs/%s%s.jpg" % (up, sub, cand)
+    folder = DOCS / d["media_root"] / base
+    for pattern in ("*_720.jpg", "*.jpg", "*.png"):
+        found = sorted(folder.glob(pattern)) if folder.is_dir() else []
+        if found:
+            return "%s%s/%s/%s" % (docs, d["media_root"], base, found[0].name)
+    raise FileNotFoundError("触って見る(%s)に添える画像が無い" % it["id"])
+
+
+def _viewer_cards(d: dict, items: list, lang: str, up: str, docs: str) -> list[str]:
+    """触って見る: 1 本 = 小さな画像 + 題 + 1 行の説明。items = (リンク先, 項目, 容量の注記)。"""
+    out = []
+    for link, it, mb in items:
+        title = it["title"].get(lang, it["title"]["en"])
+        line = it["line"].get(lang, it["line"]["en"])
+        alt = html.escape(title, quote=True)
+        out.append('<div class="vc vv"><a class="vvi" href="%s"><img src="%s" alt="%s" loading="lazy" width="96" height="96"></a>'
+                   '<div class="vt"><div class="vh"><a href="%s">%s</a></div><p>%s%s</p></div></div>'
+                   % (link, _viewer_thumb(d, it, up, docs), alt, link, _esc(title), _code_html(_esc(line)), mb))
+        out.append("")
+    return out
+
+
+def _viewer_lines(items: list[dict], lang: str, up: str) -> list[str]:
+    out = []
+    for it in items:
+        title = it["title"].get(lang, it["title"]["en"])
+        line = it["line"].get(lang, it["line"]["en"])
+        out.append("- **[%s](%sviewers/%s.html?lang=%s)**: %s" % (title, up, it["id"], lang, _code_md(line)))
+    return out
+
+
+def _item_lines(d: dict, e: dict, lang: str, ui: dict, media, glossary_ledger: dict, glossary: dict,
+                anchor: bool = False) -> list[str]:
+    """展示 1 本の説明の行(題と lead、見る所と数字、ja/en は使った op、用語)。"""
+    num = " **%s**" % _code_md(e["num"][lang]) if e["num"][lang].strip() else ""
+    src = _source(d, e)
+    link = " [%s](%s)" % (ui["source"], src) if src else ""
+    kind = ui[_media_kind(_media_rel(d, e))]
+    if _is_viewer(d, e):
+        kind += ", " + _viewer_mb(d, e)
+    youtube = " [YouTube](%s)" % e["youtube_url"] if e.get("youtube_url") else ""
+    out = ["- [%s](%s) (%s): %s%s" % (e["label"][lang], media(e), kind, _code_md(e["lead"][lang]),
+                                        '<a id="%s"></a>' % _anchor(e["id"]) if anchor else ""),
+           "  %s%s%s" % (_code_md(e["see"][lang]), num, link + youtube)]
+    if lang in ("ja", "en") and e.get("ops"):
+        label = "使った Fullseye の op" if lang == "ja" else "Fullseye ops used"
+        out.append("  %s: %s" % (label, " · ".join("`%s`" % op for op in e["ops"])))
+    source_exhibit = glossary_ledger.get(e["id"])
+    term_line = glossary_line(source_exhibit, lang, glossary) if source_exhibit else ""
+    if term_line:
+        out.append("  " + term_line)
+    return out
+
+
+def _list_by_category(d: dict, rows: list[dict], lang: str, ui: dict, media) -> list[str]:
+    """「何が見えるか・測った数字」。分類ごとに並べる。"""
+    glossary_ledger, glossary = _glossary_inputs()
+    out = ["## " + ui["h_list"], "", ui["list_intro"], ""]
+    if lang not in CONTENT_LANGS:
+        out += [ui["poc_caption_lang_note"], ""]     # 訳の無い展示は英語のまま出る(訳は ja/en だけ)
+    out += ['<div class="vl" markdown="1">', ""]
+    for cat in d["categories"]:
+        part = [e for e in rows if e["category"] == cat["id"]]
+        if not part:
+            continue
+        out += ["**%s**" % cat[lang], ""]
+        for e in part:
+            out += _item_lines(d, e, lang, ui, media, glossary_ledger, glossary)
+        out.append("")
+    return out + ["</div>", ""]
+
+
+def _share_alike_block(d: dict, lang: str, rows: list[dict]) -> list[str]:
+    """継承条件つき(CC BY-SA など)のデータのコマを含む展示の帰属表示(タイルはリンクの中なので、
+    出典とライセンスへのリンクはここに置く)。判定は tools/share_alike.py の台帳から。そのページに載る展示だけ。"""
+    shown = {e["id"]: e for e in rows}
+    sa_rows = [(pid, shown[pid]) for ds in share_alike.DATASETS for pid in ds["pocs"] if pid in shown]
+    if not sa_rows:
+        return []
+    out = ["## " + share_alike.HEADING.get(lang, share_alike.HEADING["en"]), ""]
+    for pid, e in sa_rows:
+        ds = share_alike.dataset_for(pid)
+        out.append("- **%s**: %s [%s](%s) · [%s](%s)" % (
+            e["label"][lang], share_alike.attribution(pid, lang), ds["license"], ds["license_url"],
+            ds["name"], ds["source_url"]))
+    return out + [""]
+
+
+def _caps_block(d: dict, lang: str, docs: str, ui: dict) -> list[str]:
+    """できること(docs/capabilities の全件)。"""
     caps = capabilities()
     ja_note = "" if lang == "ja" else " " + JA_MARK      # 説明のページは日本語だけ
-    out += ["## " + ui["h_caps"], "", ui["caps_intro"].format(n=len(caps)), "",
-            '<div class="vl" markdown="1">', ""]
+    out = ["## " + ui["h_caps"], "", ui["caps_intro"].format(n=len(caps)), "",
+           '<div class="vl" markdown="1">', ""]
     for cat in d["capabilities"]["categories"]:
         rows = [c for c in caps if c["category"] == cat["ja"]]
         if not rows:
@@ -474,21 +875,23 @@ def build(d: dict, lang: str) -> str:
         out += ["**%s**" % cat[lang], ""]
         for c in rows:
             title = c[lang] if lang in ("ja", "en") else d["capabilities"]["titles"][c["id"]][lang]
-            exs = " · ".join("[%s](%s/blob/master/%s)" % (x, d["repo"], _example_path(x)) for x in c["examples"])
+            exs = " · ".join("[`%s`](%s/blob/master/%s)" % (x, d["repo"], _example_path(x)) for x in c["examples"])
             out.append("- %s: [%s](%scapabilities/%s.md)%s · %s %s" % (
                 title, ui["caps_doc"], docs, c["id"], ja_note, ui["caps_ex"], exs))
         out.append("")
-    out += ["</div>", "",
-            "[%s](%s/blob/master/examples/README.md)" % (ui["other_examples"].format(n=other_example_count()), d["repo"]),
-            ""]
+    return out + ["</div>", "",
+                  "[%s](%s/blob/master/examples/README.md)" % (ui["other_examples"].format(n=other_example_count()), d["repo"]),
+                  ""]
 
-    # 4. ぜんぶ見る
-    n_poc, n_other = counts(d)
-    out += ["## " + ui["h_all"], "", ui["all_count"].format(n=n_poc, m=n_other), "",
-            '<noscript><p><a href="%s%s">%s</a></p></noscript>' % (docs, _doc("GALLERY", lang).replace(".md", ".html"),
-                                                                   ui["all_nojs"]), ""]
+
+def _all_block(d: dict, lang: str, up: str, docs: str, ui: dict, media, rows_all: list[dict]) -> list[str]:
+    """ぜんぶ見る(グループごとに畳んだサムネイル)。"""
+    n_poc, n_other = counts({"all": rows_all})
+    out = ["## " + ui["h_all"], "", ui["all_count"].format(n=n_poc, m=n_other), "",
+           '<noscript><p><a href="%s%s">%s</a></p></noscript>' % (docs, _doc("GALLERY", lang).replace(".md", ".html"),
+                                                                  ui["all_nojs"]), ""]
     for g in d["groups"]:
-        rows = [e for e in d["all"] if e["group"] == g["id"]]
+        rows = [e for e in rows_all if e["group"] == g["id"]]
         if not rows:
             continue
         cells = []
@@ -499,52 +902,23 @@ def build(d: dict, lang: str) -> str:
                          % (media(e), _representative_img(d, e, lang, up, docs, 200, True), mark, lab, _sa_small(e, lang)))
         out += ['<details class="vall"><summary><b>%s</b> (%d)</summary>' % (g["name"][lang], len(rows)),
                 '<div class="vg vs">'] + cells + ["</div>", "</details>", ""]
-    out += [LAZY, ""]
+    return out + [LAZY, ""]
 
-    # 4b. 継承条件つき(CC BY-SA など)のデータのコマを含む展示の帰属表示(タイルはリンクの中なので、
-    #     出典とライセンスへのリンクはここに置く)。判定は tools/share_alike.py の台帳から。
-    shown = {e["id"]: e for e in list(d["exhibits"]) + list(d["all"])}
-    sa_rows = [(pid, shown[pid]) for ds in share_alike.DATASETS for pid in ds["pocs"] if pid in shown]
-    if sa_rows:
-        out += ["## " + share_alike.HEADING.get(lang, share_alike.HEADING["en"]), ""]
-        for pid, e in sa_rows:
-            ds = share_alike.dataset_for(pid)
-            out.append("- **%s**: %s [%s](%s) · [%s](%s)" % (
-                e["label"][lang], share_alike.attribution(pid, lang), ds["license"], ds["license_url"],
-                ds["name"], ds["source_url"]))
-        out.append("")
 
-    # 5. 見どころの説明と数字
-    out += ["## " + ui["h_list"], "", ui["list_intro"], "", '<div class="vl" markdown="1">', ""]
-    for cat in d["categories"]:
-        rows = [e for e in d["exhibits"] if e["category"] == cat["id"]]
-        if not rows:
-            continue
-        out += ["**%s**" % cat[lang], ""]
-        for e in rows:
-            num = " **%s**" % e["num"][lang] if e["num"][lang].strip() else ""
-            src = _source(d, e)
-            link = " [%s](%s)" % (ui["source"], src) if src else ""
-            kind = ui[_media_kind(_media_rel(d, e))]
-            if _is_viewer(d, e):
-                kind += ", " + _viewer_mb(d, e)
-            youtube = " [YouTube](%s)" % e["youtube_url"] if e.get("youtube_url") else ""
-            out.append("- [%s](%s) (%s): %s" % (
-                e["label"][lang], media(e), kind, e["lead"][lang]))
-            out.append("  %s%s%s" % (e["see"][lang], num, link + youtube))
-            if lang in ("ja", "en") and e.get("ops"):
-                label = "使った Fullseye の op" if lang == "ja" else "Fullseye ops used"
-                out.append("  %s: %s" % (label, " · ".join("`%s`" % op for op in e["ops"])))
-            source_exhibit = glossary_ledger.get(e["id"])
-            term_line = glossary_line(source_exhibit, lang, glossary) if source_exhibit else ""
-            if term_line:
-                out.append("  " + term_line)
-        out.append("")
-    out += ["</div>", "", "## " + ui["h_about"], "", ui["about"], ""]
+def _series_block(d: dict, lang: str, up: str, ui: dict) -> list[str]:
+    out = ["## " + ui["h_series"] + (" " + ui["series_lang_note"] if ui["series_lang_note"] else ""), "",
+           '<div class="vser">']
+    for s in d["series"]:
+        url = s["url"]["ja"] if lang == "ja" else s["url"].get("en", s["url"]["ja"])
+        out.append('<a href="%s"><img src="%sthumbs/%s" alt="%s" loading="lazy" width="480" height="270"><strong>%s</strong><span>%s</span></a>'
+                   % (url, up, s["thumb"], s["label"][lang], s["label"][lang], s["desc"][lang]))
+    return out + ["</div>", ""]
 
-    # 6. 畳む節
-    out += ['<details markdown="1">', "<summary><b>%s</b> (Python 3.11)</summary>" % ui["try"], "",
-            TRY_CMD, "", ui["try_after"], "", "</details>", ""]
+
+def _footer(d: dict, lang: str, docs: str, ui: dict) -> list[str]:
+    """畳む節(試す・リンク・論文)。"""
+    out = ['<details markdown="1">', "<summary><b>%s</b> (Python 3.11)</summary>" % ui["try"], "",
+           TRY_CMD, "", ui["try_after"], "", "</details>", ""]
     mcp_note = "" if lang == "ja" else " " + JA_MARK
     out += ['<details markdown="1">', "<summary><b>%s</b></summary>" % ui["links"], "",
             "- [%s](%s)" % (ui["gh"], d["repo"]),
@@ -562,6 +936,113 @@ def build(d: dict, lang: str) -> str:
             _pdf_line(d, ui, lang),
             "", "**%s**: %s" % (ui["f_abstract"], d["paper"]["abstract"][lang]),
             "", "</details>", ""]
+    return out
+
+
+def _field_mb(item: dict) -> str:
+    """field_viewers の HTML の容量(MB、小数 1 桁、最小 0.1)。手で書かない。"""
+    return "%.1f MB" % max(0.1, (BASE / item["path"]).stat().st_size / 1e6)
+
+
+def build(d: dict, lang: str) -> str:
+    """入口ページ。8 言語とも目玉・準目玉だけ(残りはその言語の more.md)。中身と並びは全言語で同じ
+    (2026-11-13。それまで ja/en 以外は全展示を分類順に並べていて、目玉の顔ぶれと順が ja/en と違っていた)。"""
+    d = public_data(d)
+    ui = {k: v.get(lang, "") for k, v in d["ui"].items()}
+    glossary_ledger, glossary = _glossary_inputs()
+    up = "" if lang == "ja" else "../"            # ページから docs/view2026/ への相対
+    docs = up + "../"                              # ページから docs/ への相対
+    media = _media_fn(d, lang, docs)
+    main_rows = [e for e in d["exhibits"] if e.get("tier") in MAIN_TIERS]
+
+    sw = []
+    for l in d["langs"]:
+        name = d["ui"]["lang_name"][l]
+        sw.append("**%s**" % name if l == lang else
+                  "[%s](%s)" % (name, up + ("index.md" if l == "ja" else l + "/index.md")))
+    out = ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
+           "# Fullseye — ViEW2026", "", ui["session"], ""]
+    out += _intro(d, lang, up, ui)
+    out += [ui["tap"], ""]
+    n_more = len(d["all"]) - len({e["id"] for e in main_rows})
+    out += [MAIN_TEXT[lang]["more_top"].format(n=len(main_rows), m=n_more), ""]
+    out += [STYLE, ""]
+    if lang == "ja":
+        # 送り先の言語は exhibits.json の langs から(zh / tw は上の行で別に分ける)。
+        out += [REDIRECT.replace("@LATIN@", "|".join(
+            l for l in d["langs"] if l not in ("ja", "zh", "tw"))), ""]
+
+    # 0. 触って見る(各ページは自分の言語で開く)。ja/en は場を掃引する動く 3-D(field_viewers)を先頭に置く
+    #    (その HTML が ja/en だけなので、ほかの言語は 8 言語のビューアだけ)。
+    vw = d["viewers"]
+    out += ["## " + vw["h"][lang], "", vw["intro"][lang], ""]
+    cards = []
+    if lang in FIELD_VIEWER_LANGS:
+        for it in d["field_viewers"]["items"]:
+            cards.append(("%s%s?lang=%s" % (up, it["path"], lang), it, " (%s)" % _field_mb(it)))
+    by_id = {it["id"]: it for it in vw["items"]}
+    shown = [by_id[i] for i in vw["main_ids"]]    # 先頭の数本だけ(残りはおまけページ)
+    cards += [("%sviewers/%s.html?lang=%s" % (up, it["id"], lang), it, "") for it in shown]
+    out += _viewer_cards(d, cards, lang, up, docs)
+
+    # 1. 目玉・準目玉(展示 1 本 = 画像 + 題 + lead + 真値 + くわしく)
+    for tier in MAIN_TIERS:
+        rows = [e for e in main_rows if e["tier"] == tier]
+        if not rows:
+            continue
+        out += ["## " + MAIN_TEXT[lang][tier], ""]
+        if lang not in CONTENT_LANGS:
+            out += [ui["featured_en_note"], ""]      # この節の題と説明は英語(訳は ja/en だけ。2026-11-13)
+        out += _main_cards(d, rows, lang, up, docs, media)
+    out += _series_block(d, lang, up, ui)
+    out += _share_alike_block(d, lang, main_rows)
+    out += [MAIN_TEXT[lang]["more"], ""]
+    out += _footer(d, lang, docs, ui)
+    return "\n".join(out)
+
+
+def build_more(d: dict, lang: str) -> str:
+    """おまけページ(8 言語)。本ページに載せない展示(できること・ぜんぶ見る・残りの説明)を置く。"""
+    if lang not in d["langs"]:
+        raise ValueError("more.md の言語が exhibits.json の langs に無い: %s" % lang)
+    d = public_data(d)
+    main_ids = {e["id"] for e in d["exhibits"] if e.get("tier") in MAIN_TIERS}
+    rest = [e for e in d["exhibits"] if e["id"] not in main_ids]
+    rows_all = [e for e in d["all"] if e["id"] not in main_ids]
+    ui = {k: v.get(lang, "") for k, v in d["ui"].items()}
+    up = "" if lang == "ja" else "../"
+    docs = up + "../"
+    media = _media_fn(d, lang, docs)
+    sw = []
+    for l in d["langs"]:
+        name = d["ui"]["lang_name"][l]
+        sw.append("**%s**" % name if l == lang else
+                  "[%s](%s)" % (name, up + ("more.md" if l == "ja" else l + "/more.md")))
+    out = ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
+           "# " + MORE_TEXT[lang]["title"], "", MORE_TEXT[lang]["intro"], "", MORE_TEXT[lang]["back"], "",
+           STYLE, ""]
+    text = MAIN_TEXT[lang]
+    vw = d["viewers"]
+    on_main = set(vw["main_ids"])
+    out += ["## " + text["viewers_more"], ""]
+    out += _viewer_lines([it for it in vw["items"] if it["id"] not in on_main], lang, up)
+    out.append("")
+    glossary_ledger, glossary = _glossary_inputs()
+    out += ["## " + text["detail_h"], ""]
+    if lang not in CONTENT_LANGS:
+        out += [ui["featured_en_note"], ""]          # 本ページと同じく、この節の題と説明は英語(2026-11-13)
+    out += ['<div class="vl" markdown="1">', ""]
+    cl = _content_lang(lang)
+    for e in d["exhibits"]:
+        if e["id"] in main_ids:
+            shown = dict(e, **{f: {lang: e[f][cl]} for f in ("label", "lead", "see", "num")})
+            out += _item_lines(d, shown, lang, ui, media, glossary_ledger, glossary, anchor=True)
+    out += ["", "</div>", ""]
+    out += _caps_block(d, lang, docs, ui)
+    out += _all_block(d, lang, up, docs, ui, media, rows_all)
+    out += _share_alike_block(d, lang, rest + rows_all)
+    out += _list_by_category(d, rest, lang, ui, media)
+    out += [MORE_TEXT[lang]["back"], ""]
     return "\n".join(out)
 
 
@@ -583,6 +1064,10 @@ def page_path(lang: str) -> Path:
     return BASE / "index.md" if lang == "ja" else BASE / lang / "index.md"
 
 
+def more_page_path(lang: str) -> Path:
+    return BASE / "more.md" if lang == "ja" else BASE / lang / "more.md"
+
+
 def check_page(lang: str, text: str) -> list[str]:
     bad = []
     for i, line in enumerate(text.splitlines(), 1):
@@ -599,28 +1084,29 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     d = load()
     bad = validate(d)
-    pages = {l: build(d, l) for l in d["langs"]}
-    for l, t in pages.items():
+    pages = {page_path(lang): (lang, build(d, lang)) for lang in d["langs"]}
+    pages.update({more_page_path(lang): (lang, build_more(d, lang)) for lang in d["langs"]})
+    for _, (l, t) in pages.items():
         bad += check_page(l, t)
     if bad:
         print("exhibits.json の検査に落ちた(何も書いていない):\n  " + "\n  ".join(bad), file=sys.stderr)
         return 1
     drift = []
-    for l, t in pages.items():
-        p = page_path(l)
+    for p, (_, t) in pages.items():
         old = p.read_text(encoding="utf-8") if p.is_file() else None
         if old != t:
             drift.append(p.relative_to(ROOT).as_posix())
             if not a.check:
                 p.parent.mkdir(parents=True, exist_ok=True)
                 p.write_text(t, encoding="utf-8", newline="\n")
-    n_poc, n_other = counts(d)
+    public = public_data(d)
+    n_poc, n_other = counts(public)
     if a.check:
         if drift:
             print("生成物が古い: %s —— py -3.11 tools/gen_view2026_pages.py" % drift, file=sys.stderr)
             return 1
         print("ok: %d pages current (highlights %d, series %d, capabilities %d, all %d = PoC %d + %d)"
-              % (len(pages), len(d["exhibits"]), len(d["series"]), len(capabilities()), len(d["all"]),
+              % (len(pages), len(public["exhibits"]), len(d["series"]), len(capabilities()), len(public["all"]),
                  n_poc, n_other))
         return 0
     print("wrote %d / %d pages: %s" % (len(drift), len(pages), drift))

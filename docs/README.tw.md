@@ -312,7 +312,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 329 篇
+## 文件地圖 — 共 337 篇
 
 完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,844 篇運算子說明與 73 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
@@ -457,7 +457,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(243)
+**Other**(251)
 
 | 文件 | 內容 |
 |---|---|
@@ -696,13 +696,21 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`perf/pipeline_routes.md`](perf/pipeline_routes.md) | レシピの GPU 経路(生成物) _(ja)_ |
 | [`view2026/about.md`](view2026/about.md) | Fullseye |
 | [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
+| [`view2026/de/more.md`](view2026/de/more.md) | Zusatzseite: weitere PoCs |
 | [`view2026/en/about.md`](view2026/en/about.md) | Fullseye |
 | [`view2026/en/index.md`](view2026/en/index.md) | Fullseye — ViEW2026 |
+| [`view2026/en/more.md`](view2026/en/more.md) | Extras: more PoCs |
 | [`view2026/fr/index.md`](view2026/fr/index.md) | Fullseye — ViEW2026 |
+| [`view2026/fr/more.md`](view2026/fr/more.md) | Suppléments : autres PoC |
 | [`view2026/hi/index.md`](view2026/hi/index.md) | Fullseye — ViEW2026 |
+| [`view2026/hi/more.md`](view2026/hi/more.md) | अतिरिक्त पृष्ठ: और PoC |
 | [`view2026/index.md`](view2026/index.md) | Fullseye — ViEW2026 |
 | [`view2026/ko/index.md`](view2026/ko/index.md) | Fullseye — ViEW2026 |
+| [`view2026/ko/more.md`](view2026/ko/more.md) | 덤: 그 밖의 PoC |
+| [`view2026/more.md`](view2026/more.md) | おまけ:そのほかの PoC _(ja)_ |
 | [`view2026/tw/index.md`](view2026/tw/index.md) | Fullseye — ViEW2026 |
+| [`view2026/tw/more.md`](view2026/tw/more.md) | 附加頁:其他 PoC _(ja)_ |
 | [`view2026/zh/index.md`](view2026/zh/index.md) | Fullseye — ViEW2026 |
+| [`view2026/zh/more.md`](view2026/zh/more.md) | 附加页:其他 PoC _(ja)_ |
 
 <!-- docmap:end -->
