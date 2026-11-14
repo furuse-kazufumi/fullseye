@@ -2389,3 +2389,84 @@ def test_params_studio_entry_speaks_the_ui_language(qapp, ini, tmp_path, lang):
     assert M.make_tr("xx", fallback=lambda s: s.upper())("Search keys") == "SEARCH KEYS"
     with pytest.raises(ValueError):
         M.make_tr("xx")
+
+
+def _notice(p):
+    """状態の行で今見えている知らせのラベル(折り返した行か、1 行のラベル)。"""
+    return p.message_wrap if not p.message_wrap.isHidden() else p.message_label
+
+
+@pytest.mark.parametrize("lang", ["ja", "en", "de"])
+def test_params_refusal_reason_is_readable_in_a_narrow_window(qapp, fusion, ini, tmp_path, lang):
+    """確かめの指摘(medium): 330 px の窓でも、断りの理由が下の行で全部読める。直す前は数え方が幅を取り、知らせは
+    「▲ パラメータのフ…」(79 字のうち 9 字)だった。落とした物の断り(理由が出るのは下の行だけ)はファイル名と開ける種類、
+    セルの断りは理由と例が、省略されずに見えている(折り返した行は切れず、窓の内側にあり、表も残る)。知らせが消えれば
+    1 行へ戻る。印なしの知らせは 1 行のまま。広い窓では折り返さない。"""
+    tr = M.make_tr(lang)
+    png = _raw(tmp_path, "photo.png", b"\x89PNG")
+    win = _window(qapp, _three_files(tmp_path), lang=lang, size=(330, 300))
+    p = win.panel
+    row = p.row_height()
+    assert p.status.height() == row and p.message_wrap.isHidden()
+    read = 0
+    # 落とした物の断り
+    assert _drop(p, _mime([png])) == (True, True)
+    _pump(qapp)
+    full = p.message_label.full_text()
+    assert p.message_level == "warn" and full.startswith("\u25b2 ")
+    for want in (full, "photo.png", tr("open .json, .toml, .yaml / .yml or .xml")):
+        assert want in p.message_shown(), (lang, want, p.message_shown())
+        read += 1
+    lab = _notice(p)
+    assert lab is p.message_wrap and lab.isVisible() and lab.text() == full and lab.toolTip() == full
+    assert lab.height() >= lab.heightForWidth(lab.width()) > 0, (lang, lab.height(), lab.width())   # 折り返した行が切れていない
+    assert lab.height() >= 2 * lab.fontMetrics().lineSpacing()                                      # 1 行には入らない長さ
+    assert win.rect().contains(_rect_in(lab, win)) and win.rect().contains(_rect_in(p.counts_label, win))
+    assert p.status.height() == row + lab.height() and p.height() - p.status.geometry().bottom() - 1 == 2
+    assert p.stack.height() >= 4 * row and p.counts_label.isVisible()                               # 表も数え方も残る
+    tall = p.status.height()
+    # セルの断り(欄で断った時と同じ文: 理由 + 例)。前の知らせより短ければ、行の高さも戻る
+    ed = _start_edit(qapp, p, "fast")
+    QTest.keyClick(ed, Qt.Key_Return)
+    _pump(qapp)
+    full = p.message_label.full_text()
+    assert p.message_level == "error" and full.startswith("\u2715 ") and (tr("example: %s") % "812.5") in full
+    for want in (full, "'fast'", tr("example: %s") % "812.5"):
+        assert want in p.message_shown(), (lang, want, p.message_shown())
+        read += 1
+    lab = _notice(p)
+    assert lab.height() >= lab.heightForWidth(lab.width()) > 0 and win.rect().contains(_rect_in(lab, win))
+    assert row < p.status.height() <= tall and p.status.height() == row + lab.height()
+    QTest.keyClick(ed, Qt.Key_Escape)
+    assert read == 6
+    # 知らせが消えると 1 行へ戻る。印なしの知らせ(済んだ事)は 1 行のまま(省略 + ツールヒント)
+    p.show_message("", "info")
+    _pump(qapp)
+    assert p.status.height() == row and p.message_wrap.isHidden() and p.message_shown() == ""
+    p.show_message("saved " + "x" * 200, "info")
+    _pump(qapp)
+    assert p.status.height() == row and p.message_wrap.isHidden() and p.message_label.isVisible()
+    assert p.message_shown().endswith("\u2026") and p.message_label.toolTip() == "saved " + "x" * 200
+    # 知らせを出したまま窓を広げる(幅は書体から出す。窓の幅 = 状態の行の内側 + 8 px)
+    assert _drop(p, _mime([png])) == (True, True)
+    _pump(qapp)
+    assert not p.message_wrap.isHidden() and p.status.height() > row
+    fm = p.counts_label.fontMetrics()
+    need = p.message_label.fontMetrics().horizontalAdvance(p.message_label.full_text()) + 4
+    long_w, short_w = fm.horizontalAdvance(p.counts_text()), fm.horizontalAdvance(p.counts_text(compact=True))
+    assert long_w - short_w > 8
+    # 広い窓: 折り返さずに 1 行で全部(数え方は語つきのまま)
+    win.resize(long_w + 8 + need + 8 + 2, 300)
+    _pump(qapp)
+    assert p.message_wrap.isHidden() and p.status.height() == row
+    assert p.message_shown() == p.message_label.full_text() and p.counts_label.text() == p.counts_text()
+    # 中くらいの幅: 数え方を短い形にすれば 1 行に入るなら、折り返さずにそうする
+    win.resize(short_w + 8 + need + 8 + 2, 300)
+    _pump(qapp)
+    assert p.message_wrap.isHidden() and p.status.height() == row
+    assert p.message_shown() == p.message_label.full_text() and p.counts_label.text() == p.counts_text(compact=True)
+    # それより狭い: 折り返す
+    win.resize(short_w + 8 + need + 8 - 6, 300)
+    _pump(qapp)
+    assert not p.message_wrap.isHidden() and p.message_shown() == p.message_label.full_text() and p.status.height() > row
+    _close_quietly(win)

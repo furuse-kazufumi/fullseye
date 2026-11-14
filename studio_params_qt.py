@@ -1020,14 +1020,25 @@ class ParamsPanel(QtWidgets.QWidget):
         self._place_strip()
 
         self.status = QtWidgets.QWidget(self)
-        sl = QtWidgets.QHBoxLayout(self.status)
-        sl.setContentsMargins(2, 0, 2, 0)
+        sv = QtWidgets.QVBoxLayout(self.status)
+        sv.setContentsMargins(2, 0, 2, 0)
+        sv.setSpacing(0)
+        #: ▲ / ✕ の知らせが 1 行に収まらない時だけ出る、折り返した知らせ(数え方の行の上。全文が読める)。
+        self.message_wrap = QtWidgets.QLabel(self.status)
+        self.message_wrap.setTextFormat(Qt.PlainText)
+        self.message_wrap.setWordWrap(True)
+        self.message_wrap.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.message_wrap.hide()
+        sv.addWidget(self.message_wrap)
+        sl = QtWidgets.QHBoxLayout()
+        sl.setContentsMargins(0, 0, 0, 0)
         sl.setSpacing(8)
         self.counts_label = QtWidgets.QLabel(self.status)
         self.counts_label.setTextFormat(Qt.PlainText)
         self.message_label = _ElideLabel(self.status)
         sl.addWidget(self.counts_label)
         sl.addWidget(self.message_label, 1)
+        sv.addLayout(sl)
         self.status.setFixedHeight(self.row_height())
         self.status.installEventFilter(self)
         lay.addWidget(self.status)
@@ -1261,15 +1272,17 @@ class ParamsPanel(QtWidgets.QWidget):
         text = self._message_src(self.tr_) if self._message_src is not None else self._message_text
         mark = {"info": "", "warn": "▲ ", "error": "✕ "}[level]
         self.message_label.set_full_text(mark + text if text else "")
-        pal = self.message_label.palette()
         base = self.palette().color(QtGui.QPalette.WindowText)
         tone = {"info": base, "warn": _mix(base, _state_colour("warn"), 0.6),
                 "error": _mix(base, _state_colour("err"), 0.7)}[level]
-        pal.setColor(QtGui.QPalette.WindowText, tone)
-        self.message_label.setPalette(pal)
         # 親の窓の QSS(QLabel { color })はパレットに勝つので、状態の色はラベル自身の QSS でも言う(info は theme の文字の色)。
-        self.message_label.setStyleSheet(
-            "" if level == "info" else "QLabel { color: rgb(%d, %d, %d); }" % (tone.red(), tone.green(), tone.blue()))
+        qss = "" if level == "info" else "QLabel { color: rgb(%d, %d, %d); }" % (tone.red(), tone.green(), tone.blue())
+        for lab in (self.message_label, self.message_wrap):
+            pal = lab.palette()
+            pal.setColor(QtGui.QPalette.WindowText, tone)
+            lab.setPalette(pal)
+            lab.setStyleSheet(qss)
+        self._layout_status()
 
     def _outcome(self, out: M.Outcome) -> M.Outcome:
         if not out.ok:
@@ -1387,16 +1400,50 @@ class ParamsPanel(QtWidgets.QWidget):
         """後回しにした作り直しを今やる(試験用)。"""
         self.refresh()
 
-    def _apply_counts(self) -> None:
-        """状態の行の左側を入れる。語つきの形が幅に収まらなければ、印 + 数だけの形にする(全文はツールヒント)。"""
-        full = self.counts_text()
-        room = self.status.width() - 4 - 8 - 40          # 枠の内側・間・右側の知らせに残す最小の幅
-        fits = self.counts_label.fontMetrics().horizontalAdvance(full) <= room
-        self.counts_label.setText(full if fits else self.counts_text(compact=True))
+    #: 折り返した知らせの行数の上限(これを超える分は切れる。全文はツールヒント)。
+    WRAP_LINES = 4
+
+    def _layout_status(self) -> None:
+        """状態の行を置く。数え方は、語つきの形が幅に収まらなければ印 + 数だけの形(全文はツールヒント)。
+
+        ▲ / ✕ の知らせ(断った理由・注意)は読める事を先にする: 数え方を短い形にしても 1 行に入らなければ、数え方の行の上に
+        折り返して全文を出す(:data:`WRAP_LINES` 行まで)。印なしの知らせは 1 行のまま(収まらなければ末尾が …)。"""
+        full, short = self.counts_text(), self.counts_text(compact=True)
+        fm = self.counts_label.fontMetrics()
+        inner = self.status.width() - 4                  # 枠の内側(左右 2 px)
+        text = self.message_label.full_text()
+        urgent = bool(text) and self.message_level in ("warn", "error")
+        # 右側に要る幅: ▲ / ✕ の知らせは全文、それ以外は最小の 40 px(間の 8 px は別)
+        need = self.message_label.fontMetrics().horizontalAdvance(text) + 4 if urgent else 40
+        wrap = False
+        if fm.horizontalAdvance(full) + 8 + need <= inner:
+            counts = full
+        elif not urgent or fm.horizontalAdvance(short) + 8 + need <= inner:
+            counts = short
+        else:
+            wrap = True
+            counts = full if fm.horizontalAdvance(full) <= inner else short
+        self.counts_label.setText(counts)
         self.counts_label.setToolTip(full + "\n" + self.tmodel.legend())
+        extra = 0
+        if wrap:
+            self.message_wrap.setText(text)
+            self.message_wrap.setToolTip(text)
+            self.message_wrap.setMinimumHeight(0)        # 前の知らせで固定した高さを外してから測る(測った値が下がらなくなる)
+            extra = min(self.message_wrap.heightForWidth(inner), self.WRAP_LINES * self.message_wrap.fontMetrics().lineSpacing())
+            self.message_wrap.setFixedHeight(extra)
+        self.message_wrap.setVisible(wrap)
+        self.message_label.setVisible(not wrap)
+        height = self.row_height() + extra
+        if self.status.minimumHeight() != height or self.status.maximumHeight() != height:
+            self.status.setFixedHeight(height)
+
+    def message_shown(self) -> str:
+        """状態の行に今見えている知らせの文(1 行に収めて省略した時は末尾が …、折り返した時は全文)。"""
+        return self.message_wrap.text() if not self.message_wrap.isHidden() else self.message_label.text()
 
     def _update_status(self) -> None:
-        self._apply_counts()
+        self._layout_status()
         self._update_actions()
         t = self.title()
         self.titleChanged.emit(t)
@@ -1421,7 +1468,7 @@ class ParamsPanel(QtWidgets.QWidget):
         if obj is self.tree.header() and ev.type() == QtCore.QEvent.MouseButtonPress:
             self._user_sized = True                      # 見出しを掴んだ = 幅を自分で決めた。以後は等分に戻さない
         elif obj is self.status and ev.type() == QtCore.QEvent.Resize:
-            self._apply_counts()
+            self._layout_status()
         elif obj is self.tree.viewport() and ev.type() == QtCore.QEvent.Resize and not self._user_sized:
             if not self._fit_pending:                    # 見出しの幅が決まってから(この通知の後)等分し直す
                 self._fit_pending = True
