@@ -436,3 +436,62 @@ done()
     assert got["hooks"] == [True, True, True], got
     assert got["env"] is None and got["cwd_back"] is True, got
     assert got["gui_import"] == "ok" and "next run ok 1" in got["next_output"], got
+
+
+# --------------------------------------------------------------------------- #
+# S1c: 選んだ行は名前空間の print を戻す / S1d: 名前空間の記録役を信じない         #
+# --------------------------------------------------------------------------- #
+def test_s1c_the_programs_print_after_a_selection_while_paused_reaches_its_output():
+    """確かめ v04b P1: 止まっている間に選んだ行を走らせると、続行したプログラムの print が出力に出なかった
+    (選んだ行が名前空間の print を自分の入れ物に差し替えて、戻さなかった)。"""
+    paused, release, box, res = threading.Event(), threading.Event(), {}, {}
+
+    def hook(snap):
+        box["snap"] = snap
+        paused.set()
+        release.wait(30)
+        return "continue"
+    t = threading.Thread(target=lambda: res.setdefault("r", sp.run_program(
+        "a = 3\nb = 4\nprint('END-PRINT', a)\n", IMG, breakpoints=[2], pause_hook=hook, config="debug",
+        time_limit_s=30, stop_event=threading.Event())))
+    t.start()
+    try:
+        assert paused.wait(20)
+        ns = box["snap"].namespace
+        prog_print = ns["print"]
+        e = sp.evaluate("print('SEL', a + 10)", ns, time_limit_s=10)
+        assert e["error"] is None and e["stdout"] == "SEL 13\n"
+        assert ns["print"] is prog_print                                # 名前空間の print はプログラムの物に戻る
+    finally:
+        release.set()
+        t.join(30)
+    r = res["r"]
+    assert r.errors == [] and "END-PRINT 3" in r.stdout and "SEL" not in r.stdout, r.stdout
+    e = sp.evaluate("print('after')\nprint = 5\n", r, time_limit_s=10)       # 選んだ行が print を書き換えたら、それは残す
+    assert e["error"] is None and e["stdout"] == "after\n" and r.namespace["print"] == 5
+
+
+def test_s1d_the_selection_does_not_use_a_recorder_object_put_in_the_namespace_by_the_program():
+    """確かめ v06: 選んだ行は記録役を名前空間の ``__studio_recorder__`` から取り、その属性を見張りの外(呼び出し側の
+    スレッド)で読み書きした。プログラムがそこに自分の物を置くと、利用者のコードが上限なしに走った。"""
+    r = sp.run_program("x = 1\n", IMG)
+    touched = []
+
+    class FakeRecorder:
+        def __getattribute__(self, name):
+            touched.append((name, threading.current_thread().name))
+            raise AttributeError(name)
+
+        def __bool__(self):
+            touched.append(("__bool__", threading.current_thread().name))
+            return True
+    real = r.namespace["__studio_recorder__"]
+    r.namespace["__studio_recorder__"] = FakeRecorder()
+    t0 = time.perf_counter()
+    e = sp.evaluate("y = x + 1\ng = gaussian(img, 0.5)\n", r, time_limit_s=10)
+    assert e["error"] is None and r.namespace["y"] == 2 and [c.op for c in e["calls"]] == ["gaussian"]
+    assert touched == [] and time.perf_counter() - t0 < 5.0
+    r.namespace["__studio_recorder__"] = real                             # 本物の記録役は今までどおり使う
+    n0 = len(real.calls)
+    e = sp.evaluate("h = gaussian(img, 0.4)\n", r, time_limit_s=10)
+    assert e["error"] is None and [c.op for c in e["calls"]] == ["gaussian"] and len(real.calls) == n0 + 1

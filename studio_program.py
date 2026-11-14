@@ -2245,7 +2245,12 @@ def evaluate(source: str, namespace, *, trusted: bool = True, time_limit_s: floa
     (``sys.stdout``・環境変数・作業フォルダ …)は戻して ``notes`` に「restored after the run: …」と入れ、
     残した実行・残ったスレッドがある間は始めない。``time_limit_s`` / ``stop_event`` は見張りと op の呼び出しの
     境目の両方で効く。止めたら ``error`` は ``"stopped: …"``、止められなければ ``"could not stop …"``
-    (結果は捨て、終わった所でもう一度状態を戻す)。どちらも渡さなければ、終わるまで待つ。"""
+    (結果は捨て、終わった所でもう一度状態を戻す)。どちらも渡さなければ、終わるまで待つ。
+
+    2026-11-15 第 4 回の確かめ: 名前空間の ``print`` は、終わったら前の物へ戻す(止まっている Debug の実行の間に
+    選んだ行を走らせると、続行したプログラムの print が捨てた入れ物に入り、出力に出なかった)。選んだ行が ``print``
+    に別の物を入れたら、それは残す。記録役は、名前空間の ``__studio_recorder__`` が :class:`Recorder` **そのもの**の
+    時だけ使う(プログラムがそこに置いた物の属性を、入口の外 = 呼び出し側のスレッドで読み書きしない)。"""
     ns = getattr(namespace, "namespace", namespace)
     if ns is None:
         return {"value": None, "stdout": "", "error": "no namespace: run the program first (keep_namespace=True)",
@@ -2253,9 +2258,13 @@ def evaluate(source: str, namespace, *, trusted: bool = True, time_limit_s: floa
     if not trusted:
         return {"value": None, "stdout": "", "error": "not run: untrusted input", "calls": [], "notes": [],
                 "shown": None}
-    rec = ns.get("__studio_recorder__") or Recorder()
+    rec = ns.get("__studio_recorder__")
+    if type(rec) is not Recorder:                    # 型だけで決める(利用者の物の __bool__ / 属性を呼ばない)
+        rec = Recorder()
     out = _BoundedOutput()
-    ns["print"] = _capture_print(out)
+    no_print = object()
+    prev_print = ns.get("print", no_print)
+    mine_print = ns["print"] = _capture_print(out)
     n0 = len(rec.calls)
     shown0 = rec.shown_n
     box: dict = {}
@@ -2301,6 +2310,11 @@ def evaluate(source: str, namespace, *, trusted: bool = True, time_limit_s: floa
                                  stop_event=stop_event)
     finally:
         rec.stop_event, rec.time_limit_s, rec.deadline = before
+        if ns.get("print") is mine_print:            # 選んだ行が print を書き換えていなければ、前の物へ戻す
+            if prev_print is no_print:
+                ns.pop("print", None)
+            else:
+                ns["print"] = prev_print
     if run.refused is not None:
         return {"value": None, "stdout": "", "calls": [], "error": run.refused, "notes": [], "shown": None}
     if run.abandoned:
