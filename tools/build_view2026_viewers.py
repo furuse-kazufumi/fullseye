@@ -332,17 +332,19 @@ def build_thermo() -> dict:
     dm = K.build_scene()
     masks, sound = K.defect_masks(dm)
     ts, cube = K.synth_cube(dm, netd=K.NETD, seed=1)                      # main() と同じ
-    d25, _ = K.tsr_depth(ts, cube)
-    k4 = int(np.searchsorted(ts, 4.0))
-    d4, _ = K.tsr_depth(ts[:k4], cube[:k4])
+    d25, _ = K.tsr_depth(ts, cube)                                       # 25 秒の全コマ(3 節・深さの表と同じ地図)
+    # ★窓の比較は PoC の 4 節と同じ関数で(2026-11-13)。それまでここで別に計算していて、25 秒の側が
+    #   全コマの地図(0.5 mm・直径 2 mm が +627 %)になり、PoC・論文の +612 %(窓は最後の 1 コマを含めない)と食い違っていた。
+    wmaps, werr = K.window_depth_estimates(ts, cube, masks, [4.0, K.T_END])
+    d25w, d4 = wmaps[float(K.T_END)], wmaps[4.0]
     _, cube_nb = K.synth_cube(dm, blur=False, netd=K.NETD, seed=1)         # 4 節の対照群(横拡散を切る)
     d_nb, _ = K.tsr_depth(ts, cube_nb)
 
     def err(d, key):
         return 100.0 * (1e3 * float(np.median(d[masks[key]])) / key[0] - 1.0)
 
-    small = [(d, dia) for d in K.DEPTHS_MM for dia in (2.0, 4.0)]
-    e25, e4 = [err(d25, k) for k in small], [err(d4, k) for k in small]
+    e25, e4 = list(werr[float(K.T_END)]), list(werr[4.0])               # 小さい欠陥 8 個(K.WINDOW_COLS の順)
+    assert len(e25) == len(e4) == len(K.WINDOW_COLS) == 8
     e_nb = [err(d_nb, k) for k in masks]
     assert max(abs(v) for v in e4) <= 20.0, "窓 4 秒で小さい欠陥が ±20 %% に入らない: %r" % e4
     assert max(e25) > 400.0, "窓 25 秒で +400 %% 超が出ない: %r" % e25
@@ -353,8 +355,10 @@ def build_thermo() -> dict:
     z1 = 1e3 * float(np.mean(np.abs(est - truth)))
     big = np.array([k[1] >= 8.0 for k in masks])
     b1 = 1e3 * float(np.mean(np.abs(est - truth)[big]))
-    s25, s4 = (1e3 * float(np.median(d[sound])) for d in (d25, d4))
+    s25, s4 = (1e3 * float(np.median(d[sound])) for d in (d25w, d4))
     w25, w4 = max(e25), max(e4, key=abs)
+    # ページ(exhibits.json の viewers の 1 行)と論文に書いた 2 つの数字。PoC の PASS の行と同じ量。
+    assert abs(w25 - 612.0) < 1.0 and abs(w4 + 14.0) < 1.0, (w25, w4)
 
     # 映像: 時刻を対数に等間隔に 60 枚(0.05 秒〜25 秒)。毎コマ、健全部の平均を引いて濃淡を伸ばす
     sel = np.unique(np.rint(np.geomspace(1, len(ts) - 1, 60)).astype(int))
@@ -388,11 +392,10 @@ def build_thermo() -> dict:
         pv.viewer_split_tab(
             "tsr", tr["t_tsr"], "limit", TX.fmt(tr["x_tsr"], z0=z0, z1=z1, b1=b1), mm(dm), mm(d25),
             tr["l_truth"], tr["l_tsr25"],
-            numbers=[_n("th_zero", "%.3f mm" % z0), _n("th_all", "%.3f mm" % z1), _n("th_big", "%.3f mm" % b1),
-                     _n("th_worst25", "%+.0f %%" % w25)]),
+            numbers=[_n("th_zero", "%.3f mm" % z0), _n("th_all", "%.3f mm" % z1), _n("th_big", "%.3f mm" % b1)]),
         pv.viewer_split_tab(
-            "window", tr["t_window"], "passed", TX.fmt(tr["x_window"], w25=w25, w4=abs(w4), s4=s4, s25=s25),
-            mm(d25), mm(d4), tr["l_tsr25"], tr["l_tsr4"],
+            "window", tr["t_window"], "passed", TX.fmt(tr["x_window"], w25=w25, w4=w4, s4=s4, s25=s25),
+            mm(d25w), mm(d4), tr["l_tsr25"], tr["l_tsr4"],
             numbers=[_n("th_worst25", "%+.0f %%" % w25), _n("th_worst4", "%+.0f %%" % w4),
                      _n("th_sound4", "%.2f mm" % s4)]),
         pv.viewer_split_tab(

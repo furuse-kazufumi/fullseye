@@ -19,8 +19,8 @@
 | Radiance HDR | `.hdr` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_hdrfusion.py`<br>`tests/test_public_api.py`<br>+5 | — |
 | IMG | `.img` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+4 | — |
 | JPEG | `.jpeg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_imgforensics.py`<br>+3 | — |
-| JPEG | `.jpg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_help_rendering.py`<br>+14 | — |
-| JSON | `.json` | `backends_auto.load_specs`<br>`fullseye.jsonio.load_json` | `fullseye.jsonio.save_json` | — | optional: cv2, skimage | `tests/test_accel_bridge.py`<br>`tests/test_accel_label.py`<br>+166 | — |
+| JPEG | `.jpg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_help_rendering.py`<br>+16 | — |
+| JSON | `.json` | `backends_auto.load_specs`<br>`fullseye.jsonio.load_json` | `fullseye.jsonio.save_json` | — | optional: cv2, skimage | `tests/test_accel_bridge.py`<br>`tests/test_accel_label.py`<br>+167 | — |
 | LAS | `.las` | `meshio_opt.read_las` | — | — | stdlib / core | `tests/test_accel_label.py`<br>`tests/test_backends.py`<br>+10 | — |
 | M4V | `.m4v` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | MetaImage | `.mha` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
@@ -40,19 +40,19 @@
 | Geomview OFF | `.off` | `fileio.mesh_read_off`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_off`<br>`mesh.write_mesh` | `mesh_read_off`<br>`mesh_write_off` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_drivelateral.py`<br>+9 | `trimesh` |
 | OME-TIFF | `.ome.tif` | `fileio.ome_tiff_read` | `fileio.ome_tiff_write` | `ome_tiff_read`<br>`ome_tiff_write` | optional: tifffile | `tests/test_fileio_scientific.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
 | OME-TIFF | `.ome.tiff` | `fileio.ome_tiff_read` | `fileio.ome_tiff_write` | `ome_tiff_read`<br>`ome_tiff_write` | optional: tifffile | `tests/test_fileio_scientific.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
-| PBM | `.pbm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+77 | — |
+| PBM | `.pbm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+78 | — |
 | PCL PCD | `.pcd` | `mesh.read_points`<br>`meshio_opt.read_pcd` | — | — | optional: pypcd4 | `tests/test_mesh.py`<br>`tests/test_meshio_opt.py`<br>+3 | — |
-| PFM | `.pfm` | `raster.read_depth`<br>`raster.read_pfm`<br>`raster.read_raster` | `imgio.save`<br>`raster.write_pfm` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+79 | — |
-| PGM | `.pgm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+77 | — |
+| PFM | `.pfm` | `raster.read_depth`<br>`raster.read_pfm`<br>`raster.read_raster` | `imgio.save`<br>`raster.write_pfm` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+80 | — |
+| PGM | `.pgm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+78 | — |
 | Stanford PLY | `.ply` | `fileio.mesh_read_ply`<br>`gsplatnp.gs_read_file`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_ply`<br>`gsplat_train_native.save_gaussians_ply`<br>`imgio.save_ply`<br>`mesh.write_mesh`<br>+1 | `gs_read_file`<br>`mesh_read_ply`<br>`mesh_write_ply` | 必須: PIL, gsplat, torch<br>optional: numpy | `tests/test_audit_file_formats.py`<br>`tests/test_fileio_mesh.py`<br>+13 | `plyfile`<br>`trimesh` |
-| PNG | `.png` | `raster.read_depth`<br>`raster.read_raster` | `imgio.save`<br>`studio_display.save_outputs` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+103 | — |
-| PPM | `.ppm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+77 | — |
+| PNG | `.png` | `raster.read_depth`<br>`raster.read_raster` | `imgio.save`<br>`studio_display.save_outputs` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+105 | — |
+| PPM | `.ppm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+78 | — |
 | XYZ text | `.pts` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_mesh.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+2 | — |
 | RAW raster | `.raw` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_article_media_tool_2026_11_11.py`<br>`tests/test_gfx2d.py`<br>+13 | — |
 | 3D Gaussian splat | `.splat` | `gsplatnp.gs_read_file` | — | `gs_read_file` | stdlib / core | `tests/test_gsviewer.py`<br>`tests/test_opsdrive.py`<br>+1 | — |
 | STL | `.stl` | `fileio.mesh_read_stl`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_stl`<br>`mesh.write_mesh` | `mesh_read_stl`<br>`mesh_write_stl` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_fileio_mesh.py`<br>+7 | `stl`<br>`trimesh` |
-| TIFF | `.tif` | `raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `imgio.save`<br>`volio.write_volume` | — | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+79 | — |
-| TIFF | `.tiff` | `fileio.ome_tiff_read`<br>`raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `fileio.ome_tiff_write`<br>`imgio.save`<br>`volio.write_volume` | `ome_tiff_read`<br>`ome_tiff_write` | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+80 | — |
+| TIFF | `.tif` | `raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `imgio.save`<br>`volio.write_volume` | — | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+80 | — |
+| TIFF | `.tiff` | `fileio.ome_tiff_read`<br>`raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `fileio.ome_tiff_write`<br>`imgio.save`<br>`volio.write_volume` | `ome_tiff_read`<br>`ome_tiff_write` | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+81 | — |
 | Text/XYZ | `.txt` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_acquire_contract.py`<br>`tests/test_anim3d_i18n_builders_2026_10_25.py`<br>+32 | — |
 | VOL | `.vol` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_ctscan.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+27 | — |
 | WAV | `.wav` | `dsp.read_wav` | `dsp.write_wav` | `read_wav`<br>`write_wav` | stdlib / core | `tests/test_chain_type_contracts.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+19 | — |

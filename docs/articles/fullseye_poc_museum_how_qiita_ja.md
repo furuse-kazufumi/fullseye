@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **113 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **114 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -772,7 +772,7 @@ py -3.11 examples/poc_water_inspection_images.py
 
 ## No.2026.312 —— 背景の縞の歪みからガラス瓶を逆に測る(同じ仮定の下のシミュレーション)―― 外半径・壁厚・屈折率・液面を真値で採点し、分けられない量と、残差に出ないモデル誤差を出す
 
-透明な瓶は後ろの縞を歪めて見せる。画素ごとに「背景のどこを見ているか(u)」を求め、そこから外半径・壁厚・n_glass・n_liquid・液面を逆に当てはめる(すべてシミュレーション)。新 op 2 本(`watervision`、`opsoptics` の `watervision`): `bottle_background_map`(`bottle_image` と同じ瓶・カメラで、明るさでなく背景の座標 u を返す)/ `bottle_fit_from_pattern`(u の地図から当てはめ、標準偏差・相関行列・条件数・弱い方向・`separated` の旗を返す)。★真値の開示と共有する仮定: 真値は自作のシミュレーション(R 30 mm・壁 1.5 mm・n_glass 1.52・水 1.333 / 油 1.47・充填 5 通り)の入力で、実物の測定ではない。観測(ベクトルのスネルの式の追跡)と当てはめの順モデル(同心円の閉形式)は別の導出だが、同心円・壁厚一様・水平の 2 次元断面・理想の針穴・完全な平面の背景・既知で誤差のない距離と画素ピッチ・分散なし・水平な液面・点の標本化、という同じ世界を仮定している。結果は「同じ仮定の下での復元」で、実瓶で測れたことの証拠ではない。近軸の 2×2 行列で中心の傾きを検算した(2.2e-5)。(1) 雑音なしで 10 構成が相対 9.5e-13、液面は行境界で 0。空の瓶と満の瓶は液面「無し」。(2) 周期 256・32・4 mm の 4 ステップ縞を 8 bit・雑音 1.5 階調で撮って u を戻し(雑音 7.1 µm = 0.11 画素)、R 1.4e-6、n_liquid 2.8e-6、液面 0 画素。雑音 300 回(各区間 1 行)で最大 R 1.8e-5・n_liquid 1.7e-5。共分散から予測した σ は経験の σ の 0.67〜1.00 倍で、過小の側に寄る。(3) 液面の 2 つの読み出し(縞の行間の不連続・背面光の明暗)は 0 画素差で一致するが、同じ行分割を共有するので独立の測定ではない。メニスカス 3 mm では明暗の 2 読みが 1.15 mm 割れ、縞の側にメニスカスは無く未検証。(4) ★分けられない量: 壁厚と n_glass の相関は −0.92(cond 11)。縁の画素があれば 0.1 mm の壁も戻るが、使える窓を中心 25 % にすると壁厚の相対 σ は 800 倍、0.1 mm の壁は戻らない(0.05)。「分けられた」旗は雑音だけの誤差の目安で保証ではない: しきい値は 1600 試行を見てから 1 % に置いた(0.25 では壁が外れた回の 15〜20 %、n_glass が 0.02 外れた回の 73〜76 % を取り逃した。1 % ではこの掃引の外れ 92 回のうち 0 回)。背景距離を未知にすると n_liquid との相関が −0.999。(5) ★精度 ≠ 正確さ: 雑音だけの n_glass の σ は 3e-5 だが、背景距離 +1 mm の誤りで 0.011(355 倍)、カメラ距離 +1 mm で 0.0029 動く。(6) ★モデル誤差(偏心)を同じ雑音の条件どうしで比べる: 内円を視線の奥行きに 0.3 mm(壁厚の 20 %)ずらした満の瓶(別に書いたスカラー追跡)は、雑音なしどうしでは n_glass を −0.095 動かすが、残差も 0 から 0.008 mm に増える(雑音が無ければ残差で見える)。雑音 1.5 階調どうし(同じ雑音の実現 60 回ずつ)では、残差の比は 1.00 で同心と区別できず、n_glass の偏り +0.020 は 1 回の当てはめの σ 0.017 に埋もれ(separated は同心でも偏心でも 60 回とも偽 = 満の瓶では n_glass を分けられないと旗が言っている)、壁厚の推定が −0.20 mm(σ 0.075 mm の 2.6 倍)偏る。残差が変わらないので、この壁厚の偏りには気づけない。前の版の「n_glass を −0.095 動かすのに残差も旗も気づかない」は、雑音なしの当てはめと雑音ありの残差の床を混ぜた比較だったので取り下げた(2026-11-13、作者と独立の検証の指摘)。半分の瓶では残差が 8 倍に増えて気づけるが、旗は偏心を知らない。(7) 壊して確かめる: n_glass を 1.4 に固定すると残差が 414 倍、スネルの向き逆で 8 万倍。縦の屈折は扱わない。学習 0、較正 0(距離は既知)、門 40 件。
+透明な瓶は後ろの縞を歪めて見せる。画素ごとに背景の位置を求め、外半径・壁厚・屈折率・液面を逆に当てはめて、充填 5 通りの真値で採点した。分けられない量も出すが、真値は自作のシミュレーションで、実物の瓶では確かめていない。
 
 [![背景の縞の歪みからガラス瓶を逆に測る(同じ仮定の下のシミュレーション)―― 外半径・壁厚・屈折率・液面を真値で採点し、分けられない量と、残差に出ないモデル誤差を出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/01_checker_through_bottle.png)
 
@@ -850,7 +850,7 @@ py -3.11 examples/poc_photograph_through_prescription.py
 
 ## No.2026.304 —— 実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する ―― 縦ずれを無視すると約 0.36 mm 離れた面を再構成してしまい、その誤りは再投影の残差には原理的に出ない(外の参照で初めて分かる)
 
-公開されている実測のコーンビーム CT(Der Sarkissian ほか 2019、クルミ 1 個、CC BY 4.0)を、Fullseye の撮影モードの op で再構成し、FDK と 3 つの反復法(SIRT・OS-SART・全変動 TV)を、配布元が 3 つの軌道すべてから作った参照と比べた。使ったのは中段の軌道の投影 1200 枚のうち 300 枚(1.2° 刻み)で、検出器は 6 × 6(中央面)/ 8 × 8(3-D)に束ね、取得道具が 6 GB の zip から必要な要素だけを Range 要求で取り出す(1309 要素、SHA-256 の一覧で固定)。★幾何: 配布元のベクトル 300 本を `ct_scan_geometry` の円軌道に読み替えると、SOD・SDD は装置の設定ファイルと一致し、円軌道で表せない 2 つ(検出器の面内回転 0.50°、縦のずれ 7.2 画素)は投影を `warp_parametric` で引き直して消した。★中央面: 全 300 枚の FDK は参照と RMSE 0.0023 /mm・SSIM 0.94、配布元の FDK(ASTRA、1200 枚)とは SSIM 0.96・平均の比 0.9988。配布元の FDK と参照の差 0.0009 より大きい分の大半は粗い格子(0.1 mm で作り直して箱平均すると 0.0013)。25 枚では FDK 0.0126 / SIRT 0.0056 / OS-SART 0.0055 / TV 0.0045 で、TV が最も持ちこたえる(重み 1e-05 と反復の回数 SIRT 400・OS-SART 60・TV 150 は参照を見ず、使わなかった投影への再投影誤差で選んだ)。90° の限られた角度ではどれも 300 枚の FDK の 4 倍以上悪く(TV 0.0107)、TV は平らな塊で欠けた向きを埋めるが形は参照と違う。★3-D: Fullseye の FDK と ASTRA の FDK は相関 0.9946。両方とも中央面から下端へ向かって同じだけ崩れる(中央 0.0026 → 下端 0.0101、ASTRA 0.0008 → 0.0099)。円軌道は中央面の外を測り切らない(Tuy の条件)。★幾何の取り違え: 隣接の恒等式 <Ax,y> = <x,Aᵀy> はこの装置の幾何で 1e-15 まで成り立つが、それは射影の対が整合していることしか言わない(A と Aᵀ の幾何を食い違わせると 1.1)。縦ずれを無視すると検出器の別の行、つまり回転中心で約 0.36 mm 離れた面を再構成することになり、参照との RMSE は 0.0060 に悪化する(別の面を比べた差)。その行のデータはそれ自体に矛盾が無いので、再投影の残差は 0.0850 と正しい幾何の 0.0870 と変わらない —— 作りの上で必ず起きることで、発見ではない(門も主張の検査ではなく健全性の確認として数える)。再投影の残差はどの面を再構成したかを教えないので、外の参照が要る。正しい幾何でも再投影の相対残差は 0.087 と大きく、内訳(束ね・ビーム硬化・散乱など)は切り分けていない。横に 0.3 mm で 0.0096、回転の向きを逆にすると 0.0209。面内回転 0.5° は中央面の 0.3 mm 格子ではほぼ効かない。★二重エネルギー: このデータは 1 エネルギーだけなので、第 2 エネルギーは閉形式の合成(実データではない)。雑音は同じ角度で 2 度撮った実測の投影の差から作り(物の中で模型は実測を 1.25 倍小さく見積もる)、基底 0 の雑音は 1 エネルギーの ×5.06(条件数 15.5)。白の画像は同じ束ね方で投影 1 枚より 3.5 倍静かで、白から雑音を作ると小さく見積もる。★数字の出どころ: 実データの数字は 2026-11-09 の手元の実行の記録(PoC の RECORDED)。2026-11-13 に同じデータで全部の章を走らせ直し(手元で約 15 分)、処理時間を除く全部の数字が記録と一致した。CI はデータを取得せず、合成の幾何の門 3 本だけを回すので、実データの数字は CI では確かめていない。
+公開されている実測のコーンビーム CT(クルミ)を、FDK と反復法で再構成した。投影 300 枚を使い配布元の参照で採点すると、縦ずれを無視した再構成は別の断面を作ることになり、参照から遠くなる。そのデータ自体に矛盾は無いので再投影の残差は変わらず、これは作りの上で当然である。
 
 [![実測のコーンビーム CT(クルミ)を FDK と反復法で再構成し、配布元の参照で採点する ―― 縦ずれを無視すると約 0.36 mm 離れた面を再構成してしまい、その誤りは再投影の残差には原理的に出ない(外の参照で初めて分かる)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/07_geometry_mistakes.png)
 
@@ -1802,7 +1802,7 @@ py -3.11 examples/poc_real_bg_kalman_tracking.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 27 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 28 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -2562,7 +2562,7 @@ py -3.11 examples/poc_simcal_thin_film.py
 
 ## No.2026.315 —— 円マークの校正板を端から端まで(合成の撮像) ―― 2 値の重心の量子化が fx に rms 約 0.2 % の床を作る(雑音 0 でも配置により −0.45〜+0.33 %)
 
-create_caltab の円マーク板(7x9、15 mm)を、真の K・樽型歪み(k1 = −0.18)・8 姿勢の合成のカメラで撮る。撮像は画素から板へ逆に引く描画(3x3 標本・ぼけ 0.7 px)で、レンズは推定と同じ Brown–Conrady 4 係数の族(実装は別)。独立なのは円の像の形と面積の標本化である。find_caltab で 63 点を拾い camera_calibration_lm で校正した。雑音 0 の検出のずれは 0.0939 px で、2 値の重心の量子化の理論値 1/sqrt(6πρ) = 0.0934 px(ρ = 6.08 px)の 1.01 倍、板を 0.6 mm 以内ずらした配置でも 0.95〜1.02 倍。この量子化が fx に rms 約 0.2 % の床を作る: 雑音 0 の fx の誤差は、この 8 視点では −0.45 % だが、板をずらした 19 配置では −0.45〜+0.33 %(rms 0.198 %、床の予測の 0.96 倍)で、符号は配置により入れ替わる。画像の雑音 σ_I = 0.05 で種 40 本を校正すると、8 個の内部・歪みの誤差はすべて共分散の 1σ の 4 倍以内(最大 3.44σ、2σ を超えた種は 22 本、種 1 だけなら 1.96σ)、白色化距離 d² は最大 18.2(χ²₈ の 99.9 % 点は 26.1)。姿勢の誤差は内部パラメータの 1σ から伝わる許容の 0.83 倍以内。雑音を 0.02〜0.2 に振ると、fx のずれは検出点のずれに比例し(log-log の傾き 1.15、種の始まりを変えて 1.04〜1.29)、共分散の利得から出した予測の 0.82〜1.14 倍になる(この比較は真値を使わない自己整合で、真値と突き合わせたのは前の 3 つの検査)。検出点のずれは画像の雑音の 0.57 乗でしか増えないので、画像の雑音を半分にしても、雑音が足す分の校正の誤差は 1/√2 にしか減らない。k2 は 1σ 0.051 が真値 0.06 と同じ大きさで、この配置・種 1 では符号まで逆に推定され、種 40 本では 26 本で負だった。全点の一様なずれ(約 0.07 px 未満)と一様な拡大は cx・fx に吸収されて見えない。
+真のカメラで撮像した円マークの校正板から、点の検出・姿勢の推定・カメラ校正まで通して採点した。雑音が無くても焦点距離は 0.45 % 外れる。その床は、二値にした円マークの重心が決める。
 
 [![円マークの校正板を端から端まで(合成の撮像) ―― 2 値の重心の量子化が fx に rms 約 0.2 % の床を作る(雑音 0 でも配置により −0.45〜+0.33 %)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/01_caltab_chain.png)
 
@@ -2684,7 +2684,7 @@ py -3.11 examples/poc_sheet_deformation_ffd.py
 
 ## No.2026.302 —— 実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする
 
-実写のステレオ対(Middlebury 2014 motorcycle、真値視差つき)から、binocular_disparity_ms で視差を、binocular_distance_ms と reconstruct_surface_stereo で距離と面を、get_circle_pose で後輪のリムの姿勢を出し、真値視差と OpenCV(SGBM・reprojectImageTo3D・matchTemplate)で採点した。★bad-2 は 1/4 解像度の画素で 2 px を超える割合で、原寸の画素では 8 px にあたる(原寸換算の呼び方なら bad 8.0)。Middlebury の公式の表は原寸で数えるので、公式の bad 2.0 とは直接は比べられない(2026-11-13、作者と独立の検証の指摘で明記)。★有効画素の bad-2 4.67 %・平均誤差 0.960 px・密度 90.0 %(SGBM 7.27 % / 1.315 px / 88.4 %)。無効も誤りに数えると 14.23 %(SGBM 18.00 %)で、両方が有効な画素だけなら 4.45 % 対 4.95 % —— 差の半分は「どこを無効にするか」から来る。同じ画素の平均誤差は SGBM の方がわずかに小さく(0.918 対 0.912 px)、処理時間は SGBM の数十〜百倍余り(55〜108 倍を観測、計測の環境で揺れる)かかる。★失敗する場所: 真値から幾何で数えた遮蔽(6.9 %)は 57 % が左右一致で無効に落ちる。誤りが残るのは奥行きの段差の近く(bad-2 14.1 %)と、真値の対応で左右の明るさが食い違う面(反射・光沢の代理、11.5 %)で、それ以外は 0.85 %。「無地で壊れる」は最も平らな 1.2 % にしか当たらないが、その無地では SGBM に大きく負ける(bad-2 4.14 % 対 0.31 %、無効 14.5 % 対 0.0 %)。床のコンクリートは 0.68 % で最もよく合う。★名前の ms は多重スケールではなく複数走査線: 集約の向きを 2 → 4 にすると 5.55 → 4.67 %、op の外で 1/2 に縮めた段は 8.31 %。★距離は doffs を渡して相対誤差 中央 0.37 %、点群は OpenCV と最大 0.0006 mm で一致。★★円の姿勢は op が正しく、問題は条件の悪さ: リム(半長軸 62 px、弧 223°)で中心 23.5 mm・法線 7.74° ずれるが、真値の円の上の点を渡すと 1.2e-6°。縁の点の食い違い 0.52 px と同じ雑音で法線の誤差は中央 5.79°・95 % 点 9.39°。2 つの解は再投影の差 0.007 px で選べず、法線は 50.7° 違う。同じ縁を推定した視差で 3-D にすると 2.3 mm・1.59°。★points_lepetit の点で crop_rectangle2 → create_ncc_model → find_ncc_models を引くと bad-2 13.8 %(でたらめな画素 16.3 %)、スコア 0.9 以上で 2.2 %。OpenCV の matchTemplate と最良位置が全点一致。★★MiddEval3 の訓練 15 場面(nocc)で bad-2 の中央 6.52 % 対 SGBM 10.20 %、有効画素では 14 場面で下回るが、無効も誤りに数えると 12 場面(Playroom・Playtable・Shelves は SGBM が上)。比べた SGBM は既定に近い設定で、参照側の設定は振っていない。露出・照明を変えても ms はほぼ動かない(−0.18 / +0.94 点、SGBM +4.99 / +18.08 点。照明では無効が増える)。逆に平行化だけが違う対(Playtable、縦の残差 平均 0.24 px)では ms が +12.1 点悪化し SGBM は +0.6 点 —— 縦のずれに弱い(理由は未確認)。
+実写のステレオ対から、視差・距離・面・円の姿勢まで求めた。Middlebury 2014 の真値の視差で平均誤差を採点し、OpenCV と比べた。両方が有効な画素だけで比べるとほぼ同等で、差の多くはどこを無効にするかの選び方から来る。
 
 [![実写のステレオ対で視差・距離・面・円の姿勢まで ―― 真値視差で採点し、壊れる場所を地図にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/02_failure_map.png)
 
@@ -2745,6 +2745,36 @@ py -3.11 examples/poc_real_chessboard_undistort.py
 この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_chessboard_undistort)
 
 使用 op(ノートへ): [`camera_calibration_lm`](https://furuse.work/ops/calib/calibrate/camera_calibration_lm.html) · [`change_radial_distortion_image`](https://furuse.work/ops/mv/resample/change_radial_distortion_image.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`map_image`](https://furuse.work/ops/mv/resample/map_image.html) · [`points_lepetit`](https://furuse.work/ops/mv/detect/points_lepetit.html) · [`rectify_to_world_plane`](https://furuse.work/ops/mv/resample/rectify_to_world_plane.html)
+
+## No.2026.317 —— 置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成)―― 単純な長方形の当てはめが最良で、一般の多角形が並ぶのは色度版だけ、台の色が近い所としわ 3 mm 以上で崩れる
+
+畳む前のタオルは、角と辺の位置が分かれば、つかむ場所が決まる。合成の画像で角は 1 mm 前後の誤差で見つかったが、差は真値の定義に左右される。単純な長方形の当てはめが最良で、台の色が近いときと強いしわでは、どの方法も崩れる。
+
+[![置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成)―― 単純な長方形の当てはめが最良で、一般の多角形が並ぶのは色度版だけ、台の色が近い所としわ 3 mm 以上で崩れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/01_towel_overlays.png)
+
+*↑ **置かれたタオルの角・辺・折り線を古典の画像処理で見つける(合成)―― 単純な長方形の当てはめが最良で、一般の多角形が並ぶのは色度版だけ、台の色が近い所としわ 3 mm 以上で崩れる** ―― 矩形のタオルを 0〜2 回折って台に置いた絵を、自前の幾何で描いた(MuJoCo の布は台を貫通し、追加の 3 設定でも直らず使えなかった)。厚み・しわ・縞と裾の縫い目・台の木目・影を描き、真の隅は描画側が持ち、隅の高さで投影した点とする(台の面で投影すると提案(RGB)と最小外接長方形の順位が入れ替わるので、1 mm 前後の差は真値の定義に左右される)。検出は gaussian・otsu・fill_up・sk_find_contours・xg_gen_polygons で領域と辺を出し、辺の直線の交点を隅にする(提案)。基準線は sk_corner_harris だけ、凸包の頂点だけ、重心から最遠の 4 点、最小外接長方形。種 20 本 x 折り方 4 通り(80 枚)の隅の誤差の中央値は、提案(色度)1.08 mm、最小外接長方形 1.14 mm、提案(RGB)1.55 mm、Harris のみ 3.62 mm、凸包 4.16 mm。90 % 点は提案(RGB)3.00 mm に対し最小外接長方形 2.01 mm で、長方形の前提が使える範囲では単純な基準線が提案(RGB)に勝つ。再現率(5 mm 以内)は粗い基準線(重心から最遠の 4 点)でも 0.944 で、提案(0.991 / 0.997)との差が小さいので、補助の数に留める。再現率が 0.9 に届く最低のコントラスト ΔE は、提案(RGB)46・最小外接長方形(RGB)46・色度の 2 方法 32・Harris 57。ΔE 0 では提案と最小外接長方形(RGB・色度)がどれも 0.15 以下で、領域を使わない Harris が 0.61 と最良。しわ 3 mm / 4 mm の再現率は、提案(RGB)0.50 / 0.30、最小外接長方形(RGB)0.82 / 0.55、提案(色度)0.80 / 0.68、Harris 0.51 / 0.33。交点を取らず多角形の頂点をそのまま隅にすると、しわ 4 mm で 0.84 に上がり(0 mm では誤差が 2.4 mm に悪化)、しわで落ちる原因の一部は直線の当てはめにあるという手がかりになる(未確認)。つかむ隅の順位は辺の内側 8 mm の裾の縫い目で 0.917(偶然 0.417)で、縫い目を描かない対照は種 0〜19 で 0.267(種の組 10 組を合わせると 0.348)。縫い目は私が描画に入れた手がかりで、実物が同じとは限らない。数値は種 0〜19 の 1 組。種の組を 10 組にすると、提案(色度)と最小外接長方形の順が 1 組で入れ替わり(差 0.002 mm)、ここに挙げたほかの並びは変わらなかった。*
+
+[![half fold, wrinkle 1 mm, 20 seeds per point.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast.png)
+
+*↑ 測定の図 ―― half fold, wrinkle 1 mm, 20 seeds per point. hull vertices and 4-farthest are in the table, not drawn*
+
+[![half fold, dE 69, 20 seeds per point.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle.png)
+
+*↑ half fold, dE 69, 20 seeds per point.*
+
+[![median error: min-area rectangle (RGB) 1.14 mm, proposed (chroma) 1.08 mm, proposed (RGB) 1.55 mm.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary.png)
+
+*↑ median error: min-area rectangle (RGB) 1.14 mm, proposed (chroma) 1.08 mm, proposed (RGB) 1.55 mm.*
+
+```
+py -3.11 examples/poc_cloth_towel_corners_synth.py
+```
+
+ソース: [examples/poc_cloth_towel_corners_synth.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cloth_towel_corners_synth.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth)
+
+使用 op(ノートへ): [`fill_up`](https://furuse.work/ops/2d/region/fill_up.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_corner_harris`](https://furuse.work/ops/2d/edges/sk_corner_harris.html) · [`sk_find_contours`](https://furuse.work/ops/2d/contour/sk_find_contours.html) · [`xg_gen_polygons`](https://furuse.work/ops/2d/xldgeom/xg_gen_polygons.html)
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 
@@ -3090,11 +3120,11 @@ py -3.11 examples/poc_lens_solves_afocal.py
 
 ## No.2026.239 —— 見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える
 
-肉や仁と同じ色の異物は、カラーカメラでは見分けられない。公開の実画像を分光画像として分類すると、豚バラの上の異物を誤警報 1.1 % で検出できた。帯域を減らすと誤警報が増え、合成データでは足りた条件が実データでは足りなかった。
+公開の実画像を近赤外の分光画像として使い、豚バラの上の異物を分類した。撮影を分けて画素ごとに採点すると、誤警報 1.1 % で大半を検出できた。帯域を減らすと誤警報が増え、色が同じ異物をカラーで見分けられないことは合成でだけ示した。
 
 [![見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png)
 
-*↑ **見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える** ―― 公開の実画像 2 つ(どちらも CC BY 4.0、repo には入れず取得スクリプト + キャッシュ)を Fullseye の op(`read_envi`・`spec_continuum_removal`・`spec_angle_mapper`・`spec_band_selection_fisher`)で分類し、データの正解ラベルで採点した。樹脂の破片 6 種(RODARE 3390、400〜2500 nm の分光カメラ): 連続体除去 + SAM でクラス平均の再現率 0.816(生の反射率の SAM は 0.439 —— 暗い破片は足し算のベースラインに負ける)。別の撮影の基準試料をライブラリにすると PP / PET / PE を 0.878、この PoC の材料表の物理モデルだけをライブラリにすると 0.628(当て推量 0.333)。黒い樹脂は反射率 0.03 で C-H の谷が他の 1/6。試験ヘッダの fwhm が切り出す前の450 個のまま残っていたのを fail-closed の読み手が拒否した —— 波長の札は樹脂の谷の位置で確かめ、fwhm だけ直した写しを読む。豚バラの上の異物 10 種(Zenodo 17242553、InGaAs ラインスキャン分光カメラ): 撮影で分けて採点(65 万画素)、SAM は AUC 0.92・誤警報 10 %、全 184 帯の LDA で検出 0.92・誤警報 1.1 %、Fisher の 6 帯で誤警報 2.1 %、3 帯では 23 % —— 合成では 3 帯で足りたのに実データでは足りない。合成(材料表の吸収帯 → Kubelka–Munk → ハロゲン × 溶融石英のレンズ × InGaAs、新 op 8 本)は壊れ方の補助: 仁と同色の異物は RGB でAUC 0.48、仁の含水率 12 % で誤排出 98 %、白板の後にランプが 200 K 下がると 49 %、カーボンブラック 1 wt % で PP と PE が 1 画素の雑音に埋もれる。合成の 1.000 と実データの 0.82〜0.92 の差が逆犯罪の大きさ。パラメータは一次情報(USGS の実測、論文、データシート)で照合し、PE の帯の強さを 2〜3 倍下げ、PET の最も深い 2 帯を足し、材料表の水の k を Segelstein 1981 に直した。*
+*↑ **見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える** ―― 公開の実画像 2 つ(どちらも CC BY 4.0、repo には入れず取得スクリプト + キャッシュ)を Fullseye の op(`read_envi`・`spec_continuum_removal`・`spec_angle_mapper`・`spec_band_selection_fisher`)で分類し、データの正解ラベルで採点した。樹脂の破片 6 種(RODARE 3390、400〜2500 nm の分光カメラ): 連続体除去 + SAM でクラス平均の再現率 0.816(生の反射率の SAM は 0.439 —— 暗い破片は足し算のベースラインに負ける)。別の撮影の基準試料をライブラリにすると PP / PET / PE を 0.878、この PoC の材料表の物理モデルだけをライブラリにすると 0.628(当て推量 0.333)。黒い樹脂は反射率 0.03 で C-H の谷が他の 1/6。試験ヘッダの fwhm が切り出す前の450 個のまま残っていたのを fail-closed の読み手が拒否した —— 波長の札は樹脂の谷の位置で確かめ、fwhm だけ直した写しを読む。豚バラの上の異物 10 種(Zenodo 17242553、InGaAs ラインスキャン分光カメラ): 撮影で分けて採点(65 万画素)、SAM は AUC 0.92・誤警報 10 %、全 184 帯の LDA で検出 0.92・誤警報 1.1 %、Fisher の 6 帯で誤警報 2.1 %、3 帯では 23 % —— 合成では 3 帯で足りたのに実データでは足りない。合成(材料表の吸収帯 → Kubelka–Munk → ハロゲン × 溶融石英のレンズ × InGaAs、新 op 8 本)は壊れ方の補助: 仁と同色の異物は RGB でAUC 0.48、仁の含水率 12 % で誤排出 98 %、白板の後にランプが 200 K 下がると 49 %、カーボンブラック 1 wt % で PP と PE が 1 画素の雑音に埋もれる。合成の 1.000 と実データの 0.82〜0.92 の差が逆犯罪の大きさ。パラメータは一次情報(USGS の実測、論文、データシート)で照合し、PE の帯の強さを 2〜3 倍下げ、PET の最も深い 2 帯を足し、材料表の水の k を Segelstein 1981 に直した。数字の出どころ: 実データの数字は 2026-10-15 の手元の実行の記録値で、CI はデータを持たず記録値を印字する(2026-11-13 に手元のデータで作者と独立に再実行して一致)。*
 
 用語: SAM — 二つのスペクトルをベクトルとみなし、そのなす角で形の類似度を測る分類法で、全体の乗算には不変。
 
@@ -3448,11 +3478,11 @@ py -3.11 examples/poc_bev_sensor_fusion.py
 
 ## No.2026.058 —— CAD と実測点群の差分検査 ―― 合わせた分だけ欠陥が消え、無い所にへこみが出る
 
-点群を設計形状へ合わせてから検査すると、位置合わせが欠陥を吸収したり別の場所へ移したりする。へこみや反りを既知量で入れた部品を合わせ、欠陥のない対照にも66.5平方mmの公差外領域が出る条件を測った。図では、剛体運動に似た偏差は薄まり、稜線では対応先が隣面へ飛んで偽のへこみが現れる。
+点群を設計形状へ合わせてから検査すると、位置合わせが偏差の一部を吸収し、外れて見える場所が移る。反りを既知量で入れた部品では、真値がごく小さい中央に深さ 121 µm の読みが出た。合成の結果で、設計形状を点に置き換えて測ると欠陥のない対照でも稜線に公差外が出る。
 
 [![CAD と実測点群の差分検査 ―― 合わせた分だけ欠陥が消え、無い所にへこみが出る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene.png)
 
-*↑ **CAD と実測点群の差分検査 ―― 合わせた分だけ欠陥が消え、無い所にへこみが出る** ―― 解析形状の機械部品に、局所へこみ・反り・摩耗を法線方向の既知量として仕込み、既知の姿勢・雑音・欠測つきの実測点群を合成した。合わせてから符号付き偏差と公差外面積を測ると、局所へこみの読みは 3.7 % しか薄まらないのに、真値が 1.2 µm しかない部品中央に深さ 121 µm の存在しないへこみが出る(閉形式の予測 -120 µm)。消えるか化けるかは剛体 6 自由度が吸える偏差場に似ているかどうかで決まり、稜線では最近傍が隣の面へ飛んで、欠陥ゼロの対照でも 66.5 mm^2 の偽の公差外領域が出た。*
+*↑ **CAD と実測点群の差分検査 ―― 合わせた分だけ欠陥が消え、無い所にへこみが出る** ―― 解析形状の機械部品に、局所へこみ・反り・摩耗を法線方向の既知量として仕込み、既知の姿勢・雑音・欠測つきの実測点群を合成した。合わせてから符号付き偏差と公差外面積を測ると、局所へこみの読みは 3.7 % しか薄まらないのに、真値が 1.2 µm しかない部品中央に深さ 121 µm の存在しないへこみが出る(閉形式の予測 -120 µm)。消えるか化けるかは剛体 6 自由度が吸える偏差場に似ているかどうかで決まり、稜線では最近傍が隣の面へ飛んで、欠陥ゼロの対照でも 66.5 mm^2 の偽の公差外領域が出た。数字の出どころ: 合成の値で、この PoC に縮小の版は無く CI も同じ実行をする(2026-11-13 の作者と独立の再実行で −121.1 µm と 66.5 mm^2 を確認)。*
 
 [![真の姿勢を与えた最終行が推定器そのものの床。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/02_methods_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/02_methods.png)
 
@@ -4176,7 +4206,7 @@ py -3.11 examples/poc_bga_ball_type_roundtrip.py
 
 ## No.2026.309 —— 同じ部品を 3-D センサの 5 方式で測るシミュレーション ―― 縞投影・間接 ToF・光切断・照度差ステレオ・ステレオは、どの材質のどこで壊れるか
 
-展示会のブースは自社の 1 方式を最良の部品で見せる。ここでは段差 3 mm・止まり穴・斜面 26.6°・V 溝・リブ・浅い打痕(50 / 15 µm)を持つ同じ部品を、つや消し・金属光沢・半透明の樹脂・黒の 4 材質で、ステレオ・縞投影(位相シフト格子投影)・間接 ToF・光切断・照度差ステレオの 5 方式で撮り、寸法表の真値と比べた。★これはシミュレーションで、実機を測った結果ではない。また 5 方式は同じ等級の装置ではない: 縞投影・光切断・ステレオ・照度差ステレオは画素 0.05 mm の計測器の設定、間接 ToF は画素 0.4 mm・100 MHz の距離カメラの設定で、分解能が 8 倍違う。ToF が共通の物差し 0.1 mm で全面外れるのは、この部品の大きさ(40 × 24 mm)に対する道具の用途違いを示すだけで、方式の優劣ではない(同じ場面を構造化光と ToF の実機で撮った T-LESS では、物体の内側の雑音は 4.0 mm と 4.4 mm でほぼ同じ)。照度差ステレオの高さの定数は真値に合わせてあり、ほかの方式と同じ条件ではない(2026-11-13、作者と独立の検証の指摘で明記)。撮像は物理で描き(反射、影、加工の筋、内部散乱、レンズのぼけと周辺減光、コヒーレントなスペックル、鏡面の 1 回反射、V 溝の相互反射、12 bit のセンサ雑音)、形の外れは全方式に共通の物差し 0.1 mm / 1 mm で数え、一様な偏りは別に出した。三角測量の角はステレオ・縞投影・光切断とも 30°、露光はどの方式もつや消しの 8 倍までの自動露光にそろえた。★つや消しの雑音は縞投影 4.5 µm・ステレオ 6.6 µm・光切断 14.3 µm(平らな板)・ToF 1.34 mm。順は条件で動く(ステレオを ±5° にすると 20.9 µm)。ToF(画素 0.4 mm)はつや消しでも 94 % が 0.1 mm を超えて外れる。★金属光沢: 縞投影の V 溝は 56 % が鏡面の 2 回反射で外れ(つや消し 10 %)、ToF は露光が鏡面の返りに合わさって 86 % が 1 mm を超えて外れる。★半透明の樹脂: ステレオは模様がにじんで 75 % 欠測、縞投影は一様に −67 µm 沈むが平らな所の形の外れは 10 %。★照度差ステレオは段差を 2.9 mm 失う(乱数の種 3 通りで同じ)。打痕 50 µm は照度差ステレオ +7 µm・縞投影 +3 µm・光切断 −3 µm で読み、ToF は読めない。★光切断のスペックルは、同じ条件の op の独立な 2-D コヒーレント結像のシミュと 0.87〜0.96 倍で合う(画素 0.05 mm で 13 % 低い分は未解決)。Dorsch の式そのもの(10.35 µm)の 1.09〜1.38 倍、op の経験則 √(w/L) をつけた値の 0.74〜0.85 倍(縞投影と ToF の雑音の式は同じ雑音モデルの検算)。★受入試験の物差し(poc_virtual_acceptance_3d と同じ評価 op、直径 8 mm の球 2 つと平らな板)で探針の誤差 PF は、点を 200 にそろえて 200 回選び直した中央値でつや消しの縞投影 0.027・照度差ステレオ 0.038・ステレオ 0.380・ToF 4.87 mm。光切断は 0.104 mm(5〜95 % 0.077〜0.129、全部の点 0.173 mm)で、0.1 mm 以下とは言えない(限界)。金属光沢にすると縞投影は 0.238 mm。PF は最大 − 最小なので点が多いほど大きく、点の数に依らない残差 RMS も表に並べた。★★実データが支えるのは段差の縁の外側の向きだけ: 相関で対応を取る方式は上の面の高さのまま「太り」、ToF は物体と背景の間に「浮く」。実写ステレオ(Middlebury 2014)は太る 39 % / 浮く 9 %。T-LESS の同じ場面では、構造化光の深度センサが太る 34 % / 浮く 5 %、ToF の深度センサが浮く 48 % / 太る 18 %。深度の元の画素で数え直しても向きは同じ(浮く ToF 52 % / 構造化光 11 %)。材質の値は著者が置いた値で、材質の主張はシミュだけ。既存の方式別の深掘り(受入試験、ToF 3 本、縞の相互反射、光切断の床 2 本、実写ステレオ 2 本、照度差ステレオ)と違うのは、同じ部品・同じ材質を 5 方式とも生の画像から描いて復号し、方式をまたいで同じ物差しで並べたこと。判定の「0.1 mm で測れる」は 0.1 mm 超 5 % 以下・1 mm 超 1 % 以下・欠測 20 % 以下。★数字の出どころ: 上の数字はどれも図つきの full 実行(画素 0.05 mm、手元で約 12 分)の値で、2026-11-13 に走らせ直して一致を確かめた。CI が回す縮小版(画素 0.1 mm、図なし)では値が動く: 金属光沢の縞投影の V 溝の外れ 86 %(full 56 %)、光切断の PF 0.071 mm(full 0.104 mm)、金属光沢の縞投影の PF 0.406 mm(full 0.238 mm)。門はどちらでも通る幅で置いた。
+同じ部品を、方式の違う立体センサの模型で、つや消し・金属光沢・半透明・黒の材質ごとに測ったシミュレーションである。形の外れを共通の物差し 0.1 mm で数え、寸法表の真値と比べた。方式ごとに分解能の桁が違うので順位ではなく、どの材質のどこで壊れるかを見る。
 
 [![同じ部品を 3-D センサの 5 方式で測るシミュレーション ―― 縞投影・間接 ToF・光切断・照度差ステレオ・ステレオは、どの材質のどこで壊れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/01_map.png)
 
@@ -4218,7 +4248,7 @@ py -3.11 examples/poc_3d_sensor_modalities.py
 
 ## No.2026.314 —— 実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせないよりは良く、等速の仮定に対しては 0.45〜0.82 倍(trim の選び方 = 分割しだい、1 系列 32 枚)、窓の残差は距離の 2 乗かどうかを決められなかった(TUM RGB-D)
 
-机の上を撮った公開データの深度画像で、隣り合う画像の位置合わせをモーションキャプチャの真値と比べた。合わせないときの 0.42 倍まで誤差は減ったが、直前の動きを使う等速の仮定とほぼ同じ水準だった。小さな窓の平面の残差は距離とともに増えたが、量子化と窓の広さが混ざり、距離の二乗かどうかは決められなかった。
+机の上を撮った公開データのひと続きの深度画像で、隣り合う画像の位置合わせをモーションキャプチャの真値と比べた。合わせないときより誤差は減ったが、等速の予測と比べた良さは、外れた対応の捨て方と 8 通りの画像の分け方で大きく変わった。小さな窓の平面の残差は距離とともに増えたが、距離の二乗かどうかは決められなかった。
 
 [![実測の深度カメラの軌跡と平面の残差を外の真値で採点する ―― 合わせないよりは良く、等速の仮定に対しては 0.45〜0.82 倍(trim の選び方 = 分割しだい、1 系列 32 枚)、窓の残差は距離の 2 乗かどうかを決められなかった(TUM RGB-D)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/01_depth_and_tiles.png)
 
