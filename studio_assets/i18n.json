@@ -499,6 +499,14 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "* = rearranged since this mode was chosen; choose the mode again to return to its arrangement": {
+   "ja": "* = このモードを選んだ後に並べ替えました。もう一度このモードを選ぶと、その配置に戻ります",
+   "zh": "* = 选择此模式后已重新排列;再次选择该模式即可回到它的布局",
+   "tw": "* = 選擇此模式後已重新排列;再次選擇該模式即可回到它的配置",
+   "ko": "* = 이 모드를 고른 뒤에 배치를 바꿨습니다. 같은 모드를 다시 고르면 그 배치로 돌아갑니다",
+   "de": "* = seit der Wahl dieses Modus umgeordnet; den Modus erneut wählen, um zu seiner Anordnung zurückzukehren",
+   "hi": "* = यह मोड चुनने के बाद व्यवस्था बदली गई; उसी मोड को फिर चुनने पर उसकी व्यवस्था लौट आती है"
+  },
   "Stopped": {
    "ja": "止めました",
    "zh": "已停止",

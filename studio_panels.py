@@ -66,11 +66,12 @@ S_ST_ERRORS = "Errors: %d"
 S_ST_VARS = "Variables: %d"
 S_WORK_MODE = "Work mode"
 S_WORK_MODE_TIP = "choose which panels are shown; the name on the button is the mode in use"
+S_MODE_CHANGED = "* = rearranged since this mode was chosen; choose the mode again to return to its arrangement"
 S_STRIP = {"auto": "Tools and tabs: automatic (on the left when the panel is wide)",
            "top": "Tools and tabs: on top",
            "left": "Tools and tabs: on the left"}
 STRINGS = (S_BAR, S_HINT, S_FLOAT, S_DOCK, S_HIDE, S_SHOW, S_LAYOUT, S_RESET, S_CODE_LEFT,
-           S_CODE_BOTTOM, S_DOCK_ALL, S_MENU, S_MORE, S_REDUCE, S_REDUCE_TIP, S_OPENING, S_SAMPLE, S_SEARCHING, S_ST_SHOWN, S_ST_STAGES, S_ST_ERRORS, S_ST_VARS) + tuple(S_STRIP.values()) + (S_WORK_MODE, S_WORK_MODE_TIP)
+           S_CODE_BOTTOM, S_DOCK_ALL, S_MENU, S_MORE, S_REDUCE, S_REDUCE_TIP, S_OPENING, S_SAMPLE, S_SEARCHING, S_ST_SHOWN, S_ST_STAGES, S_ST_ERRORS, S_ST_VARS) + tuple(S_STRIP.values()) + (S_WORK_MODE, S_WORK_MODE_TIP, S_MODE_CHANGED)
 # (the strings of the strip - S_OVERFLOW, S_SCROLL_BACK, S_SCROLL_ON - are added below, where they are defined)
 
 _QWIDGETSIZE_MAX = 16777215
@@ -310,7 +311,8 @@ def mode_switch(win, bar, actions):
 
     def follow(*_a):
         on = [a for a in actions.values() if a.isChecked()]
-        b.setText((on[0].text() if on else "").replace("&", "&&"))
+        changed = (getattr(win, "_panels", None) or {}).get("mode_modified")
+        b.setText(label_text(on[0].text() if on else "") + (" *" if changed else ""))   # D128: rearranged since
         b.setChecked(True)                   # pressed = the mode in use is named on it
     for a in actions.values():
         a.toggled.connect(follow)
@@ -342,8 +344,81 @@ def compose_top_tips(win, tr):
         lines = [tool_tip(tr(S_WORK_MODE), tr(S_WORK_MODE_TIP))]
         for a in b.menu().actions():
             lines.append(tool_tip(a.text(), "", a.shortcut().toString(QtGui.QKeySequence.NativeText)))
+        if (getattr(win, "_panels", None) or {}).get("mode_modified"):
+            lines.append(tr(S_MODE_CHANGED))
         b.setToolTip("\n".join(lines))
         b.setAccessibleName(tr(S_WORK_MODE))
+
+
+def mode_differs(win):
+    """D128: whether the arrangement on screen is no longer the one the work mode in use asks for - a
+    panel shown / hidden against the mode, a panel in a separate window, or a panel on another side
+    than when the mode was chosen. (Sizes do not count; image focus is its own state.)"""
+    st = getattr(win, "_panels", None)
+    state = getattr(win, "_layout_state", None)
+    if st is None or state is None or state.focus_image:
+        return False
+    mode = studio_layout.MODES.get(state.mode)
+    if mode is None:
+        return False
+    base = st.get("mode_areas") or {}
+    for key, dock in win._docks.items():
+        want = key in mode.visible and key not in mode.collapsed
+        if want == dock.isHidden():
+            return True
+        if dock.isHidden():
+            continue
+        if dock.isFloating() or (key in base and win.dockWidgetArea(dock) != base[key]):
+            return True
+    return False
+
+
+def mode_watch(win):
+    """Look again whether the arrangement is still the mode's, and let the switch say so (" *")."""
+    st = getattr(win, "_panels", None)
+    if st is None or getattr(win, "_applying_layout", False):
+        return bool(st and st.get("mode_modified"))
+    now = mode_differs(win)
+    if now != bool(st.get("mode_modified")):
+        st["mode_modified"] = now
+        if getattr(win, "_mode_switch", None) is not None:
+            compose_top_tips(win, st["tr"])      # the switch's text and hint follow
+    return now
+
+
+def mode_chosen(win, mode_id):
+    """A work mode was chosen (the window has applied it). Chosen AGAIN while its arrangement was changed:
+    back to the arrangement the mode had when it was chosen - the panels where they were then, what the
+    user showed / hid against the mode forgotten (D128: "press it to return to that arrangement")."""
+    import dataclasses   # noqa: PLC0415
+    st = _state(win)
+    if st.get("mode_applied") == mode_id and st.get("mode_modified"):
+        state = win._layout_state
+        overrides = {m: v for m, v in state.overrides.items() if m != mode_id}
+        blob = st.get("mode_state") or getattr(win, "_default_state", None)
+        win._applying_layout = True
+        try:
+            if blob is not None:
+                win.restoreState(blob)
+        finally:
+            win._applying_layout = False
+        win._layout_state = studio_layout.apply_mode(dataclasses.replace(state, overrides=overrides), mode_id)
+        apply = getattr(win, "_apply_layout_state", None)
+        if apply is not None:
+            apply()
+        try:
+            if st.get("settings") is not None:
+                st["settings"]().setValue(WORK_LAYOUT_KEY, studio_layout.to_json(win._layout_state))
+        except Exception:                        # noqa: BLE001 - a broken store: the arrangement is still back
+            pass
+        after_restore(win)
+    st["mode_applied"] = mode_id
+    st["mode_state"] = win.saveState()
+    st["mode_areas"] = {k: win.dockWidgetArea(d) for k, d in win._docks.items()}
+    st["mode_modified"] = mode_differs(win)
+    if getattr(win, "_mode_switch", None) is not None:
+        compose_top_tips(win, st["tr"])          # the switch is told either way (its text was set before this)
+    return st["mode_modified"]
 
 
 def glyph_action(win, action, name):
@@ -2910,6 +2985,15 @@ def install(win, tr, settings=None):
             return True
 
     st["tab_keys"] = TabKeys(win)
+    watch = QtCore.QTimer(win); watch.setSingleShot(True); watch.setInterval(0)      # D128: once per turn
+    watch.timeout.connect(lambda: mode_watch(win))
+    st["mode_watch"] = watch
+    for mode_id, action in (getattr(win, "_work_mode_actions", None) or {}).items():
+        action.triggered.connect(lambda _c=False, m=mode_id: mode_chosen(win, m))
+    for dock in win._docks.values():
+        dock.visibilityChanged.connect(lambda _v: watch.start())
+        dock.dockLocationChanged.connect(lambda _a: watch.start())
+        dock.topLevelChanged.connect(lambda _f: watch.start())
     follow = Follow(win); st["follow"] = follow
     _default_registrations(win)
     tick = QtCore.QTimer(win); tick.setInterval(250)             # status read-outs: 4 times a second

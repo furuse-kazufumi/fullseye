@@ -1614,3 +1614,68 @@ def test_image_area_ground_and_title_take_role_colours(tmp_path, monkeypatch):
             win._apply_theme(theme=studio_theme.DEFAULT_THEME, save=False); _pump(app, 0.3)
     finally:
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# D128 — the work-mode switch: " *" once the arrangement is no longer the mode's; chosen again, it returns
+# --------------------------------------------------------------------------- #
+def test_work_mode_marked_modified_after_rearrange(tmp_path, monkeypatch):
+    from PySide6 import QtCore
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        sw = win._mode_switch
+        modes = win._work_mode_actions
+        st = win._panels
+        assert len(modes) == 4
+        assert sw.text() == modes["code"].text() and not studio_panels.mode_differs(win)   # first run: as the mode asks
+        modes["build"].trigger(); _pump(app, 0.3)
+        name = modes["build"].text()
+        assert sw.text() == name and sw.isChecked() and not st["mode_modified"]
+        ops = win._docks["operators"]
+        area = win.dockWidgetArea(ops)
+        assert ops.isVisible() and area == QtCore.Qt.RightDockWidgetArea
+        # 1. a panel moved to another side: the mode stays pressed, its name carries the mark (G01(h))
+        win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, ops); _pump(app, 0.3)
+        assert sw.text() == name + " *" and sw.isChecked() and modes["build"].isChecked()
+        assert studio_panels.S_MODE_CHANGED in sw.toolTip()
+        assert [a.text() for a in sw.menu().actions()] == [a.text() for a in modes.values()]   # the entries are not marked
+        modes["build"].trigger(); _pump(app, 0.3)                           # chosen again: back to its arrangement
+        assert sw.text() == name and win.dockWidgetArea(ops) == area and ops.isVisible()
+        assert studio_panels.S_MODE_CHANGED not in sw.toolTip()
+        # 2. a panel put away against the mode
+        ops.hide(); _pump(app, 0.3)
+        assert sw.text() == name + " *" and modes["build"].isChecked()
+        modes["build"].trigger(); _pump(app, 0.3)
+        assert sw.text() == name and ops.isVisible()
+        assert "build" not in win._layout_state.overrides                   # what was hidden against it is forgotten
+        # 3. a panel brought in that the mode does not show, and a panel made a separate window
+        win._docks["variables"].show(); _pump(app, 0.3)
+        assert sw.text() == name + " *"
+        modes["build"].trigger(); _pump(app, 0.3)
+        assert sw.text() == name and win._docks["variables"].isHidden()
+        studio_panels.toggle_float(win, "pipeline", True); _pump(app, 0.3)
+        assert sw.text() == name + " *"
+        win._apply_language("ja"); _pump(app, 0.4)                          # the mark survives the language pass
+        try:
+            assert sw.text() == modes["build"].text() + " *" and sw.text() != name + " *"
+        finally:
+            win._apply_language("en"); _pump(app, 0.3)
+        modes["build"].trigger(); _pump(app, 0.3)
+        assert sw.text() == name and not win._docks["pipeline"].isFloating()
+        # 4. another mode: its own arrangement, no mark; resizing a panel is not a rearrangement
+        ops.hide(); _pump(app, 0.3)
+        assert sw.text() == name + " *"
+        modes["code"].trigger(); _pump(app, 0.3)
+        assert sw.text() == modes["code"].text() and not st["mode_modified"]
+        win.resizeDocks([win._docks["program"]], [200], QtCore.Qt.Vertical); _pump(app, 0.3)
+        assert sw.text() == modes["code"].text()
+        modes["build"].trigger(); _pump(app, 0.3)                           # what the user hid in "build" is remembered:
+        assert ops.isHidden() and sw.text() == name + " *"                  # so the mark is there, honestly
+        modes["build"].trigger(); _pump(app, 0.3)
+        assert ops.isVisible() and sw.text() == name
+        win._toggle_focus_image(True); _pump(app, 0.3)                      # image focus is its own state, not a mark
+        assert not studio_panels.mode_differs(win)
+        win._toggle_focus_image(False); _pump(app, 0.3)
+        assert sw.text() == name
+    finally:
+        _close(app, win)
