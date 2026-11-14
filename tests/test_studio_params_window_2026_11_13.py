@@ -672,7 +672,8 @@ def test_every_message_is_translated_into_six_languages():
     """対訳の表: 画面の文の型は全部 6 言語(ja・zh・tw・ko・de・hi)に訳があり、% の並びが英語と同じ。使わない行は無い。
     理由だけを素通しにする型("%s")は無い(束の門の理由も UI の言語の文 + 括弧)。"""
     table = M.load_i18n_table()
-    assert len(table) >= 128 and "Could not open %s (%s)" in table
+    assert len(table) >= 128
+    assert "Could not open %s (%s)" in table
     assert M.LANGS == ("en", "ja", "zh", "tw", "ko", "de", "hi")
     templates = list(M.MESSAGES.values())
     assert len(templates) == 45 and [t for t in templates if not re.search(r"[A-Za-z]{3}", t)] == []
@@ -1738,6 +1739,8 @@ def test_params_drop_reject_says_why(qapp, ini, tmp_path):
     ]
     seen = 0
     for urls, text, wants in cases:
+        p.show_message("", "info")                                      # 前の場合の知らせを残さない(空で通さない)
+        assert p.message_label.full_text() == "" and p.message_level == "info"
         assert _drop(p, _mime(urls, text)) == (True, True), (urls, text)
         msg = p.message_label.full_text()
         assert p.message_level == "warn" and msg.startswith("\u25b2 "), msg
@@ -1754,13 +1757,21 @@ def test_params_drop_reject_says_why(qapp, ini, tmp_path):
 
 
 def test_params_deferred_calls_do_not_outlive_the_window(qapp, ini, tmp_path):
-    """直し(既存): 遅らせた呼び出し(列の幅の等分・表の作り直し)が、窓が消えた後に走らない。直す前は消えた表に触って
-    RuntimeError か access violation(2 つ続けて窓を作る試験で数回に 1 回落ちた)。呼び出しを予約してから窓を消し、
-    次の回で何も起きない事を、予約の種類ごとに数える。"""
+    """直し(既存): 遅らせた呼び出し(列の幅の等分・表の作り直し・段と向きの組み替え・theme の読み直し)が、窓が消えた後に
+    走らない。直す前は消えた表に触って RuntimeError か access violation(2 つ続けて窓を作る試験で数回に 1 回落ちた)。
+    呼び出しを予約してから窓を消し、次の回で何も起きない事を、予約の種類ごとに数える。予約の書き方は構文木でも数える:
+    QTimer.singleShot は全部「相手(self)つきの 3 引数」(相手が消えたら Qt が捨てる)。"""
     import shiboken6
 
+    tree = ast.parse(io.open(os.path.join(ROOT, "studio_params_qt.py"), encoding="utf-8").read())
+    shots = [n for n in ast.walk(tree) if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+             and n.func.attr == "singleShot"]
+    bare = [n.lineno for n in shots if not (len(n.args) == 3 and isinstance(n.args[1], ast.Name) and n.args[1].id == "self")]
+    assert len(shots) >= 4 and bare == [], bare
+    kinds = ("fit", "refresh", "replace", "theme")
+    assert len(shots) == len(kinds)                                        # 予約が増えたら、下の種類も足す
     steps = 0
-    for kind in ("fit", "refresh"):
+    for kind in kinds:
         d = tmp_path / kind
         d.mkdir()
         win = _window(qapp, _three_files(d))
@@ -1771,15 +1782,24 @@ def test_params_deferred_calls_do_not_outlive_the_window(qapp, ini, tmp_path):
             vp = p.tree.viewport()
             p.eventFilter(vp, QtGui.QResizeEvent(vp.size(), vp.size()))     # 等分を次の回へ予約する
             assert p._fit_pending
-        else:
+        elif kind == "refresh":
             p._after_change(structure=True, deferred=True)                 # 作り直しを次の回へ予約する
+        elif kind == "replace":
+            p._replace_pending = False
+            p._search_below = not p._search_below                          # 今の置き方が古い事にする
+            p.resizeEvent(QtGui.QResizeEvent(p.size(), p.size()))          # 段の組み替えを次の回へ予約する
+            assert p._replace_pending
+        else:
+            p._theme_pending = False
+            p.changeEvent(QtCore.QEvent(QtCore.QEvent.StyleChange))        # theme の読み直しを次の回へ予約する
+            assert p._theme_pending
         p.ask_unsaved = lambda names: "discard"
         win.hide()
         shiboken6.delete(win)                                              # 窓の C++ の側を今消す
         assert not shiboken6.isValid(p)
         _pump(qapp)                                                        # 予約した呼び出しは捨てられる(落ちない)
         steps += 1
-    assert steps == 2
+    assert steps == 4
 
 
 @pytest.mark.parametrize("lang", ["ja", "de", "en"])
@@ -1889,7 +1909,31 @@ def _window_texts(win) -> dict:
     for key in ("camera.fx", "exposure.gain_db"):
         for c in range(3):
             out["cell.%s.%d.tip" % (key, c)] = p.index_of(c, key).data(Qt.ToolTipRole)
+    out["every widget"] = _walk_texts(win)
     return out
+
+
+def _walk_texts(win) -> list:
+    """窓の木を全部歩いて集めた文(部品の文・ツールヒント・置いた文字・読み上げの名前・題・QAction の文とツールヒント)。
+    手で並べた一覧に載っていない所(後から足した部品)も拾う。並びに頼らないよう「型.何=文」を整列した並びで返す。"""
+    out = []
+    for w in [win] + win.findChildren(QtWidgets.QWidget):
+        for attr in ("text", "toolTip", "placeholderText", "accessibleName", "windowTitle", "statusTip", "whatsThis"):
+            f = getattr(w, attr, None)
+            if not callable(f):
+                continue
+            try:
+                v = f()
+            except TypeError:
+                continue
+            if isinstance(v, str) and v:
+                out.append("%s.%s=%s" % (type(w).__name__, attr, v))
+    for a in win.findChildren(QtGui.QAction):
+        for attr in ("text", "toolTip", "statusTip", "whatsThis"):
+            v = getattr(a, attr)()
+            if v:
+                out.append("QAction.%s=%s" % (attr, v))
+    return sorted(out)
 
 
 def _same_state(qapp, win, paths):
@@ -1919,6 +1963,9 @@ def test_params_language_switch_rebuilds_every_text(qapp, ini, tmp_path):
         _same_state(qapp, fresh, paths)
         want = _window_texts(fresh)
         assert len(want) >= 50 and sorted(got) == sorted(want)
+        assert len(want["every widget"]) >= 70, len(want["every widget"])     # 窓の木を歩いて拾った文の数
+        stale = sorted(set(got["every widget"]) ^ set(want["every widget"]))
+        assert stale == [], (lang, stale)
         diff = {k: (got[k], want[k]) for k in want if got[k] != want[k]}
         assert diff == {}, (lang, diff)
         assert want["message"] and want["title"] != "Parameters — day.json, night.yaml *, lab.xml *"
@@ -1951,9 +1998,22 @@ def test_params_colours_come_from_theme_roles(qapp, ini, tmp_path, monkeypatch):
         want = Q._mix(base, QtGui.QColor(*warn), 0.30)
         brush = p.index_of(0, "camera.fx").data(Qt.BackgroundRole)
         assert brush.color().getRgb()[:3] == want.getRgb()[:3]
+        text = p.palette().color(QtGui.QPalette.WindowText)
         p.show_message("x", "error")
         tone = p.message_label.palette().color(QtGui.QPalette.WindowText)
-        assert tone.getRgb()[:3] == Q._mix(p.palette().color(QtGui.QPalette.WindowText), QtGui.QColor(*err), 0.7).getRgb()[:3]
+        assert tone.getRgb()[:3] == Q._mix(text, QtGui.QColor(*err), 0.7).getRgb()[:3]
+        p.show_message("x", "warn")                                     # ▲ の知らせ = warn の役割
+        tone = p.message_label.palette().color(QtGui.QPalette.WindowText)
+        assert tone.getRgb()[:3] == Q._mix(text, QtGui.QColor(*warn), 0.6).getRgb()[:3]
+        assert "rgb(%d, %d, %d)" % tone.getRgb()[:3] in p.message_label.styleSheet()
+        p.show_message("x", "info")                                     # 印なしは本文の色(状態の色を付けない)
+        assert p.message_label.palette().color(QtGui.QPalette.WindowText).getRgb()[:3] == text.getRgb()[:3]
+        assert p.message_label.styleSheet() == ""
+        win.activateWindow()
+        ed = _start_edit(qapp, p, "fast")                               # 断った欄の枠 = err の役割
+        QTest.keyClick(ed, Qt.Key_Return)
+        assert ed.property("invalid") is True and ("border: 1px solid rgb(%d, %d, %d)" % err) in ed.styleSheet()
+        QTest.keyClick(ed, Qt.Key_Escape)
         seen.append(brush.color().getRgb()[:3])
         _close_quietly(win)
     assert len(seen) == 2 and seen[0] != seen[1]
@@ -1964,10 +2024,17 @@ def test_params_colours_come_from_theme_roles(qapp, ini, tmp_path, monkeypatch):
     win = _window(qapp, _three_files(d))
     p = win.panel
     old = p.index_of(0, "camera.fx").data(Qt.BackgroundRole).color().getRgb()[:3]
+    p.show_message("x", "warn")                                         # 出ている知らせの色も読み直される
+    text = p.palette().color(QtGui.QPalette.WindowText)
+    before = p.message_label.palette().color(QtGui.QPalette.WindowText).getRgb()[:3]
+    assert before == Q._mix(text, QtGui.QColor(232, 163, 61), 0.6).getRgb()[:3]
     monkeypatch.setitem(sys.modules, "studio_theme", fake)
     p.apply_theme()
     new = p.index_of(0, "camera.fx").data(Qt.BackgroundRole).color().getRgb()[:3]
     assert old != new == Q._mix(p.palette().color(QtGui.QPalette.Base), QtGui.QColor(0, 192, 0), 0.30).getRgb()[:3]
+    after = p.message_label.palette().color(QtGui.QPalette.WindowText).getRgb()[:3]
+    assert before != after == Q._mix(text, QtGui.QColor(0, 192, 0), 0.6).getRgb()[:3]
+    assert "rgb(%d, %d, %d)" % after in p.message_label.styleSheet()
     _close_quietly(win)
 
 
@@ -2439,10 +2506,20 @@ def test_params_refusal_reason_is_readable_in_a_narrow_window(qapp, fusion, ini,
     assert row < p.status.height() <= tall and p.status.height() == row + lab.height()
     QTest.keyClick(ed, Qt.Key_Escape)
     assert read == 6
-    # 知らせが消えると 1 行へ戻る。印なしの知らせ(済んだ事)は 1 行のまま(省略 + ツールヒント)
+    # 折り返しても 1 行で済む長さの知らせ: 前の知らせ(2 行以上)の高さを引きずらず、1 行分になる
+    fm = p.message_wrap.fontMetrics()
+    one = "x" * max(1, (p.status.width() - 4 - 30) // max(1, fm.horizontalAdvance("x")) - 2)
+    p.show_message(one, "warn")
+    _pump(qapp)
+    lab = _notice(p)
+    assert lab is p.message_wrap and lab.text() == "\u25b2 " + one
+    assert lab.heightForWidth(lab.width()) <= lab.height() < 2 * fm.lineSpacing(), (lang, lab.height(), fm.lineSpacing())
+    assert p.status.height() == row + lab.height() < tall
+    # 知らせが消えると 1 行へ戻る(隠れたラベルに前の文を残さない)。印なしの知らせ(済んだ事)は 1 行のまま(省略 + ツールヒント)
     p.show_message("", "info")
     _pump(qapp)
     assert p.status.height() == row and p.message_wrap.isHidden() and p.message_shown() == ""
+    assert p.message_wrap.text() == "" and p.message_wrap.toolTip() == ""
     p.show_message("saved " + "x" * 200, "info")
     _pump(qapp)
     assert p.status.height() == row and p.message_wrap.isHidden() and p.message_label.isVisible()
@@ -2959,3 +3036,146 @@ def test_params_narrow_headers_show_an_ellipsis(qapp, fusion, ini, tmp_path):
     tips = [p.tmodel.headerData(2 + i, Qt.Horizontal, Qt.ToolTipRole) for i in range(3)]
     assert [os.path.normcase(t.split("\n")[0]) for t in tips] == [os.path.normcase(x) for x in paths]
     _close_quietly(win)
+
+
+@pytest.mark.parametrize("lang", ["de", "en", "ja"])
+def test_params_search_field_is_wide_enough_at_every_width(qapp, fusion, ini, tmp_path, lang):
+    """D112 の門を広げる(確かめの指摘): 検索の欄は、窓の幅 320〜760 px のどこでも、置いた文字が全部見える幅より狭く
+    ならず、窓の内側にある(収まらない幅では次の段へ送られる)。前の門は 330 px の 1 点だけで、最小幅を直す前の 60 に戻しても
+    緑だった(330 px では 60 でも次の段へ送られる。切れるのは段が変わる境の手前の幅)。道具 10 個も切れない。広げ直すと
+    道具の行へ戻る。"""
+    win = _window(qapp, _three_files(tmp_path), lang=lang, size=(760, 300))
+    p = win.panel
+    s = p.search
+    need = s.fontMetrics().horizontalAdvance(s.placeholderText()) + 32
+    widths = list(range(760, 319, -8))
+    below = set()
+    for w in widths + [760]:
+        win.resize(w, 300)
+        _pump(qapp)
+        _pump(qapp)
+        assert win.width() == w
+        left = s.mapTo(p, QtCore.QPoint(0, 0)).x()
+        assert s.isVisible() and left >= 0 and left + s.width() <= p.width() - 2, (lang, w, left, s.width())
+        assert s.width() >= need, (lang, w, s.width(), need)
+        for k in BUTTONS:
+            b = p.buttons[k]
+            x = b.mapTo(p, QtCore.QPoint(0, 0)).x()
+            assert _whole(b) and 0 <= x and x + b.width() <= p.width() - 2, (lang, w, k)
+        below.add(p._search_below)
+    assert len(widths) == 56 and below == {True, False}                 # 段が変わる境をまたいでいる
+    assert not p._search_below                                          # 広げ直すと道具の行へ戻る
+    _close_quietly(win)
+
+
+def test_params_filter_change_clears_the_old_notice(qapp, ini, tmp_path):
+    """D112(確かめの指摘): 絞り込みを変えたら、前の表についての知らせを消す。検索の語を変えた時だけでなく、
+    「違う行だけ」を入れた時も切った時も(前の門は検索だけを見ていた)。"""
+    win = _window(qapp, _three_files(tmp_path))
+    p = win.panel
+    cleared = 0
+    for change in (lambda: p.set_diff_only(True), lambda: p.set_diff_only(False), lambda: p.buttons["diff"].click(),
+                   lambda: p.search.setText("fx"), lambda: p.search.setText("")):
+        assert p.copy_column(0, 2).ok or p.copy_column(1, 2).ok
+        assert p.message_label.full_text() != ""                        # 古い知らせ(写した)
+        change()
+        _pump(qapp)
+        assert p.message_label.full_text() == "" and p.message_level == "info"
+        cleared += 1
+    assert cleared == 5
+    _close_quietly(win)
+
+
+def test_params_every_pressable_thing_is_declared(qapp, fusion, ini, tmp_path):
+    """道具の列の門を広げる(確かめの指摘): 窓の木の中の押せる物(QAbstractButton)を全部拾い、どれも「道具の列の中の
+    QAction を押すボタン」「検索の欄の中の 2 つ」「一覧の場所の文字のボタン 3 つ」のどれかである(列の外に、宣言していない
+    道具のボタンが無い)。前の門は決まった 10 個の QAction だけを数え、列の外にボタンを 1 個足しても緑だった。"""
+    win = _window(qapp, _three_files(tmp_path))
+    p = win.panel
+    strip = p.strip_widget()
+    acts = [a for a in p.strip_actions() if a is not None]
+    every = win.findChildren(QtWidgets.QAbstractButton)
+    in_strip = [b for b in every if strip.isAncestorOf(b)]
+    in_search = [b for b in every if p.search.isAncestorOf(b)]
+    pushes = [b for b in every if isinstance(b, QtWidgets.QPushButton)]
+    assert len(every) == 15 and (len(in_strip), len(in_search), len(pushes)) == (10, 2, 3)
+    stray = [b for b in every if b not in in_strip and b not in in_search and b not in pushes]
+    assert stray == [], [(type(b).__name__, b.toolTip()) for b in stray]
+    assert sorted(id(b.defaultAction()) for b in in_strip) == sorted(id(a) for a in acts)
+    assert set(pushes) == {p.empty_open, p.empty_example, p.no_match_button}
+    for side in ("left", "top"):                                        # 向きを変えても同じ
+        p.set_strip_side(side)
+        _pump(qapp)
+        every = win.findChildren(QtWidgets.QAbstractButton)
+        live = [b for b in every if p.strip_widget().isAncestorOf(b)]
+        assert len(every) == 15 and len(live) == 10, (side, len(every), len(live))
+        assert sorted(id(b.defaultAction()) for b in live) == sorted(id(a) for a in acts), side
+    _close_quietly(win)
+
+
+def test_params_ctrl_d_does_nothing_wherever_the_focus_is(qapp, fusion, ini, tmp_path):
+    """D90 の門を広げる(確かめの指摘): 窓の木の中でフォーカスを取れる部品を全部回り、どこで Ctrl+D を押しても絞り込みが
+    変わらない(QAction / QShortcut の一覧と、表への 1 回の打鍵だけを見る門は、検索の欄のイベントフィルタで Ctrl+D を戻しても
+    緑だった)。届く事の対照: 同じ回り方で Ctrl+F は検索の欄へ行く。"""
+    win = _window(qapp, _three_files(tmp_path))
+    p = win.panel
+    assert p.select_cell(0, "camera.fx") and p.edit_cell(0, "camera.fx", "900").ok   # 押せる道具を増やす(やり直し以外の 9 個)
+    win.activateWindow()
+    _pump(qapp)
+    visited, toggled = [], []
+    for w in [win] + win.findChildren(QtWidgets.QWidget):
+        if not w.isVisible() or not w.isEnabled() or w.focusPolicy() == Qt.NoFocus:
+            continue
+        w.setFocus()
+        _pump(qapp)
+        before = p.tmodel.diff_only
+        QTest.keyClick(w, Qt.Key_D, Qt.ControlModifier)
+        _pump(qapp)
+        visited.append(type(w).__name__)
+        if p.tmodel.diff_only != before:
+            toggled.append(type(w).__name__ + ":" + w.objectName())
+            p.set_diff_only(before)
+    assert len(visited) >= 11 and visited.count("_StripButton") == 9, visited
+    assert {"_Tree", "QLineEdit", "_StripButton"} <= set(visited), visited
+    assert toggled == [] and not p.tool_actions["diff"].isChecked()
+    p.tree.setFocus()                                                   # 対照: キーは届いている
+    QTest.keyClick(p.tree, Qt.Key_F, Qt.ControlModifier)
+    assert win.focusWidget() is p.search
+    _close_quietly(win)
+
+
+def test_params_panel_in_a_host_window_does_not_take_the_focus(qapp, fusion, ini, tmp_path):
+    """パネルを別の窓の中に入れた時(Studio の dock に入れる形)、ファイルを足して一覧の場所の頁が替わっても、窓のフォーカスが
+    よその部品にある時・まだ無い時は奪わない。フォーカスがパネルの中にあった時だけ置き直す。"""
+    host = QtWidgets.QWidget()
+    lay = QtWidgets.QVBoxLayout(host)
+    editor = QtWidgets.QPlainTextEdit(host)                             # 主役(コードの欄の代わり)
+    panel = Q.ParamsPanel(M.make_tr("en"), host)
+    lay.addWidget(editor)
+    lay.addWidget(panel)
+    host.resize(800, 600)
+    kept = 0
+    assert host.focusWidget() is None
+    panel.open_example()                                                # まだフォーカスの先が無い窓: 取らない
+    assert panel.stack.currentWidget() is panel.tree and host.focusWidget() is None
+    kept += 1
+    host.show()
+    editor.setFocus()
+    _pump(qapp)
+    assert host.focusWidget() is editor
+    while panel.model.columns:
+        panel.model.remove_column(0)
+    panel.refresh()                                                     # 表 → 空の案内: フォーカスは主役のまま
+    assert panel.stack.currentWidget() is panel.empty and host.focusWidget() is editor
+    kept += 1
+    assert [o.ok for o in panel.add_paths(_three_files(tmp_path))] == [True] * 3
+    assert panel.stack.currentWidget() is panel.tree and host.focusWidget() is editor
+    kept += 1
+    panel.tree.setFocus()                                               # パネルの中にある時は置き直す
+    while panel.model.columns:
+        panel.model.remove_column(0)
+    panel.refresh()
+    assert panel.stack.currentWidget() is panel.empty and host.focusWidget() is panel
+    assert kept == 3
+    host.close()
+    host.deleteLater()

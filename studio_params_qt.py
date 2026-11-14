@@ -1243,7 +1243,8 @@ class ParamsPanel(QtWidgets.QWidget):
             return
         held = self.window().focusWidget()               # 替える前に見る(替えた後は Qt がもう移している)
         self.stack.setCurrentWidget(page)
-        if held is None or held is self or held is was or was.isAncestorOf(held):
+        # このパネルの中にあった時だけ(窓のフォーカスがよそにある・まだ無い時は取らない。dock に入った時に本体から奪わない)
+        if held is not None and (held is self or held is was or was.isAncestorOf(held)):
             self.focus_first()
 
     def _apply_empty_texts(self) -> None:
@@ -1561,10 +1562,12 @@ class ParamsPanel(QtWidgets.QWidget):
         # 親の窓の QSS(QLabel { color })はパレットに勝つので、状態の色はラベル自身の QSS でも言う(info は theme の文字の色)。
         qss = "" if level == "info" else "QLabel { color: rgb(%d, %d, %d); }" % (tone.red(), tone.green(), tone.blue())
         for lab in (self.message_label, self.message_wrap):
+            lab.setStyleSheet("")                        # 先に外す(外した時に Qt が戻す古いパレットを、下で上書きする)
             pal = lab.palette()
             pal.setColor(QtGui.QPalette.WindowText, tone)
             lab.setPalette(pal)
-            lab.setStyleSheet(qss)
+            if qss:
+                lab.setStyleSheet(qss)
         self._layout_status()
 
     def _outcome(self, out: M.Outcome) -> M.Outcome:
@@ -1715,6 +1718,9 @@ class ParamsPanel(QtWidgets.QWidget):
             self.message_wrap.setMinimumHeight(0)        # 前の知らせで固定した高さを外してから測る(測った値が下がらなくなる)
             extra = min(self.message_wrap.heightForWidth(inner), self.WRAP_LINES * self.message_wrap.fontMetrics().lineSpacing())
             self.message_wrap.setFixedHeight(extra)
+        elif self.message_wrap.text():                   # 1 行に戻った: 隠れたラベルに前の文を残さない
+            self.message_wrap.clear()
+            self.message_wrap.setToolTip("")
         self.message_wrap.setVisible(wrap)
         self.message_label.setVisible(not wrap)
         height = self.row_height() + extra
