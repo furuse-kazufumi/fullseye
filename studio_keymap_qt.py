@@ -151,6 +151,12 @@ class _ProgramKeys(QtCore.QObject):
                     keys |= set(over.get(c.id, ()))
                 self.defaults[c.ide] = keys
         editor.installEventFilter(self)
+        self.fields: list = []                                 # 検索の帯の欄(program_save のキーはここでもコードの保存)
+        bar = getattr(editor, "find_bar", None)
+        for f in (getattr(bar, "find_edit", None), getattr(bar, "replace_edit", None)):
+            if isinstance(f, QtWidgets.QWidget):
+                f.installEventFilter(self)
+                self.fields.append(f)
 
     def set_table(self, keymap: km.Keymap) -> None:
         self.current = {k: c.ide for c in km.COMMANDS if c.ide and not c.fixed for k in keymap.keys(c.id)}
@@ -160,10 +166,29 @@ class _ProgramKeys(QtCore.QObject):
         ops = eq.get(self.editor)
         return ops is not None and ops._binding_for(ev) is not None
 
+    def _field_event(self, ev) -> bool:
+        """検索の帯の欄: program_save の今のキーだけ、コードの欄と同じ保存へ回す(VS の文書の検索の小窓の Ctrl+S と同じ。
+        2026-11-15 確かめの担当 2 回目: 窓の Save result が開いていた)。ほかのキーは欄のまま。"""
+        try:
+            if not any(self.current.get(k) == "save" for k in event_keys(ev)):
+                return False
+            if ev.type() == QtCore.QEvent.ShortcutOverride:
+                ev.accept()                                    # 窓の Ctrl+S(結果の保存)より先に受ける
+                return True
+            ctl = get(self.win) if self.win is not None else None
+            if ctl is not None:
+                ctl.save_program()
+            return True
+        except Exception as exc:                               # noqa: BLE001 -- フィルタの中の例外は Qt を落とす
+            print("studio_keymap_qt: %s: %s" % (type(exc).__name__, exc))
+            return False
+
     def eventFilter(self, obj, ev):                             # noqa: N802 (Qt の名前)
         t = ev.type()
-        if obj is not self.editor or t not in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress):
+        if t not in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress):
             return False
+        if obj is not self.editor:
+            return self._field_event(ev) if any(obj is f for f in self.fields) else False
         try:
             keys = event_keys(ev)
             for k in keys:
@@ -1556,12 +1581,39 @@ class KeymapController(QtCore.QObject):
         self.open_dialog()
         return "keys"
 
+    def _apply_code_first(self) -> bool:
+        """パイプラインのモードの、適用していない Program の書き換えを先に適用する(実行のキー F5 と同じ)。適用できなければ
+        (構文の誤り)状態行で理由を言って False。書き換えが無ければ何もせず True。"""
+        state = getattr(self.win, "_state", None)
+        if not (isinstance(state, dict) and state.get("code_dirty")):
+            return True
+        prog = getattr(self.win, "_program", None)
+        apply = prog.get("apply") if isinstance(prog, dict) else None
+        if callable(apply):
+            try:
+                apply()
+            except Exception as exc:                           # noqa: BLE001 -- 保存のキーが窓を壊さない
+                print("studio_keymap_qt: %s: %s" % (type(exc).__name__, exc))
+        if not state.get("code_dirty"):
+            return True
+        if self.flash:
+            try:
+                self.flash(self.tr(km.MSG_SAVE_NOT_APPLIED))
+            except Exception:                                  # noqa: BLE001
+                pass
+        return False
+
     def save_program(self) -> str:
         """コードの欄の Ctrl+S(D48): Python のモードならプログラム(pymode_save)、パイプラインのモードならパイプライン
-        (save_pipeline)を保存する。撃った QAction の ID(撃てなければ空)。"""
+        (save_pipeline)を保存する。撃った QAction の ID(撃てなければ空)。
+
+        パイプラインのモードで適用していない書き換えがあれば先に適用する(見えているコードを保存する)。構文の誤りで
+        適用できなければ保存しない(2026-11-15 確かめの担当 2 回目: 黙って落としたまま保存していた)。"""
         acts = getattr(self.win, "_actions", None) or {}
         pm = getattr(self.win, "_pymode", None)
         key = "pymode_save" if pm is not None and getattr(pm, "active", False) else "save_pipeline"
+        if key == "save_pipeline" and not self._apply_code_first():
+            return ""
         a = acts.get(key)
         if isinstance(a, QtGui.QAction) and _valid(a) and a.isEnabled():
             a.trigger()

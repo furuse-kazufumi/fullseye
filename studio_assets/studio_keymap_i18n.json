@@ -1127,6 +1127,13 @@
    "tw": "已切換到「%s」。您自己變更的按鍵已保留。",
    "ko": "'%s'(으)로 전환했습니다. 직접 바꾼 키는 유지됩니다.",
    "de": "Zu „%s“ gewechselt. Eigene Änderungen bleiben erhalten."
+  },
+  "Not saved: the Program has errors, so its edits could not be applied (fix them, then save)": {
+   "ja": "保存していない: Program に誤りがあり、書き換えを適用できなかった(直してから保存)",
+   "zh": "未保存: Program 有错误，修改无法应用(修正后再保存)",
+   "tw": "未儲存: Program 有錯誤，修改無法套用(修正後再儲存)",
+   "ko": "저장하지 않았습니다: Program 에 오류가 있어 고친 내용을 적용하지 못했습니다(고친 뒤 저장)",
+   "de": "Nicht gespeichert: Das Programm enthält Fehler, daher konnten die Änderungen nicht übernommen werden (erst korrigieren, dann speichern)"
   }
  }
 }

@@ -366,7 +366,7 @@ def test_every_own_string_has_five_translations_and_nothing_else():
     table = km.load_table()
     assert km.missing() == []
     assert sorted(table) == sorted(km.ui_strings())
-    assert len(table) == 161
+    assert len(table) == 162
     ph = re.compile(r"%\(\w+\)s|%[sd]")
     for en, row in table.items():
         for lang in km.LANGS[1:]:
@@ -2063,6 +2063,102 @@ def test_the_code_editor_save_key_can_be_changed_and_an_empty_pipeline_says_so(a
         QTest.keyClick(ed, K.Key_F12, K.ControlModifier)                   # 保存できない事を言う(黙らない)
         _pump(0.1)
         assert hits == [1] and said == [km.MSG_NOTHING_TO_SAVE]
+    finally:
+        c.keymap = km.Keymap()
+        c._commit()
+        _close(w)
+        eq.apply_bindings(None)
+
+
+def test_ctrl_s_in_the_code_applies_unapplied_edits_first_or_says_why(app, studio_mod, monkeypatch, tmp_path):
+    """確かめの担当 2 回目: パイプラインのモードでコードの欄の Ctrl+S を押すと、適用していない書き換えを黙って落とした
+    まま保存した(見えているコードが保存されたと思う)。"""
+    _QtCore, _QtGui, QtWidgets, QTest = _qt()
+    from PySide6 import QtCore, QtGui  # noqa: PLC0415
+    import studio_editops_qt as eq  # noqa: PLC0415
+    K = QtCore.Qt
+    path = tmp_path / "pipe.json"
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName", staticmethod(lambda *a, **k: (str(path), "")))
+    w, c = _with_a_stage(studio_mod)                                      # 段 = gaussian
+    said = []
+    c.flash = said.append
+    hits = {"save_pipeline": 0, "save_result": 0}
+    for key in hits:
+        w._actions[key].triggered.connect(lambda *_a, k=key: hits.__setitem__(k, hits[k] + 1))
+    try:
+        ed = w._program["edit"]
+        w._docks["program"].show()
+        _activate(w)
+        ed.setFocus()
+        _pump(0.1)
+        cur = ed.textCursor()
+        cur.movePosition(QtGui.QTextCursor.End)
+        cur.insertText("\nmedian (0.5, 0.5)")                             # 打った = 適用していない書き換え
+        _pump(0.1)
+        assert w._state["code_dirty"] and [s[0] for s in c.model.stages] == ["gaussian"]
+        QTest.keyClick(ed, K.Key_S, K.ControlModifier)
+        _pump(0.3)
+        assert hits == {"save_pipeline": 1, "save_result": 0} and said == []
+        assert [s[0] for s in c.model.stages] == ["gaussian", "median"] and not w._state["code_dirty"]
+        text = path.read_text(encoding="utf-8")
+        assert "gaussian" in text and "median" in text                    # 見えているコードを保存した
+        cur = ed.textCursor()
+        cur.movePosition(QtGui.QTextCursor.End)
+        cur.insertText("\nno_such_op_zz (0.5, 0.5)")                      # 構文の誤り: 適用できない
+        _pump(0.1)
+        QTest.keyClick(ed, K.Key_S, K.ControlModifier)
+        _pump(0.3)
+        assert hits == {"save_pipeline": 1, "save_result": 0}             # 保存しない
+        assert said == [km.MSG_SAVE_NOT_APPLIED] and w._state["code_dirty"]   # 黙らずに理由を言う
+        assert path.read_text(encoding="utf-8") == text                   # 前のファイルはそのまま
+    finally:
+        _close(w)
+        eq.apply_bindings(None)
+
+
+def test_ctrl_s_in_the_code_find_field_saves_the_code_not_the_result(app, studio_mod, monkeypatch):
+    """確かめの担当 2 回目: コードの欄の中の検索・置換の欄で Ctrl+S を押すと「Save result (pipeline output)」が開いた
+    (設計書 P13-2: コードの欄の範囲で Ctrl+S = プログラム / パイプラインの保存)。"""
+    _QtCore, _QtGui, QtWidgets, QTest = _qt()
+    from PySide6 import QtCore  # noqa: PLC0415
+    import studio_editops_qt as eq  # noqa: PLC0415
+    K = QtCore.Qt
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName", staticmethod(lambda *a, **k: ("", "")))
+    w, c = _with_a_stage(studio_mod)
+    hits = {"save_pipeline": 0, "save_result": 0}
+    for key in hits:
+        w._actions[key].triggered.connect(lambda *_a, k=key: hits.__setitem__(k, hits[k] + 1))
+    try:
+        ed = w._program["edit"]
+        find = w._program["find"]
+        w._docks["program"].show()
+        _activate(w)
+        ed.setFocus()
+        _pump(0.1)
+        QTest.keyClick(ed, K.Key_H, K.ControlModifier)                     # 検索・置換の帯を出す
+        _pump(0.1)
+        assert find["bar"].isVisible()
+        n = 0
+        for name in ("find_edit", "replace_edit"):
+            f = find[name]
+            f.setFocus()
+            _pump(0.05)
+            assert QtWidgets.QApplication.focusWidget() is f, name
+            QTest.keyClick(f, K.Key_S, K.ControlModifier)
+            _pump(0.2)
+            n += 1
+            assert hits == {"save_pipeline": n, "save_result": 0}, (name, hits)
+        f = find["find_edit"]
+        f.setText("abc")
+        f.setFocus()
+        QTest.keyClick(f, K.Key_A, K.ControlModifier)                     # ほかのキーは欄のまま(全選択)
+        assert f.selectedText() == "abc"
+        assert c.assign("program_save", ("Ctrl+F12",)) == []
+        QTest.keyClick(f, K.Key_F12, K.ControlModifier)                   # 変えたキーで、検索の欄でも
+        _pump(0.2)
+        QTest.keyClick(f, K.Key_S, K.ControlModifier)                     # 外した Ctrl+S は窓の結果の保存へ
+        _pump(0.2)
+        assert hits == {"save_pipeline": 3, "save_result": 1}
     finally:
         c.keymap = km.Keymap()
         c._commit()

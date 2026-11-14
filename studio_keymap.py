@@ -1280,6 +1280,7 @@ ASK_IMPORT_LOST = "These changes of yours are not in the file and go back to the
 MSG_EXPORT_FAILED = "Could not save %s (%s)"
 MSG_NO_MATCH = "Nothing matches. Try a command name or a key, for example: duplicate, ctrl+d"
 MSG_NOTHING_TO_SAVE = "Nothing to save yet: the pipeline has no stage"
+MSG_SAVE_NOT_APPLIED = "Not saved: the Program has errors, so its edits could not be applied (fix them, then save)"
 BTN_CLEAR = "Clear"
 BTN_ASSIGN = "Assign"
 BTN_ADD = "Add as another key"
@@ -1421,7 +1422,8 @@ def ui_strings() -> tuple:
              MSG_LANG_HEADER, HINT_KEYS, BTN_LITERAL, PH_LITERAL, BTN_REMOVE_ONE, BTN_CANCEL, BTN_RESET_ALL_DO,
              BTN_SWITCH, BTN_REPLACE, TTL_IMPORT, ASK_IMPORT, ASK_IMPORT_PRESET, ASK_IMPORT_LOST, MSG_EXPORT_FAILED,
              MSG_NO_MATCH, MSG_NOTHING_TO_SAVE, ACT_DUPLICATE, TTL_NEWER, ASK_NEWER, BTN_NEWER_DO, BTN_RESTORE,
-             TTL_RESTORE, ASK_RESTORE, BTN_RESTORE_DO, MSG_RESTORED, MSG_RESTORE_FAILED, MSG_PRESET_SWITCHED]
+             TTL_RESTORE, ASK_RESTORE, BTN_RESTORE_DO, MSG_RESTORED, MSG_RESTORE_FAILED, MSG_PRESET_SWITCHED,
+             MSG_SAVE_NOT_APPLIED]
     fixed += list(PRESET_TITLES.values()) + [s.title for s in SCOPES.values()] + [t for t, _s in PLACES.values()]
     fixed += list(MESSAGES.values()) + [c.title for c in COMMANDS if c.own_title]
     seen, out = set(), []
