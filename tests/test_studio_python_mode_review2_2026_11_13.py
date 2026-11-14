@@ -13,7 +13,9 @@
 """
 import builtins
 import importlib
+import json
 import os
+import subprocess
 import sys
 import threading
 import time
@@ -374,31 +376,102 @@ def test_r3_other_threads_and_ordinary_imports_are_not_refused(monkeypatch):
     assert sp._ImportGuard.refused("matplotlib.backends.backend_qtagg") and sp._ImportGuard.refused("PyQt5.QtCore")
 
 
-def test_r3_matplotlib_runs_on_agg_and_show_puts_the_figure_in_the_image_pane(monkeypatch):
-    """探針 q06b / q06c: 既定のまま ``plt.show()`` すると作業スレッドで Qt の窓が出来、閉じると Studio が固まった。"""
+#: R3 の matplotlib の試験の中身(子プロセスで回す)。PySide6 を読み込んだ Studio と同じ状態にしてから、プログラムを
+#: 作業スレッドで走らせる。結果は ``RESULT <JSON>`` の 1 行。
+_R3_MPL_CHILD = r'''
+import json, os, sys, faulthandler
+faulthandler.dump_traceback_later(int(os.environ["R3_CHILD_DUMP_S"]), exit=True)
+sys.path.insert(0, os.environ["R3_ROOT"])
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
+import numpy as np
+from PySide6 import QtWidgets
+app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+import studio_program as sp
+sp.GUI_BRIDGE = None
+IMG = np.zeros((16, 16))
+OUT = {}
+def step(name):
+    print("STEP " + name, flush=True)
+def picture(r):
+    o = r.output
+    if type(o) is not np.ndarray:
+        return [type(o).__name__]
+    return ["ndarray", list(o.shape), float(o.min()), float(o.max()), float(o.std())]
+
+step("plt.show() on the default backend")
+r = sp.run_program("# python\nimport matplotlib.pyplot as plt\nb = plt.get_backend()\nplt.plot([1, 2, 3])\nplt.show()\n"
+                   "after = 1\nplt.close('all')\n", IMG, time_limit_s=20)
+OUT["show"] = {"errors": r.errors, "b": str(r.values.get("b")), "after": r.values.get("after"), "picture": picture(r),
+               "note": sp.MPL_SHOWN_NOTE in r.notes, "source": r.output_source}
+import matplotlib.pyplot as plt
+OUT["show_put_back"] = plt.show.__module__ != sp.__name__
+
+step("show(fig)")
+r = sp.run_program("# python\nimport matplotlib.pyplot as plt\nf = plt.figure()\nplt.plot([3, 1, 2])\nshow(f)\n"
+                   "plt.close('all')\n", IMG, time_limit_s=20)
+OUT["show_fig"] = {"errors": r.errors, "picture": picture(r)}
+
+step("QtAgg + a figure window + plt.close('all')")
+r = sp.run_program("# python\nimport matplotlib\nmatplotlib.use('QtAgg')\nimport matplotlib.pyplot as plt\n"
+                   "f = plt.figure()\nw = f.canvas.manager.window\nw.show()\nplt.close('all')\n", IMG, time_limit_s=20)
+OUT["qtagg"] = {"errors": r.errors, "has_f": "f" in r.values}
+
+step("matplotlib still works after the refusal")
+r = sp.run_program("# python\nimport matplotlib\nmatplotlib.use('Agg')\nimport matplotlib.pyplot as plt\n"
+                   "plt.plot([1, 2])\nplt.show()\nplt.close('all')\n", IMG, time_limit_s=20)
+OUT["after"] = {"errors": r.errors}
+gui = app.thread()
+OUT["widgets_off_gui"] = sorted(set(type(w).__name__ for w in QtWidgets.QApplication.allWidgets()
+                                    if w.thread() is not gui))
+print("RESULT " + json.dumps(OUT), flush=True)
+'''
+
+
+def test_r3_matplotlib_runs_on_agg_and_show_puts_the_figure_in_the_image_pane(tmp_path):
+    """探針 q06b / q06c: 既定のまま ``plt.show()`` すると作業スレッドで Qt の窓が出来、閉じると Studio が固まった。
+
+    **子プロセス + 時間の上限で回す**(2026-11-13 第 3 回レビュー S9)。見張りが無いと、この試験は落ちずに固まった
+    (作業スレッドの Qt の窓は GIL を持ったまま止まるので、試験の中の時間の上限も pytest-timeout も働かない。
+    レビューでは pytest を 600 秒で殺した)。子プロセスなら、固まり = 150 秒で失敗。"""
     pytest.importorskip("matplotlib")
-    monkeypatch.setattr(sp, "GUI_BRIDGE", None)
-    r, dt = _bounded(lambda: sp.run_program(
-        "# python\nimport matplotlib.pyplot as plt\nb = plt.get_backend()\nplt.plot([1, 2, 3])\nplt.show()\n"
-        "after = 1\nplt.close('all')\n", IMG, time_limit_s=20), 40)
-    assert r.ok, r.errors
-    assert str(r.values["b"]).lower() == "agg" and r.values["after"] == 1
-    assert type(r.output) is np.ndarray and r.output.ndim == 3 and r.output.shape[2] == 3 and r.output.shape[0] > 50
-    assert 0.0 <= float(r.output.min()) and float(r.output.max()) <= 1.0 and float(r.output.std()) > 0.0
-    assert sp.MPL_SHOWN_NOTE in r.notes and r.output_source.startswith("show line 5")
-    import matplotlib.pyplot as plt
-    assert plt.show.__module__ != sp.__name__                              # 差し替えた show は実行の後に外す
-    r = sp.run_program("# python\nimport matplotlib.pyplot as plt\nf = plt.figure()\nplt.plot([3, 1, 2])\nshow(f)\n"
-                       "plt.close('all')\n", IMG, time_limit_s=20)
-    assert r.ok and type(r.output) is np.ndarray and r.output.ndim == 3     # show(fig) でも同じ
-    r, dt = _bounded(lambda: sp.run_program(
-        "# python\nimport matplotlib\nmatplotlib.use('QtAgg')\nimport matplotlib.pyplot as plt\nf = plt.figure()\n"
-        "w = f.canvas.manager.window\nw.show()\nplt.close('all')\n", IMG, time_limit_s=20), 40)
-    assert not r.ok and "Studio does not let a running program import" in r.errors[0], r.errors
-    assert "f" not in r.values
-    r = sp.run_program("# python\nimport matplotlib\nmatplotlib.use('Agg')\nimport matplotlib.pyplot as plt\n"
-                       "plt.plot([1, 2])\nplt.show()\nplt.close('all')\n", IMG, time_limit_s=20)
-    assert r.ok, r.errors                                                  # 断った後も matplotlib は使い続けられる
+    timeout = 150
+    script = tmp_path / "r3_child.py"
+    script.write_text(_R3_MPL_CHILD, encoding="utf-8")
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    env = dict(os.environ, QT_QPA_PLATFORM="offscreen", PYTHONUTF8="1", PYTHONUNBUFFERED="1", R3_ROOT=root,
+               R3_CHILD_DUMP_S=str(timeout - 30), FULLSEYE_STUDIO_SETTINGS=str(tmp_path / "child.ini"))
+    env.pop("MPLBACKEND", None)
+    p = subprocess.Popen([sys.executable, str(script)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env,
+                         cwd=str(tmp_path))
+    try:
+        out, err = p.communicate(timeout=timeout)
+        hung = False
+    except subprocess.TimeoutExpired:
+        p.kill()
+        out, err = p.communicate()
+        hung = True
+    out, err = out.decode("utf-8", "replace"), err.decode("utf-8", "replace")
+    steps = [ln[5:] for ln in out.splitlines() if ln.startswith("STEP ")]
+    results = [ln[7:] for ln in out.splitlines() if ln.startswith("RESULT ")]
+    where = err.find("Thread 0x")
+    tail = err[where:where + 1500] if where >= 0 else err[-1500:]
+    assert not hung, "the child did not finish in %d s (hang) after step %r\n%s" % (timeout, steps[-1:], tail)
+    assert results, "the child ended (exit %s) without a result after step %r\n%s" % (p.returncode, steps[-1:], tail)
+    got = json.loads(results[-1])
+    show = got["show"]
+    assert show["errors"] == [], show["errors"]
+    assert show["b"].lower() == "agg" and show["after"] == 1
+    kind, shape, lo, hi, std = show["picture"]
+    assert kind == "ndarray" and len(shape) == 3 and shape[2] == 3 and shape[0] > 50
+    assert 0.0 <= lo and hi <= 1.0 and std > 0.0
+    assert show["note"] is True and show["source"].startswith("show line 5")
+    assert got["show_put_back"] is True                                    # 差し替えた show は実行の後に外す
+    assert got["show_fig"]["errors"] == [] and got["show_fig"]["picture"][0] == "ndarray" \
+        and len(got["show_fig"]["picture"][1]) == 3                        # show(fig) でも同じ
+    assert len(got["qtagg"]["errors"]) == 1 and got["qtagg"]["has_f"] is False
+    assert "Studio does not let a running program import" in got["qtagg"]["errors"][0], got["qtagg"]["errors"]
+    assert got["after"]["errors"] == [], got["after"]["errors"]           # 断った後も matplotlib は使い続けられる
+    assert got["widgets_off_gui"] == []                                    # 作業スレッドに Qt の窓は 1 つも無い
 
 
 # --------------------------------------------------------------------------- #
