@@ -674,6 +674,8 @@ MSG_BOX = "box: %d lines"
 #: 「矩形選択の使い方」の窓で、キーの設定で変えたキーを並べる前の 1 行。
 MSG_KEYS_CHANGED = "Some keys were changed in the keyboard settings:"
 HOWTO_TITLE = "Box selection"
+#: 「使い方」の窓のボタン(Qt の標準の Close は Qt の訳を読み込まないと英語のまま。設計書 D95)。
+BTN_CLOSE = "Close"
 HOWTO_TEXT = (
     "Box (column) selection\n"
     "\n"
@@ -715,7 +717,7 @@ PALETTE_WORDS = {
 def ui_strings() -> tuple:
     """画面に出す英語の文の全部(対訳の表はこれと 1 対 1)。"""
     extra = (MENU_BOX, MENU_LINE, MENU_DISPLAY, ACT_HOWTO, ACT_RULERS, ACT_TRIM_ON_SAVE, MSG_NO_BRACKET,
-             MSG_NO_OCCURRENCE, MSG_TRIMMED, MSG_BOX, HOWTO_TEXT, MSG_KEYS_CHANGED)
+             MSG_NO_OCCURRENCE, MSG_TRIMMED, MSG_BOX, HOWTO_TEXT, MSG_KEYS_CHANGED, BTN_CLOSE)
     seen, out = set(), []
     for s in tuple(b.title for b in KEYMAP) + extra:
         if s not in seen:

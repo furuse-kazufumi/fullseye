@@ -108,6 +108,15 @@ class _Overlay(QtWidgets.QWidget):
             ops.paint_overlay(self)
 
 
+def _alive(obj) -> bool:
+    """Qt の物 ``obj`` の C++ 側がまだ生きているか。"""
+    try:
+        import shiboken6                                        # noqa: PLC0415  (PySide6 に付いてくる)
+        return obj is not None and shiboken6.isValid(obj)
+    except ImportError:                                         # pragma: no cover
+        return obj is not None
+
+
 def _key_table(bindings: dict | None = None) -> dict:
     """``(キー, 修飾)`` → 操作。``studio_editops.KEYMAP`` から作る(``bindings`` に載った操作はそのキー)。
 
@@ -164,6 +173,10 @@ class EditOps(QtCore.QObject):
         self._saved_cursor_width: int | None = None
         self._bracket_cache: tuple = (-1, None, [])
         self._howto = None
+        self._howto_close = None                                # 「使い方」の窓のボタン(訳を付け直す)
+        #: 残るメニュー(Edit メニュー)に足した入口 ``[(QMenu か QAction, 種類, 元)]``。言語・キーの変更で付け直す。
+        self._menu_items: list = []
+        self._palette_howto = None
         self._menu = None
         #: イベントフィルタの中で起きた最後の例外(無ければ None)。試験と不具合の調べに使う。
         self.last_error: Exception | None = None
@@ -1157,14 +1170,14 @@ class EditOps(QtCore.QObject):
 
     def _standard_menu_with_ours(self, *args):
         menu = QtWidgets.QPlainTextEdit.createStandardContextMenu(self.editor, *args)
-        self.populate_menu(menu)
+        self.populate_menu(menu, follow=False)                 # 毎回作るメニュー: 作る時の言語とキーで足りる
         return menu
 
     def build_context_menu(self, vp_pos: QtCore.QPoint | None = None) -> QtWidgets.QMenu:
         """右クリックのメニュー(エディタの標準の項目 + 矩形選択・行の操作・エディタの表示)。"""
         args = () if vp_pos is None else (vp_pos,)
         menu = QtWidgets.QPlainTextEdit.createStandardContextMenu(self.editor, *args)
-        self.populate_menu(menu)
+        self.populate_menu(menu, follow=False)
         return menu
 
     def _show_context_menu(self, global_pos, vp_pos) -> None:
@@ -1191,32 +1204,34 @@ class EditOps(QtCore.QObject):
             bindings = {c: tuple(k) for c, k in bindings.items()}
         self._bindings = bindings
         self._keys = _key_table(bindings)
-        for b in eo.KEYMAP:
-            a = self._palette_actions.get(b.command)
-            if a is not None:
-                try:
-                    keys = self.keys_for(b.command)
-                    a.setToolTip("%s (%s)" % (self.tr(b.title), " / ".join(keys)) if keys else self.tr(b.title))
-                except RuntimeError:                            # QAction が先に消えた
-                    self._palette_actions.pop(b.command, None)
+        self.retranslate()                                     # 残るメニュー・パレット・「使い方」の文を今のキーで
 
     def _label(self, binding: eo.Binding) -> str:
         text = self.tr(binding.title)
         keys = self.keys_for(binding.command)
         return text + "\t" + keys[0] if keys else text
 
-    def _command_action(self, menu, binding: eo.Binding) -> QtGui.QAction:
+    def _tip(self, binding: eo.Binding) -> str:
+        keys = self.keys_for(binding.command)
+        return "%s (%s)" % (self.tr(binding.title), " / ".join(keys)) if keys else self.tr(binding.title)
+
+    def _command_action(self, menu, binding: eo.Binding, follow: bool = False) -> QtGui.QAction:
         a = QtGui.QAction(self._label(binding), menu)
         menu.addAction(a)
         a.setObjectName("editops:" + binding.command)
-        keys = self.keys_for(binding.command)
-        if keys:
-            a.setToolTip("%s (%s)" % (self.tr(binding.title), " / ".join(keys)))
+        if self.keys_for(binding.command):
+            a.setToolTip(self._tip(binding))
         a.triggered.connect(lambda _=False, c=binding.command: (self.editor.setFocus(), self.run(c)))
+        if follow:
+            self._menu_items.append((a, "binding", binding))
         return a
 
-    def populate_menu(self, menu: QtWidgets.QMenu) -> list:
-        """``menu`` に「矩形選択」「行の操作」「エディタの表示」の 3 つのサブメニューを足す。足したサブメニューを返す。"""
+    def populate_menu(self, menu: QtWidgets.QMenu, follow: bool = True) -> list:
+        """``menu`` に「矩形選択」「行の操作」「エディタの表示」の 3 つのサブメニューを足す。足したサブメニューを返す。
+
+        ``follow``(既定): 足した入口を覚えておき、``retranslate``(言語の切り替え・キーの変更の後)で文とキーを
+        付け直す。作ったまま残るメニュー(Edit メニュー)用。その場で作って捨てるメニューは ``follow=False``。
+        """
         tr = self.tr
         menu.addSeparator()
         menu.setToolTipsVisible(True)
@@ -1234,7 +1249,7 @@ class EditOps(QtCore.QObject):
         for b in eo.KEYMAP:
             if b.when == "box" and not self._carets:
                 continue
-            self._command_action(box if b.group == "box" else line, b)
+            self._command_action(box if b.group == "box" else line, b, follow)
         disp = QtWidgets.QMenu(tr(eo.MENU_DISPLAY), menu)
         menu.addMenu(disp)
         disp.setObjectName("editops:menu.display")
@@ -1252,7 +1267,47 @@ class EditOps(QtCore.QObject):
         t.toggled.connect(self.set_trim_on_save)
         for m in (box, line, disp):
             m.setToolTipsVisible(True)
+        if follow:
+            self._menu_items = [it for it in self._menu_items if _alive(it[0])]
+            self._menu_items += [(box, "menu", eo.MENU_BOX), (line, "menu", eo.MENU_LINE),
+                                 (disp, "menu", eo.MENU_DISPLAY), (how, "text", eo.ACT_HOWTO),
+                                 (r, "text", eo.ACT_RULERS), (t, "text", eo.ACT_TRIM_ON_SAVE)]
         return [box, line, disp]
+
+    def retranslate(self) -> int:
+        """今の言語と今のキーで文を付け直す: 残るメニューに足した入口(``populate_menu``)・コマンドパレットの入口
+        (``command_actions``)・出ている「使い方」の窓。言語の切り替えとキーの変更の後に呼ぶ(キーの部品
+        ``studio_keymap_qt`` が呼ぶ。単体で使う時は本体の言語の切り替えの後に ``retranslate_all()``)。
+
+        付け直したメニューの入口の数を返す(消えたメニューの入口は忘れる)。
+        """
+        keep = []
+        for obj, kind, src in self._menu_items:
+            if not _alive(obj):
+                continue
+            keep.append((obj, kind, src))
+            if kind == "menu":
+                obj.setTitle(self.tr(src))
+            elif kind == "binding":
+                obj.setText(self._label(src))
+                obj.setToolTip(self._tip(src))
+            else:
+                obj.setText(self.tr(src))
+        self._menu_items = keep
+        for b in eo.KEYMAP:
+            a = self._palette_actions.get(b.command)
+            if a is None:
+                continue
+            if not _alive(a):                                   # QAction が先に消えた
+                self._palette_actions.pop(b.command, None)
+                continue
+            a.setText(self.tr(b.title))
+            a.setToolTip(self._tip(b))
+        if self._palette_howto is not None and _alive(self._palette_howto):
+            self._palette_howto.setText(self.tr(eo.ACT_HOWTO))
+        if self._howto is not None and _alive(self._howto):
+            self._fill_howto()
+        return len(keep)
 
     def command_actions(self, parent: QtCore.QObject | None = None) -> dict:
         """コマンドパレットに載せる ``{名前: QAction}``(キーは付けない: キーはこの部品のフィルタが受ける)。"""
@@ -1270,6 +1325,7 @@ class EditOps(QtCore.QObject):
         a.setObjectName("editops:howto")
         a.triggered.connect(lambda _=False: self.show_howto())
         out["editops_howto"] = a
+        self._palette_howto = a
         return out
 
     def howto_text(self) -> str:
@@ -1282,17 +1338,29 @@ class EditOps(QtCore.QObject):
                 "%s: %s" % (self.tr(b.title), " / ".join(self.keys_for(b.command)) or "—") for b in changed)
         return text
 
+    def _fill_howto(self) -> None:
+        self._howto.setWindowTitle(self.tr(eo.HOWTO_TITLE))
+        self._howto.setText(self.howto_text())
+        if self._howto_close is not None and _alive(self._howto_close):
+            self._howto_close.setText(self.tr(eo.BTN_CLOSE))
+
     def show_howto(self) -> QtWidgets.QMessageBox:
-        """「矩形選択の使い方」を、本体を止めない窓で出す(Esc で閉じる。2 度目は同じ窓を前へ)。"""
-        if self._howto is None:
+        """「矩形選択の使い方」を、本体を止めない窓で出す(Esc で閉じる。2 度目は同じ窓を前へ)。
+
+        ボタンは今の言語の「閉じる」(Qt の標準の Close は訳されない)。道具の窓なので Enter でボタンを押さない
+        (既定のボタンにしない。設計書 P02-4・D95)。
+        """
+        if self._howto is None or not _alive(self._howto):
             box = QtWidgets.QMessageBox(self.editor.window())
             box.setObjectName("editopsHowto")
             box.setIcon(QtWidgets.QMessageBox.Information)
-            box.setStandardButtons(QtWidgets.QMessageBox.Close)
+            close = box.addButton(self.tr(eo.BTN_CLOSE), QtWidgets.QMessageBox.RejectRole)
+            close.setAutoDefault(False)
+            close.setDefault(False)
+            box.setEscapeButton(close)
             box.setModal(False)
-            self._howto = box
-        self._howto.setWindowTitle(self.tr(eo.HOWTO_TITLE))
-        self._howto.setText(self.howto_text())
+            self._howto, self._howto_close = box, close
+        self._fill_howto()
         self._howto.show()
         self._howto.raise_()
         return self._howto
@@ -1318,6 +1386,19 @@ def install(editor: QtWidgets.QPlainTextEdit, **options) -> EditOps:
     ``ambiguous_wide``(曖昧幅の文字を全角として数えるか。``None`` = 今の書体で測る)。
     """
     return get(editor) or EditOps(editor, **options)
+
+
+def retranslate_all() -> int:
+    """今ある全部の EditOps の文を、今の言語と今のキーで付け直す(``EditOps.retranslate``)。付け直した EditOps の数。
+
+    本体の言語の切り替えの後に呼ぶ(キーの部品 ``studio_keymap_qt`` を取り付けていれば、そちらが呼ぶ)。
+    """
+    n = 0
+    for ops in list(_LIVE):
+        if ops._on:
+            ops.retranslate()
+            n += 1
+    return n
 
 
 def apply_bindings(bindings: dict | None) -> int:

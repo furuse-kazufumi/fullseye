@@ -511,7 +511,8 @@ def test_every_ui_string_has_five_translations_and_the_table_has_nothing_else():
     table = eo.load_table()
     strings = eo.ui_strings()
     # 26 -> 27(2026-11-13: キーの設定で変えたキーを「使い方」の窓に並べる前の 1 行 MSG_KEYS_CHANGED)
-    assert len(strings) == 27 and len(set(strings)) == 27
+    # 27 -> 28(2026-11-15: 「使い方」の窓のボタン BTN_CLOSE。Qt の標準の Close は訳されない)
+    assert len(strings) == 28 and len(set(strings)) == 28
     assert eo.missing() == []
     assert sorted(table) == sorted(strings)
     assert eo.LANGS == ("en", "ja", "zh", "tw", "ko", "de")
@@ -520,7 +521,7 @@ def test_every_ui_string_has_five_translations_and_the_table_has_nothing_else():
 
 def test_translations_keep_the_placeholders_and_japanese_is_not_left_in_english():
     table = eo.load_table()
-    assert len(table) == 27
+    assert len(table) == 28
     bad = []
     for key, row in table.items():
         for lang in eo.LANGS[1:]:

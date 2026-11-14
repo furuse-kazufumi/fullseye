@@ -411,6 +411,10 @@ def _install_hooks(win, st: _State) -> None:
                 fn()
             except Exception as exc:                           # noqa: BLE001 -- 表示の付け直しが窓を壊さない
                 print("studio_keymap_qt: %s: %s" % (type(exc).__name__, exc))
+        try:
+            eq.retranslate_all()                               # 矩形選択の部品の Edit メニュー・パレット・使い方(D95)
+        except Exception as exc:                               # noqa: BLE001
+            print("studio_keymap_qt: %s: %s" % (type(exc).__name__, exc))
         _retarget_all(win, st)
 
     for a in (getattr(win, "_lang_actions", None) or {}).values():

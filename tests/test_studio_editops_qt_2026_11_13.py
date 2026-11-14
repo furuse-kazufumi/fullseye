@@ -1220,3 +1220,46 @@ def test_japanese_ui_shows_the_menu_in_japanese_in_the_real_window(win, studio_m
         assert [t for t in items if t.split("\t")[0].isascii()] == []
     finally:
         studio_mod._UI_LANG["code"] = "en"
+
+
+# --------------------------------------------------------------------------- #
+# 2026-11-15(設計書 D95): 残るメニュー(Edit メニュー)に足した入口は、言語の切り替えとキーの変更に追従する
+# --------------------------------------------------------------------------- #
+def test_retranslate_follows_the_language_and_the_keys_in_a_kept_menu(app):
+    import shiboken6  # noqa: PLC0415
+    lang = {"code": "en"}
+    ed, ops, _clip = _plain(app, TEXT, tr=eo.make_tr(lambda: lang["code"]))
+    menu = QtWidgets.QMenu()
+    subs = ops.populate_menu(menu)                                   # Edit メニューのように、作ったまま残るメニュー
+    acts = ops.command_actions()
+    assert len(subs) == 3 and len(ops._menu_items) == 20            # サブメニュー 3 + 項目 17
+    assert _menu_rows(menu)["editops:menu.line"][0] == ("editops:line.duplicate", "Duplicate line\tCtrl+D")
+    ops.build_context_menu()                                         # 右クリックのメニューは毎回作る: 覚えない
+    assert len(ops._menu_items) == 20
+    table = eo.load_table()
+    lang["code"] = "ja"
+    assert ops.retranslate() == 20 and eq.retranslate_all() >= 1
+    titles = [a.text() for a in menu.actions() if a.menu() is not None]
+    assert titles == [table[t]["ja"] for t in (eo.MENU_BOX, eo.MENU_LINE, eo.MENU_DISPLAY)]
+    assert _menu_rows(menu)["editops:menu.line"][0][1] == table["Duplicate line"]["ja"] + "\tCtrl+D"
+    assert dict(_menu_rows(menu)["editops:menu.display"])["editops:rulers"] == table[eo.ACT_RULERS]["ja"]
+    assert acts["editops_line_delete"].text() == table["Delete line"]["ja"]          # コマンドパレットの入口
+    assert acts["editops_howto"].text() == table[eo.ACT_HOWTO]["ja"]
+    ops.set_bindings({"line.duplicate": ("F8",)})                    # キーを変えたら、残るメニューの右のキーも
+    assert _menu_rows(menu)["editops:menu.line"][0][1] == table["Duplicate line"]["ja"] + "\tF8"
+    assert acts["editops_line_duplicate"].toolTip() == table["Duplicate line"]["ja"] + " (F8)"
+    ops.set_bindings(None)
+    assert _menu_rows(menu)["editops:menu.line"][0][1] == table["Duplicate line"]["ja"] + "\tCtrl+D"
+    box = ops.show_howto()
+    _pump(0.05)
+    assert [b.text() for b in box.buttons()] == [table[eo.BTN_CLOSE]["ja"]]          # 「Close」のままにしない
+    assert not any(b.isDefault() or b.autoDefault() for b in box.buttons())          # Enter でボタンを押さない
+    lang["code"] = "de"
+    ops.retranslate()                                                # 出ている「使い方」の窓も付け直す
+    assert box.windowTitle() == table[eo.HOWTO_TITLE]["de"] and box.text() == table[eo.HOWTO_TEXT]["de"]
+    assert [b.text() for b in box.buttons()] == [table[eo.BTN_CLOSE]["de"]]
+    QTest.keyClick(box, K.Key_Escape)                                # Esc で閉じる
+    _pump(0.05)
+    assert not box.isVisible()
+    shiboken6.delete(menu)                                           # 消えたメニューの入口は忘れる
+    assert ops.retranslate() == 0 and ops._menu_items == []

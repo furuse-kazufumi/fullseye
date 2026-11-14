@@ -2161,3 +2161,55 @@ def test_tooltips_name_dash_effect_and_key(win, ctl, studio_mod):
     ctl._commit()
     assert by_id["export"].toolTip() == "Export — Export as an --ops string and Python code (Ctrl+E)"
     assert win._actions["export"].statusTip() == "Export as an --ops string and Python code"   # 状態行の文は変えない
+
+
+# --------------------------------------------------------------------------- #
+# B5 [キー] 1.2-B D95: Edit メニューの矩形選択の入口は、言語の切り替えとキーの変更に追従する
+# --------------------------------------------------------------------------- #
+def _edit_menu_rows(win):
+    """Edit メニューの中の矩形選択の部品の入口 ``{objectName: 文}``(サブメニューは題)。"""
+    out = {}
+    for a in win._menus["edit"].actions():
+        sub = a.menu()
+        if sub is not None and sub.objectName().startswith("editops:"):
+            out[sub.objectName()] = sub.title()
+            out.update({x.objectName(): x.text() for x in sub.actions() if not x.isSeparator()})
+    return out
+
+
+def test_the_editor_entries_in_the_edit_menu_follow_the_language_and_the_keys(win, ctl):
+    table = eo.load_table()
+    rows = _edit_menu_rows(win)
+    assert len(rows) == 20 and rows["editops:menu.line"] == eo.MENU_LINE     # サブメニュー 3 + 項目 17
+    assert rows["editops:line.duplicate"] == "Duplicate line\tCtrl+D"
+    assert not [p for p in ctl.assign("editops_line_duplicate", ("F8",)) if p.level == "error"]
+    assert _edit_menu_rows(win)["editops:line.duplicate"] == "Duplicate line\tF8"   # 直す前は Ctrl+D のままだった
+    assert ctl.assign("editops_line_delete", ()) == []
+    assert _edit_menu_rows(win)["editops:line.delete"] == "Delete line"
+    win._apply_language("ja")
+    _pump(0.2)
+    rows = _edit_menu_rows(win)
+    english = {b.title for b in eo.KEYMAP} | {eo.ACT_HOWTO, eo.ACT_RULERS, eo.ACT_TRIM_ON_SAVE, eo.MENU_BOX,
+                                              eo.MENU_LINE, eo.MENU_DISPLAY}
+    assert len(rows) == 20 and [t for t in rows.values() if t.split("\t")[0] in english] == []   # 英語のまま 0
+    assert rows["editops:menu.box"] == table[eo.MENU_BOX]["ja"]
+    assert rows["editops:line.duplicate"] == table["Duplicate line"]["ja"] + "\tF8"
+    assert win._actions["editops_line_duplicate"].text() == table["Duplicate line"]["ja"]   # パレットの入口も
+    assert win._actions["editops_howto"].text() == table[eo.ACT_HOWTO]["ja"]
+    how = win._editops.show_howto()
+    _pump(0.05)
+    try:
+        close_ja = win._editops.tr(eo.BTN_CLOSE)
+        assert how.windowTitle() == table[eo.HOWTO_TITLE]["ja"]
+        assert close_ja != "Close" and [b.text() for b in how.buttons()] == [close_ja]
+        win._apply_language("de")                                         # 出ている窓も言語に追従する
+        _pump(0.2)
+        close_de = win._editops.tr(eo.BTN_CLOSE)
+        assert how.isVisible() and how.windowTitle() == table[eo.HOWTO_TITLE]["de"]
+        assert close_de not in ("Close", close_ja) and [b.text() for b in how.buttons()] == [close_de]
+    finally:
+        how.close()
+    win._apply_language("en")
+    _pump(0.2)
+    rows = _edit_menu_rows(win)
+    assert rows["editops:menu.line"] == eo.MENU_LINE and rows["editops:line.duplicate"] == "Duplicate line\tF8"

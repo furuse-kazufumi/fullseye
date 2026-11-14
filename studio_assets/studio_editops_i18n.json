@@ -189,6 +189,13 @@
    "tw": "在鍵盤設定中變更過的按鍵:",
    "ko": "키보드 설정에서 바꾼 키:",
    "de": "In den Tastenkürzel-Einstellungen geänderte Tasten:"
+  },
+  "Close": {
+   "ja": "閉じる",
+   "zh": "关闭",
+   "tw": "關閉",
+   "ko": "닫기",
+   "de": "Schließen"
   }
  }
 }

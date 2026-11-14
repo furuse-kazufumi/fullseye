@@ -136,7 +136,7 @@ _INTERNAL = {
     #   studio_keymap 25(Qt なし: 登録簿・範囲・正規化・型・Keymap・当たりの判定・保存の形・読み込みの検査・文の書き換え・
     #   一覧と検索・対訳)、studio_keymap_qt 8(install / apply_keymap / get / 設定の窓と記録の欄 / 制御役 /
     #   窓の組み込みのキーを集める collect_fixed / キーの出来事の読み方 event_keys)。
-    "studio_editops": 43, "studio_editops_qt": 8,
+    "studio_editops": 43, "studio_editops_qt": 9,
     "studio_keymap": 29, "studio_keymap_qt": 8,
 }
 
@@ -382,7 +382,9 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-13 feat/studio-keymap B5 1.2-B(family / same_key_different_family: 同じキー・違う意味を数える G13(b')): 1390 → 1392(+2、この機械の実測)。studio_keymap 26 → 28・studio_keymap_qt 8 → 8。
 #   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1392
 # 2026-11-15 キーの設定(D123: tooltip_text): 1392 → 1393(+1、この機械の実測)。studio_keymap 28 → 29・studio_keymap_qt 8 → 8。
-_HIDDEN_FUNCTIONS_TODAY = 1393
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1393
+# 2026-11-15 矩形選択の部品(D95: retranslate_all = 言語の切り替えの後に文を付け直す): 1393 → 1394(+1、この機械の実測)。studio_editops_qt 8 → 9。
+_HIDDEN_FUNCTIONS_TODAY = 1394
 
 
 def _hidden_total():
