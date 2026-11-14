@@ -247,7 +247,14 @@ def test_load_boundary_pixels_links_device_names_nan_and_temp_folder(cat, tmp_pa
     assert "復号しない" in str(err.value) and str(tmp_path) not in str(err.value)
     with pytest.raises(S.ArgError) as err:
         S.call_tool("fullseye_load_image", {"path": "NUL"}, cat, store)
-    assert "<outside>/" in str(err.value) and str(tmp_path) not in str(err.value)
+    # ★2026-11-15: NUL が装置名なのは Windows だけ(根の外)。他の OS ではただの名前で、根の中の「読めない拡張子」
+    #   として断る(Linux で `<outside>/` を期待して落ちた)。どちらでも -32603 にせず、ホストのパスを出さない。
+    where = "<outside>/" if os.name == "nt" else "<root>/NUL"
+    assert where in str(err.value) and str(tmp_path) not in str(err.value), str(err.value)
+    if os.name != "nt":
+        with pytest.raises(S.ArgError, match="根の外") as err:
+            S.call_tool("fullseye_load_image", {"path": "/dev/null"}, cat, store)
+        assert "<outside>/null" in str(err.value), str(err.value)
     env = json.dumps(fullseye.to_jsonable(np.float64(1.5), "feature"))
     for bad in (env.replace("1.5", "NaN"), env.replace("1.5", "Infinity")):
         with pytest.raises(S.ArgError, match="非有限"):
@@ -373,3 +380,34 @@ def test_largest_component_note_is_only_shown_when_other_components_were_left_ou
                                                                  {"op": "diameter_region"}], "vision": "none"}, cat, store)
     rec = r["structuredContent"]["stages"][-1]
     assert rec["measured"]["components_in_input"] == 1 and "最大の 1 つだけ" not in _text(r)
+
+
+def test_input_independence_generator_reads_this_tree_not_another_fullseye(tmp_path):
+    """★2026-11-15: tools/gen_mcp_input_independent.py は、fullseye を import する前にこの木を sys.path の先頭に置く。
+    2026-11-13 の整理で順番が入れ替わり、別の木の fullseye が先に見える環境(利用者の Python に別の checkout の
+    editable install)では、その木を読んだ(手元の regen_all が ModuleNotFoundError: fullseye.mcp.tasks で止まった。
+    CI は checkout 自身が editable なので緑のまま)。"""
+    import subprocess
+    import sys
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    decoy = tmp_path / "decoy"
+    (decoy / "fullseye").mkdir(parents=True)
+    (decoy / "fullseye" / "__init__.py").write_text("raise ImportError('the decoy fullseye was imported')\n",
+                                                    encoding="utf-8")
+    code = (
+        "import importlib.util, os, sys\n"
+        "sys.path.insert(0, %r)\n"
+        "spec = importlib.util.spec_from_file_location('gen_ii', %r)\n"
+        "G = importlib.util.module_from_spec(spec); spec.loader.exec_module(G)\n"
+        "def stop():\n"
+        "    import fullseye\n"
+        "    print(os.path.abspath(fullseye.__file__))\n"
+        "    raise SystemExit(0)\n"
+        "G._context = stop\n"
+        "G.build(None)\n" % (str(decoy), os.path.join(root, "tools", "gen_mcp_input_independent.py")))
+    env = {k: v for k, v in os.environ.items() if k not in ("PYTHONPATH", "PYTHONHOME")}
+    done = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, encoding="utf-8",
+                          cwd=str(tmp_path), env=dict(env, PYTHONUTF8="1"), timeout=300)
+    assert done.returncode == 0, done.stderr[-600:]
+    seen = done.stdout.strip().splitlines()[-1]
+    assert os.path.normcase(seen) == os.path.normcase(os.path.join(root, "fullseye", "__init__.py")), seen

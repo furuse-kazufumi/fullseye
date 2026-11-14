@@ -111,10 +111,20 @@ def _run(cat, store, value, sort, op):
 ISOLATED_LEDGER = os.path.join(ROOT, "docs", "mcp_isolated_ops.json")
 
 
+def _use_this_tree() -> None:
+    """この木を sys.path の先頭に置く(fullseye を import する前に呼ぶ)。
+
+    ★2026-11-15: 「ROOT が sys.path に無ければ足す」を _context() の中だけでしていて、build() はその前に
+    fullseye.opsearch を import していた。利用者の Python に別の checkout の editable install があると、その木の
+    fullseye(古い OP_GRAPH、fullseye.mcp.tasks の無い木)を読む —— 手元の regen_all がここで止まった
+    (CI は checkout 自身が editable なので緑のまま)。先頭に無ければ先頭に足す(後ろに在るだけでは勝てない)。"""
+    if sys.path[:1] != [ROOT]:
+        sys.path.insert(0, ROOT)
+
+
 def _context():
     """判定の実行器の文脈(軽い catalog の代役・handle の置き場)と、型ごとの 7 つの入力。"""
-    if ROOT not in sys.path:
-        sys.path.insert(0, ROOT)
+    _use_this_tree()
     import numpy as np
     from types import SimpleNamespace
     from fullseye.mcp.handles import HandleStore
@@ -167,6 +177,7 @@ def judge(edges: list[dict], cat, store, inputs) -> tuple[dict, set]:
 
 
 def build(previous: dict | None) -> dict:
+    _use_this_tree()
     from fullseye.opsearch import _graph
     cat, store, inputs = _context()
     edges = [e for e in _graph()["edges"] if e.get("verified_executable") and len(e.get("inputs") or []) == 1
