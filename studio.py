@@ -5810,7 +5810,8 @@ def _icon(QtGui, QtCore, name, color=TEXT, px=40):
     labels — tooltips carry the meaning). Rendered at 2× and marked HiDPI so it
     stays sharp when Qt scales it down to an 18 px button icon. Cached per
     (name, color, px) since the same glyph is reused across many buttons."""
-    key = (name, color, px)
+    off_colour = _C("off")                       # D03: the disabled look of the same shape
+    key = (name, color, px, off_colour)
     hit = _ICON_CACHE.get(key)
     if hit is not None:
         return hit
@@ -5921,8 +5922,22 @@ def _icon(QtGui, QtCore, name, color=TEXT, px=40):
         ell(8.5, 8.5, 3, 3, fill=True)
     p.end()
     ic = QtGui.QIcon(pm)
+    ic.addPixmap(_tinted(QtGui, QtCore, pm, off_colour), QtGui.QIcon.Disabled)
     _ICON_CACHE[key] = ic
     return ic
+
+
+def _tinted(QtGui, QtCore, pm, colour):
+    """The same pixmap with every drawn pixel in ``colour`` (alpha kept): the disabled icon (D03)."""
+    out = QtGui.QPixmap(pm.size())
+    out.setDevicePixelRatio(pm.devicePixelRatio())
+    out.fill(QtCore.Qt.transparent)
+    p = QtGui.QPainter(out)
+    p.drawPixmap(0, 0, pm)
+    p.setCompositionMode(QtGui.QPainter.CompositionMode_SourceIn)
+    p.fillRect(out.rect(), QtGui.QColor(colour))
+    p.end()
+    return out
 
 
 # --------------------------------------------------------------------------- #

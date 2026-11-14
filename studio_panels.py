@@ -511,6 +511,9 @@ def _icon(name, off, on=None):
     ic = QtGui.QIcon()
     ic.addPixmap(_glyph(name, off), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     ic.addPixmap(_glyph(name, on or off), QtGui.QIcon.Normal, QtGui.QIcon.On)
+    dim = studio_theme.PALETTES[studio_theme.current_name()]["off"]     # D03: disabled = the off colour
+    ic.addPixmap(_glyph(name, dim), QtGui.QIcon.Disabled, QtGui.QIcon.Off)
+    ic.addPixmap(_glyph(name, dim), QtGui.QIcon.Disabled, QtGui.QIcon.On)
     return ic
 
 

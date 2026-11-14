@@ -1714,3 +1714,45 @@ def test_image_strips_are_icon_button_size_and_in_one_order(tmp_path, monkeypatc
         assert counted >= 17
     finally:
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# D03 (the picture, not only the sheet) — a disabled icon button draws its icon in the "off" colour
+# --------------------------------------------------------------------------- #
+def _opaque_colours(pm):
+    from PySide6 import QtGui
+    im = pm.toImage().convertToFormat(QtGui.QImage.Format_ARGB32)
+    out = set()
+    for y in range(im.height()):
+        for x in range(im.width()):
+            c = im.pixelColor(x, y)
+            if c.alpha() == 255:
+                out.add(c.name())
+    return out
+
+
+def test_disabled_icon_buttons_draw_the_icon_in_the_off_colour(tmp_path, monkeypatch):
+    from PySide6 import QtGui, QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        win._docks["pipeline"].show(); _pump(app, 0.3)
+        off = studio_theme.PALETTES[studio_theme.current_name()]["off"].lower()
+        hand = [b for b in win.findChildren(QtWidgets.QAbstractButton)
+                if b.property("iconOnly") and not b.icon().isNull()]
+        hand += [b for bar in win._panels["titles"].values() for b in bar.buttons()]
+        assert len(hand) >= 30
+        counted, wrong = 0, []
+        for b in hand:
+            ic = b.icon()
+            side = max(16, b.iconSize().width())
+            normal = _opaque_colours(ic.pixmap(side, side, QtGui.QIcon.Normal, QtGui.QIcon.Off))
+            dimmed = _opaque_colours(ic.pixmap(side, side, QtGui.QIcon.Disabled, QtGui.QIcon.Off))
+            if not normal:
+                continue                                                    # nothing opaque to compare
+            if dimmed != {off} or normal == {off}:
+                wrong.append((b.objectName() or b.toolTip().split("\n")[0][:30], sorted(normal)[:2], sorted(dimmed)[:2]))
+            counted += 1
+        assert counted >= 30
+        assert wrong == [], wrong[:8]
+    finally:
+        _close(app, win)
