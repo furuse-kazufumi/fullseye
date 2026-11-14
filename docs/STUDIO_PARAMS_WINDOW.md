@@ -19,9 +19,9 @@ python -m studio_params_qt --lang ja rig_day.json
 python -m studio_params_qt            # 前に開いていたファイルを戻す
 ```
 
-Studio の中からは `studio_params_qt.show_params_window(parent, paths, tr, lang=言語コード, confirm=confirm_action)` が入口です。同じ親の窓が既にあれば 2 枚目は作らず、渡したファイルを列に足して前に出します。窓はモードレスで、本体の操作を止めません。`confirm` に Studio の `confirm_action` を渡すと、確認の窓が Studio と同じ形になります(下の「確認の窓」)。
+Studio の中からは `studio_params_qt.show_params_window(parent, paths, tr, lang=言語コード, confirm=confirm_action, strip=列の部品を作る関数, strip_rule=向きの規則, overflow="scroll" | "wrap")` が入口です。同じ親の窓が既にあれば 2 枚目は作らず、渡したファイルを列に足して前に出します。窓はモードレスで、本体の操作を止めません。`confirm` に Studio の `confirm_action` を渡すと、確認の窓が Studio と同じ形になります(下の「確認の窓」)。`strip` / `strip_rule` / `overflow` は道具の列を Studio の全部のパネルと同じ動きにする 3 つです(下の「道具の列」)。渡さないと既定の部品のままで、規則が無いので横長の窓でも道具の列は上の 1 行です。
 
-**Studio からは言語を `lang=` で渡します。** Studio の `tr` は Studio の表(`studio_assets/i18n.json`)だけを引き、この窓の文をほとんど知りません(同じ英語の文があるのは 9 行)。`tr` だけを渡すと窓がほぼ英語になります。`lang` を渡すと、この窓の対訳の表をその言語で引き、表に無い文だけを `tr` に任せます。Studio の言語を切り替えた時は `ParamsWindow.set_lang(言語コード)` を呼びます(下の「言語」)。theme を切り替えた時は何も呼ばなくて構いません(パネルが自分で色と密度を読み直します)。
+**Studio からは言語を `lang=` で渡します。** Studio の `tr` は Studio の表(`studio_assets/i18n.json`)だけを引き、この窓の文をほとんど知りません(同じ英語の文があるのは 9 行)。`tr` だけを渡すと窓がほぼ英語になります。`lang` を渡すと、この窓の対訳の表をその言語で引き、表に無い文だけを `tr` に任せます。Studio の言語を切り替えた時は `ParamsWindow.set_lang(言語コード)` を呼びます(下の「言語」。差し込んだ `FlowStrip` の送りのボタンの文も一緒に作り直します)。theme を切り替えた時は何も呼ばなくて構いません(パネルが自分で色と密度を読み直し、列の部品の色も描き直させます)。「収まらない時: 送る / 折り返す」を切り替えた時は `ParamsPanel.set_overflow(形)` を呼びます。
 
 開いた時のフォーカスは、束があれば表、無ければパネルそのものに置きます(ボタンには置きません)。窓の中の文字のボタンは、Enter で押される既定のボタンになりません。
 
@@ -53,7 +53,18 @@ Studio の中からは `studio_params_qt.show_params_window(parent, paths, tr, l
     panel.set_strip_widget(strip)
     ```
 
-この窓は dock ではないので、`studio_panels.register_panel` / `declare_strip` の台帳(`panel_ledger`)には載りません(載せるのは、窓を浮いたパネルにする時)。
+  どちらの形も、`restyle(tr)`(言語と theme で描き直す)と `set_mode("scroll" | "wrap")`(収まらない時の形)を持っていれば、パネルが呼びます。差し込んだ時に今の言語と形を当て、以後は言語の切り替え(`set_tr` / `set_lang`)・theme の読み直し・`set_overflow` のたびに当てます。
+- **収まらない時の形**: `ParamsPanel.set_overflow("scroll" | "wrap")`(`overflow()` が今の形。知らない形は `ValueError`)。覚えた形は後から差し込んだ部品にも当てます。既定の部品は送りも折り返しも持たないので、覚えるだけです。
+- **Studio の入口から渡す**: 上の 3 つ(部品・規則・形)は `show_params_window` の `strip=`(部品を作る関数。窓がまだ既定の部品の時だけ作って差し込むので、入口を何度通っても部品は 1 つ)・`strip_rule=`・`overflow=` でも渡せます。
+
+  ```python
+  show_params_window(win, paths, tr, lang=win._lang, confirm=confirm_action,
+                     strip=lambda: studio_panels.flow_classes()["FlowStrip"]("tools", "params"),
+                     strip_rule=lambda w, h, now: studio_panels.strip_side(w, h, now, win._panels["strip_mode"]),
+                     overflow=win._panels.get("overflow_mode", "scroll"))
+  ```
+
+この窓は dock ではないので、`studio_panels.register_panel` / `declare_strip` の台帳(`panel_ledger`)には載りません(載せるのは、窓を浮いたパネルにする時)。見た目の枝の切り替え(`refresh` の `restyle`、`set_overflow_mode` の `set_mode`、`set_strip_mode` の向き)は台帳の列にしか届かないので、この窓へは Studio の側から `set_lang`・`set_overflow`・`set_strip_rule`(同じ規則をもう一度渡すと、すぐ聞き直します)を呼びます。
 
 行の印は次の 4 つです。色だけに頼らず、文字と模様でも分かるようにしてあります。
 
@@ -222,7 +233,7 @@ Studio から開いた時は、Studio の `confirm_action` を `ParamsPanel.set_
 画面の文は英語が正で、日本語・簡体字・繁体字・韓国語・ドイツ語・ヒンディー語の訳を `studio_assets/studio_params_i18n.json` に持っています(形は `studio_pyedit_i18n.json` と同じ。言語コードは ja・zh・tw・ko・de・hi)。`studio_params_model.make_tr("ja")` がその言語の `tr` を返します。
 
 - 単独で開く時: `python -m studio_params_qt --lang hi …`。
-- Studio から開く時: `show_params_window(…, tr=Studio の tr, lang=言語コード)`。窓は `make_tr(lang, fallback=Studio の tr)` を使います(この窓の表に無い文だけを Studio の `tr` に任せます)。表が持たない言語コードを渡しても断らずに開き、この窓の文は英語になります。
+- Studio から開く時: `show_params_window(…, tr=Studio の tr, lang=言語コード)`。窓は `make_tr(lang, fallback=Studio の tr)` を使います(この窓の表に無い文だけを Studio の `tr` に任せます。差し込んだ `FlowStrip` の送りのボタンの文もこの道で訳されます)。表が持たない言語コードを渡しても断らずに開き、この窓の文は英語になります。
 - 開いたまま言語を切り替える時: `ParamsWindow.set_lang(言語コード)`。道具の名前とツールヒント・検索の欄・案内・見出し・数え方・題・知らせの行まで全部その言語で作り直します(中身は変わりません)。`ParamsWindow.set_tr(tr)`(パネルだけなら `ParamsPanel.set_tr(tr)`)も使えますが、渡す `tr` はこの窓の文を訳せる物(`make_tr` の物)にします。Studio の `tr` をそのまま渡すと、窓がほぼ英語になります。
 
 ヒンディー語の訳は、Studio の表(`i18n.json`)の用語に合わせて機械で作った物で、母語の人の校閲は受けていません(Studio の表にも同じ英語の文がある 9 行は、Studio の訳と同じ字です)。
