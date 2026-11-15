@@ -611,7 +611,7 @@ def set_code_side(win, side):
     if side not in ("left", "bottom"):
         raise ValueError("side must be 'left' or 'bottom', not %r" % (side,))
     dock = win._docks["program"]
-    release_tab_sides(win)
+    _release_tab_sides(win)
     dock.setFloating(False)
     win.addDockWidget(QtCore.Qt.LeftDockWidgetArea if side == "left" else QtCore.Qt.BottomDockWidgetArea, dock)
     dock.show()
@@ -678,7 +678,7 @@ def after_restore(win):
     """The bar is always there, and no separate window is left outside every screen."""
     st = _state(win)
     st["rail"].show()
-    release_tab_sides(win)
+    _release_tab_sides(win)
     relayout(win)
     for dock in win._docks.values():
         if dock.isFloating() and not dock.isHidden():
@@ -1370,7 +1370,7 @@ def flow_classes():
 
         def _hold(self):
             """The user chose a tab here: the rows keep their side until the user gives a size (relayout)."""
-            hold_tab_sides(self.win)
+            _hold_tab_sides(self.win)
 
         def vertical(self):
             return self.bar.shape() in (QtWidgets.QTabBar.RoundedWest, QtWidgets.QTabBar.RoundedEast,
@@ -1668,7 +1668,7 @@ IMAGE_ZOOM_ORDER = ("zoom_in", "zoom_out", "fit", "actual_size")
 IMAGE_GROUPS = (("open_image", "demo"), IMAGE_ZOOM_ORDER, ("save_result", "save"))
 
 
-def image_groups(buttons):
+def _image_groups(buttons):
     """``buttons`` {name: button} of an image window -> its strip's groups in IMAGE_GROUPS order (buttons
     of no listed group follow in a group of their own, so nothing is lost)."""
     groups, used = [], set()
@@ -1698,7 +1698,7 @@ def adopt_image_strip(win, view, key=None):
     order = [b for b in order if b in buttons.values()]
     if not order:
         return None
-    groups = image_groups({n: b for n, b in buttons.items() if b in order})   # D24: one order in every window
+    groups = _image_groups({n: b for n, b in buttons.items() if b in order})   # D24: one order in every window
     st["image_seq"] = st.get("image_seq", 1) + 1
     key = key or "graphics_%d" % st["image_seq"]
     FlowStrip = flow_classes()["FlowStrip"]
@@ -1899,7 +1899,7 @@ def relayout(win):
     return areas
 
 
-def hold_tab_sides(win):
+def _hold_tab_sides(win):
     """The user chose a tab (a click in a tab row, an arrow key on its bar): while the same panels share an
     area, its tab row keeps its side - the row does not jump away from the pointer (relayout)."""
     st = getattr(win, "_panels", None)
@@ -1907,7 +1907,7 @@ def hold_tab_sides(win):
         st["tab_hold"] = True
 
 
-def release_tab_sides(win):
+def _release_tab_sides(win):
     """The sides of the tab rows may be decided again (the user gave a size, or the panels moved)."""
     st = getattr(win, "_panels", None)
     if st is not None:
@@ -1917,7 +1917,7 @@ def release_tab_sides(win):
 def set_strip_mode(win, mode, settings=None):
     """The user's choice for tools and tabs: "auto", "top" or "left" (saved when ``settings`` is given)."""
     st = _state(win)
-    release_tab_sides(win)
+    _release_tab_sides(win)
     st["strip_mode"] = normalise_strip_mode(mode)
     if settings is not None:
         settings.setValue(STRIP_MODE_KEY, st["strip_mode"])
@@ -2671,7 +2671,7 @@ def _default_registrations(win):
         fs = declare_strip(win, "graphics_1", row, body, shape=shape)
         named = {n: b for n, b in (own_buttons.get("graphics_1") or {}).items() if b in fs.items()}
         if len(named) == len(fs.items()):                      # D24: the groups of every image window
-            fs.set_groups(image_groups(named))
+            fs.set_groups(_image_groups(named))
         reach = _state(win).setdefault("strip_action_of", {})
         same = equiv("graphics_1")
         for b in fs.items():
@@ -3170,7 +3170,7 @@ def install(win, tr, settings=None):
             if t == QtCore.QEvent.Move and isinstance(obj, QtWidgets.QMdiSubWindow):
                 self.later()                         # an image window moved: its seen part changes (A2)
             if obj is win and t in (QtCore.QEvent.Resize, QtCore.QEvent.MouseButtonRelease):
-                release_tab_sides(win)               # the window resized / a splitter let go: a size the user gave
+                _release_tab_sides(win)               # the window resized / a splitter let go: a size the user gave
                 if t == QtCore.QEvent.MouseButtonRelease and not self.pending:
                     self.pending = True
                     QtCore.QTimer.singleShot(0, self.run)
@@ -3194,7 +3194,7 @@ def install(win, tr, settings=None):
             if ev.type() != QtCore.QEvent.KeyPress or not isinstance(obj, QtWidgets.QTabBar):
                 return False
             if ev.key() in (QtCore.Qt.Key_Left, QtCore.Qt.Key_Right, QtCore.Qt.Key_Up, QtCore.Qt.Key_Down):
-                hold_tab_sides(win)                  # a tab chosen with the keys: the row stays where it is
+                _hold_tab_sides(win)                  # a tab chosen with the keys: the row stays where it is
             if ev.key() not in (QtCore.Qt.Key_Up, QtCore.Qt.Key_Down):
                 return False
             if obj.shape() not in (QtWidgets.QTabBar.RoundedWest, QtWidgets.QTabBar.TriangularWest,
