@@ -133,6 +133,18 @@ def test_principal_has_no_close_and_rail_never_hides_it(tmp_path, monkeypatch):
             assert bar.b_close is None
             assert bar.findChild(QtWidgets.QToolButton, "dock_title_close") is None      # no x at all
             assert bar.findChild(QtWidgets.QToolButton, "dock_title_float") is not None  # the float stays
+            dock = win._docks[key]
+            shown = [b for b in bar.findChildren(QtWidgets.QAbstractButton) if b.isVisible()]
+            assert set(shown) == {bar.b_float, bar.b_menu} and len(shown) == 2, [   # any kind of button counts
+                (type(b).__name__, b.objectName(), b.text()) for b in shown]
+            for b in shown:                                                 # and none of them puts it away
+                if b is bar.b_menu:
+                    continue                                                # (its menu is checked below)
+                for _ in range(2):
+                    b.click(); _pump(app, 0.2)
+                    assert dock.isVisible(), (key, b.objectName())
+            if dock.isFloating():
+                studio_panels.toggle_float(win, key, False); _pump(app, 0.2)
             bar.fill_menu()
             assert bar.a_hide not in [a for a in _menu_actions(bar.b_menu.menu()) if a.isVisible()]
             dock = win._docks[key]
@@ -275,9 +287,12 @@ def _shape_panel(app, win, row, w, h):
         if not shape.isFloating():
             studio_panels.toggle_float(win, row["key"], True)
         shape.resize(w, h)
+    elif _subwindow_of(shape) is None:                                     # a detached image window: its own window
+        top = shape.window()
+        assert top is not win and top.isWindow(), row["key"]
+        top.resize(w + top.width() - shape.width(), h + top.height() - shape.height())
     else:
         sub = _subwindow_of(shape)
-        assert sub is not None, row["key"]
         if sub.isMaximized():
             sub.showNormal()
             _pump(app, 0.1)
@@ -332,8 +347,19 @@ def test_every_panel_declares_its_strip_and_the_ledger_counts_them_all(tmp_path,
         # every strip of the window is the same part; the tab rows too (counted by name and type)
         every = win.findChildren(QtWidgets.QWidget, "flow_strip")
         assert {type(s).__name__ for s in every} == {"FlowStrip"}
-        assert set(studio_panels.all_strips(win)) <= set(every)
+        assert set(studio_panels.all_strips(win)) == set(every)             # both ways: none outside the ledger
         assert not win.findChildren(QtWidgets.QToolButton, "strip_more")     # the old "..." is gone (A2)
+        # the window tree, not only the registry: a panel added later without registering fails here
+        docks = win.findChildren(QtWidgets.QDockWidget)
+        assert set(docks) == set(win._docks.values()) and len(docks) == 7, sorted(d.objectName() for d in docks)
+        detached = win._detach_graphics(win._new_graphics_window()); _pump(app, 0.3)
+        assert detached is not None and detached.isWindow()
+        ledger = studio_panels.panel_ledger(win)
+        views = [v for v in win.findChildren(QtWidgets.QGraphicsView) if type(v).__name__ == "ImageView"]
+        assert len(views) >= 3                                             # main, Graphics 2, the detached one
+        for v in views:
+            assert any(r["kind"] == "image" and (r["shape"] is v or r["shape"].isAncestorOf(v)) for r in ledger), (
+                v.window().windowTitle())
     finally:
         _close(app, win)
 
@@ -377,9 +403,19 @@ def test_wide_panels_turn_their_strip_left_square_ones_keep_it_on_top(tmp_path, 
     try:
         win.resize(1600, 1000); _pump(app, 0.2)
         win._new_graphics_window(); _pump(app, 0.3)
+        top = win._detach_graphics(win._new_graphics_window()); _pump(app, 0.3)   # a detached one too (A1)
+        assert top is not None
         _show_all(app, win)
         rows = _strip_rows(win)
-        assert len(rows) >= 7
+        assert len(rows) >= 8
+        lone = [r for r in rows if r["kind"] == "image" and _subwindow_of(r["shape"]) is None
+                and r["shape"].window() is top]
+        assert len(lone) == 1
+        names = {b: n for n, b in lone[0]["shape"].tool_buttons.items()}
+        assert [[names[b] for b in g] for g in lone[0]["strip"].groups] == [
+            ["zoom_in", "zoom_out", "fit", "actual_size"], ["save"]]       # the groups of every image window
+        side = studio_theme.density()["icon_btn"]
+        assert all((b.width(), b.height()) == (side, side) for b in lone[0]["strip"].items())
         entries = {e["key"]: e for e in win._panels["strips"]}
         turned = 0
         for r in rows:
@@ -396,20 +432,31 @@ def test_wide_panels_turn_their_strip_left_square_ones_keep_it_on_top(tmp_path, 
             w, h = _shape_panel(app, win, r, int(1.9 * 520), 520)
             assert entries[r["key"]]["side"] == "top" and _is_row(s), r["key"]
             turned += 1
-        assert turned == len(rows) >= 7
+        assert turned == len(rows) >= 8                                     # the detached window turned as well
     finally:
         _close(app, win)
 
 
 def test_one_setting_fixes_the_side_of_every_strip_and_tab_row(tmp_path, monkeypatch):
+    from PySide6 import QtWidgets
     app, win = _launch(monkeypatch, tmp_path / "s.ini")
     try:
+        win.resize(1280, 720); _pump(app, 0.2)
         _show_all(app, win)
+        bar = _right_column_tabs(app, win)                                  # a group of tabbed panels
         rows = _strip_rows(win)
         assert len(rows) >= 6
-        for mode, want in (("left", "v"), ("top", "h")):
+        areas = 0
+        for mode, want in (("left", "v"), ("top", "h"), ("left", "v")):
             studio_panels.set_strip_mode(win, mode); _pump(app, 0.3)
             assert [r["strip"].orientation for r in rows] == [want] * len(rows), mode
+            sides = win._panels["tab_sides"]                                # ... and every tab row (the same setting)
+            assert len(sides) >= 1 and set(sides.values()) == {mode}, (mode, sides)
+            pos = QtWidgets.QTabWidget.West if mode == "left" else QtWidgets.QTabWidget.North
+            assert all(win.tabPosition(a) == pos for a in sides), mode
+            assert _tab_row(win, bar).vertical() == (mode == "left") and bar.isVisible(), mode
+            areas += len(sides)
+        assert areas >= 3
         studio_panels.set_strip_mode(win, "auto"); _pump(app, 0.3)
         st = win._panels
         view = win._menus["view"]
@@ -661,6 +708,7 @@ def test_wrap_mode_reaches_every_tool_and_tab_and_one_switch_reaches_every_panel
         assert bar.currentIndex() == current                               # the chosen tab and the pressed state stay
         assert {k: b.isChecked() for k, b in win._panels["buttons"].items()} == checked
         gap = studio_theme.density()["click_gap"]
+        wrapped = 0
         for mode in ("top", "left"):
             studio_panels.set_strip_mode(win, mode); _pump(app, 0.3)
             for r in _strip_rows(win):
@@ -668,6 +716,7 @@ def test_wrap_mode_reaches_every_tool_and_tab_and_one_switch_reaches_every_panel
                 k = len(s.items())
                 if k < 3:
                     continue
+                wrapped += 1
                 _force_length(s, 2 * _longest(s) + gap + 2); _pump(app, 0.15)   # two per row: ceil(k / 2) rows
                 need = -(-k // 2)
                 if need <= studio_panels.WRAP_MAX_LINES:
@@ -685,6 +734,7 @@ def test_wrap_mode_reaches_every_tool_and_tab_and_one_switch_reaches_every_panel
                     seen |= _walk(app, s)
                 assert seen == set(s.items()), (mode, r["key"])
                 _free_length(s); _pump(app, 0.15)
+        assert wrapped >= 2 * 5                                             # code ops pipeline A/B + the image, x2
         studio_panels.set_strip_mode(win, "auto"); _pump(app, 0.3)
         row = _tab_row(win, bar)                                            # tabs wrap onto rows too
         along = max(t.sizeHint().width() for t in row.tabs)
@@ -783,10 +833,17 @@ def test_top_band_text_buttons_only_run_and_examples(tmp_path, monkeypatch):
     try:
         bars = [win.findChild(QtWidgets.QToolBar, n) for n in ("main_tools", "work_modes")]
         assert all(b is not None for b in bars)
+        def no_overflow(lang):                                              # G04(h): 1280 holds the whole band
+            assert win.width() == 1280, win.width()
+            for b in bars:
+                ext = b.findChild(QtWidgets.QToolButton, "qt_toolbar_ext_button")
+                assert ext is None or not ext.isVisible(), (lang, b.objectName())
+        no_overflow("en")
         buttons = [w for b in bars for w in b.findChildren(QtWidgets.QToolButton)
                    if w.isVisible() and w.objectName() != "qt_toolbar_ext_button"]
         assert len(buttons) >= 8
-        texty = [w for w in buttons if w.icon().isNull() or w.toolButtonStyle() == QtCore.Qt.ToolButtonTextOnly]
+        texty = [w for w in buttons if w.icon().isNull() or (                # words beside / under a picture too
+            w.toolButtonStyle() != QtCore.Qt.ToolButtonIconOnly and (w.text() or "").replace("&", "").strip())]
         allowed = {"Run", "Examples", "実行", "例を開く"}
         assert [w.objectName() for w in texty if w.text() not in allowed] == ["work_mode_switch"], \
             [(w.objectName(), w.text()) for w in texty]
@@ -824,6 +881,12 @@ def test_top_band_text_buttons_only_run_and_examples(tmp_path, monkeypatch):
         modes[1].trigger(); _pump(app, 0.2)                                 # not the mode the window started with
         win._apply_language("ja"); _pump(app, 0.3)                          # hints follow the language
         try:
+            no_overflow("ja")
+            words = [w.objectName() or w.text() for w in buttons if w.isVisible() and (
+                w.icon().isNull() or (w.toolButtonStyle() != QtCore.Qt.ToolButtonIconOnly
+                                      and (w.text() or "").replace("&", "").strip()))
+                and w.text().replace("&", "") not in allowed]
+            assert words == ["work_mode_switch"], words                      # still pictures only, in Japanese
             for a, _n in drawn:                                             # the name AND what happens
                 name, _dash, effect = a.toolTip().partition(" — ")
                 assert re.search(r"[぀-ヿ一-鿿]", name) and re.search(r"[぀-ヿ]", effect), a.toolTip()
@@ -1751,14 +1814,16 @@ def test_image_strips_are_icon_button_size_and_in_one_order(tmp_path, monkeypatc
 # --------------------------------------------------------------------------- #
 # D03 (the picture, not only the sheet) — a disabled icon button draws its icon in the "off" colour
 # --------------------------------------------------------------------------- #
-def _opaque_colours(pm):
+def _opaque_colours(pm, cover=96):
+    """The colours of the pixels a glyph covers (from ``cover`` / 255: thin smoothed lines have no fully
+    opaque pixel; in non-premultiplied ARGB32 a one-colour glyph keeps its colour at every cover)."""
     from PySide6 import QtGui
     im = pm.toImage().convertToFormat(QtGui.QImage.Format_ARGB32)
     out = set()
     for y in range(im.height()):
         for x in range(im.width()):
             c = im.pixelColor(x, y)
-            if c.alpha() == 255:
+            if c.alpha() >= cover:
                 out.add(c.name())
     return out
 
@@ -1769,22 +1834,27 @@ def test_disabled_icon_buttons_draw_the_icon_in_the_off_colour(tmp_path, monkeyp
     try:
         win._docks["pipeline"].show(); _pump(app, 0.3)
         off = studio_theme.PALETTES[studio_theme.current_name()]["off"].lower()
-        hand = [b for b in win.findChildren(QtWidgets.QAbstractButton)
-                if b.property("iconOnly") and not b.icon().isNull()]
-        hand += [b for bar in win._panels["titles"].values() for b in bar.buttons()]
-        assert len(hand) >= 30
-        counted, wrong = 0, []
+        # the window tree: every drawn button (Qt's own qt_* parts aside), not only the ones with a marker
+        hand = [b for b in win.findChildren(QtWidgets.QAbstractButton)       # (a line edit's clear button is Qt's
+                if not b.objectName().startswith("qt_") and not b.icon().isNull() and _drawn(b)   # own part too)
+                and not isinstance(b.parentWidget(), QtWidgets.QLineEdit)]
+        hand += [b for bar in win._panels["titles"].values() for b in bar.buttons() if b not in hand]
+        assert len(hand) >= 60
+        counted, wrong, arrows = 0, [], 0
         for b in hand:
+            arrows += b.objectName() in ("flow_back", "flow_on")
             ic = b.icon()
             side = max(16, b.iconSize().width())
             normal = _opaque_colours(ic.pixmap(side, side, QtGui.QIcon.Normal, QtGui.QIcon.Off))
             dimmed = _opaque_colours(ic.pixmap(side, side, QtGui.QIcon.Disabled, QtGui.QIcon.Off))
             if not normal:
                 continue                                                    # nothing opaque to compare
-            if dimmed != {off} or normal == {off}:
+            def near(c, ref=off, tol=8):
+                return max(abs(int(c[i:i + 2], 16) - int(ref[i:i + 2], 16)) for i in (1, 3, 5)) <= tol
+            if not dimmed or not all(near(c) for c in dimmed) or all(near(c) for c in normal):
                 wrong.append((b.objectName() or b.toolTip().split("\n")[0][:30], sorted(normal)[:2], sorted(dimmed)[:2]))
             counted += 1
-        assert counted >= 30
+        assert counted >= 60 and arrows >= 2 * 6                           # the strips' scroll buttons too
         assert wrong == [], wrong[:8]
     finally:
         _close(app, win)
