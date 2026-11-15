@@ -1365,14 +1365,11 @@ def flow_classes():
             self.strip.show()
             bar.installEventFilter(self)
             bar.currentChanged.connect(self.follow_current)
-            bar.currentChanged.connect(self._hold)
             bar.setProperty("fsTabRow", True)
 
-        def _hold(self, _index=None):
-            """A tab was chosen: the rows keep their side until the user gives a size (see relayout)."""
-            st = getattr(self.win, "_panels", None)
-            if st is not None:
-                st["tab_hold"] = True
+        def _hold(self):
+            """The user chose a tab here: the rows keep their side until the user gives a size (relayout)."""
+            hold_tab_sides(self.win)
 
         def vertical(self):
             return self.bar.shape() in (QtWidgets.QTabBar.RoundedWest, QtWidgets.QTabBar.RoundedEast,
@@ -1450,6 +1447,7 @@ def flow_classes():
                 self.strip.ensure_visible(self.tabs[index])
 
         def select(self, index):
+            self._hold()                             # the row stays under the pointer (A1, automatic side)
             self.bar.setCurrentIndex(index)          # Qt raises the panel of that tab
             self.follow_current(self.bar.currentIndex())
 
@@ -1878,6 +1876,14 @@ def relayout(win):
         finally:
             win._applying_layout = False
     return areas
+
+
+def hold_tab_sides(win):
+    """The user chose a tab (a click in a tab row, an arrow key on its bar): while the same panels share an
+    area, its tab row keeps its side - the row does not jump away from the pointer (relayout)."""
+    st = getattr(win, "_panels", None)
+    if st is not None:
+        st["tab_hold"] = True
 
 
 def release_tab_sides(win):
@@ -3156,6 +3162,8 @@ def install(win, tr, settings=None):
         def eventFilter(self, obj, ev):
             if ev.type() != QtCore.QEvent.KeyPress or not isinstance(obj, QtWidgets.QTabBar):
                 return False
+            if ev.key() in (QtCore.Qt.Key_Left, QtCore.Qt.Key_Right, QtCore.Qt.Key_Up, QtCore.Qt.Key_Down):
+                hold_tab_sides(win)                  # a tab chosen with the keys: the row stays where it is
             if ev.key() not in (QtCore.Qt.Key_Up, QtCore.Qt.Key_Down):
                 return False
             if obj.shape() not in (QtWidgets.QTabBar.RoundedWest, QtWidgets.QTabBar.TriangularWest,

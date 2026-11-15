@@ -2045,3 +2045,29 @@ def test_every_drawn_button_of_a_panel_is_in_a_strip_or_says_why_not(tmp_path, m
     finally:
         studio_panels.set_strip_mode(win, "auto")
         _close(app, win)
+
+
+def test_a_tab_group_the_program_builds_takes_the_side_of_its_settled_front(tmp_path, monkeypatch):
+    """The hold of the tab sides is the user's (a click / a key in the row), not Qt's: while a group is being
+    built (tabified, a panel raised by the program) the side follows the front it settles on - a passing wide
+    front must not leave a tall right-hand column with its tabs on the left."""
+    from PySide6 import QtCore
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        win.resize(1280, 720); _pump(app, 0.2)
+        studio_panels.set_code_side(win, "left"); _pump(app, 0.3)
+        keys = ("operators", "pipeline", "variables", "ab", "display", "compare")
+        for k in keys:
+            win.addDockWidget(QtCore.Qt.RightDockWidgetArea, win._docks[k]); win._docks[k].show()
+        _pump(app, 0.3)
+        for k in keys[1:]:
+            win.tabifyDockWidget(win._docks[keys[0]], win._docks[k])
+        win._docks["pipeline"].raise_(); _pump(app, 0.6)
+        rows = [r for r in win._panels["tab_rows"].values() if r.bar.isVisible() and len(r.tabs) == len(keys)]
+        assert len(rows) == 1
+        front = win._docks["pipeline"]
+        assert front.width() / front.height() <= studio_panels.WIDE_OFF, front.size().toTuple()   # tall / square
+        assert not rows[0].vertical(), front.size().toTuple()                  # so its tabs are on top
+        assert not win._panels.get("tab_hold")                                  # nobody chose a tab yet
+    finally:
+        _close(app, win)
