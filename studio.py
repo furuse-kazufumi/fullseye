@@ -14142,7 +14142,21 @@ def build_window(model=None):
         dens.setToolTip(tr("Density") + " — applied now and restored on startup.")
         dens.currentIndexChanged.connect(lambda _i: win._apply_theme(level=dens.currentData()))
         dlg._theme_combos = (scheme, dens)
+        # A3: tools and tabs / when they do not fit - the same QActions as View and Window > Layout
+        strip_box, flow_box = QtWidgets.QComboBox(), QtWidgets.QComboBox()
+        for _box, _prefix, _modes, _now in (
+                (strip_box, "strip_", studio_panels.STRIP_MODES, win._panels["strip_mode"]),
+                (flow_box, "overflow_", studio_panels.OVERFLOW_MODES, win._panels["overflow_mode"])):
+            for _m in _modes:
+                _box.addItem(studio_panels.plain_text(win._actions[_prefix + _m].text()), _m)
+            _box.setCurrentIndex(max(0, _box.findData(_now)))
+            _box.currentIndexChanged.connect(
+                lambda _i, b=_box, p=_prefix: win._actions[p + b.currentData()].trigger())
+        strip_box.setToolTip(tr("Tools and tabs") + " — applied now and restored on startup.")
+        flow_box.setToolTip(tr("When they do not fit") + " — applied now and restored on startup.")
+        dlg._strip_combos = (strip_box, flow_box)
         _settings_page("Display", [("Colour scheme", scheme), ("Density", dens),
+                                   ("Tools and tabs", strip_box), ("When they do not fit", flow_box),
                                    ("Default display mode", dmode),
                                    ("Region draw (dev_set_draw)", drawm),
                                    ("Region line width", drawlw)])

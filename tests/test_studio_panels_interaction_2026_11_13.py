@@ -2118,3 +2118,55 @@ def test_a_tab_group_the_program_builds_takes_the_side_of_its_settled_front(tmp_
         assert not win._panels.get("tab_hold")                                  # nobody chose a tab yet
     finally:
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# A3 — "Tools and tabs" and "When they do not fit" are in System settings too (Display), through the same
+# QActions as View, Window > Layout and the palette
+# --------------------------------------------------------------------------- #
+def test_the_settings_window_offers_tools_and_tabs_and_when_they_do_not_fit(tmp_path, monkeypatch):
+    from PySide6 import QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        st = win._panels
+        seen = {}
+
+        def look(_dlg):                                                     # instead of the modal loop
+            dlg = win._system_dialog
+            strip_box, flow_box = dlg._strip_combos
+            pages = [dlg._tree.topLevelItem(i).text(0) for i in range(dlg._tree.topLevelItemCount())]
+            display = dlg._stack.widget(pages.index("Display"))
+            assert display.isAncestorOf(strip_box) and display.isAncestorOf(flow_box)
+            for box, prefix, modes in ((strip_box, "strip_", studio_panels.STRIP_MODES),
+                                       (flow_box, "overflow_", studio_panels.OVERFLOW_MODES)):
+                assert [box.itemData(i) for i in range(box.count())] == list(modes)
+                assert [box.itemText(i) for i in range(box.count())] == [
+                    studio_panels.plain_text(win._actions[prefix + m].text()) for m in modes]   # the menus' words
+                assert box.currentData() == st["strip_mode" if prefix == "strip_" else "overflow_mode"]
+                seen.setdefault("boxes", 0)
+                seen["boxes"] += 1
+            strip_box.setCurrentIndex(strip_box.findData("left")); _pump(app, 0.3)
+            flow_box.setCurrentIndex(flow_box.findData("wrap")); _pump(app, 0.3)
+            seen["now"] = (st["strip_mode"], st["overflow_mode"],
+                           win._actions["strip_left"].isChecked(), win._actions["overflow_wrap"].isChecked())
+            return QtWidgets.QDialog.Rejected
+
+        monkeypatch.setattr(QtWidgets.QDialog, "exec", look)
+        win._open_system_settings()
+        assert seen["boxes"] == 2
+        assert seen["now"] == ("left", "wrap", True, True)                   # applied at once, the actions follow
+        assert all(s.mode == "wrap" for s in studio_panels.all_strips(win)) and len(studio_panels.all_strips(win)) >= 6
+        saved = st["settings"]()
+        assert saved.value(studio_panels.STRIP_MODE_KEY) == "left" and saved.value(studio_panels.OVERFLOW_KEY) == "wrap"
+        win._apply_language("ja"); _pump(app, 0.3)                          # its words follow the language
+        try:
+            monkeypatch.setattr(QtWidgets.QDialog, "exec", lambda _self: QtWidgets.QDialog.Rejected)
+            win._open_system_settings()
+            strip_box, flow_box = win._system_dialog._strip_combos
+            assert strip_box.currentData() == "left" and flow_box.currentData() == "wrap"   # what is in use
+            assert all(any(ord(ch) > 0x3000 for ch in strip_box.itemText(i)) for i in range(strip_box.count()))
+        finally:
+            win._apply_language("en")
+    finally:
+        studio_panels.set_strip_mode(win, "auto"); studio_panels.set_overflow_mode(win, "scroll")
+        _close(app, win)
