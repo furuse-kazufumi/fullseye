@@ -108,7 +108,7 @@ _INTERNAL = {
     #   not_insertable_text / starter_ops / entry_sort_of / op_is_ledger / sample_menu_order / format_pixel_readout /
     #   knob_dead_measured / knob_use / knob_role_text / help_plain_markup / plain_summary / help_query_target)、
     #   studio_search +1(samples_for)。どれも GUI の内側の部品で、試験が直接呼ぶ。
-    "studio": 106, "studio_errors": 3, "studio_search": 8, "studio_roundtrip": 5, "studio_batch": 7, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    "studio": 107, "studio_errors": 3, "studio_search": 8, "studio_roundtrip": 5, "studio_batch": 7, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
@@ -153,6 +153,19 @@ _INTERNAL = {
     "studio_project": 23, "studio_pymode": 22, "studio_pyedit_syntax": 22, "studio_pyedit_complete": 35,
     "studio_pyedit_values": 31, "studio_pyedit_i18n": 5, "studio_pyedit_qt": 9, "studio_pyedit_vars_qt": 14,
     "studio_program_i18n": 4, "studio_pyedit_safe": 17,
+    # ★2026-11-13(feat/studio-blockselect): コードエディタの矩形選択・複数カーソル・行の操作。Studio の GUI の内側の
+    #   部品で、利用者の入口は Studio のエディタ(キー・右クリックのメニュー)。op にも facade にも出さない。
+    #   studio_editops 43(Qt なし: 見た目の桁 ↔ 文字の位置・箱 → 行ごとの選択・編集の計画・括弧・キーの表・対訳)、
+    #   studio_editops_qt 7(EditOps / install / uninstall / get と、キーの当たりの検査 3 本)。
+    #   2026-11-13 feat/studio-keymap: studio_editops_qt 7 → 8(apply_bindings: キーの登録簿から今のキーを全部の
+    #   エディタへ配る入口)。
+    # ★2026-11-13(feat/studio-keymap): 利用者が決められるショートカットキー。Studio の GUI の内側の部品で、利用者の
+    #   入口は Studio の Tools ▸ キーボードのショートカットの設定…(とキーそのもの)。op にも facade にも出さない。
+    #   studio_keymap 25(Qt なし: 登録簿・範囲・正規化・型・Keymap・当たりの判定・保存の形・読み込みの検査・文の書き換え・
+    #   一覧と検索・対訳)、studio_keymap_qt 8(install / apply_keymap / get / 設定の窓と記録の欄 / 制御役 /
+    #   窓の組み込みのキーを集める collect_fixed / キーの出来事の読み方 event_keys)。
+    "studio_editops": 43, "studio_editops_qt": 9,
+    "studio_keymap": 29, "studio_keymap_qt": 8,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -419,7 +432,26 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (初回の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1101
 # 2026-11-15 統合の枝に初回の枝(fix/studio-firstrun-2026-11-13、288feeec4e)を merge: 1424 + 15 = 1439
 #   (初回の枝が合わせ目 1086 から足した studio 13・studio_search 1・CLOSE_CONFIRM_HOOK 1)。
-_HIDDEN_FUNCTIONS_TODAY = 1439
+#   (キーの枝を合わせる前の値) _HIDDEN_FUNCTIONS_TODAY = 1439
+# キーの枝(feat/studio-keymap-2026-11-13、分岐元 1924e8b955 = 1305)の便:
+# 2026-11-13 feat/studio-blockselect: 1305 → 1355(+50、この機械の実測)。上の _INTERNAL の studio_editops 43・
+#   studio_editops_qt 7 のうち、公開経路の名前と重ならない分。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1355
+# 2026-11-13 feat/studio-keymap: 1355 → 1389(+34、この機械の実測)。上の _INTERNAL の studio_keymap 25・
+#   studio_keymap_qt 8 と studio_editops_qt + 1 のうち、公開経路の名前と重ならない分。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1389
+# 2026-11-13 feat/studio-keymap レビュー 1 回目の直し C1(dropped_commands: 起動で捨てた上書きを数える): 1389 → 1390(+1、この機械の実測)。studio_keymap 25 → 26・studio_keymap_qt 8 → 8。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1390
+# 2026-11-13 feat/studio-keymap B5 1.2-B(family / same_key_different_family: 同じキー・違う意味を数える G13(b')): 1390 → 1392(+2、この機械の実測)。studio_keymap 26 → 28・studio_keymap_qt 8 → 8。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1392
+# 2026-11-15 キーの設定(D123: tooltip_text): 1392 → 1393(+1、この機械の実測)。studio_keymap 28 → 29・studio_keymap_qt 8 → 8。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1393
+# 2026-11-15 矩形選択の部品(D95: retranslate_all = 言語の切り替えの後に文を付け直す): 1393 → 1394(+1、この機械の実測)。studio_editops_qt 8 → 9。
+#   (キーの枝の値) _HIDDEN_FUNCTIONS_TODAY = 1394
+# 2026-11-15 統合の枝にキーの枝を merge: 1439 + (1394 - 1305 = 89: studio_editops 43・studio_editops_qt 9・
+#   studio_keymap 29・studio_keymap_qt 8 の公開経路と重ならない分) = 1528。
+#   2026-11-15 実測で studio は 107(統合 93 と初回 103 の和集合。片方が消した名前を他方が持っていた)。
+_HIDDEN_FUNCTIONS_TODAY = 1529
 
 
 def _hidden_total():

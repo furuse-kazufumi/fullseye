@@ -4,7 +4,7 @@
   "G09(a)": {
    "title": "confirmation boxes / input windows built directly (outside confirm_action / ask_text)",
    "owners": "D49 D50 D80 D88 D106 D107",
-   "count": 12,
+   "count": 15,
    "examined_at_creation": 23318,
    "items": [
     {
@@ -52,6 +52,24 @@
      "d": "D106",
      "where": "studio.py::build_window.show_guide",
      "text": "QMessageBox.information #1"
+    },
+    {
+     "d": "D106",
+     "where": "studio_editops_qt.py::EditOps.show_howto",
+     "text": "QMessageBox #1",
+     "reason": "merged with [キー] feat/studio-keymap-2026-11-13: the rectangular-selection part's own boxes (studio_editops_qt), not yet on confirm_action (B4 D106 / 1.3 parts)"
+    },
+    {
+     "d": "D106",
+     "where": "studio_keymap_qt.py::KeyboardDialog._confirm_box",
+     "text": "QMessageBox #1",
+     "reason": "merged with [キー] feat/studio-keymap-2026-11-13: the rectangular-selection part's own boxes (studio_editops_qt), not yet on confirm_action (B4 D106 / 1.3 parts)"
+    },
+    {
+     "d": "D106",
+     "where": "studio_keymap_qt.py::KeyboardDialog._inform",
+     "text": "QMessageBox.warning #1",
+     "reason": "merged with [キー] feat/studio-keymap-2026-11-13: the rectangular-selection part's own boxes (studio_editops_qt), not yet on confirm_action (B4 D106 / 1.3 parts)"
     },
     {
      "d": "D107",
@@ -139,15 +157,9 @@
   "G13(c)": {
    "title": "menu-bar mnemonics used twice in one language (7 languages)",
    "owners": "D13",
-   "count": 1,
+   "count": 0,
    "examined_at_creation": 49,
-   "items": [
-    {
-     "d": "D13",
-     "where": "menu bar de Alt+A",
-     "text": "&Ansicht | &Ausführen"
-    }
-   ]
+   "items": []
   },
   "G15(a')": {
    "title": "text shown untranslated in a non-English UI language (6 languages, matched against the source)",

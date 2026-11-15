@@ -9045,11 +9045,10 @@ def build_window(model=None, start_mode="pipeline"):
     b_regions.clicked.connect(lambda _=False: act_featins.trigger())
     win._b_regions = b_regions
     itop.addStretch(1)
-    # (2026-11-15, integration) the entrance is a word button that comes and goes: its own row above the image,
-    # not in the image window's strip of pictures (D24)
-    _regions_row = QtWidgets.QHBoxLayout(); _regions_row.setContentsMargins(0, 0, 0, 0)
-    _regions_row.addWidget(b_regions); _regions_row.addStretch(1)
-    ilay.addLayout(itop); ilay.addLayout(_regions_row); ilay.addWidget(view, 1)
+    ilay.addLayout(itop); ilay.addWidget(view, 1)
+    # (2026-11-15, integration) the entrance is a word button that comes and goes: it stands over the image's
+    # top-left corner, not in the image window's strip of pictures (D24) and not in its layout
+    b_regions.setParent(view); b_regions.move(8, 8)
     ilay.setContentsMargins(4, 4, 4, 4); ilay.setSpacing(4)
     image_panel = QtWidgets.QWidget(); image_panel.setLayout(ilay)
     image_panel.setObjectName("graphics_primary")
