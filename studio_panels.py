@@ -1965,10 +1965,17 @@ S_DONE, S_STOPPED, S_FAILED = "Done", "Stopped", "Failed"
 STRINGS = STRINGS + (S_DONE, S_STOPPED, S_FAILED)
 
 
-def end_state(ok):
-    """How a job ended, from what its caller says: True / "done", "stopped", False / "failed"."""
-    if isinstance(ok, str) and ok in BRAND_END:
-        return ok
+def end_state(ok, log=None):
+    """How a job ended, from what its caller says: True / "done", "stopped", False / "failed".
+
+    A word that is not one of BRAND_END (a misspelt "stoped") is "failed", never "done": the corner says
+    done only when the caller said so (D99, fail-closed). ``log(what, why)`` is told about such a word."""
+    if isinstance(ok, str):
+        if ok in BRAND_END:
+            return ok
+        if log is not None:
+            log("unknown end state of a job: %r" % (ok,), "shown as failed")
+        return "failed"
     return "done" if ok else "failed"
 
 
@@ -2176,7 +2183,7 @@ def make_brand_status(parent, name="Fullseye Studio", icon=None, log=None, tr=No
 
         def end(self, token, ok=True, text=None):
             """``ok``: True / False, or how it ended - "done", "stopped", "failed" (BRAND_END)."""
-            self._call.emit("end", (token, end_state(ok), text))
+            self._call.emit("end", (token, end_state(ok, self.log), text))
 
         # ---- GUI thread ----------------------------------------------------- #
         def _on_call(self, what, args):
@@ -2390,7 +2397,8 @@ def follow_progress(brand, bar, label=None, outcome=None):
     """Let the brand corner follow an existing QProgressBar (shown = a job begins, value = how far,
     hidden = it ended) and, when given, the label that says what is running. ``outcome``: a callable
     asked when the bar hides - "done", "stopped" or "failed" (D99: the corner says how the job really
-    ended; without one, or when it fails, the job counts as done). Returns the filter (keep a reference)."""
+    ended; without one the job counts as done; one that raises, or answers another word, says "failed"
+    and is logged). Returns the filter (keep a reference)."""
     from PySide6 import QtCore   # noqa: PLC0415
 
     class Follow(QtCore.QObject):
@@ -2407,9 +2415,11 @@ def follow_progress(brand, bar, label=None, outcome=None):
             elif ev.type() == QtCore.QEvent.Hide and self.token is not None:
                 token, self.token = self.token, None
                 try:
-                    how = end_state(outcome()) if outcome is not None else "done"
-                except Exception:                    # noqa: BLE001 - no answer: as before
-                    how = "done"
+                    how = end_state(outcome(), brand.log) if outcome is not None else "done"
+                except Exception as exc:             # noqa: BLE001 - no answer is not a success (D99)
+                    how = "failed"
+                    if brand.log is not None:
+                        brand.log("the outcome of a job could not be read", repr(exc))
                 brand.end(token, how)                # the word of the outcome ("Stopped"), not the last progress text
             return False
 

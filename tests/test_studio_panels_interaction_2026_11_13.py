@@ -1238,8 +1238,11 @@ def test_brand_end_states_done_stopped_failed(tmp_path, monkeypatch):
     import threading
     import numpy as np
     from PySide6 import QtWidgets
-    assert [studio_panels.end_state(v) for v in (True, False, "done", "stopped", "failed", "nonsense", None, 1)] == [
-        "done", "failed", "done", "stopped", "failed", "done", "failed", "done"]
+    logged = []
+    assert [studio_panels.end_state(v, lambda *a: logged.append(a))
+            for v in (True, False, "done", "stopped", "failed", "nonsense", "stoped", None, 1)] == [
+        "done", "failed", "done", "stopped", "failed", "failed", "failed", "failed", "done"]   # D99: fail-closed
+    assert [a[0] for a in logged] == ["unknown end state of a job: 'nonsense'", "unknown end state of a job: 'stoped'"]
     monkeypatch.setenv("QT_QPA_PLATFORM", "offscreen")
     monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / "s.ini"))
     app = _app()
@@ -1285,7 +1288,19 @@ def test_brand_end_states_done_stopped_failed(tmp_path, monkeypatch):
     bar.show(); _pump(app, 0.05); bar.hide(); _pump(app, 0.05)
     assert b.current()[0] == "failed"                                       # None is falsy: not a success
     b.flash_timer.stop(); b._flash_over()
-    del keep
+    told = []
+    b.log = lambda *a: told.append(a)
+    box["how"] = "stoped"                                                   # a misspelt word: not "done"
+    bar.show(); _pump(app, 0.05); bar.hide(); _pump(app, 0.05)
+    assert b.current()[0] == "failed" and told and "stoped" in told[-1][0]
+    b.flash_timer.stop(); b._flash_over()
+    bar.removeEventFilter(keep); del keep
+    keep2 = studio_panels.follow_progress(b, bar, lab, outcome=lambda: 1 / 0)   # an outcome that breaks
+    told.clear()
+    bar.show(); _pump(app, 0.05); bar.hide(); _pump(app, 0.05)
+    assert b.current()[0] == "failed" and any("ZeroDivisionError" in str(a) for a in told), told
+    b.flash_timer.stop(); b._flash_over()
+    del keep2
     host.close()
     # 2. the real window: stop a run, let one fail, let one finish
     import studio
