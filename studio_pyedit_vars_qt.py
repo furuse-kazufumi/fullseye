@@ -487,6 +487,7 @@ class _EmptyState(QtWidgets.QWidget):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         lay.addWidget(self.label)
         self.buttons = []
+        self._words = None                               # (text, [(caption, tip)]) in English, for retranslate
         for caption, tip, cb in buttons:
             b = QtWidgets.QPushButton(caption, self)
             b.setToolTip(tip)
@@ -495,6 +496,13 @@ class _EmptyState(QtWidgets.QWidget):
             lay.addWidget(b, 0, QtCore.Qt.AlignCenter)
             self.buttons.append(b)
         lay.addStretch(1)
+
+
+def _resay(empty, tr, text, pairs):
+    """An empty state's words again in the language of the moment (2026-11-15: in place, no new widgets)."""
+    empty.label.setText(tr(text))
+    for b, (caption, tip) in zip(empty.buttons, pairs):
+        b.setText(tr(caption)); b.setToolTip(tr(tip)); b.setAccessibleName(tr(caption))
 
 
 class VariablesPanel(QtWidgets.QWidget):
@@ -534,6 +542,10 @@ class VariablesPanel(QtWidgets.QWidget):
             buttons.append((tr("Open an example"), tr("Open a short example program that makes some variables"), on_open_example))
         self.empty = _EmptyState(tr("Variables appear here after the program runs: each name with its type, shape and value. "
                                     "Arrays that look like images get a thumbnail."), buttons, self)
+        self._empty_pairs = ([("Run the program", "Run the program (names appear here after it runs)")]
+                             if on_run is not None else []) + (
+            [("Open an example", "Open a short example program that makes some variables")]
+            if on_open_example is not None else [])
         self.stack.addWidget(self.tree)
         self.stack.addWidget(self.empty)
         lay.addWidget(self.stack, 1)
@@ -564,6 +576,20 @@ class VariablesPanel(QtWidgets.QWidget):
         self.tree.editCommitted.connect(lambda _p: self.message.hide())
         self.preview.mouseDoubleClickEvent = lambda ev: (self.imageRequested.emit(*self._current_image)
                                                          if self._current_image else None)
+
+    def retranslate(self) -> None:
+        """The words of the panel in the language of the moment, in place (2026-11-15). The ``tr`` given at
+        construction is asked again; rows get theirs at the next refresh."""
+        tr = self._tr
+        self.filter.setPlaceholderText(tr("Filter by name or type"))
+        self.filter.setToolTip(tr("Words match the name or the type. Prefix with type: or name: to look at one."))
+        self.filter.setAccessibleName(tr("Filter variables"))
+        self.show_all.setText(tr("Functions and modules"))
+        self.show_all.setToolTip(tr("Also list functions, classes, modules and names starting with _"))
+        _resay(self.empty, tr, "Variables appear here after the program runs: each name with its type, shape and "
+               "value. Arrays that look like images get a thumbnail.", self._empty_pairs)
+        self.preview.setToolTip(tr("Preview of the selected image. Double-click to open it larger."))
+        self.tree.setHeaderLabels([tr("Name"), tr("Type"), tr("Shape"), tr("Value")])
 
     def set_source(self, source) -> None:
         self.source = source
@@ -736,6 +762,8 @@ class WatchPanel(QtWidgets.QWidget):
             buttons.append((tr("Add an example"), tr("Add the expression img.mean() to the list"), on_add_example))
         self.empty = _EmptyState(tr("Watch expressions are re-evaluated every time the program stops or finishes. "
                                     "Type an expression above, or use \"Add to watch\" in the variable list."), buttons, self)
+        self._empty_pairs = ([("Add an example", "Add the expression img.mean() to the list")]
+                             if on_add_example is not None else [])
         self.stack.addWidget(self.table)
         self.stack.addWidget(self.empty)
         lay.addWidget(self.stack, 1)
@@ -762,6 +790,22 @@ class WatchPanel(QtWidgets.QWidget):
         self._timer.timeout.connect(self._poll_jobs)
         self._building = False
         self._rebuild()
+
+    def retranslate(self) -> None:
+        """The words of the watch in the language of the moment, in place (2026-11-15)."""
+        tr = self._tr
+        self.input.setPlaceholderText(tr("Type an expression and press Enter, e.g. img.mean()"))
+        self.input.setAccessibleName(tr("Watch expression"))
+        for b, tip, name in ((self.btn_add, "Add the expression to the watch list (Enter)", "Add"),
+                             (self.btn_del, "Remove the selected expression", "Remove"),
+                             (self.btn_up, "Move the selected expression up", "Move up"),
+                             (self.btn_down, "Move the selected expression down", "Move down"),
+                             (self.btn_again, "Evaluate the selected expression again (also when automatic "
+                                              "evaluation was stopped)", "Evaluate again")):
+            b.setToolTip(tr(tip)); b.setAccessibleName(tr(name))
+        self.table.setHorizontalHeaderLabels([tr("Expression"), tr("Value")])
+        _resay(self.empty, tr, "Watch expressions are re-evaluated every time the program stops or finishes. "
+               "Type an expression above, or use \"Add to watch\" in the variable list.", self._empty_pairs)
 
     def _button(self, glyph: str, tip: str, name: str) -> QtWidgets.QToolButton:
         b = QtWidgets.QToolButton(self)
@@ -1030,6 +1074,11 @@ class VarsWatchWidget(QtWidgets.QWidget):
     def refresh(self) -> None:
         self.variables.refresh()
         self.watch.refresh()
+
+    def retranslate(self) -> None:
+        """Both halves in the language of the moment, in place (2026-11-15)."""
+        self.variables.retranslate()
+        self.watch.retranslate()
 
 
 # --------------------------------------------------------------------------- #

@@ -104,7 +104,11 @@ _INTERNAL = {
     # studio_panels +1 2026-11-15: 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない
     # studio_panels +3 2026-11-15: 作業モードの「*」の便(D128): mode_differs / mode_watch / mode_chosen。Studio の窓の内側の部品で op ではない
     "studio_panels": 58,
-    "studio": 93, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 7, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    # studio / studio_search 2026-11-13(初回起動の点検の直し、fix/studio-firstrun-2026-11-13): studio +13(op_insertable /
+    #   not_insertable_text / starter_ops / entry_sort_of / op_is_ledger / sample_menu_order / format_pixel_readout /
+    #   knob_dead_measured / knob_use / knob_role_text / help_plain_markup / plain_summary / help_query_target)、
+    #   studio_search +1(samples_for)。どれも GUI の内側の部品で、試験が直接呼ぶ。
+    "studio": 106, "studio_errors": 3, "studio_search": 8, "studio_roundtrip": 5, "studio_batch": 7, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
@@ -409,7 +413,13 @@ def test_pending_exposure_shrinks_when_fixed():
 #   (見た目の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1189
 # 2026-11-15 統合の枝に見た目の枝(feat/studio-console-theme-2026-11-12、1a3f70d772)を merge: 合わせ目 1086 から
 #   統合 +235・見た目 +103 = 1424(同じ名前の足し合いは無い。数は合わせた木の実測で確かめる)。
-_HIDDEN_FUNCTIONS_TODAY = 1424
+#   (初回の枝を合わせる前の値) _HIDDEN_FUNCTIONS_TODAY = 1424
+# 2026-11-13(Studio の初回起動の点検の直し): 1086 + 15 = 1101。studio 13・studio_search 1(上の _INTERNAL の注記)と、
+#   studio.CLOSE_CONFIRM_HOOK 1(M10 の終了の確認の差し替え口。関数を指す名前なので総数に入る)。どれも GUI の内側の部品で、op ではない。
+#   (初回の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1101
+# 2026-11-15 統合の枝に初回の枝(fix/studio-firstrun-2026-11-13、288feeec4e)を merge: 1424 + 15 = 1439
+#   (初回の枝が合わせ目 1086 から足した studio 13・studio_search 1・CLOSE_CONFIRM_HOOK 1)。
+_HIDDEN_FUNCTIONS_TODAY = 1439
 
 
 def _hidden_total():

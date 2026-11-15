@@ -54,6 +54,45 @@ def _close(app, win):
     _pump(app, 0.1)
 
 
+_LANG_ROUNDS = r'''
+import faulthandler, os, sys, time
+faulthandler.enable()
+from PySide6 import QtWidgets
+app = QtWidgets.QApplication([]); app.setStyle("Fusion")
+import studio
+def pump(s):
+    end = time.monotonic() + s
+    while time.monotonic() < end:
+        app.processEvents(); time.sleep(0.01)
+w, _m = studio.build_window(); w.resize(1280, 673); w.show(); pump(0.3)
+langs = ("en", "ja", "zh", "tw", "ko", "de", "hi")
+for lang in langs + langs:
+    w._apply_language(lang); pump(0.15)
+w._apply_language("en")
+print("LANGUAGE ROUNDS DONE", w._op_list.count(), flush=True)
+w.close_guard = lambda: True; w.quiesce(); w.close()
+'''
+
+
+def test_switching_the_language_again_and_again_does_not_break_the_process(tmp_path):
+    """After the first-run branch was merged (its language switch refills the 706 op rows), two rounds of the seven
+    languages killed the process (access violation in op_list.clear()): the integration's Python mode rebuilt its
+    variables panel into the dock on every switch, also in pipeline mode where the panel is not shown. Now it is
+    rebuilt when the Python mode is entered. Run in a child process (a crash is an exit code, not a hung test)."""
+    import os
+    import subprocess
+    import sys
+    pytest.importorskip("PySide6")
+    env = dict(os.environ, QT_QPA_PLATFORM="offscreen", FULLSEYE_STUDIO_SETTINGS=str(tmp_path / "s.ini"),
+               PYTHONUTF8="1", APPDATA=str(tmp_path), LOCALAPPDATA=str(tmp_path))
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    env["PYTHONPATH"] = root + os.pathsep + env.get("PYTHONPATH", "")
+    r = subprocess.run([sys.executable, "-c", _LANG_ROUNDS], capture_output=True, text=True, encoding="utf-8",
+                       errors="replace", env=env, cwd=root, timeout=600)
+    assert r.returncode == 0 and "LANGUAGE ROUNDS DONE" in r.stdout, (r.returncode, r.stdout[-400:], r.stderr[-1500:])
+    assert int(r.stdout.split("LANGUAGE ROUNDS DONE")[1].split()[0]) >= 100      # the op list was really refilled
+
+
 def test_a_closed_window_stops_reading_its_panels_status(tmp_path, monkeypatch):
     """The title bands' read-outs are asked four times a second (studio_panels' status tick). A closed window kept
     asking forever: in one test process every closed window went on reading its op list and stage list (the

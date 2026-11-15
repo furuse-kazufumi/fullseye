@@ -922,7 +922,11 @@ class PyModeController(QtCore.QObject):
         tr = self.tr
         lang = self.ctx.get("lang", lambda: "en")()
         if self.vars is not None and lang != self._built_lang:
-            self._build_vars()
+            # 2026-11-15 (integration): the words in place. Building the panel again and swapping it into the
+            # dock on every switch made the op list's refill of a later switch die (access violation in
+            # op_list.clear(), test_switching_the_language_again_and_again_does_not_break_the_process).
+            self.vars.retranslate()
+            self._built_lang = lang
         if self.assist is not None:
             self.assist.popup.list.setStatusTip(tr("Completions: Up / Down to choose, Enter or Tab to insert, "
                                                    "Esc to close"))

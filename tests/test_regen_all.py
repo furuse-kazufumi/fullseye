@@ -155,6 +155,8 @@ def test_the_order_gate_catches_the_old_order():
         ("tools/gen_docs_index_ops.py", "tools/gen_recipe_coverage.py"),
         # 索引はレシピの型を OP_GRAPH で検査する(2026-11-03 に READS へ足した実測の読み)。
         ("tools/gen_recipe_index.py", "tools/gen_op_facets.py"),
+        # ViEW の Fullseye 使用門は配布用 OP_INDEX を読むので、gen_mcp_data より前では古い索引を見る。
+        ("tools/gen_view2026_pages.py", "tools/gen_mcp_data.py"),
     } | {("tools/gen_docs_index_ops.py", w) for w in (
         "tools/gen_examples3d_doc.py", "tools/gen_sensor_playbook.py", "catalog.py",
         "references.py", "samples.py", "tools/conversion_matrix.py", "tools/type_connectivity.py",

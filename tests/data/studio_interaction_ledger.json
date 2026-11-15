@@ -4,9 +4,15 @@
   "G09(a)": {
    "title": "confirmation boxes / input windows built directly (outside confirm_action / ask_text)",
    "owners": "D49 D50 D80 D88 D106 D107",
-   "count": 11,
+   "count": 12,
    "examined_at_creation": 23318,
    "items": [
+    {
+     "d": "D106",
+     "where": "studio.py::_default_close_confirm",
+     "text": "QMessageBox #1",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
     {
      "d": "D106",
      "where": "studio.py::_default_confirm",
@@ -146,7 +152,7 @@
   "G15(a')": {
    "title": "text shown untranslated in a non-English UI language (6 languages, matched against the source)",
    "owners": "D14 D15 D30 D35 D107 D108 D119",
-   "count": 525,
+   "count": 570,
    "examined_at_creation": 2569,
    "items": [
     {
@@ -196,6 +202,12 @@
     },
     {
      "d": "D35",
+     "where": "de dock title",
+     "text": "Variables & Objects",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D35",
      "where": "de group title",
      "text": "ANALYSIS"
     },
@@ -427,6 +439,12 @@
     {
      "d": "D108",
      "where": "de menu",
+     "text": "Help for the selected operator",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
      "text": "Image Viewer…"
     },
     {
@@ -503,11 +521,6 @@
      "d": "D108",
      "where": "de menu",
      "text": "Panels"
-    },
-    {
-     "d": "D108",
-     "where": "de menu",
-     "text": "Physical AI: evis RL walk (Fullseye perception)…"
     },
     {
      "d": "D108",
@@ -662,12 +675,60 @@
     {
      "d": "D30",
      "where": "de tooltip",
+     "text": "Actual size 1:1 (Ctrl+Alt+1)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Export as an --ops string and Python code",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Fit to window (Ctrl+0)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
      "text": "Freeze the current pipeline and input settings, then apply them to every image in a folder, one by one"
     },
     {
      "d": "D30",
      "where": "de tooltip",
      "text": "Hide these steps. Help ▸ First steps shows them again"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Load an image file as the base frame",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Load the built-in synthetic demo scene",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Show the final pipeline result. Also F5 or Ctrl+R from any panel",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Zoom in (Ctrl+=)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Zoom out (Ctrl+-)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
     },
     {
      "d": "D15",
@@ -713,6 +774,12 @@
      "d": "D35",
      "where": "hi dock title",
      "text": "Pipeline · Parameters"
+    },
+    {
+     "d": "D35",
+     "where": "hi dock title",
+     "text": "Variables & Objects",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
     },
     {
      "d": "D35",
@@ -947,6 +1014,12 @@
     {
      "d": "D108",
      "where": "hi menu",
+     "text": "Help for the selected operator",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
      "text": "Image Viewer…"
     },
     {
@@ -1023,11 +1096,6 @@
      "d": "D108",
      "where": "hi menu",
      "text": "Panels"
-    },
-    {
-     "d": "D108",
-     "where": "hi menu",
-     "text": "Physical AI: evis RL walk (Fullseye perception)…"
     },
     {
      "d": "D108",
@@ -1182,12 +1250,60 @@
     {
      "d": "D30",
      "where": "hi tooltip",
+     "text": "Actual size 1:1 (Ctrl+Alt+1)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Export as an --ops string and Python code",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Fit to window (Ctrl+0)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
      "text": "Freeze the current pipeline and input settings, then apply them to every image in a folder, one by one"
     },
     {
      "d": "D30",
      "where": "hi tooltip",
      "text": "Hide these steps. Help ▸ First steps shows them again"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Load an image file as the base frame",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Load the built-in synthetic demo scene",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Show the final pipeline result. Also F5 or Ctrl+R from any panel",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Zoom in (Ctrl+=)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Zoom out (Ctrl+-)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
     },
     {
      "d": "D119",
@@ -1246,6 +1362,12 @@
     },
     {
      "d": "D35",
+     "where": "ko dock title",
+     "text": "Variables & Objects",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D35",
      "where": "ko group title",
      "text": "ANALYSIS"
     },
@@ -1477,6 +1599,12 @@
     {
      "d": "D108",
      "where": "ko menu",
+     "text": "Help for the selected operator",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
      "text": "Image Viewer…"
     },
     {
@@ -1553,11 +1681,6 @@
      "d": "D108",
      "where": "ko menu",
      "text": "Panels"
-    },
-    {
-     "d": "D108",
-     "where": "ko menu",
-     "text": "Physical AI: evis RL walk (Fullseye perception)…"
     },
     {
      "d": "D108",
@@ -1712,12 +1835,60 @@
     {
      "d": "D30",
      "where": "ko tooltip",
+     "text": "Actual size 1:1 (Ctrl+Alt+1)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Export as an --ops string and Python code",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Fit to window (Ctrl+0)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
      "text": "Freeze the current pipeline and input settings, then apply them to every image in a folder, one by one"
     },
     {
      "d": "D30",
      "where": "ko tooltip",
      "text": "Hide these steps. Help ▸ First steps shows them again"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Load an image file as the base frame",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Load the built-in synthetic demo scene",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Show the final pipeline result. Also F5 or Ctrl+R from any panel",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Zoom in (Ctrl+=)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Zoom out (Ctrl+-)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
     },
     {
      "d": "D119",
@@ -1771,6 +1942,12 @@
     },
     {
      "d": "D35",
+     "where": "tw dock title",
+     "text": "Variables & Objects",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D35",
      "where": "tw group title",
      "text": "ANALYSIS"
     },
@@ -2002,6 +2179,12 @@
     {
      "d": "D108",
      "where": "tw menu",
+     "text": "Help for the selected operator",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
      "text": "Image Viewer…"
     },
     {
@@ -2078,11 +2261,6 @@
      "d": "D108",
      "where": "tw menu",
      "text": "Panels"
-    },
-    {
-     "d": "D108",
-     "where": "tw menu",
-     "text": "Physical AI: evis RL walk (Fullseye perception)…"
     },
     {
      "d": "D108",
@@ -2237,12 +2415,60 @@
     {
      "d": "D30",
      "where": "tw tooltip",
+     "text": "Actual size 1:1 (Ctrl+Alt+1)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Export as an --ops string and Python code",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Fit to window (Ctrl+0)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
      "text": "Freeze the current pipeline and input settings, then apply them to every image in a folder, one by one"
     },
     {
      "d": "D30",
      "where": "tw tooltip",
      "text": "Hide these steps. Help ▸ First steps shows them again"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Load an image file as the base frame",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Load the built-in synthetic demo scene",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Show the final pipeline result. Also F5 or Ctrl+R from any panel",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Zoom in (Ctrl+=)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Zoom out (Ctrl+-)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
     },
     {
      "d": "D119",
@@ -2296,6 +2522,12 @@
     },
     {
      "d": "D35",
+     "where": "zh dock title",
+     "text": "Variables & Objects",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D35",
      "where": "zh group title",
      "text": "ANALYSIS"
     },
@@ -2527,6 +2759,12 @@
     {
      "d": "D108",
      "where": "zh menu",
+     "text": "Help for the selected operator",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
      "text": "Image Viewer…"
     },
     {
@@ -2603,11 +2841,6 @@
      "d": "D108",
      "where": "zh menu",
      "text": "Panels"
-    },
-    {
-     "d": "D108",
-     "where": "zh menu",
-     "text": "Physical AI: evis RL walk (Fullseye perception)…"
     },
     {
      "d": "D108",
@@ -2762,12 +2995,60 @@
     {
      "d": "D30",
      "where": "zh tooltip",
+     "text": "Actual size 1:1 (Ctrl+Alt+1)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Export as an --ops string and Python code",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Fit to window (Ctrl+0)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
      "text": "Freeze the current pipeline and input settings, then apply them to every image in a folder, one by one"
     },
     {
      "d": "D30",
      "where": "zh tooltip",
      "text": "Hide these steps. Help ▸ First steps shows them again"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Load an image file as the base frame",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Load the built-in synthetic demo scene",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Show the final pipeline result. Also F5 or Ctrl+R from any panel",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Zoom in (Ctrl+=)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Zoom out (Ctrl+-)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
     },
     {
      "d": "D119",

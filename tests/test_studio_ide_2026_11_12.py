@@ -468,8 +468,9 @@ def test_shift_f1_on_a_non_op_word_opens_nothing_and_says_so(win):
 
 
 def test_f1_still_opens_the_keyboard_shortcuts_not_the_op_help(win):
-    """F1 の割り当ては変えない(既存のキー割り当てを壊さない)。"""
-    assert win._actions["shortcuts"].shortcut().toString() == "F1"
+    """(2026-11-15, integration) F1 = help for the selected op, the key list = Ctrl+F1 (first-run branch
+    07e66baa0a and design D127; the key branch makes F1 "help here"). Shift+F1 stays the op reference."""
+    assert win._actions["shortcuts"].shortcut().toString() == "Ctrl+F1"
     assert win._actions["op_reference"].shortcut().toString() == "Shift+F1"      # 欄の外では従来どおり
 
 
@@ -591,7 +592,8 @@ def _hover_readout(win):
 
 def test_pixel_readout_has_no_cjk_in_english(win):
     text = _hover_readout(win)
-    assert text.startswith("Value ") and "Shown" in text and "Range" in text, text
+    # (2026-11-15) the first-run branch's line: the coordinates first (M5, design P10-5)
+    assert text.startswith("x=10  y=10   value ") and "shown" in text and "range" in text, text
     assert not _CJK.search(text), text
 
 
@@ -601,14 +603,14 @@ def test_pixel_readout_follows_the_language(win):
     try:
         win._current_view().hover_cb(10, 10, 0.3)
         text = win._readout.text()
-        assert text.startswith("値 ") and "表示" in text and "レンジ" in text, text
+        assert text.startswith("x=10  y=10   値 ") and "表示" in text and "レンジ" in text, text
         assert not re.search("[A-Za-z]{4,}", text.replace("float64", "")), text        # 英単語(型名を除く)が残らない
     finally:
         win._apply_language("en")
     win._apply_language("de")
     try:
         win._current_view().hover_cb(10, 10, 0.3)
-        assert win._readout.text().startswith("Wert "), win._readout.text()
+        assert win._readout.text().startswith("x=10  y=10   Wert "), win._readout.text()
     finally:
         win._apply_language("en")
 
@@ -642,7 +644,8 @@ def test_new_texts_all_have_six_languages_and_pending_rows_did_not_grow():
                 "%d replaced", "Match case"):
         row = d["strings"][key]
         assert all(row.get(c) for c in ("ja", "zh", "tw", "ko", "de", "hi")), key
-    assert len([k for k in d["pending_translation"] if k != "_note"]) <= 294      # 上限(test_studio_first_minute の門)
+    # 上限(test_studio_first_minute の門 PENDING_ROWS と同じ数。2026-11-15: 初回の枝の日本語だけの行を合わせた)
+    assert len([k for k in d["pending_translation"] if k != "_note"]) <= 455
 
 
 # --------------------------------------------------------------------------- 8. 選んだ行だけの実行(候補 10)

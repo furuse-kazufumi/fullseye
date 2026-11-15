@@ -1,0 +1,9 @@
+method	median err mm (px)	p90 err mm (px)	corner recall [95% CI]	grasp hit@1
+proposed (RGB)	1.55 (1.56)	3.00 (3.02)	0.991 [0.978, 1.000]	0.92
+proposed (chroma)	1.08 (1.09)	1.98 (1.99)	0.997 [0.991, 1.000]	0.95
+polygon vertices (chroma)	1.94 (1.95)	3.11 (3.13)	0.994 [0.984, 1.000]	-
+Harris only	3.62 (3.64)	4.78 (4.82)	0.919 [0.884, 0.950]	0.48
+hull vertices only	4.16 (4.19)	7.43 (7.49)	0.647 [0.600, 0.694]	0.40
+4 farthest from centroid	3.20 (3.23)	4.78 (4.82)	0.944 [0.919, 0.966]	0.37
+min-area rectangle	1.14 (1.15)	2.01 (2.03)	1.000 [1.000, 1.000]	0.32
+min-area rectangle (chroma)	1.66 (1.68)	2.53 (2.54)	1.000 [1.000, 1.000]	-

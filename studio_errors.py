@@ -429,11 +429,24 @@ def _explain(exc: Any, op_name: Optional[str], stage_index: Optional[int], input
 
     if cls == "dependency":
         pkg, extra = _extra_of(exc, msg)
+        ext_ja = ("(extra: %s)" % extra) if extra else ""
+        ext_en = (" (extra: %s)" % extra) if extra else ""
+        # ★2026-11-13(配布物の検証 M1): 見本の画像を開く時のように op の外で失敗すると op 名が無く、文の主語が
+        #   「?」になっていた("Cause ? needs the optional package Pillow")。op 名もパッケージ名も、無い時は
+        #   文の形を変える(主語を「?」で埋めない)。
+        if op_name and pkg:
+            cause = _pair("%s に必要なオプションのライブラリ %s が入っていません。" % (op_name, pkg) + ext_ja,
+                          "%s needs the optional package %s, which is not installed." % (op_name, pkg) + ext_en)
+        elif pkg:
+            cause = _pair("オプションのライブラリ %s が入っていないため、実行できませんでした。" % pkg + ext_ja,
+                          "The optional package %s is not installed, so this could not run." % pkg + ext_en)
+        elif op_name:
+            cause = _pair("%s に必要なオプションのライブラリが入っていません。" % op_name + ext_ja,
+                          "%s needs an optional package that is not installed." % op_name + ext_en)
+        else:
+            cause = _pair("必要なオプションのライブラリが入っていません。" + ext_ja,
+                          "A required optional package is not installed." + ext_en)
         pkg_txt = pkg or "?"
-        cause = _pair("%s に必要なオプションのライブラリ %s が入っていません。" % (op_txt, pkg_txt)
-                      + (("(extra: %s)" % extra) if extra else ""),
-                      "%s needs the optional package %s, which is not installed." % (op_txt, pkg_txt)
-                      + ((" (extra: %s)" % extra) if extra else ""))
         install = ('pip install "fullseye[%s]"' % extra) if extra else ("pip install %s" % pkg_txt if pkg else None)
         evidence = [{"kind": "dependency", "package": pkg, "extra": extra, "install": install}]
         actions = [open_log]

@@ -57,7 +57,7 @@ def test_generated_index_links_point_to_the_handwritten_pages():
         (VIEW / "en" / "index.md", "About Fullseye (reading)", "about.md"),
     ]
     for index, label, relative in expected:
-        link = f"[{label}]({relative})"
+        link = f'<a href="{relative}">{label}</a>'  # 冒頭の「Fullseye とは」の段落の末尾(HTML のかたまりの中なので <a>)
         assert link in index.read_text(encoding="utf-8")
         assert (index.parent / relative).is_file()
 

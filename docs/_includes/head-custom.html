@@ -1,0 +1,21 @@
+{% comment %}
+既定のテーマ(pages-gem v232 の既定 = jekyll-theme-primer 0.6.0)の _includes/head-custom.html の写し。
+テーマの _layouts/default.html は head の終わりでこのファイルを読み込む。同じ名前のファイルを
+docs/_includes に置くと、テーマの物の代わりにこちらが使われる(テーマの物の 1 行目の注記どおり)。
+テーマの物から変えたのは favicon の 3 行だけ(テーマの物では link の見本がコメントになっていた)。
+GA の読み込みはテーマの head-custom-google-analytics.html をそのまま使う。
+絵の正本は assets/make_icon.py(docs/favicon.ico・docs/apple-touch-icon.png・
+docs/assets/img/fullseye_256.png を書く)。手で差し替えない。組んだサイトで link の先が在ることは
+tools/pages_site.py check の門 4 が見る。repo の側の試験は tests/test_site_icon_2026_11_13.py。
+{% endcomment %}
+<!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+{% include head-custom-google-analytics.html %}
+
+<!-- You can set your favicon here -->
+<link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" href="{{ '/assets/img/fullseye_256.png' | relative_url }}" sizes="256x256">
+<link rel="apple-touch-icon" href="{{ '/apple-touch-icon.png' | relative_url }}" sizes="180x180">
+
+<!-- end custom head snippets -->

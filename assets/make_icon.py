@@ -21,6 +21,19 @@
 
 使い方:
     py -3.11 assets/make_icon.py
+
+出力 (正本はこの道具。どの絵も手で差し替えない):
+    assets/fullseye.ico / assets/fullseye_256.png
+        … 従来の出力 (16〜256 px の ico と 256 px の png)。
+    docs/favicon.ico (16/32/48 px)
+        … 公開サイト https://furuse.work/ の /favicon.ico。ブラウザが既定で取りに来る場所なので、
+          head に link の無い静的な HTML (docs/view2026/viewers など) にも効く。
+    docs/apple-touch-icon.png (180 px、不透明)
+        … iOS のホーム画面。iOS は透明な所を黒で埋めるので、外周と同じ濃紺の正方形に重ねる。
+    docs/assets/img/fullseye_256.png
+        … head の rel="icon" (256 px) と、サイトのトップ (docs/README*.md) の題の下のロゴ。
+          assets/fullseye_256.png と同じ絵を同じ保存のしかたで書く (バイト一致)。
+    サイトの head への配線は docs/_includes/head-custom.html (既定のテーマ primer の口)。
 """
 
 from __future__ import annotations
@@ -64,6 +77,14 @@ SUPERSAMPLE: Final = 8
 ASSETS_DIR: Final = Path(__file__).resolve().parent
 ICO_PATH: Final = ASSETS_DIR / "fullseye.ico"
 PNG_PATH: Final = ASSETS_DIR / "fullseye_256.png"
+
+# --- 公開サイト (GitHub Pages、元は docs/) に置く絵。名前はサイトの根からのパス ---------
+SITE_DIR: Final = ASSETS_DIR.parent / "docs"
+SITE_FAVICON: Final = "favicon.ico"                  # /favicon.ico
+SITE_FAVICON_SIZES: Final = (16, 32, 48)
+SITE_TOUCH: Final = "apple-touch-icon.png"           # /apple-touch-icon.png
+SITE_TOUCH_SIZE: Final = 180                         # iOS のホーム画面の標準の大きさ
+SITE_PNG: Final = "assets/img/fullseye_256.png"      # /assets/img/fullseye_256.png
 
 
 def _disc(draw: ImageDraw.ImageDraw, cx: float, cy: float, r: float, color) -> None:
@@ -114,6 +135,43 @@ def read_ico_entries(path: Path) -> list[tuple[int, int]]:
     return sorted(entries)
 
 
+def render_touch_icon(size: int = SITE_TOUCH_SIZE) -> Image.Image:
+    """apple-touch-icon を描く (不透明の RGB)。
+
+    iOS はホーム画面のアイコンの透明な所を黒で埋めるので、外周の縁と同じ濃紺の正方形に
+    重ねて四隅を塗る (角の丸めは iOS がする)。
+    """
+    bg = Image.new("RGBA", (size, size), NAVY)
+    return Image.alpha_composite(bg, render(size)).convert("RGB")
+
+
+def write_site_icons(images: dict[int, Image.Image], site_dir: Path = SITE_DIR) -> list[Path]:
+    """公開サイトの絵 3 枚を ``site_dir`` (既定は docs/) に書き、書いたパスを返す。
+
+    ``images`` は ``render`` で描いたサイズごとの絵 (main と同じ絵を使う)。
+    16/32/48 と 256 が要る。
+    """
+    need = (*SITE_FAVICON_SIZES, 256)
+    missing = [s for s in need if s not in images]
+    if missing:
+        raise ValueError(f"images にサイズが無い: {missing}")
+    favicon = site_dir / SITE_FAVICON
+    touch = site_dir / SITE_TOUCH
+    png = site_dir / SITE_PNG
+    png.parent.mkdir(parents=True, exist_ok=True)
+    largest = max(SITE_FAVICON_SIZES)
+    images[largest].save(
+        favicon,
+        format="ICO",
+        sizes=[(s, s) for s in SITE_FAVICON_SIZES],
+        append_images=[images[s] for s in SITE_FAVICON_SIZES if s != largest],
+    )
+    render_touch_icon().save(touch, format="PNG")
+    # assets/fullseye_256.png と同じ絵・同じ保存のしかた (バイト一致)
+    images[256].save(png, format="PNG")
+    return [favicon, touch, png]
+
+
 def main() -> None:
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -135,6 +193,10 @@ def main() -> None:
     with Image.open(ICO_PATH) as im:
         print(f"PIL  ico.sizes(): {sorted(im.ico.sizes())}")
         print(f"PIL  default size: {im.size} mode={im.mode}")
+
+    for path in write_site_icons(images):
+        print(f"SITE: {path}")
+    print(f"SITE favicon entries (parsed from ICONDIR): {read_ico_entries(SITE_DIR / SITE_FAVICON)}")
 
 
 if __name__ == "__main__":

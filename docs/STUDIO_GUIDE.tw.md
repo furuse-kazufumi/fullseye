@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 9b7064a1ea20 -->
+<!-- i18n-source-sha: 1e1e22bcd08c -->
 # Fullseye Studio 完全指南
 
 繁重處理不會凍結視窗。底部區域顯示目前階段與進度；停止要求會在下一個階段邊界確認。若執行期間設定有變，介面會標示顯示結果的世代，並可選擇查看舊設定的完成結果或用目前設定重新執行。
@@ -115,7 +115,7 @@ fullseye-studio             # 若已 pip install -e .，可用主控台腳本
 
 ## 鍵盤快捷鍵
 
-應用程式內可透過 **Help ▸ Keyboard shortcuts（F1）** 以表格顯示全部快捷鍵（自我文件化）。主要快捷鍵（來自 `studio.py` 的 `act_*` 定義）:
+應用程式內可透過 **Help ▸ Keyboard shortcuts（Ctrl+F1）** 以表格顯示全部快捷鍵（自我文件化）。主要快捷鍵（來自 `studio.py` 的 `act_*` 定義）:
 
 | 操作 | 快捷鍵 | 操作 | 快捷鍵 |
 |---|---|---|---|
@@ -127,9 +127,10 @@ fullseye-studio             # 若已 pip install -e .，可用主控台腳本
 | Export | `Ctrl+E` | 3D surface | `Ctrl+Alt+3` |
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
-| Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
+| Keyboard shortcuts | `Ctrl+F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
-| Pipeline as code → editor | `Ctrl+Shift+E` | | |
+| Pipeline as code → editor | `Ctrl+Shift+E` | Help for the selected operator | `F1` |
+| Undo | `Ctrl+Z` | Redo | `Ctrl+Shift+Z` / `Ctrl+Y` |
 
 每個動作無論從選單、工具列或按鈕觸發，都會呼叫同一個處理函式（一個動作、多個入口）。
 

@@ -206,12 +206,15 @@ def _inject_anim3d(d, tmp_path, langs):
         encoding="utf-8",
     )
     tr = {lang: "temporary viewer" for lang in d["langs"]}
+    # この試験はリンク生成の門なので、実在する Fullseye 使用源を借りて公開門も通す。
+    source_url = next(e["source_url"] for e in d["exhibits"] if e["id"] == "evis_stereo_depth")
     d["exhibits"].append({
         "id": "injected_anim3d",
         "category": "anim3d",
+        "tier": "more",
         "media_path": str(viewer),
         "motion": True,
-        "source_url": "",
+        "source_url": source_url,
         "label": tr,
         "lead": tr,
         "see": tr,
@@ -222,6 +225,11 @@ def _inject_anim3d(d, tmp_path, langs):
 
 
 def test_entry_page_links_anim3d_with_lang_and_size(tmp_path):
+    """注入した exhibits の viewer は、8 言語ともおまけページ(more)に載る(2026-11-13 から全言語で同じ分け方)。
+
+    field_viewers は ja/en の本ページだけ、viewers の先頭の数本は全言語の本ページに残る専用入口であり、
+    ここで検査する exhibits の viewer とはページ分割の扱いが異なる。
+    """
     d = G.load()
     e, path = _inject_anim3d(d, tmp_path, list(pv.LANGS))
     assert e["category"] == "anim3d"
@@ -231,9 +239,11 @@ def test_entry_page_links_anim3d_with_lang_and_size(tmp_path):
     mb = G._viewer_mb(d, e)
     assert len(d["langs"]) == 8
     for l in d["langs"]:
-        page = G.build(d, l)
-        assert "%s?lang=%s" % (G._media_rel(d, e), l) in page
-        assert "%s · %s" % (e["label"][l], mb) in page                # タイルに容量
+        page = "\n".join([G.build(d, l), G.build_more(d, l)])
+        link = "%s?lang=%s" % (G._media_rel(d, e), l)
+        linked_lines = [line for line in page.splitlines() if link in line]
+        assert linked_lines, "%s: 動く 3-D への言語つきリンクが無い" % l
+        assert any(mb in line for line in linked_lines), "%s: リンク行に容量が無い" % l
         assert d["ui"]["kind_anim3d"][l] in page
 
 
@@ -265,8 +275,8 @@ def test_try_it_viewer_entry_accepts_ja_en_and_falls_back_to_english(tmp_path):
             "line": {"ja": "値 2 を見る。", "en": "See value 2."},
         })
         assert not [x for x in G.validate(d) if viewer_id in x]
-        assert "Two languages" in G.build(d, "fr")
-        assert "See value 2." in G.build(d, "fr")
+        assert "Two languages" in G.build_more(d, "fr")      # 本ページに置かない viewer はおまけページ
+        assert "See value 2." in G.build_more(d, "fr")
     finally:
         (G.BASE / "viewers" / (viewer_id + ".html")).unlink()
 

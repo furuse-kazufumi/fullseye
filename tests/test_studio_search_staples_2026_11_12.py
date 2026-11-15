@@ -294,12 +294,16 @@ def test_knobs_shown_as_unused_really_do_nothing():
         for letter, role in zip("ab", roles):
             if role == "":
                 claims.setdefault(name, set()).add(letter)
-    for name in param_specs.PARAM_SPECS:
+    for name in list(param_specs.PARAM_SPECS) + list(param_specs.UNUSED_KNOBS):
         sp = param_specs.spec_for(name)
         for letter in "ab":
             if sp[letter].get("kind") == "unused":
                 claims.setdefault(name, set()).add(letter)
     assert len(claims) >= 50
+    # 2026-11-15(PR #316 の独立レビュー): 定番の op の 49 本(param_specs.UNUSED_KNOBS)も同じ測り方で確かめる
+    assert sum(len(v) for v in param_specs.UNUSED_KNOBS.values()) == 49
+    assert all(set(v) <= claims.get(n, set()) for n, v in param_specs.UNUSED_KNOBS.items())
+    assert not set(param_specs.UNUSED_KNOBS) & set(param_specs.PARAM_SPECS), "手書きの行がある op は PARAM_SPECS の側に書く"
     checked, moved = 0, []
     for name, letters in sorted(claims.items()):
         for letter in sorted(letters):
@@ -316,7 +320,7 @@ def test_knobs_shown_as_unused_really_do_nothing():
                 if any(o.shape != outs[2].shape or not np.array_equal(o, outs[2], equal_nan=True) for o in outs):
                     moved.append((name, letter))
                 break
-    assert checked >= 45, checked                                   # 走った件数に下限(空を通さない)
+    assert checked >= 90, checked                                   # 走った件数に下限(空を通さない)
     assert not moved, moved
 
 
@@ -360,16 +364,27 @@ def test_mirror_and_invert_are_told_apart():
     assert "sobel_amp" not in ss.staples_for("エッジ保存平滑")
 
 
-def test_first_search_with_staples_is_not_slow():
-    """定番の行は索引から直接組む(op ごとに検索を呼ぶと最初の検索が約 1 秒かかった)。"""
-    import time
+def test_first_search_with_staples_is_not_slow(monkeypatch):
+    """定番の行は索引から直接組む(op ごとに検索を呼ぶと最初の検索が約 1 秒かかった)。
+
+    ★2026-11-15: 以前は経過時間(< 0.6 s)で見ていた。共有の CI の機械(py3.12 の片 2)で 0.90 s になり、master の
+    CI が 2 回続けて落ちた。その時間は索引と tier の表の作り直しの分で、定番の作り方とは関係が無い。守りたい事
+    そのもの(定番の op ごとに ``search_ops`` を呼ばない)を、呼び出しの回数で数える。"""
+    from fullseye import opsearch
     ss.search_grouped("ぼかし", _image(), k=10, lang="ja")              # 索引を温める
     ss.clear_caches()
-    t0 = time.perf_counter()
+    calls = []
+    real = opsearch.search_ops
+
+    def counted(query, *args, **kwargs):
+        calls.append(query)
+        return real(query, *args, **kwargs)
+
+    monkeypatch.setattr(opsearch, "search_ops", counted)
     res = ss.search_grouped("二値化", _image(), k=10, lang="ja")
-    dt = time.perf_counter() - t0
-    assert res["staples"] and res["staples"][0]["label"] != "otsu"       # 日本語の要約は付いている
-    assert dt < 0.6, dt
+    assert len(res["staples"]) >= 2, res["staples"]                      # 定番が 2 つ以上出る語で数える
+    assert res["staples"][0]["label"] != "otsu"                          # 日本語の要約は付いている
+    assert calls == ["二値化"], calls                                    # 検索は 1 回(定番の op ごとには呼ばない)
 
 
 def _studio_window(tmp_path, monkeypatch):
@@ -390,8 +405,14 @@ def _close_window(studio, win):
     win.quiesce(); win.close(); _pump(0.1)
 
 
-def test_enter_inserts_the_top_search_hit_not_a_staple(tmp_path, monkeypatch):
-    """定番の欄を先頭に出しても、Enter が入れるのは検索の 1 位(「blur」で Enter → 定番の gaussian ではなく 1 位)。"""
+def test_enter_inserts_the_first_row_on_screen_staples_included(tmp_path, monkeypatch):
+    """Enter が入れるのは、見えている先頭の行(「blur」→ 定番の gaussian)。その行は押す前から選択状態。
+
+    ★2026-11-13(初回起動の点検 M1)で約束を変えた。11/12 は「canny edge」で定番の sobel_amp が入った為に定番を
+    外したが、op 名を含む問い合わせには定番が出ない(test_staples_do_not_fire_on_unrelated_or_name_queries)ので、
+    「canny edge」は検索の 1 位(canny の op)のまま。外したままだと、先頭に gaussian が見えているのに
+    下の欄の 1 位(xkor_bilateral)が入っていた。
+    """
     studio, win, model = _studio_window(tmp_path, monkeypatch)
     try:
         ui = win._search_ui
@@ -399,12 +420,54 @@ def test_enter_inserts_the_top_search_hit_not_a_staple(tmp_path, monkeypatch):
         ui["edit"].setText("blur"); ui["search_now"]("blur"); _pump(0.3)
         rows = ui["rows"]()
         assert rows["staples"], "この試験は定番が出る語で行う"
-        ranked = [r["name"] for g in ("applicable", "needs_preprocessing", "other") for r in rows[g]]
+        first = rows["staples"][0]["name"]
+        assert first == "gaussian"
+        assert ui["list"].currentItem() is rows["staples"][0]["item"]        # 押す前から見えている
+        n0 = len(model.stages)
+        ui["list"].setCurrentItem(None)                                     # 選択を外しても同じ行
+        ui["edit"].returnPressed.emit(); _pump(0.3)
+        assert len(model.stages) == n0 + 1
+        assert model.stages[-1][0] == studio.api.find_op(first).name
+        # op 名を含む問い合わせ: 定番は出ず、先頭は canny の op(11/12 の sobel_amp の取り違えが戻らない)
+        ui["edit"].setText("canny edge"); ui["search_now"]("canny edge"); _pump(0.3)
+        assert ui["rows"]()["staples"] == []
+        n1 = len(model.stages)
+        ui["edit"].returnPressed.emit(); _pump(0.3)
+        assert len(model.stages) == n1 + 1
+        assert "canny" in model.stages[-1][0] and model.stages[-1][0] != "sobel_amp", model.stages[-1][0]
+    finally:
+        _close_window(studio, win)
+
+
+def test_enter_skips_a_top_hit_that_is_not_installed_here(tmp_path, monkeypatch, capfd):
+    """検索の 1 位がこの環境で呼べない op でも、Enter は次の入れられる行を入れ、例外を出さない(2026-11-13 の回帰)。"""
+    studio, win, model = _studio_window(tmp_path, monkeypatch)
+    try:
+        ui = win._search_ui
+        win._ops_fit["check"].setChecked(False)
+        ui["edit"].setText("blur"); ui["search_now"]("blur"); _pump(0.3)
+        rows = ui["rows"]()
+        ranked = list(dict.fromkeys(r["name"] for g in ("staples", "applicable", "needs_preprocessing", "other")
+                                    for r in rows[g]))
+        real = studio.api.find_op
+        addable = [n for n in ranked if real(n) is not None]
+        assert len(addable) >= 2, ranked[:5]
+        gone = addable[0]                                   # 先頭の行が「未導入」だった事にする(M1: 定番を含む)
+        monkeypatch.setattr(studio.api, "find_op", lambda name, *a, **k: None if name == gone else real(name, *a, **k))
         n0 = len(model.stages)
         ui["list"].setCurrentItem(None)
         ui["edit"].returnPressed.emit(); _pump(0.3)
         assert len(model.stages) == n0 + 1
-        assert model.stages[-1][0] == ranked[0], (model.stages[-1][0], ranked[:3], rows["staples"][0]["name"])
+        assert model.stages[-1][0] == real(addable[1]).name, (model.stages[-1][0], addable[:3])
+        # 無い op を自分で選んで入れようとした時は、入らず、例外も出ない。
+        from PySide6 import QtCore as _QtCore
+        items = [ui["list"].item(i) for i in range(ui["list"].count())]
+        target = [it for it in items if it.data(_QtCore.Qt.UserRole) == gone]
+        assert target, gone
+        n1 = len(model.stages)
+        ui["list"].itemActivated.emit(target[0]); _pump(0.3)
+        assert len(model.stages) == n1
+        assert "Traceback" not in capfd.readouterr().err
     finally:
         _close_window(studio, win)
 
@@ -610,3 +673,66 @@ def test_english_words_that_are_also_op_names_give_no_staple_by_design(word):
     assert ss._row_of(word) is not None                  # 理由: その語は op 名として索引に在る
     assert ss.staples_for(word) == []
     assert ss.staples_for(word + "_") == []
+
+
+def test_recent_images_with_one_entry_survive_a_restart(tmp_path, monkeypatch):
+    """最近開いた画像が 1 件だけの時、設定の読み戻しが str を返す事があり、パスが 1 文字ずつの項目になっていた(2026-11-13)。
+
+    QSettings は 1 件だけの列を str で返す事がある(形式と中身による)。その場合を直接作って確かめる。"""
+    import studio as _studio
+    from PySide6 import QtWidgets
+    target = str(tmp_path / "one image.png")
+    real = _studio._settings
+
+    class _OneStringSettings:
+        """recent_files だけ str を返す(1 件だけの列が str で戻る QSettings の振る舞い)。"""
+        def __init__(self):
+            self._s = real()
+
+        def value(self, key, default=None, *args, **kw):
+            if key == "recent_files":
+                return target
+            return self._s.value(key, default, *args, **kw)
+
+        def __getattr__(self, name):
+            return getattr(self._s, name)
+
+    monkeypatch.setattr(_studio, "_settings", _OneStringSettings)
+    studio, win, model = _studio_window(tmp_path, monkeypatch)
+    try:
+        menus = [m for m in win.findChildren(QtWidgets.QMenu)
+                 if any("one image.png" in a.text() or a.text().strip() in ("o", "n", "e") for a in m.actions())]
+        assert len(menus) == 1, [m.title() for m in menus]
+        texts = [a.text() for a in menus[0].actions() if a.text() and not a.isSeparator()]
+        files = [x for x in texts if "one image.png" in x]
+        assert len(files) == 1, texts
+        assert len(texts) <= 3, texts          # 1 件 +「消す」などの項目。1 文字ずつなら数十になる
+    finally:
+        _close_window(studio, win)
+
+
+def test_adding_a_two_input_op_says_why_it_was_not_added(tmp_path, monkeypatch, capfd):
+    """2 入力の op を入れようとした時、「optional backend が未導入」と誤った理由を言っていた(2026-11-13)。"""
+    studio, win, model = _studio_window(tmp_path, monkeypatch)
+    try:
+        said = []
+        ui = win._search_ui
+        nary = sorted(studio.api._nary_by_name())
+        assert nary, "2 入力の op が 1 つも無い"
+        name = next((n for n in nary if studio.api.find_op(n) is None), None)
+        assert name, nary[:5]
+        ui["edit"].setText(name); ui["search_now"](name); _pump(0.3)
+        from PySide6 import QtCore as _QtCore
+        items = [ui["list"].item(i) for i in range(ui["list"].count())]
+        target = [it for it in items if it.data(_QtCore.Qt.UserRole) == name]
+        assert target, name
+        bar = win.statusBar()
+        n0 = len(model.stages)
+        ui["list"].itemActivated.emit(target[0]); _pump(0.3)
+        said.append(bar.currentMessage())
+        assert len(model.stages) == n0
+        assert "two or more inputs" in said[0], said
+        assert "optional backend" not in said[0]
+        assert "Traceback" not in capfd.readouterr().err
+    finally:
+        _close_window(studio, win)
