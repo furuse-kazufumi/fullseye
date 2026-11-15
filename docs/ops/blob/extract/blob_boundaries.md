@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_gear_tooth_metrology, poc_real_sem_metal_layer]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # blob_boundaries — BLOB `extract` op

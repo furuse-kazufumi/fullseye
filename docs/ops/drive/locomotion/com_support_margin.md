@@ -8,7 +8,7 @@ gpu: なし
 examples: [consumer_hillco, consumer_onocollo, physical_ai_perception, walking_ops_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # com_support_margin — DRIVE `locomotion` op

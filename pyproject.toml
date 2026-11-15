@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullseye"
-version = "1.1.0"
+version = "1.1.1"
 description = "Numpy-native operator library for vision, 3-D and measurement (3,838 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -289,7 +289,7 @@ py-modules = [
   # opsmv: 工業用ビジョンの定番の演算の台帳(2026-11-02)。ステレオ・幾何の再標本化・古典形態学・
   # カルマン背景・分類器の入口・文字行。実体は mvimage / mvstereo / mvmorph / mvtrack / mvclass / mvtext。
   "opsmv", "mvimage", "mvstereo", "mvmorph", "mvtrack", "mvclass", "mvtext",
-  "recipes", "measure", "studio", "studio_search", "studio_program", "defs_io", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "studio_project", "studio_result",
+  "recipes", "measure", "studio", "studio_search", "studio_program", "defs_io", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "studio_project", "studio_result", "studio_theme", "studio_panels",
   # 2026-11-13 Studio の Python のモード: UI の繋ぎ(studio_pymode)と、エディタ支援の部品 6 本(色分け・補完・
   # 値の要約・対訳・Qt の部品・変数とウォッチの欄)。どれも studio.py が import する GUI の内側の部品で、
   # py-modules に無いと wheel の Studio が起動しない。

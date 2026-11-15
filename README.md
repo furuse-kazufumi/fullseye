@@ -75,7 +75,7 @@ on plain numpy arrays, so other projects can drop it into a vision pipeline dire
 
 None of these numbers is typed by hand: `tools/gen_trust_block.py` renders them from measurement files in `docs/` (`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`), and `tests/test_trust_block.py` fails if this section drifts from them. Every number carries the version and date it was measured at.
 
-**28,758 regression tests** — included in 1.1.0, commit `7df6a9be1f`, counted with `pytest --collect-only` on 2026-11-12 with every optional backend installed (without them, tests for the missing backends are not collected and the count is lower).
+**29,285 regression tests** — included in 1.1.1, commit `d62109bb65`, counted with `pytest --collect-only` on 2026-11-13 with every optional backend installed (without them, tests for the missing backends are not collected and the count is lower).
 
 ### If you add one operator, what checks it
 
@@ -99,7 +99,7 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 1.1.0); stage definitions in [MATURITY.md](docs/MATURITY.md)).
+The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 1.1.1); stage definitions in [MATURITY.md](docs/MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
@@ -128,6 +128,7 @@ Of 500 examples, 496 are actually run by a gate.
 | 0.9.0 | 2026-11-04 | 3,752 | 2,788 | 966 | 297 | 26,045 |
 | 1.0.0 | 2026-11-06 | 3,811 | 2,847 | 1,017 | 299 | 27,660 |
 | 1.1.0 | 2026-11-12 | 3,838 | 2,874 | 1,017 | 315 | 28,758 |
+| 1.1.1 | 2026-11-13 | 3,838 | 2,874 | 1,017 | 315 | 29,285 |
 
 - The HALCON figure 323 for 0.1.0–0.1.8 is the value recorded at the time; from 0.1.9 it is 979 under a revised count (not 656 new implementations).
 - 0.2.0 is the first version whose index includes the typed ledger: 918 → 1,942 is a change in what is counted, not new implementation (the ledger existed from 0.1.6 but sat outside the index).

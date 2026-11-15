@@ -8,7 +8,7 @@ gpu: なし
 examples: [piv_field_analysis_tour, poc_river_surface_velocity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # piv_ensemble_correlate — PIV `estimate` op

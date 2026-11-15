@@ -9,7 +9,7 @@ gpu: あり(許可リスト)
 examples: [degenerate_inputs, gallery2d_texture_freq, poc_moire_screen]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # fft_image — 2D `frequency` op

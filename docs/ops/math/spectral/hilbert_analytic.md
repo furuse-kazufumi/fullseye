@@ -8,7 +8,7 @@ gpu: あり(許可リスト)
 examples: [spectral_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # hilbert_analytic — MATH `spectral` op

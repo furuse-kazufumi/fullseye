@@ -723,7 +723,8 @@ def _app():
 
 
 def _slider_handle_amber_px(enabled):
-    """Render a themed QSlider and count AMBER (enabled-handle) pixels."""
+    """Render a themed QSlider and count enabled-handle pixels (the scheme's accent colour;
+    2026-11-12: the handle moved from amber — a state colour — to the accent)."""
     from PySide6 import QtWidgets, QtGui, QtCore
     app = _app()
     w = QtWidgets.QWidget()
@@ -736,9 +737,12 @@ def _slider_handle_amber_px(enabled):
     img = w.grab().toImage().convertToFormat(QtGui.QImage.Format_RGB32)
     arr = np.frombuffer(img.constBits(), np.uint8).reshape(
         img.height(), img.bytesPerLine() // 4, 4)
-    amber = ((np.abs(arr[:, :, 2].astype(int) - 0xF5) < 12)
-             & (np.abs(arr[:, :, 1].astype(int) - 0xA5) < 12)
-             & (np.abs(arr[:, :, 0].astype(int) - 0x24) < 12))
+    import studio_theme
+    h = studio_theme.PALETTES[studio_theme.DEFAULT_THEME]["accent"].lstrip("#")
+    r_, g_, b_ = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    amber = ((np.abs(arr[:, :, 2].astype(int) - r_) < 12)
+             & (np.abs(arr[:, :, 1].astype(int) - g_) < 12)
+             & (np.abs(arr[:, :, 0].astype(int) - b_) < 12))
     w.hide()
     return int(amber.sum())
 
@@ -1550,18 +1554,19 @@ def test_default_layout_is_image_dominant():
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert isinstance(win.centralWidget(), QtWidgets.QMdiArea)          # image workspace is central
-    # Program (code) = wide bottom strip; Operators = compact right column (visible)
+    # Program (code) = wide bottom strip; Operators = compact right column
     assert win.dockWidgetArea(win._docks["program"]) == QtCore.Qt.BottomDockWidgetArea
     assert win.dockWidgetArea(win._docks["operators"]) == QtCore.Qt.RightDockWidgetArea
-    assert not win._docks["program"].isHidden() and not win._docks["operators"].isHidden()
-    # the inspection panels start HIDDEN (on-demand) so the image owns the workspace.
-    # 2026-11-12 (P-15): Pipeline · Parameters is the exception -- its tab sits next to Operators
-    # from the first launch (a first-time user could not find the knobs behind a hidden dock).
-    for key in ("variables", "pipeline", "display"):
+    assert not win._docks["program"].isHidden()
+    # 2026-11-13 (stage 2): the image and the code are the principals; EVERY other panel starts
+    # hidden and comes from the panel bar (one always-visible icon button each). This replaces the
+    # 2026-11-12 exception (P-15: the Pipeline · Parameters tab shown from the first launch so a
+    # first-time user finds the knobs) -- the knobs are now one click away on the bar instead.
+    for key in ("operators", "variables", "pipeline", "display"):
         assert win.dockWidgetArea(win._docks[key]) == QtCore.Qt.RightDockWidgetArea, key
-    for key in ("variables", "display"):
-        assert win._docks[key].isHidden(), "%s should start hidden (on-demand)" % key
-    assert not win._docks["pipeline"].isHidden()
+        assert win._docks[key].isHidden(), "%s should start hidden (on the panel bar)" % key
+        assert win._panels["buttons"][key].toolTip().startswith(win._docks[key].windowTitle())
+    assert len(win._panels["buttons"]) == len(win._docks) == 8          # + the Project dock (integration)
     # each on-demand panel has a toggle action (toolbar + Window ▸ Panels) to bring it back
     for key in ("variables", "pipeline", "display"):
         assert win._docks[key].toggleViewAction() is not None
@@ -1770,7 +1775,8 @@ def test_window_menu_is_grouped_into_submenus():
     assert list(sub_by_title) == ["Panels", "Graphics windows", "Layout"]
     assert not [a for a in wmenu.actions() if not a.menu() and not a.isSeparator()]  # nothing flat
     panel_items = [a.text() for a in sub_by_title["Panels"].actions()]
-    assert "Float: Operators" in panel_items and "Float all panels (multi-display)" in panel_items
+    assert "Separate window: Operators" in panel_items and "Float all panels (multi-display)" in panel_items
+    assert not [t for t in panel_items if t.startswith("Float: ")]      # D100: one word, one entry per panel
     assert "Reset panel layout" in panel_items
     gfx_items = [a.text() for a in sub_by_title["Graphics windows"].actions()]
     assert "New graphics window" in gfx_items and "Detach graphics window" in gfx_items

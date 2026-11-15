@@ -112,6 +112,86 @@
   "hi": "हिन्दी"
  },
  "tooltips": {
+  "Auto-update the display (HDevelop dev_update). Uncheck to edit / run without the display cost, then check to refresh.": {
+   "ja": "表示を自動で更新します(HDevelop の dev_update)。外すと表示の手間なしに編集・実行でき、入れ直すと表示が追いつきます。",
+   "zh": "自动更新显示(HDevelop 的 dev_update)。取消勾选后编辑和运行不再花时间刷新显示,重新勾选即刷新。",
+   "tw": "自動更新顯示(HDevelop 的 dev_update)。取消勾選後編輯與執行不再花時間重繪顯示,重新勾選即更新。",
+   "ko": "표시를 자동으로 갱신합니다(HDevelop의 dev_update). 끄면 표시 비용 없이 편집·실행하고, 다시 켜면 표시가 갱신됩니다.",
+   "de": "Anzeige automatisch aktualisieren (dev_update in HDevelop). Abwählen, um ohne Anzeigeaufwand zu bearbeiten / auszuführen; wieder anwählen aktualisiert die Anzeige.",
+   "hi": "डिस्प्ले अपने-आप अपडेट होता है (HDevelop का dev_update)। हटाने पर डिस्प्ले के खर्च के बिना संपादन / रन कर सकते हैं; फिर चुनने पर डिस्प्ले ताज़ा होता है।"
+  },
+  "Insert operator into the pipeline with a, b (Enter / double-click)": {
+   "ja": "a, b で処理手順に op を追加 (Enter / ダブルクリック)",
+   "zh": "用 a, b 把算子插入处理流程 (Enter / 双击)",
+   "tw": "用 a, b 把運算子插入處理流程 (Enter / 雙擊)",
+   "ko": "a, b로 연산자를 처리 순서에 추가 (Enter / 더블 클릭)",
+   "de": "Operator mit a, b in die Pipeline einfügen (Eingabe / Doppelklick)",
+   "hi": "a, b के साथ operator को pipeline में जोड़ें (Enter / डबल-क्लिक)"
+  },
+  "Run once on the loaded image — pipeline NOT changed (HDevelop single-step execution)": {
+   "ja": "読み込んだ画像で 1 回実行 — 処理手順は変えない(HDevelop の 1 段実行)",
+   "zh": "在已载入的图像上运行一次 — 不改变处理流程(HDevelop 单步执行)",
+   "tw": "在已載入的影像上執行一次 — 不改變處理流程(HDevelop 單步執行)",
+   "ko": "불러온 이미지에서 한 번 실행 — 처리 순서는 바꾸지 않음(HDevelop 단일 단계 실행)",
+   "de": "Einmal auf dem geladenen Bild ausführen — Pipeline bleibt unverändert (HDevelop-Einzelschritt)",
+   "hi": "लोड की गई image पर एक बार चलाएँ — pipeline नहीं बदलती (HDevelop single-step)"
+  },
+  "Operator help (image-processing details)": {
+   "ja": "op のヘルプ(画像処理の詳しい説明)",
+   "zh": "算子帮助(图像处理详解)",
+   "tw": "運算子說明(影像處理詳解)",
+   "ko": "연산자 도움말(영상 처리 상세)",
+   "de": "Operator-Hilfe (Details zur Bildverarbeitung)",
+   "hi": "Operator सहायता (image-processing विवरण)"
+  },
+  "Continue: resume from the execution line to the next breakpoint / end (pause via breakpoints, resume here)": {
+   "ja": "続行: 実行中の行から次のブレークポイントまたは最後まで進める(ブレークポイントで止め、ここで再開)",
+   "zh": "继续: 从执行行运行到下一个断点或结尾(用断点暂停,在此恢复)",
+   "tw": "繼續: 從執行行執行到下一個中斷點或結尾(用中斷點暫停,在此繼續)",
+   "ko": "계속: 실행 줄부터 다음 중단점 또는 끝까지 진행(중단점에서 멈추고 여기서 재개)",
+   "de": "Fortsetzen: von der Ausführungszeile bis zum nächsten Haltepunkt / Ende (Pause über Haltepunkte, hier fortsetzen)",
+   "hi": "जारी रखें: निष्पादन पंक्ति से अगले breakpoint / अंत तक (breakpoint पर रुकें, यहाँ से फिर शुरू करें)"
+  },
+  "Apply → parse the code and replace the pipeline": {
+   "ja": "適用 → コードを解析して処理手順を置き換える",
+   "zh": "应用 → 解析代码并替换流水线",
+   "tw": "套用 → 解析程式碼並取代管線",
+   "ko": "적용 → 코드를 해석해 파이프라인을 교체",
+   "de": "Anwenden → Code einlesen und die Pipeline ersetzen",
+   "hi": "लागू करें → कोड पढ़कर pipeline बदलें"
+  },
+  "Sync ← regenerate the code from the current pipeline": {
+   "ja": "同期 ← 今の処理手順からコードを作り直す",
+   "zh": "同步 ← 从当前流水线重新生成代码",
+   "tw": "同步 ← 從目前管線重新產生程式碼",
+   "ko": "동기화 ← 현재 파이프라인에서 코드를 다시 생성",
+   "de": "Abgleichen ← Code aus der aktuellen Pipeline neu erzeugen",
+   "hi": "सिंक ← मौजूदा pipeline से कोड फिर बनाएँ"
+  },
+  "Display the selected variable in a NEW graphics window": {
+   "ja": "選んだ変数を新しいグラフィックス窓に表示",
+   "zh": "在新的图形窗口中显示所选变量",
+   "tw": "在新的圖形視窗中顯示所選變數",
+   "ko": "선택한 변수를 새 그래픽 창에 표시",
+   "de": "Ausgewählte Variable in einem NEUEN Grafikfenster anzeigen",
+   "hi": "चुने गए variable को नई graphics window में दिखाएँ"
+  },
+  "Display the selected variable in the CURRENT graphics window (double-clicking the variable does the same)": {
+   "ja": "選んだ変数を今のグラフィックス窓に表示(変数をダブルクリックしても同じ)",
+   "zh": "在当前图形窗口中显示所选变量(双击变量效果相同)",
+   "tw": "在目前的圖形視窗中顯示所選變數(按兩下變數效果相同)",
+   "ko": "선택한 변수를 현재 그래픽 창에 표시(변수를 더블클릭해도 같음)",
+   "de": "Ausgewählte Variable im AKTUELLEN Grafikfenster anzeigen (Doppelklick auf die Variable tut dasselbe)",
+   "hi": "चुने गए variable को मौजूदा graphics window में दिखाएँ (variable पर double-click भी यही करता है)"
+  },
+  "Remove the selected watch row": {
+   "ja": "選んだ監視式の行を消す",
+   "zh": "删除所选的监视行",
+   "tw": "刪除所選的監看列",
+   "ko": "선택한 감시식 행 삭제",
+   "de": "Ausgewählte Überwachungszeile entfernen",
+   "hi": "चुनी गई watch पंक्ति हटाएँ"
+  },
   "Load an image file (Ctrl+O)": {
    "ja": "画像ファイルを開く (Ctrl+O)",
    "zh": "加载图像文件 (Ctrl+O)",
@@ -400,13 +480,13 @@
    "de": "HTML-Hilfe des gewählten Operators anzeigen (Details zur Bildverarbeitung)",
    "hi": "चुने गए operator की HTML help दिखाएँ (image-processing का विवरण)"
   },
-  "Freeze the current pipeline and its result as A, then compare it with what you change next (Window > Panels > A / B)": {
-   "ja": "いまの処理列とその結果を A として固定し、このあと変えたものと比べます(Window > Panels > A / B)",
-   "zh": "把当前流水线及其结果固定为 A,与之后的修改作比较(Window > Panels > A / B)",
-   "tw": "把目前流程及其結果固定為 A,與之後的修改作比較(Window > Panels > A / B)",
-   "ko": "현재 파이프라인과 그 결과를 A로 고정하고 이후의 변경과 비교합니다(Window > Panels > A / B)",
-   "de": "Heftet die aktuelle Pipeline samt Ergebnis als A an und vergleicht sie mit dem, was Sie danach ändern (Window > Panels > A / B)",
-   "hi": "वर्तमान पाइपलाइन और उसके परिणाम को A के रूप में पिन करें, फिर आगे के बदलावों से तुलना करें (Window > Panels > A / B)"
+  "Freeze the current pipeline and its result as A, then compare it with what you change next (the A / B panel shows both)": {
+   "ja": "いまの処理列とその結果を A として固定し、このあと変えたものと比べます(「A/B 比較」のパネルに並びます)",
+   "zh": "把当前流水线及其结果固定为 A,与之后的修改作比较(两者并排显示在 A / B 面板中)",
+   "tw": "把目前流程及其結果固定為 A,與之後的修改作比較(兩者並排顯示在 A / B 面板中)",
+   "ko": "현재 파이프라인과 그 결과를 A로 고정하고 이후의 변경과 비교합니다(A / B 패널에 나란히 표시됩니다)",
+   "de": "Heftet die aktuelle Pipeline samt Ergebnis als A an und vergleicht sie mit dem, was Sie danach ändern (der Bereich A / B zeigt beide)",
+   "hi": "वर्तमान पाइपलाइन और उसके परिणाम को A के रूप में पिन करें, फिर आगे के बदलावों से तुलना करें (A / B पैनल दोनों दिखाता है)"
   }
  },
  "guide": {
@@ -419,6 +499,558 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "Tools and tabs": {
+   "ja": "道具とタブ",
+   "zh": "工具和标签",
+   "tw": "工具與分頁",
+   "ko": "도구와 탭",
+   "de": "Werkzeuge und Reiter",
+   "hi": "औज़ार और टैब"
+  },
+  "When they do not fit": {
+   "ja": "収まらない時",
+   "zh": "放不下时",
+   "tw": "放不下時",
+   "ko": "들어가지 않을 때",
+   "de": "Wenn es nicht passt",
+   "hi": "न समाने पर"
+  },
+  "* = rearranged since this mode was chosen; choose the mode again to return to its arrangement": {
+   "ja": "* = このモードを選んだ後に並べ替えました。もう一度このモードを選ぶと、その配置に戻ります",
+   "zh": "* = 选择此模式后已重新排列;再次选择该模式即可回到它的布局",
+   "tw": "* = 選擇此模式後已重新排列;再次選擇該模式即可回到它的配置",
+   "ko": "* = 이 모드를 고른 뒤에 배치를 바꿨습니다. 같은 모드를 다시 고르면 그 배치로 돌아갑니다",
+   "de": "* = seit der Wahl dieses Modus umgeordnet; den Modus erneut wählen, um zu seiner Anordnung zurückzukehren",
+   "hi": "* = यह मोड चुनने के बाद व्यवस्था बदली गई; उसी मोड को फिर चुनने पर उसकी व्यवस्था लौट आती है"
+  },
+  "Stopped": {
+   "ja": "止めました",
+   "zh": "已停止",
+   "tw": "已停止",
+   "ko": "멈췄습니다",
+   "de": "Angehalten",
+   "hi": "रोका गया"
+  },
+  "No panel by that name": {
+   "ja": "その名前のパネルはありません",
+   "zh": "没有这个名称的面板",
+   "tw": "沒有這個名稱的面板",
+   "ko": "그 이름의 패널이 없습니다",
+   "de": "Kein Bereich mit diesem Namen",
+   "hi": "इस नाम का कोई पैनल नहीं"
+  },
+  "Run the code": {
+   "ja": "コードを実行",
+   "zh": "运行代码",
+   "tw": "執行程式碼",
+   "ko": "코드 실행",
+   "de": "Code ausführen",
+   "hi": "कोड चलाएँ"
+  },
+  "Continue to the next breakpoint": {
+   "ja": "次のブレークポイントまで続ける",
+   "zh": "继续到下一个断点",
+   "tw": "繼續到下一個中斷點",
+   "ko": "다음 중단점까지 계속",
+   "de": "Bis zum nächsten Haltepunkt fortsetzen",
+   "hi": "अगले ब्रेकपॉइंट तक जारी रखें"
+  },
+  "Step one line": {
+   "ja": "1 行進める",
+   "zh": "单步执行一行",
+   "tw": "逐行執行一行",
+   "ko": "한 줄 진행",
+   "de": "Eine Zeile weiter",
+   "hi": "एक पंक्ति आगे बढ़ें"
+  },
+  "Clear the run marks": {
+   "ja": "実行の印を消す",
+   "zh": "清除运行标记",
+   "tw": "清除執行標記",
+   "ko": "실행 표시 지우기",
+   "de": "Laufmarkierungen löschen",
+   "hi": "रन के निशान हटाएँ"
+  },
+  "Apply the code to the pipeline": {
+   "ja": "コードを処理手順に適用",
+   "zh": "把代码应用到处理流程",
+   "tw": "把程式碼套用到處理流程",
+   "ko": "코드를 처리 순서에 적용",
+   "de": "Code auf die Pipeline anwenden",
+   "hi": "कोड को pipeline पर लागू करें"
+  },
+  "Regenerate the code from the pipeline": {
+   "ja": "処理手順からコードを作り直す",
+   "zh": "根据处理流程重新生成代码",
+   "tw": "依處理流程重新產生程式碼",
+   "ko": "처리 순서에서 코드를 다시 만들기",
+   "de": "Code aus der Pipeline neu erzeugen",
+   "hi": "pipeline से कोड फिर से बनाएँ"
+  },
+  "Display in a new window": {
+   "ja": "新しい窓に表示",
+   "zh": "在新窗口中显示",
+   "tw": "在新視窗中顯示",
+   "ko": "새 창에 표시",
+   "de": "In neuem Fenster anzeigen",
+   "hi": "नई विंडो में दिखाएँ"
+  },
+  "Display in the current window": {
+   "ja": "今の窓に表示",
+   "zh": "在当前窗口中显示",
+   "tw": "在目前視窗中顯示",
+   "ko": "현재 창에 표시",
+   "de": "Im aktuellen Fenster anzeigen",
+   "hi": "मौजूदा विंडो में दिखाएँ"
+  },
+  "Remove the watch row": {
+   "ja": "監視式の行を消す",
+   "zh": "删除监视行",
+   "tw": "刪除監看列",
+   "ko": "감시 행 지우기",
+   "de": "Überwachungszeile entfernen",
+   "hi": "वॉच की पंक्ति हटाएँ"
+  },
+  "Insert into the pipeline": {
+   "ja": "処理手順に追加",
+   "zh": "插入处理流程",
+   "tw": "插入處理流程",
+   "ko": "처리 순서에 추가",
+   "de": "In die Pipeline einfügen",
+   "hi": "pipeline में जोड़ें"
+  },
+  "Run once (pipeline unchanged)": {
+   "ja": "1 回だけ実行(処理手順は変えない)",
+   "zh": "只运行一次(不改变处理流程)",
+   "tw": "只執行一次(不改變處理流程)",
+   "ko": "한 번만 실행(처리 순서는 그대로)",
+   "de": "Einmal ausführen (Pipeline unverändert)",
+   "hi": "एक बार चलाएँ (pipeline नहीं बदलता)"
+  },
+  "Operator help": {
+   "ja": "op のヘルプ",
+   "zh": "算子帮助",
+   "tw": "運算子說明",
+   "ko": "연산자 도움말",
+   "de": "Operatorhilfe",
+   "hi": "operator सहायता"
+  },
+  "Work mode": {
+   "ja": "作業モード",
+   "zh": "工作模式",
+   "tw": "工作模式",
+   "ko": "작업 모드",
+   "de": "Arbeitsmodus",
+   "hi": "कार्य मोड"
+  },
+  "choose which panels are shown; the name on the button is the mode in use": {
+   "ja": "どのパネルを出すかを選ぶ。ボタンの名前が今のモード",
+   "zh": "选择显示哪些面板;按钮上的名称就是当前模式",
+   "tw": "選擇顯示哪些面板;按鈕上的名稱就是目前模式",
+   "ko": "어떤 패널을 보일지 고릅니다. 버튼의 이름이 지금의 모드",
+   "de": "wählen, welche Bereiche gezeigt werden; der Name auf der Schaltfläche ist der aktuelle Modus",
+   "hi": "कौन-से पैनल दिखें चुनें; बटन पर लिखा नाम ही अभी का मोड है"
+  },
+  "When they do not fit: scroll": {
+   "ja": "収まらない時: 送る",
+   "zh": "放不下时: 滚动",
+   "tw": "放不下時: 捲動",
+   "ko": "들어가지 않을 때: 스크롤",
+   "de": "Wenn es nicht passt: blättern",
+   "hi": "न समाने पर: स्क्रॉल करें"
+  },
+  "When they do not fit: wrap onto more rows": {
+   "ja": "収まらない時: 折り返す(数段組)",
+   "zh": "放不下时: 换行(多行)",
+   "tw": "放不下時: 換行(多列)",
+   "ko": "들어가지 않을 때: 줄 바꿈(여러 줄)",
+   "de": "Wenn es nicht passt: umbrechen (mehrere Reihen)",
+   "hi": "न समाने पर: कई पंक्तियों में लपेटें"
+  },
+  "Scroll back — show the ones before (or turn the mouse wheel)": {
+   "ja": "前へ送る — 前の物を見せる(マウスのホイールでも)",
+   "zh": "向前滚动 — 显示前面的项(也可用鼠标滚轮)",
+   "tw": "向前捲動 — 顯示前面的項目(也可用滑鼠滾輪)",
+   "ko": "앞으로 — 앞의 항목을 보입니다(마우스 휠로도)",
+   "de": "Zurückblättern — die vorderen zeigen (oder das Mausrad drehen)",
+   "hi": "पीछे स्क्रॉल — पहले वाले दिखाएँ (या माउस व्हील घुमाएँ)"
+  },
+  "Scroll on — show the ones after (or turn the mouse wheel)": {
+   "ja": "次へ送る — 後の物を見せる(マウスのホイールでも)",
+   "zh": "向后滚动 — 显示后面的项(也可用鼠标滚轮)",
+   "tw": "向後捲動 — 顯示後面的項目(也可用滑鼠滾輪)",
+   "ko": "뒤로 — 뒤의 항목을 보입니다(마우스 휠로도)",
+   "de": "Weiterblättern — die hinteren zeigen (oder das Mausrad drehen)",
+   "hi": "आगे स्क्रॉल — बाद वाले दिखाएँ (या माउस व्हील घुमाएँ)"
+  },
+  "Reduce motion": {
+   "ja": "動きを減らす",
+   "zh": "减少动画",
+   "tw": "減少動畫",
+   "ko": "움직임 줄이기",
+   "de": "Bewegung reduzieren",
+   "hi": "गति कम करें"
+  },
+  "Keep the icon still while something runs (until changed here, Windows' own animation setting is followed)": {
+   "ja": "処理中もアイコンを動かさない(ここで変えるまでは Windows のアニメーションの設定に従う)",
+   "zh": "处理时图标保持不动(在此更改之前,遵循 Windows 的动画设置)",
+   "tw": "處理時圖示保持不動(在此變更之前,依照 Windows 的動畫設定)",
+   "ko": "처리 중에도 아이콘을 움직이지 않음(여기서 바꾸기 전까지는 Windows 애니메이션 설정을 따름)",
+   "de": "Das Symbol bewegt sich während einer Arbeit nicht (bis zur Änderung hier gilt die Animationseinstellung von Windows)",
+   "hi": "काम चलते समय icon स्थिर रहे (यहाँ बदलने तक Windows की animation सेटिंग मानी जाती है)"
+  },
+  "Opening %s": {
+   "ja": "%s を開いています",
+   "zh": "正在打开 %s",
+   "tw": "正在開啟 %s",
+   "ko": "%s 여는 중",
+   "de": "%s wird geöffnet",
+   "hi": "%s खोला जा रहा है"
+  },
+  "Loading sample: %s": {
+   "ja": "サンプルを読み込み中: %s",
+   "zh": "正在加载示例: %s",
+   "tw": "正在載入範例: %s",
+   "ko": "샘플 불러오는 중: %s",
+   "de": "Beispiel wird geladen: %s",
+   "hi": "नमूना लोड हो रहा है: %s"
+  },
+  "Searching: %s": {
+   "ja": "検索中: %s",
+   "zh": "正在搜索: %s",
+   "tw": "正在搜尋: %s",
+   "ko": "검색 중: %s",
+   "de": "Suche: %s",
+   "hi": "खोज रहे हैं: %s"
+  },
+  "More tools": {
+   "ja": "ほかの道具",
+   "zh": "更多工具",
+   "tw": "更多工具",
+   "ko": "도구 더 보기",
+   "de": "Weitere Werkzeuge",
+   "hi": "और उपकरण"
+  },
+  "Done": {
+   "ja": "完了",
+   "zh": "完成",
+   "tw": "完成",
+   "ko": "완료",
+   "de": "Fertig",
+   "hi": "पूर्ण"
+  },
+  "Failed": {
+   "ja": "失敗",
+   "zh": "失败",
+   "tw": "失敗",
+   "ko": "실패",
+   "de": "Fehlgeschlagen",
+   "hi": "विफल"
+  },
+  "Panel menu": {
+   "ja": "パネルのメニュー",
+   "zh": "面板菜单",
+   "tw": "面板選單",
+   "ko": "패널 메뉴",
+   "de": "Bereichsmenü",
+   "hi": "पैनल मेनू"
+  },
+  "Shown: %d / %d": {
+   "ja": "表示 %d / %d",
+   "zh": "显示 %d / %d",
+   "tw": "顯示 %d / %d",
+   "ko": "표시 %d / %d",
+   "de": "Angezeigt: %d / %d",
+   "hi": "दिख रहे: %d / %d"
+  },
+  "Stages: %d": {
+   "ja": "段 %d",
+   "zh": "阶段 %d",
+   "tw": "階段 %d",
+   "ko": "단계 %d",
+   "de": "Stufen: %d",
+   "hi": "चरण: %d"
+  },
+  "Errors: %d": {
+   "ja": "エラー %d",
+   "zh": "错误 %d",
+   "tw": "錯誤 %d",
+   "ko": "오류 %d",
+   "de": "Fehler: %d",
+   "hi": "त्रुटियाँ: %d"
+  },
+  "Variables: %d": {
+   "ja": "変数 %d",
+   "zh": "变量 %d",
+   "tw": "變數 %d",
+   "ko": "변수 %d",
+   "de": "Variablen: %d",
+   "hi": "चर: %d"
+  },
+  "Tools and tabs: automatic (on the left when the panel is wide)": {
+   "ja": "道具とタブ: 自動(横長のパネルでは左に縦並び)",
+   "zh": "工具和标签: 自动(面板较宽时放在左侧)",
+   "tw": "工具與分頁: 自動(面板較寬時放在左側)",
+   "ko": "도구와 탭: 자동(패널이 가로로 길면 왼쪽에)",
+   "de": "Werkzeuge und Reiter: automatisch (links, wenn der Bereich breit ist)",
+   "hi": "औज़ार और टैब: स्वचालित (चौड़े पैनल में बाईं ओर)"
+  },
+  "Tools and tabs: on top": {
+   "ja": "道具とタブ: 上に横並び",
+   "zh": "工具和标签: 在上方",
+   "tw": "工具與分頁: 在上方",
+   "ko": "도구와 탭: 위에",
+   "de": "Werkzeuge und Reiter: oben",
+   "hi": "औज़ार और टैब: ऊपर"
+  },
+  "Tools and tabs: on the left": {
+   "ja": "道具とタブ: 左に縦並び",
+   "zh": "工具和标签: 在左侧",
+   "tw": "工具與分頁: 在左側",
+   "ko": "도구와 탭: 왼쪽에",
+   "de": "Werkzeuge und Reiter: links",
+   "hi": "औज़ार और टैब: बाईं ओर"
+  },
+  "Code font": {
+   "ja": "コードの書体",
+   "zh": "代码字体",
+   "tw": "程式碼字型",
+   "ko": "코드 글꼴",
+   "de": "Code-Schrift",
+   "hi": "कोड फ़ॉन्ट"
+  },
+  "Automatic": {
+   "ja": "自動",
+   "zh": "自动",
+   "tw": "自動",
+   "ko": "자동",
+   "de": "Automatisch",
+   "hi": "स्वचालित"
+  },
+  "Panel bar": {
+   "ja": "パネルの帯",
+   "zh": "面板栏",
+   "tw": "面板列",
+   "ko": "패널 막대",
+   "de": "Bereichsleiste",
+   "hi": "पैनल पट्टी"
+  },
+  "Click: show or hide. Right-click: separate window or dock.": {
+   "ja": "クリック: 出す / しまう。右クリック: 別ウィンドウ / 本体に戻す。",
+   "zh": "单击: 显示或隐藏。右键: 独立窗口或停靠。",
+   "tw": "按一下: 顯示或隱藏。右鍵: 獨立視窗或停駐。",
+   "ko": "클릭: 표시 / 숨기기. 오른쪽 클릭: 별도 창 / 도킹.",
+   "de": "Klick: ein- oder ausblenden. Rechtsklick: eigenes Fenster oder andocken.",
+   "hi": "क्लिक: दिखाएँ या छिपाएँ। राइट-क्लिक: अलग विंडो या डॉक।"
+  },
+  "Separate window": {
+   "ja": "別ウィンドウにする",
+   "zh": "独立窗口",
+   "tw": "獨立視窗",
+   "ko": "별도 창으로",
+   "de": "Eigenes Fenster",
+   "hi": "अलग विंडो"
+  },
+  "Dock in the main window": {
+   "ja": "本体の窓に戻す",
+   "zh": "停靠到主窗口",
+   "tw": "停駐到主視窗",
+   "ko": "기본 창에 도킹",
+   "de": "Im Hauptfenster andocken",
+   "hi": "मुख्य विंडो में डॉक करें"
+  },
+  "Hide": {
+   "ja": "しまう",
+   "zh": "隐藏",
+   "tw": "隱藏",
+   "ko": "숨기기",
+   "de": "Ausblenden",
+   "hi": "छिपाएँ"
+  },
+  "Show": {
+   "ja": "出す",
+   "zh": "显示",
+   "tw": "顯示",
+   "ko": "표시",
+   "de": "Einblenden",
+   "hi": "दिखाएँ"
+  },
+  "Layout": {
+   "ja": "レイアウト",
+   "zh": "布局",
+   "tw": "版面配置",
+   "ko": "배치",
+   "de": "Anordnung",
+   "hi": "लेआउट"
+  },
+  "Reset panel layout": {
+   "ja": "パネル配置を元に戻す",
+   "zh": "重置面板布局",
+   "tw": "重設面板配置",
+   "ko": "패널 배치 초기화",
+   "de": "Bereichsanordnung zurücksetzen",
+   "hi": "पैनल लेआउट रीसेट करें"
+  },
+  "Code on the left (tall)": {
+   "ja": "コードを左に(縦長)",
+   "zh": "代码在左侧(竖长)",
+   "tw": "程式碼在左側(直長)",
+   "ko": "코드를 왼쪽에(세로로 길게)",
+   "de": "Code links (hoch)",
+   "hi": "कोड बाईं ओर (लंबा)"
+  },
+  "Code at the bottom (wide)": {
+   "ja": "コードを下に(横長)",
+   "zh": "代码在底部(横宽)",
+   "tw": "程式碼在底部(橫寬)",
+   "ko": "코드를 아래에(가로로 넓게)",
+   "de": "Code unten (breit)",
+   "hi": "कोड नीचे (चौड़ा)"
+  },
+  "Dock all panels": {
+   "ja": "すべてのパネルを戻す",
+   "zh": "停靠所有面板",
+   "tw": "停駐所有面板",
+   "ko": "모든 패널 도킹",
+   "de": "Alle Bereiche andocken",
+   "hi": "सभी पैनल डॉक करें"
+  },
+  "Build pipeline": {
+   "ja": "処理を組む",
+   "zh": "构建流程",
+   "tw": "建立流程",
+   "ko": "파이프라인 만들기",
+   "de": "Pipeline bauen",
+   "hi": "पाइपलाइन बनाएँ"
+  },
+  "Compare results": {
+   "ja": "結果を比べる",
+   "zh": "比较结果",
+   "tw": "比較結果",
+   "ko": "결과 비교",
+   "de": "Vergleichen",
+   "hi": "परिणामों की तुलना"
+  },
+  "Inspect values": {
+   "ja": "数値を調べる",
+   "zh": "查看数值",
+   "tw": "檢視數值",
+   "ko": "값 확인",
+   "de": "Werte prüfen",
+   "hi": "मान जाँचें"
+  },
+  "Make code": {
+   "ja": "コードにする",
+   "zh": "生成代码",
+   "tw": "產生程式碼",
+   "ko": "코드로 만들기",
+   "de": "Code erzeugen",
+   "hi": "कोड बनाएँ"
+  },
+  "Image focus": {
+   "ja": "画像だけ大きく",
+   "zh": "仅放大图像",
+   "tw": "僅放大影像",
+   "ko": "이미지만 크게",
+   "de": "Bildfokus",
+   "hi": "केवल छवि बड़ी"
+  },
+  "Find panel": {
+   "ja": "パネルを探す",
+   "zh": "查找面板",
+   "tw": "尋找面板",
+   "ko": "패널 찾기",
+   "de": "Bereich suchen",
+   "hi": "पैनल खोजें"
+  },
+  "Find panel…": {
+   "ja": "パネルを探す…",
+   "zh": "查找面板…",
+   "tw": "尋找面板…",
+   "ko": "패널 찾기…",
+   "de": "Bereich suchen…",
+   "hi": "पैनल खोजें…"
+  },
+  "Leave image focus": {
+   "ja": "画像だけ大きくを終了",
+   "zh": "退出图像放大",
+   "tw": "結束影像放大",
+   "ko": "이미지만 크게 끝내기",
+   "de": "Bildfokus beenden",
+   "hi": "छवि फ़ोकस छोड़ें"
+  },
+  "Work modes": {
+   "ja": "作業モード",
+   "zh": "工作模式",
+   "tw": "工作模式",
+   "ko": "작업 모드",
+   "de": "Arbeitsmodi",
+   "hi": "कार्य मोड"
+  },
+  "Auto-update": {
+   "ja": "自動更新",
+   "zh": "自动更新",
+   "tw": "自動更新",
+   "ko": "자동 업데이트",
+   "de": "Auto-Update",
+   "hi": "स्वतः अद्यतन"
+  },
+  "Colour scheme": {
+   "ja": "配色",
+   "zh": "配色方案",
+   "tw": "配色方案",
+   "ko": "색 구성",
+   "de": "Farbschema",
+   "hi": "रंग योजना"
+  },
+  "Density": {
+   "ja": "表示の密度",
+   "zh": "显示密度",
+   "tw": "顯示密度",
+   "ko": "표시 밀도",
+   "de": "Dichte",
+   "hi": "घनत्व"
+  },
+  "Instrument (dark)": {
+   "ja": "計器盤(暗い)",
+   "zh": "仪表盘(深色)",
+   "tw": "儀表板(深色)",
+   "ko": "계기판(어두움)",
+   "de": "Instrument (dunkel)",
+   "hi": "उपकरण पटल (गहरा)"
+  },
+  "Machine panel (light)": {
+   "ja": "操作盤(明るい)",
+   "zh": "操作面板(浅色)",
+   "tw": "操作面板(淺色)",
+   "ko": "조작반(밝음)",
+   "de": "Bedienfeld (hell)",
+   "hi": "मशीन पैनल (हल्का)"
+  },
+  "Compact": {
+   "ja": "詰める",
+   "zh": "紧凑",
+   "tw": "緊湊",
+   "ko": "촘촘하게",
+   "de": "Kompakt",
+   "hi": "सघन"
+  },
+  "Standard": {
+   "ja": "標準",
+   "zh": "标准",
+   "tw": "標準",
+   "ko": "표준",
+   "de": "Standard",
+   "hi": "मानक"
+  },
+  "value %s (%s) / shown %s / range %s – %s": {
+   "ja": "値 %s (%s) / 表示 %s / レンジ %s〜%s",
+   "zh": "值 %s (%s) / 显示 %s / 范围 %s – %s",
+   "tw": "值 %s (%s) / 顯示 %s / 範圍 %s – %s",
+   "ko": "값 %s (%s) / 표시 %s / 범위 %s – %s",
+   "de": "Wert %s (%s) / angezeigt %s / Bereich %s – %s",
+   "hi": "मान %s (%s) / दिखाया %s / सीमा %s – %s"
+  },
     "border handling": {"ja": "端の扱い", "zh": "边界处理", "tw": "邊界處理", "ko": "가장자리 처리", "de": "Randbehandlung", "hi": "किनारे का व्यवहार"},
     "element shape": {"ja": "構造要素の形", "zh": "结构元素形状", "tw": "結構元素形狀", "ko": "구조 요소 모양", "de": "Form des Strukturelements", "hi": "संरचना तत्व का आकार"},
     "border handling — b ≤ 0.5 reflect, then nearest / constant (0) / wrap": {"ja": "端の扱い — b ≤ 0.5 は reflect(折り返し)、その先は nearest / constant(0)/ wrap", "zh": "边界处理 — b ≤ 0.5 为 reflect,之后为 nearest / constant(0)/ wrap", "tw": "邊界處理 — b ≤ 0.5 為 reflect,之後為 nearest / constant(0)/ wrap", "ko": "가장자리 처리 — b ≤ 0.5는 reflect, 그다음 nearest / constant(0) / wrap", "de": "Randbehandlung — b ≤ 0,5 reflect, danach nearest / constant (0) / wrap", "hi": "किनारे का व्यवहार — b ≤ 0.5 पर reflect, फिर nearest / constant (0) / wrap"},
@@ -3046,7 +3678,6 @@
   "Start Studio in": {"ja": "起動時のモード", "zh": "启动时的模式", "tw": "啟動時的模式", "ko": "시작 시 모드", "de": "Studio starten im", "hi": "Studio इस मोड में शुरू करें"},
   "Start a new Python program in the Program": {"ja": "Program 欄で新しい Python のプログラムを始めます", "zh": "在 Program 中开始新的 Python 程序", "tw": "在 Program 中開始新的 Python 程式", "ko": "Program에서 새 Python 프로그램을 시작합니다", "de": "Ein neues Python-Programm im Programm beginnen", "hi": "Program में नया Python प्रोग्राम शुरू करें"},
   "Step": {"ja": "1 行", "zh": "单步", "tw": "單步", "ko": "한 줄", "de": "Schritt", "hi": "एक पंक्ति"},
-  "Step one line": {"ja": "1 行進む", "zh": "执行一行", "tw": "執行一行", "ko": "한 줄 실행", "de": "Eine Zeile ausführen", "hi": "एक पंक्ति आगे"},
   "Stop at line %d only when this Python expression is true:": {"ja": "この Python の式が真のときだけ %d 行目で止める:", "zh": "仅当此 Python 表达式为真时在第 %d 行停止:", "tw": "僅當此 Python 運算式為真時在第 %d 行停止:", "ko": "이 Python 식이 참일 때만 %d번째 줄에서 멈춤:", "de": "Nur in Zeile %d anhalten, wenn dieser Python-Ausdruck wahr ist:", "hi": "पंक्ति %d पर तभी रुकें जब यह Python व्यंजक सत्य हो:"},
   "Stop at the cursor line only when a Python expression is true": {"ja": "Python の式が真のときだけカーソルの行で止める", "zh": "仅当 Python 表达式为真时在光标行停止", "tw": "僅當 Python 運算式為真時在游標行停止", "ko": "Python 식이 참일 때만 커서 줄에서 멈춤", "de": "Nur in der Cursorzeile anhalten, wenn ein Python-Ausdruck wahr ist", "hi": "कर्सर पंक्ति पर तभी रुकें जब Python व्यंजक सत्य हो"},
   "Stop requested": {"ja": "停止を要求しました", "zh": "已请求停止", "tw": "已要求停止", "ko": "중지를 요청했습니다", "de": "Anhalten angefordert", "hi": "रोकने का अनुरोध किया गया"},
@@ -3142,7 +3773,6 @@
   "Keep the current result": {"ja": "今の結果を採る", "zh": "保留当前结果", "tw": "保留目前結果", "ko": "현재 결과 유지", "de": "Aktuelles Ergebnis behalten", "hi": "वर्तमान परिणाम रखें"},
   "The pinned snapshot %s is dropped: its pipeline and its picture cannot be brought back.": {"ja": "固定 %s が捨てられます。そのパイプラインと絵は戻せません。", "zh": "固定的快照 %s 将被丢弃:它的管线和图像无法恢复。", "tw": "固定的快照 %s 將被捨棄:它的管線和影像無法復原。", "ko": "고정한 스냅숏 %s이(가) 버려집니다. 그 파이프라인과 그림은 되돌릴 수 없습니다.", "de": "Der angeheftete Schnappschuss %s wird verworfen: seine Pipeline und sein Bild lassen sich nicht zurückholen.", "hi": "पिन किया गया स्नैपशॉट %s हट जाता है: उसकी पाइपलाइन और चित्र वापस नहीं लाए जा सकते।"},
   "Drop the snapshot": {"ja": "固定を捨てる", "zh": "丢弃快照", "tw": "捨棄快照", "ko": "스냅숏 버리기", "de": "Schnappschuss verwerfen", "hi": "स्नैपशॉट हटाएँ"},
-  "Reset panel layout": {"ja": "パネル配置を元に戻す", "zh": "重置面板布局", "tw": "重設面板配置", "ko": "패널 배치 초기화", "de": "Panel-Layout zurücksetzen", "hi": "पैनल लेआउट रीसेट करें"},
   "The panels go back to the default arrangement. The arrangement you have now is lost unless it was saved as a layout (Window ▸ Layout ▸ Save).": {"ja": "パネルが既定の配置に戻ります。今の配置は、レイアウトとして保存していなければ失われます(ウィンドウ ▸ レイアウト ▸ 保存)。", "zh": "面板将回到默认布局。当前的布局如果没有保存为布局(窗口 ▸ 布局 ▸ 保存)就会丢失。", "tw": "面板將回到預設配置。目前的配置如果沒有儲存為配置(視窗 ▸ 配置 ▸ 儲存)就會遺失。", "ko": "패널이 기본 배치로 돌아갑니다. 지금의 배치는 레이아웃으로 저장하지 않았다면 사라집니다(창 ▸ 레이아웃 ▸ 저장).", "de": "Die Panels kehren zur Standardanordnung zurück. Die jetzige Anordnung geht verloren, wenn sie nicht als Layout gespeichert wurde (Fenster ▸ Layout ▸ Speichern).", "hi": "पैनल डिफ़ॉल्ट व्यवस्था में लौट जाते हैं। अभी की व्यवस्था खो जाती है यदि उसे लेआउट के रूप में सहेजा नहीं गया (विंडो ▸ लेआउट ▸ सहेजें)।"},
   "Reset the layout": {"ja": "配置をリセットする", "zh": "重置布局", "tw": "重設配置", "ko": "배치 초기화", "de": "Layout zurücksetzen", "hi": "लेआउट रीसेट करें"},
   "Clear recent": {"ja": "最近使ったファイルを消す", "zh": "清除最近的文件", "tw": "清除最近的檔案", "ko": "최근 목록 지우기", "de": "Zuletzt verwendete löschen", "hi": "हाल की सूची साफ़ करें"},
@@ -3255,7 +3885,6 @@
     "Float: Program (code)": {"ja": "別窓にする: コード"},
     "Float: Variables & Objects": {"ja": "別窓にする: 変数とオブジェクト"},
     "Graphics windows": {"ja": "グラフィクス窓"},
-    "Layout": {"ja": "レイアウト"},
     "Balanced (default)": {"ja": "バランス(既定)"},
     "Graphics focus": {"ja": "画像を重視"},
     "Code focus": {"ja": "コードを重視"},
@@ -3280,7 +3909,6 @@
     "Operator timings": {"ja": "op ごとの時間"},
     "All off  (dev_update_off)": {"ja": "すべて切る  (dev_update_off)"},
     "All on  (dev_update_on)": {"ja": "すべて入れる  (dev_update_on)"},
-    "Auto-update": {"ja": "自動更新"},
     "Fill": {"ja": "塗りつぶし"},
     "Margin (outline)": {"ja": "縁取り(輪郭)"},
     "Orange": {"ja": "オレンジ"},
@@ -3292,7 +3920,6 @@
     "Magenta": {"ja": "マゼンタ"},
     "White": {"ja": "白"},
     "Float all panels (multi-display)": {"ja": "すべてのパネルを別窓にする(マルチディスプレイ)"},
-    "Dock all panels": {"ja": "すべてのパネルを戻す"},
     "Detach graphics window": {"ja": "グラフィクス窓を切り離す"},
     "Reattach graphics window": {"ja": "グラフィクス窓を戻す"},
     "PIPELINE": {"ja": "処理手順"},
@@ -3305,21 +3932,12 @@
     "Copy sig": {"ja": "署名をコピー"},
     "Open image": {"ja": "画像を開く"},
     "Export": {"ja": "書き出し"},
-    "Find panel": {"ja": "パネルを探す"},
     "Display:": {"ja": "表示:"},
     "Auto per image": {"ja": "各画像で自動"},
     "Shared by compared images": {"ja": "比較画像で共通"},
     "Manual": {"ja": "手動"},
     "add watch…  (v = selected variable, np = numpy)": {"ja": "監視式を追加…  (v = 選んだ変数、np = numpy)"},
     "search / autocomplete operators…": {"ja": "op を検索 / 補完…"},
-    "Build pipeline": {"ja": "処理を組む"},
-    "Compare results": {"ja": "結果を比べる"},
-    "Inspect values": {"ja": "数値を調べる"},
-    "Make code": {"ja": "コードにする"},
-    "Image focus": {"ja": "画像だけ大きく"},
-    "Find panel…": {"ja": "パネルを探す…"},
-    "Leave image focus": {"ja": "画像だけ大きくを終了"},
-    "Work modes": {"ja": "作業モード"},
     "Operators": {"ja": "処理を選ぶ"},
     "Pipeline · Parameters": {"ja": "処理手順と調整"},
     "Display · Analysis": {"ja": "表示と分析"},
@@ -3400,7 +4018,7 @@
   "Freeze the current pipeline and input settings, then apply them to every image in a folder, one by one": {"ja": "いまの処理と入力設定を固定して、フォルダ内の画像へ順番に適用します"},
   "First steps": {"ja": "最初の 3 手"},
   "1. Open a sample: File ▸ Sample images": {"ja": "1. サンプルを開く(ファイル ▸ サンプル画像)"},
-  "2. Select an operator in the Operators panel and press +": {"ja": "2. 「処理を選ぶ」パネルで op を選び、+ を押す"},
+  "2. Open Operators from the panel bar on the left, select an operator and press +": {"ja": "2. 左端の帯から「処理を選ぶ」を出し、op を選んで + を押す"},
   "3. Press ▶▶ to run": {"ja": "3. ▶▶ で実行"},
   "Hide these steps. Help ▸ First steps shows them again": {"ja": "この案内を閉じます。ヘルプ ▸ 最初の 3 手 でもう一度出せます"},
   "Show the three first steps over the image again": {"ja": "最初の 3 手の案内を画像の上にもう一度出します"},

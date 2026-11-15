@@ -164,6 +164,7 @@ def test_no_two_window_actions_share_a_shortcut():
     from PySide6 import QtCore, QtGui
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     seen = {}
+    scoped = {}                                         # key -> [(action, the widget it is bound to)]
     dup = []
     acts = win.findChildren(QtGui.QAction)
     assert len(acts) > 50
@@ -172,10 +173,26 @@ def test_no_two_window_actions_share_a_shortcut():
             key = ks.toString()
             if not key or a.shortcutContext() == QtCore.Qt.WidgetShortcut:
                 continue
+            if (a.shortcutContext() == QtCore.Qt.WidgetWithChildrenShortcut
+                    and isinstance(a.parent(), QtWidgets.QWidget)):
+                # ★2026-11-15: a panel's own key (Alt+M = its menu) fires only while the focus is inside that
+                # panel, so two panels may share it; a window-wide action on the same key, or a panel inside
+                # another one with the same key, is still ambiguous
+                w = a.parent()
+                clash = [o for o, ow in scoped.get(key, ()) if o is not a and (
+                    ow is w or ow.isAncestorOf(w) or w.isAncestorOf(ow))]
+                if key in seen:
+                    dup.append((key, seen[key].text(), a.text()))
+                dup.extend((key, o.text(), a.text()) for o in clash)
+                scoped.setdefault(key, []).append((a, w))
+                continue
+            if key in scoped:
+                dup.append((key, scoped[key][0][0].text(), a.text()))
             if key in seen and seen[key] is not a:
                 dup.append((key, seen[key].text(), a.text()))
             seen.setdefault(key, a)
     assert not dup, dup
+    assert len(scoped.get("Alt+M", ())) >= 7            # the panels' own menu keys were seen, not skipped
     assert seen.get("Ctrl+Shift+L") is win._act_ledger_run
 
 

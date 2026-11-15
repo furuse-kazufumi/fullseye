@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_multibeam_bathymetry, poc_tree_ring_dendro, poc_web_roll_periodicity, type_connectivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # find_peaks — ONED `signal` op

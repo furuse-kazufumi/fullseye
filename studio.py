@@ -2797,16 +2797,177 @@ def _downsample_grid(hm, max_side=140):
     return h[::ry, ::rx]
 
 
-# Dark, modern IDE design system (QSS). The palette is taken from the Fullseye
-# brand mark (assets/fullseye.ico): deep navy ground, a teal primary accent for
-# interaction/selection, and an amber secondary for section titles / knob handles
-# — the "bullseye" that the whole product is named for.
-NAVY_0, NAVY_1, NAVY_2 = "#14161d", "#1b1e28", "#232734"
-LINE = "#2c313f"
-TEXT, MUTED = "#e2e5ec", "#8b91a0"
-TEAL, TEAL_HI = "#17b8a6", "#22d3bf"
-AMBER = "#f5a524"
-INK = "#0c1116"
+# Colour schemes live in studio_theme.py, by ROLE (2026-11-12 decision: ① Instrument is the
+# default dark scheme, ③ Machine panel the light one; red / amber / green are state colours only).
+# The old constant NAMES stay for other code / branches that read them; their VALUES now come
+# from the default scheme. Code in this file asks for a role at the moment it paints (_C), so a
+# scheme switch reaches every part (per-widget sheets, painted gutters, icons, highlighters).
+import weakref as _weakref                     # noqa: E402
+import studio_theme                            # noqa: E402
+import studio_panels                           # noqa: E402  (panel bar, dock <-> separate window, saved layout)
+
+_LEGACY = studio_theme.legacy_constants(studio_theme.PALETTES[studio_theme.DEFAULT_THEME])
+NAVY_0, NAVY_1, NAVY_2 = _LEGACY["NAVY_0"], _LEGACY["NAVY_1"], _LEGACY["NAVY_2"]
+LINE = _LEGACY["LINE"]
+TEXT, MUTED = _LEGACY["TEXT"], _LEGACY["MUTED"]
+TEAL, TEAL_HI = _LEGACY["TEAL"], _LEGACY["TEAL_HI"]
+AMBER = _LEGACY["AMBER"]
+INK = _LEGACY["INK"]
+
+
+def _C(role):
+    """The active scheme's colour for one role (studio_theme.ROLES). KeyError for an unknown role."""
+    return studio_theme.colour(role)
+
+
+#: Everything themed after it was built: re-filled / re-drawn on a scheme switch.
+_THEMED = {"styles": [], "icons": [], "highlighters": _weakref.WeakSet(), "surrounds": _weakref.WeakSet()}
+
+
+def _themed_style(widget, template):
+    """A per-widget style sheet written with {role} placeholders (studio_theme.fill)."""
+    widget.setStyleSheet(studio_theme.fill(template))
+    _THEMED["styles"].append((_weakref.ref(widget), template))
+
+
+def _themed_icon(target, name, role="text"):
+    """A line icon (``_icon``) drawn in a role colour; redrawn when the scheme changes."""
+    from PySide6 import QtGui, QtCore   # noqa: PLC0415
+    target.setIcon(_icon(QtGui, QtCore, name, _C(role)))
+    _THEMED["icons"].append((_weakref.ref(target), name, role))
+
+
+def _surround_view(view):
+    """The ground around an image: neutral grey (chroma 0) in every scheme."""
+    from PySide6 import QtGui   # noqa: PLC0415
+    view.setBackgroundBrush(QtGui.QColor(_C("surround")))
+    _THEMED["surrounds"].add(view)
+
+
+#: old Navy / Teal hex in generated help HTML -> role (themed when the page is shown)
+_HTML_HEX = {"#f5a524": "title", "#8b91a0": "muted", "#22d3bf": "accent_hi", "#17b8a6": "accent",
+             "#12141b": "chrome", "#2c313f": "line"}
+_HTML_HEX_RE = re.compile("|".join(re.escape(h) for h in _HTML_HEX), re.I)
+
+
+def _themed_html(html):
+    """Help pages are generated with fixed colours (their tests pin the text); show them in the scheme."""
+    return _HTML_HEX_RE.sub(lambda m: _C(_HTML_HEX[m.group(0).lower()]), html or "")
+
+
+def _refresh_themed():
+    """Re-apply every themed style / icon / highlighter / image ground. Dead widgets are dropped."""
+    from PySide6 import QtGui, QtCore   # noqa: PLC0415
+    keep = []
+    for ref, template in _THEMED["styles"]:
+        w = ref()
+        if w is None:
+            continue
+        try:
+            w.setStyleSheet(studio_theme.fill(template))
+            keep.append((ref, template))
+        except RuntimeError:                       # the C++ object is gone
+            pass
+    _THEMED["styles"] = keep
+    keep = []
+    for ref, name, role in _THEMED["icons"]:
+        t = ref()
+        if t is None:
+            continue
+        try:
+            t.setIcon(_icon(QtGui, QtCore, name, _C(role)))
+            keep.append((ref, name, role))
+        except RuntimeError:
+            pass
+    _THEMED["icons"] = keep
+    for hl in list(_THEMED["highlighters"]):
+        try:
+            hl.retint()
+        except RuntimeError:
+            pass
+    for v in list(_THEMED["surrounds"]):
+        try:
+            v.setBackgroundBrush(QtGui.QColor(_C("surround")))
+        except RuntimeError:
+            pass
+
+
+def _apply_density(win):
+    """Rows, gaps and icon buttons from studio_theme.DENSITY (the one table).
+
+    List / tree / combo rows come from the style sheet (text + pad); here: table rows, lists that
+    show thumbnails (thumbnail + 4), layout margins / spacing (frame inside, title gap, row gap,
+    group gap, 4 px between neighbouring clickable things), labels that took spare height, and
+    the square icon-only buttons (iconOnly=true)."""
+    from PySide6 import QtWidgets, QtCore   # noqa: PLC0415
+    d = studio_theme.density()
+    row = studio_theme.row_height(win.fontMetrics().height())
+    for t in win.findChildren(QtWidgets.QTableWidget):
+        vh = t.verticalHeader()
+        vh.setMinimumSectionSize(min(row, vh.minimumSectionSize()))
+        vh.setDefaultSectionSize(row)
+    thumbs = [(getattr(win, "_stage_list", None), _STAGE_THUMB[1]),
+              ((getattr(win, "_variables", None) or {}).get("list"), 44)]        # 44 = build_window's _VAR_THUMB
+    for lw, th in thumbs:
+        if lw is not None:
+            lw.setStyleSheet("QListWidget::item { height:%dpx; }" % max(row, th + 4))
+    ol = getattr(win, "_op_list", None)          # the op list keeps its own rule (text + pad, 1.1.1)
+    if ol is not None:
+        ol.setStyleSheet("QListWidget::item { padding: 0px 6px; height: %dpx; }"
+                         % (ol.fontMetrics().height() + d["row_pad"]))
+    skip = (QtWidgets.QToolBar, QtWidgets.QStatusBar, QtWidgets.QMainWindow, QtWidgets.QDockWidget,
+            QtWidgets.QMdiSubWindow, QtWidgets.QTabBar, QtWidgets.QMenuBar)
+    for lay in win.findChildren(QtWidgets.QLayout):
+        w = lay.parentWidget()
+        if w is None or isinstance(w, skip) or w.objectName() in ("view_tools",):
+            continue
+        items = [lay.itemAt(i) for i in range(lay.count())]
+        widgets = [it.widget() for it in items if it.widget() is not None]
+        if isinstance(w, QtWidgets.QGroupBox) and lay is w.layout():
+            lay.setContentsMargins(d["inner"], d["title_gap"], d["inner"], d["inner"])
+        elif lay is w.layout():
+            m = lay.contentsMargins()
+            if max(m.left(), m.top(), m.right(), m.bottom()) > 0:
+                lay.setContentsMargins(d["unit"], d["unit"], d["unit"], d["unit"])
+        else:
+            lay.setContentsMargins(0, 0, 0, 0)
+        if any(isinstance(x, QtWidgets.QGroupBox) for x in widgets):
+            sp = d["group_gap"]
+        elif sum(isinstance(x, QtWidgets.QAbstractButton) for x in widgets) >= 2:
+            sp = d["click_gap"]
+        else:
+            sp = d["row_gap"]
+        if lay.spacing() >= 0 and not isinstance(lay, QtWidgets.QFormLayout):
+            lay.setSpacing(sp)
+        if isinstance(lay, QtWidgets.QFormLayout):
+            lay.setVerticalSpacing(d["row_gap"])
+    for w in win.findChildren(QtWidgets.QLabel) + win.findChildren(QtWidgets.QCheckBox) \
+            + win.findChildren(QtWidgets.QRadioButton):
+        if isinstance(w, QtWidgets.QLabel) and (w.wordWrap() or w.pixmap() is not None and not w.pixmap().isNull()):
+            continue
+        pol = w.sizePolicy()
+        if pol.verticalPolicy() == QtWidgets.QSizePolicy.Preferred:
+            pol.setVerticalPolicy(QtWidgets.QSizePolicy.Maximum)
+            w.setSizePolicy(pol)
+    for b in win.findChildren(QtWidgets.QToolButton):
+        if not b.property("iconOnly") or b.property("keepSize"):
+            continue
+        main = bool(b.property("accent"))
+        side = d["main_btn"] if main else d["icon_btn"]
+        ic = d["main_icon"] if main else d["icon"]
+        b.setFixedSize(side + (8 if b.menu() is not None else 0), side)
+        b.setIconSize(QtCore.QSize(ic, ic))
+    for name in ("main_tools", "work_modes"):
+        tb = win.findChild(QtWidgets.QToolBar, name)
+        if tb is not None:
+            tb.setIconSize(QtCore.QSize(d["icon"], d["icon"]))
+
+
+def dock_layout_usable(win, keys=("program", "operators", "pipeline")):
+    """A restored panel layout is usable when at least one main panel is not hidden
+    (a well-formed state that hides every panel used to be accepted — 2026-11-12)."""
+    docks = getattr(win, "_docks", {}) or {}
+    return any(k in docks and not docks[k].isHidden() for k in keys)
 
 
 # --------------------------------------------------------------------------- #
@@ -3468,99 +3629,10 @@ def mesh_edges(F, cap=60000):
     return None if e.shape[0] > int(cap) else e
 
 _OP_ROW_PAD = 4          # op の一覧の行の高さ = 文字の高さ + これ(px)
-THEME = f"""
-QWidget {{ background:{NAVY_0}; color:{TEXT}; font-size:12px;
-    font-family:"Segoe UI","Yu Gothic UI","Meiryo","Nirmala UI","Noto Sans Devanagari",system-ui,sans-serif; }}
-QMainWindow, QDialog {{ background:{NAVY_0}; }}
-QLabel {{ color:{TEXT}; background:transparent; }}
-QLabel[muted="true"] {{ color:{MUTED}; }}
-QLabel[hint="true"] {{ color:{MUTED}; font-family:Consolas,"Cascadia Mono",monospace; }}
-
-QMenuBar {{ background:#12141b; color:#c7cbd6; border-bottom:1px solid #262b38; padding:1px 4px; }}
-QMenuBar::item {{ background:transparent; padding:3px 9px; border-radius:4px; }}
-QMenuBar::item:selected {{ background:{NAVY_2}; color:{TEAL_HI}; }}
-QMenu {{ background:{NAVY_1}; border:1px solid {LINE}; border-radius:5px; padding:3px; }}
-QMenu::item {{ padding:4px 24px 4px 12px; border-radius:4px; }}
-QMenu::item:selected {{ background:{TEAL}; color:{INK}; }}
-QMenu::separator {{ height:1px; background:{LINE}; margin:4px 6px; }}
-
-QToolBar {{ background:#12141b; border:none; border-bottom:1px solid #262b38; spacing:3px; padding:2px 6px; }}
-QToolButton {{ background:{NAVY_2}; border:1px solid {LINE}; border-radius:4px; padding:3px 9px; color:{TEXT}; }}
-QToolButton:hover {{ border-color:{TEAL}; color:{TEAL_HI}; }}
-QToolButton:pressed {{ background:{TEAL}; color:{INK}; }}
-QToolButton[accent="true"] {{ background:{TEAL}; color:{INK}; border:none; font-weight:700; }}
-QToolButton[accent="true"]:hover {{ background:{TEAL_HI}; }}
-QToolButton:focus {{ border:1px solid {TEAL_HI}; padding:3px 9px; }}
-
-/* Dockable tool windows (VS/HDevelop-style). Compact title bars, square-ish. */
-QDockWidget {{ titlebar-close-icon:none; titlebar-normal-icon:none;
-    font-size:11px; color:{MUTED}; }}
-QDockWidget::title {{ background:#161922; padding:7px 8px; border:1px solid #262b38;
-    border-bottom:2px solid {TEAL}; text-transform:uppercase; letter-spacing:1px;
-    text-align:left; }}
-QDockWidget::title:hover {{ background:{NAVY_2}; }}
-QDockWidget::close-button, QDockWidget::float-button {{
-    background:transparent; border:none; padding:0; icon-size:12px; }}
-QMdiArea {{ background:{NAVY_0}; }}
-QMdiSubWindow {{ background:{NAVY_1}; }}
-QMdiSubWindow > QWidget {{ border:1px solid #262b38; }}
-
-QGroupBox {{ background:{NAVY_1}; border:1px solid #262b38; border-radius:6px;
-    margin-top:9px; padding:6px 7px 7px 7px; }}
-QGroupBox::title {{ subcontrol-origin:margin; subcontrol-position:top left; left:8px; top:0px;
-    padding:0px 6px; color:{AMBER}; font-size:10px; font-weight:700; letter-spacing:1px; }}
-
-QLineEdit,QComboBox,QPlainTextEdit,QListWidget,QSpinBox {{ background:{NAVY_2};
-    border:1px solid {LINE}; border-radius:4px; padding:2px 7px;
-    selection-background-color:{TEAL}; selection-color:{INK}; }}
-QLineEdit:focus,QComboBox:focus,QPlainTextEdit:focus,QListWidget:focus,QSpinBox:focus {{
-    border:1px solid {TEAL_HI}; }}
-QListWidget::item {{ padding:2px 6px; border-radius:3px; }}
-QListWidget::item:hover {{ background:#232a36; }}
-QListWidget::item:selected {{ background:{TEAL}; color:{INK}; }}
-QComboBox::drop-down {{ border:none; width:18px; }}
-QComboBox QAbstractItemView {{ background:{NAVY_1}; border:1px solid {LINE}; border-radius:5px;
-    selection-background-color:{TEAL}; selection-color:{INK}; outline:none; }}
-
-QPushButton {{ background:{NAVY_2}; border:1px solid {LINE}; border-radius:4px; padding:3px 10px; color:{TEXT}; }}
-QPushButton:hover {{ background:#262b38; border-color:{TEAL}; }}
-QPushButton:pressed {{ background:{TEAL}; color:{INK}; }}
-QPushButton:disabled {{ color:#5b6270; border-color:#232734; background:#191c25; }}
-QPushButton[accent="true"] {{ background:{TEAL}; color:{INK}; border:none; font-weight:700; }}
-QPushButton[accent="true"]:hover {{ background:{TEAL_HI}; }}
-/* Visible keyboard focus. A blanket universal-selector outline reset used to erase
-   the focus ring on every widget, leaving keyboard users with no idea where focus
-   was; each interactive widget now carries an explicit teal :focus border. */
-QPushButton:focus {{ border:1px solid {TEAL_HI}; padding:3px 10px; }}
-QTabBar::tab {{ background:{NAVY_1}; color:{MUTED}; padding:3px 10px; border:1px solid #262b38;
-    border-bottom:none; border-top-left-radius:4px; border-top-right-radius:4px; }}
-QTabBar::tab:selected {{ background:{NAVY_2}; color:{TEAL_HI}; }}
-
-QSlider::groove:horizontal {{ height:6px; background:{LINE}; border-radius:3px; }}
-QSlider::handle:horizontal {{ width:16px; background:{AMBER}; border-radius:8px; margin:-6px 0; }}
-QSlider::handle:horizontal:hover {{ background:#ffb841; }}
-QSlider::sub-page:horizontal {{ background:{TEAL}; border-radius:3px; }}
-/* Qt QSS orders the sub-control BEFORE the pseudo-state. Writing the state first
-   (widget-state, then sub-control) silently never matches, which is why a disabled
-   slider used to keep painting the enabled-looking amber handle. */
-QSlider::handle:horizontal:disabled {{ background:#3d424e; }}
-QSlider::sub-page:horizontal:disabled {{ background:#2a2f3b; }}
-QSlider::groove:horizontal:disabled {{ background:#232734; }}
-QSlider::handle:horizontal:focus {{ border:2px solid {TEAL_HI}; }}
-
-QScrollBar:vertical {{ background:transparent; width:12px; margin:2px; }}
-QScrollBar::handle:vertical {{ background:{LINE}; border-radius:6px; min-height:28px; }}
-QScrollBar::handle:vertical:hover {{ background:#3a4152; }}
-QScrollBar:horizontal {{ background:transparent; height:12px; margin:2px; }}
-QScrollBar::handle:horizontal {{ background:{LINE}; border-radius:6px; min-width:28px; }}
-QScrollBar::add-line,QScrollBar::sub-line {{ height:0; width:0; }}
-QSplitter::handle {{ background:#262b38; }}
-QSplitter::handle:horizontal {{ width:2px; }}
-QStatusBar {{ background:#12141b; color:{MUTED}; border-top:1px solid #262b38; }}
-QStatusBar QLabel {{ color:{MUTED}; }}
-QStatusBar::item {{ border:none; }}
-QToolTip {{ background:{INK}; color:{TEXT}; border:1px solid {TEAL}; border-radius:6px; padding:6px 8px; }}
-"""
+#: The window style sheet of the default scheme / density / English (kept as a name: code and tests
+#: read it). The live window is styled by ``studio_theme.build_qss`` with the user's scheme,
+#: density and UI language (font stack) — see ``apply_theme`` in build_window.
+THEME = studio_theme.build_qss(studio_theme.DEFAULT_THEME, "en", studio_theme.DEFAULT_DENSITY)
 
 _ICON_PATH = next((q for q in (os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_assets", "fullseye.ico"),
                                os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "fullseye.ico"))
@@ -4671,7 +4743,7 @@ class _ViewSyncMixin:
             return
         if self._cross is None:
             self._cross = QtWidgets.QGraphicsPathItem()
-            pen = QtGui.QPen(QtGui.QColor(AMBER))
+            pen = QtGui.QPen(QtGui.QColor(_C("annot")))
             pen.setCosmetic(True)
             pen.setWidth(1)
             self._cross.setPen(pen)
@@ -4713,7 +4785,7 @@ def _sync_view_class(QtWidgets, QtGui, QtCore):
             self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
             self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
             self.setMouseTracking(True)
-            self.setBackgroundBrush(QtGui.QColor(NAVY_1))
+            _surround_view(self)                     # compare panes: neutral ground like the main view
             self.setMinimumSize(120, 90)
             self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
             self._pm = None
@@ -4785,7 +4857,7 @@ def _sync_view_class(QtWidgets, QtGui, QtCore):
             if self._pm is None and self._msg:
                 painter.save()
                 painter.resetTransform()
-                painter.setPen(QtGui.QColor(MUTED))
+                painter.setPen(QtGui.QColor(_C("muted")))
                 painter.drawText(self.viewport().rect(), QtCore.Qt.AlignCenter | QtCore.Qt.TextWordWrap, self._msg)
                 painter.restore()
 
@@ -4806,7 +4878,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self._item = self._scene.addPixmap(QtGui.QPixmap())
             self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
             self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
-            self.setBackgroundBrush(QtGui.QColor("#202020"))
+            _surround_view(self)
             # ★2026-11-12: 380x380 の下限は主画像欄(MDI の中)より大きく、欄の下が切れた(窓に合わせても収まらない)。
             #   欄に収まる下限にする。別窓(tools=True)は従来どおり。
             self.setMinimumSize(380, 380) if tools else self.setMinimumSize(200, 140)
@@ -4838,7 +4910,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
                 act = QtGui.QAction(text, self)
                 act.setToolTip(tip); act.setStatusTip(tip)
                 if icon:
-                    act.setIcon(_icon(QtGui, QtCore, icon, TEXT))
+                    _themed_icon(act, icon)
                 act.triggered.connect(lambda _=False: cb())
                 return act
             self.actions = {
@@ -4860,7 +4932,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             sub-window widget stays the ImageView (``_graphics_view_of`` contract)."""
             strip = QtWidgets.QWidget(self)
             strip.setObjectName("view_tools")
-            strip.setStyleSheet("#view_tools { background: rgba(18,20,27,180); border-radius: 6px; }")
+            _themed_style(strip, "#view_tools {{ background: {chrome_rgba}; border-radius: 6px; }}")
             lay = QtWidgets.QHBoxLayout(strip)
             lay.setContentsMargins(3, 3, 3, 3); lay.setSpacing(2)
             self.tool_buttons = {}
@@ -4869,6 +4941,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
                 b.setDefaultAction(self.actions[key])
                 b.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
                 b.setIconSize(QtCore.QSize(16, 16)); b.setFixedSize(24, 24)
+                b.setProperty("iconOnly", True); b.setProperty("keepSize", True)   # overlay strip: fixed 24 px
                 b.setAccessibleName(self.actions[key].text())
                 b.setCursor(QtCore.Qt.PointingHandCursor)
                 lay.addWidget(b)
@@ -4987,7 +5060,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             if rect is None:
                 return
             x0, y0, x1, y1 = rect
-            pen = QtGui.QPen(QtGui.QColor(AMBER))
+            pen = QtGui.QPen(QtGui.QColor(_C("annot")))
             pen.setCosmetic(True); pen.setStyle(QtCore.Qt.DashLine)
             self._roi_item = self._scene.addRect(QtCore.QRectF(x0, y0, x1 - x0, y1 - y0), pen)
             self._roi_item.setZValue(50)
@@ -5062,9 +5135,9 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             w = max(self.viewport().width(), 420)
             h = max(self.viewport().height(), 300)
             pm = QtGui.QPixmap(w, h)
-            pm.fill(QtGui.QColor("#12141b"))
+            pm.fill(QtGui.QColor(_C("chrome")))
             p = QtGui.QPainter(pm)
-            p.setPen(QtGui.QColor("#aab0bf"))        # P-20: was #8b91a0 (about 5:1) -> a clearly readable grey
+            p.setPen(QtGui.QColor(_C("text")))       # P-20: a clearly readable text colour on the chrome ground
             f = p.font(); f.setPointSize(13); p.setFont(f)
             # P-03: wrap long messages (a type-mismatch sentence used to be one line cut off on both sides)
             p.drawText(pm.rect().adjusted(32, 24, -32, -24),
@@ -5087,8 +5160,8 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
                 lab.setObjectName("view_notice")
                 lab.setWordWrap(True)
                 lab.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-                lab.setStyleSheet("#view_notice { background: #5a3a00; color: #fff1cf; border: 1px solid #c88a1c;"
-                                  " border-radius: 6px; padding: 6px 10px; }")
+                _themed_style(lab, "#view_notice {{ background: {warn_bg}; color: {text}; border: 1px solid {warn};"
+                                   " border-radius: 6px; padding: 6px 10px; }}")
                 lab.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, False)
                 self._notice = lab
             lab.setText(text)
@@ -5452,7 +5525,7 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                 self._frame = self.frame_rgb()
             qi = _to_qimage(self._frame, QtGui)
             p = QtGui.QPainter(self)
-            p.fillRect(self.rect(), QtGui.QColor(NAVY_0))
+            p.fillRect(self.rect(), QtGui.QColor(_C("bg0")))
             if qi is not None:
                 # centred, unscaled (frame is already sized to the short side)
                 x0 = (self.width() - qi.width()) // 2
@@ -5494,7 +5567,7 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                 hint = (head + "   drag=orbit · wheel=zoom · shift/middle-drag=pan"
                         " · R=reset · F=walk%s"
                         % (" · W=wire" if self._edges is not None else ""))
-            p.setPen(QtGui.QColor(MUTED))
+            p.setPen(QtGui.QColor(_C("muted")))
             p.drawText(8, self.height() - 8, hint)
             p.end()
 
@@ -5797,7 +5870,8 @@ def _icon(QtGui, QtCore, name, color=TEXT, px=40):
     labels — tooltips carry the meaning). Rendered at 2× and marked HiDPI so it
     stays sharp when Qt scales it down to an 18 px button icon. Cached per
     (name, color, px) since the same glyph is reused across many buttons."""
-    key = (name, color, px)
+    off_colour = _C("off")                       # D03: the disabled look of the same shape
+    key = (name, color, px, off_colour)
     hit = _ICON_CACHE.get(key)
     if hit is not None:
         return hit
@@ -5908,8 +5982,22 @@ def _icon(QtGui, QtCore, name, color=TEXT, px=40):
         ell(8.5, 8.5, 3, 3, fill=True)
     p.end()
     ic = QtGui.QIcon(pm)
+    ic.addPixmap(_tinted(QtGui, QtCore, pm, off_colour), QtGui.QIcon.Disabled)
     _ICON_CACHE[key] = ic
     return ic
+
+
+def _tinted(QtGui, QtCore, pm, colour):
+    """The same pixmap with every drawn pixel in ``colour`` (alpha kept): the disabled icon (D03)."""
+    out = QtGui.QPixmap(pm.size())
+    out.setDevicePixelRatio(pm.devicePixelRatio())
+    out.fill(QtCore.Qt.transparent)
+    p = QtGui.QPainter(out)
+    p.drawPixmap(0, 0, pm)
+    p.setCompositionMode(QtGui.QPainter.CompositionMode_SourceIn)
+    p.fillRect(out.rect(), QtGui.QColor(colour))
+    p.end()
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -6047,7 +6135,7 @@ def studio_pymode_autosave_range():
 
 #: 起動時の案内(最初の 3 手)。Program 欄のモードごとに 3 行(画面の文は英語が正、訳は i18n.json の strings)。
 FIRST_STEPS_PIPELINE = ("1. Open a sample: File ▸ Sample images",
-                        "2. Select an operator in the Operators panel and press +",
+                        "2. Open Operators from the panel bar on the left, select an operator and press +",
                         "3. Press ▶▶ to run")
 FIRST_STEPS_PYTHON = ("1. Press F5: the example in the Program runs",
                       "2. The picture, the record and the variables appear",
@@ -6318,18 +6406,28 @@ def _python_highlighter_class(QtGui, QtCore):
     class PythonHighlighter(QtGui.QSyntaxHighlighter):
         def __init__(self, doc):
             super().__init__(doc)
-            self._str_fmt = _fmt("#9ece6a")
+            self._str_fmt = _fmt(_C("syn_str"))
             self._rules = [
                 (re.compile(r"\b(?:%s)\b" % "|".join(keyword.kwlist)),
-                 _fmt("#e0af68", bold=True)),                                # keywords
-                (re.compile(r"\b(?:self|cls)\b"), _fmt("#ff9e64")),
-                (re.compile(r"\b\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\b"), _fmt("#ff9e64")),
+                 _fmt(_C("syn_kw"), bold=True)),                             # keywords
+                (re.compile(r"\b(?:self|cls)\b"), _fmt(_C("syn_num"))),
+                (re.compile(r"\b\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\b"), _fmt(_C("syn_num"))),
                 (re.compile(r"(?:(?<=\bdef\s)|(?<=\bclass\s))\w+"),
-                 _fmt("#7dcfff", bold=True)),
-                (re.compile(r"@\w+(?:\.\w+)*"), _fmt("#bb9af7")),            # decorators
+                 _fmt(_C("syn_def"), bold=True)),
+                (re.compile(r"@\w+(?:\.\w+)*"), _fmt(_C("syn_deco"))),         # decorators
                 (re.compile(r"'[^'\n]*'|\"[^\"\n]*\""), self._str_fmt),      # 1-line strings
-                (re.compile(r"#[^\n]*"), _fmt("#565f89", italic=True)),      # comments
+                (re.compile(r"#[^\n]*"), _fmt(_C("syn_cmt"), italic=True)),   # comments (4.5:1 in both schemes)
             ]
+            self._fmt_roles = [(self._str_fmt, "syn_str")] + [
+                (f, r) for (_rx, f), r in zip(self._rules, ("syn_kw", "syn_num", "syn_num", "syn_def",
+                                                            "syn_deco", "syn_str", "syn_cmt"))]
+            _THEMED["highlighters"].add(self)
+
+        def retint(self):
+            """Scheme switch: recolour the formats in place and re-highlight."""
+            for f, role in self._fmt_roles:
+                f.setForeground(QtGui.QColor(_C(role)))
+            self.rehighlight()
 
         def highlightBlock(self, text):
             for rx, fmt in self._rules:
@@ -6564,8 +6662,8 @@ def _code_editor_class(QtWidgets, QtGui, QtCore):
 
         def paint_gutter(self, ev):
             p = QtGui.QPainter(self._gutter)
-            p.fillRect(ev.rect(), QtGui.QColor("#12141b"))
-            p.setPen(QtGui.QColor("#565f89"))
+            p.fillRect(ev.rect(), QtGui.QColor(_C("gutter")))
+            p.setPen(QtGui.QColor(_C("muted")))
             block = self.firstVisibleBlock()
             n = block.blockNumber()
             top = self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
@@ -6808,7 +6906,7 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             return n
 
     class ProgramEditor(QtWidgets.QPlainTextEdit):
-        BREAK = "#e5484d"
+        BREAK = property(lambda self: _C("err"))     # breakpoint dot: the error colour of the scheme
         #: ★2026-11-12 IDE 第 1 便: 窓(build_window)が入れる受け手。None なら何もしない(部品単体でも動く)。
         on_open_help = None        # (op 名) -> None   : Shift+F1 で op のヘルプを開く
         on_message = None          # (文) -> None      : 状態行へ 1 行
@@ -6878,7 +6976,7 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
 
         def paint_gutter(self, ev):
             p = QtGui.QPainter(self._gutter)
-            p.fillRect(ev.rect(), QtGui.QColor("#12141b"))
+            p.fillRect(ev.rect(), QtGui.QColor(_C("gutter")))
             block = self.firstVisibleBlock()
             n = block.blockNumber()
             top = self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
@@ -6892,14 +6990,14 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     if ln in self.breakpoints:      # breakpoint dot
                         p.setBrush(QtGui.QColor(self.BREAK)); p.setPen(QtCore.Qt.NoPen)
                         p.drawEllipse(3, int(top) + (fm.height() - 8) // 2, 8, 8)
-                    p.setPen(QtGui.QColor("#e5484d" if ln == self._exec_line else "#6b7280"))
+                    p.setPen(QtGui.QColor(_C("err") if ln == self._exec_line else _C("muted")))
                     p.drawText(0, int(top), numw, fm.height(),
                                QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter, str(ln))
                     if ln in self._errors:          # 構文エラーの行: ガターの右端に赤い印
                         p.fillRect(w - 5, int(top), 4, fm.height(), QtGui.QColor(self.BREAK))
                     ms = self.timings.get(ln)
                     if ms is not None:              # per-line execution time
-                        p.setPen(QtGui.QColor("#17b8a6"))
+                        p.setPen(QtGui.QColor(_C("accent")))
                         p.drawText(0, int(top), w - 4, fm.height(),
                                    QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter, "%.1fms" % ms)
                 block = block.next()
@@ -6945,7 +7043,7 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                 return
             sels = []
             cur = QtWidgets.QTextEdit.ExtraSelection()
-            cur.format.setBackground(QtGui.QColor("#1f2430"))
+            cur.format.setBackground(QtGui.QColor(_C("curline")))
             cur.format.setProperty(QtGui.QTextFormat.FullWidthSelection, True)
             cur.cursor = self.textCursor(); cur.cursor.clearSelection()
             sels.append(cur)
@@ -6954,7 +7052,7 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                 blk = doc.findBlockByNumber(self._exec_line - 1)
                 if blk.isValid():
                     ex = QtWidgets.QTextEdit.ExtraSelection()
-                    ex.format.setBackground(QtGui.QColor("#14342f"))
+                    ex.format.setBackground(QtGui.QColor(_C("execline")))
                     ex.format.setProperty(QtGui.QTextFormat.FullWidthSelection, True)
                     c = self.textCursor(); c.setPosition(blk.position()); c.clearSelection()
                     ex.cursor = c
@@ -7304,18 +7402,24 @@ def build_window(model=None, start_mode="pipeline"):
         actions live behind one small button instead of a row of wide ones."""
         tip = tr(tip)                                     # P-05: hints go through the i18n table like every label
         b = QtWidgets.QToolButton()
-        b.setIcon(_icon(QtGui, QtCore, icon_name, INK if accent else TEXT))
-        b.setIconSize(QtCore.QSize(18, 18))
+        # ★2026-11-12: the ONE maker of icon-only buttons. Square from the density table
+        #   (studio_theme.DENSITY: 24 px / icon 16, main actions 28 px / icon 20); `w` is kept in the
+        #   signature for callers but no longer sets the size. iconOnly=true lets the QSS give it padding:4px.
+        _d = studio_theme.density()
+        side = _d["main_btn"] if accent else _d["icon_btn"]
+        _themed_icon(b, icon_name, "accent_ink" if accent else "text")
+        b.setIconSize(QtCore.QSize(_d["main_icon"] if accent else _d["icon"], _d["main_icon"] if accent else _d["icon"]))
         b.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         b.setToolTip(tip); b.setAccessibleName(tip)
         b.setCursor(QtCore.Qt.PointingHandCursor)
-        b.setFixedSize(w, 28)
+        b.setProperty("iconOnly", True)
+        b.setFixedSize(side, side)
         if accent:
             b.setProperty("accent", True)
         if menu is not None:
             b.setMenu(menu)
             b.setPopupMode(QtWidgets.QToolButton.InstantPopup)
-            b.setFixedSize(w + 8, 28)                     # room for the ▾ arrow
+            b.setFixedSize(side + 8, side)                # room for the ▾ arrow
         return b
 
     _starts_on_demo = model is None            # a window we built ourselves starts on the synthetic demo scene
@@ -7357,11 +7461,8 @@ def build_window(model=None, start_mode="pipeline"):
             #   以後の visibilityChanged は利用者の操作ではないので記録しない。
             self._closing = True
             try:                              # remember window position + panel layout
-                if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-                    s = _settings()
-                    s.setValue("geometry", self.saveGeometry())
-                    s.setValue("windowState", self.saveState())
-                    s.setValue("layout_version", "3")
+                if studio_panels.persist_enabled():
+                    studio_panels.save_layout(self, _settings())
             except Exception as e:
                 _log_soft_failure("could not save window geometry/layout", e)
             ev.accept()
@@ -7392,7 +7493,14 @@ def build_window(model=None, start_mode="pipeline"):
     win.setAcceptDrops(True)
     win.resize(1320, 860)
     win.setMinimumSize(900, 560)      # every dock strip + a usable graphics view still fit
-    win.setStyleSheet(THEME)
+    try:                                   # colour scheme + density from the settings (bad value -> default)
+        _ts = _settings()
+        studio_theme.set_current(str(_ts.value("ui/theme", studio_theme.DEFAULT_THEME)),
+                                 str(_ts.value("ui/density", studio_theme.DEFAULT_DENSITY)))
+    except Exception as _e:                # noqa: BLE001 - a broken store must not stop the window
+        _log_soft_failure("could not read the colour scheme setting", _e)
+        studio_theme.set_current(studio_theme.DEFAULT_THEME, studio_theme.DEFAULT_DENSITY)
+    win.setStyleSheet(studio_theme.build_qss(lang=_UI_LANG["code"], text_px=win.fontMetrics().height()))
     if os.path.exists(_ICON_PATH):
         win.setWindowIcon(QtGui.QIcon(_ICON_PATH))
 
@@ -7442,7 +7550,7 @@ def build_window(model=None, start_mode="pipeline"):
     act_undo.setEnabled(False); act_redo.setEnabled(False)
     act_pin = _act("Pin as A", "Ctrl+Shift+A",
                    "Freeze the current pipeline and its result as A, then compare it with what you change next "
-                   "(Window > Panels > A / B)")
+                   "(the A / B panel shows both)")
     act_zin = _act("Zoom in", "Ctrl+=", "Zoom the image in")
     act_zout = _act("Zoom out", "Ctrl+-", "Zoom the image out")
     act_fit = _act("Fit to window", "Ctrl+0", "Fit the image to the view")
@@ -7633,14 +7741,11 @@ def build_window(model=None, start_mode="pipeline"):
     tb.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
     tb.setIconSize(QtCore.QSize(18, 18))
     win.addToolBar(tb)
-    if os.path.exists(_ICON_PATH):
-        brand = QtWidgets.QLabel()
-        brand.setPixmap(QtGui.QIcon(_ICON_PATH).pixmap(22, 22))
-        brand.setStyleSheet("padding:0 6px;")
-        tb.addWidget(brand)
-    title = QtWidgets.QLabel("Fullseye Studio")
-    title.setStyleSheet("font-size:15px; font-weight:800; color:%s; padding:0 4px;" % AMBER)
-    tb.addWidget(title)
+    # icon + name; while something runs the same frame is the progress read-out (studio_panels, 2026-11-13)
+    win._brand = studio_panels.make_brand_status(
+        win, "Fullseye Studio", QtGui.QIcon(_ICON_PATH) if os.path.exists(_ICON_PATH) else None,
+        _log_soft_failure, tr, reduce=lambda: studio_panels.reduce_motion(_settings()))
+    tb.addWidget(win._brand)
     spacer = QtWidgets.QWidget()
     spacer.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
     tb.addWidget(spacer)
@@ -7648,7 +7753,7 @@ def build_window(model=None, start_mode="pipeline"):
     # tooltips (already set on each action) name them.
     for _a, _ic in ((act_demo, "demo"), (act_open_img, "open"), (act_runall, "playplay"),
                     (act_batch, "apply"), (act_export, "export"), (act_pin, "eye")):
-        _a.setIcon(_icon(QtGui, QtCore, _ic, TEXT))
+        _themed_icon(_a, _ic)
         tb.addAction(_a)
 
     # Central document area = an MDI workspace of graphics windows (HDevelop-style:
@@ -7859,7 +7964,7 @@ def build_window(model=None, start_mode="pipeline"):
         tip = ", ".join(row.get("why") or [])
         if row.get("tier") == "unavailable":
             tip = (tip + "\n" if tip else "") + tr("Missing optional extra: %s") % row["name"].split("_")[0]
-            it.setFlags(QtCore.Qt.NoItemFlags); it.setForeground(QtGui.QColor(MUTED))
+            it.setFlags(QtCore.Qt.NoItemFlags); it.setForeground(QtGui.QColor(_C("muted")))
         it.setToolTip(tip); op_list.addItem(it)
         # ★P-19(2026-11-12): 説明は行の幅いっぱいに折り返し、ボタンはその下の右寄せに置く。従来は横並びで、
         # 折り返さない説明文の幅で行が伸び、「今のデータで試す」「ヘルプ」が横スクロールの先に隠れていた。
@@ -7964,6 +8069,9 @@ def build_window(model=None, start_mode="pipeline"):
             h.addStretch(1); chip = QtWidgets.QListWidgetItem(); op_list.addItem(chip)
             chip.setSizeHint(chiprow.sizeHint()); op_list.setItemWidget(chip, chiprow)
         return result
+    grouped_search = studio_panels.brand_wrap(          # the first search builds the index: the corner says so
+        win._brand, grouped_search,
+        lambda query=None: tr(studio_panels.S_SEARCHING) % (search.text().strip() if query is None else query))
 
     def _ops_insert_position():
         """Where Insert / double-click will put the next stage (the same rule as ``add_op``):
@@ -8198,7 +8306,7 @@ def build_window(model=None, start_mode="pipeline"):
         itop.addWidget(w_)
     itop.addSpacing(8)
     _vline = QtWidgets.QFrame(); _vline.setFrameShape(QtWidgets.QFrame.VLine)
-    _vline.setStyleSheet("color:%s;" % LINE); itop.addWidget(_vline); itop.addSpacing(8)
+    _themed_style(_vline, "color:{line};"); itop.addWidget(_vline); itop.addSpacing(8)
     for w_ in (b_zin, b_zout, b_fit, b_11):
         itop.addWidget(w_)
     itop.addStretch(1)
@@ -8210,8 +8318,7 @@ def build_window(model=None, start_mode="pipeline"):
 
     # ---- P-12 (2026-11-12): the first three steps, over the image until the user closes it ---------- #
     first_steps = QtWidgets.QFrame(); first_steps.setObjectName("first_steps")
-    first_steps.setStyleSheet("#first_steps { background: %s; border: 1px solid %s; border-radius: 6px; }"
-                              % (NAVY_2, TEAL))
+    _themed_style(first_steps, "#first_steps {{ background: {bg2}; border: 1px solid {accent}; border-radius: 6px; }}")
     _fs_lay = QtWidgets.QHBoxLayout(first_steps); _fs_lay.setContentsMargins(10, 2, 4, 2); _fs_lay.setSpacing(14)
     _fs_title = QtWidgets.QLabel("First steps"); _fs_title.setStyleSheet("font-weight:700;")
     _fs_lay.addWidget(_fs_title)
@@ -8279,18 +8386,27 @@ def build_window(model=None, start_mode="pipeline"):
         _spin.setEnabled(False)
     range_note = QtWidgets.QLabel("Display only. The source data is not changed")
     range_note.setProperty("hint", True); range_note.setWordWrap(True)
-    range_warning = QtWidgets.QLabel(""); range_warning.setStyleSheet("color:#ffb841;")
+    range_warning = QtWidgets.QLabel(""); _themed_style(range_warning, "color:{warn};")
     range_warning.hide()
-    rrow = QtWidgets.QHBoxLayout()
-    for _widget in (range_each, range_shared, range_manual, QtWidgets.QLabel("lo"), range_lo,
-                    QtWidgets.QLabel("hi"), range_hi):
+    # ★2026-11-13: one row of three radios + two spin boxes (range 1e100 -> a very wide minimum) made this
+    #   panel at least ~700 px wide; shown in a 1024 px window it left 288 px for the image. Two rows.
+    rrow = QtWidgets.QHBoxLayout(); rrow2 = QtWidgets.QHBoxLayout()
+    for _widget in (range_each, range_shared, range_manual):
         rrow.addWidget(_widget)
-    dlay.addLayout(drow); dlay.addLayout(rrow); dlay.addWidget(range_note)
+    rrow.addStretch(1)
+    for _widget in (QtWidgets.QLabel("lo"), range_lo, QtWidgets.QLabel("hi"), range_hi):
+        rrow2.addWidget(_widget, 1 if isinstance(_widget, QtWidgets.QDoubleSpinBox) else 0)
+    range_lo.setMinimumWidth(96); range_hi.setMinimumWidth(96)
+    dlay.addLayout(drow); dlay.addLayout(rrow); dlay.addLayout(rrow2); dlay.addWidget(range_note)
     dlay.addWidget(range_warning); dlay.addLayout(prow)
     rv.addWidget(_group(QtWidgets, "DISPLAY & PERCEPTION", dlay))
 
     hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(64)
-    hist_view.setStyleSheet("background:#12141b; border:1px solid #262b38; border-radius:6px;")
+    # ★2026-11-13: a label with a pixmap is never narrower than the pixmap, so the panel could only grow
+    #   (664 px minimum; 288 px left for the image in a 1024 px window). The width follows the panel.
+    hist_view.setMinimumWidth(120); hist_view.setScaledContents(True)   # narrower than the pixmap: scale, do not clip
+    hist_view.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Fixed)
+    _themed_style(hist_view, "background:{chrome}; border:1px solid {line}; border-radius:6px;")
     inspector = QtWidgets.QPlainTextEdit(); inspector.setReadOnly(True); inspector.setFixedHeight(150)
     inspector.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
     alay = QtWidgets.QVBoxLayout()
@@ -8534,8 +8650,10 @@ def build_window(model=None, start_mode="pipeline"):
     win.addToolBar(QtCore.Qt.TopToolBarArea, mode_bar)
     mode_group = QtGui.QActionGroup(win); mode_group.setExclusive(True)
     for _mode_id, _action in work_mode_actions.items():
-        mode_group.addAction(_action); mode_bar.addAction(_action)
-    mode_bar.addSeparator(); mode_bar.addAction(act_focus_image); mode_bar.addAction(act_find_panel)
+        mode_group.addAction(_action)
+    studio_panels.mode_switch(win, mode_bar, work_mode_actions)   # D01: one switch for the four work modes
+    mode_bar.addSeparator(); mode_bar.addAction(studio_panels.glyph_action(win, act_focus_image, "image_focus"))
+    mode_bar.addAction(studio_panels.glyph_action(win, act_find_panel, "find_panel"))
 
     def _save_layout_state():
         try:
@@ -8578,23 +8696,38 @@ def build_window(model=None, start_mode="pipeline"):
             _apply_layout_state(); _save_layout_state()
 
     def find_panel_dialog():
+        old = getattr(win, "_panel_search_dialog", None)   # D20: one window; asked again, it comes forward
+        try:
+            if old is not None and old.isVisible():
+                old.raise_(); old.activateWindow()
+                return old
+        except RuntimeError:
+            pass
         dialog = QtWidgets.QDialog(win); dialog.setWindowTitle(tr("Find panel"))
         layout = QtWidgets.QVBoxLayout(dialog)
         query = QtWidgets.QLineEdit(); query.setPlaceholderText(tr("Type a panel name…"))
         found = QtWidgets.QListWidget(); layout.addWidget(query); layout.addWidget(found)
         def refill(text=""):
             found.clear()
-            for panel in studio_layout.find_panels(text):
-                item = QtWidgets.QListWidgetItem(tr(PANEL_NAME_EN[panel]))
+            for panel in studio_panels.panel_order(win, studio_layout.find_panels(text)):   # D21: the bar's order
+                item = QtWidgets.QListWidgetItem(win._docks[panel].windowTitle())
                 item.setData(QtCore.Qt.UserRole, panel); found.addItem(item)
+            if found.count():
+                found.setCurrentRow(0)                     # Enter in the box opens the first one
+            else:
+                item = QtWidgets.QListWidgetItem(tr("No panel by that name"))
+                item.setFlags(QtCore.Qt.NoItemFlags); found.addItem(item)
         def reveal(item):
-            panel = item.data(QtCore.Qt.UserRole)
+            panel = item.data(QtCore.Qt.UserRole) if item is not None else None
+            if panel is None:
+                return
             if panel != "result":
                 win._layout_state = studio_layout.set_override(
                     win._layout_state, panel, visible=True, collapsed=False)
                 _apply_layout_state(); win._docks[panel].raise_(); _save_layout_state()
             dialog.accept()
         query.textChanged.connect(refill); found.itemActivated.connect(reveal)
+        query.returnPressed.connect(lambda: reveal(found.currentItem()))
         refill(); dialog.resize(380, 300); query.setFocus(); dialog.show()
         win._panel_search_dialog = dialog
         return dialog
@@ -8706,6 +8839,7 @@ def build_window(model=None, start_mode="pipeline"):
         sub.setWindowTitle(title or ("Graphics %d" % h))
         sub.resize(440, 360)
         sub.show()
+        studio_panels.adopt_image_strip(win, gv, "graphics_%d" % h)   # its strip turns / scrolls like every panel's
         win._graphics_windows.append(sub)
         win._current_gfx = sub                     # a freshly opened window becomes current
         _update_current_indicator()
@@ -8758,7 +8892,7 @@ def build_window(model=None, start_mode="pipeline"):
     # a permanent indicator when display updates are OFF, so a frozen display never
     # reads as a broken one (HDevelop dev_update_off state).
     win._update_label = QtWidgets.QLabel("")
-    win._update_label.setStyleSheet("QLabel{color:%s;}" % AMBER)
+    _themed_style(win._update_label, "QLabel{{color:{warn};}}")      # display updates OFF = caution
     win.statusBar().addPermanentWidget(win._update_label)
     mdi.subWindowActivated.connect(_set_current_gfx)
     win._current_view = _current_view
@@ -8790,10 +8924,7 @@ def build_window(model=None, start_mode="pipeline"):
     act_cascade.triggered.connect(mdi.cascadeSubWindows)
 
     def reset_layout():
-        if getattr(win, "_default_state", None) is not None:
-            win.restoreState(win._default_state)
-        for _d in win._docks.values():
-            _d.show()
+        studio_panels.reset_layout(win, _settings())     # the first-run arrangement: image + code
     def reset_layout_asked(_=False):
         if not confirm_action(win, tr("Reset panel layout"),
                               tr("The panels go back to the default arrangement. The arrangement you have now is "
@@ -8925,7 +9056,7 @@ def build_window(model=None, start_mode="pipeline"):
         if ic is None:
             tw, th = _STAGE_THUMB
             pm = QtGui.QPixmap(tw, th)
-            pm.fill(QtGui.QColor(NAVY_1))
+            pm.fill(QtGui.QColor(_C("bg1")))
             pt = QtGui.QPainter(pm)
             pt.setPen(QtGui.QColor(tone))
             f = pt.font(); f.setPointSize(13); pt.setFont(f)
@@ -8941,7 +9072,7 @@ def build_window(model=None, start_mode="pipeline"):
         qi = QtGui.QImage(a.data, w, h, 3 * w, QtGui.QImage.Format_RGB888).copy()
         tw, th = _STAGE_THUMB
         pm = QtGui.QPixmap(tw, th)
-        pm.fill(QtGui.QColor(NAVY_1))
+        pm.fill(QtGui.QColor(_C("bg1")))
         pt = QtGui.QPainter(pm)
         pt.drawImage((tw - w) // 2, (th - h) // 2, qi)
         pt.end()
@@ -8964,19 +9095,19 @@ def build_window(model=None, start_mode="pipeline"):
             if pv["status"] == "ready":
                 th = pv["thumb"]
                 it.setIcon(_thumb_icon(th) if th is not None
-                           else _glyph_icon(_KIND_GLYPH.get(pv["kind"], "\u00b7"), TEAL))
+                           else _glyph_icon(_KIND_GLYPH.get(pv["kind"], "\u00b7"), _C("accent")))
                 it.setToolTip(base)
             elif pv["status"] == "stale":
-                it.setIcon(_glyph_icon("\u21bb", AMBER))
+                it.setIcon(_glyph_icon("\u21bb", _C("warn")))
                 it.setToolTip(_pair("再計算が必要", "recompute needed") + "\n\n" + base)
             elif pv["status"] == "evicted":
                 th = pv["thumb"]                       # still current: only the full array was dropped
-                it.setIcon(_thumb_icon(th) if th is not None else _glyph_icon("\u25cc", MUTED))
+                it.setIcon(_thumb_icon(th) if th is not None else _glyph_icon("\u25cc", _C("muted")))
                 it.setToolTip((_pair("値は予算で解放", "evicted (budget): the picture is current, the array is recomputed on demand")
                                if _UI_LANG["code"] != "ja" else
                                "値は予算で解放: 絵は最新のまま。配列は必要になったとき計算し直す") + "\n\n" + base)
             else:
-                it.setIcon(_glyph_icon("\u2026", MUTED))
+                it.setIcon(_glyph_icon("\u2026", _C("muted")))
                 it.setToolTip(tr("not computed") + "\n\n" + base)
             it.setData(QtCore.Qt.UserRole + 2, pv["status"])
     win._update_stage_icons = update_stage_icons
@@ -9039,17 +9170,17 @@ def build_window(model=None, start_mode="pipeline"):
             it.setToolTip(op_tooltip(row) if row else name)
             if warn:                                  # ran, but the result needs a look (a warning, not an error)
                 why = "; ".join(st.get("reasons", []))
-                it.setForeground(QtGui.QColor("#c9a227"))
+                it.setForeground(QtGui.QColor(_C("warn")))
                 it.setToolTip("⚠ result needs review: %s\n(Studio only reports this; the result is shown as computed.)\n\n%s"
                               % (why, it.toolTip()))
                 validity_rows.append({"index": i, "op": name, "severity": "warning", "glyph": "⚠",
                                       "message": why})
-            if st.get("kind") == "error":             # mark a stage that raised at runtime
-                it.setForeground(QtGui.QColor(AMBER))
+            if st.get("kind") == "error":             # mark a stage that raised at runtime: the ERROR colour
+                it.setForeground(QtGui.QColor(_C("err")))
                 it.setToolTip("runtime error: " + truncate(st.get("message", "")))
             if byp:                                   # switched off: greyed + struck through, still in its place
                 _f = it.font(); _f.setStrikeOut(True); it.setFont(_f)
-                it.setForeground(QtGui.QColor(MUTED))
+                it.setForeground(QtGui.QColor(_C("muted")))
                 it.setToolTip(tr("bypassed: this stage passes its input through unchanged (Ctrl+B switches it on again)")
                               + "\n\n" + it.toolTip())
             it.setData(QtCore.Qt.UserRole + 1, it.toolTip())    # the row's own tooltip; icons add a status line
@@ -9060,7 +9191,7 @@ def build_window(model=None, start_mode="pipeline"):
             hint = QtWidgets.QListWidgetItem(
                 "— empty — double-click an operator, or drop an image/.json here, to start —")
             hint.setFlags(QtCore.Qt.NoItemFlags)        # non-selectable hint
-            hint.setForeground(QtGui.QColor(MUTED))
+            hint.setForeground(QtGui.QColor(_C("muted")))
             stage_list.addItem(hint)
         if select is not None and 0 <= select < len(model.stages):
             stage_list.setCurrentRow(select)           # still blocked -> no extra render
@@ -9112,26 +9243,26 @@ def build_window(model=None, start_mode="pipeline"):
                                               truncate(p.get("op", "?"), 40),
                                               truncate(p["message"])))
             it.setData(QtCore.Qt.UserRole, p["index"])
-            it.setForeground(QtGui.QColor(AMBER if p["severity"] == "error" else "#c9a227"))
+            it.setForeground(QtGui.QColor(_C("err") if p["severity"] == "error" else _C("warn")))
             problems_list.addItem(it)
         perr = state.get("perception_error")
         if perr:
             it = QtWidgets.QListWidgetItem("✕ perception (%s): %s" % (perr[0], truncate(perr[1])))
             it.setData(QtCore.Qt.UserRole, -1)
-            it.setForeground(QtGui.QColor(AMBER))
+            it.setForeground(QtGui.QColor(_C("err")))
             problems_list.addItem(it)
         rerr = state.get("program_error")                       # last Program Run/Step/Continue failure
         if rerr:
             it = QtWidgets.QListWidgetItem("✕ program run: stage %d (%s): %s"
                                            % (rerr[0] + 1, truncate(rerr[1], 40), truncate(rerr[2])))
             it.setData(QtCore.Qt.UserRole, rerr[0])
-            it.setForeground(QtGui.QColor(AMBER))
+            it.setForeground(QtGui.QColor(_C("err")))
             problems_list.addItem(it)
         notes = state.get("input_notes") or []
         for msg in notes:                                       # saved-input reference could not be matched cleanly
             it = QtWidgets.QListWidgetItem("⚠ input: %s" % truncate(msg, 160))
             it.setData(QtCore.Qt.UserRole, -1)
-            it.setForeground(QtGui.QColor("#c9a227"))
+            it.setForeground(QtGui.QColor(_C("warn")))
             problems_list.addItem(it)
         pin_bad = [(k, p) for k, p in enumerate(model.pins) if p.error]
         for k, p in pin_bad:                                    # a pinned snapshot whose picture could not be rebuilt
@@ -9139,13 +9270,13 @@ def build_window(model=None, start_mode="pipeline"):
             it = QtWidgets.QListWidgetItem("⚠ %s を再計算できません / cannot recompute %s: %s"
                                            % (lab, lab, truncate(p.error, 120)))
             it.setData(QtCore.Qt.UserRole, -1)
-            it.setForeground(QtGui.QColor("#c9a227"))
+            it.setForeground(QtGui.QColor(_C("warn")))
             problems_list.addItem(it)
         roundtrip = state.get("roundtrip_report")
         if roundtrip is not None and not roundtrip.ok:
             it = QtWidgets.QListWidgetItem("✕ " + roundtrip.describe(_UI_LANG.get("code", "en")))
             it.setData(QtCore.Qt.UserRole, roundtrip.first_mismatch)
-            it.setForeground(QtGui.QColor(AMBER))
+            it.setForeground(QtGui.QColor(_C("err")))
             problems_list.addItem(it)
         # Structured runtime failures keep the full cause/place/next-action text and
         # put the proposed actions beside it.  Nothing here mutates input data.
@@ -9155,7 +9286,7 @@ def build_window(model=None, start_mode="pipeline"):
             idx_ = info_.get("place", {}).get("stage")
             it.setData(QtCore.Qt.UserRole, idx_ if idx_ is not None else -1)
             it.setData(QtCore.Qt.UserRole + 10, info_)
-            it.setForeground(QtGui.QColor(AMBER))
+            it.setForeground(QtGui.QColor(_C("err")))
             problems_list.addItem(it)
             box = QtWidgets.QWidget()
             lay = QtWidgets.QVBoxLayout(box); lay.setContentsMargins(3, 3, 3, 3)
@@ -9179,7 +9310,7 @@ def build_window(model=None, start_mode="pipeline"):
                 and not (roundtrip is not None and not roundtrip.ok) \
                 and not state.get("structured_errors"):
             hint = QtWidgets.QListWidgetItem(tr("no problems"))
-            hint.setForeground(QtGui.QColor(MUTED))
+            hint.setForeground(QtGui.QColor(_C("muted")))
             hint.setData(QtCore.Qt.UserRole, -1)
             problems_list.addItem(hint)
 
@@ -9291,6 +9422,7 @@ def build_window(model=None, start_mode="pipeline"):
             return
         n = len(run_snapshots[gen]["stages"])
         done = run_completed.get(gen, 0)
+        win._run_outcome = "stopped" if stopped else ("done" if done == n else "failed")   # D99: read when the bar hides
         run_stop.setEnabled(False); run_progress.hide(); run_stop.hide()
         if stopped:
             text = tr("Stopped (%d/%d stages completed)") % (done, n)
@@ -9492,6 +9624,7 @@ def build_window(model=None, start_mode="pipeline"):
             if gen != run_ctl.latest_generation:
                 run_ctl.history.append((gen, "batch-dropped", result.done))
                 return
+            win._run_outcome = "stopped" if result.stopped else ("failed" if result.failed else "done")   # D99
             run_progress.hide(); run_stop.hide(); run_stop.setEnabled(False)
             win._last_batch_result = result
             skipped = sum(status_name == "skipped" for status_name in result.statuses.values())
@@ -9959,7 +10092,7 @@ def build_window(model=None, start_mode="pipeline"):
         if cut > 0:
             pt.drawPixmap(0, 0, pa, 0, 0, cut, pa.height())
         if 0 < cut < pa.width():
-            pt.setPen(QtGui.QPen(QtGui.QColor(AMBER), 1))
+            pt.setPen(QtGui.QPen(QtGui.QColor(_C("annot")), 1))
             pt.drawLine(cut, 0, cut, pa.height())
         pt.end()
         return out
@@ -10001,7 +10134,7 @@ def build_window(model=None, start_mode="pipeline"):
             ab_changes.addItem(e["text"])
         if ab_changes.count() == 0:
             _h = QtWidgets.QListWidgetItem(tr("no changes since %s") % lab)
-            _h.setForeground(QtGui.QColor(MUTED))
+            _h.setForeground(QtGui.QColor(_C("muted")))
             ab_changes.addItem(_h)
         ab_atitle.setText(lab + (": " + pin.note if pin.note else ""))
         ab_btitle.setText(tr("B: now") + ((" · " + tr("Generation %d") % model.displayed_generation)
@@ -10777,6 +10910,8 @@ def build_window(model=None, start_mode="pipeline"):
         show_result()
         return True
 
+    _load_image_path = studio_panels.brand_wrap(       # the corner says what is being opened (2026-11-13)
+        win._brand, _load_image_path, lambda p: tr(studio_panels.S_OPENING) % os.path.basename(str(p)))
     win._load_image_path = _load_image_path          # exposed for tests
 
     def load_image():
@@ -10804,6 +10939,9 @@ def build_window(model=None, start_mode="pipeline"):
         model.input_path = None
         state["fit_next"] = True
         flash("loaded sample image: " + name); show_result()
+    load_sample_image = studio_panels.brand_wrap(
+        win._brand, load_sample_image, lambda n: tr(studio_panels.S_SAMPLE) % n,
+        ok=lambda _r, n: state.get("input_sample") == n)
     win._load_sample_image = load_sample_image
 
     def load_visual_demo():
@@ -11184,7 +11322,7 @@ def build_window(model=None, start_mode="pipeline"):
             status = "ok" if rec["ok"] else ("error: " + rec["error"][:60])
             it = QtWidgets.QTableWidgetItem(status)
             if not rec["ok"]:
-                it.setForeground(QtGui.QColor(AMBER))
+                it.setForeground(QtGui.QColor(_C("err")))
             tbl.setItem(r, 1, it)
             tbl.setItem(r, 2, QtWidgets.QTableWidgetItem("%.1f" % rec["ms"]))
             tbl.setItem(r, 3, QtWidgets.QTableWidgetItem("" if rec["metric"] is None else "%.3f" % rec["metric"]))
@@ -11542,7 +11680,7 @@ def build_window(model=None, start_mode="pipeline"):
 
         def show3d(n):
             if n:
-                br.setHtml(op_help_html_3d(n, reg.get(n)))
+                br.setHtml(_themed_html(op_help_html_3d(n, reg.get(n))))
 
         def _select(n):
             for row in range(lst.count()):
@@ -11564,11 +11702,11 @@ def build_window(model=None, start_mode="pipeline"):
                         with open(p, encoding="utf-8") as f:
                             src = f.read()
                         esc = src.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                        br.setHtml("<h2 style='color:#f5a524'>%s</h2>"
+                        br.setHtml(_themed_html("<h2 style='color:#f5a524'>%s</h2>"
                                    "<p style='color:#8b91a0'>実行できる検証済みサンプル · "
                                    "<code>py -3.11 examples_3d/%s.py</code></p>"
                                    "<pre style='background:#12141b;border:1px solid #2c313f;"
-                                   "padding:6px;color:#22d3bf'>%s</pre>" % (ex, ex, esc))
+                                   "padding:6px;color:#22d3bf'>%s</pre>" % (ex, ex, esc)))
                     except Exception:
                         pass
                 else:
@@ -12597,7 +12735,7 @@ def build_window(model=None, start_mode="pipeline"):
         # actions first, then samples, recent files, then every operator — run by name,
         # keyboard-only. Disabled (context-unavailable) actions are skipped so the palette
         # never offers a command that would silently no-op.
-        items = [("▸ " + a.text().replace("…", "").strip(), a.trigger)
+        items = [("▸ " + studio_panels.plain_text(a.text()).replace("…", "").strip(), a.trigger)
                  for a in win._actions.values() if a is not act_palette and a.isEnabled()]
         action_keys = [k for k, a in win._actions.items() if a is not act_palette and a.isEnabled()]
         items += [("sample: " + nm, (lambda idx=i + 1: load_sample(idx)))
@@ -13476,11 +13614,11 @@ def build_window(model=None, start_mode="pipeline"):
         shp = xld.get("shape") or (1, 1)
         H, W = max(int(shp[0]), 1), max(int(shp[1]), 1)
         pm = QtGui.QPixmap(_VAR_THUMB, _VAR_THUMB)
-        pm.fill(QtGui.QColor(NAVY_1))                 # match the panel background
+        pm.fill(QtGui.QColor(_C("bg1")))              # match the panel background
         if cs:
             p = QtGui.QPainter(pm)
             p.setRenderHint(QtGui.QPainter.Antialiasing, True)
-            pen = QtGui.QPen(QtGui.QColor(TEAL)); pen.setWidthF(1.2); p.setPen(pen)
+            pen = QtGui.QPen(QtGui.QColor(_C("accent"))); pen.setWidthF(1.2); p.setPen(pen)
             s = (_VAR_THUMB - 2) / max(H, W)          # uniform scale, keep aspect, 1px margin
             ox, oy = (_VAR_THUMB - s * W) / 2.0, (_VAR_THUMB - s * H) / 2.0
             for c in cs:
@@ -13542,7 +13680,7 @@ def build_window(model=None, start_mode="pipeline"):
             it = var_list.item(r)
             idx = it.data(QtCore.Qt.UserRole)
             pending = isinstance(idx, int) and idx > frontier
-            it.setForeground(QtGui.QColor(MUTED) if pending else QtGui.QBrush())
+            it.setForeground(QtGui.QColor(_C("muted")) if pending else QtGui.QBrush())
             base = it.text().split("   ", 1)
             tag = base[1] if len(base) == 2 else ""
             want = (tag.replace(" · pending", "") + (" · pending" if pending else ""))
@@ -13603,7 +13741,7 @@ def build_window(model=None, start_mode="pipeline"):
     # -- dedicated Operator Help dialog (HTML: args / usage / sample code / links) - #
     help_browser = QtWidgets.QTextBrowser()
     help_browser.setOpenLinks(False)          # custom op:/sample:/run: anchors handled below
-    help_browser.setStyleSheet("QTextBrowser{background:#1b1e28;border:1px solid #2c313f;}")
+    _themed_style(help_browser, "QTextBrowser{{background:{bg1};border:1px solid {line};}}")
     help_dialog = QtWidgets.QDialog(win)       # dedicated, non-modal (good for multi-monitor)
     help_dialog.setWindowTitle("Operator help — Fullseye Studio")
     help_dialog.resize(560, 640)
@@ -13676,11 +13814,11 @@ def build_window(model=None, start_mode="pipeline"):
                     row = _o3.OPS3D.get(name)
                 except Exception:
                     row = None
-            help_browser.setHtml(bar + op_help_html(name, _lang, meta=row, dim=dim))
+            help_browser.setHtml(_themed_html(bar + op_help_html(name, _lang, meta=row, dim=dim)))
             disp = "%s  (3D)" % name if dim == "3d" else "%s  (%s)" % (name, dim)
         else:
             row = _op_row(name) or {"in_sort": "?", "out_sort": "?"}
-            help_browser.setHtml(bar + op_help_html(name, _lang, row))
+            help_browser.setHtml(_themed_html(bar + op_help_html(name, _lang, row)))
             disp = name
         i = help_pick.findText(disp)
         if i >= 0:
@@ -13701,7 +13839,7 @@ def build_window(model=None, start_mode="pipeline"):
             except Exception:
                 break
             _help_cur.update(kind="guide", name=stem, dim="2d")
-            help_browser.setHtml(help_lang_bar(stem, "2d", lang, "guide") + body)
+            help_browser.setHtml(_themed_html(help_lang_bar(stem, "2d", lang, "guide") + body))
             flash("opened guide: " + stem)
             return
         flash("guide not built: run `py -3.11 tools/opdocs.py html`")
@@ -13756,12 +13894,12 @@ def build_window(model=None, start_mode="pipeline"):
                     with open(p, encoding="utf-8") as f:
                         src = f.read()
                     esc = src.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                    help_browser.setHtml(
+                    help_browser.setHtml(_themed_html(
                         "<h2 style='color:#f5a524'>%s</h2>"
                         "<p style='color:#8b91a0'>実行できる検証済みサンプル · "
                         "<code>py -3.11 %s/%s.py</code></p>"
                         "<pre style='background:#12141b;border:1px solid #2c313f;padding:6px;"
-                        "color:#22d3bf'>%s</pre>" % (ex, sub, ex, esc))
+                        "color:#22d3bf'>%s</pre>" % (ex, sub, ex, esc)))
                     flash("opened example source: " + ex)
                 except Exception:
                     pass
@@ -14503,7 +14641,7 @@ def build_window(model=None, start_mode="pipeline"):
     act_upd.setToolTip("Auto-update the display (HDevelop dev_update). Uncheck to edit / run "
                        "without the display cost, then check to refresh.")
     act_upd.triggered.connect(lambda on: set_dev_update("all", on))
-    tb.addAction(act_upd); win._dev_update_actions["_toolbar"] = act_upd
+    tb.addAction(studio_panels.glyph_action(win, act_upd, "auto_update")); win._dev_update_actions["_toolbar"] = act_upd
 
     def _set_part(r1, c1, r2, c2):
         """dev_set_part: set the displayed image part of the CURRENT graphics window."""
@@ -14852,17 +14990,12 @@ def build_window(model=None, start_mode="pipeline"):
         CodeEditor picks the persisted value up on construction."""
         pt = max(6, min(int(pt), 32))
         _settings().setValue("ui/mono_font_pt", pt)
-        for ed in [code_edit] + ([win._pyedit["tabs"].widget(i)
-                                  for i in range(win._pyedit["tabs"].count())]
-                                 if getattr(win, "_pyedit", None) else []):
-            f = ed.font(); f.setPointSize(pt); ed.setFont(f)
-            # widget-level rule outranks the app QSS (which pins QPlainTextEdit fonts)
-            ed.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace; "
-                             "font-size:%dpt;" % pt)
-            ed.setTabStopDistance(4 * ed.fontMetrics().horizontalAdvance(" "))
+        # the typeface and where it applies are decided in studio_theme (CODE_FONTS, code_surfaces)
+        studio_theme.refresh_code_fonts(pt)
         return pt
     win._apply_mono_font = _apply_mono_font
-    try:        # apply the persisted size to the program editor at startup
+    try:        # apply the persisted size (and the user's own family, if any) at startup
+        studio_theme.set_code_family(_settings().value("ui/mono_font_family", ""))
         _apply_mono_font(int(_settings()
                              .value("ui/mono_font_pt", 10)))
     except (TypeError, ValueError):
@@ -14921,6 +15054,13 @@ def build_window(model=None, start_mode="pipeline"):
         fpt.setValue(int(sset.value("ui/mono_font_pt", 10)))
         fpt.setToolTip("Monospace font size for the program editor, Python Editor tabs "
                        "and code windows.")
+        ffam = QtWidgets.QComboBox()             # code family: "" = studio_theme's table decides
+        ffam.addItem(tr("Automatic"), "")
+        for _f in studio_theme.code_font_choices():
+            ffam.addItem(_f, _f)
+        ffam.setCurrentIndex(max(0, ffam.findData(str(sset.value("ui/mono_font_family", "") or ""))))
+        ffam.setToolTip("Typeface of every place that shows or takes code. Automatic: the first installed face "
+                        "whose full-width characters are exactly two half-width cells (BIZ UDGothic, MS Gothic).")
         interp = QtWidgets.QLineEdit(str(sset.value("pyedit/interpreter", "") or ""))
         interp.setPlaceholderText(sys.executable + "   (empty = this Studio's Python)")
         interp.setToolTip("Interpreter used by the Python Editor's Run. Empty = the Python "
@@ -14941,15 +15081,43 @@ def build_window(model=None, start_mode="pipeline"):
             asave_s.setValue(_pm_set.autosave_idle_s())
         dlg._autosave_mode = asave; dlg._autosave_delay = asave_s
         chk = QtWidgets.QLabel("fail-closed  (the runtime refuses degraded operators)")
-        chk.setStyleSheet("QLabel{color:%s;}" % MUTED)
+        _themed_style(chk, "QLabel{{color:{muted};}}")
         _settings_page("Execution", [("Threads (thread_num)", th),
                                      ("Operator timeout", to),
                                      ("Error checking (set_check)", chk)])
         _settings_page("Windows", [("Max graphics windows", mw)])
-        _settings_page("Display", [("Default display mode", dmode),
+        scheme = QtWidgets.QComboBox()
+        for _k in studio_theme.THEMES:
+            scheme.addItem(tr(studio_theme.THEME_LABELS[_k]), _k)
+        scheme.setCurrentIndex(studio_theme.THEMES.index(studio_theme.current_name()))
+        scheme.setToolTip(tr("Colour scheme") + " — applied now and restored on startup.")
+        scheme.currentIndexChanged.connect(lambda _i: win._apply_theme(theme=scheme.currentData()))
+        dens = QtWidgets.QComboBox()
+        for _k in studio_theme.DENSITIES:
+            dens.addItem(tr(studio_theme.DENSITY_LABELS[_k]), _k)
+        dens.setCurrentIndex(studio_theme.DENSITIES.index(studio_theme.current_density()))
+        dens.setToolTip(tr("Density") + " — applied now and restored on startup.")
+        dens.currentIndexChanged.connect(lambda _i: win._apply_theme(level=dens.currentData()))
+        dlg._theme_combos = (scheme, dens)
+        # A3: tools and tabs / when they do not fit - the same QActions as View and Window > Layout
+        strip_box, flow_box = QtWidgets.QComboBox(), QtWidgets.QComboBox()
+        for _box, _prefix, _modes, _now in (
+                (strip_box, "strip_", studio_panels.STRIP_MODES, win._panels["strip_mode"]),
+                (flow_box, "overflow_", studio_panels.OVERFLOW_MODES, win._panels["overflow_mode"])):
+            for _m in _modes:
+                _box.addItem(studio_panels.plain_text(win._actions[_prefix + _m].text()).split(": ", 1)[-1], _m)
+            _box.setCurrentIndex(max(0, _box.findData(_now)))
+            _box.currentIndexChanged.connect(
+                lambda _i, b=_box, p=_prefix: win._actions[p + b.currentData()].trigger())
+        strip_box.setToolTip(tr("Tools and tabs") + " — applied now and restored on startup.")
+        flow_box.setToolTip(tr("When they do not fit") + " — applied now and restored on startup.")
+        dlg._strip_combos = (strip_box, flow_box)
+        _settings_page("Display", [("Colour scheme", scheme), ("Density", dens),
+                                   ("Tools and tabs", strip_box), ("When they do not fit", flow_box),
+                                   ("Default display mode", dmode),
                                    ("Region draw (dev_set_draw)", drawm),
                                    ("Region line width", drawlw)])
-        _settings_page("Editor", [("Editor font size", fpt),
+        _settings_page("Editor", [("Editor font size", fpt), ("Code font", ffam),
                                   ("Python Editor interpreter", interp),
                                   ("Autosave the Python file", asave),
                                   ("Autosave delay", asave_s)])
@@ -14965,6 +15133,7 @@ def build_window(model=None, start_mode="pipeline"):
         root.addWidget(bb)
         dlg.resize(640, 420)
         dlg._tree = cat_tree; dlg._stack = stack     # test / scripting hooks
+        dlg._code_font = ffam; dlg._code_pt = fpt
         win._system_dialog = dlg               # for headless tests
         # NOTE: no win._localize here — this dialog is rebuilt per-open with tr() at
         # build time; registering tr()-produced text would poison the English baseline
@@ -14977,6 +15146,8 @@ def build_window(model=None, start_mode="pipeline"):
             set_draw_style(mode=drawm.currentText(), line_width=drawlw.value())
             sset.setValue("draw/mode", drawm.currentText())
             sset.setValue("draw/line_width", drawlw.value())
+            sset.setValue("ui/mono_font_family", ffam.currentData())
+            studio_theme.set_code_family(ffam.currentData())
             _apply_mono_font(fpt.value())
             ip = interp.text().strip()
             if ip and not os.path.isfile(ip):
@@ -15889,8 +16060,13 @@ def build_window(model=None, start_mode="pipeline"):
     QtCore.QTimer.singleShot(0, lambda: win._project["restore"]())   # 最後に開いていたフォルダと木の開閉を戻す
     # -- multi-monitor: pop every tool panel out as its own top-level window --- #
     def float_all_panels(floating=True):
-        for d in win._docks.values():
-            d.setFloating(floating)
+        for _k, d in win._docks.items():
+            if floating and d.isHidden():
+                continue                          # D60: only the panels that are shown become windows
+            if floating:
+                studio_panels.toggle_float(win, _k, True)     # by the main window, on a screen
+            else:
+                d.setFloating(False)
         if win._flash:
             win._flash("panels floated for multi-display" if floating else "panels re-docked")
     act_float_all = _act("Float all panels (multi-display)", None,
@@ -15899,6 +16075,7 @@ def build_window(model=None, start_mode="pipeline"):
     menu_panels.addAction(act_float_all); menu_panels.addAction(act_dock_all)
     act_float_all.triggered.connect(lambda: float_all_panels(True))
     act_dock_all.triggered.connect(lambda: float_all_panels(False))
+    win._actions["dock_all"] = act_dock_all; win._actions["reset_layout"] = act_reset_layout   # one QAction each (studio_panels)
     win._float_all_panels = float_all_panels
 
     # -- per-panel float control (finer than all-or-nothing float) ------------ #
@@ -15946,7 +16123,7 @@ def build_window(model=None, start_mode="pipeline"):
             top = QtWidgets.QMainWindow(win)
             top.setWindowFlag(QtCore.Qt.Window, True)
             top.setWindowTitle((title or "Graphics") + " — detached")
-            top.setStyleSheet(THEME)
+            top.setStyleSheet(win.styleSheet())
             if os.path.exists(_ICON_PATH):
                 top.setWindowIcon(QtGui.QIcon(_ICON_PATH))
             if inner is not None:
@@ -16045,7 +16222,10 @@ def build_window(model=None, start_mode="pipeline"):
 
     # built-in deterministic arrangements (no saved state needed)
     def layout_balanced():
-        win._reset_layout()                        # restore factory state + show all docks
+        win._reset_layout()                        # the first-run arrangement ...
+        for _k in ("operators", "pipeline", "display", "program", "variables"):
+            win._docks[_k].show()                  # ... then every main panel (the rest stay on the panel bar)
+        win._docks["operators"].raise_()
         win._flash and win._flash("layout: balanced (default)")
 
     def layout_graphics_focus():
@@ -16114,13 +16294,7 @@ def build_window(model=None, start_mode="pipeline"):
     win._rebuild_layouts_menu = _rebuild_layouts_menu
     win._layouts_menu = layouts_menu
 
-    # per-panel float as flat items in Panels (avoids a 3rd nesting level) + reset
-    menu_panels.addSeparator()
-    for _k, _lbl in (("operators", "Operators"), ("pipeline", "Pipeline · Parameters"),
-                     ("display", "Display · Analysis"), ("program", "Program (code)"),
-                     ("variables", "Variables & Objects"), ("project", "Project")):
-        menu_panels.addAction("Float: %s" % _lbl).triggered.connect(
-            lambda _=False, k=_k: float_panel(k, True))
+    # (D100: the per-panel "Separate window: X" entries are studio_panels' - one per panel, one word)
     menu_panels.addSeparator()
     menu_panels.addAction(act_reset_layout)
     # graphics detach/reattach live under the Graphics windows submenu
@@ -16291,6 +16465,8 @@ def build_window(model=None, start_mode="pipeline"):
         _apply_labels()
         _update_current_indicator()
         _relocalize_dynamic()
+        if getattr(win, "_apply_theme", None) is not None:
+            win._apply_theme(save=False)          # the UI font stack is per language
         for code, a in win._lang_actions.items():
             a.setChecked(code == win._lang)
         try:
@@ -16299,6 +16475,59 @@ def build_window(model=None, start_mode="pipeline"):
         except Exception:
             pass
     win._apply_language = apply_language
+
+    # ---- colour scheme + density (studio_theme.py; decision 2026-11-12) ------------------------ #
+    def apply_theme(theme=None, level=None, save=True):
+        """Switch scheme and / or density now: style sheet (with the UI language's font stack),
+        every themed widget / icon / highlighter / image ground, the density pass. Saved for next start."""
+        studio_theme.set_current(theme, level)
+        qss = studio_theme.build_qss(lang=_UI_LANG["code"], text_px=win.fontMetrics().height())
+        win.setStyleSheet(qss)
+        for _top in list(getattr(win, "_detached_graphics", []) or []):
+            try:
+                _top.setStyleSheet(qss)
+            except RuntimeError:
+                pass
+        _refresh_themed()
+        _apply_density(win)
+        studio_panels.refresh(win, tr, _UI_LANG["code"])
+        studio_theme.apply_code_fonts(win)            # the density pass rewrote the op list's own sheet
+        _theme_menu.setTitle(tr("Colour scheme")); _density_menu.setTitle(tr("Density"))
+        for _k, _a in win._theme_actions.items():
+            _a.setChecked(_k == studio_theme.current_name())
+            _a.setText(tr(studio_theme.THEME_LABELS[_k]))
+            _a.setToolTip(tr("Colour scheme") + ": " + tr(studio_theme.THEME_LABELS[_k]))
+        for _k, _a in win._density_actions.items():
+            _a.setChecked(_k == studio_theme.current_density())
+            _a.setText(tr(studio_theme.DENSITY_LABELS[_k]))
+            _a.setToolTip(tr("Density") + ": " + tr(studio_theme.DENSITY_LABELS[_k]))
+        if save:
+            try:
+                _s = _settings()
+                _s.setValue("ui/theme", studio_theme.current_name())
+                _s.setValue("ui/density", studio_theme.current_density())
+            except Exception as _e:              # noqa: BLE001
+                _log_soft_failure("could not save the colour scheme setting", _e)
+        win.update()
+    win._apply_theme = apply_theme
+    win._theme_actions, win._density_actions = {}, {}
+    _theme_menu = menu_view.addMenu(tr("Colour scheme"))
+    _density_menu = menu_view.addMenu(tr("Density"))
+    win._theme_menus = (_theme_menu, _density_menu)        # retain (shiboken ownership)
+    _tg = QtGui.QActionGroup(win); _tg.setExclusive(True)
+    for _k in studio_theme.THEMES:
+        _a = QtGui.QAction(tr(studio_theme.THEME_LABELS[_k]), win); _a.setCheckable(True); _tg.addAction(_a)
+        _a.setToolTip(tr("Colour scheme") + ": " + tr(studio_theme.THEME_LABELS[_k]))
+        _a.triggered.connect(lambda _c=False, k=_k: apply_theme(theme=k))
+        _theme_menu.addAction(_a); win._theme_actions[_k] = _a; win._actions["theme_" + _k] = _a
+    _dg = QtGui.QActionGroup(win); _dg.setExclusive(True)
+    for _k in studio_theme.DENSITIES:
+        _a = QtGui.QAction(tr(studio_theme.DENSITY_LABELS[_k]), win); _a.setCheckable(True); _dg.addAction(_a)
+        _a.setToolTip(tr("Density") + ": " + tr(studio_theme.DENSITY_LABELS[_k]))
+        _a.triggered.connect(lambda _c=False, k=_k: apply_theme(level=k))
+        _density_menu.addAction(_a); win._density_actions[_k] = _a; win._actions["density_" + _k] = _a
+    win._theme_groups = (_tg, _dg)
+    win._actions["reduce_motion"] = studio_panels.reduce_motion_action(win, menu_view, _settings, tr)
 
     # Data-driven from studio_assets/i18n.json 'languages' — add a language there,
     # no code change. English is always present as the base.
@@ -16322,7 +16551,7 @@ def build_window(model=None, start_mode="pipeline"):
         dlg = QtWidgets.QDialog(win); tag_dialog(dlg, "reference"); dlg.setModal(False)
         dlg.setWindowTitle(tr("Files you can open"))
         lay = QtWidgets.QVBoxLayout(dlg)
-        tb_ = QtWidgets.QTextBrowser(); tb_.setHtml(_drop_formats_html()); lay.addWidget(tb_)
+        tb_ = QtWidgets.QTextBrowser(); tb_.setHtml(_themed_html(_drop_formats_html())); lay.addWidget(tb_)
         dlg._browser = tb_
         dlg.resize(860, 620); dlg.show()
         win._last_formats_help = dlg
@@ -16719,6 +16948,26 @@ def build_window(model=None, start_mode="pipeline"):
     except Exception:
         pass
 
+    win._panel_buttons = {                       # panel buttons -> the panel menus (studio_panels); a name the window
+        "program": {"run": c_run, "continue": c_cont, "step": c_step, "reset": c_reset, "apply": c_apply, "sync": c_sync},
+        "variables": {"display_new": v_disp, "display_here": v_here, "watch_remove": w_del},
+        "ab": {"restore": ab_restore, "adopt": ab_adopt, "keep": ab_keep},       # has in win._actions = that QAction
+        "operators": {"insert": b_insert, "run_once": b_run_once, "help": b_help},
+        "pipeline": {"remove": b_rm, "move_up": b_up, "move_down": b_dn, "reset": b_reset, "step": b_step,
+                     "run_all": b_runall, "open_pipeline": b_openp, "save_pipeline": b_savep, "export": b_export},
+        "graphics_1": {"open_image": b_load, "demo": b_demo, "save_result": b_save, "zoom_in": b_zin,
+                       "zoom_out": b_zout, "fit": b_fit, "actual_size": b_11}}
+    for _lab in (readout, win._img_info, op_param, stage_detail):   # D121: figures and signatures keep the code face;
+        _lab.setProperty("figures", True)                           # every other hint label is a sentence (UI face)
+    win._panel_strips = {                        # each panel's tool strip: (its row of buttons, what it stands beside;
+        "program": (crow, None), "operators": (oprow, None), "pipeline": (erow, None, xrow),   # None = the whole
+        # panel; a third: rows whose buttons join the strip as more groups - the Pipeline's Export & I/O)
+        "variables": (vrow, None), "ab": (_abbtn, None), "graphics_1": (itop, view)}
+    studio_panels.install(win, tr, _settings)   # panel bar + title bands + first-run arrangement (image + code)
+    studio_theme.watch_code_fonts(QtWidgets.QApplication.instance())   # dialogs / editor tabs built later
+    win._brand_follow = studio_panels.follow_progress(      # runs / batches; D99: how the run really ended
+        win._brand, run_progress, run_status, outcome=lambda: getattr(win, "_run_outcome", "done"))
+    apply_theme(save=False)                  # scheme + density on every widget built above (2026-11-12)
     # Default (factory) panel layout — captured before any saved layout is applied,
     # so "Reset panel layout" always has somewhere to go back to.
     win._default_state = win.saveState()
@@ -16732,21 +16981,13 @@ def build_window(model=None, start_mode="pipeline"):
     except (TypeError, ValueError) as exc:
         _log_soft_failure("could not restore work-mode layout", exc)
     try:                                     # restore the user's remembered geometry + layout
-        if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-            s = _settings()
-            geo = s.value("geometry")
-            # Only reuse a saved dock layout from the SAME layout version. The current
-            # default (v3: image-dominant central, Program tall on the right, op/var
-            # panels compact) differs from older saves, so a stale windowState is
-            # ignored and the new default shows.
-            st = s.value("windowState") if str(s.value("layout_version")) == "3" else None
-            if geo:
-                win.restoreGeometry(geo)
-            if st:
-                win.restoreState(st)
-                _restored_dock_state = True
-    except Exception:
-        pass
+        if studio_panels.persist_enabled():
+            # Only a saved dock layout of the SAME layout version is reused (studio_panels.LAYOUT_VERSION);
+            # a blob restoreState refuses, or one that hides every main panel, leaves the first-run
+            # arrangement (2026-11-12).
+            _restored_dock_state = studio_panels.restore_layout(win, _settings(), dock_layout_usable)
+    except Exception as _e:                  # noqa: BLE001 - a broken store must not stop the window
+        _log_soft_failure("could not restore the saved panel layout", _e)
     win.first_layout_pending = not _restored_dock_state     # 保存済みの dock 配置を使った起動では比を触らない
     if _restore_work_layout:
         win._apply_layout_state()
@@ -16871,6 +17112,20 @@ def build_window(model=None, start_mode="pipeline"):
         "report_error": lambda t_, x_: report_error(t_, x_), "demo_image": demo_image,
         "act": _act, "menus": win._menus, "actions": win._actions, "palette_words": PALETTE_WORDS,
     }, start_mode=start_mode)
+    # 2026-11-15 (integration of the look branch): the Python mode was built after the scheme / density pass.
+    # Its popups and the variables' message speak the scheme's roles (filled again on each switch), and the
+    # pass runs again so its rows, gaps and code font come from the one table too.
+    for _pop in win.findChildren(QtWidgets.QFrame, "pyeditCompletionPopup"):
+        _themed_style(_pop, "#pyeditCompletionPopup {{ background: {editor}; border: 1px solid {muted}; }}"
+                            "QListWidget {{ background: {editor}; color: {text}; border: 0; }}"
+                            "QLabel {{ background: {curline}; color: {text}; }}")
+    for _tip in win.findChildren(QtWidgets.QFrame, "pyeditSignatureTip"):
+        _themed_style(_tip, "#pyeditSignatureTip {{ background: {curline}; border: 1px solid {muted}; }}"
+                            "QLabel {{ color: {text}; }}")
+    import studio_pyedit_vars_qt as _pvq
+    for _vp in win.findChildren(_pvq.VariablesPanel):
+        _themed_style(_vp.message, "color: {err}; font-weight: bold;")
+    apply_theme(save=False)
     _quiesce_runs = win.quiesce
 
     def _quiesce_all(timeout_ms=5000):

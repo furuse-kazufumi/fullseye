@@ -83,7 +83,28 @@ _INTERNAL = {
     # studio_search / studio_errors 2026-10-20: Studio の論理層(Qt 非依存)。UI への配線は次の片。
     #   search 6 本(current_sort_of / search_grouped / search_zero_results_help / canonical_sort / clear_caches / nearest_op_names)
     #   errors 3 本(explain_failure / format_failure / localize)。studio と同じ「GUI の内側の部品」で、テストが直接呼ぶ。
-    "studio": 92, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 7, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    # studio_theme 2026-11-12(feat/studio-console-theme): 配色・密度の表と QSS を組む関数 19 本(Qt 非依存)。
+    #   Studio の見た目の内側の部品で op ではない。studio +1 は dock_layout_usable(保存した配置の検査)。
+    # studio_theme 2026-11-13(第 2 段): +21 = コードの書体(候補の表から選ぶ・部品へ当てる・後から出来た窓を見張る・設定の一覧)、
+    #   怪しい文字の検出と印(suspicious_chars / mark_code)、色の見分けの門(lab / delta_e / simulate_cvd / distinct_report)。
+    # studio_theme +2 2026-11-13(要件 7): コードの色の表(code_colour_table)と下地の見分けの門(ground_report)。
+    # studio_theme +1 2026-11-15: 左上の終わり方と絵の印の便(D99 D130): studio_panels.end_state・studio_theme.ui_families。Studio の窓の内側の部品で op ではない
+    # studio_theme +1 2026-11-15: 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない
+    "studio_theme": 44,
+    # studio_panels 2026-11-13(第 2 段): パネルの帯・dock ⇔ 別ウィンドウ・配置の保存と復元・横長のパネルで
+    #   道具とタブを左へ・題の帯へ状態と ≡ を登録する口・左上の進捗の表示 25 本。Studio の窓の内側の部品で op ではない(studio.py からは短い呼び出しだけ。試験が直接呼ぶ)。
+    # studio_panels +3 2026-11-13(要件 5): パネルのボタンの QAction(button_action / sync_button_actions)と、
+    #   ツールチップからメニューの項目名を切る short_name。
+    # studio_panels +5 2026-11-13(要件 8): 処理中のアイコンのコマ送り(icon_frames)、動きを減らす設定
+    #   (system_reduces_motion / reduce_motion / reduce_motion_action)、同期の仕事を左上に出す brand_wrap。
+    # studio_panels +16 2026-11-15: A1〜A3・D104 の便(11 本: show_principal / normalise_overflow_mode / scroll_arrow / flow_plan / scroll_reach / flow_classes / declare_strip / adopt_image_strip / panel_ledger / set_overflow_mode / all_strips。その便で台帳を上げていなかった)と D01〜D03 の上の帯(5 本: tool_tip / mode_switch / compose_top_tips / glyph_action / fix_hand)。Studio の窓の内側の部品で op ではない
+    # studio_panels +3 2026-11-15: 題の帯とメニューの便(D14 D59 D98 D100 D111): label_text / plain_text / drop_repeated_titles。Studio の窓の内側の部品で op ではない
+    # studio_panels +1 2026-11-15: パネルの一覧の便(D20 D21 D60): panel_order。Studio の窓の内側の部品で op ではない
+    # studio_panels +1 2026-11-15: 左上の終わり方と絵の印の便(D99 D130): studio_panels.end_state・studio_theme.ui_families。Studio の窓の内側の部品で op ではない
+    # studio_panels +1 2026-11-15: 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない
+    # studio_panels +3 2026-11-15: 作業モードの「*」の便(D128): mode_differs / mode_watch / mode_chosen。Studio の窓の内側の部品で op ではない
+    "studio_panels": 58,
+    "studio": 93, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 7, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
@@ -370,7 +391,25 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-15 同じ枝(第 3 回レビューの直しの確かめ): 1319 → 1321(+2)。studio_pyedit_safe 15 → 17: static_getattr
 #   (型の記述子だけで属性を引く。補完・ホバーがメタクラスの __getattribute__ を呼ばない)・static_parameters
 #   (利用者の関数の引数の並びを __code__ から。既定値を文字にしない)。どちらも補完と変数の欄の内側。
-_HIDDEN_FUNCTIONS_TODAY = 1321
+#   (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1321
+# 2026-11-12 見た目の第 1 段(feat/studio-console-theme-2026-11-12): 1084 + 20 = 1104。studio_theme 19
+#   (配色・密度・コントラストの表と QSS。Studio の内側)・studio.dock_layout_usable 1。実測 1104。
+# 2026-11-13 origin/master(1086 = 1084 + 2)を merge: 1104 + 2 = 1106。実測 1106。
+# 2026-11-13 見た目の第 2 段: 1106 + 46 = 1152。studio_panels 25・studio_theme 21(コードの書体・怪しい文字・色の門)。実測 1152。
+# 2026-11-13 要件 5(≡ の項目): 1152 + 3 = 1155。studio_panels の button_action / sync_button_actions / short_name。
+# 2026-11-13 要件 8(左上のコマ送り): 1155 + 5 = 1160。studio_panels の icon_frames / system_reduces_motion /
+#   reduce_motion / reduce_motion_action / brand_wrap。
+# 2026-11-13 要件 7(コードの色の表): 1160 + 2 = 1162。studio_theme の code_colour_table / ground_report。
+# 2026-11-15 A1〜A3・D104 の便(11 本: show_principal / normalise_overflow_mode / scroll_arrow / flow_plan / scroll_reach / flow_classes / declare_strip / adopt_image_strip / panel_ledger / set_overflow_mode / all_strips。その便で台帳を上げていなかった)と D01〜D03 の上の帯(5 本: tool_tip / mode_switch / compose_top_tips / glyph_action / fix_hand)。Studio の窓の内側の部品で op ではない: 1162 + 16 = 1178。実測 1178。
+# 2026-11-15 題の帯とメニューの便(D14 D59 D98 D100 D111): label_text / plain_text / drop_repeated_titles。Studio の窓の内側の部品で op ではない: 1178 + 3 = 1181。実測 1181。
+# 2026-11-15 パネルの一覧の便(D20 D21 D60): panel_order。Studio の窓の内側の部品で op ではない: 1181 + 1 = 1182。実測 1182。
+# 2026-11-15 左上の終わり方と絵の印の便(D99 D130): studio_panels.end_state・studio_theme.ui_families。Studio の窓の内側の部品で op ではない: 1182 + 2 = 1184。実測 1184。
+# 2026-11-15 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない: 1184 + 2 = 1186。実測 1186。
+# 2026-11-15 作業モードの「*」の便(D128): mode_differs / mode_watch / mode_chosen。Studio の窓の内側の部品で op ではない: 1186 + 3 = 1189。実測 1189。
+#   (見た目の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1189
+# 2026-11-15 統合の枝に見た目の枝(feat/studio-console-theme-2026-11-12、1a3f70d772)を merge: 合わせ目 1086 から
+#   統合 +235・見た目 +103 = 1424(同じ名前の足し合いは無い。数は合わせた木の実測で確かめる)。
+_HIDDEN_FUNCTIONS_TODAY = 1424
 
 
 def _hidden_total():

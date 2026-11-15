@@ -240,8 +240,28 @@ class CompletionPopup(QtWidgets.QFrame):
         lay.addWidget(self.doc)
         self.apply_theme()
 
+    def eventFilter(self, obj, ev) -> bool:                   # noqa: N802 - Qt's name
+        # 2026-11-15 (integration): Studio's code-font watch gives the list its code font after it was built;
+        # the rows were measured with the old font (text + 4 no more). Measure again when the font changes.
+        if obj is getattr(self, "list", None) and ev.type() == QtCore.QEvent.FontChange:
+            QtCore.QTimer.singleShot(0, self, self._refit_rows)
+        return False
+
+    def _refit_rows(self) -> None:
+        self.ensurePolished()
+        self.list.ensurePolished()                            # the font of the style sheets, resolved now
+        want = row_height(self.list.font())
+        if getattr(self, "_rows_for", None) != want:
+            self._rows_for = want
+            self._rh = compact_rows(self.list)
+            dlg = self.list.itemDelegate()
+            if isinstance(dlg, _ItemDelegate):
+                dlg._h = self._rh                             # the rows' height is the delegate's
+            self.list.doItemsLayout()
+
     def apply_theme(self) -> None:
         th = self._theme()
+        self.list.installEventFilter(self)
         self.setStyleSheet("#pyeditCompletionPopup{background:%s;border:1px solid %s;}"
                            "QListWidget{background:%s;color:%s;border:0;}"
                            "QLabel{background:%s;color:%s;}" % (th.gutter_bg, th.gutter_fg, th.bg, th.fg, th.current_line_bg, th.fg))
@@ -250,6 +270,7 @@ class CompletionPopup(QtWidgets.QFrame):
 
     # ---- 中身 ----
     def set_items(self, items: list) -> None:
+        self._refit_rows()                                    # rows = text + 4 in the font it is shown in
         self.list.clear()
         for c in items:
             it = QtWidgets.QListWidgetItem(c.name)

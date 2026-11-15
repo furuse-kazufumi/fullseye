@@ -438,6 +438,102 @@ class _OutputView(QtWidgets.QPlainTextEdit):
 # --------------------------------------------------------------------------- #
 # モードの持ち主                                                                #
 # --------------------------------------------------------------------------- #
+class _FlowRow(QtWidgets.QLayout):
+    """A row of widgets that wraps onto the next line when it is narrower than its items (2026-11-15).
+
+    The mode row above the code was a QHBoxLayout: its minimum width was the sum of its items (~1130 px), so
+    the code dock could not be a tall column beside the image. Here the minimum is the widest single item.
+    ``addStretch()`` adds a spacer that takes the room left on its line (the items after it go right)."""
+
+    def __init__(self, parent=None, spacing=4):
+        super().__init__(parent)
+        self._items = []
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setSpacing(spacing)
+
+    def addItem(self, item):                                  # noqa: N802 - Qt's name
+        self._items.append(item)
+
+    def addStretch(self, _stretch=1):                         # noqa: N802 - QBoxLayout's name
+        self.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum))
+
+    def count(self):
+        return len(self._items)
+
+    def itemAt(self, i):                                      # noqa: N802
+        return self._items[i] if 0 <= i < len(self._items) else None
+
+    def takeAt(self, i):                                      # noqa: N802
+        return self._items.pop(i) if 0 <= i < len(self._items) else None
+
+    def expandingDirections(self):                            # noqa: N802
+        return QtCore.Qt.Orientation(0)
+
+    def hasHeightForWidth(self):                              # noqa: N802
+        return True
+
+    def heightForWidth(self, width):                          # noqa: N802
+        return self._place(QtCore.QRect(0, 0, width, 0), move=False)
+
+    def setGeometry(self, rect):                              # noqa: N802
+        super().setGeometry(rect)
+        self._place(rect, move=True)
+
+    def sizeHint(self):                                       # noqa: N802
+        shown = [it for it in self._items if not it.isEmpty() and it.spacerItem() is None]
+        w = sum(it.sizeHint().width() for it in shown) + self.spacing() * max(0, len(shown) - 1)
+        h = max([it.sizeHint().height() for it in shown] or [0])
+        m = self.contentsMargins()
+        return QtCore.QSize(w + m.left() + m.right(), h + m.top() + m.bottom())
+
+    def minimumSize(self):                                    # noqa: N802
+        size = QtCore.QSize()
+        for it in self._items:
+            if not it.isEmpty() and it.spacerItem() is None:
+                size = size.expandedTo(it.minimumSize())
+        m = self.contentsMargins()
+        return size + QtCore.QSize(m.left() + m.right(), m.top() + m.bottom())
+
+    def _place(self, rect, move):
+        m = self.contentsMargins()
+        area = rect.adjusted(m.left(), m.top(), -m.right(), -m.bottom())
+        gap = self.spacing()
+        lines, line, used = [], [], 0
+        for it in self._items:
+            if it.isEmpty() and it.spacerItem() is None:
+                continue
+            w = 0 if it.spacerItem() is not None else it.sizeHint().width()
+            need = w if not line else used + gap + w
+            if line and need > area.width() and it.spacerItem() is None:
+                lines.append(line); line, used = [], 0
+                need = w
+            if not line and it.spacerItem() is not None:
+                continue                                      # a line never starts with a stretch
+            line.append(it); used = need
+        if line:
+            lines.append(line)
+        y = area.y()
+        for line in lines:
+            widgets = [it for it in line if it.spacerItem() is None]
+            spacers = [it for it in line if it.spacerItem() is not None]
+            h = max([it.sizeHint().height() for it in widgets] or [0])
+            used = sum(it.sizeHint().width() for it in widgets) + gap * max(0, len(line) - 1)
+            spare = max(0, area.width() - used)
+            x = area.x()
+            for it in line:
+                if it.spacerItem() is not None:
+                    w = spare // len(spacers) if spacers else 0
+                else:
+                    w = min(it.sizeHint().width(), area.width())
+                if move:
+                    it.setGeometry(QtCore.QRect(x, y + (h - min(h, it.sizeHint().height())) // 2, w,
+                                                min(h, it.sizeHint().height())))
+                x += w + gap
+            y += h + gap
+        return max(0, y - gap - area.y()) + m.top() + m.bottom()
+
+
 class PyModeController(QtCore.QObject):
     """Program 欄の Python のモードの状態と、実行・ファイル・確認・表示の繋ぎ。``win._pymode``。"""
 
@@ -678,8 +774,7 @@ class PyModeController(QtCore.QObject):
         tr = self.tr
         ctx = self.ctx
         lay = ctx["code_layout"]
-        bar = QtWidgets.QHBoxLayout()
-        bar.setSpacing(4)
+        bar = _FlowRow(spacing=4)                              # 2026-11-15: wraps when the code dock is narrow
         # モードの札: この欄の文面がパイプラインか Python かを、切り替えのボタンの状態に頼らずに常に見せる
         self.badge = QtWidgets.QToolButton()
         self.badge.setObjectName("program_mode_badge")

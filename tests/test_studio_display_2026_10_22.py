@@ -98,6 +98,13 @@ def test_gui_controls_are_view_only(monkeypatch):
     text = win._format_display_readout(
         np.array([[0.4213]], dtype=np.float64), display.DisplayRange("manual", 0, 1), 0, 0)
     assert text == "Value 0.4213 (float64) / Shown 108 / Range 0 to 1"      # 2026-11-12 B-5: 英語モードは英語(日本語は言語 ja の時)
+    studio._UI_LANG["code"] = "ja"
+    try:
+        text_ja = win._format_display_readout(
+            np.array([[0.4213]], dtype=np.float64), display.DisplayRange("manual", 0, 1), 0, 0)
+    finally:
+        studio._UI_LANG["code"] = "en"
+    assert text_ja == "値 0.4213 (float64) / 表示 108 / レンジ 0〜1"
     win.quiesce(); win.close_guard = lambda: True; win.close(); app.processEvents()
 
 

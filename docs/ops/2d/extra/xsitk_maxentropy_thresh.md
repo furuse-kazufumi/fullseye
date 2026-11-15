@@ -8,7 +8,7 @@ gpu: なし
 examples: [gallery2d_color_artistic, mcp_task_score, threshold_family_agreement]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # xsitk_maxentropy_thresh — 2D `extra` op

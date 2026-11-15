@@ -8,7 +8,7 @@ gpu: なし
 examples: [converge_tour, poc_3d_sensor_modalities, poc_interreflection_fringe_error, poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # groove_profile — OPTICS `light_transport` op

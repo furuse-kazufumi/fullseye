@@ -9,7 +9,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [gallery2d_edges, poc_real_defect_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # laplace_of_gauss — 2D `edges` op

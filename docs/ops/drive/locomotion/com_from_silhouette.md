@@ -8,7 +8,7 @@ gpu: なし
 examples: [consumer_hillco, walking_ops_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # com_from_silhouette — DRIVE `locomotion` op

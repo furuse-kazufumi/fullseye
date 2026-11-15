@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [glass_and_mirror_optics, poc_pv_thermal_survey, poc_thermal_radiometry, poc_water_transparent_media]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # beer_lambert_transmittance — OPTICS `glassbody` op

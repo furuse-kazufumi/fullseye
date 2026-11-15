@@ -9,7 +9,7 @@ gpu: なし
 examples: [gallery2d_segmentation, poc_segmentation_gauntlet, threshold_family_agreement]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # sk_niblack — 2D `segmentation` op

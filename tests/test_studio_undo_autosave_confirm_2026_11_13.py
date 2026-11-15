@@ -188,15 +188,18 @@ def test_layout_reset_overwrite_delete_and_clear_recent_ask(tmp_path, monkeypatc
     win, model = _launch(tmp_path, monkeypatch, start_mode="pipeline")
     try:
         ask = Asker(monkeypatch, answer=False)
-        # 配置のリセット
-        win._docks["operators"].hide()
+        # 配置のリセット(2026-11-15 見た目の枝を合わせた後: 戻る先は「画像 + コード」= 他のパネルは隠れる)
+        win._docks["operators"].show()
         _pump(0.1)
+        assert win._docks["operators"].isVisible()
         win._actions["reset_layout"].trigger() if "reset_layout" in win._actions else win._reset_layout_asked()
-        assert len(ask.calls) == 1 and not win._docks["operators"].isVisible()
+        _pump(0.1)
+        assert len(ask.calls) == 1 and win._docks["operators"].isVisible()      # 「いいえ」: 何も変わらない
         ask.answer = True
         win._reset_layout_asked()
         _pump(0.1)
-        assert len(ask.calls) == 2 and win._docks["operators"].isVisible()
+        assert len(ask.calls) == 2 and not win._docks["operators"].isVisible()  # 「はい」: 画像 + コードへ
+        assert win._docks["program"].isVisible()
         # 保存したレイアウト: 同じ名前で保存(上書き)・削除
         assert win._save_layout_preset("mine")
         first = win._preset_store["mine"]

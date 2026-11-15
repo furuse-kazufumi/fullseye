@@ -8,7 +8,7 @@ gpu: なし
 examples: [anim3d_lens_aberrations, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_solves_afocal, poc_noncoaxial_optics, poc_plenoptic_camera, poc_pocket_interreflection, poc_telecentric_metrology, studio_raytrace_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.0  # fullseye lib version this note was generated for
+version: 1.1.1  # fullseye lib version this note was generated for
 ---
 
 # trace_rays — OPTICS `scene` op
