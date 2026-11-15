@@ -363,7 +363,10 @@ def test_tools_list_declares_the_image_tools_with_closed_schemas(cat):
     for n in ("fullseye_list_samples", "fullseye_load_image", "fullseye_apply",
               "fullseye_inspect", "fullseye_pipeline"):
         assert n in tl and tl[n]["inputSchema"]["additionalProperties"] is False
-    assert tl["fullseye_apply"]["inputSchema"]["required"] == ["handle", "op"]
+    # ★2026-11-15(独立レビュー): 入力の無い台帳 op(abbe_number など)は fullseye_apply でも handle を省ける。
+    #   handle が要る op で無ければ、サーバが理由つきで断る(tests/test_mcp_review_fixes_2026_11_15.py)。
+    assert tl["fullseye_apply"]["inputSchema"]["required"] == ["op"]
+    assert "handle" in tl["fullseye_apply"]["inputSchema"]["properties"]
     # ★2026-11-13: 入力の無い台帳 op(照明の設計・合成の入口)だけの pipeline は handle を要らないので、
     #   required から handle を外した(受ける要求を広げるだけ。handle を渡す従来の要求はそのまま通る)。
     assert tl["fullseye_pipeline"]["inputSchema"]["required"] == ["stages"]

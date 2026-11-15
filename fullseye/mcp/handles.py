@@ -64,6 +64,100 @@ def _declared_pixels(path: str) -> int | None:
         return None
 
 
+def _tree_arrays(value) -> tuple[dict[int, np.ndarray], int]:
+    """値の中の配列(``id`` → 配列)と、配列でない部分の大きさ(バイト)。dict・list・tuple の入れ子を全部たどる。
+
+    ★2026-11-15(独立レビュー、PR #318): 以前は dict・list を ``len(repr(...))`` で数えていた。repr は大きい配列を
+    「...」で省くので、128 MB の配列を入れた表が 271 バイトになり、上限 128 MiB の置き場に 6 つ入れても追い出しが
+    起きなかった(実際は 768 MB を持ったまま)。配列は ``nbytes``、文字列は UTF-8 の長さ、他の葉は 8 バイトで数える。
+    同じ配列(同じ物)は 1 回だけ。再帰しない(深い入れ子でも RecursionError にならない)。"""
+    arrays: dict[int, np.ndarray] = {}
+    other = 0
+    seen: set[int] = set()
+    todo = [value]
+    while todo:
+        item = todo.pop()
+        if isinstance(item, np.ndarray):
+            arrays[id(item)] = item
+        elif isinstance(item, (dict, list, tuple)):
+            if id(item) in seen:
+                continue
+            seen.add(id(item))
+            if isinstance(item, dict):
+                for key, sub in item.items():
+                    other += len(str(key).encode("utf-8", "replace"))
+                    todo.append(sub)
+            else:
+                todo.extend(item)
+        elif isinstance(item, str):
+            other += len(item.encode("utf-8", "replace"))
+        elif isinstance(item, (bytes, bytearray)):
+            other += len(item)
+        else:
+            other += 8
+    return arrays, other
+
+
+def value_nbytes(value) -> int:
+    """値の大きさ(バイト): 入れ子の中の配列の ``nbytes`` の和(同じ配列は 1 回)+ 配列でない部分。
+
+    ハンドル置き場の上限と、pipeline の中間の上限(``server._value_nbytes``)が同じ数え方を使う。"""
+    arrays, other = _tree_arrays(value)
+    return sum(int(a.nbytes) for a in arrays.values()) + other
+
+
+class _Key:
+    """:func:`_hash_tree` の作業の列で、dict の鍵を値と区別する印。"""
+    __slots__ = ("key",)
+
+    def __init__(self, key):
+        self.key = key
+
+
+def _hash_tree(h, value) -> None:
+    """値の中身をハッシュに入れる。配列は dtype・形・バイト列ごと(repr で省かない)。dict は鍵の順に依らない。
+
+    ★2026-11-15(独立レビュー、PR #318): 以前は ``json.dumps(..., default=repr)`` で、repr は 1000 要素を超える
+    配列を「...」で省く。zeros(5000) と、[2500] だけ 1 にした配列の表が同じハンドルになり(dedup)、2 回目の
+    読み出しで前の値(0.0)が返った。型の名前も入れる(list と tuple、1 と 1.0、int の鍵と str の鍵を分ける)。"""
+    seen: set[int] = set()
+    todo = [value]
+    while todo:
+        item = todo.pop()
+        if isinstance(item, _Key):
+            key = item.key
+            h.update(("K%s:%r|" % (type(key).__name__, key)).encode("utf-8", "replace"))
+        elif isinstance(item, np.ndarray):
+            arr = np.ascontiguousarray(item)
+            h.update(("A%s|%s|" % (arr.dtype.str, arr.shape)).encode())
+            if arr.dtype.kind == "O":
+                h.update(repr(arr.tolist()).encode("utf-8", "replace"))      # tolist の repr は省かない
+            else:
+                h.update(arr.tobytes())
+        elif isinstance(item, (dict, list, tuple)):
+            if id(item) in seen:
+                h.update(b"R|")                                           # 同じ物の 2 回目(循環も止める)
+                continue
+            seen.add(id(item))
+            if isinstance(item, dict):
+                h.update(("D%d|" % len(item)).encode())
+                for key in sorted(item, key=lambda k: (type(k).__name__, str(k)), reverse=True):
+                    todo.append(item[key])
+                    todo.append(_Key(key))                                # 列の後ろから取るので、鍵 → 値の順に入る
+            else:
+                h.update(("%s%d|" % ("L" if isinstance(item, list) else "T", len(item))).encode())
+                todo.extend(reversed(item))
+        elif isinstance(item, str):
+            raw = item.encode("utf-8", "surrogatepass")
+            h.update(b"S%d|" % len(raw))
+            h.update(raw)
+        elif isinstance(item, (bytes, bytearray)):
+            h.update(b"B%d|" % len(item))
+            h.update(bytes(item))
+        else:
+            h.update(("V%s:%r|" % (type(item).__name__, item)).encode("utf-8", "replace"))
+
+
 class HandleStore:
     def __init__(self, roots: list[str] | None = None, *, max_items: int = 256,
                  max_bytes: int | None = None, thumb_dir: str | None = None):
@@ -85,6 +179,12 @@ class HandleStore:
         self._arr: dict[str, object] = {}
         self._evicted: set[str] = set()
         self._seq = 0
+        # ★2026-11-15: 上限は「実際に持っているバイト」で数える。pipeline は表を入れた後、表の中の 2-D の配列を
+        #   image のハンドルにも入れる(同じ配列)。ハンドルごとに足すと 2 回数え、上限の半分を超える配列の表は、
+        #   自分の欄のハンドルを入れた時に追い出される。配列は物ごとに 1 回だけ数える(参照の数を持つ)。
+        self._parts: dict[str, tuple[tuple[int, ...], int]] = {}       # ハンドル → (配列の id, 配列でない大きさ)
+        self._array_refs: dict[int, list] = {}                         # 配列の id → [配列, 持っているハンドルの数]
+        self._held = 0
 
     # ---------------------------------------------------------------- paths
     def display_path(self, path: str) -> str:
@@ -196,13 +296,29 @@ class HandleStore:
             h.update(np.ascontiguousarray(arr).tobytes())
             h.update(("%s|%s|%s" % (arr.shape, arr.dtype, sort)).encode())
         else:
-            import json
-            try:
-                payload = json.dumps(arr, sort_keys=True, ensure_ascii=False, default=repr)
-            except (TypeError, ValueError):
-                payload = repr(arr)
-            h.update((type(arr).__name__ + "|" + sort + "|" + payload).encode("utf-8"))
+            h.update((type(arr).__name__ + "|" + sort + "|").encode("utf-8"))
+            _hash_tree(h, arr)
         return PREFIX + h.hexdigest()[:16]
+
+    def _drop(self, handle: str) -> None:
+        """ハンドルを追い出す(参照の無くなった配列のバイトを、持っているバイトから引く)。"""
+        self._meta.pop(handle, None)
+        self._arr.pop(handle, None)
+        self._evicted.add(handle)
+        ids, other = self._parts.pop(handle, ((), 0))
+        self._held -= other
+        for aid in ids:
+            ref = self._array_refs.get(aid)
+            if ref is None:
+                continue
+            ref[1] -= 1
+            if ref[1] <= 0:
+                self._held -= int(ref[0].nbytes)
+                del self._array_refs[aid]
+
+    def _new_bytes(self, arrays: dict, other: int) -> int:
+        """この値を足すと増えるバイト(置き場がもう持っている配列は数えない)。"""
+        return other + sum(int(a.nbytes) for aid, a in arrays.items() if aid not in self._array_refs)
 
     def put(self, arr, *, sort: str, provenance: list) -> dict:
         if isinstance(arr, (list, tuple)) and sort in {"image","images","seq<image>","points","volume"}:
@@ -212,12 +328,12 @@ class HandleStore:
         if hid in self._meta:
             self._meta.move_to_end(hid)
             return dict(self._meta[hid], dedup=True)
-        size = int(arr.nbytes) if isinstance(arr,np.ndarray) else len(repr(arr).encode("utf-8"))
+        arrays, other = _tree_arrays(arr)
+        size = sum(int(a.nbytes) for a in arrays.values()) + other
         if size > self.max_bytes:
             raise HandleError("handle requires %d bytes, above byte limit %d" % (size,self.max_bytes))
-        while self._meta and sum(m.get("bytes",0) for m in self._meta.values()) + size > self.max_bytes:
-            old, _ = self._meta.popitem(last=False)
-            self._arr.pop(old, None); self._evicted.add(old)
+        while self._meta and self._held + self._new_bytes(arrays, other) > self.max_bytes:
+            self._drop(next(iter(self._meta)))
         self._seq += 1
         meta = {"handle": hid, "sort": sort,
                 "shape": list(arr.shape) if isinstance(arr, np.ndarray) else None,
@@ -227,10 +343,17 @@ class HandleStore:
                 "provenance": list(provenance), "seq": self._seq}
         self._meta[hid] = meta
         self._arr[hid] = arr
+        self._held += other
+        for aid, item in arrays.items():
+            ref = self._array_refs.get(aid)
+            if ref is None:
+                self._array_refs[aid] = [item, 1]                  # 配列を持つので、生きている間 id は使い回されない
+                self._held += int(item.nbytes)
+            else:
+                ref[1] += 1
+        self._parts[hid] = (tuple(arrays), other)
         while len(self._meta) > self.max_items:
-            old, _ = self._meta.popitem(last=False)
-            self._arr.pop(old, None)
-            self._evicted.add(old)
+            self._drop(next(iter(self._meta)))
         return dict(meta)
 
     def load(self, path: str, *, color: bool = False, force_color: bool = False) -> dict:
@@ -303,5 +426,5 @@ class HandleStore:
 
     def stats(self) -> dict:
         return {"alive": len(self._meta), "evicted": len(self._evicted),
-                "bytes":sum(m.get("bytes",0) for m in self._meta.values()),"max_bytes":self.max_bytes,
+                "bytes":self._held,"max_bytes":self.max_bytes,
                 "max_items": self.max_items, "roots": self.roots, "thumb_dir": self.thumb_dir}

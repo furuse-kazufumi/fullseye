@@ -829,6 +829,10 @@ JA_TERMS: tuple = (
     ("サーモグラフィ", "サーモグラフィー", "熱画像", "thermography", "thermal", "lockin"),
     ("赤外線", "infrared"), ("熱拡散", "thermal diffusion"), ("穴", "hole"), ("直径", "diameter"),
     ("精度", "accuracy", "uncertainty"), ("ムラ", "むら", "shading", "uneven background"),
+    # ★2026-11-15(独立レビュー): 「ピクセルをミリメートルに変換したい」で pixel_to_world / mm_per_px_from_reference が
+    #   上位 5 件に出ず、「各ピクセル」を含む sk_sauvola などが来た。片仮名の語に英語の語の橋を足す
+    #   (評価: tools/mcp_find_ops_eval.py。この問いは合わせるのに使ったので tuned と書いてある)。
+    ("ピクセル", "pixel", "px"), ("ミリメートル", "mm", "millimetre"),
 )
 _KATAKANA_WORD = __import__("re").compile("[\u30a0-\u30ff]+")
 #: 依頼の言い回し(何を探すかでなく、探したいという言い方)。検索語にすると「見つける」を含む要約が上位に来た。

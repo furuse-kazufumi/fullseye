@@ -37,7 +37,7 @@ from fssystem import get_system
 
 from .catalog import Catalog, CatalogError, SOURCES
 from .diagnose import side_by_side, stats_of, verdict_of
-from .handles import HandleError, HandleStore
+from .handles import HandleError, HandleStore, value_nbytes
 
 PROTOCOL_VERSION = "2025-06-18"
 SERVER_NAME = "fullseye"
@@ -268,7 +268,8 @@ TOOLS: dict[str, dict] = {
             "ハンドルの画像に op を 1 つ適用し、出力ハンドル + 数値統計 + 判定 + 劣化台帳を返す。"
             "既定は strict(op が劣化したら拒否)。allow_degraded=true で fail-soft を許し、"
             "degraded に何が起きたかを載せる。判定が ok でなければ入出力対比の小図を自動で付ける。"
-            "op の in_sort とハンドルの sort が違えば拒否する。"),
+            "op の in_sort とハンドルの sort が違えば拒否する。"
+            "入力の無い台帳 op(abbe_number・illumination_design など)は handle を省ける。"),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -283,7 +284,9 @@ TOOLS: dict[str, dict] = {
                 "parity_check": {"type":"boolean"},
                 "vision": _VISION,
             },
-            "required": ["handle", "op"],
+            # ★2026-11-15(独立レビュー): 入力の無い台帳 op も handle を必須にしていて、docs/MCP.md の
+            #   「apply から呼べる」と合わなかった。handle が要るかは op で決まるので、_apply / _apply_isolated で断る。
+            "required": ["op"],
             "additionalProperties": False,
         },
     },
@@ -981,29 +984,11 @@ def _array_pixels(value) -> int:
 
 
 def _value_nbytes(value) -> int:
-    """Bounded-accounting size for a pipeline intermediate, including nested arrays."""
-    seen: set[int] = set()
+    """Bounded-accounting size for a pipeline intermediate, including nested arrays.
 
-    def size(item) -> int:
-        oid = id(item)
-        if oid in seen:
-            return 0
-        if isinstance(item, np.ndarray):
-            seen.add(oid)
-            return int(item.nbytes)
-        if isinstance(item, dict):
-            seen.add(oid)
-            return sum(len(str(k).encode("utf-8")) + size(v) for k, v in item.items())
-        if isinstance(item, (list, tuple)):
-            seen.add(oid)
-            return sum(size(v) for v in item)
-        if isinstance(item, str):
-            return len(item.encode("utf-8"))
-        if isinstance(item, (bytes, bytearray)):
-            return len(item)
-        return 8
-
-    return size(value)
+    ハンドル置き場の上限と同じ数え方(:func:`fullseye.mcp.handles.value_nbytes`。2026-11-15 に置き場の側が
+    ``len(repr(...))`` で表の中の配列を数えていなかったので、1 つにまとめた)。"""
+    return value_nbytes(value)
 
 
 def _enforce_pixel_limit(value, where: str) -> None:
@@ -1162,7 +1147,8 @@ def _isolated_limits() -> dict:
     """隔離実行 1 回の上限(呼ぶたびに fssystem を読む)。"""
     return {"time_limit_s": float(get_system("mcp_op_time_limit_s")),
             "memory_limit_bytes": int(get_system("mcp_op_memory_limit_bytes")),
-            "max_pixels": int(get_system("mcp_stack_max_pixels"))}
+            "max_pixels": int(get_system("mcp_stack_max_pixels")),
+            "max_result_bytes": int(get_system("mcp_pipeline_max_intermediate_bytes"))}
 
 
 def _check_isolated_param(op: str, row: dict, value) -> str | None:
@@ -1489,8 +1475,11 @@ def _run_isolated_stage(edge: dict, args: list, params: dict):
     limits = _isolated_limits()
     for arg in args:
         _enforce_pixel_limit(arg, "input of %s" % edge["op"])
+    # ★2026-11-15(独立レビュー): 結果の大きさは作業プロセスの側で数えて断る(以前は .npy を全部読んでから
+    #   _enforce_pixel_limit が断っていた。親に同じくらいの一時的な確保と、一時フォルダへの書き込みが起きた)。
     job = {"ledger_module": executor["ledger_module"], "ledger_table": executor["ledger_table"],
-           "key": executor["key"], "data_names": list(executor.get("data_names") or [])}
+           "key": executor["key"], "data_names": list(executor.get("data_names") or []),
+           "max_elements": limits["max_pixels"], "max_result_bytes": limits["max_result_bytes"]}
     _log("isolated", edge["op"], "start", "time<=%.0fs" % limits["time_limit_s"],
          "memory<=%dMiB" % (limits["memory_limit_bytes"] >> 20))
     value, info = run_isolated(job, args, params, time_limit_s=limits["time_limit_s"],
@@ -2029,6 +2018,9 @@ def _apply_isolated(a: dict, edge: dict, cat: Catalog, store: HandleStore, *,
         raise ArgError("%s takes %d inputs (%s); fullseye_apply carries one handle. Use fullseye_pipeline with "
                        "stages=[{\"op\":%r,\"inputs\":[<handle>, ...]}]" % (
                            edge["op"], len(data_inputs), ", ".join(edge["inputs"]), edge["op"]))
+    if data_inputs and "handle" not in a:
+        raise ArgError("fullseye_apply.handle が要る: %s は入力 %s を取る(fullseye_load_image などでハンドルを作る。"
+                       "入力の無い台帳 op だけ handle を省ける)" % (edge["op"], ", ".join(edge["inputs"])))
     stage = {"op": edge["op"]}
     if params:
         stage["params"] = params
@@ -2049,6 +2041,9 @@ def _apply(a: dict, cat: Catalog, store: HandleStore, *,
             # ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)も fullseye_apply から呼べる(pipeline と同じ経路)
             return _apply_isolated(a, edge, cat, store, max_structured_bytes=max_structured_bytes)
     op = _resolve_op(a["op"], cat)
+    if "handle" not in a:
+        raise ArgError("fullseye_apply.handle が要る: %s は画像のハンドルを取る(fullseye_load_image などで作る。"
+                       "入力の無い台帳 op だけ handle を省ける)" % op.name)
     meta, arr = store.get(a["handle"])
     _check_sort(op, meta["sort"], prev="ハンドル %s" % meta["handle"])
     physical = physical_parameter_catalog().get(op.name, {})
@@ -2322,7 +2317,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             failed.add("stage:%d"%i)
             reason = "execution_failed"
             error = {"type":type(exc).__name__,"message":str(exc)[:300]}
-            if getattr(exc, "reason", None) in ("time_limit", "memory_limit"):
+            if getattr(exc, "reason", None) in ("time_limit", "memory_limit", "output_limit"):
                 # 隔離実行の上限: どの上限に当たったかと、その値を返す(黙って長く走らせない)
                 reason = "resource_limit"
                 error.update({"limit": exc.reason, **_isolated_limits()})

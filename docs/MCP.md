@@ -87,14 +87,18 @@ asyncio.run(main())
 - 台帳 op(光学・照明の設計、合成の入口、px→mm …)は `fullseye_pipeline` / `fullseye_apply` から、作業プロセス
   (`fullseye/mcp/opworker.py`)で走る。1 回の上限は `mcp_op_time_limit_s`(既定 30 秒)と
   `mcp_op_memory_limit_bytes`(既定 2 GiB、作業プロセスのメモリの増分)で、CPU だけ。作業プロセスは一時フォルダの外へ
-  書けず、Python と fullseye の外を読めず、ネットにも繋がらない。上限を超えた段は `resource_limit` で失敗する。
+  書けず、Python と fullseye の外を読めず(読めるのは Python の本体・site-packages・fullseye の置き場所・作業フォルダ。
+  `python -m` で起動した時の cwd は入らない)、ネットにも繋がらない。結果の配列の要素の数の和が `mcp_stack_max_pixels`
+  を超える時は、作業プロセスが書き出さずに断る。上限を超えた段は `resource_limit`(`limit` = `time_limit` /
+  `memory_limit` / `output_limit`)で失敗する。
 - 引数は台帳の仕様(数・整数・真偽・選択肢・短い名前)で検査し、合わなければ 1 段も走らせずに断る(丸めない)。
   `{"profile": "<名前>.<項目>"}` で書いた引数も、引いた値を同じ仕様で検査する。
 - **optional の依存**: 2,456 は optional の依存(scikit-image・Pillow・OpenCV …)を入れた環境での数。素の
   `pip install fullseye`(numpy と scipy だけ)では、隔離して走る 1,500 op のうち 1,478 が見本のとおりに走り、22 は
   依存が無いので失敗した段で断る(scikit-image 15・Pillow 6・zxing-cpp 1。2026-11-15 に wheel だけを入れた venv で実測。
   registry の側は数えていない)。誤り文の多くは入れる物の名前を言う(例 `needs the optional dependency zxing-cpp`)。
-- 入力の無い op だけの pipeline は handle が要らない(上の例)。結果は単位つきの表(`ranking`・`recommended` …)で、
+- 入力の無い op だけの pipeline は handle が要らない(上の例)。`fullseye_apply` でも、入力の無い台帳 op は `handle` を
+  省ける(例 `fullseye_apply(op="abbe_number", params={"material": "N-SF11"})`)。入力のある op は handle が要る。結果は単位つきの表(`ranking`・`recommended` …)で、
   表の中の 2-D の配列は `image` のハンドルになり、次の pipeline に渡せる。
 - どの op を載せるかは実測の台帳(`docs/mcp_isolated_ops.json`、`tools/mcp_isolated_probe.py`)が決める。載せなかった
   op は理由の符号を持ち、誤り文は「なぜ実行できないか」と「代わりに何が出来るか」(読む・Python から呼ぶ・同じ分類で
@@ -456,5 +460,5 @@ Function Hijacking(tool 選択の乗っ取り ASR 70〜100 %)—— と、TRIZ �
 公開する計画入口は `fullseye_plan`、`fullseye_describe`、`fullseye_choose` の3つだけである。
 未計測の制約は推測で補わず、fail-closedの理由として返す。`tools/list` に
 `{"profile":"minimal"}` を渡すか、`FULLSEYE_MCP_PROFILE=minimal`を設定すると実行に必要な10道具を公開する。
-`docs/mcp_context_benchmark.json`を生成する実測では、全24道具が4,308トークン、最小10道具が1,496トークンである。
+`docs/mcp_context_benchmark.json`を生成する実測では、全24道具が4,321トークン、最小10道具が1,496トークンである。
 未検証の設計パターンと重複した計画入口はMCP一覧に出さない。

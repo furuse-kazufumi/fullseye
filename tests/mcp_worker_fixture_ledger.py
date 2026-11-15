@@ -62,6 +62,11 @@ def _table(scale=2.0):
             "tuple": (1, 2.5, "x"), "flag": True, "nothing": None, "bad": float("nan")}
 
 
+def _zeros(rows=10, cols=10):
+    """表の中に (rows, cols) の配列を 1 つ入れて返す(結果の大きさの上限の試験)。"""
+    return {"image": np.zeros((int(rows), int(cols))), "rows": int(rows)}
+
+
 def _scratch_write():
     with open("inside.txt", "w", encoding="utf-8") as fh:        # 作業フォルダの中は書ける
         fh.write("ok")
@@ -72,4 +77,4 @@ def _scratch_write():
 TABLE = {name: {"func": func} for name, func in {
     "sleep": _sleep, "allocate": _allocate, "write_outside": _write_outside, "read_outside": _read_outside,
     "remove_outside": _remove_outside, "connect": _connect, "spawn": _spawn, "object_result": _object_result,
-    "table": _table, "scratch_write": _scratch_write}.items()}
+    "table": _table, "scratch_write": _scratch_write, "zeros": _zeros}.items()}

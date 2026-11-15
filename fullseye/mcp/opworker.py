@@ -13,6 +13,10 @@ MCP の ``fullseye_pipeline`` は、registry 層の op を同じプロセスで�
   50 ms の間の急増は次の周期で止まる。
 - **ファイルとネット**: 子は audit hook で、作業用の一時フォルダの外への書き込み・Python と fullseye の
   置き場所の外の読み込み・ソケット・子プロセスの起動を拒否する(``PermissionError``、fail-closed)。
+  読める場所は :func:`_read_roots`(Python の本体と site-packages・fullseye の置き場所・作業フォルダ)だけで、
+  親の ``sys.path`` の他の場所(``python -m`` で起動した時の cwd など)は入れない。
+- **結果の大きさ**: job の ``max_elements``(配列の要素の数の和)・``max_result_bytes`` を子が数え、超えたら
+  結果を書き出さずに断る(``reason="output_limit"``)。親も子の出力を読む前に、``.npy`` の見出しで数える。
 - **値の受け渡し**: JSON の木 + 数値配列だけ(pickle は使わない。object 配列・知らない型は拒否)。
 
 子は使い回す(import の時間を毎回払わない)。時間切れ・メモリ超過・異常終了のあとは作り直す。
@@ -102,8 +106,26 @@ def encode_tree(value, folder: str, _depth: int = 0, _counter: list | None = Non
                     % type(value).__name__)
 
 
-def decode_tree(node, folder: str, _depth: int = 0):
-    """:func:`encode_tree` の逆。形の崩れた木は ``ValueError``(信頼境界: 子の出力も検査する)。"""
+class ResultTooLarge(ValueError):
+    """子の出力の配列の要素の数が ``max_elements`` を超えた(読む前に断った)。"""
+
+
+def _spend(budget: list | None, count: int) -> None:
+    """配列の要素の数を予算から引く。超えたら :class:`ResultTooLarge`(読む前に断る)。"""
+    if budget is None:
+        return
+    budget[0] -= int(count)
+    if budget[0] < 0:
+        raise ResultTooLarge("the value has more than %d array elements in total (max_elements)" % budget[1])
+
+
+def decode_tree(node, folder: str, _depth: int = 0, *, max_elements: int | None = None, _budget: list | None = None):
+    """:func:`encode_tree` の逆。形の崩れた木は ``ValueError``(信頼境界: 子の出力も検査する)。
+
+    ``max_elements`` を渡すと、配列の要素の数の和がそれを超えた時点で ``ValueError``。``.npy`` は見出しの形で
+    数えてから読む(★2026-11-15、独立レビュー: 以前は全部読んでから、サーバが画素の上限で断っていた)。"""
+    if _budget is None and max_elements is not None:
+        _budget = [int(max_elements), int(max_elements)]
     if _depth > MAX_TREE_DEPTH + 2:
         raise ValueError("tree is nested too deeply")
     if node is None or isinstance(node, (bool, int, float, str)):
@@ -121,12 +143,13 @@ def decode_tree(node, folder: str, _depth: int = 0):
         dtype = np.dtype(node["dtype"])
         if dtype.kind not in _NUMERIC_KINDS:
             raise ValueError("unsupported scalar dtype")
-        return dtype.type(decode_tree(node["v"], folder, _depth + 1))
+        return dtype.type(decode_tree(node["v"], folder, _depth + 1, _budget=_budget))
     if tag == "a":
         dtype = np.dtype(node["dtype"])
         if dtype.kind not in _NUMERIC_KINDS:
             raise ValueError("unsupported array dtype")
         shape = tuple(int(x) for x in node["shape"])
+        _spend(_budget, int(np.prod(shape, dtype=np.int64)))
         raw = base64.b64decode(node["b64"].encode("ascii"), validate=True)
         if len(raw) != int(np.prod(shape, dtype=np.int64)) * dtype.itemsize:
             raise ValueError("array payload does not match its declared shape")
@@ -135,16 +158,58 @@ def decode_tree(node, folder: str, _depth: int = 0):
         name = node["file"]
         if not isinstance(name, str) or os.path.basename(name) != name or not name.endswith(".npy"):
             raise ValueError("malformed array file name")
-        arr = np.load(os.path.join(folder, name), allow_pickle=False)
+        path = os.path.join(folder, name)
+        if _budget is not None:
+            head = np.load(path, mmap_mode="r", allow_pickle=False)      # 見出しだけ(中身は読まない)
+            count = int(head.size)
+            del head                                                     # 写像を閉じる(Windows でファイルを消せるように)
+            _spend(_budget, count)
+        arr = np.load(path, allow_pickle=False)
         if arr.dtype.kind not in _NUMERIC_KINDS:
             raise ValueError("unsupported array dtype")
         return arr
     if tag == "d":
-        return {str(k): decode_tree(v, folder, _depth + 1) for k, v in node["v"].items()}
+        return {str(k): decode_tree(v, folder, _depth + 1, _budget=_budget) for k, v in node["v"].items()}
     if tag in ("l", "u"):
-        items = [decode_tree(v, folder, _depth + 1) for v in node["v"]]
+        items = [decode_tree(v, folder, _depth + 1, _budget=_budget) for v in node["v"]]
         return items if tag == "l" else tuple(items)
     raise ValueError("unknown tree tag %r" % (tag,))
+
+
+def result_size(value) -> tuple[int, int]:
+    """結果の木の ``(配列の要素の数の和, 配列のバイトの和)``。同じ配列は 1 回。再帰しない。"""
+    elements = nbytes = 0
+    seen: set[int] = set()
+    todo = [value]
+    while todo:
+        item = todo.pop()
+        if isinstance(item, (np.ndarray, dict, list, tuple)):
+            if id(item) in seen:
+                continue
+            seen.add(id(item))
+        if isinstance(item, np.ndarray):
+            elements += int(item.size)
+            nbytes += int(item.nbytes)
+        elif isinstance(item, dict):
+            todo.extend(item.values())
+        elif isinstance(item, (list, tuple)):
+            todo.extend(item)
+    return elements, nbytes
+
+
+def _result_limit_error(value, job: dict) -> str | None:
+    """結果が job の ``max_elements`` / ``max_result_bytes`` を超えれば理由の文、収まれば None。"""
+    max_elements, max_bytes = job.get("max_elements"), job.get("max_result_bytes")
+    if not max_elements and not max_bytes:
+        return None
+    elements, nbytes = result_size(value)
+    if max_elements and elements > int(max_elements):
+        return ("the op returned %d array elements, above the %d limit (mcp_stack_max_pixels); ask for a smaller "
+                "grid or window" % (elements, int(max_elements)))
+    if max_bytes and nbytes > int(max_bytes):
+        return ("the op returned %d bytes of arrays, above the %d limit (mcp_pipeline_max_intermediate_bytes)"
+                % (nbytes, int(max_bytes)))
+    return None
 
 
 # --------------------------------------------------------------------------- #
@@ -199,11 +264,7 @@ class _Sandbox:
 
     def __init__(self, tmp: str):
         self.tmp = os.path.realpath(tmp)
-        roots = {self.tmp}
-        for item in [sys.prefix, sys.base_prefix, sys.exec_prefix, sys.base_exec_prefix] + list(sys.path):
-            if item:
-                roots.add(os.path.realpath(item))
-        self.read_roots = tuple(sorted(roots))
+        self.read_roots = _read_roots(self.tmp)
         self.armed = False
 
     def _inside(self, path, roots) -> bool:
@@ -236,6 +297,35 @@ class _Sandbox:
                 return
             if not all(self._inside(p, (self.tmp,)) for p in paths):
                 raise PermissionError("the MCP op worker does not change files outside its scratch folder (%s)" % event)
+
+
+def _read_roots(tmp: str) -> tuple:
+    """子が読んでよい場所: 作業フォルダ・Python の本体(prefix と stdlib)・site-packages・fullseye の置き場所。
+
+    ★2026-11-15(独立レビュー、PR #318): 以前は親の ``sys.path`` を全部入れていた。``python -m fullseye.mcp`` は
+    cwd を ``sys.path[0]`` に置くので、ドライブの直下やホームで起動すると読み込みの制限が実質なくなった。``sys.path`` からは
+    site-packages / dist-packages という名前の場所だけを取る(Homebrew など prefix の外にある物のため)。"""
+    import site
+    import sysconfig
+    candidates = [tmp, sys.prefix, sys.base_prefix, sys.exec_prefix, sys.base_exec_prefix,
+                  # fullseye の置き場所 = fullseye パッケージと、台帳のモジュール(opsoptics …)が並ぶ場所
+                  os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))]
+    for key in ("stdlib", "platstdlib", "purelib", "platlib"):
+        try:
+            candidates.append(sysconfig.get_path(key))
+        except KeyError:
+            pass
+    try:
+        candidates += list(site.getsitepackages())
+    except AttributeError:                                   # 古い virtualenv の site
+        pass
+    try:
+        candidates.append(site.getusersitepackages())
+    except AttributeError:
+        pass
+    candidates += [p for p in sys.path if p and os.path.basename(os.path.normpath(p)).lower()
+                   in ("site-packages", "dist-packages")]
+    return tuple(sorted({os.path.realpath(p) for p in candidates if p}))
 
 
 def _call_ledger_op(job: dict, args: list, kwargs: dict):
@@ -308,9 +398,16 @@ def _child_main(tmp: str) -> int:
             elapsed = time.monotonic() - started
             state["active"] = False
             sandbox.armed = False
-            os.makedirs(out_dir, exist_ok=True)
-            reply = {"id": jid, "phase": "done", "ok": True, "value": encode_tree(result, out_dir),
-                     "elapsed_s": elapsed}
+            too_big = _result_limit_error(result, job)
+            if too_big is not None:
+                # ★2026-11-15(独立レビュー): 結果を .npy に書き出して親が全部読んでから断っていた。書かずに断る。
+                del result
+                reply = {"id": jid, "phase": "done", "ok": False,
+                         "error": {"type": "ResourceLimit", "message": too_big, "stage": "limit"}}
+            else:
+                os.makedirs(out_dir, exist_ok=True)
+                reply = {"id": jid, "phase": "done", "ok": True, "value": encode_tree(result, out_dir),
+                         "elapsed_s": elapsed}
         except MemoryError:
             os._exit(EXIT_MEMORY)
         except BaseException as exc:                               # noqa: BLE001 - op の失敗は結果として返す
@@ -407,8 +504,10 @@ class OpWorker:
     def run(self, job: dict, args: list, kwargs: dict, *, time_limit_s: float, max_rss: int):
         """*job*(``ledger_module`` / ``ledger_table`` / ``key`` / ``data_names``)を走らせ、``(値, 情報)`` を返す。
 
-        失敗は :class:`OpWorkerError`: ``time_limit`` / ``memory_limit`` / ``worker_died`` / ``op_error`` /
-        ``unsupported_value`` / ``startup``。時間切れ・メモリ超過・異常終了では子を捨てる。"""
+        job に ``max_elements`` / ``max_result_bytes`` があれば、結果の大きさを子が数えて断る。
+
+        失敗は :class:`OpWorkerError`: ``time_limit`` / ``memory_limit`` / ``output_limit`` / ``worker_died`` /
+        ``op_error`` / ``unsupported_value`` / ``startup``。時間切れ・メモリ超過・異常終了では子を捨てる。"""
         with self._lock:
             if self._proc is None or self._proc.poll() is not None:
                 self._stop()
@@ -463,12 +562,17 @@ class OpWorker:
                         continue
                     if not reply.get("ok"):
                         err = reply.get("error") or {}
+                        if err.get("stage") == "limit":
+                            raise OpWorkerError("output_limit", str(err.get("message", ""))[:400],
+                                                error_type=err.get("type"))
                         reason = "unsupported_value" if err.get("stage") == "prepare" else "op_error"
                         if err.get("type") == "TypeError" and "worker boundary" in str(err.get("message")):
                             reason = "unsupported_value"
                         raise OpWorkerError(reason, str(err.get("message", ""))[:400], error_type=err.get("type"))
                     try:
-                        value = decode_tree(reply["value"], out_dir)
+                        value = decode_tree(reply["value"], out_dir, max_elements=job.get("max_elements"))
+                    except ResultTooLarge as exc:
+                        raise OpWorkerError("output_limit", str(exc)) from None
                     except (ValueError, KeyError, OSError, TypeError) as exc:
                         raise OpWorkerError("unsupported_value", "the op result could not be read back: %s" % exc) from None
                     return value, {"elapsed_s": float(reply.get("elapsed_s", 0.0))}
