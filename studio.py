@@ -14148,7 +14148,7 @@ def build_window(model=None):
                 (strip_box, "strip_", studio_panels.STRIP_MODES, win._panels["strip_mode"]),
                 (flow_box, "overflow_", studio_panels.OVERFLOW_MODES, win._panels["overflow_mode"])):
             for _m in _modes:
-                _box.addItem(studio_panels.plain_text(win._actions[_prefix + _m].text()), _m)
+                _box.addItem(studio_panels.plain_text(win._actions[_prefix + _m].text()).split(": ", 1)[-1], _m)
             _box.setCurrentIndex(max(0, _box.findData(_now)))
             _box.currentIndexChanged.connect(
                 lambda _i, b=_box, p=_prefix: win._actions[p + b.currentData()].trigger())

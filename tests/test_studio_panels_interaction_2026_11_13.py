@@ -2231,8 +2231,8 @@ def test_the_settings_window_offers_tools_and_tabs_and_when_they_do_not_fit(tmp_
             for box, prefix, modes in ((strip_box, "strip_", studio_panels.STRIP_MODES),
                                        (flow_box, "overflow_", studio_panels.OVERFLOW_MODES)):
                 assert [box.itemData(i) for i in range(box.count())] == list(modes)
-                assert [box.itemText(i) for i in range(box.count())] == [
-                    studio_panels.plain_text(win._actions[prefix + m].text()) for m in modes]   # the menus' words
+                assert [box.itemText(i) for i in range(box.count())] == [   # the menus' words, without the label
+                    studio_panels.plain_text(win._actions[prefix + m].text()).split(": ", 1)[1] for m in modes]
                 assert box.currentData() == st["strip_mode" if prefix == "strip_" else "overflow_mode"]
                 seen.setdefault("boxes", 0)
                 seen["boxes"] += 1
