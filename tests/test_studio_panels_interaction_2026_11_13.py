@@ -749,6 +749,7 @@ def test_qss_has_checked_and_disabled_rules_for_toolbutton(tmp_path, monkeypatch
         assert on["background"] != base["background"] and p["accent"] in on["border"]       # pressed: its own look
         assert off["color"] == p["off"] != base["color"]                                   # disabled: the off colour
         assert off["background"] != base["background"]
+        assert off["border"] != base["border"] and "rgba(" in off["border"]                # ... and a faded frame
         assert rules["QPushButton:disabled"]["color"] == p["off"]
     app, win = _launch(monkeypatch, tmp_path / "s.ini")
     from PySide6 import QtCore
@@ -766,6 +767,11 @@ def test_qss_has_checked_and_disabled_rules_for_toolbutton(tmp_path, monkeypatch
         assert b.cursor().shape() == QtCore.Qt.PointingHandCursor
         disabled = [x for x in hand if not x.isEnabled()]
         assert disabled and all(x.cursor().shape() != QtCore.Qt.PointingHandCursor for x in disabled)
+        strips = studio_panels.all_strips(win)                              # a disabled scroll button keeps a frame
+        assert len(strips) >= 6
+        for s in strips:
+            rule = _qss_rules(s.styleSheet())["QToolButton#flow_back:disabled"]
+            assert rule["border-color"] not in ("transparent", "") and "rgba(" in rule["border-color"], rule
     finally:
         _close(app, win)
 

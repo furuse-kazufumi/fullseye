@@ -1227,13 +1227,14 @@ def flow_classes():
         def restyle(self, tr=None):
             if tr is not None:
                 self.tr = tr
-            p = studio_theme.PALETTES[studio_theme.current_name()]
+            p = dict(studio_theme.PALETTES[studio_theme.current_name()])
+            p["off_line"] = studio_theme.rgba("line", studio_theme.OFF_LINE_ALPHA)   # D03: a faded frame stays
             self.setStyleSheet(
                 "QToolButton#flow_back, QToolButton#flow_on { background:%(chrome)s; border:1px solid %(line)s; "
                 "border-radius:2px; padding:0px; margin:0px; }\n"
                 "QToolButton#flow_back:hover, QToolButton#flow_on:hover { border-color:%(accent)s; }\n"
                 "QToolButton#flow_back:disabled, QToolButton#flow_on:disabled { background:transparent; "
-                "border-color:transparent; }\n" % p)
+                "border-color:%(off_line)s; }\n" % p)
             self.b_back.setToolTip(self.tr(S_SCROLL_BACK)); self.b_back.setAccessibleName(self.tr(S_SCROLL_BACK))
             self.b_on.setToolTip(self.tr(S_SCROLL_ON)); self.b_on.setAccessibleName(self.tr(S_SCROLL_ON))
             self._set_arrow_icons()

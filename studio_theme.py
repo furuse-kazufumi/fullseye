@@ -252,6 +252,7 @@ def build_qss(theme=None, lang="en", level=None, text_px=16):
     d = DENSITY[normalise_density(level or _STATE["density"])]
     row = row_height(text_px, level)
     u = d["unit"]
+    off_line = rgba("line", OFF_LINE_ALPHA, theme)   # D03: the frame of a disabled control, faded
     latin = lang in ("en", "de")
     caps = "text-transform:uppercase; letter-spacing:1px;" if latin else ""
     gcaps = "letter-spacing:1px;" if latin else ""
@@ -283,7 +284,7 @@ QToolButton:checked {{ background:{p['bg1']}; border:1px solid {p['accent']}; co
 QToolButton[accent="true"] {{ background:{p['accent']}; color:{p['accent_ink']}; border:none; font-weight:700; }}
 QToolButton[accent="true"]:hover {{ background:{p['accent_hi']}; }}
 QToolButton:focus {{ border:1px solid {p['accent_hi']}; }}
-QToolButton:disabled {{ background:{p['bg1']}; border:1px solid {p['line']}; color:{p['off']}; }}
+QToolButton:disabled {{ background:{p['bg1']}; border:1px solid {off_line}; color:{p['off']}; }}
 QToolButton[accent="true"]:disabled {{ background:{p['bg2']}; color:{p['off']}; }}
 
 QDockWidget {{ titlebar-close-icon:none; titlebar-normal-icon:none; font-size:11px; color:{p['muted']}; }}
@@ -376,6 +377,10 @@ def fill(template, theme=None):
     """A per-widget style sheet written with {role} placeholders -> concrete colours."""
     p = PALETTES[normalise_theme(theme or _STATE["theme"])]
     return template.format(**p, mono=mono_stack(), chrome_rgba=rgba("chrome", 180, theme))
+
+
+#: D03: a disabled control's frame is the frame line at this opacity (0..255) - still a frame, plainly faded
+OFF_LINE_ALPHA = 110
 
 
 def rgba(role, alpha, theme=None):
