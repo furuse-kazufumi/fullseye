@@ -30,6 +30,10 @@
 
 1. 視差の採点: 有効画素の bad-2・平均誤差・密度。無効を誤りに数えた bad-2 も並べる(密度と正しさは
    別の数字)。OpenCV の SGBM と同じ画素で比べる。
+   ★この PoC の bad-2(印字・表・図では bad2)は、**1/4 解像度の画素で 2 px**(:data:`BAD_THR`)を超える割合。
+   原寸の画素では 8 px に当たる。Middlebury の公式の採点は常に原寸で数える(配布元の提出案内: "the
+   'official' evaluation is always at full resolution")ので、**公式の表の bad 2.0 とは別の、4 倍緩い閾値**
+   —— 原寸換算の呼び方なら「bad 8.0」。公式の表の数字と直接は比べられない(2026-11-13、作者と独立の検証の指摘)。
 2. 失敗する場所の地図: 真値から遮蔽(右のカメラから見えない画素)を幾何で数え、無地(7x7 の
    局所標準偏差が小さい)と見え方が変わる面(真値の対応で左右の明るさが食い違う = 反射・光沢の代理)
    に分け、区分ごとの bad-2 と無効の割合を出す。遮蔽の数え方は、MiddEval3 があれば配布元の遮蔽の印
@@ -42,7 +46,7 @@
    ``find_ncc_models``。同じ数のでたらめな画素で同じことをした対照群と比べる。
 7. 訓練 15 場面の表(MiddEval3 が手元にあれば測り直し、無ければ記録値)。
 
-所見(2026-11-08 の実測):
+所見(2026-11-08 の実測。bad-2 はどれも 1/4 解像度の画素で 2 px = 原寸換算 bad 8.0):
 
 * motorcycle で有効画素の bad-2 **4.67 %**・平均誤差 0.960 px・密度 90.0 %(OpenCV SGBM 7.27 % /
   1.315 px / 88.4 %)。無効を誤りに数えると 14.23 %(SGBM 18.00 %)。両方が有効な画素だけで比べると
@@ -120,8 +124,14 @@ BASELINE_MM = 193.001
 #: 探索範囲(真の最大視差 59.91 px を含む)と窓。
 MAX_DISP = 64
 WINDOW = 5
-#: bad-N のしきい [px](この分野の慣習)。
+#: bad-N のしきい [px]。★この PoC の画像は 1/4 解像度(:data:`RES_SCALE`)なので、2 px は原寸の 8 px に当たる。
+#: Middlebury の公式の表の bad 2.0(常に原寸で数える)とは別の、4 倍緩い閾値 —— 原寸換算の呼び方なら bad 8.0。
 BAD_THR = 2.0
+#: 原寸に対する縮小率(scikit-image 同梱の motorcycle も MiddEval3 の Q も 1/4)。
+RES_SCALE = 4
+#: 出力の表・図に添える注(bad2 の画素の単位)。
+BAD_NOTE = ("bad2 = 1/4 解像度の画素で %g px 超(原寸の %g px に相当。Middlebury の公式の表の bad 2.0 は原寸で数える"
+            "ので別の閾値 —— 原寸換算の呼び方なら bad %.1f)" % (BAD_THR, BAD_THR * RES_SCALE, BAD_THR * RES_SCALE))
 #: 無地とみなす 7x7 の局所標準偏差(灰色 0..1)。0.02 で切ると床のコンクリートまで入り、そこは
 #: bad2 1 % 前後でよく合う(章 2 の局所標準偏差の段を参照)。本当に崩れるのは最も平らな側だけ。
 FLAT_STD = 0.003
@@ -515,6 +525,7 @@ def section_middeval3(cv2, paths):
 
 
 def print_middeval3(rows, recorded=False):
+    print("   ※ " + BAD_NOTE)
     print("   %-12s %4s %7s %6s %8s %8s | %7s %6s %8s | %6s" % (
         "場面", "探索", "bad2有効", "密度", "bad2全nocc", "bad2全all", "SGBM有効", "密度", "SGBM全", "遮蔽一致"))
     for r in rows:
@@ -553,6 +564,7 @@ def main() -> None:
     t_cv = time.perf_counter() - t
     s_cv = score(Dcv, G)
     print("\n1. 視差(真値のある %d 画素)" % s_ms["n"])
+    print("   ※ " + BAD_NOTE)
     print("   binocular_disparity_ms  bad2 %.2f %%(有効だけ)  平均誤差 %.3f px  密度 %.1f %%  "
           "無効も誤り %.2f %%  (%.1f 秒)" % (s_ms["bad"], s_ms["avg"], s_ms["density"], s_ms["bad_all"], t_ms))
     print("   OpenCV SGBM(参照)    bad2 %.2f %%(有効だけ)  平均誤差 %.3f px  密度 %.1f %%  "
@@ -820,7 +832,7 @@ def main() -> None:
          "reconstruct_surface_stereo を斜めから"],
         title="実写のステレオ対から視差と面", ncols=2,
         caption="bad2 %.2f %%(有効だけ)/ 密度 %.1f %%。OpenCV SGBM は %.2f %% / %.1f %%。"
-                % (s_ms["bad"], s_ms["density"], s_cv["bad"], s_cv["density"]))
+                % (s_ms["bad"], s_ms["density"], s_cv["bad"], s_cv["density"]) + BAD_NOTE + "。")
 
     col = {"遮蔽": (0.85, 0.37, 0.0), "段差の近く": (0.94, 0.89, 0.26), "無地": (0.0, 0.45, 0.70),
            "見え方が変わる面": (0.8, 0.47, 0.65), "それ以外": (0.6, 0.6, 0.6)}
@@ -840,12 +852,14 @@ def main() -> None:
          "橙 = 誤り、黒 = 無効。bad2 [%%](SGBM): 段差 %.1f(%.1f)/ 光沢 %.1f(%.1f)/ 無地 %.1f(%.1f、負け)"
          % (by["段差の近く"][2]["bad"], by["段差の近く"][3]["bad"], by["見え方が変わる面"][2]["bad"],
             by["見え方が変わる面"][3]["bad"], by["無地"][2]["bad"], by["無地"][3]["bad"])],
-        title="壊れ方の地図(真値視差で採点): bad2 %.2f %%(SGBM %.2f %%)、無効も誤り %.1f %%(%.1f %%)、数十倍遅い"
+        title="壊れ方の地図(真値視差で採点。bad2 は 1/4 解像度の画素で 2 px 超 = 原寸換算 bad 8.0)\n"
+              "bad2 %.2f %%(SGBM %.2f %%)、無効も誤り %.1f %%(%.1f %%)、数十倍遅い"
               % (s_ms["bad"], s_cv["bad"], s_ms["bad_all"], s_cv["bad_all"]), ncols=1,
         caption="遮蔽は左右一致で無効に落ち、誤りは段差の近くと見え方が変わる面(光沢)に残る。無地では SGBM に負け、"
                 "両方が有効な画素の平均誤差も SGBM がわずかに小さい(%.3f 対 %.3f px)。処理時間は SGBM の数十倍(機械と負荷で変わる)。 "
                 % (e_ms.mean(), e_cv.mean())
-                + " / ".join("%s bad2 %.1f %% 無効 %.1f %%" % (r[0], r[2]["bad"], 100 - r[2]["density"]) for r in cls_rows))
+                + " / ".join("%s bad2 %.1f %% 無効 %.1f %%" % (r[0], r[2]["bad"], 100 - r[2]["density"]) for r in cls_rows)
+                + "。" + BAD_NOTE + "。")
 
     wr0, wr1, wc0, wc1 = 230, 400, 110, 310
     crop = np.dstack([L] * 3)[wr0:wr1, wc0:wc1]
@@ -879,13 +893,14 @@ def main() -> None:
         "classes", ["区分", "画素 [%]", "ms bad2 [%]", "ms 無効 [%]", "SGBM bad2 [%]", "SGBM 無効 [%]"],
         [[r[0], "%.1f" % r[1], "%.2f" % r[2]["bad"], "%.1f" % (100 - r[2]["density"]), "%.2f" % r[3]["bad"],
           "%.1f" % (100 - r[3]["density"])] for r in cls_rows],
-        title="区分ごとの誤りと無効(motorcycle)", caption="遮蔽は真値から幾何で数えた。")
+        title="区分ごとの誤りと無効(motorcycle、1/4 解像度)", caption="遮蔽は真値から幾何で数えた。" + BAD_NOTE + "。")
     figs.save_table(
         "middeval3", ["場面", "bad2 有効", "密度", "無効も誤り(nocc)", "SGBM bad2", "SGBM 密度"],
         [[r[0], "%.2f" % r[2], "%.1f" % r[3], "%.2f" % r[4], "%.2f" % r[6], "%.1f" % r[7]] for r in mrows],
-        title="MiddEval3 訓練 15 場面(1/4、nocc)", caption="同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。")
+        title="MiddEval3 訓練 15 場面(1/4 解像度・nocc。bad2 の 2 px = 原寸の 8 px)",
+        caption="同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。" + BAD_NOTE + "。")
 
-    print("\n所見")
+    print("\n所見(" + BAD_NOTE + ")")
     print("  * 有効画素の bad2 %.2f %%・密度 %.1f %%(SGBM %.2f %% / %.1f %%)。無効を誤りに数えると %.2f %%。"
           % (s_ms["bad"], s_ms["density"], s_cv["bad"], s_cv["density"], s_ms["bad_all"]))
     print("  * 遮蔽は %.0f %% が無効に落ち、段差の近くと見え方が変わる面は誤りとして残る(bad2 %.1f / %.1f %%)。"
