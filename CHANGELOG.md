@@ -13,7 +13,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 展示ページ(`docs/view2026/`)は、台帳を引いている所だけを道具で作り直した(`tools/build_view2026_featured_batch.py` →
 `tools/gen_view2026_story_gifs.py` → `tools/gen_view2026_pages.py`): 目玉のカード 5 枚(OCT・機材選びの地図・テレセン・光弾性・仮想 SEM)の
 lead と説明、図を差し替えた 6 本(AI の採点・瓶・光弾性・ステレオ・TUM・クルミ)の story GIF と台帳、8 言語のページ。説明の see / num の
-切れ目は前と同じ文の頭のまま。ページの題・並び・手で書いた文は別の便(ViEW2026 の本ページ)で直す。
+切れ目は前と同じ文の頭のまま。ページの題・並び・手で書いた文は #313(master に入った)の側。その後、台帳を引かない手書きの所のうち、AI の採点の題・光弾性の出典・一覧(all)の TUM とクルミの題だけをこの PR で直した(2026-11-15、独立レビューの指摘)。
 
 - `poc_ai_built_inspection_scored`: ひび割れは画像の統計 1 つ(中央値 − 1 パーセンタイル)で解ける(AUROC 0.999)。開発用 6 枚で
   閾値を決めた自明な基準線(検出 0.995・誤報 0.045)を記録・表・図・要約に足した。AI のどのレシピもこれを超えない。要約は主の実験

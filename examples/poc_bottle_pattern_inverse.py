@@ -455,7 +455,8 @@ def chapter_model_error():
         for i in range(N_ECC):                                   # 種は試行の番号で決める = 同心と偏心で同じ雑音の実現
             r_ = fit(observe(mm_, np.random.default_rng(5000 + i)), x, restarts=3, rows_per_section=1)
             out.append((r_["n_glass"] - N_G, r_["wall_mm"] - T_B, r_["residual_rms_mm"], float(bool(r_["separated"])),
-                        float(bool(r_["converged"]))))
+                        float(bool(r_["converged"])), float("wall_mm" in r_.get("poorly_determined", ())),
+                        float(r_["sigma"]["wall_mm"] / r_["wall_mm"])))
         return np.array(out)
 
     t0_, t3_ = _full_trials(0.0), _full_trials(0.3)
@@ -470,14 +471,21 @@ def chapter_model_error():
             int(t_[:, 3].sum()), N_ECC, int(t_[:, 4].sum()), N_ECC))
     print("     偏心 − 同心(同じ雑音の実現の差の平均): Δn_g %+.4f(σ の %.1f 倍)、Δ壁 %+.4f mm(σ の %.1f 倍)、残差の比 %.3f" % (
         sh_g, abs(sh_g) / sig_g, sh_w, abs(sh_w) / sig_w, res_ratio))
+    # 2026-11-15(独立レビューの指摘): 旗 poorly_determined は壁厚を名指しする。気づけないのは偏りの向きと大きさ。
+    flag0, flag3 = int(t0_[:, 5].sum()), int(t3_[:, 5].sum())
+    rel_w = float(np.median(np.concatenate([t0_[:, 6], t3_[:, 6]])))
+    print("     旗 poorly_determined が壁厚を名指しした回数: 同心 %d / %d・偏心 %d / %d(壁厚の予測 1σ / 値 の中央 %.3f)"
+          "。名指しはするが、偏りの向きと大きさは知らせない" % (flag0, N_ECC, flag3, N_ECC, rel_w))
     gate("雑音なしどうし: 満の瓶の奥行き方向の偏心 0.3 mm(壁厚の 20 %)は n_glass を 0.05 超動かし、converged・separated は真のままだが、残差は同心の 10 倍超に増える = 雑音が無ければ残差で見える",
          abs(f3[3]) > 0.05 and f3[5] and f3[6] and f3[4] > 10.0 * max(f0[4], 1e-5), "Δn_g %+.3f、残差 %.4f mm(同心は %.1e mm)" % (f3[3], f3[4], f0[4]))
     gate("同じ雑音どうし: 満の瓶の同じ偏心は、残差では同心と区別できない(残差の比が 1.1 未満)= 残差では検出できない(限界の実測)",
          res_ratio < 1.1, "残差の比 %.3f(%d 回ずつ)" % (res_ratio, N_ECC))
-    gate("同じ雑音どうし: n_glass の偏り(%d 回の平均)は 1 回の当てはめの雑音の σ の 2 倍未満 = 1 回の観測では σ に埋もれる(雑音なしの %+.3f は、雑音ありでは現れない)。separated は同心でも偏心でも大半が偽(満の瓶では n_glass を分けられないと旗が言っている)" % (N_ECC, f3[3]),
+    gate("同じ雑音どうし: n_glass の偏り(%d 回の平均)は 1 回の当てはめの雑音の σ の 2 倍未満 = 1 回の当てはめの σ と同程度(雑音なしの %+.3f は、雑音ありでは現れない)。separated は同心でも偏心でも大半が偽(満の瓶では n_glass を分けられないと旗が言っている)" % (N_ECC, f3[3]),
          abs(sh_g) < 2.0 * sig_g and sep0 < 0.5 and sep3 < 0.5, "Δn_g %+.4f、σ %.4f、separated %.0f %% / %.0f %%" % (sh_g, sig_g, 100 * sep0, 100 * sep3))
-    gate("同じ雑音どうし: 壁厚の推定は偏心で雑音の σ の 2 倍超偏る(残差は変わらないので、この偏りには気づけない)",
-         abs(sh_w) > 2.0 * sig_w, "Δ壁 %+.4f mm、σ %.4f mm(%.1f 倍)" % (sh_w, sig_w, abs(sh_w) / sig_w))
+    gate("同じ雑音どうし: 壁厚の推定は偏心で雑音の σ の 2 倍超偏る。旗は壁厚を毎回「決まっていない」と名指しするが、偏りの向きと大きさは知らせない(残差も変わらない)",
+         abs(sh_w) > 2.0 * sig_w and flag0 == N_ECC and flag3 == N_ECC,
+         "Δ壁 %+.4f mm、σ %.4f mm(%.1f 倍)、旗の名指し 同心 %d / %d・偏心 %d / %d" % (
+             sh_w, sig_w, abs(sh_w) / sig_w, flag0, N_ECC, flag3, N_ECC))
     gate("半分の瓶(空の区間もある)では同じ偏心の残差は同心の 3 倍以上に増えて気づけるが、n_glass は 0.02 超動き separated は真のまま(旗は偏心を知らない)",
          abs(h3[3]) > 0.02 and h3[4] > 3.0 * bh and h3[6], "Δn_g %+.3f、残差 %.4f / %.4f mm" % (h3[3], h3[4], bh))
     gate("横方向の偏心 0.3 mm は左右非対称なので残差が同心の 5 倍を越えて見える(検出できる偏心と、できない偏心がある)", l3[4] > 5.0 * bh, "残差 %.4f / %.4f mm" % (l3[4], bh))

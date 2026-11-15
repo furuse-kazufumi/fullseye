@@ -32000,7 +32000,7 @@
       "still": "articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png",
       "alt": {
         "ja": "カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。右端の跳ねは分割の直後の組 16〜18 で ICP が外れた所。比べる相手は等速(直前の組の真値の相対姿勢を使う oracle)の鎖で、これは真値を 1 組ぶん遅らせた物なので、空間に描くと真値の線にほぼ重なる(ATE は同じ時刻どうしの差なので 1 組ぶんの動きが残る。線は描いていない)。「合わせない」の ATE 156 mm は真値の経路の広がりそのもので、比べる相手にならない。1 系列 32 枚の結果。",
-        "en": "On one public desk depth sequence, frame-to-frame alignment was checked against motion-capture truth. Error fell to 0.42 of no alignment on one split, but the gain over a steady-speed guess hinged on outlier trimming and the split. Plane residuals in small windows grew with distance, but no square law was confirmed."
+        "en": "On one public desk depth sequence, frame-to-frame alignment was checked against motion-capture truth. Error fell below no alignment, but the gain over a steady-speed guess hinged on outlier trimming and on which of 8 splits was used. Plane residuals in small windows grew with distance, but no square law was confirmed."
       }
     },
     "poc_light_section_step_weld_floor": {
@@ -34320,7 +34320,7 @@
       "still": "articles/assets/poc/poc_ai_built_inspection_scored/01_crack_real.png",
       "alt": {
         "ja": "コンクリートのひび割れ(試験画像、塗り = 検出)。欠陥の画像は NG なら ○、良品は OK なら ○。LLM の列は最後まで走ったレシピのうち平衡正解率が最良の 1 本。良品の段は試験の最初の良品(どの列にも寄せていない)。検出は表示のため 2 画素太らせた。出典表示: Özgenel, Ç. F. (2019). Concrete Crack Images for Classification. Mendeley Data, v2. doi:10.17632/5y9wdsg2zt.2. CC BY 4.0; converted to gray",
-        "en": "A local LLM got a task in natural language and assembled inspection recipes through MCP alone. Scored per image on 400 public crack images with their source labels, very few of its runs sorted them, and none managed the candle stains. Cloud LLM runs had unmatched conditions, and none reached the existing recipes."
+        "en": "A local LLM was given a task in words and built inspection recipes through MCP alone, scored on public real images. Few runs beat chance on cracks, and none reached a one-statistic baseline (AUROC 0.999). None worked for candle stains, and cloud LLM runs, under unmatched conditions, stayed below the existing recipes."
       }
     },
     "poc_equipment_selection_map": {
