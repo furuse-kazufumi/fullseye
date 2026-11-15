@@ -614,7 +614,7 @@ def test_icon_rows_turn_with_the_shape_of_their_panel(tmp_path, monkeypatch):
         win.resize(1280, 720); _pump(app, 0.2)
         strips = {e["key"]: e for e in win._panels["strips"]}
         assert {k: len(e["strip"].items()) for k, e in strips.items() if k in win._docks} == {
-            "program": 6, "operators": 3, "pipeline": 6, "variables": 2, "ab": 3}
+            "program": 6, "operators": 3, "pipeline": 9, "variables": 2, "ab": 3}   # pipeline: + open / save / export
         entry = strips["variables"]
         s = entry["strip"]
         dock = win._docks["variables"]
@@ -628,7 +628,8 @@ def test_icon_rows_turn_with_the_shape_of_their_panel(tmp_path, monkeypatch):
         assert len(xs) == 1 and min(xs) < entry["body"].mapTo(dock, QtCore.QPoint(0, 0)).x()   # one column, on the left
         assert not entry["home"].isVisible()                                # the row it left gives its height back
         studio_panels.set_strip_mode(win, "top"); _pump(app, 0.3)           # the user fixes it on top
-        assert entry["side"] == "top" and s.orientation == "h" and entry["home"].isVisible()
+        assert entry["side"] == "top" and s.orientation == "h" and not entry["home"].isVisible()   # the empty row
+        assert s.mapTo(dock, QtCore.QPoint(0, s.height())).y() <= entry["body"].mapTo(dock, QtCore.QPoint(0, 0)).y()
         studio_panels.set_strip_mode(win, "auto"); _pump(app, 0.3)
         assert entry["side"] == "left"
         win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock); _pump(app, 0.4)   # moved back: tall again

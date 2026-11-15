@@ -76,17 +76,17 @@ def test_a_panel_the_user_closed_stays_closed_next_time(tmp_path, monkeypatch):
     ini = tmp_path / "fresh.ini"
 
     def use(win, app):
-        win._panels["buttons"]["operators"].click()      # 出したパネルは次回も出ている
-        win._panels["buttons"]["pipeline"].click()
+        for key in ("operators", "pipeline", "variables"):
+            win._panels["buttons"][key].click()          # 出したパネルは次回も出ている
         _pump(app, 0.2)
-        win._docks["program"].close()
+        win._docks["variables"].close()                  # 利用者が閉じた(コードは主役で閉じられない: D104)
         _pump(app, 0.2)
 
     _launch(monkeypatch, ini, then=use)
     second = _launch(monkeypatch, ini)
-    assert not second["program"]
-    assert second["operators"] and second["pipeline"]
-    assert not second["variables"] and not second["display"]      # 出していない物は出てこない
+    assert not second["variables"]
+    assert second["operators"] and second["pipeline"] and second["program"]
+    assert not second["display"]                                  # 出していない物は出てこない
 
 
 def test_switching_tabs_does_not_hide_the_tab_behind(tmp_path, monkeypatch):
