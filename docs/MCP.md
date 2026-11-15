@@ -35,6 +35,12 @@ claude mcp add fullseye -- py -3.11 -m fullseye.mcp
 
 `pip install fullseye` した環境でも checkout でも同じ。checkout なら `docs/ops` の
 ノート本文と掃引図まで届く(cwd は問わない —— パッケージの位置から解決する)。
+
+クライアントはサーバをプロジェクトのフォルダ(cwd)で起動する。`python -m` は cwd を `sys.path` の先頭に置くので、
+そこにある同じ名前の `.py`(`scipy.py` など)を本物より先に読まないよう、サーバは `-m fullseye.mcp` で起動した時に
+cwd を `sys.path` から外す(fullseye の置き場所そのものが cwd の時は外さない。2026-11-15)。cwd に `fullseye/` という
+名のフォルダがある場合まで防ぐには、`-P`(Python 3.11 の safe path)を付けて登録する:
+`claude mcp add fullseye -- py -3.11 -P -m fullseye.mcp`。
 読み込める画像は既定で**同梱サンプルだけ**。自分の画像を読ませるには根を足す:
 
 ```
@@ -44,7 +50,9 @@ set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP
 ## 公式の mcp Python クライアントで確かめる(initialize → tools/list → tools/call)
 
 サーバは MCP の stdio の決まり(1 行に 1 通の JSON。Claude Code・Claude Desktop・公式 SDK が使う形)と、
-従来の Content-Length の枠の両方に応える(1.1.1 から)。公式の `mcp` Python クライアント(1.23.3 で確認)で、
+従来の Content-Length の枠の両方に応える(1.1.1 から)。1 通は 64 MiB まで(どちらの枠も)、Content-Length 枠の
+見出しは 16 行・8 KiB まで(同じ名前は 1 回だけ)。JSON に無い `NaN` / `Infinity` と重複した鍵は -32700、
+id は文字列・数・null だけ(他は -32600)。公式の `mcp` Python クライアント(1.23.3 で確認)で、
 次の例が initialize → tools/list(24 道具)→ tools/call(照明の設計)まで通る:
 
 ```python
@@ -88,9 +96,11 @@ asyncio.run(main())
   (`fullseye/mcp/opworker.py`)で走る。1 回の上限は `mcp_op_time_limit_s`(既定 30 秒)と
   `mcp_op_memory_limit_bytes`(既定 2 GiB、作業プロセスのメモリの増分)で、CPU だけ。作業プロセスは一時フォルダの外へ
   書けず、Python と fullseye の外を読めず(読めるのは Python の本体・site-packages・fullseye の置き場所・作業フォルダ。
-  `python -m` で起動した時の cwd は入らない)、ネットにも繋がらない。結果の配列の要素の数の和が `mcp_stack_max_pixels`
-  を超える時は、作業プロセスが書き出さずに断る。上限を超えた段は `resource_limit`(`limit` = `time_limit` /
-  `memory_limit` / `output_limit`)で失敗する。
+  `python -m` で起動した時の cwd は入らない)、ネットにも繋がらない。作業プロセスは `-I` で起動し、import できるのも
+  同じ場所だけ(台帳のモジュールは fullseye の置き場所の中の物だけ)。結果の値の数(配列の要素 + 文字列・数・
+  dict / list の数)が `mcp_stack_max_pixels` を、大きさ(配列のバイト + 文字列の長さ)が
+  `mcp_pipeline_max_intermediate_bytes` を超える時は、作業プロセスが書き出さずに断る。メモリの上限は結果を送り
+  終えるまで効く。上限を超えた段は `resource_limit`(`limit` = `time_limit` / `memory_limit` / `output_limit`)で失敗する。
 - 引数は台帳の仕様(数・整数・真偽・選択肢・短い名前)で検査し、合わなければ 1 段も走らせずに断る(丸めない)。
   `{"profile": "<名前>.<項目>"}` で書いた引数も、引いた値を同じ仕様で検査する。
 - **optional の依存**: 2,456 は optional の依存(scikit-image・Pillow・OpenCV …)を入れた環境での数。素の
@@ -193,6 +203,7 @@ PoC の結果を、自己完結した 1 枚の HTML(タブ・正直なバッジ�
 
 * `spec` は **untrusted として信頼境界で再検証**する。形が違う・NaN・未知のバッジ(`passed` / `limit` / `null` 以外)・未知の `kind`・空の `tabs`・要求した言語の訳が 1 つでも欠ける、は `-32602`(欠けた鍵を全部並べる。他の言語で補わない)。
 * 書き先は MCP のサンドボックスの作業ディレクトリだけ(`name` は英数字と `_` `-`、`..` や `/` は拒否)。返り値の `resource_link`(`text/html`)でファイルを受け取る。
+* 作業ディレクトリに持つビューアは新しい物から 64 枚・512 MiB まで。超えると古い物から消す(同じ `name` は書き換え)。1 枚で 512 MiB を超える物は書かずに `-32602`。
 * 対応言語は ja / en / zh / tw / ko / de / hi / fr。URL の `?lang=xx` と `?tab=<id>` で開く言語とタブを選べる。
 
 ## 文字を直す(`fullseye_fix_text`)の呼び出し例

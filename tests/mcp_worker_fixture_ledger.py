@@ -78,3 +78,29 @@ TABLE = {name: {"func": func} for name, func in {
     "sleep": _sleep, "allocate": _allocate, "write_outside": _write_outside, "read_outside": _read_outside,
     "remove_outside": _remove_outside, "connect": _connect, "spawn": _spawn, "object_result": _object_result,
     "table": _table, "scratch_write": _scratch_write, "zeros": _zeros}.items()}
+
+
+def _big_string(chars=1000):
+    """``chars`` 文字の文字列(作業プロセスの結果の大きさの上限が、配列でない値も数えるかの試験)。"""
+    return {"text": "x" * int(chars)}
+
+
+def _float_list(count=1000):
+    """``count`` 個の Python の float の list(数の list も上限に数えるかの試験)。"""
+    return {"rows": [float(i) for i in range(int(count))]}
+
+
+def _nul_string(chars=1000):
+    """NUL 文字の列。JSON では 1 文字が ``\\u0000`` の 6 文字になる(結果を JSON にする間の見張りの試験)。"""
+    return {"text": "\x00" * int(chars)}
+
+
+def _interpreter():
+    """作業プロセスの Python の起動のされ方(``-I`` か)・``sys.path``・作業フォルダ。ファイルは読まない。"""
+    import sys
+    return {"isolated": int(sys.flags.isolated), "path": list(sys.path), "cwd": os.getcwd()}
+
+
+TABLE.update({name: {"func": func} for name, func in {
+    "big_string": _big_string, "float_list": _float_list, "nul_string": _nul_string,
+    "interpreter": _interpreter}.items()})

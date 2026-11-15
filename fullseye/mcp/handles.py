@@ -17,6 +17,7 @@ fail-closed:
 from __future__ import annotations
 
 import hashlib
+import math
 import os
 import tempfile
 from collections import OrderedDict
@@ -28,6 +29,13 @@ from .catalog import ROOT
 SAMPLE_DIR = os.path.join(ROOT, "studio_assets", "sample_images")
 IMAGE_EXT = (".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".npy")
 PREFIX = "fullseye://img/"
+
+#: 追い出したハンドルの名前を覚えておく数の下限(実際は ``max(この数, 4 × max_items)``)。これより古い物は
+#: 「知らないハンドル」として断る(断る事は同じで、理由の文が違うだけ)。
+EVICTED_HISTORY_MIN = 1024
+#: ``fullseye_write_viewer`` が書いた HTML を置き場に持つ上限(枚数とバイト)。超えたら古い物から消す。
+MAX_VIEWER_FILES = 64
+MAX_VIEWER_BYTES = 512 * 1024 * 1024
 
 
 class HandleError(ValueError):
@@ -41,14 +49,28 @@ def default_roots() -> list[str]:
     return roots
 
 
+def _npy_header(path: str) -> tuple[tuple[int, ...], np.dtype]:
+    """``.npy`` の見出し(形と dtype)だけを読む。中身は読まない(pickle も使わない)。読めなければ ValueError。"""
+    from numpy.lib import format as npformat
+    with open(path, "rb") as fh:
+        version = npformat.read_magic(fh)
+        if version == (1, 0):
+            shape, _fortran, dtype = npformat.read_array_header_1_0(fh)
+        elif version in ((2, 0), (3, 0)):
+            shape, _fortran, dtype = npformat.read_array_header_2_0(fh)
+        else:
+            raise ValueError("知らない .npy の版 %r" % (version,))
+    return tuple(int(n) for n in shape), np.dtype(dtype)
+
+
 def _declared_pixels(path: str) -> int | None:
     """画像ファイルの見出しが宣言する画素数(高さ × 幅)。読めなければ None(その時は復号の後の上限が効く)。"""
     import struct
     ext = os.path.splitext(path)[1].lower()
     try:
         if ext == ".npy":
-            arr = np.load(path, mmap_mode="r", allow_pickle=False)
-            return int(np.prod(arr.shape[:2], dtype=np.int64)) if arr.ndim >= 2 else int(arr.size)
+            shape, _dtype = _npy_header(path)
+            return math.prod(shape[:2]) if len(shape) >= 2 else math.prod(shape)
         with open(path, "rb") as fh:
             head = fh.read(33)
         if head[:8] == b"\x89PNG\r\n\x1a\n" and head[12:16] == b"IHDR":
@@ -160,7 +182,8 @@ def _hash_tree(h, value) -> None:
 
 class HandleStore:
     def __init__(self, roots: list[str] | None = None, *, max_items: int = 256,
-                 max_bytes: int | None = None, thumb_dir: str | None = None):
+                 max_bytes: int | None = None, thumb_dir: str | None = None,
+                 max_viewer_files: int = MAX_VIEWER_FILES, max_viewer_bytes: int = MAX_VIEWER_BYTES):
         from fssystem import get_system
         self.roots = [os.path.realpath(r) for r in (roots if roots is not None else default_roots())]
         self.max_items = int(max_items)
@@ -177,7 +200,16 @@ class HandleStore:
             self._cleanup = weakref.finalize(self, shutil.rmtree, self.thumb_dir, True)
         self._meta: OrderedDict[str, dict] = OrderedDict()
         self._arr: dict[str, object] = {}
-        self._evicted: set[str] = set()
+        # ★2026-11-15(外部レビュー、Codex): 追い出したハンドルの名前を集合に足し続けていた(max_items=4 で 5,000 回
+        #   入れると 4,996 件)。新しい物から max_evicted 件だけ覚える。追い出した時に、そのハンドルの小図も消す
+        #   (以前は残り続けた)。名前(sha256 の先頭 64 bit)が同じでも中身の digest が違えば、dedup と答えずに断る。
+        self._evicted: OrderedDict[str, None] = OrderedDict()
+        self.max_evicted = max(EVICTED_HISTORY_MIN, 4 * self.max_items)
+        self._digests: dict[str, str] = {}                              # ハンドル → 中身の sha256(全桁)
+        self._files: dict[str, set[str]] = {}                           # ハンドル → そのハンドルの小図
+        self._viewers: OrderedDict[str, int] = OrderedDict()            # viewer の HTML → バイト(古い順)
+        self.max_viewer_files = int(max_viewer_files)
+        self.max_viewer_bytes = int(max_viewer_bytes)
         self._seq = 0
         # ★2026-11-15: 上限は「実際に持っているバイト」で数える。pipeline は表を入れた後、表の中の 2-D の配列を
         #   image のハンドルにも入れる(同じ配列)。ハンドルごとに足すと 2 回数え、上限の半分を超える配列の表は、
@@ -290,7 +322,8 @@ class HandleStore:
 
     # ---------------------------------------------------------------- store
     @staticmethod
-    def _hid(arr, sort: str = "") -> str:
+    def _digest(arr, sort: str = "") -> str:
+        """中身と型(sort)の sha256(全桁)。ハンドルの名前はこの先頭 16 桁。"""
         h = hashlib.sha256()
         if isinstance(arr, np.ndarray):
             h.update(np.ascontiguousarray(arr).tobytes())
@@ -298,13 +331,28 @@ class HandleStore:
         else:
             h.update((type(arr).__name__ + "|" + sort + "|").encode("utf-8"))
             _hash_tree(h, arr)
-        return PREFIX + h.hexdigest()[:16]
+        return h.hexdigest()
+
+    @staticmethod
+    def _hid(arr, sort: str = "") -> str:
+        return PREFIX + HandleStore._digest(arr, sort)[:16]
 
     def _drop(self, handle: str) -> None:
         """ハンドルを追い出す(参照の無くなった配列のバイトを、持っているバイトから引く)。"""
         self._meta.pop(handle, None)
         self._arr.pop(handle, None)
-        self._evicted.add(handle)
+        self._digests.pop(handle, None)
+        self._evicted[handle] = None
+        self._evicted.move_to_end(handle)
+        while len(self._evicted) > self.max_evicted:
+            self._evicted.popitem(last=False)
+        # そのハンドルの小図と、生きていないハンドルに書かれた小図(書いた時には追い出されていた物)を消す
+        for owner in [handle] + [h for h in self._files if h not in self._meta and h != handle]:
+            for path in self._files.pop(owner, ()):
+                try:
+                    os.remove(path)
+                except OSError:
+                    pass
         ids, other = self._parts.pop(handle, ((), 0))
         self._held -= other
         for aid in ids:
@@ -323,15 +371,19 @@ class HandleStore:
     def put(self, arr, *, sort: str, provenance: list) -> dict:
         if isinstance(arr, (list, tuple)) and sort in {"image","images","seq<image>","points","volume"}:
             arr = np.asarray(arr)
-        hid = self._hid(arr, sort)
-        self._evicted.discard(hid)          # 作り直したハンドルは生きている(追い出し印を消す)
-        if hid in self._meta:
-            self._meta.move_to_end(hid)
-            return dict(self._meta[hid], dedup=True)
         arrays, other = _tree_arrays(arr)
         size = sum(int(a.nbytes) for a in arrays.values()) + other
-        if size > self.max_bytes:
+        if size > self.max_bytes:                                     # 上限を超える値はハッシュも取らない
             raise HandleError("handle requires %d bytes, above byte limit %d" % (size,self.max_bytes))
+        digest = self._digest(arr, sort)
+        hid = PREFIX + digest[:16]
+        if hid in self._meta:
+            if self._digests.get(hid) != digest:
+                raise HandleError("ハンドルの名前の衝突: %s に別の中身が既にある(中身の sha256 が違う)。"
+                                  "取り違えないよう、入れずに断る" % hid)
+            self._meta.move_to_end(hid)
+            return dict(self._meta[hid], dedup=True)
+        self._evicted.pop(hid, None)        # 作り直したハンドルは生きている(追い出し印を消す)
         while self._meta and self._held + self._new_bytes(arrays, other) > self.max_bytes:
             self._drop(next(iter(self._meta)))
         self._seq += 1
@@ -343,6 +395,7 @@ class HandleStore:
                 "provenance": list(provenance), "seq": self._seq}
         self._meta[hid] = meta
         self._arr[hid] = arr
+        self._digests[hid] = digest
         self._held += other
         for aid, item in arrays.items():
             ref = self._array_refs.get(aid)
@@ -369,6 +422,22 @@ class HandleStore:
         if declared is not None and declared > max_pixels:
             raise HandleError("画素が多すぎる: %s は %d 画素で、上限 mcp_stack_max_pixels=%d を超える(復号しない)"
                               % (self.display_path(real), declared, max_pixels))
+        if real.lower().endswith(".npy"):
+            # ★2026-11-15(外部レビュー、Codex の疑い 1): 画素数(shape[:2])しか見ず、(1, 1, N) の配列は「1 画素」として
+            #   全部復号してから置き場の上限で断った(数でない dtype も全部読んでから断った)。見出しの dtype と全体の
+            #   バイト(要素の数 × itemsize)を、復号する前に見る。
+            try:
+                shape, dtype = _npy_header(real)
+            except Exception as exc:                            # noqa: BLE001 - 中身は untrusted
+                raise HandleError("読めない画像: %s(.npy の見出しが読めない: %s)"
+                                  % (self.display_path(real), str(exc)[:200])) from None
+            if dtype.kind not in "biufc":
+                raise HandleError("読めない画像: %s(数値の配列でない .npy、dtype=%s。復号しない)"
+                                  % (self.display_path(real), dtype))
+            nbytes = math.prod(shape) * dtype.itemsize
+            if nbytes > self.max_bytes:
+                raise HandleError("配列が大きすぎる: %s は %d バイトで、置き場の上限 %d バイトを超える(復号しない)"
+                                  % (self.display_path(real), nbytes, self.max_bytes))
         # ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に
         # 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る
         # (-32602)。npy は pickle を決して許さない。
@@ -422,6 +491,30 @@ class HandleStore:
         name = "%s.%s.png" % (handle[len(PREFIX):], tag)
         path = os.path.join(self.thumb_dir, name)
         imgio.save(path, rgb)
+        self._files.setdefault(handle, set()).add(path)                # 追い出す時に消す
+        return path
+
+    def write_viewer(self, name: str, text: str) -> str:
+        """``<name>.html`` を作業ディレクトリに書く(名前の検査は呼び出し側)。
+
+        新しい物から :attr:`max_viewer_files` 枚・:attr:`max_viewer_bytes` バイトまでを持ち、超えたら古い物から消す。
+        同じ名前は書き換え。1 枚で枠を超える物は書かずに断る(HandleError → -32602)。"""
+        data = text.encode("utf-8")
+        if len(data) > self.max_viewer_bytes:
+            raise HandleError("ビューアが %d バイトで、置き場の枠 %d バイトを超える(書かない)"
+                              % (len(data), self.max_viewer_bytes))
+        path = os.path.join(self.thumb_dir, name + ".html")
+        self._viewers.pop(path, None)
+        while self._viewers and (len(self._viewers) >= self.max_viewer_files
+                                 or sum(self._viewers.values()) + len(data) > self.max_viewer_bytes):
+            old, _size = self._viewers.popitem(last=False)
+            try:
+                os.remove(old)
+            except OSError:
+                pass
+        with open(path, "wb") as fh:
+            fh.write(data)
+        self._viewers[path] = len(data)
         return path
 
     def stats(self) -> dict:
