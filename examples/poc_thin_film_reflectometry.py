@@ -213,6 +213,12 @@ def chapter_truth():
 REAL = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "thin_film_real")
 #: Schwarz ら 2024 の基準の膜厚(Figure_S4a のモデル値 98.8 nm と Figure 4 の比 1.003046 から逆算、data/thin_film_real/README.md)。
 SCHWARZ_REF_NM = 98.8 / 1.003046
+#: 説明(題・lead・caption)に出す実データの数(公開の桁)。★記録値の再現の門(2026-11-15、外部レビューの指摘で足した):
+#: 物理の門(写真の膜厚は基準の ±25 % など)は fail-soft のゆるい門で、説明の数を守らない。実行の間の揺れは 0
+#: (py 3.11 / 3.14、numpy 2.4 / 2.5、Pillow 12 / 13、CI の縮小と full で写真の膜厚が全桁同じ)と測ったので、
+#: 幅は公開の桁の丸めの半分(PUBLISHED_REAL_TOL)。数が動いたら説明の文と一緒に直す(門を広げない)。
+PUBLISHED_REAL = {"real_rgb_film": 87.4, "real_fit0": 92.9, "real_fit_na": 95.8, "real_cov_mae": 0.6}
+PUBLISHED_REAL_TOL = 0.05
 #: Sánchez-Arriaga ら 2023 の市販の膜厚標準(公称値)。
 SHEFFIELD_NOMINAL = {1: 476.3, 2: 198.7}
 
@@ -347,6 +353,10 @@ def chapter_real():
          % (NUMBERS["real_rgb_film"], ref, 100 * (NUMBERS["real_rgb_film"] / ref - 1), NUMBERS["real_rgb_bare"],
             NUMBERS["real_rgb_cands"], abs(NUMBERS["real_rgb_film"] - ref) / max(abs(fit_b["thickness_nm"] - ref), 1e-9)),
          abs(NUMBERS["real_rgb_film"] / ref - 1) < 0.25 and NUMBERS["real_rgb_bare"] < 25.0)
+    # ★記録値の再現の門: 説明に出す数が、この実行の値を公開の桁で丸めたものと同じか(上の ±25 % は物理の門で別物)。
+    for key, pub in PUBLISHED_REAL.items():
+        gate("記録値の再現: %s = %.4f は説明の %.1f と ±%.2f(公開の桁の丸めの半分、実行の間の揺れは 0 と実測)"
+             % (key, NUMBERS[key], pub, PUBLISHED_REAL_TOL), abs(NUMBERS[key] - pub) <= PUBLISHED_REAL_TOL)
     return out
 
 

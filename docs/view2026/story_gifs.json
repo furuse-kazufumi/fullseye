@@ -34692,7 +34692,7 @@
       "still": "articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png",
       "alt": {
         "ja": "360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。",
-        "en": "Voids in a synthetic aluminium casting were scanned with cone-beam CT, rebuilt by several methods, and scored on exact ellipsoids. With 12 views, the classic method that ranks last by image error sized the voids better than the best iterative one. The best-looking reconstruction is not always the best measurement."
+        "en": "Voids in a synthetic aluminium casting were scanned with cone-beam CT and rebuilt by several methods. With 12 views, the method last by image error sized the voids best when volume is counted as missing material. Cutting the image at half density flips that order, so the result rests on the measure and a coarse grid."
       }
     },
     "poc_surface_defect_classifiers": {
