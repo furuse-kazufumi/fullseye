@@ -7264,190 +7264,6 @@
         "en": "Print Layer Inspection — Closing the Shape → Layer → Path → Image Loop and Catching Planted Defects by the Numbers"
       }
     },
-    "poc_aoi_ct_traceability": {
-      "representative": "01_inspection_and_reconstructed_ct.png",
-      "status": "gif",
-      "selected": [
-        "01_inspection_and_reconstructed_ct.png",
-        "02_defect_traceability.png",
-        "03_aoi_and_ct.png",
-        "04_area_vs_volume.png",
-        "05_interface_voids.png",
-        "06_worst_first.png"
-      ],
-      "excluded_frames": [],
-      "variants": {
-        "ja": {
-          "path": "articles/assets/poc/poc_aoi_ct_traceability/story.ja.gif",
-          "frames": [
-            {
-              "file": "01_inspection_and_reconstructed_ct.png",
-              "content_box": [
-                0,
-                267,
-                720,
-                155
-              ]
-            },
-            {
-              "file": "02_defect_traceability.png",
-              "content_box": [
-                0,
-                144,
-                720,
-                402
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.792135
-            },
-            {
-              "file": "03_aoi_and_ct.png",
-              "content_box": [
-                25,
-                0,
-                669,
-                690
-              ]
-            },
-            {
-              "file": "04_area_vs_volume.png",
-              "content_box": [
-                0,
-                113,
-                720,
-                463
-              ]
-            },
-            {
-              "file": "05_interface_voids.png",
-              "content_box": [
-                0,
-                113,
-                720,
-                463
-              ]
-            },
-            {
-              "file": "06_worst_first.png",
-              "content_box": [
-                0,
-                108,
-                720,
-                474
-              ]
-            }
-          ],
-          "frame_count": 6,
-          "durations_ms": [
-            2500,
-            1600,
-            1600,
-            1600,
-            1600,
-            1600
-          ],
-          "bytes": 504403,
-          "color_mad": [
-            0.1975,
-            0.2794,
-            0.0096,
-            0.1001,
-            0.1246,
-            0.0348
-          ],
-          "max_color_mad": 0.2794,
-          "source_sha256": "70b2df52e65e68744e7a8cf25a5f102a15b5884df094529ba5e6dd2359698c31"
-        },
-        "en": {
-          "path": "articles/assets/poc/poc_aoi_ct_traceability/story.en.gif",
-          "frames": [
-            {
-              "file": "01_inspection_and_reconstructed_ct.png",
-              "content_box": [
-                0,
-                267,
-                720,
-                155
-              ]
-            },
-            {
-              "file": "02_defect_traceability.png",
-              "content_box": [
-                0,
-                144,
-                720,
-                402
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.792135
-            },
-            {
-              "file": "03_aoi_and_ct.png",
-              "content_box": [
-                25,
-                0,
-                669,
-                690
-              ]
-            },
-            {
-              "file": "04_area_vs_volume.png",
-              "content_box": [
-                0,
-                113,
-                720,
-                463
-              ]
-            },
-            {
-              "file": "05_interface_voids.png",
-              "content_box": [
-                0,
-                113,
-                720,
-                463
-              ]
-            },
-            {
-              "file": "06_worst_first.png",
-              "content_box": [
-                0,
-                108,
-                720,
-                474
-              ]
-            }
-          ],
-          "frame_count": 6,
-          "durations_ms": [
-            2500,
-            1600,
-            1600,
-            1600,
-            1600,
-            1600
-          ],
-          "bytes": 504403,
-          "color_mad": [
-            0.1975,
-            0.2794,
-            0.0096,
-            0.1001,
-            0.1246,
-            0.0348
-          ],
-          "max_color_mad": 0.2794,
-          "source_sha256": "5ae6d15db443e1574b90dda0a2b2f03801e21ebd7090fae51c4371158b489714"
-        }
-      },
-      "reason": null,
-      "cover": "01_inspection_and_reconstructed_ct.png",
-      "still": "articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png",
-      "alt": {
-        "ja": "One populated region in top view and reconstructed attenuation slices. The same central joint is traceable to its internal void; rings and metal streaks arise in projection reconstruction.",
-        "en": "Full visual inspection and sampled CT must assign the same index to each joint. Unequal-sided fiducials fixed this correspondence, then top-ranked candidates caught 19 % of interface-touching voids. Apparent void rankings can agree while most life-limiting parts are missed."
-      }
-    },
     "poc_asbuilt_wall_deviation": {
       "representative": "01_scene.png",
       "status": "gif",
@@ -13583,206 +13399,6 @@
       "alt": {
         "ja": "Welch の PSD で白色化し 35〜350 Hz を通しただけで、公表図 1 の曲線(帯域通過 + 線の除去)と 0.9 以上で重なる。",
         "en": "A Pseudo-Simulation of a Gravitational-Wave Detector — Cavity Optics, the Quantum-Noise Budget and the Matched Filter in Closed Form, Scored on the Real GW150914 Data"
-      }
-    },
-    "poc_battery_ct_degradation": {
-      "representative": "17_same_outline_ct.png",
-      "status": "gif",
-      "selected": [
-        "17_same_outline_ct.png",
-        "01_xray_projection.png",
-        "02_scene.png",
-        "03_outer_profile.png",
-        "12_sweep_resolution.png",
-        "16_sweep_beamhardening.png"
-      ],
-      "excluded_frames": [],
-      "variants": {
-        "ja": {
-          "path": "articles/assets/poc/poc_battery_ct_degradation/story.ja.gif",
-          "frames": [
-            {
-              "file": "17_same_outline_ct.png",
-              "content_box": [
-                0,
-                90,
-                720,
-                509
-              ]
-            },
-            {
-              "file": "01_xray_projection.png",
-              "content_box": [
-                0,
-                149,
-                720,
-                392
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.838202
-            },
-            {
-              "file": "02_scene.png",
-              "content_box": [
-                0,
-                149,
-                720,
-                392
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.838202
-            },
-            {
-              "file": "03_outer_profile.png",
-              "content_box": [
-                0,
-                167,
-                720,
-                355
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.030556
-            },
-            {
-              "file": "12_sweep_resolution.png",
-              "content_box": [
-                0,
-                163,
-                720,
-                364
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.980556
-            },
-            {
-              "file": "16_sweep_beamhardening.png",
-              "content_box": [
-                0,
-                167,
-                720,
-                355
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.027778
-            }
-          ],
-          "frame_count": 6,
-          "durations_ms": [
-            2500,
-            1600,
-            1600,
-            1600,
-            1600,
-            1600
-          ],
-          "bytes": 589192,
-          "color_mad": [
-            0.32,
-            0.6297,
-            0.8858,
-            0.1073,
-            0.083,
-            0.0595
-          ],
-          "max_color_mad": 0.8858,
-          "source_sha256": "344d5b1346a71e2bda2d4e7a03d88bfd1cab2a2ec32d3ba748e7a1b78d8a4441"
-        },
-        "en": {
-          "path": "articles/assets/poc/poc_battery_ct_degradation/story.en.gif",
-          "frames": [
-            {
-              "file": "17_same_outline_ct.png",
-              "content_box": [
-                0,
-                90,
-                720,
-                509
-              ]
-            },
-            {
-              "file": "01_xray_projection.png",
-              "content_box": [
-                0,
-                149,
-                720,
-                392
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.838202
-            },
-            {
-              "file": "02_scene.png",
-              "content_box": [
-                0,
-                149,
-                720,
-                392
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.838202
-            },
-            {
-              "file": "03_outer_profile.png",
-              "content_box": [
-                0,
-                167,
-                720,
-                355
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.030556
-            },
-            {
-              "file": "12_sweep_resolution.png",
-              "content_box": [
-                0,
-                163,
-                720,
-                364
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.980556
-            },
-            {
-              "file": "16_sweep_beamhardening.png",
-              "content_box": [
-                0,
-                167,
-                720,
-                355
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.027778
-            }
-          ],
-          "frame_count": 6,
-          "durations_ms": [
-            2500,
-            1600,
-            1600,
-            1600,
-            1600,
-            1600
-          ],
-          "bytes": 589192,
-          "color_mad": [
-            0.32,
-            0.6297,
-            0.8858,
-            0.1073,
-            0.083,
-            0.0595
-          ],
-          "max_color_mad": 0.8858,
-          "source_sha256": "1793d1cff98ac1003f71048e2aa45c36a4d94b70a3773c46bb0aef34aaf55543"
-        }
-      },
-      "reason": null,
-      "cover": "17_same_outline_ct.png",
-      "still": "articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png",
-      "alt": {
-        "ja": "外形が同じでも中身は違う(合成の角形セル)。健全と、外形が揃うように膨れの倍率を合わせた(局所 0.2736 / ガス 0.3021)一様膨れ・局所膨れ・層間ガス空隙の 3 つのセルを、X 線 120 方向の投影(ビームハードニング・検出器のリング・光子雑音つき)から FBP で再構成した z 中央の断面(灰色、同じ窓)。外形の中央は 3 つとも 6.313 / 6.313 / 6.313 mm —— 揃えたのは作り方で、発見ではない。断面では隙間の消え方・層の波打ち・ガスの穴(矢印、位置は仕込んだ真値)が違い、内部指標(層厚 0.190 / 0.187 / 0.173 mm、空隙率 0.00 / 0.00 / 5.20 %(ガスの真値 5.81 %)、平面度 RMS 0.0156 / 0.0428 / 0.0784 mm)が分ける。明るい層 = 正極の合材、暗めの層 = 負極の合材、細い明線 = Cu 箔。★数値は単一材質の模型(1〜8 節)で測った値で、層の材質の明暗はこの図の描画だけ(材質つきの像で測り直した値はパネルの括弧内)。実セルを縮めた模型(全幅 3.2 mm・17 層)。中央の同心円はリングの痕。 再構成は別実装 skimage の iradon と相関 0.974(向きは定義から決めた)。",
-        "en": "In synthetic prismatic cells whose swelling was scaled so their exteriors match, CT slices still show closed clearance, waving layers or gas holes. Only 29.4 % of the electrode swelling reaches the outside. Outside dimensions alone cannot identify the cause."
       }
     },
     "poc_bev_sensor_fusion": {
@@ -32968,6 +32584,190 @@
         "en": "Grain Boundaries from the Skeleton by Zones of Influence on Real Metallography — A Failure Report: Per-Image Grain Size Does Not Even Rank Correctly (rho -0.17), and Boundary Placement Loses to Watershed"
       }
     },
+    "poc_aoi_ct_traceability": {
+      "representative": "01_inspection_and_reconstructed_ct.png",
+      "status": "gif",
+      "selected": [
+        "01_inspection_and_reconstructed_ct.png",
+        "02_defect_traceability.png",
+        "03_aoi_and_ct.png",
+        "04_area_vs_volume.png",
+        "05_interface_voids.png",
+        "06_worst_first.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_aoi_ct_traceability/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_inspection_and_reconstructed_ct.png",
+              "content_box": [
+                0,
+                267,
+                720,
+                155
+              ]
+            },
+            {
+              "file": "02_defect_traceability.png",
+              "content_box": [
+                0,
+                144,
+                720,
+                402
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.792135
+            },
+            {
+              "file": "03_aoi_and_ct.png",
+              "content_box": [
+                25,
+                0,
+                669,
+                690
+              ]
+            },
+            {
+              "file": "04_area_vs_volume.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_interface_voids.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "06_worst_first.png",
+              "content_box": [
+                0,
+                108,
+                720,
+                474
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 504403,
+          "color_mad": [
+            0.1975,
+            0.2794,
+            0.0096,
+            0.1001,
+            0.1246,
+            0.0348
+          ],
+          "max_color_mad": 0.2794,
+          "source_sha256": "70b2df52e65e68744e7a8cf25a5f102a15b5884df094529ba5e6dd2359698c31"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_aoi_ct_traceability/story.en.gif",
+          "frames": [
+            {
+              "file": "01_inspection_and_reconstructed_ct.png",
+              "content_box": [
+                0,
+                267,
+                720,
+                155
+              ]
+            },
+            {
+              "file": "02_defect_traceability.png",
+              "content_box": [
+                0,
+                144,
+                720,
+                402
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.792135
+            },
+            {
+              "file": "03_aoi_and_ct.png",
+              "content_box": [
+                25,
+                0,
+                669,
+                690
+              ]
+            },
+            {
+              "file": "04_area_vs_volume.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "05_interface_voids.png",
+              "content_box": [
+                0,
+                113,
+                720,
+                463
+              ]
+            },
+            {
+              "file": "06_worst_first.png",
+              "content_box": [
+                0,
+                108,
+                720,
+                474
+              ]
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 504403,
+          "color_mad": [
+            0.1975,
+            0.2794,
+            0.0096,
+            0.1001,
+            0.1246,
+            0.0348
+          ],
+          "max_color_mad": 0.2794,
+          "source_sha256": "5ae6d15db443e1574b90dda0a2b2f03801e21ebd7090fae51c4371158b489714"
+        }
+      },
+      "reason": null,
+      "cover": "01_inspection_and_reconstructed_ct.png",
+      "still": "articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png",
+      "alt": {
+        "ja": "One populated region in top view and reconstructed attenuation slices. The same central joint is traceable to its internal void; rings and metal streaks arise in projection reconstruction.",
+        "en": "Full visual inspection and sampled CT must assign the same index to each joint. Unequal-sided fiducials fixed this correspondence, then top-ranked candidates caught 19 % of interface-touching voids. Apparent void rankings can agree while most life-limiting parts are missed."
+      }
+    },
     "poc_real_stereo_multiscanline": {
       "representative": "02_failure_map.png",
       "status": "gif",
@@ -34104,6 +33904,206 @@
       "alt": {
         "ja": "同じ部品(段差・止まり穴・斜面・V 溝・リブ・浅い打痕)を 4 つの材質で、ステレオ・縞投影・間接 ToF・光切断・照度差ステレオの 5 方式で測った形。灰 = 欠測、橙 = 全方式共通の 0.1 mm を超える外れ。三角測量の角はステレオ・縞投影・光切断とも 30°。撮像は物理で描き、高さへの戻しは Fullseye の op。照度差ステレオの高さの定数は真値に合わせた(形の外れは偏りを引いて数えるので、合わせ方に依らない)。",
         "en": "In this simulation, models of several depth-sensing methods measure one part in matte, glossy metal, translucent and black materials. Shape errors were counted with a common 0.1 mm yardstick and compared with the dimension table. Their resolutions differ by orders of magnitude, so read where each breaks, not a ranking."
+      }
+    },
+    "poc_battery_ct_degradation": {
+      "representative": "17_same_outline_ct.png",
+      "status": "gif",
+      "selected": [
+        "17_same_outline_ct.png",
+        "01_xray_projection.png",
+        "02_scene.png",
+        "03_outer_profile.png",
+        "12_sweep_resolution.png",
+        "16_sweep_beamhardening.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_battery_ct_degradation/story.ja.gif",
+          "frames": [
+            {
+              "file": "17_same_outline_ct.png",
+              "content_box": [
+                0,
+                90,
+                720,
+                509
+              ]
+            },
+            {
+              "file": "01_xray_projection.png",
+              "content_box": [
+                0,
+                149,
+                720,
+                392
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.838202
+            },
+            {
+              "file": "02_scene.png",
+              "content_box": [
+                0,
+                149,
+                720,
+                392
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.838202
+            },
+            {
+              "file": "03_outer_profile.png",
+              "content_box": [
+                0,
+                167,
+                720,
+                355
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.030556
+            },
+            {
+              "file": "12_sweep_resolution.png",
+              "content_box": [
+                0,
+                163,
+                720,
+                364
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.980556
+            },
+            {
+              "file": "16_sweep_beamhardening.png",
+              "content_box": [
+                0,
+                167,
+                720,
+                355
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.027778
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 589192,
+          "color_mad": [
+            0.32,
+            0.6297,
+            0.8858,
+            0.1073,
+            0.083,
+            0.0595
+          ],
+          "max_color_mad": 0.8858,
+          "source_sha256": "344d5b1346a71e2bda2d4e7a03d88bfd1cab2a2ec32d3ba748e7a1b78d8a4441"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_battery_ct_degradation/story.en.gif",
+          "frames": [
+            {
+              "file": "17_same_outline_ct.png",
+              "content_box": [
+                0,
+                90,
+                720,
+                509
+              ]
+            },
+            {
+              "file": "01_xray_projection.png",
+              "content_box": [
+                0,
+                149,
+                720,
+                392
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.838202
+            },
+            {
+              "file": "02_scene.png",
+              "content_box": [
+                0,
+                149,
+                720,
+                392
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.838202
+            },
+            {
+              "file": "03_outer_profile.png",
+              "content_box": [
+                0,
+                167,
+                720,
+                355
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.030556
+            },
+            {
+              "file": "12_sweep_resolution.png",
+              "content_box": [
+                0,
+                163,
+                720,
+                364
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.980556
+            },
+            {
+              "file": "16_sweep_beamhardening.png",
+              "content_box": [
+                0,
+                167,
+                720,
+                355
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.027778
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 589192,
+          "color_mad": [
+            0.32,
+            0.6297,
+            0.8858,
+            0.1073,
+            0.083,
+            0.0595
+          ],
+          "max_color_mad": 0.8858,
+          "source_sha256": "1793d1cff98ac1003f71048e2aa45c36a4d94b70a3773c46bb0aef34aaf55543"
+        }
+      },
+      "reason": null,
+      "cover": "17_same_outline_ct.png",
+      "still": "articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png",
+      "alt": {
+        "ja": "外形が同じでも中身は違う(合成の角形セル)。健全と、外形が揃うように膨れの倍率を合わせた(局所 0.2736 / ガス 0.3021)一様膨れ・局所膨れ・層間ガス空隙の 3 つのセルを、X 線 120 方向の投影(ビームハードニング・検出器のリング・光子雑音つき)から FBP で再構成した z 中央の断面(灰色、同じ窓)。外形の中央は 3 つとも 6.313 / 6.313 / 6.313 mm —— 揃えたのは作り方で、発見ではない。断面では隙間の消え方・層の波打ち・ガスの穴(矢印、位置は仕込んだ真値)が違い、内部指標(層厚 0.190 / 0.187 / 0.173 mm、空隙率 0.00 / 0.00 / 5.20 %(ガスの真値 5.81 %)、平面度 RMS 0.0156 / 0.0428 / 0.0784 mm)が分ける。明るい層 = 正極の合材、暗めの層 = 負極の合材、細い明線 = Cu 箔。★数値は単一材質の模型(1〜8 節)で測った値で、層の材質の明暗はこの図の描画だけ(材質つきの像で測り直した値はパネルの括弧内)。実セルを縮めた模型(全幅 3.2 mm・17 層)。中央の同心円はリングの痕。 再構成は別実装 skimage の iradon と相関 0.974(向きは定義から決めた)。",
+        "en": "In synthetic prismatic cells whose swelling was scaled so their exteriors match, CT slices still show closed clearance, waving layers or gas holes. Only 29.4 % of the electrode swelling reaches the outside. Outside dimensions alone cannot identify the cause."
       }
     },
     "poc_ai_built_inspection_scored": {

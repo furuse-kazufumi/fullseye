@@ -7,6 +7,25 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 文書 — ViEW2026 のページ: X 線 CT を目玉から下げる(2026-11-15、パッケージの中身は変わらない)
+
+X 線 CT は Fullseye の主役・代表として扱わない(会社の知財と分けるため。ユーザーの決まり)。PoC 自体と、おまけページ・
+全体の一覧(`all`)への掲載は残す。
+
+- `docs/view2026/exhibits.json`: `poc_real_walnut_cbct`(実測のクルミのコーンビーム CT)の `tier` を `showcase` から `more` に。
+  本ページ(8 言語)の目玉と準目玉は 20 本から 19 本になる(本数はページの生成で数える)。`featured_ids` は目玉の 20 本では
+  なく、カードを持つ展示 50 本の並びの正本(`exhibits` の並びと一致することを `tools/gen_view2026_pages.py` が検査する)なので、
+  カードは残して並びの中で動かした: おまけページの「画像検査・外観計測」の先頭にあった `poc_ct_casting_sparse_views` と
+  クルミを、その分類の最後(`poc_strain_history` の後)へ。
+- 「ぜんぶ見る」の群の先頭にあった X 線 CT(寸法・形状計測の `poc_aoi_ct_traceability`、3-D 形状の
+  `poc_battery_ct_degradation`)を、それぞれの群の最後へ。
+- 門 `tests/test_view2026_no_xray_ct_featured.py`: 目玉(showcase / featured)に X 線 CT の PoC が無い・生成した本ページ
+  8 言語が X 線 CT の図を引かない・おまけページの分類と「ぜんぶ見る」の群の先頭に X 線 CT が来ない(分類 `ct` の中は除く)。
+  X 線 CT かは分類 `ct`・id(`poc_ct_*`・`*_ct_*`・`*_ct`・`cbct`)・日英の題の語 `CT` で決める(OCT は外れる)。
+  直す前の exhibits.json では 4 本が赤(目玉にクルミ・本ページ 8 言語にクルミの図・分類と群の先頭に 3 本)。
+- 道具で作り直した物: `tools/build_view2026_featured_batch.py` → `tools/gen_view2026_story_gifs.py`(台帳の並びだけ)→
+  `tools/gen_view2026_thumbs.py`(変化なし)→ `tools/gen_view2026_pages.py`(8 言語の index.md と more.md)。
+
 ### 直し — ViEW2026 の目玉の PoC: 作者と独立の敵対的レビュー 2 本(2026-11-13)の、PoC のコードと記録の側
 
 ここは PoC の出力・門・図と、数字の正本 `docs/articles/exhibits/poc_captions.json`。数字はどれも実行の出力か記録から取り直した。
@@ -138,7 +157,7 @@ AI の役で MCP を使った検証(2026-11-13)で、optics の op は MCP か�
 
 ### 文書 — ViEW2026 の本ページ(docs/view2026、パッケージの中身は変わらない)
 
-- 本ページは 8 言語とも同じ目玉 20 本を同じ順で出す(残りは各言語の `more.md`)。目玉の X 線 CT は `poc_real_walnut_cbct` の 1 本だけで、`poc_ct_casting_sparse_views` の代わりに `poc_itof_multifreq` を入れた。
+- 本ページは 8 言語とも同じ目玉 20 本を同じ順で出す(残りは各言語の `more.md`。2026-11-15 に X 線 CT の 1 本を下げて 19 本、上の節)。目玉の X 線 CT は `poc_real_walnut_cbct` の 1 本だけにし(これも 2026-11-15 に目玉から下げた)、`poc_ct_casting_sparse_views` の代わりに `poc_itof_multifreq` を入れた。
 - 作者と独立の 2 回のレビュー(前半・後半 10 本ずつ)を受けて、題・lead を PoC 自身の注意書きと食い違わない文にした。数の範囲(RGB-D の 0.45〜0.82、実写の地の 2.03〜3.47 倍、AI の採点の 60 回中 5 回)は題に、数字がどの実行(full / CI の縮小 / 手元の記録値)から来たかは 20 本すべての「数字の出どころ」の 1 文に書いた(台帳 `poc_captions.json` のキャプションの末尾。展示館の記事の生成物にも同じ文が入る)。
 - 展示のタイル(画像)の左下に真値の種類(自作合成・実データ・公表値・実写の地)の印を重ねる。
 - ja/en 以外の 6 言語: 目玉の題と説明は英語で出し、その節の頭に「この節の題と説明は英語」の断りを置く(本ページと、おまけページの詳細の節)。訳は ja/en だけの方針。

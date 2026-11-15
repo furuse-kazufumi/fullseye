@@ -23,7 +23,8 @@ V26 = json.loads((ROOT / "docs/view2026/exhibits.json").read_text(encoding="utf-
 CARDS = {e["id"]: e for e in V26["exhibits"]}
 ALL = {e["id"]: e for e in V26["all"]}
 FEATURED = list(V26["featured_ids"])
-#: 本ページ(ja/en)に載る目玉(tier が showcase / featured)。#313 が「数字の出どころ」を付けたのはこの 20 本。
+#: 本ページ(ja/en)に載る目玉(tier が showcase / featured)。#313 が「数字の出どころ」を付けたのはこの 20 本
+#: (2026-11-15 に X 線 CT の poc_real_walnut_cbct を more に下げて 19 本。数は tier から数える)。
 MAIN = [pid for pid in FEATURED if CARDS.get(pid, {}).get("tier") in ("showcase", "featured")]
 _DEC = re.compile(r"\d+[.,]\d+")
 _NUM = re.compile(r"\d+(?:[.,]\d+)?")
