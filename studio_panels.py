@@ -1220,10 +1220,12 @@ def flow_classes():
                 b.setIconSize(QtCore.QSize(side, side))
 
         def paintEvent(self, _ev):
-            if not self._seps and not self.overlay:
+            if not self._seps and not self.overlay and self.kind != "tabs":
                 return
             p = studio_theme.PALETTES[studio_theme.current_name()]
             painter = QtGui.QPainter(self)
+            if self.kind == "tabs":                  # over Qt's own bar: nothing of it shows through (a ghost
+                painter.fillRect(self.rect(), QtGui.QColor(p["bg0"]))   # tab, its scroll boxes, letters)
             if self.overlay:                         # over an image: a ground of its own
                 ground = QtGui.QColor(p["chrome"]); ground.setAlpha(220)
                 painter.setRenderHint(QtGui.QPainter.Antialiasing, True)

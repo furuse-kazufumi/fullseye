@@ -1809,3 +1809,72 @@ def test_principal_in_a_separate_window_survives_esc_and_close(tmp_path, monkeyp
         assert ops.features() & QtWidgets.QDockWidget.DockWidgetClosable
     finally:
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# A2 A3 — Qt's own tab bar never shows through the rows that are drawn over it (the user-eye check:
+# a ghost "A/B 比較" right of a short wrapped row, Qt's scroll boxes, letters behind a disabled arrow)
+# --------------------------------------------------------------------------- #
+_LOUD = ("QTabBar::tab { color:#ff00ff; background:#00ff00; border:1px solid #00ff00; } "
+         "QTabBar QToolButton { background:#00ff00; color:#ff00ff; border:1px solid #00ff00; }")
+
+
+def _loud_pixels(img, rect=None):
+    """Pixels of Qt's own bar painted in the loud colours (green ground / magenta letters)."""
+    from PySide6 import QtCore
+    r = rect if rect is not None else QtCore.QRect(0, 0, img.width(), img.height())
+    n = 0
+    for y in range(max(0, r.top()), min(img.height(), r.bottom() + 1)):
+        for x in range(max(0, r.left()), min(img.width(), r.right() + 1)):
+            c = img.pixelColor(x, y)
+            if (c.green() > 150 and c.red() < 110 and c.blue() < 110) or (
+                    c.red() > 150 and c.blue() > 150 and c.green() < 110):
+                n += 1
+    return n
+
+
+def test_qt_tab_bar_never_shows_through_the_drawn_rows(tmp_path, monkeypatch):
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        win.resize(1280, 720); _pump(app, 0.2)
+        looked = 0
+        for make, vertical in ((_right_column_tabs, False), (_bottom_tabs, True)):
+            bar = make(app, win)
+            row = _tab_row(win, bar)
+            s = row.strip
+            along = max((t.sizeHint().height() if vertical else t.sizeHint().width()) for t in row.tabs)
+            # 1. scrolled: at the start the "back" button is disabled; nothing of Qt's tabs behind it
+            studio_panels.set_overflow_mode(win, "scroll"); _pump(app, 0.2)
+            (bar.setFixedHeight if vertical else bar.setFixedWidth)(int(1.5 * along)); _pump(app, 0.4)
+            assert s.state["scrolling"] and s.b_back.isVisible() and not s.b_back.isEnabled()
+            bar.setStyleSheet(row.qss + " " + _LOUD); app.processEvents()
+            img = bar.grab().toImage()
+            assert _loud_pixels(img, s.b_back.geometry()) == 0, ("behind the disabled back button", vertical)
+            assert _loud_pixels(img) == 0, ("scrolled row", vertical)
+            looked += 1
+            bar.setStyleSheet(row.qss); bar.setMinimumSize(0, 0); bar.setMaximumSize(_MAX, _MAX); _pump(app, 0.3)
+            # 2. wrapped onto rows: right of (under) the last tab of a short row is the ground, not a ghost tab
+            if not vertical:
+                studio_panels.set_overflow_mode(win, "wrap"); _pump(app, 0.2)
+                bar.setFixedWidth(int(2.2 * along)); _pump(app, 0.4)
+                assert 2 <= s.state["lines"] <= studio_panels.WRAP_MAX_LINES and not s.state["scrolling"]
+                ends = {}
+                for t in row.tabs:                                          # the right end of every row
+                    ends[t.y()] = max(ends.get(t.y(), 0), t.x() + t.width())
+                assert len(ends) >= 2 and min(ends.values()) < s.width() - 4    # a row that is shorter than the strip
+                bar.setStyleSheet(row.qss + " " + _LOUD); app.processEvents()
+                img = bar.grab().toImage()
+                from PySide6 import QtCore
+                for y, end in ends.items():
+                    gap = QtCore.QRect(end + 1, y, s.width() - end - 1, row.t1)
+                    assert _loud_pixels(img, gap) == 0, ("right of a short row", y, end)
+                assert _loud_pixels(img) == 0
+                ground = studio_theme.PALETTES[studio_theme.current_name()]["bg0"]
+                y, end = min(ends.items(), key=lambda kv: kv[1])
+                assert img.pixelColor(end + 3, y + row.t1 // 2).name() == ground   # the window's ground there
+                looked += 1
+                bar.setStyleSheet(row.qss); bar.setMinimumSize(0, 0); bar.setMaximumSize(_MAX, _MAX)
+                studio_panels.set_overflow_mode(win, "scroll"); _pump(app, 0.3)
+        assert looked >= 3
+    finally:
+        _close(app, win)
