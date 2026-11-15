@@ -79,6 +79,8 @@ SPEC = [
     ("evis_bean_track", "articles/assets/evis_bean_track_fullseye_still.png", None, (0.5, 0.0, 1.0)),
     # 5 枚を縦に積んだ全体ではなく、最初の OCT 断面を案内用の代表図にする。
     ("poc_industrial_oct", _P + "poc_industrial_oct/01_real_paint_bscans.png", None, (0.04, 0.05, 0.25)),
+    # 実セルの EL の 6 枚組のうちパネル (b)(遮光マスクの円をゼロ点の暗画素として橙で重ねた 1 枚)。全体を縮めると 1 枚 100 px で読めない。
+    ("poc_solar_el_inspection", _P + "poc_solar_el_inspection/10_real_el_overlay.png", None, (0.3388, 0.0555, 0.4266)),
     # 「触って見る」に添える画像(展示のカードが無いビューア): 小惑星イトカワの曲率の既存の図
     ("poc_asteroid_curvature", "articles/assets/_sources/src_itokawa_curvature.png", None, None),
     # 動く 3-D: 元はビューアをスマホ幅(375 px、WebGL)で開いた画面から 3-D の部分だけを切った静止画
