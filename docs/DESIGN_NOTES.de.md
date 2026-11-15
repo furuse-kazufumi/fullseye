@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1942. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1943. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -3063,6 +3063,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_op_example_coverage.py`
 
 - **L58** — ★Ein Ratchet, das die Grundmenge von der **Seite des ausgelieferten Artefakts** zählt (2026-09-06) # --------------------------------------------------------------------------- # Gemessen 2026-09-06. Ein Anschlag, um es **nicht schlechter als diese Zahl** werden zu lassen, kein Zielwert. Von den 1,002 ops des Registers sind nur 349 im Beispiel-Index, und die beiden "100 %" oben galten nur, weil die Grundmenge 2 von 3 Schichten hatte. Verlauf und Aufschlüsselung je Familie = docs/KNOWN_ISSUES.md §38.
+
+## `tests/test_op_facets_2026_10_28.py`
+
+- **L423** _(ja)_ — ★2026-11-15: plan() は既定で plan_timeout_ms(900 ms)で打ち切る。CI の負荷(coverage つきの片)で再生の側だけが 時間切れになると「解なし」になり、('signal', ['image']) で落ちた(PR #322 の shard 4。手元では 31 ms、展開 2,856)。 test_mcp_agent_usability / test_rag_recall_airag と同じく、上限を展開数(50000)の側に移して決定的にする。
 
 ## `tests/test_op_figures.py`
 

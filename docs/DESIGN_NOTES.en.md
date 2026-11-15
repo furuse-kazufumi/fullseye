@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 658 of 1942. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 658 of 1943. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `_archive_tarxz.py`
@@ -3063,6 +3063,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_op_example_coverage.py`
 
 - **L58** — ★A ratchet that counts the population from the **shipped-artifact side** (2026-09-06) # --------------------------------------------------------------------------- # Measured 2026-09-06. A stopper to **not make it worse than this number**, not a target. Of the ledger's 1,002 ops, only 349 are in the example index, and the two "100 %" above held only because the population had 2 of 3 layers. History and per-family breakdown = docs/KNOWN_ISSUES.md §38.
+
+## `tests/test_op_facets_2026_10_28.py`
+
+- **L423** _(ja)_ — ★2026-11-15: plan() は既定で plan_timeout_ms(900 ms)で打ち切る。CI の負荷(coverage つきの片)で再生の側だけが 時間切れになると「解なし」になり、('signal', ['image']) で落ちた(PR #322 の shard 4。手元では 31 ms、展開 2,856)。 test_mcp_agent_usability / test_rag_recall_airag と同じく、上限を展開数(50000)の側に移して決定的にする。
 
 ## `tests/test_op_figures.py`
 
