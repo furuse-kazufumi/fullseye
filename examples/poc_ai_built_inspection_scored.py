@@ -32,8 +32,17 @@ public real data, side by side with a hand-built recipe, Fullseye's existing rec
    既存レシピ(``recipes.py`` の外観検査 2 本をそのまま)/ 既存の良品学習(``patchbank_fit``、良品 20 枚で学習し
    別の良品 10 枚で閾値を較正。MCP からは呼べない Python の経路)。
 6. 採点は 1 つの数字にしない: 検出率・誤報率・面積の AUROC・(欠陥マスクのある課題は)欠陥領域に触れた割合と
-   画素の誤報率・壊れ方・1 枚あたりの処理時間・段数。「選り分ける」は平衡正解率の 95 % 区間の下限が 0.5 を
-   超えること(偶然を有意に超える)。失敗は「道具 / MCP の不備 / 模型」に帰属させて数える(:func:`attribute`)。
+   画素の誤報率・壊れ方・1 枚あたりの処理時間・段数。「偶然を超えた」は平衡正解率の 95 % 区間の下限が 0.5 を
+   超えること —— **低い線で、検査として使えるという意味ではない**(2026-11-13 までは「選り分ける」と呼んでいた)。
+   失敗は「道具 / MCP の不備 / 模型」に帰属させて数える(:func:`attribute`)。
+7. **自明な基準線**(:func:`trivial_baseline`、2026-11-13 に作者と独立の検証の指摘で足した): 画像 1 枚の
+   「画素値の中央値 − 1 パーセンタイル」という数 1 つを、開発用 6 枚だけで決めた閾値で切る。op も学習も使わない。
+   ひび割れの課題はこれだけで解けてしまう(統計量の AUROC 0.999、検出 0.995・誤報 0.045)ので、AI・手組み・
+   既存レシピ・良品学習のどの列も、この基準線と並べて読む(ひび割れでこれを平衡正解率で超えた AI のレシピは
+   63 本中 0 本、手組み・良品学習・既存レシピも超えない)。ろうそくはこの統計では解けない(AUROC 0.54、
+   検出 0.81・誤報 0.77 = 偶然を超えない)ので、ろうそくの基準線は「易しさ」の証拠にならない。
+8. 出力は要約から始める(:func:`print_summary`): 主の実験はローカル LLM で、ひび割れで偶然を超える検査を
+   組めたのは 60 回中 5 回、ろうそくは 60 回中 0 回。クラウド LLM の列は条件がそろっていない参考の列。
 
 ## 課題と真値 / Tasks and ground truth
 
@@ -58,7 +67,9 @@ public real data, side by side with a hand-built recipe, Fullseye's existing rec
 (:data:`RECIPES_SHA256`)/便・模型ごとの回数/第 2 便以降が今の課題文・指示文で作られ、文脈の切り詰めの印が
 無いこと/保存したレシピ全部を MCP の検証器(``validate_pipeline``、データ不要)に通して「型の鎖が切れている」数を
 数え直す/採点の記録 :data:`SCORES_JSON` の行がいまのレシピの SHA-256 と 1 対 1 に対応する/見出しの数字
-(:data:`HEADLINE`)が記録と一致する/採点の関数を既知の答えの小さな入力で検算する。データがあるときは全部を採点し直し、記録と一致すること
+(:data:`HEADLINE`)が記録と一致する/採点の関数を既知の答えの小さな入力で検算する。**CI は採点を再実行しない** ——
+見出しの数字は手元の実行(記録の ``generated`` の日付、自明な基準線は ``trivial_generated``)から来ていて、CI が
+守るのは記録の自己整合だけ。データがあるときは全部を採点し直し(自明な基準線も数え直し)、記録と一致すること
 (処理時間を除く)を門にする。``FULLSEYE_AISCORE_RECORD=1`` で記録を書き直す。
 
 実行例::
@@ -232,6 +243,12 @@ HEADLINE: dict = {
     "candle/第 1 便 MCP の規則だけなら": "11/20",
     "candle/24 回で切った": "5",
     "candle/クラウド LLM の誤報": "0.12-0.65",
+    "crack/ローカル LLM 合計(偶然を超えた)": "5/60",
+    "candle/ローカル LLM 合計(偶然を超えた)": "0/60",
+    "crack/自明な基準線": "0.995/0.045 AUROC 0.999",
+    "candle/自明な基準線": "0.814/0.770 AUROC 0.538",
+    "crack/自明な基準線を超えた AI": "0/63",
+    "candle/自明な基準線を超えた AI": "1/63",
 }
 
 ok_all: list[bool] = []
@@ -485,7 +502,7 @@ def status_of(valid: str, sc: dict | None) -> str:
     return "ok"
 
 
-STATUS_JA = {"ok": "選り分ける", "chance": "偶然を超えない", "no_recipe": "レシピ無し",
+STATUS_JA = {"ok": "偶然を超えた", "chance": "偶然を超えない", "no_recipe": "レシピ無し",
              "invalid": "型の鎖が切れている・契約外", "runtime_error": "実行時に落ちる",
              "flags_everything": "全部に反応", "flags_nothing": "何にも反応しない"}
 BROKEN = ("no_recipe", "invalid", "runtime_error")
@@ -493,13 +510,105 @@ SKEWED = ("flags_everything", "flags_nothing")
 
 
 def summarize(rows: list[dict]) -> dict:
-    """AI の N 回の分布: 中央値・最良・最悪(選り分けたレシピの中で)と壊れた数。"""
+    """AI の N 回の分布: 中央値・最良・最悪(偶然を超えたレシピの中で)と壊れた数。"""
     bal = [r["score"]["bal"] for r in rows if r["status"] == "ok"]
     return {"n": len(rows), "n_ok": len(bal), "n_chance": sum(r["status"] == "chance" for r in rows),
             "n_broken": sum(r["status"] in BROKEN for r in rows),
             "n_degenerate": sum(r["status"] in SKEWED for r in rows),
             "bal_median": statistics.median(bal) if bal else None,
             "bal_best": max(bal) if bal else None, "bal_worst": min(bal) if bal else None}
+
+
+# --------------------------------------------------------------------------- #
+# 自明な基準線 / the trivial baseline                                           #
+# --------------------------------------------------------------------------- #
+#: 自明な基準線の名前(表・印字に出す)。op も学習も領域も使わない、画像 1 枚につき数 1 つ。
+TRIVIAL_NAME = "自明な基準線(中央値 − 1 % 点)"
+
+
+def trivial_statistic(images: np.ndarray) -> np.ndarray:
+    """画像 1 枚につき数 1 つ: 画素値の中央値 − 1 パーセンタイル(暗い外れの深さ)。
+
+    ひび割れは周りより暗い筋なので、ひび割れのある画像ではこの数が大きい。op も学習も領域も使わない ——
+    課題そのものがどれだけ易しいかを測る物差し(2026-11-13、作者と独立の検証の指摘で足した)。
+    The trivial baseline: one number per image, median minus the 1st percentile of the gray values.
+    """
+    flat = np.asarray(images, np.float64).reshape(len(images), -1)
+    return np.percentile(flat, 50.0, axis=1) - np.percentile(flat, 1.0, axis=1)
+
+
+def trivial_baseline(stat_test, labels, stat_dev, labels_dev) -> dict:
+    """自明な基準線の成績。閾値は**開発用 6 枚だけ**で決める(2 群の平均の中点。試験画像は見ない)。
+
+    ``auroc`` は閾値によらない(試験の統計量の順位)。``bal_oracle`` は試験で閾値を選んだ甘めの上限(参考、
+    比較には使わない)。AI と比べるのは ``bal``(開発用で決めた閾値の平衡正解率)。
+    """
+    s, y = np.asarray(stat_test, np.float64), np.asarray(labels, int)
+    sd, yd = np.asarray(stat_dev, np.float64), np.asarray(labels_dev, int)
+    thr = 0.5 * (float(sd[yd == 1].mean()) + float(sd[yd == 0].mean()))
+    ng = s >= thr
+    pos, neg = y == 1, y == 0
+    out = {"statistic": "median_minus_p1", "threshold_dev": thr, "n": int(len(y)),
+           "tpr": float(ng[pos].mean()), "fpr": float(ng[neg].mean()),
+           "auroc": float(fs.ledger.anomaly_image_auroc(s, y)["auroc"])}
+    out["bal"] = 0.5 * (out["tpr"] + 1.0 - out["fpr"])
+    n1, n0 = max(1, int(pos.sum())), max(1, int(neg.sum()))
+    var = 0.25 * (out["tpr"] * (1 - out["tpr"]) / n1 + out["fpr"] * (1 - out["fpr"]) / n0)
+    out["bal_lo95"] = float(out["bal"] - 1.96 * var ** 0.5)
+    out["bal_oracle"] = float(max(0.5 * (float((s[pos] >= t).mean()) + float((s[neg] < t).mean()))
+                                  for t in np.unique(s)))
+    return out
+
+
+def beats_trivial(row: dict, trivial: dict | None) -> bool:
+    """1 行(AI・手組み・既存・良品学習)が自明な基準線を平衡正解率で超えたか。採点できなかった行は超えない。"""
+    s = row.get("score")
+    return bool(trivial and s is not None and row["status"] not in BROKEN and s["bal"] > trivial["bal"])
+
+
+def condition_of(rs: list[dict]) -> str:
+    """表の「条件」の欄。主の実験(ローカル LLM)と、条件がそろっていない参考の列を表の中で分ける。"""
+    if not rs:
+        return "-"
+    r = rs[0]
+    if r["kind"] == "ai":
+        if r["phase"] == "cloud_v2":
+            return "条件不揃い(3 回・MCP 直す前)"
+        return "主の実験(10 回)"
+    return {"hand": "参考(内部を知る LLM、上限なし)", "existing": "直さずそのまま",
+            "learned": "MCP の外(良品 20 + 10 枚)"}.get(r["kind"], "-")
+
+
+def print_summary(rec: dict) -> None:
+    """出力の最初に出す要約(記録から)。主の実験(ローカル LLM)の結果 → 自明な基準線 → クラウドの但し書き。"""
+    print("\n要約(記録した採点から。主の実験 = ローカル LLM: 模型 2 つ × 便 3 つ × 10 回 = 課題ごとに 60 回)")
+    for task in TASKS:
+        t = rec.get(task) or {}
+        rows = t.get("rows") or []
+        if not rows:
+            continue
+        loc = [r for r in rows if r["kind"] == "ai" and r["phase"] != "cloud_v2"]
+        cl = [r for r in rows if r["kind"] == "ai" and r["phase"] == "cloud_v2"]
+        print("   ■ %s: ローカル LLM が「偶然を超える」検査を組めたのは %d 回中 %d 回(クラウド LLM は %d 回中 %d 回、条件不揃い)"
+              % (TASKS[task]["title"], len(loc), sum(r["status"] == "ok" for r in loc),
+                 len(cl), sum(r["status"] == "ok" for r in cl)))
+        tv = t.get("trivial")
+        if not tv:
+            print("     自明な基準線: 記録に無い(未計算)")
+            continue
+        ai = [r for r in rows if r["kind"] == "ai"]
+        best = max((r["score"]["bal"] for r in ai if r["score"] is not None and r["status"] == "ok"), default=None)
+        print("     %s: 検出 %.3f・誤報 %.3f・平衡正解率 %.3f(閾値は開発用 6 枚で決めた)、統計量の AUROC %.3f"
+              % (TRIVIAL_NAME, tv["tpr"], tv["fpr"], tv["bal"], tv["auroc"]))
+        print("     これを平衡正解率で超えた AI のレシピ: %d 本中 %d 本(偶然を超えた AI の最良は %s)。"
+              "手組み %.3f、良品学習 %.3f、既存レシピの最良 %.3f"
+              % (len(ai), sum(beats_trivial(r, tv) for r in ai), "%.3f" % best if best is not None else "無し",
+                 next(r for r in rows if r["key"] == "hand")["score"]["bal"],
+                 next(r for r in rows if r["kind"] == "learned")["score"]["bal"],
+                 max(r["score"]["bal"] for r in rows if r["kind"] == "existing" and r["score"] is not None)))
+    print("   ■ 読み方: 「偶然を超えた」は平衡正解率の 95 % 区間の下限が 0.5 を超えるというだけの低い線で、検査として"
+          "使えるかは自明な基準線と並べて読む。画像の統計 1 つで解ける課題では、基準線を超えて初めて op を組んだ意味がある。")
+    print("   ■ クラウド LLM の列は条件がそろっていない(%s)。主の結果と同列に読まない。" % " / ".join(CONDITION_GAPS))
 
 
 def self_test_scoring() -> None:
@@ -527,12 +636,28 @@ def self_test_scoring() -> None:
     m2[:61, 0, 0] = True                   # 検出 61/97 = 0.63
     m2[97:170, 0, 0] = True                # 誤報 73/100 = 0.73
     s4 = score(m2, [None] * 197, lab2, None)
-    check("偶然より悪い列(平衡正解率 %.3f)は状態 chance(選り分けたに数えない)" % s4["bal"],
+    check("偶然より悪い列(平衡正解率 %.3f)は状態 chance(偶然を超えたに数えない)" % s4["bal"],
           status_of("ok", s4) == "chance" and s4["bal"] < 0.5)
     m3 = np.zeros((197, 2, 2), bool)
     m3[:95, 0, 0] = True
     m3[97:113, 0, 0] = True                # 検出 0.98・誤報 0.16
-    check("はっきり選り分ける列は状態 ok", status_of("ok", score(m3, [None] * 197, lab2, None)) == "ok")
+    check("はっきり偶然を超える列は状態 ok", status_of("ok", score(m3, [None] * 197, lab2, None)) == "ok")
+    # 自明な基準線: 100 画素のうち 2 画素だけ暗い画像。1 % 点は下から 0.99 番目(線形補間)で、下の 2 つが
+    # 同じ暗さなのでその暗さになる。中央値は地の 0.6。無地は差 0。
+    tim = np.full((3, 10, 10), 0.6)
+    tim[0, 0, :2] = 0.1
+    tim[1, 0, :2] = 0.3
+    ts = trivial_statistic(tim)
+    check("自明な基準線の統計量: 暗い 2 画素 0.1 → 0.5、0.3 → 0.3、無地 → 0",
+          np.allclose(ts, [0.5, 0.3, 0.0], atol=1e-12), "%.3f / %.3f / %.3f" % tuple(ts))
+    tb = trivial_baseline(np.array([0.5, 0.3, 0.05, 0.0]), lab, np.array([0.4, 0.0]), np.array([1, 0]))
+    check("自明な基準線: 閾値は開発用の 2 群の平均の中点(0.2)、検出 2/2・誤報 0/2・AUROC 1",
+          abs(tb["threshold_dev"] - 0.2) < 1e-12 and tb["tpr"] == 1.0 and tb["fpr"] == 0.0
+          and tb["auroc"] == 1.0 and tb["bal_oracle"] == 1.0)
+    row = {"status": "ok", "score": {"bal": 0.9}}
+    check("基準線との比較: 平衡正解率 0.9 の行は基準線 1.0 を超えない、壊れた行も超えない",
+          not beats_trivial(row, tb) and beats_trivial(row, {"bal": 0.8})
+          and not beats_trivial({"status": "invalid", "score": None}, {"bal": 0.0}))
     check("型の鎖の検証: region で終わらない列は契約外",
           validate([{"op": "gaussian", "a": 0.5}])[0] == "invalid" and validate(HAND["crack"])[0] == "ok")
     check("型の鎖の検証: 知らない op は invalid、空はレシピ無し",
@@ -758,6 +883,13 @@ def write_figures(result: dict) -> None:
             series.append((label, [r["score"]["fpr"]], [r["score"]["tpr"]]))
             kinds.append("scatter")
             colors.append(role)
+        tv = result[task]["trivial"]
+        # 基準線は点でなく破線の角で描く(既存レシピと同じ灰色の点では見分けられなかった)。角より左上が「基準線を超えた」。
+        i_trivial = len(series)
+        series.append(("%s、op も学習も使わない)。破線の角がその点で、角より左上が基準線を超える" % TRIVIAL_NAME[:-1],
+                       [-0.02, tv["fpr"], tv["fpr"]], [tv["tpr"], tv["tpr"], -0.02]))
+        kinds.append("line")
+        colors.append("neutral")
         missing = []
         for ph, role in (("v2_ctx32k", "wrong"), ("v3_mcpfix", "emphasis"), ("cloud_v2", "right")):
             mine = [r for r in rows if r["kind"] == "ai" and r["phase"] == ph]
@@ -773,15 +905,23 @@ def write_figures(result: dict) -> None:
                        ylabel="検出率(欠陥を NG にした割合)",
                        title="%s: 試験 %d 枚%s" % (TASKS[task]["title"], result[task]["n_test"],
                                                   "(%s は走ったレシピが無い)" % "・".join(missing) if missing else ""),
-                       kinds=kinds, colors=colors, styles=["dotted"] + [None] * (len(series) - 1),
+                       kinds=kinds, colors=colors,
+                       styles=["dotted"] + ["dashed" if i == i_trivial else None for i in range(1, len(series))],
                        xlim=(-0.02, 1.02), ylim=(-0.02, 1.02), size=(680, 440),
                        caption=("左上ほど良い。対角の点線は偶然。LLM の点は 1 回ごとのレシピで、後から描いた列が上に重なる。"
-                                "実行時に落ちたレシピと型の鎖が切れたレシピは点にしない。第 1 便は道具の不備で比べられないので省いた。"))
-    header = ["課題", "組み手", "回数", "選り分けた", "偶然以下", "壊れた", "偏った",
+                                "実行時に落ちたレシピと型の鎖が切れたレシピは点にしない。第 1 便は道具の不備で比べられないので省いた。"
+                                "%s は画像 1 枚の統計 1 つを開発用 6 枚で決めた閾値で切った点(検出 %.3f・誤報 %.3f、統計量の AUROC %.3f)で、"
+                                "破線の角がその点 —— どの列もこの角と並べて読む。クラウド LLM の列は条件がそろっていない(3 回、MCP は直す前、"
+                                "応答を自前で切り出した)。" % (TRIVIAL_NAME, tv["tpr"], tv["fpr"], tv["auroc"])))
+    header = ["課題", "組み手", "条件", "回数", "偶然を超えた", "基準線を超えた", "偶然以下", "壊れた", "偏った",
               "検出率(中央)", "誤報率(中央)", "面積の AUROC(中央)", "段数(中央)"]
     body = []
     for task in TASKS:
         rows = result[task]["rows"]
+        tv = result[task]["trivial"]
+        body.append([TASKS[task]["title"], TRIVIAL_NAME, "基準線(op も学習も使わない)", "1",
+                     "1" if tv["bal_lo95"] > 0.5 else "0", "-", "0" if tv["bal_lo95"] > 0.5 else "1", "0", "0",
+                     "%.2f" % tv["tpr"], "%.2f" % tv["fpr"], "%.3f(統計量)" % tv["auroc"], "0"])
         for name, rs in _groups(rows):
             sc = [r["score"] for r in rs if r["score"] is not None and r["status"] == "ok"]
 
@@ -789,20 +929,27 @@ def write_figures(result: dict) -> None:
                 return "%.2f" % statistics.median(s[k] for s in sc) if sc else "-"
             st = [r["n_stages"] for r in rs if r["n_stages"]]
             sm = summarize(rs)
-            body.append([TASKS[task]["title"], name, str(len(rs)), str(sm["n_ok"]), str(sm["n_chance"]),
+            body.append([TASKS[task]["title"], name, condition_of(rs), str(len(rs)), str(sm["n_ok"]),
+                         str(sum(beats_trivial(r, tv) for r in rs)), str(sm["n_chance"]),
                          str(sm["n_broken"]), str(sm["n_degenerate"]),
                          med("tpr"), med("fpr"), med("auroc"), str(statistics.median(st)) if st else "-"])
     figs.save_table("summary", header, body, title="AI が組んだ検査の成績(公開実データ、真値は配布元)",
-                    caption=("選り分けた = 平衡正解率の 95 % 区間の下限が 0.5 を超える。偶然以下 = 偏ってはいないが偶然を超えない。"
+                    caption=("偶然を超えた = 平衡正解率の 95 % 区間の下限が 0.5 を超える(低い線。使える検査という意味ではない)。"
+                             "基準線を超えた = 各課題の先頭の行の自明な基準線(画像 1 枚の「中央値 − 1 パーセンタイル」を開発用 6 枚で"
+                             "決めた閾値で切る)より平衡正解率が高い。ひび割れはこの基準線だけで解け、AI の列で超えたものは無い。"
+                             "偶然以下 = 偏ってはいないが偶然を超えない。"
                              "壊れた = レシピ無し・型の鎖が切れている・実行時に落ちる。偏った = 95 % 以上 NG か 95 % 以上 OK。"
-                             "検出率などの中央値は選り分けたレシピだけから。ひび割れでは既存レシピ(金属のヘアラインの傷用を直さず)の"
+                             "検出率などの中央値は偶然を超えたレシピだけから。主の実験はローカル LLM の行で、クラウド LLM の行は"
+                             "条件がそろっていない参考(回数 3、MCP は直す前、応答を自前のコマンドで切り出して読んだ = 依頼文違反、催促なし)。"
+                             "ひび割れでは既存レシピ(金属のヘアラインの傷用を直さず)の"
                              "1 本が誤報 0.01 で、クラウド LLM の最良より平衡正解率が高い。"))
-    header = ["課題", "便・組み手", "回数", "選り分けた", "偏りの規則が無ければ", "開発用画像を読んだ", "24 回で切った",
+    header = ["課題", "便・組み手", "条件", "回数", "偶然を超えた", "偏りの規則が無ければ", "開発用画像を読んだ", "24 回で切った",
               "失敗: 道具", "失敗: MCP", "失敗: 模型", "MCP の規則だけなら"]
     body = []
     for task in TASKS:
         for name, rs in _groups(result[task]["rows"], ai_only=True):
-            body.append([TASKS[task]["title"], name, str(len(rs)), str(sum(r["status"] == "ok" for r in rs)),
+            body.append([TASKS[task]["title"], name, condition_of(rs), str(len(rs)),
+                         str(sum(r["status"] == "ok" for r in rs)),
                          str(sum(r["status"] == "ok" or bool(r.get("sorts_without_skew_rule")) for r in rs)),
                          str(sum(bool(r.get("used_dev")) for r in rs)), str(sum(bool(r.get("capped")) for r in rs))]
                         + [str(sum(r.get("cause") == c for r in rs)) for c in ("tool", "mcp", "model")]
@@ -812,7 +959,7 @@ def write_figures(result: dict) -> None:
                              "第 3 便 = MCP の不備も直した。帰属は attribute() の規則を上から順に当てる: 第 1 便は失敗を全部「道具」に"
                              "寄せたので「失敗: MCP」は全便 0 になる。MCP の規則だけを当てた数を右端に出した(第 1 便で多い)。"
                              "第 2 便以降は文脈が直り開発用画像を読めたので、MCP の不備が成否を分けなくなった。"
-                             "「選り分けた」は偏り(95 % 以上を NG)を除く規則に依る —— 規則が無ければの数を隣に出した。"
+                             "「偶然を超えた」は偏り(95 % 以上を NG)を除く規則に依る —— 規則が無ければの数を隣に出した。"
                              "そろっていない条件: " + " / ".join(CONDITION_GAPS)))
 
 
@@ -891,6 +1038,11 @@ def ci_checks(runs_json: dict, recorded: dict) -> None:
         check("%s: 記録の行がいまのレシピ(SHA-256)と 1 対 1" % task,
               not bad_link and len(rec) == len(ms) + 1, "外れ %s" % bad_link[:3])
         check("%s: データ不要の検証(型の鎖・契約)が記録の状態と一致" % task, not bad_valid, "外れ %s" % bad_valid[:3])
+        tv = recorded.get(task, {}).get("trivial") or {}
+        check("%s: 記録に自明な基準線があり、検出率・誤報率から平衡正解率を数え直せる(採点の再実行はデータがある時だけ)" % task,
+              bool(tv) and tv.get("statistic") == "median_minus_p1" and tv.get("n") == recorded[task]["n_test"]
+              and abs(0.5 * (tv["tpr"] + 1.0 - tv["fpr"]) - tv["bal"]) < 1e-12 and 0.0 <= tv["auroc"] <= 1.0,
+              "AUROC %.3f、平衡正解率 %.3f" % (tv.get("auroc", float("nan")), tv.get("bal", float("nan"))))
     got = headline(recorded)
     check("見出しの数字(HEADLINE)が記録と一致", got == HEADLINE,
           "記録 %s" % json.dumps(got, ensure_ascii=False)[:300] if got != HEADLINE else "%d 項目" % len(got))
@@ -935,6 +1087,12 @@ def headline(rec: dict) -> dict:
         cl = [r["score"]["fpr"] for r in ai if r["phase"] == "cloud_v2" and r["score"] is not None]
         if cl:
             out["%s/クラウド LLM の誤報" % task] = "%.2f-%.2f" % (min(cl), max(cl))
+        loc = [r for r in ai if r["phase"] != "cloud_v2"]
+        out["%s/ローカル LLM 合計(偶然を超えた)" % task] = "%d/%d" % (sum(r["status"] == "ok" for r in loc), len(loc))
+        tv = (rec.get(task) or {}).get("trivial")
+        if tv:
+            out["%s/自明な基準線" % task] = "%.3f/%.3f AUROC %.3f" % (tv["tpr"], tv["fpr"], tv["auroc"])
+            out["%s/自明な基準線を超えた AI" % task] = "%d/%d" % (sum(beats_trivial(r, tv) for r in ai), len(ai))
     return out
 
 
@@ -983,9 +1141,17 @@ def full_run(runs_json: dict, recorded: dict) -> dict:
                      "status": status_of("ok", lsc), "why": "", "score": lsc,
                      "ms_median": round(statistics.median(lb["ms"]), 2),
                      "fit_s": round(lb["fit_s"], 1), "threshold": lb["threshold"], "cause": None})
-        result[task] = {"rows": rows, "n_test": int(len(y)), "n_defect": int(y.sum()), "data_pin": pin,
+        xd, yd, _gd = load_part(task, sp["dev"])
+        tv = trivial_baseline(trivial_statistic(x), y, trivial_statistic(xd), yd)
+        result[task] = {"rows": rows, "n_test": int(len(y)), "n_defect": int(y.sum()), "data_pin": pin, "trivial": tv,
                         "_x": x, "_y": y, "_gt": gt, "_methods": methods_for(task, runs_json), "_learned": lb}
         print_table(task, rows)
+        print_trivial(tv, rows)
+        rtv = recorded.get(task, {}).get("trivial")
+        if not RECORD:
+            check("%s: 自明な基準線を数え直した結果が記録と一致" % task,
+                  rtv is not None and json.dumps(_stable(tv), sort_keys=True) == json.dumps(_stable(rtv), sort_keys=True),
+                  "AUROC %.4f、検出 %.3f・誤報 %.3f" % (tv["auroc"], tv["tpr"], tv["fpr"]))
         rec = {r["key"]: r for r in recorded.get(task, {}).get("rows", [])}
         if not RECORD:
             diffs = [r["key"] for r in rows if r["key"] not in rec
@@ -1033,9 +1199,26 @@ def print_table(task: str, rows: list[dict]) -> None:
         print("   " + fmt_row(r))
     for name, rs in _groups(rows, ai_only=True):
         sm = summarize(rs)
-        print("   %s: %d 回、選り分けた %d、偶然以下 %d、壊れた %d、偏った %d、平衡正解率 中央 %s 最良 %s" % (
+        print("   %s: %d 回、偶然を超えた %d、偶然以下 %d、壊れた %d、偏った %d、平衡正解率 中央 %s 最良 %s  [%s]" % (
             name, sm["n"], sm["n_ok"], sm["n_chance"], sm["n_broken"], sm["n_degenerate"],
-            *("%.3f" % v if v is not None else "-" for v in (sm["bal_median"], sm["bal_best"]))))
+            *("%.3f" % v if v is not None else "-" for v in (sm["bal_median"], sm["bal_best"])), condition_of(rs)))
+
+
+def print_trivial(tv: dict | None, rows: list[dict]) -> None:
+    """自明な基準線の行と、それを平衡正解率で超えた列の数。"""
+    if not tv:
+        print("   %s: 記録に無い(未計算)" % TRIVIAL_NAME)
+        return
+    ai = [r for r in rows if r["kind"] == "ai"]
+    print("   %s: 検出 %.3f 誤報 %.3f 平衡正解率 %.3f(閾値 %.4f は開発用 6 枚で決めた)、統計量の AUROC %.3f、"
+          "試験で閾値を選んだ上限 %.3f(参考)" % (TRIVIAL_NAME, tv["tpr"], tv["fpr"], tv["bal"], tv["threshold_dev"],
+                                       tv["auroc"], tv["bal_oracle"]))
+    print("   基準線を平衡正解率で超えた: AI %d / %d 本、手組み %s、既存レシピ %d / %d 本、良品学習 %s" % (
+        sum(beats_trivial(r, tv) for r in ai), len(ai),
+        "○" if beats_trivial(next(r for r in rows if r["key"] == "hand"), tv) else "×",
+        sum(beats_trivial(r, tv) for r in rows if r["kind"] == "existing"),
+        sum(r["kind"] == "existing" for r in rows),
+        "○" if beats_trivial(next(r for r in rows if r["kind"] == "learned"), tv) else "×"))
 
 
 def print_recorded(recorded: dict) -> None:
@@ -1046,6 +1229,7 @@ def print_recorded(recorded: dict) -> None:
             continue
         print("   ── %s: 試験 %d 枚(欠陥 %d)" % (TASKS[task]["title"], t["n_test"], t["n_defect"]))
         print_table(task, t["rows"])
+        print_trivial(t.get("trivial"), t["rows"])
 
 
 def findings(result_or_recorded: dict) -> None:
@@ -1061,7 +1245,7 @@ def findings(result_or_recorded: dict) -> None:
         print("   ── %s(開発側の手組みの平衡正解率 %.3f)" % (TASKS[task]["title"], hand["score"]["bal"]))
         for name, rs in _groups(rows, ai_only=True):
             c = Counter(r.get("cause") for r in rs if r.get("cause"))
-            print("     %-34s 選り分けた %d / %d、開発用画像を読んだ %d、失敗の帰属 %s" % (
+            print("     %-34s 偶然を超えた %d / %d、開発用画像を読んだ %d、失敗の帰属 %s" % (
                 name, sum(r["status"] == "ok" for r in rs), len(rs), sum(bool(r.get("used_dev")) for r in rs),
                 ", ".join("%s %d" % (CAUSE_JA[k], v) for k, v in sorted(c.items())) or "なし"))
         ai = [r for r in rows if r["kind"] == "ai" and r["phase"] in ("v2_ctx32k", "v3_mcpfix")]
@@ -1072,7 +1256,7 @@ def findings(result_or_recorded: dict) -> None:
 def write_record(result: dict) -> None:
     payload = {"_note": ("Scores of every saved recipe on public real data (examples/poc_ai_built_inspection_scored.py). "
                          "Written with FULLSEYE_AISCORE_RECORD=1; CI checks that rows match the saved recipes."),
-               "generated": time.strftime("%Y-%m-%d")}
+               "generated": time.strftime("%Y-%m-%d"), "trivial_generated": time.strftime("%Y-%m-%d")}
     for task, t in result.items():
         payload[task] = {k: v for k, v in t.items() if not k.startswith("_")}
     SCORES_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -1082,9 +1266,10 @@ def write_record(result: dict) -> None:
 
 def main() -> int:
     print("AI が組んだ検査を公開実データの真値で採点する")
-    self_test_scoring()
     runs_json = load_recipe_runs()
     recorded = json.loads(SCORES_JSON.read_text(encoding="utf-8")) if SCORES_JSON.exists() else {}
+    print_summary(recorded)
+    self_test_scoring()
     have_data = bool(CRACK and VISA and os.path.isdir(os.path.join(CRACK, "Positive"))
                      and os.path.isfile(os.path.join(VISA, "split_csv", "1cls.csv")))
     if not RECORD:
@@ -1096,7 +1281,9 @@ def main() -> int:
         findings(result)
         write_figures(result)
     else:
-        print("\n   FULLSEYE_CRACK_DATA / FULLSEYE_VISA_DATA が無いので、実データの採点は走らせない(記録を印字する)。")
+        print("\n   FULLSEYE_CRACK_DATA / FULLSEYE_VISA_DATA が無いので、実データの採点は走らせない(記録を印字する)。"
+              "★この実行は見出しの数字を採点し直していない —— 数字は %s の手元実行(自明な基準線は %s)の記録。"
+              % (recorded.get("generated", "?"), recorded.get("trivial_generated", "未計算")))
         print_recorded(recorded)
         findings(recorded)
     errors = figs.errors()
