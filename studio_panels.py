@@ -1605,6 +1605,25 @@ def declare_strip(win, key, row, body=None, shape=None, root=None):
 
 #: D24: the zoom tools of every image window, in this order (then a group gap, then save)
 IMAGE_ZOOM_ORDER = ("zoom_in", "zoom_out", "fit", "actual_size")
+#: D24 / P04-6: the groups of every image window's strip, in this order: [open / make] | [view] | [save].
+#: Names as the windows give them (the main image: win._panel_buttons["graphics_1"]; another one: its
+#: tool_buttons); a window without a group simply has none.
+IMAGE_GROUPS = (("open_image", "demo"), IMAGE_ZOOM_ORDER, ("save_result", "save"))
+
+
+def image_groups(buttons):
+    """``buttons`` {name: button} of an image window -> its strip's groups in IMAGE_GROUPS order (buttons
+    of no listed group follow in a group of their own, so nothing is lost)."""
+    groups, used = [], set()
+    for names in IMAGE_GROUPS:
+        g = [buttons[n] for n in names if buttons.get(n) is not None]
+        used |= {id(b) for b in g}
+        if g:
+            groups.append(g)
+    rest = [b for b in buttons.values() if b is not None and id(b) not in used]
+    if rest:
+        groups.append(rest)
+    return groups
 
 
 def adopt_image_strip(win, view, key=None):
@@ -1622,16 +1641,13 @@ def adopt_image_strip(win, view, key=None):
     order = [b for b in order if b in buttons.values()]
     if not order:
         return None
-    save = [b for b in order if buttons.get("save") is b]
-    look = [b for b in order if b not in save]
-    rank = {buttons.get(name): i for i, name in enumerate(IMAGE_ZOOM_ORDER)}
-    look.sort(key=lambda b: rank.get(b, len(rank)))   # D24: the main image's order, in every image window
+    groups = image_groups({n: b for n, b in buttons.items() if b in order})   # D24: one order in every window
     st["image_seq"] = st.get("image_seq", 1) + 1
     key = key or "graphics_%d" % st["image_seq"]
     FlowStrip = flow_classes()["FlowStrip"]
     strip = FlowStrip("tools", key, view)
     strip.overlay = True
-    strip.set_groups([look, save])
+    strip.set_groups(groups)
     old.hide()
     old.setParent(None)
     old.deleteLater()
@@ -2526,6 +2542,9 @@ def _default_registrations(win):
         sub = getattr(win, "_primary_gsub", None)
         shape = sub.widget() if sub is not None and sub.widget() is not None else body.parentWidget()
         fs = declare_strip(win, "graphics_1", row, body, shape=shape)
+        named = {n: b for n, b in (own_buttons.get("graphics_1") or {}).items() if b in fs.items()}
+        if len(named) == len(fs.items()):                      # D24: the groups of every image window
+            fs.set_groups(image_groups(named))
         reach = _state(win).setdefault("strip_action_of", {})
         same = equiv("graphics_1")
         for b in fs.items():

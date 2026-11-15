@@ -1694,7 +1694,8 @@ def test_image_strips_are_icon_button_size_and_in_one_order(tmp_path, monkeypatc
         win._new_graphics_window(); _pump(app, 0.3)
         rows = [r for r in studio_panels.panel_ledger(win) if r["kind"] == "image"]
         assert len(rows) == 3                                               # the main image and two more
-        counted = 0
+        want = (("open_image", "demo"), ("zoom_in", "zoom_out", "fit", "actual_size"), ("save_result", "save"))
+        counted, ends = 0, {}
         for r in rows:
             strip = r["strip"]
             names = (win._panel_buttons["graphics_1"] if r["key"] == "graphics_1" else r["shape"].tool_buttons)
@@ -1707,11 +1708,21 @@ def test_image_strips_are_icon_button_size_and_in_one_order(tmp_path, monkeypatc
             assert order == list(studio_panels.IMAGE_ZOOM_ORDER), (r["key"], order)
             zoom = [g for g in strip.groups if by_button.get(g[0]) == "zoom_in"]
             assert len(zoom) == 1 and len(zoom[0]) == 4, r["key"]           # one group, in that order
-            if r["key"] != "graphics_1":                                    # then a group gap, then save
-                assert [by_button.get(b) for b in strip.groups[-1]] == ["save"], r["key"]
-                assert strip.groups.index(zoom[0]) == len(strip.groups) - 2
+            # P04-6: [open / make] | [view] | [save] in EVERY image window, the main one too (the user-eye
+            # check: Graphics 1 had save in its first group, so two windows side by side had it at opposite ends)
+            kinds = []
+            for g in strip.groups:
+                names_g = [by_button.get(b) for b in g]
+                kind = [i for i, grp in enumerate(want) if names_g[0] in grp]
+                assert len(kind) == 1 and all(n in want[kind[0]] for n in names_g), (r["key"], names_g)
+                kinds.append(kind[0])
+            assert kinds == sorted(set(kinds)) and kinds[-2:] == [1, 2], (r["key"], kinds)
+            ends[r["key"]] = kinds
             counted += len(items)
         assert counted >= 17
+        assert ends["graphics_1"] == [0, 1, 2] and len(ends) == 3           # the main one opens, views, saves
+        assert {tuple(k[-2:]) for k in ends.values()} == {(1, 2)}           # save at the same end everywhere
+        assert studio_panels.IMAGE_GROUPS == want                           # one table for every window
     finally:
         _close(app, win)
 
