@@ -501,7 +501,8 @@ def test_structured_content_over_the_cap_is_dropped_and_said_so(cat):
 
 
 def test_coverage_reports_all_five_layers_and_there_are_no_orphan_notes(cat):
-    c = call_tool("fullseye_catalog_coverage", {}, cat)["structuredContent"]
+    # ★2026-11-13: 既定は件数だけになった(名前の一覧は detail=true)。この試験は名前を読むので detail を渡す。
+    c = call_tool("fullseye_catalog_coverage", {"detail": True}, cat)["structuredContent"]
     assert set(c["per_source"]) == {"index", "registry", "ledger", "note", "facade"}
     assert all(v > 0 for v in c["per_source"].values()), c["per_source"]
     # 2026-09-15 実測: 索引の全 op にノートがある。減ったら知識層の穴。
@@ -551,7 +552,8 @@ def test_the_catalog_says_where_it_read_the_index_and_the_notes_from(cat):
     assert cat.index_source.startswith("package:") and cat.index_source.endswith("OP_INDEX.json")
     assert cat.notes_source.startswith("docs:")
     c = call_tool("fullseye_catalog_coverage", {}, cat)["structuredContent"]
-    assert c["index_source"] == cat.index_source and c["notes_source"] == cat.notes_source
+    # ★2026-11-13: 応答の出どころはホストの絶対パスでなく、パッケージ・リポジトリの中の相対の場所
+    assert c["index_source"] == "package:fullseye/data/OP_INDEX.json" and c["notes_source"] == "docs:docs/ops"
 
 
 def test_the_packaged_catalog_data_equals_the_docs_it_was_copied_from():

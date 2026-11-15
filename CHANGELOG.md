@@ -7,6 +7,99 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### MCP: PR #318 の独立レビューの指摘の直し(2026-11-15)
+
+- ハンドル置き場のバイトの上限: 表(dict・list)の大きさを `len(repr(...))` で数えていて、repr が大きい配列を「...」で
+  省くので、128 MB の配列の表が 271 バイトと数えられ、上限 128 MiB の置き場に 6 つ入れても追い出しが起きなかった
+  (実際は 768 MB を持ったまま)。入れ子の中の配列を `nbytes` で数え、上限は**実際に持っているバイト**(同じ配列は
+  1 回)で見る。pipeline の表とその欄の image のハンドルは同じ配列なので、二重には数えない。`fullseye_pipeline` の
+  中間の上限も同じ数え方(`fullseye.mcp.handles.value_nbytes`)。
+- 表のハンドルの名前: `json.dumps(..., default=repr)` でハッシュを作っていて、1000 要素を超える配列は repr で省かれ、
+  真ん中だけが違う 2 つの表に同じハンドルが付いた(2 回目の読み出しで前の値が返った)。配列は dtype・形・バイト列ごと
+  ハッシュに入れる。dict の鍵の順には依らない。**挙動が変わる点**: 表(配列でない値)のハンドルの文字列が変わる
+  (ハンドルはサーバの 1 回の起動の間だけ使う物で、保存されない)。配列のハンドルは変わらない。
+- `fullseye_apply`: 入力の無い台帳 op(`abbe_number`・`illumination_design` など)は `handle` を省ける(schema の
+  `required` は `op` だけ)。以前は「arguments.handle は必須」で断られ、docs/MCP.md の「apply から呼べる」と合わなかった。
+  画像を取る op で handle が無ければ、理由つきで断る(-32602)。
+- 作業プロセスの読める場所: 親の `sys.path` を全部入れていた(`python -m fullseye.mcp` は cwd を `sys.path[0]` に置くので、
+  ドライブの直下やホームで起動すると読み込みの制限が実質なくなった)。Python の本体・site-packages・fullseye の置き場所・作業
+  フォルダだけにした。
+- 作業プロセスの結果の大きさ: 親が `.npy` を全部読んでから画素の上限で断っていた。作業プロセスが結果の配列の要素の数
+  (`mcp_stack_max_pixels`)とバイト(`mcp_pipeline_max_intermediate_bytes`)を数え、超えたら書き出さずに断る(段は
+  `resource_limit`、`limit` = `output_limit`)。親も子の出力を読む前に `.npy` の見出しで数える。
+- 日本語の検索: 評価の問い(検証の 23 回と、レビューが直しを見る前に書いた 10 問)・正解の型・採点の道具を repo に置いた
+  (`tests/data/mcp_find_ops_eval_ja.json`・`tools/mcp_find_ops_eval.py`、門は `tests/test_mcp_review_fixes_2026_11_15.py`)。
+  `--root` で別の木(origin/master など)を同じ問いで採点できる。2026-11-15 の数(上位 5 件に関係する op が入った問い /
+  関係して MCP で走る op が入った問い): 検証の 23 問は master 2a6cefab26 で 14 / 5、この枝で 19 / 16。★23 問は全部、
+  作者が語の表 `JA_TERMS` を合わせるのに見た問いで、独立な評価ではない。レビューの 10 問は master 9 / 5、この枝(px→mm を
+  足す前)9 / 8、足した後 10 / 9。合わせていない 9 問では 9 / 5 → 9 / 8 で、関係する op が出る問いの数は変わらない
+  (増えたのは MCP で走る op)。「ピクセル」「ミリメートル」の橋渡しの語を足し、「ピクセルをミリメートルに変換したい」で
+  `pixel_to_world`・`mm_per_px_from_reference` が上位 5 件に出る(この 1 問は合わせるのに使った)。
+
+### MCP: AI の役での検証の報告 2〜13 番と、判定 ok の意味の直し(2026-11-13)
+
+- 失敗の本文: `fullseye_validate_pipeline` の不合格・`fullseye_pipeline` の型の誤り(-32602)・段の失敗の本文を、段番号・op・理由・直し方の 1 行ずつにした(以前は「error」の 1 語や、結果の JSON を 1 行に繋いだ物で、理由は structuredContent にしか無かった)。structuredContent は変えていない。
+- 型の直し方の候補と plan の経路から、入力の中身を読まない op(`MCP_INPUT_INDEPENDENT.json`、採点が断る一覧と同じ)を外した。以前は image → region の候補が `hx_gen_empty_region` で、従うと `count_obj` = 0 が判定 ok で返った。
+- 実行できない op の誤り文: 理由の 1 文と代わりの手(読む・Python から呼ぶ・同じ分類で MCP が走らせられる op)を付けた(上の節)。代わりの op は、名前の語を共有する物だけを並べる。`fullseye_apply` の「近い名前」に同じ名前を出さない。
+- `fullseye_op_cards`: 上限(`budget_tokens`)で落とした名前も `missing`(`reason` = `budget_tokens` / `unknown_op`)と本文の先頭の 1 行に書く(以前は知らない名前だけで、上限で落ちた名前はどこにも出なかった)。`budget_tokens` を schema に足した(ハンドラは読むのに渡せなかった。minimal では隠す)。**挙動が変わる点**: カードの `executable` は MCP で走るか(OP_GRAPH の `verified_executable`)を表す。以前の意味(Python の関数として呼べるか)は `python_executable` に移した。`truncated` は上限で落とした名前があるか。
+- `fullseye_find_ops`: `executable_only`(既定 false、minimal では隠す)を足した。**挙動が変わる点**: `proposals` の各行は `{kind, name, executable}` の参照だけにした(以前は ops / retry_ops / recipes の行を丸ごと写し、応答の約半分が重複だった)。件数と順番は変わらない。中身は `ops` / `recipes` を読む。
+- tools/list: 段の `inputs`・`params`・`a` と `fullseye_plan` の `have`・`want`・`goal` に 1 行の説明を足し、英語だった 3 道具(`fullseye_op_cards`・`fullseye_validate_pipeline`・`fullseye_load_stack`)の説明を日本語に揃えた。minimal の予算(1,500 トークン)に収めるため、find_ops・pipeline・handle・型の説明を短くした(minimal 1,498 → 1,496、full 4,211 → 4,285 トークン)。
+- 計測値に単位と意味: registry の計測 op の値に `meaning`(op の要約)・`unit`(要約から読める物だけ: px / count)・`measured`(`diameter_region` など 26 op は入力の領域の**最大の連結成分 1 つだけ**を測る。その時は成分の数も)を付け、本文にも書く。`pixel_to_world` の値に mm、`mm_per_px_from_reference` に mm/px。
+- **挙動が変わる点**: `fullseye_catalog_coverage` の既定は件数だけ(`index_without_note` などの名前の一覧は `detail=true` の時だけ)。`index_source` / `notes_source` はホストの絶対パスでなく、パッケージ・リポジトリの中の相対の場所(例 `package:fullseye/data/OP_INDEX.json`)。
+- 読み込みの境界: `fullseye_load_image` は見出し(PNG の IHDR・Pillow の遅延の open・npy の見出し)で画素数を先に見て、上限を超える画像を復号しない(以前は 20,000×20,000 を復号してから断った)。`fullseye_list_samples` は根の中のジャンクション・リンクの先(根の外)の名前を並べない。`path=NUL` などで -32603 にせず、根の外として断る(ホストのパスを出さない)。`fullseye_import_json` は NaN・Infinity(JSON の定数・封筒の中の数・配列の中の値)を断る。サーバが自分で作った一時フォルダは置き場が捨てられる時に消す。
+- `fullseye_import_json`: `json`(文字列)の中の入れ子が深すぎる物(1 通の枠と同じ上限 64 段)を、読む前に数えて断る
+  (2026-11-15。以前は py3.11 で約 1,000 段から RecursionError、py3.14 で 10 万段から Stack overflow になり、
+  どちらも -32603 = 内部エラーで返った。サーバは落ちない)。
+- `fullseye_score_pipeline`: 型の門まで(入力の縛り・引数・入力を読まない op・型の検査)で断った試行は採点の回数に数えない(`attempt_counted: false`)。走らせる前で真値に触れないため。出力の型の検査から先は従来どおり数える。
+- 日本語の検索: 依頼の言い回し(「見つけたい」「測りたい」「どの〜が要るか」など)を検索語から外し、現場の日本語(照明・液面・瓶・ステレオ・視差・レンズ・サーモグラフィ …)を英語の術語へ橋渡しする表 `JA_TERMS` を足した(optics の要約は英語だけの物が多い)。橋渡しした片仮名の語は 2 文字の切れ端で引かない(「サーモグラフィ」が「ホモグラフィ」に当たっていた)。検証の find_ops 23 回で「上位 5 件に関係する op」14 → 19、「関係して MCP で実行できる op」5 → 16(A の前後を含む。関係するかは依頼ごとの名前の型で数えた。問いと採点は `tools/mcp_find_ops_eval.py` で再現できる。23 問は全部、語の表を合わせるのに見た問い。上の 2026-11-15 の節)。
+- `fullseye_list_samples`: `sample_details`(何が写っているか・来歴・ライセンス・真値の有無)を足し、本文にも 1 行ずつ書く。`samples`(名前の一覧)は従来どおり。
+- 判定 ok の意味: `fullseye_pipeline` の値の結果の本文に「判定 ok は出力の形(有限・空でない・定数でない)を見ただけで、値の正しさではない(利用者の画像に真値は無い)」と書き、`verdict_scope: "shape_only"` を付ける。明らかな異常には `cautions` と本文の「注意」: 長さが画像の対角の 9 割以上(物でなく画像全体・枠を測った疑い)、入力の中身を読まない op の段。
+- docs/MCP.md と README: 公式の `mcp` Python クライアントで initialize → tools/list → tools/call が通る例(確かめた物そのまま)と、`stdio_client` がサーバに最小限の環境変数しか渡さない事(`FULLSEYE_MCP_ROOT` は `env=` に書く)、MCP から実行できる op の数(2,456 / 3,842)・実行できない op の扱い・判定 ok の意味を書いた。
+
+### MCP: 光学・照明・合成の入口などの台帳 op を MCP から実行できるようにした(2026-11-13)
+
+AI の役で MCP を使った検証(2026-11-13)で、optics の op は MCP から 1 つも実行できなかった(照明の 17 op は全部
+「not executable in MCP; call from Python」)。台帳 op を、MCP のサーバと別の作業プロセス(`fullseye/mcp/opworker.py`)で、
+時間とメモリの上限つきで走らせる経路を `fullseye_pipeline` と `fullseye_apply` に足した。新しい道具は無い。
+
+- MCP から実行できる op: 956 → 2,456(全 3,842 edge のうち。増えた 1,500 は隔離して走る台帳 op)。optics の 506 op は
+  0 → 305。照明の 17 op、レンズ・センサの選定(`lens_spec`・`sensor_spec`・`depth_of_field`・`mtf50` など)、合成の入口
+  (`bottle_image`)、px→mm(`pixel_to_world`)、ステレオ(`binocular_disparity_ms`)が道具だけで呼べる。
+- 載せる op は実測で決める(`tools/mcp_isolated_probe.py` → `docs/mcp_isolated_ops.json`): ファイル・URL・関数の引数を
+  取らず、見本の入力で作業プロセスの中で 5 秒・1 GiB 以内に走り、宣言の型の有限の値を返し、道具の経路
+  (`--verify-mcp`)も通った物だけ。載せなかった 1,151 op は理由の符号つき(見本で動かない 897、ファイル等の引数 163 など)。
+- 上限: 1 回の実行は `mcp_op_time_limit_s`(既定 30 秒)と `mcp_op_memory_limit_bytes`(既定 2 GiB、作業プロセスの
+  メモリの増分)。超えたら作業プロセスを止め、段は `resource_limit` で失敗する(黙って長く走らせない)。
+  作業プロセスは audit hook で、作業用の一時フォルダの外への書き込み・Python と fullseye の外の読み込み・
+  ソケット・子プロセスを断る。値の受け渡しは JSON の木と数値配列だけ(pickle を使わない)。
+- 引数: 台帳の仕様(数・整数・真偽・選択肢・短い名前)で検査し、合わない値は 1 段も走らせずに断る(丸めない)。
+  文字列の引数はパスの区切り・ドライブ名・`..` を書けない。`device` は `cpu` だけ(GPU のメモリは上限で縛れない)。
+  `{"profile": …}` で書いた引数も、引いた値を同じ仕様で検査する(検証と、作業プロセスへ渡す直前の両方。2026-11-15:
+  直に書いた値だけを検査していて、数の引数に文字列の profile を渡すと検証を通り、op が自分で断るまで走った)。
+- optional の依存(正直な内訳、2026-11-15 に wheel だけを入れた venv で実測): 2,456 は optional の依存を入れた環境での数。
+  素の `pip install fullseye`(numpy と scipy だけ)では、隔離して走る 1,500 op のうち 1,478 が見本のとおりに走り、
+  22 は依存が無いので失敗した段で断る(scikit-image 15・Pillow 6・zxing-cpp 1。Pillow の 3 つ = `carla_scene_synthetic`・
+  `carla_scene_world`・`lead_truth_depth` は誤り文が依存の名前を言わない)。registry の側は数えていない。
+- 配布物の側の門(`tests/test_mcp_wheel.py`、CI の core)に、wheel を入れた venv から台帳 op(`illumination_design`・
+  `lens_spec`)が作業プロセスで走る事と、`fullseye_catalog_coverage` の既定(件数だけ・相対の出どころ)を足した。
+- 結果: 表・数は上限つきの要約と単位(鍵の名前の `_mm`・`_deg` など)、op の 1 行の意味、使った引数の単位を返す。
+  表の中の 2-D 配列は `image` のハンドルになり、次の pipeline に渡せる。複素数は `re` / `im` に分ける。
+  配列を返す op(`lighting_sweep` の角度とコントラストの組など)は、本文に op の意味・型・形・値の範囲と、128 要素までなら
+  値、応答の後も残る handle を書く(2026-11-15。以前は本文が「判定=ok value=None」だけで、値は structuredContent にしか
+  無かった)。途中に表を返す台帳 op がある pipeline でも、最後の値と判定の範囲を本文に書く(以前は落ちた)。
+- 実行できない op の誤り文(`fullseye_validate_pipeline` / `fullseye_pipeline` / `fullseye_apply` / find_ops の骨格)に、
+  理由の 1 文と、代わりの手(`fullseye_op_help` で読む・Python からの呼び方・同じ分類で MCP が走らせられる op)を付けた。
+  `fullseye_apply` の「近い名前」に同じ名前を出さない。
+
+挙動が変わる点(後方互換):
+
+- `fullseye_pipeline` の `required` から `handle` を外した(入力の無い op だけの pipeline のため)。handle を渡す
+  従来の要求はそのまま通る(受ける要求を広げるだけ)。
+- OP_GRAPH の `verified_executable` が真の edge に、`executor.isolation = "worker"` の物(台帳 op)が加わった。
+  同じプロセスで走る Python の op の集合(11 op)は変わらない。
+- `MCP_INPUT_INDEPENDENT.json` は、隔離の op の判定を実測の台帳から読む(regen_all の中で 1,500 op を 7 回ずつ走らせない)。
+- レシピの `runner = "mcp"` が 89 → 132(台帳 op を含むレシピが MCP で走るようになった)。
+
 ### 追加 — PoC「置かれたタオルの角・辺・折り線を古典の画像処理で見つける」(収蔵 2026.317)
 
 - `examples/poc_cloth_towel_corners_synth.py`: 0〜2 回折ったタオルを**自前の幾何で描き**(MuJoCo の布は台を貫通して不採用)、`gaussian` / `otsu` / `fill_up` / `sk_find_contours` / `xg_gen_polygons` と辺の直線の交点で隅・辺を出す。真値は描画側(隅の高さで投影)。データは自作の合成で、新 op なし。

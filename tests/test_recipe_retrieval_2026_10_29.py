@@ -11,15 +11,23 @@ def test_every_indexed_recipe_validates_for_mcp():
     # 2026-11-03: the index also carries recipebook recipes that call ledger ops with real arguments
     # (runner "python"). The MCP gate is unchanged for every recipe marked "mcp"; a recipe marked
     # "python" must really be one MCP cannot run — the label can never hide a pipeline that broke.
+    # ★2026-11-13: 台帳 op が MCP から走るようになり、validate_pipeline だけでは「kw」「call」を持つ段
+    #   (Python の runner の書き方。fullseye_pipeline の schema は受けない)が通るようになった。MCP で走るとは
+    #   「道具の schema が受ける段の鍵だけで書けて、検証も通る」事として数える。
+    from fullseye.mcp.server import TOOLS
+    stage_keys=set(TOOLS["fullseye_pipeline"]["inputSchema"]["properties"]["stages"]["items"]["properties"])
+    assert {"op","params","inputs"} <= stage_keys
     n_mcp = 0
     for recipe in data["recipes"]:
         result=validate_pipeline(recipe["stages"],recipe["input_sort"],cat)
+        tool_shaped=all(set(st) <= stage_keys for st in recipe["stages"])
         if recipe.get("runner","mcp")=="mcp":
             n_mcp += 1
-            assert result["valid"], (recipe["name"],result)
+            assert result["valid"] and tool_shaped, (recipe["name"],result)
         else:
             assert recipe["runner"]=="python", recipe["name"]
-            assert not result["valid"], ("labelled python but MCP can run it — label it mcp", recipe["name"])
+            assert not (result["valid"] and tool_shaped), ("labelled python but MCP can run it — label it mcp",
+                                                           recipe["name"])
     assert n_mcp >= 75, n_mcp
 
 def test_find_ops_returns_at_most_two_ready_pipelines():
