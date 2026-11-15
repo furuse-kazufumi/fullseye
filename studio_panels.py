@@ -611,6 +611,7 @@ def set_code_side(win, side):
     if side not in ("left", "bottom"):
         raise ValueError("side must be 'left' or 'bottom', not %r" % (side,))
     dock = win._docks["program"]
+    release_tab_sides(win)
     dock.setFloating(False)
     win.addDockWidget(QtCore.Qt.LeftDockWidgetArea if side == "left" else QtCore.Qt.BottomDockWidgetArea, dock)
     dock.show()
@@ -677,6 +678,7 @@ def after_restore(win):
     """The bar is always there, and no separate window is left outside every screen."""
     st = _state(win)
     st["rail"].show()
+    release_tab_sides(win)
     relayout(win)
     for dock in win._docks.values():
         if dock.isFloating() and not dock.isHidden():
@@ -1333,7 +1335,14 @@ def flow_classes():
             self.strip.show()
             bar.installEventFilter(self)
             bar.currentChanged.connect(self.follow_current)
+            bar.currentChanged.connect(self._hold)
             bar.setProperty("fsTabRow", True)
+
+        def _hold(self, _index=None):
+            """A tab was chosen: the rows keep their side until the user gives a size (see relayout)."""
+            st = getattr(self.win, "_panels", None)
+            if st is not None:
+                st["tab_hold"] = True
 
         def vertical(self):
             return self.bar.shape() in (QtWidgets.QTabBar.RoundedWest, QtWidgets.QTabBar.RoundedEast,
@@ -1737,16 +1746,23 @@ def relayout(win):
             _place_overlay(entry)
     st["strips"] = keep
     areas = {}
+    held = st.setdefault("tab_area_docks", {})       # {area: the panels whose tabs were last placed there}
     for area in (QtCore.Qt.LeftDockWidgetArea, QtCore.Qt.RightDockWidgetArea,
                  QtCore.Qt.TopDockWidgetArea, QtCore.Qt.BottomDockWidgetArea):
         docks = [d for d in win._docks.values()
                  if not d.isHidden() and not d.isFloating() and win.dockWidgetArea(d) == area
                  and win.tabifiedDockWidgets(d)]
         if not docks:
+            held.pop(area, None)
             continue
         front = max(docks, key=lambda d: d.width() * d.height() if not d.visibleRegion().isEmpty() else 0)
         now = "left" if win.tabPosition(area) == QtWidgets.QTabWidget.West else "top"
-        side = strip_side(front.width(), front.height(), now, mode)
+        same = frozenset(k for k, d in win._docks.items() if d in docks)
+        if mode == "auto" and st.get("tab_hold") and held.get(area) == same:
+            side = now                               # a tab was chosen: the row stays under the pointer
+        else:
+            side = strip_side(front.width(), front.height(), now, mode)
+        held[area] = same
         if side != now:
             win.setTabPosition(area, QtWidgets.QTabWidget.West if side == "left" else QtWidgets.QTabWidget.North)
         areas[area] = side
@@ -1777,9 +1793,17 @@ def relayout(win):
     return areas
 
 
+def release_tab_sides(win):
+    """The sides of the tab rows may be decided again (the user gave a size, or the panels moved)."""
+    st = getattr(win, "_panels", None)
+    if st is not None:
+        st["tab_hold"] = False
+
+
 def set_strip_mode(win, mode, settings=None):
     """The user's choice for tools and tabs: "auto", "top" or "left" (saved when ``settings`` is given)."""
     st = _state(win)
+    release_tab_sides(win)
     st["strip_mode"] = normalise_strip_mode(mode)
     if settings is not None:
         settings.setValue(STRIP_MODE_KEY, st["strip_mode"])
@@ -2991,7 +3015,13 @@ def install(win, tr, settings=None):
             self.pending = False
 
         def eventFilter(self, obj, ev):
-            if ev.type() in (QtCore.QEvent.Resize, QtCore.QEvent.Show) and not self.pending:
+            t = ev.type()
+            if obj is win and t in (QtCore.QEvent.Resize, QtCore.QEvent.MouseButtonRelease):
+                release_tab_sides(win)               # the window resized / a splitter let go: a size the user gave
+                if t == QtCore.QEvent.MouseButtonRelease and not self.pending:
+                    self.pending = True
+                    QtCore.QTimer.singleShot(0, self.run)
+            if t in (QtCore.QEvent.Resize, QtCore.QEvent.Show) and not self.pending:
                 self.pending = True
                 QtCore.QTimer.singleShot(0, self.run)
             return False

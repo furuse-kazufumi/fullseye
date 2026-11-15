@@ -1878,3 +1878,51 @@ def test_qt_tab_bar_never_shows_through_the_drawn_rows(tmp_path, monkeypatch):
         assert looked >= 3
     finally:
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# A1 (automatic side) — choosing a tab never moves the tab row under the mouse (the user-eye check: with the
+# tall Pipeline in front the row was on top; a click on "Variables" let the group shrink, its ratio passed
+# 2.2 and the whole row jumped to the left, away from the pointer)
+# --------------------------------------------------------------------------- #
+def test_choosing_a_tab_keeps_the_side_and_place_of_its_row(tmp_path, monkeypatch):
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        win.resize(1280, 720); _pump(app, 0.2)
+        keys = ["pipeline", "variables", "ab", "compare", "display", "operators"]
+        studio_panels.set_code_side(win, "left"); _pump(app, 0.2)
+        win._docks["pipeline"].widget().setMinimumHeight(560)               # a panel taller than the others
+        for k in keys:
+            win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, win._docks[k]); win._docks[k].show()
+        for k in keys[1:]:
+            win.tabifyDockWidget(win._docks[keys[0]], win._docks[k])
+        win._docks["pipeline"].raise_(); _pump(app, 0.6)
+        rows = [r for r in win._panels["tab_rows"].values() if r.bar.isVisible() and len(r.tabs) == len(keys)]
+        assert len(rows) == 1
+        row = rows[0]
+        start = (row.vertical(), row.bar.pos().toTuple())
+        assert win._docks["pipeline"].width() / win._docks["pipeline"].height() < studio_panels.WIDE_ON
+        sizes, clicks = set(), 0
+        for i in [1, 0, 2, 1, 3, 4, 5, 0]:                                   # every tab, as a user clicks them
+            t = row.tabs[i]
+            if t not in row.strip.state["shown"]:
+                row.strip.ensure_visible(t); _pump(app, 0.1)
+            QTest.mouseClick(t, QtCore.Qt.LeftButton); _pump(app, 0.5)
+            assert row.bar.currentIndex() == i
+            front = win._docks[row.key_at(i)]
+            sizes.add((front.width(), front.height()))
+            assert (row.vertical(), row.bar.pos().toTuple()) == start, (i, t.label, front.size().toTuple())
+            clicks += 1
+        assert clicks == 8 and len(sizes) >= 2                               # the group did change its size
+        assert any(w / h >= studio_panels.WIDE_ON for w, h in sizes)          # ... past the threshold: still no jump
+        # a size the user gives (the window) is decided again: the rule itself still works
+        win._docks["variables"].raise_(); _pump(app, 0.3)
+        win.resize(1700, 720); _pump(app, 0.6)
+        front = win._docks["variables"]
+        assert front.width() / front.height() >= studio_panels.WIDE_ON
+        assert row.vertical(), (front.size().toTuple(),)
+        win.resize(1280, 720); _pump(app, 0.4)
+    finally:
+        _close(app, win)
