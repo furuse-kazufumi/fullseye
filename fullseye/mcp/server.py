@@ -37,7 +37,7 @@ from fssystem import get_system
 
 from .catalog import Catalog, CatalogError, SOURCES
 from .diagnose import side_by_side, stats_of, verdict_of
-from .handles import HandleError, HandleStore
+from .handles import HandleError, HandleStore, value_nbytes
 
 PROTOCOL_VERSION = "2025-06-18"
 SERVER_NAME = "fullseye"
@@ -62,18 +62,22 @@ VISION = ("auto", "none", "thumb")
 # --------------------------------------------------------------------------- #
 # tool の宣言(入力スキーマは additionalProperties: false で余計なキーを拒む)     #
 # --------------------------------------------------------------------------- #
-_SORT_DESC = ("op の入出力の種別(image / region / points / volume ...)。"
-              "既知の種別以外は拒否する")
-_HANDLE = {"type": "string", "maxLength": 64,
-           "description": "fullseye://img/<16 hex>。load_image / apply が返す"}
+_SORT_DESC = "型(image / region / points / volume …)。知らない型は断る"
+_HANDLE = {"type": "string", "maxLength": 64, "description": "fullseye://img/<16 hex>"}
+#: 段(stage)の引数の 1 行の説明(fullseye_pipeline と fullseye_validate_pipeline で同じ)。★2026-11-13(報告 7)
+_STAGE_INPUTS = {"type": "array", "items": {"type": "string"}, "description": "入力: handle / have:<型> / stage:N"}
+_STAGE_PARAMS = {"type": "object", "description": "名前つき引数(op_cards の parameters)"}
+_KNOB_DESC = "互換用つまみ0〜1(物理量はparams)"
 _VISION = {"type": "string", "enum": list(VISION),
            "description": "auto=判定が ok でないときだけ対比の小図を出す / none=出さない / thumb=必ず出す"}
 
 TOOLS: dict[str, dict] = {
     "fullseye_plan": {
         "description": "型付き経路を計画する。入力と欲しい型が分かったら使い、次に fullseye_op_cards を呼ぶ。",
-        "inputSchema": {"type":"object","properties":{"have":{"oneOf":[{"type":"string"},{"type":"array","items":{"type":"string"}}]},
-            "want":{"type":"string"},"goal":{"type":"string","maxLength":400},
+        "inputSchema": {"type":"object","properties":{"have":{"oneOf":[{"type":"string"},{"type":"array","items":{"type":"string"}}],
+                                                               "description":"持っている型(例 image)"},
+            "want":{"type":"string","description":"欲しい型(例 table)"},
+            "goal":{"type":"string","maxLength":400,"description":"やりたい事(候補の順位に使う)"},
             "direction":{"type":"string","enum":["forward","backward"]},
             "pattern":{"type":"string"}},"required":["have","want"],"additionalProperties":False}},
     "fullseye_describe": {
@@ -106,11 +110,8 @@ TOOLS: dict[str, dict] = {
     },
     "fullseye_find_ops": {
         "description": (
-            "やりたいことの言葉(日本語・英語・中文(簡/繁)・한국어・Deutsch・हिन्दी)で op を探す。"
-            "op の要約 6 言語・名前・HALCON 名・型と、文献層のテーマ表で人が書いた文脈(現場の言い方、日本語と英訳)を BM25 で照合し、"
-            "順位つきで要約とノートの場所(文脈のある op は contexts も)を返す。"
-            "各候補は loader と pipeline stage の次呼び出し骨格つき。直接 0 件なら業務表現の"
-            "英語候補と型同義語で決定的に再検索し、retry_ops を同じ応答で返す。"),
+            "やりたい事の言葉(日本語・英語・中文・한국어・Deutsch・हिन्दी)で op を探し、順位・要約・ノートの場所と"
+            "次の呼び出しの骨格を返す(MCP で走らない op は理由つき)。直接 0 件なら英語の言い換えと型の同義語で引き直す(retry_ops)。"),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -125,6 +126,8 @@ TOOLS: dict[str, dict] = {
                 #   additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
                 "lang": {"type": "string", "enum": ["ja", "en", "zh", "tw", "ko", "de", "hi"],
                          "description": "要約の言語(省略時は問い合わせの文字から判定)"},
+                "executable_only": {"type": "boolean", "default": False,
+                                    "description": "true なら MCP で実行できる op だけを返す"},
             },
             "required": ["query"],
             "additionalProperties": False,
@@ -173,9 +176,12 @@ TOOLS: dict[str, dict] = {
         "inputSchema": {"type":"object","properties":{"sort":{"type":"string"}},"additionalProperties":False},
     },
     "fullseye_op_cards": {
-        "description": "Return short complete op cards within a token budget; cards are never cut mid-card.",
+        "description": "op のカード(型・引数・MCP で走るか)をトークンの上限内で返す。途中で切らず、収まらない名前は missing に書く。",
         "inputSchema": {"type": "object", "properties": {
-            "names": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"type": "string"}}},
+            "names": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"type": "string"}},
+            # ★2026-11-13: ハンドラは budget_tokens を読むのに schema に無く、上限を上げる手が無かった
+            "budget_tokens": {"type": "integer", "minimum": 1, "maximum": 20000, "default": 500,
+                              "description": "token budget for all cards; names that do not fit are listed in missing"}},
             "required": ["names"], "additionalProperties": False},
     },
     "fullseye_suggest_pipeline": {
@@ -188,16 +194,16 @@ TOOLS: dict[str, dict] = {
             "required":["query","start_sort","goal_sort"],"additionalProperties":False},
     },
     "fullseye_validate_pipeline": {
-        "description": "Validate op existence, knob ranges, stage count, and type chaining without execution (fail-closed).",
+        "description": "走らせずに検査する: op の有無・引数・段数・型の連鎖(fail-closed)。不合格は段ごとに理由を返す。",
         "inputSchema": {"type": "object", "properties": {
             "start_sort": {"type": "string"},
             "bindings": {"type":"object","additionalProperties":_HANDLE},
             "stages": {"type": "array", "minItems": 1, "maxItems": 64, "items": {"type": "object",
                 "properties": {"op": {"type": "string", "maxLength": 120},
-                               "inputs": {"type":"array","items":{"type":"string"}},
-                               "params": {"type":"object"},
+                               "inputs": _STAGE_INPUTS,
+                               "params": _STAGE_PARAMS,
                                "allow_reuse":{"type":"boolean"},
-                               "a": {"type": "number"}, "b": {"type": "number"}},
+                               "a": {"type": "number", "description": _KNOB_DESC}, "b": {"type": "number"}},
                 "required": ["op"], "additionalProperties": False}}},
             "required": ["stages"], "additionalProperties": False},
     },
@@ -216,8 +222,10 @@ TOOLS: dict[str, dict] = {
     "fullseye_catalog_coverage": {
         "description": (
             "カタログ 5 層(index / registry / ledger / note / facade)の交差を数える。"
-            "検索がどれだけの機能を見えているか、ノートの無い op はどれかを返す。"),
-        "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+            "検索がどれだけの機能を見えているか、ノートの無い op はどれかを返す。既定は件数だけ。"),
+        "inputSchema": {"type": "object", "properties": {
+            "detail": {"type": "boolean", "default": False, "description": "true なら op 名の一覧も返す"}},
+            "additionalProperties": False},
     },
     "fullseye_list_samples": {
         "description": "読める画像名(files=作業場所、samples=同梱)。load_image の path に渡す。",
@@ -248,7 +256,7 @@ TOOLS: dict[str, dict] = {
             "vision":_VISION},"required":["path"],"additionalProperties":False},
     },
     "fullseye_load_stack": {
-        "description": "Load several sandboxed images into one typed sequence handle for multi-frame operators.",
+        "description": "作業場所の画像を何枚か読み、多フレームの op が受ける列のハンドル(seq<image> など)にする。",
         "inputSchema": {"type":"object","properties":{
             "paths":{"type":"array","minItems":1,"maxItems":256,"items":{"type":"string"}},
             "sort":{"type":"string","enum":["seq<image>","images","polsweep"]},
@@ -260,7 +268,8 @@ TOOLS: dict[str, dict] = {
             "ハンドルの画像に op を 1 つ適用し、出力ハンドル + 数値統計 + 判定 + 劣化台帳を返す。"
             "既定は strict(op が劣化したら拒否)。allow_degraded=true で fail-soft を許し、"
             "degraded に何が起きたかを載せる。判定が ok でなければ入出力対比の小図を自動で付ける。"
-            "op の in_sort とハンドルの sort が違えば拒否する。"),
+            "op の in_sort とハンドルの sort が違えば拒否する。"
+            "入力の無い台帳 op(abbe_number・illumination_design など)は handle を省ける。"),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -275,7 +284,9 @@ TOOLS: dict[str, dict] = {
                 "parity_check": {"type":"boolean"},
                 "vision": _VISION,
             },
-            "required": ["handle", "op"],
+            # ★2026-11-15(独立レビュー): 入力の無い台帳 op も handle を必須にしていて、docs/MCP.md の
+            #   「apply から呼べる」と合わなかった。handle が要るかは op で決まるので、_apply / _apply_isolated で断る。
+            "required": ["op"],
             "additionalProperties": False,
         },
     },
@@ -315,19 +326,19 @@ TOOLS: dict[str, dict] = {
                         "type": "object",
                             "properties": {
                                 "op": {"type": "string", "maxLength": 120},
-                                "inputs": {"type":"array","items":{"type":"string"}},
-                                "params": {"type":"object"},
+                                "inputs": _STAGE_INPUTS,
+                                "params": _STAGE_PARAMS,
                                 "allow_reuse":{"type":"boolean"},
-                            "a": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                            "a": {"type": "number", "minimum": 0.0, "maximum": 1.0, "description": _KNOB_DESC},
                             "b": {"type": "number", "minimum": 0.0, "maximum": 1.0},
                         },
                         "required": ["op"],
                         "additionalProperties": False,
                     },
-                    "description": "[{op, params?}, …]。物理量は名前つきparamsを使う。a/bは互換用",
+                    "description": "[{op, params?, inputs?}, …]。入力の無いopだけならhandle不要",
                 },
             },
-            "required": ["handle", "stages"],
+            "required": ["stages"],
             "additionalProperties": False,
         },
     },
@@ -582,7 +593,14 @@ def _validate(schema: dict, args: Any) -> dict:
 # 転送(llmesh から移植)                                                        #
 # --------------------------------------------------------------------------- #
 class FramingError(ValueError):
-    """フレームは来たが JSON として読めない(EOF とは区別する)。"""
+    """フレームは来たが JSON として読めない(EOF とは区別する)。
+
+    ``framing`` は、壊れた 1 通の枠の種類が分かればその種類(:data:`FRAMING_LINES` / :data:`FRAMING_HEADERS`)、
+    分からなければ None。-32700 の返事をその枠で書く。"""
+
+    def __init__(self, message: str, framing: str | None = None):
+        super().__init__(message)
+        self.framing = framing
 
 
 #: 枠の種類。``FRAMING_LINES`` = MCP の stdio の決まり(1 行 1 通、改行区切りの JSON)、
@@ -590,8 +608,16 @@ class FramingError(ValueError):
 FRAMING_LINES = "lines"
 FRAMING_HEADERS = "content-length"
 
-#: 改行区切りの 1 通の上限(バイト)。これを超える行は読み捨てずに断る(メモリを相手に握らせない)。
+#: 1 通の上限(バイト)。改行区切りの 1 行と、Content-Length 枠の本文の両方に効く。これを超える物は読まずに断る
+#: (メモリを相手に握らせない)。
 MAX_LINE_BYTES = 64 * 1024 * 1024
+
+#: Content-Length 枠のヘッダ(見出し)の塊の上限: 行の数とバイトの総量。LSP 風の枠の見出しは Content-Length と
+#: Content-Type の 2 行(数十バイト)。
+MAX_HEADER_LINES = 16
+MAX_HEADER_BYTES = 8 * 1024
+_HEADER_NAME = re.compile(rb"[A-Za-z0-9][A-Za-z0-9-]*")
+_DECIMAL = re.compile(rb"[0-9]{1,20}")
 
 #: 1 通の JSON の入れ子の深さの上限(配列と辞書の段の数)。MCP の 1 通は深くても十数段(tools/call の
 #: arguments の中の処理列で 6〜8 段)。これを超える本文は、読む前に断る(→ -32700)。
@@ -610,8 +636,26 @@ def json_depth(body: bytes) -> int:
     return max(itertools.accumulate(map(_DEPTH_STEP.__getitem__, brackets)), default=0)
 
 
+def _refuse_constant(token: str):
+    """``NaN`` / ``Infinity`` / ``-Infinity`` は JSON に無い(RFC 8259)。json.loads の既定は受けるので断る。"""
+    raise ValueError("JSON に無い数 %s" % token)
+
+
+def _refuse_duplicate_keys(pairs: list) -> dict:
+    """同じ鍵が 2 回ある辞書は断る(json.loads の既定は後の方を取り、前の方を見た中継と解釈が割れる)。"""
+    obj: dict = {}
+    for key, value in pairs:
+        if key in obj:
+            raise ValueError("鍵 %r が 2 回ある" % key[:80])
+        obj[key] = value
+    return obj
+
+
 def _loads_body(body: bytes):
-    """本文を JSON として読む。読めない・深すぎる入れ子は FramingError(→ -32700)。"""
+    """本文を JSON として読む。読めない・深すぎる入れ子・NaN / Infinity・重複した鍵は FramingError(→ -32700)。
+
+    ★2026-11-15(外部レビュー、Codex): json.loads の既定のまま読んでいて、``NaN`` / ``Infinity`` を数として受け、
+    重複した鍵は後の方を取っていた。id が NaN の要求には、返事の側で ``"id": NaN``(JSON でない)を書いた。"""
     # ★2026-11-15: 深い入れ子を「json.loads の RecursionError を受ける」で断っていたが、Python 3.14 の json.loads は
     #   10 万段でも RecursionError を出さずに読む(同じ 1 通が 3.11 では -32700、3.14 では巨大な入れ子の値として
     #   先へ進み -32602 になった —— master の CI の py3.14 で発覚)。版に頼らず、読む前に深さを数えて断る。
@@ -621,14 +665,14 @@ def _loads_body(body: bytes):
     if body.count(b"[") + body.count(b"{") > MAX_JSON_DEPTH and json_depth(body) > MAX_JSON_DEPTH:
         raise FramingError("本文の入れ子が深すぎる(上限 %d 段)" % MAX_JSON_DEPTH)
     try:
-        return json.loads(body)
-    except json.JSONDecodeError as exc:
-        raise FramingError("本文が JSON でない: %s" % exc) from exc
+        return json.loads(body, parse_constant=_refuse_constant, object_pairs_hook=_refuse_duplicate_keys)
     except RecursionError as exc:
         # ★2026-11-13: 3,000 段の入れ子 1 通でサーバが落ちていた(json.loads の RecursionError を受けていなかった)。
         raise FramingError("本文の入れ子が深すぎる") from exc
     except UnicodeDecodeError as exc:
         raise FramingError("本文が UTF-8 でない: %s" % exc) from exc
+    except ValueError as exc:                          # JSONDecodeError と、上の 2 つの拒否
+        raise FramingError("本文が JSON でない: %s" % exc) from exc
 
 
 def read_framed(stdin) -> tuple[object, str] | None:
@@ -640,39 +684,78 @@ def read_framed(stdin) -> tuple[object, str] | None:
     改行区切り、そうでなければ Content-Length 枠として読む(両方に応える)。
 
     本文は dict とは限らない(``null`` や配列も JSON として正しい)。型の検査は呼び出し側が行う ——
-    ここで None を返すのは EOF だけ(``null`` の本文を EOF と取り違えて黙って終了していた)。"""
+    ここで None を返すのは EOF だけ(``null`` の本文を EOF と取り違えて黙って終了していた)。
+
+    Content-Length 枠の見出しは :data:`MAX_HEADER_LINES` 行・:data:`MAX_HEADER_BYTES` バイトまで、本文は改行区切りと
+    同じ :data:`MAX_LINE_BYTES` まで。見出しは「名前: 値」の形で、同じ名前は 1 回だけ(大文字小文字を区別しない)。"""
     headers: dict[bytes, bytes] = {}
+    head_lines = head_bytes = 0
+    bad = None                                # 形の崩れた見出しの最初の理由(空行まで読み捨ててから断る)
     while True:
-        raw = stdin.readline(MAX_LINE_BYTES + 1)
+        # 1 行目は改行区切りの 1 通かもしれないので 1 通の上限で、見出しの 2 行目からは見出しの上限で読む
+        started = bool(headers) or bad is not None
+        raw = stdin.readline((MAX_HEADER_BYTES if started else MAX_LINE_BYTES) + 1)
         if not raw:
             return None
         line = raw.strip()
-        if not headers and line[:1] in (b"{", b"["):
+        if not started and line[:1] in (b"{", b"["):
             if len(raw) > MAX_LINE_BYTES and not raw.endswith(b"\n"):
-                raise FramingError("1 通が長すぎる(上限 %d バイト)" % MAX_LINE_BYTES)
-            return _loads_body(line), FRAMING_LINES
+                raise FramingError("1 通が長すぎる(上限 %d バイト)" % MAX_LINE_BYTES, FRAMING_LINES)
+            try:
+                return _loads_body(line), FRAMING_LINES
+            except FramingError as exc:
+                exc.framing = FRAMING_LINES
+                raise
         if not line:
-            if not headers:
+            if not started:
                 continue                      # 通と通の間の空行は読み飛ばす(改行区切りの相手が余分に送る事がある)
             break
-        if b":" in line:
-            k, _, v = line.partition(b":")
-            headers[k.strip().lower()] = v.strip()
+        # ★2026-11-15(外部レビュー、Codex): 見出しの行の数とバイトに上限が無く(別々の名前を送り続けると表が増え続けた)、
+        #   形も見ていなかった(重複した Content-Length は後の方が勝ち、「名前: 値」でない行は黙って飛ばした)。上限を
+        #   超えたらその場で、形の崩れは見出しの塊の終わり(空行)まで読み捨ててから断る(1 通に 1 つの -32700)。
+        head_lines += 1
+        head_bytes += len(raw)
+        if head_lines > MAX_HEADER_LINES or head_bytes > MAX_HEADER_BYTES:
+            raise FramingError("Content-Length 枠の見出しが大きすぎる(上限 %d 行・%d バイト)"
+                               % (MAX_HEADER_LINES, MAX_HEADER_BYTES), FRAMING_HEADERS if started else None)
+        if bad is not None:
+            continue
+        name, sep, value = line.partition(b":")
+        name = name.strip().lower()
+        if not sep or not _HEADER_NAME.fullmatch(name):
+            if not started:                   # 1 行目: その行だけを断る(次の行は新しい 1 通として読む)
+                raise FramingError("1 行目が JSON でも「名前: 値」の見出しでもない")
+            bad = "見出しの行が「名前: 値」の形でない"
+        elif name in headers:
+            bad = "見出し %s が 2 回ある" % name.decode("ascii")
+        else:
+            headers[name] = value.strip()
+    if bad is not None:
+        raise FramingError(bad, FRAMING_HEADERS)
     # ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが
     # 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは
     # FramingError(→ -32700)にしてループを続ける。
     if b"content-length" not in headers:
-        raise FramingError("Content-Length ヘッダが無い")
-    try:
-        length = int(headers[b"content-length"])
-    except ValueError as exc:
-        raise FramingError("Content-Length が整数でない") from exc
+        raise FramingError("Content-Length ヘッダが無い", FRAMING_HEADERS)
+    if not _DECIMAL.fullmatch(headers[b"content-length"]):          # int() は「+5」「1_0」「 ５」も受ける
+        raise FramingError("Content-Length が 10 進の整数でない", FRAMING_HEADERS)
+    length = int(headers[b"content-length"])
     if length <= 0:
-        raise FramingError("Content-Length が正でない(%d)" % length)
+        raise FramingError("Content-Length が正でない(%d)" % length, FRAMING_HEADERS)
+    if length > MAX_LINE_BYTES:
+        # ★2026-11-15(外部レビュー、Codex): 本文の大きさに上限が無く、``Content-Length: 10000000000000`` の 1 通
+        #   (35 バイト)で ``read`` が先に確保しようとして MemoryError になり、サーバが落ちた。本文は読まずに断る
+        #   (残りのバイトは次の 1 通として読む —— 相手が送った物で、改行区切りでも送れた物)。
+        raise FramingError("1 通が長すぎる(Content-Length %d、上限 %d バイト)" % (length, MAX_LINE_BYTES),
+                           FRAMING_HEADERS)
     body = stdin.read(length)
     if len(body) < length:
         return None
-    return _loads_body(body), FRAMING_HEADERS
+    try:
+        return _loads_body(body), FRAMING_HEADERS
+    except FramingError as exc:
+        exc.framing = FRAMING_HEADERS
+        raise
 
 
 def read_message(stdin) -> dict | None:
@@ -700,9 +783,11 @@ def write_message(stdout, msg: dict, *, framing: str = FRAMING_HEADERS) -> None:
         body = json.dumps(msg, ensure_ascii=False, allow_nan=False).encode("utf-8")
     except ValueError as exc:
         _log("write_message", "non-finite value in response refused: %s" % exc)
-        body = json.dumps(_err(msg.get("id") if isinstance(msg, dict) else None, -32603,
+        # ★2026-11-15(外部レビュー、Codex): この最後の網が allow_nan の既定(True)のままで、id が NaN の要求には
+        #   ``"id": NaN`` をまた書いた。id は JSON-RPC の形(文字列・数・null)の時だけ返し、網も厳密に書く。
+        body = json.dumps(_err(_reply_id(msg.get("id") if isinstance(msg, dict) else None), -32603,
                                "内部エラー: 応答に JSON で表せない非有限の値(NaN / inf)が含まれていた"),
-                          ensure_ascii=False).encode("utf-8")
+                          ensure_ascii=False, allow_nan=False).encode("utf-8")
     if framing == FRAMING_LINES:
         # json.dumps は改行をエスケープするので、本文に生の改行は入らない(1 行 1 通が保たれる)。
         stdout.write(body + b"\n")
@@ -710,6 +795,22 @@ def write_message(stdout, msg: dict, *, framing: str = FRAMING_HEADERS) -> None:
         stdout.write(b"Content-Length: " + str(len(body)).encode() + b"\r\n\r\n")
         stdout.write(body)
     stdout.flush()
+
+
+def _valid_id(req_id) -> bool:
+    """JSON-RPC 2.0 の id の形(文字列・数・null)か。真偽値は数に数えない。float は有限の物だけ。"""
+    if req_id is None or isinstance(req_id, str):
+        return True
+    if isinstance(req_id, bool):
+        return False
+    if isinstance(req_id, int):
+        return True
+    return isinstance(req_id, float) and math.isfinite(req_id)
+
+
+def _reply_id(req_id):
+    """返事に書く id: 形の正しい id はそのまま、それ以外は null(JSON-RPC 2.0 の決まり)。"""
+    return req_id if _valid_id(req_id) else None
 
 
 def _ok(req_id, result) -> dict:
@@ -826,11 +927,36 @@ def _help_text(h: dict) -> str:
     return head + (h["body"] or "(この op にはノートも Studio ヘルプも無い)")
 
 
+def _public_source(source: str) -> str:
+    """``package:<絶対パス>`` / ``docs:<絶対パス>`` を、置き場所の名前とパッケージ・リポジトリの中の相対の場所にする。
+
+    ★2026-11-13(報告 9): ホストの絶対パス(利用者名を含む)を MCP の相手に返していた。"""
+    kind, _, path = str(source).partition(":")
+    norm = path.replace("\\", "/")
+    for marker in ("fullseye/data/", "docs/"):
+        at = norm.rfind("/" + marker)
+        if at >= 0:
+            return "%s:%s" % (kind, norm[at + 1:])
+    return "%s:%s" % (kind, os.path.basename(norm.rstrip("/")) or "?")
+
+
+def _public_coverage(c: dict, *, detail: bool) -> dict:
+    """catalog_coverage の応答: 既定は件数だけ(名前の一覧は detail=true)、出どころは相対の場所。"""
+    out = dict(c, index_source=_public_source(c["index_source"]), notes_source=_public_source(c["notes_source"]))
+    if not detail:
+        for key in ("index_without_note", "registry_not_in_index", "index_not_in_registry", "ledger_without_note"):
+            out[key] = len(c[key])
+        out.pop("note_only_names", None)
+    out["detail"] = detail
+    return out
+
+
 def _coverage_text(c: dict) -> str:
     return ("op 名 %d。層別: %s。索引にあってノート無し %d / レジストリにあって索引無し %d / "
             "索引にあってレジストリ無し %d / facade にあって索引無し %d / ノートだけ %d"
-            % (c["total_names"], c["per_source"], len(c["index_without_note"]),
-               len(c["registry_not_in_index"]), len(c["index_not_in_registry"]),
+            % (c["total_names"], c["per_source"], *(
+                v if isinstance(v, int) else len(v) for v in (
+                    c["index_without_note"], c["registry_not_in_index"], c["index_not_in_registry"])),
                c["facade_not_in_index"], c["note_only"]))
 
 
@@ -948,29 +1074,11 @@ def _array_pixels(value) -> int:
 
 
 def _value_nbytes(value) -> int:
-    """Bounded-accounting size for a pipeline intermediate, including nested arrays."""
-    seen: set[int] = set()
+    """Bounded-accounting size for a pipeline intermediate, including nested arrays.
 
-    def size(item) -> int:
-        oid = id(item)
-        if oid in seen:
-            return 0
-        if isinstance(item, np.ndarray):
-            seen.add(oid)
-            return int(item.nbytes)
-        if isinstance(item, dict):
-            seen.add(oid)
-            return sum(len(str(k).encode("utf-8")) + size(v) for k, v in item.items())
-        if isinstance(item, (list, tuple)):
-            seen.add(oid)
-            return sum(size(v) for v in item)
-        if isinstance(item, str):
-            return len(item.encode("utf-8"))
-        if isinstance(item, (bytes, bytearray)):
-            return len(item)
-        return 8
-
-    return size(value)
+    ハンドル置き場の上限と同じ数え方(:func:`fullseye.mcp.handles.value_nbytes`。2026-11-15 に置き場の側が
+    ``len(repr(...))`` で表の中の配列を数えていなかったので、1 つにまとめた)。"""
+    return value_nbytes(value)
 
 
 def _enforce_pixel_limit(value, where: str) -> None:
@@ -983,11 +1091,15 @@ def _enforce_pixel_limit(value, where: str) -> None:
 def _resolve_op(name: str, cat: Catalog, *, stage: int | None = None):
     """registry 層の op に解決する。無ければ近い名前を添えて拒否(黙って倒さない)。"""
     import ops
+    from fullseye.opsearch import mcp_unavailable_text
     op = ops._BY_NAME.get(name)
     if op is None:
         where = "段 %d: " % stage if stage else ""
-        raise ArgError("%sfullseye_apply で実行できる op ではない: %r(registry 層に無い)。近い名前: %s"
-                       % (where, name, cat.nearest(name)))
+        # ★2026-11-13: 台帳にある op にも「registry 層に無い」とだけ返し、「近い名前」に同じ名前を出していた。
+        why = mcp_unavailable_text(name)
+        near = [x for x in cat.nearest(name) if x != name]
+        raise ArgError("%sfullseye_apply で実行できる op ではない: %r(registry 層に無い)。%s%s"
+                       % (where, name, (why + "。") if why else "", ("近い名前: %s" % near) if near else ""))
     from fullseye.opsearch import _graph
     edge = next((e for e in _graph()["edges"] if e["op"] == name), None)
     if edge is None or not edge.get("verified_executable"):
@@ -1081,6 +1193,391 @@ def _named_knobs(op: str, params: dict | None, a: float = 0.5,
     return knobs["a"], knobs["b"], used
 
 
+#: 数 1 個を受ける入力(``measurement``)に繋げる型。registry の計測 op は ``feature`` で数を返す。
+_SCALAR_INPUT_SORTS = frozenset({"measurement", "scalar"})
+_SCALAR_COMPATIBLE_SORTS = frozenset({"measurement", "scalar", "feature"})
+#: 台帳 op の文字列の引数に書ける文字(パスの区切り・ドライブ名・親フォルダを書けない)。
+_ISOLATED_TEXT_RX = __import__("re").compile(r"[\w .+\-()%,=µ°]{1,80}")
+_ISOLATED_MAX_ELEMENTS = 4096
+_ISOLATED_MAX_DEPTH = 4
+#: 画像の列の型。MCP の handle では (T,H,W) の配列、台帳 op の引数と返り値では 2-D 配列の list。
+_SEQUENCE_SORTS = frozenset({"seq<image>", "images"})
+#: ラベルの型。台帳 op は整数の配列だけを受ける(実数のラベルは閾値の前の画像の取り違えとして断る)。
+_LABEL_SORTS = frozenset({"labels", "labels2d"})
+
+
+def _integral_labels(value):
+    """MCP の handle に実数で入ったラベル(``fullseye_import_json`` などは実数で持つ)を整数にする。
+
+    全部が有限の整数値のときだけ写す。小数を含む配列はそのまま渡し、op 自身の検査に断らせる(丸めない)。"""
+    if isinstance(value, np.ndarray) and value.dtype.kind == "f" and value.size and np.isfinite(value).all():
+        rounded = np.rint(value)
+        if np.array_equal(rounded, value) and np.abs(rounded).max() < 2 ** 31:
+            return rounded.astype(np.int32)
+    return value
+
+
+def _stack_sequence(value, op: str):
+    """台帳 op が返した画像の列(2-D 配列の list)を、MCP の handle の形 (T,H,W) にまとめる。
+
+    形の揃わない列・2-D でない要素は、まとめずにそのまま返す(後の出力の検査が invalid_output で断る)。"""
+    if isinstance(value, (list, tuple)) and value and all(
+            isinstance(frame, np.ndarray) and frame.ndim == 2 and frame.dtype.kind in "biuf"
+            and frame.shape == value[0].shape for frame in value):
+        return np.stack([np.asarray(frame, dtype=np.float64) for frame in value])
+    return value
+
+
+def _is_isolated(edge: dict | None) -> bool:
+    """隔離した子プロセス(:mod:`fullseye.mcp.opworker`)で走らせる台帳 op か。"""
+    return bool(edge) and (edge.get("executor") or {}).get("isolation") == "worker"
+
+
+def _isolated_limits() -> dict:
+    """隔離実行 1 回の上限(呼ぶたびに fssystem を読む)。"""
+    return {"time_limit_s": float(get_system("mcp_op_time_limit_s")),
+            "memory_limit_bytes": int(get_system("mcp_op_memory_limit_bytes")),
+            "max_pixels": int(get_system("mcp_stack_max_pixels")),
+            "max_result_bytes": int(get_system("mcp_pipeline_max_intermediate_bytes"))}
+
+
+def _check_isolated_param(op: str, row: dict, value) -> str | None:
+    """台帳 op の引数 1 個を、台帳の仕様(``opassist.param_spec`` 由来の kind / choices / 単位)で検査する。
+
+    問題が無ければ None、あれば理由の文。信頼境界: 数は有限、列は 4096 要素・4 段まで、文字列は短い名前だけ
+    (パスを書けない)。値は丸めず・切り詰めず、合わなければ断る。"""
+    kind = row.get("kind") or "number"
+    unit = (" [%s]" % row["unit"]) if row.get("unit") else ""
+    name = "%s.%s" % (op, row["name"])
+    if value is None:
+        if row.get("required") or row.get("default", None) is not None:
+            return "%s must not be null (omit it to use the default %r)" % (name, row.get("default"))
+        return None
+    if row.get("name") == "device" and value != "cpu":
+        # GPU のメモリは子の見張り(作業プロセスのメモリの増分)では縛れないので、MCP からは CPU だけ
+        return "%s=%r: the MCP op worker runs on the CPU only (omit it or pass \"cpu\")" % (name, value)
+    if kind == "choice":
+        choices = list(row.get("choices") or [])
+        return None if value in choices else "%s=%r is not one of %s" % (name, value, choices)
+    if kind == "bool":
+        return None if isinstance(value, bool) else "%s must be true or false" % name
+    if kind == "text":
+        if isinstance(value, str) and _ISOLATED_TEXT_RX.fullmatch(value) and ".." not in value:
+            return None
+        return ("%s must be a short name (letters, digits, space, _ . + - ( ) %% , =; at most 80 characters); "
+                "default %r" % (name, row.get("default")))
+    count = [0]
+
+    def numeric(item, depth) -> bool:
+        if isinstance(item, bool):
+            return False
+        if isinstance(item, (int, float)):
+            count[0] += 1
+            if kind == "int" and not (isinstance(item, int) or float(item).is_integer()):
+                return False
+            return math.isfinite(float(item)) and abs(float(item)) <= 1e15 and count[0] <= _ISOLATED_MAX_ELEMENTS
+        if isinstance(item, list) and depth < _ISOLATED_MAX_DEPTH:
+            return all(numeric(x, depth + 1) for x in item)
+        return False
+
+    if numeric(value, 0):
+        return None
+    return ("%s must be a finite %s%s, or a list of them (at most %d elements, %d levels); default %r"
+            % (name, "integer" if kind == "int" else "number", unit, _ISOLATED_MAX_ELEMENTS, _ISOLATED_MAX_DEPTH,
+               row.get("default")))
+
+
+def _scalar_of(value, where: str) -> float:
+    """数 1 個を受ける入力へ渡す値を、有限の数 1 個として取り出す(合わなければ ArgError)。"""
+    if isinstance(value, dict) and set(value) >= {"value"} and len(value) <= 3:
+        value = value["value"]
+    arr = np.asarray(value)
+    if arr.dtype.kind not in "biuf" or arr.size != 1:
+        raise ArgError("%s must be one number; got %s with %d element(s)" % (where, arr.dtype, arr.size))
+    number = float(arr.reshape(-1)[0])
+    if not math.isfinite(number):
+        raise ArgError("%s must be finite" % where)
+    return number
+
+
+_UNIT_SUFFIXES = (("_per_mm", "1/mm"), ("_um", "µm"), ("_nm", "nm"), ("_mm", "mm"), ("_cm", "cm"), ("_deg", "°"),
+                  ("_px", "px"), ("_hz", "Hz"), ("_ms", "ms"), ("_s", "s"), ("_rad", "rad"))
+
+
+def _unit_of_key(key: str) -> str | None:
+    """結果の表の鍵の名前から単位を読む(``height_mm`` → mm、``mm_per_px`` → mm/px)。名前に無ければ None。"""
+    if "_per_" in key:
+        head, _, tail = key.rpartition("_per_")
+        num = head.rsplit("_", 1)[-1]
+        if num in ("mm", "um", "nm", "px", "deg", "cm", "m", "lp", "cycles") and tail.isalpha():
+            return "%s/%s" % (num, tail)
+    for suffix, unit in sorted(_UNIT_SUFFIXES, key=lambda kv: -len(kv[0])):
+        if key.endswith(suffix):
+            return unit
+    return None
+
+
+def _array_field_sort(arr: np.ndarray) -> str:
+    """表の中の配列に付ける型(次の pipeline の handle に渡せるように)。決められない形は ``any``。"""
+    if arr.dtype.kind == "f" and arr.ndim == 2:
+        return "image"
+    if arr.dtype.kind == "f" and arr.ndim == 3 and arr.shape[-1] == 3:
+        return "color"
+    if arr.dtype.kind == "f" and arr.ndim == 1:
+        return "signal"
+    return "any"
+
+
+def _summarize_value(value, store: HandleStore, *, provenance: list, max_bytes: int = 6000) -> dict:
+    """台帳 op の結果(表・数・配列の木)を、上限つきの JSON の要約にする。
+
+    返り値 ``{"value": 木, "units": {鍵: 単位}, "handles": [{key, handle, sort, shape}], "truncated": bool}``。
+    数は有限だけを書く(非有限は ``null`` にして ``non_finite`` に鍵を残す)。17 要素以上の配列は値を載せず、
+    形・最小・最大とハンドル(2-D の実数配列は ``image`` なので、次の pipeline の handle に渡せる)を返す。"""
+    units: dict[str, str] = {}
+    handles: list[dict] = []
+    non_finite: list[str] = []
+    state = {"rows": 10, "keys": 48, "truncated": False}
+
+    def conv(item, key: str, depth: int):
+        if isinstance(item, np.generic):
+            item = item.item()
+        if item is None or isinstance(item, (bool, str)):
+            return item if not isinstance(item, str) or len(item) <= 200 else item[:200] + "…"
+        if isinstance(item, int):
+            return item
+        if isinstance(item, float):
+            if not math.isfinite(item):
+                non_finite.append(key)
+                return None
+            return item
+        if isinstance(item, complex):
+            return {"re": conv(item.real, key, depth), "im": conv(item.imag, key, depth)}
+        if isinstance(item, np.ndarray):
+            if item.size <= 16 and item.dtype.kind in "biuf":
+                return conv(item.tolist(), key, depth)
+            desc: dict = {"array": list(item.shape), "dtype": str(item.dtype)}
+            if item.size and item.dtype.kind in "biuf":
+                finite = item[np.isfinite(item)] if item.dtype.kind == "f" else item
+                if finite.size:
+                    desc["min"], desc["max"] = float(finite.min()), float(finite.max())
+            sort = _array_field_sort(item)
+            try:
+                meta = store.put(item, sort=sort, provenance=provenance + [{"field": key}])
+                desc["handle"], desc["sort"] = meta["handle"], sort
+                handles.append({"key": key, "handle": meta["handle"], "sort": sort, "shape": list(item.shape)})
+            except HandleError:
+                desc["handle"] = None
+            return desc
+        if isinstance(item, dict):
+            if depth >= 6:
+                state["truncated"] = True
+                return {"_omitted": "nested table"}
+            out = {}
+            for n, (k, v) in enumerate(item.items()):
+                k = str(k)
+                if n >= state["keys"]:
+                    out["_omitted_keys"] = len(item) - n
+                    state["truncated"] = True
+                    break
+                unit = _unit_of_key(k)
+                if unit:
+                    units[k] = unit
+                out[k] = conv(v, k, depth + 1)
+            return out
+        if isinstance(item, (list, tuple)):
+            if depth >= 6:
+                state["truncated"] = True
+                return ["…"]
+            rows = [conv(v, key, depth + 1) for v in item[:state["rows"]]]
+            if len(item) > state["rows"]:
+                rows.append({"_omitted_rows": len(item) - state["rows"]})
+                state["truncated"] = True
+            return rows
+        state["truncated"] = True
+        return "<%s>" % type(item).__name__
+
+    for rows, keys in ((10, 48), (4, 24), (2, 12)):
+        state.update(rows=rows, keys=keys, truncated=False)
+        units.clear(); del handles[:]; del non_finite[:]
+        tree = conv(value, "value", 0)
+        if len(json.dumps(tree, ensure_ascii=False).encode("utf-8")) <= max_bytes:
+            break
+    else:
+        tree = {"_omitted": "result is larger than %d bytes; read it with fullseye_inspect / fullseye_export_json "
+                            "on value_handle" % max_bytes}
+        state["truncated"] = True
+    out = {"value": tree, "units": dict(units), "handles": list(handles), "truncated": bool(state["truncated"])}
+    if non_finite:
+        out["non_finite"] = sorted(set(non_finite))
+    return out
+
+
+def _summary_lines(summary: dict, limit: int = 40) -> list[str]:
+    """:func:`_summarize_value` の要約を、人と文字だけのクライアントが読める行にする(単位つき)。"""
+    units = summary.get("units", {})
+    lines: list[str] = []
+
+    def cell(v) -> str:
+        if isinstance(v, float):
+            return "%.6g" % v
+        if isinstance(v, dict) and "array" in v:
+            rng = (" min=%.4g max=%.4g" % (v["min"], v["max"])) if "min" in v else ""
+            return "array shape=%s%s%s" % (v["array"], rng,
+                                           (" handle=%s sort=%s" % (v["handle"], v.get("sort"))) if v.get("handle") else "")
+        if isinstance(v, (dict, list)):
+            return json.dumps(v, ensure_ascii=False)[:160]
+        return str(v)
+
+    tree = summary.get("value")
+    if isinstance(tree, dict):
+        for key, v in tree.items():
+            unit = (" " + units[key]) if key in units and not isinstance(v, (dict, list)) else ""
+            if isinstance(v, list) and v and all(isinstance(r, dict) for r in v):
+                lines.append("%s (%d rows shown):" % (key, sum("_omitted_rows" not in r for r in v)))
+                for n, row in enumerate(v[:5], 1):
+                    if "_omitted_rows" in row:
+                        lines.append("  … +%d rows" % row["_omitted_rows"])
+                    else:
+                        lines.append("  %d. %s" % (n, ", ".join(
+                            "%s=%s%s" % (k, cell(x), (" " + units[k]) if k in units else "")
+                            for k, x in list(row.items())[:8])))
+            else:
+                lines.append("%s = %s%s" % (key, cell(v), unit))
+    else:
+        lines.append("value = %s%s" % (cell(tree), (" " + units["value"]) if units.get("value") else ""))
+    if summary.get("truncated"):
+        lines.append("(要約は一部を省いた。全体は value_handle を fullseye_inspect / fullseye_export_json で読む)")
+    return lines[:limit]
+
+
+#: 本文に値を書く配列の大きさの上限(要素の数)。これより大きい配列は形と範囲だけを書く。
+_ARRAY_TEXT_MAX_VALUES = 128
+
+
+def _array_lines(out: np.ndarray, sort: str) -> list[str]:
+    """配列を返した台帳 op の結果の本文の行: 型・形・値の範囲、小さい配列は値(6 桁)も。
+
+    ★2026-11-15: 配列の結果の本文は「判定=ok value=None」だけで、値は structuredContent にしか無かった
+    (lighting_sweep の角度とコントラストの組が本文から読めない)。handle は呼ぶ側が、残る物にだけ書き足す。"""
+    head = "%s shape=%s" % (sort, list(out.shape))
+    numeric = out.dtype.kind in "biuf"
+    if numeric and out.size:
+        head += " min=%.6g max=%.6g" % (float(out.min()), float(out.max()))
+    lines = [head]
+    if numeric and 0 < out.size <= _ARRAY_TEXT_MAX_VALUES:
+        lines.append("values = %s" % json.dumps(np.round(out.astype(np.float64), 6).tolist(), separators=(",", ":")))
+    return lines
+
+
+#: 数 1 個を返す台帳 op の値の単位(鍵の名前から読めない物)。
+_ISOLATED_VALUE_UNITS = {"pixel_to_world": "mm", "mm_per_px_from_reference": "mm/px"}
+#: registry の計測 op の値の単位(OP_CARDS の要約の言い方から読む。読めなければ書かない)。
+_SUMMARY_UNIT_RULES = ((__import__("re").compile(r"\bin pixels\b|\[px\]|distance .* in pixels", __import__("re").I), "px"),
+                       (__import__("re").compile(r"number of connected components", __import__("re").I), "count"))
+
+
+def _largest_component_only(op) -> bool:
+    """registry の領域特徴の op が、最大の連結成分 1 つだけを測るか(ops の領域特徴の工場の metric で決まる)。"""
+    fn = op.fn
+    for _ in range(4):                      # _safe(...) などの包みを、閉包の fn をたどって外す
+        code = getattr(fn, "__code__", None)
+        if code is None or not fn.__closure__ or "metric" in code.co_freevars or "fn" not in code.co_freevars:
+            break
+        fn = fn.__closure__[code.co_freevars.index("fn")].cell_contents
+    code = getattr(fn, "__code__", None)
+    if code is None or "metric" not in code.co_freevars or not fn.__closure__:
+        return False
+    metric = fn.__closure__[code.co_freevars.index("metric")].cell_contents
+    # count / area_center / area は領域全体、それ以外は _largest_label の最大の成分だけ(ops.py の工場)
+    return isinstance(metric, str) and metric not in ("count", "area_center", "area")
+
+
+def _measure_note(op_name: str, args: list) -> dict:
+    """registry の計測 op の値に付ける意味・単位・測った範囲(★2026-11-13、報告 8: 46.3 が単位も意味も無く返り、
+    それが 10 片に切れた傷の最大の 1 片の弦だと結果からは分からなかった)。"""
+    import ops
+    op = ops._BY_NAME.get(op_name)
+    if op is None:
+        return {}
+    note: dict = {}
+    summary = _op_summary(op_name) or ""
+    if summary:
+        note["meaning"] = summary.split(" — ")[0].split(". ")[0][:200]
+    for rx, unit in _SUMMARY_UNIT_RULES:
+        if rx.search(summary):
+            note["unit"] = unit
+            break
+    if _largest_component_only(op) and args and isinstance(args[0], np.ndarray) and args[0].ndim == 2:
+        from scipy import ndimage
+        n = int(ndimage.label(args[0] > 0.5, structure=np.ones((3, 3)))[1])
+        note["measured"] = {"scope": "largest_connected_component", "components_in_input": n}
+    return note
+
+
+#: 判定 ok の範囲(★2026-11-13、C)。同じ画像に 4 通りの処理で 1.0 / 46.3 / 75.0 / 1285.0 が全部 ok で返り、
+#: ok が「値が正しい」と読まれていた。判定は出力の形だけを見る。
+VERDICT_SCOPE_TEXT = ("判定 ok は出力の形(有限・空でない・定数でない)を見ただけで、値の正しさではない"
+                      "(利用者の画像に真値は無い。真値で確かめるのは fullseye_make_task / fullseye_score_pipeline の合成の課題)")
+
+
+def _ok_cautions(records: list, a: dict, store: HandleStore) -> list[str]:
+    """判定 ok の結果に付ける注意(明らかな異常だけ。見つからなければ空)。"""
+    from .handles import HandleError
+    cautions: list[str] = []
+    ok = [r for r in records if r.get("status") == "ok"]
+    blind = _input_independent_ops()
+    for r in ok:
+        if a.get("handle") and r.get("op") in blind:
+            cautions.append("段 %d %s は入力の中身を読まない op(結果は入力の画像に依らない)" % (r["stage"], r["op"]))
+    last = next((r for r in reversed(ok) if r.get("value_handle")), None)
+    if last is not None and last.get("unit") == "px" and a.get("handle"):
+        try:
+            value = float(np.asarray(store.get(last["value_handle"])[1], dtype=np.float64).reshape(-1)[0])
+            shape = np.shape(store.get(a["handle"])[1])
+        except (HandleError, TypeError, ValueError, IndexError):
+            return cautions
+        if len(shape) >= 2:
+            diagonal = math.hypot(shape[0], shape[1])
+            if math.isfinite(value) and value >= 0.9 * diagonal:
+                cautions.append("値 %.1f px は画像の対角 %.1f px とほぼ同じ(物ではなく画像全体や枠を測った疑い)"
+                                % (value, diagonal))
+    return cautions
+
+
+def _op_summary(name: str) -> str | None:
+    """op の 1 行の説明(OP_CARDS の summary)。結果に「何を計算したか」を添えるのに使う。"""
+    try:
+        from fullseye.opsearch import PKG_CARDS, _load_data
+        key = "cards_by_name"
+        cache = _op_summary.__dict__
+        if key not in cache:
+            cache[key] = {c["name"]: c.get("summary") for c in _load_data(PKG_CARDS)["ops"]}
+        return cache[key].get(name)
+    except (FileNotFoundError, ValueError, KeyError):
+        return None
+
+
+def _run_isolated_stage(edge: dict, args: list, params: dict):
+    """隔離した子プロセスで台帳 op を 1 つ走らせる。``(値, 情報)`` を返す。上限と失敗は例外で返す。"""
+    from .opworker import run_isolated
+    executor = edge["executor"]
+    limits = _isolated_limits()
+    for arg in args:
+        _enforce_pixel_limit(arg, "input of %s" % edge["op"])
+    # ★2026-11-15(独立レビュー): 結果の大きさは作業プロセスの側で数えて断る(以前は .npy を全部読んでから
+    #   _enforce_pixel_limit が断っていた。親に同じくらいの一時的な確保と、一時フォルダへの書き込みが起きた)。
+    job = {"ledger_module": executor["ledger_module"], "ledger_table": executor["ledger_table"],
+           "key": executor["key"], "data_names": list(executor.get("data_names") or []),
+           "max_elements": limits["max_pixels"], "max_result_bytes": limits["max_result_bytes"]}
+    _log("isolated", edge["op"], "start", "time<=%.0fs" % limits["time_limit_s"],
+         "memory<=%dMiB" % (limits["memory_limit_bytes"] >> 20))
+    value, info = run_isolated(job, args, params, time_limit_s=limits["time_limit_s"],
+                               max_rss=limits["memory_limit_bytes"])
+    _log("isolated", edge["op"], "done", "%.2fs" % info.get("elapsed_s", 0.0))
+    return value, dict(info, **limits)
+
+
 def _sort_mismatch_fixes(actual: str, expected: str) -> list[dict]:
     """Concrete, bounded repair candidates for a structured type mismatch."""
     fixes = []
@@ -1101,6 +1598,61 @@ def _sort_mismatch_fixes(actual: str, expected: str) -> list[dict]:
     except (TypeError, ValueError, FileNotFoundError):
         pass
     return fixes
+
+
+def _error_line(err: dict, stages: list) -> str:
+    """検証の誤り 1 件を 1 行にする(段番号・op・機械が読む符号・人が読む理由・直し方)。"""
+    stage = err.get("stage") or 0
+    op = stages[stage - 1].get("op") if 0 < stage <= len(stages) and isinstance(stages[stage - 1], dict) else None
+    head = ("段 %d %s" % (stage, op)) if stage else "pipeline"
+    reason = str(err.get("reason"))
+    short = lambda v: json.dumps(v, ensure_ascii=False)[:200]   # noqa: E731
+    if reason == "sort_mismatch":
+        body = "入力の型が違う(来たのは %s、要るのは %s)" % (
+            ", ".join(map(str, err.get("actual", []))), ", ".join(map(str, err.get("expected", []))))
+        fixes = [f.get("stage") or f.get("call") for f in err.get("fixes", []) if f.get("stage") or f.get("call")]
+        if fixes:
+            body += "。直し方の候補: " + " / ".join(dict.fromkeys(fixes))
+    elif reason == "unknown_op":
+        near = err.get("candidates") or []
+        body = "知らない op" + (("。近い名前: " + ", ".join(near[:5])) if near else "")
+    elif reason == "not_executable_in_mcp":
+        body = "MCP では実行できない(%s%s)" % (err.get("probe_reason") or err.get("detail"),
+                                              (": " + err["why"]) if err.get("why") else "")
+        if err.get("instead"):
+            body += "。代わりに: " + " / ".join(err["instead"])
+    elif reason == "unknown_parameter":
+        body = "知らない引数 %s。使える名前: %s" % (short(err.get("value")), short(err.get("candidates")))
+        if err.get("detail"):
+            body += "。" + str(err["detail"])
+    elif reason == "missing_parameter":
+        body = "必須の引数が無い: %s" % short(err.get("value"))
+    elif reason == "input_arity_mismatch":
+        body = "入力の本数が違う(渡したのは %s 本、要るのは %s 本%s)" % (
+            err.get("value"), err.get("expected"),
+            (": " + ", ".join(err["expected_sorts"])) if err.get("expected_sorts") else "")
+    elif err.get("detail"):
+        body = str(err["detail"])
+    elif "value" in err:
+        body = short(err["value"]) + ((" (expected %s)" % short(err["expected"])) if "expected" in err else "")
+    else:
+        body = ""
+    return "%s: %s%s" % (head, reason, (" — " + body) if body else "")
+
+
+def _validation_text(checked: dict, stages: list) -> str:
+    """検証の結果の本文。合否と、誤りごとの段番号と理由を 1 行ずつ(structuredContent を読めない相手にも届く)。
+
+    ★2026-11-13(AI の役での検証): 理由が structuredContent にしか無く、本文は「error」の 1 語だった。"""
+    if checked.get("valid"):
+        lines = ["検証: 合格(%d 段、1 段も走らせていない)。最終の型 %s" % (len(checked["stages"]), checked.get("out_sort"))]
+        lines += ["段 %d %s: %s -> %s" % (s["stage"], s["op"], ", ".join(s.get("in_sorts") or []) or "(入力なし)",
+                                          s["out_sort"]) for s in checked["stages"]]
+        return "\n".join(lines)
+    errors = checked.get("errors", [])
+    lines = ["検証: 不合格(誤り %d 件、1 段も走らせていない)" % len(errors)]
+    lines += [_error_line(e, stages) for e in errors]
+    return "\n".join(lines)
 
 
 def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, *,
@@ -1174,8 +1726,17 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
         refs = spec.get("inputs")
         if refs is not None:
             refs = [normalize_ref(ref) for ref in refs]
+        isolated = _is_isolated(edge)
+        literal_names = []
+        expected_inputs = list(edge["inputs"]) if edge else []
+        if isolated:
+            # 数 1 個を受けるデータ入力(measurement)は、名前で params に書ける(数、または {"ref": …})。
+            executor = edge["executor"]
+            literal_names = [n for n in executor.get("literal_inputs", []) if n in spec.get("params", {})]
+            expected_inputs = [s for n, s in zip(executor.get("data_names", []), edge["inputs"])
+                               if n not in literal_names]
         if refs is None:
-            refs = [] if not edge or not edge.get("inputs") else (["stage:%d"%(i-1)] if i>1 else
+            refs = [] if not edge or not expected_inputs else (["stage:%d"%(i-1)] if i>1 else
                     (["have:%s"%start_sort] if start_sort else []))
         if refs is not None:
             if edge is None:
@@ -1183,13 +1744,20 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                                "candidates":[x for x in cat.nearest(name) if x != name]})
                 continue
             if not edge.get("verified_executable"):
+                from fullseye.opsearch import mcp_unavailable
+                info = mcp_unavailable(name) or {}
                 errors.append({"layer":"stage","stage":i,"reason":"not_executable_in_mcp","value":name,
                                "detail":edge.get("not_executable_in_mcp", edge.get("executable_reason","no verified executor")),
-                               "candidates":[]})
+                               "why":info.get("why"),"probe_reason":info.get("reason"),
+                               "instead":info.get("instead", []),
+                               "candidates":info.get("executable_alternatives", [])})
                 continue
-            if len(refs) != len(edge["inputs"]):
-                errors.append({"layer":"stage","stage":i,"reason":"input_arity_mismatch","value":len(refs),
-                               "expected":len(edge["inputs"]),"candidates":[]})
+            if len(refs) != len(expected_inputs):
+                err = {"layer":"stage","stage":i,"reason":"input_arity_mismatch","value":len(refs),
+                       "expected":len(expected_inputs),"expected_sorts":list(expected_inputs),"candidates":[]}
+                if isolated and edge.get("example"):
+                    err["example"] = edge["example"]
+                errors.append(err)
             actual=[]; resolved=[]
             for ref in refs:
                 known={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
@@ -1200,8 +1768,9 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                     actual.append("unknown"); resolved.append(ref)
                     errors.append({"layer":"stage","stage":i,"reason":"unknown_input_ref",
                                    "value":ref,"detail":str(exc),"candidates":[]})
-            mismatches=[{"input":j,"actual":a,"expected":b} for j,(a,b) in enumerate(zip(actual,edge["inputs"]))
-                        if b not in ("poly",a)]
+            mismatches=[{"input":j,"actual":a,"expected":b} for j,(a,b) in enumerate(zip(actual,expected_inputs))
+                        if b not in ("poly",a)
+                        and not (isolated and b in _SCALAR_INPUT_SORTS and a in _SCALAR_COMPATIBLE_SORTS)]
             if mismatches:
                 for mismatch in mismatches:
                     mismatch["fixes"] = _sort_mismatch_fixes(mismatch["actual"], mismatch["expected"])
@@ -1218,6 +1787,8 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             schema={p["name"]:p for p in edge.get("parameter_schema",[])}
             physical = physical_catalog.get(name, {})
             schema_names = set(schema) | set(physical)
+            if isolated:
+                schema_names |= set(edge["executor"].get("literal_inputs", []))
             unknown_params=sorted(set(spec.get("params",{}))-schema_names)
             if unknown_params:
                 err = {"layer":"stage","stage":i,"reason":"unknown_parameter","value":unknown_params,
@@ -1231,6 +1802,33 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                 errors.append({"layer":"stage","stage":i,"reason":"missing_parameter","value":missing,"candidates":[]})
             for pname,pvalue in spec.get("params",{}).items():
                 if pname in physical:
+                    continue
+                if isolated and pname in literal_names:
+                    # 数 1 個の入力: 有限の数か、数を返した段への参照
+                    if isinstance(pvalue, dict) and set(pvalue) == {"ref"}:
+                        known={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
+                        try:
+                            ref_sort=normalize_sort(_resolve_pipeline_ref(normalize_ref(pvalue["ref"]),known,store)[0]["sort"])
+                        except (ArgError,HandleError) as exc:
+                            errors.append({"layer":"stage","stage":i,"reason":"unknown_parameter_ref",
+                                           "value":pvalue["ref"],"detail":str(exc),"candidates":[]})
+                            continue
+                        if ref_sort not in _SCALAR_COMPATIBLE_SORTS:
+                            errors.append({"layer":"stage","stage":i,"reason":"parameter_ref_sort_mismatch",
+                                           "value":ref_sort,"expected":sorted(_SCALAR_COMPATIBLE_SORTS),"candidates":[]})
+                    elif (isinstance(pvalue, bool) or not isinstance(pvalue, (int, float))
+                          or not math.isfinite(float(pvalue))):
+                        errors.append({"layer":"stage","stage":i,"reason":"parameter_type_mismatch","value":pname,
+                                       "detail":"%s.%s must be one finite number or {\"ref\": \"stage:N\"}" % (name, pname),
+                                       "candidates":[]})
+                    continue
+                if isolated and pname in schema and not (isinstance(pvalue, dict) and ("ref" in pvalue or "profile" in pvalue)):
+                    problem = _check_isolated_param(name, schema[pname], pvalue)
+                    if problem:
+                        errors.append({"layer":"stage","stage":i,"reason":"parameter_type_mismatch","value":pname,
+                                       "detail":problem,"expected":{k: schema[pname].get(k) for k in
+                                                                    ("kind","unit","choices","default") if schema[pname].get(k) is not None},
+                                       "candidates":[]})
                     continue
                 if isinstance(pvalue,dict) and "ref" in pvalue:
                     expected=edge.get("ref_parameters",{}).get(pname)
@@ -1249,10 +1847,19 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                                        "value":actual_sort,"expected":expected,"candidates":[]})
                 elif isinstance(pvalue,dict) and "profile" in pvalue:
                     from fssystem import resolve_profile
-                    try: resolve_profile(pvalue["profile"])
+                    try: profile_value=resolve_profile(pvalue["profile"])
                     except (TypeError,ValueError) as exc:
                         errors.append({"layer":"stage","stage":i,"reason":"unknown_profile",
                                        "value":pvalue.get("profile"),"detail":str(exc),"candidates":[]})
+                    else:
+                        # ★2026-11-15: 台帳 op(隔離して走る)は、profile から引いた値も台帳の仕様で検査する。
+                        #   直に書いた値だけを検査していて、profile を経た値は型も大きさも見ずに作業プロセスへ渡っていた
+                        #   (数の引数に文字列の profile を渡すと検証は通り、走らせてから op が断った)。
+                        problem = (_check_isolated_param(name, schema[pname], profile_value)
+                                   if isolated and pname in schema else None)
+                        if problem:
+                            errors.append({"layer":"stage","stage":i,"reason":"parameter_type_mismatch","value":pname,
+                                           "detail":problem,"profile":pvalue.get("profile"),"candidates":[]})
             # ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、
             #   pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
             knob_bad = {}
@@ -1286,6 +1893,8 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             normalized.append({"stage":i,"op":name,"inputs":list(refs),"params":dict(spec.get("params",{})),
                                "a":ka,"b":kb,"named_params":named_used,
                                "in_sorts":edge["inputs"],"out_sort":out})
+            if isolated:
+                normalized[-1].update({"isolated":True,"literal_inputs":list(literal_names)})
             continue
     known_outputs={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
     for ref in outputs or []:
@@ -1483,10 +2092,48 @@ def _pipeline_json_value(value, store: HandleStore, *, sort: str, provenance: li
     return normalized if len(encoded) <= max_bytes else None
 
 
+def _apply_isolated(a: dict, edge: dict, cat: Catalog, store: HandleStore, *,
+                    max_structured_bytes: int | None = None) -> dict:
+    """台帳 op(隔離して走る物)の fullseye_apply: 1 段の fullseye_pipeline と同じ経路・同じ検査で走らせる。"""
+    if a.get("device") not in (None, "cpu", "auto"):
+        raise ArgError("%s runs in the MCP op worker on the CPU only; omit device or pass \"cpu\"" % edge["op"])
+    for key in ("a", "b", "allow_degraded", "parity_check"):
+        if key in a:
+            raise ArgError("%s is a ledger op: use named params (%s), not %s" % (
+                edge["op"], ", ".join(r["name"] for r in edge.get("parameter_schema", [])) or "none", key))
+    executor = edge["executor"]
+    params = dict(a.get("params") or {})
+    data_inputs = [n for n in executor.get("data_names", []) if n not in params]
+    if len(data_inputs) > 1:
+        raise ArgError("%s takes %d inputs (%s); fullseye_apply carries one handle. Use fullseye_pipeline with "
+                       "stages=[{\"op\":%r,\"inputs\":[<handle>, ...]}]" % (
+                           edge["op"], len(data_inputs), ", ".join(edge["inputs"]), edge["op"]))
+    if data_inputs and "handle" not in a:
+        raise ArgError("fullseye_apply.handle が要る: %s は入力 %s を取る(fullseye_load_image などでハンドルを作る。"
+                       "入力の無い台帳 op だけ handle を省ける)" % (edge["op"], ", ".join(edge["inputs"])))
+    stage = {"op": edge["op"]}
+    if params:
+        stage["params"] = params
+    args = {"stages": [stage], "vision": a.get("vision", "auto")}
+    if data_inputs:
+        args["handle"] = a["handle"]
+    return _pipeline(args, cat, store, max_structured_bytes=max_structured_bytes)
+
+
 def _apply(a: dict, cat: Catalog, store: HandleStore, *,
            max_structured_bytes: int | None = None) -> dict:
     max_structured_bytes = _response_budget(max_structured_bytes)
+    import ops
+    if a["op"] not in ops._BY_NAME:
+        from fullseye.opsearch import _graph
+        edge = next((e for e in _graph()["edges"] if e["op"] == a["op"]), None)
+        if _is_isolated(edge) and edge.get("verified_executable"):
+            # ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)も fullseye_apply から呼べる(pipeline と同じ経路)
+            return _apply_isolated(a, edge, cat, store, max_structured_bytes=max_structured_bytes)
     op = _resolve_op(a["op"], cat)
+    if "handle" not in a:
+        raise ArgError("fullseye_apply.handle が要る: %s は画像のハンドルを取る(fullseye_load_image などで作る。"
+                       "入力の無い台帳 op だけ handle を省ける)" % op.name)
     meta, arr = store.get(a["handle"])
     _check_sort(op, meta["sort"], prev="ハンドル %s" % meta["handle"])
     physical = physical_parameter_catalog().get(op.name, {})
@@ -1616,11 +2263,11 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             raise ArgError("pipeline validation failed: %s"%json.dumps(checked["errors"],ensure_ascii=False))
         if not explicit:
             first=checked["errors"][0]
-            op=a["stages"][first.get("stage",1)-1].get("op") if first.get("stage") else "pipeline"
             label="型の不一致: " if first.get("reason")=="sort_mismatch" else ""
-            raise ArgError("%s段 %s %s: %s"%(label,first.get("stage",0),op,
-                json.dumps(first,ensure_ascii=False)), data=checked)
-        return _tool_error(json.dumps(checked,ensure_ascii=False),checked)
+            # 本文(-32602 の message)は段番号と理由を 1 行ずつ。機械が読む全体は error.data に載る。
+            raise ArgError(label + "\n".join(_error_line(e, a["stages"]) for e in checked["errors"])
+                           + "\n(1 段も走らせていない)", data=checked)
+        return _tool_error(_validation_text(checked, a["stages"]), checked)
     bindings = checked["bindings"]
     outputs=a.get("outputs") or (["stage:%d"%len(a["stages"])] if a["stages"] else [])
     from collections import Counter
@@ -1669,9 +2316,47 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 try: params[pname]=resolve_profile(pvalue["profile"])
                 except ValueError as exc: raise ArgError(str(exc)) from exc
         parity_meta = None
+        isolated_info = None
         try:
             executor=edge["executor"]
-            if executor["kind"]=="identity":
+            if _is_isolated(edge):
+                # 台帳 op(光学・照明・合成の入口): 隔離した子プロセスで、時間とメモリの上限つきで走らせる。
+                #   引数は validate_pipeline が台帳の仕様で検査済み。ここでは境界を越える直前にもう一度見る。
+                call_params = {}
+                literal = {}
+                for pname, pvalue in params.items():
+                    if pname in normalized_spec.get("literal_inputs", ()):
+                        literal[pname] = _scalar_of(pvalue, "%s.%s" % (edge["op"], pname))
+                        continue
+                    row = next((r for r in edge.get("parameter_schema", []) if r["name"] == pname), None)
+                    # ★2026-11-15: 解決した後の値を必ず検査する(以前は {"ref"} / {"profile"} で書いた引数を飛ばしていた)。
+                    #   profile の値は仕様に合えば通る。ref の先(配列・表)は台帳 op の引数にできないので、ここで断る
+                    #   (数 1 個の入力は上の literal_inputs の道で受ける)。
+                    if row is None or _check_isolated_param(edge["op"], row, pvalue):
+                        raise ArgError("stage %d (%s): parameter %r failed re-validation" % (i, edge["op"], pname))
+                    if pname in executor.get("array_params", ()) and isinstance(pvalue, list):
+                        # 見本で配列だった引数(K など)は、JSON の list のままでは op が添字で読めない
+                        pvalue = np.asarray(pvalue, dtype=np.float64)
+                    call_params[pname] = pvalue
+                data_args = []
+                supplied = iter(args)
+                for dname, dsort in zip(executor.get("data_names", []), edge["inputs"]):
+                    if dname in literal:
+                        data_args.append(literal[dname])
+                    else:
+                        item = next(supplied)
+                        if dsort in _SCALAR_INPUT_SORTS:
+                            item = _scalar_of(item, "%s.%s" % (edge["op"], dname))
+                        elif dsort in _SEQUENCE_SORTS and isinstance(item, np.ndarray) and item.ndim == 3:
+                            # MCP の handle は (T,H,W) の配列。台帳 op は 2-D の list を受ける(3-D は意味が曖昧なので断る)
+                            item = [np.ascontiguousarray(frame) for frame in item]
+                        elif dsort in _LABEL_SORTS:
+                            item = _integral_labels(item)
+                        data_args.append(item)
+                out, isolated_info = _run_isolated_stage(edge, data_args, call_params)
+                if edge["output"] in _SEQUENCE_SORTS:
+                    out = _stack_sequence(out, edge["op"])
+            elif executor["kind"]=="identity":
                 out=args[0]
             elif executor["kind"]=="registry":
                 import ops as runtime_ops
@@ -1720,8 +2405,21 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 out=fn(*args,**params)
         except Exception as exc:  # noqa: BLE001
             failed.add("stage:%d"%i)
-            records.append({"stage":i,"ref":"stage:%d"%i,"op":edge["op"],"status":"failed",
-                            "reason":"execution_failed","error":{"type":type(exc).__name__,"message":str(exc)[:300]}})
+            reason = "execution_failed"
+            error = {"type":type(exc).__name__,"message":str(exc)[:300]}
+            if getattr(exc, "reason", None) in ("time_limit", "memory_limit", "output_limit"):
+                # 隔離実行の上限: どの上限に当たったかと、その値を返す(黙って長く走らせない)
+                reason = "resource_limit"
+                error.update({"limit": exc.reason, **_isolated_limits()})
+            elif getattr(exc, "reason", None) == "op_error" and getattr(exc, "error_type", None):
+                error["type"] = exc.error_type
+            if getattr(exc, "reason", None):
+                _log("isolated", edge["op"], "failed", exc.reason)
+            failed_rec = {"stage":i,"ref":"stage:%d"%i,"op":edge["op"],"status":"failed",
+                          "reason":reason,"error":error}
+            if _is_isolated(edge) and edge.get("example"):
+                failed_rec["example"] = edge["example"]
+            records.append(failed_rec)
             release(refs + param_refs)
             continue
         out_sort=metas[0]["sort"] if edge["output"]=="poly" and metas else edge["output"]
@@ -1760,20 +2458,49 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         if parity_meta is not None:
             rec["parity"] = parity_meta
         if isinstance(out, np.ndarray) and out_sort not in _BULKY_SORTS and out.size <= 256:
-            rec["value"] = out.tolist()
+            # ★2026-11-13: 複素数の配列(Jones ベクトルなど)をそのまま tolist すると JSON にできず、道具ごと落ちた
+            rec["value"] = ({"re": out.real.tolist(), "im": out.imag.tolist()} if out.dtype.kind == "c"
+                            else out.tolist())
         if normalized_spec.get("named_params"):
             rec["named_params"] = normalized_spec["named_params"]
         if isinstance(out,np.ndarray) and vd.get("escalate") and not links and a.get("vision","auto")!="none":
             links=_maybe_thumb(store,meta,args[0] if args else None,out,vision=a.get("vision","auto"),
                                escalate=True,quantity=False,tag="stage%d_%s"%(i,edge["op"]))
             for link in links: link["description"]="段 %d(%s): "% (i,edge["op"])+link["description"]
+        if isolated_info is not None:
+            rec["isolated"] = {"elapsed_s": round(isolated_info.get("elapsed_s", 0.0), 3),
+                               "time_limit_s": isolated_info["time_limit_s"],
+                               "memory_limit_bytes": isolated_info["memory_limit_bytes"]}
+            meaning = _op_summary(edge["op"])
+            if meaning:
+                rec["meaning"] = meaning
+            used = {}
+            for row in edge.get("parameter_schema", []):
+                if row["name"] in spec.get("params", {}) and row.get("unit") not in (None, "", "undocumented"):
+                    used[row["name"]] = row["unit"]
+            if used:
+                rec["param_units"] = used
         if not isinstance(out,np.ndarray):
             rec["value_handle"],rec["handle"]=handle,None
-            normalized=_pipeline_json_value(
-                out,store,sort=out_sort,
-                provenance=[{"pipeline_value":edge["op"],"stage":i}],max_bytes=2048)
-            if normalized is not None:
-                rec["value"]=normalized
+            if isolated_info is not None:
+                summary=_summarize_value(out,store,provenance=[{"pipeline_value":edge["op"],"stage":i}])
+                if edge["op"] in _ISOLATED_VALUE_UNITS and not isinstance(summary["value"], dict):
+                    summary["units"]["value"] = _ISOLATED_VALUE_UNITS[edge["op"]]
+                rec["value"]=summary["value"]; rec["units"]=summary["units"]
+                rec["field_handles"]=summary["handles"]; rec["value_truncated"]=summary["truncated"]
+                if summary.get("non_finite"):
+                    rec["non_finite"]=summary["non_finite"]
+                rec["_lines"]=_summary_lines(summary)
+            else:
+                normalized=_pipeline_json_value(
+                    out,store,sort=out_sort,
+                    provenance=[{"pipeline_value":edge["op"],"stage":i}],max_bytes=2048)
+                if normalized is not None:
+                    rec["value"]=normalized
+                if edge["executor"]["kind"] == "registry" and out_sort in ("feature", "measurement"):
+                    rec.update(_measure_note(edge["op"], args))
+        elif isolated_info is not None:
+            rec["_array_lines"] = _array_lines(out, out_sort)
         records.append(rec)
         release(refs + param_refs)
         if remaining[ref] <= 0:
@@ -1825,12 +2552,70 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         addon=_typed_json_addon(last_value,records[-1].get("out_sort"),max_structured_bytes) if last_value is not None else None
         if addon is not None: result["json"]=addon[0]
     if failed:
+        for r in records:
+            r.pop("_lines", None)
+            r.pop("_array_lines", None)
         bad=next(r for r in records if r.get("status")=="failed")
-        return _tool_error("段 %d %s failed in strict mode: "% (bad["stage"],bad["op"])+
-                           json.dumps(result,ensure_ascii=False,separators=(",",":")),result)
+        # 本文は段ごとに 1 行(★2026-11-13: 以前は結果の JSON を丸ごと 1 行に繋いでいて、どの段がなぜ
+        #   止まったかを本文から読めなかった)。
+        lines = ["段 %d %s failed in strict mode: %s" % (bad["stage"], bad["op"], bad.get("reason"))]
+        for r in records:
+            err = r.get("error") or {}
+            if r.get("status") == "ok":
+                lines.append("段 %d %s: ok -> %s" % (r["stage"], r["op"], r.get("out_sort")))
+            elif r.get("status") == "failed":
+                detail = ("%s: %s" % (err.get("type"), err.get("message"))) if err else (r.get("out_sort") or "")
+                lines.append("段 %d %s: 失敗 %s — %s" % (r["stage"], r["op"], r.get("reason"), detail))
+                if err.get("limit"):
+                    lines.append("  上限: %s(時間 %s 秒、メモリ %s MiB)" % (
+                        err["limit"], err.get("time_limit_s"), int(err.get("memory_limit_bytes", 0)) >> 20))
+                if r.get("example"):
+                    lines.append("  動く見本: fullseye_pipeline(stages=%s)" % json.dumps(
+                        r["example"]["stages"], ensure_ascii=False, separators=(",", ":"))[:400])
+            else:
+                lines.append("段 %d %s: 走らせていない(%s、止めたのは %s)" % (
+                    r["stage"], r["op"], r.get("reason"), ", ".join(r.get("blocked_by", []))))
+        return _tool_error("\n".join(lines), result)
     text=(("パイプライン %d 段 完走: "%sum(r.get("status")=="ok" for r in records)) +
           " -> ".join(r["op"] for r in records if r.get("status")=="ok"))
-    text += "\n判定=ok value=%s" % result.get("value")
+    table_lines = []
+    # 配列の結果に書く handle は、応答の後も残る物だけ(最後の出力と、名指しした outputs)。途中の段の handle は捨てられる
+    kept = {row["handle"] for row in output_rows} | {result.get("handle")}
+    last_ok = next((r for r in reversed(records) if r.get("status") == "ok"), None)
+    summarized_last = bool(last_ok and last_ok.get("_lines"))       # 最後の段が表・数の要約(本文に全部出る)
+    for r in records:
+        lines = r.pop("_lines", None)
+        array_lines = r.pop("_array_lines", None)
+        if r.get("status") != "ok" or not (lines or array_lines):
+            continue
+        table_lines.append("段 %d %s%s" % (r["stage"], r["op"], (": " + r["meaning"]) if r.get("meaning") else ""))
+        if lines:
+            table_lines.extend("  " + ln for ln in lines)
+        else:
+            table_lines.append("  " + array_lines[0] + ((" handle=%s" % r["handle"]) if r.get("handle") in kept else ""))
+            table_lines.extend("  " + ln for ln in array_lines[1:])
+    if table_lines:
+        text += "\n" + "\n".join(table_lines)
+    if not summarized_last:
+        # 最後の段が配列か registry の値: 従来どおり、判定とその範囲を書く(★2026-11-15: 以前は、途中に表を返す
+        #   台帳 op が 1 つでもあると、最後の値と判定の範囲が本文から落ちた)。
+        text += "\n判定=ok value=%s" % result.get("value")
+        text += "\n" + VERDICT_SCOPE_TEXT
+        result["verdict_scope"] = "shape_only"
+        last = next((r for r in reversed(records) if r.get("status") == "ok" and r.get("value_handle")), None)
+        if last is not None and (last.get("meaning") or last.get("unit")):
+            text += "\n値の意味(段 %d %s): %s%s" % (last["stage"], last["op"], last.get("meaning", ""),
+                                                ("。単位 %s" % last["unit"]) if last.get("unit") else "")
+        if (last is not None and last.get("measured", {}).get("scope") == "largest_connected_component"
+                and last["measured"]["components_in_input"] > 1):
+            # 成分が 1 個(select_largest の後など)なら全体を測ったのと同じなので、本文の注意は出さない
+            n = last["measured"]["components_in_input"]
+            text += "\n注意: 入力の領域の連結成分 %d 個のうち、最大の 1 つだけを測った値" % n + (
+                "(他の %d 個は数に入っていない)" % (n - 1) if n > 1 else "")
+        cautions = _ok_cautions(records, a, store)
+        if cautions:
+            result["cautions"] = cautions
+            text += "".join("\n注意: " + c for c in cautions)
     return tool_result(text,result,links=links,max_structured_bytes=max_structured_bytes)
 
 
@@ -1978,8 +2763,10 @@ def _profile_tool_names(profile: str) -> set[str]:
 # 2026-11-04(統合 GPU): 第 5 便の dry_run / assume_cuda で再び 1,500 を超えた(1,588)ので同じ扱いにする。
 # 2026-11-05(敵対的検証 D10): find_ops の lang を schema に足した分で 1,531 になったので lang も隠す。
 #   plan の want の空・空白はハンドラが ArgError(-32602)で断る(minLength は空白だけを止められず、予算も食う)。
+# 2026-11-13: op_cards の budget_tokens を schema に足した(ハンドラは読むのに渡せなかった)分も同じ扱い。
 MINIMAL_HIDDEN_ARGS: dict[str, tuple[str, ...]] = {"fullseye_pipeline": ("device", "parity_check", "dry_run", "assume_cuda"),
-                                                   "fullseye_find_ops": ("lang",)}
+                                                   "fullseye_find_ops": ("lang", "executable_only"),
+                                                   "fullseye_op_cards": ("budget_tokens",)}
 
 
 def _advertised_schema(name: str, profile: str) -> dict:
@@ -2003,6 +2790,19 @@ def handle_tools_list(params: dict) -> dict:
             "estimated_tokens": math.ceil(len(json.dumps(rows, ensure_ascii=False)) / 4)}
 
 
+def _has_non_finite(value, depth: int = 0) -> bool:
+    """JSON の木に非有限の数があるか(深さ 64 まで。それより深い木は from_jsonable が断る)。"""
+    if isinstance(value, float):
+        return not math.isfinite(value)
+    if depth > 64:
+        return False
+    if isinstance(value, dict):
+        return any(_has_non_finite(v, depth + 1) for v in value.values())
+    if isinstance(value, (list, tuple)):
+        return any(_has_non_finite(v, depth + 1) for v in value)
+    return False
+
+
 def _import_json(a: dict, store: HandleStore) -> dict:
     """JSON 封筒(引数)→ 配列 sort はハンドル、非配列は値。壊れた封筒は -32602。"""
     import numpy as np
@@ -2018,11 +2818,31 @@ def _import_json(a: dict, store: HandleStore) -> dict:
     # ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する
     #   (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
     limits = {"max_bytes": int(store.max_bytes), "max_pixels": int(get_system("mcp_stack_max_pixels"))}
+    # ★2026-11-13(報告 10 / S6): NaN・Infinity(JSON の決まりに無い定数、または封筒の中の非有限の数)を受けていた。
+    #   取り込みの前に断る(他の入口と同じく、非有限は受けない)。
+    if has_json and isinstance(a["json"], str):
+        # ★2026-11-15: json(文字列)の中の深い入れ子。1 通の枠の深さの上限(MAX_JSON_DEPTH)は文字列の中の括弧を
+        #   数えないので、同じ上限をここでも読む前に当てる。当てる前は版で答えが割れ、どちらも -32603(内部エラー)
+        #   だった: py3.11 は約 1,000 段から RecursionError、py3.14 は 10 万段で Stack overflow(実測)。
+        if json_depth(a["json"].encode("utf-8", "surrogatepass")) > MAX_JSON_DEPTH:
+            raise ArgError("json の入れ子が深すぎる(上限 %d 段)" % MAX_JSON_DEPTH)
+
+        def _no_constants(token):
+            raise ArgError("json に %s がある(JSON の決まりに無い非有限の定数は取り込まない)" % token)
+        try:
+            json.loads(a["json"], parse_constant=_no_constants)
+        except json.JSONDecodeError:
+            pass                                                 # 形の崩れは from_json が理由つきで断る
+    if has_env and _has_non_finite(a["envelope"]):
+        raise ArgError("envelope に非有限の数(NaN / Infinity)がある。取り込まない")
     try:
         value, sort = (fullseye.from_json(a["json"], **limits) if has_json
                        else fullseye.from_jsonable(a["envelope"], **limits))
     except ValueError as exc:                                    # 信頼境界: 封筒を再検証
         raise ArgError("JSON 封筒が読めない: %s" % exc) from None
+    if isinstance(value, np.ndarray) and value.dtype.kind in "fc" and not np.isfinite(value).all():
+        raise ArgError("取り込む配列に非有限の値(NaN / Inf)が %d 個ある。取り込まない(有限の値にしてから渡す)"
+                       % int((~np.isfinite(value)).sum()))
     if isinstance(value, np.ndarray):
         meta = store.put(value, sort=sort, provenance=[{"import_json": sort}])
         text = "取り込んだ: %s  sort=%s  shape=%s%s" % (
@@ -2268,7 +3088,8 @@ def _score_pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
         return _tool_error("不合格(%s): %s" % (reason, message), body)
 
     try:
-        rec = tasks.claim(task_id)
+        # 走らせる前の検査(入力の縛り・引数・入力を読まない op・型の門)は回数を取らずに行い、通ったら claim する
+        rec = tasks.peek(task_id)
     except TaskError as exc:
         return refuse(exc.reason, str(exc))
     fam = FAMILIES[rec.kind]
@@ -2277,6 +3098,7 @@ def _score_pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
     if capped:
         base["feedback_capped"] = True
     stages = a["stages"]
+    base["attempt_counted"] = False                   # 型の門までの拒否は回数に数えない(報告 11)
     # 0. 課題の入力に縛る(F1): 段が読めるのは have:<入力の型> と stage:N だけ
     foreign = _foreign_refs(stages, fam.input_sort)
     if foreign:
@@ -2298,7 +3120,14 @@ def _score_pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
     checked = validate_pipeline(stages, fam.input_sort, cat,
                                 bindings={"have:%s" % fam.input_sort: handle}, store=store)
     if not checked["valid"]:
-        return refuse("type_gate", "型の門で不合格(1 段も走らせていない)", errors=checked["errors"], **base)
+        return refuse("type_gate", "型の門で不合格(1 段も走らせていない。採点の回数に数えない)",
+                      errors=checked["errors"], **base)
+    try:
+        rec = tasks.claim(task_id)                    # ここから 1 回に数える(従来どおり、出力の型の検査も含む)
+    except TaskError as exc:
+        return refuse(exc.reason, str(exc))
+    base["attempts_used"] = rec.attempts
+    base["attempt_counted"] = True
     if checked.get("out_sort") not in fam.output_sorts:
         return refuse("output_sort_mismatch", "最終段の型 %s は採点できない(要るのは %s)"
                       % (checked.get("out_sort"), "/".join(fam.output_sorts)), **base)
@@ -2420,14 +3249,16 @@ def _write_viewer(a: dict, store: HandleStore) -> dict:
         text = pocviewer._build_html(spec, langs)
     except (ValueError, TypeError, KeyError, AttributeError) as exc:
         raise ArgError("spec が不正: %s" % exc) from None
-    path = os.path.join(store.thumb_dir, name + ".html")
-    with open(path, "w", encoding="utf-8", newline="\n") as fh:
-        fh.write(text)
+    # ★2026-11-15(外部レビュー、Codex): 名前を変えれば何枚でも書け、サーバが終わるまで残った(200 枚で 11.8 MB)。
+    #   置き場が新しい物から max_viewer_files 枚・max_viewer_bytes バイトまでを持ち、超えたら古い物から消す。
+    path = store.write_viewer(name, text)
     size = len(text.encode("utf-8"))
     tabs = [t["id"] for t in spec["tabs"]]
     body = ("ビューアを書いた: %s(%.2f MB、タブ %d 本: %s、言語 %s)。ブラウザで開くだけで動く"
             "(外部の読み込み無し)。URL の ?lang=xx で開く言語、?tab=<id> で開くタブを選べる。"
-            % (os.path.basename(path), size / 1e6, len(tabs), ", ".join(tabs), "/".join(langs)))
+            "置き場のビューアは新しい %d 枚・%d MiB まで(超えると古い物から消す)。"
+            % (os.path.basename(path), size / 1e6, len(tabs), ", ".join(tabs), "/".join(langs),
+               store.max_viewer_files, store.max_viewer_bytes >> 20))
     return tool_result(body, {"path": path, "bytes": size, "tabs": tabs, "lang": list(langs)},
                        links=[_file_link(path, os.path.basename(path), "text/html", "自己完結の HTML ビューア")])
 
@@ -2496,8 +3327,16 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             # a limit equal to the default reserved the recipe slots).
             recipe_limit = max(0, min(get_system("find_ops_recipe_max"), total_limit - 1))
             op_limit = total_limit - recipe_limit
-            r = search_ops(a["query"], op_limit, lang=a.get("lang"),
-                           in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
+            executable_only = bool(a.get("executable_only", False))
+            # executable_only: 多めに引いて MCP で走る op だけを残す(順位は検索のまま)
+            r = search_ops(a["query"], min(MAX_SEARCH_LIMIT, op_limit * 8) if executable_only else op_limit,
+                           lang=a.get("lang"), in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
+            if executable_only:
+                from fullseye.opsearch import _graph
+                runnable = {e["op"] for e in _graph()["edges"] if e.get("verified_executable")}
+                r["ops"] = [row for row in r["ops"] if row["name"] in runnable][:op_limit]
+                r["retry_ops"] = [row for row in r.get("retry_ops", []) if row["name"] in runnable]
+                r["executable_only"] = True
         except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)
             raise ArgError(str(exc)) from exc
         from fullseye.recipesearch import find_recipes
@@ -2529,9 +3368,16 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
                 lines.append("recipe: %s | %d stages | %s" %
                              (recipe["name"], len(ops), " → ".join(ops)))
             text = "\n".join(lines) or _format(r)
-        r["proposals"] = ([{"kind": "op", **row} for row in r["ops"]] +
-                          [{"kind": "retry_op", **row} for row in r.get("retry_ops", [])] +
-                          [{"kind": "recipe", **row} for row in r["recipes"]])[:total_limit]
+        # ★2026-11-13(報告 6): proposals は ops / retry_ops / recipes の行を丸ごと写していて、応答の半分が重複だった
+        #   (検証の 1 回で ops 2.6 KB に proposals 4.3 KB)。順番と種類だけの参照にする(中身は元の一覧を読む)。
+        from fullseye.opsearch import _graph
+        runnable = {e["op"] for e in _graph()["edges"] if e.get("verified_executable")}
+        r["proposals"] = ([{"kind": "op", "name": row["name"], "executable": row["name"] in runnable}
+                           for row in r["ops"]] +
+                          [{"kind": "retry_op", "name": row["name"], "executable": row["name"] in runnable}
+                           for row in r.get("retry_ops", [])] +
+                          [{"kind": "recipe", "name": row["name"], "executable": row.get("runner", "mcp") == "mcp"}
+                           for row in r["recipes"]])[:total_limit]
         return tool_result(text, r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_suggest_pipeline":
         from fullseye.opsearch import normalize_sort, search_ops, op_cards
@@ -2599,14 +3445,22 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             r = op_cards(a["names"], a.get("budget_tokens", 500))
         except ValueError as exc:
             raise ArgError(str(exc)) from exc
-        return tool_result(json.dumps(r, ensure_ascii=False, indent=2), r, max_structured_bytes=max_structured_bytes)
+        text = json.dumps(r, ensure_ascii=False, indent=2)
+        if r["missing"]:
+            # ★2026-11-13(報告 5): 落とした名前が structuredContent の奥にしか無かった。本文の先頭に 1 行で書く
+            def _why(m):
+                if m["reason"] == "budget_tokens":
+                    return "%s(budget_tokens=%d に収まらない。上げるか、名前を減らす)" % (m["name"], r["budget_tokens"])
+                return "%s(知らない op%s)" % (m["name"], ("。近い名前: " + ", ".join(m["near"])) if m.get("near") else "")
+            text = "落とした名前: " + " / ".join(_why(m) for m in r["missing"]) + "\n" + text
+        return tool_result(text, r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_validate_pipeline":
         # ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、
         #   pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。
         #   None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
         r = validate_pipeline(a["stages"], a.get("start_sort"), cat, max_stages=None,
                               bindings=a.get("bindings"),store=store)
-        text = json.dumps(r, ensure_ascii=False, indent=2)
+        text = _validation_text(r, a["stages"])
         return (tool_result(text, r, max_structured_bytes=max_structured_bytes) if r["valid"]
                 else _tool_error(text, r))
     if name == "fullseye_op_help":
@@ -2618,14 +3472,24 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         return tool_result(_help_text(h), structured, links=links,
                            max_structured_bytes=max_structured_bytes)
     if name == "fullseye_catalog_coverage":
-        c = cat.coverage()
+        c = _public_coverage(cat.coverage(), detail=bool(a.get("detail", False)))
         return tool_result(_coverage_text(c), c, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_list_samples":
         rows = store.samples()
         names=[r["name"] for r in rows]
         files = store.root_files()
-        text = ("files: " + (", ".join(files) if files else "(なし)") + "\nsamples: " + ", ".join(names))
-        return tool_result(text, {"files": files, "samples": names},
+        # ★2026-11-13(報告 13): 名前だけで、来歴・ライセンス・何が写っているかが分からなかった。
+        #   samples(名前の一覧)は従来どおり、詳しい行は sample_details に足す(ホストのパスは出さない)。
+        details = [{"name": r["name"], "what": r.get("description"), "source": r.get("source"),
+                    "licence": r.get("licence"), "has_truth": bool(r.get("has_truth"))} for r in rows]
+
+        def _line(d):
+            what = " ".join(str(d["what"]).split())[:110] if d["what"] else "(説明なし)"
+            return "- %s: %s [%s%s]" % (d["name"], what, d["licence"] or "licence unknown",
+                                        "; 真値あり" if d["has_truth"] else "")
+        text = ("files: " + (", ".join(files) if files else "(なし)") + "\nsamples: " + ", ".join(names)
+                + "\n" + "\n".join(_line(d) for d in details))
+        return tool_result(text, {"files": files, "samples": names, "sample_details": details},
                            max_structured_bytes=max_structured_bytes)
     try:
         if name == "fullseye_load_image":
@@ -2662,8 +3526,12 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
 def dispatch(msg: dict, cat: Catalog, store: HandleStore | None = None) -> dict | None:
     """1 メッセージを処理。通知(id 無し)には返さない。"""
     if not isinstance(msg, dict) or msg.get("jsonrpc") != "2.0":
-        return _err(msg.get("id") if isinstance(msg, dict) else None, -32600, "JSON-RPC 2.0 でない")
+        return _err(_reply_id(msg.get("id")) if isinstance(msg, dict) else None, -32600, "JSON-RPC 2.0 でない")
     req_id = msg.get("id")
+    if not _valid_id(req_id):
+        # ★2026-11-15(外部レビュー、Codex): 配列・辞書・真偽値の id をそのまま返していた。JSON-RPC 2.0 の id は
+        #   文字列・数・null だけ。形の違う id の要求は、id を null にして -32600 で断る。
+        return _err(None, -32600, "id は文字列・数・null のどれか(受け取った型: %s)" % type(req_id).__name__)
     method = msg.get("method")
     params = msg.get("params")
     is_notification = "id" not in msg
@@ -2722,6 +3590,10 @@ def run_stdio_server(stdin=None, stdout=None, *, catalog: Catalog | None = None,
         try:
             got = read_framed(stdin)
         except FramingError as exc:
+            # ★2026-11-15(外部レビューの直しの検証): 最初の 1 通が読めない時、-32700 を Content-Length 枠で返していた
+            #   (枠が決まるのは読めた 1 通から)。改行区切りの公式のクライアントはその返事を読めない。NaN・重複した鍵を
+            #   断るようにしたので、起き得る場面が増えた。壊れた 1 通の枠が分かれば、その枠で返す。
+            framing = exc.framing or framing
             write_message(stdout, _err(None, -32700, str(exc)), framing=framing)
             continue
         if got is None:

@@ -13,7 +13,7 @@ MCP の検索(`fullseye_find_ops`)は runner = mcp(MCP の pipeline でそのま
 | 2-D の category の網羅 | 25 / 49 |
 | 使った op(重複なし) | 413 |
 | 真値の門つき | 247 |
-| runner | mcp 89, python 182 |
+| runner | mcp 132, python 139 |
 | 型の切れ目 | 合計 0(切れ目のあるレシピ 0) |
 | GPU 経路の切り替わり | 合計 96(測ったレシピ 247、GPU 段を含む 127、未計測 24、snapshot `a3f91eae72`) |
 
@@ -182,12 +182,12 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | Preprocess — flat-field correction by dividing by a white reference | 2d | preprocess | python | 3 | 0 | 3 | 0 | あり |
 | Preprocess — subtract a background frame, then measure the part area | 2d | preprocess | python | 3 | 0 | 3 | 0 | あり |
 | Inspect — missing material against the nominal shape (region difference) | 2d | inspection | python | 3 | 0 | 2 | 2 | あり |
-| Inspect — count bright particles and their total area | blob | inspection | python | 3 | 0 | 2 | 1 | あり |
-| Inspect — split touching particles with distance-transform seeds | blob | inspection | python | 5 | 0 | 3 | 1 | あり |
+| Inspect — count bright particles and their total area | blob | inspection | mcp | 3 | 0 | 2 | 1 | あり |
+| Inspect — split touching particles with distance-transform seeds | blob | inspection | mcp | 5 | 0 | 3 | 1 | あり |
 | Inspect — particle count with an honest lower/upper interval | blob | inspection | python | 2 | 0 | 1 | 1 | あり |
 | Inspect — score a segmentation against the ground-truth mask (Dice / Jaccard) | segmentation | inspection | python | 3 | 0 | 2 | 1 | あり |
-| Inspect — separate touching parts with marker-controlled watershed | segmentation | inspection | python | 5 | 0 | 3 | 1 | あり |
-| Preprocess — automatic gray threshold between two intensity classes (ISODATA) | segmentation | preprocess | python | 2 | 0 | 1 | 1 | あり |
+| Inspect — separate touching parts with marker-controlled watershed | segmentation | inspection | mcp | 5 | 0 | 3 | 1 | あり |
+| Preprocess — automatic gray threshold between two intensity classes (ISODATA) | segmentation | preprocess | mcp | 2 | 0 | 1 | 1 | あり |
 | Measure — subpixel edge position along a caliper line | measure1d | measurement | python | 2 | 0 | 0 | 0 | あり |
 | Measure — width of a bright bar in millimetres (edge pair + scale) | measure1d | measurement | python | 3 | 0 | 0 | 0 | あり |
 | Measure — hole radius and centre by circle metrology | measure1d | measurement | python | 4 | 0 | 0 | 0 | あり |
@@ -196,19 +196,19 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | Preprocess — raw Bayer ISP: black level, demosaic, gray-world white balance | gfx2d | preprocess | python | 3 | 0 | 2 | 1 | あり |
 | Preprocess — lens-shading (vignetting) correction from a flat-field frame | gfx2d | preprocess | python | 2 | 0 | 1 | 1 | あり |
 | Simulate — rule-90 cellular automaton (Sierpinski) stepped and rendered | generative | simulation | python | 3 | 0 | 0 | 0 | あり |
-| Simulate — SEM secondary-electron image of a sloped facet | generative | simulation | python | 1 | 0 | 1 | 0 | あり |
+| Simulate — SEM secondary-electron image of a sloped facet | generative | simulation | mcp | 1 | 0 | 1 | 0 | あり |
 | Simulate — photoluminescence carrier-diffusion PSF | generative | simulation | python | 1 | 0 | 0 | 0 | あり |
 | Visualize — plot a measured series on data axes (data -> pixel mapping) | annotate | visualization | python | 3 | 0 | 1 | 2 | あり |
 | Visualize — draw a filled ellipse marker and verify its pixel area | annotate | visualization | python | 4 | 0 | 2 | 2 | あり |
 | Inspect — image fidelity report of a noisy capture (PSNR / RMSE with conditions) | imgmetrics | inspection | python | 2 | 0 | 0 | 0 | あり |
 | Inspect — perceptual colour difference ΔE*ab against a reference colour | imgmetrics | inspection | python | 3 | 0 | 0 | 0 | あり |
-| Inspect — mutual information of a multimodal pair (inverted contrast) | imgmetrics | analysis | python | 2 | 0 | 1 | 1 | あり |
+| Inspect — mutual information of a multimodal pair (inverted contrast) | imgmetrics | analysis | mcp | 2 | 0 | 1 | 1 | あり |
 | Inspect — embed and blindly recover an integrity watermark | imgforensics | inspection | python | 2 | 0 | 0 | 0 | あり |
-| Inspect — detect a copy-move forgery and its displacement | imgforensics | inspection | python | 2 | 0 | 1 | 1 | あり |
-| Inspect — locate a spliced patch with different sensor noise | imgforensics | inspection | python | 4 | 0 | 3 | 1 | あり |
+| Inspect — detect a copy-move forgery and its displacement | imgforensics | inspection | mcp | 2 | 0 | 1 | 1 | あり |
+| Inspect — locate a spliced patch with different sensor noise | imgforensics | inspection | mcp | 4 | 0 | 3 | 1 | あり |
 | Preprocess — colour transfer of a product photo to a reference look | colortransport | preprocess | python | 1 | 0 | 0 | 0 | あり |
 | Measure — 1-D optimal transport plan between two sample sets | colortransport | analysis | python | 2 | 0 | 0 | 0 | あり |
-| Measure — radius of a round part from its contour (elliptic Fourier) | shape2d | measurement | python | 3 | 0 | 0 | 0 | あり |
+| Measure — radius of a round part from its contour (elliptic Fourier) | shape2d | measurement | mcp | 3 | 0 | 0 | 0 | あり |
 | Preprocess — thin-plate-spline warp from control points, check the part moved | shape2d | preprocess | python | 4 | 0 | 3 | 1 | あり |
 | Analyze — statistical shape model: variance explained by the first mode | shapestat | analysis | python | 3 | 0 | 0 | 0 | あり |
 | Inspect — form error after best-fit similarity alignment of landmarks | shapestat | inspection | python | 2 | 0 | 0 | 0 | あり |
@@ -219,21 +219,21 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | Measure — areal roughness Sq: form removal, Gaussian L-filter, ISO 25178 parameters | roughness | measurement | python | 3 | 0 | 2 | 1 | あり |
 | Measure — Sq of a synthetic self-affine surface (PSD synthesis + form removal) | roughness | simulation | python | 3 | 0 | 1 | 2 | あり |
 | Preprocess — rotate colours about the grey axis (quaternion colour rotation) | quat | preprocess | python | 3 | 0 | 1 | 1 | あり |
-| Measure — local orientation of a grating with the monogenic signal | quat | measurement | python | 2 | 0 | 0 | 0 | あり |
+| Measure — local orientation of a grating with the monogenic signal | quat | measurement | mcp | 2 | 0 | 0 | 0 | あり |
 | Inspect — locate a part template under an illumination change (orientation codes) | codematch | inspection | python | 2 | 0 | 1 | 1 | あり |
 | Measure — large displacement from multi-wavelength phases (CRT unwrapping) | residue | measurement | python | 1 | 0 | 0 | 0 | あり |
 | Inspect — flat-field correct, then register the frame to the golden image | aoi | inspection | python | 2 | 0 | 0 | 0 | あり |
-| Inspect — stroke width of printed characters (SWT) | text | inspection | python | 1 | 0 | 0 | 0 | あり |
-| Inspect — character candidates from a stroke-width field | text | inspection | python | 1 | 0 | 0 | 0 | あり |
-| Inspect — group character candidates into text lines | text | inspection | python | 2 | 0 | 未計測 | 未計測 | あり |
-| 3D — radius of a ball from a noisy scan with stray points | 3d | 3d | python | 2 | 0 | 0 | 0 | あり |
-| 3D — ball radius by least squares after statistical outlier removal | 3d | 3d | python | 2 | 0 | 0 | 0 | あり |
-| 3D — tilt of a flat face (RANSAC plane) despite clutter | 3d | 3d | python | 1 | 0 | 0 | 0 | あり |
-| 3D — pipe radius from a cylinder scan (normals + RANSAC cylinder) | 3d | 3d | python | 2 | 0 | 0 | 0 | あり |
-| 3D — mean curvature of a ball surface as a summary table | reprconv | 3d | python | 2 | 0 | 0 | 0 | あり |
-| 3D — centre of a scanned part (centroid position) | reprconv | 3d | python | 2 | 0 | 0 | 0 | あり |
-| 3D — enclosed volume of a scanned ball (convex hull mesh) | 3d | 3d | python | 2 | 0 | 0 | 0 | あり |
-| 3D — surface area of a scanned ball (convex hull mesh) | 3d | 3d | python | 2 | 0 | 0 | 0 | あり |
+| Inspect — stroke width of printed characters (SWT) | text | inspection | mcp | 1 | 0 | 0 | 0 | あり |
+| Inspect — character candidates from a stroke-width field | text | inspection | mcp | 1 | 0 | 0 | 0 | あり |
+| Inspect — group character candidates into text lines | text | inspection | mcp | 2 | 0 | 未計測 | 未計測 | あり |
+| 3D — radius of a ball from a noisy scan with stray points | 3d | 3d | mcp | 2 | 0 | 0 | 0 | あり |
+| 3D — ball radius by least squares after statistical outlier removal | 3d | 3d | mcp | 2 | 0 | 0 | 0 | あり |
+| 3D — tilt of a flat face (RANSAC plane) despite clutter | 3d | 3d | mcp | 1 | 0 | 0 | 0 | あり |
+| 3D — pipe radius from a cylinder scan (normals + RANSAC cylinder) | 3d | 3d | mcp | 2 | 0 | 0 | 0 | あり |
+| 3D — mean curvature of a ball surface as a summary table | reprconv | 3d | mcp | 2 | 0 | 0 | 0 | あり |
+| 3D — centre of a scanned part (centroid position) | reprconv | 3d | mcp | 2 | 0 | 0 | 0 | あり |
+| 3D — enclosed volume of a scanned ball (convex hull mesh) | 3d | 3d | mcp | 2 | 0 | 0 | 0 | あり |
+| 3D — surface area of a scanned ball (convex hull mesh) | 3d | 3d | mcp | 2 | 0 | 0 | 0 | あり |
 | 3D — align a scan to its reference (ICP rigid transform) | 3d | 3d | python | 2 | 0 | 0 | 0 | あり |
 | 3D — align a scan to its reference with point-to-plane ICP | 3d | 3d | python | 2 | 0 | 0 | 0 | あり |
 | 3D — register two scans with generalized ICP (plane-to-plane) | 3d | 3d | python | 2 | 0 | 0 | 0 | あり |
@@ -241,13 +241,13 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | 3D — how far a part sits from its nominal pose (point-to-plane ICP -> pose error) | 3d | 3d | python | 3 | 0 | 未計測 | 未計測 | あり |
 | 3D — camera pose deviation from its nominal mounting (PnP -> RRE / RTE) | 3d | 3d | python | 2 | 0 | 未計測 | 未計測 | あり |
 | 3D — plane tilt from a depth camera image | 3d | 3d | python | 2 | 0 | 0 | 0 | あり |
-| 3D — height of a bump by phase-shift structured light | 3d | 3d | python | 2 | 0 | 1 | 1 | あり |
+| 3D — height of a bump by phase-shift structured light | 3d | 3d | mcp | 2 | 0 | 1 | 1 | あり |
 | 3D — fuse a depth image into a TSDF volume and read occupancy | 3d | 3d | python | 2 | 0 | 1 | 1 | あり |
 | 3D — depth of a surface from a calibrated stereo pair (plane sweep) | 3d | 3d | python | 1 | 0 | 0 | 0 | あり |
-| 3D — voxel count of an inclusion after removing speckle | 3d | 3d | python | 2 | 0 | 0 | 0 | あり |
-| 3D — volume of a CT inclusion from its marching-cubes surface | 3d | 3d | python | 2 | 0 | 0 | 0 | あり |
-| 3D — surface area of a CT inclusion (marching cubes + Taubin smoothing) | 3d | 3d | python | 3 | 0 | 0 | 0 | あり |
-| 3D — label the objects in a CT volume and read their voxel counts | 3d | 3d | python | 2 | 0 | 1 | 1 | あり |
+| 3D — voxel count of an inclusion after removing speckle | 3d | 3d | mcp | 2 | 0 | 0 | 0 | あり |
+| 3D — volume of a CT inclusion from its marching-cubes surface | 3d | 3d | mcp | 2 | 0 | 0 | 0 | あり |
+| 3D — surface area of a CT inclusion (marching cubes + Taubin smoothing) | 3d | 3d | mcp | 3 | 0 | 0 | 0 | あり |
+| 3D — label the objects in a CT volume and read their voxel counts | 3d | 3d | mcp | 2 | 0 | 1 | 1 | あり |
 | Inspect — diameter of a dense inclusion along a probe line (CT volume) | 3d | 3d | python | 2 | 0 | 1 | 1 | あり |
 | DEM — slope of a hillside after filling sinks | dem | measurement | python | 2 | 0 | 1 | 1 | あり |
 | DEM — hillshade of a tilted terrain | dem | visualization | python | 1 | 0 | 1 | 0 | あり |
@@ -264,10 +264,10 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | Print — filament volume for the equator layer of a scanned ball | printpath | simulation | python | 4 | 0 | 0 | 0 | あり |
 | Inspect — map a camera pixel onto the CAD surface (depth of the hit) | cadmap | inspection | python | 2 | 0 | 0 | 0 | あり |
 | Sense — horizon line a camera sees from a DEM | geocam | simulation | python | 3 | 0 | 0 | 0 | — |
-| 3D — per-object volume table of a labelled scan | volcolor | 3d | python | 1 | 0 | 0 | 0 | あり |
-| 3D — volume table of the objects found in a grey scan | volcolor | 3d | python | 2 | 0 | 1 | 1 | あり |
-| 3D — colour a labelled volume and cut an RGB slice | volcolor | visualization | python | 2 | 0 | 1 | 1 | — |
-| Sense — slit-scan (x-t) image of a moving spot | videocube | analysis | python | 1 | 0 | 0 | 0 | — |
+| 3D — per-object volume table of a labelled scan | volcolor | 3d | mcp | 1 | 0 | 0 | 0 | あり |
+| 3D — volume table of the objects found in a grey scan | volcolor | 3d | mcp | 2 | 0 | 1 | 1 | あり |
+| 3D — colour a labelled volume and cut an RGB slice | volcolor | visualization | mcp | 2 | 0 | 1 | 1 | — |
+| Sense — slit-scan (x-t) image of a moving spot | videocube | analysis | mcp | 1 | 0 | 0 | 0 | — |
 | Sense — beating shell: maximum-intensity projection video | live4d | visualization | python | 2 | 0 | 0 | 0 | — |
 | Sense — sun elevation at a site over a day | geocam | sensing | python | 1 | 0 | 未計測 | 未計測 | あり |
 | Optics — focal length of a biconvex singlet lens (paraxial EFL / BFL) | optics | optics | python | 2 | 0 | 0 | 0 | あり |
@@ -288,13 +288,13 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | Sense — radar direction of arrival with a uniform linear array (beamforming) | rangedoppler | sensing | python | 2 | 0 | 0 | 0 | あり |
 | Sense — direct ToF distance from a TCSPC histogram (SPAD lidar pixel) | photon | sensing | python | 3 | 0 | 0 | 0 | あり |
 | 3D — flash lidar depth map from a SPAD histogram cube | photon | 3d | python | 2 | 0 | 0 | 0 | あり |
-| Preprocess — variance-stabilize a photon-limited image (Anscombe transform) | photon | preprocess | python | 2 | 0 | 1 | 1 | あり |
+| Preprocess — variance-stabilize a photon-limited image (Anscombe transform) | photon | preprocess | mcp | 2 | 0 | 1 | 1 | あり |
 | Measure — surface height at a pixel by white-light interferometry (CSI peak) | interferometry | measurement | python | 2 | 0 | 0 | 0 | あり |
 | Measure — tilt of a flat measured by a coherence-scanning interferometer | interferometry | measurement | python | 3 | 0 | 1 | 1 | あり |
 | Measure — distance by chromatic confocal sensor (spectral peak to height) | interferometry | measurement | python | 2 | 0 | 0 | 0 | あり |
 | Sense — detect and photometer stars in a frame (aperture photometry) | astrostack | sensing | python | 3 | 0 | 0 | 0 | あり |
 | Measure — seeing / PSF FWHM of point sources (Gaussian PSF fit) | astrostack | measurement | python | 3 | 0 | 0 | 0 | あり |
-| Preprocess — stack N frames with sigma clipping (noise drops as 1/sqrt N) | astrostack | preprocess | python | 2 | 0 | 1 | 1 | あり |
+| Preprocess — stack N frames with sigma clipping (noise drops as 1/sqrt N) | astrostack | preprocess | mcp | 2 | 0 | 1 | 1 | あり |
 | Preprocess — reveal faint stars: cosmic-ray reject, register and stack dithered frames | astrostack | preprocess | python | 5 | 0 | 2 | 4 | あり |
 | 3D — depth of a plane from a plenoptic camera raw image (refocus stack, depth from focus) | lightfield | 3d | python | 3 | 0 | 0 | 0 | あり |
 | 3D — metric depth from a light field (refocus depth from focus, camera-array model) | lightfield | 3d | python | 3 | 0 | 1 | 1 | あり |
@@ -302,7 +302,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | Measure — flow velocity from a PIV image pair (multipass cross-correlation) | piv | measurement | python | 3 | 0 | 0 | 0 | あり |
 | Measure — mean flow from a PIV image sequence (ensemble correlation) | piv | measurement | python | 3 | 0 | 0 | 0 | あり |
 | Measure — vorticity of a PIV vector field after outlier replacement | piv | measurement | python | 3 | 0 | 0 | 0 | あり |
-| Measure — flow speed in m/s from PIV displacement (pixel size, frame interval) | piv | measurement | python | 2 | 0 | 0 | 0 | あり |
+| Measure — flow speed in m/s from PIV displacement (pixel size, frame interval) | piv | measurement | mcp | 2 | 0 | 0 | 0 | あり |
 | Inspect — bearing outer-race defect frequency by envelope spectrum | acoustics | inspection | python | 2 | 0 | 0 | 0 | あり |
 | Measure — frequency response (gain) of a device from input / output noise (H1) | acoustics | measurement | python | 1 | 0 | 0 | 0 | あり |
 | Sense — time difference of arrival between two microphones (GCC-PHAT) | acoustics | sensing | python | 1 | 0 | 0 | 0 | あり |
@@ -325,25 +325,25 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | Inspect — peg-in-hole clearance ratio and jamming-free tilt (robot assembly) | drive | analysis | python | 2 | 0 | 0 | 0 | あり |
 | Sense — direction of arrival of two sources with an antenna array (MUSIC) | math | sensing | python | 2 | 0 | 0 | 0 | あり |
 | Analyze — count polynomial roots inside a circle (argument principle) | math | analysis | python | 3 | 0 | 1 | 2 | あり |
-| Measure — condition number of a measured covariance (anisotropy / ill-conditioning) | math | analysis | python | 2 | 0 | 0 | 0 | あり |
+| Measure — condition number of a measured covariance (anisotropy / ill-conditioning) | math | analysis | mcp | 2 | 0 | 0 | 0 | あり |
 | Measure — principal axes of a scatter (covariance eigen-decomposition) | math | measurement | python | 2 | 0 | 0 | 0 | あり |
 | Sense — dominant vibration frequency after band-pass filtering | oned | sensing | python | 2 | 0 | 0 | 0 | あり |
-| Measure — count zero crossings of a smoothed profile (1-D function) | oned | measurement | python | 2 | 0 | 1 | 1 | あり |
-| Measure — amplitude of a vibration via its Hilbert envelope | oned | measurement | python | 2 | 0 | 1 | 1 | あり |
+| Measure — count zero crossings of a smoothed profile (1-D function) | oned | measurement | mcp | 2 | 0 | 1 | 1 | あり |
+| Measure — amplitude of a vibration via its Hilbert envelope | oned | measurement | mcp | 2 | 0 | 1 | 1 | あり |
 | Inspect — process capability Cp / Cpk against spec limits | spc | inspection | python | 1 | 0 | 0 | 0 | あり |
-| Inspect — X-bar / R control chart of subgrouped parts | spc | inspection | python | 1 | 0 | 0 | 0 | あり |
+| Inspect — X-bar / R control chart of subgrouped parts | spc | inspection | mcp | 1 | 0 | 0 | 0 | あり |
 | Inspect — variation-model defect detection against good samples | spc | inspection | python | 2 | 0 | 1 | 1 | あり |
 | Inspect — probability of detection a50 of an NDT method (â vs a) | spc | inspection | python | 2 | 0 | 0 | 0 | あり |
-| Analyze — algebraic connectivity of a neuron ring (Laplacian spectrum) | conngraph | analysis | python | 2 | 0 | 0 | 0 | あり |
-| Analyze — clusters of a connectome after pruning weak synapses | conngraph | analysis | python | 3 | 0 | 0 | 0 | あり |
+| Analyze — algebraic connectivity of a neuron ring (Laplacian spectrum) | conngraph | analysis | mcp | 2 | 0 | 0 | 0 | あり |
+| Analyze — clusters of a connectome after pruning weak synapses | conngraph | analysis | mcp | 3 | 0 | 0 | 0 | あり |
 | Measure — shortest route on a weighted network (slime-mould transport) | graph | analysis | python | 1 | 0 | 0 | 0 | あり |
 | Analyze — count directed feedback triangles in a network | graph | analysis | python | 1 | 0 | 0 | 0 | あり |
 | Analyze — response-surface optimum of a central composite experiment | multivar | analysis | python | 2 | 0 | 0 | 0 | あり |
 | Analyze — global sensitivity (Sobol' indices) of a model | multivar | analysis | python | 2 | 0 | 0 | 0 | あり |
-| Analyze — principal components and explained variance of multivariate data | multivar | analysis | python | 1 | 0 | 0 | 0 | あり |
+| Analyze — principal components and explained variance of multivariate data | multivar | analysis | mcp | 1 | 0 | 0 | 0 | あり |
 | Inspect — score a segmentation split error (variation of information) | emproof | inspection | python | 2 | 0 | 0 | 0 | あり |
-| Inspect — detect a scene cut in a noisy video stream | videostream | inspection | python | 2 | 0 | 2 | 0 | あり |
-| Inspect — moving object mask in a flickering video (deflicker + background model) | videostream | inspection | python | 2 | 0 | 1 | 1 | あり |
+| Inspect — detect a scene cut in a noisy video stream | videostream | inspection | mcp | 2 | 0 | 2 | 0 | あり |
+| Inspect — moving object mask in a flickering video (deflicker + background model) | videostream | inspection | mcp | 2 | 0 | 1 | 1 | あり |
 | Calibrate — camera gain from a captured test chart (simulation calibration) | simcal | simulation | python | 4 | 0 | 0 | 0 | あり |
 | Analyze — attention as a key-value lookup (RMSNorm → scores → softmax → mix) | llmcore | analysis | python | 4 | 0 | 0 | 0 | あり |
 | Measure — observed order of convergence of a grid study (GCI) | converge | simulation | python | 1 | 0 | 0 | 0 | あり |
@@ -355,7 +355,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | Inspect — count bright and dim inclusions in a grey volume (threshold, then count) | 2d | inspection | mcp | 2 | 0 | 未計測 | 未計測 | あり |
 | Sense — bearing of a sound source from a microphone pair (time difference of arrival) | drive | sensing | python | 1 | 0 | 未計測 | 未計測 | あり |
 | Measure — feed-mark wavelength of a machined surface from its areal PSD peak | roughness | measurement | python | 2 | 0 | 未計測 | 未計測 | あり |
-| Measure — period and direction of a stripe / grating texture (strongest 2-D FFT peak) | math | measurement | python | 1 | 0 | 未計測 | 未計測 | あり |
+| Measure — period and direction of a stripe / grating texture (strongest 2-D FFT peak) | math | measurement | mcp | 1 | 0 | 未計測 | 未計測 | あり |
 | 3D — find a known part's 6-DoF pose in a scene cloud (PPF surface matching) | 3d | 3d | python | 1 | 0 | 未計測 | 未計測 | あり |
 | Accept — probing error of a 3-D sensor on a calibrated sphere (VDI/VDE 2634-2 idea: PF and PS) | acceptance | measurement | python | 1 | 0 | 未計測 | 未計測 | あり |
 | Register — sub-pixel shift between two images by ECC (enhanced correlation coefficient) | matchreg | measurement | python | 1 | 0 | 未計測 | 未計測 | あり |

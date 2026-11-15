@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 611 / 1942 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 611 / 1997 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `_archive_tarxz.py`
@@ -1729,16 +1729,16 @@
 
 ## `fssystem.py`
 
-- **L167** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T5): tightens_only=True の数値の上限 10 項目が、既定より**大きい**値 (find_ops_k=10、mcp_stack_max_pixels=64 Mpx、plan_max_depth=16 …)を受け付け、上の docstring の 「緩められない」を破っていた。既定より緩い値を表から外し、ここで機械的に止める(足し直すと import で落ちる)。
+- **L174** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T5): tightens_only=True の数値の上限 10 項目が、既定より**大きい**値 (find_ops_k=10、mcp_stack_max_pixels=64 Mpx、plan_max_depth=16 …)を受け付け、上の docstring の 「緩められない」を破っていた。既定より緩い値を表から外し、ここで機械的に止める(足し直すと import で落ちる)。
 
 ## `fullseye/__init__.py`
 
-- **L488** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L536** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L766** — ★선언 out 형에 맞추는 adapter 는, 튜플을 반환하는 op 의 **2 번째 이후를 버린다**(``drizzle_resample`` 의 ``wht``, ``piv_cross_correlate`` 의 ``info``). 버려진 쪽이 필요할 때, 대장(ledger)의 입구에서는 닿지 않았다. 2026-09-06, 초해상 PoC 가 ``flow, info = fs.ledger.piv_cross_correlate(...)`` 라고 써서 (2,R,C) 를 첫 축으로 열어, dy 의 2 번째 행을 dx 로 사용하여 어긋남 추정을 0.12 -> 0.74 픽셀로 만들었다(예외는 나지 않는다). ``.raw`` 로 원래 반환에 닿는다: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
-- **L774** _(ja)_ — ★ 署名の注釈(表示専用): ラッパーは (*args, **kw) だが、実体 ``fn`` の署名を ``__signature__`` に載せ、補完 / ``inspect.signature`` / help() で引数名と既定値が見えるようにする。 呼び出し契約は変えない(受け方は ``mod.call(key, *args, **kw)`` のまま。束縛は実体が行う)。 アクセス時にだけ作る(import 時には何もしない)。署名が取れない実体は注釈なしで素通し。 Display-only signature annotation; the call contract is unchanged; built lazily per access.
-- **L1289** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1408** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L520** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L568** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L798** — ★선언 out 형에 맞추는 adapter 는, 튜플을 반환하는 op 의 **2 번째 이후를 버린다**(``drizzle_resample`` 의 ``wht``, ``piv_cross_correlate`` 의 ``info``). 버려진 쪽이 필요할 때, 대장(ledger)의 입구에서는 닿지 않았다. 2026-09-06, 초해상 PoC 가 ``flow, info = fs.ledger.piv_cross_correlate(...)`` 라고 써서 (2,R,C) 를 첫 축으로 열어, dy 의 2 번째 행을 dx 로 사용하여 어긋남 추정을 0.12 -> 0.74 픽셀로 만들었다(예외는 나지 않는다). ``.raw`` 로 원래 반환에 닿는다: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L806** _(ja)_ — ★ 署名の注釈(表示専用): ラッパーは (*args, **kw) だが、実体 ``fn`` の署名を ``__signature__`` に載せ、補完 / ``inspect.signature`` / help() で引数名と既定値が見えるようにする。 呼び出し契約は変えない(受け方は ``mod.call(key, *args, **kw)`` のまま。束縛は実体が行う)。 アクセス時にだけ作る(import 時には何もしない)。署名が取れない実体は注釈なしで素通し。 Display-only signature annotation; the call contract is unchanged; built lazily per access.
+- **L1321** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1440** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/evaluation/metrics.py`
 
@@ -1764,36 +1764,77 @@
 
 ## `fullseye/mcp/handles.py`
 
-- **L51** _(ja)_ — ★thumb_dir を渡されたときに作っていなかった(mkdtemp のときだけ存在する)。 小図の保存が FileNotFoundError で落ち、テスト 4 件で発覚(2026-09-15)。
-- **L192** _(ja)_ — ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る (-32602)。npy は pickle を決して許さない。
+- **L191** _(ja)_ — ★thumb_dir を渡されたときに作っていなかった(mkdtemp のときだけ存在する)。 小図の保存が FileNotFoundError で落ち、テスト 4 件で発覚(2026-09-15)。
+- **L196** _(ja)_ — ★2026-11-13(報告 10 / S7): 自分で作った一時フォルダはサーバの終了後も残っていた。 この置き場が捨てられる時(終了時を含む)に消す。渡されたフォルダは消さない。
+- **L203** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 追い出したハンドルの名前を集合に足し続けていた(max_items=4 で 5,000 回 入れると 4,996 件)。新しい物から max_evicted 件だけ覚える。追い出した時に、そのハンドルの小図も消す (以前は残り続けた)。名前(sha256 の先頭 64 bit)が同じでも中身の digest が違えば、dedup と答えずに断る。
+- **L214** _(ja)_ — ★2026-11-15: 上限は「実際に持っているバイト」で数える。pipeline は表を入れた後、表の中の 2-D の配列を image のハンドルにも入れる(同じ配列)。ハンドルごとに足すと 2 回数え、上限の半分を超える配列の表は、 自分の欄のハンドルを入れた時に追い出される。配列は物ごとに 1 回だけ数える(参照の数を持つ)。
+- **L232** _(ja)_ — ★2026-11-13(報告 10 / S7): path=NUL などの装置名で relpath が ValueError を投げ、-32603 になっていた
+- **L283** _(ja)_ — ★2026-11-13(報告 10 / S4): 根の中のジャンクション・リンクの先(根の外)の名前を並べていた (中身は _check_path が断るが、名前が漏れる)。実体が根の外の物は辿らず、並べない。
+- **L417** _(ja)_ — ★2026-11-13(報告 10 / S3): 20,000×20,000 の PNG を全部復号(4 秒・1.2 GB)してから画素の上限で断っていた。 見出し(PNG の IHDR、Pillow の遅延の open、npy の見出し)で画素数を先に見る。
+- **L426** _(ja)_ — ★2026-11-15(外部レビュー、Codex の疑い 1): 画素数(shape[:2])しか見ず、(1, 1, N) の配列は「1 画素」として 全部復号してから置き場の上限で断った(数でない dtype も全部読んでから断った)。見出しの dtype と全体の バイト(要素の数 × itemsize)を、復号する前に見る。
+- **L441** _(ja)_ — ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る (-32602)。npy は pickle を決して許さない。
+
+## `fullseye/mcp/opworker.py`
+
+- **L507** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 見張りと囲いを op が返った所で止めていて、結果を数える・JSON にする・ 送る間は上限の外だった(8 MB の NUL の文字列が、JSON で 48 MB になる)。送り終えるまで掛けたままにする。
+- **L511** _(ja)_ — ★2026-11-15(独立レビュー): 結果を .npy に書き出して親が全部読んでから断っていた。書かずに断る。
+- **L579** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 子へ親の sys.path を全部渡し、子は ``-I`` 無しで起動していた。``python -m`` は cwd を sys.path に置くので、起動したフォルダ(信頼しない repo など)の ``scipy.py`` が、囲いを掛ける前に 子で import された(手元で再現)。子は ``-I``(PYTHONPATH・ユーザの site・cwd を読まない)で起動し、 sys.path には Python の本体・site-packages・fullseye の置き場所の中の場所だけを渡す。
 
 ## `fullseye/mcp/server.py`
 
-- **L124** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): ハンドラは a.get("lang") を読むのに schema に無く、 additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
-- **L463** _(ja)_ — ★2026-11-09: 真値付きの課題を作る道具と、組んだ処理を真値で採点する道具(full プロファイルだけ)。 「LLM が組む → 型の門 → 実行」の後ろに「真値で採点 → 合否 → 直させる」を足して輪を閉じる。 真値はサーバ側(fullseye/mcp/tasks.py の TaskStore)に task_id で持ち、返り値には載せない。
-- **L615** _(ja)_ — ★2026-11-15: 深い入れ子を「json.loads の RecursionError を受ける」で断っていたが、Python 3.14 の json.loads は 10 万段でも RecursionError を出さずに読む(同じ 1 通が 3.11 では -32700、3.14 では巨大な入れ子の値として 先へ進み -32602 になった —— master の CI の py3.14 で発覚)。版に頼らず、読む前に深さを数えて断る。 開き括弧の総数が上限以下なら深さも上限以下なので、数えない(普通の 1 通はここで終わる)。
-- **L628** _(ja)_ — ★2026-11-13: 3,000 段の入れ子 1 通でサーバが落ちていた(json.loads の RecursionError を受けていなかった)。
-- **L661** _(ja)_ — ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは FramingError(→ -32700)にしてループを続ける。
-- **L1226** _(ja)_ — ★2026-11-08: a/b を params の中に入れた形は、知らない引数として断るだけでは直し方が分からない
-- **L1256** _(ja)_ — ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、 pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
-- **L1329** _(ja)_ — ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の 台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。 印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
-- **L1440** _(ja)_ — ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、 値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
-- **L1686** _(ja)_ — ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、 extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。 全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
-- **L1858** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
-- **L2018** _(ja)_ — ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
-- **L2378** _(ja)_ — ★2026-11-10(独立レビュー第 4 巡): pass_fail / coarse では、双子で落ちたことを返り値で区別しない (reason は out_of_tolerance、形も許容外の不合格と同じ)。区別すると「本体には合っていた」ことが分かり、 本体と双子の探索を 2 回に分けられた(計数の 13/20 が 20 回以内に合格)。区別は監査記録にだけ残す。 coarse で見せる段階は、落ちた側(双子)の指標から作る。
-- **L2385** _(ja)_ — ★2026-11-10(独立レビュー第 2 巡 N2): 以前は stderr の score-audit 行に誤差を書いていた。MCP の クライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が pass_fail の 上限を迂回して誤差を読めた。
-- **L2449** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal=" " が search_ops の ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
-- **L2474** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
-- **L2504** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
-- **L2604** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
-- **L2670** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
-- **L2717** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
-- **L2731** _(ja)_ — ★2026-11-13: 本文が null の 1 通で黙って終了していた。要求の形でない本文は -32600 を返して続ける (配列 = JSON-RPC のバッチは受け付けない)。
+- **L67** _(ja)_ — 段(stage)の引数の 1 行の説明(fullseye_pipeline と fullseye_validate_pipeline で同じ)。★2026-11-13(報告 7)
+- **L125** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): ハンドラは a.get("lang") を読むのに schema に無く、 additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
+- **L182** _(ja)_ — ★2026-11-13: ハンドラは budget_tokens を読むのに schema に無く、上限を上げる手が無かった
+- **L287** _(ja)_ — ★2026-11-15(独立レビュー): 入力の無い台帳 op も handle を必須にしていて、docs/MCP.md の 「apply から呼べる」と合わなかった。handle が要るかは op で決まるので、_apply / _apply_isolated で断る。
+- **L474** _(ja)_ — ★2026-11-09: 真値付きの課題を作る道具と、組んだ処理を真値で採点する道具(full プロファイルだけ)。 「LLM が組む → 型の門 → 実行」の後ろに「真値で採点 → 合否 → 直させる」を足して輪を閉じる。 真値はサーバ側(fullseye/mcp/tasks.py の TaskStore)に task_id で持ち、返り値には載せない。
+- **L659** _(ja)_ — ★2026-11-15: 深い入れ子を「json.loads の RecursionError を受ける」で断っていたが、Python 3.14 の json.loads は 10 万段でも RecursionError を出さずに読む(同じ 1 通が 3.11 では -32700、3.14 では巨大な入れ子の値として 先へ進み -32602 になった —— master の CI の py3.14 で発覚)。版に頼らず、読む前に深さを数えて断る。 開き括弧の総数が上限以下なら深さも上限以下なので、数えない(普通の 1 通はここで終わる)。
+- **L670** _(ja)_ — ★2026-11-13: 3,000 段の入れ子 1 通でサーバが落ちていた(json.loads の RecursionError を受けていなかった)。
+- **L713** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 見出しの行の数とバイトに上限が無く(別々の名前を送り続けると表が増え続けた)、 形も見ていなかった(重複した Content-Length は後の方が勝ち、「名前: 値」でない行は黙って飛ばした)。上限を 超えたらその場で、形の崩れは見出しの塊の終わり(空行)まで読み捨ててから断る(1 通に 1 つの -32700)。
+- **L735** _(ja)_ — ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは FramingError(→ -32700)にしてループを続ける。
+- **L746** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 本文の大きさに上限が無く、``Content-Length: 10000000000000`` の 1 通 (35 バイト)で ``read`` が先に確保しようとして MemoryError になり、サーバが落ちた。本文は読まずに断る (残りのバイトは次の 1 通として読む —— 相手が送った物で、改行区切りでも送れた物)。
+- **L786** _(ja)_ — ★2026-11-15(外部レビュー、Codex): この最後の網が allow_nan の既定(True)のままで、id が NaN の要求には ``"id": NaN`` をまた書いた。id は JSON-RPC の形(文字列・数・null)の時だけ返し、網も厳密に書く。
+- **L1098** _(ja)_ — ★2026-11-13: 台帳にある op にも「registry 層に無い」とだけ返し、「近い名前」に同じ名前を出していた。
+- **L1518** _(ja)_ — 判定 ok の範囲(★2026-11-13、C)。同じ画像に 4 通りの処理で 1.0 / 46.3 / 75.0 / 1285.0 が全部 ok で返り、 ok が「値が正しい」と読まれていた。判定は出力の形だけを見る。
+- **L1568** _(ja)_ — ★2026-11-15(独立レビュー): 結果の大きさは作業プロセスの側で数えて断る(以前は .npy を全部読んでから _enforce_pixel_limit が断っていた。親に同じくらいの一時的な確保と、一時フォルダへの書き込みが起きた)。
+- **L1797** _(ja)_ — ★2026-11-08: a/b を params の中に入れた形は、知らない引数として断るだけでは直し方が分からない
+- **L1855** _(ja)_ — ★2026-11-15: 台帳 op(隔離して走る)は、profile から引いた値も台帳の仕様で検査する。 直に書いた値だけを検査していて、profile を経た値は型も大きさも見ずに作業プロセスへ渡っていた (数の引数に文字列の profile を渡すと検証は通り、走らせてから op が断った)。
+- **L1863** _(ja)_ — ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、 pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
+- **L1938** _(ja)_ — ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の 台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。 印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
+- **L2049** _(ja)_ — ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、 値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
+- **L2131** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)も fullseye_apply から呼べる(pipeline と同じ経路)
+- **L2332** _(ja)_ — ★2026-11-15: 解決した後の値を必ず検査する(以前は {"ref"} / {"profile"} で書いた引数を飛ばしていた)。 profile の値は仕様に合えば通る。ref の先(配列・表)は台帳 op の引数にできないので、ここで断る (数 1 個の入力は上の literal_inputs の道で受ける)。
+- **L2371** _(ja)_ — ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、 extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。 全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
+- **L2461** _(ja)_ — ★2026-11-13: 複素数の配列(Jones ベクトルなど)をそのまま tolist すると JSON にできず、道具ごと落ちた
+- **L2559** _(ja)_ — 本文は段ごとに 1 行(★2026-11-13: 以前は結果の JSON を丸ごと 1 行に繋いでいて、どの段がなぜ 止まったかを本文から読めなかった)。
+- **L2600** _(ja)_ — 最後の段が配列か registry の値: 従来どおり、判定とその範囲を書く(★2026-11-15: 以前は、途中に表を返す 台帳 op が 1 つでもあると、最後の値と判定の範囲が本文から落ちた)。
+- **L2643** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
+- **L2818** _(ja)_ — ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
+- **L2821** _(ja)_ — ★2026-11-13(報告 10 / S6): NaN・Infinity(JSON の決まりに無い定数、または封筒の中の非有限の数)を受けていた。 取り込みの前に断る(他の入口と同じく、非有限は受けない)。
+- **L2824** _(ja)_ — ★2026-11-15: json(文字列)の中の深い入れ子。1 通の枠の深さの上限(MAX_JSON_DEPTH)は文字列の中の括弧を 数えないので、同じ上限をここでも読む前に当てる。当てる前は版で答えが割れ、どちらも -32603(内部エラー) だった: py3.11 は約 1,000 段から RecursionError、py3.14 は 10 万段で Stack overflow(実測)。
+- **L3207** _(ja)_ — ★2026-11-10(独立レビュー第 4 巡): pass_fail / coarse では、双子で落ちたことを返り値で区別しない (reason は out_of_tolerance、形も許容外の不合格と同じ)。区別すると「本体には合っていた」ことが分かり、 本体と双子の探索を 2 回に分けられた(計数の 13/20 が 20 回以内に合格)。区別は監査記録にだけ残す。 coarse で見せる段階は、落ちた側(双子)の指標から作る。
+- **L3214** _(ja)_ — ★2026-11-10(独立レビュー第 2 巡 N2): 以前は stderr の score-audit 行に誤差を書いていた。MCP の クライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が pass_fail の 上限を迂回して誤差を読めた。
+- **L3252** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 名前を変えれば何枚でも書け、サーバが終わるまで残った(200 枚で 11.8 MB)。 置き場が新しい物から max_viewer_files 枚・max_viewer_bytes バイトまでを持ち、超えたら古い物から消す。
+- **L3280** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal=" " が search_ops の ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
+- **L3305** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
+- **L3343** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
+- **L3371** _(ja)_ — ★2026-11-13(報告 6): proposals は ops / retry_ops / recipes の行を丸ごと写していて、応答の半分が重複だった (検証の 1 回で ops 2.6 KB に proposals 4.3 KB)。順番と種類だけの参照にする(中身は元の一覧を読む)。
+- **L3450** _(ja)_ — ★2026-11-13(報告 5): 落とした名前が structuredContent の奥にしか無かった。本文の先頭に 1 行で書く
+- **L3458** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
+- **L3481** _(ja)_ — ★2026-11-13(報告 13): 名前だけで、来歴・ライセンス・何が写っているかが分からなかった。 samples(名前の一覧)は従来どおり、詳しい行は sample_details に足す(ホストのパスは出さない)。
+- **L3532** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 配列・辞書・真偽値の id をそのまま返していた。JSON-RPC 2.0 の id は 文字列・数・null だけ。形の違う id の要求は、id を null にして -32600 で断る。
+- **L3538** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
+- **L3585** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
+- **L3593** _(ja)_ — ★2026-11-15(外部レビューの直しの検証): 最初の 1 通が読めない時、-32700 を Content-Length 枠で返していた (枠が決まるのは読めた 1 通から)。改行区切りの公式のクライアントはその返事を読めない。NaN・重複した鍵を 断るようにしたので、起き得る場面が増えた。壊れた 1 通の枠が分かれば、その枠で返す。
+- **L3603** _(ja)_ — ★2026-11-13: 本文が null の 1 通で黙って終了していた。要求の形でない本文は -32600 を返して続ける (配列 = JSON-RPC のバッチは受け付けない)。
 
 ## `fullseye/opsearch.py`
 
-- **L665** _(ja)_ — ★2026-11-03(完成度監査 A-2): MCP で実行できない op(``verified_executable`` でない = 台帳 op の大半)にも ``fullseye_pipeline(...)`` の骨格を付けていた。従うと ``fullseye_validate_pipeline`` が ``not_executable_in_mcp`` で拒む。MCP の外での呼び方(カードの ``call``)を返す。
+- **L215** _(ja)_ — ★2026-11-13(AI の役での検証、報告 3): 型の直し方の候補に hx_gen_empty_region(入力を形のためだけに読み、 中身を見ない生成の op)が出て、従うと count_obj = 0 が判定 ok で返った。入力の中身を読まない op (MCP_INPUT_INDEPENDENT.json、採点が断る一覧と同じ)は経路の途中に置かない。
+- **L742** _(ja)_ — ★2026-11-03(完成度監査 A-2): MCP で実行できない op(``verified_executable`` でない = 台帳 op の大半)にも ``fullseye_pipeline(...)`` の骨格を付けていた。従うと ``fullseye_validate_pipeline`` が ``not_executable_in_mcp`` で拒む。MCP の外での呼び方(カードの ``call``)を返す。
+- **L746** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口)は pipeline から隔離した子プロセスで走る。実測で通った 見本の段(入力を作る段も含む)をそのまま骨格にする。
+- **L816** _(ja)_ — 日本語の現場の言い方 → 英語の術語(★2026-11-13、報告 12)。optics・照明・計測の op の要約は英語だけの物が多く、 「照明」「液面」「サーモグラフィ」で引いても当たらなかった(英語に直すと当たる)。問い合わせにある語の組は、 英語の語を**問い合わせの語として**足す(言い換えの弱い重みではない)。片仮名の語は、その 2 文字の切れ端を 検索語から外す(「サーモグラフィ」の「グラ」「ラフ」が「ホモグラフィ」に当たっていた)。
+- **L832** _(ja)_ — ★2026-11-15(独立レビュー): 「ピクセルをミリメートルに変換したい」で pixel_to_world / mm_per_px_from_reference が 上位 5 件に出ず、「各ピクセル」を含む sk_sauvola などが来た。片仮名の語に英語の語の橋を足す (評価: tools/mcp_find_ops_eval.py。この問いは合わせるのに使ったので tuned と書いてある)。
+- **L1266** _(ja)_ — ★2026-11-13(報告 5): executable は「Python の関数として呼べるか」で、MCP で走るかと食い違っていた (true のカードの op を pipeline に渡すと not_executable_in_mcp)。executable = MCP で走るか、 以前の意味は python_executable に残す。
 
 ## `fullseye/recipebook/__init__.py`
 
@@ -2867,6 +2908,10 @@
 - **L90** — ★PYTHONPATH 를 넘기지 않는다(이 게이트의 핵심). 사용자는 환경 변수를 설정하지 않는다.
 - **L129** _(ja)_ — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
 
+## `tests/test_explain_pipeline.py`
+
+- **L145** _(ja)_ — ★2026-11-15: handle は必須でなくなった(2026-11-13: 入力の無い台帳 op だけの処理列は handle を持たない)。 必須を外すのは広げるだけ(以前の呼び出しは全部そのまま通る)。入力の要る段に handle が無ければ型の門が断る。
+
 ## `tests/test_fallback_names_identify_the_op.py`
 
 - **L60** _(ja)_ — ★2026-10-07: 台帳は 256 件の環状バッファ。溢れると ``fallbacks()`` は新しい 256 件しか返さず、 下の「名前が潰れていない」「実在の op 名」は**一部だけ**を見て緑になる(実測 186 件・溢れ 0)。
@@ -2999,6 +3044,12 @@
 ## `tests/test_mcp_images.py`
 
 - **L331** _(ja)_ — ★最初 `ones + inf` にしていて、有限部が定数なので免除 op でも「定数」判定になり 落ちた —— それは診断器が正しい。確かめたいのは「免除 op なら非有限を異常と 言わない」だけなので、有限部に変化のある入力にする。
+- **L366** _(ja)_ — ★2026-11-15(独立レビュー): 入力の無い台帳 op(abbe_number など)は fullseye_apply でも handle を省ける。 handle が要る op で無ければ、サーバが理由つきで断る(tests/test_mcp_review_fixes_2026_11_15.py)。
+- **L370** _(ja)_ — ★2026-11-13: 入力の無い台帳 op(照明の設計・合成の入口)だけの pipeline は handle を要らないので、 required から handle を外した(受ける要求を広げるだけ。handle を渡す従来の要求はそのまま通る)。
+
+## `tests/test_mcp_isolated_ops_2026_11_13.py`
+
+- **L331** _(ja)_ — ★2026-11-15: 実測の台帳を作った機械には zxing-cpp(extras の symbols)が入っていた。CI の test ジョブの extras にも、 素の `pip install fullseye` にも無い。無い環境では「走る」を求めず、依存の名前を言って断る事を見る (黙って読み飛ばさない: ここに名指しした op だけ、依存が本当に import できない時だけ、誤り文まで確かめる)。
 
 ## `tests/test_mcp_server.py`
 
@@ -3006,12 +3057,20 @@
 - **L208** _(ja)_ — ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。 検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
 - **L436** _(ja)_ — ★以前の被験者は台帳経由で索引に入ったこと(= 索引が台帳を数えている)も見る
 - **L467** _(ja)_ — ★2026-09-17 に ``b`` は「未使用」から**端の扱いを選ぶつまみ**になった。 ノートがその意味と**歴史側の帯**を両方書いていることを固定する —— どちらか片方だけだと、保存済みプログラムを読む人が挙動を誤解する。
-- **L509** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+- **L504** _(ja)_ — ★2026-11-13: 既定は件数だけになった(名前の一覧は detail=true)。この試験は名前を読むので detail を渡す。
+- **L510** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+- **L555** _(ja)_ — ★2026-11-13: 応答の出どころはホストの絶対パスでなく、パッケージ・リポジトリの中の相対の場所
+
+## `tests/test_mcp_usability_fixes_2026_11_13.py`
+
+- **L250** _(ja)_ — ★2026-11-15: NUL が装置名なのは Windows だけ(根の外)。他の OS ではただの名前で、根の中の「読めない拡張子」 として断る(Linux で `<outside>/` を期待して落ちた)。どちらでも -32603 にせず、ホストのパスを出さない。
 
 ## `tests/test_mcp_wheel.py`
 
-- **L215** _(ja)_ — ★数を直書きしない。9 本目(fullseye_fix_text)を足したとき、この門は CI の core ジョブでしか走らず、手元のスイートは緑のまま CI だけ赤になった(2026-09-18)。 正本は checkout の TOOLS —— wheel が同じ集合を名乗ることを見る。
-- **L225** _(ja)_ — ★順位を 3 位までに固定していた門は、新しい op(gauss_quadrature、2026-10-03)が「gauss」に正しく当たっただけで CI の core ジョブ(ここでしか走らない)を赤にした。見たいのは「2-D レジストリの op が索引の層から出る」こと。
+- **L219** _(ja)_ — ★数を直書きしない。9 本目(fullseye_fix_text)を足したとき、この門は CI の core ジョブでしか走らず、手元のスイートは緑のまま CI だけ赤になった(2026-09-18)。 正本は checkout の TOOLS —— wheel が同じ集合を名乗ることを見る。
+- **L229** _(ja)_ — ★順位を 3 位までに固定していた門は、新しい op(gauss_quadrature、2026-10-03)が「gauss」に正しく当たっただけで CI の core ジョブ(ここでしか走らない)を赤にした。見たいのは「2-D レジストリの op が索引の層から出る」こと。
+- **L255** _(ja)_ — ★2026-11-15: 既定の応答は件数だけになった(2026-11-13、報告 9)。名前の一覧まで見るこの検査は detail=true で呼ぶ (既定のまま `== []` と比べていて、件数の 0 を添字で読んで TypeError —— この門は CI の core でしか走らない)。
+- **L280** _(ja)_ — ★2026-11-15: 台帳 op(照明の設計・レンズの仕様)が wheel からも走る。OP_GRAPH の executor、fullseye/mcp/opworker.py、 台帳のモジュール(opsoptics …)が配布物に入っていて、隔離した作業プロセスが site-packages から読めること。 checkout の試験(tests/test_mcp_isolated_ops_2026_11_13.py)は source dir が sys.path に載るので、ここが欠けても緑。
 
 ## `tests/test_meshres.py`
 
@@ -3030,6 +3089,11 @@
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
 - **L40** _(ja)_ — ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を 指している」のではなく「Visual Studio インストーラが決める場所」なので、 環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が 効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに なっていることを確認済み。 ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に 合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
+
+## `tests/test_op_card_calls_execute_2026_11_03.py`
+
+- **L247** _(ja)_ — ★2026-11-13: dem_slope は隔離した子プロセスで MCP から走るようになった。走らない物(ファイルを読む op)で見る。
+- **L278** _(ja)_ — ★2026-11-13: 台帳 op を隔離して走らせるようにして、骨格の付く側が 956 → 2,400 台へ移った。 両側の床は実測から取り、全 edge を数えた事も表明する(片側だけ縮んでも、合計が縮んでも落ちる)。
 
 ## `tests/test_op_contract_property.py`
 
@@ -3063,6 +3127,11 @@
 ## `tests/test_op_example_coverage.py`
 
 - **L58** — ★모집단을 **배포물 쪽**에서 세는 ratchet(2026-09-06) # --------------------------------------------------------------------------- # 2026-09-06 의 실측. 「이 수보다 나빠지지 않게」 하기 위한 멈춤쇠이지 목표값이 아니다. 대장 op 1,002 개 중 예제 색인에 든 것은 349 개뿐이고, 위의 두 「100 %」는 모집단이 3 층 중 2 층밖에 없어 성립했다. 경위와 계열별 내역 = docs/KNOWN_ISSUES.md §38.
+
+## `tests/test_op_facets_2026_10_28.py`
+
+- **L329** _(ja)_ — ★2026-11-13: 台帳 op は隔離した子プロセス(fullseye/mcp/opworker.py)で走る別の経路。同じプロセスで走る Python の op は従来どおり名指しの集合に一致し、隔離の op は実測の台帳(docs/mcp_isolated_ops.json)に一致する。
+- **L363** _(ja)_ — ★2026-11-13: psnr は隔離した子プロセスで MCP から走るようになった。走らない op(bandpass)で見る。
 
 ## `tests/test_op_figures.py`
 
@@ -3157,6 +3226,10 @@
 ## `tests/test_raytrace3d.py`
 
 - **L276** _(ja)_ — ★2026-10-15: 傾いた鏡(摂動)の後で像面と平行に進む光線を、以前は rms 3.4e18 mm の有効な点として数えた
+
+## `tests/test_recipe_retrieval_2026_10_29.py`
+
+- **L14** _(ja)_ — ★2026-11-13: 台帳 op が MCP から走るようになり、validate_pipeline だけでは「kw」「call」を持つ段 (Python の runner の書き方。fullseye_pipeline の schema は受けない)が通るようになった。MCP で走るとは 「道具の schema が受ける段の鍵だけで書けて、検証も通る」事として数える。
 
 ## `tests/test_reprconv.py`
 
@@ -3466,8 +3539,9 @@
 
 ## `tools/gen_op_facets.py`
 
-- **L465** _(ja)_ — ★2026-11-03: chain_fuzz の op 表に載らない台帳 op(fileio 14、acoustics の read_wav / read_audio / write_wav = 入出力の副作用がある op)は実行先が空で、OP_GRAPH を読む側が 呼べなかった(レシピの e2e が fs.ledger に迂回して見つけた)。台帳の func を実行先にする。
-- **L559** _(ja)_ — ★2026-11-04(統合 GPU): map:: の辺は実行先を持つものだけを作る(tests/test_ledger_entry_points_2026_11_03.py の「全部の辺に実行先がある」が正)。画素ごとに独立な op(compute.structure = elementwise)を 2-D の登録 op として持つなら、積んだ列 (N, H, W) にそのまま掛けた結果が要素ごとの map と同じなので、元の op の入口を 実行先にする(tests/test_op_facets_2026_10_28.py::test_map_edges_run_through_the_base_op_on_the_stack)。 近傍を見る op(neighborhood_stencil)は積んだ列に掛けると軸 0 をまたぐので、実行先を作れない → 辺を作らない。
+- **L495** _(ja)_ — ★2026-11-03: chain_fuzz の op 表に載らない台帳 op(fileio 14、acoustics の read_wav / read_audio / write_wav = 入出力の副作用がある op)は実行先が空で、OP_GRAPH を読む側が 呼べなかった(レシピの e2e が fs.ledger に迂回して見つけた)。台帳の func を実行先にする。
+- **L526** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)を MCP の pipeline から走らせる。実測の台帳に 載った op だけを、隔離した子プロセス(時間とメモリの上限つき)で走らせる印を付ける。
+- **L607** _(ja)_ — ★2026-11-04(統合 GPU): map:: の辺は実行先を持つものだけを作る(tests/test_ledger_entry_points_2026_11_03.py の「全部の辺に実行先がある」が正)。画素ごとに独立な op(compute.structure = elementwise)を 2-D の登録 op として持つなら、積んだ列 (N, H, W) にそのまま掛けた結果が要素ごとの map と同じなので、元の op の入口を 実行先にする(tests/test_op_facets_2026_10_28.py::test_map_edges_run_through_the_base_op_on_the_stack)。 近傍を見る op(neighborhood_stencil)は積んだ列に掛けると軸 0 をまたぐので、実行先を作れない → 辺を作らない。
 
 ## `tools/gen_op_figures.py`
 
@@ -3575,6 +3649,14 @@
 
 - **L473** _(ja)_ — ★2026-10-14: 絶対許容差 1e-12 は、出力が 1e-21 の桁(重力波のひずみ ``chirp_newtonian``)だと どのノブも「変化なし」にする。出力の最大絶対値が 1 より小さいときは、その大きさで許容差を縮める (1 以上の出力では以前と同じ)。
 
+## `tools/mcp_find_ops_eval.py`
+
+- **L55** _(ja)_ — ★既定はこの道具のある木。sys.path に足さないと、tools/ から起動した時に editable install の別の木の fullseye を読む(2026-11-15 に実際に別の木の数を出した)。
+
+## `tools/mcp_isolated_probe.py`
+
+- **L61** _(ja)_ — ★2026-11-13: 見本の自動の値(数 1 個)では形が合わず落ちていた物(中心は 3 成分、絞りは f 値か NA の一方)
+
 ## `tools/op_example_index.py`
 
 - **L42** — ★ 이것이 없던 동안 :func:`_called` 가 (op 명 × example) 의 **모든 조합**에 대해 :func:`_strip_prose` 를 호출하고, 그때마다 ``ast.parse`` + ``tokenize`` 로 소스 전체를 다시 파싱하고 있었다. 실측 2026-09-05: 2-D 881 op × 73 개 + 3-D 347 op × 118 개 + ledger 494 op × 73 개 = **약 14 만 회**의 전체 파싱으로, ``opdocs.py md`` 1 회에 10 분이 걸렸다(``toc`` 도 ``html`` 도 같은 색인을 다시 만들므로 전체 재생성은 30 분급). 산문 제거는 **소스마다 1 회**면 충분하다 —— op 명에 의존하지 않으므로.
@@ -3627,10 +3709,10 @@
 - **L111** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
 - **L119** — ★2026-10-15: `--md` 가 없어 **아무것도 쓰지 않았다**(요약을 표준 출력에 낼 뿐). docs/CONVERSION_MATRIX.md 는 2026-09-02 의 "타입 59 / 변환 쌍 164" 그대로 낡았고, --check 는 "쓰지 않는 단계"를 drift 로 볼 수 없어 6주 동안 통과했다. 이제 `trace_problems()` 가 "선언한 출력에 손도 대지 않는 단계"를 거부한다.
 - **L135** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
-- **L398** — * ★그리고 위험: 생성 직후의 기사는 이미지를 **상대 경로**로 쓴다. 공개판은 `raw.githubusercontent.com` 의 절대 URL 로 고친 것(Qiita 는 상대 경로면 이미지가 나오지 않는다 —— memory `feedback_qiita_svg_path_and_cache`). 생성기만 돌리면 그 절대 URL 이 42 줄만큼 되돌아간다. **돌릴 거면 기사의 공개 절차까지 통째로 할 것.** 제외는 **파일명으로** 쓴다. 산문으로 정리하면("wing*_gallery 의 10 개") 기계로 대조할 수 없어 아래의 `unclassified()` 가 작동하지 않는다.
-- **L849** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L864** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L912** — ★`tools/` 밖에 있는 생성물. `tools/*.py` 만 훑어서는 결코 찾을 수 없는 위치에 있었고, 실제로 `docs/OP_INDEX.json` 을 놓치고 있었다.
+- **L402** — * ★그리고 위험: 생성 직후의 기사는 이미지를 **상대 경로**로 쓴다. 공개판은 `raw.githubusercontent.com` 의 절대 URL 로 고친 것(Qiita 는 상대 경로면 이미지가 나오지 않는다 —— memory `feedback_qiita_svg_path_and_cache`). 생성기만 돌리면 그 절대 URL 이 42 줄만큼 되돌아간다. **돌릴 거면 기사의 공개 절차까지 통째로 할 것.** 제외는 **파일명으로** 쓴다. 산문으로 정리하면("wing*_gallery 의 10 개") 기계로 대조할 수 없어 아래의 `unclassified()` 가 작동하지 않는다.
+- **L859** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L874** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L922** — ★`tools/` 밖에 있는 생성물. `tools/*.py` 만 훑어서는 결코 찾을 수 없는 위치에 있었고, 실제로 `docs/OP_INDEX.json` 을 놓치고 있었다.
 
 ## `tools_geom.py`
 
