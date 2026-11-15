@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (493 examples)
+### 2-D image / signal / geometry (494 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -293,6 +293,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `scale_law_of_features` — ops: `contlength`, `moments_region_2nd`, `moments_region_3rd`, `moments_region_central` `py -3.11 examples/scale_law_of_features.py`
 - `shape_factors_closed_form` — ops: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
 - `walking_ops_tour` — ops: `capture_margin`, `com_from_silhouette`, `com_support_margin`, `contact_points`, `detect_obstacles`, `elevation_map`, `elevation_normals`, `elevation_step_edges`, `elevation_traversability`, `fill_gaps`, `foot_slip_metrics`, `foothold_candidates` (+12 more) `py -3.11 examples/walking_ops_tour.py`
+- `road_surface_tour` — ops: `blend`, `clothoid_points`, `crop_rectangle2`, `dem_slope`, `road_surface_heightmap`, `surface_form_remove` `py -3.11 examples/road_surface_tour.py`
 - `itokawa_gravity_tour` — ops: `mesh_slice_contours`, `polyhedron_clip_halfspace`, `polyhedron_gravity` `py -3.11 examples/itokawa_gravity_tour.py`
 
 **color**
@@ -847,9 +848,9 @@ Ops that do not fit the one-image pipeline (two images, point sequences, variabl
 
 ## Operators by family (family → category, all ops)
 
-_3845 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
+_3846 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
 
-Families: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 742 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+Families: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 743 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -3638,7 +3639,7 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: none — Non-maximum suppression (Section 3.39). A pixel (x, y) survives only if, within the window, it is **≥ its preceding neighbors (the row above and the left in the same row) and > its following neighbors** (REQ-0337). This asymmetry is why exactly 1 pixel survives on a flat peak. Nonzero pixels of *mask* are not compared and are kept as is (nor are they used in comparisons for other pixels, REQ-0336). Suppressed pixels become 0 for U8 and INT16_MIN for S16 (REQ-0335). Neighbors that fall outside the window are not compared. · examples: `gallery_openvx_spec_values`
 
-### drive (742 ops / 55 categories)
+### drive (743 ops / 55 categories)
 
 The name says driving, but the content is a **ledger of physics-simulation and robot PoCs**: besides driving (courses, traffic, decisions, CARLA / CommonRoad), categories such as touch (tac*), peg-in-hole (peg*), polishing (polish), grinding (grind), cutting (cutting), granular media (granular / scoop), powder X-ray diffraction (pxrd) and ball games (ball / puck) live side by side. Look things up by category name.
 
@@ -4015,11 +4016,11 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `string_mesh` `no input → any` GPU: none — A thin prism joining 2 points (the ball's string hole p_ball and the cross-piece's string hole p_cup) (4 sides + both ends, 8 vertices, 12 faces, outward-facing). Square cross-section of side 2·radius. ValueError if the two points coincide. · examples: `gallery_drive_world_objects`
 - `string_set` `table → any` GPU: none — Moves both ends of string i to (p_ball, p_cup) (rewrites only the vertices). ValueError for an object that is not a string. · examples: `gallery_drive_world_objects`
 
-#### drive / lateral (20)
+#### drive / lateral (21)
 - `ackermann_steer_angles` `any → table` GPU: none — Ackermann inner and outer wheel steering angles (turning radius R at the center of the rear axle, wheelbase L, track width t). · examples: `poc_driving_lateral`
 - `bicycle_model_step` `any → any` GPU: none — 1 step of the linear 2-wheel equivalent (bicycle) model (classic 4th-order Runge–Kutta; δ and u are constant within the step). · examples: `poc_driving_lateral`
 - `clothoid_design` `no input → table` GPU: none — Quantities for joining a straight line → circle (radius R) with a clothoid of length L. · examples: `poc_driving_lateral`
-- `clothoid_points` `no input → table` GPU: none — Points of a curve whose curvature is linear in arc length, κ(s) = κ₀ + (κ₁ − κ₀) s / length (part of a clothoid; a circular arc or straight line if κ₀ = κ₁). · examples: `poc_driving_lateral`
+- `clothoid_points` `no input → table` GPU: none — Points of a curve whose curvature is linear in arc length, κ(s) = κ₀ + (κ₁ − κ₀) s / length (part of a clothoid; a circular arc or straight line if κ₀ = κ₁). · examples: `poc_driving_lateral`, `road_surface_tour`
 - `curvature_speed_plan` `any → table` GPU: none — Speed planning that builds a speed limit from a curvature sequence and enforces acceleration/deceleration limits with 2 passes, forward and backward (a classical method). · examples: `poc_driving_lateral`
 - `curve_speed_limit` `any → any` GPU: none — Upper speed limit without sliding outward on a curve (radius R) with superelevation i and side-friction coefficient f: v = √(g R (i + f)/(1 − i f)) [m/s]. · examples: `gallery_drive_lateral_env`
 - `design_min_radius` `any → any` GPU: none — Minimum curve radius from Eq. (3) of the commentary on the Road Structure Ordinance: R = V² / (127 (i + f)) [m] (V in km/h). · examples: `gallery_drive_lateral_env`
@@ -4030,6 +4031,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `pure_pursuit_circle_offset` `no input → table` GPU: none — Steady-state circle radius ρ and lateral offset ρ − R (positive outward) when tracking a steady circle (radius R) with pure pursuit (referenced to the rear-axle center). · examples: `poc_driving_lateral`
 - `pure_pursuit_curvature` `any → table` GPU: none — pure pursuit: curvature κ = 2 sin α / L_d for aiming from the rear-axle center (``pose`` = (x, y, ψ), (N, 3) allowed) at the point a distance L_d ahead on the path. · examples: `poc_driving_lateral`
 - `rear_axle_path` `any → table` GPU: none — Trajectory of the rear-axle center dragged without slip by a polyline trajectory of the front-axle center (an exact pursuit curve per segment). · examples: `poc_driving_lateral`
+- `road_surface_heightmap` `table → depth` GPU: none — Road surface height map from a centre-line alignment and cross-section rules, with the per-cell analytic truth (grade and cross slope). · examples: `road_surface_tour`
 - `stanley_steer` `any → table` GPU: none — Stanley steering angle δ = ψ_e + atan2(−k e, k_s + v) (the lateral offset e of the front-axle center is positive to the left of the path; ψ_e = path heading − ψ). · examples: `gallery_drive_lateral_env`
 - `stanley_straight_decay` `no input → signal` GPU: none — Closed form of the front-axle lateral offset e(t) under Stanley (unclipped) on a straight path. · examples: `gallery_drive_lateral_env`
 - `steady_cornering` `no input → table` GPU: none — Steady-state circular cornering of the linear 2-wheel equivalent (bicycle) model (speed u, turning radius R = u/r, left turn positive). · examples: `gallery_drive_lateral_env`
@@ -5151,7 +5153,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 
 #### mv / resample (4)
 - `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: none — Redraw an image from one division-model camera into another distortion and intrinsics. · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
-- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: none — Read the inside of a rotated rectangle by linear interpolation and cut it out as an axis-aligned image. · examples: `machine_vision_tour`, `poc_mixed_case_depalletizing`, `poc_real_stereo_multiscanline`
+- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: none — Read the inside of a rotated rectangle by linear interpolation and cut it out as an axis-aligned image. · examples: `machine_vision_tour`, `poc_mixed_case_depalletizing`, `poc_real_stereo_multiscanline`, `road_surface_tour`
 - `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: none — Resample an image through an inverse map (each output pixel reads an input coordinate). · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
 - `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: none — Rectify an image to a fronto-parallel view of the world plane z=0 (one pixel = `scale` world units). · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
 
@@ -5554,7 +5556,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `robust_gaussian_surface` `depth → depth` GPU: none — Robust Gaussian regression filter (surface): waviness and roughness of a surface that scratches and spikes cannot drag. · examples: `poc_robust_profile_filter`
 - `robust_spline_profile` `signal → signal` GPU: none — Robust spline filter (profile): a mean line and roughness that outliers cannot drag. · examples: `poc_robust_profile_filter`
 - `surface_filter` `depth → depth` GPU: inside a chain only (allow-list) — Separates a height field into roughness and waviness (Gaussian filter of ISO 16610-21). · examples: `poc_robust_profile_filter`, `poc_surface_roughness`
-- `surface_form_remove` `depth → depth` GPU: inside a chain only (allow-list) — Removes a plane / quadric surface directly on the grid. Returns ``(residual, coeffs)``. · examples: `poc_polish_wipe_measure`, `poc_pv_thermal_survey`, `poc_surface_roughness`
+- `surface_form_remove` `depth → depth` GPU: inside a chain only (allow-list) — Removes a plane / quadric surface directly on the grid. Returns ``(residual, coeffs)``. · examples: `poc_polish_wipe_measure`, `poc_pv_thermal_survey`, `poc_surface_roughness`, `road_surface_tour`
 
 #### roughness / synth (1)
 - `surface_synth_psd` `no input → depth` GPU: none — Synthesizes a height field from a specified PSD. Returns ``(z, sq_analytic)``. · examples: `poc_polish_wipe_measure`, `poc_surface_roughness`
@@ -5576,7 +5578,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 
 #### shape2d / morph (6)
 - `add_frame_corners` `pairs → pairs` GPU: none — Adds the four corners of the image (+ the edge midpoints) to the point set as fixed points. · examples: `shape2d_morph_descriptor_tour`
-- `blend` `image2d × image2d → image2d` GPU: none — Cross-dissolve (1-alpha)·a + alpha·b (a, b have the same shape and lie in [0,1]). · examples: `image_morph`, `poc_live4d`
+- `blend` `image2d × image2d → image2d` GPU: none — Cross-dissolve (1-alpha)·a + alpha·b (a, b have the same shape and lie in [0,1]). · examples: `image_morph`, `poc_live4d`, `road_surface_tour`
 - `morph` `image2d × image2d × pairs × pairs → image2d` GPU: yes (allow-list) — Morphs 2 images A and B via corresponding points and produces the intermediate image at ratio alpha. · examples: `image_morph`, `poc_vanishing_detail_and_morphing_area`
 - `morph_sequence` `image2d × image2d × pairs × pairs → images` GPU: none — Morph sequence with alpha swept 0→1 in n steps (frames that change smoothly from A to B). · examples: `image_morph`
 - `warp_piecewise_affine` `image2d × pairs × pairs → image2d` GPU: none — Piecewise affine warp that moves the content at src_pts of img to dst_pts. · examples: `shape2d_morph_descriptor_tour`
@@ -5679,7 +5681,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `dem_aspect` `depth → image2d` GPU: yes (allow-list) — Slope aspect [degrees]. **North is 0 degrees, increasing towards east**. Flat cells get :data:`ASPECT_FLAT`. · examples: `poc_dem_terrain`, `poc_geodetic_height_frames`
 - `dem_curvature` `depth → image2d` GPU: yes (allow-list) — Curvature [1/m]. ``kind`` is ``"profile"`` (profile) / ``"planform"`` (plan) / ``"total"``. · examples: `poc_dem_terrain`
 - `dem_roughness` `depth → image2d` GPU: yes (allow-list) — Terrain ruggedness index TRI — the root mean square of the elevation differences to the 8 neighbors [m]. · examples: `dem_terrain_analysis_tour`
-- `dem_slope` `depth → image2d` GPU: yes (allow-list) — Slope angle. ``units`` is ``"degrees"`` / ``"radians"`` / ``"percent"``. · examples: `dem_geodesy_tour`, `poc_crop_phenotyping`, `poc_dem_terrain`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_multibeam_bathymetry`, `poc_stockpile_volume`
+- `dem_slope` `depth → image2d` GPU: yes (allow-list) — Slope angle. ``units`` is ``"degrees"`` / ``"radians"`` / ``"percent"``. · examples: `dem_geodesy_tour`, `poc_crop_phenotyping`, `poc_dem_terrain`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_multibeam_bathymetry`, `poc_stockpile_volume`, `road_surface_tour`
 - `dem_tpi` `depth → image2d` GPU: yes (allow-list) — Topographic position index TPI — the difference between the cell itself and the mean of its 8 neighbors [m]. Positive means ridge, negative means valley. · examples: `dem_terrain_analysis_tour`
 
 #### dem / visibility (3)

@@ -276,7 +276,18 @@ def nw_two_parts_gap(variant: int):
     return {"value": np.r_[part_a, fly], "aux": {"b": part_b}, "truth": {"gap": gap}}
 
 
+def nw_road_alignment(variant: int):
+    """A straight two-lane road along +x (samples every 0.5 m): grade g, crossfall c. Truth = the slope of the
+    left lane, atan(√(g² + c²)) in degrees (the lane is a plane: z = g·x − c·y)."""
+    g, c = (0.06, 0.02) if variant == 0 else (0.09, 0.025)
+    s = np.arange(0.0, 40.01, 0.5)
+    road = {"x": s, "y": np.zeros_like(s), "z": g * s, "s": s}
+    return {"value": road, "aux": {"crossfall": c},
+            "truth": {"slope_deg": math.degrees(math.atan(math.hypot(g, c)))}}
+
+
 SAMPLES = {
+    "nw_road_alignment": nw_road_alignment,
     "nw_two_parts_gap": nw_two_parts_gap,
     "nw_bore": nw_bore, "nw_touching": nw_touching, "nw_two_grey_parts": nw_two_grey_parts,
     "nw_offcentre_ring": nw_offcentre_ring, "nw_grey_spheres": nw_grey_spheres, "nw_mic_pair": nw_mic_pair,
@@ -290,6 +301,19 @@ SAMPLES = {
 # recipes
 # =================================================================================================
 RECIPES = [
+    # ------------------------------------------------ new op: road_surface_heightmap (drivelateral, 2026-11-15), family drive
+    {"name": "Simulate — a crowned road lane from its alignment, then its slope as a DEM",
+     "family": "drive", "task": "measure", "task_class": "simulation", "halcon": None,
+     "input_sort": "table", "sample": "nw_road_alignment",
+     "stages": [{"op": "road_surface_heightmap",
+                 "kw": {"cell": 0.1, "extent": [5.0, 35.0, 0.3, 2.7], "crossfall": "$aux.crossfall"}},
+                {"op": "dem_slope", "kw": {"cell_size": 0.1}}],
+     "expect": [{"get": ["@median"], "approx": "slope_deg", "atol": 1e-9}],
+     "note": "Road surface from a centre-line table (x, y, z every 0.5 m) and the cross-section rules (2 % crown, "
+             "lanes, gutter): the window is the left lane only, a plane z = g·x − c·y, so the DEM slope (Horn) is "
+             "atan(√(g² + c²)) everywhere inside. The same height map feeds the depth camera and the lane-window "
+             "slope chain (crop_rectangle2 -> surface_form_remove); return_truth=True adds the per-cell analytic "
+             "truth (grade, cross slope, s, e)."},
     # ------------------------------------------------ new op: convex_hull_gap (hull3d, 2026-11-15), family 3d
     {"name": "Measure — clearance between two scanned parts (drop flying points, then the hull gap)",
      "family": "3d", "task": "measure", "task_class": "3d", "halcon": None,
@@ -474,6 +498,10 @@ FAILED_ATTEMPTS = [
 
 
 NOTES_JA = {
+    "Simulate — a crowned road lane from its alignment, then its slope as a DEM":
+        "中心線の表と横断の決まり(拝み勾配 2 %・車線・側溝)から道の面を作り、DEM として傾斜を測る — 窓は左の車線だけで、"
+        "z = g·x − c·y の平面なので dem_slope(Horn)が内側のどこでも atan(√(g² + c²)) になる。セルごとの解析の真値は "
+        "return_truth=True で返る。",
     "Measure — clearance between two scanned parts (drop flying points, then the hull gap)":
         "走査した 2 部品のあいだの隙間を測る — 隙間の中の飛び点 6 点で凸包の隙間が詰まって見えるので、先に "
         "radius_outlier_removal(半径 0.06 に近傍 2 点未満)で除き、convex_hull_gap が面と面の隙間を保証つきの上下限で返す(Wolfe の "

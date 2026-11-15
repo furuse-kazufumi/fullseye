@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3845, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3846, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -2631,6 +2631,7 @@
 {"name":"road_eval","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"road_profile","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"road_row_distance","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"road_surface_heightmap","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"roberts","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"roberts_mag","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"robinson_amp","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},

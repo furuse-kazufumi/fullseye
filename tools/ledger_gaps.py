@@ -321,6 +321,12 @@ KNOB_EXEMPT = {
         "stopping tolerance / contact threshold: the probe's 0.25 gap converges exactly at any tol",
     ("convex_hull_gap", "max_iter"):
         "iteration cap: the probe converges in a few Wolfe steps, far below the cap",
+    # drivelateral(2026-11-15): the blend into a terrain grid is read only when terrain= is given; the probe runs
+    # the default (no terrain). tests/test_road_surface_heightmap.py exercises the blend.
+    ("road_surface_heightmap", "blend_start"):
+        "read only when terrain is given; the probe runs without a terrain grid",
+    ("road_surface_heightmap", "blend_width"):
+        "read only when terrain is given; the probe runs without a terrain grid",
 }
 
 

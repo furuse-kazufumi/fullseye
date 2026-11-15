@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">road_surface_heightmap — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_surface_heightmap(alignment, cell: &#x27;float&#x27; = 0.05, *, extent=None, margin: &#x27;float&#x27; = 10.0, half_width: &#x27;float&#x27; = 3.0, shoulder: &#x27;float&#x27; = 0.5, crossfall: &#x27;float&#x27; = 0.02, gutter_width: &#x27;float&#x27; = 0.5, gutter_depth: &#x27;float&#x27; = 0.06, verge_drop: &#x27;float&#x27; = 0.04, terrain=None, blend_start: &#x27;float&#x27; = 5.0, blend_width: &#x27;float&#x27; = 4.5, return_truth: &#x27;bool&#x27; = False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelateral; drivelateral.road_surface_heightmap(alignment, cell: &#x27;float&#x27; = 0.05, *, extent=None, margin: &#x27;float&#x27; = 10.0, half_width: &#x27;float&#x27; = 3.0, shoulder: &#x27;float&#x27; = 0.5, crossfall: &#x27;float&#x27; = 0.02, gutter_width: &#x27;float&#x27; = 0.5, gutter_depth: &#x27;float&#x27; = 0.06, verge_drop: &#x27;float&#x27; = 0.04, terrain=None, blend_start: &#x27;float&#x27; = 5.0, blend_width: &#x27;float&#x27; = 4.5, return_truth: &#x27;bool&#x27; = False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;road_surface_heightmap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>centre-line alignment और cross-section नियमों से सड़क सतह का height map, हर cell के analytic सत्य मान (grade और cross slope) के साथ।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各セルの中心を中心線へ射影した (s, e)(s = 中心線の弧長、e = 横ずれ、進行方向の左が正)で高さを決める:</p>
+<p>z = z_c(s) + p(e; β(s), rate(s))</p>
+<p style="margin:2px 0 2px 12px">• <b>射影</b>: 既存の <code style="color:#22d3bf">lateral_offset</code>(折線への射影、近い頂点から窓 2 区間)で区間を決め、その区間の始点の向き・曲率の<b>局所の円弧</b>へ射影し直す。直線と円弧では厳密で、折線の頂点ごとの mm の折れ目が出ない(クロソイドは区間の中で 3 次の誤差)。線形の端より外は、端の向きの直線で延ばす。</p>
+<p style="margin:2px 0 2px 12px">• <b>縦断</b> z_c(s): 標本の z と勾配 g = dz/ds(<code style="color:#22d3bf">grade</code> の列、無ければ <code style="color:#22d3bf">np.gradient</code>、2 次まで厳密)の 3 次 Hermite 補間。放物線の縦断曲線は標本の間でも厳密。</p>
+<p style="margin:2px 0 2px 12px">• <b>横断</b> p(e): 車道(|e| ≤ <code style="color:#22d3bf">half_width + shoulder</code>)は、拝み勾配 −<code style="color:#22d3bf">crossfall</code>·|e| と一方向の片勾配 −<code style="color:#22d3bf">rate</code>·e を <code style="color:#22d3bf">β</code> で混ぜる(β = 0 拝み、β = 1 片勾配、rate &gt; 0 で左が下がる)。β と rate は線形の列(標本の間は一次補間)で、片勾配への移り変わり(すりつけ)を表す。車道の外は縁の高さのまま、側溝(幅 <code style="color:#22d3bf">gutter_width</code>、深さ <code style="color:#22d3bf">gutter_depth</code> の半正弦)、その外は路側の段 <code style="color:#22d3bf">verge_drop</code> だけ下げる。</p>
+<p style="margin:2px 0 2px 12px">• <b>地形へのなじませ</b>(<code style="color:#22d3bf">terrain</code> を渡したとき): |e| が <code style="color:#22d3bf">blend_start</code> から <code style="color:#22d3bf">blend_width</code> かけて、線形の端より外では端からの距離で、道の高さを <code style="color:#22d3bf">terrain</code>(同じ格子の高さ図)へ一次で混ぜる。</p>
+<p>返り値は (ny, nx) の高さ図 <code style="color:#22d3bf">heights</code>(<code style="color:#22d3bf">grid[i, j]</code> はセル (行 i = y、列 j = x)の中心(xmin + (j + ½)·cell, ymin + (i + ½)·cell) の高さ。<code style="color:#22d3bf">terrain.elevation_map</code> と同じ並び)。台帳の型 <code style="color:#22d3bf">depth</code> のまま他の op(<code style="color:#22d3bf">dem_slope</code>・<code style="color:#22d3bf">heightmap_depth_camera</code>・<code style="color:#22d3bf">crop_rectangle2</code> …)へ渡せる。<code style="color:#22d3bf">return_truth=True</code> なら <code style="color:#22d3bf">(heights, truth)</code> を返す。<code style="color:#22d3bf">truth</code> は同じ形のセルごとの解析の真値(作り方の</p>
+<p>偏微分。数値微分ではない):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">s</code>・<code style="color:#22d3bf">e</code>・<code style="color:#22d3bf">heading</code>(足の点での中心線の向き [rad])・<code style="color:#22d3bf">curvature</code>(そこで使った曲率 [1/m])。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grade</code> = ∇z·t(中心線の向き t に沿った勾配 = (z_c&#x27; + ∂p/∂β·β&#x27; + ∂p/∂rate·rate&#x27;) / (1 − κe))。曲線の内側ほど急になる(1/(1 − κe))。片勾配のすりつけでは縁の勾配が中心線と違う(相対勾配)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cross</code> = ∇z·n(左向きの横勾配 ∂p/∂e、+ で左が上がる)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">carriageway</code>(bool: 車道の中で、地形と混ぜていないセル)。地形と混ぜたセルの <code style="color:#22d3bf">grade</code>・<code style="color:#22d3bf">cross</code> は nan (真値を作り方から出せないので、言わない)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">extent</code> (xmin, xmax, ymin, ymax)、<code style="color:#22d3bf">cell</code>、<code style="color:#22d3bf">cross_section</code>(使った横断の値)。</p>
+<p>側溝の外縁の段は不連続で、その上の勾配は定義されない(真値は段の両側の値)。拝みの頂(e = 0)の横勾配は左右の平均(β = 0 なら 0)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>alignment : dict</p>
+<p>中心線の表。<code style="color:#22d3bf">x</code>・<code style="color:#22d3bf">y</code>・<code style="color:#22d3bf">z</code>(N ≥ 2)が要る。任意の列: <code style="color:#22d3bf">s</code>(弧長。無ければ折線の長さ)、</p>
+<p><code style="color:#22d3bf">heading</code>・<code style="color:#22d3bf">curvature</code>(<code style="color:#22d3bf">clothoid_points</code> の返りをそのまま渡すと射影が厳密になる。無ければ</p>
+<p>標本から差分で作る)、<code style="color:#22d3bf">grade</code>(dz/ds)、<code style="color:#22d3bf">beta</code>(0..1)、<code style="color:#22d3bf">rate</code>。</p>
+<p>cell : float</p>
+<p>格子の間隔 [m]。</p>
+<p>extent : (xmin, xmax, ymin, ymax) or None</p>
+<p>格子の範囲(<code style="color:#22d3bf">terrain.elevation_map</code> の <code style="color:#22d3bf">bounds</code> と同じく nx = ceil((xmax − xmin)/cell))。</p>
+<p>None なら中心線の外接矩形に <code style="color:#22d3bf">margin</code> を足す。</p>
+<p>terrain : (ny, nx) array or None</p>
+<p>外側の地形の高さ(同じ格子)。None なら混ぜず、路側の高さがそのまま外へ続く。</p>
+<p>return_truth : bool</p>
+<p>True なら <code style="color:#22d3bf">(heights, truth)</code>(真値の表つき)。既定は高さ図だけ。</p>
+<p>空の入力(<code style="color:#22d3bf">alignment</code> が 0 要素)は ValueError で拒否する。</p>
+<p>English: road surface height map from a centre-line alignment (x, y, z + optional s / heading / curvature / grade / crossfall blend beta / superelevation rate) and a cross-section (crown, one-way slope, gutter, verge drop); with return_truth=True also the per-cell analytic truth (grade along the road, cross slope, s, e) from the construction&#x27;s partial derivatives. Cells are projected with lateral_offset and then onto the local arc of the segment (exact for lines and arcs, no polyline kinks). Optional blending into a terrain grid.</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import drivelateral as DL</p>
+<p>s = np.arange(0.0, 40.01, 0.5)                               # 直線 40 m、勾配 6 %、拝み 2 %</p>
+<p>road = {&quot;x&quot;: s, &quot;y&quot;: np.zeros_like(s), &quot;z&quot;: 0.06 * s, &quot;s&quot;: s}</p>
+<p>H, T = DL.road_surface_heightmap(road, 0.1, extent=(5.0, 35.0, -3.0, 3.0), return_truth=True)</p>
+<p>xc = 5.0 + (np.arange(H.shape[1]) + 0.5) * 0.1</p>
+<p>yc = -3.0 + (np.arange(H.shape[0]) + 0.5) * 0.1</p>
+<p>assert np.allclose(H, 0.06 * xc[None, :] - 0.02 * np.abs(yc)[:, None], atol=1e-12)</p>
+<p>assert np.allclose(T[&quot;grade&quot;], 0.06) and np.allclose(T[&quot;cross&quot;][yc &gt; 0], -0.02)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:road_surface_tour">road_surface_tour</a> — <code style="color:#22d3bf">py -3.11 examples/road_surface_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">depth</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">lateral</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:friction_circle_usage">friction_circle_usage</a> · <a style="color:#22d3bf" href="opdrive:curve_speed_limit">curve_speed_limit</a> · <a style="color:#22d3bf" href="opdrive:design_min_radius">design_min_radius</a> · <a style="color:#22d3bf" href="opdrive:understeer_gradient">understeer_gradient</a> · <a style="color:#22d3bf" href="opdrive:steady_cornering">steady_cornering</a> · <a style="color:#22d3bf" href="opdrive:bicycle_model_step">bicycle_model_step</a> · <a style="color:#22d3bf" href="opdrive:ackermann_steer_angles">ackermann_steer_angles</a> · <a style="color:#22d3bf" href="opdrive:offtracking_circle">offtracking_circle</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivelateral.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

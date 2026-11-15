@@ -61,9 +61,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3628,
+    "executable": 3629,
     "reasons": {
-      "python_signature": 2663,
+      "python_signature": 2664,
       "registry": 964
     },
     "not_executable_reasons": {
@@ -390,9 +390,9 @@
   },
   "counts": {
     "nodes": 103,
-    "edges": 3843,
+    "edges": 3844,
     "conversion_pairs": 424,
-    "conversion_edge_incidence": 2528
+    "conversion_edge_incidence": 2529
   },
   "nodes": [
     {
@@ -608,7 +608,7 @@
       "sort": "depth",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 22,
+      "produced_by": 23,
       "consumed_by": 47,
       "generator": true,
       "type_check": true,
@@ -1423,7 +1423,7 @@
       "container": "sequence",
       "size_hint": "input-dependent",
       "produced_by": 1277,
-      "consumed_by": 600,
+      "consumed_by": 601,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -116048,6 +116048,151 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 0.0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "road_surface_heightmap",
+      "inputs": [
+        "table"
+      ],
+      "output": "depth",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "drivelateral",
+        "callable": "road_surface_heightmap"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "drivelateral",
+        "callable": "road_surface_heightmap"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "extent",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "margin",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 10.0
+        },
+        {
+          "name": "half_width",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3.0
+        },
+        {
+          "name": "shoulder",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.5
+        },
+        {
+          "name": "crossfall",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.02
+        },
+        {
+          "name": "gutter_width",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.5
+        },
+        {
+          "name": "gutter_depth",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.06
+        },
+        {
+          "name": "verge_drop",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.04
+        },
+        {
+          "name": "terrain",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "blend_start",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 5.0
+        },
+        {
+          "name": "blend_width",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 4.5
+        },
+        {
+          "name": "return_truth",
+          "type": "bool",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
         }
       ],
       "verified_executable": false,

@@ -1,8 +1,8 @@
 {
- "n_ops": 3839,
+ "n_ops": 3840,
  "tiers": {
   "color": 12,
-  "ledger": 2875,
+  "ledger": 2876,
   "nary": 17,
   "registry": 935
  },
@@ -30130,6 +30130,20 @@
     "scalar"
    ],
    "gpu_tier": "none"
+  },
+  {
+   "name": "road_surface_heightmap",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "depth",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "robust_gaussian_profile",

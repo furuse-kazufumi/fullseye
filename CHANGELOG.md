@@ -25,6 +25,20 @@ Unitree G1 が国土地理院 DEM5A の上に置いた道を登る動画の製�
   同じ門を、頂点どうしの最短距離と Frank–Wolfe を 200 歩で止めた上限(製作の作り方)にかけると落ち、囲いの計算を壊した写しは
   RuntimeError になる。例 `examples_3d/convex_hull_gap_clearance.py`(examples3d に登録、図 2 枚)、recipe「走査した 2 部品の
   隙間」(`radius_outlier_removal` で隙間の中の飛び点を除いてから測る。飛び点ありの凸包は 0.3 が 0.14 に見える)。
+- `road_surface_heightmap`(drivelateral、台帳 opsdrive の `lateral`、`table → depth`、`return_truth=True` で `(高さ図, 真値の表)`):
+  中心線の線形の表(x, y, z と任意の s・heading・curvature・grade・beta・rate)と横断の決まり(拝み勾配・一方向の片勾配と
+  そのすりつけ・側溝・路側の段、全部引数)から道の面の高さ図を作り、セルごとの解析の真値(縦断勾配・横勾配・s・e・向き・曲率)
+  を作り方の偏微分で返す。射影は既存の `lateral_offset` で区間を決めてから、その区間の向きと曲率の局所の円弧へ射影し直す
+  (直線と円弧で厳密。製作の 1 m の折線では頂点ごとに mm の段が出ていた)。縦断は標本の z と勾配の 3 次 Hermite
+  (放物線の縦断曲線は標本の間でも厳密)。縦断勾配は 1/(1 − κe) で曲線の内側ほど急、すりつけでは縁の勾配が中心線と違う
+  (相対勾配)。外側の地形(同じ格子)へなじませることもでき、混ぜたセルの真値は nan(言わない)。製作の `road_profile` は
+  既存の op(drivelong)と名前が重なるので使わない。
+  門 `tests/test_road_surface_heightmap.py`(14 本): 直線は世界の座標の閉形式 z = g·x − c·|y|、ヘアピンは極座標の閉形式に
+  1e-9(局所の円弧で射影し直さない写しは mm で外れる)、放物線の縦断曲線、回した道の車線の窓を `crop_rectangle2` →
+  `surface_form_remove` で (g, −c)・`dem_slope` で atan(√(g² + c²))、推定した曲率を `curvature_torsion` と照合、
+  道路構造令の表(`TRANSITION_LENGTH`・`MAX_SUPERELEVATION`)の長さと値で作ったすりつけ、真値と高さ図の数値微分の一致、
+  地形へのなじませ(車道はビット一致)。例 `examples/road_surface_tour.py`(examples2d に登録、図 4 枚)、recipe
+  「道の車線の傾斜を DEM として測る」(`dem_slope`)。
 
 ### 追加 — PoC「置かれたタオルの角・辺・折り線を古典の画像処理で見つける」(収蔵 2026.317)
 

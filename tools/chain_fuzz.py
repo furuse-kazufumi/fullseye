@@ -8021,6 +8021,21 @@ def _b_hull_gap(pool, rng):
     return (g, g * [1.5, 0.7, 0.7] + [1.25, 0.2, -0.3]), {}
 
 
+def _b_road_surface(pool, rng):
+    # 道の面(2026-11-15): 直線 20 m → 左の円弧(半径 25 m)、勾配 5 %、後半で片勾配へすりつける。extent を
+    # 渡さない(margin が効く)。terrain は渡さない: blend_start / blend_width は terrain を渡したときだけ読む
+    # (tools/ledger_gaps.KNOB_EXEMPT に理由、tests/test_road_surface_heightmap.py が効くことを確かめる)。
+    import drivelateral as DL
+    a = DL.clothoid_points(20.0, np.arange(0.0, 20.01, 0.5))
+    b = DL.clothoid_points(20.0, np.arange(0.5, 20.01, 0.5), kappa0=0.04, kappa1=0.04, start=(20.0, 0.0))
+    s = np.r_[np.arange(0.0, 20.01, 0.5), 20.0 + np.arange(0.5, 20.01, 0.5)]
+    road = {"x": np.r_[a["points"][:, 0], b["points"][:, 0]], "y": np.r_[a["points"][:, 1], b["points"][:, 1]],
+            "z": 0.05 * s, "s": s, "heading": np.r_[a["heading"], b["heading"]],
+            "curvature": np.r_[a["curvature"], b["curvature"]], "beta": np.clip((s - 15.0) / 10.0, 0.0, 1.0),
+            "rate": np.full_like(s, 0.06)}
+    return (road,), {"cell": 0.25}
+
+
 def _b_walk_contact_lp(pool, rng):
     # 斜め 45 度の向きの斜面に 2 本の足。tan(傾き) = 0.85 μ なので、多角錐が 4 面だと摩擦が足りず(cos 45°)、
     # 8 面(既定)・16 面では足りる —— n_facets が効く入力。
@@ -8571,6 +8586,7 @@ OP_ARG_BUILDERS = {
     "foot_slip_metrics": _b_walk_slip, "footstep_plan": _b_walk_footsteps,
     "static_contact_force_lp": _b_walk_contact_lp,
     "convex_hull_gap": _b_hull_gap,
+    "road_surface_heightmap": _b_road_surface,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

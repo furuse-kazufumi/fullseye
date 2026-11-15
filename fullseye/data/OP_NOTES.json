@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3839,
- "n_notes": 3845,
+ "n_ops": 3840,
+ "n_notes": 3846,
  "notes": {
   "vol_dilate": [
    {
@@ -19575,6 +19575,16 @@
     "in": "any",
     "out": "table",
     "path": "docs/ops/drive/lateral/rear_axle_path.md"
+   }
+  ],
+  "road_surface_heightmap": [
+   {
+    "op": "road_surface_heightmap",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "table",
+    "out": "depth",
+    "path": "docs/ops/drive/lateral/road_surface_heightmap.md"
    }
   ],
   "stanley_steer": [

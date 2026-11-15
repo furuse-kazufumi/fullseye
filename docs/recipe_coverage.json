@@ -1,9 +1,9 @@
 {
  "summary": {
-  "recipes": 272,
+  "recipes": 273,
   "recipes_py": 25,
-  "recipebook": 247,
-  "multi_stage": 221,
+  "recipebook": 248,
+  "multi_stage": 222,
   "families_total": 60,
   "families_covered": 60,
   "families_uncovered": [],
@@ -15,7 +15,7 @@
    "optics": 8,
    "preprocess": 38,
    "sensing": 17,
-   "simulation": 9,
+   "simulation": 10,
    "visualization": 5
   },
   "halcon_chapters": {
@@ -44,12 +44,12 @@
   },
   "runner": {
    "mcp": 89,
-   "python": 183
+   "python": 184
   },
-  "truth_gated": 248,
+  "truth_gated": 249,
   "type_cuts_total": 0,
   "recipes_with_type_cuts": 0,
-  "distinct_ops": 415,
+  "distinct_ops": 416,
   "categories_2d_total": 49,
   "categories_2d_covered": 25,
   "categories_2d_uncovered": [
@@ -81,7 +81,7 @@
   "gpu": {
    "snapshot_commit": "a3f91eae72f851e870e6a45294ecfc44ded9cb10",
    "recipes_measured": 247,
-   "recipes_unmeasured": 25,
+   "recipes_unmeasured": 26,
    "recipes_with_gpu_stage": 127,
    "switches_total": 96,
    "switch_histogram": {
@@ -185,9 +185,9 @@
   },
   {
    "family": "drive",
-   "ops": 742,
-   "recipes": 7,
-   "ops_used": 11
+   "ops": 743,
+   "recipes": 8,
+   "ops_used": 12
   },
   {
    "family": "emproof",
@@ -5136,6 +5136,26 @@
    "gpu_stages": 0,
    "gpu_unmeasured_ops": [],
    "gpu_switches": 0
+  },
+  {
+   "name": "Simulate — a crowned road lane from its alignment, then its slope as a DEM",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "simulation",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "road_surface_heightmap",
+    "dem_slope"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "road_surface_heightmap"
+   ],
+   "gpu_switches": null
   },
   {
    "name": "Measure — clearance between two scanned parts (drop flying points, then the hull gap)",
