@@ -264,7 +264,20 @@ def nw_stereo_shift(variant: int):
     return {"value": left, "aux": {"right": right}, "truth": {"disparity": d}}
 
 
+def nw_two_parts_gap(variant: int):
+    """Two scanned parts whose facing faces are ``gap`` apart (x = 1 and x = 1 + gap), with 6 flying points
+    in the gap that belong to part A's scan. Truth = the face-to-face gap (0.3 / 0.2 m)."""
+    gap = 0.3 if variant == 0 else 0.2
+    r = rng(variant, 71)
+    part_a = np.r_[np.c_[np.ones(400), r.random((400, 2))], r.random((1600, 3))]
+    fly_yz = np.array([[0.2, 0.2], [0.2, 0.8], [0.5, 0.5], [0.8, 0.2], [0.8, 0.8], [0.5, 0.15]])
+    fly = np.c_[1.0 + gap * (0.45 + 0.1 * r.random(6)), fly_yz]
+    part_b = np.r_[np.c_[np.full(400, 1.0 + gap), r.random((400, 2))], r.random((800, 3)) + [1.0 + gap, 0, 0]]
+    return {"value": np.r_[part_a, fly], "aux": {"b": part_b}, "truth": {"gap": gap}}
+
+
 SAMPLES = {
+    "nw_two_parts_gap": nw_two_parts_gap,
     "nw_bore": nw_bore, "nw_touching": nw_touching, "nw_two_grey_parts": nw_two_grey_parts,
     "nw_offcentre_ring": nw_offcentre_ring, "nw_grey_spheres": nw_grey_spheres, "nw_mic_pair": nw_mic_pair,
     "nw_feed_marks": nw_feed_marks, "nw_grating": nw_grating, "nw_bracket_scene": nw_bracket_scene,
@@ -277,6 +290,19 @@ SAMPLES = {
 # recipes
 # =================================================================================================
 RECIPES = [
+    # ------------------------------------------------ new op: convex_hull_gap (hull3d, 2026-11-15), family 3d
+    {"name": "Measure — clearance between two scanned parts (drop flying points, then the hull gap)",
+     "family": "3d", "task": "measure", "task_class": "3d", "halcon": None,
+     "input_sort": "points", "sample": "nw_two_parts_gap",
+     "stages": [{"op": "radius_outlier_removal", "kw": {"radius": 0.06, "min_neighbors": 2}},
+                {"op": "convex_hull_gap", "args": ["$prev", "$aux.b"]}],
+     "expect": [{"get": ["separated"], "equals": True},
+                {"get": ["gap"], "approx": "gap", "atol": 1e-9}],
+     "note": "Assembly clearance from two scans: six flying points inside the gap make the raw hull gap look "
+             "less than half its size, so drop isolated points first (radius_outlier_removal: fewer than 2 "
+             "neighbours within 0.06), then "
+             "convex_hull_gap returns the face-to-face gap with certified bounds (Wolfe's minimum-norm point; an "
+             "independent HiGHS LP agrees). Use convex pieces: the hull of a non-convex part over-reports contact."},
     # ------------------------------------------------ new op: fit_circle_xld (shape2d), family 2d
     {"name": "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)",
      "family": "2d", "task": "measure", "task_class": "measurement", "halcon": "2D Metrology",
@@ -448,6 +474,10 @@ FAILED_ATTEMPTS = [
 
 
 NOTES_JA = {
+    "Measure — clearance between two scanned parts (drop flying points, then the hull gap)":
+        "走査した 2 部品のあいだの隙間を測る — 隙間の中の飛び点 6 点で凸包の隙間が詰まって見えるので、先に "
+        "radius_outlier_removal(半径 0.06 に近傍 2 点未満)で除き、convex_hull_gap が面と面の隙間を保証つきの上下限で返す(Wolfe の "
+        "最小ノルム点。独立な線形計画も一致)。非凸の部品は凸に分けてから使う。",
     "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)":
         "穴の中心と半径をサブピクセル輪郭から測る — threshold_sub_pix で円板の縁を XLD 輪郭にし、"
         "fit_circle_xld で輪郭ごとに幾何距離の円を当てて中心(行・列)と半径を画素で読む"

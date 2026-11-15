@@ -61,9 +61,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3627,
+    "executable": 3628,
     "reasons": {
-      "python_signature": 2662,
+      "python_signature": 2663,
       "registry": 964
     },
     "not_executable_reasons": {
@@ -390,9 +390,9 @@
   },
   "counts": {
     "nodes": 103,
-    "edges": 3842,
+    "edges": 3843,
     "conversion_pairs": 424,
-    "conversion_edge_incidence": 2526
+    "conversion_edge_incidence": 2528
   },
   "nodes": [
     {
@@ -1027,7 +1027,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 85,
-      "consumed_by": 309,
+      "consumed_by": 311,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1422,7 +1422,7 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1276,
+      "produced_by": 1277,
       "consumed_by": 600,
       "generator": true,
       "type_check": true,
@@ -23517,6 +23517,76 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": 1000
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00001"
+    },
+    {
+      "op": "convex_hull_gap",
+      "inputs": [
+        "points",
+        "points"
+      ],
+      "output": "table",
+      "category": "3d",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00001"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00001"
+        }
+      ],
+      "input_roles": [
+        "points_a",
+        "points_b"
+      ],
+      "runtime_target": {
+        "module": "hull3d",
+        "callable": "convex_hull_gap"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "hull3d",
+        "callable": "convex_hull_gap"
+      },
+      "parameter_schema": [
+        {
+          "name": "tol",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1e-09
+        },
+        {
+          "name": "max_iter",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1000
+        },
+        {
+          "name": "check",
+          "type": "str",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "lp"
         }
       ],
       "verified_executable": false,

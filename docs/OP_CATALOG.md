@@ -606,7 +606,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **space**
 - **星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める** — 固定 seed の合成星表 196 星と PSF・光子雑音・読み出し雑音を含む 128×128 像を作り、star_detect の 18 検出(真の星 16 + ホットピクセル 2)を三角形の角距離で全星表へ照合し、偽点を捨てて kabsch で姿勢を推定する。誤対応 0・偽点棄却 2/2・姿勢角誤差 0.0046 度。太陽・月の迷光、星不足、高速回転の星の流れは未計算の限界。 `py -3.11 examples/poc_star_tracker.py`
 
-### 3-D 点群/体積/曲面(124 例)
+### 3-D 点群/体積/曲面(125 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -638,6 +638,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **最大内接ボックス(inner_rectangle1 の 3-D 版)** — 空洞のある部品(二値ボクセル)に内接する最大の軸平行ボックス=「保証できる最大の中実ブロック」を厳密に求める(総当たりと完全一致)。深さ区間の論理積×2-D最大内接長方形。空洞をまたぐ前景bbox(非中実)を判別的に下回る。regionprops3d.inner_box3。 `py -3.11 examples_3d/inner_box_inspection.py`
 - **最小体積の有向境界箱(OBB=smallest_rectangle2 の 3-D 版)** — 傾いた直方体の実寸を最小体積 OBB で復元(半径 (5,2,1)・中心・体積 80 を機械精度)。軸平行 AABB は回転で ~1.8 倍に膨張し、PCA 箱(pcseg.obb)は非対称形状で最小にならない — min-volume OBB(凸包面×回転キャリパー, measure3d.smallest_box3)が両者を判別的に下回る。把持/梱包の寸法検査。 `py -3.11 examples_3d/oriented_bounding_box.py`
 - **点群のバウンディング(凸包/OBB/AABB/最小包含球)** — 生点群から凸包・向き付き箱(OBB)・軸整列箱(AABB)・最小包含球を起こす。新規 min_enclosing_sphere は素朴球 r=9.95→5.63(比0.57・全点内包)、OBB体積は回転箱で AABB の0.20倍。把持/衝突/寸法検査の基本メトロロジー。 `py -3.11 examples_3d/hull_bounds.py`
+- **2 つの部品の凸包の隙間を保証つきで測る(新規 convex_hull_gap)** — 箱 2 つの隙間 d・角どうしの √(dx²+dy²+dz²) を上限と下限の差 1e-9 以下で返し、独立な線形計画の t も t/√3 ≤ 隙間 ≤ t に入る。十字の棒は頂点の間が 1.4 離れていても凸包は交わる(hausdorff は 1.4)。飛び点で 0.3 → 0.14 に詰まって見えた組立の隙間が、radius_outlier_removal の後で 0.3 に戻る。 `py -3.11 examples_3d/convex_hull_gap_clearance.py`
 - **平歯車の歯数をSDFジオメトリから逆計測** — sdf_opsのCSGで平歯車を手続き生成し、歯先帯r=0.44の占有を角度サンプルしてラン計数で歯数N=12→12/20→20を厳密復元(0.2度ジッタでも不変)。歯なし円板null=0本・誤半径 内1/外0本で判別的。 `py -3.11 examples_3d/gear_metrology.py`
 - **円筒軸メトロロジー(30%外れ値ロバスト)** — 汚れた産業スキャン(30%グロス外れ値・2000点)からパイプの軸方向と半径を計測。fit_cylinder_ransacで半径誤差1.27%・軸誤差0.78°・面残差0.00165m。非ロバスト全点フィット(半径誤差101%)と誤プリミティブ平面RANSAC(残差0.058m)を5倍超マージンで判別的に上回る。 `py -3.11 examples_3d/cylinder_axis_metrology.py`
 
@@ -844,9 +845,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3844 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3845 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 742 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 742 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(964 ops / 49 categories)
 
@@ -1914,7 +1915,7 @@ _計 3844 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` GPU: なし — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · 例: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` GPU: なし — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · 例: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d(377 ops / 68 categories)
+### 3d(378 ops / 68 categories)
 
 点群・体積・メッシュ・深度の op(`ops3d.OPS3D`)。関数として呼ぶ。
 
@@ -1939,9 +1940,10 @@ _計 3844 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `vol_boundary` `voxel → voxel` GPU: 鎖の中だけ(許可リスト) — Boundary shell of a binary volume (the 3-D ``region_boundary``). · 例: `roi_domain_boundary`
 - `vol_boundary_points` `voxel → points` GPU: あり(許可リスト) — Boundary shell as an ``(N, 3)`` point cloud in ``(z, y, x)`` order. · 例: `roi_domain_boundary`
 
-#### 3d / bounds(4)
+#### 3d / bounds(5)
 - `aabb` `points → primitive` GPU: なし — Axis-aligned bounding box. Returns ``(min (3,), max (3,))``. · 例: `hull_bounds`
 - `convex_hull` `points → mesh` GPU: なし — Convex hull of a point set -> ``(V, F)`` with outward-oriented triangles. · 例: `hull_bounds`
+- `convex_hull_gap` `points × points → table` GPU: なし — 2 つの頂点集合の凸包どうしの隙間(最短距離)を、保証つきの上下限と一緒に返す。 · 例: `convex_hull_gap_clearance`
 - `min_enclosing_sphere` `points → primitive` GPU: なし — 点群 (N,3) → 全点を含む(近似)最小包含球 {center(3), radius}。 · 例: `hull_bounds`
 - `obb` `points → primitive` GPU: なし — Oriented bounding box by PCA. · 例: `hull_bounds`
 
@@ -2063,7 +2065,7 @@ _計 3844 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `distance_line_line` `primitive → measurement` GPU: なし — 2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。 · 例: `geometry_metrology`
 - `distance_point_line` (halcon: `distance_point_line`) `points × primitive → measurement` GPU: なし — 点から直線(通過点と方向)までの垂直距離を返す(2-D / 3-D 共通)。 · 例: `geometry_metrology`
 - `distance_point_plane` `points × primitive → measurement` GPU: なし — 点から平面までの距離を返す(符号なし、入力座標と同じ単位)。 · 例: `geometry_metrology`
-- `distance_segment_segment` `primitive → measurement` GPU: なし — **有限線分**どうしの最短距離と、その最近接点の対。→ ``(distance, cp, cq)``。 · 例: `geometry_metrology`
+- `distance_segment_segment` `primitive → measurement` GPU: なし — **有限線分**どうしの最短距離と、その最近接点の対。→ ``(distance, cp, cq)``。 · 例: `convex_hull_gap_clearance`, `geometry_metrology`
 - `fit_box3` `points → primitive` GPU: なし — Oriented box fit by PCA (fast, noise-tolerant; the same construction as ``pcseg.obb``). · 例: `oriented_bounding_box`
 - `fit_circle3` `points → primitive` GPU: なし — 3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane, then a circle. · 例: `primitive_fitting_3d`
 - `fit_circle_3d` `points → primitive` GPU: なし — 点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。 · 例: `geometry_metrology`
@@ -2142,7 +2144,7 @@ _計 3844 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 #### 3d / metrics(8)
 - `chamfer_distance` `points × points → measurement` GPU: なし — 対称 Chamfer 距離 = 0.5*(mean_a min_b + mean_b min_a)。→ scalar。小さいほど一致。 · 例: `itokawa_pose_canonical`, `itokawa_shape_match`, `mesh_lod_download`, `metrics_eval`, `poisson_surface_recon`
 - `fscore` `points × points → measurement` GPU: なし — F-score @ tau = precision と recall の調和平均。→ (f, precision, recall)。再構成の標準指標。 · 例: `metrics_eval`
-- `hausdorff_distance` `points × points → measurement` GPU: なし — 対称 Hausdorff 距離 = max(max_a min_b, max_b min_a)。→ scalar。最悪ケースの乖離。 · 例: `mesh_lod_download`, `pointcloud_downsampling`, `poisson_surface_recon`
+- `hausdorff_distance` `points × points → measurement` GPU: なし — 対称 Hausdorff 距離 = max(max_a min_b, max_b min_a)。→ scalar。最悪ケースの乖離。 · 例: `convex_hull_gap_clearance`, `mesh_lod_download`, `pointcloud_downsampling`, `poisson_surface_recon`
 - `m3c2_distance` `points × points → signal` GPU: なし — 2 時点の点群の差を**法線方向に**測る(M3C2)。→ ``(distance, lod)`` の 2 つ。 · 例: `metrics_eval`
 - `normal_consistency` `points × normals → measurement` GPU: なし — 最近傍対応での法線一致度 = mean|cos(na, nb)|(向き無視)。→ [0,1]。1=完全一致。 · 例: `metrics_eval`
 - `pose_error` `pose × pose → table` GPU: なし — 姿勢誤差 = (回転角[度], 並進ノルム)。登録結果の GT 比較。→ (rot_deg, trans_err)。 · 例: `itokawa_self_register`
@@ -2214,7 +2216,7 @@ _計 3844 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### 3d / preprocess(5)
 - `mls_smooth` `points → points` GPU: なし — 各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。 · 例: `pcl_geodesic`
-- `radius_outlier_removal` `points → points` GPU: なし — 半径 radius 内の近傍数が min_neighbors 未満の点を除去する(孤立点除去)。 · 例: `pcl_geodesic`
+- `radius_outlier_removal` `points → points` GPU: なし — 半径 radius 内の近傍数が min_neighbors 未満の点を除去する(孤立点除去)。 · 例: `convex_hull_gap_clearance`, `pcl_geodesic`
 - `statistical_outlier_removal` `points → points` GPU: なし — 各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。 · 例: `pcl_geodesic`
 - `volume_downsample` `voxel → voxel` GPU: 鎖の中だけ(許可リスト) — Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data 間引き). · 例: `volume_downsampling`
 - `voxel_grid_downsample` `points → points` GPU: なし — 辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。 · 例: `pointcloud_downsampling`

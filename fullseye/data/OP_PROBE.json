@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3844, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3845, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -446,6 +446,7 @@
 {"name":"conv_observed_order","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"convex_fill","status":"ok","in_sort":"region","out_sort":"region","probe_input":"op_probe.sample_input('region', structured=True)"},
 {"name":"convex_hull","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"convex_hull_gap","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"convex_mirror_fov","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"convex_mirror_image","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"convex_mirror_misjudge","status":"not_in_registry","reason":"not executable by fullseye.apply"},

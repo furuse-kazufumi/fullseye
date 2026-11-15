@@ -5,7 +5,7 @@ category: geometry
 in: primitive
 out: measurement
 gpu: なし
-examples: [geometry_metrology]
+examples: [convex_hull_gap_clearance, geometry_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -57,6 +57,7 @@ Reference (public): C. Ericson, *Real-Time Collision Detection*, Morgan Kaufmann
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [convex_hull_gap_clearance](../../../../examples_3d/convex_hull_gap_clearance.py) — `py -3.11 examples_3d/convex_hull_gap_clearance.py`
 - [geometry_metrology](../../../../examples_3d/geometry_metrology.py) — `py -3.11 examples_3d/geometry_metrology.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)

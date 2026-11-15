@@ -8014,6 +8014,13 @@ def _b_walk_footsteps(pool, rng):
     return (m, 0.1, ((5, 0), (3, 0)), 12, 0.3, 0.15, 0.25), {"extent": (0.0, 1.6, 0.0, 0.9)}
 
 
+def _b_hull_gap(pool, rng):
+    # 凸包の隙間(2026-11-15): 面が向き合う箱 2 つ(x に 0.25 離す)。tol / max_iter は止める条件だけで、
+    # Wolfe の方法は数反復で厳密な点に着くので答えを動かさない(tools/ledger_gaps.KNOB_EXEMPT に理由)。
+    g = np.array(np.meshgrid([0, 1], [0, 1], [0, 1])).reshape(3, -1).T.astype(float)
+    return (g, g * [1.5, 0.7, 0.7] + [1.25, 0.2, -0.3]), {}
+
+
 def _b_walk_contact_lp(pool, rng):
     # 斜め 45 度の向きの斜面に 2 本の足。tan(傾き) = 0.85 μ なので、多角錐が 4 面だと摩擦が足りず(cos 45°)、
     # 8 面(既定)・16 面では足りる —— n_facets が効く入力。
@@ -8563,6 +8570,7 @@ OP_ARG_BUILDERS = {
     "capture_margin": _b_walk_capture, "gait_step_events": _b_walk_step_events,
     "foot_slip_metrics": _b_walk_slip, "footstep_plan": _b_walk_footsteps,
     "static_contact_force_lp": _b_walk_contact_lp,
+    "convex_hull_gap": _b_hull_gap,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

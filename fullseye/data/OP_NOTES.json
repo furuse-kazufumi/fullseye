@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3838,
- "n_notes": 3844,
+ "n_ops": 3839,
+ "n_notes": 3845,
  "notes": {
   "vol_dilate": [
    {
@@ -10373,6 +10373,16 @@
     "in": "points",
     "out": "mesh",
     "path": "docs/ops/3d/bounds/convex_hull.md"
+   }
+  ],
+  "convex_hull_gap": [
+   {
+    "op": "convex_hull_gap",
+    "dim": "3d",
+    "category": "bounds",
+    "in": "points × points",
+    "out": "table",
+    "path": "docs/ops/3d/bounds/convex_hull_gap.md"
    }
   ],
   "min_enclosing_sphere": [

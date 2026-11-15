@@ -82,6 +82,7 @@ tb_radius_outlier_removal 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 次の例は元の台帳 op `radius_outlier_removal` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [convex_hull_gap_clearance](../../../../examples_3d/convex_hull_gap_clearance.py) — `py -3.11 examples_3d/convex_hull_gap_clearance.py`
 - [pcl_geodesic](../../../../examples_3d/pcl_geodesic.py) — `py -3.11 examples_3d/pcl_geodesic.py`
 
 ## 型が繋がる次の op(`points` を入力に取れる)

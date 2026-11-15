@@ -46,7 +46,7 @@ Needs at least 4 non-coplanar points.
 
 ## 同カテゴリ(`bounds`)
 
-[aabb](aabb.md) · [obb](obb.md) · [min_enclosing_sphere](min_enclosing_sphere.md)
+[aabb](aabb.md) · [obb](obb.md) · [min_enclosing_sphere](min_enclosing_sphere.md) · [convex_hull_gap](convex_hull_gap.md)
 
 ---
 *Provenance: meshrepair.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

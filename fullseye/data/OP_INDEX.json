@@ -1,8 +1,8 @@
 {
- "n_ops": 3838,
+ "n_ops": 3839,
  "tiers": {
   "color": 12,
-  "ledger": 2874,
+  "ledger": 2875,
   "nary": 17,
   "registry": 935
  },
@@ -5451,6 +5451,21 @@
    "ledger": "ops3d",
    "dim": "3d",
    "in_sorts": [
+    "points"
+   ],
+   "gpu_tier": "partial"
+  },
+  {
+   "name": "convex_hull_gap",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "bounds",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "points",
     "points"
    ],
    "gpu_tier": "partial"

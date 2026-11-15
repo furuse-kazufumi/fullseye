@@ -5,9 +5,9 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-furuse.work-informational)](https://furuse.work/)
 
-**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,838
+**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,839
 operators in the machine-readable index, `docs/OP_INDEX.json`: 947 single-input 2-D operators +
-17 n-ary + 2,874 in the typed ledgers, each with a per-operator note), the family guides, and the
+17 n-ary + 2,875 in the typed ledgers, each with a per-operator note), the family guides, and the
 release notes.
 
 **What it can do: [CAPABILITIES.en.md](docs/CAPABILITIES.en.md)** — an index organised by
@@ -272,7 +272,7 @@ knobs in `[0, 1]`. Feature operators return a Python float; contour operators a 
 
 ## Operator library
 
-**3,838 typed operators** (964 2-D in the registry, 17 of them n-ary, + 2,874 in the typed ledgers,
+**3,839 typed operators** (964 2-D in the registry, 17 of them n-ary, + 2,875 in the typed ledgers,
 the 3-D ledger among them), covering denoising, smoothing, sharpening,
 thresholding/segmentation, morphology, edge/corner/blob detection, distance
 transforms, color-space conversion, texture/shape features, contours, and the 3-D
@@ -299,20 +299,20 @@ py -3.11 imgevolve.py coverage               # honest coverage numbers
 Adding one operator makes evolution, code generation, the catalog, and the
 machine-readable index (`docs/OP_INDEX.json`) follow automatically.
 
-**How to call one** — the 3,838 operators are not all reachable the same way. Measured on this
+**How to call one** — the 3,839 operators are not all reachable the same way. Measured on this
 version (`fullseye.list_ops(include_ledger=True)`, then `hasattr` per name):
 
 | way of calling | reaches | what it covers |
 |---|---|---|
 | `fullseye.apply(img, "name")` / `fullseye.run_pipeline` | the 2-D registry (947 single-input + 17 n-ary, by name) | the evolvable vocabulary |
 | `fullseye.op.<name>(img)` | 947 (935 registry + 12 colour) | the same 2-D ops, by attribute |
-| `fullseye.ledger.<name>(...)` | all 2,874 typed-ledger ops | everything outside the 2-D registry |
-| `fullseye.<name>(...)` directly | only 770 of the 3,838 (767 ledger + 3 registry) | the rest raise `AttributeError` with a pointer to the right entry |
+| `fullseye.ledger.<name>(...)` | all 2,875 typed-ledger ops | everything outside the 2-D registry |
+| `fullseye.<name>(...)` directly | only 770 of the 3,839 (767 ledger + 3 registry) | the rest raise `AttributeError` with a pointer to the right entry |
 
 So `fullseye.<name>` is a convenience for a minority of names; when a name is not an attribute of
 `fullseye`, call it with `fullseye.apply` (2-D ops, `fullseye.op.<name>`) or `fullseye.ledger.<name>` /
 `fullseye.op_run("name")` (ledger ops). `fullseye.list_ops()` lists only the 964 2-D ops by default;
-pass `include_ledger=True` for the full 3,838.
+pass `include_ledger=True` for the full 3,839.
 
 ![Real outputs of classic 2-D vision operators — edges, segmentation, contour measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
 
@@ -325,7 +325,7 @@ stacking) lets you develop and test perception pipelines without hardware:
 
 ![Physical-AI sensor simulation suite — pseudo-LiDAR, stereo depth, event camera (DVS), focus stacking, polarization, camera+IMU Kalman fusion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
 
-The **3-D side is where Fullseye differentiates most**: 377 typed 3-D operators
+The **3-D side is where Fullseye differentiates most**: 378 typed 3-D operators
 spanning point clouds / meshes / volumes / SDF — 3-D feature descriptors
 (SHOT, FPFH, spin images), TSDF fusion, fringe projection, photometric stereo,
 superquadric fitting, medial axis, geodesic distance, visual hull, and
@@ -417,7 +417,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | **Read the whole story end to end (long-form)** | [`docs/articles/fullseye_overview_qiita_en.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md) |
 | See what the operators produce (result gallery) | `docs/GALLERY.md` |
 | Browse the paper exhibits (op demos and the PoC museum, en/ja; accession numbers in `exhibit_numbers.json`) | `docs/articles/exhibits/` |
-| Look up any of the 3,838 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Look up any of the 3,839 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
 | Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
 | Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |

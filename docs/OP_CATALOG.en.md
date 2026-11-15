@@ -608,7 +608,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 **space**
 - `poc_star_tracker` — ops: (not linked from any op note) `py -3.11 examples/poc_star_tracker.py`
 
-### 3-D point cloud / volume / surface (124 examples)
+### 3-D point cloud / volume / surface (125 examples)
 
 **registration**
 - `cad_to_scan` — ops: (not linked from any op note) `py -3.11 examples_3d/cad_to_scan.py`
@@ -640,6 +640,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `inner_box_inspection` — ops: `inner_box3` `py -3.11 examples_3d/inner_box_inspection.py`
 - `oriented_bounding_box` — ops: `fit_box3`, `smallest_box3`, `smallest_box3_axis` `py -3.11 examples_3d/oriented_bounding_box.py`
 - `hull_bounds` — ops: `aabb`, `convex_hull`, `mesh_volume`, `min_enclosing_sphere`, `obb` `py -3.11 examples_3d/hull_bounds.py`
+- `convex_hull_gap_clearance` — ops: `convex_hull_gap`, `distance_segment_segment`, `hausdorff_distance`, `radius_outlier_removal` `py -3.11 examples_3d/convex_hull_gap_clearance.py`
 - `gear_metrology` — ops: `box_sdf`, `grid_coords`, `sdf_intersect`, `sdf_union`, `sphere_sdf` `py -3.11 examples_3d/gear_metrology.py`
 - `cylinder_axis_metrology` — ops: `estimate_normals` `py -3.11 examples_3d/cylinder_axis_metrology.py`
 
@@ -846,9 +847,9 @@ Ops that do not fit the one-image pipeline (two images, point sequences, variabl
 
 ## Operators by family (family → category, all ops)
 
-_3844 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
+_3845 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
 
-Families: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 742 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+Families: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 742 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -1916,7 +1917,7 @@ Pipeline ops that take one image and return one image / region / contour / featu
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` GPU: none — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · examples: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` GPU: none — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · examples: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d (377 ops / 68 categories)
+### 3d (378 ops / 68 categories)
 
 Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as functions.
 
@@ -1941,9 +1942,10 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 - `vol_boundary` `voxel → voxel` GPU: inside a chain only (allow-list) — Boundary shell of a binary volume (the 3-D ``region_boundary``). · examples: `roi_domain_boundary`
 - `vol_boundary_points` `voxel → points` GPU: yes (allow-list) — Boundary shell as an ``(N, 3)`` point cloud in ``(z, y, x)`` order. · examples: `roi_domain_boundary`
 
-#### 3d / bounds (4)
+#### 3d / bounds (5)
 - `aabb` `points → primitive` GPU: none — Axis-aligned bounding box. Returns ``(min (3,), max (3,))``. · examples: `hull_bounds`
 - `convex_hull` `points → mesh` GPU: none — Convex hull of a point set -> ``(V, F)`` with outward-oriented triangles. · examples: `hull_bounds`
+- `convex_hull_gap` `points × points → table` GPU: none — Gap (shortest distance) between the convex hulls of two vertex sets, returned with certified lower and upper bounds. · examples: `convex_hull_gap_clearance`
 - `min_enclosing_sphere` `points → primitive` GPU: none — Point set (N,3) → the (approximate) minimum enclosing sphere containing every point, {center(3), radius}. · examples: `hull_bounds`
 - `obb` `points → primitive` GPU: none — Oriented bounding box by PCA. · examples: `hull_bounds`
 
@@ -2065,7 +2067,7 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 - `distance_line_line` `primitive → measurement` GPU: none — The distance between two lines (skew lines included). Falls back to point-line distance when they are parallel. · examples: `geometry_metrology`
 - `distance_point_line` (halcon: `distance_point_line`) `points × primitive → measurement` GPU: none — Returns the perpendicular distance from a point to a line (point on the line + direction), in 2-D or 3-D. · examples: `geometry_metrology`
 - `distance_point_plane` `points × primitive → measurement` GPU: none — Returns the distance from a point to a plane (unsigned, in the units of the input coordinates). · examples: `geometry_metrology`
-- `distance_segment_segment` `primitive → measurement` GPU: none — Shortest distance between **finite line segments** and the pair of their closest points. → ``(distance, cp, cq)``. · examples: `geometry_metrology`
+- `distance_segment_segment` `primitive → measurement` GPU: none — Shortest distance between **finite line segments** and the pair of their closest points. → ``(distance, cp, cq)``. · examples: `convex_hull_gap_clearance`, `geometry_metrology`
 - `fit_box3` `points → primitive` GPU: none — Oriented box fit by PCA (fast, noise-tolerant; the same construction as ``pcseg.obb``). · examples: `oriented_bounding_box`
 - `fit_circle3` `points → primitive` GPU: none — 3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane, then a circle. · examples: `primitive_fitting_3d`
 - `fit_circle_3d` `points → primitive` GPU: none — Point set → a 3-D circle (fit the plane, then fit a 2-D circle within it). Returns (center, radius, normal). · examples: `geometry_metrology`
@@ -2144,7 +2146,7 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 #### 3d / metrics (8)
 - `chamfer_distance` `points × points → measurement` GPU: none — The symmetric Chamfer distance = 0.5*(mean_a min_b + mean_b min_a). → scalar. Smaller is a closer match. · examples: `itokawa_pose_canonical`, `itokawa_shape_match`, `mesh_lod_download`, `metrics_eval`, `poisson_surface_recon`
 - `fscore` `points × points → measurement` GPU: none — F-score @ tau = the harmonic mean of precision and recall. → (f, precision, recall). The standard reconstruction metric. · examples: `metrics_eval`
-- `hausdorff_distance` `points × points → measurement` GPU: none — The symmetric Hausdorff distance = max(max_a min_b, max_b min_a). → scalar. The worst-case discrepancy. · examples: `mesh_lod_download`, `pointcloud_downsampling`, `poisson_surface_recon`
+- `hausdorff_distance` `points × points → measurement` GPU: none — The symmetric Hausdorff distance = max(max_a min_b, max_b min_a). → scalar. The worst-case discrepancy. · examples: `convex_hull_gap_clearance`, `mesh_lod_download`, `pointcloud_downsampling`, `poisson_surface_recon`
 - `m3c2_distance` `points × points → signal` GPU: none — Measures the difference between point clouds from 2 epochs **along the normal direction** (M3C2). → the 2 values ``(distance, lod)``. · examples: `metrics_eval`
 - `normal_consistency` `points × normals → measurement` GPU: none — Normal agreement over nearest-neighbour correspondences = mean|cos(na, nb)| (orientation ignored). → [0,1]. 1 = perfect agreement. · examples: `metrics_eval`
 - `pose_error` `pose × pose → table` GPU: none — Pose error = (rotation angle [deg], translation norm). For comparing a registration result against ground truth. → (rot_deg, trans_err). · examples: `itokawa_self_register`
@@ -2216,7 +2218,7 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 
 #### 3d / preprocess (5)
 - `mls_smooth` `points → points` GPU: none — Drop noise by projecting each point onto a local polynomial surface (Moving Least Squares smoothing). · examples: `pcl_geodesic`
-- `radius_outlier_removal` `points → points` GPU: none — Remove the points with fewer than min_neighbors neighbours within radius (isolated-point removal). · examples: `pcl_geodesic`
+- `radius_outlier_removal` `points → points` GPU: none — Remove the points with fewer than min_neighbors neighbours within radius (isolated-point removal). · examples: `convex_hull_gap_clearance`, `pcl_geodesic`
 - `statistical_outlier_removal` `points → points` GPU: none — Remove the points whose mean distance to their k neighbours is a global outlier (statistical outlier removal). · examples: `pcl_geodesic`
 - `volume_downsample` `voxel → voxel` GPU: inside a chain only (allow-list) — Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data decimation). · examples: `volume_downsampling`
 - `voxel_grid_downsample` `points → points` GPU: none — Thin a point set on a lattice of edge voxel_size, collapsing each cell to one centroid point (deterministic). · examples: `pointcloud_downsampling`

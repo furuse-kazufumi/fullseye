@@ -4,7 +4,7 @@
 **前** = 領域の解析の族(`accel_label.ADOPTED`、34 op)を経路から外した場合、**後** = 今の経路。
 `assume_cuda=True` は CUDA・CuPy・空き VRAM のある機械として経路表だけで決める(GPU の無い CI でも同じ表)。
 
-| 2 段以上のレシピ 220 本・578 段 | GPU の段 | 全段 GPU | 切り替わり | 往復の見込み |
+| 2 段以上のレシピ 221 本・580 段 | GPU の段 | 全段 GPU | 切り替わり | 往復の見込み |
 |---|---:|---:|---:|---:|
 | 前 | 162 | 8 | 135 | 126 |
 | 後 | 199 | 33 | 102 | 126 |
@@ -265,6 +265,7 @@
 | Analyze — attention as a key-value lookup (RMSNorm → scores → softmax → mix) | 0 / 0 | 0 / 0 | rms_norm[CPU:not_listed] → attention_scores[CPU:not_listed] → attention_weights[CPU:not_listed] → attention_apply[CPU:not_listed] |
 | Measure — observed order of convergence of a grid study (GCI) | 0 / 0 | 0 / 0 | conv_observed_order[CPU:not_listed] |
 | Measure — fixed point of an iteration with convergence proof (Anderson) | 0 / 0 | 0 / 0 | iterate_fixed_point[CPU:not_listed] |
+| Measure — clearance between two scanned parts (drop flying points, then the hull gap) | 0 / 0 | 0 / 0 | radius_outlier_removal[CPU:not_listed] → convex_hull_gap[CPU:not_listed] |
 | Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour) | 0 / 0 | 0 / 0 | threshold_sub_pix[CPU:not_listed] → fit_circle_xld[CPU:not_listed] |
 | Inspect — count touching parts as watershed basins (one label per object) | 3 / 3 | 3 / 3 | threshold[GPU] → distance_transform[GPU] → invert_image[GPU] → hierarchical_watershed[CPU:not_listed] |
 | Segment — marker-controlled watershed inside a mask (two touching parts, background kept out) | 3 / 2 | 3 / 2 | threshold[GPU] → blob_label[CPU:below_measured_size] → sobel_amp[GPU] → invert_image[GPU] → blob_split[CPU:not_listed] |

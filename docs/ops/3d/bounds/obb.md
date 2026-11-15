@@ -54,7 +54,7 @@ object's size and grasp width once it has been segmented out.
 
 ## 同カテゴリ(`bounds`)
 
-[convex_hull](convex_hull.md) · [aabb](aabb.md) · [min_enclosing_sphere](min_enclosing_sphere.md)
+[convex_hull](convex_hull.md) · [aabb](aabb.md) · [min_enclosing_sphere](min_enclosing_sphere.md) · [convex_hull_gap](convex_hull_gap.md)
 
 ---
 *Provenance: pcseg.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

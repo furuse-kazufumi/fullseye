@@ -1,14 +1,14 @@
 {
  "summary": {
-  "recipes": 271,
+  "recipes": 272,
   "recipes_py": 25,
-  "recipebook": 246,
-  "multi_stage": 220,
+  "recipebook": 247,
+  "multi_stage": 221,
   "families_total": 60,
   "families_covered": 60,
   "families_uncovered": [],
   "task_class": {
-   "3d": 37,
+   "3d": 38,
    "analysis": 24,
    "inspection": 60,
    "measurement": 73,
@@ -44,12 +44,12 @@
   },
   "runner": {
    "mcp": 89,
-   "python": 182
+   "python": 183
   },
-  "truth_gated": 247,
+  "truth_gated": 248,
   "type_cuts_total": 0,
   "recipes_with_type_cuts": 0,
-  "distinct_ops": 413,
+  "distinct_ops": 415,
   "categories_2d_total": 49,
   "categories_2d_covered": 25,
   "categories_2d_uncovered": [
@@ -81,7 +81,7 @@
   "gpu": {
    "snapshot_commit": "a3f91eae72f851e870e6a45294ecfc44ded9cb10",
    "recipes_measured": 247,
-   "recipes_unmeasured": 24,
+   "recipes_unmeasured": 25,
    "recipes_with_gpu_stage": 127,
    "switches_total": 96,
    "switch_histogram": {
@@ -101,9 +101,9 @@
   },
   {
    "family": "3d",
-   "ops": 377,
-   "recipes": 25,
-   "ops_used": 35
+   "ops": 378,
+   "recipes": 26,
+   "ops_used": 37
   },
   {
    "family": "acceptance",
@@ -5136,6 +5136,27 @@
    "gpu_stages": 0,
    "gpu_unmeasured_ops": [],
    "gpu_switches": 0
+  },
+  {
+   "name": "Measure — clearance between two scanned parts (drop flying points, then the hull gap)",
+   "source": "recipebook",
+   "family": "3d",
+   "task_class": "3d",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "radius_outlier_removal",
+    "convex_hull_gap"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "radius_outlier_removal",
+    "convex_hull_gap"
+   ],
+   "gpu_switches": null
   },
   {
    "name": "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)",

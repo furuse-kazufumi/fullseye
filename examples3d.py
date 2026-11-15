@@ -317,6 +317,11 @@ EXAMPLES = [
     {"id": "hull_bounds", "task": "metrology", "data": "synthetic",
      "name": "点群のバウンディング(凸包/OBB/AABB/最小包含球)",
      "summary": "生点群から凸包・向き付き箱(OBB)・軸整列箱(AABB)・最小包含球を起こす。新規 min_enclosing_sphere は素朴球 r=9.95→5.63(比0.57・全点内包)、OBB体積は回転箱で AABB の0.20倍。把持/衝突/寸法検査の基本メトロロジー。"},
+    {"id": "convex_hull_gap_clearance", "task": "metrology", "data": "synthetic",
+     "name": "2 つの部品の凸包の隙間を保証つきで測る(新規 convex_hull_gap)",
+     "summary": "箱 2 つの隙間 d・角どうしの √(dx²+dy²+dz²) を上限と下限の差 1e-9 以下で返し、独立な線形計画の t も "
+                "t/√3 ≤ 隙間 ≤ t に入る。十字の棒は頂点の間が 1.4 離れていても凸包は交わる(hausdorff は 1.4)。"
+                "飛び点で 0.3 → 0.14 に詰まって見えた組立の隙間が、radius_outlier_removal の後で 0.3 に戻る。"},
     {"id": "mesh_smooth", "task": "mesh_process", "data": "synthetic",
      "name": "三角形メッシュの平滑化(Laplacian/Taubin・非収縮)",
      "summary": "ノイズメッシュを接続グラフ上で平滑化。RMS 0.627→Laplacian 0.306/Taubin 0.215。Taubin は平均半径ズレ0.025で Laplacian 0.298 の約1/12=非収縮。marching cubes/スキャン後処理向け。"},

@@ -7,6 +7,25 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — G1 いろは坂の長尺動画の製作から生まれた op(2026-11-15)
+
+Unitree G1 が国土地理院 DEM5A の上に置いた道を登る動画の製作で、手元の道具として書いた計算のうち、別の題材にも使えて
+既存の op の組み合わせでは出せないものを、Fullseye の作法(型・台帳・6 言語の要約・真値の門・走る例・recipe)で書き直した。
+製作の道具を写したのではなく、敵対的な確かめ(名前でなく働きで既存の op を探した)で残ったものだけを足す。
+
+- `convex_hull_gap`(hull3d、3-D 台帳の `bounds`、`points × points → table`): 2 つの頂点集合の凸包どうしの隙間を
+  Wolfe (1976) の最小ノルム点で解く(差の集合を作らず、1 反復 O(N_A + N_B)。有限回で厳密な点に着く)。止める条件そのものが
+  保証で、上限 = 実際に作った最も近い点の組の距離、下限 = 頂点から直接測った分離の帯の幅(差 ≤ `tol`)。既定では独立な
+  線形計画(HiGHS、`‖w‖∞ ≤ 1` で `w·a ≤ c ≤ w·b − t` の最大の t)で離れ方を別に決め、`t/√d ≤ 隙間 ≤ t` から外れれば
+  RuntimeError。保証に届かない答えも RuntimeError(黙って近似値を返さない)。貫通の深さは返さない。2-D の点にも使える。
+  製作では MuJoCo の凸距離ソルバ(libccd)の誤った値を判定し直すのに使った。教訓: 頂点どうしの距離では重なりを否定できない
+  (十字の棒は頂点の間が 1.4 離れていても凸包は交わり、hausdorff_distance は 1.4 と出す)。
+  門 `tests/test_convex_hull_gap.py`(18 本): 面の向き合う箱で隙間 = d(1e-12)、角どうしで √(dx²+dy²+dz²)、接触と食い込みで 0、
+  十字の棒、剛体変換で不変、`distance_segment_segment`(閉形式)と乱数 400 組で 1e-9、乱数の凸多面体で SLSQP の QP と 1e-6。
+  同じ門を、頂点どうしの最短距離と Frank–Wolfe を 200 歩で止めた上限(製作の作り方)にかけると落ち、囲いの計算を壊した写しは
+  RuntimeError になる。例 `examples_3d/convex_hull_gap_clearance.py`(examples3d に登録、図 2 枚)、recipe「走査した 2 部品の
+  隙間」(`radius_outlier_removal` で隙間の中の飛び点を除いてから測る。飛び点ありの凸包は 0.3 が 0.14 に見える)。
+
 ### 追加 — PoC「置かれたタオルの角・辺・折り線を古典の画像処理で見つける」(収蔵 2026.317)
 
 - `examples/poc_cloth_towel_corners_synth.py`: 0〜2 回折ったタオルを**自前の幾何で描き**(MuJoCo の布は台を貫通して不採用)、`gaussian` / `otsu` / `fill_up` / `sk_find_contours` / `xg_gen_polygons` と辺の直線の交点で隅・辺を出す。真値は描画側(隅の高さで投影)。データは自作の合成で、新 op なし。

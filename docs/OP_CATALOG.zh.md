@@ -608,7 +608,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 **space**
 - `poc_star_tracker` — op:(没有 op 笔记链接到此例) `py -3.11 examples/poc_star_tracker.py`
 
-### 3-D 点云/体数据/曲面(124 例)
+### 3-D 点云/体数据/曲面(125 例)
 
 **registration**
 - `cad_to_scan` — op:(没有 op 笔记链接到此例) `py -3.11 examples_3d/cad_to_scan.py`
@@ -640,6 +640,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `inner_box_inspection` — op: `inner_box3` `py -3.11 examples_3d/inner_box_inspection.py`
 - `oriented_bounding_box` — op: `fit_box3`, `smallest_box3`, `smallest_box3_axis` `py -3.11 examples_3d/oriented_bounding_box.py`
 - `hull_bounds` — op: `aabb`, `convex_hull`, `mesh_volume`, `min_enclosing_sphere`, `obb` `py -3.11 examples_3d/hull_bounds.py`
+- `convex_hull_gap_clearance` — op: `convex_hull_gap`, `distance_segment_segment`, `hausdorff_distance`, `radius_outlier_removal` `py -3.11 examples_3d/convex_hull_gap_clearance.py`
 - `gear_metrology` — op: `box_sdf`, `grid_coords`, `sdf_intersect`, `sdf_union`, `sphere_sdf` `py -3.11 examples_3d/gear_metrology.py`
 - `cylinder_axis_metrology` — op: `estimate_normals` `py -3.11 examples_3d/cylinder_axis_metrology.py`
 
@@ -846,9 +847,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 
 ## Operators by family(族 → 类别，全部 op)
 
-_共 3844 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
+_共 3845 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
 
-族一览: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 742 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族一览: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 742 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -1916,7 +1917,7 @@ _共 3844 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` GPU: 无 — 主轴方向 [度],折叠到 [0,180) 并除以 180。 · 示例: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` GPU: 无 — 全最小二乘直线残差 RMS = sqrt(协方差较小的特征值)。 · 示例: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d (377 ops / 68 categories)
+### 3d (378 ops / 68 categories)
 
 点云、体数据、网格与深度的 op(`ops3d.OPS3D`)。作为函数调用。
 
@@ -1941,9 +1942,10 @@ _共 3844 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `vol_boundary` `voxel → voxel` GPU: 仅在链中(许可列表) — 二值体的边界壳(3-D 版 ``region_boundary``)。 · 示例: `roi_domain_boundary`
 - `vol_boundary_points` `voxel → points` GPU: 有(许可列表) — 把边界壳作为 ``(z, y, x)`` 顺序的 ``(N, 3)`` 点云。 · 示例: `roi_domain_boundary`
 
-#### 3d / bounds (4)
+#### 3d / bounds (5)
 - `aabb` `points → primitive` GPU: 无 — 轴对齐包围盒。返回 ``(min (3,), max (3,))``。 · 示例: `hull_bounds`
 - `convex_hull` `points → mesh` GPU: 无 — 点集的凸包 -> ``(V, F)``,三角形朝外定向。 · 示例: `hull_bounds`
+- `convex_hull_gap` `points × points → table` GPU: 无 — 两个顶点集合的凸包之间的间隙(最短距离),连同有保证的上下界一起返回。 · 示例: `convex_hull_gap_clearance`
 - `min_enclosing_sphere` `points → primitive` GPU: 无 — 点群 (N,3) → 包含全部点的(近似)最小包围球 {center(3), radius}。 · 示例: `hull_bounds`
 - `obb` `points → primitive` GPU: 无 — 用 PCA 求有向包围盒。 · 示例: `hull_bounds`
 
@@ -2065,7 +2067,7 @@ _共 3844 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `distance_line_line` `primitive → measurement` GPU: 无 — 两直线间距离(含异面/skew)。平行时退化为点-线距离。 · 示例: `geometry_metrology`
 - `distance_point_line` (halcon: `distance_point_line`) `points × primitive → measurement` GPU: 无 — 返回点到直线(通过点与方向)的垂直距离(2-D / 3-D 通用)。 · 示例: `geometry_metrology`
 - `distance_point_plane` `points × primitive → measurement` GPU: 无 — 返回点到平面的距离(无符号,单位与输入坐标相同)。 · 示例: `geometry_metrology`
-- `distance_segment_segment` `primitive → measurement` GPU: 无 — **有限线段**之间的最短距离及其最近点对。→ ``(distance, cp, cq)``。 · 示例: `geometry_metrology`
+- `distance_segment_segment` `primitive → measurement` GPU: 无 — **有限线段**之间的最短距离及其最近点对。→ ``(distance, cp, cq)``。 · 示例: `convex_hull_gap_clearance`, `geometry_metrology`
 - `fit_box3` `points → primitive` GPU: 无 — 用 PCA 拟合有向长方体(快速、抗噪;与 ``pcseg.obb`` 同一构造)。 · 示例: `oriented_bounding_box`
 - `fit_circle3` `points → primitive` GPU: 无 — 对 ``(depth, row, col)`` 点做 3-D 圆拟合:先拟合支撑平面,再在面内拟合圆。 · 示例: `primitive_fitting_3d`
 - `fit_circle_3d` `points → primitive` GPU: 无 — 点群 → 3D 圆(先平面拟合,再在面内做 2D 圆拟合)。返回 (center, radius, normal)。 · 示例: `geometry_metrology`
@@ -2144,7 +2146,7 @@ _共 3844 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 #### 3d / metrics (8)
 - `chamfer_distance` `points × points → measurement` GPU: 无 — 对称 Chamfer 距离 = 0.5*(mean_a min_b + mean_b min_a)。→ scalar。越小越吻合。 · 示例: `itokawa_pose_canonical`, `itokawa_shape_match`, `mesh_lod_download`, `metrics_eval`, `poisson_surface_recon`
 - `fscore` `points × points → measurement` GPU: 无 — F-score @ tau = precision 与 recall 的调和平均。→ (f, precision, recall)。重建的标准指标。 · 示例: `metrics_eval`
-- `hausdorff_distance` `points × points → measurement` GPU: 无 — 对称 Hausdorff 距离 = max(max_a min_b, max_b min_a)。→ scalar。最坏情况的偏离。 · 示例: `mesh_lod_download`, `pointcloud_downsampling`, `poisson_surface_recon`
+- `hausdorff_distance` `points × points → measurement` GPU: 无 — 对称 Hausdorff 距离 = max(max_a min_b, max_b min_a)。→ scalar。最坏情况的偏离。 · 示例: `convex_hull_gap_clearance`, `mesh_lod_download`, `pointcloud_downsampling`, `poisson_surface_recon`
 - `m3c2_distance` `points × points → signal` GPU: 无 — **沿法线方向**测量 2 个时间点点云之间的差异(M3C2)。→ ``(distance, lod)`` 这 2 个值。 · 示例: `metrics_eval`
 - `normal_consistency` `points × normals → measurement` GPU: 无 — 最近邻对应下的法线一致度 = mean|cos(na, nb)|(忽略朝向)。→ [0,1]。1=完全一致。 · 示例: `metrics_eval`
 - `pose_error` `pose × pose → table` GPU: 无 — 位姿误差 = (旋转角[度], 平移范数)。用于配准结果与 GT 的比较。→ (rot_deg, trans_err)。 · 示例: `itokawa_self_register`
@@ -2216,7 +2218,7 @@ _共 3844 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### 3d / preprocess (5)
 - `mls_smooth` `points → points` GPU: 无 — 把每个点投影到局部多项式曲面上以去噪(Moving Least Squares 平滑)。 · 示例: `pcl_geodesic`
-- `radius_outlier_removal` `points → points` GPU: 无 — 去除半径 radius 内邻居数少于 min_neighbors 的点(孤立点去除)。 · 示例: `pcl_geodesic`
+- `radius_outlier_removal` `points → points` GPU: 无 — 去除半径 radius 内邻居数少于 min_neighbors 的点(孤立点去除)。 · 示例: `convex_hull_gap_clearance`, `pcl_geodesic`
 - `statistical_outlier_removal` `points → points` GPU: 无 — 去除 k 近邻平均距离在全局上离群的点(统计离群点去除)。 · 示例: `pcl_geodesic`
 - `volume_downsample` `voxel → voxel` GPU: 仅在链中(许可列表) — 按每轴整数 *factor* 对 ``(D, H, W)`` 体做块池化(数据抽稀)。 · 示例: `volume_downsampling`
 - `voxel_grid_downsample` `points → points` GPU: 无 — 用边长 voxel_size 的格子抽稀点群,把每个单元聚合为一个重心点(确定性)。 · 示例: `pointcloud_downsampling`
