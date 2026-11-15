@@ -1756,3 +1756,56 @@ def test_disabled_icon_buttons_draw_the_icon_in_the_off_colour(tmp_path, monkeyp
         assert wrong == [], wrong[:8]
     finally:
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# D104 (a separate window too) — the code made a separate window is not put away by Esc or by its close
+# --------------------------------------------------------------------------- #
+def test_principal_in_a_separate_window_survives_esc_and_close(tmp_path, monkeypatch):
+    from PySide6 import QtCore, QtGui, QtWidgets
+    from PySide6.QtTest import QTest
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        st = win._panels
+        principals = [k for k in studio_panels.PRINCIPAL if k in win._docks]
+        assert principals == ["program"]
+        checked = 0
+        for key in principals:
+            dock = win._docks[key]
+            editor = dock.widget().findChild(QtWidgets.QPlainTextEdit)
+            assert editor is not None
+            assert not (dock.features() & QtWidgets.QDockWidget.DockWidgetClosable), key   # Qt refuses its close
+            # 1. made a separate window through its own menu (the last entry of the band's menu)
+            bar = st["titles"][key]
+            bar.fill_menu()
+            st["float_actions"][key].trigger(); _pump(app, 0.4)
+            assert dock.isFloating() and dock.isVisible(), key
+            ways = {
+                "Esc in the editor": lambda: QTest.keyClick(editor, QtCore.Qt.Key_Escape),
+                "Esc on the window": lambda: QtCore.QCoreApplication.sendEvent(
+                    dock, QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Escape, QtCore.Qt.NoModifier)),
+                "its close (Alt+F4)": dock.close,
+            }
+            for name, press in ways.items():
+                editor.setFocus(); _pump(app, 0.1)
+                press(); _pump(app, 0.3)
+                assert dock.isVisible() and not dock.isHidden() and dock.isFloating(), (key, name)
+                assert st["buttons"][key].isChecked(), (key, name)          # the bar still says it is shown
+                checked += 1
+            assert not win._layout_state.focus_image                        # the window's own Esc did not fire either
+            studio_panels.toggle_float(win, key, False); _pump(app, 0.3)
+            for name, press in ways.items():                                # docked: the same, nothing is put away
+                editor.setFocus(); _pump(app, 0.05)
+                if name != "Esc in the editor":
+                    press(); _pump(app, 0.2)
+                assert dock.isVisible(), (key, name)
+        assert checked >= 3
+        # the others are still put away by Esc in a separate window (D58), so the rule is about principals only
+        ops = win._docks["operators"]
+        studio_panels.toggle_float(win, "operators", True); _pump(app, 0.3)
+        QtCore.QCoreApplication.sendEvent(
+            ops, QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Escape, QtCore.Qt.NoModifier)); _pump(app, 0.2)
+        assert ops.isHidden()
+        assert ops.features() & QtWidgets.QDockWidget.DockWidgetClosable
+    finally:
+        _close(app, win)

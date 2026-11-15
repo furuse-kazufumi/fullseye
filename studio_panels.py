@@ -545,6 +545,16 @@ def show_principal(win, key):
     return True
 
 
+def _focus_main(win):
+    """The keyboard back to the main window: the image window in front (else the window itself)."""
+    win.activateWindow()
+    mdi = getattr(win, "_mdi", None)
+    sub = mdi.activeSubWindow() if mdi is not None else None
+    target = sub.widget() if sub is not None and sub.widget() is not None else (mdi or win)
+    target.setFocus()
+    return target
+
+
 def toggle_panel(win, key):
     """The panel-bar click: hidden -> shown and raised; behind a tab -> raised; in front -> hidden.
     A principal (``PRINCIPAL``) is only ever shown, raised and focused. Returns True when the
@@ -2777,19 +2787,35 @@ def install(win, tr, settings=None):
         a box that holds text (the search of Operators, a watch expression), the first Esc clears the box
         and the next one closes the window (D58, the Esc ladder's step 3).
 
+        A principal (the code) is never put away (D104), also as a separate window: there Esc gives the
+        keyboard back to the main window and its close is refused (it is brought forward instead).
+
         The main window has an Esc shortcut of its own (leave image focus) that would take the key
         first, so the ShortcutOverride is claimed here; the key press that follows closes the window.
         A child that uses Esc itself (an open completer, a line being edited) never lets it get here."""
 
         def eventFilter(self, obj, ev):
-            if (ev.type() in (QtCore.QEvent.KeyPress, QtCore.QEvent.ShortcutOverride)
-                    and ev.key() == QtCore.Qt.Key_Escape and ev.modifiers() == QtCore.Qt.NoModifier
-                    and isinstance(obj, QtWidgets.QDockWidget) and obj.isFloating()):
-                if ev.type() == QtCore.QEvent.KeyPress:
+            t = ev.type()
+            if (t not in (QtCore.QEvent.Close, QtCore.QEvent.KeyPress, QtCore.QEvent.ShortcutOverride)
+                    or not isinstance(obj, QtWidgets.QDockWidget)):
+                return False
+            key = next((k for k, d in win._docks.items() if d is obj), None)
+            principal = key in PRINCIPAL
+            if t == QtCore.QEvent.Close:
+                if principal and win.isVisible():
+                    ev.ignore()                      # D104: Alt+F4 on the code's own window does not put it away
+                    QtCore.QTimer.singleShot(0, lambda k=key: show_principal(win, k))
+                    return True
+                return False
+            if (ev.key() == QtCore.Qt.Key_Escape and ev.modifiers() == QtCore.Qt.NoModifier
+                    and obj.isFloating()):
+                if t == QtCore.QEvent.KeyPress:
                     fw = obj.focusWidget()
                     if (isinstance(fw, QtWidgets.QLineEdit) and fw.text() and not fw.isReadOnly()
                             and fw.isVisible() and obj.isAncestorOf(fw)):
                         fw.clear()                   # D58: a box with text in it - the first Esc only clears it
+                    elif principal:
+                        _focus_main(win)             # D104: the code stays; the keyboard goes back to the image
                     else:
                         obj.hide()
                 ev.accept()
@@ -2874,6 +2900,8 @@ def install(win, tr, settings=None):
         dock.setTitleBarWidget(bar)
         st["titles"][key] = bar
         dock.installEventFilter(esc)
+        if key in PRINCIPAL:                     # D104: Qt refuses the close of a principal (Alt+F4, close())
+            dock.setFeatures(dock.features() & ~QtWidgets.QDockWidget.DockWidgetClosable)
         dock.visibilityChanged.connect(lambda _v: sync(win))
         fa = QtGui.QAction("%s: %s" % (tr(S_FLOAT), dock.windowTitle()), win)
         fa.setCheckable(True)
