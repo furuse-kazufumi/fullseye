@@ -34,6 +34,15 @@ EXTEND: 自分のラインで使うなら :func:`grounds` の戻り値を撮影�
 3. ★**検出器を変えても残る**。整合フィルタ(背景差 + ガウシアン相関)と
    fullseye の :func:`laplace_of_gauss` という独立な 2 つで比はそれぞれ
    2.17〜3.47 倍と 2.03〜3.20 倍。**片方の癖ではない**。
+   ★★**背景のスペクトルで白色化した整合フィルタでも残る**(2026-11-15、外部レビューの指摘で足した:
+   上の 2 つは背景の色の付いたスペクトルに合わせておらず、この地に対して強い基準線ではない)。
+   背景のパワースペクトルは**限界を測る切り出しと重ならない切り出し**(節 4 の閾値と同じ右下)で推定し、
+   合成の地は別の乱数で引いた同じ σ の白色雑音で推定する。白色化で実写の限界は 0.61〜0.72 倍に下がるが、
+   合成の限界も 0.40〜0.65 倍に下がるので、比は 2.96〜4.32 倍で残る(実行時に印字する値が正)。合成の地の
+   スペクトルを推定する乱数を 5 通り、白色化の作り(核の一辺 31〜95・床 1e-4〜1e-2・平滑 0.5〜3)を振っても
+   2.65〜4.32 倍(2026-11-15 の探針、repo の外)。これは定常なガウスの
+   背景に対する最良の線形の検出器で、目地のような定常でない構造には最良ではない —— 「この 3 つの
+   検出器では」までが言える範囲。
 4. ★★**「実写だから場所で変わる」は誤り**。場所による限界の散らばりは
    brick が 16.8 倍(σ を揃えた合成では 3.3 倍)なのに、grass 2.4 倍・
    gravel 3.3 倍は**合成の 3.3 倍と区別がつかない**。散らばりを生むのは
@@ -102,6 +111,47 @@ def log_op(img, a=0.5):
     return -np.asarray(fs.op.laplace_of_gauss(img, a=a), dtype=np.float64)
 
 
+#: 白色化した整合フィルタの作り(2026-11-15 に足した。探針で核 31〜95・床 1e-4〜1e-2・平滑 0.5〜3、合成の地の
+#: スペクトルを推定する乱数 5 通りを振っても比は 2.65〜4.32 倍。ここの値は探針の真ん中で、結果を見て選んではいない)。
+WHITEN_KERNEL = 63          #: 空間の核の一辺 [px]
+WHITEN_FLOOR = 1e-3         #: パワースペクトルの床(平均に対する比)
+WHITEN_SMOOTH = 1.5         #: パワースペクトルの平滑(周波数の画素)
+
+
+def background_psd(train):
+    """無欠陥の切り出しから背景のパワースペクトルを推定する(平均を引き、Hann 窓、周波数で平滑)。"""
+    x = np.asarray(train, np.float64) - float(np.mean(train))
+    w = np.outer(np.hanning(x.shape[0]), np.hanning(x.shape[1]))
+    p = np.abs(np.fft.fft2(x * w)) ** 2 / float((w ** 2).sum())
+    return np.fft.ifftshift(ndi.gaussian_filter(np.fft.fftshift(p), WHITEN_SMOOTH, mode="wrap"))
+
+
+def whitened_matched(train, sigma=DEFECT_SIGMA):
+    """検出器 C: 背景のスペクトルで白色化した整合フィルタ。周波数応答 H = conj(T) / P(直流は 0)。
+
+    ``train``(**限界を測る画像とは別の**無欠陥の切り出し)で P を推定する。返すのは検出器の関数で、
+    画像を反射で延ばしてから空間の核(一辺 :data:`WHITEN_KERNEL`、Hann で裾を落とす)を畳み込む。線形。
+    """
+    from scipy.signal import fftconvolve
+
+    n0, n1 = train.shape
+    p = background_psd(train)
+    dy = np.minimum(np.arange(n0), n0 - np.arange(n0))[:, None]
+    dx = np.minimum(np.arange(n1), n1 - np.arange(n1))[None, :]
+    t = np.fft.fft2(np.exp(-(dy ** 2 + dx ** 2) / (2.0 * sigma ** 2)))
+    h_f = np.conj(t) / (p + WHITEN_FLOOR * p.mean())
+    h_f[0, 0] = 0.0                               # 直流は見ない(整合フィルタの核と同じ)
+    h = np.real(np.fft.fftshift(np.fft.ifft2(h_f)))
+    r = WHITEN_KERNEL // 2
+    h = h[n0 // 2 - r:n0 // 2 + r + 1, n1 // 2 - r:n1 // 2 + r + 1]
+    h = h * np.outer(np.hanning(WHITEN_KERNEL + 2)[1:-1], np.hanning(WHITEN_KERNEL + 2)[1:-1])
+    h /= np.sqrt(float((h ** 2).sum()))
+
+    def det(img, **_):
+        return fftconvolve(np.pad(np.asarray(img, np.float64), r, mode="reflect"), h, mode="same")[r:-r, r:-r]
+    return det
+
+
 def raw(img, **_):
     """ゼロ点: 何も引かず、生の画素そのもの。"""
     return np.asarray(img, dtype=np.float64)
@@ -154,6 +204,31 @@ def floors(ground, detector, pos, amps, sigma=DEFECT_SIGMA, tol=TOL, **kw):
     return np.array(out, dtype=np.float64)
 
 
+def floors_linear(ground, detector, pos, amps, sigma=DEFECT_SIGMA, tol=TOL):
+    """:func:`floors` と同じ判定を、**線形の検出器**だけに使える速い形で: s(地 + a·欠陥) = s(地) + a·s(欠陥)。
+
+    ★線形でない検出器(``log_op`` は op 側で画像ごとに正規化する)には使えない。使う前に、線形の整合フィルタで
+    :func:`floors` と一致することを門にする(:func:`section_floor`)。
+    """
+    s0 = detector(ground)
+    out = []
+    for (r, c) in pos:
+        sb = detector(blob(ground.shape, r, c, 1.0, sigma))
+        got = np.inf
+        for amp in amps:
+            pr, pc = np.unravel_index(np.argmax(s0 + amp * sb), s0.shape)
+            if (pr - r) ** 2 + (pc - c) ** 2 <= tol ** 2:
+                got = amp
+                break
+        out.append(got)
+    return np.array(out, dtype=np.float64)
+
+
+#: 白色化した整合フィルタの結果(section_floor が埋める)と、線形の速い判定の検算(食い違いの位置の数)。
+WHITENED: dict = {}
+RATIOS_W: list = []
+LINEAR_CHECK: list = []
+
 #: 振幅の刻み。★これ自体がノブ。粗いと限界が同じ格子点に丸まって、
 #: 「σ が大きいほど差が開く」のような**刻みが作った差**を本物と誤読する
 #: (2026-09-09、34 段では σ=1.5 と σ=3.0 の中央値がどちらも 3.20 に丸まった)。
@@ -175,7 +250,11 @@ def section_floor(real, rng):
     for name, g in real.items():
         rs = residual_std(g)
         syn = matched_synthetic(rs, rng)
-        fr_m = float(np.median(floors(g, matched, pos, AMPS)))
+        arr_m = floors(g, matched, pos, AMPS)
+        if name == GROUNDS[0]:
+            same = floors_linear(g, matched, pos, AMPS)
+            LINEAR_CHECK.append(int(np.sum(same != arr_m)))
+        fr_m = float(np.median(arr_m))
         fs_m = float(np.median(floors(syn, matched, pos, AMPS)))
         fr_l = float(np.median(floors(g, log_op, pos, AMPS)))
         fs_l = float(np.median(floors(syn, log_op, pos, AMPS)))
@@ -185,6 +264,26 @@ def section_floor(real, rng):
               % (name, rs, fr_m, fs_m, fr_m / fs_m, fr_l, fs_l, fr_l / fs_l))
     print("\n   → 雑音の量を揃えても、実写の地の限界は %.2f〜%.2f 倍。"
           "**限界を決めているのは雑音ではない**。" % (min(ratios), max(ratios)))
+    # ★白色化した整合フィルタ(2026-11-15、外部レビューの指摘で足した)。背景のスペクトルは重ならない切り出しで推定する。
+    print("\n   検出器 C: 背景のスペクトルで白色化した整合フィルタ(スペクトルは限界を測る切り出しと重ならない右下の "
+          "%d × %d で推定。合成の地は別の乱数で引いた同じ σ の白色雑音で推定)" % (N, N))
+    print("   線形の速い判定の検算: %s の整合フィルタで、floors と floors_linear の食い違い %d / %d 位置"
+          % (GROUNDS[0], LINEAR_CHECK[-1], len(pos)))
+    print("   %-8s | %8s %8s %6s | %s" % ("地", "実写", "合成", "比", "白色化で限界が何倍に(実写 / 合成)"))
+    ratios_w = []
+    for i, (name, g) in enumerate(real.items()):
+        rs, fr_m, fs_m, syn = table[name][0], table[name][1], table[name][2], table[name][5]
+        held = realdata.sample_photo(name)[-N:, -N:].astype(np.float64)
+        syn_train = matched_synthetic(rs, np.random.default_rng(SEED + 1000 + i))
+        fr_w = float(np.median(floors_linear(g, whitened_matched(held), pos, AMPS)))
+        fs_w = float(np.median(floors_linear(syn, whitened_matched(syn_train), pos, AMPS)))
+        ratios_w.append(fr_w / fs_w)
+        WHITENED[name] = (fr_w, fs_w)
+        print("   %-8s | %8.4f %8.4f %5.2fx | %.2f / %.2f" % (name, fr_w, fs_w, fr_w / fs_w, fr_w / fr_m, fs_w / fs_m))
+    print("   → 白色化した整合フィルタでも、実写の地の限界は %.2f〜%.2f 倍。白色化は実写の限界を下げるが、"
+          "合成の限界も下げるので比は縮まない(定常なガウスの背景に最良の線形検出器。目地のような定常でない構造には最良ではない)。"
+          % (min(ratios_w), max(ratios_w)))
+    RATIOS_W[:] = ratios_w
     return table, ratios
 
 
@@ -599,6 +698,9 @@ def main():
 
     # ---- 主張の検査(数字が動いたら、文章のほうを直すこと) ----
     assert min(ratios) > 1.0, "雑音を揃えたら差が消えた: %r" % ratios
+    assert LINEAR_CHECK == [0], "線形の速い判定が floors と食い違った: %r" % LINEAR_CHECK
+    assert len(RATIOS_W) == len(GROUNDS) and min(RATIOS_W) > 1.0, \
+        "背景のスペクトルで白色化した整合フィルタでは差が消えた: %r" % RATIOS_W
     assert worst > 1.0, "ノブのどこかで比が 1 を割った: %.3f" % worst
     assert spread["brick"][0] > 3.0 * spread["grass"][0], \
         "brick の場所依存が突出しなくなった: %r" % spread
@@ -606,10 +708,11 @@ def main():
     assert all(d0 > d1 for d0, d1 in drift.values()),         "照明がずれてもゼロ点が空振りしなかった: %r" % drift
 
     print("\nPASS: 実写の地では検出限界が %.2f〜%.2f 倍高い(雑音の量は揃えてある)。"
-          "ノブ 6 通り・検出器 2 つで残り、場所依存は brick(目地)だけが %.1f 倍。"
+          "ノブ 6 通り・検出器 2 つで残り、背景のスペクトルで白色化した整合フィルタでも %.2f〜%.2f 倍。"
+          "場所依存は brick(目地)だけが %.1f 倍。"
           "ゼロ点は当てるだけなら %.2f 倍良いが、照明が %.0f %% ずれると 1 万画素あたり"
           " %.0f 回空振りする(整合フィルタは %.0f 回)。GIF %d コマ。実行 %.2f 秒"
-          % (min(ratios), max(ratios), spread["brick"][0],
+          % (min(ratios), max(ratios), min(RATIOS_W), max(RATIOS_W), spread["brick"][0],
              min(loc.values()), 100 * LAMP_DRIFT,
              drift["brick"][0], drift["brick"][1], n, time.perf_counter() - t0))
     return 0

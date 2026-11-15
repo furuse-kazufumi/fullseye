@@ -7,6 +7,186 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 直し — 目玉の PoC: 外部レビュー(Codex、2026-11-15)の指摘で主張を絞り門を締める
+
+PR #317(目玉の PoC の直し)の「書いてある事」と「実際の出力」を、外部の AI(Codex)が読み取り専用で突き合わせた指摘 9 件
+(high 1・medium 6・low 2)を、1 件ずつ PoC を full と CI=1 で走らせて確かめ、直した。直し方は 2 通りだけ: 主張を門と出力が
+本当に支える範囲に絞る(題・lead・caption・ViEW2026 の札・例の一覧)か、門を締める・足す。しきい値は広げていない。
+
+- 鋳物の CT(`poc_ct_casting_sparse_views`): 「RMSE で 1 位の再構成が空隙の体積でも 1 位とは限らない」は、欠損で測る体積での話で、
+  半値で 2 値化した体積では順位が逆(12 投影で FDK 26.7 %、TV 7.4 %)。題・lead・caption・ViEW2026 の札(8 言語)・例の一覧を
+  「32³・空隙 3 個・欠損で測る体積」に絞り、2 値では逆である事を門にした(門が 1 本増える)。格子・空隙の形と数・分割を
+  振る比較は足していない(X 線 CT は目玉にしない。全体の一覧のまま)。
+- 混載デパレタイズ(`poc_mixed_case_depalletizing`): full の実行で、測った値と記録 `RECORDED_FULL` の差を門にした
+  (見ていない種の再現率 25 個と合わせ目の地図 168 升目。幅は記録の桁の丸めの半分 0.005 / 0.05、地図の nan は落とす)。
+  それまでは差を印字するだけだった。CI の門は「記録の整合の検査」(測り直しではない)と呼び分けた。
+- 仮想 SEM(`poc_virtual_sem_kv_cd_bse`): 「各段を外の実測値で採点」をやめ、外の値で採点したのは段 1〜3(η・到達深さ・SE の形)
+  だけ、線幅・W・帯電は模型の中、と題・caption・docstring・例の一覧に書き、まとめに段ごとの採点の表を出す。η の門の余裕を
+  「絶対 0.04」から「絶対 0.04 と、相対 0.111(収録値どうしの散らばりの最大)× 中点 + モンテカルロの 3σ の小さい方」に締めた
+  (C の 5 keV で ±0.021。Cu 以上は ±0.04 のまま)。σ が二項で足りることは種 10 本で実測した。
+- SAM(`poc_sam_hybrid_bonding_voids`): 位相 vs 振幅の優位の門は、a90/95 が両方とも試した大きさの内側にある周波数
+  (150 / 200 MHz)だけで判定する。300 MHz は両方とも外挿なので比べない(POD 曲線は 4〜24.5 µm で位相が振幅を下回る)。
+  表の位相の列にも(外挿)を付け、試した最大を 36 → 34 µm(実際に引いた最大)に直した。
+- 薄膜(`poc_thin_film_reflectometry`): 説明に出す実データの 4 つの数(写真の 87.4 nm・直入射 92.9 nm・NA 95.8 nm・被覆率 0.6 点)の
+  再現の門を、公開の桁の丸めの半分(±0.05)で足した。物理の門(写真は基準の ±25 % など)は別に残す。実行の間の揺れは
+  py 3.11 / 3.14・numpy 2.4 / 2.5・Pillow 12 / 13・CI / full で 0 と測った。門 37 → 41。
+- 実写の地の検出限界(`poc_real_defect_floor`): 背景のパワースペクトルで白色化した整合フィルタ(スペクトルは限界を測る切り出しと
+  重ならない切り出しで推定)を 3 つ目の検出器として足した。比は 2.96〜4.32 倍で、主張は弱まらなかった(作りと乱数を振った
+  探針でも 2.65〜4.32 倍)。線形の速い判定が PoC の判定と一致することも門にした。
+- AI の採点(`poc_ai_built_inspection_scored`): 自明な基準線の統計量は、独立レビューのスクリプトが試験 400 枚のラベルで 4 つを
+  比べた後に採っていた。開発用 6 枚だけで選び直す規則(4 候補・|d'| 最大・符号は d')を当てると、ひび割れは同じ統計量
+  (d' 8.30)なので数は変わらない。ろうそくでは同じ規則が −標準偏差を選び、試験で AUROC 0.700・平衡正解率 0.618 と偶然を超える
+  (AI は 0 / 63 本)—— 表のろうそくの基準線はひび割れの統計量のままで、選んだ方は参考の列として印字・記録
+  (`TRIVIAL_SELECTION`、データのある実行で数え直して一致を門にする)。経緯を caption と docstring に書いた。
+  データのある full で、記録の candle の 1 行(`ai:v2_ctx32k:qwen2.5:14b:7`、型の鎖で invalid)の理由の文だけが
+  今の MCP の検証器と食い違っていた(型の切れ目に添える直し方の候補が hx_gen_empty_region → regiongrowing。#318 の後、
+  この直しの前の木でも同じ)。状態・採点・帰属は変わらないので、その文だけを揃えて `rescored` に経緯を足した。
+- 光弾性(`poc_photoelasticity`): 定義から必ず成り立つ(恒真の)`assert dev_max < 0.01` を門から外し、表示だけにした。
+- 回帰試験 `tests/test_poc_claims_codex_2026_11_15.py`(14 本。直す前の木で 13 本が落ちる。残る 1 本は光弾性の定義そのものの検算)。
+- 道具で作り直した物: `tools/build_view2026_featured_batch.py` → story GIF の台帳 → サムネイル → ViEW2026 の 8 言語のページ、
+  例の README・カタログ・docs の README、設計ノート、ファイル形式の棚卸し、`tools/regen_all.py`。
+
+### 文書 — ViEW2026 のページ: X 線 CT を目玉から下げる(2026-11-15、パッケージの中身は変わらない)
+
+X 線 CT は Fullseye の主役・代表として扱わない(会社の知財と分けるため。ユーザーの決まり)。PoC 自体と、おまけページ・
+全体の一覧(`all`)への掲載は残す。
+
+- `docs/view2026/exhibits.json`: `poc_real_walnut_cbct`(実測のクルミのコーンビーム CT)の `tier` を `showcase` から `more` に。
+  本ページ(8 言語)の目玉と準目玉は 20 本から 19 本になる(本数はページの生成で数える)。`featured_ids` は目玉の 20 本では
+  なく、カードを持つ展示 50 本の並びの正本(`exhibits` の並びと一致することを `tools/gen_view2026_pages.py` が検査する)なので、
+  カードは残して並びの中で動かした: おまけページの「画像検査・外観計測」の先頭にあった `poc_ct_casting_sparse_views` と
+  クルミを、その分類の最後(`poc_strain_history` の後)へ。
+- 「ぜんぶ見る」の群の先頭にあった X 線 CT(寸法・形状計測の `poc_aoi_ct_traceability`、3-D 形状の
+  `poc_battery_ct_degradation`)を、それぞれの群の最後へ。
+- 門 `tests/test_view2026_no_xray_ct_featured.py`: 目玉(showcase / featured)に X 線 CT の PoC が無い・生成した本ページ
+  8 言語が X 線 CT の図を引かない・おまけページの分類と「ぜんぶ見る」の群の先頭に X 線 CT が来ない(分類 `ct` の中は除く)。
+  X 線 CT かは分類 `ct`・id(`poc_ct_*`・`*_ct_*`・`*_ct`・`cbct`)・日英の題の語 `CT` で決める(OCT は外れる)。
+  直す前の exhibits.json では 4 本が赤(目玉にクルミ・本ページ 8 言語にクルミの図・分類と群の先頭に 3 本)。
+- 道具で作り直した物: `tools/build_view2026_featured_batch.py` → `tools/gen_view2026_story_gifs.py`(台帳の並びだけ)→
+  `tools/gen_view2026_thumbs.py`(変化なし)→ `tools/gen_view2026_pages.py`(8 言語の index.md と more.md)。
+
+### 直し — ViEW2026 の目玉の PoC: 作者と独立の敵対的レビュー 2 本(2026-11-13)の、PoC のコードと記録の側
+
+ここは PoC の出力・門・図と、数字の正本 `docs/articles/exhibits/poc_captions.json`。数字はどれも実行の出力か記録から取り直した。
+展示ページ(`docs/view2026/`)は、台帳を引いている所だけを道具で作り直した(`tools/build_view2026_featured_batch.py` →
+`tools/gen_view2026_story_gifs.py` → `tools/gen_view2026_pages.py`): 目玉のカード 5 枚(OCT・機材選びの地図・テレセン・光弾性・仮想 SEM)の
+lead と説明、図を差し替えた 6 本(AI の採点・瓶・光弾性・ステレオ・TUM・クルミ)の story GIF と台帳、8 言語のページ。説明の see / num の
+切れ目は前と同じ文の頭のまま。ページの題・並び・手で書いた文は #313(master に入った)の側。その後、台帳を引かない手書きの所のうち、AI の採点の題・光弾性の出典・一覧(all)の TUM とクルミの題だけをこの PR で直した(2026-11-15、独立レビューの指摘)。
+
+- `poc_ai_built_inspection_scored`: ひび割れは画像の統計 1 つ(中央値 − 1 パーセンタイル)で解ける(AUROC 0.999)。開発用 6 枚で
+  閾値を決めた自明な基準線(検出 0.995・誤報 0.045)を記録・表・図・要約に足した。AI のどのレシピもこれを超えない。要約は主の実験
+  (ローカル LLM、ひび割れ 60 回中 5 回・ろうそく 0 回)から始める。ろうそくの 6 行は今の op で決定的に採点し直して書き戻した(LLM は呼んでいない)。
+- `poc_telecentric_metrology`: 楕円が線の外縁に乗って見える、の疑いは再現しなかった(独立の読みとの距離は中央値で最大 0.99 px)。切り分けの読みを門に。
+- `poc_bottle_pattern_inverse`: 偏心の「検出できない」を、雑音なしどうし・同じ雑音どうしの比較に直した(雑音ありでは壁厚が σ の 2.6 倍偏る)。
+- `poc_real_stereo_multiscanline`: bad-2 は 1/4 解像度の画素で 2 px(原寸換算 bad 8.0)である事を出力・図・説明に。
+- `poc_real_tum_rgbd_slam`: 分割 8 通りの全部の値の表(図 06)を足し、見出しの比(0.42、等速の 0.82 倍)が分割に依る事
+  (ほかの 7 通りの trim 0.1 なら等速の 0.45 倍)を書いた。「合わせない」と比べるだけの門 6 本を「弱い門」と名前で分けた。
+- `poc_industrial_oct`: 論文の OCT との一致は同じ生データ・同じ屈折率の処理の再現で、独立の真値は顕微鏡(3.6 µm 以内)である事を書き分けた。
+- `poc_photoelasticity`: 符号の二義性は位相シフト光弾性で既知の問題である事と、一次の出典 2 本(DOI と出版社のページで書誌を確認)を書いた。
+- `poc_real_walnut_cbct`: 説明の古い数字(25 枚の SIRT 0.0074 / OS-SART 0.0067、90° の TV 0.0110)を記録値(0.0056 / 0.0055、0.0107)に。
+  縦ずれを無視しても再投影の残差に出ないのは、別の面(約 0.36 mm 離れた面)を再構成しているだけで作りの上で必ず起きる事として書き直し、
+  該当の門を「健全性の確認」に改名。手元の実データで全部の章を走らせ直し、記録と処理時間を除いて一致。
+- `poc_3d_sensor_modalities`: シミュレーションである事、ToF だけ画素 0.4 mm の距離カメラの設定(ほかは 0.05 mm)で方式の優劣ではない事、
+  数字は full(画素 0.05 mm)の値で CI の縮小版では動く事を、出力と説明に。T-LESS の内側の雑音を 3 章に印字。
+- `poc_equipment_selection_map`: 数字は full の予算の値で縮小版では数 µm〜10 µm 動く事、合成の試験・楽観側の閾値である事を出力と説明に。
+- `poc_mixed_case_depalletizing`: 縮小版(CI)でも、調整に使っていない種 3〜5 で深度だけの主張を測り、見出しのカラーの主張は Blender の
+  描画があれば測り、無ければ(CI)full の記録 `RECORDED_FULL` を読む門で確かめる(測り直しではないと印字する)。
+- `poc_virtual_sem_kv_cd_bse`: モンテカルロの統計誤差(種を替えた幅)を出す。側壁 88 度の線幅の差は 0.86 ± 0.04 nm(種 8 本、8 本とも 1 kV が上)、
+  80 度の「向きが逆」も 8 本とも逆で雑音ではなかった。表面の W の 1 kV は反射電子 +85 ± 10 %、SE +5 ± 1 %。
+
+### MCP: PR #318 の独立レビューの指摘の直し(2026-11-15)
+
+- ハンドル置き場のバイトの上限: 表(dict・list)の大きさを `len(repr(...))` で数えていて、repr が大きい配列を「...」で
+  省くので、128 MB の配列の表が 271 バイトと数えられ、上限 128 MiB の置き場に 6 つ入れても追い出しが起きなかった
+  (実際は 768 MB を持ったまま)。入れ子の中の配列を `nbytes` で数え、上限は**実際に持っているバイト**(同じ配列は
+  1 回)で見る。pipeline の表とその欄の image のハンドルは同じ配列なので、二重には数えない。`fullseye_pipeline` の
+  中間の上限も同じ数え方(`fullseye.mcp.handles.value_nbytes`)。
+- 表のハンドルの名前: `json.dumps(..., default=repr)` でハッシュを作っていて、1000 要素を超える配列は repr で省かれ、
+  真ん中だけが違う 2 つの表に同じハンドルが付いた(2 回目の読み出しで前の値が返った)。配列は dtype・形・バイト列ごと
+  ハッシュに入れる。dict の鍵の順には依らない。**挙動が変わる点**: 表(配列でない値)のハンドルの文字列が変わる
+  (ハンドルはサーバの 1 回の起動の間だけ使う物で、保存されない)。配列のハンドルは変わらない。
+- `fullseye_apply`: 入力の無い台帳 op(`abbe_number`・`illumination_design` など)は `handle` を省ける(schema の
+  `required` は `op` だけ)。以前は「arguments.handle は必須」で断られ、docs/MCP.md の「apply から呼べる」と合わなかった。
+  画像を取る op で handle が無ければ、理由つきで断る(-32602)。
+- 作業プロセスの読める場所: 親の `sys.path` を全部入れていた(`python -m fullseye.mcp` は cwd を `sys.path[0]` に置くので、
+  ドライブの直下やホームで起動すると読み込みの制限が実質なくなった)。Python の本体・site-packages・fullseye の置き場所・作業
+  フォルダだけにした。
+- 作業プロセスの結果の大きさ: 親が `.npy` を全部読んでから画素の上限で断っていた。作業プロセスが結果の配列の要素の数
+  (`mcp_stack_max_pixels`)とバイト(`mcp_pipeline_max_intermediate_bytes`)を数え、超えたら書き出さずに断る(段は
+  `resource_limit`、`limit` = `output_limit`)。親も子の出力を読む前に `.npy` の見出しで数える。
+- 日本語の検索: 評価の問い(検証の 23 回と、レビューが直しを見る前に書いた 10 問)・正解の型・採点の道具を repo に置いた
+  (`tests/data/mcp_find_ops_eval_ja.json`・`tools/mcp_find_ops_eval.py`、門は `tests/test_mcp_review_fixes_2026_11_15.py`)。
+  `--root` で別の木(origin/master など)を同じ問いで採点できる。2026-11-15 の数(上位 5 件に関係する op が入った問い /
+  関係して MCP で走る op が入った問い): 検証の 23 問は master 2a6cefab26 で 14 / 5、この枝で 19 / 16。★23 問は全部、
+  作者が語の表 `JA_TERMS` を合わせるのに見た問いで、独立な評価ではない。レビューの 10 問は master 9 / 5、この枝(px→mm を
+  足す前)9 / 8、足した後 10 / 9。合わせていない 9 問では 9 / 5 → 9 / 8 で、関係する op が出る問いの数は変わらない
+  (増えたのは MCP で走る op)。「ピクセル」「ミリメートル」の橋渡しの語を足し、「ピクセルをミリメートルに変換したい」で
+  `pixel_to_world`・`mm_per_px_from_reference` が上位 5 件に出る(この 1 問は合わせるのに使った)。
+
+### MCP: AI の役での検証の報告 2〜13 番と、判定 ok の意味の直し(2026-11-13)
+
+- 失敗の本文: `fullseye_validate_pipeline` の不合格・`fullseye_pipeline` の型の誤り(-32602)・段の失敗の本文を、段番号・op・理由・直し方の 1 行ずつにした(以前は「error」の 1 語や、結果の JSON を 1 行に繋いだ物で、理由は structuredContent にしか無かった)。structuredContent は変えていない。
+- 型の直し方の候補と plan の経路から、入力の中身を読まない op(`MCP_INPUT_INDEPENDENT.json`、採点が断る一覧と同じ)を外した。以前は image → region の候補が `hx_gen_empty_region` で、従うと `count_obj` = 0 が判定 ok で返った。
+- 実行できない op の誤り文: 理由の 1 文と代わりの手(読む・Python から呼ぶ・同じ分類で MCP が走らせられる op)を付けた(上の節)。代わりの op は、名前の語を共有する物だけを並べる。`fullseye_apply` の「近い名前」に同じ名前を出さない。
+- `fullseye_op_cards`: 上限(`budget_tokens`)で落とした名前も `missing`(`reason` = `budget_tokens` / `unknown_op`)と本文の先頭の 1 行に書く(以前は知らない名前だけで、上限で落ちた名前はどこにも出なかった)。`budget_tokens` を schema に足した(ハンドラは読むのに渡せなかった。minimal では隠す)。**挙動が変わる点**: カードの `executable` は MCP で走るか(OP_GRAPH の `verified_executable`)を表す。以前の意味(Python の関数として呼べるか)は `python_executable` に移した。`truncated` は上限で落とした名前があるか。
+- `fullseye_find_ops`: `executable_only`(既定 false、minimal では隠す)を足した。**挙動が変わる点**: `proposals` の各行は `{kind, name, executable}` の参照だけにした(以前は ops / retry_ops / recipes の行を丸ごと写し、応答の約半分が重複だった)。件数と順番は変わらない。中身は `ops` / `recipes` を読む。
+- tools/list: 段の `inputs`・`params`・`a` と `fullseye_plan` の `have`・`want`・`goal` に 1 行の説明を足し、英語だった 3 道具(`fullseye_op_cards`・`fullseye_validate_pipeline`・`fullseye_load_stack`)の説明を日本語に揃えた。minimal の予算(1,500 トークン)に収めるため、find_ops・pipeline・handle・型の説明を短くした(minimal 1,498 → 1,496、full 4,211 → 4,285 トークン)。
+- 計測値に単位と意味: registry の計測 op の値に `meaning`(op の要約)・`unit`(要約から読める物だけ: px / count)・`measured`(`diameter_region` など 26 op は入力の領域の**最大の連結成分 1 つだけ**を測る。その時は成分の数も)を付け、本文にも書く。`pixel_to_world` の値に mm、`mm_per_px_from_reference` に mm/px。
+- **挙動が変わる点**: `fullseye_catalog_coverage` の既定は件数だけ(`index_without_note` などの名前の一覧は `detail=true` の時だけ)。`index_source` / `notes_source` はホストの絶対パスでなく、パッケージ・リポジトリの中の相対の場所(例 `package:fullseye/data/OP_INDEX.json`)。
+- 読み込みの境界: `fullseye_load_image` は見出し(PNG の IHDR・Pillow の遅延の open・npy の見出し)で画素数を先に見て、上限を超える画像を復号しない(以前は 20,000×20,000 を復号してから断った)。`fullseye_list_samples` は根の中のジャンクション・リンクの先(根の外)の名前を並べない。`path=NUL` などで -32603 にせず、根の外として断る(ホストのパスを出さない)。`fullseye_import_json` は NaN・Infinity(JSON の定数・封筒の中の数・配列の中の値)を断る。サーバが自分で作った一時フォルダは置き場が捨てられる時に消す。
+- `fullseye_import_json`: `json`(文字列)の中の入れ子が深すぎる物(1 通の枠と同じ上限 64 段)を、読む前に数えて断る
+  (2026-11-15。以前は py3.11 で約 1,000 段から RecursionError、py3.14 で 10 万段から Stack overflow になり、
+  どちらも -32603 = 内部エラーで返った。サーバは落ちない)。
+- `fullseye_score_pipeline`: 型の門まで(入力の縛り・引数・入力を読まない op・型の検査)で断った試行は採点の回数に数えない(`attempt_counted: false`)。走らせる前で真値に触れないため。出力の型の検査から先は従来どおり数える。
+- 日本語の検索: 依頼の言い回し(「見つけたい」「測りたい」「どの〜が要るか」など)を検索語から外し、現場の日本語(照明・液面・瓶・ステレオ・視差・レンズ・サーモグラフィ …)を英語の術語へ橋渡しする表 `JA_TERMS` を足した(optics の要約は英語だけの物が多い)。橋渡しした片仮名の語は 2 文字の切れ端で引かない(「サーモグラフィ」が「ホモグラフィ」に当たっていた)。検証の find_ops 23 回で「上位 5 件に関係する op」14 → 19、「関係して MCP で実行できる op」5 → 16(A の前後を含む。関係するかは依頼ごとの名前の型で数えた。問いと採点は `tools/mcp_find_ops_eval.py` で再現できる。23 問は全部、語の表を合わせるのに見た問い。上の 2026-11-15 の節)。
+- `fullseye_list_samples`: `sample_details`(何が写っているか・来歴・ライセンス・真値の有無)を足し、本文にも 1 行ずつ書く。`samples`(名前の一覧)は従来どおり。
+- 判定 ok の意味: `fullseye_pipeline` の値の結果の本文に「判定 ok は出力の形(有限・空でない・定数でない)を見ただけで、値の正しさではない(利用者の画像に真値は無い)」と書き、`verdict_scope: "shape_only"` を付ける。明らかな異常には `cautions` と本文の「注意」: 長さが画像の対角の 9 割以上(物でなく画像全体・枠を測った疑い)、入力の中身を読まない op の段。
+- docs/MCP.md と README: 公式の `mcp` Python クライアントで initialize → tools/list → tools/call が通る例(確かめた物そのまま)と、`stdio_client` がサーバに最小限の環境変数しか渡さない事(`FULLSEYE_MCP_ROOT` は `env=` に書く)、MCP から実行できる op の数(2,456 / 3,842)・実行できない op の扱い・判定 ok の意味を書いた。
+
+### MCP: 光学・照明・合成の入口などの台帳 op を MCP から実行できるようにした(2026-11-13)
+
+AI の役で MCP を使った検証(2026-11-13)で、optics の op は MCP から 1 つも実行できなかった(照明の 17 op は全部
+「not executable in MCP; call from Python」)。台帳 op を、MCP のサーバと別の作業プロセス(`fullseye/mcp/opworker.py`)で、
+時間とメモリの上限つきで走らせる経路を `fullseye_pipeline` と `fullseye_apply` に足した。新しい道具は無い。
+
+- MCP から実行できる op: 956 → 2,456(全 3,842 edge のうち。増えた 1,500 は隔離して走る台帳 op)。optics の 506 op は
+  0 → 305。照明の 17 op、レンズ・センサの選定(`lens_spec`・`sensor_spec`・`depth_of_field`・`mtf50` など)、合成の入口
+  (`bottle_image`)、px→mm(`pixel_to_world`)、ステレオ(`binocular_disparity_ms`)が道具だけで呼べる。
+- 載せる op は実測で決める(`tools/mcp_isolated_probe.py` → `docs/mcp_isolated_ops.json`): ファイル・URL・関数の引数を
+  取らず、見本の入力で作業プロセスの中で 5 秒・1 GiB 以内に走り、宣言の型の有限の値を返し、道具の経路
+  (`--verify-mcp`)も通った物だけ。載せなかった 1,151 op は理由の符号つき(見本で動かない 897、ファイル等の引数 163 など)。
+- 上限: 1 回の実行は `mcp_op_time_limit_s`(既定 30 秒)と `mcp_op_memory_limit_bytes`(既定 2 GiB、作業プロセスの
+  メモリの増分)。超えたら作業プロセスを止め、段は `resource_limit` で失敗する(黙って長く走らせない)。
+  作業プロセスは audit hook で、作業用の一時フォルダの外への書き込み・Python と fullseye の外の読み込み・
+  ソケット・子プロセスを断る。値の受け渡しは JSON の木と数値配列だけ(pickle を使わない)。
+- 引数: 台帳の仕様(数・整数・真偽・選択肢・短い名前)で検査し、合わない値は 1 段も走らせずに断る(丸めない)。
+  文字列の引数はパスの区切り・ドライブ名・`..` を書けない。`device` は `cpu` だけ(GPU のメモリは上限で縛れない)。
+  `{"profile": …}` で書いた引数も、引いた値を同じ仕様で検査する(検証と、作業プロセスへ渡す直前の両方。2026-11-15:
+  直に書いた値だけを検査していて、数の引数に文字列の profile を渡すと検証を通り、op が自分で断るまで走った)。
+- optional の依存(正直な内訳、2026-11-15 に wheel だけを入れた venv で実測): 2,456 は optional の依存を入れた環境での数。
+  素の `pip install fullseye`(numpy と scipy だけ)では、隔離して走る 1,500 op のうち 1,478 が見本のとおりに走り、
+  22 は依存が無いので失敗した段で断る(scikit-image 15・Pillow 6・zxing-cpp 1。Pillow の 3 つ = `carla_scene_synthetic`・
+  `carla_scene_world`・`lead_truth_depth` は誤り文が依存の名前を言わない)。registry の側は数えていない。
+- 配布物の側の門(`tests/test_mcp_wheel.py`、CI の core)に、wheel を入れた venv から台帳 op(`illumination_design`・
+  `lens_spec`)が作業プロセスで走る事と、`fullseye_catalog_coverage` の既定(件数だけ・相対の出どころ)を足した。
+- 結果: 表・数は上限つきの要約と単位(鍵の名前の `_mm`・`_deg` など)、op の 1 行の意味、使った引数の単位を返す。
+  表の中の 2-D 配列は `image` のハンドルになり、次の pipeline に渡せる。複素数は `re` / `im` に分ける。
+  配列を返す op(`lighting_sweep` の角度とコントラストの組など)は、本文に op の意味・型・形・値の範囲と、128 要素までなら
+  値、応答の後も残る handle を書く(2026-11-15。以前は本文が「判定=ok value=None」だけで、値は structuredContent にしか
+  無かった)。途中に表を返す台帳 op がある pipeline でも、最後の値と判定の範囲を本文に書く(以前は落ちた)。
+- 実行できない op の誤り文(`fullseye_validate_pipeline` / `fullseye_pipeline` / `fullseye_apply` / find_ops の骨格)に、
+  理由の 1 文と、代わりの手(`fullseye_op_help` で読む・Python からの呼び方・同じ分類で MCP が走らせられる op)を付けた。
+  `fullseye_apply` の「近い名前」に同じ名前を出さない。
+
+挙動が変わる点(後方互換):
+
+- `fullseye_pipeline` の `required` から `handle` を外した(入力の無い op だけの pipeline のため)。handle を渡す
+  従来の要求はそのまま通る(受ける要求を広げるだけ)。
+- OP_GRAPH の `verified_executable` が真の edge に、`executor.isolation = "worker"` の物(台帳 op)が加わった。
+  同じプロセスで走る Python の op の集合(11 op)は変わらない。
+- `MCP_INPUT_INDEPENDENT.json` は、隔離の op の判定を実測の台帳から読む(regen_all の中で 1,500 op を 7 回ずつ走らせない)。
+- レシピの `runner = "mcp"` が 89 → 132(台帳 op を含むレシピが MCP で走るようになった)。
+
 ### 追加 — PoC「置かれたタオルの角・辺・折り線を古典の画像処理で見つける」(収蔵 2026.317)
 
 - `examples/poc_cloth_towel_corners_synth.py`: 0〜2 回折ったタオルを**自前の幾何で描き**(MuJoCo の布は台を貫通して不採用)、`gaussian` / `otsu` / `fill_up` / `sk_find_contours` / `xg_gen_polygons` と辺の直線の交点で隅・辺を出す。真値は描画側(隅の高さで投影)。データは自作の合成で、新 op なし。
@@ -16,7 +196,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### 文書 — ViEW2026 の本ページ(docs/view2026、パッケージの中身は変わらない)
 
-- 本ページは 8 言語とも同じ目玉 20 本を同じ順で出す(残りは各言語の `more.md`)。目玉の X 線 CT は `poc_real_walnut_cbct` の 1 本だけで、`poc_ct_casting_sparse_views` の代わりに `poc_itof_multifreq` を入れた。
+- 本ページは 8 言語とも同じ目玉 20 本を同じ順で出す(残りは各言語の `more.md`。2026-11-15 に X 線 CT の 1 本を下げて 19 本、上の節)。目玉の X 線 CT は `poc_real_walnut_cbct` の 1 本だけにし(これも 2026-11-15 に目玉から下げた)、`poc_ct_casting_sparse_views` の代わりに `poc_itof_multifreq` を入れた。
 - 作者と独立の 2 回のレビュー(前半・後半 10 本ずつ)を受けて、題・lead を PoC 自身の注意書きと食い違わない文にした。数の範囲(RGB-D の 0.45〜0.82、実写の地の 2.03〜3.47 倍、AI の採点の 60 回中 5 回)は題に、数字がどの実行(full / CI の縮小 / 手元の記録値)から来たかは 20 本すべての「数字の出どころ」の 1 文に書いた(台帳 `poc_captions.json` のキャプションの末尾。展示館の記事の生成物にも同じ文が入る)。
 - 展示のタイル(画像)の左下に真値の種類(自作合成・実データ・公表値・実写の地)の印を重ねる。
 - ja/en 以外の 6 言語: 目玉の題と説明は英語で出し、その節の頭に「この節の題と説明は英語」の断りを置く(本ページと、おまけページの詳細の節)。訳は ja/en だけの方針。

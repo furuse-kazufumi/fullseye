@@ -1,0 +1,321 @@
+{
+ "about": "MCP の fullseye_find_ops(日本語を含む)の評価問題集。採点は tools/mcp_find_ops_eval.py、門は tests/test_mcp_review_fixes_2026_11_15.py。上位 k 件の op の名前が正解の型(正規表現)に合えば「関係する」、関係する かつ その木の OP_GRAPH で verified_executable なら「MCP で走る」。",
+ "honest_note": "verification_2026_11_13 の 23 問は、2026-11-13 に AI の役で MCP を使った検証で実際に送った問い合わせ(引数もそのまま)。正解の型は依頼(r1〜r7)ごとに作者が決めた。★23 問は全部、作者が日本語の語の表(fullseye/opsearch.py の JA_TERMS)と言い回しの除去を合わせるのに見た問い(tuned=true)で、独立な評価ではない。review_2026_11_15 の 10 問と正解の型は、独立レビューが直しの中身を見る前に書いた。うち 「ピクセルをミリメートルに変換したい」はレビューの後に px→mm の語を足すのに使った(tuned=true)。合わせていない問いは残りの 9 問だけ。",
+ "k": 5,
+ "requests": {
+  "r1": "光沢のある金属の表面の傷を見つけ、長さを測る(照明の選び方を含む)",
+  "r2": "透明な瓶の中の液面の高さを測る",
+  "r3": "印刷・印字のかすれを見つける",
+  "r4": "部品の穴の直径を 0.05 mm の精度で測るカメラとレンズを選ぶ",
+  "r5": "ムラのある背景から小さな欠陥を見つける",
+  "r6": "2 台のカメラで箱の高さを測る",
+  "r7": "熱画像で内部の欠陥の深さを知る"
+ },
+ "queries": [
+  {
+   "set": "verification_2026_11_13",
+   "request": "r1",
+   "args": {
+    "query": "光沢のある金属の表面の傷を見つけて長さを測りたい"
+   },
+   "relevant": "illumin|lighting|light_source|solid_angle|defect_contrast|coaxial|darkfield|dome|scratch|ridge|frangi|lines?_gauss|skeleton|crack",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r1",
+   "args": {
+    "query": "光沢のある金属 傷 照明の当て方"
+   },
+   "relevant": "illumin|lighting|light_source|solid_angle|defect_contrast|coaxial|darkfield|dome|scratch|ridge|frangi|lines?_gauss|skeleton|crack",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r2",
+   "args": {
+    "query": "透明な瓶の中の液面の高さを測りたい"
+   },
+   "relevant": "bottle|fill_level|liquid|meniscus|container_fill|edge_pos|measure_pos|profile_edge|level",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r2",
+   "args": {
+    "query": "liquid level in transparent bottle",
+    "limit": 8
+   },
+   "relevant": "bottle|fill_level|liquid|meniscus|container_fill|edge_pos|measure_pos|profile_edge|level",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r2",
+   "args": {
+    "query": "液面 高さ エッジ位置 測定",
+    "limit": 8
+   },
+   "relevant": "bottle|fill_level|liquid|meniscus|container_fill|edge_pos|measure_pos|profile_edge|level",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r3",
+   "args": {
+    "query": "印刷のかすれを見つけたい"
+   },
+   "relevant": "print|ocr|char|text|glyph|variation|golden|compare|difference|template|stroke|swt",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r3",
+   "args": {
+    "query": "印字 欠け かすれ 検査 良品と比較",
+    "limit": 8
+   },
+   "relevant": "print|ocr|char|text|glyph|variation|golden|compare|difference|template|stroke|swt",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r3",
+   "args": {
+    "query": "print quality inspection faint missing ink",
+    "limit": 8
+   },
+   "relevant": "print|ocr|char|text|glyph|variation|golden|compare|difference|template|stroke|swt",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r3",
+   "args": {
+    "query": "文字 かすれ 刻印 コントラスト",
+    "limit": 8,
+    "in_sort": "image"
+   },
+   "relevant": "print|ocr|char|text|glyph|variation|golden|compare|difference|template|stroke|swt",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r4",
+   "args": {
+    "query": "部品の穴の直径を0.05mmの精度で測るのに、どのカメラとレンズが要るか"
+   },
+   "relevant": "lens|sensor|camera|focal|depth_of_field|mtf|magnification|telecentric|fov|pixel_to_world|mm_per_px|circle|hole|diameter|radius|resolution",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r4",
+   "args": {
+    "query": "カメラ レンズ 選定 画素分解能 視野 倍率",
+    "limit": 10
+   },
+   "relevant": "lens|sensor|camera|focal|depth_of_field|mtf|magnification|telecentric|fov|pixel_to_world|mm_per_px|circle|hole|diameter|radius|resolution",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r4",
+   "args": {
+    "query": "穴 直径 測定 サブピクセル 円フィット",
+    "limit": 8,
+    "in_sort": "image"
+   },
+   "relevant": "lens|sensor|camera|focal|depth_of_field|mtf|magnification|telecentric|fov|pixel_to_world|mm_per_px|circle|hole|diameter|radius|resolution",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r4",
+   "args": {
+    "query": "choose lens focal length for field of view and working distance",
+    "limit": 8
+   },
+   "relevant": "lens|sensor|camera|focal|depth_of_field|mtf|magnification|telecentric|fov|pixel_to_world|mm_per_px|circle|hole|diameter|radius|resolution",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r4",
+   "args": {
+    "query": "measurement uncertainty error budget pixel size mm per pixel accuracy",
+    "limit": 8
+   },
+   "relevant": "lens|sensor|camera|focal|depth_of_field|mtf|magnification|telecentric|fov|pixel_to_world|mm_per_px|circle|hole|diameter|radius|resolution",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r4",
+   "args": {
+    "query": "各連結領域の直径 等価直径 円 半径 一覧",
+    "limit": 8,
+    "in_sort": "region"
+   },
+   "relevant": "lens|sensor|camera|focal|depth_of_field|mtf|magnification|telecentric|fov|pixel_to_world|mm_per_px|circle|hole|diameter|radius|resolution",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r5",
+   "args": {
+    "query": "ムラのある背景から小さな欠陥を見つけたい"
+   },
+   "relevant": "background|tophat|top_hat|bothat|rolling_ball|dyn_threshold|local|adaptive|flat_field|shading|blob|defect|anomal|niblack|sauvola",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r6",
+   "args": {
+    "query": "2台のカメラで箱の高さを測りたい"
+   },
+   "relevant": "stereo|disparity|binocular|triangulat|depth|height|baseline|rectif",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r6",
+   "args": {
+    "query": "ステレオ 視差 深度 高さ",
+    "limit": 8
+   },
+   "relevant": "stereo|disparity|binocular|triangulat|depth|height|baseline|rectif",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r7",
+   "args": {
+    "query": "熱画像で内部の欠陥の深さを知りたい"
+   },
+   "relevant": "therm|lockin|lock_in|heat|diffusion|infrared|pulse",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r7",
+   "args": {
+    "query": "サーモグラフィ 欠陥 深さ",
+    "limit": 8
+   },
+   "relevant": "therm|lockin|lock_in|heat|diffusion|infrared|pulse",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r7",
+   "args": {
+    "query": "thermography defect depth",
+    "limit": 8
+   },
+   "relevant": "therm|lockin|lock_in|heat|diffusion|infrared|pulse",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r7",
+   "args": {
+    "query": "pulsed infrared thermal heat diffusion subsurface defect",
+    "limit": 8
+   },
+   "relevant": "therm|lockin|lock_in|heat|diffusion|infrared|pulse",
+   "tuned": true
+  },
+  {
+   "set": "verification_2026_11_13",
+   "request": "r7",
+   "args": {
+    "query": "赤外線 加熱 熱拡散 内部欠陥",
+    "limit": 8
+   },
+   "relevant": "therm|lockin|lock_in|heat|diffusion|infrared|pulse",
+   "tuned": true
+  },
+  {
+   "set": "review_2026_11_15",
+   "args": {
+    "query": "レンズの焦点距離と被写界深度を計算したい"
+   },
+   "relevant": "lens|depth_of_field|dof|focal|hyperfocal",
+   "tuned": false
+  },
+  {
+   "set": "review_2026_11_15",
+   "args": {
+    "query": "同軸照明で鏡面の傷を見たい"
+   },
+   "relevant": "coaxial|specular|illumin|lighting",
+   "tuned": false
+  },
+  {
+   "set": "review_2026_11_15",
+   "args": {
+    "query": "画像のノイズを減らしたい"
+   },
+   "relevant": "denois|gauss|median|bilateral|nl_means|wiener|smooth",
+   "tuned": false
+  },
+  {
+   "set": "review_2026_11_15",
+   "args": {
+    "query": "円の直径を測る"
+   },
+   "relevant": "circle|hough|diameter|fit_circle|radius",
+   "tuned": false
+  },
+  {
+   "set": "review_2026_11_15",
+   "args": {
+    "query": "エッジを検出する"
+   },
+   "relevant": "edge|canny|sobel|prewitt|scharr|laplac",
+   "tuned": false
+  },
+  {
+   "set": "review_2026_11_15",
+   "args": {
+    "query": "二値化のしきい値を自動で決めたい"
+   },
+   "relevant": "otsu|threshold|triangle|li_|yen|isodata|kittler",
+   "tuned": false
+  },
+  {
+   "set": "review_2026_11_15",
+   "args": {
+    "query": "ピクセルをミリメートルに変換したい"
+   },
+   "relevant": "pixel_to_world|mm_per_px|scale|calib",
+   "tuned": true
+  },
+  {
+   "set": "review_2026_11_15",
+   "args": {
+    "query": "ステレオカメラで距離を測りたい"
+   },
+   "relevant": "stereo|disparity|depth|triangulat|rectif",
+   "tuned": false
+  },
+  {
+   "set": "review_2026_11_15",
+   "args": {
+    "query": "バーコードやQRコードを読みたい"
+   },
+   "relevant": "qr|barcode|symbol|code|zxing|ean",
+   "tuned": false
+  },
+  {
+   "set": "review_2026_11_15",
+   "args": {
+    "query": "照明の角度を変えてコントラストを比べたい"
+   },
+   "relevant": "lighting_sweep|illumin|lighting|angle|contrast",
+   "tuned": false
+  }
+ ]
+}

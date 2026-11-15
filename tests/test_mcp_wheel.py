@@ -196,8 +196,12 @@ def test_mcp_serves_the_catalog_from_the_wheel_outside_the_repo(wheel_python, ou
         _frame(_call(4, "fullseye_search_ops", query="abcd_matrix", limit=5)),
         _frame(_call(5, "fullseye_op_help", name="gaussian")),
         _frame(_call(6, "fullseye_op_help", name="abcd_matrix")),
-        _frame(_call(7, "fullseye_catalog_coverage")),
+        _frame(_call(7, "fullseye_catalog_coverage", detail=True)),
         _frame(_call(8, "fullseye_list_samples")),
+        _frame(_call(9, "fullseye_catalog_coverage")),
+        _frame(_call(10, "fullseye_pipeline", stages=[{"op": "illumination_design"}])),
+        _frame(_call(11, "fullseye_pipeline",
+                     stages=[{"op": "lens_spec", "params": {"focal_mm": 25.0, "f_number": 2.8}}])),
     ])
     p = subprocess.run([wheel_python, "-m", "fullseye.mcp"], input=payload, capture_output=True,
                        cwd=outside, env=_clean_env(), timeout=300)
@@ -206,7 +210,7 @@ def test_mcp_serves_the_catalog_from_the_wheel_outside_the_repo(wheel_python, ou
     assert "CatalogError" not in err, err[-3000:]
     msgs, rest = _parse_all(p.stdout)
     assert rest.strip() == b"", "stdout にプロトコル以外のバイト: %r" % rest[:120]
-    assert [m["id"] for m in msgs] == [1, 2, 3, 4, 5, 6, 7, 8], [m.get("id") for m in msgs]
+    assert [m["id"] for m in msgs] == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], [m.get("id") for m in msgs]
     assert all("error" not in m for m in msgs), [m for m in msgs if "error" in m]
     assert msgs[0]["result"]["serverInfo"]["name"] == "fullseye"
     assert b"[fullseye-mcp] ready" in p.stderr, "起動ログが stderr に出ていない"
@@ -248,7 +252,10 @@ def test_mcp_serves_the_catalog_from_the_wheel_outside_the_repo(wheel_python, ou
     assert links and all(c["uri"].startswith("file:///") for c in links)
 
     # 被覆: 件数を checkout の正本と突き合わせる(「走った」≠「意味のある出力」)
+    # ★2026-11-15: 既定の応答は件数だけになった(2026-11-13、報告 9)。名前の一覧まで見るこの検査は detail=true で呼ぶ
+    #   (既定のまま `== []` と比べていて、件数の 0 を添字で読んで TypeError —— この門は CI の core でしか走らない)。
     c = msgs[6]["result"]["structuredContent"]
+    assert c["detail"] is True, c.get("detail")
     want_index, want_notes = _checkout_counts()
     assert c["index_source"].startswith("package:") and c["index_source"].endswith("OP_INDEX.json"), c["index_source"]
     assert c["notes_source"].startswith("package:") and c["notes_source"].endswith("OP_NOTES.json"), c["notes_source"]
@@ -262,3 +269,23 @@ def test_mcp_serves_the_catalog_from_the_wheel_outside_the_repo(wheel_python, ou
     # 同梱サンプル(handles.py の SAMPLE_DIR も同じ ROOT 解決)
     smp = msgs[7]["result"]["structuredContent"]
     assert smp["samples"], smp
+
+    # 被覆の既定: 件数だけ。出どころはパッケージの中の相対の場所で、venv の絶対パス(利用者名を含む)を返さない
+    d = msgs[8]["result"]["structuredContent"]
+    assert d["detail"] is False and d["index_without_note"] == 0 and "note_only_names" not in d, d
+    assert d["index_source"] == "package:fullseye/data/OP_INDEX.json", d["index_source"]
+    assert d["notes_source"] == "package:fullseye/data/OP_NOTES.json", d["notes_source"]
+    assert d["per_source"] == ps, (d["per_source"], ps)
+
+    # ★2026-11-15: 台帳 op(照明の設計・レンズの仕様)が wheel からも走る。OP_GRAPH の executor、fullseye/mcp/opworker.py、
+    #   台帳のモジュール(opsoptics …)が配布物に入っていて、隔離した作業プロセスが site-packages から読めること。
+    #   checkout の試験(tests/test_mcp_isolated_ops_2026_11_13.py)は source dir が sys.path に載るので、ここが欠けても緑。
+    for i, op, key in ((9, "illumination_design", "ranking"), (10, "lens_spec", "f_number")):
+        run = msgs[i]["result"]
+        assert not run["isError"], run["content"][0]["text"][:600]
+        rec = run["structuredContent"]["stages"][0]
+        assert rec["op"] == op and rec["status"] == "ok", rec
+        assert rec["isolated"]["time_limit_s"] > 0 and rec["isolated"]["memory_limit_bytes"] > 0, rec["isolated"]
+        assert key in rec["value"], sorted(rec["value"])
+    ranking = msgs[9]["result"]["structuredContent"]["stages"][0]["value"]["ranking"]
+    assert len(ranking) >= 3 and all(0.0 <= row["score"] <= 1.0 for row in ranking), ranking[:3]
