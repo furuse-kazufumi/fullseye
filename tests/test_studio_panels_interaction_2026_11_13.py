@@ -1937,3 +1937,57 @@ def test_choosing_a_tab_keeps_the_side_and_place_of_its_row(tmp_path, monkeypatc
         win.resize(1280, 720); _pump(app, 0.4)
     finally:
         _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# A2 — an image window bigger than the image area it sits in (the code widened / heightened to the most):
+# its strip scrolls within the part that is SEEN, with both scroll buttons whole (the user-eye check: the
+# strip judged "it fits" by the window's own width, so 1:1 was cut at the area's edge, or ▼ was out of sight)
+# --------------------------------------------------------------------------- #
+def _inside_area(win, w):
+    """``w`` lies wholly inside the image area (the MDI viewport, which clips the image windows)."""
+    from PySide6 import QtCore
+    vp = win._mdi.viewport()
+    return vp.rect().contains(QtCore.QRect(w.mapTo(vp, QtCore.QPoint(0, 0)), w.size()))
+
+
+def test_image_strips_scroll_within_the_seen_part_of_a_squeezed_image_window(tmp_path, monkeypatch):
+    from PySide6 import QtCore
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        win.resize(1024, 700); _pump(app, 0.2)
+        win._new_graphics_window(); _pump(app, 0.4)                         # a second one: its strip is laid over it
+        cases, reached = 0, 0
+        for side, orient in (("left", QtCore.Qt.Horizontal), ("bottom", QtCore.Qt.Vertical)):
+            studio_panels.set_code_side(win, side); _pump(app, 0.3)
+            win.resizeDocks([win._docks["program"]], [2000], orient); _pump(app, 0.8)
+            vp = win._mdi.viewport()
+            subs = win._mdi.subWindowList()
+            assert len(subs) == 2
+            for sub in subs:
+                win._mdi.setActiveSubWindow(sub); _pump(app, 0.5)
+                rows = [r for r in studio_panels.panel_ledger(win) if r["kind"] == "image"
+                        and _subwindow_of(r["shape"]) is sub]
+                assert len(rows) == 1, sub.windowTitle()
+                s = rows[0]["strip"]
+                cut = sub.width() > vp.width() if side == "left" else sub.height() > vp.height()
+                assert cut, (side, sub.size().toTuple(), vp.size().toTuple())   # the case is really made
+                where = (side, rows[0]["key"], s.state["scrolling"], vp.size().toTuple())
+                seen = set()
+                for _step in range(40):
+                    for b in s.state["shown"]:
+                        assert _inside_area(win, b), where + (b.toolTip()[:30],)
+                        seen.add(b)
+                    if not s.state["scrolling"]:
+                        break
+                    for arrow in (s.b_back, s.b_on):                        # ▲▼ / ◀▶ whole and in sight
+                        assert arrow.isVisible() and _inside_area(win, arrow), where
+                    if not s.b_on.isEnabled():
+                        break
+                    s.b_on.click(); _pump(app, 0.02)
+                assert seen == set(s.items()) and len(seen) >= 5, where + (len(seen), len(s.items()))
+                reached += len(seen)
+                cases += 1
+        assert cases == 4 and reached >= 20
+    finally:
+        _close(app, win)

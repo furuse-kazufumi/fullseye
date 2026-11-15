@@ -926,6 +926,21 @@ def scroll_reach(extents, gaps, room, first=0):
     return first, end, last_first
 
 
+def _seen_rect(w):
+    """The part of ``w`` (in its own coordinates) that no parent cuts off, up to its window: an image window
+    bigger than the image area it sits in is clipped by that area. The whole rectangle when nothing cuts it."""
+    from PySide6 import QtCore   # noqa: PLC0415
+    r = QtCore.QRect(w.rect())
+    off = QtCore.QPoint(0, 0)
+    cur = w
+    while not cur.isWindow() and cur.parentWidget() is not None:
+        off += cur.pos()
+        par = cur.parentWidget()
+        r = r.intersected(par.rect().translated(-off))
+        cur = par
+    return r
+
+
 _FLOW = {}
 
 
@@ -955,6 +970,7 @@ def flow_classes():
             self.first = 0
             self.thickness = None                    # one row's thickness; None = the thickest item
             self.overlay = False                     # drawn over an image: a ground of its own
+            self.clip_to_seen = False                # an image strip: fit the part a parent does not cut off
             self.sizes_itself = kind == "tools"      # a tab row's size is its tab bar's
             self.state = {"lines": 1, "scrolling": False, "first": 0, "last_first": 0, "shown": []}
             self._seps, self._busy, self._queued = [], False, False
@@ -1082,10 +1098,24 @@ def flow_classes():
             except RuntimeError:                     # the strip went with its panel
                 pass
 
+        def _seen_span(self):
+            """(start, end) along the strip of the part that is seen (an image strip: the image area clips
+            its window); (0, length) for every other strip."""
+            h = self.orientation == "h"
+            full = self.width() if h else self.height()
+            if not self.clip_to_seen:
+                return 0, full
+            r = _seen_rect(self)
+            if r.isEmpty():
+                return 0, full
+            lo, hi = (r.left(), r.right() + 1) if h else (r.top(), r.bottom() + 1)
+            return max(0, lo), min(full, hi)
+
         def _place(self):
             laid = self._laid()
             h = self.orientation == "h"
-            length = self.width() if h else self.height()
+            lo, hi = self._seen_span()
+            length = hi - lo
             arrow = scroll_arrow()
             t = self._row(laid)
             lg = self._line_gap()
@@ -1108,9 +1138,9 @@ def flow_classes():
                     first, end, last_first = scroll_reach([x[1] for x in sub], [0] + [x[3] for x in sub[1:]],
                                                           max(0, length - 2 * arrow), self.first)
                     self.first = first
-                    vis, m = line[first:end], arrow
+                    vis, m = line[first:end], lo + arrow
                 else:
-                    vis, m = line, 0
+                    vis, m = line, lo
                 for j, i in enumerate(vis):
                     w, along, across, lead, newg = laid[i]
                     if j:
@@ -1131,7 +1161,7 @@ def flow_classes():
                 w.setGeometry(a, c, along, across) if h else w.setGeometry(c, a, across, along)
             if sl is not None:
                 c0 = sl * (t + lg)
-                for b, a in ((self.b_back, 0), (self.b_on, max(0, length - arrow))):
+                for b, a in ((self.b_back, lo), (self.b_on, lo + max(0, length - arrow))):
                     b.setGeometry(a, c0, arrow, t) if h else b.setGeometry(c0, a, t, arrow)
                     b.show(); b.raise_()
                 self.b_back.setEnabled(first > 0)
@@ -1545,6 +1575,7 @@ def declare_strip(win, key, row, body=None, shape=None, root=None):
             w.hide()
             w.setParent(None)
     strip = FlowStrip("tools", key)
+    strip.clip_to_seen = dock is None            # an image window: the image area may clip it
     strip.set_groups(groups)
     row.insertWidget(first_at - sum(1 for i in drop if i < first_at), strip)
     slot = row.indexOf(strip)
@@ -1647,6 +1678,7 @@ def adopt_image_strip(win, view, key=None):
     FlowStrip = flow_classes()["FlowStrip"]
     strip = FlowStrip("tools", key, view)
     strip.overlay = True
+    strip.clip_to_seen = True
     strip.set_groups(groups)
     old.hide()
     old.setParent(None)
@@ -1670,14 +1702,18 @@ def adopt_image_strip(win, view, key=None):
 
 def _place_overlay(entry):
     strip, view = entry["strip"], entry["shape"]
-    room = (view.width() if entry["side"] == "top" else view.height()) - 12
+    seen = _seen_rect(view)                      # the image area may clip the window (A2)
+    if seen.isEmpty():
+        seen = view.rect()
+    room = (seen.width() if entry["side"] == "top" else seen.height()) - 12
     hint = strip.sizeHint()
     if entry["side"] == "top":
         strip.resize(max(1, min(hint.width(), room)), strip.height())
     else:
         strip.resize(strip.width(), max(1, min(hint.height(), room)))
-    strip.move(6, 6)
+    strip.move(seen.left() + 6, seen.top() + 6)
     strip.raise_()
+    strip.relayout()
 
 
 def _turn(entry, side):
@@ -1704,6 +1740,18 @@ def _turn(entry, side):
         home.show()
     strip.show()
     entry["side"] = side
+
+
+def _side_that_fits(entry, side):
+    """An image strip (the image area may clip its window): a column that cannot hold one tool between its
+    two scroll buttons in the part that is seen becomes a row on top, a row that cannot becomes a column."""
+    need = 2 * scroll_arrow() + studio_theme.density()["icon_btn"] + 12
+    seen = _seen_rect(entry.get("host") or entry["shape"])
+    if side == "left" and seen.height() < need <= seen.width():
+        return "top"
+    if side == "top" and seen.width() < need <= seen.height():
+        return "left"
+    return side
 
 
 def _alive(w):
@@ -1756,11 +1804,21 @@ def relayout(win):
         if shape.isHidden() or shape.width() <= 0:
             continue
         side = strip_side(shape.width(), shape.height(), entry["side"], mode)
+        if entry["strip"].clip_to_seen and mode == "auto":
+            side = _side_that_fits(entry, side)
         if side != entry["side"]:
             _turn(entry, side)
         elif entry["kind"] == "overlay":
             _place_overlay(entry)
+        if entry["strip"].clip_to_seen:
+            entry["strip"].relayout()                # the seen part of an image window may have changed (A2)
     st["strips"] = keep
+    mdi = getattr(win, "_mdi", None)
+    if mdi is not None and st.get("follow") is not None:
+        for sub in mdi.subWindowList():          # an image window moved in the area: its seen part changes
+            if not sub.property("fsFollow"):
+                sub.setProperty("fsFollow", True)
+                sub.installEventFilter(st["follow"])
     areas = {}
     held = st.setdefault("tab_area_docks", {})       # {area: the panels whose tabs were last placed there}
     for area in (QtCore.Qt.LeftDockWidgetArea, QtCore.Qt.RightDockWidgetArea,
@@ -3033,8 +3091,15 @@ def install(win, tr, settings=None):
             super().__init__(parent)
             self.pending = False
 
+        def later(self, *_a):
+            if not self.pending:
+                self.pending = True
+                QtCore.QTimer.singleShot(0, self.run)
+
         def eventFilter(self, obj, ev):
             t = ev.type()
+            if t == QtCore.QEvent.Move and isinstance(obj, QtWidgets.QMdiSubWindow):
+                self.later()                         # an image window moved: its seen part changes (A2)
             if obj is win and t in (QtCore.QEvent.Resize, QtCore.QEvent.MouseButtonRelease):
                 release_tab_sides(win)               # the window resized / a splitter let go: a size the user gave
                 if t == QtCore.QEvent.MouseButtonRelease and not self.pending:
@@ -3089,6 +3154,11 @@ def install(win, tr, settings=None):
                                   if not win._docks[k].isHidden()])
     tick.start(); st["status_tick"] = tick
     win.installEventFilter(follow)
+    mdi = getattr(win, "_mdi", None)
+    if mdi is not None:                          # the image area resized / scrolled: the image strips again (A2)
+        mdi.viewport().installEventFilter(follow)
+        mdi.horizontalScrollBar().valueChanged.connect(follow.later)
+        mdi.verticalScrollBar().valueChanged.connect(follow.later)
     for dock in win._docks.values():
         dock.installEventFilter(follow)
         dock.dockLocationChanged.connect(lambda _a: follow.run())
