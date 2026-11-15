@@ -1524,7 +1524,7 @@ def _holding(start, target):
     return None, -1
 
 
-def declare_strip(win, key, row, body=None, shape=None, root=None):
+def declare_strip(win, key, row, body=None, shape=None, root=None, more=()):
     """Panel ``key`` declares its tool strip (the ONE door; register_panel(strip=...) calls it).
 
     ``row``: the row layout that holds the panel's tool buttons. Every button in it (in order) goes into
@@ -1532,7 +1532,9 @@ def declare_strip(win, key, row, body=None, shape=None, root=None):
     rest of the row (a box, a label) stays where it is. ``body``: the widget the strip stands to the
     left of when the panel is wide (None: the whole panel). ``shape``: the widget whose width and height
     decide the side (None: the dock). ``root``: the panel's top widget when ``body`` is None and the
-    panel is not a dock. Returns the FlowStrip (calling again for the same key returns the first one)."""
+    panel is not a dock. ``more``: other rows of the panel whose buttons join the strip, each as one more group
+    (a box left with nothing in it goes). Returns the FlowStrip (calling again for the same key returns the
+    first one)."""
     from PySide6 import QtCore, QtWidgets   # noqa: PLC0415
     st = _state(win)
     decl = st.setdefault("strip_decl", {})
@@ -1565,9 +1567,20 @@ def declare_strip(win, key, row, body=None, shape=None, root=None):
                 cur = []
     if cur:
         groups.append(cur)
-    buttons = [b for g in groups for b in g]
-    if not buttons:
+    if not [b for g in groups for b in g]:
         raise ValueError("strip of %r: the row holds no buttons" % (key,))
+    buttons = [b for g in groups for b in g]
+    for extra in more:                           # more rows: their buttons, one group each (P04-6: kinds in order)
+        xb = [extra.itemAt(i).widget() for i in range(extra.count())
+              if isinstance(extra.itemAt(i).widget(), QtWidgets.QAbstractButton)]
+        for b in xb:
+            extra.removeWidget(b)
+        if xb:
+            groups.append(xb)
+        box = extra.parentWidget()
+        if box is not None and not any(extra.itemAt(i).widget() is not None for i in range(extra.count())):
+            box.hide()                           # e.g. the "Export & I/O" box: its buttons are in the strip now
+            box.setProperty("fsEmptied", True)
     for i in sorted(drop + [row.indexOf(b) for b in buttons], reverse=True):
         it = row.takeAt(i)
         w = it.widget() if it is not None else None
@@ -2476,17 +2489,27 @@ STRINGS = STRINGS + tuple(BUTTON_NAMES.values())
 
 #: How many of its own functions a panel's menu offers (user, 2026-11-13: "3 to 8")
 MENU_OWN_MIN, MENU_OWN_MAX = 3, 8
+#: strip buttons whose function is a File-menu action of the window (names in win._panel_buttons): reached
+#: from the menu bar, not added to the panel's own menu (register_panel(strip_menubar=...))
+FILE_BUTTONS = ("open_pipeline", "save_pipeline", "export")
+#: a drawn button of a panel that stays out of the panel's strip says why (its property "fsLoose")
+LOOSE_REASONS = {
+    "beside_box": "it acts on the choice box it stands beside (the sample list): a strip would part them",
+}
 
 
-def register_panel(win, key, status=None, actions=None, strip=None, no_strip=None, strip_equiv=None):
+def register_panel(win, key, status=None, actions=None, strip=None, no_strip=None, strip_equiv=None,
+                   strip_menubar=None):
     """What one panel shows in its title band, offers in its menu button and uses as its tool strip —
     the ONE place a panel (also one added later: console, parameters, call stack) says so.
 
-    ``strip``: (row, body) = the panel's tool strip (declare_strip, once per panel). ``no_strip``: why
-    the panel has none (panel_ledger keeps the reason; a panel with neither fails the gate). Every
+    ``strip``: (row, body[, more rows]) = the panel's tool strip (declare_strip, once per panel). ``no_strip``:
+    why the panel has none (panel_ledger keeps the reason; a panel with neither fails the gate). Every
     button of the strip is also an entry of the menu (A2: a tool scrolled out of sight is one menu entry
     away): ``strip_equiv[button]`` (the window's QAction for the same function), else the button's
-    default action, else button_action(win, button); the ones ``actions`` lacks are added at the end.
+    default action, else button_action(win, button); the ones ``actions`` lacks are added at the end -
+    except the buttons of ``strip_menubar``, whose function is a File-menu action of the window (one
+    entry away there; the panel's own menu keeps its MENU_OWN_MIN..MENU_OWN_MAX entries).
 
     ``status``: a list of ``{"id": str, "text": callable -> str, "tip": str, "priority": int}``. Each
     is a small read-out to the right of the name; ``text()`` is asked four times a second while the
@@ -2500,17 +2523,21 @@ def register_panel(win, key, status=None, actions=None, strip=None, no_strip=Non
         raise KeyError("no panel named %r" % (key,))
     actions = list(actions or [])
     if strip is not None:
-        row, body = strip
-        fs = declare_strip(win, key, row, body)
+        row, body, more = strip[0], strip[1], tuple(strip[2:])
+        fs = declare_strip(win, key, row, body, more=more)
         own, extra = [a for a in actions if a is not None], []
         reach = st.setdefault("strip_action_of", {})
         made = st.get("button_actions") or {}
+        in_menubar = st.setdefault("strip_menubar", set())
         for b in fs.items():                     # the entry the panel already lists for this button comes first
             act = ((made.get(b) if made.get(b) in own else None)
                    or (b.defaultAction() if isinstance(b, QtWidgets.QToolButton) else None)
                    or (strip_equiv or {}).get(b)
                    or button_action(win, b))
             reach[b] = act
+            if b in (strip_menubar or ()):       # a File-menu function of the window: one entry away there
+                in_menubar.add(b)
+                continue
             if act not in own and act not in extra:
                 extra.append(act)
         if extra:
@@ -2560,6 +2587,9 @@ def _default_registrations(win):
 
     strips = getattr(win, "_panel_strips", None) or {}         # {key: (row, body)} - studio.py declares them
     own_buttons = getattr(win, "_panel_buttons", None) or {}
+    gallery = getattr(win, "_browse_samples", None)
+    if gallery is not None:                                    # it stays beside the box it acts on
+        gallery.setProperty("fsLoose", LOOSE_REASONS["beside_box"])
     for (panel, name), text in BUTTON_NAMES.items():           # D98: the short name of each button's menu entry
         b = (own_buttons.get(panel) or {}).get(name)
         if b is not None:
@@ -2574,6 +2604,8 @@ def _default_registrations(win):
             return
         if key in strips:
             kwargs.update(strip=strips[key], strip_equiv=equiv(key))
+            files = [(own_buttons.get(key) or {}).get(n) for n in FILE_BUTTONS]
+            kwargs.update(strip_menubar={b for b in files if b is not None})
         else:
             kwargs.update(no_strip=STRIP_EXEMPT.get(key))
         globals()["register_panel"](win_, key, *args, **kwargs)

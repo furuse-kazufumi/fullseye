@@ -833,7 +833,7 @@ def test_every_panel_menu_offers_three_to_eight_of_its_own_and_one_qaction_per_f
         # the panel buttons that had no QAction: one action each, the button's name / state, pressing the button
         pb = win._panel_buttons
         assert sorted(pb) == ["ab", "graphics_1", "operators", "pipeline", "program", "variables"]
-        assert sum(len(v) for v in pb.values()) == 6 + 3 + 3 + 3 + 6 + 7
+        assert sum(len(v) for v in pb.values()) == 6 + 3 + 3 + 3 + 9 + 7     # pipeline: + open / save / export
         backed = st["button_of"]                    # pipeline / graphics_1 use the window's own QActions (same names)
         assert len(backed) == 4 + 2 + 3 + 3 + 3 and set(backed.values()) <= {b for v in pb.values() for b in v.values()}
         for act, button in backed.items():

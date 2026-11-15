@@ -15819,13 +15819,14 @@ def build_window(model=None):
         "ab": {"restore": ab_restore, "adopt": ab_adopt, "keep": ab_keep},       # has in win._actions = that QAction
         "operators": {"insert": b_insert, "run_once": b_run_once, "help": b_help},
         "pipeline": {"remove": b_rm, "move_up": b_up, "move_down": b_dn, "reset": b_reset, "step": b_step,
-                     "run_all": b_runall},
+                     "run_all": b_runall, "open_pipeline": b_openp, "save_pipeline": b_savep, "export": b_export},
         "graphics_1": {"open_image": b_load, "demo": b_demo, "save_result": b_save, "zoom_in": b_zin,
                        "zoom_out": b_zout, "fit": b_fit, "actual_size": b_11}}
     for _lab in (readout, win._img_info, op_param, stage_detail):   # D121: figures and signatures keep the code face;
         _lab.setProperty("figures", True)                           # every other hint label is a sentence (UI face)
     win._panel_strips = {                        # each panel's tool strip: (its row of buttons, what it stands beside;
-        "program": (crow, None), "operators": (oprow, None), "pipeline": (erow, None),   # None = the whole panel)
+        "program": (crow, None), "operators": (oprow, None), "pipeline": (erow, None, xrow),   # None = the whole
+        # panel; a third: rows whose buttons join the strip as more groups - the Pipeline's Export & I/O)
         "variables": (vrow, None), "ab": (_abbtn, None), "graphics_1": (itop, view)}
     studio_panels.install(win, tr, _settings)   # panel bar + title bands + first-run arrangement (image + code)
     studio_theme.watch_code_fonts(QtWidgets.QApplication.instance())   # dialogs / editor tabs built later

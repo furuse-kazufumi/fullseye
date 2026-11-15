@@ -355,8 +355,8 @@ def test_every_strip_button_is_one_menu_entry_away(tmp_path, monkeypatch):
                     continue
                 act = reach.get(b)
                 assert act is not None, (r["key"], b.toolTip())
-                if r["kind"] == "image":                                    # the main image: the window's menus
-                    assert act in menubar, (r["key"], act.text())
+                if r["kind"] == "image" or b in st.get("strip_menubar", ()):  # the main image, and a panel's
+                    assert act in menubar, (r["key"], act.text())           # file buttons: the window's menus
                 else:                                                       # a panel: its own menu button
                     bar = st["titles"][r["key"]]
                     bar.fill_menu()
@@ -1990,4 +1990,58 @@ def test_image_strips_scroll_within_the_seen_part_of_a_squeezed_image_window(tmp
                 cases += 1
         assert cases == 4 and reached >= 20
     finally:
+        _close(app, win)
+
+
+# --------------------------------------------------------------------------- #
+# A1 — no drawn tool button of a panel is left out of every strip (the user-eye check: the three buttons of
+# "Export & I/O" stayed a row at the bottom right when "Tools and tabs: left" turned everything else)
+# --------------------------------------------------------------------------- #
+def _drawn(b):
+    """A button that shows only a picture (what a strip holds)."""
+    from PySide6 import QtCore, QtWidgets
+    if b.icon().isNull() or (b.text() or "").replace("&", "").strip():
+        return isinstance(b, QtWidgets.QToolButton) and not b.icon().isNull() and \
+            b.toolButtonStyle() == QtCore.Qt.ToolButtonIconOnly
+    return True
+
+
+def test_every_drawn_button_of_a_panel_is_in_a_strip_or_says_why_not(tmp_path, monkeypatch):
+    from PySide6 import QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        win.resize(1600, 1000); _pump(app, 0.2)
+        win._new_graphics_window(); _pump(app, 0.3)
+        _show_all(app, win)
+        counted = 0
+        for mode in ("top", "left"):
+            studio_panels.set_strip_mode(win, mode); _pump(app, 0.3)
+            held = set()
+            for s in studio_panels.all_strips(win):
+                held |= set(s.items()) | {s.b_back, s.b_on}
+            in_strips = loose = 0
+            for key, dock in win._docks.items():
+                dock.raise_(); _pump(app, 0.05)
+                band = set(win._panels["titles"][key].buttons())
+                for b in dock.findChildren(QtWidgets.QAbstractButton):
+                    if b.objectName().startswith("qt_") or b in band or not b.isVisible() or not _drawn(b):
+                        continue
+                    if b in held:
+                        in_strips += 1
+                    else:                                                   # only with its reason
+                        why = studio_panels.STRIP_EXEMPT.get(key) or b.property("fsLoose")
+                        assert why, (mode, key, b.toolTip()[:50])
+                        loose += 1
+            assert in_strips >= 20 and loose <= 4, (mode, in_strips, loose)   # code 6 + ops 3 + pipe 9 + vars 2
+            counted += in_strips + loose
+            # the pipeline's file buttons are the third group of its strip: [edit] | [run] | [save / export]
+            pipe = [r for r in studio_panels.panel_ledger(win) if r["key"] == "pipeline"][0]["strip"]
+            names = {b: n for n, b in win._panel_buttons["pipeline"].items()}
+            assert [[names.get(b) for b in g] for g in pipe.groups] == [
+                ["remove", "move_up", "move_down"], ["reset", "step", "run_all"],
+                ["open_pipeline", "save_pipeline", "export"]], mode
+            assert win._panel_strips["pipeline"][2].parentWidget().isHidden()   # the emptied "Export & I/O" box
+        assert counted >= 44                                                # (20 in strips + 4 with a reason) x 2
+    finally:
+        studio_panels.set_strip_mode(win, "auto")
         _close(app, win)
