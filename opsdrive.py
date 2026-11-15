@@ -1218,6 +1218,9 @@ _CATALOG = {
         ("elevation_normals", "terrain", ["depth"], "normalmap"),
         ("elevation_step_edges", "terrain", ["depth"], "mask"),
         ("foothold_candidates", "terrain", ["depth"], "table"),
+        # 高さ図を深度カメラで撮る(2026-11-15): 高さ図 × world→camera の (R, t) × K → 光軸方向の深度 [m](当たらない = nan)。
+        # depth_to_points → elevation_map の逆向き。入力の depth は高さ、出力の depth は距離(どちらも 2-D の格子のメートル)。
+        ("heightmap_depth_camera", "terrain", ["depth", "pose", "matrix"], "depth"),
     ],
     # 釣り合いと歩行(locomotion、2026-11-06 に台帳へ + 第 1 便の 8 op): 接地点・重心の軌跡は points (N, 3)、
     # 1 時刻の重心と速度は vector (3,)(x, y を地面、z を上として使う)、足の高さの (T, F) は matrix、立脚の (T, F) bool は

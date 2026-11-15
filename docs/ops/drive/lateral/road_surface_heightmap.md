@@ -5,7 +5,7 @@ category: lateral
 in: table
 out: depth
 gpu: なし
-examples: [road_surface_tour]
+examples: [heightmap_depth_camera_tour, road_surface_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -98,6 +98,7 @@ the segment (exact for lines and arcs, no polyline kinks). Optional blending int
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [heightmap_depth_camera_tour](../../../../examples/heightmap_depth_camera_tour.py) — `py -3.11 examples/heightmap_depth_camera_tour.py`
 - [road_surface_tour](../../../../examples/road_surface_tour.py) — `py -3.11 examples/road_surface_tour.py`
 
 ## 型が繋がる次の op(`depth` を入力に取れる)

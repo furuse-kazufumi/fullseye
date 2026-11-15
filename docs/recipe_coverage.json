@@ -1,9 +1,9 @@
 {
  "summary": {
-  "recipes": 273,
+  "recipes": 274,
   "recipes_py": 25,
-  "recipebook": 248,
-  "multi_stage": 222,
+  "recipebook": 249,
+  "multi_stage": 223,
   "families_total": 60,
   "families_covered": 60,
   "families_uncovered": [],
@@ -15,7 +15,7 @@
    "optics": 8,
    "preprocess": 38,
    "sensing": 17,
-   "simulation": 10,
+   "simulation": 11,
    "visualization": 5
   },
   "halcon_chapters": {
@@ -44,12 +44,12 @@
   },
   "runner": {
    "mcp": 89,
-   "python": 184
+   "python": 185
   },
-  "truth_gated": 249,
+  "truth_gated": 250,
   "type_cuts_total": 0,
   "recipes_with_type_cuts": 0,
-  "distinct_ops": 416,
+  "distinct_ops": 418,
   "categories_2d_total": 49,
   "categories_2d_covered": 25,
   "categories_2d_uncovered": [
@@ -81,7 +81,7 @@
   "gpu": {
    "snapshot_commit": "a3f91eae72f851e870e6a45294ecfc44ded9cb10",
    "recipes_measured": 247,
-   "recipes_unmeasured": 26,
+   "recipes_unmeasured": 27,
    "recipes_with_gpu_stage": 127,
    "switches_total": 96,
    "switch_histogram": {
@@ -103,7 +103,7 @@
    "family": "3d",
    "ops": 378,
    "recipes": 26,
-   "ops_used": 37
+   "ops_used": 38
   },
   {
    "family": "acceptance",
@@ -185,9 +185,9 @@
   },
   {
    "family": "drive",
-   "ops": 743,
-   "recipes": 8,
-   "ops_used": 12
+   "ops": 744,
+   "recipes": 9,
+   "ops_used": 13
   },
   {
    "family": "emproof",
@@ -5136,6 +5136,28 @@
    "gpu_stages": 0,
    "gpu_unmeasured_ops": [],
    "gpu_switches": 0
+  },
+  {
+   "name": "Simulate — a depth camera over a height map, then the plane back from its point cloud",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "simulation",
+   "halcon": null,
+   "runner": "python",
+   "stages": 3,
+   "ops": [
+    "heightmap_depth_camera",
+    "depth_to_points",
+    "fit_plane_3d"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "heightmap_depth_camera",
+    "fit_plane_3d"
+   ],
+   "gpu_switches": null
   },
   {
    "name": "Simulate — a crowned road lane from its alignment, then its slope as a DEM",

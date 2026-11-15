@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(494 例)
+### 2-D 图像/信号/几何(495 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -293,6 +293,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `scale_law_of_features` — op: `contlength`, `moments_region_2nd`, `moments_region_3rd`, `moments_region_central` `py -3.11 examples/scale_law_of_features.py`
 - `shape_factors_closed_form` — op: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
 - `walking_ops_tour` — op: `capture_margin`, `com_from_silhouette`, `com_support_margin`, `contact_points`, `detect_obstacles`, `elevation_map`, `elevation_normals`, `elevation_step_edges`, `elevation_traversability`, `fill_gaps`, `foot_slip_metrics`, `foothold_candidates`(另有 12 个) `py -3.11 examples/walking_ops_tour.py`
+- `heightmap_depth_camera_tour` — op: `clothoid_points`, `crop_rectangle2`, `dem_viewshed`, `elevation_map`, `fill_gaps`, `heightmap_depth_camera`, `road_surface_heightmap`, `surface_form_remove`, `world_camera` `py -3.11 examples/heightmap_depth_camera_tour.py`
 - `road_surface_tour` — op: `blend`, `clothoid_points`, `crop_rectangle2`, `dem_slope`, `road_surface_heightmap`, `surface_form_remove` `py -3.11 examples/road_surface_tour.py`
 - `itokawa_gravity_tour` — op: `mesh_slice_contours`, `polyhedron_clip_halfspace`, `polyhedron_gravity` `py -3.11 examples/itokawa_gravity_tour.py`
 
@@ -848,9 +849,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 
 ## Operators by family(族 → 类别，全部 op)
 
-_共 3846 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
+_共 3847 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
 
-族一览: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 743 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族一览: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -3639,7 +3640,7 @@ _共 3846 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: 无 — 非极大值抑制(3.39 节)。像素 (x, y) 仅当在窗口内**对前面的邻居(上方各行以及同一行左侧)≥、对后面的邻居 >** 时才保留(REQ-0337)。平坦峰顶只保留 1 个像素正是由于这种不对称。*mask* 的非零像素不参与比较，原样保留 (也不用于其他像素的比较，REQ-0336)。被抑制的像素在 U8 时为 0，S16 时为 INT16_MIN(REQ-0335)。超出窗口的邻居不比较。 · 示例: `gallery_openvx_spec_values`
 
-### drive (743 ops / 55 categories)
+### drive (744 ops / 55 categories)
 
 名字是驾驶，内容却是**物理仿真与机器人 PoC 的台账**: 除驾驶(赛道、交通、决策、CARLA / CommonRoad)外，触觉(tac*)、peg-in-hole(peg*)、抛光(polish)、磨削(grind)、切削(cutting)、粉体(granular / scoop)、粉末 X 射线衍射(pxrd)、球类(ball / puck)等作为类别共存其中。请按类别名查找。
 
@@ -4020,7 +4021,7 @@ _共 3846 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `ackermann_steer_angles` `any → table` GPU: 无 — 阿克曼转向的内外轮转向角(后轴中心的转弯半径 R，轴距 L，轮距 t)。 · 示例: `poc_driving_lateral`
 - `bicycle_model_step` `any → any` GPU: 无 — 线性 2 轮等效模型的 1 步(经典 4 阶 Runge–Kutta，步内 δ 与 u 恒定)。 · 示例: `poc_driving_lateral`
 - `clothoid_design` `无输入 → table` GPU: 无 — 用长度 L 的回旋曲线连接直线 → 圆(半径 R)时的各项量。 · 示例: `poc_driving_lateral`
-- `clothoid_points` `无输入 → table` GPU: 无 — 曲率随弧长线性变化 κ(s) = κ₀ + (κ₁ − κ₀) s / length 的曲线(回旋曲线的一部分；κ₀ = κ₁ 时为圆弧或直线)上的点。 · 示例: `poc_driving_lateral`, `road_surface_tour`
+- `clothoid_points` `无输入 → table` GPU: 无 — 曲率随弧长线性变化 κ(s) = κ₀ + (κ₁ − κ₀) s / length 的曲线(回旋曲线的一部分；κ₀ = κ₁ 时为圆弧或直线)上的点。 · 示例: `heightmap_depth_camera_tour`, `poc_driving_lateral`, `road_surface_tour`
 - `curvature_speed_plan` `any → table` GPU: 无 — 由曲率序列构造速度上限，并通过前向、后向 2 遍处理满足加减速上限的速度规划(经典方法)。 · 示例: `poc_driving_lateral`
 - `curve_speed_limit` `any → any` GPU: 无 — 在超高 i、横向滑动摩擦系数 f 的曲线(半径 R)上不向外侧滑出的上限速度 v = √(g R (i + f)/(1 − i f)) [m/s]。 · 示例: `gallery_drive_lateral_env`
 - `design_min_radius` `any → any` GPU: 无 — 道路构造令解说 (3) 式的最小曲线半径 R = V² / (127 (i + f)) [m] (V 单位为 km/h)。 · 示例: `gallery_drive_lateral_env`
@@ -4031,7 +4032,7 @@ _共 3846 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `pure_pursuit_circle_offset` `无输入 → table` GPU: 无 — 用 pure pursuit(以后轴中心为基准)跟踪定常圆(半径 R)时的稳态圆半径 ρ 与横向偏差 ρ − R(向外为正)。 · 示例: `poc_driving_lateral`
 - `pure_pursuit_curvature` `any → table` GPU: 无 — pure pursuit：从后轴中心(``pose`` = (x, y, ψ)，可为 (N, 3))瞄准路径上前方距离 L_d 处的点的曲率 κ = 2 sin α / L_d。 · 示例: `poc_driving_lateral`
 - `rear_axle_path` `any → table` GPU: 无 — 由前轴中心的折线轨迹，求无滑动牵引出的后轴中心轨迹(每个区段为精确的追踪曲线)。 · 示例: `poc_driving_lateral`
-- `road_surface_heightmap` `table → depth` GPU: 无 — 由中心线线形与横断面规则生成路面高度图,并给出每个单元的解析真值(纵坡与横坡)。 · 示例: `road_surface_tour`
+- `road_surface_heightmap` `table → depth` GPU: 无 — 由中心线线形与横断面规则生成路面高度图,并给出每个单元的解析真值(纵坡与横坡)。 · 示例: `heightmap_depth_camera_tour`, `road_surface_tour`
 - `stanley_steer` `any → table` GPU: 无 — Stanley 转向角 δ = ψ_e + atan2(−k e, k_s + v)(前轴中心的横向偏差 e 以路径左侧为正，ψ_e = 路径方向 − ψ)。 · 示例: `gallery_drive_lateral_env`
 - `stanley_straight_decay` `无输入 → signal` GPU: 无 — 直线路径上 Stanley(不限幅)的前轴横向偏差 e(t) 的闭式。 · 示例: `gallery_drive_lateral_env`
 - `steady_cornering` `无输入 → table` GPU: 无 — 线性 2 轮等效模型的稳态圆周转向(速度 u，转弯半径 R = u/r，左转为正)。 · 示例: `gallery_drive_lateral_env`
@@ -4476,24 +4477,25 @@ _共 3846 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `ttc_from_scale` `无输入 → scalar` GPU: 无 — 由视在大小的变化求 τ(秒，以第一帧的时刻计)：``τ₀ = Δt · w₁ / (w₁ − w₀)``。 · 示例: `poc_ttc_rss`
 - `ttc_truth` `image2d × matrix × matrix → table` GPU: 有(许可列表) — 逐像素的**真实 τ**(秒，以第一帧的时刻计)与接近速度：``{"tau", "closing_speed", "depth1", "valid"}``。 · 示例: `poc_ttc_rss`
 
-#### drive / walkterrain (12)
+#### drive / walkterrain (13)
 - `detect_obstacles` `depth → mask` GPU: 无 — 分割出高出可行走地面超过 *clearance* 的单元。 · 示例: `walking_ops_tour`
-- `elevation_map` `points → depth` GPU: 无 — 将点云分箱为 2.5-D 高程栅格。 · 示例: `perception_pipeline`, `physical_ai_perception`, `walking_ops_tour`
+- `elevation_map` `points → depth` GPU: 无 — 将点云分箱为 2.5-D 高程栅格。 · 示例: `heightmap_depth_camera_tour`, `perception_pipeline`, `physical_ai_perception`, `walking_ops_tour`
 - `elevation_normals` `depth → normalmap` GPU: 无 — 高程图的朝上单位法线 (H, W, 3) —— :func:`surface_normals` 的台账入口。 · 示例: `walking_ops_tour`
 - `elevation_step_edges` `depth → mask` GPU: 无 — 高程图的台阶边缘(路缘 / 台阶前缘)-> ``(edge_mask, signed_rise)``(台账入口)。 · 示例: `walking_ops_tour`
 - `elevation_traversability` `depth → mask` GPU: 无 — 高程图中可通行的单元(True = 在台阶与坡度上限之内)—— :func:`traversability` 的台账入口。 · 示例: `walking_ops_tour`
-- `fill_gaps` `depth → depth` GPU: 无 — 用最近的有限高度填充 ``nan`` 单元(最近邻)。 · 示例: `walking_ops_tour`
+- `fill_gaps` `depth → depth` GPU: 无 — 用最近的有限高度填充 ``nan`` 单元(最近邻)。 · 示例: `heightmap_depth_camera_tour`, `walking_ops_tour`
 - `foothold_candidates` `depth → table` GPU: 无 — 从地形中挑选离散的安全落脚目标。 · 示例: `consumer_hillco`, `physical_ai_perception`, `walking_ops_tour`
 - `foothold_score` `depth → image2d` GPU: 无 — 每个单元的平坦度得分 [0, 1] (1 = 平坦且水平 = 好的落脚点)。 · 示例: `walking_ops_tour`
 - `fuse_elevation` `images → depth` GPU: 无 — 将多个对齐的高程栅格融合为一张以机器人为中心的地图。 · 示例: `walking_ops_tour`
 - `ground_plane` `depth → depth` GPU: 无 — 每个单元的稳健最小二乘地面平面 ``z = a·x + b·y + c``。 · 示例: `walking_ops_tour`
 - `ground_surface` `depth → depth` GPU: 无 — 通过灰度开运算(先最小滤波再最大滤波)得到平滑的可行走地面包络。 · 示例: `walking_ops_tour`
+- `heightmap_depth_camera` `depth × pose × matrix → depth` GPU: 无 — 用针孔深度相机直接拍摄高度图(高程图/DEM)(光线以固定步长在高度面上行进)。 · 示例: `heightmap_depth_camera_tour`
 - `roughness_map` `depth → image2d` GPU: 无 — 每个单元的表面粗糙度 = ``window`` 邻域内高度的局部标准差。碎石 / 植被上高,平滑地面上约为 0。 · 示例: `walking_ops_tour`
 
 #### drive / world (4)
 - `load_asset` `无输入 → table` GPU: 无 — 将内置资产读成网格(mesh) dict：``{"V", "F", "color", "label", "name", "dims"}``。 · 示例: `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`
 - `world_build` `table → table` GPU: 无 — 由路线(要素或 layout)构建世界。 · 示例: `gallery_drive_japan_roads`, `gallery_drive_world_objects`, `poc_driving_longitudinal`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`, `poc_world_terrain`
-- `world_camera` `table × matrix × matrix → table` GPU: 无 — 用相机拍摄世界：``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 示例: `gsplat_trained_product`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
+- `world_camera` `table × matrix × matrix → table` GPU: 无 — 用相机拍摄世界：``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 示例: `gsplat_trained_product`, `heightmap_depth_camera_tour`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
 - `world_move` `table → any` GPU: 无 — 将物体 i(由资产放置的物体)移到新位姿 (x, y, yaw)(只改写顶点；面、标签、颜色不变)。 · 示例: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
 
 ### tomography (43 ops / 8 categories)
@@ -5153,7 +5155,7 @@ _共 3846 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### mv / resample (4)
 - `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: 无 — 把除法模型相机的图像重绘为另一组畸变与内参的图像。 · 示例: `machine_vision_tour`, `poc_real_chessboard_undistort`
-- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: 无 — 用线性插值读取旋转矩形内部，并裁剪为轴对齐图像。 · 示例: `machine_vision_tour`, `poc_mixed_case_depalletizing`, `poc_real_stereo_multiscanline`, `road_surface_tour`
+- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: 无 — 用线性插值读取旋转矩形内部，并裁剪为轴对齐图像。 · 示例: `heightmap_depth_camera_tour`, `machine_vision_tour`, `poc_mixed_case_depalletizing`, `poc_real_stereo_multiscanline`, `road_surface_tour`
 - `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: 无 — 用逆映射表对图像重采样（每个输出像素读取一个输入坐标）。 · 示例: `machine_vision_tour`, `poc_real_chessboard_undistort`
 - `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: 无 — 把图像校正为世界平面 z=0 的正视图（1 像素 = `scale` 世界单位）。 · 示例: `machine_vision_tour`, `poc_real_chessboard_undistort`
 
@@ -5556,7 +5558,7 @@ _共 3846 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `robust_gaussian_surface` `depth → depth` GPU: 无 — 稳健高斯回归滤波器(曲面):不被划痕和突起拖动的曲面波纹度与粗糙度。 · 示例: `poc_robust_profile_filter`
 - `robust_spline_profile` `signal → signal` GPU: 无 — 稳健样条滤波器(截面):不被离群点拖动的平均线与粗糙度。 · 示例: `poc_robust_profile_filter`
 - `surface_filter` `depth → depth` GPU: 仅在链中(许可列表) — 将高度场分解为粗糙度和波纹度(ISO 16610-21 的高斯滤波器)。 · 示例: `poc_robust_profile_filter`, `poc_surface_roughness`
-- `surface_form_remove` `depth → depth` GPU: 仅在链中(许可列表) — 直接在网格上去除平面 / 二次曲面。返回 ``(residual, coeffs)``。 · 示例: `poc_polish_wipe_measure`, `poc_pv_thermal_survey`, `poc_surface_roughness`, `road_surface_tour`
+- `surface_form_remove` `depth → depth` GPU: 仅在链中(许可列表) — 直接在网格上去除平面 / 二次曲面。返回 ``(residual, coeffs)``。 · 示例: `heightmap_depth_camera_tour`, `poc_polish_wipe_measure`, `poc_pv_thermal_survey`, `poc_surface_roughness`, `road_surface_tour`
 
 #### roughness / synth (1)
 - `surface_synth_psd` `无输入 → depth` GPU: 无 — 由指定的 PSD 合成高度场。返回 ``(z, sq_analytic)``。 · 示例: `poc_polish_wipe_measure`, `poc_surface_roughness`
@@ -5687,7 +5689,7 @@ _共 3846 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 #### dem / visibility (3)
 - `dem_horizon_angle` `depth → image2d` GPU: 无 — 指定方位的地平线仰角 [度]。0 为水平，90 表示正上方被遮挡。 · 示例: `dem_terrain_analysis_tour`
 - `dem_sky_view_factor` `depth → image2d` GPU: 无 — 天空可视因子 [0,1]。能看到多少天空。 · 示例: `poc_dem_terrain`
-- `dem_viewshed` `depth → image2d` GPU: 无 — 从 1 个点出发的可视区域(1 = 可见)。判定视线是否被地形遮挡。 · 示例: `dem_terrain_analysis_tour`, `poc_stockpile_volume`
+- `dem_viewshed` `depth → image2d` GPU: 无 — 从 1 个点出发的可视区域(1 = 可见)。判定视线是否被地形遮挡。 · 示例: `dem_terrain_analysis_tour`, `heightmap_depth_camera_tour`, `poc_stockpile_volume`
 
 ### conngraph (28 ops / 7 categories)
 

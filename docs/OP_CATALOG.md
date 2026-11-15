@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(494 例)
+### 2-D 画像/信号/幾何(495 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -291,6 +291,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **特徴の次元を、真値を一つも使わずに測る** — 形を k 倍に拡大して値が k^p 倍になる指数 p を測り、領域を受けて数を返す 35 op の**次元**(無次元 29・長さ 5・面積 1)を表にする。HALCON の数値も閉形式の真値も使わない —— 変成関係だけで採点する。2026-09-26 に直した 8 op のうち 5 本はこの 1 枚で出ており、同じ枚で未解決の §52(moments 族が p=0、HALCON は 4/5/8)も指す。画布で割ると p が 1.015 から 0.015 へ落ちることをその場で見せ、値域や有限性の門では区別できないことを示す。 `py -3.11 examples/scale_law_of_features.py`
 - **形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる** — 矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region 特徴を採点。面積と矩形度は丸め誤差 0 で一致。コンパクトさが頭打ちしないことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)ことを示す。 `py -3.11 examples/shape_factors_closed_form.py`
 - **点群から足場を選び、歩いた記録を足で検算する —— 歩行と足場の台帳 24 op(walkterrain + locomotion)** — 段・箱・穴のある床の点群を elevation_map で高さ図にし、障害物・段差・通れる所・足場の点数で「足を置ける所」の mask にする(箱の面積は作った値と一致、穴の上には置かない)。footstep_plan が左右交互の着地点を決め、その点を踏む 足の軌跡から gait_step_events が着地点を誤差 0 で取り戻し、foot_slip_metrics は滑り 0・足で測る前進 = 胴の前進。足を置き直さない見せかけは walking_ok = False。2 足支持では com_support_margin が -inf、support_line_margin は 線分までの距離。LIPM の捕捉点 ξ = c + ċ/ω、静的な接触力の LP は左右対称で等分。 `py -3.11 examples/walking_ops_tour.py`
+- **高さ図を深度カメラで直接撮り、知覚の連鎖を合成データで閉じる —— heightmap_depth_camera** — 傾いた面の深度が光線と平面の閉形式に 1e-12、三角形に分けた同じ高さ図を world_camera で撮った深度と 平面で 1e-9・丘で中央値 1e-4 m 以内(当たる画素も同じ)。道 → 深度(雑音つき)→ depth_to_points → elevation_map → 車線の窓で縦断・横勾配が真値に戻る。雑音は σ_z = z²σ_d/(f b) どおり、壁の向こうには 当たらず dem_viewshed と矛盾しない。 `py -3.11 examples/heightmap_depth_camera_tour.py`
 - **横断の決まりを持つ道の面を、セルごとの解析の真値つきで作る —— road_surface_heightmap** — 直線の道は世界の座標の閉形式 z = g·x − c·|y| に 1e-12、半径 35 m のヘアピン(clothoid_points の線形)は 極座標の閉形式に 1e-9 で一致し、内側の車線の勾配 6.3 %・外側 5.8 %(1/(1 − κe))。道路構造令の表の長さで 片勾配へすりつけると右の車線が途中で平らを通る。車線の窓を crop_rectangle2 → surface_form_remove に かけると (勾配, −拝み勾配) が、dem_slope の中央値が atan(√(g² + c²)) が戻る。 `py -3.11 examples/road_surface_tour.py`
 - **小惑星イトカワの実際の形の上で、立つ場所の重さと坂を測る —— 一様密度の多面体の厳密な重力(polygrav 2 op)** — 公開データの形(NASA PDS Small Bodies Node の Gaskell Itokawa Shape Model、Q = 64 の 49,152 面、CC0 1.0、data/itokawa_shape/)で、polyhedron_gravity(Werner & Scheeres 1997 の面と辺の和)を長軸の断面に沿って計算: 自転の遠心力を足した実効重力は 56.8〜82.0 µm/s²、両端で軽い。重心でガウスの法則 ∇·g = −4πGρ が 2e-16。polyhedron_clip_halfspace で x ≥ 150 m を頭として切り、頭 2,850 kg/m³・全体の質量を保つと胴 1,754 kg/m³・重心 +21.5 m(Lowry 2014: 1,750 ± 110・21 ± 12 m)。動く 3-D 版は tools/build_itokawa_anim3d.py。 `py -3.11 examples/itokawa_gravity_tour.py`
 
@@ -846,9 +847,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3846 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3847 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 743 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(964 ops / 49 categories)
 
@@ -3637,7 +3638,7 @@ _計 3846 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 #### vx / suppress(1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: なし — 非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で**自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には >** の ときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す (他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。 · 例: `gallery_openvx_spec_values`
 
-### drive(743 ops / 55 categories)
+### drive(744 ops / 55 categories)
 
 名前は運転だが、中身は**物理シミュレーションとロボットの PoC の台帳**: 運転(コース・交通・判断・CARLA / CommonRoad)に加え、触覚(tac*)・peg-in-hole(peg*)・研磨(polish)・研削(grind)・切削(cutting)・粉体(granular / scoop)・粉末 X 線回折(pxrd)・球技(ball / puck)などがカテゴリとして同居している。カテゴリ名で引くこと。
 
@@ -4018,7 +4019,7 @@ _計 3846 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `ackermann_steer_angles` `any → table` GPU: なし — アッカーマンの内外輪の舵角(後車軸の中心の旋回半径 R、ホイールベース L、輪距 t)。 · 例: `poc_driving_lateral`
 - `bicycle_model_step` `any → any` GPU: なし — 線形 2 輪等価モデルの 1 刻み(古典的な 4 次 Runge–Kutta、刻みの間 δ と u は一定)。 · 例: `poc_driving_lateral`
 - `clothoid_design` `入力なし → table` GPU: なし — 直線 → 円(半径 R)を長さ L のクロソイドで繋ぐときの量。 · 例: `poc_driving_lateral`
-- `clothoid_points` `入力なし → table` GPU: なし — 曲率が弧長に一次 κ(s) = κ₀ + (κ₁ − κ₀) s / length の曲線(クロソイドの一部。κ₀ = κ₁ なら円弧・直線)の点。 · 例: `poc_driving_lateral`, `road_surface_tour`
+- `clothoid_points` `入力なし → table` GPU: なし — 曲率が弧長に一次 κ(s) = κ₀ + (κ₁ − κ₀) s / length の曲線(クロソイドの一部。κ₀ = κ₁ なら円弧・直線)の点。 · 例: `heightmap_depth_camera_tour`, `poc_driving_lateral`, `road_surface_tour`
 - `curvature_speed_plan` `any → table` GPU: なし — 曲率の列から速度の上限を作り、前向き・後ろ向きの 2 パスで加減速の上限を守る速度計画(古典的な手法)。 · 例: `poc_driving_lateral`
 - `curve_speed_limit` `any → any` GPU: なし — 片勾配 i・横すべり摩擦係数 f の曲線(半径 R)で外へ滑らない上限速度 v = √(g R (i + f)/(1 − i f)) [m/s]。 · 例: `gallery_drive_lateral_env`
 - `design_min_radius` `any → any` GPU: なし — 道路構造令の解説 (3) 式の最小曲線半径 R = V² / (127 (i + f)) [m] (V は km/h)。 · 例: `gallery_drive_lateral_env`
@@ -4029,7 +4030,7 @@ _計 3846 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `pure_pursuit_circle_offset` `入力なし → table` GPU: なし — 定常円(半径 R)を pure pursuit(後車軸の中心を基準)で追うときの定常の円の半径 ρ と横ずれ ρ − R(外へ正)。 · 例: `poc_driving_lateral`
 - `pure_pursuit_curvature` `any → table` GPU: なし — pure pursuit: 後車軸の中心(``pose`` = (x, y, ψ)、(N, 3) 可)から経路の上で距離 L_d 先の点を狙う曲率 κ = 2 sin α / L_d。 · 例: `poc_driving_lateral`
 - `rear_axle_path` `any → table` GPU: なし — 前車軸の中心の折線の軌跡から、すべりなしで引かれる後車軸の中心の軌跡(区間ごとに厳密な追跡曲線)。 · 例: `poc_driving_lateral`
-- `road_surface_heightmap` `table → depth` GPU: なし — 中心線の線形と横断の決まりから、道の面の高さ図と、セルごとの解析の真値(勾配・横勾配)を作る。 · 例: `road_surface_tour`
+- `road_surface_heightmap` `table → depth` GPU: なし — 中心線の線形と横断の決まりから、道の面の高さ図と、セルごとの解析の真値(勾配・横勾配)を作る。 · 例: `heightmap_depth_camera_tour`, `road_surface_tour`
 - `stanley_steer` `any → table` GPU: なし — Stanley の舵角 δ = ψ_e + atan2(−k e, k_s + v)(前車軸の中心の横ずれ e は経路の左が正、ψ_e = 経路の向き − ψ)。 · 例: `gallery_drive_lateral_env`
 - `stanley_straight_decay` `入力なし → signal` GPU: なし — 直線の経路で Stanley(切らない)の前車軸の横ずれ e(t) の閉形式。 · 例: `gallery_drive_lateral_env`
 - `steady_cornering` `入力なし → table` GPU: なし — 線形 2 輪等価モデルの定常円旋回(速さ u、旋回半径 R = u/r、左旋回を正)。 · 例: `gallery_drive_lateral_env`
@@ -4474,24 +4475,25 @@ _計 3846 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `ttc_from_scale` `入力なし → scalar` GPU: なし — 見かけの大きさの変化から τ(秒、最初のコマの時刻で): ``τ₀ = Δt · w₁ / (w₁ − w₀)``。 · 例: `poc_ttc_rss`
 - `ttc_truth` `image2d × matrix × matrix → table` GPU: あり(許可リスト) — 画素ごとの **真の τ**(秒、最初のコマの時刻で)と閉じる速さ: ``{"tau", "closing_speed", "depth1", "valid"}``。 · 例: `poc_ttc_rss`
 
-#### drive / walkterrain(12)
+#### drive / walkterrain(13)
 - `detect_obstacles` `depth → mask` GPU: なし — Segment cells rising more than *clearance* above the walkable ground. · 例: `walking_ops_tour`
-- `elevation_map` `points → depth` GPU: なし — Bin a point cloud into a 2.5-D elevation grid. · 例: `perception_pipeline`, `physical_ai_perception`, `walking_ops_tour`
+- `elevation_map` `points → depth` GPU: なし — Bin a point cloud into a 2.5-D elevation grid. · 例: `heightmap_depth_camera_tour`, `perception_pipeline`, `physical_ai_perception`, `walking_ops_tour`
 - `elevation_normals` `depth → normalmap` GPU: なし — Unit up-pointing normals (H, W, 3) of an elevation map — ledger door of :func:`surface_normals`. · 例: `walking_ops_tour`
 - `elevation_step_edges` `depth → mask` GPU: なし — Step edges (curbs / stair nosings) of an elevation map -> ``(edge_mask, signed_rise)`` (ledger door). · 例: `walking_ops_tour`
 - `elevation_traversability` `depth → mask` GPU: なし — Traversable cells of an elevation map (True = within the step and slope limits) — ledger door of :func:`traversability`. · 例: `walking_ops_tour`
-- `fill_gaps` `depth → depth` GPU: なし — Fill ``nan`` cells with the nearest finite height (nearest-neighbour). · 例: `walking_ops_tour`
+- `fill_gaps` `depth → depth` GPU: なし — Fill ``nan`` cells with the nearest finite height (nearest-neighbour). · 例: `heightmap_depth_camera_tour`, `walking_ops_tour`
 - `foothold_candidates` `depth → table` GPU: なし — Pick discrete safe stepping targets from the terrain. · 例: `consumer_hillco`, `physical_ai_perception`, `walking_ops_tour`
 - `foothold_score` `depth → image2d` GPU: なし — Per-cell flatness score in [0, 1] (1 = flat & level = good foothold). · 例: `walking_ops_tour`
 - `fuse_elevation` `images → depth` GPU: なし — Fuse several aligned elevation grids into one robot-centric map. · 例: `walking_ops_tour`
 - `ground_plane` `depth → depth` GPU: なし — Robust least-squares ground plane ``z = a·x + b·y + c`` per cell. · 例: `walking_ops_tour`
 - `ground_surface` `depth → depth` GPU: なし — Smooth walkable-ground envelope by grey-opening (min-filter then max-filter). · 例: `walking_ops_tour`
+- `heightmap_depth_camera` `depth × pose × matrix → depth` GPU: なし — 高さ図(標高図・DEM)を、ピンホールの深度カメラで直接撮る(光線を一定の刻みで高さの上に進める)。 · 例: `heightmap_depth_camera_tour`
 - `roughness_map` `depth → image2d` GPU: なし — Per-cell surface roughness = local height standard deviation over a ``window`` neighbourhood. High on rubble / vegetation, ~0 on smooth ground. · 例: `walking_ops_tour`
 
 #### drive / world(4)
 - `load_asset` `入力なし → table` GPU: なし — 同梱資産をメッシュ dict に: ``{"V", "F", "color", "label", "name", "dims"}``。 · 例: `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`
 - `world_build` `table → table` GPU: なし — コース(要素か layout)から世界を組む。 · 例: `gallery_drive_japan_roads`, `gallery_drive_world_objects`, `poc_driving_longitudinal`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`, `poc_world_terrain`
-- `world_camera` `table × matrix × matrix → table` GPU: なし — 世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 例: `gsplat_trained_product`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
+- `world_camera` `table × matrix × matrix → table` GPU: なし — 世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 例: `gsplat_trained_product`, `heightmap_depth_camera_tour`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
 - `world_move` `table → any` GPU: なし — 物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。 · 例: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
 
 ### tomography(43 ops / 8 categories)
@@ -5151,7 +5153,7 @@ _計 3846 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### mv / resample(4)
 - `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: なし — 除算モデルの歪みを持つカメラの画像を、別の歪み・内部パラメータの画像へ描き直す。 · 例: `machine_vision_tour`, `poc_real_chessboard_undistort`
-- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: なし — 回転矩形の内側を線形補間で読み、軸に沿った画像として切り出す(crop_rectangle2)。 · 例: `machine_vision_tour`, `poc_mixed_case_depalletizing`, `poc_real_stereo_multiscanline`, `road_surface_tour`
+- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: なし — 回転矩形の内側を線形補間で読み、軸に沿った画像として切り出す(crop_rectangle2)。 · 例: `heightmap_depth_camera_tour`, `machine_vision_tour`, `poc_mixed_case_depalletizing`, `poc_real_stereo_multiscanline`, `road_surface_tour`
 - `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: なし — 逆写像表を画像へ適用して再標本化する(出力の画素ごとに入力の座標を読む)。 · 例: `machine_vision_tour`, `poc_real_chessboard_undistort`
 - `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: なし — 画像をワールド平面 z=0 の正面図へ平行化する(1 画素 = ``scale`` のワールド単位)。 · 例: `machine_vision_tour`, `poc_real_chessboard_undistort`
 
@@ -5554,7 +5556,7 @@ _計 3846 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `robust_gaussian_surface` `depth → depth` GPU: なし — ロバスト・ガウシアン回帰フィルタ(面): 傷・突起に引きずられない面のうねりと粗さ。 · 例: `poc_robust_profile_filter`
 - `robust_spline_profile` `signal → signal` GPU: なし — ロバスト・スプラインフィルタ(断面): 外れ値に引きずられない平均線と粗さ。 · 例: `poc_robust_profile_filter`
 - `surface_filter` `depth → depth` GPU: 鎖の中だけ(許可リスト) — 高さ場を粗さとうねりに分ける(ISO 16610-21 のガウスフィルタ)。 · 例: `poc_robust_profile_filter`, `poc_surface_roughness`
-- `surface_form_remove` `depth → depth` GPU: 鎖の中だけ(許可リスト) — 格子のまま平面 / 二次曲面を除く。``(residual, coeffs)`` を返す。 · 例: `poc_polish_wipe_measure`, `poc_pv_thermal_survey`, `poc_surface_roughness`, `road_surface_tour`
+- `surface_form_remove` `depth → depth` GPU: 鎖の中だけ(許可リスト) — 格子のまま平面 / 二次曲面を除く。``(residual, coeffs)`` を返す。 · 例: `heightmap_depth_camera_tour`, `poc_polish_wipe_measure`, `poc_pv_thermal_survey`, `poc_surface_roughness`, `road_surface_tour`
 
 #### roughness / synth(1)
 - `surface_synth_psd` `入力なし → depth` GPU: なし — 指定した PSD から高さ場を合成する。``(z, sq_analytic)`` を返す。 · 例: `poc_polish_wipe_measure`, `poc_surface_roughness`
@@ -5685,7 +5687,7 @@ _計 3846 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 #### dem / visibility(3)
 - `dem_horizon_angle` `depth → image2d` GPU: なし — 指定方位の地平線仰角 [度]。0 は水平、90 は真上が塞がれている状態。 · 例: `dem_terrain_analysis_tour`
 - `dem_sky_view_factor` `depth → image2d` GPU: なし — 天空率 [0,1]。空がどれだけ見えているか。 · 例: `poc_dem_terrain`
-- `dem_viewshed` `depth → image2d` GPU: なし — 1 点からの可視領域(1 = 見える)。視線が地形に遮られるかを判定する。 · 例: `dem_terrain_analysis_tour`, `poc_stockpile_volume`
+- `dem_viewshed` `depth → image2d` GPU: なし — 1 点からの可視領域(1 = 見える)。視線が地形に遮られるかを判定する。 · 例: `dem_terrain_analysis_tour`, `heightmap_depth_camera_tour`, `poc_stockpile_volume`
 
 ### conngraph(28 ops / 7 categories)
 

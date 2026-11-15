@@ -61,9 +61,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3629,
+    "executable": 3630,
     "reasons": {
-      "python_signature": 2664,
+      "python_signature": 2665,
       "registry": 964
     },
     "not_executable_reasons": {
@@ -390,9 +390,9 @@
   },
   "counts": {
     "nodes": 103,
-    "edges": 3844,
-    "conversion_pairs": 424,
-    "conversion_edge_incidence": 2529
+    "edges": 3845,
+    "conversion_pairs": 426,
+    "conversion_edge_incidence": 2531
   },
   "nodes": [
     {
@@ -608,8 +608,8 @@
       "sort": "depth",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 23,
-      "consumed_by": 47,
+      "produced_by": 24,
+      "consumed_by": 48,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -906,7 +906,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 94,
-      "consumed_by": 263,
+      "consumed_by": 264,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1071,7 +1071,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 17,
-      "consumed_by": 11,
+      "consumed_by": 12,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -140611,6 +140611,132 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "heightmap_depth_camera",
+      "inputs": [
+        "depth",
+        "pose",
+        "matrix"
+      ],
+      "output": "depth",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "heightmap_depth_camera"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "heightmap_depth_camera"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "origin",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "width",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "height",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "step",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "near",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "max_range",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 10.0
+        },
+        {
+          "name": "disparity_sigma",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "baseline",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "seed",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
         }
       ],
       "verified_executable": false,

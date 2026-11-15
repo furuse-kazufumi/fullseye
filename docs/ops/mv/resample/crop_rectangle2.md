@@ -6,7 +6,7 @@ in: image2d
 out: image2d
 halcon: crop_rectangle2
 gpu: なし
-examples: [machine_vision_tour, poc_mixed_case_depalletizing, poc_real_stereo_multiscanline, road_surface_tour]
+examples: [heightmap_depth_camera_tour, machine_vision_tour, poc_mixed_case_depalletizing, poc_real_stereo_multiscanline, road_surface_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [heightmap_depth_camera_tour](../../../../examples/heightmap_depth_camera_tour.py) — `py -3.11 examples/heightmap_depth_camera_tour.py`
 - [machine_vision_tour](../../../../examples/machine_vision_tour.py) — `py -3.11 examples/machine_vision_tour.py`
 - [poc_mixed_case_depalletizing](../../../../examples/poc_mixed_case_depalletizing.py) — `py -3.11 examples/poc_mixed_case_depalletizing.py`
 - [poc_real_stereo_multiscanline](../../../../examples/poc_real_stereo_multiscanline.py) — `py -3.11 examples/poc_real_stereo_multiscanline.py`

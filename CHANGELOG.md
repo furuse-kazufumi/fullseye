@@ -33,12 +33,26 @@ Unitree G1 が国土地理院 DEM5A の上に置いた道を登る動画の製�
   (放物線の縦断曲線は標本の間でも厳密)。縦断勾配は 1/(1 − κe) で曲線の内側ほど急、すりつけでは縁の勾配が中心線と違う
   (相対勾配)。外側の地形(同じ格子)へなじませることもでき、混ぜたセルの真値は nan(言わない)。製作の `road_profile` は
   既存の op(drivelong)と名前が重なるので使わない。
-  門 `tests/test_road_surface_heightmap.py`(14 本): 直線は世界の座標の閉形式 z = g·x − c·|y|、ヘアピンは極座標の閉形式に
+  門 `tests/test_road_surface_heightmap.py`(13 本): 直線は世界の座標の閉形式 z = g·x − c·|y|、ヘアピンは極座標の閉形式に
   1e-9(局所の円弧で射影し直さない写しは mm で外れる)、放物線の縦断曲線、回した道の車線の窓を `crop_rectangle2` →
   `surface_form_remove` で (g, −c)・`dem_slope` で atan(√(g² + c²))、推定した曲率を `curvature_torsion` と照合、
   道路構造令の表(`TRANSITION_LENGTH`・`MAX_SUPERELEVATION`)の長さと値で作ったすりつけ、真値と高さ図の数値微分の一致、
   地形へのなじませ(車道はビット一致)。例 `examples/road_surface_tour.py`(examples2d に登録、図 4 枚)、recipe
   「道の車線の傾斜を DEM として測る」(`dem_slope`)。
+- `heightmap_depth_camera`(terrain、台帳 opsdrive の `walkterrain`、`depth × pose × matrix → depth`): 高さ図・DEM を
+  ピンホールの深度カメラで直接撮る。画素ごとの光線を双一次の高さの上で一定の刻み(既定 cell/2、cell より粗い刻みは断る)で
+  進め、面の下へ入った刻みで一次の補間で交点を取り、光軸方向の深度を返す(当たらない・面の下から始まる・地図の側面から入る
+  光線は nan)。足場の縁を刻みの間で出入りする光線は縁の高さで判定する。カメラの向きの決まりは `camera` と同じ OpenCV の
+  軸(world→camera の (R, t))。雑音は `acceptance_scan` の triangulation と同じ則 σ_z = z²·σ_d/(f·b)(既定 σ_d = 0 =
+  厳密)。製作では MuJoCo の mj_multiRay の 1 枚 10 秒を numpy で 0.1 秒にした計算。`depth_to_points → elevation_map` の
+  逆向きで、知覚の連鎖を合成データで閉じられる。
+  門 `tests/test_heightmap_depth_camera.py`(12 本): 平面(傾いた面も)は光線と平面の交点の閉形式に 1e-12(刻みに依らない)、
+  三角形に分けた同じ高さ図を `world_camera`(render3d のラスタ化 = 別の算法)で撮った深度と平面で 1e-9・曲面で中央値 1e-4 m
+  (当たる画素の集合も同じ)、`depth_to_points → elevation_map` の往復、交点の誤差が刻みの 2 乗で縮む、40 回撮った標準偏差が
+  雑音の則に一致、高い壁の向こうに当たらず当たったセルは `dem_viewshed`(独立した op)の見える範囲、1 セル幅の壁を既定の刻みで
+  必ず捉え刻み cell では上の方を飛び越す(限界を数で示す)、交点を補間しない写しは平面の閉形式を外す。例
+  `examples/heightmap_depth_camera_tour.py`(examples2d に登録、図 2 枚: 道 → 深度 → 点群 → 標高図 → 車線の勾配を真値と
+  突き合わせる、製作と同じ連鎖を op だけで)、recipe「深度カメラ → 点群 → 平面」(`depth_to_points` → `fit_plane_3d`)。
 
 ### 追加 — PoC「置かれたタオルの角・辺・折り線を古典の画像処理で見つける」(収蔵 2026.317)
 

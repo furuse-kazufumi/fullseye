@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">heightmap_depth_camera — DRIVE <code style="color:#22d3bf">walkterrain</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth × pose × matrix</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heightmap_depth_camera(heights, pose, K, cell: &#x27;float&#x27; = 0.05, origin=(0.0, 0.0), *, width=None, height=None, step=None, near: &#x27;float&#x27; = 0.1, max_range: &#x27;float&#x27; = 10.0, disparity_sigma: &#x27;float&#x27; = 0.0, baseline: &#x27;float&#x27; = 0.05, seed: &#x27;int&#x27; = 0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import terrain; terrain.heightmap_depth_camera(heights, pose, K, cell: &#x27;float&#x27; = 0.05, origin=(0.0, 0.0), *, width=None, height=None, step=None, near: &#x27;float&#x27; = 0.1, max_range: &#x27;float&#x27; = 10.0, disparity_sigma: &#x27;float&#x27; = 0.0, baseline: &#x27;float&#x27; = 0.05, seed: &#x27;int&#x27; = 0)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;heightmap_depth_camera&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>高さ図(標高図・DEM)を、ピンホールの深度カメラで直接撮る(光線を一定の刻みで高さの上に進める)。</p>
+<p>画素ごとに光線を <code style="color:#22d3bf">step</code> 刻みで進め、光線が高さの面の下へ入った刻みで、前の刻みとの間を一次で補間して交点を取り、<b>光軸方向の深度 z</b>(<code style="color:#22d3bf">camera.depth_to_points</code> が受ける量)を返す。高さはセルの中心の値の双一次補間(<code style="color:#22d3bf">terrain.elevation_map</code> と同じ並び: <code style="color:#22d3bf">heights[i, j]</code> はセルの中心(<code style="color:#22d3bf">origin[0]</code> + (j + ½)·cell, <code style="color:#22d3bf">origin[1]</code> + (i + ½)·cell))。セルの中心が張る範囲の外と、<code style="color:#22d3bf">nan</code> のセル(観測していない)に触れる所には面が無い。</p>
+<p style="margin:2px 0 2px 12px">• <b>カメラの向きの決まりは 1 つ</b>: <code style="color:#22d3bf">camera</code> と同じ OpenCV の軸(x 右・y 下・z 前)。<code style="color:#22d3bf">pose</code> は world→camera の <code style="color:#22d3bf">(R, t)</code>(X_cam = R·X_world + t、<code style="color:#22d3bf">camera.project_points</code> と同じ)か 4×4。画素の中心は整数の座標(<code style="color:#22d3bf">u = c</code>, <code style="color:#22d3bf">v = r</code>)。返した深度を <code style="color:#22d3bf">camera.depth_to_points</code> に渡し、<code style="color:#22d3bf">Rᵀ (X_cam − t)</code> で世界へ戻せば元の面の上に乗る(往復)。render3d / world_camera の OpenGL の軸(y 上・−z 前)とは <code style="color:#22d3bf">(x, y, z)_here = (x, −y, −z)_render3d</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>刻み</b>: <code style="color:#22d3bf">step</code> は既定 cell/2、cell より大きい値は断る。刻みより短い弦で光線が横切る細い突起(1 セル幅の壁を浅い角度でかすめる所など)は飛び越しうる。交点の補間の誤差は刻みの 2 乗で縮む(平面では 0)。</p>
+<p style="margin:2px 0 2px 12px">• <b>雑音</b>: ステレオ・構造化光の誤差の伝播と同じ形 <code style="color:#22d3bf">σ_z = z²·σ_d / (f·b)</code>(<code style="color:#22d3bf">acceptance_scan</code> の <code style="color:#22d3bf">triangulation</code> と同じ則。f = K[0, 0] [px]、<code style="color:#22d3bf">baseline</code> b [m]、<code style="color:#22d3bf">disparity_sigma</code> σ_d [px])。既定 σ_d = 0(雑音なし = 厳密)。<code style="color:#22d3bf">seed</code> で決定的。</p>
+<p style="margin:2px 0 2px 12px">• 当たらない画素・面の下から始まる光線・深度が [<code style="color:#22d3bf">near</code>, <code style="color:#22d3bf">max_range</code>] の外の画素は <code style="color:#22d3bf">nan</code>(範囲は雑音を足す前の深度で判定する)。面の下から始まる光線(カメラが地面の中)と、地図の外から面の高さより下で入ってくる光線(地図の側面)も <code style="color:#22d3bf">nan</code>(側面は面ではない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>heights : (ny, nx) array</p>
+<p>高さ図 [m] (<code style="color:#22d3bf">nan</code> = 観測していない)。</p>
+<p>pose : (R, t) or (4, 4)</p>
+<p>world→camera。</p>
+<p>K : (3, 3)</p>
+<p>内部行列(<code style="color:#22d3bf">camera.intrinsic_matrix</code>)。</p>
+<p>cell, origin</p>
+<p>セルの大きさと、格子の左下の角 (xmin, ymin)(<code style="color:#22d3bf">elevation_map</code> の extent の (xmin, ymin))。</p>
+<p>width, height : int or None</p>
+<p>画像の大きさ。None なら主点から (2·cx + 1, 2·cy + 1)(整数でなければ断る)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>depth : (height, width) float64</p>
+<p>光軸方向の深度 [m]、当たらない所は <code style="color:#22d3bf">nan</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・値の誤り(pose が回転でない、K が 3×3 でない、step &gt; cell、near ≥ max_range、画像が 4e6 画素を超える 等)。</p>
+<p>空の入力(<code style="color:#22d3bf">heights</code> が 0 要素)は ValueError で拒否する。</p>
+<p>English: renders a height map / DEM directly with a pinhole depth camera by marching each pixel ray at a fixed step over the bilinear height surface and refining the crossing linearly; returns depth along the optical axis (OpenCV axes, world-&gt;camera pose as in camera.project_points), NaN where nothing is hit. Optional stereo noise sigma_z = z^2 sigma_d / (f b). The inverse of depth_to_points -&gt; elevation_map.</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import terrain</p>
+<p>R = np.array([[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])   # 真下を向く(z 前 = 世界の −z)</p>
+<p>C = np.array([1.0, 1.0, 2.0])                                         # 高さ 2 m のカメラ</p>
+<p>K = np.array([[100.0, 0.0, 31.5], [0.0, 100.0, 23.5], [0.0, 0.0, 1.0]])</p>
+<p>d = terrain.heightmap_depth_camera(np.zeros((40, 40)), (R, -R @ C), K)  # 2 m 四方の平らな床</p>
+<p>assert d.shape == (48, 64) and np.allclose(d, 2.0)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:heightmap_depth_camera_tour">heightmap_depth_camera_tour</a> — <code style="color:#22d3bf">py -3.11 examples/heightmap_depth_camera_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">depth</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">walkterrain</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:elevation_map">elevation_map</a> · <a style="color:#22d3bf" href="opdrive:fill_gaps">fill_gaps</a> · <a style="color:#22d3bf" href="opdrive:elevation_traversability">elevation_traversability</a> · <a style="color:#22d3bf" href="opdrive:foothold_score">foothold_score</a> · <a style="color:#22d3bf" href="opdrive:ground_surface">ground_surface</a> · <a style="color:#22d3bf" href="opdrive:ground_plane">ground_plane</a> · <a style="color:#22d3bf" href="opdrive:detect_obstacles">detect_obstacles</a> · <a style="color:#22d3bf" href="opdrive:fuse_elevation">fuse_elevation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: terrain.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

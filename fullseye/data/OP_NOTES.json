@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3840,
- "n_notes": 3846,
+ "n_ops": 3841,
+ "n_notes": 3847,
  "notes": {
   "vol_dilate": [
    {
@@ -23499,6 +23499,16 @@
     "in": "depth",
     "out": "depth",
     "path": "docs/ops/drive/walkterrain/ground_surface.md"
+   }
+  ],
+  "heightmap_depth_camera": [
+   {
+    "op": "heightmap_depth_camera",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth × pose × matrix",
+    "out": "depth",
+    "path": "docs/ops/drive/walkterrain/heightmap_depth_camera.md"
    }
   ],
   "roughness_map": [

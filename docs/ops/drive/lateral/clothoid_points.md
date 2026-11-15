@@ -5,7 +5,7 @@ category: lateral
 in: 
 out: table
 gpu: なし
-examples: [poc_driving_lateral, road_surface_tour]
+examples: [heightmap_depth_camera_tour, poc_driving_lateral, road_surface_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -35,6 +35,7 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [heightmap_depth_camera_tour](../../../../examples/heightmap_depth_camera_tour.py) — `py -3.11 examples/heightmap_depth_camera_tour.py`
 - [poc_driving_lateral](../../../../examples/poc_driving_lateral.py) — `py -3.11 examples/poc_driving_lateral.py`
 - [road_surface_tour](../../../../examples/road_surface_tour.py) — `py -3.11 examples/road_surface_tour.py`
 

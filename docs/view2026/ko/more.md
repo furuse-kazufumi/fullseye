@@ -262,7 +262,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 </div>
 
-[PoC가 아닌 사용 예 186개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC가 아닌 사용 예 187개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 전부 보기
 

@@ -5,7 +5,7 @@ category: prepare
 in: depth
 out: depth
 gpu: 鎖の中だけ(許可リスト)
-examples: [poc_polish_wipe_measure, poc_pv_thermal_survey, poc_surface_roughness, road_surface_tour]
+examples: [heightmap_depth_camera_tour, poc_polish_wipe_measure, poc_pv_thermal_survey, poc_surface_roughness, road_surface_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -96,6 +96,7 @@ fail-closed
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [heightmap_depth_camera_tour](../../../../examples/heightmap_depth_camera_tour.py) — `py -3.11 examples/heightmap_depth_camera_tour.py`
 - [poc_polish_wipe_measure](../../../../examples/poc_polish_wipe_measure.py) — `py -3.11 examples/poc_polish_wipe_measure.py`
 - [poc_pv_thermal_survey](../../../../examples/poc_pv_thermal_survey.py) — `py -3.11 examples/poc_pv_thermal_survey.py`
 - [poc_surface_roughness](../../../../examples/poc_surface_roughness.py) — `py -3.11 examples/poc_surface_roughness.py`

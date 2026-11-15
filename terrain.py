@@ -9,6 +9,11 @@ Frame convention: input points are in a **world/ground frame** where ``x`` and
 ``y`` span the ground plane and ``z`` is height (up). The caller is responsible
 for the camera->world transform (robot-specific extrinsics); this module owns the
 binning and the terrain analysis, not the robot's pose.
+
+The reverse direction (2026-11-15): :func:`heightmap_depth_camera` renders a height
+map / DEM directly with a pinhole depth camera (OpenCV axes, world->camera pose as in
+:mod:`camera`), so ``depth -> camera.depth_to_points -> elevation_map`` can be closed on
+synthetic data with a known surface.
 """
 from __future__ import annotations
 
@@ -20,7 +25,9 @@ __all__ = ["elevation_map", "fill_gaps", "traversability", "foothold_score",
            "fuse_elevation", "slope_map", "roughness_map", "surface_normals",
            "step_edges", "foothold_candidates",
            # 台帳の入口(2026-11-06): op 名は全体で 1 つ・1 語の名前は避ける、の規則に合わせた名前
-           "elevation_traversability", "elevation_normals", "elevation_step_edges"]
+           "elevation_traversability", "elevation_normals", "elevation_step_edges",
+           # 高さ図を深度カメラで撮る(2026-11-15)
+           "heightmap_depth_camera"]
 
 
 def _grad2(a, cell):
@@ -405,3 +412,243 @@ def foothold_candidates(grid, cell: float = 0.05, window: int = 3,
             rec["xy"] = (xmin + (x + 0.5) * cell, ymin + (y + 0.5) * cell)
         out.append(rec)
     return out
+def _crossing_fraction(a0, a1):
+    """上 a0 > 0 から下 a1 ≤ 0 へ入る刻みの中の交点の割合 a0/(a0 − a1)(光線 − 面が一次と見て)。"""
+    den = a0 - a1
+    return np.where(den > 0.0, a0 / np.where(den > 0.0, den, 1.0), 0.0)
+
+
+def _pose_world_to_camera(pose, op):
+    """``(R, t)``(X_cam = R·X_world + t、OpenCV の軸)か 4×4 の world→camera を (R, t) にする。"""
+    if isinstance(pose, (tuple, list)) and len(pose) >= 2:
+        R = np.asarray(pose[0], np.float64)
+        t = np.asarray(pose[1], np.float64).ravel()
+    else:
+        M = np.asarray(pose, np.float64)
+        if M.shape != (4, 4):
+            raise ValueError("%s: pose must be (R, t) or a 4x4 world->camera matrix, got shape %r" % (op, M.shape))
+        R, t = M[:3, :3], M[:3, 3]
+    if R.shape != (3, 3) or t.size != 3 or not (np.all(np.isfinite(R)) and np.all(np.isfinite(t))):
+        raise ValueError("%s: pose must be a finite (R 3x3, t 3)" % op)
+    if not np.allclose(R @ R.T, np.eye(3), atol=1e-6) or np.linalg.det(R) <= 0.0:
+        raise ValueError("%s: pose R must be a rotation (orthonormal, det +1)" % op)
+    return R, t
+
+
+def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.0), *, width=None, height=None,
+                           step=None, near: float = 0.1, max_range: float = 10.0, disparity_sigma: float = 0.0,
+                           baseline: float = 0.05, seed: int = 0):
+    """高さ図(標高図・DEM)を、ピンホールの深度カメラで直接撮る(光線を一定の刻みで高さの上に進める)。
+
+    画素ごとに光線を ``step`` 刻みで進め、光線が高さの面の下へ入った刻みで、前の刻みとの間を一次で補間して
+    交点を取り、**光軸方向の深度 z**(:func:`camera.depth_to_points` が受ける量)を返す。高さはセルの中心の値の
+    双一次補間(:func:`terrain.elevation_map` と同じ並び: ``heights[i, j]`` はセルの中心
+    (``origin[0]`` + (j + ½)·cell, ``origin[1]`` + (i + ½)·cell))。セルの中心が張る範囲の外と、``nan`` の
+    セル(観測していない)に触れる所には面が無い。
+
+    * **カメラの向きの決まりは 1 つ**: :mod:`camera` と同じ OpenCV の軸(x 右・y 下・z 前)。``pose`` は
+      world→camera の ``(R, t)``(X_cam = R·X_world + t、:func:`camera.project_points` と同じ)か 4×4。画素の
+      中心は整数の座標(``u = c``, ``v = r``)。返した深度を :func:`camera.depth_to_points` に渡し、
+      ``Rᵀ (X_cam − t)`` で世界へ戻せば元の面の上に乗る(往復)。render3d / world_camera の OpenGL の軸
+      (y 上・−z 前)とは ``(x, y, z)_here = (x, −y, −z)_render3d``。
+    * **刻み**: ``step`` は既定 cell/2、cell より大きい値は断る。刻みより短い弦で光線が横切る細い突起
+      (1 セル幅の壁を浅い角度でかすめる所など)は飛び越しうる。交点の補間の誤差は刻みの 2 乗で縮む(平面では 0)。
+    * **雑音**: ステレオ・構造化光の誤差の伝播と同じ形 ``σ_z = z²·σ_d / (f·b)``(``acceptance_scan`` の
+      ``triangulation`` と同じ則。f = K[0, 0] [px]、``baseline`` b [m]、``disparity_sigma`` σ_d [px])。
+      既定 σ_d = 0(雑音なし = 厳密)。``seed`` で決定的。
+    * 当たらない画素・面の下から始まる光線・深度が [``near``, ``max_range``] の外の画素は ``nan``(範囲は雑音を
+      足す前の深度で判定する)。
+      面の下から始まる光線(カメラが地面の中)と、地図の外から面の高さより下で入ってくる光線(地図の側面)も
+      ``nan``(側面は面ではない)。
+
+    Parameters
+    ----------
+    heights : (ny, nx) array
+        高さ図 [m](``nan`` = 観測していない)。
+    pose : (R, t) or (4, 4)
+        world→camera。
+    K : (3, 3)
+        内部行列(``camera.intrinsic_matrix``)。
+    cell, origin
+        セルの大きさと、格子の左下の角 (xmin, ymin)(``elevation_map`` の extent の (xmin, ymin))。
+    width, height : int or None
+        画像の大きさ。None なら主点から (2·cx + 1, 2·cy + 1)(整数でなければ断る)。
+
+    Returns
+    -------
+    depth : (height, width) float64
+        光軸方向の深度 [m]、当たらない所は ``nan``。
+
+    **Raises** ``ValueError``: 形・値の誤り(pose が回転でない、K が 3×3 でない、step > cell、near ≥ max_range、
+    画像が 4e6 画素を超える 等)。
+
+    空の入力(``heights`` が 0 要素)は ValueError で拒否する。
+
+    English: renders a height map / DEM directly with a pinhole depth camera by marching each pixel ray at a
+    fixed step over the bilinear height surface and refining the crossing linearly; returns depth along the
+    optical axis (OpenCV axes, world->camera pose as in camera.project_points), NaN where nothing is hit.
+    Optional stereo noise sigma_z = z^2 sigma_d / (f b). The inverse of depth_to_points -> elevation_map.
+
+    呼び出し例::
+
+        import numpy as np
+        import terrain
+        R = np.array([[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])   # 真下を向く(z 前 = 世界の −z)
+        C = np.array([1.0, 1.0, 2.0])                                         # 高さ 2 m のカメラ
+        K = np.array([[100.0, 0.0, 31.5], [0.0, 100.0, 23.5], [0.0, 0.0, 1.0]])
+        d = terrain.heightmap_depth_camera(np.zeros((40, 40)), (R, -R @ C), K)  # 2 m 四方の平らな床
+        assert d.shape == (48, 64) and np.allclose(d, 2.0)
+    """
+    op = "heightmap_depth_camera"
+    Hm = np.asarray(heights, np.float64)
+    if Hm.size == 0:
+        raise ValueError("%s: heights is empty — pass a (ny, nx) height map" % op)
+    if Hm.ndim != 2 or min(Hm.shape) < 2:
+        raise ValueError("%s: heights must be a 2-D map of at least 2 x 2 cells, got shape %r" % (op, Hm.shape))
+    if not np.any(np.isfinite(Hm)):
+        raise ValueError("%s: heights has no finite cell" % op)
+    c = float(cell)
+    if not (np.isfinite(c) and c > 0.0):
+        raise ValueError("%s: cell must be a positive finite length" % op)
+    o = np.asarray(origin, np.float64).ravel()
+    if o.size != 2 or not np.all(np.isfinite(o)):
+        raise ValueError("%s: origin must be a finite (xmin, ymin)" % op)
+    R, t = _pose_world_to_camera(pose, op)
+    Km = np.asarray(K, np.float64)
+    if Km.shape != (3, 3) or not np.all(np.isfinite(Km)) or Km[0, 0] <= 0 or Km[1, 1] <= 0:
+        raise ValueError("%s: K must be a finite 3x3 intrinsic matrix with fx, fy > 0" % op)
+    W = int(round(2.0 * Km[0, 2] + 1.0)) if width is None else int(width)
+    Hh = int(round(2.0 * Km[1, 2] + 1.0)) if height is None else int(height)
+    if width is None and abs(2.0 * Km[0, 2] + 1.0 - W) > 1e-9 or height is None and abs(2.0 * Km[1, 2] + 1.0 - Hh) > 1e-9:
+        raise ValueError("%s: the image size cannot be read from K (cx, cy are not (W-1)/2, (H-1)/2); pass width "
+                         "and height" % op)
+    if W < 1 or Hh < 1 or W * Hh > 4_000_000:
+        raise ValueError("%s: image must have 1..4e6 pixels, got %d x %d" % (op, Hh, W))
+    st = 0.5 * c if step is None else float(step)
+    if not (np.isfinite(st) and 0.0 < st <= c):
+        raise ValueError("%s: step must be in (0, cell] (a coarser step jumps over thin ridges), got %r" % (op, step))
+    nr, mr = float(near), float(max_range)
+    if not (np.isfinite(nr) and np.isfinite(mr) and 0.0 < nr < mr):
+        raise ValueError("%s: need 0 < near < max_range" % op)
+    sd, bl = float(disparity_sigma), float(baseline)
+    if not (np.isfinite(sd) and sd >= 0.0 and np.isfinite(bl) and bl > 0.0):
+        raise ValueError("%s: disparity_sigma must be >= 0 and baseline > 0" % op)
+    ny, nx = Hm.shape
+    # 画素の光線(カメラの座標、z 成分 1)→ 世界の単位方向
+    v, u = np.mgrid[0:Hh, 0:W].astype(np.float64)
+    yk = (v - Km[1, 2]) / Km[1, 1]
+    xk = (u - Km[0, 2] - Km[0, 1] * yk) / Km[0, 0]
+    dc = np.stack([xk, yk, np.ones_like(xk)], -1).reshape(-1, 3)
+    norm = np.linalg.norm(dc, axis=1)
+    dw = (dc / norm[:, None]) @ R                          # Rᵀ·d(行ベクトルで)
+    Cw = -R.T @ t                                          # カメラの中心(世界)
+    zmax_map = float(np.nanmax(Hm))
+    x_lo, x_hi = o[0] + 0.5 * c, o[0] + (nx - 0.5) * c
+    y_lo, y_hi = o[1] + 0.5 * c, o[1] + (ny - 0.5) * c
+    t_far = mr * float(norm.max())                         # 深度 max_range の光線の長さの最大
+    t0 = nr
+
+    def surface(px, py, clamp=False):
+        """双一次の高さ。足場(セルの中心が張る矩形)の外は nan(``clamp`` なら縁へ寄せて読む)。"""
+        fx = (px - o[0]) / c - 0.5
+        fy = (py - o[1]) / c - 0.5
+        ok = (fx >= 0.0) & (fx <= nx - 1) & (fy >= 0.0) & (fy <= ny - 1)
+        if clamp:
+            fx, fy = np.clip(fx, 0.0, nx - 1), np.clip(fy, 0.0, ny - 1)
+        j0 = np.clip(np.floor(fx).astype(np.int64), 0, nx - 2)
+        i0 = np.clip(np.floor(fy).astype(np.int64), 0, ny - 2)
+        wx, wy = fx - j0, fy - i0
+        h = ((1 - wy) * ((1 - wx) * Hm[i0, j0] + wx * Hm[i0, j0 + 1])
+             + wy * ((1 - wx) * Hm[i0 + 1, j0] + wx * Hm[i0 + 1, j0 + 1]))
+        return h if clamp else np.where(ok, h, np.nan)
+
+    def footprint_span(dwc):
+        """光線が足場の矩形に入る長さ t_in と出る長さ t_out(入らなければ t_in > t_out)。"""
+        t_in = np.full(len(dwc), -np.inf)
+        t_out = np.full(len(dwc), np.inf)
+        for ax, lo_, hi_ in ((0, x_lo, x_hi), (1, y_lo, y_hi)):
+            d_ = dwc[:, ax]
+            par = np.abs(d_) < 1e-15
+            with np.errstate(divide="ignore", invalid="ignore"):
+                a_ = (lo_ - Cw[ax]) / d_
+                b_ = (hi_ - Cw[ax]) / d_
+            t_in = np.maximum(t_in, np.where(par, np.where((Cw[ax] >= lo_) & (Cw[ax] <= hi_), -np.inf, np.inf),
+                                              np.minimum(a_, b_)))
+            t_out = np.minimum(t_out, np.where(par, np.where((Cw[ax] >= lo_) & (Cw[ax] <= hi_), np.inf, -np.inf),
+                                                np.maximum(a_, b_)))
+        return t_in, t_out
+
+    def above_at(dwc, tv):
+        """長さ tv の点の「光線 − 面」(足場の縁の上で読むので縁へ寄せる)。"""
+        tv = np.where(np.isfinite(tv), tv, 0.0)
+        Pq = Cw[None, :] + tv[:, None] * dwc
+        return Pq[:, 2] - surface(Pq[:, 0], Pq[:, 1], clamp=True)
+
+    def march(dwc):
+        """光線の束 dwc (m, 3) の、最初に面の上から下へ入る点までの長さ(当たらなければ nan)。
+
+        刻みの間で足場の矩形に入る・出る光線は、縁の点の高さで判定する(縁の 1 刻みの内側の当たりを
+        落とさない)。足場の外か穴(nan)から面の下へ入る光線は側面に当たったとして nan。"""
+        m = dwc.shape[0]
+        out = np.full(m, np.nan)
+        t_in_all, t_out_all = footprint_span(dwc)
+        a_in_all = above_at(dwc, t_in_all)
+        a_out_all = above_at(dwc, t_out_all)
+        active = np.arange(m)
+        prev_above = np.full(m, np.nan)               # 前の刻みの「光線 − 面」(nan = 面が無い)
+        prev_t = np.full(m, -np.inf)
+        k = 0
+        while active.size and k < n_steps:
+            ks = np.arange(k, min(k + 64, n_steps))
+            ts = t0 + ks * st
+            da = dwc[active]
+            na = len(active)
+            P = Cw[None, None, :] + ts[None, :, None] * da[:, None, :]
+            above = P[..., 2] - surface(P[..., 0], P[..., 1])     # > 0 上、<= 0 下、nan 面なし
+            a_prev = np.concatenate([prev_above[active][:, None], above[:, :-1]], 1)
+            t_prev = np.concatenate([prev_t[active][:, None], np.broadcast_to(ts[:-1], (na, len(ts) - 1))], 1)
+            tb = np.broadcast_to(ts, (na, len(ts)))
+            t_in = t_in_all[active][:, None]
+            t_out = t_out_all[active][:, None]
+            a_in = np.broadcast_to(a_in_all[active][:, None], above.shape)
+            a_out = np.broadcast_to(a_out_all[active][:, None], above.shape)
+            span = t_in <= t_out
+            down = (a_prev > 0.0) & (above <= 0.0)                         # 上から下へ = 当たり
+            entered = span & (t_prev < t_in) & (t_in <= tb)                # この刻みの間で足場に入った
+            enter_hit = entered & np.isnan(a_prev) & (above <= 0.0) & (a_in > 0.0)
+            blocked = np.isnan(a_prev) & (above <= 0.0) & ~enter_hit      # 外・穴・始点から面の下へ = 側面
+            exit_hit = (span & (t_prev < t_out) & (t_out <= tb) & (a_prev > 0.0) & np.isnan(above)
+                        & (a_out <= 0.0))                                  # 出る前に縁の内側で当たった
+            event = down | enter_hit | blocked | exit_hit
+            hit = event.any(1)
+            jj = np.argmax(event, 1)
+            rows = np.arange(na)
+            ta, aa = t_prev[rows, jj].copy(), a_prev[rows, jj].copy()
+            tb_, ab = tb[rows, jj].copy(), above[rows, jj].copy()
+            e_in, e_out = enter_hit[rows, jj], exit_hit[rows, jj]
+            ta[e_in], aa[e_in] = t_in[e_in, 0], a_in[e_in, 0]
+            tb_[e_out], ab[e_out] = t_out[e_out, 0], a_out[e_out, 0]
+            ok = hit & (down[rows, jj] | e_in | e_out)
+            ta = np.where(ok, ta, tb_)                      # 当たらない行は使わない(−inf を掛けない)
+            tt = ta + _crossing_fraction(np.where(ok, aa, 1.0), np.where(ok, ab, 0.0)) * (tb_ - ta)
+            out[active[ok]] = tt[ok]
+            # 進めない光線を止める: 当たった・塞がれた・面の最高点より上で上を向く・足場から離れていく
+            last = P[:, -1, :]
+            gone = (last[:, 2] > zmax_map) & (da[:, 2] >= 0.0)
+            gone |= ts[-1] > t_out[:, 0]
+            prev_above[active] = above[:, -1]
+            prev_t[active] = ts[-1]
+            active = active[~hit & ~gone]
+            k += len(ks)
+        return out
+
+    n_steps = int(np.ceil((t_far - t0) / st)) + 1
+    dist = np.concatenate([march(dw[a:a + 16384]) for a in range(0, dw.shape[0], 16384)])
+    z = (dist / norm).reshape(Hh, W)                       # 光線の長さ → 光軸方向の深度
+    z[~((z >= nr) & (z <= mr))] = np.nan
+    if sd > 0.0:
+        rng = np.random.default_rng(seed)
+        noise = rng.standard_normal(z.shape)                # 全画素ぶん引く(当たる画素が変わっても列が揃う)
+        fin = np.isfinite(z)
+        z[fin] = z[fin] + noise[fin] * (z[fin] ** 2 * sd / (Km[0, 0] * bl))
+    return z

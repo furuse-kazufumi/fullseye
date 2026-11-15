@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3846, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3847, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -1278,6 +1278,7 @@
 {"name":"heap_volume_cone","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"heap_volume_heightmap","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"height_width_ratio","status":"ok","in_sort":"region","out_sort":"feature","probe_input":"op_probe.sample_input('region', structured=True)"},
+{"name":"heightmap_depth_camera","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"hertz_cylinder","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"hertz_force","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"hertz_pressure","status":"not_in_registry","reason":"not executable by fullseye.apply"},

@@ -286,7 +286,24 @@ def nw_road_alignment(variant: int):
             "truth": {"slope_deg": math.degrees(math.atan(math.hypot(g, c)))}}
 
 
+def nw_heightmap_camera(variant: int):
+    """A tilted plane z = c0 + a·x + b·y (5 cm cells, 10 m × 8 m) under a camera looking straight down from 1.8 m.
+
+    The nadir camera frame is a reflection and a shift of the world, so the back-projected points lie on a plane
+    whose normal makes the same angle with the optical axis as the world plane with the vertical.
+    Truth = |n_z| = 1/√(1 + a² + b²)."""
+    a, b, c0 = (0.08, -0.03, 0.2) if variant == 0 else (-0.05, 0.11, 0.4)
+    yy, xx = np.mgrid[0:160, 0:200]
+    x, y = (xx + 0.5) * 0.05, (yy + 0.5) * 0.05
+    R = np.diag([1.0, -1.0, -1.0])                                     # 真下を向く(OpenCV の軸)
+    C = np.array([5.0, 4.0, 1.8 + c0 + a * 5.0 + b * 4.0])
+    return {"value": c0 + a * x + b * y, "aux": {"pose": (R, -R @ C),
+                                                 "K": np.array([[60.0, 0.0, 63.5], [0.0, 60.0, 47.5], [0.0, 0.0, 1.0]])},
+            "truth": {"cos_tilt": 1.0 / math.sqrt(1.0 + a * a + b * b)}}
+
+
 SAMPLES = {
+    "nw_heightmap_camera": nw_heightmap_camera,
     "nw_road_alignment": nw_road_alignment,
     "nw_two_parts_gap": nw_two_parts_gap,
     "nw_bore": nw_bore, "nw_touching": nw_touching, "nw_two_grey_parts": nw_two_grey_parts,
@@ -301,6 +318,21 @@ SAMPLES = {
 # recipes
 # =================================================================================================
 RECIPES = [
+    # ------------------------------------------------ new op: heightmap_depth_camera (terrain, 2026-11-15), family drive
+    {"name": "Simulate — a depth camera over a height map, then the plane back from its point cloud",
+     "family": "drive", "task": "measure", "task_class": "simulation", "halcon": None,
+     "input_sort": "depth", "sample": "nw_heightmap_camera",
+     "stages": [{"op": "heightmap_depth_camera", "args": ["$in", "$aux.pose", "$aux.K"], "kw": {"cell": 0.05}},
+                {"op": "depth_to_points", "kw": {"fx": 60.0, "fy": 60.0, "cx": 63.5, "cy": 47.5}},
+                {"op": "fit_plane_3d"}],
+     "expect": [{"get": [1, 2, "@abs"], "approx": "cos_tilt", "atol": 1e-9},
+                {"get": [2], "between": [0.0, 1e-6]}],
+     "note": "Close the perception chain on synthetic data: render a tilted plane with the depth camera (ray "
+             "marching over the bilinear height map, looking straight down; on a plane the linear crossing is exact), "
+             "back-project the depth to camera-frame points and fit a plane. The nadir camera frame is a reflection "
+             "and a shift of the world, so the points lie exactly on a plane (residual ~1e-9) whose normal makes the "
+             "world plane's tilt with the optical axis: |n_z| = 1/√(1 + a² + b²). The elevation-map round trip and the "
+             "lane slope are in tests/test_heightmap_depth_camera.py and examples/heightmap_depth_camera_tour.py."},
     # ------------------------------------------------ new op: road_surface_heightmap (drivelateral, 2026-11-15), family drive
     {"name": "Simulate — a crowned road lane from its alignment, then its slope as a DEM",
      "family": "drive", "task": "measure", "task_class": "simulation", "halcon": None,
@@ -498,6 +530,10 @@ FAILED_ATTEMPTS = [
 
 
 NOTES_JA = {
+    "Simulate — a depth camera over a height map, then the plane back from its point cloud":
+        "高さ図を深度カメラで撮り、点群から平面を当て直す — 真下を向く深度カメラで傾いた面を撮り、depth_to_points で "
+        "カメラの座標の点群にして fit_plane_3d で平面を当てる。真下のカメラの座標は世界の鏡映と平行移動なので点は平面の上に"
+        "乗り(残差 1e-9 の桁)、法線と光軸の角が面の傾きになる(|n_z| = 1/√(1 + a² + b²))。",
     "Simulate — a crowned road lane from its alignment, then its slope as a DEM":
         "中心線の表と横断の決まり(拝み勾配 2 %・車線・側溝)から道の面を作り、DEM として傾斜を測る — 窓は左の車線だけで、"
         "z = g·x − c·y の平面なので dem_slope(Horn)が内側のどこでも atan(√(g² + c²)) になる。セルごとの解析の真値は "

@@ -5,7 +5,7 @@ category: walkterrain
 in: depth
 out: depth
 gpu: なし
-examples: [walking_ops_tour]
+examples: [heightmap_depth_camera_tour, walking_ops_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -32,6 +32,7 @@ An empty grid comes back as an empty grid of the same shape.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [heightmap_depth_camera_tour](../../../../examples/heightmap_depth_camera_tour.py) — `py -3.11 examples/heightmap_depth_camera_tour.py`
 - [walking_ops_tour](../../../../examples/walking_ops_tour.py) — `py -3.11 examples/walking_ops_tour.py`
 
 ## 型が繋がる次の op(`depth` を入力に取れる)

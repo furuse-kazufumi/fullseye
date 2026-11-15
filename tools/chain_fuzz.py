@@ -8036,6 +8036,22 @@ def _b_road_surface(pool, rng):
     return (road,), {"cell": 0.25}
 
 
+def _b_heightmap_camera(pool, rng):
+    # 高さ図を深度カメラで撮る(2026-11-15): 丘のある 6 m × 5 m の面を高さ 1.2 m から斜めに。深度は 0.5〜6 m に
+    # 散るので near 0.8・max_range 4.0 の倍と半分で当たる画素が変わる。雑音 σ_d 0.05 px で baseline が効く。
+    ny, nx = 100, 120
+    yy, xx = np.mgrid[0:ny, 0:nx]
+    x, y = (xx + 0.5) * 0.05, (yy + 0.5) * 0.05
+    h = 0.4 * np.exp(-((x - 4.0) ** 2 + (y - 2.5) ** 2) / 0.5) + 0.03 * x
+    C, T = np.array([0.5, 2.5, 1.2]), np.array([4.0, 2.5, 0.0])
+    zc = (T - C) / np.linalg.norm(T - C)
+    xc = np.cross(zc, [0.0, 0.0, 1.0])
+    xc /= np.linalg.norm(xc)
+    R = np.stack([xc, np.cross(zc, xc), zc])
+    K = np.array([[40.0, 0.0, 23.5], [0.0, 40.0, 17.5], [0.0, 0.0, 1.0]])
+    return (h, (R, -R @ C), K), {"cell": 0.05, "near": 0.8, "max_range": 4.0, "disparity_sigma": 0.05}
+
+
 def _b_walk_contact_lp(pool, rng):
     # 斜め 45 度の向きの斜面に 2 本の足。tan(傾き) = 0.85 μ なので、多角錐が 4 面だと摩擦が足りず(cos 45°)、
     # 8 面(既定)・16 面では足りる —— n_facets が効く入力。
@@ -8587,6 +8603,7 @@ OP_ARG_BUILDERS = {
     "static_contact_force_lp": _b_walk_contact_lp,
     "convex_hull_gap": _b_hull_gap,
     "road_surface_heightmap": _b_road_surface,
+    "heightmap_depth_camera": _b_heightmap_camera,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,
@@ -8829,7 +8846,7 @@ NONFINITE_BY_CONTRACT_OPTICS = {
 #:   * com_from_silhouette — 空の mask の重心は (nan, nan)。
 #:   * com_support_margin — 面積の無い支持(2 足の線分・1 足)は -inf(有限の余裕は support_line_margin)。
 #:   * footstep_plan — 届かないときの cost は inf(risk_aware_path と同じ約束)。
-NONFINITE_BY_CONTRACT_WALK = {"elevation_map", "fuse_elevation", "ground_plane", "com_from_silhouette",
+NONFINITE_BY_CONTRACT_WALK = {"heightmap_depth_camera", "elevation_map", "fuse_elevation", "ground_plane", "com_from_silhouette",
                               "com_support_margin", "footstep_plan"}
 
 #: 文書化済みの非有限を返す op(cadmap)。**「当たらなかった」を NaN で表すのが
