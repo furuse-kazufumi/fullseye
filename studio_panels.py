@@ -1544,13 +1544,12 @@ def declare_strip(win, key, row, body=None, shape=None, root=None, more=()):
     if shape is None:
         raise ValueError("strip of %r: no dock of that name, so a shape widget is needed" % (key,))
     # 1. the buttons, in groups; separators between them leave the row
-    groups, cur, drop, first_at = [], [], [], None
+    groups, cur, drop = [], [], []
     items = [row.itemAt(i) for i in range(row.count())]
     for i, it in enumerate(items):
         w = it.widget()
         if isinstance(w, QtWidgets.QAbstractButton):
             cur.append(w)
-            first_at = i if first_at is None else first_at
         elif cur and any(isinstance(x.widget(), QtWidgets.QAbstractButton) for x in items[i + 1:]):
             line = isinstance(w, QtWidgets.QFrame) and w.frameShape() == QtWidgets.QFrame.VLine
             gap = it.spacerItem() is not None
@@ -1588,9 +1587,7 @@ def declare_strip(win, key, row, body=None, shape=None, root=None, more=()):
     strip = FlowStrip("tools", key)
     strip.clip_to_seen = dock is None            # an image window: the image area may clip it
     strip.set_groups(groups)
-    row.insertWidget(first_at - sum(1 for i in drop if i < first_at), strip)
-    slot = row.indexOf(strip)
-    # 2. the row's home: a widget of its own, so that it can step aside when the strip is on the left
+    # 2. the row's home: a widget of its own, for what else the row holds (hidden when nothing is left)
     parent = row.parent()
     if not isinstance(parent, QtWidgets.QBoxLayout):
         raise TypeError("strip of %r: its row must sit in a box layout, not %r" % (key, type(parent).__name__))
@@ -1605,12 +1602,20 @@ def declare_strip(win, key, row, body=None, shape=None, root=None, more=()):
     row.setContentsMargins(m)
     home.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
     parent.insertWidget(at, home, stretch)
-    # 3. the left column: the body (or the whole panel) gets a column on its left for the strip
+    # 3. the body (or the whole panel) gets a slot above it (the strip on top: right under the title band, as
+    #    a Visual Studio tool window's tool bar) and a column on its left (the strip on the left)
     host = QtWidgets.QWidget()
     host.setObjectName("strip_host")
-    hl = QtWidgets.QHBoxLayout(host)
+    vl = QtWidgets.QVBoxLayout(host)
+    vl.setContentsMargins(0, 0, 0, 0)
+    vl.setSpacing(0)
+    over = QtWidgets.QHBoxLayout()
+    over.setContentsMargins(0, 0, 0, 0)
+    vl.addLayout(over)
+    hl = QtWidgets.QHBoxLayout()
     hl.setContentsMargins(0, 0, 0, 0)
     hl.setSpacing(studio_theme.density()["click_gap"])
+    vl.addLayout(hl, 1)
     left = QtWidgets.QVBoxLayout()
     left.setContentsMargins(0, 0, 0, 0)
     hl.addLayout(left)
@@ -1624,6 +1629,9 @@ def declare_strip(win, key, row, body=None, shape=None, root=None, more=()):
         top.show()
         body = top
         host._fs_body = top                      # tighten() works on the panel, not on the strip's host
+        pm = top.layout().contentsMargins() if top.layout() is not None else None
+        ml, mt, mr = (pm.left(), pm.top(), pm.right()) if pm is not None else (0, 0, 0)
+        on_top = (max(4, ml), max(2, mt), max(4, mr), 0 if mt > 0 else 2)   # in line with the panel
     else:
         lay, i = _holding(body.parentWidget().layout() if body.parentWidget() is not None else None, body)
         if not isinstance(lay, QtWidgets.QBoxLayout):
@@ -1635,8 +1643,14 @@ def declare_strip(win, key, row, body=None, shape=None, root=None, more=()):
         hl.addWidget(body, 1)
         lay.insertWidget(i, host, stretch)
         body.setVisible(not hidden)
+        on_top = (0, 0, 0, max(0, lay.spacing()))   # the body's own gap, now between the strip and the body
+    over.addWidget(strip)
+    over.setContentsMargins(*on_top)
+    home.setVisible(any(row.itemAt(i).widget() is not None and not row.itemAt(i).widget().isHidden()
+                        for i in range(row.count())))
     entry = {"key": key, "kind": "dock" if dock is not None else "image", "strip": strip, "row": row,
-             "slot": slot, "home": home, "host": host, "left": left, "body": body, "shape": shape, "side": "top"}
+             "home": home, "host": host, "left": left, "over": over, "on_top": on_top, "body": body,
+             "shape": shape, "side": "top"}
     st["strips"].append(entry)
     decl[key] = {"strip": strip, "reason": None, "entry": entry}
     strip.restyle(st["tr"])
@@ -1735,20 +1749,21 @@ def _turn(entry, side):
         strip.set_orientation("v" if side == "left" else "h")
         _place_overlay(entry)
         return
-    row, left, home = entry["row"], entry["left"], entry["home"]
+    row, left, home, over = entry["row"], entry["left"], entry["home"], entry["over"]
     if side == "left":
-        if row.indexOf(strip) >= 0:
-            row.removeWidget(strip)
+        if left.indexOf(strip) < 0:
+            over.removeWidget(strip)
             left.addWidget(strip, 1)
+        over.setContentsMargins(0, 0, 0, 0)      # nothing above the panel: no room kept for it
         strip.set_orientation("v")
-        rest = [row.itemAt(i).widget() for i in range(row.count())]
-        home.setVisible(any(w is not None and not w.isHidden() for w in rest))
     else:
-        if row.indexOf(strip) < 0:
+        if over.indexOf(strip) < 0:
             left.removeWidget(strip)
-            row.insertWidget(min(entry["slot"], row.count()), strip)
+            over.addWidget(strip)
+        over.setContentsMargins(*entry["on_top"])
         strip.set_orientation("h")
-        home.show()
+    rest = [row.itemAt(i).widget() for i in range(row.count())]
+    home.setVisible(any(w is not None and not w.isHidden() for w in rest))
     strip.show()
     entry["side"] = side
 
@@ -1823,6 +1838,11 @@ def relayout(win):
             _place_overlay(entry)
         if entry["strip"].clip_to_seen:
             entry["strip"].relayout()                # the seen part of an image window may have changed (A2)
+        over = entry.get("over")
+        if over is not None and entry["side"] == "top":   # the density pass zeroes inner margins: give them back
+            m = over.contentsMargins()
+            if (m.left(), m.top(), m.right(), m.bottom()) != tuple(entry["on_top"]):
+                over.setContentsMargins(*entry["on_top"])
     st["strips"] = keep
     mdi = getattr(win, "_mdi", None)
     if mdi is not None and st.get("follow") is not None:

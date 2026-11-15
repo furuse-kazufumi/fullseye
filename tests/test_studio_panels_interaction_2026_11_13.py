@@ -2047,6 +2047,53 @@ def test_every_drawn_button_of_a_panel_is_in_a_strip_or_says_why_not(tmp_path, m
         _close(app, win)
 
 
+# --------------------------------------------------------------------------- #
+# A1 — "Tools and tabs: on top" means on top: every panel's strip stands right under its title band, above
+# everything else of the panel (Visual Studio's tool windows; the user-eye check: Operators and A/B had their
+# strip at the very bottom, Pipeline under its list, Variables between its list and its details)
+# --------------------------------------------------------------------------- #
+def test_on_top_every_strip_stands_above_the_rest_of_its_panel(tmp_path, monkeypatch):
+    from PySide6 import QtCore, QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        win.resize(1600, 1000); _pump(app, 0.2)
+        _show_all(app, win)
+        checked = 0
+        for mode in ("top", "auto"):
+            studio_panels.set_strip_mode(win, mode); _pump(app, 0.3)
+            for r in _strip_rows(win):
+                s = r["strip"]
+                if r["kind"] == "image":
+                    if s.overlay:
+                        continue                                            # laid over its image's corner
+                    view = r["shape"].findChild(QtWidgets.QGraphicsView)
+                    top = r["shape"]
+                    assert s.orientation == "h" or mode == "auto", r["key"]
+                    if s.orientation == "h":
+                        assert s.mapTo(top, QtCore.QPoint(0, s.height())).y() <= view.mapTo(top, QtCore.QPoint(0, 0)).y()
+                        checked += 1
+                    continue
+                dock = r["shape"]
+                dock.raise_(); _pump(app, 0.1)
+                if s.orientation != "h":
+                    assert mode == "auto", r["key"]                         # "on top" is never a column
+                    continue
+                root = dock.widget()
+                bottom = s.mapTo(root, QtCore.QPoint(0, s.height())).y()
+                others = [w for w in root.findChildren(QtWidgets.QWidget)
+                          if w.isVisible() and w is not s and not s.isAncestorOf(w) and not w.isAncestorOf(s)
+                          and w.width() > 0 and w.height() > 0]
+                assert len(others) >= 3, r["key"]
+                above = [(w.objectName() or type(w).__name__, w.mapTo(root, QtCore.QPoint(0, 0)).y())
+                         for w in others if w.mapTo(root, QtCore.QPoint(0, 0)).y() < bottom]
+                assert above == [], (mode, r["key"], bottom, above[:4])
+                checked += 1
+        assert checked >= 2 * 5 + 1                                         # code ops pipeline vars A/B (x2) + the image
+    finally:
+        studio_panels.set_strip_mode(win, "auto")
+        _close(app, win)
+
+
 def test_a_tab_group_the_program_builds_takes_the_side_of_its_settled_front(tmp_path, monkeypatch):
     """The hold of the tab sides is the user's (a click / a key in the row), not Qt's: while a group is being
     built (tabified, a panel raised by the program) the side follows the front it settles on - a passing wide
