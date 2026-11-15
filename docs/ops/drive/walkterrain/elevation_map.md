@@ -5,7 +5,7 @@ category: walkterrain
 in: points
 out: depth
 gpu: なし
-examples: [perception_pipeline, physical_ai_perception, walking_ops_tour]
+examples: [heightmap_depth_camera_tour, perception_pipeline, physical_ai_perception, walking_ops_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -45,6 +45,7 @@ An empty cloud with ``bounds`` gives an all-``nan`` grid; without ``bounds`` it 
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [heightmap_depth_camera_tour](../../../../examples/heightmap_depth_camera_tour.py) — `py -3.11 examples/heightmap_depth_camera_tour.py`
 - [perception_pipeline](../../../../examples/perception_pipeline.py) — `py -3.11 examples/perception_pipeline.py`
 - [physical_ai_perception](../../../../examples/physical_ai_perception.py) — `py -3.11 examples/physical_ai_perception.py`
 - [walking_ops_tour](../../../../examples/walking_ops_tour.py) — `py -3.11 examples/walking_ops_tour.py`

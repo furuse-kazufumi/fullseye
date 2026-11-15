@@ -573,6 +573,18 @@ EXAMPLES = [
                 "足の軌跡から gait_step_events が着地点を誤差 0 で取り戻し、foot_slip_metrics は滑り 0・足で測る前進 = 胴の前進。"
                 "足を置き直さない見せかけは walking_ok = False。2 足支持では com_support_margin が -inf、support_line_margin は "
                 "線分までの距離。LIPM の捕捉点 ξ = c + ċ/ω、静的な接触力の LP は左右対称で等分。"},
+    {"id": "heightmap_depth_camera_tour", "task": "measurement", "data": "synthetic",
+     "name": "高さ図を深度カメラで直接撮り、知覚の連鎖を合成データで閉じる —— heightmap_depth_camera",
+     "summary": "傾いた面の深度が光線と平面の閉形式に 1e-12、三角形に分けた同じ高さ図を world_camera で撮った深度と "
+                "平面で 1e-9・丘で中央値 1e-4 m 以内(当たる画素も同じ)。道 → 深度(雑音つき)→ depth_to_points → "
+                "elevation_map → 車線の窓で縦断・横勾配が真値に戻る。雑音は σ_z = z²σ_d/(f b) どおり、壁の向こうには "
+                "当たらず dem_viewshed と矛盾しない。"},
+    {"id": "road_surface_tour", "task": "measurement", "data": "synthetic",
+     "name": "横断の決まりを持つ道の面を、セルごとの解析の真値つきで作る —— road_surface_heightmap",
+     "summary": "直線の道は世界の座標の閉形式 z = g·x − c·|y| に 1e-12、半径 35 m のヘアピン(clothoid_points の線形)は "
+                "極座標の閉形式に 1e-9 で一致し、内側の車線の勾配 6.3 %・外側 5.8 %(1/(1 − κe))。道路構造令の表の長さで "
+                "片勾配へすりつけると右の車線が途中で平らを通る。車線の窓を crop_rectangle2 → surface_form_remove に "
+                "かけると (勾配, −拝み勾配) が、dem_slope の中央値が atan(√(g² + c²)) が戻る。"},
     {"id": "itokawa_gravity_tour", "task": "measurement", "data": "real",
      "name": "小惑星イトカワの実際の形の上で、立つ場所の重さと坂を測る —— 一様密度の多面体の厳密な重力(polygrav 2 op)",
      "summary": "公開データの形(NASA PDS Small Bodies Node の Gaskell Itokawa Shape Model、Q = 64 の 49,152 面、CC0 1.0、"

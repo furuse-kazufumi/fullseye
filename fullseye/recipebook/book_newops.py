@@ -264,7 +264,48 @@ def nw_stereo_shift(variant: int):
     return {"value": left, "aux": {"right": right}, "truth": {"disparity": d}}
 
 
+def nw_two_parts_gap(variant: int):
+    """Two scanned parts whose facing faces are ``gap`` apart (x = 1 and x = 1 + gap), with 6 flying points
+    in the gap that belong to part A's scan. Truth = the face-to-face gap (0.3 / 0.2 m)."""
+    gap = 0.3 if variant == 0 else 0.2
+    r = rng(variant, 71)
+    part_a = np.r_[np.c_[np.ones(400), r.random((400, 2))], r.random((1600, 3))]
+    fly_yz = np.array([[0.2, 0.2], [0.2, 0.8], [0.5, 0.5], [0.8, 0.2], [0.8, 0.8], [0.5, 0.15]])
+    fly = np.c_[1.0 + gap * (0.45 + 0.1 * r.random(6)), fly_yz]
+    part_b = np.r_[np.c_[np.full(400, 1.0 + gap), r.random((400, 2))], r.random((800, 3)) + [1.0 + gap, 0, 0]]
+    return {"value": np.r_[part_a, fly], "aux": {"b": part_b}, "truth": {"gap": gap}}
+
+
+def nw_road_alignment(variant: int):
+    """A straight two-lane road along +x (samples every 0.5 m): grade g, crossfall c. Truth = the slope of the
+    left lane, atan(√(g² + c²)) in degrees (the lane is a plane: z = g·x − c·y)."""
+    g, c = (0.06, 0.02) if variant == 0 else (0.09, 0.025)
+    s = np.arange(0.0, 40.01, 0.5)
+    road = {"x": s, "y": np.zeros_like(s), "z": g * s, "s": s}
+    return {"value": road, "aux": {"crossfall": c},
+            "truth": {"slope_deg": math.degrees(math.atan(math.hypot(g, c)))}}
+
+
+def nw_heightmap_camera(variant: int):
+    """A tilted plane z = c0 + a·x + b·y (5 cm cells, 10 m × 8 m) under a camera looking straight down from 1.8 m.
+
+    The nadir camera frame is a reflection and a shift of the world, so the back-projected points lie on a plane
+    whose normal makes the same angle with the optical axis as the world plane with the vertical.
+    Truth = |n_z| = 1/√(1 + a² + b²)."""
+    a, b, c0 = (0.08, -0.03, 0.2) if variant == 0 else (-0.05, 0.11, 0.4)
+    yy, xx = np.mgrid[0:160, 0:200]
+    x, y = (xx + 0.5) * 0.05, (yy + 0.5) * 0.05
+    R = np.diag([1.0, -1.0, -1.0])                                     # 真下を向く(OpenCV の軸)
+    C = np.array([5.0, 4.0, 1.8 + c0 + a * 5.0 + b * 4.0])
+    return {"value": c0 + a * x + b * y, "aux": {"pose": (R, -R @ C),
+                                                 "K": np.array([[60.0, 0.0, 63.5], [0.0, 60.0, 47.5], [0.0, 0.0, 1.0]])},
+            "truth": {"cos_tilt": 1.0 / math.sqrt(1.0 + a * a + b * b)}}
+
+
 SAMPLES = {
+    "nw_heightmap_camera": nw_heightmap_camera,
+    "nw_road_alignment": nw_road_alignment,
+    "nw_two_parts_gap": nw_two_parts_gap,
     "nw_bore": nw_bore, "nw_touching": nw_touching, "nw_two_grey_parts": nw_two_grey_parts,
     "nw_offcentre_ring": nw_offcentre_ring, "nw_grey_spheres": nw_grey_spheres, "nw_mic_pair": nw_mic_pair,
     "nw_feed_marks": nw_feed_marks, "nw_grating": nw_grating, "nw_bracket_scene": nw_bracket_scene,
@@ -277,6 +318,47 @@ SAMPLES = {
 # recipes
 # =================================================================================================
 RECIPES = [
+    # ------------------------------------------------ new op: heightmap_depth_camera (terrain, 2026-11-15), family drive
+    {"name": "Simulate — a depth camera over a height map, then the plane back from its point cloud",
+     "family": "drive", "task": "measure", "task_class": "simulation", "halcon": None,
+     "input_sort": "depth", "sample": "nw_heightmap_camera",
+     "stages": [{"op": "heightmap_depth_camera", "args": ["$in", "$aux.pose", "$aux.K"], "kw": {"cell": 0.05}},
+                {"op": "depth_to_points", "kw": {"fx": 60.0, "fy": 60.0, "cx": 63.5, "cy": 47.5}},
+                {"op": "fit_plane_3d"}],
+     "expect": [{"get": [1, 2, "@abs"], "approx": "cos_tilt", "atol": 1e-9},
+                {"get": [2], "between": [0.0, 1e-6]}],
+     "note": "Close the perception chain on synthetic data: render a tilted plane with the depth camera (ray "
+             "marching over the bilinear height map, looking straight down; on a plane the linear crossing is exact), "
+             "back-project the depth to camera-frame points and fit a plane. The nadir camera frame is a reflection "
+             "and a shift of the world, so the points lie exactly on a plane (residual ~1e-9) whose normal makes the "
+             "world plane's tilt with the optical axis: |n_z| = 1/√(1 + a² + b²). The elevation-map round trip and the "
+             "lane slope are in tests/test_heightmap_depth_camera.py and examples/heightmap_depth_camera_tour.py."},
+    # ------------------------------------------------ new op: road_surface_heightmap (drivelateral, 2026-11-15), family drive
+    {"name": "Simulate — a crowned road lane from its alignment, then its slope as a DEM",
+     "family": "drive", "task": "measure", "task_class": "simulation", "halcon": None,
+     "input_sort": "table", "sample": "nw_road_alignment",
+     "stages": [{"op": "road_surface_heightmap",
+                 "kw": {"cell": 0.1, "extent": [5.0, 35.0, 0.3, 2.7], "crossfall": "$aux.crossfall"}},
+                {"op": "dem_slope", "kw": {"cell_size": 0.1}}],
+     "expect": [{"get": ["@median"], "approx": "slope_deg", "atol": 1e-9}],
+     "note": "Road surface from a centre-line table (x, y, z every 0.5 m) and the cross-section rules (2 % crown, "
+             "lanes, gutter): the window is the left lane only, a plane z = g·x − c·y, so the DEM slope (Horn) is "
+             "atan(√(g² + c²)) everywhere inside. The same height map feeds the depth camera and the lane-window "
+             "slope chain (crop_rectangle2 -> surface_form_remove); return_truth=True adds the per-cell analytic "
+             "truth (grade, cross slope, s, e)."},
+    # ------------------------------------------------ new op: convex_hull_gap (hull3d, 2026-11-15), family 3d
+    {"name": "Measure — clearance between two scanned parts (drop flying points, then the hull gap)",
+     "family": "3d", "task": "measure", "task_class": "3d", "halcon": None,
+     "input_sort": "points", "sample": "nw_two_parts_gap",
+     "stages": [{"op": "radius_outlier_removal", "kw": {"radius": 0.06, "min_neighbors": 2}},
+                {"op": "convex_hull_gap", "args": ["$prev", "$aux.b"]}],
+     "expect": [{"get": ["separated"], "equals": True},
+                {"get": ["gap"], "approx": "gap", "atol": 1e-9}],
+     "note": "Assembly clearance from two scans: six flying points inside the gap make the raw hull gap look "
+             "less than half its size, so drop isolated points first (radius_outlier_removal: fewer than 2 "
+             "neighbours within 0.06), then "
+             "convex_hull_gap returns the face-to-face gap with certified bounds (Wolfe's minimum-norm point; an "
+             "independent HiGHS LP agrees). Use convex pieces: the hull of a non-convex part over-reports contact."},
     # ------------------------------------------------ new op: fit_circle_xld (shape2d), family 2d
     {"name": "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)",
      "family": "2d", "task": "measure", "task_class": "measurement", "halcon": "2D Metrology",
@@ -448,6 +530,18 @@ FAILED_ATTEMPTS = [
 
 
 NOTES_JA = {
+    "Simulate — a depth camera over a height map, then the plane back from its point cloud":
+        "高さ図を深度カメラで撮り、点群から平面を当て直す — 真下を向く深度カメラで傾いた面を撮り、depth_to_points で "
+        "カメラの座標の点群にして fit_plane_3d で平面を当てる。真下のカメラの座標は世界の鏡映と平行移動なので点は平面の上に"
+        "乗り(残差 1e-9 の桁)、法線と光軸の角が面の傾きになる(|n_z| = 1/√(1 + a² + b²))。",
+    "Simulate — a crowned road lane from its alignment, then its slope as a DEM":
+        "中心線の表と横断の決まり(拝み勾配 2 %・車線・側溝)から道の面を作り、DEM として傾斜を測る — 窓は左の車線だけで、"
+        "z = g·x − c·y の平面なので dem_slope(Horn)が内側のどこでも atan(√(g² + c²)) になる。セルごとの解析の真値は "
+        "return_truth=True で返る。",
+    "Measure — clearance between two scanned parts (drop flying points, then the hull gap)":
+        "走査した 2 部品のあいだの隙間を測る — 隙間の中の飛び点 6 点で凸包の隙間が詰まって見えるので、先に "
+        "radius_outlier_removal(半径 0.06 に近傍 2 点未満)で除き、convex_hull_gap が面と面の隙間を保証つきの上下限で返す(Wolfe の "
+        "最小ノルム点。独立な線形計画も一致)。非凸の部品は凸に分けてから使う。",
     "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)":
         "穴の中心と半径をサブピクセル輪郭から測る — threshold_sub_pix で円板の縁を XLD 輪郭にし、"
         "fit_circle_xld で輪郭ごとに幾何距離の円を当てて中心(行・列)と半径を画素で読む"

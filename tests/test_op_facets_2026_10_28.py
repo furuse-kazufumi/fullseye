@@ -420,11 +420,14 @@ def test_priority_queue_planner_replays_backward_derivations_forward():
                   and e["output"] not in {"unknown","poly"}})
     random.Random(20261029).shuffle(wants)
     checked=0; failures=[]
+    # ★2026-11-15: plan() は既定で plan_timeout_ms(900 ms)で打ち切る。CI の負荷(coverage つきの片)で再生の側だけが
+    #   時間切れになると「解なし」になり、('signal', ['image']) で落ちた(PR #322 の shard 4。手元では 31 ms、展開 2,856)。
+    #   test_mcp_agent_usability / test_rag_recall_airag と同じく、上限を展開数(50000)の側に移して決定的にする。
     for want in wants[:40]:
-        backward=opsearch.plan(None,want,direction="backward",constraints={"k":2,"max_depth":4})
+        backward=opsearch.plan(None,want,direction="backward",constraints={"k":2,"max_depth":4,"timeout_ms":120_000})
         for candidate in backward.get("plans",[]):
             replay=opsearch.plan(candidate["consumed_have"],want,direction="forward",
-                                 constraints={"k":3,"max_depth":4})
+                                 constraints={"k":3,"max_depth":4,"timeout_ms":120_000})
             if not replay["ok"]: failures.append((want,candidate["consumed_have"]))
             checked+=1
     assert failures == []

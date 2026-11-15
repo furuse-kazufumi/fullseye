@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3844, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3847, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -446,6 +446,7 @@
 {"name":"conv_observed_order","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"convex_fill","status":"ok","in_sort":"region","out_sort":"region","probe_input":"op_probe.sample_input('region', structured=True)"},
 {"name":"convex_hull","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"convex_hull_gap","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"convex_mirror_fov","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"convex_mirror_image","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"convex_mirror_misjudge","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -1277,6 +1278,7 @@
 {"name":"heap_volume_cone","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"heap_volume_heightmap","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"height_width_ratio","status":"ok","in_sort":"region","out_sort":"feature","probe_input":"op_probe.sample_input('region', structured=True)"},
+{"name":"heightmap_depth_camera","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"hertz_cylinder","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"hertz_force","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"hertz_pressure","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -2630,6 +2632,7 @@
 {"name":"road_eval","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"road_profile","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"road_row_distance","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"road_surface_heightmap","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"roberts","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"roberts_mag","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"robinson_amp","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},

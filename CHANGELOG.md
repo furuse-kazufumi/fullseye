@@ -7,6 +7,53 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — G1 いろは坂の長尺動画の製作から生まれた op(2026-11-15)
+
+Unitree G1 が国土地理院 DEM5A の上に置いた道を登る動画の製作で、手元の道具として書いた計算のうち、別の題材にも使えて
+既存の op の組み合わせでは出せないものを、Fullseye の作法(型・台帳・6 言語の要約・真値の門・走る例・recipe)で書き直した。
+製作の道具を写したのではなく、敵対的な確かめ(名前でなく働きで既存の op を探した)で残ったものだけを足す。
+
+- `convex_hull_gap`(hull3d、3-D 台帳の `bounds`、`points × points → table`): 2 つの頂点集合の凸包どうしの隙間を
+  Wolfe (1976) の最小ノルム点で解く(差の集合を作らず、1 反復 O(N_A + N_B)。有限回で厳密な点に着く)。止める条件そのものが
+  保証で、上限 = 実際に作った最も近い点の組の距離、下限 = 頂点から直接測った分離の帯の幅(差 ≤ `tol`)。既定では独立な
+  線形計画(HiGHS、`‖w‖∞ ≤ 1` で `w·a ≤ c ≤ w·b − t` の最大の t)で離れ方を別に決め、`t/√d ≤ 隙間 ≤ t` から外れれば
+  RuntimeError。保証に届かない答えも RuntimeError(黙って近似値を返さない)。貫通の深さは返さない。2-D の点にも使える。
+  製作では MuJoCo の凸距離ソルバ(libccd)の誤った値を判定し直すのに使った。教訓: 頂点どうしの距離では重なりを否定できない
+  (十字の棒は頂点の間が 1.4 離れていても凸包は交わり、hausdorff_distance は 1.4 と出す)。
+  門 `tests/test_convex_hull_gap.py`(18 本): 面の向き合う箱で隙間 = d(1e-12)、角どうしで √(dx²+dy²+dz²)、接触と食い込みで 0、
+  十字の棒、剛体変換で不変、`distance_segment_segment`(閉形式)と乱数 400 組で 1e-9、乱数の凸多面体で SLSQP の QP と 1e-6。
+  同じ門を、頂点どうしの最短距離と Frank–Wolfe を 200 歩で止めた上限(製作の作り方)にかけると落ち、囲いの計算を壊した写しは
+  RuntimeError になる。例 `examples_3d/convex_hull_gap_clearance.py`(examples3d に登録、図 2 枚)、recipe「走査した 2 部品の
+  隙間」(`radius_outlier_removal` で隙間の中の飛び点を除いてから測る。飛び点ありの凸包は 0.3 が 0.14 に見える)。
+- `road_surface_heightmap`(drivelateral、台帳 opsdrive の `lateral`、`table → depth`、`return_truth=True` で `(高さ図, 真値の表)`):
+  中心線の線形の表(x, y, z と任意の s・heading・curvature・grade・beta・rate)と横断の決まり(拝み勾配・一方向の片勾配と
+  そのすりつけ・側溝・路側の段、全部引数)から道の面の高さ図を作り、セルごとの解析の真値(縦断勾配・横勾配・s・e・向き・曲率)
+  を作り方の偏微分で返す。射影は既存の `lateral_offset` で区間を決めてから、その区間の向きと曲率の局所の円弧へ射影し直す
+  (直線と円弧で厳密。製作の 1 m の折線では頂点ごとに mm の段が出ていた)。縦断は標本の z と勾配の 3 次 Hermite
+  (放物線の縦断曲線は標本の間でも厳密)。縦断勾配は 1/(1 − κe) で曲線の内側ほど急、すりつけでは縁の勾配が中心線と違う
+  (相対勾配)。外側の地形(同じ格子)へなじませることもでき、混ぜたセルの真値は nan(言わない)。製作の `road_profile` は
+  既存の op(drivelong)と名前が重なるので使わない。
+  門 `tests/test_road_surface_heightmap.py`(13 本): 直線は世界の座標の閉形式 z = g·x − c·|y|、ヘアピンは極座標の閉形式に
+  1e-9(局所の円弧で射影し直さない写しは mm で外れる)、放物線の縦断曲線、回した道の車線の窓を `crop_rectangle2` →
+  `surface_form_remove` で (g, −c)・`dem_slope` で atan(√(g² + c²))、推定した曲率を `curvature_torsion` と照合、
+  道路構造令の表(`TRANSITION_LENGTH`・`MAX_SUPERELEVATION`)の長さと値で作ったすりつけ、真値と高さ図の数値微分の一致、
+  地形へのなじませ(車道はビット一致)。例 `examples/road_surface_tour.py`(examples2d に登録、図 4 枚)、recipe
+  「道の車線の傾斜を DEM として測る」(`dem_slope`)。
+- `heightmap_depth_camera`(terrain、台帳 opsdrive の `walkterrain`、`depth × pose × matrix → depth`): 高さ図・DEM を
+  ピンホールの深度カメラで直接撮る。画素ごとの光線を双一次の高さの上で一定の刻み(既定 cell/2、cell より粗い刻みは断る)で
+  進め、面の下へ入った刻みで一次の補間で交点を取り、光軸方向の深度を返す(当たらない・面の下から始まる・地図の側面から入る
+  光線は nan)。足場の縁を刻みの間で出入りする光線は縁の高さで判定する。カメラの向きの決まりは `camera` と同じ OpenCV の
+  軸(world→camera の (R, t))。雑音は `acceptance_scan` の triangulation と同じ則 σ_z = z²·σ_d/(f·b)(既定 σ_d = 0 =
+  厳密)。製作では MuJoCo の mj_multiRay の 1 枚 10 秒を numpy で 0.1 秒にした計算。`depth_to_points → elevation_map` の
+  逆向きで、知覚の連鎖を合成データで閉じられる。
+  門 `tests/test_heightmap_depth_camera.py`(12 本): 平面(傾いた面も)は光線と平面の交点の閉形式に 1e-12(刻みに依らない)、
+  三角形に分けた同じ高さ図を `world_camera`(render3d のラスタ化 = 別の算法)で撮った深度と平面で 1e-9・曲面で中央値 1e-4 m
+  (当たる画素の集合も同じ)、`depth_to_points → elevation_map` の往復、交点の誤差が刻みの 2 乗で縮む、40 回撮った標準偏差が
+  雑音の則に一致、高い壁の向こうに当たらず当たったセルは `dem_viewshed`(独立した op)の見える範囲、1 セル幅の壁を既定の刻みで
+  必ず捉え刻み cell では上の方を飛び越す(限界を数で示す)、交点を補間しない写しは平面の閉形式を外す。例
+  `examples/heightmap_depth_camera_tour.py`(examples2d に登録、図 2 枚: 道 → 深度 → 点群 → 標高図 → 車線の勾配を真値と
+  突き合わせる、製作と同じ連鎖を op だけで)、recipe「深度カメラ → 点群 → 平面」(`depth_to_points` → `fit_plane_3d`)。
+
 ### 追加 — PoC「置かれたタオルの角・辺・折り線を古典の画像処理で見つける」(収蔵 2026.317)
 
 - `examples/poc_cloth_towel_corners_synth.py`: 0〜2 回折ったタオルを**自前の幾何で描き**(MuJoCo の布は台を貫通して不採用)、`gaussian` / `otsu` / `fill_up` / `sk_find_contours` / `xg_gen_polygons` と辺の直線の交点で隅・辺を出す。真値は描画側(隅の高さで投影)。データは自作の合成で、新 op なし。
