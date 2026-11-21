@@ -223,6 +223,13 @@ PUBLISHED_REAL_TOL = 0.05
 SHEFFIELD_NOMINAL = {1: 476.3, 2: 198.7}
 
 
+def published_real_mismatches(numbers):
+    """公開した実測値から外れた鍵を返す。欠損・非有限も外れ。/ Return mismatched published-value keys."""
+    return [key for key, published in PUBLISHED_REAL.items()
+            if key not in numbers or not np.isfinite(numbers[key])
+            or abs(numbers[key] - published) > PUBLISHED_REAL_TOL]
+
+
 def _csv(name):
     import csv
     with open(os.path.join(REAL, name), encoding="utf-8") as f:
@@ -354,9 +361,11 @@ def chapter_real():
             NUMBERS["real_rgb_cands"], abs(NUMBERS["real_rgb_film"] - ref) / max(abs(fit_b["thickness_nm"] - ref), 1e-9)),
          abs(NUMBERS["real_rgb_film"] / ref - 1) < 0.25 and NUMBERS["real_rgb_bare"] < 25.0)
     # ★記録値の再現の門: 説明に出す数が、この実行の値を公開の桁で丸めたものと同じか(上の ±25 % は物理の門で別物)。
+    mismatches = set(published_real_mismatches(NUMBERS))
     for key, pub in PUBLISHED_REAL.items():
+        value = NUMBERS.get(key, float("nan"))
         gate("記録値の再現: %s = %.4f は説明の %.1f と ±%.2f(公開の桁の丸めの半分、実行の間の揺れは 0 と実測)"
-             % (key, NUMBERS[key], pub, PUBLISHED_REAL_TOL), abs(NUMBERS[key] - pub) <= PUBLISHED_REAL_TOL)
+             % (key, value, pub, PUBLISHED_REAL_TOL), key not in mismatches)
     return out
 
 

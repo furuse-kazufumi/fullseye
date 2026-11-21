@@ -79,6 +79,8 @@ fit_rectangle2。切り分けの手順と閾値は別実装)が箱型の物体�
     py -3.11 examples/poc_mixed_case_depalletizing.py                   # 縮小版(種 0 の 1 枚・2 手 + 種 3〜5 の最初のコマ)
     set FULLSEYE_DEPAL_FULL=1 & py -3.11 examples/poc_mixed_case_depalletizing.py   # 全部(10 枚 × 5 条件、掃引、実データ)
 
+``FULLSEYE_DEPAL_WORKERS`` は full の並列の数だけを絞る。場面ごとの結果は種で決まり、並列の数では変わらない。
+
 図(``FULLSEYE_FIGURE_DIR`` があり、全部を回したときだけ): 代表図(同じ柄のパレットを 5 通りで)、
 難しさの梯子、最初のコマの再現率の表、結果の数の表、成功率のグラフ、閾値と縁の丸みの掃引の表、
 動画(条件ごとに「カラーの溝」の成功の手と失敗の手)、失敗の見本、実データの数表。
@@ -3516,15 +3518,34 @@ RECORD_TOL_RECALL = 0.005 + 1e-9
 RECORD_TOL_FALSE = 0.05 + 1e-9
 
 
+def record_max_difference(pairs) -> float:
+    """記録値と測定値の組の最大差。空または非有限なら ``inf`` を返す。/ Maximum finite record difference."""
+    differences = [abs(got - expected) for got, expected in pairs]
+    if not differences or not all(math.isfinite(d) for d in differences):
+        return float("inf")
+    return max(differences)
+
+
+def record_map_differences(fm, rec) -> tuple[float, float, int]:
+    """地図の差を副作用なく返す。キーの不足・余分・空は ``inf``。/ Compare record maps fail-closed."""
+    keys = sorted(set(rec) & set(fm), key=str)
+    wr = record_max_difference((fm[k][0], rec[k][0]) for k in keys)
+    wf = record_max_difference((fm[k][1], rec[k][1]) for k in keys)
+    if set(fm) != set(rec):
+        wr = wf = float("inf")
+    return wr, wf, len(keys)
+
+
 def compare_with_record(res, held) -> float:
     """full の実行で、見ていない種の中央値を記録(RECORDED_FULL)と並べて印字し、差の最大を返す(main が門にする)。"""
     h = RECORDED_FULL["held_recall"]
-    worst = 0.0
+    pairs = []
     print("== 記録(RECORDED_FULL)との差: 見ていない種の再現率の中央値 ==")
     for cond in CONDITIONS:
         got = {m: static_summary(res[cond][m]["static"], held)["recall"] for m in MODES}
-        worst = max([worst] + [abs(got[m] - h[cond][m]) for m in MODES])
+        pairs.extend((got[m], h[cond][m]) for m in MODES)
         print("  %-10s " % CONDITION_JA[cond] + "  ".join("%s %.2f(記録 %.2f)" % (MODE_JA[m], got[m], h[cond][m]) for m in MODES))
+    worst = record_max_difference(pairs)
     print("  差の最大 %.4f(記録は小数 2 桁。門の幅は丸めの半分 0.005)" % worst)
     return worst
 
@@ -3532,16 +3553,10 @@ def compare_with_record(res, held) -> float:
 def compare_map_with_record(fm) -> tuple[float, float, int]:
     """full の実行で測った合わせ目の地図を記録と比べ、(再現率の差の最大, 外れの差の最大, 升目の数) を返す。"""
     rec = recorded_fm()
-    keys = sorted(set(rec) & set(fm), key=str)
-    def _d(a, b):                                  # nan(箱が 0 個の升目)は差を無限大にする(fail-closed)
-        d = abs(a - b)
-        return d if d == d else float("inf")
-
-    wr = max(_d(fm[k][0], rec[k][0]) for k in keys)
-    wf = max(_d(fm[k][1], rec[k][1]) for k in keys)
+    wr, wf, nk = record_map_differences(fm, rec)
     print("== 記録(RECORDED_FULL)との差: 合わせ目の地図 %d 升目(記録 %d、測った %d)。再現率の差の最大 %.4f、"
-          "外れの差の最大 %.3f(門の幅は丸めの半分 0.005 / 0.05)" % (len(keys), len(rec), len(fm), wr, wf))
-    return wr, wf, len(keys)
+          "外れの差の最大 %.3f(門の幅は丸めの半分 0.005 / 0.05)" % (nk, len(rec), len(fm), wr, wf))
+    return wr, wf, nk
 
 
 def map_gates(fm):
@@ -3806,6 +3821,10 @@ def main():
     loop_steps = 60 if full else 2
     root = renders_root()
     workers = min(15, max(1, (os.cpu_count() or 2) - 2)) if full else 1
+    if full and os.environ.get("FULLSEYE_DEPAL_WORKERS", "").strip():
+        # 手元の記憶の余裕に合わせて並列を絞る(2026-11-15、15 本で commit の上限に届いて落ちた)。場面ごとの結果は種で
+        # 決まり、並列の数に依らない。
+        workers = max(1, int(os.environ["FULLSEYE_DEPAL_WORKERS"]))
     t0 = time.time()
     res = chapter_conditions(seeds, seeds, loop_steps, root, None if full else ("same",),
                              workers, sweep=full)

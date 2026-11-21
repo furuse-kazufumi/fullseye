@@ -180,6 +180,27 @@ def detect_stats(c, sites):
     return rows
 
 
+def pod_inside_frequencies(pods, frequencies=F_POD):
+    """両検出の a90/95 が実測範囲内の周波数を返す。/ Return frequencies with both a90/95 values in range."""
+    return [f for f in frequencies if not pods[f]["位相"][0]["a90_95_beyond_data"]
+            and not pods[f]["振幅"][0]["a90_95_beyond_data"]]
+
+
+def pod_phase_is_superior(pods, frequencies=F_POD):
+    """内側が 2 件以上で位相 a90/95 が全て振幅の 8 割未満か。/ Apply the phase-superiority gate."""
+    inside = pod_inside_frequencies(pods, frequencies)
+    return len(inside) >= 2 and all(
+        pods[f]["位相"][0]["a90_95"] < 0.8 * pods[f]["振幅"][0]["a90_95"] for f in inside)
+
+
+def pod_a90_order(pods, sizes_max, frequencies=F_POD):
+    """外挿値を比較せず a90/95 の順を判定する。/ Check a90/95 order without comparing extrapolated values."""
+    a9 = [pods[f]["位相"][0]["a90_95"] for f in frequencies]
+    out9 = [pods[f]["位相"][0]["a90_95_beyond_data"] for f in frequencies]
+    return all((a9[i] < a9[i + 1]) if not out9[i + 1] else (not out9[i] and a9[i] < sizes_max)
+               for i in range(len(frequencies) - 1))
+
+
 def main():
     t0 = time.time()
     c0 = time.process_time()
@@ -324,11 +345,10 @@ def main():
                  100 * res["振幅"][2]["pfp_empirical"], res["位相"][3]))
     # ★優劣は、両方の a90/95 が試した大きさの内側にある周波数だけで比べる(2026-11-15、外部レビューの指摘)。
     #   外挿(a90_95_beyond_data)どうしの比は、1823A が「データの外で POD を語るな」という領域の数の比で、合格の材料にしない。
-    inside = [f for f in F_POD if not pods[f]["位相"][0]["a90_95_beyond_data"]
-              and not pods[f]["振幅"][0]["a90_95_beyond_data"]]
+    inside = pod_inside_frequencies(pods)
     sizes_max = max(size_max.values())                    # 試したボイドの最大の直径 [µm]
     sizes_min = min(size_min.values())
-    check(len(inside) >= 2 and all(pods[f]["位相"][0]["a90_95"] < 0.8 * pods[f]["振幅"][0]["a90_95"] for f in inside),
+    check(pod_phase_is_superior(pods),
           "a90/95 が両方とも試した大きさの内側にある周波数(%s MHz)で、位相を使う検出の a90/95 は振幅だけの 8 割未満"
           "(同じ基準・同じ閾値の規則)" % " / ".join("%d" % (f / 1e6) for f in inside),
           " / ".join("%d MHz %.1f vs %.1f µm" % (f / 1e6, pods[f]["位相"][0]["a90_95"], pods[f]["振幅"][0]["a90_95"])
@@ -348,8 +368,7 @@ def main():
     out9 = [pods[f]["位相"][0]["a90_95_beyond_data"] for f in F_POD]
     s_pred = [float(np.interp(f, t10["freqs"], t10["signal"])) for f in F_POD]
     # 外挿の周波数の a90/95 は「試した最大より先」とだけ読む(値どうしは比べない): 1 つ前が試した最大より小さければ順は合う。
-    order = all((a9[i] < a9[i + 1]) if not out9[i + 1] else (not out9[i] and a9[i] < sizes_max)
-                for i in range(len(F_POD) - 1))
+    order = pod_a90_order(pods, sizes_max)
     check(t10["f_opt_usable"] <= F_POD[0] and order and s_pred[0] > s_pred[1] > s_pred[2],
           "最適周波数より上では、予測の信号の順と a90/95 の順が一致(低いほど良い。外挿の値は「試した最大より先」とだけ読む)",
           "予測の最適 %.0f MHz、a90/95 %s µm" % (t10["f_opt_usable"] / 1e6, " < ".join(

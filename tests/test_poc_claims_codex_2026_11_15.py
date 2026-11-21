@@ -64,11 +64,34 @@ def test_photoelasticity_low_modulation_definition_bounds_the_fringe_offset():
 
 # --------------------------------------------------------------------------- 指摘 5: SAM の外挿
 def test_sam_superiority_gate_compares_only_frequencies_inside_the_tested_sizes():
+    sam = _load("poc_sam_hybrid_bonding_voids")
     src = _source("poc_sam_hybrid_bonding_voids")
     assert "どの周波数でも、位相を使う検出の a90/95" not in src
     assert "a90/95 が両方とも試した大きさの内側にある周波数" in src
     # 表は位相の列にも(外挿)を付ける
     assert "\"%.1f%s\" % (rp[\"a90_95\"], \"(外挿)\" if rp[\"a90_95_beyond_data\"] else \"\")" in src
+
+    def result(phase, amplitude, phase_out=False, amplitude_out=False):
+        return {"位相": ({"a90_95": phase, "a90_95_beyond_data": phase_out},),
+                "振幅": ({"a90_95": amplitude, "a90_95_beyond_data": amplitude_out},)}
+
+    freqs = (1, 2, 3)
+    none_inside = {f: result(1, 2, True, True) for f in freqs}
+    assert sam.pod_inside_frequencies(none_inside, freqs) == []
+    assert not sam.pod_phase_is_superior(none_inside, freqs)
+    one_inside = dict(none_inside)
+    one_inside[1] = result(7.9, 10.0)
+    assert not sam.pod_phase_is_superior(one_inside, freqs)
+    two_inside = {1: result(7.9, 10.0), 2: result(15.9, 20.0),
+                  3: result(999.0, 0.001, True, True)}
+    assert sam.pod_phase_is_superior(two_inside, freqs)      # 外挿の値は優劣に入らない
+    two_inside[2] = result(16.0, 20.0)
+    assert not sam.pod_phase_is_superior(two_inside, freqs)  # 8 割以上が 1 件でもあれば落ちる
+    ordered = {1: result(10.0, 20.0), 2: result(12.0, 20.0),
+               3: result(999.0, 0.001, True, True)}
+    assert sam.pod_a90_order(ordered, 34.0, freqs)           # 外挿値 999 自体は比較しない
+    ordered[2] = result(9.0, 20.0)
+    assert not sam.pod_a90_order(ordered, 34.0, freqs)
 
 
 def test_sam_caption_says_300_mhz_is_not_compared():
@@ -112,6 +135,14 @@ def test_thin_film_publishes_only_numbers_it_gates_for_reproduction():
         txt = "%.1f" % value
         assert txt in row["caption_ja"] and txt in row["caption_en"], key
     assert "87.4" in row["lead_ja"] and "87.4" in row["lead_en"]
+    numbers = dict(tf.PUBLISHED_REAL)
+    assert tf.published_real_mismatches(numbers) == []
+    changed = dict(numbers)
+    changed["real_fit0"] += 0.06
+    assert tf.published_real_mismatches(changed) == ["real_fit0"]
+    missing = dict(numbers)
+    missing.pop("real_fit_na")
+    assert tf.published_real_mismatches(missing) == ["real_fit_na"]
 
 
 # --------------------------------------------------------------------------- 指摘 7: 白色化した整合フィルタ
@@ -127,6 +158,16 @@ def test_defect_floor_has_a_prewhitened_matched_filter_that_is_linear():
     pos = [(40, 40), (40, 56), (56, 40)]
     amps = np.round(np.geomspace(0.005, 3.0, 30), 5)
     assert np.array_equal(df.floors(g, df.matched, pos, amps), df.floors_linear(g, df.matched, pos, amps))
+    whitened = {name: (2.0, 1.0) for name in df.GROUNDS}
+    ratios = [2.0] * len(df.GROUNDS)
+    assert df.whitened_claim_holds(whitened, ratios)
+    for bad in (float("nan"), float("inf")):
+        bad_ratios = list(ratios)
+        bad_ratios[-1] = bad
+        assert not df.whitened_claim_holds(whitened, bad_ratios)
+        bad_floors = dict(whitened)
+        bad_floors[df.GROUNDS[-1]] = (2.0, bad)
+        assert not df.whitened_claim_holds(bad_floors, ratios)
 
 
 def test_defect_floor_caption_reports_the_prewhitened_comparison():
@@ -181,13 +222,22 @@ def test_ct_gate_pins_the_reversal_under_the_binary_volume():
 def test_depalletizing_full_run_gates_the_difference_from_the_record():
     dep = _load("poc_mixed_case_depalletizing")
     assert dep.RECORD_TOL_RECALL <= 0.005 + 1e-6 and dep.RECORD_TOL_FALSE <= 0.05 + 1e-6
+    rec = dep.recorded_fm()
     # 地図の比較は、記録そのものを渡せば差 0・升目の数は記録と同じ
-    wr, wf, n = dep.compare_map_with_record(dep.recorded_fm())
+    wr, wf, n = dep.record_map_differences(rec, rec)
     assert (wr, wf, n) == (0.0, 0.0, len(dep.RECORDED_FULL["map"]))
-    # 箱の数が 0 の升目(再現率 nan)は差を無限大にする(fail-closed)
-    fm = dep.recorded_fm()
-    k = next(iter(fm))
-    fm[k] = (float("nan"), fm[k][1])
-    assert dep.compare_map_with_record(fm)[0] == float("inf")
-    src = _source("poc_mixed_case_depalletizing")
-    assert "worst > RECORD_TOL_RECALL" in src
+    assert dep.record_max_difference([]) == float("inf")
+    assert dep.record_max_difference([(float("nan"), 0.0)]) == float("inf")
+    assert dep.record_max_difference([(float("inf"), 0.0)]) == float("inf")
+    missing = dict(rec)
+    k = next(iter(missing))
+    missing.pop(k)
+    assert dep.record_map_differences(missing, rec)[:2] == (float("inf"), float("inf"))
+    extra = dict(rec)
+    extra[("余分",)] = (0.0, 0.0)
+    assert dep.record_map_differences(extra, rec)[:2] == (float("inf"), float("inf"))
+    assert dep.record_map_differences({}, rec)[:2] == (float("inf"), float("inf"))
+    for bad in (float("nan"), float("inf")):
+        invalid = dict(rec)
+        invalid[k] = (bad, invalid[k][1])
+        assert dep.record_map_differences(invalid, rec)[0] == float("inf")

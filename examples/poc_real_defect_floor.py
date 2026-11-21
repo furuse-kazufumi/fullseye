@@ -40,9 +40,10 @@ EXTEND: 自分のラインで使うなら :func:`grounds` の戻り値を撮影�
    合成の地は別の乱数で引いた同じ σ の白色雑音で推定する。白色化で実写の限界は 0.61〜0.72 倍に下がるが、
    合成の限界も 0.40〜0.65 倍に下がるので、比は 2.96〜4.32 倍で残る(実行時に印字する値が正)。合成の地の
    スペクトルを推定する乱数を 5 通り、白色化の作り(核の一辺 31〜95・床 1e-4〜1e-2・平滑 0.5〜3)を振っても
-   2.65〜4.32 倍(2026-11-15 の探針、repo の外)。これは定常なガウスの
-   背景に対する最良の線形の検出器で、目地のような定常でない構造には最良ではない —— 「この 3 つの
-   検出器では」までが言える範囲。
+   2.65〜4.32 倍(2026-11-15 の探針、repo の外)。理想形(スペクトルが既知で核を切らない)なら定常な
+   ガウスの背景に対する最良の線形検出器だが、ここでは別の切り出しで推定したスペクトルに床を足し、一辺 63 の
+   有限の核に切った近似で、その最適性は示していない。目地のような定常でない構造にも最良ではない ——
+   「この 3 つの検出器では」までが言える範囲。
 4. ★★**「実写だから場所で変わる」は誤り**。場所による限界の散らばりは
    brick が 16.8 倍(σ を揃えた合成では 3.3 倍)なのに、grass 2.4 倍・
    gravel 3.3 倍は**合成の 3.3 倍と区別がつかない**。散らばりを生むのは
@@ -235,6 +236,16 @@ LINEAR_CHECK: list = []
 AMPS = np.round(np.geomspace(0.005, 3.0, 60), 5)
 
 
+def whitened_claim_holds(whitened, ratios) -> bool:
+    """白色化の限界と比が有限・正で、比が全て 1 超か。/ Validate finite positive prewhitened floors and ratios."""
+    if set(whitened) != set(GROUNDS) or len(ratios) != len(GROUNDS):
+        return False
+    floors = np.asarray([value for name in GROUNDS for value in whitened[name]], dtype=np.float64)
+    ratios_a = np.asarray(ratios, dtype=np.float64)
+    return bool(np.all(np.isfinite(floors)) and np.all(floors > 0.0)
+                and np.all(np.isfinite(ratios_a)) and min(ratios) > 1.0)
+
+
 def section_floor(real, rng):
     """節 1-3: 雑音を揃えても実写の限界は高い。検出器 2 つで確かめる。"""
     pos = positions()
@@ -281,8 +292,10 @@ def section_floor(real, rng):
         WHITENED[name] = (fr_w, fs_w)
         print("   %-8s | %8.4f %8.4f %5.2fx | %.2f / %.2f" % (name, fr_w, fs_w, fr_w / fs_w, fr_w / fr_m, fs_w / fs_m))
     print("   → 白色化した整合フィルタでも、実写の地の限界は %.2f〜%.2f 倍。白色化は実写の限界を下げるが、"
-          "合成の限界も下げるので比は縮まない(定常なガウスの背景に最良の線形検出器。目地のような定常でない構造には最良ではない)。"
-          % (min(ratios_w), max(ratios_w)))
+          "合成の限界も下げるので比は縮まない(理想形(スペクトルが既知で核を切らない)なら定常なガウスの背景に最良の"
+          "線形検出器。ここでは別の切り出しで推定したスペクトルに床を足し、一辺 %d の有限の核に切った近似で、"
+          "その最適性は示していない。目地のような定常でない構造にも最良ではない)。"
+          % (min(ratios_w), max(ratios_w), WHITEN_KERNEL))
     RATIOS_W[:] = ratios_w
     return table, ratios
 
@@ -699,7 +712,7 @@ def main():
     # ---- 主張の検査(数字が動いたら、文章のほうを直すこと) ----
     assert min(ratios) > 1.0, "雑音を揃えたら差が消えた: %r" % ratios
     assert LINEAR_CHECK == [0], "線形の速い判定が floors と食い違った: %r" % LINEAR_CHECK
-    assert len(RATIOS_W) == len(GROUNDS) and min(RATIOS_W) > 1.0, \
+    assert whitened_claim_holds(WHITENED, RATIOS_W), \
         "背景のスペクトルで白色化した整合フィルタでは差が消えた: %r" % RATIOS_W
     assert worst > 1.0, "ノブのどこかで比が 1 を割った: %.3f" % worst
     assert spread["brick"][0] > 3.0 * spread["grass"][0], \
