@@ -14,13 +14,13 @@
 <p>heights : (ny, nx) array</p>
 <p>高さ図 [m] (<code style="color:#22d3bf">nan</code> = 観測していない)。</p>
 <p>pose : (R, t) or (4, 4)</p>
-<p>world→camera。</p>
+<p>world→camera。4×4 は ndarray でも入れ子の list でもよい(最後の行は (0, 0, 0, 1))。</p>
 <p>K : (3, 3)</p>
 <p>内部行列(<code style="color:#22d3bf">camera.intrinsic_matrix</code>)。</p>
 <p>cell, origin</p>
 <p>セルの大きさと、格子の左下の角 (xmin, ymin)(<code style="color:#22d3bf">elevation_map</code> の extent の (xmin, ymin))。</p>
 <p>width, height : int or None</p>
-<p>画像の大きさ。None なら主点から (2·cx + 1, 2·cy + 1)(整数でなければ断る)。</p>
+<p>画像の大きさ(整数の画素。10.7 のような値は断る)。None なら主点から (2·cx + 1, 2·cy + 1)(整数でなければ断る)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>depth : (height, width) float64</p>
 <p>光軸方向の深度 [m]、当たらない所は <code style="color:#22d3bf">nan</code>。</p>

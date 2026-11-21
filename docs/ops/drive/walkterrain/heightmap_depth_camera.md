@@ -47,13 +47,13 @@ Parameters
 heights : (ny, nx) array
     高さ図 [m] (``nan`` = 観測していない)。
 pose : (R, t) or (4, 4)
-    world→camera。
+    world→camera。4×4 は ndarray でも入れ子の list でもよい(最後の行は (0, 0, 0, 1))。
 K : (3, 3)
     内部行列(``camera.intrinsic_matrix``)。
 cell, origin
     セルの大きさと、格子の左下の角 (xmin, ymin)(``elevation_map`` の extent の (xmin, ymin))。
 width, height : int or None
-    画像の大きさ。None なら主点から (2·cx + 1, 2·cy + 1)(整数でなければ断る)。
+    画像の大きさ(整数の画素。10.7 のような値は断る)。None なら主点から (2·cx + 1, 2·cy + 1)(整数でなければ断る)。
 
 Returns
 -------

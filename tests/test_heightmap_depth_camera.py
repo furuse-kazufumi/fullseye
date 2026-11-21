@@ -7,12 +7,14 @@
 3. 往復: 深度 → camera.depth_to_points → 世界 → elevation_map が、見える範囲の元の高さに戻る
    (平面では誤差 ≤ (|a| + |b|)·cell/2 = セルの中の点の平均の位置のずれだけ)。
 4. 交点の補間の誤差は刻みの 2 乗で縮む(曲面、刻みを半分にすると誤差の中央値が 3〜6 分の 1)。
-5. 雑音: 平面を 40 回撮った深度の標準偏差が σ_z = z²·σ_d/(f·b)(acceptance_scan の triangulation と同じ則)に
-   一致する(比の中央値 1 ± 0.05。40 回の標本の標準偏差の偏りは 1/(4·40) ≈ 0.6 %)。
+5. 雑音: 平面を 40 回撮った深度の標準偏差が σ_z = z²·σ_d/(f·b)(acceptance_scan の triangulation と同じ則、
+   f = fx)に一致する(比の中央値 1 ± 0.05。40 回の標本の標準偏差の偏りは 1/(4·40) ≈ 0.6 %)。fx ≠ fy の K で撮る。
 6. 隠れ: 高い壁の向こうには当たらない。当たったセルは dem_viewshed(独立した op)が見えると言うセルに含まれる。
 7. 細い突起: 1 セル幅の壁を水平に横切る光線は、既定の刻み(cell/2)なら位相に依らず当たる。刻みを cell に
    すると壁の上の方(弦が刻みより短い所)を飛び越す光線が出る(限界を数で示す)。cell より粗い刻みは断る。
 8. 直す前で落ちる: 交点を一次で補間しない写し(刻みの点をそのまま使う)は平面の閉形式を cell/2 の桁で外す。
+9. 面でない所(独立レビューの指摘で足した): 地図の側面・起伏の中のカメラ・nan の穴は当たらない(穴の外は穴の無い面と
+   ビット一致)。[near, max_range] の切りは深度で。skew と fx ≠ fy の K も閉形式どおり。入れ子の list の 4×4 の pose。
 """
 from __future__ import annotations
 
@@ -105,10 +107,11 @@ def test_round_trip_through_depth_to_points_and_elevation_map():
 def test_crossing_error_shrinks_with_the_square_of_the_step():
     Hh = 0.6 * np.exp(-((X - 5) ** 2 + (Y - 4) ** 2) / (2 * 0.8 ** 2)) + 0.05 * X
     R, t = look([1.0, 4.0, 1.8], [5.0, 4.0, 0.0])
-    ref = TR.heightmap_depth_camera(Hh, (R, t), K, CELL, step=CELL / 64, max_range=6.0)
+    Ks = np.array([[40.0, 0.0, 23.5], [0.0, 40.0, 17.5], [0.0, 0.0, 1.0]])   # 48 × 36(比は小さい画像でも同じ)
+    ref = TR.heightmap_depth_camera(Hh, (R, t), Ks, CELL, step=CELL / 64, max_range=6.0)
     med = []
     for st in (CELL, CELL / 2, CELL / 4, CELL / 8):
-        d = TR.heightmap_depth_camera(Hh, (R, t), K, CELL, step=st, max_range=6.0)
+        d = TR.heightmap_depth_camera(Hh, (R, t), Ks, CELL, step=st, max_range=6.0)
         both = np.isfinite(d) & np.isfinite(ref)
         med.append(float(np.median(np.abs(d - ref)[both])))
     ratios = [med[i] / med[i + 1] for i in range(3)]
@@ -116,17 +119,20 @@ def test_crossing_error_shrinks_with_the_square_of_the_step():
 
 
 def test_noise_follows_the_stereo_law():
+    """f は fx(K[0, 0])。fx ≠ fy の小さい画像(40 × 30)で 40 回撮る(fy で割る写しは比が fx/fy = 1.33 にずれる)。"""
+    Kn = np.array([[60.0, 0.0, 19.5], [0.0, 45.0, 14.5], [0.0, 0.0, 1.0]])
     Hp = 0.2 + 0.08 * X - 0.03 * Y
     R, t = look([1.0, 4.0, 1.8], [5.0, 4.0, 0.0])
-    clean = TR.heightmap_depth_camera(Hp, (R, t), K, CELL, max_range=6.0)
-    shots = np.array([TR.heightmap_depth_camera(Hp, (R, t), K, CELL, disparity_sigma=0.1, baseline=0.05, seed=k,
+    clean = TR.heightmap_depth_camera(Hp, (R, t), Kn, CELL, max_range=6.0)
+    shots = np.array([TR.heightmap_depth_camera(Hp, (R, t), Kn, CELL, disparity_sigma=0.1, baseline=0.05, seed=k,
                                                 max_range=6.0) for k in range(40)])
     fin = np.isfinite(clean)
+    assert fin.sum() > 800
     std = shots[:, fin].std(0)
-    pred = clean[fin] ** 2 * 0.1 / (K[0, 0] * 0.05)
+    pred = clean[fin] ** 2 * 0.1 / (Kn[0, 0] * 0.05)
     q = std / pred
     assert abs(np.median(q) - 1.0) < 0.05
-    again = TR.heightmap_depth_camera(Hp, (R, t), K, CELL, disparity_sigma=0.1, baseline=0.05, seed=3, max_range=6.0)
+    again = TR.heightmap_depth_camera(Hp, (R, t), Kn, CELL, disparity_sigma=0.1, baseline=0.05, seed=3, max_range=6.0)
     assert np.array_equal(again, shots[3], equal_nan=True)            # seed で決定的
     assert np.abs(shots.mean(0)[fin] - clean[fin]).max() < 6 * pred.max() / np.sqrt(40)
 
@@ -203,6 +209,111 @@ def test_refusals_and_conventions():
                           TR.heightmap_depth_camera(Hp, (R, t), K, CELL), equal_nan=True)
     under = TR.heightmap_depth_camera(np.full((NY, NX), 5.0), (R, t), K, CELL)     # カメラが地面の中
     assert np.isnan(under).all()
+
+
+# ---- 独立レビューの指摘で足した門(2026-11-15) -------------------------------------------------------
+KR = np.array([[40.0, 0.0, 23.5], [0.0, 40.0, 17.5], [0.0, 0.0, 1.0]])     # 48 × 36 の小さい画像(門を軽く)
+
+
+def plane_depth_k(R, t, Kq, a, b, c0, shape):
+    """光線と平面の交点の閉形式(K の逆行列で光線を作る。skew も含む)。"""
+    Cw = -R.T @ t
+    v, u = np.mgrid[0:shape[0], 0:shape[1]].astype(float)
+    dc = np.stack([u, v, np.ones_like(u)], -1) @ np.linalg.inv(Kq).T
+    dw = dc @ R
+    z = (c0 + a * Cw[0] + b * Cw[1] - Cw[2]) / (dw[..., 2] - a * dw[..., 0] - b * dw[..., 1])
+    P = Cw + z[..., None] * dw
+    inside = (P[..., 0] > XS[0]) & (P[..., 0] < XS[-1]) & (P[..., 1] > YS[0]) & (P[..., 1] < YS[-1]) & (z > 0)
+    return z, inside, P
+
+
+def test_the_side_of_the_map_and_a_camera_inside_a_hill_see_nothing():
+    """指摘 3 (a)(b): 地図の側面と、地面の中のカメラ(起伏のある地形)は面ではない —— 全部 nan。
+
+    直す前の門は高さ一定(5 m)の「地面の中」だけで、面の下から出られないので「側面で止める」(blocked)を外した写しと
+    区別できなかった。ここでは側面・丘の向こうに当たる面を置き、外した写しが当たりを返すようにする。"""
+    side = np.where(X < 1.0, 1.0, 0.0) + np.where(X > 8.0, 2.0, 0.0)      # 手前の縁 1 m・奥に 2 m の尾根
+    R, t = look([-1.0, 4.0, 0.5], [5.0, 4.0, 0.5])                        # 縁より低い所から水平に
+    assert np.isnan(TR.heightmap_depth_camera(side, (R, t), KR, CELL, max_range=20.0)).all()
+    open_ = TR.heightmap_depth_camera(np.where(X > 8.0, 2.0, 0.0), (R, t), KR, CELL, max_range=20.0)
+    assert np.isfinite(open_).sum() > 500                                 # 縁が無ければ尾根が見える(門は空でない)
+    hill = np.where(X < 2.0, 3.0, 0.0)                                    # 高さ 3 m の丘の中(z = 1)から外の低地へ
+    R2, t2 = look([1.0, 4.0, 1.0], [6.0, 4.0, 0.0])
+    assert np.isnan(TR.heightmap_depth_camera(hill, (R2, t2), KR, CELL, max_range=20.0)).all()
+    assert np.isfinite(TR.heightmap_depth_camera(np.zeros_like(hill), (R2, t2), KR, CELL,
+                                                 max_range=20.0)).sum() > 500
+
+
+def test_nan_holes_are_not_surface():
+    """指摘 3 (c): nan のセル(観測していない)には面が無い。穴の外の深度は穴の無い面とビット一致し、穴に落ちる
+    光線は nan(穴の向こうの縁の壁に当たったことにしない)。elevation_map の出力は穴を持つのが普通。"""
+    a, b, c0 = 0.08, -0.03, 0.2
+    Hp = c0 + a * X + b * Y
+    holed = Hp.copy()
+    holed[60:100, 80:120] = np.nan                                        # x 4..6 m・y 3..5 m
+    R, t = look([1.0, 4.0, 1.8], [5.0, 4.0, 0.0])
+    full = TR.heightmap_depth_camera(Hp, (R, t), KR, CELL)
+    d = TR.heightmap_depth_camera(holed, (R, t), KR, CELL)
+    fin = np.isfinite(d)
+    assert not (fin & ~np.isfinite(full)).any() and np.array_equal(d[fin], full[fin])
+    _z, _inside, P = plane_depth_k(R, t, KR, a, b, c0, d.shape)
+    in_hole = (P[..., 0] > 3.975) & (P[..., 0] < 6.025) & (P[..., 1] > 2.975) & (P[..., 1] < 5.025)   # 双一次が nan に触れる
+    assert in_hole.sum() > 100 and np.isnan(d[in_hole]).all()
+    assert fin.sum() > 0.5 * (np.isfinite(full) & ~in_hole).sum()
+
+
+def test_near_and_max_range_cut_on_the_depth_before_noise():
+    """指摘 3 (d): 深度が [near, max_range] の外の画素は nan(光線の長さではなく光軸方向の深度で切る)。"""
+    R, t = look([1.0, 2.0, 0.6], [1.6, 2.0, 0.0])                         # 45° 見下ろす: 深度 0.59〜1.5 m
+    d = TR.heightmap_depth_camera(np.zeros((NY, NX)), (R, t), KR, CELL, near=0.7, max_range=1.2)
+    z, inside, _P = plane_depth_k(R, t, KR, 0.0, 0.0, 0.0, d.shape)
+    assert (inside & (z < 0.7)).sum() > 50 and (inside & (z > 1.2)).sum() > 50   # 両方の切りが効く配置
+    fin = np.isfinite(d)
+    assert np.array_equal(fin, inside & (z >= 0.7) & (z <= 1.2))
+    assert np.abs(d - z)[fin].max() < 1e-12
+
+
+def test_skewed_intrinsics_follow_the_ray_plane_closed_form():
+    """指摘 3 (e): skew(K[0, 1] ≠ 0)と fx ≠ fy の K でも、光線と平面の閉形式(K の逆行列)に 1e-12 で一致する。"""
+    Ks = np.array([[60.0, 7.0, 23.5], [0.0, 45.0, 17.5], [0.0, 0.0, 1.0]])
+    R, t = look([1.0, 4.0, 1.8], [5.0, 4.0, 0.0])
+    d = TR.heightmap_depth_camera(0.2 + 0.08 * X - 0.03 * Y, (R, t), Ks, CELL)
+    z, inside, _P = plane_depth_k(R, t, Ks, 0.08, -0.03, 0.2, d.shape)
+    fin = np.isfinite(d)
+    assert fin.sum() > 1000 and np.array_equal(fin, inside & (z <= 10.0) & (z >= 0.1))
+    assert np.abs(d - z)[fin].max() < 1e-12
+
+
+def test_pose_as_a_nested_4x4_list_and_whole_pixel_sizes():
+    """指摘 6: JSON / MCP から来る入れ子の list の 4×4 は (R, t) と取り違えない。画像の大きさは整数の画素だけ。"""
+    R, t = look([1.0, 4.0, 1.8], [5.0, 4.0, 0.0])
+    four = np.eye(4)
+    four[:3, :3], four[:3, 3] = R, t
+    Hp = np.zeros((NY, NX))
+    ref = TR.heightmap_depth_camera(Hp, (R, t), KR, CELL)
+    assert np.array_equal(TR.heightmap_depth_camera(Hp, four.tolist(), KR, CELL), ref, equal_nan=True)
+    assert np.array_equal(TR.heightmap_depth_camera(Hp, [R.tolist(), t.tolist()], KR, CELL), ref, equal_nan=True)
+    bad = four.copy()
+    bad[3] = [0.0, 0.0, 1.0, 1.0]
+    with pytest.raises(ValueError, match="bottom row"):
+        TR.heightmap_depth_camera(Hp, bad.tolist(), KR, CELL)
+    for kw in ({"width": 10.7, "height": 8}, {"width": 10, "height": 8.5}, {"width": True, "height": 8}):
+        with pytest.raises(ValueError, match="width|height"):
+            TR.heightmap_depth_camera(Hp, (R, t), KR, CELL, **kw)
+    assert TR.heightmap_depth_camera(Hp, (R, t), KR, CELL, width=10.0, height=np.int64(8)).shape == (8, 10)
+
+
+def test_rays_entering_from_outside_the_map_hit_just_inside_the_edge():
+    """指摘 3: 地図の外から入ってきて、縁と次の刻みの間で面の下へ入る光線は、縁の点の高さから交点を取る(落とさない)。
+
+    外の高い所から急に見下ろし、縁の 5 cm の内側に当たる画素を並べる。縁で判定しない写しはその一部を nan にする。"""
+    Ke = np.array([[400.0, 0.0, 7.5], [0.0, 400.0, 23.5], [0.0, 0.0, 1.0]])   # 16 × 48、縁のまわりを細かく
+    R, t = look([-0.5, 4.0, 1.5], [0.03, 4.0, 0.0])
+    d = TR.heightmap_depth_camera(0.2 + 0.08 * X - 0.03 * Y, (R, t), Ke, CELL)
+    z, inside, P = plane_depth_k(R, t, Ke, 0.08, -0.03, 0.2, d.shape)
+    assert (inside & (P[..., 0] < XS[0] + 0.05)).sum() > 100
+    fin = np.isfinite(d)
+    assert np.array_equal(fin, inside) and np.abs(d - z)[fin].max() < 1e-12
 
 
 def test_docstring_call_example_runs():

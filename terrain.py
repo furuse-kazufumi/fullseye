@@ -419,15 +419,27 @@ def _crossing_fraction(a0, a1):
 
 
 def _pose_world_to_camera(pose, op):
-    """``(R, t)``(X_cam = R·X_world + t、OpenCV の軸)か 4×4 の world→camera を (R, t) にする。"""
-    if isinstance(pose, (tuple, list)) and len(pose) >= 2:
+    """``(R, t)``(X_cam = R·X_world + t、OpenCV の軸)か 4×4 の world→camera を (R, t) にする。
+
+    4×4 は ndarray でも入れ子の list(JSON / MCP から来る形)でも、先に行列として読む(list の 4×4 を
+    (R, t) の組と取り違えない)。4×4 の最後の行は (0, 0, 0, 1) でなければ断る。"""
+    M = None
+    try:
+        arr = np.asarray(pose, np.float64)
+    except (ValueError, TypeError):                       # (R, t) の組は形がそろわない
+        arr = None
+    if arr is not None and arr.shape == (4, 4):
+        M = arr
+    if M is not None:
+        if not np.allclose(M[3], (0.0, 0.0, 0.0, 1.0), atol=1e-9):
+            raise ValueError("%s: a 4x4 pose must have the bottom row (0, 0, 0, 1), got %r" % (op, M[3].tolist()))
+        R, t = M[:3, :3], M[:3, 3]
+    elif isinstance(pose, (tuple, list)) and len(pose) >= 2:
         R = np.asarray(pose[0], np.float64)
         t = np.asarray(pose[1], np.float64).ravel()
     else:
-        M = np.asarray(pose, np.float64)
-        if M.shape != (4, 4):
-            raise ValueError("%s: pose must be (R, t) or a 4x4 world->camera matrix, got shape %r" % (op, M.shape))
-        R, t = M[:3, :3], M[:3, 3]
+        shape = None if arr is None else arr.shape
+        raise ValueError("%s: pose must be (R, t) or a 4x4 world->camera matrix, got shape %r" % (op, shape))
     if R.shape != (3, 3) or t.size != 3 or not (np.all(np.isfinite(R)) and np.all(np.isfinite(t))):
         raise ValueError("%s: pose must be a finite (R 3x3, t 3)" % op)
     if not np.allclose(R @ R.T, np.eye(3), atol=1e-6) or np.linalg.det(R) <= 0.0:
@@ -466,13 +478,13 @@ def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.
     heights : (ny, nx) array
         高さ図 [m](``nan`` = 観測していない)。
     pose : (R, t) or (4, 4)
-        world→camera。
+        world→camera。4×4 は ndarray でも入れ子の list でもよい(最後の行は (0, 0, 0, 1))。
     K : (3, 3)
         内部行列(``camera.intrinsic_matrix``)。
     cell, origin
         セルの大きさと、格子の左下の角 (xmin, ymin)(``elevation_map`` の extent の (xmin, ymin))。
     width, height : int or None
-        画像の大きさ。None なら主点から (2·cx + 1, 2·cy + 1)(整数でなければ断る)。
+        画像の大きさ(整数の画素。10.7 のような値は断る)。None なら主点から (2·cx + 1, 2·cy + 1)(整数でなければ断る)。
 
     Returns
     -------
@@ -517,8 +529,11 @@ def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.
     Km = np.asarray(K, np.float64)
     if Km.shape != (3, 3) or not np.all(np.isfinite(Km)) or Km[0, 0] <= 0 or Km[1, 1] <= 0:
         raise ValueError("%s: K must be a finite 3x3 intrinsic matrix with fx, fy > 0" % op)
-    W = int(round(2.0 * Km[0, 2] + 1.0)) if width is None else int(width)
-    Hh = int(round(2.0 * Km[1, 2] + 1.0)) if height is None else int(height)
+    for name, v in (("width", width), ("height", height)):
+        if v is not None and (isinstance(v, (bool, np.bool_)) or not np.isfinite(float(v)) or float(v) != int(float(v))):
+            raise ValueError("%s: %s must be a whole number of pixels, got %r" % (op, name, v))
+    W = int(round(2.0 * Km[0, 2] + 1.0)) if width is None else int(float(width))
+    Hh = int(round(2.0 * Km[1, 2] + 1.0)) if height is None else int(float(height))
     if width is None and abs(2.0 * Km[0, 2] + 1.0 - W) > 1e-9 or height is None and abs(2.0 * Km[1, 2] + 1.0 - Hh) > 1e-9:
         raise ValueError("%s: the image size cannot be read from K (cx, cy are not (W-1)/2, (H-1)/2); pass width "
                          "and height" % op)

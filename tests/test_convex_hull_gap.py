@@ -13,6 +13,8 @@
    乱数の凸多面体 = 重みの単体の上の QP を scipy の SLSQP で解いた値。
 7. 直す前で落ちること: 同じ門を、頂点どうしの最短距離(製作の代わり)と Frank–Wolfe を 200 歩で止めた
    上限にかけると落ちる。囲いのアフィン最小点を壊した写しは、保証に届かず RuntimeError になる。
+8. 線形計画が食い違えば RuntimeError(「接触」と言う写し・大きすぎる t の写し)。食い違いの丸めの幅(slack)の
+   帯の中では独立な判定が効かないことも数で示す(独立レビューの指摘で足した)。
 """
 from __future__ import annotations
 
@@ -226,6 +228,30 @@ def test_the_gate_fails_on_a_broken_copy(monkeypatch):
     a = _box([0, 0, 0], [1, 1, 1])
     with pytest.raises(RuntimeError, match="no certified answer"):
         convex_hull_gap(a, _box([1.25, 0.2, -0.3], [2.75, 0.9, 0.4]), check="none")
+
+
+def test_a_disagreeing_lp_raises_and_the_slack_band_is_measured(monkeypatch):
+    """独立レビューの指摘 5: 線形計画(独立な判定)が最小ノルム点と食い違えば RuntimeError(黙って片方を返さない)。
+
+    食い違いの判定は丸めの幅 slack = max(tol, 1e-6·scale)(scale = 平均を引いた座標の最大の絶対値、1 以上)を持つ。
+    座標が 1e3 の桁なら slack = 1e-3 で、それより小さい隙間では「接触(t = 0)」と言う線形計画でも食い違いにならない
+    (docstring に書いた帯。限界を数で示す)。食い違いの検査を外した写しは、この門の最初の 2 つで落ちる。"""
+    a, b = _box([0, 0, 0], [1, 1, 1]), _box([1.25, 0, 0], [2.25, 1, 1])
+    assert abs(convex_hull_gap(a, b)["lp_t"] - 0.25) < 1e-9
+    for fake_t in (0.0, 1.0):                                         # 「接触」と、隙間 0.25 に大きすぎる t
+        monkeypatch.setattr(hull3d, "_hull_gap_lp", lambda A0, B0, v=fake_t: v)
+        with pytest.raises(RuntimeError, match="disagree"):
+            convex_hull_gap(a, b)
+    monkeypatch.undo()
+    big_a = _box([0, 0, 0], [1000.0, 1000.0, 1000.0])
+    near = _box([1000.0 + 5e-4, 0, 0], [2000.0, 1000.0, 1000.0])      # 隙間 5e-4 < slack 1e-3
+    farther = _box([1000.0 + 5e-3, 0, 0], [2000.0, 1000.0, 1000.0])   # 隙間 5e-3 > slack
+    r = convex_hull_gap(big_a, near)
+    assert r["separated"] and abs(r["gap"] - 5e-4) < 1e-9
+    monkeypatch.setattr(hull3d, "_hull_gap_lp", lambda A0, B0: 0.0)
+    assert convex_hull_gap(big_a, near)["separated"]                 # 帯の中: 独立な判定は効かない
+    with pytest.raises(RuntimeError, match="disagree"):
+        convex_hull_gap(big_a, farther)                               # 帯の外: 効く
 
 
 def test_docstring_call_example_runs():

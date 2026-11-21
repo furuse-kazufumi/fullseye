@@ -27,7 +27,11 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 * **射影**: 既存の :func:`lateral_offset`(折線への射影、近い頂点から窓 2 区間)で区間を決め、その区間の始点の
   向き・曲率の**局所の円弧**へ射影し直す。直線と円弧では厳密で、折線の頂点ごとの mm の折れ目が出ない
-  (クロソイドは区間の中で 3 次の誤差)。線形の端より外は、端の向きの直線で延ばす。
+  (クロソイドは区間の中で 3 次の誤差)。線形の端より外は、端の向きの直線で延ばす。隣り合う局所の円弧の法線の
+  間に残る楔(曲率が変わる所の曲がりの外側、ヘアピンの中心の近く)は、``lateral_offset`` が見つけた折線の区間へ
+  その区間の中の座標で射影し、直線として扱う(真値の ``curvature`` は 0、``grade`` は ds/d(弦) = 弧/弦 で直す)。
+  足が頂点になる所は s が頂点の値で一定で、``heading`` は頂点からの向きに直交、``grade`` は 0(どれもこの作り方の
+  微分)。
 * **縦断** z_c(s): 標本の z と勾配 g = dz/ds(``grade`` の列、無ければ ``np.gradient``、2 次まで厳密)の
   3 次 Hermite 補間。放物線の縦断曲線は標本の間でも厳密。
 * **横断** p(e): 車道(|e| ≤ ``half_width + shoulder``)は、拝み勾配 −``crossfall``·|e| と一方向の片勾配
@@ -59,16 +63,25 @@ Parameters
 alignment : dict
     中心線の表。``x``・``y``・``z``(N ≥ 2)が要る。任意の列: ``s``(弧長。無ければ折線の長さ)、
     ``heading``・``curvature``(:func:`clothoid_points` の返りをそのまま渡すと射影が厳密になる。無ければ
-    標本から差分で作る)、``grade``(dz/ds)、``beta``(0..1)、``rate``。
+    標本から 2 次の差分で作る。端も 2 次)、``grade``(dz/ds)、``beta``(0..1)、``rate``(片勾配 [m/m]、
+    |rate| ≤ 0.2)。任意の列は xy・z の折線と突き合わせ、単位・符号の取り違え(度とラジアン、1/km、%、km、
+    逆向き)は ValueError で断る(heading は弦の向きと 0.01 rad + |κ|·h まで、curvature は弦の折れ角と
+    1e-3 rad + 10 % まで、grade は z の傾きと 1e-3 + 10 % まで、s は弦/弧が 0.5〜1.01)。この幅より小さい誤り
+    (例: 区間の曲がりの角 2|κ|·h が 1e-3 rad を切るほど緩い曲線の、曲率の符号)は見分けない。
 cell : float
     格子の間隔 [m]。
 extent : (xmin, xmax, ymin, ymax) or None
     格子の範囲(:func:`terrain.elevation_map` の ``bounds`` と同じく nx = ceil((xmax − xmin)/cell))。
     None なら中心線の外接矩形に ``margin`` を足す。
+crossfall : float
+    拝み勾配 [m/m] (0.02 = 2 %)。|crossfall| ≤ 0.2 でなければ断る(% のつもりの 2 を通すと勾配 2 m/m の面になる)。
 terrain : (ny, nx) array or None
     外側の地形の高さ(同じ格子)。None なら混ぜず、路側の高さがそのまま外へ続く。
 return_truth : bool
     True なら ``(heights, truth)``(真値の表つき)。既定は高さ図だけ。
+
+**Raises** ``ValueError``: 列の欠け・未知の列・非有限、任意の列が折線と合わない(単位・符号)、
+|crossfall|・|rate| > 0.2、格子が 2.5e7 セルを超える 等。
 
 空の入力(``alignment`` が 0 要素)は ValueError で拒否する。
 
@@ -76,7 +89,8 @@ English: road surface height map from a centre-line alignment (x, y, z + optiona
 grade / crossfall blend beta / superelevation rate) and a cross-section (crown, one-way slope, gutter,
 verge drop); with return_truth=True also the per-cell analytic truth (grade along the road, cross slope,
 s, e) from the construction's partial derivatives. Cells are projected with lateral_offset and then onto the local arc of
-the segment (exact for lines and arcs, no polyline kinks). Optional blending into a terrain grid.
+the segment (exact for lines and arcs, no polyline kinks). Optional blending into a terrain grid. The optional
+columns are checked against the polyline (unit and sign mistakes are refused); |crossfall| and |rate| <= 0.2 m/m.
 
 呼び出し例::
 
