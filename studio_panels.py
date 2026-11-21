@@ -1928,6 +1928,7 @@ def set_strip_mode(win, mode, settings=None):
     for m, action in st["strip_actions"].items():
         action.setChecked(m == st["strip_mode"])
     relayout(win)
+    _params_window_follows(win, "rule")
     return st["strip_mode"]
 
 
@@ -1941,7 +1942,24 @@ def set_overflow_mode(win, mode, settings=None):
     for m, action in (st.get("overflow_actions") or {}).items():
         action.setChecked(m == st["overflow_mode"])
     relayout(win)
+    _params_window_follows(win, "overflow")
     return sum(1 for s in all_strips(win) if s.mode == st["overflow_mode"])
+
+
+def _params_window_follows(win, what):
+    """The parameter window (studio_params_qt, D87) is not a dock, so the ledger's strips do not include it: it is
+    told here ([束] REPORT 8.5). ``what`` = "overflow" (when they do not fit) or "rule" (the side rule, asked again)."""
+    pw = getattr(win, "_params_window", None)
+    if pw is None:
+        return
+    st = _state(win)
+    try:
+        if what == "overflow":
+            pw.panel.set_overflow(st["overflow_mode"])
+        else:
+            pw.panel.set_strip_rule(lambda w, h, now: strip_side(w, h, now, st["strip_mode"]))
+    except RuntimeError:                         # the window was closed and is gone
+        win._params_window = None
 
 
 def all_strips(win):

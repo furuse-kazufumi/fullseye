@@ -166,6 +166,12 @@ _INTERNAL = {
     #   窓の組み込みのキーを集める collect_fixed / キーの出来事の読み方 event_keys)。
     "studio_editops": 43, "studio_editops_qt": 9,
     "studio_keymap": 29, "studio_keymap_qt": 8,
+    # ★2026-11-13(feat/studio-params): パラメータの束を並べて見る・直す窓(受け入れ表 D3)。Studio の GUI の内側の部品で、
+    #   利用者の入口は窓(python -m studio_params_qt / Studio のメニュー)。束そのものの入口は fullseye.load_params ほか
+    #   (fullseye.parambundle)で、こちらは op にも facade にも出さない。実測: studio_params_model 17(ParamsModel・
+    #   Outcome・列 / 行 / 木の型・読む read_bundle・原子的に書く write_bundle_atomic・編集の解釈 parse_edit・対訳 make_tr ほか)、
+    #   studio_params_qt 5(ParamsPanel・ParamsWindow・ParamsTreeModel・show_params_window・main)。
+    "studio_params_model": 17, "studio_params_qt": 5,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -451,7 +457,12 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-15 統合の枝にキーの枝を merge: 1439 + (1394 - 1305 = 89: studio_editops 43・studio_editops_qt 9・
 #   studio_keymap 29・studio_keymap_qt 8 の公開経路と重ならない分) = 1528。
 #   2026-11-15 実測で studio は 107(統合 93 と初回 103 の和集合。片方が消した名前を他方が持っていた)。
-_HIDDEN_FUNCTIONS_TODAY = 1529
+#   (束の枝を合わせる前の値) _HIDDEN_FUNCTIONS_TODAY = 1529
+# 2026-11-13 feat/studio-params(パラメータの窓): 1305 → 1327(+22、この機械の実測)。内訳: 上の _INTERNAL の
+#   studio_params_model 17・studio_params_qt 5。
+#   (束の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1327
+# 2026-11-15 統合の枝に束の枝を merge: 1529 + (1327 - 1305 = 22: studio_params_model 17・studio_params_qt 5) = 1551。
+_HIDDEN_FUNCTIONS_TODAY = 1551
 
 
 def _hidden_total():

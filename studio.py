@@ -4640,6 +4640,7 @@ PALETTE_WORDS = {
     "project_open": "project folder open folder files explorer tree プロジェクト フォルダ フォルダを開く ファイル ツリー エクスプローラ ctrl+shift+j",
     "project_new": "project new project create folder プロジェクト 新しいプロジェクト 新規 フォルダ作成 ファイル ツリー",
     "project_panel": "project folder files explorer tree panel プロジェクト フォルダ ファイル ツリー エクスプローラ パネル",
+    "params_window": "parameters parameter bundle bundles compare json yaml toml xml パラメータ 束 比べる 設定ファイル",
     "program_find": "find search 検索 探す 見つける 文字列 テキスト検索 ctrl+f",
     "program_replace": "replace substitute find and replace 置換 置き換え 置き換える 一括置換 ctrl+h",
     "program_find_next": "find next next match 次を検索 次へ 次の一致 f3",
@@ -8162,6 +8163,10 @@ def build_window(model=None, start_mode="pipeline"):
     act_project_open = _act("Open folder…", None, "Choose a folder: it becomes the project and its files are listed in the Project panel")
     act_project_new = _act("New project…", None, "Create a project folder with the standard sub-folders: images, pipelines, programs, params, results")
     act_project_panel = _act("Project", "Ctrl+Shift+J", "Show the Project panel: the project folder as a tree of files")
+    # D87 (2026-11-15, integration of [束]): the parameter bundles side by side (studio_params_qt), from the Window menu
+    # and the palette. It opens empty or with the files it had open before.
+    act_params_window = _act("Parameters…", None, "Open the parameter window: several parameter files side by side, "
+                             "the rows that differ marked, edited and saved")
     m = _menu(mb, "&File", "file")
     act_viewer = _act("Image Viewer…", "Ctrl+Shift+I",    # ★O は Open pipeline と重なり、どちらも発火しなかった
                       "Open images (or drop images / a folder) to look at them: zoom, pixel values, histogram")
@@ -16846,6 +16851,20 @@ def build_window(model=None, start_mode="pipeline"):
         _apply_layout_state(); dock_project.show(); dock_project.raise_(); _save_layout_state()
         win._project["tree"].setFocus()
     act_project_panel.triggered.connect(lambda _=False: _show_project_panel())
+
+    def _params_strip_rule(w_, h_, now_):
+        return studio_panels.strip_side(w_, h_, now_, win._panels.get("strip_mode", "auto"))
+
+    def open_params_window(paths=()):
+        """D87: the parameter window, as [束] REPORT 8.5 wires it (lang= so its own table is used; the strip,
+        its side rule and the overflow mode of every other panel)."""
+        import studio_params_qt as _pq
+        return _pq.show_params_window(
+            win, list(paths), tr, settings=_settings, confirm=confirm_action, lang=win._lang,
+            strip=lambda: studio_panels.flow_classes()["FlowStrip"]("tools", "params"),
+            strip_rule=_params_strip_rule, overflow=win._panels.get("overflow_mode", "scroll"))
+    win._open_params_window = open_params_window
+    act_params_window.triggered.connect(lambda _=False: open_params_window())
     win._show_project_panel = _show_project_panel
     _rebuild_recent_folders()
 
@@ -17132,6 +17151,7 @@ def build_window(model=None, start_mode="pipeline"):
         "duplicate_stage": act_dup, "bypass": act_bypass, "move_top": act_top, "move_bottom": act_bottom,
         "focus_search": act_focus_search, "pin_a": act_pin, "run_selection": act_run_sel,
         "project_open": act_project_open, "project_new": act_project_new, "project_panel": act_project_panel,
+        "params_window": act_params_window,
     }
     win._actions.update(_palette_extra)                 # Tools ▸ Run a ledger op もパレットから
 
@@ -17412,6 +17432,8 @@ def build_window(model=None, start_mode="pipeline"):
                         tr("Delete the layout")) and delete_layout_preset(n))
     win._rebuild_layouts_menu = _rebuild_layouts_menu
     win._layouts_menu = layouts_menu
+    menu_windows.addSeparator()
+    menu_windows.addAction(act_params_window)            # D87: Window ▸ Parameters…
 
     # (D100: the per-panel "Separate window: X" entries are studio_panels' - one per panel, one word)
     menu_panels.addSeparator()
@@ -17592,6 +17614,12 @@ def build_window(model=None, start_mode="pipeline"):
             win._apply_theme(save=False)          # the UI font stack is per language
         for code, a in win._lang_actions.items():
             a.setChecked(code == win._lang)
+        _pw = getattr(win, "_params_window", None)           # D87: the parameter window follows (8.5)
+        if _pw is not None:
+            try:
+                _pw.set_lang(win._lang)
+            except RuntimeError:                         # closed and gone
+                win._params_window = None
         try:
             if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
                 _settings().setValue("lang", win._lang)

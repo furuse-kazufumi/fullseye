@@ -304,6 +304,8 @@ py-modules = [
   # studio_keymap / studio_keymap_qt(2026-11-13): 利用者が決められるショートカットキー。前者はコマンドの登録簿・型・
   # 上書きの保存の形・範囲を考えた当たりの判定(Qt なし)、後者は本物の窓へ配る部品と設定の窓。
   "studio_keymap", "studio_keymap_qt",
+  # パラメータの束を並べて見る・直す窓(受け入れ表 D3): studio_params_model = 表のモデル(Qt なし)/ studio_params_qt = 窓
+  "studio_params_model", "studio_params_qt",
   "studio_pyedit_qt", "studio_pyedit_vars_qt", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
