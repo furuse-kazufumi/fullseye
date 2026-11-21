@@ -326,8 +326,17 @@ def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path)
                   # round trip above runs it, but the cited set was not extended in that commit.
                   "wrapped_phase"}
     assert VERIFIED_PYTHON == cited_python
-    graph_python={e["op"] for e in verified if e.get("executor",{}).get("kind")=="python"}
+    # ★2026-11-13: 台帳 op は隔離した子プロセス(fullseye/mcp/opworker.py)で走る別の経路。同じプロセスで走る
+    #   Python の op は従来どおり名指しの集合に一致し、隔離の op は実測の台帳(docs/mcp_isolated_ops.json)に一致する。
+    graph_python={e["op"] for e in verified if e.get("executor",{}).get("kind")=="python"
+                  and e.get("executor",{}).get("isolation")!="worker"}
     assert graph_python == cited_python
+    isolated={e["op"]:e for e in verified if e.get("executor",{}).get("isolation")=="worker"}
+    probe_ledger=json.loads((Path(__file__).resolve().parents[1]/"docs"/"mcp_isolated_ops.json").read_text(encoding="utf-8"))
+    assert len(isolated) >= 1000 and set(isolated) == set(probe_ledger["ops"])
+    assert {e["verification"]["source"] for e in isolated.values()} == {
+        "tools/mcp_isolated_probe.py -> docs/mcp_isolated_ops.json"}
+    assert {"verified_through_mcp_pipeline", "no_file_outside_scratch", "no_network"} <= set(probe_ledger["checks"])
     import ops
     collision_names={"fill_holes","lowpass","highpass","local_std","companding_mu_law"}
     collision_targets={name:(edges[name]["runtime_target"]["module"],edges[name]["runtime_target"]["callable"])
@@ -351,8 +360,10 @@ def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path)
     assert "not_executable_in_mcp" in str(attack["structuredContent"])
     assert not outside.exists()
 
+    # ★2026-11-13: psnr は隔離した子プロセスで MCP から走るようになった。走らない op(bandpass)で見る。
+    assert edges["psnr"]["executor"].get("isolation") == "worker" and not edges["bandpass"].get("verified_executable")
     unlisted=call_tool("fullseye_validate_pipeline",{"start_sort":"image","stages":[
-        {"op":"psnr","inputs":["input","input"],"params":{}}]},Catalog.load(),store)
+        {"op":"bandpass","inputs":["input"],"params":{}}]},Catalog.load(),store)
     assert unlisted["structuredContent"]["valid"] is False
     assert unlisted["structuredContent"]["errors"][0]["reason"] == "not_executable_in_mcp"
 

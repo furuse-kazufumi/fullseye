@@ -212,9 +212,14 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
     # example OP_SEARCH used ``images`` while OP_GRAPH used ``seq<image>``).
     # Normalize both graph sides here, rather than relying on every generator
     # having changed spelling in lockstep.
+    # ★2026-11-13(AI の役での検証、報告 3): 型の直し方の候補に hx_gen_empty_region(入力を形のためだけに読み、
+    #   中身を見ない生成の op)が出て、従うと count_obj = 0 が判定 ok で返った。入力の中身を読まない op
+    #   (MCP_INPUT_INDEPENDENT.json、採点が断る一覧と同じ)は経路の途中に置かない。
+    blind = _input_independent_names()
     edges = [{**e, "inputs": [normalize_sort(x) for x in e.get("inputs", ())],
               "output": normalize_sort(e.get("output"))}
              for e in graph["edges"] if (e.get("verified_executable") or not executable_only)
+             and e["op"] not in blind
              and normalize_sort(e.get("output")) not in ("unknown", "any")
              and "unknown" not in {normalize_sort(x) for x in e.get("inputs", ())}]
     import heapq
@@ -644,6 +649,78 @@ def _with_probe(row: dict, probes: dict) -> dict:
     return out
 
 
+#: MCP で実行できない理由(OP_GRAPH の ``mcp_probe`` / ``not_executable_in_mcp``)→ 人が読む 1 文。
+#: 符号は tools/mcp_isolated_probe.py と tools/gen_op_facets.py が付ける。知らない符号は符号のまま返す。
+MCP_UNAVAILABLE_REASONS = {
+    "io_side_effect": "takes a file, URL or callable argument; MCP ops never touch files",
+    "io_parameter": "takes a file, URL or callable argument; MCP ops never touch files",
+    "sample_run_failed": "the automatic MCP check could not run it on a sample input "
+                         "(its inputs need a person or a specific producing op to build)",
+    "no_sample_input": "the automatic MCP check has no sample for one of its input types",
+    "nonfinite_output": "returned NaN or infinity on the sample input, so it did not pass the bounded check",
+    "output_type_differs_from_declared": "its return value did not match its declared output type",
+    "time_limit": "exceeded the 5 s check limit even on the sample input",
+    "memory_limit": "exceeded the 1 GiB check limit even on the sample input",
+    "unsupported_value": "returns objects that cannot cross the MCP boundary (only numeric arrays and JSON trees do)",
+    "input_count_differs_from_graph": "its ledger and the type graph disagree on the number of inputs",
+    "example_chain_too_long": "a runnable example needs more than 12 stages including the stages that build its inputs",
+    "mcp_pipeline_failed": "its example did not pass through the MCP pipeline tool (handle shape or response limits)",
+    "not_in_ledger": "it is not in an op ledger, so MCP has no verified way to call it",
+    "not_verified": "it has not passed the MCP execution check",
+}
+
+
+def mcp_unavailable(op: str) -> dict | None:
+    """MCP で実行できない op の理由と代わりの手(実行できるなら ``None``)。
+
+    返り値 ``{"op", "reason", "why", "instead": [1 行の手], "executable_alternatives": [同じ分類で走る op]}``。
+    誤り文(fullseye_validate_pipeline / fullseye_pipeline / fullseye_apply)と find_ops の骨格が同じ物を使う。"""
+    try:
+        edges = _graph()["edges"]
+    except (FileNotFoundError, ValueError):
+        return None
+    edge = next((e for e in edges if e["op"] == op), None)
+    if edge is None or edge.get("verified_executable"):
+        return None
+    reason = edge.get("mcp_probe") or edge.get("not_executable_in_mcp") or edge.get("executable_reason") or "not_verified"
+    category = edge.get("category")
+    words = set(op.split("_"))
+    # 同じ分類で走る op を、名前の語(lens / file / illumination …)を多く共有する順に
+    # 名前の語を 1 つも共有しない op は並べない(optics の 300 個から abc 順の 5 個を出すと、手がかりにならない)
+    alternatives = [name for shared, name in sorted(
+        (-len(words & set(e["op"].split("_"))), e["op"]) for e in edges
+        if category and e.get("category") == category and e.get("verified_executable") and e["op"] != op)
+        if shared < 0][:5]
+    try:
+        card = next((c for c in _load_data(PKG_CARDS)["ops"] if c["name"] == op), None)
+    except (FileNotFoundError, ValueError):
+        card = None
+    instead = ["read it: fullseye_op_help(op=%r) / fullseye_op_cards(names=[%r])" % (op, op)]
+    if (card or {}).get("call"):
+        instead.append("run it outside MCP from Python: %s" % card["call"])
+    if alternatives:
+        instead.append("ops in the same category (%s) that MCP can run: %s" % (category, ", ".join(alternatives)))
+    return {"op": op, "reason": reason, "why": MCP_UNAVAILABLE_REASONS.get(reason, reason), "instead": instead,
+            "executable_alternatives": alternatives}
+
+
+def mcp_unavailable_text(op: str) -> str:
+    """:func:`mcp_unavailable` を 1 行の文にする(実行できる op なら空文字)。"""
+    info = mcp_unavailable(op)
+    if info is None:
+        return ""
+    return "%s is not executable in MCP (%s: %s). Instead: %s" % (
+        op, info["reason"], info["why"], "; ".join(info["instead"]))
+
+
+def _input_independent_names() -> frozenset:
+    """出力が入力の中身に依存しない op(tools/gen_mcp_input_independent.py → MCP_INPUT_INDEPENDENT.json)。"""
+    try:
+        return frozenset((_load_data("MCP_INPUT_INDEPENDENT.json").get("ops") or {}))
+    except (FileNotFoundError, ValueError):
+        return frozenset()
+
+
 def _next_call_skeleton(row: dict) -> str:
     """One-line loader + executable pipeline skeleton for a search candidate."""
     sort = normalize_sort(row.get("in_sort"))
@@ -665,6 +742,16 @@ def _next_call_skeleton(row: dict) -> str:
     # ★2026-11-03(完成度監査 A-2): MCP で実行できない op(``verified_executable`` でない = 台帳 op の大半)にも
     #   ``fullseye_pipeline(...)`` の骨格を付けていた。従うと ``fullseye_validate_pipeline`` が
     #   ``not_executable_in_mcp`` で拒む。MCP の外での呼び方(カードの ``call``)を返す。
+    if edge is not None and (edge.get("executor") or {}).get("isolation") == "worker":
+        # ★2026-11-13: 台帳 op(光学・照明・合成の入口)は pipeline から隔離した子プロセスで走る。実測で通った
+        #   見本の段(入力を作る段も含む)をそのまま骨格にする。
+        stages = (edge.get("example") or {}).get("stages") or [{"op": op}]
+        needs = sorted({ref for st in stages for ref in st.get("inputs", []) if ref.startswith("have:")})
+        body = json.dumps(stages, ensure_ascii=False, separators=(",", ":"))
+        if needs:
+            return ("obtain handle(s) for %s -> fullseye_pipeline(bindings={%s}, stages=%s)"
+                    % (", ".join(needs), ", ".join('"%s":<handle>' % n for n in needs), body))
+        return "fullseye_pipeline(stages=%s)" % body
     if edge is not None and not edge.get("verified_executable"):
         reason = edge.get("not_executable_in_mcp") or edge.get("executable_reason") or "not_verified"
         try:
@@ -672,7 +759,9 @@ def _next_call_skeleton(row: dict) -> str:
         except (FileNotFoundError, ValueError):
             card = None
         call = (card or {}).get("call") or "see fullseye_op_cards"
-        return "not executable in MCP (%s); call from Python: %s" % (reason, call)
+        why = MCP_UNAVAILABLE_REASONS.get(edge.get("mcp_probe") or reason)
+        return "not executable in MCP (%s%s); call from Python: %s" % (
+            edge.get("mcp_probe") or reason, (": " + why) if why else "", call)
     inputs = list((edge or {}).get("inputs") or ([sort] if sort else []))
     if len(inputs) <= 1:
         stage = '{"op":%r}' % op
@@ -723,6 +812,57 @@ _SORT_RETRY_TERMS = {
 _HI_STOP = frozenset("""के का की को में से पर है हैं था थे थी और या एक यह वह ये वे जो तो भी ही
     कर करता करती करते करें करना किया होता होती होते होना हो गया गई गए वाला वाली वाले लिए साथ तक द्वारा
     इस उस इन उन कि नहीं न अपने अपना अपनी लगाना पता""".split())
+
+#: 日本語の現場の言い方 → 英語の術語(★2026-11-13、報告 12)。optics・照明・計測の op の要約は英語だけの物が多く、
+#: 「照明」「液面」「サーモグラフィ」で引いても当たらなかった(英語に直すと当たる)。問い合わせにある語の組は、
+#: 英語の語を**問い合わせの語として**足す(言い換えの弱い重みではない)。片仮名の語は、その 2 文字の切れ端を
+#: 検索語から外す(「サーモグラフィ」の「グラ」「ラフ」が「ホモグラフィ」に当たっていた)。
+JA_TERMS: tuple = (
+    ("照明", "ライティング", "光源", "illumination", "lighting", "light"),
+    ("同軸照明", "coaxial"), ("暗視野", "darkfield", "dark field"), ("明視野", "bright field"),
+    ("ドーム照明", "dome"), ("リング照明", "ring light"), ("光沢", "鏡面", "glossy", "specular"),
+    ("傷", "キズ", "scratch"), ("欠陥", "defect"), ("かすれ", "faint", "missing ink"), ("印字", "印刷", "print"),
+    ("液面", "fill level", "liquid level"), ("瓶", "ボトル", "bottle"), ("透明", "transparent"),
+    ("ステレオ", "stereo", "binocular"), ("視差", "disparity"), ("2台のカメラ", "二台のカメラ", "stereo", "binocular"),
+    ("レンズ", "lens"), ("焦点距離", "focal length"), ("被写界深度", "depth of field"), ("倍率", "magnification"),
+    ("視野", "field of view"), ("センサ", "センサー", "sensor"), ("画素分解能", "pixel size", "mm per px"),
+    ("サーモグラフィ", "サーモグラフィー", "熱画像", "thermography", "thermal", "lockin"),
+    ("赤外線", "infrared"), ("熱拡散", "thermal diffusion"), ("穴", "hole"), ("直径", "diameter"),
+    ("精度", "accuracy", "uncertainty"), ("ムラ", "むら", "shading", "uneven background"),
+    # ★2026-11-15(独立レビュー): 「ピクセルをミリメートルに変換したい」で pixel_to_world / mm_per_px_from_reference が
+    #   上位 5 件に出ず、「各ピクセル」を含む sk_sauvola などが来た。片仮名の語に英語の語の橋を足す
+    #   (評価: tools/mcp_find_ops_eval.py。この問いは合わせるのに使ったので tuned と書いてある)。
+    ("ピクセル", "pixel", "px"), ("ミリメートル", "mm", "millimetre"),
+)
+_KATAKANA_WORD = __import__("re").compile("[\u30a0-\u30ff]+")
+#: 依頼の言い回し(何を探すかでなく、探したいという言い方)。検索語にすると「見つける」を含む要約が上位に来た。
+_JA_REQUEST = __import__("re").compile(
+    r"(?:を|が|に)?(?:見つけ|探し|調べ|知り|決め|選び|使い|やり|し)(?:たい|てほしい|て|る)|"
+    r"(?:測り|はかり)たい|測るのに|どの|どれ|どう|要るか|必要か|でしょうか|ですか|ますか|できるか|ために|には|のに|"
+    r"(?:の)?当て方|やり方|方法")
+
+
+def _ja_query(query: str) -> tuple[str, list[str], set[str]]:
+    """日本語の問い合わせから、依頼の言い回しを外した本文・橋渡しの英語の語・外す片仮名の切れ端を作る。"""
+    if not _KANA.search(_norm(query)):
+        return query, [], set()
+    body = _JA_REQUEST.sub(" ", _norm(query))
+    body = body.replace("測りたい", "測定")
+    bridged: list[str] = []
+    drop: set[str] = set()
+    fq = _fold(body)
+    for group in JA_TERMS:
+        hits = [w for w in group if not w.isascii() and _fold(w) in fq]
+        if not hits:
+            continue
+        for w in group:
+            if w.isascii():
+                bridged.extend(tokenize(w))
+        for w in hits:
+            if _KATAKANA_WORD.fullmatch(w) and len(w) >= 4:
+                drop |= set(tokenize(w))         # 片仮名の語の 2 文字の切れ端は使わない(英語の語で引く)
+    return body, list(dict.fromkeys(bridged)), drop
+
 
 #: ヒンディー語の日常語 → 英語の術語(訳の方針で術語は英語のまま書いたので、日常語で引いても当たるように)。
 #: 言語をまたぐ組はこの表だけ(他の言語は要約自体が訳語で書かれている)。
@@ -924,7 +1064,10 @@ def search_ops(query: str, k: int | None = None, *, lang: str | None = None, in_
         raise ValueError("search_ops: k must be a positive int, got %r" % (k,))
     in_sort, out_sort = normalize_sort(in_sort), normalize_sort(out_sort)
     ix = load_index(index_path)
-    q = list(dict.fromkeys(tokenize(query)))
+    body, bridged, drop = _ja_query(query)
+    q = [t for t in dict.fromkeys(tokenize(body) + bridged) if t not in drop]
+    if not q:                                            # 言い回しだけの問い合わせ: 元の語で引く
+        q = list(dict.fromkeys(tokenize(query)))
     extra = _synonym_tokens(query, set(q))
     rows, docs, lens, avg, idf = ix["rows"], ix["docs"], ix["lens"], ix["avg"], ix["idf"]
     scores: dict[int, float] = {}
@@ -1112,16 +1255,25 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
         physical = {}
     import difflib
     edges={e["op"]:e for e in _graph()["edges"]}
-    cards, missing = [], []
-    for name in names:
+    cards, missing, omitted = [], [], []
+    for n_name, name in enumerate(names):
         card = table.get(name)
         if card is None:
-            missing.append({"name":name,"near":difflib.get_close_matches(name,table,n=3,cutoff=.45)}); continue
+            missing.append({"name":name,"reason":"unknown_op",
+                            "near":[x for x in difflib.get_close_matches(name,table,n=4,cutoff=.45) if x != name][:3]})
+            continue
         card=dict(card); edge=edges.get(name,{})
+        # ★2026-11-13(報告 5): executable は「Python の関数として呼べるか」で、MCP で走るかと食い違っていた
+        #   (true のカードの op を pipeline に渡すと not_executable_in_mcp)。executable = MCP で走るか、
+        #   以前の意味は python_executable に残す。
         card.update({"inputs":edge.get("inputs",[]),"output":edge.get("output"),
-                     "executable":bool(edge.get("executable")),
+                     "executable":bool(edge.get("verified_executable")),
+                     "python_executable":bool(edge.get("executable")),
                      "executable_reason":edge.get("executable_reason"),
                      "parameters":edge.get("parameter_schema",[])})
+        if not edge.get("verified_executable"):
+            info = mcp_unavailable(name) or {}
+            card["mcp_unavailable"] = {k: info.get(k) for k in ("reason", "why")}
         if name in physical:
             card["named_physical_parameters"] = physical[name]
         executor=edge.get("executor")
@@ -1140,12 +1292,18 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
             card["tokens"] = cost
         prospective=math.ceil(len(json.dumps(cards+[card],ensure_ascii=False,separators=(",",":")))/4)
         if prospective > budget_tokens:
+            # 上限で落とした名前(この名前と、まだ見ていない残り)も missing に書く(黙って切り詰めない)
+            omitted = [x for x in names[n_name:] if x in table]
+            missing += [{"name": x, "reason": "budget_tokens", "card_tokens": card["tokens"] if x == name else None}
+                        for x in omitted]
+            missing += [{"name": x, "reason": "unknown_op", "near": [y for y in difflib.get_close_matches(
+                x, table, n=4, cutoff=.45) if y != x][:3]} for x in names[n_name:] if x not in table]
             break
         cards.append(card)
     actual_tokens=(math.ceil(len(json.dumps(cards,ensure_ascii=False,separators=(",",":")))/4)
                    if cards else 0)
     return {"cards": cards, "used_tokens": actual_tokens, "budget_tokens": budget_tokens,
-            "truncated": len(cards) + len(missing) < len(names), "missing": missing}
+            "truncated": bool(omitted), "omitted_for_budget": omitted, "missing": missing}
 
 
 def tuning_cards(query: str, op_names: list[str] | None = None, limit: int = 3) -> list[dict]:

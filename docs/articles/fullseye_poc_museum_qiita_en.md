@@ -65,9 +65,9 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 - 2026-11-12 — No.2026.316 Sorting Defects on Rendered (Synthetic) Metal Patches with Trained Classifiers: Scratches Along the Grinding Lay Are Missed About 2 Times in 3 (Cause Unidentified), and Unseen-Pit Rejection Is No Better Than a One-Feature Outlier Test
 - 2026-11-12 — No.2026.317 Finding Towel Corners, Sides and Creases with Classical Image Processing (Synthetic Rendering): A Plain Rectangle Fit Is Best, the General Polygon Only Ties It in Chroma, and Everything Degrades with Close Table Colours and Wrinkles of 3 mm or More
 - 2026-11-11 — No.2026.313 Reading Drag and Spin from a Trajectory at Once — A Missed C_L Coefficient Drags the Spin Along, and a Narrow Spin-Ratio Range Cannot Separate Them (Measuring When It Can Be Read in a Self-Made, Different-Model World)
-- 2026-11-11 — No.2026.312 Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and What Cannot Be Detected
+- 2026-11-11 — No.2026.312 Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and a Model Error the Residual Does Not Show
 - 2026-11-11 — No.2026.311 CT of Casting Voids: The Reconstruction That Wins on RMSE Does Not Always Win on Void Volume
-- 2026-11-11 — No.2026.314 Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Better Than Not Aligning but About Level With a Constant-Velocity Guess, the Tuning Depends on the Split, and Window Residuals Cannot Settle the Square Law (TUM RGB-D)
+- 2026-11-11 — No.2026.314 Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Better Than Not Aligning and 0.45 to 0.82 Times a Constant-Velocity Guess Depending on How the Split Picks the Tuning (One Sequence of 32 Frames), and Window Residuals Cannot Settle the Square Law (TUM RGB-D)
 - 2026-11-08 — No.2026.305 Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels
 
 ## Applying it to your own problem

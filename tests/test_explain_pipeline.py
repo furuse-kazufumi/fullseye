@@ -142,4 +142,6 @@ def test_mcp_pipeline_schema_only_adds_arguments():
     from fullseye.mcp.server import TOOLS
     props = TOOLS["fullseye_pipeline"]["inputSchema"]["properties"]
     assert props["dry_run"]["type"] == "boolean" and props["assume_cuda"]["type"] == "boolean"
-    assert TOOLS["fullseye_pipeline"]["inputSchema"]["required"] == ["handle", "stages"]
+    # ★2026-11-15: handle は必須でなくなった(2026-11-13: 入力の無い台帳 op だけの処理列は handle を持たない)。
+    #   必須を外すのは広げるだけ(以前の呼び出しは全部そのまま通る)。入力の要る段に handle が無ければ型の門が断る。
+    assert TOOLS["fullseye_pipeline"]["inputSchema"]["required"] == ["stages"]
