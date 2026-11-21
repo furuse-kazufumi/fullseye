@@ -28,7 +28,8 @@
 
 予想(2026-10-15、着手前): ★ユーザーの見立て「異種材料の異物(Si の上の W)は SE では見えないのに、
 反射電子の Z コントラストでは浮かぶ」。**結果は条件つきで当たった**: 段差の無い W を 1 kV で
-見たときだけ成り立つ(SE +7 %、BSE +76 %)。5 kV 以上では SE も W を拾う —— 反射電子が表面を
+見たときだけ成り立つ(full の種 8 本で SE +5 ± 1 %、BSE +85 ± 10 %。2026-11-13 に種を替えた幅を足すまでは種 1 つの値を
+書いていて、版ごとに +76〜+96 % と動いていた)。5 kV 以上では SE も W を拾う —— 反射電子が表面を
 抜けるときに叩き出す SE2 が、W の多い反射をそのまま運ぶから。「SE は表面だけ」は SE1 の話で、
 SE2 は Z を見る。
 
@@ -84,6 +85,16 @@ ETA_MEASURED = {
 ETA_1KEV = {"C": (0.076, 0.133), "AL": (0.19, 0.23), "SI": (0.228, 0.235), "CU": (0.265, 0.4375),
             "W": (0.459,), "AU": (0.289, 0.419)}
 ETA_MARGIN = 0.04
+#: モンテカルロの統計誤差を見る種の本数(2026-11-13、作者と独立の検証の指摘で足した)。表と図の値は最初の種の 1 回のまま。
+N_SEEDS = 4 if REDUCED else 8
+#: 種を替えた幅の集計(まとめの印字に使う)。
+SPREAD: dict = {}
+
+
+def _ms(v, fmt: str = "%.2f") -> str:
+    """平均 ± 標準偏差(標本、ddof=1)の文字列。"""
+    v = np.asarray(v, dtype=float)
+    return (fmt + " ± " + fmt.replace("+", "")) % (v.mean(), v.std(ddof=1))
 ELEMENTS = ("C", "AL", "SI", "CU", "AG", "W", "AU")
 ZOF = {"C": 6, "AL": 13, "SI": 14, "CU": 29, "AG": 47, "W": 74, "AU": 79}
 
@@ -262,6 +273,42 @@ def stage4_cd():
     if (90.0, 1.0) in table:
         print("   → 垂直の側壁(90 度)では、どの電圧でも真の幅より太く測る(1 / 5 / 20 kV で %+.1f / %+.1f / %+.1f nm)。"
               % tuple(table[(90.0, kv)][0] - 40.0 for kv in kvs))
+    # ★モンテカルロの統計誤差: 主張に使う側壁 88 度・80 度の 1 kV と 20 kV を、種を替えて測り直す(最初の種は上の表の 1 回)。
+    seeds = tuple(range(1, 1 + N_SEEDS))
+    spread = {}
+    for swa in (88.0, 80.0):
+        for kv in (1.0, 20.0):
+            ws, hs = [], []
+            for sd in seeds:
+                r = prof[(swa, kv)] if sd == 1 else SM.sem_line_profile(
+                    "PMMA", "SI", kv, width_nm=40, height_nm=40, sidewall_deg=swa, beam_sigma_nm=1.0,
+                    x_half_range_nm=50, x_step_nm=step, electrons_per_point=npp, seed=sd)
+                w = _cd(r)["threshold"]
+                ws.append(w)
+                hs.append((r["width_bottom_nm"] - w) / max(r["width_bottom_nm"] - r["width_top_nm"], 1e-9))
+            spread[(swa, kv)] = (np.asarray(ws), np.asarray(hs))
+    print("   ★モンテカルロの統計誤差(種 %d 本 %d〜%d、点あたり %d 電子。平均 ± 標準偏差。上の表は種 1 の 1 回):"
+          % (len(seeds), seeds[0], seeds[-1], npp))
+    for swa in (88.0, 80.0):
+        (w1, h1), (w20, h20) = spread[(swa, 1.0)], spread[(swa, 20.0)]
+        n = len(seeds)
+        dw, dw_se = float(w20.mean() - w1.mean()), float(np.sqrt(w1.var(ddof=1) / n + w20.var(ddof=1) / n))
+        dh, dh_se = float(h1.mean() - h20.mean()), float(np.sqrt(h1.var(ddof=1) / n + h20.var(ddof=1) / n))
+        up = int(np.sum(h1 > h20))
+        print("   側壁 %.0f 度: 線幅 1 kV %s / 20 kV %s nm(差 %+.2f ± %.2f nm = 平均の差 ± 標準誤差)、"
+              "測った高さ 1 kV %s / 20 kV %s(差 %+.2f ± %.2f)、1 kV が上を測った種 %d / %d"
+              % (swa, _ms(w1), _ms(w20), dw, dw_se, _ms(h1), _ms(h20), dh, dh_se, up, n))
+        SPREAD[("cd", swa)] = {"w1": w1, "w20": w20, "h1": h1, "h20": h20, "dw": dw, "dw_se": dw_se,
+                               "dh": dh, "dh_se": dh_se, "up": up, "n": n}
+    s88, s80 = SPREAD[("cd", 88.0)], SPREAD[("cd", 80.0)]
+    assert s88["up"] == s88["n"] and s88["dh"] > 3 * s88["dh_se"], (
+        "側壁 88 度で、種を替えると 1 kV が上を測らない種がある / 差が標準誤差の 3 倍に届かない: %r" % (s88,))
+    print("   → 側壁 88 度の「低加速ほど上を測る」は種 %d 本の全部で成り立つ(差 %.2f は標準誤差 %.2f の %.0f 倍)。"
+          % (s88["n"], s88["dh"], s88["dh_se"], s88["dh"] / max(s88["dh_se"], 1e-12)))
+    print("   → 側壁 80 度の向き: 測った高さの差 %+.2f ± %.2f(1 kV が上の種 %d / %d)—— %s"
+          % (s80["dh"], s80["dh_se"], s80["up"], s80["n"],
+             "標準誤差の 2 倍の内で、向きは言えない(電圧の差は小さい、までが言える)" if abs(s80["dh"]) < 2 * s80["dh_se"]
+             else "標準誤差の 2 倍を超える"))
     series = []
     for kv, col in zip(kvs, ("right", "emphasis", "wrong")):
         r = prof[(88.0, kv)]
@@ -323,6 +370,18 @@ def stage5_device_images():
               "   (η: PMMA の線の上 %.2f / 線の間の Si %.2f)"
               % (kv, 100 * stats[(kv, "inlens")], 100 * stats[(kv, "everhart")], 100 * stats[(kv, "bse")],
                  stats[(kv, "eta_line")], stats[(kv, "eta_sub")]))
+    # ★W の粒の 1 kV のコントラストを種を替えて(最初の種 4 は上の 1 回)。粒は数画素で、画素あたりの電子が少ないので大きく揺れる。
+    gi, gb = [stats[(1.0, "inlens")]], [stats[(1.0, "bse")]]
+    for sd in range(5, 4 + N_SEEDS):
+        sig = SM.sem_image(h, mm, materials=("PMMA", "W"), substrate="SI", energy_kev=1.0, pixel_nm=p,
+                           beam_sigma_nm=1.0, electrons_per_pixel=npp, return_signals=True, seed=sd)
+        ring = (~dot) & (h == 0)
+        gi.append(float(sig["inlens"][dot].mean() / np.median(sig["inlens"][ring]) - 1.0))
+        gb.append(float(sig["bse"][dot].mean() / np.median(sig["bse"][ring]) - 1.0))
+    SPREAD["grain_1kv"] = (100 * np.asarray(gi), 100 * np.asarray(gb))
+    print("   ★W の粒の 1 kV のコントラスト(種 %d 本、平均 ± 標準偏差 [%%]): レンズ内 SE %s / 反射電子 %s"
+          "(1 画素 %.1f nm、画素あたり %d 電子。縮小と full では画素と電子の数が違うので値も違う)"
+          % (len(gi), _ms(SPREAD["grain_1kv"][0], "%+.0f"), _ms(SPREAD["grain_1kv"][1], "%+.0f"), p, npp))
     print("   → 反射電子では PMMA の線と Si の差がほぼ消える: 細い線(幅 16 nm)は電子が側壁から抜けて η が"
           "バルクの PMMA より大きく、線の間の Si は溝の影で η がバルクの Si より小さい。")
     # 濃淡: SE はパネルごとにコントラストを合わせる(実機の明るさ・コントラスト調整と同じ。SE の総量は
@@ -362,6 +421,18 @@ def stage6_tungsten():
         print("   %8.0f nm    " % d + "  ".join("%+6.0f%% / %+5.0f%%" % (100 * tab[(d, kv)]["bse"],
                                                                          100 * tab[(d, kv)]["inlens"]) for kv in kvs))
     flush = tab[(0.0, 1.0)]
+    # ★表面の W の 1 kV を種を替えて(最初の種 2 は上の表の 1 回)。門は種の平均で。
+    fb, fi = [flush["bse"]], [flush["inlens"]]
+    for sd in range(3, 2 + N_SEEDS):
+        r = SM.sem_line_profile("SI", "SI", 1.0, width_nm=60, height_nm=0.0, x_half_range_nm=400,
+                                x_step_nm=400, electrons_per_point=npp, beam_sigma_nm=0.0,
+                                buried=[("W", -50.0, 50.0, 0.0, 60.0)], seed=sd)
+        fb.append(float(r["bse"][1] / (0.5 * (r["bse"][0] + r["bse"][2])) - 1.0))
+        fi.append(float(r["inlens"][1] / (0.5 * (r["inlens"][0] + r["inlens"][2])) - 1.0))
+    SPREAD["flush_1kv"] = (100 * np.asarray(fb), 100 * np.asarray(fi))
+    print("   ★表面の W の 1 kV(種 %d 本、平均 ± 標準偏差 [%%]): 反射電子 %s / レンズ内 SE %s(点あたり %d 電子)"
+          % (len(fb), _ms(SPREAD["flush_1kv"][0], "%+.0f"), _ms(SPREAD["flush_1kv"][1], "%+.0f"), npp))
+    assert float(np.mean(fb)) > 0.5 and abs(float(np.mean(fi))) < 0.15, (fb, fi)
     print("   → ★表面に埋めた W を 1 kV で: 反射電子 %+.0f %%、レンズ内 SE %+.0f %% —— SE ではほとんど見えない。"
           % (100 * flush["bse"], 100 * flush["inlens"]))
     assert flush["bse"] > 0.5 and abs(flush["inlens"]) < 0.15, flush
@@ -478,9 +549,15 @@ def main():
           % max(se[m]["shape_rms"] for m in ("C", "AL", "SI", "CU", "AG")))
     print("   CD: 側壁 88 度で 1 kV %.1f nm / 20 kV %.1f nm(底辺 40、上辺 %.1f)。"
           % (cd[(88.0, 1.0)][0], cd[(88.0, 20.0)][0], cd[(88.0, 1.0)][3]))
+    s88 = SPREAD[("cd", 88.0)]
+    print("       種 %d 本で: 1 kV %s / 20 kV %s nm、差 %+.2f ± %.2f nm、測った高さ %s / %s(平均 ± 標準偏差、差は ± 標準誤差)"
+          % (s88["n"], _ms(s88["w1"]), _ms(s88["w20"]), s88["dw"], s88["dw_se"], _ms(s88["h1"]), _ms(s88["h20"])))
     print("   W: 表面の W は 1 kV で BSE %+.0f %% / SE %+.0f %%。部品の W の粒は 1 kV のレンズ内 SE で %+.0f %%、反射電子で %+.0f %%。"
           % (100 * w[(0.0, 1.0)]["bse"], 100 * w[(0.0, 1.0)]["inlens"], 100 * dev[(1.0, "inlens")],
              100 * dev[(1.0, "bse")]))
+    print("       種 %d 本で: 表面の W は BSE %s %% / SE %s %%、粒は SE %s %% / BSE %s %%(平均 ± 標準偏差)"
+          % (N_SEEDS, _ms(SPREAD["flush_1kv"][0], "%+.0f"), _ms(SPREAD["flush_1kv"][1], "%+.0f"),
+             _ms(SPREAD["grain_1kv"][0], "%+.0f"), _ms(SPREAD["grain_1kv"][1], "%+.0f")))
     print("   帯電: 0.5 kV は %+.1f V で停止、20 kV は %+.0f V まで負に。" % (ch[0.5][1], ch[20.0][1]))
     print("   所要(CPU 時間): %.1f 秒" % cpu)
     if REDUCED:

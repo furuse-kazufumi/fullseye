@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1942. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 1994. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -448,20 +448,20 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_3d_sensor_modalities.py`
 
-- **L109** _(ja)_ — 部品を画素の格子からずらして置く [mm]。★ずらさないと壁が ToF の画素(0.4 mm)の境目にちょうど乗り、 縁の混合画素が 1 つも出ない(2026-11-08 に実測: ToF の縁の外側が全部「正しい」)。実物の壁は画素の境目を選ばない
-- **L414** _(ja)_ — ★真上へ跳ねる光は高さの図(張り出しが無い)には二度と当たらないので辿らない(時間の大半がここだった)
-- **L577** _(ja)_ — (★前の版は ToF だけ露光が固定で「露光を上げられない」と書いていた —— 条件の差で勝ち負けを作っていた)
-- **L712** _(ja)_ — ★u' は像の座標を cos a で割った座標(u' = x − z·tan a)。瞳の遮断の空間周波数 sin u/λ は像の座標での値なので、 u' では cos a 倍にする(掛けないと粒が cos 30° = 0.87 倍細かくなり、雑音が低く出る。2026-11-08 の再レビュー)
-- **L768** _(ja)_ — ★標本の足跡(幅 FINE)を、重なる 2 つの画素へ重なりの比で分ける。点で 1 画素へ落とすと、 細い光条の中心が画素の格子へ引き寄せられる(シミュの都合で出る偽の偏り、最大 0.04 mm を実測)。
-- **L827** _(ja)_ — ★レンズのぼけは光切断ではコヒーレントな瞳(coherent_speckle の中)で入れてあるので、二重に掛けない
-- **L916** _(ja)_ — 2 台のカメラの傾き ±[°]。★±15°(輻輳 30°)にして、縞投影・光切断の三角測量の角 30° と揃える (前の版は ±5° で、ステレオだけ三角測量の角が 3 分の 1 だった。条件の差で負けを作らない)
-- **L961** _(ja)_ — ★いちばん近い測定を採る(線形に補間すると、壁をまたぐ所に「間の高さ」を作ってしまう —— 縁の外側の判定で、方式ではなく並べ直しが浮いた画素を作る)
-- **L980** _(ja)_ — ★2026-11-08 の敵対的レビューの指摘で変えた: 前の版は方式ごとに「つや消しの雑音の 5 倍」を閾値にしていて、 ToF 6.7 mm・照度差ステレオ 10 mm と雑音の大きい方式ほど甘く、トゲだらけの ToF が「偽 0 %」になっていた。
-- **L1501** _(ja)_ — ★表示の高さは部品の範囲に切る(照度差ステレオの積分の飛び値 1 本で、立体全体が潰れて見えた)
-- **L1896** _(ja)_ — ★門の経緯(2026-11-08、消さずに残す): (1) 最初の門は「全部の点の PF が縞投影・光切断は 0.1 mm 以下、ToF は 1 mm 超」。画素 0.1 mm(CI)で通り、 画素 0.05 mm(full)で光切断が 0.110 mm になって NG。PF は範囲(最大 − 最小)なので点が多いほど大きい。 (2) 光切断を外した比の門に書き直したのは、結果を見て門を動かした形だったので戻した。 (3) 点を 200 にそろえた PF で同じ主張を確かめたが、種 77 の 1 回の抽選(下側 5 %)に頼っていた。 (4) 200 回の抽選の中央値・外れ点の除外なし(全部の点の列とそろえる)にすると、full で光切断が 0.104 mm (5〜95 % 0.077〜0.129)となり、**光切断の PF ≤ 0.1 mm は成り立たない**。CI(画素 0.1 mm)では 0.071 で通る —— 画素で合否が変わる主張は立てない。光切断は「約 0.1 mm」として表と印字に出し(限界)、門に残すのは 画素に依らず成り立つ「縞投影 ≤ 0.1 mm、ToF > 1 mm」だけ(再レビューの提案の書き方)
-- **L1953** _(ja)_ — ★ステレオの黒の外れは画素で大きく変わる(0.1 mm で 37 %、0.05 mm で 6 %)ので、画素を値と並べる
-- **L2126** _(ja)_ — ★line_width_um は op の約束で「カメラから見た」光条の 1/e² の半幅 w(強度 exp(−2y²/w²))。光条は 2σ、 カメラ(30°)からは cos 30° 倍に縮んで見える。参照の細かさは 1 標本 ≤ 6.25 µm(16 倍、強度のナイキスト 8.1 µm より細かい)、試行 16 回(χ² の 95 % 区間 約 ±5 %)。前の版(8 倍・4 回)は参照が粗く、 「1 画素で平均すると op も式を下回る」と誤って読んだ(2026-11-08 の再レビュー)
-- **L2284** _(ja)_ — ★キーを op と同じ名前(残差の二乗平均の 3 文字)にすると、op の例の索引(引用符つきの op 名を拾う)がこの PoC を op の例に数える
+- **L119** _(ja)_ — 部品を画素の格子からずらして置く [mm]。★ずらさないと壁が ToF の画素(0.4 mm)の境目にちょうど乗り、 縁の混合画素が 1 つも出ない(2026-11-08 に実測: ToF の縁の外側が全部「正しい」)。実物の壁は画素の境目を選ばない
+- **L424** _(ja)_ — ★真上へ跳ねる光は高さの図(張り出しが無い)には二度と当たらないので辿らない(時間の大半がここだった)
+- **L587** _(ja)_ — (★前の版は ToF だけ露光が固定で「露光を上げられない」と書いていた —— 条件の差で勝ち負けを作っていた)
+- **L722** _(ja)_ — ★u' は像の座標を cos a で割った座標(u' = x − z·tan a)。瞳の遮断の空間周波数 sin u/λ は像の座標での値なので、 u' では cos a 倍にする(掛けないと粒が cos 30° = 0.87 倍細かくなり、雑音が低く出る。2026-11-08 の再レビュー)
+- **L778** _(ja)_ — ★標本の足跡(幅 FINE)を、重なる 2 つの画素へ重なりの比で分ける。点で 1 画素へ落とすと、 細い光条の中心が画素の格子へ引き寄せられる(シミュの都合で出る偽の偏り、最大 0.04 mm を実測)。
+- **L837** _(ja)_ — ★レンズのぼけは光切断ではコヒーレントな瞳(coherent_speckle の中)で入れてあるので、二重に掛けない
+- **L926** _(ja)_ — 2 台のカメラの傾き ±[°]。★±15°(輻輳 30°)にして、縞投影・光切断の三角測量の角 30° と揃える (前の版は ±5° で、ステレオだけ三角測量の角が 3 分の 1 だった。条件の差で負けを作らない)
+- **L971** _(ja)_ — ★いちばん近い測定を採る(線形に補間すると、壁をまたぐ所に「間の高さ」を作ってしまう —— 縁の外側の判定で、方式ではなく並べ直しが浮いた画素を作る)
+- **L990** _(ja)_ — ★2026-11-08 の敵対的レビューの指摘で変えた: 前の版は方式ごとに「つや消しの雑音の 5 倍」を閾値にしていて、 ToF 6.7 mm・照度差ステレオ 10 mm と雑音の大きい方式ほど甘く、トゲだらけの ToF が「偽 0 %」になっていた。
+- **L1511** _(ja)_ — ★表示の高さは部品の範囲に切る(照度差ステレオの積分の飛び値 1 本で、立体全体が潰れて見えた)
+- **L1906** _(ja)_ — ★門の経緯(2026-11-08、消さずに残す): (1) 最初の門は「全部の点の PF が縞投影・光切断は 0.1 mm 以下、ToF は 1 mm 超」。画素 0.1 mm(CI)で通り、 画素 0.05 mm(full)で光切断が 0.110 mm になって NG。PF は範囲(最大 − 最小)なので点が多いほど大きい。 (2) 光切断を外した比の門に書き直したのは、結果を見て門を動かした形だったので戻した。 (3) 点を 200 にそろえた PF で同じ主張を確かめたが、種 77 の 1 回の抽選(下側 5 %)に頼っていた。 (4) 200 回の抽選の中央値・外れ点の除外なし(全部の点の列とそろえる)にすると、full で光切断が 0.104 mm (5〜95 % 0.077〜0.129)となり、**光切断の PF ≤ 0.1 mm は成り立たない**。CI(画素 0.1 mm)では 0.071 で通る —— 画素で合否が変わる主張は立てない。光切断は「約 0.1 mm」として表と印字に出し(限界)、門に残すのは 画素に依らず成り立つ「縞投影 ≤ 0.1 mm、ToF > 1 mm」だけ(再レビューの提案の書き方)
+- **L1963** _(ja)_ — ★ステレオの黒の外れは画素で大きく変わる(0.1 mm で 37 %、0.05 mm で 6 %)ので、画素を値と並べる
+- **L2136** _(ja)_ — ★line_width_um は op の約束で「カメラから見た」光条の 1/e² の半幅 w(強度 exp(−2y²/w²))。光条は 2σ、 カメラ(30°)からは cos 30° 倍に縮んで見える。参照の細かさは 1 標本 ≤ 6.25 µm(16 倍、強度のナイキスト 8.1 µm より細かい)、試行 16 回(χ² の 95 % 区間 約 ±5 %)。前の版(8 倍・4 回)は参照が粗く、 「1 画素で平均すると op も式を下回る」と誤って読んだ(2026-11-08 の再レビュー)
+- **L2294** _(ja)_ — ★キーを op と同じ名前(残差の二乗平均の 3 文字)にすると、op の例の索引(引用符つきの op 名を拾う)がこの PoC を op の例に数える
 
 ## `examples/poc_active_contours.py`
 
@@ -526,6 +526,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_bone_trabecular_thickness.py`
 
 - **L708** _(ja)_ — ★穴が塞がったので、所見を「無い」から「**規約が 1 画素ずれる**」に書き換える。
+
+## `examples/poc_bottle_pattern_inverse.py`
+
+- **L448** _(ja)_ — ★同じ雑音の条件どうし(2026-11-13): 満の瓶を、同心と奥行き 0.3 mm の偏心で、同じ雑音の実現 N_ECC 回ずつ当てはめる。 前の版は「雑音なしの当てはめのずれ」と「雑音ありの残差の床」を 1 つの門に混ぜていた(そういう観測は存在しない)。
 
 ## `examples/poc_bump_coplanarity.py`
 
@@ -1013,10 +1017,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_mixed_case_depalletizing.py`
 
-- **L1778** _(ja)_ — と同じ 5 mm にした。★この値は scene 1・2 の真値を見て決めたので、scene 1・2 は「調整に使った」、 scene 3〜10 は「見ていない」として結果を分けて出す(``split_by_tuning``)。
-- **L1787** _(ja)_ — ≈ 3 px。★感度: scene 1・2 の 10 枚で 0 px → 長辺 −13 / 短辺 −4.5 mm、6 px → −0.3 / +4.1 mm (6 px では遮る縁の 深度カメラの「縁の太り」まで拾って外へ伸びる)。真値で合わせ込まず見積もりの 3 にした。 全 50 枚の 0 / 3 / 6 の比較(下書きの段で出した): 再現率 0.705 / 0.705 / 0.674、誤検出 14.8 / 43.1 / 52.2 枚あたり。 全 50 枚の実測(2026-11-08): 0 px → 再現率 0.705・長 −7.8・短 −2.6 mm・誤検出 14.8 枚/画像 / 3 px → 0.705・−2.0・+2.9・43.1 / 6 px → 0.674・+0.4・+5.8・52.2。再現率は変わらず、寸法の偏りと 誤検出の数の綱引き(太らせると雑音の小片まで矩形らしくなる)。
-- **L1966** _(ja)_ — ★scipy の binary_dilation は iterations=0 で「変わらなくなるまで」太らせる(= 切り出し全体)。0 は太らせない。
-- **L3220** _(ja)_ — ★これらの門は、天面の合わせ目を入れた場面の結果を見てから置いた。全部の種と見ていない種 3〜9 の両方で確かめる。
+- **L1781** _(ja)_ — と同じ 5 mm にした。★この値は scene 1・2 の真値を見て決めたので、scene 1・2 は「調整に使った」、 scene 3〜10 は「見ていない」として結果を分けて出す(``split_by_tuning``)。
+- **L1790** _(ja)_ — ≈ 3 px。★感度: scene 1・2 の 10 枚で 0 px → 長辺 −13 / 短辺 −4.5 mm、6 px → −0.3 / +4.1 mm (6 px では遮る縁の 深度カメラの「縁の太り」まで拾って外へ伸びる)。真値で合わせ込まず見積もりの 3 にした。 全 50 枚の 0 / 3 / 6 の比較(下書きの段で出した): 再現率 0.705 / 0.705 / 0.674、誤検出 14.8 / 43.1 / 52.2 枚あたり。 全 50 枚の実測(2026-11-08): 0 px → 再現率 0.705・長 −7.8・短 −2.6 mm・誤検出 14.8 枚/画像 / 3 px → 0.705・−2.0・+2.9・43.1 / 6 px → 0.674・+0.4・+5.8・52.2。再現率は変わらず、寸法の偏りと 誤検出の数の綱引き(太らせると雑音の小片まで矩形らしくなる)。
+- **L1969** _(ja)_ — ★scipy の binary_dilation は iterations=0 で「変わらなくなるまで」太らせる(= 切り出し全体)。0 は太らせない。
+- **L3226** _(ja)_ — ★見出しのカラーの主張: 見ていない種のコマが Blender のカラーで揃っていれば測って確かめ、無ければ(CI)記録で読む。
+- **L3232** _(ja)_ — ★これらの門は、天面の合わせ目を入れた場面の結果を見てから置いた。全部の種と見ていない種 3〜9 の両方で確かめる。
 
 ## `examples/poc_moire_screen.py`
 
@@ -1093,17 +1098,17 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_photoelasticity.py`
 
-- **L163** — ★Den Befund festhalten: Dies ist eine **exakte** Gegenrechnung zu fullseyes Mueller-op, die selbst bei einem vollen δ-Durchlauf in 15-Grad-Schritten und 5 θ-Werten auf Maschinengenauigkeit übereinstimmt (gemessen 2.2e-16). Lockert sich das, misst man ab Abschnitt 3 nicht das "Ausleseverfahren", sondern einen Bug im op.
-- **L188** — ★Auch die Gegenrechnung des Spannungsfelds selbst festhalten. Stimmt die integrierte Kraft nicht mit der Last überein, ist es nicht der "wahre Wert", und der Zentralwert muss algebraisch mit der geschlossenen Form 8P/(πDh) identisch sein.
-- **L209** — ★Das Niveau des Nullpunkts festhalten. Jedes folgende "N-fach" verwendet diese 1.09 MPa als Nenner, verschiebt sich das, ändert sich die Bedeutung des Vergleichs.
-- **L232** — ★Den Befund festhalten: Das naive Verfahren, aus einem einzigen Dunkelfeldbild nur ganzzahlige Streifen abzulesen, **schlägt den Nullpunkt nicht einmal um das 2-fache**. Weil die Auflösung durch den Schritt fσ/h = 1.78 MPa begrenzt ist. Der Kontrast zur Phasenverschiebung in Abschnitt 4 (deren Fehler auf Maschinengenauigkeit fällt) ist das Rückgrat dieses PoC.
-- **L271** — ★Da wir bei null Rauschen aus derselben Intensitätsgleichung zurückrechnen, muss θ **exakt** zurückkommen (die Algebra, die 4θ aus den 4 planpolarisierten Bildern erzeugt, ist selbst die Umkehrabbildung).
-- **L296** — ★Den Befund festhalten. (1) Die Übereinstimmung übersteigt 95 %, erreicht aber **nie 100 %**. Der Rest sind Pixel, deren Vorzeichen durch die Mehrdeutigkeit (δ,θ) ↔ (-δ,θ+90°) umgekehrt ist, die sich für ein einzelnes Pixel allein (aus einer Messung bei einer Wellenlänge) prinzipiell nicht beseitigen lässt; mit der räumlichen Stetigkeit sieht es anders aus (in Abschnitt 5 gemessen). Den Befund unverändert festhalten: weder "nahezu übereinstimmend" noch "vollständig übereinstimmend".
-- **L367** — ★Den Befund festhalten. (1) Es gibt keine Depolarisation (der Stokes-Betrag ist exakt 1). Das ist die Grundlage für die Behauptung in Abschnitt 5, dass in der Modulation nicht die Lichtmenge, sondern **die Phasenempfindlichkeit** abfällt.
-- **L373** — (2) ★★Die Messung sagt das **Gegenteil** der naiven Erwartung, "eine Maske zu übergeben behebt es": ohne Maske 97.0 % / bei Ausschluss der Unterabtastung 97.1 % / **schließt man auch die niedrige Modulation aus, fällt es auf 81.9 %**. Weil das Entfernen der niedrig modulierten Pixel die Region zerteilt und skimages unwrap pro Insel einen anderen 2π-Offset wählt. Niedrig modulierte Pixel sind nicht die Ursache der Abweichungen; bei einer vorzeichenvertauschten Eingabe hebt ihr Ausschluss die Übereinstimmung nicht, sondern senkt sie. Dieselbe Maske auf eine vorzeichenrichtige Eingabe senkt sie nicht (unten gemessen). Dass die Region nicht zerteilt wird (anderes 2π je Insel), ist ebenfalls gemessen. Der Mechanismus ist ungeklärt. Den Messwert festhalten.
-- **L443** _(ja)_ — ★所見を固定する(いずれも測った事実。門は動かさない)。 (a) 外れの大半は 4 節の符号の反転と同じ画素。
-- **L530** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
-- **L533** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
+- **L185** — ★Den Befund festhalten: Dies ist eine **exakte** Gegenrechnung zu fullseyes Mueller-op, die selbst bei einem vollen δ-Durchlauf in 15-Grad-Schritten und 5 θ-Werten auf Maschinengenauigkeit übereinstimmt (gemessen 2.2e-16). Lockert sich das, misst man ab Abschnitt 3 nicht das "Ausleseverfahren", sondern einen Bug im op.
+- **L210** — ★Auch die Gegenrechnung des Spannungsfelds selbst festhalten. Stimmt die integrierte Kraft nicht mit der Last überein, ist es nicht der "wahre Wert", und der Zentralwert muss algebraisch mit der geschlossenen Form 8P/(πDh) identisch sein.
+- **L231** — ★Das Niveau des Nullpunkts festhalten. Jedes folgende "N-fach" verwendet diese 1.09 MPa als Nenner, verschiebt sich das, ändert sich die Bedeutung des Vergleichs.
+- **L254** — ★Den Befund festhalten: Das naive Verfahren, aus einem einzigen Dunkelfeldbild nur ganzzahlige Streifen abzulesen, **schlägt den Nullpunkt nicht einmal um das 2-fache**. Weil die Auflösung durch den Schritt fσ/h = 1.78 MPa begrenzt ist. Der Kontrast zur Phasenverschiebung in Abschnitt 4 (deren Fehler auf Maschinengenauigkeit fällt) ist das Rückgrat dieses PoC.
+- **L293** — ★Da wir bei null Rauschen aus derselben Intensitätsgleichung zurückrechnen, muss θ **exakt** zurückkommen (die Algebra, die 4θ aus den 4 planpolarisierten Bildern erzeugt, ist selbst die Umkehrabbildung).
+- **L321** — ★Den Befund festhalten. (1) Die Übereinstimmung übersteigt 95 %, erreicht aber **nie 100 %**. Der Rest sind Pixel, deren Vorzeichen durch die Mehrdeutigkeit (δ,θ) ↔ (-δ,θ+90°) umgekehrt ist, die sich für ein einzelnes Pixel allein (aus einer Messung bei einer Wellenlänge) prinzipiell nicht beseitigen lässt; mit der räumlichen Stetigkeit sieht es anders aus (in Abschnitt 5 gemessen). Den Befund unverändert festhalten: weder "nahezu übereinstimmend" noch "vollständig übereinstimmend".
+- **L392** — ★Den Befund festhalten. (1) Es gibt keine Depolarisation (der Stokes-Betrag ist exakt 1). Das ist die Grundlage für die Behauptung in Abschnitt 5, dass in der Modulation nicht die Lichtmenge, sondern **die Phasenempfindlichkeit** abfällt.
+- **L398** — (2) ★★Die Messung sagt das **Gegenteil** der naiven Erwartung, "eine Maske zu übergeben behebt es": ohne Maske 97.0 % / bei Ausschluss der Unterabtastung 97.1 % / **schließt man auch die niedrige Modulation aus, fällt es auf 81.9 %**. Weil das Entfernen der niedrig modulierten Pixel die Region zerteilt und skimages unwrap pro Insel einen anderen 2π-Offset wählt. Niedrig modulierte Pixel sind nicht die Ursache der Abweichungen; bei einer vorzeichenvertauschten Eingabe hebt ihr Ausschluss die Übereinstimmung nicht, sondern senkt sie. Dieselbe Maske auf eine vorzeichenrichtige Eingabe senkt sie nicht (unten gemessen). Dass die Region nicht zerteilt wird (anderes 2π je Insel), ist ebenfalls gemessen. Der Mechanismus ist ungeklärt. Den Messwert festhalten.
+- **L468** _(ja)_ — ★所見を固定する(いずれも測った事実。門は動かさない)。 (a) 外れの大半は 4 節の符号の反転と同じ画素。
+- **L556** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
+- **L559** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
 
 ## `examples/poc_pigment_unmixing.py`
 
@@ -1203,6 +1208,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_real_grain_skiz.py`
 
 - **L480** _(ja)_ — ★2026-11-09: opening_seg の修正で粒の数が 57 → 31(専門家 18)、変動係数が 0.145 → 0.176 に動き、 門「SKIZ の粒の数は専門家の 2 倍以上」「変動係数は専門家の半分以下」が成り立たなくなった。門の値を実測の 直上へ動かすのは緩めになるので、2 本とも門から外し、数値は印字と RECORDED にだけ残す(主張は本文で縮めた)。
+
+## `examples/poc_real_stereo_multiscanline.py`
+
+- **L127** _(ja)_ — bad-N のしきい [px]。★この PoC の画像は 1/4 解像度(:data:`RES_SCALE`)なので、2 px は原寸の 8 px に当たる。 Middlebury の公式の表の bad 2.0(常に原寸で数える)とは別の、4 倍緩い閾値 —— 原寸換算の呼び方なら bad 8.0。
+
+## `examples/poc_real_walnut_cbct.py`
+
+- **L948** _(ja)_ — ★主張の検査ではない。別の行のデータも矛盾の無いデータなので、この不等式は作りの上でほぼ必ず通る (2 つの行の雑音・散乱の差だけで決まる)。落ちたら fan_data / 再投影の配線が壊れた印として読む。
 
 ## `examples/poc_recycling_sorting.py`
 
@@ -1366,7 +1379,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L113** _(ja)_ — 狙い = iterative)。★2026-10-15 から門に使う: 手元に optiland が無いとき(CI)は、この記録値と telecentric.chief_ray_angle・raytrace.chief_ray(入射瞳が無限遠なら絞りを狙う)の両方を 2e-6 mm で照合する (記録は 6 桁に丸めてあるので丸めの幅 5e-7 mm を含む)。
 - **L520** _(ja)_ — ★手前(z の高い層)から over 合成: 手前の被覆率の分だけ奥を隠す(2026-11-05 まで 全層を足してぼかした重みで割っていて、奥のぼけが合焦した手前の縁に被った。 optscene.defocus_blur と同じ欠陥 —— 敵対的検証 第 2 巡 O1 の兄弟)
 - **L1017** _(ja)_ — ★2026-11-05: 往路 10 コマ + 復路 8 コマ。復路は往路と同じ高さなので描き直さず使い回す (1 コマ = 3 本のレンズの描画で、手元 1 本 ~15 秒。18 → 10 回で図の段が ~6 分縮む)。 以前は復路を np.linspace(3, -3, 10) から取っていて、往路と 1 ulp(6.7e-16 mm)違う だけの同じ絵を描いていた。図つきの全数走行で 900 秒を超えていた主因がこの GIF。
-- **L1240** _(ja)_ — ★リングごとに自由な楕円(5 自由度)を当てると、影で弧が 90〜180° しか見えない外側のリングは長半径が外挿で 膨らむ・縮む(2026-10-15 に元の解像度で見て分かった: 外側のリングで楕円が白い線から外れ、間隔が 246〜257 px/mm と ばらついた)。テレセン(正射影)なら傾いた板の同心円は「中心と形を共有する楕円の族」に写るので、族ごと当てる。 族の仮定そのもの(中心の共有)は (c) でリングごとに中心を解き直して確かめる。
+- **L1301** _(ja)_ — ★リングごとに自由な楕円(5 自由度)を当てると、影で弧が 90〜180° しか見えない外側のリングは長半径が外挿で 膨らむ・縮む(2026-10-15 に元の解像度で見て分かった: 外側のリングで楕円が白い線から外れ、間隔が 246〜257 px/mm と ばらついた)。テレセン(正射影)なら傾いた板の同心円は「中心と形を共有する楕円の族」に写るので、族ごと当てる。 族の仮定そのもの(中心の共有)は (c) でリングごとに中心を解き直して確かめる。
 
 ## `examples/poc_tem_ctf_thon_rings.py`
 
@@ -1496,6 +1509,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_video_physics_consistency.py`
 
 - **L177** _(ja)_ — ★ 縁に触れた bbox の辺は車の縁でなく画像の縁。そのまま使うと位置が 0.36 m ずれて黙って軌跡に入る(2026-10-23 の敵対的レビュー、 発射条件の端 3000 本中 2 本)。label_extent は切り詰めを知らないので、ここで止める。
+
+## `examples/poc_virtual_sem_kv_cd_bse.py`
+
+- **L276** _(ja)_ — ★モンテカルロの統計誤差: 主張に使う側壁 88 度・80 度の 1 kV と 20 kV を、種を替えて測り直す(最初の種は上の表の 1 回)。
+- **L373** _(ja)_ — ★W の粒の 1 kV のコントラストを種を替えて(最初の種 4 は上の 1 回)。粒は数画素で、画素あたりの電子が少ないので大きく揺れる。
+- **L424** _(ja)_ — ★表面の W の 1 kV を種を替えて(最初の種 2 は上の表の 1 回)。門は種の平均で。
 
 ## `examples/poc_warehouse_flow.py`
 
@@ -1729,7 +1748,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fssystem.py`
 
-- **L167** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T5): tightens_only=True の数値の上限 10 項目が、既定より**大きい**値 (find_ops_k=10、mcp_stack_max_pixels=64 Mpx、plan_max_depth=16 …)を受け付け、上の docstring の 「緩められない」を破っていた。既定より緩い値を表から外し、ここで機械的に止める(足し直すと import で落ちる)。
+- **L174** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T5): tightens_only=True の数値の上限 10 項目が、既定より**大きい**値 (find_ops_k=10、mcp_stack_max_pixels=64 Mpx、plan_max_depth=16 …)を受け付け、上の docstring の 「緩められない」を破っていた。既定より緩い値を表から外し、ここで機械的に止める(足し直すと import で落ちる)。
 
 ## `fullseye/__init__.py`
 
@@ -1764,36 +1783,67 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fullseye/mcp/handles.py`
 
-- **L51** _(ja)_ — ★thumb_dir を渡されたときに作っていなかった(mkdtemp のときだけ存在する)。 小図の保存が FileNotFoundError で落ち、テスト 4 件で発覚(2026-09-15)。
-- **L192** _(ja)_ — ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る (-32602)。npy は pickle を決して許さない。
+- **L168** _(ja)_ — ★thumb_dir を渡されたときに作っていなかった(mkdtemp のときだけ存在する)。 小図の保存が FileNotFoundError で落ち、テスト 4 件で発覚(2026-09-15)。
+- **L173** _(ja)_ — ★2026-11-13(報告 10 / S7): 自分で作った一時フォルダはサーバの終了後も残っていた。 この置き場が捨てられる時(終了時を含む)に消す。渡されたフォルダは消さない。
+- **L182** _(ja)_ — ★2026-11-15: 上限は「実際に持っているバイト」で数える。pipeline は表を入れた後、表の中の 2-D の配列を image のハンドルにも入れる(同じ配列)。ハンドルごとに足すと 2 回数え、上限の半分を超える配列の表は、 自分の欄のハンドルを入れた時に追い出される。配列は物ごとに 1 回だけ数える(参照の数を持つ)。
+- **L200** _(ja)_ — ★2026-11-13(報告 10 / S7): path=NUL などの装置名で relpath が ValueError を投げ、-32603 になっていた
+- **L251** _(ja)_ — ★2026-11-13(報告 10 / S4): 根の中のジャンクション・リンクの先(根の外)の名前を並べていた (中身は _check_path が断るが、名前が漏れる)。実体が根の外の物は辿らず、並べない。
+- **L364** _(ja)_ — ★2026-11-13(報告 10 / S3): 20,000×20,000 の PNG を全部復号(4 秒・1.2 GB)してから画素の上限で断っていた。 見出し(PNG の IHDR、Pillow の遅延の open、npy の見出し)で画素数を先に見る。
+- **L372** _(ja)_ — ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る (-32602)。npy は pickle を決して許さない。
+
+## `fullseye/mcp/opworker.py`
+
+- **L403** _(ja)_ — ★2026-11-15(独立レビュー): 結果を .npy に書き出して親が全部読んでから断っていた。書かずに断る。
 
 ## `fullseye/mcp/server.py`
 
-- **L124** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): ハンドラは a.get("lang") を読むのに schema に無く、 additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
-- **L463** _(ja)_ — ★2026-11-09: 真値付きの課題を作る道具と、組んだ処理を真値で採点する道具(full プロファイルだけ)。 「LLM が組む → 型の門 → 実行」の後ろに「真値で採点 → 合否 → 直させる」を足して輪を閉じる。 真値はサーバ側(fullseye/mcp/tasks.py の TaskStore)に task_id で持ち、返り値には載せない。
-- **L615** _(ja)_ — ★2026-11-15: 深い入れ子を「json.loads の RecursionError を受ける」で断っていたが、Python 3.14 の json.loads は 10 万段でも RecursionError を出さずに読む(同じ 1 通が 3.11 では -32700、3.14 では巨大な入れ子の値として 先へ進み -32602 になった —— master の CI の py3.14 で発覚)。版に頼らず、読む前に深さを数えて断る。 開き括弧の総数が上限以下なら深さも上限以下なので、数えない(普通の 1 通はここで終わる)。
-- **L628** _(ja)_ — ★2026-11-13: 3,000 段の入れ子 1 通でサーバが落ちていた(json.loads の RecursionError を受けていなかった)。
-- **L661** _(ja)_ — ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは FramingError(→ -32700)にしてループを続ける。
-- **L1226** _(ja)_ — ★2026-11-08: a/b を params の中に入れた形は、知らない引数として断るだけでは直し方が分からない
-- **L1256** _(ja)_ — ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、 pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
-- **L1329** _(ja)_ — ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の 台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。 印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
-- **L1440** _(ja)_ — ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、 値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
-- **L1686** _(ja)_ — ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、 extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。 全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
-- **L1858** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
-- **L2018** _(ja)_ — ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
-- **L2378** _(ja)_ — ★2026-11-10(独立レビュー第 4 巡): pass_fail / coarse では、双子で落ちたことを返り値で区別しない (reason は out_of_tolerance、形も許容外の不合格と同じ)。区別すると「本体には合っていた」ことが分かり、 本体と双子の探索を 2 回に分けられた(計数の 13/20 が 20 回以内に合格)。区別は監査記録にだけ残す。 coarse で見せる段階は、落ちた側(双子)の指標から作る。
-- **L2385** _(ja)_ — ★2026-11-10(独立レビュー第 2 巡 N2): 以前は stderr の score-audit 行に誤差を書いていた。MCP の クライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が pass_fail の 上限を迂回して誤差を読めた。
-- **L2449** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal=" " が search_ops の ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
-- **L2474** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
-- **L2504** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
-- **L2604** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
-- **L2670** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
-- **L2717** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
-- **L2731** _(ja)_ — ★2026-11-13: 本文が null の 1 通で黙って終了していた。要求の形でない本文は -32600 を返して続ける (配列 = JSON-RPC のバッチは受け付けない)。
+- **L67** _(ja)_ — 段(stage)の引数の 1 行の説明(fullseye_pipeline と fullseye_validate_pipeline で同じ)。★2026-11-13(報告 7)
+- **L125** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): ハンドラは a.get("lang") を読むのに schema に無く、 additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
+- **L182** _(ja)_ — ★2026-11-13: ハンドラは budget_tokens を読むのに schema に無く、上限を上げる手が無かった
+- **L287** _(ja)_ — ★2026-11-15(独立レビュー): 入力の無い台帳 op も handle を必須にしていて、docs/MCP.md の 「apply から呼べる」と合わなかった。handle が要るかは op で決まるので、_apply / _apply_isolated で断る。
+- **L474** _(ja)_ — ★2026-11-09: 真値付きの課題を作る道具と、組んだ処理を真値で採点する道具(full プロファイルだけ)。 「LLM が組む → 型の門 → 実行」の後ろに「真値で採点 → 合否 → 直させる」を足して輪を閉じる。 真値はサーバ側(fullseye/mcp/tasks.py の TaskStore)に task_id で持ち、返り値には載せない。
+- **L626** _(ja)_ — ★2026-11-15: 深い入れ子を「json.loads の RecursionError を受ける」で断っていたが、Python 3.14 の json.loads は 10 万段でも RecursionError を出さずに読む(同じ 1 通が 3.11 では -32700、3.14 では巨大な入れ子の値として 先へ進み -32602 になった —— master の CI の py3.14 で発覚)。版に頼らず、読む前に深さを数えて断る。 開き括弧の総数が上限以下なら深さも上限以下なので、数えない(普通の 1 通はここで終わる)。
+- **L639** _(ja)_ — ★2026-11-13: 3,000 段の入れ子 1 通でサーバが落ちていた(json.loads の RecursionError を受けていなかった)。
+- **L672** _(ja)_ — ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは FramingError(→ -32700)にしてループを続ける。
+- **L1008** _(ja)_ — ★2026-11-13: 台帳にある op にも「registry 層に無い」とだけ返し、「近い名前」に同じ名前を出していた。
+- **L1428** _(ja)_ — 判定 ok の範囲(★2026-11-13、C)。同じ画像に 4 通りの処理で 1.0 / 46.3 / 75.0 / 1285.0 が全部 ok で返り、 ok が「値が正しい」と読まれていた。判定は出力の形だけを見る。
+- **L1478** _(ja)_ — ★2026-11-15(独立レビュー): 結果の大きさは作業プロセスの側で数えて断る(以前は .npy を全部読んでから _enforce_pixel_limit が断っていた。親に同じくらいの一時的な確保と、一時フォルダへの書き込みが起きた)。
+- **L1707** _(ja)_ — ★2026-11-08: a/b を params の中に入れた形は、知らない引数として断るだけでは直し方が分からない
+- **L1765** _(ja)_ — ★2026-11-15: 台帳 op(隔離して走る)は、profile から引いた値も台帳の仕様で検査する。 直に書いた値だけを検査していて、profile を経た値は型も大きさも見ずに作業プロセスへ渡っていた (数の引数に文字列の profile を渡すと検証は通り、走らせてから op が断った)。
+- **L1773** _(ja)_ — ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、 pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
+- **L1848** _(ja)_ — ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の 台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。 印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
+- **L1959** _(ja)_ — ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、 値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
+- **L2041** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)も fullseye_apply から呼べる(pipeline と同じ経路)
+- **L2242** _(ja)_ — ★2026-11-15: 解決した後の値を必ず検査する(以前は {"ref"} / {"profile"} で書いた引数を飛ばしていた)。 profile の値は仕様に合えば通る。ref の先(配列・表)は台帳 op の引数にできないので、ここで断る (数 1 個の入力は上の literal_inputs の道で受ける)。
+- **L2281** _(ja)_ — ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、 extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。 全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
+- **L2371** _(ja)_ — ★2026-11-13: 複素数の配列(Jones ベクトルなど)をそのまま tolist すると JSON にできず、道具ごと落ちた
+- **L2469** _(ja)_ — 本文は段ごとに 1 行(★2026-11-13: 以前は結果の JSON を丸ごと 1 行に繋いでいて、どの段がなぜ 止まったかを本文から読めなかった)。
+- **L2510** _(ja)_ — 最後の段が配列か registry の値: 従来どおり、判定とその範囲を書く(★2026-11-15: 以前は、途中に表を返す 台帳 op が 1 つでもあると、最後の値と判定の範囲が本文から落ちた)。
+- **L2553** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
+- **L2728** _(ja)_ — ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
+- **L2731** _(ja)_ — ★2026-11-13(報告 10 / S6): NaN・Infinity(JSON の決まりに無い定数、または封筒の中の非有限の数)を受けていた。 取り込みの前に断る(他の入口と同じく、非有限は受けない)。
+- **L2734** _(ja)_ — ★2026-11-15: json(文字列)の中の深い入れ子。1 通の枠の深さの上限(MAX_JSON_DEPTH)は文字列の中の括弧を 数えないので、同じ上限をここでも読む前に当てる。当てる前は版で答えが割れ、どちらも -32603(内部エラー) だった: py3.11 は約 1,000 段から RecursionError、py3.14 は 10 万段で Stack overflow(実測)。
+- **L3117** _(ja)_ — ★2026-11-10(独立レビュー第 4 巡): pass_fail / coarse では、双子で落ちたことを返り値で区別しない (reason は out_of_tolerance、形も許容外の不合格と同じ)。区別すると「本体には合っていた」ことが分かり、 本体と双子の探索を 2 回に分けられた(計数の 13/20 が 20 回以内に合格)。区別は監査記録にだけ残す。 coarse で見せる段階は、落ちた側(双子)の指標から作る。
+- **L3124** _(ja)_ — ★2026-11-10(独立レビュー第 2 巡 N2): 以前は stderr の score-audit 行に誤差を書いていた。MCP の クライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が pass_fail の 上限を迂回して誤差を読めた。
+- **L3188** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal=" " が search_ops の ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
+- **L3213** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
+- **L3251** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
+- **L3279** _(ja)_ — ★2026-11-13(報告 6): proposals は ops / retry_ops / recipes の行を丸ごと写していて、応答の半分が重複だった (検証の 1 回で ops 2.6 KB に proposals 4.3 KB)。順番と種類だけの参照にする(中身は元の一覧を読む)。
+- **L3358** _(ja)_ — ★2026-11-13(報告 5): 落とした名前が structuredContent の奥にしか無かった。本文の先頭に 1 行で書く
+- **L3366** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
+- **L3389** _(ja)_ — ★2026-11-13(報告 13): 名前だけで、来歴・ライセンス・何が写っているかが分からなかった。 samples(名前の一覧)は従来どおり、詳しい行は sample_details に足す(ホストのパスは出さない)。
+- **L3442** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
+- **L3489** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
+- **L3503** _(ja)_ — ★2026-11-13: 本文が null の 1 通で黙って終了していた。要求の形でない本文は -32600 を返して続ける (配列 = JSON-RPC のバッチは受け付けない)。
 
 ## `fullseye/opsearch.py`
 
-- **L665** _(ja)_ — ★2026-11-03(完成度監査 A-2): MCP で実行できない op(``verified_executable`` でない = 台帳 op の大半)にも ``fullseye_pipeline(...)`` の骨格を付けていた。従うと ``fullseye_validate_pipeline`` が ``not_executable_in_mcp`` で拒む。MCP の外での呼び方(カードの ``call``)を返す。
+- **L215** _(ja)_ — ★2026-11-13(AI の役での検証、報告 3): 型の直し方の候補に hx_gen_empty_region(入力を形のためだけに読み、 中身を見ない生成の op)が出て、従うと count_obj = 0 が判定 ok で返った。入力の中身を読まない op (MCP_INPUT_INDEPENDENT.json、採点が断る一覧と同じ)は経路の途中に置かない。
+- **L742** _(ja)_ — ★2026-11-03(完成度監査 A-2): MCP で実行できない op(``verified_executable`` でない = 台帳 op の大半)にも ``fullseye_pipeline(...)`` の骨格を付けていた。従うと ``fullseye_validate_pipeline`` が ``not_executable_in_mcp`` で拒む。MCP の外での呼び方(カードの ``call``)を返す。
+- **L746** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口)は pipeline から隔離した子プロセスで走る。実測で通った 見本の段(入力を作る段も含む)をそのまま骨格にする。
+- **L816** _(ja)_ — 日本語の現場の言い方 → 英語の術語(★2026-11-13、報告 12)。optics・照明・計測の op の要約は英語だけの物が多く、 「照明」「液面」「サーモグラフィ」で引いても当たらなかった(英語に直すと当たる)。問い合わせにある語の組は、 英語の語を**問い合わせの語として**足す(言い換えの弱い重みではない)。片仮名の語は、その 2 文字の切れ端を 検索語から外す(「サーモグラフィ」の「グラ」「ラフ」が「ホモグラフィ」に当たっていた)。
+- **L832** _(ja)_ — ★2026-11-15(独立レビュー): 「ピクセルをミリメートルに変換したい」で pixel_to_world / mm_per_px_from_reference が 上位 5 件に出ず、「各ピクセル」を含む sk_sauvola などが来た。片仮名の語に英語の語の橋を足す (評価: tools/mcp_find_ops_eval.py。この問いは合わせるのに使ったので tuned と書いてある)。
+- **L1266** _(ja)_ — ★2026-11-13(報告 5): executable は「Python の関数として呼べるか」で、MCP で走るかと食い違っていた (true のカードの op を pipeline に渡すと not_executable_in_mcp)。executable = MCP で走るか、 以前の意味は python_executable に残す。
 
 ## `fullseye/recipebook/__init__.py`
 
@@ -2867,6 +2917,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L90** — ★PYTHONPATH nicht übergeben (der ganze Sinn dieses Gates). Nutzer setzen keine Umgebungsvariablen.
 - **L129** _(ja)_ — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
 
+## `tests/test_explain_pipeline.py`
+
+- **L145** _(ja)_ — ★2026-11-15: handle は必須でなくなった(2026-11-13: 入力の無い台帳 op だけの処理列は handle を持たない)。 必須を外すのは広げるだけ(以前の呼び出しは全部そのまま通る)。入力の要る段に handle が無ければ型の門が断る。
+
 ## `tests/test_fallback_names_identify_the_op.py`
 
 - **L60** _(ja)_ — ★2026-10-07: 台帳は 256 件の環状バッファ。溢れると ``fallbacks()`` は新しい 256 件しか返さず、 下の「名前が潰れていない」「実在の op 名」は**一部だけ**を見て緑になる(実測 186 件・溢れ 0)。
@@ -2999,6 +3053,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_mcp_images.py`
 
 - **L331** _(ja)_ — ★最初 `ones + inf` にしていて、有限部が定数なので免除 op でも「定数」判定になり 落ちた —— それは診断器が正しい。確かめたいのは「免除 op なら非有限を異常と 言わない」だけなので、有限部に変化のある入力にする。
+- **L366** _(ja)_ — ★2026-11-15(独立レビュー): 入力の無い台帳 op(abbe_number など)は fullseye_apply でも handle を省ける。 handle が要る op で無ければ、サーバが理由つきで断る(tests/test_mcp_review_fixes_2026_11_15.py)。
+- **L370** _(ja)_ — ★2026-11-13: 入力の無い台帳 op(照明の設計・合成の入口)だけの pipeline は handle を要らないので、 required から handle を外した(受ける要求を広げるだけ。handle を渡す従来の要求はそのまま通る)。
+
+## `tests/test_mcp_isolated_ops_2026_11_13.py`
+
+- **L331** _(ja)_ — ★2026-11-15: 実測の台帳を作った機械には zxing-cpp(extras の symbols)が入っていた。CI の test ジョブの extras にも、 素の `pip install fullseye` にも無い。無い環境では「走る」を求めず、依存の名前を言って断る事を見る (黙って読み飛ばさない: ここに名指しした op だけ、依存が本当に import できない時だけ、誤り文まで確かめる)。
 
 ## `tests/test_mcp_server.py`
 
@@ -3006,12 +3066,20 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L208** _(ja)_ — ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。 検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
 - **L436** _(ja)_ — ★以前の被験者は台帳経由で索引に入ったこと(= 索引が台帳を数えている)も見る
 - **L467** _(ja)_ — ★2026-09-17 に ``b`` は「未使用」から**端の扱いを選ぶつまみ**になった。 ノートがその意味と**歴史側の帯**を両方書いていることを固定する —— どちらか片方だけだと、保存済みプログラムを読む人が挙動を誤解する。
-- **L509** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+- **L504** _(ja)_ — ★2026-11-13: 既定は件数だけになった(名前の一覧は detail=true)。この試験は名前を読むので detail を渡す。
+- **L510** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+- **L555** _(ja)_ — ★2026-11-13: 応答の出どころはホストの絶対パスでなく、パッケージ・リポジトリの中の相対の場所
+
+## `tests/test_mcp_usability_fixes_2026_11_13.py`
+
+- **L250** _(ja)_ — ★2026-11-15: NUL が装置名なのは Windows だけ(根の外)。他の OS ではただの名前で、根の中の「読めない拡張子」 として断る(Linux で `<outside>/` を期待して落ちた)。どちらでも -32603 にせず、ホストのパスを出さない。
 
 ## `tests/test_mcp_wheel.py`
 
-- **L215** _(ja)_ — ★数を直書きしない。9 本目(fullseye_fix_text)を足したとき、この門は CI の core ジョブでしか走らず、手元のスイートは緑のまま CI だけ赤になった(2026-09-18)。 正本は checkout の TOOLS —— wheel が同じ集合を名乗ることを見る。
-- **L225** _(ja)_ — ★順位を 3 位までに固定していた門は、新しい op(gauss_quadrature、2026-10-03)が「gauss」に正しく当たっただけで CI の core ジョブ(ここでしか走らない)を赤にした。見たいのは「2-D レジストリの op が索引の層から出る」こと。
+- **L219** _(ja)_ — ★数を直書きしない。9 本目(fullseye_fix_text)を足したとき、この門は CI の core ジョブでしか走らず、手元のスイートは緑のまま CI だけ赤になった(2026-09-18)。 正本は checkout の TOOLS —— wheel が同じ集合を名乗ることを見る。
+- **L229** _(ja)_ — ★順位を 3 位までに固定していた門は、新しい op(gauss_quadrature、2026-10-03)が「gauss」に正しく当たっただけで CI の core ジョブ(ここでしか走らない)を赤にした。見たいのは「2-D レジストリの op が索引の層から出る」こと。
+- **L255** _(ja)_ — ★2026-11-15: 既定の応答は件数だけになった(2026-11-13、報告 9)。名前の一覧まで見るこの検査は detail=true で呼ぶ (既定のまま `== []` と比べていて、件数の 0 を添字で読んで TypeError —— この門は CI の core でしか走らない)。
+- **L280** _(ja)_ — ★2026-11-15: 台帳 op(照明の設計・レンズの仕様)が wheel からも走る。OP_GRAPH の executor、fullseye/mcp/opworker.py、 台帳のモジュール(opsoptics …)が配布物に入っていて、隔離した作業プロセスが site-packages から読めること。 checkout の試験(tests/test_mcp_isolated_ops_2026_11_13.py)は source dir が sys.path に載るので、ここが欠けても緑。
 
 ## `tests/test_meshres.py`
 
@@ -3030,6 +3098,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
 - **L40** _(ja)_ — ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を 指している」のではなく「Visual Studio インストーラが決める場所」なので、 環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が 効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに なっていることを確認済み。 ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に 合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
+
+## `tests/test_op_card_calls_execute_2026_11_03.py`
+
+- **L247** _(ja)_ — ★2026-11-13: dem_slope は隔離した子プロセスで MCP から走るようになった。走らない物(ファイルを読む op)で見る。
+- **L278** _(ja)_ — ★2026-11-13: 台帳 op を隔離して走らせるようにして、骨格の付く側が 956 → 2,400 台へ移った。 両側の床は実測から取り、全 edge を数えた事も表明する(片側だけ縮んでも、合計が縮んでも落ちる)。
 
 ## `tests/test_op_contract_property.py`
 
@@ -3063,6 +3136,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_op_example_coverage.py`
 
 - **L58** — ★Ein Ratchet, das die Grundmenge von der **Seite des ausgelieferten Artefakts** zählt (2026-09-06) # --------------------------------------------------------------------------- # Gemessen 2026-09-06. Ein Anschlag, um es **nicht schlechter als diese Zahl** werden zu lassen, kein Zielwert. Von den 1,002 ops des Registers sind nur 349 im Beispiel-Index, und die beiden "100 %" oben galten nur, weil die Grundmenge 2 von 3 Schichten hatte. Verlauf und Aufschlüsselung je Familie = docs/KNOWN_ISSUES.md §38.
+
+## `tests/test_op_facets_2026_10_28.py`
+
+- **L329** _(ja)_ — ★2026-11-13: 台帳 op は隔離した子プロセス(fullseye/mcp/opworker.py)で走る別の経路。同じプロセスで走る Python の op は従来どおり名指しの集合に一致し、隔離の op は実測の台帳(docs/mcp_isolated_ops.json)に一致する。
+- **L363** _(ja)_ — ★2026-11-13: psnr は隔離した子プロセスで MCP から走るようになった。走らない op(bandpass)で見る。
 
 ## `tests/test_op_figures.py`
 
@@ -3157,6 +3235,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_raytrace3d.py`
 
 - **L276** _(ja)_ — ★2026-10-15: 傾いた鏡(摂動)の後で像面と平行に進む光線を、以前は rms 3.4e18 mm の有効な点として数えた
+
+## `tests/test_recipe_retrieval_2026_10_29.py`
+
+- **L14** _(ja)_ — ★2026-11-13: 台帳 op が MCP から走るようになり、validate_pipeline だけでは「kw」「call」を持つ段 (Python の runner の書き方。fullseye_pipeline の schema は受けない)が通るようになった。MCP で走るとは 「道具の schema が受ける段の鍵だけで書けて、検証も通る」事として数える。
 
 ## `tests/test_reprconv.py`
 
@@ -3466,8 +3548,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/gen_op_facets.py`
 
-- **L465** _(ja)_ — ★2026-11-03: chain_fuzz の op 表に載らない台帳 op(fileio 14、acoustics の read_wav / read_audio / write_wav = 入出力の副作用がある op)は実行先が空で、OP_GRAPH を読む側が 呼べなかった(レシピの e2e が fs.ledger に迂回して見つけた)。台帳の func を実行先にする。
-- **L559** _(ja)_ — ★2026-11-04(統合 GPU): map:: の辺は実行先を持つものだけを作る(tests/test_ledger_entry_points_2026_11_03.py の「全部の辺に実行先がある」が正)。画素ごとに独立な op(compute.structure = elementwise)を 2-D の登録 op として持つなら、積んだ列 (N, H, W) にそのまま掛けた結果が要素ごとの map と同じなので、元の op の入口を 実行先にする(tests/test_op_facets_2026_10_28.py::test_map_edges_run_through_the_base_op_on_the_stack)。 近傍を見る op(neighborhood_stencil)は積んだ列に掛けると軸 0 をまたぐので、実行先を作れない → 辺を作らない。
+- **L495** _(ja)_ — ★2026-11-03: chain_fuzz の op 表に載らない台帳 op(fileio 14、acoustics の read_wav / read_audio / write_wav = 入出力の副作用がある op)は実行先が空で、OP_GRAPH を読む側が 呼べなかった(レシピの e2e が fs.ledger に迂回して見つけた)。台帳の func を実行先にする。
+- **L526** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)を MCP の pipeline から走らせる。実測の台帳に 載った op だけを、隔離した子プロセス(時間とメモリの上限つき)で走らせる印を付ける。
+- **L607** _(ja)_ — ★2026-11-04(統合 GPU): map:: の辺は実行先を持つものだけを作る(tests/test_ledger_entry_points_2026_11_03.py の「全部の辺に実行先がある」が正)。画素ごとに独立な op(compute.structure = elementwise)を 2-D の登録 op として持つなら、積んだ列 (N, H, W) にそのまま掛けた結果が要素ごとの map と同じなので、元の op の入口を 実行先にする(tests/test_op_facets_2026_10_28.py::test_map_edges_run_through_the_base_op_on_the_stack)。 近傍を見る op(neighborhood_stencil)は積んだ列に掛けると軸 0 をまたぐので、実行先を作れない → 辺を作らない。
 
 ## `tools/gen_op_figures.py`
 
@@ -3575,6 +3658,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L473** _(ja)_ — ★2026-10-14: 絶対許容差 1e-12 は、出力が 1e-21 の桁(重力波のひずみ ``chirp_newtonian``)だと どのノブも「変化なし」にする。出力の最大絶対値が 1 より小さいときは、その大きさで許容差を縮める (1 以上の出力では以前と同じ)。
 
+## `tools/mcp_find_ops_eval.py`
+
+- **L55** _(ja)_ — ★既定はこの道具のある木。sys.path に足さないと、tools/ から起動した時に editable install の別の木の fullseye を読む(2026-11-15 に実際に別の木の数を出した)。
+
+## `tools/mcp_isolated_probe.py`
+
+- **L61** _(ja)_ — ★2026-11-13: 見本の自動の値(数 1 個)では形が合わず落ちていた物(中心は 3 成分、絞りは f 値か NA の一方)
+
 ## `tools/op_example_index.py`
 
 - **L42** — ★ Solange dies fehlte, rief :func:`_called` :func:`_strip_prose` für **jede Kombination** von (op-Name × example) auf und parste dabei jedes Mal die gesamte Quelle mit ``ast.parse`` + ``tokenize`` neu. Gemessen am 2026-09-05: 2-D 881 op × 73 Beispiele + 3-D 347 op × 118 Beispiele + ledger 494 op × 73 Beispiele = **etwa 140.000** vollständige Parses, sodass ein einzelnes ``opdocs.py md`` 10 Minuten dauerte (``toc`` und ``html`` bauen denselben Index ebenfalls neu auf, sodass eine vollständige Neugenerierung in der Größenordnung von 30 Minuten liegt). Das Entfernen von Prosa muss nur **einmal pro Quelle** geschehen —— da es nicht vom op-Namen abhängt.
@@ -3627,10 +3718,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L111** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
 - **L119** — ★2026-10-15: ohne `--md` **schrieb es nichts** (es gab nur eine Zusammenfassung auf stdout aus). docs/CONVERSION_MATRIX.md blieb auf dem Stand vom 2026-09-02 ("59 Typen / 164 Konversionspaare") stehen, und da --check "eine Stufe, die nichts schreibt" nicht als Drift sieht, lief es sechs Wochen lang durch. Jetzt weist `trace_problems()` eine Stufe zurück, die ihre deklarierten Ausgaben nicht einmal berührt.
 - **L135** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
-- **L398** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
-- **L849** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L864** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L912** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
+- **L402** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
+- **L859** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L874** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L922** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `tools_geom.py`
 
