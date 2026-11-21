@@ -4,11 +4,13 @@
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
+**Fullseye は、画像検査・三次元計測・物理シミュレーションのための Python のライブラリです。** 型を持つ op をつなぎ、物理シミュレーションで作った真値で確かめ、MCP と RAG で AI に渡して使えます。
+
 > **ViEW2026(2026 年 12 月 3〜4 日、パシフィコ横浜)で発表します → [ViEW2026 のページ](view2026/)**(PoC の動く結果・ブラウザで触れるビューア・論文の情報)
 
-> **Fullseye is an open, explainable vision-and-measurement foundation for
-> industrial inspection and Physical AI** — from image and signal acquisition to
-> geometry, measurement, inspection evidence, and robot action.
+> **Fullseye is a Python library for image inspection, 3-D measurement and physics
+> simulation.** It chains typed operators, checks them against ground truth produced by
+> physics simulation, and hands them to AI assistants through MCP and RAG.
 > Apache-2.0 · `pip install fullseye` · **[English index →](README.en.md)**
 
 

@@ -218,14 +218,14 @@
    "fr": "Qu'est-ce que Fullseye"
   },
   "about": {
-   "ja": "光学設計や三次元計測などのセンシングを含む物理シミュレーションと古典画像処理を、MCP と RAG で AI に渡し、課題ごとに組み合わせを考えさせ、型整合性と真値つき評価で確かめながら対話的に課題を解く基盤です。オープンソース(Apache-2.0)。",
-   "en": "A foundation that hands physics simulation (including sensing such as optical design and 3-D measurement) and classic image processing to an AI through MCP and RAG, lets it work out a combination for each task, and solves the task interactively while checking type consistency and evaluating against ground truth. Open source (Apache-2.0).",
-   "zh": "通过 MCP 和 RAG,把包含光学设计、三维测量等传感在内的物理仿真与经典图像处理交给 AI,让它针对每个课题考虑组合方式,并在类型一致性检查和带真值的评估下以对话方式解决课题的平台。开源(Apache-2.0)。",
-   "tw": "透過 MCP 與 RAG,把包含光學設計、三維量測等感測在內的物理模擬與古典影像處理交給 AI,讓它針對每個課題思考組合方式,並在型別一致性檢查與帶真值的評估下以對話方式解決課題的平台。開放原始碼(Apache-2.0)。",
-   "ko": "광학 설계·3차원 계측 등 센싱을 포함한 물리 시뮬레이션과 고전 영상 처리를 MCP와 RAG로 AI에 넘겨, 과제마다 조합을 생각하게 하고, 타입 정합성과 참값 평가로 확인하면서 대화형으로 과제를 푸는 기반입니다. 오픈 소스(Apache-2.0).",
-   "de": "Eine Plattform, die Physiksimulation (einschließlich Sensorik wie Optikdesign und 3-D-Messung) und klassische Bildverarbeitung über MCP und RAG an eine KI übergibt, sie für jede Aufgabe eine Kombination ausarbeiten lässt und die Aufgabe interaktiv löst, geprüft durch Typkonsistenz und Bewertung gegen Ground Truth. Open Source (Apache-2.0).",
-   "hi": "एक foundation जो physics simulation (optical design और 3-D measurement जैसी sensing सहित) और classic image processing को MCP और RAG के ज़रिए AI को देता है, हर task के लिए combination सोचने देता है, और type consistency तथा ground truth evaluation से जाँचते हुए task को interactive तरीके से हल करता है। Open source (Apache-2.0)।",
-   "fr": "Une base qui transmet à une IA, via MCP et RAG, la simulation physique (y compris la détection, comme la conception optique et la mesure tridimensionnelle) et le traitement d'images classique, lui fait déterminer une combinaison adaptée à chaque tâche, et résout la tâche de manière interactive tout en vérifiant la cohérence des types et en évaluant par rapport à la vérité terrain. Open source (Apache-2.0)."
+   "ja": "Fullseye は、画像検査・三次元計測・物理シミュレーションの基盤です。型を持つ古典画像処理の op と、光学設計などのセンシングを含む物理シミュレーションを MCP と RAG で AI に渡し、課題ごとに組み合わせを考えさせ、型整合性と真値つき評価で確かめながら対話的に課題を解きます。オープンソース(Apache-2.0)。",
+   "en": "Fullseye is a foundation for image inspection, 3-D measurement and physics simulation. It hands typed classic image-processing operators and physics simulation (including sensing such as optical design) to an AI through MCP and RAG, lets it work out a combination for each task, and solves the task interactively while checking type consistency and evaluating against ground truth. Open source (Apache-2.0).",
+   "zh": "Fullseye 是图像检测、三维测量与物理仿真的平台。通过 MCP 和 RAG,把类型化的经典图像处理算子与包含光学设计等传感在内的物理仿真交给 AI,让它针对每个课题考虑组合方式,并在类型一致性检查和带真值的评估下以对话方式解决课题。开源(Apache-2.0)。",
+   "tw": "Fullseye 是影像檢測、三維量測與物理模擬的平台。透過 MCP 與 RAG,把型別化的古典影像處理運算子與包含光學設計等感測在內的物理模擬交給 AI,讓它針對每個課題思考組合方式,並在型別一致性檢查與帶真值的評估下以對話方式解決課題。開放原始碼(Apache-2.0)。",
+   "ko": "Fullseye는 영상 검사·3차원 계측·물리 시뮬레이션의 기반입니다. 타입을 가진 고전 영상 처리 연산자와 광학 설계 등 센싱을 포함한 물리 시뮬레이션을 MCP와 RAG로 AI에 넘겨, 과제마다 조합을 생각하게 하고, 타입 정합성과 참값 평가로 확인하면서 대화형으로 과제를 풉니다. 오픈 소스(Apache-2.0).",
+   "de": "Fullseye ist eine Plattform für Bildprüfung, 3-D-Messung und Physiksimulation. Sie übergibt typisierte Operatoren der klassischen Bildverarbeitung und Physiksimulation (einschließlich Sensorik wie Optikdesign) über MCP und RAG an eine KI, lässt sie für jede Aufgabe eine Kombination ausarbeiten und löst die Aufgabe interaktiv, geprüft durch Typkonsistenz und Bewertung gegen Ground Truth. Open Source (Apache-2.0).",
+   "hi": "Fullseye image inspection, 3-D measurement और physics simulation का foundation है। यह typed classic image-processing operators और physics simulation (optical design जैसी sensing सहित) को MCP और RAG के ज़रिए AI को देता है, हर task के लिए combination सोचने देता है, और type consistency तथा ground truth evaluation से जाँचते हुए task को interactive तरीके से हल करता है। Open source (Apache-2.0)।",
+   "fr": "Fullseye est une base pour l'inspection d'images, la mesure 3D et la simulation physique. Elle transmet à une IA, via MCP et RAG, des opérateurs typés de traitement d'images classique et la simulation physique (y compris la détection, comme la conception optique), lui fait déterminer une combinaison adaptée à chaque tâche, et résout la tâche de manière interactive tout en vérifiant la cohérence des types et en évaluant par rapport à la vérité terrain. Open source (Apache-2.0)."
   },
   "try": {
    "ja": "試してみる",

@@ -8,7 +8,7 @@
 
 **发表:2026 年 12 月 3 日(周四)14:40–15:50(日本时间),互动环节 2,IS2-19**(横滨 Pacifico,Annex Hall)
 
-<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="从同一个三维场景取出图像、深度、法线、阴影和边缘并分别处理的示意图" width="640" height="468"><div class="vt"><p>通过 MCP 和 RAG,把包含光学设计、三维测量等传感在内的物理仿真与经典图像处理交给 AI,让它针对每个课题考虑组合方式,并在类型一致性检查和带真值的评估下以对话方式解决课题的平台。开源(Apache-2.0)。</p></div></div>
+<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="从同一个三维场景取出图像、深度、法线、阴影和边缘并分别处理的示意图" width="640" height="468"><div class="vt"><p>Fullseye 是图像检测、三维测量与物理仿真的平台。通过 MCP 和 RAG,把类型化的经典图像处理算子与包含光学设计等传感在内的物理仿真交给 AI,让它针对每个课题考虑组合方式,并在类型一致性检查和带真值的评估下以对话方式解决课题。开源(Apache-2.0)。</p></div></div>
 
 点按图块即可打开视频或图(▶ = 动态)。
 
