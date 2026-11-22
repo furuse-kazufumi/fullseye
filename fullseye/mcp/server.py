@@ -22,7 +22,6 @@
 """
 from __future__ import annotations
 
-import itertools
 import json
 import math
 import os
@@ -33,6 +32,8 @@ import time
 from typing import Any
 
 import numpy as np
+
+from json_safety import MAX_JSON_DEPTH, _json_depth as json_depth
 from fssystem import get_system
 
 from .catalog import Catalog, CatalogError, SOURCES
@@ -622,23 +623,6 @@ _SURROGATE_ESCAPE = re.compile(rb"\\u[dD][89a-fA-F]")
 
 #: 断った Content-Length 枠の本文を読み捨てる 1 回の上限。本文全体は持たない。
 _DISCARD_CHUNK = 1 << 20
-
-#: 1 通の JSON の入れ子の深さの上限(配列と辞書の段の数)。MCP の 1 通は深くても十数段(tools/call の
-#: arguments の中の処理列で 6〜8 段)。これを超える本文は、読む前に断る(→ -32700)。
-MAX_JSON_DEPTH = 64
-
-_JSON_STRING = re.compile(rb'"(?:[^"\\]|\\[\s\S])*"')
-_NOT_BRACKET = re.compile(rb"[^\[\]{}]+")
-_DEPTH_STEP = [0] * 256
-_DEPTH_STEP[ord("[")] = _DEPTH_STEP[ord("{")] = 1
-_DEPTH_STEP[ord("]")] = _DEPTH_STEP[ord("}")] = -1
-
-
-def json_depth(body: bytes) -> int:
-    """本文の入れ子の深さの最大(文字列の中の括弧は数えない)。JSON として正しいかは見ない。"""
-    brackets = _NOT_BRACKET.sub(b"", _JSON_STRING.sub(b"", body))
-    return max(itertools.accumulate(map(_DEPTH_STEP.__getitem__, brackets)), default=0)
-
 
 def _refuse_constant(token: str):
     """``NaN`` / ``Infinity`` / ``-Infinity`` は JSON に無い(RFC 8259)。json.loads の既定は受けるので断る。"""
@@ -3707,25 +3691,38 @@ def demo() -> int:
                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, cwd=ROOT, env=env)
     seq = 0
 
-    def call(method, **params):
+    def call(method, *, allow_error=False, **params):
         nonlocal seq
         seq += 1
         write_message(p.stdin, {"jsonrpc": "2.0", "id": seq, "method": method, "params": params})
         r = read_message(p.stdout)
-        if r is None or "error" in r:
+        if r is None:
+            raise RuntimeError("MCP の返事が無いか error: %r" % (r,))
+        if "error" in r:
+            if allow_error:
+                return {"_rpc_error": r["error"]}
             raise RuntimeError("MCP の返事が無いか error: %r" % (r,))
         return r["result"]
 
-    def tool(name, **a):
-        r = call("tools/call", name=name, arguments=a)
-        text = r["content"][0]["text"]
-        links = [c["name"] for c in r["content"] if c["type"] == "resource_link"]
-        print("--- %s%s" % (name, "  [isError]" if r.get("isError") else ""))
+    def tool(name, *, expect_refusal=False, **a):
+        r = call("tools/call", name=name, arguments=a, allow_error=expect_refusal)
+        rpc_error = r.get("_rpc_error")
+        text = rpc_error.get("message", repr(rpc_error)) if rpc_error else r["content"][0]["text"]
+        links = [] if rpc_error else [c["name"] for c in r["content"] if c["type"] == "resource_link"]
+        refused = bool(rpc_error or r.get("isError"))
+        print("--- %s%s" % (name, "  [refused]" if refused else ""))
         print(text if len(text) < 1200 else text[:1200] + " …")
         if links:
             print("resource_link:", ", ".join(links))
+        if expect_refusal and not refused:
+            raise RuntimeError("expected refusal was not returned by %s" % name)
+        if refused and not expect_refusal:
+            raise RuntimeError("unexpected tool failure in %s: %s" % (name, text[:300]))
+        if expect_refusal:
+            print("(expected refusal)")
         return r
 
+    failed = False
     try:
         ini = call("initialize", protocolVersion=PROTOCOL_VERSION, capabilities={},
                    clientInfo={"name": "fullseye-demo", "version": "0"})
@@ -3757,14 +3754,18 @@ def demo() -> int:
                   + [_fs.distort_points(_np.column_stack([_np.full(30, x), _span]), _K, _true).tolist()
                      for x in (40, 100, 160)])
         tool("fullseye_estimate_distortion", lines=_lines, K=_K.tolist(), radial=2, tangential=False)
-        tool("fullseye_apply", handle=h, op="count_obj")          # 型不一致 → 拒否される見本
+        tool("fullseye_apply", handle=h, op="count_obj", expect_refusal=True)  # 型不一致 → 拒否される見本
     except RuntimeError as exc:
-        print("(拒否の見本)", str(exc)[:300])
+        failed = True
+        print("demo failed:", str(exc)[:300], file=sys.stderr)
     finally:
-        p.stdin.close()
+        try:
+            p.stdin.close()
+        except OSError:
+            pass
         rc = p.wait(timeout=120)
     print("server exit:", rc)
-    return 0 if rc == 0 else 1
+    return 0 if rc == 0 and not failed else 1
 
 
 def _arg_parser():

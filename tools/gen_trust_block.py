@@ -45,11 +45,12 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 START, END = "<!-- trust-block:start -->", "<!-- trust-block:end -->"
 HISTORY_PAGE = "docs/OP_COUNT_HISTORY.md"
+GITHUB_DOCS_BLOB = "https://github.com/furuse-kazufumi/fullseye/blob/master/docs/"
 
 #: (書き込み先, 言語, 差し込みの目印(マーカーが無い初回だけ使う), リンクの前置き)
 #: repo の README.md は英語。docs/README*.md は索引(GitHub Pages のトップ)。
 TARGETS = [
-    ("README.md", "en", "## Three ways in", "docs/"),
+    ("README.md", "en", "## Three ways in", GITHUB_DOCS_BLOB),
     ("docs/README.md", "ja", "<!-- poc-index:start -->", ""),
     ("docs/README.en.md", "en", "<!-- poc-index:start -->", ""),
     ("docs/README.zh.md", "zh", "<!-- poc-index:start -->", ""),

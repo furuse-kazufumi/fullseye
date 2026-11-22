@@ -19,6 +19,7 @@ MCP の ``fullseye_find_ops`` / ``fullseye_plan`` が毎回 -32603 で落ちて�
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import os
 import subprocess
@@ -26,6 +27,7 @@ import sys
 import tempfile
 import warnings
 import zipfile
+from pathlib import Path
 
 warnings.filterwarnings("ignore")
 
@@ -211,6 +213,145 @@ NOT_SHIPPED = {
         "道具。imgevolve の索引づくりも tools/ を探して呼ぶ)だけで、wheel の実行時には読まない",
 }
 
+#: ソースから見つけた examples の実行時データのうち wheel に同梱する物。
+EXAMPLE_SHIPPED = (
+    "examples/data/ai_inspection_recipes_2026_11_08.json",
+    "examples/data/ai_inspection_scores_2026_11_08.json",
+    "examples/data/fintraffic_sun_2026_09_20.json",
+    "examples/data/fp64_emulation_measured_2026_10_05.json",
+    "examples/data/hokusai_great_wave_met_dp130155.png",
+    "examples/data/ngs_geodetic_benchmarks_2026_09_22.json",
+    "examples_3d/_gallery/showcase_turntable_pod.gif",
+)
+
+#: ソースから見つけたが同梱しない repo 直下データと理由。最上位 ``data`` パッケージは作らない。
+EXAMPLE_NOT_SHIPPED = {
+    "data/fileio_real":
+        "1.5 MB の公開科学データ一式。最上位 data パッケージとの衝突を避け、checkout 専用にする",
+    "data/itokawa_shape/gaskell_q64.npz":
+        "checkout の重力 PoC 用形状。examples 配下への移動を伴うため同梱しない",
+    "data/oct_real/paint_sdoct_cc_by.npz":
+        "checkout の実測 OCT PoC 用。examples 配下への移動を伴うため同梱しない",
+    "data/plateau_yokohama/venue_lod2.npz":
+        "checkout の PLATEAU PoC 用。examples 配下への移動を伴うため同梱しない",
+    "data/pmd_real/hammer_grid_cc0.npz":
+        "checkout の PMD PoC 用。examples 配下への移動を伴うため同梱しない",
+    "data/thin_film_real":
+        "checkout の薄膜 PoC 2 本が共有する実測一式。examples 配下への移動を伴うため同梱しない",
+    "data/thin_film_real/schwarz2024_micrograph_sio2_edge_640.jpg":
+        "checkout の薄膜 PoC が直接読む実測画像。examples 配下への移動を伴うため同梱しない",
+    "data/thin_film_real/schwarz2024_sio2_si_reflectance.csv":
+        "checkout の薄膜 PoC が直接読む実測表。examples 配下への移動を伴うため同梱しない",
+    "data/tum_rgbd_fr1_xyz":
+        "3.9 MB の TUM RGB-D 一式。最上位 data パッケージとの衝突を避け、checkout 専用にする",
+}
+
+
+def _eval_example_path(node, names, source):
+    """例の定数式を副作用なしで Path に畳む。/ Fold an example's constant path expression safely."""
+    if isinstance(node, ast.Constant) and isinstance(node.value, (str, int)):
+        return node.value
+    if isinstance(node, ast.Name):
+        return source if node.id == "__file__" else names.get(node.id)
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
+        left = _eval_example_path(node.left, names, source)
+        right = _eval_example_path(node.right, names, source)
+        if isinstance(left, Path) and isinstance(right, (str, int)):
+            return left / str(right)
+    if isinstance(node, ast.Attribute):
+        value = _eval_example_path(node.value, names, source)
+        if node.attr == "parent" and isinstance(value, Path):
+            return value.parent
+    if (isinstance(node, ast.Subscript) and isinstance(node.value, ast.Attribute)
+            and node.value.attr == "parents"):
+        value = _eval_example_path(node.value.value, names, source)
+        index = _eval_example_path(node.slice, names, source)
+        if isinstance(value, Path) and isinstance(index, int):
+            return value.parents[index]
+    if not isinstance(node, ast.Call):
+        return None
+    args = [_eval_example_path(arg, names, source) for arg in node.args]
+    call = ast.unparse(node.func)
+    if call in ("Path", "pathlib.Path") and args and isinstance(args[0], (str, Path)):
+        return Path(args[0])
+    if call.endswith(".resolve"):
+        value = _eval_example_path(node.func.value, names, source)
+        return value.resolve() if isinstance(value, Path) else None
+    if call == "os.path.abspath" and args and isinstance(args[0], (str, Path)):
+        return Path(args[0]).resolve()
+    if call == "os.path.dirname" and args and isinstance(args[0], (str, Path)):
+        return Path(args[0]).parent
+    if (call == "os.path.join" and args and isinstance(args[0], (str, Path))
+            and all(isinstance(arg, (str, int)) for arg in args[1:])):
+        return Path(args[0]).joinpath(*(str(arg) for arg in args[1:]))
+    return None
+
+
+def _gallery_name_is_read(tree, name):
+    """gallery の生成先ではなく、読取り呼出しへ渡す名前だけを選ぶ。/ Select gallery read inputs."""
+    readers = {"open", "load", "imread", "read_bytes", "read_text"}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call) or ast.unparse(node.func).rsplit(".", 1)[-1] not in readers:
+            continue
+        if any(isinstance(part, ast.Name) and part.id == name for arg in node.args for part in ast.walk(arg)):
+            return True
+    return False
+
+
+def _example_runtime_paths(repo: str) -> dict:
+    """examples のソースが指す実在データを ``path -> readers`` で返す。
+
+    AST に見える定数式だけを辿るため、関数の引数を通じて渡されるパスは追跡しない。
+    Discover existing runtime data referenced by constant expressions in examples. Paths passed
+    through function parameters are intentionally not tracked because their runtime values are unknown.
+    """
+    root = Path(repo).resolve()
+    data_roots = (root / "examples" / "data", root / "examples_3d" / "_gallery", root / "data")
+    found = {}
+
+    def record(value, source, tree, name=None):
+        if not isinstance(value, Path):
+            return
+        path = value.resolve()
+        inside = any(path == base or base in path.parents for base in data_roots)
+        if not inside or not path.exists():
+            return
+        if name is not None and data_roots[1] in path.parents and not _gallery_name_is_read(tree, name):
+            return
+        rel = path.relative_to(root).as_posix()
+        found.setdefault(rel, set()).add(source.relative_to(root).as_posix())
+
+    def visit(node, names, source, tree):
+        value = None
+        targets = []
+        if isinstance(node, ast.Assign):
+            value, targets = _eval_example_path(node.value, names, source), node.targets
+        elif isinstance(node, ast.AnnAssign) and node.value is not None:
+            value, targets = _eval_example_path(node.value, names, source), [node.target]
+        for target in targets:
+            if not isinstance(target, ast.Name) or value is None:
+                continue
+            names[target.id] = value
+            record(value, source, tree, target.id)
+
+        if isinstance(node, ast.Call):
+            reader = ast.unparse(node.func).rsplit(".", 1)[-1]
+            if reader in {"open", "load", "imread", "read_bytes", "read_text"}:
+                for arg in node.args:
+                    record(_eval_example_path(arg, names, source), source, tree)
+                if isinstance(node.func, ast.Attribute):
+                    record(_eval_example_path(node.func.value, names, source), source, tree)
+
+        for child in ast.iter_child_nodes(node):
+            child_names = dict(names) if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) else names
+            visit(child, child_names, source, tree)
+
+    sources = sorted((root / "examples").rglob("*.py")) + sorted((root / "examples_3d").rglob("*.py"))
+    for source in sources:
+        tree = ast.parse(source.read_text(encoding="utf-8"), filename=str(source))
+        visit(tree, {}, source, tree)
+    return {path: tuple(sorted(readers)) for path, readers in sorted(found.items())}
+
 
 def _tracked_package_files(repo: str) -> list:
     """``git ls-files`` が追跡する ``fullseye/`` の下の .py 以外のファイル(repo 相対・``/`` 区切り)。
@@ -238,6 +379,14 @@ def _package_data(wheel: str, repo: str = "") -> int:
         print("NG: git ls-files で %s の追跡ファイルを数えられない(%s: %s)—— checkout の tools/ から走らせる"
               % (PACKAGE_DATA_ROOT, type(e).__name__, e))
         return 1
+    try:
+        example_runtime = _example_runtime_paths(repo)
+    except (OSError, SyntaxError, ValueError) as e:
+        print("NG: examples のソースから実行時データを数えられない(%s: %s)" % (type(e).__name__, e))
+        return 1
+    classified = set(EXAMPLE_SHIPPED) | set(EXAMPLE_NOT_SHIPPED)
+    unclassified = sorted(set(example_runtime) - classified)
+    stale_examples = sorted(classified - set(example_runtime))
     if not tracked:
         print("NG: git が追跡する %s の .py 以外のファイルが 0 件 —— 門が空を通している(repo=%s)"
               % (PACKAGE_DATA_ROOT, repo))
@@ -260,9 +409,22 @@ def _package_data(wheel: str, repo: str = "") -> int:
         problems.append("wheel の中で 0 バイト: %s" % empty)
     if stale:
         problems.append("NOT_SHIPPED に挙げたのに git が追跡していない(除外を消す): %s" % stale)
+    example_missing = [p for p in EXAMPLE_SHIPPED if p not in sizes]
+    example_empty = [p for p in EXAMPLE_SHIPPED if sizes.get(p) == 0]
+    if unclassified:
+        problems.append("examples のソースが読むが同梱/非同梱の表に無いデータ: %s" % unclassified)
+    if stale_examples:
+        problems.append("examples のソースから見つからない古い同梱/非同梱の表: %s" % stale_examples)
+    if example_missing:
+        problems.append("wheel の examples が実行時に読むデータが無い: %s" % example_missing)
+    if example_empty:
+        problems.append("wheel の examples 実行時データが 0 バイト: %s" % example_empty)
     print("%s: git が追跡する %s の .py 以外 %d 件(意図して同梱しない %d 件)/ そのうち wheel に在る %d 件"
           % (os.path.basename(wheel), PACKAGE_DATA_ROOT, len(tracked), len(tracked) - len(want),
              len(want) - len(missing)))
+    print("examples のソースから見つけた実行時データ: %d 件(同梱 %d / 非同梱 %d)、wheel 内 %d / %d 件" %
+          (len(example_runtime), len(EXAMPLE_SHIPPED), len(EXAMPLE_NOT_SHIPPED),
+           len(EXAMPLE_SHIPPED) - len(example_missing), len(EXAMPLE_SHIPPED)))
     if problems:
         for t in problems:
             print("NG:", t)
