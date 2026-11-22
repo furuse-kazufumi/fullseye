@@ -287,22 +287,32 @@ def scene_resin_dent_fibre(seed=20261013, defects=True):
 
 #: The two lines laser-engraved on the plate of ``engraved_lot_code``.
 LOT_CODE = ("LOT 2610-A7", "FS-0042")
+#: 版に依存しない刻印字形の形と置き場所。 / Shape and source of the version-independent glyph raster.
+_LOT_RASTER_SHAPE = (224, 384)
+_LOT_RASTER = os.path.join(_ROOT, "studio_assets", "sample_images", "engraved_lot_code.glyphs.png")
+
+
+def _load_lot_code_mark():
+    """固定済み刻印ラスタを bool で読む。 / Load the frozen engraved glyph raster as bool."""
+    mark = imgio.load(_LOT_RASTER) > 0.5
+    if mark.shape != _LOT_RASTER_SHAPE:
+        raise ValueError("engraved lot-code raster has shape %r, expected %r"
+                         % (mark.shape, _LOT_RASTER_SHAPE))
+    return mark
 
 
 def scene_engraved_lot_code(seed=20261014, elev=20.0, roughness=0.5, background_level=0.30):
     """A laser-engraved lot code on bead-blasted aluminium, under a low-angle (dark-field) ring."""
-    import cv2
-    H, W = 224, 384
+    H, W = _LOT_RASTER_SHAPE
     px = 0.04                                      # mm / px -> 15.4 x 9.0 mm
     rng = np.random.default_rng(seed)
     blast = ndimage.gaussian_filter(rng.standard_normal((H, W)), 1.2)        # bead-blast pits
     blast *= math.tan(math.radians(6.0)) / np.gradient(blast, px)[0].std()
     wav = ndimage.gaussian_filter(rng.standard_normal((H, W)), 50.0)
     h = blast + wav * (0.006 / wav.std())
-    ink = np.zeros((H, W), np.uint8)
-    for k, line in enumerate(LOT_CODE):
-        cv2.putText(ink, line, (34, 88 + 80 * k), cv2.FONT_HERSHEY_SIMPLEX, 1.55, 255, 4, cv2.LINE_8)
-    mark = ink > 0
+    # OpenCV 5.0.0 の Hershey Simplex を指定値で一度だけ描いて固定した。5.1.0 は同じ呼び出しでも
+    # 879 px が変わる。 / Frozen once from OpenCV 5.0.0; 5.1.0 changes 879 pixels for the same call.
+    mark = _load_lot_code_mark()
     depth = 0.020                                                            # mm
     wall = ndimage.gaussian_filter(mark.astype(np.float64), 0.8)             # sloped walls
     h = h - depth * wall
@@ -325,7 +335,8 @@ def scene_engraved_lot_code(seed=20261014, elev=20.0, roughness=0.5, background_
                            % (LOT_CODE[0], LOT_CODE[1], elev)),
         "truth": {"kind": "engraved_text", "text": list(LOT_CODE), "glyph_components": n_chars,
                   "pixels": int(mark.sum()), "depth_um": depth * 1e3,
-                  "font": "OpenCV Hershey Simplex, scale 1.55, thickness 4",
+                  "font": ("frozen once from OpenCV 5.0.0 cv2.putText: Hershey Simplex, scale 1.55, "
+                           "thickness 4, LINE_8, baselines 88/168, left 34; OpenCV 5.1 changes 879 pixels"),
                   "baselines_row": [88, 168], "left_col": 34,
                   "mask_rule": "the engraved footprint (the rasterised glyph strokes)"},
         "light": "illumdesign ring, radius 40 mm, elevation %.0f deg, 72 emitters" % elev,
