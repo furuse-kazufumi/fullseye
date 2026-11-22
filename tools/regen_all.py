@@ -51,6 +51,7 @@ CHAIN = [
     #   2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、
     #   spec を足して回し忘れても誰も気づけなかった)。
     (["gen_auto_specs_data.py"], "auto_specs_data.py(data/auto_specs/*.json の wheel 同梱用ミラー)"),
+    (["tools/gen_sbom.py"], "docs/sbom/fullseye.cdx.json(pyproject.toml の宣言依存、未解決の CycloneDX SBOM)"),
     # ★2026-11-03: GPU の台帳 2 本は op ノートより前に。op ノートの GPU 欄は gpu_route(この 2 本と許可リスト)
     #   から書くので、後ろで台帳が変わるとノートが 1 周遅れになる。入力は commit した実測ログと許可リストだけ
     #   (registry を組むときに op_knob.json を読むが、表の中身には入らない —— ORDER_EXEMPT)。
@@ -174,6 +175,7 @@ CHAIN = [
 #: パターンは fnmatch(`*` は `/` も跨ぐ)。repo 相対・`/` 区切り。
 OUTPUTS = {
     "gen_auto_specs_data.py": ["auto_specs_data.py"],
+    "tools/gen_sbom.py": ["docs/sbom/fullseye.cdx.json"],
     "imgevolve.py": ["docs/OP_INDEX.json"],
     "tools/gpu_tier_rules.py": ["docs/perf/GPU_TIERS.md"],
     "tools/gen_halcon_opencl_parity.py": ["docs/perf/HALCON_OPENCL_PARITY.md",
@@ -279,6 +281,8 @@ MAY_OUTPUTS = {
 
 
 #: 各段が読む、**他の段の**生成物(自分の出力を読み比べるのは書かなくてよい)。
+#: gen_sbom が読むのは手書きの pyproject.toml だけなので、この表には行を持たない。
+#: gen_sbom reads only the hand-written pyproject.toml, so it has no row in this generated-input table.
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
 READS = {
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],

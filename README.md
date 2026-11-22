@@ -431,6 +431,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | Update a checkout safely | `tools/update_fullseye.py --check` |
 | **See what is actually verified (and how)** | `docs/MATURITY.md` + `docs/maturity.json` (generated, not written) |
 | **Report results from real hardware or real data** (data may stay private) | `docs/VALIDATION_CONTRIBUTING.en.md` · [issue form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) |
+| **Report a security vulnerability** (privately) · SBOM | [SECURITY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/SECURITY.md) · [`docs/sbom/fullseye.cdx.json`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/sbom/fullseye.cdx.json) |
 | **Read why it is built this way** | `docs/DESIGN_NOTES.md` — the load-bearing `★` comments collected from the source (generated; the count is `total` in `docs/design_notes.json`), in 6 languages (translated as we go; untranslated entries are shown as such) |
 | Cite Fullseye | `CITATION.cff` |
 
