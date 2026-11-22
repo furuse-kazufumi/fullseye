@@ -3125,7 +3125,7 @@
      "local_max"
     ],
     "status": "invalid",
-    "why": "sort_mismatch(段 1 [{'input': 0, 'actual': 'image', 'expected': 'region', 'fixes': [{'kind': 'conversion', 'ops': ['hx_gen_empty_region'], 'stage': 'hx_gen_empty_region'}]}])",
+    "why": "sort_mismatch(段 1 [{'input': 0, 'actual': 'image', 'expected': 'region', 'fixes': [{'kind': 'conversion', 'ops': ['regiongrowing'], 'stage': 'regiongrowing'}]}])",
     "score": null,
     "ms_median": null,
     "recipe_source": "capped_pipeline",
@@ -4231,6 +4231,14 @@
     "ai:v3_mcpfix:qwen2.5-coder:32b:9"
    ],
    "why": "Re-scored deterministically from the saved recipes (no LLM call): these rows all contain auto_threshold (Otsu) and their secondary numbers (area AUROC, region hit rate, pixel false-alarm rate) no longer reproduced on the 1.1.1 operators. Status, detection rate and false-alarm rate are unchanged (all six flag every image). Every other row is the 2026-11-08 record."
+  },
+  {
+   "date": "2026-11-15",
+   "task": "candle",
+   "keys": [
+    "ai:v2_ctx32k:qwen2.5:14b:7"
+   ],
+   "why": "Only the validator's suggested conversion in the 'why' text changed (hx_gen_empty_region -> regiongrowing) after the MCP fixes merged in PR #318; status (invalid), score (none) and attribution are unchanged. Found by the local full run with data on 2026-11-15 (the same mismatch occurs on the tree before this change)."
   }
  ]
 }
