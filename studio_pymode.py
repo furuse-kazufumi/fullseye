@@ -46,6 +46,7 @@ import types
 from dataclasses import dataclass, field
 
 from PySide6 import QtCore, QtGui, QtWidgets
+import shiboken6                                  # comes with PySide6
 
 import studio_program as sp
 import studio_settings
@@ -453,6 +454,14 @@ class _FlowRow(QtWidgets.QLayout):
         self.setSpacing(spacing)
 
     def addItem(self, item):                                  # noqa: N802 - Qt's name
+        # 2026-11-23: QLayout.addWidget hands over a QWidgetItem made by Qt (C++). PySide never hears Qt delete
+        # such an item, so its wrapper (kept here, and parented by PySide to the layout around this row) outlived
+        # it and broke a later object at the same address (studio_theme.LayoutEntry). Keep an item made in
+        # Python instead: its wrapper class tells PySide when Qt deletes it.
+        widget = item.widget() if not shiboken6.createdByPython(item) else None
+        if widget is not None:
+            shiboken6.delete(item)
+            item = QtWidgets.QWidgetItem(widget)
         self._items.append(item)
 
     def addStretch(self, _stretch=1):                         # noqa: N802 - QBoxLayout's name
@@ -2652,15 +2661,15 @@ def _find_layout(widget):
     parent = widget.parentWidget()
     if parent is None or parent.layout() is None:
         return None
+    import studio_theme                                       # noqa: PLC0415
     todo = [parent.layout()]
     while todo:
         lay = todo.pop()
-        for i in range(lay.count()):
-            it = lay.itemAt(i)
-            if it.widget() is widget:
+        for it in studio_theme.layout_entries(lay):            # no Qt item object is kept (LayoutEntry)
+            if it.widget is widget:
                 return lay
-            if it.layout() is not None:
-                todo.append(it.layout())
+            if it.layout is not None:
+                todo.append(it.layout)
     return None
 
 

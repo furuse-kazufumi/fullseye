@@ -719,8 +719,8 @@ def tighten(win):
     from PySide6 import QtWidgets   # noqa: PLC0415
     grow = (QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Ignored)
 
-    def grows(item):
-        w = item.widget()
+    def grows(item):                             # item: a studio_theme.LayoutEntry (no Qt item is kept)
+        w = item.widget
         if w is not None:
             if w.isHidden() or w.maximumHeight() <= w.minimumHeight():
                 return False
@@ -728,11 +728,11 @@ def tighten(win):
                 return True
             inner = w.layout()                   # a group box grows when something inside it does
             return (inner is not None and not isinstance(w, QtWidgets.QAbstractScrollArea)
-                    and any(grows(inner.itemAt(i)) for i in range(inner.count())))
-        if item.spacerItem() is not None:
+                    and any(grows(e) for e in studio_theme.layout_entries(inner)))
+        if item.spacer:
             return _spacer_grows(item)
-        lay = item.layout()
-        return lay is not None and any(grows(lay.itemAt(i)) for i in range(lay.count()))
+        lay = item.layout
+        return lay is not None and any(grows(e) for e in studio_theme.layout_entries(lay))
 
     changed = 0
     for dock in win._docks.values():
@@ -745,12 +745,12 @@ def tighten(win):
             if not isinstance(lay, QtWidgets.QVBoxLayout) or box.property("fsTight"):
                 continue
             box.setProperty("fsTight", True)
-            items = [lay.itemAt(i) for i in range(lay.count())]
+            items = studio_theme.layout_entries(lay)
             if not items or any(grows(it) for it in items):
                 continue
-            texts = [it.widget() for it in items
-                     if isinstance(it.widget(), (QtWidgets.QPlainTextEdit, QtWidgets.QTextEdit, QtWidgets.QAbstractItemView))
-                     and it.widget().minimumHeight() == it.widget().maximumHeight()]
+            texts = [it.widget for it in items
+                     if isinstance(it.widget, (QtWidgets.QPlainTextEdit, QtWidgets.QTextEdit, QtWidgets.QAbstractItemView))
+                     and it.widget.minimumHeight() == it.widget.maximumHeight()]
             if texts:
                 texts[-1].setMaximumHeight(_QWIDGETSIZE_MAX)
             elif box is root:
@@ -766,8 +766,9 @@ def tighten(win):
 
 
 def _spacer_grows(item):
+    """``item``: a studio_theme.LayoutEntry of a spacer."""
     from PySide6 import QtCore   # noqa: PLC0415
-    return bool(item.spacerItem().expandingDirections() & QtCore.Qt.Vertical)
+    return bool(item.expanding & QtCore.Qt.Vertical)
 
 
 # --------------------------------------------------------------------------- #
@@ -1580,12 +1581,11 @@ def _holding(start, target):
     stack = [start] if start is not None else []
     while stack:
         lay = stack.pop()
-        for i in range(lay.count()):
-            it = lay.itemAt(i)
-            if it.widget() is target or it.layout() is target:
-                return lay, i
-            if it.layout() is not None:
-                stack.append(it.layout())
+        for it in studio_theme.layout_entries(lay):
+            if it.widget is target or it.layout is target:
+                return lay, it.index
+            if it.layout is not None:
+                stack.append(it.layout)
     return None, -1
 
 
@@ -1612,17 +1612,17 @@ def declare_strip(win, key, row, body=None, shape=None, root=None, more=()):
         raise ValueError("strip of %r: no dock of that name, so a shape widget is needed" % (key,))
     # 1. the buttons, in groups; separators between them leave the row
     groups, cur, drop = [], [], []
-    items = [row.itemAt(i) for i in range(row.count())]
+    items = studio_theme.layout_entries(row)
     for i, it in enumerate(items):
-        w = it.widget()
+        w = it.widget
         if isinstance(w, QtWidgets.QAbstractButton):
             cur.append(w)
-        elif cur and any(isinstance(x.widget(), QtWidgets.QAbstractButton) for x in items[i + 1:]):
+        elif cur and any(isinstance(x.widget, QtWidgets.QAbstractButton) for x in items[i + 1:]):
             line = isinstance(w, QtWidgets.QFrame) and w.frameShape() == QtWidgets.QFrame.VLine
-            gap = it.spacerItem() is not None
+            gap = it.spacer
             if line or gap:
                 drop.append(i)
-                if line or it.sizeHint().width() >= 6 or it.spacerItem().expandingDirections():
+                if line or it.size_hint.width() >= 6 or it.expanding:
                     if cur:
                         groups.append(cur)
                     cur = []
@@ -1635,14 +1635,14 @@ def declare_strip(win, key, row, body=None, shape=None, root=None, more=()):
         raise ValueError("strip of %r: the row holds no buttons" % (key,))
     buttons = [b for g in groups for b in g]
     for extra in more:                           # more rows: their buttons, one group each (P04-6: kinds in order)
-        xb = [extra.itemAt(i).widget() for i in range(extra.count())
-              if isinstance(extra.itemAt(i).widget(), QtWidgets.QAbstractButton)]
+        xb = [e.widget for e in studio_theme.layout_entries(extra)
+              if isinstance(e.widget, QtWidgets.QAbstractButton)]
         for b in xb:
             extra.removeWidget(b)
         if xb:
             groups.append(xb)
         box = extra.parentWidget()
-        if box is not None and not any(extra.itemAt(i).widget() is not None for i in range(extra.count())):
+        if box is not None and not any(e.widget is not None for e in studio_theme.layout_entries(extra)):
             box.hide()                           # e.g. the "Export & I/O" box: its buttons are in the strip now
             box.setProperty("fsEmptied", True)
     for i in sorted(drop + [row.indexOf(b) for b in buttons], reverse=True):
@@ -1658,7 +1658,7 @@ def declare_strip(win, key, row, body=None, shape=None, root=None, more=()):
     parent = row.parent()
     if not isinstance(parent, QtWidgets.QBoxLayout):
         raise TypeError("strip of %r: its row must sit in a box layout, not %r" % (key, type(parent).__name__))
-    at = next(i for i in range(parent.count()) if parent.itemAt(i).layout() is row)
+    at = next(e.index for e in studio_theme.layout_entries(parent) if e.layout is row)
     stretch = parent.stretch(at)
     m = row.contentsMargins()
     parent.takeAt(at)
@@ -1713,8 +1713,7 @@ def declare_strip(win, key, row, body=None, shape=None, root=None, more=()):
         on_top = (0, 0, 0, max(0, lay.spacing()))   # the body's own gap, now between the strip and the body
     over.addWidget(strip)
     over.setContentsMargins(*on_top)
-    home.setVisible(any(row.itemAt(i).widget() is not None and not row.itemAt(i).widget().isHidden()
-                        for i in range(row.count())))
+    home.setVisible(any(not w.isHidden() for w in studio_theme.layout_widgets(row)))
     entry = {"key": key, "kind": "dock" if dock is not None else "image", "strip": strip, "row": row,
              "home": home, "host": host, "left": left, "over": over, "on_top": on_top, "body": body,
              "shape": shape, "side": "top"}
@@ -1760,7 +1759,7 @@ def adopt_image_strip(win, view, key=None):
     if old.objectName() == "flow_strip":
         return old
     buttons = getattr(view, "tool_buttons", None) or {}
-    order = [b for b in (old.layout().itemAt(i).widget() for i in range(old.layout().count())) if b is not None]
+    order = studio_theme.layout_widgets(old.layout())
     order = [b for b in order if b in buttons.values()]
     if not order:
         return None
@@ -1829,8 +1828,7 @@ def _turn(entry, side):
             over.addWidget(strip)
         over.setContentsMargins(*entry["on_top"])
         strip.set_orientation("h")
-    rest = [row.itemAt(i).widget() for i in range(row.count())]
-    home.setVisible(any(w is not None and not w.isHidden() for w in rest))
+    home.setVisible(any(not w.isHidden() for w in studio_theme.layout_widgets(row)))
     strip.show()
     entry["side"] = side
 

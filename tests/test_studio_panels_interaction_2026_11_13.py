@@ -184,12 +184,12 @@ def test_title_band_order_menu_is_rightmost(tmp_path, monkeypatch):
         counted = 0
         for key, bar in win._panels["titles"].items():
             lay = bar.layout()
-            names = [lay.itemAt(i).widget().objectName() for i in range(lay.count())
-                     if isinstance(lay.itemAt(i).widget(), QtWidgets.QToolButton)]
+            held = studio_theme.layout_widgets(lay)          # no itemAt: see studio_theme.LayoutEntry
+            names = [w.objectName() for w in held if isinstance(w, QtWidgets.QToolButton)]
             want = (["dock_title_float", "dock_title_menu"] if key in studio_panels.PRINCIPAL
                     else ["dock_title_float", "dock_title_close", "dock_title_menu"])
             assert names == want, (key, names)
-            last = [lay.itemAt(i).widget() for i in range(lay.count()) if lay.itemAt(i).widget() is not None][-1]
+            last = held[-1]
             assert last is bar.b_menu and last.text() == "" and not last.icon().isNull(), key   # D130: drawn
             assert last.accessibleName().endswith(win._panels["tr"](studio_panels.S_MENU)), key
             win._docks[key].raise_(); _pump(app, 0.15)                          # a tab in front, to measure it

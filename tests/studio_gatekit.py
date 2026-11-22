@@ -620,7 +620,7 @@ def count_g01(app, win):
             items.append({"d": "D61", "where": "dock %s" % key, "text": "no title band"})
             continue
         lay = bar.layout()
-        widgets = [lay.itemAt(i).widget() for i in range(lay.count()) if lay.itemAt(i).widget() is not None]
+        widgets = studio_theme.layout_widgets(lay)          # no itemAt: see studio_theme.LayoutEntry
         if not widgets or widgets[-1].objectName() != "dock_title_menu":
             items.append({"d": "D105", "where": "dock %s" % key, "text": "rightmost is not the menu"})
         close = bar.findChild(QtWidgets.QToolButton, "dock_title_close")

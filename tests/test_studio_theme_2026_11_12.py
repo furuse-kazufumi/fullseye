@@ -154,7 +154,7 @@ def test_clickable_sizes_and_gaps(win):
         if b.property("accent") and not b.property("keepSize"):
             assert b.height() >= 28
     for lay in win.findChildren(QtWidgets.QBoxLayout):
-        ws = [lay.itemAt(i).widget() for i in range(lay.count())]
+        ws = studio_theme.layout_widgets(lay)               # no itemAt: see studio_theme.LayoutEntry
         if sum(isinstance(x, QtWidgets.QAbstractButton) for x in ws) >= 2 \
                 and not isinstance(lay.parentWidget(), QtWidgets.QToolBar) \
                 and lay.parentWidget().objectName() != "view_tools":

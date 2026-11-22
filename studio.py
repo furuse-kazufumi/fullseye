@@ -2995,8 +2995,7 @@ def _apply_density(win):
         w = lay.parentWidget()
         if w is None or isinstance(w, skip) or w.objectName() in ("view_tools",):
             continue
-        items = [lay.itemAt(i) for i in range(lay.count())]
-        widgets = [it.widget() for it in items if it.widget() is not None]
+        widgets = studio_theme.layout_widgets(lay)     # never itemAt here: see studio_theme.LayoutEntry
         if isinstance(w, QtWidgets.QGroupBox) and lay is w.layout():
             lay.setContentsMargins(d["inner"], d["title_gap"], d["inner"], d["inner"])
         elif lay is w.layout():
@@ -8513,6 +8512,10 @@ def build_window(model=None, start_mode="pipeline"):
     # op, the typed widget shows the same value in the op's own units (param_specs).
     op_row_a = KnobRow("a", win, raw=op_a_spin, slider=False)
     op_row_b = KnobRow("b", win, raw=op_b_spin, slider=False)
+    # The browser shows lbl_a / lbl_b, so these rows' own name labels are never placed: without a parent they
+    # outlived every closed window as top-level widgets (2 per window, 2026-11-23). They go with their row.
+    for _krow in (op_row_a, op_row_b):
+        _krow.destroyed.connect(_krow.label.deleteLater)
     argrow.addWidget(lbl_a, 0, 0); argrow.addWidget(op_a_spin, 0, 1); argrow.addWidget(op_row_a.typed, 0, 2)
     argrow.addWidget(lbl_b, 1, 0); argrow.addWidget(op_b_spin, 1, 1); argrow.addWidget(op_row_b.typed, 1, 2)
     argrow.setColumnStretch(1, 1)
@@ -17838,6 +17841,7 @@ def build_window(model=None, start_mode="pipeline"):
         win._label_en.update(labels)
         _apply_tooltips(tips)
         _apply_labels(labels)
+        studio_theme.release_layout_item_wrappers()      # its filled layouts were put together in Python
         return root
     win._localize = localize
 
@@ -17896,6 +17900,8 @@ def build_window(model=None, start_mode="pipeline"):
                 win._params_window = None
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
             _write_settings({"lang": win._lang}, what="language setting")
+        # rebuilt rows and panels: no wrapper of a Qt-made layout item may outlive its item (studio_theme.LayoutEntry)
+        studio_theme.release_layout_item_wrappers()
     win._apply_language = apply_language
 
     # ---- colour scheme + density (studio_theme.py; decision 2026-11-12) ------------------------ #
@@ -18571,6 +18577,7 @@ def build_window(model=None, start_mode="pipeline"):
     refresh_stage_list(); show_result()      # refresh_stage_list syncs the knob panel
     state["dirty"] = False                   # a freshly-built window has nothing to lose
     state["renders"] = 0
+    studio_theme.release_layout_item_wrappers()   # the build put filled layouts together (studio_theme.LayoutEntry)
     return win, model
 
 

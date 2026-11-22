@@ -19,6 +19,8 @@ Pure Python on purpose: the contrast and table tests run without a display.
 """
 from __future__ import annotations
 
+from typing import NamedTuple
+
 #: Role -> what it colours (the vocabulary the rest of Studio uses).
 ROLES = {
     "bg0": "window ground", "bg1": "panel ground", "bg2": "input-field ground",
@@ -761,6 +763,119 @@ def mark_prose(root):
         if prose:
             out.append(lab)
     return out
+
+
+#: The package PySide's own classes live in (a layout class from elsewhere is written in Python).
+_PYSIDE_PACKAGE = "PySide6"
+
+
+class LayoutEntry(NamedTuple):
+    """One item of a Qt layout, read without keeping Qt's item object (``layout_entries``).
+
+    Why (2026-11-23, the native crash of the Studio tests on Windows / Python 3.11 and the SIGABRT on Linux CI):
+    Qt's layout items (QWidgetItem, QSpacerItem) are not QObjects, so PySide never hears Qt delete one.
+    ``QLayout.itemAt()`` called from Python makes a wrapper for the item AND PySide keeps it as a child of the
+    layout (its ``addownership-item-at`` glue; for a sub-layout, every item under it too). Once Qt deletes the
+    item, that wrapper still holds the item's address in shiboken's wrapper table, and the next object put at
+    that address crashed when it was destroyed: ``QListWidget.clear()`` in a language switch ->
+    ``Shiboken::Object::destroy`` -> ``BindingManager::releaseWrapper`` on the freed wrapper. The density pass
+    walked every layout of the window with ``itemAt`` on every theme / language change.
+    """
+
+    index: int          # the item's place in the layout
+    widget: object      # the QWidget the item holds, or None
+    layout: object      # the sub-layout the item is, or None
+    spacer: bool        # a QSpacerItem (a stretch or a fixed gap)
+    size_hint: object   # QSize (a copy, safe to keep)
+    expanding: object   # Qt.Orientations the item wants to grow in
+
+
+def is_python_layout(lay) -> bool:
+    """A layout class written in Python (e.g. studio_pymode._FlowRow): it keeps its own item objects."""
+    return type(lay).__module__.split(".", 1)[0] != _PYSIDE_PACKAGE
+
+
+def release_layout_item(item) -> bool:
+    """Make PySide forget a layout item that Qt made (see ``LayoutEntry``); the item itself is untouched.
+
+    A sub-layout is a QObject (PySide hears its end) and an item made in Python has a wrapper class whose
+    destructor tells PySide: both are left alone. Returns True when a wrapper was let go."""
+    from PySide6 import QtCore   # noqa: PLC0415
+    import shiboken6             # noqa: PLC0415  (comes with PySide6)
+    if item is None or isinstance(item, QtCore.QObject):
+        return False
+    if shiboken6.createdByPython(item) or not shiboken6.isValid(item):
+        return False
+    shiboken6.invalidate(item)
+    return True
+
+
+def _release_items_under(lay) -> None:
+    """When ``itemAt`` hands back a sub-layout, PySide also wraps and keeps every item under it: let them go."""
+    from PySide6 import QtWidgets   # noqa: PLC0415
+    if lay is None or is_python_layout(lay):
+        return
+    for i in range(lay.count()):
+        it = lay.itemAt(i)
+        if isinstance(it, QtWidgets.QLayout):
+            _release_items_under(it)
+        else:
+            release_layout_item(it)
+
+
+def layout_entries(lay) -> list:
+    """The items of ``lay`` as ``LayoutEntry`` rows, in order; no Qt item object is kept (see ``LayoutEntry``)."""
+    from PySide6 import QtCore, QtWidgets   # noqa: PLC0415
+    if lay is None:
+        return []
+    own_items = is_python_layout(lay)       # a Python layout keeps its items itself: nothing to let go
+    out = []
+    for i in range(lay.count()):
+        it = lay.itemAt(i)
+        if it is None:
+            continue
+        spacer = it.spacerItem()
+        try:
+            sub = it if isinstance(it, QtWidgets.QLayout) else it.layout()
+            out.append(LayoutEntry(i, it.widget(), sub, spacer is not None, QtCore.QSize(it.sizeHint()),
+                                   it.expandingDirections()))
+        finally:
+            if not own_items:
+                if isinstance(it, QtWidgets.QLayout):
+                    _release_items_under(it)
+                else:
+                    release_layout_item(it)
+                if spacer is not None and spacer is not it:
+                    release_layout_item(spacer)
+    return out
+
+
+def layout_widgets(lay) -> list:
+    """The widgets ``lay`` holds directly, in layout order, found without asking for its items: the direct
+    children of the layout's widget that the layout says it holds (``QLayout.indexOf``)."""
+    from PySide6 import QtCore, QtWidgets   # noqa: PLC0415
+    if lay is None:
+        return []
+    owner = lay.parentWidget()
+    if owner is None:                       # not installed yet: its widgets have no common parent to ask
+        return [e.widget for e in layout_entries(lay) if e.widget is not None]
+    kids = owner.findChildren(QtWidgets.QWidget, options=QtCore.Qt.FindDirectChildrenOnly)
+    held = sorted(((lay.indexOf(w), n, w) for n, w in enumerate(kids)), key=lambda t: (t[0], t[1]))
+    return [w for i, _n, w in held if i >= 0]
+
+
+def release_layout_item_wrappers() -> int:
+    """Let go of every wrapper PySide holds for a layout item Qt made (``LayoutEntry``), wherever it came from:
+    PySide's own glue makes them when a filled layout is put into another (``addLayout`` / ``insertLayout``).
+    Studio runs this after building a window, after a language switch and when a late dialog is localised.
+    Returns how many were let go."""
+    from PySide6 import QtWidgets   # noqa: PLC0415
+    import shiboken6                # noqa: PLC0415
+    n = 0
+    for w in shiboken6.getAllValidWrappers():
+        if isinstance(w, QtWidgets.QLayoutItem) and release_layout_item(w):
+            n += 1
+    return n
 
 
 def apply_code_fonts(root, pt=None):
