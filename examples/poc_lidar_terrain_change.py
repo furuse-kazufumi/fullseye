@@ -119,6 +119,22 @@ import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 from fullseye.evaluation import save_video as save_evaluation_video  # noqa: E402
 
+#: 合成の章で見出しに載せる結果。実データの見出しは ``REAL_USGS_RECORDED`` が記録で、
+#: データありの実行では測定値と記録を別に突き合わせる。
+HEADLINE = {
+    "erosion_error_min_pct": "-0.011", "erosion_error_max_pct": "-0.011",
+    "changed_area_pct": "33", "true_net_m3": "-30.4",
+    "aligned_net_m3": "-3.8", "control_erosion_m3": "83.8",
+}
+SHOWN: dict[str, str] = {}
+
+
+def check_headline() -> None:
+    """見出しの数を守る門: この実行の印字値を ``HEADLINE`` と文字列で照合する。"""
+    diff = {k: (v, SHOWN.get(k)) for k, v in HEADLINE.items() if SHOWN.get(k) != v}
+    print("  見出しの数(この実行): " + "  ".join("%s=%s" % (k, SHOWN.get(k)) for k in HEADLINE))
+    assert not diff, "見出しの数が HEADLINE と違う(記録, 実行): %r" % diff
+
 # --- 場面の諸元 -------------------------------------------------------------- #
 LX = LY = 60.0             # 調査区画 [m]
 MARGIN = 4.0               # 解析窓の余白 [m](端の平面当てはめを避ける)
@@ -297,6 +313,10 @@ def dem(pts: np.ndarray, stat: str = "mean") -> tuple[np.ndarray, np.ndarray]:
 
     ``stat="median"`` は**セル中央値**。樹冠の取りこぼしのように 1 セルに数点だけ
     数 m 高い点が混ざる汚染に強い(平均は 1 点で数 m 動く)。
+
+    ★2026-11-15: セル平均は Fullseye の op ``elevation_map``(agg="mean")で取る(以前はここで bincount の
+    自前)。区画の外の点は op に渡す前に捨てる(op は端のセルへ寄せる)ので、格子は以前と同じ区切り。
+    中央値と点数は op が返さないので、その 2 つだけ同じ区切りで数える。
     """
     nx = ny = int(round(LX / CELL))
     ix = np.floor(pts[:, 0] / CELL).astype(np.int64)
@@ -311,9 +331,9 @@ def dem(pts: np.ndarray, stat: str = "mean") -> tuple[np.ndarray, np.ndarray]:
         if lab.size:
             z[lab] = ndimage.median(pts[ok, 2], labels=flat, index=lab)
     else:
-        ssum = np.bincount(flat, weights=pts[ok, 2], minlength=nx * ny)
-        with np.errstate(invalid="ignore", divide="ignore"):
-            z = np.where(cnt > 0, ssum / np.maximum(cnt, 1), np.nan)
+        z, _ext = fs.elevation_map(pts[ok], cell=CELL, agg="mean", bounds=(0.0, LX, 0.0, LY))
+        z = np.asarray(z, np.float64)
+        assert z.shape == (ny, nx), z.shape
     return z.reshape(ny, nx), cnt.reshape(ny, nx)
 
 
@@ -1304,10 +1324,11 @@ def section_tool_gaps() -> None:
           "「局所平面 -> 法線方向の円柱 -> 平均位置の差 -> 空間可変 LoD」は"
           "地形・構造物・摩耗のどれでも同じ形なので、族に入る価値がある。")
 
-    assert not hasattr(fs.ledger, "points_to_dem") and not hasattr(fs, "points_to_dem")
-    print("  (c) **点群 -> DEM(格子の標高図)の口が無い**。demops は完成した"
-          "標高図を受け取る前提で、その手前(セルに落として平均/最低/最頻を取る、"
-          "空セルの方針を選ぶ)が公開経路に無い。この PoC は自前で書いた。")
+    assert callable(getattr(fs, "elevation_map", None))
+    print("  (c) 点群 -> 格子の標高図は ``elevation_map``(agg = max / min / mean)で取れる。DoD の格子と実データの"
+          "格子はこれを使う(2026-11-15 から。以前の版は自前の bincount で、この節は「口が無い」と書いていた)。"
+          "ただし**セル中央値と点数が返らない** —— 遮蔽の節の中央値の DEM と、実データの充填率・分散指数に要る"
+          "点数だけは、同じ区切りで自前に数えている。")
 
     assert not hasattr(fs.ledger, "ground_filter") and not hasattr(fs, "csf_filter")
     print("  (d) 地面点の分類(CSF / 形態学的 / 進行 TIN)が無い。1 節で測ったとおり"
@@ -1641,18 +1662,23 @@ def load_forest_park(root: Path):
 
 
 def _grid1m(E, N, Z, box):
-    """1 m セル平均(行 0 = 北)。点の無いセルは NaN。``(格子, 点数)``。"""
+    """1 m セル平均(行 0 = 北)。点の無いセルは NaN。``(格子, 点数)``。
+
+    ★2026-11-15: 平均は Fullseye の op ``elevation_map``(agg="mean")で取る(以前は bincount の自前)。
+    op の格子は行 0 = 南なので上下を返す(行 0 が北端の 1 m = DEM の行 0 と同じ帯)。点数(充填率と
+    分散指数に要る)は op が返さないので、同じ区切りで数える。
+    """
     e0, e1, n0, n1 = box
     nx, ny = int(round(e1 - e0)), int(round(n1 - n0))
-    c = np.floor(E - e0).astype(np.int64)
-    r = np.floor(n1 - N).astype(np.int64)
-    ok = (c >= 0) & (c < nx) & (r >= 0) & (r < ny)
-    flat = r[ok] * nx + c[ok]
-    k = np.bincount(flat, minlength=nx * ny).astype(np.float64)
-    s = np.bincount(flat, weights=Z[ok], minlength=nx * ny)
-    with np.errstate(invalid="ignore", divide="ignore"):
-        g = np.where(k > 0, s / np.maximum(k, 1.0), np.nan)
-    return g.reshape(ny, nx), k.reshape(ny, nx)
+    ok = (E >= e0) & (E < e1) & (N >= n0) & (N < n1)
+    g, _ext = fs.elevation_map(np.column_stack([E[ok], N[ok], Z[ok]]), cell=1.0, agg="mean",
+                               bounds=(e0, e1, n0, n1))
+    g = np.flipud(np.asarray(g, np.float64))
+    assert g.shape == (ny, nx), g.shape
+    c = np.floor(E[ok] - e0).astype(np.int64)
+    r = (ny - 1) - np.floor(N[ok] - n0).astype(np.int64)
+    k = np.bincount(r * nx + c, minlength=nx * ny).astype(np.float64)
+    return g, k.reshape(ny, nx)
 
 
 def _area_3857(box, epsg_utm: int, n_side: int = 64) -> float:
@@ -1901,21 +1927,46 @@ def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
     if not figs.enabled():
         return
     hs = np.asarray(fs.ledger.dem_hillshade(dem_z, 1.0), np.float64)
-    lim = 0.5
+    lim, lim_ch = 0.5, 1.5
+    # ★2026-11-15(補欠の注意): 以前は 0 が黒の発散色で、「データ無し(NaN)」も黒に塗られ、色の尺度も無かった。
+    #   coolwarm(0 = 薄い灰、負 = 青 = 2017 のほうが低い、正 = 赤)で塗り、データ無しだけを黒にして、尺度を添える。
+    #   1 m セルのままだと 2012 の空セル(充填率 64 %)が全面に粒になって色が読めないので、表示だけ 2 m 角
+    #   (1 m セル 4 つのうち値のあるものの平均)に寄せる。数は 1 m セルのまま測っている。
+    cmap = "coolwarm"
+    no_data = np.array([0.40, 0.40, 0.40])
+
+    def block2(a):
+        a = np.asarray(a, np.float64)
+        h, w = (a.shape[0] // 2) * 2, (a.shape[1] // 2) * 2
+        b = a[:h, :w].reshape(h // 2, 2, w // 2, 2)
+        n = np.isfinite(b).sum(axis=(1, 3))
+        s = np.nansum(b, axis=(1, 3))
+        return np.where(n > 0, s / np.maximum(n, 1), np.nan)
+
+    def signed_rgb(a, m):
+        a = block2(a)
+        rgb = np.asarray(fs.apply_cmap(np.clip(np.nan_to_num(a, nan=0.0), -m, m), name=cmap, vmin=-m, vmax=m),
+                         np.float64)[..., :3]
+        rgb[~np.isfinite(a)] = no_data
+        return rgb
+
+    valid = np.isfinite(dod_raw)
+    only_change = np.where(change, dod, np.where(valid, 0.0, np.nan))   # 変化域の外 = 0(薄い灰)、データ無し = 黒
     figs.save_grid("real_dod",
-                   [hs, np.clip(dod_raw, -lim, lim), np.clip(dod, -lim, lim),
-                    np.where(change, np.clip(dod, -1.5, 1.5), np.nan)],
+                   [block2(hs), signed_rgb(dod_raw, lim), signed_rgb(dod, lim), signed_rgb(only_change, lim_ch)],
                    captions=["USGS 1 m DEM 陰影(2017)",
                              "DoD 2017−2012 そのまま(±%.1f m)" % lim,
                              "平坦部で %+.3f m 合わせた後" % (-R["off_flat"]),
-                             "変化域 %.1f %%(±1.5 m)" % (100 * R["frac_ch"])],
+                             "変化域 %.1f %%(±%.1f m)" % (100 * R["frac_ch"], lim_ch)],
                    signed=[False, True, True, True], gray=[True, False, False, False],
+                   colorbar=[False, True, True, True], cmap=[None, cmap, cmap, cmap],
+                   vrange=[None, (-lim, lim), (-lim, lim), (-lim_ch, lim_ch)], unit=["", "m", "m", "m"],
                    ncols=2, title="USGS 3DEP Forest Park —— 系統差を引かないと全面が「掘れる」",
-                   caption=("地面点(分類 2)の 1 m セル平均の差。そのまま引くと区画全体が "
-                            "%+.3f m 沈んで見え、有効セルで %+.0f m3 の偽の土量。平坦部の中央値で"
-                            "合わせると残るのは美術館まわりの変化域だけ。黒 = どちらかの時期に"
-                            "地面点が無い(建物・池・樹冠の下)。%s %s"
-                            % (R["off_flat"], R["net_raw"], USGS_MODIFIED, USGS_CREDIT)))
+                   caption=("地面点(分類 2)の 1 m セル平均の差(Fullseye の elevation_map。表示は 2 m 角 = 1 m セル 4 つの"
+                            "うち値のあるものの平均)。青 = 2017 のほうが低い(掘れた・沈んだ)、赤 = 高い、薄い灰 = 差 0、"
+                            "濃い灰 = どちらかの時期に地面点が無い(建物・池・樹冠の下)。そのまま引くと区画全体が %+.3f m 沈んで見え、有効セルで %+.0f m3 の"
+                            "偽の土量。平坦部の中央値で合わせると、残るのは美術館まわりの変化域だけ(右下は変化域の外を 0 で塗る)。"
+                            "%s %s" % (R["off_flat"], R["net_raw"], USGS_MODIFIED, USGS_CREDIT)))
     rho = np.linspace(0.0, 4.0, 81)
     u3 = R["u3"]
     figs.save_plot("real_fill",
@@ -1931,6 +1982,72 @@ def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
                    caption=("規則的な走査(分散指数 D < 1)の 2012 は予測より埋まり、測線の重なりで"
                             "群れる(D > 1)2017 は埋まらない。%s %s"
                             % (USGS_MODIFIED, USGS_CREDIT)))
+    # ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、
+    #   ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
+    from PIL import Image, ImageDraw, ImageFont
+    font = lambda n, b=False: ImageFont.truetype(str(figs._japanese_font_path(bold=b)), n)
+    S, PW = 720, 340
+    st = Image.new("RGB", (S, S), (14, 17, 23))
+    ds = ImageDraw.Draw(st)
+    ds.text((20, 14), "2 時期の航空 LiDAR の差(実データ)", font=font(32, True), fill=(240, 240, 240))
+    for j, (arr, m, lab) in enumerate(((dod_raw, lim, "そのまま引く"),
+                                       (dod, lim, "平坦部で %+.3f m 合わせる" % (-R["off_flat"])))):
+        rgb = np.clip(signed_rgb(arr, m) * 255.0, 0, 255).astype(np.uint8)
+        xo = 14 + j * (PW + 12)
+        st.paste(Image.fromarray(rgb).resize((PW, PW), Image.Resampling.BICUBIC), (xo, 70))
+        ds.text((xo + 2, 418), lab, font=font(24, True), fill=(240, 240, 240))
+    ds.text((20, 470), "そのまま引くと全面が %.2f m 沈んで見える" % abs(R["off_flat"]), font=font(28, True),
+            fill=(240, 240, 240))
+    ds.text((20, 514), "合わせると、残るのは建物まわりの変化だけ", font=font(26), fill=(225, 225, 225))
+    ds.text((20, 566), "青 = 2017 のほうが低い / 赤 = 高い(±%.1f m)" % lim, font=font(22), fill=(200, 205, 215))
+    ds.text((20, 600), "濃い灰 = 地面点が無い(建物・池・樹冠の下)", font=font(22), fill=(200, 205, 215))
+    ds.text((20, S - 40), "USGS 3DEP(public domain、USGS の承認ではない)", font=font(18), fill=(170, 170, 170))
+    figs.save("real_dod_still", np.asarray(st, dtype=np.uint8),
+              caption=("サムネイル用の静止画。13 の (b) と (c) を同じ色で並べた(表示は 2 m 角)。そのまま引くと区画全体が "
+                       "%+.3f m 沈んで見え、平坦部の中央値で合わせると美術館まわりの変化域だけが残る。%s %s"
+                       % (R["off_flat"], USGS_MODIFIED, USGS_CREDIT)))
+
+
+#: 手元の実データの実行(2026-11-15、FULLSEYE_DATA_DIR に USGS 3DEP)の記録値。CI はデータを持たないので
+#: これを印字し、**記録値どうしの門**(記録の形と結論の向き)だけを見る —— 測り直しではない。データが
+#: あるときは測った値を丸めてこれと突き合わせる(違えば記録を転記し直す)。
+REAL_USGS_RECORDED = {'off_flat': -0.183, 'nmad': 0.0486, 'n_valid': 130595, 'net_raw': -23619.3, 'net_flat': 279.6, 'net_full': 0.0, 'net_trim': 719.5, 'ch_trim': 452.7, 'ch_full': 437.4, 'absorbed': 0.0055, 'pred_abs': 0.0035, 'frac_ch': 0.0213, 'ch_spread': 0.0339, 'out_trim': 266.7, 'u3': {'2012': {'rho': 0.86814, 'fill': 0.73025, 'pois': 0.58027, 'D': 0.457, 'cells': 178835}, '2017': {'rho': 1.97683, 'fill': 0.82317, 'pois': 0.86149, 'D': 2.436, 'cells': 158648}}, 'ql': {'2012': 'QL3', '2017': 'QL2'}, 'ratio': 1.6406, 'pred_ratio': 1.6382, 'bbox_ratio': 1.7354, 'pred_bbox': 1.7348, 'd_utm': 3.661, 'd_3857': 2.231, 'gshift': 0.027}
+
+
+def _real_usgs_record(R) -> dict:
+    """実データの章の結果を、記録として比べられる形(丸めた数と区分)にする。"""
+    def r(v, n):
+        return round(float(v), n)
+    return {
+        "off_flat": r(R["off_flat"], 4), "nmad": r(R["nmad"], 4), "n_valid": int(R["n_valid"]),
+        "net_raw": r(R["net_raw"], 1), "net_flat": r(R["net_flat"], 1), "net_full": r(R["net_full"], 3),
+        "net_trim": r(R["net_trim"], 1), "ch_trim": r(R["ch_trim"], 1), "ch_full": r(R["ch_full"], 1),
+        "absorbed": r(R["absorbed"], 4), "pred_abs": r(R["pred_abs"], 4),
+        "frac_ch": r(R["frac_ch"], 4), "ch_spread": r(R["ch_spread"], 4), "out_trim": r(R["out_trim"], 1),
+        "u3": {k: {"rho": r(u["rho"], 5), "fill": r(u["fill"], 5), "pois": r(u["pois"], 5), "D": r(u["D"], 3),
+                   "cells": int(u["cells"])} for k, u in R["u3"].items()},
+        "ql": dict(R["ql"]), "ratio": r(R["ratio"], 4), "pred_ratio": r(R["pred_ratio"], 4),
+        "bbox_ratio": r(R["bbox_ratio"], 4), "pred_bbox": r(R["pred_bbox"], 4),
+        "d_utm": r(R["d_utm"], 3), "d_3857": r(R["d_3857"], 3), "gshift": r(R["gshift"], 3),
+    }
+
+
+def _real_usgs_lines(rec: dict) -> list:
+    """記録から要点の行を作る(CI では「[記録値]」を付けて印字する)。"""
+    return [
+        "USGS 3DEP Forest Park(St. Louis, MO)2012 / 2017、地面点の 1 m セル平均(elevation_map)の差",
+        "(U1) 平坦部の DoD 中央値 %+.3f m、NMAD %.3f m。そのまま引くと偽の正味 %+.0f m3(%d セル)、"
+        "平坦部の中央値で合わせると %+.0f m3" % (rec["off_flat"], rec["nmad"], rec["net_raw"], rec["n_valid"], rec["net_flat"]),
+        "(U2) 変化域は有効セルの %.1f %%。全セルの平均で合わせると区画の正味 %+.1f m3、変化域の正味は合わせ方で "
+        "%+.0f / %+.0f m3(ばらつき %.1f %%)" % (100 * rec["frac_ch"], rec["net_full"], rec["ch_full"], rec["ch_trim"],
+                                         100 * rec["ch_spread"]),
+        "(U3) 分散指数 D: 2012 %.2f / 2017 %.2f、充填率 実測 %.1f / %.1f %%、Poisson 予測 %.1f / %.1f %%"
+        % (rec["u3"]["2012"]["D"], rec["u3"]["2017"]["D"], 100 * rec["u3"]["2012"]["fill"], 100 * rec["u3"]["2017"]["fill"],
+           100 * rec["u3"]["2012"]["pois"], 100 * rec["u3"]["2017"]["pois"]),
+        "(U4) EPSG:3857 の面積比 %.4f(予測 %.4f)、2017 の密度は UTM %.2f / 3857 のまま %.2f 点/m2"
+        % (rec["ratio"], rec["pred_ratio"], rec["d_utm"], rec["d_3857"]),
+        "系統差のうちジオイドの差で説明できるのは %+.3f m だけ(残りの原因は決められない)" % rec["gshift"],
+    ]
 
 
 def gates_real_usgs(R) -> int:
@@ -2056,6 +2173,11 @@ def main() -> int:
     assert abs(sy["after"][-1]) < 0.15 * abs(sy["dod"][-1]), "ICP が系統誤差を落とせていない"
     assert abs(sy["eat"][0][1]) < 0.3 * abs(tr["net"]), "全対応 ICP が変化を吸っていない"
     assert abs(sy["eat"][-1][1]) > 0.6 * abs(tr["net"]), "trimmed ICP で戻っていない"
+    SHOWN.update(erosion_error_min_pct="%.3f" % min(ge["ero_err"]),
+                 erosion_error_max_pct="%.3f" % max(ge["ero_err"]),
+                 changed_area_pct="%.0f" % (100 * tr["area"] / WIN_AREA),
+                 true_net_m3="%.1f" % tr["net"], aligned_net_m3="%.1f" % sy["eat"][0][1],
+                 control_erosion_m3="%.1f" % ctrl["base"]["ero"])
     pl = sy["plane"]["純平面・窓で切る"]
     assert pl[1] > 0.5 * pl[0], "純平面の面内縮退が再現していない"
     assert max(abs(v[3]) for v in sy["plane"].values()) < 10.0, \
@@ -2072,10 +2194,24 @@ def main() -> int:
     # ---- 実データ(FULLSEYE_DATA_DIR があるときだけ。無ければ 1 行で飛ばし、門は数えない)
     #      合成の検査より後ろに置く: 合成の印字・図の番号・門をデータの有無で変えないため。
     real = section_real_usgs()
-    n_real = gates_real_usgs(real)
-    if n_real:
+    if real is None:
+        # ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では
+        #   手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
+        if REAL_USGS_RECORDED is None:
+            raise AssertionError("記録値 REAL_USGS_RECORDED が空 —— 手元でデータありの実行をして転記する")
+        for line in _real_usgs_lines(REAL_USGS_RECORDED):
+            print("  [記録値] " + line)
+        n_rec = gates_real_usgs(REAL_USGS_RECORDED)
+        print("  実データの記録値の門 %d 本: すべて通過(記録値どうし。測り直しではない)" % n_rec)
+    else:
+        rec = _real_usgs_record(real)
+        print("  REAL_USGS_RECORDED = %r" % (rec,))
+        if REAL_USGS_RECORDED is not None:
+            assert rec == REAL_USGS_RECORDED, "REAL_USGS_RECORDED が実測と違う(記録を転記し直す)"
+        n_real = gates_real_usgs(real)
         print("  実データの門 %d 本: すべて通過" % n_real)
 
+    check_headline()
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

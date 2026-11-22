@@ -65,6 +65,25 @@ PH, PW = 12, 12     # 段差の左右パッチ(12×12 画素ずつ、合計 12×
 STEPS = (0.050, 0.100, 0.200, 0.500)     # µm  仕込む段差
 N_TRIAL = 40        # 繰り返し測定の回数(seed を変える)
 
+#: 見出しに載せる結果を、画面・台帳と同じ丸めの文字列で固定する。値が動いたら
+#: ``check_headline`` が止めるので、実行結果を確かめてから台帳と一緒に転記し直す。
+HEADLINE = {
+    "std_min_nm": "10.5", "std_max_nm": "14.1", "bias_abs_nm": "2.4",
+    "zstep_012_nm": "+0.35", "zstep_014_nm": "+14.1",
+    "noise_limit_pct": "0.5", "centroid_std_nm": "4.2", "gaussian_std_nm": "11.8",
+    "centroid_shrink_pct": "19", "phase_limit_um": "0.150",
+    "phase_below_um": "0.149", "phase_above_um": "0.151", "phase_jump_um": "-0.300",
+    "video_truth_um": "0.650", "video_error_nm": "+11",
+}
+SHOWN: dict[str, str] = {}
+
+
+def check_headline() -> None:
+    """見出しの数を守る門: この実行の値を、印字と同じ丸めで ``HEADLINE`` と照合する。"""
+    diff = {k: (v, SHOWN.get(k)) for k, v in HEADLINE.items() if SHOWN.get(k) != v}
+    print("\n見出しの数(この実行): " + "  ".join("%s=%s" % (k, SHOWN.get(k)) for k in HEADLINE))
+    assert not diff, "見出しの数が HEADLINE と違う(記録, 実行): %r" % diff
+
 
 def surface_csi_measurement(size=512, n_planes=48, seed=22):
     """Simulate a scanned two-dimensional stepped surface and recover its height."""
@@ -143,13 +162,13 @@ def csi_resemblance_gate(size=96):
             "half_bandwidth_width_ratio": d_half["envelope_fwhm_um"] / d["envelope_fwhm_um"]}
 
 
-def fig_surface_csi():
+def fig_surface_csi(result=None):
     if not figs.enabled():
         return None
     import annotate as AN
     import fullseye as fs
 
-    r = surface_csi_measurement(size=512, n_planes=48, seed=22)
+    r = result if result is not None else surface_csi_measurement(size=512, n_planes=48, seed=22)
     picks = (9, 19, 29, 39)
     figs.save_grid("surface_interferograms", [r["stack"][k] for k in picks],
                    ["z = %.2f um" % r["z_um"][k] for k in picks], ncols=4,
@@ -183,7 +202,7 @@ def fig_surface_csi():
     return r
 
 
-def fig_csi_scan_explained():
+def fig_csi_scan_explained(result=None):
     """入口動画: 縞の包絡線が現れる z と表面高さの対応を 1 画面で示す。"""
     if not figs.enabled():
         return None
@@ -191,7 +210,7 @@ def fig_csi_scan_explained():
     import annotate as AN
     import fullseye as fs
 
-    r = surface_csi_measurement(size=512, n_planes=48, seed=22)
+    r = result if result is not None else surface_csi_measurement(size=512, n_planes=48, seed=22)
     z = np.asarray(r["z_um"], dtype=np.float64)
     truth = np.asarray(r["truth_um"], dtype=np.float64)
     height = np.asarray(r["height_um"], dtype=np.float64)
@@ -214,6 +233,8 @@ def fig_csi_scan_explained():
     step_truth = float(truth[y, x2] - truth[y, x1] - slope_truth * (x2 - x1))
     step_err_nm = (step_meas - step_truth) * 1000.0
     assert abs(step_err_nm) <= 20.0
+    # 動画の数は 1 画素対・1 回の読みで、3 節の繰り返し測定(144 画素の平均、40 回)とは別の量。
+    SHOWN.update(video_truth_um="%.3f" % step_truth, video_error_nm="%+.0f" % step_err_nm)
 
     # 最終コマでは、有効な高さ画素がすべて着色される。
     passed_last = np.isfinite(height) & (truth <= z[-1] - 0.3)
@@ -328,17 +349,21 @@ def fig_csi_scan_explained():
         put_text(im, "ここまでの最大変調", (610, 70), size=24)
         paste_gray(im, accumulated / 0.5, (610, 104, 300, 266))
 
-        put_text(im, "ここまでに決まった高さ", (610, 400), size=24)
+        # ★2026-11-15(独立レビュー): 以前は上限の数字が高さの絵に重なり、下限の数字が「通過」の板に
+        #   隠れ、絵とバーの下端が最下段の帯(y ≥ 680)に覆われていた。「通過」の注は題の下へ、絵とバーは
+        #   帯より上へ収め、上限・単位・下限の数字はバーの右の余白へ出す(何も重ねない)。
+        put_text(im, "ここまでに決まった高さ", (610, 384), size=24)
+        put_text(im, "(通過 = 真値 ≤ z − 0.3 µm)", (610, 426), size=22)
         passed = np.isfinite(height) & (truth <= z[k] - 0.3)
-        paste_turbo(im, height, passed, (610, 434, 260, 256))
-        bar = np.linspace(hi, lo, 256)[:, None]
+        hb = (610, 470, 196, 196)                      # 高さの絵の枠(左, 上, 幅, 高さ)
+        paste_turbo(im, height, passed, hb)
+        bar = np.linspace(hi, lo, hb[3])[:, None]
         bar_rgb = rgb8(fs.colorize_depth(bar, name="turbo", vmin=lo, vmax=hi))
-        im.paste(Image.fromarray(np.repeat(bar_rgb, 18, axis=1)), (878, 434))
-        put_text(im, "%.2f" % hi, (872, 434), anchor="rt")
-        put_text(im, "µm", (887, 550), anchor="cm")
-        put_text(im, "%.2f" % lo, (872, 675), anchor="rb")
-        put_text(im, "通過 = 真値 ≤ z − 0.3 µm", (610, 636), size=22,
-                 plate=(18, 21, 28))
+        bx = hb[0] + hb[2] + 8
+        im.paste(Image.fromarray(np.repeat(bar_rgb, 18, axis=1)), (bx, hb[1]))
+        put_text(im, "%.2f" % hi, (bx + 26, hb[1]), anchor="lt")
+        put_text(im, "µm", (bx + 26, hb[1] + hb[3] // 2), anchor="lm")
+        put_text(im, "%.2f" % lo, (bx + 26, hb[1] + hb[3]), anchor="lb")
 
         graph(im, k)
         # 22 px の日本語フォントは実測 39 px 高なので、指定の下帯から上へ 10 px だけ張り出す。
@@ -351,6 +376,33 @@ def fig_csi_scan_explained():
                     caption="白色干渉の48面走査で、縞のコントラストが立つ高さと表面高さが一致する様子を示す。"
                             "傾斜を除いた段差は測定 %.3f µm、真値 %.3f µm、差 %+.0f nm。"
                             % (step_meas, step_truth, step_err_nm))
+
+    # ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 以前のサムネイルは灰色の縞と
+    #   円板だけで何の図か分からず、動画のコマを切り抜くと見出しの文字が切れる)。同じ走査・同じ高さから組む。
+    k_mid = int(np.argmin(np.abs(z - 0.5 * (lo + hi))))
+    st = Image.new("RGB", (720, 720), (18, 21, 28))
+    ImageDraw.Draw(st).rectangle((0, 0, 719, 71), fill=(31, 38, 51))
+    put_text(st, "白色干渉で段差を測る(合成)", (16, 12), size=34)
+    paste_gray(st, stack[k_mid], (16, 92, 290, 290))
+    paste_turbo(st, height, np.isfinite(height), (322, 92, 290, 290))
+    sbar = np.linspace(hi, lo, 290)[:, None]
+    st.paste(Image.fromarray(np.repeat(rgb8(fs.colorize_depth(sbar, name="turbo", vmin=lo, vmax=hi)), 18, axis=1)),
+             (620, 92))
+    put_text(st, "%.2f" % hi, (644, 92), anchor="lt")
+    put_text(st, "µm", (644, 92 + 145), anchor="lm")
+    put_text(st, "%.2f" % lo, (644, 382), anchor="lb")
+    put_text(st, "走査の 1 コマ(z = %.2f µm)" % z[k_mid], (16, 392), size=22)
+    put_text(st, "読んだ高さ(黒 = 測れない)", (322, 392), size=22)
+    put_text(st, "縞のコントラストが立つ z = 表面の高さ", (16, 452), size=30)
+    put_text(st, "傾いた面の段差 %.3f µm を 48 面の走査で読む" % step_truth, (16, 512), size=24)
+    put_text(st, "1 画素対の 1 回の読み %.3f µm(差 %+.0f nm)" % (step_meas, step_err_nm), (16, 556), size=24)
+    put_text(st, "粗い円板は変調が落ちて測れない", (16, 600), size=24)
+    put_text(st, "Fullseye: csi_stack_simulate → csi_contrast_map → csi_height_map", (16, 668), size=18)
+    figs.save("csi_scan_still", np.asarray(st, dtype=np.uint8),
+              caption="サムネイル用の静止画(合成)。09 の動画と同じ 48 面の走査(雑音 0.15 %%)の z = %.2f µm のコマと、"
+                      "読んだ高さ(gaussian、変調の品質の下位 8 %% は測れない = 黒)。段差 %.3f µm(真値 %.3f µm、差 %+.0f nm)は "
+                      "1 画素対の 1 回の読みで、3 節の繰り返し測定(144 画素の平均を 40 回)とは別の量。"
+                      % (z[k_mid], step_meas, step_truth, step_err_nm))
     return {"step_measured_um": step_meas, "step_truth_um": step_truth,
             "step_error_nm": step_err_nm, "finite_height_pixels": int(np.count_nonzero(np.isfinite(height)))}
 
@@ -526,9 +578,11 @@ def fig_step_sweep_video(n_steps=136, s_max=0.90, n_hold=12, fps=12.0):
         caption="動画(%d コマ): 仕込む段差を 0 → %.2f µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。"
                             "左は低い側・高い側 1 画素ずつのコヒーレンス走査の信号で、縦線は csi_height_map(gaussian)が"
                             "包絡線から読んだ高さ。右は測った段差 vs 仕込んだ段差。包絡線(だいだい)は全域で対角線に乗り、"
-                            "誤差は最大 %.1e nm —— 包絡線には周期が無いので巻き戻らない。位相シフト法(水色、4 段)は"
-                            "段差 %.3f µm(λ/4 = %.3f µm の直後)で初めて λ/2 ぶん飛び、以後 λ/2 ごとに鋸の歯になる。"
-                            % (len(frames), s_max, csi_err, first_jump, LAM / 4))
+                            "誤差は最大 %.1e nm —— 包絡線には周期が無いので巻き戻らない。位相シフト法(水色、4 段)は "
+                            "λ/4 = %.3f µm を越えると λ/2 ぶん飛び、以後 λ/2 ごとに鋸の歯になる。動画の掃引の刻みは "
+                            "%.4f µm なので、最初に見える飛びは段差 %.3f µm のコマ(境界そのものは λ/4 ちょうどで、"
+                            "7 節の 0.149 / 0.151 µm がそれを挟む)。"
+                            % (len(frames), s_max, csi_err, LAM / 4, s_max / (n_steps - 1), first_jump))
     return {"csi_err_nm": csi_err, "first_jump": first_jump}
 
 
@@ -542,7 +596,24 @@ def main():
     print("CSI resemblance: envelope %.3f%%, fringe %.3g, repeatability %.2f nm, half-bandwidth %.3fx"
           % (100 * gate["envelope_relative_error"], gate["fringe_period_relative_error"],
              gate["step_repeatability_nm"], gate["half_bandwidth_width_ratio"]))
-    fig_surface_csi()
+    # カード動画の数も CI 相当で測り直す。図を出す実行では同じ配列を 01 / 02 / 09 / 10 に使い回す。
+    surface_result = surface_csi_measurement(size=512, n_planes=48, seed=22)
+    fig_surface_csi(surface_result)
+    truth_surface = np.asarray(surface_result["truth_um"], dtype=np.float64)
+    height_surface = np.asarray(surface_result["height_um"], dtype=np.float64)
+    y, x1, x2 = 256, 200, 312
+    xx = np.arange(truth_surface.shape[1], dtype=np.float64)
+    left = (xx < truth_surface.shape[1] // 2) & np.isfinite(height_surface[y])
+    right = (xx >= truth_surface.shape[1] // 2) & np.isfinite(height_surface[y])
+    slope_meas = 0.5 * (np.polyfit(xx[left], height_surface[y, left], 1)[0]
+                        + np.polyfit(xx[right], height_surface[y, right], 1)[0])
+    slope_truth = 0.5 * (np.polyfit(xx[xx < truth_surface.shape[1] // 2],
+                                   truth_surface[y, xx < truth_surface.shape[1] // 2], 1)[0]
+                         + np.polyfit(xx[xx >= truth_surface.shape[1] // 2],
+                                      truth_surface[y, xx >= truth_surface.shape[1] // 2], 1)[0])
+    video_truth = float(truth_surface[y, x2] - truth_surface[y, x1] - slope_truth * (x2 - x1))
+    video_meas = float(height_surface[y, x2] - height_surface[y, x1] - slope_meas * (x2 - x1))
+    SHOWN.update(video_truth_um="%.3f" % video_truth, video_error_nm="%+.0f" % ((video_meas - video_truth) * 1000.0))
 
     # ------------------------------------------------------------------ #
     # 1) 設計 — 測る前に決まってしまう限界                                  #
@@ -580,11 +651,12 @@ def main():
     # ------------------------------------------------------------------ #
     print("\n3) 雑音 1%%(振幅比)で %d 回測り直した結果 [nm]:" % N_TRIAL)
     print("   仕込んだ段差 |     偏り |  標準偏差 | 平均の標準誤差 | 偏りは有意か")
-    rep = {}
+    rep, rep_sem = {}, {}
     for step in STEPS:
         bias, std, _, n_ok = repeat(step, 0.01)
         rep[step] = (bias, std)
         sem = std / np.sqrt(n_ok)
+        rep_sem[step] = sem
         sig = "有意" if abs(bias) > 2 * sem else "雑音と区別できない"
         print("   %8.1f nm | %+8.2f | %9.2f | %14.2f | %s"
               % (step * 1000, bias, std, sem, sig))
@@ -595,6 +667,9 @@ def main():
     assert max(stds) / min(stds) < 2.0
     # 偏りは散らばりよりずっと小さい = この推定量は「ずれている」のではなく「ばらつく」
     assert all(abs(rep[s][0]) < rep[s][1] for s in STEPS)
+    SHOWN.update(std_min_nm="%.1f" % min(stds), std_max_nm="%.1f" % max(stds),
+                 bias_abs_nm="%.1f" % max(abs(rep[s][0]) for s in STEPS))
+    assert all(abs(rep[s][0]) <= 2.0 * rep_sem[s] for s in STEPS), (rep, rep_sem)
 
     # 画素数を増やせば散らばりだけが減る(偏りは減らない)ことの確認
     single = np.array([measure_step(0.100, 0.01, s)[0] for s in range(1, 21)])
@@ -672,14 +747,16 @@ def main():
                    [("雑音なし誤差", dzs, [sweep[d] for d in dzs])],
                    xlabel="走査ステップ [µm]", ylabel="段差の誤差 [nm]",
                    title="走査ステップを細かくしても良くならない",
-                   caption="0.02〜0.12 µm は 0.05 nm 以内で平ら。Nyquist 上限 "
-                           "%.2f µm の手前 0.14 µm で崖。" % DESIGN["max_z_step_um"])
+                   caption="0.02〜0.10 µm は雑音なし誤差 0.05 nm 以内で平ら、0.12 µm で %+.2f nm、"
+                           "Nyquist 上限 %.2f µm の手前 0.14 µm で %+.1f nm の崖。"
+                           % (sweep[0.12], DESIGN["max_z_step_um"], sweep[0.14]))
     print("   ★細かくしても良くならない。0.02 µm(601 面)は 0.10 µm(121 面)と同等で、"
           "計算量だけ 5 倍。局所当てはめは argmax 近傍 3 点しか見ないため。")
     print("   ★Nyquist 上限 λ/4 = %.2f µm の手前 0.14 µm で、雑音が無いのに誤差 %+.1f nm。"
           "**上限は安全な動作点ではない**(推奨 %.3f µm = λ/8 に余裕がある理由)。"
           % (DESIGN["max_z_step_um"], sweep[0.14], DESIGN["recommended_z_step_um"]))
     assert abs(sweep[0.14]) > 5.0          # Nyquist 手前で既に nm オーダーを外す
+    SHOWN.update(zstep_012_nm="%+.2f" % sweep[0.12], zstep_014_nm="%+.1f" % sweep[0.14])
     assert max(abs(sweep[d]) for d in (0.02, 0.04, 0.05, 0.08, 0.10)) < 0.05
     # Nyquist を割ると拒否される(黙って間欠的に間違うより拒否を選んでいる)
     try:
@@ -700,6 +777,7 @@ def main():
     print("        |    偏り  標準偏差    総合        |    偏り  標準偏差    総合")
     limit_nm = 0.100 * 1000 * 0.10          # 段差の 10% を「測れた」の線とする
     boundary = {}
+    rows6 = {}                              # 見出しの数の門に使う(表と同じ数字)
     noise_pts = []                          # 図用。表と同じ数字を溜めるだけ
     for noise in (0.002, 0.005, 0.01, 0.02, 0.05, 0.10, 0.20, 0.50):
         row = {}
@@ -711,6 +789,7 @@ def main():
         for mode in ("gaussian", "centroid"):
             if row[mode][2] <= limit_nm:
                 boundary[mode] = noise
+        rows6[noise] = row
         noise_pts.append((noise, row["gaussian"][2], row["centroid"][2]))
         print("   %5.3f | %+7.2f %8.2f %8.2f nm | %+7.2f %8.2f %8.2f nm | %5.1f%%"
               % (noise, *row["gaussian"], *row["centroid"], 100 * rej))
@@ -730,6 +809,7 @@ def main():
     for mode in ("gaussian", "centroid"):
         print("      %-9s 雑音 %.3f までは 10%% 以内" % (mode, boundary[mode]))
     assert boundary["gaussian"] <= 0.01 and boundary["centroid"] <= 0.01
+    SHOWN["noise_limit_pct"] = "%.1f" % (100 * boundary["gaussian"])
 
     # ★散らばりが小さいことは正しさの証拠にならない
     print("\n   ★`centroid` は散らばりが `gaussian` の 1/3〜1/5 なのに、雑音とともに"
@@ -765,6 +845,10 @@ def main():
           % (repeat(0.100, 0.10, mode="gaussian", n=16)[1],
              repeat(0.100, 0.10, mode="centroid", n=16)[1]))
     assert g_lo > 0.999 and g_hi < 0.9      # 雑音で倍率が落ちる
+    s_c, s_g = rows6[0.01]["centroid"][1], rows6[0.01]["gaussian"][1]
+    assert s_c < s_g, (s_c, s_g)
+    SHOWN.update(centroid_std_nm="%.1f" % s_c, gaussian_std_nm="%.1f" % s_g,
+                 centroid_shrink_pct="%.0f" % (100 * (1 - gain_at[0.01])))
 
     # ------------------------------------------------------------------ #
     # 7) 系統誤差探し — λ/2 の巻き戻りは出るか                              #
@@ -775,6 +859,7 @@ def main():
     gain_rad = 4.0 * np.pi / LAM                       # rad/µm(往復)
     worst_csi = 0.0
     wrapped = []
+    phase_errors = {}
     for step in (0.10, 0.149, 0.151, 0.299, 0.300, 0.301, 0.599, 0.600, 0.900):
         csi, _ = measure_step(step, 0.0, 0)
         truth = np.full((PH, 2 * PW), 0.0)
@@ -784,6 +869,7 @@ def main():
                                          amplitude=0.4)
         rec = fringe.decode_fringe(imgs, k=1.0 / gain_rad)
         psi = float(rec[:, PW:].mean() - rec[:, :PW].mean())
+        phase_errors[step] = psi - step
         worst_csi = max(worst_csi, abs(csi - step))
         note = ""
         if abs(psi - step) > 1e-6:
@@ -800,6 +886,8 @@ def main():
     print("   「出るはずのものが出ない」ことが、この族を `fringe` の隣に置いた理由。")
     assert worst_csi * 1000 < 0.05
     assert 0.149 not in wrapped and 0.151 in wrapped   # 境界は λ/4 ちょうど
+    SHOWN.update(phase_limit_um="%.3f" % (LAM / 4), phase_below_um="%.3f" % 0.149,
+                 phase_above_um="%.3f" % 0.151, phase_jump_um="%+.3f" % phase_errors[0.151])
 
     # ------------------------------------------------------------------ #
     # 所見 — 想定と違ったこと / 途中で自分が間違えたこと                     #
@@ -834,10 +922,11 @@ def main():
     # 動画は既存の図の**最後**に書く(番号が後ろの図のファイル名をずらさないように)。
     if figs.enabled():
         fig_step_sweep_video()
-        fig_csi_scan_explained()
+        fig_csi_scan_explained(surface_result)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
 
+    check_headline()
     print("\n総所要 %.1f 秒" % (time.perf_counter() - t_all))
     print("\nPASS: 既知の段差 50/100/200/500 nm に対し、雑音なしで %.3f nm 以内、"
           "雑音 1%% で偏り %.1f nm 以内・標準偏差 %.1f nm 以内で測り返した"
