@@ -1437,9 +1437,26 @@ def test_brand_end_states_done_stopped_failed(tmp_path, monkeypatch):
         _close(app, win)
 
 
+#: application-font ids lent by :func:`_lend_windows_fonts` in the running test (taken back after it).
+_LENT_FONT_IDS = []
+
+
+@pytest.fixture(autouse=True)
+def _take_back_lent_fonts():
+    """★2026-11-23: the lent faces stayed registered for the rest of the process. Every later test then laid out
+    with Segoe UI / Yu Gothic (taller MDI title bars), and the squeezed-image-window strip test failed only after
+    test_state_glyphs_have_a_font_or_are_drawn (the two alone: fails; each alone: passes). Take them back."""
+    yield
+    if _LENT_FONT_IDS:
+        from PySide6 import QtGui
+        while _LENT_FONT_IDS:
+            QtGui.QFontDatabase.removeApplicationFont(_LENT_FONT_IDS.pop())
+
+
 def _lend_windows_fonts():
     """The offscreen platform starts without the Windows fonts: lend it the UI and symbol faces (application
-    fonts, nothing is installed). Returns the families now known, or skips where the files are not there."""
+    fonts, nothing is installed; taken back after the test). Returns the families now known, or skips where the
+    files are not there."""
     import os
     from PySide6 import QtGui
     folder = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
@@ -1450,7 +1467,9 @@ def _lend_windows_fonts():
         pytest.skip("the Windows UI faces (segoeui.ttf / seguisym.ttf) are not on this machine: the glyph "
                     "coverage of the UI font stack cannot be measured here")
     for f in have:
-        QtGui.QFontDatabase.addApplicationFont(os.path.join(folder, f))
+        fid = QtGui.QFontDatabase.addApplicationFont(os.path.join(folder, f))
+        if fid >= 0:
+            _LENT_FONT_IDS.append(fid)
     return set(QtGui.QFontDatabase.families())
 
 
