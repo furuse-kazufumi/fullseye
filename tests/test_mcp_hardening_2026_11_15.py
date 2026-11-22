@@ -27,6 +27,7 @@ import queue
 import re
 import subprocess
 import sys
+import time
 
 import numpy as np
 import pytest
@@ -112,23 +113,69 @@ def _serve(raw: bytes, cat, store) -> list:
     return [_strict(b) for b in _bodies(out.getvalue())]
 
 
+def _serve_output(raw: bytes, cat, store) -> bytes:
+    out = io.BytesIO()
+    assert S.run_stdio_server(_stream(raw), out, catalog=cat, store=store) == 0
+    return out.getvalue()
+
+
+def _framing_kinds(out: bytes) -> list[str]:
+    """出力の枠だけを読む(本文の ``Content-Length`` と取り違えない)。"""
+    kinds, pos = [], 0
+    while pos < len(out):
+        m = re.compile(rb"Content-Length: (\d+)\r\n\r\n").match(out, pos)
+        if m:
+            kinds.append(S.FRAMING_HEADERS)
+            pos = m.end() + int(m.group(1))
+        else:
+            kinds.append(S.FRAMING_LINES)
+            nl = out.find(b"\n", pos)
+            pos = len(out) if nl < 0 else nl + 1
+    return kinds
+
+
+class _RecordingReader:
+    """``read`` / ``readline`` が 1 回に返した大きさを記録する。"""
+
+    def __init__(self, raw: bytes):
+        self.stream = _stream(raw)
+        self.read_sizes = []
+        self.readline_sizes = []
+
+    def read(self, size=-1):
+        got = self.stream.read(size)
+        self.read_sizes.append((size, len(got)))
+        return got
+
+    def readline(self, size=-1):
+        got = self.stream.readline(size)
+        self.readline_sizes.append((size, len(got)))
+        return got
+
+
 # --------------------------------------------------------------------------- 1: Content-Length 枠の上限
 def test_a_huge_content_length_is_refused_and_the_server_keeps_answering(cat, store):
-    """直す前: 35 バイトの 1 通で MemoryError になり、サーバが落ちた(次の ping に返事が無い)。"""
+    """直す前: 巨大な長さを ``read`` へ渡して MemoryError になった。
+
+    仕様の変更: 長さが分かる一通は、上限外でも本文として読み捨てる。後ろの ping の枠も宣言された
+    本文の一部なので実行せず、確保は小さな塊のまま -32700 を返して EOF まで走る。"""
     replies = _serve(b"Content-Length: 10000000000000\r\n\r\n" + _frame(PING), cat, store)
     assert replies[0]["id"] is None and replies[0]["error"]["code"] == -32700, replies
     assert "Content-Length" in replies[0]["error"]["message"]
-    assert replies[-1] == {"jsonrpc": "2.0", "id": 99, "result": {}}
+    assert len(replies) == 1
 
 
 def test_a_content_length_body_above_the_frame_limit_is_refused_unread(monkeypatch):
-    """直す前: 改行区切りの 1 行には上限(64 MiB)があったが、Content-Length の本文は正の数かしか見なかった。"""
+    """直す前: 上限外の本文を読まず、次の要求として実行し得た。
+
+    仕様の変更: Content-Length が分かる枠は本文を塊で読み捨ててから断る。これで本文を要求として
+    実行せず、次の Content-Length 枠の位置も保つ。"""
     monkeypatch.setattr(S, "MAX_LINE_BYTES", 1000)
     body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "ping", "pad": "x" * 1000}).encode()
     stream = _stream(b"Content-Length: %d\r\n\r\n" % len(body) + body)
     with pytest.raises(S.FramingError, match="1000"):
         S.read_framed(stream)
-    assert stream.read(1) == b"{"                                   # 本文は読まずに断った
+    assert stream.read(1) == b""                                    # 断った枠の本文は読み捨てた
     with pytest.raises(S.FramingError):                              # 改行区切りも同じ上限
         S.read_framed(_stream(body + b"\n"))
     small = json.dumps(PING).encode()                                # 上限の内は今まで通り
@@ -160,7 +207,7 @@ def test_duplicated_or_malformed_headers_are_refused(head):
 
 def test_after_a_refused_header_block_the_server_keeps_answering(cat, store):
     """壊れたヘッダの塊は空行まで読み捨ててから断る(1 通に 1 つの -32700)。後の要求には今まで通り返す。"""
-    raw = b"Content-Length: 2\r\nContent-Length: 2\r\n\r\n" + _frame(PING)
+    raw = b"Content-Length: 2\r\nContent-Length: 2\r\n\r\n{}" + _frame(PING)
     replies = _serve(raw, cat, store)
     assert [r.get("error", {}).get("code") for r in replies] == [-32700, None], replies
     assert replies[-1]["id"] == 99
@@ -172,6 +219,82 @@ def test_normal_frames_still_read_with_a_content_type_header():
     raw = b"Content-Length: %d\r\nContent-Type: application/vscode-jsonrpc; charset=utf-8\r\n\r\n" % len(body) + body
     assert S.read_framed(_stream(raw)) == (PING, S.FRAMING_HEADERS)
     assert S.read_framed(_stream(b"\r\n\n" + body + b"\n")) == (PING, S.FRAMING_LINES)
+
+
+@pytest.mark.parametrize("bad_line", [b"\x00\x00\x00", b"7", b"null", b'"x"', b"garbage"],
+                         ids=["nul-bytes", "number", "null", "string", "garbage"])
+def test_a_non_header_first_line_does_not_consume_the_next_line_message(bad_line, cat, store):
+    """1 行目が JSON object / array でも見出しでもなければ、その 1 行だけを断り、次の要求を読む。"""
+    out = _serve_output(bad_line + b"\n" + json.dumps(PING).encode() + b"\n", cat, store)
+    replies = [_strict(body) for body in _bodies(out)]
+    assert [reply.get("error", {}).get("code") for reply in replies] == [-32700, None], replies
+    assert replies[-1] == {"jsonrpc": "2.0", "id": 99, "result": {}}
+    assert _framing_kinds(out) == [S.FRAMING_HEADERS, S.FRAMING_LINES]
+
+
+def test_a_refused_oversize_body_is_discarded_before_the_next_frame(cat, store, monkeypatch):
+    """直す前: 上限 + 1 の本文の ping を、-32700 の次の改行区切り要求として実行した。"""
+    monkeypatch.setattr(S, "MAX_LINE_BYTES", 80)
+    refused = json.dumps({"jsonrpc": "2.0", "id": 7, "method": "ping", "pad": "x" * 81}).encode()
+    raw = b"Content-Length: %d\r\n\r\n" % len(refused) + refused + _frame(PING)
+    out = _serve_output(raw, cat, store)
+    replies = [_strict(body) for body in _bodies(out)]
+    assert [r.get("error", {}).get("code") for r in replies] == [-32700, None], replies
+    assert [r.get("id") for r in replies] == [None, 99]
+    assert _framing_kinds(out) == [S.FRAMING_HEADERS, S.FRAMING_HEADERS]
+
+
+def test_refused_header_blocks_discard_their_bodies_and_keep_content_length_in_sync(cat, store):
+    """直す前: 重複・形の崩れ・行数・バイト数の拒否後に本文を実行するか、次の枠と連結した。"""
+    refused = json.dumps({"jsonrpc": "2.0", "id": 7, "method": "ping"}).encode()
+    content_length = b"Content-Length: %d\r\n" % len(refused)
+    byte_pad = b"X-Pad: " + b"x" * (8193 - len(content_length) - len(b"X-Pad: \r\n")) + b"\r\n"
+    heads = [
+        content_length + content_length,
+        content_length + b"not a header\r\n",
+        content_length + b"".join(b"X-%02d: v\r\n" % i for i in range(16)),
+        content_length + byte_pad,
+    ]
+    for head in heads:
+        out = _serve_output(head + b"\r\n" + refused + _frame(PING), cat, store)
+        replies = [_strict(body) for body in _bodies(out)]
+        assert [r.get("error", {}).get("code") for r in replies] == [-32700, None], (head[:80], replies)
+        assert [r.get("id") for r in replies] == [None, 99]
+        assert _framing_kinds(out) == [S.FRAMING_HEADERS, S.FRAMING_HEADERS]
+
+
+def test_header_limits_accept_exactly_sixteen_lines_and_8192_bytes():
+    """境界の 16 行・8192 バイトは受け、超えた時だけ断る。"""
+    body = json.dumps(PING).encode()
+    content_length = b"Content-Length: %d\r\n" % len(body)
+    sixteen = content_length + b"".join(b"X-%02d: v\r\n" % i for i in range(15))
+    assert S.read_framed(_stream(sixteen + b"\r\n" + body)) == (PING, S.FRAMING_HEADERS)
+    exact = content_length + b"X-Pad: " + b"x" * (8192 - len(content_length) - len(b"X-Pad: \r\n")) + b"\r\n"
+    assert len(exact) == S.MAX_HEADER_BYTES
+    assert S.read_framed(_stream(exact + b"\r\n" + body)) == (PING, S.FRAMING_HEADERS)
+
+
+def test_refused_body_and_long_header_lines_are_discarded_in_bounded_chunks(monkeypatch):
+    """直す前: 巨大な本文を読まない代わりに次の通とし、見出しの 1 行目は 64 MiB まで読んだ。"""
+    monkeypatch.setattr(S, "MAX_LINE_BYTES", 10)
+    monkeypatch.setattr(S, "_DISCARD_CHUNK", 7)
+    body_reader = _RecordingReader(b"Content-Length: 30\r\n\r\n" + b"x" * 30)
+    with pytest.raises(S.FramingError):
+        S.read_framed(body_reader)
+    assert body_reader.read_sizes and max(max(requested, returned) for requested, returned in body_reader.read_sizes) <= 7
+
+    head_reader = _RecordingReader(b"X-Pad: " + b"x" * 20_000 + b"\r\n\r\n")
+    with pytest.raises(S.FramingError):
+        S.read_framed(head_reader)
+    assert head_reader.readline_sizes[0][1] <= S.MAX_HEADER_BYTES + 1
+    assert max(returned for _requested, returned in head_reader.readline_sizes) <= S.MAX_HEADER_BYTES + 1
+
+
+def test_a_one_megabyte_line_delimited_message_still_reads():
+    """1 行目の 8 KiB 上限は見出し用で、``{`` / ``[`` で始まる改行区切りは従来どおり読む。"""
+    obj = {"jsonrpc": "2.0", "id": 5, "method": "ping", "pad": "x" * (1 << 20)}
+    body = json.dumps(obj).encode()
+    assert S.read_framed(_stream(body + b"\n")) == (obj, S.FRAMING_LINES)
 
 
 # --------------------------------------------------------------------------- 4: JSON の入口は厳密に
@@ -220,6 +343,64 @@ def test_write_message_never_writes_nan_even_in_its_fallback():
         (body,) = _bodies(out.getvalue())
         reply = _strict(body)
         assert reply["id"] is None and reply["error"]["code"] == -32603
+
+
+@pytest.mark.parametrize("raw", [
+    b'{"jsonrpc":"2.0","id":"\\ud800","method":"ping"}',
+    b'{"jsonrpc":"2.0","id":7,"method":"ping","params":{"text":"\\ud800"}}',
+    b'{"jsonrpc":"2.0","id":7,"method":"ping","params":{"\\ud800":1}}',
+], ids=["id", "params-string", "dict-key"])
+@pytest.mark.parametrize("framing", [S.FRAMING_LINES, S.FRAMING_HEADERS])
+def test_unpaired_surrogates_are_parse_errors_and_do_not_stop_the_server(raw, framing, cat, store):
+    """直す前: id の対になっていないサロゲートで応答の UTF-8 符号化も最後の網も落ち、次の ping に答えなかった。"""
+    first = raw + b"\n" if framing == S.FRAMING_LINES else b"Content-Length: %d\r\n\r\n" % len(raw) + raw
+    second_body = json.dumps(PING).encode()
+    second = second_body + b"\n" if framing == S.FRAMING_LINES else _frame(PING)
+    out = _serve_output(first + second, cat, store)
+    out.decode("utf-8", "strict")
+    replies = [_strict(body) for body in _bodies(out)]
+    assert replies[0]["id"] is None and replies[0]["error"]["code"] in (-32700, -32600), replies
+    assert replies[-1] == {"jsonrpc": "2.0", "id": 99, "result": {}}
+    assert _framing_kinds(out) == [framing, framing]
+
+
+@pytest.mark.parametrize("framing", [S.FRAMING_LINES, S.FRAMING_HEADERS])
+def test_a_paired_surrogate_escape_remains_a_valid_unicode_id(framing, cat, store):
+    """``\\ud83d\\ude00`` の対は U+1F600 として従来どおり受ける。"""
+    raw = b'{"jsonrpc":"2.0","id":"\\ud83d\\ude00","method":"ping"}'
+    framed = raw + b"\n" if framing == S.FRAMING_LINES else b"Content-Length: %d\r\n\r\n" % len(raw) + raw
+    assert _serve(framed, cat, store) == [{"jsonrpc": "2.0", "id": "😀", "result": {}}]
+
+
+def test_eight_megabyte_strings_with_surrogate_escapes_are_checked(cat, store):
+    """8 MiB の文字列も受け、末尾に対になっていないサロゲートが 1 つあれば -32700 にする。"""
+    prefix = b'{"jsonrpc":"2.0","id":7,"method":"ping","params":{"text":"'
+    suffix = b'"}}\n'
+    payload = b"x" * (8 << 20)
+    paired = prefix + payload + b"\\ud83d\\ude00" + suffix
+    plain = prefix + payload + b"y" * 12 + suffix                  # escape が無いので木を見ない(基準)
+    started = time.monotonic()
+    assert _serve(plain, cat, store) == [{"jsonrpc": "2.0", "id": 7, "result": {}}]
+    baseline = time.monotonic() - started
+    started = time.monotonic()
+    assert _serve(paired, cat, store) == [{"jsonrpc": "2.0", "id": 7, "result": {}}]
+    walked = time.monotonic() - started
+    # 1 文字ずつ Python で回すと、木を見ない基準の数倍かかった(手元 0.69 秒)。機械の速さに依らないよう、基準との比で見る。
+    assert walked < 2.0 * baseline + 0.2, (walked, baseline)
+    unpaired = prefix + payload + b"\\ud83d\\ude00\\ud800" + suffix
+    replies = _serve(unpaired, cat, store)
+    assert replies[0]["id"] is None and replies[0]["error"]["code"] == -32700, replies
+
+
+def test_write_message_refuses_a_surrogate_in_a_result_without_raising():
+    """直す前: Linux の surrogateescape などで結果にサロゲートが入ると ``UnicodeEncodeError`` が投げられた。"""
+    for framing in (S.FRAMING_LINES, S.FRAMING_HEADERS):
+        out = io.BytesIO()
+        S.write_message(out, {"jsonrpc": "2.0", "id": "ok", "result": {"name": "\ud800"}}, framing=framing)
+        out.getvalue().decode("utf-8", "strict")
+        (body,) = _bodies(out.getvalue())
+        reply = _strict(body)
+        assert reply["id"] == "ok" and reply["error"]["code"] == -32603
 
 
 @pytest.mark.parametrize("bad_id", [{"x": 1}, [1], True, False], ids=["object", "array", "true", "false"])
@@ -289,6 +470,30 @@ def test_viewer_files_have_a_count_and_byte_quota(cat, tmp_path):
     with pytest.raises(S.ArgError, match="1000"):
         S.call_tool("fullseye_write_viewer", {"spec": spec, "name": "too_big"}, cat, st)
     assert not os.path.exists(os.path.join(st.thumb_dir, "too_big.html"))
+
+
+def test_case_only_viewer_names_share_one_quota_entry(tmp_path, monkeypatch):
+    """直す前: Windows で ``A.html`` と ``a.html`` を別の台帳行にし、A を追い出す時に新しい a の実体を消した。"""
+    real_normcase = H.os.path.normcase
+    monkeypatch.setattr(H.os.path, "normcase", lambda path: real_normcase(path).lower())
+    st = HandleStore(roots=[], thumb_dir=str(tmp_path / "t"), max_viewer_files=2, max_viewer_bytes=10_000)
+    upper = st.write_viewer("A", "upper")
+    lower = st.write_viewer("a", "lower")
+    other = st.write_viewer("b", "other")
+    assert os.path.exists(lower) and os.path.exists(other)
+    with open(lower, encoding="utf-8") as fh:
+        assert fh.read() == "lower"
+    paths = [row[0] for row in st._viewers.values()]
+    assert all(os.path.exists(path) for path in paths)
+    htmls = [name for name in os.listdir(st.thumb_dir) if name.endswith(".html")]
+    assert len(paths) == len(htmls) == 2
+
+
+@pytest.mark.parametrize("name", ["CON", "nul", "Com1", "LPT9"])
+def test_viewer_refuses_windows_device_names_on_every_os(name, cat, store):
+    """直す前: Windows の予約デバイス名を HTML の名前として通した。"""
+    with pytest.raises(S.ArgError, match="予約|device"):
+        S.call_tool("fullseye_write_viewer", {"spec": _viewer_spec(), "name": name}, cat, store)
 
 
 # --------------------------------------------------------------------------- 2: 作業プロセスの import
@@ -366,6 +571,18 @@ def test_the_server_started_with_python_m_imports_nothing_from_its_cwd(tmp_path)
     assert replies[2]["result"]["isError"] is False, r.stderr.decode("utf-8", "replace")[-800:]
 
 
+def test_script_arguments_that_look_like_python_m_do_not_remove_the_script_directory(tmp_path):
+    """直す前: ``python script.py -m fullseye.mcp`` でも orig_argv だけを見て、script.py のフォルダを sys.path から外した。"""
+    script = tmp_path / "show_path.py"
+    script.write_text("import fullseye, json, sys\nprint(json.dumps(sys.path))\n", encoding="utf-8")
+    env = dict(os.environ, PYTHONUTF8="1", PYTHONIOENCODING="utf-8", PYTHONPATH=ROOT)
+    r = subprocess.run([sys.executable, str(script), "-m", "fullseye.mcp"], cwd=str(tmp_path), env=env,
+                       timeout=120, capture_output=True, check=True)
+    paths = json.loads(r.stdout)
+    normalized = {os.path.normcase(os.path.realpath(path)) for path in paths}
+    assert os.path.normcase(os.path.realpath(tmp_path)) in normalized, paths[:3]
+
+
 # --------------------------------------------------------------------------- 3: 作業プロセスの出力の上限
 def test_result_limit_counts_strings_numbers_and_containers():
     """直す前: 数えるのは配列の要素とバイトだけで、文字列・数・dict / list は 0 と数えた。"""
@@ -376,6 +593,37 @@ def test_result_limit_counts_strings_numbers_and_containers():
     assert W._result_limit_error([shared, shared], {"max_elements": 1000})
     assert W._result_limit_error({"s": "x" * 10, "image": np.zeros((5, 5))},
                                  {"max_result_bytes": 1000, "max_elements": 1000}) is None
+
+
+@pytest.mark.parametrize("value", [
+    "ascii",
+    "日本語",
+    "\x00\"\\\n",
+    10 ** 200,
+    float("nan"),
+    float("inf"),
+    {"nested\nkey": [None, True, -12, 1.25, ("x",)]},
+    np.arange(12, dtype=np.int16).reshape(3, 4),
+    np.float32(1.25),
+], ids=["ascii", "multibyte", "escaped", "big-int", "nan", "infinity", "nested", "array", "numpy-scalar"])
+def test_result_json_byte_count_is_an_upper_bound(value, tmp_path):
+    """直す前: 生の UTF-8 長さだけを数え、NUL など JSON のエスケープで増えるバイトを見積もらなかった。"""
+    folder = tmp_path / "encoded"
+    folder.mkdir()
+    encoded = W.encode_tree(value, str(folder))
+    actual = len(json.dumps(encoded, ensure_ascii=False).encode("utf-8"))
+    assert W.result_counts(value)["json_bytes"] >= actual
+
+
+def test_result_json_byte_count_stops_at_its_limit():
+    """10**12 個の葉へ展開される共有木でも、JSON 上界を超えた時点で数えるのをやめる。"""
+    value = 0
+    for _ in range(12):
+        value = [value] * 10
+    started = time.monotonic()
+    counts = W.result_counts(value, max_json_bytes=1_000_000)
+    assert counts["json_bytes"] > 1_000_000
+    assert time.monotonic() - started < 5.0
 
 
 @pytest.mark.parametrize("key, kwargs", [("big_string", {"chars": 200_000}), ("float_list", {"count": 50_000})])
@@ -396,6 +644,34 @@ def test_worker_refuses_a_reply_line_above_the_limit(worker):
         worker.run(dict(FIXTURE, key="big_string", max_reply_bytes=10_000), [], {"chars": 50_000},
                    time_limit_s=60, max_rss=GIB)
     assert err.value.reason == "output_limit" and "reply" in str(err.value)
+
+
+def test_worker_checks_escaped_reply_size_before_building_the_json():
+    """直す前: NUL の文字列を JSON で 6 倍に広げてから返事の上限を見たため、先にメモリ上限で子が止まった。"""
+    w = OpWorker()
+    try:
+        job = dict(FIXTURE, key="nul_string", max_reply_bytes=1_000_000)
+        with pytest.raises(OpWorkerError) as err:
+            w.run(job, [], {"chars": 8_000_000}, time_limit_s=60, max_rss=16 << 20)
+    finally:
+        w.close()
+    assert err.value.reason == "output_limit", (err.value.reason, str(err.value))
+    assert "reply limit" in str(err.value)
+
+
+def test_worker_stops_counting_a_shared_tree_at_the_reply_limit():
+    """共有木を全展開して time_limit にせず、返事の上界を数える途中で output_limit にする。"""
+    w = OpWorker()
+    started = time.monotonic()
+    try:
+        with pytest.raises(OpWorkerError) as err:
+            w.run(dict(FIXTURE, key="shared_tree", max_reply_bytes=1_000_000), [],
+                  {"width": 10, "levels": 12}, time_limit_s=60, max_rss=GIB)
+    finally:
+        w.close()
+    elapsed = time.monotonic() - started
+    assert err.value.reason == "output_limit", (err.value.reason, str(err.value), elapsed)
+    assert elapsed < 15.0, elapsed
 
 
 def test_parent_stops_reading_a_reply_line_above_the_limit():
@@ -476,3 +752,27 @@ def test_a_handle_name_collision_is_refused_instead_of_answering_with_the_other_
     assert np.array_equal(st.get(first["handle"])[1], np.zeros((4, 4)))
     again = st.put(np.zeros((4, 4)), sort="image", provenance=[])     # 同じ中身は今まで通り dedup
     assert again["handle"] == first["handle"] and again["dedup"] is True
+
+
+def test_an_evicted_handle_name_cannot_be_reused_for_different_content(tmp_path, monkeypatch):
+    """直す前: 追い出し時に全 digest を捨て、同じ 16 桁の名前を別の中身に使い回せた。"""
+    real_digest = HandleStore._digest
+    first_digest = real_digest(np.array([0.0]), "image")
+    replacement_digest = first_digest[:16] + ("f" if first_digest[16] != "f" else "e") + first_digest[17:]
+
+    def fake_digest(value, sort=""):
+        marker = int(np.asarray(value).flat[0])
+        if marker == 0:
+            return first_digest
+        if marker == 2:
+            return replacement_digest
+        return real_digest(value, sort)
+
+    monkeypatch.setattr(HandleStore, "_digest", staticmethod(fake_digest))
+    st = HandleStore(roots=[], max_items=1, thumb_dir=str(tmp_path / "t"))
+    first = st.put(np.array([0.0]), sort="image", provenance=[])["handle"]
+    st.put(np.array([1.0]), sort="image", provenance=[])
+    with pytest.raises(HandleError, match="衝突"):
+        st.put(np.array([2.0]), sort="image", provenance=[])
+    with pytest.raises(HandleError, match="追い出された"):
+        st.get(first)

@@ -95,6 +95,14 @@ def _nul_string(chars=1000):
     return {"text": "\x00" * int(chars)}
 
 
+def _shared_tree(width=10, levels=12):
+    """同じ list を共有する木。送る JSON では ``width ** levels`` 個の葉へ展開される。"""
+    value = 0
+    for _ in range(int(levels)):
+        value = [value] * int(width)
+    return {"tree": value}
+
+
 def _interpreter():
     """作業プロセスの Python の起動のされ方(``-I`` か)・``sys.path``・作業フォルダ。ファイルは読まない。"""
     import sys
@@ -103,4 +111,4 @@ def _interpreter():
 
 TABLE.update({name: {"func": func} for name, func in {
     "big_string": _big_string, "float_list": _float_list, "nul_string": _nul_string,
-    "interpreter": _interpreter}.items()})
+    "shared_tree": _shared_tree, "interpreter": _interpreter}.items()})

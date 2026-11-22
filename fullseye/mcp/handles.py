@@ -203,11 +203,11 @@ class HandleStore:
         # ★2026-11-15(外部レビュー、Codex): 追い出したハンドルの名前を集合に足し続けていた(max_items=4 で 5,000 回
         #   入れると 4,996 件)。新しい物から max_evicted 件だけ覚える。追い出した時に、そのハンドルの小図も消す
         #   (以前は残り続けた)。名前(sha256 の先頭 64 bit)が同じでも中身の digest が違えば、dedup と答えずに断る。
-        self._evicted: OrderedDict[str, None] = OrderedDict()
+        self._evicted: OrderedDict[str, str] = OrderedDict()           # 追い出した名前 → 中身の sha256(全桁)
         self.max_evicted = max(EVICTED_HISTORY_MIN, 4 * self.max_items)
         self._digests: dict[str, str] = {}                              # ハンドル → 中身の sha256(全桁)
         self._files: dict[str, set[str]] = {}                           # ハンドル → そのハンドルの小図
-        self._viewers: OrderedDict[str, int] = OrderedDict()            # viewer の HTML → バイト(古い順)
+        self._viewers: OrderedDict[str, tuple[str, int]] = OrderedDict() # normcase(HTML) → (実際のパス, バイト)(古い順)
         self.max_viewer_files = int(max_viewer_files)
         self.max_viewer_bytes = int(max_viewer_bytes)
         self._seq = 0
@@ -339,10 +339,12 @@ class HandleStore:
 
     def _drop(self, handle: str) -> None:
         """ハンドルを追い出す(参照の無くなった配列のバイトを、持っているバイトから引く)。"""
+        digest = self._digests.get(handle)
         self._meta.pop(handle, None)
         self._arr.pop(handle, None)
         self._digests.pop(handle, None)
-        self._evicted[handle] = None
+        if digest is not None:
+            self._evicted[handle] = digest
         self._evicted.move_to_end(handle)
         while len(self._evicted) > self.max_evicted:
             self._evicted.popitem(last=False)
@@ -383,6 +385,10 @@ class HandleStore:
                                   "取り違えないよう、入れずに断る" % hid)
             self._meta.move_to_end(hid)
             return dict(self._meta[hid], dedup=True)
+        # ★2026-11-22(独立レビュー): 追い出し時に digest を捨てたため、同じ先頭 64 bit の名前を別の中身に使い回せた。
+        if hid in self._evicted and self._evicted[hid] != digest:
+            raise HandleError("ハンドルの名前の衝突: %s に別の中身が既にある(中身の sha256 が違う)。"
+                              "取り違えないよう、入れずに断る" % hid)
         self._evicted.pop(hid, None)        # 作り直したハンドルは生きている(追い出し印を消す)
         while self._meta and self._held + self._new_bytes(arrays, other) > self.max_bytes:
             self._drop(next(iter(self._meta)))
@@ -504,17 +510,25 @@ class HandleStore:
             raise HandleError("ビューアが %d バイトで、置き場の枠 %d バイトを超える(書かない)"
                               % (len(data), self.max_viewer_bytes))
         path = os.path.join(self.thumb_dir, name + ".html")
-        self._viewers.pop(path, None)
+        # ★2026-11-22(独立レビュー): Windows で大文字小文字だけ違う名前を別の台帳行にし、
+        #   古い行を追い出す時に新しい行と同じ実体を消した。normcase した鍵で書き換えにする。
+        key = os.path.normcase(path)
+        previous = self._viewers.pop(key, None)
+        if previous is not None and previous[0] != path:
+            try:
+                os.remove(previous[0])
+            except OSError:
+                pass
         while self._viewers and (len(self._viewers) >= self.max_viewer_files
-                                 or sum(self._viewers.values()) + len(data) > self.max_viewer_bytes):
-            old, _size = self._viewers.popitem(last=False)
+                                 or sum(row[1] for row in self._viewers.values()) + len(data) > self.max_viewer_bytes):
+            _old_key, (old, _size) = self._viewers.popitem(last=False)
             try:
                 os.remove(old)
             except OSError:
                 pass
         with open(path, "wb") as fh:
             fh.write(data)
-        self._viewers[path] = len(data)
+        self._viewers[key] = (path, len(data))
         return path
 
     def stats(self) -> dict:

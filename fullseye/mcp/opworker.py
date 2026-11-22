@@ -20,8 +20,9 @@ MCP の ``fullseye_pipeline`` は、registry 層の op を同じプロセスで�
   fullseye の置き場所の中の物だけを読む(:func:`_ledger_module`)。
 - **結果の大きさ**: job の ``max_elements``(配列の要素と、配列でない値・dict / list の数の和)・``max_result_bytes``
   (配列のバイト + 文字列の長さ + 他の値 1 つ 8 バイト)を子が数え、超えたら結果を書き出さずに断る
-  (``reason="output_limit"``)。返事の 1 行は :data:`MAX_REPLY_BYTES` まで(子が JSON にしてから測り、親も 1 行を
-  その長さまでしか読まない)。メモリの見張りと囲いは、結果を送り終えるまで掛けたまま。親も子の出力を読む前に、
+  (``reason="output_limit"``)。返事の 1 行は :data:`MAX_REPLY_BYTES` まで(子は JSON にする前に上界を数え、上限を
+  超えた所で計数も打ち切る。JSON にした後の検査も残し、親も 1 行をその長さまでしか読まない)。メモリの見張りと
+  囲いは、結果を送り終えるまで掛けたまま。親も子の出力を読む前に、
   ``.npy`` の見出しで数える。
 - **値の受け渡し**: JSON の木 + 数値配列だけ(pickle は使わない。object 配列・知らない型は拒否)。
 
@@ -35,6 +36,7 @@ import base64
 import importlib
 import importlib.util
 import json
+import math
 import os
 import queue
 import re
@@ -204,38 +206,100 @@ def _text_bytes(text: str) -> int:
     return len(text) if text.isascii() else len(text.encode("utf-8", "surrogatepass"))
 
 
-def result_counts(value, max_values: int | None = None, max_bytes: int | None = None) -> dict:
+def _json_string_bytes(text: str) -> int:
+    """``json.dumps(text, ensure_ascii=False)`` の UTF-8 バイト数。エスケープした写しは作らない。"""
+    size = _text_bytes(text) + 2
+    for char in ('"', "\\", "\b", "\f", "\n", "\r", "\t"):
+        size += text.count(char)
+    short = {8, 9, 10, 12, 13}
+    size += 5 * sum(text.count(chr(code)) for code in range(32) if code not in short)
+    return size
+
+
+def _int_decimal_bytes(value: int) -> int:
+    """10 進の符号と桁数の上界(巨大な int を文字列にしない)。"""
+    if value == 0:
+        return 1
+    bits = abs(value).bit_length()
+    digits = (bits * 30103 + 99_999) // 100_000 + 1
+    return digits + (value < 0)
+
+
+def result_counts(value, max_values: int | None = None, max_bytes: int | None = None,
+                  max_json_bytes: int | None = None) -> dict:
     """結果の木の大きさを、送る時と同じに数える(同じ物が 2 回あれば 2 回書くので 2 回数える)。再帰しない。
 
     返すのは ``array_elements`` / ``other_values``(配列でない葉と dict・list・tuple の数)/ ``array_bytes`` /
-    ``other_bytes``(配列でない値 1 つ 8 バイト + 文字列と dict の鍵の UTF-8 の長さ)。``max_values`` か ``max_bytes``
-    を超えた所で数えるのをやめる(大きな木を最後までたどらない)。:data:`MAX_TREE_DEPTH` より深い所は数えない
-    (その木は符号化が断る)。
+    ``other_bytes``(配列でない値 1 つ 8 バイト + 文字列と dict の鍵の UTF-8 の長さ) / ``json_bytes``
+    (:func:`encode_tree` の値を JSON で送る時のバイト数の上界)。``max_values`` / ``max_bytes`` /
+    ``max_json_bytes`` のどれかを超えた所で数えるのをやめる(大きな木を最後までたどらない)。
+    :data:`MAX_TREE_DEPTH` より深い所は数えない(その木は符号化が断る)。
 
     ★2026-11-15(外部レビュー、Codex): 以前は配列の要素とバイトだけを数え、文字列・数の list・dict は 0 と数えた。
     200,000 文字の文字列や 50,000 個の数の list が、上限 10,000 要素 / 100,000 バイトを素通りした。"""
-    c = {"array_elements": 0, "other_values": 0, "array_bytes": 0, "other_bytes": 0}
+    # ★2026-11-22(独立レビュー): 生の UTF-8 長さでは NUL など JSON で増える文字を数えられなかった。
+    c = {"array_elements": 0, "other_values": 0, "array_bytes": 0, "other_bytes": 0, "json_bytes": 0}
     todo = [(value, 0)]
+    inline_bytes = 0
     while todo:
         item, depth = todo.pop()
         if isinstance(item, np.ndarray):
             c["array_elements"] += int(item.size)
             c["array_bytes"] += int(item.nbytes)
+            if item.nbytes <= INLINE_ARRAY_BYTES and inline_bytes + item.nbytes <= INLINE_TOTAL_BYTES:
+                inline_bytes += int(item.nbytes)
+                b64 = 4 * ((int(item.nbytes) + 2) // 3)
+                shape = sum(_int_decimal_bytes(int(dim)) + 2 for dim in item.shape)
+                c["json_bytes"] += 96 + b64 + shape + _json_string_bytes(item.dtype.str)
+            else:
+                c["json_bytes"] += 48
         else:
             c["other_values"] += 1
             c["other_bytes"] += 8
             if isinstance(item, str):
                 c["other_bytes"] += _text_bytes(item)
+                c["json_bytes"] += _json_string_bytes(item)
             elif isinstance(item, (bytes, bytearray)):
                 c["other_bytes"] += len(item)
+                c["json_bytes"] += 64 + 2 * len(item)
             elif isinstance(item, dict) and depth <= MAX_TREE_DEPTH:
-                for key, sub in item.items():
+                c["json_bytes"] += 24 + 4 * len(item)
+                for key, sub in reversed(list(item.items())):
                     c["other_bytes"] += _text_bytes(key) if isinstance(key, str) else 8
+                    if isinstance(key, np.generic):
+                        key = key.item()
+                    key = key if isinstance(key, str) else str(key)
+                    c["json_bytes"] += _json_string_bytes(key)
                     todo.append((sub, depth + 1))
             elif isinstance(item, (list, tuple)) and depth <= MAX_TREE_DEPTH:
-                todo.extend((sub, depth + 1) for sub in item)
+                c["json_bytes"] += 24 + 2 * len(item)
+                todo.extend((sub, depth + 1) for sub in reversed(item))
+            elif isinstance(item, np.generic):
+                scalar = item.item()
+                if isinstance(scalar, bool):
+                    leaf = 5
+                elif isinstance(scalar, int):
+                    digits = _int_decimal_bytes(scalar)
+                    leaf = digits if -(2 ** 53) <= scalar <= 2 ** 53 else 32 + digits
+                elif isinstance(scalar, float):
+                    leaf = 24 if math.isfinite(scalar) else 40
+                else:                                               # complex
+                    leaf = 96
+                c["json_bytes"] += 64 + _json_string_bytes(item.dtype.str) + leaf
+            elif item is None:
+                c["json_bytes"] += 4
+            elif isinstance(item, bool):
+                c["json_bytes"] += 5
+            elif isinstance(item, int):
+                digits = _int_decimal_bytes(item)
+                c["json_bytes"] += digits if -(2 ** 53) <= item <= 2 ** 53 else 32 + digits
+            elif isinstance(item, float):
+                c["json_bytes"] += 24 if math.isfinite(item) else 40
+            elif isinstance(item, complex):
+                c["json_bytes"] += 96
         if ((max_values and c["array_elements"] + c["other_values"] > max_values)
-                or (max_bytes and c["array_bytes"] + c["other_bytes"] > max_bytes)):
+                or (max_bytes and c["array_bytes"] + c["other_bytes"] > max_bytes)
+                or (max_json_bytes and c["json_bytes"] > max_json_bytes)):
             break
     return c
 
@@ -513,11 +577,23 @@ def _child_main(tmp: str) -> int:
                 reply = {"id": jid, "phase": "done", "ok": False,
                          "error": {"type": "ResourceLimit", "message": too_big, "stage": "limit"}}
             else:
-                os.makedirs(out_dir, exist_ok=True)
-                reply = {"id": jid, "phase": "done", "ok": True, "value": encode_tree(result, out_dir),
-                         "elapsed_s": elapsed}
-                del result
-                check_memory()
+                # ★2026-11-22(独立レビュー 2 回目): 共有された list の木は、送る JSON では同じ値を
+                #   毎回展開する。上界の計数自体が返事の上限を超えた所で止まるようにする。
+                json_bound = result_counts(result, max_json_bytes=reply_limit)["json_bytes"] + 512
+                if json_bound > reply_limit:
+                    # ★2026-11-22(独立レビュー): json.dumps が GIL を持つ間は見張りが回らない。応答の
+                    #   JSON バイト数の上界が枠を超える時は、大きな写しを作る前に output_limit で断る。
+                    del result
+                    reply = {"id": jid, "phase": "done", "ok": False,
+                             "error": {"type": "ResourceLimit", "stage": "limit",
+                                       "message": "the encoded reply can require up to %d bytes, above the %d-byte "
+                                                  "reply limit; ask for a smaller result" % (json_bound, reply_limit)}}
+                else:
+                    os.makedirs(out_dir, exist_ok=True)
+                    reply = {"id": jid, "phase": "done", "ok": True, "value": encode_tree(result, out_dir),
+                             "elapsed_s": elapsed}
+                    del result
+                    check_memory()
             text = encode_reply(reply, reply_limit)
             del reply
         except MemoryError:

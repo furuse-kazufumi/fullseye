@@ -33,6 +33,10 @@ def _drop_the_cwd_entry_for_the_mcp_server() -> None:
     if getattr(sys.flags, "safe_path", False) or not sys.path:
         return
     argv = list(getattr(sys, "orig_argv", None) or [])
+    # ★2026-11-22(独立レビュー): script.py の引数に ``-m fullseye.mcp`` があるだけで、
+    #   script.py のフォルダを外していた。パッケージの import 中に sys.argv[0] が ``-m`` の本物の -m 起動だけに限る。
+    if sys.argv[:1] != ["-m"]:
+        return
     if "-m" not in argv:
         return
     at = argv.index("-m")

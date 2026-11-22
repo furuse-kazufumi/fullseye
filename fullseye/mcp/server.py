@@ -618,6 +618,10 @@ MAX_HEADER_LINES = 16
 MAX_HEADER_BYTES = 8 * 1024
 _HEADER_NAME = re.compile(rb"[A-Za-z0-9][A-Za-z0-9-]*")
 _DECIMAL = re.compile(rb"[0-9]{1,20}")
+_SURROGATE_ESCAPE = re.compile(rb"\\u[dD][89a-fA-F]")
+
+#: 断った Content-Length 枠の本文を読み捨てる 1 回の上限。本文全体は持たない。
+_DISCARD_CHUNK = 1 << 20
 
 #: 1 通の JSON の入れ子の深さの上限(配列と辞書の段の数)。MCP の 1 通は深くても十数段(tools/call の
 #: arguments の中の処理列で 6〜8 段)。これを超える本文は、読む前に断る(→ -32700)。
@@ -651,6 +655,24 @@ def _refuse_duplicate_keys(pairs: list) -> dict:
     return obj
 
 
+def _has_unpaired_surrogate(value) -> bool:
+    """読んだ JSON の文字列(dict の鍵も)に、対になっていないサロゲートがあるか。再帰しない。"""
+    todo = [value]
+    while todo:
+        item = todo.pop()
+        if isinstance(item, str):
+            try:
+                item.encode("utf-8")
+            except UnicodeEncodeError:
+                return True
+        elif isinstance(item, dict):
+            todo.extend(item.keys())
+            todo.extend(item.values())
+        elif isinstance(item, list):
+            todo.extend(item)
+    return False
+
+
 def _loads_body(body: bytes):
     """本文を JSON として読む。読めない・深すぎる入れ子・NaN / Infinity・重複した鍵は FramingError(→ -32700)。
 
@@ -665,7 +687,13 @@ def _loads_body(body: bytes):
     if body.count(b"[") + body.count(b"{") > MAX_JSON_DEPTH and json_depth(body) > MAX_JSON_DEPTH:
         raise FramingError("本文の入れ子が深すぎる(上限 %d 段)" % MAX_JSON_DEPTH)
     try:
-        return json.loads(body, parse_constant=_refuse_constant, object_pairs_hook=_refuse_duplicate_keys)
+        value = json.loads(body, parse_constant=_refuse_constant, object_pairs_hook=_refuse_duplicate_keys)
+        # ★2026-11-22(独立レビュー): ``"\ud800"`` のような JSON は json.loads が文字列として
+        #   返すが、応答の UTF-8 には書けない。本文にサロゲートの escape がある時だけ、
+        #   木全体を明示のスタックで見る。
+        if _SURROGATE_ESCAPE.search(body) and _has_unpaired_surrogate(value):
+            raise FramingError("本文の文字列に対になっていないサロゲートがある")
+        return value
     except RecursionError as exc:
         # ★2026-11-13: 3,000 段の入れ子 1 通でサーバが落ちていた(json.loads の RecursionError を受けていなかった)。
         raise FramingError("本文の入れ子が深すぎる") from exc
@@ -689,65 +717,105 @@ def read_framed(stdin) -> tuple[object, str] | None:
     Content-Length 枠の見出しは :data:`MAX_HEADER_LINES` 行・:data:`MAX_HEADER_BYTES` バイトまで、本文は改行区切りと
     同じ :data:`MAX_LINE_BYTES` まで。見出しは「名前: 値」の形で、同じ名前は 1 回だけ(大文字小文字を区別しない)。"""
     headers: dict[bytes, bytes] = {}
+    content_lengths: list[bytes] = []
     head_lines = head_bytes = 0
-    bad = None                                # 形の崩れた見出しの最初の理由(空行まで読み捨ててから断る)
+    bad = None
+    started = over_limit = False
     while True:
-        # 1 行目は改行区切りの 1 通かもしれないので 1 通の上限で、見出しの 2 行目からは見出しの上限で読む
-        started = bool(headers) or bad is not None
-        raw = stdin.readline((MAX_HEADER_BYTES if started else MAX_LINE_BYTES) + 1)
+        # ★2026-11-22(独立レビュー): 1 行目が見出しでも 64 MiB まで読んでいた。まず見出しの
+        #   上限まで読み、空白後の先頭が ``{`` / ``[`` の時だけ改行区切りの上限まで読み足す。
+        raw = stdin.readline(MAX_HEADER_BYTES + 1)
         if not raw:
             return None
         line = raw.strip()
         if not started and line[:1] in (b"{", b"["):
-            if len(raw) > MAX_LINE_BYTES and not raw.endswith(b"\n"):
+            chunks = [raw]
+            total = len(raw)
+            while not raw.endswith(b"\n") and total <= MAX_LINE_BYTES:
+                raw = stdin.readline(MAX_LINE_BYTES + 1 - total)
+                if not raw:
+                    break
+                chunks.append(raw)
+                total += len(raw)
+            message_raw = b"".join(chunks)
+            line_bytes = len(message_raw) - (2 if message_raw.endswith(b"\r\n") else
+                                             1 if message_raw.endswith(b"\n") else 0)
+            if line_bytes > MAX_LINE_BYTES:
                 raise FramingError("1 通が長すぎる(上限 %d バイト)" % MAX_LINE_BYTES, FRAMING_LINES)
             try:
-                return _loads_body(line), FRAMING_LINES
+                return _loads_body(message_raw.strip()), FRAMING_LINES
             except FramingError as exc:
                 exc.framing = FRAMING_LINES
                 raise
         if not line:
             if not started:
-                continue                      # 通と通の間の空行は読み飛ばす(改行区切りの相手が余分に送る事がある)
+                continue
             break
-        # ★2026-11-15(外部レビュー、Codex): 見出しの行の数とバイトに上限が無く(別々の名前を送り続けると表が増え続けた)、
-        #   形も見ていなかった(重複した Content-Length は後の方が勝ち、「名前: 値」でない行は黙って飛ばした)。上限を
-        #   超えたらその場で、形の崩れは見出しの塊の終わり(空行)まで読み捨ててから断る(1 通に 1 つの -32700)。
+        if not started:
+            first_name, first_sep, _first_value = line.partition(b":")
+            if not first_sep or not _HEADER_NAME.fullmatch(first_name.strip().lower()):
+                # ★2026-11-22(独立レビュー 2 回目): JSON object / array でない壊れた 1 行を見出しの
+                #   塊の始まりとして、後続の改行区切り要求まで空行なしに読み捨てていた。この物理行の
+                #   残りだけを捨てて断り、次の行は新しい 1 通として読む。
+                while raw and not raw.endswith(b"\n"):
+                    raw = stdin.readline(MAX_HEADER_BYTES + 1)
+                raise FramingError("1 行目が JSON object / array でも「名前: 値」の見出しでもない")
+        started = True
         head_lines += 1
         head_bytes += len(raw)
-        if head_lines > MAX_HEADER_LINES or head_bytes > MAX_HEADER_BYTES:
-            raise FramingError("Content-Length 枠の見出しが大きすぎる(上限 %d 行・%d バイト)"
-                               % (MAX_HEADER_LINES, MAX_HEADER_BYTES), FRAMING_HEADERS if started else None)
-        if bad is not None:
+        complete_line = raw.endswith(b"\n")
+        if not complete_line:
+            while raw and not raw.endswith(b"\n"):
+                raw = stdin.readline(MAX_HEADER_BYTES + 1)
+        if head_lines > MAX_HEADER_LINES or head_bytes > MAX_HEADER_BYTES or not complete_line:
+            if bad is None:
+                bad = "Content-Length 枠の見出しが大きすぎる(上限 %d 行・%d バイト)" \
+                      % (MAX_HEADER_LINES, MAX_HEADER_BYTES)
+            over_limit = True
+        if over_limit:
             continue
         name, sep, value = line.partition(b":")
         name = name.strip().lower()
         if not sep or not _HEADER_NAME.fullmatch(name):
-            if not started:                   # 1 行目: その行だけを断る(次の行は新しい 1 通として読む)
-                raise FramingError("1 行目が JSON でも「名前: 値」の見出しでもない")
-            bad = "見出しの行が「名前: 値」の形でない"
-        elif name in headers:
-            bad = "見出し %s が 2 回ある" % name.decode("ascii")
+            bad = bad or "見出しの行が「名前: 値」の形でない"
+            continue
+        value = value.strip()
+        if name == b"content-length":
+            content_lengths.append(value)
+        if name in headers:
+            bad = bad or "見出し %s が 2 回ある" % name.decode("ascii")
         else:
-            headers[name] = value.strip()
+            headers[name] = value
+
+    # ★2026-11-22(独立レビュー): 断った枠の本文を次の改行区切り要求として実行し、Content-Length
+    #   の相手とも以後ずっと位置がずれた。形の正しい Content-Length が 1 つの値に決まる時は、
+    #   上限外でも小さな塊でその本文を読み捨ててから断る。値が無い・非 10 進・複数に分かれる時は、
+    #   本文の終わりを決められないので読み捨てない(fail-closed で -32700 にはする)。
+    known_length = None
+    if content_lengths and all(_DECIMAL.fullmatch(value) for value in content_lengths):
+        lengths = {int(value) for value in content_lengths}
+        if len(lengths) == 1:
+            known_length = next(iter(lengths))
+    if len(content_lengths) > 1:
+        bad = bad or "見出し content-length が 2 回ある"
+    if not content_lengths:
+        bad = bad or "Content-Length ヘッダが無い"
+    elif not all(_DECIMAL.fullmatch(value) for value in content_lengths):
+        bad = bad or "Content-Length が 10 進の整数でない"
+    length = known_length
+    if length is not None and length <= 0:
+        bad = bad or "Content-Length が正でない(%d)" % length
+    if length is not None and length > MAX_LINE_BYTES:
+        bad = bad or "1 通が長すぎる(Content-Length %d、上限 %d バイト)" % (length, MAX_LINE_BYTES)
     if bad is not None:
+        remaining = max(0, length or 0)
+        while remaining:
+            chunk = stdin.read(min(remaining, _DISCARD_CHUNK))
+            if not chunk:
+                break
+            remaining -= len(chunk)
         raise FramingError(bad, FRAMING_HEADERS)
-    # ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが
-    # 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは
-    # FramingError(→ -32700)にしてループを続ける。
-    if b"content-length" not in headers:
-        raise FramingError("Content-Length ヘッダが無い", FRAMING_HEADERS)
-    if not _DECIMAL.fullmatch(headers[b"content-length"]):          # int() は「+5」「1_0」「 ５」も受ける
-        raise FramingError("Content-Length が 10 進の整数でない", FRAMING_HEADERS)
-    length = int(headers[b"content-length"])
-    if length <= 0:
-        raise FramingError("Content-Length が正でない(%d)" % length, FRAMING_HEADERS)
-    if length > MAX_LINE_BYTES:
-        # ★2026-11-15(外部レビュー、Codex): 本文の大きさに上限が無く、``Content-Length: 10000000000000`` の 1 通
-        #   (35 バイト)で ``read`` が先に確保しようとして MemoryError になり、サーバが落ちた。本文は読まずに断る
-        #   (残りのバイトは次の 1 通として読む —— 相手が送った物で、改行区切りでも送れた物)。
-        raise FramingError("1 通が長すぎる(Content-Length %d、上限 %d バイト)" % (length, MAX_LINE_BYTES),
-                           FRAMING_HEADERS)
+    assert length is not None
     body = stdin.read(length)
     if len(body) < length:
         return None
@@ -781,13 +849,20 @@ def write_message(stdout, msg: dict, *, framing: str = FRAMING_HEADERS) -> None:
     -32603(内部エラー)に置き換えて書く(値を黙って null にもしない)。"""
     try:
         body = json.dumps(msg, ensure_ascii=False, allow_nan=False).encode("utf-8")
-    except ValueError as exc:
+    except (ValueError, UnicodeEncodeError) as exc:
         _log("write_message", "non-finite value in response refused: %s" % exc)
         # ★2026-11-15(外部レビュー、Codex): この最後の網が allow_nan の既定(True)のままで、id が NaN の要求には
         #   ``"id": NaN`` をまた書いた。id は JSON-RPC の形(文字列・数・null)の時だけ返し、網も厳密に書く。
-        body = json.dumps(_err(_reply_id(msg.get("id") if isinstance(msg, dict) else None), -32603,
-                               "内部エラー: 応答に JSON で表せない非有限の値(NaN / inf)が含まれていた"),
-                          ensure_ascii=False, allow_nan=False).encode("utf-8")
+        message = ("内部エラー: 応答に UTF-8 で表せない文字が含まれていた" if isinstance(exc, UnicodeEncodeError)
+                   else "内部エラー: 応答に JSON で表せない非有限の値(NaN / inf)が含まれていた")
+        # ★2026-11-22(独立レビュー): 最後の網もサロゲートの id を再利用し、2 回目の符号化で落ちた。
+        #   検査済み id で一度だけ作り、それでも書けなければ id null の固定 ASCII の -32603 に倒す。
+        try:
+            body = json.dumps(_err(_reply_id(msg.get("id") if isinstance(msg, dict) else None), -32603, message),
+                              ensure_ascii=False, allow_nan=False).encode("utf-8")
+        except (ValueError, UnicodeEncodeError, TypeError):
+            body = (b'{"jsonrpc":"2.0","id":null,"error":{"code":-32603,'
+                    b'"message":"internal error: response was not UTF-8 JSON"}}')
     if framing == FRAMING_LINES:
         # json.dumps は改行をエスケープするので、本文に生の改行は入らない(1 行 1 通が保たれる)。
         stdout.write(body + b"\n")
@@ -799,7 +874,13 @@ def write_message(stdout, msg: dict, *, framing: str = FRAMING_HEADERS) -> None:
 
 def _valid_id(req_id) -> bool:
     """JSON-RPC 2.0 の id の形(文字列・数・null)か。真偽値は数に数えない。float は有限の物だけ。"""
-    if req_id is None or isinstance(req_id, str):
+    if req_id is None:
+        return True
+    if isinstance(req_id, str):
+        try:
+            req_id.encode("utf-8")
+        except UnicodeEncodeError:
+            return False
         return True
     if isinstance(req_id, bool):
         return False
@@ -3245,6 +3326,9 @@ def _write_viewer(a: dict, store: HandleStore) -> dict:
     name = a.get("name") or str(spec.get("id", "viewer"))
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", name):
         raise ArgError("name は英数字と _ - だけ(64 文字まで): %r" % name)
+    # ★2026-11-22(独立レビュー): Windows の予約デバイス名を HTML の名前として通した。
+    if re.fullmatch(r"(?i:CON|PRN|AUX|NUL|COM[0-9]|LPT[0-9])", name):
+        raise ArgError("name に Windows の予約デバイス名は使えない: %r" % name)
     try:                                                   # 信頼境界: spec は untrusted、形違いは -32602
         text = pocviewer._build_html(spec, langs)
     except (ValueError, TypeError, KeyError, AttributeError) as exc:

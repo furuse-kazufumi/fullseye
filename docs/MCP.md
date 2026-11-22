@@ -52,7 +52,9 @@ set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP
 サーバは MCP の stdio の決まり(1 行に 1 通の JSON。Claude Code・Claude Desktop・公式 SDK が使う形)と、
 従来の Content-Length の枠の両方に応える(1.1.1 から)。1 通は 64 MiB まで(どちらの枠も)、Content-Length 枠の
 見出しは 16 行・8 KiB まで(同じ名前は 1 回だけ)。JSON に無い `NaN` / `Infinity` と重複した鍵は -32700、
-id は文字列・数・null だけ(他は -32600)。公式の `mcp` Python クライアント(1.23.3 で確認)で、
+id は UTF-8 で表せる文字列・数・null だけ(他は -32600)。文字列と dict の鍵の対になっていないサロゲートも -32700。
+Content-Length が分かる枠を断る時は、その本文を小さな塊で読み捨ててから次の枠を読む。1 行目が JSON object / array でも
+「名前: 値」の見出しでもなければ、その 1 行だけを -32700 にして次の行を新しい 1 通として読む。公式の `mcp` Python クライアント(1.23.3 で確認)で、
 次の例が initialize → tools/list(24 道具)→ tools/call(照明の設計)まで通る:
 
 ```python
@@ -100,7 +102,9 @@ asyncio.run(main())
   同じ場所だけ(台帳のモジュールは fullseye の置き場所の中の物だけ)。結果の値の数(配列の要素 + 文字列・数・
   dict / list の数)が `mcp_stack_max_pixels` を、大きさ(配列のバイト + 文字列の長さ)が
   `mcp_pipeline_max_intermediate_bytes` を超える時は、作業プロセスが書き出さずに断る。メモリの上限は結果を送り
-  終えるまで効く。上限を超えた段は `resource_limit`(`limit` = `time_limit` / `memory_limit` / `output_limit`)で失敗する。
+  終えるまで効く。応答は JSON エスケープ・数・入れ子・base64 を含むバイト数の上界を先に数え、超えるなら JSON 全体を作る前に断る。
+  共有された木は、上界の計数自体も返事の上限を超えた所で打ち切る。
+  上限を超えた段は `resource_limit`(`limit` = `time_limit` / `memory_limit` / `output_limit`)で失敗する。
 - 引数は台帳の仕様(数・整数・真偽・選択肢・短い名前)で検査し、合わなければ 1 段も走らせずに断る(丸めない)。
   `{"profile": "<名前>.<項目>"}` で書いた引数も、引いた値を同じ仕様で検査する。
 - **optional の依存**: 2,456 は optional の依存(scikit-image・Pillow・OpenCV …)を入れた環境での数。素の
@@ -202,8 +206,10 @@ PoC の結果を、自己完結した 1 枚の HTML(タブ・正直なバッジ�
 ```
 
 * `spec` は **untrusted として信頼境界で再検証**する。形が違う・NaN・未知のバッジ(`passed` / `limit` / `null` 以外)・未知の `kind`・空の `tabs`・要求した言語の訳が 1 つでも欠ける、は `-32602`(欠けた鍵を全部並べる。他の言語で補わない)。
-* 書き先は MCP のサンドボックスの作業ディレクトリだけ(`name` は英数字と `_` `-`、`..` や `/` は拒否)。返り値の `resource_link`(`text/html`)でファイルを受け取る。
+* 書き先は MCP のサンドボックスの作業ディレクトリだけ(`name` は英数字と `_` `-`、`..` や `/` は拒否)。Windows の予約デバイス名
+  (`CON` / `PRN` / `AUX` / `NUL` / `COM0`〜`COM9` / `LPT0`〜`LPT9`) はどの OS でも -32602。返り値の `resource_link`(`text/html`)で受け取る。
 * 作業ディレクトリに持つビューアは新しい物から 64 枚・512 MiB まで。超えると古い物から消す(同じ `name` は書き換え)。1 枚で 512 MiB を超える物は書かずに `-32602`。
+  Windows で大文字小文字だけ違うパスも同じ `name` として数える。
 * 対応言語は ja / en / zh / tw / ko / de / hi / fr。URL の `?lang=xx` と `?tab=<id>` で開く言語とタブを選べる。
 
 ## 文字を直す(`fullseye_fix_text`)の呼び出し例
