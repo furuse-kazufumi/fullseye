@@ -692,6 +692,40 @@ MCP_UNAVAILABLE_REASONS = {
 }
 
 
+#: MCP find_ops では、MCP で走らない op を走る op に対してこの数だけ後ろへ動かす。消さず、
+#: ``executable: false`` と印を付けて見せる。走る op が追い越せる走らない op は最大この数で、既定の
+#: op 5 行なら元の上位 3 の走らない op は必ず残る。実測では 1 / 2 / 3 の全てが日本語評価の例を戻し、
+#: 新しい走らない op が 2 個、走る op の上に増える余裕として 2 を選んだ。
+MCP_NONEXECUTABLE_DEMOTION_SLOTS: int = 2
+
+
+def prefer_mcp_executable(rows: list[dict], runnable, limit: int,
+                          slots: int = MCP_NONEXECUTABLE_DEMOTION_SLOTS) -> list[dict]:
+    """MCP で走る行を、走らない行の有界な降格だけで優先する。
+
+    各組の中の相対順は保つ。``slots=0`` は元の順を保ち、切り詰めと ``executable`` の印だけを行う。
+    Prefer MCP-executable rows only through bounded demotion; preserve relative order within each class.
+    入力の行は変更せず、``limit`` は正の int、``slots`` は 0 以上の int だけを受ける。"""
+    if isinstance(limit, bool) or not isinstance(limit, int) or limit <= 0:
+        raise ValueError("limit must be an int greater than 0")
+    if isinstance(slots, bool) or not isinstance(slots, int) or slots < 0:
+        raise ValueError("slots must be an int greater than or equal to 0")
+    ranked = []
+    for i, row in enumerate(rows):
+        executable = row["name"] in runnable
+        ranked.append(((i + (0 if executable else slots), 0 if executable else 1, i), row, executable))
+    return [dict(row, executable=executable) for _key, row, executable in sorted(ranked)[:limit]]
+
+
+def mcp_search_pool(limit: int, slots: int = MCP_NONEXECUTABLE_DEMOTION_SLOTS) -> int:
+    """有界な降格後の先頭 ``limit`` 行を決めるのに十分な検索数 ``limit + slots`` を返す。
+
+    元の添字が ``limit + slots`` 以上の op は先頭 ``limit`` に入れない。その op の添字から
+    ``slots`` を引いた所までの全 op のキーが、それ以下だからである。
+    Return the sufficient search pool: no later row can reach the first ``limit`` positions."""
+    return limit + slots
+
+
 def mcp_unavailable(op: str) -> dict | None:
     """MCP で実行できない op の理由と代わりの手(実行できるなら ``None``)。
 
