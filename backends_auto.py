@@ -1038,11 +1038,19 @@ def _sh_segment(p):
             _require_dep(_HAS_SK, "skimage", "region boundaries = skimage.segmentation.find_boundaries "
                                              "(without it the filled regions were returned instead)")
             mser = cv2.MSER_create(delta=int(3 + 8 * a))
-            regs, _ = mser.detectRegions(_u8(x))
-            out = np.zeros_like(x, np.float64)
-            for pts in regs:
-                out[pts[:, 1], pts[:, 0]] = 1.0
-            return skseg.find_boundaries(out > 0.5).astype(np.float64)
+            regs, bboxes = mser.detectRegions(_u8(x))
+            out = np.zeros_like(x, bool)
+            height, width = x.shape
+            for pts, (bx, by, bw, bh) in zip(regs, bboxes):
+                # ★領域を先に和集合すると、入れ子の内側の境界が消える。外接矩形に 1 px の
+                #   余白を付けた局所 mask で各境界を取り、境界だけを出力へ重ねる。
+                #   Unioning regions first erases nested boundaries; find each in its padded bbox.
+                x0, y0 = max(0, int(bx) - 1), max(0, int(by) - 1)
+                x1, y1 = min(width, int(bx + bw) + 1), min(height, int(by + bh) + 1)
+                region = np.zeros((y1 - y0, x1 - x0), bool)
+                region[pts[:, 1] - y0, pts[:, 0] - x0] = True
+                out[y0:y1, x0:x1] |= skseg.find_boundaries(region)
+            return out.astype(np.float64)
         if kind == "zero_crossing":                  # Laplacian sign-changes (zero_crossing)
             lap = _log_dc_free(x, 0.5 + 2.0 * a)
             s = np.sign(lap)
@@ -2167,7 +2175,7 @@ SEED: list[tuple] = [
     ("dual_threshold", "segmentation", IMG, REG, "threshold", {"method": "dual"},
      '符号つき画像向けのしきい値処理。中央値 0.5 を「ゼロ」とみなし、\n``|x - 0.5| > 0.1+0.35*a`` を満たす画素(0.5 から十分離れた画素)を前景と\nする ―― 正負どちらの側にも対称に反応する。HALCON の ``dual_threshold``\n（Threshold operator for signed images.）に相当(HALCON は正負で別々の\nしきい値を持てるが、ここでは 0.5 を中心とした対称な帯域に単純化)。\n\n``a`` が除外帯域の半幅を振る。``b`` は未使用。``highpass_image`` や\n``bandpass_image`` のような符号つき応答(0.5=ゼロ)の後段でよく使う。'),
     ("segment_image_mser", "segmentation", IMG, REG, "segment", {"kind": "mser"},
-     'MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出\n(``cv2.MSER_create``)。しきい値を連続的に変化させても形が安定して残る\n領域を検出し、その境界線を返す(文字・ロゴなど照明変化に頑健な領域検出に\n使われる)。HALCON の ``segment_image_mser``（Segment image using Maximally\nStable Extremal Regions (MSER).）に相当。\n\n``a`` が MSER の安定性パラメータ(delta、3〜11)を振る。``b`` は未使用。\ncv2 が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
+     'MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出\n(``cv2.MSER_create``)。しきい値を連続的に変化させても形が安定して残る\n領域を検出し、入れ子の領域もそれぞれの境界線を返す(文字・ロゴなど照明変化に\n頑健な領域検出に使われる)。HALCON の ``segment_image_mser``（Segment image using\nMaximally Stable Extremal Regions (MSER).）に相当。\n\n``a`` が MSER の安定性パラメータ(delta、3〜11)を振る。``b`` は未使用。\ncv2 が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("regiongrowing_mean", "segmentation", IMG, REG, "segment", {"kind": "regiongrow"},
      '実装は ``regiongrowing`` と同一(しきい値によるシード生成+膨張)。\nHALCON の ``regiongrowing_mean``（Perform a region growing using mean gray\nvalues.）は本来、各領域の平均輝度との近さを基準に成長させる演算子だが、\nこの代役では平均輝度による判定を行わず ``regiongrowing`` と同じ処理を\n返す(近似の限界)。\n\n``a`` がシードのしきい値、``b`` が膨張の反復回数を振る。両方が使われる。'),
     ("estimate_noise", "features", IMG, FEA, "img_feat", {"metric": "noise_est"},
