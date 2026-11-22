@@ -16,8 +16,8 @@
 
 0. 触って見る —— ja/en は ``field_viewers``(場を掃引する動く 3-D)を先頭に置き、その後に ``viewers``(``docs/view2026/viewers/*.html``、``tools/build_view2026_viewers.py`` が各 PoC を
    走らせて作る自己完結の HTML)への 7 本。リンクは ``?lang=<そのページの言語>`` 付きで、ビューアが同じ言語で開く。
-1. 見どころ —— ja/en は ``tier`` が showcase / featured の展示(合わせて ``MAIN_LIMIT`` = 30 本まで)だけ。ほかの 6 言語は
-   従来どおり門を通った ``exhibits`` の全部。押すと動画・GIF・原寸の図。
+1. 見どころ —— 8 言語とも ``tier`` が showcase / featured の展示(合わせて ``MAIN_LIMIT`` = 30 本まで)だけ
+   (2026-11-13 まで ja/en 以外は ``exhibits`` の全部だった)。押すと動画・GIF・原寸の図。
 2. シリーズ記事 —— 大きいタイル(``series``)。各シリーズの Qiita 記事(公開のもの)へ。
 3. できること —— ``docs/capabilities/*.md`` の全件を分類ごとに。各行から説明のページと走る例へ。
    その下に PoC 以外の使用例の一覧(``examples/README.md``)へのリンクと本数。
@@ -518,7 +518,7 @@ def counts(d: dict) -> tuple[int, int]:
 
 MAIN_TIERS = ("showcase", "featured")
 MAIN_VIEWERS_LIMIT = 6   # 本ページ(ja/en)の「触って見る」の本数(field_viewers + viewers.main_ids)
-MAIN_LIMIT = 30          # 本ページ(ja/en)に載せる展示の上限。質が足りなければ減らしてよい
+MAIN_LIMIT = 30          # 本ページ(8 言語)に載せる展示の上限。質が足りなければ減らしてよい
 
 MAIN_TEXT = {
     "ja": {
