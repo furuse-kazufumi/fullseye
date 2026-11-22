@@ -78,7 +78,7 @@ def test_example_runtime_data_is_discovered_from_example_sources():
 
 
 def test_example_runtime_data_finds_direct_calls_and_nested_assignments(tmp_path):
-    """直接の読取り引数と try / with / for の内側も、作り物の examples 木から見つける。"""
+    """直接の読取り引数と各制御構文の内側も、作り物の examples 木から見つける。"""
     checker = _load_checker_module()
     examples = tmp_path / "examples"
     data = examples / "data"
@@ -89,6 +89,8 @@ def test_example_runtime_data_finds_direct_calls_and_nested_assignments(tmp_path
         "examples/data/try.json",
         "examples/data/with.json",
         "examples/data/for.json",
+        "examples/data/while.json",
+        "examples/data/match.json",
     }
     for rel in expected:
         path = tmp_path / rel
@@ -107,11 +109,50 @@ def test_example_runtime_data_finds_direct_calls_and_nested_assignments(tmp_path
         "with open(ROOT / 'data' / 'direct.json'):\n"
         "    WITH_PATH = ROOT / 'data' / 'with.json'\n"
         "for _item in [1]:\n"
-        "    FOR_PATH = ROOT / 'data' / 'for.json'\n",
+        "    FOR_PATH = ROOT / 'data' / 'for.json'\n"
+        "while False:\n"
+        "    WHILE_PATH = ROOT / 'data' / 'while.json'\n"
+        "match 1:\n"
+        "    case 1:\n"
+        "        MATCH_PATH = ROOT / 'data' / 'match.json'\n",
         encoding="utf-8",
     )
     found = set(checker._example_runtime_paths(str(tmp_path)))
     assert found == expected
+
+
+@pytest.mark.parametrize(("syntax", "body"), [
+    ("try", "try:\n    {call}\nexcept OSError:\n    pass\n"),
+    ("with", "with {call}:\n    pass\n"),
+    ("for", "for _item in [1]:\n    {call}\n"),
+    ("while", "while False:\n    {call}\n"),
+    ("match", "match 1:\n    case 1:\n        {call}\n"),
+])
+def test_wheel_gate_rejects_a_missing_asset_referenced_inside_control_flow(
+        tmp_path, monkeypatch, syntax, body):
+    """各制御構文内の直書き資産が合成 wheel に無ければ門を閉じる。"""
+    checker = _load_checker_module()
+    examples = tmp_path / "examples"
+    data = examples / "data"
+    data.mkdir(parents=True)
+    asset = "examples/data/%s.json" % syntax
+    (tmp_path / asset).write_bytes(b"data")
+    call = "open(ROOT / 'data' / %r)" % (syntax + ".json")
+    (examples / "synthetic.py").write_text(
+        "from pathlib import Path\n"
+        "ROOT = Path(__file__).resolve().parent\n" + body.format(call=call),
+        encoding="utf-8",
+    )
+    wheel = tmp_path / (syntax + ".whl")
+    tracked = "fullseye/data/synthetic.json"
+    with zipfile.ZipFile(wheel, "w") as zf:
+        zf.writestr(tracked, b"{}")
+    monkeypatch.setattr(checker, "_tracked_package_files", lambda _repo: [tracked])
+    monkeypatch.setattr(checker, "NOT_SHIPPED", {})
+    monkeypatch.setattr(checker, "EXAMPLE_SHIPPED", (asset,))
+    monkeypatch.setattr(checker, "EXAMPLE_NOT_SHIPPED", {})
+
+    assert checker._package_data(str(wheel), repo=str(tmp_path)) == 1
 
 
 def _example_runtime_data() -> dict:

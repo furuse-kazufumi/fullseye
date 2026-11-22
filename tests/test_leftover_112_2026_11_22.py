@@ -138,8 +138,8 @@ def test_help_cache_removes_only_stale_versions_and_touches_current(tmp_path, mo
     current = Path(helpstore._extract(str(archive)))
     current_marker = current / ".complete"
     before_touch = current_marker.stat().st_mtime
-    stale = cache / ("op_help-" + "0" * 16)
-    fresh = cache / ("op_help-" + "1" * 16)
+    stale = cache / ("op_help-" + "0" * helpstore.CACHE_DIGEST_HEX_CHARS)
+    fresh = cache / ("op_help-" + "1" * helpstore.CACHE_DIGEST_HEX_CHARS)
     unrelated = cache / "op_help-not-a-hash"
     other = cache / "keep-me"
     for path in (stale, fresh, unrelated, other):
@@ -157,6 +157,93 @@ def test_help_cache_removes_only_stale_versions_and_touches_current(tmp_path, mo
     assert unrelated.is_dir() and other.is_dir()
     err = capsys.readouterr().err
     assert stale.name in err and fresh.name not in err and current.name not in err
+
+
+def _stop_lock_holder(process):
+    """試験用ロック保持子プロセスを必ず止める。/ Always stop the test lock-holder process."""
+    if process.poll() is not None:
+        return
+    try:
+        process.stdin.write("\n")
+        process.stdin.flush()
+        process.stdin.close()
+        process.wait(timeout=10)
+    except (BrokenPipeError, OSError, subprocess.TimeoutExpired):
+        process.kill()
+        process.wait(timeout=10)
+
+
+def test_help_cache_keeps_a_stale_version_locked_by_another_process(tmp_path, monkeypatch, capsys):
+    """別プロセスが利用中の期限切れ版は残し、終了後の掃除でだけ消す。"""
+    stale_days = 31
+    seconds_per_day = 24 * 60 * 60
+    archive = tmp_path / "help.tar.xz"
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "a.html").write_text("<p>a</p>", encoding="utf-8")
+    helpstore.pack_archive(str(source), str(archive))
+    cache = tmp_path / "cache"
+    stale = cache / ("op_help-" + "2" * helpstore.CACHE_DIGEST_HEX_CHARS)
+    stale.mkdir(parents=True)
+    complete = stale / ".complete"
+    complete.write_text("", encoding="utf-8")
+    (stale / "old.html").write_text("old", encoding="utf-8")
+    now = __import__("time").time()
+    os.utime(complete, (now - stale_days * seconds_per_day,) * 2)
+    inuse = stale / (".inuse-%d-test" % os.getpid())
+    holder_code = (
+        "import os,sys\n"
+        "f=open(sys.argv[1], 'w+b')\n"
+        "f.write(b'0'); f.flush(); f.seek(0)\n"
+        "if os.name == 'nt':\n"
+        " import msvcrt; msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)\n"
+        "else:\n"
+        " import fcntl; fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)\n"
+        "print('ready', flush=True)\n"
+        "sys.stdin.read(1)\n"
+    )
+    process = subprocess.Popen(
+        [sys.executable, "-c", holder_code, str(inuse)],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        encoding="utf-8",
+    )
+    try:
+        assert process.stdout.readline().strip() == "ready"
+        monkeypatch.setenv("FULLSEYE_CACHE_DIR", str(cache))
+        helpstore._extract(str(archive))
+        assert stale.is_dir() and complete.is_file() and (stale / "old.html").is_file()
+        assert stale.name not in capsys.readouterr().err
+    finally:
+        _stop_lock_holder(process)
+
+    helpstore._extract(str(archive))
+    assert not stale.exists()
+
+
+def test_help_cache_removes_an_unlocked_crashed_process_marker(tmp_path, monkeypatch):
+    """落ちたプロセスが残したロックされていない印だけなら期限切れ版を消す。"""
+    stale_days = 31
+    seconds_per_day = 24 * 60 * 60
+    archive = tmp_path / "help.tar.xz"
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "a.html").write_text("<p>a</p>", encoding="utf-8")
+    helpstore.pack_archive(str(source), str(archive))
+    cache = tmp_path / "cache"
+    stale = cache / ("op_help-" + "3" * helpstore.CACHE_DIGEST_HEX_CHARS)
+    stale.mkdir(parents=True)
+    complete = stale / ".complete"
+    complete.write_text("", encoding="utf-8")
+    (stale / ".inuse-dead-process").write_bytes(b"0")
+    now = __import__("time").time()
+    os.utime(complete, (now - stale_days * seconds_per_day,) * 2)
+
+    monkeypatch.setenv("FULLSEYE_CACHE_DIR", str(cache))
+    helpstore._extract(str(archive))
+    assert not stale.exists()
 
 
 def _fake_demo(monkeypatch, *, failing_tool=None, final_refused=True):

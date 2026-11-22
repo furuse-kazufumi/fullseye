@@ -32,6 +32,9 @@ from typing import Any
 
 import opnames as _opnames
 
+#: op 検索で表示する説明 1 行の最大文字数。/ Maximum characters in an op search summary.
+NOTE_SUMMARY_MAX_CHARS = 200
+
 #: 台帳(registry モジュール名, テーブル属性)。`tools/opdocs.LEDGER_DIMS` と同じ並び。
 _LEDGERS = (
     ("opsfit", "OPSFIT"),
@@ -1220,7 +1223,7 @@ def _help_html_lines(root: str) -> dict:
             continue
         txt = _html.unescape(_re.sub(r"\s+", " ", txt)).strip()
         if txt:
-            dest[stem] = txt[:200]
+            dest[stem] = txt[:NOTE_SUMMARY_MAX_CHARS]
     out = dict(base)
     out.update(en)                            # 英語があれば英語が勝つ
     return out
@@ -1240,7 +1243,7 @@ def _packaged_help_lines(here: str) -> dict:
         summaries = row.get("s") or {}
         text = summaries.get("en") or summaries.get("ja")
         if row.get("n") and text:
-            out[row["n"]] = str(text)[:200]
+            out[row["n"]] = str(text)[:NOTE_SUMMARY_MAX_CHARS]
     return out
 
 
@@ -1284,7 +1287,7 @@ def _note_first_line(name: str) -> str:
                     if t.startswith("## ") and start:      # 次の節に入った: 使い方の節に散文が無かった
                         break
                     continue
-                table[stem] = _re.sub(r"[`*]", "", t)[:200]          # _ は残す(gauss_filter を gaussfilter にしない)
+                table[stem] = _re.sub(r"[`*]", "", t)[:NOTE_SUMMARY_MAX_CHARS]  # _ は残す(gauss_filter を gaussfilter にしない)
                 break
         if not table:                                    # wheel: 小さい同梱索引を先に使い、全 HTML を展開しない
             table = _packaged_help_lines(here)
