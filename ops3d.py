@@ -947,6 +947,9 @@ _CATALOG = {
         ("aabb", "pcseg", ["points"], "primitive", False),
         ("obb", "pcseg", ["points"], "primitive", False),
         ("min_enclosing_sphere", "hull3d", ["points"], "primitive", False),
+        # 2 つの凸包の隙間(2026-11-15): 頂点集合 2 つ → 名前つきの dict(隙間・保証つきの上下限・最も近い点の組・
+        # 分離の向き・線形計画の t)= table。measurement(スカラ 1 つ)にすると上下限と点の組が落ちる。
+        ("convex_hull_gap", "hull3d", ["points", "points"], "table", False),
     ],
     "mesh_process": [  # 三角形メッシュの処理(平滑化/簡略化/法線・面積・曲率)
         ("laplacian_smooth", "mesh_smooth", ["mesh"], "mesh", False),
