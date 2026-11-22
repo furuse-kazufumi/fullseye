@@ -56,8 +56,13 @@ V 字の溝の深さは場面の作り(縁の丸み 4 mm)が決めるので、�
   詰まる」「同じ柄」の最初のコマ)と、隙間ありの最低線(深度の段差・カラーの溝・両方 ≥ 0.85。カラーの溝と
   両方は代用カラーで測る)を測って確かめる。見出しのカラーの主張(カラーの溝 vs 深度、勝ち負けは合わせ目の
   作りで入れ替わる)は、Blender の描画が無い CI では**測っていない** —— full の記録 ``RECORDED_FULL``
-  (2026-11-09 の full 実行の表)を読む門で確かめ、その旨を印字する。手元に Blender の描画があれば、種 3〜5 の
+  (2026-11-22 の full 実行の表)と主張の整合を検査し(記録の整合の検査。測り直しではない)、その旨を印字する。
+  手元に Blender の描画があれば、種 3〜5 の
   カラーの溝 > 深度の段差 は縮小版でも測って確かめる(2026-11-13、作者と独立の検証の指摘で足した)。
+  ★記録が今のコードの出力であることは、full の実行(Blender のコマが全部揃ったとき)が**門にして**確かめる:
+  見ていない種の再現率の中央値(5 条件 × 5 通り)と合わせ目の地図(2 条件 × 28 升目 × 3 通り)の、測った値と
+  記録の差の最大が、記録の桁の丸めの半分(再現率 0.005、外れ 0.05)以内(2026-11-15、外部レビューの指摘で
+  印字から門にした。それまでの full は差を印字するだけで、Blender のコマが 4 枚足りず EXIT=1 のままだった)。
 * Blender の深度と幾何の深度の照合は、同じ幾何を書き出して描いたもの —— カメラの合わせの検算でしかない。
 
 **実データの章**(BOP の HOPE があるとき): 能動ステレオ式の深度カメラの実深度で、同じ op の組
@@ -73,6 +78,8 @@ fit_rectangle2。切り分けの手順と閾値は別実装)が箱型の物体�
 
     py -3.11 examples/poc_mixed_case_depalletizing.py                   # 縮小版(種 0 の 1 枚・2 手 + 種 3〜5 の最初のコマ)
     set FULLSEYE_DEPAL_FULL=1 & py -3.11 examples/poc_mixed_case_depalletizing.py   # 全部(10 枚 × 5 条件、掃引、実データ)
+
+``FULLSEYE_DEPAL_WORKERS`` は full の並列の数だけを絞る。場面ごとの結果は種で決まり、並列の数では変わらない。
 
 図(``FULLSEYE_FIGURE_DIR`` があり、全部を回したときだけ): 代表図(同じ柄のパレットを 5 通りで)、
 難しさの梯子、最初のコマの再現率の表、結果の数の表、成功率のグラフ、閾値と縁の丸みの掃引の表、
@@ -3266,14 +3273,16 @@ def print_map(fm):
 
 
 RECORDED_FULL = {
-    "source": ("2026-11-09 の full 実行(コミット 9dbd9e4958、Blender のカラー、10 枚 × 5 条件、合わせ目の地図は種 3〜5)の"
-               "表 03_first_frame_recall と 11_flap_seam_map_table(docs/articles/assets/poc/poc_mixed_case_depalletizing)"),
+    "source": ("2026-11-22 の full 実行(コード 1a7279f91b、Blender のカラー。最初のコマとつぶれの 4 コマは"
+               " 2026-11-15 に CPU で描き直した物、ほかは 2026-11-09 の GPU の描画。10 枚 × 5 条件、地図は種 3〜5)"),
+    #: 2026-11-15 の最初のコマの描き直しで、シュリンクのカラーだけが 0.38 → 0.33 に動いた。
+    #: 同じ描画では 11-15 朝のコード c9026c4190 も今のコードも 0.33 を返した(2026-11-22 の探針、repo の外)。
     #: 最初のコマの再現率、見ていない種 3〜9 の中央値(条件 → やり方 → 値)。
     "held_recall": {
         'gap': {'depth': 1.00, 'vgroove': 0.88, 'color': 0.44, 'cseam': 1.00, 'fused': 1.00},
         'tight': {'depth': 0.33, 'vgroove': 0.60, 'color': 0.29, 'cseam': 0.57, 'fused': 0.40},
         'same': {'depth': 0.00, 'vgroove': 0.17, 'color': 0.17, 'cseam': 0.71, 'fused': 0.67},
-        'shrink': {'depth': 0.38, 'vgroove': 0.33, 'color': 0.38, 'cseam': 0.50, 'fused': 0.46},
+        'shrink': {'depth': 0.38, 'vgroove': 0.33, 'color': 0.33, 'cseam': 0.50, 'fused': 0.46},
         'crush': {'depth': 0.50, 'vgroove': 0.57, 'color': 0.50, 'cseam': 0.62, 'fused': 0.62},
     },
     #: 合わせ目の地図(種 3〜5 の中央): (条件, 溝 mm, すき間 mm, テープ, やり方, 再現率, 外れ 件/枚)。
@@ -3459,11 +3468,13 @@ def recorded_claim_gates() -> list[str]:
     CI には Blender の描画が無く、代用のカラーではカラーを使うやり方の順位が入れ替わりうるので、縮小版ではこの
     「記録値を読む門」で見出しの主張(カラーの溝 vs 深度、勝敗は合わせ目の作りで入れ替わる)を確かめる。
     記録がこの PoC の主張と食い違う形に書き換えられたら落ちる —— 記録と主張の食い違いは捕まえるが、記録そのものが
-    今のコードの出力かどうかは確かめない(それは full の実行が記録との差を印字する)。
+    今のコードの出力かどうかは確かめない(**記録の整合の検査**。それは full の実行が記録との差を門にして確かめる:
+    :func:`compare_with_record` / :func:`compare_map_with_record`)。
     """
     fails = []
     h = RECORDED_FULL["held_recall"]
-    print("★記録値を読む門(測り直しではない): 見出しのカラーの主張を full の記録で確かめる —— %s" % RECORDED_FULL["source"])
+    print("★記録の整合の検査(記録値を読む門。測り直しではない): 見出しのカラーの主張を full の記録で確かめる —— %s"
+          % RECORDED_FULL["source"])
     for cond in ("tight", "same"):
         print("   記録 %s(見ていない種 3〜9 の中央): %s" % (CONDITION_JA[cond], " / ".join(
             "%s %.2f" % (MODE_JA[m], h[cond][m]) for m in MODES)))
@@ -3503,16 +3514,51 @@ def held_colour_gates(res, held) -> list[str]:
     return fails
 
 
-def compare_with_record(res, held) -> None:
-    """full の実行で、見ていない種の中央値を記録(RECORDED_FULL)と並べて印字する(門にはしない。記録の更新は手で)。"""
+#: 記録との差の門の幅(2026-11-15、外部レビューの指摘で印字から門にした)。記録は再現率を小数 2 桁、外れ(件/枚)を
+#: 小数 1 桁で持つので、その丸めの半分。1e-9 は浮動小数の丸めの分(0.875 → 0.88 の差がちょうど 0.005 になる)。
+RECORD_TOL_RECALL = 0.005 + 1e-9
+RECORD_TOL_FALSE = 0.05 + 1e-9
+
+
+def record_max_difference(pairs) -> float:
+    """記録値と測定値の組の最大差。空または非有限なら ``inf`` を返す。/ Maximum finite record difference."""
+    differences = [abs(got - expected) for got, expected in pairs]
+    if not differences or not all(math.isfinite(d) for d in differences):
+        return float("inf")
+    return max(differences)
+
+
+def record_map_differences(fm, rec) -> tuple[float, float, int]:
+    """地図の差を副作用なく返す。キーの不足・余分・空は ``inf``。/ Compare record maps fail-closed."""
+    keys = sorted(set(rec) & set(fm), key=str)
+    wr = record_max_difference((fm[k][0], rec[k][0]) for k in keys)
+    wf = record_max_difference((fm[k][1], rec[k][1]) for k in keys)
+    if set(fm) != set(rec):
+        wr = wf = float("inf")
+    return wr, wf, len(keys)
+
+
+def compare_with_record(res, held) -> float:
+    """full の実行で、見ていない種の中央値を記録(RECORDED_FULL)と並べて印字し、差の最大を返す(main が門にする)。"""
     h = RECORDED_FULL["held_recall"]
-    worst = 0.0
+    pairs = []
     print("== 記録(RECORDED_FULL)との差: 見ていない種の再現率の中央値 ==")
     for cond in CONDITIONS:
         got = {m: static_summary(res[cond][m]["static"], held)["recall"] for m in MODES}
-        worst = max([worst] + [abs(got[m] - h[cond][m]) for m in MODES])
+        pairs.extend((got[m], h[cond][m]) for m in MODES)
         print("  %-10s " % CONDITION_JA[cond] + "  ".join("%s %.2f(記録 %.2f)" % (MODE_JA[m], got[m], h[cond][m]) for m in MODES))
-    print("  差の最大 %.3f(記録は小数 2 桁。0.005 を超えたら RECORDED_FULL を取り直す)" % worst)
+    worst = record_max_difference(pairs)
+    print("  差の最大 %.4f(記録は小数 2 桁。門の幅は丸めの半分 0.005)" % worst)
+    return worst
+
+
+def compare_map_with_record(fm) -> tuple[float, float, int]:
+    """full の実行で測った合わせ目の地図を記録と比べ、(再現率の差の最大, 外れの差の最大, 升目の数) を返す。"""
+    rec = recorded_fm()
+    wr, wf, nk = record_map_differences(fm, rec)
+    print("== 記録(RECORDED_FULL)との差: 合わせ目の地図 %d 升目(記録 %d、測った %d)。再現率の差の最大 %.4f、"
+          "外れの差の最大 %.3f(門の幅は丸めの半分 0.005 / 0.05)" % (nk, len(rec), len(fm), wr, wf))
+    return wr, wf, nk
 
 
 def map_gates(fm):
@@ -3777,6 +3823,10 @@ def main():
     loop_steps = 60 if full else 2
     root = renders_root()
     workers = min(15, max(1, (os.cpu_count() or 2) - 2)) if full else 1
+    if full and os.environ.get("FULLSEYE_DEPAL_WORKERS", "").strip():
+        # 手元の記憶の余裕に合わせて並列を絞る(2026-11-15、15 本で commit の上限に届いて落ちた)。場面ごとの結果は種で
+        # 決まり、並列の数に依らない。
+        workers = max(1, int(os.environ["FULLSEYE_DEPAL_WORKERS"]))
     t0 = time.time()
     res = chapter_conditions(seeds, seeds, loop_steps, root, None if full else ("same",),
                              workers, sweep=full)
@@ -3801,9 +3851,17 @@ def main():
         print_map(flapmap)
     fails = gates(res, full, held, colour_held)
     if full:
-        compare_with_record(res, held)
+        worst = compare_with_record(res, held)
+        # ★記録が今のコードの出力であることの門(コマを揃える繰り返しの途中では判定しない)
+        if not iterating and worst > RECORD_TOL_RECALL:
+            fails.append("見ていない種の再現率が記録と %.4f 違う(丸めの幅 0.005 を超えた。記録を取り直すか理由を調べる)"
+                         % worst)
     if flapmap:
         fails += map_gates(flapmap)
+        wr, wf, nk = compare_map_with_record(flapmap)
+        if nk != len(RECORDED_FULL["map"]) or wr > RECORD_TOL_RECALL or wf > RECORD_TOL_FALSE:
+            fails.append("合わせ目の地図が記録と違う(升目 %d / %d、再現率の差 %.4f、外れの差 %.3f)"
+                         % (nk, len(RECORDED_FULL["map"]), wr, wf))
         if map_missing:
             fails.append("合わせ目の地図の Blender のコマが %d 枚足りない" % map_missing)
     if not full:
