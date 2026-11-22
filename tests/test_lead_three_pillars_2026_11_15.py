@@ -15,7 +15,7 @@ Fullseye で何ができるか(柱)を言う。型を持つ op・物理シミュ
   言語の行の直後の段落、ViEW2026 のページ(8 言語)は冒頭の紹介の段落の 1 文目、
   PyPI の一行の説明は書き出し、CITATION.cff と .zenodo.json の要旨は 1 文目。
 * 頭の範囲は README と ViEW2026 は段落全体、PyPI は一行全体、引用の要旨は最初の 2 文。
-  そこに型を持つ op・真値・MCP / RAG の土台があり、Studio・X 線 CT・会社の形の語が無い。
+  そこに型を持つ op・AI・真値・MCP / RAG の土台の語があり、Studio・X 線 CT・会社の形の語が無い。
 """
 from __future__ import annotations
 
@@ -50,7 +50,7 @@ PILLARS = {
 VIEW_LANGS = ("ja", "en", "zh", "tw", "ko", "de", "hi", "fr")
 SITE_LANGS = ("ja", "en", "zh", "tw", "ko", "de")
 
-#: 言語ごとの土台の語(型を持つ op と、物理シミュレーションで作った真値)。
+#: 言語ごとの型と真値の語。
 FOUNDATION_TERMS = {
     "ja": ("型", "真値"),
     "en": ("typed", "ground truth"),
@@ -60,6 +60,28 @@ FOUNDATION_TERMS = {
     "de": ("typisiert", "Ground Truth"),
     "hi": ("typed", "ground truth"),
     "fr": ("typés", "vérité terrain"),
+}
+
+#: 言語ごとの op と AI の語。ASCII の語は大文字小文字を区別し、語の境目も見る。
+OP_TERMS = {
+    "ja": "op",
+    "en": "operators",
+    "zh": "算子",
+    "tw": "運算子",
+    "ko": "연산자",
+    "de": "Operatoren",
+    "hi": "operators",
+    "fr": "opérateurs",
+}
+AI_TERMS = {
+    "ja": "AI",
+    "en": "AI",
+    "zh": "AI",
+    "tw": "AI",
+    "ko": "AI",
+    "de": "KI",
+    "hi": "AI",
+    "fr": "IA",
 }
 
 #: 頭に出さない語(Studio・X 線 CT・実在の会社名につながる会社の形)。
@@ -99,6 +121,13 @@ def first_sentences(text: str, count: int) -> str:
     return " ".join(_SENTENCE_END.split(_plain(text), maxsplit=count)[:count]).strip()
 
 
+def _has_exact_term(text: str, term: str) -> bool:
+    """ASCII の語は大小を保った独立語として、それ以外は字のまま探す。"""
+    if re.fullmatch(r"[A-Za-z]+", term):
+        return re.search(r"(?<![A-Za-z])%s(?![A-Za-z])" % re.escape(term), text) is not None
+    return term in text
+
+
 def pillar_problems(sentence: str, lang: str) -> list[str]:
     """名刺の 3 語が名刺の順と字のまま入っているか。問題の一覧(空なら合格)。"""
     terms, joined = PILLARS[lang]
@@ -128,6 +157,9 @@ def lead_problems(lead: str, lang: str) -> list[str]:
         problems.append("頭の範囲に出さない語 %r がある" % hit.group(0))
     for term in ("MCP", "RAG", *FOUNDATION_TERMS[lang]):
         if term.casefold() not in plain.casefold():
+            problems.append("頭の範囲に土台の語 %r が無い" % term)
+    for term in (OP_TERMS[lang], AI_TERMS[lang]):
+        if not _has_exact_term(plain, term):
             problems.append("頭の範囲に土台の語 %r が無い" % term)
     return problems
 
@@ -176,11 +208,24 @@ def test_the_check_rejects_paraphrases_wrong_order_and_the_old_leads():
             "It chains typed operators, checks them against ground truth, and hands them to AI assistants "
             "through MCP and RAG.")
     assert lead_problems(good, "en") == []
+    assert lead_problems(good.replace("typed operators", "typed records"), "en")
+    assert lead_problems(good.replace("AI assistants", "a database"), "en")
+    assert lead_problems(good.replace("AI assistants", "a database that maintains chains"), "en")
+    assert lead_problems(good.replace("AI assistants", "a database that mAIntains chAIns"), "en")
     assert lead_problems(good.replace("It chains", "Fullseye Studio chains"), "en")
     assert lead_problems(good.replace(" through MCP and RAG", ""), "en")
     assert lead_problems(good.replace("AI assistants", "株式会社の AI assistants"), "en")
     fourth = good.replace("physics simulation.", "physics simulation and robot control.", 1)
     assert lead_problems(fourth, "en")
+    about = json.loads(_read("docs/view2026/exhibits.json"))["ui"]["about"]
+    for lang, term in (("de", "KI"), ("fr", "IA")):
+        without_ai = about[lang].replace(term, "")
+        assert without_ai != about[lang]
+        before = lead_problems(about[lang], lang)
+        after = lead_problems(without_ai, lang)
+        missing = "頭の範囲に土台の語 %r が無い" % term
+        assert missing not in before
+        assert missing in after
 
 
 @pytest.mark.parametrize("lang", VIEW_LANGS)
