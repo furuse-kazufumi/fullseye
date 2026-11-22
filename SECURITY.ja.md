@@ -41,7 +41,7 @@ GitHubのPrivate vulnerability reportingを使ってください。リポジト�
 
 ## 対象外
 
-- 利用者が自分で書いて実行するPythonコードは、Fullseyeのセキュリティ境界の外です。実際のPythonをサブプロセスで実行するStudioのPython Editorも含みます。
+- 利用者が自分で書いて実行するPythonコードは、Fullseyeのセキュリティ境界の外です。Studioから実行するPythonも含みます(Python Editorはサブプロセスで、Program欄がPythonを実行する時はStudioのプロセスの中で実行します)。このコードは利用者自身の権限で動きます。ただし、利用者が求めていないのにコードが実行される場合(ファイルやプロジェクトを開いただけで実行される、Studioが求める確認を経ずに実行される、など)は対象です。
 - optionalな第三者依存パッケージ自体の脆弱性は、そのパッケージの上流へ報告してください。ただし、Fullseyeが宣言する下限によって既知の脆弱性がある版を導入できる場合は、Fullseyeにも報告してください。
 - セキュリティ上の影響がなく、数値結果が誤っているだけの問題は、[通常のバグトラッカー](https://github.com/furuse-kazufumi/fullseye/issues)へ報告してください。
 

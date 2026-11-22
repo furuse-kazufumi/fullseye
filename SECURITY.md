@@ -41,7 +41,7 @@ Examples include a crafted input file causing code execution or path traversal, 
 
 ## Out of scope
 
-- Python code that a user writes and runs is outside Fullseye's security boundary. This includes code run with Studio's Python Editor, which executes real Python in a subprocess.
+- Python code that a user writes and runs is outside Fullseye's security boundary. This includes Python run from Studio, such as the Python Editor (which runs a script in a subprocess) and the Program pane when it runs Python (which runs inside the Studio process): such code has the user's own privileges. Code that runs without the user asking for it, for example because a file or project was merely opened, or without the confirmation Studio asks for, is in scope.
 - Vulnerabilities in optional third-party dependencies themselves should be reported upstream. However, please report when Fullseye's declared lower bound permits a dependency version with a known vulnerability.
 - Results that are only numerically incorrect, without a security impact, belong in the [normal bug tracker](https://github.com/furuse-kazufumi/fullseye/issues).
 
