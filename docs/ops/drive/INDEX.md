@@ -1,4 +1,4 @@
-# DRIVE operator help — 742 ops in 55 categories
+# DRIVE operator help — 744 ops in 55 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -96,9 +96,9 @@
 
 [add_ken](kendamaworld/add_ken.md) · [add_string](kendamaworld/add_string.md) · [camera_perceiver](kendamaworld/camera_perceiver.md) · [ken_mesh](kendamaworld/ken_mesh.md) · [ken_set_pose](kendamaworld/ken_set_pose.md) · [ken_truth](kendamaworld/ken_truth.md) · [kendama_clearance](kendamaworld/kendama_clearance.md) · [kendama_pose](kendamaworld/kendama_pose.md) · [kendama_rig](kendamaworld/kendama_rig.md) · [kendama_world](kendamaworld/kendama_world.md) · [string_mesh](kendamaworld/string_mesh.md) · [string_set](kendamaworld/string_set.md)
 
-### lateral (20)
+### lateral (21)
 
-[ackermann_steer_angles](lateral/ackermann_steer_angles.md) · [bicycle_model_step](lateral/bicycle_model_step.md) · [clothoid_design](lateral/clothoid_design.md) · [clothoid_points](lateral/clothoid_points.md) · [curvature_speed_plan](lateral/curvature_speed_plan.md) · [curve_speed_limit](lateral/curve_speed_limit.md) · [design_min_radius](lateral/design_min_radius.md) · [fresnel_integrals](lateral/fresnel_integrals.md) · [friction_circle_usage](lateral/friction_circle_usage.md) · [lateral_offset](lateral/lateral_offset.md) · [offtracking_circle](lateral/offtracking_circle.md) · [pure_pursuit_circle_offset](lateral/pure_pursuit_circle_offset.md) · [pure_pursuit_curvature](lateral/pure_pursuit_curvature.md) · [rear_axle_path](lateral/rear_axle_path.md) · [stanley_steer](lateral/stanley_steer.md) · [stanley_straight_decay](lateral/stanley_straight_decay.md) · [steady_cornering](lateral/steady_cornering.md) · [time_to_line_crossing](lateral/time_to_line_crossing.md) · [turn_maneuver_check](lateral/turn_maneuver_check.md) · [understeer_gradient](lateral/understeer_gradient.md)
+[ackermann_steer_angles](lateral/ackermann_steer_angles.md) · [bicycle_model_step](lateral/bicycle_model_step.md) · [clothoid_design](lateral/clothoid_design.md) · [clothoid_points](lateral/clothoid_points.md) · [curvature_speed_plan](lateral/curvature_speed_plan.md) · [curve_speed_limit](lateral/curve_speed_limit.md) · [design_min_radius](lateral/design_min_radius.md) · [fresnel_integrals](lateral/fresnel_integrals.md) · [friction_circle_usage](lateral/friction_circle_usage.md) · [lateral_offset](lateral/lateral_offset.md) · [offtracking_circle](lateral/offtracking_circle.md) · [pure_pursuit_circle_offset](lateral/pure_pursuit_circle_offset.md) · [pure_pursuit_curvature](lateral/pure_pursuit_curvature.md) · [rear_axle_path](lateral/rear_axle_path.md) · [road_surface_heightmap](lateral/road_surface_heightmap.md) · [stanley_steer](lateral/stanley_steer.md) · [stanley_straight_decay](lateral/stanley_straight_decay.md) · [steady_cornering](lateral/steady_cornering.md) · [time_to_line_crossing](lateral/time_to_line_crossing.md) · [turn_maneuver_check](lateral/turn_maneuver_check.md) · [understeer_gradient](lateral/understeer_gradient.md)
 
 ### lidar (4)
 
@@ -216,9 +216,9 @@
 
 [flow_from_depth_motion](ttc/flow_from_depth_motion.md) · [foe_from_flow](ttc/foe_from_flow.md) · [foe_from_motion](ttc/foe_from_motion.md) · [label_extent](ttc/label_extent.md) · [relative_motion](ttc/relative_motion.md) · [ttc_from_flow](ttc/ttc_from_flow.md) · [ttc_from_range](ttc/ttc_from_range.md) · [ttc_from_scale](ttc/ttc_from_scale.md) · [ttc_truth](ttc/ttc_truth.md)
 
-### walkterrain (12)
+### walkterrain (13)
 
-[detect_obstacles](walkterrain/detect_obstacles.md) · [elevation_map](walkterrain/elevation_map.md) · [elevation_normals](walkterrain/elevation_normals.md) · [elevation_step_edges](walkterrain/elevation_step_edges.md) · [elevation_traversability](walkterrain/elevation_traversability.md) · [fill_gaps](walkterrain/fill_gaps.md) · [foothold_candidates](walkterrain/foothold_candidates.md) · [foothold_score](walkterrain/foothold_score.md) · [fuse_elevation](walkterrain/fuse_elevation.md) · [ground_plane](walkterrain/ground_plane.md) · [ground_surface](walkterrain/ground_surface.md) · [roughness_map](walkterrain/roughness_map.md)
+[detect_obstacles](walkterrain/detect_obstacles.md) · [elevation_map](walkterrain/elevation_map.md) · [elevation_normals](walkterrain/elevation_normals.md) · [elevation_step_edges](walkterrain/elevation_step_edges.md) · [elevation_traversability](walkterrain/elevation_traversability.md) · [fill_gaps](walkterrain/fill_gaps.md) · [foothold_candidates](walkterrain/foothold_candidates.md) · [foothold_score](walkterrain/foothold_score.md) · [fuse_elevation](walkterrain/fuse_elevation.md) · [ground_plane](walkterrain/ground_plane.md) · [ground_surface](walkterrain/ground_surface.md) · [heightmap_depth_camera](walkterrain/heightmap_depth_camera.md) · [roughness_map](walkterrain/roughness_map.md)
 
 ### world (4)
 

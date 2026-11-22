@@ -280,7 +280,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 </div>
 
-[All 185 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[All 187 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## See everything
 

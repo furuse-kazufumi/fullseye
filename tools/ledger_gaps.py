@@ -314,6 +314,19 @@ KNOB_EXEMPT = {
     # (probed, live) and ground_radius by 'opening' only (tests/test_terrain.py covers it).
     ("detect_obstacles", "ground_radius"):
         "read only by ground='opening'; the probe runs the default robust-plane ground",
+    # hull3d(2026-11-15): Wolfe's minimum-norm point reaches the exact corral in a few steps, so the
+    # stopping rules do not move a converged answer. tol also sets the contact threshold (gap <= tol);
+    # tests/test_convex_hull_gap.py shows it live on a 1e-10 gap.
+    ("convex_hull_gap", "tol"):
+        "stopping tolerance / contact threshold: the probe's 0.25 gap converges exactly at any tol",
+    ("convex_hull_gap", "max_iter"):
+        "iteration cap: the probe converges in a few Wolfe steps, far below the cap",
+    # drivelateral(2026-11-15): the blend into a terrain grid is read only when terrain= is given; the probe runs
+    # the default (no terrain). tests/test_road_surface_heightmap.py exercises the blend.
+    ("road_surface_heightmap", "blend_start"):
+        "read only when terrain is given; the probe runs without a terrain grid",
+    ("road_surface_heightmap", "blend_width"):
+        "read only when terrain is given; the probe runs without a terrain grid",
 }
 
 

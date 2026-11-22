@@ -5,7 +5,7 @@ category: morph
 in: image2d × image2d
 out: image2d
 gpu: なし
-examples: [image_morph, poc_live4d]
+examples: [image_morph, poc_live4d, road_surface_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 - [image_morph](../../../../examples/image_morph.py) — `py -3.11 examples/image_morph.py`
 - [poc_live4d](../../../../examples/poc_live4d.py) — `py -3.11 examples/poc_live4d.py`
+- [road_surface_tour](../../../../examples/road_surface_tour.py) — `py -3.11 examples/road_surface_tour.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
