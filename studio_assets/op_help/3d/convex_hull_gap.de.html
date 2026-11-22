@@ -1,0 +1,65 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">convex_hull_gap — 3D <code style="color:#22d3bf">bounds</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_hull_gap(points_a, points_b, tol: &#x27;float&#x27; = 1e-09, max_iter: &#x27;int&#x27; = 1000, check: &#x27;str&#x27; = &#x27;lp&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import hull3d; hull3d.convex_hull_gap(points_a, points_b, tol: &#x27;float&#x27; = 1e-09, max_iter: &#x27;int&#x27; = 1000, check: &#x27;str&#x27; = &#x27;lp&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;convex_hull_gap&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Abstand (kürzeste Distanz) zwischen den konvexen Hüllen zweier Punktmengen, zusammen mit garantierten unteren und oberen Schranken.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>凸包 conv(A) と conv(B) の距離 <code style="color:#22d3bf">min ‖a − b‖</code>(a ∈ conv(A), b ∈ conv(B))は、差の集合 D = {aᵢ − bⱼ} の凸包の中で原点に最も近い点のノルムに等しい。これを <b>Wolfe (1976) の最小ノルム点の方法</b>で解く。D を作らずに <code style="color:#22d3bf">argmin x·p</code> だけを A と B から別々に引く(<code style="color:#22d3bf">A @ x</code> の最小と <code style="color:#22d3bf">B @ x</code> の最大)ので、手間は 1 反復 O(N_A + N_B)。Wolfe の方法は有限回で厳密な点に着く(Frank–Wolfe の O(1/k) の収束ではない)。</p>
+<p>止める条件は上下限の差 <code style="color:#22d3bf">≤ tol</code>:</p>
+<p style="margin:2px 0 2px 12px">• 上限 <code style="color:#22d3bf">gap_upper = ‖b* − a*‖</code> —— a* ∈ conv(A)、b* ∈ conv(B) を重みつきで実際に作った点の距離。</p>
+<p style="margin:2px 0 2px 12px">• 下限 <code style="color:#22d3bf">gap_lower = min_b n·b − max_a n·a</code> —— n = (b* − a*)/‖b* − a*‖ の向きの、頂点から直接測った<b>分離の帯の幅</b>(この幅の帯があることがそのまま「離れている」証明)。</p>
+<p><code style="color:#22d3bf">check=&quot;lp&quot;</code>(既定)では、最小ノルム点と何も共有しない線形計画(scipy の HiGHS)で離れ方を</p>
+<p>別に決める: <code style="color:#22d3bf">‖w‖∞ ≤ 1</code> で <code style="color:#22d3bf">w·a ≤ c ≤ w·b − t</code> を満たす最大の t。t &gt; 0 ⇔ 離れていて <code style="color:#22d3bf">t/√d ≤ 隙間 ≤ t</code>、t = 0 ⇔ 接するか重なる。2 つの答えが食い違えば RuntimeError(黙って片方を返さない)。<code style="color:#22d3bf">check=&quot;none&quot;</code> で線形計画を省く(numpy だけで走る)。食い違いの判定には丸めの幅 slack = max(tol, 1e-6·scale)(scale = 平均を引いた座標の最大の絶対値、1 以上。HiGHS の可能性の許容より広く)を持たせるので、<b>隙間が slack より小さいと、線形計画が「接触」(t = 0)と言っても食い違いにならない</b>(座標が 1e3 の桁なら 1e-3 未満の隙間)。その帯の中で効くのは最小ノルム点の上下限の保証だけ。</p>
+<p><b>頂点どうしの距離では重なりを否定できない</b>(製作の教訓): 細い棒 2 本の十字は、凸包が交わるのに頂点の間は離れている。hausdorff_distance や最近頂点の距離は「離れている」と出すが、この op は重なり(<code style="color:#22d3bf">separated = False</code>)と判定する。</p>
+<p style="margin:2px 0 2px 12px">• 非凸の物体(部品・リンクのメッシュ)に直接使うと、<b>凸包の</b>重なりを部品の干渉と読み違える。凸に分けた部品ごとに使うこと(凸包は物体より大きいので、離れていれば物体も離れている)。</p>
+<p style="margin:2px 0 2px 12px">• 重なっているときの<b>貫通の深さは返さない</b>(<code style="color:#22d3bf">gap = 0</code>、<code style="color:#22d3bf">witness_a</code> ≈ <code style="color:#22d3bf">witness_b</code> は共通の点)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gap ≤ tol</code> は接触と数える(<code style="color:#22d3bf">separated = False</code>)。座標は平均を引き、全体を代表する 2 の冪の長さで割ってから解く(並進と座標の桁で値が変わらず、内積の二乗の underflow / overflow を避ける)。返り値は元の座標の単位へ戻す。2-D の点 (N, 2) にも使える(線形計画の比は √2)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>points_a, points_b : array_like (N, 3) または (N, 2)</p>
+<p>凸包の頂点(全点でもよい。凸包を先に作らなくてよい)。次元はそろえる。1 点なら (d,) も可。</p>
+<p>tol : float</p>
+<p>上下限の差の許容(座標と同じ単位、既定 1e-9)。&gt; 0。</p>
+<p>max_iter : int</p>
+<p>Wolfe の反復(主・副の合計)の上限(既定 1000)。上下限の差が <code style="color:#22d3bf">tol</code> を切る前に届いたら</p>
+<p>RuntimeError(保証の無い近似値を黙って返さない)。</p>
+<p>check : {&quot;lp&quot;, &quot;none&quot;}</p>
+<p>線形計画の独立な判定を足すか。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">separated</code> (bool)、<code style="color:#22d3bf">gap</code>(離れていれば隙間 = <code style="color:#22d3bf">gap_upper</code>、接触・重なりなら 0.0)、</p>
+<p><code style="color:#22d3bf">gap_lower</code>・<code style="color:#22d3bf">gap_upper</code>(保証つきの下限と上限)、<code style="color:#22d3bf">witness_a</code>・<code style="color:#22d3bf">witness_b</code>(最も近い点の組、</p>
+<p>(d,))、<code style="color:#22d3bf">separating_normal</code>(A から B へ向く単位ベクトル (d,)、離れていなければ None)、</p>
+<p><code style="color:#22d3bf">lp_t</code>(線形計画の t、<code style="color:#22d3bf">check=&quot;none&quot;</code> なら None)、<code style="color:#22d3bf">iterations</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>形状不正・非有限・次元の不一致・<code style="color:#22d3bf">tol ≤ 0</code>・<code style="color:#22d3bf">max_iter &lt; 1</code>・<code style="color:#22d3bf">check</code> が未知のとき(fail-closed)。</p>
+<p>RuntimeError</p>
+<p><code style="color:#22d3bf">max_iter</code> までに上下限の差が <code style="color:#22d3bf">tol</code> を切らないとき、線形計画が解けないとき、最小ノルム点と</p>
+<p>線形計画の離れ方の判定が食い違うとき。</p>
+<p>空の入力(<code style="color:#22d3bf">points_a</code> が 0 要素)は ValueError で拒否する。</p>
+<p>English: distance between the convex hulls of two vertex sets by Wolfe&#x27;s minimum-norm-point method on the implicit Minkowski difference (finite and exact, not Frank–Wolfe), returned with certified bounds (an explicit pair of hull points above, a separating slab below). An independent HiGHS LP decides separation (t &gt; 0 iff disjoint, <code style="color:#22d3bf">t/sqrt(d) &lt;= gap &lt;= t</code>); a disagreement raises. Penetration depth is not computed. Use convex pieces: the hull of a non-convex part over-reports contact.</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import hull3d</p>
+<p>g = np.array(np.meshgrid([0, 1], [0, 1], [0, 1])).reshape(3, -1).T.astype(float)</p>
+<p>r = hull3d.convex_hull_gap(g, g + [1.25, 0.0, 0.0])            # x に 0.25 離れた単位立方体</p>
+<p>assert r[&quot;separated&quot;] and abs(r[&quot;gap&quot;] - 0.25) &lt; 1e-12</p>
+<p>rod_a = np.array([[-1.0, -0.01, 0.0], [1.0, -0.01, 0.0], [-1.0, 0.01, 0.0], [1.0, 0.01, 0.0]])</p>
+<p>rod_b = rod_a[:, [1, 0, 2]]                                    # 十字に交わる棒</p>
+<p>assert not hull3d.convex_hull_gap(rod_a, rod_b)[&quot;separated&quot;]  # 頂点の間は 1.4 離れている</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:convex_hull_gap_clearance">convex_hull_gap_clearance</a> — <code style="color:#22d3bf">py -3.11 examples_3d/convex_hull_gap_clearance.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_select_lod">mesh_select_lod</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">bounds</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:convex_hull">convex_hull</a> · <a style="color:#22d3bf" href="op3d:aabb">aabb</a> · <a style="color:#22d3bf" href="op3d:obb">obb</a> · <a style="color:#22d3bf" href="op3d:min_enclosing_sphere">min_enclosing_sphere</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: hull3d.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,8 +1,8 @@
 {
- "n_ops": 3838,
+ "n_ops": 3841,
  "tiers": {
   "color": 12,
-  "ledger": 2874,
+  "ledger": 2877,
   "nary": 17,
   "registry": 935
  },
@@ -5451,6 +5451,21 @@
    "ledger": "ops3d",
    "dim": "3d",
    "in_sorts": [
+    "points"
+   ],
+   "gpu_tier": "partial"
+  },
+  {
+   "name": "convex_hull_gap",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "bounds",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "points",
     "points"
    ],
    "gpu_tier": "partial"
@@ -14902,6 +14917,22 @@
    "in_sorts": [
     "image2d",
     "scalar"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
+   "name": "heightmap_depth_camera",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "depth",
+   "category": "walkterrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "depth",
+    "pose",
+    "matrix"
    ],
    "gpu_tier": "suitable"
   },
@@ -30115,6 +30146,20 @@
     "scalar"
    ],
    "gpu_tier": "none"
+  },
+  {
+   "name": "road_surface_heightmap",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "depth",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "robust_gaussian_profile",

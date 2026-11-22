@@ -15,6 +15,9 @@
 5. 位置保持の古典的な制御則(``pure_pursuit_curvature`` / ``pure_pursuit_circle_offset`` / ``stanley_steer`` /
    ``stanley_straight_decay``)。
 6. 速度計画と車線(``curvature_speed_plan`` / ``lateral_offset`` / ``time_to_line_crossing`` / ``turn_maneuver_check``)。
+7. 道の面(``road_surface_heightmap``、2026-11-15): 中心線の線形と横断の決まり(拝み勾配・片勾配とそのすりつけ・
+   側溝・路側の段)から、高さ図とセルごとの解析の真値(縦断勾配・横勾配・s・e)を作る。射影は ``lateral_offset`` の
+   後に局所の円弧へ射影し直す(直線と円弧で厳密)。
 
 ## 真値にする閉形式(門)
 
@@ -48,6 +51,9 @@
   **どこでも** 摩擦円を守る(連続の保証)。
 * TLC(time to line crossing, Mammar ほか 2006): 車が今の曲率のまま円を走るとして境界(直線または同心円)に届く
   時間 = 円と直線 / 円と円の交点の弧長 / v。
+* 道の面: z = z_c(s) + p(e)。中心線から横に e ずれた点を道に沿って動くと s は 1/(1 − κe) 倍で進むので、縦断勾配は
+  (z_c' + ∂p/∂β·β' + ∂p/∂rate·rate') / (1 − κe)(曲線の内側ほど急、すりつけでは縁が中心線と違う = 相対勾配)、
+  横勾配は ∂p/∂e。直線・円弧・放物線の縦断曲線では、世界の座標・極座標の閉形式と 1e-9 で一致する(門)。
 
 ## 出典(書誌)と確認の状態
 
@@ -82,6 +88,7 @@ __all__ = [
     "fresnel_integrals", "clothoid_points", "clothoid_design",
     "pure_pursuit_curvature", "pure_pursuit_circle_offset", "stanley_steer", "stanley_straight_decay",
     "curvature_speed_plan", "lateral_offset", "time_to_line_crossing", "turn_maneuver_check",
+    "road_surface_heightmap",
 ]
 
 G = 9.81    # 重力の加速度 [m/s²](道路構造令の解説 (1) 式の「≒ 9.81」に合わせる)
@@ -1207,3 +1214,445 @@ def turn_maneuver_check(trajectory: dict, *, kind: str, x_entry: float, edge_y: 
         elif d[j] > inside_tol:
             viol.append("中心のすぐ内側でない(中心から %.2f m > %.2f m = 早回り)" % (d[j], inside_tol))
     return {"ok": not viol, "violations": viol, "metrics": met}
+# ---- 道の面の高さ図(2026-11-15) ---------------------------------------------------------------------
+ROAD_MAX_CROSS_SLOPE = 0.2      # crossfall・rate の上限 [m/m](% と取り違えた 2 や 6 を断る。道路構造令の片勾配は最大 0.10)
+ROAD_ALIGNMENT_CHORD_ARC_RATIO_MAX = 1.01  # 比 / ratio: 丸めを許し、弦が弧より長すぎる列を拒否 / allow rounding only
+ROAD_ALIGNMENT_CHORD_ARC_RATIO_MIN = 0.5   # 比 / ratio: 半円より粗い弦・弧の対応を拒否 / reject implausibly short chords
+ROAD_ALIGNMENT_CURVATURE_ABS_TOL = 1e-3    # [rad] 小さい曲がりの絶対許容幅 / absolute turn allowance
+ROAD_ALIGNMENT_CURVATURE_REL_TOL = 0.1     # 比 / ratio: 予測した曲がりの相対許容幅 / relative turn allowance
+ROAD_ALIGNMENT_CURVATURE_JUMP_TOL = 0.25   # 比 / ratio: 曲率の標本間の跳びに対する許容係数 / jump allowance
+ROAD_ALIGNMENT_HEADING_ABS_TOL = 0.01      # [rad] 弦と heading の絶対許容幅 / chord-heading allowance
+ROAD_ALIGNMENT_GRADE_ABS_TOL = 1e-3        # [m/m] 小さい縦断勾配の絶対許容幅 / absolute grade allowance
+ROAD_ALIGNMENT_GRADE_REL_TOL = 0.1         # 比 / ratio: 実測した縦断勾配の相対許容幅 / relative grade allowance
+ROAD_ALIGNMENT_GRADE_JUMP_TOL = 0.5        # 比 / ratio: 勾配の標本間の跳びに対する許容係数 / jump allowance
+ROAD_ALIGNMENT_ARC_CURVATURE_MIN = 1e-9    # [1/m] これ未満は直線として射影 / smaller curvature projects as a line
+ROAD_ALIGNMENT_INTERVAL_TOL = 1e-9         # [m] 区間境界の丸め許容幅 / segment-boundary rounding allowance
+ROAD_ALIGNMENT_RADIUS_FLOOR = 1e-300       # [m] 円の中心での 0 除算だけを防ぐ / avoid division by zero at arc centre
+ROAD_SURFACE_MAX_CELLS = 25_000_000         # [cell] 過大な格子の確保を拒否 / reject excessive grid allocation
+ROAD_SURFACE_BATCH_CELLS = 65_536           # [cell] 作業配列の一回の上限 / bound each work-array batch
+
+
+def _wrap_angle(a):
+    """角を (−π, π] へ。"""
+    return (np.asarray(a, np.float64) + np.pi) % (2.0 * np.pi) - np.pi
+
+
+def _check_alignment_columns(col, s, chord, op):
+    """任意の列を xy・z の折線と突き合わせ、単位・符号の誤りを断る(fail-closed)。
+
+    どの検査も、正しい線形(直線・円弧・クロソイド、直線と円弧の継ぎ目で曲率が標本の上で跳ぶもの)は通し、
+    単位・符号の取り違え(度とラジアン、1/km、%、km、逆向き)を断るだけの幅を持たせる:
+
+    * ``s``: 弧長は弦より短くならず、弦の 2 倍を超えない(1 区間で半円でも π/2 倍)。弦/弧が 0.5〜1.01 の外は断る。
+    * ``curvature``: 1 区間だけなら ``heading`` の差と台形則の積分 h(κ₀ + κ₁)/2 を照合する(``heading`` がなく
+      非零の曲率なら照合不能なので断る)。2 区間以上なら内側の頂点 i で、弦の折れ角(φ_i − φ_{i−1})と、曲率の列から予言する折れ角
+      h_{i−1}(κ_{i−1} + 2κ_i)/6 + h_i(2κ_i + κ_{i+1})/6(曲率が区間で一次なら弦の向き = 区間の平均の向きなので
+      一次まで厳密。円弧では厳密に κ·(h_{i−1} + h_i)/2)の差が 1e-3 rad + 予言の 10 % + 曲率の跳びの半分の角を超えたら断る。
+    * ``heading``: 区間の弦の向きと両端の向きの差が 0.01 rad + |κ|·h を超えたら断る(円弧では差は |κ|·h/2)。
+      |κ| は弦の折れ角から(列に頼らない)。
+    * ``grade``: 区間の z の傾き(z_{i+1} − z_i)/h と両端の勾配の平均(放物線では厳密に一致)の差が
+      1e-3 + 傾きの 10 % + 勾配の跳びの半分を超えたら断る。
+    * ``rate``: |rate| ≤ ``ROAD_MAX_CROSS_SLOPE``(m/m)。
+
+    この幅より小さい誤り(例: 曲率の符号の誤りで、区間の曲がりの角 2|κ|·h が 1e-3 rad を切るほど緩い曲線)は見分けない。"""
+    n = len(s)
+    hs = np.diff(s)
+    ratio = chord / hs
+    bad = np.nonzero((ratio > ROAD_ALIGNMENT_CHORD_ARC_RATIO_MAX)
+                     | (ratio < ROAD_ALIGNMENT_CHORD_ARC_RATIO_MIN))[0]
+    if bad.size:
+        i = int(bad[0])
+        raise ValueError("%s: alignment s does not match the polyline: segment %d is %.6g long in x, y but %.6g in s "
+                         "(s is the arc length in the unit of x, y; omit it to use the polyline length)"
+                         % (op, i, chord[i], hs[i]))
+    phi = np.arctan2(np.diff(col["y"]), np.diff(col["x"]))            # 区間の弦の向き
+    turn = _wrap_angle(np.diff(phi))                                  # 内側の頂点での弦の折れ角
+    k_xy = np.zeros(n)
+    if n >= 3:
+        k_in = np.abs(turn) / (0.5 * (hs[:-1] + hs[1:]))
+        k_xy = np.r_[k_in[0], k_in, k_in[-1]]
+    if "curvature" in col and n >= 3:
+        kc = col["curvature"]
+        pred = (hs[:-1] * (kc[:-2] + 2.0 * kc[1:-1]) + hs[1:] * (2.0 * kc[1:-1] + kc[2:])) / 6.0
+        jump = np.maximum(np.abs(kc[1:-1] - kc[:-2]), np.abs(kc[2:] - kc[1:-1]))
+        tol = (ROAD_ALIGNMENT_CURVATURE_ABS_TOL + ROAD_ALIGNMENT_CURVATURE_REL_TOL * np.abs(pred)
+               + ROAD_ALIGNMENT_CURVATURE_JUMP_TOL * jump * (hs[:-1] + hs[1:]))
+        bad = np.nonzero(np.abs(turn - pred) > tol)[0]
+        if bad.size:
+            i = int(bad[0])
+            raise ValueError("%s: alignment curvature disagrees with the polyline at sample %d: the chords turn %.4g rad "
+                             "there, the curvature column predicts %.4g rad (tolerance %.3g; curvature is in 1/m of the "
+                             "unit of x, y, positive turning left)" % (op, i + 1, turn[i], pred[i], tol[i]))
+    if "curvature" in col and n == 2:
+        kc = col["curvature"]
+        if "heading" not in col:
+            if np.any(kc != 0.0):
+                raise ValueError("%s: a two-sample alignment with nonzero curvature also needs heading so curvature "
+                                 "can be checked against the heading change" % op)
+        else:
+            observed = float(_wrap_angle(col["heading"][1] - col["heading"][0]))
+            pred = float(0.5 * hs[0] * (kc[0] + kc[1]))
+            tol = (ROAD_ALIGNMENT_CURVATURE_ABS_TOL + ROAD_ALIGNMENT_CURVATURE_REL_TOL * abs(pred)
+                   + ROAD_ALIGNMENT_CURVATURE_JUMP_TOL * abs(kc[1] - kc[0]) * hs[0])
+            if abs(observed - pred) > tol:
+                raise ValueError("%s: alignment curvature disagrees with heading over the only segment: heading turns "
+                                 "%.4g rad, the curvature integral predicts %.4g rad (tolerance %.3g; curvature is in "
+                                 "1/m of the unit of x, y)" % (op, observed, pred, tol))
+    if "heading" in col:
+        th = col["heading"]
+        kk = np.maximum(k_xy, np.abs(col["curvature"])) if "curvature" in col else k_xy
+        tol = ROAD_ALIGNMENT_HEADING_ABS_TOL + np.maximum(kk[:-1], kk[1:]) * hs
+        dev = np.maximum(np.abs(_wrap_angle(phi - th[:-1])), np.abs(_wrap_angle(th[1:] - phi)))
+        bad = np.nonzero(dev > tol)[0]
+        if bad.size:
+            i = int(bad[0])
+            raise ValueError("%s: alignment heading disagrees with the polyline at segment %d: the chord points %.4f rad, "
+                             "heading is %.4f -> %.4f rad (tolerance %.3g; heading is in radians, counter-clockwise from "
+                             "+x, along the direction of travel)" % (op, i, phi[i], th[i], th[i + 1], tol[i]))
+    if "grade" in col:
+        gr = col["grade"]
+        slope = np.diff(col["z"]) / hs
+        tol = (ROAD_ALIGNMENT_GRADE_ABS_TOL + ROAD_ALIGNMENT_GRADE_REL_TOL * np.abs(slope)
+               + ROAD_ALIGNMENT_GRADE_JUMP_TOL * np.abs(np.diff(gr)))
+        bad = np.nonzero(np.abs(slope - 0.5 * (gr[:-1] + gr[1:])) > tol)[0]
+        if bad.size:
+            i = int(bad[0])
+            raise ValueError("%s: alignment grade disagrees with z at segment %d: z rises %.4g per unit of s there, the "
+                             "grade column says %.4g -> %.4g (tolerance %.3g; grade is dz/ds in m/m, 0.06 = 6 %%)"
+                             % (op, i, slope[i], gr[i], gr[i + 1], tol[i]))
+    if "rate" in col and np.any(np.abs(col["rate"]) > ROAD_MAX_CROSS_SLOPE):
+        raise ValueError("%s: alignment rate must be a slope in m/m with |rate| <= %g (0.06 = 6 %%), got %.4g"
+                         % (op, ROAD_MAX_CROSS_SLOPE, float(col["rate"][np.argmax(np.abs(col["rate"]))])))
+
+
+def _road_alignment(alignment, op):
+    """線形の表 {x, y, z[, s, heading, curvature, grade, beta, rate]} を検査して列をそろえる。"""
+    if not isinstance(alignment, dict):
+        raise ValueError("%s: alignment must be a table (dict of columns x, y, z ...), got %s"
+                         % (op, type(alignment).__name__))
+    if len(alignment) == 0:
+        raise ValueError("%s: alignment is empty — pass the centre line columns x, y, z" % op)
+    for k in ("x", "y", "z"):
+        if k not in alignment:
+            raise ValueError("%s: alignment needs column %r" % (op, k))
+    known = {"x", "y", "z", "s", "heading", "curvature", "grade", "beta", "rate"}
+    extra = set(alignment) - known
+    if extra:
+        raise ValueError("%s: unknown alignment columns %s (known: %s)" % (op, sorted(extra), sorted(known)))
+    col = {}
+    for k in sorted(set(alignment) & known):
+        v = np.asarray(alignment[k], np.float64).ravel()
+        if not np.all(np.isfinite(v)):
+            raise ValueError("%s: alignment column %r must be finite" % (op, k))
+        col[k] = v
+    n = len(col["x"])
+    if n < 2:
+        raise ValueError("%s: alignment needs at least 2 samples, got %d" % (op, n))
+    bad = [k for k, v in col.items() if len(v) != n]
+    if bad:
+        raise ValueError("%s: alignment columns %s do not have %d samples like x" % (op, bad, n))
+    xy = np.stack([col["x"], col["y"]], 1)
+    seg = np.hypot(*np.diff(xy, axis=0).T)
+    if np.any(seg <= 0.0):
+        raise ValueError("%s: alignment has repeated consecutive points" % op)
+    s = col.get("s", np.r_[0.0, np.cumsum(seg)])
+    if np.any(np.diff(s) <= 0.0):
+        raise ValueError("%s: alignment s must increase strictly" % op)
+    _check_alignment_columns(col, s, seg, op)
+    if "heading" in col:
+        hd = np.unwrap(col["heading"])
+    else:
+        d = np.gradient(xy, s, axis=0, edge_order=2 if n >= 3 else 1)    # 端も 2 次(grade と同じ)
+        hd = np.unwrap(np.arctan2(d[:, 1], d[:, 0]))
+    kap = col["curvature"] if "curvature" in col else np.gradient(hd, s, edge_order=2 if n >= 3 else 1)
+    grade = col["grade"] if "grade" in col else np.gradient(col["z"], s, edge_order=2 if n >= 3 else 1)
+    beta = col.get("beta", np.zeros(n))
+    if np.any(beta < 0.0) or np.any(beta > 1.0):
+        raise ValueError("%s: alignment beta must lie in [0, 1] (0 = crowned, 1 = one-way slope)" % op)
+    rate = col.get("rate", np.zeros(n))
+    return {"x": col["x"], "y": col["y"], "z": col["z"], "s": s, "heading": hd, "curvature": kap,
+            "grade": grade, "beta": beta, "rate": rate, "xy": xy}
+
+
+def _foot_on_local_arc(P, C, th, kap):
+    """点 P (n, 2) を、点 C・向き th・曲率 kap の局所の円弧(|kap| < 1e-9 は直線)へ射影 → (u, e)。
+
+    u は C からの弧長(負も可)、e は左を正の横ずれ。直線と円弧では厳密(折線の頂点の折れ目が出ない)。"""
+    T = np.stack([np.cos(th), np.sin(th)], -1)
+    N = np.stack([-np.sin(th), np.cos(th)], -1)
+    D = P - C
+    u = np.einsum("ij,ij->i", D, T)
+    e = np.einsum("ij,ij->i", D, N)
+    arc = np.abs(kap) >= ROAD_ALIGNMENT_ARC_CURVATURE_MIN
+    if np.any(arc):
+        k = kap[arc]
+        O = C[arc] + N[arc] / k[:, None]                       # 円の中心(左が正の曲率なら左)
+        W = P[arc] - O
+        r = np.hypot(W[:, 0], W[:, 1])
+        r = np.where(r > 0.0, r, ROAD_ALIGNMENT_RADIUS_FLOOR)
+        Nu = np.sign(k)[:, None] * (-W) / r[:, None]           # 足の点の左の法線
+        th_u = np.arctan2(-Nu[:, 0], Nu[:, 1])
+        dth = (th_u - th[arc] + np.pi) % (2.0 * np.pi) - np.pi
+        u[arc] = dth / k
+        e[arc] = 1.0 / k - np.sign(k) * r
+    return u, e
+
+
+def _cross_profile(e, beta, rate, cs):
+    """横断の高さ p(e) と偏微分 (∂p/∂e, ∂p/∂beta, ∂p/∂rate)。e は左が正。"""
+    edge = cs["half_width"] + cs["shoulder"]
+    a = np.abs(e)
+    ec = np.clip(e, -edge, edge)
+    sg = np.sign(e)
+    inside = a <= edge
+    z = (1.0 - beta) * (-cs["crossfall"] * np.abs(ec)) + beta * (-rate * ec)
+    p_e = np.where(inside, (1.0 - beta) * (-cs["crossfall"] * sg) - beta * rate, 0.0)
+    p_b = cs["crossfall"] * np.abs(ec) - rate * ec
+    p_r = -beta * ec
+    gw = cs["gutter_width"]
+    if gw > 0.0:
+        g = (a > edge) & (a <= edge + gw)
+        ug = np.clip((a - edge) / gw, 0.0, 1.0)
+        z = np.where(g, z - cs["gutter_depth"] * np.sin(np.pi * ug), z)
+        p_e = np.where(g, -cs["gutter_depth"] * np.pi / gw * np.cos(np.pi * ug) * sg, p_e)
+    z = np.where(a > edge + gw, z - cs["verge_drop"], z)
+    return z, p_e, p_b, p_r
+
+
+def road_surface_heightmap(alignment, cell: float = 0.05, *, extent=None, margin: float = 10.0,
+                           half_width: float = 3.0, shoulder: float = 0.5, crossfall: float = 0.02,
+                           gutter_width: float = 0.5, gutter_depth: float = 0.06, verge_drop: float = 0.04,
+                           terrain=None, blend_start: float = 5.0, blend_width: float = 4.5,
+                           return_truth: bool = False):
+    """中心線の線形と横断の決まりから、道の面の高さ図と、セルごとの解析の真値(勾配・横勾配)を作る。
+
+    各セルの中心を中心線へ射影した (s, e)(s = 中心線の弧長、e = 横ずれ、進行方向の左が正)で高さを決める:
+
+        z = z_c(s) + p(e; β(s), rate(s))
+
+    * **射影**: 既存の :func:`lateral_offset`(折線への射影、近い頂点から窓 2 区間)で区間を決め、その区間の始点の
+      向き・曲率の**局所の円弧**へ射影し直す。直線と円弧では厳密で、折線の頂点ごとの mm の折れ目が出ない
+      (クロソイドは区間の中で 3 次の誤差)。線形の端より外は、端の向きの直線で延ばす。隣り合う局所の円弧の法線の
+      間に残る楔(曲率が変わる所の曲がりの外側、ヘアピンの中心の近く)は、``lateral_offset`` が見つけた折線の区間へ
+      その区間の中の座標で射影し、直線として扱う(真値の ``curvature`` は 0、``grade`` は ds/d(弦) = 弧/弦 で直す)。
+      足が頂点になる所は s が頂点の値で一定で、``heading`` は頂点からの向きに直交、``grade`` は 0(どれもこの作り方の
+      微分)。
+    * **縦断** z_c(s): 標本の z と勾配 g = dz/ds(``grade`` の列、無ければ ``np.gradient``、2 次まで厳密)の
+      3 次 Hermite 補間。放物線の縦断曲線は標本の間でも厳密。
+    * **横断** p(e): 車道(|e| ≤ ``half_width + shoulder``)は、拝み勾配 −``crossfall``·|e| と一方向の片勾配
+      −``rate``·e を ``β`` で混ぜる(β = 0 拝み、β = 1 片勾配、rate > 0 で左が下がる)。β と rate は線形の列
+      (標本の間は一次補間)で、片勾配への移り変わり(すりつけ)を表す。車道の外は縁の高さのまま、側溝
+      (幅 ``gutter_width``、深さ ``gutter_depth`` の半正弦)、その外は路側の段 ``verge_drop`` だけ下げる。
+    * **地形へのなじませ**(``terrain`` を渡したとき): |e| が ``blend_start`` から ``blend_width`` かけて、線形の端より
+      外では端からの距離で、道の高さを ``terrain``(同じ格子の高さ図)へ一次で混ぜる。
+
+    返り値は (ny, nx) の高さ図 ``heights``(``grid[i, j]`` はセル (行 i = y、列 j = x)の中心
+    (xmin + (j + ½)·cell, ymin + (i + ½)·cell) の高さ。:func:`terrain.elevation_map` と同じ並び)。台帳の型
+    ``depth`` のまま他の op(``dem_slope``・``heightmap_depth_camera``・``crop_rectangle2`` …)へ渡せる。
+    ``return_truth=True`` なら ``(heights, truth)`` を返す。``truth`` は同じ形のセルごとの解析の真値(作り方の
+    偏微分。数値微分ではない):
+
+    * ``s``・``e``・``heading``(足の点での中心線の向き [rad])・``curvature``(そこで使った曲率 [1/m])。
+    * ``grade`` = ∇z·t(中心線の向き t に沿った勾配 = (z_c' + ∂p/∂β·β' + ∂p/∂rate·rate') / (1 − κe))。
+      曲線の内側ほど急になる(1/(1 − κe))。片勾配のすりつけでは縁の勾配が中心線と違う(相対勾配)。
+    * ``cross`` = ∇z·n(左向きの横勾配 ∂p/∂e、+ で左が上がる)。
+    * ``carriageway``(bool: 車道の中で、地形と混ぜていないセル)。地形と混ぜたセルの ``grade``・``cross`` は nan
+      (真値を作り方から出せないので、言わない)。
+    * ``extent`` (xmin, xmax, ymin, ymax)、``cell``、``cross_section``(使った横断の値)。
+
+    側溝の外縁の段は不連続で、その上の勾配は定義されない(真値は段の両側の値)。拝みの頂(e = 0)の横勾配は
+    左右の平均(β = 0 なら 0)。
+
+    Parameters
+    ----------
+    alignment : dict
+        中心線の表。``x``・``y``・``z``(N ≥ 2)が要る。任意の列: ``s``(弧長。無ければ折線の長さ)、
+        ``heading``・``curvature``(:func:`clothoid_points` の返りをそのまま渡すと射影が厳密になる。無ければ
+        標本から 2 次の差分で作る。端も 2 次)、``grade``(dz/ds)、``beta``(0..1)、``rate``(片勾配 [m/m]、
+        |rate| ≤ 0.2)。任意の列は xy・z の折線と突き合わせ、単位・符号の取り違え(度とラジアン、1/km、%、km、
+        逆向き)は ValueError で断る(heading は弦の向きと 0.01 rad + |κ|·h まで、curvature は弦の折れ角または
+        1 区間なら heading の差と 1e-3 rad + 10 % まで、grade は z の傾きと 1e-3 + 10 % まで、s は弦/弧が
+        0.5〜1.01)。2 標本で heading がない非零 curvature は照合できないので断る。この幅より小さい誤り
+        (例: 区間の曲がりの角 2|κ|·h が 1e-3 rad を切るほど緩い曲線の、曲率の符号)は見分けない。
+    cell : float
+        格子の間隔 [m]。
+    extent : (xmin, xmax, ymin, ymax) or None
+        格子の範囲(:func:`terrain.elevation_map` の ``bounds`` と同じく nx = ceil((xmax − xmin)/cell))。
+        None なら中心線の外接矩形に ``margin`` を足す。
+    crossfall : float
+        拝み勾配 [m/m](0.02 = 2 %)。|crossfall| ≤ 0.2 でなければ断る(% のつもりの 2 を通すと勾配 2 m/m の面になる)。
+    terrain : (ny, nx) array or None
+        外側の地形の高さ(同じ格子)。None なら混ぜず、路側の高さがそのまま外へ続く。
+    return_truth : bool
+        True なら ``(heights, truth)``(真値の表つき)。既定は高さ図だけ。
+
+    **Raises** ``ValueError``: 列の欠け・未知の列・非有限、任意の列が折線と合わない(単位・符号)、
+    |crossfall|・|rate| > 0.2、格子が 2.5e7 セルを超える 等。
+
+    空の入力(``alignment`` が 0 要素)は ValueError で拒否する。
+
+    English: road surface height map from a centre-line alignment (x, y, z + optional s / heading / curvature /
+    grade / crossfall blend beta / superelevation rate) and a cross-section (crown, one-way slope, gutter,
+    verge drop); with return_truth=True also the per-cell analytic truth (grade along the road, cross slope,
+    s, e) from the construction's partial derivatives. Cells are projected with lateral_offset and then onto the local arc of
+    the segment (exact for lines and arcs, no polyline kinks). Optional blending into a terrain grid. The optional
+    columns are checked against the polyline (unit and sign mistakes are refused); with two samples, nonzero curvature
+    is checked against the heading integral and is refused if heading is absent. |crossfall| and |rate| <= 0.2 m/m.
+
+    呼び出し例::
+
+        import numpy as np
+        import drivelateral as DL
+        s = np.arange(0.0, 40.01, 0.5)                               # 直線 40 m、勾配 6 %、拝み 2 %
+        road = {"x": s, "y": np.zeros_like(s), "z": 0.06 * s, "s": s}
+        H, T = DL.road_surface_heightmap(road, 0.1, extent=(5.0, 35.0, -3.0, 3.0), return_truth=True)
+        xc = 5.0 + (np.arange(H.shape[1]) + 0.5) * 0.1
+        yc = -3.0 + (np.arange(H.shape[0]) + 0.5) * 0.1
+        assert np.allclose(H, 0.06 * xc[None, :] - 0.02 * np.abs(yc)[:, None], atol=1e-12)
+        assert np.allclose(T["grade"], 0.06) and np.allclose(T["cross"][yc > 0], -0.02)
+    """
+    op = "road_surface_heightmap"
+    if (len(alignment) if isinstance(alignment, (dict, list, tuple)) else np.asarray(alignment).size) == 0:
+        raise ValueError("%s: alignment is empty — pass the centre line columns x, y, z" % op)
+    A = _road_alignment(alignment, op)
+    c = _positive(cell, "cell", op)
+    cs = {"half_width": _positive(half_width, "half_width", op), "shoulder": _nonneg(shoulder, "shoulder", op),
+          "crossfall": _finite(crossfall, "crossfall", op), "gutter_width": _nonneg(gutter_width, "gutter_width", op),
+          "gutter_depth": _finite(gutter_depth, "gutter_depth", op), "verge_drop": _finite(verge_drop, "verge_drop", op)}
+    if abs(cs["crossfall"]) > ROAD_MAX_CROSS_SLOPE:
+        raise ValueError("%s: crossfall must be a slope in m/m with |crossfall| <= %g (0.02 = 2 %%), got %r"
+                         % (op, ROAD_MAX_CROSS_SLOPE, crossfall))
+    if extent is None:
+        m = _nonneg(margin, "margin", op)
+        xmin, ymin = float(A["x"].min()) - m, float(A["y"].min()) - m
+        nx = max(1, int(np.ceil((float(A["x"].max()) + m - xmin) / c)))
+        ny = max(1, int(np.ceil((float(A["y"].max()) + m - ymin) / c)))
+        ext = (xmin, xmin + nx * c, ymin, ymin + ny * c)
+    else:
+        ext = tuple(float(v) for v in np.asarray(extent, np.float64).ravel())
+        if len(ext) != 4 or not all(np.isfinite(ext)) or ext[1] <= ext[0] or ext[3] <= ext[2]:
+            raise ValueError("%s: extent must be finite (xmin, xmax, ymin, ymax) with xmax > xmin, ymax > ymin" % op)
+        xmin, ymin = ext[0], ext[2]
+        nx = max(1, int(np.ceil((ext[1] - ext[0]) / c)))
+        ny = max(1, int(np.ceil((ext[3] - ext[2]) / c)))
+    if nx * ny > ROAD_SURFACE_MAX_CELLS:
+        raise ValueError("%s: the grid would have %d cells (> %g); use a larger cell or a smaller extent"
+                         % (op, nx * ny, ROAD_SURFACE_MAX_CELLS))
+    tz = None
+    if terrain is not None:
+        tz = np.asarray(terrain, np.float64)
+        if tz.shape != (ny, nx):
+            raise ValueError("%s: terrain must be on the output grid, shape %s, got %s" % (op, (ny, nx), tz.shape))
+        if not np.all(np.isfinite(tz)):
+            raise ValueError("%s: terrain must be finite (fill the holes first, e.g. fill_gaps)" % op)
+        b0 = _finite(blend_start, "blend_start", op)
+        bw = _positive(blend_width, "blend_width", op)
+    from scipy.spatial import cKDTree
+    S, X, Y, H, K, G = A["s"], A["x"], A["y"], A["heading"], A["curvature"], A["grade"]
+    Z, B, R, xy = A["z"], A["beta"], A["rate"], A["xy"]
+    n = len(S)
+    hseg = np.diff(S)
+    chord = np.hypot(*np.diff(xy, axis=0).T)
+    tree = cKDTree(xy)
+    xc = xmin + (np.arange(nx) + 0.5) * c
+    yc = ymin + (np.arange(ny) + 0.5) * c
+    out = {k: np.empty(ny * nx) for k in ("z", "s", "e", "heading", "curvature", "grade", "cross", "alpha")}
+    edge = cs["half_width"] + cs["shoulder"]
+    rows_per = max(1, ROAD_SURFACE_BATCH_CELLS // nx)
+    for r0 in range(0, ny, rows_per):
+        yy, xx = np.meshgrid(yc[r0:r0 + rows_per], xc, indexing="ij")
+        Pt = np.stack([xx.ravel(), yy.ravel()], 1)
+        _d, iv = tree.query(Pt)
+        lo = lateral_offset(Pt, xy, start_index=np.minimum(iv, n - 2), window=2)
+        base = lo["index"].astype(np.int64)
+        # 局所の円弧で射影し直す(区間の外へ出たら隣の区間で 1 回だけ)
+        u, e = _foot_on_local_arc(Pt, xy[base], H[base], K[base])
+        for step in (1, -1):
+            mv = ((u > hseg[base] + ROAD_ALIGNMENT_INTERVAL_TOL) if step == 1
+                  else (u < -ROAD_ALIGNMENT_INTERVAL_TOL))
+            mv &= (base + step >= 0) & (base + step <= n - 2)
+            if np.any(mv):
+                b2 = base[mv] + step
+                u2, e2 = _foot_on_local_arc(Pt[mv], xy[b2], H[b2], K[b2])
+                base[mv], u[mv], e[mv] = b2, u2, e2
+        # それでも区間の外(隣り合う局所の円弧の法線の間に残る楔 —— 曲率が変わる所の曲がりの外側、ヘアピンの
+        # 中心の近くなど)は、lateral_offset が見つけた折線の区間へ、その区間の中の座標で射影する(lateral_offset の
+        # s は 0 から数えた弦の長さなので、線形の s と混ぜない)。そこは直線として扱い、真値の勾配は ds/d(弦) = 弧/弦。
+        lo_out = (base == 0) & (u < 0.0)
+        hi_out = (base == n - 2) & (u > hseg[n - 2])
+        far = ((u < -ROAD_ALIGNMENT_INTERVAL_TOL) | (u > hseg[base] + ROAD_ALIGNMENT_INTERVAL_TOL)) & ~lo_out & ~hi_out
+        kap = K[base].copy()
+        hd = H[base].copy()
+        jac = np.ones_like(u)                           # ds/d(弦の向きの長さ)。円弧の 1/(1 − κe) とは別に掛ける
+        if np.any(far):
+            fi = np.nonzero(far)[0]
+            bf = lo["index"][far].astype(np.int64)
+            ab = xy[bf + 1] - xy[bf]
+            t_raw = np.einsum("ij,ij->i", Pt[fi] - xy[bf], ab) / chord[bf] ** 2
+            base[far], u[far], e[far] = bf, np.clip(t_raw, 0.0, 1.0) * hseg[bf], lo["n"][far]
+            kap[far] = 0.0
+            hd[far] = lo["heading"][far]
+            jac[far] = hseg[bf] / chord[bf]
+            # 足が頂点(楔の中): s は頂点の値で一定、e は頂点からの符号つきの距離。向きを頂点からの向きに直交させると
+            # ∇e·t = 0 なので、この面の勾配は grade = 0・cross = ∂p/∂e(真値はこの作り方の微分のまま)
+            at_v = (t_raw <= 0.0) | (t_raw >= 1.0)
+            D = Pt[fi[at_v]] - xy[bf[at_v] + (t_raw[at_v] >= 1.0)]
+            r_v = np.hypot(D[:, 0], D[:, 1])
+            ok_v = r_v > 0.0
+            nl = np.where(e[fi[at_v]] >= 0.0, 1.0, -1.0)[:, None] * D / np.where(ok_v, r_v, 1.0)[:, None]
+            hd[fi[at_v]] = np.where(ok_v, np.arctan2(-nl[:, 0], nl[:, 1]), hd[fi[at_v]])
+            jac[fi[at_v]] = 0.0
+        # 線形の端より外は端の向きの直線で延ばす
+        lo_end = (base == 0) & (u < 0.0)
+        hi_end = (base == n - 2) & (u > hseg[n - 2])
+        if np.any(lo_end):
+            u0, e0 = _foot_on_local_arc(Pt[lo_end], xy[[0]].repeat(lo_end.sum(), 0),
+                                        np.full(lo_end.sum(), H[0]), np.zeros(lo_end.sum()))
+            u[lo_end], e[lo_end], kap[lo_end], hd[lo_end] = u0, e0, 0.0, H[0]
+        if np.any(hi_end):
+            m_ = int(hi_end.sum())
+            u1, e1 = _foot_on_local_arc(Pt[hi_end], xy[[n - 1]].repeat(m_, 0), np.full(m_, H[n - 1]), np.zeros(m_))
+            base[hi_end], u[hi_end], e[hi_end], kap[hi_end], hd[hi_end] = n - 1, u1, e1, 0.0, H[n - 1]
+        s = S[base] + u
+        heading = hd + kap * u
+        # 縦断: 区間の中は 3 次 Hermite、端の外は端の勾配の直線
+        bi = np.minimum(base, n - 2)
+        h = hseg[bi]
+        t = np.clip(u / h, 0.0, 1.0)
+        h00, h10, h01, h11 = 2 * t ** 3 - 3 * t ** 2 + 1, t ** 3 - 2 * t ** 2 + t, -2 * t ** 3 + 3 * t ** 2, t ** 3 - t ** 2
+        zc = h00 * Z[bi] + h10 * h * G[bi] + h01 * Z[bi + 1] + h11 * h * G[bi + 1]
+        dzc = ((6 * t ** 2 - 6 * t) * Z[bi] + (3 * t ** 2 - 4 * t + 1) * h * G[bi]
+               + (-6 * t ** 2 + 6 * t) * Z[bi + 1] + (3 * t ** 2 - 2 * t) * h * G[bi + 1]) / h
+        zc = np.where(lo_end, Z[0] + G[0] * u, np.where(hi_end, Z[-1] + G[-1] * u, zc))
+        dzc = np.where(lo_end, G[0], np.where(hi_end, G[-1], dzc))
+        # 横断の混ぜ(β)と片勾配(rate): 標本の間は一次、端の外は端の値
+        bt = np.clip(u / h, 0.0, 1.0)
+        bb = np.where(lo_end, B[0], np.where(hi_end, B[-1], B[bi] + (B[bi + 1] - B[bi]) * bt))
+        rr = np.where(lo_end, R[0], np.where(hi_end, R[-1], R[bi] + (R[bi + 1] - R[bi]) * bt))
+        dbb = np.where(lo_end | hi_end, 0.0, (B[bi + 1] - B[bi]) / h)
+        drr = np.where(lo_end | hi_end, 0.0, (R[bi + 1] - R[bi]) / h)
+        p, p_e, p_b, p_r = _cross_profile(e, bb, rr, cs)
+        z = zc + p
+        denom = 1.0 - kap * e
+        grade = (dzc + p_b * dbb + p_r * drr) * jac / np.where(np.abs(denom) > _EPS, denom, np.nan)
+        alpha = np.zeros_like(z)
+        if tz is not None:
+            out_s = np.maximum(S[0] - s, s - S[-1])
+            alpha = np.maximum(np.clip((np.abs(e) - b0) / bw, 0.0, 1.0), np.clip(out_s / bw, 0.0, 1.0))
+            z = (1.0 - alpha) * z + alpha * tz[r0:r0 + rows_per].ravel()
+        sl = slice(r0 * nx, r0 * nx + len(z))
+        out["z"][sl], out["s"][sl], out["e"][sl], out["heading"][sl] = z, s, e, heading
+        out["curvature"][sl], out["grade"][sl], out["cross"][sl], out["alpha"][sl] = kap, grade, p_e, alpha
+    sh = (ny, nx)
+    alpha = out["alpha"].reshape(sh)
+    blended = alpha > 0.0
+    grade = np.where(blended, np.nan, out["grade"].reshape(sh))
+    cross = np.where(blended, np.nan, out["cross"].reshape(sh))
+    e = out["e"].reshape(sh)
+    s = out["s"].reshape(sh)
+    truth = {"s": s, "e": e, "heading": out["heading"].reshape(sh), "curvature": out["curvature"].reshape(sh),
+             "grade": grade, "cross": cross,
+             "carriageway": (np.abs(e) <= edge) & ~blended & (s >= S[0]) & (s <= S[-1]),
+             "extent": ext, "cell": c, "cross_section": dict(cs)}
+    heights = out["z"].reshape(sh)
+    return (heights, truth) if return_truth else heights

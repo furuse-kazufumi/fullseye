@@ -61,9 +61,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3627,
+    "executable": 3630,
     "reasons": {
-      "python_signature": 2662,
+      "python_signature": 2665,
       "registry": 964
     },
     "not_executable_reasons": {
@@ -390,9 +390,9 @@
   },
   "counts": {
     "nodes": 103,
-    "edges": 3842,
-    "conversion_pairs": 424,
-    "conversion_edge_incidence": 2526
+    "edges": 3845,
+    "conversion_pairs": 426,
+    "conversion_edge_incidence": 2531
   },
   "nodes": [
     {
@@ -608,8 +608,8 @@
       "sort": "depth",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 22,
-      "consumed_by": 47,
+      "produced_by": 24,
+      "consumed_by": 48,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -906,7 +906,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 94,
-      "consumed_by": 263,
+      "consumed_by": 264,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1027,7 +1027,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 85,
-      "consumed_by": 309,
+      "consumed_by": 311,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1071,7 +1071,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 17,
-      "consumed_by": 11,
+      "consumed_by": 12,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1422,8 +1422,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1276,
-      "consumed_by": 600,
+      "produced_by": 1277,
+      "consumed_by": 601,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -31447,6 +31447,76 @@
           "verified_through_mcp_pipeline"
         ]
       },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00001"
+    },
+    {
+      "op": "convex_hull_gap",
+      "inputs": [
+        "points",
+        "points"
+      ],
+      "output": "table",
+      "category": "3d",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00001"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00001"
+        }
+      ],
+      "input_roles": [
+        "points_a",
+        "points_b"
+      ],
+      "runtime_target": {
+        "module": "hull3d",
+        "callable": "convex_hull_gap"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "hull3d",
+        "callable": "convex_hull_gap"
+      },
+      "parameter_schema": [
+        {
+          "name": "tol",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1e-09
+        },
+        {
+          "name": "max_iter",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1000
+        },
+        {
+          "name": "check",
+          "type": "str",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "lp"
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
       "source_ref": "S00001"
     },
@@ -149068,6 +149138,151 @@
       "source_ref": "S00021"
     },
     {
+      "op": "road_surface_heightmap",
+      "inputs": [
+        "table"
+      ],
+      "output": "depth",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "drivelateral",
+        "callable": "road_surface_heightmap"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "drivelateral",
+        "callable": "road_surface_heightmap"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "extent",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "margin",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 10.0
+        },
+        {
+          "name": "half_width",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3.0
+        },
+        {
+          "name": "shoulder",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.5
+        },
+        {
+          "name": "crossfall",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.02
+        },
+        {
+          "name": "gutter_width",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.5
+        },
+        {
+          "name": "gutter_depth",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.06
+        },
+        {
+          "name": "verge_drop",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.04
+        },
+        {
+          "name": "terrain",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "blend_start",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 5.0
+        },
+        {
+          "name": "blend_width",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 4.5
+        },
+        {
+          "name": "return_truth",
+          "type": "bool",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
       "op": "crossing_timing_check",
       "inputs": [],
       "output": "table",
@@ -179471,6 +179686,132 @@
           "verified_through_mcp_pipeline"
         ]
       },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "heightmap_depth_camera",
+      "inputs": [
+        "depth",
+        "pose",
+        "matrix"
+      ],
+      "output": "depth",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "terrain",
+        "callable": "heightmap_depth_camera"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "terrain",
+        "callable": "heightmap_depth_camera"
+      },
+      "parameter_schema": [
+        {
+          "name": "cell",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "origin",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "width",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "height",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "step",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "near",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.1
+        },
+        {
+          "name": "max_range",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 10.0
+        },
+        {
+          "name": "disparity_sigma",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "baseline",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "seed",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
       "source_ref": "S00021"
     },

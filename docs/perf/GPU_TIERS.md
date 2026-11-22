@@ -18,18 +18,18 @@
 | tier | 件数 |
 |---|---:|
 | `required` | 49 |
-| `suitable` | 2201 |
-| `partial` | 650 |
+| `suitable` | 2203 |
+| `partial` | 651 |
 | `none` | 938 |
-| **合計** | **3838** |
+| **合計** | **3841** |
 
 ## GPU 対応率
 
 指標 = `gpu_status=あり` の件数 ÷ (`required` + `suitable`) の件数(件数÷全体ではない)。現状値をそのまま書く(低くてよい)。
 
 - gpu 経路あり: **173**
-- `required` + `suitable`: **2250**
-- **GPU 対応率 = 7.7%** (173 / 2250)
+- `required` + `suitable`: **2252**
+- **GPU 対応率 = 7.7%** (173 / 2252)
 
 正直な内訳: gpu 経路を持つ op のうち 50 件は `partial`(領域モルフォロジ等)、0 件は `none` で、分母には入らない(分子にのみ計上)。
 
@@ -65,9 +65,9 @@
 | rank | 0 | 23 | 0 | 0 | 23 |
 | frequency | 0 | 22 | 0 | 0 | 22 |
 | matprop | 0 | 0 | 8 | 14 | 22 |
+| lateral | 0 | 2 | 0 | 19 | 21 |
 | spectral | 0 | 7 | 14 | 0 | 21 |
 | tacslip | 0 | 13 | 0 | 8 | 21 |
-| lateral | 0 | 1 | 0 | 19 | 20 |
 | classify | 0 | 10 | 0 | 9 | 19 |
 | kendama | 0 | 1 | 0 | 18 | 19 |
 | pegtactile | 0 | 7 | 0 | 12 | 19 |
@@ -116,6 +116,7 @@
 | noncoaxial | 0 | 1 | 0 | 12 | 13 |
 | oct | 0 | 3 | 0 | 10 | 13 |
 | polish | 0 | 10 | 0 | 3 | 13 |
+| walkterrain | 0 | 13 | 0 | 0 | 13 |
 | 3d | 0 | 12 | 0 | 0 | 12 |
 | artificial-life | 0 | 12 | 0 | 0 | 12 |
 | braidpath | 0 | 7 | 0 | 5 | 12 |
@@ -135,7 +136,6 @@
 | symmetry | 0 | 8 | 4 | 0 | 12 |
 | synth | 0 | 8 | 4 | 0 | 12 |
 | tacdome | 0 | 7 | 0 | 5 | 12 |
-| walkterrain | 0 | 12 | 0 | 0 | 12 |
 | world | 0 | 0 | 1 | 11 | 12 |
 | construct | 0 | 1 | 8 | 2 | 11 |
 | ct_scan | 0 | 10 | 0 | 1 | 11 |
@@ -243,6 +243,7 @@
 | anomaly_patch | 0 | 5 | 0 | 0 | 5 |
 | artifact | 0 | 5 | 0 | 0 | 5 |
 | barcode1d | 0 | 3 | 0 | 2 | 5 |
+| bounds | 0 | 0 | 5 | 0 | 5 |
 | calibrate | 0 | 2 | 3 | 0 | 5 |
 | cavity | 0 | 0 | 2 | 3 | 5 |
 | depth | 0 | 4 | 0 | 1 | 5 |
@@ -285,7 +286,6 @@
 | assess | 0 | 4 | 0 | 0 | 4 |
 | attend | 0 | 0 | 0 | 4 | 4 |
 | bearing | 0 | 3 | 0 | 1 | 4 |
-| bounds | 0 | 0 | 4 | 0 | 4 |
 | check | 0 | 0 | 0 | 4 | 4 |
 | decode | 0 | 3 | 0 | 1 | 4 |
 | deform | 1 | 2 | 1 | 0 | 4 |

@@ -20740,6 +20740,286 @@
     "stages": [
      {
       "on": "cpu",
+      "op": "heightmap_depth_camera",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "cpu",
+      "op": "depth_to_points",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "cpu",
+      "op": "fit_plane_3d",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": [
+     {
+      "expected": null,
+      "got": null,
+      "index": 0,
+      "op": "heightmap_depth_camera",
+      "reason": "unknown_op"
+     },
+     {
+      "expected": null,
+      "got": null,
+      "index": 1,
+      "op": "depth_to_points",
+      "reason": "unknown_op"
+     },
+     {
+      "expected": null,
+      "got": null,
+      "index": 2,
+      "op": "fit_plane_3d",
+      "reason": "unknown_op"
+     }
+    ]
+   },
+   "before": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
+      "op": "heightmap_depth_camera",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "cpu",
+      "op": "depth_to_points",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "cpu",
+      "op": "fit_plane_3d",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": [
+     {
+      "expected": null,
+      "got": null,
+      "index": 0,
+      "op": "heightmap_depth_camera",
+      "reason": "unknown_op"
+     },
+     {
+      "expected": null,
+      "got": null,
+      "index": 1,
+      "op": "depth_to_points",
+      "reason": "unknown_op"
+     },
+     {
+      "expected": null,
+      "got": null,
+      "index": 2,
+      "op": "fit_plane_3d",
+      "reason": "unknown_op"
+     }
+    ]
+   },
+   "recipe": "Simulate — a depth camera over a height map, then the plane back from its point cloud",
+   "stages": [
+    "heightmap_depth_camera",
+    "depth_to_points",
+    "fit_plane_3d"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 1,
+    "n_switches": 1,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "cpu",
+      "op": "road_surface_heightmap",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "gpu",
+      "op": "dem_slope",
+      "path": "allow_single",
+      "reason": null
+     }
+    ],
+    "switches": [
+     {
+      "at": 1,
+      "from": "cpu",
+      "op": "dem_slope",
+      "reason": null,
+      "to": "shadow"
+     }
+    ],
+    "type_breaks": [
+     {
+      "expected": null,
+      "got": null,
+      "index": 0,
+      "op": "road_surface_heightmap",
+      "reason": "unknown_op"
+     },
+     {
+      "expected": null,
+      "got": null,
+      "index": 1,
+      "op": "dem_slope",
+      "reason": "unknown_op"
+     }
+    ]
+   },
+   "before": {
+    "n_gpu_stages": 1,
+    "n_switches": 1,
+    "n_transfers": 1,
+    "stages": [
+     {
+      "on": "cpu",
+      "op": "road_surface_heightmap",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "gpu",
+      "op": "dem_slope",
+      "path": "allow_single",
+      "reason": null
+     }
+    ],
+    "switches": [
+     {
+      "at": 1,
+      "from": "cpu",
+      "op": "dem_slope",
+      "reason": null,
+      "to": "shadow"
+     }
+    ],
+    "type_breaks": [
+     {
+      "expected": null,
+      "got": null,
+      "index": 0,
+      "op": "road_surface_heightmap",
+      "reason": "unknown_op"
+     },
+     {
+      "expected": null,
+      "got": null,
+      "index": 1,
+      "op": "dem_slope",
+      "reason": "unknown_op"
+     }
+    ]
+   },
+   "recipe": "Simulate — a crowned road lane from its alignment, then its slope as a DEM",
+   "stages": [
+    "road_surface_heightmap",
+    "dem_slope"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
+      "op": "radius_outlier_removal",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "cpu",
+      "op": "convex_hull_gap",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": [
+     {
+      "expected": null,
+      "got": null,
+      "index": 0,
+      "op": "radius_outlier_removal",
+      "reason": "unknown_op"
+     },
+     {
+      "expected": null,
+      "got": null,
+      "index": 1,
+      "op": "convex_hull_gap",
+      "reason": "unknown_op"
+     }
+    ]
+   },
+   "before": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
+      "op": "radius_outlier_removal",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "cpu",
+      "op": "convex_hull_gap",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": [
+     {
+      "expected": null,
+      "got": null,
+      "index": 0,
+      "op": "radius_outlier_removal",
+      "reason": "unknown_op"
+     },
+     {
+      "expected": null,
+      "got": null,
+      "index": 1,
+      "op": "convex_hull_gap",
+      "reason": "unknown_op"
+     }
+    ]
+   },
+   "recipe": "Measure — clearance between two scanned parts (drop flying points, then the hull gap)",
+   "stages": [
+    "radius_outlier_removal",
+    "convex_hull_gap"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
       "op": "threshold_sub_pix",
       "path": "cpu",
       "reason": "not_listed"
@@ -21964,19 +22244,19 @@
  "summary": {
   "after": {
    "all_gpu_recipes": 33,
-   "gpu_stages": 199,
-   "recipes": 220,
-   "stages": 578,
-   "switches": 102,
-   "transfers": 126
+   "gpu_stages": 200,
+   "recipes": 223,
+   "stages": 585,
+   "switches": 103,
+   "transfers": 127
   },
   "before": {
    "all_gpu_recipes": 8,
-   "gpu_stages": 162,
-   "recipes": 220,
-   "stages": 578,
-   "switches": 135,
-   "transfers": 126
+   "gpu_stages": 163,
+   "recipes": 223,
+   "stages": 585,
+   "switches": 136,
+   "transfers": 127
   }
  }
 }
