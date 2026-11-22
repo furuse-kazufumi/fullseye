@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1995. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 2001. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -648,11 +648,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_ct_casting_sparse_views.py`
 
-- **L95** _(ja)_ — 再構成の格子(立方体の 1 辺のボクセル数)。★reduced でも格子は縮めない: 24³ にすると最小の空隙が 7 ボクセルになり、順位の結論そのものが変わる(2026-11-04 実測: 門 32 本中 8 本が別の答え)。 reduced は TV の重みの較正と後知恵の格子を省き、full が較正で選んだ値 TV_FULL_CHOICE を使う (省いた段の門は判定しない。閾値は変えない)。
-- **L443** _(ja)_ — ★順位の入れ替わり: TV の RMSE を、SIRT と OS-SART の良いほうで割る。投影が足りている条件では 勝たず(TV の仮定が要らない)、足りない条件でだけ勝つ —— が、重みを評価用で選んでいない状態で言えるか。
-- **L456** _(ja)_ — ★RMSE の順位は空隙の体積の順位ではない: 少数投影の FDK は RMSE が最下位でも、欠損で測る体積は
-- **L457** _(ja)_ — TV より正しい。★理由は検証していない: 同じ線形の SIRT・OS-SART の欠損誤差は FDK より悪く(5.1 / 9.4 %)、 「線形だから質量が保存される」では説明がつかない。ここで言うのは数字の事実だけ。
-- **L468** _(ja)_ — ★「異常に良い」の内訳: 2 値の体積は真値そのものでも部分体積で偏る。手法がそれより小さな誤差を 出したら、ぼけの偏りと 2 値化の偏りが打ち消し合っただけ(正しさではない)と印字する。
+- **L99** _(ja)_ — 再構成の格子(立方体の 1 辺のボクセル数)。★reduced でも格子は縮めない: 24³ にすると最小の空隙が 7 ボクセルになり、順位の結論そのものが変わる(2026-11-04 実測: 門 32 本中 8 本が別の答え)。 reduced は TV の重みの較正と後知恵の格子を省き、full が較正で選んだ値 TV_FULL_CHOICE を使う (省いた段の門は判定しない。閾値は変えない)。
+- **L447** _(ja)_ — ★順位の入れ替わり: TV の RMSE を、SIRT と OS-SART の良いほうで割る。投影が足りている条件では 勝たず(TV の仮定が要らない)、足りない条件でだけ勝つ —— が、重みを評価用で選んでいない状態で言えるか。
+- **L460** _(ja)_ — ★RMSE の順位は空隙の体積の順位ではない: 少数投影の FDK は RMSE が最下位でも、欠損で測る体積は
+- **L461** _(ja)_ — TV より正しい。★理由は検証していない: 同じ線形の SIRT・OS-SART の欠損誤差は FDK より悪く(5.1 / 9.4 %)、 「線形だから質量が保存される」では説明がつかない。ここで言うのは数字の事実だけ。
+- **L467** _(ja)_ — ★測り方で順位が入れ替わる事を固定する(2026-11-15、外部レビューの指摘): 半値で 2 値化した体積では、同じ少数投影で TV のほうが FDK より誤差が小さい。見出しは「欠損で測った体積では」に限る(2 値の体積は真値でも 16.7 % 偏るので 欠損の側を採るが、どちらの物差しでも FDK が勝つわけではない)。
+- **L478** _(ja)_ — ★「異常に良い」の内訳: 2 値の体積は真値そのものでも部分体積で偏る。手法がそれより小さな誤差を 出したら、ぼけの偏りと 2 値化の偏りが打ち消し合っただけ(正しさではない)と印字する。
 
 ## `examples/poc_ct_fidelity.py`
 
@@ -1018,11 +1019,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_mixed_case_depalletizing.py`
 
-- **L1781** _(ja)_ — と同じ 5 mm にした。★この値は scene 1・2 の真値を見て決めたので、scene 1・2 は「調整に使った」、 scene 3〜10 は「見ていない」として結果を分けて出す(``split_by_tuning``)。
-- **L1790** _(ja)_ — ≈ 3 px。★感度: scene 1・2 の 10 枚で 0 px → 長辺 −13 / 短辺 −4.5 mm、6 px → −0.3 / +4.1 mm (6 px では遮る縁の 深度カメラの「縁の太り」まで拾って外へ伸びる)。真値で合わせ込まず見積もりの 3 にした。 全 50 枚の 0 / 3 / 6 の比較(下書きの段で出した): 再現率 0.705 / 0.705 / 0.674、誤検出 14.8 / 43.1 / 52.2 枚あたり。 全 50 枚の実測(2026-11-08): 0 px → 再現率 0.705・長 −7.8・短 −2.6 mm・誤検出 14.8 枚/画像 / 3 px → 0.705・−2.0・+2.9・43.1 / 6 px → 0.674・+0.4・+5.8・52.2。再現率は変わらず、寸法の偏りと 誤検出の数の綱引き(太らせると雑音の小片まで矩形らしくなる)。
-- **L1969** _(ja)_ — ★scipy の binary_dilation は iterations=0 で「変わらなくなるまで」太らせる(= 切り出し全体)。0 は太らせない。
-- **L3226** _(ja)_ — ★見出しのカラーの主張: 見ていない種のコマが Blender のカラーで揃っていれば測って確かめ、無ければ(CI)記録で読む。
-- **L3232** _(ja)_ — ★これらの門は、天面の合わせ目を入れた場面の結果を見てから置いた。全部の種と見ていない種 3〜9 の両方で確かめる。
+- **L1788** _(ja)_ — と同じ 5 mm にした。★この値は scene 1・2 の真値を見て決めたので、scene 1・2 は「調整に使った」、 scene 3〜10 は「見ていない」として結果を分けて出す(``split_by_tuning``)。
+- **L1797** _(ja)_ — ≈ 3 px。★感度: scene 1・2 の 10 枚で 0 px → 長辺 −13 / 短辺 −4.5 mm、6 px → −0.3 / +4.1 mm (6 px では遮る縁の 深度カメラの「縁の太り」まで拾って外へ伸びる)。真値で合わせ込まず見積もりの 3 にした。 全 50 枚の 0 / 3 / 6 の比較(下書きの段で出した): 再現率 0.705 / 0.705 / 0.674、誤検出 14.8 / 43.1 / 52.2 枚あたり。 全 50 枚の実測(2026-11-08): 0 px → 再現率 0.705・長 −7.8・短 −2.6 mm・誤検出 14.8 枚/画像 / 3 px → 0.705・−2.0・+2.9・43.1 / 6 px → 0.674・+0.4・+5.8・52.2。再現率は変わらず、寸法の偏りと 誤検出の数の綱引き(太らせると雑音の小片まで矩形らしくなる)。
+- **L1976** _(ja)_ — ★scipy の binary_dilation は iterations=0 で「変わらなくなるまで」太らせる(= 切り出し全体)。0 は太らせない。
+- **L3233** _(ja)_ — ★見出しのカラーの主張: 見ていない種のコマが Blender のカラーで揃っていれば測って確かめ、無ければ(CI)記録で読む。
+- **L3239** _(ja)_ — ★これらの門は、天面の合わせ目を入れた場面の結果を見てから置いた。全部の種と見ていない種 3〜9 の両方で確かめる。
+- **L3855** _(ja)_ — ★記録が今のコードの出力であることの門(コマを揃える繰り返しの途中では判定しない)
 
 ## `examples/poc_moire_screen.py`
 
@@ -1108,8 +1110,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L392** — ★Den Befund festhalten. (1) Es gibt keine Depolarisation (der Stokes-Betrag ist exakt 1). Das ist die Grundlage für die Behauptung in Abschnitt 5, dass in der Modulation nicht die Lichtmenge, sondern **die Phasenempfindlichkeit** abfällt.
 - **L398** — (2) ★★Die Messung sagt das **Gegenteil** der naiven Erwartung, "eine Maske zu übergeben behebt es": ohne Maske 97.0 % / bei Ausschluss der Unterabtastung 97.1 % / **schließt man auch die niedrige Modulation aus, fällt es auf 81.9 %**. Weil das Entfernen der niedrig modulierten Pixel die Region zerteilt und skimages unwrap pro Insel einen anderen 2π-Offset wählt. Niedrig modulierte Pixel sind nicht die Ursache der Abweichungen; bei einer vorzeichenvertauschten Eingabe hebt ihr Ausschluss die Übereinstimmung nicht, sondern senkt sie. Dieselbe Maske auf eine vorzeichenrichtige Eingabe senkt sie nicht (unten gemessen). Dass die Region nicht zerteilt wird (anderes 2π je Insel), ist ebenfalls gemessen. Der Mechanismus ist ungeklärt. Den Messwert festhalten.
 - **L468** _(ja)_ — ★所見を固定する(いずれも測った事実。門は動かさない)。 (a) 外れの大半は 4 節の符号の反転と同じ画素。
-- **L556** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
-- **L559** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
+- **L558** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
+- **L561** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
 
 ## `examples/poc_pigment_unmixing.py`
 
@@ -1200,7 +1202,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_real_defect_floor.py`
 
-- **L157** — Amplitudenschritt. ★Dies selbst ist ein Regler. Ist er grob, rundet das Limit auf denselben Gitterpunkt und man liest eine **vom Schritt erzeugte Differenz** wie "je größer σ, desto größer der Abstand" als echt (2026-09-09; bei 34 Stufen rundeten die Mediane von σ=1.5 und σ=3.0 beide auf 3.20).
+- **L233** — Amplitudenschritt. ★Dies selbst ist ein Regler. Ist er grob, rundet das Limit auf denselben Gitterpunkt und man liest eine **vom Schritt erzeugte Differenz** wie "je größer σ, desto größer der Abstand" als echt (2026-09-09; bei 34 Stufen rundeten die Mediane von σ=1.5 und σ=3.0 beide auf 3.20).
+- **L278** _(ja)_ — ★白色化した整合フィルタ(2026-11-15、外部レビューの指摘で足した)。背景のスペクトルは重ならない切り出しで推定する。
 
 ## `examples/poc_real_file_formats.py`
 
@@ -1255,7 +1258,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_sam_hybrid_bonding_voids.py`
 
-- **L332** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+- **L346** _(ja)_ — ★優劣は、両方の a90/95 が試した大きさの内側にある周波数だけで比べる(2026-11-15、外部レビューの指摘)。 外挿(a90_95_beyond_data)どうしの比は、1823A が「データの外で POD を語るな」という領域の数の比で、合格の材料にしない。
+- **L380** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
 
 ## `examples/poc_scan_to_bim_asbuilt.py`
 
@@ -1454,10 +1458,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L93** _(ja)_ — ★色名から色相への対応は私の選択(CSS の色は表の色より彩度が高い)—— 色相だけを比べる。
 - **L211** _(ja)_ — ★ 実測で採点(公開データ、CC BY 4.0)—— この PoC の主役 # --------------------------------------------------------------------------- #
-- **L312** _(ja)_ — ★フラット補正(2026-10-15、図を見たユーザーの指摘「Si 側が 2 段に分かれて見える」から): 写真は視野の中心が明るい 周辺減光を持つ(裸の Si は左端 0.238 → 中央寄り 0.263、SiO₂ は中央寄り 0.103 → 右端 0.095)。補正しないと、Si の 暗い側が「薄い膜」と読まれ(0 nm 付近は R が膜厚の 2 乗でしか下がらないので、数 % の明るさの差が 10〜17 nm に化ける)、 明るい側は 0 nm に張り付いて、2 段に見えた。減光を半径の 2 乗 V = c₀ + c₁ r² として**裸の Si の側だけ**で当てはめ、 視野全体を割る。SiO₂ の側は当てはめに使っていないので、その明るさの傾きが消えるかが独立の検算になる。
-- **L441** _(ja)_ — ★予言が外れた: 「裸の Si は無彩色(C* < 3)」と置いたら C* 6.6 だった。Si の反射率は 400 nm 0.49 → 800 nm 0.33 と 短波長ほど高いので、裸のウェハは**青みの灰色**に見える(実物のとおり)。門を所見の側に書き直した。
-- **L479** _(ja)_ — ★境の直上でも FFT は最大 %.0f nm 外す(窓の DC の裾とフレネルの位相の分)—— 2 倍の厚さで 1 % 以内に入る。
-- **L993** _(ja)_ — ★render_plot の既定は等倍(Studio の画面用、2026-11-01 の 5103a2f2ab)。隣に並べる 円盤の板は figure_scale 倍で作るので、倍率は**ここで明示的に渡す**(渡さないと 高さ 280 と 560 で np.concatenate が落ちる —— 図の段は CI が走らせていなかった)。
+- **L216** _(ja)_ — 説明(題・lead・caption)に出す実データの数(公開の桁)。★記録値の再現の門(2026-11-15、外部レビューの指摘で足した): 物理の門(写真の膜厚は基準の ±25 % など)は fail-soft のゆるい門で、説明の数を守らない。実行の間の揺れは 0 (py 3.11 / 3.14、numpy 2.4 / 2.5、Pillow 12 / 13、CI の縮小と full で写真の膜厚が全桁同じ)と測ったので、 幅は公開の桁の丸めの半分(PUBLISHED_REAL_TOL)。数が動いたら説明の文と一緒に直す(門を広げない)。
+- **L325** _(ja)_ — ★フラット補正(2026-10-15、図を見たユーザーの指摘「Si 側が 2 段に分かれて見える」から): 写真は視野の中心が明るい 周辺減光を持つ(裸の Si は左端 0.238 → 中央寄り 0.263、SiO₂ は中央寄り 0.103 → 右端 0.095)。補正しないと、Si の 暗い側が「薄い膜」と読まれ(0 nm 付近は R が膜厚の 2 乗でしか下がらないので、数 % の明るさの差が 10〜17 nm に化ける)、 明るい側は 0 nm に張り付いて、2 段に見えた。減光を半径の 2 乗 V = c₀ + c₁ r² として**裸の Si の側だけ**で当てはめ、 視野全体を割る。SiO₂ の側は当てはめに使っていないので、その明るさの傾きが消えるかが独立の検算になる。
+- **L363** _(ja)_ — ★記録値の再現の門: 説明に出す数が、この実行の値を公開の桁で丸めたものと同じか(上の ±25 % は物理の門で別物)。
+- **L460** _(ja)_ — ★予言が外れた: 「裸の Si は無彩色(C* < 3)」と置いたら C* 6.6 だった。Si の反射率は 400 nm 0.49 → 800 nm 0.33 と 短波長ほど高いので、裸のウェハは**青みの灰色**に見える(実物のとおり)。門を所見の側に書き直した。
+- **L498** _(ja)_ — ★境の直上でも FFT は最大 %.0f nm 外す(窓の DC の裾とフレネルの位相の分)—— 2 倍の厚さで 1 % 以内に入る。
+- **L1012** _(ja)_ — ★render_plot の既定は等倍(Studio の画面用、2026-11-01 の 5103a2f2ab)。隣に並べる 円盤の板は figure_scale 倍で作るので、倍率は**ここで明示的に渡す**(渡さないと 高さ 280 と 560 で np.concatenate が落ちる —— 図の段は CI が走らせていなかった)。
 
 ## `examples/poc_timelapse_growth.py`
 
@@ -1513,9 +1519,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_virtual_sem_kv_cd_bse.py`
 
-- **L279** _(ja)_ — ★モンテカルロの統計誤差: 主張に使う側壁 88 度・80 度の 1 kV と 20 kV を、種を替えて測り直す(最初の種は上の表の 1 回)。
-- **L380** _(ja)_ — ★W の粒の 1 kV のコントラストを種を替えて(最初の種 4 は上の 1 回)。粒は数画素で、画素あたりの電子が少ないので大きく揺れる。
-- **L431** _(ja)_ — ★表面の W の 1 kV を種を替えて(最初の種 2 は上の表の 1 回)。門は種の平均で。
+- **L315** _(ja)_ — ★モンテカルロの統計誤差: 主張に使う側壁 88 度・80 度の 1 kV と 20 kV を、種を替えて測り直す(最初の種は上の表の 1 回)。
+- **L416** _(ja)_ — ★W の粒の 1 kV のコントラストを種を替えて(最初の種 4 は上の 1 回)。粒は数画素で、画素あたりの電子が少ないので大きく揺れる。
+- **L467** _(ja)_ — ★表面の W の 1 kV を種を替えて(最初の種 2 は上の表の 1 回)。門は種の平均で。
 
 ## `examples/poc_warehouse_flow.py`
 
