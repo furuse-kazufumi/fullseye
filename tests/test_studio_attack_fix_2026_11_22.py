@@ -720,8 +720,9 @@ def test_r2_ux_pending_banner_has_three_visible_actions_and_read_uses_saved_byte
         _close_window(win)
 
 
-def test_r2_ux_read_changed_loads_image_and_keeps_warning(qapp, tmp_path):
+def test_r2_ux_read_changed_requires_held_bytes_adoption(qapp, tmp_path, monkeypatch):
     import numpy as np
+    from PySide6 import QtWidgets
     import imgio
     import studio
 
@@ -731,14 +732,65 @@ def test_r2_ux_read_changed_loads_image_and_keeps_warning(qapp, tmp_path):
     _r2_write_saved_pipeline(image_path, pipe_path, np.zeros((6, 6), np.float64))
     changed = np.ones((6, 6), np.float64)
     imgio.save(str(image_path), changed)
-    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(16)))
+    real_open = builtins.open
+    image_reads = []
+
+    def watched_open(path, *args, **kwargs):
+        if os.path.normcase(os.fspath(path)) == os.path.normcase(str(image_path)):
+            image_reads.append(os.fspath(path))
+        return real_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "open", watched_open)
+    current = studio.demo_image(16)
+    win, model = studio.build_window(studio.PipelineModel(current.copy()))
     try:
+        win.show(); qapp.processEvents()
         win._open_pipe_path(str(pipe_path))
         assert win._state.get("input_pending")          # the button, not an automatic relink, reads it
-        win._input_confirm["read"]()
+        assert win._input_confirm["read"]() is False
+        qapp.processEvents()
+        assert len(image_reads) == 1
+        assert np.array_equal(model.image, current)
+        pending = win._state.get("input_pending")
+        assert pending and pending["held"]["path"] == str(image_path)
+        assert pending["held"]["sha256"] == hashlib.sha256(pending["held"]["data"]).hexdigest()
+        differs = "differs from the one saved with the pipeline"
+        banner = win.findChild(QtWidgets.QFrame, "input_confirm_bar")
+        assert differs in " ".join(label.text() for label in banner.findChildren(QtWidgets.QLabel))
+        assert differs in win._current_view().notice_text()
+        assert any(differs in note for note in win._state["input_notes"])
+        adopt = win.findChild(QtWidgets.QPushButton, "input_confirm_adopt")
+        assert adopt is not None and adopt.isVisible()
+
+        assert win._input_confirm["adopt"]() is True
+        assert len(image_reads) == 1                       # 初回保持バイトを復号。Decode first-action bytes.
         assert np.allclose(model.image, changed)
         assert win._state.get("input_pending") is None
-        assert any("changed since save" in note for note in win._state["input_notes"])
+        assert any(differs in note for note in win._state["input_notes"])
+    finally:
+        _close_window(win)
+
+
+def test_r3_ux_keep_current_after_mismatch_drops_held_bytes(qapp, tmp_path):
+    import numpy as np
+    import imgio
+    import studio
+
+    image_path = tmp_path / "elsewhere" / "source.png"
+    image_path.parent.mkdir()
+    pipe_path = tmp_path / "pipeline.json"
+    ref = _r2_write_saved_pipeline(image_path, pipe_path, np.zeros((6, 6), np.float64))
+    imgio.save(str(image_path), np.ones((6, 6), np.float64))
+    current = studio.demo_image(16)
+    win, model = studio.build_window(studio.PipelineModel(current.copy()))
+    try:
+        win._open_pipe_path(str(pipe_path))
+        assert win._input_confirm["read"]() is False
+        assert win._state["input_pending"]["held"]["data"]
+        assert win._input_confirm["keep"]() is True
+        assert np.array_equal(model.image, current)
+        assert win._state.get("input_pending") is None
+        assert model.kept_input_ref == ref
     finally:
         _close_window(win)
 
@@ -785,6 +837,87 @@ def test_r2_ux_choose_another_image_clears_pending(qapp, tmp_path, monkeypatch):
         win._input_confirm["choose"]()
         assert win._state.get("input_pending") is None
         assert np.allclose(model.image, wanted, atol=1.0 / 255.0)
+    finally:
+        _close_window(win)
+
+
+def _r3_save_pipeline(win, path, monkeypatch):
+    from PySide6 import QtWidgets
+
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName",
+                        staticmethod(lambda *_a, **_k: (str(path), "JSON")))
+    win._actions["save_pipeline"].trigger()
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def test_r3_keep_demo_preserves_saved_input_reference_on_save(qapp, tmp_path, monkeypatch):
+    import numpy as np
+    import studio
+
+    saved = tmp_path / "saved" / "source.png"
+    saved.parent.mkdir()
+    pipe_path = tmp_path / "pipeline.json"
+    out = tmp_path / "kept-demo.json"
+    ref = _r2_write_saved_pipeline(saved, pipe_path, np.zeros((6, 6), np.float64))
+    win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(16)))
+    try:
+        win._actions["demo"].trigger()
+        win._open_pipe_path(str(pipe_path))
+        assert win._state["dirty"] is False
+        assert win._input_confirm["keep"]() is True
+        assert win._state["dirty"] is False
+        assert _r3_save_pipeline(win, out, monkeypatch)["input"] == ref
+    finally:
+        _close_window(win)
+
+
+def test_r3_keep_current_file_preserves_saved_input_reference_on_save(qapp, tmp_path, monkeypatch):
+    import numpy as np
+    import imgio
+    import studio
+
+    current_path = tmp_path / "current-a.png"
+    saved = tmp_path / "saved" / "source-b.png"
+    saved.parent.mkdir()
+    pipe_path = tmp_path / "pipeline.json"
+    out = tmp_path / "kept-file.json"
+    imgio.save(str(current_path), np.ones((7, 7), np.float64))
+    ref = _r2_write_saved_pipeline(saved, pipe_path, np.zeros((6, 6), np.float64))
+    win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(16)))
+    try:
+        assert win._load_image_path(str(current_path)) is True
+        win._open_pipe_path(str(pipe_path))
+        assert win._input_confirm["keep"]() is True
+        assert _r3_save_pipeline(win, out, monkeypatch)["input"] == ref
+    finally:
+        _close_window(win)
+
+
+def test_r3_explicit_image_choice_after_keep_replaces_saved_reference(qapp, tmp_path, monkeypatch):
+    import numpy as np
+    from PySide6 import QtWidgets
+    import imgio
+    import studio
+
+    saved = tmp_path / "saved" / "source-b.png"
+    saved.parent.mkdir()
+    chosen = tmp_path / "chosen.png"
+    pipe_path = tmp_path / "pipeline.json"
+    out = tmp_path / "chosen-pipeline.json"
+    ref = _r2_write_saved_pipeline(saved, pipe_path, np.zeros((6, 6), np.float64))
+    imgio.save(str(chosen), np.full((6, 6), 0.75, np.float64))
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(16)))
+    try:
+        win._open_pipe_path(str(pipe_path))
+        assert win._input_confirm["keep"]() is True
+        assert model.kept_input_ref == ref
+        monkeypatch.setattr(QtWidgets.QFileDialog, "getOpenFileName",
+                            staticmethod(lambda *_a, **_k: (str(chosen), "Images")))
+        assert win._input_confirm["choose"]() is True
+        saved_data = _r3_save_pipeline(win, out, monkeypatch)
+        assert saved_data["input"]["path"] == str(chosen)
+        assert saved_data["input"] != ref
+        assert model.kept_input_ref is None
     finally:
         _close_window(win)
 

@@ -923,6 +923,8 @@ class PipelineModel:
         self.input_path = None
         #: the "input" reference read by the last load_dict (None for files without one)
         self.input_ref = None
+        #: 「現在画像を使う」で保持した保存入力参照。Saved input reference retained by Keep.
+        self.kept_input_ref = None
         #: pinned snapshots (Studio slice 3), oldest first, at most MAX_PINS; saved under "pinned"
         self.pins: list = []
         #: the snapshot the last :meth:`pin` call pushed out (None if none was dropped)
@@ -1601,7 +1603,9 @@ class PipelineModel:
              "stages": [[st[0], st[1], st[2]] + ([True] if _is_bypassed(st) else []) for st in self.stages]}
         if self.directives:                          # key only when used: old files stay byte-identical
             d["directives"] = list(self.directives)
-        if self.input_path:                          # the input reference (path as given + sha256 of the file)
+        if self.kept_input_ref is not None:          # Keep は全キーを原文どおり保持する。Preserve every key exactly.
+            d["input"] = dict(self.kept_input_ref)
+        elif self.input_path:                        # the input reference (path as given + sha256 of the file)
             try:
                 d["input"] = input_reference(self.input_path, self.image)
             except OSError:
@@ -1624,6 +1628,7 @@ class PipelineModel:
         self.stages = stages
         self.directives = directives
         self.input_ref = _valid_input_ref(d.get("input"))    # a malformed "input" is ignored, never fatal
+        self.kept_input_ref = None                    # 新しい pipeline は自身の参照を持つ。It owns its reference.
         self.pins = [PinnedSnapshot(p["stages"], p["input"], p["display"], p["note"], self._img_ver)
                      for p in pinned]
         self.last_dropped_pin = None
@@ -8958,9 +8963,12 @@ def build_window(model=None, start_mode="pipeline"):
     input_confirm_label = QtWidgets.QLabel(""); input_confirm_label.setWordWrap(True)
     input_confirm_layout.addWidget(input_confirm_label)
     input_confirm_actions = QtWidgets.QHBoxLayout(); input_confirm_layout.addLayout(input_confirm_actions)
+    input_confirm_buttons = {}
     for _key, _source, _object_name, _tip in (
             ("read", "Read this image", "input_confirm_read",
              "Read the image file saved with this pipeline now and check it against its SHA-256"),
+            ("adopt", "Use this different image", "input_confirm_adopt",
+             "Use the different image already read into memory without reading the file again"),
             ("choose", "Choose another image…", "input_confirm_choose",
              "Open a different image file instead of the saved input"),
             ("keep", "Keep the current image", "input_confirm_keep",
@@ -8970,6 +8978,8 @@ def build_window(model=None, start_mode="pipeline"):
         _button.setToolTip(tr(_tip))
         _button.clicked.connect(lambda _=False, k=_key: win._input_confirm[k]())
         input_confirm_actions.addWidget(_button)
+        input_confirm_buttons[_key] = _button
+    input_confirm_buttons["adopt"].hide()
     input_confirm_bar.hide()
     play.addWidget(problems_label); play.addWidget(input_confirm_bar); play.addWidget(problems_list)
     mv.addWidget(_group(QtWidgets, "PIPELINE", play), 1)
@@ -10132,11 +10142,14 @@ def build_window(model=None, start_mode="pipeline"):
             it.setForeground(QtGui.QColor(AMBER))
             problems_list.addItem(it)
         pending_input = state.get("input_pending")
-        input_confirm_label.setText(tr("The saved input is not loaded yet. Choose how Studio should continue."))
+        held_input = pending_input.get("held") if pending_input else None
+        pending_text = (tr("This image differs from the one saved with the pipeline") if held_input else
+                        tr("The saved input is not loaded yet. Choose how Studio should continue."))
+        input_confirm_label.setText(pending_text)
         input_confirm_bar.setVisible(bool(pending_input))
+        input_confirm_buttons["adopt"].setVisible(bool(held_input))
         if pending_input:
-            text_ = tr("The saved input is not loaded yet. Choose how Studio should continue.")
-            it = QtWidgets.QListWidgetItem(text_)
+            it = QtWidgets.QListWidgetItem(pending_text)
             it.setData(QtCore.Qt.UserRole, -1)
             it.setForeground(QtGui.QColor(_C("warn")))
             problems_list.addItem(it)
@@ -11918,6 +11931,7 @@ def build_window(model=None, start_mode="pipeline"):
         state["image_path"] = os.path.abspath(path)
         state["input_sample"] = None
         model.input_path = state["image_path"]        # snapshots (A / B) compare the input by file
+        model.kept_input_ref = None
         state["input_notes"] = []                     # notes belong to the previously opened project's input
         state["input_pending"] = None                 # an explicitly opened image resolves saved-input choice
         view.set_notice(None)
@@ -11948,6 +11962,9 @@ def build_window(model=None, start_mode="pipeline"):
         state["image_path"] = None; state["input_notes"] = []      # not a file: nothing to reference when saving
         state["input_sample"] = "__demo__"
         model.input_path = None
+        # Menu choices are explicit input choices, so they replace a reference retained by "Keep".
+        # メニューからの選択は明示的な入力選択なので、「現在画像を使う」で保持した参照を置き換える。
+        model.kept_input_ref = None
         _set_title()                                   # 題に前の画像のファイル名を残さない(見本の画像と同じ)
         show_result()
 
@@ -11961,6 +11978,7 @@ def build_window(model=None, start_mode="pipeline"):
         state["image_path"] = None; state["input_notes"] = []
         state["input_sample"] = name
         model.input_path = None
+        model.kept_input_ref = None                  # 見本の選択も明示入力。A selected sample is explicit input.
         state["fit_next"] = True
         # ★2026-11-15(PR #316 の独立レビュー 3 回目): 題を付け直す。従来は前に開いた写真のファイル名が題に残った
         # (File ▸ Sample images でも、M12 で入口が増えた検索の「見本を開く」でも)。
@@ -16829,6 +16847,45 @@ def build_window(model=None, start_mode="pipeline"):
         """確認待ちの結果を誤認させない表示文。Notice that prevents pending input/result confusion."""
         return tr("The saved input is not loaded yet. Choose how Studio should continue.")
 
+    def _decode_confirmed_input(held):
+        """保持済みの同じバイト列を復号する。Decode the same bytes already held after confirmation."""
+        message = ""
+        try:
+            arr = imgio._load_bytes(held["data"], source=held["path"])
+        except Exception as exc:                            # noqa: BLE001
+            arr = None
+            message = "input could not be decoded after confirmation: %s" % exc
+        if arr is not None:
+            return arr, message
+        # バイト列から復号できない形式はパスの予備 reader を使うが、保持時と同じファイルだけを採用する。
+        # For path-only formats, require the path to retain the digest of the held bytes.
+        try:
+            arr = imgio.load(held["path"])
+            same_bytes = file_sha256(held["path"]) == held["sha256"]
+        except Exception as exc:                            # noqa: BLE001
+            return None, "input could not be decoded after confirmation: %s" % exc
+        if not same_bytes:
+            return None, "input file changed while it was being read: %s" % held["path"]
+        return arr, message
+
+    def _finish_confirmed_input(arr, path, note=""):
+        """確認した入力を現在画像にする。Make the confirmed input the current image."""
+        model.set_image(arr)
+        state["image_path"] = os.path.abspath(path)
+        state["input_sample"] = None
+        model.input_path = state["image_path"]
+        model.kept_input_ref = None
+        state["fit_next"] = True
+        state["input_pending"] = None
+        state["input_notes"] = [note] if note else []
+        _push_recent(path); _set_title()
+        show_result()
+        if note:
+            view.set_notice(note); flash(note)
+        else:
+            view.set_notice(None); flash(tr("loaded %s") % os.path.basename(path))
+        return True
+
     def _input_confirm_read():
         """明示確認後に一度だけ saved input を読み hash と復号へ使う。Read once after consent."""
         pending = state.get("input_pending")
@@ -16840,51 +16897,41 @@ def build_window(model=None, start_mode="pipeline"):
             view.set_notice(_pending_notice() + "\n" + result["message"])
             _refresh_problems_only(); flash(result["message"])
             return False
-        try:
-            # hash と同じ immutable bytes を復号するため、path を二度開く TOCTOU は無い。
-            # Decode the immutable bytes that were hashed; never reopen the path.
-            arr = imgio._load_bytes(result["data"], source=result["path"])
-        except Exception:                                   # noqa: BLE001
-            arr = None
-        if arr is None:
-            # バイト列から復号できない形式(OpenCV が読めず、パスの側の予備の読み手だけが読む 16 bit・浮動小数の
-            # TIFF など)は、普段の読み手 imgio.load(path) で読み、そのあとファイルをもう一度ハッシュして、
-            # 利用者が選んだ時に照らしたバイト列と同じかを確かめる(間で差し替わっていたら読まない)。
-            # Formats only the path-based loader handles: load by path, then re-hash and require the same bytes.
-            try:
-                arr = imgio.load(result["path"])
-                same_bytes = file_sha256(result["path"]) == hashlib.sha256(result["data"]).hexdigest()
-            except Exception as exc:                        # noqa: BLE001
-                arr, same_bytes = None, True
-                message = "input could not be decoded after confirmation: %s" % exc
-            if arr is not None and not same_bytes:
-                arr = None
-                message = "input file changed while it was being read: %s" % result["path"]
+        held = {"data": result["data"], "sha256": hashlib.sha256(result["data"]).hexdigest(),
+                "path": result["path"]}
+        if result["status"] == "changed":
+            message = tr("This image differs from the one saved with the pipeline")
+            pending["held"] = held
+            state["input_notes"] = [message]
+            view.set_notice(_pending_notice() + "\n" + message)
+            _refresh_problems_only(); flash(message)
+            return False
+        arr, message = _decode_confirmed_input(held)
         if arr is None:
             state["input_notes"] = [message]
             view.set_notice(_pending_notice() + "\n" + message)
             _refresh_problems_only(); flash(message)
             return False
-        model.set_image(arr)
-        state["image_path"] = os.path.abspath(result["path"])
-        state["input_sample"] = None
-        model.input_path = state["image_path"]
-        state["fit_next"] = True
-        state["input_pending"] = None
-        state["input_notes"] = [result["message"]] if result["status"] == "changed" else []
-        _push_recent(result["path"]); _set_title()
-        show_result()
-        if result["status"] == "changed":
-            view.set_notice(result["message"])
-            flash(result["message"])
-        else:
-            view.set_notice(None)
-            flash(tr("loaded %s") % os.path.basename(result["path"]))
-        return True
+        return _finish_confirmed_input(arr, held["path"])
+
+    def _input_confirm_adopt():
+        """保持した不一致画像だけを再読取りせず採用する。Adopt only the held mismatching image."""
+        pending = state.get("input_pending")
+        held = pending.get("held") if pending else None
+        if not held:
+            return False
+        arr, message = _decode_confirmed_input(held)
+        if arr is None:
+            state["input_notes"] = [message]
+            view.set_notice(_pending_notice() + "\n" + message)
+            _refresh_problems_only(); flash(message)
+            return False
+        note = tr("This image differs from the one saved with the pipeline")
+        return _finish_confirmed_input(arr, held["path"], note)
 
     def _input_confirm_choose():
-        """通常の画像選択で pending input を置き換える。Replace pending input via the normal chooser."""
-        if not state.get("input_pending"):
+        """通常の画像選択で pending/kept input を置き換える。Replace it via the normal chooser."""
+        if not state.get("input_pending") and model.kept_input_ref is None:
             return False
         loaded = load_image()
         if loaded:
@@ -16893,8 +16940,10 @@ def build_window(model=None, start_mode="pipeline"):
 
     def _input_confirm_keep():
         """現在画像を使う選択を可視の注記と共に確定する。Keep current image with a visible note."""
-        if not state.get("input_pending"):
+        pending = state.get("input_pending")
+        if not pending:
             return False
+        model.kept_input_ref = dict(pending["ref"])
         state["input_pending"] = None
         message = tr("This result uses the current image, not the input saved with the pipeline.")
         state["input_notes"] = [message]
@@ -16904,6 +16953,7 @@ def build_window(model=None, start_mode="pipeline"):
 
     win._input_confirm = {
         "read": _input_confirm_read,
+        "adopt": _input_confirm_adopt,
         "choose": _input_confirm_choose,
         "keep": _input_confirm_keep,
     }
