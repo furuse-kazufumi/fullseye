@@ -13,12 +13,26 @@ import importlib.util
 import json
 import os
 import re
+from collections import Counter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _spec = importlib.util.spec_from_file_location(
     "gen_view2026_pages", os.path.join(ROOT, "tools", "gen_view2026_pages.py"))
 G = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(G)
+
+#: 翻訳した lead の数値を英語と照合する正規表現。
+LEAD_NUMBER_RE = re.compile(r"\d+(?:[.,]\d+)?")
+#: 小数点を小数コンマへ置き換える言語。
+DECIMAL_COMMA_LANGS = ("de", "fr")
+
+
+def _lead_numbers(text: str, lang: str) -> Counter:
+    """言語ごとの小数記号をそろえた lead の数値 multiset。"""
+    tokens = LEAD_NUMBER_RE.findall(text)
+    if lang in DECIMAL_COMMA_LANGS:
+        tokens = [token.replace(",", ".") for token in tokens]
+    return Counter(tokens)
 
 
 def test_committed_pages_are_current():
@@ -68,7 +82,8 @@ def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
             assert exhibit["lead"]["ja"] == expected_ja
             assert exhibit["lead"]["en"] == expected_en
             for lang in d["langs"][2:]:
-                assert exhibit["lead"][lang] == expected_en
+                translated = exhibit["lead"][lang]
+                assert translated == expected_en or _lead_numbers(translated, lang) == _lead_numbers(expected_en, "en")
 
     main_page = G.build(d, "ja")
     more_page = G.build_more(d, "ja")
@@ -106,7 +121,8 @@ def test_youtube_is_hidden_when_empty_and_invalid_urls_stop_generation():
     assert all("youtube_url" in e for e in d["exhibits"])
     # 空なら出さない・空でなければその URL を 1 回だけ出す(2026-11-06 にいろは坂で最初の 1 本が入った)。
     public_ids = {e["id"] for e in G.public_data(d)["exhibits"]}
-    published = [e["youtube_url"] for e in d["exhibits"] if e["youtube_url"] and e["id"] in public_ids]
+    published = [G.youtube_url_for(e, "en") for e in d["exhibits"]
+                 if G.youtube_url_for(e, "en") and e["id"] in public_ids]
     assert published, "youtube_url の入った公開の展示が 1 件も無い(2026-11-06 時点でいろは坂が入っている)"
     page = G.build(d, "en") + "\n" + G.build_more(d, "en")      # 本ページかおまけページのどちらかに載る
     assert page.count("[YouTube](") == len(published)
@@ -130,8 +146,9 @@ def test_no_exhibit_disappears_from_the_full_list():
     assert len(ids) == len(set(ids))
     assert len(ids) >= 285, "all の件数が %d —— 目玉から外した展示を all から消していないか" % len(ids)
     featured_only = sorted({e["id"] for e in d["exhibits"]} - set(ids))
-    # YouTube の本編へ飛ぶ 2 本だけは all に無い(2026-11-10 に運転の進化動画を足した)
-    assert featured_only == ["carla_iroha_haze", "driving_evolution"], featured_only
+    # YouTube の本編へ飛ぶ動画の展示だけは all に無い(2026-11-10 に運転の進化動画、2026-11-23 に G1・検査の実演集・銀座を足した)
+    assert featured_only == ["carla_ginza_perception", "carla_iroha_haze", "driving_evolution", "g1_iroha_climb",
+                             "inspection_poc_reel"], featured_only
     # 門(Fullseye の計算を呼ぶか)で公開から外れる展示は、外れる理由を数えて明示する(黙って消さない)。
     public = G.public_data(d)
     dropped = sorted(({e["id"] for e in d["all"]} | {e["id"] for e in d["exhibits"]})
@@ -179,7 +196,7 @@ def test_japanese_only_docs_are_marked_on_other_languages():
 def test_exhibit_with_youtube_opens_the_full_video_from_its_tile():
     """YouTube に本編がある展示は、タイルと行のリンクが YouTube の本編へ飛ぶ(2026-11-08、短い抜粋より本編)。"""
     d = G.load()
-    published = [e for e in d["exhibits"] if e["youtube_url"]]
+    published = [e for e in d["exhibits"] if G.youtube_url_for(e, "en")]
     assert published, "youtube_url の入った展示が 1 件も無い"
     public_ids = {e["id"] for e in G.public_data(d)["exhibits"]}
     for lang in ("ja", "en"):
@@ -187,6 +204,7 @@ def test_exhibit_with_youtube_opens_the_full_video_from_its_tile():
         for e in published:
             if e["id"] not in public_ids:
                 continue
+            url = G.youtube_url_for(e, lang)
             if e["tier"] in G.MAIN_TIERS:
-                assert page.count('href="%s"' % e["youtube_url"]) >= 1, (lang, e["id"])   # 本ページはタイルから飛ぶ
-            assert "](%s)" % e["youtube_url"] in page, (lang, e["id"])
+                assert page.count('href="%s"' % url) >= 1, (lang, e["id"])   # 本ページはタイルから飛ぶ
+            assert "](%s)" % url in page, (lang, e["id"])

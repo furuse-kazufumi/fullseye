@@ -2,6 +2,7 @@
 タイルが単色でないことを守る(2026-11-12)。"""
 from __future__ import annotations
 
+import copy
 import importlib.util
 import re
 from pathlib import Path
@@ -42,10 +43,10 @@ def test_every_main_exhibit_has_lead_truth_and_a_details_link_that_exists() -> N
         text = G.MAIN_TEXT[lang]
         for e in rows:
             blocks = [line for line in main.splitlines()
-                      if line.startswith('<div class="vc">') and ">%s</a>" % G._esc(e["label"][G._content_lang(lang)]) in line]
+                      if line.startswith('<div class="vc">') and ">%s</a>" % G._esc(e["label"][lang]) in line]
             assert len(blocks) == 1, (lang, e["id"])
             block = blocks[0]
-            assert G._code_html(G._esc(e["lead"][G._content_lang(lang)])) in block, (lang, e["id"])
+            assert G._code_html(G._esc(e["lead"][lang])) in block, (lang, e["id"])
             assert "%s: %s" % (text["truth"], G._esc(e["truth"][lang])) in block, (lang, e["id"])
             link = "more.md#%s" % G._anchor(e["id"])
             assert link in block, (lang, e["id"])
@@ -54,7 +55,7 @@ def test_every_main_exhibit_has_lead_truth_and_a_details_link_that_exists() -> N
             at = more.index('id="%s"' % G._anchor(e["id"]))
             nxt = more.find("\n- [", at + 10)
             detail = more[at:nxt if nxt >= 0 else None]
-            assert G._code_md(e["see"][G._content_lang(lang)]) in detail, (lang, e["id"])   # 本ページと同じ言語(ja/en 以外は英語)
+            assert G._code_md(e["see"][G._detail_content_lang(lang)]) in detail, (lang, e["id"])
             if lang in ("ja", "en"):            # 使った op の行は ja/en だけ(ほかの言語は見る所と数字まで)
                 assert all(("`%s`" % op) in detail for op in e["ops"]), (lang, e["id"])
 
@@ -80,24 +81,43 @@ def test_every_main_tile_carries_the_truth_badge() -> None:
         assert ".vc > a .vtb {" in main, lang
 
 
-def test_other_languages_say_that_the_exhibit_texts_are_in_english() -> None:
-    """ja/en 以外の言語では、目玉の題と説明を英語で出し、その節の頭に断り書きを置く(本ページとおまけページの詳細の節)。"""
+def test_translation_notes_follow_the_content_that_is_still_in_english() -> None:
+    """題・lead の未訳と、逐語の詳細本文が英語であることを別々の注記で知らせる。"""
     data = G.load()
     rows = _main_rows(data)
     assert len(rows) >= 10, len(rows)
-    assert [l for l in data["langs"] if l not in G.CONTENT_LANGS], "ja/en 以外の言語が無い(この試験が空振りする)"
+    other_langs = [lang for lang in data["langs"] if lang not in G.SOURCE_CONTENT_LANGS]
+    assert other_langs, "ja/en 以外の言語が無い(この試験が空振りする)"
     for lang in data["langs"]:
         main, more = G.build(data, lang), G.build_more(data, lang)
-        note = data["ui"]["featured_en_note"][lang]
+        fallback_note = data["ui"]["featured_en_note"][lang]
+        detail_note = data["ui"]["featured_detail_en_note"][lang]
         detail = more.split("## " + G.MAIN_TEXT[lang]["detail_h"])[1].split("\n## ")[0]
-        if lang in G.CONTENT_LANGS:
-            assert note not in main and note not in more, lang
+        if lang in G.SOURCE_CONTENT_LANGS:
+            assert fallback_note not in main and detail_note not in detail, lang
             continue
-        assert main.count(note) == len({e["tier"] for e in rows}), lang          # 目玉・準目玉の節ごとに 1 回
-        assert detail.lstrip().startswith(note), lang
+        untranslated_tiers = {
+            e["tier"] for e in rows
+            if any(G._untranslated(e, field, lang) for field in G.TRANSLATED_CARD_FIELDS)
+        }
+        assert main.count(fallback_note) == len(untranslated_tiers), lang
+        assert detail.lstrip().startswith(detail_note), lang
         for e in rows:
-            assert "- [%s](" % e["label"]["en"] in detail, (lang, e["id"])
-            assert G._code_md(e["lead"]["en"]) in detail, (lang, e["id"])
+            assert "- [%s](" % e["label"][lang] in detail, (lang, e["id"])
+            assert G._code_md(e["lead"][lang]) in detail, (lang, e["id"])
+
+        translated = copy.deepcopy(data)
+        translated_rows = [e for e in translated["exhibits"] if e["tier"] in G.MAIN_TIERS]
+        for e in translated_rows:
+            for field in G.TRANSLATED_CARD_FIELDS:
+                if e[field][lang] == e[field]["en"]:
+                    e[field][lang] += " [%s]" % lang
+        assert fallback_note not in G.build(translated, lang), lang
+        broken = copy.deepcopy(translated)
+        victim = next(e for e in broken["exhibits"] if e["tier"] in G.MAIN_TIERS)
+        victim["lead"][lang] = victim["lead"]["en"]
+        broken_main = G.build(broken, lang)
+        assert broken_main.count(fallback_note) == 1, (lang, victim["tier"])
 
 
 def test_viewers_on_the_main_page_are_few_and_the_rest_are_on_the_extras_page() -> None:

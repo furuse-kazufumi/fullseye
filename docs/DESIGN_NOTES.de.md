@@ -3455,7 +3455,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/build_view2026_featured_batch.py`
 
-- **L103** _(ja)_ — ★2026-11-08: 以前は台帳の PoC を「手書きの見どころかこの一括のどちらかに必ず載せる」ために、 載っていない PoC を全部目玉へ足していた。目玉を約 40 件に絞った(ユーザーの決定)ので、回すと 285 件に戻ってしまう。目玉は featured_ids だけ、それ以外は all に在ることを確かめる側に替えた。
+- **L120** _(ja)_ — ★2026-11-08: 以前は台帳の PoC を「手書きの見どころかこの一括のどちらかに必ず載せる」ために、 載っていない PoC を全部目玉へ足していた。目玉を約 40 件に絞った(ユーザーの決定)ので、回すと 285 件に戻ってしまう。目玉は featured_ids だけ、それ以外は all に在ることを確かめる側に替えた。
 
 ## `tools/build_view2026_viewers.py`
 
@@ -3628,9 +3628,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/gen_view2026_pages.py`
 
-- **L273** _(ja)_ — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
-- **L340** _(ja)_ — ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
-- **L343** _(ja)_ — ★2026-11-12: 本ページ(ja/en)に載せるのは tier が showcase / featured の展示だけ(MAIN_LIMIT 本まで)。
+- **L277** _(ja)_ — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
+- **L344** _(ja)_ — ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
+- **L347** _(ja)_ — ★2026-11-12: 本ページ(ja/en)に載せるのは tier が showcase / featured の展示だけ(MAIN_LIMIT 本まで)。
 
 ## `tools/gen_view2026_story_gifs.py`
 

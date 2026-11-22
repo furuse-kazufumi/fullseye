@@ -729,6 +729,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
   UAV水田RGBを16画素格子に分け、trainで10特徴の教師ありFisher LDAを学習し、valで方式を選び、test 148枚を一度だけ評価した。境界は事前に5、25、50%と宣言。 **段階一致0.574、カッパ0.424、被度相関0.826、IoU 0.397。撮影日を丸ごと外すと季節の異なる1日は日内相関0.14だった。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_weed_rice_ratio.py)
 - [画像相関のひずみ: 隣のコマと比べて足すと誤差が 31 分の 1](../articles/assets/poc/poc_strain_history/01_speckle.png) (図): 部品が少しずつ伸びていく試験を、表面の斑点模様を撮って追いかけ、ひずみを測る。隣接するコマの差を足していくと、毎回基準のコマと直接比較するより誤差が 31 倍小さかった。効いていたのは比べる回数ではなく、一歩あたりの変形の大きさだった。
   1 時間のクリープを 25 コマ撮り、隣接コマの累積と基準フレームとの直接比較でひずみ履歴を出した図。 **終端で累積 61 µε / 直接 1878 µε と累積が 31 倍良く、教科書の「時刻で入れ替わる」交点は無い(入れ替わるのは雑音の軸)。コマを 24 → 4 歩に間引くと累積は -60 → -606 µε と悪化 ―― 効くのは歩数でなく 1 歩あたりの変形量。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_strain_history.py)
+- [検査装置 9 種の PoC 実演](https://youtu.be/FZC3k6uGtZE) (図): 偏光、白色干渉、OCT、フラッシュ・ロックイン熱画像、dToF、ライトフィールド、SEM/TEM、実写の地の欠陥を扱う 9 本の PoC を、易しい順につないだ。各章は推定を真値の横に置き、門と限界を示し、最後は見逃しで終わる。日本語版と英語版があり、日本語のページは日本語版、ほかの言語のページは英語版を YouTube で開く。
+  9 章は偏光、白色干渉、OCT、フラッシュ・ロックイン熱画像、dToF、ライトフィールド、SEM/TEM、実写の地の欠陥を扱う。第 1・2・4〜8 章は合成、第 3 章は公開の自動車塗装 SD-OCT 生スペクトル(CC BY 4.0)、第 9 章は実写テクスチャ(CC0)に合成欠陥を加えたもの。 **第 3 章の透明層は 99.7 µm、顕微鏡の真値は 103.3 µm(見本と論文の表の行の対応は推定)。第 9 章の検出限界は実写の地で 38 %、同じ雑音量の合成の地で 13 %。** [YouTube](https://youtu.be/FZC3k6uGtZE)
+  使った Fullseye の op: `interferometry.csi_height_map` · `octscan.oct_from_spectra` · `photoncount.dtof_depth` · `lightfield.lf_refocus`
 
 **三次元計測・幾何処理**
 
@@ -759,6 +762,12 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [手首カメラで穴に寄せてペグを入れる(12 / 12 成功)](../articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif) (GIF): 柔らかい手首のロボットが、手首のカメラで穴の位置を測ってペグを差し込む。測って寄せる動きを繰り返し、横のずれを 0.03 mm まで詰めてから下ろした。接触の力は物理シミュレータで計算し、学習は使っていない。
   手首カメラで穴の位置を測って寄せ、柔らかい手首でペグを入れる(MuJoCo)。 **サーボ 7 回で真のずれ 2.24 → 0.03 mm。補正ありの挿入は 12 / 12 成功。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pegsim_insertion.py)
 
+**人型ロボット**
+
+- [G1 がつづら折りの山道を登る](https://youtu.be/oP1TBK9NwQM) (図): MuJoCo の G1 が、公開標高データ上に設計した 5 段のつづら折りを、頭の深度カメラから勾配と足場を読んで登る。制御はルールベースで、転倒も不合格の門も隠さない。本編は YouTube の長尺動画。
+  公開の 5 m 標高データ(GSI DEM5A、PDL1.0)に設計したつづら折りの道を MuJoCo Menagerie の G1 が登る。頭のカメラの理想化した雑音つき深度から Fullseye の地形関数で勾配と足場を求め、ルールベースの DCM 歩容計画と全身逆動力学 QP で、学習済み重みとモーションキャプチャなしに 5 段(勾配 4 %〜15 %)を進む。道は地形データ上の設計で、測量ではない。 **転倒 1 回を隠さず映し、固定した規則で置き直してゴールの 213 m に到達した。門は 22 件中 19 件合格、3 件不合格: 左右交互(同じ足の連続着地 7 回)、歩行中の自己接触なし、ロボットの影(基準未満 6/125 コマ、影面積÷身長の 2 乗の最小 0.00 %、基準 0.10 %)。** [YouTube](https://youtu.be/oP1TBK9NwQM)
+  使った Fullseye の op: `terrain.ground_plane` · `terrain.foothold_score`
+
 **自動運転**
 
 - [霞のヘアピンを登る(CARLA)](https://youtu.be/XN1mGAftSlY) (動画): CARLA の模擬カメラと LiDAR を Fullseye で読み、ルールで操舵と速さを決めて霞の山道を登る。白線が見える距離の中で止まれる速さまで落とす。本編は YouTube の長尺動画。
@@ -767,6 +776,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [部品を足す前と後(運転の 9 章)](https://youtu.be/6J3chWv5yHg) (動画): Fullseye の運転の部品(すべてルールベース)を、2026-09-28 から 2026-11-05 までにどの場面で足したかを、時代順の 9 章にまとめた長尺動画の抜粋。9 章のうち 7 章は、ある版が失敗する場面と、部品を足した版が越える場面を左右に並べる(第 1 章は出発点、第 8 章は到達点で、失敗と改良の対を作らない)。本編は YouTube の長尺動画。
   第 9 章「森の影と白線」の霞の日の 11.0 秒(本編 194.6〜205.6 秒)。左(橙)は git の前の版(2026-11-02)のコードを今回 2026-11-05 の森で走らせた絵、右(青)は 2026-11-05 の版の当時の画面で、同じ地図・同じ出発点。前の版は森の影で白線を見失い、対向車線の外へ出る。失敗する側の正体は章ごとに違う(この章は git の前の版)。走行は各 1 回。前の版は 100 m で止まったので、比べた距離は 100 m と 964 m で違う。霞が無くても前の版は同じヘアピンで失敗した(原因は霞だけではない)。左右の版の差は車線認識の 4 か所と運転のスクリプトと上限速度(30 → 36 km/h)で、どれが効いたかは切り分けていない。ほかの章の限界(第 8 章の衝突 1 件、第 7 章は場面に合わせて選んだ設定)は動画の概要欄にある。この章の運転のスクリプトは非公開で、使った op は公開。 出典: 地形 国土地理院 DEM5A(PDL1.0。左右反転、道路と標識は自作)、CARLA(コード MIT・アセット CC-BY)。 **審判(地図の真値、この動画のために書いた審判)、霞の日: 前の版は車線の外へ出て 100 m で止まった(車線外 440 コマ。出たあと止まっていた時間を含む。記録は 644 コマ、止まっていたのは 243 コマ)・衝突 0、2026-11-05 の版は 964 m で車線外 0 コマ・衝突 0。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/opsdrive.py) [YouTube](https://youtu.be/6J3chWv5yHg)
   使った Fullseye の op: `driveenv.sight_stop_speed` · `driveenv.mor_from_beta` · `driveenv.road_row_distance` · `drivelateral.curve_speed_limit` · `drivelateral.pure_pursuit_curvature` · `drivettc.ttc_from_range` · `pcseg.remove_ground` · `pcseg.euclidean_clusters` · `matching.create_ncc_model` · `matching.find_ncc_model` · `carlabridge.carla_intrinsics`
+- [銀座の車載カメラから信号・車・距離を読む(CARLA)](https://youtu.be/bzMAHCa5y9E) (図): CARLA の中の銀座・中央通りを走る車のカメラ画像と深度だけから、Fullseye が信号の灯の色・車・距離を読む。運転は CARLA の自動運転が行い、Fullseye は見るだけ。シミュレータの正解は Fullseye に渡さず、採点だけに使った。本編は YouTube の動画(日本語)。
+  灯は明るい赤・黄・青の点を形と高さで灯器に絞って前方の灯を追い、見えなくなっても最後の色を覚えておく。車は深度で路面より高い画素を塊にする。深度はシミュレータの深度にステレオ相当の雑音を足したもので、本物のステレオ計算ではない。逆光・夜・雨は無い。 出典: 地図 © OpenStreetMap contributors(ODbL)、沿道の建物 3D 都市モデル Project PLATEAU(PDL1.0)、CARLA(コード MIT・アセット CC-BY)。 **94.5 秒・5 交差点の採点: 灯色の一致 97.2 %(正解の灯と対応できた読みのうち。読めなかった灯 119 回)、前方の信号の判断 98.6 %(コマ単位)、車の再現率 86.6 %(60 m 以内・200 画素以上見える車)、距離の誤差 中央値 0.22 m(雑音を足す前の深度との差)。** [YouTube](https://youtu.be/bzMAHCa5y9E)
+  使った Fullseye の op: `carlabridge.carla_intrinsics` · `color_pca.trans_from_rgb` · `blob2d.blob_label` · `blob2d.blob_features`
 
 **ロボットの目(Fullseye が知覚を担当)**
 
