@@ -57,7 +57,7 @@ def test_every_exhibit_is_one_block_with_one_image_and_its_title_once(lang: str)
     cards = _cards(lines)
     rows = _expected_rows(data, lang)
     assert len(cards) == len(rows) >= 10, lang
-    labels = {e["label"][G._content_lang(lang)] for e in rows}      # ja/en 以外のページの題は英語
+    labels = {e["label"][lang] for e in rows}
     seen = set()
     for card in cards:
         assert card.count("<img ") == 1, (lang, card[:120])
