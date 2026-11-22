@@ -235,6 +235,21 @@ def test_generator_reproduces_the_shipped_picture_and_mask(tmp_path, name):
     assert mism <= max(2, int(1e-3 * sc["mask"].sum())), (name, mism)
 
 
+def test_engraved_lot_code_frozen_glyph_matches_opencv_5_0():
+    """固定字形の由来を OpenCV 5.0.x と全画素で照合する。 / Pin the raster provenance pixelwise."""
+    cv2 = pytest.importorskip("cv2")
+    if not cv2.__version__.startswith("5.0."):
+        pytest.skip("OpenCV %s differs in Hershey rasterisation; provenance is pinned to 5.0.x"
+                    % cv2.__version__)
+    ink = np.zeros(G._LOT_RASTER_SHAPE, dtype=np.uint8)
+    for index, line in enumerate(G.LOT_CODE):
+        cv2.putText(ink, line, (34, 88 + 80 * index), cv2.FONT_HERSHEY_SIMPLEX,
+                    1.55, 255, 4, cv2.LINE_8)
+    got = ink > 0
+    assert np.array_equal(got, G._load_lot_code_mark())
+    assert np.array_equal(got, _truth("engraved_lot_code"))
+
+
 def test_generator_list_writes_nothing(capsys, tmp_path, monkeypatch):
     monkeypatch.setattr(G, "OUT", str(tmp_path / "out"))
     assert G.main(["--list"]) == 0
