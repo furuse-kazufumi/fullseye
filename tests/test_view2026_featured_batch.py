@@ -75,3 +75,25 @@ def test_a_changed_caption_resets_the_split_to_the_full_caption():
     row["caption_ja"] += "改"
     card = next(e for e in B.rebuild(d, changed)["exhibits"] if e["id"] == pid)
     assert (card["see"]["ja"], card["num"]["ja"]) == (row["caption_ja"], "")
+
+
+def test_hand_translation_is_kept_only_while_the_source_english_lead_is_unchanged():
+    d, ledger = _inputs()
+    pid = next(e["id"] for e in d["exhibits"] if e["id"] in {row["id"] for row in ledger})
+    translated = copy.deepcopy(d)
+    card = next(e for e in translated["exhibits"] if e["id"] == pid)
+    card["lead"]["zh"] = "同一英文から作った手訳 " + card["lead"]["en"]
+    kept = next(e for e in B.rebuild(translated, copy.deepcopy(ledger))["exhibits"] if e["id"] == pid)
+    assert kept["lead"]["zh"] == card["lead"]["zh"]
+
+    changed_ledger = copy.deepcopy(ledger)
+    changed_row = next(e for e in changed_ledger if e["id"] == pid)
+    changed_row["lead_en"] = B.lead_for(changed_row, "en") + " Revised."
+    reverted = next(e for e in B.rebuild(translated, changed_ledger)["exhibits"] if e["id"] == pid)
+    assert reverted["lead"]["zh"] == changed_row["lead_en"]
+
+    ja_changed_ledger = copy.deepcopy(ledger)
+    ja_row = next(e for e in ja_changed_ledger if e["id"] == pid)
+    ja_row["lead_ja"] = B.lead_for(ja_row, "ja") + "改"
+    ja_reverted = next(e for e in B.rebuild(translated, ja_changed_ledger)["exhibits"] if e["id"] == pid)
+    assert ja_reverted["lead"]["zh"] == B.lead_for(ja_row, "en")       # 日本語だけが変わっても訳は古いので英語へ戻す
