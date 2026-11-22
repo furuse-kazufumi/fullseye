@@ -300,7 +300,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `poc_white_balance` — op: `delta_e_map`, `gauss_filter`, `illuminant_from_dichromatic_planes`, `laplace`, `linear_to_srgb`, `mean_image`, `prewitt_amp`, `roberts`, `sobel_amp`, `spectrum_to_srgb` `py -3.11 examples/poc_white_balance.py`
 
 **separation**
-- `poc_polarization_specular` — op: `ellipse`, `fresnel_conductor`, `fresnel_dielectric`, `measure_text`, `mueller_apply`, `mueller_element`, `polarization_dolp_map`, `polarization_render`, `polarization_separate`, `polarization_stokes`, `polarization_stokes_map`, `rmse`(另有 1 个) `py -3.11 examples/poc_polarization_specular.py`
+- `poc_polarization_specular` — op: `ellipse`, `fresnel_conductor`, `fresnel_dielectric`, `measure_text`, `mueller_apply`, `mueller_element`, `ocr_font`, `polarization_dolp_map`, `polarization_render`, `polarization_separate`, `polarization_stokes`, `polarization_stokes_map`(另有 2 个) `py -3.11 examples/poc_polarization_specular.py`
 - `example_polarization_metal` — op: `brewster_angle_deg`, `fresnel_conductor`, `fresnel_dielectric`, `polarization_dolp_map`, `polarization_render` `py -3.11 examples/example_polarization_metal.py`
 - `poc_pigment_unmixing` — op: `delta_e_map`, `linear_to_srgb`, `spectrum_to_srgb` `py -3.11 examples/poc_pigment_unmixing.py`
 - `poc_sea_ice_concentration` — op: `blob_features`, `blob_label`, `gauss_filter`, `mat_lstsq` `py -3.11 examples/poc_sea_ice_concentration.py`
@@ -5077,7 +5077,7 @@ _共 3844 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 #### symbol / ocr (9)
 - `ocr_classify` `matrix × table → table` GPU: 无 — 用 k 近邻识别特征,并按距离与距离比拒识(`table`)。 · 示例: `poc_symbol_lot_ocr`
 - `ocr_features` `image2d → signal` GPU: 无 — 由单个字的墨迹图生成 88 维特征(分区密度 + 投影)(`signal`)。 · 示例: `poc_symbol_lot_ocr`
-- `ocr_font` `无输入 → table` GPU: 无 — 返回内置字体(5x7 点阵 / 笔画)的字符集与字形设计(`table`)。 · 示例: `poc_symbol_lot_ocr`
+- `ocr_font` `无输入 → table` GPU: 无 — 返回内置字体(5x7 点阵 / 笔画)的字符集与字形设计(`table`)。 · 示例: `poc_polarization_specular`, `poc_symbol_lot_ocr`
 - `ocr_read_line` `image2d × table → table` GPU: 无 — 读取图像中的一行:切分 + 识别,拒识的字符记为 ``?``(`table`)。 · 示例: `poc_symbol_lot_ocr`
 - `ocr_read_trials` `table → table` GPU: 无 — 在每个退化水平下对印刷字符串拍摄 ``trials`` 次并用 OCR 读取,返回每次一行的表(`table`)。 · 示例: `poc_symbol_lot_ocr`
 - `ocr_render_text` `无输入 → table` GPU: 无 — 用内置字体绘制字符串,并连同每个字符的真实外接框一起返回(`table`)。 · 示例: `poc_symbol_lot_ocr`

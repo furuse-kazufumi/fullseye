@@ -300,7 +300,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `poc_white_balance` — ops: `delta_e_map`, `gauss_filter`, `illuminant_from_dichromatic_planes`, `laplace`, `linear_to_srgb`, `mean_image`, `prewitt_amp`, `roberts`, `sobel_amp`, `spectrum_to_srgb` `py -3.11 examples/poc_white_balance.py`
 
 **separation**
-- `poc_polarization_specular` — ops: `ellipse`, `fresnel_conductor`, `fresnel_dielectric`, `measure_text`, `mueller_apply`, `mueller_element`, `polarization_dolp_map`, `polarization_render`, `polarization_separate`, `polarization_stokes`, `polarization_stokes_map`, `rmse` (+1 more) `py -3.11 examples/poc_polarization_specular.py`
+- `poc_polarization_specular` — ops: `ellipse`, `fresnel_conductor`, `fresnel_dielectric`, `measure_text`, `mueller_apply`, `mueller_element`, `ocr_font`, `polarization_dolp_map`, `polarization_render`, `polarization_separate`, `polarization_stokes`, `polarization_stokes_map` (+2 more) `py -3.11 examples/poc_polarization_specular.py`
 - `example_polarization_metal` — ops: `brewster_angle_deg`, `fresnel_conductor`, `fresnel_dielectric`, `polarization_dolp_map`, `polarization_render` `py -3.11 examples/example_polarization_metal.py`
 - `poc_pigment_unmixing` — ops: `delta_e_map`, `linear_to_srgb`, `spectrum_to_srgb` `py -3.11 examples/poc_pigment_unmixing.py`
 - `poc_sea_ice_concentration` — ops: `blob_features`, `blob_label`, `gauss_filter`, `mat_lstsq` `py -3.11 examples/poc_sea_ice_concentration.py`
@@ -5077,7 +5077,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 #### symbol / ocr (9)
 - `ocr_classify` `matrix × table → table` GPU: none — Classify feature vectors by k nearest neighbours and reject by distance and distance ratio (`table`). · examples: `poc_symbol_lot_ocr`
 - `ocr_features` `image2d → signal` GPU: none — Build the 88-D feature vector (zoning densities + projections) from the ink map of one glyph (`signal`). · examples: `poc_symbol_lot_ocr`
-- `ocr_font` `no input → table` GPU: none — Return the charset and glyph designs of a built-in font (5x7 dot matrix / stroke) (`table`). · examples: `poc_symbol_lot_ocr`
+- `ocr_font` `no input → table` GPU: none — Return the charset and glyph designs of a built-in font (5x7 dot matrix / stroke) (`table`). · examples: `poc_polarization_specular`, `poc_symbol_lot_ocr`
 - `ocr_read_line` `image2d × table → table` GPU: none — Read one text line in an image: segment + classify, rejected characters become ``?`` (`table`). · examples: `poc_symbol_lot_ocr`
 - `ocr_read_trials` `table → table` GPU: none — Capture a printed string ``trials`` times at each degradation level, read it by OCR and return one row per attempt (`table`). · examples: `poc_symbol_lot_ocr`
 - `ocr_render_text` `no input → table` GPU: none — Render a string with a built-in font and return it with the true bounding box of each character (`table`). · examples: `poc_symbol_lot_ocr`

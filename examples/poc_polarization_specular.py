@@ -116,17 +116,17 @@ HEADLINE = {
     "full": {
         "size": "1024", "refused_main_pct": "0.33", "refused_low_pct": "0.38", "refused_max_pct": "0.38",
         "allowed_pct": "1", "theta_deg": "50.1", "glare_px": "41237", "dolp": "0.51", "film_removed_pct": "91",
-        "resid_meas": "0.0389", "resid_pred": "0.0355", "resid_diff_pct": "9.5",
-        "cnr_before": "1.6", "cnr_fixed_mosaic": "6.9", "cnr_camera": "6.9", "cnr_fixed_full": "8.3",
+        "resid_meas": "0.0389", "resid_pred": "0.0356", "resid_diff_pct": "9.3",
+        "cnr_before": "1.6", "cnr_fixed_mosaic": "6.9", "cnr_camera": "7.0", "cnr_fixed_full": "8.4",
         "ratio_wrinkle_first": "0.84", "ratio_wrinkle_last": "0.96", "ratio_light": "1.08", "ratio_both": "1.49",
         "metal_removed_pct": "29", "metal_pred_pct": "28",
     },
     "reduced": {
-        "size": "512", "refused_main_pct": "0.22", "refused_low_pct": "0.32", "refused_max_pct": "0.27",
+        "size": "512", "refused_main_pct": "0.21", "refused_low_pct": "0.31", "refused_max_pct": "0.28",
         "allowed_pct": "1", "theta_deg": "50.2", "glare_px": "11052", "dolp": "0.51", "film_removed_pct": "92",
-        "resid_meas": "0.0321", "resid_pred": "0.0330", "resid_diff_pct": "2.8",
-        "cnr_before": "1.6", "cnr_fixed_mosaic": "5.8", "cnr_camera": "5.8", "cnr_fixed_full": "7.9",
-        "ratio_wrinkle_first": "0.73", "ratio_wrinkle_last": "0.94", "ratio_light": "0.99", "ratio_both": "1.34",
+        "resid_meas": "0.0320", "resid_pred": "0.0330", "resid_diff_pct": "2.9",
+        "cnr_before": "1.6", "cnr_fixed_mosaic": "5.9", "cnr_camera": "5.8", "cnr_fixed_full": "8.1",
+        "ratio_wrinkle_first": "0.72", "ratio_wrinkle_last": "0.94", "ratio_light": "0.99", "ratio_both": "1.34",
         "metal_removed_pct": "30", "metal_pred_pct": "28",
     },
 }
@@ -149,21 +149,54 @@ def _smooth_noise(rng, shape, sigma):
     return a / max(float(a.std()), 1e-12)
 
 
+def _stable_radiance(a):
+    """合成輝度を 1e-8 で固定し、畳み込みの 1 ULP 差が Poisson 乱数列を変えないようにする。
+
+    Quantise synthetic radiance at 1e-8 so platform-level convolution round-off cannot
+    branch the subsequent Poisson draw sequence. The sensor is only 12 bit, so this is
+    more than four decimal decades below one output level and does not weaken the physics.
+    """
+    return np.round(np.asarray(a, dtype=np.float64), 8)
+
+
 def _label_albedo(h, w, seed):
-    """ラベルの印字(白い紙に黒の文字・バーコード・枠)を PIL で描いた反射率 (h, w)。"""
-    from PIL import Image, ImageDraw, ImageFont
+    """内蔵 5x7 書体で描く白い紙・黒文字・バーコードの反射率。System-font independent label."""
+    import ocrclassic as OCR
+
     rng = np.random.default_rng(seed)
     scale = 4
-    im = Image.new("L", (w * scale, h * scale), 225)
-    d = ImageDraw.Draw(im)
     W_, H_ = w * scale, h * scale
-    d.rectangle((int(0.04 * W_), int(0.05 * H_), int(0.96 * W_), int(0.95 * H_)), outline=30, width=3 * scale)
-    font_path = str(figs._japanese_font_path(bold=True))
-    f_big = ImageFont.truetype(font_path, int(0.105 * W_))
-    f_mid = ImageFont.truetype(font_path, int(0.064 * W_))
-    d.text((int(0.08 * W_), int(0.09 * H_)), "精密部品 FS-2611", font=f_big, fill=15)
-    d.text((int(0.08 * W_), int(0.27 * H_)), "LOT 261108-A   数量 50", font=f_mid, fill=20)
-    d.text((int(0.08 * W_), int(0.39 * H_)), "保管: 直射日光を避ける", font=f_mid, fill=20)
+    im = np.full((H_, W_), 225.0, dtype=np.float64)
+
+    def rectangle(box, fill):
+        x0, y0, x1, y1 = box
+        im[max(0, y0):min(H_, y1 + 1), max(0, x0):min(W_, x1 + 1)] = fill
+
+    x0, y0, x1, y1 = int(0.04 * W_), int(0.05 * H_), int(0.96 * W_), int(0.95 * H_)
+    border = 3 * scale
+    rectangle((x0, y0, x1, y0 + border - 1), 30)
+    rectangle((x0, y1 - border + 1, x1, y1), 30)
+    rectangle((x0, y0, x0 + border - 1, y1), 30)
+    rectangle((x1 - border + 1, y0, x1, y1), 30)
+
+    glyphs = OCR.ocr_font("dot5x7")["glyphs"]
+
+    def text(x, y, value, cell, fill):
+        advance = 6 * cell
+        for i, char in enumerate(value):
+            if char == " ":
+                continue
+            glyph = np.repeat(np.repeat(glyphs[char].astype(bool), cell, axis=0), cell, axis=1)
+            gx, gy = x + i * advance, y
+            hh = min(glyph.shape[0], H_ - gy)
+            ww = min(glyph.shape[1], W_ - gx)
+            if hh > 0 and ww > 0:
+                tile = im[gy:gy + hh, gx:gx + ww]
+                tile[glyph[:hh, :ww]] = fill
+
+    text(int(0.08 * W_), int(0.09 * H_), "FS-2611", max(2, int(0.013 * W_)), 15)
+    text(int(0.08 * W_), int(0.27 * H_), "LOT 261108-A  QTY 50", max(2, int(0.0065 * W_)), 20)
+    text(int(0.08 * W_), int(0.39 * H_), "KEEP DRY", max(2, int(0.0065 * W_)), 20)
     # バーコード(幅 1〜4 単位の黒白の帯)。実在の符号系の規則は使わない —— 縞の見え方だけ
     x = int(0.08 * W_)
     y0, y1 = int(0.55 * H_), int(0.86 * H_)
@@ -172,11 +205,13 @@ def _label_albedo(h, w, seed):
     while x < int(0.62 * W_):
         wbar = unit * int(rng.integers(1, 5))
         if black:
-            d.rectangle((x, y0, x + wbar - 1, y1), fill=12)
+            rectangle((x, y0, x + wbar - 1, y1), 12)
         x += wbar
         black = not black
-    d.text((int(0.66 * W_), int(0.64 * H_)), "検査済", font=f_mid, fill=25)
-    a = np.asarray(im.resize((w, h), Image.Resampling.LANCZOS), dtype=np.float64) / 255.0
+    text(int(0.66 * W_), int(0.64 * H_), "INSPECTED", max(2, int(0.0065 * W_)), 25)
+    # 4x4 の面積平均は NumPy だけで定義し、Pillow / FreeType の版と OS の差を入れない。
+    # Exact area averaging keeps the antialiasing independent of Pillow and FreeType.
+    a = im.reshape(h, scale, w, scale).mean(axis=(1, 3)) / 255.0
     return 0.03 + 0.85 * a
 
 
@@ -402,11 +437,12 @@ def render_bench_stokes(size=1024, seed=33, wrinkle=1.0, soft=(9.0, 14.0)):
     s2 = pol * np.sin(2.0 * psi)
     film_spec = np.where(is_film, spec_s + spec_p, 0.0)
     metal_spec = np.where(is_metal, spec_s + spec_p, 0.0)
-    return {"stokes": np.stack([s0, s1, s2]), "diffuse": diffuse, "film": film_spec,
-            "metal": metal_spec, "spec_p": spec_p, "spec_s": spec_s,
-            "theta_deg": theta, "is_film": is_film, "is_metal": is_metal,
-            "psi_deg": np.degrees(psi), "rs_film": rs_f, "rp_film": rp_f,
-            "albedo": np.where(is_film, alb, 0.0)}
+    return {"stokes": _stable_radiance(np.stack([s0, s1, s2])), "diffuse": _stable_radiance(diffuse),
+            "film": _stable_radiance(film_spec), "metal": _stable_radiance(metal_spec),
+            "spec_p": _stable_radiance(spec_p), "spec_s": _stable_radiance(spec_s),
+            "theta_deg": _stable_radiance(theta), "is_film": is_film, "is_metal": is_metal,
+            "psi_deg": _stable_radiance(np.degrees(psi)), "rs_film": _stable_radiance(rs_f),
+            "rp_film": _stable_radiance(rp_f), "albedo": _stable_radiance(np.where(is_film, alb, 0.0))}
 
 
 def separate_mosaic(analyzers):
@@ -457,7 +493,7 @@ def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0, return_tru
     ideal = np.stack([0.5 * (blur[0] + blur[1] * np.cos(2 * a) + blur[2] * np.sin(2 * a)) for a in ang])
     leak = 1.0 / extinction_ratio
     opposite = ideal[[2, 3, 0, 1]]
-    measured = (ideal + leak * opposite) / (1.0 + leak)
+    measured = _stable_radiance((ideal + leak * opposite) / (1.0 + leak))
     electrons = rng.poisson(np.clip(measured, 0.0, None) * FULL_WELL_E).astype(np.float64)
     electrons += rng.normal(0.0, READ_E, electrons.shape)
     levels = 2 ** ADC_BITS - 1
@@ -808,7 +844,7 @@ def fixed_polarizer_fullres(bench, r, cnr, seed):
     def bin2(a):
         return a.reshape(h2, 2, h2, 2).sum(axis=(1, 3))
     _score, th_best = max((cnr(bin2(score_image(th))), th) for th in np.arange(0.0, 180.0, 2.5))
-    m = through_op(th_best)
+    m = _stable_radiance(through_op(th_best))
     # 角度選びの手の展開が Mueller の op の像と同じであることの検算(2026-11-22 の独立レビュー: 選んだ角度は最終の
     # CNR に効くのに、展開と op の一致を確かめていなかった)。選んだ角度と固定の 4 角度で、像の差が浮動小数の丸めの内
     for th in (float(th_best), 0.0, 22.5, 45.0, 90.0):

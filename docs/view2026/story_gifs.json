@@ -18465,12 +18465,12 @@
               "file": "04_fresnel.png",
               "content_box": [
                 0,
-                186,
+                184,
                 720,
-                318
+                321
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.263889
+              "source_aspect": 2.244444
             },
             {
               "file": "05_angle_error.png",
@@ -18491,17 +18491,17 @@
             1600,
             1600
           ],
-          "bytes": 943367,
+          "bytes": 930297,
           "color_mad": [
-            0.3772,
+            0.3928,
             0.0,
-            0.0362,
-            1.2848,
-            0.1151,
-            0.091
+            0.0361,
+            1.3034,
+            0.0787,
+            0.0532
           ],
-          "max_color_mad": 1.2848,
-          "source_sha256": "37aead2a136c98b121a0d1f81b97f67628c4470c9859f220646bd546c6270a78"
+          "max_color_mad": 1.3034,
+          "source_sha256": "469eaf729ff67393f7b28748ff94a92b5c574118a2bdd6057749571b95e881ad"
         },
         "en": {
           "path": "articles/assets/poc/poc_polarization_specular/story.en.gif",
@@ -18555,12 +18555,12 @@
               "file": "04_fresnel.png",
               "content_box": [
                 0,
-                186,
+                184,
                 720,
-                318
+                321
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.263889
+              "source_aspect": 2.244444
             },
             {
               "file": "05_angle_error.png",
@@ -18581,17 +18581,17 @@
             1600,
             1600
           ],
-          "bytes": 943367,
+          "bytes": 930297,
           "color_mad": [
-            0.3772,
+            0.3928,
             0.0,
-            0.0362,
-            1.2848,
-            0.1151,
-            0.091
+            0.0361,
+            1.3034,
+            0.0787,
+            0.0532
           ],
-          "max_color_mad": 1.2848,
-          "source_sha256": "6c89a99bcba7f020db23a85e22a414abef6bcd0d4cd0d469d1c2be925206ef99"
+          "max_color_mad": 1.3034,
+          "source_sha256": "e7081cabc7cc074ece395d322748092b3e429cad6a29d0c349495f2ceffdbfba"
         }
       },
       "thumbnail": {
@@ -18605,7 +18605,7 @@
       "cover": "10_glare_cover.png",
       "still": "articles/assets/poc/poc_polarization_specular/10_glare_cover.png",
       "alt": {
-        "ja": "表紙(合成、1024 画素の描画): フィルムで包んだラベルの所だけを切り出した。左 = 偏光子なし(印字の CNR 1.6)、右 = 偏光カメラの生モザイクを Fullseye の op(polarization_stokes_map / polarization_separate)で分けて映り込みを剥がした像(CNR 6.9、映り込み 91 % 減)。全画素で撮る固定の偏光フィルタ 1 枚なら CNR 8.3 —— この照明(小さなソフトボックス 1 灯)では固定のフィルタで足りる。偏光カメラの勝ちではない。",
+        "ja": "表紙(合成、1024 画素の描画): フィルムで包んだラベルの所だけを切り出した。左 = 偏光子なし(印字の CNR 1.6)、右 = 偏光カメラの生モザイクを Fullseye の op(polarization_stokes_map / polarization_separate)で分けて映り込みを剥がした像(CNR 7.0、映り込み 91 % 減)。全画素で撮る固定の偏光フィルタ 1 枚なら CNR 8.4 —— この照明(小さなソフトボックス 1 灯)では固定のフィルタで足りる。偏光カメラの勝ちではない。",
         "en": "A camera with a polariser on every pixel splits a label behind shiny film into diffuse and glare components. About 90 % of the glare goes, yet under this light a fixed polarising filter reads the print better. The camera catches up only under a wider light; the scene is synthetic and unchecked against real images."
       }
     },

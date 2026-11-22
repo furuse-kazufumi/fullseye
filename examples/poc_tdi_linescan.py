@@ -85,8 +85,8 @@ HEADLINE = {
         "yaw_worst": "0.0017",
         "ri_edge_ls": "0.976", "cos4_edge_ls": "0.855", "distortion_edge_ls": "-2.9", "area_gain_edge_ls": "1.111",
         "cut_cm": "19.7",
-        "cnr_cm_edge_before": "1.23", "cnr_cm_edge_after": "1.21", "cnr_ls_edge_after": "2.49",
-        "cnr_cm_centre_after": "2.44", "cnr_ls_centre_after": "2.30",
+        "cnr_cm_edge_before": "1.33", "cnr_cm_edge_after": "1.31", "cnr_ls_edge_after": "2.49",
+        "cnr_cm_centre_after": "2.45", "cnr_ls_centre_after": "2.30",
     },
     "reduced": {
         "snr_worst_pct": "1.2", "gain_digital": "8.09", "gain_charge": "26.9",
@@ -95,8 +95,8 @@ HEADLINE = {
         "yaw_worst": "0.0017",
         "ri_edge_ls": "0.976", "cos4_edge_ls": "0.855", "distortion_edge_ls": "-2.9", "area_gain_edge_ls": "1.111",
         "cut_cm": "21.5",
-        "cnr_cm_edge_before": "1.87", "cnr_cm_edge_after": "1.88", "cnr_ls_edge_after": "3.07",
-        "cnr_cm_centre_after": "2.68", "cnr_ls_centre_after": "2.48",
+        "cnr_cm_edge_before": "1.96", "cnr_cm_edge_after": "1.95", "cnr_ls_edge_after": "3.07",
+        "cnr_cm_centre_after": "2.41", "cnr_ls_centre_after": "2.48",
     },
 }
 
@@ -159,7 +159,11 @@ def steel_web(h, w, seed=0, defects=True, centres=None):
         dep += bl_img - 0.5
         masks["異物(径 7 画素、深さ 8 %)"] = bl_m
         web = web + ndimage.gaussian_filter(dep, 0.6)
-    return np.clip(web, 0.0, 1.0), masks
+    # scipy.ndimage の畳み込みは CPU / wheel により最下位 1 bit だけ違う。その差を
+    # Poisson 標本器へ渡すと乱数列の消費順が分岐するため、合成反射率を物理的に意味の
+    # ない 12 桁目より下で固定する。Quantise below the physically meaningful precision so
+    # one-ULP convolution differences cannot change the subsequent Poisson draw sequence.
+    return np.round(np.clip(web, 0.0, 1.0), 11), masks
 
 
 def detect(img_e, masks_img, k_sigma=4.5, min_px=4):

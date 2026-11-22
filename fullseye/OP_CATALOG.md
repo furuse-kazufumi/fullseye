@@ -5075,7 +5075,7 @@ _計 3844 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 #### symbol / ocr(9)
 - `ocr_classify` `matrix × table → table` GPU: なし — 特徴量を k 最近傍で識別し、距離と距離比で棄却する(``table``)。 · 例: `poc_symbol_lot_ocr`
 - `ocr_features` `image2d → signal` GPU: なし — 1 字のインク地図から 88 次元の特徴量(区画の濃度 + 射影)を作る(``signal``)。 · 例: `poc_symbol_lot_ocr`
-- `ocr_font` `入力なし → table` GPU: なし — 内蔵書体(5x7 ドット / 線)の字種と字形の設計を返す(``table``)。 · 例: `poc_symbol_lot_ocr`
+- `ocr_font` `入力なし → table` GPU: なし — 内蔵書体(5x7 ドット / 線)の字種と字形の設計を返す(``table``)。 · 例: `poc_polarization_specular`, `poc_symbol_lot_ocr`
 - `ocr_read_line` `image2d × table → table` GPU: なし — 画像の 1 行を読む: 切り出し + 識別、棄却した字は ``?``(``table``)。 · 例: `poc_symbol_lot_ocr`
 - `ocr_read_trials` `table → table` GPU: なし — 印字した文字列を劣化量の各水準で ``trials`` 回撮って OCR で読み、1 行 = 1 回の表を返す(``table``)。 · 例: `poc_symbol_lot_ocr`
 - `ocr_render_text` `入力なし → table` GPU: なし — 文字列を内蔵書体で描き、字ごとの真値の外接箱と一緒に返す(``table``)。 · 例: `poc_symbol_lot_ocr`
