@@ -8524,7 +8524,21 @@ def build_window(model=None, start_mode="pipeline"):
     lv.addWidget(_group(QtWidgets, "OPERATORS", olay), 1)
 
     search_state = {"rows": {g: [] for g in ("applicable", "needs_preprocessing", "other")},
-                    "chips": [], "groups": {}}
+                    "chips": [], "groups": {}, "generation": 0, "clearing": False}
+
+    def _clear_op_list_and_search_state():
+        """Clear with refits paused, then discard wrappers / 再調整を止めて消し、旧 wrapper を破棄する。"""
+        search_state["clearing"] = True
+        try:
+            op_list.clear()
+        finally:
+            search_state["generation"] += 1
+            search_state["chips"] = []
+            search_state["groups"] = {}
+            search_state["rows"] = {
+                group: [] for group in ("staples", "applicable", "needs_preprocessing", "other")
+            }
+            search_state["clearing"] = False
 
     def _search_current_value():
         try:
@@ -8572,7 +8586,8 @@ def build_window(model=None, start_mode="pipeline"):
             run.clicked.connect(lambda _=False, n=row["name"]: run_op_once(n, _search_current_value()))
         help_.clicked.connect(lambda _=False, n=row["name"]: show_op_help(n))
         h.addWidget(run); h.addWidget(help_)
-        entry = dict(row, text=text_, item=it, try_button=run, help_button=help_, label_widget=label, box=box)
+        entry = dict(row, text=text_, item=it, try_button=run, help_button=help_, label_widget=label, box=box,
+                     _list_generation=search_state["generation"])
         _fit_search_row(entry)
         op_list.setItemWidget(it, box)
         _fit_search_row(entry)        # 一覧に入った後(様式の字の大きさが決まった後)にもう一度(下の注記)
@@ -8620,6 +8635,8 @@ def build_window(model=None, start_mode="pipeline"):
         パネルを狭めると行の幅が前のまま残り、ボタンが画面の外へ出ていた = P-19 の症状が戻る)。"""
         def eventFilter(self, obj, ev):
             if ev.type() == QtCore.QEvent.Resize:
+                if search_state["clearing"]:
+                    return False                    # clear owns the old items / clear 中は旧 item に触れない
                 for head in search_state["groups"].values():
                     try:
                         _fit_search_head(head)
@@ -8627,6 +8644,8 @@ def build_window(model=None, start_mode="pipeline"):
                         pass
                 for rows in search_state["rows"].values():
                     for entry in rows:
+                        if entry.get("_list_generation") != search_state["generation"]:
+                            continue                  # stale wrappers must never be touched / 古い wrapper は触らない
                         try:
                             _fit_search_row(entry)
                         except RuntimeError:               # 行の部品が破棄済み(次の検索で作り直される)
@@ -8655,7 +8674,7 @@ def build_window(model=None, start_mode="pipeline"):
             help_ = QtWidgets.QPushButton(tr("Help")); help_.setEnabled(False); help_.hide()
             h.addWidget(run)
             entry = {"name": name, "text": text_, "item": it, "try_button": run, "help_button": help_,
-                     "label_widget": label, "box": box}
+                     "label_widget": label, "box": box, "_list_generation": search_state["generation"]}
             _fit_search_row(entry)
             op_list.setItemWidget(it, box)
             _fit_search_row(entry)
@@ -8743,8 +8762,7 @@ def build_window(model=None, start_mode="pipeline"):
         q = search.text().strip() if query is None else str(query)
         if query is not None and search.text() != q:
             search.blockSignals(True); search.setText(q); search.blockSignals(False)
-        op_list.clear(); search_state["chips"] = []; search_state["groups"] = {}
-        search_state["rows"] = {g: [] for g in ("staples", "applicable", "needs_preprocessing", "other")}
+        _clear_op_list_and_search_state()
         result = search_grouped(q, current_value=_search_current_value(), k=40,
                                 lang=_UI_LANG.get("code", "en"))
         headers = {"applicable": tr("Applicable to the current input"),
@@ -8848,7 +8866,7 @@ def build_window(model=None, start_mode="pipeline"):
         # insertion point moves (e.g. right after Insert), and Run once / Insert act on it
         _cur = op_list.currentItem()
         keep = _cur.data(QtCore.Qt.UserRole) if _cur is not None else None
-        op_list.clear()
+        _clear_op_list_and_search_state()
         fit_sort, fit_prev = _ops_upstream()
         entry_sort = _ops_entry_sort()
         ops_fit_state["key"] = (ops_fit_only.isChecked(), fit_sort, entry_sort)

@@ -957,6 +957,7 @@ def flow_classes():
     if _FLOW:
         return _FLOW
     from PySide6 import QtCore, QtGui, QtWidgets   # noqa: PLC0415
+    import shiboken6                               # noqa: PLC0415
 
     class FlowStrip(QtWidgets.QWidget):
         """One row (or column) of tools or tabs that scrolls or wraps when it does not fit.
@@ -982,6 +983,7 @@ def flow_classes():
             self.sizes_itself = kind == "tools"      # a tab row's size is its tab bar's
             self.state = {"lines": 1, "scrolling": False, "first": 0, "last_first": 0, "shown": []}
             self._seps, self._busy, self._queued = [], False, False
+            self._destroyed_slots = []
             self.tr = lambda s: s
             self.b_back = self._arrow("flow_back", -1)
             self.b_on = self._arrow("flow_on", 1)
@@ -1002,6 +1004,13 @@ def flow_classes():
         # ---- what it holds -------------------------------------------------- #
         def set_groups(self, groups):
             """The items in groups (a wider gap and a thin line between two groups), moved into the strip."""
+            for w, slot in self._destroyed_slots:
+                if shiboken6.isValid(w):
+                    try:
+                        w.destroyed.disconnect(slot)
+                    except (RuntimeError, TypeError):
+                        pass
+            self._destroyed_slots = []
             for w in self.items():
                 w.removeEventFilter(self)
             self.groups = [list(g) for g in groups if g]
@@ -1010,12 +1019,28 @@ def flow_classes():
                 w.setParent(self)
                 w.setVisible(not hidden)
                 w.installEventFilter(self)
+                slot = lambda _obj=None, item=w: self._forget_destroyed(item)
+                w.destroyed.connect(slot)
+                self._destroyed_slots.append((w, slot))
             self.first = 0
             self.updateGeometry()
             self.relayout()
 
+        def _forget_destroyed(self, item):
+            """Forget one destroyed child by identity / 破棄済みの子を同一性だけで参照から外す。"""
+            found = any(w is item for group in self.groups for w in group)
+            self.groups = [[w for w in group if w is not item] for group in self.groups]
+            self.groups = [group for group in self.groups if group]
+            self._destroyed_slots = [(w, slot) for w, slot in self._destroyed_slots if w is not item]
+            if found:
+                try:
+                    self.updateGeometry()
+                    self._queue()
+                except RuntimeError:                 # the strip is being destroyed with its child / 親も破棄中
+                    pass
+
         def items(self):
-            return [w for g in self.groups for w in g]
+            return [w for g in self.groups for w in g if shiboken6.isValid(w)]
 
         def set_orientation(self, orientation):
             orientation = "v" if orientation == "v" else "h"
@@ -1052,6 +1077,8 @@ def flow_classes():
             for g in self.groups:
                 start = True
                 for w in g:
+                    if not shiboken6.isValid(w):
+                        continue
                     if w.isHidden():
                         continue
                     s = w.sizeHint().expandedTo(w.minimumSize()).boundedTo(w.maximumSize())
