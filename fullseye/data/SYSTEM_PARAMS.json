@@ -269,7 +269,7 @@
         10000,
         50000
       ],
-      "meaning": "Planner expansion cap.",
+      "meaning": "Deterministic planner expansion cap.",
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/opsearch.py"
@@ -278,13 +278,13 @@
       "status": "applied"
     },
     "plan_timeout_ms": {
-      "default": 900,
+      "default": 60000,
       "values": [
-        100,
-        500,
-        900
+        10000,
+        30000,
+        60000
       ],
-      "meaning": "Planner wall-time cap.",
+      "meaning": "Emergency planner wall-time safety fuse in milliseconds.",
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/opsearch.py"

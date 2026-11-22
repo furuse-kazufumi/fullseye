@@ -264,8 +264,9 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
         rows.append(row); rows.sort(key=lambda x:(x["cost"],x["depth"],x["signature"]))
         # Seven-proposal mode needs an over-complete pool for diversity, but only
         # at the wanted sort where the Jaccard filter picks the final plans.
-        # Widening every intermediate sort made the search ~15x slower and hit
-        # plan_timeout_ms on slower CI runners (empty plans, 2026-10-30).
+        # Widening every intermediate sort made the search ~15x slower; the bounded
+        # beam also keeps the deterministic expansion budget useful.
+        # JA: 中間型を広げないことで、決定的な展開数予算の範囲に探索を保つ。
         # Explicit legacy k values stay ranking-compatible with their old beam.
         del rows[(k * 8 if k == 7 and row["sort"] == want else k):]
         # The extra pool only feeds the final diversity filter; expanding further
@@ -303,7 +304,8 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
         if len(plans) == k:
             break
     meta = {"expanded": expanded, "elapsed_ms": round((time.monotonic() - started) * 1000, 3),
-            "limit_reached": capped, "unknown_edges_excluded": sum(
+            "limit_reached": capped, "deterministic": capped != "timeout_ms",
+            "unknown_edges_excluded": sum(
                 e.get("output") in ("unknown", "any") or "unknown" in e.get("inputs", ())
                 for e in graph["edges"])}
     return plans, meta
@@ -1162,7 +1164,7 @@ def search_ops(query: str, k: int | None = None, *, lang: str | None = None, in_
                                              if row.get("in_sort") not in (None, "any", in_sort)))
                 for target in targets:
                     route = plan(in_sort, target, constraints={"k": 1, "max_depth": 4,
-                                                               "max_expansions": 2000, "timeout_ms": 250})
+                                                               "max_expansions": 2000})
                     if route["ok"]:
                         stages = route["plans"][0]["dag"]["stages"]
                         conversion_paths.append({"from": in_sort, "to": target,
@@ -1221,8 +1223,7 @@ def plan_chain(query: str, start_sort: str, goal_sort: str, k: int = 5, max_dept
     # Legacy retrieval surface historically covered the full knowledge ledger.
     # The new plan() API defaults to executable_only=True.
     r = plan(start_sort, goal_sort, constraints={"query": query, "k": k, "max_depth": max_depth,
-                                                 "executable_only": False,
-                                                 "timeout_ms": 60_000})
+                                                 "executable_only": False})
     if not r["ok"]:
         return {"query": query, "start_sort": _sort(start_sort), "goal_sort": _sort(goal_sort),
                 "found": False, "break_at": r.get("blocked_at", []), "reason": r["reason"]}

@@ -63,7 +63,19 @@ import contextvars
 __all__ = [
     "SYSTEM_PARAMS", "set_system", "get_system", "query_system",
     "system", "reset_system", "system_snapshot", "PROFILES", "save_profile", "resolve_profile",
+    "PLAN_MAX_EXPANSIONS_DEFAULT", "PLAN_WALL_SAFETY_MS",
 ]
+
+
+# JA: 通常探索の決定的上限(展開節数)。2026-11-22 の業務6件、RAG 40件、優先度キュー試験での
+# 最大は各36,389、45,971、17,395節で、全件が未打ち切り結果と一致したため50,000節とする。
+# EN: Deterministic normal-search cap in expanded nodes; the measured maxima above all exhausted the heap.
+PLAN_MAX_EXPANSIONS_DEFAULT = 50_000
+
+# JA: 異常時だけの壁時計安全弁(ms)。最大実測1,234 ms/45,971節から5万節を1,342 msと見積もり、
+# 10倍とCI速度差2.6倍を掛けた34,892 msを上回る60,000 msとする。
+# EN: Emergency wall-clock fuse in milliseconds, above 10x the measured 50k estimate and the 2.6x CI factor.
+PLAN_WALL_SAFETY_MS = 60_000
 
 
 #: 登録済みシステムパラメータ。
@@ -134,10 +146,14 @@ SYSTEM_PARAMS = {
                "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Maximum returned plans."},
     "plan_max_depth": {"values": (2, 4), "default": 4, "tightens_only": True,
                        "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Maximum hypergraph depth."},
-    "plan_max_expansions": {"values": (1000, 10000, 50000), "default": 50000, "tightens_only": True,
-                            "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Planner expansion cap."},
-    "plan_timeout_ms": {"values": (100, 500, 900), "default": 900, "tightens_only": True,
-                        "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Planner wall-time cap."},
+    "plan_max_expansions": {"values": (1000, 10000, PLAN_MAX_EXPANSIONS_DEFAULT),
+                            "default": PLAN_MAX_EXPANSIONS_DEFAULT, "tightens_only": True,
+                            "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",),
+                            "doc": "Deterministic planner expansion cap."},
+    "plan_timeout_ms": {"values": (10000, 30000, PLAN_WALL_SAFETY_MS),
+                        "default": PLAN_WALL_SAFETY_MS, "tightens_only": True,
+                        "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",),
+                        "doc": "Emergency planner wall-time safety fuse in milliseconds."},
     "mcp_response_budget": {"values": (16000, 128000, 256000, 512000), "default": 512000, "tightens_only": True,
                             "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Structured response byte cap."},
     "mcp_body_mode": {"values": ("compact", "duplicate"), "default": "compact", "tightens_only": False,
