@@ -872,7 +872,7 @@ def test_the_guides_shortcut_tables_match_the_real_key_bindings(launch):
     paths = sorted(glob.glob(os.path.join(ROOT, "docs", "STUDIO_GUIDE*.md")))
     assert len(paths) == 7, paths
     list_key = win._actions["shortcuts"].shortcut().toString()
-    assert list_key == "Ctrl+F1" and win._actions["selected_help"].shortcut().toString() == "F1"
+    assert list_key == "Ctrl+F1" and win._actions["help_here"].shortcut().toString() == "F1"   # 採った selected_help
     for p in paths:
         with open(p, encoding="utf-8") as f:
             text = f.read()

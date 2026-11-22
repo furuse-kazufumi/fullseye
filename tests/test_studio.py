@@ -649,7 +649,8 @@ def test_shortcuts_help_action_wired():
     assert "shortcuts" in win._actions
     # 2026-11-13(初回起動の点検): F1 は選んでいる op のヘルプ。ショートカットの一覧は Ctrl+F1
     assert win._actions["shortcuts"].shortcut().toString() == "Ctrl+F1"
-    assert win._actions["selected_help"].shortcut().toString() == "F1"
+    # 2026-11-22 統合: キーの設定が初回の枝の selected_help を help_here として採る(WIRING 1 章 / studio_keymap.ADOPTED)
+    assert win._actions["help_here"].shortcut().toString() == "F1"
 
 
 def test_sample_code_helper():

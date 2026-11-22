@@ -1954,8 +1954,8 @@ def test_f1_takes_over_the_firstrun_action_when_both_branches_are_merged(app, st
         assert len(keys) >= 40 and not dup, dup
         assert keys["F1"] == ["Help for the selected operator"]             # 初回の枝の QAction をそのまま使う
         assert w._actions["help_here"] is a and a.objectName() == "keymap:help_here"
-        assert [k for k in w._actions if k not in km.BY_ID] == ["selected_help"]   # 採った旧名だけ(同じ QAction)
-        assert w._actions["selected_help"] is a
+        assert "selected_help" not in w._actions                         # 採った旧名は外す(1 つの QAction に 1 つの名前)
+        assert [k for k in w._actions if k not in km.BY_ID] == []
         assert km.ADOPTED == {"selected_help": "help_here"}
         assert ctl.assign("help_here", ("Ctrl+Shift+F1",)) == [] and _keys_of(a) == ("Ctrl+Shift+F1",)
         ctl.keymap = km.Keymap()

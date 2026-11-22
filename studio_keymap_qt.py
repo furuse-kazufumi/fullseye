@@ -1683,6 +1683,9 @@ def _install_help(win, ctl: "KeymapController", st: _State, palette_words) -> No
                     and isinstance(acts.get(k), QtGui.QAction)), None)
     if adopted is not None:                                    # 初回の枝の F1 の QAction をそのまま使う
         a = adopted
+        for old, cid in km.ADOPTED.items():
+            if cid == "help_here" and acts.get(old) is a:
+                acts.pop(old, None)                             # 同じ QAction を 2 つの名前で数えない
     else:
         a = QtGui.QAction(ctl.tr(km.BY_ID["help_here"].title), win)
         a.setToolTip(ctl.tr(km.TIP_HELP_HERE))
