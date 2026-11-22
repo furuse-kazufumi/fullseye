@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/furuse-kazufumi/fullseye/actions/workflows/ci.yml/badge.svg)](https://github.com/furuse-kazufumi/fullseye/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/fullseye)](https://pypi.org/project/fullseye/)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/furuse-kazufumi/fullseye/blob/master/LICENSE)
 [![Docs](https://img.shields.io/badge/docs-furuse.work-informational)](https://furuse.work/)
 
 **Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,838

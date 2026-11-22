@@ -34,6 +34,8 @@ ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "tools" / "ci_wheel_check.py"
 #: git が追跡する fullseye/ の .py 以外の床(2026-11-13 の実数は 28)。読み方が壊れて 0 件で緑、を止める。
 _FLOOR = 20
+#: 現在の実木から見つかる runtime 資産の床(2026-11-22 の実測は 16)。表と検出が一緒に縮むのを止める。
+_EXAMPLE_RUNTIME_PATH_FLOOR = 16
 _KNOWN_SOURCE_REFERENCES = {
     "examples/data/ai_inspection_recipes_2026_11_08.json",
     "examples/data/ai_inspection_scores_2026_11_08.json",
@@ -66,12 +68,50 @@ def test_example_runtime_data_is_discovered_from_example_sources():
     """既知の9参照を床にし、手書き目録だけを数えて0件で緑になる門を断る。"""
     checker = _load_checker_module()
     found = set(checker._example_runtime_paths(str(ROOT)))
+    assert len(found) >= _EXAMPLE_RUNTIME_PATH_FLOOR, sorted(found)
     assert _KNOWN_SOURCE_REFERENCES <= found, sorted(_KNOWN_SOURCE_REFERENCES - found)
     classified = set(checker.EXAMPLE_SHIPPED) | set(checker.EXAMPLE_NOT_SHIPPED)
     assert found <= classified, sorted(found - classified)
     reasons = tuple(checker.EXAMPLE_NOT_SHIPPED.values())
     assert reasons
     assert not [reason for reason in reasons if not reason]
+
+
+def test_example_runtime_data_finds_direct_calls_and_nested_assignments(tmp_path):
+    """直接の読取り引数と try / with / for の内側も、作り物の examples 木から見つける。"""
+    checker = _load_checker_module()
+    examples = tmp_path / "examples"
+    data = examples / "data"
+    data.mkdir(parents=True)
+    expected = {
+        "examples/data/direct.json",
+        "examples/data/joined.npy",
+        "examples/data/try.json",
+        "examples/data/with.json",
+        "examples/data/for.json",
+    }
+    for rel in expected:
+        path = tmp_path / rel
+        path.write_bytes(b"data")
+    (examples / "synthetic.py").write_text(
+        "from pathlib import Path\n"
+        "import os\n"
+        "import numpy as np\n"
+        "ROOT = Path(__file__).resolve().parent\n"
+        "open(ROOT / 'data' / 'direct.json')\n"
+        "np.load(os.path.join(ROOT, 'data', 'joined.npy'))\n"
+        "try:\n"
+        "    TRY_PATH = ROOT / 'data' / 'try.json'\n"
+        "except OSError:\n"
+        "    pass\n"
+        "with open(ROOT / 'data' / 'direct.json'):\n"
+        "    WITH_PATH = ROOT / 'data' / 'with.json'\n"
+        "for _item in [1]:\n"
+        "    FOR_PATH = ROOT / 'data' / 'for.json'\n",
+        encoding="utf-8",
+    )
+    found = set(checker._example_runtime_paths(str(tmp_path)))
+    assert found == expected
 
 
 def _example_runtime_data() -> dict:

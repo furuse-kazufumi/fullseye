@@ -23,7 +23,7 @@ from fullseye.mcp import server
 
 
 ROOT = Path(__file__).resolve().parents[1]
-README_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
+README_LINK = re.compile(r"\]\(([^)]+)\)")
 
 
 def _nested_lists(levels: int) -> str:

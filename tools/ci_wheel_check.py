@@ -238,6 +238,10 @@ EXAMPLE_NOT_SHIPPED = {
         "checkout の PMD PoC 用。examples 配下への移動を伴うため同梱しない",
     "data/thin_film_real":
         "checkout の薄膜 PoC 2 本が共有する実測一式。examples 配下への移動を伴うため同梱しない",
+    "data/thin_film_real/schwarz2024_micrograph_sio2_edge_640.jpg":
+        "checkout の薄膜 PoC が直接読む実測画像。examples 配下への移動を伴うため同梱しない",
+    "data/thin_film_real/schwarz2024_sio2_si_reflectance.csv":
+        "checkout の薄膜 PoC が直接読む実測表。examples 配下への移動を伴うため同梱しない",
     "data/tum_rgbd_fr1_xyz":
         "3.9 MB の TUM RGB-D 一式。最上位 data パッケージとの衝突を避け、checkout 専用にする",
 }
@@ -295,45 +299,57 @@ def _gallery_name_is_read(tree, name):
 
 
 def _example_runtime_paths(repo: str) -> dict:
-    """examples のソースが指す実在データを ``path -> readers`` で返す。/ Discover existing runtime data."""
+    """examples のソースが指す実在データを ``path -> readers`` で返す。
+
+    AST に見える定数式だけを辿るため、関数の引数を通じて渡されるパスは追跡しない。
+    Discover existing runtime data referenced by constant expressions in examples. Paths passed
+    through function parameters are intentionally not tracked because their runtime values are unknown.
+    """
     root = Path(repo).resolve()
     data_roots = (root / "examples" / "data", root / "examples_3d" / "_gallery", root / "data")
     found = {}
 
-    def visit(statements, names, source, tree):
-        for statement in statements:
-            value = None
-            targets = []
-            if isinstance(statement, ast.Assign):
-                value, targets = _eval_example_path(statement.value, names, source), statement.targets
-            elif isinstance(statement, ast.AnnAssign) and statement.value is not None:
-                value, targets = _eval_example_path(statement.value, names, source), [statement.target]
-            for target in targets:
-                if not isinstance(target, ast.Name) or value is None:
-                    continue
-                names[target.id] = value
-                if not isinstance(value, Path):
-                    continue
-                path = value.resolve()
-                inside = any(path == base or base in path.parents for base in data_roots)
-                if not inside or not path.exists():
-                    continue
-                if data_roots[1] in path.parents and not _gallery_name_is_read(tree, target.id):
-                    continue
-                rel = path.relative_to(root).as_posix()
-                found.setdefault(rel, set()).add(source.relative_to(root).as_posix())
-            children = []
-            if isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                children.append(statement.body)
-            elif isinstance(statement, ast.If):
-                children.extend((statement.body, statement.orelse))
-            for body in children:
-                visit(body, dict(names), source, tree)
+    def record(value, source, tree, name=None):
+        if not isinstance(value, Path):
+            return
+        path = value.resolve()
+        inside = any(path == base or base in path.parents for base in data_roots)
+        if not inside or not path.exists():
+            return
+        if name is not None and data_roots[1] in path.parents and not _gallery_name_is_read(tree, name):
+            return
+        rel = path.relative_to(root).as_posix()
+        found.setdefault(rel, set()).add(source.relative_to(root).as_posix())
+
+    def visit(node, names, source, tree):
+        value = None
+        targets = []
+        if isinstance(node, ast.Assign):
+            value, targets = _eval_example_path(node.value, names, source), node.targets
+        elif isinstance(node, ast.AnnAssign) and node.value is not None:
+            value, targets = _eval_example_path(node.value, names, source), [node.target]
+        for target in targets:
+            if not isinstance(target, ast.Name) or value is None:
+                continue
+            names[target.id] = value
+            record(value, source, tree, target.id)
+
+        if isinstance(node, ast.Call):
+            reader = ast.unparse(node.func).rsplit(".", 1)[-1]
+            if reader in {"open", "load", "imread", "read_bytes", "read_text"}:
+                for arg in node.args:
+                    record(_eval_example_path(arg, names, source), source, tree)
+                if isinstance(node.func, ast.Attribute):
+                    record(_eval_example_path(node.func.value, names, source), source, tree)
+
+        for child in ast.iter_child_nodes(node):
+            child_names = dict(names) if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) else names
+            visit(child, child_names, source, tree)
 
     sources = sorted((root / "examples").rglob("*.py")) + sorted((root / "examples_3d").rglob("*.py"))
     for source in sources:
         tree = ast.parse(source.read_text(encoding="utf-8"), filename=str(source))
-        visit(tree.body, {}, source, tree)
+        visit(tree, {}, source, tree)
     return {path: tuple(sorted(readers)) for path, readers in sorted(found.items())}
 
 

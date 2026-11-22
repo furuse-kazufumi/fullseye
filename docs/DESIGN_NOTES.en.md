@@ -3354,8 +3354,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_trust_block.py`
 
-- **L151** _(ja)_ — ★2026-10-12: ここは長らく ``release=True``(厳密一致)で呼んでいて、docstring の 「普段は 行 ≤ 索引」と食い違っていた。0.6.0 の後に op を 1 本でも足すと(pod 5 op) 凍結済みの 0.6.0 の行は直せないので、**どの commit でも必ず赤**になる門だった。 厳密一致はリリース直前に ``tools/gen_trust_block.py --release-check`` で見る (その意味は下の grown / shrunk の対で固定してある)。
-- **L159** _(ja)_ — ★2026-10-18: 先に索引を版の行とぴったり揃えてから 1 本足す。揃えずに足すと「厳密一致で 何件落ちるか」が、リリース後にどの層が増えたかで変わる(ops3d の op は 2-D 橋 tb_* も 生むので registry も 1 増え、2 件のはずが 3 件になった —— 門ではなく数え方の偶然)。
+- **L152** _(ja)_ — ★2026-10-12: ここは長らく ``release=True``(厳密一致)で呼んでいて、docstring の 「普段は 行 ≤ 索引」と食い違っていた。0.6.0 の後に op を 1 本でも足すと(pod 5 op) 凍結済みの 0.6.0 の行は直せないので、**どの commit でも必ず赤**になる門だった。 厳密一致はリリース直前に ``tools/gen_trust_block.py --release-check`` で見る (その意味は下の grown / shrunk の対で固定してある)。
+- **L160** _(ja)_ — ★2026-10-18: 先に索引を版の行とぴったり揃えてから 1 本足す。揃えずに足すと「厳密一致で 何件落ちるか」が、リリース後にどの層が増えたかで変わる(ops3d の op は 2-D 橋 tb_* も 生むので registry も 1 増え、2 件のはずが 3 件になった —— 門ではなく数え方の偶然)。
 
 ## `tests/test_type_alias_ledger.py`
 
