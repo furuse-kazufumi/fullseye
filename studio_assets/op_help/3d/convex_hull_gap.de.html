@@ -15,7 +15,7 @@
 <p><b>頂点どうしの距離では重なりを否定できない</b>(製作の教訓): 細い棒 2 本の十字は、凸包が交わるのに頂点の間は離れている。hausdorff_distance や最近頂点の距離は「離れている」と出すが、この op は重なり(<code style="color:#22d3bf">separated = False</code>)と判定する。</p>
 <p style="margin:2px 0 2px 12px">• 非凸の物体(部品・リンクのメッシュ)に直接使うと、<b>凸包の</b>重なりを部品の干渉と読み違える。凸に分けた部品ごとに使うこと(凸包は物体より大きいので、離れていれば物体も離れている)。</p>
 <p style="margin:2px 0 2px 12px">• 重なっているときの<b>貫通の深さは返さない</b>(<code style="color:#22d3bf">gap = 0</code>、<code style="color:#22d3bf">witness_a</code> ≈ <code style="color:#22d3bf">witness_b</code> は共通の点)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gap ≤ tol</code> は接触と数える(<code style="color:#22d3bf">separated = False</code>)。座標は平均を引いてから解く(並進で値が変わらない)。2-D の点 (N, 2) にも使える(線形計画の比は √2)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gap ≤ tol</code> は接触と数える(<code style="color:#22d3bf">separated = False</code>)。座標は平均を引き、全体を代表する 2 の冪の長さで割ってから解く(並進と座標の桁で値が変わらず、内積の二乗の underflow / overflow を避ける)。返り値は元の座標の単位へ戻す。2-D の点 (N, 2) にも使える(線形計画の比は √2)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points_a, points_b : array_like (N, 3) または (N, 2)</p>
 <p>凸包の頂点(全点でもよい。凸包を先に作らなくてよい)。次元はそろえる。1 点なら (d,) も可。</p>

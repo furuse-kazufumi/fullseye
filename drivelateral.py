@@ -1244,7 +1244,8 @@ def _check_alignment_columns(col, s, chord, op):
     単位・符号の取り違え(度とラジアン、1/km、%、km、逆向き)を断るだけの幅を持たせる:
 
     * ``s``: 弧長は弦より短くならず、弦の 2 倍を超えない(1 区間で半円でも π/2 倍)。弦/弧が 0.5〜1.01 の外は断る。
-    * ``curvature``: 内側の頂点 i で、弦の折れ角(φ_i − φ_{i−1})と、曲率の列から予言する折れ角
+    * ``curvature``: 1 区間だけなら ``heading`` の差と台形則の積分 h(κ₀ + κ₁)/2 を照合する(``heading`` がなく
+      非零の曲率なら照合不能なので断る)。2 区間以上なら内側の頂点 i で、弦の折れ角(φ_i − φ_{i−1})と、曲率の列から予言する折れ角
       h_{i−1}(κ_{i−1} + 2κ_i)/6 + h_i(2κ_i + κ_{i+1})/6(曲率が区間で一次なら弦の向き = 区間の平均の向きなので
       一次まで厳密。円弧では厳密に κ·(h_{i−1} + h_i)/2)の差が 1e-3 rad + 予言の 10 % + 曲率の跳びの半分の角を超えたら断る。
     * ``heading``: 区間の弦の向きと両端の向きの差が 0.01 rad + |κ|·h を超えたら断る(円弧では差は |κ|·h/2)。
@@ -1282,6 +1283,21 @@ def _check_alignment_columns(col, s, chord, op):
             raise ValueError("%s: alignment curvature disagrees with the polyline at sample %d: the chords turn %.4g rad "
                              "there, the curvature column predicts %.4g rad (tolerance %.3g; curvature is in 1/m of the "
                              "unit of x, y, positive turning left)" % (op, i + 1, turn[i], pred[i], tol[i]))
+    if "curvature" in col and n == 2:
+        kc = col["curvature"]
+        if "heading" not in col:
+            if np.any(kc != 0.0):
+                raise ValueError("%s: a two-sample alignment with nonzero curvature also needs heading so curvature "
+                                 "can be checked against the heading change" % op)
+        else:
+            observed = float(_wrap_angle(col["heading"][1] - col["heading"][0]))
+            pred = float(0.5 * hs[0] * (kc[0] + kc[1]))
+            tol = (ROAD_ALIGNMENT_CURVATURE_ABS_TOL + ROAD_ALIGNMENT_CURVATURE_REL_TOL * abs(pred)
+                   + ROAD_ALIGNMENT_CURVATURE_JUMP_TOL * abs(kc[1] - kc[0]) * hs[0])
+            if abs(observed - pred) > tol:
+                raise ValueError("%s: alignment curvature disagrees with heading over the only segment: heading turns "
+                                 "%.4g rad, the curvature integral predicts %.4g rad (tolerance %.3g; curvature is in "
+                                 "1/m of the unit of x, y)" % (op, observed, pred, tol))
     if "heading" in col:
         th = col["heading"]
         kk = np.maximum(k_xy, np.abs(col["curvature"])) if "curvature" in col else k_xy
@@ -1454,8 +1470,9 @@ def road_surface_heightmap(alignment, cell: float = 0.05, *, extent=None, margin
         ``heading``・``curvature``(:func:`clothoid_points` の返りをそのまま渡すと射影が厳密になる。無ければ
         標本から 2 次の差分で作る。端も 2 次)、``grade``(dz/ds)、``beta``(0..1)、``rate``(片勾配 [m/m]、
         |rate| ≤ 0.2)。任意の列は xy・z の折線と突き合わせ、単位・符号の取り違え(度とラジアン、1/km、%、km、
-        逆向き)は ValueError で断る(heading は弦の向きと 0.01 rad + |κ|·h まで、curvature は弦の折れ角と
-        1e-3 rad + 10 % まで、grade は z の傾きと 1e-3 + 10 % まで、s は弦/弧が 0.5〜1.01)。この幅より小さい誤り
+        逆向き)は ValueError で断る(heading は弦の向きと 0.01 rad + |κ|·h まで、curvature は弦の折れ角または
+        1 区間なら heading の差と 1e-3 rad + 10 % まで、grade は z の傾きと 1e-3 + 10 % まで、s は弦/弧が
+        0.5〜1.01)。2 標本で heading がない非零 curvature は照合できないので断る。この幅より小さい誤り
         (例: 区間の曲がりの角 2|κ|·h が 1e-3 rad を切るほど緩い曲線の、曲率の符号)は見分けない。
     cell : float
         格子の間隔 [m]。
@@ -1479,7 +1496,8 @@ def road_surface_heightmap(alignment, cell: float = 0.05, *, extent=None, margin
     verge drop); with return_truth=True also the per-cell analytic truth (grade along the road, cross slope,
     s, e) from the construction's partial derivatives. Cells are projected with lateral_offset and then onto the local arc of
     the segment (exact for lines and arcs, no polyline kinks). Optional blending into a terrain grid. The optional
-    columns are checked against the polyline (unit and sign mistakes are refused); |crossfall| and |rate| <= 0.2 m/m.
+    columns are checked against the polyline (unit and sign mistakes are refused); with two samples, nonzero curvature
+    is checked against the heading integral and is refused if heading is absent. |crossfall| and |rate| <= 0.2 m/m.
 
     呼び出し例::
 

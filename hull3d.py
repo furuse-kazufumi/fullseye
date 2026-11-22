@@ -234,8 +234,9 @@ def convex_hull_gap(points_a, points_b, tol: float = 1e-9, max_iter: int = 1000,
     * 非凸の物体(部品・リンクのメッシュ)に直接使うと、**凸包の**重なりを部品の干渉と読み違える。
       凸に分けた部品ごとに使うこと(凸包は物体より大きいので、離れていれば物体も離れている)。
     * 重なっているときの**貫通の深さは返さない**(``gap = 0``、``witness_a`` ≈ ``witness_b`` は共通の点)。
-    * ``gap ≤ tol`` は接触と数える(``separated = False``)。座標は平均を引いてから解く(並進で値が
-      変わらない)。2-D の点 (N, 2) にも使える(線形計画の比は √2)。
+    * ``gap ≤ tol`` は接触と数える(``separated = False``)。座標は平均を引き、全体を代表する 2 の冪の長さで
+      割ってから解く(並進と座標の桁で値が変わらず、内積の二乗の underflow / overflow を避ける)。返り値は元の
+      座標の単位へ戻す。2-D の点 (N, 2) にも使える(線形計画の比は √2)。
 
     Parameters
     ----------
@@ -299,8 +300,16 @@ def convex_hull_gap(points_a, points_b, tol: float = 1e-9, max_iter: int = 1000,
     if check not in ("lp", "none"):
         raise ValueError("%s: check must be 'lp' or 'none' (got %r)" % (op, check))
     d = A.shape[1]
-    c0 = 0.5 * (A.mean(0) + B.mean(0))                    # 並進で値を変えない(桁落ちを避ける)
-    A0, B0 = A - c0, B - c0
+    c0 = 0.5 * A.mean(0) + 0.5 * B.mean(0)                # 並進で値を変えない(和の overflow も避ける)
+    Ac, Bc = A - c0, B - c0
+    coord_scale = float(np.max(np.abs(np.vstack([Ac, Bc]))))
+    if coord_scale > 0.0:
+        _mantissa, exponent = np.frexp(coord_scale)
+        solve_scale = float(np.ldexp(0.5, int(exponent)))  # 最大座標以下の 2 の冪(割り算が厳密)
+    else:
+        solve_scale = 1.0
+    A0, B0 = Ac / solve_scale, Bc / solve_scale
+    solve_tol = tol / solve_scale
 
     def support(x):
         """D の上で x·p を最小にする点 p = a − b(a は A @ x の最小、b は B @ x の最大)。"""
@@ -320,11 +329,11 @@ def convex_hull_gap(points_a, points_b, tol: float = 1e-9, max_iter: int = 1000,
     while it < max_iter:
         it += 1
         nx = float(np.sqrt(x @ x))
-        if nx <= tol:                                     # 原点に届いた = 接するか重なる
+        if nx <= solve_tol:                               # 原点に届いた = 接するか重なる
             converged = True
             break
         ia, ib, p = support(x)
-        if nx - float(x @ p) / nx <= tol:                 # 上限 − 下限 ≤ tol(Wolfe の最適性)
+        if nx - float(x @ p) / nx <= solve_tol:           # 上限 − 下限 ≤ tol(Wolfe の最適性)
             converged = True
             break
         if (ia, ib) in pairs:                             # 進めない(丸めの床)
@@ -348,16 +357,20 @@ def convex_hull_gap(points_a, points_b, tol: float = 1e-9, max_iter: int = 1000,
             pairs = [q for q, k in zip(pairs, keep) if k]
             lam = lam / lam.sum()
             x = lam @ S
-    wa = np.zeros(d)
-    wb = np.zeros(d)
+    wa0 = np.zeros(d)
+    wb0 = np.zeros(d)
     for w, (i, j) in zip(lam, pairs):
-        wa += w * A[i]
-        wb += w * B[j]
-    upper = float(np.linalg.norm(wb - wa))
+        wa0 += w * A0[i]
+        wb0 += w * B0[j]
+    delta0 = wb0 - wa0
+    upper0 = float(np.linalg.norm(delta0))
+    upper = upper0 * solve_scale
+    wa = c0 + solve_scale * wa0
+    wb = c0 + solve_scale * wb0
     normal, lower = None, 0.0
-    if upper > 0.0:
-        normal = (wb - wa) / upper
-        lower = float(np.min(B @ normal) - np.max(A @ normal))
+    if upper0 > 0.0:
+        normal = delta0 / upper0
+        lower = float(np.min(B0 @ normal) - np.max(A0 @ normal)) * solve_scale
     if not converged:
         # 止める条件そのものが保証(上限 = 作った点の組、下限 = 分離の帯)なので、そこに届かない答えは
         # 出さない(fail-closed)。囲いの計算が壊れても、黙って違う隙間は返らない。
@@ -370,8 +383,8 @@ def convex_hull_gap(points_a, points_b, tol: float = 1e-9, max_iter: int = 1000,
            "separating_normal": normal if separated else None,
            "lp_t": None, "iterations": int(it)}
     if check == "lp":
-        t = _hull_gap_lp(A0, B0)
-        scale = max(HULL_GAP_LP_SCALE_FLOOR, float(np.max(np.abs(np.vstack([A0, B0])))))
+        t = _hull_gap_lp(A0, B0) * solve_scale
+        scale = max(HULL_GAP_LP_SCALE_FLOOR, coord_scale)
         slack = max(tol, HULL_GAP_LP_SLACK_REL * scale)   # HiGHS の可能性の許容(1e-7 相対)より広く
         # 答えは t/√d ≤ 隙間 ≤ t の帯に入るはず(重なり = 隙間 0 なら t ≈ 0)
         agree = t / np.sqrt(d) - slack <= out["gap"] <= t + slack

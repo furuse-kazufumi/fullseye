@@ -37,19 +37,19 @@ version: 1.1.1  # fullseye lib version this note was generated for
 * **雑音**: ステレオ・構造化光の誤差の伝播と同じ形 ``σ_z = z²·σ_d / (f·b)``(``acceptance_scan`` の
   ``triangulation`` と同じ則。f = K[0, 0] [px]、``baseline`` b [m]、``disparity_sigma`` σ_d [px])。
   既定 σ_d = 0(雑音なし = 厳密)。``seed`` で決定的。
-* 当たらない画素・面の下から始まる光線・深度が [``near``, ``max_range``] の外の画素は ``nan``(範囲は雑音を
-  足す前の深度で判定する)。
+* 当たらない画素・面の下から始まる光線・深度が [``near``, ``max_range``] の外の画素は ``nan``(両端は含み、
+  範囲は雑音を足す前の深度で判定する)。最初の標本 ``near`` が面上なら深度 ``near`` の当たりにする。
   面の下から始まる光線(カメラが地面の中)と、地図の外から面の高さより下で入ってくる光線(地図の側面)も
   ``nan``(側面は面ではない)。
 
 Parameters
 ----------
 heights : (ny, nx) array
-    高さ図 [m] (``nan`` = 観測していない)。
+    高さ図 [m] (``nan`` = 観測していない穴、Inf は ValueError)。
 pose : (R, t) or (4, 4)
     world→camera。4×4 は ndarray でも入れ子の list でもよい(最後の行は (0, 0, 0, 1))。
 K : (3, 3)
-    内部行列(``camera.intrinsic_matrix``)。
+    内部行列(``camera.intrinsic_matrix``)。形は ``[[fx, s, cx], [0, fy, cy], [0, 0, 1]]``。
 cell, origin
     セルの大きさと、格子の左下の角 (xmin, ymin)(``elevation_map`` の extent の (xmin, ymin))。
 width, height : int or None
@@ -60,8 +60,8 @@ Returns
 depth : (height, width) float64
     光軸方向の深度 [m]、当たらない所は ``nan``。
 
-**Raises** ``ValueError``: 形・値の誤り(pose が回転でない、K が 3×3 でない、step > cell、near ≥ max_range、
-画像が 4e6 画素を超える 等)。
+**Raises** ``ValueError``: 形・値の誤り(高さに Inf、pose が回転でない、K が pinhole の形でない、step > cell、
+near ≥ max_range、画像が 4e6 画素を超える 等)。
 
 空の入力(``heights`` が 0 要素)は ValueError で拒否する。
 

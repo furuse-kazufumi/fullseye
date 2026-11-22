@@ -211,6 +211,37 @@ def test_refusals_and_conventions():
     assert np.isnan(under).all()
 
 
+@pytest.mark.parametrize("endpoint", ["near", "max_range"])
+def test_near_and_max_range_endpoints_are_inclusive(endpoint):
+    """深度 1 m の平面は [near, max_range] のどちらの閉端点に置いても深度 1 m で当たる。"""
+    R = np.diag([1.0, -1.0, -1.0])
+    C = np.array([1.0, 1.0, 1.0])
+    limits = {"near": 1.0, "max_range": 2.0} if endpoint == "near" else {"near": 0.1, "max_range": 1.0}
+    got = TR.heightmap_depth_camera(np.zeros((2, 2)), (R, -R @ C), np.eye(3), cell=1.0,
+                                    width=1, height=1, **limits)[0, 0]
+    assert got == pytest.approx(1.0, abs=1e-15)
+
+
+def test_infinite_height_is_refused_but_nan_remains_a_hole():
+    R = np.diag([1.0, -1.0, -1.0])
+    C = np.array([1.0, 1.0, 1.0])
+    with pytest.raises(ValueError, match="infinite"):
+        TR.heightmap_depth_camera([[0.0, 0.0], [0.0, np.inf]], (R, -R @ C), np.eye(3), 1.0,
+                                  width=1, height=1)
+    assert np.isnan(TR.heightmap_depth_camera([[0.0, 0.0], [0.0, np.nan]], (R, -R @ C), np.eye(3), 1.0,
+                                              width=1, height=1)[0, 0])
+
+
+@pytest.mark.parametrize("index,value", [((1, 0), 1e-3), ((2, 0), 123.0), ((2, 1), -0.25), ((2, 2), 2.0)])
+def test_intrinsics_must_have_the_pinhole_bottom_triangle(index, value):
+    R = np.diag([1.0, -1.0, -1.0])
+    C = np.array([1.0, 1.0, 1.0])
+    bad = np.eye(3)
+    bad[index] = value
+    with pytest.raises(ValueError, match="pinhole"):
+        TR.heightmap_depth_camera(np.zeros((2, 2)), (R, -R @ C), bad, 1.0, width=1, height=1)
+
+
 # ---- 独立レビューの指摘で足した門(2026-11-15) -------------------------------------------------------
 KR = np.array([[40.0, 0.0, 23.5], [0.0, 40.0, 17.5], [0.0, 0.0, 1.0]])     # 48 × 36 の小さい画像(門を軽く)
 

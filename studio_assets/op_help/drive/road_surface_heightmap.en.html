@@ -26,8 +26,9 @@
 <p><code style="color:#22d3bf">heading</code>・<code style="color:#22d3bf">curvature</code>(<code style="color:#22d3bf">clothoid_points</code> の返りをそのまま渡すと射影が厳密になる。無ければ</p>
 <p>標本から 2 次の差分で作る。端も 2 次)、<code style="color:#22d3bf">grade</code>(dz/ds)、<code style="color:#22d3bf">beta</code>(0..1)、<code style="color:#22d3bf">rate</code>(片勾配 [m/m]、</p>
 <p>|rate| ≤ 0.2)。任意の列は xy・z の折線と突き合わせ、単位・符号の取り違え(度とラジアン、1/km、%、km、</p>
-<p>逆向き)は ValueError で断る(heading は弦の向きと 0.01 rad + |κ|·h まで、curvature は弦の折れ角と</p>
-<p>1e-3 rad + 10 % まで、grade は z の傾きと 1e-3 + 10 % まで、s は弦/弧が 0.5〜1.01)。この幅より小さい誤り</p>
+<p>逆向き)は ValueError で断る(heading は弦の向きと 0.01 rad + |κ|·h まで、curvature は弦の折れ角または</p>
+<p>1 区間なら heading の差と 1e-3 rad + 10 % まで、grade は z の傾きと 1e-3 + 10 % まで、s は弦/弧が</p>
+<p>0.5〜1.01)。2 標本で heading がない非零 curvature は照合できないので断る。この幅より小さい誤り</p>
 <p>(例: 区間の曲がりの角 2|κ|·h が 1e-3 rad を切るほど緩い曲線の、曲率の符号)は見分けない。</p>
 <p>cell : float</p>
 <p>格子の間隔 [m]。</p>
@@ -42,7 +43,7 @@
 <p>True なら <code style="color:#22d3bf">(heights, truth)</code>(真値の表つき)。既定は高さ図だけ。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 列の欠け・未知の列・非有限、任意の列が折線と合わない(単位・符号)、|crossfall|・|rate| &gt; 0.2、格子が 2.5e7 セルを超える 等。</p>
 <p>空の入力(<code style="color:#22d3bf">alignment</code> が 0 要素)は ValueError で拒否する。</p>
-<p>English: road surface height map from a centre-line alignment (x, y, z + optional s / heading / curvature / grade / crossfall blend beta / superelevation rate) and a cross-section (crown, one-way slope, gutter, verge drop); with return_truth=True also the per-cell analytic truth (grade along the road, cross slope, s, e) from the construction&#x27;s partial derivatives. Cells are projected with lateral_offset and then onto the local arc of the segment (exact for lines and arcs, no polyline kinks). Optional blending into a terrain grid. The optional columns are checked against the polyline (unit and sign mistakes are refused); |crossfall| and |rate| &lt;= 0.2 m/m.</p>
+<p>English: road surface height map from a centre-line alignment (x, y, z + optional s / heading / curvature / grade / crossfall blend beta / superelevation rate) and a cross-section (crown, one-way slope, gutter, verge drop); with return_truth=True also the per-cell analytic truth (grade along the road, cross slope, s, e) from the construction&#x27;s partial derivatives. Cells are projected with lateral_offset and then onto the local arc of the segment (exact for lines and arcs, no polyline kinks). Optional blending into a terrain grid. The optional columns are checked against the polyline (unit and sign mistakes are refused); with two samples, nonzero curvature is checked against the heading integral and is refused if heading is absent. |crossfall| and |rate| &lt;= 0.2 m/m.</p>
 <p>呼び出し例::</p>
 <p>import numpy as np</p>
 <p>import drivelateral as DL</p>

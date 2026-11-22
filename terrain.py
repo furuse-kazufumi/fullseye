@@ -32,6 +32,7 @@ __all__ = ["elevation_map", "fill_gaps", "traversability", "foothold_score",
 HEIGHTMAP_DEPTH_BOTTOM_ROW_ATOL = 1e-9   # 無次元 / dimensionless: 4x4 同次変換の最終行の許容幅 / bottom-row tolerance
 HEIGHTMAP_DEPTH_ROTATION_ATOL = 1e-6     # 無次元 / dimensionless: 回転行列の直交性の許容幅 / orthogonality tolerance
 HEIGHTMAP_DEPTH_IMAGE_SIZE_ATOL = 1e-9   # [px] 主点から整数画素数を復元する丸め許容幅 / image-size rounding allowance
+HEIGHTMAP_DEPTH_INTRINSIC_ATOL = 1e-12   # 無次元 / dimensionless: pinhole K の固定要素の許容幅 / fixed-entry tolerance
 HEIGHTMAP_DEPTH_MAX_PIXELS = 4_000_000   # [px] 過大な深度画像の確保を拒否 / reject excessive image allocation
 HEIGHTMAP_DEPTH_RAY_PARALLEL_TOL = 1e-15 # 無次元 / dimensionless: 足場の軸と平行な光線の判定幅 / parallel-ray threshold
 HEIGHTMAP_DEPTH_STEP_BATCH = 64          # [step] 一回の march 作業配列の上限 / bound each marching work array
@@ -476,19 +477,19 @@ def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.
     * **雑音**: ステレオ・構造化光の誤差の伝播と同じ形 ``σ_z = z²·σ_d / (f·b)``(``acceptance_scan`` の
       ``triangulation`` と同じ則。f = K[0, 0] [px]、``baseline`` b [m]、``disparity_sigma`` σ_d [px])。
       既定 σ_d = 0(雑音なし = 厳密)。``seed`` で決定的。
-    * 当たらない画素・面の下から始まる光線・深度が [``near``, ``max_range``] の外の画素は ``nan``(範囲は雑音を
-      足す前の深度で判定する)。
+    * 当たらない画素・面の下から始まる光線・深度が [``near``, ``max_range``] の外の画素は ``nan``(両端は含み、
+      範囲は雑音を足す前の深度で判定する)。最初の標本 ``near`` が面上なら深度 ``near`` の当たりにする。
       面の下から始まる光線(カメラが地面の中)と、地図の外から面の高さより下で入ってくる光線(地図の側面)も
       ``nan``(側面は面ではない)。
 
     Parameters
     ----------
     heights : (ny, nx) array
-        高さ図 [m](``nan`` = 観測していない)。
+        高さ図 [m](``nan`` = 観測していない穴、Inf は ValueError)。
     pose : (R, t) or (4, 4)
         world→camera。4×4 は ndarray でも入れ子の list でもよい(最後の行は (0, 0, 0, 1))。
     K : (3, 3)
-        内部行列(``camera.intrinsic_matrix``)。
+        内部行列(``camera.intrinsic_matrix``)。形は ``[[fx, s, cx], [0, fy, cy], [0, 0, 1]]``。
     cell, origin
         セルの大きさと、格子の左下の角 (xmin, ymin)(``elevation_map`` の extent の (xmin, ymin))。
     width, height : int or None
@@ -499,8 +500,8 @@ def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.
     depth : (height, width) float64
         光軸方向の深度 [m]、当たらない所は ``nan``。
 
-    **Raises** ``ValueError``: 形・値の誤り(pose が回転でない、K が 3×3 でない、step > cell、near ≥ max_range、
-    画像が 4e6 画素を超える 等)。
+    **Raises** ``ValueError``: 形・値の誤り(高さに Inf、pose が回転でない、K が pinhole の形でない、step > cell、
+    near ≥ max_range、画像が 4e6 画素を超える 等)。
 
     空の入力(``heights`` が 0 要素)は ValueError で拒否する。
 
@@ -525,6 +526,8 @@ def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.
         raise ValueError("%s: heights is empty — pass a (ny, nx) height map" % op)
     if Hm.ndim != 2 or min(Hm.shape) < 2:
         raise ValueError("%s: heights must be a 2-D map of at least 2 x 2 cells, got shape %r" % (op, Hm.shape))
+    if np.any(np.isinf(Hm)):
+        raise ValueError("%s: heights contains infinite values (NaN is allowed as a hole, Inf is not)" % op)
     if not np.any(np.isfinite(Hm)):
         raise ValueError("%s: heights has no finite cell" % op)
     c = float(cell)
@@ -537,6 +540,10 @@ def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.
     Km = np.asarray(K, np.float64)
     if Km.shape != (3, 3) or not np.all(np.isfinite(Km)) or Km[0, 0] <= 0 or Km[1, 1] <= 0:
         raise ValueError("%s: K must be a finite 3x3 intrinsic matrix with fx, fy > 0" % op)
+    fixed = np.array([Km[1, 0], Km[2, 0], Km[2, 1], Km[2, 2] - 1.0])
+    if np.any(np.abs(fixed) > HEIGHTMAP_DEPTH_INTRINSIC_ATOL):
+        raise ValueError("%s: K must have pinhole form [[fx, s, cx], [0, fy, cy], [0, 0, 1]] "
+                         "(fixed-entry tolerance %g)" % (op, HEIGHTMAP_DEPTH_INTRINSIC_ATOL))
     for name, v in (("width", width), ("height", height)):
         if v is not None and (isinstance(v, (bool, np.bool_)) or not np.isfinite(float(v)) or float(v) != int(float(v))):
             raise ValueError("%s: %s must be a whole number of pixels, got %r" % (op, name, v))
@@ -639,21 +646,23 @@ def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.
             a_out = np.broadcast_to(a_out_all[active][:, None], above.shape)
             span = t_in <= t_out
             down = (a_prev > 0.0) & (above <= 0.0)                         # 上から下へ = 当たり
+            near_hit = np.isnan(a_prev) & (above == 0.0) & (tb == t0)      # 閉区間の左端 t = near ちょうど
             entered = span & (t_prev < t_in) & (t_in <= tb)                # この刻みの間で足場に入った
             enter_hit = entered & np.isnan(a_prev) & (above <= 0.0) & (a_in > 0.0)
-            blocked = np.isnan(a_prev) & (above <= 0.0) & ~enter_hit      # 外・穴・始点から面の下へ = 側面
+            blocked = np.isnan(a_prev) & (above <= 0.0) & ~enter_hit & ~near_hit  # 外・穴・始点から面の下へ = 側面
             exit_hit = (span & (t_prev < t_out) & (t_out <= tb) & (a_prev > 0.0) & np.isnan(above)
                         & (a_out <= 0.0))                                  # 出る前に縁の内側で当たった
-            event = down | enter_hit | blocked | exit_hit
+            event = down | near_hit | enter_hit | blocked | exit_hit
             hit = event.any(1)
             jj = np.argmax(event, 1)
             rows = np.arange(na)
             ta, aa = t_prev[rows, jj].copy(), a_prev[rows, jj].copy()
             tb_, ab = tb[rows, jj].copy(), above[rows, jj].copy()
-            e_in, e_out = enter_hit[rows, jj], exit_hit[rows, jj]
+            e_near, e_in, e_out = near_hit[rows, jj], enter_hit[rows, jj], exit_hit[rows, jj]
+            ta[e_near], aa[e_near] = tb_[e_near], ab[e_near]
             ta[e_in], aa[e_in] = t_in[e_in, 0], a_in[e_in, 0]
             tb_[e_out], ab[e_out] = t_out[e_out, 0], a_out[e_out, 0]
-            ok = hit & (down[rows, jj] | e_in | e_out)
+            ok = hit & (down[rows, jj] | e_near | e_in | e_out)
             ta = np.where(ok, ta, tb_)                      # 当たらない行は使わない(−inf を掛けない)
             tt = ta + _crossing_fraction(np.where(ok, aa, 1.0), np.where(ok, ab, 0.0)) * (tb_ - ta)
             out[active[ok]] = tt[ok]

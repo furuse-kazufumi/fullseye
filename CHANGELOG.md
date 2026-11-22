@@ -72,6 +72,11 @@ Unitree G1 が国土地理院 DEM5A の上に置いた道を登る動画の製�
     黙って切り捨てず断る。
   - `convex_hull_gap`: 線形計画との食い違いの判定の丸めの幅 slack = max(tol, 1e-6·scale) を docstring に書いた。その幅
     より小さい隙間では独立な判定が効かない(座標が 1e3 の桁なら 1e-3 未満)。
+  - `convex_hull_gap`: 中心を引いた座標を 2 の冪の代表長さで正規化してから解き、隙間・上下限・最近点・LP の t を元の単位へ
+    戻す。2 点の距離が 1e-200〜1e150 の桁でも相対 1e-12 で真値に一致する。
+  - `road_surface_heightmap`: 2 標本でも曲率の積分と heading の差を照合し、heading がない非零曲率は検査不能なので断る。
+  - `heightmap_depth_camera`: [near, max_range] の左端ちょうどを当たりにし、near と max_range の両端を含む契約を門にした。
+  - `heightmap_depth_camera`: 高さ図の Inf と、`[[fx,s,cx],[0,fy,cy],[0,0,1]]` でない K を ValueError で断る(NaN は穴のまま)。
   - 門: 符号や項を壊した写しが全部の門をすり抜けた所に門を足した。道は車道の外(側溝 −gutter_depth·sin(πu)・路側の段)と
     線形の端の外(z = z_end + g_end·u)を既定の extent の全セルで閉形式と、退避するセルを含む全セルで真値の grade を高さ図の
     勾配(δ = 1e-6 m の中心差分)と、距離標の起点で面が変わらないこと。深度カメラは地図の側面・起伏の中のカメラ・nan の穴

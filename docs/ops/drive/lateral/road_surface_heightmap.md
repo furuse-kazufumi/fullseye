@@ -65,8 +65,9 @@ alignment : dict
     ``heading``・``curvature``(:func:`clothoid_points` の返りをそのまま渡すと射影が厳密になる。無ければ
     標本から 2 次の差分で作る。端も 2 次)、``grade``(dz/ds)、``beta``(0..1)、``rate``(片勾配 [m/m]、
     |rate| ≤ 0.2)。任意の列は xy・z の折線と突き合わせ、単位・符号の取り違え(度とラジアン、1/km、%、km、
-    逆向き)は ValueError で断る(heading は弦の向きと 0.01 rad + |κ|·h まで、curvature は弦の折れ角と
-    1e-3 rad + 10 % まで、grade は z の傾きと 1e-3 + 10 % まで、s は弦/弧が 0.5〜1.01)。この幅より小さい誤り
+    逆向き)は ValueError で断る(heading は弦の向きと 0.01 rad + |κ|·h まで、curvature は弦の折れ角または
+    1 区間なら heading の差と 1e-3 rad + 10 % まで、grade は z の傾きと 1e-3 + 10 % まで、s は弦/弧が
+    0.5〜1.01)。2 標本で heading がない非零 curvature は照合できないので断る。この幅より小さい誤り
     (例: 区間の曲がりの角 2|κ|·h が 1e-3 rad を切るほど緩い曲線の、曲率の符号)は見分けない。
 cell : float
     格子の間隔 [m]。
@@ -90,7 +91,8 @@ grade / crossfall blend beta / superelevation rate) and a cross-section (crown, 
 verge drop); with return_truth=True also the per-cell analytic truth (grade along the road, cross slope,
 s, e) from the construction's partial derivatives. Cells are projected with lateral_offset and then onto the local arc of
 the segment (exact for lines and arcs, no polyline kinks). Optional blending into a terrain grid. The optional
-columns are checked against the polyline (unit and sign mistakes are refused); |crossfall| and |rate| <= 0.2 m/m.
+columns are checked against the polyline (unit and sign mistakes are refused); with two samples, nonzero curvature
+is checked against the heading integral and is refused if heading is absent. |crossfall| and |rate| <= 0.2 m/m.
 
 呼び出し例::
 

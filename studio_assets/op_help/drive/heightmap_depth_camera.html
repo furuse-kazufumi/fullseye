@@ -9,14 +9,14 @@
 <p style="margin:2px 0 2px 12px">• <b>カメラの向きの決まりは 1 つ</b>: <code style="color:#22d3bf">camera</code> と同じ OpenCV の軸(x 右・y 下・z 前)。<code style="color:#22d3bf">pose</code> は world→camera の <code style="color:#22d3bf">(R, t)</code>(X_cam = R·X_world + t、<code style="color:#22d3bf">camera.project_points</code> と同じ)か 4×4。画素の中心は整数の座標(<code style="color:#22d3bf">u = c</code>, <code style="color:#22d3bf">v = r</code>)。返した深度を <code style="color:#22d3bf">camera.depth_to_points</code> に渡し、<code style="color:#22d3bf">Rᵀ (X_cam − t)</code> で世界へ戻せば元の面の上に乗る(往復)。render3d / world_camera の OpenGL の軸(y 上・−z 前)とは <code style="color:#22d3bf">(x, y, z)_here = (x, −y, −z)_render3d</code>。</p>
 <p style="margin:2px 0 2px 12px">• <b>刻み</b>: <code style="color:#22d3bf">step</code> は既定 cell/2、cell より大きい値は断る。刻みより短い弦で光線が横切る細い突起(1 セル幅の壁を浅い角度でかすめる所など)は飛び越しうる。交点の補間の誤差は刻みの 2 乗で縮む(平面では 0)。</p>
 <p style="margin:2px 0 2px 12px">• <b>雑音</b>: ステレオ・構造化光の誤差の伝播と同じ形 <code style="color:#22d3bf">σ_z = z²·σ_d / (f·b)</code>(<code style="color:#22d3bf">acceptance_scan</code> の <code style="color:#22d3bf">triangulation</code> と同じ則。f = K[0, 0] [px]、<code style="color:#22d3bf">baseline</code> b [m]、<code style="color:#22d3bf">disparity_sigma</code> σ_d [px])。既定 σ_d = 0(雑音なし = 厳密)。<code style="color:#22d3bf">seed</code> で決定的。</p>
-<p style="margin:2px 0 2px 12px">• 当たらない画素・面の下から始まる光線・深度が [<code style="color:#22d3bf">near</code>, <code style="color:#22d3bf">max_range</code>] の外の画素は <code style="color:#22d3bf">nan</code>(範囲は雑音を足す前の深度で判定する)。面の下から始まる光線(カメラが地面の中)と、地図の外から面の高さより下で入ってくる光線(地図の側面)も <code style="color:#22d3bf">nan</code>(側面は面ではない)。</p>
+<p style="margin:2px 0 2px 12px">• 当たらない画素・面の下から始まる光線・深度が [<code style="color:#22d3bf">near</code>, <code style="color:#22d3bf">max_range</code>] の外の画素は <code style="color:#22d3bf">nan</code>(両端は含み、範囲は雑音を足す前の深度で判定する)。最初の標本 <code style="color:#22d3bf">near</code> が面上なら深度 <code style="color:#22d3bf">near</code> の当たりにする。面の下から始まる光線(カメラが地面の中)と、地図の外から面の高さより下で入ってくる光線(地図の側面)も <code style="color:#22d3bf">nan</code>(側面は面ではない)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>heights : (ny, nx) array</p>
-<p>高さ図 [m] (<code style="color:#22d3bf">nan</code> = 観測していない)。</p>
+<p>高さ図 [m] (<code style="color:#22d3bf">nan</code> = 観測していない穴、Inf は ValueError)。</p>
 <p>pose : (R, t) or (4, 4)</p>
 <p>world→camera。4×4 は ndarray でも入れ子の list でもよい(最後の行は (0, 0, 0, 1))。</p>
 <p>K : (3, 3)</p>
-<p>内部行列(<code style="color:#22d3bf">camera.intrinsic_matrix</code>)。</p>
+<p>内部行列(<code style="color:#22d3bf">camera.intrinsic_matrix</code>)。形は <code style="color:#22d3bf">[[fx, s, cx], [0, fy, cy], [0, 0, 1]]</code>。</p>
 <p>cell, origin</p>
 <p>セルの大きさと、格子の左下の角 (xmin, ymin)(<code style="color:#22d3bf">elevation_map</code> の extent の (xmin, ymin))。</p>
 <p>width, height : int or None</p>
@@ -24,7 +24,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>depth : (height, width) float64</p>
 <p>光軸方向の深度 [m]、当たらない所は <code style="color:#22d3bf">nan</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・値の誤り(pose が回転でない、K が 3×3 でない、step &gt; cell、near ≥ max_range、画像が 4e6 画素を超える 等)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・値の誤り(高さに Inf、pose が回転でない、K が pinhole の形でない、step &gt; cell、near ≥ max_range、画像が 4e6 画素を超える 等)。</p>
 <p>空の入力(<code style="color:#22d3bf">heights</code> が 0 要素)は ValueError で拒否する。</p>
 <p>English: renders a height map / DEM directly with a pinhole depth camera by marching each pixel ray at a fixed step over the bilinear height surface and refining the crossing linearly; returns depth along the optical axis (OpenCV axes, world-&gt;camera pose as in camera.project_points), NaN where nothing is hit. Optional stereo noise sigma_z = z^2 sigma_d / (f b). The inverse of depth_to_points -&gt; elevation_map.</p>
 <p>呼び出し例::</p>

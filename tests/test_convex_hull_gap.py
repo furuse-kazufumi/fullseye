@@ -162,6 +162,18 @@ def test_gap_below_tol_counts_as_contact():
     assert r["separated"] and abs(r["gap"] - 1e-10) < 1e-13 and r["lp_t"] is None
 
 
+@pytest.mark.parametrize("distance", [1e-200, 1e-160, 1.0, 1e150])
+def test_two_points_keep_their_distance_across_extreme_coordinate_scales(distance):
+    """内積を二乗しても表せない桁を含め、2 点の距離は独立な hypot の真値へ相対 1e-12 で一致する。"""
+    a = np.array([[0.0, 0.0]])
+    b = np.array([[distance, 0.0]])
+    expected = math.hypot(float(b[0, 0] - a[0, 0]), float(b[0, 1] - a[0, 1]))
+    r = convex_hull_gap(a, b, tol=distance * 1e-13)
+    for got in (r["gap"], r["gap_upper"], r["witness_b"][0] - r["witness_a"][0], r["lp_t"]):
+        assert math.isclose(got, expected, rel_tol=1e-12, abs_tol=0.0), (distance, got, expected)
+    assert r["separated"] and r["gap_lower"] <= expected <= r["gap_upper"]
+
+
 def test_refusals():
     a = _box([0, 0, 0], [1, 1, 1])
     with pytest.raises(ValueError, match="empty"):

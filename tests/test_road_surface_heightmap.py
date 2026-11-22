@@ -293,6 +293,34 @@ def test_cross_slopes_are_in_m_per_m_and_bounded(kw):
     DL.road_surface_heightmap(_straight(), 0.1, extent=(5.0, 35.0, -3.0, 3.0), crossfall=0.2)   # 上限ちょうどは通す
 
 
+@pytest.mark.parametrize("curvature", [0.05, 1000.0])
+def test_two_sample_curvature_must_agree_with_the_heading_integral(curvature):
+    """1 区間でも heading 差 = ∫κ ds。直線の両端 heading と非零曲率を黙って面に使わない。"""
+    road = {"x": [0.0, 10.0], "y": [0.0, 0.0], "z": [0.0, 1.0], "s": [0.0, 10.0],
+            "heading": [0.0, 0.0], "curvature": [curvature, curvature], "grade": [0.1, 0.1]}
+    with pytest.raises(ValueError, match="curvature.*heading"):
+        DL.road_surface_heightmap(road, 1.0)
+
+
+def test_two_sample_nonzero_curvature_without_heading_is_refused():
+    """2 標本だけでは曲率を折線から照合できないため、非零曲率を heading なしでは受け取らない。"""
+    road = {"x": [0.0, 10.0], "y": [0.0, 0.0], "z": [0.0, 1.0], "s": [0.0, 10.0],
+            "curvature": [0.05, 0.05], "grade": [0.1, 0.1]}
+    with pytest.raises(ValueError, match="curvature.*heading"):
+        DL.road_surface_heightmap(road, 1.0)
+
+
+def test_two_sample_circular_arc_curvature_agrees_with_heading_integral():
+    """1 区間でも、解析的な円弧の端点・heading・曲率が一致する入力は拒否しない。"""
+    curvature, length = 0.05, 10.0
+    angle = curvature * length
+    road = {"x": [0.0, np.sin(angle) / curvature], "y": [0.0, (1.0 - np.cos(angle)) / curvature],
+            "z": [0.0, 1.0], "s": [0.0, length], "heading": [0.0, angle],
+            "curvature": [curvature, curvature], "grade": [0.1, 0.1]}
+    H = DL.road_surface_heightmap(road, 1.0)
+    assert H.size > 0 and np.all(np.isfinite(H))
+
+
 def _section(y, cs, beta=0.0, rate=0.0):
     """横断の閉形式 p(y)・∂p/∂y(直線の道で e = y)。車道の外は縁の高さから側溝の半正弦、その外は路側の段。"""
     edge = cs["half_width"] + cs["shoulder"]
