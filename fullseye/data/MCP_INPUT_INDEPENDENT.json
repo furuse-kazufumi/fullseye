@@ -1,13 +1,23 @@
 {
- "method": "1-input MCP-executable ops (default knobs) run on 7 inputs with different content and the same 128x128 shape (noise / gradient with discs / stripes with a dark square / a large disc / a coarse checkerboard / the blob_count and defect_inspect task images; other sorts via a converter op); listed when all 7 outputs are byte-identical. Ops that could not run here keep their committed entry. Used by fullseye_score_pipeline as a deny list.",
+ "method": "1-input MCP-executable ops (default knobs) run on 7 inputs with different content and the same 128x128 shape (noise / gradient with discs / stripes with a dark square / a large disc / a coarse checkerboard / the blob_count and defect_inspect task images; other sorts via a converter op); listed when all 7 outputs are byte-identical. Ops that could not run here keep their committed entry. Ledger ops run in the isolated MCP worker are judged the same way by tools/mcp_isolated_probe.py --verify-mcp and read from docs/mcp_isolated_ops.json. Used by fullseye_score_pipeline as a deny list.",
  "ops": {
   "banding_map": {
    "in_sort": "image",
    "out_sort": "image"
   },
+  "copy_move_regions": {
+   "in_sort": "image",
+   "judged_by": "tools/mcp_isolated_probe.py --verify-mcp",
+   "out_sort": "table"
+  },
   "count_channels": {
    "in_sort": "color",
    "out_sort": "feature"
+  },
+  "grid_hole_points": {
+   "in_sort": "image",
+   "judged_by": "tools/mcp_isolated_probe.py --verify-mcp",
+   "out_sort": "matrix"
   },
   "hx_full_domain": {
    "in_sort": "image",
@@ -85,9 +95,24 @@
    "in_sort": "contour",
    "out_sort": "feature"
   },
+  "num_points_funct_1d": {
+   "in_sort": "signal",
+   "judged_by": "tools/mcp_isolated_probe.py --verify-mcp",
+   "out_sort": "measurement"
+  },
+  "read_symbols_zxing": {
+   "in_sort": "image",
+   "judged_by": "tools/mcp_isolated_probe.py --verify-mcp",
+   "out_sort": "table"
+  },
   "sk_slic": {
    "in_sort": "image",
    "out_sort": "region"
+  },
+  "support_polygon": {
+   "in_sort": "points",
+   "judged_by": "tools/mcp_isolated_probe.py --verify-mcp",
+   "out_sort": "table"
   },
   "tb_num_points_funct_1d": {
    "in_sort": "signal",
@@ -100,6 +125,26 @@
   "tb_zero_crossings_funct_1d": {
    "in_sort": "signal",
    "out_sort": "signal"
+  },
+  "wave_nodal_lines": {
+   "in_sort": "matrix",
+   "judged_by": "tools/mcp_isolated_probe.py --verify-mcp",
+   "out_sort": "region"
+  },
+  "x_range_funct_1d": {
+   "in_sort": "signal",
+   "judged_by": "tools/mcp_isolated_probe.py --verify-mcp",
+   "out_sort": "pairs"
+  },
+  "zero_crossing_rate": {
+   "in_sort": "signal",
+   "judged_by": "tools/mcp_isolated_probe.py --verify-mcp",
+   "out_sort": "measurement"
+  },
+  "zero_crossings_funct_1d": {
+   "in_sort": "signal",
+   "judged_by": "tools/mcp_isolated_probe.py --verify-mcp",
+   "out_sort": "indices"
   }
  }
 }

@@ -323,18 +323,22 @@ READS = {
                                   "docs/ops/families_timing.json"],
     "tools/gen_recipe_index.py": ["fullseye/data/OP_SEARCH.json", "fullseye/data/OP_GRAPH.json",
                                   "fullseye/data/OP_INDEX.json"],
-    "tools/gen_mcp_input_independent.py": ["fullseye/data/OP_GRAPH.json"],
+    # 2026-11-13: pipeline の計測値に op の意味(OP_CARDS の要約)を付けるので、判定の実行が OP_CARDS を読む
+    "tools/gen_mcp_input_independent.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_CARDS.json"],
     "tools/gen_recipe_coverage.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_INDEX.json"],
     "tools/gen_recipe_retrieval_report.py": ["fullseye/data/RECIPE_INDEX.json"],
+    # 2026-11-13: plan が入力の中身を読まない op(MCP_INPUT_INDEPENDENT)を経路から外す
     "tools/measure_mcp_context.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_SEARCH.json",
                                       "fullseye/data/OP_CARDS.json", "fullseye/data/OP_PROBE.json",
-                                      "fullseye/data/RECIPE_INDEX.json", "fullseye/data/TUNING_CARDS.json"],
+                                      "fullseye/data/RECIPE_INDEX.json", "fullseye/data/TUNING_CARDS.json",
+                                      "fullseye/data/MCP_INPUT_INDEPENDENT.json"],
     "tools/gen_rag_benchmark_report.py": ["docs/ops/rag_benchmark.json",
                                              "fullseye/data/OP_SEARCH.json",
                                              "fullseye/data/OP_CARDS.json",
                                              "fullseye/data/OP_PROBE.json",
                                              "fullseye/data/OP_GRAPH.json",
-                                             "fullseye/data/TUNING_CARDS.json"],
+                                             "fullseye/data/TUNING_CARDS.json",
+                                             "fullseye/data/MCP_INPUT_INDEPENDENT.json"],
     "tools/gen_literature_counts.py": ["docs/ops/*"],
     "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md", "fullseye/data/DEVICE_RULES.json",
                                 "fullseye/data/GPU_ACCEL_USE.json"],
@@ -416,6 +420,12 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    # ---- 2026-11-13: 台帳 op を MCP の隔離した子プロセスで走らせる実測の台帳 ----
+    "tools/mcp_isolated_probe.py": ("台帳 op を MCP の作業プロセス(fullseye/mcp/opworker.py)で見本の入力つきで実際に走らせ、"
+                                    "時間(5 秒)とメモリ(1 GiB)の上限・ファイルとネットの砂場・道具の経路を通った物だけを "
+                                    "docs/mcp_isolated_ops.json に書く実測の道具(docs/op_knob.json と同じ扱い)。答えが機械の速さで揺れ"
+                                    "(上限の近くの op)、回し直すと MCP で実行できる op の集合 = 道具の契約が変わるので、drift 検査には入れず"
+                                    "人が差分を読む。回すのは台帳 op を足した・直した時(全部で 2〜5 分 + --verify-mcp で約 15 分)。"),
     # ---- 2026-11-10: CI の先頭のジョブ(gates)が読む、失敗の実績の表 ----
     "tools/ci_failure_history.py": ("GitHub の直近の失敗した run のログ(gh run list / gh run view --log-failed、読むだけ)から"
                                     "テストのファイルごとの落ちた run の数を数え、tools/ci_failure_history.json に書く手元専用の道具。"

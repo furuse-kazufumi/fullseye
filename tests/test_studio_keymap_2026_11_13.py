@@ -2483,7 +2483,8 @@ def test_tooltips_name_dash_effect_and_key(win, ctl, studio_mod):
 
     def check_mode(lang):
         lines = mode.toolTip().splitlines()
-        assert len(lines) == 5 and _TIP_FORM.match(lines[0]), (lang, lines)
+        assert len(lines) == 5, (lang, lines)
+        assert _TIP_FORM.match(lines[0]), (lang, lines)
         for cid, line in zip(("work_mode_build", "work_mode_compare", "work_mode_inspect", "work_mode_code"),
                              lines[1:]):
             assert line.endswith(" (%s)" % ctl.keymap.keys(cid)[0]), (lang, cid, line)

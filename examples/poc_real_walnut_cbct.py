@@ -42,6 +42,14 @@ doi:10.1038/s41597-019-0235-y; Zenodo doi:10.5281/zenodo.2686726, CC BY 4.0。
 * 幾何の取り違え: 隣接の恒等式 <Ax,y> = <x,Aᵀy> は射影の対が整合しているかを測るだけで、
   データと幾何の食い違いは見えない。取り違え(面内回転・縦ずれ・回転の向き・横ずれ)は
   参照との一致と再投影の残差で見つける。
+  ★縦ずれについての但し書き(2026-11-13、作者と独立の検証の指摘): 「縦ずれを無視」した再構成は、
+  検出器の**別の行**(縦ずれ dh = 1.08 mm、回転中心では dh × SOD / SDD ≈ 0.36 mm 離れた面 =
+  0.30 mm 格子の約 1.2 個分)を、同じ扇形の幾何で再構成している。別の面のデータとして矛盾が無いので、
+  再投影の残差が正しい幾何と変わらないのは**作りの上で必ず起きる**ことで、発見ではない。参照との
+  RMSE が 2.6 倍になるのも、再構成の誤差ではなく「別の面を参照の中央面と比べた」差。ここから言えるのは
+  「再投影の残差は、どの面を再構成したかを教えない(だから外の参照が要る)」までで、該当の門は
+  主張の検査ではなく健全性の確認として数える。
+  正しい幾何でも再投影の相対残差は 0.087 と大きい。内訳(束ね・ビーム硬化・散乱など)は切り分けていない。
 * 二重エネルギー: このデータは 40 kV の 1 エネルギーだけ。**第 2 エネルギーは合成**
   (実データの 1 エネルギーと、仮定した 2 物質の減弱係数の閉形式)で、実データではない。
 
@@ -52,6 +60,8 @@ doi:10.1038/s41597-019-0235-y; Zenodo doi:10.5281/zenodo.2686726, CC BY 4.0。
 
 データが無い環境(CI)では取得せず、下の ``RECORDED`` を印字して、合成の幾何ベクトルで
 幾何の読み替え(``fit_geometry`` / ``ideal_warp``)と隣接の恒等式の門だけを回す。
+**実データの章の数字は CI が守っていない** —— どれも ``RECORDED["date"]`` の手元実行 1 回の記録値で、
+説明文・キャプションの数字はこの記録から取る。
 """
 from __future__ import annotations
 
@@ -921,14 +931,24 @@ def chapter_mistakes(proj: dict, geo: dict, fan: dict, g: Gates) -> dict:
         print("  %-16s RMSE %.4f /mm  SSIM %.3f  再投影の相対残差 %.4f" % (name, sc["rmse"], sc["ssim"], resid))
     ok = rows[0]
     by = {row["name"]: row for row in rows}
+    slice_shift = abs(fit["dh_mm"]) * fit["dso"] / fit["dsd"]
+    print("  ※「縦ずれを無視」= 検出器の別の行を同じ扇形の幾何で再構成している(縦ずれ %.2f mm、回転中心で約 %.2f mm 離れた面"
+          " = 格子 %.1f mm の %.1f 個分)。別の面のデータとして矛盾が無いので、再投影の残差が正しい幾何と変わらないのは"
+          "作りの上で必ず起きる。参照との RMSE の悪化は「別の面を比べた」差で、再構成の誤差ではない。"
+          % (abs(fit["dh_mm"]), slice_shift, FAN_VOXEL, slice_shift / FAN_VOXEL))
+    print("  ※ 正しい幾何でも再投影の相対残差は %.3f ある。内訳(束ね・ビーム硬化・散乱など)は切り分けていない。" % ok["resid"])
     roll = by["面内回転 0.5° を無視"]
     g.check("取り違え", "面内回転 0.5° は中央面の 0.3 mm 格子では効かない(RMSE の差 < 5 %)",
             abs(roll["rmse"] / ok["rmse"] - 1) < 0.05, "%.5f / %.5f" % (roll["rmse"], ok["rmse"]))
     for row in rows[2:]:
+        # 縦ずれの行は「別の面を参照の中央面と比べた」差(再構成の誤差ではない)。ほかの 2 つは同じ面での誤り。
         g.check("取り違え", "%s: 参照との RMSE が正しい幾何の 2 倍超" % row["name"], row["rmse"] > 2 * ok["rmse"],
                 "%.4f / %.4f" % (row["rmse"], ok["rmse"]))
     voff = by["縦ずれ 7.2 画素を無視"]
-    g.check("取り違え", "盲点: 縦ずれは再投影の残差では見つからない(正しい幾何の残差以下)",
+    # ★主張の検査ではない。別の行のデータも矛盾の無いデータなので、この不等式は作りの上でほぼ必ず通る
+    #   (2 つの行の雑音・散乱の差だけで決まる)。落ちたら fan_data / 再投影の配線が壊れた印として読む。
+    g.check("取り違え", "健全性の確認(作りの上で起きる): 縦ずれを無視 = 別の行の面を再構成しているので、"
+            "再投影の残差は正しい幾何の残差以下",
             voff["resid"] <= ok["resid"], "%.4f ≤ %.4f(別の高さの行も、それ自体は矛盾の無いデータ)"
             % (voff["resid"], ok["resid"]))
     big = [r for r in rows[1:] if r["name"] in ("横に 1 画素(0.3 mm)ずらす", "回転の向きを逆に")]
@@ -951,7 +971,7 @@ def chapter_mistakes(proj: dict, geo: dict, fan: dict, g: Gates) -> dict:
     g.check("取り違え", "A と Aᵀ の幾何を食い違わせると恒等式は崩れる(相対差 > 1e-3)", gap_mismatch > 1e-3,
             "%.1e" % gap_mismatch)
     return {"rows": rows, "images": images, "adjoint_fan": gap_fan, "adjoint_cone": gap_cone,
-            "adjoint_mismatch": gap_mismatch}
+            "adjoint_mismatch": gap_mismatch, "slice_shift_mm": slice_shift}
 
 
 # --------------------------------------------------------------------------- #
@@ -1173,13 +1193,17 @@ def write_figures(fan: dict, cone: dict, mis: dict, dual: dict, g: Gates) -> Non
             + ["差(再構成 − 参照)" for _ in names])
     figs.save_grid("geometry_mistakes", panels, captions=caps, ncols=5, gray=[True] * 5 + [False] * 5,
                    signed=[False] * 5 + [True] * 5, vrange=[vr] * 5 + [(-0.03, 0.03)] * 5,
-                   title="盲点: 縦ずれ 7.2 画素を無視すると参照から %.1f 倍遠いのに、再投影の残差では見分けられない"
-                         "(%.4f 対 %.4f、差 %.1f %%)" % (vo["rmse"] / okr["rmse"], vo["resid"], okr["resid"],
-                                                    100 * abs(vo["resid"] - okr["resid"]) / okr["resid"]),
+                   title="縦ずれ 7.2 画素を無視 = 回転中心で約 %.2f mm 離れた面を再構成(参照の中央面から %.1f 倍遠い)。"
+                         "再投影の残差には作りの上で出ない\n"
+                         "上段の数 = 参照との RMSE [1/mm] / 再投影の相対残差(%.4f 対 %.4f、差 %.1f %%)、下段 = 再構成 − 参照(±0.03 /mm)"
+                         % (mis["slice_shift_mm"], vo["rmse"] / okr["rmse"], vo["resid"], okr["resid"],
+                            100 * abs(vo["resid"] - okr["resid"]) / okr["resid"]),
                    caption="中央面の FDK、全 300 枚。上段 = 再構成(参照との RMSE [1/mm] / 再投影の相対残差。★ = 残差が正しい幾何以下)、"
                            "左から 正しい / 面内回転 0.5° を無視 / 縦ずれ 7.2 画素を無視 / 横に 0.3 mm ずらす / 回転の向きを逆に。下段 = 差 "
-                           "±0.03 /mm。縦ずれを無視したデータも、それ自体は矛盾の無いデータなので、再構成した像を投影し直すと"
-                           "データによく合う —— 残差では幾何の誤りが見えない。参照(外の真値)と比べて初めて分かる。"
+                           "(色の尺度 ±0.03 /mm)。縦ずれを無視 = 検出器の別の行(別の面)を再構成しているので、そのデータは"
+                           "それ自体に矛盾が無く、再構成した像を投影し直すとデータによく合う。これは作りの上で必ず起きることで、"
+                           "発見ではない: 再投影の残差は「どの面を再構成したか」を教えず、参照(外の真値)と比べて初めて分かる。"
+                           "参照との RMSE の悪化は別の面を比べた差で、再構成の誤差ではない。"
                            "横ずれと回転の向きの取り違えは残差にも出る。隣接の恒等式はどの取り違えでも 1e-10 以下で成り立つ。")
     lim1 = float(np.percentile(np.abs(dual["basis_1"][mask]), 99.5))
     figs.save_grid("dual_energy_synthetic", [dual["shell"], dual["basis_0"], dual["basis_1"]],
@@ -1204,6 +1228,8 @@ def write_figures(fan: dict, cone: dict, mis: dict, dual: dict, g: Gates) -> Non
 
 def _print_recorded():
     print("実データが無いため実データの章を飛ばす。CI は取得しない(tools/fetch_walnut_cbct.py)。")
+    print("★この実行は実データの数字を 1 つも確かめていない。下の記録値は %s の手元実行 1 回のもの(合成の門だけが走る)。"
+          % RECORDED.get("date", "?"))
     print("記録値(RECORDED): " + json.dumps(RECORDED, ensure_ascii=False, sort_keys=True))
 
 

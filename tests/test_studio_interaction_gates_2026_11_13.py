@@ -56,7 +56,7 @@ def test_the_kit_walks_the_whole_window(gate_window):
     kit.at_least(len(found["line_edits"]), 3, "line edits")
     kit.at_least(len(found["plain_edits"]) + len(found["text_edits"]), 2, "text editors")
     kit.at_least(len(found["buttons"]), 40, "buttons")
-    assert all(d.isVisible() for d in found["dialogs"])
+    assert [d for d in found["dialogs"] if not d.isVisible()] == []     # only shown dialogs are walked
 
 
 def test_dialog_construction_sites_within_ledger():
