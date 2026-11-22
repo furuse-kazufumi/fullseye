@@ -1216,6 +1216,20 @@ def turn_maneuver_check(trajectory: dict, *, kind: str, x_entry: float, edge_y: 
     return {"ok": not viol, "violations": viol, "metrics": met}
 # ---- 道の面の高さ図(2026-11-15) ---------------------------------------------------------------------
 ROAD_MAX_CROSS_SLOPE = 0.2      # crossfall・rate の上限 [m/m](% と取り違えた 2 や 6 を断る。道路構造令の片勾配は最大 0.10)
+ROAD_ALIGNMENT_CHORD_ARC_RATIO_MAX = 1.01  # 比 / ratio: 丸めを許し、弦が弧より長すぎる列を拒否 / allow rounding only
+ROAD_ALIGNMENT_CHORD_ARC_RATIO_MIN = 0.5   # 比 / ratio: 半円より粗い弦・弧の対応を拒否 / reject implausibly short chords
+ROAD_ALIGNMENT_CURVATURE_ABS_TOL = 1e-3    # [rad] 小さい曲がりの絶対許容幅 / absolute turn allowance
+ROAD_ALIGNMENT_CURVATURE_REL_TOL = 0.1     # 比 / ratio: 予測した曲がりの相対許容幅 / relative turn allowance
+ROAD_ALIGNMENT_CURVATURE_JUMP_TOL = 0.25   # 比 / ratio: 曲率の標本間の跳びに対する許容係数 / jump allowance
+ROAD_ALIGNMENT_HEADING_ABS_TOL = 0.01      # [rad] 弦と heading の絶対許容幅 / chord-heading allowance
+ROAD_ALIGNMENT_GRADE_ABS_TOL = 1e-3        # [m/m] 小さい縦断勾配の絶対許容幅 / absolute grade allowance
+ROAD_ALIGNMENT_GRADE_REL_TOL = 0.1         # 比 / ratio: 実測した縦断勾配の相対許容幅 / relative grade allowance
+ROAD_ALIGNMENT_GRADE_JUMP_TOL = 0.5        # 比 / ratio: 勾配の標本間の跳びに対する許容係数 / jump allowance
+ROAD_ALIGNMENT_ARC_CURVATURE_MIN = 1e-9    # [1/m] これ未満は直線として射影 / smaller curvature projects as a line
+ROAD_ALIGNMENT_INTERVAL_TOL = 1e-9         # [m] 区間境界の丸め許容幅 / segment-boundary rounding allowance
+ROAD_ALIGNMENT_RADIUS_FLOOR = 1e-300       # [m] 円の中心での 0 除算だけを防ぐ / avoid division by zero at arc centre
+ROAD_SURFACE_MAX_CELLS = 25_000_000         # [cell] 過大な格子の確保を拒否 / reject excessive grid allocation
+ROAD_SURFACE_BATCH_CELLS = 65_536           # [cell] 作業配列の一回の上限 / bound each work-array batch
 
 
 def _wrap_angle(a):
@@ -1243,7 +1257,8 @@ def _check_alignment_columns(col, s, chord, op):
     n = len(s)
     hs = np.diff(s)
     ratio = chord / hs
-    bad = np.nonzero((ratio > 1.01) | (ratio < 0.5))[0]
+    bad = np.nonzero((ratio > ROAD_ALIGNMENT_CHORD_ARC_RATIO_MAX)
+                     | (ratio < ROAD_ALIGNMENT_CHORD_ARC_RATIO_MIN))[0]
     if bad.size:
         i = int(bad[0])
         raise ValueError("%s: alignment s does not match the polyline: segment %d is %.6g long in x, y but %.6g in s "
@@ -1259,7 +1274,8 @@ def _check_alignment_columns(col, s, chord, op):
         kc = col["curvature"]
         pred = (hs[:-1] * (kc[:-2] + 2.0 * kc[1:-1]) + hs[1:] * (2.0 * kc[1:-1] + kc[2:])) / 6.0
         jump = np.maximum(np.abs(kc[1:-1] - kc[:-2]), np.abs(kc[2:] - kc[1:-1]))
-        tol = 1e-3 + 0.1 * np.abs(pred) + 0.25 * jump * (hs[:-1] + hs[1:])
+        tol = (ROAD_ALIGNMENT_CURVATURE_ABS_TOL + ROAD_ALIGNMENT_CURVATURE_REL_TOL * np.abs(pred)
+               + ROAD_ALIGNMENT_CURVATURE_JUMP_TOL * jump * (hs[:-1] + hs[1:]))
         bad = np.nonzero(np.abs(turn - pred) > tol)[0]
         if bad.size:
             i = int(bad[0])
@@ -1269,7 +1285,7 @@ def _check_alignment_columns(col, s, chord, op):
     if "heading" in col:
         th = col["heading"]
         kk = np.maximum(k_xy, np.abs(col["curvature"])) if "curvature" in col else k_xy
-        tol = 0.01 + np.maximum(kk[:-1], kk[1:]) * hs
+        tol = ROAD_ALIGNMENT_HEADING_ABS_TOL + np.maximum(kk[:-1], kk[1:]) * hs
         dev = np.maximum(np.abs(_wrap_angle(phi - th[:-1])), np.abs(_wrap_angle(th[1:] - phi)))
         bad = np.nonzero(dev > tol)[0]
         if bad.size:
@@ -1280,7 +1296,8 @@ def _check_alignment_columns(col, s, chord, op):
     if "grade" in col:
         gr = col["grade"]
         slope = np.diff(col["z"]) / hs
-        tol = 1e-3 + 0.1 * np.abs(slope) + 0.5 * np.abs(np.diff(gr))
+        tol = (ROAD_ALIGNMENT_GRADE_ABS_TOL + ROAD_ALIGNMENT_GRADE_REL_TOL * np.abs(slope)
+               + ROAD_ALIGNMENT_GRADE_JUMP_TOL * np.abs(np.diff(gr)))
         bad = np.nonzero(np.abs(slope - 0.5 * (gr[:-1] + gr[1:])) > tol)[0]
         if bad.size:
             i = int(bad[0])
@@ -1350,13 +1367,13 @@ def _foot_on_local_arc(P, C, th, kap):
     D = P - C
     u = np.einsum("ij,ij->i", D, T)
     e = np.einsum("ij,ij->i", D, N)
-    arc = np.abs(kap) >= 1e-9
+    arc = np.abs(kap) >= ROAD_ALIGNMENT_ARC_CURVATURE_MIN
     if np.any(arc):
         k = kap[arc]
         O = C[arc] + N[arc] / k[:, None]                       # 円の中心(左が正の曲率なら左)
         W = P[arc] - O
         r = np.hypot(W[:, 0], W[:, 1])
-        r = np.where(r > 0.0, r, 1e-300)
+        r = np.where(r > 0.0, r, ROAD_ALIGNMENT_RADIUS_FLOOR)
         Nu = np.sign(k)[:, None] * (-W) / r[:, None]           # 足の点の左の法線
         th_u = np.arctan2(-Nu[:, 0], Nu[:, 1])
         dth = (th_u - th[arc] + np.pi) % (2.0 * np.pi) - np.pi
@@ -1500,9 +1517,9 @@ def road_surface_heightmap(alignment, cell: float = 0.05, *, extent=None, margin
         xmin, ymin = ext[0], ext[2]
         nx = max(1, int(np.ceil((ext[1] - ext[0]) / c)))
         ny = max(1, int(np.ceil((ext[3] - ext[2]) / c)))
-    if nx * ny > 25_000_000:
-        raise ValueError("%s: the grid would have %d cells (> 25e6); use a larger cell or a smaller extent"
-                         % (op, nx * ny))
+    if nx * ny > ROAD_SURFACE_MAX_CELLS:
+        raise ValueError("%s: the grid would have %d cells (> %g); use a larger cell or a smaller extent"
+                         % (op, nx * ny, ROAD_SURFACE_MAX_CELLS))
     tz = None
     if terrain is not None:
         tz = np.asarray(terrain, np.float64)
@@ -1523,7 +1540,7 @@ def road_surface_heightmap(alignment, cell: float = 0.05, *, extent=None, margin
     yc = ymin + (np.arange(ny) + 0.5) * c
     out = {k: np.empty(ny * nx) for k in ("z", "s", "e", "heading", "curvature", "grade", "cross", "alpha")}
     edge = cs["half_width"] + cs["shoulder"]
-    rows_per = max(1, 65536 // nx)
+    rows_per = max(1, ROAD_SURFACE_BATCH_CELLS // nx)
     for r0 in range(0, ny, rows_per):
         yy, xx = np.meshgrid(yc[r0:r0 + rows_per], xc, indexing="ij")
         Pt = np.stack([xx.ravel(), yy.ravel()], 1)
@@ -1533,7 +1550,8 @@ def road_surface_heightmap(alignment, cell: float = 0.05, *, extent=None, margin
         # 局所の円弧で射影し直す(区間の外へ出たら隣の区間で 1 回だけ)
         u, e = _foot_on_local_arc(Pt, xy[base], H[base], K[base])
         for step in (1, -1):
-            mv = (u > hseg[base] + 1e-9) if step == 1 else (u < -1e-9)
+            mv = ((u > hseg[base] + ROAD_ALIGNMENT_INTERVAL_TOL) if step == 1
+                  else (u < -ROAD_ALIGNMENT_INTERVAL_TOL))
             mv &= (base + step >= 0) & (base + step <= n - 2)
             if np.any(mv):
                 b2 = base[mv] + step
@@ -1544,7 +1562,7 @@ def road_surface_heightmap(alignment, cell: float = 0.05, *, extent=None, margin
         # s は 0 から数えた弦の長さなので、線形の s と混ぜない)。そこは直線として扱い、真値の勾配は ds/d(弦) = 弧/弦。
         lo_out = (base == 0) & (u < 0.0)
         hi_out = (base == n - 2) & (u > hseg[n - 2])
-        far = ((u < -1e-9) | (u > hseg[base] + 1e-9)) & ~lo_out & ~hi_out
+        far = ((u < -ROAD_ALIGNMENT_INTERVAL_TOL) | (u > hseg[base] + ROAD_ALIGNMENT_INTERVAL_TOL)) & ~lo_out & ~hi_out
         kap = K[base].copy()
         hd = H[base].copy()
         jac = np.ones_like(u)                           # ds/d(弦の向きの長さ)。円弧の 1/(1 − κe) とは別に掛ける
@@ -1598,7 +1616,7 @@ def road_surface_heightmap(alignment, cell: float = 0.05, *, extent=None, margin
         p, p_e, p_b, p_r = _cross_profile(e, bb, rr, cs)
         z = zc + p
         denom = 1.0 - kap * e
-        grade = (dzc + p_b * dbb + p_r * drr) * jac / np.where(np.abs(denom) > 1e-12, denom, np.nan)
+        grade = (dzc + p_b * dbb + p_r * drr) * jac / np.where(np.abs(denom) > _EPS, denom, np.nan)
         alpha = np.zeros_like(z)
         if tz is not None:
             out_s = np.maximum(S[0] - s, s - S[-1])

@@ -29,6 +29,14 @@ __all__ = ["elevation_map", "fill_gaps", "traversability", "foothold_score",
            # 高さ図を深度カメラで撮る(2026-11-15)
            "heightmap_depth_camera"]
 
+HEIGHTMAP_DEPTH_BOTTOM_ROW_ATOL = 1e-9   # 無次元 / dimensionless: 4x4 同次変換の最終行の許容幅 / bottom-row tolerance
+HEIGHTMAP_DEPTH_ROTATION_ATOL = 1e-6     # 無次元 / dimensionless: 回転行列の直交性の許容幅 / orthogonality tolerance
+HEIGHTMAP_DEPTH_IMAGE_SIZE_ATOL = 1e-9   # [px] 主点から整数画素数を復元する丸め許容幅 / image-size rounding allowance
+HEIGHTMAP_DEPTH_MAX_PIXELS = 4_000_000   # [px] 過大な深度画像の確保を拒否 / reject excessive image allocation
+HEIGHTMAP_DEPTH_RAY_PARALLEL_TOL = 1e-15 # 無次元 / dimensionless: 足場の軸と平行な光線の判定幅 / parallel-ray threshold
+HEIGHTMAP_DEPTH_STEP_BATCH = 64          # [step] 一回の march 作業配列の上限 / bound each marching work array
+HEIGHTMAP_DEPTH_RAY_BATCH = 16_384       # [ray] 一回の光線束の上限 / bound each ray bundle
+
 
 def _grad2(a, cell):
     """(dz/dy, dz/dx) that tolerates a length-1 axis (np.gradient raises there).
@@ -431,7 +439,7 @@ def _pose_world_to_camera(pose, op):
     if arr is not None and arr.shape == (4, 4):
         M = arr
     if M is not None:
-        if not np.allclose(M[3], (0.0, 0.0, 0.0, 1.0), atol=1e-9):
+        if not np.allclose(M[3], (0.0, 0.0, 0.0, 1.0), atol=HEIGHTMAP_DEPTH_BOTTOM_ROW_ATOL):
             raise ValueError("%s: a 4x4 pose must have the bottom row (0, 0, 0, 1), got %r" % (op, M[3].tolist()))
         R, t = M[:3, :3], M[:3, 3]
     elif isinstance(pose, (tuple, list)) and len(pose) >= 2:
@@ -442,7 +450,7 @@ def _pose_world_to_camera(pose, op):
         raise ValueError("%s: pose must be (R, t) or a 4x4 world->camera matrix, got shape %r" % (op, shape))
     if R.shape != (3, 3) or t.size != 3 or not (np.all(np.isfinite(R)) and np.all(np.isfinite(t))):
         raise ValueError("%s: pose must be a finite (R 3x3, t 3)" % op)
-    if not np.allclose(R @ R.T, np.eye(3), atol=1e-6) or np.linalg.det(R) <= 0.0:
+    if not np.allclose(R @ R.T, np.eye(3), atol=HEIGHTMAP_DEPTH_ROTATION_ATOL) or np.linalg.det(R) <= 0.0:
         raise ValueError("%s: pose R must be a rotation (orthonormal, det +1)" % op)
     return R, t
 
@@ -534,11 +542,13 @@ def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.
             raise ValueError("%s: %s must be a whole number of pixels, got %r" % (op, name, v))
     W = int(round(2.0 * Km[0, 2] + 1.0)) if width is None else int(float(width))
     Hh = int(round(2.0 * Km[1, 2] + 1.0)) if height is None else int(float(height))
-    if width is None and abs(2.0 * Km[0, 2] + 1.0 - W) > 1e-9 or height is None and abs(2.0 * Km[1, 2] + 1.0 - Hh) > 1e-9:
+    if (width is None and abs(2.0 * Km[0, 2] + 1.0 - W) > HEIGHTMAP_DEPTH_IMAGE_SIZE_ATOL
+            or height is None and abs(2.0 * Km[1, 2] + 1.0 - Hh) > HEIGHTMAP_DEPTH_IMAGE_SIZE_ATOL):
         raise ValueError("%s: the image size cannot be read from K (cx, cy are not (W-1)/2, (H-1)/2); pass width "
                          "and height" % op)
-    if W < 1 or Hh < 1 or W * Hh > 4_000_000:
-        raise ValueError("%s: image must have 1..4e6 pixels, got %d x %d" % (op, Hh, W))
+    if W < 1 or Hh < 1 or W * Hh > HEIGHTMAP_DEPTH_MAX_PIXELS:
+        raise ValueError("%s: image must have 1..%g pixels, got %d x %d"
+                         % (op, HEIGHTMAP_DEPTH_MAX_PIXELS, Hh, W))
     st = 0.5 * c if step is None else float(step)
     if not (np.isfinite(st) and 0.0 < st <= c):
         raise ValueError("%s: step must be in (0, cell] (a coarser step jumps over thin ridges), got %r" % (op, step))
@@ -583,7 +593,7 @@ def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.
         t_out = np.full(len(dwc), np.inf)
         for ax, lo_, hi_ in ((0, x_lo, x_hi), (1, y_lo, y_hi)):
             d_ = dwc[:, ax]
-            par = np.abs(d_) < 1e-15
+            par = np.abs(d_) < HEIGHTMAP_DEPTH_RAY_PARALLEL_TOL
             with np.errstate(divide="ignore", invalid="ignore"):
                 a_ = (lo_ - Cw[ax]) / d_
                 b_ = (hi_ - Cw[ax]) / d_
@@ -614,7 +624,7 @@ def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.
         prev_t = np.full(m, -np.inf)
         k = 0
         while active.size and k < n_steps:
-            ks = np.arange(k, min(k + 64, n_steps))
+            ks = np.arange(k, min(k + HEIGHTMAP_DEPTH_STEP_BATCH, n_steps))
             ts = t0 + ks * st
             da = dwc[active]
             na = len(active)
@@ -658,7 +668,8 @@ def heightmap_depth_camera(heights, pose, K, cell: float = 0.05, origin=(0.0, 0.
         return out
 
     n_steps = int(np.ceil((t_far - t0) / st)) + 1
-    dist = np.concatenate([march(dw[a:a + 16384]) for a in range(0, dw.shape[0], 16384)])
+    dist = np.concatenate([march(dw[a:a + HEIGHTMAP_DEPTH_RAY_BATCH])
+                           for a in range(0, dw.shape[0], HEIGHTMAP_DEPTH_RAY_BATCH)])
     z = (dist / norm).reshape(Hh, W)                       # 光線の長さ → 光軸方向の深度
     z[~((z >= nr) & (z <= mr))] = np.nan
     if sd > 0.0:

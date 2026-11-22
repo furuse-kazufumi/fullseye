@@ -54,6 +54,10 @@ __all__ = [
     "convex_hull_gap",
 ]
 
+HULL_GAP_ACTIVE_WEIGHT_TOL = 1e-12  # 無次元 / dimensionless: Wolfe の有効重みを丸めから守る / active-weight tolerance
+HULL_GAP_LP_SCALE_FLOOR = 1.0       # [座標単位 / coordinate unit] 小形状でも LP 許容幅を過小にしない / scale floor
+HULL_GAP_LP_SLACK_REL = 1e-6        # 比 / ratio: HiGHS の実行可能性誤差を覆う相対許容幅 / LP agreement slack
+
 
 def _as_points(points, min_n: int = 1) -> np.ndarray:
     """入力を (N,3) float64 に検証・正規化。fail-closed(形状不正/非有限/点数不足は ValueError)。"""
@@ -330,14 +334,14 @@ def convex_hull_gap(points_a, points_b, tol: float = 1e-9, max_iter: int = 1000,
         lam = np.append(lam, 0.0)
         while it < max_iter:                              # 副の反復: 囲いのアフィン最小点へ
             mu = _affine_minimizer(S)
-            if np.all(mu > 1e-12):
+            if np.all(mu > HULL_GAP_ACTIVE_WEIGHT_TOL):
                 lam, x = mu, mu @ S
                 break
             it += 1
-            neg = (mu <= 1e-12) & (lam - mu > 0.0)
+            neg = (mu <= HULL_GAP_ACTIVE_WEIGHT_TOL) & (lam - mu > 0.0)
             theta = float(np.min(lam[neg] / (lam[neg] - mu[neg]))) if neg.any() else 1.0
             lam = (1.0 - theta) * lam + theta * mu
-            keep = lam > 1e-12
+            keep = lam > HULL_GAP_ACTIVE_WEIGHT_TOL
             if keep.all():
                 keep[int(np.argmin(lam))] = False
             S, lam = S[keep], lam[keep]
@@ -367,8 +371,8 @@ def convex_hull_gap(points_a, points_b, tol: float = 1e-9, max_iter: int = 1000,
            "lp_t": None, "iterations": int(it)}
     if check == "lp":
         t = _hull_gap_lp(A0, B0)
-        scale = max(1.0, float(np.max(np.abs(np.vstack([A0, B0])))))
-        slack = max(tol, 1e-6 * scale)                    # HiGHS の可能性の許容(1e-7 相対)より広く
+        scale = max(HULL_GAP_LP_SCALE_FLOOR, float(np.max(np.abs(np.vstack([A0, B0])))))
+        slack = max(tol, HULL_GAP_LP_SLACK_REL * scale)   # HiGHS の可能性の許容(1e-7 相対)より広く
         # 答えは t/√d ≤ 隙間 ≤ t の帯に入るはず(重なり = 隙間 0 なら t ≈ 0)
         agree = t / np.sqrt(d) - slack <= out["gap"] <= t + slack
         if not agree:
