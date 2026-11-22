@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/furuse-kazufumi/fullseye/actions/workflows/ci.yml/badge.svg)](https://github.com/furuse-kazufumi/fullseye/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/fullseye)](https://pypi.org/project/fullseye/)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/furuse-kazufumi/fullseye/blob/master/LICENSE)
 [![Docs](https://img.shields.io/badge/docs-furuse.work-informational)](https://furuse.work/)
 
 **Fullseye is a Python library for image inspection, 3-D measurement and physics simulation.**
@@ -14,12 +14,12 @@ operators in the machine-readable index, `docs/OP_INDEX.json`: 947 single-input 
 17 n-ary + 2,877 in the typed ledgers, each with a per-operator note), the family guides, and the
 release notes.
 
-**What it can do: [CAPABILITIES.en.md](docs/CAPABILITIES.en.md)** — an index organised by
+**What it can do: [CAPABILITIES.en.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/CAPABILITIES.en.md)** — an index organised by
 *what you want to do*, every entry tied to operators that exist and an example that runs.
-**What the PoCs hardened: [HARDENING.en.md](docs/HARDENING.en.md)** — the ledger of defects
+**What the PoCs hardened: [HARDENING.en.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/HARDENING.en.md)** — the ledger of defects
 the PoC series found, what changed, and which gate now stops each one coming back.
 
-**Real RGB-D 6-DoF PoC:** [`poc_real_tless_6dof`](examples/poc_real_tless_6dof.py)
+**Real RGB-D 6-DoF PoC:** [`poc_real_tless_6dof`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
 runs the depth-to-point-cloud, normal, table-removal, clustering, PPF and ICP chain on
 BOP T-LESS (CC BY 4.0), scores it with symmetry-aware MSSD/MSPD, and compares it with
 the public Drost and Vidal baselines. The dataset is not in the repository: on a machine
@@ -34,7 +34,7 @@ does not count it as real-data validation. Dataset citation: Hodaň et al., T-LE
 > to be shared**: results-only reports are accepted, and `python -m fullseye.validation_kit`
 > writes only aggregate numbers from your local data. [Report form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) ·
 > [Discussions › Show and tell](https://github.com/furuse-kazufumi/fullseye/discussions/categories/show-and-tell) ·
-> [how reports are judged](docs/VALIDATION_CONTRIBUTING.en.md)
+> [how reports are judged](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/VALIDATION_CONTRIBUTING.en.md)
 
 <!-- Banner: real Fullseye outputs only (no mockups). Regenerate with
      `py -3.11 tools/gen_banner.py`. Absolute raw URL for PyPI compatibility. -->
@@ -103,7 +103,7 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 1.1.1); stage definitions in [MATURITY.md](docs/MATURITY.md)).
+The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 1.1.1); stage definitions in [MATURITY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
@@ -137,7 +137,7 @@ Of 503 examples, 499 are actually run by a gate.
 - The HALCON figure 323 for 0.1.0–0.1.8 is the value recorded at the time; from 0.1.9 it is 979 under a revised count (not 656 new implementations).
 - 0.2.0 is the first version whose index includes the typed ledger: 918 → 1,942 is a change in what is counted, not new implementation (the ledger existed from 0.1.6 but sat outside the index).
 
-— = not measured for that version. All versions and column definitions: [OP_COUNT_HISTORY.md](docs/OP_COUNT_HISTORY.md).
+— = not measured for that version. All versions and column definitions: [OP_COUNT_HISTORY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/OP_COUNT_HISTORY.md).
 
 <!-- trust-block:end -->
 
@@ -155,14 +155,14 @@ of them breaks, CI goes red.
 
 Every one of them carries a ground truth and prints the null (do-nothing) result beside
 the method. How far each capability is actually verified is a generated ledger:
-[`docs/MATURITY.md`](docs/MATURITY.md).
+[`docs/MATURITY.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MATURITY.md).
 
 Two more doors, both new since 0.1.11 and both honest about their limits:
 
 | Door | For | Run this first | Status |
 |---|---|---|---|
-| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. A `full` and a smaller `minimal` tool profile (the tool list is `tools/list`; see docs/MCP.md), strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). From MCP, 2,456 can be run (the type graph has 3,842 entries) — the ledger ops (optics and lighting design, synthetic inputs, px→mm) in an isolated worker with a time and memory limit; the rest are read-only and say why. A verdict of ok checks the output's shape, not whether the value is right. Checked with the official `mcp` Python client (initialize → tools/list → tools/call). [`docs/MCP.md`](docs/MCP.md) |
-| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (947 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the n-ary 2-D operators and the typed-ledger operators (counts: the index line at the top), whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
+| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. A `full` and a smaller `minimal` tool profile (the tool list is `tools/list`; see docs/MCP.md), strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). From MCP, 2,456 can be run (the type graph has 3,842 entries) — the ledger ops (optics and lighting design, synthetic inputs, px→mm) in an isolated worker with a time and memory limit; the rest are read-only and say why. A verdict of ok checks the output's shape, not whether the value is right. Checked with the official `mcp` Python client (initialize → tools/list → tools/call). [`docs/MCP.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MCP.md) |
+| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](https://github.com/furuse-kazufumi/fullseye/tree/master/rust/fullseye_core/examples) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (947 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the n-ary 2-D operators and the typed-ledger operators (counts: the index line at the top), whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
 
 ## Install
 
@@ -458,7 +458,7 @@ Everything below lives in the repo — start at the guide that matches what you 
   alongside 1-D / 2-D code reading and print-quality grading. Its classifier is k-NN over feature
   templates rendered from the font, not a neural network.
 - Some HALCON names are only **partial** analogues and are not counted as covered — see the
-  "Partial analogues" table in [docs/HALCON_COVERAGE.md](docs/HALCON_COVERAGE.md).
+  "Partial analogues" table in [docs/HALCON_COVERAGE.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/HALCON_COVERAGE.md).
 
 ## ViEW2026 入口メディアの検証(2026-11-01)
 

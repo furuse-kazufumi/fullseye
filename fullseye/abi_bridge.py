@@ -31,6 +31,8 @@ import traceback
 
 import numpy as np
 
+from json_safety import _loads_limited
+
 # --- fullseye_abi.h の値(ヘッダが正本。tests/test_abi_apply.py が照合する) ------------
 FS_OK = 0
 FS_E_INVALID_ARG = 1
@@ -80,8 +82,8 @@ def parse_params(params_json: str | None) -> dict:
     if params_json is None or params_json.strip() == "":
         return {}
     try:
-        v = json.loads(params_json, parse_constant=_reject_constant)
-    except ValueError as exc:
+        v = _loads_limited(params_json, label="params_json", parse_constant=_reject_constant)
+    except (ValueError, RecursionError) as exc:
         raise _Refuse(FS_E_BAD_PARAMS, "params_json が JSON として読めない: %s" % exc) from exc
     if not isinstance(v, dict):
         raise _Refuse(FS_E_BAD_PARAMS,

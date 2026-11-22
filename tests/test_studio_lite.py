@@ -26,6 +26,7 @@ if LITE not in sys.path:
 
 import core  # noqa: E402
 import engine  # noqa: E402
+import json_safety  # noqa: E402
 import pocviewer  # noqa: E402
 import studio  # noqa: E402
 import api  # noqa: E402
@@ -45,6 +46,34 @@ def img():
     yy, xx = np.mgrid[0:96, 0:96] / 96.0
     im = 0.5 + 0.3 * np.sin(2 * np.pi * 3 * xx) * np.cos(2 * np.pi * 2 * yy) + 0.05 * rng.standard_normal((96, 96))
     return np.clip(im, 0, 1).astype(np.float32)
+
+
+def _nested_lists(levels: int) -> str:
+    return "[" * levels + "0" + "]" * levels
+
+
+@pytest.mark.parametrize("reader", ["set_subset", "load_recipe"])
+def test_pipeline_json_rejects_deep_metadata(reader):
+    """Studio Lite のオブジェクト入口は、使わない metadata も深さ上限を超えれば断る。"""
+    required = '"ops":[]' if reader == "set_subset" else '"stages":[]'
+    text = "{%s,\"metadata\":%s}" % (required, _nested_lists(json_safety.MAX_JSON_DEPTH))
+    with pytest.raises(ValueError, match="pipeline JSON.*limit"):
+        getattr(core, reader)(text)
+
+
+@pytest.mark.parametrize("reader", ["diagnose", "run_chain", "run_chain_raw", "recipe_json", "load_recipe"])
+def test_pipeline_json_rejects_deep_stages(reader, img):
+    """段の JSON を読む全入口は、解析や実行より先に共通の深さ上限で断る。"""
+    stages = _nested_lists(json_safety.MAX_JSON_DEPTH + 1)
+    args = {
+        "diagnose": (stages,),
+        "run_chain": (img, stages),
+        "run_chain_raw": (img, stages),
+        "recipe_json": ("deep", stages),
+        "load_recipe": ('{"stages":%s}' % stages,),
+    }
+    with pytest.raises(ValueError, match="pipeline JSON.*limit"):
+        getattr(core, reader)(*args[reader])
 
 
 def test_subset_ledger_is_measured_and_in_registry(subset):

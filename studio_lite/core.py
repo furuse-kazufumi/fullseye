@@ -23,6 +23,7 @@ import numpy as np
 
 import api
 import engine
+import json_safety
 import param_specs
 import recipes
 import studio                    # Qt は遅延 import なので、PySide6 の無い環境でも読める
@@ -35,7 +36,7 @@ DISPLAY_MODES = ["gray", "region overlay", "shaded relief", "height (color)"]
 
 def set_subset(text: str) -> int:
     """``ops_subset.json`` の中身(文字列)を受け取り、使える op の集合にする。戻り値は op 数。"""
-    d = json.loads(text)
+    d = json_safety._loads_limited(text, label="pipeline JSON")
     _SUBSET.clear()
     _SUBSET_ROWS.clear()
     for r in d["ops"]:
@@ -80,7 +81,7 @@ def format_knob(name: str, letter: str, value: float) -> str:
 
 def diagnose(stages_json: str) -> str:
     """段の整合(unknown op / sort 不一致)。Studio の Problems パネルと同じ関数。"""
-    stages = [tuple(s) for s in json.loads(stages_json)]
+    stages = [tuple(s) for s in json_safety._loads_limited(stages_json, label="pipeline JSON")]
     try:
         probs = engine.diagnose_stages(stages)
     except Exception as e:  # noqa: BLE001
@@ -134,7 +135,7 @@ def image_from_flat(flat, h: int, w: int):
 
 def run_chain(img, stages_json: str, mode: str = "gray") -> dict:
     """段ごとに ``api.apply`` を当て、各段の結果の描画(RGBA)と所要 ms を返す。失敗した段で止め、理由を返す。"""
-    stages = [tuple(s[:3]) for s in json.loads(stages_json)]
+    stages = [tuple(s[:3]) for s in json_safety._loads_limited(stages_json, label="pipeline JSON")]
     cur = img
     cards = [dict(render(img, "gray"), ms=None, op=None)]
     error = None
@@ -156,14 +157,14 @@ def run_chain(img, stages_json: str, mode: str = "gray") -> dict:
 def run_chain_raw(img, stages_json: str):
     """描画なし —— 最終結果の配列そのもの(門の照合用)。"""
     cur = img
-    for op, a, b in [tuple(s[:3]) for s in json.loads(stages_json)]:
+    for op, a, b in [tuple(s[:3]) for s in json_safety._loads_limited(stages_json, label="pipeline JSON")]:
         cur = api.apply(cur, op, float(a), float(b))
     return cur
 
 
 def recipe_json(name: str, stages_json: str) -> str:
     """Studio / engine が読む形で書く(``FullseyeEngine.to_dict``)。"""
-    stages = [tuple(s[:3]) for s in json.loads(stages_json)]
+    stages = [tuple(s[:3]) for s in json_safety._loads_limited(stages_json, label="pipeline JSON")]
     return json.dumps(engine.FullseyeEngine(stages, name=name or "pipeline").to_dict(), ensure_ascii=False, indent=1)
 
 
@@ -171,7 +172,7 @@ def load_recipe(text: str) -> str:
     """Studio の検査(``validate_pipeline_dict``)で読む。bypass 印(4 要素目が true)のある段は **Studio と同じく走らせない**
     (``bypassed`` に名前を並べて列から外す。engine は印を黙って落として走らせるので、ここは Studio 側に合わせる)。
     ブラウザで使えない op が混ざっていれば ``unavailable`` に名前を並べる(黙って落とさない)。"""
-    d = json.loads(text)
+    d = json_safety._loads_limited(text, label="pipeline JSON")
     stages = studio.validate_pipeline_dict(d)
     bypassed = [s[0] for s in stages if len(s) == 4 and s[3] is True]
     norm = [[s[0], float(s[1]), float(s[2])] for s in stages if not (len(s) == 4 and s[3] is True)]
