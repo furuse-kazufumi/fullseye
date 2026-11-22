@@ -18,6 +18,42 @@ import sys
 import warnings
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _drop_the_cwd_entry_for_the_mcp_server() -> None:
+    """``python -m fullseye.mcp`` で起動した時だけ、``sys.path[0]``(cwd)を外す。他の使い方では何もしない。
+
+    ★2026-11-15(外部レビュー、Codex の指摘 2 の兄弟): ``-m`` は cwd を sys.path の先頭に置く。MCP のクライアントは
+    サーバをプロジェクトのフォルダで起動するので、そこに置かれた ``scipy.py`` / ``opsoptics.py`` を、サーバが起動の
+    時に本物より先に import した(手元で再現)。fullseye の置き場所そのものが cwd の時(ソースの木の根で起動した時)は
+    外さない。``fullseye/`` という名のフォルダが cwd にあると、この関数より前に乗っ取られる —— それは登録の命令に
+    ``-P``(Python 3.11 の safe path)を付けて防ぐ。"""
+    import os
+    import sys
+    if getattr(sys.flags, "safe_path", False) or not sys.path:
+        return
+    argv = list(getattr(sys, "orig_argv", None) or [])
+    # ★2026-11-22(独立レビュー): script.py の引数に ``-m fullseye.mcp`` があるだけで、
+    #   script.py のフォルダを外していた。パッケージの import 中に sys.argv[0] が ``-m`` の本物の -m 起動だけに限る。
+    if sys.argv[:1] != ["-m"]:
+        return
+    if "-m" not in argv:
+        return
+    at = argv.index("-m")
+    if argv[at + 1:at + 2] != ["fullseye.mcp"]:
+        return
+    try:
+        first = os.path.normcase(os.path.realpath(sys.path[0] or os.getcwd()))
+        cwd = os.path.normcase(os.path.realpath(os.getcwd()))
+        root = os.path.normcase(os.path.realpath(_ROOT))
+    except (OSError, ValueError):
+        return
+    if first == cwd and first != root:
+        del sys.path[0]
+
+
+_drop_the_cwd_entry_for_the_mcp_server()
+del _drop_the_cwd_entry_for_the_mcp_server
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 

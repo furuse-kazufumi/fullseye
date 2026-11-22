@@ -118,17 +118,20 @@ def test_six_business_plans_put_grounded_main_op_in_results():
       ("locate each part against its reference patch","image","match","ncc_locate"),
       ("recover a fast fringe-projection depth map on the production line","images","depth","decode_fringe"),
       ("corner landmarks for tracking product pose","image","feature","cv_good_features")]
-    results=[(main,opsearch.plan(have,want,constraints={"query":query,"max_depth":3,"k":5,"executable_only":False}))
+    # ★2026-11-22(独立レビュー): coverage 付き CI では既定の 900 ms に達し、時間切れで順位が変わった。
+    results=[(main,opsearch.plan(have,want,constraints={"query":query,"max_depth":3,"k":5,"executable_only":False,
+                                                       "timeout_ms":120_000}))
              for query,have,want,main in tasks]
     failed=[main for main,r in results if not r["ok"] or not r["plans"] or main not in r["plans"][0]["ops"]]
     assert not failed
     assert all(all("dag" in p and p["dag"]["outputs"] for p in r["plans"]) for _,r in results)
 
 def test_hypergraph_plan_is_bounded_and_shared_by_both_directions():
+    # ★2026-11-22(独立レビュー): 出た op と計画数の試験を既定の時間切れに依存させない。
     forward=opsearch.plan("images","depth",goal="fringe projection height",
-                          constraints={"max_depth":4,"k":3,"executable_only":False})
+                          constraints={"max_depth":4,"k":3,"executable_only":False,"timeout_ms":120_000})
     backward=opsearch.plan(None,"depth",direction="backward",goal="fringe projection height",
-                           constraints={"max_depth":4,"k":3,"executable_only":False})
+                           constraints={"max_depth":4,"k":3,"executable_only":False,"timeout_ms":120_000})
     assert forward["ok"] and backward["ok"]
     assert "decode_fringe" in forward["plans"][0]["ops"]
     # Backward planning may acquire one image and legitimately rank the
@@ -432,10 +435,12 @@ def test_priority_queue_planner_replays_backward_derivations_forward():
     random.Random(20261029).shuffle(wants)
     checked=0; failures=[]
     for want in wants[:40]:
-        backward=opsearch.plan(None,want,direction="backward",constraints={"k":2,"max_depth":4})
+        # ★2026-11-22(独立レビュー): coverage の遅さで探索の内容が変わらないようにする。
+        backward=opsearch.plan(None,want,direction="backward",
+                               constraints={"k":2,"max_depth":4,"timeout_ms":120_000})
         for candidate in backward.get("plans",[]):
             replay=opsearch.plan(candidate["consumed_have"],want,direction="forward",
-                                 constraints={"k":3,"max_depth":4})
+                                 constraints={"k":3,"max_depth":4,"timeout_ms":120_000})
             if not replay["ok"]: failures.append((want,candidate["consumed_have"]))
             checked+=1
     assert failures == []

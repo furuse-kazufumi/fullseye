@@ -15,8 +15,15 @@ MCP の ``fullseye_pipeline`` は、registry 層の op を同じプロセスで�
   置き場所の外の読み込み・ソケット・子プロセスの起動を拒否する(``PermissionError``、fail-closed)。
   読める場所は :func:`_read_roots`(Python の本体と site-packages・fullseye の置き場所・作業フォルダ)だけで、
   親の ``sys.path`` の他の場所(``python -m`` で起動した時の cwd など)は入れない。
-- **結果の大きさ**: job の ``max_elements``(配列の要素の数の和)・``max_result_bytes`` を子が数え、超えたら
-  結果を書き出さずに断る(``reason="output_limit"``)。親も子の出力を読む前に、``.npy`` の見出しで数える。
+- **import**: 子は ``-I``(PYTHONPATH・ユーザの site・cwd を読まない)で起動し、``sys.path`` には親の物のうち
+  :func:`_trusted_roots` の中の場所だけを渡す。台帳のモジュールは、点の無い名前で、出どころ(``spec.origin``)が
+  fullseye の置き場所の中の物だけを読む(:func:`_ledger_module`)。
+- **結果の大きさ**: job の ``max_elements``(配列の要素と、配列でない値・dict / list の数の和)・``max_result_bytes``
+  (配列のバイト + 文字列の長さ + 他の値 1 つ 8 バイト)を子が数え、超えたら結果を書き出さずに断る
+  (``reason="output_limit"``)。返事の 1 行は :data:`MAX_REPLY_BYTES` まで(子は JSON にする前に上界を数え、上限を
+  超えた所で計数も打ち切る。JSON にした後の検査も残し、親も 1 行をその長さまでしか読まない)。メモリの見張りと
+  囲いは、結果を送り終えるまで掛けたまま。親も子の出力を読む前に、
+  ``.npy`` の見出しで数える。
 - **値の受け渡し**: JSON の木 + 数値配列だけ(pickle は使わない。object 配列・知らない型は拒否)。
 
 子は使い回す(import の時間を毎回払わない)。時間切れ・メモリ超過・異常終了のあとは作り直す。
@@ -27,9 +34,12 @@ from __future__ import annotations
 import atexit
 import base64
 import importlib
+import importlib.util
 import json
+import math
 import os
 import queue
+import re
 import shutil
 import subprocess
 import sys
@@ -45,9 +55,17 @@ EXIT_MEMORY = 86
 STARTUP_LIMIT_S = 180.0
 #: これより小さい配列は JSON の中に base64 で運ぶ(大きい配列は一時フォルダの .npy)。
 INLINE_ARRAY_BYTES = 1 << 20
+#: 1 回の返事の中で JSON に base64 で運ぶ小さい配列の合計の上限(超えた分は .npy で渡す)。
+INLINE_TOTAL_BYTES = 8 * 1024 * 1024
+#: 子の返事の 1 行の上限(バイト)。配列は .npy で渡すので、この行に入るのは JSON の木と小さい配列だけ。
+MAX_REPLY_BYTES = 64 * 1024 * 1024
 #: 受け渡す木の深さの上限。
 MAX_TREE_DEPTH = 12
 _NUMERIC_KINDS = "biufc"
+#: 台帳のモジュールの名前の形(点の無い、最上位のモジュールだけ)。
+_MODULE_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]*\Z")
+#: 親の読み手が、上限を超える 1 行を見た時に置く印。
+_TOO_LONG = object()
 
 
 class OpWorkerError(RuntimeError):
@@ -64,7 +82,7 @@ class OpWorkerError(RuntimeError):
 # --------------------------------------------------------------------------- #
 def encode_tree(value, folder: str, _depth: int = 0, _counter: list | None = None):
     """Python の値 → JSON にできる木。数値配列以外の ndarray・知らない型は ``TypeError``。"""
-    counter = _counter if _counter is not None else [0]
+    counter = _counter if _counter is not None else [0, 0]          # [.npy の数, JSON に入れた配列のバイト]
     if _depth > MAX_TREE_DEPTH:
         raise TypeError("value is nested deeper than %d levels" % MAX_TREE_DEPTH)
     if value is None or isinstance(value, (bool, str)):
@@ -83,7 +101,8 @@ def encode_tree(value, folder: str, _depth: int = 0, _counter: list | None = Non
         if value.dtype.kind not in _NUMERIC_KINDS:
             raise TypeError("unsupported array dtype %s (only numeric arrays cross the worker boundary)" % value.dtype)
         arr = np.ascontiguousarray(value)
-        if arr.nbytes <= INLINE_ARRAY_BYTES:
+        if arr.nbytes <= INLINE_ARRAY_BYTES and counter[1] + arr.nbytes <= INLINE_TOTAL_BYTES:
+            counter[1] += int(arr.nbytes)
             return {"t": "a", "dtype": arr.dtype.str, "shape": list(arr.shape),
                     "b64": base64.b64encode(arr.tobytes()).decode("ascii")}
         counter[0] += 1
@@ -111,12 +130,13 @@ class ResultTooLarge(ValueError):
 
 
 def _spend(budget: list | None, count: int) -> None:
-    """配列の要素の数を予算から引く。超えたら :class:`ResultTooLarge`(読む前に断る)。"""
+    """値の数(配列の要素 + 配列でない値と dict / list の数)を予算から引く。超えたら :class:`ResultTooLarge`。"""
     if budget is None:
         return
     budget[0] -= int(count)
     if budget[0] < 0:
-        raise ResultTooLarge("the value has more than %d array elements in total (max_elements)" % budget[1])
+        raise ResultTooLarge("the value has more than %d values (array elements and other values) in total "
+                             "(max_elements)" % budget[1])
 
 
 def decode_tree(node, folder: str, _depth: int = 0, *, max_elements: int | None = None, _budget: list | None = None):
@@ -129,10 +149,13 @@ def decode_tree(node, folder: str, _depth: int = 0, *, max_elements: int | None 
     if _depth > MAX_TREE_DEPTH + 2:
         raise ValueError("tree is nested too deeply")
     if node is None or isinstance(node, (bool, int, float, str)):
+        _spend(_budget, 1)
         return node
     if not isinstance(node, dict) or "t" not in node:
         raise ValueError("malformed tree node")
     tag = node["t"]
+    if tag not in ("a", "n"):
+        _spend(_budget, 1)                     # ★2026-11-15(外部レビュー): 配列でない値・dict / list も数える
     if tag == "i":
         return int(node["v"])
     if tag == "f":
@@ -143,7 +166,7 @@ def decode_tree(node, folder: str, _depth: int = 0, *, max_elements: int | None 
         dtype = np.dtype(node["dtype"])
         if dtype.kind not in _NUMERIC_KINDS:
             raise ValueError("unsupported scalar dtype")
-        return dtype.type(decode_tree(node["v"], folder, _depth + 1, _budget=_budget))
+        return dtype.type(decode_tree(node["v"], folder, _depth + 1))           # 中身は上で 1 つと数えた
     if tag == "a":
         dtype = np.dtype(node["dtype"])
         if dtype.kind not in _NUMERIC_KINDS:
@@ -161,8 +184,10 @@ def decode_tree(node, folder: str, _depth: int = 0, *, max_elements: int | None 
         path = os.path.join(folder, name)
         if _budget is not None:
             head = np.load(path, mmap_mode="r", allow_pickle=False)      # 見出しだけ(中身は読まない)
-            count = int(head.size)
+            count, kind = int(head.size), head.dtype.kind
             del head                                                     # 写像を閉じる(Windows でファイルを消せるように)
+            if kind not in _NUMERIC_KINDS:
+                raise ValueError("unsupported array dtype")
             _spend(_budget, count)
         arr = np.load(path, allow_pickle=False)
         if arr.dtype.kind not in _NUMERIC_KINDS:
@@ -176,25 +201,107 @@ def decode_tree(node, folder: str, _depth: int = 0, *, max_elements: int | None 
     raise ValueError("unknown tree tag %r" % (tag,))
 
 
-def result_size(value) -> tuple[int, int]:
-    """結果の木の ``(配列の要素の数の和, 配列のバイトの和)``。同じ配列は 1 回。再帰しない。"""
-    elements = nbytes = 0
-    seen: set[int] = set()
-    todo = [value]
+def _text_bytes(text: str) -> int:
+    """文字列の UTF-8 のバイト数(ASCII だけなら写しを作らない)。"""
+    return len(text) if text.isascii() else len(text.encode("utf-8", "surrogatepass"))
+
+
+def _json_string_bytes(text: str) -> int:
+    """``json.dumps(text, ensure_ascii=False)`` の UTF-8 バイト数。エスケープした写しは作らない。"""
+    size = _text_bytes(text) + 2
+    for char in ('"', "\\", "\b", "\f", "\n", "\r", "\t"):
+        size += text.count(char)
+    short = {8, 9, 10, 12, 13}
+    size += 5 * sum(text.count(chr(code)) for code in range(32) if code not in short)
+    return size
+
+
+def _int_decimal_bytes(value: int) -> int:
+    """10 進の符号と桁数の上界(巨大な int を文字列にしない)。"""
+    if value == 0:
+        return 1
+    bits = abs(value).bit_length()
+    digits = (bits * 30103 + 99_999) // 100_000 + 1
+    return digits + (value < 0)
+
+
+def result_counts(value, max_values: int | None = None, max_bytes: int | None = None,
+                  max_json_bytes: int | None = None) -> dict:
+    """結果の木の大きさを、送る時と同じに数える(同じ物が 2 回あれば 2 回書くので 2 回数える)。再帰しない。
+
+    返すのは ``array_elements`` / ``other_values``(配列でない葉と dict・list・tuple の数)/ ``array_bytes`` /
+    ``other_bytes``(配列でない値 1 つ 8 バイト + 文字列と dict の鍵の UTF-8 の長さ) / ``json_bytes``
+    (:func:`encode_tree` の値を JSON で送る時のバイト数の上界)。``max_values`` / ``max_bytes`` /
+    ``max_json_bytes`` のどれかを超えた所で数えるのをやめる(大きな木を最後までたどらない)。
+    :data:`MAX_TREE_DEPTH` より深い所は数えない(その木は符号化が断る)。
+
+    ★2026-11-15(外部レビュー、Codex): 以前は配列の要素とバイトだけを数え、文字列・数の list・dict は 0 と数えた。
+    200,000 文字の文字列や 50,000 個の数の list が、上限 10,000 要素 / 100,000 バイトを素通りした。"""
+    # ★2026-11-22(独立レビュー): 生の UTF-8 長さでは NUL など JSON で増える文字を数えられなかった。
+    c = {"array_elements": 0, "other_values": 0, "array_bytes": 0, "other_bytes": 0, "json_bytes": 0}
+    todo = [(value, 0)]
+    inline_bytes = 0
     while todo:
-        item = todo.pop()
-        if isinstance(item, (np.ndarray, dict, list, tuple)):
-            if id(item) in seen:
-                continue
-            seen.add(id(item))
+        item, depth = todo.pop()
         if isinstance(item, np.ndarray):
-            elements += int(item.size)
-            nbytes += int(item.nbytes)
-        elif isinstance(item, dict):
-            todo.extend(item.values())
-        elif isinstance(item, (list, tuple)):
-            todo.extend(item)
-    return elements, nbytes
+            c["array_elements"] += int(item.size)
+            c["array_bytes"] += int(item.nbytes)
+            if item.nbytes <= INLINE_ARRAY_BYTES and inline_bytes + item.nbytes <= INLINE_TOTAL_BYTES:
+                inline_bytes += int(item.nbytes)
+                b64 = 4 * ((int(item.nbytes) + 2) // 3)
+                shape = sum(_int_decimal_bytes(int(dim)) + 2 for dim in item.shape)
+                c["json_bytes"] += 96 + b64 + shape + _json_string_bytes(item.dtype.str)
+            else:
+                c["json_bytes"] += 48
+        else:
+            c["other_values"] += 1
+            c["other_bytes"] += 8
+            if isinstance(item, str):
+                c["other_bytes"] += _text_bytes(item)
+                c["json_bytes"] += _json_string_bytes(item)
+            elif isinstance(item, (bytes, bytearray)):
+                c["other_bytes"] += len(item)
+                c["json_bytes"] += 64 + 2 * len(item)
+            elif isinstance(item, dict) and depth <= MAX_TREE_DEPTH:
+                c["json_bytes"] += 24 + 4 * len(item)
+                for key, sub in reversed(list(item.items())):
+                    c["other_bytes"] += _text_bytes(key) if isinstance(key, str) else 8
+                    if isinstance(key, np.generic):
+                        key = key.item()
+                    key = key if isinstance(key, str) else str(key)
+                    c["json_bytes"] += _json_string_bytes(key)
+                    todo.append((sub, depth + 1))
+            elif isinstance(item, (list, tuple)) and depth <= MAX_TREE_DEPTH:
+                c["json_bytes"] += 24 + 2 * len(item)
+                todo.extend((sub, depth + 1) for sub in reversed(item))
+            elif isinstance(item, np.generic):
+                scalar = item.item()
+                if isinstance(scalar, bool):
+                    leaf = 5
+                elif isinstance(scalar, int):
+                    digits = _int_decimal_bytes(scalar)
+                    leaf = digits if -(2 ** 53) <= scalar <= 2 ** 53 else 32 + digits
+                elif isinstance(scalar, float):
+                    leaf = 24 if math.isfinite(scalar) else 40
+                else:                                               # complex
+                    leaf = 96
+                c["json_bytes"] += 64 + _json_string_bytes(item.dtype.str) + leaf
+            elif item is None:
+                c["json_bytes"] += 4
+            elif isinstance(item, bool):
+                c["json_bytes"] += 5
+            elif isinstance(item, int):
+                digits = _int_decimal_bytes(item)
+                c["json_bytes"] += digits if -(2 ** 53) <= item <= 2 ** 53 else 32 + digits
+            elif isinstance(item, float):
+                c["json_bytes"] += 24 if math.isfinite(item) else 40
+            elif isinstance(item, complex):
+                c["json_bytes"] += 96
+        if ((max_values and c["array_elements"] + c["other_values"] > max_values)
+                or (max_bytes and c["array_bytes"] + c["other_bytes"] > max_bytes)
+                or (max_json_bytes and c["json_bytes"] > max_json_bytes)):
+            break
+    return c
 
 
 def _result_limit_error(value, job: dict) -> str | None:
@@ -202,13 +309,17 @@ def _result_limit_error(value, job: dict) -> str | None:
     max_elements, max_bytes = job.get("max_elements"), job.get("max_result_bytes")
     if not max_elements and not max_bytes:
         return None
-    elements, nbytes = result_size(value)
-    if max_elements and elements > int(max_elements):
-        return ("the op returned %d array elements, above the %d limit (mcp_stack_max_pixels); ask for a smaller "
-                "grid or window" % (elements, int(max_elements)))
+    c = result_counts(value, int(max_elements) if max_elements else None, int(max_bytes) if max_bytes else None)
+    values = c["array_elements"] + c["other_values"]
+    nbytes = c["array_bytes"] + c["other_bytes"]
+    if max_elements and values > int(max_elements):
+        return ("the op returned %d or more values (%d array elements + %d other values), above the %d limit "
+                "(mcp_stack_max_pixels); ask for a smaller grid or window"
+                % (values, c["array_elements"], c["other_values"], int(max_elements)))
     if max_bytes and nbytes > int(max_bytes):
-        return ("the op returned %d bytes of arrays, above the %d limit (mcp_pipeline_max_intermediate_bytes)"
-                % (nbytes, int(max_bytes)))
+        return ("the op returned %d or more bytes (%d of arrays + %d of strings and other values), above the %d "
+                "limit (mcp_pipeline_max_intermediate_bytes)"
+                % (nbytes, c["array_bytes"], c["other_bytes"], int(max_bytes)))
     return None
 
 
@@ -299,17 +410,29 @@ class _Sandbox:
                 raise PermissionError("the MCP op worker does not change files outside its scratch folder (%s)" % event)
 
 
-def _read_roots(tmp: str) -> tuple:
-    """子が読んでよい場所: 作業フォルダ・Python の本体(prefix と stdlib)・site-packages・fullseye の置き場所。
+def _dist_root() -> str:
+    """fullseye の置き場所(fullseye パッケージと、台帳のモジュール(opsoptics …)が並ぶ場所)。"""
+    return os.path.realpath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-    ★2026-11-15(独立レビュー、PR #318): 以前は親の ``sys.path`` を全部入れていた。``python -m fullseye.mcp`` は
-    cwd を ``sys.path[0]`` に置くので、ドライブの直下やホームで起動すると読み込みの制限が実質なくなった。``sys.path`` からは
-    site-packages / dist-packages という名前の場所だけを取る(Homebrew など prefix の外にある物のため)。"""
+
+def _inside(path, roots) -> bool:
+    """*path* の実体が *roots* のどれかの中(またはそのもの)か。比べる前に realpath と normcase で揃える。"""
+    try:
+        real = os.path.normcase(os.path.realpath(os.fsdecode(path)))
+    except (TypeError, ValueError, OSError):
+        return False
+    for root in roots:
+        root = os.path.normcase(root).rstrip(os.sep)
+        if real == root or real.startswith(root + os.sep):
+            return True
+    return False
+
+
+def _trusted_roots() -> tuple:
+    """子が import してよい場所: Python の本体(prefix と stdlib)・site-packages・fullseye の置き場所。"""
     import site
     import sysconfig
-    candidates = [tmp, sys.prefix, sys.base_prefix, sys.exec_prefix, sys.base_exec_prefix,
-                  # fullseye の置き場所 = fullseye パッケージと、台帳のモジュール(opsoptics …)が並ぶ場所
-                  os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))]
+    candidates = [sys.prefix, sys.base_prefix, sys.exec_prefix, sys.base_exec_prefix, _dist_root()]
     for key in ("stdlib", "platstdlib", "purelib", "platlib"):
         try:
             candidates.append(sysconfig.get_path(key))
@@ -328,9 +451,35 @@ def _read_roots(tmp: str) -> tuple:
     return tuple(sorted({os.path.realpath(p) for p in candidates if p}))
 
 
+def _ledger_module(name):
+    """台帳のモジュールを import して返す。点の無い名前で、出どころ(``spec.origin``)が fullseye の置き場所の中の
+    物だけ。それ以外は ImportError(文にホストのパスは書かない)。
+
+    ★2026-11-15(外部レビュー、Codex): 実行先の名前をそのまま ``import_module`` していた。sys.path を確かめた場所
+    だけにした上で(:meth:`OpWorker._start`)、読む前に出どころを見る(標準ライブラリや site-packages にある同じ名前の
+    物を、台帳と取り違えない)。"""
+    if not isinstance(name, str) or not _MODULE_NAME.match(name):
+        raise ImportError("ledger module name %r is not a plain top-level module name" % (str(name)[:80],))
+    mod = sys.modules.get(name)
+    spec = getattr(mod, "__spec__", None) if mod is not None else importlib.util.find_spec(name)
+    origin = getattr(spec, "origin", None)
+    if not origin or not os.path.isfile(origin) or not _inside(origin, (_dist_root(),)):
+        raise ImportError("ledger module %s does not come from the fullseye installation" % name)
+    return mod if mod is not None else importlib.import_module(name)
+
+
+def _read_roots(tmp: str) -> tuple:
+    """子が読んでよい場所: 作業フォルダ・Python の本体(prefix と stdlib)・site-packages・fullseye の置き場所。
+
+    ★2026-11-15(独立レビュー、PR #318): 以前は親の ``sys.path`` を全部入れていた。``python -m fullseye.mcp`` は
+    cwd を ``sys.path[0]`` に置くので、ドライブの直下やホームで起動すると読み込みの制限が実質なくなった。``sys.path`` からは
+    site-packages / dist-packages という名前の場所だけを取る(Homebrew など prefix の外にある物のため)。"""
+    return tuple(sorted(set(_trusted_roots()) | {os.path.realpath(tmp)}))
+
+
 def _call_ledger_op(job: dict, args: list, kwargs: dict):
     """台帳の入口を呼ぶ(``opassist.run`` と同じ規則: adapter を通して宣言の out 型で返す)。"""
-    mod = importlib.import_module(job["ledger_module"])
+    mod = _ledger_module(job["ledger_module"])
     table = getattr(mod, job["ledger_table"])
     entry = table[job["key"]]
     caller = getattr(mod, "call", None)
@@ -364,9 +513,30 @@ def _child_main(tmp: str) -> int:
 
     threading.Thread(target=watchdog, name="fullseye-mcp-memory-watchdog", daemon=True).start()
 
-    def send(obj: dict) -> None:
-        proto_out.write(json.dumps(obj, ensure_ascii=False) + "\n")
+    def check_memory() -> None:
+        """見張りと同じ判定を、その場で 1 回。C の処理(json.dumps など)が GIL を持ったままだと見張りは回れない。"""
+        if state["active"] and state["limit"] and _memory_bytes() > state["limit"]:
+            os._exit(EXIT_MEMORY)
+
+    def send_text(text: str) -> None:
+        proto_out.write(text)
         proto_out.flush()
+
+    def send(obj: dict) -> None:
+        send_text(json.dumps(obj, ensure_ascii=False) + "\n")
+
+    def encode_reply(obj: dict, limit: int) -> str:
+        """返事を 1 行の JSON にし、長さを測る。上限を超えたら、結果の代わりに output_limit の返事にする。"""
+        text = json.dumps(obj, ensure_ascii=False) + "\n"
+        check_memory()
+        size = _text_bytes(text)
+        if size <= limit:
+            return text
+        return json.dumps({"id": obj.get("id"), "phase": "done", "ok": False,
+                           "error": {"type": "ResourceLimit", "stage": "limit",
+                                     "message": "the encoded reply is %d bytes, above the %d-byte reply limit; "
+                                                "ask for a smaller result" % (size, limit)}},
+                          ensure_ascii=False) + "\n"
 
     for line in sys.stdin:
         line = line.strip()
@@ -376,8 +546,9 @@ def _child_main(tmp: str) -> int:
         jid = job.get("id")
         in_dir = os.path.join(tmp, "in-%s" % jid)
         out_dir = os.path.join(tmp, "out-%s" % jid)
+        reply_limit = min(int(job.get("max_reply_bytes") or MAX_REPLY_BYTES), MAX_REPLY_BYTES)
         try:
-            importlib.import_module(job["ledger_module"])          # import の時間は実行時間に数えない
+            _ledger_module(job["ledger_module"])                   # import の時間は実行時間に数えない
             args = [decode_tree(a, in_dir) for a in job.get("args", [])]
             kwargs = {str(k): decode_tree(v, in_dir) for k, v in (job.get("kwargs") or {}).items()}
         except Exception as exc:                                   # noqa: BLE001
@@ -396,8 +567,9 @@ def _child_main(tmp: str) -> int:
                 warnings.simplefilter("ignore")
                 result = _call_ledger_op(job, args, kwargs)
             elapsed = time.monotonic() - started
-            state["active"] = False
-            sandbox.armed = False
+            check_memory()
+            # ★2026-11-15(外部レビュー、Codex): 見張りと囲いを op が返った所で止めていて、結果を数える・JSON にする・
+            #   送る間は上限の外だった(8 MB の NUL の文字列が、JSON で 48 MB になる)。送り終えるまで掛けたままにする。
             too_big = _result_limit_error(result, job)
             if too_big is not None:
                 # ★2026-11-15(独立レビュー): 結果を .npy に書き出して親が全部読んでから断っていた。書かずに断る。
@@ -405,9 +577,25 @@ def _child_main(tmp: str) -> int:
                 reply = {"id": jid, "phase": "done", "ok": False,
                          "error": {"type": "ResourceLimit", "message": too_big, "stage": "limit"}}
             else:
-                os.makedirs(out_dir, exist_ok=True)
-                reply = {"id": jid, "phase": "done", "ok": True, "value": encode_tree(result, out_dir),
-                         "elapsed_s": elapsed}
+                # ★2026-11-22(独立レビュー 2 回目): 共有された list の木は、送る JSON では同じ値を
+                #   毎回展開する。上界の計数自体が返事の上限を超えた所で止まるようにする。
+                json_bound = result_counts(result, max_json_bytes=reply_limit)["json_bytes"] + 512
+                if json_bound > reply_limit:
+                    # ★2026-11-22(独立レビュー): json.dumps が GIL を持つ間は見張りが回らない。応答の
+                    #   JSON バイト数の上界が枠を超える時は、大きな写しを作る前に output_limit で断る。
+                    del result
+                    reply = {"id": jid, "phase": "done", "ok": False,
+                             "error": {"type": "ResourceLimit", "stage": "limit",
+                                       "message": "the encoded reply can require up to %d bytes, above the %d-byte "
+                                                  "reply limit; ask for a smaller result" % (json_bound, reply_limit)}}
+                else:
+                    os.makedirs(out_dir, exist_ok=True)
+                    reply = {"id": jid, "phase": "done", "ok": True, "value": encode_tree(result, out_dir),
+                             "elapsed_s": elapsed}
+                    del result
+                    check_memory()
+            text = encode_reply(reply, reply_limit)
+            del reply
         except MemoryError:
             os._exit(EXIT_MEMORY)
         except BaseException as exc:                               # noqa: BLE001 - op の失敗は結果として返す
@@ -415,12 +603,31 @@ def _child_main(tmp: str) -> int:
                      "error": {"type": type(exc).__name__, "message": str(exc)[:400], "stage": "run"}}
             if isinstance(exc, (KeyboardInterrupt, SystemExit)):
                 reply["error"]["message"] = "the op tried to stop the interpreter"
+            text = json.dumps(reply, ensure_ascii=False) + "\n"
+        try:
+            send_text(text)
         finally:
             state["active"] = False
             sandbox.armed = False
             np.random.set_state(np_state)                          # 次の呼び出しへ乱数の状態を持ち越さない
-        send(reply)
     return 0
+
+
+def _pump(stream, q: queue.Queue, limit: int) -> None:
+    """子の返事を 1 行ずつ *q* へ。改行を除いて *limit* バイトを超える行を見たら :data:`_TOO_LONG` を置いて読むのを
+    やめる(その子は捨てる)。最後に None。"""
+    try:
+        while True:
+            raw = stream.readline(limit + 2)
+            if not raw:
+                break
+            if len(raw) - (1 if raw.endswith(b"\n") else 0) > limit:
+                q.put(_TOO_LONG)
+                break
+            q.put(raw)
+    except (OSError, ValueError):
+        pass
+    q.put(None)
 
 
 #: 子の起動。sys.path は最初の 1 行で渡す(コマンド行に載せると、長い sys.path で Windows の上限を超える)。
@@ -445,24 +652,20 @@ class OpWorker:
         self._tmp = tempfile.mkdtemp(prefix="fullseye-mcp-worker-")
         env = dict(os.environ, PYTHONUTF8="1", PYTHONIOENCODING="utf-8", PYTHONDONTWRITEBYTECODE="1",
                    TMP=self._tmp, TEMP=self._tmp, TMPDIR=self._tmp)
-        paths = list(dict.fromkeys(p for p in sys.path if p))
+        # ★2026-11-15(外部レビュー、Codex): 子へ親の sys.path を全部渡し、子は ``-I`` 無しで起動していた。``python -m``
+        #   は cwd を sys.path に置くので、起動したフォルダ(信頼しない repo など)の ``scipy.py`` が、囲いを掛ける前に
+        #   子で import された(手元で再現)。子は ``-I``(PYTHONPATH・ユーザの site・cwd を読まない)で起動し、
+        #   sys.path には Python の本体・site-packages・fullseye の置き場所の中の場所だけを渡す。
+        roots = _trusted_roots()
+        paths = [os.path.abspath(p) for p in dict.fromkeys(p for p in sys.path if p) if _inside(p, roots)]
         self._proc = subprocess.Popen(
-            [sys.executable, "-c", _BOOT, self._tmp],
+            [sys.executable, "-I", "-X", "utf8", "-B", "-c", _BOOT, self._tmp],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, cwd=self._tmp, env=env)
         self._proc.stdin.write((json.dumps(paths) + "\n").encode("utf-8"))
         self._proc.stdin.flush()
         self._queue = queue.Queue()
-        proc, q = self._proc, self._queue
-
-        def reader():
-            try:
-                for raw in proc.stdout:
-                    q.put(raw)
-            except (OSError, ValueError):
-                pass
-            q.put(None)
-
-        threading.Thread(target=reader, name="fullseye-mcp-worker-reader", daemon=True).start()
+        threading.Thread(target=_pump, args=(self._proc.stdout, self._queue, MAX_REPLY_BYTES),
+                         name="fullseye-mcp-worker-reader", daemon=True).start()
 
     def _stop(self) -> None:
         proc, tmp = self._proc, self._tmp
@@ -496,6 +699,8 @@ class OpWorker:
             return "timeout"
         if raw is None:
             return None
+        if raw is _TOO_LONG:
+            return {"phase": "too_long"}
         try:
             return json.loads(raw)
         except ValueError:
@@ -552,6 +757,10 @@ class OpWorker:
                             raise OpWorkerError("memory_limit", "the op grew the worker's memory by more than "
                                                 "the %d MiB limit and was stopped" % (int(max_rss) >> 20))
                         raise OpWorkerError("worker_died", "the op worker exited (code %s)" % code)
+                    if reply.get("phase") == "too_long":
+                        self._stop()
+                        raise OpWorkerError("output_limit", "the op worker's reply was longer than %d bytes and was "
+                                            "not read" % MAX_REPLY_BYTES)
                     if reply.get("id") != jid:
                         continue
                     if reply.get("phase") == "ready":
