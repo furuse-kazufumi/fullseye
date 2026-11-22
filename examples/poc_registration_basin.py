@@ -60,6 +60,11 @@ HEADLINE = {
 SHOWN: dict[str, str] = {}
 
 
+#: 表紙の静止画の出典の行の上端を、下端から何 px 上に置くか。ストーリー GIF はこの静止画を 1 コマ目にして
+#: 下端 30 px に進み具合の点を重ねるので、出典(18 px)はその帯より上で終える(2026-11-23、点が出典に被った)。
+STILL_CREDIT_FROM_BOTTOM = 62
+
+
 def check_headline() -> None:
     """見出しの数を守る門: この実行の印字値を ``HEADLINE`` と文字列で照合する。"""
     diff = {k: (v, SHOWN.get(k)) for k, v in HEADLINE.items() if SHOWN.get(k) != v}
@@ -1042,7 +1047,8 @@ def video_real_scan(root, model, normals, frames, diam, rate, half, floor_med, h
             fill=(225, 225, 225))
     ds.text((20, 556), "判定 = 真値から始めた ICP の行き先に戻れたか", font=font(24), fill=(255, 190, 120))
     ds.text((20, 592), "(姿勢の精度ではない)", font=font(24), fill=(255, 190, 120))
-    ds.text((20, S - 40), "データ: T-LESS(Hodaň et al., WACV 2017)、CC BY 4.0", font=font(18), fill=(170, 170, 170))
+    ds.text((20, S - STILL_CREDIT_FROM_BOTTOM), "データ: T-LESS(Hodaň et al., WACV 2017)、CC BY 4.0", font=font(18),
+            fill=(170, 170, 170))
     figs.save("real_scan_still", np.asarray(st),
               caption="サムネイル用の静止画。06 の動画と同じ計算(点対面 ICP、フレーム %d の実測 %d 点、初期 30 / 60 / 120 度から "
                       "%d 反復)の最後の姿勢のモデルを実機の写真に重ね、全周 → 実測の狭まりの幅(数え方 3 通り × 種 %d 本で "

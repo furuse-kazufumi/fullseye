@@ -82,7 +82,8 @@ SPEC = [
     # 5 枚を縦に積んだ全体ではなく、最初の OCT 断面を案内用の代表図にする。
     ("poc_industrial_oct", _P + "poc_industrial_oct/01_real_paint_bscans.png", None, (0.04, 0.05, 0.25)),
     # 実セルの EL の 6 枚組のうちパネル (b)(遮光マスクの円をゼロ点の暗画素として橙で重ねた 1 枚)。全体を縮めると 1 枚 100 px で読めない。
-    ("poc_solar_el_inspection", _P + "poc_solar_el_inspection/10_real_el_overlay.png", None, (0.3388, 0.0555, 0.4266)),
+    # 2026-11-23: 6 枚組の切り出しは説明の無い橙の大円だった。PoC が書く日英併記の表紙(2×2)をそのまま使う。
+    ("poc_solar_el_inspection", _P + "poc_solar_el_inspection/15_real_cover.png", None, None),
     # 「触って見る」に添える画像(展示のカードが無いビューア): 小惑星イトカワの曲率の既存の図
     ("poc_asteroid_curvature", "articles/assets/_sources/src_itokawa_curvature.png", None, None),
     # 2026-11-15: 13 の 4 枚組を縮めると色も字も潰れる。PoC が同じ配列・同じ色から書く正方形の静止画

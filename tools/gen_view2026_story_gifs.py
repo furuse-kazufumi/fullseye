@@ -15,6 +15,15 @@ Japanese and English paths are both made for the page contract, although the fra
 no generated heading: the source figures already identify themselves.  Progress is shown
 only by bitmap dots.  GIFs are only rewritten when the selected source digest changes,
 avoiding Pillow-version byte drift while still making stale inputs regenerate.
+
+English frames (2026-11-23).  Every page except the Japanese one shows the ``en`` GIF, and the
+PoC figures carry Japanese labels.  For a PoC listed in ``docs/view2026/figure_text.json`` (made
+by ``tools/audit_view2026_figure_text.py``, which runs the PoC and records the strings drawn
+for each figure), the ``en`` GIF is chosen by the same rules from the figures whose text is
+English, bilingual or absent.  A figure changed since the audit counts as not English-ready
+(fail-closed).  With one or two such figures the ``en`` page shows the first of them as a
+still; with none, the ``en`` page keeps the Japanese frames and the ledger states the
+limitation (``en.text``).  PoCs not in the audit keep the Japanese frames (``not_audited``).
 """
 from __future__ import annotations
 
@@ -46,6 +55,10 @@ except ModuleNotFoundError:  # ``py tools/gen_view2026_story_gifs.py``
         _square,
         thumbnail_specs,
     )
+try:
+    from tools.audit_view2026_figure_text import ENGLISH_READY
+except ModuleNotFoundError:  # ``py tools/gen_view2026_story_gifs.py``
+    from audit_view2026_figure_text import ENGLISH_READY  # type: ignore[no-redef]
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +67,17 @@ ASSETS = ROOT / "docs" / "articles" / "assets" / "poc"
 EXHIBITS = VIEW / "exhibits.json"
 CAPTIONS = ROOT / "docs" / "articles" / "exhibits" / "poc_captions.json"
 LEDGER = VIEW / "story_gifs.json"
+#: 図ごとに描いた文字の監査(tools/audit_view2026_figure_text.py が書く)。英語版のコマ選びに使う。
+FIGURE_TEXT = VIEW / "figure_text.json"
+#: 英語版のコマの状態(台帳の ``en.text``)。
+EN_NOT_AUDITED = "not_audited"
+EN_FRAMES = "english_ready_frames"
+EN_STILL = "english_ready_still"
+EN_LIMITATION = "limitation_japanese_text_in_every_figure"
+#: 英語版の GIF に要るコマの最少数(これ未満なら英語に読める最初の 1 枚を静止画で出す)。
+EN_MIN_FRAMES = 3
+#: 英語版の表紙を、日本語版の表紙もサムネイルの元も使えないときに名前で探す語。
+EN_COVER_WORD = "cover"
 WIDTH = 720
 HEIGHT = 720
 PROGRESS_HEIGHT = 30
@@ -75,7 +99,15 @@ MIN_LAPLACIAN_DENSITY = 0.0005
 MIN_CONTENT_FRACTION = 0.36
 RASTER = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff"}
 #: カード媒体と物語の表紙を分ける例。偏光はカードで結果の3枚比較(09)を見せ、物語は320 pxでも読める2枚比較(10)から始める。
-COVER_OVERRIDES = {"poc_polarization_specular": "10_glare_cover.png"}
+#: 動きが主の展示でも、静止画の表紙(サムネイルと同じ図)から物語の GIF を作る目玉(2026-11-23)。
+MOTION_STORY_COVERS = {"poc_registration_basin": "07_real_scan_still.png",
+                       "poc_interferometry_step": "10_csi_scan_still.png",
+                       "poc_lidar_terrain_change": "15_real_dod_still.png"}
+#: 太陽電池 EL はカードの図(6 枚組)の切り出しが説明の無い橙の大円になっていたので、PoC が書く
+#: 日英併記の表紙(real_cover)から始める(2026-11-23)。
+COVER_OVERRIDES = {"poc_polarization_specular": "10_glare_cover.png",
+                   "poc_solar_el_inspection": "15_real_cover.png",
+                   **MOTION_STORY_COVERS}
 EYE_CATCHERS = """poc_phase_measuring_deflectometry poc_industrial_oct
 poc_hyperspectral_foreign_matter poc_thin_film_reflectometry poc_cad_scan_deviation
 poc_telecentric_metrology poc_tem_ctf_thon_rings poc_virtual_sem_kv_cd_bse
@@ -101,7 +133,7 @@ def _is_target(e: dict, caption: dict, figures: list[dict], excluded_anim3d: set
     named_still = any(f.get("name") == named and not f.get("animated") and
                       Path(f.get("file", "")).suffix.lower() in RASTER for f in figures)
     return e["id"] not in excluded_anim3d and (e["id"] in EYE_CATCHERS or
-            not e.get("motion") or ext in RASTER or named_still)
+            e["id"] in MOTION_STORY_COVERS or not e.get("motion") or ext in RASTER or named_still)
 
 
 def _usable(row: dict, folder: Path) -> bool:
@@ -296,12 +328,12 @@ def _text_only_name(row: dict) -> bool:
     return bool(tokens & {"table", "numbers"})
 
 
-def _plan_rows(pid: str, rows: list[dict]) -> tuple[list[dict], list[dict]]:
-    """先頭にサムネ仕様を付け、以後の極端比率だけ内容の濃い窓へ切り出す。"""
+def _plan_rows(pid: str, rows: list[dict], thumbnail: bool = True) -> tuple[list[dict], list[dict]]:
+    """先頭にサムネ仕様を付け(``thumbnail=False`` なら付けない)、以後の極端比率だけ内容の濃い窓へ切り出す。"""
     specs, contained = thumbnail_specs()
     by_id = {thumb_pid: (rel, frame, crop) for thumb_pid, rel, frame, crop in specs}
     planned = [dict(rows[0])]
-    if pid in by_id:
+    if thumbnail and pid in by_id:
         rel, frame, crop = by_id[pid]
         planned[0]["_thumbnail"] = {
             "source": rel,
@@ -485,6 +517,68 @@ def _write_gif(path: Path, rows: list[dict], folder: Path, lang: str,
             "max_color_mad": round(max(diffs, default=0.0), 4), "source_sha256": digest}, None, rows
 
 
+def _english_ready(pid: str, text_ledger: dict) -> dict[str, str] | None:
+    """図の名前 -> 監査の区分。英語に読める図だけでなく全図を返す(除いた理由を台帳に書くため)。
+
+    監査していない PoC は ``None``。監査の後に図のバイトが変わったものは ``changed_since_audit``、
+    監査の実行が描いた図と repo の図のバイトが違ったもの(記録した文字が repo の図の文字だと言えない)は
+    ``not_reproduced_by_audit`` にする(どちらも英語に読めるとは数えない = fail-closed)。
+    """
+    entry = text_ledger.get(pid)
+    if entry is None:
+        return None
+    out = {}
+    for name, row in entry.get("figures", {}).items():
+        path = ASSETS / pid / name
+        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != row.get("sha256"):
+            out[name] = "changed_since_audit"
+        elif row.get("same_bytes_as_audit_run") is not True:
+            out[name] = "not_reproduced_by_audit"
+        else:
+            out[name] = str(row.get("class"))
+    return out
+
+
+def _thumb_source_file(pid: str) -> str | None:
+    """サムネイルの元がこの PoC の図ならその名前。別の場所の画像か、仕様が無ければ ``None``。"""
+    specs, _contained = thumbnail_specs()
+    prefix = "articles/assets/poc/%s/" % pid
+    for thumb_pid, rel, _frame, _crop in specs:
+        if thumb_pid == pid:
+            return rel[len(prefix):] if rel.startswith(prefix) else None
+    return None
+
+
+def _has_thumb_spec(pid: str) -> bool:
+    specs, _contained = thumbnail_specs()
+    return any(thumb_pid == pid for thumb_pid, _rel, _frame, _crop in specs)
+
+
+def _english_rows(pid: str, cover: str, figures: list[dict], folder: Path, caption: dict,
+                  classes: dict[str, str]) -> tuple[list[dict], list[dict]]:
+    """英語版のコマ(計画済み)と、計画で外れたコマ。英語に読める図だけで同じ規則で選ぶ。"""
+    ready = {name for name, cls in classes.items() if cls in ENGLISH_READY}
+    ok_figs = [f for f in figures if f.get("file") in ready]
+    usable_ready = [f["file"] for f in ok_figs if _usable(f, folder)]
+    # 表紙の順: 日本語版と同じ表紙 > サムネイルの元 > 名前が表紙(cover)の図 > 図の順で最初の図。
+    # (照明の円錐は日英併記の表紙 07_cone_cover が英語に読めるのに、図の順の最初の 04 が表紙になっていた)
+    thumb_source = _thumb_source_file(pid)
+    candidates = ([cover] if cover in ready else []) + \
+        [x for x in (thumb_source,) if x in usable_ready] + \
+        [x for x in usable_ready if EN_COVER_WORD in x.lower()] + usable_ready
+    en_cover = candidates[0] if candidates else None
+    if en_cover is None:
+        return [], []
+    by_name = {f.get("name"): f.get("file") for f in figures}
+    story = [n for n in (caption.get("story_figures") or [])
+             if by_name.get(n) in ready and by_name.get(n) != en_cover]
+    rows = chosen_frames(ok_figs, en_cover, folder, story or None)
+    if not rows:
+        return [], []
+    use_thumb = en_cover == cover and (not _has_thumb_spec(pid) or thumb_source in ready)
+    return _plan_rows(pid, rows, thumbnail=use_thumb)
+
+
 def main() -> int:
     data = _json(EXHIBITS)
     all_rows = {e["id"]: e for e in data["all"]}
@@ -499,6 +593,7 @@ def main() -> int:
     rank = {name: i for i, name in enumerate(EYE_CATCHERS)}
     targets.sort(key=lambda e: (rank.get(e["id"], len(rank)), list(all_rows).index(e["id"])))
     old = _json(LEDGER).get("entries", {}) if LEDGER.is_file() else {}
+    text_ledger = _json(FIGURE_TEXT).get("entries", {}) if FIGURE_TEXT.is_file() else {}
     entries = {}
     for exhibit in targets:
         pid, folder = exhibit["id"], ASSETS / exhibit["id"]
@@ -528,19 +623,52 @@ def main() -> int:
                 "excluded_frames": excluded_frames, "variants": {}}
         if selected[0].get("_thumbnail"):
             item["thumbnail"] = selected[0]["_thumbnail"]
+        # 英語版(日本語以外の全ページ)のコマ。監査の無い PoC は日本語版と同じコマ。
+        classes = _english_ready(pid, text_ledger)
+        en_excluded: list[dict] = []
+        if classes is None:
+            en_rows, en_text = selected, EN_NOT_AUDITED
+        else:
+            en_rows, en_excluded = _english_rows(pid, selected[0]["file"], figures, folder,
+                                                 cap_rows.get(pid, {}), classes)
+            if not en_rows:
+                en_rows, en_text = selected, EN_LIMITATION
+            elif len(en_rows) < EN_MIN_FRAMES:
+                en_text = EN_STILL
+            else:
+                en_text = EN_FRAMES
+        rows_by_lang = {"ja": selected, "en": en_rows}
         failed = None
         for lang in ("ja", "en"):
             path = folder / ("story.%s.gif" % lang)
-            variant, reason, used = _write_gif(path, selected, folder, lang,
+            rows = rows_by_lang[lang]
+            if lang == "en" and en_text == EN_STILL:
+                if path.exists():
+                    path.unlink()
+                item["variants"][lang] = {
+                    "path": (folder / rows[0]["file"]).relative_to(ROOT / "docs").as_posix(),
+                    "static": True, "frame_count": 1}
+                rows_by_lang[lang] = rows[:1]
+                continue
+            variant, reason, used = _write_gif(path, rows, folder, lang,
                                                old.get(pid, {}).get("variants", {}).get(lang))
             if reason:
                 failed = reason; break
-            if len(used) < len(selected):
-                item["excluded_frames"].extend(
-                    {"file": row["file"], "reason": "capacity_limit"} for row in selected[len(used):])
-                selected = used
-                item["selected"] = [x["file"] for x in selected]
+            if len(used) < len(rows):
+                dropped = [{"file": row["file"], "reason": "capacity_limit"} for row in rows[len(used):]]
+                if lang == "ja":
+                    item["excluded_frames"].extend(dropped)
+                    item["selected"] = [x["file"] for x in used]
+                    selected = used
+                else:
+                    en_excluded.extend(dropped)
+                rows_by_lang[lang] = used
             item["variants"][lang] = variant
+        en_files = [x["file"] for x in rows_by_lang["en"]]
+        item["en"] = {"text": en_text, "selected": en_files, "excluded_frames": en_excluded,
+                      "not_english_ready": [] if classes is None else [
+                          {"file": x["file"], "class": classes.get(x["file"], "unaudited")}
+                          for x in selected if classes.get(x["file"], "unaudited") not in ENGLISH_READY]}
         if failed:
             for lang in ("ja", "en"):
                 path = folder / ("story.%s.gif" % lang)
@@ -550,10 +678,15 @@ def main() -> int:
         else:
             cap = cap_rows.get(pid, {})
             representative = selected[0]
+
+            def still_of(rows: list[dict]) -> str:
+                return (folder / next((f["file"] for f in rows if _usable(f, folder)),
+                                      rows[0]["file"])).relative_to(ROOT / "docs").as_posix()
+
             item.update(status="gif", reason=None,
                         cover=representative["file"],
-                        still=(folder / next((f["file"] for f in selected if _usable(f, folder)),
-                                             representative["file"])).relative_to(ROOT / "docs").as_posix(),
+                        still=still_of(selected),
+                        stills={"ja": still_of(selected), "en": still_of(rows_by_lang["en"])},
                         alt={"ja": representative.get("caption") or exhibit["label"]["ja"],
                              "en": cap.get("lead_en") or cap.get("title_en") or exhibit["label"]["en"]})
         entries[pid] = item
@@ -568,6 +701,9 @@ def main() -> int:
               "crop_title_band_fraction": TITLE_BAND_FRACTION,
               "min_laplacian_density": MIN_LAPLACIAN_DENSITY,
               "min_content_fraction": MIN_CONTENT_FRACTION,
+              "english_frames": {"figure_text": FIGURE_TEXT.relative_to(ROOT).as_posix(),
+                                 "english_ready_classes": sorted(ENGLISH_READY),
+                                 "min_frames": EN_MIN_FRAMES},
               "manual_thumbnail_spec_count": len(THUMB_SPEC), "entries": entries}
     text = json.dumps(ledger, ensure_ascii=False, indent=2) + "\n"
     LEDGER.write_text(text, encoding="utf-8", newline="\n")
