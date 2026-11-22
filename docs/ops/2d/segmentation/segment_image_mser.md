@@ -39,9 +39,9 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出
 (``cv2.MSER_create``)。しきい値を連続的に変化させても形が安定して残る
-領域を検出し、その境界線を返す(文字・ロゴなど照明変化に頑健な領域検出に
-使われる)。HALCON の ``segment_image_mser``（Segment image using Maximally
-Stable Extremal Regions (MSER).）に相当。
+領域を検出し、入れ子の領域もそれぞれの境界線を返す(文字・ロゴなど照明変化に
+頑健な領域検出に使われる)。HALCON の ``segment_image_mser``（Segment image using
+Maximally Stable Extremal Regions (MSER).）に相当。
 
 ``a`` が MSER の安定性パラメータ(delta、3〜11)を振る。``b`` は未使用。
 cv2 が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。
