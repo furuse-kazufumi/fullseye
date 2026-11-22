@@ -8,7 +8,7 @@
 
 **Präsentation: Do., 3. Dez. 2026, 14:40–15:50 Uhr JST, Interaktive Session 2, IS2-19** (Pacifico Yokohama, Annex Hall)
 
-<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="Eine 3-D-Szene, zerlegt in Bild, Tiefe, Normalen, Schattenmaske und Kanten, jeweils weiterverarbeitet" width="640" height="468"><div class="vt"><p>Eine Plattform, die Physiksimulation (einschließlich Sensorik wie Optikdesign und 3-D-Messung) und klassische Bildverarbeitung über MCP und RAG an eine KI übergibt, sie für jede Aufgabe eine Kombination ausarbeiten lässt und die Aufgabe interaktiv löst, geprüft durch Typkonsistenz und Bewertung gegen Ground Truth. Open Source (Apache-2.0).</p></div></div>
+<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="Eine 3-D-Szene, zerlegt in Bild, Tiefe, Normalen, Schattenmaske und Kanten, jeweils weiterverarbeitet" width="640" height="468"><div class="vt"><p>Fullseye ist eine Plattform für Bildprüfung, 3-D-Messung und Physiksimulation. Sie übergibt typisierte Operatoren der klassischen Bildverarbeitung und Physiksimulation (einschließlich Sensorik wie Optikdesign) über MCP und RAG an eine KI, lässt sie für jede Aufgabe eine Kombination ausarbeiten und löst die Aufgabe interaktiv, geprüft durch Typkonsistenz und Bewertung gegen Ground Truth. Open Source (Apache-2.0).</p></div></div>
 
 Kachel antippen öffnet Video oder Abbildung (▶ = bewegt).
 

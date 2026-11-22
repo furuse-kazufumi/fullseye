@@ -5,6 +5,8 @@
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
+**Fullseye is a Python library for image inspection, 3-D measurement and physics simulation.** It chains typed operators, checks them against ground truth produced by physics simulation, and hands them to AI assistants through MCP and RAG.
+
 > **Presenting at ViEW2026 (3–4 December 2026, Pacifico Yokohama) → [ViEW2026 page](view2026/en/)** (moving PoC results, viewers you can use in the browser, the paper)
 
 > **Please note:** only this index page is translated. The individual documents it links to are, for the moment, available in Japanese only.

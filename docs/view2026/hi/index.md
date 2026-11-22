@@ -8,7 +8,7 @@
 
 **प्रस्तुति: गुरुवार 3 दिसंबर 2026, 14:40–15:50 JST, Interactive Session 2, IS2-19** (Pacifico Yokohama, Annex Hall)
 
-<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="एक 3-D दृश्य से चित्र, depth, normals, shadow और edges निकालकर उन्हें आगे प्रोसेस करने का चित्र" width="640" height="468"><div class="vt"><p>एक foundation जो physics simulation (optical design और 3-D measurement जैसी sensing सहित) और classic image processing को MCP और RAG के ज़रिए AI को देता है, हर task के लिए combination सोचने देता है, और type consistency तथा ground truth evaluation से जाँचते हुए task को interactive तरीके से हल करता है। Open source (Apache-2.0)।</p></div></div>
+<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="एक 3-D दृश्य से चित्र, depth, normals, shadow और edges निकालकर उन्हें आगे प्रोसेस करने का चित्र" width="640" height="468"><div class="vt"><p>Fullseye image inspection, 3-D measurement और physics simulation का foundation है। यह typed classic image-processing operators और physics simulation (optical design जैसी sensing सहित) को MCP और RAG के ज़रिए AI को देता है, हर task के लिए combination सोचने देता है, और type consistency तथा ground truth evaluation से जाँचते हुए task को interactive तरीके से हल करता है। Open source (Apache-2.0)।</p></div></div>
 
 tile पर tap करने से video या figure खुलता है (▶ = चलता हुआ)।
 
