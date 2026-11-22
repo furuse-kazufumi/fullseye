@@ -24,6 +24,7 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+import stat
 
 import numpy as np
 
@@ -31,6 +32,21 @@ __all__ = [
     "assess_validity", "file_sha256", "input_reference", "resolve_input_ref",
     "StageCache", "array_nbytes", "CACHE_BUDGET_BYTES", "cache_summary_text",
 ]
+
+#: Win32 がファイル名として扱えない文字。Invalid characters in a Win32 path component.
+_WIN32_INVALID_NAME_CHARS = frozenset('<>"|?*')
+#: 拡張子の有無にかかわらず Win32 が device と解釈する stem。Reserved Win32 device stems.
+_WIN32_RESERVED_DEVICE_STEMS = frozenset(
+    {"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$"}
+    | {"COM%d" % n for n in range(1, 10)}
+    | {"LPT%d" % n for n in range(1, 10)}
+    | {"COM%s" % n for n in "¹²³"}
+    | {"LPT%s" % n for n in "¹²³"}
+)
+#: Windows の ``st_file_attributes`` で junction 等を表す bit。Reparse-point attribute bit.
+_WINDOWS_REPARSE_POINT_FLAG = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+#: C0 と DEL はパス文字列に入れない。C0 and DEL are refused in saved paths.
+_PATH_CONTROL_CODE_LIMIT = 32
 
 # --------------------------------------------------------------------------- #
 # 結果の妥当性(ran / valid / reasons を分けて持つ)。Studio は**報告するだけ**で、
@@ -172,21 +188,109 @@ def _valid_input_ref(d):
     return ref
 
 
-def _input_ref_lexical_reason(path):
-    """自動読取りしない path の理由。Classify unsafe paths without touching the filesystem."""
-    import posixpath
-    import re
-
+def _network_or_device_problem(path):
+    """UNC/device 形なら理由を返す。Return a reason for lexical UNC/device forms."""
     value = str(path)
     slash = value.replace("\\", "/")
-    if slash.startswith("//"):
-        return "network (UNC/device) path"
-    if re.match(r"^[A-Za-z]:", slash) or slash.startswith("/"):
-        return "absolute path"
-    normal = posixpath.normpath(slash)
-    if normal == ".." or normal.startswith("../"):
-        return "path leaves the pipeline folder"
+    if len(value) >= 2 and value[0] in "/\\" and value[1] in "/\\":
+        return "network/device path"
+    if slash.startswith("/??/"):
+        return "network/device path"
     return None
+
+
+def _plain_relative_path_problem(path):
+    """普通の相対 path でなければ短い英語の理由を返す。Lexically validate a plain relative path.
+
+    A single ``.`` component and a single trailing separator are harmless and
+    accepted. Empty interior components are refused so Win32 aliases do not get
+    silently normalised before the safety decision.
+    """
+    value = str(path)
+    if not value:
+        return "file path is empty"
+    if any(ord(ch) < _PATH_CONTROL_CODE_LIMIT or ord(ch) == 127 for ch in value):
+        return "file path contains a control character"
+    problem = _network_or_device_problem(value)
+    if problem:
+        return problem
+    slash = value.replace("\\", "/")
+    if re.match(r"^[A-Za-z]:", slash):
+        return "absolute path" if slash[2:3] == "/" else "drive-qualified paths are refused"
+    if slash.startswith("/"):
+        return "rooted paths are refused"
+    if ":" in value:
+        return "file path contains a colon"
+    parts = slash.split("/")
+    if parts[-1] == "":
+        parts.pop()
+    if not parts:
+        return "file path is empty"
+    for component in parts:
+        if component == "":
+            return "file path contains an empty component"
+        if component == "..":
+            return "path leaves the pipeline folder"
+        if component == ".":
+            continue
+        if component.endswith((" ", ".")):
+            return "a path component ends with a space or period"
+        if any(ch in _WIN32_INVALID_NAME_CHARS for ch in component):
+            return "a path component contains a Win32-invalid character"
+        stem = component.split(".", 1)[0].upper()
+        if stem in _WIN32_RESERVED_DEVICE_STEMS:
+            return "a path component is a reserved device name"
+    return None
+
+
+def _folder_problem(folder):
+    """pipeline folder の UNC/device 形を字句だけで拒む。Refuse lexical UNC/device folders."""
+    problem = _network_or_device_problem(folder)
+    if problem:
+        return "the pipeline folder is on a network/device path"
+    return None
+
+
+def _plain_name(path):
+    """両 separator で切った安全な末尾名を返す。Return a safe lexical basename for relinking."""
+    value = str(path)
+    name = re.split(r"[\\/]", value)[-1]
+    if re.match(r"^[A-Za-z]:", name):
+        name = name[2:]
+    if not name or _plain_relative_path_problem(name) is not None:
+        return ""
+    return name
+
+
+def _walk_inside(folder, rel):
+    """folder から各要素を lstat し link を追わずに歩く。Walk components with lstat, never links.
+
+    ``(joined_path, None)`` means every component was inspected. A missing
+    component, symlink, reparse point, or inspection error returns ``(None,
+    reason)`` and no deeper component is touched.
+    """
+    current = os.fspath(folder)
+    parts = [part for part in str(rel).replace("\\", "/").split("/") if part not in ("", ".")]
+    for component in parts:
+        current = os.path.join(current, component)
+        try:
+            info = os.lstat(current)
+        except (FileNotFoundError, NotADirectoryError):
+            return None, "missing component: %s" % component
+        except OSError as exc:
+            return None, "could not inspect component %s: %s" % (component, exc)
+        attrs = int(getattr(info, "st_file_attributes", 0) or 0)
+        if stat.S_ISLNK(info.st_mode):
+            return None, "path component is a symbolic link: %s" % component
+        if attrs & _WINDOWS_REPARSE_POINT_FLAG:
+            return None, "path component is a reparse point: %s" % component
+    return current, None
+
+
+def _needs_confirmation(given, reason):
+    """確認待ち結果を一形にする。Build the single needs-confirmation result shape."""
+    return {"status": "needs_confirmation", "path": None, "given": given, "reason": reason,
+            "message": "input was not read automatically (%s): %s" % (reason, given)}
 
 
 def resolve_input_ref(ref, base_dir):
@@ -195,12 +299,15 @@ def resolve_input_ref(ref, base_dir):
     status: ``ok``(ある・sha256 一致 = 黙って読む)/ ``changed``(ある・不一致 = 読むが警告)/
     ``relinked``(元の場所を自動読取りせず、.json の隣の同じ名前で見つかった・一致)/ ``missing``
     (安全な相対 path が見つからない)/ ``needs_confirmation``(絶対・UNC・folder 外なので自動では読まない)。
-    自動読取りするのは、realpath 後も .json の folder 内にある相対 path だけ。
+    自動読取りするのは、字句上安全で、各要素を lstat して link/reparse point が無い
+    .json folder 内の相対 path だけ。No ``realpath`` call is made here.
     """
     given = str(ref["path"])
-    name = re.split(r"[\\/]", given)[-1]
-    base = os.path.realpath(base_dir)
-    unsafe_reason = _input_ref_lexical_reason(given)
+    base = os.fspath(base_dir)
+    base_problem = _folder_problem(base)
+    if base_problem:
+        return _needs_confirmation(given, base_problem)
+    unsafe_reason = _plain_relative_path_problem(given)
 
     def _same(p):
         try:
@@ -208,31 +315,25 @@ def resolve_input_ref(ref, base_dir):
         except OSError:
             return None
 
-    cand = None
     if unsafe_reason is None:
-        candidate = os.path.realpath(os.path.join(base, given))
-        try:
-            inside = os.path.normcase(os.path.commonpath([base, candidate])) == os.path.normcase(base)
-        except ValueError:
-            inside = False
-        if inside:
-            cand = candidate
-            if os.path.isfile(cand):
-                same = _same(cand)
-                if same:
-                    return {"status": "ok", "path": cand, "message": ""}
-                if same is not None:
-                    return {"status": "changed", "path": cand,
-                            "message": "input file changed since save: %s" % given}
-        else:
-            unsafe_reason = "path leaves the pipeline folder after resolving links"
+        candidate, stopped = _walk_inside(base, given)
+        if candidate is not None and os.path.isfile(candidate):
+            same = _same(candidate)
+            if same:
+                return {"status": "ok", "path": candidate, "message": ""}
+            if same is not None:
+                return {"status": "changed", "path": candidate,
+                        "message": "input file changed since save: %s" % given}
+        if stopped and not stopped.startswith("missing component:"):
+            return _needs_confirmation(given, stopped)
+        return {"status": "missing", "path": None, "message": "input not found: %s" % given}
 
-    alt = os.path.realpath(os.path.join(base, name)) if name else ""
-    try:
-        alt_inside = bool(alt) and os.path.normcase(os.path.commonpath([base, alt])) == os.path.normcase(base)
-    except ValueError:
-        alt_inside = False
-    if alt_inside and (cand is None or os.path.normcase(alt) != os.path.normcase(cand)) and os.path.isfile(alt):
+    name = _plain_name(given)
+    if name:
+        alt, _stopped = _walk_inside(base, name)
+    else:
+        alt = None
+    if alt is not None and os.path.isfile(alt):
         same = _same(alt)
         if same:
             return {"status": "relinked", "path": alt,
@@ -240,10 +341,31 @@ def resolve_input_ref(ref, base_dir):
         if same is not None:
             return {"status": "changed", "path": alt,
                     "message": "input file changed since save: %s (found next to the project file)" % given}
-    if unsafe_reason is not None:
-        return {"status": "needs_confirmation", "path": None,
-                "message": "input was not read automatically (%s): %s" % (unsafe_reason, given)}
-    return {"status": "missing", "path": None, "message": "input not found: %s" % given}
+    return _needs_confirmation(given, unsafe_reason)
+
+
+def _read_confirmed_input(ref, base_dir):
+    """利用者の確認後だけ saved input を一度読む。Read a saved input once, only after consent.
+
+    The returned ``data`` bytes are both hashed here and decoded by Studio, so
+    there is no hash-then-reopen TOCTOU window. Drive-qualified and rooted paths
+    are used as written; other relative paths are joined to the pipeline folder.
+    """
+    given = str(ref["path"])
+    slash = given.replace("\\", "/")
+    as_written = bool(re.match(r"^[A-Za-z]:", slash) or slash.startswith("/"))
+    path = given if as_written else os.path.join(os.fspath(base_dir), given)
+    try:
+        with open(path, "rb") as fh:
+            data = fh.read()
+    except OSError as exc:
+        return {"status": "missing", "path": None, "given": given,
+                "message": "input could not be read after confirmation: %s (%s)" % (given, exc)}
+    digest = hashlib.sha256(data).hexdigest()
+    if digest == ref.get("sha256"):
+        return {"status": "ok", "path": path, "given": given, "data": data, "message": ""}
+    return {"status": "changed", "path": path, "given": given, "data": data,
+            "message": "input file changed since save: %s" % given}
 
 
 # --------------------------------------------------------------------------- #

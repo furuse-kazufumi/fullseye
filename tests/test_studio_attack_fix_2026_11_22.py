@@ -458,3 +458,393 @@ def test_f7_old_python_editor_save_is_atomic_and_marks_only_after_success(qapp, 
         assert editor._dirty is False and editor._disk_text == "print('new')\n"
     finally:
         _close_window(win)
+
+
+# Round 2: a path saved in a pipeline must not be touched before explicit consent.
+
+
+def test_r2_shared_lexical_helpers_refuse_windows_aliases_and_devices():
+    import studio_result
+
+    bad = [
+        "", "points.xyz:hidden", "dir. /points.xyz", "points.xyz ", "nul.xyz",
+        "COM1", "com1.txt", "LPT¹.log", "CONIN$", "D:foo.xyz", "../x.xyz",
+        "a//b.xyz", "a\x01b.xyz", 'bad<name>.xyz',
+    ]
+    for path in bad:
+        assert studio_result._plain_relative_path_problem(path), path
+    assert studio_result._plain_relative_path_problem("./safe/points.xyz") is None
+    assert studio_result._plain_name(r"D:old\foo.png") == "foo.png"
+    assert studio_result._plain_name("image.png:hidden") == ""
+
+
+@pytest.mark.parametrize(
+    "path",
+    ["points.xyz:hidden", "dir. /points.xyz", "points.xyz ", "nul.xyz", "COM1", "D:foo.xyz"],
+)
+def test_r2_1b_validate_directives_refuses_windows_unsafe_names(path):
+    import studio
+
+    with pytest.raises(ValueError, match=r"directive 1:"):
+        studio.validate_directives({"directives": ["disp_points3d (%r)" % path]})
+
+
+def test_r2_1a_unc_pipeline_apply_never_touches_unc(qapp, monkeypatch):
+    import mesh
+    import studio
+
+    win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(16)))
+    calls = []
+
+    def refuse(name, result=None):
+        def watched(path, *args, **kwargs):
+            value = os.fspath(path)
+            calls.append((name, value))
+            assert not value.startswith((r"\\", "//")), (name, value)
+            return result
+        return watched
+
+    monkeypatch.setattr(studio.os.path, "realpath", refuse("realpath", "local"))
+    monkeypatch.setattr(studio.os.path, "exists", refuse("exists", False))
+    monkeypatch.setattr(studio.os, "lstat", refuse("lstat"))
+    monkeypatch.setattr(mesh, "read_points", lambda path, **_k: calls.append(("reader", os.fspath(path))))
+    try:
+        win._state["pipe_path"] = r"\\server\share\pipe.json"
+        win._state["disp_log"] = []
+        win._apply_dev_directives("disp_points3d ('points.xyz')")
+        assert win._state["disp_log"][-1]["ok"] is False
+        assert "pipeline folder" in win._state["disp_log"][-1]["error"].lower()
+        assert not any(name == "reader" for name, _path in calls)
+    finally:
+        _close_window(win)
+
+
+def test_r2_1a_linked_3d_folder_stops_lstat_walk_at_link(qapp, tmp_path, monkeypatch):
+    import mesh
+    import studio
+
+    base = tmp_path / "project"
+    outside = tmp_path / "outside"
+    base.mkdir(); outside.mkdir()
+    (outside / "points.xyz").write_text("0 0 0\n", encoding="utf-8")
+    link = base / "link"
+    try:
+        link.symlink_to(outside, target_is_directory=True)
+    except (OSError, NotImplementedError) as exc:
+        pytest.skip("symlink/junction could not be created: %s" % exc)
+    win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(16)))
+    lstat_calls = []
+    real_lstat = os.lstat
+    monkeypatch.setattr(studio.os, "lstat", lambda path: lstat_calls.append(os.fspath(path)) or real_lstat(path))
+    monkeypatch.setattr(studio.os.path, "realpath", lambda *_a, **_k: pytest.fail("realpath must not be called"))
+    reader_calls = []
+    monkeypatch.setattr(mesh, "read_points", lambda path, **_k: reader_calls.append(os.fspath(path)))
+    try:
+        win._state["pipe_path"] = str(base / "pipe.json")
+        win._state["disp_log"] = []
+        win._apply_dev_directives("disp_points3d ('link/points.xyz')")
+        assert reader_calls == []
+        assert lstat_calls[-1] == str(link)
+        assert str(link / "points.xyz") not in lstat_calls
+        assert "link" in win._state["disp_log"][-1]["error"].lower()
+    finally:
+        _close_window(win)
+
+
+def test_r2_2a_outward_link_needs_confirmation_without_following_it(tmp_path, monkeypatch):
+    import studio_result
+
+    base = tmp_path / "project"
+    outside = tmp_path / "outside"
+    base.mkdir(); outside.mkdir()
+    (outside / "image.png").write_bytes(b"outside")
+    link = base / "link"
+    try:
+        link.symlink_to(outside, target_is_directory=True)
+    except (OSError, NotImplementedError) as exc:
+        pytest.skip("symlink/junction could not be created: %s" % exc)
+    calls = []
+    real_lstat = os.lstat
+    monkeypatch.setattr(studio_result.os, "lstat", lambda path: calls.append(os.fspath(path)) or real_lstat(path))
+    monkeypatch.setattr(studio_result.os.path, "realpath", lambda *_a, **_k: pytest.fail("realpath must not be called"))
+    result = studio_result.resolve_input_ref(
+        {"path": "link/image.png", "sha256": "unused"}, str(base))
+    assert result["status"] == "needs_confirmation"
+    assert result["path"] is None and result["given"] == "link/image.png"
+    assert calls[-1] == str(link)
+    assert str(link / "image.png") not in calls
+
+
+def test_r2_2a_drive_relative_relinks_only_by_plain_name(tmp_path, monkeypatch):
+    import studio_result
+
+    base = tmp_path / "project"
+    base.mkdir()
+    local = base / "foo.png"
+    local.write_bytes(b"same")
+    digest = hashlib.sha256(b"same").hexdigest()
+    calls = []
+    real_isfile = os.path.isfile
+    real_lstat = os.lstat
+
+    def safe_arg(name, func):
+        def watched(path, *args, **kwargs):
+            value = os.fspath(path)
+            calls.append((name, value))
+            assert not value.upper().startswith("D:"), (name, value)
+            return func(path, *args, **kwargs)
+        return watched
+
+    monkeypatch.setattr(studio_result.os.path, "realpath", safe_arg("realpath", os.path.realpath))
+    monkeypatch.setattr(studio_result.os.path, "isfile", safe_arg("isfile", real_isfile))
+    monkeypatch.setattr(studio_result.os, "lstat", safe_arg("lstat", real_lstat))
+    result = studio_result.resolve_input_ref({"path": r"D:foo.png", "sha256": digest}, str(base))
+    assert result["status"] == "relinked" and result["path"] == str(local)
+    assert any(value == str(local) for _name, value in calls)
+
+
+def test_r2_2a_unc_base_needs_confirmation_with_zero_unc_fs_calls(monkeypatch):
+    import studio_result
+
+    calls = []
+
+    def watched(name, result=None):
+        def inner(path, *args, **kwargs):
+            value = os.fspath(path)
+            calls.append((name, value))
+            assert "server" not in value.lower(), (name, value)
+            return result
+        return inner
+
+    monkeypatch.setattr(studio_result.os.path, "realpath", watched("realpath", "x"))
+    monkeypatch.setattr(studio_result.os.path, "exists", watched("exists", False))
+    monkeypatch.setattr(studio_result.os.path, "isfile", watched("isfile", False))
+    monkeypatch.setattr(studio_result.os, "stat", watched("stat"))
+    monkeypatch.setattr(studio_result.os, "lstat", watched("lstat"))
+    result = studio_result.resolve_input_ref(
+        {"path": "image.png", "sha256": "x"}, r"\\server\share\project")
+    assert result["status"] == "needs_confirmation"
+    assert "pipeline folder" in result["reason"]
+    assert calls == []
+
+
+def test_r2_2b_ads_input_never_reaches_filesystem(tmp_path, monkeypatch):
+    import studio_result
+
+    calls = []
+
+    def reject(name, result=None):
+        def watched(path, *args, **kwargs):
+            value = os.fspath(path)
+            calls.append((name, value))
+            assert "image.png:hidden" not in value, (name, value)
+            return result
+        return watched
+
+    monkeypatch.setattr(studio_result.os.path, "realpath", reject("realpath", "x"))
+    monkeypatch.setattr(studio_result.os.path, "isfile", reject("isfile", False))
+    monkeypatch.setattr(studio_result.os, "lstat", reject("lstat"))
+    monkeypatch.setattr(studio_result, "file_sha256", reject("sha256", "x"))
+    result = studio_result.resolve_input_ref(
+        {"path": "image.png:hidden", "sha256": "x"}, str(tmp_path))
+    assert result["status"] == "needs_confirmation"
+    assert result["path"] is None and result["given"] == "image.png:hidden"
+    assert calls == []
+
+
+def _r2_write_saved_pipeline(image_path, pipe_path, image):
+    import imgio
+    import studio_result
+
+    imgio.save(str(image_path), image)
+    ref = studio_result.input_reference(str(image_path), image)
+    pipe_path.write_text(json.dumps({
+        "fullseye_pipeline": 1,
+        "stages": [["gaussian", 0.3, 0.5]],
+        "input": ref,
+    }), encoding="utf-8")
+    return ref
+
+
+def test_r2_ux_pending_banner_has_three_visible_actions_and_read_uses_saved_bytes(
+        qapp, tmp_path, monkeypatch):
+    import numpy as np
+    from PySide6 import QtWidgets
+    import studio
+
+    folder_a = tmp_path / "a"; folder_b = tmp_path / "b"
+    folder_a.mkdir(); folder_b.mkdir()
+    image_path = folder_a / "source.png"
+    pipe_path = folder_b / "pipeline.json"
+    original = np.arange(64, dtype=np.float64).reshape(8, 8) / 63.0
+    _r2_write_saved_pipeline(image_path, pipe_path, original)
+    real_open = builtins.open
+    saved_reads = []
+
+    def watched_open(path, *args, **kwargs):
+        if os.path.normcase(os.fspath(path)) == os.path.normcase(str(image_path)):
+            saved_reads.append(os.fspath(path))
+        return real_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "open", watched_open)
+    touched = []                                   # any FS call that names folder A before a choice
+
+    def _watch(owner, attr):
+        real = getattr(owner, attr)
+
+        def spy(path, *args, **kwargs):
+            if str(folder_a).lower() in os.fspath(path).lower():
+                touched.append((attr, os.fspath(path)))
+            return real(path, *args, **kwargs)
+        monkeypatch.setattr(owner, attr, spy)
+
+    for owner, attr in ((os.path, "realpath"), (os.path, "exists"), (os.path, "isfile"),
+                        (os, "stat"), (os, "lstat")):
+        _watch(owner, attr)
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(16)))
+    try:
+        win.show(); qapp.processEvents()
+        win._open_pipe_path(str(pipe_path)); qapp.processEvents()
+        assert saved_reads == []
+        assert touched == []
+        assert win._state["input_pending"]["given"] == str(image_path)
+        for name in ("input_confirm_read", "input_confirm_choose", "input_confirm_keep"):
+            button = win.findChild(QtWidgets.QPushButton, name)
+            assert button is not None and button.isVisible()
+        assert "not loaded" in win._current_view().notice_text().lower()
+        win._input_confirm["read"](); qapp.processEvents()
+        assert len(saved_reads) == 1
+        assert np.allclose(model.image, original, atol=1.0 / 255.0)
+        assert win._state.get("input_pending") is None
+    finally:
+        _close_window(win)
+
+
+def test_r2_ux_read_changed_loads_image_and_keeps_warning(qapp, tmp_path):
+    import numpy as np
+    import imgio
+    import studio
+
+    image_path = tmp_path / "elsewhere" / "source.png"
+    image_path.parent.mkdir()
+    pipe_path = tmp_path / "pipeline.json"
+    _r2_write_saved_pipeline(image_path, pipe_path, np.zeros((6, 6), np.float64))
+    changed = np.ones((6, 6), np.float64)
+    imgio.save(str(image_path), changed)
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(16)))
+    try:
+        win._open_pipe_path(str(pipe_path))
+        assert win._state.get("input_pending")          # the button, not an automatic relink, reads it
+        win._input_confirm["read"]()
+        assert np.allclose(model.image, changed)
+        assert win._state.get("input_pending") is None
+        assert any("changed since save" in note for note in win._state["input_notes"])
+    finally:
+        _close_window(win)
+
+
+def test_r2_ux_keep_current_clears_pending_but_keeps_visible_note(qapp, tmp_path):
+    import numpy as np
+    import studio
+
+    image_path = tmp_path / "elsewhere" / "source.png"
+    image_path.parent.mkdir()
+    pipe_path = tmp_path / "pipeline.json"
+    _r2_write_saved_pipeline(image_path, pipe_path, np.zeros((6, 6), np.float64))
+    current = np.full((7, 7), 0.25, np.float64)
+    win, model = studio.build_window(studio.PipelineModel(current.copy()))
+    try:
+        win._open_pipe_path(str(pipe_path))
+        win._input_confirm["keep"]()
+        assert np.array_equal(model.image, current)
+        assert win._state.get("input_pending") is None
+        assert any("current image" in note.lower() for note in win._state["input_notes"])
+        assert "current image" in win._current_view().notice_text().lower()
+    finally:
+        _close_window(win)
+
+
+def test_r2_ux_choose_another_image_clears_pending(qapp, tmp_path, monkeypatch):
+    import numpy as np
+    from PySide6 import QtWidgets
+    import studio
+
+    saved = tmp_path / "saved" / "source.png"
+    saved.parent.mkdir()
+    chosen = tmp_path / "chosen.png"
+    pipe_path = tmp_path / "pipeline.json"
+    _r2_write_saved_pipeline(saved, pipe_path, np.zeros((6, 6), np.float64))
+    wanted = np.full((6, 6), 0.75, np.float64)
+    import imgio
+    imgio.save(str(chosen), wanted)
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getOpenFileName",
+                        lambda *_a, **_k: (str(chosen), "Images"))
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(16)))
+    try:
+        win._open_pipe_path(str(pipe_path))
+        win._input_confirm["choose"]()
+        assert win._state.get("input_pending") is None
+        assert np.allclose(model.image, wanted, atol=1.0 / 255.0)
+    finally:
+        _close_window(win)
+
+
+def test_r2_ux_read_falls_back_to_the_path_loader_and_rehashes(qapp, tmp_path, monkeypatch):
+    """バイト列から復号できない形式(16 bit・浮動小数の TIFF など)も「この画像を読む」で読める。"""
+    import numpy as np
+    import imgio
+    import studio
+
+    image_path = tmp_path / "elsewhere" / "source.png"
+    image_path.parent.mkdir()
+    pipe_path = tmp_path / "pipeline.json"
+    original = np.arange(36, dtype=np.float64).reshape(6, 6) / 35.0
+    _r2_write_saved_pipeline(image_path, pipe_path, original)
+
+    def cannot_decode(*_a, **_k):
+        raise ValueError("format not decodable from bytes")
+
+    monkeypatch.setattr(imgio, "_load_bytes", cannot_decode)
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(16)))
+    try:
+        win._open_pipe_path(str(pipe_path))
+        assert win._input_confirm["read"]() is True
+        assert np.allclose(model.image, original, atol=1.0 / 255.0)
+        assert win._state.get("input_pending") is None
+    finally:
+        _close_window(win)
+
+
+def test_r2_ux_read_refuses_a_file_swapped_while_loading(qapp, tmp_path, monkeypatch):
+    """予備の読み手で読む間にファイルが差し替わったら読まず、確認待ちのまま理由を出す。"""
+    import numpy as np
+    import imgio
+    import studio
+
+    image_path = tmp_path / "elsewhere" / "source.png"
+    image_path.parent.mkdir()
+    pipe_path = tmp_path / "pipeline.json"
+    _r2_write_saved_pipeline(image_path, pipe_path, np.zeros((6, 6), np.float64))
+    real_load = imgio.load
+
+    def cannot_decode(*_a, **_k):
+        raise ValueError("format not decodable from bytes")
+
+    def swapping_load(path, *a, **k):
+        arr = real_load(path, *a, **k)
+        imgio.save(str(image_path), np.ones((6, 6), np.float64))      # replaced after the user's check
+        return arr
+
+    monkeypatch.setattr(imgio, "_load_bytes", cannot_decode)
+    monkeypatch.setattr(imgio, "load", swapping_load)
+    keep = studio.demo_image(16)
+    win, model = studio.build_window(studio.PipelineModel(keep.copy()))
+    try:
+        win._open_pipe_path(str(pipe_path))
+        assert win._input_confirm["read"]() is False
+        assert win._state.get("input_pending")
+        assert any("changed while it was being read" in n for n in win._state["input_notes"])
+        assert np.array_equal(model.image, keep)
+    finally:
+        _close_window(win)
+

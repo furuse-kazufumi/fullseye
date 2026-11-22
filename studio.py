@@ -148,30 +148,17 @@ _FILE_READING_DIRECTIVES = {"disp_points3d", "disp_mesh3d", "disp_object_model_3
 
 
 def _is_unc_path(path):
-    """UNC / device path を文字だけで見分ける。Recognise network/device paths without filesystem access."""
-    return str(path).replace("\\", "/").startswith("//")
+    """共有 helper で UNC/device path を見分ける。Recognise network/device paths lexically."""
+    return _folder_problem(path) is not None
 
 
 def _relative_data_path(path):
-    """フォルダ内に留まる相対データ path を字句検査する。Validate a contained relative data path lexically."""
-    import posixpath
-
+    """共有 helper で相対データ path を検査する。Validate a relative data path lexically."""
     value = str(path)
-    if not value:
-        raise ValueError("file path is empty")
-    if "\x00" in value:
-        raise ValueError("file path contains NUL")
-    slash = value.replace("\\", "/")
-    if _is_unc_path(value):
-        raise ValueError("network (UNC/device) paths are refused")
-    if re.match(r"^[A-Za-z]:", slash):
-        raise ValueError("drive-qualified paths are refused")
-    if slash.startswith("/"):
-        raise ValueError("rooted paths are refused")
-    normal = posixpath.normpath(slash)
-    if normal == ".." or normal.startswith("../"):
-        raise ValueError("path leaves the pipeline folder")
-    return normal
+    problem = _plain_relative_path_problem(value)
+    if problem:
+        raise ValueError(problem)
+    return value
 
 
 def _is_supported_directive_line(line):
@@ -206,10 +193,9 @@ def validate_directives(d):
         head = _dev_op_head(_hdev_strip_comment(s))
         if head in _FILE_READING_DIRECTIVES:
             args = _parse_dev_args(_hdev_strip_comment(s))
-            try:
-                _relative_data_path(str(args[0]) if args else "")
-            except ValueError as exc:
-                raise ValueError("directive %d: %s" % (i + 1, exc)) from None
+            problem = _plain_relative_path_problem(str(args[0]) if args else "")
+            if problem:
+                raise ValueError("directive %d: %s" % (i + 1, problem))
         out.append(ln.rstrip())
     return out
 
@@ -675,7 +661,8 @@ def _stage_key(s):
 # これらの純関数(妥当性判定・入力参照・段キャッシュ)は engine 層 studio_result.py が正本。
 # Qt の外(ブラウザ版)と共有し、ここでは再エクスポートして studio.X の呼び口を保つ。
 from studio_result import (  # noqa: E402
-    assess_validity, file_sha256, input_reference, resolve_input_ref,
+    assess_validity, file_sha256, input_reference, resolve_input_ref, _read_confirmed_input,
+    _plain_relative_path_problem, _folder_problem, _walk_inside,
     _valid_input_ref, _is_binary, StageCache, array_nbytes,
     CACHE_BUDGET_BYTES, over_budget, cache_summary_text,
 )
@@ -8965,7 +8952,26 @@ def build_window(model=None, start_mode="pipeline"):
         erow.addWidget(_b)
     play.addLayout(erow)
     problems_label = QtWidgets.QLabel("Problems"); problems_label.setProperty("muted", True)
-    play.addWidget(problems_label); play.addWidget(problems_list)
+    input_confirm_bar = QtWidgets.QFrame(); input_confirm_bar.setObjectName("input_confirm_bar")
+    input_confirm_layout = QtWidgets.QVBoxLayout(input_confirm_bar)
+    input_confirm_layout.setContentsMargins(4, 4, 4, 4); input_confirm_layout.setSpacing(3)
+    input_confirm_label = QtWidgets.QLabel(""); input_confirm_label.setWordWrap(True)
+    input_confirm_layout.addWidget(input_confirm_label)
+    input_confirm_actions = QtWidgets.QHBoxLayout(); input_confirm_layout.addLayout(input_confirm_actions)
+    for _key, _source, _object_name, _tip in (
+            ("read", "Read this image", "input_confirm_read",
+             "Read the image file saved with this pipeline now and check it against its SHA-256"),
+            ("choose", "Choose another image…", "input_confirm_choose",
+             "Open a different image file instead of the saved input"),
+            ("keep", "Keep the current image", "input_confirm_keep",
+             "Continue with the image already on screen; the result is marked as not using the saved input")):
+        _button = QtWidgets.QPushButton(tr(_source), input_confirm_bar)
+        _button.setObjectName(_object_name)
+        _button.setToolTip(tr(_tip))
+        _button.clicked.connect(lambda _=False, k=_key: win._input_confirm[k]())
+        input_confirm_actions.addWidget(_button)
+    input_confirm_bar.hide()
+    play.addWidget(problems_label); play.addWidget(input_confirm_bar); play.addWidget(problems_list)
     mv.addWidget(_group(QtWidgets, "PIPELINE", play), 1)
 
     stage_detail = QtWidgets.QLabel("select a stage to tune its knobs")
@@ -9793,7 +9799,8 @@ def build_window(model=None, start_mode="pipeline"):
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
              "dirty": False, "code_dirty": False, "errors": [], "perception_error": None,
              "program_error": None, "structured_errors": [], "stage_lines": None,
-             "renders": 0, "image_path": None, "input_sample": "__demo__" if _starts_on_demo else None, "pipe_path": None,
+             "renders": 0, "image_path": None, "input_sample": "__demo__" if _starts_on_demo else None,
+             "pipe_path": None, "input_pending": None,
              "roi": None,                    # (x0, y0, x1, y1) region of interest of the main view (Shift + drag), or None
              # HDevelop dev_update_{window,var,pc,time}: whether the graphics window,
              # variable window, execution cursor and per-line timings auto-update during
@@ -10124,6 +10131,15 @@ def build_window(model=None, start_mode="pipeline"):
             it.setData(QtCore.Qt.UserRole + 20, ln_)                # 押すとその行へカーソルが移る
             it.setForeground(QtGui.QColor(AMBER))
             problems_list.addItem(it)
+        pending_input = state.get("input_pending")
+        input_confirm_label.setText(tr("The saved input is not loaded yet. Choose how Studio should continue."))
+        input_confirm_bar.setVisible(bool(pending_input))
+        if pending_input:
+            text_ = tr("The saved input is not loaded yet. Choose how Studio should continue.")
+            it = QtWidgets.QListWidgetItem(text_)
+            it.setData(QtCore.Qt.UserRole, -1)
+            it.setForeground(QtGui.QColor(_C("warn")))
+            problems_list.addItem(it)
         _act_idx = [k for k, st in enumerate(model.stages) if not _is_bypassed(st)]
         _pm = getattr(win, "_pymode", None)
         if _pm is not None and _pm.active:
@@ -10214,7 +10230,7 @@ def build_window(model=None, start_mode="pipeline"):
             box.adjustSize()
             it.setSizeHint(box.sizeHint())
             problems_list.setItemWidget(it, box)
-        if not probs and not perr and not rerr and not notes and not pin_bad and not syntax_rows \
+        if not probs and not perr and not rerr and not notes and not pin_bad and not syntax_rows and not pending_input \
                 and not (roundtrip is not None and not roundtrip.ok) \
                 and not state.get("structured_errors"):
             hint = QtWidgets.QListWidgetItem(tr("no problems"))
@@ -11903,6 +11919,8 @@ def build_window(model=None, start_mode="pipeline"):
         state["input_sample"] = None
         model.input_path = state["image_path"]        # snapshots (A / B) compare the input by file
         state["input_notes"] = []                     # notes belong to the previously opened project's input
+        state["input_pending"] = None                 # an explicitly opened image resolves saved-input choice
+        view.set_notice(None)
         state["fit_next"] = True                      # a new image should fit the view
         _push_recent(path); _set_title()
         # ★P-17(2026-11-12): カラーのファイルは輝度にして読む(処理列は 2-D)。黙って灰色にせず、そう言う。
@@ -11922,7 +11940,8 @@ def build_window(model=None, start_mode="pipeline"):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(
             win, "Open image", _proj_path("image"), "Images (%s)" % " ".join("*" + e for e in IMAGE_FILE_EXTS))
         if path:
-            _load_image_path(path)
+            return _load_image_path(path)
+        return False
 
     def use_demo():
         model.set_image(demo_image()); state["fit_next"] = True
@@ -15883,24 +15902,31 @@ def build_window(model=None, start_mode="pipeline"):
             try:
                 if not path:
                     raise ValueError("%s needs a file path argument" % name)
-                if _is_unc_path(path):
-                    raise ValueError("network (UNC/device) paths are refused")
                 pipe_path = state.get("pipe_path")
                 if pipe_path:
-                    rel = _relative_data_path(path)
-                    folder = os.path.realpath(os.path.dirname(os.path.abspath(pipe_path)))
-                    candidate = os.path.realpath(os.path.join(folder, rel))
-                    try:
-                        inside = os.path.normcase(os.path.commonpath([folder, candidate])) == os.path.normcase(folder)
-                    except ValueError:
-                        inside = False
-                    if not inside:
-                        raise ValueError("file path leaves the pipeline folder after resolving links")
+                    folder = os.path.dirname(str(pipe_path)) or os.curdir
+                    base_problem = _folder_problem(folder)
+                    if base_problem:
+                        raise ValueError("3-D file was not read because %s" % base_problem)
+                    path_problem = _plain_relative_path_problem(path)
+                    if path_problem:
+                        raise ValueError(path_problem)
+                    candidate, stopped = _walk_inside(folder, path)
+                    if stopped:
+                        raise ValueError("3-D file was not read: %s" % stopped)
                     path = candidate
-                elif not os.path.isabs(path):
+                else:
+                    path_problem = _folder_problem(path)
+                    if path_problem:
+                        raise ValueError("network/device paths are refused")
+                if not pipe_path and not os.path.isabs(path):
                     # ファイルを開いていない手入力では従来どおり cwd、次に Studio の隣を探す。
                     # With no pipeline file, preserve the cwd -> studio.py-directory lookup.
-                    cand = os.path.abspath(path)
+                    cwd = os.getcwd()
+                    cwd_problem = _folder_problem(cwd)
+                    if cwd_problem:
+                        raise ValueError("3-D file was not read because the current folder is on a network/device path")
+                    cand = os.path.abspath(os.path.join(cwd, path))
                     if not os.path.exists(cand):
                         alt = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
                         if os.path.exists(alt):
@@ -16799,6 +16825,89 @@ def build_window(model=None, start_mode="pipeline"):
         _push_recent(path); _set_title()
         flash(tr("saved %s") % os.path.basename(path))
 
+    def _pending_notice():
+        """確認待ちの結果を誤認させない表示文。Notice that prevents pending input/result confusion."""
+        return tr("The saved input is not loaded yet. Choose how Studio should continue.")
+
+    def _input_confirm_read():
+        """明示確認後に一度だけ saved input を読み hash と復号へ使う。Read once after consent."""
+        pending = state.get("input_pending")
+        if not pending:
+            return False
+        result = _read_confirmed_input(pending["ref"], pending["base_dir"])
+        if result.get("data") is None:
+            state["input_notes"] = [result["message"]]
+            view.set_notice(_pending_notice() + "\n" + result["message"])
+            _refresh_problems_only(); flash(result["message"])
+            return False
+        try:
+            # hash と同じ immutable bytes を復号するため、path を二度開く TOCTOU は無い。
+            # Decode the immutable bytes that were hashed; never reopen the path.
+            arr = imgio._load_bytes(result["data"], source=result["path"])
+        except Exception:                                   # noqa: BLE001
+            arr = None
+        if arr is None:
+            # バイト列から復号できない形式(OpenCV が読めず、パスの側の予備の読み手だけが読む 16 bit・浮動小数の
+            # TIFF など)は、普段の読み手 imgio.load(path) で読み、そのあとファイルをもう一度ハッシュして、
+            # 利用者が選んだ時に照らしたバイト列と同じかを確かめる(間で差し替わっていたら読まない)。
+            # Formats only the path-based loader handles: load by path, then re-hash and require the same bytes.
+            try:
+                arr = imgio.load(result["path"])
+                same_bytes = file_sha256(result["path"]) == hashlib.sha256(result["data"]).hexdigest()
+            except Exception as exc:                        # noqa: BLE001
+                arr, same_bytes = None, True
+                message = "input could not be decoded after confirmation: %s" % exc
+            if arr is not None and not same_bytes:
+                arr = None
+                message = "input file changed while it was being read: %s" % result["path"]
+        if arr is None:
+            state["input_notes"] = [message]
+            view.set_notice(_pending_notice() + "\n" + message)
+            _refresh_problems_only(); flash(message)
+            return False
+        model.set_image(arr)
+        state["image_path"] = os.path.abspath(result["path"])
+        state["input_sample"] = None
+        model.input_path = state["image_path"]
+        state["fit_next"] = True
+        state["input_pending"] = None
+        state["input_notes"] = [result["message"]] if result["status"] == "changed" else []
+        _push_recent(result["path"]); _set_title()
+        show_result()
+        if result["status"] == "changed":
+            view.set_notice(result["message"])
+            flash(result["message"])
+        else:
+            view.set_notice(None)
+            flash(tr("loaded %s") % os.path.basename(result["path"]))
+        return True
+
+    def _input_confirm_choose():
+        """通常の画像選択で pending input を置き換える。Replace pending input via the normal chooser."""
+        if not state.get("input_pending"):
+            return False
+        loaded = load_image()
+        if loaded:
+            _refresh_problems_only()
+        return bool(loaded)
+
+    def _input_confirm_keep():
+        """現在画像を使う選択を可視の注記と共に確定する。Keep current image with a visible note."""
+        if not state.get("input_pending"):
+            return False
+        state["input_pending"] = None
+        message = tr("This result uses the current image, not the input saved with the pipeline.")
+        state["input_notes"] = [message]
+        view.set_notice(message)
+        _refresh_problems_only(); flash(message)
+        return True
+
+    win._input_confirm = {
+        "read": _input_confirm_read,
+        "choose": _input_confirm_choose,
+        "keep": _input_confirm_keep,
+    }
+
     def _open_pipe_path(path):
         if not confirm_discard("Open pipeline"):
             return
@@ -16826,8 +16935,11 @@ def build_window(model=None, start_mode="pipeline"):
         if _pm is None or not _pm.active:                 # Python のモードの間、編集欄の印は Python の文面の物(消さない。
             code_edit.breakpoints.clear()                 # パイプラインの文面の印は on_pipeline_opened が消す)
         state["input_notes"] = []
+        state["input_pending"] = None
+        view.set_notice(None)
         if model.input_ref:                               # the input the project was saved with
-            res = resolve_input_ref(model.input_ref, os.path.dirname(os.path.abspath(path)))
+            base_dir = os.path.dirname(os.path.abspath(path))
+            res = resolve_input_ref(model.input_ref, base_dir)
             if res["path"]:
                 if _load_image_path(res["path"]):         # ok / relinked: silent; changed: loaded + warned
                     if res["status"] == "changed":
@@ -16836,12 +16948,21 @@ def build_window(model=None, start_mode="pipeline"):
                         flash(res["message"])
                 else:
                     state["input_notes"] = ["input could not be read: %s" % res["path"]]
+            elif res["status"] == "needs_confirmation":
+                state["input_pending"] = {
+                    "given": res["given"], "reason": res["reason"],
+                    "base_dir": base_dir, "ref": dict(model.input_ref),
+                }
+                state["input_notes"] = [res["message"]]
             else:
                 state["input_notes"] = [res["message"]]   # missing: keep the current image
         model.recompute_pins()                            # snapshots are saved without their pictures: rebuild them now
         refresh_stage_list(select=len(model.stages) - 1)
         update_ab()
         show_result()
+        if state.get("input_pending"):
+            dock_pipe.show(); dock_pipe.raise_()             # choices must be visible, not buried in a tabbed dock
+            view.set_notice(_pending_notice())
         _push_recent(path); _set_title()
         flash(tr("loaded %s") % os.path.basename(path))
         if _pm is not None:                                  # パイプラインのファイルはパイプラインのモードで見せる
@@ -16860,6 +16981,8 @@ def build_window(model=None, start_mode="pipeline"):
             else:
                 state["directives_pending"] = 0
                 code_status.setText("ready")                 # directive が無いファイルは従来どおり
+        if state.get("input_pending"):
+            view.set_notice(_pending_notice())                # sync_program clears its own stale-result notice
     win._open_pipe_path = _open_pipe_path
     win._refresh_stage_list = refresh_stage_list
 
