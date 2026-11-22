@@ -191,7 +191,7 @@ RECORDED = {
     "mssd_failure_gt_0_2d": 109,
 }
 
-# C:/dev/data/tless_promotion_2026_11_22/measure.json と run_*_meta.json の実測。
+# 2026-11-22 の全データ再測定(採点の JSON と実行メタデータ、repo の外に保管)の実測。
 # コード692b56d2e8、固定archive 3本はtools/fetch_tless.pyと照合済み。時間は
 # worker 10本以上が同時に動く負荷状態での壁時計。/ Measurements from measure.json
 # and run metadata; timings were taken while the machine was busy.
