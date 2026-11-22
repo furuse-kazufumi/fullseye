@@ -3359,8 +3359,8 @@
 
 ## `tests/test_studio.py`
 
-- **L961** — ★`setDefaultFormat` 은 인자 없는 생성자에만 효과가 있고, Studio 의 `QSettings("Fullseye", "Studio")` 는 레지스트리에 고정되어 있었다 —— 이 fixture 는 아무것도 격리하지 않았다(2026-09-05, 레지스트리에 pytest 의 경로가 남아 있었다). 본체 쪽 입구 `studio._settings()` 를 환경 변수로 ini 로 향하게 한다.
-- **L2089** — ★`QSettings("Fullseye", "Studio")` 를 직접 구성하면 격리를 우회하여 **사용자의 레지스트리**에 기록한다(2026-09-05 감사에서 실제 피해 확인). 설정 진입점은 하나로 유지한다.
+- **L962** — ★`setDefaultFormat` 은 인자 없는 생성자에만 효과가 있고, Studio 의 `QSettings("Fullseye", "Studio")` 는 레지스트리에 고정되어 있었다 —— 이 fixture 는 아무것도 격리하지 않았다(2026-09-05, 레지스트리에 pytest 의 경로가 남아 있었다). 본체 쪽 입구 `studio._settings()` 를 환경 변수로 ini 로 향하게 한다.
+- **L2090** — ★`QSettings("Fullseye", "Studio")` 를 직접 구성하면 격리를 우회하여 **사용자의 레지스트리**에 기록한다(2026-09-05 감사에서 실제 피해 확인). 설정 진입점은 하나로 유지한다.
 
 ## `tests/test_studio_compare_pin_sync_2026_10_20.py`
 

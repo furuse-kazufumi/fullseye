@@ -3359,8 +3359,8 @@
 
 ## `tests/test_studio.py`
 
-- **L961** — ★`setDefaultFormat` 只对无参构造函数生效，而 Studio 的 `QSettings("Fullseye", "Studio")` 固定指向 registry —— 这个 fixture 什么都没隔离（2026-09-05，registry 里残留了 pytest 的路径）。用环境变量把本体一侧的入口 `studio._settings()` 指向 ini。
-- **L2089** — ★直接构造 `QSettings("Fullseye", "Studio")` 会绕过隔离，写入**用户的注册表**（2026-09-05 的审计确认了实际危害）。设置入口保持为一个。
+- **L962** — ★`setDefaultFormat` 只对无参构造函数生效，而 Studio 的 `QSettings("Fullseye", "Studio")` 固定指向 registry —— 这个 fixture 什么都没隔离（2026-09-05，registry 里残留了 pytest 的路径）。用环境变量把本体一侧的入口 `studio._settings()` 指向 ini。
+- **L2090** — ★直接构造 `QSettings("Fullseye", "Studio")` 会绕过隔离，写入**用户的注册表**（2026-09-05 的审计确认了实际危害）。设置入口保持为一个。
 
 ## `tests/test_studio_compare_pin_sync_2026_10_20.py`
 

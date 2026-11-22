@@ -3357,8 +3357,8 @@
 
 ## `tests/test_studio.py`
 
-- **L961** — ★`setDefaultFormat` は引数なしコンストラクタにしか効かず、Studio の `QSettings("Fullseye", "Studio")` はレジストリ固定だった —— この fixture は 何も隔離していなかった(2026-09-05、レジストリに pytest のパスが残っていた)。 本体側の入口 `studio._settings()` を環境変数で ini に向ける。
-- **L2089** — ★`QSettings("Fullseye", "Studio")` を直に組むと隔離を迂回して**利用者の レジストリ**に書く(2026-09-05 の監査で実害を確認)。設定入口は 1 つに保つ。
+- **L962** — ★`setDefaultFormat` は引数なしコンストラクタにしか効かず、Studio の `QSettings("Fullseye", "Studio")` はレジストリ固定だった —— この fixture は 何も隔離していなかった(2026-09-05、レジストリに pytest のパスが残っていた)。 本体側の入口 `studio._settings()` を環境変数で ini に向ける。
+- **L2090** — ★`QSettings("Fullseye", "Studio")` を直に組むと隔離を迂回して**利用者の レジストリ**に書く(2026-09-05 の監査で実害を確認)。設定入口は 1 つに保つ。
 
 ## `tests/test_studio_compare_pin_sync_2026_10_20.py`
 
