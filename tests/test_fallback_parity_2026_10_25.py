@@ -145,3 +145,34 @@ def test_missing_dependency_is_not_swallowed_by_any_policy(monkeypatch):
         with pytest.raises(bs.MissingDependencyError, match="pip install"):
             api._run_guarded("unit_test_op", lambda: w(v, 0.5, 0.5), policy, "image", v)
     assert "unit_test_op" not in bs.fallback_counts(), "fail-closed の例外が fallback として台帳に載っている"
+
+
+def test_mser_keeps_each_nested_region_boundary(monkeypatch):
+    """MSER の入れ子の内側も残す。 / Keep every nested MSER boundary."""
+    cv2 = pytest.importorskip("cv2")
+    skseg = pytest.importorskip("skimage.segmentation")
+    import backends_auto as ba
+    import numpy as np
+
+    image = np.ones((12, 12), dtype=np.float64)
+    image[2:9, 2:9] = 0.4
+    image[4:7, 4:7] = 0.1
+    outer_y, outer_x = np.mgrid[2:9, 2:9]
+    inner_y, inner_x = np.mgrid[4:7, 4:7]
+    regions = [np.column_stack([outer_x.ravel(), outer_y.ravel()]).astype(np.int32),
+               np.column_stack([inner_x.ravel(), inner_y.ravel()]).astype(np.int32)]
+    bboxes = np.array([[2, 2, 7, 7], [4, 4, 3, 3]], dtype=np.int32)
+
+    class NestedMSER:
+        def detectRegions(self, _image):
+            return regions, bboxes
+
+    monkeypatch.setattr(cv2, "MSER_create", lambda **_kwargs: NestedMSER())
+    got = ba._sh_segment({"kind": "mser"})(image, 0.5, 0.5).astype(bool)
+    want = np.zeros_like(got)
+    for points in regions:
+        mask = np.zeros_like(got)
+        mask[points[:, 1], points[:, 0]] = True
+        want |= skseg.find_boundaries(mask)
+    assert np.array_equal(got, want)
+    assert got[3:8, 3:8].sum() > skseg.find_boundaries(image < 1.0)[3:8, 3:8].sum()
