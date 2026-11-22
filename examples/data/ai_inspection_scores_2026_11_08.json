@@ -2037,7 +2037,18 @@
   ],
   "n_test": 400,
   "n_defect": 200,
-  "data_pin": "00b7ead6255bbeb059723bf35048da05c215328ed1f41e5fb7fb4af7e16f4e50"
+  "data_pin": "00b7ead6255bbeb059723bf35048da05c215328ed1f41e5fb7fb4af7e16f4e50",
+  "trivial": {
+   "statistic": "median_minus_p1",
+   "threshold_dev": 0.18739869281045754,
+   "n": 400,
+   "tpr": 0.995,
+   "fpr": 0.045,
+   "auroc": 0.9990125,
+   "bal": 0.9750000000000001,
+   "bal_lo95": 0.9598258146841421,
+   "bal_oracle": 0.99
+  }
  },
  "candle": {
   "rows": [
@@ -2057,16 +2068,16 @@
     "score": {
      "tpr": 1.0,
      "fpr": 1.0,
-     "auroc": 0.3887628865979381,
+     "auroc": 0.3887113402061856,
      "n_err": 0,
      "n": 197,
      "bal": 0.5,
      "bal_lo95": 0.5,
      "degenerate": "all",
      "hit": 0.9970149253731343,
-     "pix_fpr": 0.3557021161477537
+     "pix_fpr": 0.3556478804245486
     },
-    "ms_median": 11.67,
+    "ms_median": 18.09,
     "recipe_source": "final_json",
     "n_tool_calls": 23,
     "used_dev": false,
@@ -2699,16 +2710,16 @@
     "score": {
      "tpr": 1.0,
      "fpr": 1.0,
-     "auroc": 0.44242268041237115,
+     "auroc": 0.4364948453608247,
      "n_err": 0,
      "n": 197,
      "bal": 0.5,
      "bal_lo95": 0.5,
      "degenerate": "all",
-     "hit": 0.4597014925373134,
-     "pix_fpr": 0.145199769693425
+     "hit": 0.39104477611940297,
+     "pix_fpr": 0.14370280949723918
     },
-    "ms_median": 21.11,
+    "ms_median": 25.14,
     "recipe_source": "final_json",
     "n_tool_calls": 10,
     "used_dev": true,
@@ -2772,16 +2783,16 @@
     "score": {
      "tpr": 1.0,
      "fpr": 1.0,
-     "auroc": 0.3641237113402062,
+     "auroc": 0.3652577319587629,
      "n_err": 0,
      "n": 197,
      "bal": 0.5,
      "bal_lo95": 0.5,
      "degenerate": "all",
      "hit": 0.9940298507462687,
-     "pix_fpr": 0.35345670297133663
+     "pix_fpr": 0.35330793438258484
     },
-    "ms_median": 21.65,
+    "ms_median": 17.89,
     "recipe_source": "final_json",
     "n_tool_calls": 23,
     "used_dev": true,
@@ -2981,16 +2992,16 @@
     "score": {
      "tpr": 1.0,
      "fpr": 1.0,
-     "auroc": 0.34170103092783505,
+     "auroc": 0.3370103092783505,
      "n_err": 0,
      "n": 197,
      "bal": 0.5,
      "bal_lo95": 0.5,
      "degenerate": "all",
      "hit": 0.991044776119403,
-     "pix_fpr": 0.3522565206525295
+     "pix_fpr": 0.35200893457609794
     },
-    "ms_median": 14.02,
+    "ms_median": 24.81,
     "recipe_source": "final_json",
     "n_tool_calls": 11,
     "used_dev": true,
@@ -3466,16 +3477,16 @@
     "score": {
      "tpr": 1.0,
      "fpr": 1.0,
-     "auroc": 0.42675257731958766,
+     "auroc": 0.4259278350515464,
      "n_err": 0,
      "n": 197,
      "bal": 0.5,
      "bal_lo95": 0.5,
      "degenerate": "all",
-     "hit": 0.42686567164179107,
-     "pix_fpr": 0.13394650795703142
+     "hit": 0.3582089552238806,
+     "pix_fpr": 0.13255156515619454
     },
-    "ms_median": 17.3,
+    "ms_median": 30.47,
     "recipe_source": "final_json",
     "n_tool_calls": 14,
     "used_dev": true,
@@ -3539,16 +3550,16 @@
     "score": {
      "tpr": 1.0,
      "fpr": 1.0,
-     "auroc": 0.3641237113402062,
+     "auroc": 0.3652577319587629,
      "n_err": 0,
      "n": 197,
      "bal": 0.5,
      "bal_lo95": 0.5,
      "degenerate": "all",
      "hit": 0.9940298507462687,
-     "pix_fpr": 0.35345670297133663
+     "pix_fpr": 0.35330793438258484
     },
-    "ms_median": 14.12,
+    "ms_median": 27.41,
     "recipe_source": "last_pipeline",
     "n_tool_calls": 24,
     "used_dev": true,
@@ -4193,6 +4204,33 @@
   ],
   "n_test": 197,
   "n_defect": 97,
-  "data_pin": "eeb59cc5a45f93a9b1987a34a12b9e8594966509a1d361065fb18acab0285519"
- }
+  "data_pin": "eeb59cc5a45f93a9b1987a34a12b9e8594966509a1d361065fb18acab0285519",
+  "trivial": {
+   "statistic": "median_minus_p1",
+   "threshold_dev": 0.11633986928104575,
+   "n": 197,
+   "tpr": 0.8144329896907216,
+   "fpr": 0.77,
+   "auroc": 0.5380927835051547,
+   "bal": 0.5222164948453608,
+   "bal_lo95": 0.4656724415194854,
+   "bal_oracle": 0.5552577319587628
+  }
+ },
+ "trivial_generated": "2026-11-13",
+ "rescored": [
+  {
+   "date": "2026-11-13",
+   "task": "candle",
+   "keys": [
+    "ai:v1_openai_ctx4096:qwen2.5-coder:32b:1",
+    "ai:v2_ctx32k:qwen2.5-coder:32b:5",
+    "ai:v2_ctx32k:qwen2.5-coder:32b:7",
+    "ai:v2_ctx32k:qwen2.5:14b:3",
+    "ai:v3_mcpfix:qwen2.5-coder:32b:7",
+    "ai:v3_mcpfix:qwen2.5-coder:32b:9"
+   ],
+   "why": "Re-scored deterministically from the saved recipes (no LLM call): these rows all contain auto_threshold (Otsu) and their secondary numbers (area AUROC, region hit rate, pixel false-alarm rate) no longer reproduced on the 1.1.1 operators. Status, detection rate and false-alarm rate are unchanged (all six flag every image). Every other row is the 2026-11-08 record."
+  }
+ ]
 }
