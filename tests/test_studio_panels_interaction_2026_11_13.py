@@ -264,7 +264,8 @@ def test_flow_plan_and_scroll_reach_without_qt():
     assert [studio_panels.normalise_overflow_mode(v) for v in ("WRAP", " scroll ", None, "fold")] == [
         "wrap", "scroll", "scroll", "scroll"]
     assert studio_panels.OVERFLOW_MODES == ("scroll", "wrap") and studio_panels.WRAP_MAX_LINES == 3
-    assert studio_panels.scroll_arrow("compact") == 12 and studio_panels.scroll_arrow("standard") == 14
+    assert studio_panels.scroll_arrow("compact") == studio_theme.DENSITY["compact"]["scroll_button"] == 16
+    assert studio_panels.scroll_arrow("standard") == studio_theme.DENSITY["standard"]["scroll_button"] == 18
     assert not hasattr(studio_panels, "_find_strips")                     # nothing is guessed any more (A1)
 
 

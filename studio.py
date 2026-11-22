@@ -4974,7 +4974,7 @@ def _knob_row_class(QtWidgets, QtCore):
             self.typed.setVisible(page is not None)
             if self.slider:
                 self.slider.setVisible(kind not in ("choice", "bool"))
-            tip = sp.get("doc") or ""
+            tip = tr(sp.get("doc") or "")
             src = sp.get("source")
             if src and src not in ("docstring", "docs/ops"):
                 tip = (tip + "\n" if tip else "") + "source: " + src
@@ -9066,9 +9066,27 @@ def build_window(model=None, start_mode="pipeline"):
     _fs_title = QtWidgets.QLabel("First steps"); _fs_title.setStyleSheet("font-weight:700;")
     _fs_lay.addWidget(_fs_title)
     _fs_labels = []
+
+    class _StepLabel(QtWidgets.QLabel):
+        """One step of the band, on one line (D126). When the band is narrower than the three steps, the step
+        ends with … (2026-11-15, [初回] D28 / D47: a plain label cut its sentence in the middle of a glyph right
+        beside the next step - "File ▸ Sa| 2. Open Operators"). The whole step is the tooltip."""
+
+        def drawn_text(self):
+            return self.fontMetrics().elidedText(self.text(), QtCore.Qt.ElideRight, self.contentsRect().width())
+
+        def minimumSizeHint(self):
+            return QtCore.QSize(self.fontMetrics().horizontalAdvance("1. …"), super().minimumSizeHint().height())
+
+        def paintEvent(self, ev):
+            p = QtGui.QPainter(self)
+            self.style().drawItemText(p, self.contentsRect(), int(self.alignment()) | int(QtCore.Qt.TextSingleLine),
+                                      self.palette(), self.isEnabled(), self.drawn_text(),
+                                      QtGui.QPalette.WindowText)
+            p.end()
+
     for _txt in FIRST_STEPS_PIPELINE:
-        _fs_step = QtWidgets.QLabel(_txt)
-        _fs_step.setMinimumWidth(1)        # ★2026-11-12: 折り返さず 1 行(狭い欄では右が切れる。全文はツールチップ)
+        _fs_step = _StepLabel(_txt)        # 折り返さず 1 行(狭い欄では … で終える。全文はツールチップ。最小は「1. …」)
         _fs_step.setToolTip(_txt)
         _fs_lay.addWidget(_fs_step, 0)
         _fs_labels.append(_fs_step)
@@ -9632,6 +9650,9 @@ def build_window(model=None, start_mode="pipeline"):
         sub.resize(440, 360)
         sub.show()
         studio_panels.adopt_image_strip(win, gv, "graphics_%d" % h)   # its strip turns / scrolls like every panel's
+        _loc = getattr(win, "_localize", None)    # (2026-11-15, D30) its tools speak the UI language and follow
+        if _loc is not None and widget is None:   # a later switch (the window's language pass knows them)
+            _loc(gv)
         win._graphics_windows.append(sub)
         win._current_gfx = sub                     # a freshly opened window becomes current
         _update_current_indicator()
@@ -17432,9 +17453,6 @@ def build_window(model=None, start_mode="pipeline"):
                         tr("Delete the layout")) and delete_layout_preset(n))
     win._rebuild_layouts_menu = _rebuild_layouts_menu
     win._layouts_menu = layouts_menu
-    menu_windows.addSeparator()
-    menu_windows.addAction(act_params_window)            # D87: Window ▸ Parameters…
-
     # (D100: the per-panel "Separate window: X" entries are studio_panels' - one per panel, one word)
     menu_panels.addSeparator()
     menu_panels.addAction(act_reset_layout)
@@ -18115,6 +18133,8 @@ def build_window(model=None, start_mode="pipeline"):
         # panel; a third: rows whose buttons join the strip as more groups - the Pipeline's Export & I/O)
         "variables": (vrow, None), "ab": (_abbtn, None), "graphics_1": (itop, view)}
     studio_panels.install(win, tr, _settings)   # panel bar + title bands + first-run arrangement (image + code)
+    menu_panels.addSeparator()
+    menu_panels.addAction(act_params_window)    # D87: Window ▸ Panels ▸ Parameters… (keep Window grouped)
     studio_theme.watch_code_fonts(QtWidgets.QApplication.instance())   # dialogs / editor tabs built later
     win._brand_follow = studio_panels.follow_progress(      # runs / batches; D99: how the run really ended
         win._brand, run_progress, run_status, outcome=lambda: getattr(win, "_run_outcome", "done"))

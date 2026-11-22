@@ -93,6 +93,150 @@ def test_switching_the_language_again_and_again_does_not_break_the_process(tmp_p
     assert int(r.stdout.split("LANGUAGE ROUNDS DONE")[1].split()[0]) >= 100      # the op list was really refilled
 
 
+def test_enter_in_the_search_on_an_op_that_cannot_be_a_stage_says_why_and_raises_nothing(tmp_path, monkeypatch):
+    """(a) "difference" + Enter in the op search: the first insertable-looking row (check_difference) went to add_op,
+    which called model.add_stage after push_undo and raised KeyError inside the slot (integration + look branches,
+    also master). Since the first-run branch's rules are merged, Enter refuses with the reason; nothing raises, no
+    stage and no undo step are added."""
+    import sys
+    import traceback
+    from PySide6 import QtCore
+    from PySide6.QtTest import QTest
+    app, win, model = _launch(monkeypatch, tmp_path / "s.ini")
+    raised = []
+    monkeypatch.setattr(sys, "excepthook", lambda t, v, tb: raised.append("".join(traceback.format_exception(t, v, tb))))
+    try:
+        for word in ("difference", "check_difference"):
+            undo_before = len(win._undo_stack)
+            win._search.setText(word)
+            _pump(app, 0.8)
+            assert win._op_list.count() >= 2, word                          # the search really listed rows
+            QTest.keyClick(win._search, QtCore.Qt.Key_Return)
+            _pump(app, 0.5)
+            assert raised == [], raised[-1][-600:]
+            assert model.stages == [] and len(win._undo_stack) == undo_before, word
+            assert win.statusBar().currentMessage().strip(), word           # it says why (not silent)
+    finally:
+        _close(app, win)
+
+
+def test_first_steps_never_cut_a_step_in_the_middle(tmp_path, monkeypatch):
+    """(b) The first-steps band stays one line (design D126), and when it is narrower than its three steps a step
+    ends with "…" instead of a glyph cut beside the next step (the look branch saw "File ▸ Sa| 2. Open Operators"
+    in en and ja with one panel shown on the right). The whole step is the tooltip."""
+    app, win, _model = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        win.resize(1280, 720)
+        checked = cut_seen = 0
+        for lang in ("en", "ja"):
+            win._apply_language(lang)
+            _pump(app, 0.3)
+            for width in (1280, 900, 760):
+                win.resize(width, 720)
+                win._panels["buttons"]["operators"].click() if not win._docks["operators"].isVisible() else None
+                _pump(app, 0.4)
+                labs = [lab for lab in win._first_steps_labels if lab.isVisible()]
+                assert len(labs) == 3, (lang, width)
+                for lab in labs:
+                    assert hasattr(lab, "drawn_text"), "a plain QLabel cuts the sentence where the room ends"
+                    shown = lab.drawn_text()
+                    room = lab.contentsRect().width()
+                    assert lab.fontMetrics().horizontalAdvance(shown) <= room, (lang, width, shown, room)
+                    assert shown == lab.text() or shown.endswith("…"), (lang, width, shown)
+                    assert lab.toolTip() == lab.text()
+                    cut_seen += shown != lab.text()
+                    checked += 1
+                rects = [lab.geometry() for lab in labs]
+                assert not any(rects[i].intersects(rects[j]) for i in range(3) for j in range(i + 1, 3))
+                assert win._first_steps.height() <= 40                       # still one line (D126)
+        assert checked == 2 * 3 * 3 and cut_seen >= 1                      # a narrow band was really measured
+    finally:
+        win._apply_language("en")
+        _close(app, win)
+
+
+def test_a_second_image_window_speaks_the_ui_language(tmp_path, monkeypatch):
+    """(c) D30: the tools of a second image window (Fit / 1:1 / zoom / Save, their tooltips and its right-click
+    entries) were English in a Japanese UI ("Zoom this window in"), and did not follow a language switch."""
+    import re
+    cjk = re.compile(r"[぀-ヿ㐀-鿿]")
+    app, win, _model = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        win._apply_language("ja")
+        _pump(app, 0.3)
+        sub = win._new_graphics_window()
+        _pump(app, 0.3)
+        gv = sub.widget()
+        acts = [gv.actions[k] for k in ("fit", "actual_size", "zoom_in", "zoom_out", "save", "copy")]
+        assert len(acts) == 6
+        for a in acts:
+            assert cjk.search(a.text()) and cjk.search(a.toolTip()), (a.text(), a.toolTip())
+        win._apply_language("en")
+        _pump(app, 0.3)
+        assert gv.actions["zoom_in"].toolTip() == "Zoom this window in"           # and back
+        win._apply_language("ja")
+        _pump(app, 0.3)
+        assert cjk.search(gv.actions["zoom_in"].toolTip())
+    finally:
+        win._apply_language("en")
+        _close(app, win)
+
+
+def test_the_parameter_window_opens_from_studio_wired_as_its_report_says(tmp_path, monkeypatch):
+    """D87 ([束] REPORT 8.5): Window ▸ Parameters… opens the parameter window with lang=, the look branch's FlowStrip,
+    the side rule and the overflow mode; the checks the report asks for after the merge: 1280x280 puts the strip on
+    the left and its scroll buttons reach all 10 tools; ja tooltips of the scroll buttons are not the English
+    source; set_overflow_mode(win, "wrap") reaches the window's strip; a language switch reaches the window."""
+    import studio_panels
+    from PySide6 import QtWidgets
+    app, win, _model = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        act = win._actions["params_window"]
+        menus = [m for m in win.menuBar().findChildren(QtWidgets.QMenu) if act in m.actions()]
+        assert menus, "Parameters… is in no menu"
+        win._apply_language("ja")
+        _pump(app, 0.3)
+        act.trigger()
+        _pump(app, 0.5)
+        pw = win._params_window
+        assert pw.isVisible()
+        strip = pw.panel.strip_widget()
+        assert strip.objectName() == "flow_strip" and type(strip).__name__ == "FlowStrip"
+        import re
+        assert re.search(r"[぀-ヿ㐀-鿿]", strip.b_back.toolTip()), strip.b_back.toolTip()  # ja
+        pw.resize(1280, 280)
+        _pump(app, 0.6)
+        assert pw.panel.strip_side_shown() == "left"
+        reached = set()
+        for _ in range(30):
+            reached |= {b for b in strip.state["shown"]}
+            if not strip.b_on.isEnabled():
+                break
+            strip.b_on.click()
+            _pump(app, 0.05)
+        assert len(set(strip.items())) == 10 and set(strip.items()) <= reached
+        studio_panels.set_overflow_mode(win, "wrap")
+        _pump(app, 0.2)
+        assert pw.panel.strip_widget().mode == "wrap"
+        win._apply_language("en")
+        _pump(app, 0.3)
+        assert getattr(pw.panel.tr_, "lang", None) == "en"                # the window followed the switch
+        pw.close()
+    finally:
+        win._apply_language("en")
+        _close(app, win)
+
+
+def test_scroll_buttons_are_16_px_along_their_strip():
+    """(d) The scroll buttons of tool strips and tab rows: 16 px along the strip at the default density (12 px was
+    half a tool button: hard to hit, main's decision 2026-11-15); the number comes from studio_theme.DENSITY."""
+    import studio_panels
+    import studio_theme
+    assert studio_theme.DENSITY["compact"]["scroll_button"] == 16
+    assert studio_panels.scroll_arrow("compact") == 16
+    assert studio_panels.scroll_arrow("standard") == studio_theme.DENSITY["standard"]["scroll_button"] >= 16
+
+
 def test_a_closed_window_stops_reading_its_panels_status(tmp_path, monkeypatch):
     """The title bands' read-outs are asked four times a second (studio_panels' status tick). A closed window kept
     asking forever: in one test process every closed window went on reading its op list and stage list (the

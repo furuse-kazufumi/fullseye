@@ -859,10 +859,11 @@ def normalise_overflow_mode(value):
 
 
 def scroll_arrow(level=None):
-    """Length of one scroll button along its strip: half a tool button (12 px compact, 14 standard). The
-    same for tool strips and tab rows; across the strip it is as thick as the row it scrolls."""
+    """Length of one scroll button along its strip: DENSITY["scroll_button"] (16 px compact, 18 standard; it
+    was half a tool button = 12 px, hard to hit - main's decision 2026-11-15). The same for tool strips and tab
+    rows; across the strip it is as thick as the row it scrolls."""
     d = studio_theme.DENSITY[studio_theme.normalise_density(level or studio_theme.current_density())]
-    return max(10, d["icon_btn"] // 2)
+    return d["scroll_button"]
 
 
 def _leads(n, gaps):
@@ -1123,9 +1124,41 @@ def flow_classes():
             arrow = scroll_arrow()
             t = self._row(laid)
             lg = self._line_gap()
-            plan = flow_plan([x[1] for x in laid], length, self.mode, [x[3] for x in laid], WRAP_MAX_LINES)
+
+            def planned():
+                # At the minimum scroll size keep the two navigation columns available. Without this reservation,
+                # a 56 px two-tool strip is declared to fit and loses its 16 px navigation buttons. Do not reserve
+                # them in a roomier strip: an image overlay deliberately sizes itself to its complete tool row.
+                room = length
+                least = 2 * arrow + max((x[1] for x in laid), default=0)
+                if normalise_overflow_mode(self.mode) == "scroll" and len(laid) > 1 and room <= least:
+                    room = max(0, room - 2 * arrow)
+                return flow_plan([x[1] for x in laid], room, self.mode,
+                                 [x[3] for x in laid], WRAP_MAX_LINES)
+
+            plan = planned()
             lines = plan["lines"] or [[]]
             k = len(lines)
+            sl = plan["scroll"]
+            if sl is not None:
+                # 12 px arrows left room for a compact 24 px tool even in the 54 px vertical column used by
+                # a two-tool wrap row. 16 px arrows need 56 px. Honour that real minimum even when a caller
+                # fixes the widget below minimumSizeHint(), otherwise the last tool overlaps the forward arrow.
+                scroll_items = [laid[i][1] for i in lines[sl]]
+                need = 2 * arrow + max(scroll_items, default=0)
+                if self.sizes_itself and length < need:
+                    if h:
+                        self.setMinimumWidth(need)
+                        self.resize(max(self.width(), need), self.height())
+                    else:
+                        self.setMinimumHeight(need)
+                        self.resize(self.width(), max(self.height(), need))
+                    lo, hi = self._seen_span()
+                    length = hi - lo
+                    plan = planned()
+                    lines = plan["lines"] or [[]]
+                    k = len(lines)
+                    sl = plan["scroll"]
             across_total = k * t + (k - 1) * lg
             if self.sizes_itself:                    # the row / column is exactly as thick as its lines
                 if h and (self.minimumHeight() != across_total or self.maximumHeight() != across_total):
@@ -1134,7 +1167,6 @@ def flow_classes():
                     self.setFixedWidth(across_total)
             pos, self._seps, shown = {}, [], []
             first = last_first = 0
-            sl = plan["scroll"]
             for li, line in enumerate(lines):
                 c0 = li * (t + lg)
                 if li == sl:
