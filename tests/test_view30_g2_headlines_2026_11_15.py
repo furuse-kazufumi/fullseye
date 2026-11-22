@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import ast
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -30,6 +31,11 @@ def _norm(text: str) -> str:
     return text.replace("\u2212", "-")
 
 
+def _has_number(text: str, token: str) -> bool:
+    """符号を保ち、数字・小数点に接した部分文字列を数値の一致とみなさない。"""
+    return re.search(r"(?<![\d.])" + re.escape(token) + r"(?!\d|\.\d)", _norm(text)) is not None
+
+
 @pytest.mark.parametrize("pid", IDS)
 def test_headline_record_is_a_single_complete_string_set(pid):
     record = _record(pid, "HEADLINE")
@@ -40,11 +46,11 @@ def test_headline_record_is_a_single_complete_string_set(pid):
 
 @pytest.mark.parametrize("pid", IDS)
 def test_synthetic_headline_numbers_are_in_both_captions(pid):
-    """HEADLINE は合成の章の実行値。符号を除いた数字列が ja/en の台帳に載る。"""
+    """HEADLINE は合成の章の実行値。符号を含む独立した数値が ja/en の台帳に載る。"""
     for lang in ("ja", "en"):
         caption = _norm(LEDGER[pid]["caption_" + lang])
         missing = [(key, value) for key, value in _record(pid, "HEADLINE").items()
-                   if value.lstrip("+-") not in caption]
+                   if not _has_number(caption, value)]
         assert not missing, (pid, lang, missing)
 
 
@@ -59,7 +65,7 @@ def test_real_registration_headline_numbers_come_from_real_record():
     values += ["5.3", "4"]
     for lang in ("ja", "en"):
         caption = LEDGER["poc_registration_basin"]["caption_" + lang]
-        assert not [value for value in values if value not in caption], (lang, values)
+        assert not [value for value in values if not _has_number(caption, value)], (lang, values)
 
 
 def test_real_lidar_headline_numbers_come_from_real_record():
@@ -70,7 +76,19 @@ def test_real_lidar_headline_numbers_come_from_real_record():
               "%+.3f" % record["gshift"]]
     for lang in ("ja", "en"):
         caption = _norm(LEDGER["poc_lidar_terrain_change"]["caption_" + lang])
-        assert not [value for value in values if value.lstrip("+") not in caption], (lang, values)
+        # off_flat と net_raw は文章が「沈下量」「偽の土量」と向きを語るため絶対値、
+        # net_flat と gshift は台帳にも明示された正符号を含めて照合する。
+        unsigned = values[:3] + values[4:6]
+        signed = values[3:4] + values[6:]
+        assert not [value for value in unsigned if not _has_number(caption, value)], (lang, values)
+        assert not [value for value in signed if not _has_number(caption, value)], (lang, values)
+
+
+def test_number_match_rejects_substrings_and_preserves_sign():
+    assert _has_number("value 20", "20")
+    assert not _has_number("value 120 or 20.0", "20")
+    assert _has_number("value +280", "+280")
+    assert not _has_number("value 280", "+280")
 
 
 def test_synthetic_conditions_are_disclosed_where_the_result_is_headlined():

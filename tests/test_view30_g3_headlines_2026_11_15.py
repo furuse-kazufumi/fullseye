@@ -34,6 +34,11 @@ def _norm(text: str) -> str:
     return text.replace("−", "-")
 
 
+def _has_number(text: str, token: str) -> bool:
+    """符号を保ち、数字・小数点に接した部分文字列を数値の一致とみなさない。"""
+    return re.search(r"(?<![\d.])" + re.escape(token) + r"(?!\d|\.\d)", _norm(text)) is not None
+
+
 @pytest.mark.parametrize("pid", IDS)
 def test_headline_record_is_complete_for_both_budgets(pid):
     rec = _record(pid, "HEADLINE")
@@ -52,8 +57,15 @@ def test_full_headline_numbers_are_in_both_captions(pid):
     for lang in ("ja", "en"):
         caption = _norm(LEDGER[pid]["caption_" + lang])
         missing = [(key, token) for key, value in want.items() for token in value.split()
-                   if token.lstrip("+-") not in caption]
+                   if not _has_number(caption, token)]
         assert not missing, (lang, missing)
+
+
+def test_number_match_rejects_substrings_and_preserves_sign():
+    assert _has_number("value 0.21", "0.21")
+    assert not _has_number("value 10.21 or 0.210", "0.21")
+    assert _has_number("value −25.00", "-25.00")
+    assert not _has_number("value 25.00", "-25.00")
 
 
 @pytest.mark.parametrize("pid", SYNTHETIC)

@@ -84,7 +84,7 @@ py -3.11 examples/poc_dtof_ranging.py
 
 ## No.2026.022 —— 白色干渉計でナノメートルの段差をどこまで正確に測れるか(合成)
 
-合成した走査の像で、白色干渉計が縞のコントラストのいちばん強い高さから読む段差を測り返した。単発の測定のばらつき(標準偏差)は 10.5 nm を超え、繰り返しの平均に残る偏りは雑音と区別できない。走査の刻みが粗すぎると、雑音が無くても誤差が残る。
+合成した走査の像で、白色干渉計が縞のコントラストのいちばん強い高さから読む段差を測り返した。単発の測定のばらつき(標準偏差)は 10.5 nm 以上で、繰り返しの平均に残る偏りは雑音と区別できない。走査の刻みが粗すぎると、雑音が無くても誤差が残る。
 
 [![白色干渉計でナノメートルの段差をどこまで正確に測れるか(合成)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms.png)
 

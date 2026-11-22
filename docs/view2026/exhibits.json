@@ -2191,14 +2191,14 @@
    },
    "youtube_url": "",
    "lead": {
-    "ja": "合成した走査の像で、白色干渉計が縞のコントラストのいちばん強い高さから読む段差を測り返した。単発の測定のばらつき(標準偏差)は 10.5 nm を超え、繰り返しの平均に残る偏りは雑音と区別できない。走査の刻みが粗すぎると、雑音が無くても誤差が残る。",
-    "en": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
-    "zh": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
-    "tw": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
-    "ko": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
-    "de": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
-    "hi": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
-    "fr": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise."
+    "ja": "合成した走査の像で、白色干渉計が縞のコントラストのいちばん強い高さから読む段差を測り返した。単発の測定のばらつき(標準偏差)は 10.5 nm 以上で、繰り返しの平均に残る偏りは雑音と区別できない。走査の刻みが粗すぎると、雑音が無くても誤差が残る。",
+    "en": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation of at least 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "zh": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation of at least 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "tw": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation of at least 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "ko": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation of at least 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "de": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation of at least 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "hi": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation of at least 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "fr": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation of at least 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise."
    },
    "ops": [
     "axes_frame",
@@ -2571,14 +2571,14 @@
    ],
    "tier": "featured",
    "truth": {
-    "ja": "実データ",
-    "en": "Real data",
-    "zh": "实测数据",
-    "tw": "實測資料",
-    "ko": "실제 데이터",
-    "de": "Reale Daten",
-    "hi": "वास्तविक डेटा",
-    "fr": "Données réelles"
+    "ja": "実データ(参照は著者の CTFFIND3 の推定値)",
+    "en": "Real data (reference: the authors' CTFFIND3 estimate)",
+    "zh": "实测数据(参考值为作者使用 CTFFIND3 得出的估计值)",
+    "tw": "實測資料(參考值為作者使用 CTFFIND3 得出的估計值)",
+    "ko": "실제 데이터(참조값은 저자의 CTFFIND3 추정값)",
+    "de": "Reale Daten (Referenz: CTFFIND3-Schätzung der Autoren)",
+    "hi": "वास्तविक डेटा (संदर्भ: लेखकों का CTFFIND3 अनुमान)",
+    "fr": "Données réelles (référence : estimation CTFFIND3 des auteurs)"
    }
   },
   {

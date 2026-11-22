@@ -10308,7 +10308,7 @@ Ops used (notes): [`dtof_cube_depth`](https://furuse.work/ops/photon/dtof/dtof_c
 
 ## No.2026.022 —— How Accurately a White-Light Interferometer Measures a Nanometre Step (synthetic)
 
-On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.
+On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation of at least 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.
 
 [![How Accurately a White-Light Interferometer Measures a Nanometre Step (synthetic)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms.png)
 

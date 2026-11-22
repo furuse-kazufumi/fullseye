@@ -39,6 +39,11 @@ def _norm(text: str) -> str:
     return text.replace("\u2212", "-")
 
 
+def _has_number(text: str, token: str) -> bool:
+    """符号を保ち、数字・小数点に接した部分文字列を数値の一致とみなさない。"""
+    return re.search(r"(?<![\d.])" + re.escape(token) + r"(?!\d|\.\d)", _norm(text)) is not None
+
+
 @pytest.mark.parametrize("pid", IDS)
 def test_headline_record_is_complete_for_both_budgets(pid):
     rec = _record(pid, "HEADLINE")
@@ -52,13 +57,20 @@ def test_headline_record_is_complete_for_both_budgets(pid):
 
 @pytest.mark.parametrize("pid", IDS)
 def test_full_headline_numbers_are_in_both_captions(pid):
-    """記録(full)の数が台帳の説明に全部載る(数字の並びで照合。符号は落とす)。"""
+    """記録(full)の数が、符号を含む独立した数値として台帳の説明に全部載る。"""
     want = dict(_record(pid, "HEADLINE")["full"])
     want.update(_record(pid, "HEADLINE_REAL") or {})
     for lang in ("ja", "en"):
         cap = _norm(LEDGER[pid]["caption_" + lang])
-        missing = [(k, tok) for k, v in want.items() for tok in v.split() if tok.lstrip("-") not in cap]
+        missing = [(k, tok) for k, v in want.items() for tok in v.split() if not _has_number(cap, tok)]
         assert not missing, (lang, missing)
+
+
+def test_number_match_rejects_substrings_and_preserves_sign():
+    assert _has_number("value 1", "1")
+    assert not _has_number("value 10 or 1.0", "1")
+    assert _has_number("value −2.9", "-2.9")
+    assert not _has_number("value 2.9", "-2.9")
 
 
 @pytest.mark.parametrize("pid", IDS)
