@@ -1,0 +1,58 @@
+{
+  "3": [
+    {
+      "bbox_obj": [
+        332,
+        97,
+        113,
+        146
+      ],
+      "bbox_visib": [
+        332,
+        97,
+        113,
+        146
+      ],
+      "px_count_all": 11127,
+      "px_count_valid": 10911,
+      "px_count_visib": 10570,
+      "visib_fract": 0.9499415835355441
+    },
+    {
+      "bbox_obj": [
+        183,
+        158,
+        141,
+        126
+      ],
+      "bbox_visib": [
+        183,
+        158,
+        141,
+        126
+      ],
+      "px_count_all": 10543,
+      "px_count_valid": 10491,
+      "px_count_visib": 10130,
+      "visib_fract": 0.9608270890638339
+    },
+    {
+      "bbox_obj": [
+        273,
+        259,
+        247,
+        195
+      ],
+      "bbox_visib": [
+        273,
+        259,
+        247,
+        192
+      ],
+      "px_count_all": 30742,
+      "px_count_valid": 30298,
+      "px_count_visib": 29205,
+      "visib_fract": 0.9500032528787977
+    }
+  ]
+}
