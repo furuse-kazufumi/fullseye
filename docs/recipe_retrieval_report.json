@@ -964,9 +964,9 @@
     },
     {
       "source": "docs/**/*.md",
-      "found": 4432,
+      "found": 4437,
       "included": 0,
-      "excluded": 4432,
+      "excluded": 4437,
       "reason": "Documentation contains prose and snippets, not a statically unambiguous inventory of MCP stages."
     }
   ]

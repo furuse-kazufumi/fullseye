@@ -856,6 +856,27 @@
     },
     {
       "type": "library",
+      "bom-ref": "dependency:pyyaml:d7b2213b93141d16",
+      "name": "pyyaml",
+      "purl": "pkg:pypi/pyyaml",
+      "scope": "optional",
+      "properties": [
+        {
+          "name": "fullseye:extra",
+          "value": "yaml"
+        },
+        {
+          "name": "fullseye:requirement",
+          "value": "PyYAML>=6.0"
+        },
+        {
+          "name": "fullseye:specifier",
+          "value": ">=6.0"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "bom-ref": "dependency:ruff:97784820f2f05749",
       "name": "ruff",
       "purl": "pkg:pypi/ruff",
@@ -1252,6 +1273,10 @@
     },
     {
       "ref": "dependency:pywavelets:4c9ae8d8e4363634",
+      "dependsOn": []
+    },
+    {
+      "ref": "dependency:pyyaml:d7b2213b93141d16",
       "dependsOn": []
     },
     {
