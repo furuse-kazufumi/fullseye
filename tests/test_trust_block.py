@@ -298,7 +298,7 @@ def test_no_local_paths_in_public_files():
 
 def test_local_drive_path_gate_distinguishes_paths_from_url_schemes():
     """門の自己試験: Windows の絶対パスは保ち、URL scheme の ``s:/`` は誤検出しない。"""
-    assert LOCAL_DRIVE_PATH.search(r"C:\dev")
+    assert LOCAL_DRIVE_PATH.search(r"C:\work")
     assert LOCAL_DRIVE_PATH.search("D:/x")
     assert LOCAL_DRIVE_PATH.search(r" c:/work")
     assert LOCAL_DRIVE_PATH.search(r"'c:/quoted'")
