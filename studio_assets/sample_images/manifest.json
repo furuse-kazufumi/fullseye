@@ -173,7 +173,7 @@
         "glyph_components": 17,
         "pixels": 8061,
         "depth_um": 20.0,
-        "font": "OpenCV Hershey Simplex, scale 1.55, thickness 4",
+        "font": "frozen once from OpenCV 5.0.0 cv2.putText: Hershey Simplex, scale 1.55, thickness 4, LINE_8, baselines 88/168, left 34; OpenCV 5.1 changes 879 pixels",
         "baselines_row": [
           88,
           168

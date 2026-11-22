@@ -108,6 +108,9 @@ def eta_window(vals, n: int) -> tuple[float, float, float]:
 
 #: モンテカルロの統計誤差を見る種の本数(2026-11-13、作者と独立の検証の指摘で足した)。表と図の値は最初の種の 1 回のまま。
 N_SEEDS = 4 if REDUCED else 8
+#: 種を替えて測り直す側壁角。門(assert)は 88 度だけで、80 度は向きを印字するだけなので、縮小(CI)では
+#: 88 度だけを測る(2026-11-22: 80 度の分が縮小の CPU の約 15 % を占め、CI の 120 秒の予算を超えた)。full は両方。
+SPREAD_SIDEWALLS = (88.0,) if REDUCED else (88.0, 80.0)
 #: 種を替えた幅の集計(まとめの印字に使う)。
 SPREAD: dict = {}
 
@@ -312,7 +315,7 @@ def stage4_cd():
     # ★モンテカルロの統計誤差: 主張に使う側壁 88 度・80 度の 1 kV と 20 kV を、種を替えて測り直す(最初の種は上の表の 1 回)。
     seeds = tuple(range(1, 1 + N_SEEDS))
     spread = {}
-    for swa in (88.0, 80.0):
+    for swa in SPREAD_SIDEWALLS:
         for kv in (1.0, 20.0):
             ws, hs = [], []
             for sd in seeds:
@@ -325,7 +328,7 @@ def stage4_cd():
             spread[(swa, kv)] = (np.asarray(ws), np.asarray(hs))
     print("   ★モンテカルロの統計誤差(種 %d 本 %d〜%d、点あたり %d 電子。平均 ± 標準偏差。上の表は種 1 の 1 回):"
           % (len(seeds), seeds[0], seeds[-1], npp))
-    for swa in (88.0, 80.0):
+    for swa in SPREAD_SIDEWALLS:
         (w1, h1), (w20, h20) = spread[(swa, 1.0)], spread[(swa, 20.0)]
         n = len(seeds)
         dw, dw_se = float(w20.mean() - w1.mean()), float(np.sqrt(w1.var(ddof=1) / n + w20.var(ddof=1) / n))
@@ -336,15 +339,19 @@ def stage4_cd():
               % (swa, _ms(w1), _ms(w20), dw, dw_se, _ms(h1), _ms(h20), dh, dh_se, up, n))
         SPREAD[("cd", swa)] = {"w1": w1, "w20": w20, "h1": h1, "h20": h20, "dw": dw, "dw_se": dw_se,
                                "dh": dh, "dh_se": dh_se, "up": up, "n": n}
-    s88, s80 = SPREAD[("cd", 88.0)], SPREAD[("cd", 80.0)]
+    s88 = SPREAD[("cd", 88.0)]
     assert s88["up"] == s88["n"] and s88["dh"] > 3 * s88["dh_se"], (
         "側壁 88 度で、種を替えると 1 kV が上を測らない種がある / 差が標準誤差の 3 倍に届かない: %r" % (s88,))
     print("   → 側壁 88 度の「低加速ほど上を測る」は種 %d 本の全部で成り立つ(差 %.2f は標準誤差 %.2f の %.0f 倍)。"
           % (s88["n"], s88["dh"], s88["dh_se"], s88["dh"] / max(s88["dh_se"], 1e-12)))
-    print("   → 側壁 80 度の向き: 測った高さの差 %+.2f ± %.2f(1 kV が上の種 %d / %d)—— %s"
-          % (s80["dh"], s80["dh_se"], s80["up"], s80["n"],
-             "標準誤差の 2 倍の内で、向きは言えない(電圧の差は小さい、までが言える)" if abs(s80["dh"]) < 2 * s80["dh_se"]
-             else "標準誤差の 2 倍を超える"))
+    if ("cd", 80.0) not in SPREAD:
+        print("   → 側壁 80 度の種の幅は縮小では測らない(門に使わないため。full で測る)。")
+    else:
+        s80 = SPREAD[("cd", 80.0)]
+        print("   → 側壁 80 度の向き: 測った高さの差 %+.2f ± %.2f(1 kV が上の種 %d / %d)—— %s"
+              % (s80["dh"], s80["dh_se"], s80["up"], s80["n"],
+                 "標準誤差の 2 倍の内で、向きは言えない(電圧の差は小さい、までが言える)" if abs(s80["dh"]) < 2 * s80["dh_se"]
+                 else "標準誤差の 2 倍を超える"))
     series = []
     for kv, col in zip(kvs, ("right", "emphasis", "wrong")):
         r = prof[(88.0, kv)]
