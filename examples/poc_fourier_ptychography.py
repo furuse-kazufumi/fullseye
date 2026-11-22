@@ -1,25 +1,30 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""PoC: フーリエ・タイコグラフィ —— 4 倍の対物の広い視野のまま、20 倍相当の分解能と位相を、反復の位相回復で得る。
+"""PoC: フーリエ・タイコグラフィ(合成)—— 4 倍の対物で、単色の平行光で照らした 20 倍と同じ細かさと位相を、反復の位相回復で得る。
 
     py -3.11 examples/poc_fourier_ptychography.py
 
 【問い】低倍率の対物(4 倍、NA 0.1)は視野が広いが分解能が低い。LED アレイで照明の角度を変えて 169 枚撮り、
 周波数空間でつなぐと、どこまで分解できるか。位相は戻るか。反復はいつ収束し、いつ収束しないか(拒否されるか)。
-新 op 6 本(``fourierptycho``、``opsoptics`` の ``fpm``)を、閉形式(合成 NA・遮断周期・2 円の重なり)と、真値の
-分かっている合成のチャート、既存の op(``coherent.coherent_image`` のコヒーレント結像、``filters_freq.phase_correlation_fft``)
-で採点する。
+op 6 本(``fourierptycho``、``opsoptics`` の ``fpm``)を、閉形式(合成 NA・遮断周期・2 円の重なり)と、真値の
+分かっている合成のチャート、既存の op(``coherent.coherent_image`` のコヒーレント結像、``optics.pupil_blur`` の普通の照明の
+結像)で採点する。**R 章のほかは全部が合成**(``fp_capture`` が撮る)。
 
   0. **閉形式を先に印字**: 4 倍 / NA 0.1・LED 13 × 13(ピッチ 4 mm、距離 70 mm)で合成 NA 0.424(20 倍 / NA 0.40 を
      上回る)、遮断周期 λ/NA_syn = 1.25 µm(対物だけなら 5.32 µm)、隣り合う瞳の重なり 64 %(Zheng ら 2013 は約 65 %、
      Sun ら 2016 の下限は 35 %)、標本化 R_cam = 2.05。重なり率の式を、画素で数えた 2 円の交わり(独立の経路)で確かめる。
-  1. **4 倍 → 20 倍相当**: USAF 1951 の G7〜G9 を振幅のチャートとして撮る。4 倍の明視野の 1 枚、FP の復元、20 倍 / NA 0.40
-     のコヒーレント像(``coherent.coherent_image``)を ``fp_element_contrast`` で読み、最後に分解した要素の周期が
-     閉形式の遮断周期と 1 要素(2^(1/6) 倍)以内であること。視野は 4 倍のまま(20 倍なら面積で 1/25)。
+  1. **4 倍 → 単色の平行光の 20 倍と同じ要素**: USAF 1951 の G7〜G9 を振幅のチャートとして撮る。4 倍の明視野の 1 枚、
+     FP の復元、20 倍 / NA 0.40 のコヒーレント像(単色の平行光、``coherent.coherent_image``)を ``fp_element_contrast`` で読み、
+     最後に分解した要素の周期が閉形式の遮断周期と 1 要素(2^(1/6) 倍)以内であること。★比べる相手を普通の照明
+     (インコヒーレント、``optics.pupil_blur``、強度で読む)にすると、20 倍 / NA 0.40 は FP より細かい要素まで分解し、
+     4 倍の基準も細かくなる(改善は約 2.9 倍)—— FP が届くのは「単色の平行光で照らした 20 倍」まで。視野の利点は
+     閉形式の上の話で、図には描かない(同じカメラなら 20 倍の視野の面積は 4 倍の 1/25)。
   2. **位相**: 位相だけの物体(USAF の棒 1 rad + 細胞のような滑らかな凸 0.6 rad)。強度の 1 枚にはほとんど写らないが、
      FP の位相は、真値を合成 NA の円で帯域制限したものと rms 0.15 rad 以内。
   3. **重なりと収束**: LED のピッチを 4〜12 mm に振り(重なり 64 % → 7 %)、合成 NA をそろえて復元する。
-     重なり 39 % 以上は収束し、32 % 以下は「2 本の初期値が別の答えに着いた」か「回数が尽きた」で拒否される ——
-     境が公表の下限 35 % を挟む。★明視野と暗視野の境に LED が乗る構成(照明 NA 0.0995)は重なり 39 % でも収束しない
+     重なり 39 % 以上は収束し、32 % 以下は「2 本の初期値が別の答えに着いた」か「回数が尽きた」で拒否される。
+     ★ただし収束の判定のしきい値 ``agree_tol = 0.08`` は、この掃引の 39 % と 32 % の間に置いたもの(``fourierptycho`` の
+     説明)なので、境が公表の下限 35 % を挟むのは公表値の独立の確認ではない。2 本の初期値の差は重なりに対して段差では
+     なく坂で増える。★明視野と暗視野の境に LED が乗る構成(照明 NA 0.0995)は重なり 39 % でも収束しない
      ことがある(reduced で誤差 1.2 の拒否、full では収束。``fp_design`` の ``boundary_leds`` が先に警告する)。
      ★残差だけでは見抜けない: 重なり 18 % の残差は 64 % より小さい(拘束が少ない分、雑音とモデルの誤差まで合わせ込む)。
   4. **瞳の同時推定(EPRY 型)**: 収差のある対物(デフォーカス 0.2 波 + 非点 0.1 波)。瞳を推定しないと像が崩れ、
@@ -28,8 +33,9 @@
      多項式へ射影する(画素ごとに自由な瞳は雑音を吸って停留しない)。★収差を倍(rms 0.25 波)にすると、瞳は戻っても
      2 本の初期値が別の像に着き、拒否される。
   5. **LED の位置のずれ**: アレイが (0.6, −0.4) mm・1°・高さ 1.5 mm ずれている。補正なしでは誤差が増え、補正
-     (±1 画素の探索 + 幾何 4 自由度の当てはめ)でずれを読み戻し、振幅の誤差が下がる。★位相は 2 本の初期値で
-     一致しないことがある(full で 0.19、拒否)—— 中心を格子に丸めた半端が位相に残る。
+     (±1 画素の探索 + 幾何 4 自由度の当てはめ)でずれを読み戻し、振幅の誤差が下がる。★ただし補正後の復元は、reduced でも
+     full でも位相が 2 本の初期値で一致せず、``fp_reconstruct`` 自身の門で拒否される(振幅は一致)—— 中心を格子に丸めた
+     半端が位相に残る。読み戻したずれは、拒否された復元から出た値。
   6. **反射型**: ウェハの上の高さ 20〜40 nm・反射の振幅 0.35 の線(地は 0.6)を、往復の位相 4πh/λ として撮って高さを
      戻す。★高さだけの線(振幅が一様)は full の大きさで 2 本の初期値が一致せず拒否された(散乱が弱く、高い周波数が
      模型の誤差に埋もれる)。
@@ -54,6 +60,11 @@
   * 門の数値のうち、位相の rms 0.15 rad・高さの rms 5 nm・LED の補正の 3/4 は、最初に置いた 0.1 rad・3 nm・2/3 を
     実測(0.106 rad・3.4 nm・0.67)が僅かに超えたので緩めた。外れの主因は端と瞳の縁の離散化のモデル誤差。
 
+★2026-11-15(ViEW2026 の目玉に上げる前の独立レビュー): 題の「4 倍の視野のまま 20 倍の解像」は、比べる相手が単色の
+平行光の 20 倍だけで、視野も図に出ていなかった。普通の照明の 20 倍との比較を 1 章に足し、題を条件つきに直した。
+見出しの数は ``HEADLINE`` に full と reduced の印字の値で持ち、実行の値と照合する門を置いた(R 章の数は
+``HEADLINE_REAL``、データがあるときだけ)。
+
 EXTEND: 実機でやるなら、``fp_design`` で重なり ≥ 35 %・R_cam ≥ 1・欲しい合成 NA を満たす LED の距離と枚数を先に決め、
 暗視野は露光を延ばして撮り(``exposure`` に比を渡す)、``fp_stack_from_images`` に照明の方向余弦を渡す。この族は
 LED の位置の x/r・y/r を +k とする(LED が試料の下にあり光が LED から試料へ進む装置では、物理の横の波数は −x/r に
@@ -75,6 +86,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import coherent  # noqa: E402
 import examplefig as figs  # noqa: E402
 import fourierptycho as FP  # noqa: E402
+import optics  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
                          "reduced" if os.environ.get("CI") else "full") == "reduced"
@@ -95,6 +107,37 @@ STEP = 2.0 ** (1.0 / 6.0)   # USAF の 1 要素の周期の比
 FAILS: list[str] = []
 GATES: list[str] = []
 NUMBERS: dict[str, float] = {}
+#: 見出しに載せる数を、印字と同じ丸めの文字列で集める(``check_headline`` が ``HEADLINE`` と照合する)。
+SHOWN: dict[str, str] = {}
+
+#: 見出しの数(台帳 poc_captions.json と ViEW2026 のカードに載せる値)。full は手元の full の実行、reduced は
+#: CI(縮小)の実行の印字。符号は落として持つ。コードを変えて数が動いたら、台帳を転記し直してからここを直す。
+HEADLINE = {
+    "full": {
+        "na_syn": "0.424", "cutoff": "1.25", "cutoff_obj": "5.32",
+        "low_last": "G7 E4 5.53", "fp_last": "G9 E5 1.22", "c20_last": "G9 E5 1.22",
+        "inc4_last": "G8 E2 3.49", "inc20_last": "G9 E6 1.06", "fp_int_last": "G9 E5 1.22", "gain_coherent": "4.5",
+        "gain_incoherent": "2.9",
+        "phase_rms": "0.13", "overlap_conv_min": "43", "overlap_rej_max": "32",
+        "disagree_top": "0.041", "disagree_bottom": "0.171", "agree_tol": "0.08",
+        "pupil_true": "0.12", "pupil_err": "0.005",
+        "led_x": "0.62", "led_y": "0.36", "led_rot": "0.93", "led_h": "1.25", "led_complex": "0.189", "led_amp": "0.047",
+        "height_rms": "4.0",
+    },
+    "reduced": {
+        "na_syn": "0.424", "cutoff": "1.25", "cutoff_obj": "5.32",
+        "low_last": "G7 E5 4.96", "fp_last": "G9 E5 1.22", "c20_last": "G9 E5 1.22",
+        "inc4_last": "G7 E6 4.39", "inc20_last": "G9 E6 1.06", "fp_int_last": "G9 E5 1.22", "gain_coherent": "4.1",
+        "gain_incoherent": "3.6",
+        "phase_rms": "0.11", "overlap_conv_min": "43", "overlap_rej_max": "32",
+        "disagree_top": "0.040", "disagree_bottom": "0.115", "agree_tol": "0.08",
+        "pupil_true": "0.12", "pupil_err": "0.006",
+        "led_x": "0.60", "led_y": "0.40", "led_rot": "1.04", "led_h": "1.31", "led_complex": "0.145", "led_amp": "0.050",
+        "height_rms": "3.8",
+    },
+}
+#: R 章(公開の実データ、手元にあるときの full だけ)の見出しの数。
+HEADLINE_REAL = {"real_cut": "1.60", "real_fp_last": "G9 E3 1.55", "real_raw_last": "G7 E3 6.20", "real_last_mod": "0.12"}
 
 
 def gate(name: str, ok: bool, detail: str = "") -> None:
@@ -102,6 +145,36 @@ def gate(name: str, ok: bool, detail: str = "") -> None:
     GATES.append(name)
     if not ok:
         FAILS.append(name)
+
+
+def _headline_gate(want: dict, label: str) -> None:
+    diff = {k: (want[k], SHOWN.get(k)) for k in want if SHOWN.get(k) != want[k]}
+    print("   見出しの数(この実行): " + "  ".join("%s=%s" % (k, SHOWN.get(k)) for k in want))
+    gate("見出しの数(%d 個)が記録 %s と一致する" % (len(want), label), not diff,
+         "食い違い(記録, 実行): %s" % diff if diff else "")
+
+
+def check_headline() -> None:
+    """見出しの数を守る門: 今の実行が印字した値(``SHOWN``)が、記録(``HEADLINE``、この予算のもの)と文字列で一致する。"""
+    key = "reduced" if REDUCED else "full"
+    _headline_gate(HEADLINE[key], "HEADLINE[%s]" % key)
+
+
+def _read(c) -> str:
+    lr = c["last_resolved"]
+    return "なし" if lr is None else "G%d E%d %.2f" % (lr["group"], lr["element"], lr["period_um"])
+
+
+def _incoherent_intensity(intensity, na):
+    """普通の照明(インコヒーレント、照明の NA ≥ 対物の NA)の像の強度: 円い瞳の回折の PSF を ``optics.pupil_blur`` で畳む。
+
+    物体側の座標で考えるので、Airy の最初の暗輪 0.61 λ/NA = 1.22 λ N から N = 1/(2 NA)。NA 0.1 では細かい格子の
+    間隔 λN/oversample が画素(0.325 µm)より粗くならないよう oversample = 16。
+    """
+    n = 64
+    c = (np.arange(n) - (n - 1) / 2.0) / (n / 2.0)
+    disk = ((c[:, None] ** 2 + c[None, :] ** 2) <= 1.0).astype(float)
+    return optics.pupil_blur(intensity, disk, wavelength_um=LAM, f_number=1.0 / (2.0 * na), pixel_pitch_um=DX, oversample=16)
 
 
 def _target(kind="amplitude", **kw):
@@ -159,6 +232,8 @@ def chapter_closed_form():
     NUMBERS.update(na_syn=d["na_synthetic"], cutoff=d["coherent_cutoff_period_um"],
                    cutoff_obj=d["coherent_cutoff_period_objective_um"], overlap=d["overlap_ratio_centre"])
     gate("合成 NA が 20 倍 / NA 0.40 を上回る", d["na_synthetic"] >= NA_20X, "%.3f" % d["na_synthetic"])
+    SHOWN.update(na_syn="%.3f" % d["na_synthetic"], cutoff="%.2f" % d["coherent_cutoff_period_um"],
+                 cutoff_obj="%.2f" % d["coherent_cutoff_period_objective_um"])
     # 重なり率を独立の経路で: 細かい格子で 2 円の交わりの画素を数える
     r = NA_OBJ / LAM
     dd = d["led_step_na_centre"] / LAM
@@ -175,7 +250,7 @@ def chapter_closed_form():
 
 # ─────────────────────────────── 1. 4 倍 → 20 倍相当 ───────────────────────────────
 def chapter_resolution(design):
-    print("\n1. 4 倍の視野のまま 20 倍相当の分解能(USAF の振幅チャート)")
+    print("\n1. 4 倍の対物の FP と、20 倍(単色の平行光・普通の照明)の分解能(合成の USAF の振幅チャート)")
     t = _target()
     st = _capture(t["amplitude"], t["phase"])
     t0 = time.process_time()
@@ -200,7 +275,25 @@ def chapter_resolution(design):
          "%.2f µm 対 %.2f µm" % (fp_p, design["coherent_cutoff_period_um"]))
     gate("FP は 20 倍 / NA 0.40 のコヒーレント像と同じかより細かく分解する", fp_p <= c20_p + 1e-9, "%.2f ≤ %.2f µm" % (fp_p, c20_p))
     gate("FP の分解の改善が 3 倍以上(4 倍の 1 枚の限界 / FP の限界)", low_p / fp_p >= 3.0, "%.2f 倍" % (low_p / fp_p))
-    return {"t": t, "st": st, "rec": rec, "low": low, "c20": c20, "reads": reads}
+    # ★2026-11-15(独立レビュー): 上の比べる相手はどれも単色の平行光(コヒーレント)。普通の照明(インコヒーレント)の
+    #   4 倍と 20 倍を強度で読み、FP も強度 |場|² で読んで、同じ物差しで並べる。
+    inc4 = _incoherent_intensity(t["amplitude"] ** 2, NA_OBJ)
+    inc20 = _incoherent_intensity(t["amplitude"] ** 2, NA_20X)
+    ri = {"4 倍 / NA 0.1 普通の照明": FP.fp_element_contrast(inc4, t),
+          "20 倍 / NA 0.40 普通の照明": FP.fp_element_contrast(inc20, t),
+          "FP(強度 |場|²)": FP.fp_element_contrast(rec["amplitude"] ** 2, t)}
+    for name, c in ri.items():
+        print("   %-22s 最後に分解(強度で読む): %s µm" % (name, _read(c)))
+    i4 = ri["4 倍 / NA 0.1 普通の照明"]["last_resolved"]["period_um"]
+    i20 = ri["20 倍 / NA 0.40 普通の照明"]["last_resolved"]["period_um"]
+    fpi = ri["FP(強度 |場|²)"]["last_resolved"]["period_um"]
+    print("   普通の照明どうしで比べた改善: 4 倍 %.2f µm → FP %.2f µm(%.1f 倍)、普通の照明の 20 倍は %.2f µm" % (i4, fpi, i4 / fpi, i20))
+    gate("★普通の照明の 20 倍 / NA 0.40 は、強度どうしで比べて FP より細かい要素まで分解する(FP が届くのは単色の平行光の 20 倍まで)",
+         i20 < fpi - 1e-9, "%.2f < %.2f µm" % (i20, fpi))
+    SHOWN.update(low_last=_read(reads["4 倍の 1 枚"]), fp_last=_read(reads["FP"]), c20_last=_read(reads["20 倍 / NA 0.40"]),
+                 inc4_last=_read(ri["4 倍 / NA 0.1 普通の照明"]), inc20_last=_read(ri["20 倍 / NA 0.40 普通の照明"]),
+                 fp_int_last=_read(ri["FP(強度 |場|²)"]), gain_coherent="%.1f" % (low_p / fp_p), gain_incoherent="%.1f" % (i4 / fpi))
+    return {"t": t, "st": st, "rec": rec, "low": low, "c20": c20, "reads": reads, "inc20": inc20, "reads_inc": ri}
 
 
 # ─────────────────────────────── 2. 位相 ───────────────────────────────
@@ -226,6 +319,7 @@ def chapter_phase():
     print("   強度の 1 枚のコントラスト(std/mean)%.3f、FP の位相の誤差 rms %.3f rad(真値の幅 %.2f rad)" % (lowc, rms, ph.max() - ph.min()))
     gate("位相の復元が収束した", rec["converged"], rec["reason"][:60])
     gate("FP の位相が帯域制限した真値と rms 0.15 rad 以内(棒の 1 rad の 15 %)", rms < 0.15, "%.3f rad" % rms)
+    SHOWN["phase_rms"] = "%.2f" % rms
     return {"ph": ph, "rec": rec, "low": low, "rms": rms}
 
 
@@ -263,8 +357,14 @@ def chapter_overlap():
     rej = [r["overlap"] for r in rows if r["refused"]]
     gate("重なり 38 % 以上はすべて収束する", ok_hi)
     gate("重なり 33 % 以下はすべて拒否される", ok_lo)
-    gate("収束と拒否の境が公表の下限 35 % を挟む", bool(acc and rej and min(acc) > FP.OVERLAP_MIN_PUBLISHED > max(rej)),
+    # ★収束の判定のしきい値 agree_tol は、この掃引の 39 % と 32 % の間に置いたもの(fourierptycho の説明)。だから境が
+    #   35 % を挟むのは、しきい値の置き方と矛盾しないことの確認で、公表値の独立の確認ではない(2026-11-15 の独立レビュー)。
+    gate("収束と拒否の境が公表の下限 35 %% を挟む(しきい値 agree_tol %.2f はこの掃引から置いた —— 独立の確認ではない)"
+         % FP.AGREE_TOL, bool(acc and rej and min(acc) > FP.OVERLAP_MIN_PUBLISHED > max(rej)),
          "拒否の最大 %.1f %% < 35 %% < 収束の最小 %.1f %%" % (100 * max(rej), 100 * min(acc)) if acc and rej else "")
+    SHOWN.update(overlap_conv_min="%.0f" % (100 * min(acc)) if acc else "", overlap_rej_max="%.0f" % (100 * max(rej)) if rej else "",
+                 disagree_top="%.3f" % rows[0]["disagree"], disagree_bottom="%.3f" % rows[-1]["disagree"],
+                 agree_tol="%.2f" % FP.AGREE_TOL)
     hi = [r for r in rows if r["overlap"] > 0.6][0]
     lo = [r for r in rows if r["overlap"] < 0.2][0]
     gate("★残差だけでは見抜けない: 重なりの少ない方が残差が小さい", lo["residual"] < hi["residual"],
@@ -327,6 +427,7 @@ def chapter_pupil():
         out[label] = (res, true_rms, st)
     mid = out["中程度"][0]
     NUMBERS.update(pupil_err=mid[True][3], pupil_true_rms=out["中程度"][1])
+    SHOWN.update(pupil_true="%.2f" % out["中程度"][1], pupil_err="%.3f" % mid[True][3])
     gate("中程度の収差: 瞳を推定すると収束し、瞳の位相が真値と 0.03 波以内", (not mid[True][1]) and mid[True][3] < 0.03,
          "%.3f 波(真値の rms %.3f 波)" % (mid[True][3], out["中程度"][1]))
     NUMBERS.update(err_free=err_free)
@@ -369,8 +470,13 @@ def chapter_led():
     amp_agree = float(np.linalg.norm(A - B * A.sum() / B.sum()) / np.linalg.norm(A))
     print("   補正ありの判定: %s(2 本の差: 複素 %.3f・振幅だけ %.3f)" % ("収束" if r1["converged"] else "拒否",
                                                           r1["start_disagreement"], amp_agree))
-    gate("補正ありの 2 本の初期値は振幅で 0.08 以内に一致する(位相は reduced では一致、full では 0.19 違い拒否 —— 丸めた中心の"
+    # ★2026-11-15(独立レビュー): この門の文言は「位相は reduced では一致」と書いていたが、CI(reduced)の実行も拒否だった。
+    gate("補正ありの 2 本の初期値は振幅で 0.08 以内に一致する(位相は reduced でも full でも食い違う —— 丸めた中心の"
          "半端が位相に残る)", amp_agree < FP.AGREE_TOL, "%.3f" % amp_agree)
+    gate("★補正ありの復元は、位相が 2 本の初期値で一致せず fp_reconstruct 自身の門で拒否される(読み戻したずれは拒否された復元の値)",
+         (not r1["converged"]) and r1["start_disagreement"] > FP.AGREE_TOL, "複素の差 %.3f" % r1["start_disagreement"])
+    SHOWN.update(led_x="%.2f" % abs(g["offset_x_mm"]), led_y="%.2f" % abs(g["offset_y_mm"]), led_rot="%.2f" % g["rotation_deg"],
+                 led_h="%.2f" % g["height_error_mm"], led_complex="%.3f" % r1["start_disagreement"], led_amp="%.3f" % amp_agree)
     return res, true_geo
 
 
@@ -402,6 +508,7 @@ def chapter_reflection():
     print("   高さの誤差 rms %.2f nm(段差 20〜40 nm)" % rms_nm)
     gate("反射型の復元が収束した", rec["converged"], rec["reason"][:60])
     gate("高さが帯域制限した真値と rms 5 nm 以内(段差 20〜40 nm)", rms_nm < 5.0, "%.2f nm" % rms_nm)
+    SHOWN["height_rms"] = "%.1f" % rms_nm
     return {"h": h, "rec": rec, "h_rec": h_rec, "h_true": h_true}
 
 
@@ -606,6 +713,13 @@ def chapter_real():
         raw_p = rw["last_resolved"]["period_um"] if rw["last_resolved"] else float("inf")
         gate("実データ: 生の 1 枚の限界が λ/NA_obj と 1 要素以内", (lam / REAL_NA) / STEP <= raw_p <= (lam / REAL_NA) * STEP,
              "%.2f µm 対 %.2f µm" % (raw_p, lam / REAL_NA))
+        lr = rr["last_resolved"]
+        # ★分解の判定は縦横の小さい方の変調 ≥ 0.1。最後の要素の変調がしきい値にどれだけ近いかも出す(手元の 1 回の実行)。
+        el = [e for e in rr["elements"] if e["group"] == lr["group"] and e["element"] == lr["element"]][0]
+        last_mod = min(el["vertical_modulation"], el["horizontal_modulation"])
+        print("   FP の最後の要素の変調(縦横の小さい方)%.2f(しきい値 0.1)" % last_mod)
+        SHOWN.update(real_cut="%.2f" % cut, real_fp_last=_read(rr), real_raw_last=_read(rw), real_last_mod="%.2f" % last_mod)
+        _headline_gate(HEADLINE_REAL, "HEADLINE_REAL(実データ)")
     return out
 
 
@@ -633,11 +747,14 @@ def make_figures(design, res1, res2, rows, pup, led, refl, real):
     rmax = int(max(e["horizontal_bars_box"][1] for e in t["elements"])) + 16
     crop = (slice(0, min(rmax, SIDE)), slice(None))
     figs.save_grid("usaf_4x_fp_20x", [a[crop] for a in (res1["low"], rec["amplitude"], res1["c20"], t["amplitude"])],
-                   captions=["4 倍 / NA 0.1 の 1 枚(視野 %d µm)" % round(SIDE * DX), "FP(169 枚、合成 NA %.3f)" % rec["na_synthetic_axis"],
-                             "20 倍 / NA 0.40 のコヒーレント像", "真値"],
+                   captions=["4 倍 / NA 0.1 の 1 枚(中心の LED)", "FP(169 枚、合成 NA %.3f)" % rec["na_synthetic_axis"],
+                             "20 倍 / NA 0.40、単色の平行光", "真値"],
                    ncols=2, gray=True,
-                   caption="同じ視野で、4 倍の 1 枚の限界 %.2f µm が FP で %.2f µm に(20 倍 / NA 0.40 は %.2f µm、閉形式 λ/NA_syn = %.2f µm)。"
-                   % (NUMBERS["low_last"], NUMBERS["fp_last"], NUMBERS["c20_last"], NUMBERS["cutoff"]))
+                   caption="合成の USAF チャート(4 面とも同じ %d µm の切り出し)。4 倍の 1 枚の限界 %.2f µm が FP で %.2f µm に(単色の平行光で"
+                           "照らした 20 倍 / NA 0.40 も %.2f µm、閉形式 λ/NA_syn = %.2f µm)。普通の照明の 20 倍は %.2f µm まで分解し、"
+                           "FP より細かい(02・03 の図)。"
+                   % (round(SIDE * DX), NUMBERS["low_last"], NUMBERS["fp_last"], NUMBERS["c20_last"], NUMBERS["cutoff"],
+                      res1["reads_inc"]["20 倍 / NA 0.40 普通の照明"]["last_resolved"]["period_um"]))
     # 細かい群を等倍の 3 倍で
     els9 = [e for e in t["elements"] if e["group"] == 9]
     r0 = int(min(e["vertical_bars_box"][0] for e in els9)) - 4
@@ -645,18 +762,24 @@ def make_figures(design, res1, res2, rows, pup, led, refl, real):
     c0 = int(min(e["vertical_bars_box"][2] for e in els9)) - 4
     c1 = int(max(e["horizontal_bars_box"][3] for e in els9)) + 4
     sl = (slice(max(r0, 0), r1), slice(max(c0, 0), c1))
-    figs.save_grid("group9_zoom", [_zoom(res1["low"][sl], 3), _zoom(rec["amplitude"][sl], 3), _zoom(res1["c20"][sl], 3)],
-                   captions=["4 倍の 1 枚", "FP", "20 倍 / NA 0.40"], ncols=1, gray=True,
-                   caption="G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(%.2f µm)まで 3 本の棒が分かれる。" % NUMBERS["fp_last"])
+    figs.save_grid("group9_zoom", [_zoom(res1["low"][sl], 3), _zoom(rec["amplitude"][sl], 3), _zoom(res1["c20"][sl], 3),
+                                   _zoom(res1["inc20"][sl], 3)],
+                   captions=["4 倍の 1 枚", "FP", "20 倍 / NA 0.40、単色の平行光", "20 倍 / NA 0.40、普通の照明(強度)"], ncols=1, gray=True,
+                   caption="合成の USAF の G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(%.2f µm)まで 3 本の棒が分かれる。"
+                           "普通の照明の 20 倍は E6 まで分かれ、FP より細かい。" % NUMBERS["fp_last"])
     names = list(res1["reads"].keys())
     els = res1["reads"]["FP"]["elements"]
     x = np.array([e["period_um"] for e in els])
     ser = [(nm, x, np.array([min(e["vertical_modulation"], e["horizontal_modulation"]) for e in res1["reads"][nm]["elements"]]))
            for nm in names]
+    inc_el = res1["reads_inc"]["20 倍 / NA 0.40 普通の照明"]["elements"]
+    ser.append(("20 倍 / NA 0.40 普通の照明(強度)", x,
+                np.array([min(e["vertical_modulation"], e["horizontal_modulation"]) for e in inc_el])))
     figs.save_plot("element_modulation", ser + [("分解のしきい値 0.1", x, np.full_like(x, 0.1))],
                    xlabel="要素の周期 [µm]", ylabel="3 本の棒の変調(縦横の小さい方)",
-                   title="要素ごとの変調: 遮断周期 λ/NA_obj = %.2f、λ/NA_syn = %.2f µm" % (NUMBERS["cutoff_obj"], NUMBERS["cutoff"]),
-                   styles=[None, None, None, None, "dashed"], colors=["neutral", "wrong", "emphasis", "right", "reference"])
+                   title="要素ごとの変調(合成): 遮断周期 λ/NA_obj = %.2f、λ/NA_syn = %.2f µm" % (NUMBERS["cutoff_obj"], NUMBERS["cutoff"]),
+                   styles=[None, None, None, None, "dotted", "dashed"],
+                   colors=["neutral", "wrong", "emphasis", "right", "right", "reference"])
     figs.save_grid("phase_object", [res2["low"], res2["ph"], res2["rec"]["phase"]],
                    captions=["4 倍の 1 枚(強度)", "真値の位相 [rad]", "FP の位相 [rad]"], ncols=3, gray=[True, False, False],
                    caption="位相だけの物体。強度の 1 枚にはほとんど写らないが、FP の位相は帯域制限した真値と rms %.3f rad。" % res2["rms"])
@@ -667,10 +790,10 @@ def make_figures(design, res1, res2, rows, pup, led, refl, real):
                     ("agree_tol 0.08", ov, np.full_like(ov, FP.AGREE_TOL)),
                     ("公表の下限 35 %", np.array([35.0, 35.0]), np.array([0.0, 0.25]))],
                    xlabel="隣り合う瞳の重なり [%]", ylabel="相対差",
-                   title="重なり 35 %(公表の下限)を割ると、2 本の初期値が別の答えに着く",
+                   title="重なりと 2 本の初期値の差(しきい値 0.08 はこの掃引から置いた)",
                    styles=[None, None, "dashed", "dotted"], colors=["emphasis", "neutral", "reference", "reference"])
     figs.save_table("overlap_table", ["ピッチ [mm]", "格子", "重なり [%]", "合成 NA", "判定", "2 本の差", "残差", "回数", "真値との差"],
-                    [["%.0f" % r["pitch"], "%d × %d" % (r["n_side"], r["n_side"]), "%.1f" % (100 * r["overlap"]), "%.3f" % r["na_syn"],
+                    [["%.1f" % r["pitch"], "%d × %d" % (r["n_side"], r["n_side"]), "%.1f" % (100 * r["overlap"]), "%.3f" % r["na_syn"],
                       ("拒否(%s)" % r["why"]) if r["refused"] else "収束", "%.3f" % r["disagree"], "%.5f" % r["residual"],
                       "%d" % r["n_iter"], "%.3f" % r["err"]] for r in rows],
                     title="重なりと収束(残差は重なりの少ない方が小さい —— 残差だけでは判定できない)")
@@ -678,18 +801,22 @@ def make_figures(design, res1, res2, rows, pup, led, refl, real):
     S = np.abs(st["pupil_true"]) > 0
     figs.save_grid("pupil_phase", [_pupil_crop(st["pupil_true"], S), _pupil_crop(res[True][0]["pupil"], S)],
                    captions=["真の瞳の位相 [rad]", "推定した瞳の位相 [rad]"], ncols=2, signed=True, vrange=(-2.0, 2.0),
+                   colorbar=True, unit="rad",
                    caption="瞳の円(NA 0.1)の中の位相。推定は 2〜4 次の多項式へ射影した EPRY 型の更新。")
     figs.save_grid("pupil_recovery", [res[False][0]["amplitude"][crop], res[True][0]["amplitude"][crop]],
                    captions=["瞳を推定しない復元", "瞳を推定した復元"],
                    ncols=2, gray=True,
                    caption="デフォーカス 0.2 波 + 非点 0.1 波。推定した瞳は真値と %.3f 波(ピストンと傾きを除く)。" % NUMBERS["pupil_err"])
     lres, true_geo = led
+    verdict = {True: "収束", False: "拒否"}
     figs.save_grid("led_misalignment", [lres[False][0]["amplitude"], lres[True][0]["amplitude"]],  # gray-ok: 図は振幅の像。キャプションの「高さ」は LED アレイの Z のずれで、高さの場ではない
-                   captions=["補正なし(誤差 %.3f)" % lres[False][1], "補正あり(誤差 %.3f)" % lres[True][1]], ncols=2, gray=True,
-                   caption="LED アレイが (0.6, −0.4) mm・1°・高さ 1.5 mm ずれている。補正で (%.2f, %.2f) mm・%.2f°・%.2f mm と読み戻す。"
+                   captions=["補正なし(%s、誤差 %.3f)" % (verdict[lres[False][0]["converged"]], lres[False][1]),
+                             "補正あり(%s、誤差 %.3f)" % (verdict[lres[True][0]["converged"]], lres[True][1])], ncols=2, gray=True,
+                   caption="LED アレイが (0.6, −0.4) mm・1°・高さ 1.5 mm ずれている。補正で (%.2f, %.2f) mm・%.2f°・%.2f mm と読み戻すが、"
+                           "補正後の復元も位相が 2 本の初期値で一致せず拒否された(右は拒否された復元)。"
                    % tuple(lres[True][0]["led_geometry"][k] for k in ("offset_x_mm", "offset_y_mm", "rotation_deg", "height_error_mm")))
     figs.save_grid("reflective_heights", [refl["h_true"] * 1000, refl["h_rec"] * 1000], captions=["帯域制限した真値 [nm]", "FP [nm]"],
-                   ncols=2, vrange=(-5, 45),
+                   ncols=2, vrange=(-5, 45), colorbar=True, unit="nm",
                    caption="反射型: 高さ 20・30・40 nm の線と間隔(周期 2.6・3.9・6.5 µm)を往復の位相で。誤差 rms %.2f nm。" % NUMBERS["height_rms_nm"])
     hist = rec["residual_history_starts"]
     figs.save_plot("residual_history", [("初期値: 明視野の拡大", np.arange(1, len(hist[0]) + 1), np.log10(np.array(hist[0]))),
@@ -720,6 +847,8 @@ def main():
     refl = chapter_reflection()
     chapter_probes(res1, rows)
     real = chapter_real()
+    print("\n見出しの数")
+    check_headline()
     if not REDUCED and figs.target_dir() is not None:
         make_figures(design, res1, res2, rows, pup, led, refl, real)
     print("\n所要 CPU %.1f s、門 %d 件中 NG %d 件" % (time.process_time() - t0, len(GATES), len(FAILS)))

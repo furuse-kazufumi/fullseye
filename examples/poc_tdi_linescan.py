@@ -5,17 +5,22 @@
 【問い】フィルム・鋼板・ガラス・印刷物・ウェハのように流れてくるものはラインセンサで撮る。暗いラインでは TDI
 (時間遅延積分)で N 段ぶん露光を積むが、そのぶん**搬送とラインレートの同期**が画質を決める。8k × 7 µm = 57 mm の
 長いセンサは普通の C マウントの像円(2/3 型で 11 mm)に収まらないので、ラインスキャン用のレンズを使う。
-新 op 6 本(`linescan`)を、閉形式と仕込んだ欠陥の真値で採点する。4 章:
+op 6 本(`linescan`)を、閉形式と仕込んだ欠陥の真値で採点する。**場面はすべて合成**(冷延鋼板の地合いと欠陥は
+自分で仕込み、センサは典型値の模型、レンズは自作の三枚玉の模型)で、実写との突き合わせはしていない。4 章:
 
   1. **段数と SNR**: 冷延鋼板の地合いに薄い傷・ピンホール・異物を仕込み、暗い照明(1 段 40 光子)で N = 1〜64 段。
      平坦な灰色の板の 2 枚撮りから EMVA 1288 の時間雑音(``sensorchar.emva_pair_statistics``)で SNR を測り、
-     ``tdi_snr``(式 21 を段数倍)と比べる。電荷で足す方式とデジタルで足す方式の差。欠陥の検出数。
+     ``tdi_snr``(式 21 を段数倍)と比べる(同じ模型の式と照らした実装の検算)。電荷で足す方式とデジタルで足す方式の差。
+     欠陥の検出数(仕込んだ欠陥は 3 種だけで、ピンホール 4 個は 1 種と数える —— 検出率としては読まない。検出は
+     scipy の中央値・平滑・連結成分で組んだ ``detect``)。
   2. **同期ずれ**: 速度誤差 ε で N 段の間に像が N·ε 画素流れ、流れ方向の MTF が |sinc(f N ε)| に落ちる ——
      閉形式を先に印字してから、正弦波の板で実測する。速度のうねりはエンコーダ同期で消える。
   3. **ヨーと蛇行**: 斜行 θ は幅方向に N·sin θ 画素のぼけを作り、エンコーダでは直らない。蛇行も同じ側。
   4. **ラインスキャン用レンズ**: 同じ形の三枚玉を「57 mm の像円のために」f 90 mm で作ったものと、「2/3 型のために」
-     f 35 mm で作ったもの(C マウントの流用)を光線追跡し、像高ごとの照度(cos⁴ × 瞳 × 歪曲の 3 因子に厳密に分解)と
-     MTF を出す。8192 画素の全幅を撮り、フラットフィールド補正で照度の落ちは直るが MTF と欠陥の CNR は直らないことを数で。
+     f 35 mm で作ったもの(C マウントの流用)を光線追跡し、像高ごとの照度(cos⁴ × 瞳 × 歪曲の 3 因子へ分ける。瞳の因子は
+     光束 / cos⁴ と定義するので、積が照度に一致するのは定義どおり —— 門には数えない)と MTF を出す。8192 画素の全幅を撮り、
+     フラットフィールド補正(列ごとのゲイン)で照度の落ちは揃うが、ぼけと欠陥の CNR は戻らないことを見せる。像円の足りない
+     レンズを流用すると何が起きるかを見せる章で、レンズの性能比べではない(中央では C マウントの模型の方が CNR が高い)。
 
 EXTEND: 実機に差し替えるなら、``linescan_acquire`` の web を実際の反射率の地図(高解像度のエリアカメラで撮った基準や、
 CAD の印刷の版)に、``eta`` / ``sigma_d`` / ``K`` を手元のカメラの EMVA 1288 データシートの値に、``lens`` を
@@ -29,6 +34,11 @@ CAD の印刷の版)に、``eta`` / ``sigma_d`` / ``K`` を手元のカメラの
 cos⁴ 則(``optics.relative_illumination``)、Lepage, Bogaerts & Meynants, IEEE TED 56(11) 2009(電荷とデジタルの加算の
 雑音の違い)、Yu ら, Sensors 24(5) 1622, 2024(ウェハの暗視野で TDI の段数が粒子欠陥の SNR を上げる)。
 欠陥の位置と形は自分で仕込んだ真値。【学習】0。【較正】0。
+
+★2026-11-15(ViEW2026 の目玉に上げる前の独立レビュー): カードの CNR(1.52 → 1.54)が 10-21 の ``linescan`` の変更の後の
+実行(1.23 → 1.21)と食い違ったまま残っていた。見出しの数は ``HEADLINE`` に full と reduced の印字の値で持ち、
+実行の値と照合する門を置いた(数が動いたら台帳を転記し直してから記録を直す)。定義上成り立つ量(照度の 3 因子の積・
+同じ白板で作った補正をその白板に掛けた幅・列ごとのゲインの前後の変調)は ``check``(検算)にし、門の数に入れない。
 """
 from __future__ import annotations
 
@@ -60,7 +70,35 @@ SENSOR_PX = 8192
 
 FAILS: list[str] = []
 GATES: list[str] = []
+CHECKS: list[str] = []
 NUMBERS: dict[str, float] = {}
+#: 見出しに載せる数を、印字と同じ丸めの文字列で集める(``check_headline`` が ``HEADLINE`` と照合する)。
+SHOWN: dict[str, str] = {}
+
+#: 見出しの数(台帳 poc_captions.json と ViEW2026 のカードに載せる値)。full は手元の full の実行、reduced は
+#: CI(縮小)の実行の印字。コードを変えて数が動いたらこの門が落ちる —— 台帳を転記し直してから、ここを直す。
+HEADLINE = {
+    "full": {
+        "snr_worst_pct": "1.2", "gain_digital": "8.09", "gain_charge": "26.9",
+        "det1": "0", "det64": "3", "fa64": "0", "pinholes64": "2",
+        "sync_n": "45", "sync_worst": "0.0035", "ripple_free": "0.637", "ripple_enc": "1.000",
+        "yaw_worst": "0.0017",
+        "ri_edge_ls": "0.976", "cos4_edge_ls": "0.855", "distortion_edge_ls": "-2.9", "area_gain_edge_ls": "1.111",
+        "cut_cm": "19.7",
+        "cnr_cm_edge_before": "1.23", "cnr_cm_edge_after": "1.21", "cnr_ls_edge_after": "2.49",
+        "cnr_cm_centre_after": "2.44", "cnr_ls_centre_after": "2.30",
+    },
+    "reduced": {
+        "snr_worst_pct": "1.2", "gain_digital": "8.09", "gain_charge": "26.9",
+        "det1": "0", "det64": "3", "fa64": "0", "pinholes64": "1",
+        "sync_n": "15", "sync_worst": "0.0028", "ripple_free": "0.637", "ripple_enc": "1.000",
+        "yaw_worst": "0.0017",
+        "ri_edge_ls": "0.976", "cos4_edge_ls": "0.855", "distortion_edge_ls": "-2.9", "area_gain_edge_ls": "1.111",
+        "cut_cm": "21.5",
+        "cnr_cm_edge_before": "1.87", "cnr_cm_edge_after": "1.88", "cnr_ls_edge_after": "3.07",
+        "cnr_cm_centre_after": "2.68", "cnr_ls_centre_after": "2.48",
+    },
+}
 
 
 def gate(name: str, ok: bool, detail: str = "") -> None:
@@ -68,6 +106,24 @@ def gate(name: str, ok: bool, detail: str = "") -> None:
     GATES.append(name)
     if not ok:
         FAILS.append(name)
+
+
+def check(name: str, ok: bool, detail: str = "") -> None:
+    """定義上成り立つ量・作りの上で必ず成り立つ性質の検算。落ちれば PoC は止まるが、門の数には数えない
+    (2026-11-15 の独立レビュー: 恒等式を「検証した数」として見出しに出していた)。"""
+    print("   [%s] 検算(門に数えない): %s%s" % ("ok" if ok else "NG", name, (" — " + detail) if detail else ""))
+    CHECKS.append(name)
+    if not ok:
+        FAILS.append(name)
+
+
+def check_headline() -> None:
+    """見出しの数を守る門: 今の実行が印字した値(``SHOWN``)が、記録(``HEADLINE``、この予算のもの)と文字列で一致する。"""
+    want = HEADLINE["reduced" if REDUCED else "full"]
+    diff = {k: (want[k], SHOWN.get(k)) for k in want if SHOWN.get(k) != want[k]}
+    print("   見出しの数(この実行): " + "  ".join("%s=%s" % (k, SHOWN.get(k)) for k in want))
+    gate("見出しの数(%d 個)が記録 HEADLINE[%s] と一致する" % (len(want), "reduced" if REDUCED else "full"), not diff,
+         "食い違い(記録, 実行): %s" % diff if diff else "")
 
 
 # --------------------------------------------------------------------------- #
@@ -124,7 +180,7 @@ def detect(img_e, masks_img, k_sigma=4.5, min_px=4):
         union |= mm
         hits[name] = bool(np.any(lab[mm] > 0))
     false_comp = len(set(np.unique(lab[(lab > 0) & ~ndimage.binary_dilation(union, iterations=3)])))
-    return hits, false_comp, z
+    return hits, false_comp, z, lab
 
 
 # --------------------------------------------------------------------------- #
@@ -153,6 +209,7 @@ def chapter_snr():
         worst = max(worst, abs(c[2] / c[3] - 1), abs(d[2] / d[3] - 1))
         print("   %4d | %7.2f / %7.2f | %7.2f / %7.2f | %5.2f" % (N, c[2], c[3], d[2], d[3], math.sqrt(N)))
     gate("像から測った SNR が式 21(段数倍)と一致(全段数・両方式で最悪 %.1f %%)" % (100 * worst), worst < 0.04)
+    SHOWN["snr_worst_pct"] = "%.1f" % (100 * worst)
     c1 = [r for r in rows if r[0] == "charge" and r[1] == 1][0][2]
     c64 = [r for r in rows if r[0] == "charge" and r[1] == 64][0][2]
     d1 = [r for r in rows if r[0] == "digital" and r[1] == 1][0][2]
@@ -160,6 +217,8 @@ def chapter_snr():
     NUMBERS.update({"snr_c1": c1, "snr_c64": c64, "snr_d64": d64})
     gate("デジタル加算は √N(64 段で ×%.2f、√64 = 8)" % (d64 / d1), abs(d64 / d1 / 8.0 - 1) < 0.05)
     gate("電荷加算は暗いと √N を超える(64 段で ×%.2f > 8 —— 読み出し雑音を 1 回しか払わない)" % (c64 / c1), c64 / c1 > 8.5)
+    SHOWN["gain_digital"] = "%.2f" % (d64 / d1)
+    SHOWN["gain_charge"] = "%.1f" % (c64 / c1)
     bright = LS.tdi_snr(4000.0, [1, 64], SENSOR["eta"], SENSOR["sigma_d"], SENSOR["K"])
     g = float(bright["gain"][1])
     gate("明るい(ショット雑音律)と電荷加算もほぼ √N に戻る(1 段 4000 光子で ×%.3f、残りは読み出し雑音の 3 %%)" % g,
@@ -176,14 +235,25 @@ def chapter_snr():
         cols = int(round(r["col0"])) + np.arange(r["width"])
         mi = {k: m[np.ix_(rows_i, cols)] for k, m in masks.items()}
         img_e = r["image"] / SENSOR["K"]
-        hits, fa, _z = detect(img_e, mi)
+        hits, fa, _z, lab = detect(img_e, mi)
         shots[N] = (img_e, mi)
         table.append((N, sum(hits.values()), fa, hits))
+        if N == stages[-1]:
+            # ★ピンホール 4 個は 1 種(和のマスク)として数えている。個別に、検出の成分が触れた個数も出す。
+            ph = [k for k in mi if "ピンホール" in k][0]
+            ph_lab, n_ph = ndimage.label(mi[ph])
+            n_hit = sum(bool(np.any(lab[ndimage.binary_dilation(ph_lab == i, iterations=2)] > 0))
+                        for i in range(1, n_ph + 1))
+            print("   N = %2d: ピンホールは %d 個のうち %d 個に検出の成分が触れた(1 種としては「検出」)" % (N, n_ph, n_hit))
+            SHOWN["pinholes64"] = "%d" % n_hit
         print("   N = %2d: 欠陥 %d / %d を検出、誤検出 %d 個  %s" % (N, sum(hits.values()), len(hits), fa,
                                                          " ".join("%s=%s" % (k.split("(")[0], "○" if v else "×") for k, v in hits.items())))
     n1, nmax = table[0], table[-1]
-    gate("1 段では薄い欠陥が見えない(%d / 3)、64 段で全部見える(%d / 3)" % (n1[1], nmax[1]), n1[1] <= 1 and nmax[1] == 3)
-    gate("64 段の誤検出 %d 個(地合いを欠陥と呼ばない)" % nmax[2], nmax[2] <= 2)
+    # ★2026-11-15: 説明が「0 / 3 → 3 / 3、誤検出 0」と言うのに門は 1 段で 1 / 3・誤検出 2 個まで許していた。主張に揃えて締めた。
+    gate("1 段では薄い欠陥が見えない(%d / 3)、64 段で 3 種とも検出の成分が触れる(%d / 3)" % (n1[1], nmax[1]),
+         n1[1] == 0 and nmax[1] == 3)
+    gate("64 段の誤検出 %d 個(地合いを欠陥と呼ばない)" % nmax[2], nmax[2] == 0)
+    SHOWN.update(det1="%d" % n1[1], det64="%d" % nmax[1], fa64="%d" % nmax[2])
     NUMBERS.update({"det1": n1[1], "det64": nmax[1]})
     return rows, shots, stages
 
@@ -225,6 +295,7 @@ def chapter_sync():
             meas[(float(f), e)] = (m, c)
             worst = max(worst, abs(m - c))
     gate("実測の MTF が |sinc(f N ε)| と一致(%d 条件で最大差 %.4f)" % (len(meas), worst), worst < 0.01)
+    SHOWN.update(sync_n="%d" % len(meas), sync_worst="%.4f" % worst)
     m, c = meas[(0.25, 0.02)]
     NUMBERS.update({"mtf_sync_meas": m, "mtf_sync_closed": c})
     print("   例: ε = 2 %%、0.25 c/px で実測 %.3f / 閉形式 %.3f" % (m, c))
@@ -252,6 +323,7 @@ def chapter_sync():
     gate("エンコーダ同期で MTF が 1 に戻る(最低 %.4f)、自走は %.3f まで落ちる" % (min(me), min(mf)),
          min(me) > 0.999 and min(mf) < 0.9)
     NUMBERS.update({"ripple_min_free": min(mf), "ripple_min_enc": min(me)})
+    SHOWN.update(ripple_free="%.3f" % min(mf), ripple_enc="%.3f" % min(me))
     return meas, f_list, eps_list, (mf, me)
 
 
@@ -285,6 +357,7 @@ def chapter_yaw():
     m, c = out[(2.0, 0.2)]
     print("   2°・0.2 c/px: 実測 %.3f / 閉形式 |sinc(f N sin θ)| = %.3f" % (m, c))
     gate("ヨーの幅方向 MTF が |sinc(f N sin θ)| と一致(9 条件で最大差 %.4f、エンコーダ同期のまま)" % worst, worst < 0.03)
+    SHOWN["yaw_worst"] = "%.4f" % worst
     NUMBERS.update({"yaw_meas": m, "yaw_closed": c})
     # 蛇行: 傷の幅方向の広がり
     web, masks = steel_web(420, 200, seed=7, centres=[(210, 100), (210, 40), (210, 160)])
@@ -318,7 +391,8 @@ def chapter_lens():
     ls, cm = prof["linescan"], prof["cmount"]
     cov = ls["covered"] & np.isfinite(ls["area_gain"])
     ident = np.max(np.abs(ls["relative_illumination"][cov] - ls["cos4"][cov] * ls["pupil_factor"][cov] * ls["area_gain"][cov]))
-    gate("照度 = cos⁴ × 瞳 × 歪曲 が厳密に成り立つ(最大差 %.1e)" % ident, ident < 1e-12)
+    # ★瞳の因子は linescan.lens_field_profile が「光束 / F0 / cos⁴」と定義するので、この積は定義どおり(恒等式)。
+    check("照度 = cos⁴ × 瞳 × 歪曲 の分け方が閉じている(定義どおり、最大差 %.1e)" % ident, ident < 1e-12)
     # cos⁴ の閉形式の検算: 絞りが第 1 面の薄い系(瞳収差なし)
     pin = RT.lens_system([{"R": float("inf"), "t": 0.5, "n": 1.0, "ap": 1.0}, {"R": 51.68, "t": 5.0, "n": "BK7"},
                           {"R": float("inf"), "t": None, "n": 1.0}], stop=0, object_mm=300.0)
@@ -340,6 +414,9 @@ def chapter_lens():
          edge_ls > ls["cos4"][-1] and ls["area_gain"][-1] > 1.05)
     NUMBERS.update({"ri_edge_ls": edge_ls, "ri_edge_cm": edge_cm, "cos4_edge_ls": float(ls["cos4"][-1]),
                     "cut_cm": cut})
+    SHOWN.update(ri_edge_ls="%.3f" % edge_ls, cos4_edge_ls="%.3f" % ls["cos4"][-1],
+                 distortion_edge_ls="%.1f" % ls["distortion_percent"][-1], area_gain_edge_ls="%.3f" % ls["area_gain"][-1],
+                 cut_cm="%.1f" % cut)
 
     # 全幅で撮る: 中央と像高 14 mm(C マウントでも光は届く)に同じ欠陥
     lines = 90 if REDUCED else 150
@@ -383,7 +460,8 @@ def chapter_lens():
               % (kind, cm_.min() / cm_.max(), cc_.min() / cc_.max(), int((~covered).sum()), refused))
         res[kind]["uni_before"] = float(cm_.min() / cm_.max())
         res[kind]["uni_after"] = float(cc_.min() / cc_.max())
-    gate("フラットフィールド補正で照度の落ちは直る(ラインスキャン用 %.3f → %.4f、C マウントも届く列で %.3f → %.4f)"
+    # ★補正のゲインはこの白板の列平均から作り、同じ白板に掛けている —— 揃うのは作りの上で当然(門に数えない)。
+    check("フラットフィールド補正で照度の落ちは揃う(同じ白板で作った補正、ラインスキャン用 %.3f → %.4f、C マウントも届く列で %.3f → %.4f)"
          % (res["linescan"]["uni_before"], res["linescan"]["uni_after"], res["cmount"]["uni_before"], res["cmount"]["uni_after"]),
          res["linescan"]["uni_after"] > 0.97 and res["cmount"]["uni_after"] > 0.9)
     gate("光の届かない列は補正できない —— lens_shading_gain が全幅の補正を拒否(C マウント %d 列)"
@@ -408,7 +486,8 @@ def chapter_lens():
     for k, (raw, cor) in mod.items():
         print("   %-8s %s: 0.2 c/px の変調 %.3f(補正前)→ %.3f(補正後)" % (k[0], k[1], raw, cor))
     dmax = max(abs(c - r_) for r_, c in mod.values())
-    gate("補正の前後で変調(MTF)は変わらない(差の最大 %.4f)—— 照度は直せても、ぼけは直せない" % dmax, dmax < 0.005)
+    # ★列ごとのゲインを掛けても、平均で割った変調はほとんど動かない(性質)。数として見出しに出さない。
+    check("補正の前後で変調(MTF)は変わらない(差の最大 %.4f)—— 照度は直せても、ぼけは直せない" % dmax, dmax < 0.005)
     mc, ml = mod[("cmount", "像高 14 mm")][0], mod[("linescan", "像高 14 mm")][0]
     gate("像高 14 mm の変調: C マウント %.3f < ラインスキャン用 %.3f" % (mc, ml), mc < 0.5 * ml)
     NUMBERS.update({"mod14_cm": mc, "mod14_ls": ml})
@@ -429,6 +508,10 @@ def chapter_lens():
             kind, *[c[(n, l)] for n in sorted(k[0] for k in c if k[1] == "前") for l in ("前", "後")]))
     ce = res["cmount"]["cnr"]
     nm = [k[0] for k in ce if "@端" in k[0]][0]
+    nc = [k[0] for k in ce if "異物" in k[0] and "@端" not in k[0]][0]
+    SHOWN.update(cnr_cm_edge_before="%.2f" % ce[(nm, "前")], cnr_cm_edge_after="%.2f" % ce[(nm, "後")],
+                 cnr_ls_edge_after="%.2f" % res["linescan"]["cnr"][(nm, "後")],
+                 cnr_cm_centre_after="%.2f" % ce[(nc, "後")], cnr_ls_centre_after="%.2f" % res["linescan"]["cnr"][(nc, "後")])
     gate("C マウントの端の異物は補正しても CNR が戻らない(%.2f → %.2f、ラインスキャン用は %.2f)"
          % (ce[(nm, "前")], ce[(nm, "後")], res["linescan"]["cnr"][(nm, "後")]),
          abs(ce[(nm, "後")] - ce[(nm, "前")]) < 0.15 * abs(ce[(nm, "前")]) + 0.1 and res["linescan"]["cnr"][(nm, "後")] > ce[(nm, "後")])
@@ -440,6 +523,15 @@ def chapter_lens():
 # --------------------------------------------------------------------------- #
 def _crop(a, r0, c0, h, w):
     return a[r0:r0 + h, c0:c0 + w]
+
+
+def _zoom(a, k):
+    """表示用に双三次補間で k 倍にする(最近傍の画素複製は発表図で使わない)。"""
+    from PIL import Image
+
+    src = np.asarray(a, dtype=np.float32)
+    h, w = src.shape
+    return np.asarray(Image.fromarray(src, mode="F").resize((w * k, h * k), Image.Resampling.BICUBIC))
 
 
 def make_figures(snr, sync, yaw, lens):
@@ -558,6 +650,23 @@ def make_figures(snr, sync, yaw, lens):
     figs.save_grid("lens_defects_center_edge", pans, captions=cps, ncols=2, gray=True, vrange=(0.0, 1.0),
                    title="同じ欠陥を中央と像高 14 mm に(シェーディング補正後)",
                    caption="補正で明るさは揃えてあるのに、C マウントの像高 14 mm では傷とピンホールがぼけて地合いに埋もれる。")
+    # ★2026-11-15(独立レビュー): 4 段の図(01)は横長で、カードやサムネの大きさでは欠陥が見えなかった。1 段と 64 段だけを
+    #   3 つの欠陥の周りで切り出し、双三次で 3 倍にした表紙(ViEW2026 のカード・サムネイル・物語の GIF の 1 コマ目)。
+    pans, cps = [], []
+    for N in (1, 64):
+        if N not in shots:
+            continue
+        img, _mi = shots[N]
+        h, w = img.shape
+        crop = _crop(img, h // 2 - 42, int(w * 0.17), 84, int(w * 0.45))     # 傷とピンホール(サムネで読める縦横比)
+        med = float(np.median(crop))
+        sd = 1.4826 * float(np.median(np.abs(crop - med)))
+        pans.append(np.clip(_zoom(np.clip(0.5 + (crop - med) / (6.0 * sd), 0, 1), 3), 0, 1))
+        cps.append("TDI %d 段(合成)" % N)
+    figs.save_grid("tdi_1_vs_64_closeup", pans, captions=cps, ncols=1, gray=True, vrange=(0.0, 1.0),
+                   title="暗いライン(1 段 40 光子)の合成の冷延鋼板: 1 段と 64 段",
+                   caption="左に傷(幅 1.3 画素、深さ 12 %)、右にピンホール 4 個(深さ 16 %)。どちらも自分で仕込んだ欠陥(異物は 01 の図)。"
+                           "各段を自分の中央値 ± 3σ で伸ばし、双三次で 3 倍に拡大(明るさではなく SNR の差を見る図)。")
 
 
 def main():
@@ -567,9 +676,12 @@ def main():
     sync = chapter_sync()
     yaw = chapter_yaw()
     lens = chapter_lens()
+    print("\n5. 見出しの数")
+    check_headline()
     if not REDUCED and figs.target_dir() is not None:
         make_figures(snr, sync, yaw, lens)
-    print("\n所要 %.1f s、門 %d 件中 NG %d 件" % (time.time() - t0, len(GATES), len(FAILS)))
+    print("\n所要 %.1f s、門 %d 件中 NG %d 件(ほかに門に数えない検算 %d 件)" % (time.time() - t0, len(GATES), len(FAILS),
+                                                                     len(CHECKS)))
     if FAILS:
         print("FAIL: " + ", ".join(FAILS))
         sys.exit(1)
