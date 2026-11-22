@@ -424,6 +424,11 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    # ---- 2026-11-23: Studio 1.2.0 の共通の門の一方向の台帳(PR #340 の CI で未分類と出た) ----
+    "tools/studio_interaction_ledger.py": ("Studio 1.2.0 の共通の門(tests/test_studio_interaction_gates_2026_11_13.py)が"
+                                           "見つけた件数の一方向の台帳 tests/data/studio_interaction_ledger.json を書く道具。"
+                                           "--shrink は直った物だけを消し、新しい物は足さない(足すのは人が理由と独立のレビュー"
+                                           "つきで)。回すたびに台帳が変わり得るので drift 検査の鎖には入れず、直した時に人が回す。"),
     # ---- 2026-11-13: 台帳 op を MCP の隔離した子プロセスで走らせる実測の台帳 ----
     "tools/mcp_isolated_probe.py": ("台帳 op を MCP の作業プロセス(fullseye/mcp/opworker.py)で見本の入力つきで実際に走らせ、"
                                     "時間(5 秒)とメモリ(1 GiB)の上限・ファイルとネットの砂場・道具の経路を通った物だけを "
