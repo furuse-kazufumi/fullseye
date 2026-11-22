@@ -435,7 +435,7 @@ def test_comment_toggle_without_a_selection_uses_the_cursor_line_and_skips_blank
     assert ed.toPlainText() == "* gaussian (0.4, 0.5)\n\notsu (0.5, 0.5)\n"
 
 
-# --------------------------------------------------------------------------- 5. Shift+F1 の op ヘルプ(B-10)
+# --------------------------------------------------------------------------- 5. F1 の「ここのヘルプ」(WIRING 4 章 D127)
 def _put_cursor_in(ed, needle):
     from PySide6 import QtGui
     i = ed.toPlainText().index(needle)
@@ -449,7 +449,7 @@ def test_shift_f1_on_an_op_name_opens_its_help(win):
     ed = _editor(win, "gaussian (0.4, 0.5)\notsu (0.5, 0.5)\n")
     _put_cursor_in(ed, "otsu")
     assert not win._help["dialog"].isVisible()
-    _key(ed, QtCore.Qt.Key_F1, QtCore.Qt.ShiftModifier)
+    _key(ed, QtCore.Qt.Key_F1)
     assert win._help["dialog"].isVisible()
     assert win._help["pick"].currentText() == "otsu"                 # 見出し = カーソルの下の op
     win._help["dialog"].hide()
@@ -459,12 +459,12 @@ def test_shift_f1_on_a_non_op_word_opens_nothing_and_says_so(win):
     from PySide6 import QtCore
     ed = _editor(win, "* just a comment\n")
     _put_cursor_in(ed, "comment")
-    _key(ed, QtCore.Qt.Key_F1, QtCore.Qt.ShiftModifier)
+    win._stage_list.setCurrentRow(-1)
+    win._op_list.setCurrentRow(-1)
+    _key(ed, QtCore.Qt.Key_F1)
     assert not win._help["dialog"].isVisible()
-    assert "not an operator" in win.statusBar().currentMessage()
-    ed.setPlainText("")
-    _key(ed, QtCore.Qt.Key_F1, QtCore.Qt.ShiftModifier)
-    assert "no operator under the cursor" in win.statusBar().currentMessage()
+    assert win._keymap.dialog is not None and win._keymap.dialog.isVisible()  # 無ければキーの一覧(D127)
+    win._keymap.dialog.close()
 
 
 def test_f1_still_opens_the_keyboard_shortcuts_not_the_op_help(win):
@@ -754,7 +754,8 @@ def test_roi_statistics_appear_in_the_inspector(win):
 _ENTRY_KEYS = {
     "program_find": ("Find in Program", "Ctrl+F"), "program_replace": ("Replace in Program", "Ctrl+H"),
     "program_find_next": ("Find next in Program", "F3"), "program_find_prev": ("Find previous in Program", "Shift+F3"),
-    "program_comment": ("Comment / uncomment lines", "Ctrl+/"), "program_help_here": ("Help for the operator under the cursor", "Shift+F1"),
+    "program_comment": ("Comment / uncomment lines", "Ctrl+/"),
+    "help_here": ("Help for the selected operator", "F1"),  # WIRING 2.7: program_help_here は help_here に吸収
     "program_font_bigger": ("Bigger editor text", "Ctrl++"), "program_font_smaller": ("Smaller editor text", "Ctrl+-"),
     "run_selection": ("Run selected lines", "Ctrl+Alt+Return"),
 }
@@ -789,7 +790,7 @@ def _palette_hits(win, query):
     ("置換", "program_replace"), ("replace", "program_replace"), ("置き換え", "program_replace"),
     ("次を検索", "program_find_next"), ("前を検索", "program_find_prev"),
     ("コメント", "program_comment"), ("comment", "program_comment"), ("コメントアウト", "program_comment"),
-    ("ヘルプ", "program_help_here"), ("documentation", "program_help_here"),
+    ("ヘルプ", "help_here"), ("documentation", "help_here"),  # WIRING 2.7: パレットの語も移す
     ("文字サイズ", "program_font_bigger"), ("font size", "program_font_smaller"), ("拡大", "program_font_bigger"), ("縮小", "program_font_smaller"),
     ("選んだ行", "run_selection"), ("selection", "run_selection"), ("部分実行", "run_selection"),
 ])

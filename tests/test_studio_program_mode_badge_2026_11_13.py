@@ -325,7 +325,10 @@ def test_the_f5_entries_say_python_in_python_mode_and_come_back_in_pipeline_mode
         pm.set_mode(pm_mod.MODE_PYTHON)
         assert run_all.text() == "Run as Python" and "as Python" in run_all.toolTip() and "F5" in run_all.toolTip()
         assert dbg_run.text() == "Run as Python (F5 / Ctrl+R)" and "as Python" in dbg_run.toolTip()
-        assert "as Python" in btn.toolTip() and run_all.statusTip() == run_all.toolTip()
+        assert "as Python" in btn.toolTip()
+        # WIRING 2.7 / 4 章 D123: 帯の tooltip は「名前 — 効果 (キー)」、statusTip は効果だけのまま。
+        assert run_all.toolTip().startswith("Run as Python — ") and run_all.toolTip().endswith(" (Ctrl+Return)")
+        assert run_all.statusTip() == "Run the Program text as Python. Also F5 or Ctrl+R from any panel"
         table = _table()
         win._apply_language("ja")
         _pump(0.1)

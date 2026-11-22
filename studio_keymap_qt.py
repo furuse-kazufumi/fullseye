@@ -441,6 +441,13 @@ def _install_hooks(win, st: _State) -> None:
         except Exception as exc:                               # noqa: BLE001
             print("studio_keymap_qt: %s: %s" % (type(exc).__name__, exc))
         _retarget_all(win, st)
+        try:
+            import studio_panels  # noqa: PLC0415
+            current = get(win)
+            if current is not None:
+                studio_panels.compose_top_tips(win, current.tr)  # 見た目の枝の「作業モード 1 ボタン」も今のキーへ
+        except (AttributeError, RuntimeError):                  # 単体の小さな窓には見た目の枝の帯が無い
+            pass
 
     for a in (getattr(win, "_lang_actions", None) or {}).values():
         a.triggered.connect(after_language)                    # 言語の切り替え(Studio の処理の後に呼ばれる)
@@ -1404,6 +1411,11 @@ class KeymapController(QtCore.QObject):
 
     def apply(self) -> dict:
         report = apply_keymap(self.win, self.keymap, self._lang)
+        try:
+            import studio_panels  # noqa: PLC0415
+            studio_panels.compose_top_tips(self.win, self.tr)
+        except (AttributeError, RuntimeError):                  # 単体の小さな窓には見た目の枝の帯が無い
+            pass
         self.changed.emit()
         return report
 

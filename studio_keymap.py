@@ -347,6 +347,11 @@ COMMANDS = (
     _c("actual_size", "Actual size (1:1)", _W, "Ctrl+Alt+1"),
     _c("surface_3d", "3D surface", _W, "Ctrl+Alt+3"),
     _c("viewer_3d", "3D viewer…", _W, "Ctrl+Alt+4"),
+    _c("theme_instrument", "Instrument (dark)", _W),
+    _c("theme_panel", "Machine panel (light)", _W),
+    _c("density_compact", "Compact", _W),
+    _c("density_standard", "Standard", _W),
+    _c("reduce_motion", "Reduce motion", _W),
     # ---- 窓全体: Run ----
     _c("run_all", "Run all", _W, "Ctrl+Return", mentions=("dbg_run",)),
     _c("run_selection", "Run selected lines", _W, "Ctrl+Alt+Return"),
@@ -365,6 +370,9 @@ COMMANDS = (
     _c("pymode_config_toggle", "Switch Debug / Release", _W, "Ctrl+Alt+D"),
     _c("pymode_example", "Open the Python example", _W),
     _c("pymode_clear_output", "Clear output", _W),
+    _c("pymode_autosave_off", "Autosave: off", _W),
+    _c("pymode_autosave_idle", "Autosave: after a pause in typing", _W),
+    _c("pymode_autosave_focus", "Autosave: when the Program loses the focus", _W),
     _c("pymode_run", "Run Python program", _W, mentions=("dbg_run",)),
     _c("pymode_step", "Step one line", _W, mentions=("dbg_step",)),
     _c("pymode_stop", "Stop the program", _W, "Ctrl+F2"),
@@ -381,6 +389,25 @@ COMMANDS = (
     _c("new_graphics_window", "New graphics window", _W, "Ctrl+G", "label:New graphics window"),
     _c("detach_graphics", "Detach graphics window", _W, "Ctrl+Shift+D"),
     _c("reattach_graphics", "Reattach graphics window", _W),
+    _c("params_window", "Parameters…", _W),
+    _c("dock_all", "Dock all panels", _W),
+    _c("reset_layout", "Reset panel layout", _W),
+    _c("panel_float_program", "Separate window: Program (code) — Pipeline", _W, own_title=True),
+    _c("panel_float_operators", "Separate window: Operators", _W, own_title=True),
+    _c("panel_float_pipeline", "Separate window: Pipeline · Parameters", _W, own_title=True),
+    _c("panel_float_variables", "Separate window: Variables && Objects", _W, own_title=True),
+    _c("panel_float_display", "Separate window: Display · Analysis", _W, own_title=True),
+    _c("panel_float_compare", "Separate window: Stage in → out", _W, own_title=True),
+    _c("panel_float_ab", "Separate window: A / B", _W, own_title=True),
+    _c("panel_float_project", "Separate window: Project", _W, own_title=True),
+    _c("panel_show_program", "Program (code) — Pipeline", _W),
+    _c("strip_auto", "Tools and tabs: automatic (on the left when the panel is wide)", _W),
+    _c("strip_top", "Tools and tabs: on top", _W),
+    _c("strip_left", "Tools and tabs: on the left", _W),
+    _c("overflow_scroll", "When they do not fit: scroll", _W),
+    _c("overflow_wrap", "When they do not fit: wrap onto more rows", _W),
+    _c("layout_code_left", "Code on the left (tall)", _W),
+    _c("layout_code_bottom", "Code at the bottom (wide)", _W),
     # ---- 窓全体: Tools ----
     _c("palette", "Command palette…", _W, "Ctrl+P"),
     _c("feature_inspection", "Feature inspection…", _W, "Ctrl+F5"),
@@ -503,8 +530,6 @@ def family(cid: str) -> str:
         if any(w in keys for w in words):
             return fam
     return cid
-
-
 def _entry_family(e: Entry) -> str:
     if e.family:
         return e.family

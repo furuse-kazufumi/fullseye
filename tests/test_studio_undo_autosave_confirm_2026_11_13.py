@@ -536,7 +536,8 @@ def test_edit_undo_follows_the_focus_and_ctrl_y_is_redo(tmp_path, monkeypatch):
     try:
         ed = _ed(win)
         undo, redo = win._actions["undo"], win._actions["redo"]
-        assert [s.toString() for s in redo.shortcuts()] == ["Ctrl+Shift+Z", "Ctrl+Y"] and undo.shortcut().toString() == "Ctrl+Z"
+        # WIRING 4 章 D16: Redo は Ctrl+Y / Ctrl+Shift+Z、先頭の Ctrl+Y をメニューに表示する。
+        assert [s.toString() for s in redo.shortcuts()] == ["Ctrl+Y", "Ctrl+Shift+Z"] and undo.shortcut().toString() == "Ctrl+Z"
         model.stages = [["gaussian", 0.4, 0.5]]
         win._refresh_stage_list()
         win._push_undo("test")

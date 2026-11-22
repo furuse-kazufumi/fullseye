@@ -652,7 +652,7 @@ def test_l1_ctrl_y_redoes(launch):
     from PySide6.QtTest import QTest
     win, model = launch()
     keys = [s.toString() for s in win._actions["redo"].shortcuts()]
-    assert keys == ["Ctrl+Shift+Z", "Ctrl+Y"]
+    assert keys == ["Ctrl+Y", "Ctrl+Shift+Z"]                 # WIRING 4 章 D16: メニュー表示は Ctrl+Y
     _dirty_pipeline(win, model)
     win._stage_list.setFocus()
     QTest.keyClick(win, QtCore.Qt.Key_Z, QtCore.Qt.ControlModifier); _pump(0.2)

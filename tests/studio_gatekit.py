@@ -348,7 +348,7 @@ def _family_of(action):
         if name.startswith("keymap:"):
             cid = name.split(":", 1)[1]
         fam = None
-        for attr in ("family_of", "command_family"):
+        for attr in ("family", "family_of", "command_family"):
             fn = getattr(km, attr, None)
             if fn is not None and cid:
                 try:

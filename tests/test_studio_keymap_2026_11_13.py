@@ -26,8 +26,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def test_registry_counts_and_every_command_has_a_scope_and_default_keys():
     cmds = km.COMMANDS
     # 件数を先に確かめる(足した・消したら、ここが知らせる)
-    assert len(cmds) == 125
-    assert sum(not c.fixed for c in cmds) == 112 and sum(c.fixed for c in cmds) == 13
+    assert len(cmds) == 152
+    assert sum(not c.fixed for c in cmds) == 139 and sum(c.fixed for c in cmds) == 13
     assert sum(bool(c.keys) for c in cmds if not c.fixed) == 91
     assert sum(len(c.keys) for c in cmds if not c.fixed) == 97
     assert len({c.id for c in cmds}) == len(cmds)
@@ -366,7 +366,7 @@ def test_every_own_string_has_five_translations_and_nothing_else():
     table = km.load_table()
     assert km.missing() == []
     assert sorted(table) == sorted(km.ui_strings())
-    assert len(table) == 162
+    assert len(table) == 170
     ph = re.compile(r"%\(\w+\)s|%[sd]")
     for en, row in table.items():
         for lang in km.LANGS[1:]:
@@ -465,26 +465,33 @@ def studio_mod(app, tmp_path_factory):
 
 
 def _build(studio_mod, flash=None):
-    """本物の窓を作り、配線の覚え書き(WIRING.txt)どおりに矩形選択とキーの割り当てを取り付ける。"""
+    """本体がキーを取り付ける直前に、試験用の矩形選択だけを取り付けて本物の窓を作る。"""
     import studio_editops_qt as eq  # noqa: PLC0415
     import studio_keymap_qt as kq  # noqa: PLC0415
-    w, _model = studio_mod.build_window()
+    original_install = kq.install
+
+    def install_after_editops(w, *args, **kwargs):
+        # 本体には繋がない矩形選択部品を、この試験だけはキー部品より先に付ける(D94・D95)。
+        ops = eq.install(w._program["edit"], settings=studio_mod._settings,
+                         tr=eo.make_tr(lambda: studio_mod._UI_LANG.get("code", "en"), first=studio_mod.tr))
+        ops.populate_menu(w._menus["edit"])
+        w._actions.update(ops.command_actions(w))
+        studio_mod.PALETTE_WORDS.update(eo.PALETTE_WORDS)
+        w._editops = ops
+        if flash is not None:
+            kwargs["flash"] = flash
+        return original_install(w, *args, **kwargs)
+
+    kq.install = install_after_editops
+    try:
+        w, _model = studio_mod.build_window()
+    finally:
+        kq.install = original_install
     w.resize(1400, 860)
     w.show()
     w.activateWindow()
     _pump(0.3)
-    # ---- ここからが配線の差分(studio.py の build_window の最後、studio_pymode.install の後) ----
-    ops = eq.install(w._program["edit"], settings=studio_mod._settings,
-                     tr=eo.make_tr(lambda: studio_mod._UI_LANG.get("code", "en"), first=studio_mod.tr))
-    ops.populate_menu(w._menus["edit"])
-    w._actions.update(ops.command_actions(w))
-    studio_mod.PALETTE_WORDS.update(eo.PALETTE_WORDS)
-    ctl = kq.install(w, settings=studio_mod._settings, tr=studio_mod.tr,
-                     lang=lambda: studio_mod._UI_LANG.get("code", "en"), flash=flash,
-                     palette_words=studio_mod.PALETTE_WORDS, model=_model)
-    # ---- ここまで ----
-    w._editops = ops
-    return w, ctl
+    return w, w._keymap
 
 
 def _close(w):
@@ -534,7 +541,8 @@ def test_install_finds_every_command_of_the_real_window(win, ctl):
     rep = ctl.apply()
     assert rep["missing"] == [] and rep["applied"] >= 85
     assert len(win._actions) >= 100
-    assert [k for k in win._actions if k not in km.BY_ID] == []          # 本体に足した action は登録簿にも載せる
+    assert [k for k in win._actions if k not in km.BY_ID and k not in km.ADOPTED] == []
+    # 本体に足した action は登録簿にも載せる。ADOPTED は同じ QAction を help_here として使う旧名。
     assert [k for k in km.ABSORBED if k in win._actions] == []            # 吸わせた action は外した
     st = kq._state(win)
     for cid, en in (("image_focus", "Image focus"), ("leave_image_focus", "Leave image focus"),
@@ -1936,41 +1944,28 @@ def test_ctrl_f1_opens_the_key_list_and_shift_f1_in_the_code_is_the_operator_ref
 
 
 def test_f1_takes_over_the_firstrun_action_when_both_branches_are_merged(app, studio_mod):
-    """初回の枝を合わせた時の形(win._actions["selected_help"] = F1 の QAction)を作り、取り付けると F1 が 1 つになる。"""
-    import studio_editops_qt as eq  # noqa: PLC0415
-    import studio_keymap_qt as kq  # noqa: PLC0415
-    from PySide6 import QtGui  # noqa: PLC0415
+    """本体の selected_help をキー部品が採用し、F1 が 1 つになる。"""
     w, _model = studio_mod.build_window()
-    old = []
     try:
-        a = QtGui.QAction("Help for the selected operator", w)
-        a.setShortcut(QtGui.QKeySequence("F1"))
-        a.triggered.connect(lambda *_: old.append(1))
-        w._actions["shortcuts"].setShortcut(QtGui.QKeySequence("Ctrl+F1"))
-        w._menus["help"].addAction(a)
-        w._actions["selected_help"] = a
-        ops = eq.install(w._program["edit"], settings=studio_mod._settings)
-        w._actions.update(ops.command_actions(w))
-        ctl = kq.install(w, settings=studio_mod._settings, tr=studio_mod.tr,
-                         lang=lambda: studio_mod._UI_LANG.get("code", "en"))
+        a = w._actions["help_here"]
+        ctl = w._keymap
         keys = _window_shortcuts(w)
         dup = {k: v for k, v in keys.items() if len(v) > 1}
         assert len(keys) >= 40 and not dup, dup
         assert keys["F1"] == ["Help for the selected operator"]             # 初回の枝の QAction をそのまま使う
         assert w._actions["help_here"] is a and a.objectName() == "keymap:help_here"
-        assert [k for k in w._actions if k not in km.BY_ID] == ["selected_help"]
+        assert [k for k in w._actions if k not in km.BY_ID] == ["selected_help"]   # 採った旧名だけ(同じ QAction)
+        assert w._actions["selected_help"] is a
         assert km.ADOPTED == {"selected_help": "help_here"}
         assert ctl.assign("help_here", ("Ctrl+Shift+F1",)) == [] and _keys_of(a) == ("Ctrl+Shift+F1",)
         ctl.keymap = km.Keymap()
         ctl._commit()
         a.trigger()
         _pump(0.2)
-        assert old == []                                                    # 古い受け手は外した(行き先は help_here)
     finally:
         if getattr(w, "_keymap", None) is not None and w._keymap.dialog is not None:
             w._keymap.dialog.close()
         _close(w)
-        eq.apply_bindings(None)
 
 
 # --------------------------------------------------------------------------- #
@@ -2481,9 +2476,18 @@ def test_tooltips_name_dash_effect_and_key(win, ctl, studio_mod):
     from PySide6 import QtGui  # noqa: PLC0415
     buttons = _strip_buttons(win)
     by_id = dict(buttons)
-    keyed = ("open_image", "run_all", "export", "pin_a", "work_mode_build", "work_mode_compare", "work_mode_inspect",
-             "work_mode_code", "image_focus", "find_panel")                # 設計書 D123 の 10 個(上の帯・作業モード・Find panel)
-    assert sorted(by_id) == sorted(keyed + ("demo", "batch_apply")) and len(buttons) == 12
+    keyed = ("open_image", "run_all", "export", "pin_a", "image_focus", "find_panel")
+    # WIRING 4 章 D123。見た目の枝 D01 は作業モード 4 個を 1 ボタンにまとめるため、QAction の帯はこの 8 個。
+    assert sorted(by_id) == sorted(keyed + ("demo", "batch_apply")) and len(buttons) == 8
+    mode = win._mode_switch
+
+    def check_mode(lang):
+        lines = mode.toolTip().splitlines()
+        assert len(lines) == 5 and _TIP_FORM.match(lines[0]), (lang, lines)
+        for cid, line in zip(("work_mode_build", "work_mode_compare", "work_mode_inspect", "work_mode_code"),
+                             lines[1:]):
+            assert line.endswith(" (%s)" % ctl.keymap.keys(cid)[0]), (lang, cid, line)
+        return lines
 
     def check(lang):
         seen = 0
@@ -2497,23 +2501,26 @@ def test_tooltips_name_dash_effect_and_key(win, ctl, studio_mod):
             seen += bool(keys)
         return seen
 
-    assert check("en") == 10                                              # キーを持つ 10 個は今のキーを含む
+    assert check("en") == 6
+    english_mode = check_mode("en")
     assert by_id["open_image"].toolTip() == "Open image — Load an image file as the base frame (Ctrl+O)"
     assert by_id["demo"].toolTip() == "Synthetic demo — Load the built-in synthetic demo scene"
     assert not [p for p in ctl.assign("open_image", ("Ctrl+Shift+F12",)) if p.level == "error"]
     assert by_id["open_image"].toolTip() == "Open image — Load an image file as the base frame (Ctrl+Shift+F12)"
     assert ctl.assign("export", ()) == []                                  # キーを外すと括弧ごと無くなる
     assert by_id["export"].toolTip() == "Export — Export as an --ops string and Python code"
-    assert check("en") == 9
+    assert check("en") == 5
     english = {cid: b.toolTip() for cid, b in buttons}
     win._apply_language("ja")                                             # 言語を変えても形とキーは保つ
     _pump(0.2)
-    assert check("ja") == 9
+    assert check("ja") == 5
+    assert check_mode("ja") != english_mode
     assert by_id["open_image"].toolTip().endswith(" (Ctrl+Shift+F12)")
-    assert sum(by_id[cid].toolTip() != english[cid] for cid in by_id) == 12   # 12 個とも訳した文になった
+    assert sum(by_id[cid].toolTip() != english[cid] for cid in by_id) == 8
     win._apply_language("de")
     _pump(0.2)
-    assert check("de") == 9 and by_id["pin_a"].toolTip().endswith(" (Ctrl+Shift+A)")
+    assert check("de") == 5 and by_id["pin_a"].toolTip().endswith(" (Ctrl+Shift+A)")
+    check_mode("de")
     assert win._actions["pin_a"].shortcut().toString(QtGui.QKeySequence.NativeText) == "Ctrl+Shift+A"   # メニューの右
     win._apply_language("en")
     _pump(0.2)

@@ -18253,6 +18253,12 @@ def build_window(model=None, start_mode="pipeline"):
                 tips[obj] = win._tt_en[obj] = tip_py if py else base_tip
         _apply_labels(labels)
         _apply_tooltips(tips)
+        _keymap = getattr(win, "_keymap", None)
+        if _keymap is not None:                                # D123: モードで文を戻した後も、帯は名前 — 効果 (キー)
+            import studio_keymap as _keymap_text
+            act_runall.setToolTip(_keymap_text.tooltip_text(
+                act_runall.text().replace("&", "").replace("…", ""), act_runall.statusTip(),
+                _keymap.keymap.keys("run_all")))
 
     def _pm_first_steps(py):
         """起動時の案内(最初の 3 手)を Program 欄のモードに合わせる: Python のモードでは「F5 で例を実行」、
@@ -18297,6 +18303,11 @@ def build_window(model=None, start_mode="pipeline"):
     for _vp in win.findChildren(_pvq.VariablesPanel):
         _themed_style(_vp.message, "color: {err}; font-weight: bold;")
     apply_theme(save=False)
+    # ---- キーの割り当て(利用者が決められるショートカット)。studio_keymap_qt が後付けする(キーの枝 WIRING.txt 1 章。
+    #      2026-11-15 統合: F1 は初回の枝の selected_help をそのまま help_here に使う = studio_keymap.ADOPTED) ----
+    import studio_keymap_qt as _kq
+    win._keymap = _kq.install(win, settings=_settings, tr=tr, lang=lambda: _UI_LANG.get("code", "en"),
+                              palette_words=PALETTE_WORDS, model=model)
     _quiesce_runs = win.quiesce
 
     def _quiesce_all(timeout_ms=5000):

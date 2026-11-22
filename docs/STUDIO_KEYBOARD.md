@@ -161,7 +161,7 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `editops_line_duplicate` | 行を複製 | `Ctrl+D` | `Alt+Shift+Down` |
 | `editops_bracket_jump` | 対応する括弧へ移動 | `Ctrl+]` | `Ctrl+Shift+\` |
 
-全部のコマンド(112 個。★ は 2 つの型で違う行。「—」はキー無し = 自分で割り当てられる):
+全部のコマンド(152 個。★ は 2 つの型で違う行。「—」はキー無し = 自分で割り当てられる):
 
 | ID | 操作 | 範囲 | Visual Studio 風(既定) | VS Code 風 |
 |---|---|---|---|---|
@@ -195,6 +195,11 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `actual_size` | 実寸 (1:1) | 窓全体 | `Ctrl+Alt+1` | `Ctrl+Alt+1` |
 | `surface_3d` | 3D 曲面 | 窓全体 | `Ctrl+Alt+3` | `Ctrl+Alt+3` |
 | `viewer_3d` | 3D ビューア… | 窓全体 | `Ctrl+Alt+4` | `Ctrl+Alt+4` |
+| `theme_instrument` | 計器盤(暗い) | 窓全体 | — | — |
+| `theme_panel` | 操作盤(明るい) | 窓全体 | — | — |
+| `density_compact` | 詰める | 窓全体 | — | — |
+| `density_standard` | 標準 | 窓全体 | — | — |
+| `reduce_motion` | 動きを減らす | 窓全体 | — | — |
 | `run_all` | すべて実行 | 窓全体 | `Ctrl+Return` | `Ctrl+Return` |
 | `run_selection` | 選んだ行だけ実行 | 窓全体 | `Ctrl+Alt+Return` | `Ctrl+Alt+Return` |
 | `dbg_run` | 全部を実行(どの欄からでも) | 窓全体 | `F5` / `Ctrl+R` | `F5` / `Ctrl+R` |
@@ -212,6 +217,9 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `pymode_config_toggle` | Debug / Release を切り替え | 窓全体 | `Ctrl+Alt+D` | `Ctrl+Alt+D` |
 | `pymode_example` | Python の例を開く | 窓全体 | — | — |
 | `pymode_clear_output` | 出力を消す | 窓全体 | — | — |
+| `pymode_autosave_off` | 自動保存: 切 | 窓全体 | — | — |
+| `pymode_autosave_idle` | 自動保存: 打つのを止めてから | 窓全体 | — | — |
+| `pymode_autosave_focus` | 自動保存: Program 欄からフォーカスが外れた時 | 窓全体 | — | — |
 | `pymode_run` | Python のプログラムを実行 | 窓全体 | — | — |
 | `pymode_step` | 1 行進む | 窓全体 | — | — |
 | `pymode_stop` | プログラムを止める | 窓全体 | `Ctrl+F2` | `Ctrl+F2` |
@@ -227,6 +235,25 @@ Studio の既定」という意味で、Visual Studio のキーを全部写し�
 | `new_graphics_window` | 新しいグラフィクスウィンドウ | 窓全体 | `Ctrl+G` | `Ctrl+G` |
 | `detach_graphics` | グラフィクス窓を切り離す | 窓全体 | `Ctrl+Shift+D` | `Ctrl+Shift+D` |
 | `reattach_graphics` | グラフィクス窓を戻す | 窓全体 | — | — |
+| `params_window` | パラメータ… | 窓全体 | — | — |
+| `dock_all` | すべてのパネルを戻す | 窓全体 | — | — |
+| `reset_layout` | パネル配置を元に戻す | 窓全体 | — | — |
+| `panel_float_program` | 別ウィンドウにする: コード — パイプライン | 窓全体 | — | — |
+| `panel_float_operators` | 別ウィンドウにする: 処理を選ぶ | 窓全体 | — | — |
+| `panel_float_pipeline` | 別ウィンドウにする: 処理手順と調整 | 窓全体 | — | — |
+| `panel_float_variables` | 別ウィンドウにする: 変数とオブジェクト | 窓全体 | — | — |
+| `panel_float_display` | 別ウィンドウにする: 表示と分析 | 窓全体 | — | — |
+| `panel_float_compare` | 別ウィンドウにする: 段の前後 | 窓全体 | — | — |
+| `panel_float_ab` | 別ウィンドウにする: A/B 比較 | 窓全体 | — | — |
+| `panel_float_project` | 別ウィンドウにする: プロジェクト | 窓全体 | — | — |
+| `panel_show_program` | コード — パイプライン | 窓全体 | — | — |
+| `strip_auto` | 道具とタブ: 自動(横長のパネルでは左に縦並び) | 窓全体 | — | — |
+| `strip_top` | 道具とタブ: 上に横並び | 窓全体 | — | — |
+| `strip_left` | 道具とタブ: 左に縦並び | 窓全体 | — | — |
+| `overflow_scroll` | 収まらない時: 送る | 窓全体 | — | — |
+| `overflow_wrap` | 収まらない時: 折り返す(数段組) | 窓全体 | — | — |
+| `layout_code_left` | コードを左に(縦長) | 窓全体 | — | — |
+| `layout_code_bottom` | コードを下に(横長) | 窓全体 | — | — |
 | `palette` | コマンドパレット… ★ | 窓全体 | `Ctrl+P` | `Ctrl+Shift+P` / `F1` |
 | `feature_inspection` | 特徴量の検査… | 窓全体 | `Ctrl+F5` | `Ctrl+F5` |
 | `ledger_run` | 台帳の op を実行… | 窓全体 | `Ctrl+Shift+L` | `Ctrl+Shift+L` |

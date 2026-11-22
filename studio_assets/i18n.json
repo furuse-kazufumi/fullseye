@@ -2799,6 +2799,7 @@
    "hi": "गणना नहीं हुई"
   },
   "x=%d  y=%d   value %s (%s) / shown %s / range %s to %s": {"ja": "x=%d  y=%d   値 %s (%s) / 表示 %s / レンジ %s〜%s", "zh": "x=%d  y=%d   值 %s (%s) / 显示 %s / 范围 %s〜%s", "tw": "x=%d  y=%d   值 %s (%s) / 顯示 %s / 範圍 %s〜%s", "ko": "x=%d  y=%d   값 %s (%s) / 표시 %s / 범위 %s〜%s", "de": "x=%d  y=%d   Wert %s (%s) / Anzeige %s / Bereich %s bis %s", "hi": "x=%d  y=%d   मान %s (%s) / प्रदर्शित %s / सीमा %s से %s"},
+  "Customize keyboard shortcuts…": {"ja": "キーボードのショートカットの設定…", "zh": "自定义键盘快捷键…", "tw": "自訂鍵盤快速鍵…", "ko": "키보드 단축키 설정…", "de": "Tastenkürzel anpassen…", "hi": "कीबोर्ड शॉर्टकट अनुकूलित करें…"},
   "Parameters…": {"ja": "パラメータ…", "zh": "参数…", "tw": "參數…", "ko": "매개변수…", "de": "Parameter…", "hi": "पैरामीटर…"},
   "Open the parameter window: several parameter files side by side, the rows that differ marked, edited and saved": {"ja": "パラメータの窓を開く: 複数のパラメータのファイルを並べ、違う行に印を付け、直して保存する", "zh": "打开参数窗口:并排显示多个参数文件,标出不同的行,可编辑并保存", "tw": "開啟參數視窗:並排顯示多個參數檔案,標出不同的列,可編輯並儲存", "ko": "매개변수 창 열기: 여러 매개변수 파일을 나란히 놓고 다른 행을 표시하며 고쳐서 저장", "de": "Parameterfenster öffnen: mehrere Parameterdateien nebeneinander, abweichende Zeilen markiert, bearbeiten und speichern", "hi": "पैरामीटर विंडो खोलें: कई पैरामीटर फ़ाइलें साथ-साथ, अलग पंक्तियाँ चिह्नित, बदलें और सहेजें"},
   "Value %s (%s) / Shown %s / Range %s to %s": {

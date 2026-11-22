@@ -1739,7 +1739,7 @@ def test_holdout_action_and_report_are_wired():
     from PySide6 import QtCore, QtGui, QtWidgets
     _app()
     win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
-    assert win._actions["holdout"].shortcut() == QtGui.QKeySequence("Ctrl+H")
+    assert win._actions["holdout"].shortcut() == QtGui.QKeySequence("Ctrl+Alt+H")  # WIRING 4 章 D11
     assert callable(win._show_holdout)
     # the report renderer builds a table from a summary (dismiss the modal via a timer)
     summary = {"n": 2, "n_ok": 1, "n_err": 1, "mean_ms": 1.2, "mean_metric": 0.5,

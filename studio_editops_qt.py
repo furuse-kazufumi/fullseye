@@ -1041,7 +1041,11 @@ class EditOps(QtCore.QObject):
             self._editing = was
 
     def _on_cursor(self) -> None:
-        if not self._editing:
+        if self._editing:
+            return
+        if self._carets:
+            self._deactivate(move_cursor=False)                # 外からカーソルを移した時は、古い箱の主カーソルへ戻さない
+        else:
             self._refresh()
 
     def _on_update_request(self, _rect, _dy) -> None:

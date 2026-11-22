@@ -1134,6 +1134,62 @@
    "tw": "未儲存: Program 有錯誤，修改無法套用(修正後再儲存)",
    "ko": "저장하지 않았습니다: Program 에 오류가 있어 고친 내용을 적용하지 못했습니다(고친 뒤 저장)",
    "de": "Nicht gespeichert: Das Programm enthält Fehler, daher konnten die Änderungen nicht übernommen werden (erst korrigieren, dann speichern)"
+  },
+  "Separate window: Program (code) — Pipeline": {
+   "ja": "別ウィンドウにする: コード — パイプライン",
+   "zh": "独立窗口: 代码 — 管线",
+   "tw": "獨立視窗: 程式碼 — 管線",
+   "ko": "별도 창으로: 코드 — 파이프라인",
+   "de": "Eigenes Fenster: Programm (Code) — Pipeline"
+  },
+  "Separate window: Operators": {
+   "ja": "別ウィンドウにする: 処理を選ぶ",
+   "zh": "独立窗口: Operators",
+   "tw": "獨立視窗: Operators",
+   "ko": "별도 창으로: Operators",
+   "de": "Eigenes Fenster: Operators"
+  },
+  "Separate window: Pipeline · Parameters": {
+   "ja": "別ウィンドウにする: 処理手順と調整",
+   "zh": "独立窗口: Pipeline · Parameters",
+   "tw": "獨立視窗: Pipeline · Parameters",
+   "ko": "별도 창으로: Pipeline · Parameters",
+   "de": "Eigenes Fenster: Pipeline · Parameters"
+  },
+  "Separate window: Variables && Objects": {
+   "ja": "別ウィンドウにする: 変数とオブジェクト",
+   "zh": "独立窗口: Variables && Objects",
+   "tw": "獨立視窗: Variables && Objects",
+   "ko": "별도 창으로: Variables && Objects",
+   "de": "Eigenes Fenster: Variables && Objects"
+  },
+  "Separate window: Display · Analysis": {
+   "ja": "別ウィンドウにする: 表示と分析",
+   "zh": "独立窗口: Display · Analysis",
+   "tw": "獨立視窗: Display · Analysis",
+   "ko": "별도 창으로: Display · Analysis",
+   "de": "Eigenes Fenster: Display · Analysis"
+  },
+  "Separate window: Stage in → out": {
+   "ja": "別ウィンドウにする: 段の前後",
+   "zh": "独立窗口: 阶段输入 → 输出",
+   "tw": "獨立視窗: 階段輸入 → 輸出",
+   "ko": "별도 창으로: 단계 입력 → 출력",
+   "de": "Eigenes Fenster: Stufe: Ein → Aus"
+  },
+  "Separate window: A / B": {
+   "ja": "別ウィンドウにする: A/B 比較",
+   "zh": "独立窗口: A / B",
+   "tw": "獨立視窗: A / B",
+   "ko": "별도 창으로: A / B",
+   "de": "Eigenes Fenster: A / B"
+  },
+  "Separate window: Project": {
+   "ja": "別ウィンドウにする: プロジェクト",
+   "zh": "独立窗口: 项目",
+   "tw": "獨立視窗: 專案",
+   "ko": "별도 창으로: 프로젝트",
+   "de": "Eigenes Fenster: Projekt"
   }
  }
 }
