@@ -70,7 +70,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--check", action="store_true")
     args = ap.parse_args(argv)
-    text = json.dumps(build(), ensure_ascii=False, indent=2) + "\n"
+    report = build()
+    text = json.dumps(report, ensure_ascii=False, indent=2) + "\n"
     current = open(OUTPUT, encoding="utf-8").read() if os.path.exists(OUTPUT) else None
     if args.check:
         if current != text:
@@ -79,7 +80,7 @@ def main(argv=None):
     else:
         with open(OUTPUT, "w", encoding="utf-8", newline="\n") as f:
             f.write(text)
-        print("wrote %s (%d queries)" % (os.path.relpath(OUTPUT, ROOT), len(build()["queries"])))
+        print("wrote %s (%d queries)" % (os.path.relpath(OUTPUT, ROOT), len(report["queries"])))
     return 0
 
 
