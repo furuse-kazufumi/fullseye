@@ -3383,7 +3383,10 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
                        source=a.get("source"), limit=a.get("limit", 20))
         return tool_result(_search_text(r), r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_find_ops":
-        from fullseye.opsearch import _format, search_ops, tuning_cards
+        from fullseye.opsearch import (_format, _graph, mcp_search_pool, prefer_mcp_executable,
+                                      search_ops, tuning_cards)
+        # 走る op の集合は try の外で読む(グラフの読み込みの ValueError を引数違反 -32602 にしない)。
+        runnable = {e["op"] for e in _graph()["edges"] if e.get("verified_executable")}
         try:
             from fssystem import get_system
             total_limit = int(a.get("limit", get_system("find_ops_k")))
@@ -3396,15 +3399,25 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             recipe_limit = max(0, min(get_system("find_ops_recipe_max"), total_limit - 1))
             op_limit = total_limit - recipe_limit
             executable_only = bool(a.get("executable_only", False))
+            # ★2026-11-22: 呼び手は結果を MCP で走らせる。PR #322 の heightmap_depth_camera(光線が
+            #   当たらない所は NaN)が、走る binocular_disparity_ms を上位 5 件から押し出したため、MCP の
+            #   経路だけで有界に降格する。search_ops と tools/opsearch_eval.py の順位は変えない。
             # executable_only: 多めに引いて MCP で走る op だけを残す(順位は検索のまま)
-            r = search_ops(a["query"], min(MAX_SEARCH_LIMIT, op_limit * 8) if executable_only else op_limit,
+            r = search_ops(a["query"], min(MAX_SEARCH_LIMIT, op_limit * 8) if executable_only
+                           else mcp_search_pool(op_limit),
                            lang=a.get("lang"), in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
             if executable_only:
-                from fullseye.opsearch import _graph
-                runnable = {e["op"] for e in _graph()["edges"] if e.get("verified_executable")}
-                r["ops"] = [row for row in r["ops"] if row["name"] in runnable][:op_limit]
-                r["retry_ops"] = [row for row in r.get("retry_ops", []) if row["name"] in runnable]
+                r["ops"] = [dict(row, executable=True) for row in r["ops"]
+                            if row["name"] in runnable][:op_limit]
+                # ★2026-11-22(独立レビュー): retry_ops は op_limit で切っていなかった(search_ops は k = op_limit*8 まで
+                #   retry 行を作るので、既定で最大 40 行が返り、proposals とも食い違った)。
+                r["retry_ops"] = [dict(row, executable=True) for row in r.get("retry_ops", [])
+                                  if row["name"] in runnable][:op_limit]
                 r["executable_only"] = True
+            else:
+                r["ops"] = prefer_mcp_executable(r["ops"], runnable, op_limit)
+                if r.get("retry_ops"):
+                    r["retry_ops"] = prefer_mcp_executable(r["retry_ops"], runnable, op_limit)
         except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)
             raise ArgError(str(exc)) from exc
         from fullseye.recipesearch import find_recipes
@@ -3438,8 +3451,6 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             text = "\n".join(lines) or _format(r)
         # ★2026-11-13(報告 6): proposals は ops / retry_ops / recipes の行を丸ごと写していて、応答の半分が重複だった
         #   (検証の 1 回で ops 2.6 KB に proposals 4.3 KB)。順番と種類だけの参照にする(中身は元の一覧を読む)。
-        from fullseye.opsearch import _graph
-        runnable = {e["op"] for e in _graph()["edges"] if e.get("verified_executable")}
         r["proposals"] = ([{"kind": "op", "name": row["name"], "executable": row["name"] in runnable}
                            for row in r["ops"]] +
                           [{"kind": "retry_op", "name": row["name"], "executable": row["name"] in runnable}

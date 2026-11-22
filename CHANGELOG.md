@@ -7,6 +7,16 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### MCP: find_ops は MCP で走る op を優先する(2026-11-22)
+
+PR #322 の追加後、「ステレオカメラで距離を測りたい」では MCP で走らない `heightmap_depth_camera` が
+4.875、走る `binocular_disparity_ms` が 4.805 となり、日本語の評価(`tools/mcp_find_ops_eval.py`)の review_2026_11_15 で、上位 5 件に MCP で走る関係 op が入る問いが 9 → 8 に減った(床は 9)。
+`fullseye_find_ops` だけで、走らない op を走る op に対して最大 2 場所だけ下げる。走らない op は隠さず、各行に
+`executable` を付ける。`search_ops` と `tools/opsearch_eval.py` は構造上まったく変えない。回帰試験は
+`tests/test_mcp_find_ops_prefers_executable_2026_11_22.py`。
+
+(評価の数: PR 本文)
+
 ### MCP: 外部レビュー(Codex)の安全の指摘の直し(2026-11-15)
 
 Codex が PR #318 を読み取り専用で読んだ指摘(Python は走らせていない)を、1 件ずつ動く再現で確かめてから直した。
