@@ -1564,15 +1564,6 @@
      "registry": "examples2d",
      "real_data_read_in_gate": false,
      "real_datasets_read": []
-    },
-    {
-     "id": "poc_real_tless_6dof",
-     "data": "real",
-     "gate": "tests/test_poc_scripts_run.py",
-     "executed": true,
-     "registry": "examples2d",
-     "real_data_read_in_gate": false,
-     "real_datasets_read": []
     }
    ]
   },
@@ -2058,7 +2049,7 @@
    "title_en": "Locate a known 3-D part in a point cloud with six degrees of freedom",
    "category": "見つける",
    "note": "docs/capabilities/six-dof-surface-pose.md",
-   "status": "verified-synthetic",
+   "status": "validated-public-real-data",
    "ops_total": 7,
    "ops_named_in_tests": 7,
    "ops_not_named_in_tests": [],
@@ -2077,8 +2068,10 @@
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d",
-     "real_data_read_in_gate": false,
-     "real_datasets_read": []
+     "real_data_read_in_gate": true,
+     "real_datasets_read": [
+      "bop-tless"
+     ]
     }
    ]
   },
@@ -2668,10 +2661,10 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 493,
+  "examples2d_total": 495,
   "run_by_the_poc_gate": 316,
-  "run_by_the_example_gate": 177,
-  "scripts_on_disk": 501,
+  "run_by_the_example_gate": 179,
+  "scripts_on_disk": 503,
   "excluded_from_the_registry": 8,
   "excluded_but_run_by_a_named_test": {
    "lensfile_tolerance_worst_mtf": [

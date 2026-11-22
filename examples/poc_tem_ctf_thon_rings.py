@@ -68,6 +68,32 @@ SI_MIP_NEUTRAL, SI_MIP_MEASURED = 13.71, 12.48     # 中性原子(上の f_e(0) 
 FAILS: list[str] = []
 GATES: list[str] = []
 NUMBERS: dict[str, float] = {}
+#: 見出しに載せる数を、印字と同じ丸めの文字列で集める。
+SHOWN: dict[str, str] = {}
+
+#: 合成の章の見出しの数。full と reduced の各実行で、同じ丸めの印字と文字列照合する。
+HEADLINE = {
+    "full": {
+        "lambda_pm": "1.9687", "nonrel_pct": "13.7", "cu_err_pct": "10.5", "si_mip": "13.83",
+        "si_neutral": "13.71", "si_measured": "12.48", "ctf_zero_err": "1.7E-12",
+        "scherzer_A": "842", "point_res_A": "2.493", "scherzer_factor": "0.6580", "bessel_err": "1.6E-13",
+        "fid_best_A": "900", "fid_zero": "-0.30", "defocus_err_A": "13", "astig_err_A": "50",
+        "astig_angle_deg": "5.2", "jackknife_cover": "2.6", "px_ratio": "1.039",
+        "drift_raw_A": "15.6", "drift_aligned_A": "5.3", "corr_raw": "0.09", "corr_flip": "0.84",
+        "corr_wiener": "0.87", "corr_wrong": "0.10",
+    },
+    "reduced": {
+        "lambda_pm": "1.9687", "nonrel_pct": "13.7", "cu_err_pct": "10.5", "si_mip": "13.83",
+        "si_neutral": "13.71", "si_measured": "12.48", "ctf_zero_err": "1.7E-12",
+        "scherzer_A": "842", "point_res_A": "2.493", "scherzer_factor": "0.6580", "bessel_err": "1.6E-13",
+        "fid_best_A": "900", "fid_zero": "-0.30", "defocus_err_A": "10", "astig_err_A": "18",
+        "astig_angle_deg": "0.8", "jackknife_cover": "1.7", "px_ratio": "1.039",
+        "drift_raw_A": "30.0", "drift_aligned_A": "6.4", "corr_raw": "0.17", "corr_flip": "0.85",
+        "corr_wiener": "0.90", "corr_wrong": "0.24",
+    },
+}
+#: 実写の見出しの数。CI に実データが無いときも ``RECORDED`` から同じ文字列を作って照合する。
+HEADLINE_REAL = {"real_diff_1": "-55", "real_diff_2": "+65", "real_diff_3": "-0.5", "real_worst_pct": "0.21"}
 
 
 def gate(name: str, ok: bool, detail: str = "") -> None:
@@ -75,6 +101,25 @@ def gate(name: str, ok: bool, detail: str = "") -> None:
     GATES.append(name)
     if not ok:
         FAILS.append(name)
+
+
+def _headline_check(want: dict[str, str], label: str, count_gate: bool = True) -> None:
+    """丸めた実行値と記録を文字列で照合する。記録値だけの CI 照合は科学的な門に数えない。"""
+    diff = {k: (want[k], SHOWN.get(k)) for k in want if SHOWN.get(k) != want[k]}
+    print("   見出しの数(この実行): " + "  ".join("%s=%s" % (k, SHOWN.get(k)) for k in want))
+    name = "見出しの数(%d 個)が記録 %s と一致する" % (len(want), label)
+    detail = "食い違い(記録, 実行): %s" % diff if diff else ""
+    if count_gate:
+        gate(name, not diff, detail)
+    else:
+        print("   [%s] 検算(門に数えない): %s%s" % ("ok" if not diff else "NG", name, (" — " + detail) if detail else ""))
+        assert not diff, detail
+
+
+def check_headline() -> None:
+    """合成の章の見出しの数を、この予算の ``HEADLINE`` と照合する。"""
+    key = "reduced" if REDUCED else "full"
+    _headline_check(HEADLINE[key], "HEADLINE[%s]" % key)
 
 
 def _corr(a, b):
@@ -98,6 +143,7 @@ def chapter_wavelength():
         print("   %5.0f kV: λ = %.5f pm(公表 %.4f)、補正なし %.4f pm、σ = %.4e rad/(V Å)"
               % (kv, r["wavelength_pm"], ref, r["wavelength_nonrel_pm"], r["sigma_rad_per_VA"]))
     r300 = TM.tem_wavelength(300.0)
+    NUMBERS["lambda_pm"] = r300["wavelength_pm"]
     NUMBERS["nonrel_excess"] = r300["wavelength_nonrel_pm"] / r300["wavelength_pm"] - 1
     gate("波長が公表値と 5 桁で一致(最大差 %.1e pm)" % worst, worst < 6e-5)
     gate("相対論補正は省けない(300 kV で補正なしは %.1f %% 長い)" % (100 * NUMBERS["nonrel_excess"]),
@@ -158,6 +204,7 @@ def chapter_ctf():
         else:
             worst = max(worst, float(np.max(np.abs(num - z))))
         curves.append((df, TM.tem_ctf_profile(0.4, 800, KV, CS, df, W, alpha_mrad=0.02, focal_spread_A=40.0)))
+    NUMBERS["ctf_zero_err"] = worst
     gate("CTF の零点が閉形式(χ + arcsin w = nπ)と一致(最大差 %.1e Å⁻¹)" % worst, worst < 1e-6)
     c2 = TM.tem_ctf(256, 1.0, KV, CS, 15000.0, amplitude_contrast=W)
     p = TM.tem_ctf_profile(0.5, 129, KV, CS, 15000.0, W)
@@ -168,7 +215,7 @@ def chapter_ctf():
     z_sch = TM.tem_ctf_profile(1.0, 10, KV, CS, sch["defocus_A"], 0.0)["zeros_A_inv"]
     first = 1.0 / z_sch[0]
     unit = (CS * 1e7) ** 0.25 * lam ** 0.75
-    NUMBERS.update({"scherzer_A": sch["defocus_A"], "point_res_A": first})
+    NUMBERS.update({"scherzer_A": sch["defocus_A"], "point_res_A": first, "scherzer_factor": first / unit})
     gate("Scherzer 焦点 %.0f Å の最初の零点 = %.3f Å = %.4f Cs^¼ λ^¾(閉形式 √(3/4)^½ = 0.6580)"
          % (sch["defocus_A"], first, first / unit), abs(first / unit - (3.0 / 4.0) ** 0.25 / math.sqrt(2.0)) < 1e-9)
     gate("教科書の 0.66 Cs^¼ λ^¾ = %.3f Å と 0.5 %% 以内" % sch["point_resolution_formula_A"],
@@ -211,6 +258,7 @@ def chapter_weak_phase(film_small):
     ms = TM.tem_multislice(vg, px, KV, slice_thickness_A=0.0, bandlimit=1.0)
     F = np.fft.fft2(ms["exit_wave"]) / (n * n)
     worst = max(abs(abs(F[0, 8 * o]) ** 2 - special.jv(o, phi0) ** 2) for o in range(5))
+    NUMBERS["bessel_err"] = worst
     gate("正弦位相格子(φ₀ = 1.3 rad)の回折の強さ = J_n(φ₀)²(n = 0〜4、差 %.1e)" % worst, worst < 1e-12)
     # 厚さ: 2 Å のスライスに分けた非晶質炭素の出射波と、投影近似(1 枚の位相物体)の差
     rows_t = []
@@ -349,6 +397,8 @@ def chapter_estimate(film_big, px_big):
     a_ok = [o for o in out if o["ast"] >= 400.0]
     wa = max(abs(o["e_ast"]) / max(60.0, 0.1 * o["ast"]) for o in a_ok)
     wang = max(abs(o["da"]) for o in a_ok)
+    NUMBERS.update({"defocus_err_A": max(abs(o["err"]) for o in out),
+                    "astig_err_A": max(abs(o["e_ast"]) for o in a_ok), "astig_angle_deg": wang})
     for o in a_ok:
         print("   非点 %4.0f Å: 誤差 %+5.1f Å(jackknife σ %.1f Å)、向き %+.1f°" % (o["ast"], o["e_ast"],
                                                                          o["r"]["astig_sigma_A"], o["da"]))
@@ -649,6 +699,15 @@ def chapter_real():
         print("   実データが無い(FULLSEYE_TEM_DOWNLOAD=1 で取得)。記録値(2026-10-15 の手元の実行)を印字して章を飛ばす:")
         for k, v in RECORDED.items():
             print("     %s = %s" % (k, v))
+        # 記録値とページの見出し(0.21 % 以内)の照合。記録の定数どうしの比べ合わせなので門には数えない(食い違えば止める)
+        rel = max(abs(RECORDED[t + "_defocus"] / RECORDED[t + "_author"] - 1) for t in MICROGRAPHS)
+        print("     記録値の相対差の最大 %.3f %%(ページの「0.21 %% 以内」と照合。門には数えない)" % (100 * rel))
+        diffs = [RECORDED[t + "_defocus"] - RECORDED[t + "_author"] for t in MICROGRAPHS]
+        # 「以内」の上限は通常の丸めで小さく見せず、0.01 % 刻みで上側へ丸める(0.2048... % → 0.21 %)。
+        rel_bound_pct = math.ceil(10000 * rel) / 100.0
+        SHOWN.update(real_diff_1="%+.0f" % diffs[0], real_diff_2="%+.0f" % diffs[1],
+                     real_diff_3="%+.1f" % diffs[2], real_worst_pct="%.2f" % rel_bound_pct)
+        _headline_check(HEADLINE_REAL, "HEADLINE_REAL(RECORDED、実データなし)", count_gate=False)
         return None
     realdata.mark_read("empiar-10028")
     res = {}
@@ -668,6 +727,18 @@ def chapter_real():
                  r["fit_resolution_A"], dt))
     worst = max(abs(v["r"]["defocus_A"] - v["a_mean"]) / max(100.0, 0.01 * v["a_mean"]) for v in res.values())
     gate("実写 3 枚の平均 Δf が著者の CTFFIND3 と max(100 Å, 1 %%) 以内(最悪で許容幅の %.2f 倍)" % worst, worst <= 1.0)
+    rel_worst = max(abs(v["r"]["defocus_A"] / v["a_mean"] - 1) for v in res.values())
+    NUMBERS["real_rel_worst"] = rel_worst
+    diffs = [res[t]["r"]["defocus_A"] - res[t]["a_mean"] for t in MICROGRAPHS]
+    rel_bound_pct = math.ceil(10000 * rel_worst) / 100.0
+    SHOWN.update(real_diff_1="%+.0f" % diffs[0], real_diff_2="%+.0f" % diffs[1],
+                 real_diff_3="%+.1f" % diffs[2], real_worst_pct="%.2f" % rel_bound_pct)
+    _headline_check(HEADLINE_REAL, "HEADLINE_REAL(実データ)")
+    # 記録値(CI はデータを持たずこれを印字する)が今の推定・著者のログと ±0.1 Å で一致すること —— 推定器が変わって
+    # 記録だけが古くなるのを止める
+    rec = max(max(abs(res[t]["r"]["defocus_A"] - RECORDED[t + "_defocus"]), abs(res[t]["a_mean"] - RECORDED[t + "_author"]))
+              for t in res)
+    gate("記録値(RECORDED)が今の推定と著者のログに ±0.1 Å で一致(最大差 %.2f Å)" % rec, rec <= 0.1)
     rel = RELION_PART2_001
     rm = 0.5 * (rel[0] + rel[1])
     v2 = res["part2_001"]
@@ -726,6 +797,46 @@ def _half_model(view, px, n, kmax, lam, cs, du, dv, ang, w):
     return out
 
 
+def real_cover(real, size=720):
+    """表紙(正方形 720 px): 実写 3 枚のパワースペクトル(左半分 = 観測、右半分 = 当てはめた CTF²)と、著者の値との差。
+
+    ページのカードとサムネイル(320 px)で字が読めるように、パネルを 2 × 2 に大きく並べ、4 つ目のます目に
+    読み方と差を大きな字で書く(12_real は 3 枚が横長で、正方形に縮めると上下の 2/3 が白く、字が 8 px だった ——
+    2026-11-15 の独立レビュー)。パネルは 12_real と同じ ``_half_model`` の絵、差は今の推定と著者の CTFFIND3 の差。
+    """
+    import fullseye as fs
+    from PIL import Image
+    head, gap = 70, 8
+    cell = (size - head - gap) // 2
+    canvas = np.ones((size, size, 3))
+    lam_r = TM.tem_wavelength(REAL["kv"])["wavelength_A"]
+    diffs = []
+    for i, (tag, v_) in enumerate(real.items()):
+        r = v_["r"]
+        psv = _ps_view(TM.tem_power_spectrum(v_["img"]), REAL["pixel_A"], 0.12)
+        pan = _half_model(psv, REAL["pixel_A"], r["tile"], 0.12, lam_r, REAL["cs_mm"], r["defocus_u_A"],
+                          r["defocus_v_A"], r["astig_angle_deg"], REAL["w"])
+        im = Image.fromarray(np.rint(np.clip(pan, 0, 1) * 255).astype(np.uint8)).resize((cell, cell), Image.LANCZOS)
+        tile = np.repeat((np.asarray(im, dtype=np.float64) / 255.0)[..., None], 3, axis=2)
+        d = r["defocus_A"] - v_["a_mean"]
+        diffs.append(d)
+        tile = np.asarray(fs.text_box(tile, "%s  差 %s Å" % (tag, ("%+.1f" % d).replace("-", "−")), (6, 6), anchor="lt",
+                                      font_size=24))
+        y0 = head + (i // 2) * (cell + gap)
+        x0 = (i % 2) * (cell + gap)
+        canvas[y0:y0 + cell, x0:x0 + cell] = tile
+    y0, x0 = head + cell + gap, cell + gap
+    rel = max(abs(v_["r"]["defocus_A"] / v_["a_mean"] - 1) for v_ in real.values())
+    lines = ["左半分 = 実写のパワースペクトル", "右半分 = 当てはめた CTF²", "著者の CTFFIND3 との差",
+             "最大 %.3f %%(学習・較正なし)" % (100 * rel)]
+    for k, s in enumerate(lines):
+        canvas = np.asarray(fs.text_box(canvas, s, (x0 + 4, y0 + 18 + 62 * k), anchor="lt", font_size=24,
+                                        box_alpha=0.0))
+    canvas = np.asarray(fs.text_box(canvas, "実写の電顕像から焦点外れを当てる", (size // 2, head // 2), anchor="cm",
+                                    font_size=32, box_alpha=0.0))
+    return canvas, diffs, rel
+
+
 def make_figures(ctf_curves, wp, sweep, est, drift, corr, real):
     lam = TM.tem_wavelength(KV)["wavelength_A"]
     # 1. 焦点を振る GIF(パワースペクトル | 像)
@@ -745,18 +856,19 @@ def make_figures(ctf_curves, wp, sweep, est, drift, corr, real):
     figs.save_grid("thon_rings_four_defoci",
                    [_ps_view(ps, px, 0.2) for _, _, ps in sw],
                    captions=["Δf = %.1f µm" % (df / 1e4) for df, _, _ in sw], ncols=4, gray=True,
-                   caption="同じ試料を 4 つの焦点で撮ったパワースペクトル。最初の暗いリング(半径 1/√(λΔf))は"
-                           " 0.4 → 2.4 µm で √6 倍内側へ動く(門: 4 点とも閉形式と 4 % 以内)。")
+                   caption="同じ試料を 4 つの焦点で撮ったパワースペクトル。2 本目の暗いリング(χ = 2π、Cs を無視すると"
+                           "半径 √(2/(λΔf)))は 0.4 → 2.4 µm で約 √6 倍内側へ動く(門: 4 点とも閉形式の零点と 3 % 以内)。")
     # 2. CTF の曲線
     series, styles, colors = [], [], []
     for df in (5000.0, 15000.0):
         p = TM.tem_ctf_profile(0.3, 1500, KV, CS, df, W, alpha_mrad=0.05, focal_spread_A=60.0)
+        col = "emphasis" if df < 10000 else "reference"        # 色 = 焦点、線の種類 = CTF か包絡か
         series.append(("CTF·E(Δf = %.1f µm)" % (df / 1e4), p["k"], p["ctf_env"]))
         styles.append(None)
-        colors.append(None)
+        colors.append(col)
         series.append(("包絡 E_s·E_t(%.1f µm)" % (df / 1e4), p["k"], p["envelope_spatial"] * p["envelope_temporal"]))
         styles.append("dashed")
-        colors.append("reference" if df > 10000 else "neutral")
+        colors.append(col)
     figs.save_plot("ctf_curves", series, xlabel="k [1/Å]", ylabel="CTF", styles=styles, colors=colors, size=(820, 380),
                    title="焦点外れによる CTF と包絡の変化",
                    caption="CTF = −sin(χ + arcsin w) に空間・時間の包絡を掛けた曲線(300 kV、Cs 2.7 mm、照明の半角 0.05 mrad、"
@@ -770,7 +882,7 @@ def make_figures(ctf_curves, wp, sweep, est, drift, corr, real):
                            % NUMBERS["scherzer_A"])
     figs.save_plot("scherzer_fidelity", [("像と投影ポテンシャルの相関", grid, fid),
                                          ("Scherzer √(4/3 Cs λ)", [NUMBERS["scherzer_A"]] * 2, [-1, 1])],
-                   xlabel="Δf [Å]", ylabel="相関", styles=[None, "dashed"], colors=[None, "reference"], size=(720, 360),
+                   xlabel="Δf [Å]", ylabel="相関", styles=[None, "dashed"], colors=["emphasis", "reference"], size=(720, 360),
                    title="Scherzer 焦点で投影ポテンシャルに最も近づく",
                    ylim=(-1, 1),
                    caption="像 −(I − 1) と、点分解能 %.2f Å まで帯域を切った投影ポテンシャルとの相関。最大は Δf = %.0f Å"
@@ -794,7 +906,7 @@ def make_figures(ctf_curves, wp, sweep, est, drift, corr, real):
                                         ("CTF²(推定、平均を引いて合わせた)", o["r"]["k"],
                                          (o["r"]["model"] - o["r"]["model"].mean()) / (o["r"]["model"].std() + 1e-12)
                                          * o["r"]["flat"].std())],
-                   xlabel="k [1/Å]", ylabel="振れ", styles=[None, "dashed"], colors=[None, "reference"], size=(760, 340),
+                   xlabel="k [1/Å]", ylabel="振れ", styles=[None, "dashed"], colors=["emphasis", "reference"], size=(760, 340),
                    title="動径平均と推定した CTF² の一致",
                    caption="背景(u = k² の上でリング 1 周期の移動平均)を引いて振れ幅で割った動径平均と、推定した Δf の CTF²。")
     # 5. 弱位相近似と厚さ
@@ -802,7 +914,7 @@ def make_figures(ctf_curves, wp, sweep, est, drift, corr, real):
     figs.save_plot("weak_phase_breakdown", [("線形 対 coherent_image の差", [a for a, _ in rows_w], [b for _, b in rows_w]),
                                             ("比例(傾き 1)", [rows_w[0][0], rows_w[-1][0]],
                                              [rows_w[0][1], rows_w[0][1] * rows_w[-1][0] / rows_w[0][0]])],
-                   xlabel="位相の rms [rad]", ylabel="相対差", styles=[None, "dashed"], colors=[None, "reference"],
+                   xlabel="位相の rms [rad]", ylabel="相対差", styles=[None, "dashed"], colors=["emphasis", "reference"],
                    size=(620, 340),
                    title="位相が大きいと弱位相近似が崩れる",
                    caption="同じ試料のポテンシャルを 0.05〜4 倍して、弱位相近似の線形の像と coherent_image の像を比べた。"
@@ -841,12 +953,14 @@ def make_figures(ctf_curves, wp, sweep, est, drift, corr, real):
             lam_r = TM.tem_wavelength(REAL["kv"])["wavelength_A"]
             pan.append(_half_model(psv, REAL["pixel_A"], r["tile"], 0.12, lam_r, REAL["cs_mm"], r["defocus_u_A"],
                                    r["defocus_v_A"], r["astig_angle_deg"], REAL["w"]))
-            caps.append("%s: %.0f Å(著者 %.0f Å)" % (tag, r["defocus_A"], v_["a_mean"]))
+            caps.append(("%s: 差 %+.1f Å(推定 %.1f / 著者 %.1f Å)" % (tag, r["defocus_A"] - v_["a_mean"], r["defocus_A"],
+                                                               v_["a_mean"])).replace("-", "−"))
             rows_t.append([tag, "%.1f ± %.1f" % (r["defocus_A"], r["defocus_sigma_A"]), "%.1f" % v_["a_mean"],
                            "%+.1f" % (r["defocus_A"] - v_["a_mean"]), "%.0f / %.0f" % (r["defocus_u_A"] - r["defocus_v_A"],
                                                                                    v_["a_ast"]),
                            "%.1f" % r["fit_resolution_A"]])
         figs.save_grid("real_empiar_10028", pan, captions=caps, ncols=3, gray=True,
+                       title="左半分 = 実写のパワースペクトル、右半分 = 当てはめた CTF²",
                        caption="実写 3 枚のパワースペクトル(k ≤ 0.12 Å⁻¹、左 = 観測、右 = この PoC が当てはめた CTF²)。" + src)
         for tag, v_ in real.items():
             figs.save("real_micrograph_%s" % tag, _gray(v_["img"][:1024, :1024]), gray=True,
@@ -855,6 +969,11 @@ def make_figures(ctf_curves, wp, sweep, est, drift, corr, real):
         figs.save_table("real_vs_author", ["写真", "推定 Δf [Å]", "著者 CTFFIND3 [Å]", "差 [Å]", "非点 推定 / 著者 [Å]",
                                            "当てはまりの分解能 [Å]"], rows_t,
                         caption="許容幅 max(100 Å, 1 %)(CTFFIND4 と CTFFIND3 の差が 1 % 未満、Gctf と CTFFIND3 の差が平均 40 Å)。")
+        cover, diffs, rel = real_cover(real)
+        figs.save("real_cover", cover, source=src,
+                  caption="表紙: 実写(EMPIAR-10028、CC0)3 枚のパワースペクトル。左半分 = 観測、右半分 = この PoC が当てはめた CTF²。"
+                          "著者の CTFFIND3 との差は %s Å(最大 %.3f %%)。CTFFIND3 も推定のソフトで真値ではなく、差は解析ソフトどうしの差と"
+                          "同じ桁。" % (" / ".join(("%+.1f" % d).replace("-", "−") for d in diffs), 100 * rel))
 
 
 SWEEP_FILM = None
@@ -877,6 +996,23 @@ def main():
     est = chapter_estimate(film_big, 1.0)
     drift = chapter_drift(film_big, 1.0)
     corr = chapter_correct()
+    sci = lambda v: ("%.1E" % v).replace("E-0", "E-").replace("E+0", "E+")
+    SHOWN.update(
+        lambda_pm="%.4f" % NUMBERS["lambda_pm"], nonrel_pct="%.1f" % (100 * NUMBERS["nonrel_excess"]),
+        cu_err_pct="%.1f" % abs(100 * NUMBERS["fe0_cu_rel"]), si_mip="%.2f" % NUMBERS["si_mip"],
+        si_neutral="%.2f" % SI_MIP_NEUTRAL, si_measured="%.2f" % SI_MIP_MEASURED,
+        ctf_zero_err=sci(NUMBERS["ctf_zero_err"]), scherzer_A="%.0f" % NUMBERS["scherzer_A"],
+        point_res_A="%.3f" % NUMBERS["point_res_A"], scherzer_factor="%.4f" % NUMBERS["scherzer_factor"],
+        bessel_err=sci(NUMBERS["bessel_err"]), fid_best_A="%.0f" % NUMBERS["fid_best_df"],
+        fid_zero="%.2f" % NUMBERS["fid_zero"], defocus_err_A="%.0f" % NUMBERS["defocus_err_A"],
+        astig_err_A="%.0f" % NUMBERS["astig_err_A"], astig_angle_deg="%.1f" % NUMBERS["astig_angle_deg"],
+        jackknife_cover="%.1f" % NUMBERS["cover"], px_ratio="%.3f" % NUMBERS["px_probe_ratio"],
+        drift_raw_A="%.1f" % NUMBERS["drift_raw_fit"], drift_aligned_A="%.1f" % NUMBERS["drift_al_fit"],
+        corr_raw="%.2f" % NUMBERS["corr_raw"], corr_flip="%.2f" % NUMBERS["corr_flip"],
+        corr_wiener="%.2f" % NUMBERS["corr_wiener"], corr_wrong="%.2f" % NUMBERS["corr_wrong"],
+    )
+    print("\n9. 見出しの数")
+    check_headline()
     if not REDUCED and figs.target_dir() is not None:
         make_figures(curves, wp, sweep, est, drift, corr, real)
     print("\n所要 CPU %.1f s、門 %d 件中 NG %d 件" % (time.process_time() - t0, len(GATES), len(FAILS)))

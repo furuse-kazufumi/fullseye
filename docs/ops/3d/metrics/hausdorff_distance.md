@@ -5,7 +5,7 @@ category: metrics
 in: points × points
 out: measurement
 gpu: なし
-examples: [mesh_lod_download, pointcloud_downsampling, poisson_surface_recon]
+examples: [convex_hull_gap_clearance, mesh_lod_download, pointcloud_downsampling, poisson_surface_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -52,6 +52,7 @@ LOD の ``max_error`` と同じ性格)に使う。
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [convex_hull_gap_clearance](../../../../examples_3d/convex_hull_gap_clearance.py) — `py -3.11 examples_3d/convex_hull_gap_clearance.py`
 - [mesh_lod_download](../../../../examples_3d/mesh_lod_download.py) — `py -3.11 examples_3d/mesh_lod_download.py`
 - [pointcloud_downsampling](../../../../examples_3d/pointcloud_downsampling.py) — `py -3.11 examples_3d/pointcloud_downsampling.py`
 - [poisson_surface_recon](../../../../examples_3d/poisson_surface_recon.py) — `py -3.11 examples_3d/poisson_surface_recon.py`

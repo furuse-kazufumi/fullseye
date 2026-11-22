@@ -1,0 +1,3 @@
+# CI の実データ切り出しは checkout 時に改行変換しない。
+tests/data/tless_subset/** -text
+tests/data/tless_subset/**/*.png binary

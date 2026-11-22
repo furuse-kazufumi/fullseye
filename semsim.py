@@ -46,6 +46,8 @@ sec θ も縁の明るさも反射電子の Z コントラストも**軌跡の�
 """
 from __future__ import annotations
 
+import threading
+
 import numpy as np
 from scipy import ndimage as _ndi
 
@@ -212,6 +214,17 @@ _MC2 = 511.0
 #: 検出器の名前(信号の列の順)。
 SEM_DETECTORS = ("se_total", "inlens", "everhart", "bse")
 
+#: 同じ断面を種だけ替えて再計算するときに共有する、決定論的な検出器幾何のキャッシュ。
+#: Deterministic detector geometry shared when only the Monte Carlo seed changes.
+_PROFILE_COLLECTION_CACHE = {}
+#: キャッシュに持つ断面の数の上限。長く動くプロセス(MCP サーバ)で断面の種類が増えてもメモリが
+#: 際限なく増えないよう、超えたら古いものから捨てる。 / Bound so a long-running process does not grow without limit.
+_PROFILE_COLLECTION_CACHE_MAX = 64
+#: 断面キャッシュの参照・追出し・登録を直列化するロック。 / Lock serialising profile-cache access and updates.
+_PROFILE_COLLECTION_CACHE_LOCK = threading.Lock()
+#: 小配列では線分ごとの Python loop より放送計算が速い境目。 / Crossover for vectorised segment queries.
+_PROFILE_VECTOR_MAX_RAYS = 256
+
 
 def _mean_ionization_kev(z):
     """平均イオン化エネルギー J = 9.76 Z + 58.5 Z^−0.19 [eV] (Berger-Seltzer)を keV で。"""
@@ -350,6 +363,7 @@ class _ProfileGeom:
         self.qz = np.concatenate([self.zk, [self.zk[-1]]])
         self.ex, self.ez = self.qx - self.px, self.qz - self.pz
         self.len = np.hypot(self.ex, self.ez)
+        self.len2 = self.len * self.len
         self.buried = list(buried)
         self.z_free = float(self.zk.max())          # これより深い点は x に依らず固体
         # 弧長の座標(左の無限線分は x − x0、以降は節からの弧長)。
@@ -357,7 +371,23 @@ class _ProfileGeom:
         self.arc0 = np.concatenate([[0.0], self.arc0])            # 線分 k の始点の弧長
         relief = float(self.zk.max() - self.zk.min())
         win = float(coll_window) if coll_window is not None else 6.0 * relief + 40.0
-        self._build_collection(win)
+        collection_key = (self.xk.tobytes(), self.zk.tobytes(), win)
+        with _PROFILE_COLLECTION_CACHE_LOCK:
+            cached = _PROFILE_COLLECTION_CACHE.get(collection_key)
+        if cached is None:
+            self._build_collection(win)
+            coll_arc = self._coll_arc.copy()
+            coll = self._coll.copy()
+            coll_arc.setflags(write=False)
+            coll.setflags(write=False)
+            with _PROFILE_COLLECTION_CACHE_LOCK:
+                cached = _PROFILE_COLLECTION_CACHE.get(collection_key)
+                if cached is None:
+                    while len(_PROFILE_COLLECTION_CACHE) >= _PROFILE_COLLECTION_CACHE_MAX:
+                        _PROFILE_COLLECTION_CACHE.pop(next(iter(_PROFILE_COLLECTION_CACHE)))
+                    cached = (coll_arc, coll)
+                    _PROFILE_COLLECTION_CACHE[collection_key] = cached
+        self._coll_arc, self._coll = cached
 
     # -- 表面 ------------------------------------------------------------------ #
     def surface(self, x, y=None):
@@ -401,6 +431,18 @@ class _ProfileGeom:
 
     def _hit(self, x, z, ux, uz, tmax):
         """折れ線との最初の交点の t ∈ (1e−6, tmax] (無ければ inf)。"""
+        if x.size <= _PROFILE_VECTOR_MAX_RAYS:
+            x2, z2 = x[..., None], z[..., None]
+            ux2, uz2 = ux[..., None], uz[..., None]
+            den = ux2 * self.ez - uz2 * self.ex
+            ok = np.abs(den) > 1e-15
+            den_s = np.where(ok, den, 1.0)
+            wx, wz = self.px - x2, self.pz - z2
+            t = (wx * self.ez - wz * self.ex) / den_s
+            s = (wx * uz2 - wz * ux2) / den_s
+            hit = (ok & (t > 1e-6) & (t <= np.asarray(tmax)[..., None])
+                   & (s >= 0.0) & (s <= 1.0))
+            return np.min(np.where(hit, t, np.inf), axis=-1)
         best = np.full(np.shape(x), np.inf)
         for k in range(self.px.size):
             ex, ez = self.ex[k], self.ez[k]
@@ -425,11 +467,28 @@ class _ProfileGeom:
         return self._hit(x, z, ux, uz, np.inf)
 
     def _nearest(self, x, z):
+        if x.size <= _PROFILE_VECTOR_MAX_RAYS:
+            original_shape = x.shape
+            x, z = x.ravel(), z.ravel()
+            x2, z2 = x[..., None], z[..., None]
+            s = ((x2 - self.px) * self.ex + (z2 - self.pz) * self.ez) / self.len2
+            s = np.minimum(1.0, np.maximum(0.0, s))
+            near_x = self.px + s * self.ex
+            near_z = self.pz + s * self.ez
+            distance = np.hypot(x2 - near_x, z2 - near_z)
+            segment = np.argmin(distance, axis=-1)
+            row = np.arange(x.size)
+            selected_s = s[row, segment]
+            arc = self.arc0[segment] + selected_s * self.len[segment]
+            left = segment == 0
+            arc[left] = near_x[row[left], 0] - self.xk[0]
+            return distance[row, segment].reshape(original_shape), arc.reshape(original_shape)
         dbest = np.full(x.shape, np.inf)
         abest = np.zeros(x.shape)
         for k in range(self.px.size):
             ex, ez = self.ex[k], self.ez[k]
-            s = np.clip(((x - self.px[k]) * ex + (z - self.pz[k]) * ez) / (self.len[k] ** 2), 0.0, 1.0)
+            s = ((x - self.px[k]) * ex + (z - self.pz[k]) * ez) / self.len2[k]
+            s = np.minimum(1.0, np.maximum(0.0, s))
             d = np.hypot(x - (self.px[k] + s * ex), z - (self.pz[k] + s * ez))
             if k == 0:
                 arc = (self.px[k] + s * ex) - self.xk[0]               # 負の側
@@ -480,7 +539,8 @@ class _ProfileGeom:
         d, arc = self._nearest(x, z)
         a = np.clip(arc, self._coll_arc[0], self._coll_arc[-1])
         i = np.clip(np.rint((a - self._coll_arc[0]) / 0.25).astype(np.int64), 0, self._coll_arc.size - 1)
-        return d, self._coll[i]
+        surface_material = self.material(x, y, self.surface(x) + 1e-3)
+        return d, self._coll[i], surface_material
 
 
 class _HeightGeom:
@@ -500,6 +560,7 @@ class _HeightGeom:
         self.substrate = int(substrate)
         self.buried = list(buried)
         self.zs = -self.h
+        self._flat_z = float(self.zs.flat[0]) if np.all(self.zs == self.zs.flat[0]) else None
         self.z_top = float(self.zs.min())           # いちばん高い表面
         self.z_free = float(self.zs.max())          # これより深い点は必ず固体
         self.ds = 0.5 * self.p                      # 交差を探す刻み
@@ -520,8 +581,10 @@ class _HeightGeom:
         return i, j
 
     def surface(self, x, y):
-        fx = np.clip(x / self.p, 0.0, self.W - 1.0)
-        fy = np.clip(y / self.p, 0.0, self.H - 1.0)
+        if self._flat_z is not None:
+            return np.full(np.shape(x), self._flat_z)
+        fx = np.minimum(self.W - 1.0, np.maximum(0.0, x / self.p))
+        fy = np.minimum(self.H - 1.0, np.maximum(0.0, y / self.p))
         j0 = np.minimum(np.floor(fx).astype(np.int64), self.W - 2) if self.W > 1 else np.zeros_like(fx, dtype=np.int64)
         i0 = np.minimum(np.floor(fy).astype(np.int64), self.H - 2) if self.H > 1 else np.zeros_like(fy, dtype=np.int64)
         tx = fx - j0; ty = fy - i0
@@ -678,7 +741,8 @@ class _HeightGeom:
 
     def se_escape(self, x, y, z):
         i, j = self._ij(x, y)
-        dp = np.maximum(z - self.surface(x, y), 0.0) * self.cos_t[i, j]
+        surface = self.surface(x, y)
+        dp = np.maximum(z - surface, 0.0) * self.cos_t[i, j]
         if self._edt is not None:
             k = np.floor((z - self._z0) / self._dz).astype(np.int64)
             ok = (k >= 0) & (k < self._nz)
@@ -686,7 +750,12 @@ class _HeightGeom:
             d = np.minimum(dp, de)
         else:
             d = dp
-        return d, self._coll[i, j]
+        surface_material = np.where(surface + 1e-3 < self.bottom[i, j],
+                                    self.labels[i, j], self.substrate)
+        for idx, mask, z0, z1 in self.buried:
+            surface_material = np.where(mask[i, j] & (surface + 1e-3 >= z0)
+                                        & (surface + 1e-3 <= z1), idx, surface_material)
+        return d, self._coll[i, j], surface_material
 
 
 def _rotate(ux, uy, uz, cphi, psi):
@@ -734,27 +803,26 @@ def _transport(mats, geom, x0, y0, e0, rng, *, tally=None, keep=0, max_steps=100
     tr = np.radians(float(tilt_deg))
     ux = np.full(n, np.sin(tr)); uy = np.zeros(n); uz = np.full(n, np.cos(tr))
     e = np.full(n, float(e0))
-    alive = np.ones(n, dtype=bool)
+    electron = np.arange(n)
     bse = np.zeros(n, dtype=bool)
     e_exit = np.zeros(n); uz_exit = np.zeros(n)
     se = np.zeros((n, 3))
     max_depth = z.copy()
+    se_live = np.zeros((n, 3))
+    depth_live = z.copy()
     tracks = [[(x[i], y[i], z[i])] for i in range(min(keep, n))]
     lam_se = np.array([m.lam_se for m in mats])
     eps_se = np.array([m.eps_se for m in mats])
     for _ in range(max_steps):
-        act = np.nonzero(alive)[0]
-        if act.size == 0:
+        if electron.size == 0:
             break
-        xa, ya, za = x[act], y[act], z[act]
-        uxa, uya, uza, ea = ux[act], uy[act], uz[act], e[act]
-        mi_a = geom.material(xa, ya, za)
-        lam = np.empty(act.size); sp = np.empty(act.size); cph = np.empty(act.size)
+        mi_a = geom.material(x, y, z)
+        lam = np.empty(electron.size); sp = np.empty(electron.size); cph = np.empty(electron.size)
         for mi, m in enumerate(mats):
             sel = mi_a == mi
             if not sel.any():
                 continue
-            es = ea[sel]
+            es = e[sel]
             mu = m.sigma(es) * m.nd[None, :]                 # 元素ごとの 1/cm
             mut = mu.sum(axis=1)
             lam[sel] = 1e7 / mut                             # nm
@@ -762,56 +830,63 @@ def _transport(mats, geom, x0, y0, e0, rng, *, tally=None, keep=0, max_steps=100
             cum = np.cumsum(mu, axis=1) / mut[:, None]
             pick = np.minimum((rng.random(es.size)[:, None] > cum).sum(axis=1), m.z.size - 1)
             cph[sel] = m.sample_cos(es, pick, rng)
-        step = -lam * np.log1p(-rng.random(act.size))
+        step = -lam * np.log1p(-rng.random(electron.size))
         # 材料の境界で歩を切る(新しい材料の自由行程で引き直す。散乱はしない)。
-        tm = geom.material_t(xa, ya, za, uxa, uya, uza, step, mi_a)
+        tm = geom.material_t(x, y, z, ux, uy, uz, step, mi_a)
         mcross = tm < step
         step = np.where(mcross, tm + 1e-6, step)
-        th = geom.exit_t(xa, ya, za, uxa, uya, uza, step)
+        th = geom.exit_t(x, y, z, ux, uy, uz, step)
         cross = np.isfinite(th)
         mcross &= ~cross
         s_in = np.where(cross, th, step)
-        de = np.minimum(sp * s_in, ea)
+        de = np.minimum(sp * s_in, e)
         # 二次電子: 固体の中の区間の一様な 1 点で ΔE/ε 個が生まれ、0.5·exp(−d/λ) で出る。
-        u = rng.random(act.size)
-        gx, gy, gz = xa + u * s_in * uxa, ya + u * s_in * uya, za + u * s_in * uza
-        d, coll = geom.se_escape(gx, gy, gz)
+        u = rng.random(electron.size)
+        gx, gy, gz = x + u * s_in * ux, y + u * s_in * uy, z + u * s_in * uz
+        d, coll, sm = geom.se_escape(gx, gy, gz)
         # λ と ε は対で決まる量(Lin & Joy の表は δ ∝ λ/ε で合わせてある)ので、両方とも
         # 抜けて出る表面の層(表面の直下)の材料から取る。埋もれた W の中で生まれた二次電子も
         # 上の Si の λ・ε で数える —— 埋もれた材料は、沈着エネルギーと反射電子を通してだけ効く。
-        sm = geom.material(gx, gy, geom.surface(gx, gy) + 1e-3)
         w_se = de / eps_se[sm] * 0.5 * np.exp(-d / lam_se[sm])
-        se[act, 0] += w_se
-        se[act, 1:] += w_se[:, None] * coll
+        se_live[:, 0] += w_se
+        se_live[:, 1:] += w_se[:, None] * coll
         if tally is not None:
             tally(gx, gy, gz, de)
-        xa = xa + s_in * uxa; ya = ya + s_in * uya; za = za + s_in * uza
-        ea = ea - de
+        x = x + s_in * ux; y = y + s_in * uy; z = z + s_in * uz
+        e = e - de
+        survives = np.ones(electron.size, dtype=bool)
         if cross.any():
             ci = np.nonzero(cross)[0]
-            t2 = geom.reenter_t(xa[ci], ya[ci], za[ci], uxa[ci], uya[ci], uza[ci])
+            t2 = geom.reenter_t(x[ci], y[ci], z[ci], ux[ci], uy[ci], uz[ci])
             back = np.isfinite(t2)
             ri = ci[back]
             tt = t2[back] + 1e-6
-            xa[ri] += tt * uxa[ri]; ya[ri] += tt * uya[ri]; za[ri] += tt * uza[ri]
+            x[ri] += tt * ux[ri]; y[ri] += tt * uy[ri]; z[ri] += tt * uz[ri]
             out = ci[~back]
-            g = act[out]
-            bse[g] = ea[out] > e_stop
-            e_exit[g] = ea[out]; uz_exit[g] = uza[out]
-            alive[g] = False
-        scat = alive[act] & ~cross & ~mcross
+            g = electron[out]
+            bse[g] = e[out] > e_stop
+            e_exit[g] = e[out]; uz_exit[g] = uz[out]
+            survives[out] = False
+        scat = ~cross & ~mcross
         if scat.any():
             cphi = cph[scat]
             psi = 2.0 * np.pi * rng.random(cphi.size)
-            uxa[scat], uya[scat], uza[scat] = _rotate(uxa[scat], uya[scat], uza[scat], cphi, psi)
-        x[act], y[act], z[act] = xa, ya, za
-        ux[act], uy[act], uz[act], e[act] = uxa, uya, uza, ea
-        max_depth[act] = np.maximum(max_depth[act], za)
-        dead = alive[act] & (ea <= e_stop)
-        alive[act[dead]] = False
+            ux[scat], uy[scat], uz[scat] = _rotate(ux[scat], uy[scat], uz[scat], cphi, psi)
+        depth_live = np.maximum(depth_live, z)
+        survives &= e > e_stop
         if keep:
-            for i in act[act < keep]:
-                tracks[i].append((x[i], y[i], z[i]))
+            for pos in np.nonzero(electron < keep)[0]:
+                i = electron[pos]
+                tracks[i].append((x[pos], y[pos], z[pos]))
+        finished = ~survives
+        se[electron[finished]] = se_live[finished]
+        max_depth[electron[finished]] = depth_live[finished]
+        electron = electron[survives]
+        x, y, z = x[survives], y[survives], z[survives]
+        ux, uy, uz, e = ux[survives], uy[survives], uz[survives], e[survives]
+        se_live, depth_live = se_live[survives], depth_live[survives]
+    se[electron] = se_live
+    max_depth[electron] = depth_live
     return {"bse": bse, "e_exit": e_exit, "uz_exit": uz_exit, "se": se,
             "max_depth": max_depth, "tracks": [np.array(t) for t in tracks]}
 

@@ -1882,11 +1882,11 @@ py -3.11 examples/poc_panorama_drift.py
 
 ## No.2026.287 —— 実機 RGB-D の産業部品を PPF で 6 自由度照合する
 
-BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。旧180/160点・6 mmの0.162/0.185に対し、密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内でAR_MSSD最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP 100反復を採用した。主経路8.291秒/対象でAR_MSSD 0.197 / AR_MSPD 0.220となり、粗い間引きが成績を抑えていたが、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。2000点は2時間で未完走、54.6秒/対象以上。クラスタなしは0.111/0.113、理想深度は0.985/0.985、ICPなしは0.346/0.338、符号未整理の法線は0.132/0.161。MSSD>0.2dの失敗109/132の重複内訳は、結合クラスタ34、可視率0.8未満8、薄い部品21、深度欠損1%超36、対称部品103。
+BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。旧180/160点・6 mmの0.162/0.185に対し、密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内でAR_MSSD最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP 100反復を採用した。2026-11-22のベクトル化後コードでは負荷状態の主経路を1.500秒/対象で再測定し、AR_MSSD 0.197 / AR_MSPD 0.220は2026-11-01の記録と一致した。当時の8.291秒/対象はベクトル化前の値。公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。2000点は2時間で未完走、54.6秒/対象以上。クラスタなしは0.111/0.113、理想深度は0.985/0.985、ICPなしは0.346/0.338、符号未整理の法線は0.132/0.161。MSSD>0.2dの失敗109/132の重複内訳は、結合クラスタ34、可視率0.8未満8、薄い部品21、深度欠損1%超36、対称部品103。
 
 [![実機 RGB-D の産業部品を PPF で 6 自由度照合する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/01_pose_overlay.png)
 
-*↑ **実機 RGB-D の産業部品を PPF で 6 自由度照合する** ―― BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。旧180/160点・6 mmの0.162/0.185に対し、密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内でAR_MSSD最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP 100反復を採用した。主経路8.291秒/対象でAR_MSSD 0.197 / AR_MSPD 0.220となり、粗い間引きが成績を抑えていたが、公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。2000点は2時間で未完走、54.6秒/対象以上。クラスタなしは0.111/0.113、理想深度は0.985/0.985、ICPなしは0.346/0.338、符号未整理の法線は0.132/0.161。MSSD>0.2dの失敗109/132の重複内訳は、結合クラスタ34、可視率0.8未満8、薄い部品21、深度欠損1%超36、対称部品103。*
+*↑ **実機 RGB-D の産業部品を PPF で 6 自由度照合する** ―― BOP T-LESS(CC BY 4.0)のBOP19 test_primesense全20場面から先頭画像を1枚ずつ決定的に選び、可視率0.5以上の132対象を深度→点群→法線→RANSAC平面除去→クラスタ→PPF+ICPと通した。旧180/160点・6 mmの0.162/0.185に対し、密度、ref_fraction、angle_bins、ICP反復を11設定で掃引し、10秒/対象以内でAR_MSSD最大の1000/1000点・2 mm・ref 0.25・24ビン・ICP 100反復を採用した。2026-11-22のベクトル化後コードでは負荷状態の主経路を1.500秒/対象で再測定し、AR_MSSD 0.197 / AR_MSPD 0.220は2026-11-01の記録と一致した。当時の8.291秒/対象はベクトル化前の値。公式全testのDrost 0.478/0.480、Vidal 0.575/0.574にはなお届かない。2000点は2時間で未完走、54.6秒/対象以上。クラスタなしは0.111/0.113、理想深度は0.985/0.985、ICPなしは0.346/0.338、符号未整理の法線は0.132/0.161。MSSD>0.2dの失敗109/132の重複内訳は、結合クラスタ34、可視率0.8未満8、薄い部品21、深度欠損1%超36、対称部品103。*
 
 用語: RANSAC — 標本から小さな部分集合を反復抽出してモデルを当て、許容誤差内の点が最も多いモデルを選ぶ外れ値に強い推定法。; ICP — 二つの点群で最近点対応と剛体変換の推定を交互に繰り返し、位置合わせする方法。
 
@@ -1954,19 +1954,19 @@ py -3.11 examples/poc_real_stereo_depth.py
 
 
 
-## No.2026.034 —— 点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか
+## No.2026.034 —— 点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか(合成の当て金と、公開の実測の部品)
 
-実物の部品の深度では、反復最近点法の収束域が全周の点で合わせたときより狭い。同じ部品で比べると、成功率が半分を切る初期回転は、半分の切り方によらず全周の点より 7.9 度以上手前に来た(点対面)。片面しか見えないことと深度の雑音のどちらがどれだけ効くかは、乱数の種で揺れて言えない。
+公開の実測の部品と合成の当て金で、反復最近点法が真値から始めたときと同じ行き先に戻れる初期回転の範囲を数えた。数え方と乱数の種で幅があるが、成功率が半分を切る角度は全周の点より最大 31.5 度手前だった。行き先自体が真値からずれるため、これは姿勢の精度ではなく戻れる範囲の比較である。
 
-[![点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/06_real_scan_icp.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/06_real_scan_icp.gif)
+[![点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか(合成の当て金と、公開の実測の部品)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/06_real_scan_icp.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/06_real_scan_icp.gif)
 
-*↑ **点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか** ―― 点群を毎試行取り直し、初期姿勢のずれに対する ICP(反復最近点法) の成功率を等高線にした図。並進ずれ 0 で成功率が 50 % を切るのは点対点 90 度、点対面 120 度。実物の部品(T-LESS の部品 22、構造化光センサの深度 26 フレーム)では、同じ部品・同じ判定で点対面の 50 % 角が全周の点 72.9〜84.0 度、片面の点 58.3〜66.0 度、実測の深度 44.2〜54.0 度(乱数の種 5 本の幅)。実測は全周より狭く(最初に切る所で取ると 19.6〜31.5 度、最後に切る所で取ると 7.9〜30.0 度。点対点は最後に切る所で 1.7 度まで縮む)、これはどの種でもどちらの取り方でも成り立つが、片面と実測の内訳は種で揺れる(判定は真値から始めた ICP の行き先に戻れたか。実測の行き先は真値から中央値 5.3 度ずれる)。50 % 角は最初に 50 % を切る所で取った値で、最後に切る所で取ると実測は 45.0〜65.0 度。初期ずれ 15 度でも実測の成功率は 73〜88 %(全周は 100 %)。球や円柱は残差が同じまま姿勢が任意で、大域手法では 16/16 が見かけ上収束しつつ姿勢は誤り ―― 残差では検出できない。*
+*↑ **点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか(合成の当て金と、公開の実測の部品)** ―― 公開の実測の部品(T-LESS の部品 22、構造化光センサの深度 26 フレーム、CC BY 4.0)で、反復最近点法(ICP)が『真値から始めた ICP の行き先(床)』に戻れるかを、初期回転を振って数えた。モデルの全周の点・片面の点・実測の深度を同じ判定で並べ、動画は推定中の姿勢のモデルを実機の写真に重ねる。成功率が半分を切る初期回転は、実測が全周より 7.9〜31.5 度手前(点対面。数え方 3 通り × 乱数の種 5 本の幅で、どれでも実測が狭い)。ただし実測では初め 15〜30 度でも 4〜27 % の試行が床から 3〜20 度の所で止まり(全周・片面は 0 %)、この分は戻れる範囲ではなく行き先のばらつき。20 度以上だけを失敗と数えると、片面(58.3〜66.0 度)と実測(58.3〜67.5 度)の 50 % 角は重なる。床は真値ではなく、真値から中央値 5.3 度ずれる(真値の 3 度以内に入るのは 4 %)—— 姿勢の精度ではなく、戻れる範囲の比較。細かい角度の範囲は乱数の流れで数度動く。合成の当て金では、並進ずれ 0 で 50 % を切るのは点対点 90 度・点対面 120 度。球は大域手法で 16/16 が見かけ上収束しつつ姿勢は誤り —— 残差では検出できない。数字の出どころ: 合成の数はこの PoC の実行値で、見出しの数は記録と照合する門がある。実データの数は 2026-11-15 に手元のデータで測り直して記録と一致した値で、CI はデータを持たず記録値の形だけを見る。*
 
 用語: ICP — 二つの点群で最近点対応と剛体変換の推定を交互に繰り返し、位置合わせする方法。
 
-[![100 % から 0 % へ落ちる位置が収束域の縁。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin.png)
+[![100 % から 0 % へ落ちる位置が収束域の縁(並進ずれ 0 の行で 50 % を切るのは 90 度)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin.png)
 
-*↑ 測定の図 ―― 100 % から 0 % へ落ちる位置が収束域の縁。並進ずれを足すと縁が左へ動く(15 試行/点)。*
+*↑ 測定の図 ―― 100 % から 0 % へ落ちる位置が収束域の縁(並進ずれ 0 の行で 50 % を切るのは 90 度)。並進ずれ(直径の 0〜50 %)による縁の動きは、1 点 15 試行の誤差(標準誤差 最大 13 点)の内で、この図からは言えない。*
 
 [![非対称性が消えると 4 候補が形として区別できず、選択が崩れる(選ばれた解が第 1 候補から離れる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant.png)
 
@@ -1980,6 +1980,10 @@ py -3.11 examples/poc_real_stereo_depth.py
 
 *↑ 球・円柱は残差が小さいまま姿勢が任意。*
 
+[![サムネイル用の静止画。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/07_real_scan_still_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/07_real_scan_still.png)
+
+*↑ サムネイル用の静止画。*
+
 [![点対点 ICP を 1 反復ずつ動かす(fs.icp(max_iter=1) を前回の姿勢から連鎖)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/05_icp_basin_iterations.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/05_icp_basin_iterations.gif)
 
 *↑ 動く図 ―― 点対点 ICP を 1 反復ずつ動かす(fs.icp(max_iter=1) を前回の姿勢から連鎖)。灰 = 目標の点群、色 = 動かしている点群(斜めから見た正射影)。同じ回転軸で初期回転ずれだけを 30 / 90 / 150 度と変え、並進ずれは直径の 10 %。反復予算は本文の点対点 ICP と同じ 60 回で、その後の回転誤差: 30 度 → 0.6 度(成功)、90 度 → 0.6 度(成功)、150 度 → 179.5 度(失敗)。下の曲線は回転誤差の推移(対数、灰線 = 成功のしきい値 3 度)。動画専用に取り直した 1 組の点群での 1 試行の軌跡で、成功率は第 2 章の表。*
@@ -1990,7 +1994,7 @@ py -3.11 examples/poc_registration_basin.py
 
 ソース: [examples/poc_registration_basin.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py)
 
-この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_registration_basin)
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_registration_basin)
 
 使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`farthest_point_sampling`](https://furuse.work/ops/3d/geodesic/farthest_point_sampling.html) · [`find_surface_pose`](https://furuse.work/ops/3d/match_pose/find_surface_pose.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
@@ -3640,13 +3644,15 @@ py -3.11 examples/poc_dfm_thickness_overhang.py
 
 使用 op(ノートへ): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) · [`erfc`](https://furuse.work/ops/math/numerics/erfc.html) · [`esdf`](https://furuse.work/ops/3d/occupancy/esdf.html) · [`face_areas`](https://furuse.work/ops/3d/mesh_process/face_areas.html) · [`face_normals`](https://furuse.work/ops/3d/mesh_process/face_normals.html) · [`grid_coords`](https://furuse.work/ops/3d/sdf_csg/grid_coords.html) · [`morph_erode3d`](https://furuse.work/ops/3d/morphology/morph_erode3d.html) · [`render_shaded`](https://furuse.work/ops/3d/render/render_shaded.html) · [`sdf_intersect`](https://furuse.work/ops/3d/sdf_csg/sdf_intersect.html) · [`sdf_subtract`](https://furuse.work/ops/3d/sdf_csg/sdf_subtract.html) · [`sdf_to_occupancy`](https://furuse.work/ops/3d/transform/sdf_to_occupancy.html) · [`sdf_union`](https://furuse.work/ops/3d/sdf_csg/sdf_union.html) · [`vol_wall_thickness`](https://furuse.work/ops/3d/probe/vol_wall_thickness.html) · [`voxel_to_mesh`](https://furuse.work/ops/3d/transform/voxel_to_mesh.html)
 
-## No.2026.070 —— 斜面の土量 ―― 合わせてから引くと、崩れが浅くなる
+## No.2026.070 —— 航空 LiDAR の 2 時期の差で土量を測る ―― 系統差を引かないと全面が掘れて見え(実データ)、合わせ方しだいで変化が消える(合成)
 
-造成地を別の時期に測った航空点群を引き算すると、掘削の体積が分かる。変化した場所が視野の 33 % もあると、位置合わせが変化そのものを吸い込んで土量が潰れた。公開の実データでは、系統的な差を引かないと全面が掘れたように見えた。
+公開の航空 LiDAR で同じ公園を別々の年に測った地面を引き算すると、区画全体が沈んだように見え、全面が掘れたことになった。平坦部で 0.183 m の系統差を合わせると、残るのは建物まわりの変化だけ。合成の斜面では、変化した場所が視野の大きな割合を占めると、位置合わせが変化そのものを吸い込んで土量が潰れた。
 
-[![斜面の土量 ―― 合わせてから引くと、崩れが浅くなる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene.png)
+[![航空 LiDAR の 2 時期の差で土量を測る ―― 系統差を引かないと全面が掘れて見え(実データ)、合わせ方しだいで変化が消える(合成)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene.png)
 
-*↑ **斜面の土量 ―― 合わせてから引くと、崩れが浅くなる** ―― 傾斜のある合成地形に既知体積の掘削と堆積を仕込み、2 時期の航空点群から鉛直差分と法線方向の差で土量を測った。予想した「斜面では cos だけ体積が縮む」は外れで、水平投影面積で積む限り cos は約分し、掘削体積の誤差は傾斜 0〜40 度でどれも -0.011 % のまま動かない。壊れたのは合わせ方のほうで、変化域が視野の 33 % もあると位置合わせが変化そのものを吸い、正味土量は真値 -30.4 m3 に対し -3.8 m3 まで潰れた ―― 変化なしの対照ですら偽の掘削が 83.8 m3 出る。*
+*↑ **航空 LiDAR の 2 時期の差で土量を測る ―― 系統差を引かないと全面が掘れて見え(実データ)、合わせ方しだいで変化が消える(合成)** ―― 公開の航空 LiDAR(USGS 3DEP、セントルイス Forest Park の 500 m 四方、2012 年と 2017 年、public domain)の地面点を、Fullseye の elevation_map で 1 m セルの平均標高にして引き算した。そのまま引くと区画全体が 0.183 m 沈んで見え、両時期に地面点のある 130595 セルで偽の正味 −23619 m3 が立つ。平坦部(傾斜 5 度未満)の中央値で合わせると正味は +280 m3(1 セルあたり NMAD 0.049 m の 4 %)まで落ち、残るのは美術館まわりの変化域(有効セルの 2.1 %)だけ。系統差の原因は決められず(ジオイドの差で説明できるのは +0.027 m だけ)、変化域が実の変化か分類の差かも決められない。合成の斜面(傾斜 25 度、既知体積の掘削と堆積)では、予想した「斜面では cos だけ体積が縮む」は外れで、掘削体積の誤差は傾斜 0〜40 度でどれも −0.011 %。壊れたのは合わせ方のほうで、変化域が視野の 33 % もあると全対応の位置合わせが変化そのものを吸い、正味土量は真値 −30.4 m3 に対し −3.8 m3 まで潰れた(変化なしの対照ですら偽の掘削 83.8 m3)。数字の出どころ: 合成の数はこの PoC の実行値で、見出しの数は記録と照合する門がある。実データの数は 2026-11-15 の手元の実行の記録値で、CI はデータを持たず記録値の形だけを見る。*
+
+用語: LiDAR — レーザー光の往復時間などから対象までの距離を測り、周囲の三次元点群を得るセンサ。
 
 [![傾斜を 0 から 40 度まで振っても体積の誤差に傾向が無い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/01_geometry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/01_geometry.png)
 
@@ -3656,17 +3662,17 @@ py -3.11 examples/poc_dfm_thickness_overhang.py
 
 *↑ 真の掘削は 164.2 m3。*
 
-[![予測式は先に立ててから測った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/04_slope_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/04_slope_table.png)
+[![変化ゼロの対照で測った検出限界。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/05_density_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/05_density_cliff.png)
 
-*↑ 予測式は先に立ててから測った。*
+*↑ 変化ゼロの対照で測った検出限界。*
 
-[![誤差はそのしきい値以上の真値に対する値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/07_occlusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/07_occlusion.png)
+[![取りこぼしは 1 % 未満でも、樹冠は数 m 高いので標準偏差だけが桁で跳ねる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/08_occlusion_lod_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/08_occlusion_lod.png)
 
-*↑ 誤差はそのしきい値以上の真値に対する値。*
+*↑ 取りこぼしは 1 % 未満でも、樹冠は数 m 高いので標準偏差だけが桁で跳ねる。*
 
-[![M3C2 の L は法線方向なので cos 25 度 = 0.906 倍だけ浅く出る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/11_scar_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/11_scar_profile.png)
+[![地面点(分類 2)の 1 m セル平均の差(Fullseye の elevation_map。表示は 2 m 角 = 1 m セル 4 つのうち値のあるものの平均)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/13_real_dod_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/13_real_dod.png)
 
-*↑ M3C2 の L は法線方向なので cos 25 度 = 0.906 倍だけ浅く出る。*
+*↑ 地面点(分類 2)の 1 m セル平均の差(Fullseye の elevation_map。表示は 2 m 角 = 1 m セル 4 つのうち値のあるものの平均)。*
 
 [![主図(動画、640 × 360・30 fps・12 秒): 前半は傾斜 25 度の斜面を北の上空から横切り、時期 1 の点群(8 pt/m²、樹冠に当たった点 = 緑)を見せる(動画専用の乱数で作った別の標本)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/12_flight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/12_flight.gif)
 
@@ -3678,9 +3684,9 @@ py -3.11 examples/poc_lidar_terrain_change.py
 
 ソース: [examples/poc_lidar_terrain_change.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 
-この回が作った図は全部で **14 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lidar_terrain_change)
+この回が作った図は全部で **15 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lidar_terrain_change)
 
-使用 op(ノートへ): [`chamfer_distance`](https://furuse.work/ops/3d/metrics/chamfer_distance.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`dem_hillshade`](https://furuse.work/ops/dem/shading/dem_hillshade.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`estimate_oriented_normals`](https://furuse.work/ops/3d/normals_orient/estimate_oriented_normals.html) · [`fit_plane_3d`](https://furuse.work/ops/3d/geometry/fit_plane_3d.html) · [`icp_point2point_3d`](https://furuse.work/ops/3d/refine/icp_point2point_3d.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`ransac_plane`](https://furuse.work/ops/3d/robust_fit/ransac_plane.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`voxel_grid_downsample`](https://furuse.work/ops/3d/preprocess/voxel_grid_downsample.html)
+使用 op(ノートへ): [`chamfer_distance`](https://furuse.work/ops/3d/metrics/chamfer_distance.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`dem_hillshade`](https://furuse.work/ops/dem/shading/dem_hillshade.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`elevation_map`](https://furuse.work/ops/drive/walkterrain/elevation_map.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`estimate_oriented_normals`](https://furuse.work/ops/3d/normals_orient/estimate_oriented_normals.html) · [`fit_plane_3d`](https://furuse.work/ops/3d/geometry/fit_plane_3d.html) · [`icp_point2point_3d`](https://furuse.work/ops/3d/refine/icp_point2point_3d.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`ransac_plane`](https://furuse.work/ops/3d/robust_fit/ransac_plane.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`voxel_grid_downsample`](https://furuse.work/ops/3d/preprocess/voxel_grid_downsample.html)
 
 ## No.2026.099 —— シルエットから体重を測る ―― 台数で買える誤差と、いくら買っても消えない誤差
 

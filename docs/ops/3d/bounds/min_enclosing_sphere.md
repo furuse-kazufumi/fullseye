@@ -74,7 +74,7 @@ ValueError
 
 ## 同カテゴリ(`bounds`)
 
-[convex_hull](convex_hull.md) · [aabb](aabb.md) · [obb](obb.md)
+[convex_hull](convex_hull.md) · [aabb](aabb.md) · [obb](obb.md) · [convex_hull_gap](convex_hull_gap.md)
 
 ---
 *Provenance: hull3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -51,6 +51,7 @@ CHAIN = [
     #   2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、
     #   spec を足して回し忘れても誰も気づけなかった)。
     (["gen_auto_specs_data.py"], "auto_specs_data.py(data/auto_specs/*.json の wheel 同梱用ミラー)"),
+    (["tools/gen_sbom.py"], "docs/sbom/fullseye.cdx.json(pyproject.toml の宣言依存、未解決の CycloneDX SBOM)"),
     # ★2026-11-03: GPU の台帳 2 本は op ノートより前に。op ノートの GPU 欄は gpu_route(この 2 本と許可リスト)
     #   から書くので、後ろで台帳が変わるとノートが 1 周遅れになる。入力は commit した実測ログと許可リストだけ
     #   (registry を組むときに op_knob.json を読むが、表の中身には入らない —— ORDER_EXEMPT)。
@@ -174,6 +175,7 @@ CHAIN = [
 #: パターンは fnmatch(`*` は `/` も跨ぐ)。repo 相対・`/` 区切り。
 OUTPUTS = {
     "gen_auto_specs_data.py": ["auto_specs_data.py"],
+    "tools/gen_sbom.py": ["docs/sbom/fullseye.cdx.json"],
     "imgevolve.py": ["docs/OP_INDEX.json"],
     "tools/gpu_tier_rules.py": ["docs/perf/GPU_TIERS.md"],
     "tools/gen_halcon_opencl_parity.py": ["docs/perf/HALCON_OPENCL_PARITY.md",
@@ -279,6 +281,8 @@ MAY_OUTPUTS = {
 
 
 #: 各段が読む、**他の段の**生成物(自分の出力を読み比べるのは書かなくてよい)。
+#: gen_sbom が読むのは手書きの pyproject.toml だけなので、この表には行を持たない。
+#: gen_sbom reads only the hand-written pyproject.toml, so it has no row in this generated-input table.
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
 READS = {
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
@@ -444,6 +448,9 @@ EXCLUDED = {
                                        "例 1 本に分単位かかるので手で回して commit する。gen_maturity(鎖の段)は記録を読むだけ。"
                                        "記録と実走の食い違いは tests/test_poc_scripts_run.py が全 PoC を走らせるたびに照合する"
                                        "(敵対的検証 2026-11-05 第 2 巡 D6)。"),
+    "tools/make_tless_subset.py": ("BOP T-LESS の場面2・画像3・obj 5/6を切り出し、--record-expected でrepo内subsetの実連鎖を"
+                                    "反復測定して期待値を記録する手動生成器。元データはrepo外でCIが取得せず、反復測定も重いため鎖に入れない。"
+                                    "SHA256SUMSと tests/test_tless_subset_gate.py が収録バイトと記録した測定値を毎回検査する。"),
     "tools/bench_device_ops.py": ("device 引数を持つ op(torch の GPU 経路)の実測器。結果は out/device_ops(追跡外)。GPU が要り数字は機械で変わる。(GPU 便、2026-11-04 の統合で分類)"),
     "tools/bench_gpu_optics.py": ("GPU 第 4 便の実測器(raytrace の CPU 基準と lens_gpu の一括経路の時間、--out の JSON)。"
                                   "数字は機械と負荷で変わり、--batch cuda は GPU と gpu_in_use.lock の手順が要るので手で回す。"

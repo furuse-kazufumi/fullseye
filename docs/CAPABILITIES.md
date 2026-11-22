@@ -725,7 +725,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 代替: [`find_surface_pose`](ops/3d/match_pose/find_surface_pose.md), `point_to_plane_icp`, `fpfh`, [`register_cross`](ops/3d/fusion/register_cross.md)
 
-限界: T-LESS の実機 subset では AR_MSSD 0.290。理想深度 0.880 から 0.590 落ち、Drost-CVPR10-3D-Only の公式 0.478、Vidal-Sensors18 の 0.575 に負ける。接触物体の cluster 結合、遮蔽、深度欠損、対称形状を別々に数える。
+限界: T-LESS の実機20場面・132対象では AR_MSSD 0.197 / AR_MSPD 0.220。理想深度は0.985 / 0.985だが、公式全testのDrost-CVPR10-3D-Only 0.478 / 0.480、Vidal-Sensors18 0.575 / 0.574に負ける。MSSD > 0.2dの失敗109 / 132の重複内訳はcluster結合34、遮蔽8、薄型21、深度欠損36、対称形状103。
 
 実寸校正: 深度とモデルの長さ単位を揃え、K と depth_scale を撮影フレームの値で読む。対称性を models_info.json から採点へ入れ、回転角だけで合否を決めない。
 
@@ -1371,7 +1371,7 @@ PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**に
 
 実寸校正: 画素校正は無い。縮尺が要るなら K の fx(画素 / 座標単位)から スケールバーを置く(annotate_scale_bar)。
 
-動く例: `points_render_basics`, `poc_flybrain_pointcloud`, `poc_real_tless_6dof`
+動く例: `points_render_basics`, `poc_flybrain_pointcloud`
 
 ### [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md)
 

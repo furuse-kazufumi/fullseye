@@ -663,6 +663,9 @@ _CATALOG = {
         ("lateral_offset", "drivelateral", ["any"], "table"),
         ("time_to_line_crossing", "drivelateral", [], "scalar"),
         ("turn_maneuver_check", "drivelateral", ["table"], "table"),
+        # 道の面(2026-11-15): 線形の表 → 高さ図(depth)。セルごとの解析の真値(縦断勾配・横勾配・s・e)は
+        # return_truth=True で (高さ図, 真値の表)。既定の返りが宣言の型そのものなので adapter は要らない。
+        ("road_surface_heightmap", "drivelateral", ["table"], "depth"),
     ],
     # 踏切と交差点の優先: 鉄道の解釈基準(警報→到達 遮断機つき 35 s・警報機だけ 30 s)と遮断機の状態機械、警報灯の交互点滅
     # (画素の時間周波数・カメラの fps の折り返し)、渡り切る時間と向こう側の余地(33 条・50 条 2 項)、見通し距離の閉形式、
@@ -1215,6 +1218,9 @@ _CATALOG = {
         ("elevation_normals", "terrain", ["depth"], "normalmap"),
         ("elevation_step_edges", "terrain", ["depth"], "mask"),
         ("foothold_candidates", "terrain", ["depth"], "table"),
+        # 高さ図を深度カメラで撮る(2026-11-15): 高さ図 × world→camera の (R, t) × K → 光軸方向の深度 [m](当たらない = nan)。
+        # depth_to_points → elevation_map の逆向き。入力の depth は高さ、出力の depth は距離(どちらも 2-D の格子のメートル)。
+        ("heightmap_depth_camera", "terrain", ["depth", "pose", "matrix"], "depth"),
     ],
     # 釣り合いと歩行(locomotion、2026-11-06 に台帳へ + 第 1 便の 8 op): 接地点・重心の軌跡は points (N, 3)、
     # 1 時刻の重心と速度は vector (3,)(x, y を地面、z を上として使う)、足の高さの (T, F) は matrix、立脚の (T, F) bool は

@@ -667,6 +667,8 @@ def write_figures(fits_res, nifti_res, mrc_res, ome_res, e57_res, g: Gates) -> N
 
 
 def main() -> None:
+    if not DATA.is_dir():
+        raise SystemExit("This example needs data/fileio_real. Run it from a Fullseye source checkout.")
     t0 = time.perf_counter()
     g = Gates()
     fits_res = chapter_fits(g)

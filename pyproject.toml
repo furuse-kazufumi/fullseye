@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fullseye"
 version = "1.1.1"
-description = "Numpy-native operator library for vision, 3-D and measurement (3,838 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
+description = "Image inspection, 3-D measurement and physics simulation in Python: a numpy-native library of typed operators (3,841 typed ops in the machine-readable index: imaging, point clouds, optics, metrology), checked against simulated ground truth and handed to AI assistants through MCP and RAG, with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -454,6 +454,10 @@ py-modules = [
                    # (2026-09-05 実測)。族が増えても落ちないようワイルドカードにする。
                    # `<op>.<lang>.html`(en / zh / tw / ko / de)も同じ書庫に入る(2026-10-01 から HTML は書庫だけ)。
                    ]
+"examples" = ["data/ai_inspection_recipes_2026_11_08.json", "data/ai_inspection_scores_2026_11_08.json",
+              "data/fintraffic_sun_2026_09_20.json", "data/fp64_emulation_measured_2026_10_05.json",
+              "data/hokusai_great_wave_met_dp130155.png", "data/ngs_geodetic_benchmarks_2026_09_22.json"]
+"examples_3d" = ["_gallery/showcase_turntable_pod.gif"]
 
 [tool.setuptools.exclude-package-data]
 # ★2026-09-07: 手元の wheel が 96 MB(PyPI 上限 100 MB)になっていた。原因は setuptools の

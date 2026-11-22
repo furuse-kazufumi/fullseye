@@ -689,28 +689,31 @@ def build_focus_sweep():
 
 
 def build_interferometry_sweep():
+    # ★2026-11-15(独立レビュー): 以前は σ ごとに乱数の種 1 本の |測定 − 0.55| を描いていて、曲線は σ ≈ 0.037 で最大の後に
+    #   下がり、題の「広がる」を支えていなかった。いまは σ ごとに PoC の repeat()(3 節と同じ種の流れ、40 回)の
+    #   総合誤差 √(偏り² + 標準偏差²) [nm] を描く。
     P=_load("poc_interferometry_step"); vals=np.linspace(0.0,0.12,24); frames=[]; err=[]
     for i,v in enumerate(vals):
         _,st=P.make_stack(0.55,float(v),i,dz=P.DZ,n_planes=P.NP)
-        measured_step_um, rejected_fraction = P.measure_step(0.55,float(v),i,dz=P.DZ,n_planes=P.NP)
-        frames.append(_gray(st[len(st)//2],float(st.min()),float(st.max()))); err.append(abs(float(measured_step_um)-0.55))
+        bias_nm, std_nm, _rej, _n_ok = P.repeat(0.55, float(v), dz=P.DZ, n_planes=P.NP, n=P.N_TRIAL)
+        frames.append(_gray(st[len(st)//2],float(st.min()),float(st.max()))); err.append(float(np.hypot(bias_nm, std_nm)))
     title=TX.T("雑音が増えると白色干渉の段差誤差が広がる", "More noise widens the step error in white-light interferometry",
                "噪声增大时，白光干涉的台阶误差扩大", "雜訊增大時，白光干涉的段差誤差擴大",
                "잡음이 커지면 백색광 간섭의 단차 오차가 벌어진다", "Mehr Rauschen vergrößert den Stufenfehler der Weißlichtinterferometrie",
                "शोर बढ़ने पर white-light interferometry की step error बढ़ती है", "Le bruit élargit l’erreur de marche en interférométrie en lumière blanche")
     watch=TX.fmt(TX.T(
-        "σ は干渉信号へ加える振幅雑音で、曲線は既知の段差との絶対差。σ {x0:.3f} では {y0:.4f} µm、σ {x1:.3f} では {y1:.4f} µm で、掃引中の最大は {ymax:.4f} µm。",
-        "σ is amplitude noise added to the interference signal; the curve is absolute error from the planted step. It is {y0:.4f} µm at σ {x0:.3f}, {y1:.4f} µm at σ {x1:.3f}, and reaches {ymax:.4f} µm within the sweep.",
-        "σ 是加入干涉信号的幅度噪声，曲线表示与已知台阶的绝对差。σ {x0:.3f} 时为 {y0:.4f} µm，σ {x1:.3f} 时为 {y1:.4f} µm，扫描中的最大值为 {ymax:.4f} µm。",
-        "σ 是加入干涉訊號的振幅雜訊，曲線表示與已知段差的絕對差。σ {x0:.3f} 時為 {y0:.4f} µm，σ {x1:.3f} 時為 {y1:.4f} µm，掃引中的最大值為 {ymax:.4f} µm。",
-        "σ는 간섭 신호에 더하는 진폭 잡음이고, 곡선은 심어 둔 단차와의 절대 오차다. σ {x0:.3f}에서 {y0:.4f} µm, σ {x1:.3f}에서 {y1:.4f} µm이며 스윕 중 최댓값은 {ymax:.4f} µm다.",
-        "σ ist das dem Interferenzsignal hinzugefügte Amplitudenrauschen; die Kurve zeigt den Absolutfehler zur vorgegebenen Stufe. Bei σ {x0:.3f} sind es {y0:.4f} µm, bei σ {x1:.3f} {y1:.4f} µm; im Durchlauf werden maximal {ymax:.4f} µm erreicht.",
-        "σ interference signal में जोड़ा गया amplitude noise है; curve लगाए गए step से absolute error दिखाती है। σ {x0:.3f} पर {y0:.4f} µm, σ {x1:.3f} पर {y1:.4f} µm और sweep में अधिकतम {ymax:.4f} µm है।",
-        "σ est le bruit d’amplitude ajouté au signal d’interférence ; la courbe est l’écart absolu à la marche imposée. Il vaut {y0:.4f} µm à σ {x0:.3f}, {y1:.4f} µm à σ {x1:.3f}, avec un maximum de {ymax:.4f} µm sur le balayage."),
-        x0=vals[0], x1=vals[-1], y0=err[0], y1=err[-1], ymax=max(err))
+        "σ は干渉信号へ加える振幅雑音(合成)。曲線は段差 0.55 µm を σ ごとに {n} 回測った総合誤差 √(偏り² + 標準偏差²)で、σ {x0:.3f} では {y0:.1f} nm、σ {x1:.3f} では {y1:.1f} nm に広がる。絵はその σ の走査の 1 コマ。",
+        "σ is amplitude noise added to the interference signal (synthetic). The curve is the total error √(bias² + SD²) of {n} measurements of the 0.55 µm step at each σ: {y0:.1f} nm at σ {x0:.3f}, widening to {y1:.1f} nm at σ {x1:.3f}. The image is one scan frame at that σ.",
+        "σ 是加入干涉信号的幅度噪声(合成)。曲线是在每个 σ 下测量 0.55 µm 台阶 {n} 次的总误差 √(偏差² + 标准差²):σ {x0:.3f} 时为 {y0:.1f} nm,σ {x1:.3f} 时扩大到 {y1:.1f} nm。图像是该 σ 下扫描的一帧。",
+        "σ 是加入干涉訊號的振幅雜訊(合成)。曲線是在每個 σ 下量測 0.55 µm 段差 {n} 次的總誤差 √(偏差² + 標準差²):σ {x0:.3f} 時為 {y0:.1f} nm,σ {x1:.3f} 時擴大到 {y1:.1f} nm。影像是該 σ 下掃描的一幀。",
+        "σ는 간섭 신호에 더하는 진폭 잡음이다(합성). 곡선은 각 σ에서 0.55 µm 단차를 {n}번 잰 총오차 √(편향² + 표준편차²)로, σ {x0:.3f}에서 {y0:.1f} nm, σ {x1:.3f}에서 {y1:.1f} nm로 커진다. 그림은 그 σ에서의 스캔 한 프레임이다.",
+        "σ ist das dem Interferenzsignal hinzugefügte Amplitudenrauschen (synthetisch). Die Kurve zeigt den Gesamtfehler √(Bias² + SD²) aus {n} Messungen der Stufe von 0,55 µm je σ: {y0:.1f} nm bei σ {x0:.3f}, anwachsend auf {y1:.1f} nm bei σ {x1:.3f}. Das Bild ist ein Scan-Einzelbild bei diesem σ.",
+        "σ interference signal में जोड़ा गया amplitude noise है (सिंथेटिक)। curve हर σ पर 0.55 µm step को {n} बार मापने की कुल त्रुटि √(bias² + SD²) है: σ {x0:.3f} पर {y0:.1f} nm, σ {x1:.3f} पर बढ़कर {y1:.1f} nm। चित्र उस σ पर scan का एक frame है।",
+        "σ est le bruit d’amplitude ajouté au signal d’interférence (synthétique). La courbe est l’erreur totale √(biais² + écart-type²) de {n} mesures de la marche de 0,55 µm à chaque σ : {y0:.1f} nm à σ {x0:.3f}, jusqu’à {y1:.1f} nm à σ {x1:.3f}. L’image est une trame de balayage à ce σ."),
+        n=P.N_TRIAL, x0=vals[0], x1=vals[-1], y0=err[0], y1=err[-1])
     return _sweep("poc_interferometry_step", TX.T("雑音 σ", "noise σ", "噪声 σ", "雜訊 σ", "잡음 σ", "Rauschen σ", "शोर σ", "bruit σ"), "", vals, frames,
                   title=title, watch=watch, metric=err,
-                  metric_label=TX.T("段差0.55 µmとの絶対差", "Absolute error from 0.55 µm step", "与 0.55 µm 台阶的绝对差", "與 0.55 µm 階差的絕對差", "0.55 µm 단차와의 절대 차이", "Absolutfehler zur Stufe von 0,55 µm", "0.55 µm चरण से निरपेक्ष अंतर", "Écart absolu à la marche de 0,55 µm"), metric_unit="µm")
+                  metric_label=TX.T("段差 0.55 µm の総合誤差(40 回)", "Total error of the 0.55 µm step (40 runs)", "0.55 µm 台阶的总误差(40 次)", "0.55 µm 段差的總誤差(40 次)", "0.55 µm 단차의 총오차(40회)", "Gesamtfehler der Stufe von 0,55 µm (40 Messungen)", "0.55 µm step की कुल त्रुटि (40 बार)", "Erreur totale sur la marche de 0,55 µm (40 mesures)"), metric_unit="nm")
 
 
 def build_polarization_sweep():

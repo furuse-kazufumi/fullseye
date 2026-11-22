@@ -5,7 +5,7 @@ category: polarization
 in: matrix × stokes
 out: stokes
 gpu: なし
-examples: [optics_imaging, poc_photoelasticity, polarization_camera_pipeline]
+examples: [optics_imaging, poc_photoelasticity, poc_polarization_specular, polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -86,6 +86,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
 - [poc_photoelasticity](../../../../examples/poc_photoelasticity.py) — `py -3.11 examples/poc_photoelasticity.py`
+- [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
 - [polarization_camera_pipeline](../../../../examples/polarization_camera_pipeline.py) — `py -3.11 examples/polarization_camera_pipeline.py`
 
 ## 型が繋がる次の op(`stokes` を入力に取れる)

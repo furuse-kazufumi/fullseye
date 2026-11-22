@@ -2,26 +2,34 @@
 
 [![CI](https://github.com/furuse-kazufumi/fullseye/actions/workflows/ci.yml/badge.svg)](https://github.com/furuse-kazufumi/fullseye/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/fullseye)](https://pypi.org/project/fullseye/)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/furuse-kazufumi/fullseye/blob/master/LICENSE)
 [![Docs](https://img.shields.io/badge/docs-furuse.work-informational)](https://furuse.work/)
 
-**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,838
+**Fullseye is a Python library for image inspection, 3-D measurement and physics simulation.**
+It chains typed operators, checks them against ground truth produced by physics simulation,
+and hands them to AI assistants through MCP and RAG.
+
+**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,841
 operators in the machine-readable index, `docs/OP_INDEX.json`: 947 single-input 2-D operators +
-17 n-ary + 2,874 in the typed ledgers, each with a per-operator note), the family guides, and the
+17 n-ary + 2,877 in the typed ledgers, each with a per-operator note), the family guides, and the
 release notes.
 
-**What it can do: [CAPABILITIES.en.md](docs/CAPABILITIES.en.md)** — an index organised by
+**What it can do: [CAPABILITIES.en.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/CAPABILITIES.en.md)** — an index organised by
 *what you want to do*, every entry tied to operators that exist and an example that runs.
-**What the PoCs hardened: [HARDENING.en.md](docs/HARDENING.en.md)** — the ledger of defects
+**What the PoCs hardened: [HARDENING.en.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/HARDENING.en.md)** — the ledger of defects
 the PoC series found, what changed, and which gate now stops each one coming back.
 
-**Real RGB-D 6-DoF PoC:** [`poc_real_tless_6dof`](examples/poc_real_tless_6dof.py)
+**Real RGB-D 6-DoF PoC:** [`poc_real_tless_6dof`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_tless_6dof.py)
 runs the depth-to-point-cloud, normal, table-removal, clustering, PPF and ICP chain on
 BOP T-LESS (CC BY 4.0), scores it with symmetry-aware MSSD/MSPD, and compares it with
-the public Drost and Vidal baselines. The dataset is not in the repository: on a machine
-without it (`FULLSEYE_TLESS_DATA`, as in CI) the script prints the recorded 2026-11-01 run
-instead of re-measuring, so CI checks the record, not the data, and the maturity ledger
-does not count it as real-data validation. Dataset citation: Hodaň et al., T-LESS, WACV 2017,
+the public Drost and Vidal baselines. CI reads the repository's small CC BY 4.0 subset
+(scene 2, image 3, 2 scored instances), verifies every file by SHA-256, runs the real
+primary chain, and checks the measured values against the recorded expectations. The
+cluster for each instance is picked by its ground-truth translation (GT-assisted
+assignment), so the baseline comparison is not an end-to-end detection comparison. The
+AR_MSSD 0.197 / AR_MSPD 0.220 result for 20 scenes and 132 instances is a full-data
+record from 2026-11-01; it was re-measured on 2026-11-22 with matching accuracy. Dataset
+citation: Hodaň et al., T-LESS, WACV 2017,
 [doi:10.1109/WACV.2017.8](https://doi.org/10.1109/WACV.2017.8).
 
 > **Real-hardware and real-data results wanted.** Fullseye is developed without physical
@@ -30,7 +38,7 @@ does not count it as real-data validation. Dataset citation: Hodaň et al., T-LE
 > to be shared**: results-only reports are accepted, and `python -m fullseye.validation_kit`
 > writes only aggregate numbers from your local data. [Report form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) ·
 > [Discussions › Show and tell](https://github.com/furuse-kazufumi/fullseye/discussions/categories/show-and-tell) ·
-> [how reports are judged](docs/VALIDATION_CONTRIBUTING.en.md)
+> [how reports are judged](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/VALIDATION_CONTRIBUTING.en.md)
 
 <!-- Banner: real Fullseye outputs only (no mockups). Regenerate with
      `py -3.11 tools/gen_banner.py`. Absolute raw URL for PyPI compatibility. -->
@@ -99,16 +107,16 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 1.1.1); stage definitions in [MATURITY.md](docs/MATURITY.md)).
+The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 1.1.1); stage definitions in [MATURITY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 92 |
-| `validated-public-real-data` | an example on public measured data runs in a gate | 9 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 91 |
+| `validated-public-real-data` | an example on public measured data runs in a gate | 10 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 501 examples, 497 are actually run by a gate.
+Of 503 examples, 499 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -133,7 +141,7 @@ Of 501 examples, 497 are actually run by a gate.
 - The HALCON figure 323 for 0.1.0–0.1.8 is the value recorded at the time; from 0.1.9 it is 979 under a revised count (not 656 new implementations).
 - 0.2.0 is the first version whose index includes the typed ledger: 918 → 1,942 is a change in what is counted, not new implementation (the ledger existed from 0.1.6 but sat outside the index).
 
-— = not measured for that version. All versions and column definitions: [OP_COUNT_HISTORY.md](docs/OP_COUNT_HISTORY.md).
+— = not measured for that version. All versions and column definitions: [OP_COUNT_HISTORY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/OP_COUNT_HISTORY.md).
 
 <!-- trust-block:end -->
 
@@ -151,14 +159,14 @@ of them breaks, CI goes red.
 
 Every one of them carries a ground truth and prints the null (do-nothing) result beside
 the method. How far each capability is actually verified is a generated ledger:
-[`docs/MATURITY.md`](docs/MATURITY.md).
+[`docs/MATURITY.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MATURITY.md).
 
 Two more doors, both new since 0.1.11 and both honest about their limits:
 
 | Door | For | Run this first | Status |
 |---|---|---|---|
-| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. A `full` and a smaller `minimal` tool profile (the tool list is `tools/list`; see docs/MCP.md), strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). From MCP, 2,456 can be run (the type graph has 3,842 entries) — the ledger ops (optics and lighting design, synthetic inputs, px→mm) in an isolated worker with a time and memory limit; the rest are read-only and say why. A verdict of ok checks the output's shape, not whether the value is right. Checked with the official `mcp` Python client (initialize → tools/list → tools/call). [`docs/MCP.md`](docs/MCP.md) |
-| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (947 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the n-ary 2-D operators and the typed-ledger operators (counts: the index line at the top), whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
+| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. A `full` and a smaller `minimal` tool profile (the tool list is `tools/list`; see docs/MCP.md), strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). From MCP, 2,456 can be run (the type graph has 3,842 entries) — the ledger ops (optics and lighting design, synthetic inputs, px→mm) in an isolated worker with a time and memory limit; the rest are read-only and say why. A verdict of ok checks the output's shape, not whether the value is right. Checked with the official `mcp` Python client (initialize → tools/list → tools/call). [`docs/MCP.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MCP.md) |
+| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](https://github.com/furuse-kazufumi/fullseye/tree/master/rust/fullseye_core/examples) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (947 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the n-ary 2-D operators and the typed-ledger operators (counts: the index line at the top), whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
 
 ## Install
 
@@ -280,7 +288,7 @@ cmp = fullseye.params_compare([p, p.with_(**{"camera.fx": 820})])   # bundles si
 
 ## Operator library
 
-**3,838 typed operators** (964 2-D in the registry, 17 of them n-ary, + 2,874 in the typed ledgers,
+**3,841 typed operators** (964 2-D in the registry, 17 of them n-ary, + 2,877 in the typed ledgers,
 the 3-D ledger among them), covering denoising, smoothing, sharpening,
 thresholding/segmentation, morphology, edge/corner/blob detection, distance
 transforms, color-space conversion, texture/shape features, contours, and the 3-D
@@ -307,20 +315,20 @@ py -3.11 imgevolve.py coverage               # honest coverage numbers
 Adding one operator makes evolution, code generation, the catalog, and the
 machine-readable index (`docs/OP_INDEX.json`) follow automatically.
 
-**How to call one** — the 3,838 operators are not all reachable the same way. Measured on this
+**How to call one** — the 3,841 operators are not all reachable the same way. Measured on this
 version (`fullseye.list_ops(include_ledger=True)`, then `hasattr` per name):
 
 | way of calling | reaches | what it covers |
 |---|---|---|
 | `fullseye.apply(img, "name")` / `fullseye.run_pipeline` | the 2-D registry (947 single-input + 17 n-ary, by name) | the evolvable vocabulary |
 | `fullseye.op.<name>(img)` | 947 (935 registry + 12 colour) | the same 2-D ops, by attribute |
-| `fullseye.ledger.<name>(...)` | all 2,874 typed-ledger ops | everything outside the 2-D registry |
-| `fullseye.<name>(...)` directly | only 770 of the 3,838 (767 ledger + 3 registry) | the rest raise `AttributeError` with a pointer to the right entry |
+| `fullseye.ledger.<name>(...)` | all 2,877 typed-ledger ops | everything outside the 2-D registry |
+| `fullseye.<name>(...)` directly | only 770 of the 3,841 (767 ledger + 3 registry) | the rest raise `AttributeError` with a pointer to the right entry |
 
 So `fullseye.<name>` is a convenience for a minority of names; when a name is not an attribute of
 `fullseye`, call it with `fullseye.apply` (2-D ops, `fullseye.op.<name>`) or `fullseye.ledger.<name>` /
 `fullseye.op_run("name")` (ledger ops). `fullseye.list_ops()` lists only the 964 2-D ops by default;
-pass `include_ledger=True` for the full 3,838.
+pass `include_ledger=True` for the full 3,841.
 
 ![Real outputs of classic 2-D vision operators — edges, segmentation, contour measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
 
@@ -333,7 +341,7 @@ stacking) lets you develop and test perception pipelines without hardware:
 
 ![Physical-AI sensor simulation suite — pseudo-LiDAR, stereo depth, event camera (DVS), focus stacking, polarization, camera+IMU Kalman fusion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
 
-The **3-D side is where Fullseye differentiates most**: 377 typed 3-D operators
+The **3-D side is where Fullseye differentiates most**: 378 typed 3-D operators
 spanning point clouds / meshes / volumes / SDF — 3-D feature descriptors
 (SHOT, FPFH, spin images), TSDF fusion, fringe projection, photometric stereo,
 superquadric fitting, medial axis, geodesic distance, visual hull, and
@@ -425,7 +433,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | **Read the whole story end to end (long-form)** | [`docs/articles/fullseye_overview_qiita_en.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md) |
 | See what the operators produce (result gallery) | `docs/GALLERY.md` |
 | Browse the paper exhibits (op demos and the PoC museum, en/ja; accession numbers in `exhibit_numbers.json`) | `docs/articles/exhibits/` |
-| Look up any of the 3,838 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Look up any of the 3,841 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
 | Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
 | Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |
@@ -435,6 +443,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | Update a checkout safely | `tools/update_fullseye.py --check` |
 | **See what is actually verified (and how)** | `docs/MATURITY.md` + `docs/maturity.json` (generated, not written) |
 | **Report results from real hardware or real data** (data may stay private) | `docs/VALIDATION_CONTRIBUTING.en.md` · [issue form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) |
+| **Report a security vulnerability** (privately) · SBOM | [SECURITY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/SECURITY.md) · [`docs/sbom/fullseye.cdx.json`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/sbom/fullseye.cdx.json) |
 | **Read why it is built this way** | `docs/DESIGN_NOTES.md` — the load-bearing `★` comments collected from the source (generated; the count is `total` in `docs/design_notes.json`), in 6 languages (translated as we go; untranslated entries are shown as such) |
 | Cite Fullseye | `CITATION.cff` |
 
@@ -462,7 +471,7 @@ Everything below lives in the repo — start at the guide that matches what you 
   alongside 1-D / 2-D code reading and print-quality grading. Its classifier is k-NN over feature
   templates rendered from the font, not a neural network.
 - Some HALCON names are only **partial** analogues and are not counted as covered — see the
-  "Partial analogues" table in [docs/HALCON_COVERAGE.md](docs/HALCON_COVERAGE.md).
+  "Partial analogues" table in [docs/HALCON_COVERAGE.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/HALCON_COVERAGE.md).
 
 ## ViEW2026 入口メディアの検証(2026-11-01)
 

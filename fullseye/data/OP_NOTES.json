@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3838,
- "n_notes": 3844,
+ "n_ops": 3841,
+ "n_notes": 3847,
  "notes": {
   "vol_dilate": [
    {
@@ -10375,6 +10375,16 @@
     "path": "docs/ops/3d/bounds/convex_hull.md"
    }
   ],
+  "convex_hull_gap": [
+   {
+    "op": "convex_hull_gap",
+    "dim": "3d",
+    "category": "bounds",
+    "in": "points × points",
+    "out": "table",
+    "path": "docs/ops/3d/bounds/convex_hull_gap.md"
+   }
+  ],
   "min_enclosing_sphere": [
    {
     "op": "min_enclosing_sphere",
@@ -19567,6 +19577,16 @@
     "path": "docs/ops/drive/lateral/rear_axle_path.md"
    }
   ],
+  "road_surface_heightmap": [
+   {
+    "op": "road_surface_heightmap",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "table",
+    "out": "depth",
+    "path": "docs/ops/drive/lateral/road_surface_heightmap.md"
+   }
+  ],
   "stanley_steer": [
    {
     "op": "stanley_steer",
@@ -23479,6 +23499,16 @@
     "in": "depth",
     "out": "depth",
     "path": "docs/ops/drive/walkterrain/ground_surface.md"
+   }
+  ],
+  "heightmap_depth_camera": [
+   {
+    "op": "heightmap_depth_camera",
+    "dim": "drive",
+    "category": "walkterrain",
+    "in": "depth × pose × matrix",
+    "out": "depth",
+    "path": "docs/ops/drive/walkterrain/heightmap_depth_camera.md"
    }
   ],
   "roughness_map": [

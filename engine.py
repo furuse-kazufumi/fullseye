@@ -27,6 +27,7 @@ from typing import Iterable
 import numpy as np
 
 import api
+from json_safety import _loads_limited
 from studio_result import StageCache, assess_validity
 
 __all__ = ["FullseyeEngine", "diagnose_stages", "stage_name", "StageCache", "pipeline_states", "check_pipeline_header"]
@@ -378,7 +379,7 @@ class FullseyeEngine:
         ``FullseyeEngine.load(path)`` returns a new engine; ``engine.load(path)`` loads into ``engine``."""
         path = os.fspath(path)
         with open(path, encoding="utf-8") as f:
-            d = json.load(f)
+            d = _loads_limited(f.read(), label="pipeline JSON")
         built = cls.from_dict(d, name=os.path.splitext(os.path.basename(path))[0])
         return self._adopt(built) if self is not None else built
 

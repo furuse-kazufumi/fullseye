@@ -21,7 +21,8 @@
   最小二乗代数フィット)/ ``ransac_sphere`` / ``match3d.hough_sphere_3d``(球の検出)。
   いずれも「全点を内包する最小の球」ではない。
 
-したがって本モジュールが実際に足す新規 op は ``min_enclosing_sphere`` の 1 本のみ。
+したがって本モジュールが実際に足す新規 op は ``min_enclosing_sphere`` の 1 本だった。
+2026-11-15 に、囲むのではなく**2 つの凸包のあいだ**を測る ``convex_hull_gap`` を足した(下の一覧)。
 「全点を含む最小の球」は最小二乗フィットや検出とは異なる最適化問題(最小包含球, MEB)で、
 把持前のクリアランス確保・衝突球・視錐台カリング等で「取りこぼしゼロで最小の余白」を欲しい
 場面に対応する。凸包 / AABB / OBB が要るときは上記の既存公開 API を呼ぶこと。
@@ -29,12 +30,18 @@
 - ``min_enclosing_sphere`` — 全点を含む(近似)最小包含球(Ritter 初期化 + Bădoiu–Clarkson
   精緻化)。重心中心の素朴球より中心を寄せて半径を詰める。全点内包を保証(構成上、各点を
   含むよう最後に半径を確定する安全側)。
+- ``convex_hull_gap`` — 2 つの頂点集合の凸包どうしの隙間(Wolfe の最小ノルム点、有限回で厳密)を、
+  実際に作った最も近い点の組(上限)と分離の帯の幅(下限)の保証つきで返す。独立な線形計画(HiGHS)で
+  離れ方を別に決め、食い違えば例外。頂点どうしの距離では重なりを否定できない(十字の棒)。
 
-numpy in / numpy(+dict) out、numpy だけで動く(scipy 不要)。入力検証は fail-closed
+numpy in / numpy(+dict) out。``min_enclosing_sphere`` は numpy だけで動く。``convex_hull_gap`` の
+既定の検算(線形計画)は scipy を使う(``check="none"`` なら numpy だけ)。入力検証は fail-closed
 (形状不正・非有限・点数不足は例外)。
 
 Reference (public): J. Ritter, "An efficient bounding sphere", Graphics Gems (1990);
-M. Bădoiu, K. L. Clarkson, "Smaller core-sets for balls", SODA (2003)。
+M. Bădoiu, K. L. Clarkson, "Smaller core-sets for balls", SODA (2003);
+P. Wolfe, "Finding the nearest point in a polytope", Mathematical Programming 11 (1976) 128–149
+(convex_hull_gap の最小ノルム点)。
 """
 from __future__ import annotations
 
@@ -44,7 +51,12 @@ import numpy as np
 
 __all__ = [
     "min_enclosing_sphere",
+    "convex_hull_gap",
 ]
+
+HULL_GAP_ACTIVE_WEIGHT_TOL = 1e-12  # 無次元 / dimensionless: Wolfe の有効重みを丸めから守る / active-weight tolerance
+HULL_GAP_LP_SCALE_FLOOR = 1.0       # [座標単位 / coordinate unit] 小形状でも LP 許容幅を過小にしない / scale floor
+HULL_GAP_LP_SLACK_REL = 1e-6        # 比 / ratio: HiGHS の実行可能性誤差を覆う相対許容幅 / LP agreement slack
 
 
 def _as_points(points, min_n: int = 1) -> np.ndarray:
@@ -137,3 +149,247 @@ def min_enclosing_sphere(points, refine_iters: int = 1000) -> Dict[str, object]:
     if r_bc < r_ritter:
         return {"center": c_bc.astype(np.float64), "radius": r_bc}
     return {"center": c_ritter.astype(np.float64), "radius": float(r_ritter)}
+# ═══════════════════════════════════════════════════════════════════════════
+# convex_hull_gap: 2 つの凸包の隙間(Wolfe の最小ノルム点 + 線形計画の独立な判定)
+#
+# 新規性(2026-11-15): 3-D の凸集合どうしの隙間を、保証つきの上下限と一緒に返す op が無かった。
+# 近い op は別の量を返す: hausdorff_distance / chamfer_distance は点どうし(凸包が交わる十字の棒でも
+# 「離れている」と出る)、polygon_fit_check は 2-D の平行移動だけの LP、cr_collision は 2-D 矩形の SAT、
+# distance_segment_segment は 2 点ずつの凸包に限った特例(門の独立な検算に使う)。
+# ═══════════════════════════════════════════════════════════════════════════
+def _as_cloud(points, name: str, op: str) -> np.ndarray:
+    """(N, d) float64(d = 2 か 3)に検証・正規化する。1 点なら (d,) も受ける。fail-closed。"""
+    P = np.asarray(points, dtype=np.float64)
+    if P.size == 0:
+        raise ValueError("%s: %s is empty — pass at least one point" % (op, name))
+    if P.ndim == 1:
+        P = P.reshape(1, -1)
+    if P.ndim != 2 or P.shape[1] not in (2, 3):
+        raise ValueError("%s: %s must be (N, 3) or (N, 2) points (got shape %r)" % (op, name, P.shape))
+    if not np.isfinite(P).all():
+        raise ValueError("%s: %s contains NaN/Inf" % (op, name))
+    return P
+
+
+def _affine_minimizer(S: np.ndarray) -> np.ndarray:
+    """点 S (m, d) の**アフィン包**の上で原点に最も近い点の重み μ(Σμ = 1、負も可)。
+
+    S[0] を基準に ``min ‖S[0] + Σ c_k (S[k] − S[0])‖`` を最小二乗で解く(rank が落ちても lstsq の
+    最小ノルム解で点は一意に決まる)。"""
+    if len(S) == 1:
+        return np.ones(1)
+    E = (S[1:] - S[0]).T
+    c, *_ = np.linalg.lstsq(E, -S[0], rcond=None)
+    return np.concatenate([[1.0 - float(c.sum())], c])
+
+
+def _hull_gap_lp(A0: np.ndarray, B0: np.ndarray) -> float:
+    """``‖w‖∞ ≤ 1`` で ``w·a ≤ c ≤ w·b − t``(全頂点)を満たす最大の t(scipy の HiGHS)。
+
+    最小ノルム点と何も共有しない独立な判定。t > 0 ⇔ 凸包が離れていて ``t/√d ≤ 隙間 ≤ t``、
+    t = 0 ⇔ 接するか重なる(w = 0 は常に実行可能なので t は負にならない)。上限の打ち切りは置かない
+    (``‖w‖∞ ≤ 1`` で t は有界)。"""
+    from scipy.optimize import linprog
+    na, nb, d = len(A0), len(B0), A0.shape[1]
+    a_ub = np.zeros((na + nb, d + 2))
+    a_ub[:na, :d], a_ub[:na, d] = A0, -1.0
+    a_ub[na:, :d], a_ub[na:, d], a_ub[na:, d + 1] = -B0, 1.0, 1.0
+    cost = np.zeros(d + 2)
+    cost[d + 1] = -1.0
+    res = linprog(cost, A_ub=a_ub, b_ub=np.zeros(na + nb),
+                  bounds=[(-1.0, 1.0)] * d + [(None, None), (0.0, None)], method="highs")
+    if res.status != 0:
+        raise RuntimeError("convex_hull_gap: the separation LP did not solve: %s" % res.message)
+    return max(0.0, float(res.x[d + 1]))
+
+
+def convex_hull_gap(points_a, points_b, tol: float = 1e-9, max_iter: int = 1000,
+                    check: str = "lp") -> Dict[str, object]:
+    """2 つの頂点集合の凸包どうしの隙間(最短距離)を、保証つきの上下限と一緒に返す。
+
+    凸包 conv(A) と conv(B) の距離 ``min ‖a − b‖``(a ∈ conv(A), b ∈ conv(B))は、差の集合
+    D = {aᵢ − bⱼ} の凸包の中で原点に最も近い点のノルムに等しい。これを **Wolfe (1976) の最小ノルム
+    点の方法**で解く。D を作らずに ``argmin x·p`` だけを A と B から別々に引く(``A @ x`` の最小と
+    ``B @ x`` の最大)ので、手間は 1 反復 O(N_A + N_B)。Wolfe の方法は有限回で厳密な点に着く
+    (Frank–Wolfe の O(1/k) の収束ではない)。
+
+    止める条件は上下限の差 ``≤ tol``:
+
+    * 上限 ``gap_upper = ‖b* − a*‖`` —— a* ∈ conv(A)、b* ∈ conv(B) を重みつきで実際に作った点の距離。
+    * 下限 ``gap_lower = min_b n·b − max_a n·a`` —— n = (b* − a*)/‖b* − a*‖ の向きの、頂点から直接
+      測った**分離の帯の幅**(この幅の帯があることがそのまま「離れている」証明)。
+
+    ``check="lp"``(既定)では、最小ノルム点と何も共有しない線形計画(scipy の HiGHS)で離れ方を
+    別に決める: ``‖w‖∞ ≤ 1`` で ``w·a ≤ c ≤ w·b − t`` を満たす最大の t。t > 0 ⇔ 離れていて
+    ``t/√d ≤ 隙間 ≤ t``、t = 0 ⇔ 接するか重なる。2 つの答えが食い違えば RuntimeError(黙って片方を
+    返さない)。``check="none"`` で線形計画を省く(numpy だけで走る)。食い違いの判定には丸めの幅
+    slack = max(tol, 1e-6·scale)(scale = 平均を引いた座標の最大の絶対値、1 以上。HiGHS の可能性の許容より広く)を
+    持たせるので、**隙間が slack より小さいと、線形計画が「接触」(t = 0)と言っても食い違いにならない**(座標が
+    1e3 の桁なら 1e-3 未満の隙間)。その帯の中で効くのは最小ノルム点の上下限の保証だけ。
+
+    **頂点どうしの距離では重なりを否定できない**(製作の教訓): 細い棒 2 本の十字は、凸包が交わるのに
+    頂点の間は離れている。hausdorff_distance や最近頂点の距離は「離れている」と出すが、この op は
+    重なり(``separated = False``)と判定する。
+
+    * 非凸の物体(部品・リンクのメッシュ)に直接使うと、**凸包の**重なりを部品の干渉と読み違える。
+      凸に分けた部品ごとに使うこと(凸包は物体より大きいので、離れていれば物体も離れている)。
+    * 重なっているときの**貫通の深さは返さない**(``gap = 0``、``witness_a`` ≈ ``witness_b`` は共通の点)。
+    * ``gap ≤ tol`` は接触と数える(``separated = False``)。座標は平均を引き、全体を代表する 2 の冪の長さで
+      割ってから解く(並進と座標の桁で値が変わらず、内積の二乗の underflow / overflow を避ける)。返り値は元の
+      座標の単位へ戻す。2-D の点 (N, 2) にも使える(線形計画の比は √2)。
+
+    Parameters
+    ----------
+    points_a, points_b : array_like (N, 3) または (N, 2)
+        凸包の頂点(全点でもよい。凸包を先に作らなくてよい)。次元はそろえる。1 点なら (d,) も可。
+    tol : float
+        上下限の差の許容(座標と同じ単位、既定 1e-9)。> 0。
+    max_iter : int
+        Wolfe の反復(主・副の合計)の上限(既定 1000)。上下限の差が ``tol`` を切る前に届いたら
+        RuntimeError(保証の無い近似値を黙って返さない)。
+    check : {"lp", "none"}
+        線形計画の独立な判定を足すか。
+
+    Returns
+    -------
+    dict
+        ``separated`` (bool)、``gap``(離れていれば隙間 = ``gap_upper``、接触・重なりなら 0.0)、
+        ``gap_lower``・``gap_upper``(保証つきの下限と上限)、``witness_a``・``witness_b``(最も近い点の組、
+        (d,))、``separating_normal``(A から B へ向く単位ベクトル (d,)、離れていなければ None)、
+        ``lp_t``(線形計画の t、``check="none"`` なら None)、``iterations``。
+
+    Raises
+    ------
+    ValueError
+        形状不正・非有限・次元の不一致・``tol ≤ 0``・``max_iter < 1``・``check`` が未知のとき(fail-closed)。
+    RuntimeError
+        ``max_iter`` までに上下限の差が ``tol`` を切らないとき、線形計画が解けないとき、最小ノルム点と
+        線形計画の離れ方の判定が食い違うとき。
+
+    空の入力(``points_a`` が 0 要素)は ValueError で拒否する。
+
+    English: distance between the convex hulls of two vertex sets by Wolfe's minimum-norm-point method on
+    the implicit Minkowski difference (finite and exact, not Frank–Wolfe), returned with certified bounds
+    (an explicit pair of hull points above, a separating slab below). An independent HiGHS LP decides
+    separation (t > 0 iff disjoint, ``t/sqrt(d) <= gap <= t``); a disagreement raises. Penetration depth
+    is not computed. Use convex pieces: the hull of a non-convex part over-reports contact.
+
+    呼び出し例::
+
+        import numpy as np
+        import hull3d
+        g = np.array(np.meshgrid([0, 1], [0, 1], [0, 1])).reshape(3, -1).T.astype(float)
+        r = hull3d.convex_hull_gap(g, g + [1.25, 0.0, 0.0])            # x に 0.25 離れた単位立方体
+        assert r["separated"] and abs(r["gap"] - 0.25) < 1e-12
+        rod_a = np.array([[-1.0, -0.01, 0.0], [1.0, -0.01, 0.0], [-1.0, 0.01, 0.0], [1.0, 0.01, 0.0]])
+        rod_b = rod_a[:, [1, 0, 2]]                                    # 十字に交わる棒
+        assert not hull3d.convex_hull_gap(rod_a, rod_b)["separated"]  # 頂点の間は 1.4 離れている
+    """
+    op = "convex_hull_gap"
+    A = _as_cloud(points_a, "points_a", op)
+    B = _as_cloud(points_b, "points_b", op)
+    if A.shape[1] != B.shape[1]:
+        raise ValueError("%s: points_a and points_b must have the same dimension (got %d and %d)"
+                         % (op, A.shape[1], B.shape[1]))
+    tol = float(tol)
+    if not (np.isfinite(tol) and tol > 0.0):
+        raise ValueError("%s: tol must be a positive finite length (got %r)" % (op, tol))
+    if isinstance(max_iter, bool) or int(max_iter) != max_iter or int(max_iter) < 1:
+        raise ValueError("%s: max_iter must be an integer >= 1 (got %r)" % (op, max_iter))
+    max_iter = int(max_iter)
+    if check not in ("lp", "none"):
+        raise ValueError("%s: check must be 'lp' or 'none' (got %r)" % (op, check))
+    d = A.shape[1]
+    c0 = 0.5 * A.mean(0) + 0.5 * B.mean(0)                # 並進で値を変えない(和の overflow も避ける)
+    Ac, Bc = A - c0, B - c0
+    coord_scale = float(np.max(np.abs(np.vstack([Ac, Bc]))))
+    if coord_scale > 0.0:
+        _mantissa, exponent = np.frexp(coord_scale)
+        solve_scale = float(np.ldexp(0.5, int(exponent)))  # 最大座標以下の 2 の冪(割り算が厳密)
+    else:
+        solve_scale = 1.0
+    A0, B0 = Ac / solve_scale, Bc / solve_scale
+    solve_tol = tol / solve_scale
+
+    def support(x):
+        """D の上で x·p を最小にする点 p = a − b(a は A @ x の最小、b は B @ x の最大)。"""
+        ia = int(np.argmin(A0 @ x))
+        ib = int(np.argmax(B0 @ x))
+        return ia, ib, A0[ia] - B0[ib]
+
+    x0 = A0.mean(0) - B0.mean(0)
+    if not np.any(x0):
+        x0 = np.ones(d)
+    ia, ib, p = support(x0)
+    S = p[None, :].copy()                                 # 囲い(corral)の点
+    pairs = [(ia, ib)]                                    # 各点の (A の添字, B の添字)
+    lam = np.ones(1)                                      # 凸結合の重み
+    x = p.copy()
+    it, converged = 0, False
+    while it < max_iter:
+        it += 1
+        nx = float(np.sqrt(x @ x))
+        if nx <= solve_tol:                               # 原点に届いた = 接するか重なる
+            converged = True
+            break
+        ia, ib, p = support(x)
+        if nx - float(x @ p) / nx <= solve_tol:           # 上限 − 下限 ≤ tol(Wolfe の最適性)
+            converged = True
+            break
+        if (ia, ib) in pairs:                             # 進めない(丸めの床)
+            break
+        S = np.vstack([S, p])
+        pairs.append((ia, ib))
+        lam = np.append(lam, 0.0)
+        while it < max_iter:                              # 副の反復: 囲いのアフィン最小点へ
+            mu = _affine_minimizer(S)
+            if np.all(mu > HULL_GAP_ACTIVE_WEIGHT_TOL):
+                lam, x = mu, mu @ S
+                break
+            it += 1
+            neg = (mu <= HULL_GAP_ACTIVE_WEIGHT_TOL) & (lam - mu > 0.0)
+            theta = float(np.min(lam[neg] / (lam[neg] - mu[neg]))) if neg.any() else 1.0
+            lam = (1.0 - theta) * lam + theta * mu
+            keep = lam > HULL_GAP_ACTIVE_WEIGHT_TOL
+            if keep.all():
+                keep[int(np.argmin(lam))] = False
+            S, lam = S[keep], lam[keep]
+            pairs = [q for q, k in zip(pairs, keep) if k]
+            lam = lam / lam.sum()
+            x = lam @ S
+    wa0 = np.zeros(d)
+    wb0 = np.zeros(d)
+    for w, (i, j) in zip(lam, pairs):
+        wa0 += w * A0[i]
+        wb0 += w * B0[j]
+    delta0 = wb0 - wa0
+    upper0 = float(np.linalg.norm(delta0))
+    upper = upper0 * solve_scale
+    wa = c0 + solve_scale * wa0
+    wb = c0 + solve_scale * wb0
+    normal, lower = None, 0.0
+    if upper0 > 0.0:
+        normal = delta0 / upper0
+        lower = float(np.min(B0 @ normal) - np.max(A0 @ normal)) * solve_scale
+    if not converged:
+        # 止める条件そのものが保証(上限 = 作った点の組、下限 = 分離の帯)なので、そこに届かない答えは
+        # 出さない(fail-closed)。囲いの計算が壊れても、黙って違う隙間は返らない。
+        raise RuntimeError("%s: no certified answer within max_iter = %d (bounds %.6g .. %.6g, tol %.3g); "
+                           "raise max_iter or tol" % (op, max_iter, max(lower, 0.0), upper, tol))
+    separated = upper > tol
+    out = {"separated": bool(separated), "gap": upper if separated else 0.0,
+           "gap_lower": max(lower, 0.0), "gap_upper": upper,
+           "witness_a": wa, "witness_b": wb,
+           "separating_normal": normal if separated else None,
+           "lp_t": None, "iterations": int(it)}
+    if check == "lp":
+        t = _hull_gap_lp(A0, B0) * solve_scale
+        scale = max(HULL_GAP_LP_SCALE_FLOOR, coord_scale)
+        slack = max(tol, HULL_GAP_LP_SLACK_REL * scale)   # HiGHS の可能性の許容(1e-7 相対)より広く
+        # 答えは t/√d ≤ 隙間 ≤ t の帯に入るはず(重なり = 隙間 0 なら t ≈ 0)
+        agree = t / np.sqrt(d) - slack <= out["gap"] <= t + slack
+        if not agree:
+            raise RuntimeError("%s: the separation LP (t = %.6g) and the minimum-norm point (gap = %.6g, "
+                               "separated = %s) disagree" % (op, t, out["gap"], separated))
+        out["lp_t"] = t
+    return out

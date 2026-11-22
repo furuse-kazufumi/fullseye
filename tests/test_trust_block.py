@@ -35,6 +35,7 @@ import gen_trust_block as G  # noqa: E402
 #: この指紋は変わらない(0.6.0 以前の行だけを数える)。
 FROZEN_THROUGH = "0.6.0"
 FROZEN_SHA256 = "00a1f05b1f5c329fd1fec7a4671c683fc9c8f1ca2ce79bfc4d5832c80cd6939b"
+LOCAL_DRIVE_PATH = re.compile(r"(?<![A-Za-z0-9+.-])[A-Za-z]:[\\/]", re.I)
 
 
 @pytest.fixture(scope="module")
@@ -288,11 +289,20 @@ def test_no_local_paths_in_public_files():
     """測定の道具は repo の外にある —— その置き場所を公開物に書かない。"""
     rels = ["docs/test_count.json", "docs/gate_inventory.json", "docs/op_count_history.json",
             G.HISTORY_PAGE, "tools/gen_trust_block.py"]
-    bad = re.compile(r"[A-Za-z]:[\\/]|/Users/|/home/|AppData|scratchpad", re.I)
+    bad = re.compile(LOCAL_DRIVE_PATH.pattern + r"|/Users/|/home/|AppData|scratchpad", re.I)
     for rel in rels:
         text = io.open(os.path.join(ROOT, rel), encoding="utf-8").read()
         m = bad.search(text)
         assert not m, "%s に手元のパスがある: %r" % (rel, text[max(0, m.start() - 30):m.end() + 30])
+
+
+def test_local_drive_path_gate_distinguishes_paths_from_url_schemes():
+    """門の自己試験: Windows の絶対パスは保ち、URL scheme の ``s:/`` は誤検出しない。"""
+    assert LOCAL_DRIVE_PATH.search(r"C:\work")
+    assert LOCAL_DRIVE_PATH.search("D:/x")
+    assert LOCAL_DRIVE_PATH.search(r" c:/work")
+    assert LOCAL_DRIVE_PATH.search(r"'c:/quoted'")
+    assert not LOCAL_DRIVE_PATH.search("https://github.com/example/project")
 
 
 def test_summary_shows_each_minor_release_and_both_sides_of_each_definition_change(data):
