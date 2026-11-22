@@ -41,6 +41,14 @@ public real data, side by side with a hand-built recipe, Fullseye's existing rec
    既存レシピ・良品学習のどの列も、この基準線と並べて読む(ひび割れでこれを平衡正解率で超えた AI のレシピは
    63 本中 0 本、手組み・良品学習・既存レシピも超えない)。ろうそくはこの統計では解けない(AUROC 0.54、
    検出 0.81・誤報 0.77 = 偶然を超えない)ので、ろうそくの基準線は「易しさ」の証拠にならない。
+   ★統計量の選び方の経緯(2026-11-15、外部レビューの指摘で書き、選び直した): この統計量は、作者と独立の検証の
+   スクリプトが**試験 400 枚のラベルで** 4 つ(標準偏差 / 中央値 − 1 % 点 / 最小 / 平均)を比べた後に採った
+   (閾値だけが開発用 6 枚)。そこで選び方を「開発用 6 枚だけで、4 候補の d'(2 群の平均の差 ÷ 群内の標準偏差の
+   合算)の絶対値が最大のもの、符号は d' の符号」と決めて当て直した(:func:`select_trivial`、:data:`TRIVIAL_SELECTION`)。
+   ひび割れでは同じ統計量が選ばれる(d' 8.30、次点の平均 −3.24)ので、表の数は変わらない。ろうそくでは同じ規則が
+   −標準偏差を選び(d' −8.77)、それは試験で AUROC 0.700・検出 0.557・誤報 0.320・平衡正解率 0.618 で偶然を超える
+   (AI のレシピで超えたものは 63 本中 0 本、超えたのは良品学習だけ)。表のろうそくの基準線は、ひび割れの統計量を
+   そのまま当てたもので、ろうそく用に選んだものではない。
 8. 出力は要約から始める(:func:`print_summary`): 主の実験はローカル LLM で、ひび割れで偶然を超える検査を
    組めたのは 60 回中 5 回、ろうそくは 60 回中 0 回。クラウド LLM の列は条件がそろっていない参考の列。
 
@@ -537,6 +545,46 @@ def trivial_statistic(images: np.ndarray) -> np.ndarray:
     return np.percentile(flat, 50.0, axis=1) - np.percentile(flat, 1.0, axis=1)
 
 
+#: 自明な基準線の統計量の候補(独立の検証のスクリプトと同じ 4 つ。符号は付けず、選ぶときに d' の符号で決める)。
+TRIVIAL_CANDIDATES = ("std", "median_minus_p1", "min", "mean")
+#: 開発用 6 枚だけで選び直した記録(2026-11-15、データのある手元の実行。試験は選んだ後に 1 回だけ数えた)。
+#: ``dprime_dev`` は候補ごとの d'(欠陥 − 良品、群内の標準偏差の合算で割る)、``pick`` / ``sign`` は |d'| 最大とその符号。
+#: ``reference_test`` はろうそくで選ばれた −標準偏差の試験の成績(表の基準線ではない参考の列)。
+TRIVIAL_SELECTION = {
+    "crack": {"dprime_dev": {"std": 2.3125186949605534, "median_minus_p1": 8.302810368308657,
+                              "min": -2.438299245470854, "mean": -3.242718814482165},
+              "pick": "median_minus_p1", "sign": 1.0},
+    "candle": {"dprime_dev": {"std": -8.76873545209515, "median_minus_p1": -1.225888712569521e-14,
+                               "min": -1.6329931618554505, "mean": -2.719644509760354},
+               "pick": "std", "sign": -1.0,
+               "reference_test": {"tpr": 0.5567010309278351, "fpr": 0.32, "auroc": 0.6997938144329897,
+                                  "bal": 0.6183505154639175, "bal_lo95": 0.5510210549794707}},
+}
+
+
+def trivial_candidates(images: np.ndarray) -> dict:
+    """自明な基準線の候補 4 つを、画像 1 枚につき 1 つずつ。"""
+    flat = np.asarray(images, np.float64).reshape(len(images), -1)
+    return {"std": flat.std(axis=1),
+            "median_minus_p1": np.percentile(flat, 50.0, axis=1) - np.percentile(flat, 1.0, axis=1),
+            "min": flat.min(axis=1), "mean": flat.mean(axis=1)}
+
+
+def select_trivial(cands_dev: dict, labels_dev) -> dict:
+    """開発用の画像**だけで**統計量を選ぶ: |d'| が最大の候補、符号は d' の符号(欠陥の側が大きくなる向き)。
+
+    d' = (欠陥の平均 − 良品の平均) / sqrt((欠陥の分散 + 良品の分散) / 2)(分散は ddof=1)。試験画像は見ない。
+    """
+    y = np.asarray(labels_dev, int)
+    d = {}
+    for k in TRIVIAL_CANDIDATES:
+        v = np.asarray(cands_dev[k], np.float64)
+        a, b = v[y == 1], v[y == 0]
+        d[k] = float((a.mean() - b.mean()) / np.sqrt(0.5 * (a.var(ddof=1) + b.var(ddof=1))))
+    pick = max(d, key=lambda k: abs(d[k]))
+    return {"dprime_dev": d, "pick": pick, "sign": 1.0 if d[pick] > 0 else -1.0}
+
+
 def trivial_baseline(stat_test, labels, stat_dev, labels_dev) -> dict:
     """自明な基準線の成績。閾値は**開発用 6 枚だけ**で決める(2 群の平均の中点。試験画像は見ない)。
 
@@ -600,6 +648,17 @@ def print_summary(rec: dict) -> None:
         best = max((r["score"]["bal"] for r in ai if r["score"] is not None and r["status"] == "ok"), default=None)
         print("     %s: 検出 %.3f・誤報 %.3f・平衡正解率 %.3f(閾値は開発用 6 枚で決めた)、統計量の AUROC %.3f"
               % (TRIVIAL_NAME, tv["tpr"], tv["fpr"], tv["bal"], tv["auroc"]))
+        sel = TRIVIAL_SELECTION.get(task) or {}
+        if task == "crack":
+            print("     統計量は、独立の検証のスクリプトが試験のラベルで 4 候補を比べた後に採った。開発用 6 枚だけで選び直す規則"
+                  "(|d'| 最大)でも同じ統計量が選ばれる(d' %.2f、次点 %.2f)ので、数は変わらない。"
+                  % (sel["dprime_dev"]["median_minus_p1"],
+                     sorted(sel["dprime_dev"].values(), key=lambda v: -abs(v))[1]))
+        elif sel.get("reference_test"):
+            rt = sel["reference_test"]
+            print("     ろうそくの基準線はひび割れの統計量をそのまま当てたもの。開発用 6 枚だけで選び直すと −標準偏差"
+                  "(d' %.2f)で、試験の AUROC %.3f・検出 %.3f・誤報 %.3f・平衡正解率 %.3f(参考の列、偶然を超える)"
+                  % (sel["dprime_dev"]["std"], rt["auroc"], rt["tpr"], rt["fpr"], rt["bal"]))
         print("     これを平衡正解率で超えた AI のレシピ: %d 本中 %d 本(偶然を超えた AI の最良は %s)。"
               "手組み %.3f、良品学習 %.3f、既存レシピの最良 %.3f"
               % (len(ai), sum(beats_trivial(r, tv) for r in ai), "%.3f" % best if best is not None else "無し",
@@ -1043,6 +1102,16 @@ def ci_checks(runs_json: dict, recorded: dict) -> None:
               bool(tv) and tv.get("statistic") == "median_minus_p1" and tv.get("n") == recorded[task]["n_test"]
               and abs(0.5 * (tv["tpr"] + 1.0 - tv["fpr"]) - tv["bal"]) < 1e-12 and 0.0 <= tv["auroc"] <= 1.0,
               "AUROC %.3f、平衡正解率 %.3f" % (tv.get("auroc", float("nan")), tv.get("bal", float("nan"))))
+    for task, sel in TRIVIAL_SELECTION.items():
+        d = sel["dprime_dev"]
+        pick = max(d, key=lambda k: abs(d[k]))
+        check("%s: 自明な基準線の統計量を開発用 6 枚だけで選ぶ規則(|d'| 最大)を、記録した d' の表に当てると記録の選択になる" % task,
+              set(d) == set(TRIVIAL_CANDIDATES) and pick == sel["pick"] and (d[pick] > 0) == (sel["sign"] > 0),
+              "%s(%s%.2f)" % (pick, "" if d[pick] > 0 else "", d[pick]))
+    sc = TRIVIAL_SELECTION["crack"]
+    check("ひび割れ: 開発用だけで選び直しても、表の基準線と同じ統計量(中央値 − 1 % 点、正の向き)が選ばれる",
+          sc["pick"] == "median_minus_p1" and sc["sign"] > 0
+          and (recorded.get("crack", {}).get("trivial") or {}).get("statistic") == "median_minus_p1")
     got = headline(recorded)
     check("見出しの数字(HEADLINE)が記録と一致", got == HEADLINE,
           "記録 %s" % json.dumps(got, ensure_ascii=False)[:300] if got != HEADLINE else "%d 項目" % len(got))
@@ -1143,6 +1212,23 @@ def full_run(runs_json: dict, recorded: dict) -> dict:
                      "fit_s": round(lb["fit_s"], 1), "threshold": lb["threshold"], "cause": None})
         xd, yd, _gd = load_part(task, sp["dev"])
         tv = trivial_baseline(trivial_statistic(x), y, trivial_statistic(xd), yd)
+        sel = select_trivial(trivial_candidates(xd), yd)
+        rsel = TRIVIAL_SELECTION[task]
+        print("   統計量を開発用 6 枚だけで選び直す(|d'| 最大): " + "、".join(
+            "%s %+.2f" % (k, v) for k, v in sel["dprime_dev"].items()) + " → %s%s" % (
+            "" if sel["sign"] > 0 else "−", sel["pick"]))
+        check("%s: 開発用 6 枚だけで数え直した候補の d' と選択が記録(TRIVIAL_SELECTION)と一致" % task,
+              sel["pick"] == rsel["pick"] and sel["sign"] == rsel["sign"]
+              and all(abs(sel["dprime_dev"][k] - rsel["dprime_dev"][k]) < 1e-9 for k in TRIVIAL_CANDIDATES))
+        if "reference_test" in rsel:
+            ct, cd = trivial_candidates(x), trivial_candidates(xd)
+            ref = trivial_baseline(sel["sign"] * ct[sel["pick"]], y, sel["sign"] * cd[sel["pick"]], yd)
+            n_ai = [r for r in rows if r["kind"] == "ai"]
+            print("   参考(表の基準線ではない): 開発用で選んだ %s%s の試験 AUROC %.3f・検出 %.3f・誤報 %.3f・平衡正解率 %.3f、"
+                  "これを超えた AI %d / %d 本" % ("" if sel["sign"] > 0 else "−", sel["pick"], ref["auroc"], ref["tpr"],
+                                              ref["fpr"], ref["bal"], sum(beats_trivial(r, ref) for r in n_ai), len(n_ai)))
+            check("%s: 開発用で選んだ統計量の試験の成績(参考の列)が記録と一致" % task,
+                  all(abs(ref[k] - rsel["reference_test"][k]) < 1e-12 for k in rsel["reference_test"]))
         result[task] = {"rows": rows, "n_test": int(len(y)), "n_defect": int(y.sum()), "data_pin": pin, "trivial": tv,
                         "_x": x, "_y": y, "_gt": gt, "_methods": methods_for(task, runs_json), "_learned": lb}
         print_table(task, rows)

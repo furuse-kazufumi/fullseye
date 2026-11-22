@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 1994. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 2001. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -129,42 +129,43 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L879** — ★Behalte jedoch die Rückgabe-Shape auf **derselben Leinwand wie die Eingabe**. Das image in dieser registry hat den Vertrag, dass es "zwischen den Stufen bedingungslos verbindet", daher lässt eine Änderung der Shape den Evaluator scheitern, weil er sie nicht mit dem Zielbild abgleichen kann (gemessen: in dem Moment, als die Zielgrößen-Version (70,50) zurückgab, scheiterte `test_evolve_is_reproducible_given_seed` mit "operands could not be broadcast together with shapes (70,50) (64,64)"). Deshalb platzieren wir das auf Ht x Wt neu abgetastete Bild oben links auf der Leinwand, füllen den Rand mit 0 und schneiden den Überstand ab —— dass "das Bild jetzt Ht x Wt Pixel groß ist", bleibt so sichtbar.
 - **L890** _(ja)_ — ★画素中心合わせ(cv2.resize / skimage.transform.resize と同じ): 出力の画素 o の中心は入力の (o + 0.5)·H/ht - 0.5。2026-11-05(敵対的検証 第 2 巡 P9)までは角合わせ(o·H/ht)で、 1/2 縮小の像が入力の 0.5 px 上にずれ、縦の傾斜の平均が 0.4921(真値 0.5)になっていた (f2_gauss_pyramid は直済の兄弟)。
 - **L996** _(ja)_ — ★2026-11-09 点検: [0,1] へ clip してから skimage の大津をかけていたので、0..255 の float は全画素 1 に 飽和して前景 0 %(真 44 %)、定数 0.4 の像は全背景(otsu は全前景)と、同じ大津を名乗る 2 つの op が 逆の答えを返した。中核の ops._otsu(実データの範囲を 256 ビン、argmax ビンの上端で切る)をそのまま使う。
-- **L1051** _(ja)_ — ★符号が変わる 4 近傍の対のうち、**0 に近い方**の画素に印を付ける(同じなら両方)。 2026-11-05(敵対的検証 第 2 巡)までは対の上 / 左の画素に固定で印を付けていて、像を上下・ 左右に反転すると線が 1 画素ずれた(反転と可換でない)。
-- **L1092** _(ja)_ — ★closing は拡大的(X ⊆ φ(X))。``binary_closing`` は画像の外を 0 として収縮するので、縁に接する 前景が構造要素の半径だけ削れていた(closing_circle で 66〜240 画素)。2026-11-05(敵対的検証 第 2 巡 P3): 画像の外へ続く平面の上で閉じてから画像に切り戻す(余白 0 を付けて ``binary_closing`` → 切り出し)。 ``border_value=1`` にすると逆に、縁の近くの孤立画素から角の楔が生える(画像の外を前景とみなす)。
-- **L1137** _(ja)_ — ★背景が無いと最も近い背景は画像に無い -> どこも最遠 = 正規化 1.0(xsp_chamfer_dist と同じ)。 2026-11-05(敵対的検証 第 2 巡 P4)までは edt が (-1, 0) に背景があるかのような斜面を返した。
-- **L1155** _(ja)_ — ★領域が空なら最も近い領域の画素は無い -> どこも最遠 = 正規化 1.0(2026-11-05 P4、以前は斜面)
-- **L1188** _(ja)_ — ★**画素で返す**(2026-09-26、ユーザー判断)。それまでは 3 成分とも 画像サイズで割って [0,1] に収めていた(「解像度に依らない」規約)が、 同名は同じ数を取る方に倒した —— 正規化は利用者が割れるが、割った値 から画素数は復元できない。docs/KNOWN_ISSUES.md §51。 [0] 面積(画素数)、[1] 重心の行、[2] 重心の列。 領域が空のときは面積ゼロ・中心は画像中心(fail-soft)。
-- **L1204** _(ja)_ — ★3 成分を返す op は、空でも 3 成分を返す(スカラーに落ちると 受け取る側の形が入力で変わる)。円の値 (1, 1, 0) を既定にする。
-- **L1217** _(ja)_ — ★**頭打ちを外し、HALCON の式に揃えた**(2026-09-26)。以前は ``min(1.0, C'/10)`` で、C' = L²/(4πF) が 10 を超える形(幅 2 px なら 長さ 80 以上の傷)を全部 1.0 に潰していた —— 傷や割れという、いちばん 見たい領域で「形が違うのに同じ数」が返っていた。HALCON は上ではなく **下**を 1 で切る(画素近似で 1 を下回りうるため)。 docs/hardening/compactness-saturated-at-one.md
-- **L1229** _(ja)_ — ★HALCON は**同じ 1 次・2 次モーメントを持つ矩形**との差で測る。 以前は軸平行の外接矩形との比(skimage の extent)だったので、 **同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた** (HALCON は 0.998 のまま)。docs/hardening/halcon-named-shape-factors.md
-- **L1240** _(ja)_ — ★HALCON の roundness は ``1 - σ/μ``(重心→輪郭距離の平均と標準偏差)。 以前は ``4A/(π·長軸²)`` という別の量で、16x64 の矩形で 0.239 対 0.577 と食い違っていた。
-- **L1246** _(ja)_ — ★**量もスケールも違っていた**(2026-09-26)。等面積円の直径を画像サイズで 割っていたが、HALCON の Diameter は**輪郭 2 点間の最大距離**(画素)。 30x70 の矩形で 0.2585 対 74.85。おまけに輪郭版 `diameter_xld` は最大弦を 返していたので、**双子どうしで 5.6 倍食い違っていた**。
-- **L1254** _(ja)_ — ★**HALCON の `elliptic_axis` は (Ra, Rb, Phi) を返す。** ここが返して いたのは Anisometry(= Ra/Rb、**別の演算子 `eccentricity` の出力**)を 10 で割ったものだった —— 名前が約束している量ではない。
-- **L1259** _(ja)_ — ★画素で返す(2026-09-26)。頭打ちも外れる —— 厚みが画像の長辺の半分を 超える領域は、それまで全部 1.0 だった。
-- **L1261** _(ja)_ — ★太さは**領域そのもの**の量: 画像の外は背景(余白 1 を付けて測る)。2026-11-05(敵対的検証 第 2 巡 P4)までは画像の縁を背景とみなさず、上の縁に接する 30x70 の矩形が 60、全面の 60x80 が 198.4(画像の外の (-1, 0) に背景があるかのような斜面の最大)になっていた。
-- **L1266** _(ja)_ — ★画素で返す(2026-09-26)。HALCON の `contlength` は輪郭長(画素)。
-- **L1271** _(ja)_ — ★**頭打ちを外した**(2026-09-26)。``min(1.0, H/W)`` だったので、 **縦長の対象が全部 1.0** になっていた(60x20 で 1.0、真値 3.0 / 160x4 で 1.0、真値 40.0)。横長は正しく出るので、**向きが変わった 瞬間に情報が消える**。HALCON の ``height_width_ratio`` も軸平行の 外接矩形の高さ/幅で、上限は無い。 docs/hardening/features-saturated-at-one.md
-- **L1289** _(ja)_ — ★**頭打ちを外した**(2026-09-26)。細長い形(幅 4・長さ 80 以上)で モーメント特徴が**全部 1.0** になり、形が違うのに同じ数が返って いた。値域 [0,1] は feature の契約ではない。 docs/hardening/features-saturated-at-one.md
-- **L1337** _(ja)_ — ★2026-10-07: 0 画素の平均・標準偏差は 0/0(NaN を guard が置き換えていた)
-- **L1546** _(ja)_ — ★2026-10-25: skimage 無しの Moore 追跡は**画素解像度の別の輪郭**(点数も座標も違う)だった。 登録 op の答えとしては返さない(fail-closed)。追跡そのものは明示的に ``backends_auto._moore_boundaries(mask)`` を呼べば使える(近似であることを名乗った別経路)。
-- **L1556** — ★2026-09-02: Zurückgegeben wurden die **ganzzahligen Pixelkoordinaten** von `np.where` selbst, sodass es trotz des Namens `sub_pix` keine Subpixel-Genauigkeit hatte. Wir haben eine Verfeinerung entlang der Normalen per Parabelanpassung hinzugefügt (derselbe gemeinsame Helfer wie core `ops._edges_sub_pix`; ein gleichnamiger op gewinnt in der Registry zuletzt, daher läuft tatsächlich dieser —— nur core zu reparieren, wirkt nicht). Gemessen (eine synthetische Stufenkante, deren wahre Position Spalte 20.37 ist, a=0.2): die alte Implementierung gab die Spalten {20.0, 21.0} mit mittlerem absolutem Fehler 0.500 px zurück, nach der Verfeinerung {20.324, 20.370} mit 0.0228 px (etwa 22x Verbesserung). Die Zahl der Punkte und die Aufteilung der Zusammenhangskomponenten bleiben unverändert (die Koordinaten bewegen sich nur um weniger als 1 px).
-- **L1565** _(ja)_ — ★2026-11-03: 以前は「しきい値を超えた**帯**(幅 2〜3 px)の画素を np.where の **ラスタ順**で」1 輪郭にしていた —— 点が曲線に沿って並ばず、length_xld が r = 18 の円(周長 113 px)で 2508 px を返した。HALCON の edges_sub_pix は **1 本の線として並んだ**サブピクセルのエッジ輪郭を返す。非極大抑制(Canny)で 1 画素幅に細らせ、曲線に沿って繋いで(分岐で分ける)から、各点を法線方向に精密化する。
-- **L1582** _(ja)_ — ★2026-11-03 追加(既定 b = 0.5 は 1 ビットも変わらない): **中心線**モード。 帯を細線化して線に沿って並べ、各点を Steger の式で線の中心へサブピクセルで 寄せる(HALCON lines_gauss の「線の中心線」に当たる量)。 length_xld がそのまま線の長さになる(既定モードの帯の画素では 2.9 倍に出る)。
-- **L1644** _(ja)_ — ★画素で返す(2026-09-26)。HALCON の `area_center_xld` は (Area, Row, Column, PointOrder)。面積と重心を画素で返す (PointOrder は向きの印なので返していない —— §51)。
-- **L1650** _(ja)_ — ★region 版と同じ HALCON の式。重心は**囲まれた面積の重心**を使う (点の平均ではない —— 点が密な側に寄ってしまう)。
-- **L1656** _(ja)_ — ★region 版と**同じ欠陥がここにも在った**(``/10`` + 頭打ち)。 直した op の双子を見落とすと、穴が半分残る。
-- **L1675** _(ja)_ — ★画素で返す + **最小外接円ではなく最大弦**(2026-09-26)。 領域版 `diameter_region` と同じ量になる。
-- **L1680** _(ja)_ — ★HALCON は最小外接矩形ではなく**同じモーメントを持つ矩形**で測る。 輪郭を一度ラスタ化して region 版と同じ式に載せる(差の面積を 直接測るため)。
-- **L1686** _(ja)_ — ★領域版と**同じ頭打ちが輪郭版にも在った**(2026-09-26)。 直した op の双子を見落とすと、穴が半分残る。
-- **L1694** _(ja)_ — ★region 版と同じ HALCON の 3 値。Ra, Rb は**囲まれた面積の幾何 モーメント**から導く —— `cv2.fitEllipse` は輪郭「点」への 最小二乗当てはめで、細長い形では大きく外れる(実測: 4x80 の 棒で Anisometry 39.1 対 20.65)。HALCON の定義は前者。
-- **L1708** _(ja)_ — ★``ang`` は**最初に返る軸**(d1 = 短軸のことが多い)の向きなので、 長軸でなければ 90 度回す —— これを忘れると領域版と 90 度ずれる (30x70 の矩形で region 0 度 / xld -89.9 度、2026-09-26 に実測)。
-- **L1711** _(ja)_ — ★cv2 の角は画像座標(行が下向き)で x 軸から y 軸へ = **画面上で時計回り**。 HALCON の Phi は画面上で**反時計回り**(mathematically positive)なので符号を反転する。 2026-11-03 まで orientation_xld は短軸の時計回りの角(画面上で反時計回り 20 度の棒で 70 度)、elliptic_axis_xld は符号が逆(-0.3505 rad)を返していた。
-- **L1719** _(ja)_ — ★elliptic_axis: HALCON は (Ra, Rb, Phi)。fitEllipse は**直径**を返すので半径にする。
-- **L1769** — ★Bei b >= 0.75 wird über 4 Richtungen (0/45/90/135 Grad) gemittelt. Der Standard b=0.5 ist wie bisher nur 0 Grad, sodass sich **bestehende Ergebnisse um kein einziges Bit ändern**. Ob es hilft, hängt von a (Ko-Okkurrenz-Abstand) ab (poc_real_texture_invariance Abschnitt 6, 3 reale Materialien): bei isotropen Materialien hilft es bei kurzen bis mittleren Abständen, bei anisotropem brick nur bei Abstand 4 (Schwankung/Auflösung 3.13 -> 1.54). Bei Abstand 1 wird brick
-- **L1774** — verschlechtert sich umgekehrt (0.30 -> 0.56). ★Die Wurzel ist, dass das Verlängern des Abstands die Auflösung selbst zusammenfallen lässt, 0.0328 -> 0.0122.
-- **L1974** — ★2026-09-02: Diese beiden teilten sich `{"kind": "zoom"}` und waren daher eine **völlig identische Implementierung**, und keiner von beiden nutzte b (gemessen: max. Differenz 0.0 bei gleicher Eingabe, Differenz 0.0 zwischen b=0 und b=1). In HALCON nimmt die factor-Version zwei Skalierungsfaktoren und die size-Version eine Zielgröße, was **verschiedene Dinge** sind, deshalb haben wir das kind aufgeteilt, um die Realität an die Namen anzupassen.
-- **L2047** — ★2026-09-02: Die alte Spezifikation war out_sort=feature / metric="area", die Realität aber `np.mean(mask)` = das **im Bild eingenommene Flächenverhältnis**. Da HALCONs `area_center` ein op ist, der (Area, Row, Column) zurückgibt, gab es eine doppelte Diskrepanz: (1) er gibt das Zentrum nicht zurück, (2) die Fläche ist ein Verhältnis statt einer Pixelzahl (= auflösungsabhängig). Ein einzelner Skalar kann den Namen nicht erfüllen, daher machen wir ihn wie `ncc_locate` zum **1-D-Vektor des match sort** und geben (Flächenverhältnis, Zeile, Spalte) zurück. Sowohl match als auch feature sind terminale Sorts (Kandidaten sind nur identity), daher bewegt sich die Genom->op-Abbildung nicht.
-- **L2054** — ★Seit 2026-09-26 sind alle 3 Komponenten in **Pixeln** (Flaeche [Pixelanzahl], Zeile [px], Spalte [px]). Die Beschreibung blieb drei Wochen lang „normiert“, und ein danach geschriebenes Beispiel ging kaputt, weil es die Koordinaten mit (H-1) multiplizierte (2026-10-15). tests/test_feature_units_doc_2026_10_15.py prueft, dass Beschreibung und Verhalten uebereinstimmen.
+- **L1045** _(ja)_ — ★領域を先に和集合すると、入れ子の内側の境界が消える。外接矩形に 1 px の 余白を付けた局所 mask で各境界を取り、境界だけを出力へ重ねる。 Unioning regions first erases nested boundaries; find each in its padded bbox.
+- **L1059** _(ja)_ — ★符号が変わる 4 近傍の対のうち、**0 に近い方**の画素に印を付ける(同じなら両方)。 2026-11-05(敵対的検証 第 2 巡)までは対の上 / 左の画素に固定で印を付けていて、像を上下・ 左右に反転すると線が 1 画素ずれた(反転と可換でない)。
+- **L1100** _(ja)_ — ★closing は拡大的(X ⊆ φ(X))。``binary_closing`` は画像の外を 0 として収縮するので、縁に接する 前景が構造要素の半径だけ削れていた(closing_circle で 66〜240 画素)。2026-11-05(敵対的検証 第 2 巡 P3): 画像の外へ続く平面の上で閉じてから画像に切り戻す(余白 0 を付けて ``binary_closing`` → 切り出し)。 ``border_value=1`` にすると逆に、縁の近くの孤立画素から角の楔が生える(画像の外を前景とみなす)。
+- **L1145** _(ja)_ — ★背景が無いと最も近い背景は画像に無い -> どこも最遠 = 正規化 1.0(xsp_chamfer_dist と同じ)。 2026-11-05(敵対的検証 第 2 巡 P4)までは edt が (-1, 0) に背景があるかのような斜面を返した。
+- **L1163** _(ja)_ — ★領域が空なら最も近い領域の画素は無い -> どこも最遠 = 正規化 1.0(2026-11-05 P4、以前は斜面)
+- **L1196** _(ja)_ — ★**画素で返す**(2026-09-26、ユーザー判断)。それまでは 3 成分とも 画像サイズで割って [0,1] に収めていた(「解像度に依らない」規約)が、 同名は同じ数を取る方に倒した —— 正規化は利用者が割れるが、割った値 から画素数は復元できない。docs/KNOWN_ISSUES.md §51。 [0] 面積(画素数)、[1] 重心の行、[2] 重心の列。 領域が空のときは面積ゼロ・中心は画像中心(fail-soft)。
+- **L1212** _(ja)_ — ★3 成分を返す op は、空でも 3 成分を返す(スカラーに落ちると 受け取る側の形が入力で変わる)。円の値 (1, 1, 0) を既定にする。
+- **L1225** _(ja)_ — ★**頭打ちを外し、HALCON の式に揃えた**(2026-09-26)。以前は ``min(1.0, C'/10)`` で、C' = L²/(4πF) が 10 を超える形(幅 2 px なら 長さ 80 以上の傷)を全部 1.0 に潰していた —— 傷や割れという、いちばん 見たい領域で「形が違うのに同じ数」が返っていた。HALCON は上ではなく **下**を 1 で切る(画素近似で 1 を下回りうるため)。 docs/hardening/compactness-saturated-at-one.md
+- **L1237** _(ja)_ — ★HALCON は**同じ 1 次・2 次モーメントを持つ矩形**との差で測る。 以前は軸平行の外接矩形との比(skimage の extent)だったので、 **同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた** (HALCON は 0.998 のまま)。docs/hardening/halcon-named-shape-factors.md
+- **L1248** _(ja)_ — ★HALCON の roundness は ``1 - σ/μ``(重心→輪郭距離の平均と標準偏差)。 以前は ``4A/(π·長軸²)`` という別の量で、16x64 の矩形で 0.239 対 0.577 と食い違っていた。
+- **L1254** _(ja)_ — ★**量もスケールも違っていた**(2026-09-26)。等面積円の直径を画像サイズで 割っていたが、HALCON の Diameter は**輪郭 2 点間の最大距離**(画素)。 30x70 の矩形で 0.2585 対 74.85。おまけに輪郭版 `diameter_xld` は最大弦を 返していたので、**双子どうしで 5.6 倍食い違っていた**。
+- **L1262** _(ja)_ — ★**HALCON の `elliptic_axis` は (Ra, Rb, Phi) を返す。** ここが返して いたのは Anisometry(= Ra/Rb、**別の演算子 `eccentricity` の出力**)を 10 で割ったものだった —— 名前が約束している量ではない。
+- **L1267** _(ja)_ — ★画素で返す(2026-09-26)。頭打ちも外れる —— 厚みが画像の長辺の半分を 超える領域は、それまで全部 1.0 だった。
+- **L1269** _(ja)_ — ★太さは**領域そのもの**の量: 画像の外は背景(余白 1 を付けて測る)。2026-11-05(敵対的検証 第 2 巡 P4)までは画像の縁を背景とみなさず、上の縁に接する 30x70 の矩形が 60、全面の 60x80 が 198.4(画像の外の (-1, 0) に背景があるかのような斜面の最大)になっていた。
+- **L1274** _(ja)_ — ★画素で返す(2026-09-26)。HALCON の `contlength` は輪郭長(画素)。
+- **L1279** _(ja)_ — ★**頭打ちを外した**(2026-09-26)。``min(1.0, H/W)`` だったので、 **縦長の対象が全部 1.0** になっていた(60x20 で 1.0、真値 3.0 / 160x4 で 1.0、真値 40.0)。横長は正しく出るので、**向きが変わった 瞬間に情報が消える**。HALCON の ``height_width_ratio`` も軸平行の 外接矩形の高さ/幅で、上限は無い。 docs/hardening/features-saturated-at-one.md
+- **L1297** _(ja)_ — ★**頭打ちを外した**(2026-09-26)。細長い形(幅 4・長さ 80 以上)で モーメント特徴が**全部 1.0** になり、形が違うのに同じ数が返って いた。値域 [0,1] は feature の契約ではない。 docs/hardening/features-saturated-at-one.md
+- **L1345** _(ja)_ — ★2026-10-07: 0 画素の平均・標準偏差は 0/0(NaN を guard が置き換えていた)
+- **L1554** _(ja)_ — ★2026-10-25: skimage 無しの Moore 追跡は**画素解像度の別の輪郭**(点数も座標も違う)だった。 登録 op の答えとしては返さない(fail-closed)。追跡そのものは明示的に ``backends_auto._moore_boundaries(mask)`` を呼べば使える(近似であることを名乗った別経路)。
+- **L1564** — ★2026-09-02: Zurückgegeben wurden die **ganzzahligen Pixelkoordinaten** von `np.where` selbst, sodass es trotz des Namens `sub_pix` keine Subpixel-Genauigkeit hatte. Wir haben eine Verfeinerung entlang der Normalen per Parabelanpassung hinzugefügt (derselbe gemeinsame Helfer wie core `ops._edges_sub_pix`; ein gleichnamiger op gewinnt in der Registry zuletzt, daher läuft tatsächlich dieser —— nur core zu reparieren, wirkt nicht). Gemessen (eine synthetische Stufenkante, deren wahre Position Spalte 20.37 ist, a=0.2): die alte Implementierung gab die Spalten {20.0, 21.0} mit mittlerem absolutem Fehler 0.500 px zurück, nach der Verfeinerung {20.324, 20.370} mit 0.0228 px (etwa 22x Verbesserung). Die Zahl der Punkte und die Aufteilung der Zusammenhangskomponenten bleiben unverändert (die Koordinaten bewegen sich nur um weniger als 1 px).
+- **L1573** _(ja)_ — ★2026-11-03: 以前は「しきい値を超えた**帯**(幅 2〜3 px)の画素を np.where の **ラスタ順**で」1 輪郭にしていた —— 点が曲線に沿って並ばず、length_xld が r = 18 の円(周長 113 px)で 2508 px を返した。HALCON の edges_sub_pix は **1 本の線として並んだ**サブピクセルのエッジ輪郭を返す。非極大抑制(Canny)で 1 画素幅に細らせ、曲線に沿って繋いで(分岐で分ける)から、各点を法線方向に精密化する。
+- **L1590** _(ja)_ — ★2026-11-03 追加(既定 b = 0.5 は 1 ビットも変わらない): **中心線**モード。 帯を細線化して線に沿って並べ、各点を Steger の式で線の中心へサブピクセルで 寄せる(HALCON lines_gauss の「線の中心線」に当たる量)。 length_xld がそのまま線の長さになる(既定モードの帯の画素では 2.9 倍に出る)。
+- **L1652** _(ja)_ — ★画素で返す(2026-09-26)。HALCON の `area_center_xld` は (Area, Row, Column, PointOrder)。面積と重心を画素で返す (PointOrder は向きの印なので返していない —— §51)。
+- **L1658** _(ja)_ — ★region 版と同じ HALCON の式。重心は**囲まれた面積の重心**を使う (点の平均ではない —— 点が密な側に寄ってしまう)。
+- **L1664** _(ja)_ — ★region 版と**同じ欠陥がここにも在った**(``/10`` + 頭打ち)。 直した op の双子を見落とすと、穴が半分残る。
+- **L1683** _(ja)_ — ★画素で返す + **最小外接円ではなく最大弦**(2026-09-26)。 領域版 `diameter_region` と同じ量になる。
+- **L1688** _(ja)_ — ★HALCON は最小外接矩形ではなく**同じモーメントを持つ矩形**で測る。 輪郭を一度ラスタ化して region 版と同じ式に載せる(差の面積を 直接測るため)。
+- **L1694** _(ja)_ — ★領域版と**同じ頭打ちが輪郭版にも在った**(2026-09-26)。 直した op の双子を見落とすと、穴が半分残る。
+- **L1702** _(ja)_ — ★region 版と同じ HALCON の 3 値。Ra, Rb は**囲まれた面積の幾何 モーメント**から導く —— `cv2.fitEllipse` は輪郭「点」への 最小二乗当てはめで、細長い形では大きく外れる(実測: 4x80 の 棒で Anisometry 39.1 対 20.65)。HALCON の定義は前者。
+- **L1716** _(ja)_ — ★``ang`` は**最初に返る軸**(d1 = 短軸のことが多い)の向きなので、 長軸でなければ 90 度回す —— これを忘れると領域版と 90 度ずれる (30x70 の矩形で region 0 度 / xld -89.9 度、2026-09-26 に実測)。
+- **L1719** _(ja)_ — ★cv2 の角は画像座標(行が下向き)で x 軸から y 軸へ = **画面上で時計回り**。 HALCON の Phi は画面上で**反時計回り**(mathematically positive)なので符号を反転する。 2026-11-03 まで orientation_xld は短軸の時計回りの角(画面上で反時計回り 20 度の棒で 70 度)、elliptic_axis_xld は符号が逆(-0.3505 rad)を返していた。
+- **L1727** _(ja)_ — ★elliptic_axis: HALCON は (Ra, Rb, Phi)。fitEllipse は**直径**を返すので半径にする。
+- **L1777** — ★Bei b >= 0.75 wird über 4 Richtungen (0/45/90/135 Grad) gemittelt. Der Standard b=0.5 ist wie bisher nur 0 Grad, sodass sich **bestehende Ergebnisse um kein einziges Bit ändern**. Ob es hilft, hängt von a (Ko-Okkurrenz-Abstand) ab (poc_real_texture_invariance Abschnitt 6, 3 reale Materialien): bei isotropen Materialien hilft es bei kurzen bis mittleren Abständen, bei anisotropem brick nur bei Abstand 4 (Schwankung/Auflösung 3.13 -> 1.54). Bei Abstand 1 wird brick
+- **L1782** — verschlechtert sich umgekehrt (0.30 -> 0.56). ★Die Wurzel ist, dass das Verlängern des Abstands die Auflösung selbst zusammenfallen lässt, 0.0328 -> 0.0122.
+- **L1982** — ★2026-09-02: Diese beiden teilten sich `{"kind": "zoom"}` und waren daher eine **völlig identische Implementierung**, und keiner von beiden nutzte b (gemessen: max. Differenz 0.0 bei gleicher Eingabe, Differenz 0.0 zwischen b=0 und b=1). In HALCON nimmt die factor-Version zwei Skalierungsfaktoren und die size-Version eine Zielgröße, was **verschiedene Dinge** sind, deshalb haben wir das kind aufgeteilt, um die Realität an die Namen anzupassen.
+- **L2055** — ★2026-09-02: Die alte Spezifikation war out_sort=feature / metric="area", die Realität aber `np.mean(mask)` = das **im Bild eingenommene Flächenverhältnis**. Da HALCONs `area_center` ein op ist, der (Area, Row, Column) zurückgibt, gab es eine doppelte Diskrepanz: (1) er gibt das Zentrum nicht zurück, (2) die Fläche ist ein Verhältnis statt einer Pixelzahl (= auflösungsabhängig). Ein einzelner Skalar kann den Namen nicht erfüllen, daher machen wir ihn wie `ncc_locate` zum **1-D-Vektor des match sort** und geben (Flächenverhältnis, Zeile, Spalte) zurück. Sowohl match als auch feature sind terminale Sorts (Kandidaten sind nur identity), daher bewegt sich die Genom->op-Abbildung nicht.
+- **L2062** — ★Seit 2026-09-26 sind alle 3 Komponenten in **Pixeln** (Flaeche [Pixelanzahl], Zeile [px], Spalte [px]). Die Beschreibung blieb drei Wochen lang „normiert“, und ein danach geschriebenes Beispiel ging kaputt, weil es die Koordinaten mit (H-1) multiplizierte (2026-10-15). tests/test_feature_units_doc_2026_10_15.py prueft, dass Beschreibung und Verhalten uebereinstimmen.
 
 ## `backends_bridge.py`
 
@@ -647,11 +648,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_ct_casting_sparse_views.py`
 
-- **L95** _(ja)_ — 再構成の格子(立方体の 1 辺のボクセル数)。★reduced でも格子は縮めない: 24³ にすると最小の空隙が 7 ボクセルになり、順位の結論そのものが変わる(2026-11-04 実測: 門 32 本中 8 本が別の答え)。 reduced は TV の重みの較正と後知恵の格子を省き、full が較正で選んだ値 TV_FULL_CHOICE を使う (省いた段の門は判定しない。閾値は変えない)。
-- **L443** _(ja)_ — ★順位の入れ替わり: TV の RMSE を、SIRT と OS-SART の良いほうで割る。投影が足りている条件では 勝たず(TV の仮定が要らない)、足りない条件でだけ勝つ —— が、重みを評価用で選んでいない状態で言えるか。
-- **L456** _(ja)_ — ★RMSE の順位は空隙の体積の順位ではない: 少数投影の FDK は RMSE が最下位でも、欠損で測る体積は
-- **L457** _(ja)_ — TV より正しい。★理由は検証していない: 同じ線形の SIRT・OS-SART の欠損誤差は FDK より悪く(5.1 / 9.4 %)、 「線形だから質量が保存される」では説明がつかない。ここで言うのは数字の事実だけ。
-- **L468** _(ja)_ — ★「異常に良い」の内訳: 2 値の体積は真値そのものでも部分体積で偏る。手法がそれより小さな誤差を 出したら、ぼけの偏りと 2 値化の偏りが打ち消し合っただけ(正しさではない)と印字する。
+- **L99** _(ja)_ — 再構成の格子(立方体の 1 辺のボクセル数)。★reduced でも格子は縮めない: 24³ にすると最小の空隙が 7 ボクセルになり、順位の結論そのものが変わる(2026-11-04 実測: 門 32 本中 8 本が別の答え)。 reduced は TV の重みの較正と後知恵の格子を省き、full が較正で選んだ値 TV_FULL_CHOICE を使う (省いた段の門は判定しない。閾値は変えない)。
+- **L447** _(ja)_ — ★順位の入れ替わり: TV の RMSE を、SIRT と OS-SART の良いほうで割る。投影が足りている条件では 勝たず(TV の仮定が要らない)、足りない条件でだけ勝つ —— が、重みを評価用で選んでいない状態で言えるか。
+- **L460** _(ja)_ — ★RMSE の順位は空隙の体積の順位ではない: 少数投影の FDK は RMSE が最下位でも、欠損で測る体積は
+- **L461** _(ja)_ — TV より正しい。★理由は検証していない: 同じ線形の SIRT・OS-SART の欠損誤差は FDK より悪く(5.1 / 9.4 %)、 「線形だから質量が保存される」では説明がつかない。ここで言うのは数字の事実だけ。
+- **L467** _(ja)_ — ★測り方で順位が入れ替わる事を固定する(2026-11-15、外部レビューの指摘): 半値で 2 値化した体積では、同じ少数投影で TV のほうが FDK より誤差が小さい。見出しは「欠損で測った体積では」に限る(2 値の体積は真値でも 16.7 % 偏るので 欠損の側を採るが、どちらの物差しでも FDK が勝つわけではない)。
+- **L478** _(ja)_ — ★「異常に良い」の内訳: 2 値の体積は真値そのものでも部分体積で偏る。手法がそれより小さな誤差を 出したら、ぼけの偏りと 2 値化の偏りが打ち消し合っただけ(正しさではない)と印字する。
 
 ## `examples/poc_ct_fidelity.py`
 
@@ -1017,11 +1019,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_mixed_case_depalletizing.py`
 
-- **L1781** _(ja)_ — と同じ 5 mm にした。★この値は scene 1・2 の真値を見て決めたので、scene 1・2 は「調整に使った」、 scene 3〜10 は「見ていない」として結果を分けて出す(``split_by_tuning``)。
-- **L1790** _(ja)_ — ≈ 3 px。★感度: scene 1・2 の 10 枚で 0 px → 長辺 −13 / 短辺 −4.5 mm、6 px → −0.3 / +4.1 mm (6 px では遮る縁の 深度カメラの「縁の太り」まで拾って外へ伸びる)。真値で合わせ込まず見積もりの 3 にした。 全 50 枚の 0 / 3 / 6 の比較(下書きの段で出した): 再現率 0.705 / 0.705 / 0.674、誤検出 14.8 / 43.1 / 52.2 枚あたり。 全 50 枚の実測(2026-11-08): 0 px → 再現率 0.705・長 −7.8・短 −2.6 mm・誤検出 14.8 枚/画像 / 3 px → 0.705・−2.0・+2.9・43.1 / 6 px → 0.674・+0.4・+5.8・52.2。再現率は変わらず、寸法の偏りと 誤検出の数の綱引き(太らせると雑音の小片まで矩形らしくなる)。
-- **L1969** _(ja)_ — ★scipy の binary_dilation は iterations=0 で「変わらなくなるまで」太らせる(= 切り出し全体)。0 は太らせない。
-- **L3226** _(ja)_ — ★見出しのカラーの主張: 見ていない種のコマが Blender のカラーで揃っていれば測って確かめ、無ければ(CI)記録で読む。
-- **L3232** _(ja)_ — ★これらの門は、天面の合わせ目を入れた場面の結果を見てから置いた。全部の種と見ていない種 3〜9 の両方で確かめる。
+- **L1788** _(ja)_ — と同じ 5 mm にした。★この値は scene 1・2 の真値を見て決めたので、scene 1・2 は「調整に使った」、 scene 3〜10 は「見ていない」として結果を分けて出す(``split_by_tuning``)。
+- **L1797** _(ja)_ — ≈ 3 px。★感度: scene 1・2 の 10 枚で 0 px → 長辺 −13 / 短辺 −4.5 mm、6 px → −0.3 / +4.1 mm (6 px では遮る縁の 深度カメラの「縁の太り」まで拾って外へ伸びる)。真値で合わせ込まず見積もりの 3 にした。 全 50 枚の 0 / 3 / 6 の比較(下書きの段で出した): 再現率 0.705 / 0.705 / 0.674、誤検出 14.8 / 43.1 / 52.2 枚あたり。 全 50 枚の実測(2026-11-08): 0 px → 再現率 0.705・長 −7.8・短 −2.6 mm・誤検出 14.8 枚/画像 / 3 px → 0.705・−2.0・+2.9・43.1 / 6 px → 0.674・+0.4・+5.8・52.2。再現率は変わらず、寸法の偏りと 誤検出の数の綱引き(太らせると雑音の小片まで矩形らしくなる)。
+- **L1976** _(ja)_ — ★scipy の binary_dilation は iterations=0 で「変わらなくなるまで」太らせる(= 切り出し全体)。0 は太らせない。
+- **L3233** _(ja)_ — ★見出しのカラーの主張: 見ていない種のコマが Blender のカラーで揃っていれば測って確かめ、無ければ(CI)記録で読む。
+- **L3239** _(ja)_ — ★これらの門は、天面の合わせ目を入れた場面の結果を見てから置いた。全部の種と見ていない種 3〜9 の両方で確かめる。
+- **L3855** _(ja)_ — ★記録が今のコードの出力であることの門(コマを揃える繰り返しの途中では判定しない)
 
 ## `examples/poc_moire_screen.py`
 
@@ -1107,8 +1110,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L392** — ★Den Befund festhalten. (1) Es gibt keine Depolarisation (der Stokes-Betrag ist exakt 1). Das ist die Grundlage für die Behauptung in Abschnitt 5, dass in der Modulation nicht die Lichtmenge, sondern **die Phasenempfindlichkeit** abfällt.
 - **L398** — (2) ★★Die Messung sagt das **Gegenteil** der naiven Erwartung, "eine Maske zu übergeben behebt es": ohne Maske 97.0 % / bei Ausschluss der Unterabtastung 97.1 % / **schließt man auch die niedrige Modulation aus, fällt es auf 81.9 %**. Weil das Entfernen der niedrig modulierten Pixel die Region zerteilt und skimages unwrap pro Insel einen anderen 2π-Offset wählt. Niedrig modulierte Pixel sind nicht die Ursache der Abweichungen; bei einer vorzeichenvertauschten Eingabe hebt ihr Ausschluss die Übereinstimmung nicht, sondern senkt sie. Dieselbe Maske auf eine vorzeichenrichtige Eingabe senkt sie nicht (unten gemessen). Dass die Region nicht zerteilt wird (anderes 2π je Insel), ist ebenfalls gemessen. Der Mechanismus ist ungeklärt. Den Messwert festhalten.
 - **L468** _(ja)_ — ★所見を固定する(いずれも測った事実。門は動かさない)。 (a) 外れの大半は 4 節の符号の反転と同じ画素。
-- **L556** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
-- **L559** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
+- **L558** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
+- **L561** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
 
 ## `examples/poc_pigment_unmixing.py`
 
@@ -1199,7 +1202,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_real_defect_floor.py`
 
-- **L157** — Amplitudenschritt. ★Dies selbst ist ein Regler. Ist er grob, rundet das Limit auf denselben Gitterpunkt und man liest eine **vom Schritt erzeugte Differenz** wie "je größer σ, desto größer der Abstand" als echt (2026-09-09; bei 34 Stufen rundeten die Mediane von σ=1.5 und σ=3.0 beide auf 3.20).
+- **L233** — Amplitudenschritt. ★Dies selbst ist ein Regler. Ist er grob, rundet das Limit auf denselben Gitterpunkt und man liest eine **vom Schritt erzeugte Differenz** wie "je größer σ, desto größer der Abstand" als echt (2026-09-09; bei 34 Stufen rundeten die Mediane von σ=1.5 und σ=3.0 beide auf 3.20).
+- **L278** _(ja)_ — ★白色化した整合フィルタ(2026-11-15、外部レビューの指摘で足した)。背景のスペクトルは重ならない切り出しで推定する。
 
 ## `examples/poc_real_file_formats.py`
 
@@ -1254,7 +1258,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_sam_hybrid_bonding_voids.py`
 
-- **L332** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
+- **L346** _(ja)_ — ★優劣は、両方の a90/95 が試した大きさの内側にある周波数だけで比べる(2026-11-15、外部レビューの指摘)。 外挿(a90_95_beyond_data)どうしの比は、1823A が「データの外で POD を語るな」という領域の数の比で、合格の材料にしない。
+- **L380** _(ja)_ — ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間 (time.process_time)で測り、壁時計は併記する。
 
 ## `examples/poc_scan_to_bim_asbuilt.py`
 
@@ -1453,10 +1458,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L93** _(ja)_ — ★色名から色相への対応は私の選択(CSS の色は表の色より彩度が高い)—— 色相だけを比べる。
 - **L211** _(ja)_ — ★ 実測で採点(公開データ、CC BY 4.0)—— この PoC の主役 # --------------------------------------------------------------------------- #
-- **L312** _(ja)_ — ★フラット補正(2026-10-15、図を見たユーザーの指摘「Si 側が 2 段に分かれて見える」から): 写真は視野の中心が明るい 周辺減光を持つ(裸の Si は左端 0.238 → 中央寄り 0.263、SiO₂ は中央寄り 0.103 → 右端 0.095)。補正しないと、Si の 暗い側が「薄い膜」と読まれ(0 nm 付近は R が膜厚の 2 乗でしか下がらないので、数 % の明るさの差が 10〜17 nm に化ける)、 明るい側は 0 nm に張り付いて、2 段に見えた。減光を半径の 2 乗 V = c₀ + c₁ r² として**裸の Si の側だけ**で当てはめ、 視野全体を割る。SiO₂ の側は当てはめに使っていないので、その明るさの傾きが消えるかが独立の検算になる。
-- **L441** _(ja)_ — ★予言が外れた: 「裸の Si は無彩色(C* < 3)」と置いたら C* 6.6 だった。Si の反射率は 400 nm 0.49 → 800 nm 0.33 と 短波長ほど高いので、裸のウェハは**青みの灰色**に見える(実物のとおり)。門を所見の側に書き直した。
-- **L479** _(ja)_ — ★境の直上でも FFT は最大 %.0f nm 外す(窓の DC の裾とフレネルの位相の分)—— 2 倍の厚さで 1 % 以内に入る。
-- **L993** _(ja)_ — ★render_plot の既定は等倍(Studio の画面用、2026-11-01 の 5103a2f2ab)。隣に並べる 円盤の板は figure_scale 倍で作るので、倍率は**ここで明示的に渡す**(渡さないと 高さ 280 と 560 で np.concatenate が落ちる —— 図の段は CI が走らせていなかった)。
+- **L216** _(ja)_ — 説明(題・lead・caption)に出す実データの数(公開の桁)。★記録値の再現の門(2026-11-15、外部レビューの指摘で足した): 物理の門(写真の膜厚は基準の ±25 % など)は fail-soft のゆるい門で、説明の数を守らない。実行の間の揺れは 0 (py 3.11 / 3.14、numpy 2.4 / 2.5、Pillow 12 / 13、CI の縮小と full で写真の膜厚が全桁同じ)と測ったので、 幅は公開の桁の丸めの半分(PUBLISHED_REAL_TOL)。数が動いたら説明の文と一緒に直す(門を広げない)。
+- **L325** _(ja)_ — ★フラット補正(2026-10-15、図を見たユーザーの指摘「Si 側が 2 段に分かれて見える」から): 写真は視野の中心が明るい 周辺減光を持つ(裸の Si は左端 0.238 → 中央寄り 0.263、SiO₂ は中央寄り 0.103 → 右端 0.095)。補正しないと、Si の 暗い側が「薄い膜」と読まれ(0 nm 付近は R が膜厚の 2 乗でしか下がらないので、数 % の明るさの差が 10〜17 nm に化ける)、 明るい側は 0 nm に張り付いて、2 段に見えた。減光を半径の 2 乗 V = c₀ + c₁ r² として**裸の Si の側だけ**で当てはめ、 視野全体を割る。SiO₂ の側は当てはめに使っていないので、その明るさの傾きが消えるかが独立の検算になる。
+- **L363** _(ja)_ — ★記録値の再現の門: 説明に出す数が、この実行の値を公開の桁で丸めたものと同じか(上の ±25 % は物理の門で別物)。
+- **L460** _(ja)_ — ★予言が外れた: 「裸の Si は無彩色(C* < 3)」と置いたら C* 6.6 だった。Si の反射率は 400 nm 0.49 → 800 nm 0.33 と 短波長ほど高いので、裸のウェハは**青みの灰色**に見える(実物のとおり)。門を所見の側に書き直した。
+- **L498** _(ja)_ — ★境の直上でも FFT は最大 %.0f nm 外す(窓の DC の裾とフレネルの位相の分)—— 2 倍の厚さで 1 % 以内に入る。
+- **L1012** _(ja)_ — ★render_plot の既定は等倍(Studio の画面用、2026-11-01 の 5103a2f2ab)。隣に並べる 円盤の板は figure_scale 倍で作るので、倍率は**ここで明示的に渡す**(渡さないと 高さ 280 と 560 で np.concatenate が落ちる —— 図の段は CI が走らせていなかった)。
 
 ## `examples/poc_timelapse_growth.py`
 
@@ -1512,9 +1519,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_virtual_sem_kv_cd_bse.py`
 
-- **L276** _(ja)_ — ★モンテカルロの統計誤差: 主張に使う側壁 88 度・80 度の 1 kV と 20 kV を、種を替えて測り直す(最初の種は上の表の 1 回)。
-- **L373** _(ja)_ — ★W の粒の 1 kV のコントラストを種を替えて(最初の種 4 は上の 1 回)。粒は数画素で、画素あたりの電子が少ないので大きく揺れる。
-- **L424** _(ja)_ — ★表面の W の 1 kV を種を替えて(最初の種 2 は上の表の 1 回)。門は種の平均で。
+- **L315** _(ja)_ — ★モンテカルロの統計誤差: 主張に使う側壁 88 度・80 度の 1 kV と 20 kV を、種を替えて測り直す(最初の種は上の表の 1 回)。
+- **L416** _(ja)_ — ★W の粒の 1 kV のコントラストを種を替えて(最初の種 4 は上の 1 回)。粒は数画素で、画素あたりの電子が少ないので大きく揺れる。
+- **L467** _(ja)_ — ★表面の W の 1 kV を種を替えて(最初の種 2 は上の表の 1 回)。門は種の平均で。
 
 ## `examples/poc_warehouse_flow.py`
 

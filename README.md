@@ -5,6 +5,10 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/furuse-kazufumi/fullseye/blob/master/LICENSE)
 [![Docs](https://img.shields.io/badge/docs-furuse.work-informational)](https://furuse.work/)
 
+**Fullseye is a Python library for image inspection, 3-D measurement and physics simulation.**
+It chains typed operators, checks them against ground truth produced by physics simulation,
+and hands them to AI assistants through MCP and RAG.
+
 **Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,838
 operators in the machine-readable index, `docs/OP_INDEX.json`: 947 single-input 2-D operators +
 17 n-ary + 2,874 in the typed ledgers, each with a per-operator note), the family guides, and the
