@@ -444,6 +444,9 @@ EXCLUDED = {
                                        "例 1 本に分単位かかるので手で回して commit する。gen_maturity(鎖の段)は記録を読むだけ。"
                                        "記録と実走の食い違いは tests/test_poc_scripts_run.py が全 PoC を走らせるたびに照合する"
                                        "(敵対的検証 2026-11-05 第 2 巡 D6)。"),
+    "tools/make_tless_subset.py": ("BOP T-LESS の場面2・画像3・obj 5/6を切り出し、--record-expected でrepo内subsetの実連鎖を"
+                                    "反復測定して期待値を記録する手動生成器。元データはrepo外でCIが取得せず、反復測定も重いため鎖に入れない。"
+                                    "SHA256SUMSと tests/test_tless_subset_gate.py が収録バイトと記録した測定値を毎回検査する。"),
     "tools/bench_device_ops.py": ("device 引数を持つ op(torch の GPU 経路)の実測器。結果は out/device_ops(追跡外)。GPU が要り数字は機械で変わる。(GPU 便、2026-11-04 の統合で分類)"),
     "tools/bench_gpu_optics.py": ("GPU 第 4 便の実測器(raytrace の CPU 基準と lens_gpu の一括経路の時間、--out の JSON)。"
                                   "数字は機械と負荷で変わり、--batch cuda は GPU と gpu_in_use.lock の手順が要るので手で回す。"

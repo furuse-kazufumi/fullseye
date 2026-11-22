@@ -40,6 +40,8 @@ T-LESS は CC BY 4.0。一次配布ページ https://bop.felk.cvut.cz/datasets/ 
 T-LESS 欄に ``license: CC BY 4.0`` と明記される。取得は
 ``py -3.11 tools/fetch_tless.py``。データは repo 外に置き、既定は
 ホーム直下の ``fullseye_data/tless``、``FULLSEYE_TLESS_DATA`` で上書きできる。
+``FULLSEYE_TLESS_SCENES="2"`` と ``FULLSEYE_TLESS_OBJECTS="5,6"`` を指定すると、
+主経路の設定を変えずに場面・物体を絞れる。指定値は範囲と実データに対して検証する。
 
 引用: Hodaň et al., "T-LESS: An RGB-D Dataset for 6D Pose Estimation of
 Texture-less Objects", WACV 2017, https://doi.org/10.1109/WACV.2017.8 。
@@ -71,15 +73,24 @@ import realdata  # noqa: E402
 
 DATA_ENV = "FULLSEYE_TLESS_DATA"
 SWEEP_ENV = "FULLSEYE_TLESS_SWEEP"
+SCENES_ENV = "FULLSEYE_TLESS_SCENES"
+OBJECTS_ENV = "FULLSEYE_TLESS_OBJECTS"
 DEFAULT_DATA = Path.home() / "fullseye_data" / "tless"   # 手元の絶対パスは書かない(環境変数で受ける)
 SCENE_IDS = tuple(range(1, 21))
+# BOP T-LESS の公開 scene/object ID の閉区間。/ Published inclusive ID ranges.
+SCENE_ID_MIN = 1
+SCENE_ID_MAX = 20
+OBJECT_ID_MIN = 1
+OBJECT_ID_MAX = 30
 VISIBILITY_MIN = 0.50
+MSSD_FAILURE_FRACTION = 0.20
 ROI = (70, 435, 65, 575)       # marker frame/background only; no GT boxes
 DEPTH_RANGE_MM = (500.0, 1200.0)
 VOXEL_MM = 4.0
 CLUSTER_TOL_MM = 8.0
-MODEL_POINTS = 1000
-SCENE_POINTS = 1000
+# BOP評価用CADから決定的に採る点数。2026-11-01の採用設定を測った時の値。
+# / Deterministic CAD evaluation sample used by the adopted 2026-11-01 run.
+EVAL_POINTS = 600
 
 
 @dataclass(frozen=True)
@@ -208,6 +219,49 @@ def _cap(points: np.ndarray, normals: np.ndarray, count: int):
     return points[idx], normals[idx]
 
 
+def _evaluation_points(points: np.ndarray) -> np.ndarray:
+    """BOP評価点を決定的に抽出する。/ Select deterministic BOP evaluation points."""
+    # 法線は評価点抽出には使わない。_capと同じ添字規則を正本として共有する。
+    # / Normals are unused here; _cap remains the shared index-selection source.
+    unused_normals = np.empty_like(points)
+    selected, _unused = _cap(points, unused_normals, EVAL_POINTS)
+    return selected
+
+
+def _normalise_ids(values, *, name: str, minimum: int, maximum: int) -> tuple[int, ...]:
+    """ID列を重複なしの整数として範囲検証する。/ Validate an integer ID sequence."""
+    try:
+        ids = tuple(values)
+    except TypeError as exc:
+        raise ValueError(f"{name} は整数の列でなければならない") from exc
+    if not ids:
+        raise ValueError(f"{name} は1個以上のIDを含まなければならない")
+    if any(isinstance(value, bool) or not isinstance(value, (int, np.integer)) for value in ids):
+        raise ValueError(f"{name} は整数でなければならない: {ids!r}")
+    ids = tuple(int(value) for value in ids)
+    outside = [value for value in ids if not minimum <= value <= maximum]
+    if outside:
+        raise ValueError(f"{name} は [{minimum},{maximum}] の範囲外: {outside}")
+    if len(set(ids)) != len(ids):
+        raise ValueError(f"{name} に重複がある: {ids!r}")
+    return ids
+
+
+def _parse_id_env(variable: str, *, minimum: int, maximum: int) -> tuple[int, ...] | None:
+    """comma区切りの環境変数をfail-closedで読む。/ Parse a comma-separated ID env var."""
+    raw = os.environ.get(variable)
+    if raw is None:
+        return None
+    fields = [field.strip() for field in raw.split(",")]
+    if any(not field for field in fields):
+        raise ValueError(f"{variable} はcomma区切りの整数でなければならない: {raw!r}")
+    try:
+        values = tuple(int(field, 10) for field in fields)
+    except ValueError as exc:
+        raise ValueError(f"{variable} はcomma区切りの整数でなければならない: {raw!r}") from exc
+    return _normalise_ids(values, name=variable, minimum=minimum, maximum=maximum)
+
+
 def _rotation(axis, angle):
     axis = np.asarray(axis, np.float64)
     axis /= np.linalg.norm(axis)
@@ -323,11 +377,15 @@ def load_scene(root: Path, scene_id: int, image_id: int, label: str):
             "K": K, "scale": scale, "rgb": rgb, "raw": raw, "gt": gt, "info": info}
 
 
-def first_bop19_scene_specs(root: Path):
+def first_bop19_scene_specs(root: Path, scene_ids=None):
     """抽出済みBOP19 subsetの各場面から最小画像IDを1枚だけ選ぶ。"""
+    selected = SCENE_IDS if scene_ids is None else _normalise_ids(
+        scene_ids, name="scene_ids", minimum=SCENE_ID_MIN, maximum=SCENE_ID_MAX)
     specs = []
-    for scene_id in SCENE_IDS:
+    for scene_id in selected:
         scene = root / "test_primesense" / f"{scene_id:06d}"
+        if not scene.is_dir():
+            raise ValueError(f"scene {scene_id}: データの場面ディレクトリが無い")
         camera = _json(scene / "scene_camera.json")
         try:
             image_ids = sorted(int(key) for key in camera)
@@ -409,8 +467,7 @@ def _match_one(root, scene, instance, cluster_index, model_info, *, seed,
     R_gt = np.asarray(instance["cam_R_m2c"], np.float64).reshape(3, 3)
     t_gt = np.asarray(instance["cam_t_m2c"], np.float64)
     eval_points, _ = _ply_vertices_normals(root / "models_cad" / f"obj_{obj_id:06d}.ply")
-    eval_points = eval_points[np.linspace(0, len(eval_points) - 1,
-                                          min(600, len(eval_points)), dtype=np.int64)]
+    eval_points = _evaluation_points(eval_points)
     syms = symmetry_transforms(model_info)
     def score(pose):
         return pose_metrics(eval_points, pose["R"], pose["t"], R_gt, t_gt, scene["K"], syms)
@@ -458,10 +515,35 @@ def _match_one(root, scene, instance, cluster_index, model_info, *, seed,
             "no_cluster_match_seconds": no_cluster_match_seconds}
 
 
-def run_real(root: Path, config: MatchConfig = DEFAULT_CONFIG, *, diagnostics: bool = True):
+def run_real(root: Path, config: MatchConfig = DEFAULT_CONFIG, *, diagnostics: bool = True,
+             scene_ids=None, object_ids=None):
     model_infos = _json(root / "models_reconst" / "models_info.json")
+    selected_scenes = None if scene_ids is None else _normalise_ids(
+        scene_ids, name="scene_ids", minimum=SCENE_ID_MIN, maximum=SCENE_ID_MAX)
+    selected_objects = None if object_ids is None else _normalise_ids(
+        object_ids, name="object_ids", minimum=OBJECT_ID_MIN, maximum=OBJECT_ID_MAX)
     scenes = [prepare_scene(load_scene(root, *spec), config)
-              for spec in first_bop19_scene_specs(root)]
+              for spec in first_bop19_scene_specs(root, selected_scenes)]
+    available_objects = {
+        int(instance["obj_id"])
+        for scene in scenes
+        for instance in scene["gt"]
+    }
+    if selected_objects is not None:
+        missing = sorted(set(selected_objects) - available_objects)
+        if missing:
+            raise ValueError(f"object_ids が選択場面のデータに無い: {missing}")
+        missing_models = [value for value in selected_objects if str(value) not in model_infos]
+        if missing_models:
+            raise ValueError(f"object_ids のモデル情報が無い: {missing_models}")
+    filtered = selected_scenes is not None or selected_objects is not None
+    if filtered:
+        scene_text = ",".join(map(str, selected_scenes or SCENE_IDS))
+        object_text = "all" if selected_objects is None else ",".join(map(str, selected_objects))
+        selection = f"絞り込み scenes={scene_text} objects={object_text}"
+        for scene in scenes:
+            scene["label"] = selection
+            scene["selection"] = selection
     realdata.mark_read("bop-tless")
     rows = []
     seed = 0
@@ -480,6 +562,10 @@ def run_real(root: Path, config: MatchConfig = DEFAULT_CONFIG, *, diagnostics: b
             cluster_index = int(np.argmin(distances))
             assigned.append(cluster_index)
             obj_id = int(instance["obj_id"])
+            if selected_objects is not None and obj_id not in selected_objects:
+                continue
+            if str(obj_id) not in model_infos:
+                raise ValueError(f"obj {obj_id}: models_info.json にモデル情報が無い")
             result = _match_one(root, scene, instance, cluster_index,
                                 model_infos[str(obj_id)], seed=seed, config=config,
                                 diagnostics=diagnostics)
@@ -500,6 +586,8 @@ def run_real(root: Path, config: MatchConfig = DEFAULT_CONFIG, *, diagnostics: b
         for row in rows:
             if row["scene"] == scene["scene"]:
                 row["merged"] = bool(counts[row["cluster"]] > 1)
+    if filtered and not rows:
+        raise ValueError("絞り込み条件に可視率しきい値以上の採点対象が無い")
     return scenes, rows
 
 
@@ -529,7 +617,8 @@ def _groups(rows, field):
 
 
 def _failure_rows(rows):
-    return [row for row in rows if row["metrics"]["mssd"] > 0.20 * row["diameter"]]
+    return [row for row in rows
+            if row["metrics"]["mssd"] > MSSD_FAILURE_FRACTION * row["diameter"]]
 
 
 def _failure_breakdown(rows):
@@ -692,17 +781,23 @@ def make_figures(scenes, rows, ar_real, ar_synth):
     _save_density_sweep()
 
 
-def _print_recorded():
+def _print_recorded(scene_ids=None, object_ids=None):
+    if scene_ids is not None or object_ids is not None:
+        print("絞り込み指定は実データが無いため実行していない（RECORDED と混同しない）")
+        print("  scenes=%s objects=%s" % (scene_ids if scene_ids is not None else "all",
+                                          object_ids if object_ids is not None else "all"))
     print("BOP T-LESS 実データが無いためダウンロードせず、2026-11-01 の実行記録を表示")
     print(json.dumps(RECORDED, ensure_ascii=False, indent=2))
     print("\n再現: py -3.11 tools/fetch_tless.py && py -3.11 examples/poc_real_tless_6dof.py")
     print("\nPASS")
 
 
-def _run_sweep_setting(root: Path, config: MatchConfig) -> None:
+def _run_sweep_setting(root: Path, config: MatchConfig, *, scene_ids=None,
+                       object_ids=None) -> None:
     """単一設定を固定 subset 全体で採点し、手計算を挟まない JSON を出す。"""
     start = time.perf_counter()
-    scenes, rows = run_real(root, config, diagnostics=False)
+    scenes, rows = run_real(root, config, diagnostics=False, scene_ids=scene_ids,
+                            object_ids=object_ids)
     elapsed = time.perf_counter() - start
     ar_mssd, ar_mspd = average_recall(_metric_rows(rows, "metrics"))
     result = {
@@ -722,25 +817,34 @@ def _run_sweep_setting(root: Path, config: MatchConfig) -> None:
         "ppf_seconds_per_instance": (
             sum(row["cluster_match_seconds"] for row in rows) / len(rows)),
     }
+    if scene_ids is not None or object_ids is not None:
+        result["selection"] = {
+            "scenes": list(scene_ids) if scene_ids is not None else "all",
+            "objects": list(object_ids) if object_ids is not None else "all",
+        }
     print("SWEEP_RESULT " + json.dumps(result, ensure_ascii=False, sort_keys=True))
     print("\nPASS")
 
 
 def main() -> None:
     root = Path(os.environ.get(DATA_ENV, DEFAULT_DATA))
+    scene_ids = _parse_id_env(SCENES_ENV, minimum=SCENE_ID_MIN, maximum=SCENE_ID_MAX)
+    object_ids = _parse_id_env(OBJECTS_ENV, minimum=OBJECT_ID_MIN, maximum=OBJECT_ID_MAX)
     required = (root / "test_primesense", root / "models_reconst" / "models_info.json")
     if not all(path.exists() for path in required):
-        _print_recorded()
+        _print_recorded(scene_ids, object_ids)
         return
     sweep_name = os.environ.get(SWEEP_ENV, "").strip()
     if sweep_name:
         if sweep_name not in SWEEP_CONFIGS:
             raise ValueError("未知の掃引設定 %r（%s）" %
                              (sweep_name, ", ".join(sorted(SWEEP_CONFIGS))))
-        _run_sweep_setting(root, SWEEP_CONFIGS[sweep_name])
+        _run_sweep_setting(root, SWEEP_CONFIGS[sweep_name], scene_ids=scene_ids,
+                           object_ids=object_ids)
         return
     start = time.perf_counter()
-    scenes, rows = run_real(root, DEFAULT_CONFIG)
+    scenes, rows = run_real(root, DEFAULT_CONFIG, scene_ids=scene_ids,
+                            object_ids=object_ids)
     metrics = _metric_rows(rows, "metrics")
     no_icp = _metric_rows(rows, "no_icp")
     raw_normals = _metric_rows(rows, "raw_normal")
@@ -754,6 +858,10 @@ def main() -> None:
 
     print("BOP T-LESS (CC BY 4.0) 実機 6DoF PoC")
     print("  source https://bop.felk.cvut.cz/datasets/ / Hodaň et al. WACV 2017")
+    if scene_ids is not None or object_ids is not None:
+        print("  絞り込み scenes=%s objects=%s（RECORDED ではなくこの実データを採点）"
+              % (scene_ids if scene_ids is not None else "all",
+                 object_ids if object_ids is not None else "all"))
     print("  setting model/scene %d/%d, voxel %.1f mm, ref %.2f, angle %d, ICP %d"
           % (DEFAULT_CONFIG.model_points, DEFAULT_CONFIG.scene_points,
              DEFAULT_CONFIG.voxel_mm, DEFAULT_CONFIG.ref_fraction,
@@ -792,12 +900,16 @@ def main() -> None:
 
     print("\n公開 leaderboard と同じ MSSD/MSPD 閾値の平均 recall")
     print(" method                         official AR  AR_MSSD  AR_MSPD")
-    print(" Fullseye cluster PPF+ICP (20 scenes) n/a      %.3f    %.3f" % ar_real)
+    scope = "20 scenes" if scene_ids is None and object_ids is None else f"filtered {len(scenes)} scene(s)"
+    print(" Fullseye cluster PPF+ICP (%s) n/a      %.3f    %.3f" % (scope, *ar_real))
     print(" Fullseye scene PPF+ICP (no cluster)  n/a      %.3f    %.3f" % ar_no_cluster)
     print(" Fullseye PPF+ICP (previous 10)       n/a      0.290    0.320")
     for name, score in LEADERBOARD.items():
         print(" %-31s  %.3f      %.3f    %.3f" % (name, score["ar"], score["mssd"], score["mspd"]))
-    print("  注: PoC は20場面の先頭画像 subset、公開値は公式全 test。VSD 未実装なので PoC AR は n/a。")
+    if scene_ids is None and object_ids is None:
+        print("  注: PoC は20場面の先頭画像 subset、公開値は公式全 test。VSD 未実装なので PoC AR は n/a。")
+    else:
+        print("  注: PoC は上記の絞り込み実データ、公開値は公式全 test。VSD 未実装なので PoC AR は n/a。")
 
     print("\n合成 -> 実機 / 切り分け")
     print(" ideal depth      AR_MSSD %.3f / AR_MSPD %.3f" % ar_synth)
