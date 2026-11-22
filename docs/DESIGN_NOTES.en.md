@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 658 of 1994. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 658 of 2019. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `_archive_tarxz.py`
@@ -824,9 +824,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_fourier_ptychography.py`
 
-- **L239** _(ja)_ — ★明視野と暗視野の境に LED が乗る構成(ピッチ 7 mm・距離 70 mm、照明 NA 0.0995)は外し、境の章で別に見せる
-- **L390** _(ja)_ — ★高さだけの線(振幅は一様)では、full(384 画素)で 2 本の初期値が 0.098 違って拒否された(差は照明 NA 0.2〜0.3 の 帯に集まる。暗視野の露光を 4 倍にしても 0.092)。散乱の弱い物体の高い周波数は、k の丸めの模型の誤差に埋もれる。
-- **L581** _(ja)_ — ★実データでは瞳を画素ごとに自由に推定する(pupil_degree=None)。2〜4 次の多項式に射影すると残差が 2.3 倍 (0.0143 対 0.0061)になり、G7 の大きな要素でも変調が 0.4 に落ちる —— 実機の瞳は振幅にも構造がある(推測)。
+- **L278** _(ja)_ — ★2026-11-15(独立レビュー): 上の比べる相手はどれも単色の平行光(コヒーレント)。普通の照明(インコヒーレント)の 4 倍と 20 倍を強度で読み、FP も強度 |場|² で読んで、同じ物差しで並べる。
+- **L333** _(ja)_ — ★明視野と暗視野の境に LED が乗る構成(ピッチ 7 mm・距離 70 mm、照明 NA 0.0995)は外し、境の章で別に見せる
+- **L360** _(ja)_ — ★収束の判定のしきい値 agree_tol は、この掃引の 39 % と 32 % の間に置いたもの(fourierptycho の説明)。だから境が 35 % を挟むのは、しきい値の置き方と矛盾しないことの確認で、公表値の独立の確認ではない(2026-11-15 の独立レビュー)。
+- **L473** _(ja)_ — ★2026-11-15(独立レビュー): この門の文言は「位相は reduced では一致」と書いていたが、CI(reduced)の実行も拒否だった。
+- **L496** _(ja)_ — ★高さだけの線(振幅は一様)では、full(384 画素)で 2 本の初期値が 0.098 違って拒否された(差は照明 NA 0.2〜0.3 の 帯に集まる。暗視野の露光を 4 倍にしても 0.092)。散乱の弱い物体の高い周波数は、k の丸めの模型の誤差に埋もれる。
+- **L688** _(ja)_ — ★実データでは瞳を画素ごとに自由に推定する(pupil_degree=None)。2〜4 次の多項式に射影すると残差が 2.3 倍 (0.0143 対 0.0061)になり、G7 の大きな要素でも変調が 0.4 に落ちる —— 実機の瞳は振幅にも構造がある(推測)。
+- **L717** _(ja)_ — ★分解の判定は縦横の小さい方の変調 ≥ 0.1。最後の要素の変調がしきい値にどれだけ近いかも出す(手元の 1 回の実行)。
 
 ## `examples/poc_gear_tooth_metrology.py`
 
@@ -897,6 +901,11 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1041** _(ja)_ — ★クラスごとに同じ画素数で選ぶ: Fisher の Sb = Σ n_k (μ_k − μ)² は画素の多いクラス(ベルト・仁)に 引っ張られ、少ない樹脂片どうし(PE と PP)を分ける帯域を選ばなくなる(2026-10-15 の初回で実測)。
 - **L1053** _(ja)_ — ★log 反射率で選ぶ: 画素ごとの明るさ(陰影)は全帯に共通の足し算になり、多変量の J はその方向を クラス内のばらつきとして割り引く(1 帯域だけでは明るさと材質を分けられない —— k = 1 が弱いのはそのため)
 
+## `examples/poc_illumination_cone_vs_na.py`
+
+- **L276** _(ja)_ — ★見えない帯は閉形式 |α − β|/2。α = β を入れれば 0 になるのは定義どおり(門に数えない)。
+- **L562** _(ja)_ — ★2026-11-15(独立レビュー): 15 枚の図(02)を縮めたカードでは α の札が読めず、打痕の段の無地が壊れた図に見えた。 ヘアライン(α = β と α = 4°)と打痕(α = β と β 傾けた α = β)の 2 × 2 を、カードの幅(260 px)で札が 14 px 以上に なる大きさで組む(ViEW2026 のカード・サムネイル・物語の GIF の 1 コマ目)。英語のページにも同じ GIF が出るので、 札は記号だけ、段の名前は日英を併記する。
+
 ## `examples/poc_illusions_and_perpetual_drawing.py`
 
 - **L60** _(ja)_ — ★ここは以前「錯視の図で測る側を採点する」章だった。だが並んでいた検査は **自分で置いた定数を読み返すだけ**で、間に変換が 1 つも無かった —— 厳密に水平に引いた目地が水平だ、平坦に塗ったマスが平坦だ、同値に置いた 2 パッチが同値だ。錯視は人間の知覚の性質なので、測る側が騙される理由が そもそも無い。**同義反復**なので落とした(2026-09-24、指摘を受けて)。 残したのは 1 件だけ —— **素朴な長さ計測が実際に外す**こと。これは 知覚ではなく**アルゴリズムの偏り**の話なので、中身がある。
@@ -907,10 +916,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_interferometry_step.py`
 
-- **L579** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
-- **L622** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
-- **L694** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
-- **L734** — ★A small spread is no evidence of correctness
+- **L352** _(ja)_ — ★2026-11-15(独立レビュー): 以前は上限の数字が高さの絵に重なり、下限の数字が「通過」の板に 隠れ、絵とバーの下端が最下段の帯(y ≥ 680)に覆われていた。「通過」の注は題の下へ、絵とバーは 帯より上へ収め、上限・単位・下限の数字はバーの右の余白へ出す(何も重ねない)。
+- **L380** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 以前のサムネイルは灰色の縞と 円板だけで何の図か分からず、動画のコマを切り抜くと見出しの文字が切れる)。同じ走査・同じ高さから組む。
+- **L650** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
+- **L697** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
+- **L771** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
+- **L814** — ★A small spread is no evidence of correctness
 
 ## `examples/poc_interreflection_fringe_error.py`
 
@@ -949,12 +960,15 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_lidar_terrain_change.py`
 
-- **L426** — ★The area of cores that could not be measured contributes nothing to the earth volume. Also return the value divided back by the effective rate —— without dividing back, you take the 'silently missing earth volume' for the correct value.
-- **L714** — ★A number close to the true value is not necessarily 'correct' —— count the two opposing errors separately
-- **L843** — ★When there are too few valid cores, do not treat the LoD as 'measured' (the standard deviation of 2 points is a number but carries no meaning).
-- **L846** — ★If you decimate here, C2C ends up measuring the 'post-decimation point spacing' and the density dependence vanishes (when I first wrote it aligned to 6000 points, it came out a constant 0.42 m at every density).
-- **L966** — --- ★ Change vanishes exactly by the amount you align away -------------------------------------- #
-- **L1330** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L446** — ★The area of cores that could not be measured contributes nothing to the earth volume. Also return the value divided back by the effective rate —— without dividing back, you take the 'silently missing earth volume' for the correct value.
+- **L734** — ★A number close to the true value is not necessarily 'correct' —— count the two opposing errors separately
+- **L863** — ★When there are too few valid cores, do not treat the LoD as 'measured' (the standard deviation of 2 points is a number but carries no meaning).
+- **L866** — ★If you decimate here, C2C ends up measuring the 'post-decimation point spacing' and the density dependence vanishes (when I first wrote it aligned to 6000 points, it came out a constant 0.42 m at every density).
+- **L986** — --- ★ Change vanishes exactly by the amount you align away -------------------------------------- #
+- **L1351** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1931** _(ja)_ — ★2026-11-15(補欠の注意): 以前は 0 が黒の発散色で、「データ無し(NaN)」も黒に塗られ、色の尺度も無かった。 coolwarm(0 = 薄い灰、負 = 青 = 2017 のほうが低い、正 = 赤)で塗り、データ無しだけを黒にして、尺度を添える。 1 m セルのままだと 2012 の空セル(充填率 64 %)が全面に粒になって色が読めないので、表示だけ 2 m 角 (1 m セル 4 つのうち値のあるものの平均)に寄せる。数は 1 m セルのまま測っている。
+- **L1985** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、 ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
+- **L2198** _(ja)_ — ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では 手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
 
 ## `examples/poc_light_section_step_weld_floor.py`
 
@@ -1137,7 +1151,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_polarization_specular.py`
 
-- **L1544** _(ja)_ — ゼロ点(偏光フィルタ 1 枚、最適角)。★2026-11-08 の探針(種 5 本 x 512 画素・3 本 x 1024 画素)と 11-09 の確認 (種 8 本 x 512・3 本 x 1024、SWEEP の上の表)を見てから置いた門。モザイクから組んだフィルタとの勝ち負けの門 (前の版から)は 512 画素・種 137 の大きな面照明で逆転する(6.60 < 6.64)ので外し、全画素のフィルタとの比に一本化した。
+- **L1689** _(ja)_ — ゼロ点(偏光フィルタ 1 枚、最適角)。★2026-11-08 の探針(種 5 本 x 512 画素・3 本 x 1024 画素)と 11-09 の確認 (種 8 本 x 512・3 本 x 1024、SWEEP の上の表)を見てから置いた門。モザイクから組んだフィルタとの勝ち負けの門 (前の版から)は 512 画素・種 137 の大きな面照明で逆転する(6.60 < 6.64)ので外し、全画素のフィルタとの比に一本化した。
 
 ## `examples/poc_powder_grinding_ae.py`
 
@@ -1223,12 +1237,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_registration_basin.py`
 
-- **L442** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
-- **L632** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
-- **L749** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
-- **L1274** — ★When the user explicitly passes `estimate_normals`, thinking "but the normals do exist". This is the **remainder** of the gap, 14 orders of magnitude worse than the default.
-- **L1460** — ★Gap 1 was closed on 2026-09-06. This assert has been rewritten to **pin the closed state** (previously it pinned the broken state: `d_fixed < 1e-6 < d_default` = broken). If the breakage returns, this fails.
-- **L1471** — ★Gap 2 was closed on 2026-09-06. Previously it was `< 0.9 * len(ka)` (pinning the broken state). Now it pins that **the default gives an exact match**.
+- **L457** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
+- **L683** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
+- **L849** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
+- **L1027** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
+- **L1421** — ★When the user explicitly passes `estimate_normals`, thinking "but the normals do exist". This is the **remainder** of the gap, 14 orders of magnitude worse than the default.
+- **L1611** — ★Gap 1 was closed on 2026-09-06. This assert has been rewritten to **pin the closed state** (previously it pinned the broken state: `d_fixed < 1e-6 < d_default` = broken). If the breakage returns, this fails.
+- **L1622** — ★Gap 2 was closed on 2026-09-06. Previously it was `< 0.9 * len(ka)` (pinning the broken state). Now it pins that **the default gives an exact match**.
 
 ## `examples/poc_reproducible_icp.py`
 
@@ -1296,12 +1311,18 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_solar_el_inspection.py`
 
-- **L377** — ★The calibration line is also **passed through the same imaging system (blur)**. A calibration line pasted without blurring responds 2.4x stronger than a real crack and pulled the cliff toward the thick side (stepped on this on 2026-09-07).
-- **L971** _(ja)_ — 112089, doi:10.1016/j.solener.2023.112089)。★したがって S1〜S6 の暗部は**セルの表面に置いた
-- **L972** _(ja)_ — 遮光マスク**で、電気的な不活性領域ではない。★ファイル名の S 番号と論文の番号の対応は配布元に 書かれていない。画像で確かめると S3〜S6 の形は論文と一致するが、S1 / S2 は「上の帯」と「左の帯」が セルによって入れ替わる(電流 6 の 69 枚で S1 = 上 18・左 17、S2 = 左 18・上 16、2026-11-08 に実測)。 S7 を「その他の欠陥」と読むのは番号の対応からの推定で、種類の内訳も配布元に無い。
-- **L983** _(ja)_ — 十分広く、影(直径 100 px 級)より十分狭い。★この値は実データを見てから決めた(事後の選択)。
-- **L993** _(ja)_ — ★2026-11-09: otsu が実データの範囲で 256 ビンを張るようになり、ゼロ点の列が 3 桁目で動いた (ρ 0.44 → 0.438、平均差 0.073 → 0.074、S3/S4/S7 の Δ +0.001〜0.002)。文中の 2 桁の値は変わらない。
-- **L1351** _(ja)_ — ★下の閾値(+0.1 / +0.3 / 0.03 / 0.04 / +0.2)はすべて**実データを見てから置いた**(事後の門)。 緩めずに、実測の記録値そのものとの一致(丸め 3 桁)を別に見る。
+- **L382** — ★The calibration line is also **passed through the same imaging system (blur)**. A calibration line pasted without blurring responds 2.4x stronger than a real crack and pulled the cliff toward the thick side (stepped on this on 2026-09-07).
+- **L976** _(ja)_ — 112089, doi:10.1016/j.solener.2023.112089)。★したがって S1〜S6 の暗部は**セルの表面に置いた
+- **L977** _(ja)_ — 遮光マスク**で、電気的な不活性領域ではない。★ファイル名の S 番号と論文の番号の対応は配布元に 書かれていない。画像で確かめると S3〜S6 の形は論文と一致するが、S1 / S2 は「上の帯」と「左の帯」が セルによって入れ替わる(電流 6 の 69 枚で S1 = 上 18・左 17、S2 = 左 18・上 16、2026-11-08 に実測)。 S7 を「その他の欠陥」と読むのは番号の対応からの推定で、種類の内訳も配布元に無い。
+- **L988** _(ja)_ — 十分広く、影(直径 100 px 級)より十分狭い。★この値は実データを見てから決めた(事後の選択)。
+- **L994** _(ja)_ — ★2026-11-15 の作者と独立の審査で「細い成分だけ割る経路がいちばん揃う」は、画像処理をしない比べ手 (1 − 平均の明るさの比)との差の区間が 0 をまたぐと指摘された。区間を毎回数え、見出しの門にする。
+- **L998** _(ja)_ — 結果の散布図の横軸 [%]。★2026-11-15: CSV のままの外れ(P16 S1 の -92 %)に軸が引き延ばされ、本体が 右の 3 分の 1 に潰れていた(同じ審査)。枠の外の点は除かずに、枠の端へ寄せて灰色で描く。
+- **L1011** _(ja)_ — ★2026-11-09: otsu が実データの範囲で 256 ビンを張るようになり、ゼロ点の列が 3 桁目で動いた (ρ 0.44 → 0.438、平均差 0.073 → 0.074、S3/S4/S7 の Δ +0.001〜0.002)。文中の 2 桁の値は変わらない。
+- **L1024** _(ja)_ — ★2026-11-15: 画像処理をしない比べ手(dim = 1 − 平均の明るさの比)・S1〜S6 だけの順位相関・ 差のブートストラップ 95 % 区間(BOOT_N 回、種 BOOT_SEED)を足した。既存の値は 3 桁まで変わらない。 2026-11-15 に同じ書庫で測り直し、既存の値は 3 桁まで一致した(作者と独立の審査の再実行と、この直しの実行)。
+- **L1408** _(ja)_ — ★比べ手: 画像処理をしない「1 − 平均の明るさの比」(セルの外枠の中、S0 比)。2026-11-15 の作者と独立の 審査が、細い成分だけ割る経路との差がこの比べ手に対しては 0 をまたぐと指摘した。同じ表に並べて数える。
+- **L1515** _(ja)_ — ★下の閾値(+0.1 / +0.3 / 0.03 / 0.04 / +0.2)はすべて**実データを見てから置いた**(事後の門)。 緩めずに、実測の記録値そのものとの一致(丸め 3 桁)を別に見る。
+- **L1523** _(ja)_ — ★2026-11-15: 見出しを「画像処理をしない比べ手とはっきりした差が無い・ゼロ点よりは揃う」に直した。両方を固定する (0 は主張の意味そのもので、実データを見て置いた閾値ではない)。
+- **L1575** _(ja)_ — ★2026-11-15: 色の凡例は題の中だけだった(縮めた図では読めない)。各パネルの説明に色の意味を書く。
 
 ## `examples/poc_solar_limb_darkening.py`
 
@@ -1374,6 +1395,15 @@ This repository records *why* things are the way they are in **comments in the s
 - **L49** _(ja)_ — ★追跡カメラは予算に関係なく 240 fps。120 fps に落とすと標本が半分になり、回転の誤差が √2 倍(バック 0.9 → 10.9 %)、 コマ間で球が 1.6 cm 動くので跳ねの谷も浅く見えた(2026-09-30)。予算は長さの掃引の刻みだけで削る。
 - **L245** _(ja)_ — 画像から見つけた跳ね(真値は使わない)。★z の局所最小のうち**最も低いもの** —— 欠けた検出が残ると空中に偽の 「跳ね」ができ、最初の谷を採るとその手前で軌跡を切ってしまう(バックスピンで 36 コマしか使えなかった)。 高さの閾値(台 + r + 1.5 cm)で選ぶ手は、コマ間で球が 1.6 cm 動く 120 fps で本物の谷を落とした
 
+## `examples/poc_tdi_linescan.py`
+
+- **L242** _(ja)_ — ★ピンホール 4 個は 1 種(和のマスク)として数えている。個別に、検出の成分が触れた個数も出す。
+- **L252** _(ja)_ — ★2026-11-15: 説明が「0 / 3 → 3 / 3、誤検出 0」と言うのに門は 1 段で 1 / 3・誤検出 2 個まで許していた。主張に揃えて締めた。
+- **L394** _(ja)_ — ★瞳の因子は linescan.lens_field_profile が「光束 / F0 / cos⁴」と定義するので、この積は定義どおり(恒等式)。
+- **L463** _(ja)_ — ★補正のゲインはこの白板の列平均から作り、同じ白板に掛けている —— 揃うのは作りの上で当然(門に数えない)。
+- **L489** _(ja)_ — ★列ごとのゲインを掛けても、平均で割った変調はほとんど動かない(性質)。数として見出しに出さない。
+- **L653** _(ja)_ — ★2026-11-15(独立レビュー): 4 段の図(01)は横長で、カードやサムネの大きさでは欠陥が見えなかった。1 段と 64 段だけを 3 つの欠陥の周りで切り出し、双三次で 3 倍にした表紙(ViEW2026 のカード・サムネイル・物語の GIF の 1 コマ目)。
+
 ## `examples/poc_telecentric_metrology.py`
 
 - **L113** _(ja)_ — 狙い = iterative)。★2026-10-15 から門に使う: 手元に optiland が無いとき(CI)は、この記録値と telecentric.chief_ray_angle・raytrace.chief_ray(入射瞳が無限遠なら絞りを狙う)の両方を 2e-6 mm で照合する (記録は 6 桁に丸めてあるので丸めの幅 5e-7 mm を含む)。
@@ -1383,7 +1413,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_tem_ctf_thon_rings.py`
 
-- **L346** _(ja)_ — 許容幅(★初回の実行で 400 Å の例が 12.5 % / 5.2° で旧の幅 10 % / 5° を外れ、広げた —— 記録として残す): 大きさは max(60 Å, 10 %)(実写 part2_001 で著者の 2 つの推定どうしが非点で 9 Å、この推定とは 190 Å 違う桁)、 向きは 8°(大きさの誤差 / 大きさ ≈ 0.12 rad = 7° の桁が、向きの決まりにくさの目安)。
+- **L394** _(ja)_ — 許容幅(★初回の実行で 400 Å の例が 12.5 % / 5.2° で旧の幅 10 % / 5° を外れ、広げた —— 記録として残す): 大きさは max(60 Å, 10 %)(実写 part2_001 で著者の 2 つの推定どうしが非点で 9 Å、この推定とは 190 Å 違う桁)、 向きは 8°(大きさの誤差 / 大きさ ≈ 0.12 rad = 7° の桁が、向きの決まりにくさの目安)。
 
 ## `examples/poc_template_tracking.py`
 
@@ -3401,6 +3431,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tools/build_view2026_viewers.py`
 
 - **L336** _(ja)_ — ★窓の比較は PoC の 4 節と同じ関数で(2026-11-13)。それまでここで別に計算していて、25 秒の側が 全コマの地図(0.5 mm・直径 2 mm が +627 %)になり、PoC・論文の +612 %(窓は最後の 1 コマを含めない)と食い違っていた。
+- **L692** _(ja)_ — ★2026-11-15(独立レビュー): 以前は σ ごとに乱数の種 1 本の |測定 − 0.55| を描いていて、曲線は σ ≈ 0.037 で最大の後に 下がり、題の「広がる」を支えていなかった。いまは σ ごとに PoC の repeat()(3 節と同じ種の流れ、40 回)の 総合誤差 √(偏り² + 標準偏差²) [nm] を描く。
 
 ## `tools/chain_fuzz.py`
 
@@ -3574,7 +3605,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tools/gen_view2026_story_gifs.py`
 
-- **L455** _(ja)_ — ★キャッシュ命中時は台帳の数値を書き換えない。color_mad は commit 済み GIF を復号して 元図を再標本化した差で、Pillow の版が違う CI では 4 桁目が動き、台帳だけが drift した (PR #227、2026-11-01: 手元は差ゼロ、CI は story_gifs.json だけ食い違う)。 ここでは限度を越えていないことだけ確かめ、数値は描画した機械の値を保つ。
+- **L461** _(ja)_ — ★キャッシュ命中時は台帳の数値を書き換えない。color_mad は commit 済み GIF を復号して 元図を再標本化した差で、Pillow の版が違う CI では 4 桁目が動き、台帳だけが drift した (PR #227、2026-11-01: 手元は差ゼロ、CI は story_gifs.json だけ食い違う)。 ここでは限度を越えていないことだけ確かめ、数値は描画した機械の値を保つ。
 
 ## `tools/gen_wing2d_gallery.py`
 

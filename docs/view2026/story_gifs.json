@@ -18,7 +18,7 @@
   "crop_title_band_fraction": 0.12,
   "min_laplacian_density": 0.0005,
   "min_content_fraction": 0.36,
-  "manual_thumbnail_spec_count": 34,
+  "manual_thumbnail_spec_count": 35,
   "entries": {
     "poc_phase_measuring_deflectometry": {
       "representative": "03_photo_vs_pmd.png",
@@ -1277,12 +1277,11 @@
       "representative": "01_thon_ring_sweep.gif",
       "status": "gif",
       "selected": [
+        "17_real_cover.png",
         "02_thon_rings_four_defoci.png",
-        "03_ctf_curves.png",
-        "07_estimate_profile.png",
-        "08_weak_phase_breakdown.png",
-        "15_real_micrograph_part2_001.png",
-        "16_real_vs_author.png"
+        "04_contrast_reversal.png",
+        "11_ctf_correction.png",
+        "10_drift_alignment.png"
       ],
       "excluded_frames": [],
       "variants": {
@@ -1290,7 +1289,7 @@
           "path": "articles/assets/poc/poc_tem_ctf_thon_rings/story.ja.gif",
           "frames": [
             {
-              "file": "02_thon_rings_four_defoci.png",
+              "file": "17_real_cover.png",
               "content_box": [
                 0,
                 0,
@@ -1298,7 +1297,7 @@
                 720
               ],
               "thumbnail": {
-                "source": "articles/assets/poc/poc_tem_ctf_thon_rings/12_real_empiar_10028.png",
+                "source": "articles/assets/poc/poc_tem_ctf_thon_rings/17_real_cover.png",
                 "frame": 0.5,
                 "crop": null,
                 "mode": "contain",
@@ -1306,85 +1305,70 @@
               }
             },
             {
-              "file": "03_ctf_curves.png",
+              "file": "02_thon_rings_four_defoci.png",
               "content_box": [
                 0,
-                207,
+                238,
                 720,
-                275
+                213
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.614474
+              "source_aspect": 3.382812
             },
             {
-              "file": "07_estimate_profile.png",
+              "file": "04_contrast_reversal.png",
               "content_box": [
                 0,
-                222,
+                81,
                 720,
-                246
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.930882
-            },
-            {
-              "file": "08_weak_phase_breakdown.png",
-              "content_box": [
-                0,
-                147,
-                720,
-                395
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.823529
-            },
-            {
-              "file": "15_real_micrograph_part2_001.png",
-              "content_box": [
-                15,
-                0,
-                690,
-                690
+                528
               ]
             },
             {
-              "file": "16_real_vs_author.png",
+              "file": "11_ctf_correction.png",
               "content_box": [
                 0,
-                262,
+                81,
                 720,
-                166
+                528
+              ]
+            },
+            {
+              "file": "10_drift_alignment.png",
+              "content_box": [
+                0,
+                140,
+                720,
+                409
               ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 4.325658
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.75974
             }
           ],
-          "frame_count": 6,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
-            1600,
             1600
           ],
-          "bytes": 987362,
+          "bytes": 1678182,
           "color_mad": [
-            0.1491,
-            0.1304,
-            0.0491,
-            0.0357,
-            0.0004,
-            0.0275
+            0.4192,
+            0.1501,
+            0.1721,
+            0.1601,
+            0.1962
           ],
-          "max_color_mad": 0.1491,
-          "source_sha256": "31ac3070216020162b3072ead8e65e3f9f5165fe55164d21e2a61ce138dc27cc"
+          "max_color_mad": 0.4192,
+          "source_sha256": "f9f080876726b8f74767f8dcd64715f9bb4a9eaefdf2377abaa850c5f31cd1f1"
         },
         "en": {
           "path": "articles/assets/poc/poc_tem_ctf_thon_rings/story.en.gif",
           "frames": [
             {
-              "file": "02_thon_rings_four_defoci.png",
+              "file": "17_real_cover.png",
               "content_box": [
                 0,
                 0,
@@ -1392,7 +1376,7 @@
                 720
               ],
               "thumbnail": {
-                "source": "articles/assets/poc/poc_tem_ctf_thon_rings/12_real_empiar_10028.png",
+                "source": "articles/assets/poc/poc_tem_ctf_thon_rings/17_real_cover.png",
                 "frame": 0.5,
                 "crop": null,
                 "mode": "contain",
@@ -1400,94 +1384,79 @@
               }
             },
             {
-              "file": "03_ctf_curves.png",
+              "file": "02_thon_rings_four_defoci.png",
               "content_box": [
                 0,
-                207,
+                238,
                 720,
-                275
+                213
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.614474
+              "source_aspect": 3.382812
             },
             {
-              "file": "07_estimate_profile.png",
+              "file": "04_contrast_reversal.png",
               "content_box": [
                 0,
-                222,
+                81,
                 720,
-                246
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.930882
-            },
-            {
-              "file": "08_weak_phase_breakdown.png",
-              "content_box": [
-                0,
-                147,
-                720,
-                395
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.823529
-            },
-            {
-              "file": "15_real_micrograph_part2_001.png",
-              "content_box": [
-                15,
-                0,
-                690,
-                690
+                528
               ]
             },
             {
-              "file": "16_real_vs_author.png",
+              "file": "11_ctf_correction.png",
               "content_box": [
                 0,
-                262,
+                81,
                 720,
-                166
+                528
+              ]
+            },
+            {
+              "file": "10_drift_alignment.png",
+              "content_box": [
+                0,
+                140,
+                720,
+                409
               ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 4.325658
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.75974
             }
           ],
-          "frame_count": 6,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
-            1600,
             1600
           ],
-          "bytes": 987362,
+          "bytes": 1678182,
           "color_mad": [
-            0.1491,
-            0.1304,
-            0.0491,
-            0.0357,
-            0.0004,
-            0.0275
+            0.4192,
+            0.1501,
+            0.1721,
+            0.1601,
+            0.1962
           ],
-          "max_color_mad": 0.1491,
-          "source_sha256": "b9ef8a3800d7b35866b609e1d23662df787525643f4373d4421750c167847e0f"
+          "max_color_mad": 0.4192,
+          "source_sha256": "15a2a4aaa0740e1a4be2493cde09c5f469029c99ebc99f0076d40af1f621ccc8"
         }
       },
       "thumbnail": {
-        "source": "articles/assets/poc/poc_tem_ctf_thon_rings/12_real_empiar_10028.png",
+        "source": "articles/assets/poc/poc_tem_ctf_thon_rings/17_real_cover.png",
         "frame": 0.5,
         "crop": null,
         "mode": "contain",
         "rendered": "view2026/thumbs/poc_tem_ctf_thon_rings.jpg"
       },
       "reason": null,
-      "cover": "02_thon_rings_four_defoci.png",
-      "still": "articles/assets/poc/poc_tem_ctf_thon_rings/02_thon_rings_four_defoci.png",
+      "cover": "17_real_cover.png",
+      "still": "articles/assets/poc/poc_tem_ctf_thon_rings/17_real_cover.png",
       "alt": {
-        "ja": "同じ試料を 4 つの焦点で撮ったパワースペクトル。最初の暗いリング(半径 1/√(λΔf))は 0.4 → 2.4 µm で √6 倍内側へ動く(門: 4 点とも閉形式と 4 % 以内)。",
-        "en": "In a transmission electron microscope, defocus decides whether fine detail looks bright or dark. Estimating defocus from 3 public real micrographs closely matched the authors' own software. Sweeping focus moves the concentric Thon rings and flips detail near true focus."
+        "ja": "表紙: 実写(EMPIAR-10028、CC0)3 枚のパワースペクトル。左半分 = 観測、右半分 = この PoC が当てはめた CTF²。著者の CTFFIND3 との差は −55.2 / +64.6 / −0.5 Å(最大 0.205 %)。CTFFIND3 も推定のソフトで真値ではなく、差は解析ソフトどうしの差と同じ桁。",
+        "en": "In a transmission electron microscope, defocus flips the sign of fine detail between bright and dark. Estimating defocus from public real micrographs matched the authors' own software to within 0.21 %. Materials and semiconductor TEM read focus from the same concentric rings, but only public biological data was tested."
       }
     },
     "poc_virtual_sem_kv_cd_bse": {
@@ -2510,12 +2479,10 @@
               "file": "02_group9_zoom.png",
               "content_box": [
                 0,
-                142,
+                76,
                 720,
-                406
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.772595
+                538
+              ]
             },
             {
               "file": "05_overlap_vs_convergence.png",
@@ -2530,12 +2497,12 @@
               "file": "07_pupil_phase.png",
               "content_box": [
                 0,
-                134,
+                206,
                 720,
-                421
+                278
               ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.710938
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.585938
             },
             {
               "file": "08_pupil_recovery.png",
@@ -2567,17 +2534,17 @@
             1600,
             1600
           ],
-          "bytes": 751228,
+          "bytes": 731088,
           "color_mad": [
-            0.1473,
-            0.118,
-            0.0938,
-            0.3011,
+            0.1474,
+            0.1655,
+            0.0993,
+            0.7262,
             0.1618,
             0.0565
           ],
-          "max_color_mad": 0.3011,
-          "source_sha256": "5ad0f5e638612a0aaf79960c26e67c836f7405d5e3c174e872a1bad97122c926"
+          "max_color_mad": 0.7262,
+          "source_sha256": "32cd032543caadcfd41c1c915c65c4a0aa83db9f471719a60fa5e16d36df4736"
         },
         "en": {
           "path": "articles/assets/poc/poc_fourier_ptychography/story.en.gif",
@@ -2602,12 +2569,10 @@
               "file": "02_group9_zoom.png",
               "content_box": [
                 0,
-                142,
+                76,
                 720,
-                406
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.772595
+                538
+              ]
             },
             {
               "file": "05_overlap_vs_convergence.png",
@@ -2622,12 +2587,12 @@
               "file": "07_pupil_phase.png",
               "content_box": [
                 0,
-                134,
+                206,
                 720,
-                421
+                278
               ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.710938
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.585938
             },
             {
               "file": "08_pupil_recovery.png",
@@ -2659,17 +2624,17 @@
             1600,
             1600
           ],
-          "bytes": 751228,
+          "bytes": 731088,
           "color_mad": [
-            0.1473,
-            0.118,
-            0.0938,
-            0.3011,
+            0.1474,
+            0.1655,
+            0.0993,
+            0.7262,
             0.1618,
             0.0565
           ],
-          "max_color_mad": 0.3011,
-          "source_sha256": "69bb426b3b7c8a5c533cc909f80eac5d7c1214dce24de6e2c7813d0343aecdbd"
+          "max_color_mad": 0.7262,
+          "source_sha256": "8d247b203f3827c9e9207bfbefe6c160259223730ee56b7077f08a3041b4cbb3"
         }
       },
       "thumbnail": {
@@ -2683,8 +2648,8 @@
       "cover": "01_usaf_4x_fp_20x.png",
       "still": "articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x.png",
       "alt": {
-        "ja": "同じ視野で、4 倍の 1 枚の限界 5.53 µm が FP で 1.22 µm に(20 倍 / NA 0.40 は 1.22 µm、閉形式 λ/NA_syn = 1.25 µm)。",
-        "en": "A low-magnification objective sees a wide field but misses fine detail. Combining images lit from different angles in frequency space resolved detail as fine as a 20x image over the same wide field. When the illumination overlap is too small to converge, no answer is returned."
+        "ja": "合成の USAF チャート(4 面とも同じ 125 µm の切り出し)。4 倍の 1 枚の限界 5.53 µm が FP で 1.22 µm に(単色の平行光で照らした 20 倍 / NA 0.40 も 1.22 µm、閉形式 λ/NA_syn = 1.25 µm)。普通の照明の 20 倍は 1.06 µm まで分解し、FP より細かい(02・03 の図)。",
+        "en": "A low-power objective sees a wide field but misses fine detail. On a synthetic chart, images lit from many angles and joined in frequency space matched a 20x objective under single-colour parallel light. Under ordinary light that objective still resolves finer, and too little illumination overlap returns no answer."
       }
     },
     "poc_photoelasticity": {
@@ -4863,10 +4828,21 @@
               "file": "10_real_el_overlay.png",
               "content_box": [
                 0,
-                73,
+                0,
                 720,
-                543
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_solar_el_inspection/10_real_el_overlay.png",
+                "frame": null,
+                "crop": [
+                  0.3388,
+                  0.0555,
+                  0.4266
+                ],
+                "mode": "square",
+                "rendered": "view2026/thumbs/poc_solar_el_inspection.jpg"
+              }
             },
             {
               "file": "11_real_input_masks.png",
@@ -4892,9 +4868,9 @@
               "file": "13_real_result_scatter.png",
               "content_box": [
                 0,
-                113,
+                62,
                 720,
-                463
+                566
               ]
             },
             {
@@ -4915,16 +4891,16 @@
             1600,
             1600
           ],
-          "bytes": 733452,
+          "bytes": 708814,
           "color_mad": [
-            0.5968,
+            0.8829,
             0.1863,
             0.2207,
-            0.0949,
+            0.1071,
             0.0462
           ],
-          "max_color_mad": 0.5968,
-          "source_sha256": "93bf050fdf0afaa278c205603b981ae2e8bd23ef86901f1c0b7da43949552f32"
+          "max_color_mad": 0.8829,
+          "source_sha256": "362decfe79cab1565e8e3bd64bebfbd69e9f866d6af478b823f3b74e8f8b55b6"
         },
         "en": {
           "path": "articles/assets/poc/poc_solar_el_inspection/story.en.gif",
@@ -4933,10 +4909,21 @@
               "file": "10_real_el_overlay.png",
               "content_box": [
                 0,
-                73,
+                0,
                 720,
-                543
-              ]
+                720
+              ],
+              "thumbnail": {
+                "source": "articles/assets/poc/poc_solar_el_inspection/10_real_el_overlay.png",
+                "frame": null,
+                "crop": [
+                  0.3388,
+                  0.0555,
+                  0.4266
+                ],
+                "mode": "square",
+                "rendered": "view2026/thumbs/poc_solar_el_inspection.jpg"
+              }
             },
             {
               "file": "11_real_input_masks.png",
@@ -4962,9 +4949,9 @@
               "file": "13_real_result_scatter.png",
               "content_box": [
                 0,
-                113,
+                62,
                 720,
-                463
+                566
               ]
             },
             {
@@ -4985,24 +4972,35 @@
             1600,
             1600
           ],
-          "bytes": 733452,
+          "bytes": 708814,
           "color_mad": [
-            0.5968,
+            0.8829,
             0.1863,
             0.2207,
-            0.0949,
+            0.1071,
             0.0462
           ],
-          "max_color_mad": 0.5968,
-          "source_sha256": "21ff400d3a135f16af6d7c78020b28107ddaf027d9f78ebd1459a01cae8ebcec"
+          "max_color_mad": 0.8829,
+          "source_sha256": "e501b68261c9e5a7706dde83f1379bf0bb152b5df39a9c00d03b6bd981445870"
         }
+      },
+      "thumbnail": {
+        "source": "articles/assets/poc/poc_solar_el_inspection/10_real_el_overlay.png",
+        "frame": null,
+        "crop": [
+          0.3388,
+          0.0555,
+          0.4266
+        ],
+        "mode": "square",
+        "rendered": "view2026/thumbs/poc_solar_el_inspection.jpg"
       },
       "reason": null,
       "cover": "10_real_el_overlay.png",
       "still": "articles/assets/poc/poc_solar_el_inspection/10_real_el_overlay.png",
       "alt": {
         "ja": "SIPV-EL(Zenodo 14439369、CC BY 4.0)の実セル。上: セル表面に置いた遮光マスク(中央の大円)。下: S7(論文の分類 7「その他の欠陥」と推定)のうち、出力低下が S7 の中央値 8.9 % に最も近いセル。灰色は実測の EL 強度、色は判定の重ね。出力低下は同じセル・同じ電流の I-V から。",
-        "en": "On real EL images the dark area is counted after dividing out the fingers and busbars, then compared with the power loss measured by I-V curves. Across 32 masked cells, dividing out only the narrow grid component ranks the losses best. For defects that dim the whole cell, the dark area does not track the power loss."
+        "en": "On public EL images of real cells, the dark area was ranked against power loss from I-V curves. The grid division that worked on synthetic cells erased edge-strip masks, and a retuned one did not clearly beat mean brightness alone (rank correlation 0.57). When the whole cell dims, no area count follows the loss."
       }
     },
     "poc_solder_fillet_aoi": {
@@ -5963,17 +5961,10 @@
               "file": "01_depth_table.png",
               "content_box": [
                 0,
-                0,
+                210,
                 720,
-                720
-              ],
-              "thumbnail": {
-                "source": "articles/assets/poc/poc_thermography_ndt/02_depth_map_720.jpg",
-                "frame": null,
-                "crop": null,
-                "mode": "square",
-                "rendered": "view2026/thumbs/poc_thermography_ndt.jpg"
-              }
+                270
+              ]
             },
             {
               "file": "02_depth_map.png",
@@ -6024,16 +6015,16 @@
             1600,
             1600
           ],
-          "bytes": 733360,
+          "bytes": 486441,
           "color_mad": [
-            2.2967,
+            0.0548,
             0.7693,
             0.1637,
             1.5505,
             0.1042
           ],
-          "max_color_mad": 2.2967,
-          "source_sha256": "cf48bf3c35cc78749850c5fbbae73b866c117c65c82ff7c3c74f879891f8a357"
+          "max_color_mad": 1.5505,
+          "source_sha256": "36f11256550b243c280d2852c84afbc5c88f4d7ba47b3164fca620cc1ae49d82"
         },
         "en": {
           "path": "articles/assets/poc/poc_thermography_ndt/story.en.gif",
@@ -6042,17 +6033,10 @@
               "file": "01_depth_table.png",
               "content_box": [
                 0,
-                0,
+                210,
                 720,
-                720
-              ],
-              "thumbnail": {
-                "source": "articles/assets/poc/poc_thermography_ndt/02_depth_map_720.jpg",
-                "frame": null,
-                "crop": null,
-                "mode": "square",
-                "rendered": "view2026/thumbs/poc_thermography_ndt.jpg"
-              }
+                270
+              ]
             },
             {
               "file": "02_depth_map.png",
@@ -6103,24 +6087,17 @@
             1600,
             1600
           ],
-          "bytes": 733360,
+          "bytes": 486441,
           "color_mad": [
-            2.2967,
+            0.0548,
             0.7693,
             0.1637,
             1.5505,
             0.1042
           ],
-          "max_color_mad": 2.2967,
-          "source_sha256": "04ec667ae299ddc865840446ba5240dc4b9c30e2da43ce285fea94a6960aba85"
+          "max_color_mad": 1.5505,
+          "source_sha256": "bb9ca15d488f61f091aae359246b1d1893707ac75575e9fa889cf0449ef498af"
         }
-      },
-      "thumbnail": {
-        "source": "articles/assets/poc/poc_thermography_ndt/02_depth_map_720.jpg",
-        "frame": null,
-        "crop": null,
-        "mode": "square",
-        "rendered": "view2026/thumbs/poc_thermography_ndt.jpg"
       },
       "reason": null,
       "cover": "01_depth_table.png",
@@ -12389,11 +12366,11 @@
       "representative": "03_fringe_flow.gif",
       "status": "gif",
       "selected": [
+        "09_overlay_cover.png",
         "02_one_nm_steps.png",
-        "01_marks.png",
-        "04_crlb.png",
         "06_quad_mark.png",
-        "07_ambiguity.png",
+        "05_differential.png",
+        "04_crlb.png",
         "08_talbot_gap.png"
       ],
       "excluded_frames": [],
@@ -12402,7 +12379,7 @@
           "path": "articles/assets/poc/poc_moire_alignment/story.ja.gif",
           "frames": [
             {
-              "file": "02_one_nm_steps.png",
+              "file": "09_overlay_cover.png",
               "content_box": [
                 0,
                 0,
@@ -12410,7 +12387,7 @@
                 720
               ],
               "thumbnail": {
-                "source": "articles/assets/poc/poc_moire_alignment/01_marks.png",
+                "source": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png",
                 "frame": 0.5,
                 "crop": null,
                 "mode": "contain",
@@ -12418,18 +12395,7 @@
               }
             },
             {
-              "file": "01_marks.png",
-              "content_box": [
-                0,
-                233,
-                720,
-                224
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 3.211747
-            },
-            {
-              "file": "04_crlb.png",
+              "file": "02_one_nm_steps.png",
               "content_box": [
                 0,
                 113,
@@ -12449,7 +12415,18 @@
               "source_aspect": 1.742149
             },
             {
-              "file": "07_ambiguity.png",
+              "file": "05_differential.png",
+              "content_box": [
+                0,
+                145,
+                720,
+                400
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.8
+            },
+            {
+              "file": "04_crlb.png",
               "content_box": [
                 0,
                 113,
@@ -12478,23 +12455,23 @@
             1600,
             1600
           ],
-          "bytes": 539333,
+          "bytes": 639831,
           "color_mad": [
-            0.261,
-            0.3037,
-            0.0711,
+            0.7047,
+            0.1614,
             0.1236,
-            0.185,
+            0.001,
+            0.0719,
             0.1295
           ],
-          "max_color_mad": 0.3037,
-          "source_sha256": "38829bab4b3f444fbda50d75ed8d74abdae3119df8ae597b21087093534cd874"
+          "max_color_mad": 0.7047,
+          "source_sha256": "9c24dc94d4f581ffec53e462caddac3a126cf6125215738d65cf859b0bde0d44"
         },
         "en": {
           "path": "articles/assets/poc/poc_moire_alignment/story.en.gif",
           "frames": [
             {
-              "file": "02_one_nm_steps.png",
+              "file": "09_overlay_cover.png",
               "content_box": [
                 0,
                 0,
@@ -12502,7 +12479,7 @@
                 720
               ],
               "thumbnail": {
-                "source": "articles/assets/poc/poc_moire_alignment/01_marks.png",
+                "source": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png",
                 "frame": 0.5,
                 "crop": null,
                 "mode": "contain",
@@ -12510,18 +12487,7 @@
               }
             },
             {
-              "file": "01_marks.png",
-              "content_box": [
-                0,
-                233,
-                720,
-                224
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 3.211747
-            },
-            {
-              "file": "04_crlb.png",
+              "file": "02_one_nm_steps.png",
               "content_box": [
                 0,
                 113,
@@ -12541,7 +12507,18 @@
               "source_aspect": 1.742149
             },
             {
-              "file": "07_ambiguity.png",
+              "file": "05_differential.png",
+              "content_box": [
+                0,
+                145,
+                720,
+                400
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.8
+            },
+            {
+              "file": "04_crlb.png",
               "content_box": [
                 0,
                 113,
@@ -12570,32 +12547,32 @@
             1600,
             1600
           ],
-          "bytes": 539333,
+          "bytes": 639831,
           "color_mad": [
-            0.261,
-            0.3037,
-            0.0711,
+            0.7047,
+            0.1614,
             0.1236,
-            0.185,
+            0.001,
+            0.0719,
             0.1295
           ],
-          "max_color_mad": 0.3037,
-          "source_sha256": "94c198cc3bc470f7f7c3edd8e2950fe17307a62a2daaceac4135b7cb1319e1f2"
+          "max_color_mad": 0.7047,
+          "source_sha256": "5923a90cf8a5e2ecc0a6a3104b1310950fffcc9f5564d1c049e594a5b198d624"
         }
       },
       "thumbnail": {
-        "source": "articles/assets/poc/poc_moire_alignment/01_marks.png",
+        "source": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png",
         "frame": 0.5,
         "crop": null,
         "mode": "contain",
         "rendered": "view2026/thumbs/poc_moire_alignment.jpg"
       },
       "reason": null,
-      "cover": "02_one_nm_steps.png",
-      "still": "articles/assets/poc/poc_moire_alignment/02_one_nm_steps.png",
+      "cover": "09_overlay_cover.png",
+      "still": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png",
       "alt": {
-        "ja": "同じ雑音・同じ画素数。相互相関は 20 µm の線のマークで、放物線補間の偏り(ずれに比例)と雑音が乗る。",
-        "en": "Lithography must overlay a mask and a wafer to within nanometres. Overlaying two gratings too fine for the camera to see produces 102 µm fringes that magnify the shift. Reading the fringe position recovers shifts smaller than a nanometre."
+        "ja": "表紙(合成): ① ウェハの 2.04 µm の格子だけを撮ると、カメラのぼけで灰色一色になる(これが正しい)。② マスクの 2.00 µm の格子と重ねると、周期 102 µm の縞が現れる。③ ウェハを 0.6 µm ずらすと縞は 30 µm 動く(50 倍、像から測った値)。カメラ・雑音は本文の図と同じ。白色雑音だけの合成で、実機の系統誤差は入っていない。",
+        "en": "Lithography must overlay a mask and a wafer to nanometres. Overlaid gratings too fine for the camera make fringes, and with white noise only, a synthetic test read nanometre steps to 0.08 nm. Real alignment accuracy is far coarser, set by systematic errors such as mark asymmetry and gap, which the test leaves out."
       }
     },
     "poc_illumination_cone_vs_na": {
@@ -12606,7 +12583,8 @@
         "01_brightness_vs_slope.png",
         "03_contrast_vs_cone.png",
         "04_waviness_failure.png",
-        "05_roughness_failure.png"
+        "05_roughness_failure.png",
+        "07_cone_cover.png"
       ],
       "excluded_frames": [],
       "variants": {
@@ -12622,7 +12600,7 @@
                 720
               ],
               "thumbnail": {
-                "source": "articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone.png",
+                "source": "articles/assets/poc/poc_illumination_cone_vs_na/07_cone_cover.png",
                 "frame": 0.5,
                 "crop": null,
                 "mode": "contain",
@@ -12633,23 +12611,23 @@
               "file": "01_brightness_vs_slope.png",
               "content_box": [
                 0,
-                156,
+                154,
                 720,
-                378
+                382
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.902778
+              "source_aspect": 1.886111
             },
             {
               "file": "03_contrast_vs_cone.png",
               "content_box": [
                 0,
-                168,
+                167,
                 720,
-                353
+                356
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.038889
+              "source_aspect": 2.025
             },
             {
               "file": "04_waviness_failure.png",
@@ -12670,26 +12648,37 @@
                 720,
                 463
               ]
+            },
+            {
+              "file": "07_cone_cover.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
             }
           ],
-          "frame_count": 5,
+          "frame_count": 6,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
+            1600,
             1600
           ],
-          "bytes": 535636,
+          "bytes": 926109,
           "color_mad": [
-            0.2846,
-            0.1689,
-            0.0619,
-            0.4349,
-            0.0196
+            0.4073,
+            0.1479,
+            0.0416,
+            0.4353,
+            0.0128,
+            0.5518
           ],
-          "max_color_mad": 0.4349,
-          "source_sha256": "253cb2729070edefb24fce6febc1bdac1697180d33b48b9b237433168ad3efe3"
+          "max_color_mad": 0.5518,
+          "source_sha256": "39dc0689b03cd7de095cdefa9c0e585cb090040f9702a7ef10c47d1e3e53d9fa"
         },
         "en": {
           "path": "articles/assets/poc/poc_illumination_cone_vs_na/story.en.gif",
@@ -12703,7 +12692,7 @@
                 720
               ],
               "thumbnail": {
-                "source": "articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone.png",
+                "source": "articles/assets/poc/poc_illumination_cone_vs_na/07_cone_cover.png",
                 "frame": 0.5,
                 "crop": null,
                 "mode": "contain",
@@ -12714,23 +12703,23 @@
               "file": "01_brightness_vs_slope.png",
               "content_box": [
                 0,
-                156,
+                154,
                 720,
-                378
+                382
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.902778
+              "source_aspect": 1.886111
             },
             {
               "file": "03_contrast_vs_cone.png",
               "content_box": [
                 0,
-                168,
+                167,
                 720,
-                353
+                356
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.038889
+              "source_aspect": 2.025
             },
             {
               "file": "04_waviness_failure.png",
@@ -12751,30 +12740,41 @@
                 720,
                 463
               ]
+            },
+            {
+              "file": "07_cone_cover.png",
+              "content_box": [
+                15,
+                0,
+                690,
+                690
+              ]
             }
           ],
-          "frame_count": 5,
+          "frame_count": 6,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
+            1600,
             1600
           ],
-          "bytes": 535636,
+          "bytes": 926109,
           "color_mad": [
-            0.2846,
-            0.1689,
-            0.0619,
-            0.4349,
-            0.0196
+            0.4073,
+            0.1479,
+            0.0416,
+            0.4353,
+            0.0128,
+            0.5518
           ],
-          "max_color_mad": 0.4349,
-          "source_sha256": "fdea8382716cb7219ea7c17fe48f25754a40f447c9efd38fe77df3caaabeccc5"
+          "max_color_mad": 0.5518,
+          "source_sha256": "22aa540f4560fc69b9a766e090855c8131b99f17baf2364633a2f31456ac246c"
         }
       },
       "thumbnail": {
-        "source": "articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone.png",
+        "source": "articles/assets/poc/poc_illumination_cone_vs_na/07_cone_cover.png",
         "frame": 0.5,
         "crop": null,
         "mode": "contain",
@@ -12784,8 +12784,8 @@
       "cover": "02_works_by_cone.png",
       "still": "articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone.png",
       "alt": {
-        "ja": "同じ 3 つのワークを、物体側 NA 0.033(β = 1.89°)のテレセンで、照明の円錐だけを変えて撮った(3.07 mm 角)。打痕は α = β でだけ輪になって見え、α = 0.5° と 7° では消える。ヘアラインは α = β で筋が目立つが、α = 4° で筋が消えて傷だけが黒く残る。梨地の斑は狭い円錐で浮き、広い円錐で消える。右端は α = β を β 傾けた円錐で、打痕の左右の斜面が明暗に分かれて浮き彫りに見える。",
-        "en": "On near-mirror metal parts, shallow dents and scratches on a hairline finish show or vanish with the width of the cone of light more than with the lamp type. With a cone half-angle of 4°, the hairline streaks disappear and only the scratch stays dark. A single dent can appear or disappear as the cone opens."
+        "ja": "合成: 同じ 3 つのワークを、物体側 NA 0.033(β = 1.89°)のテレセンで、照明の円錐だけを変えて撮った(3.07 mm 角)。打痕の段で α = 0.5°・4°・7° がほぼ無地なのは、閉形式の予言どおり打痕が消えるため(壊れた図ではない)。打痕は α = β でだけ輪になって見え、α = 0.5° と 7° では消える。ヘアラインは α = β で筋が目立つが、α = 4° で筋が消えて傷だけが黒く残る。梨地の斑は狭い円錐で浮き、広い円錐で消える。右端は α = β を β 傾けた円錐で、打痕の左右の斜面が明暗に分かれて浮き彫りに見える。",
+        "en": "On near-mirror metal, the width and axis of each light cone can show or hide shallow dents and hairline scratches. In a synthetic setup with uniform cones, a 4° cone half-angle hid the hairline streaks and left only the scratch dark. It is the physics behind the equipment map, not yet checked against real photos."
       }
     },
     "poc_tdi_linescan": {
@@ -12796,8 +12796,8 @@
         "02_snr_vs_stages.png",
         "03_sync_error_mtf.png",
         "04_sync_error_images.png",
-        "07_lens_relative_illumination.png",
-        "10_lens_defects_center_edge.png"
+        "08_lens_mtf_field.png",
+        "11_tdi_1_vs_64_closeup.png"
       ],
       "excluded_frames": [],
       "variants": {
@@ -12813,7 +12813,7 @@
                 720
               ],
               "thumbnail": {
-                "source": "articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png",
+                "source": "articles/assets/poc/poc_tdi_linescan/11_tdi_1_vs_64_closeup.png",
                 "frame": 0.5,
                 "crop": null,
                 "mode": "contain",
@@ -12848,20 +12848,22 @@
               ]
             },
             {
-              "file": "07_lens_relative_illumination.png",
+              "file": "08_lens_mtf_field.png",
               "content_box": [
                 0,
-                113,
+                182,
                 720,
-                463
-              ]
+                325
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.213889
             },
             {
-              "file": "10_lens_defects_center_edge.png",
+              "file": "11_tdi_1_vs_64_closeup.png",
               "content_box": [
-                41,
+                49,
                 0,
-                637,
+                621,
                 690
               ]
             }
@@ -12875,17 +12877,17 @@
             1600,
             1600
           ],
-          "bytes": 1025524,
+          "bytes": 1279535,
           "color_mad": [
-            0.1469,
-            0.1233,
-            0.2102,
+            0.245,
+            0.0892,
+            0.1562,
             0.1767,
-            0.1303,
-            0.1702
+            0.0622,
+            0.1831
           ],
-          "max_color_mad": 0.2102,
-          "source_sha256": "bc92b944f3cbefe84ee2a3e4ba5923c1f1bc672d5bbcdd691949313ae8d86e51"
+          "max_color_mad": 0.245,
+          "source_sha256": "d0fcdcd7dee51d229621ae706024badd53364a48b32e0a5de72eba9d2b617b3a"
         },
         "en": {
           "path": "articles/assets/poc/poc_tdi_linescan/story.en.gif",
@@ -12899,7 +12901,7 @@
                 720
               ],
               "thumbnail": {
-                "source": "articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png",
+                "source": "articles/assets/poc/poc_tdi_linescan/11_tdi_1_vs_64_closeup.png",
                 "frame": 0.5,
                 "crop": null,
                 "mode": "contain",
@@ -12934,20 +12936,22 @@
               ]
             },
             {
-              "file": "07_lens_relative_illumination.png",
+              "file": "08_lens_mtf_field.png",
               "content_box": [
                 0,
-                113,
+                182,
                 720,
-                463
-              ]
+                325
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.213889
             },
             {
-              "file": "10_lens_defects_center_edge.png",
+              "file": "11_tdi_1_vs_64_closeup.png",
               "content_box": [
-                41,
+                49,
                 0,
-                637,
+                621,
                 690
               ]
             }
@@ -12961,21 +12965,21 @@
             1600,
             1600
           ],
-          "bytes": 1025524,
+          "bytes": 1279535,
           "color_mad": [
-            0.1469,
-            0.1233,
-            0.2102,
+            0.245,
+            0.0892,
+            0.1562,
             0.1767,
-            0.1303,
-            0.1702
+            0.0622,
+            0.1831
           ],
-          "max_color_mad": 0.2102,
-          "source_sha256": "98ed40fa9d5c9418bf430dbe4c1ed0edea91ccb4105cc84658cd3dfd623d3454"
+          "max_color_mad": 0.245,
+          "source_sha256": "861995d985ebebcda98c0a25305aaf0c30e89a09040816d3aaad066f747fe039"
         }
       },
       "thumbnail": {
-        "source": "articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png",
+        "source": "articles/assets/poc/poc_tdi_linescan/11_tdi_1_vs_64_closeup.png",
         "frame": 0.5,
         "crop": null,
         "mode": "contain",
@@ -12986,7 +12990,7 @@
       "still": "articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png",
       "alt": {
         "ja": "1 段 40 光子 × 反射率、読み出し 12 e⁻。左: 傷(幅 1.3 画素、深さ 12 %)、中: ピンホール 4 個(深さ 16 %)、右: 異物(深さ 8 %)。各パネルは自分の中央値 ± 3σ で伸ばし、2 倍に拡大(明るさの差ではなく SNR の差を見る図)。",
-        "en": "Moving material such as film or steel strip is imaged with a line sensor. On a dark line, stacking 64 stages of exposure lifts faint scratches and inclusions out of the texture. If transport and capture drift out of sync, the stacked image smears."
+        "en": "Moving film or steel strip is imaged with a line sensor. On a synthetic steel strip with planted faint flaws and a typical sensor model, flaws hidden in noise stood out after stacking 64 stages of exposure on a dark line. If transport and capture drift out of sync, the stacked image smears."
       }
     },
     "poc_nir_silicon_transmission": {
@@ -18400,12 +18404,12 @@
       "representative": "09_glare_removed_label.png",
       "status": "gif",
       "selected": [
-        "09_glare_removed_label.png",
+        "10_glare_cover.png",
         "01_raw_polarizer_mosaic.png",
         "02_analyzer_samples.png",
+        "03_stokes_and_glare.png",
         "04_fresnel.png",
-        "05_angle_error.png",
-        "07_saturation.png"
+        "05_angle_error.png"
       ],
       "excluded_frames": [],
       "variants": {
@@ -18413,7 +18417,7 @@
           "path": "articles/assets/poc/poc_polarization_specular/story.ja.gif",
           "frames": [
             {
-              "file": "09_glare_removed_label.png",
+              "file": "10_glare_cover.png",
               "content_box": [
                 0,
                 0,
@@ -18421,7 +18425,7 @@
                 720
               ],
               "thumbnail": {
-                "source": "articles/assets/poc/poc_polarization_specular/09_glare_removed_label_720.jpg",
+                "source": "articles/assets/poc/poc_polarization_specular/10_glare_cover.png",
                 "frame": null,
                 "crop": null,
                 "mode": "square",
@@ -18449,6 +18453,15 @@
               "source_aspect": 3.719858
             },
             {
+              "file": "03_stokes_and_glare.png",
+              "content_box": [
+                0,
+                89,
+                720,
+                511
+              ]
+            },
+            {
               "file": "04_fresnel.png",
               "content_box": [
                 0,
@@ -18467,17 +18480,6 @@
                 720,
                 463
               ]
-            },
-            {
-              "file": "07_saturation.png",
-              "content_box": [
-                0,
-                220,
-                720,
-                249
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.897321
             }
           ],
           "frame_count": 6,
@@ -18489,23 +18491,23 @@
             1600,
             1600
           ],
-          "bytes": 742525,
+          "bytes": 943367,
           "color_mad": [
-            0.6116,
+            0.3772,
             0.0,
             0.0362,
+            1.2848,
             0.1151,
-            0.091,
-            0.0304
+            0.091
           ],
-          "max_color_mad": 0.6116,
-          "source_sha256": "b804d778674601cf88fa94ceab5a6dee1228079b4118249c14e496c236c989f6"
+          "max_color_mad": 1.2848,
+          "source_sha256": "37aead2a136c98b121a0d1f81b97f67628c4470c9859f220646bd546c6270a78"
         },
         "en": {
           "path": "articles/assets/poc/poc_polarization_specular/story.en.gif",
           "frames": [
             {
-              "file": "09_glare_removed_label.png",
+              "file": "10_glare_cover.png",
               "content_box": [
                 0,
                 0,
@@ -18513,7 +18515,7 @@
                 720
               ],
               "thumbnail": {
-                "source": "articles/assets/poc/poc_polarization_specular/09_glare_removed_label_720.jpg",
+                "source": "articles/assets/poc/poc_polarization_specular/10_glare_cover.png",
                 "frame": null,
                 "crop": null,
                 "mode": "square",
@@ -18541,6 +18543,15 @@
               "source_aspect": 3.719858
             },
             {
+              "file": "03_stokes_and_glare.png",
+              "content_box": [
+                0,
+                89,
+                720,
+                511
+              ]
+            },
+            {
               "file": "04_fresnel.png",
               "content_box": [
                 0,
@@ -18559,17 +18570,6 @@
                 720,
                 463
               ]
-            },
-            {
-              "file": "07_saturation.png",
-              "content_box": [
-                0,
-                220,
-                720,
-                249
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.897321
             }
           ],
           "frame_count": 6,
@@ -18581,32 +18581,32 @@
             1600,
             1600
           ],
-          "bytes": 742525,
+          "bytes": 943367,
           "color_mad": [
-            0.6116,
+            0.3772,
             0.0,
             0.0362,
+            1.2848,
             0.1151,
-            0.091,
-            0.0304
+            0.091
           ],
-          "max_color_mad": 0.6116,
-          "source_sha256": "ba18c660ed41f224d278d2fca48ffdcfac779b87a5907369d710a959cde9978d"
+          "max_color_mad": 1.2848,
+          "source_sha256": "6c89a99bcba7f020db23a85e22a414abef6bcd0d4cd0d469d1c2be925206ef99"
         }
       },
       "thumbnail": {
-        "source": "articles/assets/poc/poc_polarization_specular/09_glare_removed_label_720.jpg",
+        "source": "articles/assets/poc/poc_polarization_specular/10_glare_cover.png",
         "frame": null,
         "crop": null,
         "mode": "square",
         "rendered": "view2026/thumbs/poc_polarization_specular.jpg"
       },
       "reason": null,
-      "cover": "09_glare_removed_label.png",
-      "still": "articles/assets/poc/poc_polarization_specular/09_glare_removed_label.png",
+      "cover": "10_glare_cover.png",
+      "still": "articles/assets/poc/poc_polarization_specular/10_glare_cover.png",
       "alt": {
-        "ja": "フィルムで包んだ箱のラベルと鋼のナットを、4 方位の画素偏光子センサで 1 枚撮った(1024 画素の描画)。左から 偏光子なし / 最適角の偏光フィルタ 1 枚(同じモザイクから組んだ像)/ 偏光カメラで剥がした像。印字の CNR は 1.5 / 8.0 / 7.6(全画素で撮るフィルタなら 8.3)—— この場面(小さなソフトボックス 1 灯)では固定のフィルタで足りる。全画素で撮る固定のフィルタ(同じ画素数)と比べた比は、しわだけを 4 倍にして 0.92→0.97、照明だけを大きな面照明へ広げて 1.07、両方で 1.36(CNR 2.13 対 1.56、どちらも印字は読めない)。しわも照明の広さも差を広げる。この 1024 画素では 1 に届いたのは照明を広げたときだけだが、512 画素では互角で、種によってしわとの順序も入れ替わる。読める水準の差は 1 割未満。鋼の映り込みは短い露光(飽和なし)で 29 % 消え、描画と同じ金属のフレネルの式の 28 % と合う(実装の検算)。図の白いナットは飽和。",
-        "en": "Polarisation separates the glare on a shiny surface from its diffuse colour. The diffuse error vanishes at 56.31 degrees, Brewster's angle. At shallow incidence the polarisation method gains little."
+        "ja": "表紙(合成、1024 画素の描画): フィルムで包んだラベルの所だけを切り出した。左 = 偏光子なし(印字の CNR 1.6)、右 = 偏光カメラの生モザイクを Fullseye の op(polarization_stokes_map / polarization_separate)で分けて映り込みを剥がした像(CNR 6.9、映り込み 91 % 減)。全画素で撮る固定の偏光フィルタ 1 枚なら CNR 8.3 —— この照明(小さなソフトボックス 1 灯)では固定のフィルタで足りる。偏光カメラの勝ちではない。",
+        "en": "A camera with a polariser on every pixel splits a label behind shiny film into diffuse and glare components. About 90 % of the glare goes, yet under this light a fixed polarising filter reads the print better. The camera catches up only under a wider light; the scene is synthetic and unchecked against real images."
       }
     },
     "poc_real_stain_unmix": {

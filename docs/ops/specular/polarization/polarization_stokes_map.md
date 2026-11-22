@@ -5,7 +5,7 @@ category: polarization
 in: polsweep
 out: table
 gpu: なし
-examples: [polarization_camera_pipeline]
+examples: [poc_polarization_specular, polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -110,6 +110,7 @@ floor counts as a violating pixel.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
 - [polarization_camera_pipeline](../../../../examples/polarization_camera_pipeline.py) — `py -3.11 examples/polarization_camera_pipeline.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

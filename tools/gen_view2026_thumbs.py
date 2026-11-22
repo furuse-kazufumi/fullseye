@@ -57,7 +57,6 @@ SPEC = [
     # 09 の中央の正方形は真ん中の 1 枚だけで比べる構図が消えた(2026-11-15 の独立レビュー)。PoC が出す正方形の表紙を使う
     ("poc_polarization_specular", _P + "poc_polarization_specular/10_glare_cover.png", None, None),
     ("poc_photoelasticity", _P + "poc_photoelasticity/03_load_and_isoclinics.gif", 0.45, (0.0, 0.0, 1.0)),
-    ("poc_thermography_ndt", _P + "poc_thermography_ndt/02_depth_map_720.jpg", None, None),
     ("poc_equipment_selection_map", _P + "poc_equipment_selection_map/08_equipment_samples_square.png", None, None),
     ("poc_motion_magnification", _P + "poc_motion_magnification/05_magnify_video.gif", 0.3, None),
     ("poc_table_tennis_bounce", _P + "poc_table_tennis_bounce/01_drop_test.gif", 0.5, None),

@@ -5,7 +5,7 @@ category: signal
 in: signal
 out: signal
 gpu: なし
-examples: [poc_cold_chain_excursion]
+examples: [poc_cold_chain_excursion, poc_solar_el_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ Empty input (``x`` with 0 elements) raises ``ValueError``.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_cold_chain_excursion](../../../../examples/poc_cold_chain_excursion.py) — `py -3.11 examples/poc_cold_chain_excursion.py`
+- [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

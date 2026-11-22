@@ -132,6 +132,10 @@ def test_view2026_see_and_viewer_line_match_each_sweep_title(sweep):
     _, spec, _, *_ = sweep
     data = json.loads((ROOT / "docs" / "view2026" / "exhibits.json").read_text(encoding="utf-8"))
     exhibit = _exhibit(data, spec["id"])
+    if "numbers_source" in exhibit:
+        # 2026-11-22: 台帳から写す目玉のカードの see は台帳の説明と逐語一致(build_view2026_featured_batch の門)。
+        # 掃引の題は、ぜんぶ見る(all)の行が持つ。
+        exhibit = next(e for e in data["all"] if e["id"] == spec["id"])
     viewer = next(e for e in data["viewers"]["items"] if e["id"] == spec["id"])
     assert exhibit["see"] == spec["title"]
     assert viewer["line"] == spec["title"]

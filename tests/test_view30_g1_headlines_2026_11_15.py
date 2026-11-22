@@ -44,7 +44,9 @@ def test_headline_record_is_complete_for_both_budgets(pid):
     rec = _record(pid, "HEADLINE")
     assert rec is not None and set(rec) == {"full", "reduced"}
     assert set(rec["full"]) == set(rec["reduced"]) and len(rec["full"]) >= 20
-    for value in list(rec["full"].values()) + list(rec["reduced"].values()):
+    values = list(rec["full"].values()) + list(rec["reduced"].values())
+    assert values
+    for value in values:
         assert re.fullmatch(r"-?[A-Z0-9. ]+", value), value
 
 

@@ -91,7 +91,10 @@ def test_cover_is_recorded_in_figures_ledger(pid, cover):
     assert cover in {figure["file"] for figure in figures}
 
 
-def test_polarization_stays_a_fragment_not_an_installed_card():
-    assert "poc_polarization_specular" not in CARDS
+def test_polarization_card_is_installed_on_the_main_page_and_matches_the_ledger():
+    """g3 では断片だった偏光のカードを、2026-11-22 の統合で本ページ(featured)に入れた。"""
+    card = CARDS["poc_polarization_specular"]
+    assert card["tier"] == "featured" and card["media"] == "09_glare_removed_label.png"
+    assert card["ops"] == LEDGER["poc_polarization_specular"]["ops"]
     assert LEDGER["poc_polarization_specular"]["ops"] == gallery._ops_used("poc_polarization_specular")
     assert ALL["poc_polarization_specular"]["thumb_src"] == "10_glare_cover.png"
