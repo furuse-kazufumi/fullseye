@@ -28,6 +28,21 @@ import numpy as np
 import pytest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TLESS_REALDATA_EXAMPLE_ID = "poc_real_tless_6dof"
+TLESS_REALDATASET_MARKER = "bop-tless"
+TLESS_README_HEADING = "**Real RGB-D 6-DoF PoC:**"
+# READMEの主張に必要な語。場面・物体の正本は期待値JSON、実読込は台帳から照合する。
+# / Required claim text; IDs and actual gate reads come from their ledgers below.
+TLESS_README_CI_MARKERS = (
+    "CI reads the repository's small CC BY 4.0 subset",
+    "verifies every file by SHA-256",
+    "runs the real primary chain",
+)
+TLESS_README_RECORDED_MARKERS = (
+    "20 scenes and 132 instances is a full-data",
+    "record from 2026-11-01",
+    "re-measured on 2026-11-22",
+)
 for _p in (ROOT, os.path.join(ROOT, "tools")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
@@ -310,11 +325,19 @@ def test_d6_mark_read_writes_only_when_asked(tmp_path, monkeypatch):
         realdata.mark_read("two\nlines")
 
 
-def test_d6_readme_says_the_tless_poc_shows_a_record_in_ci():
+def test_d6_readme_says_ci_reads_the_tless_subset_and_full_run_is_recorded():
     md = _read("README.md")
-    i = md.index("**Real RGB-D 6-DoF PoC:**")
+    i = md.index(TLESS_README_HEADING)
     para = md[i:md.index("\n\n", i)]
-    assert "recorded" in para and "CI" in para and "not count it as real-data validation" in para
+    normalised = " ".join(para.split())
+    expected = json.loads(_read("tests/data/tless_subset_expected.json"))
+    assert all(marker in normalised for marker in TLESS_README_CI_MARKERS)
+    assert all(marker in normalised for marker in TLESS_README_RECORDED_MARKERS)
+    assert f"scene {expected['scene_ids'][0]}" in normalised
+    assert f"{len(expected['object_ids'])} scored instances" in normalised
+    run = json.loads(_read("docs/real_data_runs.json"))["examples"][TLESS_REALDATA_EXAMPLE_ID]
+    assert run["exit"] == 0 and run["printed_pass"] is True
+    assert TLESS_REALDATASET_MARKER in run["datasets_read"]
 
 
 def test_d7_not_run_by_any_gate_is_counted_from_the_disk():

@@ -30,12 +30,6 @@ GATE_OBJECT_IDS = SUBSET_OBJECT_IDS
 GATE_SCENE_COUNT = len(GATE_SCENE_IDS)
 GATE_OBJECT_COUNT = len(GATE_OBJECT_IDS)
 
-# 5実行の最大差0。/ Five runs had zero delta. 1e-6 allows only cross-platform rounding;
-# it is over six orders below the smallest 1.089 mm classification margin. No relative tolerance.
-CONTINUOUS_METRIC_ABS_TOLERANCE = 1e-6
-CONTINUOUS_METRIC_REL_TOLERANCE = 0.0
-CONTINUOUS_METRIC_FIELDS = ("mssd", "mspd", "rot_deg", "trans_mm")
-
 # PoCのRECORDEDと同じ2026-11-01の20場面実行ログにある独立照合値。
 # 場面2のMSSD > 0.2d失敗対象はobj 5だけで、obj 6は成功している。
 # / Independent classification from the same 20-scene run as PoC RECORDED.
@@ -81,6 +75,19 @@ def _load_poc():
 
 POC = _load_poc()
 
+# PoC自身のCI照合と同じ許容幅を正本から読む。5実行の最大差は0で、1e-6は
+# 最小の分類余裕1.089 mmより6桁以上小さい。/ Share the PoC's measured gate tolerance.
+CONTINUOUS_METRIC_ABS_TOLERANCE = POC.SUBSET_CONTINUOUS_METRIC_ABS_TOLERANCE
+CONTINUOUS_METRIC_REL_TOLERANCE = POC.SUBSET_CONTINUOUS_METRIC_REL_TOLERANCE
+CONTINUOUS_METRIC_FIELDS = POC.SUBSET_CONTINUOUS_METRIC_FIELDS
+
+# 許容幅の独立の見張り。2026-11-22 に同じ機械で 5 回回した差は 0 だった
+# (tests/data/tless_subset_expected.json の run_max_continuous_metric_deltas)。
+# PoC 側だけを広げる変更をここで止める。/ Independent pin of the measured tolerance.
+MEASURED_GATE_ABS_TOLERANCE = 1e-6
+MEASURED_GATE_REL_TOLERANCE = 0.0
+MEASURED_GATE_FIELDS = ("mssd", "mspd", "rot_deg", "trans_mm")
+
 
 def _sha256(path: Path) -> str:
     """大きな画像も固定メモリでhashする。/ Hash a file with bounded memory."""
@@ -106,6 +113,13 @@ def _checksum_rows(root: Path) -> dict[str, str]:
             raise AssertionError(f"SHA256SUMS line {line_number} has an unsafe/duplicate path: {relative}")
         rows[relative] = fields[0]
     return rows
+
+
+def test_tless_subset_tolerance_is_pinned_to_the_measurement():
+    """PoC の許容幅が実測の根拠から離れていない。/ PoC tolerance stays pinned."""
+    assert CONTINUOUS_METRIC_ABS_TOLERANCE == MEASURED_GATE_ABS_TOLERANCE
+    assert CONTINUOUS_METRIC_REL_TOLERANCE == MEASURED_GATE_REL_TOLERANCE
+    assert tuple(CONTINUOUS_METRIC_FIELDS) == MEASURED_GATE_FIELDS
 
 
 def test_tless_subset_bytes_match_the_manifest():

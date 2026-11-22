@@ -1116,7 +1116,7 @@ Pipeline: [`points_render`](ops/3d/render/points_render.md)
 
 Alternatives: [`render_point_depth`](ops/3d/render/render_point_depth.md), [`points_activity_video`](ops/conngraph/activity/points_activity_video.md), [`gs_render`](ops/drive/gsplat/gs_render.md), `render_mesh`
 
-Runnable: `points_render_basics`, `poc_flybrain_pointcloud`, `poc_real_tless_6dof`
+Runnable: `points_render_basics`, `poc_flybrain_pointcloud`
 
 ### [Put text and tables exactly where you want them on an image](capabilities/text-and-tables-on-images.md)
 

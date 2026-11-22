@@ -18,10 +18,12 @@ the PoC series found, what changed, and which gate now stops each one coming bac
 **Real RGB-D 6-DoF PoC:** [`poc_real_tless_6dof`](examples/poc_real_tless_6dof.py)
 runs the depth-to-point-cloud, normal, table-removal, clustering, PPF and ICP chain on
 BOP T-LESS (CC BY 4.0), scores it with symmetry-aware MSSD/MSPD, and compares it with
-the public Drost and Vidal baselines. The dataset is not in the repository: on a machine
-without it (`FULLSEYE_TLESS_DATA`, as in CI) the script prints the recorded 2026-11-01 run
-instead of re-measuring, so CI checks the record, not the data, and the maturity ledger
-does not count it as real-data validation. Dataset citation: Hodaň et al., T-LESS, WACV 2017,
+the public Drost and Vidal baselines. CI reads the repository's small CC BY 4.0 subset
+(scene 2, image 3, 2 scored instances), verifies every file by SHA-256, runs the real
+primary chain, and checks the measured values against the recorded expectations. The
+AR_MSSD 0.197 / AR_MSPD 0.220 result for 20 scenes and 132 instances is a full-data
+record from 2026-11-01; it was re-measured on 2026-11-22 with matching accuracy. Dataset
+citation: Hodaň et al., T-LESS, WACV 2017,
 [doi:10.1109/WACV.2017.8](https://doi.org/10.1109/WACV.2017.8).
 
 > **Real-hardware and real-data results wanted.** Fullseye is developed without physical
@@ -104,8 +106,8 @@ The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebu
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 92 |
-| `validated-public-real-data` | an example on public measured data runs in a gate | 9 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 91 |
+| `validated-public-real-data` | an example on public measured data runs in a gate | 10 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
 Of 501 examples, 497 are actually run by a gate.

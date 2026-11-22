@@ -13,8 +13,10 @@ test_primesense の全20場面から、各場面で画像IDが最小の1枚を�
 点群全体へクラスタ分割せず ``surface_match`` する対照群も同じ対象で採点する。
 180/160点から2000/2000点まで密度を掃引し、1対象10秒以内で AR_MSSD 最大だった
 1000/1000点、voxel 2 mm、ref_fraction 0.25、angle_bins 24、ICP 100反復を採用した。
-主経路は8.291秒/対象、AR_MSSD 0.197 / AR_MSPD 0.220。旧180/160点の
-0.162/0.185は間引き条件を明記して比較表に残す。
+2026-11-22 のベクトル化後コードによる再測定では、主経路は負荷のある機械で
+1.500秒/対象、AR_MSSD 0.197 / AR_MSPD 0.220。旧180/160点の0.162/0.185は
+間引き条件を明記して比較表に残す。2026-11-01 の8.291秒/対象はベクトル化前の
+記録として保持する。
 
 姿勢誤差(Hodaň et al., BOP Challenge 2020)を自前で計算する。モデル点集合 ``V``、
 推定姿勢 ``P_e=(R_e,t_e)``、真値 ``P_g``、物体の対称変換集合 ``S`` に対して::
@@ -48,12 +50,16 @@ Texture-less Objects", WACV 2017, https://doi.org/10.1109/WACV.2017.8 。
 指標: Hodaň et al., "BOP Challenge 2020 on 6D Object Localization",
 ECCVW 2020, https://doi.org/10.1007/978-3-030-68223-0_12 。
 
-CI にデータが無いときはダウンロードせず、実行記録 ``RECORDED`` を表示する。
-図は ``FULLSEYE_FIGURE_DIR`` があるときだけ書く。
+全20場面のデータが無いCIではダウンロードせず、repo内の小さな切り出し
+（場面2・画像3、obj 5/6）を実際に読み、主経路を測って固定期待値と照合する。
+20場面・132対象の値は ``RECORDED`` と2026-11-22の再測定記録として表示する。
+配布物に切り出しも無い場合だけ、実データを読まず記録を表示する。図は
+``FULLSEYE_FIGURE_DIR`` があるときだけ書く。
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -64,7 +70,8 @@ import numpy as np
 from PIL import Image
 from scipy.spatial import cKDTree
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 from match3d import render_point_depth                            # noqa: E402
@@ -76,6 +83,20 @@ SWEEP_ENV = "FULLSEYE_TLESS_SWEEP"
 SCENES_ENV = "FULLSEYE_TLESS_SCENES"
 OBJECTS_ENV = "FULLSEYE_TLESS_OBJECTS"
 DEFAULT_DATA = Path.home() / "fullseye_data" / "tless"   # 手元の絶対パスは書かない(環境変数で受ける)
+# repo内CI切り出しと期待値。場面・物体IDは期待値JSONを正本として実行時に読む。
+# / Repository CI subset and expectations; scene/object IDs come from the JSON ledger.
+DEFAULT_SUBSET_DATA = REPO_ROOT / "tests" / "data" / "tless_subset"
+SUBSET_EXPECTED_PATH = REPO_ROOT / "tests" / "data" / "tless_subset_expected.json"
+SUBSET_CHECKSUM_NAME = "SHA256SUMS"
+# 5実行で最大差0だった2026-11-22の門と同じ絶対許容幅。相対許容は使わない。
+# / Same gate tolerance measured over five zero-delta runs on 2026-11-22.
+SUBSET_CONTINUOUS_METRIC_ABS_TOLERANCE = 1e-6
+SUBSET_CONTINUOUS_METRIC_REL_TOLERANCE = 0.0
+SUBSET_CONTINUOUS_METRIC_FIELDS = ("mssd", "mspd", "rot_deg", "trans_mm")
+# SHA-256 manifestの形式と固定メモリ読込み量。/ Manifest format and hash block size.
+SUBSET_HASH_BLOCK_BYTES = 1024 * 1024
+SUBSET_SHA256_HEX_LENGTH = 64
+SUBSET_SHA256_FIELDS_PER_ROW = 2
 SCENE_IDS = tuple(range(1, 21))
 # BOP T-LESS の公開 scene/object ID の閉区間。/ Published inclusive ID ranges.
 SCENE_ID_MIN = 1
@@ -162,10 +183,120 @@ RECORDED = {
     "raw_normals_ar_mspd": 0.161,
     "no_cluster_ar_mssd": 0.111,
     "no_cluster_ar_mspd": 0.113,
+    # PPF投票ベクトル化d17e639303より前の壁時計。/ Pre-vectorisation wall time.
     "primary_seconds_per_instance": 8.291,
+    # PPF投票ベクトル化d17e639303より前の診断込み壁時計。
+    # / Pre-vectorisation wall time including diagnostics.
     "diagnostic_elapsed_seconds": 7189.2,
     "mssd_failure_gt_0_2d": 109,
 }
+
+# C:/dev/data/tless_promotion_2026_11_22/measure.json と run_*_meta.json の実測。
+# コード692b56d2e8、固定archive 3本はtools/fetch_tless.pyと照合済み。時間は
+# worker 10本以上が同時に動く負荷状態での壁時計。/ Measurements from measure.json
+# and run metadata; timings were taken while the machine was busy.
+REMEASURED_2026_11_22 = {
+    "date": "2026-11-22",
+    "code": "692b56d2e8",
+    "archive_sha256": {
+        "tless_base.zip": "dd70ca884b7c471a530a952f70c5ab2c212f3d2c2f371be86397442b97d70a7e",
+        "tless_models.zip": "6a29c59766b8d2af05e62e71739f0ca7243ad81bc3c7f9a24925504a8cb37928",
+        "tless_test_primesense_bop19.zip": "1a18f6bbfb5ac4ced8529f7a35225adfed88c0f62ef38067933e2b541ef1d00b",
+    },
+    "instances": 132,
+    "scenes": 20,
+    "ar_mssd": 0.197,
+    "ar_mspd": 0.220,
+    "synthetic_ar_mssd": 0.985,
+    "synthetic_ar_mspd": 0.985,
+    "no_icp_ar_mssd": 0.346,
+    "no_icp_ar_mspd": 0.338,
+    "raw_normals_ar_mssd": 0.132,
+    "raw_normals_ar_mspd": 0.161,
+    "no_cluster_ar_mssd": 0.111,
+    "no_cluster_ar_mspd": 0.113,
+    "primary_wall_seconds": 201.0,
+    "primary_seconds_per_instance": 1.500,
+    "diagnostic_wall_seconds": 942.6,
+    "timing_condition": "busy machine with 10+ concurrent workers",
+    "ci_subset": "tests/data/tless_subset/",
+    "reproduce_full": (
+        "PYTHONUTF8=1 py -3.11 tools/fetch_tless.py && "
+        "PYTHONUTF8=1 py -3.11 examples/poc_real_tless_6dof.py"
+    ),
+    "reproduce_subset": (
+        "PYTHONUTF8=1 py -3.11 examples/poc_real_tless_6dof.py "
+        "with FULLSEYE_TLESS_DATA pointing to an empty directory, or "
+        "PYTHONUTF8=1 py -3.11 -m pytest tests/test_tless_subset_gate.py"
+    ),
+}
+
+
+def _sha256(path: Path) -> str:
+    """固定メモリでSHA-256を返す。/ Return SHA-256 with bounded memory."""
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(SUBSET_HASH_BLOCK_BYTES), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def verify_subset_checksums(root: Path) -> int:
+    """切り出しの欠落・追加・改変を拒否する。/ Verify every subset payload file."""
+    manifest = root / SUBSET_CHECKSUM_NAME
+    try:
+        lines = manifest.read_text(encoding="ascii").splitlines()
+    except (OSError, UnicodeError) as exc:
+        raise ValueError(f"cannot read T-LESS subset checksum manifest: {manifest}: {exc}") from exc
+    expected: dict[str, str] = {}
+    for line_number, line in enumerate(lines, start=1):
+        fields = line.split(maxsplit=1)
+        if (len(fields) != SUBSET_SHA256_FIELDS_PER_ROW
+                or len(fields[0]) != SUBSET_SHA256_HEX_LENGTH
+                or any(character not in "0123456789abcdef" for character in fields[0])):
+            raise ValueError(f"invalid SHA256SUMS line {line_number}: {line!r}")
+        relative = fields[1]
+        relative_path = Path(relative)
+        if (relative in expected or relative_path.is_absolute()
+                or ".." in relative_path.parts):
+            raise ValueError(f"unsafe or duplicate SHA256SUMS path on line {line_number}: {relative}")
+        expected[relative] = fields[0]
+    if not expected:
+        raise ValueError("T-LESS subset checksum manifest is empty")
+    actual_files = {
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*")
+        if path.is_file() and path != manifest
+    }
+    if actual_files != set(expected):
+        missing = sorted(set(expected) - actual_files)
+        extra = sorted(actual_files - set(expected))
+        raise ValueError(f"T-LESS subset file set mismatch: missing={missing}, extra={extra}")
+    mismatches = {
+        relative: {"expected": digest, "actual": _sha256(root / relative)}
+        for relative, digest in expected.items()
+        if _sha256(root / relative) != digest
+    }
+    if mismatches:
+        raise ValueError(
+            "T-LESS subset checksum mismatch: "
+            + json.dumps(mismatches, ensure_ascii=False, sort_keys=True)
+        )
+    return len(expected)
+
+
+def _load_subset_expected() -> dict:
+    """CI切り出し期待値をfail-closedで読む。/ Load subset expectations fail-closed."""
+    try:
+        expected = json.loads(SUBSET_EXPECTED_PATH.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"cannot read T-LESS subset expectations: {SUBSET_EXPECTED_PATH}: {exc}") from exc
+    if not isinstance(expected, dict):
+        raise ValueError("T-LESS subset expectations must be a JSON object")
+    required = {"scene_ids", "object_ids", "objects", "ar_mssd", "ar_mspd"}
+    if not required <= set(expected):
+        raise ValueError(f"T-LESS subset expectations lack keys: {sorted(required - set(expected))}")
+    return expected
 
 
 def _json(path: Path):
@@ -786,9 +917,117 @@ def _print_recorded(scene_ids=None, object_ids=None):
         print("絞り込み指定は実データが無いため実行していない（RECORDED と混同しない）")
         print("  scenes=%s objects=%s" % (scene_ids if scene_ids is not None else "all",
                                           object_ids if object_ids is not None else "all"))
-    print("BOP T-LESS 実データが無いためダウンロードせず、2026-11-01 の実行記録を表示")
+    print("BOP T-LESS 実データもrepo内切り出しも無いためダウンロードしない")
+    print("実データは読んでいない。以下は2026-11-01の20場面・132対象の実行記録")
     print(json.dumps(RECORDED, ensure_ascii=False, indent=2))
+    print("\n2026-11-22の20場面・132対象の再測定記録（精度一致、負荷状態の時間）")
+    print(json.dumps(REMEASURED_2026_11_22, ensure_ascii=False, indent=2))
     print("\n再現: py -3.11 tools/fetch_tless.py && py -3.11 examples/poc_real_tless_6dof.py")
+    print("\nPASS")
+
+
+def _run_ci_subset(*, requested_scene_ids=None, requested_object_ids=None) -> None:
+    """repo切り出しを主経路で測り期待値と照合する。/ Measure and verify the CI subset."""
+    payload_count = verify_subset_checksums(DEFAULT_SUBSET_DATA)
+    expected = _load_subset_expected()
+    scene_ids = _normalise_ids(
+        expected["scene_ids"], name="subset scene_ids",
+        minimum=SCENE_ID_MIN, maximum=SCENE_ID_MAX,
+    )
+    object_ids = _normalise_ids(
+        expected["object_ids"], name="subset object_ids",
+        minimum=OBJECT_ID_MIN, maximum=OBJECT_ID_MAX,
+    )
+    if requested_scene_ids is not None and requested_scene_ids != scene_ids:
+        raise ValueError(
+            f"FULLSEYE_TLESS_SCENES must match repository subset scenes {scene_ids}"
+        )
+    if requested_object_ids is not None and requested_object_ids != object_ids:
+        raise ValueError(
+            f"FULLSEYE_TLESS_OBJECTS must match repository subset objects {object_ids}"
+        )
+    start = time.perf_counter()
+    scenes, rows = run_real(
+        DEFAULT_SUBSET_DATA,
+        DEFAULT_CONFIG,
+        diagnostics=False,
+        scene_ids=scene_ids,
+        object_ids=object_ids,
+    )
+    elapsed_seconds = time.perf_counter() - start
+    actual_by_object = {str(row["obj_id"]): row for row in rows}
+    expected_objects = expected["objects"]
+    mismatches: list[dict] = []
+    if set(actual_by_object) != set(expected_objects):
+        mismatches.append({
+            "field": "object_ids",
+            "actual": sorted(actual_by_object),
+            "expected": sorted(expected_objects),
+        })
+    for object_id, measured in expected_objects.items():
+        if object_id not in actual_by_object:
+            continue
+        row = actual_by_object[object_id]
+        for field in SUBSET_CONTINUOUS_METRIC_FIELDS:
+            actual = float(row["metrics"][field])
+            wanted = float(measured[field])
+            delta = actual - wanted
+            allowed = SUBSET_CONTINUOUS_METRIC_ABS_TOLERANCE + (
+                SUBSET_CONTINUOUS_METRIC_REL_TOLERANCE * abs(wanted)
+            )
+            if (not np.isfinite(actual) or not np.isfinite(wanted)
+                    or not np.isfinite(allowed) or abs(delta) > allowed):
+                mismatches.append({
+                    "object_id": int(object_id),
+                    "field": field,
+                    "actual": actual,
+                    "expected": wanted,
+                    "delta": delta,
+                    "allowed_abs": allowed,
+                })
+        actual_success = bool(
+            row["metrics"]["mssd"] <= MSSD_FAILURE_FRACTION * row["diameter"]
+        )
+        expected_success = measured["success_mssd_le_0_2d"]
+        if actual_success is not expected_success:
+            mismatches.append({
+                "object_id": int(object_id),
+                "field": "success_mssd_le_0_2d",
+                "actual": actual_success,
+                "expected": expected_success,
+            })
+    ar_mssd, ar_mspd = average_recall(_metric_rows(rows, "metrics"))
+    for field, actual in (("ar_mssd", ar_mssd), ("ar_mspd", ar_mspd)):
+        wanted = expected[field]
+        if actual != wanted:
+            mismatches.append({
+                "field": field,
+                "actual": actual,
+                "expected": wanted,
+                "delta": actual - wanted,
+                "allowed_abs": 0.0,
+            })
+
+    print("BOP T-LESS (CC BY 4.0) repo内CI切り出しを実測")
+    print("  subset: 場面 %s / 画像 %s / %d対象 (objects %s)"
+          % (scene_ids, tuple(scene["image"] for scene in scenes), len(rows), object_ids))
+    print("  SHA256SUMS: %d payload files verified" % payload_count)
+    for row in rows:
+        values = row["metrics"]
+        success = values["mssd"] <= MSSD_FAILURE_FRACTION * row["diameter"]
+        print("  obj %d: MSSD %.15g / MSPD %.15g / rotation %.15g deg / "
+              "translation %.15g mm / MSSD<=0.2d %s"
+              % (row["obj_id"], values["mssd"], values["mspd"],
+                 values["rot_deg"], values["trans_mm"], success))
+    print("  subset AR_MSSD %.15g / AR_MSPD %.15g / elapsed %.3f s"
+          % (ar_mssd, ar_mspd, elapsed_seconds))
+    if mismatches:
+        print("SUBSET_MISMATCH " + json.dumps(mismatches, ensure_ascii=False, indent=2))
+        raise RuntimeError("T-LESS repository subset measurement does not match expectations")
+    print("\n20場面・132対象の値は実測中の値ではなく、2026-11-01のRECORDED記録")
+    print(json.dumps(RECORDED, ensure_ascii=False, indent=2))
+    print("\n2026-11-22の20場面・132対象の再測定記録（精度一致、負荷状態の時間）")
+    print(json.dumps(REMEASURED_2026_11_22, ensure_ascii=False, indent=2))
     print("\nPASS")
 
 
@@ -832,6 +1071,17 @@ def main() -> None:
     object_ids = _parse_id_env(OBJECTS_ENV, minimum=OBJECT_ID_MIN, maximum=OBJECT_ID_MAX)
     required = (root / "test_primesense", root / "models_reconst" / "models_info.json")
     if not all(path.exists() for path in required):
+        if DEFAULT_SUBSET_DATA.is_dir():
+            if os.environ.get(SWEEP_ENV, "").strip():
+                raise ValueError(
+                    "FULLSEYE_TLESS_SWEEP requires the full T-LESS dataset; "
+                    "the repository subset always measures DEFAULT_CONFIG"
+                )
+            _run_ci_subset(
+                requested_scene_ids=scene_ids,
+                requested_object_ids=object_ids,
+            )
+            return
         _print_recorded(scene_ids, object_ids)
         return
     sweep_name = os.environ.get(SWEEP_ENV, "").strip()
