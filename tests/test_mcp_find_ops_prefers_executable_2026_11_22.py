@@ -50,10 +50,12 @@ def test_prefer_mcp_executable_boundedly_demotes_non_runnable_rows_without_mutat
     expected_names = non_runnable_names[:insertion] + [executable_name] + non_runnable_names[insertion:]
     assert [row["name"] for row in result] == expected_names
     assert result[insertion]["executable"] is True
-    assert all(row["executable"] is False for row in result if row["name"] in non_runnable_names)
+    marks = [row["executable"] for row in result if row["name"] in non_runnable_names]
+    assert marks == [False] * _NON_RUNNABLE_AHEAD
     assert set(non_runnable_names) <= {row["name"] for row in result}
     assert rows == original_rows and all("executable" not in row for row in rows)
     input_by_name = {row["name"]: row for row in rows}
+    assert len(result) == _OP_LIMIT
     assert all(row is not input_by_name[row["name"]] for row in result)
 
 
