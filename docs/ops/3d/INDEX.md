@@ -1,4 +1,4 @@
-# 3D operator help — 377 ops in 68 categories
+# 3D operator help — 378 ops in 68 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -21,9 +21,9 @@
 
 [vol_boundary](boundary/vol_boundary.md) · [vol_boundary_points](boundary/vol_boundary_points.md)
 
-### bounds (4)
+### bounds (5)
 
-[aabb](bounds/aabb.md) · [convex_hull](bounds/convex_hull.md) · [min_enclosing_sphere](bounds/min_enclosing_sphere.md) · [obb](bounds/obb.md)
+[aabb](bounds/aabb.md) · [convex_hull](bounds/convex_hull.md) · [convex_hull_gap](bounds/convex_hull_gap.md) · [min_enclosing_sphere](bounds/min_enclosing_sphere.md) · [obb](bounds/obb.md)
 
 ### bundle_adjust (3)
 

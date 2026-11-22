@@ -51,7 +51,7 @@ float64 配列で、順に ``(xmin, ymin, zmin)`` と ``(xmax, ymax, zmax)``(軸
 
 ## 同カテゴリ(`bounds`)
 
-[convex_hull](convex_hull.md) · [obb](obb.md) · [min_enclosing_sphere](min_enclosing_sphere.md)
+[convex_hull](convex_hull.md) · [obb](obb.md) · [min_enclosing_sphere](min_enclosing_sphere.md) · [convex_hull_gap](convex_hull_gap.md)
 
 ---
 *Provenance: pcseg.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

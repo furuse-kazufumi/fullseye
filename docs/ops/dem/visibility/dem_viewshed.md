@@ -5,7 +5,7 @@ category: visibility
 in: depth
 out: image2d
 gpu: なし
-examples: [dem_terrain_analysis_tour, poc_stockpile_volume]
+examples: [dem_terrain_analysis_tour, heightmap_depth_camera_tour, poc_stockpile_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -55,6 +55,7 @@ version: 1.1.1  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [dem_terrain_analysis_tour](../../../../examples/dem_terrain_analysis_tour.py) — `py -3.11 examples/dem_terrain_analysis_tour.py`
+- [heightmap_depth_camera_tour](../../../../examples/heightmap_depth_camera_tour.py) — `py -3.11 examples/heightmap_depth_camera_tour.py`
 - [poc_stockpile_volume](../../../../examples/poc_stockpile_volume.py) — `py -3.11 examples/poc_stockpile_volume.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

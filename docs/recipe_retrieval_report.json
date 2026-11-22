@@ -1,6 +1,6 @@
 {
   "method": "Business-language queries contain no operator names. recall_at_2: the expected existing recipe is in the top 2. e2e_task_recipe_hit_at_2: one of the top-2 MCP-runnable recipes contains an op PR #224's judge expects. blind_*_hit_at_3: queries written from docs/ops without seeing the recipes; a top-3 recipe has that family / one of the listed ops.",
-  "recipes_in_index": 271,
+  "recipes_in_index": 274,
   "recipes_mcp": 132,
   "recall_at_2": 0.6666666666666666,
   "queries": [
@@ -243,7 +243,7 @@
     }
   ],
   "blind_family_hit_at_3": 0.85,
-  "blind_op_hit_at_3": 0.7,
+  "blind_op_hit_at_3": 0.6833,
   "blind_queries": [
     {
       "family": "2d",
@@ -282,12 +282,12 @@
       "family": "3d",
       "query": "点群から床の平面を取り除いて、その上に置かれた球状の部品の中心と半径を求めたい",
       "top_3": [
+        "Simulate — a depth camera over a height map, then the plane back from its point cloud",
         "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)",
-        "Measure — unwrap an off-centre ring about its centre and read its radius",
-        "3D — radius of a ball from a noisy scan with stray points"
+        "Measure — unwrap an off-centre ring about its centre and read its radius"
       ],
       "family_hit": true,
-      "op_hit": true
+      "op_hit": false
     },
     {
       "family": "acoustics",
@@ -305,8 +305,8 @@
       "query": "検査画像に寸法線とスケールバーと凡例を入れて、報告書に貼れる図にしたい",
       "top_3": [
         "Inspect — airfoil blade profile deviation from the nominal NACA section",
-        "Inspect — missing material against the nominal shape (region difference)",
-        "Inspect — count bright round blobs (Laplacian-of-Gaussian detector)"
+        "Simulate — a depth camera over a height map, then the plane back from its point cloud",
+        "Inspect — missing material against the nominal shape (region difference)"
       ],
       "family_hit": false,
       "op_hit": false
@@ -316,8 +316,8 @@
       "query": "Correct uneven brightness across circuit-board camera tiles and stitch them into one registered board map",
       "top_3": [
         "Inspect — flat-field correct, then register the frame to the golden image",
-        "Inspect — split touching particles with distance-transform seeds",
-        "3D — shape from polarization of a glossy dome (curvature from polarization images)"
+        "Simulate — a depth camera over a height map, then the plane back from its point cloud",
+        "Inspect — split touching particles with distance-transform seeds"
       ],
       "family_hit": true,
       "op_hit": true
@@ -349,8 +349,8 @@
       "query": "カメラ画像で見つけた欠陥の位置を、CADモデルの表面上の座標に対応付けたい",
       "top_3": [
         "Inspect — map a camera pixel onto the CAD surface (depth of the hit)",
-        "3D — object pose from known 3-D points and their image (PnP)",
-        "3D — camera pose deviation from its nominal mounting (PnP -> RRE / RTE)"
+        "Simulate — a depth camera over a height map, then the plane back from its point cloud",
+        "3D — object pose from known 3-D points and their image (PnP)"
       ],
       "family_hit": true,
       "op_hit": true
@@ -360,8 +360,8 @@
       "query": "Work out a camera's lens parameters from photos of a dot-grid target plate and convert pixel coordinates to millimetres on the table plane",
       "top_3": [
         "Calibrate — camera focal length from views of a planar target",
-        "Measure — circle on a plane in millimetres from pixels (homography)",
-        "Optics — optimize a singlet to a target focal length (merit function, damped least squares)"
+        "Simulate — a depth camera over a height map, then the plane back from its point cloud",
+        "Measure — circle on a plane in millimetres from pixels (homography)"
       ],
       "family_hit": true,
       "op_hit": true
@@ -570,7 +570,7 @@
       "top_3": [
         "3D — depth of a plane from a plenoptic camera raw image (refocus stack, depth from focus)",
         "Sense — direction of arrival of two sources with an antenna array (MUSIC)",
-        "Optics — object-side telecentric lens: magnification and telecentricity error"
+        "Simulate — a depth camera over a height map, then the plane back from its point cloud"
       ],
       "family_hit": true,
       "op_hit": false
@@ -833,7 +833,7 @@
       "query": "鏡のような塗装面のうねりを、縞模様の映り込みを使って検査したい",
       "top_3": [
         "Measure — areal roughness Sq: form removal, Gaussian L-filter, ISO 25178 parameters",
-        "Stereo — disparity of a rectified pair by multi-scale semi-global matching",
+        "Measure — clearance between two scanned parts (drop flying points, then the hull gap)",
         "Inspect — dark contamination spots on a woven fabric"
       ],
       "family_hit": false,
@@ -910,7 +910,7 @@
     "before_label": "master a8b9c1f249 (recipes.py 25 recipes), 2026-11-03",
     "recipes_in_index": {
       "before": 25,
-      "after": 271
+      "after": 274
     },
     "recipes_mcp": {
       "before": 25,
@@ -930,7 +930,7 @@
     },
     "blind_op_hit_at_3": {
       "before": 0.0,
-      "after": 0.7
+      "after": 0.6833
     }
   },
   "inventory": [
@@ -943,8 +943,8 @@
     },
     {
       "source": "fullseye/recipebook RECIPES",
-      "found": 246,
-      "included": 246,
+      "found": 249,
+      "included": 249,
       "excluded": 0,
       "reason": null
     },
@@ -964,9 +964,9 @@
     },
     {
       "source": "docs/**/*.md",
-      "found": 4429,
+      "found": 4432,
       "included": 0,
-      "excluded": 4429,
+      "excluded": 4432,
       "reason": "Documentation contains prose and snippets, not a statically unambiguous inventory of MCP stages."
     }
   ]

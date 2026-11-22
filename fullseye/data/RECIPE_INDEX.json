@@ -10719,6 +10719,146 @@
       }
     },
     {
+      "name": "Simulate — a depth camera over a height map, then the plane back from its point cloud",
+      "task": "measure",
+      "family": "drive",
+      "task_class": "simulation",
+      "halcon": null,
+      "runner": "python",
+      "input_sort": "depth",
+      "output_sort": "primitive",
+      "stages": [
+        {
+          "op": "heightmap_depth_camera",
+          "args": [
+            "$in",
+            "$aux.pose",
+            "$aux.K"
+          ],
+          "kw": {
+            "cell": 0.05
+          }
+        },
+        {
+          "op": "depth_to_points",
+          "kw": {
+            "fx": 60.0,
+            "fy": 60.0,
+            "cx": 63.5,
+            "cy": 47.5
+          }
+        },
+        {
+          "op": "fit_plane_3d"
+        }
+      ],
+      "when": "Close the perception chain on synthetic data: render a tilted plane with the depth camera (ray marching over the bilinear height map, looking straight down; on a plane the linear crossing is exact), back-project the depth to camera-frame points and fit a plane. The nadir camera frame is a reflection and a shift of the world, so the points lie exactly on a plane (residual ~1e-9) whose normal makes the world plane's tilt with the optical axis: |n_z| = 1/√(1 + a² + b²). The elevation-map round trip and the lane slope are in tests/test_heightmap_depth_camera.py and examples/heightmap_depth_camera_tour.py.",
+      "image": null,
+      "source": {
+        "path": "fullseye/recipebook/book_newops.py",
+        "line": 322
+      },
+      "when_ja": "高さ図を深度カメラで撮り、点群から平面を当て直す — 真下を向く深度カメラで傾いた面を撮り、depth_to_points で カメラの座標の点群にして fit_plane_3d で平面を当てる。真下のカメラの座標は世界の鏡映と平行移動なので点は平面の上に乗り(残差 1e-9 の桁)、法線と光軸の角が面の傾きになる(|n_z| = 1/√(1 + a² + b²))。",
+      "index_text": {
+        "ja": "Simulate — a depth camera over a height map, then the plane back from its point cloud measure simulation drive  Close the perception chain on synthetic data: render a tilted plane with the depth camera (ray marching over the bilinear height map, looking straight down; on a plane the linear crossing is exact), back-project the depth to camera-frame points and fit a plane. The nadir camera frame is a reflection and a shift of the world, so the points lie exactly on a plane (residual ~1e-9) whose normal makes the world plane's tilt with the optical axis: |n_z| = 1/√(1 + a² + b²). The elevation-map round trip and the lane slope are in tests/test_heightmap_depth_camera.py and examples/heightmap_depth_camera_tour.py. 高さ図を深度カメラで撮り、点群から平面を当て直す — 真下を向く深度カメラで傾いた面を撮り、depth_to_points で カメラの座標の点群にして fit_plane_3d で平面を当てる。真下のカメラの座標は世界の鏡映と平行移動なので点は平面の上に乗り(残差 1e-9 の桁)、法線と光軸の角が面の傾きになる(|n_z| = 1/√(1 + a² + b²))。 高さ図(標高図・DEM)を、ピンホールの深度カメラで直接撮る(光線を一定の刻みで高さの上に進める)。 深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。 点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。",
+        "en": "Simulate — a depth camera over a height map, then the plane back from its point cloud measure simulation drive  Close the perception chain on synthetic data: render a tilted plane with the depth camera (ray marching over the bilinear height map, looking straight down; on a plane the linear crossing is exact), back-project the depth to camera-frame points and fit a plane. The nadir camera frame is a reflection and a shift of the world, so the points lie exactly on a plane (residual ~1e-9) whose normal makes the world plane's tilt with the optical axis: |n_z| = 1/√(1 + a² + b²). The elevation-map round trip and the lane slope are in tests/test_heightmap_depth_camera.py and examples/heightmap_depth_camera_tour.py. Render a height map (elevation map / DEM) directly with a pinhole depth camera (rays marched over the heights at a fixed step). Depth map (2.5-D) → point cloud (pinhole back-projection). It connects the depth row to every method. Point set → a least-squares plane (through the centroid, normal = the smallest principal axis, plus the RMS residual). Returns (point, normal, resid).",
+        "zh": "Simulate — a depth camera over a height map, then the plane back from its point cloud measure simulation drive  Close the perception chain on synthetic data: render a tilted plane with the depth camera (ray marching over the bilinear height map, looking straight down; on a plane the linear crossing is exact), back-project the depth to camera-frame points and fit a plane. The nadir camera frame is a reflection and a shift of the world, so the points lie exactly on a plane (residual ~1e-9) whose normal makes the world plane's tilt with the optical axis: |n_z| = 1/√(1 + a² + b²). The elevation-map round trip and the lane slope are in tests/test_heightmap_depth_camera.py and examples/heightmap_depth_camera_tour.py. 用针孔深度相机直接拍摄高度图(高程图/DEM)(光线以固定步长在高度面上行进)。 深度图(2.5D)→ 点云(针孔反投影)。把 depth 行接到所有方法。 点群 → 最小二乘平面(过重心,法线=最小主轴,残差 RMS)。返回 (point, normal, resid)。",
+        "tw": "Simulate — a depth camera over a height map, then the plane back from its point cloud measure simulation drive  Close the perception chain on synthetic data: render a tilted plane with the depth camera (ray marching over the bilinear height map, looking straight down; on a plane the linear crossing is exact), back-project the depth to camera-frame points and fit a plane. The nadir camera frame is a reflection and a shift of the world, so the points lie exactly on a plane (residual ~1e-9) whose normal makes the world plane's tilt with the optical axis: |n_z| = 1/√(1 + a² + b²). The elevation-map round trip and the lane slope are in tests/test_heightmap_depth_camera.py and examples/heightmap_depth_camera_tour.py. 用針孔深度相機直接拍攝高度圖(高程圖/DEM)(光線以固定步長在高度面上前進)。 深度圖(2.5D)→ 點雲(針孔反投影)。把 depth 列接到所有方法。 點群 → 最小平方平面(過重心,法線=最小主軸,殘差 RMS)。回傳 (point, normal, resid)。",
+        "ko": "Simulate — a depth camera over a height map, then the plane back from its point cloud measure simulation drive  Close the perception chain on synthetic data: render a tilted plane with the depth camera (ray marching over the bilinear height map, looking straight down; on a plane the linear crossing is exact), back-project the depth to camera-frame points and fit a plane. The nadir camera frame is a reflection and a shift of the world, so the points lie exactly on a plane (residual ~1e-9) whose normal makes the world plane's tilt with the optical axis: |n_z| = 1/√(1 + a² + b²). The elevation-map round trip and the lane slope are in tests/test_heightmap_depth_camera.py and examples/heightmap_depth_camera_tour.py. 높이 지도(표고도·DEM)를 핀홀 깊이 카메라로 직접 촬영한다(광선을 일정한 간격으로 높이 면 위로 진행). 깊이 맵(2.5D) → 포인트 클라우드(핀홀 역투영). depth 행을 모든 기법에 잇습니다. 점군 → 최소제곱 평면(통과점=무게중심, 법선=최소 주축, 잔차 RMS). 반환값 (point, normal, resid).",
+        "de": "Simulate — a depth camera over a height map, then the plane back from its point cloud measure simulation drive  Close the perception chain on synthetic data: render a tilted plane with the depth camera (ray marching over the bilinear height map, looking straight down; on a plane the linear crossing is exact), back-project the depth to camera-frame points and fit a plane. The nadir camera frame is a reflection and a shift of the world, so the points lie exactly on a plane (residual ~1e-9) whose normal makes the world plane's tilt with the optical axis: |n_z| = 1/√(1 + a² + b²). The elevation-map round trip and the lane slope are in tests/test_heightmap_depth_camera.py and examples/heightmap_depth_camera_tour.py. Eine Höhenkarte (Geländemodell / DEM) direkt mit einer Lochkamera-Tiefenkamera aufnehmen (Strahlen in festen Schritten über die Höhen geführt). Tiefenkarte (2,5-D) → Punktwolke (Lochkamera-Rückprojektion). Sie verbindet die Tiefenzeile mit allen Verfahren. Punktmenge → eine Kleinste-Quadrate-Ebene (durch den Schwerpunkt, Normale = kleinste Hauptachse, plus RMS-Residuum). Liefert (point, normal, resid).",
+        "hi": "Simulate — a depth camera over a height map, then the plane back from its point cloud measure simulation drive  Close the perception chain on synthetic data: render a tilted plane with the depth camera (ray marching over the bilinear height map, looking straight down; on a plane the linear crossing is exact), back-project the depth to camera-frame points and fit a plane. The nadir camera frame is a reflection and a shift of the world, so the points lie exactly on a plane (residual ~1e-9) whose normal makes the world plane's tilt with the optical axis: |n_z| = 1/√(1 + a² + b²). The elevation-map round trip and the lane slope are in tests/test_heightmap_depth_camera.py and examples/heightmap_depth_camera_tour.py. height map (elevation map / DEM) को सीधे pinhole depth camera से लेना (किरणों को स्थिर step में ऊँचाई की सतह के ऊपर आगे बढ़ाकर)। depth map (2.5D) → point cloud (pinhole back-projection)। depth row को सभी methods से जोड़ता है। point cloud → least squares plane (point=centroid, normal=सबसे छोटा principal axis, residual RMS)। return value (point, normal, resid)।"
+      }
+    },
+    {
+      "name": "Simulate — a crowned road lane from its alignment, then its slope as a DEM",
+      "task": "measure",
+      "family": "drive",
+      "task_class": "simulation",
+      "halcon": null,
+      "runner": "python",
+      "input_sort": "table",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "road_surface_heightmap",
+          "kw": {
+            "cell": 0.1,
+            "extent": [
+              5.0,
+              35.0,
+              0.3,
+              2.7
+            ],
+            "crossfall": "$aux.crossfall"
+          }
+        },
+        {
+          "op": "dem_slope",
+          "kw": {
+            "cell_size": 0.1
+          }
+        }
+      ],
+      "when": "Road surface from a centre-line table (x, y, z every 0.5 m) and the cross-section rules (2 % crown, lanes, gutter): the window is the left lane only, a plane z = g·x − c·y, so the DEM slope (Horn) is atan(√(g² + c²)) everywhere inside. The same height map feeds the depth camera and the lane-window slope chain (crop_rectangle2 -> surface_form_remove); return_truth=True adds the per-cell analytic truth (grade, cross slope, s, e).",
+      "image": null,
+      "source": {
+        "path": "fullseye/recipebook/book_newops.py",
+        "line": 337
+      },
+      "when_ja": "中心線の表と横断の決まり(拝み勾配 2 %・車線・側溝)から道の面を作り、DEM として傾斜を測る — 窓は左の車線だけで、z = g·x − c·y の平面なので dem_slope(Horn)が内側のどこでも atan(√(g² + c²)) になる。セルごとの解析の真値は return_truth=True で返る。",
+      "index_text": {
+        "ja": "Simulate — a crowned road lane from its alignment, then its slope as a DEM measure simulation drive  Road surface from a centre-line table (x, y, z every 0.5 m) and the cross-section rules (2 % crown, lanes, gutter): the window is the left lane only, a plane z = g·x − c·y, so the DEM slope (Horn) is atan(√(g² + c²)) everywhere inside. The same height map feeds the depth camera and the lane-window slope chain (crop_rectangle2 -> surface_form_remove); return_truth=True adds the per-cell analytic truth (grade, cross slope, s, e). 中心線の表と横断の決まり(拝み勾配 2 %・車線・側溝)から道の面を作り、DEM として傾斜を測る — 窓は左の車線だけで、z = g·x − c·y の平面なので dem_slope(Horn)が内側のどこでも atan(√(g² + c²)) になる。セルごとの解析の真値は return_truth=True で返る。 中心線の線形と横断の決まりから、道の面の高さ図と、セルごとの解析の真値(勾配・横勾配)を作る。 傾斜角。``units`` は ``\"degrees\"`` / ``\"radians\"`` / ``\"percent\"``。",
+        "en": "Simulate — a crowned road lane from its alignment, then its slope as a DEM measure simulation drive  Road surface from a centre-line table (x, y, z every 0.5 m) and the cross-section rules (2 % crown, lanes, gutter): the window is the left lane only, a plane z = g·x − c·y, so the DEM slope (Horn) is atan(√(g² + c²)) everywhere inside. The same height map feeds the depth camera and the lane-window slope chain (crop_rectangle2 -> surface_form_remove); return_truth=True adds the per-cell analytic truth (grade, cross slope, s, e). Road surface height map from a centre-line alignment and cross-section rules, with the per-cell analytic truth (grade and cross slope). Slope angle. ``units`` is ``\"degrees\"`` / ``\"radians\"`` / ``\"percent\"``.",
+        "zh": "Simulate — a crowned road lane from its alignment, then its slope as a DEM measure simulation drive  Road surface from a centre-line table (x, y, z every 0.5 m) and the cross-section rules (2 % crown, lanes, gutter): the window is the left lane only, a plane z = g·x − c·y, so the DEM slope (Horn) is atan(√(g² + c²)) everywhere inside. The same height map feeds the depth camera and the lane-window slope chain (crop_rectangle2 -> surface_form_remove); return_truth=True adds the per-cell analytic truth (grade, cross slope, s, e). 由中心线线形与横断面规则生成路面高度图,并给出每个单元的解析真值(纵坡与横坡)。 坡度角。``units`` 为 ``\"degrees\"`` / ``\"radians\"`` / ``\"percent\"``。",
+        "tw": "Simulate — a crowned road lane from its alignment, then its slope as a DEM measure simulation drive  Road surface from a centre-line table (x, y, z every 0.5 m) and the cross-section rules (2 % crown, lanes, gutter): the window is the left lane only, a plane z = g·x − c·y, so the DEM slope (Horn) is atan(√(g² + c²)) everywhere inside. The same height map feeds the depth camera and the lane-window slope chain (crop_rectangle2 -> surface_form_remove); return_truth=True adds the per-cell analytic truth (grade, cross slope, s, e). 由中心線線形與橫斷面規則產生路面高度圖,並給出每個格子的解析真值(縱坡與橫坡)。 坡度角。``units`` 為 ``\"degrees\"`` / ``\"radians\"`` / ``\"percent\"``。",
+        "ko": "Simulate — a crowned road lane from its alignment, then its slope as a DEM measure simulation drive  Road surface from a centre-line table (x, y, z every 0.5 m) and the cross-section rules (2 % crown, lanes, gutter): the window is the left lane only, a plane z = g·x − c·y, so the DEM slope (Horn) is atan(√(g² + c²)) everywhere inside. The same height map feeds the depth camera and the lane-window slope chain (crop_rectangle2 -> surface_form_remove); return_truth=True adds the per-cell analytic truth (grade, cross slope, s, e). 중심선 선형과 횡단 규칙으로 도로 면의 높이 지도와 셀별 해석적 참값(종단 경사·횡단 경사)을 만든다. 경사각. ``units``는 ``\"degrees\"`` / ``\"radians\"`` / ``\"percent\"``.",
+        "de": "Simulate — a crowned road lane from its alignment, then its slope as a DEM measure simulation drive  Road surface from a centre-line table (x, y, z every 0.5 m) and the cross-section rules (2 % crown, lanes, gutter): the window is the left lane only, a plane z = g·x − c·y, so the DEM slope (Horn) is atan(√(g² + c²)) everywhere inside. The same height map feeds the depth camera and the lane-window slope chain (crop_rectangle2 -> surface_form_remove); return_truth=True adds the per-cell analytic truth (grade, cross slope, s, e). Höhenkarte einer Straßenoberfläche aus Achslinie und Querschnittsregeln, mit der analytischen Wahrheit je Zelle (Längs- und Querneigung). Neigungswinkel. ``units`` ist ``\"degrees\"`` / ``\"radians\"`` / ``\"percent\"``.",
+        "hi": "Simulate — a crowned road lane from its alignment, then its slope as a DEM measure simulation drive  Road surface from a centre-line table (x, y, z every 0.5 m) and the cross-section rules (2 % crown, lanes, gutter): the window is the left lane only, a plane z = g·x − c·y, so the DEM slope (Horn) is atan(√(g² + c²)) everywhere inside. The same height map feeds the depth camera and the lane-window slope chain (crop_rectangle2 -> surface_form_remove); return_truth=True adds the per-cell analytic truth (grade, cross slope, s, e). centre-line alignment और cross-section नियमों से सड़क सतह का height map, हर cell के analytic सत्य मान (grade और cross slope) के साथ। slope कोण। ``units`` ``\"degrees\"`` / ``\"radians\"`` / ``\"percent\"`` है।"
+      }
+    },
+    {
+      "name": "Measure — clearance between two scanned parts (drop flying points, then the hull gap)",
+      "task": "measure",
+      "family": "3d",
+      "task_class": "3d",
+      "halcon": null,
+      "runner": "python",
+      "input_sort": "points",
+      "output_sort": "table",
+      "stages": [
+        {
+          "op": "radius_outlier_removal",
+          "kw": {
+            "radius": 0.06,
+            "min_neighbors": 2
+          }
+        },
+        {
+          "op": "convex_hull_gap",
+          "args": [
+            "$prev",
+            "$aux.b"
+          ]
+        }
+      ],
+      "when": "Assembly clearance from two scans: six flying points inside the gap make the raw hull gap look less than half its size, so drop isolated points first (radius_outlier_removal: fewer than 2 neighbours within 0.06), then convex_hull_gap returns the face-to-face gap with certified bounds (Wolfe's minimum-norm point; an independent HiGHS LP agrees). Use convex pieces: the hull of a non-convex part over-reports contact.",
+      "image": null,
+      "source": {
+        "path": "fullseye/recipebook/book_newops.py",
+        "line": 350
+      },
+      "when_ja": "走査した 2 部品のあいだの隙間を測る — 隙間の中の飛び点 6 点で凸包の隙間が詰まって見えるので、先に radius_outlier_removal(半径 0.06 に近傍 2 点未満)で除き、convex_hull_gap が面と面の隙間を保証つきの上下限で返す(Wolfe の 最小ノルム点。独立な線形計画も一致)。非凸の部品は凸に分けてから使う。",
+      "index_text": {
+        "ja": "Measure — clearance between two scanned parts (drop flying points, then the hull gap) measure 3d 3d  Assembly clearance from two scans: six flying points inside the gap make the raw hull gap look less than half its size, so drop isolated points first (radius_outlier_removal: fewer than 2 neighbours within 0.06), then convex_hull_gap returns the face-to-face gap with certified bounds (Wolfe's minimum-norm point; an independent HiGHS LP agrees). Use convex pieces: the hull of a non-convex part over-reports contact. 走査した 2 部品のあいだの隙間を測る — 隙間の中の飛び点 6 点で凸包の隙間が詰まって見えるので、先に radius_outlier_removal(半径 0.06 に近傍 2 点未満)で除き、convex_hull_gap が面と面の隙間を保証つきの上下限で返す(Wolfe の 最小ノルム点。独立な線形計画も一致)。非凸の部品は凸に分けてから使う。 半径 radius 内の近傍数が min_neighbors 未満の点を除去する(孤立点除去)。 2 つの頂点集合の凸包どうしの隙間(最短距離)を、保証つきの上下限と一緒に返す。",
+        "en": "Measure — clearance between two scanned parts (drop flying points, then the hull gap) measure 3d 3d  Assembly clearance from two scans: six flying points inside the gap make the raw hull gap look less than half its size, so drop isolated points first (radius_outlier_removal: fewer than 2 neighbours within 0.06), then convex_hull_gap returns the face-to-face gap with certified bounds (Wolfe's minimum-norm point; an independent HiGHS LP agrees). Use convex pieces: the hull of a non-convex part over-reports contact. Remove the points with fewer than min_neighbors neighbours within radius (isolated-point removal). Gap (shortest distance) between the convex hulls of two vertex sets, returned with certified lower and upper bounds.",
+        "zh": "Measure — clearance between two scanned parts (drop flying points, then the hull gap) measure 3d 3d  Assembly clearance from two scans: six flying points inside the gap make the raw hull gap look less than half its size, so drop isolated points first (radius_outlier_removal: fewer than 2 neighbours within 0.06), then convex_hull_gap returns the face-to-face gap with certified bounds (Wolfe's minimum-norm point; an independent HiGHS LP agrees). Use convex pieces: the hull of a non-convex part over-reports contact. 去除半径 radius 内邻居数少于 min_neighbors 的点(孤立点去除)。 两个顶点集合的凸包之间的间隙(最短距离),连同有保证的上下界一起返回。",
+        "tw": "Measure — clearance between two scanned parts (drop flying points, then the hull gap) measure 3d 3d  Assembly clearance from two scans: six flying points inside the gap make the raw hull gap look less than half its size, so drop isolated points first (radius_outlier_removal: fewer than 2 neighbours within 0.06), then convex_hull_gap returns the face-to-face gap with certified bounds (Wolfe's minimum-norm point; an independent HiGHS LP agrees). Use convex pieces: the hull of a non-convex part over-reports contact. 去除半徑 radius 內鄰居數少於 min_neighbors 的點(孤立點去除)。 兩個頂點集合的凸包之間的間隙(最短距離),連同有保證的上下界一起回傳。",
+        "ko": "Measure — clearance between two scanned parts (drop flying points, then the hull gap) measure 3d 3d  Assembly clearance from two scans: six flying points inside the gap make the raw hull gap look less than half its size, so drop isolated points first (radius_outlier_removal: fewer than 2 neighbours within 0.06), then convex_hull_gap returns the face-to-face gap with certified bounds (Wolfe's minimum-norm point; an independent HiGHS LP agrees). Use convex pieces: the hull of a non-convex part over-reports contact. 반경 radius 안의 이웃 수가 min_neighbors 미만인 점을 제거(고립점 제거). 두 꼭짓점 집합의 볼록 껍질 사이의 간격(최단 거리)을 보증된 상한·하한과 함께 반환한다.",
+        "de": "Measure — clearance between two scanned parts (drop flying points, then the hull gap) measure 3d 3d  Assembly clearance from two scans: six flying points inside the gap make the raw hull gap look less than half its size, so drop isolated points first (radius_outlier_removal: fewer than 2 neighbours within 0.06), then convex_hull_gap returns the face-to-face gap with certified bounds (Wolfe's minimum-norm point; an independent HiGHS LP agrees). Use convex pieces: the hull of a non-convex part over-reports contact. Entfernt Punkte mit weniger als min_neighbors Nachbarn innerhalb von radius (Entfernung isolierter Punkte). Abstand (kürzeste Distanz) zwischen den konvexen Hüllen zweier Punktmengen, zusammen mit garantierten unteren und oberen Schranken.",
+        "hi": "Measure — clearance between two scanned parts (drop flying points, then the hull gap) measure 3d 3d  Assembly clearance from two scans: six flying points inside the gap make the raw hull gap look less than half its size, so drop isolated points first (radius_outlier_removal: fewer than 2 neighbours within 0.06), then convex_hull_gap returns the face-to-face gap with certified bounds (Wolfe's minimum-norm point; an independent HiGHS LP agrees). Use convex pieces: the hull of a non-convex part over-reports contact. radius radius के अंदर min_neighbors से कम neighbours वाले points हटाता है (isolated point removal)। दो vertex sets के convex hulls के बीच का gap (सबसे छोटी दूरी), प्रमाणित lower और upper bounds के साथ।"
+      }
+    },
+    {
       "name": "Measure — bore centre and radius from a sub-pixel contour (circle fit per XLD contour)",
       "task": "measure",
       "family": "2d",
@@ -10741,7 +10881,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 281
+        "line": 363
       },
       "when_ja": "穴の中心と半径をサブピクセル輪郭から測る — threshold_sub_pix で円板の縁を XLD 輪郭にし、fit_circle_xld で輪郭ごとに幾何距離の円を当てて中心(行・列)と半径を画素で読む(HALCON fit_circle_contour_xld)。真値は被覆率で描いた円。",
       "index_text": {
@@ -10790,7 +10930,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 294
+        "line": 376
       },
       "when_ja": "接した部品を分水嶺の盆地として数える — 二値化・距離変換・反転で部品ごとの谷を作り、hierarchical_watershed をマスクの中で回して盆地のラベル画像(1..k)と個数を得る(HALCON watersheds の basins 出力)。",
       "index_text": {
@@ -10850,7 +10990,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 307
+        "line": 389
       },
       "when_ja": "マスク付きのマーカー分水嶺 — 部品のマスクを 1 ラベル、作業者の印を種、勾配の反転を優先度にして blob_split で流す。マスクの外へは出ないので面積の合計がマスクと一致し、2 部品の面積が分かる(watersheds_marker に mask 引数が無い穴の代わり)。",
       "index_text": {
@@ -10893,7 +11033,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 323
+        "line": 405
       },
       "when_ja": "中心のずれたリングを、その中心で極座標展開して半径を読む — polar_unwrap に中心(行・列)と半径の範囲を渡し、角度で平均した断面の最大の列からリングの半径を得る(HALCON polar_trans_image_ext の Row/Column/Radius)。",
       "index_text": {
@@ -10931,7 +11071,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 335
+        "line": 417
       },
       "when_ja": "濃淡ボリュームの明るい介在物と暗い介在物を数える — vol_threshold で明示のレベル(0.25)で二値化してから vol_count で連結成分を数える。vol_count だけだと 0.5 固定で暗い方を落とす。",
       "index_text": {
@@ -10968,7 +11108,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 344
+        "line": 426
       },
       "when_ja": "マイク 2 本で音源の方位を測る — tdoa_bearing が相互相関で到着時間差 Δt を取り、遠方近似 θ = asin(cΔt/d) で方位(度)にする。マイク間隔 0.2 m、48 kHz。",
       "index_text": {
@@ -11005,7 +11145,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 354
+        "line": 436
       },
       "when_ja": "加工面の送りマークの波長を面 PSD の山から測る — surface_psd の (q, PSD) 対を spectral_stats に渡し、山の横軸 q(cycles/mm)= 1/λ を読む。peak_nm という名前だが単位は対の横軸のまま。",
       "index_text": {
@@ -11036,7 +11176,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 363
+        "line": 445
       },
       "when_ja": "縞・格子・テクスチャの周期と向きを測る — wave_dominant_frequency が Hann 窓の 2-D FFT の DC 以外の最大の山を対数放物線で細かく読み、周期(画素)と波数ベクトルの向き(度)を返す。",
       "index_text": {
@@ -11071,7 +11211,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 373
+        "line": 455
       },
       "when_ja": "既知の部品の 6 自由度の姿勢を場面の点群から求める — find_surface_pose が点対特徴(PPF)の投票で初期値なしに姿勢を立て、ICP で詰めて (R, t) を返す(HALCON find_surface_model)。",
       "index_text": {
@@ -11106,7 +11246,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 387
+        "line": 469
       },
       "when_ja": "3D センサの受入試験で、校正済みの球から探針の誤差を測る — sphere_probing_error が点群に球を当て、大きさの誤差 PS(当てた直径 − 校正値)と形状の誤差 PF(最悪 0.3 % を除いた半径の残差の幅)を返す。雑音 0 なら両方 0(閉形式)。",
       "index_text": {
@@ -11144,7 +11284,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 398
+        "line": 480
       },
       "when_ja": "2 枚の像のサブピクセルのずれを ECC で測る — register_ecc(並進)の warp の平行移動の列が(dx, dy)(列が先)。滑らかな模様を既知の量だけずらした像なので、真値はそのずれ。",
       "index_text": {
@@ -11175,7 +11315,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 408
+        "line": 490
       },
       "when_ja": "EAN-13(JAN)のラベルを読む(傾きと雑音つきも)— read_barcode1d が推定した向きで平行な走査線を引き、線ごとに復号して多数決で一致したときだけ文字列を返す。真値は符号化した 13 桁。",
       "index_text": {
@@ -11213,7 +11353,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 418
+        "line": 500
       },
       "when_ja": "平行化したステレオ対の視差を半大域照合で測る — binocular_disparity_ms(HALCON の同名 op)が複数の経路で集約し左右の整合を確かめて視差の地図を返す。左は右を一様な視差 d(5 / 3 px)だけずらした像なので、地図の中央値が d になる。",
       "index_text": {
@@ -11393,8 +11533,8 @@
     },
     {
       "source": "fullseye/recipebook RECIPES",
-      "found": 246,
-      "included": 246,
+      "found": 249,
+      "included": 249,
       "excluded": 0,
       "reason": null
     },
@@ -11414,9 +11554,9 @@
     },
     {
       "source": "docs/**/*.md",
-      "found": 4429,
+      "found": 4432,
       "included": 0,
-      "excluded": 4429,
+      "excluded": 4432,
       "reason": "Documentation contains prose and snippets, not a statically unambiguous inventory of MCP stages."
     }
   ]

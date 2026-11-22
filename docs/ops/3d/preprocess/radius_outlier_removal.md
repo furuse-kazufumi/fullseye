@@ -5,7 +5,7 @@ category: preprocess
 in: points
 out: points
 gpu: なし
-examples: [pcl_geodesic]
+examples: [convex_hull_gap_clearance, pcl_geodesic]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ Notes
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [convex_hull_gap_clearance](../../../../examples_3d/convex_hull_gap_clearance.py) — `py -3.11 examples_3d/convex_hull_gap_clearance.py`
 - [pcl_geodesic](../../../../examples_3d/pcl_geodesic.py) — `py -3.11 examples_3d/pcl_geodesic.py`
 
 ## 型が繋がる次の op(`points` を入力に取れる)
