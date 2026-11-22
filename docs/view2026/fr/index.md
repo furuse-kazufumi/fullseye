@@ -8,7 +8,7 @@
 
 **Présentation : jeudi 3 décembre 2026, 14 h 40–15 h 50 JST, session interactive 2, IS2-19** (Pacifico Yokohama, Annex Hall)
 
-<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="Une scène 3-D décomposée en image, profondeur, normales, masque d&#x27;ombre et contours, chacun traité ensuite" width="640" height="468"><div class="vt"><p>Fullseye est une base pour l'inspection d'images, la mesure 3D et la simulation physique. Elle transmet à une IA, via MCP et RAG, des opérateurs typés de traitement d'images classique et la simulation physique (y compris la détection, comme la conception optique), lui fait déterminer une combinaison adaptée à chaque tâche, et résout la tâche de manière interactive tout en vérifiant la cohérence des types et en évaluant par rapport à la vérité terrain. Open source (Apache-2.0).</p></div></div>
+<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="Une scène 3-D décomposée en image, profondeur, normales, masque d&#x27;ombre et contours, chacun traité ensuite" width="640" height="468"><div class="vt"><p>Fullseye est une base pour l'inspection d'images, la mesure 3D et la simulation physique. Elle transmet à une IA, via MCP et RAG, des opérateurs typés de traitement d'images classique et la simulation physique (y compris la simulation de capteurs, comme la conception optique), lui fait déterminer une combinaison adaptée à chaque tâche, et résout la tâche de manière interactive tout en vérifiant la cohérence des types et en évaluant par rapport à la vérité terrain. Open source (Apache-2.0).</p></div></div>
 
 Touchez une vignette pour ouvrir la vidéo ou la figure (▶ = animé).
 

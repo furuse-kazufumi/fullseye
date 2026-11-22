@@ -10,10 +10,12 @@ Fullseye で何ができるか(柱)を言う。型を持つ op・物理シミュ
 
 * 日本語は名刺の字のまま(「3D 計測」「シミュレーション」などの言い換えは通さない)。
 * ほかの言語は論文の題の訳(exhibits.json の ui.title_tr)と同じ語を、名刺の順で並べる。
+* 1 文目の 3 語の直後に区切りや接続語を続けて、4 つ目の柱を足さない。
 * 置き場所は頭: リポジトリの README はバッジの直後の段落、サイトのトップ(docs/README*.md)は
   言語の行の直後の段落、ViEW2026 のページ(8 言語)は冒頭の紹介の段落の 1 文目、
   PyPI の一行の説明は書き出し、CITATION.cff と .zenodo.json の要旨は 1 文目。
-* 頭の文に Studio と X 線 CT を出さない。
+* 頭の範囲は README と ViEW2026 は段落全体、PyPI は一行全体、引用の要旨は最初の 2 文。
+  そこに型を持つ op・真値・MCP / RAG の土台があり、Studio・X 線 CT・会社の形の語が無い。
 """
 from __future__ import annotations
 
@@ -48,8 +50,32 @@ PILLARS = {
 VIEW_LANGS = ("ja", "en", "zh", "tw", "ko", "de", "hi", "fr")
 SITE_LANGS = ("ja", "en", "zh", "tw", "ko", "de")
 
-#: 頭の文に出さない語(Studio を前面で宣伝しない・X 線 CT を頭に出さない)。
-_BANNED = re.compile(r"Studio|X ?線|X-ray|\bCT\b|tomograph|トモグラフィ|断層", re.I)
+#: 言語ごとの土台の語(型を持つ op と、物理シミュレーションで作った真値)。
+FOUNDATION_TERMS = {
+    "ja": ("型", "真値"),
+    "en": ("typed", "ground truth"),
+    "zh": ("类型化", "真值"),
+    "tw": ("型別化", "真值"),
+    "ko": ("타입", "참값"),
+    "de": ("typisiert", "Ground Truth"),
+    "hi": ("typed", "ground truth"),
+    "fr": ("typés", "vérité terrain"),
+}
+
+#: 頭に出さない語(Studio・X 線 CT・実在の会社名につながる会社の形)。
+_BANNED = re.compile(
+    r"Studio|X ?線|X-ray|\bCT\b|tomograph|トモグラフィ|断層|"
+    r"株式会社|有限会社|合同会社|\(株\)|（株）|"
+    r"\bInc\.(?=\s|,|$)|\bCo\.,?\s*Ltd\.(?=\s|,|$)|\bCorporation\b|"
+    r"\bCorp\.(?=\s|,|$)|\bGmbH\b|\bK\.K\.(?=\s|,|$)",
+    re.I,
+)
+#: 3 語の直後にあると、列挙を 4 つ目へ続ける区切り・接続語。
+_PILLAR_CONTINUATION = re.compile(
+    r"^\s*(?:[・、,，]|と|及|与|與|및|and(?![A-Za-z])|und(?![A-Za-z])|"
+    r"et(?![A-Za-zÀ-ÿ])|और)",
+    re.I,
+)
 #: 文の終わり(ja / zh / tw の「。」、hi の「।」、それ以外は「. 」)。
 _SENTENCE_END = re.compile(r"(?<=[。।])|(?<=\.)\s")
 
@@ -68,6 +94,11 @@ def first_sentence(text: str) -> str:
     return _SENTENCE_END.split(_plain(text), maxsplit=1)[0].strip()
 
 
+def first_sentences(text: str, count: int) -> str:
+    """目に見える文の先頭から ``count`` 文を取り出す。"""
+    return " ".join(_SENTENCE_END.split(_plain(text), maxsplit=count)[:count]).strip()
+
+
 def pillar_problems(sentence: str, lang: str) -> list[str]:
     """名刺の 3 語が名刺の順と字のまま入っているか。問題の一覧(空なら合格)。"""
     terms, joined = PILLARS[lang]
@@ -78,9 +109,26 @@ def pillar_problems(sentence: str, lang: str) -> list[str]:
     pos = [got.find(t.casefold()) for t in terms]
     if -1 in pos or pos != sorted(pos):
         problems.append("3 語 %r の有無と順が名刺と違う(位置 %s)" % (terms, pos))
+    joined_match = re.search(re.escape(joined), sentence, re.I)
+    if joined_match and _PILLAR_CONTINUATION.match(sentence[joined_match.end():]):
+        problems.append("名刺の 3 語の直後に、4 つ目の柱へ続く区切り・接続語がある")
     hit = _BANNED.search(sentence)
     if hit:
         problems.append("頭の文に出さない語 %r がある" % hit.group(0))
+    return problems
+
+
+def lead_problems(lead: str, lang: str) -> list[str]:
+    """頭の範囲に 3 本柱と土台があり、禁止語が無いか。問題の一覧。"""
+    plain = _plain(lead)
+    sentence = first_sentence(plain)
+    problems = pillar_problems(sentence, lang)
+    hit = _BANNED.search(plain)
+    if hit and not _BANNED.search(sentence):
+        problems.append("頭の範囲に出さない語 %r がある" % hit.group(0))
+    for term in ("MCP", "RAG", *FOUNDATION_TERMS[lang]):
+        if term.casefold() not in plain.casefold():
+            problems.append("頭の範囲に土台の語 %r が無い" % term)
     return problems
 
 
@@ -102,10 +150,8 @@ def _paragraph_after(text: str, is_marker) -> str:
 def _check(label: str, lead: str, lang: str) -> None:
     sentence = first_sentence(lead)
     assert sentence, "%s: 頭の文が空" % label
-    problems = pillar_problems(sentence, lang)
-    assert not problems, "%s の頭の文 %r: %s" % (label, sentence, "; ".join(problems))
-    hit = _BANNED.search(_plain(lead))
-    assert not hit, "%s の頭の段落に %r がある(Studio・X 線 CT は頭に出さない)" % (label, hit.group(0))
+    problems = lead_problems(lead, lang)
+    assert not problems, "%s の頭 %r: %s" % (label, _plain(lead), "; ".join(problems))
 
 
 # --------------------------------------------------------------------------- #
@@ -121,11 +167,20 @@ def test_the_check_rejects_paraphrases_wrong_order_and_the_old_leads():
                 "MCP と RAG で AI に渡し、課題ごとに組み合わせを考えさせる基盤です。")
     assert pillar_problems(first_sentence(old_view), "ja")
     old_readme = ("**Documentation: [furuse.work](https://furuse.work/)** — the operator index "
-                  "(3,838 operators in the machine-readable index), the family guides, and the release notes.")
+                  "(operators in the machine-readable index), the family guides, and the release notes.")
     assert pillar_problems(first_sentence(old_readme), "en")
     assert pillar_problems("A library for 3-D measurement, image inspection and physics simulation.", "en")
     # 文の切り方: 2 文目に 3 語があっても頭の文としては通さない
     assert pillar_problems(first_sentence("Fullseye is a library. It does " + PILLARS["en"][1] + "."), "en")
+    good = ("Fullseye is a Python library for image inspection, 3-D measurement and physics simulation. "
+            "It chains typed operators, checks them against ground truth, and hands them to AI assistants "
+            "through MCP and RAG.")
+    assert lead_problems(good, "en") == []
+    assert lead_problems(good.replace("It chains", "Fullseye Studio chains"), "en")
+    assert lead_problems(good.replace(" through MCP and RAG", ""), "en")
+    assert lead_problems(good.replace("AI assistants", "株式会社の AI assistants"), "en")
+    fourth = good.replace("physics simulation.", "physics simulation and robot control.", 1)
+    assert lead_problems(fourth, "en")
 
 
 @pytest.mark.parametrize("lang", VIEW_LANGS)
@@ -197,17 +252,15 @@ def test_pypi_one_line_description_opens_with_the_three_words():
     assert m, "pyproject.toml に description が無い"
     desc = m.group(1)
     assert desc.casefold().startswith(PILLARS["en"][1].casefold()), desc[:80]
-    hit = _BANNED.search(desc)
-    assert not hit, "PyPI の一行の説明に %r がある" % hit.group(0)
+    _check("pyproject.toml description", desc, "en")
 
 
 def test_citation_and_zenodo_abstracts_open_with_the_three_words():
-    """引用の要旨(CITATION.cff)と DOI の頁の説明(.zenodo.json)の 1 文目。"""
+    """引用の要旨(CITATION.cff)と DOI の頁の説明(.zenodo.json)の最初の 2 文。"""
     cff = _read("CITATION.cff")
     m = re.search(r"^abstract: >-\n((?:  .*\n)+)", cff, re.M)
     assert m, "CITATION.cff に abstract が無い"
     abstract = " ".join(ln.strip() for ln in m.group(1).splitlines())
-    # 要旨の後ろの文(Studio にも触れる既存の説明)は変えないので、見るのは 1 文目だけ。
-    _check("CITATION.cff abstract", first_sentence(abstract), "en")
+    _check("CITATION.cff abstract", first_sentences(abstract, 2), "en")
     zen = json.loads(_read(".zenodo.json"))["description"]
-    _check(".zenodo.json description", first_sentence(zen), "en")
+    _check(".zenodo.json description", first_sentences(zen, 2), "en")
