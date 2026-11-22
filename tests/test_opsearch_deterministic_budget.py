@@ -1,4 +1,5 @@
 from fullseye import opsearch
+from fssystem import PLAN_MAX_GENERATED_DEFAULT
 
 
 def _plan_signature(result):
@@ -58,6 +59,39 @@ def test_expansion_cap_is_deterministic_across_clocks(monkeypatch):
     assert _search_meta(normal)["expanded"] == _search_meta(slow)["expanded"] == 1000
     assert _search_meta(normal)["limit_reached"] == "max_expansions"
     assert _search_meta(slow)["limit_reached"] == "max_expansions"
+    assert _search_meta(normal)["deterministic"] is True
+    assert _search_meta(slow)["deterministic"] is True
+
+
+def test_generated_candidate_cap_is_deterministic_across_clocks(monkeypatch):
+    constraints = {
+        "query": "register",
+        "executable_only": False,
+        "k": 20,
+    }
+    tightened = opsearch.plan(
+        "image", "pose", constraints={**constraints, "max_generated": 1000}
+    )
+    normal = opsearch.plan("image", "pose", constraints=constraints)
+
+    tick = -0.0001
+
+    def slow_machine_clock():
+        nonlocal tick
+        tick += 0.0001
+        return tick
+
+    monkeypatch.setattr(opsearch.time, "monotonic", slow_machine_clock)
+    slow = opsearch.plan("image", "pose", constraints=constraints)
+
+    assert _search_meta(tightened)["generated"] == 1000
+    assert _search_meta(tightened)["limit_reached"] == "max_generated"
+    assert _plan_signature(slow) == _plan_signature(normal)
+    assert _search_meta(normal)["expanded"] == _search_meta(slow)["expanded"]
+    assert _search_meta(normal)["generated"] == _search_meta(slow)["generated"]
+    assert _search_meta(normal)["generated"] == PLAN_MAX_GENERATED_DEFAULT
+    assert _search_meta(normal)["limit_reached"] == "max_generated"
+    assert _search_meta(slow)["limit_reached"] == "max_generated"
     assert _search_meta(normal)["deterministic"] is True
     assert _search_meta(slow)["deterministic"] is True
 

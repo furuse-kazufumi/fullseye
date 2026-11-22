@@ -63,7 +63,7 @@ import contextvars
 __all__ = [
     "SYSTEM_PARAMS", "set_system", "get_system", "query_system",
     "system", "reset_system", "system_snapshot", "PROFILES", "save_profile", "resolve_profile",
-    "PLAN_MAX_EXPANSIONS_DEFAULT", "PLAN_WALL_SAFETY_MS",
+    "PLAN_MAX_EXPANSIONS_DEFAULT", "PLAN_MAX_GENERATED_DEFAULT", "PLAN_WALL_SAFETY_MS",
 ]
 
 
@@ -72,9 +72,19 @@ __all__ = [
 # EN: Deterministic normal-search cap in expanded nodes; the measured maxima above all exhausted the heap.
 PLAN_MAX_EXPANSIONS_DEFAULT = 50_000
 
-# JA: 異常時だけの壁時計安全弁(ms)。最大実測1,234 ms/45,971節から5万節を1,342 msと見積もり、
-# 10倍とCI速度差2.6倍を掛けた34,892 msを上回る60,000 msとする。
-# EN: Emergency wall-clock fuse in milliseconds, above 10x the measured 50k estimate and the 2.6x CI factor.
+# JA: 1探索でheapへ積む候補数の決定的上限(件)。2026-11-22に業務6件、RAG 40件、
+# 優先度キュー試験40 wantの後方・前方再生を使い切るまで測った最大は45,971件だった。
+# 100,000件ならk=20 registerもb8cd6e9c75と同じ2計画を返し、実測20--30 us/件から
+# 2.0--3.0秒、CIを2.6倍としても5.2--7.8秒である。
+# EN: Deterministic cap in generated heap candidates per search; the measured representative maximum
+# was 45,971.  A 100k cap preserves b8cd6e9c75's two k=20 register plans and takes 2.0--3.0 s
+# at 20--30 us/candidate, or 5.2--7.8 s at the 2.6x CI factor.
+PLAN_MAX_GENERATED_DEFAULT = 100_000
+
+# JA: 異常時だけの壁時計安全弁(ms)。上のpush上限から見積もるCI最悪値7.8秒の7倍超で、
+# 通常探索は到達しない。決定的上限が働かない異常だけを60秒で止める。
+# EN: Emergency wall-clock fuse in milliseconds, over 7x the 7.8 s CI worst-case estimate from
+# the generated-candidate cap; normal searches stop at deterministic limits before reaching it.
 PLAN_WALL_SAFETY_MS = 60_000
 
 

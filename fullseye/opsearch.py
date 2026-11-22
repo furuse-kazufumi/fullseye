@@ -193,7 +193,8 @@ def _plan_dag(root: dict) -> tuple[list[dict], list[str]]:
 
 
 def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_only: bool,
-                      k: int, max_depth: int, max_expansions: int, timeout_ms: int,
+                      k: int, max_depth: int, max_expansions: int, max_generated: int,
+                      timeout_ms: int,
                       allow_sources: bool) -> tuple[list[dict], dict]:
     """Knuth-style relaxation: retain bounded derivations per type, never type sets."""
     graph = _graph()
@@ -230,9 +231,13 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
             by_input.setdefault(sort, []).append(edge)
     best = {s: [{"base": s, "sort": s, "cost": 0.0, "depth": 0,
                  "signature": "have:%s" % s, "consumed": frozenset({s})}] for s in starts}
-    started=time.monotonic(); expanded=0; capped=None; heap=[]; queued=set(); serial=0
+    started=time.monotonic(); expanded=0; generated=0; capped=None; heap=[]; queued=set(); serial=0
+    generation_stopped=max_generated<=0
+    if generation_stopped: capped="max_generated"
     def enqueue(edge):
-        nonlocal serial
+        nonlocal capped, generated, generation_stopped, serial
+        if generation_stopped:
+            return
         ins=edge.get("inputs",[])
         if not ins:
             combos=[()] if allow_sources and edge.get("type_semantics")=="source" else []
@@ -241,6 +246,8 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
         else:
             combos=itertools.islice(itertools.product(*(best[inp][:k] for inp in ins)),k*k)
         for children0 in combos:
+            if generation_stopped:
+                return
             children=list(children0); depth=1+max((x["depth"] for x in children),default=0)
             if depth>max_depth: continue
             out=edge["output"]
@@ -253,10 +260,18 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
             cost=sum(x["cost"] for x in children)+1.0/(1.0+relevance)
             row={"sort":out,"cost":cost,"depth":depth,"edge":edge,"children":children,
                  "signature":sig,"consumed":consumed}
-            serial+=1; heapq.heappush(heap,(cost,depth,serial,row))
+            serial+=1; heapq.heappush(heap,(cost,depth,serial,row)); generated+=1
+            if generated>=max_generated:
+                # JA: 上限件目は積み、以後の生成だけを止める。積み済みheapは決定的な順で
+                # 最後まで展開し、その中から結果を返すため、部分探索でも既知の候補を捨てない。
+                # EN: Push the limit-th candidate, disable further generation, then drain the
+                # already-queued deterministic heap so partial searches still return known results.
+                capped="max_generated"; generation_stopped=True; return
     for edge in edges: enqueue(edge)
     while heap:
-        if expanded>=max_expansions: capped="max_expansions"; break
+        if expanded>=max_expansions:
+            if capped is None: capped="max_expansions"
+            break
         if (time.monotonic()-started)*1000>=timeout_ms: capped="timeout_ms"; break
         _cost,_depth,_serial,row=heapq.heappop(heap); expanded+=1
         rows=best.setdefault(row["sort"],[])
@@ -303,7 +318,8 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
                                                     ",".join(starts), want)})
         if len(plans) == k:
             break
-    meta = {"expanded": expanded, "elapsed_ms": round((time.monotonic() - started) * 1000, 3),
+    meta = {"expanded": expanded, "generated": generated,
+            "elapsed_ms": round((time.monotonic() - started) * 1000, 3),
             "limit_reached": capped, "deterministic": capped != "timeout_ms",
             "unknown_edges_excluded": sum(
                 e.get("output") in ("unknown", "any") or "unknown" in e.get("inputs", ())
@@ -315,7 +331,7 @@ def plan(have, want: str, direction: str = "forward", pattern: str | None = None
          constraints: dict | None = None, goal: str | None = None) -> dict:
     """Find minimum-cost typed hypergraph derivations and return dependency DAGs."""
     constraints = constraints or {}
-    from fssystem import get_system
+    from fssystem import PLAN_MAX_GENERATED_DEFAULT, get_system
     if direction not in ("forward", "backward"):
         return _result(False, "direction must be forward or backward", hint="use direction='forward' or 'backward'", next_tool="plan")
     want = _sort(want)
@@ -329,6 +345,10 @@ def plan(have, want: str, direction: str = "forward", pattern: str | None = None
     solutions, meta = _hypergraph_plans(starts, want, query, executable_only=executable_only, k=k,
                                         max_depth=max_depth,
                                         max_expansions=int(constraints.get("max_expansions", get_system("plan_max_expansions"))),
+                                        max_generated=max(0, min(
+                                            int(constraints.get("max_generated", PLAN_MAX_GENERATED_DEFAULT)),
+                                            PLAN_MAX_GENERATED_DEFAULT,
+                                        )),
                                         timeout_ms=int(constraints.get("timeout_ms", get_system("plan_timeout_ms"))),
                                         allow_sources=direction == "backward")
     if not solutions:
