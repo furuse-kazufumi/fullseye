@@ -21,6 +21,8 @@ BOP T-LESS (CC BY 4.0), scores it with symmetry-aware MSSD/MSPD, and compares it
 the public Drost and Vidal baselines. CI reads the repository's small CC BY 4.0 subset
 (scene 2, image 3, 2 scored instances), verifies every file by SHA-256, runs the real
 primary chain, and checks the measured values against the recorded expectations. The
+cluster for each instance is picked by its ground-truth translation (GT-assisted
+assignment), so the baseline comparison is not an end-to-end detection comparison. The
 AR_MSSD 0.197 / AR_MSPD 0.220 result for 20 scenes and 132 instances is a full-data
 record from 2026-11-01; it was re-measured on 2026-11-22 with matching accuracy. Dataset
 citation: Hodaň et al., T-LESS, WACV 2017,

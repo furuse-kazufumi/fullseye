@@ -8,6 +8,8 @@ test_primesense の全20場面から、各場面で画像IDが最小の1枚を�
 ``scene_gt_info.json`` の ``visib_fract < 0.5`` は「見えている面が半分未満」として
 除外し、残る全対象を採点する。この20画像 subset は公開 leaderboard の全画像と
 同じ標本ではないため、表では必ず ``PoC 20-scene subset`` と明記する。
+各対象のクラスタは真値並進 ``cam_t_m2c`` に最も近い重心で選ぶ GT 支援割り当てである。
+したがって、公開 Drost・Vidal ベースラインとの比較は端から端までの検出性能比較ではない。
 
 クラスタ分割への依存を切り分けるため、主経路に加えて、RANSAC 平面除去後の場面
 点群全体へクラスタ分割せず ``surface_match`` する対照群も同じ対象で採点する。
@@ -93,6 +95,9 @@ SUBSET_CHECKSUM_NAME = "SHA256SUMS"
 SUBSET_CONTINUOUS_METRIC_ABS_TOLERANCE = 1e-6
 SUBSET_CONTINUOUS_METRIC_REL_TOLERANCE = 0.0
 SUBSET_CONTINUOUS_METRIC_FIELDS = ("mssd", "mspd", "rot_deg", "trans_mm")
+# 2対象 x 10閾値の AR は 1/20 = 0.05 刻みの離散値で、2026-11-22 の5回の実測で不変だったため厳密一致。
+# / Exact match: AR over 2 instances x 10 thresholds is discrete in 1/20 steps; unchanged in five runs.
+SUBSET_AR_ABS_TOLERANCE = 0.0
 # SHA-256 manifestの形式と固定メモリ読込み量。/ Manifest format and hash block size.
 SUBSET_HASH_BLOCK_BYTES = 1024 * 1024
 SUBSET_SHA256_HEX_LENGTH = 64
@@ -104,6 +109,10 @@ SCENE_ID_MAX = 20
 OBJECT_ID_MIN = 1
 OBJECT_ID_MAX = 30
 VISIBILITY_MIN = 0.50
+# 物体径 d に対する MSSD 失敗境界（無次元）。この PoC の失敗内訳の定義
+# (docs/REALDATA_TLESS_6DOF.md の失敗の節)で、BOP の 0.05d..0.50d の一点。
+# / Dimensionless MSSD failure boundary from this PoC's breakdown definition;
+# one point in the BOP MSSD threshold range 0.05d..0.50d.
 MSSD_FAILURE_FRACTION = 0.20
 ROI = (70, 435, 65, 575)       # marker frame/background only; no GT boxes
 DEPTH_RANGE_MM = (500.0, 1200.0)
@@ -689,6 +698,8 @@ def run_real(root: Path, config: MatchConfig = DEFAULT_CONFIG, *, diagnostics: b
             if visibility < VISIBILITY_MIN:
                 continue
             t_gt = np.asarray(instance["cam_t_m2c"], np.float64)
+            # 推論時に得られない真値並進で最近重心を選ぶ GT 支援割り当て。
+            # / GT-assisted assignment: choose the nearest centroid using t_gt.
             distances = np.linalg.norm(scene["centroids"] - t_gt, axis=1)
             cluster_index = int(np.argmin(distances))
             assigned.append(cluster_index)
@@ -913,14 +924,15 @@ def make_figures(scenes, rows, ar_real, ar_synth):
 
 
 def _print_recorded(scene_ids=None, object_ids=None):
+    recorded_scope = f"{RECORDED['scenes']}場面・{RECORDED['instances']}対象"
     if scene_ids is not None or object_ids is not None:
         print("絞り込み指定は実データが無いため実行していない（RECORDED と混同しない）")
         print("  scenes=%s objects=%s" % (scene_ids if scene_ids is not None else "all",
                                           object_ids if object_ids is not None else "all"))
     print("BOP T-LESS 実データもrepo内切り出しも無いためダウンロードしない")
-    print("実データは読んでいない。以下は2026-11-01の20場面・132対象の実行記録")
+    print(f"実データは読んでいない。以下は2026-11-01の{recorded_scope}の実行記録")
     print(json.dumps(RECORDED, ensure_ascii=False, indent=2))
-    print("\n2026-11-22の20場面・132対象の再測定記録（精度一致、負荷状態の時間）")
+    print(f"\n2026-11-22の{recorded_scope}の再測定記録（精度一致、負荷状態の時間）")
     print(json.dumps(REMEASURED_2026_11_22, ensure_ascii=False, indent=2))
     print("\n再現: py -3.11 tools/fetch_tless.py && py -3.11 examples/poc_real_tless_6dof.py")
     print("\nPASS")
@@ -928,6 +940,7 @@ def _print_recorded(scene_ids=None, object_ids=None):
 
 def _run_ci_subset(*, requested_scene_ids=None, requested_object_ids=None) -> None:
     """repo切り出しを主経路で測り期待値と照合する。/ Measure and verify the CI subset."""
+    recorded_scope = f"{RECORDED['scenes']}場面・{RECORDED['instances']}対象"
     payload_count = verify_subset_checksums(DEFAULT_SUBSET_DATA)
     expected = _load_subset_expected()
     scene_ids = _normalise_ids(
@@ -998,19 +1011,22 @@ def _run_ci_subset(*, requested_scene_ids=None, requested_object_ids=None) -> No
             })
     ar_mssd, ar_mspd = average_recall(_metric_rows(rows, "metrics"))
     for field, actual in (("ar_mssd", ar_mssd), ("ar_mspd", ar_mspd)):
-        wanted = expected[field]
-        if actual != wanted:
+        wanted = float(expected[field])
+        delta = actual - wanted
+        if (not np.isfinite(actual) or not np.isfinite(wanted)
+                or abs(actual - wanted) > SUBSET_AR_ABS_TOLERANCE):
             mismatches.append({
                 "field": field,
                 "actual": actual,
                 "expected": wanted,
-                "delta": actual - wanted,
-                "allowed_abs": 0.0,
+                "delta": delta,
+                "allowed_abs": SUBSET_AR_ABS_TOLERANCE,
             })
 
     print("BOP T-LESS (CC BY 4.0) repo内CI切り出しを実測")
     print("  subset: 場面 %s / 画像 %s / %d対象 (objects %s)"
           % (scene_ids, tuple(scene["image"] for scene in scenes), len(rows), object_ids))
+    print("  注: 各対象のクラスタは真値並進による GT 支援割り当て")
     print("  SHA256SUMS: %d payload files verified" % payload_count)
     for row in rows:
         values = row["metrics"]
@@ -1024,9 +1040,9 @@ def _run_ci_subset(*, requested_scene_ids=None, requested_object_ids=None) -> No
     if mismatches:
         print("SUBSET_MISMATCH " + json.dumps(mismatches, ensure_ascii=False, indent=2))
         raise RuntimeError("T-LESS repository subset measurement does not match expectations")
-    print("\n20場面・132対象の値は実測中の値ではなく、2026-11-01のRECORDED記録")
+    print(f"\n{recorded_scope}の値は実測中の値ではなく、2026-11-01のRECORDED記録")
     print(json.dumps(RECORDED, ensure_ascii=False, indent=2))
-    print("\n2026-11-22の20場面・132対象の再測定記録（精度一致、負荷状態の時間）")
+    print(f"\n2026-11-22の{recorded_scope}の再測定記録（精度一致、負荷状態の時間）")
     print(json.dumps(REMEASURED_2026_11_22, ensure_ascii=False, indent=2))
     print("\nPASS")
 
@@ -1150,16 +1166,20 @@ def main() -> None:
 
     print("\n公開 leaderboard と同じ MSSD/MSPD 閾値の平均 recall")
     print(" method                         official AR  AR_MSSD  AR_MSPD")
-    scope = "20 scenes" if scene_ids is None and object_ids is None else f"filtered {len(scenes)} scene(s)"
+    scope = (f"{len(SCENE_IDS)} scenes" if scene_ids is None and object_ids is None
+             else f"filtered {len(scenes)} scene(s)")
     print(" Fullseye cluster PPF+ICP (%s) n/a      %.3f    %.3f" % (scope, *ar_real))
     print(" Fullseye scene PPF+ICP (no cluster)  n/a      %.3f    %.3f" % ar_no_cluster)
     print(" Fullseye PPF+ICP (previous 10)       n/a      0.290    0.320")
     for name, score in LEADERBOARD.items():
         print(" %-31s  %.3f      %.3f    %.3f" % (name, score["ar"], score["mssd"], score["mspd"]))
     if scene_ids is None and object_ids is None:
-        print("  注: PoC は20場面の先頭画像 subset、公開値は公式全 test。VSD 未実装なので PoC AR は n/a。")
+        print(f"  注: PoC は{len(SCENE_IDS)}場面の先頭画像 subset、公開値は公式全 test。"
+              "VSD 未実装なので PoC AR は n/a。")
     else:
         print("  注: PoC は上記の絞り込み実データ、公開値は公式全 test。VSD 未実装なので PoC AR は n/a。")
+    print("  注: 各対象のクラスタは真値並進による GT 支援割り当てのため、"
+          "公開ベースラインとの比較は端から端までの検出性能比較ではない。")
 
     print("\n合成 -> 実機 / 切り分け")
     print(" ideal depth      AR_MSSD %.3f / AR_MSPD %.3f" % ar_synth)

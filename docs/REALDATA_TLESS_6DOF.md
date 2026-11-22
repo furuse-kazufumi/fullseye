@@ -23,6 +23,8 @@ BOP の一次配布ページの T-LESS 欄は `license: CC BY 4.0` と明記し�
 
 BOP19 `test_primesense` の全20場面から、各場面に含まれる画像IDの最小値を決定的に1枚選びました。`visib_fract >= 0.50` の全対象を採点したため、標本は20場面・132対象です。公開ベースラインは全テスト画像の値であり、この20画像 subset と同一標本の直接対決ではありません。
 
+各対象に使うクラスタは、クラスタ重心と公開真値の並進 `cam_t_m2c` との距離が最小になるものを選びます。これは推論時に得られない情報を使う GT 支援クラスタ割り当てです。
+
 MSSD は物体径の `0.05d..0.50d`、MSPD は `5..50 px` の10閾値で recall を平均しました。PoC は VSD を計算しないため、公式ARは出しません。
 
 ## 設定掃引
@@ -58,7 +60,7 @@ MSSD は物体径の `0.05d..0.50d`、MSPD は `5..50 px` の10閾値で recall 
 | Drost-CVPR10-3D-Only（公式全test） | 0.444 | 0.478 | 0.480 |
 | Vidal-Sensors18（公式全test） | 0.538 | 0.575 | 0.574 |
 
-密度を上げると実機 AR_MSSD は0.162から0.197へ改善しました。したがって0.162をPPF自体の限界とは扱いません。一方、採用設定でも公開値を下回ります。ただし公開値は公式全test、PoCは固定20画像subsetで、同一標本の直接対決ではありません。
+密度を上げると実機 AR_MSSD は0.162から0.197へ改善しました。したがって0.162をPPF自体の限界とは扱いません。一方、採用設定でも公開値を下回ります。ただし公開値は公式全test、PoCは固定20画像subsetで、同一標本の直接対決ではありません。さらに PoC は各対象のクラスタを真値並進で選ぶため、Drost・Vidal との数値比較は端から端までの検出性能比較ではありません。
 
 同じモデルと真値姿勢から作った理想 z-buffer 深度は0.985/0.985で、合成から実機への低下はMSSD 0.788、MSPD 0.765でした。ICPを外すと0.346/0.338、法線の符号をカメラ向きに揃えないと0.132/0.161です。ICPなしが良いのは、現行の局所refineが誤った大域仮説を別の局所解へ寄せる対象があるためで、次便の検討対象です。
 
@@ -149,7 +151,7 @@ $env:FULLSEYE_TLESS_SWEEP='density_1000_1000_v2'
 py -3.11 examples/poc_real_tless_6dof.py
 ```
 
-全データが無いCIでは取得を始めず、repo内の切り出しについて `SHA256SUMS` の全ファイルを照合してから、`DEFAULT_CONFIG` の主経路を場面2・画像3のobj 5/6に通します。objごとのMSSD・MSPD・回転・並進・成否とAR_MSSD / AR_MSPDを `tests/data/tless_subset_expected.json` に照合し、一致した場合だけ `PASS` を出します。20場面・132対象の値はこのCI実測ではなく、2026-11-01の `RECORDED` と2026-11-22の再測定記録です。配布物に切り出しも無い場合だけ、実データを読まず記録を表示します。切り出しだけを試験するには `py -3.11 -m pytest tests/test_tless_subset_gate.py` を使います。図を所定の場所へ再生成する場合だけ `FULLSEYE_FIGURE_DIR=docs/articles/assets/poc/poc_real_tless_6dof` を設定します。
+全データが無いCIでは取得を始めず、repo内の切り出しについて `SHA256SUMS` の全ファイルを照合してから、`DEFAULT_CONFIG` の主経路を場面2・画像3のobj 5/6に通します。manifest 自身の SHA-256 も試験に固定しています。objごとのMSSD・MSPD・回転・並進・成否とAR_MSSD / AR_MSPDを `tests/data/tless_subset_expected.json` に照合し、一致した場合だけ `PASS` を出します。20場面・132対象の値はこのCI実測ではなく、2026-11-01の `RECORDED` と2026-11-22の再測定記録です。配布物に切り出しも無い場合だけ、実データを読まず記録を表示します。切り出しだけを試験するには `py -3.11 -m pytest tests/test_tless_subset_gate.py` を使います。図を所定の場所へ再生成する場合だけ `FULLSEYE_FIGURE_DIR=docs/articles/assets/poc/poc_real_tless_6dof` を設定します。
 
 ## 図
 

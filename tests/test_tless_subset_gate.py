@@ -24,6 +24,11 @@ DEFAULT_SUBSET_ROOT = ROOT / "tests" / "data" / "tless_subset"
 EXPECTED_PATH = ROOT / "tests" / "data" / "tless_subset_expected.json"
 DEFAULT_POC_PATH = ROOT / "examples" / "poc_real_tless_6dof.py"
 
+# SHA256SUMS 自身のバイト列の SHA-256。2026-11-22 に実測して固定。
+# 切り出しを作り直したら、この値を実際の出力から更新する。
+# / SHA-256 of the manifest bytes; update from measured output after rebuilding the subset.
+SUBSET_MANIFEST_SHA256 = "22e8418e9b37247c65f84ddd08e744dd15c9ac646f65cef587d2da1ef244f425"
+
 # 切り出し生成器を正本にする。/ The subset builder is the single source of truth.
 GATE_SCENE_IDS = (SUBSET_SCENE_ID,)
 GATE_OBJECT_IDS = SUBSET_OBJECT_IDS
@@ -80,6 +85,7 @@ POC = _load_poc()
 CONTINUOUS_METRIC_ABS_TOLERANCE = POC.SUBSET_CONTINUOUS_METRIC_ABS_TOLERANCE
 CONTINUOUS_METRIC_REL_TOLERANCE = POC.SUBSET_CONTINUOUS_METRIC_REL_TOLERANCE
 CONTINUOUS_METRIC_FIELDS = POC.SUBSET_CONTINUOUS_METRIC_FIELDS
+AR_ABS_TOLERANCE = POC.SUBSET_AR_ABS_TOLERANCE
 
 # 許容幅の独立の見張り。2026-11-22 に同じ機械で 5 回回した差は 0 だった
 # (tests/data/tless_subset_expected.json の run_max_continuous_metric_deltas)。
@@ -87,6 +93,7 @@ CONTINUOUS_METRIC_FIELDS = POC.SUBSET_CONTINUOUS_METRIC_FIELDS
 MEASURED_GATE_ABS_TOLERANCE = 1e-6
 MEASURED_GATE_REL_TOLERANCE = 0.0
 MEASURED_GATE_FIELDS = ("mssd", "mspd", "rot_deg", "trans_mm")
+MEASURED_GATE_AR_ABS_TOLERANCE = 0.0
 
 
 def _sha256(path: Path) -> str:
@@ -120,6 +127,12 @@ def test_tless_subset_tolerance_is_pinned_to_the_measurement():
     assert CONTINUOUS_METRIC_ABS_TOLERANCE == MEASURED_GATE_ABS_TOLERANCE
     assert CONTINUOUS_METRIC_REL_TOLERANCE == MEASURED_GATE_REL_TOLERANCE
     assert tuple(CONTINUOUS_METRIC_FIELDS) == MEASURED_GATE_FIELDS
+    assert AR_ABS_TOLERANCE == MEASURED_GATE_AR_ABS_TOLERANCE
+
+
+def test_tless_subset_manifest_sha256_is_pinned():
+    """manifest自身の改変も赤にする。/ Pin the manifest bytes independently."""
+    assert _sha256(DEFAULT_SUBSET_ROOT / "SHA256SUMS") == SUBSET_MANIFEST_SHA256
 
 
 def test_tless_subset_bytes_match_the_manifest():

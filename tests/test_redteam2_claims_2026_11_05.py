@@ -43,6 +43,10 @@ TLESS_README_RECORDED_MARKERS = (
     "record from 2026-11-01",
     "re-measured on 2026-11-22",
 )
+TLESS_README_GT_ASSISTED_MARKER = (
+    "cluster for each instance is picked by its ground-truth translation "
+    "(GT-assisted assignment)"
+)
 for _p in (ROOT, os.path.join(ROOT, "tools")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
@@ -333,6 +337,7 @@ def test_d6_readme_says_ci_reads_the_tless_subset_and_full_run_is_recorded():
     expected = json.loads(_read("tests/data/tless_subset_expected.json"))
     assert all(marker in normalised for marker in TLESS_README_CI_MARKERS)
     assert all(marker in normalised for marker in TLESS_README_RECORDED_MARKERS)
+    assert TLESS_README_GT_ASSISTED_MARKER in normalised
     assert f"scene {expected['scene_ids'][0]}" in normalised
     assert f"{len(expected['object_ids'])} scored instances" in normalised
     run = json.loads(_read("docs/real_data_runs.json"))["examples"][TLESS_REALDATA_EXAMPLE_ID]
