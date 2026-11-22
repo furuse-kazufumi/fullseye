@@ -1671,7 +1671,7 @@ def _sort_mismatch_fixes(actual: str, expected: str) -> list[dict]:
     try:
         from fullseye.opsearch import plan
         route = plan(actual, expected, constraints={"k":1, "max_depth":3,
-                     "max_expansions":1000, "timeout_ms":200})
+                     "max_expansions":1000})
         if route.get("ok") and route.get("plans"):
             ops = route["plans"][0]["ops"]
             fixes.append({"kind":"conversion", "ops":ops,
