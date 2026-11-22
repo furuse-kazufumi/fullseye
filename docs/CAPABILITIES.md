@@ -725,7 +725,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 代替: [`find_surface_pose`](ops/3d/match_pose/find_surface_pose.md), `point_to_plane_icp`, `fpfh`, [`register_cross`](ops/3d/fusion/register_cross.md)
 
-限界: T-LESS の実機20場面・132対象では AR_MSSD 0.197 / AR_MSPD 0.220。理想深度は0.985 / 0.985だが、公式全testのDrost-CVPR10-3D-Only 0.478 / 0.480、Vidal-Sensors18 0.575 / 0.574に負ける。MSSD > 0.2dの失敗109 / 132の重複内訳はcluster結合34、遮蔽8、薄型21、深度欠損36、対称形状103。
+限界: T-LESS の実機20場面・132対象では AR_MSSD 0.197 / AR_MSPD 0.220。理想深度は0.985 / 0.985だが、公式全testのDrost-CVPR10-3D-Only 0.478 / 0.480、Vidal-Sensors18 0.575 / 0.574に負ける。各対象のclusterは真値並進に最も近い重心で選ぶGT支援割り当てで標本も公式全testと違うため、この比較は端から端までの検出性能比較ではない。MSSD > 0.2dの失敗109 / 132の重複内訳はcluster結合34、遮蔽8、薄型21、深度欠損36、対称形状103。
 
 実寸校正: 深度とモデルの長さ単位を揃え、K と depth_scale を撮影フレームの値で読む。対称性を models_info.json から採点へ入れ、回転角だけで合否を決めない。
 
