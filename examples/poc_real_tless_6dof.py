@@ -15,10 +15,12 @@ test_primesense の全20場面から、各場面で画像IDが最小の1枚を�
 点群全体へクラスタ分割せず ``surface_match`` する対照群も同じ対象で採点する。
 180/160点から2000/2000点まで密度を掃引し、1対象10秒以内で AR_MSSD 最大だった
 1000/1000点、voxel 2 mm、ref_fraction 0.25、angle_bins 24、ICP 100反復を採用した。
-2026-11-22 のベクトル化後コードによる再測定では、主経路は負荷のある機械で
-1.500秒/対象、AR_MSSD 0.197 / AR_MSPD 0.220。旧180/160点の0.162/0.185は
-間引き条件を明記して比較表に残す。2026-11-01 の8.291秒/対象はベクトル化前の
-記録として保持する。
+精度は AR_MSSD 0.197 / AR_MSPD 0.220。旧180/160点の0.162/0.185は間引き条件を
+明記して比較表に残す。所要時間は機械と負荷で変わる。現行の値は2026-11-22に
+コード692b56d2e8で、worker 10本以上が同時に動く負荷状態で測った主経路
+1.500秒/対象(132対象で201.0秒)、診断4種と図を含めて942.6秒。アイドル状態の
+機械では測り直していない。PPF投票のベクトル化d17e639303より前の時間は現行
+コードに当てはまらないので RECORDED には残さない。
 
 姿勢誤差(Hodaň et al., BOP Challenge 2020)を自前で計算する。モデル点集合 ``V``、
 推定姿勢 ``P_e=(R_e,t_e)``、真値 ``P_g``、物体の対称変換集合 ``S`` に対して::
@@ -154,6 +156,8 @@ SWEEP_CONFIGS = {
 DEFAULT_CONFIG = ADOPTED_CONFIG
 
 # 2026-11-01, Python 3.11。各値は _run_sweep_setting の stdout から転記。
+# 秒はPPF投票ベクトル化d17e639303より前のコードの値で、採用判定の当時の記録。
+# 現行コードの時間は REMEASURED_PRIMARY_SECONDS_PER_INSTANCE を見ること。
 # 2000 点は全体2時間でも完走せず、再試行も scene 1 の4対象で31分超だった。
 DENSITY_SWEEP = (
     {"model": 180, "scene": 160, "voxel": 6.0, "ar_mssd": 0.1621212121,
@@ -171,8 +175,29 @@ LEADERBOARD = {
     "Vidal-Sensors18": {"ar": 0.538, "mssd": 0.575, "mspd": 0.574},
 }
 
-# 2026-11-01, Python 3.11, archives pinned by tools/fetch_tless.py.
-# Updated only from the stdout of this script, never from a caption or hand calculation.
+# 所要時間は機械と負荷で変わる。現行コードの時間は2026-11-22にコード692b56d2e8で
+# 測った値で、論理24コアの機械にworker 10本以上が同時に動く負荷状態だった。
+# アイドル状態では測り直していない。/ Timings depend on the machine and its load.
+TIMING_MEASURED_DATE = "2026-11-22"
+TIMING_MEASURED_CODE = "692b56d2e8"
+TIMING_CONDITION = (
+    "busy machine (24 logical cores, 10+ concurrent workers); "
+    "timings depend on the machine and its load"
+)
+REMEASURED_PRIMARY_WALL_SECONDS = 201.0
+REMEASURED_PRIMARY_SECONDS_PER_INSTANCE = 1.500
+# 診断4種(合成・ICPなし・未整理法線・クラスタなし)と図を含む壁時計。
+# / Wall time including the four diagnostics and the figures.
+REMEASURED_DIAGNOSTIC_WALL_SECONDS = 942.6
+
+# 20場面の結果で置き換えた旧subset(2場面・10対象)。比較表の履歴行としてだけ表示する。
+# / Superseded 2-scene, 10-instance subset, shown only as a history row.
+SUPERSEDED_SUBSET_RESULT = {"scenes": 2, "instances": 10,
+                            "ar_mssd": 0.290, "ar_mspd": 0.320}
+
+# 精度は2026-11-01, Python 3.11, archives pinned by tools/fetch_tless.py.
+# Accuracy is updated only from the stdout of this script, never from a caption or
+# hand calculation. 時間の項目は上の2026-11-22の実測(負荷状態)を指す。
 RECORDED = {
     "instances": 132,
     "scenes": 20,
@@ -192,11 +217,14 @@ RECORDED = {
     "raw_normals_ar_mspd": 0.161,
     "no_cluster_ar_mssd": 0.111,
     "no_cluster_ar_mspd": 0.113,
-    # PPF投票ベクトル化d17e639303より前の壁時計。/ Pre-vectorisation wall time.
-    "primary_seconds_per_instance": 8.291,
-    # PPF投票ベクトル化d17e639303より前の診断込み壁時計。
-    # / Pre-vectorisation wall time including diagnostics.
-    "diagnostic_elapsed_seconds": 7189.2,
+    # 2026-11-01の時間はPPF投票ベクトル化d17e639303より前で現行コードに合わないため、
+    # 2026-11-22の負荷状態の実測に置き換えた。/ Pre-vectorisation timings replaced by
+    # the 2026-11-22 measurement taken under load.
+    "primary_seconds_per_instance": REMEASURED_PRIMARY_SECONDS_PER_INSTANCE,
+    "diagnostic_elapsed_seconds": REMEASURED_DIAGNOSTIC_WALL_SECONDS,
+    "timing_date": TIMING_MEASURED_DATE,
+    "timing_code": TIMING_MEASURED_CODE,
+    "timing_condition": TIMING_CONDITION,
     "mssd_failure_gt_0_2d": 109,
 }
 
@@ -205,8 +233,8 @@ RECORDED = {
 # worker 10本以上が同時に動く負荷状態での壁時計。/ Measurements from measure.json
 # and run metadata; timings were taken while the machine was busy.
 REMEASURED_2026_11_22 = {
-    "date": "2026-11-22",
-    "code": "692b56d2e8",
+    "date": TIMING_MEASURED_DATE,
+    "code": TIMING_MEASURED_CODE,
     "archive_sha256": {
         "tless_base.zip": "dd70ca884b7c471a530a952f70c5ab2c212f3d2c2f371be86397442b97d70a7e",
         "tless_models.zip": "6a29c59766b8d2af05e62e71739f0ca7243ad81bc3c7f9a24925504a8cb37928",
@@ -224,10 +252,10 @@ REMEASURED_2026_11_22 = {
     "raw_normals_ar_mspd": 0.161,
     "no_cluster_ar_mssd": 0.111,
     "no_cluster_ar_mspd": 0.113,
-    "primary_wall_seconds": 201.0,
-    "primary_seconds_per_instance": 1.500,
-    "diagnostic_wall_seconds": 942.6,
-    "timing_condition": "busy machine with 10+ concurrent workers",
+    "primary_wall_seconds": REMEASURED_PRIMARY_WALL_SECONDS,
+    "primary_seconds_per_instance": REMEASURED_PRIMARY_SECONDS_PER_INSTANCE,
+    "diagnostic_wall_seconds": REMEASURED_DIAGNOSTIC_WALL_SECONDS,
+    "timing_condition": TIMING_CONDITION,
     "ci_subset": "tests/data/tless_subset/",
     "reproduce_full": (
         "PYTHONUTF8=1 py -3.11 tools/fetch_tless.py && "
@@ -930,7 +958,8 @@ def _print_recorded(scene_ids=None, object_ids=None):
         print("  scenes=%s objects=%s" % (scene_ids if scene_ids is not None else "all",
                                           object_ids if object_ids is not None else "all"))
     print("BOP T-LESS 実データもrepo内切り出しも無いためダウンロードしない")
-    print(f"実データは読んでいない。以下は2026-11-01の{recorded_scope}の実行記録")
+    print(f"実データは読んでいない。以下は{recorded_scope}の実行記録"
+          f"（精度は2026-11-01、時間は{TIMING_MEASURED_DATE}の負荷状態の実測）")
     print(json.dumps(RECORDED, ensure_ascii=False, indent=2))
     print(f"\n2026-11-22の{recorded_scope}の再測定記録（精度一致、負荷状態の時間）")
     print(json.dumps(REMEASURED_2026_11_22, ensure_ascii=False, indent=2))
@@ -1040,7 +1069,8 @@ def _run_ci_subset(*, requested_scene_ids=None, requested_object_ids=None) -> No
     if mismatches:
         print("SUBSET_MISMATCH " + json.dumps(mismatches, ensure_ascii=False, indent=2))
         raise RuntimeError("T-LESS repository subset measurement does not match expectations")
-    print(f"\n{recorded_scope}の値は実測中の値ではなく、2026-11-01のRECORDED記録")
+    print(f"\n{recorded_scope}の値は実測中の値ではなく、RECORDED記録"
+          f"（精度は2026-11-01、時間は{TIMING_MEASURED_DATE}の負荷状態の実測）")
     print(json.dumps(RECORDED, ensure_ascii=False, indent=2))
     print(f"\n2026-11-22の{recorded_scope}の再測定記録（精度一致、負荷状態の時間）")
     print(json.dumps(REMEASURED_2026_11_22, ensure_ascii=False, indent=2))
@@ -1170,7 +1200,9 @@ def main() -> None:
              else f"filtered {len(scenes)} scene(s)")
     print(" Fullseye cluster PPF+ICP (%s) n/a      %.3f    %.3f" % (scope, *ar_real))
     print(" Fullseye scene PPF+ICP (no cluster)  n/a      %.3f    %.3f" % ar_no_cluster)
-    print(" Fullseye PPF+ICP (previous 10)       n/a      0.290    0.320")
+    print(" Fullseye PPF+ICP (superseded %d/%d)  n/a      %.3f    %.3f"
+          % (SUPERSEDED_SUBSET_RESULT["scenes"], SUPERSEDED_SUBSET_RESULT["instances"],
+             SUPERSEDED_SUBSET_RESULT["ar_mssd"], SUPERSEDED_SUBSET_RESULT["ar_mspd"]))
     for name, score in LEADERBOARD.items():
         print(" %-31s  %.3f      %.3f    %.3f" % (name, score["ar"], score["mssd"], score["mspd"]))
     if scene_ids is None and object_ids is None:
