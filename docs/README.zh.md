@@ -5,6 +5,8 @@
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
+**Fullseye 是用于图像检测、三维测量与物理仿真的 Python 库。** 它把类型化算子串成处理链，用物理仿真生成的真值加以验证，并通过 MCP 与 RAG 交给 AI 使用。
+
 > **将在 ViEW2026(2026 年 12 月 3–4 日,横滨 Pacifico)发表 → [ViEW2026 页面](view2026/zh/)**(PoC 的动态结果、可在浏览器中操作的查看器、论文信息)
 
 > **请注意：**目前只有本索引页有译文，它所链接的各篇文档暂时仅有日文版。
