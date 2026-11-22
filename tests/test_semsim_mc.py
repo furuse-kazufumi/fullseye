@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import pathlib
 import sys
+import threading
 
 import numpy as np
 import pytest
@@ -347,3 +348,100 @@ def test_a_vanishing_cap_layer_does_not_change_backscatter():
                          buried=[("W", mask, cap, 1e4)], return_signals=True, seed=1)
         img.append(float(s["eta"].mean()))
     assert abs(img[0] - img[1]) <= 0.03 and abs(img[0] - etas[0]) <= 0.03, (img, etas)
+
+
+def test_profile_collection_cache_is_readonly_and_cannot_poison_escape(monkeypatch):
+    """共有する検出器幾何は読み取り専用で、書換えの試みが後続の脱出率を汚さない。"""
+    monkeypatch.setattr(SM, "_PROFILE_COLLECTION_CACHE", {})
+    xk = np.array([-2.0, -0.5, 0.5, 2.0])
+    zk = np.array([0.0, -1.0, -1.0, 0.0])
+    g1 = SM._ProfileGeom(xk, zk, coll_window=2.0)
+    g2 = SM._ProfileGeom(xk, zk, coll_window=2.0)
+    x = np.array([-1.0, 0.0, 1.0])
+    y = np.zeros_like(x)
+    z = np.array([0.25, -0.5, 0.25])
+    expected = g1.se_escape(x, y, z)
+
+    assert not g1._coll.flags.writeable
+    assert not g1._coll_arc.flags.writeable
+    assert not g2._coll.flags.writeable
+    with pytest.raises(ValueError):
+        g1._coll[0, 0] = 1.0
+
+    g3 = SM._ProfileGeom(xk, zk, coll_window=2.0)
+    for geom in (g2, g3):
+        actual = geom.se_escape(x, y, z)
+        assert len(actual) == len(expected) == 3
+        assert np.array_equal(actual[0], expected[0])
+        assert np.array_equal(actual[1], expected[1])
+        assert np.array_equal(actual[2], expected[2])
+
+
+def test_profile_collection_cache_double_checked_under_threads(monkeypatch):
+    """同じ断面を並行構築しても、追出しは1件だけで同じ配列を共有する。"""
+    dummy_keys = [("dummy", i) for i in range(SM._PROFILE_COLLECTION_CACHE_MAX)]
+    cache = {key: (None, None) for key in dummy_keys}
+    monkeypatch.setattr(SM, "_PROFILE_COLLECTION_CACHE", cache)
+    barrier = threading.Barrier(2)
+    real_build = SM._ProfileGeom._build_collection
+
+    def build_then_wait(self, win):
+        real_build(self, win)
+        barrier.wait(timeout=10.0)
+
+    monkeypatch.setattr(SM._ProfileGeom, "_build_collection", build_then_wait)
+    geoms = []
+    errors = []
+
+    def construct():
+        try:
+            geoms.append(SM._ProfileGeom([-2.0, 0.0, 2.0], [0.0, -1.0, 0.0], coll_window=2.0))
+        except BaseException as exc:  # pragma: no cover - 失敗を親スレッドへ渡す / forward failures
+            errors.append(exc)
+
+    threads = [threading.Thread(target=construct) for _ in range(2)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(timeout=15.0)
+
+    assert not any(thread.is_alive() for thread in threads)
+    assert not errors
+    assert len(cache) == SM._PROFILE_COLLECTION_CACHE_MAX
+    assert sum(key not in cache for key in dummy_keys) == 1
+    assert len(geoms) == 2
+    assert geoms[0]._coll is geoms[1]._coll
+
+
+def test_profile_nearest_vectorized_preserves_input_shape(monkeypatch):
+    """放送経路は2次元・1次元ともループ経路とビット単位で一致する。"""
+    monkeypatch.setattr(SM, "_PROFILE_COLLECTION_CACHE", {})
+    geom = SM._ProfileGeom([-2.0, -0.5, 0.5, 2.0], [0.0, -1.0, -1.0, 0.0], coll_window=2.0)
+    x2 = np.array([[-1.5, -0.25], [0.25, 1.5]])
+    z2 = np.array([[0.1, -0.8], [-0.6, 0.2]])
+    vector2 = geom._nearest(x2, z2)
+    x1, z1 = x2.ravel(), z2.ravel()
+    vector1 = geom._nearest(x1, z1)
+
+    monkeypatch.setattr(SM, "_PROFILE_VECTOR_MAX_RAYS", -1)
+    loop2 = geom._nearest(x2, z2)
+    loop1 = geom._nearest(x1, z1)
+
+    assert vector2[0].shape == (2, 2)
+    assert vector2[1].shape == (2, 2)
+    assert np.array_equal(vector2[0], loop2[0]) and np.array_equal(vector2[1], loop2[1])
+    assert np.array_equal(vector1[0], loop1[0]) and np.array_equal(vector1[1], loop1[1])
+
+
+def test_profile_collection_cache_stores_instance_readonly_arrays(monkeypatch):
+    """キャッシュは構築インスタンス自身が持つ読み取り専用配列を格納する。"""
+    monkeypatch.setattr(SM, "_PROFILE_COLLECTION_CACHE", {})
+    xk = np.array([-2.0, 0.0, 2.0], dtype=np.float64)
+    zk = np.array([0.0, -1.0, 0.0], dtype=np.float64)
+    geom = SM._ProfileGeom(xk, zk, coll_window=2.0)
+    cached_arc, cached_coll = SM._PROFILE_COLLECTION_CACHE[(xk.tobytes(), zk.tobytes(), 2.0)]
+
+    assert cached_arc is geom._coll_arc
+    assert cached_coll is geom._coll
+    assert not cached_arc.flags.writeable
+    assert not cached_coll.flags.writeable
