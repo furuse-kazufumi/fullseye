@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 2023. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 2025. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -1851,25 +1851,27 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L3320** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 名前を変えれば何枚でも書け、サーバが終わるまで残った(200 枚で 11.8 MB)。 置き場が新しい物から max_viewer_files 枚・max_viewer_bytes バイトまでを持ち、超えたら古い物から消す。
 - **L3348** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal=" " が search_ops の ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
 - **L3373** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
-- **L3411** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
-- **L3439** _(ja)_ — ★2026-11-13(報告 6): proposals は ops / retry_ops / recipes の行を丸ごと写していて、応答の半分が重複だった (検証の 1 回で ops 2.6 KB に proposals 4.3 KB)。順番と種類だけの参照にする(中身は元の一覧を読む)。
-- **L3518** _(ja)_ — ★2026-11-13(報告 5): 落とした名前が structuredContent の奥にしか無かった。本文の先頭に 1 行で書く
-- **L3526** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
-- **L3549** _(ja)_ — ★2026-11-13(報告 13): 名前だけで、来歴・ライセンス・何が写っているかが分からなかった。 samples(名前の一覧)は従来どおり、詳しい行は sample_details に足す(ホストのパスは出さない)。
-- **L3600** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 配列・辞書・真偽値の id をそのまま返していた。JSON-RPC 2.0 の id は 文字列・数・null だけ。形の違う id の要求は、id を null にして -32600 で断る。
-- **L3606** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
-- **L3653** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
-- **L3661** _(ja)_ — ★2026-11-15(外部レビューの直しの検証): 最初の 1 通が読めない時、-32700 を Content-Length 枠で返していた (枠が決まるのは読めた 1 通から)。改行区切りの公式のクライアントはその返事を読めない。NaN・重複した鍵を 断るようにしたので、起き得る場面が増えた。壊れた 1 通の枠が分かれば、その枠で返す。
-- **L3671** _(ja)_ — ★2026-11-13: 本文が null の 1 通で黙って終了していた。要求の形でない本文は -32600 を返して続ける (配列 = JSON-RPC のバッチは受け付けない)。
+- **L3402** _(ja)_ — ★2026-11-22: 呼び手は結果を MCP で走らせる。PR #322 の heightmap_depth_camera(光線が 当たらない所は NaN)が、走る binocular_disparity_ms を上位 5 件から押し出したため、MCP の 経路だけで有界に降格する。search_ops と tools/opsearch_eval.py の順位は変えない。 executable_only: 多めに引いて MCP で走る op だけを残す(順位は検索のまま)
+- **L3412** _(ja)_ — ★2026-11-22(独立レビュー): retry_ops は op_limit で切っていなかった(search_ops は k = op_limit*8 まで retry 行を作るので、既定で最大 40 行が返り、proposals とも食い違った)。
+- **L3424** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
+- **L3452** _(ja)_ — ★2026-11-13(報告 6): proposals は ops / retry_ops / recipes の行を丸ごと写していて、応答の半分が重複だった (検証の 1 回で ops 2.6 KB に proposals 4.3 KB)。順番と種類だけの参照にする(中身は元の一覧を読む)。
+- **L3529** _(ja)_ — ★2026-11-13(報告 5): 落とした名前が structuredContent の奥にしか無かった。本文の先頭に 1 行で書く
+- **L3537** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
+- **L3560** _(ja)_ — ★2026-11-13(報告 13): 名前だけで、来歴・ライセンス・何が写っているかが分からなかった。 samples(名前の一覧)は従来どおり、詳しい行は sample_details に足す(ホストのパスは出さない)。
+- **L3611** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 配列・辞書・真偽値の id をそのまま返していた。JSON-RPC 2.0 の id は 文字列・数・null だけ。形の違う id の要求は、id を null にして -32600 で断る。
+- **L3617** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
+- **L3664** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
+- **L3672** _(ja)_ — ★2026-11-15(外部レビューの直しの検証): 最初の 1 通が読めない時、-32700 を Content-Length 枠で返していた (枠が決まるのは読めた 1 通から)。改行区切りの公式のクライアントはその返事を読めない。NaN・重複した鍵を 断るようにしたので、起き得る場面が増えた。壊れた 1 通の枠が分かれば、その枠で返す。
+- **L3682** _(ja)_ — ★2026-11-13: 本文が null の 1 通で黙って終了していた。要求の形でない本文は -32600 を返して続ける (配列 = JSON-RPC のバッチは受け付けない)。
 
 ## `fullseye/opsearch.py`
 
 - **L216** _(ja)_ — ★2026-11-13(AI の役での検証、報告 3): 型の直し方の候補に hx_gen_empty_region(入力を形のためだけに読み、 中身を見ない生成の op)が出て、従うと count_obj = 0 が判定 ok で返った。入力の中身を読まない op (MCP_INPUT_INDEPENDENT.json、採点が断る一覧と同じ)は経路の途中に置かない。
-- **L764** _(ja)_ — ★2026-11-03(完成度監査 A-2): MCP で実行できない op(``verified_executable`` でない = 台帳 op の大半)にも ``fullseye_pipeline(...)`` の骨格を付けていた。従うと ``fullseye_validate_pipeline`` が ``not_executable_in_mcp`` で拒む。MCP の外での呼び方(カードの ``call``)を返す。
-- **L768** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口)は pipeline から隔離した子プロセスで走る。実測で通った 見本の段(入力を作る段も含む)をそのまま骨格にする。
-- **L838** _(ja)_ — 日本語の現場の言い方 → 英語の術語(★2026-11-13、報告 12)。optics・照明・計測の op の要約は英語だけの物が多く、 「照明」「液面」「サーモグラフィ」で引いても当たらなかった(英語に直すと当たる)。問い合わせにある語の組は、 英語の語を**問い合わせの語として**足す(言い換えの弱い重みではない)。片仮名の語は、その 2 文字の切れ端を 検索語から外す(「サーモグラフィ」の「グラ」「ラフ」が「ホモグラフィ」に当たっていた)。
-- **L854** _(ja)_ — ★2026-11-15(独立レビュー): 「ピクセルをミリメートルに変換したい」で pixel_to_world / mm_per_px_from_reference が 上位 5 件に出ず、「各ピクセル」を含む sk_sauvola などが来た。片仮名の語に英語の語の橋を足す (評価: tools/mcp_find_ops_eval.py。この問いは合わせるのに使ったので tuned と書いてある)。
-- **L1287** _(ja)_ — ★2026-11-13(報告 5): executable は「Python の関数として呼べるか」で、MCP で走るかと食い違っていた (true のカードの op を pipeline に渡すと not_executable_in_mcp)。executable = MCP で走るか、 以前の意味は python_executable に残す。
+- **L798** _(ja)_ — ★2026-11-03(完成度監査 A-2): MCP で実行できない op(``verified_executable`` でない = 台帳 op の大半)にも ``fullseye_pipeline(...)`` の骨格を付けていた。従うと ``fullseye_validate_pipeline`` が ``not_executable_in_mcp`` で拒む。MCP の外での呼び方(カードの ``call``)を返す。
+- **L802** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口)は pipeline から隔離した子プロセスで走る。実測で通った 見本の段(入力を作る段も含む)をそのまま骨格にする。
+- **L872** _(ja)_ — 日本語の現場の言い方 → 英語の術語(★2026-11-13、報告 12)。optics・照明・計測の op の要約は英語だけの物が多く、 「照明」「液面」「サーモグラフィ」で引いても当たらなかった(英語に直すと当たる)。問い合わせにある語の組は、 英語の語を**問い合わせの語として**足す(言い換えの弱い重みではない)。片仮名の語は、その 2 文字の切れ端を 検索語から外す(「サーモグラフィ」の「グラ」「ラフ」が「ホモグラフィ」に当たっていた)。
+- **L888** _(ja)_ — ★2026-11-15(独立レビュー): 「ピクセルをミリメートルに変換したい」で pixel_to_world / mm_per_px_from_reference が 上位 5 件に出ず、「各ピクセル」を含む sk_sauvola などが来た。片仮名の語に英語の語の橋を足す (評価: tools/mcp_find_ops_eval.py。この問いは合わせるのに使ったので tuned と書いてある)。
+- **L1321** _(ja)_ — ★2026-11-13(報告 5): executable は「Python の関数として呼べるか」で、MCP で走るかと食い違っていた (true のカードの op を pipeline に渡すと not_executable_in_mcp)。executable = MCP で走るか、 以前の意味は python_executable に残す。
 
 ## `fullseye/recipebook/__init__.py`
 
