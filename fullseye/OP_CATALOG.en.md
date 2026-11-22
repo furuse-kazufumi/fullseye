@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (493 examples)
+### 2-D image / signal / geometry (495 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -293,6 +293,8 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `scale_law_of_features` — ops: `contlength`, `moments_region_2nd`, `moments_region_3rd`, `moments_region_central` `py -3.11 examples/scale_law_of_features.py`
 - `shape_factors_closed_form` — ops: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
 - `walking_ops_tour` — ops: `capture_margin`, `com_from_silhouette`, `com_support_margin`, `contact_points`, `detect_obstacles`, `elevation_map`, `elevation_normals`, `elevation_step_edges`, `elevation_traversability`, `fill_gaps`, `foot_slip_metrics`, `foothold_candidates` (+12 more) `py -3.11 examples/walking_ops_tour.py`
+- `heightmap_depth_camera_tour` — ops: `clothoid_points`, `crop_rectangle2`, `dem_viewshed`, `elevation_map`, `fill_gaps`, `heightmap_depth_camera`, `road_surface_heightmap`, `surface_form_remove`, `world_camera` `py -3.11 examples/heightmap_depth_camera_tour.py`
+- `road_surface_tour` — ops: `blend`, `clothoid_points`, `crop_rectangle2`, `dem_slope`, `road_surface_heightmap`, `surface_form_remove` `py -3.11 examples/road_surface_tour.py`
 - `itokawa_gravity_tour` — ops: `mesh_slice_contours`, `polyhedron_clip_halfspace`, `polyhedron_gravity` `py -3.11 examples/itokawa_gravity_tour.py`
 
 **color**
@@ -608,7 +610,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 **space**
 - `poc_star_tracker` — ops: (not linked from any op note) `py -3.11 examples/poc_star_tracker.py`
 
-### 3-D point cloud / volume / surface (124 examples)
+### 3-D point cloud / volume / surface (125 examples)
 
 **registration**
 - `cad_to_scan` — ops: (not linked from any op note) `py -3.11 examples_3d/cad_to_scan.py`
@@ -640,6 +642,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `inner_box_inspection` — ops: `inner_box3` `py -3.11 examples_3d/inner_box_inspection.py`
 - `oriented_bounding_box` — ops: `fit_box3`, `smallest_box3`, `smallest_box3_axis` `py -3.11 examples_3d/oriented_bounding_box.py`
 - `hull_bounds` — ops: `aabb`, `convex_hull`, `mesh_volume`, `min_enclosing_sphere`, `obb` `py -3.11 examples_3d/hull_bounds.py`
+- `convex_hull_gap_clearance` — ops: `convex_hull_gap`, `distance_segment_segment`, `hausdorff_distance`, `radius_outlier_removal` `py -3.11 examples_3d/convex_hull_gap_clearance.py`
 - `gear_metrology` — ops: `box_sdf`, `grid_coords`, `sdf_intersect`, `sdf_union`, `sphere_sdf` `py -3.11 examples_3d/gear_metrology.py`
 - `cylinder_axis_metrology` — ops: `estimate_normals` `py -3.11 examples_3d/cylinder_axis_metrology.py`
 
@@ -846,9 +849,9 @@ Ops that do not fit the one-image pipeline (two images, point sequences, variabl
 
 ## Operators by family (family → category, all ops)
 
-_3844 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
+_3847 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
 
-Families: **2d** 964 · **3d** 377 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 742 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+Families: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -1916,7 +1919,7 @@ Pipeline ops that take one image and return one image / region / contour / featu
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` GPU: none — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · examples: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` GPU: none — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · examples: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d (377 ops / 68 categories)
+### 3d (378 ops / 68 categories)
 
 Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as functions.
 
@@ -1941,9 +1944,10 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 - `vol_boundary` `voxel → voxel` GPU: inside a chain only (allow-list) — Boundary shell of a binary volume (the 3-D ``region_boundary``). · examples: `roi_domain_boundary`
 - `vol_boundary_points` `voxel → points` GPU: yes (allow-list) — Boundary shell as an ``(N, 3)`` point cloud in ``(z, y, x)`` order. · examples: `roi_domain_boundary`
 
-#### 3d / bounds (4)
+#### 3d / bounds (5)
 - `aabb` `points → primitive` GPU: none — Axis-aligned bounding box. Returns ``(min (3,), max (3,))``. · examples: `hull_bounds`
 - `convex_hull` `points → mesh` GPU: none — Convex hull of a point set -> ``(V, F)`` with outward-oriented triangles. · examples: `hull_bounds`
+- `convex_hull_gap` `points × points → table` GPU: none — Gap (shortest distance) between the convex hulls of two vertex sets, returned with certified lower and upper bounds. · examples: `convex_hull_gap_clearance`
 - `min_enclosing_sphere` `points → primitive` GPU: none — Point set (N,3) → the (approximate) minimum enclosing sphere containing every point, {center(3), radius}. · examples: `hull_bounds`
 - `obb` `points → primitive` GPU: none — Oriented bounding box by PCA. · examples: `hull_bounds`
 
@@ -2065,7 +2069,7 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 - `distance_line_line` `primitive → measurement` GPU: none — The distance between two lines (skew lines included). Falls back to point-line distance when they are parallel. · examples: `geometry_metrology`
 - `distance_point_line` (halcon: `distance_point_line`) `points × primitive → measurement` GPU: none — Returns the perpendicular distance from a point to a line (point on the line + direction), in 2-D or 3-D. · examples: `geometry_metrology`
 - `distance_point_plane` `points × primitive → measurement` GPU: none — Returns the distance from a point to a plane (unsigned, in the units of the input coordinates). · examples: `geometry_metrology`
-- `distance_segment_segment` `primitive → measurement` GPU: none — Shortest distance between **finite line segments** and the pair of their closest points. → ``(distance, cp, cq)``. · examples: `geometry_metrology`
+- `distance_segment_segment` `primitive → measurement` GPU: none — Shortest distance between **finite line segments** and the pair of their closest points. → ``(distance, cp, cq)``. · examples: `convex_hull_gap_clearance`, `geometry_metrology`
 - `fit_box3` `points → primitive` GPU: none — Oriented box fit by PCA (fast, noise-tolerant; the same construction as ``pcseg.obb``). · examples: `oriented_bounding_box`
 - `fit_circle3` `points → primitive` GPU: none — 3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane, then a circle. · examples: `primitive_fitting_3d`
 - `fit_circle_3d` `points → primitive` GPU: none — Point set → a 3-D circle (fit the plane, then fit a 2-D circle within it). Returns (center, radius, normal). · examples: `geometry_metrology`
@@ -2144,7 +2148,7 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 #### 3d / metrics (8)
 - `chamfer_distance` `points × points → measurement` GPU: none — The symmetric Chamfer distance = 0.5*(mean_a min_b + mean_b min_a). → scalar. Smaller is a closer match. · examples: `itokawa_pose_canonical`, `itokawa_shape_match`, `mesh_lod_download`, `metrics_eval`, `poisson_surface_recon`
 - `fscore` `points × points → measurement` GPU: none — F-score @ tau = the harmonic mean of precision and recall. → (f, precision, recall). The standard reconstruction metric. · examples: `metrics_eval`
-- `hausdorff_distance` `points × points → measurement` GPU: none — The symmetric Hausdorff distance = max(max_a min_b, max_b min_a). → scalar. The worst-case discrepancy. · examples: `mesh_lod_download`, `pointcloud_downsampling`, `poisson_surface_recon`
+- `hausdorff_distance` `points × points → measurement` GPU: none — The symmetric Hausdorff distance = max(max_a min_b, max_b min_a). → scalar. The worst-case discrepancy. · examples: `convex_hull_gap_clearance`, `mesh_lod_download`, `pointcloud_downsampling`, `poisson_surface_recon`
 - `m3c2_distance` `points × points → signal` GPU: none — Measures the difference between point clouds from 2 epochs **along the normal direction** (M3C2). → the 2 values ``(distance, lod)``. · examples: `metrics_eval`
 - `normal_consistency` `points × normals → measurement` GPU: none — Normal agreement over nearest-neighbour correspondences = mean|cos(na, nb)| (orientation ignored). → [0,1]. 1 = perfect agreement. · examples: `metrics_eval`
 - `pose_error` `pose × pose → table` GPU: none — Pose error = (rotation angle [deg], translation norm). For comparing a registration result against ground truth. → (rot_deg, trans_err). · examples: `itokawa_self_register`
@@ -2216,7 +2220,7 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 
 #### 3d / preprocess (5)
 - `mls_smooth` `points → points` GPU: none — Drop noise by projecting each point onto a local polynomial surface (Moving Least Squares smoothing). · examples: `pcl_geodesic`
-- `radius_outlier_removal` `points → points` GPU: none — Remove the points with fewer than min_neighbors neighbours within radius (isolated-point removal). · examples: `pcl_geodesic`
+- `radius_outlier_removal` `points → points` GPU: none — Remove the points with fewer than min_neighbors neighbours within radius (isolated-point removal). · examples: `convex_hull_gap_clearance`, `pcl_geodesic`
 - `statistical_outlier_removal` `points → points` GPU: none — Remove the points whose mean distance to their k neighbours is a global outlier (statistical outlier removal). · examples: `pcl_geodesic`
 - `volume_downsample` `voxel → voxel` GPU: inside a chain only (allow-list) — Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data decimation). · examples: `volume_downsampling`
 - `voxel_grid_downsample` `points → points` GPU: none — Thin a point set on a lattice of edge voxel_size, collapsing each cell to one centroid point (deterministic). · examples: `pointcloud_downsampling`
@@ -3636,7 +3640,7 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: none — Non-maximum suppression (Section 3.39). A pixel (x, y) survives only if, within the window, it is **≥ its preceding neighbors (the row above and the left in the same row) and > its following neighbors** (REQ-0337). This asymmetry is why exactly 1 pixel survives on a flat peak. Nonzero pixels of *mask* are not compared and are kept as is (nor are they used in comparisons for other pixels, REQ-0336). Suppressed pixels become 0 for U8 and INT16_MIN for S16 (REQ-0335). Neighbors that fall outside the window are not compared. · examples: `gallery_openvx_spec_values`
 
-### drive (742 ops / 55 categories)
+### drive (744 ops / 55 categories)
 
 The name says driving, but the content is a **ledger of physics-simulation and robot PoCs**: besides driving (courses, traffic, decisions, CARLA / CommonRoad), categories such as touch (tac*), peg-in-hole (peg*), polishing (polish), grinding (grind), cutting (cutting), granular media (granular / scoop), powder X-ray diffraction (pxrd) and ball games (ball / puck) live side by side. Look things up by category name.
 
@@ -4013,11 +4017,11 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `string_mesh` `no input → any` GPU: none — A thin prism joining 2 points (the ball's string hole p_ball and the cross-piece's string hole p_cup) (4 sides + both ends, 8 vertices, 12 faces, outward-facing). Square cross-section of side 2·radius. ValueError if the two points coincide. · examples: `gallery_drive_world_objects`
 - `string_set` `table → any` GPU: none — Moves both ends of string i to (p_ball, p_cup) (rewrites only the vertices). ValueError for an object that is not a string. · examples: `gallery_drive_world_objects`
 
-#### drive / lateral (20)
+#### drive / lateral (21)
 - `ackermann_steer_angles` `any → table` GPU: none — Ackermann inner and outer wheel steering angles (turning radius R at the center of the rear axle, wheelbase L, track width t). · examples: `poc_driving_lateral`
 - `bicycle_model_step` `any → any` GPU: none — 1 step of the linear 2-wheel equivalent (bicycle) model (classic 4th-order Runge–Kutta; δ and u are constant within the step). · examples: `poc_driving_lateral`
 - `clothoid_design` `no input → table` GPU: none — Quantities for joining a straight line → circle (radius R) with a clothoid of length L. · examples: `poc_driving_lateral`
-- `clothoid_points` `no input → table` GPU: none — Points of a curve whose curvature is linear in arc length, κ(s) = κ₀ + (κ₁ − κ₀) s / length (part of a clothoid; a circular arc or straight line if κ₀ = κ₁). · examples: `poc_driving_lateral`
+- `clothoid_points` `no input → table` GPU: none — Points of a curve whose curvature is linear in arc length, κ(s) = κ₀ + (κ₁ − κ₀) s / length (part of a clothoid; a circular arc or straight line if κ₀ = κ₁). · examples: `heightmap_depth_camera_tour`, `poc_driving_lateral`, `road_surface_tour`
 - `curvature_speed_plan` `any → table` GPU: none — Speed planning that builds a speed limit from a curvature sequence and enforces acceleration/deceleration limits with 2 passes, forward and backward (a classical method). · examples: `poc_driving_lateral`
 - `curve_speed_limit` `any → any` GPU: none — Upper speed limit without sliding outward on a curve (radius R) with superelevation i and side-friction coefficient f: v = √(g R (i + f)/(1 − i f)) [m/s]. · examples: `gallery_drive_lateral_env`
 - `design_min_radius` `any → any` GPU: none — Minimum curve radius from Eq. (3) of the commentary on the Road Structure Ordinance: R = V² / (127 (i + f)) [m] (V in km/h). · examples: `gallery_drive_lateral_env`
@@ -4028,6 +4032,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `pure_pursuit_circle_offset` `no input → table` GPU: none — Steady-state circle radius ρ and lateral offset ρ − R (positive outward) when tracking a steady circle (radius R) with pure pursuit (referenced to the rear-axle center). · examples: `poc_driving_lateral`
 - `pure_pursuit_curvature` `any → table` GPU: none — pure pursuit: curvature κ = 2 sin α / L_d for aiming from the rear-axle center (``pose`` = (x, y, ψ), (N, 3) allowed) at the point a distance L_d ahead on the path. · examples: `poc_driving_lateral`
 - `rear_axle_path` `any → table` GPU: none — Trajectory of the rear-axle center dragged without slip by a polyline trajectory of the front-axle center (an exact pursuit curve per segment). · examples: `poc_driving_lateral`
+- `road_surface_heightmap` `table → depth` GPU: none — Road surface height map from a centre-line alignment and cross-section rules, with the per-cell analytic truth (grade and cross slope). · examples: `heightmap_depth_camera_tour`, `road_surface_tour`
 - `stanley_steer` `any → table` GPU: none — Stanley steering angle δ = ψ_e + atan2(−k e, k_s + v) (the lateral offset e of the front-axle center is positive to the left of the path; ψ_e = path heading − ψ). · examples: `gallery_drive_lateral_env`
 - `stanley_straight_decay` `no input → signal` GPU: none — Closed form of the front-axle lateral offset e(t) under Stanley (unclipped) on a straight path. · examples: `gallery_drive_lateral_env`
 - `steady_cornering` `no input → table` GPU: none — Steady-state circular cornering of the linear 2-wheel equivalent (bicycle) model (speed u, turning radius R = u/r, left turn positive). · examples: `gallery_drive_lateral_env`
@@ -4472,24 +4477,25 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `ttc_from_scale` `no input → scalar` GPU: none — τ (seconds, at the time of the first frame) from the change in apparent size: ``τ₀ = Δt · w₁ / (w₁ − w₀)``. · examples: `poc_ttc_rss`
 - `ttc_truth` `image2d × matrix × matrix → table` GPU: yes (allow-list) — Per-pixel **ground-truth τ** (seconds, at the time of the first frame) and closing speed: ``{"tau", "closing_speed", "depth1", "valid"}``. · examples: `poc_ttc_rss`
 
-#### drive / walkterrain (12)
+#### drive / walkterrain (13)
 - `detect_obstacles` `depth → mask` GPU: none — Segment cells rising more than *clearance* above the walkable ground. · examples: `walking_ops_tour`
-- `elevation_map` `points → depth` GPU: none — Bin a point cloud into a 2.5-D elevation grid. · examples: `perception_pipeline`, `physical_ai_perception`, `poc_lidar_terrain_change`, `walking_ops_tour`
+- `elevation_map` `points → depth` GPU: none — Bin a point cloud into a 2.5-D elevation grid. · examples: `heightmap_depth_camera_tour`, `perception_pipeline`, `physical_ai_perception`, `poc_lidar_terrain_change`, `walking_ops_tour`
 - `elevation_normals` `depth → normalmap` GPU: none — Unit up-pointing normals (H, W, 3) of an elevation map — ledger door of :func:`surface_normals`. · examples: `walking_ops_tour`
 - `elevation_step_edges` `depth → mask` GPU: none — Step edges (curbs / stair nosings) of an elevation map -> ``(edge_mask, signed_rise)`` (ledger door). · examples: `walking_ops_tour`
 - `elevation_traversability` `depth → mask` GPU: none — Traversable cells of an elevation map (True = within the step and slope limits) — ledger door of :func:`traversability`. · examples: `walking_ops_tour`
-- `fill_gaps` `depth → depth` GPU: none — Fill ``nan`` cells with the nearest finite height (nearest-neighbour). · examples: `walking_ops_tour`
+- `fill_gaps` `depth → depth` GPU: none — Fill ``nan`` cells with the nearest finite height (nearest-neighbour). · examples: `heightmap_depth_camera_tour`, `walking_ops_tour`
 - `foothold_candidates` `depth → table` GPU: none — Pick discrete safe stepping targets from the terrain. · examples: `consumer_hillco`, `physical_ai_perception`, `walking_ops_tour`
 - `foothold_score` `depth → image2d` GPU: none — Per-cell flatness score in [0, 1] (1 = flat & level = good foothold). · examples: `walking_ops_tour`
 - `fuse_elevation` `images → depth` GPU: none — Fuse several aligned elevation grids into one robot-centric map. · examples: `walking_ops_tour`
 - `ground_plane` `depth → depth` GPU: none — Robust least-squares ground plane ``z = a·x + b·y + c`` per cell. · examples: `walking_ops_tour`
 - `ground_surface` `depth → depth` GPU: none — Smooth walkable-ground envelope by grey-opening (min-filter then max-filter). · examples: `walking_ops_tour`
+- `heightmap_depth_camera` `depth × pose × matrix → depth` GPU: none — Render a height map (elevation map / DEM) directly with a pinhole depth camera (rays marched over the heights at a fixed step). · examples: `heightmap_depth_camera_tour`
 - `roughness_map` `depth → image2d` GPU: none — Per-cell surface roughness = local height standard deviation over a ``window`` neighbourhood. High on rubble / vegetation, ~0 on smooth ground. · examples: `walking_ops_tour`
 
 #### drive / world (4)
 - `load_asset` `no input → table` GPU: none — Loads a bundled asset as a mesh dict: ``{"V", "F", "color", "label", "name", "dims"}``. · examples: `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`
 - `world_build` `table → table` GPU: none — Builds a world from a course (element or layout). · examples: `gallery_drive_japan_roads`, `gallery_drive_world_objects`, `poc_driving_longitudinal`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`, `poc_world_terrain`
-- `world_camera` `table × matrix × matrix → table` GPU: none — Shoots the world with a camera: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``. · examples: `gsplat_trained_product`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
+- `world_camera` `table × matrix × matrix → table` GPU: none — Shoots the world with a camera: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``. · examples: `gsplat_trained_product`, `heightmap_depth_camera_tour`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
 - `world_move` `table → any` GPU: none — Moves object i (one placed from an asset) to a new pose (x, y, yaw) (rewrites only the vertices; faces, labels and colors are unchanged). · examples: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
 
 ### tomography (43 ops / 8 categories)
@@ -5149,7 +5155,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 
 #### mv / resample (4)
 - `change_radial_distortion_image` (halcon: `change_radial_distortion_image`) `image2d × table × table → image2d` GPU: none — Redraw an image from one division-model camera into another distortion and intrinsics. · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
-- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: none — Read the inside of a rotated rectangle by linear interpolation and cut it out as an axis-aligned image. · examples: `machine_vision_tour`, `poc_mixed_case_depalletizing`, `poc_real_stereo_multiscanline`
+- `crop_rectangle2` (halcon: `crop_rectangle2`) `image2d → image2d` GPU: none — Read the inside of a rotated rectangle by linear interpolation and cut it out as an axis-aligned image. · examples: `heightmap_depth_camera_tour`, `machine_vision_tour`, `poc_mixed_case_depalletizing`, `poc_real_stereo_multiscanline`, `road_surface_tour`
 - `map_image` (halcon: `map_image`) `image2d × table → image2d` GPU: none — Resample an image through an inverse map (each output pixel reads an input coordinate). · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
 - `rectify_to_world_plane` (halcon: `image_to_world_plane`) `image2d × table × matrix → image2d` GPU: none — Rectify an image to a fronto-parallel view of the world plane z=0 (one pixel = `scale` world units). · examples: `machine_vision_tour`, `poc_real_chessboard_undistort`
 
@@ -5552,7 +5558,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `robust_gaussian_surface` `depth → depth` GPU: none — Robust Gaussian regression filter (surface): waviness and roughness of a surface that scratches and spikes cannot drag. · examples: `poc_robust_profile_filter`
 - `robust_spline_profile` `signal → signal` GPU: none — Robust spline filter (profile): a mean line and roughness that outliers cannot drag. · examples: `poc_robust_profile_filter`
 - `surface_filter` `depth → depth` GPU: inside a chain only (allow-list) — Separates a height field into roughness and waviness (Gaussian filter of ISO 16610-21). · examples: `poc_robust_profile_filter`, `poc_surface_roughness`
-- `surface_form_remove` `depth → depth` GPU: inside a chain only (allow-list) — Removes a plane / quadric surface directly on the grid. Returns ``(residual, coeffs)``. · examples: `poc_polish_wipe_measure`, `poc_pv_thermal_survey`, `poc_surface_roughness`
+- `surface_form_remove` `depth → depth` GPU: inside a chain only (allow-list) — Removes a plane / quadric surface directly on the grid. Returns ``(residual, coeffs)``. · examples: `heightmap_depth_camera_tour`, `poc_polish_wipe_measure`, `poc_pv_thermal_survey`, `poc_surface_roughness`, `road_surface_tour`
 
 #### roughness / synth (1)
 - `surface_synth_psd` `no input → depth` GPU: none — Synthesizes a height field from a specified PSD. Returns ``(z, sq_analytic)``. · examples: `poc_polish_wipe_measure`, `poc_surface_roughness`
@@ -5574,7 +5580,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 
 #### shape2d / morph (6)
 - `add_frame_corners` `pairs → pairs` GPU: none — Adds the four corners of the image (+ the edge midpoints) to the point set as fixed points. · examples: `shape2d_morph_descriptor_tour`
-- `blend` `image2d × image2d → image2d` GPU: none — Cross-dissolve (1-alpha)·a + alpha·b (a, b have the same shape and lie in [0,1]). · examples: `image_morph`, `poc_live4d`
+- `blend` `image2d × image2d → image2d` GPU: none — Cross-dissolve (1-alpha)·a + alpha·b (a, b have the same shape and lie in [0,1]). · examples: `image_morph`, `poc_live4d`, `road_surface_tour`
 - `morph` `image2d × image2d × pairs × pairs → image2d` GPU: yes (allow-list) — Morphs 2 images A and B via corresponding points and produces the intermediate image at ratio alpha. · examples: `image_morph`, `poc_vanishing_detail_and_morphing_area`
 - `morph_sequence` `image2d × image2d × pairs × pairs → images` GPU: none — Morph sequence with alpha swept 0→1 in n steps (frames that change smoothly from A to B). · examples: `image_morph`
 - `warp_piecewise_affine` `image2d × pairs × pairs → image2d` GPU: none — Piecewise affine warp that moves the content at src_pts of img to dst_pts. · examples: `shape2d_morph_descriptor_tour`
@@ -5677,13 +5683,13 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `dem_aspect` `depth → image2d` GPU: yes (allow-list) — Slope aspect [degrees]. **North is 0 degrees, increasing towards east**. Flat cells get :data:`ASPECT_FLAT`. · examples: `poc_dem_terrain`, `poc_geodetic_height_frames`
 - `dem_curvature` `depth → image2d` GPU: yes (allow-list) — Curvature [1/m]. ``kind`` is ``"profile"`` (profile) / ``"planform"`` (plan) / ``"total"``. · examples: `poc_dem_terrain`
 - `dem_roughness` `depth → image2d` GPU: yes (allow-list) — Terrain ruggedness index TRI — the root mean square of the elevation differences to the 8 neighbors [m]. · examples: `dem_terrain_analysis_tour`
-- `dem_slope` `depth → image2d` GPU: yes (allow-list) — Slope angle. ``units`` is ``"degrees"`` / ``"radians"`` / ``"percent"``. · examples: `dem_geodesy_tour`, `poc_crop_phenotyping`, `poc_dem_terrain`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_multibeam_bathymetry`, `poc_stockpile_volume`
+- `dem_slope` `depth → image2d` GPU: yes (allow-list) — Slope angle. ``units`` is ``"degrees"`` / ``"radians"`` / ``"percent"``. · examples: `dem_geodesy_tour`, `poc_crop_phenotyping`, `poc_dem_terrain`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_multibeam_bathymetry`, `poc_stockpile_volume`, `road_surface_tour`
 - `dem_tpi` `depth → image2d` GPU: yes (allow-list) — Topographic position index TPI — the difference between the cell itself and the mean of its 8 neighbors [m]. Positive means ridge, negative means valley. · examples: `dem_terrain_analysis_tour`
 
 #### dem / visibility (3)
 - `dem_horizon_angle` `depth → image2d` GPU: none — Horizon elevation angle in a given azimuth [degrees]. 0 is horizontal; 90 means the sky straight above is blocked. · examples: `dem_terrain_analysis_tour`
 - `dem_sky_view_factor` `depth → image2d` GPU: none — Sky view factor [0,1]: how much of the sky is visible. · examples: `poc_dem_terrain`
-- `dem_viewshed` `depth → image2d` GPU: none — Visible area from 1 point (1 = visible). Decides whether the line of sight is blocked by the terrain. · examples: `dem_terrain_analysis_tour`, `poc_stockpile_volume`
+- `dem_viewshed` `depth → image2d` GPU: none — Visible area from 1 point (1 = visible). Decides whether the line of sight is blocked by the terrain. · examples: `dem_terrain_analysis_tour`, `heightmap_depth_camera_tour`, `poc_stockpile_volume`
 
 ### conngraph (28 ops / 7 categories)
 
