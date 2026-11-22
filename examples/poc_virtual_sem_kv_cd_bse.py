@@ -1,23 +1,28 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""仮想 SEM —— 電子を 1 個ずつ固体に撃ち、加速電圧で像も測れる線幅も変わる様子を、実測値で採点しながら見せる。
+"""仮想 SEM —— 電子を 1 個ずつ固体に撃ち、加速電圧で像も測れる線幅も変わる様子を、前半の段を外の値で採点してから見せる。
 
 走査電子顕微鏡(SEM)の像は「表面の写真」ではない。一次電子は固体に入って何十回も散乱し、
 その途中で二次電子(SE)を叩き出し、一部は反射電子(BSE)として戻ってくる。像の明るさは、その
 **相互作用の体積**のどこから何が出てきたかの集計である。だから同じ部品でも、加速電圧を変えると
 像も、像から測った線幅も変わる。この PoC は、その相互作用を Joy の単散乱モンテカルロ
-(弾性散乱は Browning 1994 の Mott 近似、阻止能は Joy-Luo 1989)で解き、各段を**外の実測値**で
-採点してから、外観検査・計測の問いに使う。
+(弾性散乱は Browning 1994 の Mott 近似、阻止能は Joy-Luo 1989)で解き、**段 1〜3 を外の値**(実測の
+データベース・経験式・普遍曲線)で採点してから、外観検査・計測の問いに使う。★段 4〜6(線幅・3 検出器の像・
+Si の中の W)には外の真値が無く、**模型の中の結果**である。段 7(帯電)の門は閉形式との一致(模型の自己整合)で、
+実測ではない。主の結果の 1 kV の W のコントラストも、1 keV の η を門にしていない(段 1)ので模型の中の話。
+(2026-11-15、外部レビューの指摘で「各段を外の実測値で採点」を改め、まとめに段ごとの採点の表を出す。)
 
-多段(各段に外部真値か閉形式の門):
+多段(外の値で採点するのは段 1〜3):
 
 1. **反射電子係数 η(Z, E)**: 7 元素(C〜Au)× 5/10/20/30 keV を、Joy の電子-固体相互作用
-   データベース(rev. 04-02)に収録された実測の幅 ± 0.04 で採点する。遮蔽ラザフォードに戻すと
-   重元素で外れる(門に歯があることの確認)。1 keV の比較は表に出すが門にしない。
+   データベース(rev. 04-02)に収録された実測の幅 ± 余裕で採点する。余裕は「絶対 0.04」と「相対 ETA_REL
+   (収録値どうしの相対の半幅の最大)× 実測の中点 + モンテカルロの統計誤差の 3σ」の小さい方(2026-11-15、外部
+   レビューの指摘で締めた。それまでは全元素に絶対 ±0.04 で、C の 5 keV では実測 0.082〜0.085 に対し 0.042〜0.125 を
+   通していた)。遮蔽ラザフォードに戻すと重元素で外れる(門に歯があることの確認)。1 keV の比較は表に出すが門にしない。
 2. **到達深さ**: 電子ごとの最大の深さを Kanaya-Okayama の R = 0.0276 A E^1.67/(Z^0.889 ρ) µm と比べ、
    電圧の指数(1.67)も当てはめで確かめる。相互作用の体積を軌跡の密度で描く。
 3. **二次電子の収率の形**: δ(E)/δmax を Lin & Joy 2005 の普遍曲線と、Emax を同じ論文の Table 1 と比べる
    (λ・ε は表のまま入れ、δ の山には合わせていない)。
-4. **CD-SEM の線幅**: PMMA の線(底辺 40 nm、高さ 40 nm)を 1 / 5 / 20 kV、側壁角 80 / 85 / 88 / 90 度で
+4. **CD-SEM の線幅**(模型の中。外の真値なし): PMMA の線(底辺 40 nm、高さ 40 nm)を 1 / 5 / 20 kV、側壁角 80 / 85 / 88 / 90 度で
    走査し、しきい値法と最大傾斜法で測る。測れる線幅が「側壁のどの高さか」を電圧と側壁角が決める
    (側壁 88 度では低加速ほど上寄り。80 度では差が小さく向きも逆)。
 5. **同じ部品を 3 電圧 × 3 検出器で撮る**(レンズ内 SE / 側方 SE / 反射電子)。
@@ -85,6 +90,22 @@ ETA_MEASURED = {
 ETA_1KEV = {"C": (0.076, 0.133), "AL": (0.19, 0.23), "SI": (0.228, 0.235), "CU": (0.265, 0.4375),
             "W": (0.459,), "AU": (0.289, 0.419)}
 ETA_MARGIN = 0.04
+#: 収録値どうしの散らばり: 同じ (元素, keV) に 2 つ以上の実測がある組の、相対の半幅 (最大 − 最小)/(最大 + 最小) の最大。
+#: η の門の余裕は min(ETA_MARGIN, ETA_REL × 実測の中点 + 3 σ_MC)(σ_MC = sqrt(η(1 − η)/n)、二項)。
+#: 2026-11-15、外部レビューの指摘(軽元素に絶対 ±0.04 は緩い)で締めた。σ_MC が二項で足りることは、相対の分が効く軽元素で
+#: 種 10 本で実測した(C 5 keV: 種の標準偏差 0.0046 / 二項 0.0070(n = 1500)、0.0031 / 0.0038(n = 5000))。Au 30 keV では
+#: 種の揺れ 0.0095 が二項 0.0071 を超える(n = 5000)が、Cu 以上の重元素は絶対 0.04 の側が効くので門の幅には入らない。
+ETA_REL = max((max(v) - min(v)) / (max(v) + min(v)) for v in ETA_MEASURED.values() if len(v) > 1)
+
+
+def eta_window(vals, n: int) -> tuple[float, float, float]:
+    """η の門の幅 (下限, 上限, 余裕)。余裕 = min(絶対 0.04, 相対 ETA_REL × 中点 + 3 σ_MC)。"""
+    lo_m, hi_m = min(vals), max(vals)
+    mid = 0.5 * (lo_m + hi_m)
+    m = min(ETA_MARGIN, ETA_REL * mid + 3.0 * float(np.sqrt(mid * (1.0 - mid) / n)))
+    return lo_m - m, hi_m + m, m
+
+
 #: モンテカルロの統計誤差を見る種の本数(2026-11-13、作者と独立の検証の指摘で足した)。表と図の値は最初の種の 1 回のまま。
 N_SEEDS = 4 if REDUCED else 8
 #: 種を替えて測り直す側壁角。門(assert)は 88 度だけで、80 度は向きを印字するだけなので、縮小(CI)では
@@ -99,6 +120,16 @@ def _ms(v, fmt: str = "%.2f") -> str:
     v = np.asarray(v, dtype=float)
     return (fmt + " ± " + fmt.replace("+", "")) % (v.mean(), v.std(ddof=1))
 ELEMENTS = ("C", "AL", "SI", "CU", "AG", "W", "AU")
+#: 段ごとに何で採点したか(まとめに印字する)。外の値で採点したのは段 1〜3 だけ。
+STAGE_SCORING = (
+    ("1 η(5〜30 keV)", "外の実測(Joy のデータベース)。1 keV は門にしない"),
+    ("2 到達深さ", "外の経験式(Kanaya-Okayama)"),
+    ("3 SE の収率の形", "外の普遍曲線と表(Lin & Joy 2005)。C〜Ag だけ。W・Au は合わない"),
+    ("4 CD の線幅", "外の真値なし —— 模型の中(門は上辺〜底辺の幾何と、種を替えた揺れ)"),
+    ("5 3 検出器の像", "外の真値なし —— 模型の中(絵)"),
+    ("6 Si の中の W", "外の真値なし —— 模型の中(1 kV の η も門にしていない)"),
+    ("7 帯電", "閉形式(二分法)との一致 —— 模型の自己整合で、実測ではない"),
+)
 ZOF = {"C": 6, "AL": 13, "SI": 14, "CU": 29, "AG": 47, "W": 74, "AU": 79}
 
 
@@ -111,7 +142,8 @@ def _eta(mat, e, model, n):
 
 # --------------------------------------------------------------------------- #
 def stage1_eta():
-    print("\n1) 反射電子係数 η(Z, E) —— Joy のデータベースの実測の幅 ± %.2f で採点" % ETA_MARGIN)
+    print("\n1) 反射電子係数 η(Z, E) —— Joy のデータベースの実測の幅 ± 余裕で採点(余裕 = min(%.2f, %.3f × 中点 + 3σ_MC))"
+          % (ETA_MARGIN, ETA_REL))
     n = 1500 if REDUCED else 5000
     energies = (5, 20) if REDUCED else (5, 10, 20, 30)
     rows, miss_b, miss_r = [], [], []
@@ -119,7 +151,7 @@ def stage1_eta():
     for mat in ELEMENTS:
         for e in energies:
             vals = ETA_MEASURED[(mat, e)]
-            lo, hi = min(vals) - ETA_MARGIN, max(vals) + ETA_MARGIN
+            lo, hi, _m = eta_window(vals, n)
             eb = _eta(mat, e, "browning", n)
             er = _eta(mat, e, "rutherford", n)
             res[(mat, e)] = (eb, er)
@@ -128,10 +160,14 @@ def stage1_eta():
                 miss_b.append((mat, e))
             if not ok_r:
                 miss_r.append((mat, e))
-            rows.append((mat, e, eb, er, vals))
-    print("   %-3s %4s  %-8s %-9s  実測" % ("", "keV", "Browning", "Rutherford"))
-    for mat, e, eb, er, vals in rows:
-        print("   %-3s %4d  %.3f    %.3f      %s" % (mat, e, eb, er, " / ".join("%.3f" % v for v in vals)))
+            rows.append((mat, e, eb, er, vals, lo, hi))
+    print("   %-3s %4s  %-8s %-9s  %-15s 実測" % ("", "keV", "Browning", "Rutherford", "門の幅"))
+    for mat, e, eb, er, vals, lo, hi in rows:
+        print("   %-3s %4d  %.3f    %.3f      %.3f〜%.3f   %s" % (mat, e, eb, er, lo, hi,
+                                                         " / ".join("%.3f" % v for v in vals)))
+    c5 = eta_window(ETA_MEASURED[("C", 5)], n)
+    print("   門の余裕: 相対の分 ETA_REL = %.3f(収録値どうしの相対の半幅の最大)。C 5 keV で ±%.3f(絶対 %.2f より狭い)、"
+          "Cu 以上の重元素は ±%.2f のまま" % (ETA_REL, c5[2], ETA_MARGIN, ETA_MARGIN))
     print("   1 keV(門にしない): " + ", ".join(
         "%s %.2f(実測 %s)" % (m, _eta(m, 1.0, "browning", n // 2), "〜".join("%.2f" % v for v in ETA_1KEV[m]))
         for m in ("SI", "CU", "AU")))
@@ -566,12 +602,15 @@ def main():
           % (N_SEEDS, _ms(SPREAD["flush_1kv"][0], "%+.0f"), _ms(SPREAD["flush_1kv"][1], "%+.0f"),
              _ms(SPREAD["grain_1kv"][0], "%+.0f"), _ms(SPREAD["grain_1kv"][1], "%+.0f")))
     print("   帯電: 0.5 kV は %+.1f V で停止、20 kV は %+.0f V まで負に。" % (ch[0.5][1], ch[20.0][1]))
+    print("   ★段ごとの採点(外の値で採点した段と、模型の中だけの段を分ける。2026-11-15、外部レビューの指摘で足した):")
+    for stage, how in STAGE_SCORING:
+        print("     %-22s %s" % (stage, how))
     print("   所要(CPU 時間): %.1f 秒" % cpu)
     if REDUCED:
         assert cpu < 120.0, "縮小の走行が CPU 120 秒を超えた: %.1f" % cpu
-    print("\nPASS: η(Z,E) は実測の幅に、到達深さは Kanaya-Okayama に、SE の形と Emax は Lin & Joy 2005 に合う。"
-          "線幅は加速電圧と側壁角で「側壁のどの高さを測るか」が変わり、表面の W は低加速の SE では消えて反射電子で浮かび、"
-          "帯電は低加速で自己調整・高加速で溜まり続ける。")
+    print("\nPASS: η(Z,E) は実測の幅に、到達深さは Kanaya-Okayama に、SE の形と Emax は Lin & Joy 2005 に合う(外の値で採点した段)。"
+          "模型の中では、線幅は加速電圧と側壁角で「側壁のどの高さを測るか」が変わり、表面の W は低加速の SE では消えて反射電子で浮かび、"
+          "帯電は低加速で自己調整・高加速で溜まり続ける(この 3 つに外の真値は無い)。")
     return 0
 
 

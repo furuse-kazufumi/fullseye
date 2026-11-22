@@ -33784,7 +33784,7 @@
             1600,
             1600
           ],
-          "bytes": 449690,
+          "bytes": 449692,
           "color_mad": [
             0.6638,
             1.8501,
@@ -33794,7 +33794,7 @@
             0.6475
           ],
           "max_color_mad": 1.8501,
-          "source_sha256": "b464e7ca4b1f3c2b3ac62ded04c758ac2f16d47fbd27140d21c7b587036babe9"
+          "source_sha256": "15256f2a9affe999111ba6f65c0c34d7c336c818ae0580f3508532e45c50b15d"
         },
         "en": {
           "path": "articles/assets/poc/poc_mixed_case_depalletizing/story.en.gif",
@@ -33878,7 +33878,7 @@
             1600,
             1600
           ],
-          "bytes": 449690,
+          "bytes": 449692,
           "color_mad": [
             0.6638,
             1.8501,
@@ -33888,7 +33888,7 @@
             0.6475
           ],
           "max_color_mad": 1.8501,
-          "source_sha256": "491f102b910a94163f42cb3693f309c74a9cb6835f7414b7dbed8bf7281ce772"
+          "source_sha256": "caa36bfab25b97401f36a2441c13734d614b216642cc663f5ca7f9d0bcc71620"
         }
       },
       "thumbnail": {
@@ -34692,7 +34692,7 @@
       "still": "articles/assets/poc/poc_ct_casting_sparse_views/01_slices.png",
       "alt": {
         "ja": "360° に 36 投影・360° に 12 投影・110° に 30 投影の 3 条件で、同じ鋳物の同じ断面(空隙 2 個が見える高さ)を 4 つの再構成で並べた。少数投影では FDK・SIRT・OS-SART に筋やむらが出て、TV は滑らかに保つ。",
-        "en": "Voids in a synthetic aluminium casting were scanned with cone-beam CT, rebuilt by several methods, and scored on exact ellipsoids. With 12 views, the classic method that ranks last by image error sized the voids better than the best iterative one. The best-looking reconstruction is not always the best measurement."
+        "en": "Voids in a synthetic aluminium casting were scanned with cone-beam CT and rebuilt by several methods. With 12 views, the method last by image error sized the voids best when volume is counted as missing material. Cutting the image at half density flips that order, so the result rests on the measure and a coarse grid."
       }
     },
     "poc_surface_defect_classifiers": {
