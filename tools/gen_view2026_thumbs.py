@@ -54,7 +54,8 @@ SPEC = [
     ("poc_ct_void_morphology", _P + "poc_ct_void_morphology/13_section_sweep.gif", 0.5, None),
     # 2026-11-15: 灰色の縞と円板だけで何の図か分からなかった(独立レビュー)。09 の動画と同じ走査から書いた正方形の静止画
     ("poc_interferometry_step", _P + "poc_interferometry_step/10_csi_scan_still.png", None, None),
-    ("poc_polarization_specular", _P + "poc_polarization_specular/09_glare_removed_label_720.jpg", None, None),
+    # 09 の中央の正方形は真ん中の 1 枚だけで比べる構図が消えた(2026-11-15 の独立レビュー)。PoC が出す正方形の表紙を使う
+    ("poc_polarization_specular", _P + "poc_polarization_specular/10_glare_cover.png", None, None),
     ("poc_photoelasticity", _P + "poc_photoelasticity/03_load_and_isoclinics.gif", 0.45, (0.0, 0.0, 1.0)),
     ("poc_thermography_ndt", _P + "poc_thermography_ndt/02_depth_map_720.jpg", None, None),
     ("poc_equipment_selection_map", _P + "poc_equipment_selection_map/08_equipment_samples_square.png", None, None),

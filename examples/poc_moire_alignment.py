@@ -25,8 +25,8 @@ like a woven carpet; for phase gratings the sharpest images sit at fractions of 
      (Rife & Boorstyn 1974 の位相の下限 × Hann の係数 1.5 × 基準像の雑音 2 倍)と 0.75〜1.35 倍。★比べ手との差を
      **内訳に分ける**(異常に良い数字は疑う): (a) 放物線補間の偏り(ずれに比例する、いわゆる peak locking)、
      (b) 同じ 20 µm の線を**同じ位相の読み方**で読んだ場合、(c) ピッチの差(2.04 µm 対 20 µm)と縞の振幅。
-     ★所見: 誤差 RMS の差は約 90 倍(2 桁)だが、**その大半は放物線の偏り**(ずれを 17 % 小さく読む)で、偶然の誤差
-     だけなら 0.08 対 0.2 nm の 2〜2.5 倍しか違わない。線のマークを位相で読むと相互相関より悪い(縁の高調波を捨てる)。
+     ★所見: 誤差 RMS の差は 1 nm の階段で 12 倍、40 nm ずらすと約 90 倍(2 桁)と、**選んだずれで変わる**。その大半は
+     **放物線の偏り**(ずれに比例して 17 % 小さく読む)で、偶然の誤差だけなら 0.08 対 0.2 nm の 2〜2.5 倍しか違わない。線のマークを位相で読むと相互相関より悪い(縁の高調波を捨てる)。
      差が開くのはカメラを粗くしたとき(画素 0.5 → 2 µm で相互相関は 2.3 倍悪化、モアレは揺れの範囲で変わらない)。
   4. **差動で共通の誤差を消す**: 逆向きのピッチ差の 2 対(A = (2.00, 2.04)、B = (2.04, 2.00))はずれで逆に、マーク全体の
      流れで同じ向きに動く。マーク全体が 300 nm 流れ、照明が 30 % 傾き、カメラの倍率を 2 % 間違えても、
@@ -82,6 +82,30 @@ P_BAR = 20.0                   # 比べ手: 解像できる線のマークのピ
 FAILS: list[str] = []
 GATES: list[str] = []
 NUMBERS: dict[str, float] = {}
+#: 見出しに載せる数を、印字と同じ丸めの文字列で集める(``check_headline`` が記録と照合する)。
+SHOWN: dict[str, str] = {}
+
+#: 見出しの数。full は図つきの全段、reduced は CI の縮小実行の印字。
+HEADLINE = {
+    "full": {
+        "period_um": "102", "m_wafer": "50.000", "m_mask": "51.000", "direct_std": "9E-6",
+        "steps_moire": "0.08", "steps_xcorr": "1.0", "steps_gain": "12", "crlb_ratio": "1.00",
+        "xcorr_bias_pct": "17", "xcorr_rms_40": "6.95", "gain_total": "91",
+        "random_moire": "0.077", "random_xcorr": "0.192", "random_gain": "2.5",
+        "coarse_moire_before": "0.080", "coarse_moire_after": "0.063", "coarse_xcorr": "0.487",
+        "single_drift": "6.2", "diff_max": "0.022", "scale_err": "0.007",
+        "quad_x": "11.95", "quad_y": "-25.00", "abs_rms": "0.14", "talbot_um": "14.5", "gap_jump_nm": "1020",
+    },
+    "reduced": {
+        "period_um": "102", "m_wafer": "50.000", "m_mask": "51.000", "direct_std": "9E-6",
+        "steps_moire": "0.08", "steps_xcorr": "1.0", "steps_gain": "12", "crlb_ratio": "0.97",
+        "xcorr_bias_pct": "17", "xcorr_rms_40": "6.91", "gain_total": "92",
+        "random_moire": "0.075", "random_xcorr": "0.158", "random_gain": "2.1",
+        "coarse_moire_before": "0.080", "coarse_moire_after": "0.063", "coarse_xcorr": "0.487",
+        "single_drift": "6.2", "diff_max": "0.022", "scale_err": "0.007",
+        "quad_x": "11.95", "quad_y": "-25.00", "abs_rms": "0.15", "talbot_um": "14.5", "gap_jump_nm": "1020",
+    },
+}
 
 
 def gate(name: str, ok: bool, detail: str = "") -> None:
@@ -89,6 +113,16 @@ def gate(name: str, ok: bool, detail: str = "") -> None:
     GATES.append(name)
     if not ok:
         FAILS.append(name)
+
+
+def check_headline() -> None:
+    """見出しの数を守る門: この実行の丸めた印字を、予算に対応する記録と文字列で照合する。"""
+    key = "reduced" if REDUCED else "full"
+    want = HEADLINE[key]
+    diff = {k: (want[k], SHOWN.get(k)) for k in want if SHOWN.get(k) != want[k]}
+    print("   見出しの数(この実行): " + "  ".join("%s=%s" % (k, SHOWN.get(k)) for k in want))
+    gate("見出しの数(%d 個)が記録 HEADLINE[%s] と一致する" % (len(want), key), not diff,
+         "食い違い(記録, 実行): %s" % diff if diff else "")
 
 
 def xcorr_shift_nm(meas, ref, pixel_um=PX):
@@ -225,7 +259,8 @@ def chapter_crlb():
          % (NUMBERS["bar_phase_std"] / rows[1][1], P_BAR / PW, 0.2018 / amp_bar, pred),
          abs(NUMBERS["bar_phase_std"] / rows[1][1] / pred - 1) < 0.35)
     NUMBERS["gain_total"] = NUMBERS["xcorr_rms_40"] / rows[1][1]
-    gate("同じ雑音・同じ画素数で、誤差 RMS はモアレが相互相関 + 放物線の %.0f 倍(%.1f 桁)小さい —— ★ただしその大半は放物線の偏り"
+    gate("同じ雑音・同じ画素数・ずれ 40 nm で、誤差 RMS はモアレが相互相関 + 放物線の %.0f 倍(%.1f 桁)小さい"
+         "(1 nm の階段では 12 倍。偏りはずれに比例するので倍率は選んだずれで決まる)—— ★その大半は放物線の偏り"
          % (NUMBERS["gain_total"], math.log10(NUMBERS["gain_total"])), NUMBERS["gain_total"] > 10.0)
     # カメラの分解能を落とす(画素数は同じ): モアレの読みは変わらず、相互相関は悪くなる
     res = []
@@ -239,7 +274,7 @@ def chapter_crlb():
             mb = MA.moire_overlay_image(SHAPE, px, PM, P_BAR, 7.0, noise_sigma=SIGMA, seed=9500 + k, blur_sigma_um=blur, with_mask=False)
             eb.append(xcorr_shift_nm(mb, rb, px))
         res.append((float(np.std(em, ddof=1)), float(np.std(eb, ddof=1))))
-    NUMBERS.update({"lowres_moire": res[1][0], "lowres_xcorr": res[1][1]})
+    NUMBERS.update({"base_moire": res[0][0], "lowres_moire": res[1][0], "lowres_xcorr": res[1][1]})
     gate("カメラを粗くする(画素 0.5 → 2 µm、ぼけ 1.5 → 4 µm、画素数は同じ): モアレの偶然の誤差 %.3f → %.3f nm(縞の周期が"
          "画素より十分長い限り変わらない)、相互相関 %.3f → %.3f nm"
          % (res[0][0], res[1][0], res[0][1], res[1][1]),
@@ -272,6 +307,7 @@ def chapter_differential():
          % by_hand["shift_nm"], abs(by_hand["shift_nm"] - (rows[0][2] + d)) < 1e-9)
     NUMBERS["single_err_drift"] = rows[0][1]
     NUMBERS["diff_err_drift"] = rows[2][2]
+    NUMBERS["diff_max"] = max(abs(r[2]) for r in rows)
     gate("流れ 300 nm: 単一の対は 300/M = %.2f nm 狂う(実測 %+.2f)" % (300.0 / 50.0, rows[0][1]), abs(abs(rows[0][1]) - 6.0) < 0.5)
     gate("差動はどの場合も 0.3 nm 以内(最大 %.3f nm)。流れも %.1f nm と読めるが、流れは M 倍されないので 50 倍粗い(±20 nm)"
          % (max(abs(r[2]) for r in rows), rows[0][3]),
@@ -450,6 +486,56 @@ def differential_bars(rows):
     return img
 
 
+def overlay_cover(size=720):
+    """表紙(正方形 720 px): ① ウェハの格子だけ(見えない)② 2 枚を重ねる(102 µm の縞)③ ずらすと縞が 50 倍動く。
+
+    ページのカードとサムネイル(320 px)で字が読めるよう、帯ごとに大きな字で 1 行だけ書く(01_marks は 4 枚が横長で、
+    縮めると注の字が 5 px になった —— 2026-11-15 の独立レビュー)。像は本文の図と同じカメラ(画素 0.5 µm、ぼけ σ 1.5 µm)と
+    同じ雑音(σ 0.01)で、op ``moire_overlay_image`` が作る。③の縞の移動量は像から測った値(暗い縞の位置の差)。
+    """
+    import fullseye as fs
+    import imagedraw
+    head, gap = 76, 8
+    band = (size - head - 2 * gap) // 3
+    shape = (band, size)
+    P = PM * PW / abs(PW - PM) / PX
+    delta = 600.0
+    wafer = MA.moire_overlay_image(shape, PX, PM, PW, 0.0, with_mask=False, noise_sigma=SIGMA, seed=41)
+    over = MA.moire_overlay_image(shape, PX, PM, PW, 0.0, noise_sigma=SIGMA, seed=42)
+    moved = MA.moire_overlay_image(shape, PX, PM, PW, delta, noise_sigma=SIGMA, seed=43)
+    z0 = MA.moire_overlay_image(shape, PX, PM, PW, 0.0)
+    z1 = MA.moire_overlay_image(shape, PX, PM, PW, delta)
+    c0 = _dark_fringe_col(z0, size / 2, P / 2)
+    mm = MA.moire_magnification(PM, PW)
+    c1 = _dark_fringe_col(z1, c0 + mm["fringe_direction"] * mm["magnification"] * delta * 1e-3 / PX, P / 4)
+    moved_um = abs(c1 - c0) * PX
+
+    def rgb(a, vmax):
+        return np.repeat(np.clip(a / vmax, 0.0, 1.0)[..., None], 3, axis=2)
+
+    b1 = rgb(wafer, 1.0)
+    b2 = rgb(over, 0.5)
+    b3 = rgb(moved, 0.5)
+    b3 = np.asarray(fs.draw_line(b3, (c0, 2), (c0, band - 3), color=(0.0, 0.45, 0.70), width=3,
+                                 style=imagedraw.DrawStyle(line_style="dashed")))
+    b3 = np.asarray(fs.draw_line(b3, (c1, 2), (c1, band - 3), color=(0.84, 0.37, 0.0), width=3))
+    b3 = np.asarray(fs.arrow(b3, (c0, band * 0.70), (c1, band * 0.70), color="wrong", width=5, head_len=18.0,
+                             head_width=16.0))
+    b1 = np.asarray(fs.text_box(b1, "① 2.04 µm の格子だけ → 見えない(灰色一色)", (10, 8), anchor="lt", font_size=28))
+    b2 = np.asarray(fs.text_box(b2, "② 2.00 µm の格子と重ねる → 102 µm の縞", (10, 8), anchor="lt", font_size=28))
+    b3 = np.asarray(fs.text_box(b3, "③ %.1f µm ずらす → 縞は %.0f µm 動く" % (delta * 1e-3, moved_um), (10, 8),
+                                anchor="lt", font_size=28))
+    canvas = np.ones((size, size, 3))
+    y = head
+    for b in (b1, b2, b3):
+        canvas[y:y + band] = b
+        y += band + gap
+    canvas = np.asarray(fs.text_box(canvas, "見えない格子 2 枚で nm を読む(合成)", (size // 2, head // 2), anchor="cm",
+                                    font_size=32, box_alpha=0.0))
+    NUMBERS["cover_fringe_move_um"] = moved_um
+    return canvas, moved_um
+
+
 def make_figures(mw, steps_data, crlb_rows, diff_data, amb, tal):
     steps, rm, rx, direct = steps_data
     clean = mark(noise=0.0)
@@ -459,7 +545,8 @@ def make_figures(mw, steps_data, crlb_rows, diff_data, amb, tal):
     NUMBERS["panel_shift_a_um"], NUMBERS["panel_shift_b_um"] = dlabels[0][1], dlabels[1][1]
     figs.save_grid("marks", [direct, MA.moire_overlay_image(SHAPE, PX, PM, PW, 0.0, with_mask=False, noise_sigma=SIGMA),
                              single, dpanel],
-                   captions=["比べ手: 20 µm の線(直接の像)", "ウェハの 2.04 µm の格子だけ(ぼけで消え、平均 0.5 の灰色)",
+                   captions=["比べ手: 20 µm の線(直接の像)",
+                             "ウェハの 2.04 µm の格子だけ —— 灰色一色が正しい(ぼけで消え、雑音を除くと標準偏差 %.0e)" % NUMBERS["direct_std"],
                              "マスク 2.00 + ウェハ 2.04 µm(モアレ 102 µm)",
                              "差動: 上 A・下 B、ずれ 600 nm で縞は逆向きに流れる"],
                    gray=[True, True, True, False], vrange=[(0.0, 1.0), (0.0, 1.0), (0.0, 0.5), None],
@@ -514,6 +601,12 @@ def make_figures(mw, steps_data, crlb_rows, diff_data, amb, tal):
                    title="Talbot 効果: 振幅は 2p²/λ = %.1f µm で戻り、その半分で符号が反転" % zt,
                    caption="符号が反転すると縞は半周期ずれる。基準像と測定像のあいだに反転を跨ぐと読みが p/2 跳ぶ。2 対のピッチは Talbot 長が違うので、"
                            "差動でもギャップの影響は消えきらない。")
+    cover, moved_um = overlay_cover()
+    figs.save("overlay_cover", cover,
+              caption="表紙(合成): ① ウェハの 2.04 µm の格子だけを撮ると、カメラのぼけで灰色一色になる(これが正しい)。"
+                      "② マスクの 2.00 µm の格子と重ねると、周期 102 µm の縞が現れる。③ ウェハを 0.6 µm ずらすと縞は %.0f µm 動く"
+                      "(50 倍、像から測った値)。カメラ・雑音は本文の図と同じ。白色雑音だけの合成で、実機の系統誤差は入っていない。"
+                      % moved_um)
 
 
 def main():
@@ -527,6 +620,23 @@ def main():
     tal = chapter_talbot()
     if not REDUCED and figs.target_dir() is not None:
         make_figures(mw, steps, crlb, diff, amb, tal)
+    SHOWN.update(
+        period_um="%.0f" % NUMBERS["period_measured_um"], m_wafer="%.3f" % NUMBERS["M_wafer"],
+        m_mask="%.3f" % NUMBERS["M_mask"], direct_std=("%.0E" % NUMBERS["direct_std"]).replace("E-0", "E-"),
+        steps_moire="%.2f" % NUMBERS["steps_rms_moire"], steps_xcorr="%.1f" % NUMBERS["steps_rms_xcorr"],
+        steps_gain="%.0f" % (NUMBERS["steps_rms_xcorr"] / NUMBERS["steps_rms_moire"]),
+        crlb_ratio="%.2f" % NUMBERS["crlb_ratio_min"], xcorr_bias_pct="%.0f" % abs(100 * NUMBERS["xcorr_bias_slope"]),
+        xcorr_rms_40="%.2f" % NUMBERS["xcorr_rms_40"], gain_total="%.0f" % NUMBERS["gain_total"],
+        random_moire="%.3f" % NUMBERS["moire_std_sigma"], random_xcorr="%.3f" % NUMBERS["xcorr_std_40"],
+        random_gain="%.1f" % NUMBERS["random_gain"], coarse_moire_before="%.3f" % NUMBERS["base_moire"],
+        coarse_moire_after="%.3f" % NUMBERS["lowres_moire"], coarse_xcorr="%.3f" % NUMBERS["lowres_xcorr"],
+        single_drift="%.1f" % abs(NUMBERS["single_err_drift"]), diff_max="%.3f" % NUMBERS["diff_max"],
+        scale_err="%.3f" % abs(NUMBERS["scale_err_moire"]), quad_x="%.2f" % NUMBERS["quad_dx"],
+        quad_y="%.2f" % NUMBERS["quad_dy"], abs_rms="%.2f" % NUMBERS["abs_rms"],
+        talbot_um="%.1f" % NUMBERS["talbot_um"], gap_jump_nm="%.0f" % (0.5 * PW * 1000.0),
+    )
+    print("\n7. 見出しの数")
+    check_headline()
     print("\n所要 %.1f s、門 %d 件中 NG %d 件" % (time.time() - t0, len(GATES), len(FAILS)))
     if FAILS:
         print("FAIL: " + ", ".join(FAILS))
