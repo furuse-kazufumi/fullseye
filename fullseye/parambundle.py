@@ -42,6 +42,8 @@ from typing import Any, Callable, NamedTuple
 
 import numpy as np
 
+from json_safety import MAX_JSON_DEPTH, _check_json_depth
+
 __all__ = [
     "ParamBundle", "ParamSection", "Quantity", "Origin", "ParamReport", "ReportEntry",
     "ParamComparison", "CompareRow", "ParamGrid",
@@ -367,18 +369,42 @@ def _json_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return d
 
 
+def _check_tree_depth(tree: Any, *, max_depth: int = MAX_JSON_DEPTH, label: str) -> None:
+    """TOML の解析木を再帰せず検査する。Iteratively enforce the shared container-depth limit."""
+    stack = [(tree, 1)] if isinstance(tree, (Mapping, list, tuple)) else []
+    while stack:
+        value, depth = stack.pop()
+        if depth > max_depth:
+            raise ParamFileError("%s nesting is deeper than the limit of %d levels" % (label, max_depth))
+        children = value.values() if isinstance(value, Mapping) else value
+        for child in children:
+            if isinstance(child, (Mapping, list, tuple)):
+                stack.append((child, depth + 1))
+
+
 def _parse_json(text: str) -> tuple[Mapping, None]:
     try:
+        _check_json_depth(text, max_depth=MAX_JSON_DEPTH, label="parameter JSON")
         tree = json.loads(text, object_pairs_hook=_json_pairs, parse_constant=_reject_const)
     except json.JSONDecodeError as e:
         raise ParamFileError("invalid JSON (comments and trailing commas are not accepted): %s" % e) from e
+    except ValueError as e:
+        if isinstance(e, ParamError):
+            raise
+        raise ParamFileError(str(e)) from e
+    except RecursionError as e:
+        raise ParamFileError("parameter JSON nesting is too deep") from e
     return tree, None
 
 
 def _parse_toml(text: str) -> tuple[Mapping, None]:
     import tomllib
     try:
-        return tomllib.loads(text), None
+        tree = tomllib.loads(text)
+        _check_tree_depth(tree, max_depth=MAX_JSON_DEPTH, label="parameter TOML")
+        return tree, None
+    except RecursionError as e:
+        raise ParamFileError("parameter TOML nesting is too deep") from e
     except tomllib.TOMLDecodeError as e:
         raise ParamFileError("invalid TOML: %s" % e) from e
 
@@ -675,7 +701,10 @@ def load_params(path: str | os.PathLike, *, max_bytes: int = MAX_FILE_BYTES) -> 
     if not os.path.isfile(p):
         raise ParamFileError("not a file: %s" % p)
     root = os.path.dirname(os.path.abspath(p))
-    leaves, origins = _load_file(p, root, (), os.path.basename(p), max_bytes)
+    try:
+        leaves, origins = _load_file(p, root, (), os.path.basename(p), max_bytes)
+    except RecursionError as e:
+        raise ParamFileError("parameter file nesting is too deep") from e
     _check_layout(leaves)
     _resolve_refs(leaves, origins)
     return ParamBundle._make(leaves, origins, os.path.basename(p))

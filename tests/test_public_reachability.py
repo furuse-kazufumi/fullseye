@@ -74,6 +74,9 @@ _INTERNAL = {
     # safe_xml_parse / safe_xml_parse_zip_member / safe_xml_iterparse)。利用者は各形式の読み込み(CommonRoad・OSM・
     # OME-TIFF・SVG・3MF・CityGML …)から使う。公開の op にするかは 1.2.0 の定義ファイルの層で決める。
     "safe_xml": 6,
+    # 2026-11-22 Studio adversarial review: 利用者が選んだ JSON と QSettings の内部安全層。
+    # 公開 op ではなく、Studio / defs_io / ParamBundle の既存入口から使う(不可視関数は各 3 本、実測)。
+    "json_strict": 3, "studio_settings": 3,
     "param_specs": 11, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
     # GPU 第 4 便: 一括経路。op でなく、raytrace / optics と同じ定義を (M, W, R) で計算する下回りの部品。
@@ -462,7 +465,8 @@ def test_pending_exposure_shrinks_when_fixed():
 #   studio_params_model 17・studio_params_qt 5。
 #   (束の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1327
 # 2026-11-15 統合の枝に束の枝を merge: 1529 + (1327 - 1305 = 22: studio_params_model 17・studio_params_qt 5) = 1551。
-_HIDDEN_FUNCTIONS_TODAY = 1551
+# 2026-11-22 Studio adversarial review: strict JSON / checked settings の内部 2 層を追加し、1551 → 1556(実測)。
+_HIDDEN_FUNCTIONS_TODAY = 1556
 
 
 def _hidden_total():

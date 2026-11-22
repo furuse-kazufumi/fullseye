@@ -33,6 +33,7 @@ from PySide6 import QtCore, QtGui, QtWidgets
 
 import studio_editops_qt as eq
 import studio_keymap as km
+import studio_settings
 
 _K = QtCore.Qt
 _MODS = _K.ShiftModifier | _K.ControlModifier | _K.AltModifier | _K.MetaModifier
@@ -1354,18 +1355,21 @@ class KeymapController(QtCore.QObject):
         s = self.store()
         if s is None:
             return False
+        values = {}
         if self._loaded_raw is not None:                       # 起動の時に使えなかった元の文字列を 1 つ残してから書く
             old = s.value(km.BACKUP_KEY)
             if not (old != self._loaded_raw and _is_newer(old)):   # 新しい版の設定が残っている控えは潰さない(#5)
-                s.setValue(km.BACKUP_KEY, self._loaded_raw)
-            self._loaded_raw = None
+                values[km.BACKUP_KEY] = self._loaded_raw
+        remove = []
+        if self.keymap.overrides() or self.keymap.preset != km.DEFAULT_PRESET:
+            values[km.SETTINGS_KEY] = self.keymap.to_json()
+        else:
+            remove.append(km.SETTINGS_KEY)
+        if studio_settings.write_settings(values, remove=remove, settings=s, what="keyboard shortcuts"):
+            return False
+        self._loaded_raw = None
         self.load_problems = []
         self.newer_kept = False                                # 新しい版の設定は控えへ移った
-        if self.keymap.overrides() or self.keymap.preset != km.DEFAULT_PRESET:
-            s.setValue(km.SETTINGS_KEY, self.keymap.to_json())
-        else:
-            s.remove(km.SETTINGS_KEY)
-        s.sync()
         return True
 
     # ---- 配る -------------------------------------------------------------- #
@@ -1487,7 +1491,8 @@ class KeymapController(QtCore.QObject):
         """読み込んだ表に置き換える。前の表(変えた物があれば)を keymap/user.previous に 1 世代残す。"""
         s = self.store()
         if s is not None and (self.keymap.overrides() or self.keymap.preset != km.DEFAULT_PRESET):
-            s.setValue(km.PREVIOUS_KEY, self.keymap.to_json())
+            studio_settings.write_settings({km.PREVIOUS_KEY: self.keymap.to_json()}, settings=s,
+                                           what="previous keyboard shortcuts")
         self.keymap = new
         self._commit()
 
@@ -1511,7 +1516,8 @@ class KeymapController(QtCore.QObject):
             return False, probs
         s = self.store()
         if s is not None:
-            s.setValue(km.PREVIOUS_KEY, self.keymap.to_json())
+            studio_settings.write_settings({km.PREVIOUS_KEY: self.keymap.to_json()}, settings=s,
+                                           what="previous keyboard shortcuts")
         self.keymap = new
         self._commit()
         return True, probs

@@ -27,6 +27,7 @@ import numpy as np
 from PySide6 import QtCore, QtGui, QtWidgets
 
 import studio_pyedit_values as V
+import studio_settings
 from studio_pyedit_i18n import identity_tr
 from studio_pyedit_qt import ROW_EXTRA_PX, compact_rows, row_height  # noqa: F401  (ROW_EXTRA_PX は再公開)
 
@@ -1113,6 +1114,15 @@ class DictStore:
     def setValue(self, key, val):
         self.d[key] = val
 
+    def sync(self):
+        return None
+
+    def status(self):
+        return QtCore.QSettings.NoError
+
+    def fileName(self):
+        return "in-memory settings"
+
 
 class FloatingFrame(QtWidgets.QDialog):
     """モードレスの浮いた窓の入れ物。中身は任意の ``QWidget``。
@@ -1174,7 +1184,9 @@ class FloatingFrame(QtWidgets.QDialog):
 
     def save(self) -> None:
         g = self.geometry()
-        self._store.setValue("floating/" + self.key, json.dumps([g.x(), g.y(), g.width(), g.height()]))
+        studio_settings.write_settings(
+            {"floating/" + self.key: json.dumps([g.x(), g.y(), g.width(), g.height()])},
+            settings=self._store, what="floating-window geometry")
 
     def restore(self, default_size: tuple = (420, 360)) -> None:
         raw = self._store.value("floating/" + self.key, None)

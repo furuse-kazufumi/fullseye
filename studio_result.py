@@ -172,15 +172,35 @@ def _valid_input_ref(d):
     return ref
 
 
+def _input_ref_lexical_reason(path):
+    """自動読取りしない path の理由。Classify unsafe paths without touching the filesystem."""
+    import posixpath
+    import re
+
+    value = str(path)
+    slash = value.replace("\\", "/")
+    if slash.startswith("//"):
+        return "network (UNC/device) path"
+    if re.match(r"^[A-Za-z]:", slash) or slash.startswith("/"):
+        return "absolute path"
+    normal = posixpath.normpath(slash)
+    if normal == ".." or normal.startswith("../"):
+        return "path leaves the pipeline folder"
+    return None
+
+
 def resolve_input_ref(ref, base_dir):
     """保存された入力参照を今の環境へ当てる。``{"status", "path", "message"}`` を返す。
 
     status: ``ok``(ある・sha256 一致 = 黙って読む)/ ``changed``(ある・不一致 = 読むが警告)/
-    ``relinked``(元の場所に無く、.json の隣の同じ名前で見つかった・一致)/ ``missing``(見つからない =
-    今の画像を保つ)。相対 path は .json のあるフォルダ基準。"""
+    ``relinked``(元の場所を自動読取りせず、.json の隣の同じ名前で見つかった・一致)/ ``missing``
+    (安全な相対 path が見つからない)/ ``needs_confirmation``(絶対・UNC・folder 外なので自動では読まない)。
+    自動読取りするのは、realpath 後も .json の folder 内にある相対 path だけ。
+    """
     given = str(ref["path"])
-    cand = given if os.path.isabs(given) else os.path.join(base_dir, given)
     name = re.split(r"[\\/]", given)[-1]
+    base = os.path.realpath(base_dir)
+    unsafe_reason = _input_ref_lexical_reason(given)
 
     def _same(p):
         try:
@@ -188,15 +208,31 @@ def resolve_input_ref(ref, base_dir):
         except OSError:
             return None
 
-    if os.path.isfile(cand):
-        same = _same(cand)
-        if same:
-            return {"status": "ok", "path": cand, "message": ""}
-        if same is not None:
-            return {"status": "changed", "path": cand,
-                    "message": "input file changed since save: %s" % given}
-    alt = os.path.join(base_dir, name) if name else ""
-    if alt and os.path.isfile(alt) and os.path.abspath(alt) != os.path.abspath(cand):
+    cand = None
+    if unsafe_reason is None:
+        candidate = os.path.realpath(os.path.join(base, given))
+        try:
+            inside = os.path.normcase(os.path.commonpath([base, candidate])) == os.path.normcase(base)
+        except ValueError:
+            inside = False
+        if inside:
+            cand = candidate
+            if os.path.isfile(cand):
+                same = _same(cand)
+                if same:
+                    return {"status": "ok", "path": cand, "message": ""}
+                if same is not None:
+                    return {"status": "changed", "path": cand,
+                            "message": "input file changed since save: %s" % given}
+        else:
+            unsafe_reason = "path leaves the pipeline folder after resolving links"
+
+    alt = os.path.realpath(os.path.join(base, name)) if name else ""
+    try:
+        alt_inside = bool(alt) and os.path.normcase(os.path.commonpath([base, alt])) == os.path.normcase(base)
+    except ValueError:
+        alt_inside = False
+    if alt_inside and (cand is None or os.path.normcase(alt) != os.path.normcase(cand)) and os.path.isfile(alt):
         same = _same(alt)
         if same:
             return {"status": "relinked", "path": alt,
@@ -204,6 +240,9 @@ def resolve_input_ref(ref, base_dir):
         if same is not None:
             return {"status": "changed", "path": alt,
                     "message": "input file changed since save: %s (found next to the project file)" % given}
+    if unsafe_reason is not None:
+        return {"status": "needs_confirmation", "path": None,
+                "message": "input was not read automatically (%s): %s" % (unsafe_reason, given)}
     return {"status": "missing", "path": None, "message": "input not found: %s" % given}
 
 

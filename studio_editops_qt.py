@@ -30,6 +30,7 @@ from typing import Callable
 from PySide6 import QtCore, QtGui, QtWidgets
 
 import studio_editops as eo
+import studio_settings
 
 _K = QtCore.Qt
 _MODS = _K.ShiftModifier | _K.ControlModifier | _K.AltModifier | _K.MetaModifier
@@ -278,7 +279,8 @@ class EditOps(QtCore.QObject):
     def _save(self, key: str, value) -> None:
         s = self._store()
         if s is not None:
-            s.setValue(SETTINGS_PREFIX + key, value)
+            studio_settings.write_settings({SETTINGS_PREFIX + key: value}, settings=s,
+                                           what="editor settings")
 
     def set_rulers(self, columns) -> None:
         """桁の目安の線を出す桁(空なら出さない)。設定へ覚える。"""

@@ -28,6 +28,7 @@ from typing import Any, Callable, Sequence
 from PySide6 import QtCore, QtGui, QtWidgets
 
 import studio_params_model as M
+import studio_settings
 
 __all__ = ["ParamsPanel", "ParamsWindow", "show_params_window", "main", "ROW_EXTRA_PX", "BUTTON_PX", "GAP_PX",
            "MARK_DIFFER", "MARK_PARTIAL", "MARK_NOTATION", "MARK_USED"]
@@ -59,10 +60,7 @@ Qt = QtCore.Qt
 
 def _default_settings() -> QtCore.QSettings:
     """Studio と同じ設定の置き場(``FULLSEYE_STUDIO_SETTINGS`` が指す ini があればそちら)。"""
-    ini = os.environ.get("FULLSEYE_STUDIO_SETTINGS", "")
-    if ini:
-        return QtCore.QSettings(ini, QtCore.QSettings.IniFormat)
-    return QtCore.QSettings("Fullseye", "Studio")
+    return studio_settings.open_settings()
 
 
 #: 状態の色の予備(studio_theme が無い時)。琥珀 = 注意・違う、赤 = 誤り。押せる物と枠には使わない(設計書 P14-2)。
@@ -2242,7 +2240,11 @@ class ParamsPanel(QtWidgets.QWidget):
         paths, _ = QtWidgets.QFileDialog.getOpenFileNames(
             self, tr("Open parameter files"), self._start_dir(), "%s (%s)" % (tr("Parameters"), _FILTER))
         if paths:
-            self._settings().setValue(_SETTINGS_GROUP + "/last_dir", os.path.dirname(paths[0]))
+            reason = studio_settings.write_settings(
+                {_SETTINGS_GROUP + "/last_dir": os.path.dirname(paths[0])},
+                settings=self._settings(), what="parameter-window settings")
+            if reason:
+                self.show_message(reason, "error")
         return list(paths)
 
     def _pick_save_dialog(self, i: int) -> str:
@@ -2321,14 +2323,18 @@ class ParamsWindow(QtWidgets.QDialog):
         if str(s.value(_SETTINGS_GROUP + "/diff_only", "false")).lower() in ("true", "1"):
             self.panel.set_diff_only(True)
 
-    def save_state(self) -> None:
+    def save_state(self) -> str | None:
         """位置・大きさ・絞り込み・開いていたファイルを設定に書く。"""
         s = self._settings()
         g = self.geometry()
-        s.setValue(_SETTINGS_GROUP + "/geometry", json.dumps([g.x(), g.y(), g.width(), g.height()]))
-        s.setValue(_SETTINGS_GROUP + "/diff_only", "true" if self.panel.tmodel.diff_only else "false")
-        s.setValue(_SETTINGS_GROUP + "/files", json.dumps([c.path for c in self.panel.model.columns if c.path]))
-        s.sync()
+        reason = studio_settings.write_settings({
+            _SETTINGS_GROUP + "/geometry": json.dumps([g.x(), g.y(), g.width(), g.height()]),
+            _SETTINGS_GROUP + "/diff_only": "true" if self.panel.tmodel.diff_only else "false",
+            _SETTINGS_GROUP + "/files": json.dumps([c.path for c in self.panel.model.columns if c.path]),
+        }, settings=s, what="parameter-window state")
+        if reason:
+            self.panel.show_message(reason, "error")
+        return reason
 
     def restore_session(self) -> list[M.Outcome]:
         """前に閉じた時に開いていたファイルをもう一度開く(今は無いファイルは理由を出して飛ばす)。"""

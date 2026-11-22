@@ -156,7 +156,7 @@ py-modules = [
   # `torch_lazy` is the lazy torch/torch.nn.functional shim imported by
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
-  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "safe_xml", "fileio", "opsfileio", "_archive_tarxz",
+  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "safe_xml", "json_safety", "fileio", "opsfileio", "_archive_tarxz",
   # device_policy: device="auto" の規則(表は fullseye/data/DEVICE_RULES.json)。api が import する。
   "device_policy",
   # gpu_route: op の GPU 経路(accel / native / shadow)を決める唯一の関数。台帳を読むのもここだけ。
@@ -306,6 +306,8 @@ py-modules = [
   "studio_keymap", "studio_keymap_qt",
   # パラメータの束を並べて見る・直す窓(受け入れ表 D3): studio_params_model = 表のモデル(Qt なし)/ studio_params_qt = 窓
   "studio_params_model", "studio_params_qt",
+  # 利用者が選ぶ JSON と Studio の設定書込みを集約する安全層。
+  "json_strict", "studio_settings",
   "studio_pyedit_qt", "studio_pyedit_vars_qt", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",

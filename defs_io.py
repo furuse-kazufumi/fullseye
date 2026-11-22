@@ -211,9 +211,12 @@ def write_json_atomic(path: str, d: dict) -> None:
 
 def read_json(path: str) -> dict:
     """JSON を読む(データだけ)。壊れていれば行と列つきの :class:`DefinitionError`。"""
+    from json_strict import UntrustedJSONError, read_untrusted
+
     try:
-        with open(path, encoding="utf-8") as fh:
-            return json.load(fh)
+        return read_untrusted(path, label=str(path))
+    except UntrustedJSONError as e:
+        raise DefinitionError("%s: %s" % (path, e)) from None
     except json.JSONDecodeError as e:
         raise DefinitionError("%s: not valid JSON (line %d, column %d: %s)" % (path, e.lineno, e.colno, e.msg)) from None
     except UnicodeDecodeError as e:

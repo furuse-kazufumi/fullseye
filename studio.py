@@ -42,6 +42,7 @@ import studio_batch
 import studio_display
 import studio_layout
 import studio_project
+import studio_settings
 
 
 # --------------------------------------------------------------------------- #
@@ -143,17 +144,48 @@ def validate_pinned(d):
     return out
 
 
-#: Program lines that are display / config DIRECTIVES (not pipeline stages) and are
-#: therefore persisted next to the stages in a pipeline file (key ``directives``).
-_DIRECTIVE_PREFIXES = ("dev_", "set_system", "disp_")
+_FILE_READING_DIRECTIVES = {"disp_points3d", "disp_mesh3d", "disp_object_model_3d"}
+
+
+def _is_unc_path(path):
+    """UNC / device path を文字だけで見分ける。Recognise network/device paths without filesystem access."""
+    return str(path).replace("\\", "/").startswith("//")
+
+
+def _relative_data_path(path):
+    """フォルダ内に留まる相対データ path を字句検査する。Validate a contained relative data path lexically."""
+    import posixpath
+
+    value = str(path)
+    if not value:
+        raise ValueError("file path is empty")
+    if "\x00" in value:
+        raise ValueError("file path contains NUL")
+    slash = value.replace("\\", "/")
+    if _is_unc_path(value):
+        raise ValueError("network (UNC/device) paths are refused")
+    if re.match(r"^[A-Za-z]:", slash):
+        raise ValueError("drive-qualified paths are refused")
+    if slash.startswith("/"):
+        raise ValueError("rooted paths are refused")
+    normal = posixpath.normpath(slash)
+    if normal == ".." or normal.startswith("../"):
+        raise ValueError("path leaves the pipeline folder")
+    return normal
+
+
+def _is_supported_directive_line(line):
+    """許可表に head が完全一致する directive 行だけを認める。Require an exact directive allowlist match."""
+    head = _dev_op_head(_hdev_strip_comment(line))
+    return head in (_DEV_DIRECTIVES | _CONFIG_DIRECTIVES | _DISP_DIRECTIVES)
 
 
 def validate_directives(d):
     """Validate the optional ``directives`` key of a pipeline payload → list of str.
 
     Absent → ``[]`` (files written before the key existed stay loadable). Present →
-    must be a list of program lines that each start with a directive operator
-    (``dev_*`` / ``set_system`` / ``disp_*``); anything else is rejected, so a stage
+    must be a list of program lines whose operator is in Studio's exact directive
+    allowlist; anything else is rejected, so a stage
     can never sneak into the pipeline through the directive channel (fail-closed)."""
     if not isinstance(d, dict):
         raise ValueError("not a pipeline file (expected a JSON object)")
@@ -168,9 +200,16 @@ def validate_directives(d):
         if not isinstance(ln, str):
             raise ValueError("directive %d must be text, got %r" % (i + 1, truncate(ln, 40)))
         s = ln.strip()
-        if not s.startswith(_DIRECTIVE_PREFIXES):
-            raise ValueError("directive %d is not a dev_* / set_system / disp_* line: %r"
+        if not _is_supported_directive_line(s):
+            raise ValueError("directive %d is not a supported directive line: %r"
                              % (i + 1, truncate(s, 60)))
+        head = _dev_op_head(_hdev_strip_comment(s))
+        if head in _FILE_READING_DIRECTIVES:
+            args = _parse_dev_args(_hdev_strip_comment(s))
+            try:
+                _relative_data_path(str(args[0]) if args else "")
+            except ValueError as exc:
+                raise ValueError("directive %d: %s" % (i + 1, exc)) from None
         out.append(ln.rstrip())
     return out
 
@@ -609,11 +648,13 @@ def _run_worker_class(QtCore):
 def _settings():
     """Studio の QSettings。既定はネイティブ(レジストリ / plist / ini)、
     `FULLSEYE_STUDIO_SETTINGS` が指す ini があればそちら。"""
-    from PySide6 import QtCore          # noqa: PLC0415  (Qt はこのモジュールでは遅延 import)
-    ini = os.environ.get("FULLSEYE_STUDIO_SETTINGS", "")
-    if ini:
-        return QtCore.QSettings(ini, QtCore.QSettings.IniFormat)
-    return QtCore.QSettings("Fullseye", "Studio")
+    return studio_settings.open_settings()
+
+
+def _write_settings(values=(), *, remove=(), settings=None, what="settings"):
+    """既存の ``_settings`` monkeypatch seam を保った検査つき書込み。Checked write through the test seam."""
+    return studio_settings.write_settings(values, remove=remove,
+                                          settings=settings if settings is not None else _settings(), what=what)
 
 
 #: a cache entry whose value was dropped to stay under the memory budget (key/timing kept).
@@ -9137,7 +9178,7 @@ def build_window(model=None, start_mode="pipeline"):
     def _close_first_steps(_=False):
         first_steps.hide()
         try:
-            _settings().setValue("ui/first_steps_dismissed", "1")
+            _write_settings({"ui/first_steps_dismissed": "1"}, what="first-steps preference")
         except Exception as exc:                            # noqa: BLE001
             _log_soft_failure("could not remember that the first steps were closed", exc)
 
@@ -9467,7 +9508,8 @@ def build_window(model=None, start_mode="pipeline"):
 
     def _save_layout_state():
         try:
-            _settings().setValue("studio/work_mode_layout", studio_layout.to_json(win._layout_state))
+            _write_settings({"studio/work_mode_layout": studio_layout.to_json(win._layout_state)},
+                            what="work-mode layout")
         except Exception as exc:
             _log_soft_failure("could not save work-mode layout", exc)
 
@@ -9772,6 +9814,13 @@ def build_window(model=None, start_mode="pipeline"):
              # HDevelop dev_set_draw / dev_set_color / dev_set_line_width: how a region
              # result is drawn over the source in the 'region overlay' display mode.
              "draw": {"mode": "fill", "color": (0.96, 0.62, 0.14), "line_width": 1, "alpha": 0.5}}
+
+    def _settings_failure(reason):
+        """設定の永続化失敗をこの窓に残す。Keep and flash the active window's settings failure."""
+        state["settings_error"] = reason
+        flash(reason)
+
+    studio_settings.set_failure_reporter(_settings_failure)
     pmodel = PerceptionModel()
 
     # -- behaviour --
@@ -12482,8 +12531,8 @@ def build_window(model=None, start_mode="pipeline"):
         orig_close = dlg.closeEvent
 
         def _close(ev):
-            _settings().setValue(
-                "dialogs/%s_geometry" % key, dlg.saveGeometry())
+            _write_settings({"dialogs/%s_geometry" % key: dlg.saveGeometry()},
+                            what="dialog geometry")
             orig_close(ev)
         dlg.closeEvent = _close
 
@@ -13414,8 +13463,7 @@ def build_window(model=None, start_mode="pipeline"):
             if ed is None:
                 return False
             try:
-                with open(path, "w", encoding="utf-8") as f:
-                    f.write(ed.toPlainText())
+                _atomic_write_text(path, ed.toPlainText())
             except Exception as e:
                 report_error("save", e); return False
             ed._path = path; ed._dirty = False; _sync_tab(ed)
@@ -14256,8 +14304,9 @@ def build_window(model=None, start_mode="pipeline"):
         # dev_* / set_system 行を退避 — sync_program の再生成後もエディタに残す
         # (以前は Apply でディレクティブ行が消え、再 Apply の意味が変わっていた)
         state["dev_lines"] = [ln.rstrip() for ln in text.splitlines()
-                              if ln.strip().startswith(_DIRECTIVE_PREFIXES)]
+                              if _is_supported_directive_line(ln)]
         model.directives = list(state["dev_lines"])      # persisted with the pipeline (F11)
+        state["directives_pending"] = 0
         _set_title()                          # 題の * は dev_* の行も見る(上の mark_dirty の時点では、まだ前の行)
         _set_stage_lines(src_lines)           # gutter <-> stage map for THIS text
         code_edit.clear_exec()                # 旧実行位置は新パイプラインと不整合 — Continue の誤表示防止
@@ -14576,7 +14625,7 @@ def build_window(model=None, start_mode="pipeline"):
 
     def _save_watches():
         exprs = [watch_table.item(r, 0).text() for r in range(watch_table.rowCount())]
-        _settings().setValue("watch/expressions", exprs)
+        _write_settings({"watch/expressions": exprs}, what="watch expressions")
 
     def refresh_watches():
         # every watch row is evaluated against the SELECTED variable; a failing
@@ -15828,23 +15877,35 @@ def build_window(model=None, start_mode="pipeline"):
 
         def _disp_3d(name, args, slot):
             path = str(args[0]) if args else ""
-            if path and not os.path.isabs(path):
-                # a relative path in a user's program means "relative to where I
-                # ran Studio" (process cwd) — resolve there first; fall back to
-                # the studio.py directory only when the cwd candidate is missing
-                # (keeps shipped demo programs working from any cwd).
-                cand = os.path.abspath(path)
-                if not os.path.exists(cand):
-                    alt = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
-                    if os.path.exists(alt):
-                        cand = alt
-                path = cand
             sub = next((s for s in win._graphics_windows
                         if s in mdi.subWindowList()
                         and getattr(s, "_fs_disp3d_slot", None) == slot), None)
             try:
                 if not path:
                     raise ValueError("%s needs a file path argument" % name)
+                if _is_unc_path(path):
+                    raise ValueError("network (UNC/device) paths are refused")
+                pipe_path = state.get("pipe_path")
+                if pipe_path:
+                    rel = _relative_data_path(path)
+                    folder = os.path.realpath(os.path.dirname(os.path.abspath(pipe_path)))
+                    candidate = os.path.realpath(os.path.join(folder, rel))
+                    try:
+                        inside = os.path.normcase(os.path.commonpath([folder, candidate])) == os.path.normcase(folder)
+                    except ValueError:
+                        inside = False
+                    if not inside:
+                        raise ValueError("file path leaves the pipeline folder after resolving links")
+                    path = candidate
+                elif not os.path.isabs(path):
+                    # ファイルを開いていない手入力では従来どおり cwd、次に Studio の隣を探す。
+                    # With no pipeline file, preserve the cwd -> studio.py-directory lookup.
+                    cand = os.path.abspath(path)
+                    if not os.path.exists(cand):
+                        alt = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+                        if os.path.exists(alt):
+                            cand = alt
+                    path = cand
                 if name == "disp_mesh3d":
                     import mesh as meshmod
                     V, F = validate_mesh_faces(*meshmod.read_mesh(path)[:2])
@@ -16017,11 +16078,11 @@ def build_window(model=None, start_mode="pipeline"):
             return None
 
     def _persist_system():
-        s = _settings(); s.beginGroup("system")
-        s.setValue("threads", int(state["system"]["threads"]))
-        s.setValue("operator_timeout_ms", int(state["system"]["operator_timeout_ms"]))
-        s.setValue("max_graphics_windows", int(state["system"]["max_graphics_windows"]))
-        s.endGroup()
+        return _write_settings({
+            "system/threads": int(state["system"]["threads"]),
+            "system/operator_timeout_ms": int(state["system"]["operator_timeout_ms"]),
+            "system/max_graphics_windows": int(state["system"]["max_graphics_windows"]),
+        }, what="system settings")
 
     def _get_system_param(name):
         """get_system: read a HALCON-style system parameter (live where applicable)."""
@@ -16071,7 +16132,7 @@ def build_window(model=None, start_mode="pipeline"):
         pipeline program editor + open Python Editor tabs) and persist it; a new
         CodeEditor picks the persisted value up on construction."""
         pt = max(6, min(int(pt), 32))
-        _settings().setValue("ui/mono_font_pt", pt)
+        _write_settings({"ui/mono_font_pt": pt}, what="editor font setting")
         # the typeface and where it applies are decided in studio_theme (CODE_FONTS, code_surfaces)
         studio_theme.refresh_code_fonts(pt)
         return pt
@@ -16223,22 +16284,29 @@ def build_window(model=None, start_mode="pipeline"):
             _set_system_param("thread_num", th.value())
             _set_system_param("operator_timeout", to.value())
             _set_system_param("max_graphics_windows", mw.value())
+            system_reason = _persist_system()
             win._set_display_mode(dmode.currentText())
-            sset.setValue("display/default_mode", dmode.currentText())
             set_draw_style(mode=drawm.currentText(), line_width=drawlw.value())
-            sset.setValue("draw/mode", drawm.currentText())
-            sset.setValue("draw/line_width", drawlw.value())
-            sset.setValue("ui/mono_font_family", ffam.currentData())
             studio_theme.set_code_family(ffam.currentData())
             _apply_mono_font(fpt.value())
             ip = interp.text().strip()
+            values = {
+                "display/default_mode": dmode.currentText(),
+                "draw/mode": drawm.currentText(),
+                "draw/line_width": drawlw.value(),
+                "ui/mono_font_family": ffam.currentData(),
+                "ui/mono_font_pt": fpt.value(),
+            }
             if ip and not os.path.isfile(ip):
                 report_error("Python Editor interpreter",
                              "not a file (kept previous): %s" % ip)
             else:
-                sset.setValue("pyedit/interpreter", ip)
+                values["pyedit/interpreter"] = ip
+            reason = _write_settings(values, settings=sset, what="preferences")
             if _pm_set is not None:
                 _pm_set.set_autosave_file(("off", "idle", "focus")[asave.currentIndex()], asave_s.value())
+            if system_reason or reason:
+                return                         # 理由は write_settings が出した。「applied」とは言わない
             flash("settings applied (threads %d · timeout %d ms · windows ≤%d · font %dpt)"
                   % (th.value(), to.value(), mw.value(), fpt.value()))
     win._open_system_settings = open_system_settings
@@ -16732,12 +16800,11 @@ def build_window(model=None, start_mode="pipeline"):
         flash(tr("saved %s") % os.path.basename(path))
 
     def _open_pipe_path(path):
-        import json
         if not confirm_discard("Open pipeline"):
             return
         try:
-            with open(path, encoding="utf-8") as fh:          # missing / permission
-                data = json.loads(fh.read())                  # malformed JSON
+            from json_strict import read_untrusted
+            data = read_untrusted(path, label="pipeline JSON")
             snap = [_copy_stage(st) for st in model.stages]
             model.load_dict(data, recompute_pins=False)       # schema + op-name validation; pins after the image
             win._undo_stack.append(snap)                      # fork history only on success
@@ -16774,11 +16841,7 @@ def build_window(model=None, start_mode="pipeline"):
         model.recompute_pins()                            # snapshots are saved without their pictures: rebuild them now
         refresh_stage_list(select=len(model.stages) - 1)
         update_ab()
-        if model.directives:
-            apply_dev_directives("\n".join(model.directives), reclaim_stale=True)
         show_result()
-        if model.directives:
-            apply_text_directives("\n".join(model.directives))
         _push_recent(path); _set_title()
         flash(tr("loaded %s") % os.path.basename(path))
         if _pm is not None:                                  # パイプラインのファイルはパイプラインのモードで見せる
@@ -16788,7 +16851,15 @@ def build_window(model=None, start_mode="pipeline"):
         #   Apply で開いたパイプラインがその文面に置き換わった)。setPlainText なので Undo の履歴も空になる。
         sync_program(force=True)
         if _pm is None or not _pm.active:
-            code_status.setText("ready")                     # 「未適用の編集があります」の表示も残さない
+            if model.directives:
+                n_directives = len(model.directives)
+                pending = tr("%d directive(s) in this file are not applied yet — press Apply in the Program pane to apply them") % n_directives
+                state["directives_pending"] = n_directives
+                code_status.setText(pending)
+                flash(pending)
+            else:
+                state["directives_pending"] = 0
+                code_status.setText("ready")                 # directive が無いファイルは従来どおり
     win._open_pipe_path = _open_pipe_path
     win._refresh_stage_list = refresh_stage_list
 
@@ -16985,7 +17056,7 @@ def build_window(model=None, start_mode="pipeline"):
         return [x for x in (v or []) if isinstance(x, str)]
 
     def _save_recent(paths):
-        _settings().setValue(_RECENT_KEY, paths[:_RECENT_MAX])
+        _write_settings({_RECENT_KEY: paths[:_RECENT_MAX]}, what="recent files")
         _rebuild_recent_menu()
 
     def _push_recent(path):
@@ -17331,17 +17402,11 @@ def build_window(model=None, start_mode="pipeline"):
     def _persist_presets():
         if os.environ.get("QT_QPA_PLATFORM") == "offscreen":
             return                                 # tests keep presets in-memory only
-        try:
-            s = _settings()
-            s.beginGroup("layout_presets"); s.remove("")
-            for nm, (geo, st) in win._preset_store.items():
-                s.beginGroup(nm)
-                s.setValue("geometry", geo); s.setValue("state", st)
-                s.endGroup()
-            s.endGroup()
-        except Exception as e:
-            _log_soft_failure("could not save layout presets", e)
-            flash("could not save layout presets: %s" % truncate(e, 100))
+        values = {}
+        for nm, (geo, st) in win._preset_store.items():
+            values["layout_presets/%s/geometry" % nm] = geo
+            values["layout_presets/%s/state" % nm] = st
+        _write_settings(values, remove=["layout_presets"], what="layout presets")
 
     def save_layout_preset(name):
         """Capture the current window geometry + full dock/toolbar arrangement under
@@ -17638,11 +17703,8 @@ def build_window(model=None, start_mode="pipeline"):
                 _pw.set_lang(win._lang)
             except RuntimeError:                         # closed and gone
                 win._params_window = None
-        try:
-            if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-                _settings().setValue("lang", win._lang)
-        except Exception:
-            pass
+        if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
+            _write_settings({"lang": win._lang}, what="language setting")
     win._apply_language = apply_language
 
     # ---- colour scheme + density (studio_theme.py; decision 2026-11-12) ------------------------ #
@@ -17671,12 +17733,9 @@ def build_window(model=None, start_mode="pipeline"):
             _a.setText(tr(studio_theme.DENSITY_LABELS[_k]))
             _a.setToolTip(tr("Density") + ": " + tr(studio_theme.DENSITY_LABELS[_k]))
         if save:
-            try:
-                _s = _settings()
-                _s.setValue("ui/theme", studio_theme.current_name())
-                _s.setValue("ui/density", studio_theme.current_density())
-            except Exception as _e:              # noqa: BLE001
-                _log_soft_failure("could not save the colour scheme setting", _e)
+            _write_settings({"ui/theme": studio_theme.current_name(),
+                             "ui/density": studio_theme.current_density()},
+                            what="colour scheme settings")
         win.update()
     win._apply_theme = apply_theme
     win._theme_actions, win._density_actions = {}, {}
@@ -18013,8 +18072,9 @@ def build_window(model=None, start_mode="pipeline"):
                     mapping = {p: w.currentText() for p, w in st["column_widgets"].items()}
                     check_text = gauge_rr_data_check(st["csv"]["table"], mapping)
                     st["data_check"].setText(check_text)
-                    _settings().setValue(mapping_key(st["csv"]["signature"]),
-                                         json.dumps(mapping, ensure_ascii=False, sort_keys=True))
+                    _write_settings({mapping_key(st["csv"]["signature"]):
+                                     json.dumps(mapping, ensure_ascii=False, sort_keys=True)},
+                                    what="CSV column mapping")
                 data, dnames, kwargs, prov, from_sample = gather()
                 st["script"] = ledger_script(st["op"], prov, kwargs, from_sample,
                                              image_path=state.get("image_path"),

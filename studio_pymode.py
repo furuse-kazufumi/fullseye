@@ -48,6 +48,7 @@ from dataclasses import dataclass, field
 from PySide6 import QtCore, QtGui, QtWidgets
 
 import studio_program as sp
+import studio_settings
 import studio_program_i18n as spi
 
 MODE_PYTHON = "python"
@@ -645,10 +646,20 @@ class PyModeController(QtCore.QObject):
         return default if v is None else v
 
     def _set(self, key, value):
-        try:
-            self.settings().setValue(SETTINGS_PREFIX + key, value)
-        except Exception as e:                                # noqa: BLE001
-            self.state.setdefault("errors", []).append(("could not save the Python mode settings", str(e)))
+        reason = studio_settings.write_settings({SETTINGS_PREFIX + key: value}, settings=self.settings(),
+                                                what="Python mode settings")
+        if reason:
+            self._show_settings_failure(reason)
+        return reason
+
+    def _show_settings_failure(self, reason):
+        """Python mode 自身の状態欄にも設定失敗を出す。Surface settings failures in this pane too."""
+        self.state.setdefault("errors", []).append(("could not save the Python mode settings", reason))
+        note = getattr(self, "autosave_note", None)
+        if note is not None:
+            note.setText("⚠ " + self.tr("settings not saved"))
+            note.setToolTip(reason)
+        self.flash(reason)
 
     def time_limit_s(self) -> float:
         try:
@@ -2369,26 +2380,30 @@ class PyModeController(QtCore.QObject):
     def save_state(self):
         text = self.edit.toPlainText() if self.active else self.py_text
         bps = self.edit.breakpoints if self.active else self.breakpoints_py
-        self._set("mode", self.mode)
-        self._set("config", self.config)
-        self._set("file", self.file or "")
-        self._set("file_digest", self.saved_digest or "")
+        values = {
+            "mode": self.mode,
+            "config": self.config,
+            "file": self.file or "",
+            "file_digest": self.saved_digest or "",
+        }
         # 生のバイトの印(次の起動で「外で変わったか」を比べる元)。比べる元が無い(外で変わった・読めなかった)
         # 事も残す: 残さないと、次の起動で今のディスクが比べる元になり、聞かずに上書きする
-        self._set("file_stamp", "" if not self.file else (
-            "%d:%s" % self._disk_stamp if self._disk_stamp else _STAMP_CHANGED))
-        self._set("buffer", text if (self.unsaved() or not self.file) else "")
-        self._set("origin", self.origin)
-        self._set("session_trusted", "true" if self.session_trusted else "false")
-        self._set("cursor", self.edit.textCursor().position() if self.active else 0)
-        self._set("breakpoints", json.dumps(sorted(int(b) for b in bps)))
-        self._set("conditions", json.dumps({str(k): v for k, v in self.conditions.items()}))
+        values["file_stamp"] = "" if not self.file else (
+            "%d:%s" % self._disk_stamp if self._disk_stamp else _STAMP_CHANGED)
+        values["buffer"] = text if (self.unsaved() or not self.file) else ""
+        values["origin"] = self.origin
+        values["session_trusted"] = "true" if self.session_trusted else "false"
+        values["cursor"] = self.edit.textCursor().position() if self.active else 0
+        values["breakpoints"] = json.dumps(sorted(int(b) for b in bps))
+        values["conditions"] = json.dumps({str(k): v for k, v in self.conditions.items()})
         if self.vars is not None:
-            self._set("watch", self.vars.watch.dumps())
-        try:
-            self.settings().sync()
-        except Exception:                                     # noqa: BLE001
-            pass
+            values["watch"] = self.vars.watch.dumps()
+        reason = studio_settings.write_settings(
+            {SETTINGS_PREFIX + key: value for key, value in values.items()},
+            settings=self.settings(), what="Python mode session")
+        if reason:
+            self._show_settings_failure(reason)
+        return reason
 
     # ---- ファイルへの自動保存(設定で入れる。既定は切) ----
     def autosave_file_mode(self) -> str:

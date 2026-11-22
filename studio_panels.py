@@ -24,6 +24,7 @@ import os
 import re
 
 import studio_layout
+import studio_settings
 import studio_theme
 
 #: Saved dock states are reused only from the same layout version ("3" = before the panel bar).
@@ -406,11 +407,10 @@ def mode_chosen(win, mode_id):
         apply = getattr(win, "_apply_layout_state", None)
         if apply is not None:
             apply()
-        try:
-            if st.get("settings") is not None:
-                st["settings"]().setValue(WORK_LAYOUT_KEY, studio_layout.to_json(win._layout_state))
-        except Exception:                        # noqa: BLE001 - a broken store: the arrangement is still back
-            pass
+        if st.get("settings") is not None:
+            studio_settings.write_settings(
+                {WORK_LAYOUT_KEY: studio_layout.to_json(win._layout_state)},
+                settings=st["settings"](), what="work-mode layout")
         after_restore(win)
     st["mode_applied"] = mode_id
     st["mode_state"] = win.saveState()
@@ -644,9 +644,11 @@ def sync(win):
 
 def save_layout(win, settings):
     """Window geometry + the whole dock / tool-bar arrangement -> the Studio settings."""
-    settings.setValue("geometry", win.saveGeometry())
-    settings.setValue("windowState", win.saveState())
-    settings.setValue("layout_version", LAYOUT_VERSION)
+    return studio_settings.write_settings({
+        "geometry": win.saveGeometry(),
+        "windowState": win.saveState(),
+        "layout_version": LAYOUT_VERSION,
+    }, settings=settings, what="window layout")
 
 
 def restore_layout(win, settings, usable=None):
@@ -702,7 +704,8 @@ def reset_layout(win, settings=None):
     win._layout_state = initial_state()
     _sync_modes(win)
     if settings is not None:
-        settings.setValue(WORK_LAYOUT_KEY, studio_layout.to_json(win._layout_state))
+        studio_settings.write_settings({WORK_LAYOUT_KEY: studio_layout.to_json(win._layout_state)},
+                                       settings=settings, what="work-mode layout")
     first = getattr(win, "apply_first_layout", None)
     if first is not None and win.isVisible():
         first()
@@ -1956,7 +1959,8 @@ def set_strip_mode(win, mode, settings=None):
     _release_tab_sides(win)
     st["strip_mode"] = normalise_strip_mode(mode)
     if settings is not None:
-        settings.setValue(STRIP_MODE_KEY, st["strip_mode"])
+        studio_settings.write_settings({STRIP_MODE_KEY: st["strip_mode"]}, settings=settings,
+                                       what="tool-strip setting")
     for m, action in st["strip_actions"].items():
         action.setChecked(m == st["strip_mode"])
     relayout(win)
@@ -1970,7 +1974,8 @@ def set_overflow_mode(win, mode, settings=None):
     st = _state(win)
     st["overflow_mode"] = normalise_overflow_mode(mode)
     if settings is not None:
-        settings.setValue(OVERFLOW_KEY, st["overflow_mode"])
+        studio_settings.write_settings({OVERFLOW_KEY: st["overflow_mode"]}, settings=settings,
+                                       what="tool-strip overflow setting")
     for m, action in (st.get("overflow_actions") or {}).items():
         action.setChecked(m == st["overflow_mode"])
     relayout(win)
@@ -2432,10 +2437,8 @@ def reduce_motion_action(win, menu, settings, tr):
     act.setToolTip(tr(S_REDUCE_TIP)); act.setStatusTip(tr(S_REDUCE_TIP))
 
     def flip(on):
-        try:
-            settings().setValue(REDUCE_MOTION_KEY, "1" if on else "0")
-        except Exception:                        # noqa: BLE001 - the switch still works for this session
-            pass
+        studio_settings.write_settings({REDUCE_MOTION_KEY: "1" if on else "0"}, settings=settings(),
+                                       what="motion preference")
         brand = getattr(win, "_brand", None)
         if brand is not None:
             brand.reduced_motion = bool(on)

@@ -347,7 +347,8 @@ def test_c1_roundtrip_with_tmp_path(tmp_path):
     m2.load_dict(d2)
     assert m2.input_ref == ref
     res = studio.resolve_input_ref(m2.input_ref, str(tmp_path))
-    assert res["status"] == "ok" and res["path"] == str(p) and res["message"] == ""
+    assert res["status"] == "relinked" and res["path"] == str(p)
+    assert "relinked" in res["message"]
 
 
 def test_c2_changed_file_is_a_nonfatal_warning(tmp_path):
@@ -363,8 +364,8 @@ def test_c2_changed_file_is_a_nonfatal_warning(tmp_path):
 def test_c3_missing_file_message(tmp_path):
     ref = {"path": str(tmp_path / "gone" / "in.png"), "sha256": "0" * 64, "shape": [2, 2], "dtype": "float64"}
     res = studio.resolve_input_ref(ref, str(tmp_path))
-    assert res["status"] == "missing" and res["path"] is None
-    assert res["message"] == "input not found: %s" % ref["path"]
+    assert res["status"] == "needs_confirmation" and res["path"] is None
+    assert "absolute path" in res["message"] and ref["path"] in res["message"]
 
 
 def test_c4_relink_by_basename_next_to_the_json(tmp_path):
@@ -420,6 +421,6 @@ def test_c6_open_pipe_offscreen_reports_in_problems(tmp_path):
     win._open_pipe_path(str(pj))
     texts = [win._problems_list.item(i).text() for i in range(win._problems_list.count())]
     assert texts
-    assert any("input not found: %s" % p in t for t in texts)
+    assert any("not read automatically (absolute path): %s" % p in t for t in texts)
     assert model.image is keep                                 # kept the current image
     win.close()

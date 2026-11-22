@@ -23,6 +23,8 @@ import hashlib
 import json
 import os
 import re
+
+import studio_settings
 import shutil
 from collections import namedtuple
 
@@ -543,10 +545,10 @@ def build_panel(parent, hooks):
             s = _settings()
             allx = json.loads(s.value(KEY_EXP, "{}") or "{}")
             allx[state_key(S["root"])] = sorted(S["expanded"])
-            s.setValue(KEY_EXP, json.dumps(allx))
-            s.setValue(KEY_KIND, S["kind"])
-        except Exception:                                                   # noqa: BLE001 - 設定が書けなくても木は動く
-            pass
+            studio_settings.write_settings({KEY_EXP: json.dumps(allx), KEY_KIND: S["kind"]},
+                                           settings=s, what="project-panel state")
+        except Exception as exc:                                            # noqa: BLE001 - 読取り失敗も画面へ
+            H["flash"]("project-panel settings could not be saved: %s" % exc)
 
     def recent():
         try:
@@ -557,7 +559,8 @@ def build_panel(parent, hooks):
 
     def _push_recent(path):
         keep = [x for x in recent() if os.path.normcase(x) != os.path.normcase(path)]
-        _settings().setValue(KEY_RECENT, ([path] + keep)[:8])
+        studio_settings.write_settings({KEY_RECENT: ([path] + keep)[:8]}, settings=_settings(),
+                                       what="recent project folders")
 
     # ---- 開く・閉じる ---------------------------------------------------------------------------------------
     def open_dir(path, remember=True):
@@ -573,7 +576,7 @@ def build_panel(parent, hooks):
         except Exception:                                                   # noqa: BLE001
             S["expanded"] = set()
         if remember:
-            _settings().setValue(KEY_LAST, path)
+            studio_settings.write_settings({KEY_LAST: path}, settings=_settings(), what="last project folder")
             _push_recent(path)
         reload()
         _title()
@@ -584,10 +587,7 @@ def build_panel(parent, hooks):
     def close_project():
         S["root"] = None
         S["expanded"] = set()
-        try:
-            _settings().setValue(KEY_LAST, "")
-        except Exception:                                                   # noqa: BLE001
-            pass
+        studio_settings.write_settings({KEY_LAST: ""}, settings=_settings(), what="last project folder")
         reload()
         H["on_change"]()
 
@@ -605,7 +605,7 @@ def build_panel(parent, hooks):
             return False
         if not os.path.isdir(last):
             H["flash"](tr("The last project folder is gone: %s") % last)
-            _settings().setValue(KEY_LAST, "")
+            studio_settings.write_settings({KEY_LAST: ""}, settings=_settings(), what="last project folder")
             return False
         return open_dir(last, remember=False)
 

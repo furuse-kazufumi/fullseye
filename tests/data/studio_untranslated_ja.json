@@ -23,7 +23,6 @@
   ["flash", "copied export to the clipboard"],
   ["flash", "copied signature: "],
   ["flash", "copied signature: "],
-  ["flash", "could not save layout presets: %s"],
   ["flash", "displayed %s in %s"],
   ["flash", "events %s: %s events, %d×%d, columns %s%s"],
   ["flash", "example source not found: %s/%s.py"],
