@@ -153,7 +153,7 @@ py-modules = [
   # `torch_lazy` is the lazy torch/torch.nn.functional shim imported by
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
-  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "safe_xml", "fileio", "opsfileio", "_archive_tarxz",
+  "api", "param_specs", "ops", "backend_safe", "torch_lazy", "safe_xml", "json_safety", "fileio", "opsfileio", "_archive_tarxz",
   # device_policy: device="auto" の規則(表は fullseye/data/DEVICE_RULES.json)。api が import する。
   "device_policy",
   # gpu_route: op の GPU 経路(accel / native / shadow)を決める唯一の関数。台帳を読むのもここだけ。
@@ -434,6 +434,10 @@ py-modules = [
                    # (2026-09-05 実測)。族が増えても落ちないようワイルドカードにする。
                    # `<op>.<lang>.html`(en / zh / tw / ko / de)も同じ書庫に入る(2026-10-01 から HTML は書庫だけ)。
                    ]
+"examples" = ["data/ai_inspection_recipes_2026_11_08.json", "data/ai_inspection_scores_2026_11_08.json",
+              "data/fintraffic_sun_2026_09_20.json", "data/fp64_emulation_measured_2026_10_05.json",
+              "data/hokusai_great_wave_met_dp130155.png", "data/ngs_geodetic_benchmarks_2026_09_22.json"]
+"examples_3d" = ["_gallery/showcase_turntable_pod.gif"]
 
 [tool.setuptools.exclude-package-data]
 # ★2026-09-07: 手元の wheel が 96 MB(PyPI 上限 100 MB)になっていた。原因は setuptools の

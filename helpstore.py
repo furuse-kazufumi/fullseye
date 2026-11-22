@@ -17,8 +17,12 @@ from __future__ import annotations
 
 import hashlib
 import os
+import re
+import shutil
+import sys
 import tempfile
 import threading
+import time
 
 __all__ = ["HELP_DIR", "ARCHIVE", "html_root", "fig_root", "logical_path", "pack_archive"]
 
@@ -27,6 +31,10 @@ HELP_DIR = os.path.join(_HERE, "studio_assets", "op_help")
 ARCHIVE = os.path.join(_HERE, "studio_assets", "op_help_html.tar.xz")
 _LOCK = threading.Lock()
 _ROOT = None
+_CACHE_NAME = re.compile(r"op_help-[0-9a-f]{16}\Z")
+#: 別版の help キャッシュを最後の利用から保持する日数。/ Days to retain another version's cache after use.
+CACHE_RETENTION_DAYS = 30
+_SECONDS_PER_DAY = 24 * 60 * 60
 
 
 def _has_html(d):
@@ -53,7 +61,26 @@ def _extract(archive):
     with open(archive, "rb") as f:
         digest = hashlib.sha256(f.read()).hexdigest()[:16]
     dest = os.path.join(_cache_base(), "op_help-" + digest)
-    if os.path.isfile(os.path.join(dest, ".complete")):
+    now = time.time()
+    try:
+        with os.scandir(_cache_base()) as entries:
+            old = [e for e in entries if e.is_dir(follow_symlinks=False)
+                   and e.path != dest and _CACHE_NAME.fullmatch(e.name)
+                   and _cache_expired(e.path, now)]
+    except OSError:
+        old = []
+    for entry in old:
+        try:
+            shutil.rmtree(entry.path)
+            print("helpstore: removed old help cache %s" % entry.name, file=sys.stderr)
+        except OSError as exc:
+            print("helpstore: could not remove old help cache %s: %s" % (entry.name, exc), file=sys.stderr)
+    marker = os.path.join(dest, ".complete")
+    if os.path.isfile(marker):
+        try:
+            os.utime(marker, None)
+        except OSError:
+            pass
         return dest
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     tmp = tempfile.mkdtemp(prefix="op_help-tmp-", dir=os.path.dirname(dest))
@@ -63,18 +90,27 @@ def _extract(archive):
     try:
         fileio.archive_extract(archive, tmp)
     except ValueError as exc:
-        import shutil
         shutil.rmtree(tmp, ignore_errors=True)
         raise ValueError(f"helpstore: unsafe path or invalid help archive: {exc}") from exc
-    open(os.path.join(tmp, ".complete"), "w").close()
+    with open(os.path.join(tmp, ".complete"), "w"):
+        pass
     try:
         os.replace(tmp, dest)                       # 別プロセスと競ったら、先に入れ替えた方を使う
     except OSError:
-        import shutil
         shutil.rmtree(tmp, ignore_errors=True)
         if not os.path.isfile(os.path.join(dest, ".complete")):
             raise
     return dest
+
+
+def _cache_expired(path, now):
+    """最後の利用印が保持日数より古いキャッシュだけを返す。/ Return only stale caches."""
+    marker = os.path.join(path, ".complete")
+    try:
+        last_used = os.path.getmtime(marker if os.path.isfile(marker) else path)
+    except OSError:
+        return False
+    return now - last_used > CACHE_RETENTION_DAYS * _SECONDS_PER_DAY
 
 
 def html_root():

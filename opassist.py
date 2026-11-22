@@ -1214,7 +1214,8 @@ def _help_html_lines(root: str) -> dict:
         else:
             continue                          # 他言語の訳は採らない
         try:
-            txt = _re.sub(r"<[^>]+>", " ", io.open(p, encoding="utf-8").read())
+            with io.open(p, encoding="utf-8") as fh:
+                txt = _re.sub(r"<[^>]+>", " ", fh.read())
         except OSError:
             continue
         txt = _html.unescape(_re.sub(r"\s+", " ", txt)).strip()
@@ -1222,6 +1223,24 @@ def _help_html_lines(root: str) -> dict:
             dest[stem] = txt[:200]
     out = dict(base)
     out.update(en)                            # 英語があれば英語が勝つ
+    return out
+
+
+def _packaged_help_lines(here: str) -> dict:
+    """wheel 同梱の検索索引から英語(無ければ日本語)の要約を読む。HTML 書庫の展開は要らない。"""
+    import json as _json
+    path = os.path.join(here, "fullseye", "data", "OP_SEARCH.json")
+    try:
+        with io.open(path, encoding="utf-8") as fh:
+            rows = _json.load(fh).get("ops") or ()
+    except (OSError, ValueError, TypeError):
+        return {}
+    out = {}
+    for row in rows:
+        summaries = row.get("s") or {}
+        text = summaries.get("en") or summaries.get("ja")
+        if row.get("n") and text:
+            out[row["n"]] = str(text)[:200]
     return out
 
 
@@ -1244,7 +1263,8 @@ def _note_first_line(name: str) -> str:
             if stem in table or stem.startswith("INDEX"):
                 continue
             try:
-                body = io.open(p, encoding="utf-8").read()
+                with io.open(p, encoding="utf-8") as fh:
+                    body = fh.read()
             except OSError:
                 continue
             if body.startswith("---"):
@@ -1266,7 +1286,9 @@ def _note_first_line(name: str) -> str:
                     continue
                 table[stem] = _re.sub(r"[`*]", "", t)[:200]          # _ は残す(gauss_filter を gaussfilter にしない)
                 break
-        if not table:                                    # wheel: ノートの本文は無く、help HTML だけがある
+        if not table:                                    # wheel: 小さい同梱索引を先に使い、全 HTML を展開しない
+            table = _packaged_help_lines(here)
+        if not table:                                    # 古い wheel / 壊れた索引だけ、従来の HTML fallback
             table = _help_html_lines(_help_html_root(here))
         _NOTE_LINES = table
     return _NOTE_LINES.get(name, "")
