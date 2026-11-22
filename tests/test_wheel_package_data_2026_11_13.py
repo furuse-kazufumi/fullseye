@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import ast
 import fnmatch
+import functools
+import importlib.util
 import os
 import subprocess
 import sys
@@ -32,6 +34,130 @@ ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "tools" / "ci_wheel_check.py"
 #: git が追跡する fullseye/ の .py 以外の床(2026-11-13 の実数は 28)。読み方が壊れて 0 件で緑、を止める。
 _FLOOR = 20
+#: 現在の実木から見つかる runtime 資産の床(2026-11-22 の実測は 16)。表と検出が一緒に縮むのを止める。
+_EXAMPLE_RUNTIME_PATH_FLOOR = 16
+_KNOWN_SOURCE_REFERENCES = {
+    "examples/data/ai_inspection_recipes_2026_11_08.json",
+    "examples/data/ai_inspection_scores_2026_11_08.json",
+    "examples/data/fintraffic_sun_2026_09_20.json",
+    "examples/data/fp64_emulation_measured_2026_10_05.json",
+    "examples/data/hokusai_great_wave_met_dp130155.png",
+    "examples/data/ngs_geodetic_benchmarks_2026_09_22.json",
+    "examples_3d/_gallery/showcase_turntable_pod.gif",
+    "data/fileio_real",
+    "data/tum_rgbd_fr1_xyz",
+}
+
+
+@functools.lru_cache(maxsize=1)
+def _load_checker_module():
+    """cwd / sys.path を変える checker を、呼出し元の状態を戻して読む。"""
+    cwd = Path.cwd()
+    search_path = sys.path[:]
+    try:
+        spec = importlib.util.spec_from_file_location("_fullseye_ci_wheel_check", CHECK)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+    finally:
+        os.chdir(cwd)
+        sys.path[:] = search_path
+
+
+def test_example_runtime_data_is_discovered_from_example_sources():
+    """既知の9参照を床にし、手書き目録だけを数えて0件で緑になる門を断る。"""
+    checker = _load_checker_module()
+    found = set(checker._example_runtime_paths(str(ROOT)))
+    assert len(found) >= _EXAMPLE_RUNTIME_PATH_FLOOR, sorted(found)
+    assert _KNOWN_SOURCE_REFERENCES <= found, sorted(_KNOWN_SOURCE_REFERENCES - found)
+    classified = set(checker.EXAMPLE_SHIPPED) | set(checker.EXAMPLE_NOT_SHIPPED)
+    assert found <= classified, sorted(found - classified)
+    reasons = tuple(checker.EXAMPLE_NOT_SHIPPED.values())
+    assert reasons
+    assert not [reason for reason in reasons if not reason]
+
+
+def test_example_runtime_data_finds_direct_calls_and_nested_assignments(tmp_path):
+    """直接の読取り引数と各制御構文の内側も、作り物の examples 木から見つける。"""
+    checker = _load_checker_module()
+    examples = tmp_path / "examples"
+    data = examples / "data"
+    data.mkdir(parents=True)
+    expected = {
+        "examples/data/direct.json",
+        "examples/data/joined.npy",
+        "examples/data/try.json",
+        "examples/data/with.json",
+        "examples/data/for.json",
+        "examples/data/while.json",
+        "examples/data/match.json",
+    }
+    for rel in expected:
+        path = tmp_path / rel
+        path.write_bytes(b"data")
+    (examples / "synthetic.py").write_text(
+        "from pathlib import Path\n"
+        "import os\n"
+        "import numpy as np\n"
+        "ROOT = Path(__file__).resolve().parent\n"
+        "open(ROOT / 'data' / 'direct.json')\n"
+        "np.load(os.path.join(ROOT, 'data', 'joined.npy'))\n"
+        "try:\n"
+        "    TRY_PATH = ROOT / 'data' / 'try.json'\n"
+        "except OSError:\n"
+        "    pass\n"
+        "with open(ROOT / 'data' / 'direct.json'):\n"
+        "    WITH_PATH = ROOT / 'data' / 'with.json'\n"
+        "for _item in [1]:\n"
+        "    FOR_PATH = ROOT / 'data' / 'for.json'\n"
+        "while False:\n"
+        "    WHILE_PATH = ROOT / 'data' / 'while.json'\n"
+        "match 1:\n"
+        "    case 1:\n"
+        "        MATCH_PATH = ROOT / 'data' / 'match.json'\n",
+        encoding="utf-8",
+    )
+    found = set(checker._example_runtime_paths(str(tmp_path)))
+    assert found == expected
+
+
+@pytest.mark.parametrize(("syntax", "body"), [
+    ("try", "try:\n    {call}\nexcept OSError:\n    pass\n"),
+    ("with", "with {call}:\n    pass\n"),
+    ("for", "for _item in [1]:\n    {call}\n"),
+    ("while", "while False:\n    {call}\n"),
+    ("match", "match 1:\n    case 1:\n        {call}\n"),
+])
+def test_wheel_gate_rejects_a_missing_asset_referenced_inside_control_flow(
+        tmp_path, monkeypatch, syntax, body):
+    """各制御構文内の直書き資産が合成 wheel に無ければ門を閉じる。"""
+    checker = _load_checker_module()
+    examples = tmp_path / "examples"
+    data = examples / "data"
+    data.mkdir(parents=True)
+    asset = "examples/data/%s.json" % syntax
+    (tmp_path / asset).write_bytes(b"data")
+    call = "open(ROOT / 'data' / %r)" % (syntax + ".json")
+    (examples / "synthetic.py").write_text(
+        "from pathlib import Path\n"
+        "ROOT = Path(__file__).resolve().parent\n" + body.format(call=call),
+        encoding="utf-8",
+    )
+    wheel = tmp_path / (syntax + ".whl")
+    tracked = "fullseye/data/synthetic.json"
+    with zipfile.ZipFile(wheel, "w") as zf:
+        zf.writestr(tracked, b"{}")
+    monkeypatch.setattr(checker, "_tracked_package_files", lambda _repo: [tracked])
+    monkeypatch.setattr(checker, "NOT_SHIPPED", {})
+    monkeypatch.setattr(checker, "EXAMPLE_SHIPPED", (asset,))
+    monkeypatch.setattr(checker, "EXAMPLE_NOT_SHIPPED", {})
+
+    assert checker._package_data(str(wheel), repo=str(tmp_path)) == 1
+
+
+def _example_runtime_data() -> dict:
+    """checker が同梱扱いにした集合から偽 wheel 用の中身を作る。"""
+    return {path: b"example-data" for path in _load_checker_module().EXAMPLE_SHIPPED}
 
 
 def _tracked() -> list:
@@ -117,7 +243,7 @@ def test_the_wheel_gate_fails_on_a_missing_or_empty_file_and_passes_a_complete_w
     tracked = _tracked()
     assert len(tracked) >= _FLOOR
     want = [p for p in tracked if p not in _not_shipped()]
-    full = {p: b"{}" for p in want}
+    full = {**{p: b"{}" for p in want}, **_example_runtime_data()}
     target = "fullseye/data/TUNING_CARDS.json"
     assert target in full
 
@@ -133,3 +259,15 @@ def test_the_wheel_gate_fails_on_a_missing_or_empty_file_and_passes_a_complete_w
 
     gone = _gate(tmp_path / "no_such.whl")
     assert gone.returncode == 1 and "NG:" in gone.stdout and "Traceback" not in gone.stderr, gone.stdout + gone.stderr
+
+
+def test_the_wheel_gate_fails_when_an_example_runtime_asset_is_missing(tmp_path):
+    """``python -m examples.<name>`` が読む同梱データの欠けを wheel の側で見つける。"""
+    tracked = _tracked()
+    files = {p: b"{}" for p in tracked if p not in _not_shipped()}
+    required = _example_runtime_data()
+    complete = _gate(_wheel(tmp_path, "examples_ok", {**files, **required}))
+    assert complete.returncode == 0, complete.stdout + complete.stderr
+    target = "examples/data/ai_inspection_recipes_2026_11_08.json"
+    missing = _gate(_wheel(tmp_path, "examples_missing", {**files, **{k: v for k, v in required.items() if k != target}}))
+    assert missing.returncode == 1 and target in missing.stdout and "NG:" in missing.stdout, missing.stdout + missing.stderr

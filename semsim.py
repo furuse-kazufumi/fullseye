@@ -46,6 +46,8 @@ sec θ も縁の明るさも反射電子の Z コントラストも**軌跡の�
 """
 from __future__ import annotations
 
+import threading
+
 import numpy as np
 from scipy import ndimage as _ndi
 
@@ -218,6 +220,8 @@ _PROFILE_COLLECTION_CACHE = {}
 #: キャッシュに持つ断面の数の上限。長く動くプロセス(MCP サーバ)で断面の種類が増えてもメモリが
 #: 際限なく増えないよう、超えたら古いものから捨てる。 / Bound so a long-running process does not grow without limit.
 _PROFILE_COLLECTION_CACHE_MAX = 64
+#: 断面キャッシュの参照・追出し・登録を直列化するロック。 / Lock serialising profile-cache access and updates.
+_PROFILE_COLLECTION_CACHE_LOCK = threading.Lock()
 #: 小配列では線分ごとの Python loop より放送計算が速い境目。 / Crossover for vectorised segment queries.
 _PROFILE_VECTOR_MAX_RAYS = 256
 
@@ -368,14 +372,22 @@ class _ProfileGeom:
         relief = float(self.zk.max() - self.zk.min())
         win = float(coll_window) if coll_window is not None else 6.0 * relief + 40.0
         collection_key = (self.xk.tobytes(), self.zk.tobytes(), win)
-        cached = _PROFILE_COLLECTION_CACHE.get(collection_key)
+        with _PROFILE_COLLECTION_CACHE_LOCK:
+            cached = _PROFILE_COLLECTION_CACHE.get(collection_key)
         if cached is None:
             self._build_collection(win)
-            while len(_PROFILE_COLLECTION_CACHE) >= _PROFILE_COLLECTION_CACHE_MAX:
-                _PROFILE_COLLECTION_CACHE.pop(next(iter(_PROFILE_COLLECTION_CACHE)))
-            _PROFILE_COLLECTION_CACHE[collection_key] = (self._coll_arc, self._coll)
-        else:
-            self._coll_arc, self._coll = cached
+            coll_arc = self._coll_arc.copy()
+            coll = self._coll.copy()
+            coll_arc.setflags(write=False)
+            coll.setflags(write=False)
+            with _PROFILE_COLLECTION_CACHE_LOCK:
+                cached = _PROFILE_COLLECTION_CACHE.get(collection_key)
+                if cached is None:
+                    while len(_PROFILE_COLLECTION_CACHE) >= _PROFILE_COLLECTION_CACHE_MAX:
+                        _PROFILE_COLLECTION_CACHE.pop(next(iter(_PROFILE_COLLECTION_CACHE)))
+                    cached = (coll_arc, coll)
+                    _PROFILE_COLLECTION_CACHE[collection_key] = cached
+        self._coll_arc, self._coll = cached
 
     # -- 表面 ------------------------------------------------------------------ #
     def surface(self, x, y=None):
@@ -456,6 +468,8 @@ class _ProfileGeom:
 
     def _nearest(self, x, z):
         if x.size <= _PROFILE_VECTOR_MAX_RAYS:
+            original_shape = x.shape
+            x, z = x.ravel(), z.ravel()
             x2, z2 = x[..., None], z[..., None]
             s = ((x2 - self.px) * self.ex + (z2 - self.pz) * self.ez) / self.len2
             s = np.minimum(1.0, np.maximum(0.0, s))
@@ -468,7 +482,7 @@ class _ProfileGeom:
             arc = self.arc0[segment] + selected_s * self.len[segment]
             left = segment == 0
             arc[left] = near_x[row[left], 0] - self.xk[0]
-            return distance[row, segment], arc
+            return distance[row, segment].reshape(original_shape), arc.reshape(original_shape)
         dbest = np.full(x.shape, np.inf)
         abest = np.zeros(x.shape)
         for k in range(self.px.size):

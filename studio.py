@@ -14533,7 +14533,7 @@ def build_window(model=None):
             return
         try:
             with open(path, encoding="utf-8") as fh:          # missing / permission
-                data = json.loads(fh.read())                  # malformed JSON
+                data = engine._loads_limited(fh.read(), label="pipeline JSON")
             snap = [_copy_stage(st) for st in model.stages]
             model.load_dict(data, recompute_pins=False)       # schema + op-name validation; pins after the image
             win._undo_stack.append(snap)                      # fork history only on success

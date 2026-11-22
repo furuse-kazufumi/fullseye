@@ -634,6 +634,8 @@ def write_figures(seq, traj, reg, noise, g: Gates) -> None:
 
 # --------------------------------------------------------------------------- #
 def main() -> None:
+    if not DATA.is_dir():
+        raise SystemExit("This example needs data/tum_rgbd_fr1_xyz. Run it from a Fullseye source checkout.")
     t0 = time.perf_counter()
     g = Gates()
     seq = load_sequence()

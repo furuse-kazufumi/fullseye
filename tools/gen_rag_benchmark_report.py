@@ -37,7 +37,8 @@ def build() -> dict:
         direct = [x["name"] for x in search_ops(row["query"], 10)["ops"]]
         planned = plan_chain(row["query"], row["start_sort"], row["goal_sort"], k=10, max_depth=4)
         names = [x["name"] for stage in planned.get("stages", []) for x in stage["candidates"]]
-        # 時間でなく展開数で打ち切る(tests/test_rag_recall_airag.py と同じ。CI の負荷で結果が割れないように)
+        # JA: 通常結果は展開数で決まり、120秒はオフライン生成の異常時安全弁に限る。
+        # EN: Expansion count determines normal results; 120 seconds is only an offline-generation fuse.
         default = plan(row["start_sort"], row["goal_sort"], goal=row["query"], constraints={"timeout_ms": 120_000})
         executable_names = [name for p in default.get("plans", []) for name in p["ops"]]
         sr, pr = recall(direct, row["relevant"]), recall(names, row["relevant"])
@@ -69,7 +70,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--check", action="store_true")
     args = ap.parse_args(argv)
-    text = json.dumps(build(), ensure_ascii=False, indent=2) + "\n"
+    report = build()
+    text = json.dumps(report, ensure_ascii=False, indent=2) + "\n"
     current = open(OUTPUT, encoding="utf-8").read() if os.path.exists(OUTPUT) else None
     if args.check:
         if current != text:
@@ -78,7 +80,7 @@ def main(argv=None):
     else:
         with open(OUTPUT, "w", encoding="utf-8", newline="\n") as f:
             f.write(text)
-        print("wrote %s (%d queries)" % (os.path.relpath(OUTPUT, ROOT), len(build()["queries"])))
+        print("wrote %s (%d queries)" % (os.path.relpath(OUTPUT, ROOT), len(report["queries"])))
     return 0
 
 
