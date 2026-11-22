@@ -30,6 +30,7 @@ TODO(2026-11-10、独立レビュー第 3 巡 R1): いまは**既定のつまみ
 from __future__ import annotations
 
 import argparse
+import functools
 import hashlib
 import json
 import os
@@ -45,6 +46,9 @@ CONVERTERS = {
     "cimage": "img_to_cimage", "qimage": "img_to_monogenic", "lightfield": "img_to_lightfield",
     "keypoints": "img_to_keypoints", "rgbimage": "img_to_rgb", "beatcube": "img_to_beatcube",
 }
+
+#: 判定中に現れる型名は小さい固定集合。Bound the generator-local sort-name cache.
+SORT_QUERY_CACHE_SIZE = 128
 
 
 def _bases():
@@ -122,6 +126,19 @@ def _use_this_tree() -> None:
         sys.path.insert(0, ROOT)
 
 
+def _cache_static_graph_queries() -> None:
+    """生成中だけ不変な型表の照会をキャッシュする。Cache immutable graph queries for this run.
+
+    1 入力 op を 7 枚ずつ MCP 実行器に通す間、同じ OP_GRAPH に対して ``normalize_sort`` と
+    ``known_sorts`` が数千万回呼ばれる。生成器の専用プロセス内だけで包み、公開 API や生成結果は
+    変えずに辞書・集合の再構築を除く。
+    """
+    from fullseye import opsearch
+    opsearch.normalize_sort = functools.lru_cache(maxsize=SORT_QUERY_CACHE_SIZE)(
+        opsearch.normalize_sort)
+    opsearch.known_sorts = functools.lru_cache(maxsize=1)(opsearch.known_sorts)
+
+
 def _context():
     """判定の実行器の文脈(軽い catalog の代役・handle の置き場)と、型ごとの 7 つの入力。"""
     _use_this_tree()
@@ -178,6 +195,7 @@ def judge(edges: list[dict], cat, store, inputs) -> tuple[dict, set]:
 
 def build(previous: dict | None) -> dict:
     _use_this_tree()
+    _cache_static_graph_queries()
     from fullseye.opsearch import _graph
     cat, store, inputs = _context()
     edges = [e for e in _graph()["edges"] if e.get("verified_executable") and len(e.get("inputs") or []) == 1
