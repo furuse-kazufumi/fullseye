@@ -532,7 +532,7 @@ py -3.11 examples/poc_recycling_sorting.py
 
 ## No.2026.084 —— 太陽電池セルの EL 実画像の暗部を I-V の出力低下で採点する ―― 遮光マスクでは追い、全体が暗くなる欠陥では追わない
 
-実セルの EL 像で、フィンガーとバスバーの格子を割ってから暗部の面積を数え、I-V で測った出力の低下と比べた。遮光マスクを置いた 32 セルでは、格子の細い成分だけを割ると出力低下との順位がいちばん揃う。全体が暗くなる欠陥では、暗部の面積は出力低下を追わない。
+公開の実セルの EL 像で暗部の面積を数え、I-V で測った出力の低下と順位を比べた。合成で効いたフィンガーとバスバーの割り方は縁の帯状のマスクごと消し、実データで直した版も平均の明るさだけ(順位相関 0.57)とはっきりした差が無い。セル全体が暗くなる欠陥では、どの数え方も出力の低下を追わない。
 
 [![太陽電池セルの EL 実画像の暗部を I-V の出力低下で採点する ―― 遮光マスクでは追い、全体が暗くなる欠陥では追わない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/10_real_el_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/10_real_el_overlay.png)
 
@@ -566,7 +566,7 @@ py -3.11 examples/poc_solar_el_inspection.py
 
 この回が作った図は全部で **14 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_solar_el_inspection)
 
-使用 op(ノートへ): [`aug_vignette`](https://furuse.work/ops/2d/augmentation/aug_vignette.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`gray_closing`](https://furuse.work/ops/2d/morphology/gray_closing.html) · [`hysteresis_threshold`](https://furuse.work/ops/2d/segmentation/hysteresis_threshold.html) · [`lines_gauss`](https://furuse.work/ops/2d/contour/lines_gauss.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_frangi`](https://furuse.work/ops/2d/texture/sk_frangi.html) · [`sk_skeleton`](https://furuse.work/ops/2d/region/sk_skeleton.html) · [`total_length`](https://furuse.work/ops/2d/features/total_length.html) · [`vignette`](https://furuse.work/ops/gfx2d/post/vignette.html)
+使用 op(ノートへ): [`aug_vignette`](https://furuse.work/ops/2d/augmentation/aug_vignette.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`gray_closing`](https://furuse.work/ops/2d/morphology/gray_closing.html) · [`hysteresis_threshold`](https://furuse.work/ops/2d/segmentation/hysteresis_threshold.html) · [`lines_gauss`](https://furuse.work/ops/2d/contour/lines_gauss.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`quantize`](https://furuse.work/ops/oned/signal/quantize.html) · [`rank_spearman`](https://furuse.work/ops/imgmetrics/iqa/rank_spearman.html) · [`sk_frangi`](https://furuse.work/ops/2d/texture/sk_frangi.html) · [`sk_skeleton`](https://furuse.work/ops/2d/region/sk_skeleton.html) · [`total_length`](https://furuse.work/ops/2d/features/total_length.html) · [`vignette`](https://furuse.work/ops/gfx2d/post/vignette.html)
 
 ## No.2026.085 —— はんだフィレットの AOI ―― 3 リング照明は傾きの 3 段量子化器で、高さの 7 割は暗部にある
 
@@ -1068,13 +1068,13 @@ py -3.11 examples/poc_si_wafer_pl_defect_visibility.py
 
 使用 op(ノートへ): [`pl_diffusion_psf`](https://furuse.work/ops/generative/pl/pl_diffusion_psf.html) · [`pl_groove_visibility`](https://furuse.work/ops/generative/pl/pl_groove_visibility.html) · [`pl_image_simulate`](https://furuse.work/ops/generative/pl/pl_image_simulate.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html)
 
-## No.2026.240 —— 照明の円錐と観察の NA ―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする
+## No.2026.240 —— 照明の円錐と観察の NA(合成)―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする
 
-鏡面に近い金属部品の浅い打痕やヘアラインの傷は、照明の種類より光の円錐の開き方で見え方が決まる。円錐の半角を 4° にすると、ヘアラインの筋が消えて傷だけが黒く残った。同じ打痕でも、円錐の開き方しだいで見えたり消えたりする。
+鏡面に近い金属部品の浅い打痕やヘアラインの傷は、光源を替える前に、各点に届く光の円錐の開きと向きで見え方を設計できる。一様な円錐とテレセンの観察の合成で、円錐の半角を 4° にすると、ヘアラインの筋が消えて傷だけが黒く残った。機材選びの地図の奥にある物理で、実写との突き合わせは未了。
 
-[![照明の円錐と観察の NA ―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone.png)
+[![照明の円錐と観察の NA(合成)―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone.png)
 
-*↑ **照明の円錐と観察の NA ―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする** ―― 鏡面に近い金属部品の浅い打痕・ヘアラインの上の傷・梨地のムラは、光源の種類より先に、各点に届く光の円錐の半角 α と向きを、カメラが受け取る円錐(物体側 NA、半角 β)に対してどう置くかで見え方が決まる(顕微鏡のケーラー照明の照明 NA と対物 NA、シュリーレン法のナイフエッジと同じ幾何)。鏡面の反射は方向の球の上の等長写像なので、明るさは 2 つの球冠の交わりという閉形式になり、傾き θ が |α − β|/2 より小さければ見えず、(α + β)/2 を越えると暗い。新 op 5 本(`illumdesign` の `solid_angle_light` / `solid_angle_boundaries` / `solid_angle_brightness` / `solid_angle_sweep` / `solid_angle_render`)。閉形式とレンズの瞳の数値積分(射影立体角の重み)の差は 0.002。NA 0.033 のテレセンで、深さ 2 µm の打痕(最大傾き 0.25°)は α = β でだけ輪になり(画像のコントラスト −0.091、閉形式と 1e-4)、α = 0.5° と 7° では閉形式の予言どおり 0 になる。ヘアラインの筋(傾きの 99 % 点 0.82°)を消して斜面 4° の傷だけを黒くする α は閉形式で 3.5〜6.1° と決まり、α = 4° で筋の揺れが α = β の 0.014 倍、傷のコントラスト −1.00。円錐を β 傾けると平らな地が 0.39 の明るさになり、打痕の左右の斜面が 0.53 と 0.25(閉形式 0.54 / 0.25)に分かれて傾きの符号が読める。梨地の斑(微小面の広がり 1.3° 対 0.8°)は α = β で −0.20、α = 7° で −0.02。★壊れる条件: 面のうねり ±0.25° があると α = β では地の揺れが打痕の沈みの 1.6 倍になり、しきい値で打痕だけを拾えない。微小面の広がり σ が 0.25° でもコントラストは 1/3、4° では α をどう選んでも 0.001。照明の立体角だけを変えて同じワークを撮った比較写真は、再利用できるライセンスでは見つからなかった(実画像との突合は未了)。学習 0、較正 0、門 15 件。*
+*↑ **照明の円錐と観察の NA(合成)―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする** ―― 合成の場面(各点に同じ一様な円錐が届く遠方場の照明・テレセンの観察・回折と多重反射なし)で、鏡面に近い金属部品の浅い打痕・ヘアラインの上の傷・梨地のムラが、各点に届く光の円錐の半角 α と向きを、カメラが受け取る円錐(物体側 NA、半角 β)に対してどう置くかで見えたり消えたりすることを確かめる。光源の形(リング・ドーム・同軸の拡散板など)どうしは比べていない —— 光源の形を変える前に円錐の開きと向きで明暗を設計できる、という話で、顕微鏡のケーラー照明の照明 NA と対物 NA、シュリーレン法のナイフエッジと同じ幾何。鏡面の反射は方向の球の上の等長写像なので、明るさは 2 つの球冠の交わりという閉形式になり、傾き θ が |α − β|/2 より小さければ見えず、(α + β)/2 を越えると暗い。op 5 本(`illumdesign` の `solid_angle_light` / `solid_angle_boundaries` / `solid_angle_brightness` / `solid_angle_sweep` / `solid_angle_render`)。閉形式とレンズの瞳の数値積分(射影立体角の重み)の差は 0.002。NA 0.033 のテレセンで、深さ 2 µm の打痕(最大傾き 0.25°)は α = β でだけ輪になり(質感なしの描画で輪のコントラスト −0.091、閉形式と 0.0001 以内。図の質感つきの像では −0.070)、α = 0.5° と 7° では閉形式の予言どおり 0 になる。ヘアラインの筋(傾きの 99 % 点 0.82°、微小面の広がりは 0.12° と置いた)を消して斜面 4° の傷だけを黒くする α は閉形式で 3.5〜6.1° と決まり、α = 4° で筋の揺れ(雑音を除いた明るさ)が α = β の 0.014 倍、傷のコントラスト −1.00。円錐を β 傾けると平らな地が 0.39 の明るさになり、打痕の左右の斜面が 0.53 と 0.25(閉形式 0.54 / 0.25)に分かれて傾きの符号が読める。梨地の斑(微小面の広がり 1.3° 対 0.8°)は α = β で −0.20、α = 7° で −0.02。露光は円錐ごとに平らな地へ合わせた(α = 0.5° は利得 10.7 倍 —— 実機ではその分だけ露光を延ばす)。★壊れる条件: 面のうねり ±0.25° があると α = β では地の揺れが打痕の沈みの 1.6 倍になり、しきい値で打痕だけを拾えない。微小面の広がり σ が 0.25° でも打痕の最良のコントラストは 0.091 から 0.031 に、1° で 0.012 に落ち、4° では α を 0.5〜3° の 4 通りから選んでも 0.001 —— 微小面の広がりが 1° を越える面では円錐の設計の効きが落ちる。照明の立体角だけを変えて同じワークを撮った比較写真は、再利用できるライセンスでは見つからなかった(実画像との突合は未了)。数字の出どころ: full の実行の値。CI の縮小の実行(画素と標本が少ない)では、筋の揺れが 0.006 倍、うねりの揺れが打痕の沈みの 2.1 倍、梨地の斑が α = β で −0.19 になり、門はどちらも通る。見出しの数は記録と照合する門がある。学習 0、較正 0、門 15 件(ほかに、閉形式に α = β を入れれば見えない帯が 0 になる 1 件は検算として門に数えない)。*
 
 [![鏡面の傾き θ と、カメラの瞳が反射した光の円錐で覆われる割合(閉形式)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/01_brightness_vs_slope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/01_brightness_vs_slope.png)
 
@@ -1092,6 +1092,10 @@ py -3.11 examples/poc_si_wafer_pl_defect_visibility.py
 
 *↑ α を 0.5〜3° から選んだ最大のコントラスト。*
 
+[![合成(一様な遠方場の円錐・テレセン NA 0.033、β = 1.89°)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/07_cone_cover_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/07_cone_cover.png)
+
+*↑ 合成(一様な遠方場の円錐・テレセン NA 0.033、β = 1.89°)。*
+
 [![ヘアラインの上の傷を、照明の円錐の半角 α だけを 0.4〜8° で往復させて撮る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/06_hairline_cone_sweep.gif)
 
 *↑ 動く図 ―― ヘアラインの上の傷を、照明の円錐の半角 α だけを 0.4〜8° で往復させて撮る。α ≈ β で筋が最も目立ち、α ≈ 4° で筋が消えて傷が黒く残り、広げすぎると傷も薄れる。*
@@ -1102,9 +1106,9 @@ py -3.11 examples/poc_illumination_cone_vs_na.py
 
 ソース: [examples/poc_illumination_cone_vs_na.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py)
 
-この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_illumination_cone_vs_na)
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_illumination_cone_vs_na)
 
-使用 op(ノートへ): [`blast_normals`](https://furuse.work/ops/optics/finish/blast_normals.html) · [`light_source`](https://furuse.work/ops/optics/illumination/light_source.html) · [`metal_mirror_rgb`](https://furuse.work/ops/optics/mirror/metal_mirror_rgb.html) · [`micro_normals`](https://furuse.work/ops/optics/finish/micro_normals.html) · [`solid_angle_boundaries`](https://furuse.work/ops/optics/illumination/solid_angle_boundaries.html) · [`solid_angle_brightness`](https://furuse.work/ops/optics/illumination/solid_angle_brightness.html) · [`solid_angle_light`](https://furuse.work/ops/optics/illumination/solid_angle_light.html) · [`solid_angle_render`](https://furuse.work/ops/optics/illumination/solid_angle_render.html) · [`solid_angle_sweep`](https://furuse.work/ops/optics/illumination/solid_angle_sweep.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+使用 op(ノートへ): [`blast_normals`](https://furuse.work/ops/optics/finish/blast_normals.html) · [`metal_mirror_rgb`](https://furuse.work/ops/optics/mirror/metal_mirror_rgb.html) · [`micro_normals`](https://furuse.work/ops/optics/finish/micro_normals.html) · [`solid_angle_boundaries`](https://furuse.work/ops/optics/illumination/solid_angle_boundaries.html) · [`solid_angle_brightness`](https://furuse.work/ops/optics/illumination/solid_angle_brightness.html) · [`solid_angle_light`](https://furuse.work/ops/optics/illumination/solid_angle_light.html) · [`solid_angle_render`](https://furuse.work/ops/optics/illumination/solid_angle_render.html) · [`solid_angle_sweep`](https://furuse.work/ops/optics/illumination/solid_angle_sweep.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ## No.2026.254 —— 明るさの値ではなく「変化の向き」で探す ―― 遮蔽 10 % で崩れる NCC と、6 割まで残る符号系の照合
 
@@ -1266,17 +1270,17 @@ py -3.11 examples/poc_dense_bubble_count.py
 
 使用 op(ノートへ): [`blob_count_interval`](https://furuse.work/ops/blob/split/blob_count_interval.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_seeds`](https://furuse.work/ops/blob/split/blob_seeds.html) · [`blob_split`](https://furuse.work/ops/blob/split/blob_split.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html)
 
-## No.2026.280 —— フーリエ・タイコグラフィ ―― 4 倍の対物の広い視野のまま、20 倍相当の分解能と位相を、反復の位相回復で得る
+## No.2026.280 —— フーリエ・タイコグラフィ(合成)―― 4 倍の対物で、単色の平行光で照らした 20 倍と同じ細かさと位相を、反復の位相回復で得る
 
-低倍率の対物レンズは視野が広い代わりに、細かいところが見えない。照明の角度を変えて撮った像を周波数空間でつなぎ直すと、低倍率の視野のまま 20 倍の像と同じ細かさまで分解した。照明の重なりが足りず収束しない条件では、答えを出さずに拒否する。
+低倍率の対物レンズは視野が広い代わりに、細かいところが見えない。合成のチャートで、照明の角度を変えて撮った像を周波数空間でつなぎ直すと、単色の平行光で照らした 20 倍の対物と同じ要素まで分解した。普通の照明の同じ対物にはまだ届かず、照明の重なりが足りない条件では答えを出さずに拒否する。
 
-[![フーリエ・タイコグラフィ ―― 4 倍の対物の広い視野のまま、20 倍相当の分解能と位相を、反復の位相回復で得る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x.png)
+[![フーリエ・タイコグラフィ(合成)―― 4 倍の対物で、単色の平行光で照らした 20 倍と同じ細かさと位相を、反復の位相回復で得る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x.png)
 
-*↑ **フーリエ・タイコグラフィ ―― 4 倍の対物の広い視野のまま、20 倍相当の分解能と位相を、反復の位相回復で得る** ―― 低倍率の対物の広い視野のまま、LED アレイで照明の角度を変えて撮った像の組を周波数空間でつなぎ、20 倍相当の分解能と位相を反復の位相回復(収束型の演算)で得る。新 op 6 本(`fourierptycho`、`opsoptics` の `fpm`): `fp_design`(合成 NA・遮断周期・隣り合う瞳の重なり率・LED の数・画素の標本化・境の LED を撮る前に)/ `fp_usaf_target` / `fp_capture`(斜めの平面波 → 瞳 → 強度、雑音・収差・LED アレイのずれ・反射型の高さ)/ `fp_stack_from_images`(実データの入口)/ `fp_reconstruct`(逐次の位相回復 + 瞳の同時推定 + LED の位置の補正。収束の履歴・止めた理由・合成 NA を返し、収束しなければ拒否)/ `fp_element_contrast`(USAF の要素ごとの3 本の棒の変調)。4 倍 / NA 0.1・LED 13 × 13 で合成 NA 0.424、4 倍の 1 枚は G7 E4(5.53 µm、閉形式 λ/NA 5.32 µm)まで、FP は G9 E5(1.22 µm、閉形式 1.25 µm)まで分解し、20 倍 / NA 0.40 のコヒーレント像と同じ要素。位相だけの物体は帯域制限した真値と rms 0.13 rad、反射型の 20〜40 nm の段差は rms 4.0 nm。重なりを 64 → 7 % に下げると、43 % 以上は収束、32 % 以下は「2 本の初期値が別の答えに着いた」か回数切れで拒否 —— 境が公表の下限 35 % を挟む。★残差だけでは見抜けない(重なり 18 % の残差は 64 % より小さい)。瞳の同時推定は収差 rms 0.12 波を 0.005 波まで戻し、LED アレイのずれ (0.6, −0.4) mm・1°・1.5 mm を (0.62, −0.36) mm・0.93°・1.25 mm と読み戻す。★k の符号の反転は位相の符号が反転した像に着き、残差は同じ(強度では区別できない)。実データ(公開の USAF の FP データ、repo に入れずデータがあるときだけ)では、公表の装置の値からの遮断周期 1.60 µm に対し G9 E3(1.55 µm)まで分解(生の 1 枚は G7 E3)。学習 0、較正 0、門 33 件。*
+*↑ **フーリエ・タイコグラフィ(合成)―― 4 倍の対物で、単色の平行光で照らした 20 倍と同じ細かさと位相を、反復の位相回復で得る** ―― 合成の場面(R 章のほかは `fp_capture` が撮った合成のチャート)で、低倍率の対物と LED アレイで照明の角度を変えて撮った像の組を周波数空間でつなぎ、分解能と位相を反復の位相回復(収束型の演算)で得る。op 6 本(`fourierptycho`、`opsoptics` の `fpm`): `fp_design`(合成 NA・遮断周期・隣り合う瞳の重なり率・LED の数・画素の標本化・境の LED を撮る前に)/ `fp_usaf_target` / `fp_capture`(斜めの平面波 → 瞳 → 強度、雑音・収差・LED アレイのずれ・反射型の高さ)/ `fp_stack_from_images`(実データの入口)/ `fp_reconstruct`(逐次の位相回復 + 瞳の同時推定 + LED の位置の補正。収束の履歴・止めた理由・合成 NA を返し、収束しなければ拒否)/ `fp_element_contrast`(USAF の要素ごとの3 本の棒の変調)。4 倍 / NA 0.1・LED 13 × 13 で合成 NA 0.424、4 倍の 1 枚は G7 E4(5.53 µm、閉形式 λ/NA 5.32 µm)まで、FP は G9 E5(1.22 µm、閉形式 1.25 µm)まで分解し、単色の平行光で照らした 20 倍 / NA 0.40(`coherent_image`)と同じ要素。★比べる相手を普通の照明(インコヒーレント、`pupil_blur`)にして強度で読むと、20 倍 / NA 0.40 は G9 E6(1.06 µm、チャートで最も細かい要素)まで分解して FP(強度で読んでも G9 E5)より細かく、4 倍は G8 E2(3.49 µm)なので、普通の照明どうしの改善は 2.9 倍(単色の平行光どうしでは 4.5 倍)。視野の利点は閉形式の上の話で、図には描いていない(同じカメラなら 20 倍の視野の面積は 4 倍の 1/25)。位相だけの物体は帯域制限した真値と rms 0.13 rad、反射型の 20〜40 nm の段差は rms 4.0 nm。重なりを 64 → 7 % に下げると、43 % 以上は収束、32 % 以下は「2 本の初期値が別の答えに着いた」か回数切れで拒否。2 本の初期値の差は重なりに対して段差ではなく坂で増え(64 % で 0.041、7 % で 0.171)、収束の判定のしきい値 0.08 はこの掃引の 39 % と 32 % の間に置いたものなので、境が公表の下限 35 % を挟むのは公表値の独立の確認ではない。★残差だけでは見抜けない(重なり 18 % の残差は 64 % より小さい)。瞳の同時推定は収差 rms 0.12 波を 0.005 波まで戻す。LED アレイのずれ (0.6, −0.4) mm・1°・1.5 mm は (0.62, −0.36) mm・0.93°・1.25 mm と読み戻すが、補正後の復元は位相が 2 本の初期値で 0.189 食い違い、`fp_reconstruct` 自身の門で拒否される(振幅だけなら 0.047 で一致)。★k の符号の反転は位相の符号が反転した像に着き、残差は同じ(強度では区別できない)。実データ(公開の USAF の FP データ、2 倍 / NA 0.1。GPL 2.0 のため repo に入れず、データが手元にあるときの full だけで走り、CI では走らない)では、公表の装置の値からの閉形式の遮断周期 1.60 µm に対し G9 E3(1.55 µm)まで分解した(生の 1 枚は G7 E3、6.20 µm)。ただしこれは手元の 1 回の実行で、要素の位置は復元の図から手で読み、G9 E3 の変調(縦横の小さい方)0.12 はしきい値 0.1 に近い。数字の出どころ: 合成の章は full の実行の値。CI の縮小の実行(格子 256 画素、要素と掃引の点が少ない)では、4 倍の 1 枚が G7 E5(4.96 µm)、位相の誤差が 0.11 rad、LED の読み戻しが (0.60, −0.40) mm・1.04°・1.31 mm(位相の食い違い 0.145 で拒否)になる。見出しの数は記録と照合する門がある。学習 0、較正 0、門 33 件(実データがあるときは +4)。*
 
-[![G9(周期 1.95〜1.06 µm)を 3 倍に拡大。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/02_group9_zoom_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/02_group9_zoom.png)
+[![合成の USAF の G9(周期 1.95〜1.06 µm)を 3 倍に拡大。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/02_group9_zoom_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/02_group9_zoom.png)
 
-*↑ 測定の図 ―― G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(1.22 µm)まで 3 本の棒が分かれる。*
+*↑ 測定の図 ―― 合成の USAF の G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(1.22 µm)まで 3 本の棒が分かれる。普通の照明の 20 倍は E6 まで分かれ、FP より細かい。*
 
 [![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/03_element_modulation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/03_element_modulation.png)
 
@@ -1302,7 +1306,7 @@ py -3.11 examples/poc_fourier_ptychography.py
 
 この回が作った図は全部で **11 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_fourier_ptychography)
 
-使った Fullseye の op(ノートへ): [`coherent_image`](https://furuse.work/ops/optics/coherent/coherent_image.html) · [`fp_capture`](https://furuse.work/ops/optics/fpm/fp_capture.html) · [`fp_design`](https://furuse.work/ops/optics/fpm/fp_design.html) · [`fp_element_contrast`](https://furuse.work/ops/optics/fpm/fp_element_contrast.html) · [`fp_reconstruct`](https://furuse.work/ops/optics/fpm/fp_reconstruct.html) · [`fp_stack_from_images`](https://furuse.work/ops/optics/fpm/fp_stack_from_images.html) · [`fp_usaf_target`](https://furuse.work/ops/optics/fpm/fp_usaf_target.html)
+使った Fullseye の op(ノートへ): [`coherent_image`](https://furuse.work/ops/optics/coherent/coherent_image.html) · [`fp_capture`](https://furuse.work/ops/optics/fpm/fp_capture.html) · [`fp_design`](https://furuse.work/ops/optics/fpm/fp_design.html) · [`fp_element_contrast`](https://furuse.work/ops/optics/fpm/fp_element_contrast.html) · [`fp_reconstruct`](https://furuse.work/ops/optics/fpm/fp_reconstruct.html) · [`fp_stack_from_images`](https://furuse.work/ops/optics/fpm/fp_stack_from_images.html) · [`fp_usaf_target`](https://furuse.work/ops/optics/fpm/fp_usaf_target.html) · [`pupil_blur`](https://furuse.work/ops/optics/wave/pupil_blur.html)
 
 ## No.2026.281 —— 同じ始点と終点を結ぶ複数ロボットの計画を回り方で分ける ―― 時空の組紐と Dynnikov 座標でホモトピー類を数え、計画器の候補 61 本を 26 類に
 
@@ -3172,13 +3176,13 @@ py -3.11 examples/poc_residue_crt.py
 
 使用 op(ノートへ): [`crt_displacement`](https://furuse.work/ops/residue/image/crt_displacement.html) · [`harmonic_rotation`](https://furuse.work/ops/residue/image/harmonic_rotation.html) · [`residue_crt`](https://furuse.work/ops/residue/robust/residue_crt.html) · [`residue_fault_locate`](https://furuse.work/ops/residue/robust/residue_fault_locate.html) · [`residue_integer_crt`](https://furuse.work/ops/residue/theorem/residue_integer_crt.html)
 
-## No.2026.232 —— モアレ(二つの周期模様の差で生じる縞)で位置合わせ ―― 見えない 2 µm の格子 2 枚を重ねると、1 nm のずれが縞の位相で読める
+## No.2026.232 —— モアレ(二つの周期模様の差で生じる縞)で位置合わせ ―― 見えない 2 µm の格子 2 枚を重ねると、1 nm のずれが縞の位相で読める(合成)
 
-半導体の露光では、マスクとウェハをナノメートルの精度で重ねる必要がある。どちらもぼけて見えない細かい格子を重ねると、ずれが 50 倍に拡大された縞として現れる。縞の位置を読めば、ナノメートルより小さいずれまで分かる。
+半導体の露光では、マスクとウェハをナノメートルの精度で重ねる。カメラのぼけで見えない細かい格子どうしを重ねると縞が現れ、白色雑音だけの合成ではナノメートル刻みのずれを誤差 0.08 nm で読んだ。公表の位置合わせ精度はこれよりずっと粗く、マークの非対称やギャップなどの系統誤差で決まるが、この合成には入っていない。
 
-[![モアレ(二つの周期模様の差で生じる縞)で位置合わせ ―― 見えない 2 µm の格子 2 枚を重ねると、1 nm のずれが縞の位相で読める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/02_one_nm_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/02_one_nm_steps.png)
+[![モアレ(二つの周期模様の差で生じる縞)で位置合わせ ―― 見えない 2 µm の格子 2 枚を重ねると、1 nm のずれが縞の位相で読める(合成)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/09_overlay_cover_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/09_overlay_cover.png)
 
-*↑ **モアレ(二つの周期模様の差で生じる縞)で位置合わせ ―― 見えない 2 µm の格子 2 枚を重ねると、1 nm のずれが縞の位相で読める** ―― リソグラフィやナノインプリントでマスクとウェハを nm で重ねる位置合わせ。ピッチの僅かに違う 2 枚の格子(マスク 2.00 µm、ウェハ 2.04 µm)はどちらもカメラのぼけで消えるが(直接の像の標準偏差 9e-6)、重ねると周期 102 µm の縞が現れ、ずれを 50 倍に拡大する。新 op 8 本(`moirealign`、`opsoptics` の `moire_align`): `moire_magnification` / `moire_talbot_gap` / `moire_overlay_image` / `moire_phase`(ロックイン = 既知の周波数での最小二乗、または Takeda の FFT 法)/ `moire_phase_to_shift` / `moire_differential_shift` / `moire_mark_read`(単一・差動・2 次元の 4 象限)/ `moire_phase_crlb`。★拡大率はどちらが動くかで違い、像から測ってウェハ 50.000・マスク 51.000(よく書かれる M = p_w/|Δp| はマスクが動く場合)。1 nm の階段 11 段をモアレは誤差 RMS 0.08 nm で読み、Monte-Carlo の標準偏差は位相の下限(Rife–Boorstyn × Hann の 1.5 × 基準像の 2 倍)と比 1.00。★比べ手(解像できる 20 µm の線の相互相関 + 放物線補間)との差は誤差 RMS で 91 倍だが、**その大半は放物線の偏り(ずれの 17 % 小さく読む)**で、偶然の誤差だけなら 0.077 対 0.19 nm の 2.5 倍しか違わない(内訳を分けて出す)。カメラを粗くすると(画素 0.5 → 2 µm)相互相関は 2.3 倍悪化しモアレは変わらない。逆向きのピッチ差の 2 対の差動は、マーク全体の流れ 300 nm(単一の対は 300/M = 6.2 nm 狂う)と照明の傾き 30 % を 0.03 nm 以内に消し、カメラの倍率を 2 % 間違えても +0.007 nm(換算はピッチだけで決まる。相互相関は 2 % そのまま狂う)。読みはピッチ 1 つ(差動は 1.01 µm)で折り返し、粗い相互相関で次数を決めると 0〜5 µm を 0.14 nm で読む。近接ギャップではタルボ距離(周期 p の格子像がレンズなしで再生する距離 2p²/λ) = 14.5 µm で縞が戻り半分で符号が反転、反転を跨ぐと読みが半周期(1020 nm)跳ぶ。★正直な限界: 0.1 nm 級は白色雑音だけの床で、公表の位置合わせ精度 10〜30 nm はマークの非対称・ギャップ・傾きなどの系統誤差が決める。学習 0、較正 0、門 32 件。*
+*↑ **モアレ(二つの周期模様の差で生じる縞)で位置合わせ ―― 見えない 2 µm の格子 2 枚を重ねると、1 nm のずれが縞の位相で読める(合成)** ―― リソグラフィやナノインプリントでマスクとウェハを nm で重ねる位置合わせ。ピッチの僅かに違う 2 枚の格子(マスク 2.00 µm、ウェハ 2.04 µm)はどちらもカメラのぼけで消えるが(直接の像の標準偏差 9E-6)、重ねると周期 102 µm の縞が現れ、ずれを 50 倍に拡大する。op 8 本(`moirealign`、`opsoptics` の `moire_align`): `moire_magnification` / `moire_talbot_gap` / `moire_overlay_image` / `moire_phase`(ロックイン = 既知の周波数での最小二乗、または Takeda の FFT 法)/ `moire_phase_to_shift` / `moire_differential_shift` / `moire_mark_read`(単一・差動・2 次元の 4 象限)/ `moire_phase_crlb`。★拡大率はどちらが動くかで違い、像から測ってウェハ 50.000・マスク 51.000(よく書かれる M = p_w/|Δp| はマスクが動く場合)。1 nm の階段 11 段をモアレは誤差 RMS 0.08 nm で読み、Monte-Carlo の標準偏差は位相の下限(Rife–Boorstyn × Hann の 1.5 × 基準像の 2 倍)と比 1.00。★比べ手(解像できる 20 µm の線の相互相関 + 放物線補間)の誤差 RMS は、1 nm の階段で 1.0 nm(モアレの 12 倍)、40 nm ずらすと 6.95 nm(91 倍)と、選んだずれで変わる。**その大半は放物線の偏り(ずれの 17 % 小さく読む)**で、偶然の誤差だけなら 0.077 対 0.192 nm の 2.5 倍しか違わない(内訳を分けて出す)。カメラを粗くすると(画素 0.5 → 2 µm)相互相関は 2.3 倍悪化し、モアレは揺れの範囲で変わらない(0.080 → 0.063 nm、相互相関は 0.211 → 0.487 nm、24 回)。逆向きのピッチ差の 2 対の差動は、マーク全体の流れ 300 nm(単一の対は 300/M = 6.2 nm 狂う)と照明の傾き 30 % を 0.022 nm 以内に消し、カメラの倍率を 2 % 間違えても +0.007 nm(換算はピッチだけで決まる。相互相関は 2 % そのまま狂う)。4 象限の 2 次元マークは (11.95, −25.00) nm と読んだ。読みはピッチ 1 つ(差動は 1.01 µm)で折り返し、粗い相互相関で次数を決めると 0〜5 µm を 0.14 nm で読む。近接ギャップではタルボ距離(周期 p の格子像がレンズなしで再生する距離 2p²/λ) = 14.5 µm で縞が戻り半分で符号が反転、反転を跨ぐと読みが半周期(1020 nm)跳ぶ。★正直な限界: 0.1 nm 級は白色雑音だけの床で、公表の位置合わせ精度 10〜30 nm はマークの非対称・ギャップ・傾きなどの系統誤差が決める。数字の出どころ: 2026-11-15 の full 実行値。CI の縮小実行では一部が少し違い、見出しの数は full / reduced それぞれの記録と照合する門がある。学習 0、較正 0、門 33 件。*
 
 用語: Moiré — 周期や向きがわずかに異なる二つの模様を重ねたとき、差の空間周波数として現れる長周期の縞。
 
@@ -3186,13 +3190,13 @@ py -3.11 examples/poc_residue_crt.py
 
 *↑ 測定の図 ―― (a)〜(c) は同じカメラ(画素 0.5 µm、ぼけ σ 1.5 µm)と同じ雑音(σ 0.01)。2 µm の格子はカメラでは消えるが、2 枚の積の差の周波数(1/2.00 − 1/2.04 /µm)だけが残る。(d) は雑音なしの差動のマーク: 橙の線が A と B の境目、青の破線 = ずれ 0 の暗い縞、橙の実線と矢印 = ウェハを 600 nm 動かした後の同じ縞(A は -30.0 µm、B は +30.6 µm)。像全体が流れると両方が同じ向きに動くので、差を取ればずれだけが残る。*
 
+[![同じ雑音・同じ画素数。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/02_one_nm_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/02_one_nm_steps.png)
+
+*↑ 同じ雑音・同じ画素数。*
+
 [![下限 = Rife & Boorstyn の位相の下限 × Hann の係数 1.5 × 基準像の雑音で 2 倍、を p/(2π) で nm に。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/04_crlb_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/04_crlb.png)
 
 *↑ 下限 = Rife & Boorstyn の位相の下限 × Hann の係数 1.5 × 基準像の雑音で 2 倍、を p/(2π) で nm に。*
-
-[![逆向きのピッチ差の 2 対は、ずれでは逆に、マーク全体の流れでは同じ向きに縞が動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/05_differential_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/05_differential.png)
-
-*↑ 逆向きのピッチ差の 2 対は、ずれでは逆に、マーク全体の流れでは同じ向きに縞が動く。*
 
 [![左上 A_x、右上 B_x、左下 A_y、右下 B_y。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/06_quad_mark_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/06_quad_mark.png)
 
@@ -3212,7 +3216,7 @@ py -3.11 examples/poc_moire_alignment.py
 
 ソース: [examples/poc_moire_alignment.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
 
-この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_moire_alignment)
+この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_moire_alignment)
 
 使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`moire_differential_shift`](https://furuse.work/ops/optics/moire_align/moire_differential_shift.html) · [`moire_magnification`](https://furuse.work/ops/optics/moire_align/moire_magnification.html) · [`moire_mark_read`](https://furuse.work/ops/optics/moire_align/moire_mark_read.html) · [`moire_overlay_image`](https://furuse.work/ops/optics/moire_align/moire_overlay_image.html) · [`moire_phase`](https://furuse.work/ops/optics/moire_align/moire_phase.html) · [`moire_phase_crlb`](https://furuse.work/ops/optics/moire_align/moire_phase_crlb.html) · [`moire_phase_to_shift`](https://furuse.work/ops/optics/moire_align/moire_phase_to_shift.html) · [`moire_talbot_gap`](https://furuse.work/ops/optics/moire_align/moire_talbot_gap.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 

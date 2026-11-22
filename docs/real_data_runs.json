@@ -98,7 +98,9 @@
    "printed_pass": true
   },
   "poc_real_tless_6dof": {
-   "datasets_read": [],
+   "datasets_read": [
+    "bop-tless"
+   ],
    "exit": 0,
    "printed_pass": true
   },

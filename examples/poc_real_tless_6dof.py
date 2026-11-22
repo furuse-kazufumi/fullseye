@@ -8,13 +8,17 @@ test_primesense の全20場面から、各場面で画像IDが最小の1枚を�
 ``scene_gt_info.json`` の ``visib_fract < 0.5`` は「見えている面が半分未満」として
 除外し、残る全対象を採点する。この20画像 subset は公開 leaderboard の全画像と
 同じ標本ではないため、表では必ず ``PoC 20-scene subset`` と明記する。
+各対象のクラスタは真値並進 ``cam_t_m2c`` に最も近い重心で選ぶ GT 支援割り当てである。
+したがって、公開 Drost・Vidal ベースラインとの比較は端から端までの検出性能比較ではない。
 
 クラスタ分割への依存を切り分けるため、主経路に加えて、RANSAC 平面除去後の場面
 点群全体へクラスタ分割せず ``surface_match`` する対照群も同じ対象で採点する。
 180/160点から2000/2000点まで密度を掃引し、1対象10秒以内で AR_MSSD 最大だった
 1000/1000点、voxel 2 mm、ref_fraction 0.25、angle_bins 24、ICP 100反復を採用した。
-主経路は8.291秒/対象、AR_MSSD 0.197 / AR_MSPD 0.220。旧180/160点の
-0.162/0.185は間引き条件を明記して比較表に残す。
+2026-11-22 のベクトル化後コードによる再測定では、主経路は負荷のある機械で
+1.500秒/対象、AR_MSSD 0.197 / AR_MSPD 0.220。旧180/160点の0.162/0.185は
+間引き条件を明記して比較表に残す。2026-11-01 の8.291秒/対象はベクトル化前の
+記録として保持する。
 
 姿勢誤差(Hodaň et al., BOP Challenge 2020)を自前で計算する。モデル点集合 ``V``、
 推定姿勢 ``P_e=(R_e,t_e)``、真値 ``P_g``、物体の対称変換集合 ``S`` に対して::
@@ -40,18 +44,24 @@ T-LESS は CC BY 4.0。一次配布ページ https://bop.felk.cvut.cz/datasets/ 
 T-LESS 欄に ``license: CC BY 4.0`` と明記される。取得は
 ``py -3.11 tools/fetch_tless.py``。データは repo 外に置き、既定は
 ホーム直下の ``fullseye_data/tless``、``FULLSEYE_TLESS_DATA`` で上書きできる。
+``FULLSEYE_TLESS_SCENES="2"`` と ``FULLSEYE_TLESS_OBJECTS="5,6"`` を指定すると、
+主経路の設定を変えずに場面・物体を絞れる。指定値は範囲と実データに対して検証する。
 
 引用: Hodaň et al., "T-LESS: An RGB-D Dataset for 6D Pose Estimation of
 Texture-less Objects", WACV 2017, https://doi.org/10.1109/WACV.2017.8 。
 指標: Hodaň et al., "BOP Challenge 2020 on 6D Object Localization",
 ECCVW 2020, https://doi.org/10.1007/978-3-030-68223-0_12 。
 
-CI にデータが無いときはダウンロードせず、実行記録 ``RECORDED`` を表示する。
-図は ``FULLSEYE_FIGURE_DIR`` があるときだけ書く。
+全20場面のデータが無いCIではダウンロードせず、repo内の小さな切り出し
+（場面2・画像3、obj 5/6）を実際に読み、主経路を測って固定期待値と照合する。
+20場面・132対象の値は ``RECORDED`` と2026-11-22の再測定記録として表示する。
+配布物に切り出しも無い場合だけ、実データを読まず記録を表示する。図は
+``FULLSEYE_FIGURE_DIR`` があるときだけ書く。
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -62,7 +72,8 @@ import numpy as np
 from PIL import Image
 from scipy.spatial import cKDTree
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 from match3d import render_point_depth                            # noqa: E402
@@ -71,15 +82,45 @@ import realdata  # noqa: E402
 
 DATA_ENV = "FULLSEYE_TLESS_DATA"
 SWEEP_ENV = "FULLSEYE_TLESS_SWEEP"
+SCENES_ENV = "FULLSEYE_TLESS_SCENES"
+OBJECTS_ENV = "FULLSEYE_TLESS_OBJECTS"
 DEFAULT_DATA = Path.home() / "fullseye_data" / "tless"   # 手元の絶対パスは書かない(環境変数で受ける)
+# repo内CI切り出しと期待値。場面・物体IDは期待値JSONを正本として実行時に読む。
+# / Repository CI subset and expectations; scene/object IDs come from the JSON ledger.
+DEFAULT_SUBSET_DATA = REPO_ROOT / "tests" / "data" / "tless_subset"
+SUBSET_EXPECTED_PATH = REPO_ROOT / "tests" / "data" / "tless_subset_expected.json"
+SUBSET_CHECKSUM_NAME = "SHA256SUMS"
+# 5実行で最大差0だった2026-11-22の門と同じ絶対許容幅。相対許容は使わない。
+# / Same gate tolerance measured over five zero-delta runs on 2026-11-22.
+SUBSET_CONTINUOUS_METRIC_ABS_TOLERANCE = 1e-6
+SUBSET_CONTINUOUS_METRIC_REL_TOLERANCE = 0.0
+SUBSET_CONTINUOUS_METRIC_FIELDS = ("mssd", "mspd", "rot_deg", "trans_mm")
+# 2対象 x 10閾値の AR は 1/20 = 0.05 刻みの離散値で、2026-11-22 の5回の実測で不変だったため厳密一致。
+# / Exact match: AR over 2 instances x 10 thresholds is discrete in 1/20 steps; unchanged in five runs.
+SUBSET_AR_ABS_TOLERANCE = 0.0
+# SHA-256 manifestの形式と固定メモリ読込み量。/ Manifest format and hash block size.
+SUBSET_HASH_BLOCK_BYTES = 1024 * 1024
+SUBSET_SHA256_HEX_LENGTH = 64
+SUBSET_SHA256_FIELDS_PER_ROW = 2
 SCENE_IDS = tuple(range(1, 21))
+# BOP T-LESS の公開 scene/object ID の閉区間。/ Published inclusive ID ranges.
+SCENE_ID_MIN = 1
+SCENE_ID_MAX = 20
+OBJECT_ID_MIN = 1
+OBJECT_ID_MAX = 30
 VISIBILITY_MIN = 0.50
+# 物体径 d に対する MSSD 失敗境界（無次元）。この PoC の失敗内訳の定義
+# (docs/REALDATA_TLESS_6DOF.md の失敗の節)で、BOP の 0.05d..0.50d の一点。
+# / Dimensionless MSSD failure boundary from this PoC's breakdown definition;
+# one point in the BOP MSSD threshold range 0.05d..0.50d.
+MSSD_FAILURE_FRACTION = 0.20
 ROI = (70, 435, 65, 575)       # marker frame/background only; no GT boxes
 DEPTH_RANGE_MM = (500.0, 1200.0)
 VOXEL_MM = 4.0
 CLUSTER_TOL_MM = 8.0
-MODEL_POINTS = 1000
-SCENE_POINTS = 1000
+# BOP評価用CADから決定的に採る点数。2026-11-01の採用設定を測った時の値。
+# / Deterministic CAD evaluation sample used by the adopted 2026-11-01 run.
+EVAL_POINTS = 600
 
 
 @dataclass(frozen=True)
@@ -151,10 +192,120 @@ RECORDED = {
     "raw_normals_ar_mspd": 0.161,
     "no_cluster_ar_mssd": 0.111,
     "no_cluster_ar_mspd": 0.113,
+    # PPF投票ベクトル化d17e639303より前の壁時計。/ Pre-vectorisation wall time.
     "primary_seconds_per_instance": 8.291,
+    # PPF投票ベクトル化d17e639303より前の診断込み壁時計。
+    # / Pre-vectorisation wall time including diagnostics.
     "diagnostic_elapsed_seconds": 7189.2,
     "mssd_failure_gt_0_2d": 109,
 }
+
+# 2026-11-22 の全データ再測定(採点の JSON と実行メタデータ、repo の外に保管)の実測。
+# コード692b56d2e8、固定archive 3本はtools/fetch_tless.pyと照合済み。時間は
+# worker 10本以上が同時に動く負荷状態での壁時計。/ Measurements from measure.json
+# and run metadata; timings were taken while the machine was busy.
+REMEASURED_2026_11_22 = {
+    "date": "2026-11-22",
+    "code": "692b56d2e8",
+    "archive_sha256": {
+        "tless_base.zip": "dd70ca884b7c471a530a952f70c5ab2c212f3d2c2f371be86397442b97d70a7e",
+        "tless_models.zip": "6a29c59766b8d2af05e62e71739f0ca7243ad81bc3c7f9a24925504a8cb37928",
+        "tless_test_primesense_bop19.zip": "1a18f6bbfb5ac4ced8529f7a35225adfed88c0f62ef38067933e2b541ef1d00b",
+    },
+    "instances": 132,
+    "scenes": 20,
+    "ar_mssd": 0.197,
+    "ar_mspd": 0.220,
+    "synthetic_ar_mssd": 0.985,
+    "synthetic_ar_mspd": 0.985,
+    "no_icp_ar_mssd": 0.346,
+    "no_icp_ar_mspd": 0.338,
+    "raw_normals_ar_mssd": 0.132,
+    "raw_normals_ar_mspd": 0.161,
+    "no_cluster_ar_mssd": 0.111,
+    "no_cluster_ar_mspd": 0.113,
+    "primary_wall_seconds": 201.0,
+    "primary_seconds_per_instance": 1.500,
+    "diagnostic_wall_seconds": 942.6,
+    "timing_condition": "busy machine with 10+ concurrent workers",
+    "ci_subset": "tests/data/tless_subset/",
+    "reproduce_full": (
+        "PYTHONUTF8=1 py -3.11 tools/fetch_tless.py && "
+        "PYTHONUTF8=1 py -3.11 examples/poc_real_tless_6dof.py"
+    ),
+    "reproduce_subset": (
+        "PYTHONUTF8=1 py -3.11 examples/poc_real_tless_6dof.py "
+        "with FULLSEYE_TLESS_DATA pointing to an empty directory, or "
+        "PYTHONUTF8=1 py -3.11 -m pytest tests/test_tless_subset_gate.py"
+    ),
+}
+
+
+def _sha256(path: Path) -> str:
+    """固定メモリでSHA-256を返す。/ Return SHA-256 with bounded memory."""
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(SUBSET_HASH_BLOCK_BYTES), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def verify_subset_checksums(root: Path) -> int:
+    """切り出しの欠落・追加・改変を拒否する。/ Verify every subset payload file."""
+    manifest = root / SUBSET_CHECKSUM_NAME
+    try:
+        lines = manifest.read_text(encoding="ascii").splitlines()
+    except (OSError, UnicodeError) as exc:
+        raise ValueError(f"cannot read T-LESS subset checksum manifest: {manifest}: {exc}") from exc
+    expected: dict[str, str] = {}
+    for line_number, line in enumerate(lines, start=1):
+        fields = line.split(maxsplit=1)
+        if (len(fields) != SUBSET_SHA256_FIELDS_PER_ROW
+                or len(fields[0]) != SUBSET_SHA256_HEX_LENGTH
+                or any(character not in "0123456789abcdef" for character in fields[0])):
+            raise ValueError(f"invalid SHA256SUMS line {line_number}: {line!r}")
+        relative = fields[1]
+        relative_path = Path(relative)
+        if (relative in expected or relative_path.is_absolute()
+                or ".." in relative_path.parts):
+            raise ValueError(f"unsafe or duplicate SHA256SUMS path on line {line_number}: {relative}")
+        expected[relative] = fields[0]
+    if not expected:
+        raise ValueError("T-LESS subset checksum manifest is empty")
+    actual_files = {
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*")
+        if path.is_file() and path != manifest
+    }
+    if actual_files != set(expected):
+        missing = sorted(set(expected) - actual_files)
+        extra = sorted(actual_files - set(expected))
+        raise ValueError(f"T-LESS subset file set mismatch: missing={missing}, extra={extra}")
+    mismatches = {
+        relative: {"expected": digest, "actual": _sha256(root / relative)}
+        for relative, digest in expected.items()
+        if _sha256(root / relative) != digest
+    }
+    if mismatches:
+        raise ValueError(
+            "T-LESS subset checksum mismatch: "
+            + json.dumps(mismatches, ensure_ascii=False, sort_keys=True)
+        )
+    return len(expected)
+
+
+def _load_subset_expected() -> dict:
+    """CI切り出し期待値をfail-closedで読む。/ Load subset expectations fail-closed."""
+    try:
+        expected = json.loads(SUBSET_EXPECTED_PATH.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"cannot read T-LESS subset expectations: {SUBSET_EXPECTED_PATH}: {exc}") from exc
+    if not isinstance(expected, dict):
+        raise ValueError("T-LESS subset expectations must be a JSON object")
+    required = {"scene_ids", "object_ids", "objects", "ar_mssd", "ar_mspd"}
+    if not required <= set(expected):
+        raise ValueError(f"T-LESS subset expectations lack keys: {sorted(required - set(expected))}")
+    return expected
 
 
 def _json(path: Path):
@@ -206,6 +357,49 @@ def _cap(points: np.ndarray, normals: np.ndarray, count: int):
     # PLY/cluster orderだけに依存する決定的な一様抽出。乱数で条件を選ばない。
     idx = np.linspace(0, len(points) - 1, count, dtype=np.int64)
     return points[idx], normals[idx]
+
+
+def _evaluation_points(points: np.ndarray) -> np.ndarray:
+    """BOP評価点を決定的に抽出する。/ Select deterministic BOP evaluation points."""
+    # 法線は評価点抽出には使わない。_capと同じ添字規則を正本として共有する。
+    # / Normals are unused here; _cap remains the shared index-selection source.
+    unused_normals = np.empty_like(points)
+    selected, _unused = _cap(points, unused_normals, EVAL_POINTS)
+    return selected
+
+
+def _normalise_ids(values, *, name: str, minimum: int, maximum: int) -> tuple[int, ...]:
+    """ID列を重複なしの整数として範囲検証する。/ Validate an integer ID sequence."""
+    try:
+        ids = tuple(values)
+    except TypeError as exc:
+        raise ValueError(f"{name} は整数の列でなければならない") from exc
+    if not ids:
+        raise ValueError(f"{name} は1個以上のIDを含まなければならない")
+    if any(isinstance(value, bool) or not isinstance(value, (int, np.integer)) for value in ids):
+        raise ValueError(f"{name} は整数でなければならない: {ids!r}")
+    ids = tuple(int(value) for value in ids)
+    outside = [value for value in ids if not minimum <= value <= maximum]
+    if outside:
+        raise ValueError(f"{name} は [{minimum},{maximum}] の範囲外: {outside}")
+    if len(set(ids)) != len(ids):
+        raise ValueError(f"{name} に重複がある: {ids!r}")
+    return ids
+
+
+def _parse_id_env(variable: str, *, minimum: int, maximum: int) -> tuple[int, ...] | None:
+    """comma区切りの環境変数をfail-closedで読む。/ Parse a comma-separated ID env var."""
+    raw = os.environ.get(variable)
+    if raw is None:
+        return None
+    fields = [field.strip() for field in raw.split(",")]
+    if any(not field for field in fields):
+        raise ValueError(f"{variable} はcomma区切りの整数でなければならない: {raw!r}")
+    try:
+        values = tuple(int(field, 10) for field in fields)
+    except ValueError as exc:
+        raise ValueError(f"{variable} はcomma区切りの整数でなければならない: {raw!r}") from exc
+    return _normalise_ids(values, name=variable, minimum=minimum, maximum=maximum)
 
 
 def _rotation(axis, angle):
@@ -323,11 +517,15 @@ def load_scene(root: Path, scene_id: int, image_id: int, label: str):
             "K": K, "scale": scale, "rgb": rgb, "raw": raw, "gt": gt, "info": info}
 
 
-def first_bop19_scene_specs(root: Path):
+def first_bop19_scene_specs(root: Path, scene_ids=None):
     """抽出済みBOP19 subsetの各場面から最小画像IDを1枚だけ選ぶ。"""
+    selected = SCENE_IDS if scene_ids is None else _normalise_ids(
+        scene_ids, name="scene_ids", minimum=SCENE_ID_MIN, maximum=SCENE_ID_MAX)
     specs = []
-    for scene_id in SCENE_IDS:
+    for scene_id in selected:
         scene = root / "test_primesense" / f"{scene_id:06d}"
+        if not scene.is_dir():
+            raise ValueError(f"scene {scene_id}: データの場面ディレクトリが無い")
         camera = _json(scene / "scene_camera.json")
         try:
             image_ids = sorted(int(key) for key in camera)
@@ -409,8 +607,7 @@ def _match_one(root, scene, instance, cluster_index, model_info, *, seed,
     R_gt = np.asarray(instance["cam_R_m2c"], np.float64).reshape(3, 3)
     t_gt = np.asarray(instance["cam_t_m2c"], np.float64)
     eval_points, _ = _ply_vertices_normals(root / "models_cad" / f"obj_{obj_id:06d}.ply")
-    eval_points = eval_points[np.linspace(0, len(eval_points) - 1,
-                                          min(600, len(eval_points)), dtype=np.int64)]
+    eval_points = _evaluation_points(eval_points)
     syms = symmetry_transforms(model_info)
     def score(pose):
         return pose_metrics(eval_points, pose["R"], pose["t"], R_gt, t_gt, scene["K"], syms)
@@ -458,10 +655,35 @@ def _match_one(root, scene, instance, cluster_index, model_info, *, seed,
             "no_cluster_match_seconds": no_cluster_match_seconds}
 
 
-def run_real(root: Path, config: MatchConfig = DEFAULT_CONFIG, *, diagnostics: bool = True):
+def run_real(root: Path, config: MatchConfig = DEFAULT_CONFIG, *, diagnostics: bool = True,
+             scene_ids=None, object_ids=None):
     model_infos = _json(root / "models_reconst" / "models_info.json")
+    selected_scenes = None if scene_ids is None else _normalise_ids(
+        scene_ids, name="scene_ids", minimum=SCENE_ID_MIN, maximum=SCENE_ID_MAX)
+    selected_objects = None if object_ids is None else _normalise_ids(
+        object_ids, name="object_ids", minimum=OBJECT_ID_MIN, maximum=OBJECT_ID_MAX)
     scenes = [prepare_scene(load_scene(root, *spec), config)
-              for spec in first_bop19_scene_specs(root)]
+              for spec in first_bop19_scene_specs(root, selected_scenes)]
+    available_objects = {
+        int(instance["obj_id"])
+        for scene in scenes
+        for instance in scene["gt"]
+    }
+    if selected_objects is not None:
+        missing = sorted(set(selected_objects) - available_objects)
+        if missing:
+            raise ValueError(f"object_ids が選択場面のデータに無い: {missing}")
+        missing_models = [value for value in selected_objects if str(value) not in model_infos]
+        if missing_models:
+            raise ValueError(f"object_ids のモデル情報が無い: {missing_models}")
+    filtered = selected_scenes is not None or selected_objects is not None
+    if filtered:
+        scene_text = ",".join(map(str, selected_scenes or SCENE_IDS))
+        object_text = "all" if selected_objects is None else ",".join(map(str, selected_objects))
+        selection = f"絞り込み scenes={scene_text} objects={object_text}"
+        for scene in scenes:
+            scene["label"] = selection
+            scene["selection"] = selection
     realdata.mark_read("bop-tless")
     rows = []
     seed = 0
@@ -476,10 +698,16 @@ def run_real(root: Path, config: MatchConfig = DEFAULT_CONFIG, *, diagnostics: b
             if visibility < VISIBILITY_MIN:
                 continue
             t_gt = np.asarray(instance["cam_t_m2c"], np.float64)
+            # 推論時に得られない真値並進で最近重心を選ぶ GT 支援割り当て。
+            # / GT-assisted assignment: choose the nearest centroid using t_gt.
             distances = np.linalg.norm(scene["centroids"] - t_gt, axis=1)
             cluster_index = int(np.argmin(distances))
             assigned.append(cluster_index)
             obj_id = int(instance["obj_id"])
+            if selected_objects is not None and obj_id not in selected_objects:
+                continue
+            if str(obj_id) not in model_infos:
+                raise ValueError(f"obj {obj_id}: models_info.json にモデル情報が無い")
             result = _match_one(root, scene, instance, cluster_index,
                                 model_infos[str(obj_id)], seed=seed, config=config,
                                 diagnostics=diagnostics)
@@ -500,6 +728,8 @@ def run_real(root: Path, config: MatchConfig = DEFAULT_CONFIG, *, diagnostics: b
         for row in rows:
             if row["scene"] == scene["scene"]:
                 row["merged"] = bool(counts[row["cluster"]] > 1)
+    if filtered and not rows:
+        raise ValueError("絞り込み条件に可視率しきい値以上の採点対象が無い")
     return scenes, rows
 
 
@@ -529,7 +759,8 @@ def _groups(rows, field):
 
 
 def _failure_rows(rows):
-    return [row for row in rows if row["metrics"]["mssd"] > 0.20 * row["diameter"]]
+    return [row for row in rows
+            if row["metrics"]["mssd"] > MSSD_FAILURE_FRACTION * row["diameter"]]
 
 
 def _failure_breakdown(rows):
@@ -692,17 +923,136 @@ def make_figures(scenes, rows, ar_real, ar_synth):
     _save_density_sweep()
 
 
-def _print_recorded():
-    print("BOP T-LESS 実データが無いためダウンロードせず、2026-11-01 の実行記録を表示")
+def _print_recorded(scene_ids=None, object_ids=None):
+    recorded_scope = f"{RECORDED['scenes']}場面・{RECORDED['instances']}対象"
+    if scene_ids is not None or object_ids is not None:
+        print("絞り込み指定は実データが無いため実行していない（RECORDED と混同しない）")
+        print("  scenes=%s objects=%s" % (scene_ids if scene_ids is not None else "all",
+                                          object_ids if object_ids is not None else "all"))
+    print("BOP T-LESS 実データもrepo内切り出しも無いためダウンロードしない")
+    print(f"実データは読んでいない。以下は2026-11-01の{recorded_scope}の実行記録")
     print(json.dumps(RECORDED, ensure_ascii=False, indent=2))
+    print(f"\n2026-11-22の{recorded_scope}の再測定記録（精度一致、負荷状態の時間）")
+    print(json.dumps(REMEASURED_2026_11_22, ensure_ascii=False, indent=2))
     print("\n再現: py -3.11 tools/fetch_tless.py && py -3.11 examples/poc_real_tless_6dof.py")
     print("\nPASS")
 
 
-def _run_sweep_setting(root: Path, config: MatchConfig) -> None:
+def _run_ci_subset(*, requested_scene_ids=None, requested_object_ids=None) -> None:
+    """repo切り出しを主経路で測り期待値と照合する。/ Measure and verify the CI subset."""
+    recorded_scope = f"{RECORDED['scenes']}場面・{RECORDED['instances']}対象"
+    payload_count = verify_subset_checksums(DEFAULT_SUBSET_DATA)
+    expected = _load_subset_expected()
+    scene_ids = _normalise_ids(
+        expected["scene_ids"], name="subset scene_ids",
+        minimum=SCENE_ID_MIN, maximum=SCENE_ID_MAX,
+    )
+    object_ids = _normalise_ids(
+        expected["object_ids"], name="subset object_ids",
+        minimum=OBJECT_ID_MIN, maximum=OBJECT_ID_MAX,
+    )
+    if requested_scene_ids is not None and requested_scene_ids != scene_ids:
+        raise ValueError(
+            f"FULLSEYE_TLESS_SCENES must match repository subset scenes {scene_ids}"
+        )
+    if requested_object_ids is not None and requested_object_ids != object_ids:
+        raise ValueError(
+            f"FULLSEYE_TLESS_OBJECTS must match repository subset objects {object_ids}"
+        )
+    start = time.perf_counter()
+    scenes, rows = run_real(
+        DEFAULT_SUBSET_DATA,
+        DEFAULT_CONFIG,
+        diagnostics=False,
+        scene_ids=scene_ids,
+        object_ids=object_ids,
+    )
+    elapsed_seconds = time.perf_counter() - start
+    actual_by_object = {str(row["obj_id"]): row for row in rows}
+    expected_objects = expected["objects"]
+    mismatches: list[dict] = []
+    if set(actual_by_object) != set(expected_objects):
+        mismatches.append({
+            "field": "object_ids",
+            "actual": sorted(actual_by_object),
+            "expected": sorted(expected_objects),
+        })
+    for object_id, measured in expected_objects.items():
+        if object_id not in actual_by_object:
+            continue
+        row = actual_by_object[object_id]
+        for field in SUBSET_CONTINUOUS_METRIC_FIELDS:
+            actual = float(row["metrics"][field])
+            wanted = float(measured[field])
+            delta = actual - wanted
+            allowed = SUBSET_CONTINUOUS_METRIC_ABS_TOLERANCE + (
+                SUBSET_CONTINUOUS_METRIC_REL_TOLERANCE * abs(wanted)
+            )
+            if (not np.isfinite(actual) or not np.isfinite(wanted)
+                    or not np.isfinite(allowed) or abs(delta) > allowed):
+                mismatches.append({
+                    "object_id": int(object_id),
+                    "field": field,
+                    "actual": actual,
+                    "expected": wanted,
+                    "delta": delta,
+                    "allowed_abs": allowed,
+                })
+        actual_success = bool(
+            row["metrics"]["mssd"] <= MSSD_FAILURE_FRACTION * row["diameter"]
+        )
+        expected_success = measured["success_mssd_le_0_2d"]
+        if actual_success is not expected_success:
+            mismatches.append({
+                "object_id": int(object_id),
+                "field": "success_mssd_le_0_2d",
+                "actual": actual_success,
+                "expected": expected_success,
+            })
+    ar_mssd, ar_mspd = average_recall(_metric_rows(rows, "metrics"))
+    for field, actual in (("ar_mssd", ar_mssd), ("ar_mspd", ar_mspd)):
+        wanted = float(expected[field])
+        delta = actual - wanted
+        if (not np.isfinite(actual) or not np.isfinite(wanted)
+                or abs(actual - wanted) > SUBSET_AR_ABS_TOLERANCE):
+            mismatches.append({
+                "field": field,
+                "actual": actual,
+                "expected": wanted,
+                "delta": delta,
+                "allowed_abs": SUBSET_AR_ABS_TOLERANCE,
+            })
+
+    print("BOP T-LESS (CC BY 4.0) repo内CI切り出しを実測")
+    print("  subset: 場面 %s / 画像 %s / %d対象 (objects %s)"
+          % (scene_ids, tuple(scene["image"] for scene in scenes), len(rows), object_ids))
+    print("  注: 各対象のクラスタは真値並進による GT 支援割り当て")
+    print("  SHA256SUMS: %d payload files verified" % payload_count)
+    for row in rows:
+        values = row["metrics"]
+        success = values["mssd"] <= MSSD_FAILURE_FRACTION * row["diameter"]
+        print("  obj %d: MSSD %.15g / MSPD %.15g / rotation %.15g deg / "
+              "translation %.15g mm / MSSD<=0.2d %s"
+              % (row["obj_id"], values["mssd"], values["mspd"],
+                 values["rot_deg"], values["trans_mm"], success))
+    print("  subset AR_MSSD %.15g / AR_MSPD %.15g / elapsed %.3f s"
+          % (ar_mssd, ar_mspd, elapsed_seconds))
+    if mismatches:
+        print("SUBSET_MISMATCH " + json.dumps(mismatches, ensure_ascii=False, indent=2))
+        raise RuntimeError("T-LESS repository subset measurement does not match expectations")
+    print(f"\n{recorded_scope}の値は実測中の値ではなく、2026-11-01のRECORDED記録")
+    print(json.dumps(RECORDED, ensure_ascii=False, indent=2))
+    print(f"\n2026-11-22の{recorded_scope}の再測定記録（精度一致、負荷状態の時間）")
+    print(json.dumps(REMEASURED_2026_11_22, ensure_ascii=False, indent=2))
+    print("\nPASS")
+
+
+def _run_sweep_setting(root: Path, config: MatchConfig, *, scene_ids=None,
+                       object_ids=None) -> None:
     """単一設定を固定 subset 全体で採点し、手計算を挟まない JSON を出す。"""
     start = time.perf_counter()
-    scenes, rows = run_real(root, config, diagnostics=False)
+    scenes, rows = run_real(root, config, diagnostics=False, scene_ids=scene_ids,
+                            object_ids=object_ids)
     elapsed = time.perf_counter() - start
     ar_mssd, ar_mspd = average_recall(_metric_rows(rows, "metrics"))
     result = {
@@ -722,25 +1072,45 @@ def _run_sweep_setting(root: Path, config: MatchConfig) -> None:
         "ppf_seconds_per_instance": (
             sum(row["cluster_match_seconds"] for row in rows) / len(rows)),
     }
+    if scene_ids is not None or object_ids is not None:
+        result["selection"] = {
+            "scenes": list(scene_ids) if scene_ids is not None else "all",
+            "objects": list(object_ids) if object_ids is not None else "all",
+        }
     print("SWEEP_RESULT " + json.dumps(result, ensure_ascii=False, sort_keys=True))
     print("\nPASS")
 
 
 def main() -> None:
     root = Path(os.environ.get(DATA_ENV, DEFAULT_DATA))
+    scene_ids = _parse_id_env(SCENES_ENV, minimum=SCENE_ID_MIN, maximum=SCENE_ID_MAX)
+    object_ids = _parse_id_env(OBJECTS_ENV, minimum=OBJECT_ID_MIN, maximum=OBJECT_ID_MAX)
     required = (root / "test_primesense", root / "models_reconst" / "models_info.json")
     if not all(path.exists() for path in required):
-        _print_recorded()
+        if DEFAULT_SUBSET_DATA.is_dir():
+            if os.environ.get(SWEEP_ENV, "").strip():
+                raise ValueError(
+                    "FULLSEYE_TLESS_SWEEP requires the full T-LESS dataset; "
+                    "the repository subset always measures DEFAULT_CONFIG"
+                )
+            _run_ci_subset(
+                requested_scene_ids=scene_ids,
+                requested_object_ids=object_ids,
+            )
+            return
+        _print_recorded(scene_ids, object_ids)
         return
     sweep_name = os.environ.get(SWEEP_ENV, "").strip()
     if sweep_name:
         if sweep_name not in SWEEP_CONFIGS:
             raise ValueError("未知の掃引設定 %r（%s）" %
                              (sweep_name, ", ".join(sorted(SWEEP_CONFIGS))))
-        _run_sweep_setting(root, SWEEP_CONFIGS[sweep_name])
+        _run_sweep_setting(root, SWEEP_CONFIGS[sweep_name], scene_ids=scene_ids,
+                           object_ids=object_ids)
         return
     start = time.perf_counter()
-    scenes, rows = run_real(root, DEFAULT_CONFIG)
+    scenes, rows = run_real(root, DEFAULT_CONFIG, scene_ids=scene_ids,
+                            object_ids=object_ids)
     metrics = _metric_rows(rows, "metrics")
     no_icp = _metric_rows(rows, "no_icp")
     raw_normals = _metric_rows(rows, "raw_normal")
@@ -754,6 +1124,10 @@ def main() -> None:
 
     print("BOP T-LESS (CC BY 4.0) 実機 6DoF PoC")
     print("  source https://bop.felk.cvut.cz/datasets/ / Hodaň et al. WACV 2017")
+    if scene_ids is not None or object_ids is not None:
+        print("  絞り込み scenes=%s objects=%s（RECORDED ではなくこの実データを採点）"
+              % (scene_ids if scene_ids is not None else "all",
+                 object_ids if object_ids is not None else "all"))
     print("  setting model/scene %d/%d, voxel %.1f mm, ref %.2f, angle %d, ICP %d"
           % (DEFAULT_CONFIG.model_points, DEFAULT_CONFIG.scene_points,
              DEFAULT_CONFIG.voxel_mm, DEFAULT_CONFIG.ref_fraction,
@@ -792,12 +1166,20 @@ def main() -> None:
 
     print("\n公開 leaderboard と同じ MSSD/MSPD 閾値の平均 recall")
     print(" method                         official AR  AR_MSSD  AR_MSPD")
-    print(" Fullseye cluster PPF+ICP (20 scenes) n/a      %.3f    %.3f" % ar_real)
+    scope = (f"{len(SCENE_IDS)} scenes" if scene_ids is None and object_ids is None
+             else f"filtered {len(scenes)} scene(s)")
+    print(" Fullseye cluster PPF+ICP (%s) n/a      %.3f    %.3f" % (scope, *ar_real))
     print(" Fullseye scene PPF+ICP (no cluster)  n/a      %.3f    %.3f" % ar_no_cluster)
     print(" Fullseye PPF+ICP (previous 10)       n/a      0.290    0.320")
     for name, score in LEADERBOARD.items():
         print(" %-31s  %.3f      %.3f    %.3f" % (name, score["ar"], score["mssd"], score["mspd"]))
-    print("  注: PoC は20場面の先頭画像 subset、公開値は公式全 test。VSD 未実装なので PoC AR は n/a。")
+    if scene_ids is None and object_ids is None:
+        print(f"  注: PoC は{len(SCENE_IDS)}場面の先頭画像 subset、公開値は公式全 test。"
+              "VSD 未実装なので PoC AR は n/a。")
+    else:
+        print("  注: PoC は上記の絞り込み実データ、公開値は公式全 test。VSD 未実装なので PoC AR は n/a。")
+    print("  注: 各対象のクラスタは真値並進による GT 支援割り当てのため、"
+          "公開ベースラインとの比較は端から端までの検出性能比較ではない。")
 
     print("\n合成 -> 実機 / 切り分け")
     print(" ideal depth      AR_MSSD %.3f / AR_MSPD %.3f" % ar_synth)

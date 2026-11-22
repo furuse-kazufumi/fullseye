@@ -1,0 +1,52 @@
+{
+  "ar_mspd": 0.35,
+  "ar_mssd": 0.35,
+  "command": "PYTHONUTF8=1 py -3.11 tools/make_tless_subset.py --record-expected",
+  "conditions": [
+    "same process, run 1",
+    "same process, run 2",
+    "same process, run 3",
+    "same process, run 4",
+    "same process, run 5"
+  ],
+  "created_at": "2026-11-22",
+  "diagnostics": false,
+  "max_continuous_metric_delta": 0.0,
+  "object_ids": [
+    5,
+    6
+  ],
+  "objects": {
+    "5": {
+      "mspd": 89.51025389756401,
+      "mssd": 70.95901272523689,
+      "rot_deg": 97.0992139504338,
+      "success_mssd_le_0_2d": false,
+      "trans_mm": 9.959379977627135
+    },
+    "6": {
+      "mspd": 15.412922451270326,
+      "mssd": 20.56363121228191,
+      "rot_deg": 15.630653975312004,
+      "success_mssd_le_0_2d": true,
+      "trans_mm": 10.479869568131031
+    }
+  },
+  "run_max_continuous_metric_deltas": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "runs": 5,
+  "scene_ids": [
+    2
+  ],
+  "source_tool": "tools/make_tless_subset.py",
+  "versions": {
+    "numpy": "2.4.6",
+    "python": "3.11.9",
+    "scipy": "1.15.2"
+  }
+}

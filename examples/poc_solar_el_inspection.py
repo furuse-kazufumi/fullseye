@@ -63,8 +63,13 @@ EXTEND: 実写に差し替えるなら :func:`make_scene` が返す辞書の ``i
    電気的な不活性領域ではない —— ここで測ったのは「暗部の面積が I-V の出力低下を追うか」。
    マスクつき 195 枚(32 セル、S7 を含む)で暗部の増えと出力低下の順位相関は、ゼロ点 ρ 0.44、格子の
    細い成分だけを割る経路 ρ 0.64、合成どおりの中央値プロファイルで割る経路 ρ 0.04(縁の帯状の
-   マスクを丸ごと消す。細い成分の窓 15 px と門の閾値は実データを見て決めた)。S7(論文の分類の
-   「その他の欠陥」と推定)は EL がセル全体で 0.75〜0.90 倍に暗くなるのに、出力低下は中央値
+   マスクを丸ごと消す。細い成分の窓 15 px と門の閾値は実データを見て決めた —— 探索的な比較)。
+   ★★ただし画像処理をしない比べ手(1 − 平均の明るさの比)でも ρ 0.57 で、細い成分だけ割る経路との差は、
+   画像を 2000 回引き直した 95 % 区間 [-0.01, 0.17] が 0 をまたぐ —— **はっきりした差は無い**
+   (ゼロ点との差は [0.05, 0.35] で 0 をまたがない)。
+   遮光マスク S1〜S6 だけでは ゼロ点 ρ 0.59・細い成分だけ割る経路 ρ 0.63・明るさだけ ρ 0.61 とほぼ並ぶ。
+   格子の割り算(行・列プロファイル)は Fullseye の op ではなく、この PoC の自前のコード(道具の穴 (c))。
+   S7(論文の分類の「その他の欠陥」と推定)は EL がセル全体で 0.75〜0.90 倍に暗くなるのに、出力低下は中央値
    8.9 % —— ゼロ点は暗部を +50 pt と数え、細い成分だけ割る経路も +1 pt で 7.6 pt 過小に言う。
    **全体が暗くなる欠陥は、面積ではどちら向きにも測れない**。
 
@@ -985,6 +990,19 @@ NARROW_WIN = 15
 #: 代表の図の上段に使う 1 枚(セル番号, 電流, マスクの番号)。下段は S7 の出力低下の中央値に
 #: いちばん近いセルを実行時に選ぶ(都合の良いセルを手で選ばない)。
 REP_SHADOW = (20, "6", 3)
+#: 順位相関の差の不確かさ: マスクつきの画像を復元抽出で引き直す回数と種(種は固定、決定的)。
+#: ★2026-11-15 の作者と独立の審査で「細い成分だけ割る経路がいちばん揃う」は、画像処理をしない比べ手
+#:   (1 − 平均の明るさの比)との差の区間が 0 をまたぐと指摘された。区間を毎回数え、見出しの門にする。
+BOOT_N = 2000
+BOOT_SEED = 20261115
+#: 結果の散布図の横軸 [%]。★2026-11-15: CSV のままの外れ(P16 S1 の -92 %)に軸が引き延ばされ、本体が
+#: 右の 3 分の 1 に潰れていた(同じ審査)。枠の外の点は除かずに、枠の端へ寄せて灰色で描く。
+SCATTER_XLIM = (-12.0, 70.0)
+#: 縦軸 [pt]。上限は暗部率の増えの取りうる上限 100 pt。上の空いた帯に凡例が入る(4 隅のどれにも点があり、
+#: 右下の隅に置くと P4 S7 の点を隠した)。
+SCATTER_YLIM = (-20.0, 100.0)
+#: 展示の台帳(キャプションの正本)。見出しの数を実行の値と文脈つきで照合する。
+CAPTIONS_PATH = Path(__file__).resolve().parents[1] / "docs" / "articles" / "exhibits" / "poc_captions.json"
 
 #: 実データで出た数値(2026-11-08、上の SHA-256 の書庫から。実行の stdout から転記)。
 #: データが無い環境(CI)ではこれを印字し、鍵と中身と docstring の見出しの数値を照合する。
@@ -993,8 +1011,8 @@ RECORDED_REAL = {
     # ★2026-11-09: otsu が実データの範囲で 256 ビンを張るようになり、ゼロ点の列が 3 桁目で動いた
     #   (ρ 0.44 → 0.438、平均差 0.073 → 0.074、S3/S4/S7 の Δ +0.001〜0.002)。文中の 2 桁の値は変わらない。
     "cells": 32, "shadow_images": 195,
-    "rho": {"zero": 0.438, "median": 0.041, "narrow": 0.638},
-    "mean_abs_gap_vs_loss": {"zero": 0.074, "median": 0.154, "narrow": 0.051},
+    "rho": {"zero": 0.438, "median": 0.041, "narrow": 0.638, "dim": 0.565},
+    "mean_abs_gap_vs_loss": {"zero": 0.074, "median": 0.154, "narrow": 0.051, "dim": 0.06},
     "s0_area_median": {"zero": 0.089, "median": 0.014, "narrow": 0.022},
     # マスクごとの中央値: (出力低下, ゼロ点 Δ, 中央値で割る Δ, 細い成分だけ Δ)
     "by_shadow": {"S1": (0.211, 0.184, -0.008, 0.218), "S2": (0.227, 0.188, -0.006, 0.216),
@@ -1003,10 +1021,17 @@ RECORDED_REAL = {
                   "S7": (0.089, 0.499, 0.002, 0.013)},
     "s7_brightness": (0.752, 0.895), "s7_col_ratio": (0.134, 1.776),
     "s7_rep": {"cell": 2, "loss": 0.089, "d_zero": 0.499, "d_narrow": 0.011},
+    # ★2026-11-15: 画像処理をしない比べ手(dim = 1 − 平均の明るさの比)・S1〜S6 だけの順位相関・
+    #   差のブートストラップ 95 % 区間(BOOT_N 回、種 BOOT_SEED)を足した。既存の値は 3 桁まで変わらない。
+    #   2026-11-15 に同じ書庫で測り直し、既存の値は 3 桁まで一致した(作者と独立の審査の再実行と、この直しの実行)。
+    "rho_s1_s6": {"zero": 0.589, "median": 0.022, "narrow": 0.629, "dim": 0.613},
+    "boot95": {"narrow_minus_dim": (-0.014, 0.166), "narrow_minus_zero": (0.054, 0.348)},
 }
 #: RECORDED_REAL に必ず要る鍵(CI 経路の門が見る)。
 REAL_KEYS = ("cells", "shadow_images", "rho", "mean_abs_gap_vs_loss", "s0_area_median",
-             "by_shadow", "s7_brightness", "s7_col_ratio", "s7_rep")
+             "by_shadow", "s7_brightness", "s7_col_ratio", "s7_rep", "rho_s1_s6", "boot95")
+#: 記録値の中で、比べ手の名前がそろっていなければならない欄(dim は S0 では定義上 0 なので s0 には無い)。
+REAL_METHODS = ("zero", "median", "narrow", "dim")
 
 
 def real_data_root() -> Path:
@@ -1143,6 +1168,114 @@ def _squash(text: str) -> str:
     return "".join(text.split()).replace("*", "")
 
 
+def _rho(x, y) -> float:
+    """Spearman の順位相関。Fullseye の ``rank_spearman``(同順位は平均順位)で数える。
+
+    ★2026-11-15 まで ``scipy.stats.spearmanr`` だった。同じ働きの op があるので替えた(195 点で差 1e-16、
+    記録値の 3 桁は変わらない)。
+    """
+    return float(fs.ledger.rank_spearman(np.asarray(x, np.float64), np.asarray(y, np.float64)))
+
+
+def _ledger_caption() -> dict:
+    """台帳(poc_captions.json)のこの PoC の行。無ければ止める(黙って照合を飛ばさない)。"""
+    import json
+
+    with CAPTIONS_PATH.open(encoding="utf-8") as fh:
+        rows = [e for e in json.load(fh)["exhibits"] if e["id"] == Path(__file__).stem]
+    assert len(rows) == 1, "台帳にこの PoC の行が %d 件" % len(rows)
+    return rows[0]
+
+
+def _assert_in_caption(want: dict, what: str) -> None:
+    """台帳のキャプション(caption_ja / caption_en)に、文脈つきの数がそろっていること。"""
+    cap = _ledger_caption()
+    absent = {lang: [w for w in ws if _squash(w) not in _squash(cap["caption_" + lang])]
+              for lang, ws in want.items()}
+    absent = {k: v for k, v in absent.items() if v}
+    assert not absent, "台帳のキャプションの%sの数が実行と違う(印字から転記し直す): %s" % (what, absent)
+
+
+def check_ledger_synthetic(zp: dict, sc: dict, pipe: dict, fr: dict, gr: dict, wd: dict) -> None:
+    """合成部の門(台帳): 展示のキャプション(ページのカードの正本)に載せた合成の数が実行と一致すること。"""
+    dark = zp["dark_n"]
+    o0, o1 = list(fr["out"].values())[:2]
+    pct = {k: 100.0 * zp["parts"][k] / dark for k in ("フィンガー/バスバー", "結晶粒/ビネッティング", "孤立領域(本物)")}
+    fp, gv, iso = pct["フィンガー/バスバー"], pct["結晶粒/ビネッティング"], pct["孤立領域(本物)"]
+    lo_r, hi_r = min(pipe["recall"]), max(pipe["recall"])
+    _assert_in_caption({
+        "ja": ["真値 %.2f %%" % sc["iso_rate"], "暗画素率 %.1f %%" % zp["rate"],
+               "その %.0f %% はフィンガー/バスバー" % fp, "%.0f %% は結晶粒とビネッティング" % gv,
+               "本物の不活性領域は %.0f %%" % iso,
+               "面積率 %.2f %%(誤差 %+.2f ポイント)" % (pipe["iso_rate"], pipe["iso_err"]),
+               "クラック再現率 %.2f〜%.2f" % (lo_r, hi_r), "断線 %d/%d" % (pipe["fi_matched"], len(FI_BANDS)),
+               "実クラックと同じ線は応答 %.2f" % o1["weak"], "強い線は %.2f" % o1["strong"],
+               "偽クラック %.0f px" % o0["false_raw"], "c=%s から" % gr["onset"],
+               "崖 %.2f px" % wd["cliff"], "予測 %.2f px" % wd["w_pred"]],
+        "en": ["true inactive area %.2f %%" % sc["iso_rate"], "fraction of %.1f %%" % zp["rate"],
+               "%.0f %% of those pixels are fingers" % fp, "%.0f %% are grains and vignetting" % gv,
+               "only %.0f %% are truly inactive" % iso,
+               "gives %.2f %% (%+.2f points)" % (pipe["iso_rate"], pipe["iso_err"]),
+               "crack recall %.2f–%.2f" % (lo_r, hi_r), "%d/%d interruptions" % (pipe["fi_matched"], len(FI_BANDS)),
+               "responds %.2f" % o1["weak"], "black line %.2f" % o1["strong"],
+               "%.0f px of false cracks" % o0["false_raw"], "c=%s false cracks" % gr["onset"],
+               "cliff at %.2f px" % wd["cliff"], "predicted %.2f px" % wd["w_pred"]],
+    }, "合成部")
+
+
+def _f2(v: float) -> str:
+    """見出しの 2 桁。3 桁の記録値を**十進で**四捨五入する(0.565 → 0.57)。
+
+    "%.2f" % 0.565 は 2 進の 0.5649... を丸めて 0.56 になり、丸めていない実測の印字(0.57)と食い違う。
+    """
+    from decimal import ROUND_HALF_UP, Decimal
+
+    return str(Decimal(repr(round(float(v), 3))).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+
+
+def _ci(pair) -> str:
+    return "[%s, %s]" % (_f2(pair[0]), _f2(pair[1]))
+
+
+def _real_heads(rec: dict) -> list:
+    """docstring(展示の見出しの正本)に載せる実データの数(記録値を同じ書式に丸めた文字列)。"""
+    s16, b = rec["rho_s1_s6"], rec["boot95"]
+    return ["ρ %s" % _f2(rec["rho"]["zero"]), "ρ %s" % _f2(rec["rho"]["narrow"]),
+            "ρ %s" % _f2(rec["rho"]["median"]),
+            "%.1f %%" % (100 * rec["by_shadow"]["S7"][0]),
+            "%+.0f pt" % (100 * rec["by_shadow"]["S7"][1]),
+            "%s〜%s 倍" % tuple(_f2(v) for v in rec["s7_brightness"]),
+            "明るさの比)でも ρ %s" % _f2(rec["rho"]["dim"]),
+            "95 %% 区間 %s が 0 をまたぐ" % _ci(b["narrow_minus_dim"]),
+            "ゼロ点との差は %s で 0 をまたがない" % _ci(b["narrow_minus_zero"]),
+            "ゼロ点 ρ %s・細い成分だけ割る経路 ρ %s・明るさだけ ρ %s" % (_f2(s16["zero"]), _f2(s16["narrow"]),
+                                                                    _f2(s16["dim"]))]
+
+
+def _real_caption_heads(rec: dict) -> dict:
+    """台帳のキャプションに載せる実データの数(言語ごと、前後の語つき)。"""
+    r, b, s16, s7 = ({k: _f2(v) for k, v in rec["rho"].items()}, rec["boot95"],
+                     {k: _f2(v) for k, v in rec["rho_s1_s6"].items()}, rec["by_shadow"]["S7"])
+    cd, cz = _ci(b["narrow_minus_dim"]), _ci(b["narrow_minus_zero"])
+    br = tuple(_f2(v) for v in rec["s7_brightness"])
+    return {
+        "ja": ["%d セル・マスクつき %d 枚" % (rec["cells"], rec["shadow_images"]),
+               "ゼロ点 %s" % r["zero"], "中央値プロファイルで割る経路 %s" % r["median"],
+               "細い成分だけ割る経路 %s" % r["narrow"], "明るさの比)でも %s" % r["dim"],
+               "95 %% 区間 %s が 0 をまたぎ" % cd, "ゼロ点との差 %s は 0 をまたがない" % cz,
+               "ゼロ点 %s・細い成分だけ %s・明るさだけ %s" % (s16["zero"], s16["narrow"], s16["dim"]),
+               "%s〜%s 倍" % br, "出力低下は %.1f %%" % (100 * s7[0]),
+               "%+.0f pt と過大" % (100 * s7[1]), "%+.0f pt と過小" % (100 * s7[3])],
+        "en": ["%d cells, %d masked images" % (rec["cells"], rec["shadow_images"]),
+               "%s for the zero point" % r["zero"], "%s for the synthetic recipe" % r["median"],
+               "%s when only the narrow grid component" % r["narrow"], "already reaches %s" % r["dim"],
+               "resamples is %s" % cd, "against the zero point it is %s" % cz,
+               "give %s / %s / %s" % (s16["zero"], s16["narrow"], s16["dim"]),
+               "%s–%s of S0" % br, "power loss is %.1f %%" % (100 * s7[0]),
+               "at %+.0f pt and" % (100 * s7[1]), "at %+.0f pt, so" % (100 * s7[3])],
+    }
+
+
 def check_doc_synthetic(zp: dict, sc: dict, pipe: dict, fr: dict, gr: dict, wd: dict, sn: dict) -> None:
     """合成部の門: docstring(展示の見出しの正本)の数値が、**文脈つきの文字列**で実行の印字と一致すること。
 
@@ -1181,17 +1314,17 @@ def check_recorded_real(rec: dict) -> None:
     """
     missing = [k for k in REAL_KEYS if k not in rec]
     assert not missing, "RECORDED_REAL に鍵が無い: %s" % missing
+    for key in ("rho", "mean_abs_gap_vs_loss", "rho_s1_s6"):
+        assert set(rec[key]) == set(REAL_METHODS), (key, sorted(rec[key]))
+    assert set(rec["boot95"]) == {"narrow_minus_dim", "narrow_minus_zero"}, sorted(rec["boot95"])
+    assert all(lo <= hi for lo, hi in rec["boot95"].values()), rec["boot95"]
     nums = list(_flat_numbers(rec))
     assert nums and all(np.isfinite(nums)), "RECORDED_REAL に有限でない数がある"
     assert rec["cells"] >= 30 and rec["shadow_images"] >= 150, rec
-    doc = __doc__ or ""
-    heads = ["ρ %.2f" % rec["rho"]["zero"], "ρ %.2f" % rec["rho"]["narrow"],
-             "ρ %.2f" % rec["rho"]["median"],
-             "%.1f %%" % (100 * rec["by_shadow"]["S7"][0]),
-             "%+.0f pt" % (100 * rec["by_shadow"]["S7"][1]),
-             "%.2f〜%.2f 倍" % tuple(rec["s7_brightness"])]
-    absent = [h for h in heads if h not in doc]
+    doc = _squash(__doc__ or "")
+    absent = [h for h in _real_heads(rec) if _squash(h) not in doc]
     assert not absent, "docstring の見出しに記録値が載っていない: %s" % absent
+    _assert_in_caption(_real_caption_heads(rec), "実データ")
 
 
 def section_real_el() -> dict | None:
@@ -1207,10 +1340,9 @@ def section_real_el() -> dict | None:
         print("  実データが無いので実データの章を飛ばす。取得は py -3.11 tools/fetch_realinsp_data.py sipv_el")
         print("  記録値(RECORDED_REAL): %s" % RECORDED_REAL)
         check_recorded_real(RECORDED_REAL)
-        print("  記録値の門: 鍵 %d 個・有限・docstring の見出しと一致" % len(REAL_KEYS))
+        print("  記録値の門: 鍵 %d 個・有限・docstring の見出しと台帳(poc_captions.json)のキャプションに一致"
+              "(実データの測り直しではない)" % len(REAL_KEYS))
         return None
-    from scipy.stats import spearmanr
-
     by, load = _load_real(root)
     realdata.mark_read("zenodo:14439369/SIPV-EL")
     print("  " + SIPV_CREDIT)
@@ -1268,11 +1400,37 @@ def section_real_el() -> dict | None:
     print("\n   方法                         順位相関 ρ   |Δ暗部 − 出力低下| の平均   マスクなしの暗部率(中央値)")
     for k, label in names.items():
         d = np.array([r["d_" + k] for r in sh])
-        rho = float(spearmanr(d, loss).correlation)
+        rho = _rho(d, loss)
         mae = float(np.mean(np.abs(d - loss)))
         lvl = float(np.median([r[k] for r in recs if r["key"][2] == 0]))
         out[k] = {"rho": rho, "mae": mae, "s0": lvl}
         print("   %-28s %+.3f        %.3f                    %5.1f %%" % (label, rho, mae, 100 * lvl))
+    # ★比べ手: 画像処理をしない「1 − 平均の明るさの比」(セルの外枠の中、S0 比)。2026-11-15 の作者と独立の
+    #   審査が、細い成分だけ割る経路との差がこの比べ手に対しては 0 をまたぐと指摘した。同じ表に並べて数える。
+    for r in recs:
+        r["d_dim"] = 1.0 - r["bright"]
+    d = np.array([r["d_dim"] for r in sh])
+    out["dim"] = {"rho": _rho(d, loss), "mae": float(np.mean(np.abs(d - loss)))}
+    print("   %-28s %+.3f        %.3f                    (S0 では定義上 0)"
+          % ("比べ手: 1 − 平均の明るさの比", out["dim"]["rho"], out["dim"]["mae"]))
+    plate_sh = [r for r in sh if r["key"][2] <= 6]
+    loss16 = np.array([r["loss"] for r in plate_sh])
+    out["rho_s1_s6"] = {k: _rho([r["d_" + k] for r in plate_sh], loss16) for k in REAL_METHODS}
+    print("\n   遮光マスク S1〜S6 だけ(%d 枚)の順位相関: ゼロ点 %+.3f / 中央値で割る %+.3f / 細い成分だけ %+.3f"
+          " / 明るさだけ %+.3f" % ((len(plate_sh),) + tuple(out["rho_s1_s6"][k] for k in REAL_METHODS)))
+    # 順位相関の差の 95 % 区間: マスクつきの画像を復元抽出で BOOT_N 回引き直す(種は固定)。
+    rng = np.random.default_rng(BOOT_SEED)
+    cols = {k: np.array([r["d_" + k] for r in sh]) for k in ("zero", "narrow", "dim")}
+    diffs = {"narrow_minus_dim": [], "narrow_minus_zero": []}
+    for ii in rng.integers(0, len(sh), size=(BOOT_N, len(sh))):
+        rn = _rho(cols["narrow"][ii], loss[ii])
+        diffs["narrow_minus_dim"].append(rn - _rho(cols["dim"][ii], loss[ii]))
+        diffs["narrow_minus_zero"].append(rn - _rho(cols["zero"][ii], loss[ii]))
+    assert all(np.isfinite(v).all() for v in diffs.values()), "引き直しで順位相関が定義されない回がある"
+    out["boot95"] = {k: (float(np.percentile(v, 2.5)), float(np.percentile(v, 97.5))) for k, v in diffs.items()}
+    print("   順位相関の差の 95 %% 区間(画像を %d 回引き直す、種 %d): 細い成分だけ − 明るさだけ [%+.3f, %+.3f]"
+          " / 細い成分だけ − ゼロ点 [%+.3f, %+.3f]"
+          % ((BOOT_N, BOOT_SEED) + out["boot95"]["narrow_minus_dim"] + out["boot95"]["narrow_minus_zero"]))
 
     print("\n   マスク        枚数   出力低下   ゼロ点 Δ   中央値プロファイル Δ   細い成分だけ Δ   (いずれも中央値)")
     table = []
@@ -1307,9 +1465,13 @@ def section_real_el() -> dict | None:
     out["s7_rep"] = {"cell": rep7["key"][0], "loss": rep7["loss"], "d_zero": rep7["d_zero"],
                      "d_narrow": rep7["d_narrow"]}
 
-    z, md, nw = out["zero"], out["median"], out["narrow"]
-    print("\n  ★外の真値(I-V)で見ると、出力の低下をいちばん素直に追うのは「格子の細い成分だけを割る」経路"
-          "(ρ %+.2f、平均のずれ %.1f ポイント)。" % (nw["rho"], 100 * nw["mae"]))
+    z, md, nw, dm = out["zero"], out["median"], out["narrow"], out["dim"]
+    print("\n  ★外の真値(I-V)との順位相関は「格子の細い成分だけを割る」経路がいちばん高い"
+          "(ρ %+.2f、平均のずれ %.1f ポイント)。ただし窓 %d px と門の閾値は同じ実データを見て決めた(探索的な比較)。"
+          % (nw["rho"], 100 * nw["mae"], NARROW_WIN))
+    print("  ★★画像処理をしない比べ手(1 − 平均の明るさの比)でも ρ %+.2f。細い成分だけ割る経路との差の 95 %% 区間"
+          " [%+.2f, %+.2f] は 0 をまたぐ —— **はっきりした差は無い**(ゼロ点との差 [%+.2f, %+.2f] は 0 をまたがない)。"
+          % ((dm["rho"],) + out["boot95"]["narrow_minus_dim"] + out["boot95"]["narrow_minus_zero"]))
     gap = [100 * (by_shadow[s]["d_zero"] - by_shadow[s]["loss"]) for s in plate]
     print("  ★マスク(S1〜S6)では、ゼロ点も出力低下との差 %+.1f〜%+.1f ポイントで追う —— マスクは真っ黒で、"
           "暗いものを数えれば当たる。" % (min(gap), max(gap)))
@@ -1338,8 +1500,10 @@ def section_real_el() -> dict | None:
           % (100 * z["s0"], 100 * nw["s0"]))
 
     rec = _r3({"cells": n_cells, "shadow_images": len(sh),
-               "rho": {k: out[k]["rho"] for k in names}, "mean_abs_gap_vs_loss": {k: out[k]["mae"] for k in names},
+               "rho": {k: out[k]["rho"] for k in REAL_METHODS},
+               "mean_abs_gap_vs_loss": {k: out[k]["mae"] for k in REAL_METHODS},
                "s0_area_median": {k: out[k]["s0"] for k in names},
+               "rho_s1_s6": out["rho_s1_s6"], "boot95": out["boot95"],
                "by_shadow": {"S%d" % s: (v["loss"], v["d_zero"], v["d_median"], v["d_narrow"])
                              for s, v in by_shadow.items()},
                "s7_brightness": out["s7_brightness"], "s7_col_ratio": out["s7_col_ratio"],
@@ -1356,6 +1520,10 @@ def section_real_el() -> dict | None:
     assert out["narrow_plate_err"] < 0.04, out["narrow_plate_err"]
     assert by_shadow[7]["d_zero"] > by_shadow[7]["loss"] + 0.2, by_shadow[7]
     assert by_shadow[7]["d_narrow"] < by_shadow[7]["loss"], by_shadow[7]     # 過小に言うことも固定する
+    # ★2026-11-15: 見出しを「画像処理をしない比べ手とはっきりした差が無い・ゼロ点よりは揃う」に直した。両方を固定する
+    #   (0 は主張の意味そのもので、実データを見て置いた閾値ではない)。
+    assert out["boot95"]["narrow_minus_dim"][0] < 0.0 < out["boot95"]["narrow_minus_dim"][1], out["boot95"]
+    assert out["boot95"]["narrow_minus_zero"][0] > 0.0, out["boot95"]
     if RECORDED_REAL:
         assert rec == RECORDED_REAL, "実測が記録値と違う(丸め 3 桁): %r" % (rec,)
         check_recorded_real(RECORDED_REAL)
@@ -1404,13 +1572,13 @@ def _real_figures(out, by_shadow, table, sh, s7, cache, rep7) -> None:
         g = _gray3(im, rect)
         kind = "単結晶" if rec["kind"] == "Mono" else "多結晶"
         panels += [g, _tint(g, m["zero"], (1.0, 0.45, 0.1)), _tint(g, m["narrow"], (0.15, 0.55, 1.0))]
+        # ★2026-11-15: 色の凡例は題の中だけだった(縮めた図では読めない)。各パネルの説明に色の意味を書く。
         caps += ["%s P%d S%d %s(I-V 出力低下 %.0f %%)" % (kind, key[0], key[2], SIPV_MASKS[key[2]],
                                                        100 * rec["loss"]),
-                 "ゼロ点 暗部 %.0f %%(S0 比 %+.0f pt)" % (100 * rec["zero"], 100 * rec["d_zero"]),
-                 "格子の細い成分を割る 暗部 %.0f %%(S0 比 %+.0f pt)" % (100 * rec["narrow"], 100 * rec["d_narrow"])]
+                 "橙 = ゼロ点の暗画素 %.0f %%(S0 比 %+.0f pt)" % (100 * rec["zero"], 100 * rec["d_zero"]),
+                 "青 = 格子の細い成分を割った暗部 %.0f %%(S0 比 %+.0f pt)" % (100 * rec["narrow"], 100 * rec["d_narrow"])]
     figs.save_grid("real_el_overlay", panels, caps, ncols=3,
-                   title="実セルの EL 像: 遮光マスク(上)では暗部の面積が出力低下を追い、S7(下)では追わない"
-                         "(橙 = ゼロ点の暗画素、青 = 格子を割った暗部)",
+                   title="実セルの EL 像: 遮光マスク(上)では暗部の面積が出力低下を追い、S7(下)では追わない",
                    caption="SIPV-EL(Zenodo 14439369、CC BY 4.0)の実セル。上: セル表面に置いた遮光マスク(中央の大円)。"
                            "下: S7(論文の分類 7「その他の欠陥」と推定)のうち、出力低下が S7 の中央値 %.1f %% に最も近いセル。"
                            "灰色は実測の EL 強度、色は判定の重ね。出力低下は同じセル・同じ電流の I-V から。"
@@ -1458,17 +1626,36 @@ def _real_figures(out, by_shadow, table, sh, s7, cache, rep7) -> None:
     dz = np.array([r["d_zero"] for r in sh]) * 100
     dn = np.array([r["d_narrow"] for r in sh]) * 100
     ref = np.array([0.0, 60.0])
-    figs.save_plot("real_result_scatter",
-                   [("ゼロ点 ρ %.2f" % out["zero"]["rho"], lo, dz),
-                    ("細い成分だけ割る ρ %.2f" % out["narrow"]["rho"], lo, dn),
-                    ("暗部の増え = 出力低下", ref, ref)],
-                   kinds=["scatter", "scatter", "line"], styles=[None, None, "dashed"],
-                   colors=["wrong", "right", "reference"],
+    xl0, xl1 = SCATTER_XLIM
+    inside = (lo >= xl0) & (lo <= xl1)
+    outside = [r for r, ok in zip(sh, inside) if not ok]
+    series = [("ゼロ点 ρ %.2f" % out["zero"]["rho"], lo[inside], dz[inside]),
+              ("細い成分だけ割る ρ %.2f" % out["narrow"]["rho"], lo[inside], dn[inside]),
+              ("暗部の増え = 出力低下", ref, ref)]
+    kinds, styles, colors = ["scatter", "scatter", "line"], [None, None, "dashed"], ["wrong", "right", "reference"]
+    if outside:
+        # 枠の外の点は除かない: 枠の 1 目盛り内側(端の線の上に描くと半分欠ける)へ寄せ、灰色にして凡例で名指す。
+        pull = 0.0125 * (xl1 - xl0)
+        ex = np.clip(lo[~inside], xl0 + pull, xl1 - pull)
+        series.append(("枠外を端に寄せた: %s" % "・".join("P%d S%d %+.0f %%" % (r["key"][0], r["key"][2], 100 * r["loss"])
+                                                    for r in outside),
+                       np.concatenate([ex, ex]), np.concatenate([dz[~inside], dn[~inside]])))
+        kinds.append("scatter")
+        styles.append(None)
+        colors.append("neutral")
+    figs.save_plot("real_result_scatter", series, kinds=kinds, styles=styles, colors=colors, xlim=SCATTER_XLIM,
+                   ylim=SCATTER_YLIM, size=(560, 440),
                    xlabel="I-V の出力低下 [%]", ylabel="暗部率の増え [pt]",
                    title="結果: 暗部の増えは I-V の出力低下を追うか(マスクつき %d 枚)" % len(sh),
                    caption="左上に離れた橙の点の群れは S7(「その他の欠陥」と推定)。全体が暗くなるのでゼロ点は面積を大きく数える。"
+                           "横軸は %.0f〜%.0f %% に切った。" % SCATTER_XLIM
+                           + ("枠の外の %d 枚(%s)は除かずに端へ寄せて灰色で描いた。" % (
+                               len(outside), "・".join("P%d S%d" % (r["key"][0], r["key"][2]) for r in outside))
+                              if outside else "")
                            + ("外れ %d 点(%s)は CSV の出力をそのまま使った値で、除いていない。"
-                              % (len(_odd_rows(sh)), _odd_text(_odd_rows(sh))) if _odd_rows(sh) else ""))
+                              % (len(_odd_rows(sh)), _odd_text(_odd_rows(sh))) if _odd_rows(sh) else "")
+                           + "画像処理をしない比べ手(1 − 平均の明るさの比)は ρ %.2f(図には描いていない)。"
+                           % out["dim"]["rho"])
     # 限界: S7 は全体が暗くなるが出力は少ししか落ちない
     lo7 = np.array([r["loss"] for r in s7]) * 100
     br7 = np.array([r["bright"] for r in s7])
@@ -1508,6 +1695,8 @@ def main() -> int:
     section_tool_gaps()
     check_doc_synthetic(zp, sc, pipe, fr, gr, wd, sn)
     print("  docstring の合成部の数値: 実行の印字と文脈つきで一致")
+    check_ledger_synthetic(zp, sc, pipe, fr, gr, wd)
+    print("  台帳(poc_captions.json)のキャプションの合成部の数値: 実行の印字と文脈つきで一致")
     real = section_real_el()
 
     print("\n" + "=" * 78)
@@ -1545,10 +1734,13 @@ def main() -> int:
     assert sn["k_fail"] is not None and sn["k_fail"] <= 200, sn["k_fail"]
     if real is not None:
         print("  * 実セル(SIPV-EL、I-V が真値): 暗部の増えと出力低下の順位相関 ゼロ点 %+.2f / 中央値で割る %+.2f /"
-              " 細い成分だけ割る %+.2f。中央値で割る経路は縁の帯状のマスクを消す。S7(その他の欠陥)は"
-              "出力低下 %.1f %% にゼロ点 %+.0f pt。"
-              % (real["zero"]["rho"], real["median"]["rho"], real["narrow"]["rho"],
-                 100 * real["by_shadow"][7]["loss"], 100 * real["by_shadow"][7]["d_zero"]))
+              " 細い成分だけ割る %+.2f / 画像処理なしの明るさだけ %+.2f(細い成分との差の 95 %% 区間 [%+.2f, %+.2f])。"
+              "中央値で割る経路は縁の帯状のマスクを消す。S7(その他の欠陥)は"
+              "出力低下 %.1f %% にゼロ点 %+.0f pt、細い成分だけ %+.0f pt。"
+              % ((real["zero"]["rho"], real["median"]["rho"], real["narrow"]["rho"], real["dim"]["rho"])
+                 + real["boot95"]["narrow_minus_dim"]
+                 + (100 * real["by_shadow"][7]["loss"], 100 * real["by_shadow"][7]["d_zero"],
+                    100 * real["by_shadow"][7]["d_narrow"])))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():

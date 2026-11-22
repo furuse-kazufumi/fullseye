@@ -47,14 +47,16 @@ SPEC = [
     ("poc_active_contours", _P + "poc_active_contours/06_u_shape_snakes.gif", 1.0, (0.5, 0.0, 1.0)),
     ("poc_dic_strain", _P + "poc_dic_strain/05_tensile_ramp.gif", 1.0, (0.33, 0.0, 0.55)),
     ("poc_focus_stacking", _P + "poc_focus_stacking/05_focus_sweep.gif", 1.0, (0.5, 0.04, 0.55)),
-    ("poc_registration_basin", _P + "poc_registration_basin/06_real_scan_icp.gif", 0.62, (0.375, 0.0, 1.0)),
+    # 2026-11-15: 動画のコマを切ると左のコマと見出しの文字が切れた(独立レビュー)。PoC が同じ結果から書く正方形の静止画
+    ("poc_registration_basin", _P + "poc_registration_basin/07_real_scan_still.png", None, None),
     ("poc_stockpile_volume", _P + "poc_stockpile_volume/07_scan_orbit.gif", 0.3, None),
     ("poc_ct_fidelity", _P + "poc_ct_fidelity/01_recon_sweep_720.jpg", None, None),
     ("poc_ct_void_morphology", _P + "poc_ct_void_morphology/13_section_sweep.gif", 0.5, None),
-    ("poc_interferometry_step", _P + "poc_interferometry_step/03_surface_z_scan.gif", 0.6, (0.0, 0.0, 1.0)),
-    ("poc_polarization_specular", _P + "poc_polarization_specular/09_glare_removed_label_720.jpg", None, None),
+    # 2026-11-15: 灰色の縞と円板だけで何の図か分からなかった(独立レビュー)。09 の動画と同じ走査から書いた正方形の静止画
+    ("poc_interferometry_step", _P + "poc_interferometry_step/10_csi_scan_still.png", None, None),
+    # 09 の中央の正方形は真ん中の 1 枚だけで比べる構図が消えた(2026-11-15 の独立レビュー)。PoC が出す正方形の表紙を使う
+    ("poc_polarization_specular", _P + "poc_polarization_specular/10_glare_cover.png", None, None),
     ("poc_photoelasticity", _P + "poc_photoelasticity/03_load_and_isoclinics.gif", 0.45, (0.0, 0.0, 1.0)),
-    ("poc_thermography_ndt", _P + "poc_thermography_ndt/02_depth_map_720.jpg", None, None),
     ("poc_equipment_selection_map", _P + "poc_equipment_selection_map/08_equipment_samples_square.png", None, None),
     ("poc_motion_magnification", _P + "poc_motion_magnification/05_magnify_video.gif", 0.3, None),
     ("poc_table_tennis_bounce", _P + "poc_table_tennis_bounce/01_drop_test.gif", 0.5, None),
@@ -79,8 +81,13 @@ SPEC = [
     ("evis_bean_track", "articles/assets/evis_bean_track_fullseye_still.png", None, (0.5, 0.0, 1.0)),
     # 5 枚を縦に積んだ全体ではなく、最初の OCT 断面を案内用の代表図にする。
     ("poc_industrial_oct", _P + "poc_industrial_oct/01_real_paint_bscans.png", None, (0.04, 0.05, 0.25)),
+    # 実セルの EL の 6 枚組のうちパネル (b)(遮光マスクの円をゼロ点の暗画素として橙で重ねた 1 枚)。全体を縮めると 1 枚 100 px で読めない。
+    ("poc_solar_el_inspection", _P + "poc_solar_el_inspection/10_real_el_overlay.png", None, (0.3388, 0.0555, 0.4266)),
     # 「触って見る」に添える画像(展示のカードが無いビューア): 小惑星イトカワの曲率の既存の図
     ("poc_asteroid_curvature", "articles/assets/_sources/src_itokawa_curvature.png", None, None),
+    # 2026-11-15: 13 の 4 枚組を縮めると色も字も潰れる。PoC が同じ配列・同じ色から書く正方形の静止画
+    # (見どころの先頭 18 枚 = 紙面の計測館の巡回 GIF を変えないよう、末尾に足す)
+    ("poc_lidar_terrain_change", _P + "poc_lidar_terrain_change/15_real_dod_still.png", None, None),
     # 動く 3-D: 元はビューアをスマホ幅(375 px、WebGL)で開いた画面から 3-D の部分だけを切った静止画
 ]
 

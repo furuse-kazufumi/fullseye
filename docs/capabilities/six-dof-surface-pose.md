@@ -9,7 +9,7 @@ version: 0.8.1
 inputs: [depth, points]
 pipeline: [depth_to_points, estimate_normals, ransac_plane, icp_point2point_3d]
 alternatives: [find_surface_pose, point_to_plane_icp, fpfh, register_cross]
-limits: T-LESS の実機 subset では AR_MSSD 0.290。理想深度 0.880 から 0.590 落ち、Drost-CVPR10-3D-Only の公式 0.478、Vidal-Sensors18 の 0.575 に負ける。接触物体の cluster 結合、遮蔽、深度欠損、対称形状を別々に数える。
+limits: T-LESS の実機20場面・132対象では AR_MSSD 0.197 / AR_MSPD 0.220。理想深度は0.985 / 0.985だが、公式全testのDrost-CVPR10-3D-Only 0.478 / 0.480、Vidal-Sensors18 0.575 / 0.574に負ける。MSSD > 0.2dの失敗109 / 132の重複内訳はcluster結合34、遮蔽8、薄型21、深度欠損36、対称形状103。
 calibration: 深度とモデルの長さ単位を揃え、K と depth_scale を撮影フレームの値で読む。対称性を models_info.json から採点へ入れ、回転角だけで合否を決めない。
 ---
 
@@ -43,7 +43,7 @@ Matches a known CAD or reconstructed model to a measured depth cloud and returns
 
 ## 限界
 
-T-LESS の固定 10 instance subset では AR_MSSD / AR_MSPD が 0.290 / 0.320。理想 z-buffer 深度は 0.880 / 0.880 なので、合成だけでは 0.590 / 0.560 の低下が見えません。ICP を外すと 0.280 / 0.250、法線をカメラ向きに揃えないと 0.200 / 0.230 です。これは公式全 test と同じ標本ではないため、Drost/Vidal の leaderboard 値とは順位の参考として併記し、同条件の直接対決とは呼びません。
+T-LESS の固定20場面・132対象では AR_MSSD / AR_MSPD が0.197 / 0.220。理想 z-buffer 深度は0.985 / 0.985なので、合成だけでは実機での低下が見えません。ICPを外すと0.346 / 0.338、法線をカメラ向きに揃えないと0.132 / 0.161です。MSSD > 0.2dの失敗は109 / 132対象で、重複を許した内訳はcluster結合34、可視率0.8未満8、薄型21、深度欠損1%超36、対称形状103でした。各対象のクラスタは、推論時に得られない真値並進に最も近い重心を選ぶ GT 支援割り当てです。また、公式全testと同じ標本ではありません。そのため、Drost-CVPR10-3D-Onlyの0.478 / 0.480、Vidal-Sensors18の0.575 / 0.574とは順位の参考として併記し、端から端までの検出性能比較とは呼びません。
 
 ## 実寸校正
 

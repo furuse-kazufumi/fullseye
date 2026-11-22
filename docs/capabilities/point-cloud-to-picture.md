@@ -4,7 +4,7 @@ title: 点群をそのまま色の絵にする
 title_en: Draw a point cloud as a colour picture
 category: 見せる
 ops: [points_render, render_point_depth, project_points]
-examples: [points_render_basics, poc_flybrain_pointcloud, poc_real_tless_6dof]
+examples: [points_render_basics, poc_flybrain_pointcloud]
 version: 0.2.0
 inputs: [points]
 pipeline: [points_render]
@@ -40,6 +40,8 @@ R, t でカメラを置き(正面・側面・背面は軸の入れ替えの行�
 深度だけなら `render_point_depth`、射影の座標だけなら `project_points`、活動の動画は `points_activity_video`、陰影つきのガウシアンは `gs_render`、メッシュは `render_mesh`。
 
 ## 限界
+
+`poc_real_tless_6dof` は門で `points_render` を呼ばず、`render_point_depth` は門で走らない診断、`project_points` はMSPD採点にだけ使うため、この能力の実データ例には数えません。
 
 - disc の足跡は画素に量子化され、像の重心は小さな半径で最大 0.05 画素ずれる。gaussian は 1e-3 画素以内(4σ を軸ごとに切る。3σ で切ると 0.017 画素ずれた)。
 - over では、奥の点は手前の不透明度ぶん隠れる。数(密度)を見るなら add —— 総和が点の色の総和と厳密に一致する。

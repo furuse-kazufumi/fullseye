@@ -5,7 +5,7 @@ category: walkterrain
 in: points
 out: depth
 gpu: なし
-examples: [perception_pipeline, physical_ai_perception, walking_ops_tour]
+examples: [perception_pipeline, physical_ai_perception, poc_lidar_terrain_change, walking_ops_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -47,6 +47,7 @@ An empty cloud with ``bounds`` gives an all-``nan`` grid; without ``bounds`` it 
 
 - [perception_pipeline](../../../../examples/perception_pipeline.py) — `py -3.11 examples/perception_pipeline.py`
 - [physical_ai_perception](../../../../examples/physical_ai_perception.py) — `py -3.11 examples/physical_ai_perception.py`
+- [poc_lidar_terrain_change](../../../../examples/poc_lidar_terrain_change.py) — `py -3.11 examples/poc_lidar_terrain_change.py`
 - [walking_ops_tour](../../../../examples/walking_ops_tour.py) — `py -3.11 examples/walking_ops_tour.py`
 
 ## 型が繋がる次の op(`depth` を入力に取れる)
