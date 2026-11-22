@@ -74,6 +74,8 @@ HIGH_FREQUENCY_THRESHOLD = 64
 MIN_LAPLACIAN_DENSITY = 0.0005
 MIN_CONTENT_FRACTION = 0.36
 RASTER = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff"}
+#: カード媒体と物語の表紙を分ける例。偏光はカードで結果の3枚比較(09)を見せ、物語は320 pxでも読める2枚比較(10)から始める。
+COVER_OVERRIDES = {"poc_polarization_specular": "10_glare_cover.png"}
 EYE_CATCHERS = """poc_phase_measuring_deflectometry poc_industrial_oct
 poc_hyperspectral_foreign_matter poc_thin_film_reflectometry poc_cad_scan_deviation
 poc_telecentric_metrology poc_tem_ctf_thon_rings poc_virtual_sem_kv_cd_bse
@@ -168,6 +170,10 @@ def chosen_frames(figures: list[dict], representative: str, folder: Path,
 
 def _cover_file(exhibit: dict, caption: dict, figures: list[dict], folder: Path) -> str | None:
     """Prefer the current still media, then the caption ledger's principal still, then figure 1."""
+    override = COVER_OVERRIDES.get(exhibit.get("id"))
+    exact_override = next((f for f in figures if f.get("file") == override and _usable(f, folder)), None)
+    if exact_override:
+        return exact_override["file"]
     media = exhibit.get("media", "")
     exact = next((f for f in figures if f.get("file") == media and _usable(f, folder)), None)
     if exact:

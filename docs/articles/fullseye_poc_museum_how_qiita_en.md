@@ -1954,19 +1954,19 @@ This run produced **5 figures** in total - [see them all](https://github.com/fur
 
 
 
-## No.2026.034 —— The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be?
+## No.2026.034 —— The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be? (a synthetic bracket and a public measured part)
 
-On measured depth of a real part, the ICP convergence basin is narrower than with all-around points. Either way of reading the crossing, success drops below half at least 7.9 degrees of initial rotation earlier (point-to-plane). How much comes from one-sidedness or from depth noise varies with the seed.
+On a measured part and a synthetic bracket, we tested how far registration can start and return to the same endpoint. Across seeds and crossing rules, success halved up to 31.5 degrees earlier than with all-around points. The endpoint is off the truth, so this measures recovery range, not pose accuracy.
 
-[![The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/06_real_scan_icp.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/06_real_scan_icp.gif)
+[![The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be? (a synthetic bracket and a public measured part)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/06_real_scan_icp.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/06_real_scan_icp.gif)
 
-*↑ **The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be?** ―― ICP (iterative closest point) success rate contoured against the initial pose error, with the point cloud re-sampled on every trial. With no translation offset, success drops below 50 % at 90 degrees for point-to-point and 120 degrees for point-to-plane. On a real part (part 22 of T-LESS, 26 structured-light depth frames), with the same part and the same criterion, the point-to-plane 50 % angle is 72.9 to 84.0 degrees for points all around, 58.3 to 66.0 for the visible side only and 44.2 to 54.0 for measured depth (range over 5 random seeds). Measured depth is narrower than all-around points for every seed and both definitions (19.6 to 31.5 degrees taking the first crossing, 7.9 to 30.0 degrees taking the last; point-to-point shrinks to 1.7 degrees with the last crossing), but the split between one-sidedness and depth noise varies with the seed (the criterion is returning to where ICP started from the truth ends up; for measured depth that end point is 5.3 degrees from the truth in median). The 50 % angle is taken where success first drops below 50 %; taken where it last drops, measured depth gives 45.0 to 65.0 degrees. At 15 degrees of initial error measured depth succeeds in 73 to 88 % of trials (100 % all around). Spheres and cylinders converge to the same residual with an arbitrary pose; with the global method all 16 of 16 trials appear converged and the pose is wrong — undetectable from the residual.*
+*↑ **The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be? (a synthetic bracket and a public measured part)** ―― On a real part from the public T-LESS set (part 22, 26 structured-light depth frames, CC BY 4.0), we counted, over a sweep of initial rotations, how often ICP (iterative closest point) returns to where ICP started from the truth ends up (the "floor"). All-around model points, one-sided model points and measured depth are compared under the same criterion, and the video overlays the model in the currently estimated pose on the real photograph. Success falls below half 7.9 to 31.5 degrees earlier with measured depth than with all-around points (point-to-plane; the range covers 3 ways of reading the crossing and 5 random seeds, and measured depth is narrower in every one). But with measured depth, 4 to 27 % of trials started only 15 to 30 degrees off stop 3 to 20 degrees from the floor (0 % all around and one-sided): that part is scatter of the end point, not the edge of the basin. Counting only errors of 20 degrees or more as failures, the 50 % angles of one-sided points (58.3 to 66.0 degrees) and measured depth (58.3 to 67.5 degrees) overlap. The floor is not the truth: it is a median 5.3 degrees from it (only 4 % within 3 degrees of the truth), so this compares how far ICP can recover, not pose accuracy. Fine angle ranges move by a few degrees with the random stream. On the synthetic bracket, with no translation offset, success drops below 50 % at 90 degrees for point-to-point and 120 degrees for point-to-plane. With the global method a sphere converges in appearance in 16 of 16 trials with the wrong pose — undetectable from the residual. Where the numbers come from: the synthetic run of this PoC, with a gate comparing the headline numbers against their record. The real-data numbers were re-measured on local data on 2026-11-15 and matched the record; CI has no data and checks only the shape of that record.*
 
 Terms: ICP — A registration method that alternates nearest-point correspondence with rigid-transform estimation between two point clouds.
 
-[![100 % から 0 % へ落ちる位置が収束域の縁。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin.png)
+[![100 % から 0 % へ落ちる位置が収束域の縁(並進ずれ 0 の行で 50 % を切るのは 90 度)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin.png)
 
-*↑ The measurement ―― 100 % から 0 % へ落ちる位置が収束域の縁。並進ずれを足すと縁が左へ動く(15 試行/点)。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― 100 % から 0 % へ落ちる位置が収束域の縁(並進ずれ 0 の行で 50 % を切るのは 90 度)。並進ずれ(直径の 0〜50 %)による縁の動きは、1 点 15 試行の誤差(標準誤差 最大 13 点)の内で、この図からは言えない。 (figure labels are in Japanese; the numbers are the same)*
 
 [![非対称性が消えると 4 候補が形として区別できず、選択が崩れる(選ばれた解が第 1 候補から離れる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant.png)
 
@@ -1980,6 +1980,10 @@ Terms: ICP — A registration method that alternates nearest-point correspondenc
 
 *↑ 球・円柱は残差が小さいまま姿勢が任意。*
 
+[![サムネイル用の静止画。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/07_real_scan_still_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/07_real_scan_still.png)
+
+*↑ サムネイル用の静止画。*
+
 [![点対点 ICP を 1 反復ずつ動かす(fs.icp(max_iter=1) を前回の姿勢から連鎖)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/05_icp_basin_iterations.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/05_icp_basin_iterations.gif)
 
 *↑ The animation ―― 点対点 ICP を 1 反復ずつ動かす(fs.icp(max_iter=1) を前回の姿勢から連鎖)。灰 = 目標の点群、色 = 動かしている点群(斜めから見た正射影)。同じ回転軸で初期回転ずれだけを 30 / 90 / 150 度と変え、並進ずれは直径の 10 %。反復予算は本文の点対点 ICP と同じ 60 回で、その後の回転誤差: 30 度 → 0.6 度(成功)、90 度 → 0.6 度(成功)、150 度 → 179.5 度(失敗)。下の曲線は回転誤差の推移(対数、灰線 = 成功のしきい値 3 度)。動画専用に取り直した 1 組の点群での 1 試行の軌跡で、成功率は第 2 章の表。*
@@ -1990,7 +1994,7 @@ py -3.11 examples/poc_registration_basin.py
 
 Source: [examples/poc_registration_basin.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py)
 
-This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_registration_basin)
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_registration_basin)
 
 Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`depth_to_points`](https://furuse.work/ops/3d/transform/depth_to_points.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`farthest_point_sampling`](https://furuse.work/ops/3d/geodesic/farthest_point_sampling.html) · [`find_surface_pose`](https://furuse.work/ops/3d/match_pose/find_surface_pose.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
@@ -3640,13 +3644,15 @@ This run produced **9 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) · [`erfc`](https://furuse.work/ops/math/numerics/erfc.html) · [`esdf`](https://furuse.work/ops/3d/occupancy/esdf.html) · [`face_areas`](https://furuse.work/ops/3d/mesh_process/face_areas.html) · [`face_normals`](https://furuse.work/ops/3d/mesh_process/face_normals.html) · [`grid_coords`](https://furuse.work/ops/3d/sdf_csg/grid_coords.html) · [`morph_erode3d`](https://furuse.work/ops/3d/morphology/morph_erode3d.html) · [`render_shaded`](https://furuse.work/ops/3d/render/render_shaded.html) · [`sdf_intersect`](https://furuse.work/ops/3d/sdf_csg/sdf_intersect.html) · [`sdf_subtract`](https://furuse.work/ops/3d/sdf_csg/sdf_subtract.html) · [`sdf_to_occupancy`](https://furuse.work/ops/3d/transform/sdf_to_occupancy.html) · [`sdf_union`](https://furuse.work/ops/3d/sdf_csg/sdf_union.html) · [`vol_wall_thickness`](https://furuse.work/ops/3d/probe/vol_wall_thickness.html) · [`voxel_to_mesh`](https://furuse.work/ops/3d/transform/voxel_to_mesh.html)
 
-## No.2026.070 —— Earthwork on a slope — align first and the scar gets shallower
+## No.2026.070 —— Earthwork from Two Epochs of Airborne LiDAR — Without Removing the Offset Everything Looks Dug Out (real data), and Alignment Can Swallow the Change (synthetic)
 
-Subtracting airborne point clouds of a site taken in different years shows how much ground was dug away. When the changed area covers 33 % of the scene, the alignment absorbs the change itself and the earthwork volume collapses. On public real data, the whole area looks excavated until a systematic offset is removed.
+Subtracting public airborne LiDAR of one park from two years makes the whole area look sunk, as if dug away. Aligning the 0.183 m offset on flat ground leaves only the change around the building. On a synthetic slope where change covers much of the scene, alignment absorbs the change and the volume collapses.
 
-[![Earthwork on a slope — align first and the scar gets shallower](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene.png)
+[![Earthwork from Two Epochs of Airborne LiDAR — Without Removing the Offset Everything Looks Dug Out (real data), and Alignment Can Swallow the Change (synthetic)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene.png)
 
-*↑ **Earthwork on a slope — align first and the scar gets shallower** ―― A synthetic slope carries an excavation and a deposit of known volume; two epochs of airborne points are differenced both vertically (DoD) and along the local surface normal (M3C2). The expected "cos-θ shrinkage on a slope" never appears — integrating vertical differences over horizontal area cancels the cosine, and the excavated volume stays within -0.011 % from 0 to 40 degrees. What breaks is the registration: when the changed area covers 33 % of the scene, ICP absorbs the change itself and the net volume collapses from a true -30.4 m3 to -3.8 m3, while a no-change control alone already fabricates 83.8 m3 of phantom excavation.*
+*↑ **Earthwork from Two Epochs of Airborne LiDAR — Without Removing the Offset Everything Looks Dug Out (real data), and Alignment Can Swallow the Change (synthetic)** ―― Ground points of public airborne LiDAR (USGS 3DEP, a 500 m square of Forest Park in St. Louis, 2012 and 2017, public domain) were averaged into 1 m cells with Fullseye's elevation_map and subtracted. Subtracted as is, the whole block looks 0.183 m lower, and the 130595 cells with ground points in both years give a phantom net volume of −23619 m3. Aligning on the median of flat ground (slope under 5 degrees) brings the net to +280 m3 (4 % of the 0.049 m NMAD per cell), leaving only the change around the museum (2.1 % of the valid cells). The cause of the offset is unresolved (the geoid difference explains only +0.027 m), and whether the change area is real change or a classification difference cannot be told. On a synthetic slope (25 degrees, an excavation and a deposit of known volume) the expected "cos shrinkage on a slope" never appears: the excavated volume stays at −0.011 % from 0 to 40 degrees. What breaks is the registration: when the changed area covers 33 % of the scene, all-correspondence alignment absorbs the change itself and the net volume collapses from a true −30.4 m3 to −3.8 m3, while a no-change control already fabricates 83.8 m3 of phantom excavation. Where the numbers come from: the synthetic run of this PoC, with a gate comparing the headline numbers against their record. The real-data numbers are the record of a local run on 2026-11-15; CI has no data and checks only the shape of that record.*
+
+Terms: LiDAR — A sensor that measures range using laser light, commonly by time of flight, to produce a three-dimensional point cloud.
 
 [![傾斜を 0 から 40 度まで振っても体積の誤差に傾向が無い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/01_geometry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/01_geometry.png)
 
@@ -3656,17 +3662,17 @@ Subtracting airborne point clouds of a site taken in different years shows how m
 
 *↑ 真の掘削は 164.2 m3。*
 
-[![予測式は先に立ててから測った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/04_slope_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/04_slope_table.png)
+[![変化ゼロの対照で測った検出限界。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/05_density_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/05_density_cliff.png)
 
-*↑ 予測式は先に立ててから測った。*
+*↑ 変化ゼロの対照で測った検出限界。*
 
-[![誤差はそのしきい値以上の真値に対する値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/07_occlusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/07_occlusion.png)
+[![取りこぼしは 1 % 未満でも、樹冠は数 m 高いので標準偏差だけが桁で跳ねる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/08_occlusion_lod_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/08_occlusion_lod.png)
 
-*↑ 誤差はそのしきい値以上の真値に対する値。*
+*↑ 取りこぼしは 1 % 未満でも、樹冠は数 m 高いので標準偏差だけが桁で跳ねる。*
 
-[![M3C2 の L は法線方向なので cos 25 度 = 0.906 倍だけ浅く出る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/11_scar_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/11_scar_profile.png)
+[![地面点(分類 2)の 1 m セル平均の差(Fullseye の elevation_map。表示は 2 m 角 = 1 m セル 4 つのうち値のあるものの平均)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/13_real_dod_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/13_real_dod.png)
 
-*↑ M3C2 の L は法線方向なので cos 25 度 = 0.906 倍だけ浅く出る。*
+*↑ 地面点(分類 2)の 1 m セル平均の差(Fullseye の elevation_map。表示は 2 m 角 = 1 m セル 4 つのうち値のあるものの平均)。*
 
 [![主図(動画、640 × 360・30 fps・12 秒): 前半は傾斜 25 度の斜面を北の上空から横切り、時期 1 の点群(8 pt/m²、樹冠に当たった点 = 緑)を見せる(動画専用の乱数で作った別の標本)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/12_flight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/12_flight.gif)
 
@@ -3678,9 +3684,9 @@ py -3.11 examples/poc_lidar_terrain_change.py
 
 Source: [examples/poc_lidar_terrain_change.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
 
-This run produced **14 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lidar_terrain_change)
+This run produced **15 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lidar_terrain_change)
 
-Ops used (notes): [`chamfer_distance`](https://furuse.work/ops/3d/metrics/chamfer_distance.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`dem_hillshade`](https://furuse.work/ops/dem/shading/dem_hillshade.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`estimate_oriented_normals`](https://furuse.work/ops/3d/normals_orient/estimate_oriented_normals.html) · [`fit_plane_3d`](https://furuse.work/ops/3d/geometry/fit_plane_3d.html) · [`icp_point2point_3d`](https://furuse.work/ops/3d/refine/icp_point2point_3d.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`ransac_plane`](https://furuse.work/ops/3d/robust_fit/ransac_plane.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`voxel_grid_downsample`](https://furuse.work/ops/3d/preprocess/voxel_grid_downsample.html)
+Ops used (notes): [`chamfer_distance`](https://furuse.work/ops/3d/metrics/chamfer_distance.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`dem_hillshade`](https://furuse.work/ops/dem/shading/dem_hillshade.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`elevation_map`](https://furuse.work/ops/drive/walkterrain/elevation_map.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`estimate_oriented_normals`](https://furuse.work/ops/3d/normals_orient/estimate_oriented_normals.html) · [`fit_plane_3d`](https://furuse.work/ops/3d/geometry/fit_plane_3d.html) · [`icp_point2point_3d`](https://furuse.work/ops/3d/refine/icp_point2point_3d.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`ransac_plane`](https://furuse.work/ops/3d/robust_fit/ransac_plane.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`voxel_grid_downsample`](https://furuse.work/ops/3d/preprocess/voxel_grid_downsample.html)
 
 ## No.2026.099 —— Weighing an Animal from Silhouettes — The Error You Can Buy Down, and the One You Cannot
 

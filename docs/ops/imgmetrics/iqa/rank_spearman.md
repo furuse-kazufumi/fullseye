@@ -5,7 +5,7 @@ category: iqa
 in: any × any
 out: scalar
 gpu: なし
-examples: [poc_iqa_fsim_gmsd_vif, poc_iqa_tid2013]
+examples: [poc_iqa_fsim_gmsd_vif, poc_iqa_tid2013, poc_solar_el_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -37,6 +37,7 @@ Spearman の順位相関 ρ = 平均順位どうしの Pearson 相関(同順位�
 
 - [poc_iqa_fsim_gmsd_vif](../../../../examples/poc_iqa_fsim_gmsd_vif.py) — `py -3.11 examples/poc_iqa_fsim_gmsd_vif.py`
 - [poc_iqa_tid2013](../../../../examples/poc_iqa_tid2013.py) — `py -3.11 examples/poc_iqa_tid2013.py`
+- [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 

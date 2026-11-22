@@ -30,35 +30,43 @@ HDR 合成する方が、偏光子の角度較正に手をかけるより効く�
 
 10. **実物に見える場面で** —— フィルムで包んだ箱のラベルと鋼のナットを、高さ場の光線追跡・
    フレネルの s/p 反射率(誘電体と金属は glassmirror の別の式)・レンズのぼけ・消光比・
-   ショット雑音・12 bit・飽和で撮った生モザイク 1 枚から分離する。フィルムの映り込みは 9 割
+   ショット雑音・12 bit・飽和で撮った生モザイク 1 枚から分離する。**分離は Fullseye の op**
+   (``specularity.polarization_stokes_map`` / ``polarization_separate``)。既定の fail-closed では、雑音で当てはめた
+   最小輻度が負になる画素(0.20〜0.43 %、種と条件による)のために拒否され、明示した許容 POL_MVF = 1 % で通す
+   (割合は 10 節が毎回印字する)。固定のフィルタは画素ごとの Stokes を ``optics.mueller_element('polarizer')`` /
+   ``mueller_apply`` に通して組む。フィルムの映り込みは 9 割
    消えて印字が読めるようになり、残りは閉形式 R_p * E と 1 割以内で合う。**ゼロ点は偏光フィルタ
    1 枚(最適角)**: この場面(小さなソフトボックス 1 灯)では固定のフィルタの方が良い。固定のフィルタは 2 通り
    作る —— 偏光カメラと同じモザイクから組んだもの(角度を選べることだけを比べる)と、全画素で撮る別のカメラ
    (同じセンサ・同じ露光、角度は雑音の無い像で選んだ最良、2x2 を足して偏光カメラと同じ画素数)。しわの深さ
    だけ・照明の広さだけを振ると、**どちらも比(偏光カメラ / 固定のフィルタ)を偏光カメラ側へ押し上げる**。
-   全画素のフィルタと比べると、狭い照明ではしわを 4 倍にしても比は 1 に届かず(固定のフィルタで足りる)、
-   照明だけを大きな面照明まで広げると比は 1 前後(1024 画素・種 6 本で 1.03〜1.07、512 画素・種 13 本で
-   0.94〜1.05 —— 読める水準での差は 1 割未満)。両方が大きいと偏光カメラがはっきり勝つ(1.13〜1.43)が、
-   CNR は 2 前後でどちらも印字は読めない。言えるのは「しわも照明の広さも差を広げる。1024 画素では比を 1 より
-   上へ出したのは照明を広げたときだけ」まで —— **512 画素では互角で、種によってはしわとの順序も入れ替わる**
-   (種 137: 照明だけ 0.944 < しわだけ 0.955)。勝敗を決める量(映り込みの入射面の向きのばらつき)は測っていない。
-   モザイクから組んだフィルタとの勝ち負け(前の版の門)は種で入れ替わる(512 画素・種 137 の大きな面照明で
-   偏光カメラ 6.60 < フィルタ 6.64)ので門にせず、全画素のフィルタとの比だけを門にした。
-   モザイクから組んだフィルタは全画素のものより CNR が 2〜7 % 低く、その分だけ偏光カメラを有利に見せていた
-   (前の版の「大きな面照明ならしわ 1 倍でも勝つ」は 1024 画素で 11 % → 全画素のフィルタとは 7 %、512 画素では
-   互角)。袋の膨らみ(ピロー包装)でも試したが、固定のフィルタに勝てなかった(使っていない)。鋼は飽和しない短い露光で測り直し、消える割合は描画と同じ
+   全画素のフィルタと比べると、狭い照明ではしわを 4 倍にしても比は 1 に届かず(固定のフィルタで足りる。最大
+   1024 画素で 0.97、512 画素で 0.95)、照明だけを大きな面照明まで広げると比は 1 前後(1024 画素・種 4 本で 1.05〜1.08、
+   512 画素・種 13 本で 0.94〜1.05 —— 読める水準での差は 1 割未満)。両方が大きいと比は 1.27〜1.57 まで上がるが、
+   CNR は 2 前後でどちらも印字は読めず、実用上の勝敗は付けられない。言えるのは「しわも照明の広さも差を広げる。1024 画素では比を 1 より
+   上へ出したのは照明を広げたときだけ」まで —— **512 画素では互角で(照明だけで 1 に届いたのは 13 本中 4 本)、
+   種によってはしわとの順序も入れ替わる**(種 71・137: 照明だけ 0.937/0.937 < しわだけ 0.939/0.939)。勝敗を決める量(映り込みの入射面の向きのばらつき)は測っていない。
+   モザイクから組んだフィルタとの勝ち負けは種で入れ替わる(512 画素・小さなソフトボックスで 種 33 は 偏光カメラ 5.79 対
+   フィルタ 5.82、種 41 は 5.88 対 5.83)ので門にせず、全画素のフィルタとの比だけを門にした。
+   モザイクから組んだフィルタは全画素のものより CNR が 16〜29 % 低く、その分だけ偏光カメラを有利に見せる。
+   ★2026-11-15 に分離を PoC の中の numpy(S0 = I0 + I90 の 2 枚)から op(S0 = 4 枚の和の半分、最小二乗)へ替えた
+   (独立レビューの high: 図 09 と見出しの数が op を通っていなかった)。数は全部変わった —— 1024 画素・種 33 で
+   偏光カメラの CNR 7.57 → 6.93、モザイクから組んだフィルタ 7.98 → 6.86、全画素のフィルタは 8.27 のまま(分離を通らない)。
+   結論(この照明では固定のフィルタで足りる)は強まった。下がった理由の内訳は測っていない。袋の膨らみ(ピロー包装)でも試したが、固定のフィルタに勝てなかった(使っていない)。鋼は飽和しない短い露光で測り直し、消える割合は描画と同じ
    金属のフレネルの式(3 割弱)と合う —— これは実装の検算(雑音・ぼけ・モザイクを通しても式どおり出るか)
    で、外の真値ではない。図の白いナットは飽和。数は図つき実行(1024 画素)と CI(512 画素)で少し違う。
    場面・真値とも自作の描画で、フレネルの式も描画と照合で同じ glassmirror(探した範囲では、
    再配布できる許諾の偏光カメラの公開データが見つからなかった)。
 
-★ この PoC が出した道具の穴は末尾の「所見」節に 5 件まとめた。要点は
+★ この PoC が出した道具の穴は末尾の「所見」節に 5 件まとめた(うち (b)(d) の 2 件は 2026-10-23 の
+``polarization_stokes_map`` で解決済み)。要点は
 ``polarization_separate`` の返す "diffuse" が **``R_p * E`` だけ系統的に大きい**
 こと、そしてその補正に必要な入射角の口が op に無いこと。
 """
 from __future__ import annotations
 
 import math
+import re
 import sys
 import time
 from pathlib import Path
@@ -68,6 +76,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import match3d                                                   # noqa: E402
+import optics                                                    # noqa: E402
 import specularity                                               # noqa: E402
 from fullseye.evaluation import rmse as evaluation_rmse           # noqa: E402
 
@@ -93,6 +102,45 @@ STEEL_NK = (2.90, 3.00)         # 鋼(鉄)の複素屈折率 n + ik、可視の�
 FULL_WELL_E = 10000.0           # 飽和電子数
 READ_E = 3.0                    # 読出し雑音 [e-]
 ADC_BITS = 12
+#: 10 節で偏光の op(specularity.polarization_separate / polarization_stokes_map)に渡す max_violation_frac。
+#: 既定 0(fail-closed)は、生モザイクの雑音で「当てはめた最小輻度が負」になる画素が 1 つでもあると拒否する
+#: (雑音が 0 近くの暗い印字の上で起きる)。既定で拒否されたときは op が数えた割合を記録して印字し、この明示の
+#: 許容で呼び直す —— 割合が許容を超えれば op がもう一度拒否して止まる。2026-11-15 の探針(512 画素・種 13 本、1024 画素・
+#: 種 4 本、主の場面・短い露光・掃引の全条件)で拒否された割合は 0.20〜0.43 %。その 2 倍強を覆う 1 % を置く(毎回 10 節が印字)。
+POL_MVF = 0.01
+
+#: 見出しに載せる数を、印字と同じ丸めの文字列で集める。
+SHOWN: dict[str, str] = {}
+#: 10 節の見出しの数。図あり 1024 画素が full、図なし 512 画素が reduced。
+HEADLINE = {
+    "full": {
+        "size": "1024", "refused_main_pct": "0.33", "refused_low_pct": "0.38", "refused_max_pct": "0.38",
+        "allowed_pct": "1", "theta_deg": "50.1", "glare_px": "41237", "dolp": "0.51", "film_removed_pct": "91",
+        "resid_meas": "0.0389", "resid_pred": "0.0356", "resid_diff_pct": "9.3",
+        "cnr_before": "1.6", "cnr_fixed_mosaic": "6.9", "cnr_camera": "7.0", "cnr_fixed_full": "8.4",
+        "ratio_wrinkle_first": "0.84", "ratio_wrinkle_last": "0.96", "ratio_light": "1.08", "ratio_both": "1.49",
+        "metal_removed_pct": "29", "metal_pred_pct": "28",
+    },
+    "reduced": {
+        "size": "512", "refused_main_pct": "0.21", "refused_low_pct": "0.31", "refused_max_pct": "0.28",
+        "allowed_pct": "1", "theta_deg": "50.2", "glare_px": "11052", "dolp": "0.51", "film_removed_pct": "92",
+        "resid_meas": "0.0320", "resid_pred": "0.0330", "resid_diff_pct": "2.9",
+        "cnr_before": "1.6", "cnr_fixed_mosaic": "5.9", "cnr_camera": "5.8", "cnr_fixed_full": "8.1",
+        "ratio_wrinkle_first": "0.72", "ratio_wrinkle_last": "0.94", "ratio_light": "0.99", "ratio_both": "1.34",
+        "metal_removed_pct": "30", "metal_pred_pct": "28",
+    },
+}
+
+
+def check_headline(full: bool) -> None:
+    """10 節の丸めた印字を、画素数に対応する ``HEADLINE`` と文字列で照合する。"""
+    key = "full" if full else "reduced"
+    want = HEADLINE[key]
+    diff = {k: (want[k], SHOWN.get(k)) for k in want if SHOWN.get(k) != want[k]}
+    print("   見出しの数(この実行): " + "  ".join("%s=%s" % (k, SHOWN.get(k)) for k in want))
+    print("   [%s] 見出しの数(%d 個)が記録 HEADLINE[%s] と一致する%s" % (
+        "ok" if not diff else "NG", len(want), key, (" — 食い違い(記録, 実行): %s" % diff) if diff else ""))
+    assert not diff, "見出しの数が記録と食い違う: %s" % diff
 
 
 def _smooth_noise(rng, shape, sigma):
@@ -101,21 +149,54 @@ def _smooth_noise(rng, shape, sigma):
     return a / max(float(a.std()), 1e-12)
 
 
+def _stable_radiance(a):
+    """合成輝度を 1e-8 で固定し、畳み込みの 1 ULP 差が Poisson 乱数列を変えないようにする。
+
+    Quantise synthetic radiance at 1e-8 so platform-level convolution round-off cannot
+    branch the subsequent Poisson draw sequence. The sensor is only 12 bit, so this is
+    more than four decimal decades below one output level and does not weaken the physics.
+    """
+    return np.round(np.asarray(a, dtype=np.float64), 8)
+
+
 def _label_albedo(h, w, seed):
-    """ラベルの印字(白い紙に黒の文字・バーコード・枠)を PIL で描いた反射率 (h, w)。"""
-    from PIL import Image, ImageDraw, ImageFont
+    """内蔵 5x7 書体で描く白い紙・黒文字・バーコードの反射率。System-font independent label."""
+    import ocrclassic as OCR
+
     rng = np.random.default_rng(seed)
     scale = 4
-    im = Image.new("L", (w * scale, h * scale), 225)
-    d = ImageDraw.Draw(im)
     W_, H_ = w * scale, h * scale
-    d.rectangle((int(0.04 * W_), int(0.05 * H_), int(0.96 * W_), int(0.95 * H_)), outline=30, width=3 * scale)
-    font_path = str(figs._japanese_font_path(bold=True))
-    f_big = ImageFont.truetype(font_path, int(0.105 * W_))
-    f_mid = ImageFont.truetype(font_path, int(0.064 * W_))
-    d.text((int(0.08 * W_), int(0.09 * H_)), "精密部品 FS-2611", font=f_big, fill=15)
-    d.text((int(0.08 * W_), int(0.27 * H_)), "LOT 261108-A   数量 50", font=f_mid, fill=20)
-    d.text((int(0.08 * W_), int(0.39 * H_)), "保管: 直射日光を避ける", font=f_mid, fill=20)
+    im = np.full((H_, W_), 225.0, dtype=np.float64)
+
+    def rectangle(box, fill):
+        x0, y0, x1, y1 = box
+        im[max(0, y0):min(H_, y1 + 1), max(0, x0):min(W_, x1 + 1)] = fill
+
+    x0, y0, x1, y1 = int(0.04 * W_), int(0.05 * H_), int(0.96 * W_), int(0.95 * H_)
+    border = 3 * scale
+    rectangle((x0, y0, x1, y0 + border - 1), 30)
+    rectangle((x0, y1 - border + 1, x1, y1), 30)
+    rectangle((x0, y0, x0 + border - 1, y1), 30)
+    rectangle((x1 - border + 1, y0, x1, y1), 30)
+
+    glyphs = OCR.ocr_font("dot5x7")["glyphs"]
+
+    def text(x, y, value, cell, fill):
+        advance = 6 * cell
+        for i, char in enumerate(value):
+            if char == " ":
+                continue
+            glyph = np.repeat(np.repeat(glyphs[char].astype(bool), cell, axis=0), cell, axis=1)
+            gx, gy = x + i * advance, y
+            hh = min(glyph.shape[0], H_ - gy)
+            ww = min(glyph.shape[1], W_ - gx)
+            if hh > 0 and ww > 0:
+                tile = im[gy:gy + hh, gx:gx + ww]
+                tile[glyph[:hh, :ww]] = fill
+
+    text(int(0.08 * W_), int(0.09 * H_), "FS-2611", max(2, int(0.013 * W_)), 15)
+    text(int(0.08 * W_), int(0.27 * H_), "LOT 261108-A  QTY 50", max(2, int(0.0065 * W_)), 20)
+    text(int(0.08 * W_), int(0.39 * H_), "KEEP DRY", max(2, int(0.0065 * W_)), 20)
     # バーコード(幅 1〜4 単位の黒白の帯)。実在の符号系の規則は使わない —— 縞の見え方だけ
     x = int(0.08 * W_)
     y0, y1 = int(0.55 * H_), int(0.86 * H_)
@@ -124,11 +205,13 @@ def _label_albedo(h, w, seed):
     while x < int(0.62 * W_):
         wbar = unit * int(rng.integers(1, 5))
         if black:
-            d.rectangle((x, y0, x + wbar - 1, y1), fill=12)
+            rectangle((x, y0, x + wbar - 1, y1), 12)
         x += wbar
         black = not black
-    d.text((int(0.66 * W_), int(0.64 * H_)), "検査済", font=f_mid, fill=25)
-    a = np.asarray(im.resize((w, h), Image.Resampling.LANCZOS), dtype=np.float64) / 255.0
+    text(int(0.66 * W_), int(0.64 * H_), "INSPECTED", max(2, int(0.0065 * W_)), 25)
+    # 4x4 の面積平均は NumPy だけで定義し、Pillow / FreeType の版と OS の差を入れない。
+    # Exact area averaging keeps the antialiasing independent of Pillow and FreeType.
+    a = im.reshape(h, scale, w, scale).mean(axis=(1, 3)) / 255.0
     return 0.03 + 0.85 * a
 
 
@@ -354,11 +437,36 @@ def render_bench_stokes(size=1024, seed=33, wrinkle=1.0, soft=(9.0, 14.0)):
     s2 = pol * np.sin(2.0 * psi)
     film_spec = np.where(is_film, spec_s + spec_p, 0.0)
     metal_spec = np.where(is_metal, spec_s + spec_p, 0.0)
-    return {"stokes": np.stack([s0, s1, s2]), "diffuse": diffuse, "film": film_spec,
-            "metal": metal_spec, "spec_p": spec_p, "spec_s": spec_s,
-            "theta_deg": theta, "is_film": is_film, "is_metal": is_metal,
-            "psi_deg": np.degrees(psi), "rs_film": rs_f, "rp_film": rp_f,
-            "albedo": np.where(is_film, alb, 0.0)}
+    return {"stokes": _stable_radiance(np.stack([s0, s1, s2])), "diffuse": _stable_radiance(diffuse),
+            "film": _stable_radiance(film_spec), "metal": _stable_radiance(metal_spec),
+            "spec_p": _stable_radiance(spec_p), "spec_s": _stable_radiance(spec_s),
+            "theta_deg": _stable_radiance(theta), "is_film": is_film, "is_metal": is_metal,
+            "psi_deg": _stable_radiance(np.degrees(psi)), "rs_film": _stable_radiance(rs_f),
+            "rp_film": _stable_radiance(rp_f), "albedo": _stable_radiance(np.where(is_film, alb, 0.0))}
+
+
+def separate_mosaic(analyzers):
+    """10 節の核: 4 方位の生モザイク(1/2 解像度の 4 枚)を Fullseye の偏光の op で分ける。
+
+    ``specularity.polarization_stokes_map`` で画素ごとの Stokes(S0 = 4 枚の和の半分、S1 = I0 − I90、
+    S2 = I45 − I135)・偏光度・方位を、``specularity.polarization_separate`` で無偏光の成分
+    (= S0 − |S1, S2|、映り込みを剥がした像)を出す。★まず既定(``max_violation_frac=0`` = fail-closed)で
+    呼び、拒否されたら op が数えた画素の割合を記録してから、明示した許容 :data:`POL_MVF` で呼び直す
+    (割合が許容を超えれば op がもう一度拒否して止まる)。``refused_frac`` は既定で拒否された画素の割合
+    (拒否されなければ 0.0)。2026-11-15 まではこの計算を PoC の中の numpy で書いていた(S0 = I0 + I90 の
+    2 枚だけ)ので、図 09 と見出しの数が op を通っていなかった(独立レビューの high)。
+    """
+    refused = 0.0
+    try:
+        specularity.polarization_separate(analyzers, ANGLES)
+    except ValueError as exc:
+        m = re.search(r"(\d+) of (\d+) pixel", str(exc))
+        if m is None:
+            raise
+        refused = int(m.group(1)) / int(m.group(2))
+    sm = specularity.polarization_stokes_map(analyzers, ANGLES, max_violation_frac=POL_MVF)
+    diffuse, polarised = specularity.polarization_separate(analyzers, ANGLES, max_violation_frac=POL_MVF)
+    return {"stokes_map": sm, "diffuse": diffuse, "polarised": polarised, "refused_frac": refused}
 
 
 def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0, return_truth=False, exposure_scale=1.0,
@@ -385,7 +493,7 @@ def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0, return_tru
     ideal = np.stack([0.5 * (blur[0] + blur[1] * np.cos(2 * a) + blur[2] * np.sin(2 * a)) for a in ang])
     leak = 1.0 / extinction_ratio
     opposite = ideal[[2, 3, 0, 1]]
-    measured = (ideal + leak * opposite) / (1.0 + leak)
+    measured = _stable_radiance((ideal + leak * opposite) / (1.0 + leak))
     electrons = rng.poisson(np.clip(measured, 0.0, None) * FULL_WELL_E).astype(np.float64)
     electrons += rng.normal(0.0, READ_E, electrons.shape)
     levels = 2 ** ADC_BITS - 1
@@ -397,15 +505,12 @@ def dofp_inspection_scene(size=1024, seed=33, extinction_ratio=120.0, return_tru
     raw[1::2, 1::2] = measured[3, 1::2, 1::2]
     analyzers = np.stack([raw[0::2, 0::2], raw[0::2, 1::2],
                           raw[1::2, 0::2], raw[1::2, 1::2]])
-    st0 = analyzers[0] + analyzers[2]
-    st1 = analyzers[0] - analyzers[2]
-    st2 = analyzers[1] - analyzers[3]
-    dolp = np.hypot(st1, st2) / np.maximum(st0, 1e-9)
-    aolp = np.mod(0.5 * np.degrees(np.arctan2(st2, st1)), 180.0)
-    glare_removed = np.clip(st0 - np.hypot(st1, st2), 0.0, 2.0)
+    sep = separate_mosaic(analyzers)
+    sm = sep["stokes_map"]
     result = {"raw_mosaic": raw, "analyzers": analyzers,
-              "stokes": np.stack([st0, st1, st2]), "dolp": dolp,
-              "aolp_deg": aolp, "glare_removed": glare_removed,
+              "stokes": np.stack([sm["s0"], sm["s1"], sm["s2"]]), "dolp": sm["dolp"],
+              "aolp_deg": sm["aolp_deg"], "glare_removed": sep["diffuse"],
+              "refused_frac": sep["refused_frac"],
               "scene_masks": {"metal": b["is_metal"], "plastic": film},
               "azimuth_deg": float(np.median(b["psi_deg"][film])),
               "extinction_ratio": extinction_ratio, "exposure": expo}
@@ -657,17 +762,15 @@ WRINKLES = (1.0, 2.0, 3.0, 4.0)
 #: 測る条件(照明の名前, しわの倍率): しわだけの掃引 + 照明だけの掃引 + 両方が大きい 1 点
 SWEEP = ([("小さなソフトボックス", w) for w in WRINKLES] + [(n, 1.0) for n in LIGHTS if n != "小さなソフトボックス"]
          + [("大きな面照明", 4.0)])
-#: 2026-11-08 の探針(10 節と同じ関数、種 = 描画の乱数、雑音の種は +2)の 偏光カメラ / 全画素の固定フィルタ の比。
-#: 門はこの表で種によらず成り立つものだけ(結果を見てから置いた門 —— 余白は門の所に書く)。
-#:   1024 画素・種 33/41/57: しわだけ(小さな照明)1→2→3→4 倍 0.92→0.96→0.97→0.97(3 本とも同じ形)、
-#:     照明だけ(しわ 1 倍)±9°→±15°→±22°→±30° 0.92→0.95→1.01〜1.04→1.04〜1.07、両方 1.36〜1.43
-#:   512 画素・種 33/41/57/71/89: しわだけ 0.84〜0.86→0.91〜0.92→0.94〜0.95→0.95〜0.96、
-#:     照明だけ 0.84〜0.86→0.86〜0.92→0.92〜1.03→0.96〜1.05、両方 1.13〜1.19
-#: 2026-11-09 の確認(独立の探針、種 101/113/127/131/137/149/163/179):
-#:   512 画素: しわだけの最大 0.947〜0.966、照明だけ(大きな面照明)0.944〜1.025(1 を超えたのは 8 本中 3 本)、
-#:     両方 1.145〜1.352。種 137 は照明だけ 0.944 < しわだけ 0.955 で順序が逆 —— 「1 に届いたのは照明だけ」は
-#:     1024 画素の所見で、512 画素では言えない。モザイクのフィルタとの勝ち負けは種 137 で逆転(6.60 < 6.64)
-#:   1024 画素・種 101/113/127: しわだけの最大 0.969〜0.978、照明だけ 1.033〜1.059、両方 1.331〜1.371
+#: 2026-11-15 の探針(分離を op に替えた後。10 節と同じ関数 bench_glare_numbers、種 = 描画の乱数、雑音の種は +2)の
+#: 偏光カメラ / 全画素の固定フィルタ の比。門はこの表で種によらず成り立つものだけ(結果を見てから置いた門 —— 余白は門の所に書く)。
+#: 取り直しの道具と生の値は repo の外(view2026_featured30_2026_11_15/g3/probe)。11-08 / 11-09 の表は手書きの分離の値で、もう使わない。
+#:   512 画素・種 33/41/57/71/89/101/113/127/131/137/149/163/179:
+#:     しわだけ(小さな照明)1→4 倍 0.705〜0.748 → 0.937〜0.952、照明だけ(しわ 1 倍)大きな面照明 0.937〜1.050、両方 1.270〜1.510
+#:     既定の fail-closed で拒否された画素の割合 0.29〜0.35 %(主の場面・短い露光・掃引の全条件の最大)
+#:   1024 画素・種 33/41/57/101:
+#:     しわだけ(小さな照明)1→4 倍 0.831〜0.849 → 0.961〜0.973、照明だけ(しわ 1 倍)大きな面照明 1.048〜1.079、両方 1.492〜1.572
+#:     既定の fail-closed で拒否された画素の割合 0.38〜0.43 %(主の場面・短い露光・掃引の全条件の最大)
 LOW_EXPOSURE = 1.0 / 8.0          # 鋼を飽和させずに測るための短い露光(HDR の短い方の 1 枚)
 
 
@@ -693,15 +796,16 @@ def _label_cnr_tools(r, h2):
 def fixed_polarizer_best(r, cnr):
     """ゼロ点: レンズの前に偏光フィルタを 1 枚、最適な角度で固定する(2.5° 刻みで 0〜180° を全部試す)。
 
-    同じ生モザイクの Stokes から ``2·I(θ) = S0 + S1 cos 2θ + S2 sin 2θ`` を組む(フィルタを付けた普通の
-    カメラと同じ明るさの尺度)。★実物の固定フィルタはモザイクを持たないので全画素を使え、透過率も
+    同じ生モザイクの画素ごとの Stokes(``polarization_stokes_map``)を理想の偏光子の Mueller 行列
+    (``optics.mueller_element('polarizer', θ)`` / ``optics.mueller_apply``)に通し、透過の 2 倍
+    ``2·I(θ) = S0 + S1 cos 2θ + S2 sin 2θ`` を組む(フィルタを付けた普通のカメラと同じ明るさの尺度)。★実物の固定フィルタはモザイクを持たないので全画素を使え、透過率も
     違う —— ここでは同じセンサの同じ画素数で比べ、角度を選べることだけを比べる。
     """
     s0, s1, s2 = r["stokes"]
+    field = np.stack([s0, s1, s2, np.zeros_like(s0)], axis=-1)     # 画素ごとの Stokes(直線の検光子では S3 = 0)
     best = (-np.inf, 0.0, None)
     for th in np.arange(0.0, 180.0, 2.5):
-        t = math.radians(th)
-        img = s0 + s1 * math.cos(2 * t) + s2 * math.sin(2 * t)
+        img = 2.0 * optics.mueller_apply(optics.mueller_element("polarizer", float(th)), field)[..., 0]
         c = cnr(img)
         if c > best[0]:
             best = (c, th, img)
@@ -721,18 +825,33 @@ def fixed_polarizer_fullres(bench, r, cnr, seed):
     s0, s1, s2 = (_nd.gaussian_filter(expo * a, 0.7) for a in bench["stokes"])
     leak = 1.0 / r["extinction_ratio"]
     h2 = s0.shape[0] // 2
+    field = np.stack([s0, s1, s2, np.zeros_like(s0)], axis=-1)
 
-    def through(th):
+    def through_op(th):
+        # 採用する固定フィルタ像は、画素ごとの Stokes を Fullseye の Mueller op に通す。直交側は消光比の漏れ。
+        a = optics.mueller_apply(optics.mueller_element("polarizer", float(th)), field)[..., 0]
+        b = optics.mueller_apply(optics.mueller_element("polarizer", float(th + 90.0)), field)[..., 0]
+        return (a + leak * b) / (1.0 + leak)
+
+    def score_image(th):
+        # 72 候補の角度選びだけは、上の Mueller 行列の第 1 行を展開して同じ強度を安く採点する。
         t = math.radians(th)
         c, si = math.cos(2 * t), math.sin(2 * t)
         a = 0.5 * (s0 + s1 * c + s2 * si)
-        b = 0.5 * (s0 - s1 * c - s2 * si)                  # 直交する成分(消光比の分だけ漏れる)
+        b = 0.5 * (s0 - s1 * c - s2 * si)
         return (a + leak * b) / (1.0 + leak)
 
     def bin2(a):
         return a.reshape(h2, 2, h2, 2).sum(axis=(1, 3))
-    clean, th_best = max((cnr(bin2(through(th))), th) for th in np.arange(0.0, 180.0, 2.5))
-    m = through(th_best)
+    _score, th_best = max((cnr(bin2(score_image(th))), th) for th in np.arange(0.0, 180.0, 2.5))
+    m = _stable_radiance(through_op(th_best))
+    # 角度選びの手の展開が Mueller の op の像と同じであることの検算(2026-11-22 の独立レビュー: 選んだ角度は最終の
+    # CNR に効くのに、展開と op の一致を確かめていなかった)。選んだ角度と固定の 4 角度で、像の差が浮動小数の丸めの内
+    for th in (float(th_best), 0.0, 22.5, 45.0, 90.0):
+        dev = float(np.max(np.abs(score_image(th) - through_op(th))))
+        assert dev <= 1e-9 * max(1.0, float(np.max(np.abs(m)))), (
+            "固定フィルタの角度選びの展開が Mueller の op と食い違う(θ = %.1f°、最大差 %.3g)" % (th, dev))
+    clean = cnr(bin2(m))
     rng = np.random.default_rng(seed + 7)
     e = rng.poisson(np.clip(m, 0.0, None) * FULL_WELL_E).astype(np.float64) + rng.normal(0.0, READ_E, m.shape)
     levels = 2 ** ADC_BITS - 1
@@ -798,6 +917,7 @@ def bench_glare_numbers(size=1024, seed=33):
         fg = fixed_polarizer_best(rg, cg)
         ff = fixed_polarizer_fullres(bg, rg, cg, seed)
         grid[(lname, wk)] = {"none": cg(rg["stokes"][0]), "fixed": fg[0], "fixed_deg": fg[1], "dofp": cg(rg["glare_removed"]),
+                             "refused": rg["refused_frac"],
                              "fixed_full": ff[0], "fixed_full_deg": ff[1], "fixed_full_clean": ff[2]}
     theta = _half(r["truth_theta_deg"], h2)
     return {"r": r, "film_removed": film_removed, "metal_removed": metal_removed, "metal_pred": metal_pred,
@@ -806,7 +926,7 @@ def bench_glare_numbers(size=1024, seed=33):
             "fixed_img": fixed[2], "sat_metal": sat_metal, "sat_metal_lo": float((~unsat_lo & metal).sum() / max(metal.sum(), 1)),
             "theta_film": float(np.median(theta[gl])), "n_glare_px": int(gl.sum()), "size": size,
             "dolp_film": float(np.median(r["dolp"][gl])), "before": before, "after": after,
-            "grid": grid}
+            "grid": grid, "refused_main": r["refused_frac"], "refused_low": r_lo["refused_frac"]}
 
 
 def _ratio_full(g, light, wrinkle):
@@ -829,7 +949,7 @@ def fig_glare_removed_label(g):
 
     tiles = [enc(g["before"]), enc(g["fixed_img"]), enc(g["after"])]
     h, w = tiles[0].shape[:2]
-    gap, head, foot = 12, 104, 186
+    gap, head, foot = 12, 104, 215
     W_ = 3 * w + 2 * gap
     im = Image.new("RGB", (W_, h + head + foot), (24, 26, 30))
     for i, t in enumerate(tiles):
@@ -855,8 +975,10 @@ def fig_glare_removed_label(g):
         text(c, (x, 70), size=18, fill=cols[i])
     y0 = h + head + 8
     lines = [
-        "4 方位の画素偏光子センサの生モザイク 1 枚(雑音・ぼけ・消光比 1/120・12 bit・飽和入り、%d 画素の描画)。入射角 約 %.0f°。"
+        "4 方位の画素偏光子センサの生モザイク 1 枚(雑音・ぼけ・消光比 1/120・12 bit・飽和入り、%d 画素の描画、合成)。入射角 約 %.0f°。"
         % (g["size"], g["theta_film"]),
+        "分離は Fullseye の op(polarization_stokes_map / polarization_separate)。既定では拒否(最小が負の画素 %.2f %%)、"
+        "明示の許容 %.0f %% で通した。" % (100 * g["refused_main"], 100 * POL_MVF),
         "この場面(小さなソフトボックス 1 灯)では固定の偏光フィルタ 1 枚で足りる。以下の比は 偏光カメラ / 全画素で撮る固定フィルタ:",
         "しわだけ 1→4 倍で %.2f→%.2f、照明だけ大きな面照明へ広げて %.2f、両方で %.2f(CNR %.1f 対 %.1f、どちらも読めない)。"
         % (_ratio_full(g, "小さなソフトボックス", 1.0), _ratio_full(g, "小さなソフトボックス", 4.0),
@@ -870,8 +992,9 @@ def fig_glare_removed_label(g):
     for i, line in enumerate(lines):
         text(line, (14, y0 + 29 * i), size=17, fill=(210, 210, 210))
     figs.save("glare_removed_label", np.asarray(im),
-              caption="フィルムで包んだ箱のラベルと鋼のナットを、4 方位の画素偏光子センサで 1 枚撮った(%d 画素の描画)。"
-                      "左から 偏光子なし / 最適角の偏光フィルタ 1 枚(同じモザイクから組んだ像)/ 偏光カメラで剥がした像。"
+              caption="フィルムで包んだ箱のラベルと鋼のナットを、4 方位の画素偏光子センサで 1 枚撮った(%d 画素の描画、合成)。"
+                      "左から 偏光子なし / 最適角の偏光フィルタ 1 枚(同じモザイクから組んだ像)/ 偏光カメラで剥がした像"
+                      "(分離は Fullseye の polarization_stokes_map / polarization_separate)。"
                       "印字の CNR は %.1f / %.1f / %.1f(全画素で撮るフィルタなら %.1f)—— "
                       "この場面(小さなソフトボックス 1 灯)では固定のフィルタで足りる。全画素で撮る固定のフィルタ(同じ画素数)と比べた比は、"
                       "しわだけを 4 倍にして %.2f→%.2f、照明だけを大きな面照明へ広げて %.2f、両方で %.2f(CNR %.2f 対 %.2f、どちらも"
@@ -885,6 +1008,58 @@ def fig_glare_removed_label(g):
                          _ratio_full(g, "大きな面照明", 1.0), _ratio_full(g, "大きな面照明", 4.0),
                          g["grid"][("大きな面照明", 4.0)]["dofp"], g["grid"][("大きな面照明", 4.0)]["fixed_full"],
                          g["size"], 100 * g["metal_removed"], 100 * g["metal_pred"]))
+    return True
+
+
+def fig_glare_cover(g):
+    """表紙(正方形 720 px): ラベルの所だけを 2 枚並べる —— 偏光子なし / 偏光カメラで剥がした像(op)。下に固定のフィルタの値。
+
+    ページのカードとサムネイル(320 px)で字が読めるように大きな字で書く(09 は 3 枚が横長で、正方形に切ると真ん中の
+    1 枚だけが残り、比べる構図が消えていた —— 2026-11-15 の独立レビュー)。像は 09 と同じ(同じ白の基準・同じガンマ)。
+    """
+    if not figs.enabled():
+        return None
+    from PIL import Image
+    import annotate as AN
+    size, head, foot, gap = 720, 64, 124, 8
+    tw, th = (size - gap) // 2, size - head - foot
+    film = g["r"]["scene_masks"]["plastic"][0::2, 0::2]
+    ys, xs = np.nonzero(film)
+    Hh, Ww = film.shape
+    cw = 1.08 * (xs.max() - xs.min() + 1)
+    ch = min(cw * th / tw, float(Hh))
+    cw = ch * tw / th
+    y0 = int(round(min(max(0.5 * (ys.min() + ys.max()) - ch / 2, 0.0), Hh - ch)))
+    x0 = int(round(min(max(0.5 * (xs.min() + xs.max()) - cw / 2, 0.0), Ww - cw)))
+    box = (x0, y0, x0 + int(round(cw)), y0 + int(round(ch)))
+    white = float(np.percentile(g["before"][film], 99.5))
+
+    def enc(a):
+        q = np.clip(np.asarray(a) / white, 0.0, 1.0) ** (1.0 / 2.2)
+        im = Image.fromarray(np.rint(q * 255).astype(np.uint8)).crop(box).resize((tw, th), Image.LANCZOS)
+        return np.repeat((np.asarray(im, dtype=np.float64) / 255.0)[..., None], 3, axis=2)
+
+    canvas = np.ones((size, size, 3))
+    panels = ((g["before"], "偏光子なし", "印字の CNR %.1f" % g["cnr_before"]),
+              (g["after"], "偏光カメラで剥がす", "CNR %.1f・映り込み %.0f %% 減" % (g["cnr_after"], 100 * g["film_removed"])))
+    for i, (img, t1, t2) in enumerate(panels):
+        tile = enc(img)
+        tile = np.asarray(AN.text_box(tile, t1, (6, 6), anchor="lt", font_size=28))
+        tile = np.asarray(AN.text_box(tile, t2, (6, 52), anchor="lt", font_size=24))
+        canvas[head:head + th, i * (tw + gap):i * (tw + gap) + tw] = tile
+    ff = g["grid"][("小さなソフトボックス", 1.0)]["fixed_full"]
+    canvas = np.asarray(AN.text_box(canvas, "フィルムの映り込みを偏光で消す(合成)", (size // 2, head // 2), anchor="cm",
+                                    font_size=30, box_alpha=0.0))
+    canvas = np.asarray(AN.text_box(canvas, "全画素の偏光フィルタ 1 枚なら CNR %.1f" % ff, (12, head + th + 12), anchor="lt",
+                                    font_size=27, box_alpha=0.0))
+    canvas = np.asarray(AN.text_box(canvas, "→ この照明ではフィルタ 1 枚で足りる", (12, head + th + 64), anchor="lt",
+                                    font_size=27, box_alpha=0.0))
+    figs.save("glare_cover", canvas,
+              caption="表紙(合成、%d 画素の描画): フィルムで包んだラベルの所だけを切り出した。左 = 偏光子なし(印字の CNR %.1f)、"
+                      "右 = 偏光カメラの生モザイクを Fullseye の op(polarization_stokes_map / polarization_separate)で分けて"
+                      "映り込みを剥がした像(CNR %.1f、映り込み %.0f %% 減)。全画素で撮る固定の偏光フィルタ 1 枚なら CNR %.1f —— "
+                      "この照明(小さなソフトボックス 1 灯)では固定のフィルタで足りる。偏光カメラの勝ちではない。"
+                      % (g["size"], g["cnr_before"], g["cnr_after"], 100 * g["film_removed"], ff))
     return True
 
 
@@ -1335,6 +1510,7 @@ def main():
     big_d, big_l = scene(1024, 1024)
     ba, bb = specular_components(big_l, 70.0)
     big = render_sweep(big_d, ba, bb)
+    times = []                                          # 並びは下の 4 本の順(先頭 = 分離、末尾 = 素朴な最小値)
     for label, fn in (("polarization_separate", lambda: separate(big)),
                       ("polarization_dolp_map",
                        lambda: specularity.polarization_dolp_map(big, ANGLES)),
@@ -1343,17 +1519,22 @@ def main():
                       ("ゼロ点 3(最小値)", lambda: null_frame_min2(big))):
         t0 = time.perf_counter()
         fn()
-        print(f"  {label:<26}{1e3 * (time.perf_counter() - t0):>9.1f} ms  "
+        times.append(1e3 * (time.perf_counter() - t0))
+        print(f"  {label:<26}{times[-1]:>9.1f} ms  "
               f"(4 x 1024 x 1024)")
     print("  → 3 つの op はどれも同じ正弦波当てはめ 1 回で、コストは区別できない。")
-    print("     素朴な最小値の 13 倍だが、1 Mpixel で 83 ms は毎フレーム回せる。")
-    print("     **偏光板を付けない理由に計算コストは使えない。**")
+    print("     素朴な最小値の %.0f 倍、1 Mpixel で %.0f ms(この機械のこの回の実測。混み具合で何倍も変わる)。"
+          % (times[0] / max(times[-1], 1e-9), times[0]))
 
     # ---------------------------------------------------------------- #
     print("\n=== 10. 実物に見える検査台 —— フィルムで包んだラベルと鋼のナット ===")
     size10 = 1024 if figs.enabled() else 512
     g10 = bench_glare_numbers(size10)
     print(f"  {size10}x{size10} の生モザイク 1 枚(雑音・ぼけ・消光比 1/120・12 bit・飽和入り)")
+    ref_grid = max(v["refused"] for v in g10["grid"].values())
+    print(f"  分離は Fullseye の op(polarization_stokes_map / polarization_separate)。既定(fail-closed)では拒否 —— "
+          f"当てはめた最小輻度が負の画素 {100 * g10['refused_main']:.2f} %(短い露光 {100 * g10['refused_low']:.2f} %、"
+          f"掃引の最大 {100 * ref_grid:.2f} %)。明示した許容 POL_MVF = {100 * POL_MVF:.0f} % で通した")
     print(f"  フィルムの映り込み(入射角の中央値 {g10['theta_film']:.1f} 度、{g10['n_glare_px']} 画素): "
           f"偏光度 {g10['dolp_film']:.2f}、分離で {100 * g10['film_removed']:.1f} % 消える")
     print(f"  分離の後に残る映り込み: 実測 {g10['resid_meas']:.4f} / 閉形式 2*I_p = R_p*E "
@@ -1372,7 +1553,7 @@ def main():
           + "、照明の広さだけ " + " → ".join("%.2f" % x for x in rl)
           + "、両方 %.2f" % _ratio_full(g10, "大きな面照明", 4.0))
     print("     しわも照明の広さも比を偏光カメラ側へ押し上げる。1024 画素では 1 に届いたのは照明を広げたときだけだが、")
-    print("     512 画素では互角で、種によってしわとの順序も入れ替わる(種 137: 照明だけ 0.944 < しわだけ 0.955)。")
+    print("     512 画素では互角で、種によってしわとの順序も入れ替わる(種 71・137: 照明だけ 0.937/0.937 < しわだけ 0.939/0.939)。")
     print("     読める水準(CNR > 3)での差は 1 割未満。両方が大きいときの大差は CNR 2 前後(どちらも読めない)。モザイクから組んだフィルタは")
     print("     全画素のものより CNR が低く、その分だけ偏光カメラを有利に見せる(勝ち負けは種で入れ替わるので門にしない)。")
     print("     数は %d 画素・種 1 本(種を振った表は" % size10)
@@ -1383,6 +1564,7 @@ def main():
     print("  → 誘電体(フィルム)の映り込みは偏光で 9 割剥がれ、残りは R_p*E の 1 割以内。偏光カメラが固定のフィルタを")
     print("     読める水準で上回る差は小さい(照明を広げたときに 1 割未満)。鋼の映り込みが残るのは偏光が弱いこと(式どおり)と飽和の両方。")
     fig_glare_removed_label(g10)
+    fig_glare_cover(g10)
 
     print("\n所見(想定と違ったこと):")
     print("   (1) 「ブリュースター角付近が最良」は正しかったが、**理由が予想と")
@@ -1409,19 +1591,16 @@ def main():
     print("       「垂直入射で false」とだけ書くが、**偏りが閉形式で書ける**ことも、")
     print("       ρ = (R_s-R_p)/(R_s+R_p) を渡せば完全に消せることも書いていない。")
     print("       `specular_dop=` のような引数が 1 つあれば 5 節の補正が op 内で済む。")
-    print("   (b) **AoLP(偏光の方位角)を返す op が無い。** `_polar_fit` は a1,a2 を")
-    print("       計算しているので 0.5*atan2(a2,a1) を返すだけだが、外へ出る口は")
-    print("       `polarization_stokes` の **場面全体 1 本**しかない。方位は入射面の")
-    print("       向き = 面法線の方位そのもので、形状復元の主役なのに画素ごとに")
-    print("       取れない(`polar_cam.py` は自前で計算していて op を使っていない)。")
+    print("   (b) 【解決済み 2026-10-23】AoLP(偏光の方位角)を画素ごとに返す op が無かった。")
+    print("       今は `polarization_stokes_map` が s0/s1/s2/dolp/aolp_deg/lit を返し、10 節の分離はこれを使う。")
     print("   (c) fail-closed 検査は下端(最小輻度が負)だけを見ており、**上端の")
     print("       飽和は素通りする**(8-c)。飽和は例外なしで拡散を過大評価する側へ")
     print("       倒れるので、雑音より質が悪い。`I >= 1.0` の画素率を返すか、")
     print("       `max_saturated_frac` があると同じ規律で守れる。")
-    print("   (d) **画素ごとの Stokes 地図が無い。** `polarization_stokes` は空間平均")
+    print("   (d) 【解決済み 2026-10-23】画素ごとの Stokes 地図が無かった。`polarization_stokes` は空間平均")
     print("       (4,) だけで、7 節のとおり場面平均の偏光度 "
           f"{math.hypot(st[1], st[2]) / st[0]:.3f} は画素最大 {dolp.max():.3f} の")
-    print("       1/6 以下。平均値で「偏光は使えない」と判断すると取り逃す。")
+    print("       1/6 以下。今は `polarization_stokes_map` が画素ごとに返す(10 節)。")
     print("   (e) 部分偏光の鏡面を **前方合成する op が無い**。")
     print("       `polarization_render` は鏡面完全偏光だけで、フレネルから")
     print("       (R_s, R_p) を作って掃引にする経路は本 PoC が手で書いた。")
@@ -1535,6 +1714,8 @@ def main():
     assert rmse(null_frame_min(frames), d_true) > 1e-2
 
     # 10. 実物に見える検査台: フィルムは剥がれ、鋼は剥がれず、残りは閉形式 R_p*E
+    # 文の「既定(fail-closed)では拒否し、明示した許容で通した」を守る。上限は op が通した時点で成り立つので数えない
+    assert g10["refused_main"] > 0.0, "既定の fail-closed で拒否されなかった(文の前提が変わった)"
     assert g10["film_removed"] > 0.85, f"フィルムの映り込みが剥がれない: {g10['film_removed']:.3f}"
     assert g10["metal_removed"] < 0.60, f"鋼の映り込みまで剥がれた: {g10['metal_removed']:.3f}"
     assert g10["film_removed"] - g10["metal_removed"] > 0.30, "誘電体と金属の差が出ない"
@@ -1548,11 +1729,10 @@ def main():
     assert max(gr[("大きな面照明", 4.0)]["dofp"], gr[("大きな面照明", 4.0)]["fixed"],
                gr[("大きな面照明", 4.0)]["fixed_full"]) < 3.0, (
         "深いしわ + 面照明で印字が読める CNR になった(「どちらも読めない」の所見が変わった)")
-    # 全画素の固定フィルタとの門(探針の種 13 本 x 512・6 本 x 1024 の最小の余白)。CI は 512 画素で走るので、効く余白は
-    # 512 画素の列: しわだけでは 1 に届かない(512 の最大 0.966 = 余白 3.4 %。1024 の最大 0.978 = 余白 2.2 % は図つき
-    # 実行でだけ効き、CI では効かない)、しわは比を上げる(+0.05 以上、余白 0.03)、照明だけでも比を上げる(512 の種 137 で
-    # +0.089、余白 0.039)、照明だけの大きな面照明で差は 1 割未満(0.944〜1.07、余白 4.4 %)、両方が大きいと 1.1 倍を超える
-    # (最小 1.13)。「1 に届いたのは照明だけ」は 512 画素で種により成り立たないので門にしない(文で条件を付ける)
+    # 全画素の固定フィルタとの門(2026-11-15 の探針、分離を op に替えた後。512 画素・種 13 本、1024 画素・種 4 本 —— SWEEP の上の表)。
+    # 余白: しわだけでは 1 に届かない(512 の最大 0.952、1024 の最大 0.973)、しわは比を上げる(+0.12 以上)、照明だけでも
+    # 比を上げる(+0.19 以上)、照明だけの大きな面照明で差は 1 割未満(0.937〜1.079)、両方が大きいと 1.1 倍を超える(最小 1.270)。
+    # 門の閾値は 11-08 のまま(緩めていない)。「1 に届いたのは照明だけ」は 512 画素で種により成り立たないので門にしない
     rw = [_ratio_full(g10, "小さなソフトボックス", w) for w in WRINKLES]
     assert max(rw) < 1.0, f"狭い照明でしわだけを深くして全画素の固定フィルタに勝った(所見が変わった): {rw}"
     assert rw[-1] > rw[0] + 0.02, f"しわを深くしても比が上がらない: {rw}"
@@ -1565,6 +1745,25 @@ def main():
         f"残る映り込みが R_p*E と合わない: {g10['resid_meas']:.4f} vs {g10['resid_pred']:.4f}")
     assert g10["cnr_after"] > 3.0 * g10["cnr_before"], "剥がしても印字が読みやすくならない"
     assert 45.0 < g10["theta_film"] < 55.0, "入射角がカメラの傾き 50 度の近くにない(幾何が壊れた)"
+
+    small = gr[("小さなソフトボックス", 1.0)]
+    both = _ratio_full(g10, "大きな面照明", 4.0)
+    SHOWN.update(
+        size="%d" % size10, refused_main_pct="%.2f" % (100 * g10["refused_main"]),
+        refused_low_pct="%.2f" % (100 * g10["refused_low"]), refused_max_pct="%.2f" % (100 * ref_grid),
+        allowed_pct="%.0f" % (100 * POL_MVF), theta_deg="%.1f" % g10["theta_film"],
+        glare_px="%d" % g10["n_glare_px"], dolp="%.2f" % g10["dolp_film"],
+        film_removed_pct="%.0f" % (100 * g10["film_removed"]), resid_meas="%.4f" % g10["resid_meas"],
+        resid_pred="%.4f" % g10["resid_pred"],
+        resid_diff_pct="%.1f" % (100 * abs(g10["resid_meas"] / g10["resid_pred"] - 1)),
+        cnr_before="%.1f" % g10["cnr_before"], cnr_fixed_mosaic="%.1f" % g10["cnr_fixed"],
+        cnr_camera="%.1f" % g10["cnr_after"], cnr_fixed_full="%.1f" % small["fixed_full"],
+        ratio_wrinkle_first="%.2f" % rw[0], ratio_wrinkle_last="%.2f" % rw[-1], ratio_light="%.2f" % r_large,
+        ratio_both="%.2f" % both, metal_removed_pct="%.0f" % (100 * g10["metal_removed"]),
+        metal_pred_pct="%.0f" % (100 * g10["metal_pred"]),
+    )
+    print("\n=== 11. 見出しの数 ===")
+    check_headline(size10 == 1024)
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

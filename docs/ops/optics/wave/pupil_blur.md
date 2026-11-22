@@ -5,7 +5,7 @@ category: wave
 in: image2d × image2d
 out: image2d
 gpu: なし
-examples: [optics_imaging, poc_nir_silicon_transmission]
+examples: [optics_imaging, poc_fourier_ptychography, poc_nir_silicon_transmission]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -76,6 +76,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
+- [poc_fourier_ptychography](../../../../examples/poc_fourier_ptychography.py) — `py -3.11 examples/poc_fourier_ptychography.py`
 - [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
