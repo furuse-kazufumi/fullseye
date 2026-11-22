@@ -1001,6 +1001,11 @@ def test_poc_runner_is_split_by_test_once_each_with_the_file_average_weight():
         assert {x: i for i, p in enumerate(rev) for x in p} == where
 
 
+#: 片の重さと PoC の重さの総和の比較に使う相対の許容。どちらも同じ所要時間の和だが、足す順が違う
+#: (片ごとに足す / 全部を足してから倍率を掛ける)ので、丸めの差が相対 1e-15 ほど出る。等号の側で
+#: その差に落ちないよう、意味のある差よりずっと小さい 1e-9 だけ許す(2026-11-23、#339 で 5e-12 の差で落ちた)。
+LOAD_COMPARE_REL_TOL = 1e-9
+
 def test_poc_runner_split_on_the_real_baseline_shortens_the_longest_shard():
     with open(os.path.join(ROOT, ".test_durations"), encoding="utf-8") as f:
         d = json.load(f)
@@ -1032,8 +1037,8 @@ def test_poc_runner_split_on_the_real_baseline_shortens_the_longest_shard():
     whole = _POC.replace(".py", "_as_one_file.py") + "::"                           # 同じ重さを 1 ファイルのまま配ると
     _, loads_w = CST._shard_plan_with_loads([x.replace(_POC + "::", whole, 1) for x in ids], 6,
                                             {x.replace(_POC + "::", whole, 1): v for x, v in heavy.items()})
-    assert max(loads_w) >= heavy_total, (loads_w, heavy_total)                     # 1 ファイルの片が下限になる
-    assert max(loads_h) < heavy_total, (loads_h, heavy_total)                      # 散らすと下限ではなくなる
+    assert max(loads_w) >= heavy_total * (1 - LOAD_COMPARE_REL_TOL), (loads_w, heavy_total)   # 1 ファイルの片が下限になる
+    assert max(loads_h) < heavy_total * (1 - LOAD_COMPARE_REL_TOL), (loads_h, heavy_total)    # 散らすと下限ではなくなる
     assert max(loads_h) <= 1.02 * (sum(loads_h) / 6), loads_h
 
 
