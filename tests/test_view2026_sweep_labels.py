@@ -15,8 +15,8 @@ from tools import build_view2026_viewers as B
 CASES = [
     (B.build_focus_sweep, "F値", "f-number", "真のテクスチャとのRMSE (0–1階調)",
      "RMSE from true texture (0–1 intensity)"),
-    (B.build_interferometry_sweep, "雑音 σ", "noise σ", "段差0.55 µmとの絶対差",
-     "Absolute error from 0.55 µm step"),
+    (B.build_interferometry_sweep, "雑音 σ", "noise σ", "段差 0.55 µm の総合誤差(40 回)",
+     "Total error of the 0.55 µm step (40 runs)"),
     (B.build_polarization_sweep, "入射角", "incidence angle", "真の拡散成分とのRMSE (0–1階調)",
      "RMSE from true diffuse component (0–1 intensity)"),
     (B.build_photoelastic_sweep, "検光子角", "analyser angle", "円板内の平均輝度 (0–1)",
@@ -57,8 +57,9 @@ def _expected_endpoints(name):
             st = P.focal_stack(tex, depth, focus, f_number=float(v), layers=16)
             return P.rms(P.fuse(st, P.fm_laplacian(st), focus)[0] - tex)
     elif name == "build_interferometry_sweep":
+        # 2026-11-15: σ ごとに 40 回(PoC の repeat、3 節と同じ種の流れ)の総合誤差 √(偏り² + 標準偏差²) [nm]
         P = B._load("poc_interferometry_step"); xs = np.linspace(0.0, 0.12, 24)
-        metric = lambda v, i: abs(float(P.measure_step(0.55, float(v), i, dz=P.DZ, n_planes=P.NP)[0]) - 0.55)
+        metric = lambda v, _: float(np.hypot(*P.repeat(0.55, float(v), dz=P.DZ, n_planes=P.NP, n=P.N_TRIAL)[:2]))
     elif name == "build_polarization_sweep":
         P = B._load("poc_polarization_specular"); d, l = P.scene(128, 160); xs = np.linspace(0, 80, 25)
         def metric(v, _):

@@ -2620,37 +2620,62 @@
     "fr": "LiDAR aéroporté à deux dates : sans retirer le décalage, tout semble creusé"
    },
    "lead": {
-    "ja": "造成地を別の時期に測った航空点群を引き算すると、掘削の体積が分かる。変化した場所が視野の 33 % もあると、位置合わせが変化そのものを吸い込んで土量が潰れた。公開の実データでは、系統的な差を引かないと全面が掘れたように見えた。",
-    "en": "Subtracting airborne point clouds of a site taken in different years shows how much ground was dug away. When the changed area covers 33 % of the scene, the alignment absorbs the change itself and the earthwork volume collapses. On public real data, the whole area looks excavated until a systematic offset is removed.",
-    "zh": "Subtracting airborne point clouds of a site taken in different years shows how much ground was dug away. When the changed area covers 33 % of the scene, the alignment absorbs the change itself and the earthwork volume collapses. On public real data, the whole area looks excavated until a systematic offset is removed.",
-    "tw": "Subtracting airborne point clouds of a site taken in different years shows how much ground was dug away. When the changed area covers 33 % of the scene, the alignment absorbs the change itself and the earthwork volume collapses. On public real data, the whole area looks excavated until a systematic offset is removed.",
-    "ko": "Subtracting airborne point clouds of a site taken in different years shows how much ground was dug away. When the changed area covers 33 % of the scene, the alignment absorbs the change itself and the earthwork volume collapses. On public real data, the whole area looks excavated until a systematic offset is removed.",
-    "de": "Subtracting airborne point clouds of a site taken in different years shows how much ground was dug away. When the changed area covers 33 % of the scene, the alignment absorbs the change itself and the earthwork volume collapses. On public real data, the whole area looks excavated until a systematic offset is removed.",
-    "hi": "Subtracting airborne point clouds of a site taken in different years shows how much ground was dug away. When the changed area covers 33 % of the scene, the alignment absorbs the change itself and the earthwork volume collapses. On public real data, the whole area looks excavated until a systematic offset is removed.",
-    "fr": "Subtracting airborne point clouds of a site taken in different years shows how much ground was dug away. When the changed area covers 33 % of the scene, the alignment absorbs the change itself and the earthwork volume collapses. On public real data, the whole area looks excavated until a systematic offset is removed."
+    "ja": "公開の航空 LiDAR で同じ公園を別々の年に測った地面を引き算すると、区画全体が沈んだように見え、全面が掘れたことになった。平坦部で 0.183 m の系統差を合わせると、残るのは建物まわりの変化だけ。合成の斜面では、変化した場所が視野の大きな割合を占めると、位置合わせが変化そのものを吸い込んで土量が潰れた。",
+    "en": "Subtracting public airborne LiDAR of one park from two years makes the whole area look sunk, as if dug away. Aligning the 0.183 m offset on flat ground leaves only the change around the building. On a synthetic slope where change covers much of the scene, alignment absorbs the change and the volume collapses.",
+    "zh": "Subtracting public airborne LiDAR of one park from two years makes the whole area look sunk, as if dug away. Aligning the 0.183 m offset on flat ground leaves only the change around the building. On a synthetic slope where change covers much of the scene, alignment absorbs the change and the volume collapses.",
+    "tw": "Subtracting public airborne LiDAR of one park from two years makes the whole area look sunk, as if dug away. Aligning the 0.183 m offset on flat ground leaves only the change around the building. On a synthetic slope where change covers much of the scene, alignment absorbs the change and the volume collapses.",
+    "ko": "Subtracting public airborne LiDAR of one park from two years makes the whole area look sunk, as if dug away. Aligning the 0.183 m offset on flat ground leaves only the change around the building. On a synthetic slope where change covers much of the scene, alignment absorbs the change and the volume collapses.",
+    "de": "Subtracting public airborne LiDAR of one park from two years makes the whole area look sunk, as if dug away. Aligning the 0.183 m offset on flat ground leaves only the change around the building. On a synthetic slope where change covers much of the scene, alignment absorbs the change and the volume collapses.",
+    "hi": "Subtracting public airborne LiDAR of one park from two years makes the whole area look sunk, as if dug away. Aligning the 0.183 m offset on flat ground leaves only the change around the building. On a synthetic slope where change covers much of the scene, alignment absorbs the change and the volume collapses.",
+    "fr": "Subtracting public airborne LiDAR of one park from two years makes the whole area look sunk, as if dug away. Aligning the 0.183 m offset on flat ground leaves only the change around the building. On a synthetic slope where change covers much of the scene, alignment absorbs the change and the volume collapses."
    },
    "see": {
-    "ja": "傾斜のある合成地形に既知体積の掘削と堆積を仕込み、2 時期の航空点群から鉛直差分と法線方向の差で土量を測った。予想した「斜面では cos だけ体積が縮む」は外れで、水平投影面積で積む限り cos は約分し、掘削体積の誤差は傾斜 0〜40 度でどれも -0.011 % のまま動かない。",
-    "en": "A synthetic slope carries an excavation and a deposit of known volume; two epochs of airborne points are differenced both vertically (DoD) and along the local surface normal (M3C2). The expected \"cos-θ shrinkage on a slope\" never appears — integrating vertical differences over horizontal area cancels the cosine, and the excavated volume stays within -0.011 % from 0 to 40 degrees. ",
-    "zh": "A synthetic slope carries an excavation and a deposit of known volume; two epochs of airborne points are differenced both vertically (DoD) and along the local surface normal (M3C2). The expected \"cos-θ shrinkage on a slope\" never appears — integrating vertical differences over horizontal area cancels the cosine, and the excavated volume stays within -0.011 % from 0 to 40 degrees. ",
-    "tw": "A synthetic slope carries an excavation and a deposit of known volume; two epochs of airborne points are differenced both vertically (DoD) and along the local surface normal (M3C2). The expected \"cos-θ shrinkage on a slope\" never appears — integrating vertical differences over horizontal area cancels the cosine, and the excavated volume stays within -0.011 % from 0 to 40 degrees. ",
-    "ko": "A synthetic slope carries an excavation and a deposit of known volume; two epochs of airborne points are differenced both vertically (DoD) and along the local surface normal (M3C2). The expected \"cos-θ shrinkage on a slope\" never appears — integrating vertical differences over horizontal area cancels the cosine, and the excavated volume stays within -0.011 % from 0 to 40 degrees. ",
-    "de": "A synthetic slope carries an excavation and a deposit of known volume; two epochs of airborne points are differenced both vertically (DoD) and along the local surface normal (M3C2). The expected \"cos-θ shrinkage on a slope\" never appears — integrating vertical differences over horizontal area cancels the cosine, and the excavated volume stays within -0.011 % from 0 to 40 degrees. ",
-    "hi": "A synthetic slope carries an excavation and a deposit of known volume; two epochs of airborne points are differenced both vertically (DoD) and along the local surface normal (M3C2). The expected \"cos-θ shrinkage on a slope\" never appears — integrating vertical differences over horizontal area cancels the cosine, and the excavated volume stays within -0.011 % from 0 to 40 degrees. ",
-    "fr": "A synthetic slope carries an excavation and a deposit of known volume; two epochs of airborne points are differenced both vertically (DoD) and along the local surface normal (M3C2). The expected \"cos-θ shrinkage on a slope\" never appears — integrating vertical differences over horizontal area cancels the cosine, and the excavated volume stays within -0.011 % from 0 to 40 degrees. "
+    "ja": "公開の航空 LiDAR(USGS 3DEP、セントルイス Forest Park の 500 m 四方、2012 年と 2017 年、public domain)の地面点を、Fullseye の elevation_map で 1 m セルの平均標高にして引き算した。",
+    "en": "Ground points of public airborne LiDAR (USGS 3DEP, a 500 m square of Forest Park in St. Louis, 2012 and 2017, public domain) were averaged into 1 m cells with Fullseye's elevation_map and subtracted. ",
+    "zh": "Ground points of public airborne LiDAR (USGS 3DEP, a 500 m square of Forest Park in St. Louis, 2012 and 2017, public domain) were averaged into 1 m cells with Fullseye's elevation_map and subtracted. ",
+    "tw": "Ground points of public airborne LiDAR (USGS 3DEP, a 500 m square of Forest Park in St. Louis, 2012 and 2017, public domain) were averaged into 1 m cells with Fullseye's elevation_map and subtracted. ",
+    "ko": "Ground points of public airborne LiDAR (USGS 3DEP, a 500 m square of Forest Park in St. Louis, 2012 and 2017, public domain) were averaged into 1 m cells with Fullseye's elevation_map and subtracted. ",
+    "de": "Ground points of public airborne LiDAR (USGS 3DEP, a 500 m square of Forest Park in St. Louis, 2012 and 2017, public domain) were averaged into 1 m cells with Fullseye's elevation_map and subtracted. ",
+    "hi": "Ground points of public airborne LiDAR (USGS 3DEP, a 500 m square of Forest Park in St. Louis, 2012 and 2017, public domain) were averaged into 1 m cells with Fullseye's elevation_map and subtracted. ",
+    "fr": "Ground points of public airborne LiDAR (USGS 3DEP, a 500 m square of Forest Park in St. Louis, 2012 and 2017, public domain) were averaged into 1 m cells with Fullseye's elevation_map and subtracted. "
    },
    "num": {
-    "ja": "壊れたのは合わせ方のほうで、変化域が視野の 33 % もあると位置合わせが変化そのものを吸い、正味土量は真値 -30.4 m3 に対し -3.8 m3 まで潰れた ―― 変化なしの対照ですら偽の掘削が 83.8 m3 出る。",
-    "en": "What breaks is the registration: when the changed area covers 33 % of the scene, ICP absorbs the change itself and the net volume collapses from a true -30.4 m3 to -3.8 m3, while a no-change control alone already fabricates 83.8 m3 of phantom excavation.",
-    "zh": "What breaks is the registration: when the changed area covers 33 % of the scene, ICP absorbs the change itself and the net volume collapses from a true -30.4 m3 to -3.8 m3, while a no-change control alone already fabricates 83.8 m3 of phantom excavation.",
-    "tw": "What breaks is the registration: when the changed area covers 33 % of the scene, ICP absorbs the change itself and the net volume collapses from a true -30.4 m3 to -3.8 m3, while a no-change control alone already fabricates 83.8 m3 of phantom excavation.",
-    "ko": "What breaks is the registration: when the changed area covers 33 % of the scene, ICP absorbs the change itself and the net volume collapses from a true -30.4 m3 to -3.8 m3, while a no-change control alone already fabricates 83.8 m3 of phantom excavation.",
-    "de": "What breaks is the registration: when the changed area covers 33 % of the scene, ICP absorbs the change itself and the net volume collapses from a true -30.4 m3 to -3.8 m3, while a no-change control alone already fabricates 83.8 m3 of phantom excavation.",
-    "hi": "What breaks is the registration: when the changed area covers 33 % of the scene, ICP absorbs the change itself and the net volume collapses from a true -30.4 m3 to -3.8 m3, while a no-change control alone already fabricates 83.8 m3 of phantom excavation.",
-    "fr": "What breaks is the registration: when the changed area covers 33 % of the scene, ICP absorbs the change itself and the net volume collapses from a true -30.4 m3 to -3.8 m3, while a no-change control alone already fabricates 83.8 m3 of phantom excavation."
+    "ja": "そのまま引くと区画全体が 0.183 m 沈んで見え、両時期に地面点のある 130595 セルで偽の正味 −23619 m3 が立つ。平坦部(傾斜 5 度未満)の中央値で合わせると正味は +280 m3(1 セルあたり NMAD 0.049 m の 4 %)まで落ち、残るのは美術館まわりの変化域(有効セルの 2.1 %)だけ。系統差の原因は決められず(ジオイドの差で説明できるのは +0.027 m だけ)、変化域が実の変化か分類の差かも決められない。合成の斜面(傾斜 25 度、既知体積の掘削と堆積)では、予想した「斜面では cos だけ体積が縮む」は外れで、掘削体積の誤差は傾斜 0〜40 度でどれも −0.011 %。壊れたのは合わせ方のほうで、変化域が視野の 33 % もあると全対応の位置合わせが変化そのものを吸い、正味土量は真値 −30.4 m3 に対し −3.8 m3 まで潰れた(変化なしの対照ですら偽の掘削 83.8 m3)。実データの数は 2026-11-15 の手元の実行の記録値で、CI はデータを持たず記録値の形だけを見る。",
+    "en": "Subtracted as is, the whole block looks 0.183 m lower, and the 130595 cells with ground points in both years give a phantom net volume of −23619 m3. Aligning on the median of flat ground (slope under 5 degrees) brings the net to +280 m3 (4 % of the 0.049 m NMAD per cell), leaving only the change around the museum (2.1 % of the valid cells). The cause of the offset is unresolved (the geoid difference explains only +0.027 m), and whether the change area is real change or a classification difference cannot be told. On a synthetic slope (25 degrees, an excavation and a deposit of known volume) the expected \"cos shrinkage on a slope\" never appears: the excavated volume stays at −0.011 % from 0 to 40 degrees. What breaks is the registration: when the changed area covers 33 % of the scene, all-correspondence alignment absorbs the change itself and the net volume collapses from a true −30.4 m3 to −3.8 m3, while a no-change control already fabricates 83.8 m3 of phantom excavation. The real-data numbers are the record of a local run on 2026-11-15; CI has no data and checks only the shape of the record.",
+    "zh": "Subtracted as is, the whole block looks 0.183 m lower, and the 130595 cells with ground points in both years give a phantom net volume of −23619 m3. Aligning on the median of flat ground (slope under 5 degrees) brings the net to +280 m3 (4 % of the 0.049 m NMAD per cell), leaving only the change around the museum (2.1 % of the valid cells). The cause of the offset is unresolved (the geoid difference explains only +0.027 m), and whether the change area is real change or a classification difference cannot be told. On a synthetic slope (25 degrees, an excavation and a deposit of known volume) the expected \"cos shrinkage on a slope\" never appears: the excavated volume stays at −0.011 % from 0 to 40 degrees. What breaks is the registration: when the changed area covers 33 % of the scene, all-correspondence alignment absorbs the change itself and the net volume collapses from a true −30.4 m3 to −3.8 m3, while a no-change control already fabricates 83.8 m3 of phantom excavation. The real-data numbers are the record of a local run on 2026-11-15; CI has no data and checks only the shape of the record.",
+    "tw": "Subtracted as is, the whole block looks 0.183 m lower, and the 130595 cells with ground points in both years give a phantom net volume of −23619 m3. Aligning on the median of flat ground (slope under 5 degrees) brings the net to +280 m3 (4 % of the 0.049 m NMAD per cell), leaving only the change around the museum (2.1 % of the valid cells). The cause of the offset is unresolved (the geoid difference explains only +0.027 m), and whether the change area is real change or a classification difference cannot be told. On a synthetic slope (25 degrees, an excavation and a deposit of known volume) the expected \"cos shrinkage on a slope\" never appears: the excavated volume stays at −0.011 % from 0 to 40 degrees. What breaks is the registration: when the changed area covers 33 % of the scene, all-correspondence alignment absorbs the change itself and the net volume collapses from a true −30.4 m3 to −3.8 m3, while a no-change control already fabricates 83.8 m3 of phantom excavation. The real-data numbers are the record of a local run on 2026-11-15; CI has no data and checks only the shape of the record.",
+    "ko": "Subtracted as is, the whole block looks 0.183 m lower, and the 130595 cells with ground points in both years give a phantom net volume of −23619 m3. Aligning on the median of flat ground (slope under 5 degrees) brings the net to +280 m3 (4 % of the 0.049 m NMAD per cell), leaving only the change around the museum (2.1 % of the valid cells). The cause of the offset is unresolved (the geoid difference explains only +0.027 m), and whether the change area is real change or a classification difference cannot be told. On a synthetic slope (25 degrees, an excavation and a deposit of known volume) the expected \"cos shrinkage on a slope\" never appears: the excavated volume stays at −0.011 % from 0 to 40 degrees. What breaks is the registration: when the changed area covers 33 % of the scene, all-correspondence alignment absorbs the change itself and the net volume collapses from a true −30.4 m3 to −3.8 m3, while a no-change control already fabricates 83.8 m3 of phantom excavation. The real-data numbers are the record of a local run on 2026-11-15; CI has no data and checks only the shape of the record.",
+    "de": "Subtracted as is, the whole block looks 0.183 m lower, and the 130595 cells with ground points in both years give a phantom net volume of −23619 m3. Aligning on the median of flat ground (slope under 5 degrees) brings the net to +280 m3 (4 % of the 0.049 m NMAD per cell), leaving only the change around the museum (2.1 % of the valid cells). The cause of the offset is unresolved (the geoid difference explains only +0.027 m), and whether the change area is real change or a classification difference cannot be told. On a synthetic slope (25 degrees, an excavation and a deposit of known volume) the expected \"cos shrinkage on a slope\" never appears: the excavated volume stays at −0.011 % from 0 to 40 degrees. What breaks is the registration: when the changed area covers 33 % of the scene, all-correspondence alignment absorbs the change itself and the net volume collapses from a true −30.4 m3 to −3.8 m3, while a no-change control already fabricates 83.8 m3 of phantom excavation. The real-data numbers are the record of a local run on 2026-11-15; CI has no data and checks only the shape of the record.",
+    "hi": "Subtracted as is, the whole block looks 0.183 m lower, and the 130595 cells with ground points in both years give a phantom net volume of −23619 m3. Aligning on the median of flat ground (slope under 5 degrees) brings the net to +280 m3 (4 % of the 0.049 m NMAD per cell), leaving only the change around the museum (2.1 % of the valid cells). The cause of the offset is unresolved (the geoid difference explains only +0.027 m), and whether the change area is real change or a classification difference cannot be told. On a synthetic slope (25 degrees, an excavation and a deposit of known volume) the expected \"cos shrinkage on a slope\" never appears: the excavated volume stays at −0.011 % from 0 to 40 degrees. What breaks is the registration: when the changed area covers 33 % of the scene, all-correspondence alignment absorbs the change itself and the net volume collapses from a true −30.4 m3 to −3.8 m3, while a no-change control already fabricates 83.8 m3 of phantom excavation. The real-data numbers are the record of a local run on 2026-11-15; CI has no data and checks only the shape of the record.",
+    "fr": "Subtracted as is, the whole block looks 0.183 m lower, and the 130595 cells with ground points in both years give a phantom net volume of −23619 m3. Aligning on the median of flat ground (slope under 5 degrees) brings the net to +280 m3 (4 % of the 0.049 m NMAD per cell), leaving only the change around the museum (2.1 % of the valid cells). The cause of the offset is unresolved (the geoid difference explains only +0.027 m), and whether the change area is real change or a classification difference cannot be told. On a synthetic slope (25 degrees, an excavation and a deposit of known volume) the expected \"cos shrinkage on a slope\" never appears: the excavated volume stays at −0.011 % from 0 to 40 degrees. What breaks is the registration: when the changed area covers 33 % of the scene, all-correspondence alignment absorbs the change itself and the net volume collapses from a true −30.4 m3 to −3.8 m3, while a no-change control already fabricates 83.8 m3 of phantom excavation. The real-data numbers are the record of a local run on 2026-11-15; CI has no data and checks only the shape of the record."
    },
    "numbers_source": "log",
    "youtube_url": "",
+   "ops": [
+    "chamfer_distance",
+    "color_bar",
+    "dem_hillshade",
+    "dem_slope",
+    "elevation_map",
+    "estimate_normals",
+    "estimate_oriented_normals",
+    "fit_plane_3d",
+    "icp_point2point_3d",
+    "median",
+    "ransac_plane",
+    "text_box",
+    "voxel_grid_downsample"
+   ],
+   "truth": {
+    "ja": "実データ",
+    "en": "Real data",
+    "zh": "实测数据",
+    "tw": "實測資料",
+    "ko": "실제 데이터",
+    "de": "Reale Daten",
+    "hi": "वास्तविक डेटा",
+    "fr": "Données réelles"
+   },
    "tier": "more"
   },
   {
@@ -3161,14 +3186,14 @@
    "media": "09_csi_scan_explained.mp4",
    "motion": true,
    "label": {
-    "ja": "白色干渉でナノメートルの段差を測る",
-    "en": "Nanometre steps by white-light interferometry",
-    "zh": "用白光干涉测纳米级台阶",
-    "tw": "以白光干涉測奈米級台階",
-    "ko": "백색광 간섭으로 나노미터 단차 측정",
-    "de": "Nanometerstufen per Weißlichtinterferometrie",
-    "hi": "white-light interferometry से nanometre step",
-    "fr": "Marches nanométriques par interférométrie en lumière blanche"
+    "ja": "白色干渉でナノメートルの段差を測る(合成)",
+    "en": "Nanometre steps by white-light interferometry (synthetic)",
+    "zh": "用白光干涉测纳米级台阶(合成)",
+    "tw": "以白光干涉測奈米級台階(合成)",
+    "ko": "백색광 간섭으로 나노미터 단차 측정(합성)",
+    "de": "Nanometerstufen per Weißlichtinterferometrie (synthetisch)",
+    "hi": "white-light interferometry से nanometre step (सिंथेटिक)",
+    "fr": "Marches nanométriques par interférométrie en lumière blanche (synthétique)"
    },
    "see": {
     "ja": "雑音が増えると白色干渉の段差誤差が広がる",
@@ -3181,25 +3206,52 @@
     "fr": "Le bruit élargit l’erreur de marche en interférométrie en lumière blanche"
    },
    "num": {
-    "ja": "雑音 1 % で偏り 2.4 nm 以内(段差 50〜500 nm)。位相シフト法は 0.153 µm で λ/2 跳ぶ。",
-    "en": "Bias within 2.4 nm at 1 % noise (steps of 50-500 nm). Phase shifting jumps by λ/2 at 0.153 µm.",
-    "zh": "噪声 1 % 时偏差在 2.4 nm 以内(台阶 50〜500 nm)。相移法在 0.153 µm 处跳变 λ/2。",
-    "tw": "雜訊 1 % 時偏差在 2.4 nm 以內(段差 50〜500 nm)。相移法在 0.153 µm 處跳變 λ/2。",
-    "ko": "잡음 1 %에서 편향 2.4 nm 이내(단차 50〜500 nm). 위상 이동법은 0.153 µm에서 λ/2 튄다.",
-    "de": "Bias unter 2.4 nm bei 1 % Rauschen (Stufen 50-500 nm). Phasenschieben springt bei 0.153 µm um λ/2.",
-    "hi": "1 % noise पर bias 2.4 nm के भीतर (step 50-500 nm)। phase shifting 0.153 µm पर λ/2 कूदता है।",
-    "fr": "Biais inférieur à 2.4 nm pour un bruit de 1 % (marches de 50 à 500 nm). La méthode de décalage de phase saute de λ/2 à 0.153 µm."
+    "ja": "合成の走査(雑音 1 %)で段差 50〜500 nm を 40 回ずつ測り返すと、単発の測定の標準偏差は 10.5〜14.1 nm。40 回の平均の偏りは ±2.4 nm 以内だが、どの段差でも平均の標準誤差の 2 倍に届かず、雑音と区別できない(精度が 2.4 nm という意味ではない)。段差 100 nm を総合誤差 10 % 以内で測れるのは雑音 0.5 % まで。重心法(centroid)は雑音 1 % で標準偏差がガウス当てはめより小さい(4.2 対 11.8 nm)のに、段差を 19 % 縮める —— 再現性は精度ではない。位相シフト法は段差が λ/4 = 0.150 µm を越えると λ/2 跳ぶ(0.149 µm は正しく、0.151 µm で −0.300 µm)が、包絡線は跳ばない。動画の「差 +11 nm」は、段差 0.650 µm を画素の対で一度だけ読んだ値。画素ごとに独立した合成のモデルで、段差の縁のバットウイングや横方向の回折は入っていない(雑音なしの一致は同じモデルどうしの検算)。動画の文字は日本語のみ。",
+    "en": "On synthetic scans (1 % noise), steps of 50-500 nm were each measured back 40 times: a single measurement scatters with a standard deviation of 10.5-14.1 nm. The mean bias over 40 runs stays within ±2.4 nm, but for every step it is below 2 standard errors of the mean, so it cannot be told from noise (this is not an accuracy of 2.4 nm). A 100 nm step is measured within 10 % total error only up to 0.5 % noise. At 1 % noise the centroid estimator scatters less than the Gaussian fit (4.2 versus 11.8 nm) yet shrinks the step by 19 % — repeatability is not accuracy. Phase shifting jumps by λ/2 once the step passes λ/4 = 0.150 µm (0.149 µm comes back right, 0.151 µm reads −0.300 µm off), while the envelope never jumps. The video's \"difference +11 nm\" is one reading of a 0.650 µm step from a pair of pixels. The synthetic model is independent per pixel: it has no batwing at the step edge and no lateral diffraction (the noise-free agreement only checks the model against itself). Video labels are in Japanese only.",
+    "zh": "On synthetic scans (1 % noise), steps of 50-500 nm were each measured back 40 times: a single measurement scatters with a standard deviation of 10.5-14.1 nm. The mean bias over 40 runs stays within ±2.4 nm, but for every step it is below 2 standard errors of the mean, so it cannot be told from noise (this is not an accuracy of 2.4 nm). A 100 nm step is measured within 10 % total error only up to 0.5 % noise. At 1 % noise the centroid estimator scatters less than the Gaussian fit (4.2 versus 11.8 nm) yet shrinks the step by 19 % — repeatability is not accuracy. Phase shifting jumps by λ/2 once the step passes λ/4 = 0.150 µm (0.149 µm comes back right, 0.151 µm reads −0.300 µm off), while the envelope never jumps. The video's \"difference +11 nm\" is one reading of a 0.650 µm step from a pair of pixels. The synthetic model is independent per pixel: it has no batwing at the step edge and no lateral diffraction (the noise-free agreement only checks the model against itself). Video labels are in Japanese only.",
+    "tw": "On synthetic scans (1 % noise), steps of 50-500 nm were each measured back 40 times: a single measurement scatters with a standard deviation of 10.5-14.1 nm. The mean bias over 40 runs stays within ±2.4 nm, but for every step it is below 2 standard errors of the mean, so it cannot be told from noise (this is not an accuracy of 2.4 nm). A 100 nm step is measured within 10 % total error only up to 0.5 % noise. At 1 % noise the centroid estimator scatters less than the Gaussian fit (4.2 versus 11.8 nm) yet shrinks the step by 19 % — repeatability is not accuracy. Phase shifting jumps by λ/2 once the step passes λ/4 = 0.150 µm (0.149 µm comes back right, 0.151 µm reads −0.300 µm off), while the envelope never jumps. The video's \"difference +11 nm\" is one reading of a 0.650 µm step from a pair of pixels. The synthetic model is independent per pixel: it has no batwing at the step edge and no lateral diffraction (the noise-free agreement only checks the model against itself). Video labels are in Japanese only.",
+    "ko": "On synthetic scans (1 % noise), steps of 50-500 nm were each measured back 40 times: a single measurement scatters with a standard deviation of 10.5-14.1 nm. The mean bias over 40 runs stays within ±2.4 nm, but for every step it is below 2 standard errors of the mean, so it cannot be told from noise (this is not an accuracy of 2.4 nm). A 100 nm step is measured within 10 % total error only up to 0.5 % noise. At 1 % noise the centroid estimator scatters less than the Gaussian fit (4.2 versus 11.8 nm) yet shrinks the step by 19 % — repeatability is not accuracy. Phase shifting jumps by λ/2 once the step passes λ/4 = 0.150 µm (0.149 µm comes back right, 0.151 µm reads −0.300 µm off), while the envelope never jumps. The video's \"difference +11 nm\" is one reading of a 0.650 µm step from a pair of pixels. The synthetic model is independent per pixel: it has no batwing at the step edge and no lateral diffraction (the noise-free agreement only checks the model against itself). Video labels are in Japanese only.",
+    "de": "On synthetic scans (1 % noise), steps of 50-500 nm were each measured back 40 times: a single measurement scatters with a standard deviation of 10.5-14.1 nm. The mean bias over 40 runs stays within ±2.4 nm, but for every step it is below 2 standard errors of the mean, so it cannot be told from noise (this is not an accuracy of 2.4 nm). A 100 nm step is measured within 10 % total error only up to 0.5 % noise. At 1 % noise the centroid estimator scatters less than the Gaussian fit (4.2 versus 11.8 nm) yet shrinks the step by 19 % — repeatability is not accuracy. Phase shifting jumps by λ/2 once the step passes λ/4 = 0.150 µm (0.149 µm comes back right, 0.151 µm reads −0.300 µm off), while the envelope never jumps. The video's \"difference +11 nm\" is one reading of a 0.650 µm step from a pair of pixels. The synthetic model is independent per pixel: it has no batwing at the step edge and no lateral diffraction (the noise-free agreement only checks the model against itself). Video labels are in Japanese only.",
+    "hi": "On synthetic scans (1 % noise), steps of 50-500 nm were each measured back 40 times: a single measurement scatters with a standard deviation of 10.5-14.1 nm. The mean bias over 40 runs stays within ±2.4 nm, but for every step it is below 2 standard errors of the mean, so it cannot be told from noise (this is not an accuracy of 2.4 nm). A 100 nm step is measured within 10 % total error only up to 0.5 % noise. At 1 % noise the centroid estimator scatters less than the Gaussian fit (4.2 versus 11.8 nm) yet shrinks the step by 19 % — repeatability is not accuracy. Phase shifting jumps by λ/2 once the step passes λ/4 = 0.150 µm (0.149 µm comes back right, 0.151 µm reads −0.300 µm off), while the envelope never jumps. The video's \"difference +11 nm\" is one reading of a 0.650 µm step from a pair of pixels. The synthetic model is independent per pixel: it has no batwing at the step edge and no lateral diffraction (the noise-free agreement only checks the model against itself). Video labels are in Japanese only.",
+    "fr": "On synthetic scans (1 % noise), steps of 50-500 nm were each measured back 40 times: a single measurement scatters with a standard deviation of 10.5-14.1 nm. The mean bias over 40 runs stays within ±2.4 nm, but for every step it is below 2 standard errors of the mean, so it cannot be told from noise (this is not an accuracy of 2.4 nm). A 100 nm step is measured within 10 % total error only up to 0.5 % noise. At 1 % noise the centroid estimator scatters less than the Gaussian fit (4.2 versus 11.8 nm) yet shrinks the step by 19 % — repeatability is not accuracy. Phase shifting jumps by λ/2 once the step passes λ/4 = 0.150 µm (0.149 µm comes back right, 0.151 µm reads −0.300 µm off), while the envelope never jumps. The video's \"difference +11 nm\" is one reading of a 0.650 µm step from a pair of pixels. The synthetic model is independent per pixel: it has no batwing at the step edge and no lateral diffraction (the noise-free agreement only checks the model against itself). Video labels are in Japanese only."
    },
    "youtube_url": "",
    "lead": {
-    "ja": "白色干渉計は、縞のコントラストがいちばん強くなる高さから表面の段差を読む。合成した走査の像で段差を測り返すと、偏りは 2.4 nm 以内に収まった。走査の刻みが粗すぎると、雑音が無くても誤差が残る。",
-    "en": "A white-light interferometer reads a step from the height at which the fringe contrast peaks. On synthesised scans the step heights came back with a bias within 2.4 nm. When the scan step is too coarse, an error remains even without noise.",
-    "zh": "A white-light interferometer reads a step from the height at which the fringe contrast peaks. On synthesised scans the step heights came back with a bias within 2.4 nm. When the scan step is too coarse, an error remains even without noise.",
-    "tw": "A white-light interferometer reads a step from the height at which the fringe contrast peaks. On synthesised scans the step heights came back with a bias within 2.4 nm. When the scan step is too coarse, an error remains even without noise.",
-    "ko": "A white-light interferometer reads a step from the height at which the fringe contrast peaks. On synthesised scans the step heights came back with a bias within 2.4 nm. When the scan step is too coarse, an error remains even without noise.",
-    "de": "A white-light interferometer reads a step from the height at which the fringe contrast peaks. On synthesised scans the step heights came back with a bias within 2.4 nm. When the scan step is too coarse, an error remains even without noise.",
-    "hi": "A white-light interferometer reads a step from the height at which the fringe contrast peaks. On synthesised scans the step heights came back with a bias within 2.4 nm. When the scan step is too coarse, an error remains even without noise.",
-    "fr": "A white-light interferometer reads a step from the height at which the fringe contrast peaks. On synthesised scans the step heights came back with a bias within 2.4 nm. When the scan step is too coarse, an error remains even without noise."
+    "ja": "合成した走査の像で、白色干渉計が縞のコントラストのいちばん強い高さから読む段差を測り返した。単発の測定のばらつき(標準偏差)は 10.5 nm を超え、繰り返しの平均に残る偏りは雑音と区別できない。走査の刻みが粗すぎると、雑音が無くても誤差が残る。",
+    "en": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "zh": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "tw": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "ko": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "de": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "hi": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise.",
+    "fr": "On synthesised scans, the step a white-light interferometer reads from peak fringe contrast was measured back. A single measurement scatters with a standard deviation above 10.5 nm, and the bias left in the mean of repeats is lost in noise. With too coarse a scan step, an error remains even without noise."
+   },
+   "ops": [
+    "axes_frame",
+    "axes_transform",
+    "color_bar",
+    "csi_contrast_map",
+    "csi_design",
+    "csi_height_map",
+    "csi_stack_simulate",
+    "decode_fringe",
+    "ellipse",
+    "gaussian",
+    "measure_text",
+    "plot_series",
+    "synthesize_fringes",
+    "text_box",
+    "ticks"
+   ],
+   "truth": {
+    "ja": "自作合成",
+    "en": "Synthetic",
+    "zh": "自制合成数据",
+    "tw": "自製合成資料",
+    "ko": "자체 합성",
+    "de": "Synthetisch",
+    "hi": "सिंथेटिक",
+    "fr": "Synthétique"
    },
    "tier": "more"
   },
@@ -4910,16 +4962,16 @@
    "group": "wing_metrology",
    "media": "09_csi_scan_explained.mp4",
    "motion": true,
-   "thumb_src": "09_csi_scan_explained.gif",
+   "thumb_src": "10_csi_scan_still.png",
    "label": {
-    "ja": "白色干渉の段差",
-    "en": "White-light steps",
-    "zh": "白光干涉台阶",
-    "tw": "白光干涉段差",
-    "ko": "백색광 간섭 단차",
-    "de": "Weißlicht-Stufen",
-    "hi": "White-light step",
-    "fr": "Marches en interférométrie en lumière blanche"
+    "ja": "白色干渉の段差(合成)",
+    "en": "White-light steps (synthetic)",
+    "zh": "白光干涉台阶(合成)",
+    "tw": "白光干涉段差(合成)",
+    "ko": "백색광 간섭 단차(합성)",
+    "de": "Weißlicht-Stufen (synthetisch)",
+    "hi": "White-light step (सिंथेटिक)",
+    "fr": "Marches en interférométrie en lumière blanche (synthétique)"
    }
   },
   {
@@ -5838,7 +5890,7 @@
    "group": "wing_threed",
    "media": "12_flight.gif",
    "motion": true,
-   "thumb_src": "12_flight.gif",
+   "thumb_src": "15_real_dod_still.png",
    "label": {
     "ja": "斜面の土量",
     "en": "Slope earthwork",
@@ -6093,7 +6145,7 @@
    "group": "wing_geometry",
    "media": "06_real_scan_icp.mp4",
    "motion": true,
-   "thumb_src": "06_real_scan_icp.gif",
+   "thumb_src": "07_real_scan_still.png",
    "label": {
     "ja": "実物の深度では ICP の収束域が狭まる",
     "en": "ICP's basin shrinks on real depth",
