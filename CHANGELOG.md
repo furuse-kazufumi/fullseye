@@ -7,6 +7,43 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 依存: PySide6 6.12.0 を除く(2026-11-23)
+
+`gui` ・ `all` の extras の PySide6 を `PySide6>=6.5,!=6.12.0` にした(`fullseye setup` の代わりの表・起動と
+ショートカットの案内文・導入の文書 7 言語・install/README・SBOM も同じ)。
+
+- **根拠(同じコードの A/B)**: Linux CI(Python 3.11)で PySide6 6.12.0 だと full suite の 6 組が全部
+  SIGABRT で止まり、gates の作業スレッドの試験が `none_dealloc` で落ちた。PySide6 だけ 6.11.1 にした
+  下書き PR #343(閉じた)では 1 組も止まらない。
+- **原因の切り分け**: Linux の 6.12.0 の wheel では `QTimer.singleShot(0, callable)` の 1 回ごとに `None` の
+  参照数が 1 減り、Python の slot へ繋いだ `Signal.emit()` の 1 回ごとに `True` の参照数が 1 減る
+  (WSL の Ubuntu 24.04 / CPython 3.11.15 で 200 回あたり −219 と −200。6.11.1 ではどちらも ±1 以内)。
+  3.11 では `None` / `True` は不死でないので、窓の作り直しを繰り返すと `none_dealloc` / `bool_dealloc` で
+  落ちる(3.12 以降は不死なので表に出ない)。Windows の 6.12.0 の wheel では減らなかった(CPython 3.11.9)。
+- 門: `tests/test_pyside6_excludes_6_12_0_2026_11_23.py`。
+
+### 直し — Studio のプロジェクト: Windows の根付きの形を OS に依らず断る(2026-11-23)
+
+`studio_project.resolve_inside` が Linux で `C:\x` ・ `C:x` ・ `\\srv\share\x` ・ `\x` を「プロジェクトの中の、
+そういう名前のファイル」として通していた(`os.path` が posixpath のため)。Linux では realpath の検査が効いて
+いて**外へは出なかった**(悪用はできない)が、同じ名前は Windows では根付きになる。字句の拒否を OS に依らない
+形にした。3-D の表示の命令(`disp_points3d` など)が UNC のパイプラインのパスを Linux で見落としていたのも
+同じ型で直した。試験: `tests/test_studio_project_rooted_forms_2026_11_23.py`(posixpath に差し替えて Windows の
+上でも Linux の意味で検査する)。
+
+### 直し — Studio: Linux でだけ赤かった試験(2026-11-23)
+
+PySide6 6.12.0 の SIGABRT で隠れていた Linux の赤を、WSL(Ubuntu 24.04 / PySide6 6.11.1)で 1 件ずつ再現してから直した。
+
+- **コードの字**(製品): Linux の既定の `Noto Sans Mono CJK JP` は半角が全部同じ幅で全角がちょうど 2 倍(この表の決まりどおり)なのに、fontconfig が spacing=dual と申告するので Qt は fixedPitch を False と言う。設定の一覧が既定の字を隠していた。字幅を実測する `studio_theme.is_code_pitch` で判定する(Windows で選ばれる字は変わらない)。試験の判定も Qt の申告でなく字幅の実測にした。
+- **キーの設定の窓**(製品): 絞り込みで行の見え隠れを変えた直後、Linux では行の配置が遅れて、選んだ行へ巻き戻らなかった。配置を済ませてから中央へ巻く。
+- **時間の試験**(試験): 「止められない呼び出し」の代わりの `time.sleep` は有限なので、遅い CI では見張りの猶予より先に戻り、別の結果になっていた。試験が放すまで戻らない C の待ち(`threading.Lock.acquire`)に替えた(`tests/studio_timingkit.py`)。GUI が止まらない事は、実行中に GUI の側から合図が届く事で確かめる。
+- **入力のパスの文**(試験): Linux の一時フォルダは根付きのパス(`rooted paths are refused`)で、ドライブ付き(`absolute path`)ではない。両方の形を全部の OS で確かめる。
+- **窓の題の帯・表の見出し・タブの帯**(試験): 題の帯の「青」は題の字の副画素のにじみ(字を消すと帯は役割の色だけ)、見出しの 1 点は 1 px の境界線に当たっていた。帯は字を消して、見出しは面で測る。
+- **閉じた窓の後に残る最上位の部品**(試験): `id()` は C++ が持つ部品では列挙のたびに別の wrapper になり得るので、C++ の番地で比べる。
+
+- **公開経路の門**(試験): `studio_editops_qt` が Linux CI の gates でだけ「島でなくなった」と出る件は、Windows でも WSL(CI と同じ依存・同じ環境変数・同じ順)でも再現しなかった。行を消すと Windows で門が赤になるので消さず、門がどの関数がどの経路の名前と重なったかを出すようにした(次の CI で原因を読む)。
+
 ### 直し — Studio を初めて起動した人のつまずき(初回起動の点検 2026-11-13 と、その独立レビュー 2 本)
 
 - **挙動が変わる点**: `F1` は「選んでいる op のヘルプ」になった(ショートカットの一覧は `Ctrl+F1`。以前は `F1` が一覧)。`Ctrl+Y` でもやり直せる(以前は `Ctrl+Shift+Z` だけ)。`docs/STUDIO_GUIDE`(7 言語)と `STUDIO_UX` の表も直した。
