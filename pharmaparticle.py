@@ -128,7 +128,7 @@ def _sha256(value):
     return hashlib.sha256(payload).hexdigest()
 
 
-def upstream_provenance_digest(records):
+def _upstream_provenance_digest(records):
     """Digest structured blob_split/count-interval records / 構造化上流記録を要約する。"""
     if not isinstance(records, dict) or set(records) != set(PROVENANCE_KEYS):
         raise ValueError("particle_size_distribution: upstream_records must contain blob_split and blob_count_interval")
@@ -139,6 +139,27 @@ def upstream_provenance_digest(records):
     if not isinstance(components, dict) or not all(key in components for key in ("label", "lo", "hi", "status")):
         raise ValueError("particle_size_distribution: blob_count_interval components are incomplete")
     return _sha256(records)
+
+
+def _bounded_normal(rng, mean, standard_uncertainty, *, lower, upper, shape):
+    """Draw normal sensitivity values inside a physical domain / 物理範囲内で正規感度値を再抽出する。"""
+    mean = np.asarray(mean, dtype=float)
+    standard_uncertainty = np.asarray(standard_uncertainty, dtype=float)
+    result = np.broadcast_to(mean, shape).copy()
+    active = np.broadcast_to(standard_uncertainty > 0.0, shape)
+    if not np.any(active):
+        return result
+    remaining = active.copy()
+    for _ in range(100):
+        candidate = rng.normal(np.broadcast_to(mean, shape)[remaining],
+                               np.broadcast_to(standard_uncertainty, shape)[remaining])
+        valid = (candidate > lower) & (candidate <= upper)
+        locations = np.flatnonzero(remaining)
+        result.flat[locations[valid]] = candidate[valid]
+        remaining.flat[locations[valid]] = False
+        if not np.any(remaining):
+            return result
+    raise ValueError("particle_size_distribution: could not draw border-correction sensitivity values inside the physical domain")
 
 
 def _weighted_midpoint_dx(diameters, weights, q):
@@ -160,6 +181,78 @@ def _effective_particles(weights):
     """Kish effective n for unequal count weights / 不等重みの Kish 有効標本数。"""
     weight = np.asarray(weights, np.float64)
     return float(weight.sum() ** 2 / np.square(weight).sum())
+
+
+def _wilson_lower(successes, trials, confidence=.95):
+    """Wilson lower endpoint without optional statistics packages / 追加統計パッケージなしの Wilson 下側端点。"""
+    if not (isinstance(trials, int) and trials > 0 and 0 <= successes <= trials and confidence == .95):
+        raise ValueError("particle_size_distribution: Wilson inputs are invalid")
+    z = 1.959963984540054
+    p = successes / trials
+    return float((p + z * z / (2 * trials) - z * math.sqrt(p * (1 - p) / trials + z * z / (4 * trials ** 2))) /
+                 (1 + z * z / trials))
+
+
+def _conditional_simultaneous_coverage_validation(trials=400):
+    """Recompute the synthetic conditional-family coverage observation / 条件付き区間族の合成被覆観測を再計算する。
+
+    This is an observational, post-hoc exploratory calculation.  It supplies the
+    PoC figure and its regression test from exactly the same deterministic run;
+    it is not a predeclared acceptance gate and does not prove nominal coverage.
+    """
+    if not isinstance(trials, int) or trials < 1:
+        raise ValueError("particle_size_distribution: trials must be a positive integer")
+    rng = np.random.default_rng(42)
+    population = rng.lognormal(np.log(20.0), .08, 100_000)
+    acceptance_probability = .92 * .90 * (.78 + .20 / (1.0 + np.exp(-(population - 16.0) / 3.0)))
+    truth = {}
+    for basis, weight in (("number", acceptance_probability),
+                          ("area", acceptance_probability * population ** 2),
+                          ("volume", acceptance_probability * population ** 3)):
+        truth[basis] = {"D%d" % q: _weighted_midpoint_dx(population, weight, q) * .001 for q in (10, 50, 90)}
+    simultaneous = []
+    for seed in range(trials):
+        source = rng.choice(population, 96)
+        source = source[rng.random(source.size) < (.78 + .20 / (1.0 + np.exp(-(source - 16.0) / 3.0)))]
+        determined = rng.random(source.size) < .92
+        border = rng.random(source.size) < .10
+        true_scale = .001 + rng.normal(0.0, .000004)
+        observed_px = source * .001 / true_scale + rng.normal(0.0, .18, source.size)
+        labels = np.arange(1, source.size + 1, dtype=int)
+        upstream_records = {"blob_split": labels.reshape(1, -1),
+                            "blob_count_interval": {"components": {
+                                "label": labels, "lo": np.ones(source.size, dtype=int),
+                                "hi": np.where(determined, 1, -1),
+                                "status": np.where(determined, "determined", "ambiguous")}}}
+        digest = _upstream_provenance_digest(upstream_records)
+        particles = {"object_id": ["trial-%03d-%03d" % (seed, i) for i in range(source.size)],
+                     "diameter_px": observed_px, "area_px2": np.pi * np.square(observed_px) / 4.0,
+                     "diameter_unit": "px", "area_unit": "px2", "touches_border": border,
+                     "split_status": ["isolated" if item else "ambiguous" for item in determined],
+                     "component_id": ["component-%d" % label for label in labels],
+                     "split_evidence": ["blob_split + blob_count_interval:determined"] * source.size,
+                     "upstream_provenance_hash": [digest] * source.size,
+                     "upstream_component_label": labels, "upstream_split_label": labels,
+                     "count_interval_lo": np.ones(source.size, dtype=int),
+                     "count_interval_hi": [1 if item else None for item in determined],
+                     "count_determined": determined}
+        calibration = {"scale": {"value": true_scale + rng.normal(0.0, .000004), "unit": "mm/px",
+                                  "standard_uncertainty": .000004},
+                       "calibrator_id": "COVERAGE-SYNTHETIC", "calibrated_at": "2026-10-01", "valid_until": "2027-09-30"}
+        report = particle_size_distribution(particles, calibration, border_policy="exclude", measurement_date="2026-11-23",
+                                            bootstrap_samples=200, seed=seed, upstream_records=upstream_records)
+        family = []
+        for basis, targets in truth.items():
+            for name, target in targets.items():
+                interval = report["quantiles"][basis][name]
+                if interval["status"] != "estimated":
+                    raise AssertionError("coverage trial fell below the effective-particle gate")
+                family.append(interval["ci_lower"] <= target <= interval["ci_upper"])
+        simultaneous.append(all(family))
+    successes = int(sum(simultaneous))
+    return {"trials": trials, "successes": successes, "observed_proportion": successes / trials,
+            "wilson_lower_95": _wilson_lower(successes, trials), "nominal_family_confidence": DEFAULT_CONFIDENCE,
+            "interpretation": "post_hoc_exploratory_observation"}
 
 
 def _edges(diameters, supplied):
@@ -193,12 +286,17 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
     上流の ``blob_split`` と ``blob_count_interval`` に由来する成分 ID、分割根拠、
     来歴ハッシュ、上流の構造化 ``blob_split`` / ``blob_count_interval`` 記録、個数区間、
     決定可否が必須であり、op 内で再計算したダイジェストと一致しない入力は拒否する。
+    ``component_id`` と上流 label は一対一、各行の split label は実際の ``blob_split``
+    画像と一対一で照合する。これは同一実行内の整合性検査であり、署名または不変の外部
+    成果物が無いので改ざん検知ではない。改ざん検知は実行記録と署名を備えた規制対応基盤で扱う。
     未決定行は ``ambiguous`` として除外する。
     ``border_policy="correct"`` は端粒子について ``border_inclusion_probability``、
     ``border_corrected_diameter_px``、``border_corrected_area_px2`` が揃う場合だけ
     Horvitz--Thompson の個数重み ``1/p`` と補正寸法を使う。尺度の標準不確かさは
     各径へ線形伝播し、分位点では決定的 bootstrap、尺度、端補正不確かさの
-    感度再標本化を保守的に合成する。
+    感度再標本化を保守的に合成する。端補正の径・面積・包含確率は独立と明示した周辺正規
+    不確かさとして扱うため、相関を持つ校正には使えない。物理範囲外の抽出値は切り詰めず
+    再抽出する。
     有効粒子数が ``MIN_EFFECTIVE_PARTICLES`` 未満なら、母集団分位点を主張せず
     ``insufficient_sample`` を返す。bootstrap 区間は独立粒子の経験分布を再標本化する
     **分割後に受理された粒子に条件付けた区間**であり、端補正時は設計ベース保証ではなく
@@ -209,7 +307,7 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
     particles : table (dict of 1-D columns)
         必須列は ``object_id``、``diameter_px``、``area_px2``、``diameter_unit="px"``、
         ``area_unit="px2"``、``touches_border``、``split_status``、``component_id``、
-        ``split_evidence``、``upstream_provenance_hash``、``upstream_component_label``、``count_interval_lo``、
+        ``split_evidence``、``upstream_provenance_hash``、``upstream_component_label``、``upstream_split_label``、``count_interval_lo``、
         ``count_interval_hi``、``count_determined``。来歴ハッシュは元の ``blob_split`` と
         ``blob_count_interval`` の構造化記録を正規化して SHA-256 化したもの。
         状態は ``isolated`` / ``split`` / ``unsplit`` / ``ambiguous``。
@@ -232,7 +330,8 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
         bootstrap の乱数種。
     upstream_records : dict
         ``{"blob_split": blob_split出力, "blob_count_interval": blob_count_interval出力}``。
-        各行の ``upstream_component_label`` と個数記録を照合し、op がダイジェストを再計算する。
+        各行の ``upstream_component_label`` と個数記録、``upstream_split_label`` と実際の
+        split 画像を照合し、op がダイジェストを再計算する。これは改ざん検知ではない。
 
     Returns
     -------
@@ -263,7 +362,7 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
     >>> u = {"blob_split": np.arange(30).reshape(1, 30) + 1,
     ...      "blob_count_interval": {"components": {"label": np.arange(1, 31), "lo": np.ones(30, int),
     ...      "hi": np.ones(30, int), "status": np.array(["determined"] * 30)}}}
-    >>> p["upstream_component_label"] = list(range(1, 31)); p["upstream_provenance_hash"] = [upstream_provenance_digest(u)] * 30
+    >>> p["upstream_component_label"] = list(range(1, 31)); p["upstream_provenance_hash"] = [_upstream_provenance_digest(u)] * 30
     >>> r = particle_size_distribution(p, c, measurement_date="2026-06-01", bootstrap_samples=200, upstream_records=u)
     >>> r["counts"]["accepted_observed"], r["particle_rows"][0]["diameter"]
     (30, 0.02)
@@ -304,7 +403,7 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
         raise ValueError("%s: bootstrap_samples must be an integer >= 200" % op)
     if isinstance(seed, (bool, np.bool_)) or not isinstance(seed, (int, np.integer)):
         raise ValueError("%s: seed must be an integer" % op)
-    upstream_digest = upstream_provenance_digest(upstream_records)
+    upstream_digest = _upstream_provenance_digest(upstream_records)
 
     ids = _column(particles, "object_id")
     n = int(ids.size)
@@ -341,6 +440,9 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
     component_label = _numbers(particles, "upstream_component_label", n, positive=True)
     if np.any(component_label != np.floor(component_label)):
         raise ValueError("%s: upstream_component_label must be an integer" % op)
+    split_label = _numbers(particles, "upstream_split_label", n, positive=True)
+    if np.any(split_label != np.floor(split_label)):
+        raise ValueError("%s: upstream_split_label must be an integer" % op)
     interval_lo = _numbers(particles, "count_interval_lo", n, positive=True)
     raw_hi = _column(particles, "count_interval_hi", n).tolist()
     try:
@@ -370,6 +472,19 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
     upstream_index = {int(label): i for i, label in enumerate(upstream_labels.tolist())}
     if len(upstream_index) != len(upstream_labels):
         raise ValueError("%s: blob_count_interval component labels must be unique" % op)
+    actual_split_labels = set(np.unique(np.asarray(upstream_records["blob_split"], dtype=int)).tolist()) - {0}
+    reported_split_labels = set(split_label.astype(int).tolist())
+    if not actual_split_labels or reported_split_labels != actual_split_labels:
+        raise ValueError("%s: rows must correspond one-to-one with nonzero blob_split labels" % op)
+    component_to_label = {}
+    label_to_component = {}
+    for component_id, label in zip(component, component_label.astype(int)):
+        previous_label = component_to_label.setdefault(component_id, label)
+        previous_component = label_to_component.setdefault(label, component_id)
+        if previous_label != label or previous_component != component_id:
+            raise ValueError("%s: component_id and upstream_component_label must be one-to-one" % op)
+    if set(label_to_component) != set(upstream_index):
+        raise ValueError("%s: particle rows and blob_count_interval labels must agree in both directions" % op)
     for i, label in enumerate(component_label.astype(int)):
         if label not in upstream_index:
             raise ValueError("%s: upstream_component_label is absent from blob_count_interval" % op)
@@ -397,7 +512,12 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
             if statuses[first] != expected_status:
                 raise ValueError("%s: determined component %r has inconsistent split_status" % (op, component_id))
         elif statuses[first] != "ambiguous":
-            raise ValueError("%s: undetermined component %r must be ambiguous" % (op, component_id))
+                raise ValueError("%s: undetermined component %r must be ambiguous" % (op, component_id))
+    for label, component_id in label_to_component.items():
+        members = np.flatnonzero(component_label.astype(int) == label)
+        expected_rows = int(upstream_lo[upstream_index[label]])
+        if upstream_status[upstream_index[label]] == "determined" and members.size != expected_rows:
+            raise ValueError("%s: upstream label %d must report exactly its declared count" % (op, label))
 
     major = _numbers(particles, "major_axis_px", n, positive=True) if "major_axis_px" in particles else None
     minor = _numbers(particles, "minor_axis_px", n, positive=True) if "minor_axis_px" in particles else None
@@ -423,8 +543,11 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
         corr_a_u = _numbers(particles, required[5], n, nonnegative=True)
         correction_provenance = _one(particles, required[6])
         if not isinstance(correction_provenance, dict) or not all(
-                key in correction_provenance for key in ("view_shape", "inclusion_probability_method", "correction_method")):
-            raise ValueError("%s: border_correction_provenance must state view_shape, inclusion_probability_method, correction_method" % op)
+                key in correction_provenance for key in ("view_shape", "inclusion_probability_method", "correction_method",
+                                                         "uncertainty_dependence")):
+            raise ValueError("%s: border_correction_provenance must state view_shape, inclusion_probability_method, correction_method, uncertainty_dependence" % op)
+        if correction_provenance["uncertainty_dependence"] != "independent":
+            raise ValueError("%s: only explicitly independent border-correction uncertainties are supported; correlated inputs are fail-closed" % op)
         if np.any(prob > 1.0):
             raise ValueError("%s: border_inclusion_probability must be <= 1" % op)
         if np.any(prob - PHYSICAL_TAIL_Z * prob_u <= 0.0) or np.any(prob + PHYSICAL_TAIL_Z * prob_u > 1.0):
@@ -481,12 +604,14 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
     if corrected_positions.size:
         sensitivity_rng = np.random.default_rng(int(seed) + 104729)
         local = idx[corrected_positions]
-        dpx_draw[:, corrected_positions] = used_d[local] + sensitivity_rng.normal(
-            0.0, corr_d_u[local], size=(int(bootstrap_samples), local.size))
-        area_draw[:, corrected_positions] = used_a[local] + sensitivity_rng.normal(
-            0.0, corr_a_u[local], size=(int(bootstrap_samples), local.size))
-        probability_draw = 1.0 / cw[corrected_positions] + sensitivity_rng.normal(
-            0.0, prob_u[local], size=(int(bootstrap_samples), local.size))
+        physical_shape = (int(bootstrap_samples), local.size)
+        dpx_draw[:, corrected_positions] = _bounded_normal(
+            sensitivity_rng, used_d[local], corr_d_u[local], lower=0.0, upper=math.inf, shape=physical_shape)
+        area_draw[:, corrected_positions] = _bounded_normal(
+            sensitivity_rng, used_a[local], corr_a_u[local], lower=0.0, upper=math.inf, shape=physical_shape)
+        probability_draw = _bounded_normal(
+            sensitivity_rng, 1.0 / cw[corrected_positions], prob_u[local], lower=0.0, upper=1.0,
+            shape=physical_shape)
         count_draw[:, corrected_positions] = 1.0 / probability_draw
     # Nine Dx intervals are reported together (3 bases x D10/D50/D90).  Use a
     # Bonferroni bootstrap envelope so the stated 95% family is not made
@@ -566,6 +691,6 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
                          "interval_per_dx_bootstrap_confidence": 1.0 - 2.0 * alpha,
                          "effective_particles": effective_particles,
                          "border_correction": correction_provenance,
-                         "border_uncertainty_propagation": "normal sensitivity resampling after six-sigma physical-domain rejection" if corrected_positions.size else "not_applicable",
+                          "border_uncertainty_propagation": "independent marginal-normal sensitivity resampling with physical-domain rejection sampling; correlations are unsupported" if corrected_positions.size else "not_applicable",
                         "laser_diffraction_equivalence": False},
             "bootstrap": {"samples": int(bootstrap_samples), "seed": int(seed)}}

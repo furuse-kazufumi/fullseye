@@ -60,8 +60,6 @@ CALIBRATOR_ID = "STAGE-MICROMETER-SM-2026-017"
 MIN_SEED_PROMINENCE_PX = 4.0
 OVERLAP_RATES = np.array([0.05, 0.25, 0.45, 0.60, 0.75])
 DIAMETER_ERROR_LIMIT_PX = 1.5
-SIMULTANEOUS_COVERAGE_TRIALS = 400
-SIMULTANEOUS_COVERAGE_WILSON_LOWER = 0.9123
 
 
 TRUTH = (
@@ -122,7 +120,7 @@ def _match(features):
 
 def _upstream_provenance_hash(split, count_record):
     """Hash structured split/count records / 構造化した分割・個数記録をハッシュ化。"""
-    return pharma.upstream_provenance_digest({"blob_split": split, "blob_count_interval": count_record})
+    return pharma._upstream_provenance_digest({"blob_split": split, "blob_count_interval": count_record})
 
 
 def analyse(image):
@@ -168,6 +166,7 @@ def analyse(image):
         "split_evidence": ["blob_split + blob_count_interval:%s" % row["status"] for row in upstream],
         "upstream_provenance_hash": [upstream_hash] * len(upstream),
         "upstream_component_label": component_ids.astype(int),
+        "upstream_split_label": split[features["row"][fi].round().astype(int), features["col"][fi].round().astype(int)].astype(int),
         "count_interval_lo": [int(row["lo"]) for row in upstream],
         "count_interval_hi": [None if row["hi"] is None else int(row["hi"]) for row in upstream],
         "count_determined": [bool(row["determined"]) for row in upstream],
@@ -234,19 +233,19 @@ def _cdf_panel(basis, truth_diameter, estimated_diameter, truth_weight, report):
     x_est, y_est = _cdf(estimated_diameter, np.power(estimated_diameter, exponent))
     panel = figs.render_plot(
         [("true CDF", x_truth, y_truth), ("accepted estimated CDF", x_est, y_est)],
-        xlabel="diameter [mm]", ylabel="weighted CDF", ylim=(0.0, 1.0), size=(600, 340),
-        title="%s basis: true / accepted estimated diameter" % basis,
-        colors=["reference", "emphasis"], styles=["dashed", None], legend_position="outside", scale=1)
+        xlabel="diameter [mm]", ylabel="weighted CDF", ylim=(0.0, 1.0), size=(1200, 700),
+        title="%s basis: conditionally matched true / accepted estimated diameter" % basis,
+        colors=["reference", "emphasis"], styles=["dashed", None], legend_position="outside", scale=2)
     # render_plot's documented geometry: direct tags identify every Dx line.
     xlim = (min(x_truth.min(), x_est.min()), max(x_truth.max(), x_est.max()))
-    x0, y0, rw, rh = 72, 44, 504, 232
+    x0, y0, rw, rh = 144, 88, 1008, 464
     for q, y_fraction in ((10, .16), (50, .46), (90, .76)):
         for dx, role, label, offset in ((_midpoint_truth(truth_diameter, truth_weight, q), "reference", "true D%d" % q, 0),
                                         (report["quantiles"][basis]["D%d" % q]["value"], "emphasis", "estimated D%d" % q, 1)):
             px = x0 + int(round((dx - xlim[0]) / (xlim[1] - xlim[0]) * rw))
-            panel = np.asarray(fs.draw_line(panel, (px, y0), (px, y0 + rh), color=role, width=1))
-            panel = np.asarray(fs.text_box(panel, label, (px + 3, y0 + int(rh * (y_fraction + .07 * offset))),
-                                            anchor="lt", font_size=10, box_color=(1.0, 1.0, 1.0)))
+            panel = np.asarray(fs.draw_line(panel, (px, y0), (px, y0 + rh), color=role, width=3))
+            panel = np.asarray(fs.text_box(panel, label, (px + 8, y0 + int(rh * (y_fraction + .07 * offset))),
+                                            anchor="lt", font_size=18, box_color=(1.0, 1.0, 1.0)))
     return panel
 
 
@@ -315,9 +314,10 @@ def large_sample_validation():
              "split_status": ["ambiguous" if not x["determined"] else ("split" if x["lo"] > 1 else "isolated") for x in upstream],
               "component_id": ["component-%d" % int(x) for x in comp],
              "split_evidence": ["blob_split + blob_count_interval:%s" % x["status"] for x in upstream],
-             "upstream_provenance_hash": [upstream_hash] * len(upstream),
-             "upstream_component_label": comp.astype(int),
-             "count_interval_lo": [x["lo"] for x in upstream], "count_interval_hi": [x["hi"] for x in upstream],
+              "upstream_provenance_hash": [upstream_hash] * len(upstream),
+              "upstream_component_label": comp.astype(int),
+              "upstream_split_label": split[feature["row"].round().astype(int), feature["col"].round().astype(int)].astype(int),
+              "count_interval_lo": [x["lo"] for x in upstream], "count_interval_hi": [x["hi"] for x in upstream],
              "count_determined": [x["determined"] for x in upstream]}
     calibration = {"scale": {"value": MICROMETER_KNOWN_MM / MICROMETER_LENGTH_PX, "unit": "mm/px",
                                "standard_uncertainty": SCALE_UNCERTAINTY_UM_PER_PX / 1000.0},
@@ -334,21 +334,34 @@ def large_sample_validation():
     values = {}
     state = np.full(len(truth), "undetected", dtype=object)
     feature_centres = np.c_[feature["row"], feature["col"]]
+    candidates = []
     for truth_index, row in enumerate(truth):
-        distance = np.linalg.norm(feature_centres - np.asarray(row["center"]), axis=1)
-        feature_index = int(np.argmin(distance))
-        if distance[feature_index] <= max(5.0, row["diameter"]):
+        distances = np.linalg.norm(feature_centres - np.asarray(row["center"]), axis=1)
+        for feature_index, distance in enumerate(distances):
+            if distance <= max(5.0, row["diameter"]):
+                candidates.append((float(distance), truth_index, feature_index))
+    matched_truth, matched_feature, truth_for_feature = set(), set(), {}
+    for _, truth_index, feature_index in sorted(candidates):
+        if truth_index not in matched_truth and feature_index not in matched_feature:
+            matched_truth.add(truth_index)
+            matched_feature.add(feature_index)
+            truth_for_feature[feature_index] = truth_index
             reason = report["particle_rows"][feature_index]["reason"]
             state[truth_index] = "accepted" if report["particle_rows"][feature_index]["accepted"] else reason
 
     for basis, weight in (("number", np.ones_like(td)), ("area", td ** 2), ("volume", td ** 3)):
         hist = np.histogram(td, edges, weights=weight)[0]
         assert np.isclose(hist.sum(), weight.sum())
-        values[basis] = [_midpoint_truth(td[valid], weight[valid], q) for q in (10, 50, 90)]
-    accepted_estimated = np.array([row["diameter"] for row in report["particle_rows"] if row["accepted"]])
-    if accepted_estimated.size != report["counts"]["accepted_observed"]:
-        raise AssertionError("accepted estimated diameter rows must match report count")
-    cdf_panels = [_cdf_panel(basis, td[valid], accepted_estimated, weight[valid], report)
+    accepted_feature_indices = [index for index, row in enumerate(report["particle_rows"])
+                                if row["accepted"] and index in truth_for_feature]
+    if len(accepted_feature_indices) != report["counts"]["accepted_observed"]:
+        raise AssertionError("every accepted measured particle must have one unique truth correspondence")
+    accepted_truth_indices = np.asarray([truth_for_feature[index] for index in accepted_feature_indices], dtype=int)
+    accepted_truth = td[accepted_truth_indices]
+    accepted_estimated = np.asarray([report["particle_rows"][index]["diameter"] for index in accepted_feature_indices])
+    for basis, weight in (("number", np.ones_like(td)), ("area", td ** 2), ("volume", td ** 3)):
+        values[basis] = [_midpoint_truth(accepted_truth, weight[accepted_truth_indices], q) for q in (10, 50, 90)]
+    cdf_panels = [_cdf_panel(basis, accepted_truth, accepted_estimated, weight[accepted_truth_indices], report)
                   for basis, weight in (("number", np.ones_like(td)), ("area", td ** 2), ("volume", td ** 3))]
     loss_panel = _large_loss_panel(td, state)
     split_overlay = _label_rgb(split)
@@ -364,21 +377,23 @@ def large_sample_validation():
             q = report["quantiles"][basis][name]
             rows.append([basis + " " + name, "%.5f" % truth_value, "%.5f [%.5f, %.5f]" %
                          (q["value"], q["ci_lower"], q["ci_upper"])])
-    summary = figs._render_table(["basis / Dx", "truth mm", "estimate / 95% simultaneous interval mm"], rows,
-                                  title="Conditional accepted-particle simultaneous intervals", scale=1)
+    summary = figs._render_table(["basis / Dx", "matched true mm", "estimate / 95% simultaneous interval mm"], rows,
+                                   title="Conditional intervals: uniquely matched accepted particles", scale=1)
+    coverage_summary = pharma._conditional_simultaneous_coverage_validation()
     coverage = figs._render_table(["simultaneous-family validation", "measured result"],
         [["interval family", "9 Dx; conditional accepted-particle"],
-         ["independent trials", str(SIMULTANEOUS_COVERAGE_TRIALS)], ["all 9 covered", "376 / 400 = 94.0%"],
-         ["95% Wilson lower", "%.2f%% (predeclared gate 90.00%%)" % (100 * SIMULTANEOUS_COVERAGE_WILSON_LOWER)]],
-        title="95% simultaneous intervals: validation", scale=1)
-    figure = fs.annotate_figure_grid([_rgb_gray(image), split_overlay, *cdf_panels, loss_panel, summary, coverage],
+         ["independent trials", str(coverage_summary["trials"])],
+         ["all 9 covered", "%d / %d = %.1f%%" % (coverage_summary["successes"], coverage_summary["trials"],
+                                                     100 * coverage_summary["observed_proportion"])],
+         ["95% Wilson lower", "%.2f%% (post-hoc exploratory observation)" % (100 * coverage_summary["wilson_lower_95"])]],
+        title="Nominal 95% simultaneous intervals: observed validation", scale=1)
+    figure = fs.annotate_figure_grid([_rgb_gray(image), split_overlay, loss_panel, summary, coverage],
         captions=["Input: low contrast, overlap and clipped particles",
-                  "blob_split; red=edge, orange=ambiguous, blue=undetected", "number CDF: true dashed / accepted estimated solid",
-                  "area CDF: true dashed / accepted estimated solid", "volume CDF: true dashed / accepted estimated solid",
-                  "loss rug at true positions and counts", "Dx values with 95% simultaneous interval",
-                  "400-trial simultaneous-coverage validation"], ncols=2,
+                  "blob_split; red=edge, orange=ambiguous, blue=undetected", "loss rug at true positions and counts",
+                  "Dx values with 95% simultaneous interval",
+                  "same-run observed simultaneous coverage"], ncols=2,
         title="Large-sample PSD validation / 数百粒子の分布検証")
-    return report, values, figure, image, split
+    return report, values, figure, cdf_panels, image, split
 
 
 def accuracy_sweep():
@@ -540,7 +555,7 @@ def main():
     result = analyse(image)
     repeat = analyse(image.copy())
     sweep, sweep_panels, sweep_captions = overlap_sweep()
-    large_report, large_truth, large_figure, large_raw, large_split = large_sample_validation()
+    large_report, large_truth, large_figure, large_cdf_panels, large_raw, large_split = large_sample_validation()
     sweep_stats, sweep_figure = accuracy_sweep()
 
     truth_d = np.array([_equivalent_diameter(row) for row in TRUTH])
@@ -592,7 +607,10 @@ def main():
                    gray=True, vrange=(0.0, 1.0),
                    caption="重なり率を増やす系列。連結成分数だけでは 2 粒を 1 粒として数える。")
     figs.save("compendial_particle_microscopy_large_validation", large_figure,
-              "324粒子の別試料。低コントラスト、重なり、端粒子を含み、3基準の分布と真値・区間を併記する。")
+              "324粒子の別試料。低コントラスト、重なり、端粒子を含み、損失と条件付き区間を併記する。")
+    for basis, panel in zip(("number", "area", "volume"), large_cdf_panels):
+        figs.save("compendial_particle_microscopy_large_validation_%s_cdf" % basis, panel,
+                  "%s基準。受理推定粒子と一意対応する真値だけの条件付きCDF。" % basis)
     figs.save("compendial_particle_microscopy_accuracy_sweep", sweep_figure,
               "全128条件のうち、受理条件に条件付けた誤差と、理由別の拒否率。")
     sweep_header = ["diameter_px", "axis_ratio", "phase_px", "noise_sigma", "psf_sigma_px", "threshold",
@@ -619,7 +637,9 @@ def main():
                  "calibration_sha256": report["calibration_provenance"]["sha256"]},
         arrays={"raw": image, "segmentation": result["split"], "truth_diameter_px": truth_d,
                 "estimated_diameter_px": estimated_d, "main_figure": figure_a, "large_raw": large_raw,
-                "large_segmentation": large_split, "large_figure": large_figure, "accuracy_sweep": sweep_figure},
+                 "large_segmentation": large_split, "large_figure": large_figure,
+                 "large_number_cdf": large_cdf_panels[0], "large_area_cdf": large_cdf_panels[1],
+                 "large_volume_cdf": large_cdf_panels[2], "accuracy_sweep": sweep_figure},
         truth=truth, gates=gates, figures=figs.manifest(), videos={}, seed=SEED)
     manifest_repeat = build_manifest(
         "poc_compendial_particle_microscopy",
@@ -627,8 +647,10 @@ def main():
                  "calibration_sha256": repeat["report"]["calibration_provenance"]["sha256"]},
         arrays={"raw": image.copy(), "segmentation": repeat["split"], "truth_diameter_px": truth_d.copy(),
                 "estimated_diameter_px": np.asarray(repeat["table"]["diameter_px"]), "main_figure": figure_b,
-                "large_raw": large_raw.copy(), "large_segmentation": large_split.copy(), "large_figure": large_figure.copy(),
-                "accuracy_sweep": sweep_figure.copy()},
+                 "large_raw": large_raw.copy(), "large_segmentation": large_split.copy(), "large_figure": large_figure.copy(),
+                 "large_number_cdf": large_cdf_panels[0].copy(), "large_area_cdf": large_cdf_panels[1].copy(),
+                 "large_volume_cdf": large_cdf_panels[2].copy(),
+                 "accuracy_sweep": sweep_figure.copy()},
         truth=truth, gates=gates, figures=figs.manifest(), videos={}, seed=SEED)
     differences = compare_manifests(manifest, manifest_repeat)
     gates.append(GateResult("same-environment-manifest", differences == [], len(differences), 0, 0, "==", "exact JSON"))

@@ -26,12 +26,17 @@ D10/D50/D90 は、重複径を重みごとに集約した**重み付き経験分
 上流の ``blob_split`` と ``blob_count_interval`` に由来する成分 ID、分割根拠、
 来歴ハッシュ、上流の構造化 ``blob_split`` / ``blob_count_interval`` 記録、個数区間、
 決定可否が必須であり、op 内で再計算したダイジェストと一致しない入力は拒否する。
+``component_id`` と上流 label は一対一、各行の split label は実際の ``blob_split``
+画像と一対一で照合する。これは同一実行内の整合性検査であり、署名または不変の外部
+成果物が無いので改ざん検知ではない。改ざん検知は実行記録と署名を備えた規制対応基盤で扱う。
 未決定行は ``ambiguous`` として除外する。
 ``border_policy="correct"`` は端粒子について ``border_inclusion_probability``、
 ``border_corrected_diameter_px``、``border_corrected_area_px2`` が揃う場合だけ
 Horvitz--Thompson の個数重み ``1/p`` と補正寸法を使う。尺度の標準不確かさは
 各径へ線形伝播し、分位点では決定的 bootstrap、尺度、端補正不確かさの
-感度再標本化を保守的に合成する。
+感度再標本化を保守的に合成する。端補正の径・面積・包含確率は独立と明示した周辺正規
+不確かさとして扱うため、相関を持つ校正には使えない。物理範囲外の抽出値は切り詰めず
+再抽出する。
 有効粒子数が ``MIN_EFFECTIVE_PARTICLES`` 未満なら、母集団分位点を主張せず
 ``insufficient_sample`` を返す。bootstrap 区間は独立粒子の経験分布を再標本化する
 **分割後に受理された粒子に条件付けた区間**であり、端補正時は設計ベース保証ではなく
@@ -42,7 +47,7 @@ Parameters
 particles : table (dict of 1-D columns)
     必須列は ``object_id``、``diameter_px``、``area_px2``、``diameter_unit="px"``、
     ``area_unit="px2"``、``touches_border``、``split_status``、``component_id``、
-    ``split_evidence``、``upstream_provenance_hash``、``upstream_component_label``、``count_interval_lo``、
+    ``split_evidence``、``upstream_provenance_hash``、``upstream_component_label``、``upstream_split_label``、``count_interval_lo``、
     ``count_interval_hi``、``count_determined``。来歴ハッシュは元の ``blob_split`` と
     ``blob_count_interval`` の構造化記録を正規化して SHA-256 化したもの。
     状態は ``isolated`` / ``split`` / ``unsplit`` / ``ambiguous``。
@@ -65,7 +70,8 @@ seed : int
     bootstrap の乱数種。
 upstream_records : dict
     ``{"blob_split": blob_split出力, "blob_count_interval": blob_count_interval出力}``。
-    各行の ``upstream_component_label`` と個数記録を照合し、op がダイジェストを再計算する。
+    各行の ``upstream_component_label`` と個数記録、``upstream_split_label`` と実際の
+    split 画像を照合し、op がダイジェストを再計算する。これは改ざん検知ではない。
 
 Returns
 -------
@@ -96,7 +102,7 @@ Examples
 >>> u = {"blob_split": np.arange(30).reshape(1, 30) + 1,
 ...      "blob_count_interval": {"components": {"label": np.arange(1, 31), "lo": np.ones(30, int),
 ...      "hi": np.ones(30, int), "status": np.array(["determined"] * 30)}}}
->>> p["upstream_component_label"] = list(range(1, 31)); p["upstream_provenance_hash"] = [upstream_provenance_digest(u)] * 30
+>>> p["upstream_component_label"] = list(range(1, 31)); p["upstream_provenance_hash"] = [_upstream_provenance_digest(u)] * 30
 >>> r = particle_size_distribution(p, c, measurement_date="2026-06-01", bootstrap_samples=200, upstream_records=u)
 >>> r["counts"]["accepted_observed"], r["particle_rows"][0]["diameter"]
 (30, 0.02)

@@ -24,6 +24,7 @@ def _particles(diameter=(10.0, 20.0, 40.0), repeats=12, **changes):
              "component_id": ["c%03d" % i for i in range(n)],
               "split_evidence": ["blob_split + blob_count_interval:determined"] * n,
               "upstream_component_label": list(range(1, n + 1)),
+              "upstream_split_label": list(range(1, n + 1)),
               "upstream_provenance_hash": [""] * n,
              "count_interval_lo": [1] * n, "count_interval_hi": [1] * n,
              "count_determined": [True] * n}
@@ -48,7 +49,7 @@ def _upstream_records(particles):
 
 def _seal(particles):
     """Attach the op-recomputed digest / op が再計算する digest を記録する。"""
-    digest = psd.upstream_provenance_digest(_upstream_records(particles))
+    digest = psd._upstream_provenance_digest(_upstream_records(particles))
     particles["upstream_provenance_hash"] = [digest] * len(particles["object_id"])
     return particles
 
@@ -69,9 +70,10 @@ def _border_columns(n, *, probability=.5, uncertainty=.02, diameter_uncertainty=
             "border_corrected_diameter_uncertainty_px": [diameter_uncertainty] + [0.] * (n - 1),
             "border_corrected_area_px2": [np.pi * 12.0 ** 2] + [np.pi * x ** 2 / 4 for x in ([10., 20., 40.] * ((n - 1) // 3) + [10., 20., 40.][:((n - 1) % 3)])],
             "border_corrected_area_uncertainty_px2": [area_uncertainty] + [0.] * (n - 1),
-            "border_correction_provenance": {"view_shape": [100, 100],
+             "border_correction_provenance": {"view_shape": [100, 100],
                                                "inclusion_probability_method": "uniform-centre-window geometry",
-                                               "correction_method": "experimental Horvitz-Thompson"}}
+                                               "correction_method": "experimental Horvitz-Thompson",
+                                               "uncertainty_dependence": "independent"}}
 
 
 def test_weighted_empirical_midpoint_quantiles_match_independent_duplicate_weight_truth():
@@ -126,8 +128,18 @@ def test_upstream_count_interval_is_required_and_an_undetermined_component_is_fa
 def test_component_record_must_be_coherent_and_determined_count_must_equal_reported_rows():
     p = _particles(diameter=(10.0,), repeats=30)
     p["component_id"] = ["c0"] * 30
+    p["upstream_component_label"] = [1] * 30
+    p["upstream_split_label"] = list(range(1, 31))
+    p["split_status"] = ["split"] * 30
+    p["count_interval_lo"] = [29] * 30
+    p["count_interval_hi"] = [29] * 30
+    upstream = {"blob_split": np.arange(1, 31).reshape(1, 30),
+                "blob_count_interval": {"components": {"label": np.array([1]), "lo": np.array([29]),
+                                                           "hi": np.array([29]), "status": np.array(["determined"])}}}
+    p["upstream_provenance_hash"] = [psd._upstream_provenance_digest(upstream)] * 30
     with pytest.raises(ValueError, match="exactly its declared count"):
-        _run(p)
+        psd.particle_size_distribution(p, _calibration(), measurement_date="2026-11-23", bootstrap_samples=200,
+                                       upstream_records=upstream)
     p = _particles(diameter=(10.0,), repeats=30)
     del p["upstream_provenance_hash"]
     with pytest.raises(ValueError, match="upstream_provenance_hash"):
@@ -140,6 +152,29 @@ def test_rejects_thirty_arbitrary_component_ids_with_a_copied_digest():
     p["upstream_component_label"] = list(range(101, 131))
     p["upstream_provenance_hash"] = ["a" * 64] * 30
     with pytest.raises(ValueError, match="does not match recomputed"):
+        _run(p)
+
+
+def test_rejects_thirty_distinct_component_ids_claiming_one_upstream_label():
+    p = _particles(diameter=(10.0,), repeats=30)
+    p["upstream_component_label"] = [1] * 30
+    p["upstream_split_label"] = list(range(1, 31))
+    p["component_id"] = ["forged-%02d" % i for i in range(30)]
+    upstream = {"blob_split": np.arange(1, 31).reshape(1, 30),
+                "blob_count_interval": {"components": {"label": np.array([1]), "lo": np.array([30]),
+                                                           "hi": np.array([30]), "status": np.array(["determined"])}}}
+    p["count_interval_lo"] = [30] * 30
+    p["count_interval_hi"] = [30] * 30
+    p["upstream_provenance_hash"] = [psd._upstream_provenance_digest(upstream)] * 30
+    with pytest.raises(ValueError, match="one-to-one"):
+        psd.particle_size_distribution(p, _calibration(), measurement_date="2026-11-23", bootstrap_samples=200,
+                                       upstream_records=upstream)
+
+
+def test_rejects_rows_that_do_not_cover_actual_blob_split_labels():
+    p = _particles(diameter=(10.0,), repeats=30)
+    p["upstream_split_label"][-1] = 999
+    with pytest.raises(ValueError, match="blob_split labels"):
         _run(p)
 
 
@@ -181,7 +216,15 @@ def test_border_correction_uncertainty_changes_quantile_interval_and_particle_un
     qa, qb = a["quantiles"]["number"]["D90"], b["quantiles"]["number"]["D90"]
     assert (qa["ci_lower"], qa["ci_upper"]) != pytest.approx((qb["ci_lower"], qb["ci_upper"]))
     assert a["particle_rows"][0]["diameter_uncertainty"] > b["particle_rows"][0]["diameter_uncertainty"]
-    assert a["policy"]["border_uncertainty_propagation"] == "normal sensitivity resampling after six-sigma physical-domain rejection"
+    assert "physical-domain rejection sampling" in a["policy"]["border_uncertainty_propagation"]
+    assert "correlations are unsupported" in a["policy"]["border_uncertainty_propagation"]
+
+
+def test_border_correction_requires_an_explicit_independence_assumption():
+    p = _particles(repeats=10, touches_border=[True] + [False] * 29, **_border_columns(30))
+    p["border_correction_provenance"]["uncertainty_dependence"] = "correlated"
+    with pytest.raises(ValueError, match="correlated inputs"):
+        _run(p, border_policy="correct")
 
 
 def test_border_probability_with_a_physically_invalid_tail_is_rejected_instead_of_clipped():
@@ -210,9 +253,10 @@ def test_known_random_field_multiple_windows_call_op_and_reduce_border_cdf_bias_
                           border_corrected_diameter_uncertainty_px=[0.] * raw.size,
                           border_corrected_area_px2=(np.pi * np.square(corrected_d) / 4).tolist(),
                           border_corrected_area_uncertainty_px2=[0.] * raw.size,
-                          border_correction_provenance={"view_shape": [100, 100],
-                                                        "inclusion_probability_method": "uniform-centre-window geometry",
-                                                        "correction_method": "experimental Horvitz-Thompson"})
+                              border_correction_provenance={"view_shape": [100, 100],
+                                                            "inclusion_probability_method": "uniform-centre-window geometry",
+                                                            "correction_method": "experimental Horvitz-Thompson",
+                                                            "uncertainty_dependence": "independent"})
         report = _run(rows, border_policy="correct", seed=int(origin) + 8)
         corrected_median = report["quantiles"]["number"]["D50"]["value"] / .001
         windows.append((abs(np.median(raw) - np.median(truth)), abs(corrected_median - np.median(truth))))
@@ -220,70 +264,13 @@ def test_known_random_field_multiple_windows_call_op_and_reduce_border_cdf_bias_
     assert corrected_bias < raw_bias
 
 
-def _wilson_lower(successes, trials, confidence=.95):
-    """Wilson lower endpoint without a statistics-library dependency / 下側 Wilson 端点。"""
-    z = 1.959963984540054 if confidence == .95 else pytest.fail("test only fixes 95%")
-    p = successes / trials
-    return (p + z * z / (2 * trials) - z * np.sqrt(p * (1 - p) / trials + z * z / (4 * trials ** 2))) / (1 + z * z / trials)
-
-
-def test_predeclared_400_trial_conditional_coverage_varies_scale_split_detection_and_border_judgement():
-    # Predeclared before running: 400 trials make a one-sided 0.90 Wilson
-    # screening threshold distinguishable from 0.95 (about +/-2.1 points).
-    # The unit is one entire 3-basis x 3-Dx interval family, conditional on
-    # accepted particles after segmentation; it is not nine separate claims.
-    rng = np.random.default_rng(42)
-    population = rng.lognormal(np.log(20.0), .08, 100_000)
-    acceptance_probability = .92 * .90 * (.78 + .20 / (1.0 + np.exp(-(population - 16.0) / 3.0)))
-    truth = {}
-    for basis, weight in (("number", acceptance_probability),
-                          ("area", acceptance_probability * population ** 2),
-                          ("volume", acceptance_probability * population ** 3)):
-        order = np.argsort(population)
-        x, w = population[order], weight[order]
-        position = (np.cumsum(w) - .5 * w) / w.sum()
-        truth[basis] = {"D%d" % q: float(np.interp(q / 100.0, position, x)) * .001 for q in (10, 50, 90)}
-    covered = {(basis, "D%d" % q): 0 for basis in truth for q in (10, 50, 90)}
-    simultaneous = []
-    trials = 400
-    for seed in range(trials):
-        source = rng.choice(population, 96)
-        detected = rng.random(source.size) < (.78 + .20 / (1.0 + np.exp(-(source - 16.0) / 3.0)))
-        source = source[detected]
-        determined = rng.random(source.size) < .92
-        border = rng.random(source.size) < .10
-        true_scale = .001 + rng.normal(0.0, .000004)
-        observed_px = source * .001 / true_scale + rng.normal(0.0, .18, source.size)
-        p = _particles(diameter=tuple(observed_px), repeats=1,
-                       area_px2=(np.pi * np.square(observed_px) / 4).tolist(),
-                       touches_border=border.tolist(),
-                       split_status=["isolated" if item else "ambiguous" for item in determined],
-                       count_interval_lo=[1] * source.size,
-                       count_interval_hi=[1 if item else None for item in determined],
-                       count_determined=determined.tolist())
-        calibration = _calibration(scale={"value": true_scale + rng.normal(0.0, .000004),
-                                          "unit": "mm/px", "standard_uncertainty": .000004})
-        report = _run(p, calibration=calibration, border_policy="exclude", seed=seed)
-        this_trial = []
-        for basis in truth:
-            for name, target in truth[basis].items():
-                interval = report["quantiles"][basis][name]
-                if interval["status"] == "estimated":
-                    is_covered = interval["ci_lower"] <= target <= interval["ci_upper"]
-                    covered[basis, name] += is_covered
-                    this_trial.append(is_covered)
-                else:
-                    pytest.fail("coverage trial fell below the predeclared effective-n gate")
-        simultaneous.append(all(this_trial))
-    lower = {key: _wilson_lower(value, trials) for key, value in covered.items()}
-    simultaneous_successes = int(sum(simultaneous))
-    simultaneous_lower = _wilson_lower(simultaneous_successes, trials)
-    print("simultaneous coverage %d/%d; Wilson lower %.4f" %
-          (simultaneous_successes, trials, simultaneous_lower))
-    assert simultaneous_lower >= .90, (
-        "predeclared simultaneous Wilson lower threshold 0.90; got %d/%d = %.4f"
-        % (simultaneous_successes, trials, simultaneous_lower))
-    assert all(value >= simultaneous_lower for value in lower.values())
+def test_post_hoc_400_trial_conditional_coverage_observation_drives_the_figure_values():
+    summary = psd._conditional_simultaneous_coverage_validation()
+    assert summary["trials"] == 400
+    assert summary["successes"] == 376
+    assert summary["observed_proportion"] == pytest.approx(.94)
+    assert summary["wilson_lower_95"] == pytest.approx(.9123, abs=.0001)
+    assert summary["interpretation"] == "post_hoc_exploratory_observation"
 
 
 def test_effective_n_sweep_records_coverage_and_width_near_provisional_gate():
