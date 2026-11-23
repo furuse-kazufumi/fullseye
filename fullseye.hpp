@@ -72,9 +72,9 @@ public:
     Result call(const std::string &op_id, const std::vector<fs_input_n_t> &inputs,
                 const std::string &params = "{}") {
         fs_result_id_t out = 0u;
-        check(fs_call_n(value_, op_id.data(), op_id.size(),
-                        inputs.empty() ? nullptr : inputs.data(), inputs.size(),
-                        params.data(), params.size(), &out));
+        check(fs_call_id_n(value_, op_id.data(), op_id.size(),
+                           inputs.empty() ? nullptr : inputs.data(), inputs.size(),
+                           params.data(), params.size(), &out));
         return Result(out);
     }
 

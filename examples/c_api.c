@@ -63,25 +63,25 @@ int main(int argc, char **argv) {
 
     fs_input_n_t image = FS_INPUT_N_INIT;
     image.image = image_input(pixels, 30, 5, 6).image;
-    if (!check(runtime, fs_call_n(runtime, "contract:threshold", sizeof("contract:threshold") - 1u,
+    if (!check(runtime, fs_call_id_n(runtime, "contract:threshold", sizeof("contract:threshold") - 1u,
                                   &image, 1, "{\"lo\":0.6,\"hi\":1.0}",
                                   sizeof("{\"lo\":0.6,\"hi\":1.0}") - 1u, &contract_region),
                "contract threshold")) goto done;
     fs_input_n_t region = result_input(FS_VALUE_REGION, contract_region, 0);
-    if (!check(runtime, fs_call_n(runtime, "contract:connection", sizeof("contract:connection") - 1u,
+    if (!check(runtime, fs_call_id_n(runtime, "contract:connection", sizeof("contract:connection") - 1u,
                                   &region, 1, "{}", sizeof("{}") - 1u, &objects),
                "connection")) goto done;
     fs_input_n_t object_input = result_input(FS_VALUE_OBJECTSET, objects, 0);
-    if (!check(runtime, fs_call_n(runtime, "contract:measure_all", sizeof("contract:measure_all") - 1u,
+    if (!check(runtime, fs_call_id_n(runtime, "contract:measure_all", sizeof("contract:measure_all") - 1u,
                                   &object_input, 1, "{}", sizeof("{}") - 1u, &measures),
                "measure_all")) goto done;
 
-    if (!check(runtime, fs_call_n(runtime, "registry:threshold", sizeof("registry:threshold") - 1u,
+    if (!check(runtime, fs_call_id_n(runtime, "registry:threshold", sizeof("registry:threshold") - 1u,
                                   &image, 1, "{\"a\":0.6,\"b\":0.5}",
                                   sizeof("{\"a\":0.6,\"b\":0.5}") - 1u, &registry_region),
                "registry threshold")) goto done;
     fs_input_n_t registry_input = result_input(FS_VALUE_REGION, registry_region, 0);
-    if (!check(runtime, fs_call_n(runtime, "registry:blob_count", sizeof("registry:blob_count") - 1u,
+    if (!check(runtime, fs_call_id_n(runtime, "registry:blob_count", sizeof("registry:blob_count") - 1u,
                                   &registry_input, 1, "{}", sizeof("{}") - 1u, &count),
                "blob_count")) goto done;
 

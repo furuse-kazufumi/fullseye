@@ -58,7 +58,7 @@ static fs_status_t threshold(fs_runtime_t *runtime, fs_result_id_t *out) {
     input.image = image_input(pixels, 4).image;
     static const char op[] = "contract:threshold";
     static const char params[] = "{\"lo\":0.5,\"hi\":1.0}";
-    return fs_call_n(runtime, op, sizeof(op) - 1u, &input, 1, params, sizeof(params) - 1u, out);
+    return fs_call_id_n(runtime, op, sizeof(op) - 1u, &input, 1, params, sizeof(params) - 1u, out);
 }
 
 int main(int argc, char **argv) {

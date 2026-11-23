@@ -74,9 +74,9 @@ def _bind(lib):
     lib.fs_runtime_create.argtypes = [C.POINTER(InitOptions), C.POINTER(C.c_void_p)]
     lib.fs_runtime_create.restype = C.c_int
     lib.fs_runtime_destroy.argtypes = [C.c_void_p]
-    lib.fs_call_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t, C.POINTER(InputN), C.c_size_t,
+    lib.fs_call_id_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t, C.POINTER(InputN), C.c_size_t,
                               C.c_void_p, C.c_size_t, C.POINTER(C.c_uint64)]
-    lib.fs_call_n.restype = C.c_int
+    lib.fs_call_id_n.restype = C.c_int
     lib.fs_result_release_n.argtypes = [C.c_uint64]
     lib.fs_result_release_n.restype = C.c_int
     lib.fs_result_kind_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.c_int)]
@@ -97,6 +97,14 @@ def _bind(lib):
     lib.fs_result_real_n.restype = C.c_int
     lib.fs_last_error.argtypes = [C.c_void_p, C.c_char_p, C.c_size_t]
     lib.fs_last_error.restype = C.c_size_t
+    lib.fs_test_result_id_seed_next_generation.argtypes = [C.c_uint32]
+    lib.fs_test_result_id_seed_next_generation.restype = C.c_int
+    lib.fs_test_result_id_pause_after_lease.argtypes = [C.c_int]
+    lib.fs_test_result_id_pause_after_lease.restype = C.c_int
+    lib.fs_test_result_id_wait_for_lease.argtypes = [C.c_uint32]
+    lib.fs_test_result_id_wait_for_lease.restype = C.c_int
+    lib.fs_test_result_id_resume_lease.argtypes = []
+    lib.fs_test_result_id_resume_lease.restype = C.c_int
 
 
 @pytest.fixture(scope="module")
@@ -130,7 +138,7 @@ def _call(abi, op: str, inputs: list[Input], params="{}"):
     result = C.c_uint64()
     array = (InputN * len(inputs))(*inputs) if inputs else None
     op_bytes, params_bytes = op.encode(), params.encode()
-    status = lib.fs_call_n(runtime, op_bytes, len(op_bytes), array, len(inputs),
+    status = lib.fs_call_id_n(runtime, op_bytes, len(op_bytes), array, len(inputs),
                            params_bytes, len(params_bytes), C.byref(result))
     return status, result
 
@@ -269,7 +277,7 @@ def test_null_input_array_unknown_ops_and_extra_json_are_rejected(abi):
     lib, runtime = abi
     result = C.c_uint64()
     op, params = b"contract:threshold", b"{}"
-    assert lib.fs_call_n(runtime, op, len(op), None, 1, params, len(params),
+    assert lib.fs_call_id_n(runtime, op, len(op), None, 1, params, len(params),
                          C.byref(result)) == FS_E_INVALID_ARG
     pixels = np.ones((2, 2), dtype=np.float64)
     assert _call(abi, "threshold", [_image(pixels)], '{"lo":0.2,"hi":0.8}')[0] == FS_E_UNKNOWN_OP
@@ -331,13 +339,29 @@ def test_abi_0_2_runtime_paths_are_explicit_spans_without_a_trailing_nul():
     assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_E_INVALID_ARG
 
 
+def test_abi_0_2_runtime_paths_reject_embedded_nul_bytes():
+    lib = C.CDLL(str(_library_path()))
+    _bind(lib)
+    root = (C.c_char * len(b"root\0suffix")).from_buffer_copy(b"root\0suffix")
+    runtime = C.c_void_p()
+    options = InitOptions(C.sizeof(InitOptions), C.cast(root, C.c_char_p), None,
+                          3, 0, 2, C.sizeof(root), 0)
+    assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_E_INVALID_ARG
+    home = (C.c_char * len(b"home\0suffix")).from_buffer_copy(b"home\0suffix")
+    options.runtime_root = os.fsencode(ROOT)
+    options.runtime_root_bytes = len(options.runtime_root)
+    options.python_home = C.cast(home, C.c_char_p)
+    options.python_home_bytes = C.sizeof(home)
+    assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_E_INVALID_ARG
+
+
 def test_bounded_strings_do_not_require_nul_and_legacy_entrypoint_remains_abi_0_1_compatible(abi):
     lib, runtime = abi
     op = (C.c_char * len(b"contract:threshold")).from_buffer_copy(b"contract:threshold")
     params = (C.c_char * len(b'{"lo":0.5,"hi":1.0}')).from_buffer_copy(b'{"lo":0.5,"hi":1.0}')
     pixels = np.ones((2, 2), dtype=np.float64)
     result = C.c_uint64()
-    assert lib.fs_call_n(runtime, op, C.sizeof(op), C.byref(_image(pixels)), 1,
+    assert lib.fs_call_id_n(runtime, op, C.sizeof(op), C.byref(_image(pixels)), 1,
                          params, C.sizeof(params), C.byref(result)) == FS_OK
     assert lib.fs_result_release_n(result) == FS_OK
     legacy = lib.fs_call
@@ -371,6 +395,26 @@ def test_released_and_unknown_result_handles_are_rejected_and_double_release_err
     assert lib.fs_result_release_n(replacement) == FS_OK
 
 
+def test_maximum_generation_slot_is_retired_without_revalidating_a_stale_id(abi):
+    lib, _runtime = abi
+    pixels = np.ones((2, 2), dtype=np.float64)
+    status, first = _call(abi, "contract:threshold", [_image(pixels)], '{"lo":0.5,"hi":1.0}')
+    assert status == FS_OK
+    assert lib.fs_result_release_n(first) == FS_OK
+    assert lib.fs_test_result_id_seed_next_generation(2**32 - 1) == FS_OK
+    status, maximum = _call(abi, "contract:threshold", [_image(pixels)], '{"lo":0.5,"hi":1.0}')
+    assert status == FS_OK
+    assert maximum.value >> 32 == 2**32 - 1
+    assert lib.fs_result_release_n(maximum) == FS_OK
+    kind = C.c_int()
+    assert lib.fs_result_kind_n(maximum, 0, C.byref(kind)) == FS_E_INVALID_ARG
+    status, replacement = _call(abi, "contract:threshold", [_image(pixels)], '{"lo":0.5,"hi":1.0}')
+    assert status == FS_OK
+    assert (replacement.value & 0xFFFFFFFF) != (maximum.value & 0xFFFFFFFF)
+    assert lib.fs_result_kind_n(maximum, 0, C.byref(kind)) == FS_E_INVALID_ARG
+    assert lib.fs_result_release_n(replacement) == FS_OK
+
+
 def test_runtime_without_a_named_python_environment_fails_closed(monkeypatch):
     lib = C.CDLL(str(_library_path()))
     _bind(lib)
@@ -386,27 +430,19 @@ def test_release_and_accessor_concurrency_keeps_the_handle_lifetime_safe(abi):
     pixels = np.ones((8, 8), dtype=np.float64)
     status, result = _call(abi, "contract:threshold", [_image(pixels)], '{"lo":0.5,"hi":1.0}')
     assert status == FS_OK
-    first_accessor_finished = threading.Event()
-    release_started = threading.Event()
+    assert lib.fs_test_result_id_pause_after_lease(1) == FS_OK
 
     def read_result():
         pointer = C.POINTER(Run)()
         count = C.c_size_t()
-        first = lib.fs_result_region_runs_n(result, 0, C.byref(pointer), C.byref(count))
-        first_accessor_finished.set()
-        assert release_started.wait(5)
-        rows = [first]
-        for _ in range(200):
-            pointer = C.POINTER(Run)()
-            count = C.c_size_t()
-            rows.append(lib.fs_result_region_runs_n(result, 0, C.byref(pointer), C.byref(count)))
-        return rows
+        return lib.fs_result_region_runs_n(result, 0, C.byref(pointer), C.byref(count)), count.value
 
     with ThreadPoolExecutor(max_workers=1) as pool:
         future = pool.submit(read_result)
-        assert first_accessor_finished.wait(5)
+        assert lib.fs_test_result_id_wait_for_lease(5000) == FS_OK
         assert lib.fs_result_release_n(result) == FS_OK
-        release_started.set()
-        statuses = future.result()
-    assert statuses[0] == FS_OK
-    assert set(statuses[1:]) == {FS_E_INVALID_ARG}
+        assert lib.fs_test_result_id_resume_lease() == FS_OK
+        status, count = future.result()
+    assert status == FS_OK and count == 8
+    assert lib.fs_result_region_runs_n(result, 0, C.byref(C.POINTER(Run)()), C.byref(C.c_size_t())) == FS_E_INVALID_ARG
+    assert lib.fs_test_result_id_pause_after_lease(0) == FS_OK

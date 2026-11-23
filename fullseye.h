@@ -2,9 +2,9 @@
  * Fullseye embedded C API / Fullseye 埋め込み C API.
  *
  * The existing fullseye_abi.h remains the semantic L1 contract.  This header
- * adds an owned runtime/result API implemented by the pybind11 bridge.
+ * adds the initial C SDK API (ABI 0.2) implemented by the pybind11 bridge.
  * 既存の fullseye_abi.h を意味論上の L1 契約として保ち、このヘッダは pybind11
- * ブリッジが実装する所有権つき runtime/result API を追加する。
+ * ブリッジが実装する、最初の C SDK API (ABI 0.2) を追加する。
  */
 #ifndef FULLSEYE_H
 #define FULLSEYE_H
@@ -38,7 +38,7 @@ extern "C" {
 
 typedef struct fs_runtime fs_runtime_t;
 typedef struct fs_result fs_result_t;
-/* A generation-tagged, opaque result handle for the ABI 0.2 bounded API.
+/* A generation-tagged, opaque result handle for the ABI 0.2 C SDK API.
  * ABI 0.2 の長さ付き API が返す世代付き不透明結果ハンドル。 */
 typedef uint64_t fs_result_id_t;
 
@@ -106,7 +106,20 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options,
                                               fs_runtime_t **out);
 FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime);
 
-/* ABI 0.1 legacy entry points accept valid NUL-terminated C strings. Result
+/* Compatibility map / 互換性表:
+ *
+ *   Surface                              Version       Result ownership
+ *   fullseye_abi.h public L1 contract    published 0.1  its declared handles
+ *   fs_runtime_create, fs_call, and      C SDK 0.2     fs_result_t* pointer
+ *     fs_find_ops_json below
+ *   fs_find_ops_json_n and fs_call_id_n  C SDK 0.2     fs_result_id_t
+ *
+ * The C SDK is first published as 0.2. Its generation-ID call entry is named
+ * fs_call_id_n so it cannot be mistaken for a pointer-result function.
+ * C SDK は 0.2 として最初に公開する。世代付き ID を返す入口は
+ * fs_call_id_n とし、ポインタ結果の関数名と混同しない。
+ *
+ * Pointer entry points accept valid NUL-terminated C strings. Result
  * pointers must not be used after fs_result_release(); that is undefined.
  * ABI 0.1 旧入口は有効な NUL 終端 C 文字列を受ける。fs_result_release() 後の
  * 結果ポインタ利用は未定義で、呼出し側の責任。 */
@@ -140,14 +153,14 @@ FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime,
                                                size_t query_json_bytes,
                                                char **out_utf8,
                                                size_t *out_bytes);
-FS_API fs_status_t FS_CALL fs_call_n(fs_runtime_t *runtime,
-                                      const char *op_id,
-                                      size_t op_id_bytes,
-                                      const fs_input_n_t *inputs,
-                                      size_t input_count,
-                                      const char *params_json,
-                                      size_t params_json_bytes,
-                                      fs_result_id_t *out);
+FS_API fs_status_t FS_CALL fs_call_id_n(fs_runtime_t *runtime,
+                                         const char *op_id,
+                                         size_t op_id_bytes,
+                                         const fs_input_n_t *inputs,
+                                         size_t input_count,
+                                         const char *params_json,
+                                         size_t params_json_bytes,
+                                         fs_result_id_t *out);
 
 /* Borrowed result views remain valid through fs_result_release().
  * 借用結果は fs_result_release() まで有効。 */

@@ -9,6 +9,8 @@
 #include <atomic>
 #include <cmath>
 #include <cstdint>
+#include <chrono>
+#include <condition_variable>
 #include <cstdlib>
 #include <cstring>
 #include <limits>
@@ -60,7 +62,6 @@ struct ThreadError {
 
 thread_local ThreadError g_error;
 bool g_python_ready = false;
-std::string g_python_error;
 bool g_python_owned = false;
 std::string g_python_root;
 std::string g_python_home;
@@ -211,27 +212,47 @@ void add_runtime_paths(const std::string &root) {
     path.attr("insert")(0, root + separator + "runtime" + separator + "site-packages");
 }
 
-fs_status_t initialize_python(const std::string &root, const std::string &home,
-                              bool allow_host) {
+struct PythonInitResult {
+    fs_status_t status = FS_OK;
+    std::string error;
+};
+
+PythonInitResult initialize_python(const std::string &root, const std::string &home,
+                                   bool allow_host) {
     std::lock_guard<std::mutex> lock(g_python_mutex);
     if (g_python_ready) {
         if (g_python_root != root || g_python_home != home) {
-            g_python_error = "the CPython runtime is already configured for a different runtime_root or python_home";
-            return FS_E_INVALID_ARG;
+            return {FS_E_INVALID_ARG,
+                    "the CPython runtime is already configured for a different runtime_root or python_home"};
         }
         if (!g_python_owned && !allow_host) {
-            g_python_error = "the existing CPython host requires FS_INIT_ALLOW_HOST_PYTHON_UNSAFE";
-            return FS_E_INVALID_ARG;
+            return {FS_E_INVALID_ARG,
+                    "the existing CPython host requires FS_INIT_ALLOW_HOST_PYTHON_UNSAFE"};
         }
-        return FS_OK;
+        return {};
     }
     try {
         const bool was_running = Py_IsInitialized() != 0;
-        if (was_running && !allow_host) {
-            g_python_error = "FS_INIT_ISOLATED cannot use an existing CPython; set FS_INIT_ALLOW_HOST_PYTHON_UNSAFE to opt in to the host interpreter";
-            return FS_E_INVALID_ARG;
-        }
-        if (!was_running) {
+        if (was_running && g_python_owned) {
+            if (g_python_root != root || g_python_home != home) {
+                return {FS_E_INVALID_ARG,
+                        "the CPython runtime is already configured for a different runtime_root or python_home"};
+            }
+            py::gil_scoped_acquire acquire;
+            add_runtime_paths(root);
+            py::module_::import("fullseye.c_api_bridge");
+        } else if (was_running) {
+            if (!allow_host) {
+                return {FS_E_INVALID_ARG,
+                        "FS_INIT_ISOLATED cannot use an existing CPython; set FS_INIT_ALLOW_HOST_PYTHON_UNSAFE to opt in to the host interpreter"};
+            }
+            py::gil_scoped_acquire acquire;
+            add_runtime_paths(root);
+            py::module_::import("fullseye.c_api_bridge");
+            g_python_owned = false;
+            g_python_root = root;
+            g_python_home = home;
+        } else {
             PyConfig config;
             PyConfig_InitIsolatedConfig(&config);
             config.install_signal_handlers = 0;
@@ -242,33 +263,38 @@ fs_status_t initialize_python(const std::string &root, const std::string &home,
                     const std::string message = status.err_msg == nullptr
                         ? "could not set Python home" : status.err_msg;
                     PyConfig_Clear(&config);
-                    throw std::runtime_error(message);
+                    return {FS_E_NO_PYTHON, message};
                 }
             }
             py::initialize_interpreter(&config, 0, nullptr, false);
-            add_runtime_paths(root);
-            py::module_::import("fullseye.c_api_bridge");
+            // Record ownership and the immutable configuration immediately. If
+            // importing the bridge fails, this remains a library-owned Python.
+            // 起動直後に所有者と設定を記録し、import 失敗後も library 所有と保つ。
             g_python_owned = true;
+            g_python_root = root;
+            g_python_home = home;
+            try {
+                add_runtime_paths(root);
+                py::module_::import("fullseye.c_api_bridge");
+            } catch (const std::exception &exc) {
+                const std::string message = exc.what();
+                PyEval_SaveThread();
+                return {FS_E_NO_PYTHON, message};
+            } catch (...) {
+                PyEval_SaveThread();
+                return {FS_E_NO_PYTHON, "unknown error while importing fullseye.c_api_bridge"};
+            }
             // CPython remains alive until process exit; native callers acquire
             // the GIL for every later call. / 終了まで生かし、各呼出しで GIL を取る。
             PyEval_SaveThread();
-        } else {
-            py::gil_scoped_acquire acquire;
-            add_runtime_paths(root);
-            py::module_::import("fullseye.c_api_bridge");
-            g_python_owned = false;
         }
-        g_python_root = root;
-        g_python_home = home;
         g_python_ready = true;
-        g_python_error.clear();
-        return FS_OK;
+        return {};
     } catch (const std::exception &exc) {
-        g_python_error = exc.what();
+        return {FS_E_NO_PYTHON, exc.what()};
     } catch (...) {
-        g_python_error = "unknown error while initializing CPython";
+        return {FS_E_NO_PYTHON, "unknown error while initializing CPython"};
     }
-    return FS_E_NO_PYTHON;
 }
 
 py::dict item_to_python(const Item &item) {
@@ -400,10 +426,27 @@ namespace {
 std::mutex g_result_mutex;
 struct ResultSlot {
     uint32_t generation = 1u;
+    bool retired = false;
     std::shared_ptr<const ResultPayload> payload;
 };
 std::vector<ResultSlot> g_result_slots;
 std::vector<uint32_t> g_free_result_slots;
+
+#if defined(FULLSEYE_C_API_TESTING)
+std::mutex g_test_lease_mutex;
+std::condition_variable g_test_lease_cv;
+bool g_test_pause_after_id_lease = false;
+bool g_test_id_lease_acquired = false;
+bool g_test_id_lease_resume = false;
+
+void pause_after_id_lease_for_test() {
+    std::unique_lock<std::mutex> lock(g_test_lease_mutex);
+    if (!g_test_pause_after_id_lease) return;
+    g_test_id_lease_acquired = true;
+    g_test_lease_cv.notify_all();
+    g_test_lease_cv.wait(lock, [] { return g_test_id_lease_resume; });
+}
+#endif
 
 fs_result_id_t make_result_id(uint32_t index, uint32_t generation) {
     return (static_cast<fs_result_id_t>(generation) << 32u)
@@ -430,13 +473,18 @@ public:
         if (!split_result_id(result, &index, &generation)) {
             return;
         }
-        std::lock_guard<std::mutex> lock(g_result_mutex);
-        if (index < g_result_slots.size()) {
-            const ResultSlot &slot = g_result_slots[index];
-            if (slot.generation == generation) {
-                payload_ = slot.payload;
+        {
+            std::lock_guard<std::mutex> lock(g_result_mutex);
+            if (index < g_result_slots.size()) {
+                const ResultSlot &slot = g_result_slots[index];
+                if (slot.generation == generation) {
+                    payload_ = slot.payload;
+                }
             }
         }
+#if defined(FULLSEYE_C_API_TESTING)
+        if (payload_) pause_after_id_lease_for_test();
+#endif
     }
     const ResultPayload *get() const noexcept { return payload_.get(); }
     explicit operator bool() const noexcept { return static_cast<bool>(payload_); }
@@ -505,6 +553,9 @@ fs_result_id_t register_result(std::shared_ptr<const ResultPayload> payload) {
     if (!g_free_result_slots.empty()) {
         index = g_free_result_slots.back();
         g_free_result_slots.pop_back();
+        if (g_result_slots[index].retired) {
+            return 0u;
+        }
         g_result_slots[index].payload = std::move(payload);
     } else {
         if (g_result_slots.size() >= std::numeric_limits<uint32_t>::max()) {
@@ -530,17 +581,56 @@ fs_status_t release_result_id(fs_result_id_t result) {
     }
     ResultSlot &slot = g_result_slots[index];
     slot.payload.reset();
-    ++slot.generation;
-    if (slot.generation == 0u) {
+    if (slot.generation == std::numeric_limits<uint32_t>::max()) {
+        // Never wrap a generation: an ID that was once invalid must never
+        // become valid again. / 世代は一周させず、失効 ID を再有効化しない。
+        slot.retired = true;
+    } else {
         ++slot.generation;
+        g_free_result_slots.push_back(index);
     }
-    g_free_result_slots.push_back(index);
     return FS_OK;
 }
 
 }  // namespace
 
 extern "C" {
+
+#if defined(FULLSEYE_C_API_TESTING)
+FS_API fs_status_t FS_CALL fs_test_result_id_seed_next_generation(uint32_t generation) {
+    if (generation == 0u) return FS_E_INVALID_ARG;
+    std::lock_guard<std::mutex> lock(g_result_mutex);
+    if (g_free_result_slots.empty()) return FS_E_INVALID_ARG;
+    const uint32_t index = g_free_result_slots.back();
+    ResultSlot &slot = g_result_slots[index];
+    if (slot.payload || slot.retired) return FS_E_INVALID_ARG;
+    slot.generation = generation;
+    return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_test_result_id_pause_after_lease(int enabled) {
+    std::lock_guard<std::mutex> lock(g_test_lease_mutex);
+    g_test_pause_after_id_lease = enabled != 0;
+    g_test_id_lease_acquired = false;
+    g_test_id_lease_resume = !g_test_pause_after_id_lease;
+    return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_test_result_id_wait_for_lease(uint32_t timeout_ms) {
+    std::unique_lock<std::mutex> lock(g_test_lease_mutex);
+    const bool acquired = g_test_lease_cv.wait_for(lock, std::chrono::milliseconds(timeout_ms), [] {
+        return g_test_id_lease_acquired;
+    });
+    return acquired ? FS_OK : FS_E_BUSY;
+}
+
+FS_API fs_status_t FS_CALL fs_test_result_id_resume_lease(void) {
+    std::lock_guard<std::mutex> lock(g_test_lease_mutex);
+    g_test_id_lease_resume = true;
+    g_test_lease_cv.notify_all();
+    return FS_OK;
+}
+#endif
 
 FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, fs_runtime_t **out) {
     if (out != nullptr) {
@@ -580,9 +670,17 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, f
             return FS_E_INVALID_ARG;
         }
         if (options->runtime_root != nullptr) {
+            if (std::memchr(options->runtime_root, '\0', options->runtime_root_bytes) != nullptr) {
+                set_error(nullptr, "ABI 0.2 runtime_root must not contain NUL bytes");
+                return FS_E_INVALID_ARG;
+            }
             root.assign(options->runtime_root, options->runtime_root_bytes);
         }
         if (options->python_home != nullptr) {
+            if (std::memchr(options->python_home, '\0', options->python_home_bytes) != nullptr) {
+                set_error(nullptr, "ABI 0.2 python_home must not contain NUL bytes");
+                return FS_E_INVALID_ARG;
+            }
             home.assign(options->python_home, options->python_home_bytes);
         }
     } else {
@@ -598,11 +696,11 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, f
         return FS_E_NO_PYTHON;
     }
     try {
-        const fs_status_t init_status = initialize_python(
+        const PythonInitResult init = initialize_python(
             root, home, (options->flags & FS_INIT_ALLOW_HOST_PYTHON_UNSAFE) != 0u);
-        if (init_status != FS_OK) {
-            set_error(nullptr, "CPython initialization failed: " + g_python_error);
-            return init_status;
+        if (init.status != FS_OK) {
+            set_error(nullptr, "CPython initialization failed: " + init.error);
+            return init.status;
         }
         auto *runtime = new fs_runtime_t();
         {
@@ -774,10 +872,10 @@ FS_API fs_status_t FS_CALL fs_call(fs_runtime_t *runtime, const char *op_id,
     }
 }
 
-FS_API fs_status_t FS_CALL fs_call_n(fs_runtime_t *runtime, const char *op_id,
-                                      size_t op_id_bytes, const fs_input_n_t *inputs,
-                                      size_t input_count, const char *params_json,
-                                      size_t params_json_bytes, fs_result_id_t *out) {
+FS_API fs_status_t FS_CALL fs_call_id_n(fs_runtime_t *runtime, const char *op_id,
+                                         size_t op_id_bytes, const fs_input_n_t *inputs,
+                                         size_t input_count, const char *params_json,
+                                         size_t params_json_bytes, fs_result_id_t *out) {
     if (out != nullptr) {
         *out = 0u;
     }

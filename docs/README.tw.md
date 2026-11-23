@@ -314,7 +314,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 338 篇
+## 文件地圖 — 共 339 篇
 
 完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,847 篇運算子說明與 73 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
@@ -459,7 +459,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(252)
+**Other**(253)
 
 | 文件 | 內容 |
 |---|---|
@@ -478,6 +478,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`CAPABILITIES.en.md`](CAPABILITIES.en.md) | What Fullseye can do |
 | [`CAPABILITIES.md`](CAPABILITIES.md) | What Fullseye can do → [`CAPABILITIES.en.md`](CAPABILITIES.en.md) · 原文 _(ja)_ |
 | [`CHAIN_FUZZ.en.md`](CHAIN_FUZZ.en.md) | Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains |
+| [`C_API.md`](C_API.md) | Fullseye C SDK compatibility |
 | [`C_API_SDK.md`](C_API_SDK.md) | C/C++ SDK runtime requirement |
 | [`DESIGN_NOTES.de.md`](DESIGN_NOTES.de.md) | Fullseye-Entwurfsnotizen (aus den ★-Kommentaren im Quellcode erzeugt) |
 | [`DESIGN_NOTES.en.md`](DESIGN_NOTES.en.md) | Fullseye design notes (generated from the ★ comments in the source) |

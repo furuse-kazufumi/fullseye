@@ -37,6 +37,17 @@ if(FULLSEYE_BUILD_NATIVE)
     if(_fullseye_winpthread)
       target_link_libraries(fullseye_c_api PRIVATE "${_fullseye_winpthread}")
     endif()
+    # GCC may still emit a libwinpthread DLL dependency for condition variables.
+    # Put that runtime beside the SDK DLL and install it with the SDK so loading
+    # never relies on a compiler directory being on PATH.
+    # condition_variable の DLL 依存も SDK DLL と同じ場所へ配置する。
+    set(_fullseye_winpthread_dll "${_fullseye_mingw_root}/bin/libwinpthread-1.dll")
+    if(EXISTS "${_fullseye_winpthread_dll}")
+      add_custom_command(TARGET fullseye_c_api POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${_fullseye_winpthread_dll}" "$<TARGET_FILE_DIR:fullseye_c_api>")
+      install(FILES "${_fullseye_winpthread_dll}" DESTINATION ${CMAKE_INSTALL_BINDIR})
+    endif()
   endif()
   set_target_properties(fullseye_c_api PROPERTIES
     CXX_VISIBILITY_PRESET hidden
@@ -88,6 +99,7 @@ if(FULLSEYE_BUILD_NATIVE)
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Fullseye)
 
   if(FULLSEYE_BUILD_TESTS)
+    target_compile_definitions(fullseye_c_api PRIVATE FULLSEYE_C_API_TESTING=1)
     enable_testing()
     find_package(Threads REQUIRED)
     add_executable(fullseye_c_example examples/c_api.c)
@@ -104,9 +116,15 @@ if(FULLSEYE_BUILD_NATIVE)
     add_executable(fullseye_c_abi_0_1_consumer tests/c_abi_0_1_consumer.c)
     set_property(TARGET fullseye_c_abi_0_1_consumer PROPERTY C_STANDARD 11)
     target_link_libraries(fullseye_c_abi_0_1_consumer PRIVATE Fullseye::C)
+    add_executable(fullseye_cpp_abi_0_1_consumer tests/cpp_abi_0_1_consumer.cpp)
+    target_link_libraries(fullseye_cpp_abi_0_1_consumer PRIVATE Fullseye::CXX)
     add_executable(fullseye_c_runtime_configuration examples/c_runtime_configuration.c)
     set_property(TARGET fullseye_c_runtime_configuration PROPERTY C_STANDARD 11)
     target_link_libraries(fullseye_c_runtime_configuration PRIVATE Fullseye::C)
+    add_executable(fullseye_c_runtime_initialization_failure
+                   examples/c_runtime_initialization_failure.c)
+    set_property(TARGET fullseye_c_runtime_initialization_failure PROPERTY C_STANDARD 11)
+    target_link_libraries(fullseye_c_runtime_initialization_failure PRIVATE Fullseye::C)
     add_test(NAME fullseye_c_lifecycle
              COMMAND fullseye_c_example ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME fullseye_cpp_lifecycle
@@ -117,7 +135,11 @@ if(FULLSEYE_BUILD_NATIVE)
              COMMAND fullseye_c_handle_safety ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME fullseye_c_abi_0_1_consumer
              COMMAND fullseye_c_abi_0_1_consumer ${CMAKE_CURRENT_SOURCE_DIR})
+    add_test(NAME fullseye_cpp_abi_0_1_consumer
+             COMMAND fullseye_cpp_abi_0_1_consumer ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME fullseye_c_runtime_configuration
              COMMAND fullseye_c_runtime_configuration ${CMAKE_CURRENT_SOURCE_DIR})
+    add_test(NAME fullseye_c_runtime_initialization_failure
+             COMMAND fullseye_c_runtime_initialization_failure)
   endif()
 endif()

@@ -24,7 +24,7 @@ static void run_one(thread_arg_t *arg) {
     char error[ERROR_CAPACITY];
     fs_result_id_t result = 0u;
     snprintf(op, sizeof(op), "registry:missing_%d", arg->index);
-    fs_status_t status = fs_call_n(arg->runtime, op, strlen(op), NULL, 0,
+    fs_status_t status = fs_call_id_n(arg->runtime, op, strlen(op), NULL, 0,
                                    "{}", sizeof("{}") - 1u, &result);
     fs_last_error(arg->runtime, error, sizeof(error));
     arg->ok = status == FS_E_UNKNOWN_OP && result == 0u && strstr(error, op) != NULL;
