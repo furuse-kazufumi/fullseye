@@ -283,6 +283,7 @@ def test_last_error_is_isolated_per_os_thread(abi):
 
     with ThreadPoolExecutor(max_workers=8) as pool:
         rows = list(pool.map(worker, range(32)))
+    assert len(rows) == 32
     for index, (status, result, message) in enumerate(rows):
         assert status == FS_E_UNKNOWN_OP and result is None
         assert "registry:thread_missing_%d" % index in message
