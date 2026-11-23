@@ -46,7 +46,6 @@ import types
 from dataclasses import dataclass, field
 
 from PySide6 import QtCore, QtGui, QtWidgets
-import shiboken6                                  # comes with PySide6
 
 import studio_program as sp
 import studio_settings
@@ -458,6 +457,7 @@ class _FlowRow(QtWidgets.QLayout):
         # such an item, so its wrapper (kept here, and parented by PySide to the layout around this row) outlived
         # it and broke a later object at the same address (studio_theme.LayoutEntry). Keep an item made in
         # Python instead: its wrapper class tells PySide when Qt deletes it.
+        import shiboken6                                      # noqa: PLC0415  (comes with PySide6)
         widget = item.widget() if not shiboken6.createdByPython(item) else None
         if widget is not None:
             shiboken6.delete(item)
