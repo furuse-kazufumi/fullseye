@@ -14,7 +14,7 @@ version: 1.1.1  # fullseye lib version this note was generated for
 # particle_size_distribution — DRIVE `pharma` op
 
 - **データ種**: `table × table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.particle_size_distribution(particles, calibration, *, border_policy='exclude', measurement_date=None, bin_edges=None, confidence=0.95, bootstrap_samples=2000, seed=776)` (実装を直接呼ぶなら `import pharmaparticle; pharmaparticle.particle_size_distribution(particles, calibration, *, border_policy='exclude', measurement_date=None, bin_edges=None, confidence=0.95, bootstrap_samples=2000, seed=776)`、台帳から引くなら `opsdrive.get("particle_size_distribution")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.particle_size_distribution(particles, calibration, *, border_policy='exclude', measurement_date=None, bin_edges=None, confidence=0.95, bootstrap_samples=2000, seed=776, upstream_records=None)` (実装を直接呼ぶなら `import pharmaparticle; pharmaparticle.particle_size_distribution(particles, calibration, *, border_policy='exclude', measurement_date=None, bin_edges=None, confidence=0.95, bootstrap_samples=2000, seed=776, upstream_records=None)`、台帳から引くなら `opsdrive.get("particle_size_distribution")`)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -24,7 +24,8 @@ version: 1.1.1  # fullseye lib version this note was generated for
 D10/D50/D90 は、重複径を重みごとに集約した**重み付き経験分布の中点規約**で求める。
 ``unsplit`` と ``ambiguous`` の重なりは常に除外し、1 粒として黙って数えない。
 上流の ``blob_split`` と ``blob_count_interval`` に由来する成分 ID、分割根拠、
-来歴ハッシュ、個数区間、決定可否が全行で必須であり、成分内で矛盾する入力は拒否する。
+来歴ハッシュ、上流の構造化 ``blob_split`` / ``blob_count_interval`` 記録、個数区間、
+決定可否が必須であり、op 内で再計算したダイジェストと一致しない入力は拒否する。
 未決定行は ``ambiguous`` として除外する。
 ``border_policy="correct"`` は端粒子について ``border_inclusion_probability``、
 ``border_corrected_diameter_px``、``border_corrected_area_px2`` が揃う場合だけ
@@ -41,7 +42,7 @@ Parameters
 particles : table (dict of 1-D columns)
     必須列は ``object_id``、``diameter_px``、``area_px2``、``diameter_unit="px"``、
     ``area_unit="px2"``、``touches_border``、``split_status``、``component_id``、
-    ``split_evidence``、``upstream_provenance_hash``、``count_interval_lo``、
+    ``split_evidence``、``upstream_provenance_hash``、``upstream_component_label``、``count_interval_lo``、
     ``count_interval_hi``、``count_determined``。来歴ハッシュは元の ``blob_split`` と
     ``blob_count_interval`` の構造化記録を正規化して SHA-256 化したもの。
     状態は ``isolated`` / ``split`` / ``unsplit`` / ``ambiguous``。
@@ -62,6 +63,9 @@ bootstrap_samples : int
     決定的 bootstrap の反復数。200 以上。
 seed : int
     bootstrap の乱数種。
+upstream_records : dict
+    ``{"blob_split": blob_split出力, "blob_count_interval": blob_count_interval出力}``。
+    各行の ``upstream_component_label`` と個数記録を照合し、op がダイジェストを再計算する。
 
 Returns
 -------
@@ -89,7 +93,11 @@ Examples
 ...      "count_interval_hi": [1] * 30, "count_determined": [True] * 30}
 >>> c = {"scale": {"value": .002, "unit": "mm/px", "standard_uncertainty": .00002},
 ...      "calibrator_id": "SM-01", "calibrated_at": "2026-01-01", "valid_until": "2026-12-31"}
->>> r = particle_size_distribution(p, c, measurement_date="2026-06-01", bootstrap_samples=200)
+>>> u = {"blob_split": np.arange(30).reshape(1, 30) + 1,
+...      "blob_count_interval": {"components": {"label": np.arange(1, 31), "lo": np.ones(30, int),
+...      "hi": np.ones(30, int), "status": np.array(["determined"] * 30)}}}
+>>> p["upstream_component_label"] = list(range(1, 31)); p["upstream_provenance_hash"] = [upstream_provenance_digest(u)] * 30
+>>> r = particle_size_distribution(p, c, measurement_date="2026-06-01", bootstrap_samples=200, upstream_records=u)
 >>> r["counts"]["accepted_observed"], r["particle_rows"][0]["diameter"]
 (30, 0.02)
 

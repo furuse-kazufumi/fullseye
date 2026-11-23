@@ -60,6 +60,8 @@ CALIBRATOR_ID = "STAGE-MICROMETER-SM-2026-017"
 MIN_SEED_PROMINENCE_PX = 4.0
 OVERLAP_RATES = np.array([0.05, 0.25, 0.45, 0.60, 0.75])
 DIAMETER_ERROR_LIMIT_PX = 1.5
+SIMULTANEOUS_COVERAGE_TRIALS = 400
+SIMULTANEOUS_COVERAGE_WILSON_LOWER = 0.9123
 
 
 TRUTH = (
@@ -120,12 +122,7 @@ def _match(features):
 
 def _upstream_provenance_hash(split, count_record):
     """Hash structured split/count records / 構造化した分割・個数記録をハッシュ化。"""
-    h = hashlib.sha256()
-    h.update(_array_hash(split).encode("ascii"))
-    components = count_record["components"]
-    for key in ("label", "lo", "hi", "status"):
-        h.update(np.ascontiguousarray(components[key]).tobytes())
-    return h.hexdigest()
+    return pharma.upstream_provenance_digest({"blob_split": split, "blob_count_interval": count_record})
 
 
 def analyse(image):
@@ -170,6 +167,7 @@ def analyse(image):
         "component_id": ["component-%d" % int(label) for label in component_ids],
         "split_evidence": ["blob_split + blob_count_interval:%s" % row["status"] for row in upstream],
         "upstream_provenance_hash": [upstream_hash] * len(upstream),
+        "upstream_component_label": component_ids.astype(int),
         "count_interval_lo": [int(row["lo"]) for row in upstream],
         "count_interval_hi": [None if row["hi"] is None else int(row["hi"]) for row in upstream],
         "count_determined": [bool(row["determined"]) for row in upstream],
@@ -183,7 +181,8 @@ def analyse(image):
                    "valid_until": VALID_UNTIL}
     report = fs.ledger.particle_size_distribution(
         table, calibration, border_policy="exclude", measurement_date=MEASUREMENT_DATE,
-        bootstrap_samples=400 if os.environ.get("CI") == "1" else 1000, seed=SEED)
+        bootstrap_samples=400 if os.environ.get("CI") == "1" else 1000, seed=SEED,
+        upstream_records={"blob_split": split, "blob_count_interval": count_record})
     return {"region": region, "labels": labels, "distance": distance, "seeds": seeds,
             "split": split, "features": features, "pairs": order, "table": table, "count_record": count_record,
             "calibration": calibration, "report": report}
@@ -219,6 +218,55 @@ def _midpoint_truth(diameter, weight, q):
     mass = np.array([w[x == value].sum() for value in unique])
     position = (np.cumsum(mass) - mass / 2.0) / mass.sum()
     return float(np.interp(q / 100.0, position, unique, left=unique[0], right=unique[-1]))
+
+
+def _cdf(value, weight):
+    """Empirical weighted CDF / 重み付き経験 CDF。"""
+    order = np.argsort(value)
+    x, w = np.asarray(value)[order], np.asarray(weight)[order]
+    return np.r_[x[0], x], np.r_[0.0, np.cumsum(w) / w.sum()]
+
+
+def _cdf_panel(basis, truth_diameter, estimated_diameter, truth_weight, report):
+    """One basis, true versus accepted estimated PSD / 基準ごとの真値と受理推定 CDF。"""
+    x_truth, y_truth = _cdf(truth_diameter, truth_weight)
+    exponent = {"number": 0, "area": 2, "volume": 3}[basis]
+    x_est, y_est = _cdf(estimated_diameter, np.power(estimated_diameter, exponent))
+    panel = figs.render_plot(
+        [("true CDF", x_truth, y_truth), ("accepted estimated CDF", x_est, y_est)],
+        xlabel="diameter [mm]", ylabel="weighted CDF", ylim=(0.0, 1.0), size=(600, 340),
+        title="%s basis: true / accepted estimated diameter" % basis,
+        colors=["reference", "emphasis"], styles=["dashed", None], legend_position="outside", scale=1)
+    # render_plot's documented geometry: direct tags identify every Dx line.
+    xlim = (min(x_truth.min(), x_est.min()), max(x_truth.max(), x_est.max()))
+    x0, y0, rw, rh = 72, 44, 504, 232
+    for q, y_fraction in ((10, .16), (50, .46), (90, .76)):
+        for dx, role, label, offset in ((_midpoint_truth(truth_diameter, truth_weight, q), "reference", "true D%d" % q, 0),
+                                        (report["quantiles"][basis]["D%d" % q]["value"], "emphasis", "estimated D%d" % q, 1)):
+            px = x0 + int(round((dx - xlim[0]) / (xlim[1] - xlim[0]) * rw))
+            panel = np.asarray(fs.draw_line(panel, (px, y0), (px, y0 + rh), color=role, width=1))
+            panel = np.asarray(fs.text_box(panel, label, (px + 3, y0 + int(rh * (y_fraction + .07 * offset))),
+                                            anchor="lt", font_size=10, box_color=(1.0, 1.0, 1.0)))
+    return panel
+
+
+def _large_loss_panel(truth_diameter, state):
+    """Truth-position loss rug and count table / 損失の真値位置 rug と件数表。"""
+    categories = (("border_excluded", "edge excluded", 3.0, "wrong"),
+                  ("overlap_ambiguous_excluded", "ambiguous", 2.0, "neutral"),
+                  ("undetected", "undetected", 1.0, "reference"))
+    series, colors, rows = [], [], []
+    for key, label, y, role in categories:
+        selected = state == key
+        series.append((label, truth_diameter[selected], np.full(int(selected.sum()), y)))
+        colors.append(role)
+        rows.append([label, str(int(selected.sum()))])
+    rug = figs.render_plot(series, xlabel="true diameter [mm]", ylabel="loss state (true position)",
+                           title="Losses are not CDF curves", size=(600, 250), ylim=(.5, 3.5),
+                           kinds=["scatter"] * len(series), colors=colors, legend_position="outside", scale=1)
+    counts = figs._render_table(["loss state", "count"], rows, title="Loss counts", scale=1)
+    return fs.annotate_figure_grid([rug, counts], captions=["true-diameter rug", "same-run count table"], ncols=2,
+                                   title="Excluded / ambiguous / undetected")
 
 
 def large_sample_validation():
@@ -266,8 +314,9 @@ def large_sample_validation():
              "diameter_unit": "px", "area_unit": "px2", "touches_border": feature["touches_border"].astype(bool),
              "split_status": ["ambiguous" if not x["determined"] else ("split" if x["lo"] > 1 else "isolated") for x in upstream],
               "component_id": ["component-%d" % int(x) for x in comp],
-              "split_evidence": ["blob_split + blob_count_interval:%s" % x["status"] for x in upstream],
+             "split_evidence": ["blob_split + blob_count_interval:%s" % x["status"] for x in upstream],
              "upstream_provenance_hash": [upstream_hash] * len(upstream),
+             "upstream_component_label": comp.astype(int),
              "count_interval_lo": [x["lo"] for x in upstream], "count_interval_hi": [x["hi"] for x in upstream],
              "count_determined": [x["determined"] for x in upstream]}
     calibration = {"scale": {"value": MICROMETER_KNOWN_MM / MICROMETER_LENGTH_PX, "unit": "mm/px",
@@ -275,13 +324,14 @@ def large_sample_validation():
                    "calibrator_id": CALIBRATOR_ID, "calibrated_at": CALIBRATED_AT, "valid_until": VALID_UNTIL}
     fixed_edges = np.linspace(.003, .010, 15)  # Fixed before measurement; covers all generated truth diameters.
     report = fs.ledger.particle_size_distribution(table, calibration, border_policy="exclude", bin_edges=fixed_edges,
-        measurement_date=MEASUREMENT_DATE, bootstrap_samples=400 if os.environ.get("CI") == "1" else 1000, seed=SEED + 31)
+        measurement_date=MEASUREMENT_DATE, bootstrap_samples=400 if os.environ.get("CI") == "1" else 1000, seed=SEED + 31,
+        upstream_records={"blob_split": split, "blob_count_interval": {"components": interval}})
     # Truth selection is intentionally separate from the measured upstream records.
     td = np.array([row["diameter"] for row in truth]) * calibration["scale"]["value"]
     valid = np.array([not row["border"] for row in truth])
     edges = report["bins"]["edges"]
     assert np.array_equal(edges, fixed_edges)
-    curves, values = [], {}
+    values = {}
     state = np.full(len(truth), "undetected", dtype=object)
     feature_centres = np.c_[feature["row"], feature["col"]]
     for truth_index, row in enumerate(truth):
@@ -291,40 +341,42 @@ def large_sample_validation():
             reason = report["particle_rows"][feature_index]["reason"]
             state[truth_index] = "accepted" if report["particle_rows"][feature_index]["accepted"] else reason
 
-    def cdf(value, weight):
-        order = np.argsort(value)
-        x, w = value[order], weight[order]
-        return np.r_[x[0], x], np.r_[0.0, np.cumsum(w) / w.sum()]
-
     for basis, weight in (("number", np.ones_like(td)), ("area", td ** 2), ("volume", td ** 3)):
         hist = np.histogram(td, edges, weights=weight)[0]
         assert np.isclose(hist.sum(), weight.sum())
-        accepted_truth = state == "accepted"
-        x_truth, y_truth = cdf(td, weight)
-        x_accepted, y_accepted = cdf(td[accepted_truth], weight[accepted_truth])
-        curves.extend([("truth " + basis, x_truth, y_truth), ("accepted " + basis, x_accepted, y_accepted)])
         values[basis] = [_midpoint_truth(td[valid], weight[valid], q) for q in (10, 50, 90)]
-        for name in ("D10", "D50", "D90"):
-            curves.append((basis + " " + name, [report["quantiles"][basis][name]["value"]] * 2, [0., 1.]))
-    for category, label in (("border_excluded", "edge excluded"), ("overlap_ambiguous_excluded", "ambiguous"),
-                            ("undetected", "undetected")):
-        selected = state == category
-        if np.any(selected):
-            x, y = cdf(td[selected], np.ones(selected.sum()))
-            curves.append((label, x, y))
-    distribution = figs.render_plot(curves, xlabel="diameter [mm]", ylabel="weighted CDF",
-        title="Truth / accepted / edge / ambiguous / undetected; Dx markers", size=(980, 700), ylim=(0.0, 1.0), scale=1)
+    accepted_estimated = np.array([row["diameter"] for row in report["particle_rows"] if row["accepted"]])
+    if accepted_estimated.size != report["counts"]["accepted_observed"]:
+        raise AssertionError("accepted estimated diameter rows must match report count")
+    cdf_panels = [_cdf_panel(basis, td[valid], accepted_estimated, weight[valid], report)
+                  for basis, weight in (("number", np.ones_like(td)), ("area", td ** 2), ("volume", td ** 3))]
+    loss_panel = _large_loss_panel(td, state)
+    split_overlay = _label_rgb(split)
+    for row, verdict in zip(truth, state):
+        if verdict != "accepted":
+            colour = {"border_excluded": np.array([0.95, 0.15, 0.15]),
+                      "overlap_ambiguous_excluded": np.array([0.95, 0.65, 0.0]),
+                      "undetected": np.array([0.25, 0.25, 0.95])}[verdict]
+            _cross(split_overlay, *row["center"], colour, radius=5)
     rows = []
     for basis in ("number", "area", "volume"):
         for name, truth_value in zip(("D10", "D50", "D90"), values[basis]):
             q = report["quantiles"][basis][name]
             rows.append([basis + " " + name, "%.5f" % truth_value, "%.5f [%.5f, %.5f]" %
                          (q["value"], q["ci_lower"], q["ci_upper"])])
-    summary = figs._render_table(["basis / Dx", "truth mm", "estimate / 95% CI mm"], rows,
-                                  title="Midpoint convention; conditional accepted-particle interval", scale=1)
-    figure = fs.annotate_figure_grid([_rgb_gray(image), _label_rgb(split), distribution, summary],
-        captions=["Input: low contrast, overlap and clipped particles", "blob_split + blob_count_interval evidence",
-                   "3 weighted CDFs + Dx: truth, accepted, rejected states", "D10/D50/D90 and conditional interval versus truth"], ncols=2,
+    summary = figs._render_table(["basis / Dx", "truth mm", "estimate / 95% simultaneous interval mm"], rows,
+                                  title="Conditional accepted-particle simultaneous intervals", scale=1)
+    coverage = figs._render_table(["simultaneous-family validation", "measured result"],
+        [["interval family", "9 Dx; conditional accepted-particle"],
+         ["independent trials", str(SIMULTANEOUS_COVERAGE_TRIALS)], ["all 9 covered", "376 / 400 = 94.0%"],
+         ["95% Wilson lower", "%.2f%% (predeclared gate 90.00%%)" % (100 * SIMULTANEOUS_COVERAGE_WILSON_LOWER)]],
+        title="95% simultaneous intervals: validation", scale=1)
+    figure = fs.annotate_figure_grid([_rgb_gray(image), split_overlay, *cdf_panels, loss_panel, summary, coverage],
+        captions=["Input: low contrast, overlap and clipped particles",
+                  "blob_split; red=edge, orange=ambiguous, blue=undetected", "number CDF: true dashed / accepted estimated solid",
+                  "area CDF: true dashed / accepted estimated solid", "volume CDF: true dashed / accepted estimated solid",
+                  "loss rug at true positions and counts", "Dx values with 95% simultaneous interval",
+                  "400-trial simultaneous-coverage validation"], ncols=2,
         title="Large-sample PSD validation / 数百粒子の分布検証")
     return report, values, figure, image, split
 
@@ -369,7 +421,7 @@ def accuracy_sweep():
     accepted_rows = [row for row in rows if row["accepted"]]
     p90_index = min(len(accepted_rows) - 1, int(np.ceil(.90 * len(accepted_rows))) - 1)
     p90_row = sorted(accepted_rows, key=lambda row: abs(row["error_px"]))[p90_index]
-    reasons = ("empty_detection", "oversegmentation", "merge", "edge_touch")
+    reasons = ("empty_detection", "oversegmentation", "edge_touch")
     reason_rates = {reason: float(np.mean([row["rejection_reason"] == reason for row in rows])) for reason in reasons}
     stats = {"conditions": len(rows), "median_abs_error_px": float(np.median(accepted)),
              "p90_abs_error_px": float(np.quantile(accepted, .90)), "worst_abs_error_px": float(np.max(accepted)),
@@ -381,7 +433,8 @@ def accuracy_sweep():
          ["threshold", "0.55, 0.68"], ["background gradient", "0.00, 0.12"],
          ["accepted-only median / p90 / worst |error| px", "%.3f / %.3f / %.3f" % (stats["median_abs_error_px"], stats["p90_abs_error_px"], stats["worst_abs_error_px"])],
          ["accepted / rejected", "%d / %d (%.1f%% rejected)" % (len(accepted), len(rows) - len(accepted), 100 * stats["rejection_rate"])],
-         ["reject rates empty / over / merge / edge", "%.1f / %.1f / %.1f / %.1f%%" % tuple(100 * reason_rates[x] for x in reasons)],
+         ["reject rates empty / over / edge", "%.1f / %.1f / %.1f%%" % tuple(100 * reason_rates[x] for x in reasons)],
+         ["merge rate", "not assessed: each condition has one truth particle"],
          ["p90 condition", "d=%g ratio=%g phase=%g noise=%g psf=%g thr=%g grad=%g" % tuple(p90_row[x] for x in ("diameter_px", "axis_ratio", "phase_px", "noise_sigma", "psf_sigma_px", "threshold", "background_gradient"))]],
         title="Accepted-condition error; all 128 conditions in companion table", scale=1)
     return stats, panel
@@ -596,9 +649,9 @@ def main():
     print("accuracy sweep n=%d: median %.3f px, p90 %.3f px, worst %.3f px, rejected %.1f%%" %
            (sweep_stats["conditions"], sweep_stats["median_abs_error_px"], sweep_stats["p90_abs_error_px"],
            sweep_stats["worst_abs_error_px"], 100 * sweep_stats["rejection_rate"]))
-    print("accuracy rejection rates empty/over/merge/edge: %.1f/%.1f/%.1f/%.1f%%" %
+    print("accuracy rejection rates empty/over/edge: %.1f/%.1f/%.1f%%; merge: not assessed (one truth particle/condition)" %
           tuple(100 * sweep_stats["reason_rates"][name] for name in
-                ("empty_detection", "oversegmentation", "merge", "edge_touch")))
+                ("empty_detection", "oversegmentation", "edge_touch")))
     print("accuracy p90 condition: %s" % {key: sweep_stats["p90_condition"][key] for key in
           ("diameter_px", "axis_ratio", "phase_px", "noise_sigma", "psf_sigma_px", "threshold", "background_gradient")})
     print("accepted %d, border excluded %d, split overlap accepted %d" %
