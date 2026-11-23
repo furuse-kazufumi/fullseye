@@ -63,6 +63,18 @@ SHOWN: dict[str, str] = {}
 #: 表紙の静止画の出典の行の上端を、下端から何 px 上に置くか。ストーリー GIF はこの静止画を 1 コマ目にして
 #: 下端 30 px に進み具合の点を重ねるので、出典(18 px)はその帯より上で終える(2026-11-23、点が出典に被った)。
 STILL_CREDIT_FROM_BOTTOM = 62
+#: 日英併記の表紙で使う余白と文字サイズ。 / Margins and font sizes for the bilingual cover.
+STILL_MARGIN = 20
+STILL_TITLE_FONT = 25
+STILL_PANEL_FONT = 20
+STILL_BODY_FONT = 19
+STILL_CREDIT_FONT = 15
+PCA_TABLE_COLUMN_WIDTH = 205
+
+
+def _bi(ja, en):
+    """図の札を日本語 / English の順で返す。 / Return a bilingual figure label."""
+    return "%s / %s" % (ja, en)
 
 
 def check_headline() -> None:
@@ -1034,20 +1046,35 @@ def video_real_scan(root, model, normals, frames, diam, rate, half, floor_med, h
     S, PT = 720, 220
     st = Image.new("RGB", (S, S), (12, 16, 22))
     ds = ImageDraw.Draw(st)
-    ds.text((20, 14), "実物の部品で ICP の収束域を測る", font=font(34, True), fill=(240, 240, 240))
+    ds.text((STILL_MARGIN, 14), _bi("実物の部品で ICP の収束域を測る",
+                                    "measure real-part ICP basin"),
+            font=font(STILL_TITLE_FONT, True), fill=(240, 240, 240))
     for j, c in enumerate(cases):
         xo = 12 + j * (PT + 18)
         st.paste(overlay(c, VIDEO_ITERS).resize((PT, PT), Image.Resampling.LANCZOS), (xo, 78))
-        ds.text((xo + 4, 306), "初期 %.0f 度" % c["deg"], font=font(28, True), fill=(240, 240, 240))
-        ds.text((xo + 4, 344), "→ 戻れた" if c["ok"] else "→ 戻れない", font=font(26),
+        ds.text((xo + 4, 306), _bi("初期 %.0f 度" % c["deg"], "initial %.0f°" % c["deg"]),
+                font=font(STILL_PANEL_FONT, True), fill=(240, 240, 240))
+        verdict = _bi("→ 戻れた", "→ recovered") if c["ok"] else _bi("→ 戻れない", "→ not recovered")
+        ds.text((xo + 4, 338), verdict, font=font(STILL_PANEL_FONT),
                 fill=(220, 220, 220) if c["ok"] else (255, 140, 120))
-    ds.text((20, 410), "実測の深度では収束域が狭い", font=font(32, True), fill=(240, 240, 240))
-    ds.text((20, 462), "成功率が半分を切る初期回転が、全周の点より", font=font(26), fill=(225, 225, 225))
-    ds.text((20, 500), "%.1f〜%.1f 度手前(点対面、種と数え方による)" % (narrow_span[0], narrow_span[1]), font=font(26),
+    ds.text((STILL_MARGIN, 400), _bi("実測の深度では収束域が狭い", "real-depth ICP basin is narrower"),
+            font=font(STILL_TITLE_FONT, True), fill=(240, 240, 240))
+    ds.text((STILL_MARGIN, 444), _bi("成功率が半分を切る初期回転が、全周の点より",
+                                     "50% rotation limit precedes full-view limit"),
+            font=font(STILL_BODY_FONT), fill=(225, 225, 225))
+    ds.text((STILL_MARGIN, 478), _bi("%.1f〜%.1f 度手前(点対面、種と数え方による)" %
+                                     (narrow_span[0], narrow_span[1]),
+                                     "by %.1f–%.1f° (point-to-plane; seeds/rule)" %
+                                     (narrow_span[0], narrow_span[1])), font=font(STILL_BODY_FONT),
             fill=(225, 225, 225))
-    ds.text((20, 556), "判定 = 真値から始めた ICP の行き先に戻れたか", font=font(24), fill=(255, 190, 120))
-    ds.text((20, 592), "(姿勢の精度ではない)", font=font(24), fill=(255, 190, 120))
-    ds.text((20, S - STILL_CREDIT_FROM_BOTTOM), "データ: T-LESS(Hodaň et al., WACV 2017)、CC BY 4.0", font=font(18),
+    ds.text((STILL_MARGIN, 532), _bi("判定 = 真値から始めた ICP の行き先に戻れたか",
+                                     "test: return to truth-started ICP endpoint"),
+            font=font(STILL_BODY_FONT), fill=(255, 190, 120))
+    ds.text((STILL_MARGIN, 566), _bi("(姿勢の精度ではない)", "(not pose accuracy)"),
+            font=font(STILL_BODY_FONT), fill=(255, 190, 120))
+    ds.text((STILL_MARGIN, S - STILL_CREDIT_FROM_BOTTOM),
+            _bi("データ: T-LESS(Hodaň et al., WACV 2017)、CC BY 4.0",
+                "data: T-LESS (Hodaň et al., 2017), CC BY 4.0"), font=font(STILL_CREDIT_FONT),
             fill=(170, 170, 170))
     figs.save("real_scan_still", np.asarray(st),
               caption="サムネイル用の静止画。06 の動画と同じ計算(点対面 ICP、フレーム %d の実測 %d 点、初期 30 / 60 / 120 度から "
@@ -1144,11 +1171,14 @@ def main():
     # 等高線は 4x8 の表で、画像にすると小さすぎて読めない。行ごとの折れ線にする。
     _rx = np.array(ROTS, float)
     figs.save_plot("basin",
-                   [("初期並進ずれ %.0f %%" % (100 * tf), _rx,
+                   [(_bi("初期並進ずれ %.0f %%" % (100 * tf),
+                         "initial translation error %.0f %%" % (100 * tf)), _rx,
                      100.0 * basin["点対点 ICP"][i])
                     for i, tf in enumerate(TRANS)],
-                   xlabel="初期回転ずれ [度]", ylabel="成功率 [%]",
-                   title="点対点 ICP の収束域 —— 境界はどこか",
+                   xlabel=_bi("初期回転ずれ [度]", "initial rotation error [deg]"),
+                   ylabel=_bi("成功率 [%]", "success rate [%]"),
+                   title=_bi("点対点 ICP の収束域 —— 境界はどこか",
+                             "point-to-point ICP basin — where is the boundary?"),
                    caption="100 %% から 0 %% へ落ちる位置が収束域の縁(並進ずれ 0 の行で 50 %% を切るのは %s 度)。"
                            "並進ずれ(直径の 0〜50 %%)による縁の動きは、1 点 %d 試行の誤差(標準誤差 最大 %.0f 点)の内で、"
                            "この図からは言えない。" % (edges["点対点 ICP"], TRIALS, 100 * 0.5 / np.sqrt(TRIALS)))
@@ -1207,14 +1237,21 @@ def main():
         print(f"  {label:<22}{med(best):>13.2f}{med(rest):>16.1f}"
               f"{100 * wrong / N_Q:>9.0f}%{med(chosen_all):>16.2f}")
     print("  (象限誤り = 選ばれた解が最良候補より 30 度以上悪い = 反転した象限を掴んだ)")
+    shape_en = {"非対称 強(角柱 1.0)": "strong asymmetry (peg 1.0)",
+                "非対称 弱(角柱 0.25)": "weak asymmetry (peg 0.25)",
+                "対称(素の直方体)": "symmetric (plain box)"}
     figs.save_table("pca_quadrant",
-                    ["形状", "第1候補 度", "第2候補 度", "象限誤り %", "選ばれた解 度"],
-                    [[k, "%.2f" % v[0], "%.1f" % v[1], "%.0f" % v[2], "%.2f" % v[3]]
+                    [_bi("形状", "shape"), _bi("第1候補 度", "first candidate [deg]"),
+                     _bi("第2候補 度", "second candidate [deg]"),
+                     _bi("象限誤り %", "quadrant errors [%]"),
+                     _bi("選ばれた解 度", "selected solution [deg]")],
+                    [[_bi(k, shape_en[k]), "%.2f" % v[0], "%.1f" % v[1], "%.0f" % v[2], "%.2f" % v[3]]
                      for k, v in quad_tbl.items()],
-                    title="PCA の正しさは形状の非対称性に賭けている",
+                    title=_bi("PCA の正しさは形状の非対称性に賭けている",
+                              "PCA correctness depends on shape asymmetry"),
                     caption="非対称性が消えると 4 候補が形として区別できず、"
                             "選択が崩れる(選ばれた解が第 1 候補から離れる)。",
-                    col_w=125)
+                    col_w=PCA_TABLE_COLUMN_WIDTH)
     print("  → 理由その 1・象限: 角柱があるうちは最小 RMSE が正しい象限を選ぶ。素の")
     print("     直方体では 4 候補が形として区別できず、選択が崩れる。**PCA の正しさは")
     print("     形状の非対称性に賭けている**。")
@@ -1266,9 +1303,14 @@ def main():
     print("  → 左から右へ落ちる手法は「狭い」、平らな手法は「広い」。広さと右 2 列の")
     print("     精度は連動していない。**「良い手法」は 1 つの数では決まらない**。")
     figs.save_plot("width",
-                   [(k, np.array(WIDE, float), 100.0 * v) for k, v in width.items()],
-                   xlabel="初期回転ずれ [度]", ylabel="成功率 [%]",
-                   title="収束域の広さ —— 落ちる手法と、平らな手法",
+                   [(_bi(k, {"点対点 ICP": "point-to-point ICP", "点対面 ICP": "point-to-plane ICP",
+                             "PCA + ICP": "PCA + ICP", "FPFH + RANSAC": "FPFH + RANSAC",
+                             "PPF surface_match": "PPF surface_match"}[k]),
+                     np.array(WIDE, float), 100.0 * v) for k, v in width.items()],
+                   xlabel=_bi("初期回転ずれ [度]", "initial rotation error [deg]"),
+                   ylabel=_bi("成功率 [%]", "success rate [%]"),
+                   title=_bi("収束域の広さ —— 落ちる手法と、平らな手法",
+                             "basin width — methods that fall and methods that stay flat"),
                    caption="平らな線ほど「広い」。広さと最終精度は別の軸で、"
                            "この図だけでは手法を選べない(%d 試行/点)。" % TR4)
     _pr = width["PPF surface_match"]
@@ -1366,15 +1408,20 @@ def main():
             sym_stat[(mode, label)] = (med(res), med(rr))       # 図用
             print(f"  {label:<12}{med(res):>16.5f}{med(rr):>22.2f}"
                   f"{conv:>13}/{N_S}{bad:>17}")
+    init_en = {"局所": "local", "大域": "global"}
+    sym_shape_en = {"非対称当て金": "asymmetric bracket", "素の直方体": "plain box",
+                    "球": "sphere", "円柱": "cylinder"}
     figs.save_table("symmetry_lies",
-                    ["初期化", "形状", "残差/直径", "回転誤差 度", "見かけ収束",
-                     "姿勢が誤り"],
-                    [[mode.split(":")[0], label,
+                    [_bi("初期化", "initialisation"), _bi("形状", "shape"),
+                     _bi("残差/直径", "residual/diameter"), _bi("回転誤差 度", "rotation error [deg]"),
+                     _bi("見かけ収束", "apparent convergence"), _bi("誤姿勢", "wrong pose")],
+                    [[_bi(mode.split(":")[0], init_en[mode.split(":")[0]]), _bi(label, sym_shape_en[label]),
                       "%.5f" % sym_stat[(mode, label)][0],
                       "%.2f" % sym_stat[(mode, label)][1],
                       "%d/%d" % (v[0], N_S), "%d" % v[1]]
                      for (mode, label), v in sym.items()],
-                    title="収束したのに間違っている(残差では検出できない)",
+                    title=_bi("収束したのに間違っている(残差では検出できない)",
+                              "converged but wrong (residual cannot detect it)"),
                     caption="球・円柱は残差が小さいまま姿勢が任意。素の直方体は"
                             "局所なら嘘をつかず、大域に替えた瞬間に嘘をつく。",
                     col_w=118)
