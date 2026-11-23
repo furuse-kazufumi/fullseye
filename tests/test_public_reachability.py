@@ -95,7 +95,9 @@ _INTERNAL = {
     # studio_theme +1 2026-11-15: 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない
     # studio_theme +6 2026-11-23: 配置の項目を wrapper を残さずに読む口(is_python_layout / release_layout_item /
     #   layout_entries / layout_widgets / release_layout_item_wrappers と LayoutEntry)。native crash の直し。Studio の窓の内側の部品で op ではない
-    "studio_theme": 50,
+    # studio_theme +1 2026-11-23: is_code_pitch(コードの字の幅を実測で判定する。Linux の Noto Sans Mono CJK JP は
+    #   Qt の申告では fixedPitch でない)。Studio の窓の内側の部品で op ではない
+    "studio_theme": 51,
     # studio_panels 2026-11-13(第 2 段): パネルの帯・dock ⇔ 別ウィンドウ・配置の保存と復元・横長のパネルで
     #   道具とタブを左へ・題の帯へ状態と ≡ を登録する口・左上の進捗の表示 25 本。Studio の窓の内側の部品で op ではない(studio.py からは短い呼び出しだけ。試験が直接呼ぶ)。
     # studio_panels +3 2026-11-13(要件 5): パネルのボタンの QAction(button_action / sync_button_actions)と、
@@ -469,7 +471,8 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-15 統合の枝に束の枝を merge: 1529 + (1327 - 1305 = 22: studio_params_model 17・studio_params_qt 5) = 1551。
 # 2026-11-22 Studio adversarial review: strict JSON / checked settings の内部 2 層を追加し、1551 → 1556(実測)。
 # 2026-11-23 配置の項目の wrapper を残さない直し: studio_theme +6(LayoutEntry と読む口 5 本)で 1556 → 1562(この機械の実測)。
-_HIDDEN_FUNCTIONS_TODAY = 1562
+# 2026-11-23 Linux のコードの字の直し: studio_theme +1(is_code_pitch)で 1562 → 1563(この機械の実測)。
+_HIDDEN_FUNCTIONS_TODAY = 1563
 
 
 def _hidden_total():
@@ -504,6 +507,40 @@ def test_hidden_function_total_does_not_grow():
     )
 
 
+def _why_not_an_island(name):
+    """*name* が島でなくなった理由(どの関数が、どの公開経路の名前と重なったか・関数が無いか)を 1 行にする。"""
+    mod = _import_shipped(name)
+    if mod is None:
+        return "%s: optional dependency missing" % name
+    fns = sorted(n for n in dir(mod) if not n.startswith("_") and callable(getattr(mod, n))
+                 and getattr(getattr(mod, n), "__module__", "") == name)
+    if not fns:
+        foreign = sorted((n, getattr(getattr(mod, n), "__module__", "")) for n in dir(mod)
+                         if not n.startswith("_") and callable(getattr(mod, n)))
+        return "%s: no function of its own (file %s; callables %s)" % (name, getattr(mod, "__file__", "?"), foreign[:20])
+    import fullseye as fs
+    import ops
+    routes = {
+        "fullseye": {n for n in dir(fs) if not n.startswith("_")},
+        "fullseye.ledger": {n for n in dir(fs.ledger) if not n.startswith("_")},
+        "ops.REGISTRY": {o.name for o in ops.REGISTRY},
+    }
+    reg = fs.vision._ensure()
+    uops = reg._ops.values() if isinstance(reg._ops, dict) else reg._ops
+    unified = {}
+    for u in uops:
+        if isinstance(u.module, str):
+            unified.setdefault(u.module.rpartition(".")[2], []).append(u.module)
+    hits = []
+    for f in fns:
+        where = [r for r, names in routes.items() if f in names]
+        if f in unified:
+            where.append("vision registry %s" % unified[f][:3])
+        if where:
+            hits.append("%s via %s" % (f, ", ".join(where)))
+    return "%s: %s" % (name, "; ".join(hits) or "functions %s (route not found here)" % fns)
+
+
 def test_internal_rows_are_still_islands():
     """_INTERNAL の行は「1 本も届かない島」であり続けること(届くようになったら行を消す)。
 
@@ -515,7 +552,7 @@ def test_internal_rows_are_still_islands():
     stale = sorted(n for n in _INTERNAL if n not in now)
     assert not stale, (
         "公開経路から届くようになったのに _INTERNAL に残っている: " + ", ".join(stale)
-        + "  —— この表から行を消すこと。"
+        + "  —— この表から行を消すこと。\n  " + "\n  ".join(_why_not_an_island(n) for n in stale)
     )
 
 
