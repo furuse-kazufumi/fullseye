@@ -5138,7 +5138,7 @@
    "gpu_switches": 0
   },
   {
-   "name": "Detect — build a lane corridor from its two boundaries, then reject crosswalk stripes and find the stop line",
+   "name": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk",
    "source": "recipebook",
    "family": "drive",
    "task_class": "measurement",

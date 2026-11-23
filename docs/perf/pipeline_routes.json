@@ -20805,7 +20805,7 @@
      }
     ]
    },
-   "recipe": "Detect — build a lane corridor from its two boundaries, then reject crosswalk stripes and find the stop line",
+   "recipe": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk",
    "stages": [
     "lane_center_path",
     "stop_line_detect"

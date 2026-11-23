@@ -120,15 +120,18 @@ def holdout_stop_gate(full):
     q = np.stack([cols, rows, np.ones_like(rows)], -1) @ H_truth.T
     world = q[..., :2]
     layers = (
-        ("clear_stop", True, (-1.2, -0.4, 0.4, 1.2), False, False),
-        ("stop_plus_japan_crosswalk", True, (-1.2, -0.4, 0.4, 1.2), False, True),
-        ("crosswalk_all_stripes", False, (-1.2, -0.4, 0.4, 1.2), False, True),
-        ("crosswalk_one_or_two_stripes", False, None, False, True),
-        ("occlusion_and_image_edge", True, (1.2,), True, True),
+        ("clear_stop", True, (-1.2, -0.4, 0.4, 1.2), False, "none"),
+        ("stop_plus_japan_crosswalk", True, (-1.2, -0.4, 0.4, 1.2), True, "none"),
+        ("crosswalk_all_stripes", False, (-1.2, -0.4, 0.4, 1.2), True, "none"),
+        ("crosswalk_one_or_two_stripes", False, None, True, "none"),
+        # These change actual observed labels after RGB classification; they are not labels only.
+        ("occlusion_mask", True, (-1.2, -0.4, 0.4, 1.2), True, "occlusion_mask"),
+        ("image_edge_crop", True, (-1.2, -0.4, 0.4, 1.2), True, "image_edge_crop"),
+        ("local_shadow", True, (-1.2, -0.4, 0.4, 1.2), True, "local_shadow"),
     )
     rows_out = []
-    for layer, has_stop, stripe_spec, occluded, has_crosswalk in layers:
-        found, confidence, ambiguous, errors = [], [], [], []
+    for layer, has_stop, stripe_spec, has_crosswalk, degradation in layers:
+        found, confidence, ambiguous, crosswalk_found, crosswalk_confidence, stripe_counts, errors = [], [], [], [], [], [], []
         for case in range(count):
             # 格子=画素量子化、ぼけ、露出/色ずれ、白飛び、路面texture、校正誤差を同時に掛ける。
             texture = rng.normal(0.0, 0.025, (h, w, 1)) + 0.018 * np.sin(world[..., 1:2] * 2.3)
@@ -145,11 +148,15 @@ def holdout_stop_gate(full):
             rgb = ndimage.gaussian_filter(rgb, sigma=(rng.uniform(0.25, 0.55), rng.uniform(0.25, 0.55), 0.0))
             rgb *= rng.uniform(0.88, 1.16) * rng.uniform(0.97, 1.03, (1, 1, 3))
             rgb[:, :w // 3] *= rng.uniform(0.72, 0.86)  # shadow
-            if occluded:
-                # 停止線を中央遮蔽で2片にし、右端付近に1本だけ残る縦縞を置いた層。
-                rgb[(np.abs(world[..., 1] - 8.0) <= 0.15) & (np.abs(world[..., 0]) < 0.28)] = 0.22
             rgb = np.clip(rgb, 0.0, 1.0)  # white clipping
             labels = LG.color_rule_mask(rgb, {})["labels"]
+            if degradation == "occlusion_mask":
+                labels[(np.abs(world[..., 1] - 8.0) <= 0.15) & (np.abs(world[..., 0]) < 0.28)] = 0
+            elif degradation == "image_edge_crop":
+                labels[:, :w // 4] = 0
+            elif degradation == "local_shadow":
+                labels[(world[..., 1] >= 10.0) & (world[..., 1] <= 10.8)
+                       & (world[..., 0] >= -0.55) & (world[..., 0] <= -0.25)] = 0
             H_detector = H_truth.copy()
             H_detector[0, 2] += rng.uniform(-0.03, 0.03)
             H_detector[1, 2] += rng.uniform(-0.04, 0.04)
@@ -159,16 +166,26 @@ def holdout_stop_gate(full):
             found.append(bool(got["found"]))
             confidence.append(float(got["confidence"]))
             ambiguous.append(bool(got["ambiguous"]))
+            crosswalk_found.append(bool(got["crosswalk_found"]))
+            crosswalk_confidence.append(float(got["crosswalk_confidence"]))
+            stripe_counts.append(int(got["crosswalk_stripe_count"]))
             if has_stop and got["found"]:
                 errors.append(abs(got["distance"] - 8.0))
         rows_out.append({"layer": layer, "cases": count, "has_stop": has_stop,
                          "found": int(sum(found)), "confidence_mean": float(np.mean(confidence)),
                          "confidence_max": float(np.max(confidence)), "ambiguous": int(sum(ambiguous)),
+                         "crosswalk_found": int(sum(crosswalk_found)),
+                         "crosswalk_confidence_mean": float(np.mean(crosswalk_confidence)),
+                         "crosswalk_stripes_min": int(min(stripe_counts)),
                          "max_distance_error": float(max(errors)) if errors else float("nan")})
     stop_layers = [row for row in rows_out if row["has_stop"]]
     no_stop_layers = [row for row in rows_out if not row["has_stop"]]
+    crosswalk_layers = [row for row, spec in zip(rows_out, layers) if spec[3]]
     gates = (all(row["found"] == row["cases"] for row in stop_layers),
-             all(row["found"] == 0 and row["confidence_max"] < 0.5 for row in no_stop_layers))
+             all(row["found"] == 0 and row["confidence_max"] < 0.5 for row in no_stop_layers),
+             # Even when degraded RGB loses legal spacing confirmation, it must retain a typed
+             # crosswalk candidate rather than collapsing the observation to a rejection count.
+             all(row["crosswalk_stripes_min"] >= 1 for row in crosswalk_layers))
     return rows_out, gates
 
 
@@ -190,7 +207,7 @@ def main(argv=None):
           % (stop_error, stop_cases, rejected))
     print("synthetic-generator holdout by fixed layer (not a real-road accuracy claim):")
     for row in holdout_rows:
-        print("  %(layer)s: found %(found)d/%(cases)d; confidence mean %(confidence_mean).3f max %(confidence_max).3f; ambiguous %(ambiguous)d/%(cases)d; max stop error %(max_distance_error)s"
+        print("  %(layer)s: stop %(found)d/%(cases)d; confidence mean %(confidence_mean).3f max %(confidence_max).3f; ambiguous %(ambiguous)d/%(cases)d; crosswalk %(crosswalk_found)d/%(cases)d (mean confidence %(crosswalk_confidence_mean).3f, stripes >= %(crosswalk_stripes_min)d); max stop error %(max_distance_error)s"
               % {**row, "max_distance_error": "n/a" if np.isnan(row["max_distance_error"])
                  else "%.4f m" % row["max_distance_error"]})
     checks = [recall == 1.0, fp == 0.0, projection_error < 1e-14,

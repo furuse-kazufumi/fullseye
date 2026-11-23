@@ -4023,7 +4023,7 @@ _共 3852 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `lane_boundary_fit` `keypoints → table` GPU: 无 — 对俯视点(横向 x、前向 y)稳健拟合车道边界 ``x=c0+c1*y+c2*y²``。 · 示例: `lane_ops_tour`
 - `lane_center_path` `table × table → table` GPU: 无 — 由左右边界返回车道中心路径与可行驶带。 · 示例: `lane_ops_tour`
 - `plane_topview_color` `rgbimage × matrix × matrix × signal → table` GPU: 无 — 将地面平面投影为保留 RGB 的俯视图,并返回有效掩码及像素与世界坐标的对应关系。 · 示例: `lane_ops_tour`
-- `stop_line_detect` `labels × table → table` GPU: 无 — 将与车道近乎垂直且足够宽的白线检测为停止线,并剔除日式人行横道。 · 示例: `lane_ops_tour`
+- `stop_line_detect` `labels × table → table` GPU: 无 — 将停止线和日式人行横道作为独立的类型化输出进行检测。 · 示例: `lane_ops_tour`
 
 #### drive / lateral (21)
 - `ackermann_steer_angles` `any → table` GPU: 无 — 阿克曼转向的内外轮转向角(后轴中心的转弯半径 R，轴距 L，轮距 t)。 · 示例: `poc_driving_lateral`

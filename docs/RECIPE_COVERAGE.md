@@ -348,7 +348,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | Analyze — attention as a key-value lookup (RMSNorm → scores → softmax → mix) | llmcore | analysis | python | 4 | 0 | 0 | 0 | あり |
 | Measure — observed order of convergence of a grid study (GCI) | converge | simulation | python | 1 | 0 | 0 | 0 | あり |
 | Measure — fixed point of an iteration with convergence proof (Anderson) | converge | simulation | python | 1 | 0 | 0 | 0 | あり |
-| Detect — build a lane corridor from its two boundaries, then reject crosswalk stripes and find the stop line | drive | measurement | python | 2 | 0 | 未計測 | 未計測 | あり |
+| Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk | drive | measurement | python | 2 | 0 | 未計測 | 未計測 | あり |
 | Simulate — a depth camera over a height map, then the plane back from its point cloud | drive | simulation | python | 3 | 0 | 未計測 | 未計測 | あり |
 | Simulate — a crowned road lane from its alignment, then its slope as a DEM | drive | simulation | python | 2 | 0 | 未計測 | 未計測 | あり |
 | Measure — clearance between two scanned parts (drop flying points, then the hull gap) | 3d | 3d | python | 2 | 0 | 未計測 | 未計測 | あり |

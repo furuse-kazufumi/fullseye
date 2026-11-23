@@ -54,6 +54,7 @@ MIN_FORWARD_DIRECTION = 0.20
 MIN_OBSERVED_RANGE_M = 5.0
 MIN_DISTINCT_BOUNDARY_Y = 3
 MAX_QUADRATIC_DESIGN_CONDITION = 1.0e7
+MAX_LEGACY_COEFFICIENT_WORLD_Y_M = 1.0e6
 
 # 中央と走行帯 / centre and drivable band.
 DEFAULT_LANE_WIDTH_M = 3.50
@@ -66,6 +67,7 @@ SINGLE_BOUNDARY_CONFIDENCE_SCALE = 0.60
 # 停止線 / stop line.
 MIN_COMPONENT_PIXELS = 4
 MIN_FRAGMENT_WIDTH_M = 0.25
+MIN_TRANSVERSE_BAND_WIDTH_M = 1.00
 MIN_STOP_WIDTH_M = 2.20
 MAX_STOP_THICKNESS_M = 0.90
 MAX_PERPENDICULAR_ERROR_DEG = 18.0
@@ -74,6 +76,14 @@ LANE_INTERIOR_FRACTION = 0.48
 JAPAN_CROSSWALK_MIN_STRIPE_LENGTH_M = 1.00
 JAPAN_CROSSWALK_MAX_STRIPE_WIDTH_M = 0.90
 JAPAN_CROSSWALK_MAX_PARALLEL_ERROR_DEG = 18.0
+# National Police Agency, 2024-07-26 notification: the clear interval between
+# Japanese crosswalk (201) white stripes is 0.45--0.90 m.  One BEV pixel is
+# allowed at either end because the raster measures both stripe edges only to
+# that resolution.
+JAPAN_CROSSWALK_MIN_STRIPE_GAP_M = 0.45
+JAPAN_CROSSWALK_MAX_STRIPE_GAP_M = 0.90
+CROSSWALK_GAP_TOLERANCE_PIXELS = 1.0
+MIN_CROSSWALK_STRIPES = 2
 MAPPING_ABSOLUTE_TOLERANCE = 1e-12
 HOMOGRAPHY_SINGULAR_VALUE_FLOOR = 1e-12
 BEV_HOMOGENEOUS_ROW_TOLERANCE = 1e-12
@@ -109,6 +119,47 @@ def _quadratic_original_coefficients(coefficients, y_centre, y_scale):
     return np.array([b0 - b1 * y_centre / y_scale + b2 * y_centre ** 2 / y_scale ** 2,
                      b1 / y_scale - 2.0 * b2 * y_centre / y_scale ** 2,
                      b2 / y_scale ** 2])
+
+
+def _evaluate_boundary(boundary, y):
+    """Evaluate the canonical normalised fit when it is available / 正規化fitを正準として評価する。"""
+    yy = np.asarray(y, np.float64)
+    if all(key in boundary for key in ("normalised_coefficients", "y_centre", "y_scale")):
+        coefficient = np.asarray(boundary["normalised_coefficients"], np.float64)
+        centre, scale = float(boundary["y_centre"]), float(boundary["y_scale"])
+        if coefficient.shape != (3,) or not np.all(np.isfinite(coefficient)) or not np.isfinite(centre) or scale <= 0.0:
+            raise ValueError("lane_center_path: boundary has invalid normalised coefficients")
+        u = (yy - centre) / scale
+        return coefficient[0] + coefficient[1] * u + coefficient[2] * u * u
+    coefficient = np.asarray(boundary["coefficients"], np.float64)
+    return coefficient[0] + coefficient[1] * yy + coefficient[2] * yy * yy
+
+
+def _boundary_slope(boundary, y):
+    """Evaluate dx/dy without expanding a large-origin polynomial / 大原点へ展開せず接線を評価する。"""
+    yy = np.asarray(y, np.float64)
+    if all(key in boundary for key in ("normalised_coefficients", "y_centre", "y_scale")):
+        coefficient = np.asarray(boundary["normalised_coefficients"], np.float64)
+        centre, scale = float(boundary["y_centre"]), float(boundary["y_scale"])
+        u = (yy - centre) / scale
+        return (coefficient[1] + 2.0 * coefficient[2] * u) / scale
+    coefficient = np.asarray(boundary["coefficients"], np.float64)
+    return coefficient[1] + 2.0 * coefficient[2] * yy
+
+
+def _minimum_boundary_radius(boundary, y0, y1):
+    """Return the minimum radius using canonical coefficients / 正規化係数で最小曲率半径を求める。"""
+    if all(key in boundary for key in ("normalised_coefficients", "y_centre", "y_scale")):
+        coefficient = np.asarray(boundary["normalised_coefficients"], np.float64)
+        centre, scale = float(boundary["y_centre"]), float(boundary["y_scale"])
+        if abs(coefficient[2]) <= np.finfo(float).eps:
+            return float("inf")
+        critical_u = np.clip(-coefficient[1] / (2.0 * coefficient[2]),
+                             (y0 - centre) / scale, (y1 - centre) / scale)
+        slopes = (coefficient[1] + 2.0 * coefficient[2] * np.array([
+            (y0 - centre) / scale, (y1 - centre) / scale, critical_u])) / scale
+        return float(np.min((1.0 + slopes * slopes) ** 1.5 * scale * scale / abs(2.0 * coefficient[2])))
+    return _minimum_quadratic_radius(boundary["coefficients"], y0, y1)
 
 
 def _minimum_quadratic_radius(coefficients, y0, y1):
@@ -396,12 +447,16 @@ def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC
     Returns
     -------
     table
-        ``coefficients``(c0,c1,c2)、``observed_y``、``inlier_mask``、残差、RMS、確信度。
+        正準の``normalised_coefficients``(b0,b1,b2), ``y_centre``, ``y_scale``、
+        ``observed_y``、``inlier_mask``、残差、RMS、確信度。互換用の
+        ``coefficients``(c0,c1,c2)は ``abs(y) <= 1e6 m`` の範囲だけ数値精度を契約する。
 
     English: initialise with the existing 3-D ``ransac_line`` (z=0), then fit the
     boundary x(y) with a Huber robust quadratic. Point order does not matter. It centres
-    and normalises y for rank, condition-number, and least-squares work, then returns
-    coefficients in the original world coordinates. The final inlier design must have
+    and normalises y for rank, condition-number, least-squares work, and evaluation.
+    ``normalised_coefficients``, ``y_centre``, and ``y_scale`` are the canonical output.
+    The legacy expanded world coefficients are numerically guaranteed only while
+    ``abs(y) <= 1e6 m``. The final inlier design must have
     rank 3, at least three distinct y values, and bounded condition number; otherwise it
     returns ``valid=False`` instead of silently using a line. Hairpins where y is not
     single-valued are outside the contract and fail closed.
@@ -480,8 +535,11 @@ def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC
     rms = float(np.sqrt(np.mean(residual[inliers] ** 2)))
     confidence = float((inliers.mean()) * min(1.0, span / MIN_OBSERVED_RANGE_M)
                        * math.exp(-rms / threshold))
-    return {"valid": True, "model": "x(y)=c0+c1*y+c2*y^2", "side": side,
-            "coefficients": _quadratic_original_coefficients(coef, y_centre, y_scale),
+    original = _quadratic_original_coefficients(coef, y_centre, y_scale)
+    return {"valid": True, "model": "x=b0+b1*u+b2*u^2; u=(y-y_centre)/y_scale", "side": side,
+            "normalised_coefficients": coef.copy(), "y_centre": y_centre, "y_scale": y_scale,
+            "coefficients": original,
+            "legacy_coefficients_valid": bool(np.max(np.abs(y[inliers])) <= MAX_LEGACY_COEFFICIENT_WORLD_Y_M),
             "observed_y": yrange, "inlier_mask": inliers,
             "residuals": residual, "rms": rms, "confidence": confidence,
             "ransac_line": line, "ransac_inlier_mask": line_inliers,
@@ -501,7 +559,13 @@ def _boundary(boundary, name):
         confidence = float(confidence)
     except (TypeError, ValueError):
         confidence = float("nan")
-    if (coef.shape != (3,) or yrange.shape != (2,) or not np.all(np.isfinite(np.r_[coef, yrange]))
+    has_normalised = all(key in boundary for key in ("normalised_coefficients", "y_centre", "y_scale"))
+    normalised = np.asarray(boundary.get("normalised_coefficients", []), np.float64).reshape(-1)
+    normal_centre, normal_scale = boundary.get("y_centre", np.nan), boundary.get("y_scale", np.nan)
+    normal_ok = (normalised.shape == (3,) and np.all(np.isfinite(normalised))
+                 and np.isfinite(normal_centre) and np.isfinite(normal_scale) and normal_scale > 0.0)
+    if ((not has_normalised and (coef.shape != (3,) or not np.all(np.isfinite(coef))))
+            or (has_normalised and not normal_ok) or yrange.shape != (2,) or not np.all(np.isfinite(yrange))
             or yrange[1] <= yrange[0] or not np.isfinite(confidence)
             or not 0.0 <= confidence <= 1.0):
         raise ValueError("lane_center_path: %s has invalid coefficients or observed_y" % name)
@@ -556,9 +620,8 @@ def lane_center_path(left, right, *, lane_width=DEFAULT_LANE_WIDTH_M,
         if y1 <= y0:
             raise ValueError("lane_center_path: left and right observed ranges do not overlap")
         y = np.linspace(y0, y1, count)
-        design = np.column_stack([np.ones(count), y, y * y])
-        lx = design @ np.asarray(lft["coefficients"])
-        rx = design @ np.asarray(rgt["coefficients"])
+        lx = _evaluate_boundary(lft, y)
+        rx = _evaluate_boundary(rgt, y)
         widths = rx - lx
         if np.any((widths < MIN_LANE_WIDTH_M) | (widths > MAX_LANE_WIDTH_M)):
             raise ValueError("lane_center_path: boundaries cross or give an implausible lane width")
@@ -569,15 +632,14 @@ def lane_center_path(left, right, *, lane_width=DEFAULT_LANE_WIDTH_M,
     else:
         one, source = (lft, "left") if lft is not None else (rgt, "right")
         y = np.linspace(float(one["observed_y"][0]), float(one["observed_y"][1]), count)
-        curvature_radius = _minimum_quadratic_radius(one["coefficients"], y[0], y[-1])
+        curvature_radius = _minimum_boundary_radius(one, y[0], y[-1])
         # 片側の中心だけでなく推定した反対側境界まで作るので、最大offset=lane_widthを守る。
         # The inferred outer boundary is offset by a full lane width, not only the centre.
         if curvature_radius <= width:
             return {"valid": False, "reason": "one-sided offset reaches curvature radius (radius=%g m, offset=%g m)"
                     % (curvature_radius, width), "source": source, "left": lft, "right": rgt}
-        design = np.column_stack([np.ones(count), y, y * y])
-        bx = design @ np.asarray(one["coefficients"])
-        slope = np.asarray(one["coefficients"])[1] + 2.0 * np.asarray(one["coefficients"])[2] * y
+        bx = _evaluate_boundary(one, y)
+        slope = _boundary_slope(one, y)
         # (x(y), y) の右向き法線。曲線の平行曲線なので x だけをずらさない。
         normal = np.column_stack([np.ones(count), -slope])
         normal /= np.linalg.norm(normal, axis=1, keepdims=True)
@@ -639,19 +701,118 @@ def _pixel_world(pixel_to_world, rows, cols, op):
     return q[:, :2] / q[:, 2:3]
 
 
+def _empty_crosswalk():
+    """Return the fail-soft typed crosswalk table / 横断歩道なしの型付き表。"""
+    return {"crosswalk_found": False, "near_distance": float("nan"), "far_distance": float("nan"),
+            "width": 0.0, "stripe_count": 0, "stripe_width": 0.0,
+            "stripe_spacing": float("nan"), "stripe_spacings": [], "confidence": 0.0,
+            "candidates": []}
+
+
+def _crosswalk_from_lane_coordinates(arc, lateral, resolution):
+    """Group long lane-parallel stripes and measure their clear gaps / 縦縞群と白線間隔を測る。"""
+    empty = _empty_crosswalk()
+    if len(arc) == 0:
+        return empty
+    # Remove transverse bands before measuring a stripe.  In a touching comb the
+    # first stripe shares one raster row with the stop line; retaining that row would
+    # incorrectly pull the stripe's near edge back to the stop-line near edge.
+    # A diagonal raster line jitters its projected arc coordinate by roughly a pixel;
+    # use a two-pixel longitudinal band so that it is still removed as one transverse line.
+    forward_bins = np.rint(arc / (2.0 * resolution)).astype(np.int64)
+    keep = np.ones(len(arc), bool)
+    for bin_id in np.unique(forward_bins):
+        selected = forward_bins == bin_id
+        lateral_bins = np.unique(np.rint(lateral[selected] / resolution).astype(np.int64))
+        breaks = np.flatnonzero(np.diff(lateral_bins) > 1)
+        starts = np.r_[0, breaks + 1]
+        ends = np.r_[breaks, len(lateral_bins) - 1]
+        widest_run = max((lateral_bins[end] - lateral_bins[start] + 1) * resolution
+                         for start, end in zip(starts, ends))
+        if widest_run >= MIN_TRANSVERSE_BAND_WIDTH_M:
+            keep[selected] = False
+    arc, lateral = arc[keep], lateral[keep]
+    if len(arc) == 0:
+        return empty
+    # A transverse stop line contributes only a short arc span to each lateral bin;
+    # a zebra stripe must stay long in the forward direction.
+    bins = np.rint(lateral / resolution).astype(np.int64)
+    stripes = []
+    for bin_id in np.unique(bins):
+        selected = bins == bin_id
+        if selected.sum() < MIN_COMPONENT_PIXELS:
+            continue
+        length = float(np.ptp(arc[selected]) + resolution)
+        if length < JAPAN_CROSSWALK_MIN_STRIPE_LENGTH_M:
+            continue
+        stripes.append({"bin": int(bin_id), "near_distance": float(np.min(arc[selected])),
+                        "far_distance": float(np.max(arc[selected])),
+                        "left": float(np.min(lateral[selected])), "right": float(np.max(lateral[selected])),
+                        "width": float(np.ptp(lateral[selected]) + resolution), "length": length})
+    if not stripes:
+        return empty
+    # Join adjacent long bins into one painted white stripe.
+    stripes.sort(key=lambda stripe: stripe["bin"])
+    merged = []
+    for stripe in stripes:
+        if not merged or stripe["bin"] > merged[-1][-1]["bin"] + 1:
+            merged.append([stripe])
+        else:
+            merged[-1].append(stripe)
+    measured = []
+    for group in merged:
+        measured.append({"near_distance": min(s["near_distance"] for s in group),
+                         "far_distance": max(s["far_distance"] for s in group),
+                         "left": min(s["left"] for s in group), "right": max(s["right"] for s in group),
+                         "width": max(s["right"] for s in group) - min(s["left"] for s in group) + resolution,
+                         "length": max(s["far_distance"] for s in group) - min(s["near_distance"] for s in group) + resolution})
+    tolerance = CROSSWALK_GAP_TOLERANCE_PIXELS * resolution
+    groups = []
+    for stripe in measured:
+        if not groups or stripe["left"] - groups[-1][-1]["right"] > JAPAN_CROSSWALK_MAX_STRIPE_GAP_M + tolerance:
+            groups.append([stripe])
+        else:
+            groups[-1].append(stripe)
+    candidates = []
+    for group in groups:
+        gaps = [float(group[i + 1]["left"] - group[i]["right"])
+                for i in range(len(group) - 1)]
+        valid_widths = all(s["width"] <= JAPAN_CROSSWALK_MAX_STRIPE_WIDTH_M + tolerance for s in group)
+        valid_gaps = (len(group) >= MIN_CROSSWALK_STRIPES and all(
+            JAPAN_CROSSWALK_MIN_STRIPE_GAP_M - tolerance <= gap <= JAPAN_CROSSWALK_MAX_STRIPE_GAP_M + tolerance
+            for gap in gaps))
+        confidence = min(1.0, len(group) / 4.0) * (1.0 if valid_gaps and valid_widths else 0.25)
+        candidates.append({"kind": "japan_crosswalk_201", "crosswalk_found": bool(valid_gaps and valid_widths),
+                           "near_distance": min(s["near_distance"] for s in group),
+                           "far_distance": max(s["far_distance"] for s in group),
+                           "width": max(s["right"] for s in group) - min(s["left"] for s in group) + resolution,
+                           "stripe_count": len(group), "stripe_width": float(np.median([s["width"] for s in group])),
+                           "stripe_spacing": float(np.median(gaps)) if gaps else float("nan"),
+                           "stripe_spacings": gaps, "spacing_tolerance": tolerance,
+                           "spacing_valid": bool(valid_gaps), "confidence": float(confidence)})
+    candidates.sort(key=lambda candidate: (candidate["crosswalk_found"], candidate["stripe_count"], candidate["confidence"]), reverse=True)
+    primary = candidates[0]
+    return {**primary, "observed_stripe_count": len(measured), "candidates": candidates}
+
+
 def stop_line_detect(labels, lane_model):
-    """車線にほぼ直交する十分に広い白線を停止線として検出し、日本式横断歩道を棄却する。
+    """停止線と日本式横断歩道を別々の型付き出力として検出する。
 
     白画素を車線内へ切り、連結片を世界座標へ写す。同じ前方距離の遮蔽片を結合し、
     車線接線への直交角、幅、厚さで停止線を判定する。日本式の横断歩道は、車の進行方向と
     平行な細長い白線を道路幅方向に並べる様式なので、長手が接線方向・幅が道路幅方向に細い
-    片を横断歩道縞として数え、停止線候補に入れない。従って遮蔽・画面端・影で縞が1本だけ
-    見えても、横に長い停止線とは形で区別できる。停止線の直後に縦縞が並ぶ場合も停止線を
-    ``ambiguous``にしない。別様式の横断歩道はこのopの入力契約外である。
+    片を横断歩道縞として数える。同一の8近傍成分に停止線と縦縞が接しても、まず各前方位置の
+    横方向の帯を取り出して停止線候補を残す。縞は別に横方向へ束ね、停止線とは別の横断歩道
+    表として手前/奥の弧長、幅、縞数、縞幅、白線間隔、確信度を返す。縞の間隔が法令の範囲外
+    なら横断歩道と断定しない。別様式の横断歩道はこのopの入力契約外である。
 
     様式の一次情報: 道路標識、区画線及び道路標示に関する命令（昭和三十五年総理府・建設省令
     第三号）別表第6の横断歩道(201)および停止線(203)、e-Gov法令検索
     https://laws.e-gov.go.jp/law/335M50004002003 。
+    白線間隔は警察庁交通規制課長通達「白線の設置間隔を拡大した横断歩道等を設ける場合の
+    留意事項について」（令和6年7月26日、警規発第96号）で45--90 cm。
+    https://www.npa.go.jp/laws/notification/koutuu/kisei/kisei20240726_4.pdf 。BEVでは各端
+    を1画素までしか測れないため、判定域を ``[0.45-res, 0.90+res] m`` とする。
 
     Parameters
     ----------
@@ -663,15 +824,20 @@ def stop_line_detect(labels, lane_model):
     Returns
     -------
     table
-        ``found``、``ambiguous``、経路始点からの``distance``[m]、``width``[m]、``confidence``、候補と日本式横断歩道縞の棄却数。
+        停止線の``found``、``ambiguous``、経路始点からの``distance``[m]、``width``[m]、
+        ``confidence``、候補に加え、別の型付き ``crosswalk`` 表と同じ値の
+        ``crosswalk_found``、``crosswalk_near_distance``、``crosswalk_far_distance``、
+        ``crosswalk_width``、``crosswalk_stripe_count``、``crosswalk_stripe_width``、
+        ``crosswalk_stripe_spacing``、``crosswalk_confidence``を返す。
 
     English: find wide white components nearly perpendicular to the lane tangent and
-    merge fragments split by occlusion. The supported Japanese crosswalk style is a
-    set of long lane-parallel, laterally narrow stripes, per Road Sign, Road Marking
+    merge fragments split by occlusion. It returns a separate typed crosswalk table.
+    The supported Japanese crosswalk style is a set of long lane-parallel, laterally narrow stripes, per Road Sign, Road Marking
     and Road Surface Marking Order, Appended Table 6, crosswalk (201) and stop line
-    (203), e-Gov https://laws.e-gov.go.jp/law/335M50004002003 . It therefore rejects
-    even one visible zebra stripe geometrically while keeping a preceding transverse
-    stop line definitive. Other national styles are outside this op's contract. It
+    (203), e-Gov https://laws.e-gov.go.jp/law/335M50004002003 . Its clear stripe gaps
+    must be 0.45--0.90 m per National Police Agency notification No. 96 (2024-07-26),
+    https://www.npa.go.jp/laws/notification/koutuu/kisei/kisei20240726_4.pdf , with one
+    BEV pixel tolerance at each bound. Other national styles are outside this op's contract. It
     validates every path segment and an affine nonsingular BEV mapping first. Distance
     is arc length from path[0].
 
@@ -698,10 +864,21 @@ def stop_line_detect(labels, lane_model):
         raise ValueError("%s: lane_model.lane_width is missing or implausible" % op)
     H = _bev_pixel_to_world(lane_model.get("pixel_to_world"), op)
     white_rows, white_cols = np.nonzero(lab == WHITE_LABEL)
+    def result(stop, crosswalk):
+        return {**stop, "crosswalk": crosswalk,
+                "crosswalk_found": crosswalk["crosswalk_found"],
+                "crosswalk_near_distance": crosswalk["near_distance"],
+                "crosswalk_far_distance": crosswalk["far_distance"],
+                "crosswalk_width": crosswalk["width"],
+                "crosswalk_stripe_count": crosswalk["stripe_count"],
+                "crosswalk_stripe_width": crosswalk["stripe_width"],
+                "crosswalk_stripe_spacing": crosswalk["stripe_spacing"],
+                "crosswalk_confidence": crosswalk["confidence"],
+                "rejected_crosswalk": crosswalk.get("observed_stripe_count", crosswalk["stripe_count"])}
     empty = {"found": False, "distance": float("nan"), "width": 0.0,
-             "confidence": 0.0, "ambiguous": False, "candidates": [], "rejected_crosswalk": 0}
+             "confidence": 0.0, "ambiguous": False, "candidates": []}
     if len(white_rows) == 0:
-        return empty
+        return result(empty, _empty_crosswalk())
     world = _pixel_world(lane_model.get("pixel_to_world"), white_rows, white_cols, op)
     # 最近の中心点と接線 / nearest centre point and local tangent.
     from scipy.spatial import cKDTree
@@ -717,8 +894,11 @@ def stop_line_detect(labels, lane_model):
     interior[white_rows[keep], white_cols[keep]] = True
     components, ncomp = ndimage.label(interior, structure=np.ones((3, 3), int))
     cumulative = np.r_[0.0, np.cumsum(segment_lengths)]
+    kept_world, kept_nearest = world[keep], nearest[keep]
+    kept_tangent, kept_normal = tangent[keep], normal[keep]
+    crosswalk_arc = cumulative[kept_nearest] + np.sum((kept_world - path[kept_nearest]) * kept_tangent, axis=1)
+    crosswalk_lateral = np.sum((kept_world - path[kept_nearest]) * kept_normal, axis=1)
     fragments = []
-    rejected_crosswalk = 0
     resolution = math.sqrt(abs(float(np.linalg.det(H[:2, :2]))))
     for component_id in range(1, ncomp + 1):
         rows, cols = np.nonzero(components == component_id)
@@ -732,23 +912,45 @@ def stop_line_detect(labels, lane_model):
         nv = np.array([-tv[1], tv[0]])
         rel = pts - path[idx]
         along, across = rel @ tv, rel @ nv
-        cov = np.cov(pts - pts.mean(0), rowvar=False)
-        major = np.linalg.eigh(cov)[1][:, -1]
-        angle_error = math.degrees(math.asin(np.clip(abs(float(major @ tv)), 0.0, 1.0)))
-        width = float(np.ptp(across) + resolution)
-        thickness = float(np.ptp(along) + resolution)
-        parallel_error = math.degrees(math.asin(np.clip(abs(float(major @ nv)), 0.0, 1.0)))
-        if (thickness >= JAPAN_CROSSWALK_MIN_STRIPE_LENGTH_M
-                and width <= JAPAN_CROSSWALK_MAX_STRIPE_WIDTH_M
-                and parallel_error <= JAPAN_CROSSWALK_MAX_PARALLEL_ERROR_DEG):
-            rejected_crosswalk += 1
-            continue
-        if (width >= MIN_FRAGMENT_WIDTH_M and thickness <= MAX_STOP_THICKNESS_M
-                and angle_error <= MAX_PERPENDICULAR_ERROR_DEG):
-            fragments.append({"points": pts, "distance": float(cumulative[idx] + np.mean(along)),
-                              "width": width, "thickness": thickness, "angle_error_deg": angle_error})
+        # Extract transverse bands before rejecting long vertical stripes.  This is what
+        # keeps a stop line when its end touches a zebra stripe in an 8-neighbour image.
+        along_bins = np.rint(along / resolution).astype(np.int64)
+        broad = []
+        for bin_id in np.unique(along_bins):
+            selected = along_bins == bin_id
+            # Four separated zebra stripes have a large outer span but no wide
+            # continuous transverse run.  Test the largest continuous run instead.
+            lateral_bins = np.unique(np.rint(across[selected] / resolution).astype(np.int64))
+            breaks = np.flatnonzero(np.diff(lateral_bins) > 1)
+            starts = np.r_[0, breaks + 1]
+            ends = np.r_[breaks, len(lateral_bins) - 1]
+            widest_run = max((lateral_bins[end] - lateral_bins[start] + 1) * resolution
+                             for start, end in zip(starts, ends))
+            if widest_run >= MIN_TRANSVERSE_BAND_WIDTH_M:
+                broad.append(int(bin_id))
+        runs = []
+        for bin_id in broad:
+            if not runs or bin_id > runs[-1][-1] + 1:
+                runs.append([bin_id])
+            else:
+                runs[-1].append(bin_id)
+        for run in runs:
+            selected = np.isin(along_bins, run)
+            band = pts[selected]
+            band_along, band_across = along[selected], across[selected]
+            thickness = float(np.ptp(band_along) + resolution)
+            width = float(np.ptp(band_across) + resolution)
+            if thickness > MAX_STOP_THICKNESS_M:
+                continue
+            cov = np.cov(band - band.mean(0), rowvar=False)
+            major = np.linalg.eigh(cov)[1][:, -1]
+            angle_error = math.degrees(math.asin(np.clip(abs(float(major @ tv)), 0.0, 1.0)))
+            if width >= MIN_FRAGMENT_WIDTH_M and angle_error <= MAX_PERPENDICULAR_ERROR_DEG:
+                fragments.append({"points": band, "distance": float(cumulative[idx] + np.mean(band_along)),
+                                  "width": width, "thickness": thickness, "angle_error_deg": angle_error})
+    crosswalk = _crosswalk_from_lane_coordinates(crosswalk_arc, crosswalk_lateral, resolution)
     if not fragments:
-        return {**empty, "rejected_crosswalk": rejected_crosswalk}
+        return result(empty, crosswalk)
     fragments.sort(key=lambda f: f["distance"])
     groups = []
     for fragment in fragments:
@@ -780,14 +982,14 @@ def stop_line_detect(labels, lane_model):
                                "fragment_count": len(group), "crosswalk": False,
                                "ambiguous": False})
     if not candidates:
-        return {**empty, "rejected_crosswalk": rejected_crosswalk}
+        return result(empty, crosswalk)
     candidates.sort(key=lambda c: c["distance"])
     accepted = [c for c in candidates if c["distance"] >= 0.0]
     if not accepted:
-        return {**empty, "candidates": candidates, "rejected_crosswalk": rejected_crosswalk}
+        return result({**empty, "candidates": candidates}, crosswalk)
     best = min(accepted, key=lambda c: c["distance"])
     confidence = best["confidence"]
-    return {"found": True, "distance": best["distance"], "width": best["width"],
+    return result({"found": True, "distance": best["distance"], "width": best["width"],
             "confidence": confidence, "ambiguous": best["ambiguous"], "thickness": best["thickness"],
             "angle_error_deg": best["angle_error_deg"], "candidates": candidates,
-            "rejected_crosswalk": rejected_crosswalk}
+            }, crosswalk)

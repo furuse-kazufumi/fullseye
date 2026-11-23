@@ -174,19 +174,25 @@ def test_lane_boundary_fit_refuses_unidentifiable_quadratic_without_linear_fallb
     assert not got["valid"] and "rank=2" in got["reason"]
 
 
-def test_lane_boundary_fit_is_translation_invariant_for_large_world_y_origin():
+@pytest.mark.parametrize("origin", [1_000_000.0, 1_000_000_000_000.0])
+def test_lane_boundary_fit_is_translation_invariant_for_large_world_y_origin(origin):
     local_y = np.linspace(0.0, 25.0, 41)
     local_x = -1.75 + 0.035 * local_y + 0.0015 * local_y * local_y
-    translated_y = 1_000_000.0 + local_y
+    translated_y = origin + local_y
     local = LO.lane_boundary_fit(np.c_[local_x, local_y], side="left", seed=7)
     translated = LO.lane_boundary_fit(np.c_[local_x, translated_y], side="left", seed=7)
     assert local["valid"] and translated["valid"]
     probe = np.linspace(0.0, 25.0, 31)
-    local_prediction = np.polynomial.polynomial.polyval(probe, local["coefficients"])
-    translated_prediction = np.polynomial.polynomial.polyval(
-        probe + 1_000_000.0, translated["coefficients"])
+    local_prediction = LO._evaluate_boundary(local, probe)
+    translated_prediction = LO._evaluate_boundary(translated, probe + origin)
     assert np.max(np.abs(local_prediction - (-1.75 + 0.035 * probe + 0.0015 * probe * probe))) < 1e-9
-    assert np.max(np.abs(translated_prediction - local_prediction)) < 2e-4
+    assert np.max(np.abs(translated_prediction - local_prediction)) < 5e-6
+    assert translated["legacy_coefficients_valid"] is (origin + 25.0 <= LO.MAX_LEGACY_COEFFICIENT_WORLD_Y_M)
+    # lane_center_path evaluates the canonical normalised fit, not the cancelling world polynomial.
+    right = {**translated, "normalised_coefficients": translated["normalised_coefficients"].copy()}
+    right["normalised_coefficients"][0] += 3.5
+    centre = LO.lane_center_path(translated, right)
+    assert np.max(np.abs(centre["path"][:, 0] - LO._evaluate_boundary(translated, centre["path"][:, 1]) - 1.75)) < 1e-9
 
 
 @pytest.mark.parametrize("curvature,outlier_fraction", [(0.0, 0.0), (0.0015, 0.15), (0.003, 0.30)])
@@ -257,20 +263,33 @@ def test_lane_center_path_rejects_one_sided_offset_cusp_and_foldover():
     assert not got["valid"] and "curvature radius" in got["reason"]
 
 
-def _bev_geometry(theta_deg=0.0):
-    h, w, res = 401, 161, 0.05
+def _bev_geometry(theta_deg=0.0, res=0.05, curved=False):
+    h, w = 401, 161
     pixel_to_world = np.array([[res, 0.0, -4.0], [0.0, -res, 20.0], [0.0, 0.0, 1.0]])
     theta = np.radians(theta_deg)
     tangent = np.array([np.sin(theta), np.cos(theta)])
     normal = np.array([-tangent[1], tangent[0]])
     s = np.linspace(0.0, 20.0, 201)
     path = s[:, None] * tangent
+    if curved:
+        # Actual curved world path, not a case label: 40 m radius at the origin.
+        path = path + 0.0125 * s[:, None] ** 2 * normal
     lane = {"path": path, "lane_width": 3.5, "pixel_to_world": pixel_to_world}
     rows, cols = np.mgrid[0:h, 0:w]
     q = np.stack([cols, rows, np.ones_like(rows)], -1) @ pixel_to_world.T
     world = q[..., :2] / q[..., 2:3]
-    along = world @ tangent
-    across = world @ normal
+    if curved:
+        from scipy.spatial import cKDTree
+        nearest = cKDTree(path).query(world.reshape(-1, 2))[1].reshape(h, w)
+        path_tangent = np.gradient(path, axis=0)
+        path_tangent /= np.linalg.norm(path_tangent, axis=1, keepdims=True)
+        path_normal = np.c_[-path_tangent[:, 1], path_tangent[:, 0]]
+        rel = world - path[nearest]
+        along = s[nearest] + np.sum(rel * path_tangent[nearest], axis=-1)
+        across = np.sum(rel * path_normal[nearest], axis=-1)
+    else:
+        along = world @ tangent
+        across = world @ normal
     return np.zeros((h, w), np.int16), lane, along, across
 
 
@@ -315,6 +334,14 @@ def test_stop_line_detect_crosswalk_only_and_no_lines_fail_soft():
     crossing = LO.stop_line_detect(labels, lane)
     assert not crossing["found"] and not crossing["ambiguous"]
     assert crossing["confidence"] == 0.0 and crossing["rejected_crosswalk"] == 4
+    assert crossing["crosswalk_found"]
+    assert crossing["crosswalk_near_distance"] == pytest.approx(7.0, abs=0.06)
+    assert crossing["crosswalk_far_distance"] == pytest.approx(10.0, abs=0.06)
+    assert crossing["crosswalk_width"] == pytest.approx(2.7, abs=0.11)
+    assert crossing["crosswalk_stripe_count"] == 4
+    assert crossing["crosswalk_stripe_width"] == pytest.approx(0.30, abs=0.06)
+    assert crossing["crosswalk_stripe_spacing"] == pytest.approx(0.50, abs=0.06)
+    assert crossing["crosswalk_confidence"] > 0.9
 
 
 def test_stop_line_detect_keeps_adjacent_stop_before_japan_crosswalk_definitive():
@@ -327,16 +354,54 @@ def test_stop_line_detect_keeps_adjacent_stop_before_japan_crosswalk_definitive(
     assert got["confidence"] > 0.8 and got["rejected_crosswalk"] == 4
 
 
-@pytest.mark.parametrize("visibility,stripes", [("occlusion", (-0.4,)),
-                                                    ("image_edge_crop", (-1.2, 1.2)),
-                                                    ("shadow", (0.4,))])
-def test_stop_line_detect_rejects_one_or_two_visible_japan_crosswalk_stripes(visibility, stripes):
+@pytest.mark.parametrize("gap", [0.0, 0.05, 0.25], ids=["touching", "one_pixel", "several_pixels"])
+def test_stop_line_detect_splits_touching_stop_line_and_crosswalk(gap):
     labels, lane, along, across = _bev_geometry()
-    # 各破壊要因の後に縦縞が1〜2本だけ残る観測を表す。停止線と形が違うので返さない。
-    _paint_japan_crosswalk(labels, along, across, start=7.0, end=10.0, stripes=stripes)
+    labels[(np.abs(along - 8.0) <= 0.15) & (np.abs(across) <= 1.55)] = LO.WHITE_LABEL
+    # At gap=0 the stop-line end and zebra-stripe start share an 8-neighbour component.
+    _paint_japan_crosswalk(labels, along, across, start=8.15 + gap, end=11.0 + gap)
     got = LO.stop_line_detect(labels, lane)
-    assert not got["found"] and not got["ambiguous"]
-    assert got["confidence"] == 0.0 and got["rejected_crosswalk"] == len(stripes)
+    assert got["found"] and not got["ambiguous"]
+    assert got["distance"] == pytest.approx(8.0, abs=0.06)
+    assert got["crosswalk_found"] and got["crosswalk_near_distance"] == pytest.approx(8.15 + gap, abs=0.06)
+
+
+def test_stop_line_detect_refuses_crosswalk_gap_outside_statutory_range():
+    labels, lane, along, across = _bev_geometry()
+    # Each measured clear gap is 1.10 m, beyond 0.90 m plus the 5-cm BEV tolerance.
+    _paint_japan_crosswalk(labels, along, across, start=7.0, end=10.0,
+                           stripes=(-1.4, 0.0, 1.4))
+    got = LO.stop_line_detect(labels, lane)
+    assert not got["found"] and not got["crosswalk_found"]
+    assert got["crosswalk"]["candidates"][0]["spacing_valid"] is False
+
+
+@pytest.mark.parametrize("condition", ["occlusion_mask", "image_edge_crop", "local_shadow"])
+def test_stop_line_detect_conditions_are_applied_and_keep_both_outputs(condition):
+    labels, lane, along, across = _bev_geometry()
+    labels[(np.abs(along - 8.0) <= 0.15) & (np.abs(across) <= 1.55)] = LO.WHITE_LABEL
+    _paint_japan_crosswalk(labels, along, across, start=9.0, end=12.0)
+    if condition == "occlusion_mask":
+        labels[(np.abs(along - 8.0) <= 0.15) & (np.abs(across) < 0.28)] = 0
+    elif condition == "image_edge_crop":
+        labels[:, :40] = 0  # actually crop the left part of the BEV, including one stripe
+    else:
+        shadow = (along >= 10.0) & (along <= 10.8) & (across >= -0.55) & (across <= -0.25)
+        labels[shadow] = 0  # unknown labels after a local dark shadow
+    got = LO.stop_line_detect(labels, lane)
+    assert got["found"] and got["distance"] == pytest.approx(8.0, abs=0.11)
+    assert got["crosswalk_found"] and got["crosswalk_stripe_count"] >= 2
+
+
+@pytest.mark.parametrize("theta_deg,curved,res", [(17.0, False, 0.05), (0.0, True, 0.05), (11.0, False, 0.20)],
+                         ids=["diagonal_road", "curved_path", "one_to_two_pixel_stripes"])
+def test_stop_line_detect_geometric_and_resolution_layers_return_both_outputs(theta_deg, curved, res):
+    labels, lane, along, across = _bev_geometry(theta_deg, res=res, curved=curved)
+    labels[(np.abs(along - 8.0) <= 0.15) & (np.abs(across) <= 1.55)] = LO.WHITE_LABEL
+    _paint_japan_crosswalk(labels, along, across, start=9.0, end=12.0)
+    got = LO.stop_line_detect(labels, lane)
+    assert got["found"] and got["distance"] == pytest.approx(8.0, abs=max(0.11, 1.5 * res))
+    assert got["crosswalk_found"] and got["crosswalk_stripe_count"] == 4
 
 
 @pytest.mark.parametrize("mapping", [np.array([[.05, 0., -4.], [0., 0., 20.], [0., 0., 1.]]),

@@ -19,18 +19,23 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-車線にほぼ直交する十分に広い白線を停止線として検出し、日本式横断歩道を棄却する。
+停止線と日本式横断歩道を別々の型付き出力として検出する。
 
 白画素を車線内へ切り、連結片を世界座標へ写す。同じ前方距離の遮蔽片を結合し、
 車線接線への直交角、幅、厚さで停止線を判定する。日本式の横断歩道は、車の進行方向と
 平行な細長い白線を道路幅方向に並べる様式なので、長手が接線方向・幅が道路幅方向に細い
-片を横断歩道縞として数え、停止線候補に入れない。従って遮蔽・画面端・影で縞が1本だけ
-見えても、横に長い停止線とは形で区別できる。停止線の直後に縦縞が並ぶ場合も停止線を
-``ambiguous``にしない。別様式の横断歩道はこのopの入力契約外である。
+片を横断歩道縞として数える。同一の8近傍成分に停止線と縦縞が接しても、まず各前方位置の
+横方向の帯を取り出して停止線候補を残す。縞は別に横方向へ束ね、停止線とは別の横断歩道
+表として手前/奥の弧長、幅、縞数、縞幅、白線間隔、確信度を返す。縞の間隔が法令の範囲外
+なら横断歩道と断定しない。別様式の横断歩道はこのopの入力契約外である。
 
 様式の一次情報: 道路標識、区画線及び道路標示に関する命令（昭和三十五年総理府・建設省令
 第三号）別表第6の横断歩道(201)および停止線(203)、e-Gov法令検索
 https://laws.e-gov.go.jp/law/335M50004002003 。
+白線間隔は警察庁交通規制課長通達「白線の設置間隔を拡大した横断歩道等を設ける場合の
+留意事項について」（令和6年7月26日、警規発第96号）で45--90 cm。
+https://www.npa.go.jp/laws/notification/koutuu/kisei/kisei20240726_4.pdf 。BEVでは各端
+を1画素までしか測れないため、判定域を ``[0.45-res, 0.90+res] m`` とする。
 
 Parameters
 ----------
@@ -42,15 +47,20 @@ lane_model : table
 Returns
 -------
 table
-    ``found``、``ambiguous``、経路始点からの``distance``[m]、``width``[m]、``confidence``、候補と日本式横断歩道縞の棄却数。
+    停止線の``found``、``ambiguous``、経路始点からの``distance``[m]、``width``[m]、
+    ``confidence``、候補に加え、別の型付き ``crosswalk`` 表と同じ値の
+    ``crosswalk_found``、``crosswalk_near_distance``、``crosswalk_far_distance``、
+    ``crosswalk_width``、``crosswalk_stripe_count``、``crosswalk_stripe_width``、
+    ``crosswalk_stripe_spacing``、``crosswalk_confidence``を返す。
 
 English: find wide white components nearly perpendicular to the lane tangent and
-merge fragments split by occlusion. The supported Japanese crosswalk style is a
-set of long lane-parallel, laterally narrow stripes, per Road Sign, Road Marking
+merge fragments split by occlusion. It returns a separate typed crosswalk table.
+The supported Japanese crosswalk style is a set of long lane-parallel, laterally narrow stripes, per Road Sign, Road Marking
 and Road Surface Marking Order, Appended Table 6, crosswalk (201) and stop line
-(203), e-Gov https://laws.e-gov.go.jp/law/335M50004002003 . It therefore rejects
-even one visible zebra stripe geometrically while keeping a preceding transverse
-stop line definitive. Other national styles are outside this op's contract. It
+(203), e-Gov https://laws.e-gov.go.jp/law/335M50004002003 . Its clear stripe gaps
+must be 0.45--0.90 m per National Police Agency notification No. 96 (2024-07-26),
+https://www.npa.go.jp/laws/notification/koutuu/kisei/kisei20240726_4.pdf , with one
+BEV pixel tolerance at each bound. Other national styles are outside this op's contract. It
 validates every path segment and an affine nonsingular BEV mapping first. Distance
 is arc length from path[0].
 

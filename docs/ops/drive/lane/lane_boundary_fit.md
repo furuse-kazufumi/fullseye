@@ -38,12 +38,16 @@ ransac_threshold, ransac_iterations, initial_outlier_weight, seed
 Returns
 -------
 table
-    ``coefficients``(c0,c1,c2)、``observed_y``、``inlier_mask``、残差、RMS、確信度。
+    正準の``normalised_coefficients``(b0,b1,b2), ``y_centre``, ``y_scale``、
+    ``observed_y``、``inlier_mask``、残差、RMS、確信度。互換用の
+    ``coefficients``(c0,c1,c2)は ``abs(y) <= 1e6 m`` の範囲だけ数値精度を契約する。
 
 English: initialise with the existing 3-D ``ransac_line`` (z=0), then fit the
 boundary x(y) with a Huber robust quadratic. Point order does not matter. It centres
-and normalises y for rank, condition-number, and least-squares work, then returns
-coefficients in the original world coordinates. The final inlier design must have
+and normalises y for rank, condition-number, least-squares work, and evaluation.
+``normalised_coefficients``, ``y_centre``, and ``y_scale`` are the canonical output.
+The legacy expanded world coefficients are numerically guaranteed only while
+``abs(y) <= 1e6 m``. The final inlier design must have
 rank 3, at least three distinct y values, and bounded condition number; otherwise it
 returns ``valid=False`` instead of silently using a line. Hairpins where y is not
 single-valued are outside the contract and fail closed.

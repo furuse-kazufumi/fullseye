@@ -265,7 +265,7 @@
 | Analyze — attention as a key-value lookup (RMSNorm → scores → softmax → mix) | 0 / 0 | 0 / 0 | rms_norm[CPU:not_listed] → attention_scores[CPU:not_listed] → attention_weights[CPU:not_listed] → attention_apply[CPU:not_listed] |
 | Measure — observed order of convergence of a grid study (GCI) | 0 / 0 | 0 / 0 | conv_observed_order[CPU:not_listed] |
 | Measure — fixed point of an iteration with convergence proof (Anderson) | 0 / 0 | 0 / 0 | iterate_fixed_point[CPU:not_listed] |
-| Detect — build a lane corridor from its two boundaries, then reject crosswalk stripes and find the stop line | 0 / 0 | 0 / 0 | lane_center_path[CPU:not_listed] → stop_line_detect[CPU:not_listed] |
+| Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk | 0 / 0 | 0 / 0 | lane_center_path[CPU:not_listed] → stop_line_detect[CPU:not_listed] |
 | Simulate — a depth camera over a height map, then the plane back from its point cloud | 0 / 0 | 0 / 0 | heightmap_depth_camera[CPU:not_listed] → depth_to_points[CPU:not_listed] → fit_plane_3d[CPU:not_listed] |
 | Simulate — a crowned road lane from its alignment, then its slope as a DEM | 1 / 1 | 1 / 1 | road_surface_heightmap[CPU:not_listed] → dem_slope[GPU] |
 | Measure — clearance between two scanned parts (drop flying points, then the hull gap) | 0 / 0 | 0 / 0 | radius_outlier_removal[CPU:not_listed] → convex_hull_gap[CPU:not_listed] |

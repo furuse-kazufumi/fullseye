@@ -201,7 +201,7 @@
       "judge": "judge_dolp_mean",
       "top_2": [
         "Sense — degree of linear polarization map from four analyzer angles (0/45/90/135)",
-        "Inspect — glossy (specular) area from polarization: DoLP map, threshold, area fraction"
+        "Preprocess — stack N frames with sigma clipping (noise drops as 1/sqrt N)"
       ],
       "hit": true
     },

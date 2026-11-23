@@ -4021,7 +4021,7 @@ _計 3852 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `lane_boundary_fit` `keypoints → table` GPU: なし — 俯瞰の(x横,y前方)点から ``x=c0+c1*y+c2*y²`` の車線境界を頑健に当てはめる。 · 例: `lane_ops_tour`
 - `lane_center_path` `table × table → table` GPU: なし — 左右境界から車線中央の経路と走行可能帯を返す。 · 例: `lane_ops_tour`
 - `plane_topview_color` `rgbimage × matrix × matrix × signal → table` GPU: なし — 地面平面をRGBのまま俯瞰へ写し、有効maskと画素↔世界座標を返す。 · 例: `lane_ops_tour`
-- `stop_line_detect` `labels × table → table` GPU: なし — 車線にほぼ直交する十分に広い白線を停止線として検出し、日本式横断歩道を棄却する。 · 例: `lane_ops_tour`
+- `stop_line_detect` `labels × table → table` GPU: なし — 停止線と日本式横断歩道を別々の型付き出力として検出する。 · 例: `lane_ops_tour`
 
 #### drive / lateral(21)
 - `ackermann_steer_angles` `any → table` GPU: なし — アッカーマンの内外輪の舵角(後車軸の中心の旋回半径 R、ホイールベース L、輪距 t)。 · 例: `poc_driving_lateral`

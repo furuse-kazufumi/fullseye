@@ -17,8 +17,10 @@
 <p>外れた点を残すための固定値である。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>table</p>
-<p><code style="color:#22d3bf">coefficients</code>(c0,c1,c2)、<code style="color:#22d3bf">observed_y</code>、<code style="color:#22d3bf">inlier_mask</code>、残差、RMS、確信度。</p>
-<p>English: initialise with the existing 3-D <code style="color:#22d3bf">ransac_line</code> (z=0), then fit the boundary x(y) with a Huber robust quadratic. Point order does not matter. It centres and normalises y for rank, condition-number, and least-squares work, then returns coefficients in the original world coordinates. The final inlier design must have rank 3, at least three distinct y values, and bounded condition number; otherwise it returns <code style="color:#22d3bf">valid=False</code> instead of silently using a line. Hairpins where y is not single-valued are outside the contract and fail closed.</p>
+<p>正準の<code style="color:#22d3bf">normalised_coefficients</code>(b0,b1,b2), <code style="color:#22d3bf">y_centre</code>, <code style="color:#22d3bf">y_scale</code>、</p>
+<p><code style="color:#22d3bf">observed_y</code>、<code style="color:#22d3bf">inlier_mask</code>、残差、RMS、確信度。互換用の</p>
+<p><code style="color:#22d3bf">coefficients</code>(c0,c1,c2)は <code style="color:#22d3bf">abs(y) &lt;= 1e6 m</code> の範囲だけ数値精度を契約する。</p>
+<p>English: initialise with the existing 3-D <code style="color:#22d3bf">ransac_line</code> (z=0), then fit the boundary x(y) with a Huber robust quadratic. Point order does not matter. It centres and normalises y for rank, condition-number, least-squares work, and evaluation. <code style="color:#22d3bf">normalised_coefficients</code>, <code style="color:#22d3bf">y_centre</code>, and <code style="color:#22d3bf">y_scale</code> are the canonical output. The legacy expanded world coefficients are numerically guaranteed only while <code style="color:#22d3bf">abs(y) &lt;= 1e6 m</code>. The final inlier design must have rank 3, at least three distinct y values, and bounded condition number; otherwise it returns <code style="color:#22d3bf">valid=False</code> instead of silently using a line. Hairpins where y is not single-valued are outside the contract and fail closed.</p>
 <p>呼び出し例::</p>
 <p>import numpy as np</p>
 <p>import laneops</p>
