@@ -72,12 +72,16 @@ def test_withdrawn_words_stay_out_of_titles_and_leads_everywhere():
     assert not problems, problems
 
 
+#: 小数点をコンマで書く言語(目玉の題と lead の訳。2026-11-23)。
+DECIMAL_COMMA_LANGS = ("de", "fr")
+
 def test_featured_ai_card_puts_the_trivial_baseline_on_the_main_page():
     """本ページの AI の採点のカードは題と lead だけを出す。自明な基準線(AUROC 0.999)は lead に要る。"""
     card = CARDS["poc_ai_built_inspection_scored"]
     assert card.get("tier") in ("showcase", "featured")
     for lang in V26["langs"]:
-        assert "0.999" in card["lead"][lang], lang
+        baseline = "0,999" if lang in DECIMAL_COMMA_LANGS else "0.999"   # de/fr は小数コンマ(訳の決まり)
+        assert baseline in card["lead"][lang], lang
     assert "偶然を超える検査を組めたのは" in card["label"]["ja"]
     assert "above-chance" in card["label"]["en"]
 

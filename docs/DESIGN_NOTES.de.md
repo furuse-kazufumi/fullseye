@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 611 von 2100. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 611 von 2101. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `_archive_tarxz.py`
@@ -969,8 +969,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L986** — --- ★ Genau um den Betrag, den du wegjustierst, verschwindet die Änderung -------------------------------------- #
 - **L1351** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 - **L1932** _(ja)_ — ★2026-11-15(補欠の注意): 以前は 0 が黒の発散色で、「データ無し(NaN)」も黒に塗られ、色の尺度も無かった。 coolwarm(0 = 薄い灰、負 = 青 = 2017 のほうが低い、正 = 赤)で塗り、データ無しだけを黒にして、尺度を添える。 1 m セルのままだと 2012 の空セル(充填率 64 %)が全面に粒になって色が読めないので、表示だけ 2 m 角 (1 m セル 4 つのうち値のあるものの平均)に寄せる。数は 1 m セルのまま測っている。
-- **L1986** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、 ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
-- **L2200** _(ja)_ — ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では 手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
+- **L1997** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、 ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
+- **L2222** _(ja)_ — ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では 手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
 
 ## `examples/poc_light_section_step_weld_floor.py`
 
@@ -1241,13 +1241,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_registration_basin.py`
 
-- **L457** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
-- **L683** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
-- **L849** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
-- **L1027** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
-- **L1421** — ★Wenn der Nutzer `estimate_normals` explizit uebergibt, im Glauben, die Normalen seien doch vorhanden. Das ist der **Rest** der Luecke, 14 Groessenordnungen schlechter als der Standard.
-- **L1611** — ★Luecke 1 wurde am 2026-09-06 geschlossen. Dieses assert wurde so umgeschrieben, dass es **den geschlossenen Zustand fixiert** (frueher fixierte es den defekten Zustand: `d_fixed < 1e-6 < d_default` = defekt). Kehrt der Defekt zurueck, schlaegt es hier fehl.
-- **L1622** — ★Luecke 2 wurde am 2026-09-06 geschlossen. Frueher war es `< 0.9 * len(ka)` (den defekten Zustand fixierend). Jetzt fixiert es, dass **der Standard eine exakte Uebereinstimmung liefert**.
+- **L462** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
+- **L688** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
+- **L854** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
+- **L1032** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
+- **L1427** — ★Wenn der Nutzer `estimate_normals` explizit uebergibt, im Glauben, die Normalen seien doch vorhanden. Das ist der **Rest** der Luecke, 14 Groessenordnungen schlechter als der Standard.
+- **L1617** — ★Luecke 1 wurde am 2026-09-06 geschlossen. Dieses assert wurde so umgeschrieben, dass es **den geschlossenen Zustand fixiert** (frueher fixierte es den defekten Zustand: `d_fixed < 1e-6 < d_default` = defekt). Kehrt der Defekt zurueck, schlaegt es hier fehl.
+- **L1628** — ★Luecke 2 wurde am 2026-09-06 geschlossen. Frueher war es `< 0.9 * len(ka)` (den defekten Zustand fixierend). Jetzt fixiert es, dass **der Standard eine exakte Uebereinstimmung liefert**.
 
 ## `examples/poc_reproducible_icp.py`
 
@@ -1322,12 +1322,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L988** _(ja)_ — 十分広く、影(直径 100 px 級)より十分狭い。★この値は実データを見てから決めた(事後の選択)。
 - **L994** _(ja)_ — ★2026-11-15 の作者と独立の審査で「細い成分だけ割る経路がいちばん揃う」は、画像処理をしない比べ手 (1 − 平均の明るさの比)との差の区間が 0 をまたぐと指摘された。区間を毎回数え、見出しの門にする。
 - **L998** _(ja)_ — 結果の散布図の横軸 [%]。★2026-11-15: CSV のままの外れ(P16 S1 の -92 %)に軸が引き延ばされ、本体が 右の 3 分の 1 に潰れていた(同じ審査)。枠の外の点は除かずに、枠の端へ寄せて灰色で描く。
-- **L1011** _(ja)_ — ★2026-11-09: otsu が実データの範囲で 256 ビンを張るようになり、ゼロ点の列が 3 桁目で動いた (ρ 0.44 → 0.438、平均差 0.073 → 0.074、S3/S4/S7 の Δ +0.001〜0.002)。文中の 2 桁の値は変わらない。
-- **L1024** _(ja)_ — ★2026-11-15: 画像処理をしない比べ手(dim = 1 − 平均の明るさの比)・S1〜S6 だけの順位相関・ 差のブートストラップ 95 % 区間(BOOT_N 回、種 BOOT_SEED)を足した。既存の値は 3 桁まで変わらない。 2026-11-15 に同じ書庫で測り直し、既存の値は 3 桁まで一致した(作者と独立の審査の再実行と、この直しの実行)。
-- **L1408** _(ja)_ — ★比べ手: 画像処理をしない「1 − 平均の明るさの比」(セルの外枠の中、S0 比)。2026-11-15 の作者と独立の 審査が、細い成分だけ割る経路との差がこの比べ手に対しては 0 をまたぐと指摘した。同じ表に並べて数える。
-- **L1515** _(ja)_ — ★下の閾値(+0.1 / +0.3 / 0.03 / 0.04 / +0.2)はすべて**実データを見てから置いた**(事後の門)。 緩めずに、実測の記録値そのものとの一致(丸め 3 桁)を別に見る。
-- **L1523** _(ja)_ — ★2026-11-15: 見出しを「画像処理をしない比べ手とはっきりした差が無い・ゼロ点よりは揃う」に直した。両方を固定する (0 は主張の意味そのもので、実データを見て置いた閾値ではない)。
-- **L1575** _(ja)_ — ★2026-11-15: 色の凡例は題の中だけだった(縮めた図では読めない)。各パネルの説明に色の意味を書く。
+- **L1036** _(ja)_ — ★2026-11-09: otsu が実データの範囲で 256 ビンを張るようになり、ゼロ点の列が 3 桁目で動いた (ρ 0.44 → 0.438、平均差 0.073 → 0.074、S3/S4/S7 の Δ +0.001〜0.002)。文中の 2 桁の値は変わらない。
+- **L1049** _(ja)_ — ★2026-11-15: 画像処理をしない比べ手(dim = 1 − 平均の明るさの比)・S1〜S6 だけの順位相関・ 差のブートストラップ 95 % 区間(BOOT_N 回、種 BOOT_SEED)を足した。既存の値は 3 桁まで変わらない。 2026-11-15 に同じ書庫で測り直し、既存の値は 3 桁まで一致した(作者と独立の審査の再実行と、この直しの実行)。
+- **L1433** _(ja)_ — ★比べ手: 画像処理をしない「1 − 平均の明るさの比」(セルの外枠の中、S0 比)。2026-11-15 の作者と独立の 審査が、細い成分だけ割る経路との差がこの比べ手に対しては 0 をまたぐと指摘した。同じ表に並べて数える。
+- **L1540** _(ja)_ — ★下の閾値(+0.1 / +0.3 / 0.03 / 0.04 / +0.2)はすべて**実データを見てから置いた**(事後の門)。 緩めずに、実測の記録値そのものとの一致(丸め 3 桁)を別に見る。
+- **L1548** _(ja)_ — ★2026-11-15: 見出しを「画像処理をしない比べ手とはっきりした差が無い・ゼロ点よりは揃う」に直した。両方を固定する (0 は主張の意味そのもので、実データを見て置いた閾値ではない)。
+- **L1600** _(ja)_ — ★2026-11-15: 色の凡例は題の中だけだった(縮めた図では読めない)。各パネルの説明に色の意味を書く。
+- **L1698** _(ja)_ — ★2026-11-23(目玉 30 本の見た目の点検): サムネイルとストーリー GIF の 1 コマ目が real_el_overlay の 橙の大円の切り出しで、説明が何も無かった。real_el_overlay と同じセル・同じ重ねから 2×2 の表紙を 作り、行(遮光マスク / S7)と札(ゼロ点 / 格子を割った暗部の割合)を日英併記で書く(英語のページも 同じ表紙を使う)。最後に書くので、既存の図の番号は変わらない。
 
 ## `examples/poc_solar_limb_darkening.py`
 
@@ -2904,7 +2905,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L202** _(ja)_ — ★2026-11-11: PoC の門(SPLIT_BY_TEST)だけはテスト単位で散らしてよい。各 PoC はちょうど 1 片
 - **L214** _(ja)_ — ★2026-11-11: SPLIT_BY_TEST(PoC の門)の 1 件ごとの記録値は台本の重さではない(一括実行の時間が片の 最初の 1 件に付く)ので、そのファイルはファイルの記録の平均で数える(配る側と同じ物差し)
 - **L970** _(ja)_ — ★PoC の門はテスト単位で片に散らす(2026-11-11、SPLIT_BY_TEST) # --------------------------------------------------------------------------- # run 42982984881: py3.12 片 1 = 71 分。片 1 は tests/test_poc_scripts_run.py の 310 本だけで、このファイル 1 つ(3,738 秒)が 6 片の平均(約 3,507 秒)を超えるので、ファイル単位では持った片が必ず最長になっていた。
-- **L1010** _(ja)_ — ★2026-11-13: 床は `poc_total > 3000` だった = 2026-10-22 の記録の値(PoC 3,738 秒 / 全体 21,041 秒)。master の run 43348040276 の実測を取り込むと PoC は 1,904 秒 / 全体 14,346 秒(縮小モードの実測)で、PoC のファイルは もう均等な 1 片(2,391 秒)より軽く、「ファイルが下限」は実の数では成り立たない。実の記録では配り方の不変条件を、 「最長の片を短くする」は実の id のまま PoC の重さだけを均等な 1 片の 1.5 倍まで増やした記録で確かめる。
+- **L1015** _(ja)_ — ★2026-11-13: 床は `poc_total > 3000` だった = 2026-10-22 の記録の値(PoC 3,738 秒 / 全体 21,041 秒)。master の run 43348040276 の実測を取り込むと PoC は 1,904 秒 / 全体 14,346 秒(縮小モードの実測)で、PoC のファイルは もう均等な 1 片(2,391 秒)より軽く、「ファイルが下限」は実の数では成り立たない。実の記録では配り方の不変条件を、 「最長の片を短くする」は実の id のまま PoC の重さだけを均等な 1 片の 1.5 倍まで増やした記録で確かめる。
 
 ## `tests/test_ci_wheel_check_paths.py`
 
@@ -3513,7 +3514,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/build_view2026_featured_batch.py`
 
-- **L103** _(ja)_ — ★2026-11-08: 以前は台帳の PoC を「手書きの見どころかこの一括のどちらかに必ず載せる」ために、 載っていない PoC を全部目玉へ足していた。目玉を約 40 件に絞った(ユーザーの決定)ので、回すと 285 件に戻ってしまう。目玉は featured_ids だけ、それ以外は all に在ることを確かめる側に替えた。
+- **L120** _(ja)_ — ★2026-11-08: 以前は台帳の PoC を「手書きの見どころかこの一括のどちらかに必ず載せる」ために、 載っていない PoC を全部目玉へ足していた。目玉を約 40 件に絞った(ユーザーの決定)ので、回すと 285 件に戻ってしまう。目玉は featured_ids だけ、それ以外は all に在ることを確かめる側に替えた。
 
 ## `tools/build_view2026_viewers.py`
 
@@ -3686,13 +3687,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/gen_view2026_pages.py`
 
-- **L273** _(ja)_ — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
-- **L340** _(ja)_ — ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
-- **L343** _(ja)_ — ★2026-11-12: 本ページ(ja/en)に載せるのは tier が showcase / featured の展示だけ(MAIN_LIMIT 本まで)。
+- **L278** _(ja)_ — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
+- **L345** _(ja)_ — ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
+- **L348** _(ja)_ — ★2026-11-12: 本ページ(ja/en)に載せるのは tier が showcase / featured の展示だけ(MAIN_LIMIT 本まで)。
 
 ## `tools/gen_view2026_story_gifs.py`
 
-- **L461** _(ja)_ — ★キャッシュ命中時は台帳の数値を書き換えない。color_mad は commit 済み GIF を復号して 元図を再標本化した差で、Pillow の版が違う CI では 4 桁目が動き、台帳だけが drift した (PR #227、2026-11-01: 手元は差ゼロ、CI は story_gifs.json だけ食い違う)。 ここでは限度を越えていないことだけ確かめ、数値は描画した機械の値を保つ。
+- **L493** _(ja)_ — ★キャッシュ命中時は台帳の数値を書き換えない。color_mad は commit 済み GIF を復号して 元図を再標本化した差で、Pillow の版が違う CI では 4 桁目が動き、台帳だけが drift した (PR #227、2026-11-01: 手元は差ゼロ、CI は story_gifs.json だけ食い違う)。 ここでは限度を越えていないことだけ確かめ、数値は描画した機械の値を保つ。
 
 ## `tools/gen_wing2d_gallery.py`
 
@@ -3837,9 +3838,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L120** — ★2026-10-15: ohne `--md` **schrieb es nichts** (es gab nur eine Zusammenfassung auf stdout aus). docs/CONVERSION_MATRIX.md blieb auf dem Stand vom 2026-09-02 ("59 Typen / 164 Konversionspaare") stehen, und da --check "eine Stufe, die nichts schreibt" nicht als Drift sieht, lief es sechs Wochen lang durch. Jetzt weist `trace_problems()` eine Stufe zurück, die ihre deklarierten Ausgaben nicht einmal berührt.
 - **L136** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
 - **L406** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
-- **L872** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L887** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L935** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
+- **L876** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L891** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L939** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `tools_geom.py`
 

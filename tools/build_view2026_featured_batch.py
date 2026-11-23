@@ -63,6 +63,23 @@ def lead_for(src: dict, lang: str) -> str:
     return src.get(key, "").strip() or caption_for(src, lang)
 
 
+def rebuilt_lead(previous: dict | None, src: dict, lang: str) -> str:
+    """同じ英語と日本語から作った既存の手訳だけを保ち、どちらかが変われば英語へ戻す。"""
+    new_english = lead_for(src, "en")
+    if lang == "ja":
+        return lead_for(src, lang)
+    if lang == "en" or previous is None:
+        return new_english
+    previous_leads = previous.get("lead", {})
+    previous_english = previous_leads.get("en", "")
+    translated = previous_leads.get(lang, "")
+    # 訳は英語から作り、曖昧な所は日本語で決めた。どちらかの原文が変われば訳は古い。
+    same_sources = previous_english == new_english and previous_leads.get("ja", "") == lead_for(src, "ja")
+    if translated and translated != previous_english and same_sources:
+        return translated
+    return new_english
+
+
 def media_for(pid: str) -> str | None:
     p = ASSETS / pid / "figures.json"
     if not p.is_file():
@@ -106,13 +123,14 @@ def rebuild(d: dict, ledger: list[dict]) -> dict:
     out = []
     for pid in featured:
         src = ledger_by_id.get(pid)
-        item = copy.deepcopy(previous[pid]) if pid in previous else None
+        previous_item = previous.get(pid)
+        item = copy.deepcopy(previous_item) if previous_item is not None else None
         if item is None:
             if src is None or pid not in all_by_id:
                 raise BuildError("%s: featured_ids に在るが、カードも台帳の行も無い" % pid)
             item = _new_card(src, all_by_id[pid], langs)
         if src is not None:
-            item["lead"] = {l: lead_for(src, l) for l in langs}
+            item["lead"] = {l: rebuilt_lead(previous_item, src, l) for l in langs}
             if "numbers_source" in item:
                 item["numbers_source"] = src["numbers_source"]
                 for l in langs:

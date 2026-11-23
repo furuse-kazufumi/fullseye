@@ -998,6 +998,31 @@ BOOT_SEED = 20261115
 #: 結果の散布図の横軸 [%]。★2026-11-15: CSV のままの外れ(P16 S1 の -92 %)に軸が引き延ばされ、本体が
 #: 右の 3 分の 1 に潰れていた(同じ審査)。枠の外の点は除かずに、枠の端へ寄せて灰色で描く。
 SCATTER_XLIM = (-12.0, 70.0)
+#: 表紙(real_cover)の正方形の一辺・パネルの一辺・パネルの間 [px]。
+COVER_SIZE = 720
+COVER_PANEL = 290
+COVER_GAP = 20
+#: 表紙の地の色・文字の色・出典の色(RGB 0..255)。
+COVER_BG = (14, 17, 23)
+COVER_INK = (240, 240, 240)
+COVER_NOTE_INK = (170, 170, 170)
+#: 表紙の重ねの色(代表の図 real_el_overlay と同じ。橙 = ゼロ点、青 = 格子の細い成分を割った暗部)。
+COVER_ZERO_RGB = (1.0, 0.45, 0.1)
+COVER_NARROW_RGB = (0.15, 0.55, 1.0)
+#: 表紙の文字の大きさ [px](行の見出し・パネルの札・出典)。
+COVER_ROW_FONT = 22
+COVER_BADGE_FONT = 19
+COVER_NOTE_FONT = 14
+#: 出典の左端 [px]。ストーリー GIF は表紙の下端に進み具合の点(中央、最大 6 個で幅 101 px)を重ねるので、
+#: 出典は左端に寄せて点の手前(x < 300)で終える(2026-11-23、点が「CC BY 4.0」に被った)。
+COVER_NOTE_X = 10
+#: 表紙の配置 [px]: 1 行目の見出しの上端・行の見出しから次の行の見出しまでのパネル以外の高さ・
+#: 見出しからパネルの上端まで・札の板の内側の余白・出典の行の上端の下端からの距離。
+COVER_TOP = 10
+COVER_ROW_EXTRA = 50
+COVER_HEAD_TO_PANEL = 36
+COVER_BADGE_PAD = 6
+COVER_NOTE_FROM_BOTTOM = 26
 #: 縦軸 [pt]。上限は暗部率の増えの取りうる上限 100 pt。上の空いた帯に凡例が入る(4 隅のどれにも点があり、
 #: 右下の隅に置くと P4 S7 の点を隠した)。
 SCATTER_YLIM = (-20.0, 100.0)
@@ -1583,6 +1608,7 @@ def _real_figures(out, by_shadow, table, sh, s7, cache, rep7) -> None:
                            "下: S7(論文の分類 7「その他の欠陥」と推定)のうち、出力低下が S7 の中央値 %.1f %% に最も近いセル。"
                            "灰色は実測の EL 強度、色は判定の重ね。出力低下は同じセル・同じ電流の I-V から。"
                            % (100 * by_shadow[7]["loss"]))
+    cover_rows = [(key, cache[key]) for key in (REP_SHADOW, rep7["key"]) if key in cache]
     # 入力: 同じセルのマスク 0〜6 と、S7 の代表セルの S0 / S7
     p, cur, _ = REP_SHADOW
     ins, icap = [], []
@@ -1669,6 +1695,51 @@ def _real_figures(out, by_shadow, table, sh, s7, cache, rep7) -> None:
                          % (round(float(br7.min()), 3), round(float(br7.max()), 3), 100 * by_shadow[7]["loss"]),
                    caption="明るさはセルの外枠の中の平均。暗さの原因は配布元に書かれていない。面積で数える方法は"
                            "どれもこの欠陥の出力低下を測れない(ゼロ点は過大、細い成分だけ割る経路は過小)。")
+    # ★2026-11-23(目玉 30 本の見た目の点検): サムネイルとストーリー GIF の 1 コマ目が real_el_overlay の
+    #   橙の大円の切り出しで、説明が何も無かった。real_el_overlay と同じセル・同じ重ねから 2×2 の表紙を
+    #   作り、行(遮光マスク / S7)と札(ゼロ点 / 格子を割った暗部の割合)を日英併記で書く(英語のページも
+    #   同じ表紙を使う)。最後に書くので、既存の図の番号は変わらない。
+    if len(cover_rows) == 2:
+        _save_cover(cover_rows)
+
+
+def _save_cover(cover_rows) -> None:
+    """表紙(real_cover): 行 = 遮光マスク S3 / S7、列 = ゼロ点(橙)/ 格子の細い成分を割った暗部(青)。"""
+    from PIL import Image, ImageDraw, ImageFont
+
+    def font(n, bold=False):
+        return ImageFont.truetype(str(figs._japanese_font_path(bold=bold)), n)
+
+    S, PW, G = COVER_SIZE, COVER_PANEL, COVER_GAP
+    x0 = (S - 2 * PW - G) // 2
+    st = Image.new("RGB", (S, S), COVER_BG)
+    ds = ImageDraw.Draw(st)
+    heads = ["遮光マスク / shading mask", "S7 その他の欠陥 / S7 other defect"]
+    for r, ((key, (im, rect, m, _m0, rec)), head) in enumerate(zip(cover_rows, heads)):
+        y_head = COVER_TOP + r * (PW + COVER_ROW_EXTRA)
+        ds.text((x0, y_head), "%s  (I-V loss %.0f %%)" % (head, 100 * rec["loss"]),
+                font=font(COVER_ROW_FONT, True), fill=COVER_INK)
+        g = _gray3(im, rect)
+        for c, (mask, rgb, label) in enumerate(((m["zero"], COVER_ZERO_RGB, "ゼロ点 / zero-point"),
+                                                (m["narrow"], COVER_NARROW_RGB, "格子を割る / de-gridded"))):
+            tile = np.clip(_tint(g, mask, rgb) * 255.0, 0, 255).astype(np.uint8)
+            xo, yo = x0 + c * (PW + G), y_head + COVER_HEAD_TO_PANEL
+            st.paste(Image.fromarray(tile).resize((PW, PW), Image.Resampling.BICUBIC), (xo, yo))
+            share = 100 * rec["zero" if c == 0 else "narrow"]
+            text = "%s %.0f %%" % (label, share)
+            bf = font(COVER_BADGE_FONT, True)
+            l, t, rr, b = ds.textbbox((0, 0), text, font=bf)
+            ds.rectangle((xo, yo, xo + (rr - l) + 2 * COVER_BADGE_PAD, yo + (b - t) + 2 * COVER_BADGE_PAD),
+                         fill=COVER_BG)
+            ds.text((xo + COVER_BADGE_PAD - l, yo + COVER_BADGE_PAD - t), text, font=bf,
+                    fill=tuple(int(round(255 * v)) for v in rgb))
+    ds.text((COVER_NOTE_X, S - COVER_NOTE_FROM_BOTTOM), "SIPV-EL (Zenodo 14439369, CC BY 4.0)", font=font(COVER_NOTE_FONT),
+            fill=COVER_NOTE_INK)
+    figs.save("real_cover", np.asarray(st, dtype=np.uint8),
+              caption=("表紙用の正方形の静止画。real_el_overlay と同じ 2 セル・同じ重ね。上: 遮光マスク(中央の大円)では"
+                       "ゼロ点(橙)も格子の細い成分を割った暗部(青)も出力低下に見合う面積を数える。下: S7(「その他の欠陥」と"
+                       "推定)ではゼロ点が全体の暗さを面積として数え、青はほとんど数えない。札の数は暗部の割合、行の数は"
+                       "同じセルの I-V の出力低下。SIPV-EL(Zenodo 14439369、CC BY 4.0)の実セル。"))
 
 
 def main() -> int:

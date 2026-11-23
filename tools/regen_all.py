@@ -696,6 +696,10 @@ EXCLUDED = {
                                             "ソースに直書きで、索引から数えていない(2026-10-07 時点で古い)。"),
     "tools/gen_view2026_thumbs.py": _IMAGE_REASON + (" docs/view2026/thumbs の JPEG/GIF。在ることと"
                                                      " 全展示ぶん揃うことは gen_view2026_pages の検査が見る。"),
+    "tools/audit_view2026_figure_text.py": ("PoC を丸ごと走らせ(1 本 1〜4 分、実データの章は FULLSEYE_DATA_DIR)、"
+                                            "図ごとに描いた文字を docs/view2026/figure_text.json に記録する。"
+                                            "重く手元のデータに依るので鎖では回さない。図が変わったら古いことは "
+                                            "--check と tests/test_view2026_featured_visuals_2026_11_23.py が見る。"),
     "tools/gen_hero_channels.py": _IMAGE_REASON + " C:/Windows/Fonts を読む。",
     "tools/gen_hero_ct.py": _IMAGE_REASON + " C:/Windows/Fonts を読む。",
     "tools/gen_hero_making_of.py": _IMAGE_REASON + " 手元の作業画像(C:/...)を素材にする。",

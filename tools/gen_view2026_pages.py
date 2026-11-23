@@ -77,6 +77,10 @@ _KANA = re.compile(r"[぀-ヿ]")
 _GARBLE = re.compile(r"\ufffd|\?{3,}|(?<=\d)\?(?=\d)")
 _NUM = re.compile(r"\d+(?:\.\d+)?")
 _LIQUID = re.compile(re.escape("{" + "{") + "|" + re.escape("{" + "%"))
+#: 展示に登録できる YouTube 動画 URL。動画 ID は 11 文字で、後続のパスや query を許さない。
+YOUTUBE_URL_RE = re.compile(
+    r"https://(?:youtu\.be/|(?:www\.)?youtube\.com/watch\?v=)[A-Za-z0-9_-]{11}"
+)
 
 STYLE = """<style>
 .vlang { font-size: 14px; line-height: 2; }
@@ -215,7 +219,8 @@ def _representative_img(d: dict, e: dict, lang: str, up: str, docs: str,
     if story.get("status") == "gif":
         label_lang = "ja" if lang == "ja" else "en"
         gif = docs + story["variants"][label_lang]["path"]
-        still = docs + story["still"]
+        # 英語版の GIF は日本語の文字の無いコマで組むことがあるので、減速時の静止画も言語ごと(2026-11-23)。
+        still = docs + story.get("stills", {}).get(label_lang, story["still"])
         alt = (alt if alt is not None else story["alt"][label_lang]).replace('"', "&quot;")
         return ('<picture><source media="(prefers-reduced-motion: reduce)" srcset="%s">'
                 '<img src="%s" alt="%s" loading="lazy" width="%d" height="%d"></picture>'
@@ -373,8 +378,26 @@ def validate(d: dict) -> list[str]:
         full("%s.num" % pid, e["num"], allow_empty=True)
         if "youtube_url" not in e:
             bad.append("%s: youtube_url 欄が無い(未公開なら空文字)" % pid)
-        elif e["youtube_url"] and not re.match(r"^https://(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)[A-Za-z0-9_-]+", e["youtube_url"]):
-            bad.append("%s: youtube_url が YouTube の動画 URL でない: %s" % (pid, e["youtube_url"]))
+        else:
+            youtube = e["youtube_url"]
+            if isinstance(youtube, dict):
+                unknown = sorted(set(youtube) - set(langs))
+                if "en" not in youtube:
+                    bad.append("%s: youtube_url の言語別 URL に en が無い" % pid)
+                if unknown:
+                    bad.append("%s: youtube_url に langs に無い言語がある: %s" % (pid, unknown))
+                urls = youtube.items()
+            elif isinstance(youtube, str):
+                urls = [("all", youtube)]
+            else:
+                bad.append("%s: youtube_url は文字列か言語別の object でなければならない" % pid)
+                urls = []
+            for youtube_lang, url in urls:
+                # 言語別の object では空の値を許さない(空の en は「en 必須」をすり抜けて英語へ落ちる先が無くなる)。
+                empty_allowed = isinstance(youtube, str)
+                if not isinstance(url, str) or ((url or not empty_allowed) and YOUTUBE_URL_RE.fullmatch(url) is None):
+                    bad.append("%s: youtube_url[%s] が YouTube の動画 URL でない: %s" %
+                               (pid, youtube_lang, url))
         if e["category"] not in cats:
             bad.append("%s: category %r が categories に無い" % (pid, e["category"]))
         checks = [(DOCS / _media_rel(d, e), "図"), (BASE / "thumbs" / (pid + ".jpg"), "サムネイル")]
@@ -606,13 +629,22 @@ MAIN_TEXT = {
 }
 #: 場を掃引する動く 3-D(field_viewers)を「触って見る」の先頭に置く言語。ビューアの HTML がこの 2 言語だけなので、ほかの言語には置かない。
 FIELD_VIEWER_LANGS = ("ja", "en")
-#: 展示の題と lead が訳してある言語。ほかの言語のページでは、目玉のかたまりの題と lead を英語で出し、
-#: その節の頭に「説明は英語」の 1 行を添える(訳は ja/en だけ、ほかは後回しの方針。2026-11-13)。
-CONTENT_LANGS = ("ja", "en")
+#: 英語と同じ文でも「未翻訳」と扱わない原文の言語。
+SOURCE_CONTENT_LANGS = ("ja", "en")
+#: 英語を逐語で写す詳細本文(``see`` / ``num``)を、その言語の欄から読める言語。
+DETAIL_CONTENT_LANGS = ("ja", "en")
+#: カードで翻訳状況を確かめる欄。
+TRANSLATED_CARD_FIELDS = ("label", "lead")
 
 
-def _content_lang(lang: str) -> str:
-    return lang if lang in CONTENT_LANGS else "en"
+def _detail_content_lang(lang: str) -> str:
+    """逐語の詳細本文(``see`` / ``num``)に使う言語。"""
+    return lang if lang in DETAIL_CONTENT_LANGS else "en"
+
+
+def _untranslated(e: dict, field: str, lang: str) -> bool:
+    """題または lead が、その言語で英語のままなら True。"""
+    return lang not in SOURCE_CONTENT_LANGS and e[field][lang] == e[field]["en"]
 
 
 #: 読み物(about.md、手書き)がある言語。
@@ -661,11 +693,20 @@ MORE_TEXT = {
 }
 
 
+def youtube_url_for(e: dict, lang: str) -> str:
+    """展示の YouTube URL を言語別に解決する。未登録なら空文字。"""
+    value = e.get("youtube_url", "")
+    if isinstance(value, str):
+        return value
+    return value.get(lang) or value.get("en", "")
+
+
 def _media_fn(d: dict, lang: str, docs: str):
     """タイルと行のリンク先。YouTube に本編があればそこへ、動く 3-D の HTML はそのページの言語で開く。"""
     def media(e):
-        if e.get("youtube_url"):
-            return e["youtube_url"]
+        youtube = youtube_url_for(e, lang)
+        if youtube:
+            return youtube
         return docs + _media_rel(d, e) + ("?lang=" + lang if _is_viewer(d, e) else "")
     return media
 
@@ -758,12 +799,11 @@ def truth_badge(e: dict, lang: str) -> str:
 def _main_cards(d: dict, rows: list[dict], lang: str, up: str, docs: str, media) -> list[str]:
     """本ページ(8 言語とも同じ形): 展示 1 本 = 画像 + 題 + lead + 真値 + くわしく。"""
     text = MAIN_TEXT[lang]
-    cl = _content_lang(lang)
     out = []
     for e in rows:
         body = '<p>%s</p><p class="vm">%s: %s · <a href="more.md#%s">%s</a></p>' % (
-            _code_html(_esc(e["lead"][cl])), text["truth"], _esc(e["truth"][lang]), _anchor(e["id"]), text["detail"])
-        out += [_card(d, e, lang, up, docs, media, body, label=e["label"][cl], badge=truth_badge(e, lang)), ""]
+            _code_html(_esc(e["lead"][lang])), text["truth"], _esc(e["truth"][lang]), _anchor(e["id"]), text["detail"])
+        out += [_card(d, e, lang, up, docs, media, body, label=e["label"][lang], badge=truth_badge(e, lang)), ""]
     return out
 
 
@@ -814,7 +854,8 @@ def _item_lines(d: dict, e: dict, lang: str, ui: dict, media, glossary_ledger: d
     kind = ui[_media_kind(_media_rel(d, e))]
     if _is_viewer(d, e):
         kind += ", " + _viewer_mb(d, e)
-    youtube = " [YouTube](%s)" % e["youtube_url"] if e.get("youtube_url") else ""
+    youtube_url = youtube_url_for(e, lang)
+    youtube = " [YouTube](%s)" % youtube_url if youtube_url else ""
     out = ["- [%s](%s) (%s): %s%s" % (e["label"][lang], media(e), kind, _code_md(e["lead"][lang]),
                                         '<a id="%s"></a>' % _anchor(e["id"]) if anchor else ""),
            "  %s%s%s" % (_code_md(e["see"][lang]), num, link + youtube)]
@@ -832,7 +873,7 @@ def _list_by_category(d: dict, rows: list[dict], lang: str, ui: dict, media) -> 
     """「何が見えるか・測った数字」。分類ごとに並べる。"""
     glossary_ledger, glossary = _glossary_inputs()
     out = ["## " + ui["h_list"], "", ui["list_intro"], ""]
-    if lang not in CONTENT_LANGS:
+    if lang not in DETAIL_CONTENT_LANGS:
         out += [ui["poc_caption_lang_note"], ""]     # 訳の無い展示は英語のまま出る(訳は ja/en だけ)
     out += ['<div class="vl" markdown="1">', ""]
     for cat in d["categories"]:
@@ -991,8 +1032,8 @@ def build(d: dict, lang: str) -> str:
         if not rows:
             continue
         out += ["## " + MAIN_TEXT[lang][tier], ""]
-        if lang not in CONTENT_LANGS:
-            out += [ui["featured_en_note"], ""]      # この節の題と説明は英語(訳は ja/en だけ。2026-11-13)
+        if any(_untranslated(e, field, lang) for e in rows for field in TRANSLATED_CARD_FIELDS):
+            out += [ui["featured_en_note"], ""]      # この節に英語のままの題か lead があれば知らせる。
         out += _main_cards(d, rows, lang, up, docs, media)
     out += _series_block(d, lang, up, ui)
     out += _share_alike_block(d, lang, main_rows)
@@ -1029,13 +1070,18 @@ def build_more(d: dict, lang: str) -> str:
     out.append("")
     glossary_ledger, glossary = _glossary_inputs()
     out += ["## " + text["detail_h"], ""]
-    if lang not in CONTENT_LANGS:
-        out += [ui["featured_en_note"], ""]          # 本ページと同じく、この節の題と説明は英語(2026-11-13)
+    if lang not in DETAIL_CONTENT_LANGS:
+        out += [ui["featured_detail_en_note"], ""]   # 題と lead は翻訳済み、逐語の詳細本文は英語。
     out += ['<div class="vl" markdown="1">', ""]
-    cl = _content_lang(lang)
+    detail_lang = _detail_content_lang(lang)
     for e in d["exhibits"]:
         if e["id"] in main_ids:
-            shown = dict(e, **{f: {lang: e[f][cl]} for f in ("label", "lead", "see", "num")})
+            shown = dict(e, **{
+                "label": {lang: e["label"][lang]},
+                "lead": {lang: e["lead"][lang]},
+                "see": {lang: e["see"][detail_lang]},
+                "num": {lang: e["num"][detail_lang]},
+            })
             out += _item_lines(d, shown, lang, ui, media, glossary_ledger, glossary, anchor=True)
     out += ["", "</div>", ""]
     out += _caps_block(d, lang, docs, ui)
