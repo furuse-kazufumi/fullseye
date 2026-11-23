@@ -146,9 +146,9 @@ def test_no_exhibit_disappears_from_the_full_list():
     assert len(ids) == len(set(ids))
     assert len(ids) >= 285, "all の件数が %d —— 目玉から外した展示を all から消していないか" % len(ids)
     featured_only = sorted({e["id"] for e in d["exhibits"]} - set(ids))
-    # YouTube の本編へ飛ぶ動画の展示だけは all に無い(2026-11-10 に運転の進化動画、2026-11-23 に G1・検査の実演集・銀座を足した)
+    # YouTube の本編へ飛ぶ動画の展示だけは all に無い(2026-11-10 に運転の進化動画、2026-11-23 に G1・Go2・検査の実演集・銀座を足した)
     assert featured_only == ["carla_ginza_perception", "carla_iroha_haze", "driving_evolution", "g1_iroha_climb",
-                             "inspection_poc_reel"], featured_only
+                             "go2_trail_footholds", "inspection_poc_reel"], featured_only
     # 門(Fullseye の計算を呼ぶか)で公開から外れる展示は、外れる理由を数えて明示する(黙って消さない)。
     public = G.public_data(d)
     dropped = sorted(({e["id"] for e in d["all"]} | {e["id"] for e in d["exhibits"]})
