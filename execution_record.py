@@ -40,6 +40,7 @@ MAX_RANDOM_SEED = 2 ** 64 - 1
 EXECUTION_STATUSES = frozenset({"succeeded", "failed", "cancelled"})
 WHEEL_RECORD_HASH_ALGORITHM = "sha256"
 WHEEL_RECORD_PREFIX = b"fullseye-wheel-record/v1\0"
+GIT_COMMAND_TIMEOUT_SECONDS = 30
 
 # 実行結果を変え得る既存の環境変数 / Existing environment overrides that can change results.
 EXECUTION_ENVIRONMENT_VARIABLES = (
@@ -391,34 +392,55 @@ def artifact_ref(value: Any, *, medium: str = "memory", storage_id: str | None =
                        storage_id=storage_id or f"sha256:{digest}")
 
 
-def _run_git(*args: str) -> bytes:
+def _run_git(*args: str) -> bytes | None:
     """この checkout の git 出力を得る / Read git metadata for this checkout."""
     try:
         return subprocess.run(("git", *args), cwd=_ROOT, check=True, capture_output=True,
-                              timeout=30).stdout
+                              timeout=GIT_COMMAND_TIMEOUT_SECONDS).stdout
     except (OSError, subprocess.SubprocessError):
-        return b""
+        return None
+
+
+def _require_git_output(output: bytes | None, component: str) -> bytes:
+    """正常な空出力と取得失敗を分ける / Distinguish valid empty output from retrieval failure."""
+    if output is None:
+        raise SoftwareProvenanceError(f"git source provenance could not read {component}")
+    return output
 
 
 def _source_state() -> tuple[str, bool]:
     """現在の source 又は検証済み wheel から provenance を作る / Build current source or verified-wheel provenance."""
-    head = _run_git("rev-parse", "HEAD").strip()
+    head_output = _run_git("rev-parse", "HEAD")
+    if not head_output:
+        return _wheel_record_state()
+    head = head_output.strip()
     if not head:
         return _wheel_record_state()
-    status = _run_git("status", "--porcelain=v1", "-z", "--untracked-files=all")
-    diff = _run_git("diff", "--no-ext-diff", "--binary", "HEAD", "--", ".")
+    status = _require_git_output(
+        _run_git("status", "--porcelain=v1", "-z", "--untracked-files=all"),
+        "status",
+    )
+    diff = _require_git_output(
+        _run_git("diff", "--no-ext-diff", "--binary", "HEAD", "--", "."),
+        "diff",
+    )
     h = hashlib.sha256()
     for part in (head, status, diff):
         h.update(len(part).to_bytes(8, "big"))
         h.update(part)
     # 未追跡ファイルは status の名前だけでなく内容も含める / Include untracked contents, not only names.
-    untracked = _run_git("ls-files", "--others", "--exclude-standard", "-z").split(b"\0")
+    untracked_output = _require_git_output(
+        _run_git("ls-files", "--others", "--exclude-standard", "-z"),
+        "untracked files",
+    )
+    untracked = untracked_output.split(b"\0")
     for raw_name in sorted(name for name in untracked if name):
         h.update(hashlib.sha256(raw_name).digest())
         try:
             h.update(hashlib.sha256((_ROOT / os.fsdecode(raw_name)).read_bytes()).digest())
-        except OSError:
-            h.update(b"unreadable")
+        except OSError as exc:
+            raise SoftwareProvenanceError(
+                "git source provenance could not read an untracked file") from exc
     return h.hexdigest(), bool(status)
 
 

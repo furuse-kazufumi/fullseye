@@ -196,17 +196,45 @@ def test_artifact_ref_rejects_non_string_mapping_keys_without_aliasing():
 
 
 def test_source_state_is_recomputed_for_each_record(monkeypatch):
-    """実行後の source 変更を次の record が見落とさない / Do not cache source provenance across records."""
-    marker = {"value": b"first"}
+    """tracked source の変更を次の record が見落とさない / Do not cache tracked-source provenance."""
+    tracked_diff = {"value": b"first"}
 
-    def fake_git(*_args):
-        return marker["value"]
+    def fake_git(*args):
+        if args == ("rev-parse", "HEAD"):
+            return b"0123456789abcdef\n"
+        if args[0] == "diff":
+            return tracked_diff["value"]
+        return b""
 
     monkeypatch.setattr(execution_record, "_run_git", fake_git)
     first = execution_record._source_state()
-    marker["value"] = b"second"
+    tracked_diff["value"] = b"second"
     second = execution_record._source_state()
     assert first[0] != second[0]
+
+
+@pytest.mark.parametrize(
+    ("failed_command", "component"),
+    [
+        (("status", "--porcelain=v1", "-z", "--untracked-files=all"), "status"),
+        (("diff", "--no-ext-diff", "--binary", "HEAD", "--", "."), "diff"),
+        (("ls-files", "--others", "--exclude-standard", "-z"), "untracked files"),
+    ],
+    ids=("status", "diff", "untracked-files"),
+)
+def test_partial_git_provenance_failure_is_rejected(monkeypatch, failed_command, component):
+    """HEAD 後の部分取得失敗を空出力と扱わない / Reject partial git provenance failures."""
+
+    def partial_git(*args):
+        if args == failed_command:
+            return None
+        if args == ("rev-parse", "HEAD"):
+            return b"0123456789abcdef\n"
+        return b""
+
+    monkeypatch.setattr(execution_record, "_run_git", partial_git)
+    with pytest.raises(execution_record.SoftwareProvenanceError, match=component):
+        execution_record._source_state()
 
 
 def test_unverifiable_editable_wheel_provenance_rejects_regulated_output(tmp_path, monkeypatch):
@@ -220,7 +248,7 @@ def test_unverifiable_editable_wheel_provenance_rejects_regulated_output(tmp_pat
 
 
 def test_wheel_record_provenance_verifies_payload_for_non_git_execution(tmp_path, monkeypatch):
-    """wheel 外で git が無くても RECORD を検証する / Verify a wheel RECORD when git provenance is absent."""
+    """wheel RECORD の対象payloadと改ざんを検査する / Verify wheel payloads and reject tampering."""
     root = tmp_path / "site-packages"
     root.mkdir()
     source = root / "execution_record.py"
