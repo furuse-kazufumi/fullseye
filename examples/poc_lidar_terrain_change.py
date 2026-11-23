@@ -134,6 +134,11 @@ def _bi(ja, en):
     return "%s / %s" % (ja, en)
 
 
+def _bi_table(ja, en):
+    """表のセルを日本語、英語の 2 行で返す。 / Stack bilingual table text."""
+    return "%s\n%s" % (ja, en)
+
+
 def check_headline() -> None:
     """見出しの数を守る門: この実行の印字値を ``HEADLINE`` と文字列で照合する。"""
     diff = {k: (v, SHOWN.get(k)) for k, v in HEADLINE.items() if SHOWN.get(k) != v}
@@ -150,6 +155,8 @@ SLOPE = 25.0               # 既定の斜面傾斜 [deg]
 UNDUL = 0.35               # うねりの振幅 [m]
 DENSITY = 8.0              # 点密度 [pt/m2]
 LAT_DENSITY = 9.0          # 幾何だけを見る節の格子標本(1 セルにちょうど 3x3 点)
+DENSITY_PLOT_SIZE = (700, 360)
+OCCLUSION_PLOT_SIZE = (650, 360)
 SIG_R = 0.05               # 鉛直測距雑音 sigma [m]
 SIG_H = 0.10               # 水平位置雑音 sigma [m](★斜面ではこれが tan θ 倍で効く)
 OCCL = 0.30                # 樹冠で地表に届かない確率
@@ -705,12 +712,25 @@ def section_control(tr: dict) -> dict:
           "落ちた %.1f m3 は測定の失敗ではなく**しきい値の定義**。"
           % (tr_thr["ero"], 100 * (real_thr["ero"] / tr_thr["ero"] - 1),
              tr["ero"] - tr_thr["ero"]))
+    condition_en = {
+        "変化なし・遮蔽なし・誤差なし": "no change; no occlusion; no errors",
+        "変化なし・遮蔽 30 %": "no change; 30% occlusion",
+        "変化なし・系統誤差 0.10 m": "no change; 0.10 m systematic error",
+        "変化なし・遮蔽 + 系統誤差": "no change; occlusion + systematic error",
+    }
+    display_rows = [[_bi_table(r[0], condition_en[r[0]])] + r[1:] for r in rows]
+    display_rows.append([_bi_table("変化なし・誤差なし + LoD %.3f m でしきる" % lod,
+                                   "no change or errors; threshold at LoD %.3f m" % lod),
+                         "%.1f" % thr["ero"], "%.1f" % thr["dep"],
+                         "%+.1f" % thr["net"], "%.0f" % thr["area"]])
     figs.save_table("controls",
-                    ["条件", "偽掘削 m3", "偽堆積 m3", "偽正味 m3", "偽変化面積 m2"],
-                    rows + [["変化なし・誤差なし + LoD %.3f m でしきる" % lod,
-                             "%.1f" % thr["ero"], "%.1f" % thr["dep"],
-                             "%+.1f" % thr["net"], "%.0f" % thr["area"]]],
-                    title="対照群: 変化が無いのに出てしまう土量",
+                    [_bi_table("条件", "condition"), _bi_table("偽掘削 m3", "false erosion [m3]"),
+                     _bi_table("偽堆積 m3", "false deposition [m3]"),
+                     _bi_table("偽正味 m3", "false net [m3]"),
+                     _bi_table("偽変化面積 m2", "false changed area [m2]")],
+                    display_rows,
+                    title=_bi("対照群: 変化が無いのに出てしまう土量",
+                              "controls: apparent volume with no change"),
                     caption="真の掘削は %.1f m3。しきらない DoD の内訳は"
                             "その半分近くを雑音から作る。" % tr["ero"])
     return {"base": base, "thr": thr, "lod": lod, "all": out,
@@ -845,9 +865,13 @@ def section_slope() -> dict:
                    caption="足跡面積を揃えた比較。平地では両者は一致し、"
                            "傾斜とともに DoD だけが悪化する。")
     figs.save_table("slope_table",
-                    ["傾斜 deg", "sigma_dz 実測/予測 m", "sigma_L 実測/予測 m",
-                     "LoD95 DoD / M3C2 m", "比"], rows,
-                    title="傾斜掃引(変化ゼロの対照から測った検出限界)",
+                    [_bi_table("傾斜 deg", "slope [deg]"),
+                     _bi_table("sigma_dz 実測/予測 m", "sigma_dz measured/predicted [m]"),
+                     _bi_table("sigma_L 実測/予測 m", "sigma_L measured/predicted [m]"),
+                     _bi_table("LoD95 DoD / M3C2 m", "LoD95 DoD / M3C2 [m]"),
+                     _bi_table("比", "ratio")], rows,
+                    title=_bi("傾斜掃引(変化ゼロの対照から測った検出限界)",
+                              "slope sweep (detection limit measured on no-change controls)"),
                     caption="予測式は先に立ててから測った。うねりの寄与ぶん"
                             "実測がわずかに上に出る。")
     return {"slope": sl_l, "lod_d": lod_d, "lod_m": lod_m,
@@ -917,13 +941,17 @@ def section_density() -> dict:
           "0.42 m の一定値になった —— **間引いた後の点間隔**を測っていた。"
           "密度の話をするなら密度を変えてはいけない。")
     figs.save_plot("density_cliff",
-                   [("DoD LoD95 実測", *finite(dens, ld)),
-                    ("DoD 予測", *finite(dens, pd_)),
-                    ("M3C2 LoD95 実測", *finite(dens, lm)),
-                    ("M3C2 予測", *finite(dens, pm)),
-                    ("C2C 最近傍距離(符号なし)", *finite(dens, c2c))],
-                   xlabel="点密度 [pt/m2]", ylabel="距離 [m]",
-                   title="密度は「何 m の変化まで言えるか」を決める",
+                   [(_bi("DoD LoD95 実測", "DoD LoD95 measured"), *finite(dens, ld)),
+                    (_bi("DoD 予測", "DoD prediction"), *finite(dens, pd_)),
+                    (_bi("M3C2 LoD95 実測", "M3C2 LoD95 measured"), *finite(dens, lm)),
+                    (_bi("M3C2 予測", "M3C2 prediction"), *finite(dens, pm)),
+                    (_bi("C2C 最近傍距離(符号なし)", "C2C nearest-neighbour distance (unsigned)"),
+                     *finite(dens, c2c))],
+                   xlabel=_bi("点密度 [pt/m2]", "point density [pt/m2]"),
+                   ylabel=_bi("距離 [m]", "distance [m]"),
+                   title=_bi("密度は「何 m の変化まで言えるか」を決める",
+                             "density determines the smallest defensible change"),
+                   size=DENSITY_PLOT_SIZE,
                    caption="変化ゼロの対照で測った検出限界。C2C は変化が無くても"
                            "点間隔ぶんの距離を返し、符号も持たない。")
     return {"dens": dens, "lod_d": ld, "lod_m": lm, "pred_d": pd_, "pred_m": pm,
@@ -1067,14 +1095,19 @@ def section_systematic(tr: dict) -> dict:
     print("     位置合わせの残差だけを見て「合っていない」と言うと判断を誤る。")
 
     figs.save_plot("systematic",
-                   [("予測 (delta_z + tan θ delta_y) x 面積", mags, pred),
-                    ("DoD 偽正味", mags, md), ("M3C2 偽正味(生値)", mags, mm),
-                    ("M3C2 有効率で補正", mags, mc),
-                    ("位置合わせ後の DoD", mags, aft)],
-                   xlabel="水平の系統ずれ [m]", ylabel="偽の正味土量 [m3]",
-                   title="系統誤差が生む偽の土量は傾斜に比例する",
+                   [(_bi("予測 (delta_z + tan θ delta_y) x 面積",
+                         "prediction (delta_z + tan θ delta_y) x area"), mags, pred),
+                    (_bi("DoD 偽正味", "DoD false net"), mags, md),
+                    (_bi("M3C2 偽正味(生値)", "M3C2 false net (raw)"), mags, mm),
+                    (_bi("M3C2 有効率で補正", "M3C2 corrected for valid fraction"), mags, mc),
+                    (_bi("位置合わせ後の DoD", "DoD after alignment"), mags, aft)],
+                   xlabel=_bi("水平の系統ずれ [m]", "horizontal systematic shift [m]"),
+                   ylabel=_bi("偽の正味土量 [m3]", "false net volume [m3]"),
+                   title=_bi("系統誤差が生む偽の土量は傾斜に比例する",
+                             "false volume from systematic error scales with slope"),
                    caption="変化ゼロの対照。DoD と M3C2 は体積では同じだけ間違える。"
-                           "雑音は正味では打ち消すので予測と直接比べられる。")
+                           "雑音は正味では打ち消すので予測と直接比べられる。",
+                   legend_position="outside")
     return {"mag": mags, "pred": pred, "dod": md, "m3c2": mm, "m3c2_cov": mc,
             "after": aft, "plane": res, "eat": eat, "base_net": base_net,
             "rate": rate}
@@ -1191,19 +1224,32 @@ def section_occlusion(tr: dict, lod0: float) -> dict:
           % (truth(lod=lmad[0])["ero"], truth(lod=lmad[-1])["ero"],
              100 * (1 - truth(lod=lmad[-1])["ero"] / truth(lod=lmad[0])["ero"])))
     figs.save_table("occlusion",
-                    ["遮蔽 %", "地面点 %", "取りこぼし %", "全滅セル",
-                     "LoD std m", "LoD MAD m", "平均 DEM m3", "誤差 %",
-                     "中央値 DEM m3", "誤差 %", "3x3 窓 m3", "誤差 %", "空セル",
-                     "しきい値以上の真値 m3", "分類なし m3"], rows,
-                    title="樹冠の遮蔽 —— 直すのは代表値ではなく分類の窓",
+                    [_bi_table("遮蔽 %", "occlusion [%]"),
+                     _bi_table("地面点 %", "ground points [%]"),
+                     _bi_table("取りこぼし %", "leakage [%]"),
+                     _bi_table("全滅セル", "cells with no ground returns"),
+                     _bi_table("LoD std m", "LoD std [m]"),
+                     _bi_table("LoD MAD m", "LoD MAD [m]"),
+                     _bi_table("平均 DEM m3", "mean DEM [m3]"), _bi_table("誤差 %", "error [%]"),
+                     _bi_table("中央値 DEM m3", "median DEM [m3]"), _bi_table("誤差 %", "error [%]"),
+                     _bi_table("3x3 窓 m3", "3x3 window [m3]"), _bi_table("誤差 %", "error [%]"),
+                     _bi_table("空セル", "empty cells"),
+                     _bi_table("しきい値以上の真値 m3", "truth above threshold [m3]"),
+                     _bi_table("分類なし m3", "unclassified [m3]")], rows,
+                    title=_bi("樹冠の遮蔽 —— 直すのは代表値ではなく分類の窓",
+                              "canopy occlusion — fix the classification window, not the statistic"),
                     caption="誤差はそのしきい値以上の真値に対する値。全滅セル = "
                             "地面点が 1 つも届かなかったセル。中央値では救えない。")
     figs.save_plot("occlusion_lod",
-                   [("LoD95(標準偏差)", occ, lstd),
-                    ("LoD95(MAD、外れ値に強い)", occ, lmad),
-                    ("固定 LoD(遮蔽 0 で決めた値)", occ, [lod0] * len(occ))],
-                   xlabel="樹冠での遮蔽率 [%]", ylabel="検出できる最小の変化 [m]",
-                   title="分類の取りこぼしが検出限界を飛ばす",
+                   [(_bi("LoD95(標準偏差)", "LoD95 (standard deviation)"), occ, lstd),
+                    (_bi("LoD95(MAD、外れ値に強い)", "LoD95 (MAD, outlier-robust)"), occ, lmad),
+                    (_bi("固定 LoD(遮蔽 0 で決めた値)", "fixed LoD (set at zero occlusion)"),
+                     occ, [lod0] * len(occ))],
+                   xlabel=_bi("樹冠での遮蔽率 [%]", "canopy occlusion [%]"),
+                   ylabel=_bi("検出できる最小の変化 [m]", "minimum detectable change [m]"),
+                   title=_bi("分類の取りこぼしが検出限界を飛ばす",
+                             "classification leakage inflates the detection limit"),
+                   size=OCCLUSION_PLOT_SIZE,
                    caption="取りこぼしは 1 % 未満でも、樹冠は数 m 高いので"
                            "標準偏差だけが桁で跳ねる。")
     return {"occ": occ, "raw": raw, "lstd": lstd, "lmad": lmad, "adapt": adapt,
@@ -1275,7 +1321,7 @@ def section_figures(ctrl: dict, mm: dict, tr: dict) -> None:
                     _bi("DoD の鉛直差 [m]", "DoD vertical delta [m]"),
                     _bi("M3C2 の法線距離 [m]", "M3C2 normal distance [m]")],
                    ncols=2, signed=[False, True, True, True],
-                   kind=["height", "displacement", "displacement", "displacement"],
+                   kind=["height", None, None, None], colorbar=True,
                    unit=["m", "m", "m", "m"],
                    title=_bi("航空 LiDAR の 2 時期差分(傾斜 %.0f 度・%.1f pt/m2)" % (SLOPE, DENSITY),
                              "two-epoch airborne LiDAR change (slope %.0f deg; %.1f pt/m2)" %
@@ -1308,11 +1354,15 @@ def section_figures(ctrl: dict, mm: dict, tr: dict) -> None:
 
     row = int(SCAR["y"] / CELL)
     figs.save_plot("scar_profile",
-                   [("真の鉛直変位 -d", *finite(cc, -d_true[row])),
-                    ("DoD の dz", *finite(cc, r["dz"][row])),
-                    ("M3C2 の L(法線方向)", *finite(cc, lmap[row]))],
-                   xlabel="x [m](崩壊中心を通る東西断面)", ylabel="変化量 [m]",
-                   title="同じ崩壊、2 つの「深さ」",
+                   [(_bi("真の鉛直変位 -d", "true vertical displacement -d"),
+                     *finite(cc, -d_true[row])),
+                    (_bi("DoD の dz", "DoD dz"), *finite(cc, r["dz"][row])),
+                    (_bi("M3C2 の L(法線方向)", "M3C2 L (normal direction)"),
+                     *finite(cc, lmap[row]))],
+                   xlabel=_bi("x [m](崩壊中心を通る東西断面)",
+                              "x [m] (east-west section through scar centre)"),
+                   ylabel=_bi("変化量 [m]", "change [m]"),
+                   title=_bi("同じ崩壊、2 つの「深さ」", "same scar, two definitions of depth"),
                    caption="M3C2 の L は法線方向なので cos %.0f 度 = %.3f 倍だけ"
                            "浅く出る。体積にするときは 1/cos を掛ける。"
                            % (SLOPE, math.cos(math.radians(SLOPE))))
@@ -2024,7 +2074,8 @@ def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
     S, PW = 720, 340
     st = Image.new("RGB", (S, S), (14, 17, 23))
     ds = ImageDraw.Draw(st)
-    ds.text((STILL_MARGIN, 14), _bi("2 時期の航空 LiDAR 差", "two-epoch airborne LiDAR change"),
+    ds.text((STILL_MARGIN, 10), "2 時期の航空 LiDAR の差(実データ)\n"
+            "two-epoch airborne LiDAR change (real data)",
             font=font(STILL_TITLE_FONT, True), fill=(240, 240, 240))
     labels = ((dod_raw, lim, "そのまま引く", "raw subtraction"),
               (dod, lim, "平坦部で %+.3f m 合わせる" % (-R["off_flat"]),
@@ -2045,7 +2096,8 @@ def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
     ds.text((STILL_MARGIN, 574), _bi("青 = 2017 が低い・赤 = 高い(±%.1f m)" % lim,
                                      "blue = lower; red = higher (±%.1f m)" % lim),
             font=font(STILL_NOTE_FONT), fill=(200, 205, 215))
-    ds.text((STILL_MARGIN, 602), _bi("濃灰 = 地面点なし", "dark grey = no ground points"),
+    ds.text((STILL_MARGIN, 598), "濃灰 = 地面点なし(建物・池・樹冠の下)\n"
+            "dark grey = no ground points (under buildings, ponds, canopy)",
             font=font(STILL_NOTE_FONT), fill=(200, 205, 215))
     ds.text((STILL_MARGIN, S - STILL_CREDIT_FROM_BOTTOM),
             _bi("USGS 3DEP(public domain、USGS の承認ではない)",
