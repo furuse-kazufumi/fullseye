@@ -4023,7 +4023,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `lane_boundary_fit` `keypoints → table` GPU: none — Robustly fit the lane boundary ``x=c0+c1*y+c2*y²`` to top-view points (lateral x, forward y). · examples: `lane_ops_tour`
 - `lane_center_path` `table × table → table` GPU: none — Return a lane-centre path and drivable band from the left and right boundaries. · examples: `lane_ops_tour`
 - `plane_topview_color` `rgbimage × matrix × matrix × signal → table` GPU: none — Project a ground plane into a colour-preserving top view and return a validity mask plus pixel-to-world coordinates. · examples: `lane_ops_tour`
-- `stop_line_detect` `labels × table → table` GPU: none — Detect a sufficiently wide white line nearly perpendicular to the lane as a stop line, while rejecting crosswalks. · examples: `lane_ops_tour`
+- `stop_line_detect` `labels × table → table` GPU: none — Detect a sufficiently wide white line nearly perpendicular to the lane as a stop line and reject Japanese-style crosswalks. · examples: `lane_ops_tour`
 
 #### drive / lateral (21)
 - `ackermann_steer_angles` `any → table` GPU: none — Ackermann inner and outer wheel steering angles (turning radius R at the center of the rear axle, wheelbase L, track width t). · examples: `poc_driving_lateral`

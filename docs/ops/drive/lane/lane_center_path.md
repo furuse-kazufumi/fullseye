@@ -37,8 +37,11 @@ table
     ``path``(x,y)、``band_left/right``、閉じた``corridor_polygon``、幅、確信度、使用した側。
 
 English: average two fitted boundaries, or offset a single observed boundary by
-half the known lane width with reduced confidence. It returns the centre path and
-an inset drivable corridor; it does not check vehicle footprint or obstacles.
+half the known lane width with reduced confidence. Before a one-sided offset, it
+rejects a curvature radius no larger than any constructed offset, and rejects a
+cusp, tangent reversal, or self-intersection with ``valid=False``. It returns the
+centre path and an inset drivable corridor; it does not check vehicle footprint or
+obstacles.
 
 呼び出し例::
 

@@ -174,15 +174,32 @@ def test_lane_boundary_fit_refuses_unidentifiable_quadratic_without_linear_fallb
     assert not got["valid"] and "rank=2" in got["reason"]
 
 
+def test_lane_boundary_fit_is_translation_invariant_for_large_world_y_origin():
+    local_y = np.linspace(0.0, 25.0, 41)
+    local_x = -1.75 + 0.035 * local_y + 0.0015 * local_y * local_y
+    translated_y = 1_000_000.0 + local_y
+    local = LO.lane_boundary_fit(np.c_[local_x, local_y], side="left", seed=7)
+    translated = LO.lane_boundary_fit(np.c_[local_x, translated_y], side="left", seed=7)
+    assert local["valid"] and translated["valid"]
+    probe = np.linspace(0.0, 25.0, 31)
+    local_prediction = np.polynomial.polynomial.polyval(probe, local["coefficients"])
+    translated_prediction = np.polynomial.polynomial.polyval(
+        probe + 1_000_000.0, translated["coefficients"])
+    assert np.max(np.abs(local_prediction - (-1.75 + 0.035 * probe + 0.0015 * probe * probe))) < 1e-9
+    assert np.max(np.abs(translated_prediction - local_prediction)) < 2e-4
+
+
 @pytest.mark.parametrize("curvature,outlier_fraction", [(0.0, 0.0), (0.0015, 0.15), (0.003, 0.30)])
-def test_lane_boundary_fit_named_initial_outlier_weight_is_stable(curvature, outlier_fraction):
+@pytest.mark.parametrize("initial_outlier_weight", [0.10, LO.INITIAL_RANSAC_OUTLIER_WEIGHT, 0.50])
+def test_lane_boundary_fit_initial_outlier_weight_sensitivity(curvature, outlier_fraction, initial_outlier_weight):
     rng = np.random.default_rng(20261124)
     y = np.linspace(0.0, 25.0, 101)
     truth = np.array([-1.75, 0.02, curvature])
     good = np.c_[np.polynomial.polynomial.polyval(y, truth) + rng.normal(0.0, 0.012, len(y)), y]
     nbad = int(round(len(good) * outlier_fraction))
     bad = np.c_[rng.uniform(-5.0, 5.0, nbad), rng.uniform(0.0, 25.0, nbad)]
-    got = LO.lane_boundary_fit(np.vstack([good, bad]), seed=19)
+    got = LO.lane_boundary_fit(np.vstack([good, bad]), seed=19,
+                               initial_outlier_weight=initial_outlier_weight)
     assert got["valid"] and np.max(np.abs(got["coefficients"] - truth)) < 0.02
 
 
@@ -232,6 +249,14 @@ def test_lane_center_path_fail_closed_without_boundaries_or_with_crossing():
         LO.lane_center_path({**_boundary(-1.75), "confidence": np.nan}, None)
 
 
+def test_lane_center_path_rejects_one_sided_offset_cusp_and_foldover():
+    # x=0.5y^2 は y=0 の曲率半径が1 mで、3.5 m の片側offsetは尖点・折返しを作る。
+    tight = {"valid": True, "coefficients": np.array([0.0, 0.0, 0.5]),
+             "observed_y": np.array([0.0, 2.0]), "confidence": 1.0}
+    got = LO.lane_center_path(tight, None)
+    assert not got["valid"] and "curvature radius" in got["reason"]
+
+
 def _bev_geometry(theta_deg=0.0):
     h, w, res = 401, 161, 0.05
     pixel_to_world = np.array([[res, 0.0, -4.0], [0.0, -res, 20.0], [0.0, 0.0, 1.0]])
@@ -249,13 +274,18 @@ def _bev_geometry(theta_deg=0.0):
     return np.zeros((h, w), np.int16), lane, along, across
 
 
+def _paint_japan_crosswalk(labels, along, across, *, start=8.7, end=11.5, stripes=(-1.2, -0.4, 0.4, 1.2)):
+    """Paint lane-parallel, laterally spaced Japanese zebra stripes / 日本式ゼブラを描く。"""
+    for lateral in stripes:
+        labels[(np.abs(across - lateral) <= 0.15) & (along >= start) & (along <= end)] = LO.WHITE_LABEL
+
+
 def test_stop_line_detect_distance_width_partial_occlusion_and_crosswalk_rejection():
     labels, lane, along, across = _bev_geometry()
     stop = (np.abs(along - 8.0) <= 0.15) & (np.abs(across) <= 1.60)
     stop &= ~((across > -0.25) & (across < 0.35))  # 中央の遮蔽で2片に割る
     labels[stop] = LO.WHITE_LABEL
-    for s in (12.0, 12.7, 13.4, 14.1):
-        labels[(np.abs(along - s) <= 0.15) & (np.abs(across) <= 1.60)] = LO.WHITE_LABEL
+    _paint_japan_crosswalk(labels, along, across, start=12.0, end=15.0)
     # 車線境界は停止線へ接続しても、車線内へ切る段で除かれる。
     labels[np.abs(across + 1.75) <= 0.03] = LO.WHITE_LABEL
     labels[np.abs(across - 1.75) <= 0.03] = LO.WHITE_LABEL
@@ -263,7 +293,7 @@ def test_stop_line_detect_distance_width_partial_occlusion_and_crosswalk_rejecti
     assert got["found"]
     assert abs(got["distance"] - 8.0) <= 0.06
     assert abs(got["width"] - 3.25) <= 0.11
-    assert got["rejected_crosswalk"] == 3
+    assert got["rejected_crosswalk"] == 4
     assert got["confidence"] > 0.8
     assert got["candidates"][0]["fragment_count"] == 2
 
@@ -281,32 +311,32 @@ def test_stop_line_detect_crosswalk_only_and_no_lines_fail_soft():
     labels, lane, along, across = _bev_geometry()
     empty = LO.stop_line_detect(labels, lane)
     assert not empty["found"] and np.isnan(empty["distance"]) and empty["confidence"] == 0.0
-    for s in (7.0, 7.7, 8.4, 9.1):
-        labels[(np.abs(along - s) <= 0.15) & (np.abs(across) <= 1.55)] = LO.WHITE_LABEL
+    _paint_japan_crosswalk(labels, along, across, start=7.0, end=10.0)
     crossing = LO.stop_line_detect(labels, lane)
-    assert crossing["found"] and crossing["ambiguous"]
-    assert crossing["confidence"] < 0.4 and crossing["rejected_crosswalk"] == 3
+    assert not crossing["found"] and not crossing["ambiguous"]
+    assert crossing["confidence"] == 0.0 and crossing["rejected_crosswalk"] == 4
 
 
-def test_stop_line_detect_keeps_adjacent_stop_before_crosswalk_as_ambiguous_candidate():
+def test_stop_line_detect_keeps_adjacent_stop_before_japan_crosswalk_definitive():
     labels, lane, along, across = _bev_geometry()
-    for s in (8.0, 8.7, 9.4, 10.1):
-        labels[(np.abs(along - s) <= 0.15) & (np.abs(across) <= 1.55)] = LO.WHITE_LABEL
+    labels[(np.abs(along - 8.0) <= 0.15) & (np.abs(across) <= 1.55)] = LO.WHITE_LABEL
+    _paint_japan_crosswalk(labels, along, across, start=8.7, end=11.5)
     got = LO.stop_line_detect(labels, lane)
-    assert got["found"] and got["ambiguous"]
+    assert got["found"] and not got["ambiguous"]
     assert abs(got["distance"] - 8.0) <= 0.06
-    assert got["confidence"] < 0.4 and got["rejected_crosswalk"] == 3
+    assert got["confidence"] > 0.8 and got["rejected_crosswalk"] == 4
 
 
-@pytest.mark.parametrize("visibility", ["occlusion", "image_edge_crop", "shadow"])
-def test_stop_line_detect_does_not_assert_one_or_two_visible_crosswalk_stripes(visibility):
+@pytest.mark.parametrize("visibility,stripes", [("occlusion", (-0.4,)),
+                                                    ("image_edge_crop", (-1.2, 1.2)),
+                                                    ("shadow", (0.4,))])
+def test_stop_line_detect_rejects_one_or_two_visible_japan_crosswalk_stripes(visibility, stripes):
     labels, lane, along, across = _bev_geometry()
-    # 各破壊要因の後に縞が2本しか残らない観測を表す。検出器は停止線と断定してはならない。
-    for s in (7.0, 7.7):
-        labels[(np.abs(along - s) <= 0.15) & (np.abs(across) <= 1.55)] = LO.WHITE_LABEL
+    # 各破壊要因の後に縦縞が1〜2本だけ残る観測を表す。停止線と形が違うので返さない。
+    _paint_japan_crosswalk(labels, along, across, start=7.0, end=10.0, stripes=stripes)
     got = LO.stop_line_detect(labels, lane)
-    assert got["found"] and got["ambiguous"]
-    assert got["confidence"] <= LO.AMBIGUOUS_STOP_CONFIDENCE_SCALE
+    assert not got["found"] and not got["ambiguous"]
+    assert got["confidence"] == 0.0 and got["rejected_crosswalk"] == len(stripes)
 
 
 @pytest.mark.parametrize("mapping", [np.array([[.05, 0., -4.], [0., 0., 20.], [0., 0., 1.]]),

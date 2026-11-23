@@ -303,7 +303,7 @@ def nw_heightmap_camera(variant: int):
 
 
 def nw_lane_stop(variant: int):
-    """Two lane-boundary tables and a BEV label image with one known stop line and four crosswalk stripes."""
+    """Two lane-boundary tables and a BEV image with one stop line plus four Japanese lane-parallel zebra stripes."""
     stop_s = 7.0 if variant == 0 else 9.0
     res, h, w = 0.05, 301, 101
     H = np.array([[res, 0.0, -2.5], [0.0, -res, 15.0], [0.0, 0.0, 1.0]])
@@ -312,8 +312,8 @@ def nw_lane_stop(variant: int):
     x, y = q[..., 0], q[..., 1]
     labels = np.zeros((h, w), np.int16)
     labels[(np.abs(y - stop_s) <= 0.15) & (np.abs(x) <= 1.60)] = 1
-    for yy in (11.0, 11.7, 12.4, 13.1):
-        labels[(np.abs(y - yy) <= 0.15) & (np.abs(x) <= 1.60)] = 1
+    for xx in (-1.2, -0.4, 0.4, 1.2):
+        labels[(np.abs(x - xx) <= 0.15) & (y >= stop_s + 0.7) & (y <= stop_s + 3.7)] = 1
     common = {"valid": True, "observed_y": np.array([0.0, 15.0]),
               "confidence": 0.95, "pixel_to_world": H}
     left = dict(common, coefficients=np.array([-1.75, 0.0, 0.0]))
@@ -350,7 +350,8 @@ RECIPES = [
                 {"get": ["rejected_crosswalk"], "equals": 4}],
      "note": "Both fitted boundary tables carry the same BEV pixel-to-world mapping. lane_center_path preserves it "
              "with the centre path and corridor, so stop_line_detect can measure the transverse white line in metres. "
-             "Four later, equally spaced stripes are deliberately present and must be rejected as a crosswalk."},
+             "Four later lane-parallel, laterally spaced Japanese zebra stripes are deliberately present and must be "
+             "rejected as a crosswalk."},
     # ------------------------------------------------ new op: heightmap_depth_camera (terrain, 2026-11-15), family drive
     {"name": "Simulate — a depth camera over a height map, then the plane back from its point cloud",
      "family": "drive", "task": "measure", "task_class": "simulation", "halcon": None,

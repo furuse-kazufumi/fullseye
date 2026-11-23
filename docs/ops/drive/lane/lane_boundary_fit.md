@@ -14,7 +14,7 @@ version: 1.1.1  # fullseye lib version this note was generated for
 # lane_boundary_fit — DRIVE `lane` op
 
 - **データ種**: `keypoints` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.lane_boundary_fit(points, *, side='unknown', ransac_threshold=0.18, ransac_iterations=300, seed=0)` (実装を直接呼ぶなら `import laneops; laneops.lane_boundary_fit(points, *, side='unknown', ransac_threshold=0.18, ransac_iterations=300, seed=0)`、台帳から引くなら `opsdrive.get("lane_boundary_fit")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lane_boundary_fit(points, *, side='unknown', ransac_threshold=0.18, ransac_iterations=300, initial_outlier_weight=0.25, seed=0)` (実装を直接呼ぶなら `import laneops; laneops.lane_boundary_fit(points, *, side='unknown', ransac_threshold=0.18, ransac_iterations=300, initial_outlier_weight=0.25, seed=0)`、台帳から引くなら `opsdrive.get("lane_boundary_fit")`)
 - **GPU**: なし(CPU 参照実装のみ)
 
 ## 使い方
@@ -30,8 +30,10 @@ points : (N, 2) keypoints
     世界座標 ``(x lateral, y forward)`` [m]。順序は問わない。
 side : {"left", "right", "unknown"}
     後段が片側だけを車線中央へずらすための名前。
-ransac_threshold, ransac_iterations, seed
-    直線/最終inlierの距離[m]、反復数、固定乱数seed。
+ransac_threshold, ransac_iterations, initial_outlier_weight, seed
+    直線/最終inlierの距離[m]、反復数、初期RANSAC外れ値のIRLS重み、固定乱数seed。
+    ``initial_outlier_weight=0.25``は初期inlierを4倍優先しつつ、曲線上で初期直線から
+    外れた点を残すための固定値である。
 
 Returns
 -------
@@ -39,10 +41,12 @@ table
     ``coefficients``(c0,c1,c2)、``observed_y``、``inlier_mask``、残差、RMS、確信度。
 
 English: initialise with the existing 3-D ``ransac_line`` (z=0), then fit the
-boundary x(y) with a Huber robust quadratic. Point order does not matter. The final
-inlier design must have rank 3, at least three distinct y values, and bounded
-condition number; otherwise it returns ``valid=False`` instead of silently using a
-line. Hairpins where y is not single-valued are outside the contract and fail closed.
+boundary x(y) with a Huber robust quadratic. Point order does not matter. It centres
+and normalises y for rank, condition-number, and least-squares work, then returns
+coefficients in the original world coordinates. The final inlier design must have
+rank 3, at least three distinct y values, and bounded condition number; otherwise it
+returns ``valid=False`` instead of silently using a line. Hairpins where y is not
+single-valued are outside the contract and fail closed.
 
 呼び出し例::
 

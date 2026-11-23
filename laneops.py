@@ -45,6 +45,10 @@ DEFAULT_RANSAC_ITERATIONS = 300
 HUBER_SCALE_MULTIPLIER = 1.5
 IRLS_ITERATIONS = 12
 IRLS_COEFFICIENT_TOLERANCE = 1e-12
+# RANSAC は初期直線の外れ値を完全には捨てない。0.25 は、初期inlierを4倍優先して
+# 曲線へ収束させつつ、直線RANSACが取りこぼした曲線上の点もIRLSへ残す折衷である。
+# Keep RANSAC outliers at one quarter weight: initial inliers dominate 4:1 while curved
+# inliers missed by the initial line can still enter the IRLS fit.
 INITIAL_RANSAC_OUTLIER_WEIGHT = 0.25
 MIN_FORWARD_DIRECTION = 0.20
 MIN_OBSERVED_RANGE_M = 5.0
@@ -67,11 +71,9 @@ MAX_STOP_THICKNESS_M = 0.90
 MAX_PERPENDICULAR_ERROR_DEG = 18.0
 MERGE_LONGITUDINAL_M = 0.38
 LANE_INTERIOR_FRACTION = 0.48
-CROSSWALK_MIN_STRIPES = 3
-CROSSWALK_MIN_GAP_M = 0.35
-CROSSWALK_MAX_GAP_M = 1.20
-CROSSWALK_WIDTH_RATIO = 0.65
-AMBIGUOUS_STOP_CONFIDENCE_SCALE = 0.35
+JAPAN_CROSSWALK_MIN_STRIPE_LENGTH_M = 1.00
+JAPAN_CROSSWALK_MAX_STRIPE_WIDTH_M = 0.90
+JAPAN_CROSSWALK_MAX_PARALLEL_ERROR_DEG = 18.0
 MAPPING_ABSOLUTE_TOLERANCE = 1e-12
 HOMOGRAPHY_SINGULAR_VALUE_FLOOR = 1e-12
 BEV_HOMOGENEOUS_ROW_TOLERANCE = 1e-12
@@ -86,14 +88,55 @@ def _invalid_boundary(reason, *, side, points, ransac_line=None, ransac_inliers=
 
 
 def _quadratic_design_is_identifiable(y):
-    """Check the final quadratic design, without silently reducing its order / 二次設計行列の同定性。"""
+    """Normalise y before testing the final quadratic design / 中心化・正規化した二次設計行列の同定性。"""
     unique_y = np.unique(np.asarray(y, np.float64))
-    design = np.column_stack([np.ones(len(y)), y, y * y])
+    y0 = float(np.mean(y))
+    scale = float(np.max(np.abs(y - y0)))
+    if not np.isfinite(scale) or scale <= np.finfo(float).eps:
+        return False, 0, len(unique_y), float("inf"), y0, scale
+    u = (y - y0) / scale
+    design = np.column_stack([np.ones(len(y)), u, u * u])
     rank = int(np.linalg.matrix_rank(design))
     condition = float(np.linalg.cond(design))
     ok = (rank == 3 and len(unique_y) >= MIN_DISTINCT_BOUNDARY_Y
           and np.isfinite(condition) and condition <= MAX_QUADRATIC_DESIGN_CONDITION)
-    return ok, rank, len(unique_y), condition
+    return ok, rank, len(unique_y), condition, y0, scale
+
+
+def _quadratic_original_coefficients(coefficients, y_centre, y_scale):
+    """Convert x=b0+b1*u+b2*u^2 back to x=c0+c1*y+c2*y^2 / 正規化係数を世界座標へ戻す。"""
+    b0, b1, b2 = np.asarray(coefficients, np.float64)
+    return np.array([b0 - b1 * y_centre / y_scale + b2 * y_centre ** 2 / y_scale ** 2,
+                     b1 / y_scale - 2.0 * b2 * y_centre / y_scale ** 2,
+                     b2 / y_scale ** 2])
+
+
+def _minimum_quadratic_radius(coefficients, y0, y1):
+    """Return the smallest radius of curvature on y0..y1 / 二次境界の最小曲率半径。"""
+    c1, c2 = float(coefficients[1]), float(coefficients[2])
+    if abs(c2) <= np.finfo(float).eps:
+        return float("inf")
+    critical = np.clip(-c1 / (2.0 * c2), y0, y1)
+    slopes = c1 + 2.0 * c2 * np.array([y0, y1, critical])
+    return float(np.min((1.0 + slopes * slopes) ** 1.5 / abs(2.0 * c2)))
+
+
+def _polyline_self_intersects(points):
+    """Detect proper or touching non-adjacent segment intersections / 非隣接線分の自己交差を検出。"""
+    p = np.asarray(points, np.float64)
+    def cross2(a, b):
+        return float(a[0] * b[1] - a[1] * b[0])
+    for i in range(len(p) - 1):
+        a, b = p[i], p[i + 1]
+        for j in range(i + 2, len(p) - 1):
+            c, d = p[j], p[j + 1]
+            ab_c = cross2(b - a, c - a)
+            ab_d = cross2(b - a, d - a)
+            cd_a = cross2(d - c, a - c)
+            cd_b = cross2(d - c, b - c)
+            if ab_c * ab_d <= 0.0 and cd_a * cd_b <= 0.0:
+                return True
+    return False
 
 
 def _finite_unit_path(path, op):
@@ -332,7 +375,8 @@ def plane_topview_color(image, K, R, t, *, z=0.0, centre=(0.0, 0.0),
 
 
 def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC_THRESHOLD_M,
-                      ransac_iterations=DEFAULT_RANSAC_ITERATIONS, seed=0):
+                      ransac_iterations=DEFAULT_RANSAC_ITERATIONS,
+                      initial_outlier_weight=INITIAL_RANSAC_OUTLIER_WEIGHT, seed=0):
     """俯瞰の(x横,y前方)点から ``x=c0+c1*y+c2*y²`` の車線境界を頑健に当てはめる。
 
     既存 :func:`ransac_line` を外れ値に強い初期直線として使い、その後Huber IRLSの
@@ -344,8 +388,10 @@ def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC
         世界座標 ``(x lateral, y forward)`` [m]。順序は問わない。
     side : {"left", "right", "unknown"}
         後段が片側だけを車線中央へずらすための名前。
-    ransac_threshold, ransac_iterations, seed
-        直線/最終inlierの距離[m]、反復数、固定乱数seed。
+    ransac_threshold, ransac_iterations, initial_outlier_weight, seed
+        直線/最終inlierの距離[m]、反復数、初期RANSAC外れ値のIRLS重み、固定乱数seed。
+        ``initial_outlier_weight=0.25``は初期inlierを4倍優先しつつ、曲線上で初期直線から
+        外れた点を残すための固定値である。
 
     Returns
     -------
@@ -353,10 +399,12 @@ def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC
         ``coefficients``(c0,c1,c2)、``observed_y``、``inlier_mask``、残差、RMS、確信度。
 
     English: initialise with the existing 3-D ``ransac_line`` (z=0), then fit the
-    boundary x(y) with a Huber robust quadratic. Point order does not matter. The final
-    inlier design must have rank 3, at least three distinct y values, and bounded
-    condition number; otherwise it returns ``valid=False`` instead of silently using a
-    line. Hairpins where y is not single-valued are outside the contract and fail closed.
+    boundary x(y) with a Huber robust quadratic. Point order does not matter. It centres
+    and normalises y for rank, condition-number, and least-squares work, then returns
+    coefficients in the original world coordinates. The final inlier design must have
+    rank 3, at least three distinct y values, and bounded condition number; otherwise it
+    returns ``valid=False`` instead of silently using a line. Hairpins where y is not
+    single-valued are outside the contract and fail closed.
 
     呼び出し例::
 
@@ -375,20 +423,29 @@ def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC
         raise ValueError("%s: side must be 'left', 'right', or 'unknown'" % op)
     threshold = float(ransac_threshold)
     iterations = int(ransac_iterations)
+    outlier_weight = float(initial_outlier_weight)
     if not (np.isfinite(threshold) and threshold > 0.0 and iterations >= 1):
         raise ValueError("%s: ransac_threshold must be > 0 and ransac_iterations >= 1" % op)
+    if not (np.isfinite(outlier_weight) and 0.0 <= outlier_weight <= 1.0):
+        raise ValueError("%s: initial_outlier_weight must be finite and in [0, 1]" % op)
     p3 = np.column_stack([p, np.zeros(len(p))])
     line, line_inliers, line_info = ransac_fit.ransac_line(p3, threshold, iters=iterations, seed=int(seed))
     point, direction = line["point"], line["direction"]
     if abs(direction[1]) < MIN_FORWARD_DIRECTION:
         raise ValueError("%s: boundary is not single-valued in forward y (RANSAC direction y=%g)"
                          % (op, direction[1]))
-    coef = np.array([point[0] - direction[0] / direction[1] * point[1],
-                     direction[0] / direction[1], 0.0])
     y = p[:, 1]
-    design = np.column_stack([np.ones(len(p)), y, y * y])
+    y_centre = float(np.mean(y))
+    y_scale = float(np.max(np.abs(y - y_centre)))
+    if not np.isfinite(y_scale) or y_scale <= np.finfo(float).eps:
+        return _invalid_boundary("quadratic design has no finite y scale", side=side, points=p,
+                                 ransac_line=line, ransac_inliers=line_inliers)
+    u = (y - y_centre) / y_scale
+    design = np.column_stack([np.ones(len(p)), u, u * u])
+    line_slope = direction[0] / direction[1]
+    coef = np.array([point[0] + line_slope * y_centre, line_slope * y_scale, 0.0])
     delta = HUBER_SCALE_MULTIPLIER * threshold
-    weights = np.where(line_inliers, 1.0, INITIAL_RANSAC_OUTLIER_WEIGHT)
+    weights = np.where(line_inliers, 1.0, outlier_weight)
     for _ in range(IRLS_ITERATIONS):
         root_w = np.sqrt(weights)
         new_coef, *_ = np.linalg.lstsq(design * root_w[:, None], p[:, 0] * root_w, rcond=None)
@@ -403,7 +460,7 @@ def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC
     inliers = np.abs(residual) <= threshold
     if int(inliers.sum()) < MIN_BOUNDARY_POINTS:
         raise ValueError("%s: fewer than %d inliers remain after robust fitting" % (op, MIN_BOUNDARY_POINTS))
-    identifiable, rank, unique_count, condition = _quadratic_design_is_identifiable(y[inliers])
+    identifiable, rank, unique_count, condition, _, _ = _quadratic_design_is_identifiable(y[inliers])
     # このopは次数を黙って一次へ落とさない。必要な二次情報が無い出力は明示的に無効にする。
     # Do not silently fall back to a line: a quadratic boundary needs all three columns.
     if not identifiable:
@@ -413,7 +470,7 @@ def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC
     coef, *_ = np.linalg.lstsq(design[inliers], p[inliers, 0], rcond=None)
     residual = p[:, 0] - design @ coef
     inliers = np.abs(residual) <= threshold
-    identifiable, rank, unique_count, condition = _quadratic_design_is_identifiable(y[inliers])
+    identifiable, rank, unique_count, condition, _, _ = _quadratic_design_is_identifiable(y[inliers])
     if not identifiable:
         return _invalid_boundary("final quadratic design is not identifiable (rank=%d, distinct_y=%d, condition=%g)"
                                  % (rank, unique_count, condition), side=side, points=p,
@@ -424,7 +481,8 @@ def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC
     confidence = float((inliers.mean()) * min(1.0, span / MIN_OBSERVED_RANGE_M)
                        * math.exp(-rms / threshold))
     return {"valid": True, "model": "x(y)=c0+c1*y+c2*y^2", "side": side,
-            "coefficients": coef, "observed_y": yrange, "inlier_mask": inliers,
+            "coefficients": _quadratic_original_coefficients(coef, y_centre, y_scale),
+            "observed_y": yrange, "inlier_mask": inliers,
             "residuals": residual, "rms": rms, "confidence": confidence,
             "ransac_line": line, "ransac_inlier_mask": line_inliers,
             "ransac_info": line_info, "points": p.copy()}
@@ -470,8 +528,11 @@ def lane_center_path(left, right, *, lane_width=DEFAULT_LANE_WIDTH_M,
         ``path``(x,y)、``band_left/right``、閉じた``corridor_polygon``、幅、確信度、使用した側。
 
     English: average two fitted boundaries, or offset a single observed boundary by
-    half the known lane width with reduced confidence. It returns the centre path and
-    an inset drivable corridor; it does not check vehicle footprint or obstacles.
+    half the known lane width with reduced confidence. Before a one-sided offset, it
+    rejects a curvature radius no larger than any constructed offset, and rejects a
+    cusp, tangent reversal, or self-intersection with ``valid=False``. It returns the
+    centre path and an inset drivable corridor; it does not check vehicle footprint or
+    obstacles.
 
     呼び出し例::
 
@@ -508,6 +569,12 @@ def lane_center_path(left, right, *, lane_width=DEFAULT_LANE_WIDTH_M,
     else:
         one, source = (lft, "left") if lft is not None else (rgt, "right")
         y = np.linspace(float(one["observed_y"][0]), float(one["observed_y"][1]), count)
+        curvature_radius = _minimum_quadratic_radius(one["coefficients"], y[0], y[-1])
+        # 片側の中心だけでなく推定した反対側境界まで作るので、最大offset=lane_widthを守る。
+        # The inferred outer boundary is offset by a full lane width, not only the centre.
+        if curvature_radius <= width:
+            return {"valid": False, "reason": "one-sided offset reaches curvature radius (radius=%g m, offset=%g m)"
+                    % (curvature_radius, width), "source": source, "left": lft, "right": rgt}
         design = np.column_stack([np.ones(count), y, y * y])
         bx = design @ np.asarray(one["coefficients"])
         slope = np.asarray(one["coefficients"])[1] + 2.0 * np.asarray(one["coefficients"])[2] * y
@@ -535,6 +602,16 @@ def lane_center_path(left, right, *, lane_width=DEFAULT_LANE_WIDTH_M,
     band_left = left_points + inset * inward
     band_right = right_points - inset * inward
     path = centre_points
+    if source != "both":
+        tangents = np.diff(path, axis=0)
+        tangent_lengths = np.linalg.norm(tangents, axis=1)
+        if (np.any(tangent_lengths <= PATH_SEGMENT_LENGTH_FLOOR_M)
+                or np.any(np.sum(tangents[:-1] * tangents[1:], axis=1) <= 0.0)
+                or _polyline_self_intersects(path)
+                or _polyline_self_intersects(left_points)
+                or _polyline_self_intersects(right_points)):
+            return {"valid": False, "reason": "one-sided offset has a cusp, reversal, or self-intersection",
+                    "source": source, "left": lft, "right": rgt}
     polygon = np.vstack([band_left, band_right[::-1], band_left[:1]])
     out = {"valid": True, "path": path, "band_left": band_left,
             "band_right": band_right, "corridor_polygon": polygon,
@@ -563,13 +640,18 @@ def _pixel_world(pixel_to_world, rows, cols, op):
 
 
 def stop_line_detect(labels, lane_model):
-    """車線にほぼ直交する十分に広い白線を停止線として検出し、横断歩道を棄却する。
+    """車線にほぼ直交する十分に広い白線を停止線として検出し、日本式横断歩道を棄却する。
 
     白画素を車線内へ切り、連結片を世界座標へ写す。同じ前方距離の遮蔽片を結合し、
-    車線接線への直交角、幅、厚さで判定する。似た横線が反復する集合は横断歩道候補に
-    するが、先頭が停止線か、遮蔽・端切れ・影で1〜2本しか見えないかを幾何だけでは
-    決められない。そこで候補を捨てず``ambiguous=True``かつ低確信度で返す。BEV対応と
-    経路の全区間を入口で検査する。摩耗した実線と横断歩道が接触して1成分になる場合は対象外。
+    車線接線への直交角、幅、厚さで停止線を判定する。日本式の横断歩道は、車の進行方向と
+    平行な細長い白線を道路幅方向に並べる様式なので、長手が接線方向・幅が道路幅方向に細い
+    片を横断歩道縞として数え、停止線候補に入れない。従って遮蔽・画面端・影で縞が1本だけ
+    見えても、横に長い停止線とは形で区別できる。停止線の直後に縦縞が並ぶ場合も停止線を
+    ``ambiguous``にしない。別様式の横断歩道はこのopの入力契約外である。
+
+    様式の一次情報: 道路標識、区画線及び道路標示に関する命令（昭和三十五年総理府・建設省令
+    第三号）別表第6の横断歩道(201)および停止線(203)、e-Gov法令検索
+    https://laws.e-gov.go.jp/law/335M50004002003 。
 
     Parameters
     ----------
@@ -581,13 +663,15 @@ def stop_line_detect(labels, lane_model):
     Returns
     -------
     table
-        ``found``、``ambiguous``、経路始点からの``distance``[m]、``width``[m]、``confidence``、候補と横断歩道棄却数。
+        ``found``、``ambiguous``、経路始点からの``distance``[m]、``width``[m]、``confidence``、候補と日本式横断歩道縞の棄却数。
 
     English: find wide white components nearly perpendicular to the lane tangent and
-    merge fragments split by occlusion. Repeated stripes are crosswalk evidence, but
-    geometry alone cannot tell whether their first stripe is an adjacent stop line or
-    whether one/two stripes are a partial crosswalk. Those cases remain an
-    ``ambiguous`` low-confidence candidate rather than a definitive assertion. It
+    merge fragments split by occlusion. The supported Japanese crosswalk style is a
+    set of long lane-parallel, laterally narrow stripes, per Road Sign, Road Marking
+    and Road Surface Marking Order, Appended Table 6, crosswalk (201) and stop line
+    (203), e-Gov https://laws.e-gov.go.jp/law/335M50004002003 . It therefore rejects
+    even one visible zebra stripe geometrically while keeping a preceding transverse
+    stop line definitive. Other national styles are outside this op's contract. It
     validates every path segment and an affine nonsingular BEV mapping first. Distance
     is arc length from path[0].
 
@@ -634,6 +718,7 @@ def stop_line_detect(labels, lane_model):
     components, ncomp = ndimage.label(interior, structure=np.ones((3, 3), int))
     cumulative = np.r_[0.0, np.cumsum(segment_lengths)]
     fragments = []
+    rejected_crosswalk = 0
     resolution = math.sqrt(abs(float(np.linalg.det(H[:2, :2]))))
     for component_id in range(1, ncomp + 1):
         rows, cols = np.nonzero(components == component_id)
@@ -652,12 +737,18 @@ def stop_line_detect(labels, lane_model):
         angle_error = math.degrees(math.asin(np.clip(abs(float(major @ tv)), 0.0, 1.0)))
         width = float(np.ptp(across) + resolution)
         thickness = float(np.ptp(along) + resolution)
+        parallel_error = math.degrees(math.asin(np.clip(abs(float(major @ nv)), 0.0, 1.0)))
+        if (thickness >= JAPAN_CROSSWALK_MIN_STRIPE_LENGTH_M
+                and width <= JAPAN_CROSSWALK_MAX_STRIPE_WIDTH_M
+                and parallel_error <= JAPAN_CROSSWALK_MAX_PARALLEL_ERROR_DEG):
+            rejected_crosswalk += 1
+            continue
         if (width >= MIN_FRAGMENT_WIDTH_M and thickness <= MAX_STOP_THICKNESS_M
                 and angle_error <= MAX_PERPENDICULAR_ERROR_DEG):
             fragments.append({"points": pts, "distance": float(cumulative[idx] + np.mean(along)),
                               "width": width, "thickness": thickness, "angle_error_deg": angle_error})
     if not fragments:
-        return empty
+        return {**empty, "rejected_crosswalk": rejected_crosswalk}
     fragments.sort(key=lambda f: f["distance"])
     groups = []
     for fragment in fragments:
@@ -689,38 +780,14 @@ def stop_line_detect(labels, lane_model):
                                "fragment_count": len(group), "crosswalk": False,
                                "ambiguous": False})
     if not candidates:
-        return empty
+        return {**empty, "rejected_crosswalk": rejected_crosswalk}
     candidates.sort(key=lambda c: c["distance"])
-    # 似た横線の反復は横断歩道候補。先頭は停止線でもあり得るので棄却でなく曖昧候補に残す。
-    # Repeated stripes are crosswalk evidence, but the leading stripe can be a stop line.
-    run_start = 0
-    for i in range(1, len(candidates) + 1):
-        continues = False
-        if i < len(candidates):
-            gap = candidates[i]["distance"] - candidates[i - 1]["distance"]
-            ratio = min(candidates[i]["width"], candidates[i - 1]["width"]) / max(candidates[i]["width"], candidates[i - 1]["width"])
-            continues = CROSSWALK_MIN_GAP_M <= gap <= CROSSWALK_MAX_GAP_M and ratio >= CROSSWALK_WIDTH_RATIO
-        if continues:
-            continue
-        run_count = i - run_start
-        if run_count >= CROSSWALK_MIN_STRIPES:
-            for j in range(run_start, i):
-                candidates[j]["crosswalk"] = True
-            candidates[run_start]["ambiguous"] = True
-        elif run_count >= 2:
-            # 遮蔽・画面端・影で1〜2本だけ残った反復縞は停止線と断定しない。
-            # One/two visible stripes may be an occluded, cropped, or shadowed crosswalk.
-            for j in range(run_start, i):
-                candidates[j]["ambiguous"] = True
-        run_start = i
-    accepted = [c for c in candidates
-                if (not c["crosswalk"] or c["ambiguous"]) and c["distance"] >= 0.0]
+    accepted = [c for c in candidates if c["distance"] >= 0.0]
     if not accepted:
-        return {**empty, "candidates": candidates,
-                "rejected_crosswalk": sum(c["crosswalk"] and not c["ambiguous"] for c in candidates)}
+        return {**empty, "candidates": candidates, "rejected_crosswalk": rejected_crosswalk}
     best = min(accepted, key=lambda c: c["distance"])
-    confidence = best["confidence"] * (AMBIGUOUS_STOP_CONFIDENCE_SCALE if best["ambiguous"] else 1.0)
+    confidence = best["confidence"]
     return {"found": True, "distance": best["distance"], "width": best["width"],
             "confidence": confidence, "ambiguous": best["ambiguous"], "thickness": best["thickness"],
             "angle_error_deg": best["angle_error_deg"], "candidates": candidates,
-            "rejected_crosswalk": sum(c["crosswalk"] and not c["ambiguous"] for c in candidates)}
+            "rejected_crosswalk": rejected_crosswalk}

@@ -98,8 +98,8 @@ def stop_gate(full):
         stop = (np.abs(along - 8.0) <= 0.15) & (np.abs(across) <= 1.60)
         stop &= ~((across > -0.25) & (across < 0.35))
         labels[stop] = 1
-        for s in (12.0, 12.7, 13.4, 14.1):
-            labels[(np.abs(along - s) <= 0.15) & (np.abs(across) <= 1.60)] = 1
+        for lateral in (-1.2, -0.4, 0.4, 1.2):
+            labels[(np.abs(across - lateral) <= 0.15) & (along >= 12.0) & (along <= 15.0)] = 1
         ss = np.linspace(0.0, 20.0, 201)
         lane = {"path": ss[:, None] * tangent, "lane_width": 3.5, "pixel_to_world": H}
         got = LG.stop_line_detect(labels, lane)
@@ -111,38 +111,65 @@ def stop_gate(full):
 
 
 def holdout_stop_gate(full):
-    """独立seedの合成holdout。実道路の精度ではなく生成器内の頑健性だけを測る。"""
+    """固定層の独立seed合成holdout。実道路の精度ではなく生成器内の頑健性だけを測る。"""
     rng = np.random.default_rng(HOLDOUT_SEED)
-    errors, ambiguous = [], []
-    count = 32 if full else 8
+    count = 12 if full else 3
     h, w, res = 401, 161, 0.05
     H_truth = np.array([[res, 0.0, -4.0], [0.0, -res, 20.0], [0.0, 0.0, 1.0]])
     rows, cols = np.mgrid[0:h, 0:w]
     q = np.stack([cols, rows, np.ones_like(rows)], -1) @ H_truth.T
     world = q[..., :2]
-    for _ in range(count):
-        # 格子=画素量子化、ぼけ、露出/色ずれ、白飛び、路面texture、校正誤差を同時に掛ける。
-        texture = rng.normal(0.0, 0.025, (h, w, 1)) + 0.018 * np.sin(world[..., 1:2] * 2.3)
-        rgb = np.clip(0.22 + texture + rng.uniform(-0.025, 0.025, (1, 1, 3)), 0.0, 1.0)
-        for distance in (8.0, 8.7, 9.4, 10.1):  # 停止線と隣接横断歩道
-            stripe = (np.abs(world[..., 1] - distance) <= 0.15) & (np.abs(world[..., 0]) <= 1.55)
-            rgb[stripe] = 1.05
-        rgb = ndimage.gaussian_filter(rgb, sigma=(rng.uniform(0.25, 0.55), rng.uniform(0.25, 0.55), 0.0))
-        rgb *= rng.uniform(0.88, 1.16) * rng.uniform(0.97, 1.03, (1, 1, 3))
-        rgb[:, :w // 3] *= rng.uniform(0.72, 0.86)  # shadow
-        rgb = np.clip(rgb, 0.0, 1.0)  # white clipping
-        labels = LG.color_rule_mask(rgb, {})["labels"]
-        H_detector = H_truth.copy()
-        H_detector[0, 2] += rng.uniform(-0.03, 0.03)
-        H_detector[1, 2] += rng.uniform(-0.04, 0.04)
-        lane = {"path": np.c_[np.zeros(201), np.linspace(0.0, 20.0, 201)],
-                "lane_width": 3.5, "pixel_to_world": H_detector}
-        got = LG.stop_line_detect(labels, lane)
-        if not got["found"]:
-            raise AssertionError("holdout stop/crosswalk candidate was lost")
-        errors.append(abs(got["distance"] - 8.0))
-        ambiguous.append(got["ambiguous"])
-    return float(max(errors)), int(sum(ambiguous)), count
+    layers = (
+        ("clear_stop", True, (-1.2, -0.4, 0.4, 1.2), False, False),
+        ("stop_plus_japan_crosswalk", True, (-1.2, -0.4, 0.4, 1.2), False, True),
+        ("crosswalk_all_stripes", False, (-1.2, -0.4, 0.4, 1.2), False, True),
+        ("crosswalk_one_or_two_stripes", False, None, False, True),
+        ("occlusion_and_image_edge", True, (1.2,), True, True),
+    )
+    rows_out = []
+    for layer, has_stop, stripe_spec, occluded, has_crosswalk in layers:
+        found, confidence, ambiguous, errors = [], [], [], []
+        for case in range(count):
+            # 格子=画素量子化、ぼけ、露出/色ずれ、白飛び、路面texture、校正誤差を同時に掛ける。
+            texture = rng.normal(0.0, 0.025, (h, w, 1)) + 0.018 * np.sin(world[..., 1:2] * 2.3)
+            rgb = np.clip(0.22 + texture + rng.uniform(-0.025, 0.025, (1, 1, 3)), 0.0, 1.0)
+            if has_stop:
+                stop = (np.abs(world[..., 1] - 8.0) <= 0.15) & (np.abs(world[..., 0]) <= 1.55)
+                rgb[stop] = 1.05
+            if has_crosswalk:
+                stripes = stripe_spec if stripe_spec is not None else ((-0.4,) if case % 2 == 0 else (-1.2, 1.2))
+                for lateral in stripes:
+                    stripe = ((np.abs(world[..., 0] - lateral) <= 0.15)
+                              & (world[..., 1] >= 8.7) & (world[..., 1] <= 11.5))
+                    rgb[stripe] = 1.05
+            rgb = ndimage.gaussian_filter(rgb, sigma=(rng.uniform(0.25, 0.55), rng.uniform(0.25, 0.55), 0.0))
+            rgb *= rng.uniform(0.88, 1.16) * rng.uniform(0.97, 1.03, (1, 1, 3))
+            rgb[:, :w // 3] *= rng.uniform(0.72, 0.86)  # shadow
+            if occluded:
+                # 停止線を中央遮蔽で2片にし、右端付近に1本だけ残る縦縞を置いた層。
+                rgb[(np.abs(world[..., 1] - 8.0) <= 0.15) & (np.abs(world[..., 0]) < 0.28)] = 0.22
+            rgb = np.clip(rgb, 0.0, 1.0)  # white clipping
+            labels = LG.color_rule_mask(rgb, {})["labels"]
+            H_detector = H_truth.copy()
+            H_detector[0, 2] += rng.uniform(-0.03, 0.03)
+            H_detector[1, 2] += rng.uniform(-0.04, 0.04)
+            lane = {"path": np.c_[np.zeros(201), np.linspace(0.0, 20.0, 201)],
+                    "lane_width": 3.5, "pixel_to_world": H_detector}
+            got = LG.stop_line_detect(labels, lane)
+            found.append(bool(got["found"]))
+            confidence.append(float(got["confidence"]))
+            ambiguous.append(bool(got["ambiguous"]))
+            if has_stop and got["found"]:
+                errors.append(abs(got["distance"] - 8.0))
+        rows_out.append({"layer": layer, "cases": count, "has_stop": has_stop,
+                         "found": int(sum(found)), "confidence_mean": float(np.mean(confidence)),
+                         "confidence_max": float(np.max(confidence)), "ambiguous": int(sum(ambiguous)),
+                         "max_distance_error": float(max(errors)) if errors else float("nan")})
+    stop_layers = [row for row in rows_out if row["has_stop"]]
+    no_stop_layers = [row for row in rows_out if not row["has_stop"]]
+    gates = (all(row["found"] == row["cases"] for row in stop_layers),
+             all(row["found"] == 0 and row["confidence_max"] < 0.5 for row in no_stop_layers))
+    return rows_out, gates
 
 
 def main(argv=None):
@@ -153,7 +180,7 @@ def main(argv=None):
     projection_error = projection_gate()
     curve_error, order_error, centre_delta, both_conf, one_conf = boundary_gate(args.full)
     stop_error, rejected, stop_cases = stop_gate(args.full)
-    holdout_error, holdout_ambiguous, holdout_cases = holdout_stop_gate(args.full)
+    holdout_rows, holdout_gates = holdout_stop_gate(args.full)
     print("mode=%s; colour %d cases: min recall %.3f, max false-positive %.3f"
           % ("full" if args.full else "reduced", colour_cases, recall, fp))
     print("RGB top-view closed-form max error %.3e" % projection_error)
@@ -161,12 +188,15 @@ def main(argv=None):
     print("one-side parallel-curve displacement from two-side midpoint %.4f m; confidence both %.3f > one-side %.3f" % (centre_delta, both_conf, one_conf))
     print("stop distance max error %.4f m over %d rotations; crosswalk stripes rejected >= %d"
           % (stop_error, stop_cases, rejected))
-    print("synthetic-generator holdout (%d independent-seed cases): max stop candidate error %.4f m; ambiguous %d/%d"
-          % (holdout_cases, holdout_error, holdout_ambiguous, holdout_cases))
+    print("synthetic-generator holdout by fixed layer (not a real-road accuracy claim):")
+    for row in holdout_rows:
+        print("  %(layer)s: found %(found)d/%(cases)d; confidence mean %(confidence_mean).3f max %(confidence_max).3f; ambiguous %(ambiguous)d/%(cases)d; max stop error %(max_distance_error)s"
+              % {**row, "max_distance_error": "n/a" if np.isnan(row["max_distance_error"])
+                 else "%.4f m" % row["max_distance_error"]})
     checks = [recall == 1.0, fp == 0.0, projection_error < 1e-14,
               curve_error < 0.06, order_error < 0.002, centre_delta > 0.01,
-              one_conf < both_conf, stop_error < 0.10, rejected == 3,
-              holdout_error < 0.15, holdout_ambiguous == holdout_cases]
+              one_conf < both_conf, stop_error < 0.10, rejected == 4,
+              *holdout_gates]
     ok = all(checks)
     print("PASS" if ok else "FAIL", "(%d / %d)" % (sum(checks), len(checks)))
     return 0 if ok else 1

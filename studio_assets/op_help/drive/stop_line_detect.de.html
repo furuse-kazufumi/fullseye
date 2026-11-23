@@ -4,9 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stop_line_detect(labels, lane_model)</code> (die Implementierung direkt: <code style="color:#22d3bf">import laneops; laneops.stop_line_detect(labels, lane_model)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;stop_line_detect&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Erkennt eine ausreichend breite, nahezu quer zur Fahrspur liegende weiße Linie als Haltelinie und verwirft Fußgängerüberwege.</p>
+<p>Erkennt eine ausreichend breite, nahezu quer zur Fahrspur liegende weiße Linie als Haltelinie und verwirft japanische Fußgängerüberwege.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>白画素を車線内へ切り、連結片を世界座標へ写す。同じ前方距離の遮蔽片を結合し、車線接線への直交角、幅、厚さで判定する。似た横線が反復する集合は横断歩道候補にするが、先頭が停止線か、遮蔽・端切れ・影で1〜2本しか見えないかを幾何だけでは決められない。そこで候補を捨てず<code style="color:#22d3bf">ambiguous=True</code>かつ低確信度で返す。BEV対応と経路の全区間を入口で検査する。摩耗した実線と横断歩道が接触して1成分になる場合は対象外。</p>
+<p>白画素を車線内へ切り、連結片を世界座標へ写す。同じ前方距離の遮蔽片を結合し、車線接線への直交角、幅、厚さで停止線を判定する。日本式の横断歩道は、車の進行方向と平行な細長い白線を道路幅方向に並べる様式なので、長手が接線方向・幅が道路幅方向に細い片を横断歩道縞として数え、停止線候補に入れない。従って遮蔽・画面端・影で縞が1本だけ見えても、横に長い停止線とは形で区別できる。停止線の直後に縦縞が並ぶ場合も停止線を <code style="color:#22d3bf">ambiguous</code>にしない。別様式の横断歩道はこのopの入力契約外である。</p>
+<p>様式の一次情報: 道路標識、区画線及び道路標示に関する命令（昭和三十五年総理府・建設省令第三号）別表第6の横断歩道(201)および停止線(203)、e-Gov法令検索</p>
+<p>https://laws.e-gov.go.jp/law/335M50004002003 。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : (H, W) labels</p>
 <p><code style="color:#22d3bf">color_rule_mask</code>のlabelを俯瞰へ写したもの。1だけを白として使う。</p>
@@ -14,8 +16,8 @@
 <p><code style="color:#22d3bf">path</code>(世界xy), <code style="color:#22d3bf">lane_width</code> と <code style="color:#22d3bf">pixel_to_world</code>(俯瞰画素col,row→世界xy)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>table</p>
-<p><code style="color:#22d3bf">found</code>、<code style="color:#22d3bf">ambiguous</code>、経路始点からの<code style="color:#22d3bf">distance</code>[m]、<code style="color:#22d3bf">width</code>[m]、<code style="color:#22d3bf">confidence</code>、候補と横断歩道棄却数。</p>
-<p>English: find wide white components nearly perpendicular to the lane tangent and merge fragments split by occlusion. Repeated stripes are crosswalk evidence, but geometry alone cannot tell whether their first stripe is an adjacent stop line or whether one/two stripes are a partial crosswalk. Those cases remain an <code style="color:#22d3bf">ambiguous</code> low-confidence candidate rather than a definitive assertion. It validates every path segment and an affine nonsingular BEV mapping first. Distance is arc length from path[0].</p>
+<p><code style="color:#22d3bf">found</code>、<code style="color:#22d3bf">ambiguous</code>、経路始点からの<code style="color:#22d3bf">distance</code>[m]、<code style="color:#22d3bf">width</code>[m]、<code style="color:#22d3bf">confidence</code>、候補と日本式横断歩道縞の棄却数。</p>
+<p>English: find wide white components nearly perpendicular to the lane tangent and merge fragments split by occlusion. The supported Japanese crosswalk style is a set of long lane-parallel, laterally narrow stripes, per Road Sign, Road Marking and Road Surface Marking Order, Appended Table 6, crosswalk (201) and stop line (203), e-Gov https://laws.e-gov.go.jp/law/335M50004002003 . It therefore rejects even one visible zebra stripe geometrically while keeping a preceding transverse stop line definitive. Other national styles are outside this op&#x27;s contract. It validates every path segment and an affine nonsingular BEV mapping first. Distance is arc length from path[0].</p>
 <p>呼び出し例::</p>
 <p>import numpy as np</p>
 <p>import laneops</p>

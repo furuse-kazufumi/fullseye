@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lane_boundary_fit — DRIVE <code style="color:#22d3bf">lane</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lane_boundary_fit(points, *, side=&#x27;unknown&#x27;, ransac_threshold=0.18, ransac_iterations=300, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import laneops; laneops.lane_boundary_fit(points, *, side=&#x27;unknown&#x27;, ransac_threshold=0.18, ransac_iterations=300, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;lane_boundary_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lane_boundary_fit(points, *, side=&#x27;unknown&#x27;, ransac_threshold=0.18, ransac_iterations=300, initial_outlier_weight=0.25, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import laneops; laneops.lane_boundary_fit(points, *, side=&#x27;unknown&#x27;, ransac_threshold=0.18, ransac_iterations=300, initial_outlier_weight=0.25, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;lane_boundary_fit&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>하향식 점(가로 x, 전방 y)에 차선 경계 <code style="color:#22d3bf">x=c0+c1*y+c2*y²</code> 를 강건하게 맞춘다.</p>
@@ -12,12 +12,14 @@
 <p>世界座標 <code style="color:#22d3bf">(x lateral, y forward)</code> [m]。順序は問わない。</p>
 <p>side : {&quot;left&quot;, &quot;right&quot;, &quot;unknown&quot;}</p>
 <p>後段が片側だけを車線中央へずらすための名前。</p>
-<p>ransac_threshold, ransac_iterations, seed</p>
-<p>直線/最終inlierの距離[m]、反復数、固定乱数seed。</p>
+<p>ransac_threshold, ransac_iterations, initial_outlier_weight, seed</p>
+<p>直線/最終inlierの距離[m]、反復数、初期RANSAC外れ値のIRLS重み、固定乱数seed。</p>
+<p><code style="color:#22d3bf">initial_outlier_weight=0.25</code>は初期inlierを4倍優先しつつ、曲線上で初期直線から</p>
+<p>外れた点を残すための固定値である。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>table</p>
 <p><code style="color:#22d3bf">coefficients</code>(c0,c1,c2)、<code style="color:#22d3bf">observed_y</code>、<code style="color:#22d3bf">inlier_mask</code>、残差、RMS、確信度。</p>
-<p>English: initialise with the existing 3-D <code style="color:#22d3bf">ransac_line</code> (z=0), then fit the boundary x(y) with a Huber robust quadratic. Point order does not matter. The final inlier design must have rank 3, at least three distinct y values, and bounded condition number; otherwise it returns <code style="color:#22d3bf">valid=False</code> instead of silently using a line. Hairpins where y is not single-valued are outside the contract and fail closed.</p>
+<p>English: initialise with the existing 3-D <code style="color:#22d3bf">ransac_line</code> (z=0), then fit the boundary x(y) with a Huber robust quadratic. Point order does not matter. It centres and normalises y for rank, condition-number, and least-squares work, then returns coefficients in the original world coordinates. The final inlier design must have rank 3, at least three distinct y values, and bounded condition number; otherwise it returns <code style="color:#22d3bf">valid=False</code> instead of silently using a line. Hairpins where y is not single-valued are outside the contract and fail closed.</p>
 <p>呼び出し例::</p>
 <p>import numpy as np</p>
 <p>import laneops</p>
