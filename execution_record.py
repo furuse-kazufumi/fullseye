@@ -114,7 +114,7 @@ def _require_text(value: Any, label: str) -> None:
         raise ValueError(f"{label} must be a non-empty string")
 
 
-def utc_now() -> _dt.datetime:
+def _utc_now() -> _dt.datetime:
     """timezone-aware UTC を返す / Return a timezone-aware UTC timestamp."""
     return _dt.datetime.now(_dt.timezone.utc)
 
@@ -167,7 +167,7 @@ class ExecutionContext:
     validation_profile: ValidationProfile | None = None
     run_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     parent_run_id: str | None = None
-    utc_time_source: Callable[[], _dt.datetime] = field(default=utc_now, repr=False, compare=False)
+    utc_time_source: Callable[[], _dt.datetime] = field(default=_utc_now, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         for label, value in (("principal", self.principal), ("session", self.session),
@@ -525,7 +525,7 @@ def _dependencies() -> dict[str, str]:
     return dict(sorted(rows.items()))
 
 
-def software_inventory(blas_threads: int) -> SoftwareInventory:
+def _software_inventory(blas_threads: int) -> SoftwareInventory:
     """現在の実行 inventory を作る / Build the current execution inventory."""
     digest, dirty = _source_state()
     cpu = platform.processor().strip() or platform.machine().strip() or "unknown"
@@ -699,7 +699,7 @@ class AuditSink:
             return digest, after
 
 
-def validation_enabled(context: ExecutionContext | None) -> bool:
+def _validation_enabled(context: ExecutionContext | None) -> bool:
     """明示 profile がある時だけ真 / True only for an explicitly selected profile."""
     return context is not None and context.validation_profile is not None
 
@@ -729,7 +729,7 @@ def _cancelled(exc: BaseException) -> bool:
     return isinstance(exc, (asyncio.CancelledError, KeyboardInterrupt, GeneratorExit))
 
 
-def execute_recorded(*, context: ExecutionContext | None, audit_sink: Any,
+def _execute_recorded(*, context: ExecutionContext | None, audit_sink: Any,
                      stages: list[dict[str, Any]], normalized_parameters: dict[str, Any],
                      inputs: Iterable[Any], requested_device: str,
                      stochastic: bool | Callable[[], bool], operation: Callable[[], Any],
@@ -740,7 +740,7 @@ def execute_recorded(*, context: ExecutionContext | None, audit_sink: Any,
     成功時も ``audit_sink.append`` が返るまで出力を返さない。Failure and cancellation are
     also written exactly once; a successful result is not returned until the append completes.
     """
-    if not validation_enabled(context):
+    if not _validation_enabled(context):
         return operation()
     assert context is not None and context.validation_profile is not None
     profile = context.validation_profile
@@ -766,10 +766,10 @@ def execute_recorded(*, context: ExecutionContext | None, audit_sink: Any,
         if uses_random and profile.seed is None:
             raise ValidationProfileError("a stochastic operator requires ValidationProfile.seed")
         import fsthreads
-        with fsthreads.validation_threads(profile.blas_threads) as applied:
+        with fsthreads._validation_threads(profile.blas_threads) as applied:
             if applied is not True:
                 raise ValidationProfileError("the requested BLAS thread limit could not be applied")
-            inventory = software_inventory(profile.blas_threads)
+            inventory = _software_inventory(profile.blas_threads)
             result = operation()
         output_refs = (artifact_ref(result),)
         status = "succeeded"
@@ -777,7 +777,7 @@ def execute_recorded(*, context: ExecutionContext | None, audit_sink: Any,
         error = exc
         status = "cancelled" if _cancelled(exc) else "failed"
         if inventory is None:
-            inventory = software_inventory(profile.blas_threads)
+            inventory = _software_inventory(profile.blas_threads)
     finished = context.now()
     after_events = degraded_reader()
     previous_sequences = {int(item.get("seq", 0)) for item in before_events}
@@ -819,5 +819,5 @@ __all__ = [
     "AuditIntegrityError", "ValidationProfile", "ExecutionContext", "ArtifactRef",
     "SoftwareInventory", "ExecutionRecord", "AuditCheckpoint", "AuditVerification",
     "AuditSink", "canonical_json", "canonical_json_bytes", "artifact_ref",
-    "software_inventory", "verify_audit_file", "validation_enabled", "execute_recorded",
+    "verify_audit_file",
 ]

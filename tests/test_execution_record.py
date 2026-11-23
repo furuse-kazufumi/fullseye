@@ -154,8 +154,11 @@ def test_profile_forces_raise_nonfinite_cpu_environment_and_blas(tmp_path, monke
         fs.apply(INPUT, "identity", execution_context=_context("environment"), audit_sink=sink)
     records = _records(path)
     assert [row["status"] for row in records] == ["failed", "failed", "failed"]
+    assert len(records) == 3
     assert all(row["device"] == "cpu" for row in records)
+    assert len(records) == 3
     assert all(row["normalized_parameters"]["on_error"] == "raise" for row in records)
+    assert len(records) == 3
     assert all(row["software"]["blas_threads"] == 1 for row in records)
 
 
@@ -179,7 +182,7 @@ def test_unavailable_blas_control_fails_closed_and_records_no_success(tmp_path, 
     def unavailable_threads(_threads):
         yield False
 
-    monkeypatch.setattr(fsthreads, "validation_threads", unavailable_threads)
+    monkeypatch.setattr(fsthreads, "_validation_threads", unavailable_threads)
     with pytest.raises(fs.ValidationProfileError, match="BLAS thread limit"):
         fs.apply(INPUT, "identity", execution_context=_context("blas-unavailable"), audit_sink=fs.AuditSink(path))
     [record] = _records(path)

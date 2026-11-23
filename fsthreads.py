@@ -175,7 +175,7 @@ import numpy as np
 __all__ = [
     "TIERS", "MIN_N", "ENV",
     "available", "cap_for", "current_threads", "policy", "short_side",
-    "for_decomposition", "blas_threads", "validation_threads", "limited", "counters", "reset_counters",
+    "for_decomposition", "blas_threads", "limited", "counters", "reset_counters",
     "svd", "eigh", "eigvalsh", "qr", "pinv", "lstsq",
 ]
 
@@ -441,7 +441,7 @@ def blas_threads(n):
 
 
 @contextlib.contextmanager
-def validation_threads(n):
+def _validation_threads(n):
     """規制実行中に緩まない BLAS 上限 / A BLAS ceiling that nested tiers cannot relax.
 
     BLAS の状態は process 全体で共有されるため、この文脈が生きている間は別 thread の
@@ -449,7 +449,7 @@ def validation_threads(n):
     ordinary contexts in other threads also remain under this ceiling while it is active.
     """
     if int(n) < 1:
-        raise ValueError(f"validation_threads(n) needs n >= 1, got {n!r}")
+        raise ValueError(f"validation thread limit needs n >= 1, got {n!r}")
     with _apply(int(n), ceiling=True) as applied:
         yield applied
 

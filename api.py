@@ -43,8 +43,8 @@ import opnames as _opnames  # noqa: E402  (canonical op-name aliases, phase 1 of
 import backend_safe as _bs  # noqa: E402  (fallback ledger / strict mode — the one mediator)
 from execution_record import (  # noqa: E402  (規制実行 envelope / regulated execution envelope)
     STOCHASTIC_OPERATOR_NAMES as _STOCHASTIC_OPERATOR_NAMES,
-    execute_recorded as _execute_recorded,
-    validation_enabled as _validation_enabled,
+    _execute_recorded,
+    _validation_enabled,
 )
 from fslib import FsValueError as _FsValueError  # noqa: E402  (FS_E_INVALID_ARG: input outside the declared domain)
 from backend_safe import FullseyeFallbackWarning  # noqa: E402,F401  (re-exported)
