@@ -62,6 +62,11 @@ def test_gifs_match_sources_durations_colour_and_capacity():
 
         for lang, variant in item["variants"].items():
             path = ROOT / "docs" / variant["path"]
+            if variant.get("static"):
+                # 2026-11-23: 英語に読める図が 1〜2 枚の PoC は、英語版だけその最初の 1 枚を静止画で出す
+                # (tests/test_view2026_featured_visuals_2026_11_23.py が中身を見る)。
+                assert lang == "en" and path.is_file() and variant["frame_count"] == 1
+                continue
             assert path.is_file() and path.stat().st_size == variant["bytes"] <= LEDGER["max_bytes"]
             with Image.open(path) as gif:
                 durations = []

@@ -219,7 +219,8 @@ def _representative_img(d: dict, e: dict, lang: str, up: str, docs: str,
     if story.get("status") == "gif":
         label_lang = "ja" if lang == "ja" else "en"
         gif = docs + story["variants"][label_lang]["path"]
-        still = docs + story["still"]
+        # 英語版の GIF は日本語の文字の無いコマで組むことがあるので、減速時の静止画も言語ごと(2026-11-23)。
+        still = docs + story.get("stills", {}).get(label_lang, story["still"])
         alt = (alt if alt is not None else story["alt"][label_lang]).replace('"', "&quot;")
         return ('<picture><source media="(prefers-reduced-motion: reduce)" srcset="%s">'
                 '<img src="%s" alt="%s" loading="lazy" width="%d" height="%d"></picture>'

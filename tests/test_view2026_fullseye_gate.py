@@ -98,11 +98,13 @@ def test_fake_exhibit_without_fullseye_is_dropped_by_the_real_generator() -> Non
 
 
 _ANCHOR = re.compile(r'<a href="[^"]*">(?:<picture>.*?</picture>|<img [^>]*>)', re.S)
-_TILE_ID = re.compile(r"thumbs/(?:all/)?([A-Za-z0-9_-]+)\.jpg|assets/poc/([A-Za-z0-9_-]+)/story\.")
+# 2026-11-23: 英語版は英語に読める図が 1〜2 枚なら story GIF でなくその図(PNG)をタイルに出す。
+_TILE_ID = re.compile(r"thumbs/(?:all/)?([A-Za-z0-9_-]+)\.jpg|"
+                      r"assets/poc/([A-Za-z0-9_-]+)/(?:story\.|[^\"/]+\.png)")
 
 
 def _tile_ids(text: str, ids: set[str]) -> set[str]:
-    """タイル(<a> の中の画像)から展示の id を読む。story GIF なら素材の経路、静止画ならサムネイルの名前。"""
+    """タイル(<a> の中の画像)から展示の id を読む。story GIF・英語版の静止画なら素材の経路、静止画ならサムネイルの名前。"""
     found: set[str] = set()
     for anchor in _ANCHOR.findall(text):
         for match in _TILE_ID.finditer(anchor):

@@ -1953,8 +1953,19 @@ def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
 
     valid = np.isfinite(dod_raw)
     only_change = np.where(change, dod, np.where(valid, 0.0, np.nan))   # 変化域の外 = 0(薄い灰)、データ無し = 黒
+
+    def framed(rgb):
+        """★2026-11-23(目玉 30 本の見た目の点検): 尺度は地図の右に足されるが、間が 10 px しかなく、
+        地図の右端(データの切れ目)と尺度の白地が接して「尺度が地図に被っている」ように読めた。
+        地図に細い枠を付け、尺度との間に白の余白を空けて、地図がどこで終わるかを見せる。"""
+        rgb = np.asarray(rgb, np.float64)
+        f = DOD_MAP_FRAME_PX
+        rgb = np.pad(rgb, ((f, f), (f, f), (0, 0)), constant_values=DOD_MAP_FRAME_GRAY)
+        return np.pad(rgb, ((0, 0), (0, DOD_COLORBAR_GUTTER_PX), (0, 0)), constant_values=1.0)
+
     figs.save_grid("real_dod",
-                   [block2(hs), signed_rgb(dod_raw, lim), signed_rgb(dod, lim), signed_rgb(only_change, lim_ch)],
+                   [block2(hs), framed(signed_rgb(dod_raw, lim)), framed(signed_rgb(dod, lim)),
+                    framed(signed_rgb(only_change, lim_ch))],
                    captions=["USGS 1 m DEM 陰影(2017)",
                              "DoD 2017−2012 そのまま(±%.1f m)" % lim,
                              "平坦部で %+.3f m 合わせた後" % (-R["off_flat"]),
@@ -2002,11 +2013,22 @@ def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
     ds.text((20, 514), "合わせると、残るのは建物まわりの変化だけ", font=font(26), fill=(225, 225, 225))
     ds.text((20, 566), "青 = 2017 のほうが低い / 赤 = 高い(±%.1f m)" % lim, font=font(22), fill=(200, 205, 215))
     ds.text((20, 600), "濃い灰 = 地面点が無い(建物・池・樹冠の下)", font=font(22), fill=(200, 205, 215))
-    ds.text((20, S - 40), "USGS 3DEP(public domain、USGS の承認ではない)", font=font(18), fill=(170, 170, 170))
+    ds.text((20, S - STILL_CREDIT_FROM_BOTTOM), "USGS 3DEP(public domain、USGS の承認ではない)", font=font(18),
+            fill=(170, 170, 170))
     figs.save("real_dod_still", np.asarray(st, dtype=np.uint8),
               caption=("サムネイル用の静止画。13 の (b) と (c) を同じ色で並べた(表示は 2 m 角)。そのまま引くと区画全体が "
                        "%+.3f m 沈んで見え、平坦部の中央値で合わせると美術館まわりの変化域だけが残る。%s %s"
                        % (R["off_flat"], USGS_MODIFIED, USGS_CREDIT)))
+
+
+#: 表紙の静止画の出典の行の上端を、下端から何 px 上に置くか。ストーリー GIF はこの静止画を 1 コマ目にして
+#: 下端 30 px に進み具合の点を重ねるので、出典(18 px)はその帯より上で終える(2026-11-23、点が出典に被った)。
+STILL_CREDIT_FROM_BOTTOM = 62
+#: 図 13(実データの DoD)で地図を囲む枠の太さ [px] と色(0..1 の灰)。
+DOD_MAP_FRAME_PX = 2
+DOD_MAP_FRAME_GRAY = 0.35
+#: 図 13 で地図の枠と色の尺度の間に空ける白の余白 [px](尺度は examplefig がこの右に足す)。
+DOD_COLORBAR_GUTTER_PX = 24
 
 
 #: 手元の実データの実行(2026-11-15、FULLSEYE_DATA_DIR に USGS 3DEP)の記録値。CI はデータを持たないので
