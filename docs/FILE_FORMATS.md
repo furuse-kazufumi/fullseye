@@ -48,14 +48,14 @@
 | PNG | `.png` | `raster.read_depth`<br>`raster.read_raster` | `imgio.save`<br>`studio_display.save_outputs` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+139 | — |
 | PPM | `.ppm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+107 | — |
 | XYZ text | `.pts` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_mesh.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+3 | — |
-| PY | `.py` | — | `studio_pymode.atomic_write_text` | — | 必須: PySide6 | `tests/test_abi_apply.py`<br>`tests/test_abi_conformance.py`<br>+427 | — |
+| PY | `.py` | — | `studio_pymode.atomic_write_text` | — | 必須: PySide6 | `tests/test_abi_apply.py`<br>`tests/test_abi_conformance.py`<br>+428 | — |
 | RAW raster | `.raw` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_article_media_tool_2026_11_11.py`<br>`tests/test_gfx2d.py`<br>+15 | — |
 | 3D Gaussian splat | `.splat` | `gsplatnp.gs_read_file` | — | `gs_read_file` | stdlib / core | `tests/test_gsviewer.py`<br>`tests/test_opsdrive.py`<br>+1 | — |
 | STL | `.stl` | `fileio.mesh_read_stl`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_stl`<br>`mesh.write_mesh` | `mesh_read_stl`<br>`mesh_write_stl` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_fileio_mesh.py`<br>+8 | `stl`<br>`trimesh` |
 | TIFF | `.tif` | `raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `imgio.save`<br>`volio.write_volume` | — | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+109 | — |
 | TIFF | `.tiff` | `fileio.ome_tiff_read`<br>`raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `fileio.ome_tiff_write`<br>`imgio.save`<br>`volio.write_volume` | `ome_tiff_read`<br>`ome_tiff_write` | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+110 | — |
 | TOML | `.toml` | `studio_params_model.read_bundle` | — | — | stdlib / core | `tests/test_ci_local_tool_2026_11_10.py`<br>`tests/test_ci_select_tests_2026_11_10.py`<br>+34 | — |
-| Text/XYZ | `.txt` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_acquire_contract.py`<br>`tests/test_anim3d_i18n_builders_2026_10_25.py`<br>+43 | — |
+| Text/XYZ | `.txt` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_acquire_contract.py`<br>`tests/test_anim3d_i18n_builders_2026_10_25.py`<br>+44 | — |
 | VOL | `.vol` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_ctscan.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+27 | — |
 | WAV | `.wav` | `dsp.read_wav` | `dsp.write_wav` | `read_wav`<br>`write_wav` | stdlib / core | `tests/test_chain_type_contracts.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+21 | — |
 | WebM video | `.webm` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
@@ -63,7 +63,7 @@
 | XML | `.xml` | `safe_xml.safe_xml_parse`<br>`safe_xml.safe_xml_parse_zip_member`<br>`studio_params_model.read_bundle` | `studio_params_model.write_bundle_atomic` | — | optional: yaml | `tests/test_anatomical_hand.py`<br>`tests/test_ci_folded_run_no_comment_2026_11_03.py`<br>+16 | — |
 | XYZ point cloud | `.xyz` | `fileio.points_read_xyz`<br>`mesh.read_points` | `fileio.points_write_xyz`<br>`mesh.write_points` | `points_read_xyz`<br>`points_write_xyz` | stdlib / core | `tests/test_anim3d_raster_gate_2026_10_26.py`<br>`tests/test_audit_file_formats.py`<br>+11 | — |
 | YAML | `.yaml` | `studio_params_model.read_bundle` | `studio_params_model.write_bundle_atomic` | — | optional: yaml | `tests/test_ci_folded_run_no_comment_2026_11_03.py`<br>`tests/test_pages_site_tool_2026_11_11.py`<br>+6 | — |
-| YML | `.yml` | `studio_params_model.read_bundle` | `studio_params_model.write_bundle_atomic` | — | optional: yaml | `tests/test_abi_wheel.py`<br>`tests/test_ci_folded_run_no_comment_2026_11_03.py`<br>+16 | — |
+| YML | `.yml` | `studio_params_model.read_bundle` | `studio_params_model.write_bundle_atomic` | — | optional: yaml | `tests/test_abi_wheel.py`<br>`tests/test_ci_folded_run_no_comment_2026_11_03.py`<br>+17 | — |
 
 ## 集計
 
