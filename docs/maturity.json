@@ -2661,10 +2661,10 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 495,
-  "run_by_the_poc_gate": 316,
+  "examples2d_total": 496,
+  "run_by_the_poc_gate": 317,
   "run_by_the_example_gate": 179,
-  "scripts_on_disk": 503,
+  "scripts_on_disk": 504,
   "excluded_from_the_registry": 8,
   "excluded_but_run_by_a_named_test": {
    "lensfile_tolerance_worst_mtf": [

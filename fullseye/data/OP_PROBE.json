@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3847, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3848, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -2132,6 +2132,7 @@
 {"name":"particle_image_d50","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"particle_image_synth","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"particle_render","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"particle_size_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"particle_size_dx","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"particle_size_oversize","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"particle_size_read","status":"not_in_registry","reason":"not executable by fullseye.apply"},

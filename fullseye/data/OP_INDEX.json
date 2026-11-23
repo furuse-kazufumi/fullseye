@@ -1,8 +1,8 @@
 {
- "n_ops": 3841,
+ "n_ops": 3842,
  "tiers": {
   "color": 12,
-  "ledger": 2877,
+  "ledger": 2878,
   "nary": 17,
   "registry": 935
  },
@@ -24074,6 +24074,21 @@
     "table"
    ],
    "gpu_tier": "suitable"
+  },
+  {
+   "name": "particle_size_distribution",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pharma",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ],
+   "gpu_tier": "none"
   },
   {
    "name": "particle_size_dx",

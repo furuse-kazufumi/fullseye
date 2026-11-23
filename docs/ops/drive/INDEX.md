@@ -1,4 +1,4 @@
-# DRIVE operator help — 744 ops in 55 categories
+# DRIVE operator help — 745 ops in 56 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -139,6 +139,10 @@
 ### pegtactile (19)
 
 [contact_candidates](pegtactile/contact_candidates.md) · [contact_state_from_wrench](pegtactile/contact_state_from_wrench.md) · [equivariance_check](pegtactile/equivariance_check.md) · [friction_from_single_contact](pegtactile/friction_from_single_contact.md) · [pad_context](pegtactile/pad_context.md) · [pad_loads_to_peg_wrench](pegtactile/pad_loads_to_peg_wrench.md) · [pad_marker_displacement](pegtactile/pad_marker_displacement.md) · [pad_params](pegtactile/pad_params.md) · [pad_shear_asymmetry](pegtactile/pad_shear_asymmetry.md) · [pad_tactile_frame](pegtactile/pad_tactile_frame.md) · [pad_tactile_read](pegtactile/pad_tactile_read.md) · [peg_wrench_to_pad_loads](pegtactile/peg_wrench_to_pad_loads.md) · [stall_verdict](pegtactile/stall_verdict.md) · [symmetric_peg_shape](pegtactile/symmetric_peg_shape.md) · [symmetry_order_contour](pegtactile/symmetry_order_contour.md) · [two_point_forces](pegtactile/two_point_forces.md) · [whitney_wrench](pegtactile/whitney_wrench.md) · [wrist_deflection_from_rgbd](pegtactile/wrist_deflection_from_rgbd.md) · [wrist_stiffness_fit](pegtactile/wrist_stiffness_fit.md)
+
+### pharma (1)
+
+[particle_size_distribution](pharma/particle_size_distribution.md)
 
 ### polish (13)
 
