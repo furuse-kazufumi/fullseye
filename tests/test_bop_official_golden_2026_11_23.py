@@ -1,7 +1,8 @@
 """Small synthetic golden errors checked against the official BOP toolkit.
 
-Set ``BOP_TOOLKIT_ROOT`` to an explicit local checkout.  CI does not download the
-toolkit; the stage-1 verification run pins and reports the checkout commit.
+Set ``BOP_TOOLKIT_ROOT`` to an explicit local checkout.  The Ubuntu/EGL CI job
+clones the toolkit, checks out the recorded commit, verifies the driver digest,
+and runs both the direct metric checks and the complete official driver fixture.
 """
 from __future__ import annotations
 

@@ -570,6 +570,30 @@ def _validate_official_bop_toolkit(toolkit: Path, script: Path) -> None:
         raise ValueError("toolkit_root must be the pinned official BOP toolkit git checkout") from exc
     if Path(top_level).resolve() != toolkit.resolve() or commit != _BOP_TOOLKIT_COMMIT:
         raise ValueError(f"toolkit_root must be BOP toolkit commit {_BOP_TOOLKIT_COMMIT}")
+    try:
+        subprocess.run(
+            ["git", "-C", str(toolkit), "cat-file", "-e",
+             f"{_BOP_TOOLKIT_COMMIT}^{{commit}}"], check=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise ValueError(
+            f"toolkit_root does not contain pinned BOP toolkit commit {_BOP_TOOLKIT_COMMIT}"
+        ) from exc
+    try:
+        tracked_diff = subprocess.run(
+            ["git", "-C", str(toolkit), "diff", "--quiet", "--no-ext-diff",
+             _BOP_TOOLKIT_COMMIT, "--"],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        untracked = subprocess.run(
+            ["git", "-C", str(toolkit), "ls-files", "--others", "--exclude-standard"],
+            check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise ValueError("could not verify the pinned BOP toolkit worktree") from exc
+    if tracked_diff.returncode not in (0, 1):
+        detail = tracked_diff.stderr.decode(errors="replace").strip()
+        raise ValueError(f"could not verify the pinned BOP toolkit worktree: {detail}")
+    if tracked_diff.returncode or untracked.stdout.strip():
+        raise ValueError("pinned BOP toolkit checkout has modified or untracked files")
     script_digest = hashlib.sha256(script.read_bytes()).hexdigest()
     if script_digest != _BOP19_EVALUATOR_SHA256:
         raise ValueError("BOP eval_bop19_pose.py does not match the pinned official digest")

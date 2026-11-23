@@ -1,9 +1,11 @@
 """Stage-1 BOP gates use synthetic data only; no ITODD assets enter the repository."""
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 from pathlib import Path
+import subprocess
 
 import numpy as np
 import pytest
@@ -11,6 +13,27 @@ from scipy.spatial import cKDTree
 
 import bop
 import ppf
+
+
+def _git(toolkit, *args):
+    return subprocess.run(
+        ["git", "-C", str(toolkit), *args], check=True, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.strip()
+
+
+def _make_synthetic_toolkit(toolkit):
+    script = toolkit / "scripts" / "eval_bop19_pose.py"
+    helper = toolkit / "bop_toolkit_lib" / "misc.py"
+    script.parent.mkdir(parents=True)
+    helper.parent.mkdir(parents=True)
+    script.write_text("# pinned synthetic driver\n", encoding="utf-8")
+    helper.write_text("VALUE = 'official'\n", encoding="utf-8")
+    (toolkit / "LICENSE").write_text("MIT License\n", encoding="utf-8")
+    _git(toolkit, "init", "-q")
+    _git(toolkit, "add", ".")
+    _git(toolkit, "-c", "user.name=BOP fixture", "-c", "user.email=bop@example.invalid",
+         "commit", "-q", "-m", "synthetic pinned toolkit")
+    return script, helper, _git(toolkit, "rev-parse", "HEAD")
 
 
 def _rotation(axis, degrees):
@@ -246,6 +269,58 @@ def test_evaluator_rejects_lookalike_toolkit_before_execution(tmp_path):
     result.write_text("scene_id,im_id,obj_id,score,R,t,time\n", encoding="utf-8")
     with pytest.raises(ValueError, match="pinned official BOP toolkit"):
         bop.evaluate_bop19_pose(result, datasets, toolkit, tmp_path / "eval")
+
+
+def test_evaluator_accepts_pristine_pinned_toolkit(tmp_path, monkeypatch):
+    toolkit = tmp_path / "toolkit"
+    script, _helper, commit = _make_synthetic_toolkit(toolkit)
+    monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", commit)
+    monkeypatch.setattr(
+        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+
+    bop._validate_official_bop_toolkit(toolkit, script)
+
+
+def test_evaluator_rejects_modified_helper_at_pinned_commit(tmp_path, monkeypatch):
+    toolkit = tmp_path / "toolkit"
+    script, helper, commit = _make_synthetic_toolkit(toolkit)
+    monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", commit)
+    monkeypatch.setattr(
+        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+
+    helper.write_text("VALUE = 'tampered'\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="modified or untracked files"):
+        bop._validate_official_bop_toolkit(toolkit, script)
+
+
+def test_evaluator_rejects_untracked_helper_at_pinned_commit(tmp_path, monkeypatch):
+    toolkit = tmp_path / "toolkit"
+    script, helper, commit = _make_synthetic_toolkit(toolkit)
+    monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", commit)
+    monkeypatch.setattr(
+        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+
+    helper.with_name("injected.py").write_text("VALUE = 'injected'\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="modified or untracked files"):
+        bop._validate_official_bop_toolkit(toolkit, script)
+
+
+def test_evaluator_rejects_ref_to_nonexistent_pinned_commit(tmp_path, monkeypatch):
+    toolkit = tmp_path / "toolkit"
+    script, _helper, _commit = _make_synthetic_toolkit(toolkit)
+    nonexistent_commit = "1" * 40
+    branch_ref = _git(toolkit, "symbolic-ref", "HEAD")
+    loose_ref = toolkit / ".git" / Path(*branch_ref.split("/"))
+    loose_ref.parent.mkdir(parents=True, exist_ok=True)
+    loose_ref.write_text(f"{nonexistent_commit}\n", encoding="ascii")
+    monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", nonexistent_commit)
+    monkeypatch.setattr(
+        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+
+    with pytest.raises(ValueError, match="does not contain pinned BOP toolkit commit"):
+        bop._validate_official_bop_toolkit(toolkit, script)
 
 
 def test_official_adapter_parses_the_pinned_evaluator_score_file(tmp_path, monkeypatch):
