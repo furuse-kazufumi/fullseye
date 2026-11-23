@@ -1017,12 +1017,12 @@
               "file": "13_controls.png",
               "content_box": [
                 0,
-                272,
+                161,
                 720,
-                145
+                368
               ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 4.957721
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.957647
             }
           ],
           "frame_count": 6,
@@ -1034,17 +1034,17 @@
             1600,
             1600
           ],
-          "bytes": 357931,
+          "bytes": 383153,
           "color_mad": [
             0.5029,
             0.2539,
             0.0243,
             1.2185,
             0.095,
-            0.0297
+            0.0322
           ],
           "max_color_mad": 1.2185,
-          "source_sha256": "32c0418b20d30eaa748efc95908396dfbfd0b765e376a75917f7db55ea4e6107"
+          "source_sha256": "cfcb9f2f918f26ee4dd7f222b81cb4256793e7811ebe1b1eb6fe39b3e628de35"
         },
         "en": {
           "path": "articles/assets/poc/poc_cad_scan_deviation/story.en.gif",
@@ -1106,39 +1106,26 @@
                 720,
                 432
               ]
-            },
-            {
-              "file": "13_controls.png",
-              "content_box": [
-                0,
-                272,
-                720,
-                145
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 4.957721
             }
           ],
-          "frame_count": 6,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
-            1600,
             1600
           ],
-          "bytes": 357931,
+          "bytes": 328994,
           "color_mad": [
-            0.5029,
-            0.2539,
-            0.0243,
-            1.2185,
-            0.095,
-            0.0297
+            0.4802,
+            0.2534,
+            0.0248,
+            1.2186,
+            0.095
           ],
-          "max_color_mad": 1.2185,
-          "source_sha256": "58c7caa1b414abeb8782ab65a3a25d53410663cacd09ddf7a40e0dcff9982c60"
+          "max_color_mad": 1.2186,
+          "source_sha256": "fe5e2d2c92234ff841d68775ca198ff430652b2121437bff8c48da2c68e57b83"
         }
       },
       "thumbnail": {
@@ -1155,11 +1142,15 @@
           "01_scene.png",
           "02_methods.png",
           "03_deviation_maps.png",
-          "04_noise_bias.png",
-          "13_controls.png"
+          "04_noise_bias.png"
         ],
         "excluded_frames": [],
-        "not_english_ready": []
+        "not_english_ready": [
+          {
+            "file": "13_controls.png",
+            "class": "japanese"
+          }
+        ]
       },
       "reason": null,
       "cover": "14_align_orbit.gif",
@@ -2946,14 +2937,14 @@
             1600,
             1600
           ],
-          "bytes": 700225,
+          "bytes": 700209,
           "color_mad": [
             0.3037,
             1.1246,
-            1.3716
+            1.3705
           ],
-          "max_color_mad": 1.3716,
-          "source_sha256": "2656135f7efb4891a42694b4278992a44237df6e64581e3f4221b52ad166b75c"
+          "max_color_mad": 1.3705,
+          "source_sha256": "7b4c69f9d4e21f9933e0b64036ddf59b8f2116fdbba5057eaf0ab8f66e066137"
         },
         "en": {
           "path": "articles/assets/poc/poc_photoelasticity/story.en.gif",
@@ -3003,14 +2994,14 @@
             1600,
             1600
           ],
-          "bytes": 700225,
+          "bytes": 700209,
           "color_mad": [
             0.3037,
             1.1246,
-            1.3716
+            1.3705
           ],
-          "max_color_mad": 1.3716,
-          "source_sha256": "314283275f6da4ef907fc0a98c698ee00860b49425e653441d44e6894701f98e"
+          "max_color_mad": 1.3705,
+          "source_sha256": "d8be2c029357e45ba57fef0679011ec2b8d7718d6f1f6cb9cdeccfc649918a52"
         }
       },
       "thumbnail": {
@@ -13716,37 +13707,21 @@
             1600,
             1600
           ],
-          "bytes": 643352,
+          "bytes": 644013,
           "color_mad": [
             0.7047,
             0.129,
             0.0605,
-            0.0014,
+            0.0013,
             0.0652,
             0.1002
           ],
           "max_color_mad": 0.7047,
-          "source_sha256": "80890181c367a37a1ea032c451784aa2c98fd5809c413ed0c4176240759284e0"
+          "source_sha256": "73f9f6e4aef36ebcae57a7542da46684b9e1e0a51246dff7b10b908bcfa7ebfe"
         },
         "en": {
           "path": "articles/assets/poc/poc_moire_alignment/story.en.gif",
           "frames": [
-            {
-              "file": "09_overlay_cover.png",
-              "content_box": [
-                0,
-                0,
-                720,
-                720
-              ],
-              "thumbnail": {
-                "source": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png",
-                "frame": 0.5,
-                "crop": null,
-                "mode": "contain",
-                "rendered": "view2026/thumbs/poc_moire_alignment.jpg"
-              }
-            },
             {
               "file": "02_one_nm_steps.png",
               "content_box": [
@@ -13754,9 +13729,7 @@
                 151,
                 720,
                 388
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.857143
+              ]
             },
             {
               "file": "06_quad_mark.png",
@@ -13768,17 +13741,6 @@
               ],
               "contain_reason": "aspect_within_2_4",
               "source_aspect": 1.86034
-            },
-            {
-              "file": "05_differential.png",
-              "content_box": [
-                0,
-                145,
-                720,
-                400
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.8
             },
             {
               "file": "04_crlb.png",
@@ -13801,26 +13763,22 @@
               "source_aspect": 2.738095
             }
           ],
-          "frame_count": 6,
+          "frame_count": 4,
           "durations_ms": [
             2500,
             1600,
             1600,
-            1600,
-            1600,
             1600
           ],
-          "bytes": 643352,
+          "bytes": 360474,
           "color_mad": [
-            0.7047,
-            0.129,
+            0.1291,
             0.0605,
-            0.0014,
-            0.0652,
-            0.1002
+            0.0653,
+            0.1016
           ],
-          "max_color_mad": 0.7047,
-          "source_sha256": "4d82c715c3f394d1f430301ba7144b70464c163f21d26b74bbe4816935b0ffb8"
+          "max_color_mad": 0.1291,
+          "source_sha256": "d4e1e11c36e010f9df91a7df8488f6d62deedb5440f80d4075df7affcccca526"
         }
       },
       "thumbnail": {
@@ -13833,22 +13791,29 @@
       "en": {
         "text": "english_ready_frames",
         "selected": [
-          "09_overlay_cover.png",
           "02_one_nm_steps.png",
           "06_quad_mark.png",
-          "05_differential.png",
           "04_crlb.png",
           "08_talbot_gap.png"
         ],
         "excluded_frames": [],
-        "not_english_ready": []
+        "not_english_ready": [
+          {
+            "file": "09_overlay_cover.png",
+            "class": "japanese"
+          },
+          {
+            "file": "05_differential.png",
+            "class": "japanese"
+          }
+        ]
       },
       "reason": null,
       "cover": "09_overlay_cover.png",
       "still": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png",
       "stills": {
         "ja": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png",
-        "en": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png"
+        "en": "articles/assets/poc/poc_moire_alignment/02_one_nm_steps.png"
       },
       "alt": {
         "ja": "表紙(合成): ① ウェハの 2.04 µm の格子だけを撮ると、カメラのぼけで灰色一色になる(これが正しい)。② マスクの 2.00 µm の格子と重ねると、周期 102 µm の縞が現れる。③ ウェハを 0.6 µm ずらすと縞は 30 µm 動く(50 倍、像から測った値)。カメラ・雑音は本文の図と同じ。白色雑音だけの合成で、実機の系統誤差は入っていない。",
@@ -14113,7 +14078,7 @@
             0.1746
           ],
           "max_color_mad": 0.245,
-          "source_sha256": "c9600f0f01e0dc796f3d0001f90e3009f6e8d494c926cdee20d161cecf17995f"
+          "source_sha256": "1d35c9c8a261421df0ea5084138f5825f88b4db1cdd5cec93b95f2fabf3eb447"
         },
         "en": {
           "path": "articles/assets/poc/poc_tdi_linescan/story.en.gif",
@@ -14205,7 +14170,7 @@
             0.1746
           ],
           "max_color_mad": 0.245,
-          "source_sha256": "0255c2cc7bd1d2355af56abd0d4162cf373921ba572de7d89069e9612c930c2d"
+          "source_sha256": "cb86c0445f9219a29e9385d84ae6ed1fc0c95a9f87c3b633a2950fb4c319256e"
         }
       },
       "thumbnail": {
@@ -15836,37 +15801,21 @@
             1600,
             1600
           ],
-          "bytes": 672571,
+          "bytes": 627949,
           "color_mad": [
             1.6031,
             0.0231,
             0.1598,
-            0.8932,
+            0.9128,
             0.039,
             0.0479
           ],
           "max_color_mad": 1.6031,
-          "source_sha256": "7a6c53624f76449f804f4ad2647bcba625dfcdbe4813ac49bebb9b45bd6c80ab"
+          "source_sha256": "9432fbab54eb4b7e73d6ec4cb4f751399e2513414ccf766aaa500807ed0f884c"
         },
         "en": {
           "path": "articles/assets/poc/poc_lidar_terrain_change/story.en.gif",
           "frames": [
-            {
-              "file": "15_real_dod_still.png",
-              "content_box": [
-                0,
-                0,
-                720,
-                720
-              ],
-              "thumbnail": {
-                "source": "articles/assets/poc/poc_lidar_terrain_change/15_real_dod_still.png",
-                "frame": null,
-                "crop": null,
-                "mode": "square",
-                "rendered": "view2026/thumbs/poc_lidar_terrain_change.jpg"
-              }
-            },
             {
               "file": "01_geometry.png",
               "content_box": [
@@ -15874,9 +15823,7 @@
                 289,
                 720,
                 112
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 6.410714
+              ]
             },
             {
               "file": "03_slope_cliff.png",
@@ -15886,6 +15833,17 @@
                 720,
                 463
               ]
+            },
+            {
+              "file": "05_density_cliff.png",
+              "content_box": [
+                0,
+                160,
+                720,
+                370
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.944444
             },
             {
               "file": "09_scene.png",
@@ -15928,17 +15886,17 @@
             1600,
             1600
           ],
-          "bytes": 672571,
+          "bytes": 362733,
           "color_mad": [
-            1.6031,
-            0.0231,
-            0.1598,
-            0.8932,
+            0.0232,
+            0.1597,
+            0.227,
+            0.9128,
             0.039,
             0.0479
           ],
-          "max_color_mad": 1.6031,
-          "source_sha256": "b8fcbd0ba43e8f25685777cdd9e5ac560827c7d3bd293160d4901af9dd33662c"
+          "max_color_mad": 0.9128,
+          "source_sha256": "91dad17605e1690273c624ff2a2c0b6e8292e159ddd8634e2af6a5f087509f7e"
         }
       },
       "thumbnail": {
@@ -15951,22 +15909,27 @@
       "en": {
         "text": "english_ready_frames",
         "selected": [
-          "15_real_dod_still.png",
           "01_geometry.png",
           "03_slope_cliff.png",
+          "05_density_cliff.png",
           "09_scene.png",
           "10_change_maps.png",
           "14_real_fill.png"
         ],
         "excluded_frames": [],
-        "not_english_ready": []
+        "not_english_ready": [
+          {
+            "file": "15_real_dod_still.png",
+            "class": "japanese"
+          }
+        ]
       },
       "reason": null,
       "cover": "15_real_dod_still.png",
       "still": "articles/assets/poc/poc_lidar_terrain_change/15_real_dod_still.png",
       "stills": {
         "ja": "articles/assets/poc/poc_lidar_terrain_change/15_real_dod_still.png",
-        "en": "articles/assets/poc/poc_lidar_terrain_change/15_real_dod_still.png"
+        "en": "articles/assets/poc/poc_lidar_terrain_change/01_geometry.png"
       },
       "alt": {
         "ja": "サムネイル用の静止画。13 の (b) と (c) を同じ色で並べた(表示は 2 m 角)。そのまま引くと区画全体が -0.183 m 沈んで見え、平坦部の中央値で合わせると美術館まわりの変化域だけが残る。改変: EPT の点を EPSG:3857 から NAD83 / UTM 15N へ変換し、区画 500 x 500 m に切り、地面点(分類 2)を 1 m セルで平均(補間なし)して差を取った。 Map services and data available from U.S. Geological Survey, National Geospatial Program. Lidar: USGS 3D Elevation Program, projects MO_StLouis_2012 and USGS_LPC_MO_StLouis_2017_LAS_2018 (Entwine Point Tiles, https://usgs-lidar-public.s3.amazonaws.com/); DEM: USGS one meter x73y429 MO SaintLouis 2017 (published 20200330); accessed October 2, 2026. Public domain; not endorsed by USGS.",
@@ -17936,12 +17899,12 @@
               "file": "02_pca_quadrant.png",
               "content_box": [
                 0,
-                293,
+                240,
                 720,
-                104
+                210
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 6.901316
+              "source_aspect": 3.427273
             },
             {
               "file": "03_width.png",
@@ -17958,12 +17921,10 @@
               "file": "04_symmetry_lies.png",
               "content_box": [
                 0,
-                211,
+                129,
                 720,
-                268
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.691176
+                432
+              ]
             }
           ],
           "frame_count": 5,
@@ -17974,16 +17935,16 @@
             1600,
             1600
           ],
-          "bytes": 437644,
+          "bytes": 453402,
           "color_mad": [
             1.5701,
             0.1319,
-            0.0334,
+            0.0344,
             0.1414,
-            0.0459
+            0.0299
           ],
           "max_color_mad": 1.5701,
-          "source_sha256": "cf2eab6b960a5ad4d7ab62ccb57dca460e67c5568e6e47a1ead009ac56936289"
+          "source_sha256": "f73262b552fbf9d731f1ae870f522442aced34607662f786b63d0abcc10323bd"
         },
         "en": {
           "path": "articles/assets/poc/poc_registration_basin/story.en.gif",
@@ -18016,17 +17977,6 @@
               "source_aspect": 2.447222
             },
             {
-              "file": "02_pca_quadrant.png",
-              "content_box": [
-                0,
-                293,
-                720,
-                104
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 6.901316
-            },
-            {
               "file": "03_width.png",
               "content_box": [
                 0,
@@ -18036,37 +17986,22 @@
               ],
               "contain_reason": "aspect_within_2_4",
               "source_aspect": 2.318056
-            },
-            {
-              "file": "04_symmetry_lies.png",
-              "content_box": [
-                0,
-                211,
-                720,
-                268
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.691176
             }
           ],
-          "frame_count": 5,
+          "frame_count": 3,
           "durations_ms": [
             2500,
             1600,
-            1600,
-            1600,
             1600
           ],
-          "bytes": 437644,
+          "bytes": 369071,
           "color_mad": [
-            1.5701,
+            1.5046,
             0.1319,
-            0.0334,
-            0.1414,
-            0.0459
+            0.1401
           ],
-          "max_color_mad": 1.5701,
-          "source_sha256": "06653aabb92e64ae8f2a9576c8482910529a35f3fafd4e4b5ea37bd71fc143ba"
+          "max_color_mad": 1.5046,
+          "source_sha256": "89e6030ca8d2fec9fea846cba22fc861c5781a91dfb1d87d8c8bdb3877c3d9b6"
         }
       },
       "thumbnail": {
@@ -18081,12 +18016,19 @@
         "selected": [
           "07_real_scan_still.png",
           "01_basin.png",
-          "02_pca_quadrant.png",
-          "03_width.png",
-          "04_symmetry_lies.png"
+          "03_width.png"
         ],
         "excluded_frames": [],
-        "not_english_ready": []
+        "not_english_ready": [
+          {
+            "file": "02_pca_quadrant.png",
+            "class": "japanese"
+          },
+          {
+            "file": "04_symmetry_lies.png",
+            "class": "japanese"
+          }
+        ]
       },
       "reason": null,
       "cover": "07_real_scan_still.png",

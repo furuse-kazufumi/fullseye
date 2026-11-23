@@ -17,7 +17,7 @@
  "entries": {
   "poc_cad_scan_deviation": {
    "poc": "examples/poc_cad_scan_deviation.py",
-   "data_dir_set": false,
+   "data_dir_set": true,
    "figures": {
     "01_scene.png": {
      "class": "bilingual",
@@ -142,10 +142,35 @@
      ]
     },
     "13_controls.png": {
-     "class": "bilingual",
-     "sha256": "c080eef16e01e1f99294bd1e27beb4632096a286d4caf67a16394884f0cca7c6",
+     "class": "japanese",
+     "sha256": "7d0603c14262dbeee7ecb875f424860d1467cdfdb98555ce8250035e43790afa",
      "same_bytes_as_audit_run": true,
-     "japanese_strings": []
+     "japanese_strings": [
+      "条件\ncondition",
+      "条件",
+      "点数\npoints",
+      "点数",
+      "可視面積 [mm^2]\nvisible area [mm^2]",
+      "可視面積 [mm^2]",
+      "姿勢 [度]\npose [deg]",
+      "姿勢 [度]",
+      "偏差RMS [µm]\ndeviation RMS [µm]",
+      "偏差RMS [µm]",
+      "公差外面積 推定/真値 [mm^2]",
+      "対照: 変換なし・欠陥なし・雑音なし\ncontrol: no transform, defects or noise",
+      "対照: 変換なし・欠陥なし・雑音なし",
+      "対照: 欠陥なし(雑音のみ)\ncontrol: no defects (noise only)",
+      "対照: 欠陥なし(雑音のみ)",
+      "対照: 雑音なし(欠陥のみ)\ncontrol: no noise (defects only)",
+      "対照: 雑音なし(欠陥のみ)",
+      "基準: 欠陥 + 雑音\nreference: defects + noise",
+      "基準: 欠陥 + 雑音",
+      "欠測: 片側スキャン\nmissing data: one-sided scan",
+      "欠測: 片側スキャン",
+      "密度 1/10",
+      "密度 1/50",
+      "欠測 + 密度 1/10"
+     ]
     },
     "14_align_orbit.gif": {
      "class": "bilingual",
@@ -1433,19 +1458,28 @@
     },
     "02_controls.png": {
      "class": "japanese",
-     "sha256": "72fe795f3694078d95f9e67f5852261a6dc360dc83226b437341f7e60ef00367",
+     "sha256": "0adbb38a856deff2b7f1686a1c607633549f43f0710db1ab085f4b12ead6e64d",
      "same_bytes_as_audit_run": true,
      "japanese_strings": [
-      "対照群: 変化が無いのに出てしまう土量",
+      "条件\ncondition",
       "条件",
+      "偽掘削 m3\nfalse erosion [m3]",
       "偽掘削 m3",
+      "偽堆積 m3\nfalse deposition [m3]",
       "偽堆積 m3",
+      "偽正味 m3\nfalse net [m3]",
       "偽正味 m3",
+      "偽変化面積 m2\nfalse changed area [m2]",
       "偽変化面積 m2",
+      "変化なし・遮蔽なし・誤差なし\nno change; no occlusion; no errors",
       "変化なし・遮蔽なし・誤差なし",
+      "変化なし・遮蔽 30 %\nno change; 30% occlusion",
       "変化なし・遮蔽 30 %",
+      "変化なし・系統誤差 0.10 m\nno change; 0.10 m systematic error",
       "変化なし・系統誤差 0.10 m",
+      "変化なし・遮蔽 + 系統誤差\nno change; occlusion + systematic error",
       "変化なし・遮蔽 + 系統誤差",
+      "変化なし・誤差なし + LoD 0.148 m でしきる\nno change or errors; threshold at LoD 0.148 m",
       "変化なし・誤差なし + LoD 0.148 m でしきる"
      ]
     },
@@ -1457,78 +1491,67 @@
     },
     "04_slope_table.png": {
      "class": "japanese",
-     "sha256": "075d16ce226761a68c737e385afe1d58ef539dcd04b2a196bfb1823e77fb9a57",
+     "sha256": "d5d49289b000cb141f1278673d6cc391d2b77e74f9939270bd3c63f8d0e78754",
      "same_bytes_as_audit_run": true,
      "japanese_strings": [
-      "傾斜掃引(変化ゼロの対照から測った検出限界)",
+      "傾斜 deg\nslope [deg]",
       "傾斜 deg",
       "sigma_dz 実測/予測 m",
       "sigma_L 実測/予測 m",
+      "比\nratio",
       "比"
      ]
     },
     "05_density_cliff.png": {
-     "class": "japanese",
-     "sha256": "bd334640fe8ed9bf471139129e6eae92df3c7c3ead684ab8189da001e0eca63e",
+     "class": "bilingual",
+     "sha256": "13727aa64f3a65b4c2b8ec35fa69fad191563b271d91bbebbace4a0b0a96b594",
      "same_bytes_as_audit_run": true,
-     "japanese_strings": [
-      "▷ DoD LoD95 実測",
-      "★ DoD 予測",
-      "○ M3C2 LoD95 実測",
-      "× M3C2 予測",
-      "・ C2C 最近傍距離(符号なし)",
-      "密度は「何 m の変化まで言えるか」を決める",
-      "点密度 [pt/m2]   |   距離 [m]"
-     ]
+     "japanese_strings": []
     },
     "06_systematic.png": {
-     "class": "japanese",
-     "sha256": "62e500a84715dd38e9e7bf78c4c321580060faa548ec92c413d5428b6f4c2814",
+     "class": "bilingual",
+     "sha256": "f186cb3d61b8636739ee87b561dbf521c7f33987314e0a10dc19b866d885609b",
      "same_bytes_as_audit_run": true,
-     "japanese_strings": [
-      "▷ 予測 (delta_z + tan θ delta_y) x 面積",
-      "★ DoD 偽正味",
-      "○ M3C2 偽正味(生値)",
-      "× M3C2 有効率で補正",
-      "・ 位置合わせ後の DoD",
-      "系統誤差が生む偽の土量は傾斜に比例する",
-      "水平の系統ずれ [m]   |   偽の正味土量 [m3]"
-     ]
+     "japanese_strings": []
     },
     "07_occlusion.png": {
      "class": "japanese",
-     "sha256": "31ba8f608277fe80f528285643983115385fc86aac6173d506519ae025b76005",
+     "sha256": "81512c3a765442c3d6fe68c2fd982abdca16db6ba24b9af2d8f7b05c9ab176c6",
      "same_bytes_as_audit_run": true,
      "japanese_strings": [
-      "樹冠の遮蔽 —— 直すのは代表値ではなく分類の窓",
+      "遮蔽 %\nocclusion [%]",
       "遮蔽 %",
+      "地面点 %\nground points [%]",
       "地面点 %",
+      "取りこぼし %\nleakage [%]",
       "取りこぼし %",
+      "全滅セル\ncells with no ground returns",
       "全滅セル",
+      "平均 DEM m3\nmean DEM [m3]",
       "平均 DEM m3",
+      "誤差 %\nerror [%]",
       "誤差 %",
+      "中央値 DEM m3\nmedian DEM [m3]",
       "中央値 DEM m3",
+      "3x3 窓 m3\n3x3 window [m3]",
       "3x3 窓 m3",
+      "空セル\nempty cells",
       "空セル",
+      "しきい値以上の真値 m3\ntruth above threshold [m3]",
       "しきい値以上の真値 m3",
+      "分類なし m3\nunclassified [m3]",
       "分類なし m3"
      ]
     },
     "08_occlusion_lod.png": {
-     "class": "japanese",
-     "sha256": "1c610739608092e042456eb4930567e20d70c37eee638c1ba5f632843a737eaf",
+     "class": "bilingual",
+     "sha256": "a4df2b32fb3ba3430b5331ebe67dc6523024d1eadc89789f0b5714b5deb46ba6",
      "same_bytes_as_audit_run": true,
-     "japanese_strings": [
-      "▷ LoD95(標準偏差)",
-      "★ LoD95(MAD、外れ値に強い)",
-      "○ 固定 LoD(遮蔽 0 で決めた値)",
-      "分類の取りこぼしが検出限界を飛ばす",
-      "樹冠での遮蔽率 [%]   |   検出できる最小の変化 [m]"
-     ]
+     "japanese_strings": []
     },
     "09_scene.png": {
      "class": "bilingual",
-     "sha256": "57b770e2a7ff8c8ab85a1e82e46225a5bfd6323d2d27eac5c5c709fdadd7214d",
+     "sha256": "9652b65c3d7b880e806877dfc33f0ac39d14e968a311e9855eb8fb4a498d9493",
      "same_bytes_as_audit_run": true,
      "japanese_strings": []
     },
@@ -1539,16 +1562,10 @@
      "japanese_strings": []
     },
     "11_scar_profile.png": {
-     "class": "japanese",
-     "sha256": "dadbf25fe12536f4c2efc6a50c8e21663778ab9986548a30be4ad438f5cc88bf",
+     "class": "bilingual",
+     "sha256": "ecd750a02c50a4b5390330c7864a9aa1092fd65a9e9b3cb957fb183bee20fd7e",
      "same_bytes_as_audit_run": true,
-     "japanese_strings": [
-      "▷ 真の鉛直変位 -d",
-      "★ DoD の dz",
-      "○ M3C2 の L(法線方向)",
-      "同じ崩壊、2 つの「深さ」",
-      "x [m](崩壊中心を通る東西断面)   |   変化量 [m]"
-     ]
+     "japanese_strings": []
     },
     "12_flight.gif": {
      "class": "japanese",
@@ -1595,16 +1612,19 @@
      "japanese_strings": []
     },
     "15_real_dod_still.png": {
-     "class": "bilingual",
-     "sha256": "26a52d76ccb4a3803eeb8b446ea6b716b27ee63a4721d53658b2092ee9f1c340",
+     "class": "japanese",
+     "sha256": "ca2db0e665a25e14d3321afacbf347ec9918555109a8cb936d21b1e5e68891ab",
      "same_bytes_as_audit_run": true,
-     "japanese_strings": []
+     "japanese_strings": [
+      "2 時期の航空 LiDAR の差(実データ)\ntwo-epoch airborne LiDAR change (real data)",
+      "濃灰 = 地面点なし(建物・池・樹冠の下)\ndark grey = no ground points (under buildings, ponds, canopy)"
+     ]
     }
    }
   },
   "poc_moire_alignment": {
    "poc": "examples/poc_moire_alignment.py",
-   "data_dir_set": false,
+   "data_dir_set": true,
    "figures": {
     "01_marks.png": {
      "class": "japanese",
@@ -1643,10 +1663,13 @@
      "japanese_strings": []
     },
     "05_differential.png": {
-     "class": "bilingual",
-     "sha256": "a0f18ea7cfc58e4e68312d2effccb83657e9021a1623f34f24440dafbd642bc1",
+     "class": "japanese",
+     "sha256": "dae41c494a987df5f2cfddea46225cd5328447fa1b1796fbaf26dbfe151020ed",
      "same_bytes_as_audit_run": true,
-     "japanese_strings": []
+     "japanese_strings": [
+      "差動で共通の誤差が消える(単一 -6.2 nm → 差動 0.01 nm)\ndifferential pairs cancel common error (single -6.2 nm → differential 0.01 nm)",
+      "差動で共通の誤差が消える(単一 -6.2 nm → 差動 0.01 nm)"
+     ]
     },
     "06_quad_mark.png": {
      "class": "bilingual",
@@ -1655,17 +1678,10 @@
      "japanese_strings": []
     },
     "07_ambiguity.png": {
-     "class": "japanese",
-     "sha256": "d1a9c621f59a1de9e44d53237b4d8562817ba3b66d349c6fb8d699e295aa4ec6",
+     "class": "bilingual",
+     "sha256": "5c6f15b1b72d108e134ddf7a0856e6d4cb6caab0d2f26f40c74e5c62ab83236e",
      "same_bytes_as_audit_run": true,
-     "japanese_strings": [
-      "▷ 真値",
-      "× 単一の対(2.04 µm で折り返す)",
-      "・ 差動(1.01 µm で折り返す)",
-      "★ 粗い相互相関で次数を決めた差動",
-      "縞の位相は 1 周期で折り返す —— 粗い読みで次数を決める",
-      "与えたずれ [nm]   |   読んだずれ [nm]"
-     ]
+     "japanese_strings": []
     },
     "08_talbot_gap.png": {
      "class": "bilingual",
@@ -1674,16 +1690,19 @@
      "japanese_strings": []
     },
     "09_overlay_cover.png": {
-     "class": "bilingual",
-     "sha256": "09635d90ca5f94ddd441e1299f25cecd6032fcf667ced90c06d3ebc2b747383d",
+     "class": "japanese",
+     "sha256": "677a0d1a8b257126cbcbf773350f5ba337d256ea9c49d841aa57dd138dc7a85a",
      "same_bytes_as_audit_run": true,
-     "japanese_strings": []
+     "japanese_strings": [
+      "③ 0.6 µm ずらす → 縞は 30 µm 動く\n③ shift 0.6 µm → fringes move 30 µm",
+      "③ 0.6 µm ずらす → 縞は 30 µm 動く"
+     ]
     }
    }
   },
   "poc_photoelasticity": {
    "poc": "examples/poc_photoelasticity.py",
-   "data_dir_set": false,
+   "data_dir_set": true,
    "figures": {
     "01_polariscope.png": {
      "class": "bilingual",
@@ -1693,7 +1712,7 @@
     },
     "02_unwrap.png": {
      "class": "bilingual",
-     "sha256": "3d48b13175ec52a0f7730ea981a0b48f78a7484822cc09f0ae3cfe22066bed02",
+     "sha256": "46b09184e9d31090d8de164c6efe0b24dd83439cd96a34c63b259a2cce3cb029",
      "same_bytes_as_audit_run": true,
      "japanese_strings": []
     },
@@ -1919,10 +1938,27 @@
      "japanese_strings": []
     },
     "02_pca_quadrant.png": {
-     "class": "bilingual",
-     "sha256": "21e4c6ff417c07d6ff28f0d1a998a931c7a82a34ce59d7149ee089db8071bb7f",
+     "class": "japanese",
+     "sha256": "a197309e26a4167a87b468f356f8360105229bd5bfbf1022a91a3b671e60458f",
      "same_bytes_as_audit_run": true,
-     "japanese_strings": []
+     "japanese_strings": [
+      "形状\nshape",
+      "形状",
+      "第1候補 度\nfirst candidate [deg]",
+      "第1候補 度",
+      "第2候補 度\nsecond candidate [deg]",
+      "第2候補 度",
+      "象限誤り %\nquadrant errors [%]",
+      "象限誤り %",
+      "選ばれた解 度\nselected solution [deg]",
+      "選ばれた解 度",
+      "非対称 強(角柱 1.0)\nstrong asymmetry (peg 1.0)",
+      "非対称 強(角柱 1.0)",
+      "非対称 弱(角柱 0.25)\nweak asymmetry (peg 0.25)",
+      "非対称 弱(角柱 0.25)",
+      "対称(素の直方体)\nsymmetric (plain box)",
+      "対称(素の直方体)"
+     ]
     },
     "03_width.png": {
      "class": "bilingual",
@@ -1931,10 +1967,34 @@
      "japanese_strings": []
     },
     "04_symmetry_lies.png": {
-     "class": "bilingual",
-     "sha256": "d157eac9bf324587f939bdcc1f3c37e57ef3a997175f2a5d8400a2deeb6cbc9d",
+     "class": "japanese",
+     "sha256": "2cfa1cfee635daedd88550caa56a913c6ba8ea4a29ebf593a4ae9af166ea53ce",
      "same_bytes_as_audit_run": true,
-     "japanese_strings": []
+     "japanese_strings": [
+      "初期化\ninitialisation",
+      "初期化",
+      "形状\nshape",
+      "形状",
+      "残差/直径",
+      "回転誤差 度\nrotation error [deg]",
+      "回転誤差 度",
+      "見かけ収束\napparent convergence",
+      "見かけ収束",
+      "誤姿勢\nwrong pose",
+      "誤姿勢",
+      "局所\nlocal",
+      "局所",
+      "非対称当て金\nasymmetric bracket",
+      "非対称当て金",
+      "素の直方体\nplain box",
+      "素の直方体",
+      "球\nsphere",
+      "球",
+      "円柱\ncylinder",
+      "円柱",
+      "大域\nglobal",
+      "大域"
+     ]
     },
     "05_icp_basin_iterations.gif": {
      "class": "japanese",
@@ -2997,11 +3057,11 @@
   },
   "poc_tdi_linescan": {
    "poc": "examples/poc_tdi_linescan.py",
-   "data_dir_set": false,
+   "data_dir_set": true,
    "figures": {
     "01_tdi_stages_defects.png": {
      "class": "bilingual",
-     "sha256": "66d53d12b6ef43052ad1ffa783bbc38c0fa357d2a22f21bde31b63cea1d3002f",
+     "sha256": "39d06d175bd7c3511097cc4009d24ebbd332369844f137eee9ad1f519644d29f",
      "same_bytes_as_audit_run": true,
      "japanese_strings": []
     },
