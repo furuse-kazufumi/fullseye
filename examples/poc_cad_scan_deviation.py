@@ -139,6 +139,11 @@ def _bi(ja, en):
     """図の札を日本語 / English の順で返す。 / Return a bilingual figure label."""
     return "%s / %s" % (ja, en)
 
+
+def _bi_table(ja, en):
+    """表のセルを日本語、英語の 2 行で返す。 / Stack bilingual table text."""
+    return "%s\n%s" % (ja, en)
+
 # --- 欠陥の諸元(すべて真値として仕込む) --------------------------------------- #
 DENT_C = np.array([-8.0, 6.0, H])  # 局所へこみの中心(上面)
 DENT_H = 0.45                      # へこみの深さ [mm]
@@ -1326,12 +1331,12 @@ def section_controls(ref: CadRef) -> dict:
         "密度 1/10": "density 1/10", "密度 1/50": "density 1/50",
         "欠測 + 密度 1/10": "missing data + density 1/10",
     }
-    display_rows = [[_bi(r[0], condition_en[r[0]])] + r[1:] for r in rows]
-    figs.save_table("controls", [_bi("条件", "condition"), _bi("点数", "points"),
-                                 _bi("可視面積 [mm^2]", "visible area [mm^2]"),
-                                 _bi("姿勢 [度]", "pose [deg]"),
-                                 _bi("偏差RMS [µm]", "deviation RMS [µm]"),
-                                 _bi("公差外面積 推定/真値 [mm^2]", "O.O.T. est./true [mm^2]")],
+    display_rows = [[_bi_table(r[0], condition_en[r[0]])] + r[1:] for r in rows]
+    figs.save_table("controls", [_bi_table("条件", "condition"), _bi_table("点数", "points"),
+                                 _bi_table("可視面積 [mm^2]", "visible area [mm^2]"),
+                                 _bi_table("姿勢 [度]", "pose [deg]"),
+                                 _bi_table("偏差RMS [µm]", "deviation RMS [µm]"),
+                                 _bi_table("公差外面積 推定/真値 [mm^2]", "O.O.T. est./true [mm^2]")],
                     display_rows, title=_bi("対照群 —— 要因を 1 つずつ止める",
                                             "controls — disable one factor at a time"))
     return out

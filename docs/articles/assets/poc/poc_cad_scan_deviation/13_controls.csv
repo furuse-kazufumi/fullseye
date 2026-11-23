@@ -1,9 +1,23 @@
-﻿条件 / condition,点数 / points,可視面積 [mm^2] / visible area [mm^2],姿勢 [度] / pose [deg],偏差RMS [µm] / deviation RMS [µm],公差外面積 推定/真値 [mm^2] / O.O.T. est./true [mm^2]
-"対照: 変換なし・欠陥なし・雑音なし / control: no transform, defects or noise",24002,8267,0.0037,4.5,1.4 / 0.0
-対照: 欠陥なし(雑音のみ) / control: no defects (noise only),24002,8267,0.0022,20.4,1.4 / 0.0
-対照: 雑音なし(欠陥のみ) / control: no noise (defects only),24002,8267,0.0247,79.2,2358.1 / 2532.7 (-6.9 %)
-基準: 欠陥 + 雑音 / reference: defects + noise,24002,8267,0.0230,81.6,2318.8 / 2533.4 (-8.5 %)
-欠測: 片側スキャン / missing data: one-sided scan,11846,4080,0.0587,76.1,1159.8 / 1292.0 (-10.2 %)
-密度 1/10 / density 1/10,2400,827,0.0321,85.9,232.2 / 254.5 (-8.8 %)
-密度 1/50 / density 1/50,480,165,0.0483,72.3,36.2 / 43.4 (-16.7 %)
-欠測 + 密度 1/10 / missing data + density 1/10,1185,408,0.0639,72.7,111.3 / 123.3 (-9.8 %)
+﻿"条件
+condition","点数
+points","可視面積 [mm^2]
+visible area [mm^2]","姿勢 [度]
+pose [deg]","偏差RMS [µm]
+deviation RMS [µm]","公差外面積 推定/真値 [mm^2]
+O.O.T. est./true [mm^2]"
+"対照: 変換なし・欠陥なし・雑音なし
+control: no transform, defects or noise",24002,8267,0.0037,4.5,1.4 / 0.0
+"対照: 欠陥なし(雑音のみ)
+control: no defects (noise only)",24002,8267,0.0022,20.4,1.4 / 0.0
+"対照: 雑音なし(欠陥のみ)
+control: no noise (defects only)",24002,8267,0.0247,79.2,2358.1 / 2532.7 (-6.9 %)
+"基準: 欠陥 + 雑音
+reference: defects + noise",24002,8267,0.0230,81.6,2318.8 / 2533.4 (-8.5 %)
+"欠測: 片側スキャン
+missing data: one-sided scan",11846,4080,0.0587,76.1,1159.8 / 1292.0 (-10.2 %)
+"密度 1/10
+density 1/10",2400,827,0.0321,85.9,232.2 / 254.5 (-8.8 %)
+"密度 1/50
+density 1/50",480,165,0.0483,72.3,36.2 / 43.4 (-16.7 %)
+"欠測 + 密度 1/10
+missing data + density 1/10",1185,408,0.0639,72.7,111.3 / 123.3 (-9.8 %)
