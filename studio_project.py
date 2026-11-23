@@ -154,6 +154,15 @@ def is_hidden_dir(name):
 
 
 _BAD_NAME_CHARS = re.compile(r'[<>:"|?*\x00-\x1f]')
+#: 先頭が Windows の根付きの形(``C:`` ・ ``\\`` ・ ``/`` ・ ``\x``)。OS に依らず字句で断る。
+#: Linux の os.path では ``C:\x`` や ``\\srv\share`` は「普通の名前」になり、同じプロジェクトを
+#: Windows で開いた時だけ根付きになる(2026-11-23、Linux CI で見つかった)。
+_ROOTED_ON_ANY_OS = re.compile(r"^(?:[A-Za-z]:|[\\/])")
+
+
+def _rooted_on_any_os(path):
+    """*path* がどれかの OS で絶対・ドライブ付き・UNC・根付きなら True(字句だけで決める)。"""
+    return os.path.isabs(path) or bool(os.path.splitdrive(path)[0]) or bool(_ROOTED_ON_ANY_OS.match(path))
 
 
 def validate_name(name):
@@ -162,7 +171,7 @@ def validate_name(name):
     if not isinstance(name, str) or not name.strip():
         raise ValueError("the name is empty")
     name = name.strip()
-    if os.path.isabs(name) or os.path.splitdrive(name)[0]:
+    if _rooted_on_any_os(name):
         raise ValueError("an absolute path is not accepted; give a name inside the project folder")
     if re.search(r"[\\/]", name):
         raise ValueError("a name cannot contain / or \\ ; it must stay in the folder you chose")
@@ -177,7 +186,7 @@ def resolve_inside(root, rel):
     """*root* の中に解決されるパスだけを返す(``..`` ・絶対パス・外へ出るリンクは ValueError)。"""
     if not isinstance(rel, str) or not rel.strip():
         raise ValueError("the path is empty")
-    if os.path.isabs(rel) or os.path.splitdrive(rel)[0]:
+    if _rooted_on_any_os(rel.strip()):
         raise ValueError("an absolute path is not accepted; give a path inside the project folder")
     if ".." in re.split(r"[\\/]+", rel):
         raise ValueError("'..' is not accepted; the path must stay inside the project folder")

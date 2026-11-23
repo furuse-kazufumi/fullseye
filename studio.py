@@ -15943,8 +15943,10 @@ def build_window(model=None, start_mode="pipeline"):
                     raise ValueError("%s needs a file path argument" % name)
                 pipe_path = state.get("pipe_path")
                 if pipe_path:
+                    # 字句の検査は dirname の前に、パイプラインのパスそのものへ(Linux の dirname は
+                    # ``\\server\share\pipe.json`` を "" にし、UNC の形を落とす)。
                     folder = os.path.dirname(str(pipe_path)) or os.curdir
-                    base_problem = _folder_problem(folder)
+                    base_problem = _folder_problem(str(pipe_path)) or _folder_problem(folder)
                     if base_problem:
                         raise ValueError("3-D file was not read because %s" % base_problem)
                     path_problem = _plain_relative_path_problem(path)
