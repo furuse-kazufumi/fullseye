@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ctypes as C
 import gc
+import json
 import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -31,6 +32,7 @@ FS_VALUE_OBJECTSET = 3
 FS_VALUE_FEATURE = 4
 FS_VALUE_COLOR = 6
 FS_VALUE_VOLUME = 7
+MIN_CALLABLE_C_API_OPS = 682
 
 
 class InitOptions(C.Structure):
@@ -198,6 +200,17 @@ def _typed_array(array: np.ndarray, kind: int) -> tuple[InputN, np.ndarray]:
     return InputN(C.sizeof(InputN), kind, ImageView(), 0, 0, view, 0.0), values
 
 
+def _typed_array_with_dtype(shape, kind: int, dtype: int, numpy_dtype) -> tuple[InputN, np.ndarray]:
+    """Build an oversized typed view for refusal tests / 拒否試験用の余裕ある view を組む。"""
+    layout = np.empty(shape, dtype=numpy_dtype, order="C")
+    values = np.ones(int(np.prod(shape)) * 2, dtype=numpy_dtype)
+    full_shape = (C.c_int64 * 4)(*shape, *([0] * (4 - len(shape))))
+    full_strides = (C.c_int64 * 4)(*layout.strides, *([0] * (4 - len(shape))))
+    view = ArrayView(C.sizeof(ArrayView), int(values.ctypes.data), values.nbytes, len(shape),
+                     full_shape, full_strides, dtype)
+    return InputN(C.sizeof(InputN), kind, ImageView(), 0, 0, view, 0.0), values
+
+
 def _feature(value: float) -> InputN:
     return InputN(C.sizeof(InputN), FS_VALUE_FEATURE, ImageView(), 0, 0, ArrayView(), value)
 
@@ -232,14 +245,21 @@ def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(ab
     全生成対象を既存 ``inputs_for`` 探針で C 経由・Python 直呼びの両方に通す。配列は
     byte-for-byte equality; scalar feature も同じ一回の呼出しで比較する。
     """
-    from conftest import copy_input, inputs_for
+    from conftest import inputs_for, requires_full_registry
+    requires_full_registry()
     import ops
     from fullseye import c_api_bridge
 
     lib, _runtime = abi
     registry = {op.name: op for op in ops.REGISTRY}
-    rows = [row for row in c_api_bridge.catalog()["ops"] if row["callable"]]
-    assert len(rows) == 682
+    catalog = c_api_bridge.catalog()
+    rows = [row for row in catalog["ops"] if row["callable"]]
+    generated = json.loads(
+        (ROOT / "fullseye" / "data" / "C_API_OPS.json").read_text(encoding="utf-8"))
+    expected_count = generated["n_callable"]
+    assert expected_count >= MIN_CALLABLE_C_API_OPS
+    assert expected_count == sum(row["callable"] for row in generated["ops"])
+    assert catalog["n_callable"] == len(rows) == expected_count
     exercised = []
     for row in rows:
         if row["tier"] == "contract":
@@ -249,24 +269,26 @@ def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(ab
         candidate = next((value for name, value in candidates if name in {"normal", "unit"}), candidates[0][1])
         held = []
         borrowed = []
+        if row["in_sort"] != "feature":
+            c_input = np.array(candidate, dtype=np.float64, order="C", copy=True)
+            direct_input = np.array(candidate, dtype=np.float64, order="C", copy=True)
+            assert np.shares_memory(c_input, direct_input) is False, row["id"]
         if row["in_sort"] == "image":
-            input_value = _image(np.ascontiguousarray(candidate, dtype=np.float64))
-            direct_input = np.asarray(candidate, dtype=np.float64)
+            held.append(c_input)
+            input_value = _image(c_input)
         elif row["in_sort"] == "region":
-            mask = np.ascontiguousarray(candidate, dtype=np.float64)
-            status, seed = _call(abi, "contract:threshold", [_image(mask)], '{"lo":0.5,"hi":1.0}')
+            held.append(c_input)
+            status, seed = _call(abi, "contract:threshold", [_image(c_input)],
+                                 '{"lo":0.5,"hi":1.0}')
             assert status == FS_OK, row["id"]
             borrowed.append(seed)
             input_value = _borrow(FS_VALUE_REGION, seed)
-            direct_input = mask
         elif row["in_sort"] == "color":
-            input_value, keep = _typed_array(candidate, FS_VALUE_COLOR)
+            input_value, keep = _typed_array(c_input, FS_VALUE_COLOR)
             held.append(keep)
-            direct_input = keep
         elif row["in_sort"] == "volume":
-            input_value, keep = _typed_array(candidate, FS_VALUE_VOLUME)
+            input_value, keep = _typed_array(c_input, FS_VALUE_VOLUME)
             held.append(keep)
-            direct_input = keep
         else:
             input_value = _feature(float(candidate))
             direct_input = float(candidate)
@@ -283,7 +305,7 @@ def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(ab
                     {"lo": 0.5, "hi": 1.0} if row["name"] == "threshold"
                     else {"sigma": 0.5} if row["name"] == "gauss" else {}))
             else:
-                direct = _direct_registry(registry[row["name"]], copy_input(direct_input))
+                direct = _direct_registry(registry[row["name"]], direct_input)
             got = _c_output(lib, result, row["out_sort"])
             if row["out_sort"] == "region":
                 expected = _direct_runs(direct if isinstance(direct, fslib.Region)
@@ -414,6 +436,48 @@ def test_invalid_image_views_are_rejected(abi, case, expected):
         input_value.image.dtype = 999
     status, result = _call(abi, "contract:threshold", [input_value], '{"lo":0.2,"hi":0.8}')
     assert status == expected and not result.value
+
+
+@pytest.mark.parametrize("kind,shape,op", [
+    (FS_VALUE_COLOR, (2, 2, 3), "registry:rgb1_to_gray"),
+    (FS_VALUE_VOLUME, (2, 2, 2), "registry:vol_gaussian"),
+])
+@pytest.mark.parametrize("dtype,numpy_dtype", [
+    (1, np.uint8),
+    (2, np.uint16),
+    (3, np.float32),
+    (4, np.float64),
+])
+@pytest.mark.parametrize("case", ["short_buffer", "extra_shape", "extra_stride", "inner_stride"])
+def test_invalid_color_and_volume_views_are_rejected_for_every_dtype(
+        abi, kind, shape, op, dtype, numpy_dtype, case):
+    """Reject malformed typed views for every dtype / 全 dtype で不正 view を拒否する。"""
+    lib, _runtime = abi
+    input_value, keep = _typed_array_with_dtype(shape, kind, dtype, numpy_dtype)
+    element = keep.dtype.itemsize
+    if case == "short_buffer":
+        input_value.array.data_bytes = int(np.prod(shape)) * element - 1
+    elif case == "extra_shape":
+        input_value.array.shape[len(shape)] = 1
+    elif case == "extra_stride":
+        input_value.array.stride_bytes[len(shape)] = element
+    else:
+        input_value.array.stride_bytes[1] += element
+    status, result = _call(abi, op, [input_value])
+    if result.value:
+        assert lib.fs_result_release_n(result) == FS_OK
+    assert status == FS_E_SHAPE
+
+
+@pytest.mark.parametrize("kind,shape,op", [
+    (FS_VALUE_COLOR, (2, 2, 3), "registry:rgb1_to_gray"),
+    (FS_VALUE_VOLUME, (2, 2, 2), "registry:vol_gaussian"),
+])
+def test_color_and_volume_views_reject_unknown_dtype(abi, kind, shape, op):
+    """Reject an unknown typed-array dtype / 未知の配列 dtype を拒否する。"""
+    input_value, _keep = _typed_array_with_dtype(shape, kind, 999, np.uint8)
+    status, result = _call(abi, op, [input_value])
+    assert status == FS_E_TYPE and not result.value
 
 
 def test_null_input_array_unknown_ops_and_extra_json_are_rejected(abi):

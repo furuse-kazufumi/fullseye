@@ -97,9 +97,10 @@ typedef struct fs_image_view {
     { (uint32_t)sizeof(fs_image_view_t), NULL, 0u, 0, 0, 0, FS_DTYPE_F64, 0.0, 1.0 }
 
 /* Dense color/volume view used by the typed C SDK input and result accessors.
- * ndim is exactly 3 for color (H,W,3), and 3 or 4 for volume.  The shape and
- * stride entries after ndim are ignored and must be zero. / 型付き C SDK の
- * color/volume 用密配列 view。color は (H,W,3)、volume は 3 または 4 次元。 */
+ * ndim is exactly 3 for color (H,W,3), and 3 or 4 for volume.  Reserved shape
+ * and stride entries after ndim must be zero. / 型付き C SDK の color/volume
+ * 用密配列 view。color は (H,W,3)、volume は 3 または 4 次元で、ndim より
+ * 後ろの予約済み shape/stride はゼロでなければならない。 */
 typedef struct fs_array_view {
     uint32_t struct_size;
     const void *data;
@@ -145,8 +146,11 @@ FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime);
  *
  * Pointer entry points accept valid NUL-terminated C strings. Result
  * pointers must not be used after fs_result_release(); that is undefined.
+ * Direct input buffers are borrowed only for the duration of fs_call() or
+ * fs_call_id_n(); the library does not retain their pointers after return.
  * ABI 0.1 旧入口は有効な NUL 終端 C 文字列を受ける。fs_result_release() 後の
- * 結果ポインタ利用は未定義で、呼出し側の責任。 */
+ * 結果ポインタ利用は未定義で、呼出し側の責任。直接入力のバッファは fs_call()
+ * または fs_call_id_n() の呼出し中だけ借用し、復帰後はポインタを保持しない。 */
 FS_API fs_status_t FS_CALL fs_find_ops_json(fs_runtime_t *runtime,
                                              const char *query_json,
                                              char **out_utf8,

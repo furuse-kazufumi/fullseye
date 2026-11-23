@@ -218,6 +218,12 @@ fs_status_t validate_array(const fs_runtime_t *runtime, const fs_array_view_t &v
         set_error(runtime, "color requires shape (height, width, 3)");
         return FS_E_SHAPE;
     }
+    for (uint32_t i = view.ndim; i < 4u; ++i) {
+        if (view.shape[i] != 0 || view.stride_bytes[i] != 0) {
+            set_error(runtime, "array shape and stride entries after ndim must be zero");
+            return FS_E_SHAPE;
+        }
+    }
     const size_t element = dtype_size(view.dtype);
     if (element == 0u) {
         set_error(runtime, "array dtype is unknown");
@@ -243,22 +249,24 @@ fs_status_t validate_array(const fs_runtime_t *runtime, const fs_array_view_t &v
             return FS_E_SHAPE;
         }
     }
+    size_t contiguous_stride = element;
+    for (uint32_t axis = view.ndim; axis-- > 1u;) {
+        if (static_cast<size_t>(view.stride_bytes[axis]) != contiguous_stride) {
+            set_error(runtime, "array must be contiguous after its first axis");
+            return FS_E_SHAPE;
+        }
+        if (!checked_mul(contiguous_stride, static_cast<size_t>(view.shape[axis]),
+                         &contiguous_stride)) {
+            set_error(runtime, "array contiguous byte extent overflows size_t");
+            return FS_E_SHAPE;
+        }
+    }
     if (view.data_bytes < required || reinterpret_cast<uintptr_t>(view.data) % element != 0u) {
         set_error(runtime, "array data_bytes is too small or data is misaligned");
         return FS_E_SHAPE;
     }
     if (view.dtype == FS_DTYPE_F32 || view.dtype == FS_DTYPE_F64) {
         const auto *base = static_cast<const unsigned char *>(view.data);
-        for (uint32_t axis = 1u; axis < view.ndim; ++axis) {
-            size_t contiguous_stride = element;
-            for (uint32_t tail = axis + 1u; tail < view.ndim; ++tail) {
-                contiguous_stride *= static_cast<size_t>(view.shape[tail]);
-            }
-            if (static_cast<size_t>(view.stride_bytes[axis]) != contiguous_stride) {
-                set_error(runtime, "array must be contiguous after its first axis");
-                return FS_E_SHAPE;
-            }
-        }
         size_t rest = 1u;
         for (uint32_t axis = 1u; axis < view.ndim; ++axis) rest *= static_cast<size_t>(view.shape[axis]);
         for (int64_t d0 = 0; d0 < view.shape[0]; ++d0) {
