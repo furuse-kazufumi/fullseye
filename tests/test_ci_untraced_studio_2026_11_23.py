@@ -23,6 +23,7 @@ EXPECTED_CALLERS = {
     "tests/test_studio_python_mode_review2_2026_11_13.py::test_r5_a_run_is_not_started_while_a_value_helper_thread_is_left",
     "tests/test_studio_python_mode_review2_2026_11_13.py::test_r7_the_next_run_waits_until_the_late_restore_of_an_abandoned_run_is_done",
     "tests/test_studio_python_mode_review3_2026_11_15.py::test_s1_a_selection_that_cannot_be_stopped_is_put_back_when_it_ends",
+    "tests/test_bench_ops.py::test_smoke_run_is_fast_enough_for_ci",
 }
 
 
