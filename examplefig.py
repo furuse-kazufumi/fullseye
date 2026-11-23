@@ -422,7 +422,13 @@ def _append_colorbar(rgb, values, unit="", cmap="turbo", signed=False, vrange=No
         y0, y1 = 0, h - 1
     bh = max(1, y1 - y0 + 1)
     ramp = np.linspace(hi, lo, bh)[:, None]
-    bar = np.asarray(fs.apply_cmap(ramp, name=cmap or "turbo", vmin=lo, vmax=hi), np.float64)
+    if signed and cmap is None:
+        lut = np.asarray(fs.diverging_lut(256), np.float64)
+        idx = np.clip(((ramp / max(abs(lo), abs(hi))) * 0.5 + 0.5) * 255.0,
+                      0, 255).astype(np.int32)
+        bar = lut[idx]
+    else:
+        bar = np.asarray(fs.apply_cmap(ramp, name=cmap or "turbo", vmin=lo, vmax=hi), np.float64)
     bx, bw = w + 10, 14
     canvas[y0:y0 + bh, bx:bx + bw] = bar[:, :1, :3]
     text_h = 28  # fullseye's built-in bitmap text plate at font_size=10
@@ -465,7 +471,7 @@ def save(name: str, image, caption: str = "", signed: bool = False,
         rgb = _to_rgb8(image, signed, gray, vrange, cmap)
         if colorbar:
             rgb = (_append_colorbar(rgb.astype(np.float64) / 255.0, image, unit=unit,
-                                    cmap=cmap or "turbo", signed=signed, vrange=vrange) * 255
+                                    cmap=cmap, signed=signed, vrange=vrange) * 255
                    ).astype(np.uint8)
         path = d / ("%02d_%s.png" % (len(_manifest) + 1, name))
         fs.write_image(str(path), rgb)     # uint8 はそのまま画素値(api.write_image)
@@ -699,7 +705,7 @@ def _panel(v, signed=False, title="", gray=False, vrange=None, colorbar=False,
 
     rgb = _to_rgb8(v, signed, gray, vrange, cmap).astype(np.float64) / 255.0
     if colorbar:
-        rgb = _append_colorbar(rgb, v, unit=unit, cmap=cmap or "turbo",
+        rgb = _append_colorbar(rgb, v, unit=unit, cmap=cmap,
                                signed=signed, vrange=vrange)
     if title:
         rgb = np.asarray(fs.text_box(rgb, title, (6, 6), anchor="lt", font_size=12))
@@ -820,7 +826,7 @@ def _upscale(imgs, factor):
 def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str = "",
               caption: str = "", size=(560, 360), xlim=None, ylim=None,
               kinds=None, styles=None, colors=None, aspect=None, source: str = "",
-              scale=None) -> Path | None:
+              scale=None, legend_position=None) -> Path | None:
     """折れ線・散布のグラフを書く。``series`` = ``[(ラベル, x, y), ...]``。``source`` は :func:`save` と同じ(出典)。
 
     ``styles`` は系列ごとの線種(``None`` / ``"dashed"`` / ``"dotted"``)の列。**真値・参照線は破線**にする
@@ -838,7 +844,8 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
     try:
         img = render_plot(series, xlabel=xlabel, ylabel=ylabel, title=title or name, size=size,
                           xlim=xlim, ylim=ylim, kinds=kinds, styles=styles, colors=colors,
-                          aspect=aspect, scale=_figure_scale(scale))
+                          aspect=aspect, scale=_figure_scale(scale),
+                          legend_position=legend_position)
         return save(name, img, caption, source=source)
     except Exception as exc:                            # noqa: BLE001
         _errors.append("%s(plot): %s: %s" % (name, type(exc).__name__, exc))
@@ -920,7 +927,7 @@ def _render_heatmap(values, xvalues, yvalues, xlabel: str = "", ylabel: str = ""
 
 def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", size=(560, 360),
                 xlim=None, ylim=None, kinds=None, styles=None, colors=None, aspect=None,
-                scale=None):
+                scale=None, legend_position=None):
     """:func:`save_plot` の絵だけを返す(``(h, w, 3)`` float、[0, 1])。ファイルは書かない。
 
     ★2026-10-03 に切り出した。Studio の結果ビューが 1-D 系列や表の列を**同じ見た目の
@@ -1022,7 +1029,9 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
             cost = int(np.sum(ink & box))
             if best_cost is None or cost < best_cost:
                 best, best_cost = corner, cost
-        if best_cost > 40 * s * s:
+        if legend_position not in (None, "outside"):
+            raise ValueError("render_plot: legend_position must be None or 'outside'")
+        if legend_position == "outside" or best_cost > 40 * s * s:
             # どの隅でもデータを隠す(Runge の図は四隅すべてに線がある)→ 軸の外、右に出す
             # (MATLAB の 'eastoutside')。キャンバスを凡例の幅だけ広げる。
             wide = np.ones((img.shape[0], img.shape[1] + box_w + 16 * s, 3))
@@ -1045,8 +1054,9 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
     return img
 
 
-#: 表の列幅の下限・上限[px](自動計算がどちらかへ振り切れないようにする)
-COL_W_MIN, COL_W_MAX = 56, 320
+#: 表の列幅の下限[px]。上限は設けない。実測した文字幅を切る上限は、長い日英併記を
+#: 隣の列へはみ出させるためである(2026-11-23 の原寸検分で確認)。
+COL_W_MIN = 56
 
 #: 列と列のあいだの余白[px]。``text_box`` が左右に ``pad=5`` を取るので、
 #: 見た目の隙間はこれから 10 px 引いた分になる。
@@ -1061,44 +1071,84 @@ def _column_widths(header, rows, col_w=None, scale=1) -> list[int]:
     ``fullseye`` には**描く前に測る** :func:`measure_text` があるのだから、
     自前の表がそれを使わないのは筋が通らない(ドッグフーディング)。
 
-    ``col_w`` に数値を渡せば従来どおり全列その幅(呼び手が版を決めたいとき)。
+    ``col_w`` は全列の**下限**。指定値より文字が広ければ、実測幅を優先する。
     """
     import fullseye as fs
 
     ncol = len(header)
-    if col_w is not None:
-        return [int(col_w) * scale] * ncol
     out = []
     for j in range(ncol):
         cells = [str(header[j])] + [str(r[j]) for r in rows if j < len(r)]
         wide = max(int(fs.measure_text(c, font_size=11 * scale)["width"]) for c in cells)
-        out.append(int(min(COL_W_MAX * scale,
-                           max(COL_W_MIN * scale, wide + COL_GAP * scale))))
+        requested = int(col_w) * scale if col_w is not None else 0
+        out.append(int(max(COL_W_MIN * scale, requested, wide + COL_GAP * scale)))
     return out
+
+
+def _table_layout(header, rows, title: str = "", col_w=None, row_h=24, scale=None):
+    """表の寸法と全セルの文字外接矩形を、描画前の実測だけから返す。
+
+    セル内に改行があれば、その行だけを高くする。返した ``cell_rects`` は全組を調べ、
+    交差が 1 件でもあれば例外にする。 / Measure every table cell before drawing and reject
+    any intersecting pair of text bounding boxes.
+    """
+    import fullseye as fs
+
+    s = _figure_scale(1 if scale is None else scale)
+    ncol = len(header)
+    all_rows = [list(header)] + [list(row[:ncol]) for row in rows]
+    measured = [[fs.measure_text(str(cell), font_size=11 * s) for cell in row]
+                for row in all_rows]
+    widths = _column_widths(header, rows, col_w, scale=s)
+    xs = [14 * s + sum(widths[:j]) for j in range(ncol)]
+    row_steps = [max(int(row_h) * s,
+                     max((int(m["height"]) for m in row), default=0) + 2 * s)
+                 for row in measured]
+    ys, y = [], 40 * s
+    for step in row_steps:
+        ys.append(y)
+        y += step
+    cell_rects = []
+    for i, row in enumerate(measured):
+        for j, m in enumerate(row):
+            cell_rects.append((xs[j], ys[i], xs[j] + int(m["width"]),
+                               ys[i] + int(m["height"]), i, j))
+    for k, a in enumerate(cell_rects):
+        for b in cell_rects[k + 1:]:
+            intersects = a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
+            if intersects:
+                raise AssertionError("table cell text overlaps: row/col %r and %r" %
+                                     ((a[4], a[5]), (b[4], b[5])))
+    table_w = 24 * s + sum(widths)
+    title_w = (int(fs.measure_text(str(title), font_size=13 * s)["width"]) + 24 * s
+               if title else 0)
+    return {"scale": s, "widths": widths, "xs": xs, "ys": ys,
+            "cell_rects": cell_rects, "width": max(table_w, title_w),
+            "height": 56 * s + sum(row_steps)}
 
 
 def _render_table(header, rows, title: str = "", col_w=None, row_h=24, scale=None):
     """表の画像だけを返す。寸法・文字・余白を同じ倍率で描く。"""
     import fullseye as fs
 
-    s = _figure_scale(1 if scale is None else scale)
+    layout = _table_layout(header, rows, title=title, col_w=col_w, row_h=row_h,
+                           scale=scale)
+    s = layout["scale"]
     ncol = len(header)
-    widths = _column_widths(header, rows, col_w, scale=s)
-    xs = [14 * s + sum(widths[:j]) for j in range(ncol)]
-    w = 24 * s + sum(widths)
-    h = 56 * s + row_h * s * (len(rows) + 1)
+    xs = layout["xs"]
+    ys = layout["ys"]
+    w, h = layout["width"], layout["height"]
     img = np.full((h, w, 3), 1.0)
     if title:
         img = np.asarray(fs.text_box(img, title, (12 * s, 8 * s), anchor="lt",
                                      font_size=13 * s))
-    y0 = 40 * s
     for j, cell in enumerate(header):
-        img = np.asarray(fs.text_box(img, str(cell), (xs[j], y0),
+        img = np.asarray(fs.text_box(img, str(cell), (xs[j], ys[0]),
                                      anchor="lt", font_size=11 * s, color="emphasis"))
     for i, row in enumerate(rows):
         for j, cell in enumerate(row[:ncol]):
             img = np.asarray(fs.text_box(img, str(cell),
-                                         (xs[j], y0 + row_h * s * (i + 1)),
+                                         (xs[j], ys[i + 1]),
                                          anchor="lt", font_size=11 * s,
                                          box_alpha=0.0, border=0))
     return img

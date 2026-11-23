@@ -202,6 +202,22 @@ def test_table_also_writes_csv_and_tsv(tmp_path, monkeypatch):
     assert man[0]["csv"] == "01_depth.csv" and man[0]["tsv"] == "01_depth.tsv"
 
 
+def test_table_measures_bilingual_cells_without_any_intersections():
+    """固定幅や幅の上限で、日英併記を隣の数値列へ押し出さない。"""
+    header = ["形状\nshape", "第1候補 度\nfirst candidate [deg]", "点数\npoints"]
+    rows = [["非対称当て金\nasymmetric bracket", "4.66", "24002"],
+            ["対照: 変換なし・欠陥なし・雑音なし\ncontrol: no transform, defects or noise",
+             "4.54", "24002"]]
+    layout = examplefig._table_layout(header, rows, col_w=60, scale=2)
+    rects = layout["cell_rects"]
+    for i, a in enumerate(rects):
+        for b in rects[i + 1:]:
+            assert not (a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]), (a, b)
+    # 60 px の固定指定や旧上限 320 px ではなく、最長セルの実測幅が列幅を決める。
+    assert layout["widths"][0] > 60 * 2
+    assert examplefig._column_widths(["W" * 100], [], scale=1)[0] > 320
+
+
 def test_only_tables_get_csv(tmp_path, monkeypatch):
     """画像の図に CSV は付かない(付けると Studio が空の表を出す)。"""
     monkeypatch.setenv(examplefig.ENV_DIR, str(tmp_path))

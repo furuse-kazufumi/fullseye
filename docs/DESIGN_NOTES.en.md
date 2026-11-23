@@ -356,13 +356,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L251** _(ja)_ — 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
 - **L323** — ★`colorize_depth` returns **float [0,1]**. Receiving it with `np.asarray(..., np.uint8)` truncates every 0.x to 0 and turns it pitch black (hit on 2026-09-06).
-- **L481** — ★Do not drop the body of the example. It is a pity that the figure does not appear, but the numbers must be shown.
-- **L520** — ★Do not just hand off to :func:`_to_rgb8` here. That passes (H,W) to `colorize_depth`, but **inside it each frame is normalized individually**, so a frame that is all 0 and a frame that is all 1 come out the same colour (caught by a test on 2026-09-09). Only by passing the value range explicitly does the scale become a single one.
-- **L585** — ★Pillow **folds a frame identical to the previous one into a single frame** (that time is added to the previous frame's display time, so the speed of motion does not change). We count after writing and, if it differs from the number passed, record **both** in the ledger —— so as not to silently pass off "a 72-frame GIF" whose content is 40 frames.
-- **L753** _(ja)_ — ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や 24×24 の縮小マップは PoC で普通に出るのに、エラーは 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、 呼び手ごとに拡大を書かせず、ここで 1 度だけ補間する。入力が十分大きければ 1 倍のままなので実データの解像度を保つ。拡大が必要な小画像だけは、発表図で 画素の四角を増やす最近傍を避け、双三次補間する。
-- **L960** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
-- **L973** _(ja)_ — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
-- **L1005** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
+- **L487** — ★Do not drop the body of the example. It is a pity that the figure does not appear, but the numbers must be shown.
+- **L526** — ★Do not just hand off to :func:`_to_rgb8` here. That passes (H,W) to `colorize_depth`, but **inside it each frame is normalized individually**, so a frame that is all 0 and a frame that is all 1 come out the same colour (caught by a test on 2026-09-09). Only by passing the value range explicitly does the scale become a single one.
+- **L591** — ★Pillow **folds a frame identical to the previous one into a single frame** (that time is added to the previous frame's display time, so the speed of motion does not change). We count after writing and, if it differs from the number passed, record **both** in the ledger —— so as not to silently pass off "a 72-frame GIF" whose content is 40 frames.
+- **L759** _(ja)_ — ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や 24×24 の縮小マップは PoC で普通に出るのに、エラーは 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、 呼び手ごとに拡大を書かせず、ここで 1 度だけ補間する。入力が十分大きければ 1 倍のままなので実データの解像度を保つ。拡大が必要な小画像だけは、発表図で 画素の四角を増やす最近傍を避け、双三次補間する。
+- **L967** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
+- **L980** _(ja)_ — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
+- **L1012** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -542,13 +542,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_cad_scan_deviation.py`
 
-- **L442** — ★The ledger's out adapter truncates the dict to (R, t), so rmse does not get through
-- **L925** — Chapter 6: ★The defect pulls the alignment —— predicted by projection onto the rigid-body 6-D # --------------------------------------------------------------------------- #
-- **L1131** — ★Do not add a defect —— if you do, Chapter 6's datum shift (0.107 mm) becomes a pedestal on the point movement and mixes with "the amount broken by the initial angle".
-- **L1284** — ★Producing a "%" for the control group whose ground truth is 0 gives a meaningless huge number from division by zero. Present the area in mm^2 as is, and append % only when the ground truth is meaningful.
-- **L1295** — ★Do not read the difference of a single run as "it worked" —— vary the seed and compare against the spread
-- **L1399** — ★An assert that fires once the gap is closed. It actually fired on 2026-09-07, and this line was rewritten: after the note that "cylindrical holes, chamfers, and fillets cannot be built", plane / cylinder / torus / capsule were added. The note changed the tool, so we record it and move on.
-- **L1421** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L447** — ★The ledger's out adapter truncates the dict to (R, t), so rmse does not get through
+- **L930** — Chapter 6: ★The defect pulls the alignment —— predicted by projection onto the rigid-body 6-D # --------------------------------------------------------------------------- #
+- **L1136** — ★Do not add a defect —— if you do, Chapter 6's datum shift (0.107 mm) becomes a pedestal on the point movement and mixes with "the amount broken by the initial angle".
+- **L1289** — ★Producing a "%" for the control group whose ground truth is 0 gives a meaningless huge number from division by zero. Present the area in mm^2 as is, and append % only when the ground truth is meaningful.
+- **L1300** — ★Do not read the difference of a single run as "it worked" —— vary the seed and compare against the spread
+- **L1404** — ★An assert that fires once the gap is closed. It actually fired on 2026-09-07, and this line was rewritten: after the note that "cylindrical holes, chamfers, and fillets cannot be built", plane / cylinder / torus / capsule were added. The note changed the tool, so we record it and move on.
+- **L1426** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
@@ -962,15 +962,15 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_lidar_terrain_change.py`
 
-- **L451** — ★The area of cores that could not be measured contributes nothing to the earth volume. Also return the value divided back by the effective rate —— without dividing back, you take the 'silently missing earth volume' for the correct value.
-- **L743** — ★A number close to the true value is not necessarily 'correct' —— count the two opposing errors separately
-- **L874** — ★When there are too few valid cores, do not treat the LoD as 'measured' (the standard deviation of 2 points is a number but carries no meaning).
-- **L877** — ★If you decimate here, C2C ends up measuring the 'post-decimation point spacing' and the density dependence vanishes (when I first wrote it aligned to 6000 points, it came out a constant 0.42 m at every density).
-- **L997** — --- ★ Change vanishes exactly by the amount you align away -------------------------------------- #
-- **L1368** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
-- **L1950** _(ja)_ — ★2026-11-15(補欠の注意): 以前は 0 が黒の発散色で、「データ無し(NaN)」も黒に塗られ、色の尺度も無かった。 coolwarm(0 = 薄い灰、負 = 青 = 2017 のほうが低い、正 = 赤)で塗り、データ無しだけを黒にして、尺度を添える。 1 m セルのままだと 2012 の空セル(充填率 64 %)が全面に粒になって色が読めないので、表示だけ 2 m 角 (1 m セル 4 つのうち値のあるものの平均)に寄せる。数は 1 m セルのまま測っている。
-- **L2020** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、 ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
-- **L2265** _(ja)_ — ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では 手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
+- **L458** — ★The area of cores that could not be measured contributes nothing to the earth volume. Also return the value divided back by the effective rate —— without dividing back, you take the 'silently missing earth volume' for the correct value.
+- **L763** — ★A number close to the true value is not necessarily 'correct' —— count the two opposing errors separately
+- **L898** — ★When there are too few valid cores, do not treat the LoD as 'measured' (the standard deviation of 2 points is a number but carries no meaning).
+- **L901** — ★If you decimate here, C2C ends up measuring the 'post-decimation point spacing' and the density dependence vanishes (when I first wrote it aligned to 6000 points, it came out a constant 0.42 m at every density).
+- **L1025** — --- ★ Change vanishes exactly by the amount you align away -------------------------------------- #
+- **L1418** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L2000** _(ja)_ — ★2026-11-15(補欠の注意): 以前は 0 が黒の発散色で、「データ無し(NaN)」も黒に塗られ、色の尺度も無かった。 coolwarm(0 = 薄い灰、負 = 青 = 2017 のほうが低い、正 = 赤)で塗り、データ無しだけを黒にして、尺度を添える。 1 m セルのままだと 2012 の空セル(充填率 64 %)が全面に粒になって色が読めないので、表示だけ 2 m 角 (1 m セル 4 つのうち値のあるものの平均)に寄せる。数は 1 m セルのまま測っている。
+- **L2070** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、 ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
+- **L2317** _(ja)_ — ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では 手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
 
 ## `examples/poc_light_section_step_weld_floor.py`
 
@@ -1241,13 +1241,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_registration_basin.py`
 
-- **L474** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
-- **L700** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
-- **L866** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
-- **L1044** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
-- **L1472** — ★When the user explicitly passes `estimate_normals`, thinking "but the normals do exist". This is the **remainder** of the gap, 14 orders of magnitude worse than the default.
-- **L1662** — ★Gap 1 was closed on 2026-09-06. This assert has been rewritten to **pin the closed state** (previously it pinned the broken state: `d_fixed < 1e-6 < d_default` = broken). If the breakage returns, this fails.
-- **L1673** — ★Gap 2 was closed on 2026-09-06. Previously it was `< 0.9 * len(ka)` (pinning the broken state). Now it pins that **the default gives an exact match**.
+- **L476** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
+- **L702** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
+- **L868** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
+- **L1046** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
+- **L1475** — ★When the user explicitly passes `estimate_normals`, thinking "but the normals do exist". This is the **remainder** of the gap, 14 orders of magnitude worse than the default.
+- **L1665** — ★Gap 1 was closed on 2026-09-06. This assert has been rewritten to **pin the closed state** (previously it pinned the broken state: `d_fixed < 1e-6 < d_default` = broken). If the breakage returns, this fails.
+- **L1676** — ★Gap 2 was closed on 2026-09-06. Previously it was `< 0.9 * len(ka)` (pinning the broken state). Now it pins that **the default gives an exact match**.
 
 ## `examples/poc_reproducible_icp.py`
 

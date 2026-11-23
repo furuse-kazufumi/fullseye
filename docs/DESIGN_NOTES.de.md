@@ -356,13 +356,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L251** _(ja)_ — 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
 - **L323** — ★`colorize_depth` gibt **float [0,1]** zurück. Empfängt man es mit `np.asarray(..., np.uint8)`, wird jedes 0.x auf 0 abgeschnitten und pechschwarz (getroffen am 2026-09-06).
-- **L481** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
-- **L520** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
-- **L585** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
-- **L753** _(ja)_ — ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や 24×24 の縮小マップは PoC で普通に出るのに、エラーは 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、 呼び手ごとに拡大を書かせず、ここで 1 度だけ補間する。入力が十分大きければ 1 倍のままなので実データの解像度を保つ。拡大が必要な小画像だけは、発表図で 画素の四角を増やす最近傍を避け、双三次補間する。
-- **L960** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
-- **L973** _(ja)_ — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
-- **L1005** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
+- **L487** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
+- **L526** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
+- **L591** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
+- **L759** _(ja)_ — ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や 24×24 の縮小マップは PoC で普通に出るのに、エラーは 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、 呼び手ごとに拡大を書かせず、ここで 1 度だけ補間する。入力が十分大きければ 1 倍のままなので実データの解像度を保つ。拡大が必要な小画像だけは、発表図で 画素の四角を増やす最近傍を避け、双三次補間する。
+- **L967** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
+- **L980** _(ja)_ — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
+- **L1012** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -542,13 +542,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_cad_scan_deviation.py`
 
-- **L442** — ★Der out-Adapter des Registers kürzt das dict auf (R, t), sodass rmse nicht durchkommt
-- **L925** — Kapitel 6: ★Der Defekt zieht die Ausrichtung —— vorhergesagt durch Projektion auf die 6-D des starren Körpers # --------------------------------------------------------------------------- #
-- **L1131** — ★Keinen Defekt hinzufügen —— tut man es, wird die Datum-Verschiebung aus Kapitel 6 (0.107 mm) zu einem Sockel für die Punktbewegung und vermischt sich mit "dem durch den Anfangswinkel zerstörten Betrag".
-- **L1284** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
-- **L1295** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
-- **L1399** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
-- **L1421** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L447** — ★Der out-Adapter des Registers kürzt das dict auf (R, t), sodass rmse nicht durchkommt
+- **L930** — Kapitel 6: ★Der Defekt zieht die Ausrichtung —— vorhergesagt durch Projektion auf die 6-D des starren Körpers # --------------------------------------------------------------------------- #
+- **L1136** — ★Keinen Defekt hinzufügen —— tut man es, wird die Datum-Verschiebung aus Kapitel 6 (0.107 mm) zu einem Sockel für die Punktbewegung und vermischt sich mit "dem durch den Anfangswinkel zerstörten Betrag".
+- **L1289** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
+- **L1300** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
+- **L1404** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
+- **L1426** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
@@ -962,15 +962,15 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_lidar_terrain_change.py`
 
-- **L451** — ★Die Fläche der nicht messbaren Cores geht überhaupt nicht in die Erdmenge ein. Gib auch den durch die effektive Rate zurückgerechneten Wert zurück —— ohne Zurückrechnen hält man die 'still fehlende Erdmenge' für den korrekten Wert.
-- **L743** — ★Eine Zahl nahe am wahren Wert ist nicht zwangsläufig 'korrekt' —— zähle die zwei entgegengesetzten Fehler getrennt
-- **L874** — ★Wenn zu wenige gültige Cores vorliegen, gilt die LoD nicht als 'gemessen' (die Standardabweichung von 2 Punkten ergibt eine Zahl, hat aber keine Bedeutung).
-- **L877** — ★Wenn du hier ausdünnst, misst C2C am Ende den 'Punktabstand nach dem Ausdünnen', und die Dichteabhängigkeit verschwindet (als ich es zuerst auf 6000 Punkte angeglichen schrieb, ergab sich bei jeder Dichte ein konstanter Wert von 0.42 m).
-- **L997** — --- ★ Genau um den Betrag, den du wegjustierst, verschwindet die Änderung -------------------------------------- #
-- **L1368** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
-- **L1950** _(ja)_ — ★2026-11-15(補欠の注意): 以前は 0 が黒の発散色で、「データ無し(NaN)」も黒に塗られ、色の尺度も無かった。 coolwarm(0 = 薄い灰、負 = 青 = 2017 のほうが低い、正 = 赤)で塗り、データ無しだけを黒にして、尺度を添える。 1 m セルのままだと 2012 の空セル(充填率 64 %)が全面に粒になって色が読めないので、表示だけ 2 m 角 (1 m セル 4 つのうち値のあるものの平均)に寄せる。数は 1 m セルのまま測っている。
-- **L2020** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、 ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
-- **L2265** _(ja)_ — ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では 手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
+- **L458** — ★Die Fläche der nicht messbaren Cores geht überhaupt nicht in die Erdmenge ein. Gib auch den durch die effektive Rate zurückgerechneten Wert zurück —— ohne Zurückrechnen hält man die 'still fehlende Erdmenge' für den korrekten Wert.
+- **L763** — ★Eine Zahl nahe am wahren Wert ist nicht zwangsläufig 'korrekt' —— zähle die zwei entgegengesetzten Fehler getrennt
+- **L898** — ★Wenn zu wenige gültige Cores vorliegen, gilt die LoD nicht als 'gemessen' (die Standardabweichung von 2 Punkten ergibt eine Zahl, hat aber keine Bedeutung).
+- **L901** — ★Wenn du hier ausdünnst, misst C2C am Ende den 'Punktabstand nach dem Ausdünnen', und die Dichteabhängigkeit verschwindet (als ich es zuerst auf 6000 Punkte angeglichen schrieb, ergab sich bei jeder Dichte ein konstanter Wert von 0.42 m).
+- **L1025** — --- ★ Genau um den Betrag, den du wegjustierst, verschwindet die Änderung -------------------------------------- #
+- **L1418** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L2000** _(ja)_ — ★2026-11-15(補欠の注意): 以前は 0 が黒の発散色で、「データ無し(NaN)」も黒に塗られ、色の尺度も無かった。 coolwarm(0 = 薄い灰、負 = 青 = 2017 のほうが低い、正 = 赤)で塗り、データ無しだけを黒にして、尺度を添える。 1 m セルのままだと 2012 の空セル(充填率 64 %)が全面に粒になって色が読めないので、表示だけ 2 m 角 (1 m セル 4 つのうち値のあるものの平均)に寄せる。数は 1 m セルのまま測っている。
+- **L2070** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、 ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
+- **L2317** _(ja)_ — ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では 手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
 
 ## `examples/poc_light_section_step_weld_floor.py`
 
@@ -1241,13 +1241,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_registration_basin.py`
 
-- **L474** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
-- **L700** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
-- **L866** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
-- **L1044** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
-- **L1472** — ★Wenn der Nutzer `estimate_normals` explizit uebergibt, im Glauben, die Normalen seien doch vorhanden. Das ist der **Rest** der Luecke, 14 Groessenordnungen schlechter als der Standard.
-- **L1662** — ★Luecke 1 wurde am 2026-09-06 geschlossen. Dieses assert wurde so umgeschrieben, dass es **den geschlossenen Zustand fixiert** (frueher fixierte es den defekten Zustand: `d_fixed < 1e-6 < d_default` = defekt). Kehrt der Defekt zurueck, schlaegt es hier fehl.
-- **L1673** — ★Luecke 2 wurde am 2026-09-06 geschlossen. Frueher war es `< 0.9 * len(ka)` (den defekten Zustand fixierend). Jetzt fixiert es, dass **der Standard eine exakte Uebereinstimmung liefert**.
+- **L476** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
+- **L702** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
+- **L868** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
+- **L1046** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
+- **L1475** — ★Wenn der Nutzer `estimate_normals` explizit uebergibt, im Glauben, die Normalen seien doch vorhanden. Das ist der **Rest** der Luecke, 14 Groessenordnungen schlechter als der Standard.
+- **L1665** — ★Luecke 1 wurde am 2026-09-06 geschlossen. Dieses assert wurde so umgeschrieben, dass es **den geschlossenen Zustand fixiert** (frueher fixierte es den defekten Zustand: `d_fixed < 1e-6 < d_default` = defekt). Kehrt der Defekt zurueck, schlaegt es hier fehl.
+- **L1676** — ★Luecke 2 wurde am 2026-09-06 geschlossen. Frueher war es `< 0.9 * len(ka)` (den defekten Zustand fixierend). Jetzt fixiert es, dass **der Standard eine exakte Uebereinstimmung liefert**.
 
 ## `examples/poc_reproducible_icp.py`
 
