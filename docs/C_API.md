@@ -22,6 +22,19 @@ Direct input buffers are borrowed only while `fs_call` or `fs_call_id_n` is
 running. The caller must keep them valid and unchanged until the call returns;
 the library does not retain their pointers afterward.
 
+## Building the native SDK
+
+Install the native extra, then pass the CMake package directory reported by
+the installed pybind11 module explicitly. CI uses this same route rather than
+depending on a system-wide pybind11 CMake package:
+
+```sh
+python -m pip install -e ".[native]"
+cmake -S . -B build-c-api -DFULLSEYE_BUILD_NATIVE=ON \
+  -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
+cmake --build build-c-api
+```
+
 ## Typed operator reachability
 
 `fs_call_id_n` derives its callable operators from the contract and registry

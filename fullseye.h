@@ -172,7 +172,10 @@ typedef struct fs_input_n {
     fs_result_id_t result_id;
     size_t result_index;
     /* ABI 0.2 extension: direct COLOR/VOLUME and FEATURE inputs.  Existing
-     * callers retain the prefix and use IMAGE or borrowed values. */
+     * callers retain the prefix and use IMAGE or borrowed values. Direct
+     * IMAGE/COLOR/VOLUME buffers are borrowed only for fs_call_id_n and are
+     * not retained after it returns. / 直接配列は fs_call_id_n の呼出し中だけ
+     * 借用し、戻った後は保持しない。 */
     fs_array_view_t array;
     double feature;
 } fs_input_n_t;

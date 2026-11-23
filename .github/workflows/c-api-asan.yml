@@ -49,6 +49,7 @@ jobs:
         run: >-
           cmake -S . -B build-c-api-asan -DFULLSEYE_BUILD_NATIVE=ON
           -DFULLSEYE_BUILD_TESTS=ON -DFULLSEYE_ENABLE_SANITIZERS=ON
+          -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
       - run: cmake --build build-c-api-asan --parallel 2
       - name: Run CTest and ctypes hardening tests under sanitizers
         env:

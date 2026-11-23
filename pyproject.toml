@@ -391,6 +391,9 @@ py-modules = [
               #   tests/test_wheel_package_data_2026_11_13.py が「列挙した名前は checkout に在る」を数える。
               # device="auto" の実測の表(device_policy が読む。tools/gen_device_rules.py が生ログから作る)
               "data/DEVICE_RULES.json",
+              # C SDK が公開する型付き op の生成台帳(tools/gen_c_api_ops.py)。
+              # docs/C_API_OPS.md と同じ run から生成し、wheel でも検索・監査できるよう同梱する。
+              "data/C_API_OPS.json",
               # 実測で採用した機械的 GPU の許可リスト(gpu_shadow.run_allowed が読む)
               "data/gpu_auto_allow.json",
               # gpu_route が読む実測の台帳: 手書き経路の場面(領域の解析の族、tools/gen_gpu_routes.py)と
