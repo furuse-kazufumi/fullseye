@@ -22,7 +22,7 @@ jobs:
       - run: cmake --build build-c-api-asan --parallel 2
       - name: Run CTest and ctypes hardening tests under sanitizers
         env:
-          ASAN_OPTIONS: detect_leaks=0
+          ASAN_OPTIONS: detect_leaks=1
           FULLSEYE_C_API_LIBRARY: ${{ github.workspace }}/build-c-api-asan/libfullseye.so
         run: |
           export LD_PRELOAD="$(gcc -print-file-name=libasan.so)"

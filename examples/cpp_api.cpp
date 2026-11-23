@@ -9,10 +9,11 @@ int main(int argc, char **argv) {
         fs_init_options_t options = FS_INIT_OPTIONS_INIT;
         if (argc > 1) {
             options.runtime_root = argv[1];
+            options.runtime_root_bytes = std::strlen(argv[1]);
         }
         fullseye::Runtime runtime(options);
         std::array<double, 6> pixels{{0.0, 0.7, 0.8, 0.2, 0.9, 0.0}};
-        fs_input_t input = FS_INPUT_INIT;
+        fs_input_n_t input = FS_INPUT_N_INIT;
         input.image.data = pixels.data();
         input.image.data_bytes = pixels.size() * sizeof(double);
         input.image.width = 3;

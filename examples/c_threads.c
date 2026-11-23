@@ -22,12 +22,12 @@ typedef struct thread_arg {
 static void run_one(thread_arg_t *arg) {
     char op[64];
     char error[ERROR_CAPACITY];
-    fs_result_t *result = NULL;
+    fs_result_id_t result = 0u;
     snprintf(op, sizeof(op), "registry:missing_%d", arg->index);
     fs_status_t status = fs_call_n(arg->runtime, op, strlen(op), NULL, 0,
                                    "{}", sizeof("{}") - 1u, &result);
     fs_last_error(arg->runtime, error, sizeof(error));
-    arg->ok = status == FS_E_UNKNOWN_OP && result == NULL && strstr(error, op) != NULL;
+    arg->ok = status == FS_E_UNKNOWN_OP && result == 0u && strstr(error, op) != NULL;
 }
 
 #ifdef _WIN32
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
     thread_arg_t args[THREAD_COUNT];
     int ok = 1;
     int index;
-    if (argc > 1) options.runtime_root = argv[1];
+    if (argc > 1) { options.runtime_root = argv[1]; options.runtime_root_bytes = strlen(argv[1]); }
     if (fs_runtime_create(&options, &runtime) != FS_OK) return 1;
 
 #ifdef _WIN32

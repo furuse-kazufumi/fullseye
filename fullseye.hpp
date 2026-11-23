@@ -24,23 +24,30 @@ private:
 
 class Result {
 public:
-    explicit Result(fs_result_t *value = nullptr) noexcept : value_(value) {}
-    ~Result() { fs_result_release(value_); }
-    Result(Result &&other) noexcept : value_(std::exchange(other.value_, nullptr)) {}
+    explicit Result(fs_result_id_t value = 0u) noexcept : value_(value) {}
+    ~Result() { if (value_ != 0u) (void)fs_result_release_n(value_); }
+    Result(Result &&other) noexcept : value_(std::exchange(other.value_, 0u)) {}
     Result &operator=(Result &&other) noexcept {
         if (this != &other) {
-            fs_result_release(value_);
-            value_ = std::exchange(other.value_, nullptr);
+            if (value_ != 0u) (void)fs_result_release_n(value_);
+            value_ = std::exchange(other.value_, 0u);
         }
         return *this;
     }
     Result(const Result &) = delete;
     Result &operator=(const Result &) = delete;
-    fs_result_t *get() const noexcept { return value_; }
-    size_t size() const noexcept { return fs_result_count(value_); }
+    fs_result_id_t get() const noexcept { return value_; }
+    size_t size() const {
+        size_t count = 0u;
+        check(fs_result_count_n(value_, &count));
+        return count;
+    }
 
 private:
-    fs_result_t *value_;
+    void check(fs_status_t status) const {
+        if (status != FS_OK) throw Error(status, "Fullseye result access failed");
+    }
+    fs_result_id_t value_;
 };
 
 class Runtime {
@@ -62,9 +69,9 @@ public:
         return *this;
     }
 
-    Result call(const std::string &op_id, const std::vector<fs_input_t> &inputs,
+    Result call(const std::string &op_id, const std::vector<fs_input_n_t> &inputs,
                 const std::string &params = "{}") {
-        fs_result_t *out = nullptr;
+        fs_result_id_t out = 0u;
         check(fs_call_n(value_, op_id.data(), op_id.size(),
                         inputs.empty() ? nullptr : inputs.data(), inputs.size(),
                         params.data(), params.size(), &out));

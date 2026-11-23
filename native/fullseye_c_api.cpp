@@ -29,10 +29,14 @@ namespace {
 
 constexpr uint32_t kRequiredInitSize =
     static_cast<uint32_t>(offsetof(fs_init_options_t, abi_minor) + sizeof(uint32_t));
+constexpr uint32_t kRequiredInitNSize =
+    static_cast<uint32_t>(offsetof(fs_init_options_t, python_home_bytes) + sizeof(size_t));
 constexpr uint32_t kRequiredImageSize =
     static_cast<uint32_t>(offsetof(fs_image_view_t, range_hi) + sizeof(double));
 constexpr uint32_t kRequiredInputSize =
     static_cast<uint32_t>(offsetof(fs_input_t, result_index) + sizeof(size_t));
+constexpr uint32_t kRequiredInputNSize =
+    static_cast<uint32_t>(offsetof(fs_input_n_t, result_index) + sizeof(size_t));
 constexpr size_t kMaxErrorBytes = 4096u;
 
 struct Item {
@@ -55,9 +59,12 @@ struct ThreadError {
 };
 
 thread_local ThreadError g_error;
-std::once_flag g_python_once;
 bool g_python_ready = false;
 std::string g_python_error;
+bool g_python_owned = false;
+std::string g_python_root;
+std::string g_python_home;
+std::mutex g_python_mutex;
 std::mutex g_runtime_mutex;
 std::unordered_set<fs_runtime_t *> g_runtimes;
 
@@ -204,45 +211,64 @@ void add_runtime_paths(const std::string &root) {
     path.attr("insert")(0, root + separator + "runtime" + separator + "site-packages");
 }
 
-void initialize_python(const fs_init_options_t &options) {
-    const std::string root = options.runtime_root == nullptr ? "" : options.runtime_root;
-    const std::string home = options.python_home == nullptr ? "" : options.python_home;
-    std::call_once(g_python_once, [root, home]() {
-        try {
-            const bool was_running = Py_IsInitialized() != 0;
-            if (!was_running) {
-                PyConfig config;
-                PyConfig_InitIsolatedConfig(&config);
-                config.install_signal_handlers = 0;
-                config.parse_argv = 0;
-                if (!home.empty()) {
-                    const PyStatus status = PyConfig_SetBytesString(&config, &config.home, home.c_str());
-                    if (PyStatus_Exception(status) != 0) {
-                        const std::string message = status.err_msg == nullptr
-                            ? "could not set Python home" : status.err_msg;
-                        PyConfig_Clear(&config);
-                        throw std::runtime_error(message);
-                    }
-                }
-                py::initialize_interpreter(&config, 0, nullptr, false);
-                add_runtime_paths(root);
-                py::module_::import("fullseye.c_api_bridge");
-                g_python_ready = true;
-                // CPython remains alive until process exit; native callers acquire
-                // the GIL for every later call. / 終了まで生かし、各呼出しで GIL を取る。
-                PyEval_SaveThread();
-            } else {
-                py::gil_scoped_acquire acquire;
-                add_runtime_paths(root);
-                py::module_::import("fullseye.c_api_bridge");
-                g_python_ready = true;
-            }
-        } catch (const std::exception &exc) {
-            g_python_error = exc.what();
-        } catch (...) {
-            g_python_error = "unknown error while initializing CPython";
+fs_status_t initialize_python(const std::string &root, const std::string &home,
+                              bool allow_host) {
+    std::lock_guard<std::mutex> lock(g_python_mutex);
+    if (g_python_ready) {
+        if (g_python_root != root || g_python_home != home) {
+            g_python_error = "the CPython runtime is already configured for a different runtime_root or python_home";
+            return FS_E_INVALID_ARG;
         }
-    });
+        if (!g_python_owned && !allow_host) {
+            g_python_error = "the existing CPython host requires FS_INIT_ALLOW_HOST_PYTHON_UNSAFE";
+            return FS_E_INVALID_ARG;
+        }
+        return FS_OK;
+    }
+    try {
+        const bool was_running = Py_IsInitialized() != 0;
+        if (was_running && !allow_host) {
+            g_python_error = "FS_INIT_ISOLATED cannot use an existing CPython; set FS_INIT_ALLOW_HOST_PYTHON_UNSAFE to opt in to the host interpreter";
+            return FS_E_INVALID_ARG;
+        }
+        if (!was_running) {
+            PyConfig config;
+            PyConfig_InitIsolatedConfig(&config);
+            config.install_signal_handlers = 0;
+            config.parse_argv = 0;
+            if (!home.empty()) {
+                const PyStatus status = PyConfig_SetBytesString(&config, &config.home, home.c_str());
+                if (PyStatus_Exception(status) != 0) {
+                    const std::string message = status.err_msg == nullptr
+                        ? "could not set Python home" : status.err_msg;
+                    PyConfig_Clear(&config);
+                    throw std::runtime_error(message);
+                }
+            }
+            py::initialize_interpreter(&config, 0, nullptr, false);
+            add_runtime_paths(root);
+            py::module_::import("fullseye.c_api_bridge");
+            g_python_owned = true;
+            // CPython remains alive until process exit; native callers acquire
+            // the GIL for every later call. / 終了まで生かし、各呼出しで GIL を取る。
+            PyEval_SaveThread();
+        } else {
+            py::gil_scoped_acquire acquire;
+            add_runtime_paths(root);
+            py::module_::import("fullseye.c_api_bridge");
+            g_python_owned = false;
+        }
+        g_python_root = root;
+        g_python_home = home;
+        g_python_ready = true;
+        g_python_error.clear();
+        return FS_OK;
+    } catch (const std::exception &exc) {
+        g_python_error = exc.what();
+    } catch (...) {
+        g_python_error = "unknown error while initializing CPython";
+    }
+    return FS_E_NO_PYTHON;
 }
 
 py::dict item_to_python(const Item &item) {
@@ -354,9 +380,6 @@ Item python_to_item(const py::dict &value) {
     return item;
 }
 
-fs_status_t access_item(const fs_result_t *result, size_t index, fs_value_kind_t expected,
-                        const Item **out);
-
 }  // namespace
 
 struct fs_runtime {
@@ -369,25 +392,50 @@ struct ResultPayload {
 };
 
 struct fs_result {
-    std::shared_ptr<const ResultPayload> payload;
+    ResultPayload payload;
 };
 
 namespace {
 
 std::mutex g_result_mutex;
-std::unordered_map<const fs_result_t *, std::shared_ptr<fs_result_t>> g_live_results;
-/* Retired control blocks keep stale pointer addresses from being reused.  A
- * release drops the payload; leases keep it alive until an in-flight accessor
- * finishes. Process teardown reclaims only the small quarantined handles. */
-std::vector<std::shared_ptr<fs_result_t>> g_retired_results;
+struct ResultSlot {
+    uint32_t generation = 1u;
+    std::shared_ptr<const ResultPayload> payload;
+};
+std::vector<ResultSlot> g_result_slots;
+std::vector<uint32_t> g_free_result_slots;
 
-class ResultLease {
+fs_result_id_t make_result_id(uint32_t index, uint32_t generation) {
+    return (static_cast<fs_result_id_t>(generation) << 32u)
+        | static_cast<fs_result_id_t>(index + 1u);
+}
+
+bool split_result_id(fs_result_id_t id, uint32_t *index, uint32_t *generation) {
+    const uint64_t raw_index = id & UINT64_C(0xffffffff);
+    const uint64_t raw_generation = id >> 32u;
+    if (raw_index == 0u || raw_generation == 0u
+        || raw_index > static_cast<uint64_t>(std::numeric_limits<uint32_t>::max())) {
+        return false;
+    }
+    *index = static_cast<uint32_t>(raw_index - 1u);
+    *generation = static_cast<uint32_t>(raw_generation);
+    return true;
+}
+
+class ResultIdLease {
 public:
-    explicit ResultLease(const fs_result_t *result) {
+    explicit ResultIdLease(fs_result_id_t result) {
+        uint32_t index = 0u;
+        uint32_t generation = 0u;
+        if (!split_result_id(result, &index, &generation)) {
+            return;
+        }
         std::lock_guard<std::mutex> lock(g_result_mutex);
-        const auto found = g_live_results.find(result);
-        if (found != g_live_results.end()) {
-            payload_ = found->second->payload;
+        if (index < g_result_slots.size()) {
+            const ResultSlot &slot = g_result_slots[index];
+            if (slot.generation == generation) {
+                payload_ = slot.payload;
+            }
         }
     }
     const ResultPayload *get() const noexcept { return payload_.get(); }
@@ -451,6 +499,45 @@ bool copy_text_span(const char *text, size_t bytes, bool optional, std::string *
     return true;
 }
 
+fs_result_id_t register_result(std::shared_ptr<const ResultPayload> payload) {
+    std::lock_guard<std::mutex> lock(g_result_mutex);
+    uint32_t index = 0u;
+    if (!g_free_result_slots.empty()) {
+        index = g_free_result_slots.back();
+        g_free_result_slots.pop_back();
+        g_result_slots[index].payload = std::move(payload);
+    } else {
+        if (g_result_slots.size() >= std::numeric_limits<uint32_t>::max()) {
+            return 0u;
+        }
+        index = static_cast<uint32_t>(g_result_slots.size());
+        g_result_slots.push_back(ResultSlot{});
+        g_result_slots.back().payload = std::move(payload);
+    }
+    return make_result_id(index, g_result_slots[index].generation);
+}
+
+fs_status_t release_result_id(fs_result_id_t result) {
+    uint32_t index = 0u;
+    uint32_t generation = 0u;
+    if (!split_result_id(result, &index, &generation)) {
+        return FS_E_INVALID_ARG;
+    }
+    std::lock_guard<std::mutex> lock(g_result_mutex);
+    if (index >= g_result_slots.size() || g_result_slots[index].generation != generation
+        || !g_result_slots[index].payload) {
+        return FS_E_INVALID_ARG;
+    }
+    ResultSlot &slot = g_result_slots[index];
+    slot.payload.reset();
+    ++slot.generation;
+    if (slot.generation == 0u) {
+        ++slot.generation;
+    }
+    g_free_result_slots.push_back(index);
+    return FS_OK;
+}
+
 }  // namespace
 
 extern "C" {
@@ -476,27 +563,46 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, f
         set_error(nullptr, "FS_INIT_ISOLATED is mandatory");
         return FS_E_INVALID_ARG;
     }
-    if (Py_IsInitialized() != 0
-        && (options->flags & FS_INIT_ALLOW_HOST_PYTHON_UNSAFE) == 0u) {
-        set_error(nullptr, "FS_INIT_ISOLATED cannot use an existing CPython; set "
-                           "FS_INIT_ALLOW_HOST_PYTHON_UNSAFE to opt in to the host interpreter");
+    const bool bounded_options = options->abi_minor >= 2u;
+    if (bounded_options && options->struct_size < kRequiredInitNSize) {
+        set_error(nullptr, "ABI 0.2 fs_init_options_t.struct_size is too small");
         return FS_E_INVALID_ARG;
     }
     const char *environment_root = std::getenv("FULLSEYE_PYTHON_ROOT");
-    if (options->runtime_root == nullptr && (environment_root == nullptr || *environment_root == '\0')) {
+    std::string root;
+    std::string home;
+    if (bounded_options) {
+        if ((options->runtime_root == nullptr && options->runtime_root_bytes != 0u)
+            || (options->runtime_root != nullptr && options->runtime_root_bytes == 0u)
+            || (options->python_home == nullptr && options->python_home_bytes != 0u)
+            || (options->python_home != nullptr && options->python_home_bytes == 0u)) {
+            set_error(nullptr, "ABI 0.2 runtime_root and python_home pointers must match their byte lengths");
+            return FS_E_INVALID_ARG;
+        }
+        if (options->runtime_root != nullptr) {
+            root.assign(options->runtime_root, options->runtime_root_bytes);
+        }
+        if (options->python_home != nullptr) {
+            home.assign(options->python_home, options->python_home_bytes);
+        }
+    } else {
+        root = options->runtime_root == nullptr ? "" : options->runtime_root;
+        home = options->python_home == nullptr ? "" : options->python_home;
+    }
+    if (root.empty() && environment_root != nullptr && *environment_root != '\0') {
+        root = environment_root;
+    }
+    if (root.empty()) {
         set_error(nullptr, "no Fullseye Python environment was specified; set runtime_root or "
                            "FULLSEYE_PYTHON_ROOT to an environment containing the fullseye package");
         return FS_E_NO_PYTHON;
     }
     try {
-        fs_init_options_t initialized_options = *options;
-        if (initialized_options.runtime_root == nullptr) {
-            initialized_options.runtime_root = environment_root;
-        }
-        initialize_python(initialized_options);
-        if (!g_python_ready) {
+        const fs_status_t init_status = initialize_python(
+            root, home, (options->flags & FS_INIT_ALLOW_HOST_PYTHON_UNSAFE) != 0u);
+        if (init_status != FS_OK) {
             set_error(nullptr, "CPython initialization failed: " + g_python_error);
-            return FS_E_NO_PYTHON;
+            return init_status;
         }
         auto *runtime = new fs_runtime_t();
         {
@@ -535,11 +641,13 @@ FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime) {
 
 FS_API fs_status_t FS_CALL fs_find_ops_json(fs_runtime_t *runtime, const char *query_json,
                                              char **out_utf8, size_t *out_bytes) {
-    (void)query_json;
-    if (out_utf8 != nullptr) *out_utf8 = nullptr;
-    if (out_bytes != nullptr) *out_bytes = 0u;
-    set_error(runtime, "fs_find_ops_json requires a bounded query; call fs_find_ops_json_n");
-    return FS_E_INVALID_ARG;
+    if (query_json == nullptr) {
+        if (out_utf8 != nullptr) *out_utf8 = nullptr;
+        if (out_bytes != nullptr) *out_bytes = 0u;
+        set_error(runtime, "query_json must not be NULL");
+        return FS_E_INVALID_ARG;
+    }
+    return fs_find_ops_json_n(runtime, query_json, std::strlen(query_json), out_utf8, out_bytes);
 }
 
 FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime, const char *query_json,
@@ -598,21 +706,81 @@ FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime, const char 
 FS_API fs_status_t FS_CALL fs_call(fs_runtime_t *runtime, const char *op_id,
                                     const fs_input_t *inputs, size_t input_count,
                                     const char *params_json, fs_result_t **out) {
-    (void)op_id;
-    (void)inputs;
-    (void)input_count;
-    (void)params_json;
     if (out != nullptr) {
         *out = nullptr;
     }
-    set_error(runtime, "fs_call requires bounded strings; call fs_call_n");
-    return FS_E_INVALID_ARG;
+    if (runtime == nullptr || op_id == nullptr || params_json == nullptr || out == nullptr
+        || (input_count != 0u && inputs == nullptr)) {
+        set_error(runtime, "runtime, C strings, inputs, and out must satisfy the ABI 0.1 contract");
+        return FS_E_INVALID_ARG;
+    }
+    RuntimeCall call(runtime);
+    if (!call.entered()) {
+        set_error(runtime, "runtime is closing");
+        return FS_E_BUSY;
+    }
+    try {
+        py::gil_scoped_acquire acquire;
+        py::list values;
+        for (size_t index = 0; index < input_count; ++index) {
+            const fs_input_t &input = inputs[index];
+            if (input.struct_size < kRequiredInputSize) {
+                set_error(runtime, "fs_input_t.struct_size is too small");
+                return FS_E_INVALID_ARG;
+            }
+            if (input.result != nullptr) {
+                if (input.result_index >= input.result->payload.items.size()) {
+                    set_error(runtime, "result_index is out of range");
+                    return FS_E_INVALID_ARG;
+                }
+                const Item &item = input.result->payload.items[input.result_index];
+                if (input.kind != item.kind) {
+                    set_error(runtime, "fs_input_t.kind does not match the borrowed result");
+                    return FS_E_TYPE;
+                }
+                values.append(item_to_python(item));
+            } else {
+                if (input.kind != FS_VALUE_IMAGE) {
+                    set_error(runtime, "non-image inputs must borrow an earlier result");
+                    return FS_E_INVALID_ARG;
+                }
+                const fs_status_t status = validate_image(runtime, input.image);
+                if (status != FS_OK) return status;
+                values.append(image_to_python(input.image));
+            }
+        }
+        const py::object bridge = py::module_::import("fullseye.c_api_bridge");
+        const py::dict answer = py::cast<py::dict>(bridge.attr("call")(op_id, values, params_json));
+        const auto status = static_cast<fs_status_t>(py::cast<int>(answer["status"]));
+        if (status != FS_OK) {
+            set_error(runtime, py::cast<std::string>(answer["message"]));
+            return status;
+        }
+        auto result = std::make_unique<fs_result_t>();
+        for (const py::handle value : py::cast<py::list>(answer["outputs"])) {
+            result->payload.items.push_back(python_to_item(py::cast<py::dict>(value)));
+        }
+        *out = result.release();
+        clear_error(runtime);
+        return FS_OK;
+    } catch (const py::error_already_set &exc) {
+        set_error(runtime, exc.what()); return FS_E_PY_EXCEPTION;
+    } catch (const std::bad_alloc &) {
+        set_error(runtime, "out of memory while running the operator"); return FS_E_OUT_OF_MEMORY;
+    } catch (const std::exception &exc) {
+        set_error(runtime, exc.what()); return FS_E_INTERNAL;
+    } catch (...) {
+        set_error(runtime, "unknown error while running the operator"); return FS_E_INTERNAL;
+    }
 }
 
 FS_API fs_status_t FS_CALL fs_call_n(fs_runtime_t *runtime, const char *op_id,
-                                      size_t op_id_bytes, const fs_input_t *inputs,
+                                      size_t op_id_bytes, const fs_input_n_t *inputs,
                                       size_t input_count, const char *params_json,
-                                      size_t params_json_bytes, fs_result_t **out) {
+                                      size_t params_json_bytes, fs_result_id_t *out) {
+    if (out != nullptr) {
+        *out = 0u;
+    }
     if (runtime == nullptr || op_id == nullptr || out == nullptr
         || (input_count != 0u && inputs == nullptr)) {
         set_error(runtime, "runtime, op_id, inputs, and out must satisfy the C API contract");
@@ -633,15 +801,15 @@ FS_API fs_status_t FS_CALL fs_call_n(fs_runtime_t *runtime, const char *op_id,
     try {
         py::gil_scoped_acquire acquire;
         py::list values;
-        std::vector<ResultLease> borrowed_results;
+        std::vector<ResultIdLease> borrowed_results;
         for (size_t index = 0; index < input_count; ++index) {
-            const fs_input_t &input = inputs[index];
-            if (input.struct_size < kRequiredInputSize) {
-                set_error(runtime, "fs_input_t.struct_size is too small");
+            const fs_input_n_t &input = inputs[index];
+            if (input.struct_size < kRequiredInputNSize) {
+                set_error(runtime, "fs_input_n_t.struct_size is too small");
                 return FS_E_INVALID_ARG;
             }
-            if (input.result != nullptr) {
-                borrowed_results.emplace_back(input.result);
+            if (input.result_id != 0u) {
+                borrowed_results.emplace_back(input.result_id);
                 const ResultPayload *borrowed = borrowed_results.back().get();
                 if (borrowed == nullptr || input.result_index >= borrowed->items.size()) {
                     set_error(runtime, "result_index is out of range");
@@ -649,7 +817,7 @@ FS_API fs_status_t FS_CALL fs_call_n(fs_runtime_t *runtime, const char *op_id,
                 }
                 const Item &item = borrowed->items[input.result_index];
                 if (input.kind != item.kind) {
-                    set_error(runtime, "fs_input_t.kind does not match the borrowed result");
+                    set_error(runtime, "fs_input_n_t.kind does not match the borrowed result");
                     return FS_E_TYPE;
                 }
                 values.append(item_to_python(item));
@@ -678,13 +846,12 @@ FS_API fs_status_t FS_CALL fs_call_n(fs_runtime_t *runtime, const char *op_id,
         for (const py::handle value : py::cast<py::list>(answer["outputs"])) {
             payload->items.push_back(python_to_item(py::cast<py::dict>(value)));
         }
-        auto result = std::make_shared<fs_result_t>();
-        result->payload = std::move(payload);
-        {
-            std::lock_guard<std::mutex> lock(g_result_mutex);
-            g_live_results.emplace(result.get(), result);
+        const fs_result_id_t id = register_result(std::move(payload));
+        if (id == 0u) {
+            set_error(runtime, "result handle table is exhausted");
+            return FS_E_OUT_OF_MEMORY;
         }
-        *out = result.get();
+        *out = id;
         clear_error(runtime);
         return FS_OK;
     } catch (const py::error_already_set &exc) {
@@ -703,30 +870,23 @@ FS_API fs_status_t FS_CALL fs_call_n(fs_runtime_t *runtime, const char *op_id,
 }
 
 FS_API size_t FS_CALL fs_result_count(const fs_result_t *result) {
-    ResultLease lease(result);
-    if (!lease) {
-        set_error(nullptr, "result handle is unknown or has been released");
-        return 0u;
-    }
-    return lease.get()->items.size();
+    return result == nullptr ? 0u : result->payload.items.size();
 }
 
 FS_API fs_status_t FS_CALL fs_result_kind(const fs_result_t *result, size_t index,
                                            fs_value_kind_t *out) {
-    ResultLease lease(result);
-    if (!lease || out == nullptr || index >= lease.get()->items.size()) {
+    if (result == nullptr || out == nullptr || index >= result->payload.items.size()) {
         return FS_E_INVALID_ARG;
     }
-    *out = lease.get()->items[index].kind;
+    *out = result->payload.items[index].kind;
     return FS_OK;
 }
 
 FS_API fs_status_t FS_CALL fs_result_image(const fs_result_t *result, size_t index,
                                             fs_image_view_t *out_borrowed) {
-    ResultLease lease(result);
     const Item *item = nullptr;
-    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_IMAGE, &item)
-                                     : FS_E_INVALID_ARG;
+    const fs_status_t status = result == nullptr ? FS_E_INVALID_ARG
+        : access_item(&result->payload, index, FS_VALUE_IMAGE, &item);
     if (status != FS_OK || out_borrowed == nullptr) {
         return out_borrowed == nullptr ? FS_E_INVALID_ARG : status;
     }
@@ -747,10 +907,9 @@ FS_API fs_status_t FS_CALL fs_result_image(const fs_result_t *result, size_t ind
 FS_API fs_status_t FS_CALL fs_result_region_runs(const fs_result_t *result, size_t index,
                                                   const fs_run_t **out_borrowed,
                                                   size_t *out_count) {
-    ResultLease lease(result);
     const Item *item = nullptr;
-    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_REGION, &item)
-                                     : FS_E_INVALID_ARG;
+    const fs_status_t status = result == nullptr ? FS_E_INVALID_ARG
+        : access_item(&result->payload, index, FS_VALUE_REGION, &item);
     if (status != FS_OK || out_borrowed == nullptr || out_count == nullptr) {
         return status != FS_OK ? status : FS_E_INVALID_ARG;
     }
@@ -761,10 +920,9 @@ FS_API fs_status_t FS_CALL fs_result_region_runs(const fs_result_t *result, size
 
 FS_API fs_status_t FS_CALL fs_result_object_count(const fs_result_t *result, size_t index,
                                                    size_t *out_count) {
-    ResultLease lease(result);
     const Item *item = nullptr;
-    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_OBJECTSET, &item)
-                                     : FS_E_INVALID_ARG;
+    const fs_status_t status = result == nullptr ? FS_E_INVALID_ARG
+        : access_item(&result->payload, index, FS_VALUE_OBJECTSET, &item);
     if (status != FS_OK || out_count == nullptr) {
         return status != FS_OK ? status : FS_E_INVALID_ARG;
     }
@@ -776,10 +934,9 @@ FS_API fs_status_t FS_CALL fs_result_object_runs(const fs_result_t *result, size
                                                   size_t object_index,
                                                   const fs_run_t **out_borrowed,
                                                   size_t *out_count) {
-    ResultLease lease(result);
     const Item *item = nullptr;
-    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_OBJECTSET, &item)
-                                     : FS_E_INVALID_ARG;
+    const fs_status_t status = result == nullptr ? FS_E_INVALID_ARG
+        : access_item(&result->payload, index, FS_VALUE_OBJECTSET, &item);
     if (status != FS_OK || out_borrowed == nullptr || out_count == nullptr
         || object_index >= item->objects.size()) {
         return status != FS_OK ? status : FS_E_INVALID_ARG;
@@ -790,10 +947,9 @@ FS_API fs_status_t FS_CALL fs_result_object_runs(const fs_result_t *result, size
 }
 
 FS_API fs_status_t FS_CALL fs_result_real(const fs_result_t *result, size_t index, double *out) {
-    ResultLease lease(result);
     const Item *item = nullptr;
-    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_REAL, &item)
-                                     : FS_E_INVALID_ARG;
+    const fs_status_t status = result == nullptr ? FS_E_INVALID_ARG
+        : access_item(&result->payload, index, FS_VALUE_REAL, &item);
     if (status != FS_OK || out == nullptr) {
         return status != FS_OK ? status : FS_E_INVALID_ARG;
     }
@@ -803,10 +959,9 @@ FS_API fs_status_t FS_CALL fs_result_real(const fs_result_t *result, size_t inde
 
 FS_API fs_status_t FS_CALL fs_result_tuple_size(const fs_result_t *result, size_t index,
                                                  size_t *out_count) {
-    ResultLease lease(result);
     const Item *item = nullptr;
-    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_TUPLE, &item)
-                                     : FS_E_INVALID_ARG;
+    const fs_status_t status = result == nullptr ? FS_E_INVALID_ARG
+        : access_item(&result->payload, index, FS_VALUE_TUPLE, &item);
     if (status != FS_OK || out_count == nullptr) {
         return status != FS_OK ? status : FS_E_INVALID_ARG;
     }
@@ -816,10 +971,9 @@ FS_API fs_status_t FS_CALL fs_result_tuple_size(const fs_result_t *result, size_
 
 FS_API fs_status_t FS_CALL fs_result_tuple_real(const fs_result_t *result, size_t index,
                                                  size_t element_index, double *out) {
-    ResultLease lease(result);
     const Item *item = nullptr;
-    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_TUPLE, &item)
-                                     : FS_E_INVALID_ARG;
+    const fs_status_t status = result == nullptr ? FS_E_INVALID_ARG
+        : access_item(&result->payload, index, FS_VALUE_TUPLE, &item);
     if (status != FS_OK || out == nullptr || element_index >= item->tuple.size()) {
         return status != FS_OK ? status : FS_E_INVALID_ARG;
     }
@@ -827,22 +981,109 @@ FS_API fs_status_t FS_CALL fs_result_tuple_real(const fs_result_t *result, size_
     return FS_OK;
 }
 
-FS_API fs_status_t FS_CALL fs_result_release(fs_result_t *result) {
-    if (result == nullptr) {
-        set_error(nullptr, "result must not be NULL");
-        return FS_E_INVALID_ARG;
-    }
-    std::lock_guard<std::mutex> lock(g_result_mutex);
-    const auto found = g_live_results.find(result);
-    if (found == g_live_results.end()) {
-        set_error(nullptr, "result handle is unknown or has already been released");
-        return FS_E_INVALID_ARG;
-    }
-    g_retired_results.push_back(found->second);
-    found->second->payload.reset();
-    g_live_results.erase(found);
-    clear_error(nullptr);
+FS_API void FS_CALL fs_result_release(fs_result_t *result) {
+    delete result;
+}
+
+FS_API fs_status_t FS_CALL fs_result_count_n(fs_result_id_t result, size_t *out_count) {
+    ResultIdLease lease(result);
+    if (!lease || out_count == nullptr) return FS_E_INVALID_ARG;
+    *out_count = lease.get()->items.size();
     return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_result_kind_n(fs_result_id_t result, size_t index,
+                                             fs_value_kind_t *out) {
+    ResultIdLease lease(result);
+    if (!lease || out == nullptr || index >= lease.get()->items.size()) return FS_E_INVALID_ARG;
+    *out = lease.get()->items[index].kind;
+    return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_result_image_n(fs_result_id_t result, size_t index,
+                                              fs_image_view_t *out_borrowed) {
+    ResultIdLease lease(result);
+    const Item *item = nullptr;
+    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_IMAGE, &item)
+                                     : FS_E_INVALID_ARG;
+    if (status != FS_OK || out_borrowed == nullptr) return status != FS_OK ? status : FS_E_INVALID_ARG;
+    if (out_borrowed->struct_size < kRequiredImageSize) return FS_E_INVALID_ARG;
+    out_borrowed->data = item->image.data();
+    out_borrowed->data_bytes = item->image.size() * sizeof(double);
+    out_borrowed->width = item->width;
+    out_borrowed->height = item->height;
+    out_borrowed->row_stride_bytes = item->width * static_cast<int64_t>(sizeof(double));
+    out_borrowed->dtype = FS_DTYPE_F64;
+    out_borrowed->range_lo = item->range_lo;
+    out_borrowed->range_hi = item->range_hi;
+    return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_result_region_runs_n(fs_result_id_t result, size_t index,
+                                                    const fs_run_t **out_borrowed, size_t *out_count) {
+    ResultIdLease lease(result);
+    const Item *item = nullptr;
+    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_REGION, &item)
+                                     : FS_E_INVALID_ARG;
+    if (status != FS_OK || out_borrowed == nullptr || out_count == nullptr) return status != FS_OK ? status : FS_E_INVALID_ARG;
+    *out_borrowed = item->runs.data(); *out_count = item->runs.size(); return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_result_object_count_n(fs_result_id_t result, size_t index,
+                                                     size_t *out_count) {
+    ResultIdLease lease(result);
+    const Item *item = nullptr;
+    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_OBJECTSET, &item)
+                                     : FS_E_INVALID_ARG;
+    if (status != FS_OK || out_count == nullptr) return status != FS_OK ? status : FS_E_INVALID_ARG;
+    *out_count = item->objects.size(); return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_result_object_runs_n(fs_result_id_t result, size_t index,
+                                                    size_t object_index, const fs_run_t **out_borrowed,
+                                                    size_t *out_count) {
+    ResultIdLease lease(result);
+    const Item *item = nullptr;
+    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_OBJECTSET, &item)
+                                     : FS_E_INVALID_ARG;
+    if (status != FS_OK || out_borrowed == nullptr || out_count == nullptr || object_index >= item->objects.size()) return status != FS_OK ? status : FS_E_INVALID_ARG;
+    *out_borrowed = item->objects[object_index].data(); *out_count = item->objects[object_index].size(); return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_result_real_n(fs_result_id_t result, size_t index, double *out) {
+    ResultIdLease lease(result);
+    const Item *item = nullptr;
+    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_REAL, &item)
+                                     : FS_E_INVALID_ARG;
+    if (status != FS_OK || out == nullptr) return status != FS_OK ? status : FS_E_INVALID_ARG;
+    *out = item->real; return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_result_tuple_size_n(fs_result_id_t result, size_t index,
+                                                   size_t *out_count) {
+    ResultIdLease lease(result);
+    const Item *item = nullptr;
+    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_TUPLE, &item)
+                                     : FS_E_INVALID_ARG;
+    if (status != FS_OK || out_count == nullptr) return status != FS_OK ? status : FS_E_INVALID_ARG;
+    *out_count = item->tuple.size(); return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_result_tuple_real_n(fs_result_id_t result, size_t index,
+                                                   size_t element_index, double *out) {
+    ResultIdLease lease(result);
+    const Item *item = nullptr;
+    const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_TUPLE, &item)
+                                     : FS_E_INVALID_ARG;
+    if (status != FS_OK || out == nullptr || element_index >= item->tuple.size()) return status != FS_OK ? status : FS_E_INVALID_ARG;
+    *out = item->tuple[element_index]; return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_result_release_n(fs_result_id_t result) {
+    const fs_status_t status = release_result_id(result);
+    if (status != FS_OK) set_error(nullptr, "result ID is unknown or has already been released");
+    else clear_error(nullptr);
+    return status;
 }
 
 FS_API void FS_CALL fs_free(void *library_allocated) {

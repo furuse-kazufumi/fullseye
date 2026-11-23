@@ -24,10 +24,10 @@ static fs_input_t image_input(const double *pixels, size_t count, int64_t height
     return input;
 }
 
-static fs_input_t result_input(fs_value_kind_t kind, const fs_result_t *result, size_t index) {
-    fs_input_t input = FS_INPUT_INIT;
+static fs_input_n_t result_input(fs_value_kind_t kind, fs_result_id_t result, size_t index) {
+    fs_input_n_t input = FS_INPUT_N_INIT;
     input.kind = kind;
-    input.result = result;
+    input.result_id = result;
     input.result_index = index;
     return input;
 }
@@ -42,17 +42,18 @@ int main(int argc, char **argv) {
     };
     fs_init_options_t options = FS_INIT_OPTIONS_INIT;
     fs_runtime_t *runtime = NULL;
-    fs_result_t *contract_region = NULL;
-    fs_result_t *objects = NULL;
-    fs_result_t *measures = NULL;
-    fs_result_t *registry_region = NULL;
-    fs_result_t *count = NULL;
+    fs_result_id_t contract_region = 0u;
+    fs_result_id_t objects = 0u;
+    fs_result_id_t measures = 0u;
+    fs_result_id_t registry_region = 0u;
+    fs_result_id_t count = 0u;
     char *catalog = NULL;
     size_t catalog_bytes = 0;
     int ok = 0;
 
     if (argc > 1) {
         options.runtime_root = argv[1];
+        options.runtime_root_bytes = strlen(argv[1]);
     }
     if (!check(NULL, fs_runtime_create(&options, &runtime), "initialize")) goto done;
     if (!check(runtime, fs_find_ops_json_n(runtime, "{\"query\":\"threshold\"}",
@@ -60,16 +61,17 @@ int main(int argc, char **argv) {
                                            &catalog, &catalog_bytes), "search")) goto done;
     if (catalog_bytes == 0 || strstr(catalog, "contract:threshold") == NULL) goto done;
 
-    fs_input_t image = image_input(pixels, 30, 5, 6);
+    fs_input_n_t image = FS_INPUT_N_INIT;
+    image.image = image_input(pixels, 30, 5, 6).image;
     if (!check(runtime, fs_call_n(runtime, "contract:threshold", sizeof("contract:threshold") - 1u,
                                   &image, 1, "{\"lo\":0.6,\"hi\":1.0}",
                                   sizeof("{\"lo\":0.6,\"hi\":1.0}") - 1u, &contract_region),
                "contract threshold")) goto done;
-    fs_input_t region = result_input(FS_VALUE_REGION, contract_region, 0);
+    fs_input_n_t region = result_input(FS_VALUE_REGION, contract_region, 0);
     if (!check(runtime, fs_call_n(runtime, "contract:connection", sizeof("contract:connection") - 1u,
                                   &region, 1, "{}", sizeof("{}") - 1u, &objects),
                "connection")) goto done;
-    fs_input_t object_input = result_input(FS_VALUE_OBJECTSET, objects, 0);
+    fs_input_n_t object_input = result_input(FS_VALUE_OBJECTSET, objects, 0);
     if (!check(runtime, fs_call_n(runtime, "contract:measure_all", sizeof("contract:measure_all") - 1u,
                                   &object_input, 1, "{}", sizeof("{}") - 1u, &measures),
                "measure_all")) goto done;
@@ -78,7 +80,7 @@ int main(int argc, char **argv) {
                                   &image, 1, "{\"a\":0.6,\"b\":0.5}",
                                   sizeof("{\"a\":0.6,\"b\":0.5}") - 1u, &registry_region),
                "registry threshold")) goto done;
-    fs_input_t registry_input = result_input(FS_VALUE_REGION, registry_region, 0);
+    fs_input_n_t registry_input = result_input(FS_VALUE_REGION, registry_region, 0);
     if (!check(runtime, fs_call_n(runtime, "registry:blob_count", sizeof("registry:blob_count") - 1u,
                                   &registry_input, 1, "{}", sizeof("{}") - 1u, &count),
                "blob_count")) goto done;
@@ -87,19 +89,19 @@ int main(int argc, char **argv) {
         double value = -1.0;
         size_t objects_count = 0;
         size_t tuple_count = 0;
-        if (fs_result_object_count(objects, 0, &objects_count) != FS_OK || objects_count != 4) goto done;
-        if (fs_result_tuple_size(measures, 0, &tuple_count) != FS_OK || tuple_count != 4) goto done;
-        if (fs_result_real(count, 0, &value) != FS_OK || value != 4.0) goto done;
+        if (fs_result_object_count_n(objects, 0, &objects_count) != FS_OK || objects_count != 4) goto done;
+        if (fs_result_tuple_size_n(measures, 0, &tuple_count) != FS_OK || tuple_count != 4) goto done;
+        if (fs_result_real_n(count, 0, &value) != FS_OK || value != 4.0) goto done;
     }
     ok = 1;
 
 done:
     fs_free(catalog);
-    fs_result_release(count);
-    fs_result_release(registry_region);
-    fs_result_release(measures);
-    fs_result_release(objects);
-    fs_result_release(contract_region);
+    (void)fs_result_release_n(count);
+    (void)fs_result_release_n(registry_region);
+    (void)fs_result_release_n(measures);
+    (void)fs_result_release_n(objects);
+    (void)fs_result_release_n(contract_region);
     fs_runtime_destroy(runtime);
     return ok ? 0 : 1;
 }

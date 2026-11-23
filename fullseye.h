@@ -38,6 +38,9 @@ extern "C" {
 
 typedef struct fs_runtime fs_runtime_t;
 typedef struct fs_result fs_result_t;
+/* A generation-tagged, opaque result handle for the ABI 0.2 bounded API.
+ * ABI 0.2 の長さ付き API が返す世代付き不透明結果ハンドル。 */
+typedef uint64_t fs_result_id_t;
 
 typedef enum fs_value_kind {
     FS_VALUE_IMAGE = 1,
@@ -61,11 +64,16 @@ typedef struct fs_init_options {
     uint32_t flags;
     uint32_t abi_major;
     uint32_t abi_minor;
+    /* ABI 0.2: explicit byte spans.  A non-NULL pointer needs a non-zero
+     * length; NULL with zero means unspecified. ABI 0.1 uses C strings.
+     * ABI 0.2: 明示長。非 NULL なら長さは正、NULL と 0 は未指定。ABI 0.1 は C 文字列。 */
+    size_t runtime_root_bytes;
+    size_t python_home_bytes;
 } fs_init_options_t;
 
 #define FS_INIT_OPTIONS_INIT \
     { (uint32_t)sizeof(fs_init_options_t), NULL, NULL, FS_INIT_ISOLATED, \
-      FULLSEYE_ABI_VERSION_MAJOR, FULLSEYE_ABI_VERSION_MINOR }
+      FULLSEYE_ABI_VERSION_MAJOR, FULLSEYE_ABI_VERSION_MINOR, 0u, 0u }
 
 typedef struct fs_image_view {
     uint32_t struct_size;
@@ -98,10 +106,10 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options,
                                               fs_runtime_t **out);
 FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime);
 
-/* Legacy NUL-terminated entry points are retained for binary compatibility but
- * fail closed. Use the _n functions, whose explicit lengths prevent reads past
- * a caller-owned buffer. / 旧入口は互換性のため残すが、境界外読取りを避けるため
- * fail-closed とする。 */
+/* ABI 0.1 legacy entry points accept valid NUL-terminated C strings. Result
+ * pointers must not be used after fs_result_release(); that is undefined.
+ * ABI 0.1 旧入口は有効な NUL 終端 C 文字列を受ける。fs_result_release() 後の
+ * 結果ポインタ利用は未定義で、呼出し側の責任。 */
 FS_API fs_status_t FS_CALL fs_find_ops_json(fs_runtime_t *runtime,
                                              const char *query_json,
                                              char **out_utf8,
@@ -112,8 +120,21 @@ FS_API fs_status_t FS_CALL fs_call(fs_runtime_t *runtime,
                                     size_t input_count,
                                     const char *params_json,
                                     fs_result_t **out);
-/* The byte spans need not have a trailing NUL. They must contain UTF-8 text.
- * 文字列は終端 NUL 不要で、長さの範囲内の UTF-8 を渡す。 */
+/* ABI 0.2 bounded API. Byte spans need not have a trailing NUL and must
+ * contain UTF-8 text. Results are generation-tagged IDs; unknown or released
+ * IDs return FS_E_INVALID_ARG. / ABI 0.2 の長さ付き API。文字列は終端 NUL
+ * 不要で UTF-8。結果は世代付き ID で、未知・解放済み ID は FS_E_INVALID_ARG。 */
+typedef struct fs_input_n {
+    uint32_t struct_size;
+    fs_value_kind_t kind;
+    fs_image_view_t image;
+    fs_result_id_t result_id;
+    size_t result_index;
+} fs_input_n_t;
+
+#define FS_INPUT_N_INIT \
+    { (uint32_t)sizeof(fs_input_n_t), FS_VALUE_IMAGE, FS_IMAGE_VIEW_INIT, 0u, 0u }
+
 FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime,
                                                const char *query_json,
                                                size_t query_json_bytes,
@@ -122,11 +143,11 @@ FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime,
 FS_API fs_status_t FS_CALL fs_call_n(fs_runtime_t *runtime,
                                       const char *op_id,
                                       size_t op_id_bytes,
-                                      const fs_input_t *inputs,
+                                      const fs_input_n_t *inputs,
                                       size_t input_count,
                                       const char *params_json,
                                       size_t params_json_bytes,
-                                      fs_result_t **out);
+                                      fs_result_id_t *out);
 
 /* Borrowed result views remain valid through fs_result_release().
  * 借用結果は fs_result_release() まで有効。 */
@@ -159,9 +180,32 @@ FS_API fs_status_t FS_CALL fs_result_tuple_real(const fs_result_t *result,
                                                  size_t index,
                                                  size_t element_index,
                                                  double *out);
-/* Release returns FS_E_INVALID_ARG for an unknown or already released handle.
- * 解放済みまたは未知のハンドルは FS_E_INVALID_ARG。 */
-FS_API fs_status_t FS_CALL fs_result_release(fs_result_t *result);
+/* ABI 0.1 pointer results. Borrowed views are valid through release.
+ * ABI 0.1 ポインタ結果。借用 view は release まで有効。 */
+FS_API void FS_CALL fs_result_release(fs_result_t *result);
+/* ABI 0.2 generation-ID results. Borrowed views are valid until the matching
+ * release_n; callers must not retain a borrowed pointer past it.
+ * ABI 0.2 世代 ID 結果。借用 view は release_n まで有効。 */
+FS_API fs_status_t FS_CALL fs_result_count_n(fs_result_id_t result, size_t *out_count);
+FS_API fs_status_t FS_CALL fs_result_kind_n(fs_result_id_t result, size_t index,
+                                             fs_value_kind_t *out);
+FS_API fs_status_t FS_CALL fs_result_image_n(fs_result_id_t result, size_t index,
+                                              fs_image_view_t *out_borrowed);
+FS_API fs_status_t FS_CALL fs_result_region_runs_n(fs_result_id_t result, size_t index,
+                                                    const fs_run_t **out_borrowed,
+                                                    size_t *out_count);
+FS_API fs_status_t FS_CALL fs_result_object_count_n(fs_result_id_t result, size_t index,
+                                                     size_t *out_count);
+FS_API fs_status_t FS_CALL fs_result_object_runs_n(fs_result_id_t result, size_t index,
+                                                    size_t object_index,
+                                                    const fs_run_t **out_borrowed,
+                                                    size_t *out_count);
+FS_API fs_status_t FS_CALL fs_result_real_n(fs_result_id_t result, size_t index, double *out);
+FS_API fs_status_t FS_CALL fs_result_tuple_size_n(fs_result_id_t result, size_t index,
+                                                   size_t *out_count);
+FS_API fs_status_t FS_CALL fs_result_tuple_real_n(fs_result_id_t result, size_t index,
+                                                   size_t element_index, double *out);
+FS_API fs_status_t FS_CALL fs_result_release_n(fs_result_id_t result);
 FS_API void FS_CALL fs_free(void *library_allocated);
 
 /* The returned size includes the trailing NUL byte / 返す長さは終端 NUL を含む。 */

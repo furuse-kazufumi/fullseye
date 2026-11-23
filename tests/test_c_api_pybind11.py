@@ -32,7 +32,8 @@ FS_VALUE_OBJECTSET = 3
 class InitOptions(C.Structure):
     _fields_ = [("struct_size", C.c_uint32), ("runtime_root", C.c_char_p),
                 ("python_home", C.c_char_p), ("flags", C.c_uint32),
-                ("abi_major", C.c_uint32), ("abi_minor", C.c_uint32)]
+                ("abi_major", C.c_uint32), ("abi_minor", C.c_uint32),
+                ("runtime_root_bytes", C.c_size_t), ("python_home_bytes", C.c_size_t)]
 
 
 class ImageView(C.Structure):
@@ -45,6 +46,11 @@ class ImageView(C.Structure):
 class Input(C.Structure):
     _fields_ = [("struct_size", C.c_uint32), ("kind", C.c_int), ("image", ImageView),
                 ("result", C.c_void_p), ("result_index", C.c_size_t)]
+
+
+class InputN(C.Structure):
+    _fields_ = [("struct_size", C.c_uint32), ("kind", C.c_int), ("image", ImageView),
+                ("result_id", C.c_uint64), ("result_index", C.c_size_t)]
 
 
 class Run(C.Structure):
@@ -68,27 +74,27 @@ def _bind(lib):
     lib.fs_runtime_create.argtypes = [C.POINTER(InitOptions), C.POINTER(C.c_void_p)]
     lib.fs_runtime_create.restype = C.c_int
     lib.fs_runtime_destroy.argtypes = [C.c_void_p]
-    lib.fs_call_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t, C.POINTER(Input), C.c_size_t,
-                              C.c_void_p, C.c_size_t, C.POINTER(C.c_void_p)]
+    lib.fs_call_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t, C.POINTER(InputN), C.c_size_t,
+                              C.c_void_p, C.c_size_t, C.POINTER(C.c_uint64)]
     lib.fs_call_n.restype = C.c_int
-    lib.fs_result_release.argtypes = [C.c_void_p]
-    lib.fs_result_release.restype = C.c_int
-    lib.fs_result_kind.argtypes = [C.c_void_p, C.c_size_t, C.POINTER(C.c_int)]
-    lib.fs_result_kind.restype = C.c_int
-    lib.fs_result_region_runs.argtypes = [C.c_void_p, C.c_size_t, C.POINTER(C.POINTER(Run)),
+    lib.fs_result_release_n.argtypes = [C.c_uint64]
+    lib.fs_result_release_n.restype = C.c_int
+    lib.fs_result_kind_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.c_int)]
+    lib.fs_result_kind_n.restype = C.c_int
+    lib.fs_result_region_runs_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.POINTER(Run)),
                                            C.POINTER(C.c_size_t)]
-    lib.fs_result_region_runs.restype = C.c_int
-    lib.fs_result_object_count.argtypes = [C.c_void_p, C.c_size_t, C.POINTER(C.c_size_t)]
-    lib.fs_result_object_count.restype = C.c_int
-    lib.fs_result_object_runs.argtypes = [C.c_void_p, C.c_size_t, C.c_size_t,
+    lib.fs_result_region_runs_n.restype = C.c_int
+    lib.fs_result_object_count_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.c_size_t)]
+    lib.fs_result_object_count_n.restype = C.c_int
+    lib.fs_result_object_runs_n.argtypes = [C.c_uint64, C.c_size_t, C.c_size_t,
                                            C.POINTER(C.POINTER(Run)), C.POINTER(C.c_size_t)]
-    lib.fs_result_object_runs.restype = C.c_int
-    lib.fs_result_tuple_size.argtypes = [C.c_void_p, C.c_size_t, C.POINTER(C.c_size_t)]
-    lib.fs_result_tuple_size.restype = C.c_int
-    lib.fs_result_tuple_real.argtypes = [C.c_void_p, C.c_size_t, C.c_size_t, C.POINTER(C.c_double)]
-    lib.fs_result_tuple_real.restype = C.c_int
-    lib.fs_result_real.argtypes = [C.c_void_p, C.c_size_t, C.POINTER(C.c_double)]
-    lib.fs_result_real.restype = C.c_int
+    lib.fs_result_object_runs_n.restype = C.c_int
+    lib.fs_result_tuple_size_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.c_size_t)]
+    lib.fs_result_tuple_size_n.restype = C.c_int
+    lib.fs_result_tuple_real_n.argtypes = [C.c_uint64, C.c_size_t, C.c_size_t, C.POINTER(C.c_double)]
+    lib.fs_result_tuple_real_n.restype = C.c_int
+    lib.fs_result_real_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.c_double)]
+    lib.fs_result_real_n.restype = C.c_int
     lib.fs_last_error.argtypes = [C.c_void_p, C.c_char_p, C.c_size_t]
     lib.fs_last_error.restype = C.c_size_t
 
@@ -98,7 +104,7 @@ def abi():
     lib = C.CDLL(str(_library_path()))
     _bind(lib)
     root = os.fsencode(ROOT)
-    options = InitOptions(C.sizeof(InitOptions), root, None, 3, 0, 2)
+    options = InitOptions(C.sizeof(InitOptions), root, None, 3, 0, 2, len(root), 0)
     runtime = C.c_void_p()
     assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_OK
     yield lib, runtime
@@ -106,23 +112,23 @@ def abi():
 
 
 def _image(array: np.ndarray, *, data_bytes=None, width=None, height=None, stride=None,
-           dtype=4, lo=0.0, hi=1.0) -> Input:
+           dtype=4, lo=0.0, hi=1.0) -> InputN:
     view = ImageView(C.sizeof(ImageView), int(array.ctypes.data),
                      array.nbytes if data_bytes is None else data_bytes,
                      array.shape[1] if width is None else width,
                      array.shape[0] if height is None else height,
                      array.strides[0] if stride is None else stride, dtype, lo, hi)
-    return Input(C.sizeof(Input), FS_VALUE_IMAGE, view, None, 0)
+    return InputN(C.sizeof(InputN), FS_VALUE_IMAGE, view, 0, 0)
 
 
-def _borrow(kind: int, result, index=0) -> Input:
-    return Input(C.sizeof(Input), kind, ImageView(), result, index)
+def _borrow(kind: int, result, index=0) -> InputN:
+    return InputN(C.sizeof(InputN), kind, ImageView(), result, index)
 
 
 def _call(abi, op: str, inputs: list[Input], params="{}"):
     lib, runtime = abi
-    result = C.c_void_p()
-    array = (Input * len(inputs))(*inputs) if inputs else None
+    result = C.c_uint64()
+    array = (InputN * len(inputs))(*inputs) if inputs else None
     op_bytes, params_bytes = op.encode(), params.encode()
     status = lib.fs_call_n(runtime, op_bytes, len(op_bytes), array, len(inputs),
                            params_bytes, len(params_bytes), C.byref(result))
@@ -132,24 +138,24 @@ def _call(abi, op: str, inputs: list[Input], params="{}"):
 def _runs(lib, result, index=0):
     pointer = C.POINTER(Run)()
     count = C.c_size_t()
-    assert lib.fs_result_region_runs(result, index, C.byref(pointer), C.byref(count)) == FS_OK
+    assert lib.fs_result_region_runs_n(result, index, C.byref(pointer), C.byref(count)) == FS_OK
     return [(pointer[i].row, pointer[i].col_begin, pointer[i].col_end) for i in range(count.value)]
 
 
 def _object_runs(lib, result, object_index):
     pointer = C.POINTER(Run)()
     count = C.c_size_t()
-    assert lib.fs_result_object_runs(result, 0, object_index, C.byref(pointer), C.byref(count)) == FS_OK
+    assert lib.fs_result_object_runs_n(result, 0, object_index, C.byref(pointer), C.byref(count)) == FS_OK
     return [(pointer[i].row, pointer[i].col_begin, pointer[i].col_end) for i in range(count.value)]
 
 
 def _tuple(lib, result, index):
     count = C.c_size_t()
-    assert lib.fs_result_tuple_size(result, index, C.byref(count)) == FS_OK
+    assert lib.fs_result_tuple_size_n(result, index, C.byref(count)) == FS_OK
     values = []
     for element in range(count.value):
         value = C.c_double()
-        assert lib.fs_result_tuple_real(result, index, element, C.byref(value)) == FS_OK
+        assert lib.fs_result_tuple_real_n(result, index, element, C.byref(value)) == FS_OK
         values.append(value.value)
     return values
 
@@ -174,7 +180,7 @@ def test_contract_pipeline_matches_python_at_edges_and_preserves_order(abi):
     status, objects = _call(abi, "contract:connection", [_borrow(FS_VALUE_REGION, region)])
     assert status == FS_OK
     count = C.c_size_t()
-    assert lib.fs_result_object_count(objects, 0, C.byref(count)) == FS_OK
+    assert lib.fs_result_object_count_n(objects, 0, C.byref(count)) == FS_OK
     assert count.value == len(direct_objects)
     assert [_object_runs(lib, objects, i) for i in range(count.value)] == [
         _direct_runs(direct_objects.region(i)) for i in range(len(direct_objects))]
@@ -184,7 +190,7 @@ def test_contract_pipeline_matches_python_at_edges_and_preserves_order(abi):
         np.testing.assert_array_equal(_tuple(lib, measures, index), np.asarray(expected))
 
     for result in (measures, objects, region):
-        assert lib.fs_result_release(result) == FS_OK
+        assert lib.fs_result_release_n(result) == FS_OK
 
 
 def test_empty_region_and_registry_results_match_direct_python(abi):
@@ -204,13 +210,13 @@ def test_empty_region_and_registry_results_match_direct_python(abi):
     assert status == FS_OK and _runs(lib, registry_region) == _direct_runs(fslib.Region(direct > 0.5))
     status, count = _call(abi, "registry:blob_count", [_borrow(FS_VALUE_REGION, registry_region)])
     value = C.c_double()
-    assert status == FS_OK and lib.fs_result_real(count, 0, C.byref(value)) == FS_OK
+    assert status == FS_OK and lib.fs_result_real_n(count, 0, C.byref(value)) == FS_OK
     expected = fullseye.apply((direct > 0.5).astype(np.float64), "blob_count", 0.5, 0.5,
                               coerce=False, on_error="raise", allow_nonfinite=False)
     assert value.value == float(expected) == 1.0
 
     for result in (count, registry_region, measures, objects, region):
-        assert lib.fs_result_release(result) == FS_OK
+        assert lib.fs_result_release_n(result) == FS_OK
 
 
 def test_result_owns_data_after_input_is_freed(abi):
@@ -221,7 +227,7 @@ def test_result_owns_data_after_input_is_freed(abi):
     del pixels
     gc.collect()
     assert _runs(lib, result) == [(0, 1, 2), (1, 0, 1)]
-    assert lib.fs_result_release(result) == FS_OK
+    assert lib.fs_result_release_n(result) == FS_OK
 
 
 @pytest.mark.parametrize("case,expected", [
@@ -261,7 +267,7 @@ def test_invalid_image_views_are_rejected(abi, case, expected):
 
 def test_null_input_array_unknown_ops_and_extra_json_are_rejected(abi):
     lib, runtime = abi
-    result = C.c_void_p()
+    result = C.c_uint64()
     op, params = b"contract:threshold", b"{}"
     assert lib.fs_call_n(runtime, op, len(op), None, 1, params, len(params),
                          C.byref(result)) == FS_E_INVALID_ARG
@@ -285,7 +291,7 @@ def test_last_error_is_isolated_per_os_thread(abi):
         rows = list(pool.map(worker, range(32)))
     assert len(rows) == 32
     for index, (status, result, message) in enumerate(rows):
-        assert status == FS_E_UNKNOWN_OP and result is None
+        assert status == FS_E_UNKNOWN_OP and result == 0
         assert "registry:thread_missing_%d" % index in message
 
 
@@ -293,7 +299,7 @@ def test_runtime_rejects_an_incompatible_abi_major():
     lib = C.CDLL(str(_library_path()))
     _bind(lib)
     root = os.fsencode(ROOT)
-    options = InitOptions(C.sizeof(InitOptions), root, None, 3, 999, 0)
+    options = InitOptions(C.sizeof(InitOptions), root, None, 3, 999, 0, 0, 0)
     runtime = C.c_void_p()
     assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == 6
     assert runtime.value is None
@@ -304,27 +310,47 @@ def test_isolated_mode_rejects_existing_cpython_and_unsafe_host_opt_in_is_explic
     _bind(lib)
     root = os.fsencode(ROOT)
     runtime = C.c_void_p()
-    isolated = InitOptions(C.sizeof(InitOptions), root, None, 1, 0, 2)
+    isolated = InitOptions(C.sizeof(InitOptions), root, None, 1, 0, 2, len(root), 0)
     assert lib.fs_runtime_create(C.byref(isolated), C.byref(runtime)) == FS_E_INVALID_ARG
-    unsafe = InitOptions(C.sizeof(InitOptions), root, None, 3, 0, 2)
+    unsafe = InitOptions(C.sizeof(InitOptions), root, None, 3, 0, 2, len(root), 0)
     assert lib.fs_runtime_create(C.byref(unsafe), C.byref(runtime)) == FS_OK
     lib.fs_runtime_destroy(runtime)
 
 
-def test_bounded_strings_do_not_require_nul_and_legacy_entrypoint_fails_closed(abi):
+def test_abi_0_2_runtime_paths_are_explicit_spans_without_a_trailing_nul():
+    lib = C.CDLL(str(_library_path()))
+    _bind(lib)
+    root = os.fsencode(ROOT)
+    root_span = (C.c_char * len(root)).from_buffer_copy(root)
+    runtime = C.c_void_p()
+    options = InitOptions(C.sizeof(InitOptions), C.cast(root_span, C.c_char_p), None,
+                          3, 0, 2, len(root), 0)
+    assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_OK
+    lib.fs_runtime_destroy(runtime)
+    options.runtime_root_bytes = 0
+    assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_E_INVALID_ARG
+
+
+def test_bounded_strings_do_not_require_nul_and_legacy_entrypoint_remains_abi_0_1_compatible(abi):
     lib, runtime = abi
     op = (C.c_char * len(b"contract:threshold")).from_buffer_copy(b"contract:threshold")
     params = (C.c_char * len(b'{"lo":0.5,"hi":1.0}')).from_buffer_copy(b'{"lo":0.5,"hi":1.0}')
     pixels = np.ones((2, 2), dtype=np.float64)
-    result = C.c_void_p()
+    result = C.c_uint64()
     assert lib.fs_call_n(runtime, op, C.sizeof(op), C.byref(_image(pixels)), 1,
                          params, C.sizeof(params), C.byref(result)) == FS_OK
-    assert lib.fs_result_release(result) == FS_OK
+    assert lib.fs_result_release_n(result) == FS_OK
     legacy = lib.fs_call
     legacy.argtypes = [C.c_void_p, C.c_char_p, C.POINTER(Input), C.c_size_t,
                        C.c_char_p, C.POINTER(C.c_void_p)]
     legacy.restype = C.c_int
-    assert legacy(runtime, b"contract:threshold", None, 0, b"{}", C.byref(result)) == FS_E_INVALID_ARG
+    legacy_result = C.c_void_p()
+    old_input = Input(C.sizeof(Input), FS_VALUE_IMAGE, _image(pixels).image, None, 0)
+    assert legacy(runtime, b"contract:threshold", C.byref(old_input), 1,
+                  b'{"lo":0.5,"hi":1.0}', C.byref(legacy_result)) == FS_OK
+    lib.fs_result_release.argtypes = [C.c_void_p]
+    lib.fs_result_release.restype = None
+    lib.fs_result_release(legacy_result)
 
 
 def test_released_and_unknown_result_handles_are_rejected_and_double_release_errors(abi):
@@ -332,14 +358,17 @@ def test_released_and_unknown_result_handles_are_rejected_and_double_release_err
     pixels = np.ones((2, 2), dtype=np.float64)
     status, result = _call(abi, "contract:threshold", [_image(pixels)], '{"lo":0.5,"hi":1.0}')
     assert status == FS_OK and result.value
-    assert lib.fs_result_release(result) == FS_OK
+    assert lib.fs_result_release_n(result) == FS_OK
     kind = C.c_int()
-    assert lib.fs_result_kind(result, 0, C.byref(kind)) == FS_E_INVALID_ARG
-    assert lib.fs_result_release(result) == FS_E_INVALID_ARG
-    unknown = C.c_void_p(0x1234)
-    assert lib.fs_result_kind(unknown, 0, C.byref(kind)) == FS_E_INVALID_ARG
+    assert lib.fs_result_kind_n(result, 0, C.byref(kind)) == FS_E_INVALID_ARG
+    assert lib.fs_result_release_n(result) == FS_E_INVALID_ARG
+    unknown = C.c_uint64(0x1234)
+    assert lib.fs_result_kind_n(unknown, 0, C.byref(kind)) == FS_E_INVALID_ARG
     input_value = _borrow(FS_VALUE_REGION, result)
     assert _call(abi, "contract:connection", [input_value])[0] == FS_E_INVALID_ARG
+    status, replacement = _call(abi, "contract:threshold", [_image(pixels)], '{"lo":0.5,"hi":1.0}')
+    assert status == FS_OK and replacement.value != result.value
+    assert lib.fs_result_release_n(replacement) == FS_OK
 
 
 def test_runtime_without_a_named_python_environment_fails_closed(monkeypatch):
@@ -347,7 +376,7 @@ def test_runtime_without_a_named_python_environment_fails_closed(monkeypatch):
     _bind(lib)
     monkeypatch.delenv("FULLSEYE_PYTHON_ROOT", raising=False)
     runtime = C.c_void_p()
-    options = InitOptions(C.sizeof(InitOptions), None, None, 3, 0, 2)
+    options = InitOptions(C.sizeof(InitOptions), None, None, 3, 0, 2, 0, 0)
     assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_E_NO_PYTHON
     assert runtime.value is None
 
@@ -357,20 +386,27 @@ def test_release_and_accessor_concurrency_keeps_the_handle_lifetime_safe(abi):
     pixels = np.ones((8, 8), dtype=np.float64)
     status, result = _call(abi, "contract:threshold", [_image(pixels)], '{"lo":0.5,"hi":1.0}')
     assert status == FS_OK
-    start = threading.Barrier(2)
+    first_accessor_finished = threading.Event()
+    release_started = threading.Event()
 
     def read_result():
-        start.wait()
-        rows = []
+        pointer = C.POINTER(Run)()
+        count = C.c_size_t()
+        first = lib.fs_result_region_runs_n(result, 0, C.byref(pointer), C.byref(count))
+        first_accessor_finished.set()
+        assert release_started.wait(5)
+        rows = [first]
         for _ in range(200):
             pointer = C.POINTER(Run)()
             count = C.c_size_t()
-            rows.append(lib.fs_result_region_runs(result, 0, C.byref(pointer), C.byref(count)))
+            rows.append(lib.fs_result_region_runs_n(result, 0, C.byref(pointer), C.byref(count)))
         return rows
 
     with ThreadPoolExecutor(max_workers=1) as pool:
         future = pool.submit(read_result)
-        start.wait()
-        assert lib.fs_result_release(result) == FS_OK
+        assert first_accessor_finished.wait(5)
+        assert lib.fs_result_release_n(result) == FS_OK
+        release_started.set()
         statuses = future.result()
-    assert set(statuses) <= {FS_OK, FS_E_INVALID_ARG}
+    assert statuses[0] == FS_OK
+    assert set(statuses[1:]) == {FS_E_INVALID_ARG}

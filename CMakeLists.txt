@@ -101,6 +101,12 @@ if(FULLSEYE_BUILD_NATIVE)
     add_executable(fullseye_c_handle_safety examples/c_handle_safety.c)
     set_property(TARGET fullseye_c_handle_safety PROPERTY C_STANDARD 11)
     target_link_libraries(fullseye_c_handle_safety PRIVATE Fullseye::C Threads::Threads)
+    add_executable(fullseye_c_abi_0_1_consumer tests/c_abi_0_1_consumer.c)
+    set_property(TARGET fullseye_c_abi_0_1_consumer PROPERTY C_STANDARD 11)
+    target_link_libraries(fullseye_c_abi_0_1_consumer PRIVATE Fullseye::C)
+    add_executable(fullseye_c_runtime_configuration examples/c_runtime_configuration.c)
+    set_property(TARGET fullseye_c_runtime_configuration PROPERTY C_STANDARD 11)
+    target_link_libraries(fullseye_c_runtime_configuration PRIVATE Fullseye::C)
     add_test(NAME fullseye_c_lifecycle
              COMMAND fullseye_c_example ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME fullseye_cpp_lifecycle
@@ -109,5 +115,9 @@ if(FULLSEYE_BUILD_NATIVE)
              COMMAND fullseye_c_threads ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME fullseye_c_handle_safety
              COMMAND fullseye_c_handle_safety ${CMAKE_CURRENT_SOURCE_DIR})
+    add_test(NAME fullseye_c_abi_0_1_consumer
+             COMMAND fullseye_c_abi_0_1_consumer ${CMAKE_CURRENT_SOURCE_DIR})
+    add_test(NAME fullseye_c_runtime_configuration
+             COMMAND fullseye_c_runtime_configuration ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 endif()
