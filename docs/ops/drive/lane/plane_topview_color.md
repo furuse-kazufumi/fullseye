@@ -23,7 +23,8 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 投影格子は既存 :func:`plane_topview` と共通の ``calib`` 核を使う。列=世界+x、
 行=世界−y、画素中心は整数。レンズ歪みは補正済みを前提とし、地面を単一平面
-z=``z``とみなすため、坂・縁石・車体は正しい位置にならない。
+z=``z``とみなすため、坂・縁石・車体は正しい位置にならない。``K``の正則性と
+焦点距離、``R``の直交性・行列式を入口で検査し、満たさなければ拒否する。
 
 Parameters
 ----------
@@ -41,7 +42,8 @@ table
 
 English: bilinearly rectify RGB onto a world z-plane while retaining a validity
 mask and both pixel/world correspondences. It assumes an already-undistorted image
-and a single plane; non-planar road objects are not metrically valid.
+and a single plane; non-planar road objects are not metrically valid. It validates
+nonsingular positive-focal K and a proper orthogonal R before any sampling.
 
 呼び出し例::
 

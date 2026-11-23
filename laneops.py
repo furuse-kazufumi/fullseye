@@ -45,8 +45,11 @@ DEFAULT_RANSAC_ITERATIONS = 300
 HUBER_SCALE_MULTIPLIER = 1.5
 IRLS_ITERATIONS = 12
 IRLS_COEFFICIENT_TOLERANCE = 1e-12
+INITIAL_RANSAC_OUTLIER_WEIGHT = 0.25
 MIN_FORWARD_DIRECTION = 0.20
 MIN_OBSERVED_RANGE_M = 5.0
+MIN_DISTINCT_BOUNDARY_Y = 3
+MAX_QUADRATIC_DESIGN_CONDITION = 1.0e7
 
 # 中央と走行帯 / centre and drivable band.
 DEFAULT_LANE_WIDTH_M = 3.50
@@ -68,7 +71,62 @@ CROSSWALK_MIN_STRIPES = 3
 CROSSWALK_MIN_GAP_M = 0.35
 CROSSWALK_MAX_GAP_M = 1.20
 CROSSWALK_WIDTH_RATIO = 0.65
+AMBIGUOUS_STOP_CONFIDENCE_SCALE = 0.35
 MAPPING_ABSOLUTE_TOLERANCE = 1e-12
+HOMOGRAPHY_SINGULAR_VALUE_FLOOR = 1e-12
+BEV_HOMOGENEOUS_ROW_TOLERANCE = 1e-12
+PATH_SEGMENT_LENGTH_FLOOR_M = 1e-9
+
+
+def _invalid_boundary(reason, *, side, points, ransac_line=None, ransac_inliers=None):
+    """Return an explicit unusable boundary / 二次同定不能の境界を明示する。"""
+    return {"valid": False, "reason": reason, "side": side,
+            "points": points.copy(), "ransac_line": ransac_line,
+            "ransac_inlier_mask": ransac_inliers}
+
+
+def _quadratic_design_is_identifiable(y):
+    """Check the final quadratic design, without silently reducing its order / 二次設計行列の同定性。"""
+    unique_y = np.unique(np.asarray(y, np.float64))
+    design = np.column_stack([np.ones(len(y)), y, y * y])
+    rank = int(np.linalg.matrix_rank(design))
+    condition = float(np.linalg.cond(design))
+    ok = (rank == 3 and len(unique_y) >= MIN_DISTINCT_BOUNDARY_Y
+          and np.isfinite(condition) and condition <= MAX_QUADRATIC_DESIGN_CONDITION)
+    return ok, rank, len(unique_y), condition
+
+
+def _finite_unit_path(path, op):
+    """Validate every path segment before a tangent is formed / 接線の前に各経路区間を検査。"""
+    if path.ndim != 2 or path.shape[1] != 2 or len(path) < 2 or not np.all(np.isfinite(path)):
+        raise ValueError("%s: lane_model.path must be finite (N >= 2, 2) world points" % op)
+    segments = np.diff(path, axis=0)
+    lengths = np.linalg.norm(segments, axis=1)
+    if not np.all(np.isfinite(lengths)) or np.any(lengths <= PATH_SEGMENT_LENGTH_FLOOR_M):
+        raise ValueError("%s: every lane_model.path segment must have positive finite length" % op)
+    local = np.empty_like(path)
+    local[0], local[-1] = segments[0], segments[-1]
+    if len(path) > 2:
+        local[1:-1] = path[2:] - path[:-2]
+    if np.any(np.linalg.norm(local, axis=1) <= PATH_SEGMENT_LENGTH_FLOOR_M):
+        raise ValueError("%s: every lane_model.path point must have a nonzero local tangent" % op)
+    return lengths
+
+
+def _bev_pixel_to_world(pixel_to_world, op):
+    """Validate the affine BEV raster mapping / BEV の正則なアフィン対応だけを受ける。"""
+    H = np.asarray(pixel_to_world, np.float64)
+    if H.shape != (3, 3) or not np.all(np.isfinite(H)):
+        raise ValueError("%s: lane_model.pixel_to_world must be a finite 3x3 matrix" % op)
+    if not np.allclose(H[2], [0.0, 0.0, 1.0], rtol=0.0,
+                       atol=BEV_HOMOGENEOUS_ROW_TOLERANCE):
+        raise ValueError("%s: pixel_to_world must be an affine BEV mapping with final row [0, 0, 1]" % op)
+    linear = H[:2, :2]
+    if np.linalg.matrix_rank(linear) != 2 or np.linalg.svd(linear, compute_uv=False)[-1] <= HOMOGRAPHY_SINGULAR_VALUE_FLOOR:
+        raise ValueError("%s: pixel_to_world 2x2 linear part must be nonsingular" % op)
+    if np.linalg.matrix_rank(H) != 3:
+        raise ValueError("%s: pixel_to_world must be nonsingular" % op)
+    return H
 
 
 def _finite_rgb(image, op):
@@ -217,7 +275,8 @@ def plane_topview_color(image, K, R, t, *, z=0.0, centre=(0.0, 0.0),
 
     投影格子は既存 :func:`plane_topview` と共通の ``calib`` 核を使う。列=世界+x、
     行=世界−y、画素中心は整数。レンズ歪みは補正済みを前提とし、地面を単一平面
-    z=``z``とみなすため、坂・縁石・車体は正しい位置にならない。
+    z=``z``とみなすため、坂・縁石・車体は正しい位置にならない。``K``の正則性と
+    焦点距離、``R``の直交性・行列式を入口で検査し、満たさなければ拒否する。
 
     Parameters
     ----------
@@ -235,7 +294,8 @@ def plane_topview_color(image, K, R, t, *, z=0.0, centre=(0.0, 0.0),
 
     English: bilinearly rectify RGB onto a world z-plane while retaining a validity
     mask and both pixel/world correspondences. It assumes an already-undistorted image
-    and a single plane; non-planar road objects are not metrically valid.
+    and a single plane; non-planar road objects are not metrically valid. It validates
+    nonsingular positive-focal K and a proper orthogonal R before any sampling.
 
     呼び出し例::
 
@@ -293,8 +353,10 @@ def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC
         ``coefficients``(c0,c1,c2)、``observed_y``、``inlier_mask``、残差、RMS、確信度。
 
     English: initialise with the existing 3-D ``ransac_line`` (z=0), then fit the
-    boundary x(y) with a Huber robust quadratic. Point order does not matter. Hairpins
-    where y is not single-valued are outside the contract and fail closed.
+    boundary x(y) with a Huber robust quadratic. Point order does not matter. The final
+    inlier design must have rank 3, at least three distinct y values, and bounded
+    condition number; otherwise it returns ``valid=False`` instead of silently using a
+    line. Hairpins where y is not single-valued are outside the contract and fail closed.
 
     呼び出し例::
 
@@ -326,7 +388,7 @@ def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC
     y = p[:, 1]
     design = np.column_stack([np.ones(len(p)), y, y * y])
     delta = HUBER_SCALE_MULTIPLIER * threshold
-    weights = np.where(line_inliers, 1.0, 0.25)
+    weights = np.where(line_inliers, 1.0, INITIAL_RANSAC_OUTLIER_WEIGHT)
     for _ in range(IRLS_ITERATIONS):
         root_w = np.sqrt(weights)
         new_coef, *_ = np.linalg.lstsq(design * root_w[:, None], p[:, 0] * root_w, rcond=None)
@@ -341,9 +403,21 @@ def lane_boundary_fit(points, *, side="unknown", ransac_threshold=DEFAULT_RANSAC
     inliers = np.abs(residual) <= threshold
     if int(inliers.sum()) < MIN_BOUNDARY_POINTS:
         raise ValueError("%s: fewer than %d inliers remain after robust fitting" % (op, MIN_BOUNDARY_POINTS))
+    identifiable, rank, unique_count, condition = _quadratic_design_is_identifiable(y[inliers])
+    # このopは次数を黙って一次へ落とさない。必要な二次情報が無い出力は明示的に無効にする。
+    # Do not silently fall back to a line: a quadratic boundary needs all three columns.
+    if not identifiable:
+        return _invalid_boundary("quadratic design is not identifiable (rank=%d, distinct_y=%d, condition=%g)"
+                                 % (rank, unique_count, condition), side=side, points=p,
+                                 ransac_line=line, ransac_inliers=line_inliers)
     coef, *_ = np.linalg.lstsq(design[inliers], p[inliers, 0], rcond=None)
     residual = p[:, 0] - design @ coef
     inliers = np.abs(residual) <= threshold
+    identifiable, rank, unique_count, condition = _quadratic_design_is_identifiable(y[inliers])
+    if not identifiable:
+        return _invalid_boundary("final quadratic design is not identifiable (rank=%d, distinct_y=%d, condition=%g)"
+                                 % (rank, unique_count, condition), side=side, points=p,
+                                 ransac_line=line, ransac_inliers=line_inliers)
     yrange = np.array([float(np.min(y[inliers])), float(np.max(y[inliers]))])
     span = float(yrange[1] - yrange[0])
     rms = float(np.sqrt(np.mean(residual[inliers] ** 2)))
@@ -364,7 +438,14 @@ def _boundary(boundary, name):
         raise ValueError("lane_center_path: %s must be a boundary table or None" % name)
     coef = np.asarray(boundary.get("coefficients"), np.float64).reshape(-1)
     yrange = np.asarray(boundary.get("observed_y"), np.float64).reshape(-1)
-    if coef.shape != (3,) or yrange.shape != (2,) or not np.all(np.isfinite(np.r_[coef, yrange])) or yrange[1] <= yrange[0]:
+    confidence = boundary.get("confidence", np.nan)
+    try:
+        confidence = float(confidence)
+    except (TypeError, ValueError):
+        confidence = float("nan")
+    if (coef.shape != (3,) or yrange.shape != (2,) or not np.all(np.isfinite(np.r_[coef, yrange]))
+            or yrange[1] <= yrange[0] or not np.isfinite(confidence)
+            or not 0.0 <= confidence <= 1.0):
         raise ValueError("lane_center_path: %s has invalid coefficients or observed_y" % name)
     return boundary
 
@@ -429,15 +510,31 @@ def lane_center_path(left, right, *, lane_width=DEFAULT_LANE_WIDTH_M,
         y = np.linspace(float(one["observed_y"][0]), float(one["observed_y"][1]), count)
         design = np.column_stack([np.ones(count), y, y * y])
         bx = design @ np.asarray(one["coefficients"])
+        slope = np.asarray(one["coefficients"])[1] + 2.0 * np.asarray(one["coefficients"])[2] * y
+        # (x(y), y) の右向き法線。曲線の平行曲線なので x だけをずらさない。
+        normal = np.column_stack([np.ones(count), -slope])
+        normal /= np.linalg.norm(normal, axis=1, keepdims=True)
+        boundary_points = np.column_stack([bx, y])
         if source == "left":
-            lx, rx, cx = bx, bx + width, bx + 0.5 * width
+            left_points = boundary_points
+            right_points = boundary_points + width * normal
+            centre_points = boundary_points + 0.5 * width * normal
         else:
-            lx, rx, cx = bx - width, bx, bx - 0.5 * width
+            right_points = boundary_points
+            left_points = boundary_points - width * normal
+            centre_points = boundary_points - 0.5 * width * normal
         widths = np.full(count, width)
         confidence = float(one.get("confidence", 0.0)) * SINGLE_BOUNDARY_CONFIDENCE_SCALE
-    band_left = np.column_stack([lx + inset, y])
-    band_right = np.column_stack([rx - inset, y])
-    path = np.column_stack([cx, y])
+    if lft is not None and rgt is not None:
+        left_points = np.column_stack([lx, y])
+        right_points = np.column_stack([rx, y])
+        centre_points = np.column_stack([cx, y])
+    # 片側は法線方向、両側は既知の左右境界方向で走行帯を内側へ縮める。
+    inward = right_points - left_points
+    inward /= np.linalg.norm(inward, axis=1, keepdims=True)
+    band_left = left_points + inset * inward
+    band_right = right_points - inset * inward
+    path = centre_points
     polygon = np.vstack([band_left, band_right[::-1], band_left[:1]])
     out = {"valid": True, "path": path, "band_left": band_left,
             "band_right": band_right, "corridor_polygon": polygon,
@@ -458,9 +555,7 @@ def lane_center_path(left, right, *, lane_width=DEFAULT_LANE_WIDTH_M,
 
 def _pixel_world(pixel_to_world, rows, cols, op):
     """Raster coordinates to world xy / ラスタ座標を世界xyへ。"""
-    H = np.asarray(pixel_to_world, np.float64)
-    if H.shape != (3, 3) or not np.all(np.isfinite(H)):
-        raise ValueError("%s: lane_model.pixel_to_world must be a finite 3x3 matrix" % op)
+    H = _bev_pixel_to_world(pixel_to_world, op)
     q = np.column_stack([cols, rows, np.ones(len(rows))]) @ H.T
     if np.any(np.abs(q[:, 2]) < np.finfo(float).eps):
         raise ValueError("%s: pixel_to_world maps a white pixel to the horizon" % op)
@@ -471,9 +566,10 @@ def stop_line_detect(labels, lane_model):
     """車線にほぼ直交する十分に広い白線を停止線として検出し、横断歩道を棄却する。
 
     白画素を車線内へ切り、連結片を世界座標へ写す。同じ前方距離の遮蔽片を結合し、
-    車線接線への直交角、幅、厚さで判定する。似た横線が3本以上、0.35..1.20 m
-    間隔で並ぶ集合は横断歩道として棄却する。摩耗した実線と横断歩道が接触して1成分に
-    なる場合や、格子の対応が誤っている場合は対象外。
+    車線接線への直交角、幅、厚さで判定する。似た横線が反復する集合は横断歩道候補に
+    するが、先頭が停止線か、遮蔽・端切れ・影で1〜2本しか見えないかを幾何だけでは
+    決められない。そこで候補を捨てず``ambiguous=True``かつ低確信度で返す。BEV対応と
+    経路の全区間を入口で検査する。摩耗した実線と横断歩道が接触して1成分になる場合は対象外。
 
     Parameters
     ----------
@@ -485,11 +581,15 @@ def stop_line_detect(labels, lane_model):
     Returns
     -------
     table
-        ``found``、経路始点からの``distance``[m]、``width``[m]、``confidence``、候補と横断歩道棄却数。
+        ``found``、``ambiguous``、経路始点からの``distance``[m]、``width``[m]、``confidence``、候補と横断歩道棄却数。
 
-    English: find wide white components nearly perpendicular to the lane tangent,
-    merge fragments split by occlusion, and reject runs of three or more similarly
-    spaced transverse stripes as a crosswalk. Distance is arc length from path[0].
+    English: find wide white components nearly perpendicular to the lane tangent and
+    merge fragments split by occlusion. Repeated stripes are crosswalk evidence, but
+    geometry alone cannot tell whether their first stripe is an adjacent stop line or
+    whether one/two stripes are a partial crosswalk. Those cases remain an
+    ``ambiguous`` low-confidence candidate rather than a definitive assertion. It
+    validates every path segment and an affine nonsingular BEV mapping first. Distance
+    is arc length from path[0].
 
     呼び出し例::
 
@@ -508,14 +608,14 @@ def stop_line_detect(labels, lane_model):
     if not isinstance(lane_model, dict):
         raise ValueError("%s: lane_model must be a table" % op)
     path = np.asarray(lane_model.get("path"), np.float64)
-    if path.ndim != 2 or path.shape[1] != 2 or len(path) < 2 or not np.all(np.isfinite(path)):
-        raise ValueError("%s: lane_model.path must be finite (N >= 2, 2) world points" % op)
+    segment_lengths = _finite_unit_path(path, op)
     lane_width = float(lane_model.get("lane_width", np.nan))
     if not (MIN_LANE_WIDTH_M <= lane_width <= MAX_LANE_WIDTH_M):
         raise ValueError("%s: lane_model.lane_width is missing or implausible" % op)
+    H = _bev_pixel_to_world(lane_model.get("pixel_to_world"), op)
     white_rows, white_cols = np.nonzero(lab == WHITE_LABEL)
     empty = {"found": False, "distance": float("nan"), "width": 0.0,
-             "confidence": 0.0, "candidates": [], "rejected_crosswalk": 0}
+             "confidence": 0.0, "ambiguous": False, "candidates": [], "rejected_crosswalk": 0}
     if len(white_rows) == 0:
         return empty
     world = _pixel_world(lane_model.get("pixel_to_world"), white_rows, white_cols, op)
@@ -532,9 +632,9 @@ def stop_line_detect(labels, lane_model):
     interior = np.zeros(lab.shape, bool)
     interior[white_rows[keep], white_cols[keep]] = True
     components, ncomp = ndimage.label(interior, structure=np.ones((3, 3), int))
-    cumulative = np.r_[0.0, np.cumsum(np.linalg.norm(np.diff(path, axis=0), axis=1))]
+    cumulative = np.r_[0.0, np.cumsum(segment_lengths)]
     fragments = []
-    resolution = math.sqrt(abs(float(np.linalg.det(np.asarray(lane_model["pixel_to_world"], float)[:2, :2]))))
+    resolution = math.sqrt(abs(float(np.linalg.det(H[:2, :2]))))
     for component_id in range(1, ncomp + 1):
         rows, cols = np.nonzero(components == component_id)
         if len(rows) < MIN_COMPONENT_PIXELS:
@@ -586,11 +686,13 @@ def stop_line_detect(labels, lane_model):
             confidence = min(1.0, width / lane_width) * max(0.0, 1.0 - angle_error / MAX_PERPENDICULAR_ERROR_DEG)
             candidates.append({"distance": distance, "width": width, "thickness": thickness,
                                "angle_error_deg": angle_error, "confidence": confidence,
-                               "fragment_count": len(group), "crosswalk": False})
+                               "fragment_count": len(group), "crosswalk": False,
+                               "ambiguous": False})
     if not candidates:
         return empty
     candidates.sort(key=lambda c: c["distance"])
-    # 連続する似た横線だけを横断歩道にする / reject only consecutive similar stripes.
+    # 似た横線の反復は横断歩道候補。先頭は停止線でもあり得るので棄却でなく曖昧候補に残す。
+    # Repeated stripes are crosswalk evidence, but the leading stripe can be a stop line.
     run_start = 0
     for i in range(1, len(candidates) + 1):
         continues = False
@@ -600,16 +702,25 @@ def stop_line_detect(labels, lane_model):
             continues = CROSSWALK_MIN_GAP_M <= gap <= CROSSWALK_MAX_GAP_M and ratio >= CROSSWALK_WIDTH_RATIO
         if continues:
             continue
-        if i - run_start >= CROSSWALK_MIN_STRIPES:
+        run_count = i - run_start
+        if run_count >= CROSSWALK_MIN_STRIPES:
             for j in range(run_start, i):
                 candidates[j]["crosswalk"] = True
+            candidates[run_start]["ambiguous"] = True
+        elif run_count >= 2:
+            # 遮蔽・画面端・影で1〜2本だけ残った反復縞は停止線と断定しない。
+            # One/two visible stripes may be an occluded, cropped, or shadowed crosswalk.
+            for j in range(run_start, i):
+                candidates[j]["ambiguous"] = True
         run_start = i
-    accepted = [c for c in candidates if not c["crosswalk"] and c["distance"] >= 0.0]
+    accepted = [c for c in candidates
+                if (not c["crosswalk"] or c["ambiguous"]) and c["distance"] >= 0.0]
     if not accepted:
         return {**empty, "candidates": candidates,
-                "rejected_crosswalk": sum(c["crosswalk"] for c in candidates)}
+                "rejected_crosswalk": sum(c["crosswalk"] and not c["ambiguous"] for c in candidates)}
     best = min(accepted, key=lambda c: c["distance"])
+    confidence = best["confidence"] * (AMBIGUOUS_STOP_CONFIDENCE_SCALE if best["ambiguous"] else 1.0)
     return {"found": True, "distance": best["distance"], "width": best["width"],
-            "confidence": best["confidence"], "thickness": best["thickness"],
+            "confidence": confidence, "ambiguous": best["ambiguous"], "thickness": best["thickness"],
             "angle_error_deg": best["angle_error_deg"], "candidates": candidates,
-            "rejected_crosswalk": sum(c["crosswalk"] for c in candidates)}
+            "rejected_crosswalk": sum(c["crosswalk"] and not c["ambiguous"] for c in candidates)}

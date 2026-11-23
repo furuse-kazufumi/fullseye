@@ -39,8 +39,10 @@ table
     ``coefficients``(c0,c1,c2)、``observed_y``、``inlier_mask``、残差、RMS、確信度。
 
 English: initialise with the existing 3-D ``ransac_line`` (z=0), then fit the
-boundary x(y) with a Huber robust quadratic. Point order does not matter. Hairpins
-where y is not single-valued are outside the contract and fail closed.
+boundary x(y) with a Huber robust quadratic. Point order does not matter. The final
+inlier design must have rank 3, at least three distinct y values, and bounded
+condition number; otherwise it returns ``valid=False`` instead of silently using a
+line. Hairpins where y is not single-valued are outside the contract and fail closed.
 
 呼び出し例::
 

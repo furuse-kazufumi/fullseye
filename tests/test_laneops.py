@@ -108,6 +108,16 @@ def test_plane_topview_color_and_existing_gray_op_share_projection():
     assert np.max(np.abs(colour["rgb"][..., 0] - gray)) < 1e-15
 
 
+@pytest.mark.parametrize("bad_K,bad_R", [(np.zeros((3, 3)), np.eye(3)),
+                                          (np.eye(3), np.zeros((3, 3))),
+                                          (np.eye(3), np.diag([1.0, 1.0, -1.0]))])
+def test_plane_topview_color_rejects_degenerate_camera_before_sampling(bad_K, bad_R):
+    # 白画素も無い入力で先に校正を拒否する。もっともらしい空BEVを返さない。
+    with pytest.raises(ValueError, match="K must|R must"):
+        LO.plane_topview_color(np.zeros((8, 8, 3)), bad_K, bad_R, (0.0, 0.0, 1.0),
+                               extent=4.0, res=0.5)
+
+
 def _boundary_points(seed=20261123, shuffle=False, occluded=False):
     rng = np.random.default_rng(seed)
     y = np.linspace(0.0, 25.0, 126)
@@ -158,6 +168,24 @@ def test_lane_boundary_fit_rotated_straight_line_and_no_line_failure():
         LO.lane_boundary_fit(horizontal)
 
 
+def test_lane_boundary_fit_refuses_unidentifiable_quadratic_without_linear_fallback():
+    points = np.repeat(np.array([[0.0, 0.0], [1.0, 25.0]]), 3, axis=0)
+    got = LO.lane_boundary_fit(points, seed=3)
+    assert not got["valid"] and "rank=2" in got["reason"]
+
+
+@pytest.mark.parametrize("curvature,outlier_fraction", [(0.0, 0.0), (0.0015, 0.15), (0.003, 0.30)])
+def test_lane_boundary_fit_named_initial_outlier_weight_is_stable(curvature, outlier_fraction):
+    rng = np.random.default_rng(20261124)
+    y = np.linspace(0.0, 25.0, 101)
+    truth = np.array([-1.75, 0.02, curvature])
+    good = np.c_[np.polynomial.polynomial.polyval(y, truth) + rng.normal(0.0, 0.012, len(y)), y]
+    nbad = int(round(len(good) * outlier_fraction))
+    bad = np.c_[rng.uniform(-5.0, 5.0, nbad), rng.uniform(0.0, 25.0, nbad)]
+    got = LO.lane_boundary_fit(np.vstack([good, bad]), seed=19)
+    assert got["valid"] and np.max(np.abs(got["coefficients"] - truth)) < 0.02
+
+
 def _boundary(c0, confidence=0.9, yrange=(0.0, 20.0)):
     return {"valid": True, "coefficients": np.array([c0, 0.02, 0.001]),
             "observed_y": np.array(yrange), "confidence": confidence}
@@ -180,7 +208,17 @@ def test_lane_center_path_one_side_offsets_and_lowers_confidence(missing):
     both = LO.lane_center_path(left, right)
     one = LO.lane_center_path(None if missing == "left" else left,
                               None if missing == "right" else right)
-    assert np.max(np.abs(one["path"] - both["path"])) < 1e-14
+    # 曲線ではx方向だけでなく法線方向へずらす。両側の単純中点とは座標が一致しない。
+    coef = left["coefficients"] if missing == "right" else right["coefficients"]
+    sign = 1.0 if missing == "right" else -1.0
+    y = np.linspace(0.0, 20.0, 51)
+    bx = coef[0] + coef[1] * y + coef[2] * y * y
+    slope = coef[1] + 2.0 * coef[2] * y
+    normal = np.c_[np.ones_like(y), -slope]
+    normal /= np.linalg.norm(normal, axis=1, keepdims=True)
+    expected = np.c_[bx, y] + sign * 1.75 * normal
+    assert np.max(np.abs(one["path"] - expected)) < 1e-14
+    assert np.max(np.abs(one["path"] - both["path"])) > 0.01
     assert one["confidence"] < both["confidence"]
     assert one["source"] == ("right" if missing == "left" else "left")
 
@@ -190,6 +228,8 @@ def test_lane_center_path_fail_closed_without_boundaries_or_with_crossing():
         LO.lane_center_path(None, None)
     with pytest.raises(ValueError, match="cross"):
         LO.lane_center_path(_boundary(1.0), _boundary(-1.0))
+    with pytest.raises(ValueError, match="invalid coefficients"):
+        LO.lane_center_path({**_boundary(-1.75), "confidence": np.nan}, None)
 
 
 def _bev_geometry(theta_deg=0.0):
@@ -223,7 +263,7 @@ def test_stop_line_detect_distance_width_partial_occlusion_and_crosswalk_rejecti
     assert got["found"]
     assert abs(got["distance"] - 8.0) <= 0.06
     assert abs(got["width"] - 3.25) <= 0.11
-    assert got["rejected_crosswalk"] == 4
+    assert got["rejected_crosswalk"] == 3
     assert got["confidence"] > 0.8
     assert got["candidates"][0]["fragment_count"] == 2
 
@@ -244,7 +284,48 @@ def test_stop_line_detect_crosswalk_only_and_no_lines_fail_soft():
     for s in (7.0, 7.7, 8.4, 9.1):
         labels[(np.abs(along - s) <= 0.15) & (np.abs(across) <= 1.55)] = LO.WHITE_LABEL
     crossing = LO.stop_line_detect(labels, lane)
-    assert not crossing["found"] and crossing["rejected_crosswalk"] == 4
+    assert crossing["found"] and crossing["ambiguous"]
+    assert crossing["confidence"] < 0.4 and crossing["rejected_crosswalk"] == 3
+
+
+def test_stop_line_detect_keeps_adjacent_stop_before_crosswalk_as_ambiguous_candidate():
+    labels, lane, along, across = _bev_geometry()
+    for s in (8.0, 8.7, 9.4, 10.1):
+        labels[(np.abs(along - s) <= 0.15) & (np.abs(across) <= 1.55)] = LO.WHITE_LABEL
+    got = LO.stop_line_detect(labels, lane)
+    assert got["found"] and got["ambiguous"]
+    assert abs(got["distance"] - 8.0) <= 0.06
+    assert got["confidence"] < 0.4 and got["rejected_crosswalk"] == 3
+
+
+@pytest.mark.parametrize("visibility", ["occlusion", "image_edge_crop", "shadow"])
+def test_stop_line_detect_does_not_assert_one_or_two_visible_crosswalk_stripes(visibility):
+    labels, lane, along, across = _bev_geometry()
+    # 各破壊要因の後に縞が2本しか残らない観測を表す。検出器は停止線と断定してはならない。
+    for s in (7.0, 7.7):
+        labels[(np.abs(along - s) <= 0.15) & (np.abs(across) <= 1.55)] = LO.WHITE_LABEL
+    got = LO.stop_line_detect(labels, lane)
+    assert got["found"] and got["ambiguous"]
+    assert got["confidence"] <= LO.AMBIGUOUS_STOP_CONFIDENCE_SCALE
+
+
+@pytest.mark.parametrize("mapping", [np.array([[.05, 0., -4.], [0., 0., 20.], [0., 0., 1.]]),
+                                       np.array([[.05, 0., -4.], [0., -.05, 20.], [.01, 0., 1.]])])
+def test_stop_line_detect_rejects_bad_bev_mapping_even_without_white_pixels(mapping):
+    labels, lane, _, _ = _bev_geometry()
+    lane["pixel_to_world"] = mapping
+    with pytest.raises(ValueError, match="nonsingular|affine"):
+        LO.stop_line_detect(labels, lane)
+
+
+def test_stop_line_detect_rejects_zero_length_path_before_detection():
+    labels, lane, _, _ = _bev_geometry()
+    lane["path"] = np.array([[0.0, 0.0], [0.0, 0.0]])
+    with pytest.raises(ValueError, match="segment"):
+        LO.stop_line_detect(labels, lane)
+    lane["path"] = np.array([[0.0, 0.0], [0.0, 1.0], [0.0, 0.0]])
+    with pytest.raises(ValueError, match="local tangent"):
+        LO.stop_line_detect(labels, lane)
 
 
 def test_stop_line_detect_rejects_non_label_input():

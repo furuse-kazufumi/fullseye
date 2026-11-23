@@ -6,7 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>지면 평면을 RGB를 보존한 하향식 영상으로 투영하고 유효 마스크와 픽셀↔세계 좌표 대응을 반환한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>投影格子は既存 <code style="color:#22d3bf">plane_topview</code> と共通の <code style="color:#22d3bf">calib</code> 核を使う。列=世界+x、行=世界−y、画素中心は整数。レンズ歪みは補正済みを前提とし、地面を単一平面 z=<code style="color:#22d3bf">z</code>とみなすため、坂・縁石・車体は正しい位置にならない。</p>
+<p>投影格子は既存 <code style="color:#22d3bf">plane_topview</code> と共通の <code style="color:#22d3bf">calib</code> 核を使う。列=世界+x、行=世界−y、画素中心は整数。レンズ歪みは補正済みを前提とし、地面を単一平面 z=<code style="color:#22d3bf">z</code>とみなすため、坂・縁石・車体は正しい位置にならない。<code style="color:#22d3bf">K</code>の正則性と焦点距離、<code style="color:#22d3bf">R</code>の直交性・行列式を入口で検査し、満たさなければ拒否する。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>image : (H, W, 3) rgbimage</p>
 <p>0..1 RGB。色を輝度へ落とさない。</p>
@@ -17,7 +17,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>table</p>
 <p><code style="color:#22d3bf">rgb</code>, <code style="color:#22d3bf">valid</code>, <code style="color:#22d3bf">world_x/y</code>, <code style="color:#22d3bf">image_row/col</code>, <code style="color:#22d3bf">pixel_to_world</code> と逆行列。</p>
-<p>English: bilinearly rectify RGB onto a world z-plane while retaining a validity mask and both pixel/world correspondences. It assumes an already-undistorted image and a single plane; non-planar road objects are not metrically valid.</p>
+<p>English: bilinearly rectify RGB onto a world z-plane while retaining a validity mask and both pixel/world correspondences. It assumes an already-undistorted image and a single plane; non-planar road objects are not metrically valid. It validates nonsingular positive-focal K and a proper orthogonal R before any sampling.</p>
 <p>呼び出し例::</p>
 <p>import numpy as np</p>
 <p>import laneops</p>

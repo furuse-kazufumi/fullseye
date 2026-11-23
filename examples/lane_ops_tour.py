@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -21,6 +22,7 @@ import fullseye as fs  # noqa: E402
 
 LG = fs.ledger
 SEED = 20261123
+HOLDOUT_SEED = 20261125
 
 
 def colour_gate(full):
@@ -108,6 +110,41 @@ def stop_gate(full):
     return float(max(errors)), min(rejected), len(angles)
 
 
+def holdout_stop_gate(full):
+    """独立seedの合成holdout。実道路の精度ではなく生成器内の頑健性だけを測る。"""
+    rng = np.random.default_rng(HOLDOUT_SEED)
+    errors, ambiguous = [], []
+    count = 32 if full else 8
+    h, w, res = 401, 161, 0.05
+    H_truth = np.array([[res, 0.0, -4.0], [0.0, -res, 20.0], [0.0, 0.0, 1.0]])
+    rows, cols = np.mgrid[0:h, 0:w]
+    q = np.stack([cols, rows, np.ones_like(rows)], -1) @ H_truth.T
+    world = q[..., :2]
+    for _ in range(count):
+        # 格子=画素量子化、ぼけ、露出/色ずれ、白飛び、路面texture、校正誤差を同時に掛ける。
+        texture = rng.normal(0.0, 0.025, (h, w, 1)) + 0.018 * np.sin(world[..., 1:2] * 2.3)
+        rgb = np.clip(0.22 + texture + rng.uniform(-0.025, 0.025, (1, 1, 3)), 0.0, 1.0)
+        for distance in (8.0, 8.7, 9.4, 10.1):  # 停止線と隣接横断歩道
+            stripe = (np.abs(world[..., 1] - distance) <= 0.15) & (np.abs(world[..., 0]) <= 1.55)
+            rgb[stripe] = 1.05
+        rgb = ndimage.gaussian_filter(rgb, sigma=(rng.uniform(0.25, 0.55), rng.uniform(0.25, 0.55), 0.0))
+        rgb *= rng.uniform(0.88, 1.16) * rng.uniform(0.97, 1.03, (1, 1, 3))
+        rgb[:, :w // 3] *= rng.uniform(0.72, 0.86)  # shadow
+        rgb = np.clip(rgb, 0.0, 1.0)  # white clipping
+        labels = LG.color_rule_mask(rgb, {})["labels"]
+        H_detector = H_truth.copy()
+        H_detector[0, 2] += rng.uniform(-0.03, 0.03)
+        H_detector[1, 2] += rng.uniform(-0.04, 0.04)
+        lane = {"path": np.c_[np.zeros(201), np.linspace(0.0, 20.0, 201)],
+                "lane_width": 3.5, "pixel_to_world": H_detector}
+        got = LG.stop_line_detect(labels, lane)
+        if not got["found"]:
+            raise AssertionError("holdout stop/crosswalk candidate was lost")
+        errors.append(abs(got["distance"] - 8.0))
+        ambiguous.append(got["ambiguous"])
+    return float(max(errors)), int(sum(ambiguous)), count
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--full", action="store_true", help="run the denser fixed-seed sweep")
@@ -116,16 +153,20 @@ def main(argv=None):
     projection_error = projection_gate()
     curve_error, order_error, centre_delta, both_conf, one_conf = boundary_gate(args.full)
     stop_error, rejected, stop_cases = stop_gate(args.full)
+    holdout_error, holdout_ambiguous, holdout_cases = holdout_stop_gate(args.full)
     print("mode=%s; colour %d cases: min recall %.3f, max false-positive %.3f"
           % ("full" if args.full else "reduced", colour_cases, recall, fp))
     print("RGB top-view closed-form max error %.3e" % projection_error)
     print("boundary max lateral error %.4f m; point-order coefficient delta %.3e" % (curve_error, order_error))
-    print("one-side centre delta %.3e m; confidence both %.3f > one-side %.3f" % (centre_delta, both_conf, one_conf))
+    print("one-side parallel-curve displacement from two-side midpoint %.4f m; confidence both %.3f > one-side %.3f" % (centre_delta, both_conf, one_conf))
     print("stop distance max error %.4f m over %d rotations; crosswalk stripes rejected >= %d"
           % (stop_error, stop_cases, rejected))
+    print("synthetic-generator holdout (%d independent-seed cases): max stop candidate error %.4f m; ambiguous %d/%d"
+          % (holdout_cases, holdout_error, holdout_ambiguous, holdout_cases))
     checks = [recall == 1.0, fp == 0.0, projection_error < 1e-14,
-              curve_error < 0.06, order_error < 0.002, centre_delta < 1e-12,
-              one_conf < both_conf, stop_error < 0.10, rejected == 4]
+              curve_error < 0.06, order_error < 0.002, centre_delta > 0.01,
+              one_conf < both_conf, stop_error < 0.10, rejected == 3,
+              holdout_error < 0.15, holdout_ambiguous == holdout_cases]
     ok = all(checks)
     print("PASS" if ok else "FAIL", "(%d / %d)" % (sum(checks), len(checks)))
     return 0 if ok else 1

@@ -13,6 +13,22 @@ import numpy as np
 # Shared projection kernel for the grayscale and RGB-preserving top-view ops.
 PLANE_TOPVIEW_MIN_SIZE = 8
 PLANE_TOPVIEW_MAX_SIZE = 4096
+CAMERA_MATRIX_MAX_CONDITION = 1.0e12
+ROTATION_ORTHOGONALITY_TOLERANCE = 1.0e-7
+ROTATION_DETERMINANT_TOLERANCE = 1.0e-7
+
+
+def _validated_plane_camera(Km, Rm, op):
+    """Fail closed on non-camera matrices before making a BEV / BEV前に校正行列を検査。"""
+    if (np.linalg.matrix_rank(Km) != 3 or not np.isfinite(np.linalg.cond(Km))
+            or np.linalg.cond(Km) > CAMERA_MATRIX_MAX_CONDITION
+            or Km[0, 0] <= 0.0 or Km[1, 1] <= 0.0):
+        raise ValueError("%s: K must be nonsingular with positive finite focal lengths" % op)
+    gram_error = float(np.max(np.abs(Rm.T @ Rm - np.eye(3))))
+    determinant = float(np.linalg.det(Rm))
+    if (gram_error > ROTATION_ORTHOGONALITY_TOLERANCE
+            or abs(determinant - 1.0) > ROTATION_DETERMINANT_TOLERANCE):
+        raise ValueError("%s: R must be an orthogonal proper rotation (determinant +1)" % op)
 
 
 def _plane_topview_projection(image_shape, K, R, t, *, z=0.0, centre=(0.0, 0.0),
@@ -33,6 +49,7 @@ def _plane_topview_projection(image_shape, K, R, t, *, z=0.0, centre=(0.0, 0.0),
             or tv.shape != (3,) or not np.all(np.isfinite(Km))
             or not np.all(np.isfinite(Rm)) or not np.all(np.isfinite(tv))):
         raise ValueError("%s: image must be at least 2x2; K and R must be finite 3x3; t must have 3 components" % op)
+    _validated_plane_camera(Km, Rm, op)
     ex, rs = float(extent), float(res)
     ctr = np.asarray(centre, np.float64).reshape(-1)
     if (not np.isfinite(ex) or not np.isfinite(rs) or ex <= 0.0 or rs <= 0.0
@@ -57,6 +74,8 @@ def _plane_topview_projection(image_shape, K, R, t, *, z=0.0, centre=(0.0, 0.0),
     pixel_to_world = np.array([[rs, 0.0, ctr[0] - c * rs],
                                [0.0, -rs, ctr[1] + c * rs],
                                [0.0, 0.0, 1.0]], np.float64)
+    if np.linalg.matrix_rank(pixel_to_world) != 3:
+        raise ValueError("%s: derived pixel_to_world mapping is singular" % op)
     return {"shape": (size, size),
             "image_row": image_row.reshape(size, size),
             "image_col": image_col.reshape(size, size),

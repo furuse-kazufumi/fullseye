@@ -22,9 +22,10 @@ version: 1.1.1  # fullseye lib version this note was generated for
 車線にほぼ直交する十分に広い白線を停止線として検出し、横断歩道を棄却する。
 
 白画素を車線内へ切り、連結片を世界座標へ写す。同じ前方距離の遮蔽片を結合し、
-車線接線への直交角、幅、厚さで判定する。似た横線が3本以上、0.35..1.20 m
-間隔で並ぶ集合は横断歩道として棄却する。摩耗した実線と横断歩道が接触して1成分に
-なる場合や、格子の対応が誤っている場合は対象外。
+車線接線への直交角、幅、厚さで判定する。似た横線が反復する集合は横断歩道候補に
+するが、先頭が停止線か、遮蔽・端切れ・影で1〜2本しか見えないかを幾何だけでは
+決められない。そこで候補を捨てず``ambiguous=True``かつ低確信度で返す。BEV対応と
+経路の全区間を入口で検査する。摩耗した実線と横断歩道が接触して1成分になる場合は対象外。
 
 Parameters
 ----------
@@ -36,11 +37,15 @@ lane_model : table
 Returns
 -------
 table
-    ``found``、経路始点からの``distance``[m]、``width``[m]、``confidence``、候補と横断歩道棄却数。
+    ``found``、``ambiguous``、経路始点からの``distance``[m]、``width``[m]、``confidence``、候補と横断歩道棄却数。
 
-English: find wide white components nearly perpendicular to the lane tangent,
-merge fragments split by occlusion, and reject runs of three or more similarly
-spaced transverse stripes as a crosswalk. Distance is arc length from path[0].
+English: find wide white components nearly perpendicular to the lane tangent and
+merge fragments split by occlusion. Repeated stripes are crosswalk evidence, but
+geometry alone cannot tell whether their first stripe is an adjacent stop line or
+whether one/two stripes are a partial crosswalk. Those cases remain an
+``ambiguous`` low-confidence candidate rather than a definitive assertion. It
+validates every path segment and an affine nonsingular BEV mapping first. Distance
+is arc length from path[0].
 
 呼び出し例::
 
