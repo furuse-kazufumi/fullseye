@@ -82,7 +82,7 @@ COVER_HEADER_HEIGHT = 104
 COVER_BAND_FONT_SIZE = 16
 COVER_MOVE_FONT_SIZE = 18
 COVER_TITLE_FONT_SIZE = 16
-DIFFERENTIAL_TITLE_FONT_SIZE = 10
+DIFFERENTIAL_TITLE_FONT_SIZE = 12
 ONE_NM_PLOT_SIZE = (780, 420)
 CRLB_PLOT_SIZE = (700, 420)
 TALBOT_PLOT_SIZE = (920, 420)
@@ -91,6 +91,11 @@ TALBOT_PLOT_SIZE = (920, 420)
 def _bi(ja, en):
     """図の札を日本語 / English の順で返す。 / Return a bilingual figure label."""
     return "%s / %s" % (ja, en)
+
+
+def _bi_lines(ja, en):
+    """札を日本語、英語の 2 行で返す。 / Stack a bilingual label."""
+    return "%s\n%s" % (ja, en)
 
 FAILS: list[str] = []
 GATES: list[str] = []
@@ -496,9 +501,11 @@ def differential_bars(rows):
                                    (rect[0] + rect[2] - 6, rect[1] + 6), anchor="rt", markers=True,
                                    font_size=12, swatch=12, pad=6))
     img = np.asarray(fs.text_box(img,
-                                 _bi("差動で共通の誤差が消える(単一 %.1f nm → 差動 %.2f nm)" % (rows[0][1], rows[0][2]),
-                                     "differential pairs cancel common error (single %.1f nm → differential %.2f nm)" %
-                                     (rows[0][1], rows[0][2])),
+                                 _bi_lines("差動で共通の誤差が消える(単一 %.1f nm → 差動 %.2f nm)" %
+                                           (rows[0][1], rows[0][2]),
+                                           "differential pairs cancel common error "
+                                           "(single %.1f nm → differential %.2f nm)" %
+                                           (rows[0][1], rows[0][2])),
                                  (10, 8), anchor="lt", font_size=DIFFERENTIAL_TITLE_FONT_SIZE))
     img = np.asarray(fs.text_box(img, _bi("|誤差| [nm](棒の上の数は符号つきの誤差)",
                                          "|error| [nm] (labels show signed error)"),
@@ -548,8 +555,11 @@ def overlay_cover(size=720):
     b2 = np.asarray(fs.text_box(b2, _bi("② 2.00 µm の格子と重ねる → 102 µm の縞",
                                        "② add 2.00 µm grating → 102 µm fringes"),
                                 (10, 8), anchor="lt", font_size=COVER_BAND_FONT_SIZE))
-    b3 = np.asarray(fs.text_box(b3, _bi("③ %.1f µm ずらす → 縞は %.0f µm 動く" % (delta * 1e-3, moved_um),
-                                       "③ shift %.1f µm → fringes move %.0f µm" % (delta * 1e-3, moved_um)), (10, 8),
+    b3 = np.asarray(fs.text_box(b3, _bi_lines("③ %.1f µm ずらす → 縞は %.0f µm 動く" %
+                                             (delta * 1e-3, moved_um),
+                                             "③ shift %.1f µm → fringes move %.0f µm" %
+                                             (delta * 1e-3, moved_um)),
+                                (max(c0, c1) + 12, 8),
                                 anchor="lt", font_size=COVER_MOVE_FONT_SIZE))
     canvas = np.ones((size, size, 3))
     y = head
@@ -633,12 +643,20 @@ def make_figures(mw, steps_data, crlb_rows, diff_data, amb, tal):
                              "2-D four-quadrant mark (displayed every 2 pixels)"),
                    caption="左上 A_x、右上 B_x、左下 A_y、右下 B_y。読み = (%.2f, %.2f) nm。" % (NUMBERS["quad_dx"], NUMBERS["quad_dy"]))
     true, single, diffr, absolute = amb
-    figs.save_plot("ambiguity", [("真値", true, true), ("単一の対(2.04 µm で折り返す)", true, single),
-                                 ("差動(1.01 µm で折り返す)", true, diffr), ("粗い相互相関で次数を決めた差動", true, absolute)],
-                   xlabel="与えたずれ [nm]", ylabel="読んだずれ [nm]", styles=["dashed", None, None, "dotted"],
+    figs.save_plot("ambiguity", [(_bi("真値", "truth"), true, true),
+                                 (_bi("単一の対(2.04 µm で折り返す)",
+                                      "single pair (wraps at 2.04 µm)"), true, single),
+                                 (_bi("差動(1.01 µm で折り返す)",
+                                      "differential (wraps at 1.01 µm)"), true, diffr),
+                                 (_bi("粗い相互相関で次数を決めた差動",
+                                      "differential with order from coarse correlation"), true, absolute)],
+                   xlabel=_bi("与えたずれ [nm]", "applied shift [nm]"),
+                   ylabel=_bi("読んだずれ [nm]", "measured shift [nm]"),
+                   styles=["dashed", None, None, "dotted"],
                    kinds=["line", "scatter", "scatter", "line"],
                    colors=["reference", "wrong", "neutral", "emphasis"],
-                   title="縞の位相は 1 周期で折り返す —— 粗い読みで次数を決める",
+                   title=_bi("縞の位相は 1 周期で折り返す —— 粗い読みで次数を決める",
+                             "fringe phase wraps every period — use a coarse reading for the order"),
                    caption="印刷の版ずれと同じ不定性。差動は捕捉範囲が p_m p_w/(p_m+p_w) と半分になる。")
     gaps, ca, cb, zt = tal
     figs.save_plot("talbot_gap", [(_bi("マスク 2.00 µm", "mask 2.00 µm"), gaps, ca),
