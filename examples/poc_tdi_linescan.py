@@ -67,6 +67,14 @@ SENSOR = {"eta": 0.6, "sigma_d": 12.0, "K": 0.25, "full_well_e": 60000.0}
 PHOTONS_DARK = 40.0
 PIXEL_UM = 7.0
 SENSOR_PX = 8192
+SNR_PLOT_SIZE = (1020, 420)
+SYNC_MTF_PLOT_SIZE = (900, 420)
+LENS_MTF_PLOT_SIZE = (960, 420)
+
+
+def _bi(ja, en):
+    """図の札を日本語 / English の順で返す。 / Return a bilingual figure label."""
+    return "%s / %s" % (ja, en)
 
 FAILS: list[str] = []
 GATES: list[str] = []
@@ -550,41 +558,53 @@ def make_figures(snr, sync, yaw, lens):
         sd = 1.4826 * float(np.median(np.abs(crop - med)))
         g = np.clip(0.5 + (crop - med) / (6.0 * sd), 0, 1)           # 中央値 ± 3σ(雑音と地合いの尺度で揃える)
         panels.append(np.repeat(np.repeat(g, 2, axis=0), 2, axis=1))
-        caps.append("TDI %d 段" % N)
+        caps.append(_bi("TDI %d 段" % N, "TDI %d stages" % N))
     figs.save_grid("tdi_stages_defects", panels, captions=caps, ncols=2, gray=True, vrange=(0.0, 1.0),
-                   title="暗いラインの冷延鋼板: 段数を積むと薄い欠陥が地合いから浮く",
+                   title=_bi("暗いラインの冷延鋼板: 段数を積むと薄い欠陥が地合いから浮く",
+                             "cold-rolled steel on a dark line: more stages reveal faint flaws"),
                    caption="1 段 40 光子 × 反射率、読み出し 12 e⁻。左: 傷(幅 1.3 画素、深さ 12 %)、中: ピンホール 4 個(深さ 16 %)、右: 異物(深さ 8 %)。"
                            "各パネルは自分の中央値 ± 3σ で伸ばし、2 倍に拡大(明るさの差ではなく SNR の差を見る図)。")
     Ns = np.array(stages, float)
     ch = [r for r in rows if r[0] == "charge"]
     dg = [r for r in rows if r[0] == "digital"]
-    figs.save_plot("snr_vs_stages", [("電荷加算 実測", Ns, np.array([r[2] for r in ch])),
-                                     ("電荷加算 式 21", Ns, np.array([r[3] for r in ch])),
-                                     ("デジタル加算 実測", Ns, np.array([r[2] for r in dg])),
-                                     ("デジタル加算 式 21", Ns, np.array([r[3] for r in dg])),
-                                     ("√N × 1 段", Ns, np.sqrt(Ns) * dg[0][2])],
-                   xlabel="TDI の段数 N", ylabel="SNR(灰色 0.5 の板)", kinds=["scatter", "line", "scatter", "line", "line"],
+    figs.save_plot("snr_vs_stages",
+                   [(_bi("電荷加算 実測", "charge summing, measured"), Ns, np.array([r[2] for r in ch])),
+                    (_bi("電荷加算 式 21", "charge summing, Eq. 21"), Ns, np.array([r[3] for r in ch])),
+                    (_bi("デジタル加算 実測", "digital summing, measured"), Ns, np.array([r[2] for r in dg])),
+                    (_bi("デジタル加算 式 21", "digital summing, Eq. 21"), Ns, np.array([r[3] for r in dg])),
+                    (_bi("√N × 1 段", "√N × one stage"), Ns, np.sqrt(Ns) * dg[0][2])],
+                   xlabel=_bi("TDI の段数 N", "TDI stages N"),
+                   ylabel=_bi("SNR(灰色 0.5 の板)", "SNR (0.5-grey target)"),
+                   kinds=["scatter", "line", "scatter", "line", "line"],
                    styles=[None, "dashed", None, "dashed", "dotted"],
                    colors=["emphasis", "emphasis", "right", "right", "reference"],
-                   title="段数と SNR: デジタル加算は厳密に √N、電荷加算は暗いと √N を超える",
+                   title=_bi("段数と SNR: デジタル加算は厳密に √N、電荷加算は暗いと √N を超える",
+                             "stages vs SNR: digital summing follows √N; charge summing exceeds it in the dark"),
+                   size=SNR_PLOT_SIZE,
                    caption="EMVA 1288 の 2 枚撮り(時間雑音)で測った SNR と、式 21 を段数倍した閉形式。")
     meas, f_list, eps_list, (mf, me) = sync
     ser, kinds, sty, col = [], [], [], []
     for e in eps_list[1:]:
         fs_ = np.array(f_list, float)
-        ser.append(("ε = %.1f %% 実測" % (100 * e), fs_, np.array([meas[(float(f), e)][0] for f in f_list])))
+        ser.append((_bi("ε = %.1f %% 実測" % (100 * e), "ε = %.1f %% measured" % (100 * e)),
+                    fs_, np.array([meas[(float(f), e)][0] for f in f_list])))
         ff = np.linspace(0, 0.5, 101)
         ser.append(("", ff, LS.tdi_sync_mtf(ff, 64, e)["mtf_scan"]))
         kinds += ["scatter", "line"]
         sty += [None, "dashed"]
-    figs.save_plot("sync_error_mtf", ser, xlabel="周波数 [cycles/画素](流れ方向)", ylabel="MTF(同期ずれのぶん)",
+    figs.save_plot("sync_error_mtf", ser,
+                   xlabel=_bi("周波数 [cycles/画素](流れ方向)", "frequency [cycles/pixel] (web direction)"),
+                   ylabel=_bi("MTF(同期ずれのぶん)", "MTF (synchronisation component)"),
                    kinds=kinds, styles=sty, ylim=(0, 1.05),
-                   title="同期ずれの MTF: 実測(点)と |sinc(f N ε)|(破線)、64 段",
+                   title=_bi("同期ずれの MTF: 実測(点)と |sinc(f N ε)|(破線)、64 段",
+                             "synchronisation-error MTF: measured dots and |sinc(f N ε)| dashes, 64 stages"),
+                   size=SYNC_MTF_PLOT_SIZE,
                    caption="ε は搬送速度とラインレートの相対誤差。64 段の間に像が 64·ε 画素流れる。")
     # 同期ずれの絵
     web, masks = steel_web(300, 160, seed=9, centres=[(150, 50), (150, 80), (150, 115)])
     pans, cps = [], []
-    for e, lab in ((0.0, "同期 ε = 0"), (0.02, "ε = 2 %"), (0.06, "ε = 6 %"), ("enc", "うねり + エンコーダ")):
+    for e, lab in ((0.0, _bi("同期 ε = 0", "synchronised ε = 0")), (0.02, "ε = 2 %"),
+                   (0.06, "ε = 6 %"), ("enc", _bi("うねり + エンコーダ", "speed ripple + encoder"))):
         if e == "enc":
             t = np.arange(300)
             r = LS.linescan_acquire(web, stages=64, encoder=True, sync_error=0.03 * np.sin(2 * np.pi * t / 157.0) + 0.01,
@@ -596,7 +616,8 @@ def make_figures(snr, sync, yaw, lens):
         pans.append(np.repeat(np.repeat(a, 3, axis=0), 3, axis=1))
         cps.append(lab)
     figs.save_grid("sync_error_images", pans, captions=cps, ncols=2, gray=True, vrange=(0.0, 1.0),
-                   title="同期がずれると欠陥が流れ方向に伸びる(64 段)",
+                   title=_bi("同期がずれると欠陥が流れ方向に伸びる(64 段)",
+                             "sync error stretches flaws (64 stages)"),
                    caption="ピンホール(σ 1 画素)は ε = 6 % で 3.8 画素ぶん縦に伸びる(3 倍に拡大)。速度がうねってもエンコーダ同期なら崩れない。")
     out, (a, b) = yaw
     th = [0.5, 1.0, 2.0]
@@ -626,13 +647,16 @@ def make_figures(snr, sync, yaw, lens):
                    caption="光線追跡(射影立体角の一様格子)で数えた照度。ラインスキャン用は樽型歪曲で cos⁴ より明るい。")
     _ = hh
     figs.save_plot("lens_mtf_field",
-                   [("ラインスキャン用 タンジェンシャル", hs, ls["mtf_tangential"][:, 1]),
-                    ("ラインスキャン用 サジタル", hs, ls["mtf_sagittal"][:, 1]),
-                    ("C マウント タンジェンシャル", hs, np.nan_to_num(cm["mtf_tangential"][:, 1])),
-                    ("C マウント サジタル", hs, np.nan_to_num(cm["mtf_sagittal"][:, 1]))],
-                   xlabel="像高 [mm]", ylabel="MTF(20 lp/mm)", ylim=(0, 1.05), styles=[None, "dashed", None, "dashed"],
+                   [(_bi("ラインスキャン用 タンジェンシャル", "line-scan tangential"), hs, ls["mtf_tangential"][:, 1]),
+                    (_bi("ラインスキャン用 サジタル", "line-scan sagittal"), hs, ls["mtf_sagittal"][:, 1]),
+                    (_bi("C マウント タンジェンシャル", "C-mount tangential"), hs, np.nan_to_num(cm["mtf_tangential"][:, 1])),
+                    (_bi("C マウント サジタル", "C-mount sagittal"), hs, np.nan_to_num(cm["mtf_sagittal"][:, 1]))],
+                   xlabel=_bi("像高 [mm]", "image height [mm]"), ylabel="MTF (20 lp/mm)",
+                   ylim=(0, 1.05), styles=[None, "dashed", None, "dashed"],
                    colors=["right", "right", "wrong", "wrong"],
-                   title="像高ごとの MTF(20 lp/mm): C マウントは 2/3 型の外で崩れる",
+                   title=_bi("像高ごとの MTF(20 lp/mm): C マウントは 2/3 型の外で崩れる",
+                             "MTF by image height (20 lp/mm): C-mount collapses outside the 2/3-inch format"),
+                   size=LENS_MTF_PLOT_SIZE,
                    caption="タンジェンシャル = センサの並び(幅方向)、サジタル = 流れ方向。幾何 MTF × 回折 MTF。")
     pans, cps = [], []
     for kind, lab in (("linescan", "ラインスキャン用"), ("cmount", "C マウント流用")):
@@ -666,9 +690,10 @@ def make_figures(snr, sync, yaw, lens):
         med = float(np.median(crop))
         sd = 1.4826 * float(np.median(np.abs(crop - med)))
         pans.append(np.clip(_zoom(np.clip(0.5 + (crop - med) / (6.0 * sd), 0, 1), 3), 0, 1))
-        cps.append("TDI %d 段(合成)" % N)
+        cps.append(_bi("TDI %d 段(合成)" % N, "TDI %d stages (synthetic)" % N))
     figs.save_grid("tdi_1_vs_64_closeup", pans, captions=cps, ncols=1, gray=True, vrange=(0.0, 1.0),
-                   title="暗いライン(1 段 40 光子)の合成の冷延鋼板: 1 段と 64 段",
+                   title=_bi("暗いライン(1 段 40 光子)の合成の冷延鋼板: 1 段と 64 段",
+                             "synthetic cold-rolled steel on a dark line (40 photons/stage): 1 vs 64 stages"),
                    caption="左に傷(幅 1.3 画素、深さ 12 %)、右にピンホール 4 個(深さ 16 %)。どちらも自分で仕込んだ欠陥(異物は 01 の図)。"
                            "各段を自分の中央値 ± 3σ で伸ばし、双三次で 3 倍に拡大(明るさではなく SNR の差を見る図)。")
 
