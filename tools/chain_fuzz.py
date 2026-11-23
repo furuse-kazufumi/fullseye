@@ -8096,7 +8096,15 @@ def _b_lane_topview(pool, rng):
 def _b_lane_boundary(pool, rng):
     f = _fuzz_lane()
     y = f["y"]
-    return (np.c_[-1.75 + 0.01 * y, y],), {"side": "left", "seed": 0}
+    # Keep borderline off-line points: changing initial_outlier_weight must exercise
+    # the robust fit instead of testing the knob on an exactly perfect line.
+    local_rng = np.random.default_rng(7)
+    good = np.c_[-1.75 + 0.01 * y + local_rng.normal(0.0, 0.03, len(y)), y]
+    for _ in range(5):
+        outlier_y = local_rng.uniform(0.0, 12.0, 20)
+        outlier_x = (-1.75 + 0.01 * outlier_y
+                     + local_rng.choice([-1.0, 1.0], 20) * local_rng.uniform(0.08, 0.25, 20))
+    return (np.vstack([good, np.c_[outlier_x, outlier_y]]),), {"side": "left", "seed": 0}
 
 
 def _b_lane_center(pool, rng):

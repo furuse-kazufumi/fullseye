@@ -273540,20 +273540,12 @@
         "module": "backend_safe",
         "callable": "_safe(anisotropic)"
       },
-      "verified_executable": true,
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
       "verification": {
-        "source": "tools/gen_op_facets.py::_verified_registry_ops",
-        "status": "ok",
-        "checks": [
-          "executed",
-          "typed",
-          "shape",
-          "finite",
-          "temporary_cwd",
-          "filesystem_unchanged",
-          "random_state_unchanged",
-          "under_2_seconds"
-        ]
+        "status": "failed",
+        "reason": "TimeoutError",
+        "detail": "execution exceeded 2 seconds"
       },
       "bundle_semantics": "unknown",
       "source_ref": "S00060"
@@ -322054,20 +322046,12 @@
         "module": "backend_safe",
         "callable": "_safe(build.<locals>._resp.<locals>.<lambda>)"
       },
-      "verified_executable": true,
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
       "verification": {
-        "source": "tools/gen_op_facets.py::_verified_registry_ops",
-        "status": "ok",
-        "checks": [
-          "executed",
-          "typed",
-          "shape",
-          "finite",
-          "temporary_cwd",
-          "filesystem_unchanged",
-          "random_state_unchanged",
-          "under_2_seconds"
-        ]
+        "status": "failed",
+        "reason": "TimeoutError",
+        "detail": "execution exceeded 2 seconds"
       },
       "bundle_semantics": "unknown",
       "source_ref": "S00060"
@@ -322126,20 +322110,12 @@
         "module": "backend_safe",
         "callable": "_safe(build.<locals>._harris)"
       },
-      "verified_executable": true,
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
       "verification": {
-        "source": "tools/gen_op_facets.py::_verified_registry_ops",
-        "status": "ok",
-        "checks": [
-          "executed",
-          "typed",
-          "shape",
-          "finite",
-          "temporary_cwd",
-          "filesystem_unchanged",
-          "random_state_unchanged",
-          "under_2_seconds"
-        ]
+        "status": "failed",
+        "reason": "TimeoutError",
+        "detail": "execution exceeded 2 seconds"
       },
       "bundle_semantics": "unknown",
       "source_ref": "S00060"
@@ -324459,20 +324435,12 @@
         "module": "backend_safe",
         "callable": "_safe(_make.<locals>.fn)"
       },
-      "verified_executable": true,
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
       "verification": {
-        "source": "tools/gen_op_facets.py::_verified_registry_ops",
-        "status": "ok",
-        "checks": [
-          "executed",
-          "typed",
-          "shape",
-          "finite",
-          "temporary_cwd",
-          "filesystem_unchanged",
-          "random_state_unchanged",
-          "under_2_seconds"
-        ]
+        "status": "failed",
+        "reason": "TimeoutError",
+        "detail": "execution exceeded 2 seconds"
       },
       "bundle_semantics": "unknown",
       "source_ref": "S00060"
@@ -324531,20 +324499,12 @@
         "module": "backend_safe",
         "callable": "_safe(_make.<locals>.fn)"
       },
-      "verified_executable": true,
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
       "verification": {
-        "source": "tools/gen_op_facets.py::_verified_registry_ops",
-        "status": "ok",
-        "checks": [
-          "executed",
-          "typed",
-          "shape",
-          "finite",
-          "temporary_cwd",
-          "filesystem_unchanged",
-          "random_state_unchanged",
-          "under_2_seconds"
-        ]
+        "status": "failed",
+        "reason": "TimeoutError",
+        "detail": "execution exceeded 2 seconds"
       },
       "bundle_semantics": "unknown",
       "source_ref": "S00060"

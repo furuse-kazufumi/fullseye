@@ -32,10 +32,11 @@ version: 1.1.1  # fullseye lib version this note was generated for
 様式の一次情報: 道路標識、区画線及び道路標示に関する命令（昭和三十五年総理府・建設省令
 第三号）別表第6の横断歩道(201)および停止線(203)、e-Gov法令検索
 https://laws.e-gov.go.jp/law/335M50004002003 。
-白線間隔は警察庁交通規制課長通達「白線の設置間隔を拡大した横断歩道等を設ける場合の
-留意事項について」（令和6年7月26日、警規発第96号）で45--90 cm。
+警察庁の設置基準では201の幅員は原則4 m（縮小しても3 m以上）、白線間隔は45--90 cm、
+51 cm以上の間隔では5本以上、原則等間隔（差10 cm以内）である。
 https://www.npa.go.jp/laws/notification/koutuu/kisei/kisei20240726_4.pdf 。BEVでは各端
-を1画素までしか測れないため、判定域を ``[0.45-res, 0.90+res] m`` とする。
+を1画素までしか測れないため、接線・法線へ投影した別々の画素フットプリントを使う。
+画像端に達した候補は ``legal_compliance="unconfirmed"`` とし、法令適合を断定しない。
 
 Parameters
 ----------
@@ -51,17 +52,21 @@ table
     ``confidence``、候補に加え、別の型付き ``crosswalk`` 表と同じ値の
     ``crosswalk_found``、``crosswalk_near_distance``、``crosswalk_far_distance``、
     ``crosswalk_width``、``crosswalk_stripe_count``、``crosswalk_stripe_width``、
-    ``crosswalk_stripe_spacing``、``crosswalk_confidence``を返す。
+    ``crosswalk_stripe_spacing``、``crosswalk_confidence``、観測した縞数
+    ``observed_crosswalk_stripe_count``を返す。互換用の``rejected_crosswalk``は、
+    実際に法令条件で棄却した縞だけを数える。
 
 English: find wide white components nearly perpendicular to the lane tangent and
 merge fragments split by occlusion. It returns a separate typed crosswalk table.
 The supported Japanese crosswalk style is a set of long lane-parallel, laterally narrow stripes, per Road Sign, Road Marking
 and Road Surface Marking Order, Appended Table 6, crosswalk (201) and stop line
 (203), e-Gov https://laws.e-gov.go.jp/law/335M50004002003 . Its clear stripe gaps
-must be 0.45--0.90 m per National Police Agency notification No. 96 (2024-07-26),
-https://www.npa.go.jp/laws/notification/koutuu/kisei/kisei20240726_4.pdf , with one
-BEV pixel tolerance at each bound. Other national styles are outside this op's contract. It
-validates every path segment and an affine nonsingular BEV mapping first. Distance
+requires 3 m width even when reduced (normally 4 m), 0.45--0.90 m clear gaps, at
+least five stripes when a gap is 0.51 m or wider, and gaps within 0.10 m, per the
+National Police Agency installation standard. It uses separate pixel footprints
+projected on the local path tangent and normal; an image-edge candidate is returned
+as unconfirmed rather than legally compliant. Other national styles are outside this
+op's contract. It validates every path segment and an affine nonsingular BEV mapping first. Distance
 is arc length from path[0].
 
 呼び出し例::

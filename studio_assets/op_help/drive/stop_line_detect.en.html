@@ -8,8 +8,8 @@
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>白画素を車線内へ切り、連結片を世界座標へ写す。同じ前方距離の遮蔽片を結合し、車線接線への直交角、幅、厚さで停止線を判定する。日本式の横断歩道は、車の進行方向と平行な細長い白線を道路幅方向に並べる様式なので、長手が接線方向・幅が道路幅方向に細い片を横断歩道縞として数える。同一の8近傍成分に停止線と縦縞が接しても、まず各前方位置の横方向の帯を取り出して停止線候補を残す。縞は別に横方向へ束ね、停止線とは別の横断歩道表として手前/奥の弧長、幅、縞数、縞幅、白線間隔、確信度を返す。縞の間隔が法令の範囲外なら横断歩道と断定しない。別様式の横断歩道はこのopの入力契約外である。</p>
 <p>様式の一次情報: 道路標識、区画線及び道路標示に関する命令（昭和三十五年総理府・建設省令第三号）別表第6の横断歩道(201)および停止線(203)、e-Gov法令検索</p>
-<p>https://laws.e-gov.go.jp/law/335M50004002003 。白線間隔は警察庁交通規制課長通達「白線の設置間隔を拡大した横断歩道等を設ける場合の留意事項について」（令和6年7月26日、警規発第96号）で45--90 cm。</p>
-<p>https://www.npa.go.jp/laws/notification/koutuu/kisei/kisei20240726_4.pdf 。BEVでは各端を1画素までしか測れないため、判定域を <code style="color:#22d3bf">[0.45-res, 0.90+res] m</code> とする。</p>
+<p>https://laws.e-gov.go.jp/law/335M50004002003 。警察庁の設置基準では201の幅員は原則4 m（縮小しても3 m以上）、白線間隔は45--90 cm、51 cm以上の間隔では5本以上、原則等間隔（差10 cm以内）である。</p>
+<p>https://www.npa.go.jp/laws/notification/koutuu/kisei/kisei20240726_4.pdf 。BEVでは各端を1画素までしか測れないため、接線・法線へ投影した別々の画素フットプリントを使う。画像端に達した候補は <code style="color:#22d3bf">legal_compliance=&quot;unconfirmed&quot;</code> とし、法令適合を断定しない。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : (H, W) labels</p>
 <p><code style="color:#22d3bf">color_rule_mask</code>のlabelを俯瞰へ写したもの。1だけを白として使う。</p>
@@ -21,9 +21,10 @@
 <p><code style="color:#22d3bf">confidence</code>、候補に加え、別の型付き <code style="color:#22d3bf">crosswalk</code> 表と同じ値の</p>
 <p><code style="color:#22d3bf">crosswalk_found</code>、<code style="color:#22d3bf">crosswalk_near_distance</code>、<code style="color:#22d3bf">crosswalk_far_distance</code>、</p>
 <p><code style="color:#22d3bf">crosswalk_width</code>、<code style="color:#22d3bf">crosswalk_stripe_count</code>、<code style="color:#22d3bf">crosswalk_stripe_width</code>、</p>
-<p><code style="color:#22d3bf">crosswalk_stripe_spacing</code>、<code style="color:#22d3bf">crosswalk_confidence</code>を返す。</p>
-<p>English: find wide white components nearly perpendicular to the lane tangent and merge fragments split by occlusion. It returns a separate typed crosswalk table. The supported Japanese crosswalk style is a set of long lane-parallel, laterally narrow stripes, per Road Sign, Road Marking and Road Surface Marking Order, Appended Table 6, crosswalk (201) and stop line (203), e-Gov https://laws.e-gov.go.jp/law/335M50004002003 . Its clear stripe gaps must be 0.45--0.90 m per National Police Agency notification No. 96 (2024-07-26),</p>
-<p>https://www.npa.go.jp/laws/notification/koutuu/kisei/kisei20240726_4.pdf , with one BEV pixel tolerance at each bound. Other national styles are outside this op&#x27;s contract. It validates every path segment and an affine nonsingular BEV mapping first. Distance is arc length from path[0].</p>
+<p><code style="color:#22d3bf">crosswalk_stripe_spacing</code>、<code style="color:#22d3bf">crosswalk_confidence</code>、観測した縞数</p>
+<p><code style="color:#22d3bf">observed_crosswalk_stripe_count</code>を返す。互換用の<code style="color:#22d3bf">rejected_crosswalk</code>は、</p>
+<p>実際に法令条件で棄却した縞だけを数える。</p>
+<p>English: find wide white components nearly perpendicular to the lane tangent and merge fragments split by occlusion. It returns a separate typed crosswalk table. The supported Japanese crosswalk style is a set of long lane-parallel, laterally narrow stripes, per Road Sign, Road Marking and Road Surface Marking Order, Appended Table 6, crosswalk (201) and stop line (203), e-Gov https://laws.e-gov.go.jp/law/335M50004002003 . Its clear stripe gaps requires 3 m width even when reduced (normally 4 m), 0.45--0.90 m clear gaps, at least five stripes when a gap is 0.51 m or wider, and gaps within 0.10 m, per the National Police Agency installation standard. It uses separate pixel footprints projected on the local path tangent and normal; an image-edge candidate is returned as unconfirmed rather than legally compliant. Other national styles are outside this op&#x27;s contract. It validates every path segment and an affine nonsingular BEV mapping first. Distance is arc length from path[0].</p>
 <p>呼び出し例::</p>
 <p>import numpy as np</p>
 <p>import laneops</p>

@@ -29,14 +29,16 @@ Parameters
 left, right : table or None
     :func:`lane_boundary_fit`の結果。欠測側はNoneか``{"valid":False}``。
 lane_width, samples, band_inset
-    既知の車線幅[m]、標本数、境界から走行帯を内側へ引く量[m]。
+    既知の車線幅[m]、標本数、境界から走行帯を内側へ引く量[m]。両側がある場合も、
+    観測した幅が既知幅と整合することを検査する。
 
 Returns
 -------
 table
     ``path``(x,y)、``band_left/right``、閉じた``corridor_polygon``、幅、確信度、使用した側。
 
-English: average two fitted boundaries, or offset a single observed boundary by
+English: average two fitted boundaries after checking their observed width against
+the supplied known lane width, or offset a single observed boundary by
 half the known lane width with reduced confidence. Before a one-sided offset, it
 rejects a curvature radius no larger than any constructed offset, and rejects a
 cusp, tangent reversal, or self-intersection with ``valid=False``. It returns the

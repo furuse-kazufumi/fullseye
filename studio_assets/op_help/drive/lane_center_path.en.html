@@ -11,11 +11,12 @@
 <p>left, right : table or None</p>
 <p><code style="color:#22d3bf">lane_boundary_fit</code>の結果。欠測側はNoneか<code style="color:#22d3bf">{&quot;valid&quot;:False}</code>。</p>
 <p>lane_width, samples, band_inset</p>
-<p>既知の車線幅[m]、標本数、境界から走行帯を内側へ引く量[m]。</p>
+<p>既知の車線幅[m]、標本数、境界から走行帯を内側へ引く量[m]。両側がある場合も、</p>
+<p>観測した幅が既知幅と整合することを検査する。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>table</p>
 <p><code style="color:#22d3bf">path</code>(x,y)、<code style="color:#22d3bf">band_left/right</code>、閉じた<code style="color:#22d3bf">corridor_polygon</code>、幅、確信度、使用した側。</p>
-<p>English: average two fitted boundaries, or offset a single observed boundary by half the known lane width with reduced confidence. Before a one-sided offset, it rejects a curvature radius no larger than any constructed offset, and rejects a cusp, tangent reversal, or self-intersection with <code style="color:#22d3bf">valid=False</code>. It returns the centre path and an inset drivable corridor; it does not check vehicle footprint or obstacles.</p>
+<p>English: average two fitted boundaries after checking their observed width against the supplied known lane width, or offset a single observed boundary by half the known lane width with reduced confidence. Before a one-sided offset, it rejects a curvature radius no larger than any constructed offset, and rejects a cusp, tangent reversal, or self-intersection with <code style="color:#22d3bf">valid=False</code>. It returns the centre path and an inset drivable corridor; it does not check vehicle footprint or obstacles.</p>
 <p>呼び出し例::</p>
 <p>import numpy as np</p>
 <p>import laneops</p>
