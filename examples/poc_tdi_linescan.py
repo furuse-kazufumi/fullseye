@@ -558,7 +558,7 @@ def make_figures(snr, sync, yaw, lens):
         sd = 1.4826 * float(np.median(np.abs(crop - med)))
         g = np.clip(0.5 + (crop - med) / (6.0 * sd), 0, 1)           # 中央値 ± 3σ(雑音と地合いの尺度で揃える)
         panels.append(np.repeat(np.repeat(g, 2, axis=0), 2, axis=1))
-        caps.append(_bi("TDI %d 段" % N, "TDI %d stages" % N))
+        caps.append(_bi("TDI %d 段" % N, "TDI %d %s" % (N, "stage" if N == 1 else "stages")))
     figs.save_grid("tdi_stages_defects", panels, captions=caps, ncols=2, gray=True, vrange=(0.0, 1.0),
                    title=_bi("暗いラインの冷延鋼板: 段数を積むと薄い欠陥が地合いから浮く",
                              "cold-rolled steel on a dark line: more stages reveal faint flaws"),
