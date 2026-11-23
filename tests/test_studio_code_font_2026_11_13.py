@@ -258,12 +258,16 @@ def test_suspicious_characters_are_found_by_kind():
 
 
 def test_marks_are_painted_over_a_full_width_space_and_its_kin(qapp):
-    from PySide6 import QtGui, QtWidgets
+    from PySide6 import QtCore, QtGui, QtWidgets
     studio_theme.set_current(studio_theme.DEFAULT_THEME, studio_theme.DEFAULT_DENSITY)
     lines = ["x = 1", "y\u3000= 2", "f\uff08a\uff09", "p\u0430ss\u200b", "z = 3   "]
 
     def shot(marked, trailing=True):
         ed = QtWidgets.QPlainTextEdit()
+        # 比べるのは marks だけ。先に別の editor が表示されていると、offscreen Qt は 2 枚の片方だけに
+        # focus を渡すことがある。12 pt / 76 dpi ではその caret が 19 px の偽の差分になった。
+        # Compare only the marks: a previously shown editor can make offscreen Qt focus just one shot.
+        ed.setFocusPolicy(QtCore.Qt.NoFocus)
         ed.setStyleSheet("QPlainTextEdit { background:#1d2126; color:#e4e7eb; border:none; }")
         studio_theme.apply_code_font(ed, 12)
         ed.setPlainText("\n".join(lines))
