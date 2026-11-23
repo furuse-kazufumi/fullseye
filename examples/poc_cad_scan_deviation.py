@@ -131,6 +131,13 @@ NOISE = 0.020                      # 既定の測定雑音 σ [mm]
 N_REF = 40000                      # CAD 参照点群の点数
 N_SCAN = 24000                     # 実測点群の点数(主実験)
 SEED = 7
+NOISE_BIAS_PLOT_SIZE = (600, 360)
+ALIGN_DEVIATION_FONT_SIZE = 10
+
+
+def _bi(ja, en):
+    """図の札を日本語 / English の順で返す。 / Return a bilingual figure label."""
+    return "%s / %s" % (ja, en)
 
 # --- 欠陥の諸元(すべて真値として仕込む) --------------------------------------- #
 DENT_C = np.array([-8.0, 6.0, H])  # 局所へこみの中心(上面)
@@ -582,10 +589,13 @@ def section_part(ref: CadRef) -> dict:
             [render(big["pts"], nrm=big["nrm"], shade=True),
              render(big["pts"], dv, nrm=big["nrm"], scale=S),
              render(big["pts"][vis], dv[vis], nrm=big["nrm"][vis], scale=S)],
-            ["公称形状(60x40x12 + ボス + フィレット + 穴 2)",
-             "真の偏差(だいだい = 足りない / 青 = 余る、±%.2f mm)" % S,
-             "片側スキャンで見える面だけ(可視 %.0f %%)" % (100 * vis.mean())],
-            title="CAD と実測の差分検査 —— 場面", ncols=3,
+            [_bi("公称形状(60x40x12 + ボス + フィレット + 穴 2)",
+                 "nominal shape (60x40x12 + boss + fillet + 2 holes)"),
+             _bi("真の偏差(だいだい = 足りない・青 = 余る、±%.2f mm)" % S,
+                 "true deviation (orange = short; blue = excess, ±%.2f mm)" % S),
+             _bi("片側スキャンで見える面だけ(可視 %.0f %%)" % (100 * vis.mean()),
+                 "surfaces visible to one-sided scan only (%.0f %% visible)" % (100 * vis.mean()))],
+            title=_bi("CAD と実測の差分検査 —— 場面", "CAD-to-scan deviation inspection — scene"), ncols=3,
             signed=[False, True, True],
             caption="偏差は法線方向の変位そのもの(構成で厳密)。"
                     "右端の帯が色と値の対応。")
@@ -659,9 +669,19 @@ def section_align(ref: CadRef) -> dict:
                   % (dd.mean(), TOL, dd.mean() / TOL))
         keep[meth] = {"R": R, "t": t, "sig": ss, "unsig": dd, "q": q}
 
-    figs.save_table("methods", ["手法", "姿勢 [度]", "点移動 [mm]", "偏差RMS [µm]",
-                                "偏差最大 [µm]", "公差外面積 [mm^2]", "面積誤差"],
-                    rows, title="位置合わせの段階と、そこから出る偏差の誤差",
+    method_en = {"なし(ゼロ点)": "none (baseline)", "重心だけ": "centroid only",
+                 "FPFH 粗合わせ": "FPFH coarse alignment", "+ 点-点 ICP": "+ point-to-point ICP",
+                 "+ 点-面 ICP": "+ point-to-plane ICP", "+ GICP": "+ GICP",
+                 "真の姿勢を与える": "given true pose"}
+    display_rows = [[_bi(r[0], method_en[r[0]])] + r[1:] for r in rows]
+    figs.save_table("methods", [_bi("手法", "method"), _bi("姿勢 [度]", "pose [deg]"),
+                                _bi("点移動 [mm]", "point shift [mm]"),
+                                _bi("偏差RMS [µm]", "deviation RMS [µm]"),
+                                _bi("偏差最大 [µm]", "max deviation [µm]"),
+                                _bi("公差外面積 [mm^2]", "out-of-tolerance area [mm^2]"),
+                                _bi("面積誤差", "area error")],
+                    display_rows, title=_bi("位置合わせの段階と、そこから出る偏差の誤差",
+                                            "alignment stages and resulting deviation error"),
                     caption="真の姿勢を与えた最終行が推定器そのものの床。"
                             "点-面 ICP との差は姿勢ではなく datum の取り方の差。")
 
@@ -702,9 +722,12 @@ def section_align(ref: CadRef) -> dict:
              with_scalebar(top_map(P2, np.where(np.abs(best["sig"][on_top]) > TOL,
                                                 np.sign(best["sig"][on_top]),
                                                 0.0)) * S, S)],
-            ["真の偏差(±%.2f mm)" % S, "点-面 ICP のあとの推定(同じ目盛り)" ,
-             "推定 - 真値(同じ目盛り)", "公差 ±%.2f mm を外れた領域" % TOL],
-            title="上面の偏差地図(だいだい = 足りない / 青 = 余る)", ncols=2,
+            [_bi("真の偏差(±%.2f mm)" % S, "true deviation (±%.2f mm)" % S),
+             _bi("点-面 ICP のあとの推定(同じ目盛り)", "estimate after point-to-plane ICP (same scale)"),
+             _bi("推定 - 真値(同じ目盛り)", "estimate − truth (same scale)"),
+             _bi("公差 ±%.2f mm を外れた領域" % TOL, "area outside ±%.2f mm tolerance" % TOL)],
+            title=_bi("上面の偏差地図(だいだい = 足りない・青 = 余る)",
+                      "top-surface deviation maps (orange = short; blue = excess)"), ncols=2,
             signed=True,
             # (d) は符号だけの 3 値図: 色は同じ尺でも目盛り付きのバーは付けない
             kind=["displacement", "displacement", "displacement", None],
@@ -797,10 +820,14 @@ def section_noise(ref: CadRef) -> dict:
         print("   %6.1f   %11.2f   %14.2f   %6.4f   %+12.3f µm"
               % (1000 * s, 1000 * p, 1000 * d.mean(), d.mean() / p, sgn[-1]))
     figs.save_plot("noise_bias",
-                   [("予測 σ√(2/π)", sig, pred), ("実測(符号なし)", sig, meas),
-                    ("実測(符号付き)", sig, sgn)],
-                   xlabel="測定雑音 σ [µm]", ylabel="平面までの距離の平均 [µm]",
-                   title="符号を捨てると雑音がそのまま偏りになる",
+                   [(_bi("予測 σ√(2/π)", "prediction σ√(2/π)"), sig, pred),
+                    (_bi("実測(符号なし)", "measured (unsigned)"), sig, meas),
+                    (_bi("実測(符号付き)", "measured (signed)"), sig, sgn)],
+                   xlabel=_bi("測定雑音 σ [µm]", "measurement noise σ [µm]"),
+                   ylabel=_bi("平面までの距離の平均 [µm]", "mean distance to plane [µm]"),
+                   title=_bi("符号を捨てると雑音がそのまま偏りになる",
+                             "discarding the sign turns noise directly into bias"),
+                   size=NOISE_BIAS_PLOT_SIZE,
                    caption="半正規分布の平均。符号付き(法線へ射影)にすると 0 に戻る。")
     return {"sig": sig, "pred": pred, "meas": meas, "sgn": sgn}
 
@@ -1290,9 +1317,23 @@ def section_controls(ref: CadRef) -> dict:
           % (ref.area - out["欠測: 片側スキャン"]["area"],
              100 * (1 - out["欠測: 片側スキャン"]["area"] / ref.area)))
     out["_seed_stat"] = stat
-    figs.save_table("controls", ["条件", "点数", "可視面積 [mm^2]", "姿勢 [度]",
-                                 "偏差RMS [µm]", "公差外面積 推定/真値 [mm^2]"], rows,
-                    title="対照群 —— 要因を 1 つずつ止める")
+    condition_en = {
+        "対照: 変換なし・欠陥なし・雑音なし": "control: no transform, defects or noise",
+        "対照: 欠陥なし(雑音のみ)": "control: no defects (noise only)",
+        "対照: 雑音なし(欠陥のみ)": "control: no noise (defects only)",
+        "基準: 欠陥 + 雑音": "reference: defects + noise",
+        "欠測: 片側スキャン": "missing data: one-sided scan",
+        "密度 1/10": "density 1/10", "密度 1/50": "density 1/50",
+        "欠測 + 密度 1/10": "missing data + density 1/10",
+    }
+    display_rows = [[_bi(r[0], condition_en[r[0]])] + r[1:] for r in rows]
+    figs.save_table("controls", [_bi("条件", "condition"), _bi("点数", "points"),
+                                 _bi("可視面積 [mm^2]", "visible area [mm^2]"),
+                                 _bi("姿勢 [度]", "pose [deg]"),
+                                 _bi("偏差RMS [µm]", "deviation RMS [µm]"),
+                                 _bi("公差外面積 推定/真値 [mm^2]", "O.O.T. est./true [mm^2]")],
+                    display_rows, title=_bi("対照群 —— 要因を 1 つずつ止める",
+                                            "controls — disable one factor at a time"))
     return out
 
 
@@ -1525,9 +1566,9 @@ def fig_align_orbit(ref: CadRef, al: dict, VW=640, VH=360, fps=30.0):
     lam = 0.22 * np.clip(sc["nrm"] @ light, 0.0, 1.0)            # sc["nrm"] は CAD 系の公称法線
     dcol_lit = np.clip(dcol + lam[:, None], 0.0, 1.0)
     rows = {r[0]: r for r in al["rows"]}
-    stages = [("位置合わせなし(ゼロ点)", keep["none"], rows["なし(ゼロ点)"]),
-              ("FPFH 粗合わせ", keep["fpfh"], rows["FPFH 粗合わせ"]),
-              ("+ 点-面 ICP", keep["p2plane"], rows["+ 点-面 ICP"])]
+    stages = [(_bi("位置合わせなし(ゼロ点)", "no alignment (baseline)"), keep["none"], rows["なし(ゼロ点)"]),
+              (_bi("FPFH 粗合わせ", "FPFH coarse alignment"), keep["fpfh"], rows["FPFH 粗合わせ"]),
+              (_bi("+ 点-面 ICP", "+ point-to-plane ICP"), keep["p2plane"], rows["+ 点-面 ICP"])]
 
     def draw(eye, P, Nw, col, with_ref):
         pose = R3.look_at(eye, ctr, up=(0.0, 0.0, 1.0))
@@ -1573,9 +1614,13 @@ def fig_align_orbit(ref: CadRef, al: dict, VW=640, VH=360, fps=30.0):
                 eye = ctr + np.array([150.0 * np.cos(a), 150.0 * np.sin(a), 95.0])
                 img = draw(eye, P, n_scan @ R.T, np.tile([1.0, 0.62, 0.2], (len(P), 1)), True)
                 lab = name if kind == "hold" else "→ " + name
-                img = _v_txt(img, "%s\n姿勢の誤差 %s 度 / 点の移動 %s mm\n偏差 RMS %s µm"
-                             % (lab, row[1], row[2], row[3]), (6, 6), fs=12)
-                img = _v_txt(img, "灰 = CAD の参照点 / だいだい = 実測点群", (6, VH - 6), anchor="lb", fs=11)
+                img = _v_txt(img, "%s\n%s\n%s" % (
+                    lab, _bi("姿勢の誤差 %s 度・点の移動 %s mm" % (row[1], row[2]),
+                             "pose error %s deg; point shift %s mm" % (row[1], row[2])),
+                    _bi("偏差 RMS %s µm" % row[3], "deviation RMS %s µm" % row[3])), (6, 6), fs=12)
+                img = _v_txt(img, _bi("灰 = CAD の参照点・だいだい = 実測点群",
+                                      "grey = CAD reference; orange = measured cloud"),
+                             (6, VH - 6), anchor="lb", fs=11)
                 frames.append(img)
                 n1 += 1
     P = keep["p2plane"]["q"]
@@ -1588,10 +1633,14 @@ def fig_align_orbit(ref: CadRef, al: dict, VW=640, VH=360, fps=30.0):
         el = 95.0 + 25.0 * np.sin(np.pi * k / n2)
         eye = ctr + np.array([115.0 * np.cos(a), 115.0 * np.sin(a), el * 0.8])
         img = draw(eye, P, Nw, dcol_lit, False)
-        img = _v_txt(img, "点-面 ICP 後の符号付き偏差(法線へ射影)\n公差 ±%.2f mm の外: 推定 %s mm² / 真値 %.1f mm²"
-                     % (TOL, row[5], al["a_true"]), (6, 6), fs=12)
+        img = _v_txt(img, _bi("点-面 ICP 後の符号付き偏差(法線へ射影)",
+                              "signed deviation after point-to-plane ICP (normal projection)") + "\n" +
+                     _bi("公差 ±%.2f mm の外: 推定 %s mm²・真値 %.1f mm²" % (TOL, row[5], al["a_true"]),
+                         "outside ±%.2f mm: estimate %s mm²; truth %.1f mm²" % (TOL, row[5], al["a_true"])),
+                     (6, 6), fs=ALIGN_DEVIATION_FONT_SIZE)
         img = _v_cbar(img, lut, (VW - 80, 92, 14, VH - 150), -S, S, "mm")
-        img = _v_txt(img, "だいだい = 足りない\n青 = 余る", (VW - 8, 50), anchor="rt", fs=11)
+        img = _v_txt(img, _bi("だいだい = 足りない", "orange = short") + "\n" +
+                     _bi("青 = 余る", "blue = excess"), (VW - 8, 50), anchor="rt", fs=11)
         frames.append(img)
     save_evaluation_video(
         "align_orbit", frames, capture_fps=fps, playback_fps=fps, hold_frames=0, gif_stride=4,
