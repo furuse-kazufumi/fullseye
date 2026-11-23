@@ -510,7 +510,7 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3, flipped):
                     np.where(IN_DISC, cause, np.nan)],
                    [_bi("巻いたままの δ [rad]", "wrapped δ [rad]"),
                     _bi("変調度 |sinδ|(N が 0.5 の倍数の帯で 0)",
-                        "modulation |sinδ| (zero at half-integer N)"),
+                        "modulation |sinδ| (zero at multiples of 0.5 in N)"),
                     _bi("1 縞あたりの画素数(上限 = 99 % 点)",
                         "pixels per fringe (capped at 99th percentile)"),
                     _bi("巻き戻しの外れ(0 = 合う / 1 = 符号反転と重なる / 2 = その他)",
