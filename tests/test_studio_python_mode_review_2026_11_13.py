@@ -31,6 +31,7 @@ import studio_pyedit_complete as comp
 import studio_pyedit_safe as safe
 import studio_pyedit_values as V
 import studio_pymode as pm_mod
+import studio_timingkit as timing
 
 IMG = np.zeros((16, 16))
 
@@ -281,14 +282,8 @@ def test_h2_the_window_recovers_when_a_value_has_a_repr_that_never_returns(tmp_p
 # --------------------------------------------------------------------------- #
 # H3: 止められずに残した実行                                                     #
 # --------------------------------------------------------------------------- #
-def _late_writer(tmp_path, seconds=1.6):
-    return ("import os, time\n"
-            "try:\n"
-            "    time.sleep(%r)\n"
-            "except BaseException:\n"
-            "    pass\n"
-            "os.environ['ZZ_STUDIO_LATE'] = 'leaked'\n"
-            "os.chdir(%r)\n") % (seconds, str(tmp_path))
+def _late_writer(tmp_path, gate):
+    return gate.source("import os\nos.environ['ZZ_STUDIO_LATE'] = 'leaked'\nos.chdir(%r)\n" % str(tmp_path))
 
 
 def test_h3_an_abandoned_run_blocks_the_next_run_and_is_restored_again_when_it_ends(tmp_path):
@@ -297,8 +292,10 @@ def test_h3_an_abandoned_run_blocks_the_next_run_and_is_restored_again_when_it_e
     assert _wait_no_abandoned()
     cwd = os.getcwd()
     assert "ZZ_STUDIO_LATE" not in os.environ
+    gate = timing.UnstoppableGate()
     try:
-        r = sp.run_program(_late_writer(tmp_path), IMG, time_limit_s=0.2, config="release")
+        # Lock.acquire() は全 OS で C 待機から戻らない。有限の sleep は遅いだけで、監視より先に戻り得る。
+        r = sp.run_program(_late_writer(tmp_path, gate), IMG, time_limit_s=0.2, config="release")
         assert r.stopped == "unstoppable", (r.stopped, r.errors)
         assert len(sp.abandoned_runs()) == 1
         assert len(r.notes) >= 2, r.notes
@@ -308,12 +305,14 @@ def test_h3_an_abandoned_run_blocks_the_next_run_and_is_restored_again_when_it_e
         assert nxt.not_run_reason == nxt.errors[0] and "x" not in nxt.values
         ev = sp.evaluate("1 + 1", {"__builtins__": builtins}, time_limit_s=1.0)
         assert ev["value"] is None and "still running in the background" in ev["error"]
+        gate.release()
         assert _wait_no_abandoned(), "the abandoned run did not end"
         assert "ZZ_STUDIO_LATE" not in os.environ, "the late write of the abandoned run was not undone"
         assert os.getcwd() == cwd
         ok = sp.run_program("x = 1\n", IMG)
         assert ok.ok and ok.values["x"] == 1
     finally:
+        gate.close()
         _wait_no_abandoned()
         os.environ.pop("ZZ_STUDIO_LATE", None)
         os.chdir(cwd)
@@ -323,10 +322,11 @@ def test_h3_the_window_says_that_the_earlier_run_is_still_running(tmp_path, monk
     assert _wait_no_abandoned()
     cwd = os.getcwd()
     win, _m = _launch(tmp_path, monkeypatch, time_limit=0.3)
+    gate = timing.UnstoppableGate()
     try:
         pm = win._pymode
         pm.set_config("release")
-        _set_text(win, "# python\n" + _late_writer(tmp_path, 6.0))     # 並行の負荷でも、次の F5 より先に終わらない長さ
+        _set_text(win, "# python\n" + _late_writer(tmp_path, gate))
         res = _f5(win, timeout=10)
         assert res.stopped == "unstoppable"
         runs0 = pm.state.get("pymode_runs", 0)
@@ -338,9 +338,11 @@ def test_h3_the_window_says_that_the_earlier_run_is_still_running(tmp_path, monk
         assert not pm.running and pm.state.get("pymode_runs", 0) == runs0   # 始めていない
         assert "still running in the background" in pm.output.toPlainText().splitlines()[-1]
         assert "still running in the background" in win._program["status"]().toolTip()
+        gate.release()
         assert _wait_no_abandoned()
         assert _f5(win).ok                                                # 終われば使い続けられる
     finally:
+        gate.close()
         _wait_no_abandoned()
         os.environ.pop("ZZ_STUDIO_LATE", None)
         os.chdir(cwd)
@@ -700,9 +702,13 @@ def test_e2_unsaved_text_is_written_out_while_typing_and_comes_back_after_a_cras
     try:
         pm = win._pymode
         assert pm._autosave.isActive() and pm._autosave.interval() == pm_mod.AUTOSAVE_MS
-        assert pm.autosave_now() is False                                 # 変わっていなければ書かない
-        _set_text(win, "# python\nprecious = 42\nshow(img)\n")
-        assert pm.autosave_now() is True and pm.autosave_now() is False
+        pm._autosave.stop()                                               # 手動呼出しの戻り値を本物の timer と競合させない
+        try:
+            assert pm.autosave_now() is False                             # 変わっていなければ書かない
+            _set_text(win, "# python\nprecious = 42\nshow(img)\n")
+            assert pm.autosave_now() is True and pm.autosave_now() is False
+        finally:
+            pm._autosave.start()
         # 落ちた事にする: 閉じる処理(save_state)を通さずに、同じ設定で起動し直す
         win2, _m2 = _launch(tmp_path, monkeypatch, name="crash.ini")
         try:

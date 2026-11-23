@@ -231,8 +231,26 @@ def test_a_layout_item_freed_after_the_density_pass_does_not_crash_a_later_list(
 def test_a_closed_and_deleted_window_leaves_no_top_level_widget(qapp):
     """直す前: 窓を閉じて消しても、処理の一覧の引数の行(KnobRow)の置かれない名前のラベル 2 枚が残った(窓ごとに 2 枚)。"""
     from PySide6 import QtCore, QtWidgets
+    import shiboken6
     import studio
     import studio_keymap_qt
+
+    def top_levels_by_cpp_address():
+        return {shiboken6.getCppPointer(w)[0]: w for w in QtWidgets.QApplication.topLevelWidgets()}
+
+    def describe(address, widget):
+        parent = widget.parent()
+        parent_probe = None if parent is None else (
+            type(parent).__name__, parent.objectName(), shiboken6.getCppPointer(parent)[0])
+        return {
+            "class": type(widget).__name__,
+            "objectName": widget.objectName(),
+            "cpp_address": address,
+            "createdByPython": shiboken6.createdByPython(widget),
+            "windowFlags": int(widget.windowFlags()),
+            "parent": parent_probe,
+            "children_count": len(widget.children()),
+        }
 
     def deleted_pump():
         for _ in range(3):
@@ -243,7 +261,8 @@ def test_a_closed_and_deleted_window_leaves_no_top_level_widget(qapp):
     _close_window(warm)
     warm.deleteLater()
     deleted_pump()
-    before = {id(w) for w in QtWidgets.QApplication.topLevelWidgets()}
+    # C++ 所有の widget は列挙ごとに別の Python wrapper を得るため id(wrapper) は安定しない。
+    before = set(top_levels_by_cpp_address())
     win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
     win.show()
     _pump(qapp)
@@ -251,6 +270,7 @@ def test_a_closed_and_deleted_window_leaves_no_top_level_widget(qapp):
     win.deleteLater()
     del win
     deleted_pump()
-    probes = {id(w) for w in studio_keymap_qt._PROBE_FIELDS}                 # the key-measuring fields: one per process
-    left = [w for w in QtWidgets.QApplication.topLevelWidgets() if id(w) not in before and id(w) not in probes]
-    assert left == [], [(type(w).__name__, getattr(w, "text", lambda: "")()) for w in left]
+    after = top_levels_by_cpp_address()
+    probes = {shiboken6.getCppPointer(w)[0] for w in studio_keymap_qt._PROBE_FIELDS}  # one per process
+    left = {address: w for address, w in after.items() if address not in before and address not in probes}
+    assert left == {}, [describe(address, w) for address, w in left.items()]

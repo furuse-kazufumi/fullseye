@@ -976,7 +976,11 @@ class KeyboardDialog(QtWidgets.QDialog):
     def _scroll_to(self, cid: str) -> None:
         for r, row in enumerate(self._rows):
             if row[0] == cid and self.table.item(r, 0) is not None:
-                self.table.scrollToItem(self.table.item(r, 0))
+                self.table.doItemsLayout()
+                self.table.scrollToItem(
+                    self.table.item(r, 0),
+                    QtWidgets.QAbstractItemView.PositionAtCenter,
+                )
                 return
 
     def _on_select(self) -> None:

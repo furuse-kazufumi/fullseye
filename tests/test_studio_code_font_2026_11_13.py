@@ -16,6 +16,14 @@ import pytest
 import studio_theme
 
 
+#: Qt の 1/64 px 量子化を 1 段許す字幅差 / one 1/64-pixel quantization step.
+_CODE_PITCH_TOLERANCE_PX = 1.0 / 64          # 26.6 固定小数の 1 段(全角が「半角 x 2 - 1/64 px」になる大きさがある)
+#: 空白を含む印字可能 ASCII の試験標本 / printable ASCII sample including space.
+_CODE_PITCH_ASCII = " " + "".join(chr(code) for code in range(0x21, 0x7F))
+#: 日本語フォントの全角幅を測る標本 / full-width sample for Japanese families.
+_CODE_PITCH_FULLWIDTH_SAMPLE = "あ漢字ア、"
+
+
 # --------------------------------------------------------------------------- #
 # Qt-free: the table
 # --------------------------------------------------------------------------- #
@@ -85,11 +93,29 @@ def qapp(monkeypatch):
     studio_theme.set_code_pt(studio_theme.CODE_PT_DEFAULT)
 
 
+def _measured_code_pitch(font):
+    """実際の字幅を測る独立した oracle / independent oracle that measures actual advances."""
+    from PySide6 import QtGui
+    info = QtGui.QFontInfo(font)
+    measured = QtGui.QFont(font)
+    measured.setHintingPreference(QtGui.QFont.HintingPreference.PreferNoHinting)
+    metrics = QtGui.QFontMetricsF(measured)
+    advances = [metrics.horizontalAdvance(ch) for ch in _CODE_PITCH_ASCII]
+    if max(advances) - min(advances) > _CODE_PITCH_TOLERANCE_PX:
+        return False
+    japanese = QtGui.QFontDatabase.WritingSystem.Japanese
+    if japanese in QtGui.QFontDatabase.writingSystems(info.family()):
+        half = advances[0]
+        return all(abs(metrics.horizontalAdvance(ch) - 2.0 * half) <= _CODE_PITCH_TOLERANCE_PX
+                   for ch in _CODE_PITCH_FULLWIDTH_SAMPLE)
+    return True
+
+
 def _resolved(widget_or_font):
     from PySide6 import QtGui
     font = widget_or_font if isinstance(widget_or_font, QtGui.QFont) else widget_or_font.font()
     info = QtGui.QFontInfo(font)
-    return info.family(), bool(info.fixedPitch()), int(round(info.pointSizeF()))
+    return info.family(), _measured_code_pitch(font), int(round(info.pointSizeF()))
 
 
 def test_the_code_font_is_fixed_pitch(qapp):
@@ -119,7 +145,8 @@ def test_the_users_own_family_is_used_only_when_it_is_installed_and_fixed_pitch(
     studio_theme.set_code_family("No Such Face 9")
     assert studio_theme.code_family() == table
     proportional = [f for f in QtGui.QFontDatabase.families() if not QtGui.QFontDatabase.isFixedPitch(f)
-                    and QtGui.QFontDatabase.isSmoothlyScalable(f)]
+                    and QtGui.QFontDatabase.isSmoothlyScalable(f)
+                    and not _measured_code_pitch(QtGui.QFont(f))]
     if proportional:
         studio_theme.set_code_family(proportional[0])
         assert studio_theme.code_family() == table                                    # a proportional face is refused
@@ -131,6 +158,20 @@ def test_the_users_own_family_is_used_only_when_it_is_installed_and_fixed_pitch(
     assert _resolved(studio_theme.code_font())[:2] == (others[-1], True)
     studio_theme.set_code_family("")
     assert studio_theme.code_family() == table
+
+
+def test_the_settings_list_contains_the_family_currently_used(qapp):
+    assert studio_theme.code_family() in studio_theme.code_font_choices()
+
+
+def test_the_independent_measurement_rejects_a_proportional_family(qapp):
+    from PySide6 import QtGui
+    proportional = [f for f in QtGui.QFontDatabase.families() if not QtGui.QFontDatabase.isFixedPitch(f)
+                    and QtGui.QFontDatabase.isSmoothlyScalable(f)
+                    and not _measured_code_pitch(QtGui.QFont(f))]
+    if not proportional:
+        pytest.skip("this machine has no smoothly scalable proportional family")
+    assert not _measured_code_pitch(QtGui.QFont(proportional[0]))
 
 
 #: pairs a reader mixes up; every one must DRAW differently in the chosen face (same size, same box)
@@ -342,7 +383,7 @@ def test_code_inside_a_help_page_follows_also_after_a_new_page_is_loaded(qapp):
                 if fr.isValid() and fr.text().strip():
                     fam = QtGui.QFontInfo(fr.charFormat().font()).family()
                     (code if fr.charFormat().fontFixedPitch() or "fullseye" in fr.text() or "op(a" in fr.text()
-                     else prose).append((fr.text()[:14], fam, QtGui.QFontInfo(fr.charFormat().font()).fixedPitch()))
+                     else prose).append((fr.text()[:14], fam, _measured_code_pitch(fr.charFormat().font())))
                 it += 1
             block = block.next()
         return code, prose

@@ -16,6 +16,12 @@ import studio_panels
 import studio_theme
 
 
+#: header section の border を除く inset(px) / inset excluding the section border.
+_HEADER_INTERIOR_INSET_PX = 2
+#: header の面で背景色が占めるべき最低割合 / minimum background fraction in a header face.
+_HEADER_MIN_GROUND_FRACTION = 0.5
+
+
 # --------------------------------------------------------------------------- #
 # helpers
 # --------------------------------------------------------------------------- #
@@ -663,8 +669,17 @@ def test_tab_rows_are_the_same_strip_scroll_when_short_and_reach_every_tab(tmp_p
             assert menu is win._panels["titles"][key].b_menu.menu()
             assert win._panels["float_actions"][key] in menu.actions()
             menu.close()
+            original_extent = full
+            if vertical:
+                bar.setFixedHeight(original_extent)
+            else:
+                bar.setFixedWidth(original_extent)
+            _pump(app, 0.3)
+            current_extent = bar.height() if vertical else bar.width()
+            current_total = sum(t.sizeHint().height() if vertical else t.sizeHint().width() for t in row.tabs)
+            assert current_extent == original_extent
+            assert s.state["scrolling"] == (current_total > current_extent)  # 現在の実寸に対する製品判定を確認する
             bar.setMinimumSize(0, 0); bar.setMaximumSize(_MAX, _MAX); _pump(app, 0.3)
-            assert s.state["scrolling"] == (total > full)                      # room again: as before
     finally:
         _close(app, win)
 
@@ -1673,7 +1688,16 @@ def test_trees_tables_and_headers_select_in_the_accent(tmp_path, monkeypatch):
                 assert not near(img.pixelColor(other.right() - 6, other.center().y()), accent)
                 head = view.header() if hasattr(view, "header") else view.horizontalHeader()
                 himg = head.grab().toImage()
-                assert himg.pixelColor(head.width() // 4, 3).name() == p["chrome"], type(view).__name__
+                # 製品 QSS は chrome の面と line の 1 px border を指定する。境界に当たり得る一点でなく面積を測る。
+                x0 = head.sectionViewportPosition(0)
+                rect = QtCore.QRect(x0, 0, head.sectionSize(0), head.height()).adjusted(
+                    _HEADER_INTERIOR_INSET_PX, _HEADER_INTERIOR_INSET_PX,
+                    -_HEADER_INTERIOR_INSET_PX, -_HEADER_INTERIOR_INSET_PX,
+                ).intersected(himg.rect())
+                pixels = [himg.pixelColor(x, y).name()
+                          for x in range(rect.left(), rect.right() + 1)
+                          for y in range(rect.top(), rect.bottom() + 1)]
+                assert pixels.count(p["chrome"]) / len(pixels) > _HEADER_MIN_GROUND_FRACTION, type(view).__name__
                 seen += 1
             assert seen == 3
         finally:
@@ -1703,7 +1727,15 @@ def test_image_area_ground_and_title_take_role_colours(tmp_path, monkeypatch):
             sub.showNormal()
         subs[0].setGeometry(10, 10, 360, 240); subs[1].setGeometry(420, 30, 360, 240); _pump(app, 0.4)
         mdi.setActiveSubWindow(subs[1]); _pump(app, 0.3)
+        # 題の字は消してから撮る: Linux(fontconfig の rgba)では題の字の縁が色の付いた副画素のにじみになり、
+        # 帯の色ではない青い画素が混じる(2026-11-23 WSL で実測。字を消すと帯は役割の色 #274353 / #21252b だけ)。
+        titles = [sub.windowTitle() for sub in subs]
+        for sub in subs:
+            sub.setWindowTitle("")
+        _pump(app, 0.2)
         img = mdi.grab().toImage()
+        for sub, title in zip(subs, titles):
+            sub.setWindowTitle(title)
         assert img.pixelColor(400, 200).name() == p["surround"]             # the ground between the two windows
         blue = QtGui.QColor("#308cc6")                                      # Fusion's own active title
         for sub in subs:                                                    # no light-blue title band

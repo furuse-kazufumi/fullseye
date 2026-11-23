@@ -30,6 +30,7 @@ import pytest
 import studio
 import studio_program as sp
 import studio_pymode as pm_mod
+import studio_timingkit as timing
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IMG = np.zeros((16, 16))
@@ -283,14 +284,18 @@ def test_s1_a_selection_that_cannot_be_stopped_is_put_back_when_it_ends():
     imp0 = builtins.__import__
     for k in ("S1_EARLY", "S1_LATE"):
         os.environ.pop(k, None)
+    gate = timing.UnstoppableGate()
     try:
-        e = sp.evaluate("import os, time\nos.environ['S1_EARLY'] = '1'\ntry:\n    time.sleep(3.0)\n"
-                        "except BaseException:\n    pass\nos.environ['S1_LATE'] = '1'\n", r, time_limit_s=0.2)
+        # Lock.acquire() は全 OS で C 待機から戻らない。有限の sleep は遅いだけで、監視より先に戻り得る。
+        e = sp.evaluate(("import os\nos.environ['S1_EARLY'] = '1'\ntry:\n    %s\n"
+                         "except BaseException:\n    pass\nos.environ['S1_LATE'] = '1'\n") % gate.expression,
+                        r, time_limit_s=0.2)
         assert e["error"].startswith("could not stop the selected lines")
         assert len(sp.abandoned_runs()) == 1
         assert os.environ.get("S1_EARLY") is None                       # 諦めた所で 1 回戻す
         assert sp.evaluate("x = 2", r, time_limit_s=5.0)["error"] == sp.ABANDONED_BLOCKS_RUN % 1
         assert builtins.__import__ is not imp0                          # 残した実行が生きている間、見張りは付けたまま
+        gate.release()
         end = time.monotonic() + 15
         while sp.abandoned_runs() and time.monotonic() < end:
             time.sleep(0.05)
@@ -299,6 +304,7 @@ def test_s1_a_selection_that_cannot_be_stopped_is_put_back_when_it_ends():
         assert builtins.__import__ is imp0
         assert sp.evaluate("x = 2", r, time_limit_s=5.0)["error"] is None and r.namespace["x"] == 2
     finally:
+        gate.close()
         end = time.monotonic() + 15                                     # 残した実行を次の試験へ持ち越さない
         while sp.abandoned_runs() and time.monotonic() < end:
             time.sleep(0.05)

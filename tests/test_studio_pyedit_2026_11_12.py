@@ -22,9 +22,12 @@ import studio_pyedit_complete as comp
 import studio_pyedit_i18n as i18n
 import studio_pyedit_syntax as syn
 import studio_pyedit_values as V
+import studio_timingkit as timing
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _CJK = re.compile("[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]")
+#: 止められない Watch の試験式 / expression used for an unstoppable Watch job.
+_STUCK_WATCH_EXPRESSION = "gate.acquire()"
 
 
 # --------------------------------------------------------------------------- #
@@ -1430,37 +1433,47 @@ def test_watch_python_loop_is_stopped_and_reported_in_red(qapp):
 
 
 def test_watch_shows_evaluating_then_stuck_and_stops_auto_reevaluation(qapp):
-    """止められない長い呼び出し(GIL を手放す time.sleep で代用)でも UI は待たされず、行に理由が出て、自動では評価し直さない。"""
+    """止められない C 待機でも UI は待たされず、行に理由が出て、自動では評価し直さない。"""
     import studio_pyedit_vars_qt as VQ
-    ns = {"time": time, "v": 1}
+    # Lock.acquire() は全 OS で Python bytecode に戻らない C 待機。有限の sleep は単に遅く、先に戻り得る。
+    gate = timing.UnstoppableGate()
+    retry_gate = None
+    ns = {"gate": gate.lock, "v": 1}
     w = VQ.WatchPanel(ns, tr=lambda s: s, timeout_s=0.1)
     w.show()
     ticks = []
     t = QtCoreTimer(ticks)
-    t0 = time.perf_counter()
-    w.add_expression("time.sleep(1.2) or 1")
-    w.add_expression("v + 1")
-    assert time.perf_counter() - t0 < 0.5
-    assert w.table.item(0, 1).text() == "evaluating…"                # 結果が来るまで「評価中…」
-    pump(qapp, 600)                                                   # 約 0.4 秒で止められなかったと判断される
-    assert len(ticks) > 5                                              # この間も UI のイベントは回っている
-    assert w.table.item(1, 1).text() == "2"                           # 他の式の結果は待たずに出る
-    cell = w.table.item(0, 1)
-    assert cell.text() == "⚠ timed out (could not be stopped)" and cell.foreground().color().red() > 200
-    assert "time.sleep(1.2) or 1" in w._auto_off and not w._jobs
-    started = []
-    orig = w.evaluator.start
-    w.evaluator.start = lambda e: (started.append(e), orig(e))[1]
-    w.refresh()                                                       # 停止のたびの更新: この式は評価し直さない
-    assert w.wait_idle(3)
-    assert started == ["v + 1"] and w.table.item(0, 1).text().startswith("⚠ timed out (could not be stopped)")
-    assert "press" in w.table.item(0, 1).toolTip() or "↻" in w.table.item(0, 1).toolTip()
-    # ↻ で選んだ行だけ評価し直せる(今度は 0.1 秒の上限でまた止められないが、始まる)
-    w.table.setCurrentCell(0, 0)
-    w.evaluate_again()
-    assert started[-1] == "time.sleep(1.2) or 1" and w.table.item(0, 1).text() == "evaluating…"
-    t.stop()
-    w.wait_idle(5)
+    try:
+        t0 = time.perf_counter()
+        w.add_expression(_STUCK_WATCH_EXPRESSION)
+        w.add_expression("v + 1")
+        assert time.perf_counter() - t0 < 0.5
+        assert w.table.item(0, 1).text() == "evaluating…"                # 結果が来るまで「評価中…」
+        pump(qapp, 600)                                                   # 約 0.4 秒で止められなかったと判断される
+        assert len(ticks) > 5                                              # この間も UI のイベントは回っている
+        assert w.table.item(1, 1).text() == "2"                           # 他の式の結果は待たずに出る
+        cell = w.table.item(0, 1)
+        assert cell.text() == "⚠ timed out (could not be stopped)" and cell.foreground().color().red() > 200
+        assert _STUCK_WATCH_EXPRESSION in w._auto_off and not w._jobs
+        started = []
+        orig = w.evaluator.start
+        w.evaluator.start = lambda e: (started.append(e), orig(e))[1]
+        w.refresh()                                                       # 停止のたびの更新: この式は評価し直さない
+        assert w.wait_idle(3)
+        assert started == ["v + 1"] and w.table.item(0, 1).text().startswith("⚠ timed out (could not be stopped)")
+        assert "press" in w.table.item(0, 1).toolTip() or "↻" in w.table.item(0, 1).toolTip()
+        # ↻ で選んだ行だけ評価し直せる(今度も 0.1 秒の上限で止められないが、始まる)
+        retry_gate = timing.UnstoppableGate()
+        ns["gate"] = retry_gate.lock
+        w.table.setCurrentCell(0, 0)
+        w.evaluate_again()
+        assert started[-1] == _STUCK_WATCH_EXPRESSION and w.table.item(0, 1).text() == "evaluating…"
+    finally:
+        t.stop()
+        gate.close()
+        if retry_gate is not None:
+            retry_gate.close()
+        w.wait_idle(5)
 
 
 class QtCoreTimer:
@@ -1487,12 +1500,16 @@ def test_watch_job_logic_without_qt():
     assert j.result.ok and j.result.value == 6 and not j.result.stuck
     j = ev.start("y +")
     assert j.result is not None and "syntax" in j.result.error             # 構文エラーは始める前に分かる
-    j = ev.start("__import__('time').sleep(1) or 1")
-    end = time.time() + 3
-    while j.poll() is None and time.time() < end:
-        time.sleep(0.01)
-    assert j.result.stuck and j.result.timed_out and "could not be stopped" in j.result.error
-    assert V.STUCK_THREADS
+    gate = timing.UnstoppableGate()
+    try:
+        j = V.WatchEvaluator({"gate": gate.lock}, timeout_s=0.1).start(_STUCK_WATCH_EXPRESSION)
+        end = time.time() + 3
+        while j.poll() is None and time.time() < end:
+            time.sleep(0.01)
+        assert j.result.stuck and j.result.timed_out and "could not be stopped" in j.result.error
+        assert V.STUCK_THREADS
+    finally:
+        gate.close()
 
 
 def test_add_to_watch_from_variables_goes_to_the_watch_panel(qapp):

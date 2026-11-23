@@ -31,6 +31,7 @@ import studio_pyedit_i18n as pi
 import studio_pyedit_safe as safe
 import studio_pyedit_values as V
 import studio_pymode as pm_mod
+import studio_timingkit as timing
 
 IMG = np.zeros((16, 16))
 
@@ -557,13 +558,13 @@ def test_r10_a_parameter_file_sent_to_the_editor_is_confirmed_before_it_runs(tmp
 # R5: 変数の欄の __repr__ 用のスレッド                                           #
 # --------------------------------------------------------------------------- #
 class SleepsInRepr:
-    def __init__(self, seconds, mark):
-        self.seconds, self.mark = seconds, mark
+    def __init__(self, gate, mark):
+        self.gate, self.mark = gate, mark
 
     def __repr__(self):
         os.environ["ZZ_STUDIO_REPR"] = self.mark
         try:
-            time.sleep(self.seconds)
+            self.gate.lock.acquire()
         except BaseException:                         # noqa: BLE001 -- 止めの例外を握りつぶす(探針 q07 と同じ)
             pass
         return "SleepsInRepr(%s)" % self.mark
@@ -581,17 +582,19 @@ def test_r5_helper_threads_do_not_pile_up_and_their_changes_are_put_back(tmp_pat
     assert _wait(lambda: not V.stray_threads())
     os.environ.pop("ZZ_STUDIO_REPR", None)
     os.environ.pop("ZZ_STUDIO_QUICK", None)
+    gate = timing.UnstoppableGate()
     try:
         CALLED.clear()
         s = V.summarize(QuickRepr())
         assert s.text == "QuickRepr()" and CALLED == ["QuickRepr.__repr__"]
         assert "ZZ_STUDIO_QUICK" not in os.environ                         # __repr__ が変えた環境は戻す
         n0 = threading.active_count()
-        s1 = V.summarize(SleepsInRepr(1.5, "a"))
+        # Lock.acquire() は全 OS で C 待機から戻らない。有限の sleep は遅いだけで、監視より先に戻り得る。
+        s1 = V.summarize(SleepsInRepr(gate, "a"))
         assert s1.problem == "repr_timeout" and len(V.stray_threads()) == 1
         CALLED.clear()
         s2 = V.summarize(QuickRepr())                                      # 残っている間は新しく起こさない
-        s3 = V.summarize(SleepsInRepr(1.5, "b"))
+        s3 = V.summarize(SleepsInRepr(gate, "b"))
         assert CALLED == [] and "not shown" in s2.text and "not shown" in s3.text
         assert len(V.stray_threads()) == 1 and threading.active_count() <= n0 + 2      # 残り 1 本 + 後始末 1 本
         ev = V.WatchEvaluator({"x": 3}, timeout_s=0.1)
@@ -602,10 +605,12 @@ def test_r5_helper_threads_do_not_pile_up_and_their_changes_are_put_back(tmp_pat
             r = sp.run_program("# python\nk = 1\n", IMG, time_limit_s=3.0, config=cfg)
             assert not r.ran and r.errors == [sp.STRAY_BLOCKS_RUN % 1] and "k" not in r.values, (cfg, r.errors)
         assert spi.localize(sp.STRAY_BLOCKS_RUN % 1, pi.make_tr("ja")) != sp.STRAY_BLOCKS_RUN % 1
+        gate.release()
         assert _wait(lambda: not V.stray_threads(), 10)
         assert _wait(lambda: "ZZ_STUDIO_REPR" not in os.environ, 5)        # 残ったスレッドが終わった所で戻す
         assert V.summarize(QuickRepr()).text == "QuickRepr()"              # 終われば元どおり
     finally:
+        gate.close()
         _wait(lambda: not V.stray_threads(), 10)
         os.environ.pop("ZZ_STUDIO_REPR", None)
         os.environ.pop("ZZ_STUDIO_QUICK", None)
@@ -614,12 +619,13 @@ def test_r5_helper_threads_do_not_pile_up_and_their_changes_are_put_back(tmp_pat
 def test_r5_a_run_is_not_started_while_a_value_helper_thread_is_left(tmp_path, monkeypatch):
     """探針 q07b / q07e: 残ったスレッドの保留の例外で、次の Debug の実行が何もしなくても時間切れになった。"""
     assert _wait(lambda: not V.stray_threads())
+    gate = timing.UnstoppableGate()
     win, _m = _launch(tmp_path, monkeypatch, time_limit=5)
     try:
         pm = win._pymode
-        _set_text(win, "# python\nimport time\nclass Stuck:\n    def __repr__(self):\n        try:\n"
-                       "            time.sleep(2.5)\n        except BaseException:\n            pass\n"
-                       "        return 'Stuck()'\nx = Stuck()\nshow(img)\n")
+        _set_text(win, "# python\nclass Stuck:\n    def __repr__(self):\n        try:\n"
+                       "            %s\n        except BaseException:\n            pass\n"
+                       "        return 'Stuck()'\nx = Stuck()\nshow(img)\n" % gate.expression)
         res = _f5(win)
         assert res.ok, res.errors
         assert _wait(lambda: len(V.stray_threads()) == 1, 5), "the Variables panel did not leave the helper thread"
@@ -631,10 +637,12 @@ def test_r5_a_run_is_not_started_while_a_value_helper_thread_is_left(tmp_path, m
         _pump(0.2)
         assert not pm.running and pm.state.get("pymode_runs", 0) == runs0  # 始めずに、そう言う
         assert "still running its own code" in pm.output.toPlainText().splitlines()[-1]
+        gate.release()
         assert _wait(lambda: not V.stray_threads(), 10)
         res = _f5(win)
         assert res.ok and res.stopped is None and res.values["y"] == 1     # 時間切れの誤判定をしない
     finally:
+        gate.close()
         _wait(lambda: not V.stray_threads(), 10)
         _close(win)
 
@@ -656,12 +664,14 @@ def test_r7_the_next_run_waits_until_the_late_restore_of_an_abandoned_run_is_don
         return real(self)
     monkeypatch.setattr(sp._GlobalState, "restore", slow_restore)
     imp0 = builtins.__import__
-    prog = "# python\nimport time\ntry:\n    time.sleep(2.5)\nexcept BaseException:\n    pass\n"
+    gate = timing.UnstoppableGate()
+    prog = "# python\n" + gate.source()
     try:
         r = sp.run_program(prog, IMG, time_limit_s=0.2, config="release")
         assert r.stopped == "unstoppable"
         worker = [t for t in threading.enumerate() if t.name == "studio-program"]
         assert len(worker) == 1
+        gate.release()
         worker[0].join(10)
         assert not worker[0].is_alive()               # 残した実行そのものは終わった
         assert len(sp.abandoned_runs()) == 1          # …が、戻し終えるまでは「残っている」
@@ -672,6 +682,7 @@ def test_r7_the_next_run_waits_until_the_late_restore_of_an_abandoned_run_is_don
         assert ok.ok and ok.notes == [], ok.notes
         assert builtins.__import__ is imp0            # import の見張りが残っていない
     finally:
+        gate.close()
         _wait(lambda: not sp.abandoned_runs(), 10)
 
 

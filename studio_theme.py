@@ -421,9 +421,20 @@ CODE_FONTS = ("BIZ UDGothic", "MS Gothic", "Consolas", "Cascadia Mono",
 MONO_FONTS = CODE_FONTS                 # the name the style sheet and older callers use
 CODE_PT_DEFAULT = 10
 CODE_PT_RANGE = (6, 32)
+#: コード用フォントの字幅を測る基準サイズ / reference size for code-pitch measurements.
+CODE_PITCH_REFERENCE_PT = 10
+#: Qt の字幅測定で同じ幅とみなす許容差(px) / tolerance for equal glyph advances. Qt の字幅は 26.6 固定小数
+#: (1/64 px 刻み)で、Noto Sans Mono CJK JP の全角は 15 pt などで「半角 x 2 - 1/64 px」になる(2026-11-23 実測)。
+CODE_PITCH_TOLERANCE_PX = 1.0 / 64
+#: 半角の等幅性を調べる空白と印字可能 ASCII / space and printable ASCII pitch sample.
+CODE_PITCH_ASCII = " " + "".join(chr(code) for code in range(0x21, 0x7F))
+#: 日本語フォントの全角幅を調べる標本 / full-width sample for Japanese families.
+CODE_PITCH_FULLWIDTH_SAMPLE = "あ漢字ア、"
 #: marks the part of a widget style sheet written by apply_code_font (so it is replaced, not piled up)
 _CF_OPEN, _CF_CLOSE = "/*code-font*/", "/*end-code-font*/"
 _CODE = {"pt": CODE_PT_DEFAULT, "prefer": "", "family": {}}
+#: family ごとの実測結果 / measured code-pitch result cached per family.
+_CODE_PITCH_CACHE = {}
 
 #: characters that read as something else or as nothing: kind -> what it is (suspicious_chars)
 SUSPICIOUS_KINDS = {
@@ -503,6 +514,33 @@ def set_code_family(name):
     return _CODE["prefer"]
 
 
+def is_code_pitch(family):
+    """Return whether ``family`` has code-safe advances; needs QGuiApplication.
+
+    ``family`` がコード表示に安全な字幅かを返す。QGuiApplication が必要。
+    """
+    from PySide6 import QtGui   # noqa: PLC0415
+    family = str(family)
+    cached = _CODE_PITCH_CACHE.get(family)
+    if cached is not None:
+        return cached
+    if QtGui.QFontDatabase.isFixedPitch(family):
+        _CODE_PITCH_CACHE[family] = True
+        return True
+    font = QtGui.QFont(family)
+    font.setPointSize(CODE_PITCH_REFERENCE_PT)
+    metrics = QtGui.QFontMetricsF(font)
+    advances = [metrics.horizontalAdvance(ch) for ch in CODE_PITCH_ASCII]
+    answer = max(advances) - min(advances) <= CODE_PITCH_TOLERANCE_PX
+    japanese = QtGui.QFontDatabase.WritingSystem.Japanese
+    if answer and japanese in QtGui.QFontDatabase.writingSystems(family):
+        half = advances[0]
+        answer = all(abs(metrics.horizontalAdvance(ch) - 2.0 * half) <= CODE_PITCH_TOLERANCE_PX
+                     for ch in CODE_PITCH_FULLWIDTH_SAMPLE)
+    _CODE_PITCH_CACHE[family] = answer
+    return answer
+
+
 def code_families():
     """The family every code surface uses on this machine, as a one-item list (needs a QGuiApplication).
 
@@ -518,14 +556,18 @@ def code_families():
     fam = None
     if _CODE["prefer"]:
         fam = pick_code_family(families, (_CODE["prefer"],))
-        if fam is not None and not QtGui.QFontDatabase.isFixedPitch(fam):
+        if fam is not None and not is_code_pitch(fam):
             fam = None
     if fam is None:
-        fam = pick_code_family(families)
+        for candidate in CODE_FONTS:
+            hit = pick_code_family(families, (candidate,))
+            if hit is not None and is_code_pitch(hit):
+                fam = hit
+                break
     if fam is None:
         fam = QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.FixedFont).family()
-        if not QtGui.QFontInfo(QtGui.QFont(fam)).fixedPitch():
-            fixed = [f for f in families if QtGui.QFontDatabase.isFixedPitch(f)]
+        if not is_code_pitch(fam):
+            fixed = [f for f in families if is_code_pitch(f)]
             fam = fixed[0] if fixed else fam
     _CODE["family"][key] = (fam,)
     return [fam]
@@ -538,7 +580,7 @@ def code_font_choices():
     out = []
     for cand in MONO_FONTS:
         hit = pick_code_family(families, (cand,))
-        if hit is not None and QtGui.QFontDatabase.isFixedPitch(hit) and hit not in out:
+        if hit is not None and is_code_pitch(hit) and hit not in out:
             out.append(hit)
     return out
 

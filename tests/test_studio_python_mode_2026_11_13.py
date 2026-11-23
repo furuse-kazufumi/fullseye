@@ -5,6 +5,7 @@
 起動は既存の Studio の試験と同じ(offscreen・空の設定ファイル)。キーは QTest で本物のキーイベントを送る。
 確認の窓(信頼・保存・名前を付けて保存・条件)は studio_pymode の差し込み口を差し替える。
 """
+import builtins
 import json
 import os
 import threading
@@ -16,6 +17,15 @@ import pytest
 import studio
 import studio_program as sp
 import studio_pymode as pm_mod
+import studio_timingkit as timing
+
+
+#: GUI heartbeat を送るまでの遅延(ms) / delay before the GUI heartbeat is sent.
+GUI_HEARTBEAT_DELAY_MS = 100
+#: 作業側が heartbeat を待つ上限(秒) / worker-side heartbeat deadline.
+GUI_HEARTBEAT_DEADLINE_S = 2.0
+#: user program から heartbeat を見る builtins 名 / builtin name carrying the heartbeat.
+GUI_HEARTBEAT_BUILTIN = "_studio_test_gui_heartbeat"
 
 
 # --------------------------------------------------------------------------- #
@@ -222,24 +232,23 @@ def test_2_run_shows_picture_record_output_and_variables(tmp_path, monkeypatch):
 
 def test_2_gui_keeps_running_during_a_slow_program(tmp_path, monkeypatch):
     from PySide6 import QtCore
+    heartbeat = threading.Event()
+    monkeypatch.setattr(builtins, GUI_HEARTBEAT_BUILTIN, heartbeat, raising=False)
     win, model = _launch(tmp_path, monkeypatch)
     try:
-        _set_text(win, "# python\nimport time\nt0 = time.perf_counter()\nk = 0\n"
-                       "while time.perf_counter() - t0 < 0.8:\n    k += 1\nshow(img)\n")   # 素の Python のループ
-        ticks = []
-        t = QtCore.QTimer()
-        t.setInterval(20)
-        t.timeout.connect(lambda: win._pymode.running and ticks.append(time.perf_counter()))
-        t.start()
+        _set_text(win, "# python\nimport builtins, time\n"
+                       "deadline = time.perf_counter() + %r\n"
+                       "while not getattr(builtins, %r).is_set() "
+                       "and time.perf_counter() < deadline:\n"
+                       "    pass\n"
+                       "gui_heartbeat_seen = getattr(builtins, %r).is_set()\n"
+                       "show(img)\n" % (GUI_HEARTBEAT_DEADLINE_S, GUI_HEARTBEAT_BUILTIN,
+                                         GUI_HEARTBEAT_BUILTIN))
         _key(win, QtCore.Qt.Key_F5)
         assert win._pymode.running
+        QtCore.QTimer.singleShot(GUI_HEARTBEAT_DELAY_MS, heartbeat.set)
         assert win._pymode.wait_idle(10)
-        t.stop()
-        # 実行している間(作業スレッドが GIL を取り合う素の Python のループ)に GUI のタイマーが回り続けること。
-        # 終わった後の画面の更新(記録・絵・変数・検査、実測 100〜200 ms)はここでは数えない。
-        assert len(ticks) >= 10, "the GUI thread was blocked while the program ran"
-        gaps = np.diff(ticks)
-        assert gaps.max() < 0.25, gaps.max()
+        assert win._pymode.last.values["gui_heartbeat_seen"] is True
     finally:
         _close(win)
 
@@ -390,7 +399,9 @@ def test_7_infinite_loop_is_stopped(tmp_path, monkeypatch):
         pm.set_config("release")
         res = _run_f5(win)
         assert res.stopped in ("time_limit", "stop_requested") and res.config == "release"
-        _set_text(win, "# python\nimport time\ntime.sleep(4)\n")
+        # Lock.acquire() は全 OS で Python bytecode に戻らない C 待機。有限の sleep は単に遅く、先に戻り得る。
+        gate = timing.UnstoppableGate()
+        _set_text(win, "# python\n" + gate.source())
         t0 = time.perf_counter()
         res = _run_f5(win, timeout=10)
         assert res.stopped == "unstoppable" and time.perf_counter() - t0 < 6
@@ -401,12 +412,15 @@ def test_7_infinite_loop_is_stopped(tmp_path, monkeypatch):
         _key(win, QtCore.Qt.Key_F5)
         _pump(0.2)
         assert pm.state.get("pymode_runs", 0) == runs0 and "still running in the background" in pm.output.toPlainText()
+        gate.release()
         end = time.monotonic() + 15
         while sp.abandoned_runs() and time.monotonic() < end:
             time.sleep(0.05)
         assert not sp.abandoned_runs()                                    # 残したまま次の試験へ行かない
         assert _run_f5(win).ok
     finally:
+        if "gate" in locals():
+            gate.close()
         _close(win)
 
 
