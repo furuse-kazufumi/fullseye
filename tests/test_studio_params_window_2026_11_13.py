@@ -2120,6 +2120,13 @@ def _contrast(a, b) -> float:
     return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
 
 
+#: 描かれた字の色の許容: 地 -> 役割の色の距離に対する割合。字の画素が完全に塗られない(縁のにじみ)ので
+#: 一番遠い画素も少し地へ寄る。Linux(Noto、灰色の antialias)では 5.6 % 寄った(2026-11-23 実測、絶対の 24 を超えた)。
+NOTICE_INK_TOLERANCE_FRACTION = 0.10
+#: 上の割合で決まる許容の下限(従来の絶対の値)
+NOTICE_INK_TOLERANCE_MIN = 24
+
+
 def _far(a, b) -> int:
     a, b = QtGui.QColor(a), QtGui.QColor(b)
     return abs(a.red() - b.red()) + abs(a.green() - b.green()) + abs(a.blue() - b.blue())
@@ -2208,7 +2215,8 @@ def _theme_notice(qapp, win, roles) -> int:
         w, _h, ink, ground = _ink(win.grab().toImage(), _rect_in(ml, win), 0)
         if w == 0:                                    # 字を描ける書体が無い環境(字の画素が無い)
             pytest.skip("no font draws text on this platform: the painted colour of the notice cannot be read")
-        assert _far(ink, tone) <= 24, (level, ink.name(), tone.name())
+        allowed = max(NOTICE_INK_TOLERANCE_MIN, int(NOTICE_INK_TOLERANCE_FRACTION * _far(ground, tone)))
+        assert _far(ink, tone) <= allowed, (level, ink.name(), tone.name(), allowed)
         if role:
             assert _far(ink, body) >= 60, (level, ink.name(), body.name())
         counted += 1
