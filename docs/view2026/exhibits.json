@@ -4153,6 +4153,78 @@
    "tier": "more"
   },
   {
+   "id": "go2_trail_footholds",
+   "category": "robotics",
+   "media": "",
+   "media_path": "view2026/media/go2_trail_footholds.jpg",
+   "thumb_path": "view2026/media/go2_trail_footholds.jpg",
+   "source_url": "",
+   "provenance": "公開動画「Go2、深度で足場を選んで 5 段の山道に挑む」の 4,050 コマ目(135.0 s)を 960×540 に縮めた 1 コマ。ロボット、岩、足場候補、深度、標高の地図が同時に見え、会社のロゴが写らないコマを選んだ。数値と説明は同動画の公開説明文から",
+   "motion": true,
+   "label": {
+    "ja": "Go2 が深度で足場を選び 5 段の山道に挑む",
+    "en": "Go2 chooses footholds from depth on a 5-stage mountain trail",
+    "zh": "Go2 根据深度选择落脚点,挑战 5 段山路",
+    "tw": "Go2 依深度選擇落腳點,挑戰 5 段山路",
+    "ko": "Go2가 깊이로 디딤점을 골라 5단계 산길에 도전한다",
+    "de": "Go2 wählt Trittstellen aus Tiefendaten auf einem Bergpfad mit 5 Stufen",
+    "hi": "Go2 depth से footholds चुनकर 5-stage पहाड़ी रास्ते पर चलता है",
+    "fr": "Go2 choisit ses appuis par la profondeur sur un sentier de montagne en 5 étapes"
+   },
+   "lead": {
+    "ja": "MuJoCo の Go2 が、後半ほど難しくなる 5 段の山道を進む。頭の深度を点群と標高の地図へ変換し、Fullseye の地形関数で足場候補と着地点を選ぶ。制御は学習済み重みを使わないルールベースのトロット。本編は YouTube の長尺動画。",
+    "en": "In MuJoCo, Go2 follows a 5-stage mountain trail that becomes harder toward the end. Head-camera depth is converted into a point cloud and elevation map, then Fullseye terrain functions choose foothold candidates and landing points. Control is a rule-based trot with no learned weights. The full run is a long video on YouTube.",
+    "zh": "在 MuJoCo 中,Go2 行走于越到后段越难的 5 段山路。头部深度先转换为点云和高程图,再由 Fullseye 地形函数选择落脚候选与着地点。控制采用不含学习权重的规则式小跑。完整过程是 YouTube 上的长视频。",
+    "tw": "在 MuJoCo 中,Go2 行走於愈到後段愈難的 5 段山路。頭部深度先轉換為點雲與高程圖,再由 Fullseye 地形函數選擇落腳候選與著地點。控制採用不含學習權重的規則式小跑。完整過程是 YouTube 上的長影片。",
+    "ko": "MuJoCo에서 Go2가 뒤로 갈수록 어려워지는 5단계 산길을 걷는다. 머리의 깊이를 점군과 표고 지도로 바꾸고 Fullseye 지형 함수로 디딤 후보와 착지점을 고른다. 제어는 학습 가중치가 없는 규칙 기반 트로트다. 전체 과정은 YouTube 장편 영상에 담았다.",
+    "de": "In MuJoCo läuft Go2 über einen Bergpfad mit 5 Stufen, der zum Ende hin schwieriger wird. Die Tiefe der Kopfkamera wird in eine Punktwolke und Höhenkarte umgewandelt; Fullseye-Geländefunktionen wählen daraus Trittstellen und Aufsetzpunkte. Gesteuert wird mit einem regelbasierten Trab ohne gelernte Gewichte. Der vollständige Lauf ist als langes Video auf YouTube zu sehen.",
+    "hi": "MuJoCo में Go2 ऐसे 5-stage पहाड़ी रास्ते पर चलता है जो आगे जाकर कठिन होता जाता है। सिर की depth को point cloud और elevation map में बदलकर Fullseye terrain functions foothold candidates और landing points चुनते हैं। नियंत्रण rule-based trot है, जिसमें learned weights नहीं हैं। पूरा run YouTube के लंबे video में है।",
+    "fr": "Dans MuJoCo, Go2 parcourt un sentier de montagne en 5 étapes, de plus en plus difficile. La profondeur de la caméra de tête est convertie en nuage de points et en carte d'altitude, puis les fonctions de terrain Fullseye choisissent les appuis possibles et les points de pose. La commande est un trot fondé sur des règles, sans poids appris. Le parcours complet est présenté dans une longue vidéo sur YouTube."
+   },
+   "see": {
+    "ja": "深度から作った標高の地図に、通れる場所、段差の縁、平らな足場候補を重ね、次の着地点を選ぶ。図はロボット、岩と段、足場候補、深度、標高の地図を一画面で示す。Go2 のモデルは MuJoCo Menagerie 収録(BSD-3-Clause)。地形は国土地理院の地理院タイルを加工(PDL1.0)。",
+    "en": "The elevation map built from depth is overlaid with traversable cells, step edges and flat foothold candidates to choose the next landing point. The image shows the robot, rocks and steps, foothold candidates, depth and elevation map together. The Go2 model comes from MuJoCo Menagerie (BSD-3-Clause). Terrain is derived from GSI Tiles (PDL1.0).",
+    "zh": "系统在由深度生成的高程图上叠加可通行区域、台阶边缘和平坦落脚候选,据此选择下一着地点。图中同时显示机器人、岩石与台阶、落脚候选、深度和高程图。Go2 模型收录于 MuJoCo Menagerie(BSD-3-Clause)。地形由地理院瓦片加工而成(PDL1.0)。",
+    "tw": "系統在由深度建立的高程圖上疊加可通行區域、臺階邊緣與平坦落腳候選,據此選擇下一著地點。圖中同時顯示機器人、岩石與臺階、落腳候選、深度和高程圖。Go2 模型收錄於 MuJoCo Menagerie(BSD-3-Clause)。地形由地理院圖磚加工而成(PDL1.0)。",
+    "ko": "깊이로 만든 표고 지도에 지나갈 수 있는 셀, 단차 가장자리, 평평한 디딤 후보를 겹쳐 다음 착지점을 고른다. 그림은 로봇, 바위와 단차, 디딤 후보, 깊이와 표고 지도를 한 화면에 보여 준다. Go2 모델은 MuJoCo Menagerie 수록판(BSD-3-Clause)이고, 지형은 GSI 타일을 가공했다(PDL1.0).",
+    "de": "Auf der aus Tiefendaten erzeugten Höhenkarte werden begehbare Zellen, Stufenkanten und ebene Trittstellen überlagert, um den nächsten Aufsetzpunkt zu wählen. Das Bild zeigt Roboter, Felsen und Stufen, Trittstellen, Tiefe und Höhenkarte gemeinsam. Das Go2-Modell stammt aus MuJoCo Menagerie (BSD-3-Clause). Das Gelände wurde aus GSI Tiles abgeleitet (PDL1.0).",
+    "hi": "depth से बने elevation map पर चलने योग्य cells, step edges और सपाट foothold candidates रखकर अगला landing point चुना जाता है। चित्र में robot, चट्टानें और steps, foothold candidates, depth और elevation map एक साथ दिखते हैं। Go2 model MuJoCo Menagerie से है (BSD-3-Clause)। terrain GSI Tiles से बनाया गया है (PDL1.0)।",
+    "fr": "La carte d'altitude produite à partir de la profondeur reçoit les cellules franchissables, les bords de marche et les appuis plats possibles afin de choisir le prochain point de pose. L'image réunit le robot, les rochers et marches, les appuis possibles, la profondeur et la carte d'altitude. Le modèle Go2 vient de MuJoCo Menagerie (BSD-3-Clause). Le terrain est dérivé des tuiles GSI (PDL1.0)."
+   },
+   "num": {
+    "ja": "5 段は勾配 5°→14.5°、岩の最大 11 cm、段の最大 10 cm。段 5 は足場を選んでも 6 種すべてで転倒し、このルールベースのトロットの限界だった。学習済みの重みは使わず、真値は審判だけが使う。限界: 深度に雑音なし、摩擦は一様、岩は凸形。",
+    "en": "Across 5 stages, slope rises from 5° to 14.5°, rocks reach 11 cm and steps 10 cm. On stage 5, all 6 variants fell even with foothold selection, marking the limit of this rule-based trot. It uses no learned weights, and only the judge sees ground truth. Limits: noiseless depth, uniform friction and convex rocks.",
+    "zh": "5 段的坡度从 5° 增至 14.5°,岩石最高 11 cm,台阶最高 10 cm。第 5 段即使选择落脚点,6 种情况也全部跌倒,这是该规则式小跑的极限。没有使用学习权重,真值仅供裁判使用。限制:深度无噪声、摩擦均匀、岩石为凸形。",
+    "tw": "5 段的坡度從 5° 增至 14.5°,岩石最高 11 cm,臺階最高 10 cm。第 5 段即使選擇落腳點,6 種情況也全數跌倒,這是該規則式小跑的極限。沒有使用學習權重,真值僅供裁判使用。限制:深度無雜訊、摩擦均一、岩石為凸形。",
+    "ko": "5단계의 경사는 5°에서 14.5°로 높아지고, 바위는 최대 11 cm, 단차는 최대 10 cm다. 5단계에서는 디딤점을 골라도 6가지 모두 넘어져 이 규칙 기반 트로트의 한계를 보였다. 학습 가중치는 쓰지 않았고 참값은 심판만 사용한다. 한계: 깊이에 잡음이 없고 마찰이 균일하며 바위는 볼록한 형상이다.",
+    "de": "Über 5 Stufen steigt die Neigung von 5° auf 14.5°; Felsen erreichen 11 cm und Stufen 10 cm. In Stufe 5 stürzten alle 6 Varianten trotz Trittstellenwahl: die Grenze dieses regelbasierten Trabs. Gelernte Gewichte werden nicht verwendet, und nur der Schiedsrichter sieht die Ground Truth. Grenzen: rauschfreie Tiefe, gleichmäßige Reibung und konvexe Felsen.",
+    "hi": "5 stages में ढलान 5° से 14.5° तक बढ़ती है, चट्टानें अधिकतम 11 cm और steps अधिकतम 10 cm हैं। stage 5 में foothold चुनने पर भी सभी 6 variants गिर गए; यह इस rule-based trot की सीमा है। learned weights इस्तेमाल नहीं होते और ground truth केवल judge देखता है। सीमाएँ: depth में noise नहीं, friction एक समान और चट्टानें convex हैं।",
+    "fr": "Sur 5 étapes, la pente passe de 5° à 14.5°, les rochers atteignent 11 cm et les marches 10 cm. À l'étape 5, les 6 variantes chutent malgré le choix des appuis : c'est la limite de ce trot fondé sur des règles. Aucun poids appris n'est utilisé et seul le juge accède à la vérité terrain. Limites : profondeur sans bruit, frottement uniforme et rochers convexes."
+   },
+   "truth": {
+    "ja": "シミュレータの真値(審判だけが使用)",
+    "en": "Simulator ground truth (judge only)",
+    "zh": "模拟器真值(仅供裁判使用)",
+    "tw": "模擬器真值(僅供裁判使用)",
+    "ko": "시뮬레이터 참값(심판만 사용)",
+    "de": "Ground Truth des Simulators (nur für den Schiedsrichter)",
+    "hi": "simulator का ground truth (केवल judge के लिए)",
+    "fr": "Vérité terrain du simulateur (réservée au juge)"
+   },
+   "youtube_url": "https://youtu.be/FBtlYrHev74",
+   "ops": [
+    "terrain.elevation_map",
+    "terrain.fuse_elevation",
+    "terrain.traversability",
+    "terrain.foothold_score",
+    "terrain.step_edges",
+    "terrain.foothold_candidates",
+    "terrain.fill_gaps",
+    "terrain.ground_surface"
+   ],
+   "tier": "more"
+  },
+  {
    "id": "inspection_poc_reel",
    "category": "inspection",
    "media": "",
