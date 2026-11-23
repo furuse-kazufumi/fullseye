@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 056a87b1bfa1 -->
+<!-- i18n-source-sha: 9a5287d609f4 -->
 # 安装 / 环境搭建完全指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · **简体中文** · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
