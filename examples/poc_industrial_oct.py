@@ -78,6 +78,10 @@ TABLE1 = {
 }
 #: 原本のファイル名の色(公開側の書き方)。
 FILE_COLOUR = {"V-D": "黒", "VI-D": "黒", "III-B": "濃色", "IV-C": "濃色", "II-A": "白"}
+PAPER_COLOUR_EN = {"濃色 A": "dark A", "濃色 B": "dark B", "黒 A": "black A", "黒 B": "black B"}
+REAL_PROFILE_PLOT_SIZE = (600, 360)
+FILM_ASCAN_PLOT_SIZE = (760, 420)
+LATERAL_DOF_PLOT_SIZE = (560, 480)
 N_CLEAR, N_BASE = 1.56, 1.64          # 論文が使った屈折率(テラヘルツ帯の値)
 
 FAILS: list[str] = []
@@ -818,6 +822,11 @@ def _scale(a, sy, sx):
         (w * sx, h * sy), Image.Resampling.BICUBIC)).astype(float) / 255.0
 
 
+def _bi(ja, en):
+    """図の札を日本語 / English の順で返す。 / Return a bilingual figure label."""
+    return "%s / %s" % (ja, en)
+
+
 def make_figures(design, real, film, proc, art, lim, bs):
     # 1. 実測の B スキャン 5 枚 + 界面
     panels, caps = [], []
@@ -833,9 +842,14 @@ def make_figures(design, real, film, proc, art, lim, bs):
         rgb = _overlay(_gray(im, lo, hi), rows, cols, step=2)
         panels.append(_scale(rgb, 1, 4))
         t1 = real["mapping"].get(k)
-        caps.append("見本 %s(%s)%s" % (k, FILE_COLOUR[k], " → 表の %s" % t1 if t1 else "・着色層の下は見えない"))
+        ja = "見本 %s(%s)%s" % (k, FILE_COLOUR[k], " → 表の %s" % t1 if t1 else "・着色層の下は見えない")
+        en = "sample %s (%s)%s" % (
+            k, {"黒": "black", "濃色": "dark", "白": "white"}[FILE_COLOUR[k]],
+            " → table %s" % PAPER_COLOUR_EN[t1] if t1 else "; below the colour coat is not visible")
+        caps.append(_bi(ja, en))
     figs.save_grid("real_paint_bscans", panels, captions=caps, ncols=2,
-                   title="実測の自動車塗装 5 枚: 表面(赤)・透明層の下の面(緑)・着色層の下の面(青)",
+                   title=_bi("実測の自動車塗装 5 枚: 表面(赤)・透明層の下の面(緑)・着色層の下の面(青)",
+                             "five measured car-paint samples: surface (red), base of clear coat (green), base of colour coat (blue)"),
                    caption="生の干渉スペクトル(CC BY 4.0、Liverpool Research Data Catalogue 126)を Fullseye の op だけで "
                            "k 線形化・FFT し、界面を動的計画法で辿った。横 1 mm(100 本)、縦は表面の 40 µm 上から光路 260 µm。白の見本は"
                            "着色層が強く散乱し、下の面が立たない。III-B の表面の下の水平な線は自己相関の幽霊。")
@@ -849,10 +863,17 @@ def make_figures(design, real, film, proc, art, lim, bs):
     for k in ("V-D", "VI-D", "III-B", "IV-C", "II-A"):
         r = real["res"][k]
         fl = r["flat"]
-        ser.append(("%s(%s)" % (k, FILE_COLOUR[k]), fl["z_um"] - 20.0, fl["db"] - 20 * np.log10(fl["noise_sigma"])))
+        colour = FILE_COLOUR[k]
+        ser.append((_bi("%s(%s)" % (k, colour), "%s (%s)" %
+                        (k, {"黒": "black", "濃色": "dark", "白": "white"}[colour])),
+                    fl["z_um"] - 20.0, fl["db"] - 20 * np.log10(fl["noise_sigma"])))
     ser = [(lab, zz[(zz > -10) & (zz < 260)], yy[(zz > -10) & (zz < 260)]) for lab, zz, yy in ser]
-    figs.save_plot("real_flattened_profiles", ser, xlabel="表面からの光路 [µm]", ylabel="雑音の床からの dB",
-                   xlim=(-10, 260), title="表面に沿って平均した深さの断面(実測)",
+    figs.save_plot("real_flattened_profiles", ser,
+                   xlabel=_bi("表面からの光路 [µm]", "optical path from surface [µm]"),
+                   ylabel=_bi("雑音の床からの dB", "dB above noise floor"),
+                   xlim=(-10, 260), title=_bi("表面に沿って平均した深さの断面(実測)",
+                                              "measured depth profile averaged along the surface"),
+                   size=REAL_PROFILE_PLOT_SIZE,
                    caption="黒・濃色は透明層の下の面と着色層の下の面の 2 つの山。白は透明層の下の面のあと滑らかに減衰する"
                            "(強い散乱)。この断面に oct_layer_thickness を掛けて層厚を出した。")
     gp, meas, psf = real["glass"]
@@ -873,13 +894,17 @@ def make_figures(design, real, film, proc, art, lim, bs):
     A = film["a"]
     z = A["z_um"]
     sel = (z > 350) & (z < 570)
-    ser = [("A スキャン(hann)", z[sel], A["db"][sel] - 20 * np.log10(A["noise_sigma"]))]
+    ser = [(_bi("A スキャン(hann)", "A-scan (Hann)"), z[sel],
+            A["db"][sel] - 20 * np.log10(A["noise_sigma"]))]
     for zt in film["L"]["z_opt_um"]:
         ser.append(("", [zt, zt], [0, 75]))
-    figs.save_plot("film_ascan", ser, xlabel="光路 [µm]", ylabel="雑音の床からの dB",
+    figs.save_plot("film_ascan", ser, xlabel=_bi("光路 [µm]", "optical path [µm]"),
+                   ylabel=_bi("雑音の床からの dB", "dB above noise floor"),
                    styles=[None] + ["dashed"] * len(film["L"]["z_opt_um"]),
                    colors=["emphasis"] + ["reference"] * len(film["L"]["z_opt_um"]),
-                   title="多層フィルム(PMMA 25 / PC 40 / PS 15 µm)の A スキャン",
+                   title=_bi("多層フィルム(PMMA 25 / PC 40 / PS 15 µm)の A スキャン",
+                             "A-scan of multilayer film (PMMA 25 / PC 40 / PS 15 µm)"),
+                   size=FILM_ASCAN_PLOT_SIZE,
                    caption="破線は見つけた界面。光学厚を材料表の群屈折率で割ると真値と 0.05 µm 以内。")
     zs, meas_r, closed = film["rolloff_sd"]
     _zl, meas_l = film["rolloff_lam"]
@@ -932,13 +957,17 @@ def make_figures(design, real, film, proc, art, lim, bs):
     for win, col in (("none", "emphasis"), ("hann", "right")):
         rr, lm, _p = rr_thin[win]
         acc = [(t, v) for t, v in rr if v is not None]
-        ser.append(("窓 %s(受理した厚さ)" % win, [t for t, _ in acc], [100 * (v / t - 1) for t, v in acc]))
-    ser.append(("下限 窓なし", [rr_thin["none"][1]] * 2, [-1.0, 1.0]))
-    ser.append(("下限 hann", [rr_thin["hann"][1]] * 2, [-1.0, 1.0]))
-    figs.save_plot("thin_layer_limit", ser, xlabel="PMMA の厚さ [µm](真値)", ylabel="厚さの偏り [%]",
+        ser.append((_bi("窓 %s(受理した厚さ)" % win, "%s window (accepted thickness)" % win),
+                    [t for t, _ in acc], [100 * (v / t - 1) for t, v in acc]))
+    ser.append((_bi("下限 窓なし", "limit, no window"), [rr_thin["none"][1]] * 2, [-1.0, 1.0]))
+    ser.append((_bi("下限 hann", "limit, Hann"), [rr_thin["hann"][1]] * 2, [-1.0, 1.0]))
+    figs.save_plot("thin_layer_limit", ser,
+                   xlabel=_bi("PMMA の厚さ [µm](真値)", "true PMMA thickness [µm]"),
+                   ylabel=_bi("厚さの偏り [%]", "thickness bias [%]"),
                    kinds=["scatter", "scatter", "line", "line"], colors=["emphasis", "right", "emphasis", "right"],
                    styles=[None, None, "dashed", "dashed"], xlim=(1.5, 14.5), ylim=(-1.0, 1.0),
-                   title="薄い層の限界: 点像の幅の 1.4 倍(÷ n_g)より薄いと拒否",
+                   title=_bi("薄い層の限界: 点像の幅の 1.4 倍(÷ n_g)より薄いと拒否",
+                             "thin-layer limit: reject below 1.4× point-spread width (÷ n_g)"),
                    caption="下限: 窓なし %.2f µm、hann %.2f µm。点が無い厚さは op が拒否した(2 つの点像が重なり、頂点が"
                            "引き寄せ合うので、見えても厚さが偏る)。" % (rr_thin["none"][1], rr_thin["hann"][1]))
     rows, lim_mu = lim["scatter"]
@@ -976,18 +1005,24 @@ def make_figures(design, real, film, proc, art, lim, bs):
     six = [r for r in lat if r[0] == 6.0]
     p0 = [r[5] for r in six if r[2] == 0.0 and r[1] == "point"][0]
     figs.save_plot("lateral_vs_dof",
-                   [("横の半値幅 / 焦点での値(実測)", [-r[2] for r in lat if r[1] == "point"],
+                   [(_bi("横の半値幅 / 焦点での値(実測)", "lateral FWHM / in-focus value (measured)"),
+                     [-r[2] for r in lat if r[1] == "point"],
                      [r[3] / (math.sqrt(2 * math.log(2)) * r[0]) for r in lat if r[1] == "point"]),
                     ("√(1+u²)", uu, np.sqrt(1 + uu ** 2)),
-                    ("信号 点照明(実測)", [-r[2] for r in six if r[1] == "point"], [r[5] / p0 for r in six if r[1] == "point"]),
+                    (_bi("信号 点照明(実測)", "signal, point illumination (measured)"),
+                     [-r[2] for r in six if r[1] == "point"], [r[5] / p0 for r in six if r[1] == "point"]),
                     ("(1+u²)^(−1/2)", uu, (1 + uu ** 2) ** -0.5),
-                    ("信号 ライン照明(実測)", [-r[2] for r in six if r[1] == "line"], [r[5] / p0 for r in six if r[1] == "line"]),
+                    (_bi("信号 ライン照明(実測)", "signal, line illumination (measured)"),
+                     [-r[2] for r in six if r[1] == "line"], [r[5] / p0 for r in six if r[1] == "line"]),
                     ("(1+u²)^(−1/4)", uu, (1 + uu ** 2) ** -0.25)],
-                   xlabel="焦点からのずれ |u| = |z − z_f| / z_R", ylabel="焦点での値を 1 とした比",
+                   xlabel=_bi("焦点からのずれ |u| = |z − z_f| / z_R", "defocus |u| = |z − z_f| / z_R"),
+                   ylabel=_bi("焦点での値を 1 とした比", "ratio to in-focus value"),
                    kinds=["scatter", "line", "scatter", "line", "scatter", "line"],
                    styles=[None, "dashed", None, "dashed", None, "dashed"],
                    colors=["emphasis", "emphasis", "right", "right", "wrong", "wrong"],
-                   title="横分解能と焦点深度: 焦点を外れると点像が太り、信号が落ちる",
+                   title=_bi("横分解能と焦点深度: 焦点を外れると点像が太り、信号が落ちる",
+                             "lateral resolution and depth of field: defocus broadens the spot and lowers signal"),
+                   size=LATERAL_DOF_PLOT_SIZE,
                    caption="z_R = π w0² n/λ(w0 4 µm で 90 µm、6 µm で 202 µm、10 µm で 561 µm)。細く絞るほど深さの"
                            "見える範囲が短い。ライン照明は片方向だけ共焦点なので信号の落ち方が緩い。")
 
