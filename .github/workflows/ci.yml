@@ -246,7 +246,7 @@ jobs:
           sudo apt-get install -y -q fonts-noto-cjk fonts-ipafont-gothic
       - name: Install documentation-check dependencies (same optional backends as the full suite)
         run: >
-          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]" "PySide6==6.11.1"
           pytest matplotlib sympy ziglang hypothesis pytest-timeout
       - name: Run documentation invariants
         run: >
@@ -468,7 +468,7 @@ jobs:
         # Python; gltf/lidar/pcd extras: small pure-python readers with real
         # format tests. torch/mujoco stay out (their tests skip honestly).
         run: >
-          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]" "PySide6==6.11.1"
           pytest pytest-cov pytest-split matplotlib sympy ziglang hypothesis pytest-timeout
       - name: Optional backends (py3.11 only — 不変条件を実際に走らせる)
         run: |
@@ -556,7 +556,7 @@ jobs:
         # Python; gltf/lidar/pcd extras: small pure-python readers with real
         # format tests. torch/mujoco stay out (their tests skip honestly).
         run: >
-          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]" "PySide6==6.11.1"
           pytest pytest-cov pytest-split matplotlib sympy ziglang hypothesis pytest-timeout
       - name: Optional backends (py3.11 only — 不変条件を実際に走らせる)
         run: |
@@ -631,7 +631,7 @@ jobs:
         # Python; gltf/lidar/pcd extras: small pure-python readers with real
         # format tests. torch/mujoco stay out (their tests skip honestly).
         run: >
-          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]" "PySide6==6.11.1"
           pytest pytest-cov pytest-split matplotlib sympy ziglang hypothesis pytest-timeout
       # 依存の版の基準(PR の changes ジョブが比べる。tools/ci_deps_drift.py)。master と毎日の全数だけ。
       - name: Record the installed versions (main)
@@ -850,7 +850,7 @@ jobs:
       - name: Install with optional backends (no torch)
         id: install
         run: >
-          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]" "PySide6==6.11.1"
           pytest pytest-xdist pytest-randomly matplotlib sympy ziglang
       # 種を出力に残す —— 落ちたら `-p randomly --randomly-seed=<種>` で再現できる。
       # --junitxml は「何件走ったか」を下の order-shuffle-ran ジョブへ渡すため。
