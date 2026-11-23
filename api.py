@@ -3029,11 +3029,17 @@ def _audit_op_name(name) -> str:
         return "invalid-name-sha256:" + hashlib.sha256(name.encode("utf-8", "surrogatepass")).hexdigest()
 
 
+AUDIT_KNOB_NONFINITE_VALUE = "nonfinite"
+
+
 def _audit_knob(value):
-    """有効な knob だけ値を残す / Retain a knob value only when it has the accepted scalar type."""
+    """有効な knob だけ値を残す / Retain only a canonical-safe accepted scalar knob value."""
     if isinstance(value, (bool, int, float, np.integer, np.floating)):
         try:
-            return float(value)
+            normalized = float(value)
+            if np.isfinite(normalized):
+                return normalized
+            return {"invalid_value": AUDIT_KNOB_NONFINITE_VALUE}
         except (TypeError, ValueError, OverflowError):
             pass
     return {"invalid_type": type(value).__name__}

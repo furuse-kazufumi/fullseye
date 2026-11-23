@@ -915,7 +915,7 @@ from fullseye.opsearch import search_ops  # noqa: E402,F401
 from fslib import connection_opts  # noqa: E402,F401
 from execution_record import (  # noqa: E402,F401  (規制実行型 / regulated execution types)
     ArtifactRef, AuditCheckpoint, AuditIntegrityError, AuditSink, AuditVerification,
-    AuditWriteError, ExecutionContext, ExecutionRecord, SoftwareInventory,
+    AuditWriteError, ExecutionContext, ExecutionRecord, SoftwareInventory, SoftwareProvenanceError,
     ValidationProfile, ValidationProfileError, artifact_ref, canonical_json,
     canonical_json_bytes, verify_audit_file,
 )
@@ -942,7 +942,7 @@ __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories", "knob_summary",
     "ExecutionContext", "ArtifactRef", "SoftwareInventory", "ExecutionRecord",
     "ValidationProfile", "AuditSink", "AuditCheckpoint", "AuditVerification",
-    "ValidationProfileError", "AuditWriteError", "AuditIntegrityError",
+    "ValidationProfileError", "SoftwareProvenanceError", "AuditWriteError", "AuditIntegrityError",
     "canonical_json", "canonical_json_bytes", "artifact_ref", "verify_audit_file",
     "fallbacks", "fallback_counts", "fallback_overflow", "clear_fallbacks", "FullseyeFallbackWarning",
     "strict_mode", "set_match_template", "FAILED_BACKENDS", "ambiguous_aliases", "reset_gpu", "gpu_open_ops",

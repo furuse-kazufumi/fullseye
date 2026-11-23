@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
+import base64
+import contextlib
+import hashlib
 import json
 from datetime import datetime, timezone
+from pathlib import Path
 
 import numpy as np
 import pytest
 
 import api
+import execution_record as execution_record
+import fsthreads
 import fullseye as fs
 
 
@@ -85,12 +91,8 @@ def test_pipeline_writes_one_record_with_normalized_stages(tmp_path):
     ]
 
 
-def test_audit_failure_prevents_result_from_being_returned(monkeypatch):
+def test_audit_failure_prevents_result_from_being_returned(tmp_path, monkeypatch):
     ran = []
-
-    class BrokenSink:
-        def append(self, _record):
-            raise OSError("injected write failure")
 
     original = api._apply_unrecorded
 
@@ -99,10 +101,34 @@ def test_audit_failure_prevents_result_from_being_returned(monkeypatch):
         return original(*args, **kwargs)
 
     monkeypatch.setattr(api, "_apply_unrecorded", marked)
+    sink = fs.AuditSink(tmp_path / "broken.jsonl")
+    monkeypatch.setattr(sink, "append", lambda _record: (_ for _ in ()).throw(OSError("injected write failure")))
     with pytest.raises(fs.AuditWriteError, match="audit append failed"):
         fs.apply(INPUT, "identity", execution_context=_context("write-failure"),
-                 audit_sink=BrokenSink())
+                 audit_sink=sink)
     assert ran == [True]
+
+
+def test_noop_sink_is_rejected_before_an_output_can_be_returned():
+    """耐久性を検査できない sink は規制実行に使えない / Reject an unverifiable no-op sink."""
+    ran = []
+
+    class NoOpSink:
+        def append(self, _record):
+            return None
+
+    def operation(*_args, **_kwargs):
+        ran.append(True)
+        return INPUT
+
+    original = api._apply_unrecorded
+    try:
+        api._apply_unrecorded = operation
+        with pytest.raises(fs.ValidationProfileError, match="durable AuditSink"):
+            fs.apply(INPUT, "identity", execution_context=_context("no-op"), audit_sink=NoOpSink())
+    finally:
+        api._apply_unrecorded = original
+    assert ran == []
 
 
 def test_stochastic_operator_rejects_none_seed_and_records_failure(tmp_path):
@@ -131,6 +157,96 @@ def test_profile_forces_raise_nonfinite_cpu_environment_and_blas(tmp_path, monke
     assert all(row["device"] == "cpu" for row in records)
     assert all(row["normalized_parameters"]["on_error"] == "raise" for row in records)
     assert all(row["software"]["blas_threads"] == 1 for row in records)
+
+
+def test_nonfinite_knob_records_the_original_failure_with_safe_audit_value(tmp_path):
+    """NaN knob でも失敗を監査する / Audit the original failure when a knob is NaN."""
+    path = tmp_path / "nonfinite-knob.jsonl"
+    with pytest.raises(ValueError, match="finite"):
+        fs.apply(INPUT, "identity", a=float("nan"), execution_context=_context("nonfinite-knob"),
+                 audit_sink=fs.AuditSink(path))
+    [record] = _records(path)
+    assert record["status"] == "failed"
+    assert record["error_type"] == "ValueError"
+    assert record["stages"][0]["a"] == {"invalid_value": "nonfinite"}
+
+
+def test_unavailable_blas_control_fails_closed_and_records_no_success(tmp_path, monkeypatch):
+    """threadpoolctl が使えない規制実行は拒否する / Reject regulated execution without BLAS control."""
+    path = tmp_path / "blas-unavailable.jsonl"
+
+    @contextlib.contextmanager
+    def unavailable_threads(_threads):
+        yield False
+
+    monkeypatch.setattr(fsthreads, "validation_threads", unavailable_threads)
+    with pytest.raises(fs.ValidationProfileError, match="BLAS thread limit"):
+        fs.apply(INPUT, "identity", execution_context=_context("blas-unavailable"), audit_sink=fs.AuditSink(path))
+    [record] = _records(path)
+    assert record["status"] == "failed"
+    assert record["outputs"] == []
+
+
+def test_artifact_ref_rejects_non_string_mapping_keys_without_aliasing():
+    """型の異なる mapping key を同じ入力へ潰さない / Refuse mapping keys that could alias by stringification."""
+    with pytest.raises(TypeError, match="mapping keys must be strings"):
+        fs.artifact_ref({1: "x"})
+    string_key = fs.artifact_ref({"1": "x"})
+    assert string_key.artifact_type == "dict"
+
+
+def test_source_state_is_recomputed_for_each_record(monkeypatch):
+    """実行後の source 変更を次の record が見落とさない / Do not cache source provenance across records."""
+    marker = {"value": b"first"}
+
+    def fake_git(*_args):
+        return marker["value"]
+
+    monkeypatch.setattr(execution_record, "_run_git", fake_git)
+    first = execution_record._source_state()
+    marker["value"] = b"second"
+    second = execution_record._source_state()
+    assert first[0] != second[0]
+
+
+def test_unverifiable_editable_wheel_provenance_rejects_regulated_output(tmp_path, monkeypatch):
+    """git の無い editable install は規制 output を確定できない / Reject output without git or a verifiable wheel."""
+    path = tmp_path / "unverifiable.jsonl"
+    monkeypatch.setattr(execution_record, "_run_git", lambda *_args: b"")
+    with pytest.raises(execution_record.SoftwareProvenanceError, match="provenance|wheel RECORD"):
+        fs.apply(INPUT, "identity", execution_context=_context("unverifiable-wheel"),
+                 audit_sink=fs.AuditSink(path))
+    assert not path.exists()
+
+
+def test_wheel_record_provenance_verifies_payload_for_non_git_execution(tmp_path, monkeypatch):
+    """wheel 外で git が無くても RECORD を検証する / Verify a wheel RECORD when git provenance is absent."""
+    root = tmp_path / "site-packages"
+    root.mkdir()
+    source = root / "execution_record.py"
+    source.write_bytes(b"verified payload")
+    payload_hash = base64.urlsafe_b64encode(hashlib.sha256(source.read_bytes()).digest()).rstrip(b"=").decode()
+
+    class WheelDistribution:
+        version = "0.9.0"
+
+        def locate_file(self, relative_name):
+            return root / Path(relative_name)
+
+        def read_text(self, name):
+            assert name == "RECORD"
+            return f"execution_record.py,sha256={payload_hash},{source.stat().st_size}\nRECORD,,\n"
+
+    monkeypatch.setattr(execution_record, "_ROOT", root)
+    monkeypatch.setattr(execution_record, "__file__", str(source))
+    monkeypatch.setattr(execution_record.importlib.metadata, "distribution", lambda _name: WheelDistribution())
+    digest, dirty = execution_record._wheel_record_state()
+    assert len(digest) == 64
+    assert dirty is False
+
+    source.write_bytes(b"tampered payload")
+    with pytest.raises(execution_record.SoftwareProvenanceError, match="does not match"):
+        execution_record._wheel_record_state()
 
 
 def test_same_input_and_profile_produce_same_output_hash(tmp_path):

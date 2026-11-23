@@ -7,11 +7,15 @@ data-only; records are created only by an explicitly selected validation profile
 from __future__ import annotations
 
 import asyncio
+import base64
+import binascii
 import contextlib
+import csv
 import dataclasses
 import datetime as _dt
 import hashlib
 import importlib.metadata
+import io
 import json
 import os
 import platform
@@ -34,6 +38,8 @@ DEFAULT_BLAS_THREADS = 1
 AUDIT_FILE_MODE = 0o600
 MAX_RANDOM_SEED = 2 ** 64 - 1
 EXECUTION_STATUSES = frozenset({"succeeded", "failed", "cancelled"})
+WHEEL_RECORD_HASH_ALGORITHM = "sha256"
+WHEEL_RECORD_PREFIX = b"fullseye-wheel-record/v1\0"
 
 # 実行結果を変え得る既存の環境変数 / Existing environment overrides that can change results.
 EXECUTION_ENVIRONMENT_VARIABLES = (
@@ -88,6 +94,10 @@ class AuditWriteError(RuntimeError):
 
 class AuditIntegrityError(ValueError):
     """監査連鎖またはチェックポイントの不一致 / Audit-chain or checkpoint mismatch."""
+
+
+class SoftwareProvenanceError(ValidationProfileError):
+    """検証可能な実行ソフトウェアの出所がない / Execution software provenance is unavailable."""
 
 
 def _require_sha256(value: Any, label: str) -> None:
@@ -346,8 +356,10 @@ def _feed_artifact(h: Any, value: Any) -> int:
     if isinstance(value, Mapping):
         h.update(b"map\0" + len(value).to_bytes(8, "big"))
         total = 0
-        for key in sorted(value, key=lambda x: str(x)):
-            total += _feed_artifact(h, str(key))
+        if any(not isinstance(key, str) for key in value):
+            raise TypeError("artifact mapping keys must be strings")
+        for key in sorted(value):
+            total += _feed_artifact(h, key)
             total += _feed_artifact(h, value[key])
         return total
     if isinstance(value, (list, tuple)):
@@ -388,10 +400,11 @@ def _run_git(*args: str) -> bytes:
         return b""
 
 
-@lru_cache(maxsize=1)
 def _source_state() -> tuple[str, bool]:
-    """HEAD と差分から source digest を作る / Hash HEAD plus working-tree changes."""
+    """現在の source 又は検証済み wheel から provenance を作る / Build current source or verified-wheel provenance."""
     head = _run_git("rev-parse", "HEAD").strip()
+    if not head:
+        return _wheel_record_state()
     status = _run_git("status", "--porcelain=v1", "-z", "--untracked-files=all")
     diff = _run_git("diff", "--no-ext-diff", "--binary", "HEAD", "--", ".")
     h = hashlib.sha256()
@@ -407,6 +420,64 @@ def _source_state() -> tuple[str, bool]:
         except OSError:
             h.update(b"unreadable")
     return h.hexdigest(), bool(status)
+
+
+def _wheel_record_state() -> tuple[str, bool]:
+    """実行中の wheel RECORD を全件照合して digest にする / Verify the executing wheel RECORD and digest it."""
+    try:
+        distribution = importlib.metadata.distribution("fullseye")
+        distribution_root = Path(distribution.locate_file("")).resolve()
+        source_relative = Path(__file__).resolve().relative_to(distribution_root)
+        record_text = distribution.read_text("RECORD")
+    except (ValueError, OSError, importlib.metadata.PackageNotFoundError) as exc:
+        raise SoftwareProvenanceError(
+            "validation profile requires git source provenance or a verified wheel RECORD") from exc
+    if not record_text:
+        raise SoftwareProvenanceError(
+            "validation profile requires a wheel RECORD; editable installations are not accepted")
+
+    try:
+        rows = list(csv.reader(io.StringIO(record_text)))
+    except csv.Error as exc:
+        raise SoftwareProvenanceError("wheel RECORD could not be parsed") from exc
+    if any(row and Path(row[0]).name.startswith("__editable__") for row in rows):
+        raise SoftwareProvenanceError(
+            "validation profile requires a wheel installation, not an editable installation")
+
+    digest = hashlib.sha256()
+    digest.update(WHEEL_RECORD_PREFIX)
+    digest.update(distribution.version.encode("utf-8"))
+    verified_paths: set[str] = set()
+    for row in rows:
+        if len(row) != 3 or not row[0]:
+            raise SoftwareProvenanceError("wheel RECORD contains an invalid row")
+        relative_name, declared_hash, declared_size = row
+        if not declared_hash:
+            continue
+        try:
+            algorithm, encoded_hash = declared_hash.split("=", 1)
+            expected_hash = base64.urlsafe_b64decode(encoded_hash + "=" * (-len(encoded_hash) % 4))
+            expected_size = int(declared_size)
+        except (binascii.Error, ValueError, TypeError) as exc:
+            raise SoftwareProvenanceError("wheel RECORD contains an invalid hash") from exc
+        if algorithm != WHEEL_RECORD_HASH_ALGORITHM:
+            raise SoftwareProvenanceError("wheel RECORD must use SHA-256 hashes")
+        try:
+            payload = Path(distribution.locate_file(relative_name)).read_bytes()
+        except OSError as exc:
+            raise SoftwareProvenanceError("a wheel RECORD payload could not be read") from exc
+        if len(payload) != expected_size or hashlib.sha256(payload).digest() != expected_hash:
+            raise SoftwareProvenanceError("a wheel RECORD payload does not match its recorded SHA-256")
+        encoded_name = relative_name.encode("utf-8")
+        digest.update(len(encoded_name).to_bytes(8, "big"))
+        digest.update(encoded_name)
+        digest.update(expected_hash)
+        verified_paths.add(relative_name.replace("\\", "/"))
+
+    source_name = source_relative.as_posix()
+    if source_name not in verified_paths:
+        raise SoftwareProvenanceError("wheel RECORD does not cover the executing source tree")
+    return digest.hexdigest(), False
 
 
 @lru_cache(maxsize=1)
@@ -462,6 +533,13 @@ def verify_audit_file(path: str | os.PathLike[str], *, checkpoint: AuditCheckpoi
     連鎖単独では正しい末尾の切り落としを識別できないため、その検知には以前に保管した
     ``checkpoint`` を渡す。  A chain alone cannot distinguish a valid truncated tail; pass a
     previously retained checkpoint to detect that case.
+
+    署名、WORM 保管、又は外部 attestation は提供しない。信頼済み checkpoint を同じ
+    保管域に置いたままでは、攻撃者が連鎖全体と checkpoint を作り直せる。真正性には
+    別保管した checkpoint と、次段で導入する電子署名又は WORM 保管が必要である。
+    This does not provide signatures, WORM storage, or external attestation. An attacker who can
+    replace both this file and a co-located checkpoint can rebuild the chain; authenticity requires
+    an externally retained checkpoint plus the planned signature or WORM control.
     """
     source = Path(path)
     try:
@@ -547,7 +625,13 @@ def _exclusive_stream(path: Path):
 
 
 class AuditSink:
-    """1 行ずつ追記・flush・fsync する JSONL sink / Append, flush, and fsync one JSONL record."""
+    """1 行ずつ追記・flush・fsync する JSONL sink / Append, flush, and fsync one JSONL record.
+
+    hash chain と local fsync は改変の検出補助であり、署名、WORM 保管、外部 attestation
+    を提供しない。checkpoint を同じ書込み可能な場所に置く運用では真正性を保証できない。
+    A hash chain and local fsync aid tamper detection but do not provide signatures, WORM storage,
+    or external attestation; a checkpoint stored beside a writable log cannot establish authenticity.
+    """
 
     def __init__(self, path: str | os.PathLike[str]) -> None:
         self._path = Path(path)
@@ -638,8 +722,8 @@ def execute_recorded(*, context: ExecutionContext | None, audit_sink: Any,
         return operation()
     assert context is not None and context.validation_profile is not None
     profile = context.validation_profile
-    if audit_sink is None or not callable(getattr(audit_sink, "append", None)):
-        raise ValidationProfileError("a validation profile requires an AuditSink-compatible append target")
+    if type(audit_sink) is not AuditSink:
+        raise ValidationProfileError("a validation profile requires the durable AuditSink implementation")
     started = context.now()
     before_events = degraded_reader()
     input_refs: tuple[ArtifactRef, ...] = ()
@@ -661,7 +745,7 @@ def execute_recorded(*, context: ExecutionContext | None, audit_sink: Any,
             raise ValidationProfileError("a stochastic operator requires ValidationProfile.seed")
         import fsthreads
         with fsthreads.validation_threads(profile.blas_threads) as applied:
-            if fsthreads.available() and not applied:
+            if applied is not True:
                 raise ValidationProfileError("the requested BLAS thread limit could not be applied")
             inventory = software_inventory(profile.blas_threads)
             result = operation()
@@ -709,7 +793,7 @@ def _safe_exception_text(error: BaseException) -> str:
 
 __all__ = [
     "SCHEMA_ID", "GENESIS_RECORD_HASH", "EXECUTION_ENVIRONMENT_VARIABLES",
-    "STOCHASTIC_OPERATOR_NAMES", "ValidationProfileError", "AuditWriteError",
+    "STOCHASTIC_OPERATOR_NAMES", "ValidationProfileError", "SoftwareProvenanceError", "AuditWriteError",
     "AuditIntegrityError", "ValidationProfile", "ExecutionContext", "ArtifactRef",
     "SoftwareInventory", "ExecutionRecord", "AuditCheckpoint", "AuditVerification",
     "AuditSink", "canonical_json", "canonical_json_bytes", "artifact_ref",
