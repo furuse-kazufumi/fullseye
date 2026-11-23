@@ -38,7 +38,7 @@ PROBES = [
     ("xlsx", "openpyxl", "openpyxl", "Excel レポート", "Excel reports"),
 ]
 # importlib.metadata で取れないとき(checkout 直読みなど)の代替。
-_FALLBACK_REQ = {"gui": ["PySide6>=6.5", "Pillow>=13.0"], "opencv": ["opencv-python>=4.8.1.78"], "skimage": ["scikit-image>=0.20"],
+_FALLBACK_REQ = {"gui": ["PySide6>=6.5,!=6.12.0", "Pillow>=13.0"], "opencv": ["opencv-python>=4.8.1.78"], "skimage": ["scikit-image>=0.20"],
                  "pil": ["Pillow>=13.0"]}
 # 用途ごとの「入れておくと良い」軽い extras(torch / GPU は重いので勧めない。報告だけする)。
 RECOMMENDED = {"studio": ["gui"], "python": ["opencv", "skimage", "pil"], "ai": []}
@@ -298,7 +298,7 @@ def format_report(info: Dict[str, object], lang: str) -> str:
 
 # --------------------------------------------------------------------------- pip
 def requirements_for(extras: Sequence[str]) -> List[str]:
-    """extras に対応する要件(``PySide6>=6.5`` など)。fullseye 自身は入れ直さない(checkout を壊さない)。"""
+    """extras に対応する要件(``PySide6>=6.5,!=6.12.0`` など)。fullseye 自身は入れ直さない(checkout を壊さない)。"""
     out: List[str] = []
     try:
         reqs = importlib.metadata.requires("fullseye") or []

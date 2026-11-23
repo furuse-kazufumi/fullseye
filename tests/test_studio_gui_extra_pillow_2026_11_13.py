@@ -49,7 +49,7 @@ def test_the_gui_extra_carries_pillow_with_the_same_floor_as_the_pil_extra():
     pil = [r for r in ex["pil"] if r.lower().startswith("pillow")]
     gui = [r for r in ex["gui"] if r.lower().startswith("pillow")]
     assert len(pil) == 1 and gui == pil, (ex["gui"], ex["pil"])
-    assert [r for r in ex["gui"] if r.startswith("PySide6")] == ["PySide6>=6.5"], ex["gui"]
+    assert [r for r in ex["gui"] if r.startswith("PySide6")] == ["PySide6>=6.5,!=6.12.0"], ex["gui"]
 
 
 def test_setup_falls_back_to_the_same_gui_requirements_as_the_extra():

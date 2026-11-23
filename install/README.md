@@ -131,7 +131,7 @@ bash install/uninstall.sh --remove-venv   # venv ごと削除
 
 - **GUI が起動しない / PySide6 が無いと言われる**
   `-Minimal`（Windows）/ `--minimal`（Linux）でも **GUI（PySide6）は入ります**。
-  それでも駄目な場合は venv の pip で `pip install PySide6>=6.5` を試してください。
+  それでも駄目な場合は venv の pip で `pip install "PySide6>=6.5,!=6.12.0"` を試してください。
   Linux では追加のシステムライブラリ（例: `libEGL`, `libxkbcommon`, `xcb` 系）が
   必要になることがあります。ディストリのパッケージで補ってください。
 

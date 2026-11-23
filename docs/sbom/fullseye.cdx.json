@@ -701,7 +701,7 @@
     },
     {
       "type": "library",
-      "bom-ref": "dependency:pyside6:1358b201c6ced04a",
+      "bom-ref": "dependency:pyside6:aad067671c8fc349",
       "name": "pyside6",
       "purl": "pkg:pypi/pyside6",
       "scope": "optional",
@@ -716,11 +716,11 @@
         },
         {
           "name": "fullseye:requirement",
-          "value": "PySide6>=6.5"
+          "value": "PySide6>=6.5,!=6.12.0"
         },
         {
           "name": "fullseye:specifier",
-          "value": ">=6.5"
+          "value": ">=6.5,!=6.12.0"
         }
       ]
     },
@@ -1248,7 +1248,7 @@
       "dependsOn": []
     },
     {
-      "ref": "dependency:pyside6:1358b201c6ced04a",
+      "ref": "dependency:pyside6:aad067671c8fc349",
       "dependsOn": []
     },
     {

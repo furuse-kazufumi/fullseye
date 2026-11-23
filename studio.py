@@ -146,6 +146,9 @@ def validate_pinned(d):
 
 _FILE_READING_DIRECTIVES = {"disp_points3d", "disp_mesh3d", "disp_object_model_3d"}
 
+#: Studio の GUI の要件(pyproject の gui extra と同じ。6.12.0 は Linux で試験が SIGABRT になるので除く)
+PYSIDE6_REQUIREMENT = "PySide6>=6.5,!=6.12.0"
+
 
 def _is_unc_path(path):
     """共有 helper で UNC/device path を見分ける。Recognise network/device paths lexically."""
@@ -18630,7 +18633,7 @@ def main(argv=None) -> int:
         from PySide6 import QtWidgets
     except ImportError as e:
         _msg = ('Fullseye Studio needs PySide6, which is not installed in this Python (%s).\n'
-                'Install it with:  %s -m pip install "PySide6>=6.5"' % (e, sys.executable))
+                'Install it with:  %s -m pip install "%s"' % (e, sys.executable, PYSIDE6_REQUIREMENT))
         print(_msg, file=sys.stderr)
         if sys.platform == "win32" and sys.stderr is None:      # pythonw(ショートカット起動): コンソールが無い
             try:

@@ -145,6 +145,10 @@ def pythonw_path(python: Optional[str] = None) -> Path:
                         "Reinstall Python with the standard installer, or run from a normal Python/venv." % exe)
 
 
+#: Studio の GUI の要件(pyproject の gui extra と同じ。6.12.0 は Linux で試験が SIGABRT になるので除く)
+PYSIDE6_REQUIREMENT = "PySide6>=6.5,!=6.12.0"
+
+
 def gui_available() -> bool:
     """Studio の GUI 部品(PySide6)が見えるか(ショートカットが何も起きない物にならないよう警告に使う)。"""
     return importlib.util.find_spec("PySide6") is not None
@@ -929,7 +933,7 @@ def run_cli(install_mode: bool, desktop: bool = False, *, out=None) -> int:
         if install_mode:
             if not gui_available():
                 print('warning: PySide6 is not installed, so the shortcut will open nothing yet. '
-                      'Run: %s -m pip install "PySide6>=6.5"' % sys.executable, file=out)
+                      'Run: %s -m pip install "%s"' % (sys.executable, PYSIDE6_REQUIREMENT), file=out)
             made = install(desktop=desktop)
             for p in made:
                 print("registered: %s" % p, file=out)
