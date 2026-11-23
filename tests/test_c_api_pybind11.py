@@ -24,9 +24,13 @@ FS_E_RANGE = 4
 FS_E_NO_PYTHON = 10
 FS_E_UNKNOWN_OP = 11
 FS_E_BAD_PARAMS = 12
+FS_E_UNSUPPORTED = 6
 FS_VALUE_IMAGE = 1
 FS_VALUE_REGION = 2
 FS_VALUE_OBJECTSET = 3
+FS_VALUE_FEATURE = 4
+FS_VALUE_COLOR = 6
+FS_VALUE_VOLUME = 7
 
 
 class InitOptions(C.Structure):
@@ -43,6 +47,12 @@ class ImageView(C.Structure):
                 ("dtype", C.c_int), ("range_lo", C.c_double), ("range_hi", C.c_double)]
 
 
+class ArrayView(C.Structure):
+    _fields_ = [("struct_size", C.c_uint32), ("data", C.c_void_p), ("data_bytes", C.c_size_t),
+                ("ndim", C.c_uint32), ("shape", C.c_int64 * 4),
+                ("stride_bytes", C.c_int64 * 4), ("dtype", C.c_int)]
+
+
 class Input(C.Structure):
     _fields_ = [("struct_size", C.c_uint32), ("kind", C.c_int), ("image", ImageView),
                 ("result", C.c_void_p), ("result_index", C.c_size_t)]
@@ -50,7 +60,8 @@ class Input(C.Structure):
 
 class InputN(C.Structure):
     _fields_ = [("struct_size", C.c_uint32), ("kind", C.c_int), ("image", ImageView),
-                ("result_id", C.c_uint64), ("result_index", C.c_size_t)]
+                ("result_id", C.c_uint64), ("result_index", C.c_size_t),
+                ("array", ArrayView), ("feature", C.c_double)]
 
 
 class Run(C.Structure):
@@ -77,10 +88,19 @@ def _bind(lib):
     lib.fs_call_id_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t, C.POINTER(InputN), C.c_size_t,
                               C.c_void_p, C.c_size_t, C.POINTER(C.c_uint64)]
     lib.fs_call_id_n.restype = C.c_int
+    lib.fs_find_ops_json_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t,
+                                        C.POINTER(C.c_void_p), C.POINTER(C.c_size_t)]
+    lib.fs_find_ops_json_n.restype = C.c_int
+    lib.fs_free.argtypes = [C.c_void_p]
+    lib.fs_free.restype = None
     lib.fs_result_release_n.argtypes = [C.c_uint64]
     lib.fs_result_release_n.restype = C.c_int
     lib.fs_result_kind_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.c_int)]
     lib.fs_result_kind_n.restype = C.c_int
+    lib.fs_result_image_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(ImageView)]
+    lib.fs_result_image_n.restype = C.c_int
+    lib.fs_result_array_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(ArrayView)]
+    lib.fs_result_array_n.restype = C.c_int
     lib.fs_result_region_runs_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.POINTER(Run)),
                                            C.POINTER(C.c_size_t)]
     lib.fs_result_region_runs_n.restype = C.c_int
@@ -126,11 +146,11 @@ def _image(array: np.ndarray, *, data_bytes=None, width=None, height=None, strid
                      array.shape[1] if width is None else width,
                      array.shape[0] if height is None else height,
                      array.strides[0] if stride is None else stride, dtype, lo, hi)
-    return InputN(C.sizeof(InputN), FS_VALUE_IMAGE, view, 0, 0)
+    return InputN(C.sizeof(InputN), FS_VALUE_IMAGE, view, 0, 0, ArrayView(), 0.0)
 
 
 def _borrow(kind: int, result, index=0) -> InputN:
-    return InputN(C.sizeof(InputN), kind, ImageView(), result, index)
+    return InputN(C.sizeof(InputN), kind, ImageView(), result, index, ArrayView(), 0.0)
 
 
 def _call(abi, op: str, inputs: list[Input], params="{}"):
@@ -168,11 +188,150 @@ def _tuple(lib, result, index):
     return values
 
 
+def _typed_array(array: np.ndarray, kind: int) -> tuple[InputN, np.ndarray]:
+    """Build the ABI's direct color/volume view / 色・volume の直接 ABI view を組む。"""
+    values = np.ascontiguousarray(array, dtype=np.float64)
+    shape = (C.c_int64 * 4)(*list(values.shape), *([0] * (4 - values.ndim)))
+    strides = (C.c_int64 * 4)(*list(values.strides), *([0] * (4 - values.ndim)))
+    view = ArrayView(C.sizeof(ArrayView), int(values.ctypes.data), values.nbytes, values.ndim,
+                     shape, strides, 4)
+    return InputN(C.sizeof(InputN), kind, ImageView(), 0, 0, view, 0.0), values
+
+
+def _feature(value: float) -> InputN:
+    return InputN(C.sizeof(InputN), FS_VALUE_FEATURE, ImageView(), 0, 0, ArrayView(), value)
+
+
+def _c_output(lib, result, sort: str):
+    if sort == "region":
+        return _runs(lib, result)
+    if sort == "feature":
+        value = C.c_double()
+        assert lib.fs_result_real_n(result, 0, C.byref(value)) == FS_OK
+        return value.value
+    if sort == "image":
+        view = ImageView(C.sizeof(ImageView))
+        assert lib.fs_result_image_n(result, 0, C.byref(view)) == FS_OK
+        return np.ctypeslib.as_array(C.cast(view.data, C.POINTER(C.c_double)),
+                                     shape=(view.height * view.width,)).reshape(view.height, view.width).copy()
+    view = ArrayView(C.sizeof(ArrayView))
+    assert lib.fs_result_array_n(result, 0, C.byref(view)) == FS_OK
+    shape = tuple(view.shape[:view.ndim])
+    return np.ctypeslib.as_array(C.cast(view.data, C.POINTER(C.c_double)),
+                                 shape=(int(np.prod(shape)),)).reshape(shape).copy()
+
+
+def _direct_registry(op, value):
+    return fullseye.apply(value, op.name, 0.5, 0.5, coerce=False, device="cpu",
+                          on_error="raise", allow_nonfinite=False)
+
+
+def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(abi):
+    """All generated callable rows traverse C and match the direct Python call exactly.
+
+    全生成対象を既存 ``inputs_for`` 探針で C 経由・Python 直呼びの両方に通す。配列は
+    byte-for-byte equality; scalar feature も同じ一回の呼出しで比較する。
+    """
+    from conftest import copy_input, inputs_for
+    import ops
+    from fullseye import c_api_bridge
+
+    lib, _runtime = abi
+    registry = {op.name: op for op in ops.REGISTRY}
+    rows = [row for row in c_api_bridge.catalog()["ops"] if row["callable"]]
+    assert len(rows) == 682
+    exercised = []
+    for row in rows:
+        if row["tier"] == "contract":
+            candidates = [("normal", np.linspace(0.0, 1.0, 64, dtype=np.float64).reshape(8, 8))]
+        else:
+            candidates = list(inputs_for(row["in_sort"], row["name"]))
+        candidate = next((value for name, value in candidates if name in {"normal", "unit"}), candidates[0][1])
+        held = []
+        borrowed = []
+        if row["in_sort"] == "image":
+            input_value = _image(np.ascontiguousarray(candidate, dtype=np.float64))
+            direct_input = np.asarray(candidate, dtype=np.float64)
+        elif row["in_sort"] == "region":
+            mask = np.ascontiguousarray(candidate, dtype=np.float64)
+            status, seed = _call(abi, "contract:threshold", [_image(mask)], '{"lo":0.5,"hi":1.0}')
+            assert status == FS_OK, row["id"]
+            borrowed.append(seed)
+            input_value = _borrow(FS_VALUE_REGION, seed)
+            direct_input = mask
+        elif row["in_sort"] == "color":
+            input_value, keep = _typed_array(candidate, FS_VALUE_COLOR)
+            held.append(keep)
+            direct_input = keep
+        elif row["in_sort"] == "volume":
+            input_value, keep = _typed_array(candidate, FS_VALUE_VOLUME)
+            held.append(keep)
+            direct_input = keep
+        else:
+            input_value = _feature(float(candidate))
+            direct_input = float(candidate)
+        params = ({"contract:threshold": '{"lo":0.5,"hi":1.0}',
+                   "contract:gauss": '{"sigma":0.5}'}.get(row["id"], "{}"))
+        status, result = _call(abi, row["id"], [input_value], params)
+        error = C.create_string_buffer(1024)
+        lib.fs_last_error(_runtime, error, len(error))
+        assert status == FS_OK, "%s: %s" % (row["id"], error.value.decode("utf-8"))
+        try:
+            if row["tier"] == "contract":
+                fn = getattr(fslib, row["name"])
+                direct = fn(fslib.FImage(direct_input), **(
+                    {"lo": 0.5, "hi": 1.0} if row["name"] == "threshold"
+                    else {"sigma": 0.5} if row["name"] == "gauss" else {}))
+            else:
+                direct = _direct_registry(registry[row["name"]], copy_input(direct_input))
+            got = _c_output(lib, result, row["out_sort"])
+            if row["out_sort"] == "region":
+                expected = _direct_runs(direct if isinstance(direct, fslib.Region)
+                                        else fslib.Region(np.asarray(direct) > 0.5))
+                assert got == expected, row["id"]
+            elif row["out_sort"] == "feature":
+                assert got == float(direct), row["id"]
+            else:
+                expected = direct.pixels if isinstance(direct, fslib.FImage) else np.asarray(direct)
+                np.testing.assert_array_equal(got, expected, err_msg=row["id"])
+            exercised.append(row["id"])
+        finally:
+            assert lib.fs_result_release_n(result) == FS_OK
+            for seed in borrowed:
+                assert lib.fs_result_release_n(seed) == FS_OK
+    assert exercised == [row["id"] for row in rows]
+
+
+def test_generated_catalog_and_fs_find_ops_json_have_the_same_callable_rows(abi):
+    """Generated JSON, help source, and the C search entry share one typed ledger.
+
+    生成 JSON と ``fs_find_ops_json`` の両方が同じ呼出可能 ID を返すことを確認する。
+    """
+    import json
+    from fullseye import c_api_bridge
+
+    lib, runtime = abi
+    data = c_api_bridge.catalog()
+    generated = json.loads((ROOT / "fullseye" / "data" / "C_API_OPS.json").read_text(encoding="utf-8"))
+    assert generated == data
+    query = b'{"limit":1000}'
+    text = C.c_void_p()
+    size = C.c_size_t()
+    assert lib.fs_find_ops_json_n(runtime, query, len(query), C.byref(text), C.byref(size)) == FS_OK
+    try:
+        found = json.loads(C.string_at(text, size.value - 1).decode("utf-8"))
+    finally:
+        lib.fs_free(text)
+    expected = [row for row in data["ops"] if row["callable"]]
+    assert found["n_callable"] == data["n_callable"] == len(expected)
+    assert found["ops"] == expected
+
+
 def _direct_runs(region: fslib.Region):
     return [tuple(map(int, row)) for row in region.runs()]
 
 
-def test_contract_pipeline_matches_python_at_edges_and_preserves_order(abi):
+def test_contract_threshold_matches_python_and_objectset_contract_is_explicitly_rejected(abi):
     lib, _runtime = abi
     pixels = np.zeros((7, 9), dtype=np.float64)
     pixels[0, 0:2] = 0.8                 # image edge / 画像端
@@ -180,25 +339,11 @@ def test_contract_pipeline_matches_python_at_edges_and_preserves_order(abi):
     pixels[4, 5] = pixels[5, 6] = 0.7   # diagonal contact = one 8-connected object
     pixels[6, 8] = 1.0                  # opposite edge / 反対側の端
     direct_region = fslib.threshold(fslib.FImage(pixels), 0.6, 1.0)
-    direct_objects = fslib.connection(direct_region)
-    direct_measures = fslib.measure_all(direct_objects)
-
     status, region = _call(abi, "contract:threshold", [_image(pixels)], '{"lo":0.6,"hi":1.0}')
     assert status == FS_OK and _runs(lib, region) == _direct_runs(direct_region)
     status, objects = _call(abi, "contract:connection", [_borrow(FS_VALUE_REGION, region)])
-    assert status == FS_OK
-    count = C.c_size_t()
-    assert lib.fs_result_object_count_n(objects, 0, C.byref(count)) == FS_OK
-    assert count.value == len(direct_objects)
-    assert [_object_runs(lib, objects, i) for i in range(count.value)] == [
-        _direct_runs(direct_objects.region(i)) for i in range(len(direct_objects))]
-    status, measures = _call(abi, "contract:measure_all", [_borrow(FS_VALUE_OBJECTSET, objects)])
-    assert status == FS_OK
-    for index, expected in enumerate(direct_measures):
-        np.testing.assert_array_equal(_tuple(lib, measures, index), np.asarray(expected))
-
-    for result in (measures, objects, region):
-        assert lib.fs_result_release_n(result) == FS_OK
+    assert status == FS_E_UNSUPPORTED and not objects.value
+    assert lib.fs_result_release_n(region) == FS_OK
 
 
 def test_empty_region_and_registry_results_match_direct_python(abi):
@@ -207,9 +352,7 @@ def test_empty_region_and_registry_results_match_direct_python(abi):
     status, region = _call(abi, "contract:threshold", [_image(pixels)], '{"lo":0.8,"hi":1.0}')
     assert status == FS_OK and _runs(lib, region) == []
     status, objects = _call(abi, "contract:connection", [_borrow(FS_VALUE_REGION, region)])
-    assert status == FS_OK
-    status, measures = _call(abi, "contract:measure_all", [_borrow(FS_VALUE_OBJECTSET, objects)])
-    assert status == FS_OK and [_tuple(lib, measures, i) for i in range(3)] == [[], [], []]
+    assert status == FS_E_UNSUPPORTED and not objects.value
 
     pixels[0, 0] = pixels[1, 1] = 0.9
     direct = fullseye.apply(pixels, "threshold", 0.6, 0.5, coerce=False,
@@ -223,7 +366,7 @@ def test_empty_region_and_registry_results_match_direct_python(abi):
                               coerce=False, on_error="raise", allow_nonfinite=False)
     assert value.value == float(expected) == 1.0
 
-    for result in (count, registry_region, measures, objects, region):
+    for result in (count, registry_region, region):
         assert lib.fs_result_release_n(result) == FS_OK
 
 

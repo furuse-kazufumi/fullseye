@@ -18,3 +18,21 @@ reject embedded NUL bytes.
 
 The pointer API accepts valid NUL-terminated strings for compatibility. Its
 result pointer and borrowed views are invalid after `fs_result_release`.
+
+## Typed operator reachability
+
+`fs_call_id_n` derives its callable operators from the contract and registry
+type ledgers. An operator is callable when both its declared input and output
+are one of `image`, `region`, `color`, `volume`, or scalar `feature`; a row
+with another sort is rejected as `FS_E_UNSUPPORTED` with the declared-sort
+reason. This is fail-closed: it does not substitute an image or tuple for an
+unrepresentable value.
+
+`fs_input_n_t` carries direct `image`, `color`, `volume`, and `feature` inputs.
+Color uses a 3-D `(H, W, 3)` `fs_array_view_t`; volume uses a contiguous 3-D or
+4-D `fs_array_view_t`; feature is a finite `double`. Use `fs_result_array_n`
+for color or volume outputs and `fs_result_real_n` for feature outputs. The
+machine-readable ledger and complete help are generated in
+[`fullseye/data/C_API_OPS.json`](../fullseye/data/C_API_OPS.json) and
+[`C_API_OPS.md`](C_API_OPS.md); regenerate both with
+`py -3.11 tools/gen_c_api_ops.py`.

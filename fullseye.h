@@ -46,8 +46,14 @@ typedef enum fs_value_kind {
     FS_VALUE_IMAGE = 1,
     FS_VALUE_REGION = 2,
     FS_VALUE_OBJECTSET = 3,
+    /* FS_VALUE_REAL is the ABI 0.2 spelling.  Feature is the typed-ledger
+     * spelling and has the same scalar representation. / ABI 0.2 の real と
+     * 型台帳の feature は同じスカラー表現。 */
     FS_VALUE_REAL = 4,
-    FS_VALUE_TUPLE = 5
+    FS_VALUE_FEATURE = FS_VALUE_REAL,
+    FS_VALUE_TUPLE = 5,
+    FS_VALUE_COLOR = 6,
+    FS_VALUE_VOLUME = 7
 } fs_value_kind_t;
 
 enum {
@@ -89,6 +95,24 @@ typedef struct fs_image_view {
 
 #define FS_IMAGE_VIEW_INIT \
     { (uint32_t)sizeof(fs_image_view_t), NULL, 0u, 0, 0, 0, FS_DTYPE_F64, 0.0, 1.0 }
+
+/* Dense color/volume view used by the typed C SDK input and result accessors.
+ * ndim is exactly 3 for color (H,W,3), and 3 or 4 for volume.  The shape and
+ * stride entries after ndim are ignored and must be zero. / 型付き C SDK の
+ * color/volume 用密配列 view。color は (H,W,3)、volume は 3 または 4 次元。 */
+typedef struct fs_array_view {
+    uint32_t struct_size;
+    const void *data;
+    size_t data_bytes;
+    uint32_t ndim;
+    int64_t shape[4];
+    int64_t stride_bytes[4];
+    fs_dtype_t dtype;
+} fs_array_view_t;
+
+#define FS_ARRAY_VIEW_INIT \
+    { (uint32_t)sizeof(fs_array_view_t), NULL, 0u, 0u, {0, 0, 0, 0}, \
+      {0, 0, 0, 0}, FS_DTYPE_F64 }
 
 typedef struct fs_input {
     uint32_t struct_size;
@@ -143,10 +167,15 @@ typedef struct fs_input_n {
     fs_image_view_t image;
     fs_result_id_t result_id;
     size_t result_index;
+    /* ABI 0.2 extension: direct COLOR/VOLUME and FEATURE inputs.  Existing
+     * callers retain the prefix and use IMAGE or borrowed values. */
+    fs_array_view_t array;
+    double feature;
 } fs_input_n_t;
 
 #define FS_INPUT_N_INIT \
-    { (uint32_t)sizeof(fs_input_n_t), FS_VALUE_IMAGE, FS_IMAGE_VIEW_INIT, 0u, 0u }
+    { (uint32_t)sizeof(fs_input_n_t), FS_VALUE_IMAGE, FS_IMAGE_VIEW_INIT, 0u, 0u, \
+      FS_ARRAY_VIEW_INIT, 0.0 }
 
 FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime,
                                                const char *query_json,
@@ -204,6 +233,8 @@ FS_API fs_status_t FS_CALL fs_result_kind_n(fs_result_id_t result, size_t index,
                                              fs_value_kind_t *out);
 FS_API fs_status_t FS_CALL fs_result_image_n(fs_result_id_t result, size_t index,
                                               fs_image_view_t *out_borrowed);
+FS_API fs_status_t FS_CALL fs_result_array_n(fs_result_id_t result, size_t index,
+                                              fs_array_view_t *out_borrowed);
 FS_API fs_status_t FS_CALL fs_result_region_runs_n(fs_result_id_t result, size_t index,
                                                     const fs_run_t **out_borrowed,
                                                     size_t *out_count);

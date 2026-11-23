@@ -43,8 +43,6 @@ int main(int argc, char **argv) {
     fs_init_options_t options = FS_INIT_OPTIONS_INIT;
     fs_runtime_t *runtime = NULL;
     fs_result_id_t contract_region = 0u;
-    fs_result_id_t objects = 0u;
-    fs_result_id_t measures = 0u;
     fs_result_id_t registry_region = 0u;
     fs_result_id_t count = 0u;
     char *catalog = NULL;
@@ -67,15 +65,6 @@ int main(int argc, char **argv) {
                                   &image, 1, "{\"lo\":0.6,\"hi\":1.0}",
                                   sizeof("{\"lo\":0.6,\"hi\":1.0}") - 1u, &contract_region),
                "contract threshold")) goto done;
-    fs_input_n_t region = result_input(FS_VALUE_REGION, contract_region, 0);
-    if (!check(runtime, fs_call_id_n(runtime, "contract:connection", sizeof("contract:connection") - 1u,
-                                  &region, 1, "{}", sizeof("{}") - 1u, &objects),
-               "connection")) goto done;
-    fs_input_n_t object_input = result_input(FS_VALUE_OBJECTSET, objects, 0);
-    if (!check(runtime, fs_call_id_n(runtime, "contract:measure_all", sizeof("contract:measure_all") - 1u,
-                                  &object_input, 1, "{}", sizeof("{}") - 1u, &measures),
-               "measure_all")) goto done;
-
     if (!check(runtime, fs_call_id_n(runtime, "registry:threshold", sizeof("registry:threshold") - 1u,
                                   &image, 1, "{\"a\":0.6,\"b\":0.5}",
                                   sizeof("{\"a\":0.6,\"b\":0.5}") - 1u, &registry_region),
@@ -87,10 +76,6 @@ int main(int argc, char **argv) {
 
     {
         double value = -1.0;
-        size_t objects_count = 0;
-        size_t tuple_count = 0;
-        if (fs_result_object_count_n(objects, 0, &objects_count) != FS_OK || objects_count != 4) goto done;
-        if (fs_result_tuple_size_n(measures, 0, &tuple_count) != FS_OK || tuple_count != 4) goto done;
         if (fs_result_real_n(count, 0, &value) != FS_OK || value != 4.0) goto done;
     }
     ok = 1;
@@ -99,8 +84,6 @@ done:
     fs_free(catalog);
     (void)fs_result_release_n(count);
     (void)fs_result_release_n(registry_region);
-    (void)fs_result_release_n(measures);
-    (void)fs_result_release_n(objects);
     (void)fs_result_release_n(contract_region);
     fs_runtime_destroy(runtime);
     return ok ? 0 : 1;

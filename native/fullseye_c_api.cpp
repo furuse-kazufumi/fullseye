@@ -4,6 +4,7 @@
 
 #include <pybind11/embed.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
 
 #include <algorithm>
 #include <atomic>
@@ -39,6 +40,10 @@ constexpr uint32_t kRequiredInputSize =
     static_cast<uint32_t>(offsetof(fs_input_t, result_index) + sizeof(size_t));
 constexpr uint32_t kRequiredInputNSize =
     static_cast<uint32_t>(offsetof(fs_input_n_t, result_index) + sizeof(size_t));
+constexpr uint32_t kTypedInputNSize =
+    static_cast<uint32_t>(offsetof(fs_input_n_t, feature) + sizeof(double));
+constexpr uint32_t kRequiredArraySize =
+    static_cast<uint32_t>(offsetof(fs_array_view_t, dtype) + sizeof(fs_dtype_t));
 constexpr size_t kMaxErrorBytes = 4096u;
 
 struct Item {
@@ -48,6 +53,8 @@ struct Item {
     double range_lo = 0.0;
     double range_hi = 1.0;
     std::vector<double> image;
+    std::vector<double> array;
+    std::vector<int64_t> shape;
     std::vector<fs_run_t> runs;
     std::vector<std::vector<fs_run_t>> objects;
     double real = 0.0;
@@ -195,6 +202,81 @@ fs_status_t validate_image(const fs_runtime_t *runtime, const fs_image_view_t &v
     return FS_OK;
 }
 
+fs_status_t validate_array(const fs_runtime_t *runtime, const fs_array_view_t &view,
+                           fs_value_kind_t kind) {
+    if (view.struct_size < kRequiredArraySize || view.data == nullptr) {
+        set_error(runtime, "array view struct_size is too small or data is NULL");
+        return FS_E_INVALID_ARG;
+    }
+    const uint32_t want_dims = kind == FS_VALUE_COLOR ? 3u : 0u;
+    if ((want_dims != 0u && view.ndim != want_dims)
+        || (kind == FS_VALUE_VOLUME && (view.ndim < 3u || view.ndim > 4u))) {
+        set_error(runtime, "color requires three dimensions; volume requires three or four dimensions");
+        return FS_E_SHAPE;
+    }
+    if (kind == FS_VALUE_COLOR && view.shape[2] != 3) {
+        set_error(runtime, "color requires shape (height, width, 3)");
+        return FS_E_SHAPE;
+    }
+    const size_t element = dtype_size(view.dtype);
+    if (element == 0u) {
+        set_error(runtime, "array dtype is unknown");
+        return FS_E_TYPE;
+    }
+    size_t required = element;
+    for (uint32_t i = 0u; i < view.ndim; ++i) {
+        if (view.shape[i] <= 0 || view.stride_bytes[i] <= 0
+            || static_cast<uint64_t>(view.shape[i]) > std::numeric_limits<size_t>::max()
+            || static_cast<uint64_t>(view.stride_bytes[i]) > std::numeric_limits<size_t>::max()) {
+            set_error(runtime, "array shape and stride must be positive and fit size_t");
+            return FS_E_SHAPE;
+        }
+        size_t offset = 0u;
+        if (!checked_mul(static_cast<size_t>(view.shape[i] - 1),
+                         static_cast<size_t>(view.stride_bytes[i]), &offset)
+            || !checked_add(required, offset, &required)) {
+            set_error(runtime, "array byte extent overflows size_t");
+            return FS_E_SHAPE;
+        }
+        if (static_cast<size_t>(view.stride_bytes[i]) % element != 0u) {
+            set_error(runtime, "array stride must align to the dtype size");
+            return FS_E_SHAPE;
+        }
+    }
+    if (view.data_bytes < required || reinterpret_cast<uintptr_t>(view.data) % element != 0u) {
+        set_error(runtime, "array data_bytes is too small or data is misaligned");
+        return FS_E_SHAPE;
+    }
+    if (view.dtype == FS_DTYPE_F32 || view.dtype == FS_DTYPE_F64) {
+        const auto *base = static_cast<const unsigned char *>(view.data);
+        for (uint32_t axis = 1u; axis < view.ndim; ++axis) {
+            size_t contiguous_stride = element;
+            for (uint32_t tail = axis + 1u; tail < view.ndim; ++tail) {
+                contiguous_stride *= static_cast<size_t>(view.shape[tail]);
+            }
+            if (static_cast<size_t>(view.stride_bytes[axis]) != contiguous_stride) {
+                set_error(runtime, "array must be contiguous after its first axis");
+                return FS_E_SHAPE;
+            }
+        }
+        size_t rest = 1u;
+        for (uint32_t axis = 1u; axis < view.ndim; ++axis) rest *= static_cast<size_t>(view.shape[axis]);
+        for (int64_t d0 = 0; d0 < view.shape[0]; ++d0) {
+            const auto *row0 = base + static_cast<size_t>(d0) * static_cast<size_t>(view.stride_bytes[0]);
+            for (size_t i = 0u; i < rest; ++i) {
+                const double value = view.dtype == FS_DTYPE_F32
+                    ? static_cast<double>(reinterpret_cast<const float *>(row0)[i])
+                    : reinterpret_cast<const double *>(row0)[i];
+                if (!std::isfinite(value)) {
+                    set_error(runtime, "array contains NaN or infinity");
+                    return FS_E_INVALID_ARG;
+                }
+            }
+        }
+    }
+    return FS_OK;
+}
+
 void add_runtime_paths(const std::string &root) {
     if (root.empty()) {
         return;
@@ -309,6 +391,17 @@ py::dict item_to_python(const Item &item) {
                                     {static_cast<py::ssize_t>(item.height), static_cast<py::ssize_t>(item.width)},
                                     {static_cast<py::ssize_t>(item.width * sizeof(double)),
                                      static_cast<py::ssize_t>(sizeof(double))}, item.image.data(), py::none());
+    } else if (item.kind == FS_VALUE_COLOR || item.kind == FS_VALUE_VOLUME) {
+        std::vector<py::ssize_t> shape;
+        std::vector<py::ssize_t> strides;
+        size_t stride = sizeof(double);
+        for (auto it = item.shape.rbegin(); it != item.shape.rend(); ++it) {
+            shape.insert(shape.begin(), static_cast<py::ssize_t>(*it));
+            strides.insert(strides.begin(), static_cast<py::ssize_t>(stride));
+            stride *= static_cast<size_t>(*it);
+        }
+        value["kind"] = item.kind == FS_VALUE_COLOR ? "color" : "volume";
+        value["array"] = py::array(py::dtype::of<double>(), shape, strides, item.array.data(), py::none());
     } else if (item.kind == FS_VALUE_REGION) {
         value["kind"] = "region";
         value["h"] = item.height;
@@ -328,6 +421,9 @@ py::dict item_to_python(const Item &item) {
     } else if (item.kind == FS_VALUE_TUPLE) {
         value["kind"] = "tuple";
         value["values"] = py::cast(item.tuple);
+    } else if (item.kind == FS_VALUE_FEATURE) {
+        value["kind"] = "feature";
+        value["value"] = item.real;
     } else {
         throw std::runtime_error("result kind cannot be used as an input");
     }
@@ -347,6 +443,21 @@ py::dict image_to_python(const fs_image_view_t &view) {
                                 {static_cast<py::ssize_t>(view.row_stride_bytes),
                                  static_cast<py::ssize_t>(dtype_size(view.dtype))},
                                 const_cast<void *>(view.data), borrowed);
+    return value;
+}
+
+py::dict array_to_python(const fs_array_view_t &view, fs_value_kind_t kind) {
+    py::dict value;
+    py::capsule borrowed(const_cast<void *>(view.data), [](void *) {});
+    std::vector<py::ssize_t> shape;
+    std::vector<py::ssize_t> strides;
+    for (uint32_t i = 0u; i < view.ndim; ++i) {
+        shape.push_back(static_cast<py::ssize_t>(view.shape[i]));
+        strides.push_back(static_cast<py::ssize_t>(view.stride_bytes[i]));
+    }
+    value["kind"] = kind == FS_VALUE_COLOR ? "color" : "volume";
+    value["array"] = py::array(numpy_dtype(view.dtype), shape, strides,
+                                 const_cast<void *>(view.data), borrowed);
     return value;
 }
 
@@ -379,6 +490,23 @@ Item python_to_item(const py::dict &value) {
             || item.image.size() != expected) {
             throw std::runtime_error("Python returned an invalid image shape or byte length");
         }
+    } else if (kind == "color" || kind == "volume") {
+        item.kind = kind == "color" ? FS_VALUE_COLOR : FS_VALUE_VOLUME;
+        item.shape = py::cast<std::vector<int64_t>>(value["shape"]);
+        item.array = bytes_vector<double>(value["pixels"], "array");
+        if ((item.kind == FS_VALUE_COLOR && (item.shape.size() != 3u || item.shape[2] != 3))
+            || (item.kind == FS_VALUE_VOLUME && (item.shape.size() < 3u || item.shape.size() > 4u))) {
+            throw std::runtime_error("Python returned an invalid color or volume shape");
+        }
+        size_t expected = 1u;
+        for (const int64_t dim : item.shape) {
+            if (dim <= 0 || !checked_mul(expected, static_cast<size_t>(dim), &expected)) {
+                throw std::runtime_error("Python returned an invalid color or volume shape");
+            }
+        }
+        if (item.array.size() != expected) {
+            throw std::runtime_error("Python returned an invalid color or volume byte length");
+        }
     } else if (kind == "region") {
         item.kind = FS_VALUE_REGION;
         item.height = py::cast<int64_t>(value["h"]);
@@ -391,7 +519,7 @@ Item python_to_item(const py::dict &value) {
         for (const py::handle object : py::cast<py::list>(value["objects"])) {
             item.objects.push_back(bytes_vector<fs_run_t>(object, "object runs"));
         }
-    } else if (kind == "real") {
+    } else if (kind == "real" || kind == "feature") {
         item.kind = FS_VALUE_REAL;
         item.real = py::cast<double>(value["value"]);
     } else if (kind == "tuple") {
@@ -920,15 +1048,31 @@ FS_API fs_status_t FS_CALL fs_call_id_n(fs_runtime_t *runtime, const char *op_id
                 }
                 values.append(item_to_python(item));
             } else {
-                if (input.kind != FS_VALUE_IMAGE) {
-                    set_error(runtime, "non-image inputs must borrow an earlier result");
+                if (input.kind == FS_VALUE_IMAGE) {
+                    const fs_status_t status = validate_image(runtime, input.image);
+                    if (status != FS_OK) return status;
+                    values.append(image_to_python(input.image));
+                } else if (input.kind == FS_VALUE_COLOR || input.kind == FS_VALUE_VOLUME) {
+                    if (input.struct_size < kTypedInputNSize) {
+                        set_error(runtime, "typed array input requires the extended fs_input_n_t");
+                        return FS_E_UNSUPPORTED;
+                    }
+                    const fs_status_t status = validate_array(runtime, input.array, input.kind);
+                    if (status != FS_OK) return status;
+                    values.append(array_to_python(input.array, input.kind));
+                } else if (input.kind == FS_VALUE_FEATURE) {
+                    if (input.struct_size < kTypedInputNSize || !std::isfinite(input.feature)) {
+                        set_error(runtime, "feature input requires a finite value in the extended fs_input_n_t");
+                        return input.struct_size < kTypedInputNSize ? FS_E_UNSUPPORTED : FS_E_INVALID_ARG;
+                    }
+                    py::dict value;
+                    value["kind"] = "feature";
+                    value["value"] = input.feature;
+                    values.append(std::move(value));
+                } else {
+                    set_error(runtime, "non-image inputs must borrow an earlier result or use a typed C ABI kind");
                     return FS_E_INVALID_ARG;
                 }
-                const fs_status_t status = validate_image(runtime, input.image);
-                if (status != FS_OK) {
-                    return status;
-                }
-                values.append(image_to_python(input.image));
             }
         }
         const py::object bridge = py::module_::import("fullseye.c_api_bridge");
@@ -1114,6 +1258,28 @@ FS_API fs_status_t FS_CALL fs_result_image_n(fs_result_id_t result, size_t index
     out_borrowed->dtype = FS_DTYPE_F64;
     out_borrowed->range_lo = item->range_lo;
     out_borrowed->range_hi = item->range_hi;
+    return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_result_array_n(fs_result_id_t result, size_t index,
+                                              fs_array_view_t *out_borrowed) {
+    ResultIdLease lease(result);
+    if (!lease || out_borrowed == nullptr || out_borrowed->struct_size < kRequiredArraySize
+        || index >= lease.get()->items.size()) return FS_E_INVALID_ARG;
+    const Item &item = lease.get()->items[index];
+    if (item.kind != FS_VALUE_COLOR && item.kind != FS_VALUE_VOLUME) return FS_E_TYPE;
+    out_borrowed->data = item.array.data();
+    out_borrowed->data_bytes = item.array.size() * sizeof(double);
+    out_borrowed->ndim = static_cast<uint32_t>(item.shape.size());
+    for (uint32_t i = 0u; i < 4u; ++i) {
+        out_borrowed->shape[i] = i < item.shape.size() ? item.shape[i] : 0;
+        size_t stride = sizeof(double);
+        for (size_t j = item.shape.size(); j > static_cast<size_t>(i + 1u); --j) {
+            stride *= static_cast<size_t>(item.shape[j - 1u]);
+        }
+        out_borrowed->stride_bytes[i] = i < item.shape.size() ? static_cast<int64_t>(stride) : 0;
+    }
+    out_borrowed->dtype = FS_DTYPE_F64;
     return FS_OK;
 }
 
