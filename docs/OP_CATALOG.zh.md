@@ -610,11 +610,12 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 **space**
 - `poc_star_tracker` — op:(没有 op 笔记链接到此例) `py -3.11 examples/poc_star_tracker.py`
 
-### 3-D 点云/体数据/曲面(125 例)
+### 3-D 点云/体数据/曲面(126 例)
 
 **registration**
 - `cad_to_scan` — op:(没有 op 笔记链接到此例) `py -3.11 examples_3d/cad_to_scan.py`
 - `find_surface_pose_bracket` — op: `find_surface_pose` `py -3.11 examples_3d/find_surface_pose_bracket.py`
+- `bop_pose_stage1` — op: `pose_nms_symmetry`, `ppf_pose_hypotheses` `py -3.11 examples_3d/bop_pose_stage1.py`
 - `auto_register` — op:(没有 op 笔记链接到此例) `py -3.11 examples_3d/auto_register.py`
 - `reg_eval` — op: `inlier_ratio`, `registration_recall`, `rmse_inliers`, `rotation_translation_error` `py -3.11 examples_3d/reg_eval.py`
 - `two_view_pose` — op: `fundamental_8point`, `recover_pose`, `sampson_distance` `py -3.11 examples_3d/two_view_pose.py`
@@ -849,9 +850,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 
 ## Operators by family(族 → 类别，全部 op)
 
-_共 3847 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
+_共 3849 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
 
-族一览: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族一览: **2d** 964 · **3d** 380 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -1919,7 +1920,7 @@ _共 3847 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` GPU: 无 — 主轴方向 [度],折叠到 [0,180) 并除以 180。 · 示例: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` GPU: 无 — 全最小二乘直线残差 RMS = sqrt(协方差较小的特征值)。 · 示例: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d (378 ops / 68 categories)
+### 3d (380 ops / 68 categories)
 
 点云、体数据、网格与深度的 op(`ops3d.OPS3D`)。作为函数调用。
 
@@ -2111,12 +2112,14 @@ _共 3847 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `match_points_ncc` `points × points → position` GPU: 无 — 点群间匹配(结构=point cloud × 方法=NCC、变换=splat)。在 scene 中定位 model。 · 示例: `matching_localize`
 - `match_shape_3d` `voxel × voxel → position` GPU: 无 — 3D 形状(梯度方向)匹配 = 2D shapematch_gpu 的 voxel 版(「轮廓匹配」)。 · 示例: `matching_localize`
 
-#### 3d / match_pose (5)
+#### 3d / match_pose (7)
 - `find_surface_pose` `points × points → pose` GPU: 无 — 通过点对特征（PPF）投票和 ICP，求出已知物体（模型点云）在场景点云中的位置（``pose``）。 · 示例: `find_surface_pose_bracket`
 - `match_logpolar_z` `voxel × voxel → rot_scale` GPU: 无 — 用 log-polar × 相位相关(Fourier-Mellin)恢复 **绕 z 旋转 + 各向同性缩放**。 · 示例: `shape_desc_pose`
 - `match_pca` `points × points → pose` GPU: 无 — PCA 位姿匹配(结构=point cloud × 方法=主轴对齐)。 · 示例: `shape_desc_pose`
 - `match_phase_3d` `voxel × voxel → shift` GPU: 无 — 3D 相位相关(FFT)。返回把 b 对齐到 a 的整数位移 (dz,dy,dx)。 · 示例: `shape_desc_pose`
 - `moment_axes` `points → axes` GPU: 无 — 点群/加权点的 **重心 + 主轴**(惯性张量的特征向量)。位姿估计的基础。 · 示例: `itokawa_pose_canonical`
+- `pose_nms_symmetry` `table × points × table → table` GPU: 无 — 仅抑制模型空间距离阈值内由对称性等价的位姿。 · 示例: `bop_pose_stage1`
+- `ppf_pose_hypotheses` `table × points → table` GPU: 无 — 返回 PPF 投票得分最高的 N 个位姿，而不是将投票压缩为单个位姿。 · 示例: `bop_pose_stage1`
 
 #### 3d / medial (13)
 - `distance_ridge` `voxel → voxel` GPU: 有(许可列表) — 把 EDT 的脊(距离场的局部极大)提取为中轴。返回 (ridge_mask, edt)。 · 示例: `pcl_geodesic`

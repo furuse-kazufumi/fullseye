@@ -288,7 +288,7 @@ Dans cette section, les titres et les résumés sont traduits ; les descriptions
 
 </div>
 
-[Liste des 187 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Liste des 188 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Tout voir
 

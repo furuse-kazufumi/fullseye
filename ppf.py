@@ -20,13 +20,91 @@ Drost, Ulrich, Navab & Ilic, "Model Globally, Match Locally: Efficient and Robus
 """
 from __future__ import annotations
 
+from dataclasses import dataclass
+import math
+
 import numpy as np
 
-__all__ = ["ppf_model", "surface_match", "find_surface_pose"]
+__all__ = [
+    "PoseHypothesis",
+    "ppf_model",
+    "surface_match",
+    "find_surface_pose",
+    "ppf_pose_hypotheses",
+    "pose_nms_symmetry",
+]
 
 
 _PAIR_BLOCK = 32768
 _VOTE_BLOCK = 1000000
+_POSE_ATOL = 1e-7
+_BOP_SYMMETRY_ATOL = 2e-5  # public models_info transforms are rounded to ~6 decimals.
+_HYPOTHESIS_REFINEMENT_MULTIPLIER = 8
+_DEFAULT_INLIER_DISTANCE_STEPS = 2.0
+
+
+def _validated_rotation(value, name="R"):
+    """Finite proper rotation copy. / 有限な正回転の複製。"""
+    rotation = np.asarray(value, np.float64)
+    if rotation.shape != (3, 3):
+        raise ValueError(f"{name} must be (3, 3)")
+    if not np.isfinite(rotation).all():
+        raise ValueError(f"{name} contains NaN or infinity")
+    if not np.allclose(rotation.T @ rotation, np.eye(3), atol=_POSE_ATOL, rtol=0.0):
+        raise ValueError(f"{name} is not orthonormal")
+    determinant = float(np.linalg.det(rotation))
+    if not math.isclose(determinant, 1.0, abs_tol=_POSE_ATOL, rel_tol=0.0):
+        raise ValueError(f"{name} is not a proper rotation: det(R)={determinant!r}")
+    return rotation.copy()
+
+
+@dataclass(frozen=True, eq=False)
+class PoseHypothesis:
+    """A scored PPF pose mapping model points into a scene. / PPF 姿勢候補。
+
+    ``scene ~= model @ R.T + t``. ``votes`` is the raw integer PPF peak;
+    ``score`` and ``inlier_fraction`` are finite values in ``[0, 1]``. ``rmse``
+    is the ICP nearest-neighbour RMSE in the cloud's own length unit.  A valid
+    proper rotation is required; reflection, scale and non-finite values fail
+    closed.
+
+    ``scene ~= model @ R.T + t`` の規約。票は PPF 累積器の整数ピーク、score と
+    inlier_fraction は [0,1]、rmse は入力点群と同じ長さ単位。反射、拡大縮小、
+    非有限値は ``ValueError`` で拒否する。
+    """
+
+    R: np.ndarray
+    t: np.ndarray
+    votes: int
+    score: float
+    inlier_fraction: float
+    rmse: float
+
+    def __post_init__(self):
+        rotation = _validated_rotation(self.R)
+        translation = np.asarray(self.t, np.float64)
+        if translation.shape != (3,) or not np.isfinite(translation).all():
+            raise ValueError("t must be a finite (3,) vector")
+        if isinstance(self.votes, (bool, np.bool_)) or int(self.votes) != self.votes or int(self.votes) <= 0:
+            raise ValueError("votes must be a positive integer")
+        score = float(self.score)
+        inlier = float(self.inlier_fraction)
+        rmse = float(self.rmse)
+        if not math.isfinite(score) or not 0.0 <= score <= 1.0:
+            raise ValueError("score must be finite and in [0, 1]")
+        if not math.isfinite(inlier) or not 0.0 <= inlier <= 1.0:
+            raise ValueError("inlier_fraction must be finite and in [0, 1]")
+        if not math.isfinite(rmse) or rmse < 0.0:
+            raise ValueError("rmse must be finite and non-negative")
+        rotation.setflags(write=False)
+        translation = translation.copy()
+        translation.setflags(write=False)
+        object.__setattr__(self, "R", rotation)
+        object.__setattr__(self, "t", translation)
+        object.__setattr__(self, "votes", int(self.votes))
+        object.__setattr__(self, "score", score)
+        object.__setattr__(self, "inlier_fraction", inlier)
+        object.__setattr__(self, "rmse", rmse)
 
 
 class _PPFTable:
@@ -455,3 +533,232 @@ def find_surface_pose(model_points, scene_points, model_normals=None,
     model = ppf_model(model_points, model_normals, dist_step=dist_step,
                       angle_bins=angle_bins, k_normals=k_normals)
     return surface_match(model, scene_points, scene_normals, k_normals=k_normals, **kw)
+
+
+def _validated_ppf_inputs(model, scene_points, scene_normals, k_normals):
+    """Validate a reusable PPF model and scene. / 再利用 PPF モデルと場面を検査。"""
+    required = {"points", "normals", "table", "dist_step", "angle_bins"}
+    if not isinstance(model, dict) or not required.issubset(model):
+        raise ValueError("model must be a descriptor returned by ppf_model")
+    points = np.asarray(model["points"], np.float64)
+    normals = np.asarray(model["normals"], np.float64)
+    if points.ndim != 2 or points.shape[1:] != (3,) or points.shape[0] < 5:
+        raise ValueError("model points must be (N, 3) with N >= 5")
+    if normals.shape != points.shape:
+        raise ValueError("model normals must match model points")
+    if not np.isfinite(points).all() or not np.isfinite(normals).all():
+        raise ValueError("model points and normals must be finite")
+    scene = np.asarray(scene_points, np.float64)
+    if scene.ndim != 2 or scene.shape[1:] != (3,) or scene.shape[0] == 0:
+        raise ValueError("scene_points must be a non-empty (N, 3) array")
+    if not np.isfinite(scene).all():
+        raise ValueError("scene_points contains NaN or infinity")
+    if scene_normals is None:
+        scene_normals_array = _default_scene_normals(scene, k_normals)
+        sign_choices = (1.0, -1.0)
+    else:
+        scene_normals_array = np.asarray(scene_normals, np.float64)
+        if scene_normals_array.shape != scene.shape:
+            raise ValueError("scene_normals must match scene_points")
+        if not np.isfinite(scene_normals_array).all():
+            raise ValueError("scene_normals contains NaN or infinity")
+        lengths = np.linalg.norm(scene_normals_array, axis=1)
+        if np.any(lengths <= 0.0):
+            raise ValueError("scene_normals contains a zero vector")
+        scene_normals_array = scene_normals_array / lengths[:, None]
+        sign_choices = (1.0,)
+    return scene, scene_normals_array, sign_choices
+
+
+def ppf_pose_hypotheses(model: dict, scene_points, scene_normals=None,
+                        top_n: int = 5, ref_fraction: float = 0.3,
+                        refine: bool = True, k_normals: int = 16,
+                        seed: int = 0) -> list[PoseHypothesis]:
+    """Return the top-N PPF poses instead of collapsing the vote to one pose.
+
+    ``model`` is the reusable descriptor from :func:`ppf_model`.  Each result is
+    a :class:`PoseHypothesis` containing ``R``, ``t``, raw votes, a bounded score,
+    inlier fraction and ICP RMSE.  The score is
+    ``inlier_fraction / (1 + rmse / model_diameter)``; it is used only for
+    ranking and is not a calibrated probability.  The inlier distance is two
+    PPF distance steps.  With ``refine=False`` RMSE is measured from the voted
+    pose rather than reported as NaN.
+
+    Empty/non-finite input, bad normals, invalid ``top_n``/``ref_fraction`` and
+    an accumulator with no votes raise ``ValueError``.  The returned list can
+    contain symmetry-equivalent or same-instance poses; pass it to
+    :func:`pose_nms_symmetry` when those should be merged.
+
+    既存 PPF 表から最良1件へ潰さず上位 N 姿勢を返す。返りは R、t、票、順位用
+    score、インライア率、ICP RMSE を持つ。空、非有限値、法線不正、無投票は
+    fail-closed。対称で等価な候補の統合は :func:`pose_nms_symmetry` が担う。
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> x = np.linspace(-1.0, 1.0, 6)
+    >>> model_points = np.array([(a, b, 0.2*a*b) for a in x for b in x])
+    >>> normals = np.tile([0.0, 0.0, 1.0], (len(model_points), 1))
+    >>> descriptor = ppf_model(model_points, normals, angle_bins=24)
+    >>> t_true = np.array([0.3, -0.2, 1.4])
+    >>> scene = model_points + t_true
+    >>> poses = ppf_pose_hypotheses(descriptor, scene, normals, top_n=2, seed=3)
+    >>> bool(np.linalg.norm(poses[0].t - t_true) < 1e-6)
+    True
+    """
+    from registration import apply_transform, icp
+    from scipy.spatial import cKDTree
+
+    if isinstance(top_n, (bool, np.bool_)) or int(top_n) != top_n or int(top_n) <= 0:
+        raise ValueError("top_n must be a positive integer")
+    top_n = int(top_n)
+    fraction = float(ref_fraction)
+    if not math.isfinite(fraction) or not 0.0 < fraction <= 1.0:
+        raise ValueError("ref_fraction must be finite and in (0, 1]")
+    scene, normals, sign_choices = _validated_ppf_inputs(
+        model, scene_points, scene_normals, int(k_normals))
+    model_points = np.asarray(model["points"], np.float64)
+    model_size = model_points.shape[0]
+    dist_step = float(model["dist_step"])
+    angle_bins = int(model["angle_bins"])
+    if not math.isfinite(dist_step) or dist_step <= 0.0 or angle_bins < 2:
+        raise ValueError("model has invalid dist_step or angle_bins")
+    diameter = float(model.get("diameter", _invariant_diameter(model_points)))
+    if not math.isfinite(diameter) or diameter <= 0.0:
+        raise ValueError("model diameter must be finite and positive")
+    tree = cKDTree(scene)
+    rng = np.random.default_rng(seed)
+    reference_count = max(1, int(round(fraction * len(scene))))
+    references = rng.choice(len(scene), min(reference_count, len(scene)), replace=False)
+    raw = []
+    for sign in sign_choices:
+        raw.extend(_vote_hypotheses(
+            scene, sign * normals, references, tree, diameter, model, dist_step,
+            angle_bins, model_size, 2.0 * np.pi, sign))
+    if not raw:
+        raise ValueError("PPF voting produced no votes")
+    raw.sort(key=lambda item: -item[0])
+    # Refining every scene-reference maximum is needlessly unbounded.  Keep a
+    # named multiple of the requested output from each normal-sign branch.
+    refinement_count = max(top_n, _HYPOTHESIS_REFINEMENT_MULTIPLIER * top_n)
+    selected = []
+    for sign in sign_choices:
+        selected.extend([item for item in raw if item[3] == sign][:refinement_count])
+    tolerance = _DEFAULT_INLIER_DISTANCE_STEPS * dist_step
+    hypotheses = []
+    for votes, initial_rotation, initial_translation, _sign in selected:
+        if refine:
+            rotation, translation, _aligned, _reported_rmse = icp(
+                model_points, scene, init=(initial_rotation, initial_translation), trim=0.2)
+        else:
+            rotation, translation = initial_rotation, initial_translation
+        moved = apply_transform(model_points, rotation, translation)
+        distances, _indices = tree.query(moved, k=1)
+        rmse = float(np.sqrt(np.mean(distances * distances)))
+        inlier = float(np.mean(distances <= tolerance))
+        score = float(inlier / (1.0 + rmse / diameter))
+        hypotheses.append(PoseHypothesis(
+            R=rotation, t=translation, votes=int(votes), score=score,
+            inlier_fraction=inlier, rmse=rmse))
+    hypotheses.sort(key=lambda item: (-item.score, -item.votes, item.rmse,
+                                      tuple(item.t.tolist())))
+    return hypotheses[:top_n]
+
+
+def _hypothesis(value, index: int) -> PoseHypothesis:
+    if isinstance(value, PoseHypothesis):
+        return value
+    if isinstance(value, dict):
+        try:
+            return PoseHypothesis(
+                R=value["R"], t=value["t"], votes=value["votes"], score=value["score"],
+                inlier_fraction=value["inlier_fraction"], rmse=value.get("rmse", 0.0))
+        except KeyError as exc:
+            raise ValueError(f"hypotheses[{index}] is missing {exc.args[0]!r}") from exc
+    raise ValueError(f"hypotheses[{index}] must be PoseHypothesis or a mapping")
+
+
+def _symmetry_matrix(value, index: int):
+    transform = np.asarray(value, np.float64)
+    if transform.shape != (4, 4) or not np.isfinite(transform).all():
+        raise ValueError(f"symmetries[{index}] must be a finite (4, 4) matrix")
+    rotation = transform[:3, :3]
+    if not np.allclose(rotation.T @ rotation, np.eye(3), atol=_BOP_SYMMETRY_ATOL,
+                       rtol=0.0):
+        raise ValueError(f"symmetries[{index}] rotation is not orthonormal")
+    if not math.isclose(float(np.linalg.det(rotation)), 1.0,
+                        abs_tol=_BOP_SYMMETRY_ATOL, rel_tol=0.0):
+        raise ValueError(f"symmetries[{index}] rotation is not proper")
+    if not np.allclose(transform[3], (0.0, 0.0, 0.0, 1.0), atol=_POSE_ATOL, rtol=0.0):
+        raise ValueError(f"symmetries[{index}] has an invalid homogeneous last row")
+    return transform
+
+
+def _symmetry_pose_distance(first, second, points, symmetries):
+    moved_first = points @ first.R.T + first.t
+    best = float("inf")
+    for transform in symmetries:
+        symmetric = points @ transform[:3, :3].T + transform[:3, 3]
+        moved_second = symmetric @ second.R.T + second.t
+        distance = float(np.linalg.norm(moved_first - moved_second, axis=1).max())
+        best = min(best, distance)
+    return best
+
+
+def pose_nms_symmetry(hypotheses, model_points, symmetries=(),
+                      distance_threshold: float = 1.0,
+                      top_n: int | None = None) -> list[PoseHypothesis]:
+    """Suppress only symmetry-equivalent poses within a model-space distance.
+
+    Candidates are processed by descending ``score`` (then votes).  A candidate
+    is removed only if the maximum transformed-model-point distance to a kept
+    pose, minimized over the supplied BOP 4x4 symmetries, is at most
+    ``distance_threshold``.  Consequently a symmetry-equivalent orientation is
+    merged, while a non-equivalent orientation or another object instance whose
+    translation is farther away remains.  Identity is inserted automatically.
+
+    This is an exact point-set test over the supplied points, not a bounding-box
+    proxy.  The threshold uses the same unit as ``model_points`` and ``t``.
+    Empty, non-finite or malformed inputs fail closed.
+
+    score と票の順に候補を見て、BOP 4x4 対称変換のどれかを介したモデル点の最大距離が
+    閾値以下の時だけ抑制する。したがって対称で同じ向きはまとまり、非対称な向きと、
+    並進の離れた別個体は残る。箱・球の代用ではなく指定モデル点を直接測る。
+
+    Examples
+    --------
+    >>> points = np.array([[1., 0., 0.], [-1., 0., 0.], [0., .3, .2]])
+    >>> a = PoseHypothesis(np.eye(3), np.zeros(3), 9, .9, .9, .1)
+    >>> b = PoseHypothesis(np.eye(3), np.array([5., 0., 0.]), 8, .8, .8, .2)
+    >>> len(pose_nms_symmetry([a, b], points, distance_threshold=.5))
+    2
+    """
+    points = np.asarray(model_points, np.float64)
+    if points.ndim != 2 or points.shape[1:] != (3,) or points.shape[0] == 0:
+        raise ValueError("model_points must be a non-empty (N, 3) array")
+    if not np.isfinite(points).all():
+        raise ValueError("model_points contains NaN or infinity")
+    threshold = float(distance_threshold)
+    if not math.isfinite(threshold) or threshold < 0.0:
+        raise ValueError("distance_threshold must be finite and non-negative")
+    candidates = [_hypothesis(value, index) for index, value in enumerate(hypotheses)]
+    if not candidates:
+        raise ValueError("hypotheses must not be empty")
+    if top_n is not None:
+        if isinstance(top_n, (bool, np.bool_)) or int(top_n) != top_n or int(top_n) <= 0:
+            raise ValueError("top_n must be a positive integer or None")
+        top_n = int(top_n)
+    transforms = [np.eye(4)]
+    transforms.extend(_symmetry_matrix(value, index) for index, value in enumerate(symmetries))
+    candidates.sort(key=lambda item: (-item.score, -item.votes, item.rmse,
+                                      tuple(item.t.tolist())))
+    kept = []
+    for candidate in candidates:
+        duplicate = any(
+            _symmetry_pose_distance(candidate, old, points, transforms) <= threshold
+            for old in kept)
+        if not duplicate:
+            kept.append(candidate)
+            if top_n is not None and len(kept) >= top_n:
+                break
+    return kept

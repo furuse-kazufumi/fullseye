@@ -610,11 +610,12 @@ _The titles and descriptions of the worked examples are written in Japanese only
 **space**
 - `poc_star_tracker` — ops: (not linked from any op note) `py -3.11 examples/poc_star_tracker.py`
 
-### 3-D point cloud / volume / surface (125 examples)
+### 3-D point cloud / volume / surface (126 examples)
 
 **registration**
 - `cad_to_scan` — ops: (not linked from any op note) `py -3.11 examples_3d/cad_to_scan.py`
 - `find_surface_pose_bracket` — ops: `find_surface_pose` `py -3.11 examples_3d/find_surface_pose_bracket.py`
+- `bop_pose_stage1` — ops: `pose_nms_symmetry`, `ppf_pose_hypotheses` `py -3.11 examples_3d/bop_pose_stage1.py`
 - `auto_register` — ops: (not linked from any op note) `py -3.11 examples_3d/auto_register.py`
 - `reg_eval` — ops: `inlier_ratio`, `registration_recall`, `rmse_inliers`, `rotation_translation_error` `py -3.11 examples_3d/reg_eval.py`
 - `two_view_pose` — ops: `fundamental_8point`, `recover_pose`, `sampson_distance` `py -3.11 examples_3d/two_view_pose.py`
@@ -849,9 +850,9 @@ Ops that do not fit the one-image pipeline (two images, point sequences, variabl
 
 ## Operators by family (family → category, all ops)
 
-_3847 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
+_3849 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
 
-Families: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+Families: **2d** 964 · **3d** 380 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -1919,7 +1920,7 @@ Pipeline ops that take one image and return one image / region / contour / featu
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` GPU: none — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · examples: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` GPU: none — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · examples: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d (378 ops / 68 categories)
+### 3d (380 ops / 68 categories)
 
 Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as functions.
 
@@ -2111,12 +2112,14 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 - `match_points_ncc` `points × points → position` GPU: none — Point-set to point-set matching (structure = point cloud × method = NCC, transform = splat). Locates the model within the scene. · examples: `matching_localize`
 - `match_shape_3d` `voxel × voxel → position` GPU: none — 3-D shape-based (gradient-orientation) matching = the voxel version of the 2-D shapematch_gpu ("contour matching"). · examples: `matching_localize`
 
-#### 3d / match_pose (5)
+#### 3d / match_pose (7)
 - `find_surface_pose` `points × points → pose` GPU: none — Find where a known object (model point cloud) lies in a scene point cloud by point-pair-feature (PPF) voting and ICP (``pose``). · examples: `find_surface_pose_bracket`
 - `match_logpolar_z` `voxel × voxel → rot_scale` GPU: none — Recover **rotation about z and isotropic scale** by log-polar × phase correlation (Fourier-Mellin). · examples: `shape_desc_pose`
 - `match_pca` `points × points → pose` GPU: none — PCA pose matching (structure = point cloud × method = principal-axis alignment). · examples: `shape_desc_pose`
 - `match_phase_3d` `voxel × voxel → shift` GPU: none — 3-D phase correlation (FFT). Returns the integer shift (dz, dy, dx) that aligns b to a. · examples: `shape_desc_pose`
 - `moment_axes` `points → axes` GPU: none — The **centroid and principal axes** (the eigenvectors of the inertia tensor) of a point set or weighted points. The basis of pose estimation. · examples: `itokawa_pose_canonical`
+- `pose_nms_symmetry` `table × points × table → table` GPU: none — Suppress only symmetry-equivalent poses within a model-space distance. · examples: `bop_pose_stage1`
+- `ppf_pose_hypotheses` `table × points → table` GPU: none — Return the top-N PPF poses instead of collapsing the vote to one pose. · examples: `bop_pose_stage1`
 
 #### 3d / medial (13)
 - `distance_ridge` `voxel → voxel` GPU: yes (allow-list) — Extract the ridge of the EDT (the local maxima of the distance field) as the medial axis. Returns (ridge_mask, edt). · examples: `pcl_geodesic`

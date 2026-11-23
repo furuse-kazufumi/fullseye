@@ -17939,6 +17939,26 @@
    "de": "Bestimmt per Punktpaar-Merkmal-(PPF-)Abstimmung und ICP, wo ein bekanntes Objekt (Modellpunktwolke) in einer Szenenpunktwolke liegt (``pose``).",
    "hi": "पॉइंट-पेयर फ़ीचर (PPF) वोटिंग और ICP से ज्ञात वस्तु (मॉडल पॉइंट क्लाउड) दृश्य पॉइंट क्लाउड में कहाँ है, यह निकालता है (``pose``)।"
   },
+  "3d/ppf_pose_hypotheses": {
+   "fp": "56a10f7c4219",
+   "ja": "PPF 投票を最良の1姿勢にまとめず、上位 N 件の姿勢を返す。",
+   "en": "Return the top-N PPF poses instead of collapsing the vote to one pose.",
+   "zh": "返回 PPF 投票得分最高的 N 个位姿，而不是将投票压缩为单个位姿。",
+   "tw": "傳回 PPF 投票得分最高的 N 個姿態，而不是將投票壓縮為單一姿態。",
+   "ko": "PPF 투표를 하나의 최적 자세로 합치지 않고 상위 N개 자세를 반환합니다.",
+   "de": "Liefert die N besten PPF-Posen, statt die Abstimmung auf eine einzige Pose zu reduzieren.",
+   "hi": "PPF मतदान को एक सर्वोत्तम pose में समेटने के बजाय शीर्ष N poses लौटाता है।"
+  },
+  "3d/pose_nms_symmetry": {
+   "fp": "e09074d51d9e",
+   "ja": "モデル空間の距離内にある、対称性で等価な姿勢だけを抑制する。",
+   "en": "Suppress only symmetry-equivalent poses within a model-space distance.",
+   "zh": "仅抑制模型空间距离阈值内由对称性等价的位姿。",
+   "tw": "僅抑制模型空間距離閾值內由對稱性等價的姿態。",
+   "ko": "모델 공간 거리 안에서 대칭적으로 동등한 자세만 억제합니다.",
+   "de": "Unterdrückt nur symmetrieäquivalente Posen innerhalb eines Abstands im Modellraum.",
+   "hi": "मॉडल-स्पेस दूरी के भीतर केवल symmetry-equivalent poses को दबाता है।"
+  },
   "spc/proportion_interval": {
    "fp": "40a502123fae",
    "en": "Return the point estimate and confidence limits for the binomial proportion ``k/n`` (``table``).",
