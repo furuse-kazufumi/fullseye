@@ -2518,8 +2518,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `ppf.py`
 
-- **L339** — ★ Rohe PCA-Normalen haben ein **beliebiges Vorzeichen** und kippen unter Rotation bei 40% der Punkte. Da PPF-Merkmale Winkel zwischen Normalen sind, ändert sich beim Kippen der Schlüssel. Gemessen (400 Punkte, um die z-Achse): mit rohen Normalen ist die Schlüssel-Übereinstimmungsrate bei 0/37/90/143 Grad 100 / 73.6 / 69.4 / 67.2 %, mit orientierten Normalen **alle 100 %**. Dasselbe Loch, in das ``pointcloud.fpfh`` getreten war, am selben Tag zusammen behoben.
-- **L423** _(ja)_ — ★2026-11-09 独立レビュー: 向き付き法線の符号は「場面の重心から外向き」に決まる。 床や他の物体を含む場面では物体ごと裏返ることがある(片側視+床で試行の 20 % が 物体全体の符号がモデルと逆)。既定の法線のときは両方の符号で投票し、ICP 後の 当てはまりで選ぶ(符号を渡されたときは渡された向きを信じる)。
+- **L340** — ★ Rohe PCA-Normalen haben ein **beliebiges Vorzeichen** und kippen unter Rotation bei 40% der Punkte. Da PPF-Merkmale Winkel zwischen Normalen sind, ändert sich beim Kippen der Schlüssel. Gemessen (400 Punkte, um die z-Achse): mit rohen Normalen ist die Schlüssel-Übereinstimmungsrate bei 0/37/90/143 Grad 100 / 73.6 / 69.4 / 67.2 %, mit orientierten Normalen **alle 100 %**. Dasselbe Loch, in das ``pointcloud.fpfh`` getreten war, am selben Tag zusammen behoben.
+- **L424** _(ja)_ — ★2026-11-09 独立レビュー: 向き付き法線の符号は「場面の重心から外向き」に決まる。 床や他の物体を含む場面では物体ごと裏返ることがある(片側視+床で試行の 20 % が 物体全体の符号がモデルと逆)。既定の法線のときは両方の符号で投票し、ICP 後の 当てはまりで選ぶ(符号を渡されたときは渡された向きを信じる)。
 
 ## `printpath.py`
 

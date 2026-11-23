@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from scipy.spatial import cKDTree
 
 import bop
 import ppf
@@ -120,6 +121,51 @@ def test_pose_nms_merges_only_symmetric_same_instance():
     assert without_symmetry == [identity, symmetric]
 
 
+def test_bop_symmetry_product_merges_noncommuting_discrete_and_continuous_pose():
+    # This mirrors the mixed discrete/continuous ITODD objects: neither factor
+    # alone maps the second pose onto the first one.
+    discrete = np.eye(4)
+    discrete[:3, :3] = _rotation((1, 0, 0), 180.0)
+    info = {
+        "diameter": 4.0,
+        "symmetries_discrete": [discrete.ravel().tolist()],
+        "symmetries_continuous": [{"axis": [0.0, 0.0, 1.0], "offset": [0.0, 0.0, 0.0]}],
+    }
+    transforms = bop.bop_symmetry_transforms(info, max_step=2.0)
+    continuous_half_turn = np.diag([-1.0, -1.0, 1.0, 1.0])
+    combined = continuous_half_turn @ discrete
+    assert any(np.allclose(combined, transform, atol=1e-12, rtol=0.0)
+               for transform in transforms)
+    points = np.array([[1.0, 0.3, 0.2], [-0.5, 1.2, 0.4], [0.7, -0.8, 1.1]])
+    first = _hypothesis(np.eye(3), (0, 0, 0), 0.9, 10)
+    second = _hypothesis(combined[:3, :3].T,
+                         -combined[:3, :3].T @ combined[:3, 3], 0.8, 9)
+    assert ppf.pose_nms_symmetry([first, second], points, transforms,
+                                 distance_threshold=1e-10) == [first]
+
+
+def test_ppf_vote_hypotheses_keeps_multiple_ranked_local_peaks(monkeypatch):
+    accumulator = np.array([[0, 11, 2, 0, 7, 0], [0, 0, 9, 0, 0, 0]])
+
+    def vote_with_two_peaks(*_args):
+        return accumulator
+
+    def pose_for_peak(_point, _normal, _model, model_index, alpha):
+        return np.eye(3), np.array([float(model_index), alpha, 0.0])
+
+    monkeypatch.setattr(ppf, "_vote", vote_with_two_peaks)
+    monkeypatch.setattr(ppf, "_pose_from", pose_for_peak)
+    scene = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
+    normals = np.tile([0.0, 0.0, 1.0], (2, 1))
+    tree = cKDTree(scene)
+    hypotheses = ppf._vote_hypotheses(
+        scene, normals, np.array([0]), tree, 2.0, {"table": {}}, 0.1, 6, 2,
+        2.0 * np.pi, 1.0, peaks_per_accumulator=3)
+    # The second peak in row zero is not a global argmax, but it is a valid
+    # candidate and retains its rank between the stronger and weaker peaks.
+    assert [candidate[0] for candidate in hypotheses] == [11.0, 9.0, 7.0]
+
+
 def test_pose_nms_rejects_empty_and_nonfinite():
     with pytest.raises(ValueError, match="must not be empty"):
         ppf.pose_nms_symmetry([], np.eye(3))
@@ -169,7 +215,40 @@ def test_val_target_writer_counts_instances_and_test_evaluator_fails_before_subp
                                 tmp_path / "eval")
 
 
-def test_official_adapter_parses_only_the_official_score_file(tmp_path, monkeypatch):
+def test_evaluator_rejects_invalid_csv_before_any_subprocess(tmp_path, monkeypatch):
+    datasets = tmp_path / "datasets"
+    dataset = datasets / "itodd"
+    dataset.mkdir(parents=True)
+    (dataset / "val_targets.json").write_text("[]", encoding="utf-8")
+    result = tmp_path / "method_itodd-val.csv"
+    result.write_text(
+        "scene_id,im_id,obj_id,score,R,t,time\n"
+        "1,1,1,1,1 0 0 0 1 0 0 0 -1,0 0 1,0\n", encoding="utf-8")
+
+    def subprocess_must_not_run(*_args, **_kwargs):
+        raise AssertionError("CSV validation must precede every subprocess")
+
+    monkeypatch.setattr(bop.subprocess, "run", subprocess_must_not_run)
+    with pytest.raises(ValueError, match="proper rotation"):
+        bop.evaluate_bop19_pose(result, datasets, tmp_path / "toolkit", tmp_path / "eval")
+
+
+def test_evaluator_rejects_lookalike_toolkit_before_execution(tmp_path):
+    datasets = tmp_path / "datasets"
+    dataset = datasets / "itodd"
+    dataset.mkdir(parents=True)
+    (dataset / "val_targets.json").write_text("[]", encoding="utf-8")
+    toolkit = tmp_path / "toolkit"
+    (toolkit / "scripts").mkdir(parents=True)
+    (toolkit / "scripts" / "eval_bop19_pose.py").write_text("# imitation\n", encoding="utf-8")
+    (toolkit / "LICENSE").write_text("MIT License\n", encoding="utf-8")
+    result = tmp_path / "method_itodd-val.csv"
+    result.write_text("scene_id,im_id,obj_id,score,R,t,time\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="pinned official BOP toolkit"):
+        bop.evaluate_bop19_pose(result, datasets, toolkit, tmp_path / "eval")
+
+
+def test_official_adapter_parses_the_pinned_evaluator_score_file(tmp_path, monkeypatch):
     datasets = tmp_path / "datasets"
     dataset = datasets / "itodd"
     dataset.mkdir(parents=True)
@@ -198,6 +277,7 @@ def test_official_adapter_parses_only_the_official_score_file(tmp_path, monkeypa
         }), encoding="utf-8")
         return type("Completed", (), {"returncode": 0, "stdout": "official fixture"})()
 
+    monkeypatch.setattr(bop, "_validate_official_bop_toolkit", lambda *_args: None)
     monkeypatch.setattr(bop.subprocess, "run", fake_run)
     scores = bop.evaluate_bop19_pose(result, datasets, toolkit, eval_path)
     assert scores["AR"] == 0.25

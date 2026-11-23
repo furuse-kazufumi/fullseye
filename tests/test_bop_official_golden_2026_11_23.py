@@ -5,6 +5,7 @@ toolkit; the stage-1 verification run pins and reports the checkout commit.
 """
 from __future__ import annotations
 
+import json
 import math
 import os
 from pathlib import Path
@@ -13,6 +14,7 @@ import sys
 import numpy as np
 import pytest
 
+import bop
 
 TOOLKIT_ROOT = os.environ.get("BOP_TOOLKIT_ROOT")
 pytestmark = pytest.mark.skipif(not TOOLKIT_ROOT, reason="BOP_TOOLKIT_ROOT is not set")
@@ -74,3 +76,67 @@ def test_official_vsd_mssd_mspd_match_synthetic_golden_values():
         normalized_by_diameter=True, diameter=10.0,
         renderer=_SequenceDepthRenderer(depth_estimate, depth_truth), obj_id=1)
     assert vsd == [1.0, 0.0]
+
+
+_ITODD_OBJECT_IDS = range(1, 29)
+_IDENTITY_R = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+_FIXTURE_IMAGE_SIZE = (1280, 960)
+_FIXTURE_FOCAL_LENGTH_PX = 800.0
+_FIXTURE_DEPTH_MM = 1000.0
+
+
+def _write_tetrahedron_ply(path: Path) -> None:
+    path.write_text(
+        "ply\nformat ascii 1.0\n"
+        "element vertex 4\nproperty float x\nproperty float y\nproperty float z\n"
+        "element face 4\nproperty list uchar int vertex_indices\nend_header\n"
+        "-20 -20 -20\n20 -20 -20\n0 20 -20\n0 0 20\n"
+        "3 0 1 2\n3 0 3 1\n3 1 3 2\n3 2 3 0\n", encoding="ascii")
+
+
+def _write_official_eval_fixture(root: Path) -> tuple[Path, Path]:
+    """Create a disposable BOP-shaped fixture; no ITODD asset is copied."""
+    from PIL import Image
+
+    dataset = root / "datasets" / "itodd"
+    models = dataset / "models_eval"
+    scene = dataset / "val" / "000001"
+    depth = scene / "depth"
+    models.mkdir(parents=True)
+    depth.mkdir(parents=True)
+    model_info = {}
+    for object_id in _ITODD_OBJECT_IDS:
+        _write_tetrahedron_ply(models / f"obj_{object_id:06d}.ply")
+        model_info[str(object_id)] = {"diameter": 60.0}
+    (models / "models_info.json").write_text(json.dumps(model_info), encoding="utf-8")
+    Image.fromarray(np.zeros((_FIXTURE_IMAGE_SIZE[1], _FIXTURE_IMAGE_SIZE[0]), np.uint16)).save(
+        depth / "000000.tif")
+    gt = {"0": [{"obj_id": 1, "cam_R_m2c": _IDENTITY_R,
+                  "cam_t_m2c": [0.0, 0.0, _FIXTURE_DEPTH_MM]}]}
+    info = {"0": [{"bbox_obj": [600, 440, 80, 80], "bbox_visib": [600, 440, 80, 80],
+                   "px_count_all": 6400, "px_count_valid": 6400, "px_count_visib": 6400,
+                   "visib_fract": 1.0}]}
+    camera = {"0": {"cam_K": [_FIXTURE_FOCAL_LENGTH_PX, 0.0, 640.0,
+                                 0.0, _FIXTURE_FOCAL_LENGTH_PX, 480.0,
+                                 0.0, 0.0, 1.0], "depth_scale": 1.0}}
+    for name, value in (("scene_gt.json", gt), ("scene_gt_info.json", info),
+                        ("scene_camera.json", camera), ("val_targets.json", [
+                            {"scene_id": 1, "im_id": 0, "obj_id": 1, "inst_count": 1}])):
+        ((scene / name) if name.startswith("scene_") else (dataset / name)).write_text(
+            json.dumps(value), encoding="utf-8")
+    result = root / "method_itodd-val.csv"
+    result.write_text(
+        "scene_id,im_id,obj_id,score,R,t,time\n"
+        "1,0,1,1,1 0 0 0 1 0 0 0 1,0 0 1000,0.25\n", encoding="utf-8")
+    return root / "datasets", result
+
+
+def test_pinned_official_bop19_driver_scores_synthetic_fixture(tmp_path):
+    """Run the pinned official script, including its VSD/MSSD/MSPD subprocesses."""
+    datasets, result = _write_official_eval_fixture(tmp_path)
+    scores = bop.evaluate_bop19_pose(result, datasets, Path(TOOLKIT_ROOT), tmp_path / "eval",
+                                     renderer_type="vispy", num_workers=1)
+    assert scores["AR"] == pytest.approx(1.0, abs=1e-12)
+    assert scores["AR_VSD"] == pytest.approx(1.0, abs=1e-12)
+    assert scores["AR_MSSD"] == pytest.approx(1.0, abs=1e-12)
+    assert scores["AR_MSPD"] == pytest.approx(1.0, abs=1e-12)

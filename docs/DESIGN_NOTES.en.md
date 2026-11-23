@@ -2518,8 +2518,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `ppf.py`
 
-- **L339** — ★ Raw PCA normals have an **arbitrary sign**, and under rotation flip on 40% of points. Since PPF features are angles between normals, if they flip the key changes. Measured (400 points, about the z-axis): with raw normals the key match rate at 0/37/90/143 degrees is 100 / 73.6 / 69.4 / 67.2 %, with oriented normals **all 100 %**. The same hole that ``pointcloud.fpfh`` had stepped on, fixed together the same day.
-- **L423** _(ja)_ — ★2026-11-09 独立レビュー: 向き付き法線の符号は「場面の重心から外向き」に決まる。 床や他の物体を含む場面では物体ごと裏返ることがある(片側視+床で試行の 20 % が 物体全体の符号がモデルと逆)。既定の法線のときは両方の符号で投票し、ICP 後の 当てはまりで選ぶ(符号を渡されたときは渡された向きを信じる)。
+- **L340** — ★ Raw PCA normals have an **arbitrary sign**, and under rotation flip on 40% of points. Since PPF features are angles between normals, if they flip the key changes. Measured (400 points, about the z-axis): with raw normals the key match rate at 0/37/90/143 degrees is 100 / 73.6 / 69.4 / 67.2 %, with oriented normals **all 100 %**. The same hole that ``pointcloud.fpfh`` had stepped on, fixed together the same day.
+- **L424** _(ja)_ — ★2026-11-09 独立レビュー: 向き付き法線の符号は「場面の重心から外向き」に決まる。 床や他の物体を含む場面では物体ごと裏返ることがある(片側視+床で試行の 20 % が 物体全体の符号がモデルと逆)。既定の法線のときは両方の符号で投票し、ICP 後の 当てはまりで選ぶ(符号を渡されたときは渡された向きを信じる)。
 
 ## `printpath.py`
 

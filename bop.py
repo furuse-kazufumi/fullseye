@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import csv
+import hashlib
 import json
 import math
 import os
@@ -52,6 +53,8 @@ _BOP19_SCORE_KEYS = (
     "bop19_average_recall_mspd",
     "bop19_average_time_per_image",
 )
+_BOP_TOOLKIT_COMMIT = "cea62d651c7e395b2e1962b9749e4e89693c6ac4"
+_BOP19_EVALUATOR_SHA256 = "44a0fa020f53bec65dad351c4a188e2a21e3d8cbe554925e06c98315be3f57f4"
 
 
 def _positive_id(value, name: str) -> int:
@@ -303,9 +306,10 @@ def bop_symmetry_transforms(model_info: Mapping, max_step: float | None = None) 
     """
     if not isinstance(model_info, Mapping):
         raise ValueError("model_info must be a mapping")
-    transforms = [np.eye(4)]
+    discrete = [np.eye(4)]
     for index, value in enumerate(model_info.get("symmetries_discrete", [])):
-        transforms.append(_transform4(value, f"symmetries_discrete[{index}]"))
+        discrete.append(_transform4(value, f"symmetries_discrete[{index}]"))
+    continuous_transforms = []
     continuous = model_info.get("symmetries_continuous", [])
     if continuous:
         if max_step is None:
@@ -326,13 +330,20 @@ def bop_symmetry_transforms(model_info: Mapping, max_step: float | None = None) 
             axis = np.asarray(axis) / norm
             skew = np.array([[0.0, -axis[2], axis[1]], [axis[2], 0.0, -axis[0]],
                              [-axis[1], axis[0], 0.0]])
-            for sample in range(1, count):
+            for sample in range(count):
                 angle = 2.0 * math.pi * sample / count
                 rotation = np.eye(3) + math.sin(angle) * skew + (1.0 - math.cos(angle)) * skew @ skew
                 transform = np.eye(4)
                 transform[:3, :3] = rotation
                 transform[:3, 3] = offset - rotation @ offset
-                transforms.append(transform)
+                continuous_transforms.append(transform)
+    # BOP first forms the discrete set and then composes every sampled continuous
+    # transform on its left (C @ D in its column-vector convention).  Do not
+    # merely append D and C: objects such as ITODD 12 and 28 need their product.
+    transforms = ([(continuous_transform @ discrete_transform)
+                   for discrete_transform in discrete
+                   for continuous_transform in continuous_transforms]
+                  if continuous_transforms else discrete)
     unique = []
     for transform in transforms:
         if not any(np.allclose(transform, old, atol=1e-10, rtol=0.0) for old in unique):
@@ -455,9 +466,10 @@ def evaluate_bop19_pose(result_csv, datasets_path, toolkit_root, eval_path,
 
     The result filename must follow ``METHOD_itodd-val.csv``.  Any test split is
     refused before a subprocess starts.  ``toolkit_root`` must be an explicit
-    local checkout with an MIT ``LICENSE`` and the official script; this adapter
-    never clones or installs it.  Returned keys are AR, AR_VSD, AR_MSSD, AR_MSPD
-    and seconds per image exactly as written by the toolkit.
+    local checkout pinned to the recorded official commit and evaluator digest;
+    this adapter never clones or installs it.  The input CSV is fully validated
+    before the toolkit subprocess starts. Returned keys are AR, AR_VSD, AR_MSSD,
+    AR_MSPD and seconds per image exactly as written by the toolkit.
 
     公式 ``eval_bop19_pose.py`` を val に対して実行する薄いアダプター。test は
     subprocess 起動前に拒否し、toolkit の取得・導入は行わない。
@@ -473,6 +485,7 @@ def evaluate_bop19_pose(result_csv, datasets_path, toolkit_root, eval_path,
         raise ValueError("test evaluation is forbidden: test ground truth is private")
     if dataset.lower() != "itodd" or split.lower() != "val":
         raise ValueError("stage 1 evaluation accepts only the itodd-val split")
+    read_bop_results_csv(result)
     datasets = _existing_dir(datasets_path, "datasets_path")
     dataset_root = datasets / "itodd"
     if not dataset_root.is_dir():
@@ -482,11 +495,7 @@ def evaluate_bop19_pose(result_csv, datasets_path, toolkit_root, eval_path,
         raise FileNotFoundError(target)
     toolkit = _existing_dir(toolkit_root, "toolkit_root")
     script = toolkit / "scripts" / "eval_bop19_pose.py"
-    license_path = toolkit / "LICENSE"
-    if not script.is_file() or not license_path.is_file():
-        raise FileNotFoundError("toolkit_root must contain scripts/eval_bop19_pose.py and LICENSE")
-    if "MIT License" not in license_path.read_text(encoding="utf-8", errors="replace"):
-        raise ValueError("BOP toolkit license was not recognized as MIT")
+    _validate_official_bop_toolkit(toolkit, script)
     workers = int(num_workers)
     if workers < 1:
         raise ValueError("num_workers must be >= 1")
@@ -544,3 +553,23 @@ def evaluate_bop19_pose(result_csv, datasets_path, toolkit_root, eval_path,
         "time_per_image": float(scores["bop19_average_time_per_image"]),
         "official_score_path": str(score_path),
     }
+
+
+def _validate_official_bop_toolkit(toolkit: Path, script: Path) -> None:
+    """Refuse a look-alike toolkit checkout. / 偽の toolkit checkout を拒否する。"""
+    if not script.is_file() or not (toolkit / "LICENSE").is_file():
+        raise FileNotFoundError("toolkit_root must contain scripts/eval_bop19_pose.py and LICENSE")
+    try:
+        top_level = subprocess.run(
+            ["git", "-C", str(toolkit), "rev-parse", "--show-toplevel"], check=True,
+            text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.strip()
+        commit = subprocess.run(
+            ["git", "-C", str(toolkit), "rev-parse", "HEAD"], check=True,
+            text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.strip().lower()
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise ValueError("toolkit_root must be the pinned official BOP toolkit git checkout") from exc
+    if Path(top_level).resolve() != toolkit.resolve() or commit != _BOP_TOOLKIT_COMMIT:
+        raise ValueError(f"toolkit_root must be BOP toolkit commit {_BOP_TOOLKIT_COMMIT}")
+    script_digest = hashlib.sha256(script.read_bytes()).hexdigest()
+    if script_digest != _BOP19_EVALUATOR_SHA256:
+        raise ValueError("BOP eval_bop19_pose.py does not match the pinned official digest")

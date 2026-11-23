@@ -40,6 +40,7 @@ _VOTE_BLOCK = 1000000
 _POSE_ATOL = 1e-7
 _BOP_SYMMETRY_ATOL = 2e-5  # public models_info transforms are rounded to ~6 decimals.
 _HYPOTHESIS_REFINEMENT_MULTIPLIER = 8
+_ACCUMULATOR_PEAK_MULTIPLIER = 8
 _DEFAULT_INLIER_DISTANCE_STEPS = 2.0
 
 
@@ -471,8 +472,28 @@ def surface_match(model: dict, scene_points, scene_normals=None,
             "inlier_fraction": float(inlier)}
 
 
-def _vote_hypotheses(S, SN, refs, tree, diameter, model, dist_step, ab, M, two_pi, sgn):
-    """PPF voting for every reference point; returns ``[(votes, R, t, sgn)]``."""
+def _accumulator_local_peaks(accumulator, maximum: int):
+    """Return strongest circular-alpha local maxima from one PPF accumulator."""
+    if maximum <= 0:
+        raise ValueError("maximum must be positive")
+    accumulator = np.asarray(accumulator)
+    if accumulator.ndim != 2 or accumulator.shape[1] < 2:
+        raise ValueError("accumulator must be a 2-D array with at least two angle bins")
+    previous = np.roll(accumulator, 1, axis=1)
+    following = np.roll(accumulator, -1, axis=1)
+    peaks = (accumulator > 0) & (accumulator >= previous) & (accumulator > following)
+    indices = np.argwhere(peaks)
+    if not len(indices):
+        return []
+    ranked = sorted(((int(accumulator[model_index, angle_bin]), int(model_index), int(angle_bin))
+                     for model_index, angle_bin in indices),
+                    key=lambda item: (-item[0], item[1], item[2]))
+    return ranked[:maximum]
+
+
+def _vote_hypotheses(S, SN, refs, tree, diameter, model, dist_step, ab, M, two_pi, sgn,
+                     peaks_per_accumulator=1):
+    """PPF voting for every reference point; returns ranked local accumulator peaks."""
     hypotheses = []
     for r in refs:
         Ts = _align_to_x(S[r], SN[r])
@@ -499,10 +520,11 @@ def _vote_hypotheses(S, SN, refs, tree, diameter, model, dist_step, ab, M, two_p
         acc = _vote(model["table"], keys, alpha_s, M, ab)
         if acc.max() <= 0:
             continue
-        mi_star, b_star = np.unravel_index(int(acc.argmax()), acc.shape)
-        alpha = b_star * (two_pi / ab)
-        R, t = _pose_from(S[r], SN[r], model, int(mi_star), alpha)
-        hypotheses.append((float(acc.max()), R, t, sgn))
+        for votes, model_index, angle_bin in _accumulator_local_peaks(
+                acc, peaks_per_accumulator):
+            alpha = angle_bin * (two_pi / ab)
+            R, t = _pose_from(S[r], SN[r], model, model_index, alpha)
+            hypotheses.append((float(votes), R, t, sgn))
     return hypotheses
 
 
@@ -631,10 +653,12 @@ def ppf_pose_hypotheses(model: dict, scene_points, scene_normals=None,
     reference_count = max(1, int(round(fraction * len(scene))))
     references = rng.choice(len(scene), min(reference_count, len(scene)), replace=False)
     raw = []
+    peaks_per_accumulator = max(
+        top_n, _ACCUMULATOR_PEAK_MULTIPLIER * top_n)
     for sign in sign_choices:
         raw.extend(_vote_hypotheses(
             scene, sign * normals, references, tree, diameter, model, dist_step,
-            angle_bins, model_size, 2.0 * np.pi, sign))
+            angle_bins, model_size, 2.0 * np.pi, sign, peaks_per_accumulator))
     if not raw:
         raise ValueError("PPF voting produced no votes")
     raw.sort(key=lambda item: -item[0])
