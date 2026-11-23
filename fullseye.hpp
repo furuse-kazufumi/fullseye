@@ -65,15 +65,16 @@ public:
     Result call(const std::string &op_id, const std::vector<fs_input_t> &inputs,
                 const std::string &params = "{}") {
         fs_result_t *out = nullptr;
-        check(fs_call(value_, op_id.c_str(), inputs.empty() ? nullptr : inputs.data(),
-                      inputs.size(), params.c_str(), &out));
+        check(fs_call_n(value_, op_id.data(), op_id.size(),
+                        inputs.empty() ? nullptr : inputs.data(), inputs.size(),
+                        params.data(), params.size(), &out));
         return Result(out);
     }
 
     std::string find_ops(const std::string &query = "{}") {
         char *text = nullptr;
         size_t bytes = 0;
-        check(fs_find_ops_json(value_, query.c_str(), &text, &bytes));
+        check(fs_find_ops_json_n(value_, query.data(), query.size(), &text, &bytes));
         std::string result(text, bytes ? bytes - 1 : 0);
         fs_free(text);
         return result;

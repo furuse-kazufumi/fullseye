@@ -20,6 +20,8 @@ class InstallComponent:
     selectable: bool
     python_extra: str | None
     destinations: tuple[str, ...]
+    development_only: bool
+    runtime_note: str
 
 
 SDK_LAYOUT = {
@@ -37,5 +39,8 @@ INSTALL_COMPONENTS = {
         selectable=True,
         python_extra="native",
         destinations=tuple(SDK_LAYOUT.values()),
+        development_only=True,
+        runtime_note=("The SDK does not bundle CPython or fullseye. Set runtime_root or "
+                      "FULLSEYE_PYTHON_ROOT to a Python environment with fullseye installed."),
     ),
 }

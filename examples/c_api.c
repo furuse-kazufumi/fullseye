@@ -55,26 +55,32 @@ int main(int argc, char **argv) {
         options.runtime_root = argv[1];
     }
     if (!check(NULL, fs_runtime_create(&options, &runtime), "initialize")) goto done;
-    if (!check(runtime, fs_find_ops_json(runtime, "{\"query\":\"threshold\"}",
-                                         &catalog, &catalog_bytes), "search")) goto done;
+    if (!check(runtime, fs_find_ops_json_n(runtime, "{\"query\":\"threshold\"}",
+                                           sizeof("{\"query\":\"threshold\"}") - 1u,
+                                           &catalog, &catalog_bytes), "search")) goto done;
     if (catalog_bytes == 0 || strstr(catalog, "contract:threshold") == NULL) goto done;
 
     fs_input_t image = image_input(pixels, 30, 5, 6);
-    if (!check(runtime, fs_call(runtime, "contract:threshold", &image, 1,
-                                "{\"lo\":0.6,\"hi\":1.0}", &contract_region),
+    if (!check(runtime, fs_call_n(runtime, "contract:threshold", sizeof("contract:threshold") - 1u,
+                                  &image, 1, "{\"lo\":0.6,\"hi\":1.0}",
+                                  sizeof("{\"lo\":0.6,\"hi\":1.0}") - 1u, &contract_region),
                "contract threshold")) goto done;
     fs_input_t region = result_input(FS_VALUE_REGION, contract_region, 0);
-    if (!check(runtime, fs_call(runtime, "contract:connection", &region, 1, "{}", &objects),
+    if (!check(runtime, fs_call_n(runtime, "contract:connection", sizeof("contract:connection") - 1u,
+                                  &region, 1, "{}", sizeof("{}") - 1u, &objects),
                "connection")) goto done;
     fs_input_t object_input = result_input(FS_VALUE_OBJECTSET, objects, 0);
-    if (!check(runtime, fs_call(runtime, "contract:measure_all", &object_input, 1, "{}", &measures),
+    if (!check(runtime, fs_call_n(runtime, "contract:measure_all", sizeof("contract:measure_all") - 1u,
+                                  &object_input, 1, "{}", sizeof("{}") - 1u, &measures),
                "measure_all")) goto done;
 
-    if (!check(runtime, fs_call(runtime, "registry:threshold", &image, 1,
-                                "{\"a\":0.6,\"b\":0.5}", &registry_region),
+    if (!check(runtime, fs_call_n(runtime, "registry:threshold", sizeof("registry:threshold") - 1u,
+                                  &image, 1, "{\"a\":0.6,\"b\":0.5}",
+                                  sizeof("{\"a\":0.6,\"b\":0.5}") - 1u, &registry_region),
                "registry threshold")) goto done;
     fs_input_t registry_input = result_input(FS_VALUE_REGION, registry_region, 0);
-    if (!check(runtime, fs_call(runtime, "registry:blob_count", &registry_input, 1, "{}", &count),
+    if (!check(runtime, fs_call_n(runtime, "registry:blob_count", sizeof("registry:blob_count") - 1u,
+                                  &registry_input, 1, "{}", sizeof("{}") - 1u, &count),
                "blob_count")) goto done;
 
     {

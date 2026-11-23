@@ -1,0 +1,30 @@
+name: C API ASan
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  c-api-asan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install native development dependencies
+        run: python -m pip install -e '.[native]'
+      - name: Build the C API with AddressSanitizer and UBSan
+        run: >-
+          cmake -S . -B build-c-api-asan -DFULLSEYE_BUILD_NATIVE=ON
+          -DFULLSEYE_BUILD_TESTS=ON -DFULLSEYE_ENABLE_SANITIZERS=ON
+      - run: cmake --build build-c-api-asan --parallel 2
+      - name: Run CTest and ctypes hardening tests under sanitizers
+        env:
+          ASAN_OPTIONS: detect_leaks=0
+          FULLSEYE_C_API_LIBRARY: ${{ github.workspace }}/build-c-api-asan/libfullseye.so
+        run: |
+          export LD_PRELOAD="$(gcc -print-file-name=libasan.so)"
+          ctest --test-dir build-c-api-asan --output-on-failure
+          python -m pytest tests/test_c_api_pybind11.py -q

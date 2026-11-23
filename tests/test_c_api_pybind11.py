@@ -5,6 +5,7 @@ from __future__ import annotations
 import ctypes as C
 import gc
 import os
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -20,6 +21,7 @@ FS_E_INVALID_ARG = 1
 FS_E_TYPE = 2
 FS_E_SHAPE = 3
 FS_E_RANGE = 4
+FS_E_NO_PYTHON = 10
 FS_E_UNKNOWN_OP = 11
 FS_E_BAD_PARAMS = 12
 FS_VALUE_IMAGE = 1
@@ -66,10 +68,13 @@ def _bind(lib):
     lib.fs_runtime_create.argtypes = [C.POINTER(InitOptions), C.POINTER(C.c_void_p)]
     lib.fs_runtime_create.restype = C.c_int
     lib.fs_runtime_destroy.argtypes = [C.c_void_p]
-    lib.fs_call.argtypes = [C.c_void_p, C.c_char_p, C.POINTER(Input), C.c_size_t,
-                            C.c_char_p, C.POINTER(C.c_void_p)]
-    lib.fs_call.restype = C.c_int
+    lib.fs_call_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t, C.POINTER(Input), C.c_size_t,
+                              C.c_void_p, C.c_size_t, C.POINTER(C.c_void_p)]
+    lib.fs_call_n.restype = C.c_int
     lib.fs_result_release.argtypes = [C.c_void_p]
+    lib.fs_result_release.restype = C.c_int
+    lib.fs_result_kind.argtypes = [C.c_void_p, C.c_size_t, C.POINTER(C.c_int)]
+    lib.fs_result_kind.restype = C.c_int
     lib.fs_result_region_runs.argtypes = [C.c_void_p, C.c_size_t, C.POINTER(C.POINTER(Run)),
                                            C.POINTER(C.c_size_t)]
     lib.fs_result_region_runs.restype = C.c_int
@@ -93,7 +98,7 @@ def abi():
     lib = C.CDLL(str(_library_path()))
     _bind(lib)
     root = os.fsencode(ROOT)
-    options = InitOptions(C.sizeof(InitOptions), root, None, 1, 0, 1)
+    options = InitOptions(C.sizeof(InitOptions), root, None, 3, 0, 2)
     runtime = C.c_void_p()
     assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_OK
     yield lib, runtime
@@ -118,7 +123,9 @@ def _call(abi, op: str, inputs: list[Input], params="{}"):
     lib, runtime = abi
     result = C.c_void_p()
     array = (Input * len(inputs))(*inputs) if inputs else None
-    status = lib.fs_call(runtime, op.encode(), array, len(inputs), params.encode(), C.byref(result))
+    op_bytes, params_bytes = op.encode(), params.encode()
+    status = lib.fs_call_n(runtime, op_bytes, len(op_bytes), array, len(inputs),
+                           params_bytes, len(params_bytes), C.byref(result))
     return status, result
 
 
@@ -177,7 +184,7 @@ def test_contract_pipeline_matches_python_at_edges_and_preserves_order(abi):
         np.testing.assert_array_equal(_tuple(lib, measures, index), np.asarray(expected))
 
     for result in (measures, objects, region):
-        lib.fs_result_release(result)
+        assert lib.fs_result_release(result) == FS_OK
 
 
 def test_empty_region_and_registry_results_match_direct_python(abi):
@@ -203,7 +210,7 @@ def test_empty_region_and_registry_results_match_direct_python(abi):
     assert value.value == float(expected) == 1.0
 
     for result in (count, registry_region, measures, objects, region):
-        lib.fs_result_release(result)
+        assert lib.fs_result_release(result) == FS_OK
 
 
 def test_result_owns_data_after_input_is_freed(abi):
@@ -214,7 +221,7 @@ def test_result_owns_data_after_input_is_freed(abi):
     del pixels
     gc.collect()
     assert _runs(lib, result) == [(0, 1, 2), (1, 0, 1)]
-    lib.fs_result_release(result)
+    assert lib.fs_result_release(result) == FS_OK
 
 
 @pytest.mark.parametrize("case,expected", [
@@ -255,7 +262,9 @@ def test_invalid_image_views_are_rejected(abi, case, expected):
 def test_null_input_array_unknown_ops_and_extra_json_are_rejected(abi):
     lib, runtime = abi
     result = C.c_void_p()
-    assert lib.fs_call(runtime, b"contract:threshold", None, 1, b"{}", C.byref(result)) == FS_E_INVALID_ARG
+    op, params = b"contract:threshold", b"{}"
+    assert lib.fs_call_n(runtime, op, len(op), None, 1, params, len(params),
+                         C.byref(result)) == FS_E_INVALID_ARG
     pixels = np.ones((2, 2), dtype=np.float64)
     assert _call(abi, "threshold", [_image(pixels)], '{"lo":0.2,"hi":0.8}')[0] == FS_E_UNKNOWN_OP
     assert _call(abi, "registry:no_such_op", [_image(pixels)])[0] == FS_E_UNKNOWN_OP
@@ -283,7 +292,84 @@ def test_runtime_rejects_an_incompatible_abi_major():
     lib = C.CDLL(str(_library_path()))
     _bind(lib)
     root = os.fsencode(ROOT)
-    options = InitOptions(C.sizeof(InitOptions), root, None, 1, 999, 0)
+    options = InitOptions(C.sizeof(InitOptions), root, None, 3, 999, 0)
     runtime = C.c_void_p()
     assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == 6
     assert runtime.value is None
+
+
+def test_isolated_mode_rejects_existing_cpython_and_unsafe_host_opt_in_is_explicit():
+    lib = C.CDLL(str(_library_path()))
+    _bind(lib)
+    root = os.fsencode(ROOT)
+    runtime = C.c_void_p()
+    isolated = InitOptions(C.sizeof(InitOptions), root, None, 1, 0, 2)
+    assert lib.fs_runtime_create(C.byref(isolated), C.byref(runtime)) == FS_E_INVALID_ARG
+    unsafe = InitOptions(C.sizeof(InitOptions), root, None, 3, 0, 2)
+    assert lib.fs_runtime_create(C.byref(unsafe), C.byref(runtime)) == FS_OK
+    lib.fs_runtime_destroy(runtime)
+
+
+def test_bounded_strings_do_not_require_nul_and_legacy_entrypoint_fails_closed(abi):
+    lib, runtime = abi
+    op = (C.c_char * len(b"contract:threshold")).from_buffer_copy(b"contract:threshold")
+    params = (C.c_char * len(b'{"lo":0.5,"hi":1.0}')).from_buffer_copy(b'{"lo":0.5,"hi":1.0}')
+    pixels = np.ones((2, 2), dtype=np.float64)
+    result = C.c_void_p()
+    assert lib.fs_call_n(runtime, op, C.sizeof(op), C.byref(_image(pixels)), 1,
+                         params, C.sizeof(params), C.byref(result)) == FS_OK
+    assert lib.fs_result_release(result) == FS_OK
+    legacy = lib.fs_call
+    legacy.argtypes = [C.c_void_p, C.c_char_p, C.POINTER(Input), C.c_size_t,
+                       C.c_char_p, C.POINTER(C.c_void_p)]
+    legacy.restype = C.c_int
+    assert legacy(runtime, b"contract:threshold", None, 0, b"{}", C.byref(result)) == FS_E_INVALID_ARG
+
+
+def test_released_and_unknown_result_handles_are_rejected_and_double_release_errors(abi):
+    lib, _runtime = abi
+    pixels = np.ones((2, 2), dtype=np.float64)
+    status, result = _call(abi, "contract:threshold", [_image(pixels)], '{"lo":0.5,"hi":1.0}')
+    assert status == FS_OK and result.value
+    assert lib.fs_result_release(result) == FS_OK
+    kind = C.c_int()
+    assert lib.fs_result_kind(result, 0, C.byref(kind)) == FS_E_INVALID_ARG
+    assert lib.fs_result_release(result) == FS_E_INVALID_ARG
+    unknown = C.c_void_p(0x1234)
+    assert lib.fs_result_kind(unknown, 0, C.byref(kind)) == FS_E_INVALID_ARG
+    input_value = _borrow(FS_VALUE_REGION, result)
+    assert _call(abi, "contract:connection", [input_value])[0] == FS_E_INVALID_ARG
+
+
+def test_runtime_without_a_named_python_environment_fails_closed(monkeypatch):
+    lib = C.CDLL(str(_library_path()))
+    _bind(lib)
+    monkeypatch.delenv("FULLSEYE_PYTHON_ROOT", raising=False)
+    runtime = C.c_void_p()
+    options = InitOptions(C.sizeof(InitOptions), None, None, 3, 0, 2)
+    assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_E_NO_PYTHON
+    assert runtime.value is None
+
+
+def test_release_and_accessor_concurrency_keeps_the_handle_lifetime_safe(abi):
+    lib, _runtime = abi
+    pixels = np.ones((8, 8), dtype=np.float64)
+    status, result = _call(abi, "contract:threshold", [_image(pixels)], '{"lo":0.5,"hi":1.0}')
+    assert status == FS_OK
+    start = threading.Barrier(2)
+
+    def read_result():
+        start.wait()
+        rows = []
+        for _ in range(200):
+            pointer = C.POINTER(Run)()
+            count = C.c_size_t()
+            rows.append(lib.fs_result_region_runs(result, 0, C.byref(pointer), C.byref(count)))
+        return rows
+
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        future = pool.submit(read_result)
+        start.wait()
+        assert lib.fs_result_release(result) == FS_OK
+        statuses = future.result()
+    assert set(statuses) <= {FS_OK, FS_E_INVALID_ARG}

@@ -48,7 +48,10 @@ typedef enum fs_value_kind {
 } fs_value_kind_t;
 
 enum {
-    FS_INIT_ISOLATED = 1u
+    FS_INIT_ISOLATED = 1u,
+    /* Deliberately opt in when this DLL is loaded by an existing CPython host.
+     * 既存 CPython ホストを使う場合だけ、明示的に危険な許可を与える。 */
+    FS_INIT_ALLOW_HOST_PYTHON_UNSAFE = 2u
 };
 
 typedef struct fs_init_options {
@@ -95,7 +98,10 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options,
                                               fs_runtime_t **out);
 FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime);
 
-/* Discovery and execution / 検索と実行。IDs are always scoped / ID は必ず層付き。 */
+/* Legacy NUL-terminated entry points are retained for binary compatibility but
+ * fail closed. Use the _n functions, whose explicit lengths prevent reads past
+ * a caller-owned buffer. / 旧入口は互換性のため残すが、境界外読取りを避けるため
+ * fail-closed とする。 */
 FS_API fs_status_t FS_CALL fs_find_ops_json(fs_runtime_t *runtime,
                                              const char *query_json,
                                              char **out_utf8,
@@ -106,6 +112,21 @@ FS_API fs_status_t FS_CALL fs_call(fs_runtime_t *runtime,
                                     size_t input_count,
                                     const char *params_json,
                                     fs_result_t **out);
+/* The byte spans need not have a trailing NUL. They must contain UTF-8 text.
+ * 文字列は終端 NUL 不要で、長さの範囲内の UTF-8 を渡す。 */
+FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime,
+                                               const char *query_json,
+                                               size_t query_json_bytes,
+                                               char **out_utf8,
+                                               size_t *out_bytes);
+FS_API fs_status_t FS_CALL fs_call_n(fs_runtime_t *runtime,
+                                      const char *op_id,
+                                      size_t op_id_bytes,
+                                      const fs_input_t *inputs,
+                                      size_t input_count,
+                                      const char *params_json,
+                                      size_t params_json_bytes,
+                                      fs_result_t **out);
 
 /* Borrowed result views remain valid through fs_result_release().
  * 借用結果は fs_result_release() まで有効。 */
@@ -138,7 +159,9 @@ FS_API fs_status_t FS_CALL fs_result_tuple_real(const fs_result_t *result,
                                                  size_t index,
                                                  size_t element_index,
                                                  double *out);
-FS_API void FS_CALL fs_result_release(fs_result_t *result);
+/* Release returns FS_E_INVALID_ARG for an unknown or already released handle.
+ * 解放済みまたは未知のハンドルは FS_E_INVALID_ARG。 */
+FS_API fs_status_t FS_CALL fs_result_release(fs_result_t *result);
 FS_API void FS_CALL fs_free(void *library_allocated);
 
 /* The returned size includes the trailing NUL byte / 返す長さは終端 NUL を含む。 */

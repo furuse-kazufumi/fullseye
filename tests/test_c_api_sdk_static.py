@@ -18,6 +18,8 @@ def test_native_dependencies_are_optional_and_pybind11_is_pinned():
 def test_sdk_is_a_selectable_component_with_fixed_destinations():
     sdk = INSTALL_COMPONENTS["sdk"]
     assert sdk.selectable is True and sdk.python_extra == "native"
+    assert sdk.development_only is True
+    assert "FULLSEYE_PYTHON_ROOT" in sdk.runtime_note
     assert set(SDK_LAYOUT) == {"headers", "runtime_windows", "library", "cmake_config",
                                "python_runtime", "site_packages"}
     assert set(sdk.destinations) == set(SDK_LAYOUT.values())
@@ -30,3 +32,5 @@ def test_cmake_exports_cxx_target_and_installs_all_headers():
     assert "add_library(Fullseye::CXX ALIAS fullseye_cxx)" in text
     assert "fullseye.h fullseye.hpp fullseye_abi.h" in text
     assert (ROOT / "cmake" / "FullseyeConfig.cmake.in").is_file()
+    config = (ROOT / "cmake" / "FullseyeConfig.cmake.in").read_text(encoding="utf-8")
+    assert "development SDK" in config and "FULLSEYE_PYTHON_ROOT" in config

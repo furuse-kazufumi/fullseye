@@ -98,11 +98,16 @@ if(FULLSEYE_BUILD_NATIVE)
     add_executable(fullseye_c_threads examples/c_threads.c)
     set_property(TARGET fullseye_c_threads PROPERTY C_STANDARD 11)
     target_link_libraries(fullseye_c_threads PRIVATE Fullseye::C Threads::Threads)
+    add_executable(fullseye_c_handle_safety examples/c_handle_safety.c)
+    set_property(TARGET fullseye_c_handle_safety PROPERTY C_STANDARD 11)
+    target_link_libraries(fullseye_c_handle_safety PRIVATE Fullseye::C Threads::Threads)
     add_test(NAME fullseye_c_lifecycle
              COMMAND fullseye_c_example ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME fullseye_cpp_lifecycle
              COMMAND fullseye_cpp_example ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME fullseye_c_thread_errors
              COMMAND fullseye_c_threads ${CMAKE_CURRENT_SOURCE_DIR})
+    add_test(NAME fullseye_c_handle_safety
+             COMMAND fullseye_c_handle_safety ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 endif()
