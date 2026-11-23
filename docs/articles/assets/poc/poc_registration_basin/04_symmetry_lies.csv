@@ -1,9 +1,31 @@
-﻿初期化 / initialisation,形状 / shape,残差/直径 / residual/diameter,回転誤差 度 / rotation error [deg],見かけ収束 / apparent convergence,誤姿勢 / wrong pose
-局所 / local,非対称当て金 / asymmetric bracket,0.02648,1.31,16/16,0
-局所 / local,素の直方体 / plain box,0.02677,0.83,16/16,0
-局所 / local,球 / sphere,0.02111,24.70,16/16,16
-局所 / local,円柱 / cylinder,0.02238,19.24,16/16,6
-大域 / global,非対称当て金 / asymmetric bracket,0.02647,1.39,16/16,0
-大域 / global,素の直方体 / plain box,0.02659,179.26,16/16,9
-大域 / global,球 / sphere,0.02092,99.57,16/16,16
-大域 / global,円柱 / cylinder,0.02186,179.57,16/16,16
+﻿"初期化
+initialisation","形状
+shape","残差/直径
+residual/diameter","回転誤差 度
+rotation error [deg]","見かけ収束
+apparent convergence","誤姿勢
+wrong pose"
+"局所
+local","非対称当て金
+asymmetric bracket",0.02648,1.31,16/16,0
+"局所
+local","素の直方体
+plain box",0.02677,0.83,16/16,0
+"局所
+local","球
+sphere",0.02111,24.70,16/16,16
+"局所
+local","円柱
+cylinder",0.02238,19.24,16/16,6
+"大域
+global","非対称当て金
+asymmetric bracket",0.02647,1.39,16/16,0
+"大域
+global","素の直方体
+plain box",0.02659,179.26,16/16,9
+"大域
+global","球
+sphere",0.02092,99.57,16/16,16
+"大域
+global","円柱
+cylinder",0.02186,179.57,16/16,16

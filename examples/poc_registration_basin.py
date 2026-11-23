@@ -69,12 +69,14 @@ STILL_TITLE_FONT = 20
 STILL_PANEL_FONT = 17
 STILL_BODY_FONT = 16
 STILL_CREDIT_FONT = 14
-PCA_TABLE_COLUMN_WIDTH = 205
-
-
 def _bi(ja, en):
     """図の札を日本語 / English の順で返す。 / Return a bilingual figure label."""
     return "%s / %s" % (ja, en)
+
+
+def _bi_table(ja, en):
+    """表のセルを日本語、英語の 2 行で返す。 / Stack bilingual table text."""
+    return "%s\n%s" % (ja, en)
 
 
 def check_headline() -> None:
@@ -1239,17 +1241,16 @@ def main():
                 "非対称 弱(角柱 0.25)": "weak asymmetry (peg 0.25)",
                 "対称(素の直方体)": "symmetric (plain box)"}
     figs.save_table("pca_quadrant",
-                    [_bi("形状", "shape"), _bi("第1候補 度", "first candidate [deg]"),
-                     _bi("第2候補 度", "second candidate [deg]"),
-                     _bi("象限誤り %", "quadrant errors [%]"),
-                     _bi("選ばれた解 度", "selected solution [deg]")],
-                    [[_bi(k, shape_en[k]), "%.2f" % v[0], "%.1f" % v[1], "%.0f" % v[2], "%.2f" % v[3]]
+                    [_bi_table("形状", "shape"), _bi_table("第1候補 度", "first candidate [deg]"),
+                     _bi_table("第2候補 度", "second candidate [deg]"),
+                     _bi_table("象限誤り %", "quadrant errors [%]"),
+                     _bi_table("選ばれた解 度", "selected solution [deg]")],
+                    [[_bi_table(k, shape_en[k]), "%.2f" % v[0], "%.1f" % v[1], "%.0f" % v[2], "%.2f" % v[3]]
                      for k, v in quad_tbl.items()],
                     title=_bi("PCA の正しさは形状の非対称性に賭けている",
                               "PCA correctness depends on shape asymmetry"),
                     caption="非対称性が消えると 4 候補が形として区別できず、"
-                            "選択が崩れる(選ばれた解が第 1 候補から離れる)。",
-                    col_w=PCA_TABLE_COLUMN_WIDTH)
+                            "選択が崩れる(選ばれた解が第 1 候補から離れる)。")
     print("  → 理由その 1・象限: 角柱があるうちは最小 RMSE が正しい象限を選ぶ。素の")
     print("     直方体では 4 候補が形として区別できず、選択が崩れる。**PCA の正しさは")
     print("     形状の非対称性に賭けている**。")
@@ -1410,10 +1411,13 @@ def main():
     sym_shape_en = {"非対称当て金": "asymmetric bracket", "素の直方体": "plain box",
                     "球": "sphere", "円柱": "cylinder"}
     figs.save_table("symmetry_lies",
-                    [_bi("初期化", "initialisation"), _bi("形状", "shape"),
-                     _bi("残差/直径", "residual/diameter"), _bi("回転誤差 度", "rotation error [deg]"),
-                     _bi("見かけ収束", "apparent convergence"), _bi("誤姿勢", "wrong pose")],
-                    [[_bi(mode.split(":")[0], init_en[mode.split(":")[0]]), _bi(label, sym_shape_en[label]),
+                    [_bi_table("初期化", "initialisation"), _bi_table("形状", "shape"),
+                     _bi_table("残差/直径", "residual/diameter"),
+                     _bi_table("回転誤差 度", "rotation error [deg]"),
+                     _bi_table("見かけ収束", "apparent convergence"),
+                     _bi_table("誤姿勢", "wrong pose")],
+                    [[_bi_table(mode.split(":")[0], init_en[mode.split(":")[0]]),
+                      _bi_table(label, sym_shape_en[label]),
                       "%.5f" % sym_stat[(mode, label)][0],
                       "%.2f" % sym_stat[(mode, label)][1],
                       "%d/%d" % (v[0], N_S), "%d" % v[1]]
@@ -1421,8 +1425,7 @@ def main():
                     title=_bi("収束したのに間違っている(残差では検出できない)",
                               "converged but wrong (residual cannot detect it)"),
                     caption="球・円柱は残差が小さいまま姿勢が任意。素の直方体は"
-                            "局所なら嘘をつかず、大域に替えた瞬間に嘘をつく。",
-                    col_w=118)
+                            "局所なら嘘をつかず、大域に替えた瞬間に嘘をつく。")
     print("\n  → 局所 ICP は初期ずれが小さければ対称形状でも**近い**解に落ちるので嘘が")
     print("     出にくい(素の直方体の他の 3 姿勢は 180 度先にあり、盆地の外)。大域手法に")
     print("     替えたとたん、残差が同じまま別の姿勢を返す。**残差を成功判定に使うと")
