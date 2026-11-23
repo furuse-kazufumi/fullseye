@@ -16,6 +16,7 @@ import pytest
 
 import api
 import studio_program as sp
+import studio_timingkit as timing
 
 NAMES = sorted(sp.op_table())
 
@@ -158,6 +159,7 @@ def test_more_right_examples_than_wrong_ones():
 
 
 def test_500_lines_are_checked_quickly():
+    timing.requires_no_external_tracer()
     big = "\n".join("x%d = gaussian(img, 0.%d)\nif x%d is not None:\n    img = median(x%d, 0.3)"
                     % (i, i % 9 + 1, i, i) for i in range(167))
     assert len(big.splitlines()) >= 500

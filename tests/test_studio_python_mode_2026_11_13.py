@@ -6,8 +6,10 @@
 確認の窓(信頼・保存・名前を付けて保存・条件)は studio_pymode の差し込み口を差し替える。
 """
 import builtins
+import contextlib
 import json
 import os
+import sys
 import threading
 import time
 
@@ -85,6 +87,67 @@ def _key(win, key, mod=None):
     from PySide6.QtTest import QTest
     QTest.keyClick(win._program["edit"], key, mod or QtCore.Qt.NoModifier)
     _pump(0.05)
+
+
+@contextlib.contextmanager
+def _tracers(sys_trace, thread_trace):
+    """呼び出し元と新しいスレッドの tracer を一時的に替え、coverage の物も同一性を保って戻す。"""
+    previous_sys = sys.gettrace()
+    previous_thread = threading.gettrace()
+    try:
+        sys.settrace(sys_trace)
+        threading.settrace(thread_trace)
+        yield
+    finally:
+        sys.settrace(previous_sys)
+        threading.settrace(previous_thread)
+    assert sys.gettrace() is previous_sys
+    assert threading.gettrace() is previous_thread
+
+
+def _press_stop_with_dummy_run(pm):
+    """実行中と同じ stop_event を置き、実際の Stop ボタンを押す。"""
+    class DummyRun:
+        stop_event = threading.Event()
+
+    job = DummyRun()
+    pm.job = job
+    pm._update_labels()
+    pm.btn_stop.click()
+    pm.job = None
+    pm._update_labels()
+    return job
+
+
+def test_external_tracer_detects_all_three_process_hooks(monkeypatch):
+    """calling-thread、thread default、3.12+ monitoring id 0..5 のどれも外部 tracer とする。"""
+    def fake_trace(frame, event, arg):
+        return fake_trace
+
+    with _tracers(fake_trace, None):
+        assert sp.external_tracer() == sp.SYS_TRACE_DESCRIPTION
+        assert timing.external_tracer_reason() == timing.EXTERNAL_TRACER_REASON
+    with _tracers(None, fake_trace):
+        assert sp.external_tracer() == sp.THREADING_TRACE_DESCRIPTION
+        assert timing.external_tracer_reason() == timing.EXTERNAL_TRACER_REASON
+
+    class FakeMonitoring:
+        @staticmethod
+        def get_tool(tool_id):
+            return "coverage" if tool_id == sp.MONITORING_TOOL_IDS[-1] else None
+
+    with _tracers(None, None):
+        monkeypatch.setattr(sys, "monitoring", FakeMonitoring(), raising=False)
+        assert sp.external_tracer() == sp.MONITORING_TRACE_DESCRIPTION % sp.MONITORING_TOOL_IDS[-1]
+        assert timing.external_tracer_reason() == timing.EXTERNAL_TRACER_REASON
+
+
+def test_external_tracer_notice_and_help_are_translated_in_every_ui_language():
+    expected = set(studio.LANGUAGES) - {"en"}
+    for key in (pm_mod.EXTERNAL_TRACER_STOP_NOTICE, pm_mod.EXTERNAL_TRACER_STOP_TOOLTIP):
+        row = studio.STRINGS_I18N.get(key) or {}
+        assert set(row) == expected, (key, sorted(expected - set(row)))
+        assert all(text.strip() and text != key for text in row.values())
 
 
 def _run_f5(win, timeout=30):
@@ -378,7 +441,40 @@ def test_6_runtime_exception_marks_the_line(tmp_path, monkeypatch):
 # --------------------------------------------------------------------------- #
 # 7. 無限ループ: 止めるボタン・時間の上限・Release・止められない C の呼び出し          #
 # --------------------------------------------------------------------------- #
+def test_stop_reports_an_external_tracer_in_the_output(tmp_path, monkeypatch):
+    """coverage が元から tracer を持っていても、偽物を入れた間だけ検査し、元を同じ物へ戻す。"""
+    win, _model = _launch(tmp_path, monkeypatch)
+
+    def fake_trace(frame, event, arg):
+        return fake_trace
+
+    try:
+        pm = win._pymode
+        pm.output.clear()
+        with _tracers(fake_trace, fake_trace):
+            job = _press_stop_with_dummy_run(pm)
+        assert job.stop_event.is_set()
+        assert "Stop may not take effect: another tracer" in pm.output.toPlainText()
+    finally:
+        _close(win)
+
+
+def test_stop_does_not_report_a_tracer_when_none_is_active(tmp_path, monkeypatch):
+    """coverage の tracer も一時退避し、本当に tracer の無い呼び出し元で Stop を押す。"""
+    win, _model = _launch(tmp_path, monkeypatch)
+    try:
+        pm = win._pymode
+        pm.output.clear()
+        with _tracers(None, None):
+            job = _press_stop_with_dummy_run(pm)
+        assert job.stop_event.is_set()
+        assert "Stop may not take effect: another tracer" not in pm.output.toPlainText()
+    finally:
+        _close(win)
+
+
 def test_7_infinite_loop_is_stopped(tmp_path, monkeypatch):
+    timing.requires_no_external_tracer()
     from PySide6 import QtCore
     win, model = _launch(tmp_path, monkeypatch, time_limit=30)
     try:

@@ -289,6 +289,7 @@ def _late_writer(tmp_path, gate):
 def test_h3_an_abandoned_run_blocks_the_next_run_and_is_restored_again_when_it_ends(tmp_path):
     """探針 p03: 諦めた実行は、戻した後にも環境変数と作業フォルダを書き換える。生きている間は次を始めず、
     終わった所でもう一度戻す。"""
+    timing.requires_no_external_tracer()
     assert _wait_no_abandoned()
     cwd = os.getcwd()
     assert "ZZ_STUDIO_LATE" not in os.environ
@@ -319,6 +320,7 @@ def test_h3_an_abandoned_run_blocks_the_next_run_and_is_restored_again_when_it_e
 
 
 def test_h3_the_window_says_that_the_earlier_run_is_still_running(tmp_path, monkeypatch):
+    timing.requires_no_external_tracer()
     assert _wait_no_abandoned()
     cwd = os.getcwd()
     win, _m = _launch(tmp_path, monkeypatch, time_limit=0.3)

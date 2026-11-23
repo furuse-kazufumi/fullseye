@@ -579,6 +579,7 @@ class QuickRepr:
 
 def test_r5_helper_threads_do_not_pile_up_and_their_changes_are_put_back(tmp_path):
     """探針 q07: 止まらない ``__repr__`` のスレッドが溜まり、環境変数の書き換えが Studio に残った。"""
+    timing.requires_no_external_tracer()
     assert _wait(lambda: not V.stray_threads())
     os.environ.pop("ZZ_STUDIO_REPR", None)
     os.environ.pop("ZZ_STUDIO_QUICK", None)
@@ -618,6 +619,7 @@ def test_r5_helper_threads_do_not_pile_up_and_their_changes_are_put_back(tmp_pat
 
 def test_r5_a_run_is_not_started_while_a_value_helper_thread_is_left(tmp_path, monkeypatch):
     """探針 q07b / q07e: 残ったスレッドの保留の例外で、次の Debug の実行が何もしなくても時間切れになった。"""
+    timing.requires_no_external_tracer()
     assert _wait(lambda: not V.stray_threads())
     gate = timing.UnstoppableGate()
     win, _m = _launch(tmp_path, monkeypatch, time_limit=5)
@@ -653,6 +655,7 @@ def test_r5_a_run_is_not_started_while_a_value_helper_thread_is_left(tmp_path, m
 def test_r7_the_next_run_waits_until_the_late_restore_of_an_abandoned_run_is_done(tmp_path, monkeypatch):
     """残した実行のスレッドが終わった瞬間に次の実行を通すと、その実行の途中で状態と import の見張りが戻される
     (e2e の 7 段目が 10 回中 1 回落ちた)。遅れて戻す処理が終わるまで、次の実行を断る。"""
+    timing.requires_no_external_tracer()
     assert _wait(lambda: not sp.abandoned_runs())
     real = sp._GlobalState.restore
     slow = {"calls": 0}

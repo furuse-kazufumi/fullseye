@@ -279,6 +279,7 @@ def test_s1_the_selection_is_refused_while_a_value_helper_thread_is_left(monkeyp
 
 def test_s1_a_selection_that_cannot_be_stopped_is_put_back_when_it_ends():
     """F5 と同じ後始末(H3): 止められずに残した「選んだ行」が後から変えた環境も、終わった所で戻す。その間は次を断る。"""
+    timing.requires_no_external_tracer()
     import builtins
     r = sp.run_program("# python\nx = 1\n", IMG)
     imp0 = builtins.__import__

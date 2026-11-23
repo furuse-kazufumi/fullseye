@@ -82,10 +82,10 @@ def _ok(detail: str = "ok") -> dict:
 
 # ---- 門の一覧 --------------------------------------------------------------------------------
 
-def test_builtin_gates_are_ten_distinct_existing_files():
+def test_builtin_gates_are_eleven_distinct_existing_files():
     gates = cl.BUILTIN_GATES
-    assert len(gates) == 10
-    assert len(set(gates)) == 10
+    assert len(gates) == 11
+    assert len(set(gates)) == 11
     missing = [g for g in gates if not (ROOT / g).is_file()]
     assert missing == []
 

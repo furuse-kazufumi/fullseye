@@ -125,6 +125,13 @@ AUTOSAVE_FILE_MODES = ("off", "idle", "focus")
 DEFAULT_AUTOSAVE_IDLE_S = 2.0
 AUTOSAVE_IDLE_RANGE_S = (0.5, 600.0)
 DEFAULT_TIME_LIMIT_S = sp.DEFAULT_TIME_LIMIT_S
+EXTERNAL_TRACER_STOP_NOTICE = (
+    "Stop may not take effect: another tracer (a debugger or coverage) is active in this Python."
+)
+EXTERNAL_TRACER_STOP_TOOLTIP = (
+    "Stop the running program (Ctrl+F2). The Stop button and time limit are not guaranteed while an external tracer "
+    "(a debugger or coverage) is active."
+)
 NEW_PROGRAM_COMMENT = "New program. F5 runs it; img is the image open in Studio."
 NEW_PROGRAM_TEXT = ("# python\n"
                     "# " + NEW_PROGRAM_COMMENT + "\n"
@@ -977,7 +984,7 @@ class PyModeController(QtCore.QObject):
         self.btn_step.setText(tr("Step"))
         self.btn_step.setToolTip(tr("Step: run one line and stop (F6, Debug only)"))
         self.btn_stop.setText(tr("Stop"))
-        self.btn_stop.setToolTip(tr("Stop the running program (Ctrl+F2)"))
+        self.btn_stop.setToolTip(tr(EXTERNAL_TRACER_STOP_TOOLTIP))
         self.output_title.setText(tr("Output (print, notes and errors; click a line with 'line N' to go there)"))
         self.output.setPlaceholderText(tr("Run the program (F5): print output, notes and errors appear here."))
         if getattr(self, "stage_stack", None) is not None:   # 部品を作っている途中(_build_ui)では入れ替えない
@@ -1656,6 +1663,7 @@ class PyModeController(QtCore.QObject):
     def stop(self):
         """Ctrl+F2: 走っていれば止める。止まっている(ブレークポイント)なら Debug の区切りを終える。"""
         if self.job is not None:
+            self._external_tracer_notice(self.job)
             self.job.stop_event.set()
             self._status(self.tr("stop requested…"))
             self.flash(self.tr("Stop requested"))
@@ -1665,6 +1673,18 @@ class PyModeController(QtCore.QObject):
             self.flash(self.tr("Debugging ended"))
             return True
         return False
+
+    def _external_tracer_notice(self, job=None):
+        """外部 tracer の下では止まる保証が無いことを、1 回だけ出力の欄へ知らせる。"""
+        if sp.external_tracer() is None:
+            return False
+        meta = getattr(job, "meta", None)
+        if isinstance(meta, dict) and meta.get("external_tracer_notice"):
+            return False
+        self._out("⚠ " + self.tr(EXTERNAL_TRACER_STOP_NOTICE))
+        if isinstance(meta, dict):
+            meta["external_tracer_notice"] = True
+        return True
 
     def reset(self):
         self._end_session()
@@ -1826,6 +1846,8 @@ class PyModeController(QtCore.QObject):
         if new_out:
             head, sep, rest = new_out.partition("\n")         # 先頭の「前の出力は捨てた」の 1 行は UI の言語で
             self._out((self._loc(head) + sep + rest).rstrip("\n"))
+        if res.stopped in ("time_limit", "unstoppable"):
+            self._external_tracer_notice(job)
         for n in res.notes[job.meta.get("notes_n", 0):]:
             self._out("ℹ " + self._loc(n))
         job.meta["notes_n"] = len(res.notes)

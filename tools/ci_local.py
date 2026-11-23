@@ -166,6 +166,7 @@ BUILTIN_GATES = [
     "tests/test_no_invalid_escape_sequences.py", "tests/test_svd_full_matrices.py", "tests/test_fssystem.py",
     "tests/test_docs_liquid_safe.py", "tests/test_no_stray_root_images_2026_11_01.py",
     "tests/test_review_fixes_lib2_2026_10_07.py",
+    "tests/test_ci_untraced_studio_2026_11_23.py",
 ]
 GATES_FILE = "tools/ci_always_run.txt"
 #: 依存の定義を変えたら上げる(venv を作り直す合図)。

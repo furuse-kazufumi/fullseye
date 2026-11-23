@@ -1434,6 +1434,7 @@ def test_watch_python_loop_is_stopped_and_reported_in_red(qapp):
 
 def test_watch_shows_evaluating_then_stuck_and_stops_auto_reevaluation(qapp):
     """止められない C 待機でも UI は待たされず、行に理由が出て、自動では評価し直さない。"""
+    timing.requires_no_external_tracer()
     import studio_pyedit_vars_qt as VQ
     # Lock.acquire() は全 OS で Python bytecode に戻らない C 待機。有限の sleep は単に遅く、先に戻り得る。
     gate = timing.UnstoppableGate()
@@ -1491,6 +1492,7 @@ class QtCoreTimer:
 
 
 def test_watch_job_logic_without_qt():
+    timing.requires_no_external_tracer()
     ns = {"x": 3}
     ev = V.WatchEvaluator(ns, timeout_s=0.1)
     j = ev.start("x * 2")

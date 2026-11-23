@@ -495,7 +495,9 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-23 下位モジュールの名前を公開の名前に数えない直し: 1563 → 1568(+5、この機械の実測)。名前が
 #   fullseye の下位モジュールと同じだっただけで届く事にされていた scene_registry.motion と
 #   oss_adapter.camera / features / flow / stereo。届いていなかった物を正直に数え直した(増えたのではない)。
-_HIDDEN_FUNCTIONS_TODAY = 1568
+# 2026-11-23 Studio の外部 tracer の知らせ: studio_program.external_tracer 1 本(Studio の GUI の内側。
+#   呼び出し元の sys.settrace / threading.settrace / sys.monitoring を検出する)で 1568 → 1569(この機械の実測)。
+_HIDDEN_FUNCTIONS_TODAY = 1569
 
 
 def _hidden_total():

@@ -49,7 +49,7 @@ __all__ = [
     "fingerprint", "describe_value", "pipeline_search_dirs", "close_program_windows", "needs_gui_thread",
     "Problem", "check_program", "checker_backends", "complete", "hover", "apply_fix", "CONFIGS",
     "run_file", "evaluate", "STARTER_PROGRAM", "STARTER_PROGRAMS", "starter_program", "abandoned_runs",
-    "program_threads",
+    "program_threads", "external_tracer",
 ]
 
 SYNTAX_PYTHON = "python"
@@ -60,6 +60,32 @@ PROGRAM_FILENAME = "<studio-program>"
 
 #: 時間の上限の既定(秒)。行ごとに見るので、C の中で回っている重い op の途中では止まらない。
 DEFAULT_TIME_LIMIT_S = 30.0
+
+#: CPython が利用者向けに予約する monitoring tool id 全域 / all user-visible monitoring tool ids.
+MONITORING_TOOL_IDS = (0, 1, 2, 3, 4, 5)
+#: tracer の短い出所名 / short descriptions returned by :func:`external_tracer`.
+SYS_TRACE_DESCRIPTION = "sys.settrace"
+THREADING_TRACE_DESCRIPTION = "threading.settrace"
+MONITORING_TRACE_DESCRIPTION = "sys.monitoring tool %d"
+
+
+def external_tracer() -> str | None:
+    """Return an active external tracer, or ``None``; 外部 tracer の短い出所名を返す。
+
+    呼び出したスレッドの ``sys.settrace``、新しいスレッドへ付ける ``threading.settrace``、CPython 3.12+
+    の ``sys.monitoring`` tool id 0..5 を見る。Studio が作業スレッドだけへ付ける行 tracer は、GUI スレッドから
+    呼ぶこの関数の ``sys.gettrace()`` には現れない。
+    """
+    if sys.gettrace() is not None:
+        return SYS_TRACE_DESCRIPTION
+    if threading.gettrace() is not None:
+        return THREADING_TRACE_DESCRIPTION
+    monitoring = getattr(sys, "monitoring", None)
+    if monitoring is not None:
+        for tool_id in MONITORING_TOOL_IDS:
+            if monitoring.get_tool(tool_id) is not None:
+                return MONITORING_TRACE_DESCRIPTION % tool_id
+    return None
 
 #: 起動時に Program 欄へ入れる Python の例(既定のモードは Python、設計書 §1)。同梱の画像を読み、op 4 つ・
 #: 変数・if を 1 つずつ使う。実行すると絵(show)と段の列(記録)が出る。コメントと print の見出しは UI の言語で

@@ -10,13 +10,49 @@ Linux CI の full suite で test_7_infinite_loop_is_stopped が 1 時間 40 分�
 補助のスレッドに頼らず、待ちそのものが上限で必ず戻る形にする。上限の間も C の待ちのまま。
 """
 import builtins
+import os
+import sys
 import threading
+
+import pytest
 
 
 #: 失敗した試験でも待ちを永久に残さない秒数(待ち 1 回の上限) / per-wait failsafe in seconds.
 UNSTOPPABLE_FAILSAFE_S = 15.0
 #: 利用者コードから試験用 lock を参照する builtins 名 / builtin name for the test lock.
 UNSTOPPABLE_BUILTIN = "_fullseye_test_unstoppable_gate"
+
+#: CPython が利用者向けに予約する monitoring tool id 全域 / all user-visible monitoring tool ids.
+MONITORING_TOOL_IDS = (0, 1, 2, 3, 4, 5)
+#: tracer 無しを強制する専用 CI の環境変数 / dedicated-CI environment variable.
+REQUIRE_UNTRACED_ENV = "FULLSEYE_REQUIRE_UNTRACED"
+#: 上の環境変数を有効にする値 / value that enables the dedicated-CI guard.
+REQUIRE_UNTRACED_VALUE = "1"
+#: pytest の skip にそのまま出す理由 / exact pytest skip reason.
+EXTERNAL_TRACER_REASON = "requires no external tracer: debugger, coverage, or sys.monitoring is active"
+#: 専用 CI が tracer を見つけた時の補足 / fail-closed detail for the dedicated CI job.
+UNTRACED_REQUIRED_DETAIL = "FULLSEYE_REQUIRE_UNTRACED=1 requires a genuinely untraced process"
+
+
+def external_tracer_reason() -> str | None:
+    """Return the skip reason when an external tracer is active; 外部 tracer があれば理由を返す。"""
+    if sys.gettrace() is not None or threading.gettrace() is not None:
+        return EXTERNAL_TRACER_REASON
+    monitoring = getattr(sys, "monitoring", None)
+    if monitoring is not None and any(monitoring.get_tool(tool_id) is not None
+                                      for tool_id in MONITORING_TOOL_IDS):
+        return EXTERNAL_TRACER_REASON
+    return None
+
+
+def requires_no_external_tracer() -> None:
+    """Skip traced timing tests, or fail closed in dedicated CI; tracer 下の時間試験を止める。"""
+    reason = external_tracer_reason()
+    if reason is None:
+        return
+    if os.environ.get(REQUIRE_UNTRACED_ENV) == REQUIRE_UNTRACED_VALUE:
+        pytest.fail("%s; %s" % (reason, UNTRACED_REQUIRED_DETAIL), pytrace=False)
+    pytest.skip(reason)
 
 
 class _BoundedLock:
