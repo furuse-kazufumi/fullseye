@@ -4915,6 +4915,15 @@ def _knob_row_class(QtWidgets, QtCore):
             if slider:
                 self.slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
                 self.slider.setRange(0, 100)
+                # 選んだ spec が choice / bool だと slider は隠れる。Linux の style では表示中だけ
+                # 15 px の最小幅を持つため、段を選ぶたびに dock の最小幅まで変わっていた。横は
+                # layout の stretch で割り当て、size hint は幅の下限に数えない。
+                # A choice/bool spec hides the slider. Some Linux styles otherwise add its 15 px
+                # minimum only while visible, making the dock minimum depend on the selected stage.
+                _slider_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Ignored,
+                                                       QtWidgets.QSizePolicy.Fixed)
+                _slider_policy.setRetainSizeWhenHidden(True)  # spacing / 配置の間隔も spec 間で一定にする
+                self.slider.setSizePolicy(_slider_policy)
                 self.slider.setToolTip("Knob %s (0..1) — meaning depends on the selected op" % letter)
                 self.slider.valueChanged.connect(self._from_slider)
             if raw is None:
