@@ -60,6 +60,9 @@ Documentation = "https://furuse.work/"
 "Validation reports" = "https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml"
 
 [project.optional-dependencies]
+# Native SDK build tools are deliberately absent from the normal wheel install.
+# ネイティブ SDK のビルド道具は通常の wheel 導入には含めない。
+native = ["pybind11==2.13.6", "cmake>=3.21,<5"]
 # 下限を上げた extras(2026-10-24、OSV の件数は旧い下限の版で数えた):
 #   opencv-python 4.6 → 4.8.1.78: GHSA-qr4w-53vh-m672 / PYSEC-2023-183(同梱 libwebp)の 2 件
 #   Pillow 9 → 13.0: 72 件。13.0.0 は Python 3.11 以上 —— 3.10 を外した理由
