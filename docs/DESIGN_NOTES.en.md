@@ -542,13 +542,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_cad_scan_deviation.py`
 
-- **L435** — ★The ledger's out adapter truncates the dict to (R, t), so rmse does not get through
-- **L898** — Chapter 6: ★The defect pulls the alignment —— predicted by projection onto the rigid-body 6-D # --------------------------------------------------------------------------- #
-- **L1104** — ★Do not add a defect —— if you do, Chapter 6's datum shift (0.107 mm) becomes a pedestal on the point movement and mixes with "the amount broken by the initial angle".
-- **L1257** — ★Producing a "%" for the control group whose ground truth is 0 gives a meaningless huge number from division by zero. Present the area in mm^2 as is, and append % only when the ground truth is meaningful.
-- **L1268** — ★Do not read the difference of a single run as "it worked" —— vary the seed and compare against the spread
-- **L1358** — ★An assert that fires once the gap is closed. It actually fired on 2026-09-07, and this line was rewritten: after the note that "cylindrical holes, chamfers, and fillets cannot be built", plane / cylinder / torus / capsule were added. The note changed the tool, so we record it and move on.
-- **L1380** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L442** — ★The ledger's out adapter truncates the dict to (R, t), so rmse does not get through
+- **L925** — Chapter 6: ★The defect pulls the alignment —— predicted by projection onto the rigid-body 6-D # --------------------------------------------------------------------------- #
+- **L1131** — ★Do not add a defect —— if you do, Chapter 6's datum shift (0.107 mm) becomes a pedestal on the point movement and mixes with "the amount broken by the initial angle".
+- **L1284** — ★Producing a "%" for the control group whose ground truth is 0 gives a meaningless huge number from division by zero. Present the area in mm^2 as is, and append % only when the ground truth is meaningful.
+- **L1295** — ★Do not read the difference of a single run as "it worked" —— vary the seed and compare against the spread
+- **L1399** — ★An assert that fires once the gap is closed. It actually fired on 2026-09-07, and this line was rewritten: after the note that "cylindrical holes, chamfers, and fillets cannot be built", plane / cylinder / torus / capsule were added. The note changed the tool, so we record it and move on.
+- **L1421** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
@@ -826,13 +826,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_fourier_ptychography.py`
 
-- **L278** _(ja)_ — ★2026-11-15(独立レビュー): 上の比べる相手はどれも単色の平行光(コヒーレント)。普通の照明(インコヒーレント)の 4 倍と 20 倍を強度で読み、FP も強度 |場|² で読んで、同じ物差しで並べる。
-- **L333** _(ja)_ — ★明視野と暗視野の境に LED が乗る構成(ピッチ 7 mm・距離 70 mm、照明 NA 0.0995)は外し、境の章で別に見せる
-- **L360** _(ja)_ — ★収束の判定のしきい値 agree_tol は、この掃引の 39 % と 32 % の間に置いたもの(fourierptycho の説明)。だから境が 35 % を挟むのは、しきい値の置き方と矛盾しないことの確認で、公表値の独立の確認ではない(2026-11-15 の独立レビュー)。
-- **L473** _(ja)_ — ★2026-11-15(独立レビュー): この門の文言は「位相は reduced では一致」と書いていたが、CI(reduced)の実行も拒否だった。
-- **L496** _(ja)_ — ★高さだけの線(振幅は一様)では、full(384 画素)で 2 本の初期値が 0.098 違って拒否された(差は照明 NA 0.2〜0.3 の 帯に集まる。暗視野の露光を 4 倍にしても 0.092)。散乱の弱い物体の高い周波数は、k の丸めの模型の誤差に埋もれる。
-- **L688** _(ja)_ — ★実データでは瞳を画素ごとに自由に推定する(pupil_degree=None)。2〜4 次の多項式に射影すると残差が 2.3 倍 (0.0143 対 0.0061)になり、G7 の大きな要素でも変調が 0.4 に落ちる —— 実機の瞳は振幅にも構造がある(推測)。
-- **L717** _(ja)_ — ★分解の判定は縦横の小さい方の変調 ≥ 0.1。最後の要素の変調がしきい値にどれだけ近いかも出す(手元の 1 回の実行)。
+- **L283** _(ja)_ — ★2026-11-15(独立レビュー): 上の比べる相手はどれも単色の平行光(コヒーレント)。普通の照明(インコヒーレント)の 4 倍と 20 倍を強度で読み、FP も強度 |場|² で読んで、同じ物差しで並べる。
+- **L338** _(ja)_ — ★明視野と暗視野の境に LED が乗る構成(ピッチ 7 mm・距離 70 mm、照明 NA 0.0995)は外し、境の章で別に見せる
+- **L365** _(ja)_ — ★収束の判定のしきい値 agree_tol は、この掃引の 39 % と 32 % の間に置いたもの(fourierptycho の説明)。だから境が 35 % を挟むのは、しきい値の置き方と矛盾しないことの確認で、公表値の独立の確認ではない(2026-11-15 の独立レビュー)。
+- **L478** _(ja)_ — ★2026-11-15(独立レビュー): この門の文言は「位相は reduced では一致」と書いていたが、CI(reduced)の実行も拒否だった。
+- **L501** _(ja)_ — ★高さだけの線(振幅は一様)では、full(384 画素)で 2 本の初期値が 0.098 違って拒否された(差は照明 NA 0.2〜0.3 の 帯に集まる。暗視野の露光を 4 倍にしても 0.092)。散乱の弱い物体の高い周波数は、k の丸めの模型の誤差に埋もれる。
+- **L693** _(ja)_ — ★実データでは瞳を画素ごとに自由に推定する(pupil_degree=None)。2〜4 次の多項式に射影すると残差が 2.3 倍 (0.0143 対 0.0061)になり、G7 の大きな要素でも変調が 0.4 に落ちる —— 実機の瞳は振幅にも構造がある(推測)。
+- **L722** _(ja)_ — ★分解の判定は縦横の小さい方の変調 ≥ 0.1。最後の要素の変調がしきい値にどれだけ近いかも出す(手元の 1 回の実行)。
 
 ## `examples/poc_gear_tooth_metrology.py`
 
@@ -962,15 +962,15 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_lidar_terrain_change.py`
 
-- **L446** — ★The area of cores that could not be measured contributes nothing to the earth volume. Also return the value divided back by the effective rate —— without dividing back, you take the 'silently missing earth volume' for the correct value.
-- **L734** — ★A number close to the true value is not necessarily 'correct' —— count the two opposing errors separately
-- **L863** — ★When there are too few valid cores, do not treat the LoD as 'measured' (the standard deviation of 2 points is a number but carries no meaning).
-- **L866** — ★If you decimate here, C2C ends up measuring the 'post-decimation point spacing' and the density dependence vanishes (when I first wrote it aligned to 6000 points, it came out a constant 0.42 m at every density).
-- **L986** — --- ★ Change vanishes exactly by the amount you align away -------------------------------------- #
-- **L1351** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
-- **L1932** _(ja)_ — ★2026-11-15(補欠の注意): 以前は 0 が黒の発散色で、「データ無し(NaN)」も黒に塗られ、色の尺度も無かった。 coolwarm(0 = 薄い灰、負 = 青 = 2017 のほうが低い、正 = 赤)で塗り、データ無しだけを黒にして、尺度を添える。 1 m セルのままだと 2012 の空セル(充填率 64 %)が全面に粒になって色が読めないので、表示だけ 2 m 角 (1 m セル 4 つのうち値のあるものの平均)に寄せる。数は 1 m セルのまま測っている。
-- **L1997** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、 ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
-- **L2222** _(ja)_ — ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では 手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
+- **L451** — ★The area of cores that could not be measured contributes nothing to the earth volume. Also return the value divided back by the effective rate —— without dividing back, you take the 'silently missing earth volume' for the correct value.
+- **L743** — ★A number close to the true value is not necessarily 'correct' —— count the two opposing errors separately
+- **L874** — ★When there are too few valid cores, do not treat the LoD as 'measured' (the standard deviation of 2 points is a number but carries no meaning).
+- **L877** — ★If you decimate here, C2C ends up measuring the 'post-decimation point spacing' and the density dependence vanishes (when I first wrote it aligned to 6000 points, it came out a constant 0.42 m at every density).
+- **L997** — --- ★ Change vanishes exactly by the amount you align away -------------------------------------- #
+- **L1368** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1950** _(ja)_ — ★2026-11-15(補欠の注意): 以前は 0 が黒の発散色で、「データ無し(NaN)」も黒に塗られ、色の尺度も無かった。 coolwarm(0 = 薄い灰、負 = 青 = 2017 のほうが低い、正 = 赤)で塗り、データ無しだけを黒にして、尺度を添える。 1 m セルのままだと 2012 の空セル(充填率 64 %)が全面に粒になって色が読めないので、表示だけ 2 m 角 (1 m セル 4 つのうち値のあるものの平均)に寄せる。数は 1 m セルのまま測っている。
+- **L2020** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、 ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
+- **L2265** _(ja)_ — ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では 手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
 
 ## `examples/poc_light_section_step_weld_floor.py`
 
@@ -1115,17 +1115,17 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_photoelasticity.py`
 
-- **L185** — ★Pin the finding: this is an **exact** cross-check against fullseye's Mueller op, agreeing to machine precision even sweeping δ once around in 15-degree steps and θ over 5 values (measured 2.2e-16). If this loosens, what Section 3 onward measures is not the "readout procedure" but a bug in the op.
-- **L210** — ★Pin the cross-check of the stress field itself too. If the integrated force does not match the load it is not the "ground truth", and the central value should be algebraically identical to the closed form 8P/(πDh).
-- **L231** — ★Pin the level of the zero point. Every subsequent "N×" uses this 1.09 MPa as the denominator, so if it moves the meaning of the comparison changes.
-- **L254** — ★Pin the finding: the naive procedure of reading only integer fringes from a single dark-field image **cannot even beat the zero point by 2×**. Because the resolution is rate-limited by the fσ/h = 1.78 MPa step. The contrast with Section 4's phase shift (whose error drops to machine precision) is the backbone of this PoC.
-- **L293** — ★Since we invert from the same intensity equation with zero noise, θ should come back **exactly** (the algebra that produces 4θ from the 4 plane-polarization images is itself the inverse map).
-- **L321** — ★Pin the finding. (1) The agreement exceeds 95 % but **never reaches 100 %**. The rest are pixels sign-flipped by the (δ,θ) ↔ (-δ,θ+90°) ambiguity, which cannot in principle be removed by a single pixel taken alone (from one measurement at one wavelength); using the spatial continuity is a different matter (measured in Section 5). Pin the finding as-is: neither "nearly matches" nor "fully matches".
-- **L392** — ★Pin the finding. (1) There is no depolarization (the Stokes magnitude is exactly 1). This is the basis for Section 5's claim that what drops in the modulation is not the light level but **the phase sensitivity**.
-- **L398** — (2) ★★The measurement says the **opposite** of the naive expectation that "passing a mask fixes it": no mask 97.0 % / excluding undersampling 97.1 % / **excluding low modulation as well drops to 81.9 %**. Because removing the low-modulation pixels fragments the region and skimage's unwrap picks a different 2π offset per island. Low-modulation pixels are not the cause of the misses, and for a sign-flipped input excluding them does not raise the agreement but lowers it. The same mask on a correctly signed input does not lower it (measured below). It is also confirmed by measurement that the region is not fragmented (a different 2π per island). The mechanism is unexplained. Pin the measured value.
-- **L468** _(ja)_ — ★所見を固定する(いずれも測った事実。門は動かさない)。 (a) 外れの大半は 4 節の符号の反転と同じ画素。
-- **L558** — ★Pin the finding. (1) With neither noise nor quantization, δ comes back **exactly** from the bright-field/dark-field ratio.
-- **L561** — (2) ★The error from 8 bit quantization "alone" is the same order as the error from noise σ=0.002 alone (measured 0.00277 vs 0.00305). The camera's bit depth weighs as heavily as noise.
+- **L193** — ★Pin the finding: this is an **exact** cross-check against fullseye's Mueller op, agreeing to machine precision even sweeping δ once around in 15-degree steps and θ over 5 values (measured 2.2e-16). If this loosens, what Section 3 onward measures is not the "readout procedure" but a bug in the op.
+- **L218** — ★Pin the cross-check of the stress field itself too. If the integrated force does not match the load it is not the "ground truth", and the central value should be algebraically identical to the closed form 8P/(πDh).
+- **L239** — ★Pin the level of the zero point. Every subsequent "N×" uses this 1.09 MPa as the denominator, so if it moves the meaning of the comparison changes.
+- **L262** — ★Pin the finding: the naive procedure of reading only integer fringes from a single dark-field image **cannot even beat the zero point by 2×**. Because the resolution is rate-limited by the fσ/h = 1.78 MPa step. The contrast with Section 4's phase shift (whose error drops to machine precision) is the backbone of this PoC.
+- **L304** — ★Since we invert from the same intensity equation with zero noise, θ should come back **exactly** (the algebra that produces 4θ from the 4 plane-polarization images is itself the inverse map).
+- **L332** — ★Pin the finding. (1) The agreement exceeds 95 % but **never reaches 100 %**. The rest are pixels sign-flipped by the (δ,θ) ↔ (-δ,θ+90°) ambiguity, which cannot in principle be removed by a single pixel taken alone (from one measurement at one wavelength); using the spatial continuity is a different matter (measured in Section 5). Pin the finding as-is: neither "nearly matches" nor "fully matches".
+- **L403** — ★Pin the finding. (1) There is no depolarization (the Stokes magnitude is exactly 1). This is the basis for Section 5's claim that what drops in the modulation is not the light level but **the phase sensitivity**.
+- **L409** — (2) ★★The measurement says the **opposite** of the naive expectation that "passing a mask fixes it": no mask 97.0 % / excluding undersampling 97.1 % / **excluding low modulation as well drops to 81.9 %**. Because removing the low-modulation pixels fragments the region and skimage's unwrap picks a different 2π offset per island. Low-modulation pixels are not the cause of the misses, and for a sign-flipped input excluding them does not raise the agreement but lowers it. The same mask on a correctly signed input does not lower it (measured below). It is also confirmed by measurement that the region is not fragmented (a different 2π per island). The mechanism is unexplained. Pin the measured value.
+- **L479** _(ja)_ — ★所見を固定する(いずれも測った事実。門は動かさない)。 (a) 外れの大半は 4 節の符号の反転と同じ画素。
+- **L574** — ★Pin the finding. (1) With neither noise nor quantization, δ comes back **exactly** from the bright-field/dark-field ratio.
+- **L577** — (2) ★The error from 8 bit quantization "alone" is the same order as the error from noise σ=0.002 alone (measured 0.00277 vs 0.00305). The camera's bit depth weighs as heavily as noise.
 
 ## `examples/poc_pigment_unmixing.py`
 
@@ -1241,13 +1241,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_registration_basin.py`
 
-- **L462** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
-- **L688** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
-- **L854** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
-- **L1032** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
-- **L1427** — ★When the user explicitly passes `estimate_normals`, thinking "but the normals do exist". This is the **remainder** of the gap, 14 orders of magnitude worse than the default.
-- **L1617** — ★Gap 1 was closed on 2026-09-06. This assert has been rewritten to **pin the closed state** (previously it pinned the broken state: `d_fixed < 1e-6 < d_default` = broken). If the breakage returns, this fails.
-- **L1628** — ★Gap 2 was closed on 2026-09-06. Previously it was `< 0.9 * len(ka)` (pinning the broken state). Now it pins that **the default gives an exact match**.
+- **L474** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
+- **L700** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
+- **L866** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
+- **L1044** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
+- **L1474** — ★When the user explicitly passes `estimate_normals`, thinking "but the normals do exist". This is the **remainder** of the gap, 14 orders of magnitude worse than the default.
+- **L1664** — ★Gap 1 was closed on 2026-09-06. This assert has been rewritten to **pin the closed state** (previously it pinned the broken state: `d_fixed < 1e-6 < d_default` = broken). If the breakage returns, this fails.
+- **L1675** — ★Gap 2 was closed on 2026-09-06. Previously it was `< 0.9 * len(ka)` (pinning the broken state). Now it pins that **the default gives an exact match**.
 
 ## `examples/poc_reproducible_icp.py`
 
@@ -1403,12 +1403,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_tdi_linescan.py`
 
-- **L246** _(ja)_ — ★ピンホール 4 個は 1 種(和のマスク)として数えている。個別に、検出の成分が触れた個数も出す。
-- **L256** _(ja)_ — ★2026-11-15: 説明が「0 / 3 → 3 / 3、誤検出 0」と言うのに門は 1 段で 1 / 3・誤検出 2 個まで許していた。主張に揃えて締めた。
-- **L398** _(ja)_ — ★瞳の因子は linescan.lens_field_profile が「光束 / F0 / cos⁴」と定義するので、この積は定義どおり(恒等式)。
-- **L467** _(ja)_ — ★補正のゲインはこの白板の列平均から作り、同じ白板に掛けている —— 揃うのは作りの上で当然(門に数えない)。
-- **L493** _(ja)_ — ★列ごとのゲインを掛けても、平均で割った変調はほとんど動かない(性質)。数として見出しに出さない。
-- **L657** _(ja)_ — ★2026-11-15(独立レビュー): 4 段の図(01)は横長で、カードやサムネの大きさでは欠陥が見えなかった。1 段と 64 段だけを 3 つの欠陥の周りで切り出し、双三次で 3 倍にした表紙(ViEW2026 のカード・サムネイル・物語の GIF の 1 コマ目)。
+- **L254** _(ja)_ — ★ピンホール 4 個は 1 種(和のマスク)として数えている。個別に、検出の成分が触れた個数も出す。
+- **L264** _(ja)_ — ★2026-11-15: 説明が「0 / 3 → 3 / 3、誤検出 0」と言うのに門は 1 段で 1 / 3・誤検出 2 個まで許していた。主張に揃えて締めた。
+- **L406** _(ja)_ — ★瞳の因子は linescan.lens_field_profile が「光束 / F0 / cos⁴」と定義するので、この積は定義どおり(恒等式)。
+- **L475** _(ja)_ — ★補正のゲインはこの白板の列平均から作り、同じ白板に掛けている —— 揃うのは作りの上で当然(門に数えない)。
+- **L501** _(ja)_ — ★列ごとのゲインを掛けても、平均で割った変調はほとんど動かない(性質)。数として見出しに出さない。
+- **L681** _(ja)_ — ★2026-11-15(独立レビュー): 4 段の図(01)は横長で、カードやサムネの大きさでは欠陥が見えなかった。1 段と 64 段だけを 3 つの欠陥の周りで切り出し、双三次で 3 倍にした表紙(ViEW2026 のカード・サムネイル・物語の GIF の 1 コマ目)。
 
 ## `examples/poc_telecentric_metrology.py`
 

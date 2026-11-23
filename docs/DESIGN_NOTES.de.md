@@ -542,13 +542,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_cad_scan_deviation.py`
 
-- **L435** — ★Der out-Adapter des Registers kürzt das dict auf (R, t), sodass rmse nicht durchkommt
-- **L898** — Kapitel 6: ★Der Defekt zieht die Ausrichtung —— vorhergesagt durch Projektion auf die 6-D des starren Körpers # --------------------------------------------------------------------------- #
-- **L1104** — ★Keinen Defekt hinzufügen —— tut man es, wird die Datum-Verschiebung aus Kapitel 6 (0.107 mm) zu einem Sockel für die Punktbewegung und vermischt sich mit "dem durch den Anfangswinkel zerstörten Betrag".
-- **L1257** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
-- **L1268** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
-- **L1358** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
-- **L1380** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L442** — ★Der out-Adapter des Registers kürzt das dict auf (R, t), sodass rmse nicht durchkommt
+- **L925** — Kapitel 6: ★Der Defekt zieht die Ausrichtung —— vorhergesagt durch Projektion auf die 6-D des starren Körpers # --------------------------------------------------------------------------- #
+- **L1131** — ★Keinen Defekt hinzufügen —— tut man es, wird die Datum-Verschiebung aus Kapitel 6 (0.107 mm) zu einem Sockel für die Punktbewegung und vermischt sich mit "dem durch den Anfangswinkel zerstörten Betrag".
+- **L1284** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
+- **L1295** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
+- **L1399** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
+- **L1421** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
@@ -826,13 +826,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_fourier_ptychography.py`
 
-- **L278** _(ja)_ — ★2026-11-15(独立レビュー): 上の比べる相手はどれも単色の平行光(コヒーレント)。普通の照明(インコヒーレント)の 4 倍と 20 倍を強度で読み、FP も強度 |場|² で読んで、同じ物差しで並べる。
-- **L333** _(ja)_ — ★明視野と暗視野の境に LED が乗る構成(ピッチ 7 mm・距離 70 mm、照明 NA 0.0995)は外し、境の章で別に見せる
-- **L360** _(ja)_ — ★収束の判定のしきい値 agree_tol は、この掃引の 39 % と 32 % の間に置いたもの(fourierptycho の説明)。だから境が 35 % を挟むのは、しきい値の置き方と矛盾しないことの確認で、公表値の独立の確認ではない(2026-11-15 の独立レビュー)。
-- **L473** _(ja)_ — ★2026-11-15(独立レビュー): この門の文言は「位相は reduced では一致」と書いていたが、CI(reduced)の実行も拒否だった。
-- **L496** _(ja)_ — ★高さだけの線(振幅は一様)では、full(384 画素)で 2 本の初期値が 0.098 違って拒否された(差は照明 NA 0.2〜0.3 の 帯に集まる。暗視野の露光を 4 倍にしても 0.092)。散乱の弱い物体の高い周波数は、k の丸めの模型の誤差に埋もれる。
-- **L688** _(ja)_ — ★実データでは瞳を画素ごとに自由に推定する(pupil_degree=None)。2〜4 次の多項式に射影すると残差が 2.3 倍 (0.0143 対 0.0061)になり、G7 の大きな要素でも変調が 0.4 に落ちる —— 実機の瞳は振幅にも構造がある(推測)。
-- **L717** _(ja)_ — ★分解の判定は縦横の小さい方の変調 ≥ 0.1。最後の要素の変調がしきい値にどれだけ近いかも出す(手元の 1 回の実行)。
+- **L283** _(ja)_ — ★2026-11-15(独立レビュー): 上の比べる相手はどれも単色の平行光(コヒーレント)。普通の照明(インコヒーレント)の 4 倍と 20 倍を強度で読み、FP も強度 |場|² で読んで、同じ物差しで並べる。
+- **L338** _(ja)_ — ★明視野と暗視野の境に LED が乗る構成(ピッチ 7 mm・距離 70 mm、照明 NA 0.0995)は外し、境の章で別に見せる
+- **L365** _(ja)_ — ★収束の判定のしきい値 agree_tol は、この掃引の 39 % と 32 % の間に置いたもの(fourierptycho の説明)。だから境が 35 % を挟むのは、しきい値の置き方と矛盾しないことの確認で、公表値の独立の確認ではない(2026-11-15 の独立レビュー)。
+- **L478** _(ja)_ — ★2026-11-15(独立レビュー): この門の文言は「位相は reduced では一致」と書いていたが、CI(reduced)の実行も拒否だった。
+- **L501** _(ja)_ — ★高さだけの線(振幅は一様)では、full(384 画素)で 2 本の初期値が 0.098 違って拒否された(差は照明 NA 0.2〜0.3 の 帯に集まる。暗視野の露光を 4 倍にしても 0.092)。散乱の弱い物体の高い周波数は、k の丸めの模型の誤差に埋もれる。
+- **L693** _(ja)_ — ★実データでは瞳を画素ごとに自由に推定する(pupil_degree=None)。2〜4 次の多項式に射影すると残差が 2.3 倍 (0.0143 対 0.0061)になり、G7 の大きな要素でも変調が 0.4 に落ちる —— 実機の瞳は振幅にも構造がある(推測)。
+- **L722** _(ja)_ — ★分解の判定は縦横の小さい方の変調 ≥ 0.1。最後の要素の変調がしきい値にどれだけ近いかも出す(手元の 1 回の実行)。
 
 ## `examples/poc_gear_tooth_metrology.py`
 
@@ -962,15 +962,15 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_lidar_terrain_change.py`
 
-- **L446** — ★Die Fläche der nicht messbaren Cores geht überhaupt nicht in die Erdmenge ein. Gib auch den durch die effektive Rate zurückgerechneten Wert zurück —— ohne Zurückrechnen hält man die 'still fehlende Erdmenge' für den korrekten Wert.
-- **L734** — ★Eine Zahl nahe am wahren Wert ist nicht zwangsläufig 'korrekt' —— zähle die zwei entgegengesetzten Fehler getrennt
-- **L863** — ★Wenn zu wenige gültige Cores vorliegen, gilt die LoD nicht als 'gemessen' (die Standardabweichung von 2 Punkten ergibt eine Zahl, hat aber keine Bedeutung).
-- **L866** — ★Wenn du hier ausdünnst, misst C2C am Ende den 'Punktabstand nach dem Ausdünnen', und die Dichteabhängigkeit verschwindet (als ich es zuerst auf 6000 Punkte angeglichen schrieb, ergab sich bei jeder Dichte ein konstanter Wert von 0.42 m).
-- **L986** — --- ★ Genau um den Betrag, den du wegjustierst, verschwindet die Änderung -------------------------------------- #
-- **L1351** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
-- **L1932** _(ja)_ — ★2026-11-15(補欠の注意): 以前は 0 が黒の発散色で、「データ無し(NaN)」も黒に塗られ、色の尺度も無かった。 coolwarm(0 = 薄い灰、負 = 青 = 2017 のほうが低い、正 = 赤)で塗り、データ無しだけを黒にして、尺度を添える。 1 m セルのままだと 2012 の空セル(充填率 64 %)が全面に粒になって色が読めないので、表示だけ 2 m 角 (1 m セル 4 つのうち値のあるものの平均)に寄せる。数は 1 m セルのまま測っている。
-- **L1997** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、 ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
-- **L2222** _(ja)_ — ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では 手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
+- **L451** — ★Die Fläche der nicht messbaren Cores geht überhaupt nicht in die Erdmenge ein. Gib auch den durch die effektive Rate zurückgerechneten Wert zurück —— ohne Zurückrechnen hält man die 'still fehlende Erdmenge' für den korrekten Wert.
+- **L743** — ★Eine Zahl nahe am wahren Wert ist nicht zwangsläufig 'korrekt' —— zähle die zwei entgegengesetzten Fehler getrennt
+- **L874** — ★Wenn zu wenige gültige Cores vorliegen, gilt die LoD nicht als 'gemessen' (die Standardabweichung von 2 Punkten ergibt eine Zahl, hat aber keine Bedeutung).
+- **L877** — ★Wenn du hier ausdünnst, misst C2C am Ende den 'Punktabstand nach dem Ausdünnen', und die Dichteabhängigkeit verschwindet (als ich es zuerst auf 6000 Punkte angeglichen schrieb, ergab sich bei jeder Dichte ein konstanter Wert von 0.42 m).
+- **L997** — --- ★ Genau um den Betrag, den du wegjustierst, verschwindet die Änderung -------------------------------------- #
+- **L1368** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1950** _(ja)_ — ★2026-11-15(補欠の注意): 以前は 0 が黒の発散色で、「データ無し(NaN)」も黒に塗られ、色の尺度も無かった。 coolwarm(0 = 薄い灰、負 = 青 = 2017 のほうが低い、正 = 赤)で塗り、データ無しだけを黒にして、尺度を添える。 1 m セルのままだと 2012 の空セル(充填率 64 %)が全面に粒になって色が読めないので、表示だけ 2 m 角 (1 m セル 4 つのうち値のあるものの平均)に寄せる。数は 1 m セルのまま測っている。
+- **L2020** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画。13 の 4 枚組を 320 px に縮めると色も字も潰れ、 ぜんぶ見るのサムネイル(12 の動画の中央切り)は字が切れていた。13 と同じ配列・同じ色で 2 枚だけを並べる。
+- **L2265** _(ja)_ — ★2026-11-15(補欠の注意「実データの章が CI でも記録値の門でも再現されない」): データが無い実行(CI)では 手元の実行の記録値を印字し、同じ門を記録値に掛ける。これは記録の形と結論の向きを見るだけで、測り直しではない。
 
 ## `examples/poc_light_section_step_weld_floor.py`
 
@@ -1115,17 +1115,17 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_photoelasticity.py`
 
-- **L185** — ★Den Befund festhalten: Dies ist eine **exakte** Gegenrechnung zu fullseyes Mueller-op, die selbst bei einem vollen δ-Durchlauf in 15-Grad-Schritten und 5 θ-Werten auf Maschinengenauigkeit übereinstimmt (gemessen 2.2e-16). Lockert sich das, misst man ab Abschnitt 3 nicht das "Ausleseverfahren", sondern einen Bug im op.
-- **L210** — ★Auch die Gegenrechnung des Spannungsfelds selbst festhalten. Stimmt die integrierte Kraft nicht mit der Last überein, ist es nicht der "wahre Wert", und der Zentralwert muss algebraisch mit der geschlossenen Form 8P/(πDh) identisch sein.
-- **L231** — ★Das Niveau des Nullpunkts festhalten. Jedes folgende "N-fach" verwendet diese 1.09 MPa als Nenner, verschiebt sich das, ändert sich die Bedeutung des Vergleichs.
-- **L254** — ★Den Befund festhalten: Das naive Verfahren, aus einem einzigen Dunkelfeldbild nur ganzzahlige Streifen abzulesen, **schlägt den Nullpunkt nicht einmal um das 2-fache**. Weil die Auflösung durch den Schritt fσ/h = 1.78 MPa begrenzt ist. Der Kontrast zur Phasenverschiebung in Abschnitt 4 (deren Fehler auf Maschinengenauigkeit fällt) ist das Rückgrat dieses PoC.
-- **L293** — ★Da wir bei null Rauschen aus derselben Intensitätsgleichung zurückrechnen, muss θ **exakt** zurückkommen (die Algebra, die 4θ aus den 4 planpolarisierten Bildern erzeugt, ist selbst die Umkehrabbildung).
-- **L321** — ★Den Befund festhalten. (1) Die Übereinstimmung übersteigt 95 %, erreicht aber **nie 100 %**. Der Rest sind Pixel, deren Vorzeichen durch die Mehrdeutigkeit (δ,θ) ↔ (-δ,θ+90°) umgekehrt ist, die sich für ein einzelnes Pixel allein (aus einer Messung bei einer Wellenlänge) prinzipiell nicht beseitigen lässt; mit der räumlichen Stetigkeit sieht es anders aus (in Abschnitt 5 gemessen). Den Befund unverändert festhalten: weder "nahezu übereinstimmend" noch "vollständig übereinstimmend".
-- **L392** — ★Den Befund festhalten. (1) Es gibt keine Depolarisation (der Stokes-Betrag ist exakt 1). Das ist die Grundlage für die Behauptung in Abschnitt 5, dass in der Modulation nicht die Lichtmenge, sondern **die Phasenempfindlichkeit** abfällt.
-- **L398** — (2) ★★Die Messung sagt das **Gegenteil** der naiven Erwartung, "eine Maske zu übergeben behebt es": ohne Maske 97.0 % / bei Ausschluss der Unterabtastung 97.1 % / **schließt man auch die niedrige Modulation aus, fällt es auf 81.9 %**. Weil das Entfernen der niedrig modulierten Pixel die Region zerteilt und skimages unwrap pro Insel einen anderen 2π-Offset wählt. Niedrig modulierte Pixel sind nicht die Ursache der Abweichungen; bei einer vorzeichenvertauschten Eingabe hebt ihr Ausschluss die Übereinstimmung nicht, sondern senkt sie. Dieselbe Maske auf eine vorzeichenrichtige Eingabe senkt sie nicht (unten gemessen). Dass die Region nicht zerteilt wird (anderes 2π je Insel), ist ebenfalls gemessen. Der Mechanismus ist ungeklärt. Den Messwert festhalten.
-- **L468** _(ja)_ — ★所見を固定する(いずれも測った事実。門は動かさない)。 (a) 外れの大半は 4 節の符号の反転と同じ画素。
-- **L558** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
-- **L561** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
+- **L193** — ★Den Befund festhalten: Dies ist eine **exakte** Gegenrechnung zu fullseyes Mueller-op, die selbst bei einem vollen δ-Durchlauf in 15-Grad-Schritten und 5 θ-Werten auf Maschinengenauigkeit übereinstimmt (gemessen 2.2e-16). Lockert sich das, misst man ab Abschnitt 3 nicht das "Ausleseverfahren", sondern einen Bug im op.
+- **L218** — ★Auch die Gegenrechnung des Spannungsfelds selbst festhalten. Stimmt die integrierte Kraft nicht mit der Last überein, ist es nicht der "wahre Wert", und der Zentralwert muss algebraisch mit der geschlossenen Form 8P/(πDh) identisch sein.
+- **L239** — ★Das Niveau des Nullpunkts festhalten. Jedes folgende "N-fach" verwendet diese 1.09 MPa als Nenner, verschiebt sich das, ändert sich die Bedeutung des Vergleichs.
+- **L262** — ★Den Befund festhalten: Das naive Verfahren, aus einem einzigen Dunkelfeldbild nur ganzzahlige Streifen abzulesen, **schlägt den Nullpunkt nicht einmal um das 2-fache**. Weil die Auflösung durch den Schritt fσ/h = 1.78 MPa begrenzt ist. Der Kontrast zur Phasenverschiebung in Abschnitt 4 (deren Fehler auf Maschinengenauigkeit fällt) ist das Rückgrat dieses PoC.
+- **L304** — ★Da wir bei null Rauschen aus derselben Intensitätsgleichung zurückrechnen, muss θ **exakt** zurückkommen (die Algebra, die 4θ aus den 4 planpolarisierten Bildern erzeugt, ist selbst die Umkehrabbildung).
+- **L332** — ★Den Befund festhalten. (1) Die Übereinstimmung übersteigt 95 %, erreicht aber **nie 100 %**. Der Rest sind Pixel, deren Vorzeichen durch die Mehrdeutigkeit (δ,θ) ↔ (-δ,θ+90°) umgekehrt ist, die sich für ein einzelnes Pixel allein (aus einer Messung bei einer Wellenlänge) prinzipiell nicht beseitigen lässt; mit der räumlichen Stetigkeit sieht es anders aus (in Abschnitt 5 gemessen). Den Befund unverändert festhalten: weder "nahezu übereinstimmend" noch "vollständig übereinstimmend".
+- **L403** — ★Den Befund festhalten. (1) Es gibt keine Depolarisation (der Stokes-Betrag ist exakt 1). Das ist die Grundlage für die Behauptung in Abschnitt 5, dass in der Modulation nicht die Lichtmenge, sondern **die Phasenempfindlichkeit** abfällt.
+- **L409** — (2) ★★Die Messung sagt das **Gegenteil** der naiven Erwartung, "eine Maske zu übergeben behebt es": ohne Maske 97.0 % / bei Ausschluss der Unterabtastung 97.1 % / **schließt man auch die niedrige Modulation aus, fällt es auf 81.9 %**. Weil das Entfernen der niedrig modulierten Pixel die Region zerteilt und skimages unwrap pro Insel einen anderen 2π-Offset wählt. Niedrig modulierte Pixel sind nicht die Ursache der Abweichungen; bei einer vorzeichenvertauschten Eingabe hebt ihr Ausschluss die Übereinstimmung nicht, sondern senkt sie. Dieselbe Maske auf eine vorzeichenrichtige Eingabe senkt sie nicht (unten gemessen). Dass die Region nicht zerteilt wird (anderes 2π je Insel), ist ebenfalls gemessen. Der Mechanismus ist ungeklärt. Den Messwert festhalten.
+- **L479** _(ja)_ — ★所見を固定する(いずれも測った事実。門は動かさない)。 (a) 外れの大半は 4 節の符号の反転と同じ画素。
+- **L574** — ★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück.
+- **L577** — (2) ★Der Fehler durch "reine" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen.
 
 ## `examples/poc_pigment_unmixing.py`
 
@@ -1241,13 +1241,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_registration_basin.py`
 
-- **L462** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
-- **L688** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
-- **L854** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
-- **L1032** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
-- **L1427** — ★Wenn der Nutzer `estimate_normals` explizit uebergibt, im Glauben, die Normalen seien doch vorhanden. Das ist der **Rest** der Luecke, 14 Groessenordnungen schlechter als der Standard.
-- **L1617** — ★Luecke 1 wurde am 2026-09-06 geschlossen. Dieses assert wurde so umgeschrieben, dass es **den geschlossenen Zustand fixiert** (frueher fixierte es den defekten Zustand: `d_fixed < 1e-6 < d_default` = defekt). Kehrt der Defekt zurueck, schlaegt es hier fehl.
-- **L1628** — ★Luecke 2 wurde am 2026-09-06 geschlossen. Frueher war es `< 0.9 * len(ka)` (den defekten Zustand fixierend). Jetzt fixiert es, dass **der Standard eine exakte Uebereinstimmung liefert**.
+- **L474** _(ja)_ — ★比べ方(2026-11-08 の敵対的レビューで作り直し): 同じ部品 22 のモデルから作った 2 つの対照と、実測を **同じ成功の基準**で並べる —— (A) 全周の点(モデル表面から一様に取る)、(B) 片面の点(実測と同じ フレームの真値の姿勢で、カメラから見える面だけを残す。自己遮蔽は z バッファで近似、雑音なし)、 (C) 実測の深度。A→B の差が「片面しか見えない」ぶん、B→C の差が「センサ雑音・欠損・真値の誤差」の分。 以前の版は形の違う合成の当て金と比べていたので、差の原因が言えなかった。
+- **L700** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
+- **L866** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
+- **L1044** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
+- **L1474** — ★Wenn der Nutzer `estimate_normals` explizit uebergibt, im Glauben, die Normalen seien doch vorhanden. Das ist der **Rest** der Luecke, 14 Groessenordnungen schlechter als der Standard.
+- **L1664** — ★Luecke 1 wurde am 2026-09-06 geschlossen. Dieses assert wurde so umgeschrieben, dass es **den geschlossenen Zustand fixiert** (frueher fixierte es den defekten Zustand: `d_fixed < 1e-6 < d_default` = defekt). Kehrt der Defekt zurueck, schlaegt es hier fehl.
+- **L1675** — ★Luecke 2 wurde am 2026-09-06 geschlossen. Frueher war es `< 0.9 * len(ka)` (den defekten Zustand fixierend). Jetzt fixiert es, dass **der Standard eine exakte Uebereinstimmung liefert**.
 
 ## `examples/poc_reproducible_icp.py`
 
@@ -1403,12 +1403,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_tdi_linescan.py`
 
-- **L246** _(ja)_ — ★ピンホール 4 個は 1 種(和のマスク)として数えている。個別に、検出の成分が触れた個数も出す。
-- **L256** _(ja)_ — ★2026-11-15: 説明が「0 / 3 → 3 / 3、誤検出 0」と言うのに門は 1 段で 1 / 3・誤検出 2 個まで許していた。主張に揃えて締めた。
-- **L398** _(ja)_ — ★瞳の因子は linescan.lens_field_profile が「光束 / F0 / cos⁴」と定義するので、この積は定義どおり(恒等式)。
-- **L467** _(ja)_ — ★補正のゲインはこの白板の列平均から作り、同じ白板に掛けている —— 揃うのは作りの上で当然(門に数えない)。
-- **L493** _(ja)_ — ★列ごとのゲインを掛けても、平均で割った変調はほとんど動かない(性質)。数として見出しに出さない。
-- **L657** _(ja)_ — ★2026-11-15(独立レビュー): 4 段の図(01)は横長で、カードやサムネの大きさでは欠陥が見えなかった。1 段と 64 段だけを 3 つの欠陥の周りで切り出し、双三次で 3 倍にした表紙(ViEW2026 のカード・サムネイル・物語の GIF の 1 コマ目)。
+- **L254** _(ja)_ — ★ピンホール 4 個は 1 種(和のマスク)として数えている。個別に、検出の成分が触れた個数も出す。
+- **L264** _(ja)_ — ★2026-11-15: 説明が「0 / 3 → 3 / 3、誤検出 0」と言うのに門は 1 段で 1 / 3・誤検出 2 個まで許していた。主張に揃えて締めた。
+- **L406** _(ja)_ — ★瞳の因子は linescan.lens_field_profile が「光束 / F0 / cos⁴」と定義するので、この積は定義どおり(恒等式)。
+- **L475** _(ja)_ — ★補正のゲインはこの白板の列平均から作り、同じ白板に掛けている —— 揃うのは作りの上で当然(門に数えない)。
+- **L501** _(ja)_ — ★列ごとのゲインを掛けても、平均で割った変調はほとんど動かない(性質)。数として見出しに出さない。
+- **L681** _(ja)_ — ★2026-11-15(独立レビュー): 4 段の図(01)は横長で、カードやサムネの大きさでは欠陥が見えなかった。1 段と 64 段だけを 3 つの欠陥の周りで切り出し、双三次で 3 倍にした表紙(ViEW2026 のカード・サムネイル・物語の GIF の 1 コマ目)。
 
 ## `examples/poc_telecentric_metrology.py`
 

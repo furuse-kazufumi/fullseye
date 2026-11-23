@@ -129,6 +129,11 @@ HEADLINE = {
 SHOWN: dict[str, str] = {}
 
 
+def _bi(ja, en):
+    """図の札を日本語 / English の順で返す。 / Return a bilingual figure label."""
+    return "%s / %s" % (ja, en)
+
+
 def check_headline() -> None:
     """見出しの数を守る門: この実行の印字値を ``HEADLINE`` と文字列で照合する。"""
     diff = {k: (v, SHOWN.get(k)) for k, v in HEADLINE.items() if SHOWN.get(k) != v}
@@ -627,10 +632,14 @@ def section_geometry(tr: dict) -> dict:
           "斜面上の面積で積めば**、法線方向に測っても同じ体積になる。"
           % (min(mero_e), max(mero_e)))
     figs.save_table("geometry",
-                    ["傾斜 deg", "DoD 掘削 m3", "誤差 %", "DoD 堆積 m3", "誤差 %",
-                     "M3C2 掘削 m3", "誤差 %", "M3C2 堆積 誤差 %"], rows,
-                    title="雑音を止めた幾何だけの比較(真値 掘削 %.3f / 堆積 %.3f m3)"
-                          % (tr["ero"], tr["dep"]),
+                    [_bi("傾斜 deg", "slope [deg]"), _bi("DoD 掘削 m3", "DoD erosion [m3]"),
+                     _bi("誤差 %", "error [%]"), _bi("DoD 堆積 m3", "DoD deposition [m3]"),
+                     _bi("誤差 %", "error [%]"), _bi("M3C2 掘削 m3", "M3C2 erosion [m3]"),
+                     _bi("誤差 %", "error [%]"), _bi("M3C2 堆積 誤差 %", "M3C2 deposition error [%]")], rows,
+                    title=_bi("雑音を止めた幾何だけの比較(真値 掘削 %.3f・堆積 %.3f m3)" %
+                              (tr["ero"], tr["dep"]),
+                              "geometry-only comparison without noise (truth: erosion %.3f; deposition %.3f m3)" %
+                              (tr["ero"], tr["dep"])),
                     caption="傾斜を 0 から 40 度まで振っても体積の誤差に傾向が無い。"
                             "cos は積分で約分する。")
     return {"slope": sl_l, "ero_err": ero_e, "dep_err": dep_e, "m_ero_err": mero_e}
@@ -825,12 +834,14 @@ def section_slope() -> dict:
     print("     平地では落ちる項が無いので**同じ**。「M3C2 は常に良い」は嘘で、"
           "良いのは斜面と粗い面だけ。")
     figs.save_plot("slope_cliff",
-                   [("DoD の LoD95 実測", sl_l, lod_d),
-                    ("DoD 予測", sl_l, [1.96 * v for v in sd_p]),
-                    ("M3C2 の LoD95 実測", sl_l, lod_m),
-                    ("M3C2 予測", sl_l, [1.96 * v for v in sm_p])],
-                   xlabel="傾斜 [deg]", ylabel="検出できる最小の変化 [m]",
-                   title="斜面が壊すのは体積ではなく検出限界",
+                   [(_bi("DoD の LoD95 実測", "DoD LoD95 measured"), sl_l, lod_d),
+                    (_bi("DoD 予測", "DoD prediction"), sl_l, [1.96 * v for v in sd_p]),
+                    (_bi("M3C2 の LoD95 実測", "M3C2 LoD95 measured"), sl_l, lod_m),
+                    (_bi("M3C2 予測", "M3C2 prediction"), sl_l, [1.96 * v for v in sm_p])],
+                   xlabel=_bi("傾斜 [deg]", "slope [deg]"),
+                   ylabel=_bi("検出できる最小の変化 [m]", "minimum detectable change [m]"),
+                   title=_bi("斜面が壊すのは体積ではなく検出限界",
+                             "slope degrades the detection limit, not volume"),
                    caption="足跡面積を揃えた比較。平地では両者は一致し、"
                            "傾斜とともに DoD だけが悪化する。")
     figs.save_table("slope_table",
@@ -1259,13 +1270,16 @@ def section_figures(ctrl: dict, mm: dict, tr: dict) -> None:
 
     figs.save_grid("scene",
                    [up(detr), up(-d_true), up(r["dz"]), up(lmap)],
-                   ["時期 1 の起伏 [m]", "真の鉛直変位 [m]",
-                    "DoD の鉛直差 [m]", "M3C2 の法線距離 [m]"],
+                   [_bi("時期 1 の起伏 [m]", "epoch-1 relief [m]"),
+                    _bi("真の鉛直変位 [m]", "true vertical displacement [m]"),
+                    _bi("DoD の鉛直差 [m]", "DoD vertical delta [m]"),
+                    _bi("M3C2 の法線距離 [m]", "M3C2 normal distance [m]")],
                    ncols=2, signed=[False, True, True, True],
                    kind=["height", "displacement", "displacement", "displacement"],
                    unit=["m", "m", "m", "m"],
-                   title="航空 LiDAR の 2 時期差分(傾斜 %.0f 度・%.1f pt/m2)"
-                         % (SLOPE, DENSITY),
+                   title=_bi("航空 LiDAR の 2 時期差分(傾斜 %.0f 度・%.1f pt/m2)" % (SLOPE, DENSITY),
+                             "two-epoch airborne LiDAR change (slope %.0f deg; %.1f pt/m2)" %
+                             (SLOPE, DENSITY)),
                    caption="左上は平面を抜いた残差(%.2f m のうねり。この場面は遮蔽を"
                            "止めてある)。右上が仕込んだ真値(掘削 %.1f m3 / 堆積 "
                            "%.1f m3)。下 2 枚は足跡面積を揃えて測った 2 通りの差 —— "
@@ -1281,10 +1295,13 @@ def section_figures(ctrl: dict, mm: dict, tr: dict) -> None:
                    [big(truth_mask.astype(float)[::-1]),
                     big(sig_dod.astype(float)[::-1]),
                     big(sig_m.astype(float)[::-1])],
-                   ["真の変化域 %.0f m2" % tr["area"],
-                    "DoD 有意 %.0f m2" % float(sig_dod.sum()),
-                    "M3C2 有意 %.0f m2" % float(sig_m.sum())],
-                   ncols=3, title="「変化ありと判定した面積」は体積とは別に数える",
+                   [_bi("真の変化域 %.0f m2" % tr["area"], "true changed area %.0f m2" % tr["area"]),
+                    _bi("DoD 有意 %.0f m2" % float(sig_dod.sum()),
+                        "DoD significant %.0f m2" % float(sig_dod.sum())),
+                    _bi("M3C2 有意 %.0f m2" % float(sig_m.sum()),
+                        "M3C2 significant %.0f m2" % float(sig_m.sum()))],
+                   ncols=3, title=_bi("「変化ありと判定した面積」は体積とは別に数える",
+                                      "area judged changed is counted separately from volume"),
                    caption="DoD は一律 LoD %.3f m、M3C2 は core ごとの sigma で判定。"
                            "面積が合っていても、縁の薄い層を落としていれば体積は"
                            "足りない。" % lod)
@@ -1590,6 +1607,7 @@ CHANGE_DZ = 0.30
 CHANGE_MIN_CELLS = 20
 #: trimmed の位置合わせで使う割合(合成の §7 の trimmed ICP と同じ 0.6)。
 REAL_TRIM = 0.6
+REAL_FILL_PLOT_SIZE = (1020, 420)
 
 
 def real_data_dir(sub: str):
@@ -1982,15 +2000,20 @@ def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
     rho = np.linspace(0.0, 4.0, 81)
     u3 = R["u3"]
     figs.save_plot("real_fill",
-                   [("合成 §6 の予測 1 − exp(−ρ)", rho, 100 * (1 - np.exp(-rho))),
-                    ("2012 実測(D = %.2f)" % u3["2012"]["D"], [u3["2012"]["rho"]],
+                   [(_bi("合成 §6 の予測 1 − exp(−ρ)", "synthetic §6 prediction 1 − exp(−ρ)"),
+                     rho, 100 * (1 - np.exp(-rho))),
+                    (_bi("2012 実測(D = %.2f)" % u3["2012"]["D"],
+                         "2012 measured (D = %.2f)" % u3["2012"]["D"]), [u3["2012"]["rho"]],
                      [100 * u3["2012"]["fill"]]),
-                    ("2017 実測(D = %.2f)" % u3["2017"]["D"], [u3["2017"]["rho"]],
+                    (_bi("2017 実測(D = %.2f)" % u3["2017"]["D"],
+                         "2017 measured (D = %.2f)" % u3["2017"]["D"]), [u3["2017"]["rho"]],
                      [100 * u3["2017"]["fill"]])],
                    kinds=["line", "scatter", "scatter"], xlim=(0.0, 4.0), ylim=(0.0, 100.0),
-                   xlabel="地面点の密度 ρ [点/m2](もう片方の時期に地面点のあるセルで)",
-                   ylabel="地面点のある 1 m セル [%]", size=(720, 420),
-                   title="点密度の崖 —— 実データは Poisson でない",
+                   xlabel=_bi("地面点の密度 ρ [点/m2](もう片方の時期に地面点のあるセルで)",
+                              "ground-point density ρ [points/m2] (cells occupied in other epoch)"),
+                   ylabel=_bi("地面点のある 1 m セル [%]", "occupied 1 m cells [%]"), size=REAL_FILL_PLOT_SIZE,
+                   title=_bi("点密度の崖 —— 実データは Poisson でない",
+                             "point-density cliff — real data are not Poisson"),
                    caption=("規則的な走査(分散指数 D < 1)の 2012 は予測より埋まり、測線の重なりで"
                             "群れる(D > 1)2017 は埋まらない。%s %s"
                             % (USGS_MODIFIED, USGS_CREDIT)))
@@ -2001,19 +2024,32 @@ def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
     S, PW = 720, 340
     st = Image.new("RGB", (S, S), (14, 17, 23))
     ds = ImageDraw.Draw(st)
-    ds.text((20, 14), "2 時期の航空 LiDAR の差(実データ)", font=font(32, True), fill=(240, 240, 240))
-    for j, (arr, m, lab) in enumerate(((dod_raw, lim, "そのまま引く"),
-                                       (dod, lim, "平坦部で %+.3f m 合わせる" % (-R["off_flat"])))):
+    ds.text((STILL_MARGIN, 14), _bi("2 時期の航空 LiDAR の差(実データ)",
+                                    "two-epoch LiDAR change (real)"),
+            font=font(STILL_TITLE_FONT, True), fill=(240, 240, 240))
+    for j, (arr, m, lab) in enumerate(((dod_raw, lim, _bi("そのまま引く", "raw subtraction")),
+                                       (dod, lim, _bi("平坦部で %+.3f m 合わせる" % (-R["off_flat"]),
+                                                     "align %+.3f m" % (-R["off_flat"]))))):
         rgb = np.clip(signed_rgb(arr, m) * 255.0, 0, 255).astype(np.uint8)
         xo = 14 + j * (PW + 12)
         st.paste(Image.fromarray(rgb).resize((PW, PW), Image.Resampling.BICUBIC), (xo, 70))
-        ds.text((xo + 2, 418), lab, font=font(24, True), fill=(240, 240, 240))
-    ds.text((20, 470), "そのまま引くと全面が %.2f m 沈んで見える" % abs(R["off_flat"]), font=font(28, True),
+        ds.text((xo + 2, 418), lab, font=font(STILL_PANEL_FONT, True), fill=(240, 240, 240))
+    ds.text((STILL_MARGIN, 466), _bi("そのまま引くと全面が %.2f m 沈んで見える" % abs(R["off_flat"]),
+                                     "raw subtraction: all terrain −%.2f m" % abs(R["off_flat"])),
+            font=font(STILL_BODY_FONT, True),
             fill=(240, 240, 240))
-    ds.text((20, 514), "合わせると、残るのは建物まわりの変化だけ", font=font(26), fill=(225, 225, 225))
-    ds.text((20, 566), "青 = 2017 のほうが低い / 赤 = 高い(±%.1f m)" % lim, font=font(22), fill=(200, 205, 215))
-    ds.text((20, 600), "濃い灰 = 地面点が無い(建物・池・樹冠の下)", font=font(22), fill=(200, 205, 215))
-    ds.text((20, S - STILL_CREDIT_FROM_BOTTOM), "USGS 3DEP(public domain、USGS の承認ではない)", font=font(18),
+    ds.text((STILL_MARGIN, 506), _bi("合わせると、残るのは建物まわりの変化だけ",
+                                     "alignment leaves only building-area change"),
+            font=font(STILL_BODY_FONT), fill=(225, 225, 225))
+    ds.text((STILL_MARGIN, 548), _bi("青 = 2017 のほうが低い・赤 = 高い(±%.1f m)" % lim,
+                                     "blue = lower in 2017; red = higher (±%.1f m)" % lim),
+            font=font(STILL_NOTE_FONT), fill=(200, 205, 215))
+    ds.text((STILL_MARGIN, 582), _bi("濃い灰 = 地面点が無い(建物・池・樹冠の下)",
+                                     "dark grey = no ground points (building, pond or canopy)"),
+            font=font(STILL_NOTE_FONT), fill=(200, 205, 215))
+    ds.text((STILL_MARGIN, S - STILL_CREDIT_FROM_BOTTOM),
+            _bi("USGS 3DEP(public domain、USGS の承認ではない)",
+                "USGS 3DEP (public domain; no endorsement)"), font=font(STILL_CREDIT_FONT),
             fill=(170, 170, 170))
     figs.save("real_dod_still", np.asarray(st, dtype=np.uint8),
               caption=("サムネイル用の静止画。13 の (b) と (c) を同じ色で並べた(表示は 2 m 角)。そのまま引くと区画全体が "
@@ -2024,6 +2060,13 @@ def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
 #: 表紙の静止画の出典の行の上端を、下端から何 px 上に置くか。ストーリー GIF はこの静止画を 1 コマ目にして
 #: 下端 30 px に進み具合の点を重ねるので、出典(18 px)はその帯より上で終える(2026-11-23、点が出典に被った)。
 STILL_CREDIT_FROM_BOTTOM = 62
+#: 日英併記の表紙で使う余白と文字サイズ。 / Margins and font sizes for the bilingual cover.
+STILL_MARGIN = 20
+STILL_TITLE_FONT = 24
+STILL_PANEL_FONT = 18
+STILL_BODY_FONT = 18
+STILL_NOTE_FONT = 16
+STILL_CREDIT_FONT = 14
 #: 図 13(実データの DoD)で地図を囲む枠の太さ [px] と色(0..1 の灰)。
 DOD_MAP_FRAME_PX = 2
 DOD_MAP_FRAME_GRAY = 0.35
