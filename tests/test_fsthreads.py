@@ -226,6 +226,27 @@ def test_blas_threads_refuses_zero():
 
 
 @needs_ctl
+def test_validation_ceiling_cannot_be_relaxed_by_a_nested_ordinary_context():
+    """規制上限の内側で通常の段が大きい値を求めても 1 thread のまま / Keep the ceiling."""
+    outside = T.current_threads()
+    with T.validation_threads(1) as applied:
+        assert applied is True
+        assert T.current_threads() == 1
+        with T.blas_threads(2) as nested_applied:
+            assert nested_applied is True
+            assert T.current_threads() == 1
+        assert T.current_threads() == 1
+    assert T.current_threads() == outside
+
+
+def test_validation_threads_refuses_zero():
+    """不正な規制上限は何も実行せず拒否する / Reject an invalid validation ceiling."""
+    with pytest.raises(ValueError, match="needs n >= 1"):
+        with T.validation_threads(0):
+            pass
+
+
+@needs_ctl
 def test_off_really_leaves_the_process_alone(monkeypatch):
     monkeypatch.setenv(T.ENV, "off")
     outside = T.current_threads()
