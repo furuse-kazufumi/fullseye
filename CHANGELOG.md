@@ -31,6 +31,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 同じ型で直した。試験: `tests/test_studio_project_rooted_forms_2026_11_23.py`(posixpath に差し替えて Windows の
 上でも Linux の意味で検査する)。
 
+### Studio: 外のトレーサの下では止めるボタンを保証しない(2026-11-23)
+
+デバッガやカバレッジなど外のトレーサ(`sys.settrace` ・ `threading.settrace` ・ `sys.monitoring`)の下では、Program の止めるボタンと時間の上限は保証しない(`docs/STUDIO_PROGRAM_LANGUAGE.md` と止めるボタンのツールヒント)。止めるボタンを押した時と、時間の上限・止められずに終わった時に外のトレーサがあれば、出力の欄に「停止が効かない場合があります」と 1 回だけ出す(`studio_program.external_tracer()`)。CI の full suite は `--cov` で走るので、止める動き・速さを測る試験 10 本は外のトレーサの下では理由つきで skip し、新しいジョブ `untraced`(--cov 無し、`FULLSEYE_REQUIRE_UNTRACED=1` で skip を許さない)で必ず回す(一覧は `tools/ci_untraced_tests.txt`)。
+
 ### 直し — Studio: Linux でだけ赤かった試験(2026-11-23)
 
 PySide6 6.12.0 の SIGABRT で隠れていた Linux の赤を、WSL(Ubuntu 24.04 / PySide6 6.11.1)で 1 件ずつ再現してから直した。
