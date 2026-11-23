@@ -65,10 +65,10 @@ SHOWN: dict[str, str] = {}
 STILL_CREDIT_FROM_BOTTOM = 62
 #: 日英併記の表紙で使う余白と文字サイズ。 / Margins and font sizes for the bilingual cover.
 STILL_MARGIN = 20
-STILL_TITLE_FONT = 25
-STILL_PANEL_FONT = 20
-STILL_BODY_FONT = 19
-STILL_CREDIT_FONT = 15
+STILL_TITLE_FONT = 20
+STILL_PANEL_FONT = 17
+STILL_BODY_FONT = 16
+STILL_CREDIT_FONT = 14
 PCA_TABLE_COLUMN_WIDTH = 205
 
 
@@ -1046,31 +1046,29 @@ def video_real_scan(root, model, normals, frames, diam, rate, half, floor_med, h
     S, PT = 720, 220
     st = Image.new("RGB", (S, S), (12, 16, 22))
     ds = ImageDraw.Draw(st)
-    ds.text((STILL_MARGIN, 14), _bi("実物の部品で ICP の収束域を測る",
-                                    "measure real-part ICP basin"),
+    ds.text((STILL_MARGIN, 14), _bi("実部品の ICP 収束域", "real-part ICP basin"),
             font=font(STILL_TITLE_FONT, True), fill=(240, 240, 240))
     for j, c in enumerate(cases):
         xo = 12 + j * (PT + 18)
         st.paste(overlay(c, VIDEO_ITERS).resize((PT, PT), Image.Resampling.LANCZOS), (xo, 78))
         ds.text((xo + 4, 306), _bi("初期 %.0f 度" % c["deg"], "initial %.0f°" % c["deg"]),
                 font=font(STILL_PANEL_FONT, True), fill=(240, 240, 240))
-        verdict = _bi("→ 戻れた", "→ recovered") if c["ok"] else _bi("→ 戻れない", "→ not recovered")
+        verdict = "→ 戻れた /\n→ recovered" if c["ok"] else "→ 戻れない /\n→ not recovered"
         ds.text((xo + 4, 338), verdict, font=font(STILL_PANEL_FONT),
                 fill=(220, 220, 220) if c["ok"] else (255, 140, 120))
-    ds.text((STILL_MARGIN, 400), _bi("実測の深度では収束域が狭い", "real-depth ICP basin is narrower"),
+    ds.text((STILL_MARGIN, 400), _bi("実測深度では収束域が狭い", "real-depth basin is narrower"),
             font=font(STILL_TITLE_FONT, True), fill=(240, 240, 240))
-    ds.text((STILL_MARGIN, 444), _bi("成功率が半分を切る初期回転が、全周の点より",
-                                     "50% rotation limit precedes full-view limit"),
+    ds.text((STILL_MARGIN, 438), "成功率が半分を切る初期回転は、全周の点より /\n"
+            "the 50% rotation limit comes before the full-view limit",
             font=font(STILL_BODY_FONT), fill=(225, 225, 225))
-    ds.text((STILL_MARGIN, 478), _bi("%.1f〜%.1f 度手前(点対面、種と数え方による)" %
-                                     (narrow_span[0], narrow_span[1]),
-                                     "by %.1f–%.1f° (point-to-plane; seeds/rule)" %
-                                     (narrow_span[0], narrow_span[1])), font=font(STILL_BODY_FONT),
-            fill=(225, 225, 225))
-    ds.text((STILL_MARGIN, 532), _bi("判定 = 真値から始めた ICP の行き先に戻れたか",
-                                     "test: return to truth-started ICP endpoint"),
+    ds.text((STILL_MARGIN, 486), "%.1f〜%.1f 度手前(点対面、種と数え方による) /\n"
+            "by %.1f–%.1f° (point-to-plane; seeds and rule)" %
+            (narrow_span[0], narrow_span[1], narrow_span[0], narrow_span[1]),
+            font=font(STILL_BODY_FONT), fill=(225, 225, 225))
+    ds.text((STILL_MARGIN, 544), "判定 = 真値から始めた ICP の行き先に戻れたか /\n"
+            "test: return to the truth-started ICP endpoint",
             font=font(STILL_BODY_FONT), fill=(255, 190, 120))
-    ds.text((STILL_MARGIN, 566), _bi("(姿勢の精度ではない)", "(not pose accuracy)"),
+    ds.text((STILL_MARGIN, 594), _bi("(姿勢の精度ではない)", "(not pose accuracy)"),
             font=font(STILL_BODY_FONT), fill=(255, 190, 120))
     ds.text((STILL_MARGIN, S - STILL_CREDIT_FROM_BOTTOM),
             _bi("データ: T-LESS(Hodaň et al., WACV 2017)、CC BY 4.0",
