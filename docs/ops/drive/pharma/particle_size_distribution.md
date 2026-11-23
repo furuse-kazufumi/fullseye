@@ -24,21 +24,26 @@ version: 1.1.1  # fullseye lib version this note was generated for
 D10/D50/D90 は、重複径を重みごとに集約した**重み付き経験分布の中点規約**で求める。
 ``unsplit`` と ``ambiguous`` の重なりは常に除外し、1 粒として黙って数えない。
 上流の ``blob_split`` と ``blob_count_interval`` に由来する成分 ID、分割根拠、
-個数区間、決定可否が全行で必須であり、未決定行は ``ambiguous`` として除外する。
+来歴ハッシュ、個数区間、決定可否が全行で必須であり、成分内で矛盾する入力は拒否する。
+未決定行は ``ambiguous`` として除外する。
 ``border_policy="correct"`` は端粒子について ``border_inclusion_probability``、
 ``border_corrected_diameter_px``、``border_corrected_area_px2`` が揃う場合だけ
 Horvitz--Thompson の個数重み ``1/p`` と補正寸法を使う。尺度の標準不確かさは
-各径へ線形伝播し、分位点では決定的 bootstrap の標本区間と尺度区間を合成する。
+各径へ線形伝播し、分位点では決定的 bootstrap、尺度、端補正不確かさの
+感度再標本化を保守的に合成する。
 有効粒子数が ``MIN_EFFECTIVE_PARTICLES`` 未満なら、母集団分位点を主張せず
 ``insufficient_sample`` を返す。bootstrap 区間は独立粒子の経験分布を再標本化する
-条件付き区間であり、端補正時は設計ベース保証ではなく実験的な不確かさである。
+**分割後に受理された粒子に条件付けた区間**であり、端補正時は設計ベース保証ではなく
+実験的な不確かさである。
 
 Parameters
 ----------
 particles : table (dict of 1-D columns)
     必須列は ``object_id``、``diameter_px``、``area_px2``、``diameter_unit="px"``、
     ``area_unit="px2"``、``touches_border``、``split_status``、``component_id``、
-    ``split_evidence``、``count_interval_lo``、``count_interval_hi``、``count_determined``。
+    ``split_evidence``、``upstream_provenance_hash``、``count_interval_lo``、
+    ``count_interval_hi``、``count_determined``。来歴ハッシュは元の ``blob_split`` と
+    ``blob_count_interval`` の構造化記録を正規化して SHA-256 化したもの。
     状態は ``isolated`` / ``split`` / ``unsplit`` / ``ambiguous``。
     ``major_axis_px`` と ``minor_axis_px`` は任意。
 calibration : table (one-row dict)
@@ -76,10 +81,11 @@ as an interchangeable laser-diffraction result.
 
 Examples
 --------
->>> p = {"object_id": ["a"] * 30, "diameter_px": [10.] * 30, "area_px2": [78.5] * 30,
+>>> p = {"object_id": ["p%d" % i for i in range(30)], "diameter_px": [10.] * 30, "area_px2": [78.5] * 30,
 ...      "diameter_unit": "px", "area_unit": "px2", "touches_border": [False] * 30,
 ...      "split_status": ["isolated"] * 30, "component_id": ["c%d" % i for i in range(30)],
-...      "split_evidence": ["blob_count_interval" ] * 30, "count_interval_lo": [1] * 30,
+...      "split_evidence": ["blob_split + blob_count_interval"] * 30,
+...      "upstream_provenance_hash": ["0" * 64] * 30, "count_interval_lo": [1] * 30,
 ...      "count_interval_hi": [1] * 30, "count_determined": [True] * 30}
 >>> c = {"scale": {"value": .002, "unit": "mm/px", "standard_uncertainty": .00002},
 ...      "calibrator_id": "SM-01", "calibrated_at": "2026-01-01", "valid_until": "2026-12-31"}

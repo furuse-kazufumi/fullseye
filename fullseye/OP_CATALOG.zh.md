@@ -66,7 +66,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `example_inner_diameter_mm` — op: `add_metrology_object_circle_measure`, `apply_metrology_model`, `area_center`, `create_metrology_model`, `gaussian`, `mm_per_px_from_reference`, `otsu`, `pixel_to_world`, `table_px_to_mm` `py -3.11 examples/example_inner_diameter_mm.py`
 - `example_scratch_width` — op: `bothat`, `gen_measure_rectangle2`, `lines_gauss`, `measure_pairs`, `mm_per_px_from_reference`, `table_px_to_mm`, `tophat` `py -3.11 examples/example_scratch_width.py`
 - `poc_dimensional_inspection` — op: `add_metrology_object_circle_measure`, `add_metrology_object_ellipse_measure`, `add_metrology_object_generic`, `add_metrology_object_line_measure`, `add_metrology_object_rectangle2_measure`, `align_metrology_model`, `apply_metrology_model`, `create_metrology_model`, `ellipse`, `erf`, `fuzzy_measure_pairing`, `gen_measure_arc`(另有 8 个) `py -3.11 examples/poc_dimensional_inspection.py`
-- `poc_compendial_particle_microscopy` — op: `annotate_figure_grid`, `blob_count_interval`, `blob_distance`, `blob_features`, `blob_label`, `blob_seeds`, `blob_split`, `ellipse`, `mm_per_px_from_reference`, `particle_size_distribution`, `threshold` `py -3.11 examples/poc_compendial_particle_microscopy.py`
+- `poc_compendial_particle_microscopy` — op: `annotate_figure_grid`, `blob_count_interval`, `blob_distance`, `blob_features`, `blob_label`, `blob_seeds`, `blob_split`, `ellipse`, `mm_per_px_from_reference`, `noise_sigma`, `particle_size_distribution`, `threshold` `py -3.11 examples/poc_compendial_particle_microscopy.py`
 - `poc_star_astrometry` — op: `erf`, `gaussian`, `noise_sigma`, `psf_fit`, `star_detect`, `vector_to_similarity` `py -3.11 examples/poc_star_astrometry.py`
 - `poc_surface_roughness` — op: `profile_params`, `rms`, `surface_filter`, `surface_form_remove`, `surface_params`, `surface_psd`, `surface_synth_psd` `py -3.11 examples/poc_surface_roughness.py`
 - `poc_dic_strain` — op: `axes_frame`, `axes_transform`, `erf`, `piv_cross_correlate`, `plot_series`, `strain_from_displacement`, `text_box`, `ticks` `py -3.11 examples/poc_dic_strain.py`
@@ -5429,7 +5429,7 @@ _共 3848 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 #### astrostack / quality (3)
 - `frame_quality` `image2d → table` GPU: 无 — 给单帧打分 —— 锐度、FWHM、背景、圆度,以及用于筛选的分数。 · 示例: `astro_stacking`
 - `lucky_select` `images → indices` GPU: 有(许可列表) — 只保留质量分前 ``keep_fraction`` 的帧 —— lucky imaging 的筛选。 · 示例: `astro_stacking`, `poc_astro_photometry`
-- `noise_sigma` `image2d → measurement` GPU: 无 — 稳健估计背景噪声 sigma(一个不被恒星污染的实数)。 · 示例: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
+- `noise_sigma` `image2d → measurement` GPU: 无 — 稳健估计背景噪声 sigma(一个不被恒星污染的实数)。 · 示例: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_compendial_particle_microscopy`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
 
 #### astrostack / stack (2)
 - `drizzle_resample` `images → image2d` GPU: 无 — Drizzle —— 由若干亚像素错位的帧构建更细的网格(保面积)。 · 示例: `astro_stacking`, `poc_astro_photometry`, `poc_pixel_shift`, `poc_superresolution_limits`

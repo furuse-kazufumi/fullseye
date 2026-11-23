@@ -66,7 +66,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `example_inner_diameter_mm` — ops: `add_metrology_object_circle_measure`, `apply_metrology_model`, `area_center`, `create_metrology_model`, `gaussian`, `mm_per_px_from_reference`, `otsu`, `pixel_to_world`, `table_px_to_mm` `py -3.11 examples/example_inner_diameter_mm.py`
 - `example_scratch_width` — ops: `bothat`, `gen_measure_rectangle2`, `lines_gauss`, `measure_pairs`, `mm_per_px_from_reference`, `table_px_to_mm`, `tophat` `py -3.11 examples/example_scratch_width.py`
 - `poc_dimensional_inspection` — ops: `add_metrology_object_circle_measure`, `add_metrology_object_ellipse_measure`, `add_metrology_object_generic`, `add_metrology_object_line_measure`, `add_metrology_object_rectangle2_measure`, `align_metrology_model`, `apply_metrology_model`, `create_metrology_model`, `ellipse`, `erf`, `fuzzy_measure_pairing`, `gen_measure_arc` (+8 more) `py -3.11 examples/poc_dimensional_inspection.py`
-- `poc_compendial_particle_microscopy` — ops: `annotate_figure_grid`, `blob_count_interval`, `blob_distance`, `blob_features`, `blob_label`, `blob_seeds`, `blob_split`, `ellipse`, `mm_per_px_from_reference`, `particle_size_distribution`, `threshold` `py -3.11 examples/poc_compendial_particle_microscopy.py`
+- `poc_compendial_particle_microscopy` — ops: `annotate_figure_grid`, `blob_count_interval`, `blob_distance`, `blob_features`, `blob_label`, `blob_seeds`, `blob_split`, `ellipse`, `mm_per_px_from_reference`, `noise_sigma`, `particle_size_distribution`, `threshold` `py -3.11 examples/poc_compendial_particle_microscopy.py`
 - `poc_star_astrometry` — ops: `erf`, `gaussian`, `noise_sigma`, `psf_fit`, `star_detect`, `vector_to_similarity` `py -3.11 examples/poc_star_astrometry.py`
 - `poc_surface_roughness` — ops: `profile_params`, `rms`, `surface_filter`, `surface_form_remove`, `surface_params`, `surface_psd`, `surface_synth_psd` `py -3.11 examples/poc_surface_roughness.py`
 - `poc_dic_strain` — ops: `axes_frame`, `axes_transform`, `erf`, `piv_cross_correlate`, `plot_series`, `strain_from_displacement`, `text_box`, `ticks` `py -3.11 examples/poc_dic_strain.py`
@@ -5429,7 +5429,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 #### astrostack / quality (3)
 - `frame_quality` `image2d → table` GPU: none — Score one frame — sharpness, FWHM, background, roundness, and a point for selection. · examples: `astro_stacking`
 - `lucky_select` `images → indices` GPU: yes (allow-list) — Keep only the top ``keep_fraction`` by quality score — the lucky-imaging cut. · examples: `astro_stacking`, `poc_astro_photometry`
-- `noise_sigma` `image2d → measurement` GPU: none — Robustly estimate the background noise sigma (one real number that the stars cannot spoil). · examples: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
+- `noise_sigma` `image2d → measurement` GPU: none — Robustly estimate the background noise sigma (one real number that the stars cannot spoil). · examples: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_compendial_particle_microscopy`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
 
 #### astrostack / stack (2)
 - `drizzle_resample` `images → image2d` GPU: none — Drizzle — build a finer grid from several sub-pixel-shifted frames (area-conserving). · examples: `astro_stacking`, `poc_astro_photometry`, `poc_pixel_shift`, `poc_superresolution_limits`

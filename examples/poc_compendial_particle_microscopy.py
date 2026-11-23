@@ -22,6 +22,7 @@
 """
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
 import os
@@ -117,6 +118,16 @@ def _match(features):
     return pairs
 
 
+def _upstream_provenance_hash(split, count_record):
+    """Hash structured split/count records / 構造化した分割・個数記録をハッシュ化。"""
+    h = hashlib.sha256()
+    h.update(_array_hash(split).encode("ascii"))
+    components = count_record["components"]
+    for key in ("label", "lo", "hi", "status"):
+        h.update(np.ascontiguousarray(components[key]).tobytes())
+    return h.hexdigest()
+
+
 def analyse(image):
     """Run the existing blob chain and the reporting op / 既存 op の鎖と新 op を実行。"""
     region = (image < SEGMENT_THRESHOLD)
@@ -144,6 +155,7 @@ def analyse(image):
         for i in range(len(components["label"]))}
     component_ids = labels[features["row"][fi].round().astype(int), features["col"][fi].round().astype(int)]
     upstream = [component_records[int(label)] for label in component_ids]
+    upstream_hash = _upstream_provenance_hash(split, count_record)
     # This table is derived solely from blob_split labels and blob_count_interval;
     # TRUTH is used only below for a separate post-hoc comparison.
     statuses = ["ambiguous" if not row["determined"] else ("split" if row["count"] > 1 else "isolated")
@@ -157,6 +169,7 @@ def analyse(image):
         "split_status": statuses,
         "component_id": ["component-%d" % int(label) for label in component_ids],
         "split_evidence": ["blob_split + blob_count_interval:%s" % row["status"] for row in upstream],
+        "upstream_provenance_hash": [upstream_hash] * len(upstream),
         "count_interval_lo": [int(row["lo"]) for row in upstream],
         "count_interval_hi": [None if row["hi"] is None else int(row["hi"]) for row in upstream],
         "count_determined": [bool(row["determined"]) for row in upstream],
@@ -231,7 +244,9 @@ def large_sample_validation():
     for row in truth:
         cy, cx = row["center"]
         mask = (yy - cy) ** 2 + (xx - cx) ** 2 <= (row["diameter"] / 2.0) ** 2
-        image[mask] = np.minimum(image[mask], LOW_CONTRAST_LEVEL if row["low"] else PARTICLE_LEVEL)
+        # Deliberately above the predeclared threshold: these particles remain in
+        # the analytical truth but are shown as low-contrast non-detections.
+        image[mask] = np.minimum(image[mask], .72 if row["low"] else PARTICLE_LEVEL)
     image = np.clip(image + rng.normal(0.0, .008, image.shape), 0.0, 1.0)
     region = image < SEGMENT_THRESHOLD
     labels = blob2d.blob_label(region)
@@ -245,31 +260,60 @@ def large_sample_validation():
                for i in range(len(interval["label"]))}
     comp = labels[feature["row"].round().astype(int), feature["col"].round().astype(int)]
     upstream = [records[int(label)] for label in comp]
+    upstream_hash = _upstream_provenance_hash(split, {"components": interval})
     table = {"object_id": ["detected-%03d" % i for i in range(feature["n"])],
              "diameter_px": feature["equiv_diameter"], "area_px2": feature["area"],
              "diameter_unit": "px", "area_unit": "px2", "touches_border": feature["touches_border"].astype(bool),
              "split_status": ["ambiguous" if not x["determined"] else ("split" if x["lo"] > 1 else "isolated") for x in upstream],
-             "component_id": ["component-%d" % int(x) for x in comp],
-             "split_evidence": ["blob_split + blob_count_interval:%s" % x["status"] for x in upstream],
+              "component_id": ["component-%d" % int(x) for x in comp],
+              "split_evidence": ["blob_split + blob_count_interval:%s" % x["status"] for x in upstream],
+             "upstream_provenance_hash": [upstream_hash] * len(upstream),
              "count_interval_lo": [x["lo"] for x in upstream], "count_interval_hi": [x["hi"] for x in upstream],
              "count_determined": [x["determined"] for x in upstream]}
     calibration = {"scale": {"value": MICROMETER_KNOWN_MM / MICROMETER_LENGTH_PX, "unit": "mm/px",
                                "standard_uncertainty": SCALE_UNCERTAINTY_UM_PER_PX / 1000.0},
                    "calibrator_id": CALIBRATOR_ID, "calibrated_at": CALIBRATED_AT, "valid_until": VALID_UNTIL}
-    report = fs.ledger.particle_size_distribution(table, calibration, border_policy="exclude",
+    fixed_edges = np.linspace(.003, .010, 15)  # Fixed before measurement; covers all generated truth diameters.
+    report = fs.ledger.particle_size_distribution(table, calibration, border_policy="exclude", bin_edges=fixed_edges,
         measurement_date=MEASUREMENT_DATE, bootstrap_samples=400 if os.environ.get("CI") == "1" else 1000, seed=SEED + 31)
     # Truth selection is intentionally separate from the measured upstream records.
     td = np.array([row["diameter"] for row in truth]) * calibration["scale"]["value"]
     valid = np.array([not row["border"] for row in truth])
     edges = report["bins"]["edges"]
+    assert np.array_equal(edges, fixed_edges)
     curves, values = [], {}
+    state = np.full(len(truth), "undetected", dtype=object)
+    feature_centres = np.c_[feature["row"], feature["col"]]
+    for truth_index, row in enumerate(truth):
+        distance = np.linalg.norm(feature_centres - np.asarray(row["center"]), axis=1)
+        feature_index = int(np.argmin(distance))
+        if distance[feature_index] <= max(5.0, row["diameter"]):
+            reason = report["particle_rows"][feature_index]["reason"]
+            state[truth_index] = "accepted" if report["particle_rows"][feature_index]["accepted"] else reason
+
+    def cdf(value, weight):
+        order = np.argsort(value)
+        x, w = value[order], weight[order]
+        return np.r_[x[0], x], np.r_[0.0, np.cumsum(w) / w.sum()]
+
     for basis, weight in (("number", np.ones_like(td)), ("area", td ** 2), ("volume", td ** 3)):
-        hist = np.histogram(td[valid], edges, weights=weight[valid])[0]
-        curves.extend([("estimated " + basis, np.sqrt(edges[:-1] * edges[1:]), report["bins"][basis]),
-                       ("truth " + basis, np.sqrt(edges[:-1] * edges[1:]), hist / hist.sum())])
+        hist = np.histogram(td, edges, weights=weight)[0]
+        assert np.isclose(hist.sum(), weight.sum())
+        accepted_truth = state == "accepted"
+        x_truth, y_truth = cdf(td, weight)
+        x_accepted, y_accepted = cdf(td[accepted_truth], weight[accepted_truth])
+        curves.extend([("truth " + basis, x_truth, y_truth), ("accepted " + basis, x_accepted, y_accepted)])
         values[basis] = [_midpoint_truth(td[valid], weight[valid], q) for q in (10, 50, 90)]
-    distribution = figs.render_plot(curves, xlabel="diameter [mm]", ylabel="fraction",
-        title="324-particle specimen: estimated and synthetic truth", size=(640, 360), ylim=(0.0, 1.0), scale=1)
+        for name in ("D10", "D50", "D90"):
+            curves.append((basis + " " + name, [report["quantiles"][basis][name]["value"]] * 2, [0., 1.]))
+    for category, label in (("border_excluded", "edge excluded"), ("overlap_ambiguous_excluded", "ambiguous"),
+                            ("undetected", "undetected")):
+        selected = state == category
+        if np.any(selected):
+            x, y = cdf(td[selected], np.ones(selected.sum()))
+            curves.append((label, x, y))
+    distribution = figs.render_plot(curves, xlabel="diameter [mm]", ylabel="weighted CDF",
+        title="Truth / accepted / edge / ambiguous / undetected; Dx markers", size=(980, 700), ylim=(0.0, 1.0), scale=1)
     rows = []
     for basis in ("number", "area", "volume"):
         for name, truth_value in zip(("D10", "D50", "D90"), values[basis]):
@@ -277,10 +321,10 @@ def large_sample_validation():
             rows.append([basis + " " + name, "%.5f" % truth_value, "%.5f [%.5f, %.5f]" %
                          (q["value"], q["ci_lower"], q["ci_upper"])])
     summary = figs._render_table(["basis / Dx", "truth mm", "estimate / 95% CI mm"], rows,
-                                 title="Midpoint convention; conditional bootstrap interval", scale=1)
+                                  title="Midpoint convention; conditional accepted-particle interval", scale=1)
     figure = fs.annotate_figure_grid([_rgb_gray(image), _label_rgb(split), distribution, summary],
         captions=["Input: low contrast, overlap and clipped particles", "blob_split + blob_count_interval evidence",
-                  "Three bases: estimate versus truth", "D10/D50/D90 and interval versus truth"], ncols=2,
+                   "3 weighted CDFs + Dx: truth, accepted, rejected states", "D10/D50/D90 and conditional interval versus truth"], ncols=2,
         title="Large-sample PSD validation / 数百粒子の分布検証")
     return report, values, figure, image, split
 
@@ -305,22 +349,41 @@ def accuracy_sweep():
                                 seed = int(diameter * 100 + ratio * 10 + phase * 1000 + noise * 10000 + psf * 100 + threshold * 1000 + background_gradient * 100)
                                 image = image + np.random.default_rng(seed).normal(0.0, noise, image.shape)
                                 f = blob2d.blob_features(blob2d.blob_label(image < threshold))
-                                if f["n"] != 1 or bool(f["touches_border"][0]):
-                                    rows.append({"error_px": np.nan, "rejected": True})
+                                condition = {"diameter_px": diameter, "axis_ratio": ratio, "phase_px": phase,
+                                             "noise_sigma": noise, "psf_sigma_px": psf, "threshold": threshold,
+                                             "background_gradient": background_gradient}
+                                if f["n"] == 0:
+                                    rows.append(condition | {"error_px": np.nan, "accepted": False,
+                                                             "rejection_reason": "empty_detection"})
+                                elif f["n"] > 1:
+                                    rows.append(condition | {"error_px": np.nan, "accepted": False,
+                                                             "rejection_reason": "oversegmentation"})
+                                elif bool(f["touches_border"][0]):
+                                    rows.append(condition | {"error_px": np.nan, "accepted": False,
+                                                             "rejection_reason": "edge_touch"})
                                 else:
-                                    rows.append({"error_px": float(f["equiv_diameter"][0] - diameter), "rejected": False})
+                                    rows.append(condition | {"error_px": float(f["equiv_diameter"][0] - diameter),
+                                                             "accepted": True, "rejection_reason": "accepted"})
     error = np.abs(np.array([row["error_px"] for row in rows], float))
     accepted = error[np.isfinite(error)]
+    accepted_rows = [row for row in rows if row["accepted"]]
+    p90_index = min(len(accepted_rows) - 1, int(np.ceil(.90 * len(accepted_rows))) - 1)
+    p90_row = sorted(accepted_rows, key=lambda row: abs(row["error_px"]))[p90_index]
+    reasons = ("empty_detection", "oversegmentation", "merge", "edge_touch")
+    reason_rates = {reason: float(np.mean([row["rejection_reason"] == reason for row in rows])) for reason in reasons}
     stats = {"conditions": len(rows), "median_abs_error_px": float(np.median(accepted)),
              "p90_abs_error_px": float(np.quantile(accepted, .90)), "worst_abs_error_px": float(np.max(accepted)),
-             "rejection_rate": float(np.mean(~np.isfinite(error)))}
+             "rejection_rate": float(np.mean(~np.isfinite(error))), "reason_rates": reason_rates,
+             "p90_condition": p90_row, "rows": rows}
     panel = figs._render_table(["swept condition", "range / result"],
         [["diameter px", "12, 20"], ["axis ratio", "1.0, 1.8"], ["subpixel phase px", "0.15, 0.65"],
          ["noise sigma (SNR proxy)", "0.01, 0.04"], ["PSF sigma px", "0.4, 1.0"],
          ["threshold", "0.55, 0.68"], ["background gradient", "0.00, 0.12"],
-         ["median / p90 / worst |error| px", "%.3f / %.3f / %.3f" % (stats["median_abs_error_px"], stats["p90_abs_error_px"], stats["worst_abs_error_px"])],
-         ["rejection rate", "%.1f%%" % (100 * stats["rejection_rate"]) ]],
-        title="Accuracy claim limited to the swept synthetic range", scale=1)
+         ["accepted-only median / p90 / worst |error| px", "%.3f / %.3f / %.3f" % (stats["median_abs_error_px"], stats["p90_abs_error_px"], stats["worst_abs_error_px"])],
+         ["accepted / rejected", "%d / %d (%.1f%% rejected)" % (len(accepted), len(rows) - len(accepted), 100 * stats["rejection_rate"])],
+         ["reject rates empty / over / merge / edge", "%.1f / %.1f / %.1f / %.1f%%" % tuple(100 * reason_rates[x] for x in reasons)],
+         ["p90 condition", "d=%g ratio=%g phase=%g noise=%g psf=%g thr=%g grad=%g" % tuple(p90_row[x] for x in ("diameter_px", "axis_ratio", "phase_px", "noise_sigma", "psf_sigma_px", "threshold", "background_gradient"))]],
+        title="Accepted-condition error; all 128 conditions in companion table", scale=1)
     return stats, panel
 
 
@@ -405,6 +468,19 @@ def _array_hash(value):
     return h.hexdigest()
 
 
+def _write_accuracy_sweep_tsv(header, rows):
+    """Write the complete 128-condition audit table / 128条件の監査表を書く。"""
+    target = figs.target_dir()
+    if target is None:
+        return None
+    path = target / "04_compendial_particle_microscopy_accuracy_sweep_all_conditions.tsv"
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle, delimiter="\t")
+        writer.writerow(header)
+        writer.writerows(rows)
+    return path
+
+
 def main():
     started = time.perf_counter()
     image, truth_masks = synthesize()
@@ -465,7 +541,13 @@ def main():
     figs.save("compendial_particle_microscopy_large_validation", large_figure,
               "324粒子の別試料。低コントラスト、重なり、端粒子を含み、3基準の分布と真値・区間を併記する。")
     figs.save("compendial_particle_microscopy_accuracy_sweep", sweep_figure,
-              "径、軸比、副画素位置、SNR、PSF、閾値、背景むらを掃引した範囲内だけの精度要約。")
+              "全128条件のうち、受理条件に条件付けた誤差と、理由別の拒否率。")
+    sweep_header = ["diameter_px", "axis_ratio", "phase_px", "noise_sigma", "psf_sigma_px", "threshold",
+                    "background_gradient", "abs_error_px (accepted only)", "accepted", "rejection_reason"]
+    sweep_rows = [["%.3g" % row[key] for key in sweep_header[:7]] +
+                  ["" if not row["accepted"] else "%.6f" % abs(row["error_px"]),
+                   str(row["accepted"]), row["rejection_reason"]] for row in sweep_stats["rows"]]
+    _write_accuracy_sweep_tsv(sweep_header, sweep_rows)
 
     truth = TruthBundle(
         fields={"centres": np.array([row["center"] for row in TRUTH]),
@@ -512,8 +594,13 @@ def main():
               ", ".join("%.5f" % x for x in large_truth[basis]),
               ", ".join("%.5f" % large_report["quantiles"][basis][name]["value"] for name in ("D10", "D50", "D90"))))
     print("accuracy sweep n=%d: median %.3f px, p90 %.3f px, worst %.3f px, rejected %.1f%%" %
-          (sweep_stats["conditions"], sweep_stats["median_abs_error_px"], sweep_stats["p90_abs_error_px"],
+           (sweep_stats["conditions"], sweep_stats["median_abs_error_px"], sweep_stats["p90_abs_error_px"],
            sweep_stats["worst_abs_error_px"], 100 * sweep_stats["rejection_rate"]))
+    print("accuracy rejection rates empty/over/merge/edge: %.1f/%.1f/%.1f/%.1f%%" %
+          tuple(100 * sweep_stats["reason_rates"][name] for name in
+                ("empty_detection", "oversegmentation", "merge", "edge_touch")))
+    print("accuracy p90 condition: %s" % {key: sweep_stats["p90_condition"][key] for key in
+          ("diameter_px", "axis_ratio", "phase_px", "noise_sigma", "psf_sigma_px", "threshold", "background_gradient")})
     print("accepted %d, border excluded %d, split overlap accepted %d" %
           (report["counts"]["accepted_observed"], report["counts"]["border_excluded"],
            report["counts"]["overlap_split_accepted"]))

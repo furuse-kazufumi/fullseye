@@ -5427,7 +5427,7 @@ _計 3848 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 #### astrostack / quality(3)
 - `frame_quality` `image2d → table` GPU: なし — 1 枚の品質を数える —— 鋭さ・FWHM・背景・真円度、そして選別用の点。 · 例: `astro_stacking`
 - `lucky_select` `images → indices` GPU: あり(許可リスト) — 品質点の上位 ``keep_fraction`` だけを採る —— lucky imaging の選別。 · 例: `astro_stacking`, `poc_astro_photometry`
-- `noise_sigma` `image2d → measurement` GPU: なし — 背景の雑音 sigma を頑健に推定する(星に汚されない一つの実数)。 · 例: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
+- `noise_sigma` `image2d → measurement` GPU: なし — 背景の雑音 sigma を頑健に推定する(星に汚されない一つの実数)。 · 例: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_compendial_particle_microscopy`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
 
 #### astrostack / stack(2)
 - `drizzle_resample` `images → image2d` GPU: なし — Drizzle —— 副画素でずれた複数フレームから細かい格子を作る(面積保存)。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_pixel_shift`, `poc_superresolution_limits`

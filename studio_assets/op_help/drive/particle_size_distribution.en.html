@@ -6,12 +6,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Calibrate a particle table and return reasoned acceptance, three-basis bins, D10/D50/D90 with confidence intervals, and provenance.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>D10/D50/D90 は、重複径を重みごとに集約した<b>重み付き経験分布の中点規約</b>で求める。<code style="color:#22d3bf">unsplit</code> と <code style="color:#22d3bf">ambiguous</code> の重なりは常に除外し、1 粒として黙って数えない。上流の <code style="color:#22d3bf">blob_split</code> と <code style="color:#22d3bf">blob_count_interval</code> に由来する成分 ID、分割根拠、個数区間、決定可否が全行で必須であり、未決定行は <code style="color:#22d3bf">ambiguous</code> として除外する。<code style="color:#22d3bf">border_policy=&quot;correct&quot;</code> は端粒子について <code style="color:#22d3bf">border_inclusion_probability</code>、<code style="color:#22d3bf">border_corrected_diameter_px</code>、<code style="color:#22d3bf">border_corrected_area_px2</code> が揃う場合だけ Horvitz--Thompson の個数重み <code style="color:#22d3bf">1/p</code> と補正寸法を使う。尺度の標準不確かさは各径へ線形伝播し、分位点では決定的 bootstrap の標本区間と尺度区間を合成する。有効粒子数が <code style="color:#22d3bf">MIN_EFFECTIVE_PARTICLES</code> 未満なら、母集団分位点を主張せず <code style="color:#22d3bf">insufficient_sample</code> を返す。bootstrap 区間は独立粒子の経験分布を再標本化する条件付き区間であり、端補正時は設計ベース保証ではなく実験的な不確かさである。</p>
+<p>D10/D50/D90 は、重複径を重みごとに集約した<b>重み付き経験分布の中点規約</b>で求める。<code style="color:#22d3bf">unsplit</code> と <code style="color:#22d3bf">ambiguous</code> の重なりは常に除外し、1 粒として黙って数えない。上流の <code style="color:#22d3bf">blob_split</code> と <code style="color:#22d3bf">blob_count_interval</code> に由来する成分 ID、分割根拠、来歴ハッシュ、個数区間、決定可否が全行で必須であり、成分内で矛盾する入力は拒否する。未決定行は <code style="color:#22d3bf">ambiguous</code> として除外する。<code style="color:#22d3bf">border_policy=&quot;correct&quot;</code> は端粒子について <code style="color:#22d3bf">border_inclusion_probability</code>、<code style="color:#22d3bf">border_corrected_diameter_px</code>、<code style="color:#22d3bf">border_corrected_area_px2</code> が揃う場合だけ Horvitz--Thompson の個数重み <code style="color:#22d3bf">1/p</code> と補正寸法を使う。尺度の標準不確かさは各径へ線形伝播し、分位点では決定的 bootstrap、尺度、端補正不確かさの感度再標本化を保守的に合成する。有効粒子数が <code style="color:#22d3bf">MIN_EFFECTIVE_PARTICLES</code> 未満なら、母集団分位点を主張せず <code style="color:#22d3bf">insufficient_sample</code> を返す。bootstrap 区間は独立粒子の経験分布を再標本化する <b>分割後に受理された粒子に条件付けた区間</b>であり、端補正時は設計ベース保証ではなく実験的な不確かさである。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>particles : table (dict of 1-D columns)</p>
 <p>必須列は <code style="color:#22d3bf">object_id</code>、<code style="color:#22d3bf">diameter_px</code>、<code style="color:#22d3bf">area_px2</code>、<code style="color:#22d3bf">diameter_unit=&quot;px&quot;</code>、</p>
 <p><code style="color:#22d3bf">area_unit=&quot;px2&quot;</code>、<code style="color:#22d3bf">touches_border</code>、<code style="color:#22d3bf">split_status</code>、<code style="color:#22d3bf">component_id</code>、</p>
-<p><code style="color:#22d3bf">split_evidence</code>、<code style="color:#22d3bf">count_interval_lo</code>、<code style="color:#22d3bf">count_interval_hi</code>、<code style="color:#22d3bf">count_determined</code>。</p>
+<p><code style="color:#22d3bf">split_evidence</code>、<code style="color:#22d3bf">upstream_provenance_hash</code>、<code style="color:#22d3bf">count_interval_lo</code>、</p>
+<p><code style="color:#22d3bf">count_interval_hi</code>、<code style="color:#22d3bf">count_determined</code>。来歴ハッシュは元の <code style="color:#22d3bf">blob_split</code> と</p>
+<p><code style="color:#22d3bf">blob_count_interval</code> の構造化記録を正規化して SHA-256 化したもの。</p>
 <p>状態は <code style="color:#22d3bf">isolated</code> / <code style="color:#22d3bf">split</code> / <code style="color:#22d3bf">unsplit</code> / <code style="color:#22d3bf">ambiguous</code>。</p>
 <p><code style="color:#22d3bf">major_axis_px</code> と <code style="color:#22d3bf">minor_axis_px</code> は任意。</p>
 <p>calibration : table (one-row dict)</p>
@@ -39,10 +41,11 @@
 <p>空表、列不整合、非有限・非正、補正情報不足、校正期間外、採用粒子ゼロを拒否する。</p>
 <p>English: combine microscopy particles and a calibration record into an auditable report. Unresolved overlaps are excluded; border correction is refused without inclusion probability and corrected dimensions. Number, area and volume bases remain distinct and are not treated as an interchangeable laser-diffraction result.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
-<p>&gt;&gt;&gt; p = {&quot;object_id&quot;: [&quot;a&quot;] * 30, &quot;diameter_px&quot;: [10.] * 30, &quot;area_px2&quot;: [78.5] * 30,</p>
+<p>&gt;&gt;&gt; p = {&quot;object_id&quot;: [&quot;p%d&quot; % i for i in range(30)], &quot;diameter_px&quot;: [10.] * 30, &quot;area_px2&quot;: [78.5] * 30,</p>
 <p>...      &quot;diameter_unit&quot;: &quot;px&quot;, &quot;area_unit&quot;: &quot;px2&quot;, &quot;touches_border&quot;: [False] * 30,</p>
 <p>...      &quot;split_status&quot;: [&quot;isolated&quot;] * 30, &quot;component_id&quot;: [&quot;c%d&quot; % i for i in range(30)],</p>
-<p>...      &quot;split_evidence&quot;: [&quot;blob_count_interval&quot; ] * 30, &quot;count_interval_lo&quot;: [1] * 30,</p>
+<p>...      &quot;split_evidence&quot;: [&quot;blob_split + blob_count_interval&quot;] * 30,</p>
+<p>...      &quot;upstream_provenance_hash&quot;: [&quot;0&quot; * 64] * 30, &quot;count_interval_lo&quot;: [1] * 30,</p>
 <p>...      &quot;count_interval_hi&quot;: [1] * 30, &quot;count_determined&quot;: [True] * 30}</p>
 <p>&gt;&gt;&gt; c = {&quot;scale&quot;: {&quot;value&quot;: .002, &quot;unit&quot;: &quot;mm/px&quot;, &quot;standard_uncertainty&quot;: .00002},</p>
 <p>...      &quot;calibrator_id&quot;: &quot;SM-01&quot;, &quot;calibrated_at&quot;: &quot;2026-01-01&quot;, &quot;valid_until&quot;: &quot;2026-12-31&quot;}</p>
