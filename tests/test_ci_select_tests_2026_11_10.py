@@ -1024,7 +1024,14 @@ def test_poc_runner_split_on_the_real_baseline_shortens_the_longest_shard():
         assert holders == [1] * len(pocs)
         assert abs(sum(loads) - sum(d.values())) < 1e-6 * sum(d.values())         # 重さの総量は変えない
     plan, loads = CST._shard_plan_with_loads(ids, 6, d)
-    assert max(loads) <= 1.02 * (sum(loads) / 6), loads
+    # ★2026-11-24: 実の記録では、1 ファイル(PoC 以外は分けない)が均等な 1 片より重いことがある
+    #   (tests/test_studio_panels_interaction_2026_11_13.py = 44 件で約 3,720 秒、run 45244055568 の片 5)。
+    #   その時の最良は「最も重いファイル 1 本」なので、上限はそれと均等な 1 片の 1.02 倍の大きい方。
+    file_load: dict[str, float] = {}
+    for k, v in d.items():
+        if not k.startswith(_POC + "::"):
+            file_load[k.split("::", 1)[0]] = file_load.get(k.split("::", 1)[0], 0.0) + v
+    assert max(loads) <= max(1.02 * (sum(loads) / 6), max(file_load.values()) * (1 + 1e-9)), loads
     info = CST.plan_session(ids, selection=None, shard="1/6", durations_path=CST.ROOT / ".test_durations")
     assert info["est_seconds"] == round(loads[0]) and info["sizes"] == [len(p) for p in plan]
     # PoC のファイルが均等な 1 片の 1.5 倍になる重さ: h = 1.5 * (others + h) / 6  ->  h = others / 3
