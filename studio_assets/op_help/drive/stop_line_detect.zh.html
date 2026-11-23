@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stop_line_detect — DRIVE <code style="color:#22d3bf">lane</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">labels × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stop_line_detect(labels, lane_model)</code>(要直接调用实现,<code style="color:#22d3bf">import laneops; laneops.stop_line_detect(labels, lane_model)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;stop_line_detect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>将与车道近乎垂直且足够宽的白线检测为停止线,同时剔除人行横道。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>白画素を車線内へ切り、連結片を世界座標へ写す。同じ前方距離の遮蔽片を結合し、車線接線への直交角、幅、厚さで判定する。似た横線が3本以上、0.35..1.20 m 間隔で並ぶ集合は横断歩道として棄却する。摩耗した実線と横断歩道が接触して1成分になる場合や、格子の対応が誤っている場合は対象外。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>labels : (H, W) labels</p>
+<p><code style="color:#22d3bf">color_rule_mask</code>のlabelを俯瞰へ写したもの。1だけを白として使う。</p>
+<p>lane_model : table</p>
+<p><code style="color:#22d3bf">path</code>(世界xy), <code style="color:#22d3bf">lane_width</code> と <code style="color:#22d3bf">pixel_to_world</code>(俯瞰画素col,row→世界xy)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>table</p>
+<p><code style="color:#22d3bf">found</code>、経路始点からの<code style="color:#22d3bf">distance</code>[m]、<code style="color:#22d3bf">width</code>[m]、<code style="color:#22d3bf">confidence</code>、候補と横断歩道棄却数。</p>
+<p>English: find wide white components nearly perpendicular to the lane tangent, merge fragments split by occlusion, and reject runs of three or more similarly spaced transverse stripes as a crosswalk. Distance is arc length from path[0].</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import laneops</p>
+<p>labels = np.zeros((201, 81), np.int16); labels[100:104, 8:73] = 1</p>
+<p>H = np.array([[.05,0.,-2.],[0.,-.05,10.],[0.,0.,1.]])</p>
+<p>lane = {&quot;path&quot;:np.c_[np.zeros(101), np.linspace(0.,10.,101)], &quot;lane_width&quot;:3.5, &quot;pixel_to_world&quot;:H}</p>
+<p>out = laneops.stop_line_detect(labels, lane)</p>
+<p>assert out[&quot;found&quot;] and abs(out[&quot;distance&quot;] - 5.0) &lt; 0.11</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lane_ops_tour">lane_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/lane_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">lane</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:color_rule_mask">color_rule_mask</a> · <a style="color:#22d3bf" href="opdrive:plane_topview_color">plane_topview_color</a> · <a style="color:#22d3bf" href="opdrive:lane_boundary_fit">lane_boundary_fit</a> · <a style="color:#22d3bf" href="opdrive:lane_center_path">lane_center_path</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: laneops.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

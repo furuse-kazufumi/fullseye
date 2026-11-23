@@ -5,7 +5,7 @@ category: scale
 in: measurement
 out: measurement
 gpu: なし
-examples: [example_inner_diameter_mm]
+examples: [example_inner_diameter_mm, lane_ops_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ version: 1.1.1  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [example_inner_diameter_mm](../../../../examples/example_inner_diameter_mm.py) — `py -3.11 examples/example_inner_diameter_mm.py`
+- [lane_ops_tour](../../../../examples/lane_ops_tour.py) — `py -3.11 examples/lane_ops_tour.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 

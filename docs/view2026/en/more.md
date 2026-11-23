@@ -316,7 +316,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 </div>
 
-[All 187 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[All 188 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## See everything
 

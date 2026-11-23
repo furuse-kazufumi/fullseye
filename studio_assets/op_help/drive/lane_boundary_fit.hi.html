@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lane_boundary_fit — DRIVE <code style="color:#22d3bf">lane</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lane_boundary_fit(points, *, side=&#x27;unknown&#x27;, ransac_threshold=0.18, ransac_iterations=300, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import laneops; laneops.lane_boundary_fit(points, *, side=&#x27;unknown&#x27;, ransac_threshold=0.18, ransac_iterations=300, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;lane_boundary_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Top-view points (पार्श्व x, आगे y) पर lane boundary <code style="color:#22d3bf">x=c0+c1*y+c2*y²</code> को robust ढंग से fit करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>既存 <code style="color:#22d3bf">ransac_line</code> を外れ値に強い初期直線として使い、その後Huber IRLSの二次曲線へ拡張する。強いS字、yが折り返す境界、地面平面でない点には使えない。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>points : (N, 2) keypoints</p>
+<p>世界座標 <code style="color:#22d3bf">(x lateral, y forward)</code> [m]。順序は問わない。</p>
+<p>side : {&quot;left&quot;, &quot;right&quot;, &quot;unknown&quot;}</p>
+<p>後段が片側だけを車線中央へずらすための名前。</p>
+<p>ransac_threshold, ransac_iterations, seed</p>
+<p>直線/最終inlierの距離[m]、反復数、固定乱数seed。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>table</p>
+<p><code style="color:#22d3bf">coefficients</code>(c0,c1,c2)、<code style="color:#22d3bf">observed_y</code>、<code style="color:#22d3bf">inlier_mask</code>、残差、RMS、確信度。</p>
+<p>English: initialise with the existing 3-D <code style="color:#22d3bf">ransac_line</code> (z=0), then fit the boundary x(y) with a Huber robust quadratic. Point order does not matter. Hairpins where y is not single-valued are outside the contract and fail closed.</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import laneops</p>
+<p>y = np.linspace(0., 20., 41); x = -1.75 + 0.002 * y*y</p>
+<p>fit = laneops.lane_boundary_fit(np.c_[x, y], side=&quot;left&quot;, seed=7)</p>
+<p>assert np.allclose(fit[&quot;coefficients&quot;], [-1.75, 0., 0.002], atol=1e-10)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lane_ops_tour">lane_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/lane_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">lane</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:color_rule_mask">color_rule_mask</a> · <a style="color:#22d3bf" href="opdrive:plane_topview_color">plane_topview_color</a> · <a style="color:#22d3bf" href="opdrive:lane_center_path">lane_center_path</a> · <a style="color:#22d3bf" href="opdrive:stop_line_detect">stop_line_detect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: laneops.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

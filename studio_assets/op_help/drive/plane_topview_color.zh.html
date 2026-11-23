@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">plane_topview_color — DRIVE <code style="color:#22d3bf">lane</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbimage × matrix × matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_topview_color(image, K, R, t, *, z=0.0, centre=(0.0, 0.0), extent=30.0, res=0.05, fill=(0.0, 0.0, 0.0))</code>(要直接调用实现,<code style="color:#22d3bf">import laneops; laneops.plane_topview_color(image, K, R, t, *, z=0.0, centre=(0.0, 0.0), extent=30.0, res=0.05, fill=(0.0, 0.0, 0.0))</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;plane_topview_color&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>将地面平面投影为保留 RGB 的俯视图,并返回有效掩码及像素与世界坐标的对应关系。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>投影格子は既存 <code style="color:#22d3bf">plane_topview</code> と共通の <code style="color:#22d3bf">calib</code> 核を使う。列=世界+x、行=世界−y、画素中心は整数。レンズ歪みは補正済みを前提とし、地面を単一平面 z=<code style="color:#22d3bf">z</code>とみなすため、坂・縁石・車体は正しい位置にならない。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>image : (H, W, 3) rgbimage</p>
+<p>0..1 RGB。色を輝度へ落とさない。</p>
+<p>K, R, t : matrix, matrix, signal</p>
+<p><code style="color:#22d3bf">X_camera = R @ X_world + t</code>の内部/外部パラメータ。</p>
+<p>z, centre, extent, res</p>
+<p>平面の高さ、出力中心(x,y)、一辺[m]、1画素[m]。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>table</p>
+<p><code style="color:#22d3bf">rgb</code>, <code style="color:#22d3bf">valid</code>, <code style="color:#22d3bf">world_x/y</code>, <code style="color:#22d3bf">image_row/col</code>, <code style="color:#22d3bf">pixel_to_world</code> と逆行列。</p>
+<p>English: bilinearly rectify RGB onto a world z-plane while retaining a validity mask and both pixel/world correspondences. It assumes an already-undistorted image and a single plane; non-planar road objects are not metrically valid.</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import laneops</p>
+<p>rgb = np.zeros((8, 8, 3)); rgb[..., 1] = 1.0</p>
+<p>K = np.array([[4., 0., 3.5], [0., 4., 3.5], [0., 0., 1.]])</p>
+<p>R = np.diag([1., -1., -1.]); C = np.array([0., 0., 4.])</p>
+<p>out = laneops.plane_topview_color(rgb, K, R, -R @ C, extent=4., res=.5)</p>
+<p>assert out[&quot;rgb&quot;].shape == (8, 8, 3) and np.all(out[&quot;rgb&quot;][out[&quot;valid&quot;], 1] == 1.0)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lane_ops_tour">lane_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/lane_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">lane</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:color_rule_mask">color_rule_mask</a> · <a style="color:#22d3bf" href="opdrive:lane_boundary_fit">lane_boundary_fit</a> · <a style="color:#22d3bf" href="opdrive:lane_center_path">lane_center_path</a> · <a style="color:#22d3bf" href="opdrive:stop_line_detect">stop_line_detect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: laneops.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

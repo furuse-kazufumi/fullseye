@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lane_center_path — DRIVE <code style="color:#22d3bf">lane</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lane_center_path(left, right, *, lane_width=3.5, samples=51, band_inset=0.2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import laneops; laneops.lane_center_path(left, right, *, lane_width=3.5, samples=51, band_inset=0.2)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;lane_center_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>左右境界から車線中央の経路と走行可能帯を返す。</p>
+<p>両側があれば共通観測範囲で中点を取る。片側だけなら既知の<code style="color:#22d3bf">lane_width</code>の半分だけ内側へずらし、確信度を<code style="color:#22d3bf">SINGLE_BOUNDARY_CONFIDENCE_SCALE</code>倍に下げる。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>left, right : table or None</p>
+<p><code style="color:#22d3bf">lane_boundary_fit</code>の結果。欠測側はNoneか<code style="color:#22d3bf">{&quot;valid&quot;:False}</code>。</p>
+<p>lane_width, samples, band_inset</p>
+<p>既知の車線幅[m]、標本数、境界から走行帯を内側へ引く量[m]。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>table</p>
+<p><code style="color:#22d3bf">path</code>(x,y)、<code style="color:#22d3bf">band_left/right</code>、閉じた<code style="color:#22d3bf">corridor_polygon</code>、幅、確信度、使用した側。</p>
+<p>English: average two fitted boundaries, or offset a single observed boundary by half the known lane width with reduced confidence. It returns the centre path and an inset drivable corridor; it does not check vehicle footprint or obstacles.</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import laneops</p>
+<p>left = {&quot;coefficients&quot;:np.array([-1.75,0.,0.]), &quot;observed_y&quot;:np.array([0.,20.]), &quot;confidence&quot;:1.}</p>
+<p>right = {&quot;coefficients&quot;:np.array([1.75,0.,0.]), &quot;observed_y&quot;:np.array([0.,20.]), &quot;confidence&quot;:1.}</p>
+<p>out = laneops.lane_center_path(left, right)</p>
+<p>assert np.allclose(out[&quot;path&quot;][:, 0], 0.) and np.allclose(out[&quot;lane_width_samples&quot;], 3.5)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lane_ops_tour">lane_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/lane_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">lane</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:color_rule_mask">color_rule_mask</a> · <a style="color:#22d3bf" href="opdrive:plane_topview_color">plane_topview_color</a> · <a style="color:#22d3bf" href="opdrive:lane_boundary_fit">lane_boundary_fit</a> · <a style="color:#22d3bf" href="opdrive:stop_line_detect">stop_line_detect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: laneops.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
