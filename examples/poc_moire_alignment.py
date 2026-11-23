@@ -78,6 +78,24 @@ PX = 0.5                       # 物体側の画素 µm
 SHAPE = (256, 1024)            # 1 対のマークの像
 SIGMA = 0.01                   # 白色雑音(平均の強度 0.25 の 4 %)
 P_BAR = 20.0                   # 比べ手: 解像できる線のマークのピッチ µm
+COVER_HEADER_HEIGHT = 104
+COVER_BAND_FONT_SIZE = 16
+COVER_MOVE_FONT_SIZE = 18
+COVER_TITLE_FONT_SIZE = 16
+DIFFERENTIAL_TITLE_FONT_SIZE = 12
+ONE_NM_PLOT_SIZE = (780, 420)
+CRLB_PLOT_SIZE = (700, 420)
+TALBOT_PLOT_SIZE = (920, 420)
+
+
+def _bi(ja, en):
+    """図の札を日本語 / English の順で返す。 / Return a bilingual figure label."""
+    return "%s / %s" % (ja, en)
+
+
+def _bi_lines(ja, en):
+    """札を日本語、英語の 2 行で返す。 / Stack a bilingual label."""
+    return "%s\n%s" % (ja, en)
 
 FAILS: list[str] = []
 GATES: list[str] = []
@@ -455,7 +473,9 @@ def differential_bars(rows):
     import fullseye as fs
     w, h = 720, 400
     img = np.ones((h, w, 3))
-    names = [r[0] for r in rows]
+    name_en = {"流れ 300 nm": "drift 300 nm", "照明の傾き 30 %": "illumination tilt 30 %",
+               "両方": "both"}
+    names = [_bi(r[0], name_en[r[0]]) for r in rows]
     single = np.array([abs(r[1]) for r in rows])
     diff = np.array([abs(r[2]) for r in rows])
     top = float(np.ceil(single.max() * 1.6))                 # 上に凡例の置き場を空ける(棒と値に重ねない)
@@ -476,12 +496,20 @@ def differential_bars(rows):
     for x, nm in zip(xs, names):
         px, _ = fs.data_to_pixel(ax, x, 0.0)
         img = np.asarray(fs.text_box(img, nm, (float(px), rect[1] + rect[3] + 8), anchor="ct", font_size=12))
-    img = np.asarray(fs.legend_box(img, [("wrong", "単一の対(A だけ)"), ("emphasis", "差動の 2 対")],
+    img = np.asarray(fs.legend_box(img, [("wrong", _bi("単一の対(A だけ)", "single pair (A only)")),
+                                        ("emphasis", _bi("差動の 2 対", "two differential pairs"))],
                                    (rect[0] + rect[2] - 6, rect[1] + 6), anchor="rt", markers=True,
                                    font_size=12, swatch=12, pad=6))
-    img = np.asarray(fs.text_box(img, "差動で共通の誤差が消える(単一 %.1f nm → 差動 %.2f nm)" % (rows[0][1], rows[0][2]),
-                                 (10, 8), anchor="lt", font_size=13))
-    img = np.asarray(fs.text_box(img, "|誤差| [nm](棒の上の数は符号つきの誤差)", (10, h - 10), anchor="lb",
+    img = np.asarray(fs.text_box(img,
+                                 _bi_lines("差動で共通の誤差が消える(単一 %.1f nm → 差動 %.2f nm)" %
+                                           (rows[0][1], rows[0][2]),
+                                           "differential pairs cancel common error "
+                                           "(single %.1f nm → differential %.2f nm)" %
+                                           (rows[0][1], rows[0][2])),
+                                 (10, 8), anchor="lt", font_size=DIFFERENTIAL_TITLE_FONT_SIZE))
+    img = np.asarray(fs.text_box(img, _bi("|誤差| [nm](棒の上の数は符号つきの誤差)",
+                                         "|error| [nm] (labels show signed error)"),
+                                 (10, h - 10), anchor="lb",
                                  font_size=11))
     return img
 
@@ -489,13 +517,13 @@ def differential_bars(rows):
 def overlay_cover(size=720):
     """表紙(正方形 720 px): ① ウェハの格子だけ(見えない)② 2 枚を重ねる(102 µm の縞)③ ずらすと縞が 50 倍動く。
 
-    ページのカードとサムネイル(320 px)で字が読めるよう、帯ごとに大きな字で 1 行だけ書く(01_marks は 4 枚が横長で、
+    ページのカードとサムネイル(320 px)で字が読めるよう、帯ごとに英日 2 行の大きな字で書く(01_marks は 4 枚が横長で、
     縮めると注の字が 5 px になった —— 2026-11-15 の独立レビュー)。像は本文の図と同じカメラ(画素 0.5 µm、ぼけ σ 1.5 µm)と
     同じ雑音(σ 0.01)で、op ``moire_overlay_image`` が作る。③の縞の移動量は像から測った値(暗い縞の位置の差)。
     """
     import fullseye as fs
     import imagedraw
-    head, gap = 76, 8
+    head, gap = COVER_HEADER_HEIGHT, 8
     band = (size - head - 2 * gap) // 3
     shape = (band, size)
     P = PM * PW / abs(PW - PM) / PX
@@ -521,17 +549,26 @@ def overlay_cover(size=720):
     b3 = np.asarray(fs.draw_line(b3, (c1, 2), (c1, band - 3), color=(0.84, 0.37, 0.0), width=3))
     b3 = np.asarray(fs.arrow(b3, (c0, band * 0.70), (c1, band * 0.70), color="wrong", width=5, head_len=18.0,
                              head_width=16.0))
-    b1 = np.asarray(fs.text_box(b1, "① 2.04 µm の格子だけ → 見えない(灰色一色)", (10, 8), anchor="lt", font_size=28))
-    b2 = np.asarray(fs.text_box(b2, "② 2.00 µm の格子と重ねる → 102 µm の縞", (10, 8), anchor="lt", font_size=28))
-    b3 = np.asarray(fs.text_box(b3, "③ %.1f µm ずらす → 縞は %.0f µm 動く" % (delta * 1e-3, moved_um), (10, 8),
-                                anchor="lt", font_size=28))
+    b1 = np.asarray(fs.text_box(b1, _bi("① 2.04 µm の格子だけ → 見えない(灰色一色)",
+                                       "① 2.04 µm grating → invisible (grey)"),
+                                (10, 8), anchor="lt", font_size=COVER_BAND_FONT_SIZE))
+    b2 = np.asarray(fs.text_box(b2, _bi("② 2.00 µm の格子と重ねる → 102 µm の縞",
+                                       "② add 2.00 µm grating → 102 µm fringes"),
+                                (10, 8), anchor="lt", font_size=COVER_BAND_FONT_SIZE))
+    b3 = np.asarray(fs.text_box(b3, _bi_lines("③ %.1f µm ずらす → 縞は %.0f µm 動く" %
+                                             (delta * 1e-3, moved_um),
+                                             "③ shift %.1f µm → fringes move %.0f µm" %
+                                             (delta * 1e-3, moved_um)),
+                                (max(c0, c1) + 12, 8),
+                                anchor="lt", font_size=COVER_MOVE_FONT_SIZE))
     canvas = np.ones((size, size, 3))
     y = head
     for b in (b1, b2, b3):
         canvas[y:y + band] = b
         y += band + gap
-    canvas = np.asarray(fs.text_box(canvas, "見えない格子 2 枚で nm を読む(合成)", (size // 2, head // 2), anchor="cm",
-                                    font_size=32, box_alpha=0.0))
+    canvas = np.asarray(fs.text_box(canvas, _bi("見えない格子 2 枚で nm を読む(合成)",
+                                                "read nm with two invisible gratings (synthetic)"),
+                                    (size // 2, head // 2), anchor="cm", font_size=COVER_TITLE_FONT_SIZE, box_alpha=0.0))
     NUMBERS["cover_fringe_move_um"] = moved_um
     return canvas, moved_um
 
@@ -556,10 +593,17 @@ def make_figures(mw, steps_data, crlb_rows, diff_data, amb, tal):
                            "青の破線 = ずれ 0 の暗い縞、橙の実線と矢印 = ウェハを 600 nm 動かした後の同じ縞(A は %+.1f µm、B は %+.1f µm)。"
                            "像全体が流れると両方が同じ向きに動くので、差を取ればずれだけが残る。"
                            % (NUMBERS["panel_shift_a_um"], NUMBERS["panel_shift_b_um"]))
-    figs.save_plot("one_nm_steps", [("真値", steps, steps), ("モアレの位相", steps, rm), ("相互相関 + 放物線", steps, rx)],
-                   xlabel="与えたずれ [nm]", ylabel="読んだずれ [nm]", styles=["dashed", None, None],
+    figs.save_plot("one_nm_steps", [(_bi("真値", "truth"), steps, steps),
+                                     (_bi("モアレの位相", "moiré phase"), steps, rm),
+                                     (_bi("相互相関 + 放物線", "cross-correlation + parabola"), steps, rx)],
+                   xlabel=_bi("与えたずれ [nm]", "applied shift [nm]"),
+                   ylabel=_bi("読んだずれ [nm]", "measured shift [nm]"), styles=["dashed", None, None],
                    colors=["reference", "emphasis", "wrong"], kinds=["line", "line", "line"],
-                   title="1 nm ずつ: モアレは誤差 %.2f nm、相互相関は %.1f nm" % (NUMBERS["steps_rms_moire"], NUMBERS["steps_rms_xcorr"]),
+                   title=_bi("1 nm ずつ: モアレは誤差 %.2f nm、相互相関は %.1f nm" %
+                             (NUMBERS["steps_rms_moire"], NUMBERS["steps_rms_xcorr"]),
+                             "1 nm steps: moiré error %.2f nm; cross-correlation %.1f nm" %
+                             (NUMBERS["steps_rms_moire"], NUMBERS["steps_rms_xcorr"])),
+                   size=ONE_NM_PLOT_SIZE,
                    caption="同じ雑音・同じ画素数。相互相関は 20 µm の線のマークで、放物線補間の偏り(ずれに比例)と雑音が乗る。")
     # GIF: ずれを 51 nm ずつ 40 コマで p_w(2.04 µm)ぶん動かす —— 縞は 1 周期(102 µm)流れて元に戻る
     n = 24 if REDUCED else 40
@@ -574,31 +618,57 @@ def make_figures(mw, steps_data, crlb_rows, diff_data, amb, tal):
                           "線は 0.1 画素ずつしか動かず見えないが、縞は 1 コマ 2.55 µm(5 画素)流れ、1 周して元に戻る(= 折り返し)。"
                           % (PW * 1e3 / n))
     sg = np.array([r[0] for r in crlb_rows])
-    figs.save_plot("crlb", [("Monte-Carlo の標準偏差", sg, np.array([r[1] for r in crlb_rows])),
-                            ("下限(moire_phase_crlb)", sg, np.array([r[2] for r in crlb_rows]))],
-                   xlabel="雑音 σ(平均の強度 0.25)", ylabel="ずれの標準偏差 [nm]", kinds=["scatter", "line"],
+    figs.save_plot("crlb", [(_bi("Monte-Carlo の標準偏差", "Monte Carlo standard deviation"),
+                              sg, np.array([r[1] for r in crlb_rows])),
+                             (_bi("下限(moire_phase_crlb)", "lower bound (moire_phase_crlb)"),
+                              sg, np.array([r[2] for r in crlb_rows]))],
+                   xlabel=_bi("雑音 σ(平均の強度 0.25)", "noise σ (mean intensity 0.25)"),
+                   ylabel=_bi("ずれの標準偏差 [nm]", "shift standard deviation [nm]"), kinds=["scatter", "line"],
                    colors=["emphasis", "reference"], styles=[None, "dashed"],
-                   title="モアレの読みは雑音の下限に乗る(比 %.2f〜%.2f)" % (NUMBERS["crlb_ratio_min"], NUMBERS["crlb_ratio_max"]),
+                   title=_bi("モアレの読みは雑音の下限に乗る(比 %.2f〜%.2f)" %
+                             (NUMBERS["crlb_ratio_min"], NUMBERS["crlb_ratio_max"]),
+                             "moiré readings reach the noise bound (ratio %.2f–%.2f)" %
+                             (NUMBERS["crlb_ratio_min"], NUMBERS["crlb_ratio_max"])),
+                   size=CRLB_PLOT_SIZE,
                    caption="下限 = Rife & Boorstyn の位相の下限 × Hann の係数 1.5 × 基準像の雑音で 2 倍、を p/(2π) で nm に。")
     figs.save("differential", differential_bars(diff_data[0]),
               caption="逆向きのピッチ差の 2 対は、ずれでは逆に、マーク全体の流れでは同じ向きに縞が動く。差を取ると流れが消える。"
                       "照明の傾きは単一の対でも小さい(0.6 nm)が、それも差動で 0.02 nm に。")
-    figs.save_grid("quad_mark", [q0[::2, ::2], q1[::2, ::2]], captions=["基準(ずれ 0)", "(dx, dy) = (12, −25) nm、流れ (200, −100) nm"],
-                   gray=True, vrange=(0.0, 0.5), title="2 次元の 4 象限のマーク(2 画素ごとに表示)",
+    figs.save_grid("quad_mark", [q0[::2, ::2], q1[::2, ::2]],
+                   captions=[_bi("基準(ずれ 0)", "reference (zero shift)"),
+                             _bi("(dx, dy) = (12, −25) nm、流れ (200, −100) nm",
+                                 "(dx, dy) = (12, −25) nm, drift (200, −100) nm")],
+                   gray=True, vrange=(0.0, 0.5),
+                   title=_bi("2 次元の 4 象限のマーク(2 画素ごとに表示)",
+                             "2-D four-quadrant mark (displayed every 2 pixels)"),
                    caption="左上 A_x、右上 B_x、左下 A_y、右下 B_y。読み = (%.2f, %.2f) nm。" % (NUMBERS["quad_dx"], NUMBERS["quad_dy"]))
     true, single, diffr, absolute = amb
-    figs.save_plot("ambiguity", [("真値", true, true), ("単一の対(2.04 µm で折り返す)", true, single),
-                                 ("差動(1.01 µm で折り返す)", true, diffr), ("粗い相互相関で次数を決めた差動", true, absolute)],
-                   xlabel="与えたずれ [nm]", ylabel="読んだずれ [nm]", styles=["dashed", None, None, "dotted"],
+    figs.save_plot("ambiguity", [(_bi("真値", "truth"), true, true),
+                                 (_bi("単一の対(2.04 µm で折り返す)",
+                                      "single pair (wraps at 2.04 µm)"), true, single),
+                                 (_bi("差動(1.01 µm で折り返す)",
+                                      "differential (wraps at 1.01 µm)"), true, diffr),
+                                 (_bi("粗い相互相関で次数を決めた差動",
+                                      "differential with order from coarse correlation"), true, absolute)],
+                   xlabel=_bi("与えたずれ [nm]", "applied shift [nm]"),
+                   ylabel=_bi("読んだずれ [nm]", "measured shift [nm]"),
+                   styles=["dashed", None, None, "dotted"],
                    kinds=["line", "scatter", "scatter", "line"],
                    colors=["reference", "wrong", "neutral", "emphasis"],
-                   title="縞の位相は 1 周期で折り返す —— 粗い読みで次数を決める",
+                   title=_bi("縞の位相は 1 周期で折り返す —— 粗い読みで次数を決める",
+                             "fringe phase wraps every period — use a coarse reading for the order"),
                    caption="印刷の版ずれと同じ不定性。差動は捕捉範囲が p_m p_w/(p_m+p_w) と半分になる。")
     gaps, ca, cb, zt = tal
-    figs.save_plot("talbot_gap", [("マスク 2.00 µm", gaps, ca), ("マスク 2.04 µm", gaps, cb), ("0", gaps, 0 * gaps)],
-                   xlabel="マスクとウェハのギャップ [µm](λ = 0.55 µm)", ylabel="縞の振幅(接触時との比、符号つき)",
+    figs.save_plot("talbot_gap", [(_bi("マスク 2.00 µm", "mask 2.00 µm"), gaps, ca),
+                                   (_bi("マスク 2.04 µm", "mask 2.04 µm"), gaps, cb), ("0", gaps, 0 * gaps)],
+                   xlabel=_bi("マスクとウェハのギャップ [µm](λ = 0.55 µm)",
+                              "mask–wafer gap [µm] (λ = 0.55 µm)"),
+                   ylabel=_bi("縞の振幅(接触時との比、符号つき)",
+                              "signed fringe amplitude (ratio to contact)"),
                    styles=[None, None, "dashed"], colors=["emphasis", "neutral", "reference"],
-                   title="Talbot 効果: 振幅は 2p²/λ = %.1f µm で戻り、その半分で符号が反転" % zt,
+                   title=_bi("Talbot 効果: 振幅は 2p²/λ = %.1f µm で戻り、その半分で符号が反転" % zt,
+                             "Talbot effect: amplitude returns at 2p²/λ = %.1f µm and flips halfway" % zt),
+                   size=TALBOT_PLOT_SIZE,
                    caption="符号が反転すると縞は半周期ずれる。基準像と測定像のあいだに反転を跨ぐと読みが p/2 跳ぶ。2 対のピッチは Talbot 長が違うので、"
                            "差動でもギャップの影響は消えきらない。")
     cover, moved_um = overlay_cover()

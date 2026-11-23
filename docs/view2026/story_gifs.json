@@ -308,39 +308,43 @@
               "file": "03_real_flattened_profiles.png",
               "content_box": [
                 0,
-                113,
+                129,
                 720,
-                463
+                432
               ]
             },
             {
               "file": "05_film_ascan.png",
               "content_box": [
                 0,
-                113,
+                146,
                 720,
-                463
-              ]
+                398
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.809524
             },
             {
               "file": "10_thin_layer_limit.png",
               "content_box": [
                 0,
-                113,
+                206,
                 720,
-                463
-              ]
+                278
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.594444
             },
             {
               "file": "14_lateral_vs_dof.png",
               "content_box": [
                 0,
-                177,
+                174,
                 720,
-                336
+                342
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.143056
+              "source_aspect": 2.104167
             }
           ],
           "frame_count": 5,
@@ -351,16 +355,16 @@
             1600,
             1600
           ],
-          "bytes": 409774,
+          "bytes": 418418,
           "color_mad": [
             1.0412,
-            0.2418,
-            0.061,
-            0.0682,
-            0.1051
+            0.2726,
+            0.0598,
+            0.065,
+            0.0944
           ],
           "max_color_mad": 1.0412,
-          "source_sha256": "37077bccb2c744bfe1d1966f37708b97deb59d6d37a40f39e5b3f96fd8f84272"
+          "source_sha256": "d1183ebdab74e1dc22937d38ea505ed018f392d5ca94c2817620ae7cf9cae1e8"
         },
         "en": {
           "path": "articles/assets/poc/poc_industrial_oct/story.en.gif",
@@ -389,39 +393,43 @@
               "file": "03_real_flattened_profiles.png",
               "content_box": [
                 0,
-                113,
+                129,
                 720,
-                463
+                432
               ]
             },
             {
               "file": "05_film_ascan.png",
               "content_box": [
                 0,
-                113,
+                146,
                 720,
-                463
-              ]
+                398
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.809524
             },
             {
               "file": "10_thin_layer_limit.png",
               "content_box": [
                 0,
-                113,
+                206,
                 720,
-                463
-              ]
+                278
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.594444
             },
             {
               "file": "14_lateral_vs_dof.png",
               "content_box": [
                 0,
-                177,
+                174,
                 720,
-                336
+                342
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.143056
+              "source_aspect": 2.104167
             }
           ],
           "frame_count": 5,
@@ -432,16 +440,16 @@
             1600,
             1600
           ],
-          "bytes": 409774,
+          "bytes": 418418,
           "color_mad": [
             1.0412,
-            0.2418,
-            0.061,
-            0.0682,
-            0.1051
+            0.2726,
+            0.0598,
+            0.065,
+            0.0944
           ],
           "max_color_mad": 1.0412,
-          "source_sha256": "908950f2373c40cd3ade73a84ab91a9559e0f0410314697186970f6fbca1af6e"
+          "source_sha256": "7ccdc7a0137ffbe057100cb98a4d40837841927cb4ad3e26bae5b2e2cebbbe7c"
         }
       },
       "thumbnail": {
@@ -456,7 +464,7 @@
         "rendered": "view2026/thumbs/poc_industrial_oct.jpg"
       },
       "en": {
-        "text": "limitation_japanese_text_in_every_figure",
+        "text": "english_ready_frames",
         "selected": [
           "01_real_paint_bscans.png",
           "03_real_flattened_profiles.png",
@@ -465,28 +473,7 @@
           "14_lateral_vs_dof.png"
         ],
         "excluded_frames": [],
-        "not_english_ready": [
-          {
-            "file": "01_real_paint_bscans.png",
-            "class": "japanese"
-          },
-          {
-            "file": "03_real_flattened_profiles.png",
-            "class": "japanese"
-          },
-          {
-            "file": "05_film_ascan.png",
-            "class": "japanese"
-          },
-          {
-            "file": "10_thin_layer_limit.png",
-            "class": "japanese"
-          },
-          {
-            "file": "14_lateral_vs_dof.png",
-            "class": "japanese"
-          }
-        ]
+        "not_english_ready": []
       },
       "reason": null,
       "cover": "01_real_paint_bscans.png",
@@ -988,52 +975,54 @@
               "file": "01_scene.png",
               "content_box": [
                 0,
-                227,
+                246,
                 720,
-                236
+                198
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 3.055394
+              "source_aspect": 3.634638
             },
             {
               "file": "02_methods.png",
               "content_box": [
                 0,
-                216,
+                283,
                 720,
-                258
+                123
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.794355
+              "source_aspect": 5.864919
             },
             {
               "file": "03_deviation_maps.png",
               "content_box": [
                 0,
-                127,
+                152,
                 720,
-                435
-              ]
+                386
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.863102
             },
             {
               "file": "04_noise_bias.png",
               "content_box": [
                 0,
-                113,
+                129,
                 720,
-                463
+                432
               ]
             },
             {
               "file": "13_controls.png",
               "content_box": [
                 0,
-                214,
+                161,
                 720,
-                261
+                368
               ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.759191
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.957647
             }
           ],
           "frame_count": 6,
@@ -1045,17 +1034,17 @@
             1600,
             1600
           ],
-          "bytes": 376446,
+          "bytes": 383153,
           "color_mad": [
             0.5029,
-            0.2341,
-            0.0349,
-            0.9793,
-            0.0915,
-            0.0327
+            0.2539,
+            0.0243,
+            1.2185,
+            0.095,
+            0.0322
           ],
-          "max_color_mad": 0.9793,
-          "source_sha256": "a46de10c22661a5f0cf2358cc956fd8c051f119664caa72dd549ff52921818f3"
+          "max_color_mad": 1.2185,
+          "source_sha256": "cfcb9f2f918f26ee4dd7f222b81cb4256793e7811ebe1b1eb6fe39b3e628de35"
         },
         "en": {
           "path": "articles/assets/poc/poc_cad_scan_deviation/story.en.gif",
@@ -1080,74 +1069,63 @@
               "file": "01_scene.png",
               "content_box": [
                 0,
-                227,
+                246,
                 720,
-                236
+                198
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 3.055394
+              "source_aspect": 3.634638
             },
             {
               "file": "02_methods.png",
               "content_box": [
                 0,
-                216,
+                283,
                 720,
-                258
+                123
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.794355
+              "source_aspect": 5.864919
             },
             {
               "file": "03_deviation_maps.png",
               "content_box": [
                 0,
-                127,
+                152,
                 720,
-                435
-              ]
+                386
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.863102
             },
             {
               "file": "04_noise_bias.png",
               "content_box": [
                 0,
-                113,
+                129,
                 720,
-                463
+                432
               ]
-            },
-            {
-              "file": "13_controls.png",
-              "content_box": [
-                0,
-                214,
-                720,
-                261
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.759191
             }
           ],
-          "frame_count": 6,
+          "frame_count": 5,
           "durations_ms": [
             2500,
             1600,
             1600,
             1600,
-            1600,
             1600
           ],
-          "bytes": 376446,
+          "bytes": 328994,
           "color_mad": [
-            0.5029,
-            0.2341,
-            0.0349,
-            0.9793,
-            0.0915,
-            0.0327
+            0.4802,
+            0.2534,
+            0.0248,
+            1.2186,
+            0.095
           ],
-          "max_color_mad": 0.9793,
-          "source_sha256": "22669cbc6f5782af3727fb534d31005273b58d296d52e735df0fb2ee3afc34b3"
+          "max_color_mad": 1.2186,
+          "source_sha256": "fe5e2d2c92234ff841d68775ca198ff430652b2121437bff8c48da2c68e57b83"
         }
       },
       "thumbnail": {
@@ -1158,37 +1136,16 @@
         "rendered": "view2026/thumbs/poc_cad_scan_deviation.jpg"
       },
       "en": {
-        "text": "limitation_japanese_text_in_every_figure",
+        "text": "english_ready_frames",
         "selected": [
           "14_align_orbit.gif",
           "01_scene.png",
           "02_methods.png",
           "03_deviation_maps.png",
-          "04_noise_bias.png",
-          "13_controls.png"
+          "04_noise_bias.png"
         ],
         "excluded_frames": [],
         "not_english_ready": [
-          {
-            "file": "14_align_orbit.gif",
-            "class": "japanese"
-          },
-          {
-            "file": "01_scene.png",
-            "class": "japanese"
-          },
-          {
-            "file": "02_methods.png",
-            "class": "japanese"
-          },
-          {
-            "file": "03_deviation_maps.png",
-            "class": "japanese"
-          },
-          {
-            "file": "04_noise_bias.png",
-            "class": "japanese"
-          },
           {
             "file": "13_controls.png",
             "class": "japanese"
@@ -2728,41 +2685,43 @@
               "file": "02_group9_zoom.png",
               "content_box": [
                 0,
-                76,
+                125,
                 720,
-                538
+                439
               ]
             },
             {
               "file": "05_overlap_vs_convergence.png",
               "content_box": [
                 0,
-                113,
+                206,
                 720,
-                463
-              ]
+                277
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.602778
             },
             {
               "file": "07_pupil_phase.png",
               "content_box": [
                 0,
-                206,
+                217,
                 720,
-                278
+                256
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.585938
+              "source_aspect": 2.813043
             },
             {
               "file": "08_pupil_recovery.png",
               "content_box": [
                 0,
-                221,
+                231,
                 720,
-                247
+                228
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.912409
+              "source_aspect": 3.157258
             },
             {
               "file": "11_residual_history.png",
@@ -2783,17 +2742,17 @@
             1600,
             1600
           ],
-          "bytes": 731088,
+          "bytes": 747687,
           "color_mad": [
             0.1474,
-            0.1655,
-            0.0993,
-            0.7262,
-            0.1618,
-            0.0565
+            0.167,
+            0.0898,
+            0.766,
+            0.1744,
+            0.0797
           ],
-          "max_color_mad": 0.7262,
-          "source_sha256": "32cd032543caadcfd41c1c915c65c4a0aa83db9f471719a60fa5e16d36df4736"
+          "max_color_mad": 0.766,
+          "source_sha256": "f7417b820a9020c997555234400e885cea057a572a5e24d0d53aa20914c67688"
         },
         "en": {
           "path": "articles/assets/poc/poc_fourier_ptychography/story.en.gif",
@@ -2818,41 +2777,43 @@
               "file": "02_group9_zoom.png",
               "content_box": [
                 0,
-                76,
+                125,
                 720,
-                538
+                439
               ]
             },
             {
               "file": "05_overlap_vs_convergence.png",
               "content_box": [
                 0,
-                113,
+                206,
                 720,
-                463
-              ]
+                277
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.602778
             },
             {
               "file": "07_pupil_phase.png",
               "content_box": [
                 0,
-                206,
+                217,
                 720,
-                278
+                256
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.585938
+              "source_aspect": 2.813043
             },
             {
               "file": "08_pupil_recovery.png",
               "content_box": [
                 0,
-                221,
+                231,
                 720,
-                247
+                228
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 2.912409
+              "source_aspect": 3.157258
             },
             {
               "file": "11_residual_history.png",
@@ -2873,17 +2834,17 @@
             1600,
             1600
           ],
-          "bytes": 731088,
+          "bytes": 747687,
           "color_mad": [
             0.1474,
-            0.1655,
-            0.0993,
-            0.7262,
-            0.1618,
-            0.0565
+            0.167,
+            0.0898,
+            0.766,
+            0.1744,
+            0.0797
           ],
-          "max_color_mad": 0.7262,
-          "source_sha256": "8d247b203f3827c9e9207bfbefe6c160259223730ee56b7077f08a3041b4cbb3"
+          "max_color_mad": 0.766,
+          "source_sha256": "f52df9900a31a51fd1c7870d7a8e4e05fb55fd3c4c04f2e908d06fd3eb25e900"
         }
       },
       "thumbnail": {
@@ -2894,7 +2855,7 @@
         "rendered": "view2026/thumbs/poc_fourier_ptychography.jpg"
       },
       "en": {
-        "text": "limitation_japanese_text_in_every_figure",
+        "text": "english_ready_frames",
         "selected": [
           "01_usaf_4x_fp_20x.png",
           "02_group9_zoom.png",
@@ -2904,32 +2865,7 @@
           "11_residual_history.png"
         ],
         "excluded_frames": [],
-        "not_english_ready": [
-          {
-            "file": "01_usaf_4x_fp_20x.png",
-            "class": "japanese"
-          },
-          {
-            "file": "02_group9_zoom.png",
-            "class": "japanese"
-          },
-          {
-            "file": "05_overlap_vs_convergence.png",
-            "class": "japanese"
-          },
-          {
-            "file": "07_pupil_phase.png",
-            "class": "japanese"
-          },
-          {
-            "file": "08_pupil_recovery.png",
-            "class": "japanese"
-          },
-          {
-            "file": "11_residual_history.png",
-            "class": "japanese"
-          }
-        ]
+        "not_english_ready": []
       },
       "reason": null,
       "cover": "01_usaf_4x_fp_20x.png",
@@ -2979,18 +2915,18 @@
             {
               "file": "01_polariscope.png",
               "content_box": [
-                71,
+                36,
                 0,
-                578,
+                647,
                 690
               ]
             },
             {
               "file": "02_unwrap.png",
               "content_box": [
-                46,
+                31,
                 0,
-                628,
+                657,
                 690
               ]
             }
@@ -3001,14 +2937,14 @@
             1600,
             1600
           ],
-          "bytes": 643506,
+          "bytes": 700209,
           "color_mad": [
             0.3037,
-            1.0699,
-            1.2877
+            1.1246,
+            1.3705
           ],
-          "max_color_mad": 1.2877,
-          "source_sha256": "1733f6e8de479ee70f8af878d9f0cc6ce35dd219af04eafb99a366a3694b165b"
+          "max_color_mad": 1.3705,
+          "source_sha256": "7b4c69f9d4e21f9933e0b64036ddf59b8f2116fdbba5057eaf0ab8f66e066137"
         },
         "en": {
           "path": "articles/assets/poc/poc_photoelasticity/story.en.gif",
@@ -3036,18 +2972,18 @@
             {
               "file": "01_polariscope.png",
               "content_box": [
-                71,
+                36,
                 0,
-                578,
+                647,
                 690
               ]
             },
             {
               "file": "02_unwrap.png",
               "content_box": [
-                46,
+                31,
                 0,
-                628,
+                657,
                 690
               ]
             }
@@ -3058,14 +2994,14 @@
             1600,
             1600
           ],
-          "bytes": 643506,
+          "bytes": 700209,
           "color_mad": [
             0.3037,
-            1.0699,
-            1.2877
+            1.1246,
+            1.3705
           ],
-          "max_color_mad": 1.2877,
-          "source_sha256": "d9d9a99dd1ee5c884cfdf274f482b6d8c2ac0b449f07ae198c60dbd4b058342a"
+          "max_color_mad": 1.3705,
+          "source_sha256": "d8be2c029357e45ba57fef0679011ec2b8d7718d6f1f6cb9cdeccfc649918a52"
         }
       },
       "thumbnail": {
@@ -3080,27 +3016,14 @@
         "rendered": "view2026/thumbs/poc_photoelasticity.jpg"
       },
       "en": {
-        "text": "limitation_japanese_text_in_every_figure",
+        "text": "english_ready_frames",
         "selected": [
           "03_load_and_isoclinics.gif",
           "01_polariscope.png",
           "02_unwrap.png"
         ],
         "excluded_frames": [],
-        "not_english_ready": [
-          {
-            "file": "03_load_and_isoclinics.gif",
-            "class": "japanese"
-          },
-          {
-            "file": "01_polariscope.png",
-            "class": "japanese"
-          },
-          {
-            "file": "02_unwrap.png",
-            "class": "japanese"
-          }
-        ]
+        "not_english_ready": []
       },
       "reason": null,
       "cover": "03_load_and_isoclinics.gif",
@@ -13725,21 +13648,23 @@
               "file": "02_one_nm_steps.png",
               "content_box": [
                 0,
-                113,
+                151,
                 720,
-                463
-              ]
+                388
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.857143
             },
             {
               "file": "06_quad_mark.png",
               "content_box": [
                 0,
-                138,
+                151,
                 720,
-                413
+                387
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.742149
+              "source_aspect": 1.86034
             },
             {
               "file": "05_differential.png",
@@ -13756,21 +13681,21 @@
               "file": "04_crlb.png",
               "content_box": [
                 0,
-                113,
+                129,
                 720,
-                463
+                432
               ]
             },
             {
               "file": "08_talbot_gap.png",
               "content_box": [
                 0,
-                161,
+                213,
                 720,
-                367
+                263
               ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.961111
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.738095
             }
           ],
           "frame_count": 6,
@@ -13782,109 +13707,78 @@
             1600,
             1600
           ],
-          "bytes": 639831,
+          "bytes": 644013,
           "color_mad": [
             0.7047,
-            0.1614,
-            0.1236,
-            0.001,
-            0.0719,
-            0.1295
+            0.129,
+            0.0605,
+            0.0013,
+            0.0652,
+            0.1002
           ],
           "max_color_mad": 0.7047,
-          "source_sha256": "9c24dc94d4f581ffec53e462caddac3a126cf6125215738d65cf859b0bde0d44"
+          "source_sha256": "73f9f6e4aef36ebcae57a7542da46684b9e1e0a51246dff7b10b908bcfa7ebfe"
         },
         "en": {
           "path": "articles/assets/poc/poc_moire_alignment/story.en.gif",
           "frames": [
             {
-              "file": "09_overlay_cover.png",
-              "content_box": [
-                0,
-                0,
-                720,
-                720
-              ],
-              "thumbnail": {
-                "source": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png",
-                "frame": 0.5,
-                "crop": null,
-                "mode": "contain",
-                "rendered": "view2026/thumbs/poc_moire_alignment.jpg"
-              }
-            },
-            {
               "file": "02_one_nm_steps.png",
               "content_box": [
                 0,
-                113,
+                151,
                 720,
-                463
+                388
               ]
             },
             {
               "file": "06_quad_mark.png",
               "content_box": [
                 0,
-                138,
+                151,
                 720,
-                413
+                387
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.742149
-            },
-            {
-              "file": "05_differential.png",
-              "content_box": [
-                0,
-                145,
-                720,
-                400
-              ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.8
+              "source_aspect": 1.86034
             },
             {
               "file": "04_crlb.png",
               "content_box": [
                 0,
-                113,
+                129,
                 720,
-                463
+                432
               ]
             },
             {
               "file": "08_talbot_gap.png",
               "content_box": [
                 0,
-                161,
+                213,
                 720,
-                367
+                263
               ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.961111
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.738095
             }
           ],
-          "frame_count": 6,
+          "frame_count": 4,
           "durations_ms": [
             2500,
             1600,
             1600,
-            1600,
-            1600,
             1600
           ],
-          "bytes": 639831,
+          "bytes": 360474,
           "color_mad": [
-            0.7047,
-            0.1614,
-            0.1236,
-            0.001,
-            0.0719,
-            0.1295
+            0.1291,
+            0.0605,
+            0.0653,
+            0.1016
           ],
-          "max_color_mad": 0.7047,
-          "source_sha256": "5923a90cf8a5e2ecc0a6a3104b1310950fffcc9f5564d1c049e594a5b198d624"
+          "max_color_mad": 0.1291,
+          "source_sha256": "d4e1e11c36e010f9df91a7df8488f6d62deedb5440f80d4075df7affcccca526"
         }
       },
       "thumbnail": {
@@ -13895,12 +13789,10 @@
         "rendered": "view2026/thumbs/poc_moire_alignment.jpg"
       },
       "en": {
-        "text": "limitation_japanese_text_in_every_figure",
+        "text": "english_ready_frames",
         "selected": [
-          "09_overlay_cover.png",
           "02_one_nm_steps.png",
           "06_quad_mark.png",
-          "05_differential.png",
           "04_crlb.png",
           "08_talbot_gap.png"
         ],
@@ -13911,24 +13803,8 @@
             "class": "japanese"
           },
           {
-            "file": "02_one_nm_steps.png",
-            "class": "not_reproduced_by_audit"
-          },
-          {
-            "file": "06_quad_mark.png",
-            "class": "japanese"
-          },
-          {
             "file": "05_differential.png",
             "class": "japanese"
-          },
-          {
-            "file": "04_crlb.png",
-            "class": "not_reproduced_by_audit"
-          },
-          {
-            "file": "08_talbot_gap.png",
-            "class": "not_reproduced_by_audit"
           }
         ]
       },
@@ -13937,7 +13813,7 @@
       "still": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png",
       "stills": {
         "ja": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png",
-        "en": "articles/assets/poc/poc_moire_alignment/09_overlay_cover.png"
+        "en": "articles/assets/poc/poc_moire_alignment/02_one_nm_steps.png"
       },
       "alt": {
         "ja": "表紙(合成): ① ウェハの 2.04 µm の格子だけを撮ると、カメラのぼけで灰色一色になる(これが正しい)。② マスクの 2.00 µm の格子と重ねると、周期 102 µm の縞が現れる。③ ウェハを 0.6 µm ずらすと縞は 30 µm 動く(50 倍、像から測った値)。カメラ・雑音は本文の図と同じ。白色雑音だけの合成で、実機の系統誤差は入っていない。",
@@ -14135,19 +14011,23 @@
               "file": "02_snr_vs_stages.png",
               "content_box": [
                 0,
-                113,
+                197,
                 720,
-                463
-              ]
+                296
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.428571
             },
             {
               "file": "03_sync_error_mtf.png",
               "content_box": [
                 0,
-                113,
+                177,
                 720,
-                463
-              ]
+                336
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.142857
             },
             {
               "file": "04_sync_error_images.png",
@@ -14162,19 +14042,19 @@
               "file": "08_lens_mtf_field.png",
               "content_box": [
                 0,
-                182,
+                230,
                 720,
-                325
+                230
               ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.213889
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.132143
             },
             {
               "file": "11_tdi_1_vs_64_closeup.png",
               "content_box": [
-                49,
+                19,
                 0,
-                621,
+                682,
                 690
               ]
             }
@@ -14188,17 +14068,17 @@
             1600,
             1600
           ],
-          "bytes": 1279535,
+          "bytes": 1355863,
           "color_mad": [
             0.245,
-            0.0892,
-            0.1562,
-            0.1767,
-            0.0622,
-            0.1831
+            0.1012,
+            0.1636,
+            0.1911,
+            0.0733,
+            0.1746
           ],
           "max_color_mad": 0.245,
-          "source_sha256": "d0fcdcd7dee51d229621ae706024badd53364a48b32e0a5de72eba9d2b617b3a"
+          "source_sha256": "1d35c9c8a261421df0ea5084138f5825f88b4db1cdd5cec93b95f2fabf3eb447"
         },
         "en": {
           "path": "articles/assets/poc/poc_tdi_linescan/story.en.gif",
@@ -14223,19 +14103,23 @@
               "file": "02_snr_vs_stages.png",
               "content_box": [
                 0,
-                113,
+                197,
                 720,
-                463
-              ]
+                296
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.428571
             },
             {
               "file": "03_sync_error_mtf.png",
               "content_box": [
                 0,
-                113,
+                177,
                 720,
-                463
-              ]
+                336
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.142857
             },
             {
               "file": "04_sync_error_images.png",
@@ -14250,19 +14134,19 @@
               "file": "08_lens_mtf_field.png",
               "content_box": [
                 0,
-                182,
+                230,
                 720,
-                325
+                230
               ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.213889
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.132143
             },
             {
               "file": "11_tdi_1_vs_64_closeup.png",
               "content_box": [
-                49,
+                19,
                 0,
-                621,
+                682,
                 690
               ]
             }
@@ -14276,17 +14160,17 @@
             1600,
             1600
           ],
-          "bytes": 1279535,
+          "bytes": 1355863,
           "color_mad": [
             0.245,
-            0.0892,
-            0.1562,
-            0.1767,
-            0.0622,
-            0.1831
+            0.1012,
+            0.1636,
+            0.1911,
+            0.0733,
+            0.1746
           ],
           "max_color_mad": 0.245,
-          "source_sha256": "861995d985ebebcda98c0a25305aaf0c30e89a09040816d3aaad066f747fe039"
+          "source_sha256": "cb86c0445f9219a29e9385d84ae6ed1fc0c95a9f87c3b633a2950fb4c319256e"
         }
       },
       "thumbnail": {
@@ -14297,7 +14181,7 @@
         "rendered": "view2026/thumbs/poc_tdi_linescan.jpg"
       },
       "en": {
-        "text": "limitation_japanese_text_in_every_figure",
+        "text": "english_ready_frames",
         "selected": [
           "01_tdi_stages_defects.png",
           "02_snr_vs_stages.png",
@@ -14307,32 +14191,7 @@
           "11_tdi_1_vs_64_closeup.png"
         ],
         "excluded_frames": [],
-        "not_english_ready": [
-          {
-            "file": "01_tdi_stages_defects.png",
-            "class": "japanese"
-          },
-          {
-            "file": "02_snr_vs_stages.png",
-            "class": "japanese"
-          },
-          {
-            "file": "03_sync_error_mtf.png",
-            "class": "japanese"
-          },
-          {
-            "file": "04_sync_error_images.png",
-            "class": "japanese"
-          },
-          {
-            "file": "08_lens_mtf_field.png",
-            "class": "japanese"
-          },
-          {
-            "file": "11_tdi_1_vs_64_closeup.png",
-            "class": "japanese"
-          }
-        ]
+        "not_english_ready": []
       },
       "reason": null,
       "cover": "01_tdi_stages_defects.png",
@@ -15885,12 +15744,12 @@
               "file": "01_geometry.png",
               "content_box": [
                 0,
-                225,
+                289,
                 720,
-                239
+                112
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 3.008929
+              "source_aspect": 6.410714
             },
             {
               "file": "03_slope_cliff.png",
@@ -15904,10 +15763,10 @@
             {
               "file": "09_scene.png",
               "content_box": [
-                57,
                 0,
-                605,
-                690
+                29,
+                720,
+                632
               ]
             },
             {
@@ -15925,12 +15784,12 @@
               "file": "14_real_fill.png",
               "content_box": [
                 0,
-                135,
+                197,
                 720,
-                420
+                296
               ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.714286
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.428571
             }
           ],
           "frame_count": 6,
@@ -15942,47 +15801,29 @@
             1600,
             1600
           ],
-          "bytes": 613588,
+          "bytes": 627949,
           "color_mad": [
             1.6031,
-            0.0489,
-            0.1843,
-            0.6127,
-            0.0861,
-            0.0012
+            0.0231,
+            0.1598,
+            0.9128,
+            0.039,
+            0.0479
           ],
           "max_color_mad": 1.6031,
-          "source_sha256": "265456abd0dfc9ddd2a36a60408c97dae4e3ad8769bd8b9ea8e91cd7fe82909a"
+          "source_sha256": "9432fbab54eb4b7e73d6ec4cb4f751399e2513414ccf766aaa500807ed0f884c"
         },
         "en": {
           "path": "articles/assets/poc/poc_lidar_terrain_change/story.en.gif",
           "frames": [
             {
-              "file": "15_real_dod_still.png",
-              "content_box": [
-                0,
-                0,
-                720,
-                720
-              ],
-              "thumbnail": {
-                "source": "articles/assets/poc/poc_lidar_terrain_change/15_real_dod_still.png",
-                "frame": null,
-                "crop": null,
-                "mode": "square",
-                "rendered": "view2026/thumbs/poc_lidar_terrain_change.jpg"
-              }
-            },
-            {
               "file": "01_geometry.png",
               "content_box": [
                 0,
-                225,
+                289,
                 720,
-                239
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 3.008929
+                112
+              ]
             },
             {
               "file": "03_slope_cliff.png",
@@ -15994,12 +15835,23 @@
               ]
             },
             {
+              "file": "05_density_cliff.png",
+              "content_box": [
+                0,
+                160,
+                720,
+                370
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.944444
+            },
+            {
               "file": "09_scene.png",
               "content_box": [
-                57,
                 0,
-                605,
-                690
+                29,
+                720,
+                632
               ]
             },
             {
@@ -16017,12 +15869,12 @@
               "file": "14_real_fill.png",
               "content_box": [
                 0,
-                135,
+                197,
                 720,
-                420
+                296
               ],
-              "contain_reason": "aspect_within_2_4",
-              "source_aspect": 1.714286
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.428571
             }
           ],
           "frame_count": 6,
@@ -16034,17 +15886,17 @@
             1600,
             1600
           ],
-          "bytes": 613588,
+          "bytes": 362733,
           "color_mad": [
-            1.6031,
-            0.0489,
-            0.1843,
-            0.6127,
-            0.0861,
-            0.0012
+            0.0232,
+            0.1597,
+            0.227,
+            0.9128,
+            0.039,
+            0.0479
           ],
-          "max_color_mad": 1.6031,
-          "source_sha256": "3c76fa4f20bec906941c88845789529b2403456b592d1fcb3384266362f6fa9f"
+          "max_color_mad": 0.9128,
+          "source_sha256": "91dad17605e1690273c624ff2a2c0b6e8292e159ddd8634e2af6a5f087509f7e"
         }
       },
       "thumbnail": {
@@ -16055,11 +15907,11 @@
         "rendered": "view2026/thumbs/poc_lidar_terrain_change.jpg"
       },
       "en": {
-        "text": "limitation_japanese_text_in_every_figure",
+        "text": "english_ready_frames",
         "selected": [
-          "15_real_dod_still.png",
           "01_geometry.png",
           "03_slope_cliff.png",
+          "05_density_cliff.png",
           "09_scene.png",
           "10_change_maps.png",
           "14_real_fill.png"
@@ -16069,26 +15921,6 @@
           {
             "file": "15_real_dod_still.png",
             "class": "japanese"
-          },
-          {
-            "file": "01_geometry.png",
-            "class": "not_reproduced_by_audit"
-          },
-          {
-            "file": "03_slope_cliff.png",
-            "class": "not_reproduced_by_audit"
-          },
-          {
-            "file": "09_scene.png",
-            "class": "not_reproduced_by_audit"
-          },
-          {
-            "file": "10_change_maps.png",
-            "class": "not_reproduced_by_audit"
-          },
-          {
-            "file": "14_real_fill.png",
-            "class": "not_reproduced_by_audit"
           }
         ]
       },
@@ -16097,7 +15929,7 @@
       "still": "articles/assets/poc/poc_lidar_terrain_change/15_real_dod_still.png",
       "stills": {
         "ja": "articles/assets/poc/poc_lidar_terrain_change/15_real_dod_still.png",
-        "en": "articles/assets/poc/poc_lidar_terrain_change/15_real_dod_still.png"
+        "en": "articles/assets/poc/poc_lidar_terrain_change/01_geometry.png"
       },
       "alt": {
         "ja": "サムネイル用の静止画。13 の (b) と (c) を同じ色で並べた(表示は 2 m 角)。そのまま引くと区画全体が -0.183 m 沈んで見え、平坦部の中央値で合わせると美術館まわりの変化域だけが残る。改変: EPT の点を EPSG:3857 から NAD83 / UTM 15N へ変換し、区画 500 x 500 m に切り、地面点(分類 2)を 1 m セルで平均(補間なし)して差を取った。 Map services and data available from U.S. Geological Survey, National Geospatial Program. Lidar: USGS 3D Elevation Program, projects MO_StLouis_2012 and USGS_LPC_MO_StLouis_2017_LAS_2018 (Entwine Point Tiles, https://usgs-lidar-public.s3.amazonaws.com/); DEM: USGS one meter x73y429 MO SaintLouis 2017 (published 20200330); accessed October 2, 2026. Public domain; not endorsed by USGS.",
@@ -18056,43 +17888,43 @@
               "file": "01_basin.png",
               "content_box": [
                 0,
-                113,
+                198,
                 720,
-                463
-              ]
+                294
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.447222
             },
             {
               "file": "02_pca_quadrant.png",
               "content_box": [
                 0,
-                260,
+                240,
                 720,
-                169
+                210
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 4.269737
+              "source_aspect": 3.427273
             },
             {
               "file": "03_width.png",
               "content_box": [
                 0,
-                166,
+                189,
                 720,
-                357
+                311
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.016667
+              "source_aspect": 2.318056
             },
             {
               "file": "04_symmetry_lies.png",
               "content_box": [
                 0,
-                211,
+                129,
                 720,
-                268
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.691176
+                432
+              ]
             }
           ],
           "frame_count": 5,
@@ -18103,16 +17935,16 @@
             1600,
             1600
           ],
-          "bytes": 431625,
+          "bytes": 453402,
           "color_mad": [
             1.5701,
-            0.1671,
-            0.0407,
-            0.1505,
-            0.0329
+            0.1319,
+            0.0344,
+            0.1414,
+            0.0299
           ],
           "max_color_mad": 1.5701,
-          "source_sha256": "39510250a50c79b686b5cdd3f78bbb87df0db75ad007d69488c9873957224456"
+          "source_sha256": "f73262b552fbf9d731f1ae870f522442aced34607662f786b63d0abcc10323bd"
         },
         "en": {
           "path": "articles/assets/poc/poc_registration_basin/story.en.gif",
@@ -18137,63 +17969,39 @@
               "file": "01_basin.png",
               "content_box": [
                 0,
-                113,
+                198,
                 720,
-                463
-              ]
-            },
-            {
-              "file": "02_pca_quadrant.png",
-              "content_box": [
-                0,
-                260,
-                720,
-                169
+                294
               ],
               "contain_reason": "protected_both_edges",
-              "source_aspect": 4.269737
+              "source_aspect": 2.447222
             },
             {
               "file": "03_width.png",
               "content_box": [
                 0,
-                166,
+                189,
                 720,
-                357
+                311
               ],
               "contain_reason": "aspect_within_2_4",
-              "source_aspect": 2.016667
-            },
-            {
-              "file": "04_symmetry_lies.png",
-              "content_box": [
-                0,
-                211,
-                720,
-                268
-              ],
-              "contain_reason": "protected_both_edges",
-              "source_aspect": 2.691176
+              "source_aspect": 2.318056
             }
           ],
-          "frame_count": 5,
+          "frame_count": 3,
           "durations_ms": [
             2500,
             1600,
-            1600,
-            1600,
             1600
           ],
-          "bytes": 431625,
+          "bytes": 369071,
           "color_mad": [
-            1.5701,
-            0.1671,
-            0.0407,
-            0.1505,
-            0.0329
+            1.5046,
+            0.1319,
+            0.1401
           ],
-          "max_color_mad": 1.5701,
-          "source_sha256": "a0bdff32d4a06513aca93e4f52e2c84ef5334d476308378da7c10381418ccbc1"
+          "max_color_mad": 1.5046,
+          "source_sha256": "89e6030ca8d2fec9fea846cba22fc861c5781a91dfb1d87d8c8bdb3877c3d9b6"
         }
       },
       "thumbnail": {
@@ -18204,35 +18012,21 @@
         "rendered": "view2026/thumbs/poc_registration_basin.jpg"
       },
       "en": {
-        "text": "limitation_japanese_text_in_every_figure",
+        "text": "english_ready_frames",
         "selected": [
           "07_real_scan_still.png",
           "01_basin.png",
-          "02_pca_quadrant.png",
-          "03_width.png",
-          "04_symmetry_lies.png"
+          "03_width.png"
         ],
         "excluded_frames": [],
         "not_english_ready": [
           {
-            "file": "07_real_scan_still.png",
+            "file": "02_pca_quadrant.png",
             "class": "japanese"
           },
           {
-            "file": "01_basin.png",
-            "class": "not_reproduced_by_audit"
-          },
-          {
-            "file": "02_pca_quadrant.png",
-            "class": "not_reproduced_by_audit"
-          },
-          {
-            "file": "03_width.png",
-            "class": "not_reproduced_by_audit"
-          },
-          {
             "file": "04_symmetry_lies.png",
-            "class": "not_reproduced_by_audit"
+            "class": "japanese"
           }
         ]
       },
