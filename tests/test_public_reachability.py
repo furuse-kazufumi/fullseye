@@ -40,6 +40,7 @@ import importlib
 import io
 import os
 import re
+import types
 import warnings
 
 import pytest
@@ -243,13 +244,32 @@ def _import_shipped(name):
                              % (name, type(e).__name__, e)) from e
 
 
+def _public_attribute_names(namespace):
+    """*namespace* の公開の属性名(``_`` 始まりと、import 済みの下位モジュールを除く)。"""
+    return {n for n in dir(namespace)
+            if not n.startswith("_") and not isinstance(getattr(namespace, n, None), types.ModuleType)}
+
+
+def test_public_names_do_not_depend_on_which_submodules_were_imported():
+    """下位モジュールを import しても公開の名前は増えない(試験の順で門の答えが変わらない)。"""
+    importlib.import_module("fullseye")
+    before = _public_names()
+    importlib.import_module("fullseye.uninstall")
+    importlib.import_module("fullseye.setup_cmd")
+    assert _public_names() == before
+
+
 def _public_names():
     """公開経路 3 つの名前を集める(facade / 型つき台帳 / 進化する 2-D op)。"""
     import fullseye as fs
     import ops
 
-    names = {n for n in dir(fs) if not n.startswith("_")}
-    names |= {n for n in dir(fs.ledger) if not n.startswith("_")}
+    # ★2026-11-23: 下位モジュールは数えない。dir(fullseye) には「その時までに import された」下位モジュールも
+    #   並ぶ(fullseye.uninstall を import する試験が先に集められると "uninstall" が公開の名前に見え、
+    #   studio_editops_qt.uninstall が届くことになった。Linux CI の gates でだけ赤だった理由)。モジュールは
+    #   呼べる関数ではない。除いても他の行の数は変わらない(この機械の実測、モジュール 129 本)。
+    names = _public_attribute_names(fs)
+    names |= _public_attribute_names(fs.ledger)
     names |= {o.name for o in ops.REGISTRY}
     # ★2026-10-02: 4 つ目の公開経路 = 知覚 facade(fullseye.vision.<群>.<関数>、halcon_facade_map.json の
     #   "module.func" が実体)。HALCON 章の実装(segmentation.py 等)はここからだけ届いていた。
@@ -472,7 +492,10 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-11-22 Studio adversarial review: strict JSON / checked settings の内部 2 層を追加し、1551 → 1556(実測)。
 # 2026-11-23 配置の項目の wrapper を残さない直し: studio_theme +6(LayoutEntry と読む口 5 本)で 1556 → 1562(この機械の実測)。
 # 2026-11-23 Linux のコードの字の直し: studio_theme +1(is_code_pitch)で 1562 → 1563(この機械の実測)。
-_HIDDEN_FUNCTIONS_TODAY = 1563
+# 2026-11-23 下位モジュールの名前を公開の名前に数えない直し: 1563 → 1568(+5、この機械の実測)。名前が
+#   fullseye の下位モジュールと同じだっただけで届く事にされていた scene_registry.motion と
+#   oss_adapter.camera / features / flow / stereo。届いていなかった物を正直に数え直した(増えたのではない)。
+_HIDDEN_FUNCTIONS_TODAY = 1568
 
 
 def _hidden_total():
