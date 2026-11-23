@@ -1,6 +1,16 @@
-﻿条件,偽掘削 m3,偽堆積 m3,偽正味 m3,偽変化面積 m2
-変化なし・遮蔽なし・誤差なし,83.8,90.7,+6.9,2702
-変化なし・遮蔽 30 %,105.8,108.0,+2.2,2703
-変化なし・系統誤差 0.10 m,85.0,89.9,+4.9,2702
-変化なし・遮蔽 + 系統誤差,119.4,101.6,-17.8,2703
-変化なし・誤差なし + LoD 0.148 m でしきる,18.1,18.7,+0.6,194
+﻿"条件
+condition","偽掘削 m3
+false erosion [m3]","偽堆積 m3
+false deposition [m3]","偽正味 m3
+false net [m3]","偽変化面積 m2
+false changed area [m2]"
+"変化なし・遮蔽なし・誤差なし
+no change; no occlusion; no errors",83.8,90.7,+6.9,2702
+"変化なし・遮蔽 30 %
+no change; 30% occlusion",105.8,108.0,+2.2,2703
+"変化なし・系統誤差 0.10 m
+no change; 0.10 m systematic error",85.0,89.9,+4.9,2702
+"変化なし・遮蔽 + 系統誤差
+no change; occlusion + systematic error",119.4,101.6,-17.8,2703
+"変化なし・誤差なし + LoD 0.148 m でしきる
+no change or errors; threshold at LoD 0.148 m",18.1,18.7,+0.6,194

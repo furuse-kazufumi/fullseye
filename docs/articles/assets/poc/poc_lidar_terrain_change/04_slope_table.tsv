@@ -1,4 +1,9 @@
-傾斜 deg	sigma_dz 実測/予測 m	sigma_L 実測/予測 m	LoD95 DoD / M3C2 m	比
+傾斜 deg
+slope [deg]	sigma_dz 実測/予測 m
+sigma_dz measured/predicted [m]	sigma_L 実測/予測 m
+sigma_L measured/predicted [m]	LoD95 DoD / M3C2 m
+LoD95 DoD / M3C2 [m]	比
+ratio
 0	0.0313 / 0.0250	0.0264 / 0.0250	0.061 / 0.052	1.18
 5	0.0347 / 0.0283	0.0267 / 0.0253	0.068 / 0.052	1.30
 10	0.0430 / 0.0367	0.0274 / 0.0261	0.084 / 0.054	1.57

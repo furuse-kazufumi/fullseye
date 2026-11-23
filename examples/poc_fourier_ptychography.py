@@ -104,6 +104,11 @@ GROUPS = (7, 8, 9)
 ELEMENTS = (3, 4, 5, 6) if REDUCED else (1, 2, 3, 4, 5, 6)
 STEP = 2.0 ** (1.0 / 6.0)   # USAF の 1 要素の周期の比
 
+
+def _bi(ja, en):
+    """図の札を日本語 / English の順で返す。 / Return a bilingual figure label."""
+    return "%s / %s" % (ja, en)
+
 FAILS: list[str] = []
 GATES: list[str] = []
 NUMBERS: dict[str, float] = {}
@@ -747,8 +752,11 @@ def make_figures(design, res1, res2, rows, pup, led, refl, real):
     rmax = int(max(e["horizontal_bars_box"][1] for e in t["elements"])) + 16
     crop = (slice(0, min(rmax, SIDE)), slice(None))
     figs.save_grid("usaf_4x_fp_20x", [a[crop] for a in (res1["low"], rec["amplitude"], res1["c20"], t["amplitude"])],
-                   captions=["4 倍 / NA 0.1 の 1 枚(中心の LED)", "FP(169 枚、合成 NA %.3f)" % rec["na_synthetic_axis"],
-                             "20 倍 / NA 0.40、単色の平行光", "真値"],
+                   captions=[_bi("4 倍・NA 0.1 の 1 枚(中心の LED)", "one 4x / NA 0.1 frame (central LED)"),
+                             _bi("FP(169 枚、合成 NA %.3f)" % rec["na_synthetic_axis"],
+                                 "FP (169 frames, synthetic NA %.3f)" % rec["na_synthetic_axis"]),
+                             _bi("20 倍・NA 0.40、単色の平行光", "20x / NA 0.40, monochromatic plane wave"),
+                             _bi("真値", "truth")],
                    ncols=2, gray=True,
                    caption="合成の USAF チャート(4 面とも同じ %d µm の切り出し)。4 倍の 1 枚の限界 %.2f µm が FP で %.2f µm に(単色の平行光で"
                            "照らした 20 倍 / NA 0.40 も %.2f µm、閉形式 λ/NA_syn = %.2f µm)。普通の照明の 20 倍は %.2f µm まで分解し、"
@@ -764,7 +772,10 @@ def make_figures(design, res1, res2, rows, pup, led, refl, real):
     sl = (slice(max(r0, 0), r1), slice(max(c0, 0), c1))
     figs.save_grid("group9_zoom", [_zoom(res1["low"][sl], 3), _zoom(rec["amplitude"][sl], 3), _zoom(res1["c20"][sl], 3),
                                    _zoom(res1["inc20"][sl], 3)],
-                   captions=["4 倍の 1 枚", "FP", "20 倍 / NA 0.40、単色の平行光", "20 倍 / NA 0.40、普通の照明(強度)"], ncols=1, gray=True,
+                   captions=[_bi("4 倍の 1 枚", "one 4x frame"), "FP",
+                             _bi("20 倍・NA 0.40、単色の平行光", "20x / NA 0.40, monochromatic plane wave"),
+                             _bi("20 倍・NA 0.40、普通の照明(強度)", "20x / NA 0.40, ordinary illumination (intensity)")],
+                   ncols=1, gray=True,
                    caption="合成の USAF の G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(%.2f µm)まで 3 本の棒が分かれる。"
                            "普通の照明の 20 倍は E6 まで分かれ、FP より細かい。" % NUMBERS["fp_last"])
     names = list(res1["reads"].keys())
@@ -785,12 +796,16 @@ def make_figures(design, res1, res2, rows, pup, led, refl, real):
                    caption="位相だけの物体。強度の 1 枚にはほとんど写らないが、FP の位相は帯域制限した真値と rms %.3f rad。" % res2["rms"])
     ov = np.array([r["overlap"] for r in rows]) * 100
     figs.save_plot("overlap_vs_convergence",
-                   [("2 本の初期値の差", ov, np.array([r["disagree"] for r in rows])),
-                    ("真値との差", ov, np.array([r["err"] for r in rows])),
+                   [(_bi("2 本の初期値の差", "disagreement between two initialisations"),
+                     ov, np.array([r["disagree"] for r in rows])),
+                    (_bi("真値との差", "error from truth"), ov, np.array([r["err"] for r in rows])),
                     ("agree_tol 0.08", ov, np.full_like(ov, FP.AGREE_TOL)),
-                    ("公表の下限 35 %", np.array([35.0, 35.0]), np.array([0.0, 0.25]))],
-                   xlabel="隣り合う瞳の重なり [%]", ylabel="相対差",
-                   title="重なりと 2 本の初期値の差(しきい値 0.08 はこの掃引から置いた)",
+                    (_bi("公表の下限 35 %", "published lower bound 35 %"),
+                     np.array([35.0, 35.0]), np.array([0.0, 0.25]))],
+                   xlabel=_bi("隣り合う瞳の重なり [%]", "adjacent-pupil overlap [%]"),
+                   ylabel=_bi("相対差", "relative discrepancy"),
+                   title=_bi("重なりと 2 本の初期値の差(しきい値 0.08 はこの掃引から置いた)",
+                             "overlap vs two-initialisation disagreement (0.08 threshold set from this sweep)"),
                    styles=[None, None, "dashed", "dotted"], colors=["emphasis", "neutral", "reference", "reference"])
     figs.save_table("overlap_table", ["ピッチ [mm]", "格子", "重なり [%]", "合成 NA", "判定", "2 本の差", "残差", "回数", "真値との差"],
                     [["%.1f" % r["pitch"], "%d × %d" % (r["n_side"], r["n_side"]), "%.1f" % (100 * r["overlap"]), "%.3f" % r["na_syn"],
@@ -800,11 +815,14 @@ def make_figures(design, res1, res2, rows, pup, led, refl, real):
     res, true_rms, st = pup["中程度"]
     S = np.abs(st["pupil_true"]) > 0
     figs.save_grid("pupil_phase", [_pupil_crop(st["pupil_true"], S), _pupil_crop(res[True][0]["pupil"], S)],
-                   captions=["真の瞳の位相 [rad]", "推定した瞳の位相 [rad]"], ncols=2, signed=True, vrange=(-2.0, 2.0),
+                   captions=[_bi("真の瞳の位相 [rad]", "true pupil phase [rad]"),
+                             _bi("推定した瞳の位相 [rad]", "estimated pupil phase [rad]")],
+                   ncols=2, signed=True, vrange=(-2.0, 2.0),
                    colorbar=True, unit="rad",
                    caption="瞳の円(NA 0.1)の中の位相。推定は 2〜4 次の多項式へ射影した EPRY 型の更新。")
     figs.save_grid("pupil_recovery", [res[False][0]["amplitude"][crop], res[True][0]["amplitude"][crop]],
-                   captions=["瞳を推定しない復元", "瞳を推定した復元"],
+                   captions=[_bi("瞳を推定しない復元", "reconstruction without pupil estimation"),
+                             _bi("瞳を推定した復元", "reconstruction with pupil estimation")],
                    ncols=2, gray=True,
                    caption="デフォーカス 0.2 波 + 非点 0.1 波。推定した瞳は真値と %.3f 波(ピストンと傾きを除く)。" % NUMBERS["pupil_err"])
     lres, true_geo = led
@@ -819,9 +837,14 @@ def make_figures(design, res1, res2, rows, pup, led, refl, real):
                    ncols=2, vrange=(-5, 45), colorbar=True, unit="nm",
                    caption="反射型: 高さ 20・30・40 nm の線と間隔(周期 2.6・3.9・6.5 µm)を往復の位相で。誤差 rms %.2f nm。" % NUMBERS["height_rms_nm"])
     hist = rec["residual_history_starts"]
-    figs.save_plot("residual_history", [("初期値: 明視野の拡大", np.arange(1, len(hist[0]) + 1), np.log10(np.array(hist[0]))),
-                                        ("初期値: 一様", np.arange(1, len(hist[1]) + 1), np.log10(np.array(hist[1])))],
-                   xlabel="反復", ylabel="log10 振幅の相対残差", title="収束の履歴(1 章の復元)")
+    figs.save_plot("residual_history",
+                   [(_bi("初期値: 明視野の拡大", "initial: upsampled bright field"),
+                     np.arange(1, len(hist[0]) + 1), np.log10(np.array(hist[0]))),
+                    (_bi("初期値: 一様", "initial: uniform"),
+                     np.arange(1, len(hist[1]) + 1), np.log10(np.array(hist[1])))],
+                   xlabel=_bi("反復", "iteration"),
+                   ylabel=_bi("log10 振幅の相対残差", "log10 relative amplitude residual"),
+                   title=_bi("収束の履歴(1 章の復元)", "convergence history (chapter 1 reconstruction)"))
     if real is not None:
         rec_r = real["rec"]
         figs.save_grid("real_usaf", [real["raw"], rec_r["amplitude"]], captions=["生の 1 枚(2 倍 / NA 0.1、中心の LED)", "FP(225 枚)"],
