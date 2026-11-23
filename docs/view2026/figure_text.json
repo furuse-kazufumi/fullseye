@@ -1596,7 +1596,7 @@
     },
     "15_real_dod_still.png": {
      "class": "bilingual",
-     "sha256": "c2c884a9883cbaa12ad2d76d15019fb5a079cfc29776a6f1b8e27858778ee7a4",
+     "sha256": "26a52d76ccb4a3803eeb8b446ea6b716b27ee63a4721d53658b2092ee9f1c340",
      "same_bytes_as_audit_run": true,
      "japanese_strings": []
     }
@@ -2756,7 +2756,7 @@
     },
     "07_real_scan_still.png": {
      "class": "bilingual",
-     "sha256": "97eb52dfee894366d6025b17aa40b3543d0e987c2f262682b34fceacf351a28b",
+     "sha256": "35783154ab39e33d690b4d2efbda796c8400bce35a3c67d503e1013299cf4f66",
      "same_bytes_as_audit_run": true,
      "japanese_strings": []
     }

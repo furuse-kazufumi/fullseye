@@ -2024,28 +2024,28 @@ def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
     S, PW = 720, 340
     st = Image.new("RGB", (S, S), (14, 17, 23))
     ds = ImageDraw.Draw(st)
-    ds.text((STILL_MARGIN, 14), _bi("2 時期の航空 LiDAR の差(実データ)",
-                                    "two-epoch LiDAR change (real)"),
+    ds.text((STILL_MARGIN, 14), _bi("2 時期の航空 LiDAR 差", "two-epoch airborne LiDAR change"),
             font=font(STILL_TITLE_FONT, True), fill=(240, 240, 240))
-    for j, (arr, m, lab) in enumerate(((dod_raw, lim, _bi("そのまま引く", "raw subtraction")),
-                                       (dod, lim, _bi("平坦部で %+.3f m 合わせる" % (-R["off_flat"]),
-                                                     "align %+.3f m" % (-R["off_flat"]))))):
+    labels = ((dod_raw, lim, "そのまま引く", "raw subtraction"),
+              (dod, lim, "平坦部で %+.3f m 合わせる" % (-R["off_flat"]),
+               "align %+.3f m on flats" % (-R["off_flat"])))
+    for j, (arr, m, ja, en) in enumerate(labels):
         rgb = np.clip(signed_rgb(arr, m) * 255.0, 0, 255).astype(np.uint8)
         xo = 14 + j * (PW + 12)
         st.paste(Image.fromarray(rgb).resize((PW, PW), Image.Resampling.BICUBIC), (xo, 70))
-        ds.text((xo + 2, 418), lab, font=font(STILL_PANEL_FONT, True), fill=(240, 240, 240))
-    ds.text((STILL_MARGIN, 466), _bi("そのまま引くと全面が %.2f m 沈んで見える" % abs(R["off_flat"]),
-                                     "raw subtraction: all terrain −%.2f m" % abs(R["off_flat"])),
-            font=font(STILL_BODY_FONT, True),
-            fill=(240, 240, 240))
-    ds.text((STILL_MARGIN, 506), _bi("合わせると、残るのは建物まわりの変化だけ",
-                                     "alignment leaves only building-area change"),
+        ds.text((xo + 2, 416), "%s /\n%s" % (ja, en),
+                font=font(STILL_PANEL_FONT, True), fill=(240, 240, 240))
+    ds.text((STILL_MARGIN, 464), "そのまま引くと全面が %.2f m 沈んで見える /\n"
+            "raw subtraction makes all terrain look %.2f m lower" %
+            (abs(R["off_flat"]), abs(R["off_flat"])),
+            font=font(STILL_BODY_FONT, True), fill=(240, 240, 240))
+    ds.text((STILL_MARGIN, 518), "合わせると、残るのは建物まわりの変化だけ /\n"
+            "alignment leaves only building-area change",
             font=font(STILL_BODY_FONT), fill=(225, 225, 225))
-    ds.text((STILL_MARGIN, 548), _bi("青 = 2017 のほうが低い・赤 = 高い(±%.1f m)" % lim,
-                                     "blue = lower in 2017; red = higher (±%.1f m)" % lim),
+    ds.text((STILL_MARGIN, 574), _bi("青 = 2017 が低い・赤 = 高い(±%.1f m)" % lim,
+                                     "blue = lower; red = higher (±%.1f m)" % lim),
             font=font(STILL_NOTE_FONT), fill=(200, 205, 215))
-    ds.text((STILL_MARGIN, 582), _bi("濃い灰 = 地面点が無い(建物・池・樹冠の下)",
-                                     "dark grey = no ground points (building, pond or canopy)"),
+    ds.text((STILL_MARGIN, 602), _bi("濃灰 = 地面点なし", "dark grey = no ground points"),
             font=font(STILL_NOTE_FONT), fill=(200, 205, 215))
     ds.text((STILL_MARGIN, S - STILL_CREDIT_FROM_BOTTOM),
             _bi("USGS 3DEP(public domain、USGS の承認ではない)",
@@ -2062,11 +2062,11 @@ def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
 STILL_CREDIT_FROM_BOTTOM = 62
 #: 日英併記の表紙で使う余白と文字サイズ。 / Margins and font sizes for the bilingual cover.
 STILL_MARGIN = 20
-STILL_TITLE_FONT = 24
-STILL_PANEL_FONT = 18
-STILL_BODY_FONT = 18
-STILL_NOTE_FONT = 16
-STILL_CREDIT_FONT = 14
+STILL_TITLE_FONT = 20
+STILL_PANEL_FONT = 15
+STILL_BODY_FONT = 16
+STILL_NOTE_FONT = 14
+STILL_CREDIT_FONT = 13
 #: 図 13(実データの DoD)で地図を囲む枠の太さ [px] と色(0..1 の灰)。
 DOD_MAP_FRAME_PX = 2
 DOD_MAP_FRAME_GRAY = 0.35

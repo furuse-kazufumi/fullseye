@@ -15846,7 +15846,7 @@
             0.0479
           ],
           "max_color_mad": 1.6031,
-          "source_sha256": "90feeb1f8e46506ae2ced432151c8938cf73a9b8dcec4bc465259c658168618d"
+          "source_sha256": "7a6c53624f76449f804f4ad2647bcba625dfcdbe4813ac49bebb9b45bd6c80ab"
         },
         "en": {
           "path": "articles/assets/poc/poc_lidar_terrain_change/story.en.gif",
@@ -15938,7 +15938,7 @@
             0.0479
           ],
           "max_color_mad": 1.6031,
-          "source_sha256": "c14bb60ed9c5d89f65156baec837de22f14d786eddcfee7535303505ed4db23e"
+          "source_sha256": "b8fcbd0ba43e8f25685777cdd9e5ac560827c7d3bd293160d4901af9dd33662c"
         }
       },
       "thumbnail": {
@@ -17983,7 +17983,7 @@
             0.0459
           ],
           "max_color_mad": 1.5701,
-          "source_sha256": "869fea1ea53ebdfa139403ebaaf9ccefe2cb271c5e387f96e1a1ede2619a5650"
+          "source_sha256": "cf2eab6b960a5ad4d7ab62ccb57dca460e67c5568e6e47a1ead009ac56936289"
         },
         "en": {
           "path": "articles/assets/poc/poc_registration_basin/story.en.gif",
@@ -18066,7 +18066,7 @@
             0.0459
           ],
           "max_color_mad": 1.5701,
-          "source_sha256": "28c3240cb33ffbff459c81e5a01fbeaba37e9565648e70aaa85995d6b7bf1e22"
+          "source_sha256": "06653aabb92e64ae8f2a9576c8482910529a35f3fafd4e4b5ea37bd71fc143ba"
         }
       },
       "thumbnail": {

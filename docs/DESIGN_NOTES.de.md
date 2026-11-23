@@ -1245,9 +1245,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L700** _(ja)_ — ★ここは記録値どうしの門で、記録の形と結論の向きしか見ない(記録が古いかはデータありの実行が見る)。
 - **L866** _(ja)_ — ★データがあるときは、測った値と埋め込みの記録値を突き合わせる(決定的な計算。CI の門は記録どうしなので)。
 - **L1044** _(ja)_ — ★2026-11-15: 目玉のカードのサムネイル用の正方形の静止画(独立レビュー: 動画のコマを切り抜いたサムネイルは 左のコマと見出しの文字が切れていた)。動画と同じ計算結果だけで組み、320 px に縮めても字が潰れにくい大きさにする。
-- **L1474** — ★Wenn der Nutzer `estimate_normals` explizit uebergibt, im Glauben, die Normalen seien doch vorhanden. Das ist der **Rest** der Luecke, 14 Groessenordnungen schlechter als der Standard.
-- **L1664** — ★Luecke 1 wurde am 2026-09-06 geschlossen. Dieses assert wurde so umgeschrieben, dass es **den geschlossenen Zustand fixiert** (frueher fixierte es den defekten Zustand: `d_fixed < 1e-6 < d_default` = defekt). Kehrt der Defekt zurueck, schlaegt es hier fehl.
-- **L1675** — ★Luecke 2 wurde am 2026-09-06 geschlossen. Frueher war es `< 0.9 * len(ka)` (den defekten Zustand fixierend). Jetzt fixiert es, dass **der Standard eine exakte Uebereinstimmung liefert**.
+- **L1472** — ★Wenn der Nutzer `estimate_normals` explizit uebergibt, im Glauben, die Normalen seien doch vorhanden. Das ist der **Rest** der Luecke, 14 Groessenordnungen schlechter als der Standard.
+- **L1662** — ★Luecke 1 wurde am 2026-09-06 geschlossen. Dieses assert wurde so umgeschrieben, dass es **den geschlossenen Zustand fixiert** (frueher fixierte es den defekten Zustand: `d_fixed < 1e-6 < d_default` = defekt). Kehrt der Defekt zurueck, schlaegt es hier fehl.
+- **L1673** — ★Luecke 2 wurde am 2026-09-06 geschlossen. Frueher war es `< 0.9 * len(ka)` (den defekten Zustand fixierend). Jetzt fixiert es, dass **der Standard eine exakte Uebereinstimmung liefert**.
 
 ## `examples/poc_reproducible_icp.py`
 
