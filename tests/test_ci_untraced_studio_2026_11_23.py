@@ -57,7 +57,8 @@ def _helper_callers() -> set[str]:
 
 def test_every_untraced_test_is_listed_and_every_listed_file_exists():
     listed = _listed_files()
-    assert listed and len(listed) == len(set(listed)), listed
+    assert listed, "tools/ci_untraced_tests.txt lists no test file"
+    assert len(listed) == len(set(listed)), listed
     assert all(path.startswith("tests/test_") and path.endswith(".py") for path in listed), listed
     missing = [path for path in listed if not os.path.isfile(os.path.join(ROOT, path))]
     assert not missing, missing
