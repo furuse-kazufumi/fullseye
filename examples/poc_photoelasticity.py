@@ -83,6 +83,14 @@ LAMBDA_M = 5.5e-7       # 波長 [m]。fσ はこの波長での値(δ は fσ �
 C_PA = LAMBDA_M / (F_SIGMA * 1e3)   # 応力光学係数 [Pa⁻¹] = λ/fσ(5.1e-11、樹脂の桁)
 NPIX = 257              # 奇数にして中心を画素に乗せる
 PX_MM = 2.0 * R_MM / (NPIX - 1)
+VIDEO_PANEL_TITLE_FONT_SIZE = 9
+VIDEO_STATUS_FONT_SIZE = 9
+VIDEO_POLARISER_FONT_SIZE = 9
+
+
+def _bi(ja, en):
+    """図の札を日本語 / English の順で返す。 / Return a bilingual figure label."""
+    return "%s / %s" % (ja, en)
 
 
 def fields(npix=NPIX):
@@ -261,9 +269,12 @@ def section3_dark_field(dsig, theta, delta, naive, m):
     figs.save_grid("polariscope",
                    [np.where(IN_DISC, img, 0.0), np.where(IN_DISC, bright, 0.0),
                     np.where(IN_DISC, plane, 0.0), np.where(IN_DISC, dsig, 0.0)],
-                   ["暗視野(円偏光)", "明視野(円偏光)",
-                    "平面偏光(等傾線が混ざる)", "主応力差 σ1-σ2 [MPa](真値)"],
-                   title="円板の直径圧縮 —— ポラリスコープ像と真値",
+                   [_bi("暗視野(円偏光)", "dark field (circular)"),
+                    _bi("明視野(円偏光)", "bright field (circular)"),
+                    _bi("平面偏光(等傾線が混ざる)", "linear polarisation (with isoclinics)"),
+                    _bi("主応力差 σ1-σ2 [MPa](真値)", "true principal-stress difference σ1-σ2 [MPa]")],
+                   title=_bi("円板の直径圧縮 —— ポラリスコープ像と真値",
+                             "diametral compression of a disc — polariscope images and truth"),
                    caption="応力場も偏光像も光弾性の族の op(brazilian_disc_stress → polariscope_intensity)で組んだ。")
     print("  → 整数の縞しか読まないと **fσ/h = %.3f MPa の刻み**でしか答えられない。"
           % (F_SIGMA / H_MM))
@@ -497,10 +508,15 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3, flipped):
                     np.where(IN_DISC, np.hypot(s1, s2), np.nan),
                     np.where(IN_DISC, np.minimum(px_per_fringe, ppf_cap), np.nan),
                     np.where(IN_DISC, cause, np.nan)],
-                   ["巻いたままの δ [rad]", "変調度 |sinδ|(N が 0.5 の倍数の帯で 0)",
-                    "1 縞あたりの画素数(上限 = 99 % 点)",
-                    "巻き戻しの外れ(0 = 合う / 1 = 符号反転と重なる / 2 = その他)"],
-                   title="巻き戻しの外れは、ほとんどが既知の符号のあいまいさ(等傾角の π/2)と同じ画素",
+                   [_bi("巻いたままの δ [rad]", "wrapped δ [rad]"),
+                    _bi("変調度 |sinδ|(N が 0.5 の倍数の帯で 0)",
+                        "modulation |sinδ| (zero at half-integer N)"),
+                    _bi("1 縞あたりの画素数(上限 = 99 % 点)",
+                        "pixels per fringe (capped at 99th percentile)"),
+                    _bi("巻き戻しの外れ(0 = 合う / 1 = 符号反転と重なる / 2 = その他)",
+                        "unwrap error (0 match / 1 sign-flip overlap / 2 other)")],
+                   title=_bi("巻き戻しの外れは、ほとんどが既知の符号のあいまいさ(等傾角の π/2)と同じ画素",
+                             "most unwrap errors coincide with the known sign ambiguity (isoclinic π/2)"),
                    signed=[True, False, False, False],
                    vrange=[None, None, None, (0.0, 2.0)],
                    caption="右下が外れの場所。ほとんどが 4 節の符号の二義性(位相シフト光弾性で既知の問題。"
@@ -647,7 +663,8 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
 
     def title(f, k, s):
         strip = f[0:TB, xs[k]:xs[k] + S]
-        f[0:TB, xs[k]:xs[k] + S] = _v_txt(strip, s, (4, TB // 2), anchor="lm", fs_=13)
+        f[0:TB, xs[k]:xs[k] + S] = _v_txt(
+            strip, s, (4, TB // 2), anchor="lm", fs_=VIDEO_PANEL_TITLE_FONT_SIZE)
 
     # 右のパネル(中心の明るさ vs 荷重)の軸は 1 度だけ描く
     plot = np.full((S, S, 3), 0.10)
@@ -655,7 +672,8 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
     plot = np.asarray(AN.axes_frame(plot, ax), np.float64)
     plot = np.asarray(AN.ticks(plot, ax, xticks=[0, 100, 200, 300, 400, 500],
                                yticks=[0.0, 0.5, 1.0], font_size=10), np.float64)
-    plot = _v_txt(plot, "荷重 P [N]", (S // 2 + 20, S - 4), anchor="cb", fs_=10)
+    plot = _v_txt(plot, _bi("荷重 P [N]", "load P [N]"),
+                  (S // 2 + 20, S - 4), anchor="cb", fs_=10)
 
     def disc_rgb(v):
         out = np.where(disc[..., None], v, 0.0)
@@ -664,9 +682,11 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
 
     frames = []
     base1 = base.copy()
-    title(base1, 0, "暗視野(円偏光)= 等色線")
-    title(base1, 1, "主応力差 σ1-σ2(真値、0〜%.1f MPa)" % vmax)
-    title(base1, 2, "中心の明るさ(0 = 暗線が中心を通過)")
+    title(base1, 0, _bi("暗視野(円偏光)= 等色線", "dark field = isochromatics"))
+    title(base1, 1, _bi("主応力差 σ1-σ2(真値、0〜%.1f MPa)" % vmax,
+                        "true σ1-σ2 (0–%.1f MPa)" % vmax))
+    title(base1, 2, _bi("中心の明るさ(0 = 暗線が中心を通過)",
+                        "centre brightness (0 = dark line crossing)"))
     base1[TB:, xs[2]:xs[2] + S] = plot
     for k, p in enumerate(loads):
         f = base1.copy()
@@ -674,10 +694,15 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
         dark = pe.polariscope_intensity(f_full["delta"] * s_, ang, "circular_dark")
         a = disc_rgb(np.repeat(np.clip(dark, 0, 1)[..., None], 3, 2))
         n_c = n_c_full * s_
-        a = _v_txt(a, "荷重 P = %3.0f N\n中心の縞次数 N = %.2f\n(閉形式 h(σ1-σ2)/fσ)" % (p, n_c), (5, 5), fs_=12)
+        a = _v_txt(a, (_bi("荷重 P = %3.0f N" % p, "load P = %3.0f N" % p) + "\n" +
+                       _bi("中心の縞次数 N = %.2f" % n_c, "centre fringe order N = %.2f" % n_c) + "\n" +
+                       _bi("(閉形式 h(σ1-σ2)/fσ)", "(closed form h(σ1-σ2)/fσ)")),
+                   (5, 5), fs_=12)
         f[TB:, xs[0]:xs[0] + S] = a
         sig = np.asarray(imgio.apply_cmap(dsig_full * s_, "inferno", vmin=0.0, vmax=vmax), np.float64)
-        b = _v_txt(disc_rgb(sig), "中心 %.3f MPa\n(8P/(πDh))" % (8 * p / (np.pi * 2 * R_MM * H_MM)),
+        centre_mpa = 8 * p / (np.pi * 2 * R_MM * H_MM)
+        b = _v_txt(disc_rgb(sig), _bi("中心 %.3f MPa" % centre_mpa,
+                                      "centre %.3f MPa" % centre_mpa) + "\n(8P/(πDh))",
                    (5, 5), fs_=12)
         f[TB:, xs[1]:xs[1] + S] = b
         pl = f[TB:, xs[2]:xs[2] + S]
@@ -685,7 +710,9 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
             pl = np.asarray(AN.plot_series(pl, ax, loads[:k + 1], i_centre[:k + 1],
                                            color=(0.95, 0.85, 0.35), width=2), np.float64)
         n_pass = int(np.floor(n_c + 1e-9))
-        pl = _v_txt(pl, "暗線の通過 %d 回 → 縞次数は %d 以上" % (n_pass, n_pass), (8, 6), fs_=11)
+        pl = _v_txt(pl, _bi("暗線の通過 %d 回 → 縞次数は %d 以上" % (n_pass, n_pass),
+                             "%d dark-line crossings → fringe order ≥ %d" % (n_pass, n_pass)),
+                    (8, 6), fs_=VIDEO_STATUS_FONT_SIZE)
         f[TB:, xs[2]:xs[2] + S] = pl
         frames.append(np.clip(f, 0.0, 1.0))
     last_plot = frames[-1][TB:, xs[2]:xs[2] + S].copy()
@@ -693,9 +720,12 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
 
     # 後半: 荷重 P_N のまま、直交させた平面偏光子の対を回す
     base2 = base.copy()
-    title(base2, 0, "平面偏光(直交)= 等色線 + 等傾線")
-    title(base2, 1, "等傾角 θ(真値)と、いま黒くなる向き")
-    title(base2, 2, "中心の明るさ(荷重 %.0f N で止めた)" % P_N)
+    title(base2, 0, _bi("平面偏光(直交)= 等色線 + 等傾線",
+                        "crossed linear = isochromatics + isoclinics"))
+    title(base2, 1, _bi("等傾角 θ(真値)と、いま黒くなる向き",
+                        "true isoclinic θ and current dark direction"))
+    title(base2, 2, _bi("中心の明るさ(荷重 %.0f N で止めた)" % P_N,
+                        "centre brightness (load held at %.0f N)" % P_N))
     base2[TB:, xs[2]:xs[2] + S] = last_plot
     th_rgb = np.asarray(imgio.apply_cmap(np.mod(theta, np.pi) / np.pi, "twilight", vmin=0.0, vmax=1.0),
                         np.float64)
@@ -703,13 +733,18 @@ def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
         f = base2.copy()
         plane = pe.polariscope_intensity(f_full["delta"], ang, "plane_dark", polarizer_deg=float(bdeg))
         a = disc_rgb(np.repeat(np.clip(plane, 0, 1)[..., None], 3, 2))
-        a = _v_txt(a, "偏光子 %.0f 度 / 検光子 %.0f 度" % (bdeg, bdeg + 90.0), (5, 5), fs_=12)
+        a = _v_txt(a, _bi("偏光子 %.0f 度・検光子 %.0f 度" % (bdeg, bdeg + 90.0),
+                           "polariser %.0f deg; analyser %.0f deg" % (bdeg, bdeg + 90.0)),
+                   (5, 5), fs_=VIDEO_POLARISER_FONT_SIZE)
         f[TB:, xs[0]:xs[0] + S] = a
         on = disc & (np.abs(np.sin(2.0 * (theta - np.deg2rad(bdeg)))) < 0.05)
         b = th_rgb.copy()
         b[on] = (1.0, 1.0, 1.0)
-        b = _v_txt(disc_rgb(b), "白 = 主応力の向きが %.0f 度か %.0f 度\n(この点が左で黒い帯になる)"
-                   % (bdeg, bdeg + 90.0), (5, 5), fs_=11)
+        b = _v_txt(disc_rgb(b),
+                   _bi("白 = 主応力の向きが %.0f 度か %.0f 度" % (bdeg, bdeg + 90.0),
+                       "white = principal stress at %.0f or %.0f deg" % (bdeg, bdeg + 90.0)) +
+                   "\n" + _bi("(この点が左で黒い帯になる)", "(these points form the dark band at left)"),
+                   (5, 5), fs_=VIDEO_STATUS_FONT_SIZE)
         f[TB:, xs[1]:xs[1] + S] = b
         frames.append(np.clip(f, 0.0, 1.0))
     frames += [frames[-1]] * n_hold
