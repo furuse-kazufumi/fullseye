@@ -6,15 +6,18 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>कण तालिका को calibrate कर कारण सहित स्वीकृति, तीन आधारों के bins, confidence interval समेत D10/D50/D90 और provenance लौटाता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">unsplit</code> と <code style="color:#22d3bf">ambiguous</code> の重なりは常に除外し、1 粒として黙って数えない。<code style="color:#22d3bf">border_policy=&quot;correct&quot;</code> は端粒子について <code style="color:#22d3bf">border_inclusion_probability</code>、<code style="color:#22d3bf">border_corrected_diameter_px</code>、<code style="color:#22d3bf">border_corrected_area_px2</code> が揃う場合だけ Horvitz--Thompson の個数重み <code style="color:#22d3bf">1/p</code> と補正寸法を使う。尺度の標準不確かさは各径へ線形伝播し、分位点では決定的 bootstrap の標本区間と尺度区間を合成する。</p>
+<p>D10/D50/D90 は、重複径を重みごとに集約した<b>重み付き経験分布の中点規約</b>で求める。<code style="color:#22d3bf">unsplit</code> と <code style="color:#22d3bf">ambiguous</code> の重なりは常に除外し、1 粒として黙って数えない。上流の <code style="color:#22d3bf">blob_split</code> と <code style="color:#22d3bf">blob_count_interval</code> に由来する成分 ID、分割根拠、個数区間、決定可否が全行で必須であり、未決定行は <code style="color:#22d3bf">ambiguous</code> として除外する。<code style="color:#22d3bf">border_policy=&quot;correct&quot;</code> は端粒子について <code style="color:#22d3bf">border_inclusion_probability</code>、<code style="color:#22d3bf">border_corrected_diameter_px</code>、<code style="color:#22d3bf">border_corrected_area_px2</code> が揃う場合だけ Horvitz--Thompson の個数重み <code style="color:#22d3bf">1/p</code> と補正寸法を使う。尺度の標準不確かさは各径へ線形伝播し、分位点では決定的 bootstrap の標本区間と尺度区間を合成する。有効粒子数が <code style="color:#22d3bf">MIN_EFFECTIVE_PARTICLES</code> 未満なら、母集団分位点を主張せず <code style="color:#22d3bf">insufficient_sample</code> を返す。bootstrap 区間は独立粒子の経験分布を再標本化する条件付き区間であり、端補正時は設計ベース保証ではなく実験的な不確かさである。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>particles : table (dict of 1-D columns)</p>
-<p>必須列は <code style="color:#22d3bf">object_id</code>、<code style="color:#22d3bf">diameter_px</code>、<code style="color:#22d3bf">area_px2</code>、<code style="color:#22d3bf">touches_border</code>、</p>
-<p><code style="color:#22d3bf">split_status</code>。状態は <code style="color:#22d3bf">isolated</code> / <code style="color:#22d3bf">split</code> / <code style="color:#22d3bf">unsplit</code> / <code style="color:#22d3bf">ambiguous</code>。</p>
+<p>必須列は <code style="color:#22d3bf">object_id</code>、<code style="color:#22d3bf">diameter_px</code>、<code style="color:#22d3bf">area_px2</code>、<code style="color:#22d3bf">diameter_unit=&quot;px&quot;</code>、</p>
+<p><code style="color:#22d3bf">area_unit=&quot;px2&quot;</code>、<code style="color:#22d3bf">touches_border</code>、<code style="color:#22d3bf">split_status</code>、<code style="color:#22d3bf">component_id</code>、</p>
+<p><code style="color:#22d3bf">split_evidence</code>、<code style="color:#22d3bf">count_interval_lo</code>、<code style="color:#22d3bf">count_interval_hi</code>、<code style="color:#22d3bf">count_determined</code>。</p>
+<p>状態は <code style="color:#22d3bf">isolated</code> / <code style="color:#22d3bf">split</code> / <code style="color:#22d3bf">unsplit</code> / <code style="color:#22d3bf">ambiguous</code>。</p>
 <p><code style="color:#22d3bf">major_axis_px</code> と <code style="color:#22d3bf">minor_axis_px</code> は任意。</p>
 <p>calibration : table (one-row dict)</p>
-<p><code style="color:#22d3bf">scale_per_px</code>、<code style="color:#22d3bf">unit</code>(<code style="color:#22d3bf">nm/px</code> / <code style="color:#22d3bf">um/px</code> / <code style="color:#22d3bf">µm/px</code> / <code style="color:#22d3bf">mm/px</code>)、</p>
-<p><code style="color:#22d3bf">uncertainty_per_px</code>、<code style="color:#22d3bf">calibrator_id</code>、<code style="color:#22d3bf">calibrated_at</code>、<code style="color:#22d3bf">valid_until</code>。</p>
+<p><code style="color:#22d3bf">scale</code> = {<code style="color:#22d3bf">value</code>, <code style="color:#22d3bf">unit=&quot;mm/px&quot;</code>, <code style="color:#22d3bf">standard_uncertainty</code>} と</p>
+<p><code style="color:#22d3bf">calibrator_id</code>、<code style="color:#22d3bf">calibrated_at</code>、<code style="color:#22d3bf">valid_until</code>。<code style="color:#22d3bf">pixel_to_world</code> と同じ</p>
+<p>mm/px 契約だけを許す。</p>
 <p>border_policy : {&quot;include&quot;, &quot;exclude&quot;, &quot;correct&quot;}</p>
 <p>端粒子を切れた測定のまま含める、除外する、必要情報を使って補正する方針。</p>
 <p>measurement_date : str</p>
@@ -36,13 +39,16 @@
 <p>空表、列不整合、非有限・非正、補正情報不足、校正期間外、採用粒子ゼロを拒否する。</p>
 <p>English: combine microscopy particles and a calibration record into an auditable report. Unresolved overlaps are excluded; border correction is refused without inclusion probability and corrected dimensions. Number, area and volume bases remain distinct and are not treated as an interchangeable laser-diffraction result.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
-<p>&gt;&gt;&gt; p = {&quot;object_id&quot;: [&quot;a&quot;, &quot;b&quot;], &quot;diameter_px&quot;: [10., 20.], &quot;area_px2&quot;: [78.5, 314.],</p>
-<p>...      &quot;touches_border&quot;: [False, False], &quot;split_status&quot;: [&quot;isolated&quot;, &quot;split&quot;]}</p>
-<p>&gt;&gt;&gt; c = {&quot;scale_per_px&quot;: 2., &quot;unit&quot;: &quot;um/px&quot;, &quot;uncertainty_per_px&quot;: .02,</p>
+<p>&gt;&gt;&gt; p = {&quot;object_id&quot;: [&quot;a&quot;] * 30, &quot;diameter_px&quot;: [10.] * 30, &quot;area_px2&quot;: [78.5] * 30,</p>
+<p>...      &quot;diameter_unit&quot;: &quot;px&quot;, &quot;area_unit&quot;: &quot;px2&quot;, &quot;touches_border&quot;: [False] * 30,</p>
+<p>...      &quot;split_status&quot;: [&quot;isolated&quot;] * 30, &quot;component_id&quot;: [&quot;c%d&quot; % i for i in range(30)],</p>
+<p>...      &quot;split_evidence&quot;: [&quot;blob_count_interval&quot; ] * 30, &quot;count_interval_lo&quot;: [1] * 30,</p>
+<p>...      &quot;count_interval_hi&quot;: [1] * 30, &quot;count_determined&quot;: [True] * 30}</p>
+<p>&gt;&gt;&gt; c = {&quot;scale&quot;: {&quot;value&quot;: .002, &quot;unit&quot;: &quot;mm/px&quot;, &quot;standard_uncertainty&quot;: .00002},</p>
 <p>...      &quot;calibrator_id&quot;: &quot;SM-01&quot;, &quot;calibrated_at&quot;: &quot;2026-01-01&quot;, &quot;valid_until&quot;: &quot;2026-12-31&quot;}</p>
 <p>&gt;&gt;&gt; r = particle_size_distribution(p, c, measurement_date=&quot;2026-06-01&quot;, bootstrap_samples=200)</p>
 <p>&gt;&gt;&gt; r[&quot;counts&quot;][&quot;accepted_observed&quot;], r[&quot;particle_rows&quot;][0][&quot;diameter&quot;]</p>
-<p>(2, 20.0)</p>
+<p>(30, 0.02)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

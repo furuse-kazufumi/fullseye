@@ -16,7 +16,6 @@ from statistics import NormalDist
 
 import numpy as np
 
-import grind
 import measuring1d
 import pod
 
@@ -26,9 +25,14 @@ DEFAULT_BIN_COUNT = 12
 DEFAULT_BOOTSTRAP_SAMPLES = 2000
 DEFAULT_CONFIDENCE = 0.95
 DEFAULT_SEED = 776
+# A percentile CI reports a distribution, not a single particle.  Thirty is the
+# predeclared lower limit used by this screening op; below it resampling merely
+# replays a handful of particles and is deliberately reported as insufficient.
+MIN_EFFECTIVE_PARTICLES = 30
 _BORDER_POLICIES = ("include", "exclude", "correct")
 _SPLIT_STATUSES = ("isolated", "split", "unsplit", "ambiguous")
-_UNITS = {"nm/px": "nm", "um/px": "um", "µm/px": "µm", "mm/px": "mm"}
+_PARTICLE_UNITS = {"diameter_unit": "px", "area_unit": "px2"}
+_SCALE_UNIT = "mm/px"
 
 
 def _column(table, key, n=None):
@@ -43,7 +47,7 @@ def _column(table, key, n=None):
     return value
 
 
-def _numbers(table, key, n, *, positive=False):
+def _numbers(table, key, n, *, positive=False, nonnegative=False):
     """Read a finite numeric column / 有限な数値列を読む。"""
     try:
         value = _column(table, key, n).astype(np.float64)
@@ -53,6 +57,8 @@ def _numbers(table, key, n, *, positive=False):
         raise ValueError("particle_size_distribution: particles[%r] contains NaN or Inf" % key)
     if positive and np.any(value <= 0.0):
         raise ValueError("particle_size_distribution: particles[%r] must be > 0" % key)
+    if nonnegative and np.any(value < 0.0):
+        raise ValueError("particle_size_distribution: particles[%r] must be >= 0" % key)
     return value
 
 
@@ -119,17 +125,25 @@ def _sha256(value):
     return hashlib.sha256(payload).hexdigest()
 
 
-def _weighted_dx(diameters, weights, q):
-    """Discrete weighted Dx through the existing PSD op / 既存 op で離散 Dx。"""
+def _weighted_midpoint_dx(diameters, weights, q):
+    """Weighted empirical-midpoint Dx / 重み付き経験分布の中点規約による Dx。"""
     order = np.argsort(diameters, kind="mergesort")
-    d, w = np.asarray(diameters)[order], np.asarray(weights)[order]
+    d, w = np.asarray(diameters, np.float64)[order], np.asarray(weights, np.float64)[order]
     unique, inverse = np.unique(d, return_inverse=True)
     summed = np.bincount(inverse, weights=w, minlength=unique.size)
     if unique.size == 1:
         return float(unique[0])
-    psd = {"edges": np.r_[unique, np.nextafter(unique[-1], math.inf)],
-           "volume": np.r_[summed, 0.0]}
-    return float(grind.particle_size_dx(psd, q, "lower_cumsum"))
+    # Each observed particle mass is centred at its diameter.  Unlike lower
+    # cumulative interpolation, this cannot shift every percentile one bin low.
+    positions = (np.cumsum(summed) - 0.5 * summed) / summed.sum()
+    return float(np.interp(float(q) / 100.0, positions, unique,
+                           left=unique[0], right=unique[-1]))
+
+
+def _effective_particles(weights):
+    """Kish effective n for unequal count weights / 不等重みの Kish 有効標本数。"""
+    weight = np.asarray(weights, np.float64)
+    return float(weight.sum() ** 2 / np.square(weight).sum())
 
 
 def _edges(diameters, supplied):
@@ -158,21 +172,30 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
                                seed=DEFAULT_SEED):
     """粒子表を校正し、採否理由、3 基準のビン、D10/D50/D90 と信頼区間、来歴を返す。
 
+    D10/D50/D90 は、重複径を重みごとに集約した**重み付き経験分布の中点規約**で求める。
     ``unsplit`` と ``ambiguous`` の重なりは常に除外し、1 粒として黙って数えない。
+    上流の ``blob_split`` と ``blob_count_interval`` に由来する成分 ID、分割根拠、
+    個数区間、決定可否が全行で必須であり、未決定行は ``ambiguous`` として除外する。
     ``border_policy="correct"`` は端粒子について ``border_inclusion_probability``、
     ``border_corrected_diameter_px``、``border_corrected_area_px2`` が揃う場合だけ
     Horvitz--Thompson の個数重み ``1/p`` と補正寸法を使う。尺度の標準不確かさは
     各径へ線形伝播し、分位点では決定的 bootstrap の標本区間と尺度区間を合成する。
+    有効粒子数が ``MIN_EFFECTIVE_PARTICLES`` 未満なら、母集団分位点を主張せず
+    ``insufficient_sample`` を返す。bootstrap 区間は独立粒子の経験分布を再標本化する
+    条件付き区間であり、端補正時は設計ベース保証ではなく実験的な不確かさである。
 
     Parameters
     ----------
     particles : table (dict of 1-D columns)
-        必須列は ``object_id``、``diameter_px``、``area_px2``、``touches_border``、
-        ``split_status``。状態は ``isolated`` / ``split`` / ``unsplit`` / ``ambiguous``。
+        必須列は ``object_id``、``diameter_px``、``area_px2``、``diameter_unit="px"``、
+        ``area_unit="px2"``、``touches_border``、``split_status``、``component_id``、
+        ``split_evidence``、``count_interval_lo``、``count_interval_hi``、``count_determined``。
+        状態は ``isolated`` / ``split`` / ``unsplit`` / ``ambiguous``。
         ``major_axis_px`` と ``minor_axis_px`` は任意。
     calibration : table (one-row dict)
-        ``scale_per_px``、``unit``(``nm/px`` / ``um/px`` / ``µm/px`` / ``mm/px``)、
-        ``uncertainty_per_px``、``calibrator_id``、``calibrated_at``、``valid_until``。
+        ``scale`` = {``value``, ``unit="mm/px"``, ``standard_uncertainty``} と
+        ``calibrator_id``、``calibrated_at``、``valid_until``。``pixel_to_world`` と同じ
+        mm/px 契約だけを許す。
     border_policy : {"include", "exclude", "correct"}
         端粒子を切れた測定のまま含める、除外する、必要情報を使って補正する方針。
     measurement_date : str
@@ -204,13 +227,16 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
 
     Examples
     --------
-    >>> p = {"object_id": ["a", "b"], "diameter_px": [10., 20.], "area_px2": [78.5, 314.],
-    ...      "touches_border": [False, False], "split_status": ["isolated", "split"]}
-    >>> c = {"scale_per_px": 2., "unit": "um/px", "uncertainty_per_px": .02,
+    >>> p = {"object_id": ["a"] * 30, "diameter_px": [10.] * 30, "area_px2": [78.5] * 30,
+    ...      "diameter_unit": "px", "area_unit": "px2", "touches_border": [False] * 30,
+    ...      "split_status": ["isolated"] * 30, "component_id": ["c%d" % i for i in range(30)],
+    ...      "split_evidence": ["blob_count_interval" ] * 30, "count_interval_lo": [1] * 30,
+    ...      "count_interval_hi": [1] * 30, "count_determined": [True] * 30}
+    >>> c = {"scale": {"value": .002, "unit": "mm/px", "standard_uncertainty": .00002},
     ...      "calibrator_id": "SM-01", "calibrated_at": "2026-01-01", "valid_until": "2026-12-31"}
     >>> r = particle_size_distribution(p, c, measurement_date="2026-06-01", bootstrap_samples=200)
     >>> r["counts"]["accepted_observed"], r["particle_rows"][0]["diameter"]
-    (2, 20.0)
+    (30, 0.02)
     """
     op = "particle_size_distribution"
     if border_policy not in _BORDER_POLICIES:
@@ -219,11 +245,14 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
         raise ValueError("%s: measurement_date is required" % op)
     measured = _day(measurement_date, "measurement_date")
 
-    scale = _finite(calibration, "scale_per_px", positive=True)
-    scale_u = _finite(calibration, "uncertainty_per_px", nonnegative=True)
-    unit_raw = _one(calibration, "unit")
-    if unit_raw not in _UNITS:
-        raise ValueError("%s: calibration['unit'] must be one of %r" % (op, tuple(_UNITS)))
+    scale_record = _one(calibration, "scale")
+    if not isinstance(scale_record, dict):
+        raise ValueError("%s: calibration['scale'] must be a unit-tagged table" % op)
+    scale = _finite(scale_record, "value", positive=True)
+    scale_u = _finite(scale_record, "standard_uncertainty", nonnegative=True)
+    unit_raw = _one(scale_record, "unit")
+    if unit_raw != _SCALE_UNIT:
+        raise ValueError("%s: calibration['scale']['unit'] must be 'mm/px'" % op)
     calibrator = _one(calibration, "calibrator_id")
     if not isinstance(calibrator, str) or not calibrator.strip():
         raise ValueError("%s: calibration['calibrator_id'] must be a non-empty string" % op)
@@ -253,6 +282,10 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
     ids = [str(v) for v in ids.tolist()]
     if any(not v for v in ids) or len(set(ids)) != n:
         raise ValueError("%s: object_id values must be non-empty and unique" % op)
+    for key, expected in _PARTICLE_UNITS.items():
+        value = _one(particles, key)
+        if value != expected:
+            raise ValueError("%s: particles[%r] must be %r" % (op, key, expected))
     diameter_px = _numbers(particles, "diameter_px", n, positive=True)
     area_px2 = _numbers(particles, "area_px2", n, positive=True)
     touches_raw = _column(particles, "touches_border", n)
@@ -263,6 +296,28 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
     unknown = sorted(set(statuses) - set(_SPLIT_STATUSES))
     if unknown:
         raise ValueError("%s: unknown split_status values %r" % (op, unknown))
+    component = [str(v) for v in _column(particles, "component_id", n).tolist()]
+    evidence = [str(v) for v in _column(particles, "split_evidence", n).tolist()]
+    if any(not value for value in component) or any(not value for value in evidence):
+        raise ValueError("%s: component_id and split_evidence must be non-empty" % op)
+    interval_lo = _numbers(particles, "count_interval_lo", n, positive=True)
+    raw_hi = _column(particles, "count_interval_hi", n).tolist()
+    try:
+        interval_hi = np.asarray([np.nan if value is None else float(value) for value in raw_hi], np.float64)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("%s: count_interval_hi must be positive or None" % op) from exc
+    if np.any(np.isinf(interval_hi)) or np.any(interval_hi[~np.isnan(interval_hi)] <= 0.0):
+        raise ValueError("%s: count_interval_hi must be positive or None" % op)
+    determined_raw = _column(particles, "count_determined", n)
+    if not all(isinstance(v, (bool, np.bool_)) for v in determined_raw.tolist()):
+        raise ValueError("%s: count_determined must contain booleans" % op)
+    determined = determined_raw.astype(bool)
+    if np.any(interval_hi[~np.isnan(interval_hi)] < interval_lo[~np.isnan(interval_hi)]):
+        raise ValueError("%s: count_interval_hi must be >= count_interval_lo" % op)
+    if any((not ok and status != "ambiguous") for ok, status in zip(determined, statuses)):
+        raise ValueError("%s: undetermined count_interval rows must be split_status='ambiguous'" % op)
+    if any((ok and (not math.isfinite(hi) or lo != hi)) for ok, lo, hi in zip(determined, interval_lo, interval_hi)):
+        raise ValueError("%s: determined count_interval rows must have equal bounds" % op)
 
     major = _numbers(particles, "major_axis_px", n, positive=True) if "major_axis_px" in particles else None
     minor = _numbers(particles, "minor_axis_px", n, positive=True) if "minor_axis_px" in particles else None
@@ -270,14 +325,25 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
         raise ValueError("%s: major/minor axes must be paired and major_axis_px >= minor_axis_px" % op)
 
     used_d, used_a, count_weight = diameter_px.copy(), area_px2.copy(), np.ones(n)
+    correction_provenance = None
     if border_policy == "correct" and np.any(touches):
-        required = ("border_inclusion_probability", "border_corrected_diameter_px", "border_corrected_area_px2")
+        required = ("border_inclusion_probability", "border_inclusion_probability_uncertainty",
+                    "border_corrected_diameter_px", "border_corrected_diameter_uncertainty_px",
+                    "border_corrected_area_px2", "border_corrected_area_uncertainty_px2",
+                    "border_correction_provenance")
         missing = [key for key in required if key not in particles]
         if missing:
             raise ValueError("%s: border correction requires columns %r" % (op, missing))
         prob = _numbers(particles, required[0], n, positive=True)
-        corr_d = _numbers(particles, required[1], n, positive=True)
-        corr_a = _numbers(particles, required[2], n, positive=True)
+        prob_u = _numbers(particles, required[1], n, nonnegative=True)
+        corr_d = _numbers(particles, required[2], n, positive=True)
+        corr_d_u = _numbers(particles, required[3], n, nonnegative=True)
+        corr_a = _numbers(particles, required[4], n, positive=True)
+        corr_a_u = _numbers(particles, required[5], n, nonnegative=True)
+        correction_provenance = _one(particles, required[6])
+        if not isinstance(correction_provenance, dict) or not all(
+                key in correction_provenance for key in ("view_shape", "inclusion_probability_method", "correction_method")):
+            raise ValueError("%s: border_correction_provenance must state view_shape, inclusion_probability_method, correction_method" % op)
         if np.any(prob > 1.0):
             raise ValueError("%s: border_inclusion_probability must be <= 1" % op)
         used_d[touches], used_a[touches], count_weight[touches] = corr_d[touches], corr_a[touches], 1.0 / prob[touches]
@@ -304,7 +370,7 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
     scale_lo, scale_hi = scale - z * scale_u, scale + z * scale_u
     if scale_lo <= 0.0:
         raise ValueError("%s: calibration uncertainty interval includes a non-positive scale" % op)
-    unit = _UNITS[unit_raw]
+    unit = "mm"
     diameters = np.array([measuring1d.pixel_to_world(v, scale) for v in used_d])
     idx = np.flatnonzero(accepted)
     d, dpx, cw, area = diameters[idx], used_d[idx], count_weight[idx], used_a[idx]
@@ -315,18 +381,30 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
         hist = np.histogram(d, bins=bin_edges, weights=weight)[0].astype(float)
         bins[basis] = hist / hist.sum()
 
+    effective_n = _effective_particles(cw)
     rng = np.random.default_rng(int(seed))
+    # Equal-probability row bootstrap is conditional on observed particles.  It
+    # describes sampling uncertainty for the declared particle population; it is
+    # not a design-based guarantee for experimental border correction.
     draws = rng.integers(0, idx.size, size=(int(bootstrap_samples), idx.size), endpoint=False)
     alpha = (1.0 - confidence) / 2.0
     quantiles = {}
     for basis, weight in weights.items():
         quantiles[basis] = {}
         for q in (10, 50, 90):
-            sample = np.array([_weighted_dx(dpx[take], weight[take], q) for take in draws])
+            key = "D%d" % q
+            if effective_n < MIN_EFFECTIVE_PARTICLES:
+                quantiles[basis][key] = {"status": "insufficient_sample", "value": None,
+                                         "ci_lower": None, "ci_upper": None, "unit": unit,
+                                         "effective_particles": effective_n,
+                                         "minimum_effective_particles": MIN_EFFECTIVE_PARTICLES}
+                continue
+            sample = np.array([_weighted_midpoint_dx(dpx[take], weight[take], q) for take in draws])
             lo, hi = np.quantile(sample, [alpha, 1.0 - alpha])
-            quantiles[basis]["D%d" % q] = {
-                "value": _weighted_dx(dpx, weight, q) * scale,
+            quantiles[basis][key] = {
+                "status": "estimated", "value": _weighted_midpoint_dx(dpx, weight, q) * scale,
                 "ci_lower": float(lo * scale_lo), "ci_upper": float(hi * scale_hi), "unit": unit,
+                "effective_particles": effective_n, "minimum_effective_particles": MIN_EFFECTIVE_PARTICLES,
             }
 
     rows = []
@@ -348,7 +426,7 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
               "overlap_split_accepted": int(sum(a and s == "split" for a, s in zip(accepted, statuses))),
               "overlap_unsplit_excluded": statuses.count("unsplit"),
               "overlap_ambiguous_excluded": statuses.count("ambiguous")}
-    record = {"scale_per_px": scale, "unit": unit_raw, "uncertainty_per_px": scale_u,
+    record = {"scale": {"value": scale, "unit": unit_raw, "standard_uncertainty": scale_u},
               "calibrator_id": calibrator, "calibrated_at": calibrated_raw,
               "valid_until": valid_raw, "measurement_date": measurement_date}
     return {"particle_rows": rows, "counts": counts, "bins": bins, "quantiles": quantiles,
@@ -358,7 +436,11 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
                                        "particles_sha256": _sha256(particles),
                                        "scale_ci": {"lower": scale_lo, "upper": scale_hi,
                                                     "confidence": confidence, "unit": unit_raw}},
-            "policy": {"border": border_policy, "overlap": "exclude_unsplit_and_ambiguous",
-                       "bases": ["number", "area", "volume"],
-                       "laser_diffraction_equivalence": False},
+             "policy": {"border": border_policy, "overlap": "exclude_unsplit_and_ambiguous",
+                        "bases": ["number", "area", "volume"],
+                        "quantile_convention": "weighted_empirical_midpoint",
+                        "minimum_effective_particles": MIN_EFFECTIVE_PARTICLES,
+                        "interval": "conditional nonparametric bootstrap + normal calibration scale interval",
+                        "border_correction": correction_provenance,
+                        "laser_diffraction_equivalence": False},
             "bootstrap": {"samples": int(bootstrap_samples), "seed": int(seed)}}

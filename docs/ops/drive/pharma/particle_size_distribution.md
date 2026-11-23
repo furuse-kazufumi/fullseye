@@ -21,21 +21,30 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 粒子表を校正し、採否理由、3 基準のビン、D10/D50/D90 と信頼区間、来歴を返す。
 
+D10/D50/D90 は、重複径を重みごとに集約した**重み付き経験分布の中点規約**で求める。
 ``unsplit`` と ``ambiguous`` の重なりは常に除外し、1 粒として黙って数えない。
+上流の ``blob_split`` と ``blob_count_interval`` に由来する成分 ID、分割根拠、
+個数区間、決定可否が全行で必須であり、未決定行は ``ambiguous`` として除外する。
 ``border_policy="correct"`` は端粒子について ``border_inclusion_probability``、
 ``border_corrected_diameter_px``、``border_corrected_area_px2`` が揃う場合だけ
 Horvitz--Thompson の個数重み ``1/p`` と補正寸法を使う。尺度の標準不確かさは
 各径へ線形伝播し、分位点では決定的 bootstrap の標本区間と尺度区間を合成する。
+有効粒子数が ``MIN_EFFECTIVE_PARTICLES`` 未満なら、母集団分位点を主張せず
+``insufficient_sample`` を返す。bootstrap 区間は独立粒子の経験分布を再標本化する
+条件付き区間であり、端補正時は設計ベース保証ではなく実験的な不確かさである。
 
 Parameters
 ----------
 particles : table (dict of 1-D columns)
-    必須列は ``object_id``、``diameter_px``、``area_px2``、``touches_border``、
-    ``split_status``。状態は ``isolated`` / ``split`` / ``unsplit`` / ``ambiguous``。
+    必須列は ``object_id``、``diameter_px``、``area_px2``、``diameter_unit="px"``、
+    ``area_unit="px2"``、``touches_border``、``split_status``、``component_id``、
+    ``split_evidence``、``count_interval_lo``、``count_interval_hi``、``count_determined``。
+    状態は ``isolated`` / ``split`` / ``unsplit`` / ``ambiguous``。
     ``major_axis_px`` と ``minor_axis_px`` は任意。
 calibration : table (one-row dict)
-    ``scale_per_px``、``unit``(``nm/px`` / ``um/px`` / ``µm/px`` / ``mm/px``)、
-    ``uncertainty_per_px``、``calibrator_id``、``calibrated_at``、``valid_until``。
+    ``scale`` = {``value``, ``unit="mm/px"``, ``standard_uncertainty``} と
+    ``calibrator_id``、``calibrated_at``、``valid_until``。``pixel_to_world`` と同じ
+    mm/px 契約だけを許す。
 border_policy : {"include", "exclude", "correct"}
     端粒子を切れた測定のまま含める、除外する、必要情報を使って補正する方針。
 measurement_date : str
@@ -67,13 +76,16 @@ as an interchangeable laser-diffraction result.
 
 Examples
 --------
->>> p = {"object_id": ["a", "b"], "diameter_px": [10., 20.], "area_px2": [78.5, 314.],
-...      "touches_border": [False, False], "split_status": ["isolated", "split"]}
->>> c = {"scale_per_px": 2., "unit": "um/px", "uncertainty_per_px": .02,
+>>> p = {"object_id": ["a"] * 30, "diameter_px": [10.] * 30, "area_px2": [78.5] * 30,
+...      "diameter_unit": "px", "area_unit": "px2", "touches_border": [False] * 30,
+...      "split_status": ["isolated"] * 30, "component_id": ["c%d" % i for i in range(30)],
+...      "split_evidence": ["blob_count_interval" ] * 30, "count_interval_lo": [1] * 30,
+...      "count_interval_hi": [1] * 30, "count_determined": [True] * 30}
+>>> c = {"scale": {"value": .002, "unit": "mm/px", "standard_uncertainty": .00002},
 ...      "calibrator_id": "SM-01", "calibrated_at": "2026-01-01", "valid_until": "2026-12-31"}
 >>> r = particle_size_distribution(p, c, measurement_date="2026-06-01", bootstrap_samples=200)
 >>> r["counts"]["accepted_observed"], r["particle_rows"][0]["diameter"]
-(2, 20.0)
+(30, 0.02)
 
 ## 参考(サンプルデータ・文献)
 
