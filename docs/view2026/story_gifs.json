@@ -355,16 +355,16 @@
             1600,
             1600
           ],
-          "bytes": 418418,
+          "bytes": 407820,
           "color_mad": [
-            1.0412,
+            1.073,
             0.2726,
             0.0598,
             0.065,
             0.0944
           ],
-          "max_color_mad": 1.0412,
-          "source_sha256": "d1183ebdab74e1dc22937d38ea505ed018f392d5ca94c2817620ae7cf9cae1e8"
+          "max_color_mad": 1.073,
+          "source_sha256": "ebbe0b3b80a0109eace0aca4c83d9dabcfcb0ea91cb4eebf3ad5ed5b6e13db7b"
         },
         "en": {
           "path": "articles/assets/poc/poc_industrial_oct/story.en.gif",
@@ -440,16 +440,16 @@
             1600,
             1600
           ],
-          "bytes": 418418,
+          "bytes": 407820,
           "color_mad": [
-            1.0412,
+            1.073,
             0.2726,
             0.0598,
             0.065,
             0.0944
           ],
-          "max_color_mad": 1.0412,
-          "source_sha256": "7ccdc7a0137ffbe057100cb98a4d40837841927cb4ad3e26bae5b2e2cebbbe7c"
+          "max_color_mad": 1.073,
+          "source_sha256": "9f5280e1c530803e434917b96deb2154087932ae9983a4c2742cfa07b92a5d7b"
         }
       },
       "thumbnail": {
@@ -1034,9 +1034,9 @@
             1600,
             1600
           ],
-          "bytes": 383153,
+          "bytes": 399972,
           "color_mad": [
-            0.5029,
+            0.53,
             0.2539,
             0.0243,
             1.2185,
@@ -1044,7 +1044,7 @@
             0.0322
           ],
           "max_color_mad": 1.2185,
-          "source_sha256": "cfcb9f2f918f26ee4dd7f222b81cb4256793e7811ebe1b1eb6fe39b3e628de35"
+          "source_sha256": "a6ac370d756667f676a5c5d47d84ce08987a52ba4701f1aff147589e2e2a3314"
         },
         "en": {
           "path": "articles/assets/poc/poc_cad_scan_deviation/story.en.gif",
@@ -1116,16 +1116,16 @@
             1600,
             1600
           ],
-          "bytes": 328994,
+          "bytes": 345810,
           "color_mad": [
-            0.4802,
+            0.5116,
             0.2534,
             0.0248,
             1.2186,
             0.095
           ],
           "max_color_mad": 1.2186,
-          "source_sha256": "fe5e2d2c92234ff841d68775ca198ff430652b2121437bff8c48da2c68e57b83"
+          "source_sha256": "068605e50880404b94ddf9b663c3792f252ecd02774f080bf0fff0f061d16735"
         }
       },
       "thumbnail": {
@@ -2742,7 +2742,7 @@
             1600,
             1600
           ],
-          "bytes": 747687,
+          "bytes": 742768,
           "color_mad": [
             0.1474,
             0.167,
@@ -2752,7 +2752,7 @@
             0.0797
           ],
           "max_color_mad": 0.766,
-          "source_sha256": "f7417b820a9020c997555234400e885cea057a572a5e24d0d53aa20914c67688"
+          "source_sha256": "bcae4b11a71dc7afbeeac0d3e5893730402dde676bdd9e3bb3d24dcc2dff01fe"
         },
         "en": {
           "path": "articles/assets/poc/poc_fourier_ptychography/story.en.gif",
@@ -2834,7 +2834,7 @@
             1600,
             1600
           ],
-          "bytes": 747687,
+          "bytes": 742768,
           "color_mad": [
             0.1474,
             0.167,
@@ -2844,7 +2844,7 @@
             0.0797
           ],
           "max_color_mad": 0.766,
-          "source_sha256": "f52df9900a31a51fd1c7870d7a8e4e05fb55fd3c4c04f2e908d06fd3eb25e900"
+          "source_sha256": "af07e1caf1574c7af041f7316b70c113b05edd306a618732be02928d85dbdec9"
         }
       },
       "thumbnail": {
@@ -2937,14 +2937,14 @@
             1600,
             1600
           ],
-          "bytes": 700209,
+          "bytes": 682337,
           "color_mad": [
-            0.3037,
+            0.4159,
             1.1246,
             1.3705
           ],
           "max_color_mad": 1.3705,
-          "source_sha256": "7b4c69f9d4e21f9933e0b64036ddf59b8f2116fdbba5057eaf0ab8f66e066137"
+          "source_sha256": "2ecf6f005b36b92f607a34b5c01116896a3e9f3e0e797c2c0423a6f36139abd5"
         },
         "en": {
           "path": "articles/assets/poc/poc_photoelasticity/story.en.gif",
@@ -2994,14 +2994,14 @@
             1600,
             1600
           ],
-          "bytes": 700209,
+          "bytes": 682337,
           "color_mad": [
-            0.3037,
+            0.4159,
             1.1246,
             1.3705
           ],
           "max_color_mad": 1.3705,
-          "source_sha256": "d8be2c029357e45ba57fef0679011ec2b8d7718d6f1f6cb9cdeccfc649918a52"
+          "source_sha256": "8f342858cd7eaea71740176d159cade68fdaa58b43205bc64ec3a2e2d03c6e6f"
         }
       },
       "thumbnail": {
@@ -13707,17 +13707,17 @@
             1600,
             1600
           ],
-          "bytes": 644013,
+          "bytes": 625413,
           "color_mad": [
-            0.7047,
+            0.6794,
             0.129,
             0.0605,
             0.0013,
             0.0652,
             0.1002
           ],
-          "max_color_mad": 0.7047,
-          "source_sha256": "73f9f6e4aef36ebcae57a7542da46684b9e1e0a51246dff7b10b908bcfa7ebfe"
+          "max_color_mad": 0.6794,
+          "source_sha256": "6ade8f52aff29cb7be26cca31aadd717f2d4b1bf7a44b0225e2dbff1e763328d"
         },
         "en": {
           "path": "articles/assets/poc/poc_moire_alignment/story.en.gif",
@@ -14068,17 +14068,17 @@
             1600,
             1600
           ],
-          "bytes": 1355863,
+          "bytes": 1464059,
           "color_mad": [
-            0.245,
+            0.141,
             0.1012,
             0.1636,
             0.1911,
             0.0733,
             0.1746
           ],
-          "max_color_mad": 0.245,
-          "source_sha256": "1d35c9c8a261421df0ea5084138f5825f88b4db1cdd5cec93b95f2fabf3eb447"
+          "max_color_mad": 0.1911,
+          "source_sha256": "942f22b0fed691bddd6bd0dc98337abbe607bc98112954b4f50ea868e9ed56c1"
         },
         "en": {
           "path": "articles/assets/poc/poc_tdi_linescan/story.en.gif",
@@ -14160,17 +14160,17 @@
             1600,
             1600
           ],
-          "bytes": 1355863,
+          "bytes": 1464059,
           "color_mad": [
-            0.245,
+            0.141,
             0.1012,
             0.1636,
             0.1911,
             0.0733,
             0.1746
           ],
-          "max_color_mad": 0.245,
-          "source_sha256": "cb86c0445f9219a29e9385d84ae6ed1fc0c95a9f87c3b633a2950fb4c319256e"
+          "max_color_mad": 0.1911,
+          "source_sha256": "4bb056de9b5b87fd13a3255bdce0b2f9cb1704c3b794069bcbb15d44f9986d1a"
         }
       },
       "thumbnail": {
@@ -15801,17 +15801,17 @@
             1600,
             1600
           ],
-          "bytes": 627949,
+          "bytes": 618376,
           "color_mad": [
-            1.6031,
+            1.5845,
             0.0231,
             0.1598,
             0.9128,
             0.039,
             0.0479
           ],
-          "max_color_mad": 1.6031,
-          "source_sha256": "9432fbab54eb4b7e73d6ec4cb4f751399e2513414ccf766aaa500807ed0f884c"
+          "max_color_mad": 1.5845,
+          "source_sha256": "4a37fabd13f204a088e7098ce0751c3aebc80ff0b792662d3a55f9edaf3aef22"
         },
         "en": {
           "path": "articles/assets/poc/poc_lidar_terrain_change/story.en.gif",
@@ -17935,16 +17935,16 @@
             1600,
             1600
           ],
-          "bytes": 453402,
+          "bytes": 428398,
           "color_mad": [
-            1.5701,
+            1.4166,
             0.1319,
             0.0344,
             0.1414,
             0.0299
           ],
-          "max_color_mad": 1.5701,
-          "source_sha256": "f73262b552fbf9d731f1ae870f522442aced34607662f786b63d0abcc10323bd"
+          "max_color_mad": 1.4166,
+          "source_sha256": "65c59e007e3a887dc41ae9e80165ccfff5e8b1993b80425fb791a9b5c32fca32"
         },
         "en": {
           "path": "articles/assets/poc/poc_registration_basin/story.en.gif",
@@ -17994,14 +17994,14 @@
             1600,
             1600
           ],
-          "bytes": 369071,
+          "bytes": 343833,
           "color_mad": [
-            1.5046,
+            1.3596,
             0.1319,
             0.1401
           ],
-          "max_color_mad": 1.5046,
-          "source_sha256": "89e6030ca8d2fec9fea846cba22fc861c5781a91dfb1d87d8c8bdb3877c3d9b6"
+          "max_color_mad": 1.3596,
+          "source_sha256": "d24fcdb2c1125907ba423e10cd6564f451f4687ac949aa3c11ebbdb775487f99"
         }
       },
       "thumbnail": {
