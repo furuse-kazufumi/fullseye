@@ -123,11 +123,13 @@ def _require_image(a, name: str, op: str) -> np.ndarray:
     if isinstance(a, (str, bytes)):
         raise ValueError("%s: %s is a string — expected a 2-D array of numbers" % (op, name))
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        a, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2)
+        a, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     arr = np.asarray(a)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            arr, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2)
+            arr, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if arr.dtype.kind == "c":
         raise ValueError("%s: %s is complex — expected a real image" % (op, name))
     if arr.dtype.kind not in "fiub":

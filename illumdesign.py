@@ -326,11 +326,13 @@ def illumination_uniformity(irradiance, region_fraction=0.8):
     relative to the centre — a mis-aimed ring shows up here).
     """
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        irradiance, "irradiance", "illumination_uniformity", MAX_MAP_ELEMENTS, expected_ndim=2)
+        irradiance, "irradiance", "illumination_uniformity", MAX_MAP_ELEMENTS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     a = np.asarray(irradiance, dtype=np.float64)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            a, "irradiance", "illumination_uniformity", MAX_MAP_ELEMENTS, expected_ndim=2)
+            a, "irradiance", "illumination_uniformity", MAX_MAP_ELEMENTS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if a.ndim != 2 or a.size == 0 or not np.all(np.isfinite(a)):
         raise ValueError("irradiance must be a finite 2-D map")
     if np.any(a < 0):

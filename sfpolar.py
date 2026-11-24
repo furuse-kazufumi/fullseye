@@ -142,10 +142,12 @@ def _real(a, name, op, ndim=None):
         raise ValueError("%s: %s is None" % (op, name))
     if np.ma.is_masked(a):
         raise ValueError("%s: %s is a masked array with masked entries" % (op, name))
-    raw_shape = _arrayguard.precheck_shape_and_elements(a, name, op, MAX_PIXELS * 4)
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        a, name, op, MAX_PIXELS * 4, advice=_arrayguard.IMAGE_CAP_ADVICE)
     arr = np.asarray(a)
     if raw_shape is None:
-        _arrayguard.precheck_shape_and_elements(arr, name, op, MAX_PIXELS * 4)
+        _arrayguard.precheck_shape_and_elements(
+            arr, name, op, MAX_PIXELS * 4, advice=_arrayguard.IMAGE_CAP_ADVICE)
     if arr.dtype.kind not in "iuf":
         raise ValueError("%s: %s must be a real numeric array, got dtype %s" % (op, name, arr.dtype))
     arr = arr.astype(np.float64)

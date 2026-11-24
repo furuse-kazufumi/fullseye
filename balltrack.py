@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 __all__ = [
     "ball_detect", "ball_track", "kalman_ca", "triangulate_dlt", "track_triangulate", "bounce_detect",
     "marker_direction", "spin_from_markers", "spin_from_marker_sequence", "reproject",
@@ -284,8 +286,9 @@ def triangulate_dlt(uvs, poses, Ks) -> dict:
     except TypeError:
         raise ValueError("poses and Ks must be sized camera sequences") from None
     if len(uvs) != n_poses or n_poses != n_Ks:
-        raise ValueError("triangulate_dlt: uvs, poses and Ks must have the same number of views "
-                         "(got %d, %d, %d)" % (len(uvs), n_poses, n_Ks))
+        _arrayguard.refuse_count_mismatch(
+            "triangulate_dlt", {"uvs": len(uvs), "poses": n_poses, "Ks": n_Ks},
+            advice=_arrayguard.CAMERA_COUNT_ADVICE)
     U = np.asarray(uvs, np.float64).reshape(-1, 2)
     rows = []
     Ms = []
@@ -324,8 +327,9 @@ def track_triangulate(tracks, poses, Ks, n_frames: int) -> dict:
     if C == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("track_triangulate: tracks is empty — pass at least one item")
     if C != n_poses or C != n_Ks:
-        raise ValueError("track_triangulate: tracks, poses, and Ks must have the same "
-                         "number of views (got %d, %d, %d)" % (C, n_poses, n_Ks))
+        _arrayguard.refuse_count_mismatch(
+            "track_triangulate", {"tracks": C, "poses": n_poses, "Ks": n_Ks},
+            advice=_arrayguard.CAMERA_COUNT_ADVICE)
     uv = np.full((n_frames, C, 2), np.nan)
     for c, tr in enumerate(tracks):
         uv[tr["frame"], c, 0] = tr["col"]

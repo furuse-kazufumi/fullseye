@@ -53,7 +53,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `aoi.py`
 
-- **L445** _(ja)_ — ★積の向きが符号を決める。``fb * conj(fa)`` の山は「``moving`` が ``reference`` に対してどれだけずれているか」に立つ(逆にすると符号が反転し、残差を測る ときに**逆向きへ戻して**しまうので、完全に一致する対でも残差が 1 を超える)。
+- **L447** _(ja)_ — ★積の向きが符号を決める。``fb * conj(fa)`` の山は「``moving`` が ``reference`` に対してどれだけずれているか」に立つ(逆にすると符号が反転し、残差を測る ときに**逆向きへ戻して**しまうので、完全に一致する対でも残差が 1 を超える)。
 
 ## `api.py`
 
@@ -86,15 +86,15 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `astrostack.py`
 
 - **L158** — ★Hypothesentest: Wir sagten voraus, dass "das Verschieben sich nicht lohnt, solange es in eine Cache-Line (64B) passt", lagen aber **falsch**. Bei float32 liegt der Übergang bei K≈17-19, nahe 64B (K=16), doch bei float64 liegt der tatsächliche Übergang bei K≈23-25 (etwa 200B) gegenüber einem vorhergesagten K=8. Es wird durch die **Elementzahl** bestimmt, nicht durch die Byte-Zahl —— die Abrufkosten pro Element dominieren. Verschiebt man bei nur wenigen, ist es **sogar langsamer** (1.4x langsamer bei float64 K=5), daher ist der Übergangspunkt unerlässlich.
-- **L382** — ★MAD fällt auf 0 zusammen, obwohl das Bild nicht flach ist = **Quantisierung** (2026-09-08, von poc_thermal_radiometry ausgelöst). Bei ganzzahligem DN ist auch |x-med| ganzzahlig, sodass das zurückgebbare Sigma nur ein Vielfaches von 1.4826 ist —— **0.0** für ein Realbild-Äquivalent von σ=0.5, und σ=1.0 und σ=1.983 ergeben beide **dasselbe 1.4826**. Stilles Zurückgeben von 0 macht die Schwelle gleich dem Hintergrund, und stromabwärts (star_detect) findet nichts. Dies ist ein Eintrittspunkt, der einen Wert zurückgibt, daher erhebt er die Stimme, statt zu werfen (der Aufrufer kann method="clip" wählen). Das Verweigern ist Aufgabe der Seite, die die Antwort liefert = star_detect.
-- **L619** — ★ Der einzige Eintrittspunkt für Schrotrauschen. Mit photons_per_unit=1 gilt "Erwartungswert = lambda".
-- **L710** — ★ field_seed ist fest (derselbe Himmel), nur seed wird variiert (eine andere Beobachtung).
-- **L783** — ★Bis 2026-09-08 sagte der Kommentar dieses Gates "vollkommen flach = Rauschen ist nicht messbar". **Es war die Prämisse, die falsch war** —— es gibt noch einen weiteren Weg, auf dem σ zu 0 wird: wenn MAD unter ganzzahligem DN zusammenfällt (0.0 für ein Realbild-Äquivalent von σ=0.5). Für ein nicht flaches Bild leer zurückzugeben ist keine konservative, sondern eine **falsche Antwort**; tatsächlich wurden 2 in ein 200x200-Ganzzahl-Frame gepflanzte Punktziele als 0 zurückgegeben. Wir trennen die Wege: wenn flach, leer zurückgeben (keine Sterne); wenn nicht flach, verweigern.
-- **L1108** _(ja)_ — ★ 画像の外の中心は「flux 0・area 0・snr inf」を黙って返していた —— 拒否する。 画像の縁で欠けた開口は計算はできるが flux が系統的に少ないので ``truncated`` で印を付ける(area_px は欠けた後の面積)。
-- **L1346** _(ja)_ — 残差の sigma で下支えする。★ 以前は +inf に置き換えていたので **何も落とさず**、宇宙線がそのまま平均に入った。
-- **L1704** _(ja)_ — 束ねた sigma で下支えする。★ 以前は中央値画像の空間 MAD を使っていたが、 平坦な整数データではそれも 0 になり床が 1e-12 —— 読み出し雑音の +1 DN が 全部「宇宙線」になった(32x32x9 枚で真の宇宙線 1 に対し 871 画素)。
-- **L1745** — ★Bei Gleichstand wähle den **Bin mit mehr rohen Stimmen**. Eine 3x3-Glättung ergibt links wie rechts der wahren Spitze dieselbe Summe, sodass ein argmax allein auf dem geglätteten Wert "einen leeren Bin neben der Spitze" wählen kann —— genau das trat in der Messung auf: die wahre Verschiebung (-0.087, +0.996) hatte ihre Stimmen 7 + 4 an der Bin-Grenze zweigeteilt, und ihr um einen Bin verschobenes Zentrum endete mit **0 Stimmen** (frame_align schlug fälschlich als "nicht überlappend" fail-closed an). Ein Gewicht von 1e-6 ist weit kleiner als der Schritt des geglätteten Werts (1/9), ändert also die Rangfolge nicht, wenn ein echter Unterschied besteht.
-- **L1768** — ★2026-09-08: gib auch die **Höhe der zweitplatzierten Spitze** zurück. Bei einem Sternfeld gibt es eine Spitze, aber bei repetitiven Strukturen (Rasterpunkte, Gitter, Gewebe) reihen sich **gleich hohe Spitzen** um einen Gittervektor verschoben auf, und welche man auch wählt, "alle stimmen zu" = inlier_ratio wird 1.00. Die Zustimmungsrate ist nicht "die Wahrscheinlichkeit, dass die Antwort korrekt ist", daher geben wir **ob es eine einzige Spitze gab** als separate Zahl aus (0 = Einzelspitze, nahe 1 = es gibt weitere gleichwertige Kandidaten).
+- **L384** — ★MAD fällt auf 0 zusammen, obwohl das Bild nicht flach ist = **Quantisierung** (2026-09-08, von poc_thermal_radiometry ausgelöst). Bei ganzzahligem DN ist auch |x-med| ganzzahlig, sodass das zurückgebbare Sigma nur ein Vielfaches von 1.4826 ist —— **0.0** für ein Realbild-Äquivalent von σ=0.5, und σ=1.0 und σ=1.983 ergeben beide **dasselbe 1.4826**. Stilles Zurückgeben von 0 macht die Schwelle gleich dem Hintergrund, und stromabwärts (star_detect) findet nichts. Dies ist ein Eintrittspunkt, der einen Wert zurückgibt, daher erhebt er die Stimme, statt zu werfen (der Aufrufer kann method="clip" wählen). Das Verweigern ist Aufgabe der Seite, die die Antwort liefert = star_detect.
+- **L621** — ★ Der einzige Eintrittspunkt für Schrotrauschen. Mit photons_per_unit=1 gilt "Erwartungswert = lambda".
+- **L712** — ★ field_seed ist fest (derselbe Himmel), nur seed wird variiert (eine andere Beobachtung).
+- **L785** — ★Bis 2026-09-08 sagte der Kommentar dieses Gates "vollkommen flach = Rauschen ist nicht messbar". **Es war die Prämisse, die falsch war** —— es gibt noch einen weiteren Weg, auf dem σ zu 0 wird: wenn MAD unter ganzzahligem DN zusammenfällt (0.0 für ein Realbild-Äquivalent von σ=0.5). Für ein nicht flaches Bild leer zurückzugeben ist keine konservative, sondern eine **falsche Antwort**; tatsächlich wurden 2 in ein 200x200-Ganzzahl-Frame gepflanzte Punktziele als 0 zurückgegeben. Wir trennen die Wege: wenn flach, leer zurückgeben (keine Sterne); wenn nicht flach, verweigern.
+- **L1110** _(ja)_ — ★ 画像の外の中心は「flux 0・area 0・snr inf」を黙って返していた —— 拒否する。 画像の縁で欠けた開口は計算はできるが flux が系統的に少ないので ``truncated`` で印を付ける(area_px は欠けた後の面積)。
+- **L1348** _(ja)_ — 残差の sigma で下支えする。★ 以前は +inf に置き換えていたので **何も落とさず**、宇宙線がそのまま平均に入った。
+- **L1706** _(ja)_ — 束ねた sigma で下支えする。★ 以前は中央値画像の空間 MAD を使っていたが、 平坦な整数データではそれも 0 になり床が 1e-12 —— 読み出し雑音の +1 DN が 全部「宇宙線」になった(32x32x9 枚で真の宇宙線 1 に対し 871 画素)。
+- **L1747** — ★Bei Gleichstand wähle den **Bin mit mehr rohen Stimmen**. Eine 3x3-Glättung ergibt links wie rechts der wahren Spitze dieselbe Summe, sodass ein argmax allein auf dem geglätteten Wert "einen leeren Bin neben der Spitze" wählen kann —— genau das trat in der Messung auf: die wahre Verschiebung (-0.087, +0.996) hatte ihre Stimmen 7 + 4 an der Bin-Grenze zweigeteilt, und ihr um einen Bin verschobenes Zentrum endete mit **0 Stimmen** (frame_align schlug fälschlich als "nicht überlappend" fail-closed an). Ein Gewicht von 1e-6 ist weit kleiner als der Schritt des geglätteten Werts (1/9), ändert also die Rangfolge nicht, wenn ein echter Unterschied besteht.
+- **L1770** — ★2026-09-08: gib auch die **Höhe der zweitplatzierten Spitze** zurück. Bei einem Sternfeld gibt es eine Spitze, aber bei repetitiven Strukturen (Rasterpunkte, Gitter, Gewebe) reihen sich **gleich hohe Spitzen** um einen Gittervektor verschoben auf, und welche man auch wählt, "alle stimmen zu" = inlier_ratio wird 1.00. Die Zustimmungsrate ist nicht "die Wahrscheinlichkeit, dass die Antwort korrekt ist", daher geben wir **ob es eine einzige Spitze gab** als separate Zahl aus (0 = Einzelspitze, nahe 1 = es gibt weitere gleichwertige Kandidaten).
 
 ## `backend_safe.py`
 
@@ -218,7 +218,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `balltrack.py`
 
-- **L426** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F5): 以前は軸 = 歪対称部 / |歪対称部| で、コマ間がちょうど 180° だと 0 / 0 = NaN の ω を 返した。回転の対数は camera.rotation_log(π の近くは対称部から軸)に寄せる。ちょうど π では ω と −ω の区別は原理的に付かない(どちらも同じ R)。
+- **L430** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F5): 以前は軸 = 歪対称部 / |歪対称部| で、コマ間がちょうど 180° だと 0 / 0 = NaN の ω を 返した。回転の対数は camera.rotation_log(π の近くは対称部から軸)に寄せる。ちょうど π では ω と −ω の区別は原理的に付かない(どちらも同じ R)。
 
 ## `barcode1d.py`
 
@@ -330,8 +330,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `dualxray.py`
 
-- **L225** _(ja)_ — ★2026-10-15 探針で見つけた: Pb 50 mm でも e^{-130} は 0 にならず、正規化すると「ほぼ何も通らない」スペクトルが ふつうの顔で返っていた。透過が 1e-12 を切ったら値を返さず拒否する。
-- **L963** _(ja)_ — ★2026-10-15 探針で見つけた: Fe(26)より上は R がほとんど同じになる(80 kV・窓 20/45 keV の薄い板で Fe 4.403 / Ni 4.417 / Cu 4.418 / Zn 4.416 —— Cu と Zn は逆転する)。区別できない範囲を照合に入れると、 単調性の検査で拒否するか、雑音で Z が 26〜30 を飛び回る。照合は Fe までにし、それより重い R は範囲の外(NaN)。
+- **L229** _(ja)_ — ★2026-10-15 探針で見つけた: Pb 50 mm でも e^{-130} は 0 にならず、正規化すると「ほぼ何も通らない」スペクトルが ふつうの顔で返っていた。透過が 1e-12 を切ったら値を返さず拒否する。
+- **L967** _(ja)_ — ★2026-10-15 探針で見つけた: Fe(26)より上は R がほとんど同じになる(80 kV・窓 20/45 keV の薄い板で Fe 4.403 / Ni 4.417 / Cu 4.418 / Zn 4.416 —— Cu と Zn は逆転する)。区別できない範囲を照合に入れると、 単調性の検査で拒否するか、雑音で Z が 26〜30 を飛び回る。照合は Fe までにし、それより重い R は範囲の外(NaN)。
 
 ## `engine.py`
 
@@ -2022,8 +2022,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `imgforensics.py`
 
-- **L207** _(ja)_ — ★ complex は ComplexWarning だけで虚部を捨て、実部のハッシュを返していた。 文字列・object も同じく受け取らない
-- **L718** _(ja)_ — ★2026-10-18: 受けるのは 2-D の uint8 だけ。float の [0,1] を渡しても古い Pillow は mode="L" で生のバイト列を 読み替えて黙って通し(画素値は意味の無い数になる)、Pillow 13 で初めて "Invalid mode for data type" で落ちた。 試験 1 本がこの経路で無意味な入力を 1 か月使っていた。型を確かめてから渡す(mode は dtype から決まる)。
+- **L211** _(ja)_ — ★ complex は ComplexWarning だけで虚部を捨て、実部のハッシュを返していた。 文字列・object も同じく受け取らない
+- **L722** _(ja)_ — ★2026-10-18: 受けるのは 2-D の uint8 だけ。float の [0,1] を渡しても古い Pillow は mode="L" で生のバイト列を 読み替えて黙って通し(画素値は意味の無い数になる)、Pillow 13 で初めて "Invalid mode for data type" で落ちた。 試験 1 本がこの経路で無意味な入力を 1 か月使っていた。型を確かめてから渡す(mode は dtype から決まる)。
 
 ## `imgio.py`
 
@@ -2642,7 +2642,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `segcompare.py`
 
-- **L219** _(ja)_ — ★2026-10-07: 43*0.1/0.1 = 42.99999999999999 → floor で 1 voxel 手前に落ちた(spacing 0.1 で 1000 個中 47 個)。 整数のごく近く(相対 1e-9)は整数に寄せてから floor
+- **L221** _(ja)_ — ★2026-10-07: 43*0.1/0.1 = 42.99999999999999 → floor で 1 voxel 手前に落ちた(spacing 0.1 で 1000 個中 47 個)。 整数のごく近く(相対 1e-9)は整数に寄せてから floor
 
 ## `segmentation.py`
 
@@ -2650,8 +2650,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `sensitivity.py`
 
-- **L400** _(ja)_ — ★2026-10-15: 生きた列(影響ゼロでない列)が 1 本以下なら、組み合わせが 1 つも無いので交絡は定義上ない (以前は max_subset の範囲 2..2 に 1 が入って ValueError で落ちた。simcal で σ = 0 のボケの列が 0 になって踏んだ)。
-- **L422** _(ja)_ — ★大きさの等しい項の順と符号の基準は丸めの屑で決めない(simcal._fmt_combo と同じ、2026-10-15 に CI の Linux でだけ順が入れ替わった)。1e-6 で丸めて比べ、同点は宣言順。
+- **L402** _(ja)_ — ★2026-10-15: 生きた列(影響ゼロでない列)が 1 本以下なら、組み合わせが 1 つも無いので交絡は定義上ない (以前は max_subset の範囲 2..2 に 1 が入って ValueError で落ちた。simcal で σ = 0 のボケの列が 0 になって踏んだ)。
+- **L424** _(ja)_ — ★大きさの等しい項の順と符号の基準は丸めの屑で決めない(simcal._fmt_combo と同じ、2026-10-15 に CI の Linux でだけ順が入れ替わった)。1e-6 で丸めて比べ、同点は宣言順。
 
 ## `shapestats.py`
 
@@ -3837,11 +3837,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `volops.py`
 
-- **L463** _(ja)_ — ★2026-11-09 点検: 背景が 1 つも無いと scipy は (-1, …) に背景があるかのような斜面 (1×8×8 で最小 1.0・最大 9.95)を返した。2-D 側(2026-11-05)と同じく定義どおりにする。
-- **L1226** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
-- **L1239** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
-- **L1338** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
-- **L1358** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
+- **L465** _(ja)_ — ★2026-11-09 点検: 背景が 1 つも無いと scipy は (-1, …) に背景があるかのような斜面 (1×8×8 で最小 1.0・最大 9.95)を返した。2-D 側(2026-11-05)と同じく定義どおりにする。
+- **L1228** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
+- **L1241** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
+- **L1340** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
+- **L1360** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
 
 ## `watervision.py`
 

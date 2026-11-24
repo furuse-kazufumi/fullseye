@@ -12,6 +12,8 @@ from scipy.ndimage import gaussian_filter, map_coordinates
 from scipy.optimize import least_squares
 from scipy.spatial.transform import Rotation
 
+import arrayguard as _arrayguard
+
 
 def _unit(d):
     d = np.asarray(d, float)
@@ -202,8 +204,10 @@ def equirect_from_perspectives(images, extrinsics, intrinsics, out_shape, feathe
     if n_images == 0:
         raise ValueError("images must not be empty")
     if n_images != n_extrinsics or n_images != n_intrinsics:
-        raise ValueError("images, extrinsics and intrinsics must have the same length "
-                         "(got %d, %d, %d)" % (n_images, n_extrinsics, n_intrinsics))
+        _arrayguard.refuse_count_mismatch(
+            "equirect_from_perspectives",
+            {"images": n_images, "extrinsics": n_extrinsics, "intrinsics": n_intrinsics},
+            advice=_arrayguard.CAMERA_COUNT_ADVICE)
     h,w=out_shape; world=equirect_to_dir(h,w); num=None; den=np.zeros((h,w))
     for im,R,K in zip(images,extrinsics,intrinsics):
         im=np.asarray(im,float); local=world@np.asarray(R,float); z=local[...,2]

@@ -126,11 +126,13 @@ def _require_volume(vol, name: str = "vol") -> np.ndarray:
     if isinstance(vol, PreparedVolProbe):
         return vol.volume
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        vol, name, "volprobe", MAX_VOXELS, expected_ndim=3)
+        vol, name, "volprobe", MAX_VOXELS, expected_ndim=3,
+        advice=_arrayguard.VOLUME_CAP_ADVICE)
     v = np.ascontiguousarray(vol, dtype=np.float64)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            v, name, "volprobe", MAX_VOXELS, expected_ndim=3)
+            v, name, "volprobe", MAX_VOXELS, expected_ndim=3,
+            advice=_arrayguard.VOLUME_CAP_ADVICE)
     if v.ndim != 3:
         raise ValueError("%s must be a 3-D (D, H, W) volume, got a %d-D array of shape %r"
                          % (name, v.ndim, tuple(np.shape(vol))))

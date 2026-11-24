@@ -157,6 +157,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 __all__ = [
     # convert / algebra
     "rgb_to_quaternion", "quaternion_to_rgb",
@@ -294,7 +296,8 @@ def _count(v, name: str, lo: int, hi: int) -> int:
     return n
 
 
-def _precheck_size(a, name: str, op: str, cap: int, cap_name: str) -> None:
+def _precheck_size(a, name: str, op: str, cap: int, _cap_name: str, *,
+                   advice: tuple[str, str] = _arrayguard.IMAGE_CAP_ADVICE) -> None:
     """Reject an oversized array **before** it is copied to float64.
 
     The lesson is recorded in ``specularity._precheck_size`` and it is repeated
@@ -309,10 +312,8 @@ def _precheck_size(a, name: str, op: str, cap: int, cap_name: str) -> None:
         for d in a.shape:
             n *= int(d)
         if n > cap:
-            raise ValueError("%s: %s has %d elements (shape %r), over the %d cap "
-                             "(quatimage.%s) — refused before conversion, so the "
-                             "copy is never allocated"
-                             % (op, name, n, tuple(a.shape), cap, cap_name))
+            _arrayguard.refuse_cap_exceeded(
+                op, name, n, cap, shape=tuple(a.shape), advice=advice)
 
 
 def _as_float_array(a, name: str, op: str) -> np.ndarray:
@@ -371,9 +372,9 @@ def _require_image(a, name: str, op: str) -> np.ndarray:
                          "carries no transform at all"
                          % (op, name, arr.shape[0], arr.shape[1]))
     if arr.size > MAX_PIXELS:
-        raise ValueError("%s: %s has %d pixels (shape %r), over the %d cap "
-                         "(quatimage.MAX_PIXELS)"
-                         % (op, name, arr.size, tuple(arr.shape), MAX_PIXELS))
+        _arrayguard.refuse_cap_exceeded(
+            op, name, arr.size, MAX_PIXELS, shape=tuple(arr.shape),
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     return arr
 
 
@@ -391,9 +392,9 @@ def _require_qimage(a, name: str, op: str) -> np.ndarray:
         raise ValueError("%s: %s is empty (shape %r)" % (op, name, tuple(arr.shape)))
     n = arr.shape[0] * arr.shape[1]
     if n > MAX_PIXELS:
-        raise ValueError("%s: %s has %d pixels (shape %r), over the %d cap "
-                         "(quatimage.MAX_PIXELS)"
-                         % (op, name, n, tuple(arr.shape), MAX_PIXELS))
+        _arrayguard.refuse_cap_exceeded(
+            op, name, n, MAX_PIXELS, shape=tuple(arr.shape),
+            advice=_arrayguard.IMAGE_CAP_ADVICE, unit=("pixels", "画素"))
     return arr
 
 
@@ -409,9 +410,9 @@ def _require_rgb(a, name: str, op: str) -> np.ndarray:
         raise ValueError("%s: %s is empty (shape %r)" % (op, name, tuple(arr.shape)))
     n = arr.shape[0] * arr.shape[1]
     if n > MAX_PIXELS:
-        raise ValueError("%s: %s has %d pixels (shape %r), over the %d cap "
-                         "(quatimage.MAX_PIXELS)"
-                         % (op, name, n, tuple(arr.shape), MAX_PIXELS))
+        _arrayguard.refuse_cap_exceeded(
+            op, name, n, MAX_PIXELS, shape=tuple(arr.shape),
+            advice=_arrayguard.IMAGE_CAP_ADVICE, unit=("pixels", "画素"))
     return arr
 
 
@@ -475,19 +476,18 @@ def _require_video(video, name: str, op: str, max_elements: int,
             raise ValueError("%s: %s is an empty frame list" % (op, name))
         n_frames = len(video)
         if n_frames > MAX_FRAMES:
-            raise ValueError("%s: %s has T=%d frames, over the %d cap "
-                             "(quatimage.MAX_FRAMES)" % (op, name, n_frames, MAX_FRAMES))
+            _arrayguard.refuse_cap_exceeded(
+                op, "%s frame count" % name, n_frames, MAX_FRAMES, shape=None,
+                advice=_arrayguard.VIDEO_CAP_ADVICE, unit=("frames", "フレーム"))
         raw_shapes = [tuple(np.shape(f)) for f in video]
         if any(len(shape) != 2 for shape in raw_shapes) or len(set(raw_shapes)) != 1:
             raise ValueError("%s: %s frames have differing shapes: %r"
                              % (op, name, sorted(set(raw_shapes))))
         h, w = raw_shapes[0]
         if n_frames * h * w > max_elements:
-            raise ValueError("%s: %s has T*H*W = %d elements (shape %r), over the %d "
-                             "cap — this operator holds three real volumes and one "
-                             "complex volume per band at once, so the cap is a memory "
-                             "bound, not a preference"
-                             % (op, name, n_frames * h * w, (n_frames, h, w), max_elements))
+            _arrayguard.refuse_cap_exceeded(
+                op, name, n_frames * h * w, max_elements, shape=(n_frames, h, w),
+                advice=_arrayguard.VIDEO_CAP_ADVICE)
         frames = []
         for i, f in enumerate(video):
             frames.append(_require_image(f, "%s[%d]" % (name, i), op))
@@ -497,7 +497,8 @@ def _require_video(video, name: str, op: str, max_elements: int,
                              % (op, name, sorted(shapes)))
         vid = np.stack(frames, axis=0)
     else:
-        _precheck_size(video, name, op, max_elements, "MAX_PYRAMID_ELEMENTS")
+        _precheck_size(video, name, op, max_elements, "MAX_PYRAMID_ELEMENTS",
+                       advice=_arrayguard.VIDEO_CAP_ADVICE)
         vid = _as_float_array(video, name, op)
     if vid.ndim != 3:
         raise ValueError("%s: %s must be a (T, H, W) clip, got a %d-D array of "
@@ -509,20 +510,21 @@ def _require_video(video, name: str, op: str, max_elements: int,
                          "frequency is undefined below that)"
                          % (op, name, t, min_frames))
     if t > MAX_FRAMES:
-        raise ValueError("%s: %s has T=%d frames, over the %d cap "
-                         "(quatimage.MAX_FRAMES)" % (op, name, t, MAX_FRAMES))
+        _arrayguard.refuse_cap_exceeded(
+            op, "%s frame count" % name, t, MAX_FRAMES, shape=None,
+            advice=_arrayguard.VIDEO_CAP_ADVICE, unit=("frames", "フレーム"))
     if h < 4 or w < 4:
         raise ValueError("%s: %s frames are %dx%d; at least 4x4 is needed for a "
                          "radial band to be sampled at all" % (op, name, h, w))
     if h * w > MAX_PIXELS:
-        raise ValueError("%s: %s frames are %dx%d = %d pixels, over the %d cap "
-                         "(quatimage.MAX_PIXELS)" % (op, name, h, w, h * w, MAX_PIXELS))
+        _arrayguard.refuse_cap_exceeded(
+            op, "%s frame pixels" % name, h * w, MAX_PIXELS,
+            shape=tuple(vid.shape), advice=_arrayguard.VIDEO_CAP_ADVICE,
+            unit=("pixels", "画素"))
     if vid.size > max_elements:
-        raise ValueError("%s: %s has T*H*W = %d elements (shape %r), over the %d "
-                         "cap — this operator holds three real volumes and one "
-                         "complex volume per band at once, so the cap is a memory "
-                         "bound, not a preference"
-                         % (op, name, vid.size, tuple(vid.shape), max_elements))
+        _arrayguard.refuse_cap_exceeded(
+            op, name, vid.size, max_elements, shape=tuple(vid.shape),
+            advice=_arrayguard.VIDEO_CAP_ADVICE)
     return vid
 
 

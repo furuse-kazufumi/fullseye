@@ -190,19 +190,23 @@ def _as_image(image, name: str = "image", *, allow_color: bool = True) -> np.nda
     黙ってやらないよう docstring に書いてある。
     """
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        image, name, "imgforensics", MAX_PIXELS * 4)
+        image, name, "imgforensics", MAX_PIXELS * 4,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     if raw_shape is not None:
         if len(raw_shape) == 2:
             _arrayguard.precheck_shape_and_elements(
-                image, name, "imgforensics", MAX_PIXELS, expected_ndim=2)
+                image, name, "imgforensics", MAX_PIXELS, expected_ndim=2,
+                advice=_arrayguard.IMAGE_CAP_ADVICE)
         elif len(raw_shape) == 3 and raw_shape[2] in (3, 4):
             if raw_shape[0] * raw_shape[1] > MAX_PIXELS:
-                raise ValueError(f"{name}: 画素数 {raw_shape[0] * raw_shape[1]} が上限 {MAX_PIXELS} を超える。"
-                                 "ROI に切ってから渡すこと")
+                _arrayguard.refuse_cap_exceeded(
+                    "imgforensics", name, raw_shape[0] * raw_shape[1], MAX_PIXELS,
+                    shape=raw_shape, advice=_arrayguard.IMAGE_CAP_ADVICE)
     a = np.asarray(image)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            a, name, "imgforensics", MAX_PIXELS * 4)
+            a, name, "imgforensics", MAX_PIXELS * 4,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if a.dtype.kind not in "biuf":
         # ★ complex は ComplexWarning だけで虚部を捨て、実部のハッシュを返していた。
         #   文字列・object も同じく受け取らない

@@ -35,6 +35,8 @@ import math
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 import materials
 import photoncount
 
@@ -112,8 +114,10 @@ def _channels(ch, op):
     except (TypeError, ValueError, OverflowError):
         weight_shape = None
     if weight_shape is not None and len(weight_shape) == 2 and weight_shape[0] > MAX_CHANNELS:
-        raise ValueError("%s: channels have %d rows, over the %d channel cap"
-                         % (op, weight_shape[0], MAX_CHANNELS))
+        _arrayguard.refuse_cap_exceeded(
+            op, "channels", weight_shape[0], MAX_CHANNELS, shape=weight_shape,
+            advice=_arrayguard.CHANNEL_CAP_ADVICE,
+            unit=("channels", "チャンネル"))
     E = np.asarray(ch["energy_kev"], dtype=np.float64)
     W = np.asarray(ch["weights"], dtype=np.float64)
     g = np.asarray(ch["gain"], dtype=np.float64)

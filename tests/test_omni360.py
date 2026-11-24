@@ -66,8 +66,11 @@ def test_weight_map_is_four_pi_and_ws_psnr_is_independent_definition():
 def test_perspective_rig_refuses_mismatched_camera_counts():
     """2 枚の画像を渡して 1 台の校正だけを再利用・黙殺することは許さない。"""
     images = [np.zeros((8, 8)), np.ones((8, 8))]
-    with pytest.raises(ValueError, match=r"same length.*2, 1, 1"):
+    with pytest.raises(ValueError, match=r"images=2, extrinsics=1, intrinsics=1") as error:
         O.equirect_from_perspectives(images, [np.eye(3)], [np.eye(3)], (12, 24))
+    message = str(error.value)
+    assert "make the three sequence lengths equal" in message
+    assert "理由:" in message and "対処:" in message
 
 
 def test_constant_resampling_has_no_seam():

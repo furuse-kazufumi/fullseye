@@ -73,13 +73,36 @@ _CASES = [
                  (2, 2, VF.MAX_VOXELS // 4 + 1), id="volfreq-volume"),
 ]
 
+_CAP_DETAILS = {
+    AOI: (AOI.MAX_IMAGE_ELEMENTS, "scipy.ndimage.zoom"),
+    IL: (IL.MAX_MAP_ELEMENTS, "scipy.ndimage.zoom"),
+    IF: (IF.MAX_PIXELS, "scipy.ndimage.zoom"),
+    LIM: (LIM.MAX_IMAGE_PIXELS, "scipy.ndimage.zoom"),
+    L4: (L4.MAX_SERIES_ELEMENTS, "process"),
+    SC: (SC.MAX_SEG_PIXELS, "scipy.ndimage.zoom"),
+    SCT: (SCT.MAX_PIXELS, "scipy.ndimage.zoom"),
+    SG: (SG.MAX_PIXELS, "scipy.ndimage.zoom"),
+    SP: (SP.MAX_PIXELS * 4, "scipy.ndimage.zoom"),
+    VC: (VC.MAX_CUBE_ELEMENTS, "process"),
+    VD: (VD.MAX_IMAGE_PIXELS, "scipy.ndimage.zoom"),
+    VF: (VF.MAX_VOXELS, "volops.volume_downsample"),
+    VP: (VP.MAX_VOXELS, "volops.volume_downsample"),
+    VR: (VR.MAX_VOXELS, "volops.volume_downsample"),
+    VX: (VX.MAX_VOXELS, "volops.volume_downsample"),
+}
+
 
 @pytest.mark.parametrize(("module", "conversion", "call", "shape"), _CASES)
 def test_static_cap_matches_are_refused_before_conversion(monkeypatch, module, conversion, call, shape):
     virtual = _zero_stride(shape)
     monkeypatch.setattr(module.np, conversion, _conversion_must_not_run)
-    with pytest.raises(ValueError, match="cap"):
+    with pytest.raises(ValueError, match="exceeding the limit") as error:
         call(virtual)
+    cap, remedy = _CAP_DETAILS[module]
+    message = str(error.value)
+    assert f"{int(np.prod(shape)):,} elements" in message
+    assert f"{cap:,} elements" in message
+    assert remedy in message and "Why:" in message and "対処:" in message
 
 
 def test_dual_xray_channel_count_is_checked_before_float64_conversion(monkeypatch):
@@ -91,5 +114,8 @@ def test_dual_xray_channel_count_is_checked_before_float64_conversion(monkeypatc
         "mode": "energy_integrating",
     }
     monkeypatch.setattr(DX.np, "asarray", _conversion_must_not_run)
-    with pytest.raises(ValueError, match=rf"{n} rows.*cap"):
+    with pytest.raises(ValueError) as error:
         DX._channels(channels, "dual_xray_op")
+    message = str(error.value)
+    assert f"{n} channels" in message and f"{DX.MAX_CHANNELS} channels" in message
+    assert "thresholds_kev" in message and "対処:" in message

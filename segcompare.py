@@ -61,10 +61,12 @@ MAX_SEG_PIXELS = 500_000_000
 def _labels(x, name, op):
     if isinstance(x, (str, bytes)) or np.ma.is_masked(x):
         raise ValueError("%s: %s must be an integer label array" % (op, name))
-    raw_shape = _arrayguard.precheck_shape_and_elements(x, name, op, MAX_SEG_PIXELS)
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        x, name, op, MAX_SEG_PIXELS, advice=_arrayguard.IMAGE_CAP_ADVICE)
     a = np.asarray(x)
     if raw_shape is None:
-        _arrayguard.precheck_shape_and_elements(a, name, op, MAX_SEG_PIXELS)
+        _arrayguard.precheck_shape_and_elements(
+            a, name, op, MAX_SEG_PIXELS, advice=_arrayguard.IMAGE_CAP_ADVICE)
     if a.dtype.kind == "b":
         a = a.astype(np.int64)
     if a.dtype.kind == "f":

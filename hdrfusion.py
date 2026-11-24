@@ -565,11 +565,13 @@ def hdr_exposure_series_simulate(radiance, exposures, eta=0.6, K=0.1, sigma_d_e=
     """
     op = "hdr_exposure_series_simulate"
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        radiance, "radiance", op, MAX_PIXELS, expected_ndim=2)
+        radiance, "radiance", op, MAX_PIXELS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     r = np.asarray(radiance, dtype=np.float64)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            r, "radiance", op, MAX_PIXELS, expected_ndim=2)
+            r, "radiance", op, MAX_PIXELS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if r.ndim != 2 or r.size == 0 or not np.isfinite(r).all() or np.any(r < 0):
         raise ValueError("%s: radiance must be a finite, non-negative 2-D array" % op)
     t = np.asarray(exposures, dtype=np.float64).reshape(-1)

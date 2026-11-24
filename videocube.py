@@ -45,7 +45,8 @@ CUT_PLANES = ("xt", "yt", "xy")
 # --------------------------------------------------------------------------- #
 def _video(video: Any, op: str, min_t: int = 1) -> np.ndarray:
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        video, "video", op, MAX_CUBE_ELEMENTS, expected_ndim=3)
+        video, "video", op, MAX_CUBE_ELEMENTS, expected_ndim=3,
+        advice=_arrayguard.VIDEO_CAP_ADVICE)
     if isinstance(video, (list, tuple)):
         frames = [np.asarray(f, dtype=np.float64) for f in video]
         if not frames or any(f.ndim != 2 or f.shape != frames[0].shape for f in frames):
@@ -55,7 +56,8 @@ def _video(video: Any, op: str, min_t: int = 1) -> np.ndarray:
         v = np.asarray(video, dtype=np.float64)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            v, "video", op, MAX_CUBE_ELEMENTS, expected_ndim=3)
+            v, "video", op, MAX_CUBE_ELEMENTS, expected_ndim=3,
+            advice=_arrayguard.VIDEO_CAP_ADVICE)
     if v.ndim != 3:
         raise ValueError(f"{op}: video must be (T, H, W), got shape {v.shape}")
     if v.shape[0] < min_t or v.shape[1] < 2 or v.shape[2] < 2:
@@ -67,11 +69,13 @@ def _video(video: Any, op: str, min_t: int = 1) -> np.ndarray:
 
 def _cube(vol: Any, op: str, name: str = "vol", shape=None) -> np.ndarray:
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        vol, name, op, MAX_CUBE_ELEMENTS, expected_ndim=3)
+        vol, name, op, MAX_CUBE_ELEMENTS, expected_ndim=3,
+        advice=_arrayguard.VOLUME_CAP_ADVICE)
     a = np.asarray(vol, dtype=np.float64)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            a, name, op, MAX_CUBE_ELEMENTS, expected_ndim=3)
+            a, name, op, MAX_CUBE_ELEMENTS, expected_ndim=3,
+            advice=_arrayguard.VOLUME_CAP_ADVICE)
     if a.ndim != 3 or a.size == 0:
         raise ValueError(f"{op}: {name} must be a non-empty (T, H, W) cube, got shape {a.shape}")
     if shape is not None and a.shape != tuple(shape):

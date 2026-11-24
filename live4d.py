@@ -49,7 +49,8 @@ MAX_SERIES_ELEMENTS = 2 ** 26
 # 検査                                                                          #
 # --------------------------------------------------------------------------- #
 def _series(x: Any, op: str, name: str = "volseq", min_t: int = 2) -> np.ndarray:
-    raw_shape = _arrayguard.precheck_shape_and_elements(x, name, op, MAX_SERIES_ELEMENTS)
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        x, name, op, MAX_SERIES_ELEMENTS, advice=_arrayguard.VIDEO_CAP_ADVICE)
     if isinstance(x, (list, tuple)):
         vols = [np.asarray(v, dtype=np.float64) for v in x]
         if not vols or any(v.ndim != 3 or v.shape != vols[0].shape for v in vols):
@@ -58,7 +59,8 @@ def _series(x: Any, op: str, name: str = "volseq", min_t: int = 2) -> np.ndarray
     else:
         a = np.asarray(x, dtype=np.float64)
     if raw_shape is None:
-        _arrayguard.precheck_shape_and_elements(a, name, op, MAX_SERIES_ELEMENTS)
+        _arrayguard.precheck_shape_and_elements(
+            a, name, op, MAX_SERIES_ELEMENTS, advice=_arrayguard.VIDEO_CAP_ADVICE)
     if a.ndim != 4 or a.size == 0:
         raise ValueError(f"{op}: {name} must be a volume series (T, Z, Y, X), got shape {a.shape}")
     if a.shape[0] < min_t or min(a.shape[1:]) < 2:
@@ -69,10 +71,12 @@ def _series(x: Any, op: str, name: str = "volseq", min_t: int = 2) -> np.ndarray
 
 
 def _vol(x: Any, op: str, name: str) -> np.ndarray:
-    raw_shape = _arrayguard.precheck_shape_and_elements(x, name, op, MAX_SERIES_ELEMENTS)
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        x, name, op, MAX_SERIES_ELEMENTS, advice=_arrayguard.VOLUME_CAP_ADVICE)
     a = np.asarray(x, dtype=np.float64)
     if raw_shape is None:
-        _arrayguard.precheck_shape_and_elements(a, name, op, MAX_SERIES_ELEMENTS)
+        _arrayguard.precheck_shape_and_elements(
+            a, name, op, MAX_SERIES_ELEMENTS, advice=_arrayguard.VOLUME_CAP_ADVICE)
     if a.ndim != 3 or a.size == 0 or min(a.shape) < 2:
         raise ValueError(f"{op}: {name} must be a (Z, Y, X) volume with every side >= 2, got shape {a.shape}")
     if not np.isfinite(a).all():

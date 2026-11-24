@@ -47,11 +47,13 @@ MAX_VOXELS = 1 << 27
 
 def _require_volume(vol, name: str = "vol") -> np.ndarray:
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        vol, name, "volfreq.MAX_VOXELS", MAX_VOXELS, expected_ndim=3)
+        vol, name, "volfreq.MAX_VOXELS", MAX_VOXELS, expected_ndim=3,
+        advice=_arrayguard.VOLUME_CAP_ADVICE)
     raw = np.asarray(vol)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            raw, name, "volfreq.MAX_VOXELS", MAX_VOXELS, expected_ndim=3)
+            raw, name, "volfreq.MAX_VOXELS", MAX_VOXELS, expected_ndim=3,
+            advice=_arrayguard.VOLUME_CAP_ADVICE)
     if raw.ndim != 3:
         raise ValueError("%s must be a 3-D (D, H, W) volume, got a %d-D array"
                          % (name, raw.ndim))

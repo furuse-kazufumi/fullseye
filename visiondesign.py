@@ -335,11 +335,13 @@ def image_formation(scene, f_number=8.0, pixel_pitch_um=3.45,
     ``image_distance_mm``.
     """
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        scene, "scene", "image_formation", MAX_IMAGE_PIXELS, expected_ndim=2)
+        scene, "scene", "image_formation", MAX_IMAGE_PIXELS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     img = np.asarray(scene, dtype=np.float64)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            img, "scene", "image_formation", MAX_IMAGE_PIXELS, expected_ndim=2)
+            img, "scene", "image_formation", MAX_IMAGE_PIXELS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if img.ndim != 2:
         raise ValueError("scene must be a 2-D image, got a %d-D array" % img.ndim)
     if img.size == 0:

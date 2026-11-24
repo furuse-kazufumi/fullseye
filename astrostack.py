@@ -287,11 +287,13 @@ def _shape(shape):
 def _require_image(a, name, op):
     """2-D の有限 float64 画像。"""
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        a, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2)
+        a, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     arr = np.asarray(a, dtype=np.float64)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            arr, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2)
+            arr, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if arr.ndim != 2:
         raise ValueError("%s: %s must be a 2-D image, got shape %r"
                          % (op, name, arr.shape))

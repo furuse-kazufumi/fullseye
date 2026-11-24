@@ -57,6 +57,14 @@ PERIOD_TOL = 1e-6
 MAX_CONDITION = 1e8
 #: largest SNR at which the exact Rice-phase integral is evaluated (above it the small-noise value is returned)
 _MAX_EXACT_R = 100.0
+_VIDEO_CAP_ADVICE = (
+    "Reduce frames or spatial resolution (for example, video[::2, ::2, ::2]), or process shorter clips.",
+    "フレーム数または空間解像度を下げる（例: video[::2, ::2, ::2]）か、短いクリップに分けて処理してください。",
+)
+_SYNTHESIS_CAP_ADVICE = (
+    "Reduce the input-map resolution, lower frames_per_period or n_periods, or synthesize separate tiles.",
+    "入力マップの解像度を下げるか、frames_per_period または n_periods を下げるか、タイルごとに別々に合成してください。",
+)
 
 
 def _require_video(video, name, op, max_elements):
@@ -66,8 +74,9 @@ def _require_video(video, name, op, max_elements):
             raise ValueError("%s: %s is an empty frame list" % (op, name))
         n_frames = len(video)
         if n_frames > MAX_FRAMES:
-            raise ValueError("%s: %s has %d frames, over the %d cap (lockin.MAX_FRAMES)"
-                             % (op, name, n_frames, MAX_FRAMES))
+            _arrayguard.refuse_cap_exceeded(
+                op, "%s frame count" % name, n_frames, MAX_FRAMES, shape=None,
+                advice=_VIDEO_CAP_ADVICE, unit=("frames", "フレーム"))
         raw_shapes = [tuple(np.shape(f)) for f in video]
         if any(len(shape) != 2 for shape in raw_shapes) or len(set(raw_shapes)) != 1:
             raise ValueError("%s: %s frames must be 2-D and of one shape" % (op, name))
@@ -78,17 +87,18 @@ def _require_video(video, name, op, max_elements):
         if h < 1 or w < 1:
             raise ValueError("%s: %s frames are empty" % (op, name))
         if n_frames * h * w > max_elements:
-            raise ValueError("%s: %s has %d elements (shape %r), over the %d cap"
-                             % (op, name, n_frames * h * w, (n_frames, h, w), max_elements))
+            _arrayguard.refuse_cap_exceeded(
+                op, name, n_frames * h * w, max_elements, shape=(n_frames, h, w),
+                advice=_VIDEO_CAP_ADVICE)
         frames = [np.asarray(f) for f in video]
         arr = np.stack(frames, axis=0)
     else:
         raw_shape = _arrayguard.precheck_shape_and_elements(
-            video, name, op, max_elements)
+            video, name, op, max_elements, advice=_VIDEO_CAP_ADVICE)
         arr = np.asarray(video)
         if raw_shape is None:
             _arrayguard.precheck_shape_and_elements(
-                arr, name, op, max_elements)
+                arr, name, op, max_elements, advice=_VIDEO_CAP_ADVICE)
     if np.ma.is_masked(video):
         raise ValueError("%s: %s is a masked array; fill or drop the masked entries explicitly" % (op, name))
     if np.iscomplexobj(arr):
@@ -102,11 +112,15 @@ def _require_video(video, name, op, max_elements):
     if vid.shape[0] < 3:
         raise ValueError("%s: %s has %d frames; at least 3 are needed to define a temporal frequency" % (op, name, vid.shape[0]))
     if vid.shape[0] > MAX_FRAMES:
-        raise ValueError("%s: %s has %d frames, over the %d cap" % (op, name, vid.shape[0], MAX_FRAMES))
+        _arrayguard.refuse_cap_exceeded(
+            op, "%s frame count" % name, vid.shape[0], MAX_FRAMES, shape=None,
+            advice=_VIDEO_CAP_ADVICE, unit=("frames", "フレーム"))
     if vid.shape[1] < 1 or vid.shape[2] < 1:
         raise ValueError("%s: %s frames are empty" % (op, name))
     if vid.size > max_elements:
-        raise ValueError("%s: %s has %d elements (shape %r), over the %d cap" % (op, name, vid.size, tuple(vid.shape), max_elements))
+        _arrayguard.refuse_cap_exceeded(
+            op, name, vid.size, max_elements, shape=tuple(vid.shape),
+            advice=_VIDEO_CAP_ADVICE)
     if not np.isfinite(vid).all():
         raise ValueError("%s: %s has %d non-finite sample(s) (NaN or Inf); refusing" % (op, name, int((~np.isfinite(vid)).sum())))
     return vid
@@ -342,22 +356,24 @@ def lockin_ring_synthesize(height, zenith_deg, n_sources, multipole, frames_per_
     npd = _int(n_periods, "n_periods", op, 1, 64)
     raw_shape = _arrayguard.precheck_shape_and_elements(
         height, "height output", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
-        multiplier=fpp * npd)
+        multiplier=fpp * npd, advice=_SYNTHESIS_CAP_ADVICE)
     h = np.asarray(height, np.float64)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
             h, "height output", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
-            multiplier=fpp * npd)
+            multiplier=fpp * npd, advice=_SYNTHESIS_CAP_ADVICE)
     if h.ndim != 2 or h.shape[0] < 4 or h.shape[1] < 4 or not np.isfinite(h).all():
         raise ValueError("%s: height must be a finite 2-D map of at least 4x4, got shape %r" % (op, np.shape(height)))
     albedo_shape = None
     if albedo is not None:
         albedo_shape = _arrayguard.precheck_shape_and_elements(
-            albedo, "albedo", op, MAX_VIDEO_ELEMENTS, expected_ndim=2)
+            albedo, "albedo", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
+            advice=_SYNTHESIS_CAP_ADVICE)
     rho = 1.0 if albedo is None else np.asarray(albedo, np.float64)
     if albedo is not None and albedo_shape is None:
-        _arrayguard.precheck_shape_and_elements(
-            rho, "albedo", op, MAX_VIDEO_ELEMENTS, expected_ndim=2)
+            _arrayguard.precheck_shape_and_elements(
+                rho, "albedo", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
+                advice=_SYNTHESIS_CAP_ADVICE)
     if albedo is not None and (rho.shape != h.shape or not np.isfinite(rho).all() or (rho < 0).any()):
         raise ValueError("%s: albedo must be a finite non-negative map of the height's shape %r" % (op, h.shape))
     gy, gx = np.gradient(h)
@@ -434,12 +450,12 @@ def lockin_thermal_wave(depth, thermal_diffusivity, f_heat, frames_per_period, n
     npd = _int(n_periods, "n_periods", op, 1, 64)
     raw_shape = _arrayguard.precheck_shape_and_elements(
         depth, "depth output", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
-        multiplier=fpp * npd)
+        multiplier=fpp * npd, advice=_SYNTHESIS_CAP_ADVICE)
     d = np.asarray(depth, np.float64)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
             d, "depth output", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
-            multiplier=fpp * npd)
+            multiplier=fpp * npd, advice=_SYNTHESIS_CAP_ADVICE)
     if d.ndim != 2 or d.shape[0] < 4 or d.shape[1] < 4 or not np.isfinite(d).all() or (d <= 0.0).any():
         raise ValueError("%s: depth must be a finite positive 2-D map (m) of at least 4x4, got shape %r" % (op, np.shape(depth)))
     om = 2.0 * np.pi * f
@@ -452,11 +468,13 @@ def lockin_thermal_wave(depth, thermal_diffusivity, f_heat, frames_per_period, n
     out = (zt[None] * rot[:, None, None]).real
     if nonuniformity is not None:
         nonuniformity_shape = _arrayguard.precheck_shape_and_elements(
-            nonuniformity, "nonuniformity", op, MAX_VIDEO_ELEMENTS, expected_ndim=2)
+            nonuniformity, "nonuniformity", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
+            advice=_SYNTHESIS_CAP_ADVICE)
         nu = np.asarray(nonuniformity, np.float64)
         if nonuniformity_shape is None:
             _arrayguard.precheck_shape_and_elements(
-                nu, "nonuniformity", op, MAX_VIDEO_ELEMENTS, expected_ndim=2)
+                nu, "nonuniformity", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
+                advice=_SYNTHESIS_CAP_ADVICE)
         if nu.shape != d.shape or not np.isfinite(nu).all() or (nu <= 0.0).any():
             raise ValueError("%s: nonuniformity must be a finite positive map of the depth's shape %r" % (op, d.shape))
         out = out * nu[None]

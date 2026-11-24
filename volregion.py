@@ -144,14 +144,16 @@ def vol_rle_encode(vol_binary) -> VolRLE:
     空の入力(``vol_binary`` が 0 要素)は ValueError。
     """
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        vol_binary, "vol_binary", "vol_rle_encode", MAX_VOXELS, expected_ndim=3)
+        vol_binary, "vol_binary", "vol_rle_encode", MAX_VOXELS, expected_ndim=3,
+        advice=_arrayguard.VOLUME_CAP_ADVICE)
     if ((raw_shape is not None and 0 in raw_shape)
             or (raw_shape is None and isinstance(vol_binary, (list, tuple)) and not vol_binary)):   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("vol_rle_encode: vol_binary is empty — pass at least one element")
     v = np.ascontiguousarray(vol_binary)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            v, "vol_binary", "vol_rle_encode", MAX_VOXELS, expected_ndim=3)
+            v, "vol_binary", "vol_rle_encode", MAX_VOXELS, expected_ndim=3,
+            advice=_arrayguard.VOLUME_CAP_ADVICE)
     if v.ndim != 3:
         raise ValueError("vol_binary must be a 3-D (D, H, W) volume, got %d-D"
                          % (v.ndim,))

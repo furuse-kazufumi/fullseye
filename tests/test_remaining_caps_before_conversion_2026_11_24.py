@@ -55,7 +55,7 @@ class _TooManyFrames(list):
 def test_volume_caps_precede_contiguous_float64_copy(monkeypatch, module):
     virtual = _zero_stride((2, 2, module.MAX_VOXELS // 4 + 1))
     monkeypatch.setattr(module.np, "ascontiguousarray", _conversion_must_not_run)
-    with pytest.raises(ValueError, match="cap"):
+    with pytest.raises(ValueError, match="exceeding the limit"):
         module._require_volume(virtual)
 
 
@@ -69,20 +69,24 @@ def test_volops_eigen_cap_precedes_contiguous_float64_copy(monkeypatch):
 def test_volfreq_list_or_array_cap_uses_shared_precheck_before_asarray(monkeypatch):
     virtual = _zero_stride((2, 2, VF.MAX_VOXELS // 4 + 1))
     monkeypatch.setattr(VF, "np", _NoAsarray(np))
-    with pytest.raises(ValueError, match="cap"):
+    with pytest.raises(ValueError, match="exceeding the limit"):
         VF._require_volume(virtual)
 
 
 @pytest.mark.parametrize("module", [LI, MM, QI])
 def test_video_frame_count_is_refused_before_frame_iteration(module):
-    with pytest.raises(ValueError, match="MAX_FRAMES"):
+    with pytest.raises(ValueError) as error:
         module._require_video(_TooManyFrames(module.MAX_FRAMES + 1), "video", "test", 1)
+    message = str(error.value)
+    assert f"{module.MAX_FRAMES + 1:,} frames" in message
+    assert f"{module.MAX_FRAMES:,} frames" in message
+    assert "shorter clips" in message and "対処:" in message
 
 
 def test_lockin_total_list_cap_precedes_stack(monkeypatch):
     frames = [_zero_stride((1, LI.MAX_VIDEO_ELEMENTS // 3 + 1)) for _ in range(3)]
     monkeypatch.setattr(LI.np, "stack", _conversion_must_not_run)
-    with pytest.raises(ValueError, match="cap"):
+    with pytest.raises(ValueError, match="exceeding the limit"):
         LI._require_video(frames, "video", "test", LI.MAX_VIDEO_ELEMENTS)
 
 
@@ -94,7 +98,7 @@ def test_video_total_list_cap_precedes_frame_conversion(monkeypatch, module):
         monkeypatch.setattr(module, "np", _NoAsarray(np))
     else:
         monkeypatch.setattr(module, "_require_image", _conversion_must_not_run)
-    with pytest.raises(ValueError, match="cap"):
+    with pytest.raises(ValueError, match="exceeding the limit"):
         module._require_video(frames, "video", "test", cap)
 
 
@@ -104,5 +108,6 @@ def test_track_triangulate_checks_all_view_counts_before_uv_allocation(monkeypat
         {"frame": np.empty(0, np.int64), "col": np.empty(0), "row": np.empty(0)},
     ]
     monkeypatch.setattr(BT.np, "full", _conversion_must_not_run)
-    with pytest.raises(ValueError, match="tracks, poses, and Ks"):
+    with pytest.raises(ValueError, match=r"tracks=2, poses=1, Ks=1") as error:
         BT.track_triangulate(tracks, [np.eye(4)], [np.eye(3)], n_frames=1)
+    assert "make the three sequence lengths equal" in str(error.value)

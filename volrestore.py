@@ -52,11 +52,13 @@ NEGATIVE_DUST_TOL = 1e-9
 
 def _require_volume(vol, name: str = "vol") -> np.ndarray:
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        vol, name, "volrestore", MAX_VOXELS, expected_ndim=3)
+        vol, name, "volrestore", MAX_VOXELS, expected_ndim=3,
+        advice=_arrayguard.VOLUME_CAP_ADVICE)
     v = np.ascontiguousarray(vol, dtype=np.float64)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            v, name, "volrestore", MAX_VOXELS, expected_ndim=3)
+            v, name, "volrestore", MAX_VOXELS, expected_ndim=3,
+            advice=_arrayguard.VOLUME_CAP_ADVICE)
     if v.ndim != 3:
         raise ValueError("%s must be a 3-D (D, H, W) volume, got a %d-D array"
                          % (name, v.ndim))

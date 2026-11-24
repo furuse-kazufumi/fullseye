@@ -109,10 +109,13 @@ def _image(x, name: str, op: str, min_side: int = 1) -> np.ndarray:
     if isinstance(x, (str, bytes, dict)) or np.ma.is_masked(x):
         raise ValueError("%s: %s must be a 2-D real image" % (op, name))
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        x, name, op, MAX_PIXELS, expected_ndim=2)
+        x, name, op, MAX_PIXELS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     a = np.asarray(x)
     if raw_shape is None:
-        _arrayguard.precheck_shape_and_elements(a, name, op, MAX_PIXELS, expected_ndim=2)
+        _arrayguard.precheck_shape_and_elements(
+            a, name, op, MAX_PIXELS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if a.dtype.kind not in "biuf":
         raise ValueError("%s: %s has dtype %s — must be real" % (op, name, a.dtype))
     a = a.astype(np.float64)

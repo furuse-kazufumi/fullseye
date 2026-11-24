@@ -109,11 +109,13 @@ def _image(a, name="image"):
     if isinstance(a, (str, bytes, dict)):
         raise ValueError("%s must be a 2-D array, got %r" % (name, type(a).__name__))
     raw_shape = _arrayguard.precheck_shape_and_elements(
-        a, name, "lensimage", MAX_IMAGE_PIXELS, expected_ndim=2)
+        a, name, "lensimage", MAX_IMAGE_PIXELS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     arr = np.asarray(a)
     if raw_shape is None:
         _arrayguard.precheck_shape_and_elements(
-            arr, name, "lensimage", MAX_IMAGE_PIXELS, expected_ndim=2)
+            arr, name, "lensimage", MAX_IMAGE_PIXELS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if arr.dtype.kind not in "fiub":
         raise ValueError("%s must be numeric, got dtype %r" % (name, arr.dtype))
     arr = arr.astype(np.float64)
