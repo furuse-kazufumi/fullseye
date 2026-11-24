@@ -1,0 +1,17 @@
+# CPython 3.11 keeps interpreter-global import state and extension-module
+# registries until process exit.  In the ASan CTest executables the leak
+# stacks begin in libpython's Py_InitializeFromConfig, then enter pybind11's
+# initialize_interpreter before this library's runtime boundary.
+#
+# CPython 3.11 はインタプリタ全体の import 状態と拡張モジュールの登録表をプロセス終了
+# まで保持する。ASan の CTest 実行ファイルで出る leak stack は libpython の
+# Py_InitializeFromConfig から始まり、pybind11 の initialize_interpreter を経て
+# 本ライブラリの runtime 境界へ入る。
+#
+# Keep this to the single CPython initialization function.  It deliberately
+# does not name a Fullseye function, so a leak allocated by our own code after
+# startup remains visible to LSan.
+#
+# CPython 初期化関数だけに限定する。Fullseye の関数名は含めないため、起動後に本実装
+# が確保して漏らしたメモリは LSan に残る。
+leak:Py_InitializeFromConfig

@@ -10,6 +10,14 @@ option(FULLSEYE_BUILD_NATIVE "Build the optional pybind11 C ABI bridge" ON)
 option(FULLSEYE_BUILD_TESTS "Build native C/C++ examples and CTest gates" ON)
 option(FULLSEYE_ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
 
+# C/C++ public headers and the native bridge contain UTF-8 Japanese comments.
+# Tell MSVC explicitly so a byte in a comment cannot corrupt the next token.
+# 公開ヘッダと native bridge のコメントは UTF-8 の日本語を含む。MSVC に明示して、
+# コメント中の byte が次の token を壊さないようにする。
+if(MSVC)
+  add_compile_options(/utf-8)
+endif()
+
 if(FULLSEYE_BUILD_NATIVE)
   find_package(Python 3.11 EXACT COMPONENTS Interpreter Development.Embed REQUIRED)
   find_package(pybind11 2.13.6 CONFIG REQUIRED)

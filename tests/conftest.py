@@ -83,7 +83,7 @@ def _have_backend(name: str) -> bool:
 #: レジストリから消え、op 名を直書きしたギャラリーと、レジストリから指紋を取る
 #: docs の drift 検査が落ちた。**op 集合が環境で変わる**のに、不変条件の側が
 #: 固定を仮定していた形。揃っていないなら skip、揃っている CI の py3.11 では実行。
-FULL_REGISTRY_BACKENDS = ("torch", "kornia", "mahotas", "cv2.xfeatures2d")
+FULL_REGISTRY_BACKENDS = ("torch", "kornia", "mahotas", "pywt", "cv2.xfeatures2d")
 
 
 def requires_full_registry() -> None:

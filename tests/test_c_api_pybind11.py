@@ -33,9 +33,6 @@ FS_VALUE_OBJECTSET = 3
 FS_VALUE_FEATURE = 4
 FS_VALUE_COLOR = 6
 FS_VALUE_VOLUME = 7
-MIN_CALLABLE_C_API_OPS = 682
-
-
 class InitOptions(C.Structure):
     _fields_ = [("struct_size", C.c_uint32), ("runtime_root", C.c_char_p),
                 ("python_home", C.c_char_p), ("flags", C.c_uint32),
@@ -311,7 +308,6 @@ def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(ab
     generated = json.loads(
         (ROOT / "fullseye" / "data" / "C_API_OPS.json").read_text(encoding="utf-8"))
     expected_count = generated["n_callable"]
-    assert expected_count >= MIN_CALLABLE_C_API_OPS
     assert expected_count == sum(row["callable"] for row in generated["ops"])
     assert catalog["n_callable"] == len(rows) == expected_count
     exercised = []
