@@ -55,31 +55,31 @@
 
 ## `api.py`
 
-- **L173** — ★2026-10-02: 合成パイプライン 6 本を fs.<名前> から出す。以前は ``fs.pipeline3d.<fn>`` でしか届かず、 公開経路の門では「1 本も届かない島」として _INTERNAL に置かれていた。import 自体は torch が無くても 通る(torch_lazy)。torch を要るのは呼んだときの FPFH / ICP の側だけ。
-- **L905** — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L921** — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
-- **L976** — ★ ``annotate.overlay_mask`` は **意図的にトップレベルへ出していない**。同名の ``imgio.overlay_mask`` が既に ``fs.overlay_mask`` として公開されており、引数も 意味も違う(imgio = 生 RGB・mask>0.5・fill/margin / annotate = 役割名の色・ 重み [0,1] も可・形の不一致を拒否)。同じ名前に別の約束を載せると、呼び手は 例外ではなく**もっともらしく違う絵**を受け取る。公開 API の破壊的変更は 独断でしないので、役割つきの方は ``fs.annotate.overlay_mask`` で引く。
-- **L1145** — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L1732** — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1735** — ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が 無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
-- **L1751** — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1820** — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L2382** — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L2413** — ★ **いまのところカラー画像に対して正しい呼び方が存在しない**: まとめて渡すと 色が混ざり、チャネルごとに 3 回呼ぶと自己正規化する op が各チャネルを 自分の最大で割ってチャネル間の比を壊す(灰色エッジ法の角度誤差が 自前 Sobel 1.03 度 -> 画像ごと 4.17 度 -> ch ごと 27.86 度、ゼロ点 29.14 度)。 どちらに倒すかは**契約の決め**なので、ここでは既定の数値は 1 つも変えず、 `on_error="raise"` のときだけ拒否し、既定では台帳に記録して見えるようにする。 詳細と選択肢は docs/KNOWN_ISSUES.md。
-- **L2627** — ★2026-11-05(1.0 前の修正 typed-dtype): the typed bridge opened sorts whose values are the SAME [0,1] pixel values as ``image`` — ``video`` (T,H,W[,3]) frames, ``rgbimage`` (H,W,3) linear RGB, ``lightfield`` (V,U,H,W) views — but the set stayed at the three original sorts, so a uint8 video passed ``on_error="raise"`` and ``tb_temporal_bandpass`` / ``tb_temporal_band_power`` returned the x255 / x255**2 answer with no exception and no record (the other 14 video ops are scale-equivariant or thresholded and happened to agree). Every entry (``apply``, the n-ary tier, ``template=``, ``run_pipeline`` CPU/GPU, ``FullseyeEngine.run_cached`` and the MCP stages, which call ``fullseye.apply``) reads THIS set, so widening it here is what makes them agree. Deliberately NOT here — their values are not pixel values, an integer can be the meaning, and /255 would be a silent unit change (the opposite bug): counts (photon counts, int64 by contract), cimage / beatcube (complex fields), qimage (quaternion: signed Riesz pairs, QFT spectra far outside [0,1]), signal / matrix / points / keypoints (profiles, linear algebra, coordinates), region (int masks, see above), contour / feature / match / any.
-- **L2748** — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2789** — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L3155** — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
-- **L3272** — ★2026-11-05(敵対的検証 C12): 単入力の apply / run_pipeline は fullseye.Image を剥がすのに、 n 項だけが剥がさず「got a scalar Image」の TypeError だった。入力ごとに同じ剥がし方 (非有限の検査より前 —— Image の中身も検査する)。
-- **L3305** — ★2026-11-04(外部監査 v0.9.0 F2): 単入力の apply / run_pipeline と PrecisionUnion の n-ary 経路は dtype 契約(_contract_dtype)を通るのに、密な配列の n-ary だけが通らず、uint8 の 32 + 32 が on_error="raise" でも例外も台帳記録も無く 1.0(正しくは 64/255)になっていた。入力ごとに同じ規則で。 畳み込みの核(_NARY_KERNEL_SECOND の第 2 入力)は画像でなく重みの表なので、型だけ float64 にする。
-- **L3313** — ★2026-11-05(敵対的検証 C11): 単入力の apply にある _guard_input(空・次元・色軸・extra_checks の 値域)が n 項に無く、空 (0, 0) / 1-D / 4-D / 0..50 の入力が on_error="raise" でも例外も台帳記録も 無く通っていた。入力ごとに同じ検査(その入力の sort で)。畳み込みの核は画像でないので外す。
-- **L3328** — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L3332** — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
-- **L3474** — ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の 省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。 省いた位置の分だけ、その位置の既定値で埋める。
-- **L3687** — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L3691** — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3813** — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3823** — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L179** — ★2026-10-02: 合成パイプライン 6 本を fs.<名前> から出す。以前は ``fs.pipeline3d.<fn>`` でしか届かず、 公開経路の門では「1 本も届かない島」として _INTERNAL に置かれていた。import 自体は torch が無くても 通る(torch_lazy)。torch を要るのは呼んだときの FPFH / ICP の側だけ。
+- **L911** — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L927** — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L982** — ★ ``annotate.overlay_mask`` は **意図的にトップレベルへ出していない**。同名の ``imgio.overlay_mask`` が既に ``fs.overlay_mask`` として公開されており、引数も 意味も違う(imgio = 生 RGB・mask>0.5・fill/margin / annotate = 役割名の色・ 重み [0,1] も可・形の不一致を拒否)。同じ名前に別の約束を載せると、呼び手は 例外ではなく**もっともらしく違う絵**を受け取る。公開 API の破壊的変更は 独断でしないので、役割つきの方は ``fs.annotate.overlay_mask`` で引く。
+- **L1151** — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L1738** — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1741** — ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が 無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
+- **L1757** — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1826** — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L2388** — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L2419** — ★ **いまのところカラー画像に対して正しい呼び方が存在しない**: まとめて渡すと 色が混ざり、チャネルごとに 3 回呼ぶと自己正規化する op が各チャネルを 自分の最大で割ってチャネル間の比を壊す(灰色エッジ法の角度誤差が 自前 Sobel 1.03 度 -> 画像ごと 4.17 度 -> ch ごと 27.86 度、ゼロ点 29.14 度)。 どちらに倒すかは**契約の決め**なので、ここでは既定の数値は 1 つも変えず、 `on_error="raise"` のときだけ拒否し、既定では台帳に記録して見えるようにする。 詳細と選択肢は docs/KNOWN_ISSUES.md。
+- **L2633** — ★2026-11-05(1.0 前の修正 typed-dtype): the typed bridge opened sorts whose values are the SAME [0,1] pixel values as ``image`` — ``video`` (T,H,W[,3]) frames, ``rgbimage`` (H,W,3) linear RGB, ``lightfield`` (V,U,H,W) views — but the set stayed at the three original sorts, so a uint8 video passed ``on_error="raise"`` and ``tb_temporal_bandpass`` / ``tb_temporal_band_power`` returned the x255 / x255**2 answer with no exception and no record (the other 14 video ops are scale-equivariant or thresholded and happened to agree). Every entry (``apply``, the n-ary tier, ``template=``, ``run_pipeline`` CPU/GPU, ``FullseyeEngine.run_cached`` and the MCP stages, which call ``fullseye.apply``) reads THIS set, so widening it here is what makes them agree. Deliberately NOT here — their values are not pixel values, an integer can be the meaning, and /255 would be a silent unit change (the opposite bug): counts (photon counts, int64 by contract), cimage / beatcube (complex fields), qimage (quaternion: signed Riesz pairs, QFT spectra far outside [0,1]), signal / matrix / points / keypoints (profiles, linear algebra, coordinates), region (int masks, see above), contour / feature / match / any.
+- **L2754** — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L2795** — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L3222** — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
+- **L3339** — ★2026-11-05(敵対的検証 C12): 単入力の apply / run_pipeline は fullseye.Image を剥がすのに、 n 項だけが剥がさず「got a scalar Image」の TypeError だった。入力ごとに同じ剥がし方 (非有限の検査より前 —— Image の中身も検査する)。
+- **L3372** — ★2026-11-04(外部監査 v0.9.0 F2): 単入力の apply / run_pipeline と PrecisionUnion の n-ary 経路は dtype 契約(_contract_dtype)を通るのに、密な配列の n-ary だけが通らず、uint8 の 32 + 32 が on_error="raise" でも例外も台帳記録も無く 1.0(正しくは 64/255)になっていた。入力ごとに同じ規則で。 畳み込みの核(_NARY_KERNEL_SECOND の第 2 入力)は画像でなく重みの表なので、型だけ float64 にする。
+- **L3380** — ★2026-11-05(敵対的検証 C11): 単入力の apply にある _guard_input(空・次元・色軸・extra_checks の 値域)が n 項に無く、空 (0, 0) / 1-D / 4-D / 0..50 の入力が on_error="raise" でも例外も台帳記録も 無く通っていた。入力ごとに同じ検査(その入力の sort で)。畳み込みの核は画像でないので外す。
+- **L3395** — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L3399** — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
+- **L3541** — ★2026-11-04(外部監査 v0.9.0 F1): 以前は ``(rest + [a, b])[:2]`` で、``("op", 0.2)`` の 省いた b に共通の **a** が入っていた(dict 形 ``{"op", "a": 0.2}`` とは別の答え)。 省いた位置の分だけ、その位置の既定値で埋める。
+- **L3791** — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L3795** — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L3917** — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3927** — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -1793,8 +1793,8 @@
 - **L572** — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
 - **L802** — ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を 捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。 2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)`` と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、 ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。 ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
 - **L810** — ★ 署名の注釈(表示専用): ラッパーは (*args, **kw) だが、実体 ``fn`` の署名を ``__signature__`` に載せ、補完 / ``inspect.signature`` / help() で引数名と既定値が見えるようにする。 呼び出し契約は変えない(受け方は ``mod.call(key, *args, **kw)`` のまま。束縛は実体が行う)。 アクセス時にだけ作る(import 時には何もしない)。署名が取れない実体は注釈なしで素通し。 Display-only signature annotation; the call contract is unchanged; built lazily per access.
-- **L1325** — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1444** — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L1335** — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1454** — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/evaluation/metrics.py`
 
@@ -2016,7 +2016,7 @@
 - **L781** — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
 - **L783** — ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。
 - **L784** — ★2026-11-12: 引数なしは「必須引数が無い」エラー(rc=2)でなく、次に何をするかの案内を出す(rc=0)。 `fullseye setup` は対話的な初期設定(fullseye/setup_cmd.py)。自前の argparse に丸ごと渡す。
-- **L804** — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
+- **L807** — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
 
 ## `imgforensics.py`
 
@@ -3499,8 +3499,8 @@
 
 ## `tools/ci_local.py`
 
-- **L1367** — ★再利用のたびに中身を確かめる。2026-11-10 実測: 揃え直しが途中で落ちた venv(cv2 が空)を stamp だけ見て再利用し、全数の 720 件が「backend が無い」で落ちた。
-- **L1382** — ★--force-reinstall: 揃え直しの道では上の `-e .[opencv]` が opencv-python を入れ直し、その uninstall が contrib と共有の cv2/ を消す。contrib は「最新なので何もしない」ため cv2 が空になった(2026-11-10 実測)。
+- **L1368** — ★再利用のたびに中身を確かめる。2026-11-10 実測: 揃え直しが途中で落ちた venv(cv2 が空)を stamp だけ見て再利用し、全数の 720 件が「backend が無い」で落ちた。
+- **L1383** — ★--force-reinstall: 揃え直しの道では上の `-e .[opencv]` が opencv-python を入れ直し、その uninstall が contrib と共有の cv2/ を消す。contrib は「最新なので何もしない」ため cv2 が空になった(2026-11-10 実測)。
 
 ## `tools/ci_select_tests.py`
 
