@@ -1910,8 +1910,8 @@
 
 ## `fullseye/shortcuts.py`
 
-- **L154** _(ja)_ — ★.lnk は IShellLinkW(Unicode の COM)を ctypes で直接呼んで読み書きする。 以前は PowerShell の WScript.Shell(``$lnk.TargetPath = ...``)だったが、WSH の ShortcutLink は文字列を**システムの ANSI コードページ**で持つので、そのコードページに無い文字(英語の Windows の日本語のユーザー名、日本語の Windows のタイ語・ヘブライ語 など)が ``?`` に化けて ``Unable to save shortcut`` になった(2026-11-13、CI の windows-latest で判明。環境変数で渡した文字は PowerShell まで無傷で届いていて、壊すのは WSH の COM 層)。IShellLinkW + IPersistFile は全部 Unicode で、PowerShell も Add-Type も要らない(Constrained Language Mode でも動く)。COM が使えない環境のためだけに、従来の PowerShell 経路を残す。
-- **L696** _(ja)_ — ★`if errorlevel 1` は「1 以上」の判定で、DLL が無いときの負の終了コード(0xC0000135 = -1073741515)を見逃す。 終了コードが 0 かどうかで分岐する `||` / `&&` を使う。
+- **L157** _(ja)_ — ★.lnk は IShellLinkW(Unicode の COM)を ctypes で直接呼んで読み書きする。 以前は PowerShell の WScript.Shell(``$lnk.TargetPath = ...``)だったが、WSH の ShortcutLink は文字列を**システムの ANSI コードページ**で持つので、そのコードページに無い文字(英語の Windows の日本語のユーザー名、日本語の Windows のタイ語・ヘブライ語 など)が ``?`` に化けて ``Unable to save shortcut`` になった(2026-11-13、CI の windows-latest で判明。環境変数で渡した文字は PowerShell まで無傷で届いていて、壊すのは WSH の COM 層)。IShellLinkW + IPersistFile は全部 Unicode で、PowerShell も Add-Type も要らない(Constrained Language Mode でも動く)。COM が使えない環境のためだけに、従来の PowerShell 経路を残す。
+- **L703** _(ja)_ — ★`if errorlevel 1` は「1 以上」の判定で、DLL が無いときの負の終了コード(0xC0000135 = -1073741515)を見逃す。 終了コードが 0 かどうかで分岐する `||` / `&&` を使う。
 
 ## `fullseye/validation_kit.py`
 
@@ -2015,10 +2015,10 @@
 - **L513** _(ja)_ — ★2026-11-04(統合 GPU): 規則は tools/ にあるので、imgevolve.py の隣に tools/ が無い置き方(変異探針の 小さな作業木: imgevolve.py だけを写し、本体は PYTHONPATH で引く)では見つからず索引が組めなかった。 imgevolve.py の隣を先に、無ければ sys.path の各所の tools/ を探す。
 - **L568** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N228): checkout の判定が「HERE に docs/ が在るか」だけだった。wheel の HERE は site-packages そのものなので、別のパッケージが site-packages/docs/ を置いていると、そこへ OP_INDEX.json を書きに行く(読み取り専用の環境では落ちる)。checkout にしか無い正本の組で判定する。
 - **L651** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
-- **L781** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
-- **L783** _(ja)_ — ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。
-- **L784** _(ja)_ — ★2026-11-12: 引数なしは「必須引数が無い」エラー(rc=2)でなく、次に何をするかの案内を出す(rc=0)。 `fullseye setup` は対話的な初期設定(fullseye/setup_cmd.py)。自前の argparse に丸ごと渡す。
-- **L804** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
+- **L797** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
+- **L799** _(ja)_ — ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。
+- **L800** _(ja)_ — ★2026-11-12: 引数なしは「必須引数が無い」エラー(rc=2)でなく、次に何をするかの案内を出す(rc=0)。 `fullseye setup` は対話的な初期設定(fullseye/setup_cmd.py)。自前の argparse に丸ごと渡す。
+- **L820** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
 
 ## `imgforensics.py`
 
@@ -2741,7 +2741,7 @@
 
 ## `studio_errors.py`
 
-- **L434** _(ja)_ — ★2026-11-13(配布物の検証 M1): 見本の画像を開く時のように op の外で失敗すると op 名が無く、文の主語が 「?」になっていた("Cause ? needs the optional package Pillow")。op 名もパッケージ名も、無い時は 文の形を変える(主語を「?」で埋めない)。
+- **L441** _(ja)_ — ★2026-11-13(配布物の検証 M1): 見本の画像を開く時のように op の外で失敗すると op 名が無く、文の主語が 「?」になっていた("Cause ? needs the optional package Pillow")。op 名もパッケージ名も、無い時は 文の形を変える(主語を「?」で埋めない)。
 
 ## `studio_result.py`
 
@@ -2777,13 +2777,13 @@
 - **L30** — ★ 把 Studio 的设置**在整个会话内**逃逸到一次性 ini。 # --------------------------------------------------------------------------- # `QSettings("Fullseye", "Studio")` 会写入原生存储库（Windows 上为注册表 HKCU\Software\Fullseye\Studio）。我们此前把隔离放在**各个测试文件**里，故被遗漏的文件污染了用户的真实注册表。2026-09-05 的审计确认了实害：10 个 `recent_files` 中有 8 个是 pytest 的临时路径，`system\operator_timeout_ms` 等实值也残留着。（隔离只在 3 个文件中的 2 个里，`test_studio_params.py` 是素通的。）不再逐个添加，而是**作为会话 autouse 在此只放一个**。环境变量是 `studio._settings()` 唯一查看的入口，故此举覆盖全部测试。
 - **L46** — ★ 需要 optional backend 的测试的声明。 # --------------------------------------------------------------------------- # CI 的注记长期写着“不安装 torch/kornia（**对应测试 graceful skip**）”，但 2026-09-05 的实测显示那**并非事实**——目标测试并未 skip，而是以 `ImportError: this operator needs the optional 'torch' backend` 失败（14 件）。只有注记，却没有用机器核实它的机制。此处把声明汇入单一入口。目标是**双向**：* 无 backend 的环境 → skip（让注记成为事实）* **理应有** backend 的环境 → 不许 skip，令其失败（`FULLSEYE_REQUIRE_OPTIONAL=1`。CI 的 py3.11 作业会立起它）只有单向时，真正的回归会悄然化为 skip（与 `feedback_failsoft_hides_permanently_dead_ops` 同形）。
 - **L175** _(ja)_ — ★本物の Fullseye の登録(デスクトップ・スタートメニュー・HKCU の Uninstall・setup フォルダ)を試験が触らないことの見張り # --------------------------------------------------------------------------- # 2026-11-12(3 回目の独立レビュー): インストーラの試験(.cmd 経由で uninstall を呼ぶ物)が、環境変数を一時フォルダへ向けても デスクトップだけは SHGetKnownFolderPath で**本物**を引き、本物の ``Fullseye Studio.lnk`` と ``Uninstall\\Fullseye`` を消す 対象に入れていた(実際に、利用者のデスクトップの ``Fullseye Studio.lnk`` が消えた)。個々の試験の注意では防げないので、 試験群を回す前後で本物の一覧を取り、**差があれば失敗**させる(Windows だけ。fullseye は import しない)。
-- **L397** _(ja)_ — ★2026-09-14 追加。ここまで探針バンクは 6 sort しか無く、**901 op のうち 151 本 (16.8 %)が契約ゲート 3 本(例外を投げない / 非有限を出さない / 決定的)を 一度も実行されていなかった** —— `PROBELESS_OPS_BUDGET = 151` というラチェットで 本数だけ凍結し、「本来の直しは BANKS を全 in_sort へ広げること」と自分で書いて あった。その本来の直しをここで入れる。 形の出どころは推測ではない: `backends_bridge._EMPTY_OF` が 12 sort すべての **正準の最小値**を宣言しており(そこが sort の定義そのもの)、`problems.py` の `_points_stack` / `_signal_stack` などが実データの作り方を持っている。 各バンクは既存の作法に合わせ、**普通の値・定数 0・定数 1・退化形**を混ぜる (定数と退化形が「走った」と「意味のある出力」を分ける —— [[feedback_ran_is_not_meaningful_output]])。 --------------------------------------------------------------------------- #
-- **L420** _(ja)_ — ★点群は**連結なものと非連結なものの両方**を置く。`tb_geodesic_distances` が 不達を `inf` で表すのは契約どおりで、`ops.NONFINITE_IS_MEANINGFUL` に 「1.0 に潰すと『届かない』が『近い』に化ける」と宣言済み。 ここで一度 `normal` をわざと連結にして有限性ゲートを緑にしかけたが、 それは**欠陥を隠す方向**だった —— 直すべきは門が台帳を見ていないこと。 `normal` は橋でつないだ現実的な形、`two_clusters` は非連結を撃つ探針。
-- **L487** _(ja)_ — ★**特異行列は必ず置く。** 一度ここから外しかけたが、それは誤りだった —— `tb_mat_cond` が特異行列で `inf` を返すのは**契約どおり**で、`ops.py` の `NONFINITE_IS_MEANINGFUL` に「厳密に特異な行列は s_min=0 なので inf が 正しい答え。有限に潰すと『十分に良条件』と読めてしまう」と**既に宣言済み** だった。落ちていたのは op ではなく、**有限性ゲートがその台帳を見ていない** こと。探針を削って緑にするのは、欠陥を隠す行為。 (同じ註に 2026-09-05 の教訓が書いてある ——「自分の probe では特異行列を 作っていなかったので tb_mat_cond を取りこぼした」。探針から外すのは その取りこぼしを**わざと再現する**ことになる。)
-- **L605** _(ja)_ — ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield / beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、 **一度に全部入れて切り分け不能にしない**よう次の段で足す。
-- **L613** _(ja)_ — ★第 3 段(2026-09-17): 戻りの橋 ``feature_to_img`` が入るまで、feature を **入力**に取る op は 1 本も無かった(作る op は 125 本ある)。門が「探針の 無い op が 1 本に増えた」と正しく落ちて教えた。
-- **L658** _(ja)_ — ★2026-10-07: ここに ``return`` があり、上の docstring(sort 既定の帯を捨てない) に反して override のある 10 op は sort 既定の帯を一度も通っていなかった。 sort 既定は「拒否が明示の fail-closed で記録される」ことの検査として通す (test_op_contracts.KNOWN_FALLS_BACK_ON_EDGE に by-design として載る)。
-- **L677** _(ja)_ — ★CI: PR では変更に関係するテストだけ / 片はファイル単位で分ける(2026-11-10) # --------------------------------------------------------------------------- # どちらも環境変数があるときだけ働く(手元の `pytest` は何も変わらない)。 FULLSEYE_CI_SELECTION=<一覧のファイル> tools/ci_select_tests.py が書いた一覧に無いテストを外す FULLSEYE_CI_SHARD=k/N ファイル単位の LPT で N 片に分け、k 片目だけ残す (例外: SPLIT_BY_TEST のファイルはテスト単位。PoC の門) 選ぶ規則と、選ばなかったテストを master・毎日の full suite で回す約束は CONTRIBUTING.md の「CI: which tests run where」。 一覧が読めない・1 件も当たらないときは**止める**(黙って 0 件で緑にしない)。
+- **L398** _(ja)_ — ★2026-09-14 追加。ここまで探針バンクは 6 sort しか無く、**901 op のうち 151 本 (16.8 %)が契約ゲート 3 本(例外を投げない / 非有限を出さない / 決定的)を 一度も実行されていなかった** —— `PROBELESS_OPS_BUDGET = 151` というラチェットで 本数だけ凍結し、「本来の直しは BANKS を全 in_sort へ広げること」と自分で書いて あった。その本来の直しをここで入れる。 形の出どころは推測ではない: `backends_bridge._EMPTY_OF` が 12 sort すべての **正準の最小値**を宣言しており(そこが sort の定義そのもの)、`problems.py` の `_points_stack` / `_signal_stack` などが実データの作り方を持っている。 各バンクは既存の作法に合わせ、**普通の値・定数 0・定数 1・退化形**を混ぜる (定数と退化形が「走った」と「意味のある出力」を分ける —— [[feedback_ran_is_not_meaningful_output]])。 --------------------------------------------------------------------------- #
+- **L421** _(ja)_ — ★点群は**連結なものと非連結なものの両方**を置く。`tb_geodesic_distances` が 不達を `inf` で表すのは契約どおりで、`ops.NONFINITE_IS_MEANINGFUL` に 「1.0 に潰すと『届かない』が『近い』に化ける」と宣言済み。 ここで一度 `normal` をわざと連結にして有限性ゲートを緑にしかけたが、 それは**欠陥を隠す方向**だった —— 直すべきは門が台帳を見ていないこと。 `normal` は橋でつないだ現実的な形、`two_clusters` は非連結を撃つ探針。
+- **L488** _(ja)_ — ★**特異行列は必ず置く。** 一度ここから外しかけたが、それは誤りだった —— `tb_mat_cond` が特異行列で `inf` を返すのは**契約どおり**で、`ops.py` の `NONFINITE_IS_MEANINGFUL` に「厳密に特異な行列は s_min=0 なので inf が 正しい答え。有限に潰すと『十分に良条件』と読めてしまう」と**既に宣言済み** だった。落ちていたのは op ではなく、**有限性ゲートがその台帳を見ていない** こと。探針を削って緑にするのは、欠陥を隠す行為。 (同じ註に 2026-09-05 の教訓が書いてある ——「自分の probe では特異行列を 作っていなかったので tb_mat_cond を取りこぼした」。探針から外すのは その取りこぼしを**わざと再現する**ことになる。)
+- **L606** _(ja)_ — ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield / beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、 **一度に全部入れて切り分け不能にしない**よう次の段で足す。
+- **L614** _(ja)_ — ★第 3 段(2026-09-17): 戻りの橋 ``feature_to_img`` が入るまで、feature を **入力**に取る op は 1 本も無かった(作る op は 125 本ある)。門が「探針の 無い op が 1 本に増えた」と正しく落ちて教えた。
+- **L659** _(ja)_ — ★2026-10-07: ここに ``return`` があり、上の docstring(sort 既定の帯を捨てない) に反して override のある 10 op は sort 既定の帯を一度も通っていなかった。 sort 既定は「拒否が明示の fail-closed で記録される」ことの検査として通す (test_op_contracts.KNOWN_FALLS_BACK_ON_EDGE に by-design として載る)。
+- **L678** _(ja)_ — ★CI: PR では変更に関係するテストだけ / 片はファイル単位で分ける(2026-11-10) # --------------------------------------------------------------------------- # どちらも環境変数があるときだけ働く(手元の `pytest` は何も変わらない)。 FULLSEYE_CI_SELECTION=<一覧のファイル> tools/ci_select_tests.py が書いた一覧に無いテストを外す FULLSEYE_CI_SHARD=k/N ファイル単位の LPT で N 片に分け、k 片目だけ残す (例外: SPLIT_BY_TEST のファイルはテスト単位。PoC の門) 選ぶ規則と、選ばなかったテストを master・毎日の full suite で回す約束は CONTRIBUTING.md の「CI: which tests run where」。 一覧が読めない・1 件も当たらないときは**止める**(黙って 0 件で緑にしない)。
 
 ## `tests/test_abi_apply.py`
 

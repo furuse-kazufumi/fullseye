@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: c70ba3c329f3 -->
+<!-- i18n-source-sha: 4d7dab5a96bd -->
 # शुरुआत करें (5 मिनट में चालू)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · **हिन्दी**
@@ -41,22 +41,20 @@ Prerequisite: **Python 3.11** (Windows पर `py -3.11`, Linux पर `python3.
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # core only (numpy + scipy; every op is listed, and an op that needs an optional backend names the missing extra when called)
+py -3.11 -m pip install -e .          # Python API + Studio + Pillow; heavy backends only when needed
 ```
 
-Core **सिर्फ़ numpy और scipy** पर चलता है। OpenCV / scikit-image / Pillow जैसे extra backends
-optional हैं; अगर कोई install नहीं है, तो सिर्फ़ उसी backend के अपने operators बंद होते हैं (graceful
-degradation)। व्यवहार में image files पढ़ने और लिखने के लिए आपको कम से कम OpenCV या Pillow चाहिए,
-इसलिए इनमें से एक जोड़ने से काम आसान हो जाता है:
+Core API **numpy और scipy** पर चलता है, और सामान्य `pip install fullseye` Studio के लिए
+PySide6-Essentials तथा image I/O के लिए Pillow भी install करता है। सिर्फ़ OpenCV / scikit-image जैसे
+भारी backends optional हैं; अगर कोई नहीं है तो केवल उसी backend के operators बंद होते हैं (graceful degradation)।
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # image I/O + OpenCV-derived operators
-py -3.11 -m pip install -e ".[all]"       # all backends (opencv, skimage, pil, wavelets, gpu, extra)
-py -3.11 -m pip install -e ".[gui]"       # if you want Fullseye Studio (PySide6)
+py -3.11 -m pip install -e ".[opencv]"    # OpenCV-only image API and cv_* operators
+py -3.11 -m pip install -e ".[all]"       # all additional backends
+fullseye-studio                            # Studio starts after standard installation
 ```
 
-Extras की list और हर एक का मतलब [INSTALL.md](INSTALL.md) में इकट्ठा है। GUI इस्तेमाल करने के लिए
-आपको `[gui]` चाहिए (या `[all]` + `[gui]`)।
+Extras की list और हर एक का मतलब [INSTALL.md](INSTALL.md) में इकट्ठा है। `gui` और `pil` पुराने install commands के लिए खाली compatibility aliases हैं।
 
 > आप install किए बिना भी आज़मा सकते हैं। Repository root (`<path-to-fullseye>`) को अपनी
 > working directory बनाएँ और उस path को `PYTHONPATH` environment variable में डालें, तो `import
@@ -145,7 +143,7 @@ out = fullseye.run_pipeline(frame, stages)
 
 Code लिखे बिना आप operators search करके उन्हें लगा सकते हैं, sliders से knobs घुमा सकते हैं,
 उन्हें एक-एक stage करके चला सकते हैं, और intermediate results देखते हुए pipeline जोड़ सकते हैं।
-GUI extras (`pip install -e ".[gui]"` = PySide6) ज़रूरी हैं।
+Studio standard installation में शामिल है। पहली interactive `fullseye` या `fullseye-studio` command पर Windows Start menu या Linux app menu में एक बार registration होता है; बाहर रहने के लिए `FULLSEYE_NO_SHORTCUTS=1` या Studio setting `shortcuts/auto_register=false` इस्तेमाल करें।
 
 ```powershell
 py -3.11 studio.py          # or, if installed: fullseye-studio
@@ -237,8 +235,8 @@ py -3.11 imgevolve.py pipeline in.png out.png --ops "gaussian,sobel_amp,otsu"
 |---|---|
 | `ModuleNotFoundError: No module named 'fullseye'` | `pip install -e .` चलाएँ, या repo root को `PYTHONPATH` में डालें |
 | `fullseye` / `fullseye-studio` command नहीं है | console scripts `pip install -e .` से register होती हैं। Install नहीं किया है तो `py -3.11 imgevolve.py ...` / `py -3.11 studio.py` इस्तेमाल करें |
-| Studio शुरू नहीं होता | GUI extras install नहीं हैं। `pip install -e ".[gui]"` (PySide6) |
-| `apply` / `pipeline` में `cannot read ...` | image I/O के लिए OpenCV (`[opencv]`) या Pillow (`[pil]`) install करें |
+| Studio शुरू नहीं होता | standard dependency टूटी हुई है। `pip install --force-reinstall fullseye` |
+| `apply` / `pipeline` में `cannot read ...` | standard Pillow dependency या image टूटी है। Fullseye reinstall करके image जाँचें |
 | किसी extra backend का operator "unknown" है | वह backend install नहीं है। `.[skimage]` `.[wavelets]` `.[extra]` आदि जोड़ें |
 
 ज़्यादा विस्तृत troubleshooting के लिए [INSTALL.md](INSTALL.md) देखें।

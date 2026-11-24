@@ -27,7 +27,7 @@ from typing import Callable, Dict, List, Optional, Sequence
 
 # (extra 名, import 名, pip の配布名, 説明 ja, 説明 en) — pyproject の extras と対応。
 PROBES = [
-    ("gui", "PySide6", "PySide6", "Studio の画面", "Studio GUI"),
+    ("gui", "PySide6", "PySide6-Essentials", "Studio の画面(標準で導入)", "Studio GUI (installed by default)"),
     ("opencv", "cv2", "opencv-python", "OpenCV 系の op / 画像 I/O", "OpenCV ops / image I/O"),
     ("skimage", "skimage", "scikit-image", "scikit-image 系の op", "scikit-image ops"),
     ("pil", "PIL", "Pillow", "Pillow(画像の読み書き)", "Pillow (image read/write)"),
@@ -38,10 +38,9 @@ PROBES = [
     ("xlsx", "openpyxl", "openpyxl", "Excel レポート", "Excel reports"),
 ]
 # importlib.metadata で取れないとき(checkout 直読みなど)の代替。
-_FALLBACK_REQ = {"gui": ["PySide6>=6.5", "Pillow>=13.0"], "opencv": ["opencv-python>=4.8.1.78"], "skimage": ["scikit-image>=0.20"],
-                 "pil": ["Pillow>=13.0"]}
+_FALLBACK_REQ = {"opencv": ["opencv-python>=4.8.1.78"], "skimage": ["scikit-image>=0.20"]}
 # 用途ごとの「入れておくと良い」軽い extras(torch / GPU は重いので勧めない。報告だけする)。
-RECOMMENDED = {"studio": ["gui"], "python": ["opencv", "skimage", "pil"], "ai": []}
+RECOMMENDED = {"studio": [], "python": ["opencv", "skimage"], "ai": []}
 
 M = {
     "ja": {
@@ -51,7 +50,7 @@ M = {
         "fs": "fullseye",
         "qt": "Studio(Qt)",
         "qt_ok": "開けます(PySide6 %s)",
-        "qt_no_dep": "開けません: PySide6 が未導入(下の質問で入れられます)",
+        "qt_no_dep": "開けません: 標準依存の PySide6-Essentials が見つかりません(Fullseye を再インストールしてください)",
         "qt_no_display": "PySide6 は有りますが、画面(DISPLAY)がありません",
         "opt": "[任意の依存]",
         "have": "あり",
@@ -113,7 +112,7 @@ M = {
         "fs": "fullseye",
         "qt": "Studio (Qt)",
         "qt_ok": "can open (PySide6 %s)",
-        "qt_no_dep": "cannot open: PySide6 is not installed (the questions below can install it)",
+        "qt_no_dep": "cannot open: the required PySide6-Essentials is missing (reinstall fullseye)",
         "qt_no_display": "PySide6 is installed but there is no display (DISPLAY)",
         "opt": "[Optional dependencies]",
         "have": "yes",
@@ -298,13 +297,15 @@ def format_report(info: Dict[str, object], lang: str) -> str:
 
 # --------------------------------------------------------------------------- pip
 def requirements_for(extras: Sequence[str]) -> List[str]:
-    """extras に対応する要件(``PySide6>=6.5`` など)。fullseye 自身は入れ直さない(checkout を壊さない)。"""
+    """extras に対応する任意要件(``opencv-python>=4.8.1.78`` など)。fullseye 自身は入れ直さない。"""
     out: List[str] = []
     try:
         reqs = importlib.metadata.requires("fullseye") or []
     except importlib.metadata.PackageNotFoundError:
         reqs = []
     for x in extras:
+        if x in ("gui", "pil"):           # standard dependencies; these remain only as pip compatibility aliases
+            continue
         found = []
         for r in reqs:
             if ";" in r:

@@ -649,7 +649,8 @@ def test_12_uninstall_script_text_is_fixed_names_only_and_escapes_percent():
     s = shortcuts.uninstall_cmd_text(python=Path(r"C:\Py 3\a%b\python.exe"), uninstaller=Path(r"C:\x\uninstall.py"),
                                      lnks=[Path(r"C:\sm\Fullseye\Fullseye Studio.lnk")], regkey=shortcuts.UNINSTALL_KEY)
     assert 'set "FS_PY=C:\\Py 3\\a%%b\\python.exe"' in s and "\r\n" in s
-    assert s.count("del ") == 5 and 'del "C:\\sm\\Fullseye\\Fullseye Studio.lnk"' in s       # lnk / ico / ledger / 自分自身(Python 経路と fallback 経路の 2 か所)
+    assert s.count("del ") == 6 and 'del "C:\\sm\\Fullseye\\Fullseye Studio.lnk"' in s       # lnk / ico / marker / ledger / 自分自身(Python 経路と fallback 経路の 2 か所)
+    assert 'del "%~dp0fullseye-auto-shortcuts.json" 2>nul' in s
     assert "rmdir" in s and "rmdir /s" not in s and "rd /s" not in s and "rmdir /q" not in s        # 再帰削除はしない
     with pytest.raises(shortcuts.ShortcutError):
         shortcuts.uninstall_cmd_text(python=Path('C:\\a"b\\python.exe'), uninstaller=Path("u"), lnks=[], regkey="k")
@@ -1070,9 +1071,14 @@ def test_R8_exit_codes_follow_the_table(tmp_path):
 
 
 def test_R8_setup_exits_nonzero_when_a_step_failed():
-    from test_studio_shortcuts_2026_11_12 import Fakes, _run
+    from test_studio_shortcuts_2026_11_12 import Fakes, _info, _run
     f = Fakes(pip_rc=1)
-    rc, out = _run(["--yes", "--lang", "en"], f, tty=False)
+    k = f.kw(answers=["2", "y"], tty=True)
+    info = _info(gui=True)
+    info["probes"]["opencv"]["installed"] = False
+    k["info"] = info
+    rc = setup_cmd.main(["--lang", "en"], **k)
+    out = k["out"].getvalue()
     assert rc == 1 and "dependency install failed" in out
     f2 = Fakes()
     k = f2.kw(tty=False)

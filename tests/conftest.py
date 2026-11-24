@@ -178,7 +178,8 @@ def _isolate_install_ledger(tmp_path_factory):
 # デスクトップだけは SHGetKnownFolderPath で**本物**を引き、本物の ``Fullseye Studio.lnk`` と ``Uninstall\\Fullseye`` を消す
 # 対象に入れていた(実際に、利用者のデスクトップの ``Fullseye Studio.lnk`` が消えた)。個々の試験の注意では防げないので、
 # 試験群を回す前後で本物の一覧を取り、**差があれば失敗**させる(Windows だけ。fullseye は import しない)。
-_FS_FILE_NAMES = {"fullseye studio.lnk", "fullseye-uninstall.cmd", "fullseye.ico", "fullseye-studio.desktop"}
+_FS_FILE_NAMES = {"fullseye studio.lnk", "fullseye-uninstall.cmd", "fullseye.ico", "fullseye-studio.desktop",
+                  "fullseye-auto-shortcuts.json"}
 
 
 def real_install_snapshot() -> dict:

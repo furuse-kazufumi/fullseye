@@ -503,20 +503,8 @@
       "bom-ref": "dependency:pillow:712a69576be02cdb",
       "name": "pillow",
       "purl": "pkg:pypi/pillow",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "all"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "gui"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "pil"
-        },
         {
           "name": "fullseye:requirement",
           "value": "Pillow>=13.0"
@@ -701,22 +689,14 @@
     },
     {
       "type": "library",
-      "bom-ref": "dependency:pyside6:1358b201c6ced04a",
-      "name": "pyside6",
-      "purl": "pkg:pypi/pyside6",
-      "scope": "optional",
+      "bom-ref": "dependency:pyside6-essentials:06ed693474a410b3",
+      "name": "pyside6-essentials",
+      "purl": "pkg:pypi/pyside6-essentials",
+      "scope": "required",
       "properties": [
         {
-          "name": "fullseye:extra",
-          "value": "all"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "gui"
-        },
-        {
           "name": "fullseye:requirement",
-          "value": "PySide6>=6.5"
+          "value": "PySide6-Essentials>=6.5"
         },
         {
           "name": "fullseye:specifier",
@@ -1102,6 +1082,8 @@
       "ref": "pkg:pypi/fullseye@1.1.1",
       "dependsOn": [
         "dependency:numpy:0ea3e51cd447c867",
+        "dependency:pillow:712a69576be02cdb",
+        "dependency:pyside6-essentials:06ed693474a410b3",
         "dependency:scipy:7b4a15d34b14013a",
         "dependency:threadpoolctl:1a8416879673e721"
       ]
@@ -1227,7 +1209,7 @@
       "dependsOn": []
     },
     {
-      "ref": "dependency:pyside6:1358b201c6ced04a",
+      "ref": "dependency:pyside6-essentials:06ed693474a410b3",
       "dependsOn": []
     },
     {

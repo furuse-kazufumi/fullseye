@@ -776,8 +776,24 @@ def _tolerate_unencodable_output() -> None:
             pass
 
 
+def _auto_register_studio_shortcut(argv) -> None:
+    """対話コマンドの初回だけ Studio をメニューへ置く / one-time menu registration.
+
+    ``setup --uninstall`` は後始末そのものなので、登録を先に作り直してはいけない。
+    ``shortcuts`` は標準ライブラリだけで、ここから PySide6 を import しない。
+    """
+    if list(argv[:1]) == ["setup"] and "--uninstall" in argv[1:]:
+        return
+    try:
+        from fullseye import shortcuts
+        shortcuts.auto_register_on_first_command()
+    except Exception:       # noqa: BLE001 -- an optional convenience must not break a CLI command
+        pass
+
+
 def main() -> int:
     _tolerate_unencodable_output()
+    _auto_register_studio_shortcut(sys.argv[1:])
     # ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、
     # `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
     # ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。

@@ -429,12 +429,21 @@ def _explain(exc: Any, op_name: Optional[str], stage_index: Optional[int], input
 
     if cls == "dependency":
         pkg, extra = _extra_of(exc, msg)
+        # Pillow と PySide6 は 1.2.0 から標準依存であり、空の extra を案内しない。
+        # Their absence is a broken installation, not an optional extra to suggest.
+        standard = (pkg or "").lower() in {"pil", "pillow", "pyside6"}
+        if standard:
+            pkg = "Pillow" if (pkg or "").lower() in {"pil", "pillow"} else "PySide6"
+            extra = None
         ext_ja = ("(extra: %s)" % extra) if extra else ""
         ext_en = (" (extra: %s)" % extra) if extra else ""
         # ★2026-11-13(配布物の検証 M1): 見本の画像を開く時のように op の外で失敗すると op 名が無く、文の主語が
         #   「?」になっていた("Cause ? needs the optional package Pillow")。op 名もパッケージ名も、無い時は
         #   文の形を変える(主語を「?」で埋めない)。
-        if op_name and pkg:
+        if standard:
+            cause = _pair("標準依存の %s が見つかりません。Fullseye を再インストールしてください。" % pkg,
+                          "The standard dependency %s is missing. Reinstall Fullseye." % pkg)
+        elif op_name and pkg:
             cause = _pair("%s に必要なオプションのライブラリ %s が入っていません。" % (op_name, pkg) + ext_ja,
                           "%s needs the optional package %s, which is not installed." % (op_name, pkg) + ext_en)
         elif pkg:
@@ -447,8 +456,10 @@ def _explain(exc: Any, op_name: Optional[str], stage_index: Optional[int], input
             cause = _pair("必要なオプションのライブラリが入っていません。" + ext_ja,
                           "A required optional package is not installed." + ext_en)
         pkg_txt = pkg or "?"
-        install = ('pip install "fullseye[%s]"' % extra) if extra else ("pip install %s" % pkg_txt if pkg else None)
-        evidence = [{"kind": "dependency", "package": pkg, "extra": extra, "install": install}]
+        install = ("pip install --force-reinstall fullseye" if standard else
+                   ('pip install "fullseye[%s]"' % extra) if extra else ("pip install %s" % pkg_txt if pkg else None))
+        evidence = [{"kind": "dependency", "package": pkg, "extra": extra,
+                     "standard": standard, "install": install}]
         actions = [open_log]
     elif cls == "unknown_op":
         m = re.search(r"['\"]([^'\"]+)['\"]", msg)

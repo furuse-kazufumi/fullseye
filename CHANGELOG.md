@@ -7,6 +7,24 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 1.2.0 — Studio is part of the standard installation (2026-11-24)
+
+- `pip install fullseye` now installs `PySide6-Essentials>=6.5` and `Pillow>=13.0`, so
+  `fullseye-studio` starts without an extra. `gui` remains an empty compatibility alias and
+  `all` contains only the remaining optional backends. Studio imports Qt lazily: a Python-only
+  `import fullseye` does not load `PySide6`.
+- Studio needs the Essentials modules `QtCore`, `QtGui`, `QtWidgets`, and `QtSvg`.
+  `QtDataVisualization` (3-D surface) and `QtMultimedia` (audio playback) remain existing
+  best-effort features and are disabled when their add-on modules are absent. On Windows/Python
+  3.11, the measured expanded dependency footprint for Essentials + Pillow was **228.4 MiB**;
+  full PySide6 + Pillow was **666.7 MiB**, so the standard install avoids **438.3 MiB (65.7%)**.
+- The first interactive `fullseye` or `fullseye-studio` command registers Fullseye Studio once
+  in the Windows Start menu / Linux application menu through the existing ledger. It prints the
+  removal command, uses the invoking venv's Python, never recreates an entry that the user later
+  removes, and its marker is removed by `fullseye setup --uninstall` and Apps & features.
+  `FULLSEYE_NO_SHORTCUTS=1`, `[shortcuts] auto_register=false` in the Studio INI, CI,
+  no-terminal invocation, and Windows Start-menu policy suppress the write.
+
 ### MCP: find_ops は MCP で走る op を優先する(2026-11-22)
 
 PR #322 の追加後、「ステレオカメラで距離を測りたい」では MCP で走らない `heightmap_depth_camera` が

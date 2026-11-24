@@ -154,12 +154,13 @@ def _legacy_places(plat: str, dirs: Optional[Dict[str, Path]], registry: bool = 
         d.update(dirs or {})
         prog = d["start_menu"].parent                      # .../Programs
         cands = [d["start_menu"] / (sc.APP_NAME + ".lnk"), prog / (sc.APP_NAME + ".lnk"),
-                 d["desktop"] / (sc.APP_NAME + ".lnk"), d["icon_dir"] / "fullseye.ico", d["icon_dir"] / sc.CMD_NAME]
+                 d["desktop"] / (sc.APP_NAME + ".lnk"), d["icon_dir"] / "fullseye.ico", d["icon_dir"] / sc.CMD_NAME,
+                 d["icon_dir"] / sc.AUTO_SHORTCUT_MARKER]
         keys = [k for k in (([sc.UNINSTALL_KEY] if registry else []) + list(allow_keys)) if sc.regkey_exists(k)]
     elif plat == "linux":
         d = sc._linux_dirs(dirs)
         cands = [d["apps"] / "fullseye-studio.desktop", d["desktop"] / "fullseye-studio.desktop",
-                 d["icon_dir"] / "fullseye-studio.png"]
+                 d["icon_dir"] / "fullseye-studio.png", d["icon_dir"] / sc.AUTO_SHORTCUT_MARKER]
     else:
         return out
     for p in cands:

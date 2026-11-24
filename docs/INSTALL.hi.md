@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 056a87b1bfa1 -->
+<!-- i18n-source-sha: f1044d971702 -->
 # Installation / Environment Setup — पूरी गाइड
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · **हिन्दी**
@@ -7,9 +7,9 @@
 machine से लेकर embedded Linux तक। अगर आप बस इसे पाँच मिनट में चलाना चाहते हैं, तो
 [GETTING_STARTED.md](GETTING_STARTED.hi.md) shortcut है।
 
-Fullseye का design principle है **"ऐसा core जो सिर्फ़ numpy + scipy पर चलता है" + "हर भारी
-dependency optional है।"** किसी extra backend के बिना सिर्फ़ उसी backend वाले खास operators बंद
-होते हैं; core हमेशा चलता है (graceful degradation)।
+Fullseye का Python API core **numpy + scipy** पर चलता है। सामान्य `pip install fullseye` Studio
+(PySide6-Essentials) और Pillow भी install करता है; भारी image-processing backends optional रहते हैं।
+किसी extra backend के बिना केवल उसी backend के खास operators बंद होते हैं (graceful degradation)।
 
 ---
 
@@ -19,7 +19,7 @@ dependency optional है।"** किसी extra backend के बिना 
 |---|---|
 | Python | **3.11** (`pyproject.toml` में `requires-python = ">=3.11"` set है; development और testing 3.11 पर होती है) |
 | चलाने का command | Windows: `py -3.11` / Linux: `python3.11` |
-| Core dependencies | `numpy>=1.23`, `scipy>=1.10` (`pip install -e .` से अपने-आप install होती हैं) |
+| Standard dependencies | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0` (`pip install -e .` से अपने-आप install होती हैं) |
 | OS | Windows 10/11, Linux (embedded सहित)। जहाँ Python चलता है, वहाँ macOS पर भी काम करता है |
 
 ---
@@ -30,7 +30,7 @@ Repository root से editable install करें।
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .            # core only (numpy + scipy; every op is listed, and an op that needs an optional backend names the missing extra when called)
+py -3.11 -m pip install -e .            # standard: Python API + Studio + Pillow; optional backend वाला op missing extra बताता है
 ```
 
 अतिरिक्त backends **extras** के ज़रिए चुने जाते हैं (`pyproject.toml` के
@@ -40,31 +40,30 @@ py -3.11 -m pip install -e .            # core only (numpy + scipy; every op is 
 |---|---|---|
 | `opencv` | `opencv-python>=4.8.1.78` | image file I/O (`apply`/`pipeline` CLI के लिए ज़रूरी), `cv_*` operators |
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` families (कई auto-generated operators का आधार) |
-| `pil` | `Pillow>=13.0` | image I/O fallback, `xpil_*` family (emboss/posterize/solarize आदि) |
+| `pil` | none (Pillow standard है) | compatibility alias; image I/O fallback और `xpil_*` family default से उपलब्ध |
 | `wavelets` | `PyWavelets>=1.4` | wavelet family (VisuShrink / subbands / packets आदि) |
 | `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU batch backend (`accel.py`/`bench.py`), `xkor_*` (kornia) family |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow आदि), mahotas से बने (Zernike / pftas आदि) |
-| `gui` | `PySide6>=6.5` | **Fullseye Studio** (`studio.py` / `fullseye-studio`) |
-| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile` (CuPy नहीं; पूरा GPU set `fullseye[gpu]` से। PyTorch के install guide के अनुसार Linux पर default torch CUDA build है और साथ में CUDA components (nvidia-* wheels) भी आ सकते हैं। केवल CPU के लिए पहले CPU-only index से torch install करें: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | सभी operators और backends |
+| `gui` | none (Studio standard है) | compatibility alias; `pip install fullseye` के बाद **Fullseye Studio** शुरू होता है |
+| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile` (CuPy नहीं; पूरा GPU set `fullseye[gpu]` से। PyTorch के install guide के अनुसार Linux पर default torch CUDA build है और साथ में CUDA components (nvidia-* wheels) भी आ सकते हैं। केवल CPU के लिए पहले CPU-only index से torch install करें: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | सभी operators और backends |
 
 मोटे तौर पर नियम:
 
 ```powershell
-# the common minimum for real work + image I/O (no GUI, code/CLI-centric)
+# real work + image I/O का common minimum (Studio पहले से standard है)
 py -3.11 -m pip install -e ".[opencv]"
 
-# also use the GUI (Studio)
+# पुरानी spelling भी compatible है (`gui` खाली alias है)
 py -3.11 -m pip install -e ".[opencv,gui]"
 
-# fully loaded (GUI included; since `all` does not include GUI, add `gui`)
-py -3.11 -m pip install -e ".[all,gui]"
+# fully loaded (Studio पहले से standard है)
+py -3.11 -m pip install -e ".[all]"
 
 # also try the GPU batch path (needs a CUDA-capable torch)
 py -3.11 -m pip install -e ".[gpu]"
 ```
 
-> `all` में `gui` शामिल **नहीं** है (GUI को अलग रखा गया है क्योंकि उसका उद्देश्य अलग है)।
-> अगर आप Studio इस्तेमाल करते हैं, तो `gui` हमेशा अलग से जोड़ें।
+> Studio और Pillow standard dependencies हैं। `gui` और `pil` पुराने install commands के लिए खाली compatibility aliases हैं।
 
 Install सफल होने पर आपको ये **दो console scripts** मिलती हैं (`[project.scripts]`)।
 
@@ -79,6 +78,19 @@ Install किए बिना आज़माने के लिए repository
 ```powershell
 $env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
+```
+
+`pip install fullseye` के बाद `fullseye` या `fullseye-studio` को पहली बार interactive terminal में चलाने पर Windows Start menu या Linux application menu में **Fullseye Studio** एक बार register होता है। virtual environment का entry उसी environment का Python चलाता है। बाद में user के entry मिटाने पर सामान्य command उसे फिर नहीं बनाता। सफलता पर यह एक पंक्ति दिखती है:
+
+```text
+スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)
+```
+
+इसे रोकने के लिए `FULLSEYE_NO_SHORTCUTS=1` set करें, या `FULLSEYE_STUDIO_SETTINGS` के INI (Linux में सामान्यतः `~/.config/Fullseye/Studio.conf`) में नीचे का item डालें। CI, terminal रहित command और Start-menu programs छिपाने वाली Windows administrator policy कोई entry नहीं बनाती। विस्तृत optional setup के लिए `fullseye setup` चलाएँ।
+
+```ini
+[shortcuts]
+auto_register=false
 ```
 
 ---
@@ -129,11 +141,10 @@ bash install/install.sh
 
 ## (e) Minimal setup / embedded (embedded Linux)
 
-Fullseye का core **सिर्फ़ numpy + scipy** पर चलने के लिए बनाया गया है। जिन embedded कामों में GUI,
-GPU या भारी backends की ज़रूरत नहीं, उनके लिए सिर्फ़ core install करना काफ़ी है।
+Fullseye का Python API core **सिर्फ़ numpy + scipy** पर चलने के लिए बनाया गया है; standard install में Studio और Pillow भी आते हैं। जिन embedded कामों में GUI, GPU या भारी backends की ज़रूरत नहीं, उनमें केवल इस API हिस्से का उपयोग किया जा सकता है।
 
 ```bash
-python3.11 -m pip install -e .        # numpy + scipy only. No GUI/torch/opencv needed
+python3.11 -m pip install -e .        # standard install में Studio/Pillow भी; torch/opencv नहीं चाहिए
 ```
 
 Embedded इस्तेमाल के मुख्य बिंदु:
@@ -149,8 +160,7 @@ Embedded इस्तेमाल के मुख्य बिंदु:
   ```
 
 - **जब file I/O की ज़रूरत हो** (`fullseye.load` / `fullseye.save`, `imgevolve.py run`, examples), तो यह
-  **OpenCV या Pillow में से किसी एक** के होने पर चलता है (`imgio` अपने-आप fallback करता है)। अगर आप
-  embedded footprint छोटा रखना चाहते हैं, तो दोनों में Pillow (`[pil]`) हल्का है।
+  **OpenCV या Pillow में से किसी एक** के होने पर चलता है (`imgio` अपने-आप fallback करता है)। Pillow पहले से standard dependency है।
 - आप काम को **dev machine पर design, embedded machine पर execution** में बाँट सकते हैं। Dev machine पर
   Studio में pipeline बनाकर JSON export करें; embedded machine पर बस
   `FullseyeEngine.load("pipeline.json").run(frame)` चलाएँ (GUI नहीं)। विवरण के लिए [ENGINE.md](ENGINE.md) देखें।
@@ -169,8 +179,8 @@ Embedded इस्तेमाल के मुख्य बिंदु:
 |---|---|---|
 | `ModuleNotFoundError: No module named 'fullseye'` | install नहीं हुआ / path set नहीं | `pip install -e .`, या repository root को `PYTHONPATH` में जोड़ें |
 | `fullseye` / `fullseye-studio` command नहीं मिलता | console scripts register नहीं हुईं | `pip install -e .` चलाएँ। Install नहीं किया है तो `py -3.11 imgevolve.py` / `py -3.11 studio.py` इस्तेमाल करें |
-| Studio launch करते समय PySide6 ImportError | GUI extras install नहीं | `pip install -e ".[gui]"` |
-| `apply` / `pipeline` पर `cannot read <path>` | कोई image I/O backend नहीं | `pip install -e ".[opencv]"` (या `[pil]`) |
+| Studio launch करते समय PySide6 ImportError | standard dependency टूटी हुई है | `pip install --force-reinstall fullseye` |
+| `apply` / `pipeline` पर `cannot read <path>` | standard Pillow dependency टूटी है या image खराब है | `pip install --force-reinstall fullseye`; फिर भी हो तो image जाँचें |
 | `read_image` / `write_image` (API) से cv2 ImportError | ये **सिर्फ़ OpenCV** वाले हैं | `pip install -e ".[opencv]"`। अगर Pillow से काम चलाना है, तो `fullseye.load` / `fullseye.save` इस्तेमाल करें |
 | अपेक्षित operator `list_ops` में नहीं है / `has` unknown लौटाता है | संबंधित backend install नहीं | मेल खाते extras जोड़ें (`skimage`/`wavelets`/`extra` आदि) |
 | GPU batch (`accel`/`bench`) CPU पर धीमा है | `torch` CPU build है | GPU पर `--device cuda` इस्तेमाल करें। CPU पर साधारण pointwise काम conversion cost से हार जाता है (by design) |

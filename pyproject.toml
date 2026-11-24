@@ -28,8 +28,8 @@ classifiers = [
   "Topic :: Multimedia :: Graphics :: 3D Modeling",
   "Typing :: Typed",
 ]
-# The core (75 ops) runs on numpy + scipy alone. Everything else is optional and
-# only its own operators are affected when a backend is absent (graceful degradation).
+# CLI / library の核は numpy + scipy で動き、Studio は標準導入に含める。
+# The optional image-processing backends remain opt-in.
 #
 # threadpoolctl (BSD-3, pure Python, no dependencies of its own, ~40 KB) is the one
 # addition: it is the only portable way to cap BLAS threads around a decomposition.
@@ -44,7 +44,7 @@ classifiers = [
 # 求めると入れられる人が減るので、0 件のうち最も古い版にとどめる。修正版の無い脆弱性は
 # docs/security/pip_audit_allowlist.json に理由と期限つきで書く。
 # scipy 1.9 → 1.10: PYSEC-2023-102(CVE-2023-25399)。numpy 1.23 と threadpoolctl 3.1 は 0 件のまま。
-dependencies = ["numpy>=1.23", "scipy>=1.10", "threadpoolctl>=3.1"]
+dependencies = ["numpy>=1.23", "scipy>=1.10", "threadpoolctl>=3.1", "PySide6-Essentials>=6.5", "Pillow>=13.0"]
 
 # PyPI ⇄ GitHub の相互リンク(PyPI プロジェクトページのサイドバーに出る)。
 # 公開リポジトリ名は公開名 fullseye(リネーム時はここを追従させる)。
@@ -67,7 +67,8 @@ Documentation = "https://furuse.work/"
 #     GHSA-rrmf-rvhw-rf47(CVE-2025-3000、2.13.0)
 opencv = ["opencv-python>=4.8.1.78"]
 skimage = ["scikit-image>=0.20"]
-pil = ["Pillow>=13.0"]
+# Pillow は標準依存。既存の ``fullseye[pil]`` を壊さない空の互換別名。
+pil = []
 wavelets = ["PyWavelets>=1.4"]
 # ★2026-11-03(完成度監査 段 0-5): CuPy を足した(numpy/scipy の実装を GPU で走らせる経路が使う)。
 #   cupy-cuda12x の wheel は Linux と Windows だけ —— macOS で `[gpu]` ごと入らなくならないよう印で外す。
@@ -79,9 +80,9 @@ gpu = ["torch>=2.13", "kornia>=0.9", "cupy-cuda12x>=14; platform_system != 'Darw
 # あるのでビルド不要。**必須にはしない** —— 内蔵ラスタライザだけでも動く設計を保つ。
 gi = ["mitsuba>=3.5"]
 extra = ["mahotas>=1.4", "SimpleITK>=2.2"]
-# Studio(fullseye-studio)。Pillow は画像の復号器: これが無いと README の勧める入れ方で Studio の「最初の 3 手」の
-# 1 手目(見本の画像を開く)が "No module named 'PIL'" で失敗した(2026-11-13、配布物の検証 M1)。下限は pil と同じ。
-gui = ["PySide6>=6.5", "Pillow>=13.0"]
+# Studio は標準依存(Pyside6-Essentials + Pillow)。gui は既存の
+# ``pip install fullseye[gui]`` を壊さないための空の互換別名。
+gui = []
 handpose = ["mediapipe>=0.10"]
 video = ["imageio>=2.28", "imageio-ffmpeg>=0.4"]
 audio = ["soundfile>=0.12"]          # non-WAV audio (mp3/flac/ogg); WAV is built-in
@@ -125,12 +126,13 @@ dev = ["pytest>=9.0.3", "pytest-cov>=4", "ruff>=0.4", "pytest-timeout>=2.3",
 # (2026-09-05 実測で 1 件)。`pytest -p randomly -n auto` が週次 CI の
 # `order-shuffle` ジョブと同じ走らせ方。
 # ★`flaky` は入れない —— 失敗を握り潰す道具であって、見つける道具ではない。
-# `all` = the full desktop app (image libs + GPU + GUI + video). Industrial/robotics
+# `all` はデスクトップ向け任意の画像ライブラリ・GPU・動画をまとめる。Studio は標準導入済み。
+# Industrial/robotics
 # adapters stay opt-in (a desktop user does not need pymodbus/asyncua by default).
 all = [
-  "opencv-python>=4.8.1.78", "scikit-image>=0.20", "Pillow>=13.0", "PyWavelets>=1.4",
+  "opencv-python>=4.8.1.78", "scikit-image>=0.20", "PyWavelets>=1.4",
   "torch>=2.13", "kornia>=0.9", "mahotas>=1.4", "SimpleITK>=2.2",
-  "PySide6>=6.5", "imageio>=2.28", "imageio-ffmpeg>=0.4", "tifffile>=2023.1",
+  "imageio>=2.28", "imageio-ffmpeg>=0.4", "tifffile>=2023.1",
 ]
 
 [project.scripts]

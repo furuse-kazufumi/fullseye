@@ -179,18 +179,17 @@ def test_yes_runs_defaults_unattended_without_opening_a_window():
     f = Fakes()
     rc, out = _run(["--yes", "--lang", "en"], f, tty=False)
     assert rc == 0
-    assert len(f.pip) == 1 and any(a.startswith("PySide6") for a in f.pip[0])   # missing gui -> pip (faked)
-    assert f.pip[0][1:4] == ["-m", "pip", "install"]
+    assert not f.pip                         # Studio is now a standard dependency, not setup work
     assert f.sc == [False] and not f.rag and not f.launch                      # default use = Studio only
     assert "never opens a window" in out and "[What was done]" in out
 
 
 def test_interactive_answers_drive_every_step():
     f = Fakes()
-    # uses=1,3 / start-menu y / desktop y / install deps y / rag y / open studio y
+    # uses=1,3 / start-menu y / desktop y / RAG y / open studio y
     rc, out = _run(["--lang", "en"], f, answers=["1,3", "y", "y", "y", "y", "y"])
     assert rc == 0
-    assert len(f.pip) == 1 and f.sc == [True] and f.rag == [1] and f.launch == [1]
+    assert not f.pip and f.sc == [True] and f.rag == [1] and f.launch == [1]
     assert "claude mcp add fullseye" in out and '"mcpServers"' in out
     assert "Command to run:" in out and out.index("Command to run:") < out.index("[What was done]")
 
@@ -202,11 +201,10 @@ def test_interactive_refusals_do_nothing_and_enter_takes_defaults():
     assert "(no changes)" in out
 
 
-def test_pip_failure_is_reported_and_setup_continues():
+def test_setup_does_not_try_to_reinstall_a_missing_standard_gui_dependency():
     f = Fakes(pip_rc=1)
     rc, out = _run(["--yes", "--lang", "en"], f, tty=False)
-    # 失敗した段があれば終了コードは 1(続行はする)。0 は選んだ段が全部できたときだけ
-    assert rc == 1 and "dependency install failed (exit code 1)" in out and f.sc == [False]
+    assert rc == 0 and not f.pip and f.sc == [False]
 
 
 def test_bad_answer_is_asked_again():
@@ -217,8 +215,9 @@ def test_bad_answer_is_asked_again():
 
 def test_requirements_come_from_pyproject_extras_not_the_package_itself():
     reqs = setup_cmd.requirements_for(["gui", "opencv"])
-    assert any(r.lower().startswith("pyside6") for r in reqs) and any(r.lower().startswith("opencv") for r in reqs)
-    assert len(reqs) >= 2, reqs                                       # 空の列に対する not any は無条件に通る
+    assert setup_cmd.requirements_for(["gui"]) == []                 # compatibility alias; PySide6 is standard
+    assert any(r.lower().startswith("opencv") for r in reqs)
+    assert len(reqs) >= 1, reqs                                       # 空の列に対する not any は無条件に通る
     assert not any(r.lower().startswith("fullseye") for r in reqs)
     assert setup_cmd.pip_command(["x"])[:4] == [sys.executable, "-m", "pip", "install"]
 

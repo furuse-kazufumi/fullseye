@@ -22,16 +22,15 @@
     <repo>\install).
 
 .PARAMETER Extras
-    Comma-separated pip "extras" to install. Default "all,gui" installs every
-    optional backend (opencv / scikit-image / Pillow / PyWavelets / torch /
-    kornia / mahotas / SimpleITK) PLUS the PySide6 GUI that Fullseye Studio
-    needs. NOTE: the pyproject "all" extra does NOT include the GUI, so "gui"
-    is added explicitly here.
+    Comma-separated pip "extras" to install. Default "all" installs every
+    optional backend (opencv / scikit-image / PyWavelets / torch / kornia /
+    mahotas / SimpleITK). Fullseye Studio and Pillow are standard dependencies,
+    so they are installed even without an extra.
 
 .PARAMETER Minimal
-    Install only the "gui" extra (core numpy/scipy + PySide6). This is a small,
-    fast install that runs Fullseye Studio and the ~75 core operators, but skips
-    the heavy optional backends (torch, opencv, ...). Overrides -Extras.
+    Install only the standard dependencies (core numpy/scipy + Studio + Pillow).
+    This is a small, fast install that skips the heavy optional backends
+    (torch, opencv, ...). Overrides -Extras.
 
 .PARAMETER UserSite
     Install into the user site-packages (py -3.11 -m pip install --user) instead
@@ -52,7 +51,7 @@
 [CmdletBinding()]
 param(
     [string]$RepoRoot,
-    [string]$Extras = "all,gui",
+    [string]$Extras = "all",
     [switch]$Minimal,
     [switch]$UserSite,
     [switch]$NoShortcut
@@ -117,13 +116,13 @@ if (-not $pyOk) {
 # 3. Decide the extras string.
 # --------------------------------------------------------------------------- #
 if ($Minimal) {
-    $Extras = "gui"
+    $Extras = ""
 }
-Write-Host "Extras: [$Extras]"
+Write-Host "Optional extras: [$Extras]"
 
 # The editable-install target. Brackets select the extras; this must stay a
 # single argument, so we build it as one quoted string.
-$pipTarget = "$RepoRoot[$Extras]"
+$pipTarget = if ([string]::IsNullOrWhiteSpace($Extras)) { $RepoRoot } else { "$RepoRoot[$Extras]" }
 
 # --------------------------------------------------------------------------- #
 # 4. Install (venv by default, or --user site with -UserSite).
