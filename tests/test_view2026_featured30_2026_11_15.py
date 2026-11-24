@@ -34,7 +34,7 @@ def _card_ids(page: str, exhibits: list[dict]) -> list[str]:
     """既存ゲートと同じ「くわしく」の錨をカードの印として、ページ上の展示 id を読む。"""
     anchor_to_id = {G._anchor(e["id"]): e["id"] for e in exhibits}
     assert len(anchor_to_id) == len(exhibits), "展示 id の錨が衝突している"
-    anchors = re.findall(r'href="more\.md#(d-[a-z0-9-]+)"', page)
+    anchors = re.findall(r'href="more\.html#(d-[a-z0-9-]+)"', page)
     unknown = [anchor for anchor in anchors if anchor not in anchor_to_id]
     assert not unknown, ("台帳に無い本ページのカード", unknown)
     return [anchor_to_id[anchor] for anchor in anchors]

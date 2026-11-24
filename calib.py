@@ -9,6 +9,82 @@ from __future__ import annotations
 import numpy as np
 
 
+# 平面俯瞰の格子を作る 2 つの公開 op が同じ投影を使うための共通核。
+# Shared projection kernel for the grayscale and RGB-preserving top-view ops.
+PLANE_TOPVIEW_MIN_SIZE = 8
+PLANE_TOPVIEW_MAX_SIZE = 4096
+CAMERA_MATRIX_MAX_CONDITION = 1.0e12
+ROTATION_ORTHOGONALITY_TOLERANCE = 1.0e-7
+ROTATION_DETERMINANT_TOLERANCE = 1.0e-7
+
+
+def _validated_plane_camera(Km, Rm, op):
+    """Fail closed on non-camera matrices before making a BEV / BEV前に校正行列を検査。"""
+    if (np.linalg.matrix_rank(Km) != 3 or not np.isfinite(np.linalg.cond(Km))
+            or np.linalg.cond(Km) > CAMERA_MATRIX_MAX_CONDITION
+            or Km[0, 0] <= 0.0 or Km[1, 1] <= 0.0):
+        raise ValueError("%s: K must be nonsingular with positive finite focal lengths" % op)
+    gram_error = float(np.max(np.abs(Rm.T @ Rm - np.eye(3))))
+    determinant = float(np.linalg.det(Rm))
+    if (gram_error > ROTATION_ORTHOGONALITY_TOLERANCE
+            or abs(determinant - 1.0) > ROTATION_DETERMINANT_TOLERANCE):
+        raise ValueError("%s: R must be an orthogonal proper rotation (determinant +1)" % op)
+
+
+def _plane_topview_projection(image_shape, K, R, t, *, z=0.0, centre=(0.0, 0.0),
+                              extent=0.02, res=0.05e-3, op="plane_topview"):
+    """Project a world-plane grid into an image (shared private implementation).
+
+    返り値は出力画素ごとの入力 ``row/col``、有効 mask、世界 ``x/y`` と
+    ``pixel_to_world``。サンプリングは呼び手が濃淡/RGBのまま行う。
+    The caller samples gray or RGB values without duplicating the camera geometry.
+    """
+    try:
+        ih, iw = (int(image_shape[0]), int(image_shape[1]))
+    except (TypeError, ValueError, IndexError):
+        raise ValueError("%s: image_shape must be (height, width)" % op) from None
+    Km, Rm = np.asarray(K, np.float64), np.asarray(R, np.float64)
+    tv = np.asarray(t, np.float64).reshape(-1)
+    if (ih < 2 or iw < 2 or Km.shape != (3, 3) or Rm.shape != (3, 3)
+            or tv.shape != (3,) or not np.all(np.isfinite(Km))
+            or not np.all(np.isfinite(Rm)) or not np.all(np.isfinite(tv))):
+        raise ValueError("%s: image must be at least 2x2; K and R must be finite 3x3; t must have 3 components" % op)
+    _validated_plane_camera(Km, Rm, op)
+    ex, rs = float(extent), float(res)
+    ctr = np.asarray(centre, np.float64).reshape(-1)
+    if (not np.isfinite(ex) or not np.isfinite(rs) or ex <= 0.0 or rs <= 0.0
+            or ctr.shape != (2,) or not np.all(np.isfinite(ctr)) or not np.isfinite(float(z))):
+        raise ValueError("%s: extent and res must be positive finite values; centre and z must be finite" % op)
+    size = int(round(ex / rs))
+    if size < PLANE_TOPVIEW_MIN_SIZE or size > PLANE_TOPVIEW_MAX_SIZE:
+        raise ValueError("%s: extent/res gives %d px (need %d..%d)"
+                         % (op, size, PLANE_TOPVIEW_MIN_SIZE, PLANE_TOPVIEW_MAX_SIZE))
+    c = (size - 1) / 2.0
+    rows, cols = np.mgrid[0:size, 0:size].astype(np.float64)
+    world_x = ctr[0] + (cols - c) * rs
+    world_y = ctr[1] - (rows - c) * rs
+    world = np.stack([world_x, world_y, np.full_like(world_x, float(z))], -1).reshape(-1, 3)
+    camera = world @ Rm.T + tv
+    camera_z = camera[:, 2]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        image_col = Km[0, 0] * camera[:, 0] / camera_z + Km[0, 1] * camera[:, 1] / camera_z + Km[0, 2]
+        image_row = Km[1, 0] * camera[:, 0] / camera_z + Km[1, 1] * camera[:, 1] / camera_z + Km[1, 2]
+    valid = (camera_z > 0.0) & np.isfinite(image_col) & np.isfinite(image_row)
+    valid &= (image_col >= 0.0) & (image_col <= iw - 1) & (image_row >= 0.0) & (image_row <= ih - 1)
+    pixel_to_world = np.array([[rs, 0.0, ctr[0] - c * rs],
+                               [0.0, -rs, ctr[1] + c * rs],
+                               [0.0, 0.0, 1.0]], np.float64)
+    if np.linalg.matrix_rank(pixel_to_world) != 3:
+        raise ValueError("%s: derived pixel_to_world mapping is singular" % op)
+    return {"shape": (size, size),
+            "image_row": image_row.reshape(size, size),
+            "image_col": image_col.reshape(size, size),
+            "valid": valid.reshape(size, size),
+            "world_x": world_x, "world_y": world_y,
+            "pixel_to_world": pixel_to_world,
+            "world_to_pixel": np.linalg.inv(pixel_to_world)}
+
+
 # ── 入口の検査(fail-closed、2026-10-23 に台帳 opscalib へ載せる便で追加)────────── #
 # 非有限・空・形の合わない入力は ValueError で拒否する。以前は NaN の点が NaN の画素に、
 # 欠けた鍵が KeyError に、視線と平行な点が inf になって黙って下流へ流れていた。

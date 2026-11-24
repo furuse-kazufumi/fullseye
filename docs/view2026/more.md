@@ -316,7 +316,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 </div>
 
-[PoC 以外の使用例 187 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 188 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 
@@ -762,6 +762,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [手首カメラで穴に寄せてペグを入れる(12 / 12 成功)](../articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif) (GIF): 柔らかい手首のロボットが、手首のカメラで穴の位置を測ってペグを差し込む。測って寄せる動きを繰り返し、横のずれを 0.03 mm まで詰めてから下ろした。接触の力は物理シミュレータで計算し、学習は使っていない。
   手首カメラで穴の位置を測って寄せ、柔らかい手首でペグを入れる(MuJoCo)。 **サーボ 7 回で真のずれ 2.24 → 0.03 mm。補正ありの挿入は 12 / 12 成功。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pegsim_insertion.py)
+- [Go2 が深度で足場を選び 5 段の山道に挑む](https://youtu.be/FBtlYrHev74) (図): MuJoCo の Go2 が、後半ほど難しくなる 5 段の山道の段 1〜4 を進むが、段 5 は足場を選んでも 6 種すべてで転倒した。頭の深度を点群と標高の地図へ変換し、Fullseye の地形関数で足場候補と着地点を選ぶ。制御は学習済み重みを使わないルールベースのトロット。本編は YouTube の長尺動画。
+  深度から作った標高の地図に、通れる場所、段差の縁、平らな足場候補を重ね、次の着地点を選ぶ。図はロボット、岩と段、足場候補、深度、標高の地図を一画面で示す。Go2 のモデルは MuJoCo Menagerie 収録(BSD-3-Clause)。地形は国土地理院の地理院タイルを加工(PDL1.0)。 **5 段は勾配 5°→14.5°、岩の最大 11 cm、段の最大 10 cm。段 5 は足場を選んでも 6 種すべてで転倒し、このルールベースのトロットの限界だった。学習済みの重みは使わず、真値は審判だけが使う。限界: 深度に雑音なし、自機の除去は描画 group で代用、摩擦は一様、岩は凸形、段は丸太を模した剛体。** [YouTube](https://youtu.be/FBtlYrHev74)
+  使った Fullseye の op: `terrain.elevation_map` · `terrain.fuse_elevation` · `terrain.traversability` · `terrain.foothold_score` · `terrain.step_edges` · `terrain.foothold_candidates` · `terrain.fill_gaps` · `terrain.ground_surface`
 
 **人型ロボット**
 
@@ -777,8 +780,8 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [部品を足す前と後(運転の 9 章)](https://youtu.be/6J3chWv5yHg) (動画): Fullseye の運転の部品(すべてルールベース)を、2026-09-28 から 2026-11-05 までにどの場面で足したかを、時代順の 9 章にまとめた長尺動画の抜粋。9 章のうち 7 章は、ある版が失敗する場面と、部品を足した版が越える場面を左右に並べる(第 1 章は出発点、第 8 章は到達点で、失敗と改良の対を作らない)。本編は YouTube の長尺動画。
   第 9 章「森の影と白線」の霞の日の 11.0 秒(本編 194.6〜205.6 秒)。左(橙)は git の前の版(2026-11-02)のコードを今回 2026-11-05 の森で走らせた絵、右(青)は 2026-11-05 の版の当時の画面で、同じ地図・同じ出発点。前の版は森の影で白線を見失い、対向車線の外へ出る。失敗する側の正体は章ごとに違う(この章は git の前の版)。走行は各 1 回。前の版は 100 m で止まったので、比べた距離は 100 m と 964 m で違う。霞が無くても前の版は同じヘアピンで失敗した(原因は霞だけではない)。左右の版の差は車線認識の 4 か所と運転のスクリプトと上限速度(30 → 36 km/h)で、どれが効いたかは切り分けていない。ほかの章の限界(第 8 章の衝突 1 件、第 7 章は場面に合わせて選んだ設定)は動画の概要欄にある。この章の運転のスクリプトは非公開で、使った op は公開。 出典: 地形 国土地理院 DEM5A(PDL1.0。左右反転、道路と標識は自作)、CARLA(コード MIT・アセット CC-BY)。 **審判(地図の真値、この動画のために書いた審判)、霞の日: 前の版は車線の外へ出て 100 m で止まった(車線外 440 コマ。出たあと止まっていた時間を含む。記録は 644 コマ、止まっていたのは 243 コマ)・衝突 0、2026-11-05 の版は 964 m で車線外 0 コマ・衝突 0。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/opsdrive.py) [YouTube](https://youtu.be/6J3chWv5yHg)
   使った Fullseye の op: `driveenv.sight_stop_speed` · `driveenv.mor_from_beta` · `driveenv.road_row_distance` · `drivelateral.curve_speed_limit` · `drivelateral.pure_pursuit_curvature` · `drivettc.ttc_from_range` · `pcseg.remove_ground` · `pcseg.euclidean_clusters` · `matching.create_ncc_model` · `matching.find_ncc_model` · `carlabridge.carla_intrinsics`
-- [銀座の車載カメラから信号・車・距離を読む(CARLA)](https://youtu.be/bzMAHCa5y9E) (図): CARLA の中の銀座・中央通りを走る車のカメラ画像と深度だけから、Fullseye が信号の灯の色・車・距離を読む。運転は CARLA の自動運転が行い、Fullseye は見るだけ。シミュレータの正解は Fullseye に渡さず、採点だけに使った。本編は YouTube の動画(日本語)。
-  灯は明るい赤・黄・青の点を形と高さで灯器に絞って前方の灯を追い、見えなくなっても最後の色を覚えておく。車は深度で路面より高い画素を塊にする。深度はシミュレータの深度にステレオ相当の雑音を足したもので、本物のステレオ計算ではない。逆光・夜・雨は無い。 出典: 地図 © OpenStreetMap contributors(ODbL)、沿道の建物 3D 都市モデル Project PLATEAU(PDL1.0)、CARLA(コード MIT・アセット CC-BY)。 **94.5 秒・5 交差点の採点: 灯色の一致 97.2 %(正解の灯と対応できた読みのうち。読めなかった灯 119 回)、前方の信号の判断 98.6 %(コマ単位)、車の再現率 86.6 %(60 m 以内・200 画素以上見える車)、距離の誤差 中央値 0.22 m(雑音を足す前の深度との差)。** [YouTube](https://youtu.be/bzMAHCa5y9E)
+- [銀座の車載カメラから信号・車・距離を読む(CARLA)](https://youtu.be/jf1ToHYNGC0) (図): CARLA の中の銀座・中央通りを走る車のカメラ画像と深度だけから、Fullseye が信号の灯の色・車・距離を読む。運転は CARLA の自動運転が行い、Fullseye は見るだけ。シミュレータの正解は Fullseye に渡さず、採点だけに使った。本編は YouTube の動画(日本語)。
+  日本の信号は青→黄→赤→青の順にだけ変わるとして灯ごとの履歴を追う。順序外の変化は 0.5 秒続いて初めて出し、遠い灯は同じ色を 3 コマ確かめる。一つの灯器に二色は出さず、より安全な色を確かめる間は古い色を残さず「不確か」にする。車は深度で路面より高い画素を塊にする。深度はシミュレータ値にステレオ相当の雑音を足したもので、本物のステレオ計算ではない。逆光・夜・雨は無い。出典: 地図 © OpenStreetMap contributors(ODbL)、沿道の建物 3D 都市モデル Project PLATEAU(PDL1.0)、CARLA(コード MIT・アセット CC-BY)。 **5 章・94.5 秒・5 交差点: 灯は色を出した割合 92.5 %、出したときの正解率 98.6 %、控えた分も外れに数えると 91.2 %。前方の信号は決めた割合 98.6 %、決めたときの正解率 99.4 %、控えた分も外れに数えると 98.0 %。車の再現率 86.6 %(60 m 以内・200 画素以上見える車)、距離誤差の中央値 0.22 m(雑音を足す前の深度との差)。調整に使わなかった seed 27 を凍結版 011c161(規則を固めた版)で一度だけ処理すると、色を出した灯の正解率は 99.1 %、前方の信号は控えた分も外れに数えて 89.3 %で、後続修正後の最終版の値ではない。遠い信号の判断に弱点が残る。** [YouTube](https://youtu.be/jf1ToHYNGC0)
   使った Fullseye の op: `carlabridge.carla_intrinsics` · `color_pca.trans_from_rgb` · `blob2d.blob_label` · `blob2d.blob_features`
 
 **ロボットの目(Fullseye が知覚を担当)**

@@ -4025,7 +4025,7 @@
    "media_path": "view2026/media/carla_ginza_perception.jpg",
    "thumb_path": "view2026/media/carla_ginza_perception.jpg",
    "source_url": "",
-   "provenance": "fullseye_shows(非公開)の動画「銀座・中央通りの車載カメラから Fullseye が信号・車・距離を読む」(94.5 s、5 交差点)の 760 コマ目(25.3 s)を 960×540 に縮めた 1 コマ。数値は投稿した動画の説明文(採点 5 区間)から",
+  "provenance": "公開動画「銀座・中央通りの車載カメラから Fullseye が信号・車・距離を読む」v23(94.5 s、5 交差点)の 760 コマ目(25.3 s)を 960×540 に縮めた 1 コマ。数値は同じ実行の truth_2026-11-23.json と gates_2026-11-23.json から",
    "motion": true,
    "ops": [
     "carlabridge.carla_intrinsics",
@@ -4054,26 +4054,26 @@
     "fr": "À partir de la seule image caméra et de la profondeur d'une voiture qui roule sur Chuo-dori à Ginza dans CARLA, Fullseye lit la couleur des feux, les voitures et leur distance. C'est le pilote automatique de CARLA qui conduit ; Fullseye ne fait que regarder. La vérité terrain du simulateur n'est jamais donnée à Fullseye et ne sert qu'à la notation. La vidéo complète est sur YouTube (en japonais)."
    },
    "see": {
-    "ja": "灯は明るい赤・黄・青の点を形と高さで灯器に絞って前方の灯を追い、見えなくなっても最後の色を覚えておく。車は深度で路面より高い画素を塊にする。深度はシミュレータの深度にステレオ相当の雑音を足したもので、本物のステレオ計算ではない。逆光・夜・雨は無い。 出典: 地図 © OpenStreetMap contributors(ODbL)、沿道の建物 3D 都市モデル Project PLATEAU(PDL1.0)、CARLA(コード MIT・アセット CC-BY)。",
-    "en": "Bright red, yellow and green dots are narrowed to signal lamps by shape and height, the lamp ahead is tracked, and its last colour is remembered when it leaves the view. Cars are blobs of pixels that stand above the road in depth. The depth is the simulator's depth plus stereo-like noise, not a real stereo computation. There is no backlight, night or rain. Sources: map © OpenStreetMap contributors (ODbL), roadside buildings from the Project PLATEAU 3D city model (PDL1.0), CARLA (code MIT, assets CC-BY).",
-    "zh": "把明亮的红、黄、绿点按形状和高度筛选为信号灯,跟踪前方的灯,灯离开画面后仍记住最后的颜色。车辆是深度中高出路面的像素团。深度是模拟器深度加上相当于立体相机的噪声,并非真正的立体计算。没有逆光、夜间和雨天。 出处: 地图 © OpenStreetMap contributors(ODbL)、沿街建筑 Project PLATEAU 3D 城市模型(PDL1.0)、CARLA(代码 MIT、素材 CC-BY)。",
-    "tw": "把明亮的紅、黃、綠點依形狀與高度篩選為號誌燈,追蹤前方的燈,燈離開畫面後仍記住最後的顏色。車輛是深度中高出路面的像素團。深度是模擬器深度加上相當於立體相機的雜訊,並非真正的立體計算。沒有逆光、夜間與雨天。 出處: 地圖 © OpenStreetMap contributors(ODbL)、沿街建築 Project PLATEAU 3D 城市模型(PDL1.0)、CARLA(程式碼 MIT、素材 CC-BY)。",
-    "ko": "밝은 빨강·노랑·초록 점을 모양과 높이로 신호등 램프로 좁혀 앞쪽 램프를 추적하고, 화면에서 사라져도 마지막 색을 기억한다. 차량은 깊이에서 노면보다 높은 화소의 덩어리다. 깊이는 시뮬레이터의 깊이에 스테레오 상당의 잡음을 더한 것으로 실제 스테레오 계산이 아니다. 역광·밤·비는 없다. 출처: 지도 © OpenStreetMap contributors(ODbL), 길가 건물 Project PLATEAU 3D 도시 모델(PDL1.0), CARLA(코드 MIT, 에셋 CC-BY).",
-    "de": "Helle rote, gelbe und grüne Punkte werden nach Form und Höhe auf Signallampen eingegrenzt, die Lampe voraus wird verfolgt, und ihre letzte Farbe bleibt gespeichert, wenn sie aus dem Bild verschwindet. Autos sind Pixelgruppen, die in der Tiefe über der Straße liegen. Die Tiefe ist die Simulatortiefe plus stereoähnliches Rauschen, keine echte Stereoberechnung. Gegenlicht, Nacht und Regen kommen nicht vor. Quellen: Karte © OpenStreetMap contributors (ODbL), Gebäude am Straßenrand aus dem 3-D-Stadtmodell Project PLATEAU (PDL1.0), CARLA (Code MIT, Assets CC-BY).",
-    "hi": "चमकीले लाल, पीले और हरे बिंदुओं को आकार और ऊँचाई से signal lamps तक सीमित किया जाता है, आगे वाले lamp को track किया जाता है, और दृश्य से हटने पर उसका आख़िरी रंग याद रखा जाता है। गाड़ियाँ depth में सड़क से ऊपर उठे pixels के समूह हैं। depth simulator की depth में stereo जैसा noise जोड़कर बनी है, असली stereo गणना नहीं। backlight, रात और बारिश नहीं हैं। स्रोत: map © OpenStreetMap contributors (ODbL), सड़क किनारे की इमारतें Project PLATEAU 3-D city model (PDL1.0), CARLA (code MIT, assets CC-BY)।",
-    "fr": "Les points rouges, jaunes et verts lumineux sont réduits aux lampes de feux par la forme et la hauteur, la lampe devant est suivie, et sa dernière couleur est mémorisée quand elle sort du champ. Les voitures sont des amas de pixels qui dépassent la chaussée en profondeur. La profondeur est celle du simulateur plus un bruit de type stéréo, pas un vrai calcul stéréo. Il n'y a ni contre-jour, ni nuit, ni pluie. Sources : carte © OpenStreetMap contributors (ODbL), bâtiments en bordure issus du modèle urbain 3D Project PLATEAU (PDL1.0), CARLA (code MIT, ressources CC-BY)."
+    "ja": "日本の信号は青→黄→赤→青の順にだけ変わるとして灯ごとの履歴を追う。順序外の変化は 0.5 秒続いて初めて出し、遠い灯は同じ色を 3 コマ確かめる。一つの灯器に二色は出さず、より安全な色を確かめる間は古い色を残さず「不確か」にする。車は深度で路面より高い画素を塊にする。深度はシミュレータ値にステレオ相当の雑音を足したもので、本物のステレオ計算ではない。逆光・夜・雨は無い。出典: 地図 © OpenStreetMap contributors(ODbL)、沿道の建物 3D 都市モデル Project PLATEAU(PDL1.0)、CARLA(コード MIT・アセット CC-BY)。",
+    "en": "The tracker assumes that Japanese signals change only green → yellow → red → green and keeps a history for each lamp. An out-of-order change is shown only after it persists for 0.5 s, while a distant lamp must hold the same colour for 3 frames. A signal head never shows two colours; while a safer colour is being checked, the old colour is removed and the state is marked “uncertain”. Cars are depth pixels standing above the road. Depth is simulator depth with stereo-like noise, not a real stereo calculation; there is no backlight, night or rain. Sources: map © OpenStreetMap contributors (ODbL), roadside buildings from the Project PLATEAU 3-D city model (PDL1.0), CARLA (code MIT, assets CC-BY).",
+    "zh": "系统假定日本信号灯只按绿→黄→红→绿的顺序变化,并为每盏灯保存历史。顺序外的变化持续 0.5 秒后才显示;远处的灯则要连续 3 帧保持同色。一组灯头不会同时显示两种颜色;确认更安全的颜色时不保留旧颜色,而标为“不确定”。车辆由深度中高出路面的像素团得到。深度是模拟器深度加上立体视觉般的噪声,不是真正的立体计算;没有逆光、夜间或雨天。出处: 地图 © OpenStreetMap contributors(ODbL)、沿街建筑 Project PLATEAU 3-D 城市模型(PDL1.0)、CARLA(代码 MIT、素材 CC-BY)。",
+    "tw": "系統假定日本號誌只依綠→黃→紅→綠的順序變化,並為每盞燈保留歷史。順序外的變化持續 0.5 秒後才顯示;遠處的燈則要連續 3 幀維持同色。一組燈頭不會同時顯示兩種顏色;確認較安全的顏色時不保留舊色,而標為「不確定」。車輛由深度中高出路面的像素群取得。深度是模擬器深度加上類似立體視覺的雜訊,不是真正的立體計算;沒有逆光、夜間或雨天。出處: 地圖 © OpenStreetMap contributors(ODbL)、沿街建築 Project PLATEAU 3-D 城市模型(PDL1.0)、CARLA(程式碼 MIT、素材 CC-BY)。",
+    "ko": "일본 신호는 녹색→노란색→빨간색→녹색 순서로만 바뀐다고 보고 각 램프의 이력을 추적한다. 순서를 벗어난 변화는 0.5초 동안 이어져야 표시하고, 먼 램프는 같은 색을 3프레임 확인한다. 한 신호등에 두 색을 함께 표시하지 않으며, 더 안전한 색을 확인하는 동안에는 예전 색을 지우고 ‘불확실’로 표시한다. 차량은 깊이에서 노면보다 높은 화소 덩어리로 찾는다. 깊이는 시뮬레이터 깊이에 스테레오에 해당하는 잡음을 더한 것이며 실제 스테레오 계산은 아니다. 역광·밤·비는 없다. 출처: 지도 © OpenStreetMap contributors(ODbL), 길가 건물 Project PLATEAU 3-D 도시 모델(PDL1.0), CARLA(코드 MIT, 에셋 CC-BY).",
+    "de": "Der Tracker nimmt an, dass japanische Ampeln nur in der Folge Grün → Gelb → Rot → Grün wechseln, und führt für jede Lampe einen Verlauf. Ein Wechsel außerhalb dieser Folge erscheint erst, wenn er 0.5 s anhält; bei einer entfernten Lampe muss dieselbe Farbe 3 Bilder lang bestätigt sein. Ein Signalgeber zeigt nie zwei Farben zugleich. Solange eine sicherere Farbe geprüft wird, verschwindet die alte Farbe und der Zustand lautet „unsicher“. Autos sind Tiefenpixel oberhalb der Fahrbahn. Die Tiefe ist Simulatortiefe mit stereoähnlichem Rauschen, keine echte Stereoberechnung; Gegenlicht, Nacht und Regen fehlen. Quellen: Karte © OpenStreetMap contributors (ODbL), Gebäude aus dem 3-D-Stadtmodell Project PLATEAU (PDL1.0), CARLA (Code MIT, Assets CC-BY).",
+    "hi": "यह tracker मानता है कि जापान के signal केवल हरा→पीला→लाल→हरा क्रम में बदलते हैं और हर lamp का इतिहास रखता है। क्रम से बाहर बदलाव 0.5 s तक बना रहने पर ही दिखता है, जबकि दूर के lamp का वही रंग 3 frames तक पक्का किया जाता है। एक signal head पर दो रंग साथ नहीं दिखते; अधिक सुरक्षित रंग जाँचते समय पुराना रंग हटाकर स्थिति “अनिश्चित” दिखाई जाती है। गाड़ियाँ depth में सड़क से ऊपर के pixels के समूह हैं। depth simulator की depth में stereo जैसा noise जोड़कर बनी है, असली stereo गणना नहीं; backlight, रात और बारिश नहीं हैं। स्रोत: map © OpenStreetMap contributors (ODbL), सड़क किनारे की इमारतें Project PLATEAU 3-D city model (PDL1.0), CARLA (code MIT, assets CC-BY)।",
+    "fr": "Le suivi suppose que les feux japonais changent uniquement selon la suite vert → jaune → rouge → vert et conserve l'historique de chaque lampe. Un changement hors séquence n'est affiché qu'après 0.5 s, tandis qu'une lampe lointaine doit garder la même couleur pendant 3 images. Un même bloc optique n'affiche jamais deux couleurs ; pendant la vérification d'une couleur plus sûre, l'ancienne disparaît et l'état devient « incertain ». Les voitures sont des pixels de profondeur au-dessus de la chaussée. La profondeur est celle du simulateur avec un bruit de type stéréo, pas un vrai calcul stéréo ; il n'y a ni contre-jour, ni nuit, ni pluie. Sources : carte © OpenStreetMap contributors (ODbL), bâtiments du modèle urbain 3-D Project PLATEAU (PDL1.0), CARLA (code MIT, ressources CC-BY)."
    },
    "num": {
-    "ja": "94.5 秒・5 交差点の採点: 灯色の一致 97.2 %(正解の灯と対応できた読みのうち。読めなかった灯 119 回)、前方の信号の判断 98.6 %(コマ単位)、車の再現率 86.6 %(60 m 以内・200 画素以上見える車)、距離の誤差 中央値 0.22 m(雑音を足す前の深度との差)。",
-    "en": "Scored over 94.5 s and 5 intersections: light colour agreement 97.2 % (of the readings matched to a true lamp; 119 lamps were not read), signal-ahead decision 98.6 % (per frame), car recall 86.6 % (cars within 60 m showing at least 200 pixels), distance error median 0.22 m (against the depth before noise was added).",
-    "zh": "在 94.5 秒、5 个路口上的评分: 灯色一致 97.2 %(在能与真实灯对应的读数中;未读出的灯 119 次),前方信号判断 98.6 %(按帧),车辆召回率 86.6 %(60 m 以内、可见 200 像素以上的车辆),距离误差中位数 0.22 m(与加噪前的深度之差)。",
-    "tw": "在 94.5 秒、5 個路口上的評分: 燈色一致 97.2 %(在能與真實燈對應的讀數中;未讀出的燈 119 次),前方號誌判斷 98.6 %(按影格),車輛召回率 86.6 %(60 m 以內、可見 200 像素以上的車輛),距離誤差中位數 0.22 m(與加入雜訊前的深度之差)。",
-    "ko": "94.5 초·5 교차로 채점: 램프 색 일치 97.2 %(참 램프와 대응된 판독 가운데. 읽지 못한 램프 119 회), 앞쪽 신호 판단 98.6 %(프레임 단위), 차량 재현율 86.6 %(60 m 이내·200 화소 이상 보이는 차량), 거리 오차 중앙값 0.22 m(잡음을 더하기 전 깊이와의 차).",
-    "de": "Bewertet über 94.5 s und 5 Kreuzungen: Übereinstimmung der Lampenfarbe 97.2 % (unter den Lesungen, die einer echten Lampe zugeordnet wurden; 119 Lampen nicht gelesen), Entscheidung zur Ampel voraus 98.6 % (pro Bild), Recall der Autos 86.6 % (Autos innerhalb 60 m mit mindestens 200 sichtbaren Pixeln), Abstandsfehler im Median 0.22 m (gegenüber der Tiefe vor dem Rauschen).",
-    "hi": "94.5 s और 5 चौराहों पर scoring: lamp रंग मेल 97.2 % (असली lamp से जुड़ी readings में; 119 lamps पढ़े नहीं गए), आगे के signal का निर्णय 98.6 % (हर frame पर), गाड़ियों का recall 86.6 % (60 m के भीतर, कम से कम 200 pixels दिखने वाली गाड़ियाँ), दूरी की त्रुटि median 0.22 m (noise जोड़ने से पहले की depth से)।",
-    "fr": "Notation sur 94.5 s et 5 carrefours : accord de la couleur des feux 97.2 % (parmi les lectures appariées à un vrai feu ; 119 feux non lus), décision sur le feu devant 98.6 % (par image), rappel des voitures 86.6 % (voitures à moins de 60 m montrant au moins 200 pixels), erreur de distance médiane 0.22 m (par rapport à la profondeur avant ajout du bruit)."
+    "ja": "5 章・94.5 秒・5 交差点: 灯は色を出した割合 92.5 %、出したときの正解率 98.6 %、控えた分も外れに数えると 91.2 %。前方の信号は決めた割合 98.6 %、決めたときの正解率 99.4 %、控えた分も外れに数えると 98.0 %。車の再現率 86.6 %(60 m 以内・200 画素以上見える車)、距離誤差の中央値 0.22 m(雑音を足す前の深度との差)。調整に使わなかった seed 27 を凍結版 011c161(規則を固めた版)で一度だけ処理すると、色を出した灯の正解率は 99.1 %、前方の信号は控えた分も外れに数えて 89.3 %で、後続修正後の最終版の値ではない。遠い信号の判断に弱点が残る。",
+    "en": "Across 5 chapters, 94.5 s and 5 intersections, lamp colour was shown for 92.5 % of matched readings; accuracy when shown was 98.6 %, or 91.2 % when withheld readings count as wrong. The signal ahead was decided in 98.6 % of scored frames; accuracy when decided was 99.4 %, or 98.0 % with abstentions counted wrong. Car recall was 86.6 % (cars within 60 m with at least 200 visible pixels), and median distance error was 0.22 m (against depth before noise). On seed 27, which was not used for tuning, frozen revision 011c161 (the rules-finalised revision) was run once: shown lamp colours were 99.1 % accurate, but signal-ahead accuracy was 89.3 % with abstentions counted wrong. These are not values from the final revision after subsequent fixes; distant signals remain a weakness.",
+    "zh": "在 5 章、94.5 秒和 5 个路口中,灯色显示率为 92.5 %;显示时正确率 98.6 %,把未显示也算错则为 91.2 %。前方信号的判定率为 98.6 %;判定时正确率 99.4 %,把未判定也算错则为 98.0 %。车辆召回率 86.6 %(60 m 内、至少可见 200 像素的车辆),距离误差中位数 0.22 m(相对加噪前的深度)。未用于调参的 seed 27 由冻结版 011c161(规则定稿版)只处理一次:已显示灯色的正确率 99.1 %,前方信号把未判定也算错时为 89.3 %;这不是后续修正后最终版的数值。远处信号仍是弱点。",
+    "tw": "在 5 章、94.5 秒與 5 個路口中,燈色顯示率為 92.5 %;顯示時正確率 98.6 %,把未顯示也算錯則為 91.2 %。前方號誌的判定率為 98.6 %;判定時正確率 99.4 %,把未判定也算錯則為 98.0 %。車輛召回率 86.6 %(60 m 內、至少可見 200 像素的車輛),距離誤差中位數 0.22 m(相對加入雜訊前的深度)。未用於調整的 seed 27 由凍結版 011c161(規則定稿版)只處理一次:已顯示燈色的正確率 99.1 %,前方號誌把未判定也算錯時為 89.3 %;這不是後續修正後最終版的數值。遠處號誌仍是弱點。",
+    "ko": "5개 장·94.5초·5개 교차로에서 램프 색을 표시한 비율은 92.5 %, 표시했을 때 정확도는 98.6 %, 보류도 오답으로 세면 91.2 %였다. 앞쪽 신호는 98.6 %에서 판단했고, 판단했을 때 정확도는 99.4 %, 보류도 오답으로 세면 98.0 %였다. 차량 재현율은 86.6 %(60 m 이내에서 200화소 이상 보이는 차량), 거리 오차 중앙값은 0.22 m(잡음을 넣기 전 깊이와 비교)였다. 조정에 쓰지 않은 seed 27은 동결판 011c161(규칙을 확정한 판)으로 한 번만 처리했으며, 표시한 램프 색 정확도는 99.1 %였지만 앞쪽 신호는 보류를 오답으로 세어 89.3 %였다. 이는 후속 수정 뒤 최종판의 값이 아니며, 먼 신호 판단은 여전히 약점이다.",
+    "de": "Über 5 Kapitel, 94.5 s und 5 Kreuzungen wurde bei 92.5 % der zugeordneten Lampenlesungen eine Farbe ausgegeben. Die Genauigkeit der ausgegebenen Farben betrug 98.6 %, mit zurückgehaltenen Lesungen als Fehler 91.2 %. Die Ampel voraus wurde in 98.6 % der bewerteten Bilder entschieden; die Genauigkeit bei einer Entscheidung betrug 99.4 %, mit Enthaltungen als Fehler 98.0 %. Der Auto-Recall lag bei 86.6 % (Autos innerhalb 60 m mit mindestens 200 sichtbaren Pixeln), der Median des Abstandsfehlers bei 0.22 m (gegenüber der Tiefe vor dem Rauschen). Seed 27, nicht zur Abstimmung verwendet, wurde mit der eingefrorenen Revision 011c161 (der Revision mit festgelegten Regeln) nur einmal verarbeitet: Die Genauigkeit ausgegebener Lampenfarben betrug 99.1 %, die der Ampel voraus mit Enthaltungen als Fehler 89.3 %. Das sind nicht die Werte der endgültigen Revision nach späteren Korrekturen; entfernte Ampeln bleiben eine Schwäche.",
+    "hi": "5 अध्यायों, 94.5 s और 5 चौराहों में 92.5 % matched readings पर lamp का रंग दिखाया गया। दिखाए गए रंगों की accuracy 98.6 % थी, और रोके गए रंगों को भी गलत गिनने पर 91.2 %। आगे के signal पर 98.6 % frames में निर्णय हुआ; निर्णय होने पर accuracy 99.4 %, और परहेज़ को गलत गिनने पर 98.0 % थी। गाड़ियों का recall 86.6 % (60 m के भीतर कम से कम 200 visible pixels वाली गाड़ियाँ) और दूरी की median error 0.22 m (noise से पहले की depth के मुकाबले) थी। tuning में इस्तेमाल न हुए seed 27 को frozen revision 011c161 (नियम तय किए गए revision) से केवल एक बार चलाने पर दिखाए गए lamp रंग 99.1 % सही थे, लेकिन आगे के signal की accuracy परहेज़ को गलत गिनकर 89.3 % रही। ये बाद की fixes के बाद वाले final revision के मान नहीं हैं; दूर के signal अभी भी कमज़ोरी हैं।",
+    "fr": "Sur 5 chapitres, 94.5 s et 5 carrefours, une couleur a été affichée pour 92.5 % des lectures de lampe appariées ; sa justesse était de 98.6 % quand elle était affichée, ou de 91.2 % en comptant les abstentions comme des erreurs. Le feu devant a été déterminé dans 98.6 % des images notées ; la justesse était de 99.4 % lorsqu'une décision était prise, ou de 98.0 % avec les abstentions comptées comme erreurs. Le rappel des voitures était de 86.6 % (voitures à moins de 60 m avec au moins 200 pixels visibles) et l'erreur de distance médiane de 0.22 m (par rapport à la profondeur avant bruit). Pour seed 27, non utilisé pour le réglage, la révision figée 011c161 (celle où les règles étaient fixées) n'a été traitée qu'une fois : les couleurs affichées étaient justes à 99.1 %, mais le feu devant à 89.3 % en comptant les abstentions comme erreurs. Ce ne sont pas les valeurs de la version finale après les corrections ultérieures ; les feux lointains restent une faiblesse."
    },
-   "youtube_url": "https://youtu.be/bzMAHCa5y9E",
+  "youtube_url": "https://youtu.be/jf1ToHYNGC0",
    "tier": "more",
    "truth": {
     "ja": "シミュレータの正解(採点だけに使用)",
@@ -4149,6 +4149,78 @@
    "ops": [
     "terrain.ground_plane",
     "terrain.foothold_score"
+   ],
+   "tier": "more"
+  },
+  {
+   "id": "go2_trail_footholds",
+   "category": "robotics",
+   "media": "",
+   "media_path": "view2026/media/go2_trail_footholds.jpg",
+   "thumb_path": "view2026/media/go2_trail_footholds.jpg",
+   "source_url": "",
+  "provenance": "公開動画「Go2、深度で足場を選んで 5 段の山道に挑む」の 4,050 コマ目(135.0 s)を 960×540 に縮めた 1 コマ。ロボット、岩、足場候補、深度、標高の地図が同時に見え、機体上の「Go2」表記だけを周囲の機体色でなめらかに除いた。同じ原図を媒体図とサムネイルに使う。数値と説明は同動画の公開説明文から",
+   "motion": true,
+   "label": {
+    "ja": "Go2 が深度で足場を選び 5 段の山道に挑む",
+    "en": "Go2 chooses footholds from depth on a 5-stage mountain trail",
+    "zh": "Go2 根据深度选择落脚点,挑战 5 段山路",
+    "tw": "Go2 依深度選擇落腳點,挑戰 5 段山路",
+    "ko": "Go2가 깊이로 디딤점을 골라 5단계 산길에 도전한다",
+    "de": "Go2 wählt Trittstellen aus Tiefendaten auf einem Bergpfad mit 5 Stufen",
+    "hi": "Go2 depth से footholds चुनकर 5-stage पहाड़ी रास्ते पर चलता है",
+    "fr": "Go2 choisit ses appuis par la profondeur sur un sentier de montagne en 5 étapes"
+   },
+   "lead": {
+    "ja": "MuJoCo の Go2 が、後半ほど難しくなる 5 段の山道の段 1〜4 を進むが、段 5 は足場を選んでも 6 種すべてで転倒した。頭の深度を点群と標高の地図へ変換し、Fullseye の地形関数で足場候補と着地点を選ぶ。制御は学習済み重みを使わないルールベースのトロット。本編は YouTube の長尺動画。",
+    "en": "In MuJoCo, Go2 progresses through stages 1–4 of a mountain trail that becomes harder toward the end, but on stage 5 all 6 variants fall even with foothold selection. Head-camera depth is converted into a point cloud and elevation map, then Fullseye terrain functions choose foothold candidates and landing points. Control is a rule-based trot with no learned weights. The full run is a long video on YouTube.",
+    "zh": "在 MuJoCo 中,Go2 通过一条越到后段越难的 5 段山路的第 1 至第 4 段,但第 5 段即使选择落脚点,6 种情况也全部跌倒。头部深度先转换为点云和高程图,再由 Fullseye 地形函数选择落脚候选与着地点。控制采用不含学习权重的规则式小跑。完整过程是 YouTube 上的长视频。",
+    "tw": "在 MuJoCo 中,Go2 通過一條愈到後段愈難的 5 段山路的第 1 至第 4 段,但第 5 段即使選擇落腳點,6 種情況也全數跌倒。頭部深度先轉換為點雲與高程圖,再由 Fullseye 地形函數選擇落腳候選與著地點。控制採用不含學習權重的規則式小跑。完整過程是 YouTube 上的長影片。",
+    "ko": "MuJoCo에서 Go2가 뒤로 갈수록 어려워지는 5단계 산길의 1~4단계를 지나지만, 5단계에서는 디딤점을 골라도 6가지 모두 넘어졌다. 머리의 깊이를 점군과 표고 지도로 바꾸고 Fullseye 지형 함수로 디딤 후보와 착지점을 고른다. 제어는 학습 가중치가 없는 규칙 기반 트로트다. 전체 과정은 YouTube 장편 영상에 담았다.",
+    "de": "In MuJoCo bewältigt Go2 die Stufen 1–4 eines zum Ende hin schwierigeren Bergpfads mit 5 Stufen, doch in Stufe 5 stürzen alle 6 Varianten trotz Trittstellenwahl. Die Tiefe der Kopfkamera wird in eine Punktwolke und Höhenkarte umgewandelt; Fullseye-Geländefunktionen wählen daraus Trittstellen und Aufsetzpunkte. Gesteuert wird mit einem regelbasierten Trab ohne gelernte Gewichte. Der vollständige Lauf ist als langes Video auf YouTube zu sehen.",
+    "hi": "MuJoCo में Go2 ऐसे 5-stage पहाड़ी रास्ते की stage 1–4 से गुजरता है जो आगे जाकर कठिन होता जाता है, लेकिन stage 5 में foothold चुनने पर भी सभी 6 variants गिर गए। सिर की depth को point cloud और elevation map में बदलकर Fullseye terrain functions foothold candidates और landing points चुनते हैं। नियंत्रण rule-based trot है, जिसमें learned weights नहीं हैं। पूरा run YouTube के लंबे video में है।",
+    "fr": "Dans MuJoCo, Go2 franchit les étapes 1 à 4 d'un sentier de montagne en 5 étapes, de plus en plus difficile, mais à l'étape 5 les 6 variantes chutent malgré le choix des appuis. La profondeur de la caméra de tête est convertie en nuage de points et en carte d'altitude, puis les fonctions de terrain Fullseye choisissent les appuis possibles et les points de pose. La commande est un trot fondé sur des règles, sans poids appris. Le parcours complet est présenté dans une longue vidéo sur YouTube."
+   },
+   "see": {
+    "ja": "深度から作った標高の地図に、通れる場所、段差の縁、平らな足場候補を重ね、次の着地点を選ぶ。図はロボット、岩と段、足場候補、深度、標高の地図を一画面で示す。Go2 のモデルは MuJoCo Menagerie 収録(BSD-3-Clause)。地形は国土地理院の地理院タイルを加工(PDL1.0)。",
+    "en": "The elevation map built from depth is overlaid with traversable cells, step edges and flat foothold candidates to choose the next landing point. The image shows the robot, rocks and steps, foothold candidates, depth and elevation map together. The Go2 model comes from MuJoCo Menagerie (BSD-3-Clause). Terrain is derived from GSI Tiles (PDL1.0).",
+    "zh": "系统在由深度生成的高程图上叠加可通行区域、台阶边缘和平坦落脚候选,据此选择下一着地点。图中同时显示机器人、岩石与台阶、落脚候选、深度和高程图。Go2 模型收录于 MuJoCo Menagerie(BSD-3-Clause)。地形由地理院瓦片加工而成(PDL1.0)。",
+    "tw": "系統在由深度建立的高程圖上疊加可通行區域、臺階邊緣與平坦落腳候選,據此選擇下一著地點。圖中同時顯示機器人、岩石與臺階、落腳候選、深度和高程圖。Go2 模型收錄於 MuJoCo Menagerie(BSD-3-Clause)。地形由地理院圖磚加工而成(PDL1.0)。",
+    "ko": "깊이로 만든 표고 지도에 지나갈 수 있는 셀, 단차 가장자리, 평평한 디딤 후보를 겹쳐 다음 착지점을 고른다. 그림은 로봇, 바위와 단차, 디딤 후보, 깊이와 표고 지도를 한 화면에 보여 준다. Go2 모델은 MuJoCo Menagerie 수록판(BSD-3-Clause)이고, 지형은 GSI 타일을 가공했다(PDL1.0).",
+    "de": "Auf der aus Tiefendaten erzeugten Höhenkarte werden begehbare Zellen, Stufenkanten und ebene Trittstellen überlagert, um den nächsten Aufsetzpunkt zu wählen. Das Bild zeigt Roboter, Felsen und Stufen, Trittstellen, Tiefe und Höhenkarte gemeinsam. Das Go2-Modell stammt aus MuJoCo Menagerie (BSD-3-Clause). Das Gelände wurde aus GSI Tiles abgeleitet (PDL1.0).",
+    "hi": "depth से बने elevation map पर चलने योग्य cells, step edges और सपाट foothold candidates रखकर अगला landing point चुना जाता है। चित्र में robot, चट्टानें और steps, foothold candidates, depth और elevation map एक साथ दिखते हैं। Go2 model MuJoCo Menagerie से है (BSD-3-Clause)। terrain GSI Tiles से बनाया गया है (PDL1.0)।",
+    "fr": "La carte d'altitude produite à partir de la profondeur reçoit les cellules franchissables, les bords de marche et les appuis plats possibles afin de choisir le prochain point de pose. L'image réunit le robot, les rochers et marches, les appuis possibles, la profondeur et la carte d'altitude. Le modèle Go2 vient de MuJoCo Menagerie (BSD-3-Clause). Le terrain est dérivé des tuiles GSI (PDL1.0)."
+   },
+   "num": {
+    "ja": "5 段は勾配 5°→14.5°、岩の最大 11 cm、段の最大 10 cm。段 5 は足場を選んでも 6 種すべてで転倒し、このルールベースのトロットの限界だった。学習済みの重みは使わず、真値は審判だけが使う。限界: 深度に雑音なし、自機の除去は描画 group で代用、摩擦は一様、岩は凸形、段は丸太を模した剛体。",
+    "en": "Across 5 stages, slope rises from 5° to 14.5°, rocks reach 11 cm and steps 10 cm. On stage 5, all 6 variants fell even with foothold selection, marking the limit of this rule-based trot. It uses no learned weights, and only the judge sees ground truth. Limits: noiseless depth, self-removal approximated with a rendering group, uniform friction, convex rocks, and rigid log-modelled steps.",
+    "zh": "5 段的坡度从 5° 增至 14.5°,岩石最高 11 cm,台阶最高 10 cm。第 5 段即使选择落脚点,6 种情况也全部跌倒,这是该规则式小跑的极限。没有使用学习权重,真值仅供裁判使用。限制:深度无噪声、自身移除以渲染 group 代替、摩擦均匀、岩石为凸形、台阶为模拟圆木的刚体。",
+    "tw": "5 段的坡度從 5° 增至 14.5°,岩石最高 11 cm,臺階最高 10 cm。第 5 段即使選擇落腳點,6 種情況也全數跌倒,這是該規則式小跑的極限。沒有使用學習權重,真值僅供裁判使用。限制:深度無雜訊、自身移除以渲染 group 代替、摩擦均一、岩石為凸形、臺階為模擬圓木的剛體。",
+    "ko": "5단계의 경사는 5°에서 14.5°로 높아지고, 바위는 최대 11 cm, 단차는 최대 10 cm다. 5단계에서는 디딤점을 골라도 6가지 모두 넘어져 이 규칙 기반 트로트의 한계를 보였다. 학습 가중치는 쓰지 않았고 참값은 심판만 사용한다. 한계: 깊이에 잡음이 없고, 자기 몸 제거는 렌더링 group으로 대신했으며, 마찰은 균일하고 바위는 볼록한 형상이며 단차는 통나무를 본뜬 강체다.",
+    "de": "Über 5 Stufen steigt die Neigung von 5° auf 14.5°; Felsen erreichen 11 cm und Stufen 10 cm. In Stufe 5 stürzten alle 6 Varianten trotz Trittstellenwahl: die Grenze dieses regelbasierten Trabs. Gelernte Gewichte werden nicht verwendet, und nur der Schiedsrichter sieht die Ground Truth. Grenzen: rauschfreie Tiefe, Eigenausblendung mit einer Rendering-Gruppe angenähert, gleichmäßige Reibung, konvexe Felsen und als Baumstämme modellierte starre Stufen.",
+    "hi": "5 stages में ढलान 5° से 14.5° तक बढ़ती है, चट्टानें अधिकतम 11 cm और steps अधिकतम 10 cm हैं। stage 5 में foothold चुनने पर भी सभी 6 variants गिर गए; यह इस rule-based trot की सीमा है। learned weights इस्तेमाल नहीं होते और ground truth केवल judge देखता है। सीमाएँ: depth में noise नहीं, अपने रोबोट को हटाने के लिए rendering group का विकल्प इस्तेमाल हुआ, friction एक समान है, चट्टानें convex हैं और steps लकड़ी के लट्ठों जैसे rigid bodies हैं।",
+    "fr": "Sur 5 étapes, la pente passe de 5° à 14.5°, les rochers atteignent 11 cm et les marches 10 cm. À l'étape 5, les 6 variantes chutent malgré le choix des appuis : c'est la limite de ce trot fondé sur des règles. Aucun poids appris n'est utilisé et seul le juge accède à la vérité terrain. Limites : profondeur sans bruit, retrait du robot approché par un groupe de rendu, frottement uniforme, rochers convexes et marches constituées de corps rigides imitant des rondins."
+   },
+   "truth": {
+    "ja": "シミュレータの真値(審判だけが使用)",
+    "en": "Simulator ground truth (judge only)",
+    "zh": "模拟器真值(仅供裁判使用)",
+    "tw": "模擬器真值(僅供裁判使用)",
+    "ko": "시뮬레이터 참값(심판만 사용)",
+    "de": "Ground Truth des Simulators (nur für den Schiedsrichter)",
+    "hi": "simulator का ground truth (केवल judge के लिए)",
+    "fr": "Vérité terrain du simulateur (réservée au juge)"
+   },
+   "youtube_url": "https://youtu.be/FBtlYrHev74",
+   "ops": [
+    "terrain.elevation_map",
+    "terrain.fuse_elevation",
+    "terrain.traversability",
+    "terrain.foothold_score",
+    "terrain.step_edges",
+    "terrain.foothold_candidates",
+    "terrain.fill_gaps",
+    "terrain.ground_surface"
    ],
    "tier": "more"
   },
@@ -4279,6 +4351,7 @@
   "driving_evolution",
   "carla_ginza_perception",
   "g1_iroha_climb",
+  "go2_trail_footholds",
   "inspection_poc_reel"
  ],
  "series": [
