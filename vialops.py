@@ -15,19 +15,34 @@ __all__ = ["vial_spin_stop_sequence", "track_moving_particles"]
 _G = 9.80665
 
 
+def _input_error(name, value, expected, why, fix):
+    """Make fail-closed input errors actionable in English and Japanese."""
+    return ValueError(
+        f"{name}={value!r} is invalid; expected {expected}. Why: {why}. "
+        f"How to fix: {fix}. / {name}={value!r} は不正です。期待値: {expected}。"
+        f"理由: {why}。対処: {fix}。"
+    )
+
+
 def _positive(value, name):
     value = float(value)
     if not np.isfinite(value) or value <= 0:
-        raise ValueError(f"{name} must be a finite positive number, got {value!r}")
+        raise _input_error(name, value, "a finite number > 0",
+                           "the physical scale and the detector threshold must be positive",
+                           f"pass a finite positive {name}, for example 0.01")
     return value
 
 
 def _image_shape(shape):
     if len(shape) != 2:
-        raise ValueError("shape must be (height, width)")
+        raise _input_error("shape", shape, "(height, width)",
+                           "the sequence renderer needs exactly two image dimensions",
+                           "pass a tuple such as (96, 72)")
     h, w = (int(shape[0]), int(shape[1]))
     if h < 32 or w < 24:
-        raise ValueError("shape must be at least (32, 24) pixels")
+        raise _input_error("shape", shape, "height >= 32 and width >= 24 pixels",
+                           "smaller images cannot contain the vial, liquid, and tracking cues",
+                           "increase shape to at least (32, 24)")
     return h, w
 
 
@@ -40,6 +55,43 @@ def _draw_gaussian(image, row, col, sigma, amplitude):
         return
     rr, cc = np.mgrid[r0:r1, c0:c1]
     image[r0:r1, c0:c1] += amplitude * np.exp(-((rr - row) ** 2 + (cc - col) ** 2) / (2 * sigma * sigma))
+
+
+def _draw_ring(image, row, col, radius, amplitude):
+    """Add a soft refractive bubble ring; the central void stays transparent."""
+    h, w = image.shape
+    r0, r1 = max(0, int(math.floor(row - radius - 3))), min(h, int(math.ceil(row + radius + 4)))
+    c0, c1 = max(0, int(math.floor(col - radius - 3))), min(w, int(math.ceil(col + radius + 4)))
+    if r0 >= r1 or c0 >= c1:
+        return
+    rr, cc = np.mgrid[r0:r1, c0:c1]
+    distance = np.hypot(rr - row, cc - col)
+    image[r0:r1, c0:c1] += amplitude * np.exp(-((distance - radius) ** 2) / 1.1)
+
+
+def _vial_profile(height, width, body_half):
+    """Return the visible half-width of a cylindrical vial at every image row.
+
+    The profile is an intentionally simple drawing model: a narrow neck, sloped
+    shoulders and a rounded heel.  It is separate from the flow model, which is
+    still the documented axisymmetric screening approximation.
+    """
+    y = np.arange(height, dtype=float)
+    neck_half = max(2.0, 0.43 * body_half)
+    neck_top, shoulder_top, shoulder_bottom = 0.055 * height, 0.155 * height, 0.285 * height
+    heel_top, heel_bottom = 0.845 * height, 0.955 * height
+    profile = np.full(height, body_half, dtype=float)
+    profile[y < neck_top] = neck_half * 0.92
+    q = (y >= neck_top) & (y < shoulder_top)
+    profile[q] = neck_half
+    q = (y >= shoulder_top) & (y < shoulder_bottom)
+    profile[q] = neck_half + (body_half - neck_half) * (y[q] - shoulder_top) / (shoulder_bottom - shoulder_top)
+    q = (y > heel_top) & (y <= heel_bottom)
+    # The circular heel creates the visible curved bottom rather than a box edge.
+    t = (y[q] - heel_top) / (heel_bottom - heel_top)
+    profile[q] = body_half * np.sqrt(np.clip(1.0 - 0.72 * t * t, 0.08, 1.0))
+    profile[y > heel_bottom] = 0.0
+    return profile
 
 
 def vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.04,
@@ -75,7 +127,9 @@ def vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.0
     """
     h, w = _image_shape(shape)
     if int(n_frames) != n_frames or int(n_frames) < 3:
-        raise ValueError("n_frames must be an integer >= 3")
+        raise _input_error("n_frames", n_frames, "an integer >= 3",
+                           "motion and a stationary background need at least three frames",
+                           "pass n_frames=3 or more")
     n_frames = int(n_frames)
     for name, value in (("frame_interval_s", frame_interval_s), ("decay_time_s", decay_time_s),
                         ("vial_radius_mm", vial_radius_mm), ("liquid_height_mm", liquid_height_mm),
@@ -84,33 +138,58 @@ def vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.0
                         ("pixel_size_um", pixel_size_um)):
         _positive(value, name)
     if illumination not in ("back", "side"):
-        raise ValueError("illumination must be 'back' or 'side'")
+        raise _input_error("illumination", illumination, "'back' or 'side'",
+                           "the simulator only has calibrated rendering rules for these two lighting modes",
+                           "use illumination='back' or illumination='side'")
     if not np.isfinite(particle_contrast) or not 0.0 < float(particle_contrast) <= 1.0:
-        raise ValueError("particle_contrast must be finite in (0, 1]")
+        raise _input_error("particle_contrast", particle_contrast, "a finite value in (0, 1]",
+                           "contrast is rendered as a bounded fraction of the optical background",
+                           "use a value such as 0.065")
     if not np.isfinite(initial_omega_rad_s) or initial_omega_rad_s < 0:
-        raise ValueError("initial_omega_rad_s must be finite and >= 0")
+        raise _input_error("initial_omega_rad_s", initial_omega_rad_s, "a finite value >= 0",
+                           "a negative angular speed is outside this one-direction spin-stop model",
+                           "use 0 for no swirl or a positive angular speed")
     if not np.isfinite(noise_sigma) or noise_sigma < 0:
-        raise ValueError("noise_sigma must be finite and >= 0")
+        raise _input_error("noise_sigma", noise_sigma, "a finite value >= 0",
+                           "sensor noise is a non-negative standard deviation",
+                           "use 0 for noiseless data or a small positive value")
     counts = []
     for name, value in (("n_particles", n_particles), ("n_bubbles", n_bubbles), ("n_scratches", n_scratches)):
         if int(value) != value or int(value) < 0:
-            raise ValueError(f"{name} must be a non-negative integer")
+            raise _input_error(name, value, "a non-negative integer",
+                               "object counts must be whole items before trajectories are generated",
+                               f"use {name}=0, 1, 2, ...")
         counts.append(int(value))
     n_particles, n_bubbles, n_scratches = counts
 
     rng = np.random.default_rng(seed)
     dt = float(frame_interval_s)
     px_mm = float(pixel_size_um) / 1000.0
-    cx, cy = (w - 1) / 2.0, (h - 1) / 2.0
-    radius_px = min((w - 6) / 2.0, float(vial_radius_mm) / px_mm)
-    liquid_top = max(3.0, cy - float(liquid_height_mm) / (2.0 * px_mm))
-    liquid_bottom = min(h - 4.0, cy + float(liquid_height_mm) / (2.0 * px_mm))
-    # The image plane is a cross-section through a cylindrical vial.
+    cx = (w - 1) / 2.0
+    body_half = min(0.37 * (w - 1), float(vial_radius_mm) / px_mm)
+    profile = _vial_profile(h, w, body_half)
+    glass_px = max(1.0, min(3.5, 0.7 + 0.008 * body_half))
     yy, xx = np.mgrid[:h, :w]
-    inside = ((xx - cx) / radius_px) ** 2 <= 1.0
-    liquid = inside & (yy >= liquid_top) & (yy <= liquid_bottom)
+    half_at_y = profile[np.clip(yy, 0, h - 1)]
+    # A front view of the container: narrow neck, shoulders, cylindrical body
+    # and rounded heel.  The flow remains the documented axial screening model.
+    glass = np.abs(xx - cx) <= half_at_y
+    inner = np.abs(xx - cx) <= np.maximum(0.0, half_at_y - glass_px)
+    body_top, body_bottom = 0.29 * h, 0.875 * h
+    liquid_bottom = min(body_bottom, 0.94 * h) - 2.0
+    liquid_height_px = min(float(liquid_height_mm) / px_mm, 0.72 * h)
+    liquid_top = max(body_top + 2.0, liquid_bottom - liquid_height_px)
+    # A shallow concave meniscus: the edges are raised by the wetting cue.
+    normalized_x = np.clip((xx - cx) / np.maximum(half_at_y, 1.0), -1.0, 1.0)
+    meniscus = liquid_top + 2.0 * normalized_x * normalized_x
+    liquid = inner & (yy >= meniscus) & (yy <= liquid_bottom)
+    cy = 0.5 * (liquid_top + liquid_bottom)
+    flow_radius = max(5.0, min(0.78 * body_half, 0.48 * (liquid_bottom - liquid_top)))
     if not np.any(liquid):
-        raise ValueError("vial geometry leaves no visible liquid pixels")
+        raise _input_error("shape/liquid_height_mm", (shape, liquid_height_mm),
+                           "a geometry with visible liquid pixels",
+                           "the image is too short for the requested liquid height and vial profile",
+                           "increase shape height or reduce liquid_height_mm")
     objects = []
     object_id = 0
     for kind, number, diameter, density, contrast in (
@@ -118,11 +197,16 @@ def vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.0
         ("bubble", n_bubbles, max(90.0, float(particle_diameter_um) * 1.25), 1.2, min(0.95, float(particle_contrast) * 1.15)),
     ):
         for _ in range(number):
-            # Keep one PSF radius clear of the wall/meniscus at t=0.
+            # Keep one PSF radius clear of the wall/meniscus and away from the
+            # optical axis at t=0.  A particle exactly on the vortex centre has
+            # no measurable lateral post-stop motion, so it would make a motion
+            # detector appear to depend on a hidden random placement.
             for _attempt in range(200):
-                col = rng.uniform(cx - 0.72 * radius_px, cx + 0.72 * radius_px)
-                row = rng.uniform(liquid_top + 4, liquid_bottom - 4)
-                if ((col - cx) / radius_px) ** 2 + ((row - cy) / radius_px) ** 2 < 0.55:
+                angle = rng.uniform(0.0, 2.0 * math.pi)
+                radial = rng.uniform(0.32, 0.65) * flow_radius
+                col = cx + radial * math.cos(angle)
+                row = cy + radial * math.sin(angle)
+                if liquid_top + 4 < row < liquid_bottom - 4:
                     break
             objects.append({"id": object_id, "type": kind, "row": row, "col": col,
                             "diameter_um": diameter, "density": density, "contrast": contrast})
@@ -130,7 +214,7 @@ def vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.0
 
     scratches = []
     for scratch_id in range(n_scratches):
-        col = rng.uniform(cx - 0.70 * radius_px, cx + 0.70 * radius_px)
+        col = rng.uniform(cx - 0.68 * body_half, cx + 0.68 * body_half)
         row = rng.uniform(liquid_top + 5, liquid_bottom - 8)
         angle = rng.uniform(-0.35, 0.35)
         length = rng.uniform(8.0, 17.0)
@@ -141,17 +225,35 @@ def vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.0
                              "diameter_um", "density_kg_m3", "visible")}
     omega = float(initial_omega_rad_s) * np.exp(-np.arange(n_frames) * dt / float(decay_time_s))
     for frame in range(n_frames):
-        # Backlight has a bright, nearly uniform liquid. Side light has a fixed lateral gradient.
-        base = 0.16 + 0.54 * liquid.astype(float)
-        if illumination == "side":
-            base += liquid * (0.13 * (xx - cx) / max(radius_px, 1.0))
-        base += 0.025 * np.exp(-((yy - liquid_top) / 1.4) ** 2) * inside  # meniscus cue
-        image = base
+        edge_distance = np.abs(np.abs(xx - cx) - half_at_y)
+        inner_edge_distance = np.abs(np.abs(xx - cx) - np.maximum(0.0, half_at_y - glass_px))
+        rim = glass * np.exp(-(edge_distance / max(0.8, glass_px * 0.65)) ** 2)
+        refracted_edge = inner * np.exp(-(inner_edge_distance / max(1.0, glass_px * 1.25)) ** 2)
+        meniscus_line = inner * np.exp(-((yy - meniscus) / 1.05) ** 2)
+        meniscus_shadow = liquid * np.exp(-((yy - meniscus - 1.8) / 1.6) ** 2)
+        bottom_curve = glass * np.exp(-((yy - liquid_bottom) / 2.3) ** 2)
+        side_shine = glass * np.exp(-((np.abs(xx - cx) - 0.72 * half_at_y) /
+                                      max(1.4, 0.08 * body_half)) ** 2)
+        if illumination == "back":
+            # Bright-field: a white diffuser behind the vial makes opaque particles dark.
+            base = 0.80 + 0.06 * np.exp(-((xx - cx) / max(1.0, body_half * 1.2)) ** 2)
+            base = base - 0.12 * glass + 0.16 * inner + 0.035 * liquid
+            base += 0.17 * rim + 0.08 * refracted_edge + 0.055 * side_shine
+            base += 0.10 * meniscus_line - 0.065 * meniscus_shadow + 0.12 * bottom_curve
+        else:
+            # Dark-field / Tyndall-like side light: a dark field makes scattered light bright.
+            base = np.full((h, w), 0.018, dtype=float)
+            beam = np.exp(-((xx - (cx + 0.28 * body_half)) / max(1.0, 0.22 * body_half)) ** 2)
+            base += glass * (0.030 + 0.055 * beam) + inner * (0.020 + 0.025 * beam)
+            base += liquid * (0.018 + 0.025 * beam)
+            base += 0.25 * rim + 0.10 * refracted_edge + 0.075 * side_shine
+            base += 0.13 * meniscus_line + 0.09 * bottom_curve
+        image = np.asarray(base, dtype=float)
         # Stationary glass scratches are deliberately rendered in every frame.
         for sid, sr, sc, ang, length in scratches:
             for s in np.linspace(-length / 2.0, length / 2.0, int(length * 2) + 1):
                 rr, cc = sr + s * math.sin(ang), sc + s * math.cos(ang)
-                _draw_gaussian(image, rr, cc, 0.55, -0.11)
+                _draw_gaussian(image, rr, cc, 0.55, -0.095 if illumination == "back" else 0.10)
             for key, value in (("object_id", sid), ("object_type", "scratch"), ("frame", frame),
                                ("row_px", sr), ("col_px", sc), ("row_mm", (sr - cy) * px_mm),
                                ("col_mm", (sc - cx) * px_mm), ("diameter_um", 0.0),
@@ -162,7 +264,7 @@ def vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.0
                 # swirl in image coordinates and gravitational / buoyant Stokes drift
                 previous_row = ob["row"]
                 dy, dx = (ob["row"] - cy) * px_mm / 1000.0, (ob["col"] - cx) * px_mm / 1000.0
-                ob["row"] += (float(omega[frame - 1]) * dx / px_mm +
+                ob["row"] += (float(omega[frame - 1]) * dx * 1000.0 / px_mm +
                               (2.0 / 9.0) * (ob["diameter_um"] * 1e-6 / 2.0) ** 2 *
                               (ob["density"] - float(fluid_density_kg_m3)) * _G / float(viscosity_pa_s) /
                               px_mm * 1000.0) * dt
@@ -170,19 +272,24 @@ def vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.0
                 # geometric reflection at the circular wall and horizontal liquid limits
                 vec_r, vec_c = ob["row"] - cy, ob["col"] - cx
                 rad = math.hypot(vec_r, vec_c)
-                if rad > 0.92 * radius_px:
-                    ob["row"] = cy + vec_r / rad * 0.92 * radius_px
-                    ob["col"] = cx + vec_c / rad * 0.92 * radius_px
+                if rad > 0.92 * flow_radius:
+                    ob["row"] = cy + vec_r / rad * 0.92 * flow_radius
+                    ob["col"] = cx + vec_c / rad * 0.92 * flow_radius
                 # In the zero-swirl settling check a hard wall may arrest a
                 # particle, but must not turn gravity into an upward jump.
                 if initial_omega_rad_s == 0.0 and ob["density"] >= fluid_density_kg_m3:
                     ob["row"] = max(ob["row"], previous_row)
                 ob["row"] = float(np.clip(ob["row"], liquid_top + 2.0, liquid_bottom - 2.0))
-            visible = liquid_top < ob["row"] < liquid_bottom and abs(ob["col"] - cx) < radius_px
-            sigma = max(0.75, ob["diameter_um"] / float(pixel_size_um) * 0.9)
-            amp = ob["contrast"] * (1.0 if ob["type"] == "bubble" else (0.95 if illumination == "back" else 0.68))
+            visible = liquid_top < ob["row"] < liquid_bottom and abs(ob["col"] - cx) < 0.92 * body_half
+            sigma = max(0.55, ob["diameter_um"] / float(pixel_size_um) * 0.35)
+            size_gain = min(1.55, 0.28 + ob["diameter_um"] / 190.0)
+            amp = ob["contrast"] * size_gain * (-1.15 if illumination == "back" else 1.35)
             if visible:
-                _draw_gaussian(image, ob["row"], ob["col"], sigma, amp)
+                if ob["type"] == "bubble":
+                    _draw_ring(image, ob["row"], ob["col"], max(1.15, 1.45 * sigma), -0.7 * amp)
+                    _draw_gaussian(image, ob["row"], ob["col"], 0.65 * sigma, 0.25 * amp)
+                else:
+                    _draw_gaussian(image, ob["row"], ob["col"], sigma, amp)
             for key, value in (("object_id", ob["id"]), ("object_type", ob["type"]), ("frame", frame),
                                ("row_px", ob["row"]), ("col_px", ob["col"]),
                                ("row_mm", (ob["row"] - cy) * px_mm), ("col_mm", (ob["col"] - cx) * px_mm),
@@ -215,12 +322,18 @@ def track_moving_particles(frames, *, threshold=0.045, max_displacement_px=10.0,
     """
     x = np.asarray(frames, dtype=np.float64)
     if x.ndim != 3 or x.shape[0] < 3 or min(x.shape[1:]) < 8:
-        raise ValueError("frames must be a finite (T, H, W) sequence with T >= 3")
+        raise _input_error("frames.shape", tuple(x.shape), "a finite (T, H, W) sequence with T >= 3 and H,W >= 8",
+                           "temporal subtraction needs a sequence and a spatial neighbourhood",
+                           "pass at least three finite grayscale frames")
     if not np.all(np.isfinite(x)):
-        raise ValueError("frames contains non-finite values")
+        raise _input_error("frames", "contains NaN or inf", "finite pixel values",
+                           "a non-finite pixel makes a residual threshold meaningless",
+                           "replace NaN/inf before calling track_moving_particles")
     threshold, max_displacement_px = _positive(threshold, "threshold"), _positive(max_displacement_px, "max_displacement_px")
     if int(min_area_px) != min_area_px or int(min_area_px) < 1:
-        raise ValueError("min_area_px must be an integer >= 1")
+        raise _input_error("min_area_px", min_area_px, "an integer >= 1",
+                           "connected-component areas count whole pixels",
+                           "use min_area_px=1 or a larger integer")
     static_threshold = _positive(static_threshold, "static_threshold")
     from scipy import ndimage as ndi
 
@@ -246,7 +359,10 @@ def track_moving_particles(frames, *, threshold=0.045, max_displacement_px=10.0,
         # thresholding.  Without it, a low-contrast detector becomes a tracker of
         # accidental two-pixel noise islands rather than of PSF-shaped objects.
         residual = ndi.gaussian_filter(x[frame] - median, 0.8)
-        labels, nlab = ndi.label(residual >= threshold)
+        # Bright-field particles are dark on a bright diffuser; dark-field /
+        # Tyndall particles are bright on a dark field.  The signed residual is
+        # kept for the image, but detection is intentionally polarity agnostic.
+        labels, nlab = ndi.label(np.abs(residual) >= threshold)
         detections = []
         for lab in range(1, nlab + 1):
             pts = np.argwhere(labels == lab)
