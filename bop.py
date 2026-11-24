@@ -526,6 +526,11 @@ def evaluate_bop19_pose(result_csv, datasets_path, toolkit_root, eval_path,
     output.mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
     env["BOP_PATH"] = str(datasets)
+    # The evaluator imports the toolkit in this checkout, and its worker
+    # subprocesses inherit this environment.  Keep the verified worktree clean
+    # so a second evaluation sees exactly the same official checkout.
+    # 評価器と子 worker が検証済み checkout に bytecode を書かないようにする。
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
     interpreter = Path(python_executable or sys.executable).expanduser().resolve()
     if not interpreter.is_file():
         raise FileNotFoundError(f"python_executable does not exist: {interpreter}")

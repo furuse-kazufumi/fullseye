@@ -10,6 +10,7 @@ import json
 import math
 import os
 from pathlib import Path
+import subprocess
 import sys
 
 import numpy as np
@@ -17,8 +18,37 @@ import pytest
 
 import bop
 
-TOOLKIT_ROOT = os.environ.get("BOP_TOOLKIT_ROOT")
-pytestmark = pytest.mark.skipif(not TOOLKIT_ROOT, reason="BOP_TOOLKIT_ROOT is not set")
+TOOLKIT_SOURCE_ROOT = os.environ.get("BOP_TOOLKIT_ROOT")
+pytestmark = pytest.mark.skipif(
+    not TOOLKIT_SOURCE_ROOT, reason="BOP_TOOLKIT_ROOT is not set")
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _disable_toolkit_bytecode():
+    """Keep direct toolkit imports clean. / toolkit の直接 import でも bytecode を書かない。"""
+    previous = sys.dont_write_bytecode
+    sys.dont_write_bytecode = True
+    try:
+        yield
+    finally:
+        sys.dont_write_bytecode = previous
+
+
+@pytest.fixture(scope="module")
+def toolkit_root(tmp_path_factory):
+    """Clone the pinned revision for the test. / 元を汚さず固定版を一時複製する。"""
+    source = Path(TOOLKIT_SOURCE_ROOT).resolve()
+    if not (source / ".git").exists():
+        pytest.fail(f"BOP_TOOLKIT_ROOT is not a git checkout: {source}")
+    root = tmp_path_factory.mktemp("bop_toolkit") / "checkout"
+    environment = bop._toolkit_git_environment()
+    subprocess.run(
+        ["git", "clone", "--no-local", "--no-checkout", str(source), str(root)],
+        check=True, env=environment, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(
+        ["git", "-C", str(root), "checkout", "--detach", bop._BOP_TOOLKIT_COMMIT],
+        check=True, env=environment, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return root
 
 
 class _SequenceDepthRenderer:
@@ -31,8 +61,8 @@ class _SequenceDepthRenderer:
         return {"depth": next(self._depths)}
 
 
-def _official_pose_error():
-    root = Path(TOOLKIT_ROOT).resolve()
+def _official_pose_error(toolkit_root):
+    root = Path(toolkit_root).resolve()
     if not (root / "LICENSE").is_file():
         pytest.fail(f"BOP_TOOLKIT_ROOT has no LICENSE: {root}")
     sys.path.insert(0, str(root))
@@ -43,8 +73,8 @@ def _official_pose_error():
     return pose_error
 
 
-def test_official_vsd_mssd_mspd_match_synthetic_golden_values():
-    pose_error = _official_pose_error()
+def test_official_vsd_mssd_mspd_match_synthetic_golden_values(toolkit_root):
+    pose_error = _official_pose_error(toolkit_root)
     identity = np.eye(3)
     points = np.array([[-2.0, -1.0, 0.0], [3.0, -1.0, 0.0],
                        [0.5, 2.0, 0.0], [0.0, 0.0, 1.0]])
@@ -132,12 +162,24 @@ def _write_official_eval_fixture(root: Path) -> tuple[Path, Path]:
     return root / "datasets", result
 
 
-def test_pinned_official_bop19_driver_scores_synthetic_fixture(tmp_path):
-    """Run the pinned official script, including its VSD/MSSD/MSPD subprocesses."""
+def _assert_toolkit_worktree_is_clean(toolkit_root: Path) -> None:
+    completed = subprocess.run(
+        ["git", "-C", str(toolkit_root), "status", "--porcelain", "--ignored",
+         "--untracked-files=all"],
+        check=True, env=bop._toolkit_git_environment(), text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    assert completed.stdout == ""
+
+
+def test_pinned_official_bop19_driver_twice_keeps_checkout_clean(tmp_path, toolkit_root):
+    """Run the official adapter twice. / 公式 adapter を2回走らせても複製を汚さない。"""
     datasets, result = _write_official_eval_fixture(tmp_path)
-    scores = bop.evaluate_bop19_pose(result, datasets, Path(TOOLKIT_ROOT), tmp_path / "eval",
-                                     renderer_type="vispy", num_workers=1)
-    assert scores["AR"] == pytest.approx(1.0, abs=1e-12)
-    assert scores["AR_VSD"] == pytest.approx(1.0, abs=1e-12)
-    assert scores["AR_MSSD"] == pytest.approx(1.0, abs=1e-12)
-    assert scores["AR_MSPD"] == pytest.approx(1.0, abs=1e-12)
+    for run_number in (1, 2):
+        scores = bop.evaluate_bop19_pose(
+            result, datasets, toolkit_root, tmp_path / f"eval-{run_number}",
+            renderer_type="vispy", num_workers=1)
+        assert scores["AR"] == pytest.approx(1.0, abs=1e-12)
+        assert scores["AR_VSD"] == pytest.approx(1.0, abs=1e-12)
+        assert scores["AR_MSSD"] == pytest.approx(1.0, abs=1e-12)
+        assert scores["AR_MSPD"] == pytest.approx(1.0, abs=1e-12)
+        _assert_toolkit_worktree_is_clean(toolkit_root)

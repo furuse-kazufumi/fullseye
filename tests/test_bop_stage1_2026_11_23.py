@@ -384,11 +384,13 @@ def test_official_adapter_parses_the_pinned_evaluator_score_file(tmp_path, monke
     result = tmp_path / "method_itodd-val.csv"
     result.write_text("scene_id,im_id,obj_id,score,R,t,time\n", encoding="utf-8")
     eval_path = tmp_path / "eval"
+    evaluator_environment = {}
 
     def fake_run(command, **kwargs):
         if len(command) > 1 and command[1] == "-c":
             return type("Completed", (), {"returncode": 0, "stdout": str(tmp_path),
                                            "stderr": ""})()
+        evaluator_environment.update(kwargs["env"])
         score_dir = eval_path / "method_itodd-val"
         score_dir.mkdir(parents=True)
         (score_dir / "scores_bop19.json").write_text(json.dumps({
@@ -407,3 +409,4 @@ def test_official_adapter_parses_the_pinned_evaluator_score_file(tmp_path, monke
     assert scores["AR_VSD"] == 0.1
     assert scores["AR_MSSD"] == 0.2
     assert scores["AR_MSPD"] == 0.45
+    assert evaluator_environment["PYTHONDONTWRITEBYTECODE"] == "1"
