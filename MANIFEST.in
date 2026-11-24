@@ -2,4 +2,4 @@ include fullseye.h
 include fullseye.hpp
 include fullseye_abi.h
 recursive-include native fullseye_c_api.cpp
-recursive-include fullseye/sdk *.py *.cmake
+recursive-include fullseye/sdk *.py *.cmake ABI_VERSION

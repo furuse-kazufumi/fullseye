@@ -28,6 +28,7 @@ SDK_LAYOUT = {
     "headers": "fullseye/sdk/include/fullseye",
     "bridge_source": "fullseye/sdk/src",
     "cmake_config": "fullseye/sdk/cmake",
+    "runtime_abi": "fullseye/sdk/ABI_VERSION",
     "sdk_cli": "python -m fullseye.sdk",
 }
 
@@ -39,6 +40,7 @@ INSTALL_COMPONENTS = {
         destinations=tuple(SDK_LAYOUT.values()),
         development_only=False,
         runtime_note=("Installed by default with pip install fullseye. Run python -m fullseye.sdk "
-                      "--cmakedir and pass the result to CMake; Runtime uses that Python environment."),
+                      "--cmakedir and call fullseye_deploy_runtime(app); relink a moved environment "
+                      "with python -m fullseye.sdk relink <executable-directory>."),
     ),
 }

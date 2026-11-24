@@ -134,6 +134,9 @@ if(FULLSEYE_BUILD_NATIVE)
     add_executable(fullseye_c_missing_runtime_root tests/c_missing_runtime_root.c)
     set_property(TARGET fullseye_c_missing_runtime_root PROPERTY C_STANDARD 11)
     target_link_libraries(fullseye_c_missing_runtime_root PRIVATE Fullseye::C)
+    add_executable(fullseye_c_runtime_diagnose tests/c_runtime_diagnose.c)
+    set_property(TARGET fullseye_c_runtime_diagnose PROPERTY C_STANDARD 11)
+    target_link_libraries(fullseye_c_runtime_diagnose PRIVATE Fullseye::C)
     add_executable(fullseye_cpp_header_safety tests/cpp_header_safety.cpp)
     target_compile_features(fullseye_cpp_header_safety PRIVATE cxx_std_20)
     target_link_libraries(fullseye_cpp_header_safety PRIVATE Fullseye::CXX)
@@ -160,6 +163,8 @@ if(FULLSEYE_BUILD_NATIVE)
     add_test(NAME fullseye_c_missing_runtime_root
              COMMAND fullseye_c_missing_runtime_root
                      ${CMAKE_CURRENT_BINARY_DIR}/fullseye-runtime-root-does-not-exist)
+    add_test(NAME fullseye_c_runtime_diagnose
+             COMMAND fullseye_c_runtime_diagnose)
     add_test(NAME fullseye_cpp_header_safety
              COMMAND fullseye_cpp_header_safety)
   endif()

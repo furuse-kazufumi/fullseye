@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import json
 from pathlib import Path
 import shutil
 import subprocess
@@ -29,6 +30,8 @@ def _config_with_runtime_root(directory: Path, runtime_root: Path) -> Path:
     (directory / "fullseyeConfig.cmake").write_text("\n".join((
         "set(fullseye_PYTHON_EXECUTABLE %s)" % sdk_cli._bracket(str(Path(sys.executable).resolve())),
         "set(fullseye_PYTHON_RUNTIME_ROOT %s)" % sdk_cli._bracket(str(runtime_root)),
+        "set(fullseye_PYTHON_HOME %s)" % sdk_cli._bracket(str(Path(sys.prefix).resolve())),
+        "set(fullseye_SDK_ABI_VERSION %s)" % sdk_cli._bracket(sdk.abi_version()),
         "set(fullseye_SDK_SOURCE_FILE %s)" % sdk_cli._bracket(str(source.resolve())),
         "set(fullseye_SDK_INCLUDE_DIR %s)" % sdk_cli._bracket(str(include.resolve())),
         "include(%s)" % sdk_cli._bracket(str(config.resolve())),
@@ -47,7 +50,7 @@ def _runtime_env_without_python_path(env: dict[str, str]) -> dict[str, str]:
 
 
 def test_sdk_cli_reports_the_active_python_and_a_complete_config():
-    """The Config shim binds CMake to the Python that asked for it / Python 環境を固定する。"""
+    """The Config records build inputs but never bakes a runtime root / build 入力だけを記録する。"""
     result = _run([sys.executable, "-m", "fullseye.sdk", "--cmakedir"], cwd=ROOT)
     cmake_dir = Path(result.stdout.strip())
     config = cmake_dir / "fullseyeConfig.cmake"
@@ -55,8 +58,24 @@ def test_sdk_cli_reports_the_active_python_and_a_complete_config():
     text = config.read_text(encoding="utf-8")
     assert str(Path(sys.executable).resolve()) in text
     assert str(sdk.package_root().parent) in text
+    assert "fullseye_PYTHON_HOME" in text
+    assert sdk.abi_version() in text
     assert _run([sys.executable, "-m", "fullseye.sdk", "--python"], cwd=ROOT).stdout.strip() == sys.executable
     assert Path(_run([sys.executable, "-m", "fullseye.sdk", "--includedir"], cwd=ROOT).stdout.strip()).is_dir()
+
+
+def test_relink_rewrites_a_runtime_manifest_without_running_cmake(tmp_path):
+    """Relink updates all portable manifest facts / relink は再 configure なしで manifest を更新する。"""
+    target = tmp_path / "app"
+    target.mkdir()
+    manifest = target / "fullseye_runtime.json"
+    assert _run([sys.executable, "-m", "fullseye.sdk", "relink", str(target)], cwd=ROOT).stdout.strip() == str(manifest)
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    assert data["python_executable"] == str(Path(sys.executable).resolve())
+    assert data["runtime_root"] == str(sdk.package_root().parent)
+    assert data["sdk_abi_version"] == sdk.abi_version()
+    assert data["created_at"].endswith("Z")
+    assert _run([sys.executable, "-m", "fullseye.sdk", "relink", str(manifest)], cwd=ROOT).returncode == 0
 
 
 def test_doctor_reports_a_hidden_pybind11_dependency(monkeypatch, capsys):
@@ -81,6 +100,10 @@ def test_external_consumer_uses_default_runtime_and_matches_python(tmp_path, exa
           "-Dfullseye_DIR=" + cmake_dir], cwd=tmp_path, env=env)
     _run([cmake, "--build", str(build)], cwd=tmp_path, env=env)
     executable = build / ("app.exe" if sys.platform == "win32" else "app")
+    manifest = build / "fullseye_runtime.json"
+    recorded = json.loads(manifest.read_text(encoding="utf-8"))
+    assert recorded["runtime_root"] == str(sdk.package_root().parent)
+    assert recorded["sdk_abi_version"] == sdk.abi_version()
     run_env = _runtime_env_without_python_path(env)
     if sys.platform == "win32":
         dll = executable.parent / ("python%d%d.dll" % sys.version_info[:2])
@@ -117,8 +140,8 @@ def test_external_consumer_uses_a_non_ascii_runtime_root(tmp_path):
                                       env=_runtime_env_without_python_path(env)).stdout
 
 
-def test_moved_runtime_root_fails_closed_with_a_reconfigure_instruction(tmp_path):
-    """A vanished Config runtime reports FS_E_NO_PYTHON / 移動済み venv の復旧手順。"""
+def test_moved_runtime_root_is_repaired_by_relink_without_rebuilding(tmp_path):
+    """A moved venv is repaired by relink alone / 移動済み venv は relink だけで直る。"""
     cmake = shutil.which("cmake")
     if cmake is None:
         raise AssertionError("CMake is required for the standard C/C++ SDK gate")
@@ -130,9 +153,73 @@ def test_moved_runtime_root_fails_closed_with_a_reconfigure_instruction(tmp_path
           "-Dfullseye_DIR=" + str(cmake_dir)], cwd=tmp_path, env=env)
     _run([cmake, "--build", str(build)], cwd=tmp_path, env=env)
     executable = build / ("app.exe" if sys.platform == "win32" else "app")
-    result = subprocess.run([str(executable)], cwd=tmp_path,
-                            env=_runtime_env_without_python_path(env), text=True,
-                            capture_output=True, check=False, timeout=120)
+    manifest = build / "fullseye_runtime.json"
+    assert json.loads(manifest.read_text(encoding="utf-8"))["runtime_root"] != str(sdk.package_root().parent)
+    # This changes only the sidecar: no CMake configure/build invocation follows.
+    _run([sys.executable, "-m", "fullseye.sdk", "relink", str(build)], cwd=ROOT)
+    assert json.loads(manifest.read_text(encoding="utf-8"))["runtime_root"] == str(sdk.package_root().parent)
+    assert "result_count=1" in _run([str(executable)], cwd=tmp_path,
+                                      env=_runtime_env_without_python_path(env)).stdout
+
+
+def test_missing_manifest_uses_environment_and_abi_mismatch_is_rejected(tmp_path):
+    """Deleted sidecars fall back; a wrong ABI sidecar is never selected / 消去後探索と ABI 不一致拒否。"""
+    cmake = shutil.which("cmake")
+    if cmake is None:
+        raise AssertionError("CMake is required for the standard C/C++ SDK gate")
+    cmake_dir = _run([sys.executable, "-m", "fullseye.sdk", "--cmakedir"], cwd=ROOT).stdout.strip()
+    build = tmp_path / "automatic" / "build"
+    env = os.environ.copy()
+    env.pop("FULLSEYE_PYTHON_ROOT", None)
+    _run([cmake, "-S", str(ROOT / "examples" / "c_api" / "hello_cpp"), "-B", str(build),
+          "-Dfullseye_DIR=" + cmake_dir], cwd=tmp_path, env=env)
+    _run([cmake, "--build", str(build)], cwd=tmp_path, env=env)
+    executable = build / ("app.exe" if sys.platform == "win32" else "app")
+    manifest = build / "fullseye_runtime.json"
+    manifest.unlink()
+    automatic = _runtime_env_without_python_path(env)
+    automatic["FULLSEYE_PYTHON_ROOT"] = str(sdk.package_root().parent)
+    automatic["VIRTUAL_ENV"] = str(Path(sys.prefix).resolve())
+    result = _run([str(executable)], cwd=tmp_path, env=automatic)
+    assert "result_count=1" in result.stdout
+    assert "FULLSEYE_PYTHON_ROOT" in result.stderr
+    data = {
+        "python_executable": str(Path(sys.executable).resolve()),
+        "python_home": str(Path(sys.prefix).resolve()),
+        "runtime_root": str(sdk.package_root().parent),
+        "sdk_abi_version": "999.0",
+        "created_at": "2026-11-24T00:00:00Z",
+    }
+    manifest.write_text(json.dumps(data), encoding="utf-8")
+    result = _run([str(executable)], cwd=tmp_path, env=automatic)
+    assert "result_count=1" in result.stdout
+    assert "FULLSEYE_PYTHON_ROOT" in result.stderr
+    assert "adjacent fullseye_runtime.json" not in result.stderr
+
+
+def test_missing_every_candidate_explains_what_happened_and_how_to_fix(tmp_path):
+    """The C error gives attempts and paste-ready repairs / C の失敗は探索履歴と修復コマンドを返す。"""
+    cmake = shutil.which("cmake")
+    if cmake is None:
+        raise AssertionError("CMake is required for the standard C/C++ SDK gate")
+    cmake_dir = _run([sys.executable, "-m", "fullseye.sdk", "--cmakedir"], cwd=ROOT).stdout.strip()
+    build = tmp_path / "failure" / "build"
+    env = os.environ.copy()
+    _run([cmake, "-S", str(ROOT / "examples" / "c_api" / "hello_cpp"), "-B", str(build),
+          "-Dfullseye_DIR=" + cmake_dir], cwd=tmp_path, env=env)
+    _run([cmake, "--build", str(build)], cwd=tmp_path, env=env)
+    manifest = build / "fullseye_runtime.json"
+    manifest.write_text(json.dumps({"runtime_root": str(tmp_path / "gone"), "sdk_abi_version": "0.2"}),
+                        encoding="utf-8")
+    failed = _runtime_env_without_python_path(env)
+    failed["FULLSEYE_PYTHON_ROOT"] = str(tmp_path / "no-fullseye")
+    failed["VIRTUAL_ENV"] = str(tmp_path / "no-venv")
+    failed["CONDA_PREFIX"] = str(tmp_path / "no-conda")
+    result = subprocess.run([str(build / ("app.exe" if sys.platform == "win32" else "app"))], cwd=tmp_path,
+                            env=failed, text=True, capture_output=True, check=False, timeout=120)
     assert result.returncode != 0
-    assert "FS_E_NO_PYTHON" in result.stderr
-    assert "no longer exists" in result.stderr and "Re-run CMake" in result.stderr
+    for text in ("FS_E_NO_PYTHON", "Tried:", "FULLSEYE_PYTHON_ROOT", "fullseye_runtime.json",
+                 "Fix in PowerShell:", "py -3.11 -m pip install fullseye",
+                 "py -3.11 -m fullseye.sdk relink .\\build", "Fix in bash:",
+                 "python3 -m fullseye.sdk relink ./build"):
+        assert text in result.stderr

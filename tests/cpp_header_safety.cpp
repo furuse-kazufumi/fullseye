@@ -74,6 +74,9 @@ private:
 int main() {
     static_assert(!std::is_constructible_v<fullseye::Result, fs_result_id_t>,
                   "Only Runtime may adopt a result ID");
+    const std::string diagnosis = fullseye::Runtime::diagnose();
+    if (diagnosis.find("Tried:") == std::string::npos
+        || diagnosis.find("FULLSEYE_PYTHON_ROOT") == std::string::npos) return 2;
 
     GuardedDouble guarded;
     try {

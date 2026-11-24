@@ -408,7 +408,7 @@ py-modules = [
                "data/MCP_INPUT_INDEPENDENT.json",
                # Header/source SDK payload. setup.py stages the three headers
                # and bridge source into these paths while building the wheel.
-               "sdk/cmake/*.cmake", "sdk/include/fullseye/*.h", "sdk/src/*.cpp"]
+               "sdk/ABI_VERSION", "sdk/cmake/*.cmake", "sdk/include/fullseye/*.h", "sdk/src/*.cpp"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).

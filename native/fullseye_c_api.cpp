@@ -9,16 +9,22 @@
 #include <algorithm>
 #include <atomic>
 #include <cmath>
+#include <cstdio>
 #include <cstdint>
 #include <chrono>
 #include <condition_variable>
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <iterator>
 #include <limits>
 #include <mutex>
 #include <new>
 #include <memory>
+#include <optional>
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -31,6 +37,10 @@
 #    define WIN32_LEAN_AND_MEAN
 #  endif
 #  include <windows.h>
+#elif defined(__APPLE__)
+#  include <mach-o/dyld.h>
+#else
+#  include <unistd.h>
 #endif
 
 namespace py = pybind11;
@@ -61,7 +71,10 @@ constexpr uint32_t kTypedInputNSize =
     static_cast<uint32_t>(offsetof(fs_input_n_t, feature) + sizeof(double));
 constexpr uint32_t kRequiredArraySize =
     static_cast<uint32_t>(offsetof(fs_array_view_t, dtype) + sizeof(fs_dtype_t));
-constexpr size_t kMaxErrorBytes = 4096u;
+// Discovery reports retain every candidate and both repair command sets, so a
+// short fixed error slot would hide the last remedy. / 全候補と二系統の修復手順を
+// 保つため、短い固定バッファで末尾を切らない。
+constexpr size_t kMaxErrorBytes = 16384u;
 // Windows extended-length paths are limited to 32,767 UTF-16 code units.
 // UTF-8 needs at most three bytes per UTF-16 code unit: a BMP scalar uses at
 // most three bytes, and a supplementary scalar uses four bytes across its
@@ -85,6 +98,7 @@ constexpr size_t kMaxOperatorIdBytes = 256u;
 // payload でなく制御用文書なので、1 MiB で閉じた schema には足り、悪意ある
 // span 長を std::string の確保まで通さない。
 constexpr size_t kMaxJsonBytes = 1024u * 1024u;
+constexpr const char kSdkAbiVersion[] = "0.2";
 
 struct Item {
     fs_value_kind_t kind = FS_VALUE_REAL;
@@ -352,22 +366,378 @@ struct PythonInitResult {
     std::string error;
 };
 
-bool runtime_root_is_directory(const std::string &root) {
-    std::error_code root_error;
+struct RuntimeAttempt {
+    std::string source;
+    std::string location;
+    std::string outcome;
+};
+
+struct RuntimeDiscovery {
+    bool found = false;
+    std::string root;
+    std::string home;
+    std::string source;
+    std::vector<RuntimeAttempt> attempts;
+};
+
+std::filesystem::path utf8_path(const std::string &value) {
 #ifdef _WIN32
-    if (root.size() > static_cast<size_t>(std::numeric_limits<int>::max())) return false;
-    const int wide_count = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, root.data(),
-                                               static_cast<int>(root.size()), nullptr, 0);
-    if (wide_count <= 0) return false;
-    std::wstring wide_root(static_cast<size_t>(wide_count), L'\0');
-    if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, root.data(),
-                            static_cast<int>(root.size()), wide_root.data(), wide_count) != wide_count) {
+    if (value.size() > static_cast<size_t>(std::numeric_limits<int>::max())) {
+        throw std::runtime_error("UTF-8 path exceeds the Windows API limit");
+    }
+    const int count = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, value.data(),
+                                          static_cast<int>(value.size()), nullptr, 0);
+    if (count <= 0) throw std::runtime_error("path is not valid UTF-8");
+    std::wstring wide(static_cast<size_t>(count), L'\0');
+    if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, value.data(), static_cast<int>(value.size()),
+                            wide.data(), count) != count) {
+        throw std::runtime_error("path is not valid UTF-8");
+    }
+    return std::filesystem::path(wide);
+#else
+    return std::filesystem::path(value);
+#endif
+}
+
+std::string path_utf8(const std::filesystem::path &value) {
+    const auto bytes = value.u8string();
+    return std::string(bytes.begin(), bytes.end());
+}
+
+std::string linked_python_home() {
+#ifdef _WIN32
+    char name[32]{};
+    std::snprintf(name, sizeof(name), "python%d%d.dll", PY_MAJOR_VERSION, PY_MINOR_VERSION);
+    const HMODULE module = GetModuleHandleA(name);
+    if (module == nullptr) return "";
+    std::vector<wchar_t> path(32768u, L'\0');
+    const DWORD count = GetModuleFileNameW(module, path.data(), static_cast<DWORD>(path.size()));
+    if (count == 0u || count >= path.size()) return "";
+    return path_utf8(std::filesystem::path(std::wstring(path.data(), count)).parent_path());
+#else
+    return "";
+#endif
+}
+
+std::string trim_ascii(std::string value) {
+    const auto first = value.find_first_not_of(" \t\r\n");
+    if (first == std::string::npos) return "";
+    const auto last = value.find_last_not_of(" \t\r\n");
+    return value.substr(first, last - first + 1u);
+}
+
+bool compatible_runtime_root(const std::string &root, std::string *why) {
+    try {
+        if (root.empty()) {
+            *why = "not specified";
+            return false;
+        }
+        const std::filesystem::path base = utf8_path(root);
+        std::error_code error;
+        if (!std::filesystem::is_directory(base, error)) {
+            *why = "directory does not exist";
+            return false;
+        }
+        const std::filesystem::path package = base / "fullseye";
+        if (!std::filesystem::is_regular_file(package / "__init__.py", error)) {
+            *why = "fullseye is not installed (missing fullseye/__init__.py)";
+            return false;
+        }
+        const std::filesystem::path abi_file = package / "sdk" / "ABI_VERSION";
+        if (!std::filesystem::is_regular_file(abi_file, error)) {
+            *why = "SDK ABI version file is missing (fullseye/sdk/ABI_VERSION)";
+            return false;
+        }
+        std::ifstream input(abi_file, std::ios::binary);
+        std::string version((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+        version = trim_ascii(version);
+        if (version != kSdkAbiVersion) {
+            *why = "SDK ABI version " + (version.empty() ? std::string("is empty") : version)
+                + " does not match required " + kSdkAbiVersion;
+            return false;
+        }
+        *why = "compatible fullseye SDK ABI " + std::string(kSdkAbiVersion);
+        return true;
+    } catch (const std::exception &exc) {
+        *why = std::string("could not inspect the path: ") + exc.what();
         return false;
     }
-    return std::filesystem::is_directory(std::filesystem::path(wide_root), root_error);
+}
+
+void try_runtime_root(RuntimeDiscovery *discovery, const std::string &source,
+                      const std::string &root, const std::string &home) {
+    if (discovery->found) return;
+    std::string why;
+    const bool compatible = compatible_runtime_root(root, &why);
+    discovery->attempts.push_back({source, root.empty() ? "(none)" : root,
+                                   compatible ? "usable: " + why : why});
+    if (compatible) {
+        discovery->found = true;
+        discovery->root = root;
+        discovery->home = home.empty() ? linked_python_home() : home;
+        discovery->source = source;
+    }
+}
+
+void try_runtime_prefix(RuntimeDiscovery *discovery, const std::string &source,
+                        const std::string &prefix) {
+    if (discovery->found) return;
+    if (prefix.empty()) {
+        try_runtime_root(discovery, source, "", "");
+        return;
+    }
+    const std::filesystem::path base = utf8_path(prefix);
+    try_runtime_root(discovery, source + " (root)", path_utf8(base), prefix);
+    if (discovery->found) return;
+    try_runtime_root(discovery, source + " (Windows site-packages)",
+                     path_utf8(base / "Lib" / "site-packages"), prefix);
+    if (discovery->found) return;
+    std::error_code error;
+    const std::filesystem::path lib = base / "lib";
+    if (!std::filesystem::is_directory(lib, error)) {
+        discovery->attempts.push_back({source + " (POSIX site-packages)", path_utf8(lib),
+                                       "directory does not exist"});
+        return;
+    }
+    bool had_python_directory = false;
+    for (const auto &entry : std::filesystem::directory_iterator(lib, error)) {
+        if (error) break;
+        const std::string name = entry.path().filename().string();
+        if (name.rfind("python", 0u) != 0u) continue;
+        had_python_directory = true;
+        try_runtime_root(discovery, source + " (POSIX site-packages)",
+                         path_utf8(entry.path() / "site-packages"), prefix);
+        if (discovery->found) return;
+    }
+    if (!had_python_directory) {
+        discovery->attempts.push_back({source + " (POSIX site-packages)", path_utf8(lib),
+                                       "no lib/python*/site-packages directory"});
+    }
+}
+
+std::optional<std::string> json_string_field(const std::string &text, const char *field) {
+    const std::string key = std::string("\"") + field + "\"";
+    const size_t key_at = text.find(key);
+    if (key_at == std::string::npos) return std::nullopt;
+    size_t at = text.find(':', key_at + key.size());
+    if (at == std::string::npos) return std::nullopt;
+    ++at;
+    while (at < text.size() && (text[at] == ' ' || text[at] == '\t' || text[at] == '\r' || text[at] == '\n')) ++at;
+    if (at >= text.size() || text[at++] != '\"') return std::nullopt;
+    std::string value;
+    while (at < text.size()) {
+        const char character = text[at++];
+        if (character == '\"') return value;
+        if (character != '\\') {
+            value.push_back(character);
+            continue;
+        }
+        if (at >= text.size()) return std::nullopt;
+        const char escaped = text[at++];
+        switch (escaped) {
+            case '\"': value.push_back('\"'); break;
+            case '\\': value.push_back('\\'); break;
+            case '/': value.push_back('/'); break;
+            case 'b': value.push_back('\b'); break;
+            case 'f': value.push_back('\f'); break;
+            case 'n': value.push_back('\n'); break;
+            case 'r': value.push_back('\r'); break;
+            case 't': value.push_back('\t'); break;
+            default: return std::nullopt;  // Manifests use UTF-8, never \u escapes.
+        }
+    }
+    return std::nullopt;
+}
+
+std::string executable_directory() {
+#ifdef _WIN32
+    std::vector<wchar_t> path(32768u, L'\0');
+    const DWORD count = GetModuleFileNameW(nullptr, path.data(), static_cast<DWORD>(path.size()));
+    if (count == 0u || count >= path.size()) return "";
+    return path_utf8(std::filesystem::path(std::wstring(path.data(), count)).parent_path());
+#elif defined(__APPLE__)
+    uint32_t count = 0u;
+    (void)_NSGetExecutablePath(nullptr, &count);
+    std::vector<char> path(static_cast<size_t>(count) + 1u, '\0');
+    if (_NSGetExecutablePath(path.data(), &count) != 0) return "";
+    return path_utf8(std::filesystem::path(path.data()).parent_path());
 #else
-    return std::filesystem::is_directory(std::filesystem::path(root), root_error);
+    std::vector<char> path(32768u, '\0');
+    const ssize_t count = readlink("/proc/self/exe", path.data(), path.size() - 1u);
+    if (count <= 0) return "";
+    path[static_cast<size_t>(count)] = '\0';
+    return path_utf8(std::filesystem::path(path.data()).parent_path());
 #endif
+}
+
+std::string home_from_python_executable(const std::string &python) {
+    if (python.empty()) return "";
+    const std::filesystem::path directory = utf8_path(python).parent_path();
+    const std::string leaf = directory.filename().string();
+    return path_utf8((leaf == "Scripts" || leaf == "bin") ? directory.parent_path() : directory);
+}
+
+void try_runtime_manifest(RuntimeDiscovery *discovery) {
+    if (discovery->found) return;
+    const std::string directory = executable_directory();
+    if (directory.empty()) {
+        discovery->attempts.push_back({"adjacent fullseye_runtime.json", "(current executable)",
+                                       "could not determine executable directory"});
+        return;
+    }
+    const std::filesystem::path manifest = utf8_path(directory) / "fullseye_runtime.json";
+    std::error_code error;
+    if (!std::filesystem::is_regular_file(manifest, error)) {
+        discovery->attempts.push_back({"adjacent fullseye_runtime.json", path_utf8(manifest), "file does not exist"});
+        return;
+    }
+    std::ifstream input(manifest, std::ios::binary);
+    const std::string text((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+    const auto root = json_string_field(text, "runtime_root");
+    const auto version = json_string_field(text, "sdk_abi_version");
+    if (!root || !version) {
+        discovery->attempts.push_back({"adjacent fullseye_runtime.json", path_utf8(manifest),
+                                       "invalid manifest: runtime_root or sdk_abi_version is missing"});
+        return;
+    }
+    if (*version != kSdkAbiVersion) {
+        discovery->attempts.push_back({"adjacent fullseye_runtime.json", path_utf8(manifest),
+                                       "SDK ABI version " + *version + " does not match required " + kSdkAbiVersion});
+        return;
+    }
+    const auto home = json_string_field(text, "python_home");
+    const auto python = json_string_field(text, "python_executable");
+    try_runtime_root(discovery, "adjacent fullseye_runtime.json", *root,
+                     home ? *home : (python ? home_from_python_executable(*python) : ""));
+}
+
+#ifdef _WIN32
+std::string utf8_from_wide(const std::wstring &value) {
+    if (value.empty()) return "";
+    const int count = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, value.data(),
+                                          static_cast<int>(value.size()), nullptr, 0, nullptr, nullptr);
+    if (count <= 0) return "";
+    std::string result(static_cast<size_t>(count), '\0');
+    if (WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, value.data(), static_cast<int>(value.size()),
+                            result.data(), count, nullptr, nullptr) != count) return "";
+    return result;
+}
+
+bool try_pep514_hive(RuntimeDiscovery *discovery, HKEY hive) {
+    HKEY core = nullptr;
+    if (RegOpenKeyExW(hive, L"Software\\Python\\PythonCore", 0u, KEY_READ, &core) != ERROR_SUCCESS) return false;
+    bool found_installation = false;
+    for (DWORD index = 0u; !discovery->found; ++index) {
+        wchar_t name[256]{};
+        DWORD length = static_cast<DWORD>(std::size(name) - 1u);
+        if (RegEnumKeyExW(core, index, name, &length, nullptr, nullptr, nullptr, nullptr) != ERROR_SUCCESS) break;
+        const std::wstring key_name = std::wstring(name, length) + L"\\InstallPath";
+        HKEY install = nullptr;
+        if (RegOpenKeyExW(core, key_name.c_str(), 0u, KEY_READ, &install) != ERROR_SUCCESS) continue;
+        wchar_t value[32768]{};
+        DWORD type = 0u;
+        DWORD bytes = sizeof(value) - sizeof(wchar_t);
+        const LONG result = RegQueryValueExW(install, nullptr, nullptr, &type,
+                                             reinterpret_cast<LPBYTE>(value), &bytes);
+        RegCloseKey(install);
+        if (result != ERROR_SUCCESS || (type != REG_SZ && type != REG_EXPAND_SZ)) continue;
+        found_installation = true;
+        try_runtime_prefix(discovery, "PEP 514 registry", utf8_from_wide(value));
+    }
+    RegCloseKey(core);
+    return found_installation;
+}
+#endif
+
+void try_path_python3(RuntimeDiscovery *discovery) {
+#ifndef _WIN32
+    const char *path_value = std::getenv("PATH");
+    if (path_value == nullptr || *path_value == '\0') {
+        discovery->attempts.push_back({"PATH python3", "(PATH)", "PATH is empty"});
+        return;
+    }
+    std::stringstream paths(path_value);
+    std::string directory;
+    bool found_executable = false;
+    while (std::getline(paths, directory, ':') && !discovery->found) {
+        const std::filesystem::path executable = (directory.empty() ? std::filesystem::path(".")
+                                                                       : utf8_path(directory)) / "python3";
+        std::error_code error;
+        if (!std::filesystem::is_regular_file(executable, error)) continue;
+        found_executable = true;
+        try_runtime_prefix(discovery, "PATH python3", home_from_python_executable(path_utf8(executable)));
+    }
+    if (!discovery->found && !found_executable) {
+        discovery->attempts.push_back({"PATH python3", "python3", "executable was not found"});
+    }
+#endif
+}
+
+RuntimeDiscovery discover_runtime(const std::string &explicit_root, const std::string &explicit_home) {
+    RuntimeDiscovery discovery;
+    if (!explicit_root.empty()) try_runtime_root(&discovery, "explicit runtime_root", explicit_root, explicit_home);
+    if (!discovery.found) {
+        const char *environment_root = std::getenv("FULLSEYE_PYTHON_ROOT");
+        const char *venv_home = std::getenv("VIRTUAL_ENV");
+        const char *conda_home = std::getenv("CONDA_PREFIX");
+        const std::string environment_home = venv_home != nullptr && *venv_home != '\0' ? venv_home
+            : (conda_home != nullptr && *conda_home != '\0' ? conda_home : linked_python_home());
+        if (environment_root == nullptr || *environment_root == '\0') {
+            discovery.attempts.push_back({"FULLSEYE_PYTHON_ROOT", "(not set)", "not specified"});
+        } else {
+            try_runtime_root(&discovery, "FULLSEYE_PYTHON_ROOT", environment_root, environment_home);
+            if (!discovery.found) try_runtime_prefix(&discovery, "FULLSEYE_PYTHON_ROOT", environment_root);
+        }
+    }
+    if (!discovery.found) try_runtime_manifest(&discovery);
+    const char *venv = std::getenv("VIRTUAL_ENV");
+    if (!discovery.found) try_runtime_prefix(&discovery, "VIRTUAL_ENV", venv == nullptr ? "" : venv);
+    const char *conda = std::getenv("CONDA_PREFIX");
+    if (!discovery.found) try_runtime_prefix(&discovery, "CONDA_PREFIX", conda == nullptr ? "" : conda);
+#ifdef _WIN32
+    if (!discovery.found) {
+        const bool user_registry = try_pep514_hive(&discovery, HKEY_CURRENT_USER);
+        const bool machine_registry = discovery.found ? false : try_pep514_hive(&discovery, HKEY_LOCAL_MACHINE);
+        if (!discovery.found && !user_registry && !machine_registry) {
+            discovery.attempts.push_back({"PEP 514 registry", "HKCU/HKLM Software\\Python\\PythonCore",
+                                          "no registered Python installation"});
+        }
+    }
+#else
+    if (!discovery.found) try_path_python3(&discovery);
+#endif
+    if (!discovery.found && FULLSEYE_DEFAULT_RUNTIME_ROOT[0] != '\0') {
+        try_runtime_root(&discovery, "embedded build-time fallback", FULLSEYE_DEFAULT_RUNTIME_ROOT,
+                         FULLSEYE_DEFAULT_PYTHON_HOME);
+    } else if (!discovery.found) {
+        discovery.attempts.push_back({"embedded build-time fallback", "(not compiled in)", "not available"});
+    }
+    return discovery;
+}
+
+std::string discovery_report(const RuntimeDiscovery &discovery) {
+    std::ostringstream output;
+    if (discovery.found) {
+        output << "Fullseye runtime discovery (CPython was not started).\n"
+               << "Selected " << discovery.source << ": " << discovery.root << "\n";
+    } else {
+        output << "Fullseye could not find a compatible Python runtime.\n"
+               << "Why: every candidate was absent, incomplete, or built for a different SDK ABI (expected "
+               << kSdkAbiVersion << ").\n";
+    }
+    output << "Tried:\n";
+    for (const RuntimeAttempt &attempt : discovery.attempts) {
+        output << "- " << attempt.source << ": " << attempt.location << " -- " << attempt.outcome << "\n";
+    }
+    if (!discovery.found) {
+        output << "Fix in PowerShell:\n"
+               << "py -3.11 -m pip install fullseye\n"
+               << "py -3.11 -m fullseye.sdk relink .\\build\n"
+               << "Fix in bash:\n"
+               << "python3 -m pip install fullseye\n"
+               << "python3 -m fullseye.sdk relink ./build\n";
+    }
+    return output.str();
 }
 
 PythonInitResult initialize_python(const std::string &root, const std::string &home,
@@ -384,11 +754,11 @@ PythonInitResult initialize_python(const std::string &root, const std::string &h
         }
         return {};
     }
-    if (!runtime_root_is_directory(root)) {
+    std::string compatibility;
+    if (!compatible_runtime_root(root, &compatibility)) {
         return {FS_E_NO_PYTHON,
-                "the configured Fullseye Python runtime_root no longer exists; the Python "
-                "environment may have moved. Re-run CMake with -Dfullseye_DIR=\"$(python -m "
-                "fullseye.sdk --cmakedir)\"."};
+                "the selected Fullseye Python runtime became unusable: " + compatibility
+                + ". Run: python -m fullseye.sdk relink <executable-directory>."};
     }
     try {
         const bool was_running = Py_IsInitialized() != 0;
@@ -884,6 +1254,27 @@ FS_API fs_status_t FS_CALL fs_test_result_id_resume_lease(void) {
 }
 #endif
 
+FS_API size_t FS_CALL fs_runtime_diagnose(char *buf, size_t capacity) {
+    try {
+        const std::string message = discovery_report(discover_runtime("", ""));
+        const size_t needed = message.size() + 1u;
+        if (buf != nullptr && capacity != 0u) {
+            const size_t copied = std::min(message.size(), capacity - 1u);
+            if (copied != 0u) std::memcpy(buf, message.data(), copied);
+            buf[copied] = '\0';
+        }
+        return needed;
+    } catch (...) {
+        static constexpr char fallback[] = "Fullseye runtime discovery could not inspect this process.";
+        if (buf != nullptr && capacity != 0u) {
+            const size_t copied = std::min(sizeof(fallback) - 1u, capacity - 1u);
+            std::memcpy(buf, fallback, copied);
+            buf[copied] = '\0';
+        }
+        return sizeof(fallback);
+    }
+}
+
 FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, fs_runtime_t **out) {
     if (out != nullptr) {
         *out = nullptr;
@@ -911,7 +1302,6 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, f
             set_error(nullptr, "ABI 0.2 fs_init_options_t.struct_size is too small");
             return FS_E_INVALID_ARG;
         }
-        const char *environment_root = std::getenv("FULLSEYE_PYTHON_ROOT");
         std::string root;
         std::string home;
         if (bounded_options) {
@@ -945,32 +1335,29 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, f
             root = options->runtime_root == nullptr ? "" : options->runtime_root;
             home = options->python_home == nullptr ? "" : options->python_home;
         }
-        if (root.empty() && environment_root != nullptr && *environment_root != '\0') {
-            root = environment_root;
+        // Preserve the one-interpreter-per-process contract before automatic
+        // recovery can consider a different environment. / 同一 process の
+        // Python 設定が固定済みなら、自動探索より先に明示指定の食い違いを拒否する。
+        if (!root.empty()) {
+            std::lock_guard<std::mutex> lock(g_python_mutex);
+            if (g_python_ready && root != g_python_root) {
+                set_error(nullptr, "the CPython runtime is already configured for a different runtime_root or python_home");
+                return FS_E_INVALID_ARG;
+            }
         }
-        if (root.empty() && FULLSEYE_DEFAULT_RUNTIME_ROOT[0] != '\0') {
-            // The consumer Config is generated by ``python -m fullseye.sdk`` and
-            // compiles this exact package root into the bridge. / 利用者 Config は
-            // SDK CLI が生成し、その Python 環境の package root を埋め込む。
-            root = FULLSEYE_DEFAULT_RUNTIME_ROOT;
-        }
-        if (home.empty() && FULLSEYE_DEFAULT_PYTHON_HOME[0] != '\0') {
-            // The embedded interpreter needs its stdlib even when PATH does
-            // not contain Python. / PATH に Python が無い時も stdlib を使う。
-            home = FULLSEYE_DEFAULT_PYTHON_HOME;
-        }
-        if (root.empty()) {
-            set_error(nullptr, "no Fullseye Python environment was specified; build with "
-                               "-Dfullseye_DIR=\"$(python -m fullseye.sdk --cmakedir)\", "
-                               "or set runtime_root or FULLSEYE_PYTHON_ROOT");
+        const RuntimeDiscovery discovery = discover_runtime(root, home);
+        if (!discovery.found) {
+            set_error(nullptr, discovery_report(discovery));
             return FS_E_NO_PYTHON;
         }
         const PythonInitResult init = initialize_python(
-            root, home, (options->flags & FS_INIT_ALLOW_HOST_PYTHON_UNSAFE) != 0u);
+            discovery.root, discovery.home,
+            (options->flags & FS_INIT_ALLOW_HOST_PYTHON_UNSAFE) != 0u);
         if (init.status != FS_OK) {
             set_error(nullptr, init.error);
             return init.status;
         }
+        std::clog << "Fullseye runtime: using " << discovery.source << ": " << discovery.root << '\n';
         auto *runtime = new fs_runtime_t();
         {
             std::lock_guard<std::mutex> lock(g_runtime_mutex);

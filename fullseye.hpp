@@ -220,6 +220,14 @@ class Runtime {
 public:
     using Parameter = std::pair<std::string, double>;
 
+    // Report the runtime candidates without starting CPython. / CPython を起動せず候補を報告する。
+    static std::string diagnose() {
+        const size_t needed = fs_runtime_diagnose(nullptr, 0u);
+        std::vector<char> message(needed ? needed : 1u, '\0');
+        fs_runtime_diagnose(message.data(), message.size());
+        return std::string(message.data());
+    }
+
     Runtime() {
         fs_init_options_t options = FS_INIT_OPTIONS_INIT;
         create(options);

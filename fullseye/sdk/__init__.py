@@ -5,6 +5,11 @@ from __future__ import annotations
 from pathlib import Path
 
 
+def abi_version() -> str:
+    """Return the C SDK ABI carried by this package / 同梱 C SDK ABI を返す。"""
+    return (Path(__file__).resolve().parent / "ABI_VERSION").read_text(encoding="utf-8").strip()
+
+
 def package_root() -> Path:
     """Return the installed ``fullseye`` package directory.
 

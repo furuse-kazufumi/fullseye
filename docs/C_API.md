@@ -36,6 +36,7 @@ cmake --build build
 find_package(fullseye CONFIG REQUIRED)
 add_executable(app main.cpp)
 target_link_libraries(app PRIVATE fullseye::fullseye)
+fullseye_deploy_runtime(app)
 ```
 
 `main.cpp` は借用かコピーかを選んで既存の連続 `double` バッファを渡せる。名前に scope を
@@ -67,21 +68,51 @@ python -m fullseye.sdk --cmakedir    # find_package 用の Config directory
 python -m fullseye.sdk --includedir  # <fullseye.hpp> がある directory
 python -m fullseye.sdk --python      # Config が使う Python executable
 python -m fullseye.sdk --doctor      # compiler / Python headers / pybind11 / example build
+python -m fullseye.sdk relink ./build # 実行ファイル横の runtime manifest を更新する
 ```
 
-`--cmakedir` は呼び出した Python executable と、その `fullseye` package root を記録した
-小さな Config shim を返す。そこでビルドされた DLL/SO は `Runtime()` の既定で同じ root を
-使う。明示的な `fs_init_options_t.runtime_root` と `FULLSEYE_PYTHON_ROOT` は、既存アプリで
-別の runtime を指定する上書きとして引き続き使える。
+`fullseye_deploy_runtime(app)` はビルド時に、`app` の横へ UTF-8 の
+`fullseye_runtime.json` を置く。中身は Python executable、runtime root、SDK ABI 版、作成日時
+であり、runtime root を DLL/SO に焼き込まない。したがって、仮想環境を移動した後も新しい
+Python から `relink` を一度実行すれば、CMake の configure や再ビルドは不要である。
 
-Config を作った後で仮想環境を移動または削除すると、埋め込んだ build-time の root は無効になる。
-この場合 `fs_runtime_create` は理由と `cmake` を再実行する手順を含む `FS_E_NO_PYTHON` を返す。
-環境を移動したら、新しい環境の Python で `cmake -S . -B build -Dfullseye_DIR="$(python -m
-fullseye.sdk --cmakedir)"` をもう一度実行してから build する。
+起動時は、候補を Python process として起動せず、`fullseye/__init__.py` と
+`fullseye/sdk/ABI_VERSION` の存在・ABI を確認して次の順に選ぶ。選んだ場所は stderr に出る。
+
+1. `fs_init_options_t.runtime_root` の明示値
+2. `FULLSEYE_PYTHON_ROOT`
+3. 実行ファイル横の `fullseye_runtime.json`
+4. `VIRTUAL_ENV`、`CONDA_PREFIX`
+5. Windows の PEP 514 registry、Linux/macOS の `PATH` 上の `python3`
+6. 古い build-time fallback（存在する旧 binary だけ）
+
+SDK ABI が違う候補、`fullseye` の無い候補は使わない。`Runtime::diagnose()` と
+`fs_runtime_diagnose()` は CPython を起動せずに同じ探索表を返す。
 
 `--doctor` は CMake、コンパイラ、Python 開発ヘッダ、同梱 pybind11 を確認し、temp directory
-で consumer C++ project を configure、build、run する。失敗時は不足した部品と対処を stderr
-に出す。
+で consumer C++ project を configure、build、run する。失敗時は不足した部品ごとに
+Windows/Linux/macOS の導入コマンドを stderr に出す。CMake configure 自体でも同じく、
+compiler、Python 開発ヘッダ、pybind11 が無い理由と導入コマンドを出して止まる。
+
+## うまく動かないとき / Troubleshooting
+
+まず、実行ファイルと同じ directory を指定して manifest を更新する。これは再ビルドではない。
+
+```powershell
+py -3.11 -m pip install fullseye
+py -3.11 -m fullseye.sdk relink .\build
+```
+
+```sh
+python3 -m pip install fullseye
+python3 -m fullseye.sdk relink ./build
+```
+
+それでも `fs_runtime_create` が `FS_E_NO_PYTHON` を返すとき、`fs_last_error` には試行した
+全候補と結果（無い、`fullseye` が無い、ABI 版違い）が並ぶ。C++ では同じ本文が
+`fullseye::Error` に入り、アプリを起動せず表示したいときは
+`fullseye::Runtime::diagnose()` を呼ぶ。Windows で Python DLL や build tool が見つからない
+場合は `py -3.11 -m fullseye.sdk --doctor` を実行する。
 
 ## C API
 

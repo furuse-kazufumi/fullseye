@@ -21,10 +21,11 @@ def test_sdk_is_a_standard_component_with_fixed_wheel_destinations():
     assert sdk.selectable is False and sdk.python_extra is None
     assert sdk.development_only is False
     assert "--cmakedir" in sdk.runtime_note
-    assert set(SDK_LAYOUT) == {"headers", "bridge_source", "cmake_config", "sdk_cli"}
+    assert set(SDK_LAYOUT) == {"headers", "bridge_source", "cmake_config", "runtime_abi", "sdk_cli"}
     assert set(sdk.destinations) == set(SDK_LAYOUT.values())
     assert SDK_LAYOUT["headers"] == "fullseye/sdk/include/fullseye"
     assert SDK_LAYOUT["cmake_config"] == "fullseye/sdk/cmake"
+    assert SDK_LAYOUT["runtime_abi"] == "fullseye/sdk/ABI_VERSION"
 
 
 def test_cmake_exports_cxx_target_and_installs_all_headers():
@@ -34,5 +35,6 @@ def test_cmake_exports_cxx_target_and_installs_all_headers():
     config = ROOT / "fullseye" / "sdk" / "cmake" / "fullseyeConfig.cmake"
     assert config.is_file()
     text = config.read_text(encoding="utf-8")
-    assert "fullseye::fullseye" in text and "FULLSEYE_DEFAULT_RUNTIME_ROOT" in text
-    assert "string(HEX" in text and "copy_if_different" in text
+    assert "fullseye::fullseye" in text and "fullseye_deploy_runtime" in text
+    assert "FULLSEYE_DEFAULT_RUNTIME_ROOT" not in text
+    assert "sdk_abi_version" in text and "copy_if_different" in text

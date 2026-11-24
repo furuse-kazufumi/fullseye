@@ -130,6 +130,10 @@ typedef struct fs_input {
 FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options,
                                               fs_runtime_t **out);
 FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime);
+/* Inspect runtime discovery without starting CPython.  The returned size includes
+ * the trailing NUL, as with fs_last_error. / CPython を起動せず探索結果を返す。
+ * 戻り値は fs_last_error と同様に終端 NUL を含む。 */
+FS_API size_t FS_CALL fs_runtime_diagnose(char *buf, size_t capacity);
 
 /* Compatibility map / 互換性表:
  *
