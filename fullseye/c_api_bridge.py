@@ -217,6 +217,13 @@ def _output(value, row: dict) -> dict:
         if (len(shape) != 2 or any(isinstance(dim, bool) or not isinstance(dim, (int, np.integer))
                                   or int(dim) <= 0 for dim in shape)):
             raise _Refuse(FS_E_UNSUPPORTED, "%s returned an invalid contour shape" % row["id"])
+        if not isinstance(value["cs"], (list, tuple)) or not value["cs"]:
+            raise _Refuse(
+                FS_E_UNSUPPORTED,
+                "%s returned 0 contour sequences; the C ABI requires at least 1 non-empty (N,2) "
+                "sequence / %s は輪郭列を 0 本返しました。C ABI は空でない (N,2) 点列を 1 本以上 "
+                "要求します。少なくとも 1 本の点列を返してください" % (row["id"], row["id"]),
+            )
         contours = []
         for raw in value["cs"]:
             points = np.asarray(raw, dtype=np.float64)
@@ -235,7 +242,14 @@ def _output(value, row: dict) -> dict:
     array = np.asarray(value, dtype=np.float64)
     want_dims = {"image": (2,), "color": (3,), "volume": (3, 4), "points": (2,)}[sort]
     if (array.ndim not in want_dims or (sort == "color" and array.shape[-1] != 3)
-            or (sort == "points" and array.shape[1] not in (2, 3))):
+            or (sort == "points" and (array.shape[0] == 0 or array.shape[1] not in (2, 3)))):
+        if sort == "points" and array.ndim == 2 and array.shape[0] == 0:
+            raise _Refuse(
+                FS_E_UNSUPPORTED,
+                "%s returned points shape %s; the C ABI requires shape (N,2) or (N,3) with N > 0 / "
+                "%s は点列 shape %s を返しました。C ABI では N > 0 が必要です。少なくとも 1 点を "
+                "含む (N,2) または (N,3) を返してください" % (row["id"], array.shape, row["id"], array.shape),
+            )
         raise _Refuse(FS_E_UNSUPPORTED, "%s returned shape %s, not declared %s" %
                       (row["id"], array.shape, sort))
     if not np.isfinite(array).all():

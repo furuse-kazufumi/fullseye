@@ -361,8 +361,13 @@ fs_status_t validate_contour(const fs_runtime_t *runtime, const fs_contour_view_
     }
     const auto *base = reinterpret_cast<const unsigned char *>(view.contours);
     for (size_t i = 0u; i < view.contour_count; ++i) {
+        size_t offset = 0u;
+        if (!checked_mul(i, view.contour_stride_bytes, &offset)) {
+            set_error(runtime, "contour element offset overflows size_t");
+            return FS_E_SHAPE;
+        }
         const auto *part = reinterpret_cast<const fs_contour_part_t *>(
-            base + i * view.contour_stride_bytes);
+            base + offset);
         if (part->struct_size < kRequiredContourPartSize || part->closed > 1u) {
             set_error(runtime, "contour element struct_size or closed flag is invalid");
             return FS_E_INVALID_ARG;
@@ -495,7 +500,10 @@ py::dict item_to_python(const Item &item) {
         for (auto it = item.shape.rbegin(); it != item.shape.rend(); ++it) {
             shape.insert(shape.begin(), static_cast<py::ssize_t>(*it));
             strides.insert(strides.begin(), static_cast<py::ssize_t>(stride));
-            stride *= static_cast<size_t>(*it);
+            if (*it <= 0 || static_cast<uint64_t>(*it) > std::numeric_limits<size_t>::max()
+                || !checked_mul(stride, static_cast<size_t>(*it), &stride)) {
+                throw std::runtime_error("stored array shape cannot be represented as byte strides");
+            }
         }
         value["kind"] = item.kind == FS_VALUE_COLOR ? "color"
             : item.kind == FS_VALUE_VOLUME ? "volume" : "points";
@@ -583,8 +591,12 @@ py::dict contour_to_python(const fs_contour_view_t &view) {
     py::list closed;
     const auto *base = reinterpret_cast<const unsigned char *>(view.contours);
     for (size_t i = 0u; i < view.contour_count; ++i) {
+        size_t offset = 0u;
+        if (!checked_mul(i, view.contour_stride_bytes, &offset)) {
+            throw std::runtime_error("contour element offset overflows size_t");
+        }
         const auto *part = reinterpret_cast<const fs_contour_part_t *>(
-            base + i * view.contour_stride_bytes);
+            base + offset);
         py::capsule borrowed(const_cast<void *>(part->points.data), [](void *) {});
         cs.append(py::array(numpy_dtype(part->points.dtype),
                             {static_cast<py::ssize_t>(part->points.shape[0]),
@@ -633,17 +645,23 @@ Item python_to_item(const py::dict &value) {
             : kind == "volume" ? FS_VALUE_VOLUME : FS_VALUE_POINTS;
         item.shape = py::cast<std::vector<int64_t>>(value["shape"]);
         item.array = bytes_vector<double>(value["pixels"], "array");
+        if (item.kind == FS_VALUE_POINTS && (item.shape.size() != 2u || item.shape[0] <= 0
+            || (item.shape[1] != 2 && item.shape[1] != 3))) {
+            const std::string actual = item.shape.size() == 2u
+                ? "(" + std::to_string(item.shape[0]) + ", " + std::to_string(item.shape[1]) + ")"
+                : "with " + std::to_string(item.shape.size()) + " dimensions";
+            throw std::runtime_error("Python returned points shape " + actual
+                + "; the C ABI requires shape (N,2) or (N,3) with N > 0 / Python 出力の点列 shape "
+                + actual + " は C ABI の N > 0 の約束に違反します。少なくとも 1 点を返してください");
+        }
         if ((item.kind == FS_VALUE_COLOR && (item.shape.size() != 3u || item.shape[2] != 3))
-            || (item.kind == FS_VALUE_VOLUME && (item.shape.size() < 3u || item.shape.size() > 4u))
-            || (item.kind == FS_VALUE_POINTS && (item.shape.size() != 2u
-                || item.shape[0] < 0 || (item.shape[1] != 2 && item.shape[1] != 3)))) {
+            || (item.kind == FS_VALUE_VOLUME && (item.shape.size() < 3u || item.shape.size() > 4u))) {
             throw std::runtime_error("Python returned an invalid array or points shape");
         }
         size_t expected = 1u;
         for (size_t axis = 0u; axis < item.shape.size(); ++axis) {
             const int64_t dim = item.shape[axis];
-            const bool empty_points = item.kind == FS_VALUE_POINTS && axis == 0u && dim == 0;
-            if ((dim <= 0 && !empty_points)
+            if (dim <= 0 || static_cast<uint64_t>(dim) > std::numeric_limits<size_t>::max()
                 || !checked_mul(expected, static_cast<size_t>(dim), &expected)) {
                 throw std::runtime_error("Python returned an invalid array or points shape");
             }
@@ -658,14 +676,25 @@ Item python_to_item(const py::dict &value) {
         if (item.height <= 0 || item.width <= 0) {
             throw std::runtime_error("Python returned an invalid contour image shape");
         }
-        for (const py::handle raw : py::cast<py::list>(value["contours"])) {
+        const py::list contours = py::cast<py::list>(value["contours"]);
+        if (py::len(contours) == 0) {
+            throw std::runtime_error("Python returned 0 contour sequences; the C ABI requires at least 1 non-empty "
+                "(N,2) sequence / Python 出力の輪郭列は 0 本です。C ABI は空でない (N,2) 点列を 1 本以上 "
+                "要求します。少なくとも 1 本の点列を返してください");
+        }
+        for (const py::handle raw : contours) {
             const py::dict part = py::cast<py::dict>(raw);
             OwnedContour contour;
             contour.points = bytes_vector<double>(part["points"], "contour points");
             const size_t count = py::cast<size_t>(part["count"]);
             contour.closed = py::cast<bool>(part["closed"]);
-            if (count == 0u || contour.points.size() != count * 2u) {
-                throw std::runtime_error("Python returned an invalid contour point count");
+            size_t expected_points = 0u;
+            if (count == 0u || !checked_mul(count, 2u, &expected_points)
+                || contour.points.size() != expected_points) {
+                throw std::runtime_error("Python returned contour count " + std::to_string(count)
+                    + "; the C ABI requires a positive count and exactly 2 coordinates per point / Python 出力の "
+                    "輪郭点数 " + std::to_string(count) + " は C ABI の正の点数・各点 2 座標の約束に違反します。"
+                    "少なくとも 1 点の (N,2) 点列を返してください");
             }
             item.contours.push_back(std::move(contour));
         }
@@ -1589,14 +1618,21 @@ FS_API fs_status_t FS_CALL fs_result_contour_n(fs_result_id_t result, size_t ind
     if (item.kind != FS_VALUE_CONTOUR) return FS_E_TYPE;
     if (contour_index >= item.contours.size()) return FS_E_INVALID_ARG;
     const OwnedContour &contour = item.contours[contour_index];
+    size_t data_bytes = 0u;
+    size_t point_stride = 0u;
+    if (!checked_mul(contour.points.size(), sizeof(double), &data_bytes)
+        || !checked_mul(2u, sizeof(double), &point_stride)
+        || point_stride > static_cast<size_t>(std::numeric_limits<int64_t>::max())) {
+        return FS_E_INTERNAL;
+    }
     out_borrowed->points.data = contour.points.data();
-    out_borrowed->points.data_bytes = contour.points.size() * sizeof(double);
+    out_borrowed->points.data_bytes = data_bytes;
     out_borrowed->points.ndim = 2u;
     out_borrowed->points.shape[0] = static_cast<int64_t>(contour.points.size() / 2u);
     out_borrowed->points.shape[1] = 2;
     out_borrowed->points.shape[2] = 0;
     out_borrowed->points.shape[3] = 0;
-    out_borrowed->points.stride_bytes[0] = 2 * static_cast<int64_t>(sizeof(double));
+    out_borrowed->points.stride_bytes[0] = static_cast<int64_t>(point_stride);
     out_borrowed->points.stride_bytes[1] = static_cast<int64_t>(sizeof(double));
     out_borrowed->points.stride_bytes[2] = 0;
     out_borrowed->points.stride_bytes[3] = 0;
@@ -1615,14 +1651,23 @@ FS_API fs_status_t FS_CALL fs_result_points_n(fs_result_id_t result, size_t inde
         || index >= lease.get()->items.size()) return FS_E_INVALID_ARG;
     const Item &item = lease.get()->items[index];
     if (item.kind != FS_VALUE_POINTS || item.shape.size() != 2u) return FS_E_TYPE;
+    size_t data_bytes = 0u;
+    size_t point_stride = 0u;
+    if (item.shape[0] <= 0 || item.shape[1] < 2 || item.shape[1] > 3
+        || static_cast<uint64_t>(item.shape[1]) > std::numeric_limits<size_t>::max()
+        || !checked_mul(item.array.size(), sizeof(double), &data_bytes)
+        || !checked_mul(static_cast<size_t>(item.shape[1]), sizeof(double), &point_stride)
+        || point_stride > static_cast<size_t>(std::numeric_limits<int64_t>::max())) {
+        return FS_E_INTERNAL;
+    }
     out_borrowed->data = item.array.data();
-    out_borrowed->data_bytes = item.array.size() * sizeof(double);
+    out_borrowed->data_bytes = data_bytes;
     out_borrowed->ndim = 2u;
     out_borrowed->shape[0] = item.shape[0];
     out_borrowed->shape[1] = item.shape[1];
     out_borrowed->shape[2] = 0;
     out_borrowed->shape[3] = 0;
-    out_borrowed->stride_bytes[0] = item.shape[1] * static_cast<int64_t>(sizeof(double));
+    out_borrowed->stride_bytes[0] = static_cast<int64_t>(point_stride);
     out_borrowed->stride_bytes[1] = static_cast<int64_t>(sizeof(double));
     out_borrowed->stride_bytes[2] = 0;
     out_borrowed->stride_bytes[3] = 0;

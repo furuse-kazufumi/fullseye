@@ -26,6 +26,7 @@ FS_E_NO_PYTHON = 10
 FS_E_UNKNOWN_OP = 11
 FS_E_BAD_PARAMS = 12
 FS_E_UNSUPPORTED = 6
+FS_E_INTERNAL = 9
 FS_VALUE_IMAGE = 1
 FS_VALUE_REGION = 2
 FS_VALUE_OBJECTSET = 3
@@ -374,6 +375,10 @@ def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(ab
         candidate = next((value for name, value in candidates if name == "override"),
                          next((value for name, value in candidates if name in {"normal", "unit"}),
                               candidates[0][1]))
+        if row["name"] in {"select_contours", "select_contours_xld"}:
+            angles = np.linspace(0.0, 2.0 * np.pi, 44, endpoint=True)
+            candidate = {"shape": (32, 32), "cs": [np.column_stack((
+                16.0 + 10.0 * np.sin(angles), 16.0 + 10.0 * np.cos(angles)))]}
         held = []
         borrowed = []
         if row["in_sort"] == "contour":
@@ -416,7 +421,29 @@ def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(ab
         status, result = _call(abi, row["id"], [input_value], params)
         error = C.create_string_buffer(1024)
         lib.fs_last_error(_runtime, error, len(error))
-        assert status == FS_OK, "%s: %s" % (row["id"], error.value.decode("utf-8"))
+        message = error.value.decode("utf-8")
+        if status != FS_OK:
+            try:
+                if row["tier"] == "contract":
+                    direct = getattr(fslib, row["name"])(fslib.FImage(direct_input), **(
+                        {"lo": 0.5, "hi": 1.0} if row["name"] == "threshold"
+                        else {"sigma": 0.5} if row["name"] == "gauss" else {}))
+                else:
+                    direct = _direct_registry(registry[row["name"]], direct_input)
+                if row["out_sort"] == "contour":
+                    assert status == FS_E_UNSUPPORTED and not direct["cs"], (row["id"], message)
+                    assert "0 contour sequences" in message and "at least 1" in message
+                elif row["out_sort"] == "points":
+                    assert status == FS_E_UNSUPPORTED and np.asarray(direct).shape[0] == 0, (row["id"], message)
+                    assert "N > 0" in message and "少なくとも 1" in message
+                else:
+                    pytest.fail("%s: %s" % (row["id"], message))
+                exercised.append(row["id"])
+            finally:
+                assert not result.value
+                for seed in borrowed:
+                    assert lib.fs_result_release_n(seed) == FS_OK
+            continue
         try:
             if row["tier"] == "contract":
                 fn = getattr(fslib, row["name"])
@@ -771,6 +798,44 @@ def test_invalid_contour_views_are_rejected(abi, case, expected):
         part.points.shape[0] = 0
     status, result = _call(abi, "registry:count_contours", [input_value])
     assert status == expected and not result.value
+
+
+@pytest.mark.parametrize(("sort", "value", "actual", "contract"), [
+    ("contour", {"shape": (8, 8), "cs": []}, "0 contour sequences", "at least 1"),
+    ("points", np.empty((0, 2)), "shape (0, 2)", "N > 0"),
+])
+def test_python_bridge_refuses_empty_coordinate_outputs_with_the_abi_contract(sort, value, actual, contract):
+    """Empty coordinate output names its value, positive-N contract, and repair / 空出力を値・約束・直し方付きで拒む。"""
+    from fullseye import c_api_bridge
+
+    with pytest.raises(c_api_bridge._Refuse) as caught:
+        c_api_bridge._output(value, {"id": "registry:test_coordinate_output", "out_sort": sort})
+    message = str(caught.value)
+    assert caught.value.status == FS_E_UNSUPPORTED
+    assert actual in message and contract in message and "C ABI" in message
+    assert "少なくとも 1" in message and "返してください" in message
+
+
+@pytest.mark.parametrize(("output", "actual", "contract"), [
+    ({"kind": "contour", "h": 8, "w": 8, "contours": []}, "0 contour sequences", "at least 1"),
+    ({"kind": "points", "shape": [0, 2], "pixels": b""}, "shape (0, 2)", "N > 0"),
+])
+def test_native_bridge_refuses_empty_coordinate_outputs_with_the_abi_contract(
+        abi, monkeypatch, output, actual, contract):
+    """Native result conversion independently rejects the same empty ABI outputs / native 側も同じ空出力を拒む。"""
+    from fullseye import c_api_bridge
+
+    monkeypatch.setattr(c_api_bridge, "call", lambda *_args: {
+        "status": FS_OK, "message": "", "outputs": [output],
+    })
+    lib, runtime = abi
+    status, result = _call(abi, "contract:threshold", [_image(np.ones((2, 2)))])
+    error = C.create_string_buffer(1024)
+    lib.fs_last_error(runtime, error, len(error))
+    message = error.value.decode("utf-8")
+    assert status == FS_E_INTERNAL and not result.value
+    assert actual in message and contract in message and "C ABI" in message
+    assert "少なくとも 1" in message and "返してください" in message
 
 
 @pytest.mark.parametrize("closed,expected", [(False, 8.0), (True, 12.0)])
