@@ -211,6 +211,17 @@ def _typed_array_with_dtype(shape, kind: int, dtype: int, numpy_dtype) -> tuple[
     return InputN(C.sizeof(InputN), kind, ImageView(), 0, 0, view, 0.0), values
 
 
+def _typed_array_view(values: np.ndarray, owner: np.ndarray, kind: int) -> InputN:
+    """Keep dtype and first-axis padding in a direct ABI view / dtype と第 1 軸の余白を保つ。"""
+    codes = {np.dtype(np.uint8): 1, np.dtype(np.uint16): 2,
+             np.dtype(np.float32): 3, np.dtype(np.float64): 4}
+    shape = (C.c_int64 * 4)(*values.shape, *([0] * (4 - values.ndim)))
+    strides = (C.c_int64 * 4)(*values.strides, *([0] * (4 - values.ndim)))
+    view = ArrayView(C.sizeof(ArrayView), int(values.ctypes.data), owner.nbytes, values.ndim,
+                     shape, strides, codes[values.dtype])
+    return InputN(C.sizeof(InputN), kind, ImageView(), 0, 0, view, 0.0)
+
+
 def _feature(value: float) -> InputN:
     return InputN(C.sizeof(InputN), FS_VALUE_FEATURE, ImageView(), 0, 0, ArrayView(), value)
 
@@ -450,7 +461,8 @@ def test_invalid_image_views_are_rejected(abi, case, expected):
     (3, np.float32),
     (4, np.float64),
 ])
-@pytest.mark.parametrize("case", ["short_buffer", "extra_shape", "extra_stride", "inner_stride"])
+@pytest.mark.parametrize("case", ["short_buffer", "extra_shape", "extra_stride", "inner_stride",
+                                  "overlapping_outer_stride"])
 def test_invalid_color_and_volume_views_are_rejected_for_every_dtype(
         abi, kind, shape, op, dtype, numpy_dtype, case):
     """Reject malformed typed views for every dtype / 全 dtype で不正 view を拒否する。"""
@@ -463,12 +475,70 @@ def test_invalid_color_and_volume_views_are_rejected_for_every_dtype(
         input_value.array.shape[len(shape)] = 1
     elif case == "extra_stride":
         input_value.array.stride_bytes[len(shape)] = element
-    else:
+    elif case == "inner_stride":
         input_value.array.stride_bytes[1] += element
+    else:
+        input_value.array.stride_bytes[0] -= element
     status, result = _call(abi, op, [input_value])
     if result.value:
         assert lib.fs_result_release_n(result) == FS_OK
     assert status == FS_E_SHAPE
+
+
+@pytest.mark.parametrize("kind,shape,op", [
+    (FS_VALUE_COLOR, (2, 2, 3), "registry:rgb1_to_gray"),
+    (FS_VALUE_VOLUME, (2, 2, 2), "registry:vol_gaussian"),
+])
+def test_color_and_volume_views_allow_first_axis_padding(abi, kind, shape, op):
+    """A first-axis gap is valid; only overlapping rows are refused / 行間の余白だけを許す。"""
+    lib, _runtime = abi
+    input_value, keep = _typed_array_with_dtype(shape, kind, 4, np.float64)
+    input_value.array.stride_bytes[0] += keep.dtype.itemsize
+    status, result = _call(abi, op, [input_value])
+    try:
+        assert status == FS_OK and result.value
+    finally:
+        if result.value:
+            assert lib.fs_result_release_n(result) == FS_OK
+
+
+@pytest.mark.parametrize("nonfinite", [np.nan, np.inf])
+def test_region_output_rejects_nonfinite_values_with_the_operator_id(nonfinite):
+    """A non-finite region must not be silently thresholded / NaN/inf を領域化しない。"""
+    from fullseye import c_api_bridge
+
+    with pytest.raises(c_api_bridge._Refuse) as raised:
+        c_api_bridge._output(np.array([[0.0, nonfinite]]),
+                             {"id": "contract:threshold", "out_sort": "region"})
+    assert raised.value.status == FS_E_UNSUPPORTED
+    assert "contract:threshold" in str(raised.value)
+
+
+@pytest.mark.parametrize("kind,shape,op,out_sort", [
+    (FS_VALUE_COLOR, (2, 3, 3), "registry:rgb1_to_gray", "image"),
+    (FS_VALUE_VOLUME, (2, 3, 4), "registry:vol_gaussian", "volume"),
+    (FS_VALUE_VOLUME, (2, 2, 3, 4), "registry:vol_gaussian", "volume"),
+])
+@pytest.mark.parametrize("dtype", [np.uint8, np.uint16, np.float32, np.float64])
+def test_typed_c_sdk_parity_covers_dtype_row_padding_and_volume_rank(abi, kind, shape, op, out_sort,
+                                                                       dtype):
+    """C/Python equality spans all ABI dtypes, padded rows, and 3-D/4-D volumes.
+
+    C/Python の一致を全 ABI dtype、行余白、3-D/4-D volume に広げる。
+    """
+    lib, _runtime = abi
+    backing_shape = (shape[0], shape[1] + 1, *shape[2:])
+    owner = np.arange(np.prod(backing_shape), dtype=dtype).reshape(backing_shape)
+    values = owner[:, :shape[1], ...]
+    input_value = _typed_array_view(values, owner, kind)
+    status, result = _call(abi, op, [input_value])
+    assert status == FS_OK and result.value
+    try:
+        direct = fullseye.apply(np.asarray(values, dtype=np.float64), op.split(":", 1)[1], 0.5, 0.5,
+                                coerce=False, device="cpu", on_error="raise", allow_nonfinite=False)
+        np.testing.assert_array_equal(_c_output(lib, result, out_sort), np.asarray(direct))
+    finally:
+        assert lib.fs_result_release_n(result) == FS_OK
 
 
 @pytest.mark.parametrize("kind,shape,op", [
