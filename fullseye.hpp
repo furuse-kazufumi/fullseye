@@ -7,6 +7,7 @@
 #include <cstring>
 #include <initializer_list>
 #include <limits>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -66,19 +67,14 @@ public:
 
     static Image from_buffer(const double *data, int64_t height, int64_t width,
                              BufferOwnership ownership = BufferOwnership::borrow) {
-        if (data == nullptr || height <= 0 || width <= 0) {
+        if (data == nullptr) {
             throw std::invalid_argument("Image::from_buffer needs a non-null, non-empty float64 buffer");
         }
-        const auto h = static_cast<size_t>(height);
-        const auto w = static_cast<size_t>(width);
-        if (h > std::numeric_limits<size_t>::max() / w
-            || h * w > std::numeric_limits<size_t>::max() / sizeof(double)) {
-            throw std::overflow_error("Image::from_buffer dimensions overflow size_t");
-        }
+        const size_t count = checked_element_count(height, width);
         Image image;
         image.height_ = height;
         image.width_ = width;
-        image.count_ = h * w;
+        image.count_ = count;
         if (ownership == BufferOwnership::copy) {
             image.owned_.assign(data, data + image.count_);
             image.data_ = image.owned_.data();
@@ -91,11 +87,11 @@ public:
 #if __cplusplus >= 202002L
     static Image from_buffer(std::span<const double> data, int64_t height, int64_t width,
                              BufferOwnership ownership = BufferOwnership::borrow) {
-        auto image = from_buffer(data.data(), height, width, ownership);
-        if (data.size() != image.count_) {
+        const size_t count = checked_element_count(height, width);
+        if (data.size() != count) {
             throw std::invalid_argument("Image::from_buffer span size does not match height * width");
         }
-        return image;
+        return from_buffer(data.data(), height, width, ownership);
     }
 #endif
 
@@ -113,6 +109,19 @@ public:
     }
 
 private:
+    static size_t checked_element_count(int64_t height, int64_t width) {
+        if (height <= 0 || width <= 0) {
+            throw std::invalid_argument("Image::from_buffer needs a non-null, non-empty float64 buffer");
+        }
+        const auto h = static_cast<size_t>(height);
+        const auto w = static_cast<size_t>(width);
+        if (h > std::numeric_limits<size_t>::max() / w
+            || h * w > std::numeric_limits<size_t>::max() / sizeof(double)) {
+            throw std::overflow_error("Image::from_buffer dimensions overflow size_t");
+        }
+        return h * w;
+    }
+
     const double *data_ = nullptr;
     int64_t height_ = 0;
     int64_t width_ = 0;
@@ -166,7 +175,6 @@ private:
 
 class Result {
 public:
-    explicit Result(fs_result_id_t value = 0u) noexcept : value_(value) {}
     ~Result() { if (value_ != 0u) (void)fs_result_release_n(value_); }
     Result(Result &&other) noexcept : value_(std::exchange(other.value_, 0u)) {}
     Result &operator=(Result &&other) noexcept {
@@ -202,7 +210,10 @@ public:
     }
 
 private:
-    fs_result_id_t value_;
+    friend class Runtime;
+    explicit Result(fs_result_id_t value) noexcept : value_(value) {}
+
+    fs_result_id_t value_ = 0u;
 };
 
 class Runtime {
@@ -249,8 +260,8 @@ public:
         char *text = nullptr;
         size_t bytes = 0;
         check(fs_find_ops_json_n(value_, query.data(), query.size(), &text, &bytes), "operator search");
-        std::string result(text, bytes ? bytes - 1 : 0);
-        fs_free(text);
+        const std::unique_ptr<char, decltype(&fs_free)> owned_text(text, &fs_free);
+        std::string result(owned_text.get(), bytes ? bytes - 1 : 0);
         return result;
     }
 

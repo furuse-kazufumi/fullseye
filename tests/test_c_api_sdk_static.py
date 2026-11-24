@@ -35,3 +35,4 @@ def test_cmake_exports_cxx_target_and_installs_all_headers():
     assert config.is_file()
     text = config.read_text(encoding="utf-8")
     assert "fullseye::fullseye" in text and "FULLSEYE_DEFAULT_RUNTIME_ROOT" in text
+    assert "string(HEX" in text and "copy_if_different" in text

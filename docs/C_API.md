@@ -74,6 +74,11 @@ python -m fullseye.sdk --doctor      # compiler / Python headers / pybind11 / ex
 使う。明示的な `fs_init_options_t.runtime_root` と `FULLSEYE_PYTHON_ROOT` は、既存アプリで
 別の runtime を指定する上書きとして引き続き使える。
 
+Config を作った後で仮想環境を移動または削除すると、埋め込んだ build-time の root は無効になる。
+この場合 `fs_runtime_create` は理由と `cmake` を再実行する手順を含む `FS_E_NO_PYTHON` を返す。
+環境を移動したら、新しい環境の Python で `cmake -S . -B build -Dfullseye_DIR="$(python -m
+fullseye.sdk --cmakedir)"` をもう一度実行してから build する。
+
 `--doctor` は CMake、コンパイラ、Python 開発ヘッダ、同梱 pybind11 を確認し、temp directory
 で consumer C++ project を configure、build、run する。失敗時は不足した部品と対処を stderr
 に出す。
