@@ -68,7 +68,7 @@
 | `validated-public-real-data` | 공개 실측 데이터를 쓰는 예가 게이트에서 실제로 실행됨 | 10 |
 | `validated-hardware` | 실기로 검증(외부 보고를 수리한 경우에만) | 0 |
 
-예 503건 중 게이트가 실제로 실행하는 것은 499건.
+예 504건 중 게이트가 실제로 실행하는 것은 500건.
 
 ### 버전별 연산자 수
 
@@ -149,16 +149,16 @@
 
 ## 연산자 찾기
 
-**3,847개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **73개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**3,852개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **73개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 947/947, 타입 台帳 2877/2877, 한 줄 파사드 `fullseye.<이름>` 770/1578 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 947/947, 타입 台帳 2882/2882, 한 줄 파사드 `fullseye.<이름>` 770/1594 — **파사드는 아직 절반**.
 
-**내용 실측**: 3847건 중 실행 가능한 예제가 붙은 것은 **3808**건(39건은 없음), 사용법이 120자 이상인 것은 **3648**건(199건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3847건 모두.
+**내용 실측**: 3852건 중 실행 가능한 예제가 붙은 것은 **3813**건(39건은 없음), 사용법이 120자 이상인 것은 **3653**건(199건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3852건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
 | `2d` | 964 | [INDEX](ops/2d/INDEX.md) |
-| `drive` | 744 | [INDEX](ops/drive/INDEX.md) |
+| `drive` | 749 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 506 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 378 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 115 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
@@ -314,9 +314,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 339건
+## 문서 지도 — 전 338건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,847건과 패밀리 가이드 73건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,852건과 패밀리 가이드 73건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 
@@ -459,7 +459,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(253)
+**Other**(252)
 
 | 문서 | 내용 |
 |---|---|
@@ -533,6 +533,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`POC_QUALITY_CRITERIA.en.md`](POC_QUALITY_CRITERIA.en.md) | Quality criteria for PoCs, figures, videos and exhibits (for whoever asks and whoever builds) |
 | [`REALDATA_TLESS_6DOF.md`](REALDATA_TLESS_6DOF.md) | BOP T-LESS 実機深度 6 自由度 PoC _(ja)_ |
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | レシピの網羅(族・課題・型の繋がり・GPU 経路) _(ja)_ |
+| [`REGULATED_EXECUTION.md`](REGULATED_EXECUTION.md) | 規制実行記録の保証境界 / Regulated execution-record assurance boundary _(ja)_ |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
 | [`STUDIO_GUIDE.de.md`](STUDIO_GUIDE.de.md) | Vollständiger Leitfaden zu Fullseye Studio |
 | [`STUDIO_GUIDE.en.md`](STUDIO_GUIDE.en.md) | The complete guide to Fullseye Studio |
@@ -541,8 +542,6 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`STUDIO_GUIDE.tw.md`](STUDIO_GUIDE.tw.md) | Fullseye Studio 完全指南 _(tw)_ |
 | [`STUDIO_GUIDE.zh.md`](STUDIO_GUIDE.zh.md) | Fullseye Studio 完全指南 _(zh)_ |
 | [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) | Walking a Character Over Terrain (sim-native, no GPU required) |
-| [`TROUBLESHOOTING.en.md`](TROUBLESHOOTING.en.md) | Windows troubleshooting |
-| [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) | Windows troubleshooting → [`TROUBLESHOOTING.en.md`](TROUBLESHOOTING.en.md) · 원문 _(ja)_ |
 | [`TYPE_CONNECTIVITY.md`](TYPE_CONNECTIVITY.md) | 型のつながり ―― 全型の役割と処置 _(ja)_ |
 | [`UNIFIED_API_REQUIREMENTS.en.md`](UNIFIED_API_REQUIREMENTS.en.md) | Fullseye Unified Interface — Requirements Specification (v0.1, 2026-08-18) |
 | [`VALIDATION_CONTRIBUTING.en.md`](VALIDATION_CONTRIBUTING.en.md) | Reporting validation on real hardware or real data |

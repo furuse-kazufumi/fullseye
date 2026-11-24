@@ -1,6 +1,6 @@
 {
   "method": "Business-language queries contain no operator names. recall_at_2: the expected existing recipe is in the top 2. e2e_task_recipe_hit_at_2: one of the top-2 MCP-runnable recipes contains an op PR #224's judge expects. blind_*_hit_at_3: queries written from docs/ops without seeing the recipes; a top-3 recipe has that family / one of the listed ops.",
-  "recipes_in_index": 274,
+  "recipes_in_index": 275,
   "recipes_mcp": 132,
   "recall_at_2": 0.6666666666666666,
   "queries": [
@@ -201,7 +201,7 @@
       "judge": "judge_dolp_mean",
       "top_2": [
         "Sense — degree of linear polarization map from four analyzer angles (0/45/90/135)",
-        "Inspect — glossy (specular) area from polarization: DoLP map, threshold, area fraction"
+        "Preprocess — stack N frames with sigma clipping (noise drops as 1/sqrt N)"
       ],
       "hit": true
     },
@@ -910,7 +910,7 @@
     "before_label": "master a8b9c1f249 (recipes.py 25 recipes), 2026-11-03",
     "recipes_in_index": {
       "before": 25,
-      "after": 274
+      "after": 275
     },
     "recipes_mcp": {
       "before": 25,
@@ -943,8 +943,8 @@
     },
     {
       "source": "fullseye/recipebook RECIPES",
-      "found": 249,
-      "included": 249,
+      "found": 250,
+      "included": 250,
       "excluded": 0,
       "reason": null
     },
@@ -964,9 +964,9 @@
     },
     {
       "source": "docs/**/*.md",
-      "found": 4434,
+      "found": 4438,
       "included": 0,
-      "excluded": 4434,
+      "excluded": 4438,
       "reason": "Documentation contains prose and snippets, not a statically unambiguous inventory of MCP stages."
     }
   ]
