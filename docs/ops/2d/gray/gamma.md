@@ -6,7 +6,7 @@ in: image
 out: image
 halcon: pow_image
 gpu: あり(gamma_image)
-examples: [gallery2d_gray_arith, poc_itof_multifreq, poc_simcal_thin_film]
+examples: [gallery2d_gray_arith, poc_ginza_stage2_ops, poc_itof_multifreq, poc_simcal_thin_film]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -62,6 +62,7 @@ gamma 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_gray_arith](../../../../examples/gallery2d_gray_arith.py) — `py -3.11 examples/gallery2d_gray_arith.py`
+- [poc_ginza_stage2_ops](../../../../examples/poc_ginza_stage2_ops.py) — `py -3.11 examples/poc_ginza_stage2_ops.py`
 - [poc_itof_multifreq](../../../../examples/poc_itof_multifreq.py) — `py -3.11 examples/poc_itof_multifreq.py`
 - [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 

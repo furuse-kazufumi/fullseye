@@ -8117,6 +8117,55 @@ def _b_lane_stop(pool, rng):
     return (f["labels"], f["lane"]), {}
 
 
+def _b_lane_curve(pool, rng):
+    """整合した左右境界を曲率opへ渡す / feed coherent boundaries to the curve op."""
+    f = _fuzz_lane()
+    left = {**f["left"], "coefficients": np.array([-1.75, 0.01, 0.002])}
+    right = {**f["right"], "coefficients": np.array([1.75, 0.01, 0.002])}
+    return (left, right), {"camera_height": 1.6, "seed": 0}
+
+
+def _b_road_sign(pool, rng):
+    """同一座標系の一時停止cropと輪郭 / matched Japanese-stop crop and contour."""
+    shape = (129, 129)
+    rows, cols = np.mgrid[0:shape[0], 0:shape[1]].astype(np.float64)
+    rows += 0.5
+    cols += 0.5
+    centre = np.array([64.0, 64.0])
+    radius = 32.0
+    image = np.full((*shape, 3), 0.12, np.float64)
+    theta = 2.0 * np.pi * np.arange(3) / 3.0
+    vertices = np.c_[centre[0] + radius * np.cos(theta),
+                     centre[1] + radius * np.sin(theta)]
+    pieces = []
+    for start, end in zip(vertices, np.roll(vertices, -1, axis=0)):
+        t = np.arange(16, dtype=np.float64) / 16.0
+        pieces.append(start[None] * (1.0 - t[:, None]) + end[None] * t[:, None])
+    points = np.vstack(pieces)
+
+    def polygon_mask(polygon):
+        """偶奇則で小輪郭を塗る / fill the small contour by the even-odd rule."""
+        inside = np.zeros(shape, bool)
+        previous = polygon[-1]
+        for current in polygon:
+            r0, c0 = previous
+            r1, c1 = current
+            crosses = (r0 > rows) != (r1 > rows)
+            at_col = (c1 - c0) * (rows - r0) / (r1 - r0 + np.finfo(float).eps) + c0
+            inside ^= crosses & (cols < at_col)
+            previous = current
+        return inside
+
+    outer = polygon_mask(points)
+    image[outer] = (0.90, 0.04, 0.04)
+    image[polygon_mask(centre + 0.84 * (points - centre))] = (0.94, 0.94, 0.94)
+    image[polygon_mask(centre + 0.72 * (points - centre))] = (0.90, 0.04, 0.04)
+    bar = outer & (np.abs(rows - 61.0) <= 2.0) & (np.abs(cols - 64.0) <= 16.0)
+    image[bar] = (0.94, 0.94, 0.94)
+    contour = {"shape": shape, "cs": [points]}
+    return (image, contour), {}
+
+
 OP_ARG_BUILDERS = {
     **_MV_BUILDERS,
     "archive_probe": lambda pool, rng: ((_archive_probe_payload(),), {}),
@@ -8663,6 +8712,8 @@ OP_ARG_BUILDERS = {
     "color_rule_mask": _b_lane_color, "plane_topview_color": _b_lane_topview,
     "lane_boundary_fit": _b_lane_boundary, "lane_center_path": _b_lane_center,
     "stop_line_detect": _b_lane_stop,
+    # 銀座 v2 第2段の曲率・日本式標識 / Ginza v2 stage-two curve and Japanese signs.
+    "lane_curve_estimate": _b_lane_curve, "road_sign_rule_classify": _b_road_sign,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

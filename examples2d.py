@@ -584,6 +584,12 @@ EXAMPLES = [
      "summary": "trans_from_rgbを使う明示的なHSV規則、RGB保持の地面俯瞰、ransac_lineを初期値にした頑健な二次境界、"
                 "左右または片側からの中央と走行帯、直交幅と縞間隔で横断歩道を棄却する停止線検出を接続する。照明・gamma、"
                 "曲線の外れ値と遮蔽、点順変更、片側欠測、回転した停止線を、既知の色・係数・距離と比較する。"},
+    {"id": "poc_ginza_stage2_ops", "task": "measurement", "data": "synthetic",
+     "name": "銀座v2第2段 —— 緩曲線の中心・曲率・速度上限と日本式標識の形を学習なしで読む",
+     "summary": "白・黄の合成RGBから第1段の色規則と二次境界を通して車線中央と符号つき曲率を推定し、既存の"
+                "curvature_speed_planで横加速度上限を速度へ変換する。e-Gov別表第二の寸法と配色で一時停止・最高速度候補・"
+                "車両進入禁止を合成し、頂点数・円形度・HSV配置だけで分類する。調整用とholdoutを別seedにし、赤い八角形、"
+                "正立三角形、欠け、低彩度をunknownへ棄却した全件をJSONで公表する。"},
     {"id": "road_surface_tour", "task": "measurement", "data": "synthetic",
      "name": "横断の決まりを持つ道の面を、セルごとの解析の真値つきで作る —— road_surface_heightmap",
      "summary": "直線の道は世界の座標の閉形式 z = g·x − c·|y| に 1e-12、半径 35 m のヘアピン(clothoid_points の線形)は "

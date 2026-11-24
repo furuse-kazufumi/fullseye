@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3846,
- "n_notes": 3852,
+ "n_ops": 3849,
+ "n_notes": 3855,
  "notes": {
   "vol_dilate": [
    {
@@ -19471,6 +19471,16 @@
     "path": "docs/ops/drive/lane/lane_center_path.md"
    }
   ],
+  "lane_curve_estimate": [
+   {
+    "op": "lane_curve_estimate",
+    "dim": "drive",
+    "category": "lane",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/lane/lane_curve_estimate.md"
+   }
+  ],
   "plane_topview_color": [
    {
     "op": "plane_topview_color",
@@ -22018,6 +22028,26 @@
     "in": "image2d × image2d × scalar",
     "out": "table",
     "path": "docs/ops/drive/scoop/two_view_volume.md"
+   }
+  ],
+  "regular_shape_classify": [
+   {
+    "op": "regular_shape_classify",
+    "dim": "drive",
+    "category": "sign",
+    "in": "contour",
+    "out": "table",
+    "path": "docs/ops/drive/sign/regular_shape_classify.md"
+   }
+  ],
+  "road_sign_rule_classify": [
+   {
+    "op": "road_sign_rule_classify",
+    "dim": "drive",
+    "category": "sign",
+    "in": "rgbimage × contour × table",
+    "out": "table",
+    "path": "docs/ops/drive/sign/road_sign_rule_classify.md"
    }
   ],
   "obstacle_fit_doublet": [

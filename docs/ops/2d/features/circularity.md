@@ -6,7 +6,7 @@ in: region
 out: feature
 halcon: circularity
 gpu: 鎖の中だけ(lbl_circularity)
-examples: [gallery2d_features, poc_cell_counting, poc_particle_sizing, poc_rotation_invariance_audit, shape_factors_closed_form]
+examples: [gallery2d_features, poc_cell_counting, poc_ginza_stage2_ops, poc_particle_sizing, poc_rotation_invariance_audit, shape_factors_closed_form]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -68,6 +68,7 @@ circularity 0.50 0.50
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 - [poc_cell_counting](../../../../examples/poc_cell_counting.py) — `py -3.11 examples/poc_cell_counting.py`
+- [poc_ginza_stage2_ops](../../../../examples/poc_ginza_stage2_ops.py) — `py -3.11 examples/poc_ginza_stage2_ops.py`
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
 - [poc_rotation_invariance_audit](../../../../examples/poc_rotation_invariance_audit.py) — `py -3.11 examples/poc_rotation_invariance_audit.py`
 - [shape_factors_closed_form](../../../../examples/shape_factors_closed_form.py) — `py -3.11 examples/shape_factors_closed_form.py`

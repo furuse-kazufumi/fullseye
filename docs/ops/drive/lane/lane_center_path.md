@@ -70,7 +70,7 @@ obstacles.
 
 ## 同カテゴリ(`lane`)
 
-[color_rule_mask](color_rule_mask.md) · [plane_topview_color](plane_topview_color.md) · [lane_boundary_fit](lane_boundary_fit.md) · [stop_line_detect](stop_line_detect.md)
+[color_rule_mask](color_rule_mask.md) · [plane_topview_color](plane_topview_color.md) · [lane_boundary_fit](lane_boundary_fit.md) · [lane_curve_estimate](lane_curve_estimate.md) · [stop_line_detect](stop_line_detect.md)
 
 ---
 *Provenance: laneops.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

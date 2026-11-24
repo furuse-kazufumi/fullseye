@@ -5,7 +5,7 @@ category: lane
 in: rgbimage × table
 out: table
 gpu: なし
-examples: [lane_ops_tour]
+examples: [lane_ops_tour, poc_ginza_stage2_ops]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -60,6 +60,7 @@ is not a white line; this is a fixed classical rule, not an illumination estimat
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lane_ops_tour](../../../../examples/lane_ops_tour.py) — `py -3.11 examples/lane_ops_tour.py`
+- [poc_ginza_stage2_ops](../../../../examples/poc_ginza_stage2_ops.py) — `py -3.11 examples/poc_ginza_stage2_ops.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
@@ -67,7 +68,7 @@ is not a white line; this is a fixed classical rule, not an illumination estimat
 
 ## 同カテゴリ(`lane`)
 
-[plane_topview_color](plane_topview_color.md) · [lane_boundary_fit](lane_boundary_fit.md) · [lane_center_path](lane_center_path.md) · [stop_line_detect](stop_line_detect.md)
+[plane_topview_color](plane_topview_color.md) · [lane_boundary_fit](lane_boundary_fit.md) · [lane_center_path](lane_center_path.md) · [lane_curve_estimate](lane_curve_estimate.md) · [stop_line_detect](stop_line_detect.md)
 
 ---
 *Provenance: laneops.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

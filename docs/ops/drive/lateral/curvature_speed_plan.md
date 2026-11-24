@@ -5,7 +5,7 @@ category: lateral
 in: any
 out: table
 gpu: なし
-examples: [poc_driving_lateral]
+examples: [poc_driving_lateral, poc_ginza_stage2_ops]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -39,6 +39,7 @@ version: 1.1.1  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_driving_lateral](../../../../examples/poc_driving_lateral.py) — `py -3.11 examples/poc_driving_lateral.py`
+- [poc_ginza_stage2_ops](../../../../examples/poc_ginza_stage2_ops.py) — `py -3.11 examples/poc_ginza_stage2_ops.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

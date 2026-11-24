@@ -20,7 +20,7 @@ import calib
 import ransac_fit
 
 __all__ = ["color_rule_mask", "plane_topview_color", "lane_boundary_fit",
-           "lane_center_path", "stop_line_detect"]
+           "lane_center_path", "lane_curve_estimate", "stop_line_detect"]
 
 
 # 色規則 / colour rules (OpenCV HSV returned by trans_from_rgb, all scaled by 255).
@@ -97,6 +97,11 @@ MAPPING_ABSOLUTE_TOLERANCE = 1e-12
 HOMOGRAPHY_SINGULAR_VALUE_FLOOR = 1e-12
 BEV_HOMOGENEOUS_ROW_TOLERANCE = 1e-12
 PATH_SEGMENT_LENGTH_FLOOR_M = 1e-9
+
+# 緩曲線の中心と曲率 / gentle-curve centre and curvature.
+CURVE_MIN_PATH_POINTS = 6
+CURVE_FIT_THRESHOLD_M = 0.12
+CURVATURE_ZERO_TOLERANCE = 1e-12
 
 
 def _invalid_boundary(reason, *, side, points, ransac_line=None, ransac_inliers=None):
@@ -707,6 +712,109 @@ def lane_center_path(left, right, *, lane_width=DEFAULT_LANE_WIDTH_M,
                                atol=MAPPING_ABSOLUTE_TOLERANCE) for m in mappings[1:]):
             raise ValueError("lane_center_path: left and right pixel_to_world mappings disagree")
         out["pixel_to_world"] = first
+    return out
+
+
+def lane_curve_estimate(left, right, *, lane_width=DEFAULT_LANE_WIDTH_M,
+                        samples=DEFAULT_PATH_SAMPLES, band_inset=DEFAULT_BAND_INSET_M,
+                        pixel_to_world=None, camera_height=None, seed=0):
+    """左右の二次境界から車線中央、弧長、符号つき曲率を一つの表で返す。
+
+    :func:`lane_center_path` で中央と走行帯を作り、その中央点へ既存の
+    :func:`lane_boundary_fit` をもう一度適用する。正準二次式
+    ``x=b0+b1*u+b2*u², u=(y-y0)/scale`` を解析微分し、右曲がり(+x側)を正とする
+    ``kappa=x''/(1+x'^2)^(3/2)``を求める。強いS字、ヘアピン、地面が単一平面でない
+    場合は契約外である。
+
+    Parameters
+    ----------
+    left, right : table or None
+        :func:`lane_boundary_fit` の左右境界。少なくとも一方が必要。
+    lane_width, samples, band_inset
+        :func:`lane_center_path` と同じ車線幅[m]、標本数、走行帯の内側余白[m]。
+    pixel_to_world : (3, 3) matrix or None
+        画像/BEV画素から世界平面[m]への明示的な射影。上流の境界表に同じ行列が
+        入っている場合は一致を検査し、出力へ保存する。BEV世界点を直接渡す場合はNone。
+    camera_height : float or None
+        画像由来の点で使ったカメラ高[m]を監査用に保存する。射影そのものは
+        ``pixel_to_world``に含まれるため、ここで固定値を仮定しない。
+    seed : int
+        中央線の頑健当てはめに使う固定seed。
+
+    Returns
+    -------
+    table
+        ``path``(x,y)[m]、``arc_length``[m]、``curvature``[1/m]、``radius``[m]、
+        中央二次式、走行帯、確信度、明示された較正条件。
+
+    English: build the centre path with :func:`lane_center_path`, robustly refit its
+    metric BEV points with the existing quadratic fitter, and analytically differentiate
+    that polynomial. Positive curvature bends towards +x. Camera height is audit metadata;
+    the supplied pixel-to-world homography carries the actual metric projection, so this op
+    never assumes a hidden camera height. It is not valid for hairpins, strong S-curves, or
+    non-planar road points.
+
+    呼び出し例::
+
+        import numpy as np
+        import laneops
+        left = laneops.lane_boundary_fit(np.c_[-1.75 + .002*np.arange(21)**2, np.arange(21)], side="left")
+        right = laneops.lane_boundary_fit(np.c_[1.75 + .002*np.arange(21)**2, np.arange(21)], side="right")
+        out = laneops.lane_curve_estimate(left, right, camera_height=1.6)
+        assert abs(out["curvature"][0] - .004) < 1e-10
+    """
+    op = "lane_curve_estimate"
+    count = int(samples)
+    if count < CURVE_MIN_PATH_POINTS:
+        raise ValueError("%s: samples must be >= %d" % (op, CURVE_MIN_PATH_POINTS))
+    height = None
+    if camera_height is not None:
+        height = float(camera_height)
+        if not (np.isfinite(height) and height > 0.0):
+            raise ValueError("%s: camera_height must be a positive finite value" % op)
+    mapping = None
+    if pixel_to_world is not None:
+        mapping = _bev_pixel_to_world(pixel_to_world, op)
+        supplied = []
+        for boundary in (left, right):
+            if isinstance(boundary, dict) and "pixel_to_world" in boundary:
+                supplied.append(_bev_pixel_to_world(boundary["pixel_to_world"], op))
+        if any(not np.allclose(mapping, item, rtol=0.0, atol=MAPPING_ABSOLUTE_TOLERANCE)
+               for item in supplied):
+            raise ValueError("%s: boundary and argument pixel_to_world mappings disagree" % op)
+        left = None if left is None else {**left, "pixel_to_world": mapping}
+        right = None if right is None else {**right, "pixel_to_world": mapping}
+    centre = lane_center_path(left, right, lane_width=lane_width,
+                              samples=count, band_inset=band_inset)
+    if not centre.get("valid", False):
+        return {**centre, "camera_height": height}
+    fit = lane_boundary_fit(
+        centre["path"], side="unknown", ransac_threshold=CURVE_FIT_THRESHOLD_M,
+        seed=int(seed))
+    if not fit.get("valid", False):
+        return {"valid": False, "reason": "centre polynomial is not identifiable: "
+                + str(fit.get("reason", "unknown")), "centre": centre,
+                "centre_fit": fit, "camera_height": height}
+    y = np.linspace(float(fit["observed_y"][0]), float(fit["observed_y"][1]), count)
+    u = (y - float(fit["y_centre"])) / float(fit["y_scale"])
+    b0, b1, b2 = np.asarray(fit["normalised_coefficients"], np.float64)
+    x = b0 + b1 * u + b2 * u * u
+    first = (b1 + 2.0 * b2 * u) / float(fit["y_scale"])
+    second = 2.0 * b2 / float(fit["y_scale"]) ** 2
+    curvature = second / np.power(1.0 + first * first, 1.5)
+    path = np.column_stack([x, y])
+    arc = np.r_[0.0, np.cumsum(np.linalg.norm(np.diff(path, axis=0), axis=1))]
+    radius = np.full(count, math.inf, np.float64)
+    curved = np.abs(curvature) > CURVATURE_ZERO_TOLERANCE
+    radius[curved] = 1.0 / np.abs(curvature[curved])
+    confidence = float(np.clip(centre["confidence"] * fit["confidence"], 0.0, 1.0))
+    out = {**centre, "path": path, "observed_path": np.asarray(centre["path"], np.float64),
+           "arc_length": arc, "curvature": curvature, "radius": radius,
+           "max_abs_curvature": float(np.max(np.abs(curvature))),
+           "min_radius": float(np.min(radius)), "centre_fit": fit,
+           "confidence": confidence, "camera_height": height}
+    if mapping is not None:
+        out["pixel_to_world"] = mapping
     return out
 
 

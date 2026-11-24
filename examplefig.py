@@ -714,13 +714,21 @@ def _panel(v, signed=False, title="", gray=False, vrange=None, colorbar=False,
 
 def save_grid(name: str, panels, captions=None, title=None, ncols=2,
               signed=False, caption: str = "", gray=False, vrange=None,
-              colorbar=False, unit="", cmap=None, kind=None) -> Path | None:
+              colorbar=False, unit="", cmap=None, kind=None, *,
+              font_size=14, min_font_size=9, caption_h=32,
+              letters=True) -> Path | None:
     """複数の画像を 1 枚の多パネル図に組んで書く(:func:`annotate_figure_grid`)。
 
     ``signed`` と ``gray`` は 1 個の bool でも、パネルごとの列でもよい。
     ``gray=True`` のパネルは疑似カラーにせずグレースケールで塗る(強度そのもの
     を「絵」として見せる量に使う。詳細は :func:`_to_rgb8`)。
     ``vrange`` は ``(lo, hi)`` 1 つ(全パネル共通)か、パネルごとの列(``None`` = そのパネルは自動)。
+    ``font_size``、``min_font_size``、``caption_h``、``letters`` は注釈グリッドへ渡し、
+    発表媒体に応じて文字寸法、caption帯、パネル記号を明示的に制御する。
+
+    English: the keyword-only typography options are forwarded to
+    :func:`annotate_figure_grid`; callers can set the initial/minimum font size,
+    caption-band height, and panel-letter visibility without changing image data.
     """
     count = len(panels)
     def per_panel(value, *, pair_is_scalar=False):
@@ -766,8 +774,10 @@ def save_grid(name: str, panels, captions=None, title=None, ncols=2,
         # 画素の四角を増やす最近傍を避け、双三次補間する。
         for factor in _grid_upscales(imgs, caps):
             try:
-                fig = fs.annotate_figure_grid(_upscale(imgs, factor), captions=caps,
-                                              ncols=ncols, title=title)
+                fig = fs.annotate_figure_grid(
+                    _upscale(imgs, factor), captions=caps, ncols=ncols, title=title,
+                    font_size=font_size, min_font_size=min_font_size,
+                    caption_h=caption_h, letters=letters)
             except ValueError as exc:
                 if "does not fit" not in str(exc) or factor == _GRID_UPSCALES[-1]:
                     raise
