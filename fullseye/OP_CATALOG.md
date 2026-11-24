@@ -2441,7 +2441,7 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 #### fit / fit(3)
 - `fit_circle_geometric` `keypoints → table` GPU: なし — 短い円弧を含む ``(row, col)`` 点に幾何距離の最小二乗で円と半径を当てはめる。 · 例: `fit_ops_from_knowhow`
 - `fit_curve_principal_axis` `keypoints → table` GPU: なし — 斜めの曲がった縁を主軸へ回してから多項式 ``y'=f(x')`` を当てはめる。 · 例: `fit_ops_from_knowhow`
-- `region_perimeter_estimate` `region → measurement` GPU: なし — Estimate a binary region's perimeter with an explicit estimator / 推定量を明示して領域の周囲長を測る。 · 例: `shape_factors_closed_form`
+- `region_perimeter_estimate` `mask → measurement` GPU: なし — Estimate a binary region's perimeter with an explicit estimator / 推定量を明示して領域の周囲長を測る。 · 例: `shape_factors_closed_form`
 
 #### fit / registration(1)
 - `phase_correlation_shift` `image2d × image2d → table` GPU: なし — 2 枚の画像の位置合わせに必要なサブピクセル移動量を位相限定相関で求める。 · 例: `fit_ops_from_knowhow`

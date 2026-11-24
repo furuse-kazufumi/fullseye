@@ -2443,7 +2443,7 @@ _共 3854 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 #### fit / fit (3)
 - `fit_circle_geometric` `keypoints → table` GPU: 无 — 用几何最小二乘法对包括短圆弧的（行、列）点拟合圆和半径。 · 示例: `fit_ops_from_knowhow`
 - `fit_curve_principal_axis` `keypoints → table` GPU: 无 — 将倾斜曲边旋转到主轴后拟合多项式 y'=f(x')。 · 示例: `fit_ops_from_knowhow`
-- `region_perimeter_estimate` `region → measurement` GPU: 无 — 使用明确选择的估计器测量二值区域的周长。 · 示例: `shape_factors_closed_form`
+- `region_perimeter_estimate` `mask → measurement` GPU: 无 — 使用明确选择的估计器测量二值区域的周长。 · 示例: `shape_factors_closed_form`
 
 #### fit / registration (1)
 - `phase_correlation_shift` `image2d × image2d → table` GPU: 无 — 用相位限定相关估计两幅图像对齐所需的亚像素平移。 · 示例: `fit_ops_from_knowhow`

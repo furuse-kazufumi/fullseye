@@ -2443,7 +2443,7 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 #### fit / fit (3)
 - `fit_circle_geometric` `keypoints → table` GPU: none — Fit a circle and radius to (row, col) points, including short arcs, by geometric least squares. · examples: `fit_ops_from_knowhow`
 - `fit_curve_principal_axis` `keypoints → table` GPU: none — Rotate a slanted curved edge to its principal axis, then fit polynomial y'=f(x'). · examples: `fit_ops_from_knowhow`
-- `region_perimeter_estimate` `region → measurement` GPU: none — Estimate a binary region's perimeter with a chosen estimator. · examples: `shape_factors_closed_form`
+- `region_perimeter_estimate` `mask → measurement` GPU: none — Estimate a binary region's perimeter with a chosen estimator. · examples: `shape_factors_closed_form`
 
 #### fit / registration (1)
 - `phase_correlation_shift` `image2d × image2d → table` GPU: none — Estimate the subpixel translation needed to align two images by phase-only correlation. · examples: `fit_ops_from_knowhow`

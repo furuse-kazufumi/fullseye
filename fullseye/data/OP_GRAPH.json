@@ -330078,14 +330078,10 @@
   ],
   "diagnostics": {
     "dead_ends": [],
-    "orphans": [
-      "region"
-    ],
+    "orphans": [],
     "never_consumed": [],
     "unchecked_ops": [],
-    "unreachable": [
-      "region"
-    ],
+    "unreachable": [],
     "duplicate_declarations": [
       {
         "op": "gaussians_to_voxel",

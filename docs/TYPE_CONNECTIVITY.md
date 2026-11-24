@@ -98,7 +98,7 @@
 | `labels2d` | ok | 15 | 33 |  |  | none | 2-D のラベル画像。産 12 / 受 32。 | opssegmentation。 |
 | `lightfield` | ok | 4 | 21 | ライトフィールドカメラ(格子状の視点)。 |  | none | 4-D (V,U,H,W) のライトフィールド。産 4 / 受 21。 | tools/gen_op_facets.py ACQUIRABLE['lightfield']、TYPE_TO_SORT['lightfield']。 |
 | `lut` | d | 1 | 2 | color_lut() が引数(色の段)だけで作る色の対応表。 |  | none | 第 1 入力の数え方では行き止まりに見えるが、color_bar / color_grade が第 2 入力として受けている。作り方は合成が正しい。 | OP_INDEX: color_bar の in_sorts = [image2d, lut]、color_grade = [rgb, lut]。 |
-| `mask` | a | 19 | 31 |  |  | none | 2-D レジストリの region(0/1 の (H,W))と同じ物を blob 族が mask と呼ぶ。境界ごとに alias で同一視される(実測 2026-09-15、gen_capabilities_index のコメント)。直さない(揺れとして記録)。 | SORT_ALIASES の mask -> region。 |
+| `mask` | a | 19 | 32 |  |  | none | 2-D レジストリの region(0/1 の (H,W))と同じ物を blob 族が mask と呼ぶ。境界ごとに alias で同一視される(実測 2026-09-15、gen_capabilities_index のコメント)。直さない(揺れとして記録)。 | SORT_ALIASES の mask -> region。 |
 | `match` | b | 8 | 1 |  |  | match_component(match, index) -> measurement を台帳(opsreprconv)に足した。2-D レジストリの候補(進化のゲノム)は動かさないため、レジストリには足していない(tests/test_wave0.py が match の候補数を固定している)。 | 2-D レジストリの 1-D 結果ベクトル(area_center = (面積, 行, 列)、ncc_locate = (相関, 行, 列) など 8 op)を受ける op が 0(行き止まり)。HALCON では Row / Column を個別に次へ渡すのが普通の使い方。 | ops.MATCH、backends_auto の MAT = 'match' のコメント。grep 'match' を op 名・in_sort で引いた。 |
 | `matrix` | ok | 94 | 208 | 引数だけで作る行列(内部行列・変換行列・設計行列)。 |  | none | 一般の 2-D 数値行列(線形代数)。産 91 / 受 191。 | ops.MATRIX、OP_INDEX で in_sorts = [] の作り手 13。 |
 | `measurehandle` | d | 3 | 4 | gen_measure_rectangle2 / gen_measure_arc が測定窓の幾何(中心・向き・長さ)から作る HALCON の測定ハンドル。 |  | none | ハンドルは引数から作るものなので入口が正しい。 | opsmeasure1d の caliper カテゴリ。 |
@@ -120,7 +120,7 @@
 | `primitive` | ok | 33 | 9 |  |  | none | 当てはめた幾何プリミティブ(平面・球・箱)。産 33 / 受 9。 | ops3d の geometry / robust_fit。 |
 | `projstack` | ok | 2 | 6 |  |  | none | CT の投影束 (view, V, U)。ct_forward_project / ellipsoid_projections が産み、FDK・反復法の再構成が受けて voxel に戻す。sinostack とは軸の順序が違うので別の型。 | OP_INDEX 産 2(ct_forward_project / ellipsoid_projections)/ 受 6(ct_adjoint_project・fdk・sirt・os_sart・tv_reconstruct・ct_dual_energy_reconstruct)。第 8 便、2026-11-04 の統合で行を足した。 |
 | `qimage` | ok | 19 | 24 |  |  | none | 四元数画像(色の回転・フィルタ)。産 19 / 受 24。 | TYPE_TO_SORT['qimage']、opsquat。 |
-| `region` | ok | 178 | 137 |  |  | none | 2-D レジストリの 0/1 領域。産 177 / 受 136。 | docs/ADDING_OPS.md の Sort contract。 |
+| `region` | ok | 178 | 136 |  |  | none | 2-D レジストリの 0/1 領域。産 177 / 受 136。 | docs/ADDING_OPS.md の Sort contract。 |
 | `rgb` | ok | 58 | 36 | 台帳の描画・合成(gfx2d)の色画像。 | 人が見る色の絵(gfx2d の合成結果・図)。 | none | (H,W,3) の色(符号化を特定しない 3 チャネル)。rgbimage と分けた理由は opsimgmetrics.NEW_SORTS(L* が 32.53 でなく 5.72 と静かに出る実測)。 | opsimgmetrics.NEW_SORTS['rgb']。 |
 | `rgba` | ok | 11 | 7 |  | 合成した絵(ストレート α)。 | none | (H,W,4) ストレート α。rgba_premul と分けた理由は opsgfx2d の docstring。 | opsgfx2d の docstring(rgba / rgba_premul を分けた理由)。 |
 | `rgba_premul` | ok | 2 | 2 |  |  | none | 乗算済み α。premultiply / unpremultiply の往復で閉じる。 | opsgfx2d の premultiply / unpremultiply / alpha_composite_premul。 |

@@ -2,7 +2,7 @@
 op: region_perimeter_estimate
 dim: fit
 category: fit
-in: region
+in: mask
 out: measurement
 gpu: なし
 examples: [shape_factors_closed_form]
@@ -13,7 +13,7 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 # region_perimeter_estimate — FIT `fit` op
 
-- **データ種**: `region` → `measurement`
+- **データ種**: `mask` → `measurement`
 - **呼び出し**: `import fullseye as fs; fs.ledger.region_perimeter_estimate(region, method: 'str' = 'skimage') -> 'float'` (実装を直接呼ぶなら `import measure; measure.region_perimeter_estimate(region, method: 'str' = 'skimage') -> 'float'`、台帳から引くなら `opsfit.get("region_perimeter_estimate")`)
 - **GPU**: なし(CPU 参照実装のみ)
 

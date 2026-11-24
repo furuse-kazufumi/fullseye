@@ -24055,7 +24055,7 @@
     "op": "region_perimeter_estimate",
     "dim": "fit",
     "category": "fit",
-    "in": "region",
+    "in": "mask",
     "out": "measurement",
     "path": "docs/ops/fit/fit/region_perimeter_estimate.md"
    }

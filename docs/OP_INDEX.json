@@ -29048,16 +29048,16 @@
   {
    "name": "region_perimeter_estimate",
    "halcon": "",
-   "in_sort": "region",
+   "in_sort": "mask",
    "out_sort": "measurement",
    "category": "fit",
    "tier": "ledger",
    "ledger": "opsfit",
    "dim": "fit",
    "in_sorts": [
-    "region"
+    "mask"
    ],
-   "gpu_tier": "partial"
+   "gpu_tier": "suitable"
   },
   {
    "name": "region_props",
