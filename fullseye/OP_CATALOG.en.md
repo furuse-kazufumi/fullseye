@@ -849,9 +849,9 @@ Ops that do not fit the one-image pipeline (two images, point sequences, variabl
 
 ## Operators by family (family → category, all ops)
 
-_3847 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
+_3849 ops / 61 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
 
-Families: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+Families: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **pharma** 2 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -3536,8 +3536,8 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 - `pod_decision_tradeoff` `table × signal → table` GPU: none — Trade-off table of (a50, a90, a90/95, false-call probability) as the decision threshold ``a_dec`` is varied (``table``). · examples: `poc_pod_lighting`
 - `pod_false_call` `signal → table` GPU: none — Probability of a false call from the responses ``noise`` of unflawed sites and the decision threshold ``a_dec`` (``table``). · examples: `poc_equipment_selection_map`, `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
 - `pod_from_ahat` `table → table` GPU: none — From the â-vs-a regression and the decision threshold ``a_dec``: the POD(a) curve and a50 / a90 / a90/95 (``table``). · examples: `poc_equipment_selection_map`, `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
-- `pod_hitmiss_fit` `table → table` GPU: none — Fit POD(a) to binary found/missed data with a generalised linear model (``table``). · examples: `poc_pod_lighting`, `poc_sem_wafer_defect_edge_bias`, `poc_si_wafer_pl_defect_visibility`
-- `proportion_interval` `no input → table` GPU: none — Return the point estimate and confidence limits for the binomial proportion ``k/n`` (``table``). · examples: `proportion_interval_audit`
+- `pod_hitmiss_fit` `table → table` GPU: none — Fit POD(a) to binary found/missed data with a generalised linear model (``table``). · examples: `poc_pod_lighting`, `poc_sem_wafer_defect_edge_bias`, `poc_si_wafer_pl_defect_visibility`, `poc_vial_particle_pod`
+- `proportion_interval` `no input → table` GPU: none — Return the point estimate and confidence limits for the binomial proportion ``k/n`` (``table``). · examples: `poc_vial_particle_pod`, `proportion_interval_audit`
 - `trials_for_all_success` `no input → scalar` GPU: none — Return the minimum trial count needed for all successes to establish ``p >= p_min`` at one-sided ``confidence`` (``scalar``). · examples: `proportion_interval_audit`
 
 #### spc / uncertainty (5)
@@ -3553,6 +3553,14 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 - `varmodel_calibrate` `table × video → table` GPU: none — Re-derive the band half-width ``k`` from held-out good images, for data that break the normal assumption (``table``). · examples: `poc_good_sample_variation_model`
 - `varmodel_fit` (halcon: `train_variation_model`) `video → table` GPU: yes (allow-list) — Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``). · examples: `poc_good_sample_variation_model`, `poc_patch_anomaly`
 - `varmodel_score` `image2d × table → table` GPU: none — Score one image against a ``varmodel_fit`` model: z map in sigmas, out-of-band map and a per-region explanation (``table``). · examples: `poc_good_sample_variation_model`, `poc_patch_anomaly`
+
+### pharma (2 ops / 2 categories)
+
+#### pharma / synth (1)
+- `vial_spin_stop_sequence` `no input → video` GPU: none — Create a post-spin-stop vial image sequence and per-object ground-truth trajectories. · examples: `poc_vial_particle_pod`
+
+#### pharma / track (1)
+- `track_moving_particles` `video → table` GPU: none — Separate particles, bubbles, and stationary glass scratches in an image sequence, returning a trajectory table. · examples: `poc_vial_particle_pod`
 
 ### graph (20 ops / 9 categories)
 

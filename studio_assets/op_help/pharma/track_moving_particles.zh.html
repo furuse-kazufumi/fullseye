@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">track_moving_particles — PHARMA <code style="color:#22d3bf">track</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_moving_particles(frames, *, threshold=0.045, max_displacement_px=10.0, min_area_px=2, static_threshold=0.055)</code>(要直接调用实现,<code style="color:#22d3bf">import vialops; vialops.track_moving_particles(frames, *, threshold=0.045, max_displacement_px=10.0, min_area_px=2, static_threshold=0.055)</code>;从台账取用则 <code style="color:#22d3bf">opspharma.get(&quot;track_moving_particles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:无(仅 CPU 参考实现)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>从图像序列中分离颗粒、气泡和静止玻璃划痕，并返回轨迹表。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Each frame is compared with the temporal median, so stationary scratches are reported from the median image and moving objects from residual components. Consecutive moving detections are linked greedily only within <code style="color:#22d3bf">max_displacement_px</code>; ambiguous or too-large jumps start a new track rather than being silently joined.  A moving track whose fitted row velocity is negative is labelled <code style="color:#22d3bf">bubble</code> (image rows increase downward), otherwise <code style="color:#22d3bf">particle</code>.  This is a conservative 2-D projection tracker, not an identity-preserving multi-object tracker through overlap/occlusion.</p>
+<p>Returns a table with one row per detection: <code style="color:#22d3bf">frame</code>, <code style="color:#22d3bf">track_id</code>, <code style="color:#22d3bf">object_class</code>, centroid, area, and row velocity.  Input must be a finite <code style="color:#22d3bf">(T,H,W)</code> sequence with at least three frames.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepharma:pharmaceutical_vial_inspection">pharmaceutical_vial_inspection 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_vial_particle_pod">poc_vial_particle_pod</a> — <code style="color:#22d3bf">py -3.11 examples/poc_vial_particle_pod.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">track</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: vialops.py — PHARMA 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

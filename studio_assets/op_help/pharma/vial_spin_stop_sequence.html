@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vial_spin_stop_sequence — PHARMA <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">video</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.04, initial_omega_rad_s=10.0, decay_time_s=0.25, vial_radius_mm=10.0, liquid_height_mm=28.0, particle_diameter_um=80.0, particle_density_kg_m3=1450.0, particle_contrast=0.16, illumination=&#x27;back&#x27;, n_particles=1, n_bubbles=1, n_scratches=1, viscosity_pa_s=0.003, fluid_density_kg_m3=1000.0, pixel_size_um=280.0, noise_sigma=0.012, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import vialops; vialops.vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.04, initial_omega_rad_s=10.0, decay_time_s=0.25, vial_radius_mm=10.0, liquid_height_mm=28.0, particle_diameter_um=80.0, particle_density_kg_m3=1450.0, particle_contrast=0.16, illumination=&#x27;back&#x27;, n_particles=1, n_bubbles=1, n_scratches=1, viscosity_pa_s=0.003, fluid_density_kg_m3=1000.0, pixel_size_um=280.0, noise_sigma=0.012, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opspharma.get(&quot;vial_spin_stop_sequence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.vial_spin_stop_sequence(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">video</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.vial_spin_stop_sequence.raw(...)</code>、または <code style="color:#22d3bf">vialops.vial_spin_stop_sequence</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>回転停止後のバイアル画像列と物体ごとの真値軌跡を作る。</p>
+<p>The liquid azimuthal velocity is the axisymmetric, prescribed field <code style="color:#22d3bf">u_theta(r,t) = omega0 exp(-t/tau) r</code>; it is not a Navier--Stokes solution.  A particle has that in-plane advection plus its Stokes terminal velocity <code style="color:#22d3bf">v_t = 2 r_p^2 (rho_p-rho_f) g / (9 mu)</code> in the image-downward direction.  Bubbles use <code style="color:#22d3bf">rho_p=1.2 kg/m^3</code> and therefore rise.  The model is restricted to small Reynolds number / isolated spherical objects where Stokes drag is appropriate; it does not model turbulent wake, aggregation, meniscus forces, or wall-corrected drag.  At the cylindrical wall positions are reflected, which prevents a silent escape but is not a hydrodynamic wall model.  Refraction through glass and liquid is deliberately simplified to a fixed apparent contrast and Gaussian PSF in this first stage.</p>
+<p><code style="color:#22d3bf">illumination</code> is <code style="color:#22d3bf">&quot;back&quot;</code> or <code style="color:#22d3bf">&quot;side&quot;</code>.  A fixed <code style="color:#22d3bf">seed</code> determines object positions, sensor noise, and scratches.  The direct return is <code style="color:#22d3bf">(frames, truth)</code>; <code style="color:#22d3bf">truth</code> contains a row table with object type, frame, projected positions, physical positions and visibility, plus angular-speed truth.  The ledger adapter returns only the <code style="color:#22d3bf">video</code> frames.</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> for nonphysical dimensions, an unknown illumination, or a nonintegral object count.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepharma:pharmaceutical_vial_inspection">pharmaceutical_vial_inspection ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_vial_particle_pod">poc_vial_particle_pod</a> — <code style="color:#22d3bf">py -3.11 examples/poc_vial_particle_pod.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">video</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oppharma:track_moving_particles">track_moving_particles</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">synth</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: vialops.py — PHARMA operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -849,9 +849,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 
 ## Operators by family(族 → 类别，全部 op)
 
-_共 3847 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
+_共 3849 ops / 61 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
 
-族一览: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族一览: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **pharma** 2 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -3536,8 +3536,8 @@ _共 3847 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `pod_decision_tradeoff` `table × signal → table` GPU: 无 — 改变判定阈值 ``a_dec`` 时 (a50, a90, a90/95, 误检概率) 的权衡表(``table``)。 · 示例: `poc_pod_lighting`
 - `pod_false_call` `signal → table` GPU: 无 — 由无缺陷部位的响应 ``noise`` 与判定阈值 ``a_dec`` 求误检概率(``table``)。 · 示例: `poc_equipment_selection_map`, `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
 - `pod_from_ahat` `table → table` GPU: 无 — 由 â 对 a 的回归与判定阈值 ``a_dec`` 求 POD(a) 曲线及 a50 / a90 / a90/95(``table``)。 · 示例: `poc_equipment_selection_map`, `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
-- `pod_hitmiss_fit` `table → table` GPU: 无 — 用广义线性模型由“检出/漏检”二值数据拟合 POD(a)(``table``)。 · 示例: `poc_pod_lighting`, `poc_sem_wafer_defect_edge_bias`, `poc_si_wafer_pl_defect_visibility`
-- `proportion_interval` `无输入 → table` GPU: 无 — 返回二项比例 ``k/n`` 的点估计和置信限（``table``）。 · 示例: `proportion_interval_audit`
+- `pod_hitmiss_fit` `table → table` GPU: 无 — 用广义线性模型由“检出/漏检”二值数据拟合 POD(a)(``table``)。 · 示例: `poc_pod_lighting`, `poc_sem_wafer_defect_edge_bias`, `poc_si_wafer_pl_defect_visibility`, `poc_vial_particle_pod`
+- `proportion_interval` `无输入 → table` GPU: 无 — 返回二项比例 ``k/n`` 的点估计和置信限（``table``）。 · 示例: `poc_vial_particle_pod`, `proportion_interval_audit`
 - `trials_for_all_success` `无输入 → scalar` GPU: 无 — 返回在单侧 ``confidence`` 下以全数成功证明 ``p >= p_min`` 所需的最少试验数（``scalar``）。 · 示例: `proportion_interval_audit`
 
 #### spc / uncertainty (5)
@@ -3553,6 +3553,14 @@ _共 3847 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `varmodel_calibrate` `table × video → table` GPU: 无 — 用未参与拟合的良品重新求容许带半宽 ``k``(用于不满足正态假设的真实图像,``table``)。 · 示例: `poc_good_sample_variation_model`
 - `varmodel_fit` (halcon: `train_variation_model`) `video → table` GPU: 有(许可列表) — 由良品图像堆叠学习逐像素的变动模型(中心、离散度、容许带半宽 k)(``table``)。 · 示例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
 - `varmodel_score` `image2d × table → table` GPU: 无 — 将一张图像与 ``varmodel_fit`` 的模型比较:以 σ 计的 z 图、带外图与逐区域说明(``table``)。 · 示例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
+
+### pharma (2 ops / 2 categories)
+
+#### pharma / synth (1)
+- `vial_spin_stop_sequence` `无输入 → video` GPU: 无 — 生成旋转停止后的西林瓶图像序列及每个物体的真值轨迹。 · 示例: `poc_vial_particle_pod`
+
+#### pharma / track (1)
+- `track_moving_particles` `video → table` GPU: 无 — 从图像序列中分离颗粒、气泡和静止玻璃划痕，并返回轨迹表。 · 示例: `poc_vial_particle_pod`
 
 ### graph (20 ops / 9 categories)
 

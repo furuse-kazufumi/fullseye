@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vial_spin_stop_sequence — PHARMA <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">video</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.04, initial_omega_rad_s=10.0, decay_time_s=0.25, vial_radius_mm=10.0, liquid_height_mm=28.0, particle_diameter_um=80.0, particle_density_kg_m3=1450.0, particle_contrast=0.16, illumination=&#x27;back&#x27;, n_particles=1, n_bubbles=1, n_scratches=1, viscosity_pa_s=0.003, fluid_density_kg_m3=1000.0, pixel_size_um=280.0, noise_sigma=0.012, seed=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import vialops; vialops.vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.04, initial_omega_rad_s=10.0, decay_time_s=0.25, vial_radius_mm=10.0, liquid_height_mm=28.0, particle_diameter_um=80.0, particle_density_kg_m3=1450.0, particle_contrast=0.16, illumination=&#x27;back&#x27;, n_particles=1, n_bubbles=1, n_scratches=1, viscosity_pa_s=0.003, fluid_density_kg_m3=1000.0, pixel_size_um=280.0, noise_sigma=0.012, seed=0)</code>;從台帳取用則 <code style="color:#22d3bf">opspharma.get(&quot;vial_spin_stop_sequence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.vial_spin_stop_sequence(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">video</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.vial_spin_stop_sequence.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">vialops.vial_spin_stop_sequence</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>產生旋轉停止後的西林瓶影像序列及每個物體的真值軌跡。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>The liquid azimuthal velocity is the axisymmetric, prescribed field <code style="color:#22d3bf">u_theta(r,t) = omega0 exp(-t/tau) r</code>; it is not a Navier--Stokes solution.  A particle has that in-plane advection plus its Stokes terminal velocity <code style="color:#22d3bf">v_t = 2 r_p^2 (rho_p-rho_f) g / (9 mu)</code> in the image-downward direction.  Bubbles use <code style="color:#22d3bf">rho_p=1.2 kg/m^3</code> and therefore rise.  The model is restricted to small Reynolds number / isolated spherical objects where Stokes drag is appropriate; it does not model turbulent wake, aggregation, meniscus forces, or wall-corrected drag.  At the cylindrical wall positions are reflected, which prevents a silent escape but is not a hydrodynamic wall model.  Refraction through glass and liquid is deliberately simplified to a fixed apparent contrast and Gaussian PSF in this first stage.</p>
+<p><code style="color:#22d3bf">illumination</code> is <code style="color:#22d3bf">&quot;back&quot;</code> or <code style="color:#22d3bf">&quot;side&quot;</code>.  A fixed <code style="color:#22d3bf">seed</code> determines object positions, sensor noise, and scratches.  The direct return is <code style="color:#22d3bf">(frames, truth)</code>; <code style="color:#22d3bf">truth</code> contains a row table with object type, frame, projected positions, physical positions and visibility, plus angular-speed truth.  The ledger adapter returns only the <code style="color:#22d3bf">video</code> frames.</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> for nonphysical dimensions, an unknown illumination, or a nonintegral object count.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepharma:pharmaceutical_vial_inspection">pharmaceutical_vial_inspection 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_vial_particle_pod">poc_vial_particle_pod</a> — <code style="color:#22d3bf">py -3.11 examples/poc_vial_particle_pod.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">video</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="oppharma:track_moving_particles">track_moving_particles</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">synth</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: vialops.py — PHARMA 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
