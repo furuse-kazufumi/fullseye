@@ -305,7 +305,7 @@ arguments prints the same guidance. The pieces, if you prefer them one by one:
 | open the GUI | `fullseye-studio` (needs `pip install "fullseye[gui]"`) |
 | put Studio in the Start menu / on the desktop | `fullseye-studio --install-shortcuts` (add `--desktop`); undo: `--remove-shortcuts` |
 | use it from Python (3 lines) | `import fullseye, numpy as np` / `img = np.random.rand(64, 64)` / `fullseye.apply(img, "sobel_amp")` |
-| use it from an AI (Claude Code) | `fullseye-rag` (skill) and `claude mcp add fullseye -- python -m fullseye.mcp` |
+| use it from an AI (Claude Code) | `fullseye-rag` (skill) and `claude mcp add fullseye -- fullseye-mcp` (or `claude mcp add fullseye -- python -P -m fullseye.mcp`) |
 
 ### Uninstalling
 

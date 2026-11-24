@@ -140,6 +140,7 @@ all = [
 fullseye = "imgevolve:main"
 fullseye-studio = "studio:main"
 fullseye-rag = "fullseye.rag_setup:main"      # Claude Code RAG skill installer (docs/AI_RAG_GUIDE.md)
+fullseye-mcp = "fullseye.mcp.server:main"      # cwd-safe MCP stdio server entry point / cwd を読まない MCP stdio の入口
 
 [tool.setuptools]
 # The public facade is the `fullseye` package; the engine is a set of flat
