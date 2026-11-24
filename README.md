@@ -165,7 +165,7 @@ Two more doors, both new since 0.1.11 and both honest about their limits:
 
 | Door | For | Run this first | Status |
 |---|---|---|---|
-| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. A `full` and a smaller `minimal` tool profile (the tool list is `tools/list`; see docs/MCP.md), strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). From MCP, 2,456 can be run (the type graph has 3,842 entries) — the ledger ops (optics and lighting design, synthetic inputs, px→mm) in an isolated worker with a time and memory limit; the rest are read-only and say why. A verdict of ok checks the output's shape, not whether the value is right. Checked with the official `mcp` Python client (initialize → tools/list → tools/call). [`docs/MCP.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MCP.md) |
+| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `fullseye-mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. A `full` and a smaller `minimal` tool profile (the tool list is `tools/list`; see docs/MCP.md), strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). From MCP, 2,456 can be run (the type graph has 3,842 entries) — the ledger ops (optics and lighting design, synthetic inputs, px→mm) in an isolated worker with a time and memory limit; the rest are read-only and say why. A verdict of ok checks the output's shape, not whether the value is right. Checked with the official `mcp` Python client (initialize → tools/list → tools/call). [`docs/MCP.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MCP.md) |
 | **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](https://github.com/furuse-kazufumi/fullseye/tree/master/rust/fullseye_core/examples) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (947 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the n-ary 2-D operators and the typed-ledger operators (counts: the index line at the top), whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
 
 ## Install
@@ -177,6 +177,8 @@ pip install "fullseye[all]" # + opencv, scikit-image, Pillow, PyWavelets, Simple
 ```
 
 **After installing, run `fullseye setup`** (see "Your first minute after `pip install`" below).
+If Windows startup behaves unexpectedly, run **`fullseye doctor`** for checked causes and copyable repairs; see
+[Windows troubleshooting](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/TROUBLESHOOTING.en.md).
 
 PyPI: <https://pypi.org/project/fullseye/> · Source / issues / operator corpus:
 GitHub (linked from the PyPI sidebar). After installing, `fullseye-rag` sets up the
@@ -192,6 +194,7 @@ operators are affected when it is absent (graceful degradation). GPU is opt-in.
 
 ```bash
 fullseye setup          # checks your environment, then asks one question at a time (Enter = default)
+fullseye doctor         # read-only startup diagnosis; add --json for automation, --fix asks before a safe repair
 ```
 
 It reports your Python / fullseye / Qt / optional dependencies / Claude Code integration, then asks what you want
@@ -206,7 +209,7 @@ arguments prints the same guidance. The pieces, if you prefer them one by one:
 | open the GUI | `fullseye-studio` (needs `pip install "fullseye[gui]"`) |
 | put Studio in the Start menu / on the desktop | `fullseye-studio --install-shortcuts` (add `--desktop`); undo: `--remove-shortcuts` |
 | use it from Python (3 lines) | `import fullseye, numpy as np` / `img = np.random.rand(64, 64)` / `fullseye.apply(img, "sobel_amp")` |
-| use it from an AI (Claude Code) | `fullseye-rag` (skill) and `claude mcp add fullseye -- python -m fullseye.mcp` |
+| use it from an AI (Claude Code) | `fullseye-rag` (skill) and `claude mcp add fullseye -- fullseye-mcp` (or `claude mcp add fullseye -- python -P -m fullseye.mcp`) |
 
 ### Uninstalling
 
