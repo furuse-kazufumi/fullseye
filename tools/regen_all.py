@@ -374,6 +374,7 @@ READS = {
 #: Dependency/version fields of pyproject.toml feed these stages; gen_doc_counts changes only its
 #: final count prose. Declare every measured reader here.
 _PYPROJECT_COUNT_READERS = (
+    "tools/license_audit.py",  # 2026-11-25: 依存の版と extras を pyproject から読む(件数表記は使わない)
     "tools/gen_sbom.py", "tools/gen_device_rules.py", "imgevolve.py",
     "tools/halcon_compat_profile.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
     "tools/gen_wingpoc_gallery.py", "tools/gen_mcp_data.py", "tools/gen_view2026_pages.py",
