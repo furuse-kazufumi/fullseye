@@ -24,6 +24,8 @@ import math
 import numpy as np
 from scipy import special
 
+from numpy_compat import trapezoid
+
 __all__ = [
     "material_group_index", "material_gvd", "fiber_numerical_aperture", "fiber_v_number",
     "fiber_lp_modes", "fiber_mode_field_diameter", "fiber_bundle_coupling",
@@ -223,12 +225,11 @@ def fiber_mode_field_diameter(core_radius_um=4.1, v_number=2.2):
     r = np.concatenate([r_in, r_out])
     # NumPy 1.23 is supported, where the public spelling is still ``trapz``.
     # Keep the numerical rule identical across supported releases / 対応する旧版でも同じ台形則を使う。
-    integrate = getattr(np, "trapezoid", np.trapz)
-    ee = integrate(e * e * r, r)
+    ee = trapezoid(e * e * r, r)
 
     def overlap(w0):
         g = np.exp(-(r / w0) ** 2)
-        return integrate(e * g * r, r) ** 2 / (ee * integrate(g * g * r, r))
+        return trapezoid(e * g * r, r) ** 2 / (ee * trapezoid(g * g * r, r))
 
     lo, hi = 0.2, 20.0
     gr = (math.sqrt(5.0) - 1.0) / 2.0
@@ -244,7 +245,7 @@ def fiber_mode_field_diameter(core_radius_um=4.1, v_number=2.2):
             x2 = lo + gr * (hi - lo)
             f2 = overlap(x2)
     w_best = 0.5 * (lo + hi)
-    p1 = math.sqrt(2.0 * integrate(e * e * r ** 3, r) / ee)
+    p1 = math.sqrt(2.0 * trapezoid(e * e * r ** 3, r) / ee)
     marc = 2.0 * a * (0.65 + 1.619 * V ** -1.5 + 2.879 * V ** -6)
     mfd = 2.0 * w_best * a
     return {"mfd_um": mfd, "mfd_marcuse_um": marc, "relative_difference": marc / mfd - 1.0,

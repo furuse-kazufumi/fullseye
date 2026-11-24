@@ -2204,7 +2204,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.318 —— Compendial Microscopy Particle Sizing — Keep Border and Overlap Decisions, Three Bases, and Calibration Provenance
 
-When microscopy particles are counted, silently treating clipped or overlapping objects as one changes the distribution. Against synthetic truth, this report keeps each acceptance reason, number/area/volume bases, scale uncertainty and calibration provenance together.
+Counting clipped or overlapping objects as one changes a microscopy size distribution. Synthetic truth shows a largest error of 0.165 px. Acceptance reasons and three bases remain with calibration provenance.
 
 [![Compendial Microscopy Particle Sizing — Keep Border and Overlap Decisions, Three Bases, and Calibration Provenance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png)
 

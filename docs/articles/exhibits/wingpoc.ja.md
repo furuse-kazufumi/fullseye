@@ -2202,7 +2202,7 @@ py -3.11 examples/poc_particle_sizing.py
 
 ## No.2026.318 —— 薬学向け顕微鏡粒径 ―― 端と重なりを黙って1粒にせず、3基準と校正来歴を残す
 
-顕微鏡で撮った粒子を数えるとき、端で切れた粒子と重なった粒子を一粒として黙って数えると分布が変わる。合成した真値と比べ、採否の理由、個数・面積・体積の三つの基準、尺度の不確かさと校正来歴を同じ報告に残した。
+端で切れた粒子と重なった粒子を一粒として数えると、顕微鏡の粒度分布が変わる。合成真値では最大誤差 0.165 px を確かめた。採否理由と三つの基準を校正来歴とともに残す。
 
 [![薬学向け顕微鏡粒径 ―― 端と重なりを黙って1粒にせず、3基準と校正来歴を残す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png)
 

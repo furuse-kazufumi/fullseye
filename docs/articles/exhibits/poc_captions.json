@@ -1234,8 +1234,8 @@
    "caption_ja": "ステージミクロメータ、孤立円・楕円、低コントラスト、重なり、端切れを同じ合成画像に置き、真値と分割結果を比べた。孤立粒子の面積相当径の最大誤差は 0.165 px、端の1粒は理由付きで除外し、分割済みの重なり2粒を記録した。個数基準と体積基準のD50は 17.428 µm と 18.064 µm で別系列であり、レーザー回折と同一視しない。尺度 0.500000 ± 0.002500 µm/px を径と分位点へ伝播し、校正記録と粒子表のSHA-256を保存する。",
    "caption_en": "A stage micrometer, isolated circles and ellipses, low contrast, overlaps and clipped borders are put in one synthetic image and compared with planted truth. The largest area-equivalent-diameter error for isolated particles is 0.165 px; one border particle is excluded with its reason and two split overlap particles are recorded. Number- and volume-weighted D50 are separate series, 17.428 and 18.064 µm, and are not treated as laser-diffraction results. A scale of 0.500000 ± 0.002500 µm/px propagates to diameters and quantiles; the calibration record and particle table SHA-256 are retained.",
    "run": "py -3.11 examples/poc_compendial_particle_microscopy.py",
-   "lead_ja": "顕微鏡で撮った粒子を数えるとき、端で切れた粒子と重なった粒子を一粒として黙って数えると分布が変わる。合成した真値と比べ、採否の理由、個数・面積・体積の三つの基準、尺度の不確かさと校正来歴を同じ報告に残した。",
-   "lead_en": "When microscopy particles are counted, silently treating clipped or overlapping objects as one changes the distribution. Against synthetic truth, this report keeps each acceptance reason, number/area/volume bases, scale uncertainty and calibration provenance together."
+   "lead_ja": "端で切れた粒子と重なった粒子を一粒として数えると、顕微鏡の粒度分布が変わる。合成真値では最大誤差 0.165 px を確かめた。採否理由と三つの基準を校正来歴とともに残す。",
+   "lead_en": "Counting clipped or overlapping objects as one changes a microscopy size distribution. Synthetic truth shows a largest error of 0.165 px. Acceptance reasons and three bases remain with calibration provenance."
   },
   {
    "id": "poc_particle_tracking",

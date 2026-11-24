@@ -162,7 +162,7 @@ py-modules = [
   "accel_label",
   # ★2026-10-25: numpy_twins は backends_auto / backends_filters2 / backends_regions2 が import する
   #   (scikit-image の無い環境の双子)。py-modules に無いと wheel から落ちて 3 backend ごと消える。
-  "numpy_twins",
+  "numpy_twins", "numpy_compat",
   # photoelastic: 光弾性の族(12 op、#135)。api が import するので、py-modules に無いと wheel の import fullseye ごと落ちる。
   "photoelastic",
   # opnames: canonical op-name aliases (phase 1 of the naming cleanup, 2026-10-07). api / opassist /
