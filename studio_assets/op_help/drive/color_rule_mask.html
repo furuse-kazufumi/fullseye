@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">color_rule_mask — DRIVE <code style="color:#22d3bf">lane</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_rule_mask(image, rules=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import laneops; laneops.color_rule_mask(image, rules=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;color_rule_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>RGBを明示的なHSV規則で白線・黄線・不明に分け、maskと確信度を返す。</p>
+<p><code style="color:#22d3bf">trans_from_rgb</code> の既存実装でRGB→HSVに変換する。白と黄のscoreを独立に計算して最大scoreを採るため、<code style="color:#22d3bf">rules</code>をlistで渡した順序には依存しない。scoreが <code style="color:#22d3bf">min_class_confidence</code>未満、または上位2色の差が<code style="color:#22d3bf">ambiguity_margin</code>以下なら <code style="color:#22d3bf">unknown</code>に棄却する。影・逆光・濡れ路面に合わせた自動較正はしない。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>image : (H, W, 3) rgbimage</p>
+<p>0..1の有限なRGB画像。</p>
+<p>rules : table or None</p>
+<p>名前付きしきい値の上書き。<code style="color:#22d3bf">[{&quot;name&quot;:&quot;white&quot;, &quot;min_value&quot;:...}, ...]</code>も可。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>table</p>
+<p><code style="color:#22d3bf">labels</code>(0 unknown, 1 white, 2 yellow)、各mask、<code style="color:#22d3bf">confidence</code>、色ごとのscore、HSV、使った規則。</p>
+<p>English: classify finite RGB pixels as white, yellow or unknown with explicit HSV thresholds after the existing <code style="color:#22d3bf">trans_from_rgb</code> conversion. Ambiguous pixels are rejected. White additionally requires local value contrast, so a uniformly bright road is not a white line; this is a fixed classical rule, not an illumination estimator.</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import laneops</p>
+<p>rgb = np.array([[[0.9, 0.9, 0.9], [0.9, 0.75, 0.05], [0.3, 0.3, 0.3]]])</p>
+<p>out = laneops.color_rule_mask(rgb, {})</p>
+<p>assert out[&quot;labels&quot;].tolist() == [[1, 2, 0]]</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lane_ops_tour">lane_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/lane_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">lane</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:plane_topview_color">plane_topview_color</a> · <a style="color:#22d3bf" href="opdrive:lane_boundary_fit">lane_boundary_fit</a> · <a style="color:#22d3bf" href="opdrive:lane_center_path">lane_center_path</a> · <a style="color:#22d3bf" href="opdrive:stop_line_detect">stop_line_detect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: laneops.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

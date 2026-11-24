@@ -3786,24 +3786,27 @@ def demo() -> int:
 
 
 def _arg_parser():
-    """``python -m fullseye.mcp`` の引数(使い方の文は ASCII だけ: cp932 のパイプでも同じ文で出る)。
+    """``fullseye-mcp`` の引数 / arguments (ASCII help works through cp932 pipes).
 
     ★2026-11-13(配布物の検証 M7): ``--coverage`` / ``--demo`` しか見ておらず、``--help`` を付けても stdio サーバとして
     入力を待った(端末で打つと黙って止まる)。``-h`` / ``--help`` は使い方を出して 0、知らない引数は使い方と理由を
-    標準エラーに出して 2(argparse の約束)。引数なしは従来どおり stdio サーバ。
+    標準エラーに出して 2(argparse の約束)。引数なしは従来どおり stdio サーバ。 Before the 2026-11-13 fix,
+    ``--help`` waited for stdio input; now help exits 0, unknown arguments exit 2, and no arguments run the server.
     """
     import argparse
     ap = argparse.ArgumentParser(
-        prog="python -m fullseye.mcp",
+        prog="fullseye-mcp",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=("Fullseye MCP server (Model Context Protocol: JSON-RPC 2.0 over stdio).\n\n"
                      "With no arguments it runs as an MCP stdio server: it waits for messages on stdin\n"
                      "(newline-delimited JSON, or Content-Length framing) and answers on stdout until EOF.\n"
                      "An MCP client starts it; typed at a terminal it just waits for input."),
         epilog=("register it with Claude Code:\n"
-                '  claude mcp add fullseye -- "%s" -m fullseye.mcp\n'
+                "  claude mcp add fullseye -- fullseye-mcp\n"
+                "or, with Python safe-path mode:\n"
+                '  claude mcp add fullseye -- "%s" -P -m fullseye.mcp\n'
                 "try it without a client:\n"
-                "  python -m fullseye.mcp --demo" % (sys.executable or "python")))
+                "  fullseye-mcp --demo" % (sys.executable or "python")))
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--demo", action="store_true",
                    help="start a server, run a short scripted session against it, print it and exit")
