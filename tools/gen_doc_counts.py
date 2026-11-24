@@ -7,6 +7,7 @@ README の op 数は registry、AI_RAG_GUIDE のノート数は docs 索引と�
 """
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -28,6 +29,12 @@ def counts() -> tuple[int, int]:
     return len(ops.REGISTRY), nnotes
 
 
+def _index_counts() -> tuple[int, int]:
+    """Read shipped total and ledger counts / 出荷索引から総数・台帳数を読む。"""
+    index = json.loads((DOCS / "OP_INDEX.json").read_text(encoding="utf-8"))
+    return int(index["n_ops"]), int(index["tiers"]["ledger"])
+
+
 def _replace_one(path: Path, pattern: str, replacement: str) -> None:
     body = path.read_text(encoding="utf-8")
     changed, n = re.subn(pattern, replacement, body, count=1)
@@ -36,8 +43,34 @@ def _replace_one(path: Path, pattern: str, replacement: str) -> None:
     path.write_text(changed, encoding="utf-8", newline="\n")
 
 
+def _replace_public_count_forms(path: Path, total: int, ledger: int) -> None:
+    """Update only current-count prose forms / 現在数を述べる定型だけを索引値へそろえる。"""
+    body = path.read_text(encoding="utf-8")
+    total_text, ledger_text = format(total, ","), format(ledger, ",")
+    total_patterns = (
+        r"\b\d{1,3}(?:,\d{3})*(?= typed ops\b)",
+        r"\b\d{1,3}(?:,\d{3})*(?= typed operators\b)",
+        r"\b\d{1,3}(?:,\d{3})*(?=\s+operators in the machine-readable\s+index)",
+        r"(?<=the )\d{1,3}(?:,\d{3})*(?= operators are not all reachable)",
+        r"(?<=of the )\d{1,3}(?:,\d{3})*(?= \(\d+ ledger \+ \d+ registry\))",
+        r"(?<=the full )\d{1,3}(?:,\d{3})*(?=\.)",
+    )
+    ledger_patterns = (
+        r"\b\d{1,3}(?:,\d{3})*(?= in the typed ledgers)",
+        r"\b\d{1,3}(?:,\d{3})*(?= typed-ledger ops)",
+        r"(?<=typed ledgers \()\d{1,3}(?:,\d{3})*(?= operators)",
+        r"(?<=ledgers \()\d{1,3}(?:,\d{3})*(?= operators whose inputs)",
+    )
+    for pattern in total_patterns:
+        body = re.sub(pattern, total_text, body)
+    for pattern in ledger_patterns:
+        body = re.sub(pattern, ledger_text, body)
+    path.write_text(body, encoding="utf-8", newline="\n")
+
+
 def generate() -> None:
     nops, nnotes = counts()
+    total, ledger = _index_counts()
 
     # 冒頭だけ。後段の生成ブロックにある網羅率の分母などは、その生成器の責務。
     for path in sorted(DOCS.glob("README*.md")):
@@ -58,6 +91,14 @@ def generate() -> None:
     # 翻訳を fresh として扱う。文章まで変わっていれば例外になり、手訳を要求する。
     for path in sorted(DOCS.glob("AI_RAG_GUIDE.*.md")):
         i18n_docs.stamp_if_numeric_only(str(path))
+
+    # These files are prose, but their present-tense operator counts are derived
+    # facts. Keep the narrow count forms in one generator rather than hand-editing.
+    public_root = DOCS.parent
+    for rel in ("pyproject.toml", "CITATION.cff", "README.md", "docs/INTEGRATION.md"):
+        path = public_root / rel
+        if path.exists():
+            _replace_public_count_forms(path, total, ledger)
 
 
 def main() -> int:
