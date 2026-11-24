@@ -201,9 +201,13 @@ FS_API fs_status_t FS_CALL fs_call(fs_runtime_t *runtime,
                                     const char *params_json,
                                     fs_result_t **out);
 /* ABI 0.2 bounded API. Byte spans need not have a trailing NUL and must
- * contain UTF-8 text. Results are generation-tagged IDs; unknown or released
- * IDs return FS_E_INVALID_ARG. / ABI 0.2 の長さ付き API。文字列は終端 NUL
- * 不要で UTF-8。結果は世代付き ID で、未知・解放済み ID は FS_E_INVALID_ARG。 */
+ * contain UTF-8 text. Operator IDs are at most 256 B; query and parameter
+ * JSON are at most 1 MiB, so an untrusted length cannot request an unbounded
+ * allocation at the C boundary. Results are generation-tagged IDs; unknown
+ * or released IDs return FS_E_INVALID_ARG. / ABI 0.2 の長さ付き API。文字列は
+ * 終端 NUL 不要で UTF-8。operator ID は 256 B 以下、query/parameter JSON は
+ * 1 MiB 以下とし、信頼できない長さが C 境界で無制限の確保を要求しないようにする。
+ * 結果は世代付き ID で、未知・解放済み ID は FS_E_INVALID_ARG。 */
 typedef struct fs_input_n {
     uint32_t struct_size;
     fs_value_kind_t kind;

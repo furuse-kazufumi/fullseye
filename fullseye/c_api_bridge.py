@@ -185,6 +185,9 @@ def _output(value, row: dict) -> dict:
                  else value.pixels if isinstance(value, fslib.FImage) else np.asarray(value))
         if array.ndim != 2:
             raise _Refuse(FS_E_UNSUPPORTED, "%s returned a non-2-D region" % row["id"])
+        if not np.isfinite(array).all():
+            raise _Refuse(FS_E_UNSUPPORTED,
+                          "%s returned a region containing NaN or infinity" % row["id"])
         runs = np.ascontiguousarray(fslib.Region(array > 0.5).runs(), dtype=np.int32)
         return {"kind": "region", "h": int(array.shape[0]), "w": int(array.shape[1]),
                 "runs": runs.tobytes()}
