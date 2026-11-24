@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fullseye"
 version = "1.1.1"
-description = "Image inspection, 3-D measurement and physics simulation in Python: a numpy-native library of typed operators (3,841 typed ops in the machine-readable index: imaging, point clouds, optics, metrology), checked against simulated ground truth and handed to AI assistants through MCP and RAG, with an evolutionary pipeline designer and honest holdout gating"
+description = "Image inspection, 3-D measurement and physics simulation in Python: a numpy-native library of typed operators (3,846 typed ops in the machine-readable index: imaging, point clouds, optics, metrology), checked against simulated ground truth and handed to AI assistants through MCP and RAG, with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -256,7 +256,7 @@ py-modules = [
   "backends_aug", "backends_alife", "backends_alife2", "backends_tactile", "backends_deform",
   "backends_texture",
   "backends_macro", "macro_champions_data", "auto_specs_data", "halcon_names_data",
-  "imgops_nary", "scale", "stereo", "terrain", "locomotion", "occupancy", "imgio", "detect", "registration", "deformreg", "ppf", "pose",
+  "imgops_nary", "scale", "stereo", "terrain", "locomotion", "laneops", "occupancy", "imgio", "detect", "registration", "deformreg", "ppf", "pose",
   "unified", "sim_source", "oss_adapter", "filters_flow", "matching3d",
   "calib", "matching", "mosaic", "objmodel3d", "pose_quat", "reconstruction", "transforms",
   "pointcloud", "pcseg", "mesh", "meshio_opt", "volio", "raster", "render3d", "camera", "odometry", "grasp", "meshrepair", "volops", "volregion", "volgray", "volxform", "volprobe", "volfreq", "volrestore", "handpose", "complexops", "specops", "flow", "motion", "sceneflow", "features", "events", "video", "videops", "engine", "graphengine", "acquire", "fullseye_comm", "device", "dsp", "funct1d", "mathops", "mathtransforms", "mathnumerics", "mathspectral", "mathestimation", "mathgeometry", "predicates", "precision_union", "geompred", "matappear", "glassmirror", "metalfinish", "surfacelib", "opassist", "ops1d", "opsmath", "optics",

@@ -149,16 +149,16 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**3,849 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **74 family guides**. Entry points by dimension:
+**3,852 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **73 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 947/947, typed ledger 2879/2879, one-line facade `fullseye.<name>` 770/1578 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 947/947, typed ledger 2882/2882, one-line facade `fullseye.<name>` 770/1578 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3849 notes, **3810** link at least one runnable example (39 have none) and **3650** have a usage section of 120+ characters (199 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3849.
+**Measured substance**: of 3852 notes, **3813** link at least one runnable example (39 have none) and **3653** have a usage section of 120+ characters (199 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3852.
 
 | dimension | ops | entry |
 |---|---:|---|
 | `2d` | 964 | [INDEX](ops/2d/INDEX.md) |
-| `drive` | 744 | [INDEX](ops/drive/INDEX.md) |
+| `drive` | 749 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 506 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 378 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 115 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
@@ -217,7 +217,6 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
-| `pharma` | 2 | [INDEX](ops/pharma/INDEX.md) · [guide](ops/pharma/guides/pharmaceutical_vial_inspection.md) |
 
 Search by name with `py -3.11 imgevolve.py ops --search edge`; the full cross-library table is [OP_CATALOG.md](OP_CATALOG.md) and the cross-dimension entry point is [ops/INDEX.md](ops/INDEX.md).
 
@@ -386,7 +385,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 337
 
-The complete map, so that **no document is unreachable from this index** (the 3,849 per-op notes and 74 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 3,852 per-op notes and 73 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 

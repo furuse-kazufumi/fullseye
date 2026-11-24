@@ -149,16 +149,16 @@
 
 ## 查找算子
 
-共有 **3,849 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **74 篇族指南**。按维度的入口:
+共有 **3,852 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **73 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 947/947、类型化台账 2879/2879、单行门面 `fullseye.<名称>` 770/1578 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 947/947、类型化台账 2882/2882、单行门面 `fullseye.<名称>` 770/1578 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3849 篇中，附有可运行示例的 **3810** 篇(39 篇没有)，用法说明 120 字以上的 **3650** 篇(199 篇仅一行)。结构(调用形式、类型、可衔接算子)3849 篇全有。
+**内容实测**: 3852 篇中，附有可运行示例的 **3813** 篇(39 篇没有)，用法说明 120 字以上的 **3653** 篇(199 篇仅一行)。结构(调用形式、类型、可衔接算子)3852 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
 | `2d` | 964 | [INDEX](ops/2d/INDEX.md) |
-| `drive` | 744 | [INDEX](ops/drive/INDEX.md) |
+| `drive` | 749 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 506 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 378 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 115 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
@@ -217,7 +217,6 @@
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
-| `pharma` | 2 | [INDEX](ops/pharma/INDEX.md) · [guide](ops/pharma/guides/pharmaceutical_vial_inspection.md) |
 
 按名称检索用 `py -3.11 imgevolve.py ops --search edge`;全部算子的对照表见 [OP_CATALOG.md](OP_CATALOG.md)，跨维度入口见 [ops/INDEX.md](ops/INDEX.md)。
 
@@ -317,7 +316,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 337 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,849 篇算子说明与 74 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,852 篇算子说明与 73 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 

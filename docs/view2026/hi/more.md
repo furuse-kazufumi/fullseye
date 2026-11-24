@@ -288,7 +288,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 </div>
 
-[PoC के अलावा 187 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 188 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 

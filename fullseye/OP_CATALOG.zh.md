@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(495 例)
+### 2-D 图像/信号/几何(496 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -294,6 +294,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `shape_factors_closed_form` — op: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
 - `walking_ops_tour` — op: `capture_margin`, `com_from_silhouette`, `com_support_margin`, `contact_points`, `detect_obstacles`, `elevation_map`, `elevation_normals`, `elevation_step_edges`, `elevation_traversability`, `fill_gaps`, `foot_slip_metrics`, `foothold_candidates`(另有 12 个) `py -3.11 examples/walking_ops_tour.py`
 - `heightmap_depth_camera_tour` — op: `clothoid_points`, `crop_rectangle2`, `dem_viewshed`, `elevation_map`, `fill_gaps`, `heightmap_depth_camera`, `road_surface_heightmap`, `surface_form_remove`, `world_camera` `py -3.11 examples/heightmap_depth_camera_tour.py`
+- `lane_ops_tour` — op: `color_rule_mask`, `lane_boundary_fit`, `lane_center_path`, `pixel_to_world`, `plane_topview_color`, `stop_line_detect` `py -3.11 examples/lane_ops_tour.py`
 - `road_surface_tour` — op: `blend`, `clothoid_points`, `crop_rectangle2`, `dem_slope`, `road_surface_heightmap`, `surface_form_remove` `py -3.11 examples/road_surface_tour.py`
 - `itokawa_gravity_tour` — op: `mesh_slice_contours`, `polyhedron_clip_halfspace`, `polyhedron_gravity` `py -3.11 examples/itokawa_gravity_tour.py`
 
@@ -849,9 +850,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 
 ## Operators by family(族 → 类别，全部 op)
 
-_共 3849 ops / 61 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
+_共 3852 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
 
-族一览: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **pharma** 2 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族一览: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 749 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -3536,8 +3537,8 @@ _共 3849 ops / 61 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `pod_decision_tradeoff` `table × signal → table` GPU: 无 — 改变判定阈值 ``a_dec`` 时 (a50, a90, a90/95, 误检概率) 的权衡表(``table``)。 · 示例: `poc_pod_lighting`
 - `pod_false_call` `signal → table` GPU: 无 — 由无缺陷部位的响应 ``noise`` 与判定阈值 ``a_dec`` 求误检概率(``table``)。 · 示例: `poc_equipment_selection_map`, `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
 - `pod_from_ahat` `table → table` GPU: 无 — 由 â 对 a 的回归与判定阈值 ``a_dec`` 求 POD(a) 曲线及 a50 / a90 / a90/95(``table``)。 · 示例: `poc_equipment_selection_map`, `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
-- `pod_hitmiss_fit` `table → table` GPU: 无 — 用广义线性模型由“检出/漏检”二值数据拟合 POD(a)(``table``)。 · 示例: `poc_pod_lighting`, `poc_sem_wafer_defect_edge_bias`, `poc_si_wafer_pl_defect_visibility`, `poc_vial_particle_pod`
-- `proportion_interval` `无输入 → table` GPU: 无 — 返回二项比例 ``k/n`` 的点估计和置信限（``table``）。 · 示例: `poc_vial_particle_pod`, `proportion_interval_audit`
+- `pod_hitmiss_fit` `table → table` GPU: 无 — 用广义线性模型由“检出/漏检”二值数据拟合 POD(a)(``table``)。 · 示例: `poc_pod_lighting`, `poc_sem_wafer_defect_edge_bias`, `poc_si_wafer_pl_defect_visibility`
+- `proportion_interval` `无输入 → table` GPU: 无 — 返回二项比例 ``k/n`` 的点估计和置信限（``table``）。 · 示例: `proportion_interval_audit`
 - `trials_for_all_success` `无输入 → scalar` GPU: 无 — 返回在单侧 ``confidence`` 下以全数成功证明 ``p >= p_min`` 所需的最少试验数（``scalar``）。 · 示例: `proportion_interval_audit`
 
 #### spc / uncertainty (5)
@@ -3553,14 +3554,6 @@ _共 3849 ops / 61 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `varmodel_calibrate` `table × video → table` GPU: 无 — 用未参与拟合的良品重新求容许带半宽 ``k``(用于不满足正态假设的真实图像,``table``)。 · 示例: `poc_good_sample_variation_model`
 - `varmodel_fit` (halcon: `train_variation_model`) `video → table` GPU: 有(许可列表) — 由良品图像堆叠学习逐像素的变动模型(中心、离散度、容许带半宽 k)(``table``)。 · 示例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
 - `varmodel_score` `image2d × table → table` GPU: 无 — 将一张图像与 ``varmodel_fit`` 的模型比较:以 σ 计的 z 图、带外图与逐区域说明(``table``)。 · 示例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
-
-### pharma (2 ops / 2 categories)
-
-#### pharma / synth (1)
-- `vial_spin_stop_sequence` `无输入 → video` GPU: 无 — 生成旋转停止后的西林瓶图像序列及每个物体的真值轨迹。 · 示例: `poc_vial_particle_pod`
-
-#### pharma / track (1)
-- `track_moving_particles` `video → table` GPU: 无 — 从图像序列中分离颗粒、气泡和静止玻璃划痕，并返回轨迹表。 · 示例: `poc_vial_particle_pod`
 
 ### graph (20 ops / 9 categories)
 
@@ -3648,7 +3641,7 @@ _共 3849 ops / 61 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: 无 — 非极大值抑制(3.39 节)。像素 (x, y) 仅当在窗口内**对前面的邻居(上方各行以及同一行左侧)≥、对后面的邻居 >** 时才保留(REQ-0337)。平坦峰顶只保留 1 个像素正是由于这种不对称。*mask* 的非零像素不参与比较，原样保留 (也不用于其他像素的比较，REQ-0336)。被抑制的像素在 U8 时为 0，S16 时为 INT16_MIN(REQ-0335)。超出窗口的邻居不比较。 · 示例: `gallery_openvx_spec_values`
 
-### drive (744 ops / 55 categories)
+### drive (749 ops / 56 categories)
 
 名字是驾驶，内容却是**物理仿真与机器人 PoC 的台账**: 除驾驶(赛道、交通、决策、CARLA / CommonRoad)外，触觉(tac*)、peg-in-hole(peg*)、抛光(polish)、磨削(grind)、切削(cutting)、粉体(granular / scoop)、粉末 X 射线衍射(pxrd)、球类(ball / puck)等作为类别共存其中。请按类别名查找。
 
@@ -4024,6 +4017,13 @@ _共 3849 ops / 61 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `kendama_world` `table → table` GPU: 无 — 地面 + 剑(kp 中招式的姿态 R_ken，握持处 kp["grip"] 位于 ``hand``)+ 带孔的球 + 绳的世界。原点在地面，z 朝上。球位于皿胴穿绳孔下方绳的有效长度(kp["pendulum_length"])处(自正下方向 ``hang_dir`` 一侧摆开 ``hang_deg`` 的位置 —— 若为斜向 (1, −1)，则从方位 0° 与 90° 的两台相机都能看到横向偏移)。若传入 ``p_ball`` 则放在该处。地面分割为 0.25 m 的格子单元(若为 1 张大四边形，跨到相机背后的三角形会整个被丢弃，地面消失)。返回值的 world["kendama"] = ``{"ken", "ball", "string"}``(objects 的索引)+ ``"kp"``。 · 示例: `gallery_drive_world_objects`, `poc_kendama`
 - `string_mesh` `无输入 → any` GPU: 无 — 连接 2 点(球的穿绳孔 p_ball 与皿胴的穿绳孔 p_cup)的细棱柱(4 个侧面 + 两端，8 个顶点 12 个面，朝外)。截面为边长 2·radius 的正方形。两点重合则 ValueError。 · 示例: `gallery_drive_world_objects`
 - `string_set` `table → any` GPU: 无 — 将绳 i 的两端重新放到 (p_ball, p_cup)(只改写顶点)。不是绳的物体则 ValueError。 · 示例: `gallery_drive_world_objects`
+
+#### drive / lane (5)
+- `color_rule_mask` `rgbimage × table → table` GPU: 无 — 用明确的 HSV 规则将 RGB 分为白线、黄线或未知,并返回掩码与置信度。 · 示例: `lane_ops_tour`
+- `lane_boundary_fit` `keypoints → table` GPU: 无 — 对俯视点(横向 x、前向 y)稳健拟合车道边界 ``x=c0+c1*y+c2*y²``。 · 示例: `lane_ops_tour`
+- `lane_center_path` `table × table → table` GPU: 无 — 由左右边界返回车道中心路径与可行驶带。 · 示例: `lane_ops_tour`
+- `plane_topview_color` `rgbimage × matrix × matrix × signal → table` GPU: 无 — 将地面平面投影为保留 RGB 的俯视图,并返回有效掩码及像素与世界坐标的对应关系。 · 示例: `lane_ops_tour`
+- `stop_line_detect` `labels × table → table` GPU: 无 — 将停止线和日式人行横道作为独立的类型化输出进行检测。 · 示例: `lane_ops_tour`
 
 #### drive / lateral (21)
 - `ackermann_steer_angles` `any → table` GPU: 无 — 阿克曼转向的内外轮转向角(后轴中心的转弯半径 R，轴距 L，轮距 t)。 · 示例: `poc_driving_lateral`
@@ -4799,8 +4799,8 @@ _共 3849 ops / 61 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### annotate / plot (7)
 - `axes_frame` `image2d × axes → image2d` GPU: 仅在链中(许可列表) — 坐标轴框(``box=True`` 为四边,False 时只有左边与下边)。 · 示例: `annotate_gallery`, `annotate_paper_tour`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_simcal_thin_film`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
-- `axes_transform` `无输入 → axes` GPU: 无 — 构建数据坐标 → 像素坐标的(**闭式**)映射。 · 示例: `annotate_gallery`, `annotate_paper_tour`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_simcal_thin_film`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_threshold_transfer_after_normalization`, `poc_timelapse_growth`, `poc_vial_particle_pod`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
-- `data_to_pixel` `axes × signal × signal → pairs` GPU: 仅在链中(许可列表) — 用 :func:`axes_transform` 的映射把数据点映到像素 ``(x, y)``。 · 示例: `annotate_gallery`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_crack_width_timeseries`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_traffic_counting`, `poc_vial_particle_pod`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
+- `axes_transform` `无输入 → axes` GPU: 无 — 构建数据坐标 → 像素坐标的(**闭式**)映射。 · 示例: `annotate_gallery`, `annotate_paper_tour`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_simcal_thin_film`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_threshold_transfer_after_normalization`, `poc_timelapse_growth`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
+- `data_to_pixel` `axes × signal × signal → pairs` GPU: 仅在链中(许可列表) — 用 :func:`axes_transform` 的映射把数据点映到像素 ``(x, y)``。 · 示例: `annotate_gallery`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_crack_width_timeseries`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_traffic_counting`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
 - `grid_lines` `image2d × axes → image2d` GPU: 有(许可列表) — 网格线。未给出刻度值时由 :func:`nice_ticks` 决定。 · 示例: `annotate_gallery`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
 - `nice_ticks` `无输入 → signal` GPU: 无 — 覆盖 [lo, hi] 的「取整」刻度值(1/2/5 × 10^k,**闭式**)。 · 示例: `annotate_gallery`, `poc_dehazing`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_simcal_thin_film`
 - `plot_series` `image2d × axes × signal × signal → image2d` GPU: 无 — 画折线、散点、柱状。以**数据坐标**接收(像素由 axes 决定)。 · 示例: `annotate_gallery`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_simcal_thin_film`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_timelapse_growth`, `poc_wound_area_tracking`
@@ -5551,7 +5551,7 @@ _共 3849 ops / 61 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### measure1d / scale (3)
 - `mm_per_px_from_reference` `measurement → measurement` GPU: 无 — 由已知尺寸的标准物(比例尺、基准孔、量规)求出像素间距 mm/px(标定)。 · 示例: `example_inner_diameter_mm`, `example_scratch_width`
-- `pixel_to_world` `measurement → measurement` GPU: 无 — 把以像素测得的一个长度换算为实际尺寸 mm(``value_px * mm_per_px``)。 · 示例: `example_inner_diameter_mm`
+- `pixel_to_world` `measurement → measurement` GPU: 无 — 把以像素测得的一个长度换算为实际尺寸 mm(``value_px * mm_per_px``)。 · 示例: `example_inner_diameter_mm`, `lane_ops_tour`
 - `table_px_to_mm` `table → table` GPU: 无 — 给测量结果表(``measure_pairs`` / ``apply_metrology_model`` 的返回值)添加 mm 列。 · 示例: `example_inner_diameter_mm`, `example_scratch_width`
 
 ### roughness (9 ops / 3 categories)

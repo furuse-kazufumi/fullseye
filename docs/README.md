@@ -151,16 +151,16 @@
 
 ## オペレータを探す
 
-**3,849 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **74 本の族ガイド**があります。次元ごとの入口:
+**3,852 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **73 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 947/947、型つき台帳 2879/2879、1 行ファサード `fullseye.<名前>` 770/1578。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 947/947、型つき台帳 2882/2882、1 行ファサード `fullseye.<名前>` 770/1578。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3849 本のうち、実行できる例が付いているのは **3810 本**(39 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3650 本**(199 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3849 本すべてにある。
+**ノートの中身の実測**: 3852 本のうち、実行できる例が付いているのは **3813 本**(39 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3653 本**(199 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3852 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
 | `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 964 | [INDEX](ops/2d/INDEX.md) |
-| `drive` | 744 | [INDEX](ops/drive/INDEX.md) |
+| `drive` | 749 | [INDEX](ops/drive/INDEX.md) |
 | `optics` — レンズ・収差・光線追跡・照明設計 | 506 | [INDEX](ops/optics/INDEX.md) · [ガイド](ops/optics/guides/optics_imaging.md) |
 | `3d` — 点群 / メッシュ / 体積 / SDF / 6-DoF | 378 | [INDEX](ops/3d/INDEX.md) |
 | `math` — 数値・線形代数 | 115 | [INDEX](ops/math/INDEX.md) · [ガイド](ops/math/guides/math_metrology.md) |
@@ -219,7 +219,6 @@
 | `cadmap` — CAD 対応づけ | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
-| `pharma` | 2 | [INDEX](ops/pharma/INDEX.md) · [ガイド](ops/pharma/guides/pharmaceutical_vial_inspection.md) |
 
 名前で引くなら `py -3.11 imgevolve.py ops --search edge`、全 op の対応表は [OP_CATALOG.md](OP_CATALOG.md)、次元をまたぐ入口は [ops/INDEX.md](ops/INDEX.md)。
 
@@ -383,7 +382,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 337 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,849 本と族ガイド 74 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,852 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 

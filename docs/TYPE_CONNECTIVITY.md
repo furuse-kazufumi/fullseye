@@ -92,15 +92,15 @@
 | `images` | ok | 20 | 44 | 多フレームの取り込み(同じ視点の束)。 |  | none | 同じ視点の画像の束 (N,H,W)。産 19 / 受 37。 | tools/gen_op_facets.py ACQUIRABLE['images'](多フレームの取り込み)。 |
 | `indices` | ok | 10 | 4 |  |  | none | 整数の添字。labels との往復、select_points、この版で indices_to_positions が出口に加わった。 | reprconv.indices_to_labels。 |
 | `jones` | b | 2 | 2 |  |  | jones_state(azimuth_deg, ellipticity_deg, amplitude) -> jones を足した。stokes_from_jones の符号の約束に合わせ、stokes_analyze で方位角と楕円率が戻る(実測 10 度 / -15 度が 1e-15 で戻る)。 | Jones ベクトル(長さ 2 の複素 (Ex, Ey))を作れるのは jones_apply だけで、その jones_apply 自身が jones を入力に取る —— 最初の 1 本を作る op が無く、入口から届かなかった(jones_element が作るのは 2x2 の行列 = cimage で、ベクトルではない)。 | optics.jones_apply / jones_element / stokes_from_jones の docstring を読み、grep 'jones' を op 名で引いた。opsoptics のコメント『jones — 長さ 2 固定の complex 1-D』。 |
-| `keypoints` | a | 26 | 28 |  |  | keypoints_rowcol_to_uv / keypoints_uv_to_rowcol を足した(向きを op 名に書いた列の入れ替え)。dlt_pose の t が真値に戻ることを門にした。 | 像面の (N,2)。points と別型にした理由は TYPE_TO_SORT のコメント(shape[1] == 3 の契約)。ただし中身に軸の約束が 2 つ同居している: calib.project_3d_point などは (row, col)、project_points / dlt_pose / pnp_ransac は (u, v) = (列, 行)。取り違えても例外は出ず、姿勢が鏡に映ったように出る(レシピの網羅 W2 の実測: t = (-0.565, 0.61, 3.21) のはずが (0.1, -0.05, 3.0))。 | backends_typed.TYPE_TO_SORT['keypoints']、reprconv の docstring『軸と単位』、docs/RECIPE_COVERAGE.md(W2)の落とした鎖 project_3d_point -> dlt_pose。 |
+| `keypoints` | a | 26 | 29 |  |  | keypoints_rowcol_to_uv / keypoints_uv_to_rowcol を足した(向きを op 名に書いた列の入れ替え)。dlt_pose の t が真値に戻ることを門にした。 | 像面の (N,2)。points と別型にした理由は TYPE_TO_SORT のコメント(shape[1] == 3 の契約)。ただし中身に軸の約束が 2 つ同居している: calib.project_3d_point などは (row, col)、project_points / dlt_pose / pnp_ransac は (u, v) = (列, 行)。取り違えても例外は出ず、姿勢が鏡に映ったように出る(レシピの網羅 W2 の実測: t = (-0.565, 0.61, 3.21) のはずが (0.1, -0.05, 3.0))。 | backends_typed.TYPE_TO_SORT['keypoints']、reprconv の docstring『軸と単位』、docs/RECIPE_COVERAGE.md(W2)の落とした鎖 project_3d_point -> dlt_pose。 |
 | `lab` | ok | 2 | 3 |  |  | none | CIELAB 画像。ΔE と lab_to_rgb が受ける。 | opsimgmetrics.NEW_SORTS['lab']。 |
-| `labels` | ok | 15 | 17 |  |  | none | 整数ラベル(体積または 1-D)。産 15 / 受 17。 | TYPE_TO_SORT['labels']。 |
+| `labels` | ok | 15 | 18 |  |  | none | 整数ラベル(体積または 1-D)。産 15 / 受 17。 | TYPE_TO_SORT['labels']。 |
 | `labels2d` | ok | 15 | 33 |  |  | none | 2-D のラベル画像。産 12 / 受 32。 | opssegmentation。 |
 | `lightfield` | ok | 4 | 21 | ライトフィールドカメラ(格子状の視点)。 |  | none | 4-D (V,U,H,W) のライトフィールド。産 4 / 受 21。 | tools/gen_op_facets.py ACQUIRABLE['lightfield']、TYPE_TO_SORT['lightfield']。 |
 | `lut` | d | 1 | 2 | color_lut() が引数(色の段)だけで作る色の対応表。 |  | none | 第 1 入力の数え方では行き止まりに見えるが、color_bar / color_grade が第 2 入力として受けている。作り方は合成が正しい。 | OP_INDEX: color_bar の in_sorts = [image2d, lut]、color_grade = [rgb, lut]。 |
 | `mask` | a | 19 | 31 |  |  | none | 2-D レジストリの region(0/1 の (H,W))と同じ物を blob 族が mask と呼ぶ。境界ごとに alias で同一視される(実測 2026-09-15、gen_capabilities_index のコメント)。直さない(揺れとして記録)。 | SORT_ALIASES の mask -> region。 |
 | `match` | b | 8 | 1 |  |  | match_component(match, index) -> measurement を台帳(opsreprconv)に足した。2-D レジストリの候補(進化のゲノム)は動かさないため、レジストリには足していない(tests/test_wave0.py が match の候補数を固定している)。 | 2-D レジストリの 1-D 結果ベクトル(area_center = (面積, 行, 列)、ncc_locate = (相関, 行, 列) など 8 op)を受ける op が 0(行き止まり)。HALCON では Row / Column を個別に次へ渡すのが普通の使い方。 | ops.MATCH、backends_auto の MAT = 'match' のコメント。grep 'match' を op 名・in_sort で引いた。 |
-| `matrix` | ok | 94 | 207 | 引数だけで作る行列(内部行列・変換行列・設計行列)。 |  | none | 一般の 2-D 数値行列(線形代数)。産 91 / 受 191。 | ops.MATRIX、OP_INDEX で in_sorts = [] の作り手 13。 |
+| `matrix` | ok | 94 | 208 | 引数だけで作る行列(内部行列・変換行列・設計行列)。 |  | none | 一般の 2-D 数値行列(線形代数)。産 91 / 受 191。 | ops.MATRIX、OP_INDEX で in_sorts = [] の作り手 13。 |
 | `measurehandle` | d | 3 | 4 | gen_measure_rectangle2 / gen_measure_arc が測定窓の幾何(中心・向き・長さ)から作る HALCON の測定ハンドル。 |  | none | ハンドルは引数から作るものなので入口が正しい。 | opsmeasure1d の caliper カテゴリ。 |
 | `measurement` | c | 99 | 6 |  | 台帳の数 1 個(長さ・角度・誤差)。測定値そのもの。 | none | 台帳の数 1 個。産 94 / 受 6 で、測った結果そのものなので終端で正しい。 | TYPE_TO_SORT['measurement'] = 'feature'(2-D の feature と同じ席)。 |
 | `mesh` | ok | 23 | 49 | メッシュファイル(STL / OBJ / OFF / PLY の読み込み)。 |  | none | 三角メッシュ (vertices, faces)。産 23 / 受 49。 | opsfileio の mesh_read_stl / mesh_read_obj / mesh_read_off。 |
@@ -124,7 +124,7 @@
 | `rgb` | ok | 58 | 36 | 台帳の描画・合成(gfx2d)の色画像。 | 人が見る色の絵(gfx2d の合成結果・図)。 | none | (H,W,3) の色(符号化を特定しない 3 チャネル)。rgbimage と分けた理由は opsimgmetrics.NEW_SORTS(L* が 32.53 でなく 5.72 と静かに出る実測)。 | opsimgmetrics.NEW_SORTS['rgb']。 |
 | `rgba` | ok | 11 | 7 |  | 合成した絵(ストレート α)。 | none | (H,W,4) ストレート α。rgba_premul と分けた理由は opsgfx2d の docstring。 | opsgfx2d の docstring(rgba / rgba_premul を分けた理由)。 |
 | `rgba_premul` | ok | 2 | 2 |  |  | none | 乗算済み α。premultiply / unpremultiply の往復で閉じる。 | opsgfx2d の premultiply / unpremultiply / alpha_composite_premul。 |
-| `rgbimage` | ok | 42 | 38 |  | 線形 RGB の絵(断面・可視化の出口、Studio で見せる)。 | none | 線形 RGB (H,W,3)。pointmap / normalmap と同形だが意味が違うので分けた(opsspecular のコメント)。 | TYPE_TO_SORT['rgbimage']。 |
+| `rgbimage` | ok | 42 | 40 |  | 線形 RGB の絵(断面・可視化の出口、Studio で見せる)。 | none | 線形 RGB (H,W,3)。pointmap / normalmap と同形だが意味が違うので分けた(opsspecular のコメント)。 | TYPE_TO_SORT['rgbimage']。 |
 | `rgbvideo` | ok | 8 | 4 |  | 展示と Studio へ渡す色動画(opsconngraph の docstring『受ける op は無い(出口)』)。 | none | (F,H,W,3) の色動画。受ける op は無く、展示と Studio へ渡す出口。 | opsconngraph の docstring『rgbvideo』。 |
 | `rgbvolume` | ok | 3 | 2 |  |  | none | 色つき体積。断面・MPR の rgbimage が出口。 | opsvolcolor(vol_label_slice_rgb / vol_label_mpr_rgb が受ける)。 |
 | `rle_region` | ok | 5 | 7 |  |  | none | ランレングスの 3-D 領域。産 5 / 受 7。 | ops3d rle_region。 |
@@ -136,7 +136,7 @@
 | `shapemodel` | ok | 1 | 5 |  |  | none | 形の PCA モデル。shapeset から作り、5 op が受ける。shapeset が入口なので届く。 | shapestats.shape_pca。 |
 | `shapeset` | d | 2 | 3 | 対応の取れた点集合の群 (K,N,3)。いまの作り手は shape_synth_family()(合成)だけで、実データは外から来る。 |  | none | 統計的形状モデルの入力。点の対応(landmark)が前提なので、ばらばらの点群から勝手には作れない。 | shapestats.shape_synth_family / generalized_procrustes の docstring。 |
 | `shift` | ok | 2 | 1 |  |  | none | 整数の 3-D 平行移動。vector との往復。 | reprconv.shift_to_vector。 |
-| `signal` | ok | 164 | 309 | センサ・音声の時系列(ファイル・取り込み)。 |  | none | 1-D 配列(プロファイル・スペクトル・センサ系列)。産 161 / 受 306。 | ops.SIGNAL、ops1d の docstring(1-D データの源流 3 つ)。 |
+| `signal` | ok | 164 | 310 | センサ・音声の時系列(ファイル・取り込み)。 |  | none | 1-D 配列(プロファイル・スペクトル・センサ系列)。産 161 / 受 306。 | ops.SIGNAL、ops1d の docstring(1-D データの源流 3 つ)。 |
 | `simmodel` | d | 2 | 5 | simcal_model() が op の鎖とノブ(単位・範囲・雑音)の宣言から作る順モデル。 |  | none | シミュレーションの模型は設計から組むものなので入口が正しい。simcal_observe(simmodel, images)で実測と結びつく。 | simcal.simcal_model の docstring。 |
 | `sinogram` | ok | 8 | 10 | CT 装置の投影データ(角度 × 検出器)。 |  | none | CT のサイノグラム(角度 × 検出器)。産 8 / 受 10。 | opstomography(radon / fbp の族)。 |
 | `sinostack` | ok | 1 | 1 |  |  | none | 体積のサイノグラム束。radon_volume と fbp_volume の往復で閉じる。 | opstomography の radon_volume / fbp_volume。 |
@@ -144,12 +144,12 @@
 | `stokes` | ok | 3 | 2 |  |  | none | Stokes ベクトル。mueller_apply / stokes_analyze が受ける。 | opsoptics / opsspecular。 |
 | `sweep` | d | 2 | 3 | 掃引軸に沿って標本化した強度(白色干渉・クロマティック共焦点)。作り手は *_simulate の合成だけで、実機の分光器・z 走査の出力が入口。 |  | none | 掃引信号は計測器が出すもの。合成の作り手が入口として正しい。 | opsinterferometry のコメント『sweep — 掃引軸に沿って標本化した非負の 1-D 強度』。 |
 | `synapse_table` | b | 1 | 1 |  |  | synapse_table_from_table(table, pre, post, count) -> synapse_table を足した(id が 0 以上の整数であることを確かめる)。 | graph_from_synapses が受けるのに作る op が 0(入口なし)。コネクトームは CSV で来るので table から作れるのが自然。 | grep 'synapse' を op 名で引き、作り手 0。opsfileio.table_read_csv(text -> table)はある。 |
-| `table` | c | 1278 | 527 | CSV / 設定の表(table_read_csv、引数だけで作る表)。 | 報告書・測定結果の表(列名 -> 配列)。 | none | 産 1166 / 受 482。最も多い終端。dict を返す op の欄を次の op へ渡すつなぎが無かったので、この版で table_field_image2d / _signal / _matrix / _measurement を足した(vx_sobel3x3 -> vx_magnitude、swt_map -> text_candidates、flow_from_depth_motion -> ttc_from_flow、label_extent の width)。 | opsfileio table_read_csv / table_write_csv。 |
+| `table` | c | 1282 | 530 | CSV / 設定の表(table_read_csv、引数だけで作る表)。 | 報告書・測定結果の表(列名 -> 配列)。 | none | 産 1166 / 受 482。最も多い終端。dict を返す op の欄を次の op へ渡すつなぎが無かったので、この版で table_field_image2d / _signal / _matrix / _measurement を足した(vx_sobel3x3 -> vx_magnitude、swt_map -> text_candidates、flow_from_depth_motion -> ttc_from_flow、label_extent の width)。 | opsfileio table_read_csv / table_write_csv。 |
 | `text` | c | 13 | 29 | ファイルの中身(CSV・OBJ・XYZ の文字列)。 | 書き出す文字列(CSV・G-code・報告)。 | none | 文字列。読み込みの入口であり書き出しの終端。 | opsfileio(*_read_* は text を受け、table_write_csv は text を返す)。 |
 | `tokens` | b | 8 | 10 | LLM の活性(Q / K / V の (T, d) 行列)。外のモデルから来る。 |  | tokens_to_matrix(-> matrix)を足した。出る側は一般の行列でよい(mat_cond などが掛かる)。逆向き matrix -> tokens は軸の順を確かめられないので足さない。 | 注意機構の演算族の値。入口は外(d)で正しいが、出口が 1 つも無かった: tokens と attnmap を受ける op は全部 tokens か attnmap を返すので、表・測定値・絵のどれにも出られなかった(終端へ届かない)。 | opsllmcore の _CATALOG 10 op の出力を全部見た。tokens を matrix と分けた理由は opsllmcore の docstring(入る側で転置が黙って通る)。 |
 | `transport_plan` | ok | 2 | 2 |  |  | none | 最適輸送の計画。apply_transport / transport_cost が受ける。 | opscolortransport。 |
 | `vector` | ok | 7 | 14 |  |  | none | 小さな実ベクトル。shift との往復ほか。 | reprconv.vector_to_shift。 |
-| `video` | ok | 41 | 62 | カメラの動画ストリーム(acquire の取り込み)。 | 動画として見せる出口(展示・Studio)。 | none | (T,H,W) の灰色動画。産 40 / 受 61。 | tools/gen_op_facets.py ACQUIRABLE['video']、opsvideostream。 |
+| `video` | ok | 40 | 61 | カメラの動画ストリーム(acquire の取り込み)。 | 動画として見せる出口(展示・Studio)。 | none | (T,H,W) の灰色動画。産 40 / 受 61。 | tools/gen_op_facets.py ACQUIRABLE['video']、opsvideostream。 |
 | `volseq` | d | 5 | 10 | 4-D の体積の時系列(ライトシート顕微鏡など)。作り手は volseq_synth_* の合成で、実データは外から来る。 |  | none | 体積の時系列は装置が出すもの。合成の作り手が入口として正しい。 | opslive4d の synth カテゴリ。 |
 | `volume` | ok | 23 | 17 | CT / MRI の体積取り込み。 |  | none | 2-D レジストリの 3-D float stack。台帳の voxel と同じ物(TYPE_TO_SORT['voxel'] = 'volume')。 | tools/gen_op_facets.py ACQUIRABLE['volume']。 |
 | `voxel` | a | 74 | 107 |  |  | none | 2-D レジストリの volume と同じ (D,H,W) を台帳が voxel と呼ぶ。境界で alias される(TYPE_TO_SORT)。sdf / labels も同じ sort に畳まれるが、それは TYPE_ALIAS_LEDGER に理由つきで記録済み。直さない(揺れとして記録)。 | backends_typed.TYPE_TO_SORT、docs/TYPE_ALIAS_LEDGER.json。 |

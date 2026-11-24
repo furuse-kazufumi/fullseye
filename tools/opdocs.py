@@ -1080,7 +1080,7 @@ def _records_uncached():
     for o in ops.REGISTRY:
         fn = o.fn
         try:
-            sig = str(inspect.signature(fn))
+            sig = __import__("signature_text").format_signature(fn)
         except (TypeError, ValueError):
             sig = "(v, a, b)"
         recs.append({
@@ -1116,7 +1116,7 @@ def _records_uncached():
     assert _nary, "nary 層が空(build_nary が何も返さない)"
     for o in _nary:
         try:
-            sig = str(inspect.signature(o.fn))
+            sig = __import__("signature_text").format_signature(o.fn)
         except (TypeError, ValueError):
             sig = "(inputs, a, b)"
         recs.append({
@@ -1137,7 +1137,7 @@ def _records_uncached():
         for name, info in ops3d.OPS3D.items():
             fn = info.get("func")
             try:
-                sig = str(inspect.signature(fn)) if fn is not None else "(...)"
+                sig = __import__("signature_text").format_signature(fn) if fn is not None else "(...)"
             except (TypeError, ValueError):
                 sig = "(...)"
             ins = info["in"]
@@ -1185,7 +1185,7 @@ def _records_uncached():
             for name, info in ledger.items():
                 fn = info.get("func")
                 try:
-                    sig = str(inspect.signature(fn)) if fn is not None else "(...)"
+                    sig = __import__("signature_text").format_signature(fn) if fn is not None else "(...)"
                 except (TypeError, ValueError):
                     sig = "(...)"
                 ins = info["in"]

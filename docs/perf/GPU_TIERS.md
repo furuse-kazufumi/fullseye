@@ -19,9 +19,9 @@
 |---|---:|
 | `required` | 49 |
 | `suitable` | 2205 |
-| `partial` | 651 |
-| `none` | 938 |
-| **合計** | **3843** |
+| `partial` | 653 |
+| `none` | 939 |
+| **合計** | **3846** |
 
 ## GPU 対応率
 
@@ -116,7 +116,6 @@
 | noncoaxial | 0 | 1 | 0 | 12 | 13 |
 | oct | 0 | 3 | 0 | 10 | 13 |
 | polish | 0 | 10 | 0 | 3 | 13 |
-| synth | 0 | 9 | 4 | 0 | 13 |
 | walkterrain | 0 | 13 | 0 | 0 | 13 |
 | 3d | 0 | 12 | 0 | 0 | 12 |
 | artificial-life | 0 | 12 | 0 | 0 | 12 |
@@ -135,6 +134,7 @@
 | signal | 0 | 11 | 1 | 0 | 12 |
 | swarmflow | 0 | 5 | 0 | 7 | 12 |
 | symmetry | 0 | 8 | 4 | 0 | 12 |
+| synth | 0 | 8 | 4 | 0 | 12 |
 | tacdome | 0 | 7 | 0 | 5 | 12 |
 | world | 0 | 0 | 1 | 11 | 12 |
 | construct | 0 | 1 | 8 | 2 | 11 |
@@ -255,6 +255,7 @@
 | freeform | 0 | 3 | 2 | 0 | 5 |
 | gcode | 0 | 1 | 2 | 2 | 5 |
 | information | 0 | 5 | 0 | 0 | 5 |
+| lane | 0 | 2 | 2 | 1 | 5 |
 | lensconfig | 0 | 0 | 0 | 5 | 5 |
 | light | 0 | 5 | 0 | 0 | 5 |
 | match_pose | 0 | 2 | 3 | 0 | 5 |
@@ -502,7 +503,6 @@
 | texture-feature | 0 | 1 | 0 | 0 | 1 |
 | texture/shape-feature | 0 | 1 | 0 | 0 | 1 |
 | theorem | 0 | 1 | 0 | 0 | 1 |
-| track | 0 | 1 | 0 | 0 | 1 |
 | trajectory | 0 | 0 | 1 | 0 | 1 |
 | tuning | 0 | 1 | 0 | 0 | 1 |
 | watershed | 0 | 1 | 0 | 0 | 1 |

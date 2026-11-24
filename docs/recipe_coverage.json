@@ -1,19 +1,17 @@
 {
  "summary": {
-  "recipes": 274,
+  "recipes": 275,
   "recipes_py": 25,
-  "recipebook": 249,
-  "multi_stage": 223,
-  "families_total": 61,
+  "recipebook": 250,
+  "multi_stage": 224,
+  "families_total": 60,
   "families_covered": 60,
-  "families_uncovered": [
-   "pharma"
-  ],
+  "families_uncovered": [],
   "task_class": {
    "3d": 38,
    "analysis": 24,
    "inspection": 60,
-   "measurement": 73,
+   "measurement": 74,
    "optics": 8,
    "preprocess": 38,
    "sensing": 17,
@@ -46,12 +44,12 @@
   },
   "runner": {
    "mcp": 132,
-   "python": 142
+   "python": 143
   },
-  "truth_gated": 250,
+  "truth_gated": 251,
   "type_cuts_total": 0,
   "recipes_with_type_cuts": 0,
-  "distinct_ops": 418,
+  "distinct_ops": 420,
   "categories_2d_total": 49,
   "categories_2d_covered": 25,
   "categories_2d_uncovered": [
@@ -83,7 +81,7 @@
   "gpu": {
    "snapshot_commit": "a3f91eae72f851e870e6a45294ecfc44ded9cb10",
    "recipes_measured": 247,
-   "recipes_unmeasured": 27,
+   "recipes_unmeasured": 28,
    "recipes_with_gpu_stage": 127,
    "switches_total": 96,
    "switch_histogram": {
@@ -187,9 +185,9 @@
   },
   {
    "family": "drive",
-   "ops": 744,
-   "recipes": 9,
-   "ops_used": 13
+   "ops": 749,
+   "recipes": 10,
+   "ops_used": 15
   },
   {
    "family": "emproof",
@@ -322,12 +320,6 @@
    "ops": 506,
    "recipes": 14,
    "ops_used": 37
-  },
-  {
-   "family": "pharma",
-   "ops": 2,
-   "recipes": 0,
-   "ops_used": 0
   },
   {
    "family": "photon",
@@ -5144,6 +5136,27 @@
    "gpu_stages": 0,
    "gpu_unmeasured_ops": [],
    "gpu_switches": 0
+  },
+  {
+   "name": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk",
+   "source": "recipebook",
+   "family": "drive",
+   "task_class": "measurement",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "lane_center_path",
+    "stop_line_detect"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "lane_center_path",
+    "stop_line_detect"
+   ],
+   "gpu_switches": null
   },
   {
    "name": "Simulate — a depth camera over a height map, then the plane back from its point cloud",

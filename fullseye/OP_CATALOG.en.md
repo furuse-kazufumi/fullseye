@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (495 examples)
+### 2-D image / signal / geometry (496 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -294,6 +294,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `shape_factors_closed_form` — ops: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
 - `walking_ops_tour` — ops: `capture_margin`, `com_from_silhouette`, `com_support_margin`, `contact_points`, `detect_obstacles`, `elevation_map`, `elevation_normals`, `elevation_step_edges`, `elevation_traversability`, `fill_gaps`, `foot_slip_metrics`, `foothold_candidates` (+12 more) `py -3.11 examples/walking_ops_tour.py`
 - `heightmap_depth_camera_tour` — ops: `clothoid_points`, `crop_rectangle2`, `dem_viewshed`, `elevation_map`, `fill_gaps`, `heightmap_depth_camera`, `road_surface_heightmap`, `surface_form_remove`, `world_camera` `py -3.11 examples/heightmap_depth_camera_tour.py`
+- `lane_ops_tour` — ops: `color_rule_mask`, `lane_boundary_fit`, `lane_center_path`, `pixel_to_world`, `plane_topview_color`, `stop_line_detect` `py -3.11 examples/lane_ops_tour.py`
 - `road_surface_tour` — ops: `blend`, `clothoid_points`, `crop_rectangle2`, `dem_slope`, `road_surface_heightmap`, `surface_form_remove` `py -3.11 examples/road_surface_tour.py`
 - `itokawa_gravity_tour` — ops: `mesh_slice_contours`, `polyhedron_clip_halfspace`, `polyhedron_gravity` `py -3.11 examples/itokawa_gravity_tour.py`
 
@@ -849,9 +850,9 @@ Ops that do not fit the one-image pipeline (two images, point sequences, variabl
 
 ## Operators by family (family → category, all ops)
 
-_3849 ops / 61 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
+_3852 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
 
-Families: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **pharma** 2 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+Families: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 749 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -3536,8 +3537,8 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 - `pod_decision_tradeoff` `table × signal → table` GPU: none — Trade-off table of (a50, a90, a90/95, false-call probability) as the decision threshold ``a_dec`` is varied (``table``). · examples: `poc_pod_lighting`
 - `pod_false_call` `signal → table` GPU: none — Probability of a false call from the responses ``noise`` of unflawed sites and the decision threshold ``a_dec`` (``table``). · examples: `poc_equipment_selection_map`, `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
 - `pod_from_ahat` `table → table` GPU: none — From the â-vs-a regression and the decision threshold ``a_dec``: the POD(a) curve and a50 / a90 / a90/95 (``table``). · examples: `poc_equipment_selection_map`, `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
-- `pod_hitmiss_fit` `table → table` GPU: none — Fit POD(a) to binary found/missed data with a generalised linear model (``table``). · examples: `poc_pod_lighting`, `poc_sem_wafer_defect_edge_bias`, `poc_si_wafer_pl_defect_visibility`, `poc_vial_particle_pod`
-- `proportion_interval` `no input → table` GPU: none — Return the point estimate and confidence limits for the binomial proportion ``k/n`` (``table``). · examples: `poc_vial_particle_pod`, `proportion_interval_audit`
+- `pod_hitmiss_fit` `table → table` GPU: none — Fit POD(a) to binary found/missed data with a generalised linear model (``table``). · examples: `poc_pod_lighting`, `poc_sem_wafer_defect_edge_bias`, `poc_si_wafer_pl_defect_visibility`
+- `proportion_interval` `no input → table` GPU: none — Return the point estimate and confidence limits for the binomial proportion ``k/n`` (``table``). · examples: `proportion_interval_audit`
 - `trials_for_all_success` `no input → scalar` GPU: none — Return the minimum trial count needed for all successes to establish ``p >= p_min`` at one-sided ``confidence`` (``scalar``). · examples: `proportion_interval_audit`
 
 #### spc / uncertainty (5)
@@ -3553,14 +3554,6 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 - `varmodel_calibrate` `table × video → table` GPU: none — Re-derive the band half-width ``k`` from held-out good images, for data that break the normal assumption (``table``). · examples: `poc_good_sample_variation_model`
 - `varmodel_fit` (halcon: `train_variation_model`) `video → table` GPU: yes (allow-list) — Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``). · examples: `poc_good_sample_variation_model`, `poc_patch_anomaly`
 - `varmodel_score` `image2d × table → table` GPU: none — Score one image against a ``varmodel_fit`` model: z map in sigmas, out-of-band map and a per-region explanation (``table``). · examples: `poc_good_sample_variation_model`, `poc_patch_anomaly`
-
-### pharma (2 ops / 2 categories)
-
-#### pharma / synth (1)
-- `vial_spin_stop_sequence` `no input → video` GPU: none — Create a post-spin-stop vial image sequence and per-object ground-truth trajectories. · examples: `poc_vial_particle_pod`
-
-#### pharma / track (1)
-- `track_moving_particles` `video → table` GPU: none — Separate particles, bubbles, and stationary glass scratches in an image sequence, returning a trajectory table. · examples: `poc_vial_particle_pod`
 
 ### graph (20 ops / 9 categories)
 
@@ -3648,7 +3641,7 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: none — Non-maximum suppression (Section 3.39). A pixel (x, y) survives only if, within the window, it is **≥ its preceding neighbors (the row above and the left in the same row) and > its following neighbors** (REQ-0337). This asymmetry is why exactly 1 pixel survives on a flat peak. Nonzero pixels of *mask* are not compared and are kept as is (nor are they used in comparisons for other pixels, REQ-0336). Suppressed pixels become 0 for U8 and INT16_MIN for S16 (REQ-0335). Neighbors that fall outside the window are not compared. · examples: `gallery_openvx_spec_values`
 
-### drive (744 ops / 55 categories)
+### drive (749 ops / 56 categories)
 
 The name says driving, but the content is a **ledger of physics-simulation and robot PoCs**: besides driving (courses, traffic, decisions, CARLA / CommonRoad), categories such as touch (tac*), peg-in-hole (peg*), polishing (polish), grinding (grind), cutting (cutting), granular media (granular / scoop), powder X-ray diffraction (pxrd) and ball games (ball / puck) live side by side. Look things up by category name.
 
@@ -4024,6 +4017,13 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `kendama_world` `table → table` GPU: none — A world of floor + ken (trick pose R_ken from kp, grip point kp["grip"] at ``hand``) + ball with hole + string. Origin on the floor, z up. The ball hangs below the cross-piece's string hole by the effective string length (kp["pendulum_length"]) (swung ``hang_deg`` from straight down toward ``hang_dir`` — with the diagonal (1, −1), the lateral offset is visible from both cameras at azimuth 0° and 90°). If ``p_ball`` is given, the ball is placed there. The floor is split into 0.25 m cells (as 1 large quad, any triangle reaching behind the camera is dropped whole and the floor vanishes). The return value's world["kendama"] = ``{"ken", "ball", "string"}`` (indices into objects) + ``"kp"``. · examples: `gallery_drive_world_objects`, `poc_kendama`
 - `string_mesh` `no input → any` GPU: none — A thin prism joining 2 points (the ball's string hole p_ball and the cross-piece's string hole p_cup) (4 sides + both ends, 8 vertices, 12 faces, outward-facing). Square cross-section of side 2·radius. ValueError if the two points coincide. · examples: `gallery_drive_world_objects`
 - `string_set` `table → any` GPU: none — Moves both ends of string i to (p_ball, p_cup) (rewrites only the vertices). ValueError for an object that is not a string. · examples: `gallery_drive_world_objects`
+
+#### drive / lane (5)
+- `color_rule_mask` `rgbimage × table → table` GPU: none — Classify RGB as white line, yellow line, or unknown with explicit HSV rules, returning masks and confidence. · examples: `lane_ops_tour`
+- `lane_boundary_fit` `keypoints → table` GPU: none — Robustly fit the lane boundary ``x=c0+c1*y+c2*y²`` to top-view points (lateral x, forward y). · examples: `lane_ops_tour`
+- `lane_center_path` `table × table → table` GPU: none — Return a lane-centre path and drivable band from the left and right boundaries. · examples: `lane_ops_tour`
+- `plane_topview_color` `rgbimage × matrix × matrix × signal → table` GPU: none — Project a ground plane into a colour-preserving top view and return a validity mask plus pixel-to-world coordinates. · examples: `lane_ops_tour`
+- `stop_line_detect` `labels × table → table` GPU: none — Detect the stop line and Japanese-style crosswalk as separate typed outputs. · examples: `lane_ops_tour`
 
 #### drive / lateral (21)
 - `ackermann_steer_angles` `any → table` GPU: none — Ackermann inner and outer wheel steering angles (turning radius R at the center of the rear axle, wheelbase L, track width t). · examples: `poc_driving_lateral`
@@ -4799,8 +4799,8 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 
 #### annotate / plot (7)
 - `axes_frame` `image2d × axes → image2d` GPU: inside a chain only (allow-list) — The axis frame (all four sides with ``box=True``, only the left and bottom with False). · examples: `annotate_gallery`, `annotate_paper_tour`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_simcal_thin_film`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
-- `axes_transform` `no input → axes` GPU: none — Build the (**closed-form**) mapping from data coordinates to pixel coordinates. · examples: `annotate_gallery`, `annotate_paper_tour`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_simcal_thin_film`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_threshold_transfer_after_normalization`, `poc_timelapse_growth`, `poc_vial_particle_pod`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
-- `data_to_pixel` `axes × signal × signal → pairs` GPU: inside a chain only (allow-list) — Map data points to pixel ``(x, y)`` through an :func:`axes_transform` mapping. · examples: `annotate_gallery`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_crack_width_timeseries`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_traffic_counting`, `poc_vial_particle_pod`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
+- `axes_transform` `no input → axes` GPU: none — Build the (**closed-form**) mapping from data coordinates to pixel coordinates. · examples: `annotate_gallery`, `annotate_paper_tour`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_simcal_thin_film`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_threshold_transfer_after_normalization`, `poc_timelapse_growth`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
+- `data_to_pixel` `axes × signal × signal → pairs` GPU: inside a chain only (allow-list) — Map data points to pixel ``(x, y)`` through an :func:`axes_transform` mapping. · examples: `annotate_gallery`, `poc_beam_modal_video`, `poc_camera_calibration`, `poc_crack_width_timeseries`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_traffic_counting`, `poc_wound_area_tracking`, `poc_xyt_event_surface`
 - `grid_lines` `image2d × axes → image2d` GPU: yes (allow-list) — Grid lines. If no tick values are given, :func:`nice_ticks` chooses them. · examples: `annotate_gallery`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`
 - `nice_ticks` `no input → signal` GPU: none — "Round" tick values covering [lo, hi] (1/2/5 × 10^k, **closed form**). · examples: `annotate_gallery`, `poc_dehazing`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_simcal_thin_film`
 - `plot_series` `image2d × axes × signal × signal → image2d` GPU: none — Draw lines, scatter or bars. Takes **data coordinates** (the axes decide the pixels). · examples: `annotate_gallery`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_crack_width_timeseries`, `poc_dehazing`, `poc_dic_strain`, `poc_driving_decisions`, `poc_driving_traffic`, `poc_focus_stacking`, `poc_interferometry_step`, `poc_measurement_system_analysis`, `poc_moire_alignment`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_photoelasticity`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_simcal_thin_film`, `poc_superresolution_limits`, `poc_template_tracking`, `poc_timelapse_growth`, `poc_wound_area_tracking`
@@ -5551,7 +5551,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 
 #### measure1d / scale (3)
 - `mm_per_px_from_reference` `measurement → measurement` GPU: none — Derives the pixel pitch in mm/px from a target of known size (scale bar, reference hole, gauge) — the calibration step. · examples: `example_inner_diameter_mm`, `example_scratch_width`
-- `pixel_to_world` `measurement → measurement` GPU: none — Converts one length measured in pixels to real-world mm (``value_px * mm_per_px``). · examples: `example_inner_diameter_mm`
+- `pixel_to_world` `measurement → measurement` GPU: none — Converts one length measured in pixels to real-world mm (``value_px * mm_per_px``). · examples: `example_inner_diameter_mm`, `lane_ops_tour`
 - `table_px_to_mm` `table → table` GPU: none — Adds mm columns to a measurement table (the return of ``measure_pairs`` / ``apply_metrology_model``). · examples: `example_inner_diameter_mm`, `example_scratch_width`
 
 ### roughness (9 ops / 3 categories)
