@@ -1563,7 +1563,32 @@ def probe_builders():
     out.update(_type_connectivity_builders())
     out.update(_matchreg_builders())
     out.update(_symbol_builders())
+    out.update(_bop_builders())
     return out
+
+
+def _bop_builders():
+    """Build valid BOP pose inputs. / BOP 姿勢 op に正しい合成入力を作る。"""
+    import ppf
+
+    grid = np.linspace(0.0, 1.0, 6)
+    points = np.array([(3.0 * x, 2.0 * y, 0.15 * x * y)
+                       for x in grid for y in grid])
+    normals = points - points.mean(axis=0)
+    normals /= np.linalg.norm(normals, axis=1)[:, None]
+    descriptor = ppf.ppf_model(points, normals, angle_bins=24)
+    scene = points + np.array([0.3, -0.2, 1.4])
+    first = ppf.PoseHypothesis(np.eye(3), np.zeros(3), 9, 0.9, 0.9, 0.1)
+    second = ppf.PoseHypothesis(np.eye(3), np.array([2.0, 0.0, 0.0]),
+                                8, 0.8, 0.8, 0.2)
+    return {
+        "ppf_pose_hypotheses": lambda pool, rng: (
+            [descriptor, scene], {"scene_normals": normals, "top_n": 1,
+                                  "ref_fraction": 0.5, "refine": False, "seed": 3}),
+        "pose_nms_symmetry": lambda pool, rng: (
+            [[first, second], points, [np.eye(4)]],
+            {"distance_threshold": 0.1, "top_n": 2}),
+    }
 
 
 def _type_connectivity_builders():

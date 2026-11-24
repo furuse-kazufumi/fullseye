@@ -2665,7 +2665,7 @@
   "run_by_the_poc_gate": 316,
   "run_by_the_example_gate": 179,
   "scripts_on_disk": 504,
-  "excluded_from_the_registry": 8,
+  "excluded_from_the_registry": 9,
   "excluded_but_run_by_a_named_test": {
    "lensfile_tolerance_worst_mtf": [
     "tests/test_lenstol_composability.py"
@@ -2681,11 +2681,12 @@
     "tests/test_tof_realdata.py"
    ]
   },
-  "not_run_by_any_gate": 4,
+  "not_run_by_any_gate": 5,
   "not_run_by_any_gate_reasons": {
    "g1_policy_staged": "needs a trained G1 walking checkpoint (REF) + MuJoCo; no checkpoint ships with the repo, so it cannot self-run",
    "gsplat_trained_product": "needs a Python with CUDA torch (FULLSEYE_TORCH_PYTHON) to train the 3DGS on the GPU; without one it prints SKIP, so it cannot self-run as a gallery example",
    "hand_tracking_demo": "needs a photo/webcam argument plus the optional mediapipe extra and a downloaded hand_landmarker.task model",
+   "itodd_bop_stage1_val": "needs a local public ITODD validation dataset; the dataset is not shipped, so this real-data example cannot self-run",
    "perception_staged": "needs FULLSEYE_G1_QPOS / FULLSEYE_MENAGERIE_XML pointing at external MuJoCo Menagerie assets (not shipped)"
   },
   "gates": [

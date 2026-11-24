@@ -2231,6 +2231,8 @@ EXAMPLES = [
 # honest reason. test_examples2d enforces: registry ∪ EXCLUDED == files on disk,
 # and the two sets are disjoint, so a new script cannot slip in unlisted.
 EXCLUDED = {
+    "itodd_bop_stage1_val": "needs a local public ITODD validation dataset; the dataset is not "
+                            "shipped, so this real-data example cannot self-run",
     "lensfile_tolerance_worst_mtf": "runnable composability sample covered by the lens-tolerancing exhibit; "
                                     "cannot be numbered again without creating a duplicate exhibit",
     "optimized_lens_tolerance_sensitivity": "runnable composability sample covered by the lens-tolerancing exhibit; "

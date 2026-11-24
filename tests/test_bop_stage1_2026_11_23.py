@@ -156,6 +156,7 @@ def test_bop_symmetry_product_merges_noncommuting_discrete_and_continuous_pose()
     transforms = bop.bop_symmetry_transforms(info, max_step=2.0)
     continuous_half_turn = np.diag([-1.0, -1.0, 1.0, 1.0])
     combined = continuous_half_turn @ discrete
+    assert transforms
     assert any(np.allclose(combined, transform, atol=1e-12, rtol=0.0)
                for transform in transforms)
     points = np.array([[1.0, 0.3, 0.2], [-0.5, 1.2, 0.4], [0.7, -0.8, 1.1]])

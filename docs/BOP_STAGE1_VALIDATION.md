@@ -23,7 +23,7 @@ BOP toolkit の固定 commit をチェックアウトしたディレクトリを
 `BOP_TOOLKIT_ROOT` に指定し、EGL が使える Python 3.11 環境で次を実行します。
 
 ```powershell
-$env:BOP_TOOLKIT_ROOT = 'C:\path\to\bop_toolkit'
+$env:BOP_TOOLKIT_ROOT = (Resolve-Path '.\bop_toolkit').Path
 $env:VISPY_USE_APP = 'egl'
 py -3.11 -m pytest -q tests/test_bop_official_golden_2026_11_23.py
 ```
