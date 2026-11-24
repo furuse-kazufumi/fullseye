@@ -302,7 +302,28 @@ def nw_heightmap_camera(variant: int):
             "truth": {"cos_tilt": 1.0 / math.sqrt(1.0 + a * a + b * b)}}
 
 
+def nw_lane_stop(variant: int):
+    """Two lane boundaries and a BEV stop line plus five legally spaced Japanese zebra stripes."""
+    stop_s = 7.0 if variant == 0 else 9.0
+    res, h, w = 0.05, 301, 101
+    H = np.array([[res, 0.0, -2.5], [0.0, -res, 15.0], [0.0, 0.0, 1.0]])
+    rows, cols = np.mgrid[0:h, 0:w]
+    q = np.stack([cols, rows, np.ones_like(rows)], -1) @ H.T
+    x, y = q[..., 0], q[..., 1]
+    labels = np.zeros((h, w), np.int16)
+    labels[(np.abs(y - stop_s) <= 0.15) & (np.abs(x) <= 1.60)] = 1
+    for xx in (-1.5, -0.75, 0.0, 0.75, 1.5):
+        labels[(np.abs(x - xx) <= 0.15) & (y >= stop_s + 0.7) & (y <= stop_s + 3.7)] = 1
+    common = {"valid": True, "observed_y": np.array([0.0, 15.0]),
+              "confidence": 0.95, "pixel_to_world": H}
+    left = dict(common, coefficients=np.array([-1.75, 0.0, 0.0]))
+    right = dict(common, coefficients=np.array([1.75, 0.0, 0.0]))
+    return {"value": left, "aux": {"right": right, "labels": labels},
+            "truth": {"distance": stop_s}}
+
+
 SAMPLES = {
+    "nw_lane_stop": nw_lane_stop,
     "nw_heightmap_camera": nw_heightmap_camera,
     "nw_road_alignment": nw_road_alignment,
     "nw_two_parts_gap": nw_two_parts_gap,
@@ -318,6 +339,21 @@ SAMPLES = {
 # recipes
 # =================================================================================================
 RECIPES = [
+    # ------------------------------------------------ lane_center_path -> stop_line_detect (lane, 2026-11-23)
+    {"name": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk",
+     "family": "drive", "task": "measure", "task_class": "measurement", "halcon": None,
+     "input_sort": "table", "sample": "nw_lane_stop",
+     "stages": [{"op": "lane_center_path", "args": ["$in", "$aux.right"]},
+                {"op": "stop_line_detect", "args": ["$aux.labels", "$prev"]}],
+     "expect": [{"get": ["found"], "equals": True},
+                {"get": ["distance"], "approx": "distance", "atol": 0.06},
+                {"get": ["crosswalk_found"], "equals": True},
+                {"get": ["crosswalk_stripe_count"], "equals": 5}],
+     "note": "Both fitted boundary tables carry the same BEV pixel-to-world mapping. lane_center_path preserves it "
+             "with the centre path and corridor, so stop_line_detect can measure the transverse white line and the "
+             "separate Japanese crosswalk in metres. Five lane-parallel stripes with 0.45 m clear gaps span 3.3 m "
+             "and must "
+             "return their near/far distance, width, spacing, and confidence rather than be discarded."},
     # ------------------------------------------------ new op: heightmap_depth_camera (terrain, 2026-11-15), family drive
     {"name": "Simulate — a depth camera over a height map, then the plane back from its point cloud",
      "family": "drive", "task": "measure", "task_class": "simulation", "halcon": None,
@@ -530,6 +566,10 @@ FAILED_ATTEMPTS = [
 
 
 NOTES_JA = {
+    "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk":
+        "左右の車線境界から中央経路と走行帯を作り、停止線と横断歩道を別々に測る — "
+        "lane_center_path が両境界に共通の俯瞰画素→世界座標の対応を引き継ぎ、stop_line_detect が車線に直交する"
+        "白線の幅と距離、後方に置いた空き45 cm・全幅3.3 mの等間隔5本の縞の手前/奥の距離・間隔・確信度をメートルで返す。",
     "Simulate — a depth camera over a height map, then the plane back from its point cloud":
         "高さ図を深度カメラで撮り、点群から平面を当て直す — 真下を向く深度カメラで傾いた面を撮り、depth_to_points で "
         "カメラの座標の点群にして fit_plane_3d で平面を当てる。真下のカメラの座標は世界の鏡映と平行移動なので点は平面の上に"

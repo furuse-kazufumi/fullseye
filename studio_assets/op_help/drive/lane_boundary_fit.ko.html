@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lane_boundary_fit — DRIVE <code style="color:#22d3bf">lane</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lane_boundary_fit(points, *, side=&#x27;unknown&#x27;, ransac_threshold=0.18, ransac_iterations=300, initial_outlier_weight=0.25, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import laneops; laneops.lane_boundary_fit(points, *, side=&#x27;unknown&#x27;, ransac_threshold=0.18, ransac_iterations=300, initial_outlier_weight=0.25, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;lane_boundary_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>하향식 점(가로 x, 전방 y)에 차선 경계 <code style="color:#22d3bf">x=c0+c1*y+c2*y²</code> 를 강건하게 맞춘다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>既存 <code style="color:#22d3bf">ransac_line</code> を外れ値に強い初期直線として使い、その後Huber IRLSの二次曲線へ拡張する。強いS字、yが折り返す境界、地面平面でない点には使えない。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>points : (N, 2) keypoints</p>
+<p>世界座標 <code style="color:#22d3bf">(x lateral, y forward)</code> [m]。順序は問わない。</p>
+<p>side : {&quot;left&quot;, &quot;right&quot;, &quot;unknown&quot;}</p>
+<p>後段が片側だけを車線中央へずらすための名前。</p>
+<p>ransac_threshold, ransac_iterations, initial_outlier_weight, seed</p>
+<p>直線/最終inlierの距離[m]、反復数、初期RANSAC外れ値のIRLS重み、固定乱数seed。</p>
+<p><code style="color:#22d3bf">initial_outlier_weight=0.25</code>は初期inlierを4倍優先しつつ、曲線上で初期直線から</p>
+<p>外れた点を残すための固定値である。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>table</p>
+<p>正準の<code style="color:#22d3bf">normalised_coefficients</code>(b0,b1,b2), <code style="color:#22d3bf">y_centre</code>, <code style="color:#22d3bf">y_scale</code>、</p>
+<p><code style="color:#22d3bf">observed_y</code>、<code style="color:#22d3bf">inlier_mask</code>、残差、RMS、確信度。互換用の</p>
+<p><code style="color:#22d3bf">coefficients</code>(c0,c1,c2)は <code style="color:#22d3bf">abs(y) &lt;= 1e6 m</code> の範囲だけ数値精度を契約する。</p>
+<p>English: initialise with the existing 3-D <code style="color:#22d3bf">ransac_line</code> (z=0), then fit the boundary x(y) with a Huber robust quadratic. Point order does not matter. It centres and normalises y for rank, condition-number, least-squares work, and evaluation. <code style="color:#22d3bf">normalised_coefficients</code>, <code style="color:#22d3bf">y_centre</code>, and <code style="color:#22d3bf">y_scale</code> are the canonical output. The legacy expanded world coefficients are numerically guaranteed only while <code style="color:#22d3bf">abs(y) &lt;= 1e6 m</code>. The final inlier design must have rank 3, at least three distinct y values, and bounded condition number; otherwise it returns <code style="color:#22d3bf">valid=False</code> instead of silently using a line. Hairpins where y is not single-valued are outside the contract and fail closed.</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import laneops</p>
+<p>y = np.linspace(0., 20., 41); x = -1.75 + 0.002 * y*y</p>
+<p>fit = laneops.lane_boundary_fit(np.c_[x, y], side=&quot;left&quot;, seed=7)</p>
+<p>assert np.allclose(fit[&quot;coefficients&quot;], [-1.75, 0., 0.002], atol=1e-10)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lane_ops_tour">lane_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/lane_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">lane</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:color_rule_mask">color_rule_mask</a> · <a style="color:#22d3bf" href="opdrive:plane_topview_color">plane_topview_color</a> · <a style="color:#22d3bf" href="opdrive:lane_center_path">lane_center_path</a> · <a style="color:#22d3bf" href="opdrive:stop_line_detect">stop_line_detect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: laneops.py — DRIVE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

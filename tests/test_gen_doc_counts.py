@@ -34,6 +34,7 @@ def test_generate_repairs_stale_counts_and_is_idempotent(tmp_path, monkeypatch):
     stamped = []
     monkeypatch.setattr(G, "DOCS", tmp_path)
     monkeypatch.setattr(G, "counts", lambda: (940, 3535))
+    monkeypatch.setattr(G, "_index_counts", lambda: (940, 3535))
     monkeypatch.setattr(G.i18n_docs, "stamp_if_numeric_only", stamped.append)
 
     G.generate()
@@ -56,4 +57,5 @@ def test_regen_all_owns_the_count_outputs():
     assert regen_all.OUTPUTS["tools/gen_doc_counts.py"] == [
         "docs/README.md", "docs/README.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md",
+        "README.md", "docs/INTEGRATION.md", "CITATION.cff", "pyproject.toml",
     ]
