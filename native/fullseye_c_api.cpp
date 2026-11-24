@@ -100,6 +100,60 @@ std::mutex g_python_mutex;
 std::mutex g_runtime_mutex;
 std::unordered_set<fs_runtime_t *> g_runtimes;
 
+#if defined(FULLSEYE_C_API_TESTING)
+// CTest starts an isolated CPython in each standalone C/C++ executable.  The
+// production SDK deliberately keeps that interpreter alive until process exit:
+// a consumer can create, destroy, and create runtimes again without trying the
+// unsupported extension-module reinitialization sequence.  For the sanitizer
+// test build, however, finalizing at the executable boundary releases CPython
+// import state before LSan runs.  This path is compiled only for CTest builds;
+// it is never registered in the shipped library.
+// CTest は各 C/C++ 実行ファイルで独立 CPython を起動する。本番 SDK は、拡張
+// モジュールの未対応な再初期化を避けるため、利用者のプロセス終了まで解釈系を保持する。
+// ただし sanitizer 用の test build では、LSan より前に CPython の import 状態を
+// 解放するため、実行ファイル境界で finalize する。この経路は CTest build 専用で、
+// 出荷ライブラリには登録されない。
+std::once_flag g_test_python_finalize_registration;
+
+void finalize_owned_python_for_lsan_test() noexcept {
+    std::unique_lock<std::mutex> python_lock(g_python_mutex);
+    if (!g_python_owned || Py_IsInitialized() == 0) {
+        return;
+    }
+    {
+        std::lock_guard<std::mutex> runtime_lock(g_runtime_mutex);
+        // A test that exits with a live runtime did not exercise the documented
+        // lifecycle, so fail instead of making that error invisible to LSan.
+        if (!g_runtimes.empty()) {
+            std::abort();
+        }
+    }
+    // Py_FinalizeEx releases the GIL it owns.  Do not call PyGILState_Release
+    // afterwards: CPython's thread state no longer exists at that point.
+    // Py_FinalizeEx は取得中の GIL も解放する。終了後は CPython の thread state
+    // が無いので、PyGILState_Release を続けて呼んではならない。
+    (void)PyGILState_Ensure();
+    const int finalize_status = Py_FinalizeEx();
+    g_python_ready = false;
+    g_python_owned = false;
+    g_python_root.clear();
+    g_python_home.clear();
+    if (finalize_status < 0) {
+        std::abort();
+    }
+}
+
+void register_owned_python_finalizer_for_lsan_test() {
+    std::call_once(g_test_python_finalize_registration, [] {
+        // Registration failure means the sanitizer test cannot establish its
+        // promised cleanup boundary; abort rather than silently weakening it.
+        if (std::atexit(finalize_owned_python_for_lsan_test) != 0) {
+            std::abort();
+        }
+    });
+}
+#endif
+
 void set_error(const fs_runtime_t *runtime, std::string_view message) noexcept {
     g_error.runtime = runtime;
     g_error.length = std::min(message.size(), kMaxErrorBytes);
@@ -403,6 +457,9 @@ PythonInitResult initialize_python(const std::string &root, const std::string &h
                 PyEval_SaveThread();
                 return {FS_E_NO_PYTHON, "unknown error while importing fullseye.c_api_bridge"};
             }
+#if defined(FULLSEYE_C_API_TESTING)
+            register_owned_python_finalizer_for_lsan_test();
+#endif
             // CPython remains alive until process exit; native callers acquire
             // the GIL for every later call. / 終了まで生かし、各呼出しで GIL を取る。
             PyEval_SaveThread();

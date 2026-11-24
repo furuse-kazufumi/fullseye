@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lane_center_path — DRIVE <code style="color:#22d3bf">lane</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lane_center_path(left, right, *, lane_width=3.5, samples=51, band_inset=0.2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import laneops; laneops.lane_center_path(left, right, *, lane_width=3.5, samples=51, band_inset=0.2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;lane_center_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: 없음(CPU 참조 구현만)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>좌우 경계에서 차선 중심 경로와 주행 가능 띠를 반환한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>両側があれば共通観測範囲で中点を取る。片側だけなら既知の<code style="color:#22d3bf">lane_width</code>の半分だけ内側へずらし、確信度を<code style="color:#22d3bf">SINGLE_BOUNDARY_CONFIDENCE_SCALE</code>倍に下げる。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>left, right : table or None</p>
+<p><code style="color:#22d3bf">lane_boundary_fit</code>の結果。欠測側はNoneか<code style="color:#22d3bf">{&quot;valid&quot;:False}</code>。</p>
+<p>lane_width, samples, band_inset</p>
+<p>既知の車線幅[m]、標本数、境界から走行帯を内側へ引く量[m]。両側がある場合も、</p>
+<p>観測した幅が既知幅と整合することを検査する。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>table</p>
+<p><code style="color:#22d3bf">path</code>(x,y)、<code style="color:#22d3bf">band_left/right</code>、閉じた<code style="color:#22d3bf">corridor_polygon</code>、幅、確信度、使用した側。</p>
+<p>English: average two fitted boundaries after checking their observed width against the supplied known lane width, or offset a single observed boundary by half the known lane width with reduced confidence. Before a one-sided offset, it rejects a curvature radius no larger than any constructed offset, and rejects a cusp, tangent reversal, or self-intersection with <code style="color:#22d3bf">valid=False</code>. It returns the centre path and an inset drivable corridor; it does not check vehicle footprint or obstacles.</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import laneops</p>
+<p>left = {&quot;coefficients&quot;:np.array([-1.75,0.,0.]), &quot;observed_y&quot;:np.array([0.,20.]), &quot;confidence&quot;:1.}</p>
+<p>right = {&quot;coefficients&quot;:np.array([1.75,0.,0.]), &quot;observed_y&quot;:np.array([0.,20.]), &quot;confidence&quot;:1.}</p>
+<p>out = laneops.lane_center_path(left, right)</p>
+<p>assert np.allclose(out[&quot;path&quot;][:, 0], 0.) and np.allclose(out[&quot;lane_width_samples&quot;], 3.5)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lane_ops_tour">lane_ops_tour</a> — <code style="color:#22d3bf">py -3.11 examples/lane_ops_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">lane</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:color_rule_mask">color_rule_mask</a> · <a style="color:#22d3bf" href="opdrive:plane_topview_color">plane_topview_color</a> · <a style="color:#22d3bf" href="opdrive:lane_boundary_fit">lane_boundary_fit</a> · <a style="color:#22d3bf" href="opdrive:stop_line_detect">stop_line_detect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: laneops.py — DRIVE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
