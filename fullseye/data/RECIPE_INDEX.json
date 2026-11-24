@@ -10719,6 +10719,48 @@
       }
     },
     {
+      "name": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk",
+      "task": "measure",
+      "family": "drive",
+      "task_class": "measurement",
+      "halcon": null,
+      "runner": "python",
+      "input_sort": "table",
+      "output_sort": "table",
+      "stages": [
+        {
+          "op": "lane_center_path",
+          "args": [
+            "$in",
+            "$aux.right"
+          ]
+        },
+        {
+          "op": "stop_line_detect",
+          "args": [
+            "$aux.labels",
+            "$prev"
+          ]
+        }
+      ],
+      "when": "Both fitted boundary tables carry the same BEV pixel-to-world mapping. lane_center_path preserves it with the centre path and corridor, so stop_line_detect can measure the transverse white line and the separate Japanese crosswalk in metres. Five lane-parallel stripes with 0.45 m clear gaps span 3.3 m and must return their near/far distance, width, spacing, and confidence rather than be discarded.",
+      "image": null,
+      "source": {
+        "path": "fullseye/recipebook/book_newops.py",
+        "line": 343
+      },
+      "when_ja": "左右の車線境界から中央経路と走行帯を作り、停止線と横断歩道を別々に測る — lane_center_path が両境界に共通の俯瞰画素→世界座標の対応を引き継ぎ、stop_line_detect が車線に直交する白線の幅と距離、後方に置いた空き45 cm・全幅3.3 mの等間隔5本の縞の手前/奥の距離・間隔・確信度をメートルで返す。",
+      "index_text": {
+        "ja": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk measure measurement drive  Both fitted boundary tables carry the same BEV pixel-to-world mapping. lane_center_path preserves it with the centre path and corridor, so stop_line_detect can measure the transverse white line and the separate Japanese crosswalk in metres. Five lane-parallel stripes with 0.45 m clear gaps span 3.3 m and must return their near/far distance, width, spacing, and confidence rather than be discarded. 左右の車線境界から中央経路と走行帯を作り、停止線と横断歩道を別々に測る — lane_center_path が両境界に共通の俯瞰画素→世界座標の対応を引き継ぎ、stop_line_detect が車線に直交する白線の幅と距離、後方に置いた空き45 cm・全幅3.3 mの等間隔5本の縞の手前/奥の距離・間隔・確信度をメートルで返す。 左右境界から車線中央の経路と走行可能帯を返す。 停止線と日本式横断歩道を別々の型付き出力として検出する。",
+        "en": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk measure measurement drive  Both fitted boundary tables carry the same BEV pixel-to-world mapping. lane_center_path preserves it with the centre path and corridor, so stop_line_detect can measure the transverse white line and the separate Japanese crosswalk in metres. Five lane-parallel stripes with 0.45 m clear gaps span 3.3 m and must return their near/far distance, width, spacing, and confidence rather than be discarded. Return a lane-centre path and drivable band from the left and right boundaries. Detect the stop line and Japanese-style crosswalk as separate typed outputs.",
+        "zh": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk measure measurement drive  Both fitted boundary tables carry the same BEV pixel-to-world mapping. lane_center_path preserves it with the centre path and corridor, so stop_line_detect can measure the transverse white line and the separate Japanese crosswalk in metres. Five lane-parallel stripes with 0.45 m clear gaps span 3.3 m and must return their near/far distance, width, spacing, and confidence rather than be discarded. 由左右边界返回车道中心路径与可行驶带。 将停止线和日式人行横道作为独立的类型化输出进行检测。",
+        "tw": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk measure measurement drive  Both fitted boundary tables carry the same BEV pixel-to-world mapping. lane_center_path preserves it with the centre path and corridor, so stop_line_detect can measure the transverse white line and the separate Japanese crosswalk in metres. Five lane-parallel stripes with 0.45 m clear gaps span 3.3 m and must return their near/far distance, width, spacing, and confidence rather than be discarded. 由左右邊界回傳車道中心路徑與可行駛帶。 將停止線和日式行人穿越道作為獨立的型別化輸出進行偵測。",
+        "ko": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk measure measurement drive  Both fitted boundary tables carry the same BEV pixel-to-world mapping. lane_center_path preserves it with the centre path and corridor, so stop_line_detect can measure the transverse white line and the separate Japanese crosswalk in metres. Five lane-parallel stripes with 0.45 m clear gaps span 3.3 m and must return their near/far distance, width, spacing, and confidence rather than be discarded. 좌우 경계에서 차선 중심 경로와 주행 가능 띠를 반환한다. 정지선과 일본식 횡단보도를 별도의 형식化된 출력으로 검출한다.",
+        "de": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk measure measurement drive  Both fitted boundary tables carry the same BEV pixel-to-world mapping. lane_center_path preserves it with the centre path and corridor, so stop_line_detect can measure the transverse white line and the separate Japanese crosswalk in metres. Five lane-parallel stripes with 0.45 m clear gaps span 3.3 m and must return their near/far distance, width, spacing, and confidence rather than be discarded. Gibt aus linker und rechter Begrenzung einen Spurmittelpfad und ein befahrbares Band zurück. Erkennt Haltelinie und japanischen Fußgängerüberweg als getrennte typisierte Ausgaben.",
+        "hi": "Detect — build a lane corridor, then measure both the stop line and Japanese crosswalk measure measurement drive  Both fitted boundary tables carry the same BEV pixel-to-world mapping. lane_center_path preserves it with the centre path and corridor, so stop_line_detect can measure the transverse white line and the separate Japanese crosswalk in metres. Five lane-parallel stripes with 0.45 m clear gaps span 3.3 m and must return their near/far distance, width, spacing, and confidence rather than be discarded. बाईं और दाईं boundaries से lane-centre path और drivable band लौटाता है। स्टॉप लाइन और जापानी शैली के क्रॉसवॉक को अलग-अलग टाइप किए गए आउटपुट के रूप में पहचानता है।"
+      }
+    },
+    {
       "name": "Simulate — a depth camera over a height map, then the plane back from its point cloud",
       "task": "measure",
       "family": "drive",
@@ -10756,7 +10798,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 322
+        "line": 358
       },
       "when_ja": "高さ図を深度カメラで撮り、点群から平面を当て直す — 真下を向く深度カメラで傾いた面を撮り、depth_to_points で カメラの座標の点群にして fit_plane_3d で平面を当てる。真下のカメラの座標は世界の鏡映と平行移動なので点は平面の上に乗り(残差 1e-9 の桁)、法線と光軸の角が面の傾きになる(|n_z| = 1/√(1 + a² + b²))。",
       "index_text": {
@@ -10803,7 +10845,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 337
+        "line": 373
       },
       "when_ja": "中心線の表と横断の決まり(拝み勾配 2 %・車線・側溝)から道の面を作り、DEM として傾斜を測る — 窓は左の車線だけで、z = g·x − c·y の平面なので dem_slope(Horn)が内側のどこでも atan(√(g² + c²)) になる。セルごとの解析の真値は return_truth=True で返る。",
       "index_text": {
@@ -10845,7 +10887,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 350
+        "line": 386
       },
       "when_ja": "走査した 2 部品のあいだの隙間を測る — 隙間の中の飛び点 6 点で凸包の隙間が詰まって見えるので、先に radius_outlier_removal(半径 0.06 に近傍 2 点未満)で除き、convex_hull_gap が面と面の隙間を保証つきの上下限で返す(Wolfe の 最小ノルム点。独立な線形計画も一致)。非凸の部品は凸に分けてから使う。",
       "index_text": {
@@ -10881,7 +10923,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 363
+        "line": 399
       },
       "when_ja": "穴の中心と半径をサブピクセル輪郭から測る — threshold_sub_pix で円板の縁を XLD 輪郭にし、fit_circle_xld で輪郭ごとに幾何距離の円を当てて中心(行・列)と半径を画素で読む(HALCON fit_circle_contour_xld)。真値は被覆率で描いた円。",
       "index_text": {
@@ -10930,7 +10972,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 376
+        "line": 412
       },
       "when_ja": "接した部品を分水嶺の盆地として数える — 二値化・距離変換・反転で部品ごとの谷を作り、hierarchical_watershed をマスクの中で回して盆地のラベル画像(1..k)と個数を得る(HALCON watersheds の basins 出力)。",
       "index_text": {
@@ -10990,7 +11032,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 389
+        "line": 425
       },
       "when_ja": "マスク付きのマーカー分水嶺 — 部品のマスクを 1 ラベル、作業者の印を種、勾配の反転を優先度にして blob_split で流す。マスクの外へは出ないので面積の合計がマスクと一致し、2 部品の面積が分かる(watersheds_marker に mask 引数が無い穴の代わり)。",
       "index_text": {
@@ -11033,7 +11075,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 405
+        "line": 441
       },
       "when_ja": "中心のずれたリングを、その中心で極座標展開して半径を読む — polar_unwrap に中心(行・列)と半径の範囲を渡し、角度で平均した断面の最大の列からリングの半径を得る(HALCON polar_trans_image_ext の Row/Column/Radius)。",
       "index_text": {
@@ -11071,7 +11113,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 417
+        "line": 453
       },
       "when_ja": "濃淡ボリュームの明るい介在物と暗い介在物を数える — vol_threshold で明示のレベル(0.25)で二値化してから vol_count で連結成分を数える。vol_count だけだと 0.5 固定で暗い方を落とす。",
       "index_text": {
@@ -11108,7 +11150,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 426
+        "line": 462
       },
       "when_ja": "マイク 2 本で音源の方位を測る — tdoa_bearing が相互相関で到着時間差 Δt を取り、遠方近似 θ = asin(cΔt/d) で方位(度)にする。マイク間隔 0.2 m、48 kHz。",
       "index_text": {
@@ -11145,7 +11187,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 436
+        "line": 472
       },
       "when_ja": "加工面の送りマークの波長を面 PSD の山から測る — surface_psd の (q, PSD) 対を spectral_stats に渡し、山の横軸 q(cycles/mm)= 1/λ を読む。peak_nm という名前だが単位は対の横軸のまま。",
       "index_text": {
@@ -11176,7 +11218,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 445
+        "line": 481
       },
       "when_ja": "縞・格子・テクスチャの周期と向きを測る — wave_dominant_frequency が Hann 窓の 2-D FFT の DC 以外の最大の山を対数放物線で細かく読み、周期(画素)と波数ベクトルの向き(度)を返す。",
       "index_text": {
@@ -11211,7 +11253,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 455
+        "line": 491
       },
       "when_ja": "既知の部品の 6 自由度の姿勢を場面の点群から求める — find_surface_pose が点対特徴(PPF)の投票で初期値なしに姿勢を立て、ICP で詰めて (R, t) を返す(HALCON find_surface_model)。",
       "index_text": {
@@ -11246,7 +11288,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 469
+        "line": 505
       },
       "when_ja": "3D センサの受入試験で、校正済みの球から探針の誤差を測る — sphere_probing_error が点群に球を当て、大きさの誤差 PS(当てた直径 − 校正値)と形状の誤差 PF(最悪 0.3 % を除いた半径の残差の幅)を返す。雑音 0 なら両方 0(閉形式)。",
       "index_text": {
@@ -11284,7 +11326,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 480
+        "line": 516
       },
       "when_ja": "2 枚の像のサブピクセルのずれを ECC で測る — register_ecc(並進)の warp の平行移動の列が(dx, dy)(列が先)。滑らかな模様を既知の量だけずらした像なので、真値はそのずれ。",
       "index_text": {
@@ -11315,7 +11357,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 490
+        "line": 526
       },
       "when_ja": "EAN-13(JAN)のラベルを読む(傾きと雑音つきも)— read_barcode1d が推定した向きで平行な走査線を引き、線ごとに復号して多数決で一致したときだけ文字列を返す。真値は符号化した 13 桁。",
       "index_text": {
@@ -11353,7 +11395,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_newops.py",
-        "line": 500
+        "line": 536
       },
       "when_ja": "平行化したステレオ対の視差を半大域照合で測る — binocular_disparity_ms(HALCON の同名 op)が複数の経路で集約し左右の整合を確かめて視差の地図を返す。左は右を一様な視差 d(5 / 3 px)だけずらした像なので、地図の中央値が d になる。",
       "index_text": {
@@ -11533,8 +11575,8 @@
     },
     {
       "source": "fullseye/recipebook RECIPES",
-      "found": 249,
-      "included": 249,
+      "found": 250,
+      "included": 250,
       "excluded": 0,
       "reason": null
     },
@@ -11554,9 +11596,9 @@
     },
     {
       "source": "docs/**/*.md",
-      "found": 4432,
+      "found": 4438,
       "included": 0,
-      "excluded": 4432,
+      "excluded": 4438,
       "reason": "Documentation contains prose and snippets, not a statically unambiguous inventory of MCP stages."
     }
   ]
