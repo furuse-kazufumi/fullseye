@@ -70,6 +70,10 @@ def validate_pipeline_dict(d):
         raise ValueError("not a pipeline file (no 'stages' key)")
     if not isinstance(raw, (list, tuple)):
         raise ValueError("'stages' must be a list, got %s" % type(raw).__name__)
+    if len(raw) > MAX_PROGRAM_STAGES:
+        # Reject the decoded payload before this validator resolves/normalises each
+        # stage and before PipelineModel.stages builds its mutable stage list.
+        raise ValueError(engine.pipeline_stage_limit_message(len(raw)))
     out = []
     for i, s in enumerate(raw):
         if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) not in (3, 4):
@@ -3763,15 +3767,22 @@ def _hdev_parse_op(line, lineno, errs, names):
 #: 解析のたびに空にし、解析の最後に「段になった行」だけを残す(``if 0 … endif`` の中や無効の行は知らせない)。
 _HDEV_CLAMPED: dict = {}
 
-#: Program の ``for N`` が展開してよい段数の上限。画面は段ごとに行・途中結果・キャッシュを持つので、
-#: 無制限にすると解析だけでメモリを使い切り、Apply が GUI スレッドを長く占有する。
-MAX_PROGRAM_STAGES = 512
+#: Program の ``for N`` が展開してよい段数の上限。正本は :mod:`fssystem` で、
+#: engine/MCP と同じ値を使う。Studio は既存呼び手向けにこの公開別名を残す。
+#: The single source is ``fssystem.MAX_PROGRAM_STAGES``.
+MAX_PROGRAM_STAGES = engine.MAX_PROGRAM_STAGES
 
 #: ``for N`` の拒否は値・理由・そのまま取れる次の手を 1 文にする。英語をキーに i18n.json で翻訳する。
 _PROGRAM_STAGE_LIMIT_TEXT = (
     "line %d: `for %d` would expand to %d stages, above Studio's limit of %d. "
     "Studio keeps a visible row and cached result for every expanded stage, so a larger loop can exhaust memory "
     "and stop the window responding. Use a smaller N, split the pipeline, or run a batch/CLI script."
+)
+
+_PROGRAM_PLAIN_STAGE_LIMIT_TEXT = (
+    "line %d: this would make %d stages, above Studio's limit of %d. "
+    "Studio keeps a visible row and cached result for every stage, so a larger pipeline can exhaust memory "
+    "and stop the window responding. Remove stages, split the pipeline, or run a batch/CLI script."
 )
 
 
@@ -3785,6 +3796,16 @@ def _program_stage_limit_message(line, count, expanded, limit=MAX_PROGRAM_STAGES
     拒否した値をそのまま伝えられる。
     """
     return tr(_PROGRAM_STAGE_LIMIT_TEXT) % (int(line), int(count), int(expanded), int(limit))
+
+
+def _program_plain_stage_limit_message(line, expanded, limit=MAX_PROGRAM_STAGES):
+    """素の Program 行が上限を超えるときの、値・理由・次の手つきの日英拒否文。
+
+    Return the localised actionable refusal for an ordinary Program line which
+    would exceed the shared stage cap. Unlike a ``for`` error, there is no repeat
+    count to show; ``expanded`` is the actual running total at the rejected line.
+    """
+    return tr(_PROGRAM_PLAIN_STAGE_LIMIT_TEXT) % (int(line), int(expanded), int(limit))
 
 
 def hdev_last_clamped():
@@ -3854,6 +3875,19 @@ def parse_hdev_program_lines(text, names):
 
     pos = [0]
 
+    def append_stages(out, items, line):
+        """Append stages only while the local parse block stays within the hard cap.
+
+        Every recursive block uses this before extending its list, so plain lines
+        and a selected ``if`` branch cannot bypass the loop-expansion guard.
+        """
+        expanded = len(out) + len(items)
+        if expanded > MAX_PROGRAM_STAGES:
+            errs.append(_program_plain_stage_limit_message(line, expanded))
+            return False
+        out.extend(items)
+        return True
+
     def expect(kw, openln):
         if pos[0] < len(toks) and toks[pos[0]][0] == kw:
             pos[0] += 1
@@ -3884,8 +3918,11 @@ def parse_hdev_program_lines(text, names):
                 expanded = len(out) + len(body) * repeats
                 if expanded > MAX_PROGRAM_STAGES:
                     errs.append(_program_stage_limit_message(n, repeats, expanded))
-                else:
-                    out += body * repeats
+                elif body:
+                    # ``expanded`` was checked before this loop.  Extending one
+                    # bounded body at a time avoids materialising a second list.
+                    for _ in range(repeats):
+                        out.extend(body)
             elif kind == "if":
                 cond = _hdev_eval_cond(line[2:].strip())
                 then_body = parse_block(("else", "endif"))
@@ -3894,7 +3931,7 @@ def parse_hdev_program_lines(text, names):
                     pos[0] += 1
                     else_body = parse_block(("endif",))
                 expect("endif", n)
-                out += then_body if cond else else_body
+                append_stages(out, then_body if cond else else_body, n)
             elif kind == "while":
                 errs.append("line %d: 'while' not supported — use 'for N'" % n)
                 parse_block(("endwhile",)); expect("endwhile", n)
@@ -3914,10 +3951,16 @@ def parse_hdev_program_lines(text, names):
                     if n in byp_lines:
                         st = _normalise_stage(st)
                         st.bypass = True
-                    out.append((st, n))            # (stage, source line)
+                    append_stages(out, [(st, n)], n)  # (stage, source line)
         return out
 
     pairs = parse_block(())
+    # Defensive final gate: each append above is bounded, but keep the parser's
+    # public result fail-closed if a future control-flow form forgets that rule.
+    if len(pairs) > MAX_PROGRAM_STAGES:
+        errs.append(_program_plain_stage_limit_message(
+            pairs[MAX_PROGRAM_STAGES][1], len(pairs)))
+        pairs = pairs[:MAX_PROGRAM_STAGES]
     live = {n for st, n in pairs if not getattr(st, "bypass", False)}   # 実際に走る段の行だけ
     for ln in [ln for ln in _HDEV_CLAMPED if ln not in live]:
         del _HDEV_CLAMPED[ln]
@@ -8739,6 +8782,10 @@ def build_window(model=None):
         if not stopped and done == n:
             state["worker_result"] = model.displayed_result
             show_result()
+            # A Program Apply may contain display-text directives.  They must be
+            # painted after the worker result is rendered; painting them before
+            # the asynchronous render would let show_result clear them again.
+            getattr(win, "_apply_text_directives", lambda _text: None)("\n".join(model.directives))
             refresh_stage_list(select=len(model.stages) - 1 if model.stages else None)
             if snap["token"] != _current_run_token():
                 run_banner.setText(tr("The completed result used settings from before the change"))
@@ -12368,8 +12415,11 @@ def build_window(model=None):
         refresh_stage_list(select=(len(stages) - 1) if stages else None)
         n_err = len(state["errors"])
         apply_dev_directives(text, reclaim_stale=True)   # state/style directives — pre-render; stale program windows reclaimed
-        show_result()
-        apply_text_directives(text)           # dev_disp_text annotations — drawn on top of the render
+        # Program Apply used to call show_result() here, which computed every
+        # uncached stage on the GUI thread.  Reuse the normal frozen-snapshot
+        # worker so even a newly pasted 512-stage program keeps the window alive.
+        # _worker_done renders the result and then reapplies dev_disp_text.
+        start_run_async()
         if len(state["errors"]) > n_err:      # a directive was rejected (bad set_system …)
             code_status.setText("applied %d stage(s)  ·  ✕ %s"
                                 % (len(stages), truncate(state["errors"][-1][1], 100)))

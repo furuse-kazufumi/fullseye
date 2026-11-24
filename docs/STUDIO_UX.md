@@ -26,14 +26,17 @@ built head­lessly in the suite.
 キャッシュが必要なため）、続ける手段（`N` を小さくする、処理列を分ける、batch/CLI に移す）を入れる。
 上限内の処理は既存の段キャッシュで各段を一度ずつ増分計算し、非同期の通常実行では段番号の進捗と
 停止要求を表示する。停止は実行中の op を無理に中断せず、次の段の境界で受けるため、すでに表示している
-結果と処理列を壊さない。
+結果と処理列を壊さない。Program の Apply も同じ凍結スナップショットの worker へ渡すため、新しく貼り付けた
+処理列の初回表示で GUI スレッドが全段を同期計算することはない。Apply に含まれる `dev_disp_text` は worker の
+結果を表示した後に重ねる。
 
-同じ「重い処理を GUI スレッドで同期実行し、進捗・停止が無い」候補は、次の 3 経路である。今回の
+同じ「重い処理を GUI スレッドで同期実行し、進捗・停止が無い」候補は、次の 4 経路である。今回の
 `for N` 修正とは別の設計単位なので、隠して「対応済み」とは書かない。
 
 | 経路 | 場所 | 現在の限界 |
 |---|---|---|
-| Program の Run / Step / Continue | `studio.py` の `run_program` / `step_program` / `continue_program` | 個々の op が重いと UI を待たせる。 |
+| 段の選択・つまみ変更のライブ表示 | `show_result()` → `model.result_upto()` | キャッシュに無い結果を同期計算する。重い処理は Run all または Program Apply で worker に渡す。 |
+| Program の Run / Step / Continue | `studio.py` の `run_program` / `step_program` / `continue_program` | 個々の op が重いと UI を待たせる。重い処理は Run all または Program Apply を使う。 |
 | Holdout validation | `run_holdout` を呼ぶ Run ▸ Holdout | 画像ごとの進捗と停止がない。 |
 | Run a ledger op | `run_ledger_op` を呼ぶ台帳 op ダイアログ | 1 回の op が重いとダイアログを待たせる。 |
 

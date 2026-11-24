@@ -84,6 +84,14 @@
     "de": "Zeile %d: `for %d` würde zu %d Stufen expandieren und damit das Studio-Limit von %d überschreiten. Studio hält für jede expandierte Stufe eine sichtbare Zeile und ein zwischengespeichertes Ergebnis; eine größere Schleife kann daher den Speicher erschöpfen und das Fenster blockieren. Verwenden Sie ein kleineres N, teilen Sie die Pipeline auf oder führen Sie ein Batch-/CLI-Skript aus.",
     "hi": "पंक्ति %d: `for %d` %d चरणों में विस्तृत होगा, जो Studio की सीमा %d से अधिक है। Studio हर विस्तृत चरण के लिए दिखाई देने वाली पंक्ति और कैश परिणाम रखता है, इसलिए बड़ा लूप मेमोरी समाप्त कर सकता है और विंडो को अनुत्तरदायी बना सकता है। छोटा N लें, पाइपलाइन को बाँटें, या बैच/CLI स्क्रिप्ट चलाएँ।"
   },
+  "line %d: this would make %d stages, above Studio's limit of %d. Studio keeps a visible row and cached result for every stage, so a larger pipeline can exhaust memory and stop the window responding. Remove stages, split the pipeline, or run a batch/CLI script.": {
+    "ja": "行 %d: ここまでで %d 段となり、Studio の上限 %d 段を超えます。Studio は各段の表示行とキャッシュ済みの結果を持つため、これより大きい処理列はメモリを使い切り、画面が応答しなくなるおそれがあります。段を減らす、処理列を分けて保存する、またはバッチ/CLI スクリプトで実行してください。",
+    "zh": "第 %d 行：这会形成 %d 个阶段，超过 Studio 的上限 %d。Studio 为每个阶段保留可见行和缓存结果，较大的管线可能耗尽内存并使窗口无响应。请删减阶段、拆分并保存管线，或运行批处理/CLI 脚本。",
+    "tw": "第 %d 行：這會形成 %d 個階段，超過 Studio 的上限 %d。Studio 為每個階段保留可見列和快取結果，較大的管線可能耗盡記憶體並讓視窗無回應。請刪減階段、拆分並儲存管線，或執行批次/CLI 指令碼。",
+    "ko": "%d행: 여기까지 %d단계가 되어 Studio 상한 %d단계를 넘습니다. Studio는 각 단계의 표시 행과 캐시된 결과를 보관하므로 더 큰 파이프라인은 메모리를 소진하고 창의 응답을 멈출 수 있습니다. 단계를 줄이거나 파이프라인을 나누어 저장하거나 배치/CLI 스크립트를 실행하세요.",
+    "de": "Zeile %d: Dadurch entstünden %d Stufen und damit mehr als das Studio-Limit von %d. Studio hält für jede Stufe eine sichtbare Zeile und ein zwischengespeichertes Ergebnis; eine größere Pipeline kann daher den Speicher erschöpfen und das Fenster blockieren. Entfernen Sie Stufen, teilen Sie die Pipeline auf oder führen Sie ein Batch-/CLI-Skript aus.",
+    "hi": "पंक्ति %d: इससे %d चरण बनेंगे, जो Studio की सीमा %d से अधिक हैं। Studio हर चरण के लिए दिखाई देने वाली पंक्ति और कैश परिणाम रखता है, इसलिए बड़ी पाइपलाइन मेमोरी समाप्त कर सकती है और विंडो को अनुत्तरदायी बना सकती है। चरण हटाएँ, पाइपलाइन बाँटें, या बैच/CLI स्क्रिप्ट चलाएँ।"
+  },
   "Common choices": {
     "ja": "定番", "zh": "常用", "tw": "常用", "ko": "기본 선택", "de": "Übliche Wahl", "hi": "आम विकल्प"
   },

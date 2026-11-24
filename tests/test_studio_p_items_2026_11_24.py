@@ -11,13 +11,18 @@ import json
 import os
 import subprocess
 import sys
+import threading
+import time
 from pathlib import Path
 
 import numpy as np
 import pytest
 
+import engine
+import fssystem
 import studio
 import studio_search
+from fullseye.mcp import server as mcp_server
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -106,6 +111,67 @@ def test_program_for_limit_is_localised_in_japanese_with_value_reason_and_next_a
     assert "メモリ" in message and "N を小さく" in message and "CLI" in message
 
 
+def test_loaded_pipeline_limit_refuses_before_stage_normalisation_and_keeps_the_current_pipeline(tmp_path, monkeypatch):
+    """513 段の JSON は Studio/engine とも段リストを組み立てる前に日英で拒否する。
+
+    A 513-stage saved pipeline is rejected before either reader normalises a
+    stage, with the observed count, cap, reason and practical next action.
+    """
+    count = studio.MAX_PROGRAM_STAGES + 1
+    path = tmp_path / "too-many-stages.json"
+    path.write_text(json.dumps({"fullseye_pipeline": 1,
+                                "stages": [["gaussian", 0.5, 0.5]] * count}), encoding="utf-8")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    model = studio.PipelineModel(studio.demo_image(16))
+    model.stages = [["gaussian", 0.2, 0.3]]
+    before = [list(stage) for stage in model.stages]
+
+    def should_not_normalise(_stage):
+        pytest.fail("the oversized file must be rejected before stage normalisation")
+
+    monkeypatch.setattr(studio, "_normalise_stage", should_not_normalise)
+    with pytest.raises(ValueError) as studio_error:
+        model.load_dict(payload, recompute_pins=False)
+    assert [list(stage) for stage in model.stages] == before
+
+    with pytest.raises(ValueError) as engine_error:
+        engine.FullseyeEngine.load(str(path))
+    for message in (str(studio_error.value), str(engine_error.value)):
+        assert str(count) in message and str(studio.MAX_PROGRAM_STAGES) in message
+        assert "memory" in message and "split the pipeline" in message
+        assert "パイプライン" in message and "処理列を分ける" in message
+
+
+def test_program_plain_lines_are_limited_incrementally_with_an_actionable_message():
+    """513 行の素の Program は 513 行目を積む前に止め、英語で直し方を示す。"""
+    count = studio.MAX_PROGRAM_STAGES + 1
+    text = "\n".join(["gaussian (0.5, 0.5)"] * count)
+    stages, errors, lines = studio.parse_hdev_program_lines(text, {"gaussian"})
+    assert len(stages) == len(lines) == studio.MAX_PROGRAM_STAGES
+    assert len(errors) == 1
+    message = errors[0]
+    assert str(count) in message and str(studio.MAX_PROGRAM_STAGES) in message
+    assert "cached result" in message and "Remove stages" in message and "batch/CLI" in message
+
+
+def test_program_nested_loop_checks_the_product_before_unrolling():
+    """入れ子の 257×2 段は、展開配列を作る前に 514 段として拒否する。"""
+    text = "for 2\n  for 257\n    gaussian (0.5, 0.5)\n  endfor\nendfor"
+    stages, errors, lines = studio.parse_hdev_program_lines(text, {"gaussian"})
+    assert stages == [] and lines == [] and len(errors) == 1
+    message = errors[0]
+    assert "514" in message and str(studio.MAX_PROGRAM_STAGES) in message
+    assert "smaller N" in message and "batch/CLI" in message
+
+
+def test_stage_limit_is_one_constant_for_studio_engine_and_mcp_schemas():
+    """Studio/engine/MCP の上限は正本 fssystem の 512 から分岐しない。"""
+    assert fssystem.MAX_PROGRAM_STAGES == studio.MAX_PROGRAM_STAGES == engine.MAX_PROGRAM_STAGES == 512
+    for tool in ("fullseye_validate_pipeline", "fullseye_pipeline"):
+        stages = mcp_server.TOOLS[tool]["inputSchema"]["properties"]["stages"]
+        assert stages["maxItems"] == fssystem.MAX_PROGRAM_STAGES
+
+
 def test_accepted_for_reuses_the_stage_cache_incrementally():
     """上限内の Program は各段を一度だけ計算し、末段の変更後は先行段を使い回す。
 
@@ -152,6 +218,48 @@ def test_program_for_limit_leaves_the_current_pipeline_unchanged_in_the_offscree
         studio._UI_LANG["code"] = previous
         win.close_guard = lambda: True
         win.quiesce()
+        win.close()
+        app.processEvents()
+
+
+def test_program_apply_computes_the_new_pipeline_in_the_existing_worker(tmp_path, monkeypatch):
+    """Program Apply は新しい段を GUI スレッドで同期実行せず、既存 worker に渡す。"""
+    pytest.importorskip("PySide6")
+    monkeypatch.setenv("QT_QPA_PLATFORM", "offscreen")
+    monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / "studio.ini"))
+    from PySide6 import QtWidgets
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    entered, release = threading.Event(), threading.Event()
+    thread_ids = []
+    gui_thread = threading.get_ident()
+
+    def slow(value, _stages, **_kwargs):
+        thread_ids.append(threading.get_ident())
+        entered.set()
+        assert release.wait(5)
+        return value
+
+    monkeypatch.setattr(studio.api, "run_pipeline", slow)
+    try:
+        program = win._program
+        program["edit"].setPlainText("gaussian (0.5, 0.5)")
+        program["apply"]()
+        deadline = time.monotonic() + 5.0
+        while not entered.is_set() and time.monotonic() < deadline:
+            app.processEvents()
+            time.sleep(0.01)
+        assert entered.is_set()
+        assert thread_ids == [thread_ids[0]] and thread_ids[0] != gui_thread
+    finally:
+        release.set()
+        deadline = time.monotonic() + 5.0
+        while win._run_controller.running and time.monotonic() < deadline:
+            app.processEvents()
+            time.sleep(0.01)
+        win.quiesce()
+        win.close_guard = lambda: True
         win.close()
         app.processEvents()
 
