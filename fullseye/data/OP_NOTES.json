@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3843,
- "n_notes": 3849,
+ "n_ops": 3848,
+ "n_notes": 3854,
  "notes": {
   "vol_dilate": [
    {
@@ -19439,6 +19439,56 @@
     "in": "table",
     "out": "any",
     "path": "docs/ops/drive/kendamaworld/string_set.md"
+   }
+  ],
+  "color_rule_mask": [
+   {
+    "op": "color_rule_mask",
+    "dim": "drive",
+    "category": "lane",
+    "in": "rgbimage × table",
+    "out": "table",
+    "path": "docs/ops/drive/lane/color_rule_mask.md"
+   }
+  ],
+  "lane_boundary_fit": [
+   {
+    "op": "lane_boundary_fit",
+    "dim": "drive",
+    "category": "lane",
+    "in": "keypoints",
+    "out": "table",
+    "path": "docs/ops/drive/lane/lane_boundary_fit.md"
+   }
+  ],
+  "lane_center_path": [
+   {
+    "op": "lane_center_path",
+    "dim": "drive",
+    "category": "lane",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/lane/lane_center_path.md"
+   }
+  ],
+  "plane_topview_color": [
+   {
+    "op": "plane_topview_color",
+    "dim": "drive",
+    "category": "lane",
+    "in": "rgbimage × matrix × matrix × signal",
+    "out": "table",
+    "path": "docs/ops/drive/lane/plane_topview_color.md"
+   }
+  ],
+  "stop_line_detect": [
+   {
+    "op": "stop_line_detect",
+    "dim": "drive",
+    "category": "lane",
+    "in": "labels × table",
+    "out": "table",
+    "path": "docs/ops/drive/lane/stop_line_detect.md"
    }
   ],
   "ackermann_steer_angles": [

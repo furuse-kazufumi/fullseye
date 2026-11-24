@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(495 例)
+### 2-D 画像/信号/幾何(496 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -292,6 +292,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる** — 矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region 特徴を採点。面積と矩形度は丸め誤差 0 で一致。コンパクトさが頭打ちしないことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)ことを示す。 `py -3.11 examples/shape_factors_closed_form.py`
 - **点群から足場を選び、歩いた記録を足で検算する —— 歩行と足場の台帳 24 op(walkterrain + locomotion)** — 段・箱・穴のある床の点群を elevation_map で高さ図にし、障害物・段差・通れる所・足場の点数で「足を置ける所」の mask にする(箱の面積は作った値と一致、穴の上には置かない)。footstep_plan が左右交互の着地点を決め、その点を踏む 足の軌跡から gait_step_events が着地点を誤差 0 で取り戻し、foot_slip_metrics は滑り 0・足で測る前進 = 胴の前進。足を置き直さない見せかけは walking_ok = False。2 足支持では com_support_margin が -inf、support_line_margin は 線分までの距離。LIPM の捕捉点 ξ = c + ċ/ω、静的な接触力の LP は左右対称で等分。 `py -3.11 examples/walking_ops_tour.py`
 - **高さ図を深度カメラで直接撮り、知覚の連鎖を合成データで閉じる —— heightmap_depth_camera** — 傾いた面の深度が光線と平面の閉形式に 1e-12、三角形に分けた同じ高さ図を world_camera で撮った深度と 平面で 1e-9・丘で中央値 1e-4 m 以内(当たる画素も同じ)。道 → 深度(雑音つき)→ depth_to_points → elevation_map → 車線の窓で縦断・横勾配が真値に戻る。雑音は σ_z = z²σ_d/(f b) どおり、壁の向こうには 当たらず dem_viewshed と矛盾しない。 `py -3.11 examples/heightmap_depth_camera_tour.py`
+- **RGBから白・黄車線と停止線を読む —— 学習なしの車線知覚5 op** — trans_from_rgbを使う明示的なHSV規則、RGB保持の地面俯瞰、ransac_lineを初期値にした頑健な二次境界、左右または片側からの中央と走行帯、直交幅と縞間隔で横断歩道を棄却する停止線検出を接続する。照明・gamma、曲線の外れ値と遮蔽、点順変更、片側欠測、回転した停止線を、既知の色・係数・距離と比較する。 `py -3.11 examples/lane_ops_tour.py`
 - **横断の決まりを持つ道の面を、セルごとの解析の真値つきで作る —— road_surface_heightmap** — 直線の道は世界の座標の閉形式 z = g·x − c·|y| に 1e-12、半径 35 m のヘアピン(clothoid_points の線形)は 極座標の閉形式に 1e-9 で一致し、内側の車線の勾配 6.3 %・外側 5.8 %(1/(1 − κe))。道路構造令の表の長さで 片勾配へすりつけると右の車線が途中で平らを通る。車線の窓を crop_rectangle2 → surface_form_remove に かけると (勾配, −拝み勾配) が、dem_slope の中央値が atan(√(g² + c²)) が戻る。 `py -3.11 examples/road_surface_tour.py`
 - **小惑星イトカワの実際の形の上で、立つ場所の重さと坂を測る —— 一様密度の多面体の厳密な重力(polygrav 2 op)** — 公開データの形(NASA PDS Small Bodies Node の Gaskell Itokawa Shape Model、Q = 64 の 49,152 面、CC0 1.0、data/itokawa_shape/)で、polyhedron_gravity(Werner & Scheeres 1997 の面と辺の和)を長軸の断面に沿って計算: 自転の遠心力を足した実効重力は 56.8〜82.0 µm/s²、両端で軽い。重心でガウスの法則 ∇·g = −4πGρ が 2e-16。polyhedron_clip_halfspace で x ≥ 150 m を頭として切り、頭 2,850 kg/m³・全体の質量を保つと胴 1,754 kg/m³・重心 +21.5 m(Lowry 2014: 1,750 ± 110・21 ± 12 m)。動く 3-D 版は tools/build_itokawa_anim3d.py。 `py -3.11 examples/itokawa_gravity_tour.py`
 
@@ -847,9 +848,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3849 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 964 · **3d** 378 · **fit** 4 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 44 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 964 · **3d** 378 · **fit** 4 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 749 · **tomography** 44 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(964 ops / 49 categories)
 
@@ -3639,7 +3640,7 @@ _計 3849 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 #### vx / suppress(1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: なし — 非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で**自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には >** の ときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す (他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。 · 例: `gallery_openvx_spec_values`
 
-### drive(744 ops / 55 categories)
+### drive(749 ops / 56 categories)
 
 名前は運転だが、中身は**物理シミュレーションとロボットの PoC の台帳**: 運転(コース・交通・判断・CARLA / CommonRoad)に加え、触覚(tac*)・peg-in-hole(peg*)・研磨(polish)・研削(grind)・切削(cutting)・粉体(granular / scoop)・粉末 X 線回折(pxrd)・球技(ball / puck)などがカテゴリとして同居している。カテゴリ名で引くこと。
 
@@ -4015,6 +4016,13 @@ _計 3849 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `kendama_world` `table → table` GPU: なし — 床 + けん(kp の技の姿勢 R_ken、持つ所 kp["grip"] を ``hand`` に)+ 穴のある玉 + 糸の世界。原点は床、z 上。 玉は皿胴の糸穴からひもの有効長(kp["pendulum_length"])だけ下(真下から ``hang_deg`` だけ ``hang_dir`` 側へ振れた位置 —— 斜め (1, −1) なら方位 0° と 90° の両カメラから横ずれが見える)。``p_ball`` を渡せばそこに置く。 床は 0.25 m の升に割る(1 枚の大きな四角形だとカメラの背後にかかる三角形ごと落ちて床が消える)。 返り値の world["kendama"] = ``{"ken", "ball", "string"}``(objects の索引)+ ``"kp"``。 · 例: `gallery_drive_world_objects`, `poc_kendama`
 - `string_mesh` `入力なし → any` GPU: なし — 2 点(玉の糸穴 p_ball と皿胴の糸穴 p_cup)を結ぶ細い角柱(4 面 + 両端、8 頂点 12 面、外向き)。断面は 2·radius 角。 両点が一致すると ValueError。 · 例: `gallery_drive_world_objects`
 - `string_set` `table → any` GPU: なし — 糸 i の両端を (p_ball, p_cup) に置き直す(頂点だけ書き換える)。糸でない物体は ValueError。 · 例: `gallery_drive_world_objects`
+
+#### drive / lane(5)
+- `color_rule_mask` `rgbimage × table → table` GPU: なし — RGBを明示的なHSV規則で白線・黄線・不明に分け、maskと確信度を返す。 · 例: `lane_ops_tour`
+- `lane_boundary_fit` `keypoints → table` GPU: なし — 俯瞰の(x横,y前方)点から ``x=c0+c1*y+c2*y²`` の車線境界を頑健に当てはめる。 · 例: `lane_ops_tour`
+- `lane_center_path` `table × table → table` GPU: なし — 左右境界から車線中央の経路と走行可能帯を返す。 · 例: `lane_ops_tour`
+- `plane_topview_color` `rgbimage × matrix × matrix × signal → table` GPU: なし — 地面平面をRGBのまま俯瞰へ写し、有効maskと画素↔世界座標を返す。 · 例: `lane_ops_tour`
+- `stop_line_detect` `labels × table → table` GPU: なし — 停止線と日本式横断歩道を別々の型付き出力として検出する。 · 例: `lane_ops_tour`
 
 #### drive / lateral(21)
 - `ackermann_steer_angles` `any → table` GPU: なし — アッカーマンの内外輪の舵角(後車軸の中心の旋回半径 R、ホイールベース L、輪距 t)。 · 例: `poc_driving_lateral`
@@ -5543,7 +5551,7 @@ _計 3849 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### measure1d / scale(3)
 - `mm_per_px_from_reference` `measurement → measurement` GPU: なし — 既知寸法の的(スケールバー・基準穴・ゲージ)から画素ピッチ mm/px を出す(校正)。 · 例: `example_inner_diameter_mm`, `example_scratch_width`
-- `pixel_to_world` `measurement → measurement` GPU: なし — 画素で測った長さ 1 個を実寸 mm にする(``value_px * mm_per_px``)。 · 例: `example_inner_diameter_mm`
+- `pixel_to_world` `measurement → measurement` GPU: なし — 画素で測った長さ 1 個を実寸 mm にする(``value_px * mm_per_px``)。 · 例: `example_inner_diameter_mm`, `lane_ops_tour`
 - `table_px_to_mm` `table → table` GPU: なし — 計測結果の表(``measure_pairs`` / ``apply_metrology_model`` の返り)に mm 列を足す。 · 例: `example_inner_diameter_mm`, `example_scratch_width`
 
 ### roughness(9 ops / 3 categories)
