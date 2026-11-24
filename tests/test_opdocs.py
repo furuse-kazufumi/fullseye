@@ -1339,3 +1339,17 @@ def test_detail_body_translation_is_used_only_while_its_fingerprint_matches(monk
     monkeypatch.setattr(OD, "_REST_I18N", {key: {"fp": "000000000000", "en": "TRANSLATED BODY"}})
     md = OD._op_md(rec, path, by, lang="en")
     assert "TRANSLATED BODY" not in md and head in md and note in md
+
+
+def test_generated_call_signatures_normalise_numpy_scalar_defaults():
+    """NumPy 1/2 の repr 差を、生成する呼び出し例へ漏らさない。"""
+    import numpy as np
+
+    def scalar_defaults(
+            float_value=np.float64(137.50776405003785),
+            int_value=np.int64(7), bool_value=np.bool_(True)):
+        return float_value, int_value, bool_value
+
+    signature = __import__("signature_text").format_signature(scalar_defaults)
+    assert signature == "(float_value=137.50776405003785, int_value=7, bool_value=True)"
+    assert "np." not in signature
