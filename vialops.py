@@ -15,12 +15,15 @@ __all__ = ["vial_spin_stop_sequence", "track_moving_particles"]
 _G = 9.80665
 
 
-def _input_error(name, value, expected, why, fix):
+def _input_error(name, value, expected, why, fix, *, expected_ja=None, why_ja=None, fix_ja=None):
     """Make fail-closed input errors actionable in English and Japanese."""
+    expected_ja = expected if expected_ja is None else expected_ja
+    why_ja = why if why_ja is None else why_ja
+    fix_ja = fix if fix_ja is None else fix_ja
     return ValueError(
         f"{name}={value!r} is invalid; expected {expected}. Why: {why}. "
-        f"How to fix: {fix}. / {name}={value!r} は不正です。期待値: {expected}。"
-        f"理由: {why}。対処: {fix}。"
+        f"How to fix: {fix}. / {name}={value!r} は不正です。期待値: {expected_ja}。"
+        f"理由: {why_ja}。対処: {fix_ja}。"
     )
 
 
@@ -70,22 +73,33 @@ def _draw_ring(image, row, col, radius, amplitude):
 
 
 def _vial_profile(height, width, body_half):
-    """Return the visible half-width of a cylindrical vial at every image row.
+    """Return the visible half-width of an ISO 8362-1 2R-like vial.
 
-    The profile is an intentionally simple drawing model: a narrow neck, sloped
-    shoulders and a rounded heel.  It is separate from the flow model, which is
-    still the documented axisymmetric screening approximation.
+    The outline preserves the public 2R proportions: 16 mm body diameter,
+    13 mm neck/finish diameter, 35 mm overall height, and an 8 mm finish
+    height.  It is scaled to the requested raster, so it is a drawing profile
+    rather than a dimensional metrology model.  The wide finish, short shoulder
+    transition, cylindrical body, and rounded heel deliberately avoid a
+    long-necked bottle silhouette.  The flow remains the documented
+    axisymmetric screening approximation.
+
+    公開された ISO 8362-1 の 2R 比率(胴 16 mm、口部 13 mm、全高 35 mm、
+    口部高 8 mm)を保つ描画用外形である。要求されたラスタに合わせて拡大縮小
+    するため、寸法計測モデルではない。
     """
     y = np.arange(height, dtype=float)
-    neck_half = max(2.0, 0.43 * body_half)
-    neck_top, shoulder_top, shoulder_bottom = 0.055 * height, 0.155 * height, 0.285 * height
-    heel_top, heel_bottom = 0.845 * height, 0.955 * height
+    # 2R: d2 / d1 = 13 / 16.  8 / 35 of the usable height is the finish;
+    # keep it visibly wide instead of using a bottle-like narrow neck.
+    neck_half = max(2.0, (13.0 / 16.0) * body_half)
+    top, neck_bottom = 0.025 * height, 0.255 * height
+    shoulder_bottom = 0.370 * height
+    heel_top, heel_bottom = 0.875 * height, 0.975 * height
     profile = np.full(height, body_half, dtype=float)
-    profile[y < neck_top] = neck_half * 0.92
-    q = (y >= neck_top) & (y < shoulder_top)
+    profile[y < top] = 0.0
+    q = (y >= top) & (y < neck_bottom)
     profile[q] = neck_half
-    q = (y >= shoulder_top) & (y < shoulder_bottom)
-    profile[q] = neck_half + (body_half - neck_half) * (y[q] - shoulder_top) / (shoulder_bottom - shoulder_top)
+    q = (y >= neck_bottom) & (y < shoulder_bottom)
+    profile[q] = neck_half + (body_half - neck_half) * (y[q] - neck_bottom) / (shoulder_bottom - neck_bottom)
     q = (y > heel_top) & (y <= heel_bottom)
     # The circular heel creates the visible curved bottom rather than a box edge.
     t = (y[q] - heel_top) / (heel_bottom - heel_top)
@@ -121,6 +135,17 @@ def vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.0
     ``(frames, truth)``; ``truth`` contains a row table with object type, frame,
     projected positions, physical positions and visibility, plus angular-speed
     truth.  The ledger adapter returns only the ``video`` frames.
+
+    The rendered outline is a display-only 2R-like profile, not a metrology
+    calibration.  Its public dimensional source is ISO 8362-1:2018(E), Table 1
+    (2R: 16 mm body, 13 mm finish, 35 mm overall height, 8 mm finish height),
+    previewed at
+    ``https://cdn.standards.iteh.ai/samples/74398/343407bc7b564f6184bfa0a9decede14/ISO-8362-1-2018.pdf``.
+    An independent public 2R product listing confirms the 16 mm body and 35 mm
+    overall height at
+    ``https://www.westpharma.com/es-es/products/vial-containment-solutions/vials/nuova-ompi-sg-ez-fill-glass-vials-sterile-3-8-10``.
+    描画外形は計測校正ではなく、公開 ISO 8362-1:2018(E) Table 1 の 2R 比率を
+    使う表示モデルである。独立した公開製品寸法も上記 URL で確認する。
 
     Raises ``ValueError`` for nonphysical dimensions, an unknown illumination,
     or a nonintegral object count.
@@ -305,20 +330,28 @@ def vial_spin_stop_sequence(shape=(96, 72), *, n_frames=18, frame_interval_s=0.0
 
 def track_moving_particles(frames, *, threshold=0.045, max_displacement_px=10.0,
                            min_area_px=2, static_threshold=0.055):
-    """画像列から粒子・気泡・静止したガラス傷を分け、軌跡表を返す。
+    """画像列から動く物と静止したガラス傷を分け、軌跡表を返す。
 
     Each frame is compared with the temporal median, so stationary scratches are
     reported from the median image and moving objects from residual components.
     Consecutive moving detections are linked greedily only within
     ``max_displacement_px``; ambiguous or too-large jumps start a new track
-    rather than being silently joined.  A moving track whose fitted row velocity
-    is negative is labelled ``bubble`` (image rows increase downward), otherwise
-    ``particle``.  This is a conservative 2-D projection tracker, not an
-    identity-preserving multi-object tracker through overlap/occlusion.
+    rather than being silently joined.  Every moving track is deliberately
+    labelled ``"moving"``: the frame-only API has neither a calibrated lighting
+    polarity nor enough 3-D trajectory context to identify a particle versus a
+    bubble.  In particular, residual swirl can make a settling particle have a
+    negative image-row velocity.  This is a conservative 2-D projection tracker,
+    not an identity-preserving multi-object tracker through overlap/occlusion.
+
+    動く軌跡は常に保守的に ``"moving"`` とし、速度符号だけで粒子/気泡を
+    推定しない。残留旋回では沈降粒子も画像上向きに見えるためである。
 
     Returns a table with one row per detection: ``frame``, ``track_id``,
     ``object_class``, centroid, area, and row velocity.  Input must be a finite
-    ``(T,H,W)`` sequence with at least three frames.
+    non-constant ``(T,H,W)`` sequence with at least three frames.  A sequence
+    that is constant over both time and space is rejected; call it only for
+    images with a motion or spatial cue, and record ``no detected motion``
+    directly when the intended interpretation is no motion.
     """
     x = np.asarray(frames, dtype=np.float64)
     if x.ndim != 3 or x.shape[0] < 3 or min(x.shape[1:]) < 8:
@@ -329,6 +362,16 @@ def track_moving_particles(frames, *, threshold=0.045, max_displacement_px=10.0,
         raise _input_error("frames", "contains NaN or inf", "finite pixel values",
                            "a non-finite pixel makes a residual threshold meaningless",
                            "replace NaN/inf before calling track_moving_particles")
+    if np.ptp(x) == 0.0:
+        value = "all %d samples equal %g; shape=%s" % (x.size, float(x.flat[0]), tuple(x.shape))
+        raise _input_error("frames", value, "finite frames with a spatial or temporal change",
+                           "a sequence constant over time and space has no motion cue to track",
+                           "pass consecutive camera frames with variation; for an intended still scene, "
+                           "record 'no detected motion' without calling track_moving_particles",
+                           expected_ja="空間または時間で変化する有限のフレーム",
+                           why_ja="時間・空間の両方で一定な列には追跡する動きの手掛かりがないため",
+                           fix_ja="変化を含む連続カメラフレームを渡す。静止場面ならこの op を呼ばず、"
+                                  "'no detected motion' と記録する")
     threshold, max_displacement_px = _positive(threshold, "threshold"), _positive(max_displacement_px, "max_displacement_px")
     if int(min_area_px) != min_area_px or int(min_area_px) < 1:
         raise _input_error("min_area_px", min_area_px, "an integer >= 1",
@@ -387,7 +430,8 @@ def track_moving_particles(frames, *, threshold=0.045, max_displacement_px=10.0,
             new_active[best] = (row, col)
             records.append([frame, best, "moving", row, col, area, np.nan])
         active = new_active
-    # label tracks after fitting their signed vertical velocity
+    # 軌跡の縦速度は出すが、符号から種別を断定しない。
+    # Keep the signed velocity for review, but never infer object kind from it.
     for tid in sorted({int(r[1]) for r in records if r[2] == "moving"}):
         inds = [i for i, r in enumerate(records) if r[1] == tid and r[2] == "moving"]
         if len(inds) >= 2:
@@ -396,8 +440,7 @@ def track_moving_particles(frames, *, threshold=0.045, max_displacement_px=10.0,
             velocity = float(np.polyfit(fr, rr, 1)[0])
         else:
             velocity = 0.0
-        label = "bubble" if velocity < 0.0 else "particle"
         for i in inds:
-            records[i][2], records[i][6] = label, velocity
+            records[i][6] = velocity
     names = ("frame", "track_id", "object_class", "row_px", "col_px", "area_px", "row_velocity_px_frame")
     return {name: np.asarray([r[j] for r in records]) for j, name in enumerate(names)}

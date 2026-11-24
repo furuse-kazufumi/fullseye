@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3852, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3854, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -3446,6 +3446,7 @@
 {"name":"tps_warp","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"trace_rays","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"trace_sensor_rays","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"track_moving_particles","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"track_sight_distance","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"track_triangulate","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"train_class_gmm","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -3514,6 +3515,7 @@
 {"name":"velocity_deficit_map","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"vertex_curvature","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"vertex_normals","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"vial_spin_stop_sequence","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"video360_tile_coverage","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"video360_viewport_track","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"video_cube_cut","status":"not_in_registry","reason":"not executable by fullseye.apply"},

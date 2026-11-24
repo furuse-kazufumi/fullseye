@@ -9,7 +9,7 @@ MCP の検索(`fullseye_find_ops`)は runner = mcp(MCP の pipeline でそのま
 | 項目 | 値 |
 |---|---|
 | レシピ | 275(2 段以上 224) |
-| 族(docs/ops)の網羅 | 60 / 60 |
+| 族(docs/ops)の網羅 | 60 / 61 |
 | 2-D の category の網羅 | 25 / 49 |
 | 使った op(重複なし) | 420 |
 | 真値の門つき | 251 |
@@ -20,6 +20,8 @@ MCP の検索(`fullseye_find_ops`)は runner = mcp(MCP の pipeline でそのま
 課題の分類: 3d 38, analysis 24, inspection 60, measurement 74, optics 8, preprocess 38, sensing 17, simulation 11, visualization 5
 
 HALCON の章: 1D Measuring 7, 2D Metrology 6, 3D Matching 8, 3D Object Model 18, 3D Reconstruction 15, Bar Code 1, Calibration 4, Color 8, Features 2, Filters 10, Frequency 1, Identification 1, Inspection 4, Matching 6, Morphology 3, OCR 4, Regions 19, Restoration 2, Segmentation 10, Texture 3, Transformations 7, XLD 10
+
+**レシピの無い族**: pharma
 
 2-D でレシピの無い category: arithmetic, artificial_life, artistic, augmentation, classification, decomposition, deformation, domain, extra, filtering, intensity_transform, macro, misc, morphology_markers, noise, physics, region_morphology, region_transform, self_similarity, tactile, texture_feature, texture_shape_feature, tomography, transform
 
@@ -67,6 +69,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | mv | 47 | 1 | 1 |
 | oned | 49 | 3 | 8 |
 | optics | 506 | 14 | 37 |
+| pharma | 2 | 0 | 0 |
 | photon | 17 | 3 | 7 |
 | piv | 29 | 4 | 8 |
 | printpath | 23 | 1 | 3 |

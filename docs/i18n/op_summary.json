@@ -9,6 +9,24 @@
   "hi"
  ],
  "summaries": {
+  "pharma/vial_spin_stop_sequence": {
+   "fp": "9421aa7cedc2",
+   "en": "Generate a post-spin-stop vial image sequence and per-object ground-truth trajectories.",
+   "zh": "生成旋停后的西林瓶图像序列及逐物体真值轨迹。",
+   "tw": "產生旋停後的西林瓶影像序列及逐物體真值軌跡。",
+   "ko": "회전 정지 후 바이알 영상 시퀀스와 물체별 정답 궤적을 생성합니다.",
+   "de": "Erzeugt eine Bildsequenz eines Vials nach dem Rotationsstopp und Grundwahrheits-Trajektorien je Objekt.",
+   "hi": "Spin रुकने के बाद vial image sequence और हर object की ground-truth trajectory बनाता है।"
+  },
+  "pharma/track_moving_particles": {
+   "fp": "42cd6ffe11d4",
+   "en": "Separate moving objects and stationary glass scratches in an image sequence and return a trajectory table.",
+   "zh": "在图像序列中分离运动物体与静止玻璃划痕，并返回轨迹表。",
+   "tw": "在影像序列中分離運動物體與靜止玻璃刮痕，並回傳軌跡表。",
+   "ko": "영상 시퀀스에서 움직이는 물체와 정지한 유리 흠집을 분리하고 궤적 표를 반환합니다.",
+   "de": "Trennt bewegte Objekte und stationäre Kratzer im Glas in einer Bildfolge und gibt eine Trajektorientabelle zurück.",
+   "hi": "Image sequence में चलती वस्तुओं और स्थिर कांच खरोंचों को अलग करके trajectory table लौटाता है।"
+  },
   "drive/color_rule_mask": {"fp":"eaa329d00a46","en":"Classify RGB as white line, yellow line, or unknown with explicit HSV rules, returning masks and confidence.","zh":"用明确的 HSV 规则将 RGB 分为白线、黄线或未知,并返回掩码与置信度。","tw":"以明確的 HSV 規則將 RGB 分為白線、黃線或未知,並回傳遮罩與信心度。","ko":"명시적인 HSV 규칙으로 RGB를 흰색 선, 노란색 선 또는 미상으로 분류하고 마스크와 신뢰도를 반환한다.","de":"Klassifiziert RGB mit expliziten HSV-Regeln als weiße Linie, gelbe Linie oder unbekannt und gibt Masken und Konfidenz zurück.","hi":"स्पष्ट HSV नियमों से RGB को सफेद रेखा, पीली रेखा या अज्ञात में वर्गीकृत कर masks और confidence लौटाता है।"},
   "drive/plane_topview_color": {"fp":"6906aaedaf79","en":"Project a ground plane into a colour-preserving top view and return a validity mask plus pixel-to-world coordinates.","zh":"将地面平面投影为保留 RGB 的俯视图,并返回有效掩码及像素与世界坐标的对应关系。","tw":"將地面平面投影為保留 RGB 的俯視圖,並回傳有效遮罩及像素與世界座標的對應關係。","ko":"지면 평면을 RGB를 보존한 하향식 영상으로 투영하고 유효 마스크와 픽셀↔세계 좌표 대응을 반환한다.","de":"Projiziert eine Bodenebene in eine farberhaltende Draufsicht und gibt Gültigkeitsmaske sowie Pixel-Welt-Zuordnung zurück.","hi":"Ground plane को रंग बनाए रखते हुए top view में project करता है और validity mask तथा pixel↔world coordinates लौटाता है।"},
   "drive/lane_boundary_fit": {"fp":"773541e09148","en":"Robustly fit the lane boundary ``x=c0+c1*y+c2*y²`` to top-view points (lateral x, forward y).","zh":"对俯视点(横向 x、前向 y)稳健拟合车道边界 ``x=c0+c1*y+c2*y²``。","tw":"對俯視點(橫向 x、前向 y)穩健擬合車道邊界 ``x=c0+c1*y+c2*y²``。","ko":"하향식 점(가로 x, 전방 y)에 차선 경계 ``x=c0+c1*y+c2*y²`` 를 강건하게 맞춘다.","de":"Passt die Fahrspurgrenze ``x=c0+c1*y+c2*y²`` robust an Draufsichtspunkte (quer x, vorwärts y) an.","hi":"Top-view points (पार्श्व x, आगे y) पर lane boundary ``x=c0+c1*y+c2*y²`` को robust ढंग से fit करता है।"},

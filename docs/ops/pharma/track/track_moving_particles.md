@@ -19,24 +19,28 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-画像列から粒子・気泡・静止したガラス傷を分け、軌跡表を返す。
+画像列から動く物と静止したガラス傷を分け、軌跡表を返す。
 
 Each frame is compared with the temporal median, so stationary scratches are
 reported from the median image and moving objects from residual components.
 Consecutive moving detections are linked greedily only within
 ``max_displacement_px``; ambiguous or too-large jumps start a new track
-rather than being silently joined.  A moving track whose fitted row velocity
-is negative is labelled ``bubble`` (image rows increase downward), otherwise
-``particle``.  This is a conservative 2-D projection tracker, not an
-identity-preserving multi-object tracker through overlap/occlusion.
+rather than being silently joined.  Every moving track is deliberately
+labelled ``"moving"``: the frame-only API has neither a calibrated lighting
+polarity nor enough 3-D trajectory context to identify a particle versus a
+bubble.  In particular, residual swirl can make a settling particle have a
+negative image-row velocity.  This is a conservative 2-D projection tracker,
+not an identity-preserving multi-object tracker through overlap/occlusion.
+
+動く軌跡は常に保守的に ``"moving"`` とし、速度符号だけで粒子/気泡を
+推定しない。残留旋回では沈降粒子も画像上向きに見えるためである。
 
 Returns a table with one row per detection: ``frame``, ``track_id``,
 ``object_class``, centroid, area, and row velocity.  Input must be a finite
-``(T,H,W)`` sequence with at least three frames.
-
-## 詳しい使い方ガイド
-
-- [pharmaceutical_vial_inspection ファミリ ガイド](../guides/pharmaceutical_vial_inspection.md)
+non-constant ``(T,H,W)`` sequence with at least three frames.  A sequence
+that is constant over both time and space is rejected; call it only for
+images with a motion or spatial cue, and record ``no detected motion``
+directly when the intended interpretation is no motion.
 
 ## 参考(サンプルデータ・文献)
 

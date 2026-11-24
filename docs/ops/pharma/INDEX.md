@@ -2,10 +2,6 @@
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/pharma/<category>/<op>.md` を走査。
 
-## ファミリ使い方ガイド(用途→op の教材)
-
-- [pharmaceutical_vial_inspection](guides/pharmaceutical_vial_inspection.md) — バイアル回転停止後の異物検査
-
 ## カテゴリ
 
 ### synth (1)

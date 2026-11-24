@@ -4,9 +4,11 @@
   "recipes_py": 25,
   "recipebook": 250,
   "multi_stage": 224,
-  "families_total": 60,
+  "families_total": 61,
   "families_covered": 60,
-  "families_uncovered": [],
+  "families_uncovered": [
+   "pharma"
+  ],
   "task_class": {
    "3d": 38,
    "analysis": 24,
@@ -320,6 +322,12 @@
    "ops": 506,
    "recipes": 14,
    "ops_used": 37
+  },
+  {
+   "family": "pharma",
+   "ops": 2,
+   "recipes": 0,
+   "ops_used": 0
   },
   {
    "family": "photon",

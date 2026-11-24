@@ -76,24 +76,49 @@ def _truth_rows(truth, object_id):
 
 
 def correspondence(truth, tracks, kinds=("particle", "bubble", "scratch"), max_distance_px=3.5):
-    """Associate every true object with one tracker ID using common-frame distance.
+    """Globally associate true objects and tracker IDs by common-frame distance.
 
     A nearest detection in a single frame is insufficient: an unrelated bubble
-    might happen to be nearby.  This association scores a *whole trajectory*,
-    and then returns the frame-level pairs used both for POD scoring and for the
-    same-colour truth/detection overlays.
+    might happen to be nearby.  This association scores whole trajectories and
+    uses one bipartite assignment, so one tracker ID cannot be credited to two
+    true particle/bubble/scratch IDs.  It returns the frame-level pairs used
+    both for POD scoring and for the same-colour truth/detection overlays.
+
+    全真値物体と軌跡 ID を一度に二部マッチングし、1 本の軌跡を複数物体の
+    検出として数えない。返り値は POD と同色の真値/検出重ね描きに共用する。
     """
+    from scipy.optimize import linear_sum_assignment
+
     result = {}
-    object_ids = np.unique(truth["object_id"].astype(int))
-    track_ids = np.unique(tracks["track_id"].astype(int))
-    for oid in object_ids:
+    objects = []
+    for oid in np.unique(truth["object_id"].astype(int)):
         own = _truth_rows(truth, oid)
         kind = str(own["object_type"][0])
-        if kind not in kinds:
-            continue
-        best = None
-        for tid in track_ids:
+        if kind in kinds:
+            objects.append((int(oid), kind, own))
+    track_ids = np.unique(tracks["track_id"].astype(int))
+    if not objects or not track_ids.size:
+        return result
+
+    # One dummy column per truth object allows an unmatched trajectory without
+    # making an invalid distant track look like a correspondence.  Valid edges
+    # rank common-frame coverage first, then median distance.
+    # 真値物体ごとのダミー列で未対応を許し、遠い軌跡を対応と取り違えない。
+    invalid = 1.0e9
+    cost = np.zeros((len(objects), len(track_ids) + len(objects)), dtype=float)
+    cost[:, :len(track_ids)] = invalid
+    candidates = {}
+    track_class = tracks["object_class"].astype(str)
+    for row_index, (oid, kind, own) in enumerate(objects):
+        for track_index, tid in enumerate(track_ids):
             tq = tracks["track_id"].astype(int) == tid
+            # The tracker can prove a stationary scratch; all other moving
+            # truth objects share the intentionally conservative "moving" class.
+            # 静止傷だけは区別し、動く真値物体は保守的な "moving" を共用する。
+            if kind == "scratch" and not np.all(track_class[tq] == "scratch"):
+                continue
+            if kind != "scratch" and np.any(track_class[tq] == "scratch"):
+                continue
             if not np.any(tq):
                 continue
             tframe = tracks["frame"][tq].astype(int)
@@ -110,11 +135,19 @@ def correspondence(truth, tracks, kinds=("particle", "bubble", "scratch"), max_d
             if not pairs:
                 continue
             distances = np.asarray([row[5] for row in pairs])
-            candidate = (int(np.sum(distances <= max_distance_px)), float(np.median(distances)), pairs)
-            if best is None or candidate[:2] > (best[0], -best[1]):
-                best = (candidate[0], candidate[1], candidate[2])
-        if best is not None:
-            result[oid] = best[2]
+            matched = int(np.sum(distances <= max_distance_px))
+            if not matched:
+                continue
+            median = float(np.median(distances))
+            # 1,000 dominates every possible sub-pixel median-distance change.
+            # 1,000 はサブ画素の中央値差より十分大きく、対応フレーム数を優先する。
+            cost[row_index, track_index] = -1000.0 * matched + median
+            candidates[(row_index, track_index)] = pairs
+    assigned_rows, assigned_cols = linear_sum_assignment(cost)
+    for row_index, track_index in zip(assigned_rows, assigned_cols):
+        pairs = candidates.get((int(row_index), int(track_index)))
+        if pairs is not None:
+            result[objects[int(row_index)][0]] = pairs
     return result
 
 
@@ -298,6 +331,78 @@ def fit_monotone_pod(rows):
     return {"beta": solved.x, "predict": predict, "neg_loglik": float(solved.fun), "n": int(hit.size)}
 
 
+def fit_condition_a90(rows):
+    """Fit independent GLM a90 values for every illumination × contrast cell.
+
+    A condition with all hits, all misses, or complete separation is intentionally
+    reported as unestimable: with the available per-diameter replication it has
+    too little mixed evidence for a finite a90/a90/95, so no substitute number is
+    invented.
+
+    全 hit/全 miss/完全分離の条件は、径ごとの反復数では有限の a90/a90/95 を
+    支える混合した証拠が不足する。代わりの数値は作らず、推定不能として返す。
+    """
+    results = {}
+    for illumination in ILLUMINATIONS:
+        for contrast in CONTRASTS:
+            subset = [row for row in rows if row["illumination"] == illumination and
+                      row["contrast"] == float(contrast)]
+            per_diameter = [sum(row["diameter_um"] == float(diameter) for row in subset)
+                            for diameter in DIAMETERS]
+            entry = {"n": len(subset), "n_per_diameter": tuple(per_diameter), "fit": None,
+                     "reason": None}
+            try:
+                entry["fit"] = pod_hitmiss_fit(
+                    {"a": np.asarray([row["diameter_um"] for row in subset]),
+                     "hit": np.asarray([row["hit"] for row in subset])},
+                    log_size=True, link="logit")
+            except ValueError as exc:
+                entry["reason"] = str(exc)
+            results[(illumination, float(contrast))] = entry
+    return results
+
+
+def _condition_a90_text(entry):
+    """Return a caption without an invented estimate. / GLM が拒否した値は作らない。"""
+    if entry["fit"] is None:
+        return "a90: 求まらない（点が足りない）"
+    fitted = entry["fit"]
+    return "a90=%.1f, a90/95=%.1f µm" % (fitted["a90"], fitted["a90_95"])
+
+
+def _pod_legend(image, scale):
+    """Draw exact legend primitives. / POD パネルと同じ線・点で凡例を描く。"""
+    import fullseye as fs
+
+    strip_h = 84 * scale
+    strip = np.ones((strip_h, image.shape[1], 3), dtype=float)
+    rows = (17 * scale, 42 * scale, 67 * scale)
+    x0, x1, xc = 24 * scale, 60 * scale, 42 * scale
+    strip = np.asarray(fs.draw_line(strip, (x0, rows[0]), (x1, rows[0]),
+                                    color="emphasis", width=2 * scale))
+    strip = np.asarray(fs.text_box(strip, "単調制約付き binomial trend", (72 * scale, rows[0]),
+                                   anchor="lm", pad=0, box_alpha=0.0, font_size=10 * scale))
+    strip = np.asarray(fs.draw_line(strip, (xc, rows[1] - 9 * scale), (xc, rows[1] + 9 * scale),
+                                    color="reference", width=2 * scale))
+    for y in (rows[1] - 9 * scale, rows[1] + 9 * scale):
+        strip = np.asarray(fs.draw_line(strip, (x0 + 10 * scale, y), (x1 - 10 * scale, y),
+                                        color="reference", width=2 * scale))
+    strip = np.asarray(fs.draw_circle(strip, (xc, rows[1]), 3 * scale,
+                                      color="reference", fill="reference", width=1))
+    strip = np.asarray(fs.text_box(strip, "holdout k/n と Clopper–Pearson 95% CI", (72 * scale, rows[1]),
+                                   anchor="lm", pad=0, box_alpha=0.0, font_size=10 * scale))
+    # Match the plotted reference's dashed neutral line rather than showing a
+    # coloured square unrelated to the data mark.
+    # データ印と無関係な色見本にせず、実際の灰色破線と同じ印を描く。
+    for start in range(x0, x1, 10 * scale):
+        strip = np.asarray(fs.draw_line(strip, (start, rows[2]),
+                                        (min(start + 5 * scale, x1), rows[2]),
+                                        color="neutral", width=2 * scale))
+    strip = np.asarray(fs.text_box(strip, "USP<1790> 文脈の参考・手作業", (72 * scale, rows[2]),
+                                   anchor="lm", pad=0, box_alpha=0.0, font_size=10 * scale))
+    return np.concatenate((image, strip), axis=0)
+
+
 def _pod_panel(rows, trend, illumination, contrast):
     """Render one readable POD condition: trend, holdout dots, and CP-95 % whiskers."""
     import fullseye as fs
@@ -307,13 +412,13 @@ def _pod_panel(rows, trend, illumination, contrast):
     title = "%s照明 / C=%.3f" % ("背面（暗粒子）" if illumination == "back" else "側面（明粒子）", contrast)
     grid = np.linspace(35.0, 275.0, 160)
     image = figs.render_plot(
-        [("単調制約付き binomial trend", grid, trend["predict"](grid, contrast, illumination)),
-         ("holdout k/n", DIAMETERS, rates),
-         ("USP<1790>参考・手作業", np.array([100.0, 150.0, 200.0]), np.array([0.40, 0.70, 0.95]))],
+        [("", grid, trend["predict"](grid, contrast, illumination)),
+         ("", DIAMETERS, rates),
+         ("", np.array([100.0, 150.0, 200.0]), np.array([0.40, 0.70, 0.95]))],
         xlabel="particle diameter [µm]", ylabel="POD", title=title, size=(620, 390),
         xlim=(35.0, 275.0), ylim=(0.0, 1.0),
         kinds=("line", "scatter", "line"), styles=(None, None, "dashed"),
-        colors=("emphasis", "emphasis", "neutral"), scale=2)
+        colors=("emphasis", "reference", "neutral"), scale=2)
     scale, logical_w, logical_h = 2, 620, 390
     axes = fs.axes_transform((72 * scale, 44 * scale, (logical_w - 96) * scale,
                               (logical_h - 108) * scale), (35.0, 275.0), (-0.06, 1.06))
@@ -324,10 +429,10 @@ def _pod_panel(rows, trend, illumination, contrast):
         cap1 = fs.data_to_pixel(axes, float(diameter) + 2.8, float(interval["lower"]))
         cap2 = fs.data_to_pixel(axes, float(diameter) - 2.8, float(interval["upper"]))
         cap3 = fs.data_to_pixel(axes, float(diameter) + 2.8, float(interval["upper"]))
-        image = np.asarray(fs.draw_line(image, p0, p1, color=(0.02, 0.34, 0.60), width=3))
-        image = np.asarray(fs.draw_line(image, cap0, cap1, color=(0.02, 0.34, 0.60), width=3))
-        image = np.asarray(fs.draw_line(image, cap2, cap3, color=(0.02, 0.34, 0.60), width=3))
-    return image, counts, intervals
+        image = np.asarray(fs.draw_line(image, p0, p1, color="reference", width=3))
+        image = np.asarray(fs.draw_line(image, cap0, cap1, color="reference", width=3))
+        image = np.asarray(fs.draw_line(image, cap2, cap3, color="reference", width=3))
+    return _pod_legend(image, scale), counts, intervals
 
 
 def prepare_visual(threshold):
@@ -343,12 +448,43 @@ def prepare_visual(threshold):
     return result
 
 
+def _particle_zoom(item, frame, *, magnification=4, half_width=22):
+    """Append an explicitly labelled integer-nearest particle inset below one image.
+
+    The full image stays at its source resolution.  Only this labelled diagnostic
+    crop uses nearest-neighbour replication, which lets a reviewer inspect the
+    few-pixel particle without mistaking an enlarged display for new data.
+
+    全体像は元解像度のままにし、この明記した小窓だけを整数倍・最近傍で複製する。
+    画素数の少ない粒子を検分でき、拡大表示を新しいデータと誤読させない。
+    """
+    import fullseye as fs
+
+    base = overlay(item["frames"], item["truth"], item["tracks"], item["links"], frame)
+    particle = item["truth"]["object_type"] == "particle"
+    at = particle & (item["truth"]["frame"].astype(int) == int(frame))
+    row = int(round(float(item["truth"]["row_px"][at][0])))
+    col = int(round(float(item["truth"]["col_px"][at][0])))
+    padded = np.pad(base, ((half_width, half_width), (half_width, half_width), (0, 0)),
+                    mode="edge")
+    crop = padded[row:row + 2 * half_width, col:col + 2 * half_width]
+    enlarged = np.repeat(np.repeat(crop, magnification, axis=0), magnification, axis=1)
+    strip_h = enlarged.shape[0] + 48
+    strip = np.full((strip_h, base.shape[1], 3), 0.985, dtype=float)
+    x0 = (strip.shape[1] - enlarged.shape[1]) // 2
+    strip[40:40 + enlarged.shape[0], x0:x0 + enlarged.shape[1]] = enlarged
+    strip = np.asarray(fs.text_box(
+        strip, "粒子の原寸 crop を %d×（最近傍はこの小窓のみ）" % magnification,
+        (12, 10), anchor="lt", pad=0, box_alpha=0.0, font_size=18))
+    return np.concatenate((base, strip), axis=0)
+
+
 def _lighting_panel(visual, frame):
-    """Put the same physical scene under back and side illumination in one panel."""
+    """Put both lighting modes and insets in one panel. / 両照明と粒子小窓を並べる。"""
     panels = []
     for illumination in ILLUMINATIONS:
         item = visual[illumination]
-        panels.append(overlay(item["frames"], item["truth"], item["tracks"], item["links"], frame))
+        panels.append(_particle_zoom(item, frame))
     divider = np.full((panels[0].shape[0], 8, 3), 0.16, dtype=float)
     return np.concatenate((panels[0], divider, panels[1]), axis=1)
 
@@ -370,7 +506,7 @@ def save_inspection_frames(visual):
     imwrite(out / "contact_sheet.png", np.round(np.concatenate(panels, axis=1) * 255).astype(np.uint8))
 
 
-def make_figures(visual, holdout_rows, fit, trend, exemplar):
+def make_figures(visual, holdout_rows, fit, condition_fits, trend, exemplar):
     """Make all figures only from pre-holdout visuals or the completed holdout result."""
     if not figs.enabled():
         return
@@ -384,20 +520,46 @@ def make_figures(visual, holdout_rows, fit, trend, exemplar):
                "同色で粒子=水色、気泡=橙、傷=紫。seed=4242, median Δ=%.2f/%.2f px" %
                (visual["back"]["median_error_px"], visual["side"]["median_error_px"])),
         caption="公開 AVI 資料の照明・容器形状の特徴を合成した入力→真値→追跡。第三者画像は不使用。"
-                "明るい背景では粒子を暗く、側面/Tyndall では明るく描く。")
+                "明るい背景では粒子を暗く、側面/Tyndall では明るく描く。各時点の下段は粒子の原寸 crop を 4×にした小窓で、"
+                "最近傍拡大はこの明記済み表示だけに使う。")
     pod_panels, table_rows = [], []
     for illumination in ILLUMINATIONS:
         for contrast in CONTRASTS:
             panel, counts, intervals = _pod_panel(holdout_rows, trend, illumination, contrast)
             pod_panels.append(panel)
-            table_rows.append("%s C=%.3f: %s" % ("背面" if illumination == "back" else "側面", contrast,
-                                                 ", ".join("%d/%d" % pair for pair in counts)))
+            entry = condition_fits[(illumination, float(contrast))]
+            table_rows.append("%s C=%.3f: %s; %s" % (
+                "背面" if illumination == "back" else "側面", contrast,
+                ", ".join("%d/%d" % pair for pair in counts), _condition_a90_text(entry)))
     figs.save_grid(
         "pod_by_diameter_contrast", pod_panels, table_rows, ncols=3,
         title=("独立 holdout の POD (点=k/n、縦線=Clopper–Pearson 95%% CI、実線=単調制約付き fit); "
-               "全条件 GLM a90=%.1f µm, a90/95=%.1f µm" % (fit["a90"], fit["a90_95"])),
+               "全条件をまとめた GLM a90=%.1f µm, a90/95=%.1f µm" % (fit["a90"], fit["a90_95"])),
         caption="灰色破線は USP<1790> 文脈の手作業検査の参考観測値(100/150/200 µm = 40/70/95%%)であり、"
-                "規格の基準でも本 AVI の合否基準でもない。各パネルは別の照明・コントラストで、凡例の点を実際に描く。")
+                "規格の基準でも本 AVI の合否基準でもない。各パネルの下に同じ条件の GLM a90/a90/95 を記し、"
+                "見出しの値だけが全条件をまとめた値である。凡例は実線、青い点+区間、灰色破線を実際と同じ色・形で描く。")
+    a90_rows = []
+    for illumination in ILLUMINATIONS:
+        for contrast in CONTRASTS:
+            entry = condition_fits[(illumination, float(contrast))]
+            fitted = entry["fit"]
+            if fitted is None:
+                a90, a9095, status = "—", "—", "求まらない（点が足りない）"
+            else:
+                a90, a9095, status = "%.1f" % fitted["a90"], "%.1f" % fitted["a90_95"], "GLM"
+            a90_rows.append([
+                "背面" if illumination == "back" else "側面", "%.3f" % contrast,
+                "/".join(map(str, entry["n_per_diameter"])), a90, a9095, status,
+            ])
+    figs.save_table(
+        "pod_condition_a90",
+        ["照明", "コントラスト", "n/径 (45…260 µm)", "a90 [µm]",
+         "a90/95 [µm]", "状態"],
+        a90_rows,
+        title="照明 2 × 濃淡 3 の条件別 GLM: a90 と片側 95% 上限 a90/95",
+        caption="各行は独立 holdout のその条件だけで fit した GLM。a90/95 は a90 の片側 95% 上限。"
+                "完全分離など n=10/径では推定できない行は、数値を補わず「求まらない（点が足りない）」と記す。"
+                "全条件をまとめた値は POD 図の見出しだけに別記する。")
     if exemplar is None:
         raise AssertionError("the holdout must include a visible miss-side exemplar")
     row, got = exemplar
@@ -452,20 +614,22 @@ def main():
     tab = {"a": np.array([row["diameter_um"] for row in holdout]),
            "hit": np.array([row["hit"] for row in holdout])}
     fit = pod_hitmiss_fit(tab, log_size=True, link="logit")
+    condition_fits = fit_condition_a90(holdout)
     trend = fit_monotone_pod(holdout)
     fpr = proportion_interval(int(clean.sum()), int(clean.size), confidence=0.95, sides="upper")
     raw_condition, raw_contrast, condition_mono, contrast_mono = _monotonic_rows(holdout, trend)
     high_condition = [entry for entry in condition_mono if entry[1] == float(CONTRASTS[-1]) and entry[2][-1] >= 0.90]
-    print("holdout %d trial: hit %d, miss %d; a90=%.2f µm, a90/95=%.2f µm" %
+    print("holdout %d trial: hit %d, miss %d; 全条件をまとめた a90=%.2f µm, a90/95=%.2f µm" %
           (len(holdout), sum(row["hit"] for row in holdout), len(holdout) - sum(row["hit"] for row in holdout),
            fit["a90"], fit["a90_95"]))
     print("clean holdout false particle %d/%d: FPR=%.4f, 95%% upper=%.4f" %
           (int(clean.sum()), int(clean.size), fpr["estimate"], fpr["upper"]))
     for illumination, contrast, rates, _ok in condition_mono:
         raw = next(item[2] for item in raw_condition if item[:2] == (illumination, contrast))
-        print("  %s C=%.3f: holdout %s; monotone fit %s" %
+        print("  %s C=%.3f: holdout %s; monotone fit %s; %s" %
               (illumination, contrast, ", ".join("%.2f" % item for item in raw),
-               ", ".join("%.2f" % item for item in rates)))
+               ", ".join("%.2f" % item for item in rates),
+               _condition_a90_text(condition_fits[(illumination, float(contrast))])))
     check(all(row[3] for row in condition_mono), "diameter-monotone POD",
           "constrained trend: %d/%d illumination×contrast curves are non-decreasing; beta_size=%.3f" %
           (sum(row[3] for row in condition_mono), len(condition_mono), trend["beta"][1]))
@@ -487,7 +651,7 @@ def main():
     digest_a = hashlib.sha256(np.concatenate(panels, axis=1).tobytes()).hexdigest()
     digest_b = hashlib.sha256(np.concatenate(panels, axis=1).tobytes()).hexdigest()
     check(digest_a == digest_b, "inspection render determinism", "SHA-256 %s" % digest_a)
-    make_figures(visual, holdout, fit, trend, exemplar)
+    make_figures(visual, holdout, fit, condition_fits, trend, exemplar)
     save_inspection_frames(visual)
     check(time.process_time() - cpu0 < (90 if REDUCED else 240), "runtime budget",
           "CPU %.1f s" % (time.process_time() - cpu0))

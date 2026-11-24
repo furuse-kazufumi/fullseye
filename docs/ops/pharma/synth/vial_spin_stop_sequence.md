@@ -40,12 +40,19 @@ object positions, sensor noise, and scratches.  The direct return is
 projected positions, physical positions and visibility, plus angular-speed
 truth.  The ledger adapter returns only the ``video`` frames.
 
+The rendered outline is a display-only 2R-like profile, not a metrology
+calibration.  Its public dimensional source is ISO 8362-1:2018(E), Table 1
+(2R: 16 mm body, 13 mm finish, 35 mm overall height, 8 mm finish height),
+previewed at
+``https://cdn.standards.iteh.ai/samples/74398/343407bc7b564f6184bfa0a9decede14/ISO-8362-1-2018.pdf``.
+An independent public 2R product listing confirms the 16 mm body and 35 mm
+overall height at
+``https://www.westpharma.com/es-es/products/vial-containment-solutions/vials/nuova-ompi-sg-ez-fill-glass-vials-sterile-3-8-10``.
+描画外形は計測校正ではなく、公開 ISO 8362-1:2018(E) Table 1 の 2R 比率を
+使う表示モデルである。独立した公開製品寸法も上記 URL で確認する。
+
 Raises ``ValueError`` for nonphysical dimensions, an unknown illumination,
 or a nonintegral object count.
-
-## 詳しい使い方ガイド
-
-- [pharmaceutical_vial_inspection ファミリ ガイド](../guides/pharmaceutical_vial_inspection.md)
 
 ## 参考(サンプルデータ・文献)
 
