@@ -573,7 +573,10 @@ def _validate(schema: dict, args: Any) -> dict:
             if len(value) < spec.get("minItems", 0):
                 raise ArgError("%s は%d 段以上" % (path,spec["minItems"]))
             if len(value) > spec.get("maxItems", 10**9):
-                raise ArgError("%s は%d以下" % (path,spec["maxItems"]))
+                if path.split(".")[-1] == "stages" and spec["maxItems"] == MAX_PROGRAM_STAGES:
+                    raise ArgError(pipeline_stage_limit_message(len(value)))
+                raise ArgError("%s は %d 個ですが、上限は %d 個です / %s has %d items; the maximum is %d"
+                               % (path, len(value), spec["maxItems"], path, len(value), spec["maxItems"]))
             for i, item in enumerate(value):
                 check(spec.get("items", {}), item, "%s[%d]" % (path, i), depth + 1)
         elif not kind:

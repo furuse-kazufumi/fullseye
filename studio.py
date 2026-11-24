@@ -880,7 +880,14 @@ class PipelineModel:
         # The ONE normalisation point: whatever a loader hands over (parser tuples,
         # JSON lists, undo snapshots, recipes) becomes mutable [name, a, b] lists, so
         # set_knobs / knob drags can never hit "'tuple' does not support item assignment".
-        self._stages = [_normalise_stage(s) for s in (value or [])]
+        if value is None:
+            value = []
+        elif not hasattr(value, "__len__"):   # a generator: take at most one past the cap, never the whole stream
+            import itertools
+            value = list(itertools.islice(value, MAX_PROGRAM_STAGES + 1))
+        if len(value) > MAX_PROGRAM_STAGES:   # every loader funnels here: refuse before normalising / caching
+            raise ValueError(engine.pipeline_stage_limit_message(len(value)))
+        self._stages = [_normalise_stage(s) for s in value]
         self._thumbs.clear()                  # a new pipeline: nothing was computed for these stages before
         self._invalidate(0)
         self._notify_changed()
