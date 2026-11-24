@@ -60,6 +60,11 @@ CALIBRATOR_ID = "STAGE-MICROMETER-SM-2026-017"
 MIN_SEED_PROMINENCE_PX = 4.0
 OVERLAP_RATES = np.array([0.05, 0.25, 0.45, 0.60, 0.75])
 DIAMETER_ERROR_LIMIT_PX = 1.5
+MIN_TEXT_HEIGHT_1080_PX = 22.0
+CDF_TEXT_SIZE = 16
+CDF_SCALE = 2
+CDF_LOGICAL_SIZE = (1200, 700)
+LARGE_VALIDATION_TEXT_SIZE = 40
 
 
 TRUTH = (
@@ -226,27 +231,32 @@ def _cdf(value, weight):
     return np.r_[x[0], x], np.r_[0.0, np.cumsum(w) / w.sum()]
 
 
+def _cdf_marker_specs(basis, truth_diameter, truth_weight, report):
+    """Dx markers in data coordinates / D値の線をデータ座標で返す。"""
+    markers = []
+    for q in (10, 50, 90):
+        markers.extend((
+            {"x": _midpoint_truth(truth_diameter, truth_weight, q), "color": "reference",
+             "label": "true D%d" % q, "label_row": 0},
+            {"x": report["quantiles"][basis]["D%d" % q]["value"], "color": "emphasis",
+             "label": "estimated D%d" % q, "label_row": 1},
+        ))
+    return markers
+
+
 def _cdf_panel(basis, truth_diameter, estimated_diameter, truth_weight, report):
     """One basis, true versus accepted estimated PSD / 基準ごとの真値と受理推定 CDF。"""
     x_truth, y_truth = _cdf(truth_diameter, truth_weight)
     exponent = {"number": 0, "area": 2, "volume": 3}[basis]
     x_est, y_est = _cdf(estimated_diameter, np.power(estimated_diameter, exponent))
-    panel = figs.render_plot(
-        [("true CDF", x_truth, y_truth), ("accepted estimated CDF", x_est, y_est)],
-        xlabel="diameter [mm]", ylabel="weighted CDF", ylim=(0.0, 1.0), size=(1200, 700),
-        title="%s basis: conditionally matched true / accepted estimated diameter" % basis,
-        colors=["reference", "emphasis"], styles=["dashed", None], legend_position="outside", scale=2)
-    # render_plot's documented geometry: direct tags identify every Dx line.
     xlim = (min(x_truth.min(), x_est.min()), max(x_truth.max(), x_est.max()))
-    x0, y0, rw, rh = 144, 88, 1008, 464
-    for q, y_fraction in ((10, .16), (50, .46), (90, .76)):
-        for dx, role, label, offset in ((_midpoint_truth(truth_diameter, truth_weight, q), "reference", "true D%d" % q, 0),
-                                        (report["quantiles"][basis]["D%d" % q]["value"], "emphasis", "estimated D%d" % q, 1)):
-            px = x0 + int(round((dx - xlim[0]) / (xlim[1] - xlim[0]) * rw))
-            panel = np.asarray(fs.draw_line(panel, (px, y0), (px, y0 + rh), color=role, width=3))
-            panel = np.asarray(fs.text_box(panel, label, (px + 8, y0 + int(rh * (y_fraction + .07 * offset))),
-                                            anchor="lt", font_size=18, box_color=(1.0, 1.0, 1.0)))
-    return panel
+    return figs.render_plot(
+        [("true CDF", x_truth, y_truth), ("accepted estimated CDF", x_est, y_est)],
+        xlabel="diameter [mm]", ylabel="weighted CDF", xlim=xlim, ylim=(0.0, 1.0), size=CDF_LOGICAL_SIZE,
+        title="%s basis: conditionally matched true / accepted estimated diameter" % basis,
+        colors=["reference", "emphasis"], styles=["dashed", None], legend_position="outside",
+        scale=CDF_SCALE, text_size=CDF_TEXT_SIZE,
+        vertical_markers=_cdf_marker_specs(basis, truth_diameter, truth_weight, report))
 
 
 def _large_loss_panel(truth_diameter, state):
@@ -261,11 +271,15 @@ def _large_loss_panel(truth_diameter, state):
         colors.append(role)
         rows.append([label, str(int(selected.sum()))])
     rug = figs.render_plot(series, xlabel="true diameter [mm]", ylabel="loss state (true position)",
-                           title="Losses are not CDF curves", size=(600, 250), ylim=(.5, 3.5),
-                           kinds=["scatter"] * len(series), colors=colors, legend_position="outside", scale=1)
-    counts = figs._render_table(["loss state", "count"], rows, title="Loss counts", scale=1)
+                           title="Losses are not CDF curves", size=(800, 360), ylim=(.5, 3.5),
+                           kinds=["scatter"] * len(series), colors=colors, legend_position="outside", scale=1,
+                           text_size=LARGE_VALIDATION_TEXT_SIZE)
+    counts = figs._render_table(["loss state", "count"], rows, title="Loss counts", scale=1,
+                                font_size=LARGE_VALIDATION_TEXT_SIZE,
+                                title_font_size=LARGE_VALIDATION_TEXT_SIZE + 2)
     return fs.annotate_figure_grid([rug, counts], captions=["true-diameter rug", "same-run count table"], ncols=2,
-                                   title="Excluded / ambiguous / undetected")
+                                   title="Excluded / ambiguous / undetected", font_size=LARGE_VALIDATION_TEXT_SIZE,
+                                   min_font_size=LARGE_VALIDATION_TEXT_SIZE, caption_h=90)
 
 
 def large_sample_validation():
@@ -377,8 +391,10 @@ def large_sample_validation():
             q = report["quantiles"][basis][name]
             rows.append([basis + " " + name, "%.5f" % truth_value, "%.5f [%.5f, %.5f]" %
                          (q["value"], q["ci_lower"], q["ci_upper"])])
-    summary = figs._render_table(["basis / Dx", "matched true mm", "estimate / 95% simultaneous interval mm"], rows,
-                                   title="Conditional intervals: uniquely matched accepted particles", scale=1)
+    summary = figs._render_table(["basis / Dx", "matched true mm", "estimate / 95% simultaneous\ninterval mm"], rows,
+                                   title="Conditional intervals: uniquely matched accepted particles", scale=1,
+                                   font_size=LARGE_VALIDATION_TEXT_SIZE,
+                                   title_font_size=LARGE_VALIDATION_TEXT_SIZE + 2)
     coverage_summary = pharma._conditional_simultaneous_coverage_validation()
     coverage = figs._render_table(["simultaneous-family validation", "measured result"],
         [["interval family", "9 Dx; conditional accepted-particle"],
@@ -386,13 +402,20 @@ def large_sample_validation():
          ["all 9 covered", "%d / %d = %.1f%%" % (coverage_summary["successes"], coverage_summary["trials"],
                                                      100 * coverage_summary["observed_proportion"])],
          ["95% Wilson lower", "%.2f%% (post-hoc exploratory observation)" % (100 * coverage_summary["wilson_lower_95"])]],
-        title="Nominal 95% simultaneous intervals: observed validation", scale=1)
-    figure = fs.annotate_figure_grid([_rgb_gray(image), split_overlay, loss_panel, summary, coverage],
+        title="Nominal 95% simultaneous intervals: observed validation", scale=1,
+        font_size=LARGE_VALIDATION_TEXT_SIZE, title_font_size=LARGE_VALIDATION_TEXT_SIZE + 2)
+    top = fs.annotate_figure_grid([_rgb_gray(image), split_overlay, loss_panel],
         captions=["Input: low contrast, overlap and clipped particles",
-                  "blob_split; red=edge, orange=ambiguous, blue=undetected", "loss rug at true positions and counts",
-                  "Dx values with 95% simultaneous interval",
-                  "same-run observed simultaneous coverage"], ncols=2,
-        title="Large-sample PSD validation / 数百粒子の分布検証")
+                  "blob_split; red=edge, orange=ambiguous, blue=undetected", "loss rug at true positions and counts"],
+        ncols=3, title="Large-sample PSD validation / 数百粒子の分布検証",
+        font_size=LARGE_VALIDATION_TEXT_SIZE, min_font_size=LARGE_VALIDATION_TEXT_SIZE, caption_h=90)
+    bottom = fs.annotate_figure_grid([summary, coverage],
+        captions=["Dx values with 95% simultaneous interval", "same-run observed simultaneous coverage"], ncols=2,
+        font_size=LARGE_VALIDATION_TEXT_SIZE, min_font_size=LARGE_VALIDATION_TEXT_SIZE, caption_h=90)
+    figure = np.ones((top.shape[0] + bottom.shape[0] + 20, max(top.shape[1], bottom.shape[1]), 3))
+    figure[:top.shape[0], :top.shape[1]] = top
+    bottom_x = (figure.shape[1] - bottom.shape[1]) // 2
+    figure[top.shape[0] + 20:, bottom_x:bottom_x + bottom.shape[1]] = bottom
     return report, values, figure, cdf_panels, image, split
 
 
@@ -587,6 +610,15 @@ def main():
                    large_truth["number"][1], large_report["quantiles"]["number"]["D50"]["ci_lower"], large_report["quantiles"]["number"]["D50"]["ci_upper"], "within", "mm"),
         GateResult("accuracy-sweep-is-labelled-with-its-range", sweep_stats["conditions"] == 128,
                    sweep_stats["conditions"], 128, 0, "==", "factorial conditions"),
+        GateResult("cdf-minimum-text-height-at-1080p",
+                   CDF_TEXT_SIZE * CDF_SCALE * 1080 / max(panel.shape[0] for panel in large_cdf_panels)
+                   >= MIN_TEXT_HEIGHT_1080_PX,
+                   CDF_TEXT_SIZE * CDF_SCALE * 1080 / max(panel.shape[0] for panel in large_cdf_panels),
+                   MIN_TEXT_HEIGHT_1080_PX, 0.0, ">=", "px at 1080p"),
+        GateResult("large-validation-minimum-text-height-at-1080p",
+                   LARGE_VALIDATION_TEXT_SIZE * 1080 / large_figure.shape[0] >= MIN_TEXT_HEIGHT_1080_PX,
+                   LARGE_VALIDATION_TEXT_SIZE * 1080 / large_figure.shape[0],
+                   MIN_TEXT_HEIGHT_1080_PX, 0.0, ">=", "px at 1080p"),
     ]
 
     panels = make_panels(image, result, sweep)

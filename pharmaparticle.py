@@ -219,14 +219,16 @@ def _conditional_simultaneous_coverage_validation(trials=400):
         true_scale = .001 + rng.normal(0.0, .000004)
         observed_px = source * .001 / true_scale + rng.normal(0.0, .18, source.size)
         labels = np.arange(1, source.size + 1, dtype=int)
-        upstream_records = {"blob_split": labels.reshape(1, -1),
+        observed_area = np.pi * np.square(observed_px) / 4.0
+        split_area = np.rint(observed_area).astype(int)
+        upstream_records = {"blob_split": np.repeat(labels, split_area).reshape(1, -1),
                             "blob_count_interval": {"components": {
                                 "label": labels, "lo": np.ones(source.size, dtype=int),
                                 "hi": np.where(determined, 1, -1),
                                 "status": np.where(determined, "determined", "ambiguous")}}}
         digest = _upstream_provenance_digest(upstream_records)
         particles = {"object_id": ["trial-%03d-%03d" % (seed, i) for i in range(source.size)],
-                     "diameter_px": observed_px, "area_px2": np.pi * np.square(observed_px) / 4.0,
+                     "diameter_px": observed_px, "area_px2": observed_area,
                      "diameter_unit": "px", "area_unit": "px2", "touches_border": border,
                      "split_status": ["isolated" if item else "ambiguous" for item in determined],
                      "component_id": ["component-%d" % label for label in labels],
@@ -286,8 +288,8 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
     上流の ``blob_split`` と ``blob_count_interval`` に由来する成分 ID、分割根拠、
     来歴ハッシュ、上流の構造化 ``blob_split`` / ``blob_count_interval`` 記録、個数区間、
     決定可否が必須であり、op 内で再計算したダイジェストと一致しない入力は拒否する。
-    ``component_id`` と上流 label は一対一、各行の split label は実際の ``blob_split``
-    画像と一対一で照合する。これは同一実行内の整合性検査であり、署名または不変の外部
+    ``component_id`` と上流 label は一対一、各行の一意な split label、面積、面積相当径は
+    実際の ``blob_split`` 画像から再計算して照合する。これは同一実行内の整合性検査であり、署名または不変の外部
     成果物が無いので改ざん検知ではない。改ざん検知は実行記録と署名を備えた規制対応基盤で扱う。
     未決定行は ``ambiguous`` として除外する。
     ``border_policy="correct"`` は端粒子について ``border_inclusion_probability``、
@@ -330,8 +332,10 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
         bootstrap の乱数種。
     upstream_records : dict
         ``{"blob_split": blob_split出力, "blob_count_interval": blob_count_interval出力}``。
-        各行の ``upstream_component_label`` と個数記録、``upstream_split_label`` と実際の
-        split 画像を照合し、op がダイジェストを再計算する。これは改ざん検知ではない。
+        各行の ``upstream_component_label`` と個数記録、一意な ``upstream_split_label``、
+        面積、面積相当径を実際の split 画像と照合し、op がダイジェストを再計算する。
+        面積は画素数の丸め幅 0.5 px2、径はその面積幅から導かれる範囲だけを許す。
+        これは改ざん検知ではない。
 
     Returns
     -------
@@ -355,11 +359,12 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
     ...      "diameter_unit": "px", "area_unit": "px2", "touches_border": [False] * 30,
     ...      "split_status": ["isolated"] * 30, "component_id": ["c%d" % i for i in range(30)],
     ...      "split_evidence": ["blob_split + blob_count_interval"] * 30,
-    ...      "upstream_provenance_hash": ["0" * 64] * 30, "count_interval_lo": [1] * 30,
+    ...      "upstream_provenance_hash": ["0" * 64] * 30, "upstream_split_label": list(range(1, 31)),
+    ...      "count_interval_lo": [1] * 30,
     ...      "count_interval_hi": [1] * 30, "count_determined": [True] * 30}
     >>> c = {"scale": {"value": .002, "unit": "mm/px", "standard_uncertainty": .00002},
     ...      "calibrator_id": "SM-01", "calibrated_at": "2026-01-01", "valid_until": "2026-12-31"}
-    >>> u = {"blob_split": np.arange(30).reshape(1, 30) + 1,
+    >>> u = {"blob_split": np.repeat(np.arange(1, 31), 79).reshape(1, -1),
     ...      "blob_count_interval": {"components": {"label": np.arange(1, 31), "lo": np.ones(30, int),
     ...      "hi": np.ones(30, int), "status": np.array(["determined"] * 30)}}}
     >>> p["upstream_component_label"] = list(range(1, 31)); p["upstream_provenance_hash"] = [_upstream_provenance_digest(u)] * 30
@@ -474,8 +479,33 @@ def particle_size_distribution(particles, calibration, *, border_policy="exclude
         raise ValueError("%s: blob_count_interval component labels must be unique" % op)
     actual_split_labels = set(np.unique(np.asarray(upstream_records["blob_split"], dtype=int)).tolist()) - {0}
     reported_split_labels = set(split_label.astype(int).tolist())
-    if not actual_split_labels or reported_split_labels != actual_split_labels:
+    if len(reported_split_labels) != n:
+        raise ValueError("%s: upstream_split_label must be unique for every particle row" % op)
+    if not actual_split_labels or len(actual_split_labels) != n or reported_split_labels != actual_split_labels:
         raise ValueError("%s: rows must correspond one-to-one with nonzero blob_split labels" % op)
+    split_image = np.asarray(upstream_records["blob_split"])
+    try:
+        split_numeric = split_image.astype(np.float64)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("%s: blob_split labels must be nonnegative integers" % op) from exc
+    if (not np.all(np.isfinite(split_numeric)) or np.any(split_numeric < 0.0)
+            or np.any(split_numeric != np.floor(split_numeric))):
+        raise ValueError("%s: blob_split labels must be nonnegative integers" % op)
+    actual_label_values, actual_label_counts = np.unique(split_numeric.astype(np.int64), return_counts=True)
+    actual_area = {int(label): float(count) for label, count in zip(actual_label_values, actual_label_counts)
+                   if int(label) != 0}
+    for i, label in enumerate(split_label.astype(int)):
+        pixel_area = actual_area[label]
+        # blob_features の面積は整数画素。連続円の面積を直列化した入力には最近接画素の
+        # 丸め幅だけを許し、異なる領域寸法を一致扱いにはしない。 / blob_features reports
+        # integer pixel area; allow only the nearest-pixel rounding interval.
+        if abs(float(area_px2[i]) - pixel_area) > 0.5:
+            raise ValueError("%s: area_px2 does not match its blob_split label area" % op)
+        area_lo, area_hi = max(0.0, pixel_area - 0.5), pixel_area + 0.5
+        diameter_lo = math.sqrt(4.0 * area_lo / math.pi)
+        diameter_hi = math.sqrt(4.0 * area_hi / math.pi)
+        if not diameter_lo <= float(diameter_px[i]) <= diameter_hi:
+            raise ValueError("%s: diameter_px does not match its blob_split label area-equivalent diameter" % op)
     component_to_label = {}
     label_to_component = {}
     for component_id, label in zip(component, component_label.astype(int)):

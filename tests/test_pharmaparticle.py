@@ -42,7 +42,12 @@ def _upstream_records(particles):
         lo.append(particles["count_interval_lo"][i])
         hi.append(-1 if particles["count_interval_hi"][i] is None else particles["count_interval_hi"][i])
         status.append("determined" if particles["count_determined"][i] else "ambiguous")
-    return {"blob_split": np.arange(unique.size).reshape(1, unique.size) + 1,
+    split_labels = np.asarray(particles["upstream_split_label"], int)
+    pixel_areas = np.rint(np.asarray(particles["area_px2"], float)).astype(int)
+    if np.any(pixel_areas < 1):
+        raise AssertionError("synthetic particle areas must occupy at least one pixel")
+    blob_split = np.repeat(split_labels, pixel_areas).reshape(1, -1)
+    return {"blob_split": blob_split,
             "blob_count_interval": {"components": {"label": unique, "lo": np.asarray(lo),
                                                         "hi": np.asarray(hi), "status": np.asarray(status)}}}
 
@@ -102,7 +107,7 @@ def test_single_particle_and_small_main_sample_report_insufficient_sample_instea
 def test_kish_effective_particles_are_computed_and_gated_per_weighting_basis():
     # 29 one-pixel particles plus one 10^6-pixel particle: count n_eff is 30,
     # while area and volume mass are concentrated in the single large particle.
-    p = _particles(diameter=tuple([1.0] * 29 + [1.0e6]), repeats=1)
+    p = _particles(diameter=tuple([1.0] * 29 + [100.0]), repeats=1)
     r = _run(p)
     assert r["quantiles"]["number"]["D50"]["status"] == "estimated"
     assert r["quantiles"]["area"]["D50"]["status"] == "insufficient_sample"
@@ -133,9 +138,7 @@ def test_component_record_must_be_coherent_and_determined_count_must_equal_repor
     p["split_status"] = ["split"] * 30
     p["count_interval_lo"] = [29] * 30
     p["count_interval_hi"] = [29] * 30
-    upstream = {"blob_split": np.arange(1, 31).reshape(1, 30),
-                "blob_count_interval": {"components": {"label": np.array([1]), "lo": np.array([29]),
-                                                           "hi": np.array([29]), "status": np.array(["determined"])}}}
+    upstream = _upstream_records(p)
     p["upstream_provenance_hash"] = [psd._upstream_provenance_digest(upstream)] * 30
     with pytest.raises(ValueError, match="exactly its declared count"):
         psd.particle_size_distribution(p, _calibration(), measurement_date="2026-11-23", bootstrap_samples=200,
@@ -160,9 +163,7 @@ def test_rejects_thirty_distinct_component_ids_claiming_one_upstream_label():
     p["upstream_component_label"] = [1] * 30
     p["upstream_split_label"] = list(range(1, 31))
     p["component_id"] = ["forged-%02d" % i for i in range(30)]
-    upstream = {"blob_split": np.arange(1, 31).reshape(1, 30),
-                "blob_count_interval": {"components": {"label": np.array([1]), "lo": np.array([30]),
-                                                           "hi": np.array([30]), "status": np.array(["determined"])}}}
+    upstream = _upstream_records(p)
     p["count_interval_lo"] = [30] * 30
     p["count_interval_hi"] = [30] * 30
     p["upstream_provenance_hash"] = [psd._upstream_provenance_digest(upstream)] * 30
@@ -173,9 +174,47 @@ def test_rejects_thirty_distinct_component_ids_claiming_one_upstream_label():
 
 def test_rejects_rows_that_do_not_cover_actual_blob_split_labels():
     p = _particles(diameter=(10.0,), repeats=30)
+    upstream = _upstream_records(p)
     p["upstream_split_label"][-1] = 999
+    p["upstream_provenance_hash"] = [psd._upstream_provenance_digest(upstream)] * 30
     with pytest.raises(ValueError, match="blob_split labels"):
-        _run(p)
+        psd.particle_size_distribution(p, _calibration(), measurement_date="2026-11-23", bootstrap_samples=200,
+                                       upstream_records=upstream)
+
+
+def test_rejects_thirty_rows_reusing_one_actual_split_label():
+    p = _particles(diameter=(10.0,), repeats=30)
+    p["component_id"] = ["c0"] * 30
+    p["upstream_component_label"] = [1] * 30
+    p["upstream_split_label"] = [1] * 30
+    p["split_status"] = ["split"] * 30
+    p["count_interval_lo"] = [30] * 30
+    p["count_interval_hi"] = [30] * 30
+    one_area = int(round(float(p["area_px2"][0])))
+    upstream = {"blob_split": np.ones((1, one_area), dtype=int),
+                "blob_count_interval": {"components": {"label": np.array([1]), "lo": np.array([30]),
+                                                           "hi": np.array([30]), "status": np.array(["determined"])}}}
+    p["upstream_provenance_hash"] = [psd._upstream_provenance_digest(upstream)] * 30
+    with pytest.raises(ValueError, match="upstream_split_label must be unique"):
+        psd.particle_size_distribution(p, _calibration(), measurement_date="2026-11-23", bootstrap_samples=200,
+                                       upstream_records=upstream)
+
+
+def test_rejects_particle_dimensions_not_measured_from_its_split_region():
+    p = _particles(diameter=(10.0,), repeats=30)
+    upstream = _upstream_records(p)
+    p["area_px2"][7] += 1.0
+    p["upstream_provenance_hash"] = [psd._upstream_provenance_digest(upstream)] * 30
+    with pytest.raises(ValueError, match="area_px2 does not match"):
+        psd.particle_size_distribution(p, _calibration(), measurement_date="2026-11-23", bootstrap_samples=200,
+                                       upstream_records=upstream)
+    p = _particles(diameter=(10.0,), repeats=30)
+    upstream = _upstream_records(p)
+    p["diameter_px"][7] += 1.0
+    p["upstream_provenance_hash"] = [psd._upstream_provenance_digest(upstream)] * 30
+    with pytest.raises(ValueError, match="diameter_px does not match"):
+        psd.particle_size_distribution(p, _calibration(), measurement_date="2026-11-23", bootstrap_samples=200,
+                                       upstream_records=upstream)
 
 
 def test_unit_empty_and_missing_columns_each_fail_closed():

@@ -26,8 +26,8 @@ D10/D50/D90 は、重複径を重みごとに集約した**重み付き経験分
 上流の ``blob_split`` と ``blob_count_interval`` に由来する成分 ID、分割根拠、
 来歴ハッシュ、上流の構造化 ``blob_split`` / ``blob_count_interval`` 記録、個数区間、
 決定可否が必須であり、op 内で再計算したダイジェストと一致しない入力は拒否する。
-``component_id`` と上流 label は一対一、各行の split label は実際の ``blob_split``
-画像と一対一で照合する。これは同一実行内の整合性検査であり、署名または不変の外部
+``component_id`` と上流 label は一対一、各行の一意な split label、面積、面積相当径は
+実際の ``blob_split`` 画像から再計算して照合する。これは同一実行内の整合性検査であり、署名または不変の外部
 成果物が無いので改ざん検知ではない。改ざん検知は実行記録と署名を備えた規制対応基盤で扱う。
 未決定行は ``ambiguous`` として除外する。
 ``border_policy="correct"`` は端粒子について ``border_inclusion_probability``、
@@ -70,8 +70,10 @@ seed : int
     bootstrap の乱数種。
 upstream_records : dict
     ``{"blob_split": blob_split出力, "blob_count_interval": blob_count_interval出力}``。
-    各行の ``upstream_component_label`` と個数記録、``upstream_split_label`` と実際の
-    split 画像を照合し、op がダイジェストを再計算する。これは改ざん検知ではない。
+    各行の ``upstream_component_label`` と個数記録、一意な ``upstream_split_label``、
+    面積、面積相当径を実際の split 画像と照合し、op がダイジェストを再計算する。
+    面積は画素数の丸め幅 0.5 px2、径はその面積幅から導かれる範囲だけを許す。
+    これは改ざん検知ではない。
 
 Returns
 -------
@@ -95,11 +97,12 @@ Examples
 ...      "diameter_unit": "px", "area_unit": "px2", "touches_border": [False] * 30,
 ...      "split_status": ["isolated"] * 30, "component_id": ["c%d" % i for i in range(30)],
 ...      "split_evidence": ["blob_split + blob_count_interval"] * 30,
-...      "upstream_provenance_hash": ["0" * 64] * 30, "count_interval_lo": [1] * 30,
+...      "upstream_provenance_hash": ["0" * 64] * 30, "upstream_split_label": list(range(1, 31)),
+...      "count_interval_lo": [1] * 30,
 ...      "count_interval_hi": [1] * 30, "count_determined": [True] * 30}
 >>> c = {"scale": {"value": .002, "unit": "mm/px", "standard_uncertainty": .00002},
 ...      "calibrator_id": "SM-01", "calibrated_at": "2026-01-01", "valid_until": "2026-12-31"}
->>> u = {"blob_split": np.arange(30).reshape(1, 30) + 1,
+>>> u = {"blob_split": np.repeat(np.arange(1, 31), 79).reshape(1, -1),
 ...      "blob_count_interval": {"components": {"label": np.arange(1, 31), "lo": np.ones(30, int),
 ...      "hi": np.ones(30, int), "status": np.array(["determined"] * 30)}}}
 >>> p["upstream_component_label"] = list(range(1, 31)); p["upstream_provenance_hash"] = [_upstream_provenance_digest(u)] * 30
