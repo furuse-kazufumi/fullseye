@@ -1,7 +1,6 @@
 """Stage-1 BOP gates use synthetic data only; no ITODD assets enter the repository."""
 from __future__ import annotations
 
-import hashlib
 import json
 import math
 from pathlib import Path
@@ -276,9 +275,19 @@ def test_evaluator_accepts_pristine_pinned_toolkit(tmp_path, monkeypatch):
     script, _helper, commit = _make_synthetic_toolkit(toolkit)
     monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", commit)
     monkeypatch.setattr(
-        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+        bop, "_BOP19_EVALUATOR_SHA256", bop._canonical_python_sha256(script))
 
     bop._validate_official_bop_toolkit(toolkit, script)
+
+
+def test_evaluator_digest_is_stable_across_checkout_line_endings(tmp_path):
+    lf_script = tmp_path / "lf.py"
+    crlf_script = tmp_path / "crlf.py"
+    lf_script.write_bytes(b"VALUE = 1\n")
+    crlf_script.write_bytes(b"VALUE = 1\r\n")
+
+    assert lf_script.read_bytes() != crlf_script.read_bytes()
+    assert bop._canonical_python_sha256(lf_script) == bop._canonical_python_sha256(crlf_script)
 
 
 def test_evaluator_rejects_modified_helper_at_pinned_commit(tmp_path, monkeypatch):
@@ -286,7 +295,7 @@ def test_evaluator_rejects_modified_helper_at_pinned_commit(tmp_path, monkeypatc
     script, helper, commit = _make_synthetic_toolkit(toolkit)
     monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", commit)
     monkeypatch.setattr(
-        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+        bop, "_BOP19_EVALUATOR_SHA256", bop._canonical_python_sha256(script))
 
     helper.write_text("VALUE = 'tampered'\n", encoding="utf-8")
 
@@ -299,7 +308,7 @@ def test_evaluator_rejects_untracked_helper_at_pinned_commit(tmp_path, monkeypat
     script, helper, commit = _make_synthetic_toolkit(toolkit)
     monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", commit)
     monkeypatch.setattr(
-        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+        bop, "_BOP19_EVALUATOR_SHA256", bop._canonical_python_sha256(script))
 
     helper.with_name("injected.py").write_text("VALUE = 'injected'\n", encoding="utf-8")
 
@@ -312,7 +321,7 @@ def test_evaluator_rejects_ignored_untracked_extension_at_pinned_commit(tmp_path
     script, helper, commit = _make_synthetic_toolkit(toolkit)
     monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", commit)
     monkeypatch.setattr(
-        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+        bop, "_BOP19_EVALUATOR_SHA256", bop._canonical_python_sha256(script))
     ignored_extension = helper.with_name("pose_error_tampered.so")
     (toolkit / ".git" / "info" / "exclude").write_text(
         "bop_toolkit_lib/pose_error_tampered.so\n", encoding="utf-8")
@@ -327,7 +336,7 @@ def test_evaluator_rejects_replace_ref_that_masks_a_tampered_commit(tmp_path, mo
     script, helper, pinned_commit = _make_synthetic_toolkit(toolkit)
     monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", pinned_commit)
     monkeypatch.setattr(
-        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+        bop, "_BOP19_EVALUATOR_SHA256", bop._canonical_python_sha256(script))
     helper.write_text("VALUE = 'tampered'\n", encoding="utf-8")
     _git(toolkit, "add", str(helper.relative_to(toolkit)))
     _git(toolkit, "-c", "user.name=BOP fixture", "-c", "user.email=bop@example.invalid",
@@ -347,7 +356,7 @@ def test_evaluator_ignores_inherited_git_worktree_settings(tmp_path, monkeypatch
     script, _helper, commit = _make_synthetic_toolkit(toolkit)
     monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", commit)
     monkeypatch.setattr(
-        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+        bop, "_BOP19_EVALUATOR_SHA256", bop._canonical_python_sha256(script))
     monkeypatch.setenv("GIT_DIR", str(tmp_path / "not-a-git-directory"))
     monkeypatch.setenv("GIT_WORK_TREE", str(tmp_path / "not-a-worktree"))
     monkeypatch.setenv("GIT_INDEX_FILE", str(tmp_path / "not-an-index"))
@@ -365,7 +374,7 @@ def test_evaluator_rejects_ref_to_nonexistent_pinned_commit(tmp_path, monkeypatc
     loose_ref.write_text(f"{nonexistent_commit}\n", encoding="ascii")
     monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", nonexistent_commit)
     monkeypatch.setattr(
-        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+        bop, "_BOP19_EVALUATOR_SHA256", bop._canonical_python_sha256(script))
 
     with pytest.raises(ValueError, match="does not contain pinned BOP toolkit commit"):
         bop._validate_official_bop_toolkit(toolkit, script)

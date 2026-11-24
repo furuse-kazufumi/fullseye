@@ -352,7 +352,7 @@ jobs:
           git clone https://github.com/thodan/bop_toolkit.git bop_toolkit
           git -C bop_toolkit checkout --detach "$BOP_TOOLKIT_COMMIT"
           test "$(git -C bop_toolkit rev-parse HEAD)" = "$BOP_TOOLKIT_COMMIT"
-          test "$(sha256sum bop_toolkit/scripts/eval_bop19_pose.py | cut -d' ' -f1)" = "44a0fa020f53bec65dad351c4a188e2a21e3d8cbe554925e06c98315be3f57f4"
+          test "$(sha256sum bop_toolkit/scripts/eval_bop19_pose.py | cut -d' ' -f1)" = "953a016e47a31ed05a5032302b8154722049d8dd953aeb7794ecedbf607bfcce"
       - name: Run the real official BOP19 driver on the synthetic fixture
         env:
           BOP_TOOLKIT_ROOT: ${{ github.workspace }}/bop_toolkit

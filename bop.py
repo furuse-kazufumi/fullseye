@@ -54,7 +54,13 @@ _BOP19_SCORE_KEYS = (
     "bop19_average_time_per_image",
 )
 _BOP_TOOLKIT_COMMIT = "cea62d651c7e395b2e1962b9749e4e89693c6ac4"
-_BOP19_EVALUATOR_SHA256 = "44a0fa020f53bec65dad351c4a188e2a21e3d8cbe554925e06c98315be3f57f4"
+_BOP19_EVALUATOR_SHA256 = "953a016e47a31ed05a5032302b8154722049d8dd953aeb7794ecedbf607bfcce"
+
+
+def _canonical_python_sha256(path: Path) -> str:
+    """Hash Python source with LF endings. / Python source を LF 改行でハッシュする。"""
+    content = path.read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(content).hexdigest()
 
 
 def _toolkit_git_environment() -> dict[str, str]:
@@ -620,6 +626,6 @@ def _validate_official_bop_toolkit(toolkit: Path, script: Path) -> None:
         raise ValueError(f"could not verify the pinned BOP toolkit worktree: {detail}")
     if tracked_diff.returncode or worktree_status.stdout.strip():
         raise ValueError("pinned BOP toolkit checkout has modified or untracked files")
-    script_digest = hashlib.sha256(script.read_bytes()).hexdigest()
+    script_digest = _canonical_python_sha256(script)
     if script_digest != _BOP19_EVALUATOR_SHA256:
         raise ValueError("BOP eval_bop19_pose.py does not match the pinned official digest")
