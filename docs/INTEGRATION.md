@@ -58,7 +58,7 @@ be reorganised. Everything a consumer needs is re-exported from `fullseye`.
 
 ## From an LLM (MCP server, 0.1.11 PoC)
 
-`py -3.11 -m fullseye.mcp` is a stdio Model Context Protocol server (protocol
+`fullseye-mcp` is a stdio Model Context Protocol server (protocol
 `2025-06-18`). It exposes **9 tools, not 1,942**: search the catalog, read an operator's
 knowledge-layer note (with its pre-rendered, gate-verified figures as `resource_link`s),
 load a sample or a sandboxed image into a handle, apply one operator or a pipeline, and

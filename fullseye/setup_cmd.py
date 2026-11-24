@@ -256,7 +256,8 @@ def guidance(lang: str) -> str:
         "  " + m["g_2"], "      import fullseye, numpy as np",
         "      img = np.random.rand(64, 64)",
         "      print(fullseye.apply(img, \"sobel_amp\").shape)",
-        "  " + m["g_3"], "      fullseye-rag     |     claude mcp add fullseye -- \"%s\" -P -m fullseye.mcp" % exe,
+        "  " + m["g_3"], "      fullseye-rag     |     claude mcp add fullseye -- fullseye-mcp",
+        " " * 26 + "or: claude mcp add fullseye -- \"%s\" -P -m fullseye.mcp" % exe,
         "", m["g_tail"], ""])
 
 
@@ -715,9 +716,12 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
             say("  " + " ".join(mcp_cmd))
         else:
             say("  " + m["mcp_manual"])
-            say('  claude mcp add fullseye -- "%s" -P -m fullseye.mcp' % sys.executable)
-            say('  {"mcpServers": {"fullseye": {"command": %s, "args": ["-P", "-m", "fullseye.mcp"]}}}'
-                % json.dumps(sys.executable))
+            say("  claude mcp add fullseye -- fullseye-mcp")
+            say('  or: claude mcp add fullseye -- "%s" -P -m fullseye.mcp' % sys.executable)
+            say('  {"mcpServers": {"fullseye": {"command": "fullseye-mcp", "args": []}}}')
+    if info["probes"]["gpu"]["installed"] is False and "python" in uses:
+        say()
+        say(m["gpu_note"])
 
     if "studio" in uses:
         if args.yes:
