@@ -16,7 +16,6 @@ import importlib.util
 import json
 import os
 import shlex
-import shutil
 import ssl
 import subprocess
 import sys
@@ -24,6 +23,8 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Iterable, Optional, Sequence
+
+import backend_safe
 
 
 # 日英のトラブルシューティング表と同じ順に保つ。 / Keep the order of both troubleshooting tables.
@@ -104,12 +105,13 @@ def _repair_commands(exe: str) -> dict[str, tuple[Command, ...]]:
                                      ("export", "PYTHONUTF8=1")),),
         "long_path": (_shell(("Start-Process", "powershell", "-Verb", "RunAs"),
                               ("powershell.exe", "-NoProfile", "-Command", "Start-Process powershell -Verb RunAs")),),
-        "unicode_space_path": (_argv(exe, "-m", "venv", r"C:\venvs\fullseye"),),
-        "onedrive_known_folders": (_shell(("New-Item", "-ItemType", "Directory", "-Force", r"C:\src,", r"C:\data"),
-                                            ("mkdir", "-p", "/c/src", "/c/data")),),
-        "store_python": (_shell(("py", "-3.11", "-m", "venv", r"$HOME\venvs\fullseye"),
-                                  ("py", "-3.11", "-m", "venv", "$HOME/venvs/fullseye")),),
-        "conda_pythonw": (_script("conda activate fullseye; fullseye-studio",
+        "unicode_space_path": (_shell((exe, "-m", "venv", r"$env:USERPROFILE\fullseye-venv"),
+                                        (exe, "-m", "venv", "$HOME/fullseye-venv")),),
+        "onedrive_known_folders": (_shell(("New-Item", "-ItemType", "Directory", "-Force", r"$env:SystemDrive\src", r"$env:SystemDrive\data"),
+                                            ("mkdir", "-p", "$HOME/src", "$HOME/data")),),
+        "store_python": (_shell(("py", "-3.11", "-m", "venv", r"$env:USERPROFILE\fullseye-venv"),
+                                  ("py", "-3.11", "-m", "venv", "$HOME/fullseye-venv")),),
+        "conda_pythonw": (_script("conda activate fullseye; if ($?) { fullseye-studio }",
                                    "conda activate fullseye && fullseye-studio"),),
         "python_path": (_argv(exe, "-m", "fullseye", "doctor"),),
         "multiple_python": (_argv(exe, "-m", "pip", "--version"),),
@@ -123,14 +125,14 @@ def _repair_commands(exe: str) -> dict[str, tuple[Command, ...]]:
                                       ("powershell.exe", "-NoProfile", "-Command", "Get-ExecutionPolicy -List")),
                               _shell(("Set-ExecutionPolicy", "-Scope", "Process", "-ExecutionPolicy", "RemoteSigned"),
                                      ("powershell.exe", "-NoProfile", "-Command", "Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned"))),
-        "proxy_certificate": (_shell((r"$env:REQUESTS_CA_BUNDLE='C:\certs\company-root.pem'",),
-                                      ("export", "REQUESTS_CA_BUNDLE=/c/certs/company-root.pem")),),
-        "write_permission": (_shell(("py", "-3.11", "-m", "venv", r"$HOME\venvs\fullseye"),
-                                      ("py", "-3.11", "-m", "venv", "$HOME/venvs/fullseye")),),
+        "proxy_certificate": (_script("$env:REQUESTS_CA_BUNDLE = Join-Path $env:USERPROFILE 'company-root.pem'",
+                                       'export REQUESTS_CA_BUNDLE="$HOME/company-root.pem"'),),
+        "write_permission": (_shell(("py", "-3.11", "-m", "venv", r"$env:USERPROFILE\fullseye-venv"),
+                                      ("py", "-3.11", "-m", "venv", "$HOME/fullseye-venv")),),
         "cuda_driver": (_argv("nvidia-smi"),
                         _argv(exe, "-c", "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())")),
-        "smartscreen": (_shell(("Get-Item", "-LiteralPath", r"C:\path\to\downloaded-file", "-Stream", "Zone.Identifier"),
-                                ("powershell.exe", "-NoProfile", "-Command", "Get-Item -LiteralPath 'C:\\path\\to\\downloaded-file' -Stream Zone.Identifier")),),
+        "smartscreen": (_shell(("Get-Item", "-LiteralPath", "'<downloaded-file>'", "-Stream", "Zone.Identifier"),
+                                ("powershell.exe", "-NoProfile", "-Command", "Get-Item -LiteralPath '<downloaded-file>' -Stream Zone.Identifier")),),
     }
 
 
@@ -176,21 +178,21 @@ def _windows_known_folder_env(env: dict[str, str]) -> tuple[bool, str]:
     return bool(moved), "; ".join(moved)
 
 
-def _qt_plugin_entries(value: str) -> list[str]:
-    """QT_PLUGIN_PATH を Windows の ``;`` 単位で保つ。 / Preserve QT_PLUGIN_PATH entries split by Windows ``;``."""
-    return [entry for entry in value.split(";") if entry]
+def _qt_plugin_entries(value: str, separator: str = os.pathsep) -> list[str]:
+    """QT_PLUGIN_PATH を実行環境の区切りで保つ。 / Preserve QT_PLUGIN_PATH entries using the runtime separator."""
+    return [entry for entry in value.split(separator) if entry]
 
 
-def _stale_qt_plugin_entries(value: str) -> list[str]:
+def _stale_qt_plugin_entries(value: str, separator: str = os.pathsep) -> list[str]:
     """実在しない Qt plugin folder だけを返す。 / Return only Qt plugin folders confirmed missing."""
-    return [entry for entry in _qt_plugin_entries(value) if not Path(entry).is_dir()]
+    return [entry for entry in _qt_plugin_entries(value, separator) if not Path(entry).is_dir()]
 
 
-def _remove_qt_plugin_entries(value: str, stale: Iterable[str]) -> str:
+def _remove_qt_plugin_entries(value: str, stale: Iterable[str], separator: str = os.pathsep) -> str:
     """確認済みの古い項目だけを除く。 / Remove only entries already confirmed stale."""
     stale_keys = {os.path.normcase(entry) for entry in stale}
-    return ";".join(entry for entry in _qt_plugin_entries(value)
-                    if os.path.normcase(entry) not in stale_keys)
+    return separator.join(entry for entry in _qt_plugin_entries(value, separator)
+                          if os.path.normcase(entry) not in stale_keys)
 
 
 def _distribution_root() -> Optional[Path]:
@@ -251,7 +253,7 @@ def collect(*, env: Optional[dict[str, str]] = None, executable: Optional[str] =
     findings.append(_item(
         "long_path", status, "Windows long-path support",
         "LongPathsEnabled=%s" % ("1" if long_paths else "0" if long_paths is False else "not read"),
-        "Enable Win32 long paths, then restart Windows; keep projects near C:\\src until then.",
+        "Enable Win32 long paths, then restart Windows; keep projects near $env:SystemDrive\\src until then.",
         commands["long_path"] if long_paths is False else (),
     ))
     non_ascii = not _is_ascii_path(exe)
@@ -259,7 +261,7 @@ def collect(*, env: Optional[dict[str, str]] = None, executable: Optional[str] =
     findings.append(_item(
         "unicode_space_path", "info" if non_ascii or has_space else "ok", "Unicode or spaces in paths",
         "Python path: %s" % exe,
-        "Quote every path. If a third-party native tool still fails, make a venv at C:\\venvs\\fullseye.",
+        "Quote every path. If a third-party native tool still fails, make a venv at $env:USERPROFILE\\fullseye-venv.",
         commands["unicode_space_path"] if non_ascii or has_space else (),
     ))
     redirected, redirected_paths = _windows_known_folder_env(environment) if windows else (False, "")
@@ -316,7 +318,7 @@ def collect(*, env: Optional[dict[str, str]] = None, executable: Optional[str] =
     ))
     qt_spec = importlib.util.find_spec("PySide6")
     plugin_path = environment.get("QT_PLUGIN_PATH", "")
-    stale_plugin_paths = _stale_qt_plugin_entries(plugin_path)
+    stale_plugin_paths = _stale_qt_plugin_entries(plugin_path, ";" if windows else os.pathsep)
     native_status = "warning" if stale_plugin_paths else "ok"
     native = _item(
         "native_dll", native_status, "Native DLL and Qt plugin loading",
@@ -325,7 +327,7 @@ def collect(*, env: Optional[dict[str, str]] = None, executable: Optional[str] =
         "Install the matching package with this Python. For DLL errors install Microsoft Visual C++ 2015-2022 x64,"
         " then run doctor again.",
         commands["native_dll"] if qt_spec or plugin_path else (),
-        fixable=bool(sys.platform == "win32" and stale_plugin_paths),
+        fixable=bool(windows and stale_plugin_paths),
     )
     native["stale_qt_plugin_paths"] = stale_plugin_paths
     findings.append(native)
@@ -389,19 +391,19 @@ def _has_failures(report: dict[str, Any]) -> bool:
 
 _EN_FIX = {
     "console_encoding": "chcp 65001; $env:PYTHONUTF8='1' in the same PowerShell",
-    "long_path": "Enable Windows long paths as Administrator and reboot; meanwhile use a short root such as C:\\src",
-    "unicode_space_path": "Quote paths as \"...\"; for an old DLL that still fails, make the venv at C:\\venvs\\fullseye",
-    "onedrive_known_folders": "New-Item -ItemType Directory -Force C:\\src, C:\\data; move projects/data there and reselect them in Studio",
-    "store_python": "Use python.org Python or a venv: py -3.11 -m venv $HOME\\venvs\\fullseye",
-    "conda_pythonw": "conda activate fullseye; fullseye-studio; do not double-click pythonw.exe",
+    "long_path": "Enable Windows long paths as Administrator and reboot; meanwhile use a short root such as $env:SystemDrive\\src",
+    "unicode_space_path": "Quote paths as \"...\"; for an old DLL that still fails, make the venv at $env:USERPROFILE\\fullseye-venv",
+    "onedrive_known_folders": "New-Item -ItemType Directory -Force $env:SystemDrive\\src, $env:SystemDrive\\data; move your projects and input files there and reselect them in Studio",
+    "store_python": "Use python.org Python or a venv: py -3.11 -m venv $env:USERPROFILE\\fullseye-venv",
+    "conda_pythonw": "conda activate fullseye; if ($?) { fullseye-studio }; do not double-click pythonw.exe",
     "python_path": "Use py -3.11 -m fullseye doctor, or activate the venv",
     "multiple_python": "Use the same <python> -m pip install ... and <python> -m fullseye ...",
     "pip_target": "With the shown Python run <python> -m pip install --upgrade fullseye, then <python> -c \"import fullseye; print(fullseye.__file__)\"",
     "native_dll": "<python> -m pip install --upgrade fullseye[gui]; install VC++ 2015–2022 x64: winget install Microsoft.VCRedist.2015+.x64; follow SDK doctor for python3XX.dll",
     "antivirus_lock": "Verify source/hash, then restore/exclude only the Fullseye venv/project; never exclude all Python",
     "powershell_policy": "Inspect first, then only for this process: Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned",
-    "proxy_certificate": "Obtain the PEM from IT and set $env:REQUESTS_CA_BUNDLE='C:\\certs\\company-root.pem'; do not routinely disable TLS",
-    "write_permission": "Use a user venv, not Administrator: py -3.11 -m venv $HOME\\venvs\\fullseye",
+    "proxy_certificate": "Obtain the PEM from IT and set $env:REQUESTS_CA_BUNDLE = Join-Path $env:USERPROFILE 'company-root.pem'; do not routinely disable TLS",
+    "write_permission": "Use a user venv, not Administrator: py -3.11 -m venv $env:USERPROFILE\\fullseye-venv",
     "high_dpi": "Test Settings > System > Display > Scale at 100%, restart Studio, then keep the readable value",
     "cuda_driver": "Update to a supported NVIDIA driver or use CPU; do not mix an arbitrary CUDA toolkit into the venv",
     "smartscreen": "Verify source and hash, then use Properties > Unblock for that file only; do not disable SmartScreen",
@@ -410,19 +412,19 @@ _EN_FIX = {
 
 _JA_TEXT = {
     "console_encoding": ("コンソールの文字エンコーディング", "chcp 65001; $env:PYTHONUTF8='1' を同じ PowerShell で実行"),
-    "long_path": ("Windows の長いパスの対応", "管理者で Windows の「長いパスを有効にする」を有効化して再起動。急ぎなら C:\\src のような短い場所へ置く"),
-    "unicode_space_path": ("パス中の日本語または空白", "パスを常に \"...\" で引用。直らない古い DLL は C:\\venvs\\fullseye に venv を作る"),
-    "onedrive_known_folders": ("OneDrive の既知フォルダー移動", "New-Item -ItemType Directory -Force C:\\src, C:\\data、プロジェクトと大量データはそこへ移して Studio で再選択"),
-    "store_python": ("Microsoft Store Python", "python.org 版 Python か venv を使用: py -3.11 -m venv $HOME\\venvs\\fullseye"),
-    "conda_pythonw": ("conda / pythonw の DLL 環境", "conda activate fullseye; fullseye-studio。pythonw.exe を直接ダブルクリックしない"),
+    "long_path": ("Windows の長いパスの対応", "管理者で Windows の「長いパスを有効にする」を有効化して再起動。急ぎなら $env:SystemDrive\\src のような短い場所へ置く"),
+    "unicode_space_path": ("パス中の日本語または空白", "パスを常に \"...\" で引用。直らない古い DLL は $env:USERPROFILE\\fullseye-venv に venv を作る"),
+    "onedrive_known_folders": ("OneDrive の既知フォルダー移動", "New-Item -ItemType Directory -Force $env:SystemDrive\\src, $env:SystemDrive\\data、プロジェクトと入力ファイルはそこへ移して Studio で再選択"),
+    "store_python": ("Microsoft Store Python", "python.org 版 Python か venv を使用: py -3.11 -m venv $env:USERPROFILE\\fullseye-venv"),
+    "conda_pythonw": ("conda / pythonw の DLL 環境", "conda activate fullseye; if ($?) { fullseye-studio }。pythonw.exe を直接ダブルクリックしない"),
     "python_path": ("PATH 上の Python コマンド", "py -3.11 -m fullseye doctor のように Python を明示、または venv を activate"),
     "multiple_python": ("複数の Python インストール", "常に同じ <python> -m pip install ... と <python> -m fullseye ... を使う"),
     "pip_target": ("pip の配布先と読み込んだ Fullseye の一致", "doctor が示す Python で <python> -m pip install --upgrade fullseye、続けて <python> -c \"import fullseye; print(fullseye.__file__)\""),
     "native_dll": ("ネイティブ DLL と Qt plugin の読み込み", "<python> -m pip install --upgrade fullseye[gui]。VC++ 2015–2022 x64 を入れる: winget install Microsoft.VCRedist.2015+.x64。SDK の python3XX.dll は SDK doctor の指示に従う"),
     "antivirus_lock": ("ウイルス対策ソフトによるロックまたは隔離", "出所・ハッシュを確認後、Fullseye の venv/プロジェクトだけを復元・除外。Python 全体を除外しない"),
     "powershell_policy": ("PowerShell の実行ポリシー", "内容を確認後、現在のプロセスだけ Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned。全体のポリシーは下げない"),
-    "proxy_certificate": ("社内 proxy と TLS 証明書", "IT から PEM を受け $env:REQUESTS_CA_BUNDLE='C:\\certs\\company-root.pem'。--trusted-host や TLS 無効化を常用しない"),
-    "write_permission": ("書き込み権限 / Program Files へのインストール", "管理者でなくユーザー venv を作る: py -3.11 -m venv $HOME\\venvs\\fullseye"),
+    "proxy_certificate": ("社内 proxy と TLS 証明書", "IT から PEM を受け $env:REQUESTS_CA_BUNDLE = Join-Path $env:USERPROFILE 'company-root.pem'。--trusted-host や TLS 無効化を常用しない"),
+    "write_permission": ("書き込み権限 / Program Files へのインストール", "管理者でなくユーザー venv を作る: py -3.11 -m venv $env:USERPROFILE\\fullseye-venv"),
     "high_dpi": ("高 DPI の拡大縮小", "Windows 設定 > システム > ディスプレイ > 拡大縮小を 100% でも一度確認し、Studio を再起動。読みやすい倍率を採用"),
     "cuda_driver": ("GPU driver / CUDA の互換性", "対応する NVIDIA driver に更新、または CPU を使う。任意の CUDA toolkit を venv に混ぜない"),
     "smartscreen": ("Defender SmartScreen / ダウンロード済みファイルの印", "出所とハッシュを検証後、そのファイルだけ プロパティ > 許可する。SmartScreen は無効化しない"),
@@ -556,20 +558,29 @@ def _fix_plan(report: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def _powershell_executable() -> Path:
-    """既定位置、次に PATH から Windows PowerShell を探す。 / Find Windows PowerShell at its default path, then PATH."""
-    default = Path(r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe")
-    if default.is_file():
-        return default
-    found = shutil.which("powershell.exe") or shutil.which("powershell")
-    if found:
-        return Path(found)
+    """SystemRoot/WINDIR、次に安全な PATH から PowerShell を探す。 / Find PowerShell from SystemRoot/WINDIR, then a safe PATH lookup."""
+    candidates: list[Path] = []
+    for variable in ("SystemRoot", "WINDIR"):
+        root = os.environ.get(variable)
+        if root:
+            candidate = Path(root) / "System32" / "WindowsPowerShell" / "v1.0" / "powershell.exe"
+            if candidate not in candidates:
+                candidates.append(candidate)
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+    for name in ("powershell.exe", "powershell", "pwsh.exe", "pwsh"):
+        found = backend_safe.which_outside_cwd(name)
+        if found:
+            return Path(found)
+    checked = ", ".join(str(candidate) for candidate in candidates) or "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
     raise OSError(
         "PowerShell が見つかりません / Windows PowerShell was not found. "
         "確認した場所 / Checked: %s and PATH. "
         "ユーザー環境変数を安全に変更できません / Cannot safely change the per-user setting. "
-        "対処 / What to do: Enable Windows PowerShell or add powershell.exe to PATH, then rerun "
+        "対処 / What to do: Enable Windows PowerShell or add powershell.exe or pwsh to PATH, then rerun "
         "`fullseye doctor --fix`; otherwise remove only the reported stale QT_PLUGIN_PATH entries manually."
-        % default
+        % checked
     )
 
 

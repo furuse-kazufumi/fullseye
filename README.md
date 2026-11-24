@@ -178,7 +178,7 @@ pip install "fullseye[all]" # + opencv, scikit-image, Pillow, PyWavelets, Simple
 
 **After installing, run `fullseye setup`** (see "Your first minute after `pip install`" below).
 If Windows startup behaves unexpectedly, run **`fullseye doctor`** for checked causes and copyable repairs; see
-[Windows troubleshooting](docs/TROUBLESHOOTING.en.md).
+[Windows troubleshooting](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/TROUBLESHOOTING.en.md).
 
 PyPI: <https://pypi.org/project/fullseye/> · Source / issues / operator corpus:
 GitHub (linked from the PyPI sidebar). After installing, `fullseye-rag` sets up the
