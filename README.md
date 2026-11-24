@@ -180,6 +180,10 @@ fullseye setup --yes         # try every remaining backend independently + RAG; 
 duplicate dependency. `PySide6-Essentials` provides Studio's required Qt modules; its optional 3-D
 surface and audio playback features stay unavailable when their Qt add-ons are not installed.
 
+**After installing, run `fullseye setup`** (see "Your first minute after `pip install`" below).
+If Windows startup behaves unexpectedly, run **`fullseye doctor`** for checked causes and copyable repairs; see
+[Windows troubleshooting](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/TROUBLESHOOTING.en.md).
+
 PyPI: <https://pypi.org/project/fullseye/> · Source / issues / operator corpus:
 GitHub (linked from the PyPI sidebar). After installing, `fullseye-rag` sets up the
 Claude Code RAG skill; `py -3.11 tools/update_fullseye.py` updates a checkout without
@@ -200,6 +204,7 @@ Use `fullseye setup --yes` for the detailed **install everything possible** flow
 
 ```bash
 fullseye setup --yes    # every compatible optional backend, RAG skill, and Claude MCP when Claude is installed
+fullseye doctor         # read-only startup diagnosis; add --json for automation, --fix asks before a safe repair
 ```
 
 It reports your Python / fullseye / Qt / optional dependencies / Claude Code integration, then shows each pip command

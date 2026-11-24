@@ -314,7 +314,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 339 篇
+## 文件地圖 — 共 341 篇
 
 完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,852 篇運算子說明與 73 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
@@ -459,7 +459,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(253)
+**Other**(255)
 
 | 文件 | 內容 |
 |---|---|
@@ -543,6 +543,8 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`STUDIO_GUIDE.tw.md`](STUDIO_GUIDE.tw.md) | Fullseye Studio 完全指南 |
 | [`STUDIO_GUIDE.zh.md`](STUDIO_GUIDE.zh.md) | Fullseye Studio 完全指南 _(zh)_ |
 | [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) | Walking a Character Over Terrain (sim-native, no GPU required) |
+| [`TROUBLESHOOTING.en.md`](TROUBLESHOOTING.en.md) | Windows troubleshooting |
+| [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) | Windows troubleshooting → [`TROUBLESHOOTING.en.md`](TROUBLESHOOTING.en.md) · 原文 _(ja)_ |
 | [`TYPE_CONNECTIVITY.md`](TYPE_CONNECTIVITY.md) | 型のつながり ―― 全型の役割と処置 _(ja)_ |
 | [`UNIFIED_API_REQUIREMENTS.en.md`](UNIFIED_API_REQUIREMENTS.en.md) | Fullseye Unified Interface — Requirements Specification (v0.1, 2026-08-18) |
 | [`VALIDATION_CONTRIBUTING.en.md`](VALIDATION_CONTRIBUTING.en.md) | Reporting validation on real hardware or real data |

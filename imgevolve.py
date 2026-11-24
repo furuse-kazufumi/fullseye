@@ -792,7 +792,7 @@ def _auto_register_studio_shortcut(argv) -> None:
         pass
 
 
-def main() -> int:
+def _main() -> int:
     _tolerate_unencodable_output()
     _auto_register_studio_shortcut(sys.argv[1:])
     # ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、
@@ -809,6 +809,9 @@ def main() -> int:
     if sys.argv[1] == "setup":
         from fullseye import setup_cmd as _sc
         return _sc.main(sys.argv[2:])
+    if sys.argv[1] == "doctor":
+        from fullseye import doctor as _doctor
+        return _doctor.main(sys.argv[2:])
     ap = argparse.ArgumentParser(prog=_prog() if _prog().startswith("python -m") else None,
                                  description=__doc__.replace("py -3.11 imgevolve.py", _prog())
                                  .replace("imgevolve — single CLI", "fullseye — single CLI", 1),
@@ -910,8 +913,22 @@ def main() -> int:
     p.add_argument("rest", nargs="*", help=argparse.SUPPRESS)
     p.set_defaults(fn=lambda a: __import__("fullseye.setup_cmd", fromlist=["main"]).main(a.rest))
 
+    p = sub.add_parser("doctor", help="diagnose Windows/Python startup problems; --json for automation, --fix asks first")
+    p.add_argument("rest", nargs="*", help=argparse.SUPPRESS)
+    p.set_defaults(fn=lambda a: __import__("fullseye.doctor", fromlist=["main"]).main(a.rest))
+
     a = ap.parse_args()
     return a.fn(a)
+
+
+def main() -> int:
+    """CLI の入口で起動例外を案内へ変え、元の traceback も残す。 / Explain startup failures without hiding tracebacks."""
+    try:
+        return _main()
+    except (ImportError, OSError, UnicodeError) as exc:
+        from fullseye import startup_errors
+        startup_errors.report(exc, "CLI")
+        return 1
 
 
 if __name__ == "__main__":
