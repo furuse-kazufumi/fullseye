@@ -31,7 +31,7 @@ def test_main_page_is_short_and_has_no_full_captions() -> None:
         visible = re.sub(r'alt="[^"]*"', "", page)          # 画像の代替文(目に見えない)は数えない
         assert "★" not in visible, "%s: 本ページに台帳のキャプション全文が残っている" % lang
         assert ("使った Fullseye の op" if lang == "ja" else "Fullseye ops used") not in page
-        assert page.count('href="more.md#d-') == len(_main_rows(data)), lang
+        assert page.count('href="more.html#d-') == len(_main_rows(data)), lang
 
 
 def test_every_main_exhibit_has_lead_truth_and_a_details_link_that_exists() -> None:
@@ -48,7 +48,7 @@ def test_every_main_exhibit_has_lead_truth_and_a_details_link_that_exists() -> N
             block = blocks[0]
             assert G._code_html(G._esc(e["lead"][lang])) in block, (lang, e["id"])
             assert "%s: %s" % (text["truth"], G._esc(e["truth"][lang])) in block, (lang, e["id"])
-            link = "more.md#%s" % G._anchor(e["id"])
+            link = "more.html#%s" % G._anchor(e["id"])  # 生の HTML の中なので配信される .html を指す
             assert link in block, (lang, e["id"])
             # 行き先: おまけページに錨があり、その項目に全文(キャプションと op)がある
             assert more.count('id="%s"' % G._anchor(e["id"])) == 1, (lang, e["id"])
@@ -74,7 +74,7 @@ def test_every_main_tile_carries_the_truth_badge() -> None:
         text = G.MAIN_TEXT[lang]
         for e in rows:
             block = next(line for line in main.splitlines()
-                         if line.startswith('<div class="vc">') and 'more.md#%s"' % G._anchor(e["id"]) in line)
+                         if line.startswith('<div class="vc">') and 'more.html#%s"' % G._anchor(e["id"]) in line)
             tile = block.split('<div class="vt">')[0]           # 画像のリンクの中だけ
             badge = '<i class="vtb">%s: %s</i>' % (text["truth"], G._esc(e["truth"][lang]))
             assert tile.count(badge) == 1, (lang, e["id"])
@@ -142,7 +142,7 @@ def test_every_language_shows_the_same_exhibits_in_the_same_order() -> None:
     assert len(want) == len(set(want)) >= 10
     for lang in data["langs"]:
         page = G.build(data, lang)
-        got = re.findall(r'href="more\.md#d-([a-z0-9-]+)"', page)
+        got = re.findall(r'href="more\.html#d-([a-z0-9-]+)"', page)
         assert got == [G._anchor(i)[2:] for i in want], lang
         assert (G.BASE / ("" if lang == "ja" else lang) / "more.md").is_file(), lang
         text = G.MAIN_TEXT[lang]
