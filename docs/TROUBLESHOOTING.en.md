@@ -1,6 +1,6 @@
 # Windows troubleshooting
 
-Run the doctor with **the same Python that failed**. Its `Checked` field is an observed value, not a guess. `fullseye doctor --json` is for automation or a support ticket. `--fix` shows its plan first and makes only a reversible repair after confirmation in an interactive terminal: it removes a per-user `QT_PLUGIN_PATH` that names a missing directory. It makes no change in CI, a pipe, or a console-less launch.
+Run the doctor with **the same Python that failed**. Its `Checked` field is an observed value, not a guess. `fullseye doctor --json` is for automation or a support ticket. `--fix` shows its plan first and makes only a reversible repair after confirmation in an interactive terminal: it removes only missing `QT_PLUGIN_PATH` entries from the per-user value and current process, preserving valid entries. It makes no change in CI or a pipe. A console-less launch reports through a dialog and otherwise returns the location of a UTF-8 log.
 
 ```powershell
 py -3.11 -m fullseye doctor

@@ -58,6 +58,83 @@ def test_missing_qt_plugin_path_is_a_safe_fix_but_pipe_cannot_apply_it(monkeypat
     assert "made no changes" in out.getvalue()
 
 
+def test_qt_plugin_path_reports_only_missing_entries_and_preserves_valid_ones(tmp_path):
+    good = str(tmp_path / "qt-plugins")
+    Path(good).mkdir()
+    bad = str(tmp_path / "missing-qt-plugins")
+    report = doctor.collect(env={"PATH": "", "QT_PLUGIN_PATH": good + ";" + bad},
+                            executable=sys.executable, platform="win32", include_sdk=False)
+    item = _finding(report, "native_dll")
+    assert item["status"] == "warning" and item["fixable"]
+    assert item["stale_qt_plugin_paths"] == [bad]
+    assert good not in item["checked"] and bad in item["checked"]
+
+
+def test_qt_fix_rewrites_only_proven_stale_user_entries_after_persistence_succeeds(monkeypatch, tmp_path):
+    good = str(tmp_path / "qt-plugins")
+    Path(good).mkdir()
+    bad = str(tmp_path / "missing-qt-plugins")
+    calls = []
+
+    monkeypatch.setattr(doctor, "_powershell_executable", lambda: "powershell.exe")
+    monkeypatch.setattr(doctor, "_read_user_qt_plugin_path", lambda _powershell: good + ";" + bad)
+    monkeypatch.setattr(doctor.subprocess, "run", lambda args, **kwargs: calls.append((args, kwargs)))
+    monkeypatch.setenv("QT_PLUGIN_PATH", good + ";" + bad)
+    changed = doctor._apply_fixes([{"id": "native_dll", "stale_qt_plugin_paths": [bad]}])
+    assert calls and calls[0][1]["env"]["FULLSEYE_DOCTOR_QT_PLUGIN_PATH"] == good
+    assert os.environ["QT_PLUGIN_PATH"] == good
+    assert bad in changed[0] and good in changed[0]
+
+
+def test_qt_fix_leaves_process_value_unchanged_when_persistent_write_fails(monkeypatch, tmp_path):
+    good = str(tmp_path / "qt-plugins")
+    Path(good).mkdir()
+    bad = str(tmp_path / "missing-qt-plugins")
+    monkeypatch.setattr(doctor, "_powershell_executable", lambda: "powershell.exe")
+    monkeypatch.setattr(doctor, "_read_user_qt_plugin_path", lambda _powershell: bad)
+    monkeypatch.setattr(doctor.subprocess, "run", lambda *args, **kwargs: (_ for _ in ()).throw(OSError("denied")))
+    monkeypatch.setenv("QT_PLUGIN_PATH", good + ";" + bad)
+    with pytest.raises(OSError, match="denied"):
+        doctor._apply_fixes([{"id": "native_dll", "stale_qt_plugin_paths": [bad]}])
+    assert os.environ["QT_PLUGIN_PATH"] == good + ";" + bad
+
+
+def test_qt_fix_does_not_delete_a_valid_user_value_when_only_process_is_stale(monkeypatch, tmp_path):
+    good = str(tmp_path / "qt-plugins")
+    Path(good).mkdir()
+    bad = str(tmp_path / "missing-qt-plugins")
+    monkeypatch.setattr(doctor, "_powershell_executable", lambda: "powershell.exe")
+    monkeypatch.setattr(doctor, "_read_user_qt_plugin_path", lambda _powershell: good)
+    monkeypatch.setattr(doctor.subprocess, "run", lambda *args, **kwargs: pytest.fail("must not rewrite valid user value"))
+    monkeypatch.setenv("QT_PLUGIN_PATH", bad)
+    doctor._apply_fixes([{"id": "native_dll", "stale_qt_plugin_paths": [bad]}])
+    assert "QT_PLUGIN_PATH" not in os.environ
+
+
+def test_powershell_lookup_uses_default_path_then_path_lookup(monkeypatch):
+    expected = Path(r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe")
+    monkeypatch.setattr(doctor.Path, "is_file", lambda path: path == expected)
+    monkeypatch.setattr(doctor.shutil, "which", lambda _: pytest.fail("PATH lookup should not be needed"))
+    assert doctor._powershell_executable() == expected
+
+
+def test_powershell_lookup_falls_back_to_path_without_systemroot(monkeypatch):
+    monkeypatch.delenv("SystemRoot", raising=False)
+    monkeypatch.setattr(doctor.Path, "is_file", lambda _path: False)
+    monkeypatch.setattr(doctor.shutil, "which", lambda name: r"D:\tools\powershell.exe" if name == "powershell.exe" else None)
+    assert doctor._powershell_executable() == Path(r"D:\tools\powershell.exe")
+
+
+def test_consoleless_doctor_writes_a_report_file_when_message_box_is_unavailable(monkeypatch, tmp_path):
+    monkeypatch.setattr(doctor.sys, "stdout", None)
+    monkeypatch.setattr(doctor, "_show_windows_message_box", lambda _text: False)
+    monkeypatch.setattr(doctor.tempfile, "gettempdir", lambda: str(tmp_path))
+    report = doctor.collect(env={"PATH": ""}, executable=sys.executable, include_sdk=False)
+    result = doctor.main(["--lang", "en"], collect_fn=lambda: report)
+    saved = Path(result)
+    assert saved.is_file() and "environment probe" in saved.read_text(encoding="utf-8")
+
+
 def test_qt_fix_shows_plan_then_requires_confirmation_without_touching_windows(monkeypatch):
     report = doctor.collect(env={"PATH": "", "QT_PLUGIN_PATH": "C:\\missing"}, executable=sys.executable,
                             include_sdk=False)
@@ -158,6 +235,15 @@ def test_every_repair_command_is_pasteable_power_shell_and_bash_syntax():
         parsed = subprocess.run([powershell, "-NoProfile", "-NonInteractive", "-Command", parser],
                                 input=command["powershell"], capture_output=True, text=True)
         assert parsed.returncode == 0, (command["powershell"], parsed.stderr)
+
+
+def test_shell_specific_repair_commands_keep_command_separators_outside_arguments():
+    commands = doctor._repair_commands(sys.executable)
+    conda = doctor._render_command(commands["conda_pythonw"][0])
+    certificate = doctor._render_command(commands["proxy_certificate"][0])
+    assert conda == {"powershell": "conda activate fullseye; fullseye-studio",
+                     "bash": "conda activate fullseye && fullseye-studio"}
+    assert certificate["bash"] == "export REQUESTS_CA_BUNDLE=/c/certs/company-root.pem"
 
 
 def test_troubleshooting_tables_and_doctor_items_cannot_drift():

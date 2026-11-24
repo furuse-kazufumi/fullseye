@@ -10,14 +10,17 @@ from __future__ import annotations
 
 import argparse
 import codecs
+import io
 import importlib.metadata
 import importlib.util
 import json
 import os
 import shlex
+import shutil
 import ssl
 import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Iterable, Optional, Sequence
@@ -35,10 +38,16 @@ TROUBLESHOOTING_IDS = (
 
 @dataclass(frozen=True)
 class Command:
-    """PowerShell / bash の生の argv。表示時までエスケープしない。 / Raw argv for both shells, escaped only at display time."""
+    """PowerShell / bash の生の argv。表示時までエスケープしない。 / Raw argv for both shells, escaped only at display time.
+
+    ``*_script`` is only for shell grammar such as ``&&`` that cannot be an argv
+    element. / ``*_script`` は argv にできない ``&&`` 等の shell 構文だけに使う。
+    """
 
     powershell: tuple[str, ...]
     bash: tuple[str, ...]
+    powershell_script: Optional[str] = None
+    bash_script: Optional[str] = None
 
 
 def _argv(*parts: str) -> Command:
@@ -49,6 +58,11 @@ def _argv(*parts: str) -> Command:
 def _shell(powershell: Sequence[str], bash: Sequence[str]) -> Command:
     """shell ごとに構文が違う命令を表す。 / Describe a command whose shell syntax differs."""
     return Command(tuple(powershell), tuple(bash))
+
+
+def _script(powershell: str, bash: str) -> Command:
+    """shell の区切りを含む命令を、意図どおり表示する。 / Keep shell separators outside argv."""
+    return Command((), (), powershell_script=powershell, bash_script=bash)
 
 
 def _quote_powershell(part: str) -> str:
@@ -71,7 +85,7 @@ def _quote_bash(part: str) -> str:
 
 def _render_command(command: Command) -> dict[str, str]:
     """表示の直前に一か所だけで shell 用にエスケープする。 / Escape commands in one place, immediately before display."""
-    powershell = " ".join(_quote_powershell(part) for part in command.powershell)
+    powershell = command.powershell_script or " ".join(_quote_powershell(part) for part in command.powershell)
     # 空白を含む実行ファイルは call operator が必要。無いと ScriptBlock は引用パスをコマンドでなく文字列式として読む。
     # A quoted executable needs PowerShell's call operator; otherwise ScriptBlock
     # parses the quoted path as a string expression instead of a command invocation.
@@ -79,7 +93,7 @@ def _render_command(command: Command) -> dict[str, str]:
         powershell = "& " + powershell
     return {
         "powershell": powershell,
-        "bash": " ".join(_quote_bash(part) for part in command.bash),
+        "bash": command.bash_script or " ".join(_quote_bash(part) for part in command.bash),
     }
 
 
@@ -95,7 +109,8 @@ def _repair_commands(exe: str) -> dict[str, tuple[Command, ...]]:
                                             ("mkdir", "-p", "/c/src", "/c/data")),),
         "store_python": (_shell(("py", "-3.11", "-m", "venv", r"$HOME\venvs\fullseye"),
                                   ("py", "-3.11", "-m", "venv", "$HOME/venvs/fullseye")),),
-        "conda_pythonw": (_argv("conda", "activate", "fullseye;", "fullseye-studio"),),
+        "conda_pythonw": (_script("conda activate fullseye; fullseye-studio",
+                                   "conda activate fullseye && fullseye-studio"),),
         "python_path": (_argv(exe, "-m", "fullseye", "doctor"),),
         "multiple_python": (_argv(exe, "-m", "pip", "--version"),),
         "pip_target": (_argv(exe, "-m", "pip", "install", "--upgrade", "fullseye"),
@@ -109,7 +124,7 @@ def _repair_commands(exe: str) -> dict[str, tuple[Command, ...]]:
                               _shell(("Set-ExecutionPolicy", "-Scope", "Process", "-ExecutionPolicy", "RemoteSigned"),
                                      ("powershell.exe", "-NoProfile", "-Command", "Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned"))),
         "proxy_certificate": (_shell((r"$env:REQUESTS_CA_BUNDLE='C:\certs\company-root.pem'",),
-                                      ("export", r"REQUESTS_CA_BUNDLE=C:\certs\company-root.pem")),),
+                                      ("export", "REQUESTS_CA_BUNDLE=/c/certs/company-root.pem")),),
         "write_permission": (_shell(("py", "-3.11", "-m", "venv", r"$HOME\venvs\fullseye"),
                                       ("py", "-3.11", "-m", "venv", "$HOME/venvs/fullseye")),),
         "cuda_driver": (_argv("nvidia-smi"),
@@ -159,6 +174,23 @@ def _windows_known_folder_env(env: dict[str, str]) -> tuple[bool, str]:
                   env.get("OneDriveCommercial", ""), env.get("USERPROFILE", "")]
     moved = [p for p in candidates if p and "onedrive" in p.lower()]
     return bool(moved), "; ".join(moved)
+
+
+def _qt_plugin_entries(value: str) -> list[str]:
+    """QT_PLUGIN_PATH を Windows の ``;`` 単位で保つ。 / Preserve QT_PLUGIN_PATH entries split by Windows ``;``."""
+    return [entry for entry in value.split(";") if entry]
+
+
+def _stale_qt_plugin_entries(value: str) -> list[str]:
+    """実在しない Qt plugin folder だけを返す。 / Return only Qt plugin folders confirmed missing."""
+    return [entry for entry in _qt_plugin_entries(value) if not Path(entry).is_dir()]
+
+
+def _remove_qt_plugin_entries(value: str, stale: Iterable[str]) -> str:
+    """確認済みの古い項目だけを除く。 / Remove only entries already confirmed stale."""
+    stale_keys = {os.path.normcase(entry) for entry in stale}
+    return ";".join(entry for entry in _qt_plugin_entries(value)
+                    if os.path.normcase(entry) not in stale_keys)
 
 
 def _distribution_root() -> Optional[Path]:
@@ -284,15 +316,19 @@ def collect(*, env: Optional[dict[str, str]] = None, executable: Optional[str] =
     ))
     qt_spec = importlib.util.find_spec("PySide6")
     plugin_path = environment.get("QT_PLUGIN_PATH", "")
-    native_status = "warning" if plugin_path and not Path(plugin_path).exists() else "ok"
-    findings.append(_item(
+    stale_plugin_paths = _stale_qt_plugin_entries(plugin_path)
+    native_status = "warning" if stale_plugin_paths else "ok"
+    native = _item(
         "native_dll", native_status, "Native DLL and Qt plugin loading",
-        "PySide6=%s; QT_PLUGIN_PATH=%s" % ("found" if qt_spec else "not installed", plugin_path or "unset"),
+        "PySide6=%s; stale QT_PLUGIN_PATH entries=%s" %
+        ("found" if qt_spec else "not installed", "; ".join(stale_plugin_paths) or "none"),
         "Install the matching package with this Python. For DLL errors install Microsoft Visual C++ 2015-2022 x64,"
         " then run doctor again.",
         commands["native_dll"] if qt_spec or plugin_path else (),
-        fixable=bool(sys.platform == "win32" and plugin_path and not Path(plugin_path).exists()),
-    ))
+        fixable=bool(sys.platform == "win32" and stale_plugin_paths),
+    )
+    native["stale_qt_plugin_paths"] = stale_plugin_paths
+    findings.append(native)
     findings.append(_item(
         "antivirus_lock", "manual", "Antivirus lock or quarantine", "No safe read-only quarantine API is portable.",
         "Restore only the Fullseye file after checking its publisher; exclude the venv/project, not all of Python.",
@@ -519,24 +555,103 @@ def _fix_plan(report: dict[str, Any]) -> list[dict[str, Any]]:
     return [f for f in report["findings"] if f["id"] == "native_dll" and f["fixable"]]
 
 
+def _powershell_executable() -> Path:
+    """既定位置、次に PATH から Windows PowerShell を探す。 / Find Windows PowerShell at its default path, then PATH."""
+    default = Path(r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe")
+    if default.is_file():
+        return default
+    found = shutil.which("powershell.exe") or shutil.which("powershell")
+    if found:
+        return Path(found)
+    raise OSError(
+        "PowerShell が見つかりません / Windows PowerShell was not found. "
+        "確認した場所 / Checked: %s and PATH. "
+        "ユーザー環境変数を安全に変更できません / Cannot safely change the per-user setting. "
+        "対処 / What to do: Enable Windows PowerShell or add powershell.exe to PATH, then rerun "
+        "`fullseye doctor --fix`; otherwise remove only the reported stale QT_PLUGIN_PATH entries manually."
+        % default
+    )
+
+
+def _read_user_qt_plugin_path(powershell: Path | str) -> str:
+    """利用者単位の QT_PLUGIN_PATH を読むだけで変更しない。 / Read, never change, the per-user QT_PLUGIN_PATH."""
+    result = subprocess.run(
+        [str(powershell), "-NoProfile", "-Command",
+         "[Console]::OutputEncoding = [Text.Encoding]::UTF8; "
+         "[Environment]::GetEnvironmentVariable('QT_PLUGIN_PATH', 'User')"],
+        check=True, capture_output=True, text=True, encoding="utf-8", timeout=20,
+    )
+    return result.stdout.rstrip("\r\n")
+
+
+def _write_user_qt_plugin_path(powershell: Path | str, value: str) -> None:
+    """利用者単位の値を一度だけ書く。 / Write the per-user value exactly once."""
+    child_env = os.environ.copy()
+    child_env["FULLSEYE_DOCTOR_QT_PLUGIN_PATH"] = value
+    child_env["FULLSEYE_DOCTOR_QT_PLUGIN_PATH_DELETE"] = "1" if not value else "0"
+    subprocess.run(
+        [str(powershell), "-NoProfile", "-Command",
+         "$next = $env:FULLSEYE_DOCTOR_QT_PLUGIN_PATH; "
+         "if ($env:FULLSEYE_DOCTOR_QT_PLUGIN_PATH_DELETE -eq '1') { $next = $null }; "
+         "[Environment]::SetEnvironmentVariable('QT_PLUGIN_PATH', $next, 'User')"],
+        check=True, capture_output=True, text=True, timeout=20, env=child_env,
+    )
+
+
 def _apply_fixes(plan: Iterable[dict[str, Any]]) -> list[str]:
+    """確認済みの古い Qt 項目だけを直す。 / Repair only confirmed stale Qt entries.
+
+    The process environment is changed only after the per-user write succeeds.
+    / プロセス環境は、利用者単位の書込み成功後だけ変更する。
+    """
     changed: list[str] = []
     for finding in plan:
         if finding["id"] == "native_dll":
-            os.environ.pop("QT_PLUGIN_PATH", None)
-            powershell = Path(os.environ.get("SystemRoot", r"C:\\Windows")) / "System32" / "WindowsPowerShell" / "v1.0" / "powershell.exe"
-            if not powershell.is_file():
-                raise OSError("Windows PowerShell was not found at %s" % powershell)
-            subprocess.run([str(powershell), "-NoProfile", "-Command",
-                            "[Environment]::SetEnvironmentVariable('QT_PLUGIN_PATH', $null, 'User')"],
-                           check=True, capture_output=True, text=True, timeout=20)
-            changed.append("removed stale QT_PLUGIN_PATH from this process and the user environment")
+            stale = list(finding.get("stale_qt_plugin_paths", ()))
+            if not stale:
+                continue
+            powershell = _powershell_executable()
+            persistent = _read_user_qt_plugin_path(powershell)
+            persistent_stale = [entry for entry in _stale_qt_plugin_entries(persistent)
+                                if os.path.normcase(entry) in {os.path.normcase(item) for item in stale}]
+            updated_persistent = _remove_qt_plugin_entries(persistent, persistent_stale)
+            if persistent_stale:
+                _write_user_qt_plugin_path(powershell, updated_persistent)
+            process = os.environ.get("QT_PLUGIN_PATH", "")
+            updated_process = _remove_qt_plugin_entries(process, stale)
+            if updated_process:
+                os.environ["QT_PLUGIN_PATH"] = updated_process
+            else:
+                os.environ.pop("QT_PLUGIN_PATH", None)
+            changed.append(
+                "removed stale QT_PLUGIN_PATH entries %s; preserved entries %s"
+                % ("; ".join(stale), updated_persistent or "none")
+            )
     return changed
+
+
+def _show_windows_message_box(text: str) -> bool:
+    """コンソールなしでは Windows のダイアログで報告する。 / Show a report through a Windows dialog without a console."""
+    if sys.platform != "win32":
+        return False
+    try:
+        import ctypes
+        return bool(ctypes.windll.user32.MessageBoxW(0, text, "Fullseye doctor", 0x10))
+    except Exception:  # noqa: BLE001 - logging below is the last-resort report channel
+        return False
+
+
+def _write_consoleless_report(text: str) -> str:
+    """最後の手段として UTF-8 ログを返す。 / Return a UTF-8 log path as the final fallback."""
+    with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", suffix=".log", prefix="fullseye-doctor-",
+                                     dir=tempfile.gettempdir(), delete=False) as log:
+        log.write(text)
+        return log.name
 
 
 def main(argv: Optional[Sequence[str]] = None, *, collect_fn: Callable[[], dict[str, Any]] = collect,
          input_fn: Callable[[str], str] = input, is_tty: Optional[bool] = None,
-         apply_fn: Callable[[Iterable[dict[str, Any]]], list[str]] = _apply_fixes, out=None) -> int:
+         apply_fn: Callable[[Iterable[dict[str, Any]]], list[str]] = _apply_fixes, out=None) -> int | str:
     """CLI entry: ``--json`` for tools and conservative ``--fix`` for terminals. / CLI with fail-closed fixing."""
     default_lang = _detect_lang()
     description = ("システムを変更せずに Fullseye の起動問題を診断します。" if default_lang == "ja"
@@ -547,7 +662,15 @@ def main(argv: Optional[Sequence[str]] = None, *, collect_fn: Callable[[], dict[
     ap.add_argument("--fix", action="store_true", help="show and confirm safe, reversible repairs")
     ap.add_argument("--yes", action="store_true", help="confirm --fix (ignored without a terminal)")
     args = ap.parse_args(list(argv) if argv is not None else None)
-    out = out or sys.stdout
+    consoleless = out is None and sys.stdout is None
+    out = out if out is not None else (io.StringIO() if consoleless else sys.stdout)
+
+    def finish(status: int) -> int | str:
+        if not consoleless:
+            return status
+        text = out.getvalue()
+        return status if _show_windows_message_box(text) else _write_consoleless_report(text)
+
     try:
         out.reconfigure(errors="replace")
     except Exception:  # noqa: BLE001 - StringIO and redirected streams may not support reconfigure
@@ -559,7 +682,7 @@ def main(argv: Optional[Sequence[str]] = None, *, collect_fn: Callable[[], dict[
     else:
         print(format_report(report, lang), end="", file=out)
     if not args.fix:
-        return 1 if _has_failures(report) else 0
+        return finish(1 if _has_failures(report) else 0)
     if is_tty is None:
         try:
             from fullseye.setup_cmd import _stdin_is_terminal
@@ -570,24 +693,28 @@ def main(argv: Optional[Sequence[str]] = None, *, collect_fn: Callable[[], dict[
     if not plan:
         print("安全な自動修復はありません。上の命令を使ってください。" if lang == "ja"
               else "No safe automatic repair is available; use the commands above.", file=out)
-        return 1 if _has_failures(report) else 0
-    print("予定した変更: 存在しないフォルダーを指すユーザー環境変数 QT_PLUGIN_PATH を削除します。" if lang == "ja"
-          else "Planned change: remove the stale per-user QT_PLUGIN_PATH because it names a missing directory.", file=out)
+        return finish(1 if _has_failures(report) else 0)
+    stale = [entry for finding in plan for entry in finding.get("stale_qt_plugin_paths", ())]
+    stale_text = "; ".join(stale)
+    print("予定した変更: 次の確認済みで存在しない QT_PLUGIN_PATH 項目だけを、プロセスと利用者の値から削除します: %s"
+          % stale_text if lang == "ja" else
+          "Planned change: remove only these confirmed missing QT_PLUGIN_PATH entries from the process and per-user value: %s"
+          % stale_text, file=out)
     if not is_tty:
         print("端末を検出できなかったため、--fix は変更しませんでした。端末で実行して確認してください。" if lang == "ja"
               else "No terminal detected: --fix made no changes. Run in a terminal and confirm.", file=out)
-        return 1
+        return finish(1)
     prompt = "この変更を適用しますか? [y/N] " if lang == "ja" else "Apply this change? [y/N] "
     confirmed = args.yes or input_fn(prompt).strip().lower() in {"y", "yes"}
     if not confirmed:
         print("変更しませんでした。" if lang == "ja" else "No changes made.", file=out)
-        return 1
+        return finish(1)
     try:
         messages = apply_fn(plan)
     except (OSError, subprocess.SubprocessError) as exc:
         prefix = "変更を完了できませんでした" if lang == "ja" else "No change completed"
         print("%s: %s: %s" % (prefix, type(exc).__name__, exc), file=out)
-        return 1
+        return finish(1)
     for message in messages:
         print(("変更しました: %s" if lang == "ja" else "Changed: %s") % message, file=out)
-    return 0
+    return finish(0)
