@@ -102,6 +102,8 @@ def test_static_cap_matches_are_refused_before_conversion(monkeypatch, module, c
     message = str(error.value)
     assert f"{int(np.prod(shape)):,} elements" in message
     assert f"{cap:,} elements" in message
+    assert "input dtype uint8" in message
+    assert f"{int(np.prod(shape)) * np.dtype(np.float64).itemsize:,} bytes" in message
     assert remedy in message and "Why:" in message and "対処:" in message
 
 

@@ -46,31 +46,66 @@ def _advice_pair(advice: tuple[str, str]) -> tuple[str, str]:
     return advice
 
 
+def _dtype_name(dtype) -> str:
+    """dtype 名を安全に表示する / Format a dtype without coercing input data."""
+    if dtype is None:
+        return "unknown"
+    try:
+        return np.dtype(dtype).name
+    except TypeError:
+        return "unknown"
+
+
 def _cap_message(op: str, name: str, actual: int, cap: int, *,
                  shape: tuple[int, ...] | None, advice: tuple[str, str],
-                 unit: tuple[str, str]) -> str:
+                 unit: tuple[str, str], input_dtype=None,
+                 working_dtype=np.float64) -> str:
     """上限拒否を日英で組み立てる / Build a bilingual cap-refusal message."""
     advice_en, advice_ja = _advice_pair(advice)
     unit_en, unit_ja = _advice_pair(unit)
     shape_text = "" if shape is None else " (shape %s)" % (shape,)
+    input_dtype_name = _dtype_name(input_dtype)
+    working_dtype_name = _dtype_name(working_dtype)
+    working_itemsize = np.dtype(working_dtype).itemsize
+    allocation_bytes = actual * working_itemsize
+    if unit_en in {"elements", "pixels"}:
+        allocation_en = ("Converting input dtype %s to working dtype %s would "
+                         "allocate at least %s bytes for one working array."
+                         % (input_dtype_name, working_dtype_name,
+                            format(allocation_bytes, ",")))
+        allocation_ja = ("入力 dtype %s を処理用 dtype %s に変換すると、処理用配列 1 枚だけで "
+                         "少なくとも %s bytes を確保します。"
+                         % (input_dtype_name, working_dtype_name,
+                            format(allocation_bytes, ",")))
+    else:
+        allocation_en = ("Input dtype is %s and working dtype is %s; the exact "
+                         "allocation also depends on the frame or channel geometry."
+                         % (input_dtype_name, working_dtype_name))
+        allocation_ja = ("入力 dtype は %s、処理用 dtype は %s です。正確な確保量はフレームまたは "
+                         "チャンネルの形状にも依存します。"
+                         % (input_dtype_name, working_dtype_name))
     return (
         "English: %s: argument '%s' has %s %s%s, exceeding the limit of %s %s.\n"
-        "Why: it is refused before conversion because the operation may allocate oversized working arrays.\n"
+        "Why: it is refused before conversion because the operation may allocate oversized working arrays. %s\n"
         "How: %s\n"
         "日本語: %s: 引数 '%s' は %s %s%sで、上限 %s %sを超えています。\n"
-        "理由: 処理用配列の過大な確保を避けるため、変換前に拒否しました。\n"
+        "理由: 処理用配列の過大な確保を避けるため、変換前に拒否しました。%s\n"
         "対処: %s"
-        % (op, name, format(actual, ","), unit_en, shape_text, format(cap, ","), unit_en, advice_en,
-           op, name, format(actual, ","), unit_ja, shape_text, format(cap, ","), unit_ja, advice_ja)
+        % (op, name, format(actual, ","), unit_en, shape_text, format(cap, ","), unit_en, allocation_en, advice_en,
+           op, name, format(actual, ","), unit_ja, shape_text, format(cap, ","), unit_ja, allocation_ja, advice_ja)
     )
 
 
 def refuse_cap_exceeded(op: str, name: str, actual: int, cap: int, *,
                         shape: tuple[int, ...] | None,
                         advice: tuple[str, str],
-                        unit: tuple[str, str] = ("elements", "要素")) -> None:
+                        unit: tuple[str, str] = ("elements", "要素"),
+                        input_dtype=None,
+                        working_dtype=np.float64) -> None:
     """要素数上限を親切に拒否する / Refuse an element cap with a useful remedy."""
-    raise ValueError(_cap_message(op, name, actual, cap, shape=shape, advice=advice, unit=unit))
+    raise ValueError(_cap_message(
+        op, name, actual, cap, shape=shape, advice=advice, unit=unit,
+        input_dtype=input_dtype, working_dtype=working_dtype))
 
 
 def refuse_count_mismatch(op: str, counts: dict[str, int], *,
@@ -114,5 +149,7 @@ def precheck_shape_and_elements(a, name: str, op: str, cap: int, *,
         n *= dim
     total = n * int(multiplier)
     if total > cap:
-        refuse_cap_exceeded(op, name, total, cap, shape=shape, advice=advice)
+        refuse_cap_exceeded(
+            op, name, total, cap, shape=shape, advice=advice,
+            input_dtype=getattr(a, "dtype", None))
     return shape
