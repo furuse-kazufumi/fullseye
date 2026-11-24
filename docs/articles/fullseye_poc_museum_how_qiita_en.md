@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**114 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**115 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -4289,6 +4289,48 @@ Source: [examples/poc_real_tum_rgbd_slam.py](https://github.com/furuse-kazufumi/
 This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam)
 
 Ops used (notes): [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`euclidean_cluster`](https://furuse.work/ops/3d/segment/euclidean_cluster.html) · [`fit_plane_3d`](https://furuse.work/ops/3d/geometry/fit_plane_3d.html) · [`normals_from_depth`](https://furuse.work/ops/3d/range_image/normals_from_depth.html) · [`occlusion_edges`](https://furuse.work/ops/3d/range_image/occlusion_edges.html) · [`plane_segmentation`](https://furuse.work/ops/3d/segment/plane_segmentation.html)
+
+## No.2026.318 —— Measuring a Generic Two-Stage Vehicle from Two Fixed RGB Cameras — From Separation to First-Stage Reusable Landing, Video Measurement Reaches the Same Verdict as Truth
+
+Video measurement of a reusable landing must return failures from insufficient fuel or crosswind as well as successes. A generic two-stage vehicle is measured by two fixed RGB cameras, and its success/failure verdict is checked against simulator truth.
+
+[![Measuring a Generic Two-Stage Vehicle from Two Fixed RGB Cameras — From Separation to First-Stage Reusable Landing, Video Measurement Reaches the Same Verdict as Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/01_two_camera_input_output_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/01_two_camera_input_output.png)
+
+*↑ **Measuring a Generic Two-Stage Vehicle from Two Fixed RGB Cameras — From Separation to First-Stage Reusable Landing, Video Measurement Reaches the Same Verdict as Truth** ―― A generic two-stage vehicle, not a model of a real one, separates in MuJoCo; its first stage boostbacks to a circular landing pad. RGB from fixed ground-tracking and pad cameras alone supplies colour markers for calibrated two-view triangulation, attitude, flame-image axis, touchdown time and speed, and pad-centre offset. On holdout seed 41 the median / maximum position error is 0.354 / 0.468 m, median tilt error 0.770 degrees, median flame-image-axis error 6.557 degrees; touchdown is RGB 5.01 s versus truth 4.97 s, RGB 0.752 m/s versus truth 3.711 m/s, and the pad offset is 0.919 m for both. Both tuning runs and both holdout runs succeed under truth and RGB; fuel shortage and strong wind both give truth/RGB = fail/fail, and a missing RGB touchdown never becomes a success.*
+
+[![固定の地上追尾カメラ(左)と着陸台カメラ(右)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/02_separation_landing_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/02_separation_landing_video.gif)
+
+*↑ The measurement ―― 固定の地上追尾カメラ(左)と着陸台カメラ(右)。分離から着陸までの 106 コマ、10.0 fps。橙=RGB計測、緑=真値表示。 (figure labels are in Japanese; the numbers are the same)*
+
+[![holdout の第1段 3-D 軌跡。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/03_trajectory_truth_vs_rgb_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/03_trajectory_truth_vs_rgb.png)
+
+*↑ holdout の第1段 3-D 軌跡。*
+
+[![画面中の数値はこの実行の run から作った値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/04_holdout_error_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/04_holdout_error_table.png)
+
+*↑ 画面中の数値はこの実行の run から作った値。*
+
+[![意図した燃料不足と強風。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/07_failure_cases_rgb_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/07_failure_cases_rgb_truth.png)
+
+*↑ 意図した燃料不足と強風。*
+
+[![fuel_shortage seed 7。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/05_fuel_shortage_rgb_failure.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/05_fuel_shortage_rgb_failure.gif)
+
+*↑ The animation ―― fuel_shortage seed 7。固定2カメラ RGB の橙=計測、緑=MuJoCo真値。真値/RGB の成功判定は False/False で、成功を返さない。*
+
+[![strong_wind seed 19。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/06_strong_wind_rgb_failure.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/06_strong_wind_rgb_failure.gif)
+
+*↑ The animation ―― strong_wind seed 19。固定2カメラ RGB の橙=計測、緑=MuJoCo真値。真値/RGB の成功判定は False/False で、成功を返さない。*
+
+```
+py -3.11 examples/poc_rocket_landing.py
+```
+
+Source: [examples/poc_rocket_landing.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rocket_landing.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_rocket_landing)
+
+Ops used (notes): [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 
 

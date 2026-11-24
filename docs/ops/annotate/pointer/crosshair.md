@@ -5,7 +5,7 @@ category: pointer
 in: image2d
 out: image2d
 gpu: あり(許可リスト)
-examples: [annotate_gallery, poc_air_hockey_intercept, poc_ball_bounce, poc_kendama, poc_table_tennis_bounce, poc_ttc_rss, poc_world_terrain]
+examples: [annotate_gallery, poc_air_hockey_intercept, poc_ball_bounce, poc_kendama, poc_rocket_landing, poc_table_tennis_bounce, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -55,6 +55,7 @@ ValueError
 - [poc_air_hockey_intercept](../../../../examples/poc_air_hockey_intercept.py) — `py -3.11 examples/poc_air_hockey_intercept.py`
 - [poc_ball_bounce](../../../../examples/poc_ball_bounce.py) — `py -3.11 examples/poc_ball_bounce.py`
 - [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
+- [poc_rocket_landing](../../../../examples/poc_rocket_landing.py) — `py -3.11 examples/poc_rocket_landing.py`
 - [poc_table_tennis_bounce](../../../../examples/poc_table_tennis_bounce.py) — `py -3.11 examples/poc_table_tennis_bounce.py`
 - [poc_ttc_rss](../../../../examples/poc_ttc_rss.py) — `py -3.11 examples/poc_ttc_rss.py`
 - [poc_world_terrain](../../../../examples/poc_world_terrain.py) — `py -3.11 examples/poc_world_terrain.py`

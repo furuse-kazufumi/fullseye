@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 227,
+  "target_count": 228,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -38704,6 +38704,145 @@
       "alt": {
         "ja": "synthetic towel, 1 mm per pixel. red cross = detected corner (chroma variant), blue circle = true corner, yellow = true crease, green = detected side. bottom row: low contrast, strong wrinkle. dE is this seed's; the mean over 20 seeds is 69",
         "en": "Knowing where a towel's edges meet tells a robot where to grasp. In rendered images of folded towels the corners were found within about 1 mm, though such small gaps depend on how the truth is defined. Simple rectangle fitting worked best, and every method broke with close colours or strong wrinkles."
+      }
+    },
+    "poc_rocket_landing": {
+      "representative": "02_separation_landing_video.gif",
+      "status": "gif",
+      "selected": [
+        "01_two_camera_input_output.png",
+        "03_trajectory_truth_vs_rgb.png",
+        "07_failure_cases_rgb_truth.png"
+      ],
+      "excluded_frames": [
+        {
+          "file": "04_holdout_error_table.png",
+          "reason": "crop_text_only",
+          "source_aspect": 1.886161
+        }
+      ],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_rocket_landing/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_two_camera_input_output.png",
+              "content_box": [
+                0,
+                295,
+                720,
+                100
+              ]
+            },
+            {
+              "file": "03_trajectory_truth_vs_rgb.png",
+              "content_box": [
+                0,
+                183,
+                720,
+                324
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.225
+            },
+            {
+              "file": "07_failure_cases_rgb_truth.png",
+              "content_box": [
+                0,
+                270,
+                720,
+                150
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.793578
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 50784,
+          "color_mad": [
+            0.0893,
+            0.0586,
+            0.0833
+          ],
+          "max_color_mad": 0.0893,
+          "source_sha256": "7e8b3761677a4a6d9e92fe3b5057f4b79fdce58bac47407e113b43521f91a4f7"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_rocket_landing/story.en.gif",
+          "frames": [
+            {
+              "file": "01_two_camera_input_output.png",
+              "content_box": [
+                0,
+                295,
+                720,
+                100
+              ]
+            },
+            {
+              "file": "03_trajectory_truth_vs_rgb.png",
+              "content_box": [
+                0,
+                183,
+                720,
+                324
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.225
+            },
+            {
+              "file": "07_failure_cases_rgb_truth.png",
+              "content_box": [
+                0,
+                270,
+                720,
+                150
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.793578
+            }
+          ],
+          "frame_count": 3,
+          "durations_ms": [
+            2500,
+            1600,
+            1600
+          ],
+          "bytes": 50784,
+          "color_mad": [
+            0.0893,
+            0.0586,
+            0.0833
+          ],
+          "max_color_mad": 0.0893,
+          "source_sha256": "ca22b105cf4386af2af3bc86532764d9a9d6c657e19c8cd2ea4774a622257671"
+        }
+      },
+      "en": {
+        "text": "not_audited",
+        "selected": [
+          "01_two_camera_input_output.png",
+          "03_trajectory_truth_vs_rgb.png",
+          "07_failure_cases_rgb_truth.png"
+        ],
+        "excluded_frames": [],
+        "not_english_ready": []
+      },
+      "reason": null,
+      "cover": "01_two_camera_input_output.png",
+      "still": "articles/assets/poc/poc_rocket_landing/01_two_camera_input_output.png",
+      "stills": {
+        "ja": "articles/assets/poc/poc_rocket_landing/01_two_camera_input_output.png",
+        "en": "articles/assets/poc/poc_rocket_landing/01_two_camera_input_output.png"
+      },
+      "alt": {
+        "ja": "holdout seed 41 の固定 2 カメラ。橙の十字は RGB からの計測、緑は後から重ねた MuJoCo 真値。位置中央値 0.354 m、傾き中央値 0.770°。",
+        "en": "Video measurement of a reusable landing must return failures from insufficient fuel or crosswind as well as successes. A generic two-stage vehicle is measured by two fixed RGB cameras, and its success/failure verdict is checked against simulator truth."
       }
     }
   }

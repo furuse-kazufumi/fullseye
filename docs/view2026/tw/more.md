@@ -292,7 +292,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## 全部看
 
-PoC 283 個,另有機器人範例 2 個。展開分組即可載入縮圖。
+PoC 284 個,另有機器人範例 2 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -416,7 +416,7 @@ PoC 283 個,另有機器人範例 2 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>三維形狀</b> (18)</summary>
+<details class="vall"><summary><b>三維形狀</b> (19)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png"><img src="../../articles/assets/poc/poc_battery_ct_degradation/story.en.gif" alt="In synthetic prismatic cells whose swelling was scaled so their exteriors match, CT slices still show closed clearance, waving layers or gas holes. Only 29.4 % of the electrode swelling reaches the outside. Outside dimensions alone cannot identify the cause." loading="lazy" width="200" height="200"></picture><span>電池 CT 劣化</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="../../articles/assets/poc/poc_bev_sensor_fusion/story.en.gif" alt="For distant vehicles, a small image calibration error becomes a physical shift in a bird's-eye map. Opposite-side range sensors were fused on one grid, tracing the reprojection shift at 22 m. Complementary views create the gain, but growing yaw error makes fusion worse than one sensor." loading="lazy" width="200" height="200"></picture><span>鳥瞰圖融合</span></a>
@@ -436,6 +436,7 @@ PoC 283 個,另有機器人範例 2 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori.png"><img src="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/story.en.gif" alt="Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>以三維工具量四維</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="會場建築與小行星糸川同一把尺:把 PLATEAU 的 CityGML LOD2 變成網格" width="200" height="200"><span>會場建築與小行星糸川同一把尺:把 PLATEAU 的 CityGML LOD2 變成網格</span></a>
 <a href="../../articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bga_ball_type_roundtrip.jpg" alt="從影像傳到點雲、體積、網格和圖,焊球數在三種型別中都是 71 個" width="200" height="200"><span>從影像傳到點雲、體積、網格和圖,焊球數在三種型別中都是 71 個</span></a>
+<a href="../../articles/assets/poc/poc_rocket_landing/02_separation_landing_video.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_rocket_landing/01_two_camera_input_output.png"><img src="../../articles/assets/poc/poc_rocket_landing/story.en.gif" alt="Video measurement of a reusable landing must return failures from insufficient fuel or crosswind as well as successes. A generic two-stage vehicle is measured by two fixed RGB cameras, and its success/failure verdict is checked against simulator truth." loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>用兩台固定 RGB 相機量測通用二級飛行器分離與一級著陸</span></a>
 </div>
 </details>
 

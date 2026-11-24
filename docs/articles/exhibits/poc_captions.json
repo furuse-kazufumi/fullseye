@@ -5133,6 +5133,20 @@
    "run": "py -3.11 examples/poc_cloth_towel_corners_synth.py",
    "lead_ja": "畳む前のタオルは、角と辺の位置が分かれば、つかむ場所が決まる。合成の画像で角は 1 mm 前後の誤差で見つかったが、差は真値の定義に左右される。単純な長方形の当てはめが最良で、台の色が近いときと強いしわでは、どの方法も崩れる。",
    "lead_en": "Knowing where a towel's edges meet tells a robot where to grasp. In rendered images of folded towels the corners were found within about 1 mm, though such small gaps depend on how the truth is defined. Simple rectangle fitting worked best, and every method broke with close colours or strong wrinkles."
+  },
+  {
+   "id": "poc_rocket_landing",
+   "wing": "wing_threed",
+   "added": "2026-11-24",
+   "numbers_source": "log",
+   "figure": "two_camera_input_output",
+   "title_ja": "一般化した二段機を固定 RGB 2 視点で測る —— 分離から第1段の再使用着陸まで、映像計測は真値と同じ成否を返す",
+   "title_en": "Measuring a Generic Two-Stage Vehicle from Two Fixed RGB Cameras — From Separation to First-Stage Reusable Landing, Video Measurement Reaches the Same Verdict as Truth",
+   "caption_ja": "実在の機体を模さない一般化した二段機を MuJoCo で分離し、第1段をブーストバックから円形の着陸台へ降ろした。固定した地上追尾・着陸台の2カメラの RGB だけから、色マーカーを二視点三角測量し、姿勢、炎の画像軸、接地時刻・速さ、台中心からのずれを測る。holdout seed 41 では位置誤差の中央値/最大が 0.354 / 0.468 m、傾き誤差の中央値が 0.770 度、炎の画像軸誤差の中央値が 6.557 度、接地時刻は RGB 5.01 s・真値 4.97 s、接地速さは RGB 0.752 m/s・真値 3.711 m/s、中心からのずれは両方 0.919 m だった。調整用2回と holdout 2回はどちらも成功、燃料不足と強風はどちらも真値/RGB = 不成功/不成功で、欠測した接地を成功扱いしない。",
+   "caption_en": "A generic two-stage vehicle, not a model of a real one, separates in MuJoCo; its first stage boostbacks to a circular landing pad. RGB from fixed ground-tracking and pad cameras alone supplies colour markers for calibrated two-view triangulation, attitude, flame-image axis, touchdown time and speed, and pad-centre offset. On holdout seed 41 the median / maximum position error is 0.354 / 0.468 m, median tilt error 0.770 degrees, median flame-image-axis error 6.557 degrees; touchdown is RGB 5.01 s versus truth 4.97 s, RGB 0.752 m/s versus truth 3.711 m/s, and the pad offset is 0.919 m for both. Both tuning runs and both holdout runs succeed under truth and RGB; fuel shortage and strong wind both give truth/RGB = fail/fail, and a missing RGB touchdown never becomes a success.",
+   "run": "py -3.11 examples/poc_rocket_landing.py",
+   "lead_ja": "再使用着陸の映像計測は、着陸の成功だけでなく、燃料不足や横風での失敗も取り違えずに返す必要がある。一般化した二段機を二台の固定 RGB カメラで測り、真値と成功・不成功の判断を照合した。",
+   "lead_en": "Video measurement of a reusable landing must return failures from insufficient fuel or crosswind as well as successes. A generic two-stage vehicle is measured by two fixed RGB cameras, and its success/failure verdict is checked against simulator truth."
   }
  ]
 }

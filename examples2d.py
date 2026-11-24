@@ -2225,6 +2225,11 @@ EXAMPLES = [
     {"id": "poc_sheet_deformation_ffd", "task": "registration", "data": "synthetic",
      "name": "印刷したシートの変形を B-spline FFD で推定し、真値で領域ごと・成分ごとの誤差の地図を作る",
      "summary": "点の格子・文字・格子縞・縦棒だけのバーコード・余白の 5 領域を持つシートに、異物の膨らみ 2 か所 + 引き伸ばしの既知の場(最大 3.28 px)を掛ける。2 方向の模様の 3 領域の EPE の平均は register_ffd 0.025 px / 既存の demons 0.125 px / アフィンの ECC 1.226 px。★開口問題: バーコードでは dy の誤差 0.807 px が dx の 0.032 px の 25 倍。★余白の EPE 中央値 1.326 px は模様のある所の 67 倍。★格子の分解能: 波長 24 px の皺で格子 8 / 12 / 16 px の誤差 0.062 / 0.329 / 0.505 px。★曲げの罰だけだと余白で推定が 34.3 px まで暴れ(真の最大 1.5 px)、membrane_weight=0.1 で 3.6 px —— 模様のある所の精度との引き換えなので既定は曲げだけ。registration_to_flow2d → piv_flow_magnitude の最大 3.291 px(真値 3.279 px)。"},
+    {"id": "poc_rocket_landing", "task": "space", "data": "synthetic",
+     "name": "二段式ロケットの第1段を固定 RGB 2 視点で追い、再使用着陸の成否を真値と照合する",
+     "summary": "MuJoCo の一般化した二段機で分離・ブーストバック・着陸を実行し、二台の固定 RGB カメラだけから"
+                "校正済み 3-D 軌跡、姿勢、接地、炎の方向、着陸台中心からのずれを測る。調整用 2 回と holdout 2 回で"
+                "映像と真値の成功判定が一致し、燃料不足と強風の失敗も RGB 判定が fail-closed で不成功にする。"},
 ]
 
 # Scripts under examples/ that are deliberately NOT in the gallery — each with the

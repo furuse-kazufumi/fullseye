@@ -10219,6 +10219,23 @@
     "hi": "क्लासिक इमेज प्रोसेसिंग से तौलिये के कोने, किनारे और तह-रेखाएँ (सिंथेटिक): सरल आयत-फ़िट सबसे अच्छा है, सामान्य बहुभुज केवल क्रोमा में बराबरी करता है, और मेज़ का रंग पास होने या 3 mm से अधिक झुर्रियों पर सब कुछ बिगड़ता है",
     "fr": "Coins, côtés et plis d'une serviette par traitement d'image classique (synthétique) : un simple ajustement de rectangle est le meilleur, le polygone général ne l'égale qu'en chroma, et tout se dégrade avec une couleur de table proche ou des plis de 3 mm et plus"
    }
+  },
+  {
+   "id": "poc_rocket_landing",
+   "group": "wing_threed",
+   "media": "02_separation_landing_video.gif",
+   "motion": true,
+   "thumb_src": "02_separation_landing_video.gif",
+   "label": {
+    "ja": "固定 RGB 2 視点で二段機の分離と第1段着陸を測る",
+    "en": "Measure generic two-stage separation and first-stage landing with two fixed RGB cameras",
+    "zh": "用两台固定 RGB 相机测量通用二级飞行器分离与一级着陆",
+    "tw": "用兩台固定 RGB 相機量測通用二級飛行器分離與一級著陸",
+    "ko": "고정 RGB 카메라 두 대로 일반 2단 비행체의 분리와 1단 착륙을 측정한다",
+    "de": "Abtrennung und Erststufenlandung eines generischen Zweistufenfahrzeugs mit zwei festen RGB-Kameras messen",
+    "hi": "दो स्थिर RGB कैमरों से सामान्य दो-चरण वाहन का पृथक्करण और पहले चरण का अवतरण मापें",
+    "fr": "Mesurer la séparation d'un véhicule générique à deux étages et l'atterrissage du premier étage avec deux caméras RGB fixes"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

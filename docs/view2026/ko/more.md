@@ -292,7 +292,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## 전부 보기
 
-PoC 283개와 로봇 예 2개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 284개와 로봇 예 2개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -416,7 +416,7 @@ PoC 283개와 로봇 예 2개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 형상</b> (18)</summary>
+<details class="vall"><summary><b>3-D 형상</b> (19)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png"><img src="../../articles/assets/poc/poc_battery_ct_degradation/story.en.gif" alt="In synthetic prismatic cells whose swelling was scaled so their exteriors match, CT slices still show closed clearance, waving layers or gas holes. Only 29.4 % of the electrode swelling reaches the outside. Outside dimensions alone cannot identify the cause." loading="lazy" width="200" height="200"></picture><span>배터리 CT 열화</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="../../articles/assets/poc/poc_bev_sensor_fusion/story.en.gif" alt="For distant vehicles, a small image calibration error becomes a physical shift in a bird's-eye map. Opposite-side range sensors were fused on one grid, tracing the reprojection shift at 22 m. Complementary views create the gain, but growing yaw error makes fusion worse than one sensor." loading="lazy" width="200" height="200"></picture><span>BEV 센서 융합</span></a>
@@ -436,6 +436,7 @@ PoC 283개와 로봇 예 2개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori.png"><img src="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/story.en.gif" alt="Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>3-D로 4차원</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="회의장 건물과 소행성 이토카와를 같은 자로: PLATEAU CityGML LOD2 를 메시로" width="200" height="200"><span>회의장 건물과 소행성 이토카와를 같은 자로: PLATEAU CityGML LOD2 를 메시로</span></a>
 <a href="../../articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bga_ball_type_roundtrip.jpg" alt="영상에서 점군·볼륨·메시·그래프로 넘겨도 볼 개수는 세 가지 형에서 모두 71개" width="200" height="200"><span>영상에서 점군·볼륨·메시·그래프로 넘겨도 볼 개수는 세 가지 형에서 모두 71개</span></a>
+<a href="../../articles/assets/poc/poc_rocket_landing/02_separation_landing_video.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_rocket_landing/01_two_camera_input_output.png"><img src="../../articles/assets/poc/poc_rocket_landing/story.en.gif" alt="Video measurement of a reusable landing must return failures from insufficient fuel or crosswind as well as successes. A generic two-stage vehicle is measured by two fixed RGB cameras, and its success/failure verdict is checked against simulator truth." loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>고정 RGB 카메라 두 대로 일반 2단 비행체의 분리와 1단 착륙을 측정한다</span></a>
 </div>
 </details>
 
