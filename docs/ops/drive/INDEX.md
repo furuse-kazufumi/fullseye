@@ -1,4 +1,4 @@
-# DRIVE operator help — 744 ops in 55 categories
+# DRIVE operator help — 749 ops in 56 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -95,6 +95,10 @@
 ### kendamaworld (12)
 
 [add_ken](kendamaworld/add_ken.md) · [add_string](kendamaworld/add_string.md) · [camera_perceiver](kendamaworld/camera_perceiver.md) · [ken_mesh](kendamaworld/ken_mesh.md) · [ken_set_pose](kendamaworld/ken_set_pose.md) · [ken_truth](kendamaworld/ken_truth.md) · [kendama_clearance](kendamaworld/kendama_clearance.md) · [kendama_pose](kendamaworld/kendama_pose.md) · [kendama_rig](kendamaworld/kendama_rig.md) · [kendama_world](kendamaworld/kendama_world.md) · [string_mesh](kendamaworld/string_mesh.md) · [string_set](kendamaworld/string_set.md)
+
+### lane (5)
+
+[color_rule_mask](lane/color_rule_mask.md) · [lane_boundary_fit](lane/lane_boundary_fit.md) · [lane_center_path](lane/lane_center_path.md) · [plane_topview_color](lane/plane_topview_color.md) · [stop_line_detect](lane/stop_line_detect.md)
 
 ### lateral (21)
 
