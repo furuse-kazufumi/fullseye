@@ -20,6 +20,128 @@ import warnings
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+def _mcp_module_invocation() -> bool:
+    """Return whether this import is the real ``python -m fullseye.mcp`` path.
+
+    ``python -m fullseye.mcp`` の本物の起動経路で import 中かを返す。
+    """
+    import sys
+
+    argv = list(getattr(sys, "orig_argv", None) or [])
+    if sys.argv[:1] != ["-m"] or "-m" not in argv:
+        return False
+    at = argv.index("-m")
+    return argv[at + 1:at + 2] == ["fullseye.mcp"]
+
+
+def _distribution_package_roots() -> set[str]:
+    """Return canonical package directories declared by the installed distribution.
+
+    Wheel installs declare ``site-packages/fullseye`` through the distribution
+    metadata.  A PEP 610 editable install instead declares its checkout in
+    ``direct_url.json``; both are accepted.  Missing or malformed metadata is
+    intentionally an empty allow-list, so the caller can fail closed.
+
+    wheel は metadata に ``site-packages/fullseye`` を記録する。PEP 610 の
+    editable install は ``direct_url.json`` に checkout を記録するので、両方を
+    許可する。metadata が無い・壊れている場合は空の許可表を返し、呼び出し側を
+    fail-closed にする。
+    """
+    import importlib.metadata as metadata
+    import json
+    import os
+    from urllib.parse import unquote, urlparse
+    from urllib.request import url2pathname
+
+    roots: set[str] = set()
+    try:
+        dist = metadata.distribution("fullseye")
+    except metadata.PackageNotFoundError:
+        return roots
+
+    def add(path: str) -> None:
+        try:
+            candidate = os.path.normcase(os.path.realpath(path))
+        except (OSError, ValueError):
+            return
+        if os.path.isfile(os.path.join(candidate, "__init__.py")):
+            roots.add(candidate)
+
+    add(str(dist.locate_file("fullseye")))
+    try:
+        direct_url = json.loads(dist.read_text("direct_url.json") or "{}")
+        parsed = urlparse(str(direct_url.get("url", "")))
+        editable = bool(direct_url.get("dir_info", {}).get("editable"))
+        if editable and parsed.scheme == "file":
+            add(os.path.join(url2pathname(unquote(parsed.path)), "fullseye"))
+    except (OSError, TypeError, ValueError):
+        pass
+    return roots
+
+
+def _is_below(path: str, parent: str) -> bool:
+    """Whether canonical ``path`` is ``parent`` or below it, across drives.
+
+    正規化済みの ``path`` が ``parent`` 自身または配下かを、Windows の別 drive
+    でも例外を出さずに調べる。
+    """
+    import os
+
+    try:
+        return os.path.commonpath((path, parent)) == parent
+    except ValueError:
+        return False
+
+
+def _refuse_untrusted_cwd_package_for_mcp_server() -> None:
+    """Fail closed for a ``-m`` MCP server imported from an uninstalled cwd copy.
+
+    ``python -m fullseye.mcp`` normally puts cwd before ``site-packages``.  Once
+    this package has been selected, compare its directory with the installed
+    wheel directory or the PEP 610 editable source directory recorded for the
+    ``fullseye`` distribution.  If the selected package is below cwd but is not
+    one of those declared locations, stop before loading any MCP code.
+
+    This check cannot run before Python chooses the top-level ``fullseye``
+    package: a wholly attacker-controlled ``cwd/fullseye`` can replace this file
+    and execute first.  Use the ``fullseye-mcp`` console script (the default
+    registration command) or ``python -P -m fullseye.mcp``; both keep cwd out of
+    that initial package lookup.  The check still protects accidental copied or
+    stale package trees that execute this code.
+
+    ``python -m fullseye.mcp`` は通常 cwd を ``site-packages`` より前に置く。この
+    package が選ばれた後に、wheel の場所または PEP 610 editable install が記録した
+    source と実際の package directory を比べる。cwd 配下で、かつ登録済みの場所に
+    一致しなければ MCP code を読む前に止める。
+
+    ただし、Python が完全に攻撃者管理の ``cwd/fullseye`` を最初に選んだ場合、この
+    file 自体を置換できるため検査より先にその code が走る。既定の
+    ``fullseye-mcp`` console script、または ``python -P -m fullseye.mcp`` を使う。
+    どちらも最初の package lookup から cwd を外す。この検査は、この code を実行した
+    偶発的な copied/stale package tree を fail-closed にする。
+    """
+    import os
+
+    if not _mcp_module_invocation():
+        return
+    try:
+        package_dir = os.path.normcase(os.path.realpath(os.path.dirname(__file__)))
+        cwd = os.path.normcase(os.path.realpath(os.getcwd()))
+    except (OSError, ValueError):
+        raise RuntimeError(
+            "refusing to start fullseye MCP: cannot verify the package location; "
+            "use fullseye-mcp or python -P -m fullseye.mcp") from None
+    if _is_below(package_dir, cwd) and package_dir not in _distribution_package_roots():
+        raise RuntimeError(
+            "refusing to start fullseye MCP: fullseye was imported from the current "
+            "working directory instead of its installed or editable location; "
+            "use fullseye-mcp or python -P -m fullseye.mcp")
+
+
+_refuse_untrusted_cwd_package_for_mcp_server()
+del _refuse_untrusted_cwd_package_for_mcp_server
+
+
 def _drop_the_cwd_entry_for_the_mcp_server() -> None:
     """``python -m fullseye.mcp`` で起動した時だけ、``sys.path[0]``(cwd)を外す。他の使い方では何もしない。
 
@@ -32,15 +154,9 @@ def _drop_the_cwd_entry_for_the_mcp_server() -> None:
     import sys
     if getattr(sys.flags, "safe_path", False) or not sys.path:
         return
-    argv = list(getattr(sys, "orig_argv", None) or [])
     # ★2026-11-22(独立レビュー): script.py の引数に ``-m fullseye.mcp`` があるだけで、
     #   script.py のフォルダを外していた。パッケージの import 中に sys.argv[0] が ``-m`` の本物の -m 起動だけに限る。
-    if sys.argv[:1] != ["-m"]:
-        return
-    if "-m" not in argv:
-        return
-    at = argv.index("-m")
-    if argv[at + 1:at + 2] != ["fullseye.mcp"]:
+    if not _mcp_module_invocation():
         return
     try:
         first = os.path.normcase(os.path.realpath(sys.path[0] or os.getcwd()))

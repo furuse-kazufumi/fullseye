@@ -4,9 +4,9 @@ Claude Code / Claude Desktop などの MCP クライアントから、fullseye �
 使い方を読み、実際に走らせる**ための stdio サーバ。0.1.11 で PoC として入った。
 
 ```
-py -3.11 -m fullseye.mcp             # stdio サーバ(クライアントが起動する)
-py -3.11 -m fullseye.mcp --demo      # 自分を起動して一通り叩く(下の出力が出れば動いている)
-py -3.11 -m fullseye.mcp --coverage  # カタログ 5 層の被覆を JSON で
+fullseye-mcp                         # stdio サーバ(クライアントが起動する)
+fullseye-mcp --demo                  # 自分を起動して一通り叩く(下の出力が出れば動いている)
+fullseye-mcp --coverage              # カタログ 5 層の被覆を JSON で
 ```
 
 **wheel から動く(0.2.0〜)**。0.1.11 はカタログの正本 `docs/OP_INDEX.json` と知識層
@@ -30,17 +30,19 @@ wheel ではノート本文の代わりに同梱の Studio help HTML(`studio_ass
 ## Claude Code への登録
 
 ```
-claude mcp add fullseye -- py -3.11 -m fullseye.mcp
+claude mcp add fullseye -- fullseye-mcp
 ```
 
 `pip install fullseye` した環境でも checkout でも同じ。checkout なら `docs/ops` の
 ノート本文と掃引図まで届く(cwd は問わない —— パッケージの位置から解決する)。
 
-クライアントはサーバをプロジェクトのフォルダ(cwd)で起動する。`python -m` は cwd を `sys.path` の先頭に置くので、
-そこにある同じ名前の `.py`(`scipy.py` など)を本物より先に読まないよう、サーバは `-m fullseye.mcp` で起動した時に
-cwd を `sys.path` から外す(fullseye の置き場所そのものが cwd の時は外さない。2026-11-15)。cwd に `fullseye/` という
-名のフォルダがある場合まで防ぐには、`-P`(Python 3.11 の safe path)を付けて登録する:
+クライアントはサーバをプロジェクトのフォルダ(cwd)で起動する。`fullseye-mcp` は console script の場所から起動するので、
+cwd の `fullseye/` や同名の `.py`(`scipy.py` など)を import の先頭に置かない。Python を直接指定する必要がある場合だけ、
+safe path の `-P` を付けて登録する:
 `claude mcp add fullseye -- py -3.11 -P -m fullseye.mcp`。
+裸の `python -m fullseye.mcp` は登録に使わない。MCP 側は、実行された package が cwd の下にあり、installed wheel または
+PEP 610 editable install の場所と一致しなければ起動を拒否する。ただし Python が最初に cwd の完全な偽 `fullseye/` を選んだ場合、
+そのコードは MCP 側の検査より先に実行される。このため `fullseye-mcp` と `-P` のどちらかが入口である。
 読み込める画像は既定で**同梱サンプルだけ**。自分の画像を読ませるには根を足す:
 
 ```
@@ -65,7 +67,7 @@ from mcp.client.stdio import stdio_client
 
 
 async def main():
-    server = StdioServerParameters(command="py", args=["-3.11", "-m", "fullseye.mcp"],
+    server = StdioServerParameters(command="fullseye-mcp", args=[],
                                    env={"PYTHONUTF8": "1"})
     async with stdio_client(server) as (read, write):
         async with ClientSession(read, write) as session:
