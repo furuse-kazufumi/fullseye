@@ -26,6 +26,8 @@
 
 > **できること一覧 → [CAPABILITIES.md](CAPABILITIES.md)**（何をしたいかで引く索引）／**PoC が上げた堅牢性 → [HARDENING.md](HARDENING.md)**（見つけて直した記録）／**どこまで検証できているか → [MATURITY.md](MATURITY.md)**（手で書かず数えて出す成熟度台帳）
 
+> **C/C++ から使う → [C_API.md](C_API.md)**（`pip install fullseye` のまま CMake consumer project をビルドする）
+
 > **実機・実データでの検証を募集しています。** Fullseye は個人開発で、物理の計測装置を持っていません。そのため検証は仮想の光学系と合成した真値で行っています。実機や実データで試した結果は大歓迎です。**データは共有しなくて構いません** —— 結果の数値だけの報告も受け付けます。手元のデータから集計値だけを出す検証キット(`python -m fullseye.validation_kit`)もあります。→ [検証報告フォーム](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) · [Discussions › Show and tell](https://github.com/furuse-kazufumi/fullseye/discussions/categories/show-and-tell) · [VALIDATION_CONTRIBUTING.md](VALIDATION_CONTRIBUTING.md)
 
 ---
@@ -544,9 +546,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`CAPABILITIES.en.md`](CAPABILITIES.en.md) | What Fullseye can do |
 | [`CAPABILITIES.md`](CAPABILITIES.md) | Fullseye でできること |
 | [`CHAIN_FUZZ.en.md`](CHAIN_FUZZ.en.md) | Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains |
-| [`C_API.md`](C_API.md) | Fullseye C SDK compatibility |
+| [`C_API.md`](C_API.md) | Fullseye C/C++ SDK |
 | [`C_API_OPS.md`](C_API_OPS.md) | C SDK callable operators |
-| [`C_API_SDK.md`](C_API_SDK.md) | C/C++ SDK runtime requirement |
+| [`C_API_SDK.md`](C_API_SDK.md) | C/C++ SDK の導入 |
 | [`DESIGN_NOTES.de.md`](DESIGN_NOTES.de.md) | Fullseye-Entwurfsnotizen (aus den ★-Kommentaren im Quellcode erzeugt) |
 | [`DESIGN_NOTES.en.md`](DESIGN_NOTES.en.md) | Fullseye design notes (generated from the ★ comments in the source) |
 | [`DESIGN_NOTES.ko.md`](DESIGN_NOTES.ko.md) | Fullseye 설계 판단 모음(소스의 ★ 주석에서 생성) |

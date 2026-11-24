@@ -1,0 +1,19 @@
+name: C API natural consumer
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  c-api-natural-consumer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install the default package only
+        run: python -m pip install -e . pytest
+      - name: Build external C and C++ consumers without runtime environment variables
+        run: python -m pytest tests/test_c_api_sdk_static.py tests/test_c_api_natural_sdk.py -q

@@ -77,27 +77,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "dependency:cmake:46651f03960eb478",
-      "name": "cmake",
-      "purl": "pkg:pypi/cmake",
-      "scope": "optional",
-      "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "native"
-        },
-        {
-          "name": "fullseye:requirement",
-          "value": "cmake>=3.21,<5"
-        },
-        {
-          "name": "fullseye:specifier",
-          "value": ">=3.21,<5"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "dependency:cupy-cuda12x:484a81c63f6822ce",
       "name": "cupy-cuda12x",
       "purl": "pkg:pypi/cupy-cuda12x",
@@ -595,12 +574,8 @@
       "bom-ref": "dependency:pybind11:15d579d579fe7eea",
       "name": "pybind11",
       "purl": "pkg:pypi/pybind11",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "native"
-        },
         {
           "name": "fullseye:requirement",
           "value": "pybind11==2.13.6"
@@ -1144,6 +1119,7 @@
       "ref": "pkg:pypi/fullseye@1.1.1",
       "dependsOn": [
         "dependency:numpy:0ea3e51cd447c867",
+        "dependency:pybind11:15d579d579fe7eea",
         "dependency:scipy:7b4a15d34b14013a",
         "dependency:threadpoolctl:1a8416879673e721"
       ]
@@ -1154,10 +1130,6 @@
     },
     {
       "ref": "dependency:asyncua:0d08a0f64fe43bd3",
-      "dependsOn": []
-    },
-    {
-      "ref": "dependency:cmake:46651f03960eb478",
       "dependsOn": []
     },
     {

@@ -80,7 +80,7 @@ if(FULLSEYE_BUILD_NATIVE)
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
           LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
           ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-  install(FILES fullseye.h fullseye.hpp fullseye_abi.h
+  install(FILES fullseye.h fullseye.hpp fullseye_opencv.hpp fullseye_abi.h
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fullseye)
   install(EXPORT FullseyeTargets NAMESPACE Fullseye::
           DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Fullseye)
