@@ -11,6 +11,7 @@ import sys
 import numpy as np
 import pytest
 
+import fslib
 import fullseye
 from fullseye import sdk
 from fullseye.sdk import __main__ as sdk_cli
@@ -114,6 +115,39 @@ def test_external_consumer_uses_default_runtime_and_matches_python(tmp_path, exa
     fields = dict(part.split("=", 1) for part in actual.split())
     assert fields["result_count"] == "1"
     assert float(fields["output_sum"]) == expected
+
+
+def test_cpp_saved_pipeline_reloads_replaced_studio_json_without_rebuilding(tmp_path):
+    """The same executable follows a replacement Studio save / JSON 差し替えで答えが変わる門。"""
+    cmake = shutil.which("cmake")
+    if cmake is None:
+        raise AssertionError("CMake is required for the standard C/C++ SDK gate")
+    cmake_dir = _run([sys.executable, "-m", "fullseye.sdk", "--cmakedir"], cwd=ROOT).stdout.strip()
+    build = tmp_path / "hello-pipeline" / "build"
+    env = os.environ.copy()
+    env.pop("FULLSEYE_PYTHON_ROOT", None)
+    _run([cmake, "-S", str(ROOT / "examples" / "c_api" / "hello_pipeline"), "-B", str(build),
+          "-Dfullseye_DIR=" + cmake_dir], cwd=tmp_path, env=env)
+    _run([cmake, "--build", str(build)], cwd=tmp_path, env=env)
+    executable = build / ("app.exe" if sys.platform == "win32" else "app")
+    pipeline_path = build / "inspect.json"
+    pixels = np.array([[0.0, 0.2, 0.0], [0.2, 1.0, 0.2], [0.0, 0.2, 0.0]], dtype=np.float64)
+
+    def run_same_binary() -> tuple[dict[str, str], int]:
+        text = _run([str(executable)], cwd=build, env=_runtime_env_without_python_path(env)).stdout.strip()
+        fields = dict(part.split("=", 1) for part in text.split())
+        expected = fullseye.load_pipeline(pipeline_path).run(pixels.copy())
+        return fields, len(fslib.Region(np.asarray(expected) > 0.5).runs())
+
+    first, first_python = run_same_binary()
+    assert first["input"] == "image" and first["output"] == "result"
+    assert int(first["run_count"]) == first_python
+    document = json.loads(pipeline_path.read_text(encoding="utf-8"))
+    document["stages"][0][1] = 0.1
+    pipeline_path.write_text(json.dumps(document), encoding="utf-8")
+    second, second_python = run_same_binary()
+    assert int(second["run_count"]) == second_python
+    assert second["run_count"] != first["run_count"]
 
 
 def test_external_consumer_uses_a_non_ascii_runtime_root(tmp_path):

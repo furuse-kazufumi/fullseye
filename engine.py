@@ -30,7 +30,8 @@ import api
 from json_safety import _loads_limited
 from studio_result import StageCache, assess_validity
 
-__all__ = ["FullseyeEngine", "diagnose_stages", "stage_name", "StageCache", "pipeline_states", "check_pipeline_header"]
+__all__ = ["FullseyeEngine", "diagnose_stages", "stage_name", "StageCache", "pipeline_states",
+           "check_pipeline_header", "load_pipeline", "load_pipeline_text", "pipeline_interface"]
 
 
 def _input_hash(image):
@@ -274,6 +275,14 @@ def diagnose_stages(stages) -> list[dict]:
 #: パイプラインのファイル(``to_dict`` / Studio の Save pipeline が書く JSON)の版。印 ``fullseye_pipeline`` の値。
 PIPELINE_FORMAT_VERSION = 1
 
+# Saved Studio pipelines are control-plane JSON, never image payloads.  Bound
+# files at the public file entry before decoding them so a mistaken image path
+# or an untrusted file cannot allocate without limit. / Studio 保存 pipeline は
+# 画素でなく制御用 JSON なので、公開ファイル入口で復号前に上限を掛け、画像を
+# 間違えて渡した場合や信頼できないファイルで無制限に確保しない。
+MAX_PIPELINE_FILE_BYTES = 1024 * 1024
+_PIPELINE_FILE_KEYS = frozenset(("fullseye_pipeline", "name", "stages"))
+
 
 def check_pipeline_header(d, *, where: str = "pipeline file") -> None:
     """パイプラインのファイルの **版の印** を読むときに検査する(各読み手がここを呼ぶ。形式は変えない)。
@@ -376,7 +385,13 @@ class FullseyeEngine:
     @_hybridmethod
     def load(cls, self, path: str) -> "FullseyeEngine":
         """Load a pipeline from the JSON that Studio's "Save pipeline" writes.
-        ``FullseyeEngine.load(path)`` returns a new engine; ``engine.load(path)`` loads into ``engine``."""
+        ``FullseyeEngine.load(path)`` returns a new engine; ``engine.load(path)`` loads into ``engine``.
+
+        This legacy engine method intentionally keeps accepting in-memory Studio
+        metadata used by older GUI files.  New application/file boundaries
+        should use :func:`load_pipeline`, the closed-schema gate shared by the
+        CLI and C/C++ SDK.
+        """
         path = os.fspath(path)
         with open(path, encoding="utf-8") as f:
             d = _loads_limited(f.read(), label="pipeline JSON")
@@ -645,6 +660,122 @@ class FullseyeEngine:
     def __repr__(self):
         return "FullseyeEngine(%r, %d stages: %s)" % (
             self.name, len(self.stages), self.to_ops() or "<empty>")
+
+
+def _pipeline_problem(where: str, problem: dict) -> ValueError:
+    """Make structural rejection useful at every file-reading entry / 構造拒否を全入口で親切にする。"""
+    stage = int(problem.get("index", -1)) + 1
+    op = problem.get("op", "<unknown>")
+    message = str(problem.get("message", "invalid pipeline stage"))
+    if "sort_mismatch" == problem.get("kind"):
+        fix = "Make the preceding stage produce the input sort this operator expects, or insert a converting operator."
+    elif "unknown operator" in message:
+        fix = "Choose an operator listed by fullseye.list_ops() and save the pipeline again from Studio."
+    else:
+        fix = "Correct this stage in Studio, save the pipeline again, then reload the file."
+    return ValueError(
+        "%s: stage %d (%s) is invalid: %s. The file is refused before execution because a saved "
+        "pipeline must have one unambiguous, type-safe meaning. %s" % (where, stage, op, message, fix))
+
+
+def _validate_file_pipeline_dict(value: object, *, where: str) -> dict:
+    """Reject non-Studio keys and malformed documents before constructing an engine.
+
+    ``FullseyeEngine.from_dict`` remains the in-memory construction API.  This
+    narrower gate is for JSON files/text crossing an application boundary, and
+    is shared by CLI, Python, C and C++ so they cannot disagree about a saved
+    Studio pipeline. / ``from_dict`` はメモリ上の構築 API のままとし、この狭い
+    門はアプリ境界を越す JSON 用で、CLI/Python/C/C++ が同じ Studio 保存物を同じ
+    ように拒否する。
+    """
+    if not isinstance(value, dict):
+        raise ValueError("%s: expected a JSON object with 'stages', got %s. A Studio pipeline is an object; save it "
+                         "again with Studio's Save pipeline command." % (where, type(value).__name__))
+    check_pipeline_header(value, where=where)
+    extra = sorted(set(value) - _PIPELINE_FILE_KEYS)
+    if extra:
+        raise ValueError("%s: unsupported key(s): %s. They are refused because a saved pipeline has a closed schema; "
+                         "remove the key(s) or save the pipeline again from Studio." %
+                         (where, ", ".join(repr(key) for key in extra)))
+    if "stages" not in value:
+        raise ValueError("%s: missing required key 'stages'. The file cannot name work to run; save the pipeline again "
+                         "from Studio." % where)
+    return value
+
+
+def load_pipeline_text(text: str | bytes, *, where: str = "pipeline JSON") -> FullseyeEngine:
+    """Load, validate and prepare a Studio pipeline JSON document without running it.
+
+    Unknown operators, bad stage keys and sort mismatches are rejected here,
+    before the first operator can run.  This is the canonical saved-pipeline
+    gate used by :func:`load_pipeline`, the CLI and the native SDK bridge.
+    """
+    if isinstance(text, bytes):
+        try:
+            text = text.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise ValueError("%s: bytes are not valid UTF-8 (%s). Save the Studio pipeline as UTF-8 JSON and retry."
+                             % (where, exc)) from exc
+    if not isinstance(text, str):
+        raise TypeError("%s: expected UTF-8 JSON text, got %s. Pass the contents of a Studio .json file."
+                        % (where, type(text).__name__))
+    try:
+        document = _validate_file_pipeline_dict(_loads_limited(text, label=where), where=where)
+        name = document.get("name", "pipeline")
+        engine = FullseyeEngine.from_dict(document, name=name)
+    except (TypeError, ValueError) as exc:
+        if str(exc).startswith(where + ":"):
+            raise
+        raise ValueError("%s: cannot read the saved pipeline: %s. Fix the named field or re-save it from Studio."
+                         % (where, exc)) from exc
+    problems = engine.validate()
+    if problems:
+        raise _pipeline_problem(where, problems[0])
+    return engine
+
+
+def load_pipeline(path: str | os.PathLike[str]) -> FullseyeEngine:
+    """Load a Studio JSON pipeline through the same fail-closed gate as ``fullseye run``.
+
+    The returned :class:`FullseyeEngine` runs with ``.run(image)``.  File paths
+    are intentionally the only extra concern here; all JSON validation belongs
+    to :func:`load_pipeline_text`, which also serves the C/C++ byte API.
+    """
+    path = os.fspath(path)
+    try:
+        size = os.path.getsize(path)
+    except OSError as exc:
+        raise ValueError("pipeline file %r cannot be read: %s. Check the path and permissions, then save the Studio "
+                         "pipeline as UTF-8 JSON." % (path, exc)) from exc
+    if size > MAX_PIPELINE_FILE_BYTES:
+        raise ValueError("pipeline file %r is %d bytes, above the %d-byte limit. A pipeline is control JSON, not image "
+                         "data, so it is refused before decoding. Remove embedded data or split the workflow, then save "
+                         "again from Studio." % (path, size, MAX_PIPELINE_FILE_BYTES))
+    try:
+        with open(path, "rb") as source:
+            text = source.read()
+    except OSError as exc:
+        raise ValueError("pipeline file %r cannot be read: %s. Check the path and permissions, then retry." %
+                         (path, exc)) from exc
+    return load_pipeline_text(text, where="pipeline file %r" % path)
+
+
+def pipeline_interface(pipeline: FullseyeEngine) -> dict:
+    """Return the single named input/output interface of a Studio linear pipeline.
+
+    Studio's saved linear pipeline format has one value flowing from its first
+    stage to its last.  Name those endpoints explicitly for language bindings
+    instead of making C/C++ callers guess positional conventions.
+    """
+    if not isinstance(pipeline, FullseyeEngine) or not pipeline.stages:
+        raise ValueError("pipeline interface needs a validated, non-empty Studio pipeline. Load it with fullseye.load_pipeline().")
+    input_sort, output_sort = pipeline.input_sort(), pipeline.output_sort()
+    if input_sort == "any" or output_sort == "any" or input_sort is None or output_sort is None:
+        raise ValueError("pipeline %r has no concrete input/output sort (input=%r, output=%r). Start and end with "
+                         "operators that declare a concrete sort before embedding it." %
+                         (pipeline.name, input_sort, output_sort))
+    return {"inputs": [{"name": "image", "sort": input_sort}],
+            "outputs": [{"name": "result", "sort": output_sort}]}
 
 
 def _knob_literal(v) -> str:

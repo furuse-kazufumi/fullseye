@@ -378,7 +378,7 @@ def cmd_run(a):
     import engine
     import imgio
     if str(a.pipeline).lower().endswith(".json"):
-        eng = engine.FullseyeEngine.load(a.pipeline)
+        eng = engine.load_pipeline(a.pipeline)
     else:
         eng = engine.FullseyeEngine.from_ops(a.pipeline, a=a.a, b=a.b)
 

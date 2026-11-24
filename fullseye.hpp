@@ -208,12 +208,121 @@ public:
         return ImageView(static_cast<const double *>(value.data), value.height, value.width,
                          value.row_stride_bytes);
     }
+    // A value-copy view of a region result.  Keeping the C result's borrowed
+    // storage inside this RAII owner would make a Region outlive its Result,
+    // so the natural C++ method returns its explicit run list instead.
+    std::vector<fs_run_t> region_runs(size_t index = 0u) const {
+        const fs_run_t *runs = nullptr;
+        size_t count = 0u;
+        const fs_status_t status = fs_result_region_runs_n(value_, index, &runs, &count);
+        if (status != FS_OK) {
+            throw Error(status, std::string("Fullseye result.region_runs failed (") + status_name(status) + ")");
+        }
+        return std::vector<fs_run_t>(runs, runs + count);
+    }
+    double real(size_t index = 0u) const {
+        double value = 0.0;
+        const fs_status_t status = fs_result_real_n(value_, index, &value);
+        if (status != FS_OK) {
+            throw Error(status, std::string("Fullseye result.real failed (") + status_name(status) + ")");
+        }
+        return value;
+    }
 
 private:
     friend class Runtime;
+    friend class Pipeline;
     explicit Result(fs_result_id_t value) noexcept : value_(value) {}
 
     fs_result_id_t value_ = 0u;
+};
+
+struct PipelineEndpoint {
+    std::string name;
+    fs_value_kind_t kind = FS_VALUE_IMAGE;
+};
+
+class PipelineInput {
+public:
+    PipelineInput(std::string_view name, const Image &image) : name_(name), value_(image.input()) {
+        if (name.empty()) {
+            throw std::invalid_argument("Fullseye Pipeline input needs a non-empty declared name");
+        }
+    }
+
+private:
+    friend class Pipeline;
+    std::string name_;
+    fs_input_n_t value_ = FS_INPUT_N_INIT;
+};
+
+class Pipeline {
+public:
+    ~Pipeline() { fs_pipeline_destroy(value_); }
+    Pipeline(Pipeline &&other) noexcept
+        : runtime_(std::exchange(other.runtime_, nullptr)), value_(std::exchange(other.value_, nullptr)) {}
+    Pipeline &operator=(Pipeline &&other) noexcept {
+        if (this != &other) {
+            fs_pipeline_destroy(value_);
+            runtime_ = std::exchange(other.runtime_, nullptr);
+            value_ = std::exchange(other.value_, nullptr);
+        }
+        return *this;
+    }
+    Pipeline(const Pipeline &) = delete;
+    Pipeline &operator=(const Pipeline &) = delete;
+
+    size_t input_count() const noexcept { return fs_pipeline_input_count(value_); }
+    size_t output_count() const noexcept { return fs_pipeline_output_count(value_); }
+    PipelineEndpoint input(size_t index = 0u) const { return endpoint(index, true); }
+    PipelineEndpoint output(size_t index = 0u) const { return endpoint(index, false); }
+
+    Result run(std::initializer_list<PipelineInput> inputs) const {
+        if (value_ == nullptr) {
+            throw Error(FS_E_INVALID_ARG, "Fullseye Pipeline is empty or has been moved from; load a Studio JSON pipeline again");
+        }
+        std::vector<fs_pipeline_input_n_t> native;
+        native.reserve(inputs.size());
+        for (const PipelineInput &input_value : inputs) {
+            fs_pipeline_input_n_t input = FS_PIPELINE_INPUT_N_INIT;
+            input.name = input_value.name_.data();
+            input.name_bytes = input_value.name_.size();
+            input.value = input_value.value_;
+            native.push_back(input);
+        }
+        fs_result_id_t result = 0u;
+        check(fs_pipeline_run_n(value_, native.empty() ? nullptr : native.data(), native.size(), &result),
+              "pipeline run");
+        return Result(result);
+    }
+
+private:
+    friend class Runtime;
+    Pipeline(fs_runtime_t *runtime, fs_pipeline_t *value) noexcept : runtime_(runtime), value_(value) {}
+
+    PipelineEndpoint endpoint(size_t index, bool is_input) const {
+        char *name = nullptr;
+        size_t bytes = 0u;
+        fs_value_kind_t kind = FS_VALUE_IMAGE;
+        check(is_input ? fs_pipeline_input_info(value_, index, &name, &bytes, &kind)
+                       : fs_pipeline_output_info(value_, index, &name, &bytes, &kind),
+              is_input ? "pipeline input interface" : "pipeline output interface");
+        const std::unique_ptr<char, decltype(&fs_free)> owned(name, &fs_free);
+        return {std::string(owned.get(), bytes == 0u ? 0u : bytes - 1u), kind};
+    }
+
+    void check(fs_status_t status, const std::string &context) const {
+        if (status != FS_OK) {
+            const size_t needed = fs_last_error(runtime_, nullptr, 0u);
+            std::vector<char> message(needed ? needed : 1u, '\0');
+            fs_last_error(runtime_, message.data(), message.size());
+            throw Error(status, "Fullseye " + context + " failed (" + status_name(status) + "): " +
+                                std::string(message.data()));
+        }
+    }
+
+    fs_runtime_t *runtime_ = nullptr;
+    fs_pipeline_t *value_ = nullptr;
 };
 
 class Runtime {
@@ -258,6 +367,16 @@ public:
                 std::initializer_list<Parameter> parameters = {}) {
         const std::string op_id = scoped_op(op_name);
         return call(op_id, std::vector<fs_input_n_t>{image.input()}, params_json(parameters));
+    }
+
+    Pipeline load_pipeline(std::string_view path) {
+        if (path.empty()) {
+            throw std::invalid_argument("Fullseye load_pipeline needs a non-empty UTF-8 Studio .json path");
+        }
+        fs_pipeline_t *pipeline = nullptr;
+        check(fs_pipeline_load_path_n(value_, path.data(), path.size(), &pipeline),
+              "pipeline load from " + std::string(path));
+        return Pipeline(value_, pipeline);
     }
 
     std::string find(std::string_view query = "") {

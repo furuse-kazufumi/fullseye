@@ -69,6 +69,8 @@ constexpr uint32_t kRequiredInputNSize =
     static_cast<uint32_t>(offsetof(fs_input_n_t, result_index) + sizeof(size_t));
 constexpr uint32_t kTypedInputNSize =
     static_cast<uint32_t>(offsetof(fs_input_n_t, feature) + sizeof(double));
+constexpr uint32_t kRequiredPipelineInputNSize =
+    static_cast<uint32_t>(offsetof(fs_pipeline_input_n_t, value) + sizeof(fs_input_n_t));
 constexpr uint32_t kRequiredArraySize =
     static_cast<uint32_t>(offsetof(fs_array_view_t, dtype) + sizeof(fs_dtype_t));
 // Discovery reports retain every candidate and both repair command sets, so a
@@ -98,7 +100,12 @@ constexpr size_t kMaxOperatorIdBytes = 256u;
 // payload でなく制御用文書なので、1 MiB で閉じた schema には足り、悪意ある
 // span 長を std::string の確保まで通さない。
 constexpr size_t kMaxJsonBytes = 1024u * 1024u;
-constexpr const char kSdkAbiVersion[] = "0.2";
+// A saved Studio pipeline is control JSON, not pixel data.  Apply the same
+// cap to its text and its on-disk file before JSON/Python can allocate. /
+// Studio 保存 pipeline は画素でなく制御 JSON なので、JSON/Python が確保する前に
+// 本文とファイルへ同じ上限を掛ける。
+constexpr size_t kMaxPipelineBytes = kMaxJsonBytes;
+constexpr const char kSdkAbiVersion[] = "0.3";
 
 struct Item {
     fs_value_kind_t kind = FS_VALUE_REAL;
@@ -985,6 +992,7 @@ Item python_to_item(const py::dict &value) {
 
 struct fs_runtime {
     std::atomic<size_t> active{0u};
+    std::atomic<size_t> pipeline_refs{0u};
     std::atomic<bool> closing{false};
 };
 
@@ -1107,7 +1115,8 @@ private:
             finished_ = true;
             std::lock_guard<std::mutex> lock(g_runtime_mutex);
             const size_t remaining = runtime_->active.fetch_sub(1u, std::memory_order_acq_rel) - 1u;
-            if (remaining == 0u && runtime_->closing.load(std::memory_order_acquire)) {
+            if (remaining == 0u && runtime_->pipeline_refs.load(std::memory_order_acquire) == 0u
+                && runtime_->closing.load(std::memory_order_acquire)) {
                 g_runtimes.erase(runtime_);
                 delete runtime_;
             }
@@ -1191,6 +1200,18 @@ fs_status_t release_result_id(fs_result_id_t result) {
 }
 
 }  // namespace
+
+struct PipelineEndpoint {
+    std::string name;
+    fs_value_kind_t kind = FS_VALUE_IMAGE;
+};
+
+struct fs_pipeline {
+    fs_runtime_t *runtime = nullptr;
+    std::string json;
+    std::vector<PipelineEndpoint> inputs;
+    std::vector<PipelineEndpoint> outputs;
+};
 
 extern "C" {
 
@@ -1388,7 +1409,8 @@ FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime) {
             return;
         }
         runtime->closing.store(true, std::memory_order_release);
-        if (runtime->active.load(std::memory_order_acquire) == 0u) {
+        if (runtime->active.load(std::memory_order_acquire) == 0u
+            && runtime->pipeline_refs.load(std::memory_order_acquire) == 0u) {
             g_runtimes.erase(runtime);
             delete runtime;
         }
@@ -1665,6 +1687,328 @@ FS_API fs_status_t FS_CALL fs_call_id_n(fs_runtime_t *runtime, const char *op_id
         return FS_E_INTERNAL;
     } catch (...) {
         set_error(runtime, "unknown error while running the operator");
+        return FS_E_INTERNAL;
+    }
+}
+
+FS_API fs_status_t FS_CALL fs_pipeline_load_json_n(fs_runtime_t *runtime,
+                                                    const char *pipeline_json,
+                                                    size_t pipeline_json_bytes,
+                                                    fs_pipeline_t **out) {
+    if (out != nullptr) *out = nullptr;
+    if (runtime == nullptr || pipeline_json == nullptr || out == nullptr) {
+        set_error(runtime, "pipeline load needs a runtime, UTF-8 JSON bytes, and an output handle; pass the Studio Save pipeline JSON and retry");
+        return FS_E_INVALID_ARG;
+    }
+    if (pipeline_json_bytes == 0u || pipeline_json_bytes > kMaxPipelineBytes) {
+        set_error(runtime, "pipeline JSON is empty or exceeds the 1 MiB limit; a saved pipeline is control JSON, not image data. Re-save the Studio pipeline without embedded data and retry");
+        return FS_E_INVALID_ARG;
+    }
+    if (std::memchr(pipeline_json, '\0', pipeline_json_bytes) != nullptr) {
+        set_error(runtime, "pipeline JSON contains a NUL byte and is not UTF-8 JSON; save it again from Studio as a UTF-8 .json file");
+        return FS_E_INVALID_ARG;
+    }
+    try {
+        RuntimeCall call(runtime);
+        if (call.status() != FS_OK) {
+            set_error(runtime, "could not enter the runtime while loading the pipeline");
+            return call.status();
+        }
+        if (!call.entered()) {
+            set_error(runtime, "the runtime is closing, so the pipeline cannot be loaded; keep Runtime alive until loading finishes");
+            return FS_E_BUSY;
+        }
+        std::string json(pipeline_json, pipeline_json_bytes);
+        py::gil_scoped_acquire acquire;
+        const py::object bridge = py::module_::import("fullseye.c_api_bridge");
+        const py::dict schema = py::cast<py::dict>(bridge.attr("pipeline_load_json")(json));
+        auto pipeline = std::make_unique<fs_pipeline>();
+        pipeline->runtime = runtime;
+        pipeline->json = std::move(json);
+        const auto append_endpoints = [&schema](const char *key, std::vector<PipelineEndpoint> *out_endpoints) {
+            const py::list rows = py::cast<py::list>(schema[key]);
+            for (const py::handle row_handle : rows) {
+                const py::dict row = py::cast<py::dict>(row_handle);
+                const std::string name = py::cast<std::string>(row["name"]);
+                const std::string sort = py::cast<std::string>(row["sort"]);
+                fs_value_kind_t kind = FS_VALUE_IMAGE;
+                if (sort == "image") kind = FS_VALUE_IMAGE;
+                else if (sort == "region") kind = FS_VALUE_REGION;
+                else if (sort == "color") kind = FS_VALUE_COLOR;
+                else if (sort == "volume") kind = FS_VALUE_VOLUME;
+                else if (sort == "feature") kind = FS_VALUE_FEATURE;
+                else throw std::runtime_error("pipeline endpoint has a sort the C API cannot carry: " + sort);
+                if (name.empty() || name.size() > kMaxOperatorIdBytes || name.find('\0') != std::string::npos) {
+                    throw std::runtime_error("pipeline endpoint name is empty, too long, or contains a NUL byte");
+                }
+                out_endpoints->push_back({name, kind});
+            }
+        };
+        append_endpoints("inputs", &pipeline->inputs);
+        append_endpoints("outputs", &pipeline->outputs);
+        if (pipeline->inputs.empty() || pipeline->outputs.empty()) {
+            set_error(runtime, "pipeline declares no concrete input or output; add at least one typed Studio stage, save, then retry");
+            return FS_E_UNSUPPORTED;
+        }
+        {
+            std::lock_guard<std::mutex> lock(g_runtime_mutex);
+            if (g_runtimes.count(runtime) == 0u || runtime->closing.load(std::memory_order_acquire)) {
+                set_error(runtime, "the runtime closed while the pipeline was loading; keep Runtime alive and retry");
+                return FS_E_BUSY;
+            }
+            runtime->pipeline_refs.fetch_add(1u, std::memory_order_acq_rel);
+        }
+        *out = pipeline.release();
+        clear_error(runtime);
+        return FS_OK;
+    } catch (const py::error_already_set &exc) {
+        set_error(runtime, std::string("pipeline JSON was refused before execution: ") + exc.what()
+                  + ". Correct the reported Studio stage or schema field, save again, then reload it");
+        return FS_E_BAD_PARAMS;
+    } catch (const std::bad_alloc &) {
+        set_error(runtime, "out of memory while validating the pipeline; reduce the saved pipeline size and retry");
+        return FS_E_OUT_OF_MEMORY;
+    } catch (const std::exception &exc) {
+        set_error(runtime, std::string("pipeline JSON was refused before execution: ") + exc.what()
+                  + ". Correct the reported Studio stage or schema field, save again, then reload it");
+        return FS_E_BAD_PARAMS;
+    } catch (...) {
+        set_error(runtime, "pipeline JSON could not be validated; save the pipeline again from Studio and retry");
+        return FS_E_INTERNAL;
+    }
+}
+
+FS_API fs_status_t FS_CALL fs_pipeline_load_path_n(fs_runtime_t *runtime,
+                                                    const char *path_utf8, size_t path_bytes,
+                                                    fs_pipeline_t **out) {
+    if (out != nullptr) *out = nullptr;
+    if (runtime == nullptr || path_utf8 == nullptr || out == nullptr) {
+        set_error(runtime, "pipeline path loading needs a runtime, UTF-8 path, and output handle; pass the saved Studio .json path and retry");
+        return FS_E_INVALID_ARG;
+    }
+    if (path_bytes == 0u || path_bytes > kMaxRuntimePathBytes) {
+        set_error(runtime, "pipeline path is empty or exceeds the 98301-byte limit; shorten the UTF-8 path and retry");
+        return FS_E_INVALID_ARG;
+    }
+    if (std::memchr(path_utf8, '\0', path_bytes) != nullptr) {
+        set_error(runtime, "pipeline path contains a NUL byte; pass one UTF-8 filesystem path from Studio Save pipeline");
+        return FS_E_INVALID_ARG;
+    }
+    try {
+        const std::filesystem::path path = utf8_path(std::string(path_utf8, path_bytes));
+        std::error_code error;
+        if (!std::filesystem::is_regular_file(path, error)) {
+            set_error(runtime, "pipeline path is not a readable regular file; check the saved .json path and permissions, then retry");
+            return FS_E_INVALID_ARG;
+        }
+        const uintmax_t size = std::filesystem::file_size(path, error);
+        if (error || size > kMaxPipelineBytes) {
+            set_error(runtime, "pipeline file cannot be read or exceeds the 1 MiB limit; a saved pipeline is control JSON. Re-save without embedded data and retry");
+            return FS_E_INVALID_ARG;
+        }
+        std::ifstream source(path, std::ios::binary);
+        std::string json((std::istreambuf_iterator<char>(source)), std::istreambuf_iterator<char>());
+        if (!source.good() && !source.eof()) {
+            set_error(runtime, "pipeline file could not be read completely; check the path and permissions, then retry");
+            return FS_E_INVALID_ARG;
+        }
+        if (json.size() != static_cast<size_t>(size) || json.size() > kMaxPipelineBytes) {
+            set_error(runtime, "pipeline file changed while it was read or exceeds the 1 MiB limit; save a stable Studio JSON file and retry");
+            return FS_E_INVALID_ARG;
+        }
+        return fs_pipeline_load_json_n(runtime, json.data(), json.size(), out);
+    } catch (const std::exception &exc) {
+        set_error(runtime, std::string("pipeline path could not be opened: ") + exc.what()
+                  + ". Check that it is a UTF-8 Studio .json path and retry");
+        return FS_E_INVALID_ARG;
+    } catch (...) {
+        set_error(runtime, "pipeline path could not be opened; check the UTF-8 path and retry");
+        return FS_E_INTERNAL;
+    }
+}
+
+FS_API void FS_CALL fs_pipeline_destroy(fs_pipeline_t *pipeline) {
+    try {
+        if (pipeline == nullptr) return;
+        fs_runtime_t *runtime = pipeline->runtime;
+        {
+            std::lock_guard<std::mutex> lock(g_runtime_mutex);
+            if (runtime != nullptr && g_runtimes.count(runtime) != 0u) {
+                const size_t remaining = runtime->pipeline_refs.fetch_sub(1u, std::memory_order_acq_rel) - 1u;
+                if (remaining == 0u && runtime->active.load(std::memory_order_acquire) == 0u
+                    && runtime->closing.load(std::memory_order_acquire)) {
+                    g_runtimes.erase(runtime);
+                    delete runtime;
+                }
+            }
+        }
+        delete pipeline;
+    } catch (...) {
+        // A void C destructor must never let C++ cross the ABI boundary.
+    }
+}
+
+FS_API size_t FS_CALL fs_pipeline_input_count(const fs_pipeline_t *pipeline) {
+    return pipeline == nullptr ? 0u : pipeline->inputs.size();
+}
+
+FS_API size_t FS_CALL fs_pipeline_output_count(const fs_pipeline_t *pipeline) {
+    return pipeline == nullptr ? 0u : pipeline->outputs.size();
+}
+
+static fs_status_t pipeline_endpoint_info(const fs_pipeline_t *pipeline, size_t index, bool input,
+                                          char **out_name_utf8, size_t *out_name_bytes,
+                                          fs_value_kind_t *out_kind) {
+    if (out_name_utf8 != nullptr) *out_name_utf8 = nullptr;
+    if (out_name_bytes != nullptr) *out_name_bytes = 0u;
+    if (pipeline == nullptr || out_name_utf8 == nullptr || out_name_bytes == nullptr || out_kind == nullptr) {
+        return FS_E_INVALID_ARG;
+    }
+    const std::vector<PipelineEndpoint> &endpoints = input ? pipeline->inputs : pipeline->outputs;
+    if (index >= endpoints.size()) return FS_E_INVALID_ARG;
+    const PipelineEndpoint &endpoint = endpoints[index];
+    char *name = static_cast<char *>(std::malloc(endpoint.name.size() + 1u));
+    if (name == nullptr) return FS_E_OUT_OF_MEMORY;
+    std::memcpy(name, endpoint.name.data(), endpoint.name.size());
+    name[endpoint.name.size()] = '\0';
+    *out_name_utf8 = name;
+    *out_name_bytes = endpoint.name.size() + 1u;
+    *out_kind = endpoint.kind;
+    return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_pipeline_input_info(const fs_pipeline_t *pipeline, size_t index,
+                                                   char **out_name_utf8, size_t *out_name_bytes,
+                                                   fs_value_kind_t *out_kind) {
+    return pipeline_endpoint_info(pipeline, index, true, out_name_utf8, out_name_bytes, out_kind);
+}
+
+FS_API fs_status_t FS_CALL fs_pipeline_output_info(const fs_pipeline_t *pipeline, size_t index,
+                                                    char **out_name_utf8, size_t *out_name_bytes,
+                                                    fs_value_kind_t *out_kind) {
+    return pipeline_endpoint_info(pipeline, index, false, out_name_utf8, out_name_bytes, out_kind);
+}
+
+FS_API fs_status_t FS_CALL fs_pipeline_run_n(fs_pipeline_t *pipeline,
+                                             const fs_pipeline_input_n_t *inputs, size_t input_count,
+                                             fs_result_id_t *out) {
+    if (out != nullptr) *out = 0u;
+    if (pipeline == nullptr || out == nullptr || (input_count != 0u && inputs == nullptr)) {
+        set_error(nullptr, "pipeline run needs a live pipeline, its named inputs, and an output result ID");
+        return FS_E_INVALID_ARG;
+    }
+    fs_runtime_t *runtime = pipeline->runtime;
+    if (input_count != pipeline->inputs.size()) {
+        set_error(runtime, "pipeline input count does not match its declared interface; query fs_pipeline_input_info, pass every named input exactly once, then retry");
+        return FS_E_INVALID_ARG;
+    }
+    try {
+        RuntimeCall call(runtime);
+        if (call.status() != FS_OK) {
+            set_error(runtime, "could not enter the runtime while running the pipeline");
+            return call.status();
+        }
+        if (!call.entered()) {
+            set_error(runtime, "the runtime is closing, so the pipeline cannot run; keep Runtime alive until Pipeline is destroyed");
+            return FS_E_BUSY;
+        }
+        py::gil_scoped_acquire acquire;
+        py::list values;
+        std::vector<ResultIdLease> borrowed_results;
+        for (size_t index = 0u; index < input_count; ++index) {
+            const fs_pipeline_input_n_t &input = inputs[index];
+            const PipelineEndpoint &expected = pipeline->inputs[index];
+            if (input.struct_size < kRequiredPipelineInputNSize || input.name == nullptr
+                || input.name_bytes == 0u || input.name_bytes > kMaxOperatorIdBytes
+                || std::memchr(input.name, '\0', input.name_bytes) != nullptr) {
+                set_error(runtime, "pipeline input name or struct_size is invalid; use FS_PIPELINE_INPUT_N_INIT and the exact UTF-8 name returned by fs_pipeline_input_info");
+                return FS_E_INVALID_ARG;
+            }
+            const std::string name(input.name, input.name_bytes);
+            if (name != expected.name) {
+                set_error(runtime, "pipeline input name does not match the declared endpoint; query fs_pipeline_input_info and pass its exact name, because positional guesses can send data to the wrong stage");
+                return FS_E_INVALID_ARG;
+            }
+            const fs_input_n_t &value = input.value;
+            if (value.struct_size < kRequiredInputNSize) {
+                set_error(runtime, "embedded fs_input_n_t.struct_size is too small; initialize it with FS_INPUT_N_INIT before running the pipeline");
+                return FS_E_INVALID_ARG;
+            }
+            if (value.kind != expected.kind) {
+                set_error(runtime, "pipeline input kind does not match the declared endpoint; query fs_pipeline_input_info and pass that kind, because a saved pipeline never coerces one declared type into another");
+                return FS_E_TYPE;
+            }
+            if (value.result_id != 0u) {
+                borrowed_results.emplace_back(value.result_id);
+                const ResultPayload *borrowed = borrowed_results.back().get();
+                if (borrowed == nullptr || value.result_index >= borrowed->items.size()) {
+                    set_error(runtime, "pipeline input references an unknown or released result ID; keep the producing Result alive until this call returns");
+                    return FS_E_INVALID_ARG;
+                }
+                const Item &item = borrowed->items[value.result_index];
+                if (item.kind != value.kind) {
+                    set_error(runtime, "pipeline input kind does not match the borrowed result; query its kind and pass the declared pipeline input type");
+                    return FS_E_TYPE;
+                }
+                values.append(item_to_python(item));
+            } else if (value.kind == FS_VALUE_IMAGE) {
+                const fs_status_t status = validate_image(runtime, value.image);
+                if (status != FS_OK) return status;
+                values.append(image_to_python(value.image));
+            } else if (value.kind == FS_VALUE_COLOR || value.kind == FS_VALUE_VOLUME) {
+                if (value.struct_size < kTypedInputNSize) {
+                    set_error(runtime, "pipeline color/volume input needs the extended fs_input_n_t; initialize with FS_INPUT_N_INIT and fill array");
+                    return FS_E_UNSUPPORTED;
+                }
+                const fs_status_t status = validate_array(runtime, value.array, value.kind);
+                if (status != FS_OK) return status;
+                values.append(array_to_python(value.array, value.kind));
+            } else if (value.kind == FS_VALUE_FEATURE) {
+                if (value.struct_size < kTypedInputNSize || !std::isfinite(value.feature)) {
+                    set_error(runtime, "pipeline feature input must be a finite extended fs_input_n_t value; pass a finite scalar and retry");
+                    return value.struct_size < kTypedInputNSize ? FS_E_UNSUPPORTED : FS_E_INVALID_ARG;
+                }
+                py::dict feature;
+                feature["kind"] = "feature";
+                feature["value"] = value.feature;
+                values.append(std::move(feature));
+            } else {
+                set_error(runtime, "this pipeline input kind needs a borrowed result or a supported typed C value; inspect the declared endpoint and supply a matching value");
+                return FS_E_INVALID_ARG;
+            }
+        }
+        const py::object bridge = py::module_::import("fullseye.c_api_bridge");
+        const py::dict answer = py::cast<py::dict>(bridge.attr("pipeline_run_json")(pipeline->json, values));
+        const fs_status_t status = static_cast<fs_status_t>(py::cast<int>(answer["status"]));
+        if (status != FS_OK) {
+            set_error(runtime, py::cast<std::string>(answer["message"]));
+            return status;
+        }
+        auto payload = std::make_shared<ResultPayload>();
+        for (const py::handle value : py::cast<py::list>(answer["outputs"])) {
+            payload->items.push_back(python_to_item(py::cast<py::dict>(value)));
+        }
+        const fs_result_id_t id = register_result(std::move(payload));
+        if (id == 0u) {
+            set_error(runtime, "pipeline result handle table is exhausted; release completed result IDs before running more pipelines");
+            return FS_E_OUT_OF_MEMORY;
+        }
+        *out = id;
+        clear_error(runtime);
+        return FS_OK;
+    } catch (const py::error_already_set &exc) {
+        set_error(runtime, std::string("pipeline execution failed: ") + exc.what()
+                  + ". Check the named Studio stage and its input contract, correct it, then reload the pipeline");
+        return FS_E_PY_EXCEPTION;
+    } catch (const std::bad_alloc &) {
+        set_error(runtime, "out of memory while running the pipeline; reduce the input size or split the workflow, then retry");
+        return FS_E_OUT_OF_MEMORY;
+    } catch (const std::exception &exc) {
+        set_error(runtime, std::string("pipeline execution failed: ") + exc.what()
+                  + ". Check the named Studio stage and its input contract, correct it, then reload the pipeline");
+        return FS_E_INTERNAL;
+    } catch (...) {
+        set_error(runtime, "pipeline execution failed unexpectedly; inspect the saved Studio stages and retry with a smaller input");
         return FS_E_INTERNAL;
     }
 }

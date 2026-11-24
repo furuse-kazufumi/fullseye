@@ -61,6 +61,48 @@ int main() {
 [`examples/c_api/hello_cpp`](../examples/c_api/hello_cpp) と
 [`examples/c_api/hello_c`](../examples/c_api/hello_c) にある。
 
+## Studio の保存を C++ で動かす / Run a saved Studio pipeline from C++
+
+Studio で pipeline を作り、Problems が空であることを確認して **Save pipeline** を選ぶ。
+保存された UTF-8 JSON をアプリの実行時 working directory に `inspect.json` として置けば、
+アプリ側は次だけで入力名・型を読み、実行できる。
+
+```cpp
+fullseye::Runtime fs;
+auto image = fullseye::Image::from_buffer(pixels.data(), height, width);
+fullseye::Pipeline p = fs.load_pipeline("inspect.json");
+auto input = p.input();       // {"image", FS_VALUE_IMAGE}
+auto output = p.output();     // 例: {"result", FS_VALUE_REGION}
+auto out = p.run({{"image", image}});
+```
+
+`Pipeline` と `Result` は move-only RAII 型で、結果 ID と pipeline handle を自動で解放する。
+`out.image()` は画像の借用 view、`out.region_runs()` は region の run list のコピー、
+`out.real()` はスカラーを返す。入力名・型、出力名・型が違う場合は実行前に拒否され、
+例外にはどの stage / op / 型が合わないかと Studio での直し方が入る。
+
+`examples/c_api/hello_pipeline` は `inspect.json` を Studio 保存物として C++ から読む完全な
+consumer project である。最初の CMake build の後は JSON の stage や knob を保存し直して
+アプリを再起動するだけでよい。C++ を再コンパイルする必要はない。
+
+C では同じ Python 実行器の上にある `fs_pipeline_load_path_n` または
+`fs_pipeline_load_json_n` を使う。`fs_pipeline_input_info` / `fs_pipeline_output_info` が
+名前と `fs_value_kind_t` を返し、`fs_pipeline_run_n` は `fs_pipeline_input_n_t` の名前付き
+入力から通常の generation-tagged `fs_result_id_t` を返す。パスは 98,301 UTF-8 bytes、
+JSON と pipeline file は 1 MiB を上限として、ファイルを開く・解析する前に拒否する。
+未知 op、型連鎖の不一致、余計な JSON key も同じ読み込み時に fail-closed となる。
+
+Python でも同じ入口を使える。
+
+```python
+import fullseye
+
+p = fullseye.load_pipeline("inspect.json")
+result = p.run(image.copy())
+```
+
+CLI の `fullseye run inspect.json ...`、Python、C、C++ はこの同じ保存 JSON 検証を共有する。
+
 ## SDK CLI
 
 ```text
