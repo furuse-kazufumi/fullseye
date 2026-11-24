@@ -153,7 +153,7 @@
 
 **3,852 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **73 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 947/947、型つき台帳 2882/2882、1 行ファサード `fullseye.<名前>` 770/1578。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 947/947、型つき台帳 2882/2882、1 行ファサード `fullseye.<名前>` 770/1594。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
 **ノートの中身の実測**: 3852 本のうち、実行できる例が付いているのは **3813 本**(39 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3653 本**(199 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3852 本すべてにある。
 
@@ -380,7 +380,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 337 本
+## ドキュメント地図 — 全 338 本
 
 **索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,852 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
@@ -525,7 +525,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(251)
+**そのほか**(252)
 
 | 文書 | 内容 |
 |---|---|
@@ -599,6 +599,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`POC_QUALITY_CRITERIA.en.md`](POC_QUALITY_CRITERIA.en.md) | Quality criteria for PoCs, figures, videos and exhibits (for whoever asks and whoever builds) |
 | [`REALDATA_TLESS_6DOF.md`](REALDATA_TLESS_6DOF.md) | BOP T-LESS 実機深度 6 自由度 PoC |
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | レシピの網羅(族・課題・型の繋がり・GPU 経路) |
+| [`REGULATED_EXECUTION.md`](REGULATED_EXECUTION.md) | 規制実行記録の保証境界 / Regulated execution-record assurance boundary |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
 | [`STUDIO_GUIDE.de.md`](STUDIO_GUIDE.de.md) | Vollständiger Leitfaden zu Fullseye Studio |
 | [`STUDIO_GUIDE.en.md`](STUDIO_GUIDE.en.md) | The complete guide to Fullseye Studio |
