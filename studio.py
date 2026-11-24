@@ -3763,6 +3763,29 @@ def _hdev_parse_op(line, lineno, errs, names):
 #: 解析のたびに空にし、解析の最後に「段になった行」だけを残す(``if 0 … endif`` の中や無効の行は知らせない)。
 _HDEV_CLAMPED: dict = {}
 
+#: Program の ``for N`` が展開してよい段数の上限。画面は段ごとに行・途中結果・キャッシュを持つので、
+#: 無制限にすると解析だけでメモリを使い切り、Apply が GUI スレッドを長く占有する。
+MAX_PROGRAM_STAGES = 512
+
+#: ``for N`` の拒否は値・理由・そのまま取れる次の手を 1 文にする。英語をキーに i18n.json で翻訳する。
+_PROGRAM_STAGE_LIMIT_TEXT = (
+    "line %d: `for %d` would expand to %d stages, above Studio's limit of %d. "
+    "Studio keeps a visible row and cached result for every expanded stage, so a larger loop can exhaust memory "
+    "and stop the window responding. Use a smaller N, split the pipeline, or run a batch/CLI script."
+)
+
+
+def _program_stage_limit_message(line, count, expanded, limit=MAX_PROGRAM_STAGES):
+    """大きすぎる Program ``for`` 展開を、値・理由・次の手つきで現地語へ拒否する。
+
+    Return a localised, actionable refusal for an oversized Program ``for`` expansion.
+
+    解析器は Qt 非依存のままにする。:func:`tr` はデータだけを引く関数で、Program を解析できる時点には
+    初期化済みである。``expanded`` は単なる繰り返し回数でなく、この入れ子での実際の段数なので、
+    拒否した値をそのまま伝えられる。
+    """
+    return tr(_PROGRAM_STAGE_LIMIT_TEXT) % (int(line), int(count), int(expanded), int(limit))
+
 
 def hdev_last_clamped():
     """直近の Program の解析で 0..1 に丸めたつまみの一覧(行の順。``"line 3: gaussian a=9 → 1"``)。"""
@@ -3847,11 +3870,22 @@ def parse_hdev_program_lines(text, names):
             if kind == "for":
                 try:
                     count = int(float(line.split()[1]))
-                except (IndexError, ValueError):
+                except (IndexError, OverflowError, ValueError):
                     errs.append("line %d: 'for' needs a count, e.g. 'for 3'" % n); count = 0
                 body = parse_block(("endfor",))
                 expect("endfor", n)
-                out += body * max(0, count)
+                # Do the multiplication only after checking the expanded size.  The old
+                # ``body * count`` accepted ``for 1000000`` and allocated the whole list
+                # on the GUI thread before the async runner could show progress or accept
+                # a stop request.  The normal PipelineModel cache still recomputes each
+                # accepted stage once, and the existing worker owns progress/stop at stage
+                # boundaries; this bound protects the synchronous parse/Apply boundary.
+                repeats = max(0, count)
+                expanded = len(out) + len(body) * repeats
+                if expanded > MAX_PROGRAM_STAGES:
+                    errs.append(_program_stage_limit_message(n, repeats, expanded))
+                else:
+                    out += body * repeats
             elif kind == "if":
                 cond = _hdev_eval_cond(line[2:].strip())
                 then_body = parse_block(("else", "endif"))

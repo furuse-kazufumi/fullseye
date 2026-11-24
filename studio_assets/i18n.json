@@ -76,6 +76,14 @@
     "de": "⚠ Regler außerhalb 0..1, mit dem nächsten Grenzwert ausgeführt: %s",
     "hi": "⚠ नॉब 0..1 के बाहर है, निकटतम सीमा के साथ चलाया गया: %s"
   },
+  "line %d: `for %d` would expand to %d stages, above Studio's limit of %d. Studio keeps a visible row and cached result for every expanded stage, so a larger loop can exhaust memory and stop the window responding. Use a smaller N, split the pipeline, or run a batch/CLI script.": {
+    "ja": "行 %d: `for %d` は %d 段に展開され、Studio の上限 %d 段を超えます。Studio は展開した各段の行とキャッシュ済みの結果を持つため、これより大きいループはメモリを使い切り、画面が応答しなくなるおそれがあります。N を小さくする、処理列を分けて保存する、またはバッチ/CLI スクリプトで実行してください。",
+    "zh": "第 %d 行：`for %d` 将展开为 %d 个阶段，超过 Studio 的上限 %d。Studio 为每个展开阶段保留可见行和缓存结果，较大的循环可能耗尽内存并使窗口无响应。请减小 N、拆分并保存管线，或运行批处理/CLI 脚本。",
+    "tw": "第 %d 行：`for %d` 將展開為 %d 個階段，超過 Studio 的上限 %d。Studio 為每個展開階段保留可見列和快取結果，較大的迴圈可能耗盡記憶體並讓視窗無回應。請減小 N、拆分並儲存管線，或執行批次/CLI 指令碼。",
+    "ko": "%d행: `for %d`은(는) %d단계로 펼쳐져 Studio 상한 %d단계를 넘습니다. Studio는 펼쳐진 각 단계의 행과 캐시된 결과를 보관하므로 큰 루프는 메모리를 소진하고 창의 응답을 멈출 수 있습니다. N을 줄이거나 파이프라인을 나누어 저장하거나 배치/CLI 스크립트를 실행하세요.",
+    "de": "Zeile %d: `for %d` würde zu %d Stufen expandieren und damit das Studio-Limit von %d überschreiten. Studio hält für jede expandierte Stufe eine sichtbare Zeile und ein zwischengespeichertes Ergebnis; eine größere Schleife kann daher den Speicher erschöpfen und das Fenster blockieren. Verwenden Sie ein kleineres N, teilen Sie die Pipeline auf oder führen Sie ein Batch-/CLI-Skript aus.",
+    "hi": "पंक्ति %d: `for %d` %d चरणों में विस्तृत होगा, जो Studio की सीमा %d से अधिक है। Studio हर विस्तृत चरण के लिए दिखाई देने वाली पंक्ति और कैश परिणाम रखता है, इसलिए बड़ा लूप मेमोरी समाप्त कर सकता है और विंडो को अनुत्तरदायी बना सकता है। छोटा N लें, पाइपलाइन को बाँटें, या बैच/CLI स्क्रिप्ट चलाएँ।"
+  },
   "Common choices": {
     "ja": "定番", "zh": "常用", "tw": "常用", "ko": "기본 선택", "de": "Übliche Wahl", "hi": "आम विकल्प"
   },
