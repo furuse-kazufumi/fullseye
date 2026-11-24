@@ -46,6 +46,17 @@ constexpr uint32_t kTypedInputNSize =
 constexpr uint32_t kRequiredArraySize =
     static_cast<uint32_t>(offsetof(fs_array_view_t, dtype) + sizeof(fs_dtype_t));
 constexpr size_t kMaxErrorBytes = 4096u;
+// Windows extended-length paths are limited to 32,767 UTF-16 code units.
+// UTF-8 needs at most three bytes per UTF-16 code unit: a BMP scalar uses at
+// most three bytes, and a supplementary scalar uses four bytes across its
+// surrogate pair.  Use the resulting 98,301-byte bound for explicit ABI 0.2
+// path spans on every platform so hostile lengths are rejected before a scan
+// or allocation. / Windows の拡張長パスは UTF-16 で 32,767 code unit が上限。
+// UTF-8 は UTF-16 code unit 当たり最大 3 B（BMP は最大 3 B、補助面は
+// surrogate pair の 2 code unit で 4 B）なので、ABI 0.2 の明示長パスは
+// 全プラットフォームで 98,301 B に制限し、走査・確保の前に拒否する。
+constexpr size_t kWindowsExtendedPathUtf16CodeUnits = 32767u;
+constexpr size_t kMaxRuntimePathBytes = 3u * kWindowsExtendedPathUtf16CodeUnits;
 // Every generated C-callable operator ID is at most 41 UTF-8 bytes (952 rows,
 // measured 2026-11-24).  Keep ample room for future scoped IDs while bounding
 // an untrusted allocation request at the C boundary. / 現在の型台帳で最長の
@@ -869,6 +880,11 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, f
                 || (options->python_home == nullptr && options->python_home_bytes != 0u)
                 || (options->python_home != nullptr && options->python_home_bytes == 0u)) {
                 set_error(nullptr, "ABI 0.2 runtime_root and python_home pointers must match their byte lengths");
+                return FS_E_INVALID_ARG;
+            }
+            if (options->runtime_root_bytes > kMaxRuntimePathBytes
+                || options->python_home_bytes > kMaxRuntimePathBytes) {
+                set_error(nullptr, "ABI 0.2 runtime_root and python_home exceed the 98301-byte path limit");
                 return FS_E_INVALID_ARG;
             }
             if (options->runtime_root != nullptr) {
