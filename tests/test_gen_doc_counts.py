@@ -57,4 +57,5 @@ def test_regen_all_owns_the_count_outputs():
     assert regen_all.OUTPUTS["tools/gen_doc_counts.py"] == [
         "docs/README.md", "docs/README.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md",
+        "README.md", "docs/INTEGRATION.md", "CITATION.cff", "pyproject.toml",
     ]

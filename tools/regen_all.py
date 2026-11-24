@@ -361,15 +361,16 @@ READS = {
 }
 
 #: pyproject.toml の依存・version 等は鎖の入力だが、最後の件数文だけは gen_doc_counts が
-#: 更新する。実測された全読取段を一箇所で宣言し、後段更新の安全性は下の例外理由で残す。
+#: 更新する。実測された全読取段を一箇所で宣言する。
 #: Dependency/version fields of pyproject.toml feed these stages; gen_doc_counts changes only its
-#: final count prose. Declare every measured reader here and document the safe late write below.
+#: final count prose. Declare every measured reader here.
 _PYPROJECT_COUNT_READERS = (
     "tools/gen_sbom.py", "tools/gen_device_rules.py", "imgevolve.py",
     "tools/halcon_compat_profile.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
     "tools/gen_wingpoc_gallery.py", "tools/gen_mcp_data.py", "tools/gen_view2026_pages.py",
     "tools/gen_trust_block.py", "tools/gen_recipe_coverage.py", "tools/gen_design_notes.py",
-    "tools/gen_docs_index_ops.py", "tools/gen_mcp_input_independent.py",
+    "tools/gen_docs_index_ops.py",
+    "tools/gen_mcp_input_independent.py",
     "tools/gen_recipe_index.py", "tools/gen_recipe_retrieval_report.py",
     "tools/measure_mcp_context.py", "tools/gen_rag_benchmark_report.py", "tools/gen_gpu_routes.py",
 )
@@ -419,8 +420,14 @@ ORDER_EXEMPT = {
         "gen_docs_index_ops は文書地図に載せるため pipeline_routes.md の題だけを読む。題は gen_gpu_routes の"
         "固定の文で、後で書き直されるのは表の中身だけなので、地図の生成結果には影響しない。"),
 }
+# gen_doc_counts の**前**に読む段だけが、最後の件数更新に対する順序例外を要する。
+# 後段の読取は実測 READS として残すが、既に更新済みなので ORDER_EXEMPT は不要。
+# Only readers before gen_doc_counts need a late-write order exemption; later readers
+# stay in READS for audit tracing without an exemption.
+_PYPROJECT_PRE_COUNT_READERS = _PYPROJECT_COUNT_READERS[:
+    _PYPROJECT_COUNT_READERS.index("tools/gen_mcp_input_independent.py")]
 ORDER_EXEMPT.update({(stage, "pyproject.toml"): _LATE_COUNT_PROSE
-                     for stage in _PYPROJECT_COUNT_READERS})
+                     for stage in _PYPROJECT_PRE_COUNT_READERS})
 
 #: **CHAIN に入れないものと、その理由**(2026-09-09)。
 #:
