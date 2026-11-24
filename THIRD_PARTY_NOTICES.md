@@ -37,9 +37,9 @@ Fullseye itself is licensed under Apache-2.0; see `LICENSE` and `NOTICE`. This f
 ### fintraffic-osm-aggregate
 
 - Files: `examples/data/fintraffic_sun_2026_09_20.json`
-- Source: Fintraffic/Digitraffic weather cameras and OpenStreetMap road geometry (https://www.digitraffic.fi/en/)
+- Source: Fintraffic/Digitraffic weather cameras and OpenStreetMap road attributes (https://www.digitraffic.fi/en/terms-of-service/ ; https://www.openstreetmap.org/copyright)
 - Licence: CC-BY-4.0 and ODbL-1.0
-- Changes: Only measured aggregate values, camera identifiers and road geometry used for the published result are retained; raw images are excluded.
+- Changes: The wheel retains one camera-result aggregate and one derived nearest-road attribute record (bearing, ref, name, highway); raw images and OSM geometries are excluded.
 
 ### ngs-benchmarks
 

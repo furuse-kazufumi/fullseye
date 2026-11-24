@@ -64,6 +64,52 @@ def test_gpl_exception_is_limited_to_the_test_extra():
     assert module.requirement_scopes()["plyfile"] == ("export-verify",)
 
 
+def test_full_setup_exclusion_is_the_single_gpl_source_of_truth():
+    """GPL extra の既定除外は一箇所の台帳で決める。 / Keep the GPL default exclusion in one ledger."""
+    module = _tool()
+    excluded = module.default_setup_exclusions()
+    assert set(excluded) == {"export-verify"}
+    record = excluded["export-verify"]
+    assert record["dependency"] == "plyfile"
+    assert record["license"] == "GPL-3.0-or-later"
+    assert "verification" in record["reason"].lower()
+    assert record["setup_include"] == "fullseye setup --include export-verify"
+
+
+def test_public_figure_provenance_has_no_unexplained_omission():
+    """公開図の出典欄を空の台帳で通さない。 / Reject unexplained public-figure provenance gaps."""
+    module = _tool()
+    _, assets, _ = _ledgers(module)
+    records = module.figure_source_records()
+    unrecorded = {"%s/%s" % (record["poc"], record["file"])
+                  for record in records if record["unrecorded"]}
+    assert unrecorded == set(assets["unresolved_public_figures"])
+    assert not unrecorded
+    synced = json.loads((ROOT / "docs" / "licenses" / "public_figure_provenance.json").read_text(encoding="utf-8"))
+    figures = {figure for entry in synced["records"] for figure in entry["figures"]}
+    assert len(figures) == 65
+    assert all("Retrieved:" in record["source"] and "Licence:" in record["source"]
+               for record in records if "%s/%s" % (record["poc"], record["file"]) in figures)
+
+
+def test_fintraffic_and_osm_attribution_is_on_figures_pages_and_readme():
+    """Fintraffic/OSM 帰属を図・展示ページ・README から落とさない。 / Keep Fintraffic/OSM credit published."""
+    required = ("Fintraffic / Digitraffic weather-camera history", "© OpenStreetMap contributors", "ODbL 1.0")
+    figures = (ROOT / "docs" / "articles" / "assets" / "poc" /
+               "poc_public_camera_heading_real" / "figures.json").read_text(encoding="utf-8")
+    pages = [
+        ROOT / "docs" / "articles" / "exhibits" / "wingpoc.ja.md",
+        ROOT / "docs" / "articles" / "exhibits" / "wingpoc.en.md",
+        ROOT / "docs" / "articles" / "fullseye_poc_museum_how_qiita_ja.md",
+        ROOT / "docs" / "articles" / "fullseye_poc_museum_how_qiita_en.md",
+    ]
+    assert all(token in figures for token in required)
+    assert all(all(token in page.read_text(encoding="utf-8") for token in required) for page in pages)
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    assert "© OpenStreetMap contributors" in readme and "ODbL 1.0" in readme
+    assert "Source: Fintraffic / digitraffic.fi, license CC 4.0 BY" in readme
+
+
 @pytest.mark.parametrize(
     ("metadata", "expected"),
     [

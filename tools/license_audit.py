@@ -22,6 +22,7 @@ PYPROJECT = ROOT / "pyproject.toml"
 LICENSE_DIR = ROOT / "docs" / "licenses"
 POLICY = LICENSE_DIR / "dependency_licenses.json"
 ASSETS = LICENSE_DIR / "third_party_assets.json"
+SETUP_EXCLUSIONS = LICENSE_DIR / "setup_default_excluded_extras.json"
 RESOLUTION = LICENSE_DIR / "resolved_win_py311.json"
 DEPENDENCY_INVENTORY = LICENSE_DIR / "DEPENDENCY_INVENTORY.md"
 ASSET_INVENTORY = LICENSE_DIR / "THIRD_PARTY_INVENTORY.md"
@@ -32,7 +33,7 @@ OUTPUTS = (DEPENDENCY_INVENTORY, ASSET_INVENTORY, NOTICES, WHEEL_NOTICES)
 _NORMALISE = re.compile(r"[-_.]+")
 _REQ_NAME = re.compile(r"^\s*([A-Za-z0-9][A-Za-z0-9._-]*)")
 _EXTERNAL_MARKER = re.compile(
-    r"CC[ -]?(?:BY|BY-SA|BY-NC|0)|ODbL|public domain|LASIESTA|skimage\.data",
+    r"CC[ -]?(?:BY|BY-SA|BY-NC|0)|ODbL|OpenStreetMap|Fintraffic|Digitraffic|public domain|LASIESTA|skimage\.data",
     re.IGNORECASE,
 )
 _BSD3_SCITKIT = """BSD 3-Clause License
@@ -78,6 +79,24 @@ def load_json(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise AuditError("%s must be a JSON object" % path)
     return value
+
+
+def default_setup_exclusions() -> dict[str, dict[str, Any]]:
+    """全部入り既定から外す extra を厳密に読む。 / Read full-setup exclusions fail-closed."""
+    payload = load_json(SETUP_EXCLUSIONS)
+    entries = payload.get("default_setup_excluded_extras")
+    if payload.get("schema") != 1 or not isinstance(entries, list) or not entries:
+        raise AuditError("default setup exclusion ledger is invalid")
+    result: dict[str, dict[str, Any]] = {}
+    required = ("extra", "dependency", "license", "reason", "pip_install", "setup_include")
+    for entry in entries:
+        if not isinstance(entry, dict) or any(not str(entry.get(key, "")).strip() for key in required):
+            raise AuditError("default setup exclusion record is incomplete")
+        extra = str(entry["extra"])
+        if extra in result:
+            raise AuditError("default setup exclusion has a duplicate extra: %s" % extra)
+        result[extra] = entry
+    return result
 
 
 def requirement_scopes() -> dict[str, tuple[str, ...]]:
@@ -247,6 +266,8 @@ def validate(policy: dict[str, Any], assets: dict[str, Any], resolution: dict[st
         if name not in packages:
             raise AuditError("1.2.0 planned dependency is not pre-audited: %s" % name)
     exceptions = policy.get("strong_copyleft_exceptions", {})
+    excluded = default_setup_exclusions()
+    strong_extras: set[str] = set()
     for name, record in packages.items():
         if name not in scopes or record["class"] != "strong-copyleft":
             continue
@@ -256,6 +277,14 @@ def validate(policy: dict[str, Any], assets: dict[str, Any], resolution: dict[st
         only_extra = exception.get("only_extra")
         if set(scopes[name]) != {only_extra}:
             raise AuditError("strong-copyleft dependency escaped its test-only extra: %s" % name)
+        strong_extras.add(str(only_extra))
+        entry = excluded.get(str(only_extra))
+        if entry is None or entry["dependency"] != name or entry["license"] != record["spdx"]:
+            raise AuditError("strong-copyleft extra lacks a matching full-setup exclusion: %s" % name)
+    if set(excluded) != strong_extras:
+        raise AuditError("default setup exclusions do not exactly cover strong-copyleft extras")
+    if "all" in strong_extras:
+        raise AuditError("the full extra includes a strong-copyleft dependency")
 
     listed_assets = assets.get("assets")
     if not isinstance(listed_assets, list) or len(listed_assets) < 18:
@@ -287,11 +316,18 @@ def validate(policy: dict[str, Any], assets: dict[str, Any], resolution: dict[st
         "%s/%s" % (item["poc"], item["file"])
         for item in figure_source_records() if item["unrecorded"]
     }
-    baseline = set(assets.get("known_unrecorded_public_figures", []))
-    if unrecorded_figures != baseline:
+    unresolved = assets.get("unresolved_public_figures", {})
+    cap = assets.get("unresolved_public_figure_cap")
+    if not isinstance(unresolved, dict) or not isinstance(cap, int) or cap < 0:
+        raise AuditError("public-figure unresolved-provenance ledger is invalid")
+    if any(not isinstance(reason, str) or not reason.strip() for reason in unresolved.values()):
+        raise AuditError("an unresolved public figure needs a non-empty reason")
+    if len(unresolved) > cap:
+        raise AuditError("unresolved public-figure count exceeds its cap")
+    if unrecorded_figures != set(unresolved):
         raise AuditError(
             "public figures with missing provenance changed: expected %s, found %s"
-            % (sorted(baseline), sorted(unrecorded_figures))
+            % (sorted(unresolved), sorted(unrecorded_figures))
         )
     components = resolution.get("components")
     if not isinstance(components, list) or len(components) < len(scopes):
@@ -318,7 +354,7 @@ def render_dependency_inventory(policy: dict[str, Any], resolution: dict[str, An
         "",
         "## Items requiring a decision first",
         "",
-        "- `plyfile` is GPL-3.0-or-later. It is limited to the `export-verify` test extra and is not bundled in the wheel. Do not promote it to a runtime/default dependency without a GPL distribution decision.",
+        "- `plyfile` is GPL-3.0-or-later. It is limited to the `export-verify` test extra and is not bundled in the wheel. The full setup default must exclude that extra; use `fullseye setup --include export-verify` only when independent export verification is needed.",
         "- `PySide6` is currently optional but planned for the 1.2.0 default installation. Use it only as a dynamically imported, replaceable dependency; retain Qt/PySide notices and use a Qt commercial licence if the LGPL route is unsuitable. Fullseye's commercial licence does not change Qt's licence.",
         "- `examples/data/fintraffic_sun_2026_09_20.json` carries an ODbL provenance question. It is reported separately in the material inventory; decide Produced Work vs Derivative Database before a commercial redistribution.",
         "",
@@ -392,8 +428,10 @@ def render_asset_inventory(assets: dict[str, Any]) -> str:
     ]
     for asset in attention:
         lines.append("- `%s`: %s" % (asset["id"], asset.get("note", "review required")))
+    unresolved_reasons = assets.get("unresolved_public_figures", {})
     for item in unrecorded:
-        lines.append("- `%s/%s`: the public figure metadata names an external licence but has no source field. It is intentionally recorded as an unresolved provenance item; do not redistribute it in a wheel." % (item["poc"], item["file"]))
+        key = "%s/%s" % (item["poc"], item["file"])
+        lines.append("- `%s`: %s Do not redistribute it in a wheel." % (key, unresolved_reasons[key]))
     lines += [
         "",
         "## Files held in the repository",
@@ -410,7 +448,7 @@ def render_asset_inventory(assets: dict[str, Any]) -> str:
         "",
         "## ViEW / article figures with an external source declaration",
         "",
-        "The source text below comes from the corresponding `figures.json`. A fixed, explicit baseline records the existing source-field omissions above, so a new omission fails the gate; attribution remains next to the public figure through the generated article and ViEW pages.",
+        "The source text below comes from the corresponding `figures.json`. Every externally sourced public figure must have a source field unless it is listed with a reason in the bounded unresolved-provenance ledger; attribution remains next to the public figure through the generated article and ViEW pages.",
         "",
         "| PoC | externally sourced figures | source declaration |",
         "|---|---:|---|",

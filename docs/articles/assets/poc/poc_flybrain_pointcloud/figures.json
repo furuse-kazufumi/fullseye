@@ -33,7 +33,8 @@
   "animated": true,
   "frames": 36,
   "frames_written": 36,
-  "fps": 10.0
+  "fps": 10.0,
+  "source": "Source: Male CNS dataset v1.0, Janelia FlyEM / Google Research. URL: https://male-cns.janelia.org/. Publication: Male CNS dataset v1.0 release documentation. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Only the stated soma positions and superclass labels are rendered; graph activity and camera motion are Fullseye-derived."
  },
  {
   "file": "04_footprints.png",
