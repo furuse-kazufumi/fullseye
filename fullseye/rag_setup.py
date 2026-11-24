@@ -229,6 +229,8 @@ def main(argv=None) -> int:
               "clone the repo for the full per-op notes)" % PKG)
     print("next: open Claude Code anywhere and ask an image-processing question — "
           "the 'fullseye-ops' skill routes it through the corpus")
+    print("register MCP: claude mcp add fullseye -- fullseye-mcp")
+    print("alternative: claude mcp add fullseye -- %s -P -m fullseye.mcp" % sys.executable)
     print('try:  fullseye-rag search "remove noise"   (any of ja/en/zh/tw/ko/de)')
     return 0
 
