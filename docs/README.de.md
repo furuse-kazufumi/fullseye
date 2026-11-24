@@ -68,7 +68,7 @@ Die 101 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, vo
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 10 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 503 Beispielen werden 499 tatsächlich von einem Gate ausgeführt.
+Von 504 Beispielen werden 500 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
@@ -99,7 +99,7 @@ Von 503 Beispielen werden 499 tatsächlich von einem Gate ausgeführt.
 
 <!-- poc-index:start -->
 
-## PoC-Serie — 316 reale Aufgaben mit Grundwahrheit
+## PoC-Serie — 317 reale Aufgaben mit Grundwahrheit
 
 Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. Fehlerarten werden getrennt gezählt. Vollständige Liste: [examples/README.md](../examples/README.md).
 
@@ -133,12 +133,12 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | ranging (2) | [`poc_dtof_ranging`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dtof_ranging.py) Ranging by Counting Photons — How Many for How Many Millimetres?<br>[`poc_leak_localization`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_leak_localization.py) Digging Where the Sound Says — A Clean Correlation Still Digs in the Wrong Place |
 | shape_descriptors (2) | [`poc_real_texture_invariance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_texture_invariance.py) Rotating Real Textures — Rotation Invariance Holds Only Where It Is Not Needed<br>[`poc_rotation_invariance_audit`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rotation_invariance_audit.py) Which Quantities Really Survive a Rotation — Auditing Invariance on a Real Coin |
 | signal_processing (2) | [`poc_rail_corrugation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py) Measuring Rail with a Chord — At the Wavelengths Where the Transfer Function Is Zero, Any Amplitude Reads Zero<br>[`poc_web_roll_periodicity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_web_roll_periodicity.py) Naming the Damaged Roller from a Period — You Run Out of Evidence Before You Reach the Cliff |
+| space (2) | [`poc_rocket_landing`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rocket_landing.py) Measuring a Generic Two-Stage Vehicle from Two Fixed RGB Cameras — From Separation to First-Stage Reusable Landing, Video Measurement Reaches the Same Verdict as Truth<br>[`poc_star_tracker`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py) How One Star Image Reveals Satellite Attitude |
 | verification (2) | [`poc_glyph_typo_detection`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py) Finding and Fixing Wrong Characters Without Recognising Them — the Threshold Comes from Typeface Spread<br>[`poc_larval_connectome_reservoir`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_larval_connectome_reservoir.py) A Larval Connectome as a Reservoir Reads Digits — and the Wiring Is Not What Does It |
 | vibration (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) Modal identification from video — frequency survives to the end, damping lies first<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure? |
 | colour (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) Colour Constancy (White Balance) — No Method Works, Only Conditions Do |
 | fileio (1) | [`poc_real_file_formats`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py) Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed |
 | rectification (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth |
-| space (1) | [`poc_star_tracker`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py) How One Star Image Reveals Satellite Attitude |
 | tomography (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) Where CT Reconstruction Starts to Break as Projections Are Removed |
 | tracking (1) | [`poc_real_bg_kalman_tracking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_bg_kalman_tracking.py) Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels |
 | super-resolution (1) | [`poc_superresolution_limits`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_superresolution_limits.py) Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count |
@@ -314,7 +314,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 337
+## Dokumentkarte — alle 338
 
 Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,847 Operator-Notizen und 73 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
@@ -459,7 +459,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(251)
+**Other**(252)
 
 | Dokument | Inhalt |
 |---|---|
@@ -531,6 +531,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`P0A_EVALUATION_REPORT.md`](P0A_EVALUATION_REPORT.md) | 評価の枠組み共通層 P0-A 実施報告 _(ja)_ |
 | [`PIPELINE_SHAPES.md`](PIPELINE_SHAPES.md) | Typed DAG execution |
 | [`POC_QUALITY_CRITERIA.en.md`](POC_QUALITY_CRITERIA.en.md) | Quality criteria for PoCs, figures, videos and exhibits (for whoever asks and whoever builds) |
+| [`POC_ROCKET_LANDING.md`](POC_ROCKET_LANDING.md) | 汎用二段式ロケットの着陸計測 PoC _(ja)_ |
 | [`REALDATA_TLESS_6DOF.md`](REALDATA_TLESS_6DOF.md) | BOP T-LESS 実機深度 6 自由度 PoC _(ja)_ |
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | レシピの網羅(族・課題・型の繋がり・GPU 経路) _(ja)_ |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |

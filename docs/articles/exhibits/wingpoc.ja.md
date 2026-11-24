@@ -10230,6 +10230,48 @@ py -3.11 examples/poc_real_tum_rgbd_slam.py
 
 使用 op(ノートへ): [`depth_to_organized_points`](https://furuse.work/ops/3d/range_image/depth_to_organized_points.html) · [`euclidean_cluster`](https://furuse.work/ops/3d/segment/euclidean_cluster.html) · [`fit_plane_3d`](https://furuse.work/ops/3d/geometry/fit_plane_3d.html) · [`normals_from_depth`](https://furuse.work/ops/3d/range_image/normals_from_depth.html) · [`occlusion_edges`](https://furuse.work/ops/3d/range_image/occlusion_edges.html) · [`plane_segmentation`](https://furuse.work/ops/3d/segment/plane_segmentation.html)
 
+## No.2026.318 —— 一般化した二段機を固定 RGB 2 視点で測る —— 分離から第1段の再使用着陸まで、映像計測は真値と同じ成否を返す
+
+再使用着陸の映像計測は、着陸の成功だけでなく、燃料不足や横風での失敗も取り違えずに返す必要がある。一般化した二段機を二台の固定 RGB カメラで測り、真値と成功・不成功の判断を照合した。
+
+[![一般化した二段機を固定 RGB 2 視点で測る —— 分離から第1段の再使用着陸まで、映像計測は真値と同じ成否を返す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/01_two_camera_input_output_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/01_two_camera_input_output.png)
+
+*↑ **一般化した二段機を固定 RGB 2 視点で測る —— 分離から第1段の再使用着陸まで、映像計測は真値と同じ成否を返す** ―― 実在の機体を模さない一般化した二段機を MuJoCo で分離し、第1段をブーストバックから円形の着陸台へ降ろした。固定した地上追尾・着陸台の2カメラの RGB だけから、色マーカーを二視点三角測量し、姿勢、炎の画像軸、接地時刻・速さ、台中心からのずれを測る。holdout seed 41 では位置誤差の中央値/最大が 0.354 / 0.468 m、傾き誤差の中央値が 0.770 度、炎の画像軸誤差の中央値が 6.557 度、接地時刻は RGB 5.01 s・真値 4.97 s、接地速さは RGB 0.752 m/s・真値 3.711 m/s、中心からのずれは両方 0.919 m だった。調整用2回と holdout 2回はどちらも成功、燃料不足と強風はどちらも真値/RGB = 不成功/不成功で、欠測した接地を成功扱いしない。*
+
+[![固定の地上追尾カメラ(左)と着陸台カメラ(右)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/02_separation_landing_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/02_separation_landing_video.gif)
+
+*↑ 測定の図 ―― 固定の地上追尾カメラ(左)と着陸台カメラ(右)。分離から着陸までの 106 コマ、10.0 fps。橙=RGB計測、緑=真値表示。*
+
+[![holdout の第1段 3-D 軌跡。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/03_trajectory_truth_vs_rgb_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/03_trajectory_truth_vs_rgb.png)
+
+*↑ holdout の第1段 3-D 軌跡。*
+
+[![画面中の数値はこの実行の run から作った値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/04_holdout_error_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/04_holdout_error_table.png)
+
+*↑ 画面中の数値はこの実行の run から作った値。*
+
+[![意図した燃料不足と強風。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/07_failure_cases_rgb_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/07_failure_cases_rgb_truth.png)
+
+*↑ 意図した燃料不足と強風。*
+
+[![fuel_shortage seed 7。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/05_fuel_shortage_rgb_failure.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/05_fuel_shortage_rgb_failure.gif)
+
+*↑ 動く図 ―― fuel_shortage seed 7。固定2カメラ RGB の橙=計測、緑=MuJoCo真値。真値/RGB の成功判定は False/False で、成功を返さない。*
+
+[![strong_wind seed 19。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/06_strong_wind_rgb_failure.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rocket_landing/06_strong_wind_rgb_failure.gif)
+
+*↑ 動く図 ―― strong_wind seed 19。固定2カメラ RGB の橙=計測、緑=MuJoCo真値。真値/RGB の成功判定は False/False で、成功を返さない。*
+
+```
+py -3.11 examples/poc_rocket_landing.py
+```
+
+ソース: [examples/poc_rocket_landing.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rocket_landing.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_rocket_landing)
+
+使用 op(ノートへ): [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
 ### 装置の棟 ―― 生の出力から、装置固有の壊れ方まで再現する
 
 計測装置を名前だけ借り、都合のよい画像を出すのは簡単です。この部屋の 33 点は逆に、光子・電子・干渉・熱拡散・走査・光線追跡から装置の生出力を作り、そこから普段の測定値までを一続きにしています。

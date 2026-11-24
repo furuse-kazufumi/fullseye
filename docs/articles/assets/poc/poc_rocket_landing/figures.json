@@ -1,0 +1,94 @@
+[
+ {
+  "file": "01_two_camera_input_output.png",
+  "name": "two_camera_input_output",
+  "caption": "holdout seed 41 の固定 2 カメラ。橙の十字は RGB からの計測、緑は後から重ねた MuJoCo 真値。位置中央値 0.354 m、傾き中央値 0.770°。",
+  "shape": [
+   436,
+   3130,
+   3
+  ]
+ },
+ {
+  "file": "02_separation_landing_video.gif",
+  "name": "separation_landing_video",
+  "caption": "固定の地上追尾カメラ(左)と着陸台カメラ(右)。分離から着陸までの 106 コマ、10.0 fps。橙=RGB計測、緑=真値表示。",
+  "shape": [
+   358,
+   960,
+   3
+  ],
+  "animated": true,
+  "frames": 106,
+  "frames_written": 106,
+  "fps": 10.0,
+  "video": "02_separation_landing_video.mp4",
+  "video_frames": 106,
+  "video_fps": 10.0,
+  "video_shape": [
+   384,
+   1030,
+   3
+  ]
+ },
+ {
+  "file": "03_trajectory_truth_vs_rgb.png",
+  "name": "trajectory_truth_vs_rgb",
+  "caption": "holdout の第1段 3-D 軌跡。RGBの重心を 2 視点の camera.triangulate で復元し、真値との距離は中央値 0.354 m、最大 0.468 m。",
+  "shape": [
+   720,
+   1602,
+   3
+  ]
+ },
+ {
+  "file": "04_holdout_error_table.png",
+  "name": "holdout_error_table",
+  "caption": "画面中の数値はこの実行の run から作った値。成功判定は RGB と真値の両方で一致した。",
+  "shape": [
+   448,
+   845,
+   3
+  ],
+  "csv": "04_holdout_error_table.csv",
+  "tsv": "04_holdout_error_table.tsv"
+ },
+ {
+  "file": "05_fuel_shortage_rgb_failure.gif",
+  "name": "fuel_shortage_rgb_failure",
+  "caption": "fuel_shortage seed 7。固定2カメラ RGB の橙=計測、緑=MuJoCo真値。真値/RGB の成功判定は False/False で、成功を返さない。",
+  "shape": [
+   268,
+   720,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 3.333333333333333
+ },
+ {
+  "file": "06_strong_wind_rgb_failure.gif",
+  "name": "strong_wind_rgb_failure",
+  "caption": "strong_wind seed 19。固定2カメラ RGB の橙=計測、緑=MuJoCo真値。真値/RGB の成功判定は False/False で、成功を返さない。",
+  "shape": [
+   268,
+   720,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 3.333333333333333
+ },
+ {
+  "file": "07_failure_cases_rgb_truth.png",
+  "name": "failure_cases_rgb_truth",
+  "caption": "意図した燃料不足と強風。各画像は真値接触時刻に最も近い RGB コマで、橙=RGB 計測、緑=MuJoCo 真値。両ケースを fail-closed として不成功にする。",
+  "shape": [
+   436,
+   2090,
+   3
+  ]
+ }
+]

@@ -292,7 +292,7 @@ In diesem Abschnitt sind Titel und Zusammenfassungen übersetzt; die ausführlic
 
 ## Alles ansehen
 
-283 PoCs und 2 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+284 PoCs und 2 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -416,7 +416,7 @@ In diesem Abschnitt sind Titel und Zusammenfassungen übersetzt; die ausführlic
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D-Form</b> (18)</summary>
+<details class="vall"><summary><b>3-D-Form</b> (19)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png"><img src="../../articles/assets/poc/poc_battery_ct_degradation/story.en.gif" alt="In synthetic prismatic cells whose swelling was scaled so their exteriors match, CT slices still show closed clearance, waving layers or gas holes. Only 29.4 % of the electrode swelling reaches the outside. Outside dimensions alone cannot identify the cause." loading="lazy" width="200" height="200"></picture><span>Batterie-CT</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="../../articles/assets/poc/poc_bev_sensor_fusion/story.en.gif" alt="For distant vehicles, a small image calibration error becomes a physical shift in a bird's-eye map. Opposite-side range sensors were fused on one grid, tracing the reprojection shift at 22 m. Complementary views create the gain, but growing yaw error makes fusion worse than one sensor." loading="lazy" width="200" height="200"></picture><span>BEV-Sensorfusion</span></a>
@@ -436,6 +436,7 @@ In diesem Abschnitt sind Titel und Zusammenfassungen übersetzt; die ausführlic
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori.png"><img src="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/story.en.gif" alt="Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>4-D mit 3-D-Werkzeugen</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="Die Gebäude des Veranstaltungsorts und der Asteroid Itokawa auf einem Maßstab: PLATEAU-CityGML LOD2 als Netz" width="200" height="200"><span>Die Gebäude des Veranstaltungsorts und der Asteroid Itokawa auf einem Maßstab: PLATEAU-CityGML LOD2 als Netz</span></a>
 <a href="../../articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bga_ball_type_roundtrip.jpg" alt="Vom Bild über Punktwolke, Volumen, Netz und Graph: Die Kugelzahl bleibt in drei Typen 71" width="200" height="200"><span>Vom Bild über Punktwolke, Volumen, Netz und Graph: Die Kugelzahl bleibt in drei Typen 71</span></a>
+<a href="../../articles/assets/poc/poc_rocket_landing/02_separation_landing_video.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_rocket_landing/01_two_camera_input_output.png"><img src="../../articles/assets/poc/poc_rocket_landing/story.en.gif" alt="Video measurement of a reusable landing must return failures from insufficient fuel or crosswind as well as successes. A generic two-stage vehicle is measured by two fixed RGB cameras, and its success/failure verdict is checked against simulator truth." loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>Abtrennung und Erststufenlandung eines generischen Zweistufenfahrzeugs mit zwei festen RGB-Kameras messen</span></a>
 </div>
 </details>
 

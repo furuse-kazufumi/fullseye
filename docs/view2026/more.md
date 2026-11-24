@@ -320,7 +320,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## ぜんぶ見る
 
-PoC 283 本と、ロボットの例 2 本。グループを開くとサムネイルが出ます。
+PoC 284 本と、ロボットの例 2 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -444,7 +444,7 @@ PoC 283 本と、ロボットの例 2 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 形状</b> (18)</summary>
+<details class="vall"><summary><b>3-D 形状</b> (19)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_battery_ct_degradation/17_same_outline_ct.png"><img src="../articles/assets/poc/poc_battery_ct_degradation/story.ja.gif" alt="外形が同じでも中身は違う(合成の角形セル)。健全と、外形が揃うように膨れの倍率を合わせた(局所 0.2736 / ガス 0.3021)一様膨れ・局所膨れ・層間ガス空隙の 3 つのセルを、X 線 120 方向の投影(ビームハードニング・検出器のリング・光子雑音つき)から FBP で再構成した z 中央の断面(灰色、同じ窓)。外形の中央は 3 つとも 6.313 / 6.313 / 6.313 mm —— 揃えたのは作り方で、発見ではない。断面では隙間の消え方・層の波打ち・ガスの穴(矢印、位置は仕込んだ真値)が違い、内部指標(層厚 0.190 / 0.187 / 0.173 mm、空隙率 0.00 / 0.00 / 5.20 %(ガスの真値 5.81 %)、平面度 RMS 0.0156 / 0.0428 / 0.0784 mm)が分ける。明るい層 = 正極の合材、暗めの層 = 負極の合材、細い明線 = Cu 箔。★数値は単一材質の模型(1〜8 節)で測った値で、層の材質の明暗はこの図の描画だけ(材質つきの像で測り直した値はパネルの括弧内)。実セルを縮めた模型(全幅 3.2 mm・17 層)。中央の同心円はリングの痕。 再構成は別実装 skimage の iradon と相関 0.974(向きは定義から決めた)。" loading="lazy" width="200" height="200"></picture><span>電池の CT 劣化</span></a>
 <a href="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="../articles/assets/poc/poc_bev_sensor_fusion/story.ja.gif" alt="評価窓は前方 3-30 m。既知でない領域(車体内部・陰)は評価から外す。" loading="lazy" width="200" height="200"></picture><span>鳥瞰図の融合</span></a>
@@ -464,6 +464,7 @@ PoC 283 本と、ロボットの例 2 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori.png"><img src="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/story.ja.gif" alt="同じ θ の繊維を 12 本ずつ、θ を 3 通り描いたもの。★**S² の緯線 1 本が、3 次元では 1 枚のトーラス面**になる —— 3 つの色が入れ子の殻をつくる。S² の北極と南極に対応する 2 本だけは、直線と単位円になる(この図には入れていない)。" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>4 次元を 3-D で</span></a>
 <a href="../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_plateau_venue_lod2.jpg" alt="会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに" width="200" height="200"><span>会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに</span></a>
 <a href="../articles/assets/poc/poc_bga_ball_type_roundtrip/01_bga_types.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_bga_ball_type_roundtrip.jpg" alt="画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個" width="200" height="200"><span>画像から点群・体積・メッシュ・グラフへ渡しても、ボールの数は 3 つの型で同じ 71 個</span></a>
+<a href="../articles/assets/poc/poc_rocket_landing/02_separation_landing_video.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_rocket_landing/01_two_camera_input_output.png"><img src="../articles/assets/poc/poc_rocket_landing/story.ja.gif" alt="holdout seed 41 の固定 2 カメラ。橙の十字は RGB からの計測、緑は後から重ねた MuJoCo 真値。位置中央値 0.354 m、傾き中央値 0.770°。" loading="lazy" width="200" height="200"></picture><b>&#9654;</b><span>固定 RGB 2 視点で二段機の分離と第1段着陸を測る</span></a>
 </div>
 </details>
 

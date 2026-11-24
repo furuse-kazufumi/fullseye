@@ -68,7 +68,7 @@
 | `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 10 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
-503 个示例中,检查实际运行的有 499 个。
+504 个示例中,检查实际运行的有 500 个。
 
 ### 各版本的算子数
 
@@ -99,7 +99,7 @@
 
 <!-- poc-index:start -->
 
-## PoC 系列 — 带真值求解的 316 个实际问题
+## PoC 系列 — 带真值求解的 317 个实际问题
 
 每一个都具有闭式或合成的真值，并必定附带零点(什么都不做)。失败模式分开计数，原因用对照组区分。完整列表: [examples/README.md](../examples/README.md)。
 
@@ -133,12 +133,12 @@
 | ranging (2) | [`poc_dtof_ranging`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dtof_ranging.py) Ranging by Counting Photons — How Many for How Many Millimetres?<br>[`poc_leak_localization`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_leak_localization.py) Digging Where the Sound Says — A Clean Correlation Still Digs in the Wrong Place |
 | shape_descriptors (2) | [`poc_real_texture_invariance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_texture_invariance.py) Rotating Real Textures — Rotation Invariance Holds Only Where It Is Not Needed<br>[`poc_rotation_invariance_audit`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rotation_invariance_audit.py) Which Quantities Really Survive a Rotation — Auditing Invariance on a Real Coin |
 | signal_processing (2) | [`poc_rail_corrugation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py) Measuring Rail with a Chord — At the Wavelengths Where the Transfer Function Is Zero, Any Amplitude Reads Zero<br>[`poc_web_roll_periodicity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_web_roll_periodicity.py) Naming the Damaged Roller from a Period — You Run Out of Evidence Before You Reach the Cliff |
+| space (2) | [`poc_rocket_landing`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rocket_landing.py) Measuring a Generic Two-Stage Vehicle from Two Fixed RGB Cameras — From Separation to First-Stage Reusable Landing, Video Measurement Reaches the Same Verdict as Truth<br>[`poc_star_tracker`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py) How One Star Image Reveals Satellite Attitude |
 | verification (2) | [`poc_glyph_typo_detection`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py) Finding and Fixing Wrong Characters Without Recognising Them — the Threshold Comes from Typeface Spread<br>[`poc_larval_connectome_reservoir`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_larval_connectome_reservoir.py) A Larval Connectome as a Reservoir Reads Digits — and the Wiring Is Not What Does It |
 | vibration (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) Modal identification from video — frequency survives to the end, damping lies first<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure? |
 | colour (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) Colour Constancy (White Balance) — No Method Works, Only Conditions Do |
 | fileio (1) | [`poc_real_file_formats`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py) Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed |
 | rectification (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth |
-| space (1) | [`poc_star_tracker`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py) How One Star Image Reveals Satellite Attitude |
 | tomography (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) Where CT Reconstruction Starts to Break as Projections Are Removed |
 | tracking (1) | [`poc_real_bg_kalman_tracking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_bg_kalman_tracking.py) Cutting a Walking Person out of Real Static-Camera Video and Carrying the Track behind a Pillar with a Kalman Filter — Per-Pixel Kalman Background versus MOG2, Scored by F-Measure against Hand Labels |
 | super-resolution (1) | [`poc_superresolution_limits`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_superresolution_limits.py) Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count |
@@ -314,7 +314,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 337 篇
+## 文档地图 — 共 338 篇
 
 完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,847 篇算子说明与 73 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
@@ -459,7 +459,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(251)
+**Other**(252)
 
 | 文档 | 内容 |
 |---|---|
@@ -531,6 +531,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`P0A_EVALUATION_REPORT.md`](P0A_EVALUATION_REPORT.md) | 評価の枠組み共通層 P0-A 実施報告 _(ja)_ |
 | [`PIPELINE_SHAPES.md`](PIPELINE_SHAPES.md) | Typed DAG execution |
 | [`POC_QUALITY_CRITERIA.en.md`](POC_QUALITY_CRITERIA.en.md) | Quality criteria for PoCs, figures, videos and exhibits (for whoever asks and whoever builds) |
+| [`POC_ROCKET_LANDING.md`](POC_ROCKET_LANDING.md) | 汎用二段式ロケットの着陸計測 PoC _(ja)_ |
 | [`REALDATA_TLESS_6DOF.md`](REALDATA_TLESS_6DOF.md) | BOP T-LESS 実機深度 6 自由度 PoC _(ja)_ |
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | レシピの網羅(族・課題・型の繋がり・GPU 経路) _(ja)_ |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |

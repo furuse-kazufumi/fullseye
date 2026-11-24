@@ -70,7 +70,7 @@
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 10 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 503 本のうち、門が実際に走らせるもの 499 本。
+例 504 本のうち、門が実際に走らせるもの 500 本。
 
 ### 版ごとの op の数
 
@@ -101,7 +101,7 @@
 
 <!-- poc-index:start -->
 
-## PoC シリーズ — 真値つきで実問題を解いた 316 本
+## PoC シリーズ — 真値つきで実問題を解いた 317 本
 
 どれも**真値を閉形式か合成で厳密に持ち、ゼロ点(何もしない場合)を必ず併記**します。壊れ方は 1 つの指標に畳まず別々に数え、原因は対照群で分けます。全文と実行手順は [examples/README.md](../examples/README.md)。
 
@@ -135,12 +135,12 @@
 | 測距 (2) | [`poc_dtof_ranging`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dtof_ranging.py) 光子計数 dToF の距離精度(理論限界に乗るか、どこで崩れるか)<br>[`poc_leak_localization`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_leak_localization.py) 音で漏水を位置決めする(音速を誤ると掘る場所がずれる) |
 | shape_descriptors (2) | [`poc_real_texture_invariance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_texture_invariance.py) 実写テクスチャを回す(回転不変は等方な素材でだけ成り立つ)<br>[`poc_rotation_invariance_audit`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rotation_invariance_audit.py) 「回転しても同じ」と言える量はどれか(実写の硬貨を 72 角度で監査) |
 | signal_processing (2) | [`poc_rail_corrugation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py) レールの波状摩耗を弦で測る(伝達関数が 0 になる波長は 0 mm と出る)<br>[`poc_web_roll_periodicity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_web_roll_periodicity.py) 搬送ロールの傷を周期から名指しする(崖に着く前に何も言えなくなる) |
+| space (2) | [`poc_rocket_landing`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rocket_landing.py) 二段式ロケットの第1段を固定 RGB 2 視点で追い、再使用着陸の成否を真値と照合する<br>[`poc_star_tracker`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py) 星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める |
 | verification (2) | [`poc_glyph_typo_detection`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py) 画像の誤字を認識せずに見つけて直す(正しい文字列を入力で貰う)<br>[`poc_larval_connectome_reservoir`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_larval_connectome_reservoir.py) 幼虫コネクトームを reservoir にして数字を読む(配線は効いていない) |
 | 振動 (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) 動画からのモード同定(f は当たる、ζ が先に嘘をつく)<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) モーション拡大の振幅精度(拡大は測るための道具か) |
 | 色 (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) 色恒常性(どの手法にも「効く条件」があり、勝ち続ける手法は無い) |
 | fileio (1) | [`poc_real_file_formats`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py) 実物の科学データファイルを 5 形式読み、外の読み手と公表値で採点する(FITS・NIfTI・MRC・OME-TIFF・E57) |
 | 正対化 (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) 書類スキャンの台形補正と影除去(良いところ取りは無い) |
-| space (1) | [`poc_star_tracker`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py) 星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める |
 | 断層 (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) CT 再構成の忠実度(投影数を減らすとどこで壊れるか) |
 | tracking (1) | [`poc_real_bg_kalman_tracking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_bg_kalman_tracking.py) 実写の固定カメラで人を切り出し、柱の裏をカルマン予測で通り抜ける(画素ごとのカルマン背景対 MOG2) |
 | 超解像 (1) | [`poc_superresolution_limits`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_superresolution_limits.py) 超解像は情報を増やすか(単一画像では増えない) |
@@ -380,7 +380,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 337 本
+## ドキュメント地図 — 全 338 本
 
 **索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,847 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
@@ -525,7 +525,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(251)
+**そのほか**(252)
 
 | 文書 | 内容 |
 |---|---|
@@ -597,6 +597,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`P0A_EVALUATION_REPORT.md`](P0A_EVALUATION_REPORT.md) | 評価の枠組み共通層 P0-A 実施報告 |
 | [`PIPELINE_SHAPES.md`](PIPELINE_SHAPES.md) | Typed DAG execution |
 | [`POC_QUALITY_CRITERIA.en.md`](POC_QUALITY_CRITERIA.en.md) | Quality criteria for PoCs, figures, videos and exhibits (for whoever asks and whoever builds) |
+| [`POC_ROCKET_LANDING.md`](POC_ROCKET_LANDING.md) | 汎用二段式ロケットの着陸計測 PoC |
 | [`REALDATA_TLESS_6DOF.md`](REALDATA_TLESS_6DOF.md) | BOP T-LESS 実機深度 6 自由度 PoC |
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | レシピの網羅(族・課題・型の繋がり・GPU 経路) |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |

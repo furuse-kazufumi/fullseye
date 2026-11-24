@@ -139,10 +139,10 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 495 |
-| `tests/test_poc_scripts_run.py` が走らせる | 316 |
+| 2-D 台帳の例 | 496 |
+| `tests/test_poc_scripts_run.py` が走らせる | 317 |
 | `tests/test_example_scripts_run.py` が走らせる | 179 |
-| ディスク上の例のスクリプト(`examples/*.py`) | 503 |
+| ディスク上の例のスクリプト(`examples/*.py`) | 504 |
 | うち 2-D 台帳の外(`examples2d.EXCLUDED`) | 8 |
 | 台帳の外だが、名指しの試験が走らせる | 4 |
 | **どの門も走らせていない** | **4** |
