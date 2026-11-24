@@ -260,11 +260,11 @@ class Pipeline {
 public:
     ~Pipeline() { fs_pipeline_destroy(value_); }
     Pipeline(Pipeline &&other) noexcept
-        : runtime_(std::exchange(other.runtime_, nullptr)), value_(std::exchange(other.value_, nullptr)) {}
+        : runtime_(std::move(other.runtime_)), value_(std::exchange(other.value_, nullptr)) {}
     Pipeline &operator=(Pipeline &&other) noexcept {
         if (this != &other) {
             fs_pipeline_destroy(value_);
-            runtime_ = std::exchange(other.runtime_, nullptr);
+            runtime_ = std::move(other.runtime_);
             value_ = std::exchange(other.value_, nullptr);
         }
         return *this;
@@ -298,7 +298,8 @@ public:
 
 private:
     friend class Runtime;
-    Pipeline(fs_runtime_t *runtime, fs_pipeline_t *value) noexcept : runtime_(runtime), value_(value) {}
+    Pipeline(std::shared_ptr<fs_runtime_t> runtime, fs_pipeline_t *value) noexcept
+        : runtime_(std::move(runtime)), value_(value) {}
 
     PipelineEndpoint endpoint(size_t index, bool is_input) const {
         char *name = nullptr;
@@ -313,15 +314,20 @@ private:
 
     void check(fs_status_t status, const std::string &context) const {
         if (status != FS_OK) {
-            const size_t needed = fs_last_error(runtime_, nullptr, 0u);
+            const size_t needed = fs_last_error(runtime_.get(), nullptr, 0u);
             std::vector<char> message(needed ? needed : 1u, '\0');
-            fs_last_error(runtime_, message.data(), message.size());
+            fs_last_error(runtime_.get(), message.data(), message.size());
             throw Error(status, "Fullseye " + context + " failed (" + status_name(status) + "): " +
                                 std::string(message.data()));
         }
     }
 
-    fs_runtime_t *runtime_ = nullptr;
+    // A Pipeline is independently usable after its C++ Runtime owner leaves
+    // scope.  The shared native handle is released only after this pipeline's
+    // native destructor has released its C ABI reference. / Pipeline は C++ の
+    // Runtime 所有者が scope を抜けても単独で使える。共有 native handle はこの
+    // pipeline の C ABI 参照を解放した後にだけ解放する。
+    std::shared_ptr<fs_runtime_t> runtime_;
     fs_pipeline_t *value_ = nullptr;
 };
 
@@ -342,22 +348,16 @@ public:
         create(options);
     }
     explicit Runtime(const fs_init_options_t &options) { create(options); }
-    ~Runtime() { fs_runtime_destroy(value_); }
+    ~Runtime() = default;
     Runtime(const Runtime &) = delete;
     Runtime &operator=(const Runtime &) = delete;
-    Runtime(Runtime &&other) noexcept : value_(std::exchange(other.value_, nullptr)) {}
-    Runtime &operator=(Runtime &&other) noexcept {
-        if (this != &other) {
-            fs_runtime_destroy(value_);
-            value_ = std::exchange(other.value_, nullptr);
-        }
-        return *this;
-    }
+    Runtime(Runtime &&other) noexcept = default;
+    Runtime &operator=(Runtime &&other) noexcept = default;
 
     Result call(const std::string &op_id, const std::vector<fs_input_n_t> &inputs,
                 const std::string &params = "{}") {
         fs_result_id_t out = 0u;
-        check(fs_call_id_n(value_, op_id.data(), op_id.size(),
+        check(fs_call_id_n(value_.get(), op_id.data(), op_id.size(),
                            inputs.empty() ? nullptr : inputs.data(), inputs.size(),
                            params.data(), params.size(), &out), "op " + op_id);
         return Result(out);
@@ -374,7 +374,7 @@ public:
             throw std::invalid_argument("Fullseye load_pipeline needs a non-empty UTF-8 Studio .json path");
         }
         fs_pipeline_t *pipeline = nullptr;
-        check(fs_pipeline_load_path_n(value_, path.data(), path.size(), &pipeline),
+        check(fs_pipeline_load_path_n(value_.get(), path.data(), path.size(), &pipeline),
               "pipeline load from " + std::string(path));
         return Pipeline(value_, pipeline);
     }
@@ -386,13 +386,13 @@ public:
     std::string find_ops(const std::string &query = "{}") {
         char *text = nullptr;
         size_t bytes = 0;
-        check(fs_find_ops_json_n(value_, query.data(), query.size(), &text, &bytes), "operator search");
+        check(fs_find_ops_json_n(value_.get(), query.data(), query.size(), &text, &bytes), "operator search");
         const std::unique_ptr<char, decltype(&fs_free)> owned_text(text, &fs_free);
         std::string result(owned_text.get(), bytes ? bytes - 1 : 0);
         return result;
     }
 
-    fs_runtime_t *get() const noexcept { return value_; }
+    fs_runtime_t *get() const noexcept { return value_.get(); }
 
 private:
     static std::string json_string(std::string_view value) {
@@ -428,16 +428,23 @@ private:
     }
 
     void create(const fs_init_options_t &options) {
-        const fs_status_t status = fs_runtime_create(&options, &value_);
+        fs_runtime_t *runtime = nullptr;
+        const fs_status_t status = fs_runtime_create(&options, &runtime);
         if (status != FS_OK) {
             throw Error(status, "Fullseye runtime initialization failed (" +
                                 std::string(status_name(status)) + "): " + last_error());
         }
+        try {
+            value_ = std::shared_ptr<fs_runtime_t>(runtime, &fs_runtime_destroy);
+        } catch (...) {
+            fs_runtime_destroy(runtime);
+            throw;
+        }
     }
     std::string last_error() const {
-        const size_t needed = fs_last_error(value_, nullptr, 0);
+        const size_t needed = fs_last_error(value_.get(), nullptr, 0);
         std::vector<char> message(needed ? needed : 1, '\0');
-        fs_last_error(value_, message.data(), message.size());
+        fs_last_error(value_.get(), message.data(), message.size());
         return std::string(message.data());
     }
     void check(fs_status_t status, const std::string &context) const {
@@ -446,7 +453,7 @@ private:
         }
     }
 
-    fs_runtime_t *value_ = nullptr;
+    std::shared_ptr<fs_runtime_t> value_;
 };
 
 }  // namespace fullseye

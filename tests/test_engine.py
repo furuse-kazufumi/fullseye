@@ -221,3 +221,34 @@ def test_public_saved_pipeline_loader_and_cli_share_the_closed_validation_gate(t
                            inp=None, stepwise=False, out=None, upto=None)
     with pytest.raises(ValueError, match="unsupported key"):
         imgevolve.cmd_run(args)
+
+
+def test_saved_pipeline_name_is_a_string_and_stage_aliases_are_unambiguous():
+    """Saved JSON never coerces its name or silently chooses one conflicting stage alias.
+
+    保存名は文字列だけを受け、dict stage が ``op`` と ``name`` を併記するときは同値だけを
+    受ける。こうして C/C++ SDK を含む全保存JSON入口で同じ意味になる。
+    """
+    non_string_name = json.dumps({"fullseye_pipeline": 1, "name": 17,
+                                  "stages": [["gaussian", 0.5, 0.5]]})
+    with pytest.raises(ValueError) as raised:
+        engine.load_pipeline_text(non_string_name)
+    message = str(raised.value)
+    assert all(fragment in message for fragment in ("'name' must be a JSON string", "17", "str()", "は JSON 文字列"))
+
+    same_alias = engine.load_pipeline_text(json.dumps({
+        "fullseye_pipeline": 1,
+        "name": "same-alias",
+        "stages": [{"op": "gaussian", "name": "gaussian", "a": 0.2, "b": 0.5}],
+    }))
+    assert same_alias.name == "same-alias" and same_alias.op_names() == ["gaussian"]
+
+    conflicting_alias = json.dumps({
+        "fullseye_pipeline": 1,
+        "name": "conflict",
+        "stages": [{"op": "gaussian", "name": "threshold", "a": 0.2, "b": 0.5}],
+    })
+    with pytest.raises(ValueError) as raised:
+        engine.load_pipeline_text(conflicting_alias)
+    message = str(raised.value)
+    assert all(fragment in message for fragment in ("'op' is 'gaussian'", "'name' is 'threshold'", "one stage", "operator は 1 つ"))

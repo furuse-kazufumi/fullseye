@@ -1154,6 +1154,17 @@ bool copy_text_span(const char *text, size_t bytes, bool optional, std::string *
     return true;
 }
 
+// ABI 0.1 has NUL-terminated strings rather than explicit spans.  Never call
+// strlen on them: a missing terminator must be rejected before it can walk or
+// copy unbounded memory. / ABI 0.1 は明示長でなく NUL 終端文字列を受ける。
+// strlen は使わず、終端がない文字列を無制限に走査・複写する前に拒否する。
+bool legacy_c_string_bytes(const char *text, size_t maximum, size_t *out_bytes) noexcept {
+    const void *const nul = std::memchr(text, '\0', maximum + 1u);
+    if (nul == nullptr) return false;
+    *out_bytes = static_cast<const char *>(nul) - text;
+    return true;
+}
+
 fs_result_id_t register_result(std::shared_ptr<const ResultPayload> payload) {
     std::lock_guard<std::mutex> lock(g_result_mutex);
     uint32_t index = 0u;
@@ -1423,13 +1434,19 @@ FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime) {
 
 FS_API fs_status_t FS_CALL fs_find_ops_json(fs_runtime_t *runtime, const char *query_json,
                                              char **out_utf8, size_t *out_bytes) {
+    if (out_utf8 != nullptr) *out_utf8 = nullptr;
+    if (out_bytes != nullptr) *out_bytes = 0u;
     if (query_json == nullptr) {
-        if (out_utf8 != nullptr) *out_utf8 = nullptr;
-        if (out_bytes != nullptr) *out_bytes = 0u;
         set_error(runtime, "query_json must not be NULL");
         return FS_E_INVALID_ARG;
     }
-    return fs_find_ops_json_n(runtime, query_json, std::strlen(query_json), out_utf8, out_bytes);
+    size_t query_json_bytes = 0u;
+    if (!legacy_c_string_bytes(query_json, kMaxJsonBytes, &query_json_bytes)) {
+        set_error(runtime,
+                  "fs_find_ops_json query_json is at least 1048577 bytes before its NUL terminator; the limit is 1048576 bytes (1 MiB). It is refused because ABI 0.1 must bound text before it reaches Python. Pass NUL-terminated JSON of 1048576 bytes or less, or use fs_find_ops_json_n with its explicit byte length. / fs_find_ops_json の query_json は終端 NUL まで少なくとも 1048577 B あり、上限 1048576 B (1 MiB) を超えています。ABI 0.1 では Python に渡す前に文字列長を制限するため拒否します。1048576 B 以下で NUL 終端した JSON を渡すか、明示的なバイト長を取る fs_find_ops_json_n を使ってください。");
+        return FS_E_INVALID_ARG;
+    }
+    return fs_find_ops_json_n(runtime, query_json, query_json_bytes, out_utf8, out_bytes);
 }
 
 FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime, const char *query_json,
@@ -1502,6 +1519,18 @@ FS_API fs_status_t FS_CALL fs_call(fs_runtime_t *runtime, const char *op_id,
     if (runtime == nullptr || op_id == nullptr || params_json == nullptr || out == nullptr
         || (input_count != 0u && inputs == nullptr)) {
         set_error(runtime, "runtime, C strings, inputs, and out must satisfy the ABI 0.1 contract");
+        return FS_E_INVALID_ARG;
+    }
+    size_t op_id_bytes = 0u;
+    if (!legacy_c_string_bytes(op_id, kMaxOperatorIdBytes, &op_id_bytes)) {
+        set_error(runtime,
+                  "fs_call op_id is at least 257 bytes before its NUL terminator; the limit is 256 bytes. It is refused because ABI 0.1 must bound an operator ID before it reaches Python. Pass a NUL-terminated op_id of 256 bytes or less, or use fs_call_id_n with its explicit byte length. / fs_call の op_id は終端 NUL まで少なくとも 257 B あり、上限 256 B を超えています。ABI 0.1 では Python に渡す前に operator ID を制限するため拒否します。256 B 以下で NUL 終端した op_id を渡すか、明示的なバイト長を取る fs_call_id_n を使ってください。");
+        return FS_E_INVALID_ARG;
+    }
+    size_t params_json_bytes = 0u;
+    if (!legacy_c_string_bytes(params_json, kMaxJsonBytes, &params_json_bytes)) {
+        set_error(runtime,
+                  "fs_call params_json is at least 1048577 bytes before its NUL terminator; the limit is 1048576 bytes (1 MiB). It is refused because ABI 0.1 must bound JSON before it reaches Python. Pass NUL-terminated JSON of 1048576 bytes or less, or use fs_call_id_n with its explicit byte length. / fs_call の params_json は終端 NUL まで少なくとも 1048577 B あり、上限 1048576 B (1 MiB) を超えています。ABI 0.1 では Python に渡す前に JSON を制限するため拒否します。1048576 B 以下で NUL 終端した JSON を渡すか、明示的なバイト長を取る fs_call_id_n を使ってください。");
         return FS_E_INVALID_ARG;
     }
     try {
@@ -1909,7 +1938,8 @@ FS_API fs_status_t FS_CALL fs_pipeline_run_n(fs_pipeline_t *pipeline,
             return call.status();
         }
         if (!call.entered()) {
-            set_error(runtime, "the runtime is closing, so the pipeline cannot run; keep Runtime alive until Pipeline is destroyed");
+            set_error(runtime,
+                      "The runtime was destroyed before this pipeline could run (it is closing). Destroy the pipeline first, or keep the runtime alive until fs_pipeline_destroy returns. / Runtime が pipeline より先に破棄されたため実行できません（closing 中です）。pipeline を先に破棄するか、fs_pipeline_destroy が戻るまで runtime を生かしてください。");
             return FS_E_BUSY;
         }
         py::gil_scoped_acquire acquire;

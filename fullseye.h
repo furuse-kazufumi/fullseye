@@ -149,13 +149,18 @@ FS_API size_t FS_CALL fs_runtime_diagnose(char *buf, size_t capacity);
  * C SDK は 0.2 として最初に公開する。世代付き ID を返す入口は
  * fs_call_id_n とし、ポインタ結果の関数名と混同しない。
  *
- * Pointer entry points accept valid NUL-terminated C strings. Result
- * pointers must not be used after fs_result_release(); that is undefined.
- * Direct input buffers are borrowed only for the duration of fs_call() or
- * fs_call_id_n(); the library does not retain their pointers after return.
- * ABI 0.1 旧入口は有効な NUL 終端 C 文字列を受ける。fs_result_release() 後の
- * 結果ポインタ利用は未定義で、呼出し側の責任。直接入力のバッファは fs_call()
- * または fs_call_id_n() の呼出し中だけ借用し、復帰後はポインタを保持しない。 */
+ * Pointer entry points accept valid NUL-terminated C strings.  Their legacy
+ * strings are scanned only through their explicit C SDK caps: fs_call() op_id
+ * is at most 256 B and params_json, and fs_find_ops_json() query_json, are at
+ * most 1 MiB.  A missing NUL within that bound is rejected. Result pointers
+ * must not be used after fs_result_release(); that is undefined. Direct input
+ * buffers are borrowed only for the duration of fs_call() or fs_call_id_n();
+ * the library does not retain their pointers after return. / ABI 0.1 旧入口は
+ * 有効な NUL 終端 C 文字列を受ける。旧文字列は C SDK の明示上限までしか走査しない:
+ * fs_call() の op_id は 256 B 以下、params_json と fs_find_ops_json() の
+ * query_json は 1 MiB 以下であり、この範囲に NUL がなければ拒否する。
+ * fs_result_release() 後の結果ポインタ利用は未定義で、呼出し側の責任。直接入力の
+ * バッファは fs_call() または fs_call_id_n() の呼出し中だけ借用し、復帰後は保持しない。 */
 FS_API fs_status_t FS_CALL fs_find_ops_json(fs_runtime_t *runtime,
                                              const char *query_json,
                                              char **out_utf8,

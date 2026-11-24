@@ -27,6 +27,11 @@ if(FULLSEYE_BUILD_NATIVE)
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/fullseye>)
   target_link_libraries(fullseye_c_api PRIVATE pybind11::embed)
+  if(MSVC)
+    # C ABI errors include Japanese remediation alongside English. / C ABI の
+    # エラーには英語と日本語の修復手順を載せる。
+    target_compile_options(fullseye_c_api PRIVATE /utf-8)
+  endif()
   if(MINGW)
     # The SDK DLL must not depend on a compiler installation being on PATH.
     # SDK DLL はコンパイラー導入先の PATH に依存させない。

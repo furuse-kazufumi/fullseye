@@ -3450,6 +3450,12 @@ def _normalise_stage(i, st, a=0.5, b=0.5) -> tuple:
     if isinstance(st, str):
         name, sa, sb = st, a, b
     elif isinstance(st, dict):
+        if "op" in st and "name" in st and st["op"] != st["name"]:
+            raise TypeError(
+                "stage %d: 'op' is %r but 'name' is %r. It is refused because one stage must name exactly one "
+                "operator. Keep one key, or give both the same operator name. / stage %d: 'op' は %r、'name' は %r "
+                "です。1 段が指せる operator は 1 つだけなので拒否します。片方の key を残すか、両方を同じ operator 名にしてください。"
+                % (i, st["op"], st["name"], i, st["op"], st["name"]))
         name = st.get("op", st.get("name"))
         if not isinstance(name, str):
             raise TypeError("stage %d: a dict stage needs 'op' (or 'name'), got keys %s"

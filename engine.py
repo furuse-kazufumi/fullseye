@@ -700,6 +700,13 @@ def _validate_file_pipeline_dict(value: object, *, where: str) -> dict:
     if "stages" not in value:
         raise ValueError("%s: missing required key 'stages'. The file cannot name work to run; save the pipeline again "
                          "from Studio." % where)
+    if "name" in value and not isinstance(value["name"], str):
+        raise ValueError(
+            "%s: 'name' must be a JSON string, got %r (%s). It is refused because converting it with str() would "
+            "change the saved pipeline's declared identity. Set 'name' to a string such as \"inspection\", then "
+            "save and retry. / %s: 'name' は JSON 文字列である必要がありますが、%r (%s) でした。str() への変換で保存 "
+            "pipeline の宣言名が変わるため拒否します。'name' を \"inspection\" のような文字列にして保存し直してください。"
+            % (where, value["name"], type(value["name"]).__name__, where, value["name"], type(value["name"]).__name__))
     return value
 
 
