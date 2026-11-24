@@ -177,6 +177,8 @@ pip install "fullseye[all]" # + opencv, scikit-image, Pillow, PyWavelets, Simple
 ```
 
 **After installing, run `fullseye setup`** (see "Your first minute after `pip install`" below).
+If Windows startup behaves unexpectedly, run **`fullseye doctor`** for checked causes and copyable repairs; see
+[Windows troubleshooting](docs/TROUBLESHOOTING.en.md).
 
 PyPI: <https://pypi.org/project/fullseye/> · Source / issues / operator corpus:
 GitHub (linked from the PyPI sidebar). After installing, `fullseye-rag` sets up the
@@ -192,6 +194,7 @@ operators are affected when it is absent (graceful degradation). GPU is opt-in.
 
 ```bash
 fullseye setup          # checks your environment, then asks one question at a time (Enter = default)
+fullseye doctor         # read-only startup diagnosis; add --json for automation, --fix asks before a safe repair
 ```
 
 It reports your Python / fullseye / Qt / optional dependencies / Claude Code integration, then asks what you want
