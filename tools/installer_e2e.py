@@ -66,7 +66,10 @@ def _assert(path: Path, what: str) -> None:
 def _real_user_state_allowed(env: dict[str, str] | None = None) -> bool:
     """実ユーザー状態に触れる E2E を許すのは GitHub Actions か明示 opt-in だけ / allow real-user-state E2E only in Actions or after explicit opt-in."""
     e = os.environ if env is None else env
-    return e.get("CI") == "true" or e.get("FULLSEYE_E2E_ALLOW_REAL_USER_STATE") == "1"
+    # CI=true だけなら手元の別ツールでも立つので、GitHub Actions の印も要る。
+    # CI=true alone is set by many local tools; also require the GitHub Actions marker.
+    in_actions = e.get("CI") == "true" and e.get("GITHUB_ACTIONS") == "true"
+    return in_actions or e.get("FULLSEYE_E2E_ALLOW_REAL_USER_STATE") == "1"
 
 
 def _print_real_user_state_refusal(env: dict[str, str] | None = None) -> None:

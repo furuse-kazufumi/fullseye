@@ -46,3 +46,14 @@ def test_e2e_forces_utf8_for_children_and_decodes_logs_fail_softly():
     text = (ROOT / "tools" / "installer_e2e.py").read_text(encoding="utf-8")
     assert '"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"' in text
     assert 'encoding="utf-8", errors="replace"' in text
+
+
+def test_ci_true_alone_does_not_allow_real_user_state():
+    """CI=true だけでは本物の利用者の状態に触れない / CI=true without GITHUB_ACTIONS is refused."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("installer_e2e_guard", ROOT / "tools" / "installer_e2e.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    assert not mod._real_user_state_allowed({"CI": "true"})
+    assert mod._real_user_state_allowed({"CI": "true", "GITHUB_ACTIONS": "true"})
+    assert mod._real_user_state_allowed({"FULLSEYE_E2E_ALLOW_REAL_USER_STATE": "1"})
