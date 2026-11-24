@@ -256,7 +256,7 @@ def _doc1(obj) -> str:
 
 def _sig(fn) -> str:
     try:
-        return str(inspect.signature(fn))
+        return __import__("signature_text").format_signature(fn)
     except (TypeError, ValueError):
         return "(...)"
 
