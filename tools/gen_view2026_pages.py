@@ -772,7 +772,7 @@ def _intro(d: dict, lang: str, up: str, ui: dict) -> list[str]:
     src, w, h = INTRO_IMG
     link = ""
     if lang in ABOUT_LANGS:
-        link = '<p><a href="about.md">%s</a></p>' % ("Fullseye とは(読み物)" if lang == "ja" else "About Fullseye (reading)")
+        link = '<p><a href="about.html">%s</a></p>' % ("Fullseye とは(読み物)" if lang == "ja" else "About Fullseye (reading)")
     alt = html.escape(ui["intro_alt"], quote=True)
     return ['<div class="vintro"><img src="%s%s" alt="%s" width="%d" height="%d">'
             '<div class="vt"><p>%s</p>%s</div></div>' % (up, src, alt, w, h, _esc(ui["about"]), link), ""]
@@ -801,7 +801,7 @@ def _main_cards(d: dict, rows: list[dict], lang: str, up: str, docs: str, media)
     text = MAIN_TEXT[lang]
     out = []
     for e in rows:
-        body = '<p>%s</p><p class="vm">%s: %s · <a href="more.md#%s">%s</a></p>' % (
+        body = '<p>%s</p><p class="vm">%s: %s · <a href="more.html#%s">%s</a></p>' % (
             _code_html(_esc(e["lead"][lang])), text["truth"], _esc(e["truth"][lang]), _anchor(e["id"]), text["detail"])
         out += [_card(d, e, lang, up, docs, media, body, label=e["label"][lang], badge=truth_badge(e, lang)), ""]
     return out
