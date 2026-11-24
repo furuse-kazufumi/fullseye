@@ -19,6 +19,7 @@
 #include <new>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -45,6 +46,18 @@ constexpr uint32_t kTypedInputNSize =
 constexpr uint32_t kRequiredArraySize =
     static_cast<uint32_t>(offsetof(fs_array_view_t, dtype) + sizeof(fs_dtype_t));
 constexpr size_t kMaxErrorBytes = 4096u;
+// Every generated C-callable operator ID is at most 41 UTF-8 bytes (952 rows,
+// measured 2026-11-24).  Keep ample room for future scoped IDs while bounding
+// an untrusted allocation request at the C boundary. / 現在の型台帳で最長の
+// C-callable ID は 41 UTF-8 B (952 行、2026-11-24 実測)。将来の scoped ID
+// の余裕を残しつつ、C 境界で信頼できない確保要求を上限化する。
+constexpr size_t kMaxOperatorIdBytes = 256u;
+// Query and parameter JSON are control-plane documents, not array payloads.
+// One MiB is enough for closed operator schemas and prevents hostile span
+// lengths from reaching std::string allocation. / query/params JSON は配列
+// payload でなく制御用文書なので、1 MiB で閉じた schema には足り、悪意ある
+// span 長を std::string の確保まで通さない。
+constexpr size_t kMaxJsonBytes = 1024u * 1024u;
 
 struct Item {
     fs_value_kind_t kind = FS_VALUE_REAL;
@@ -76,10 +89,12 @@ std::mutex g_python_mutex;
 std::mutex g_runtime_mutex;
 std::unordered_set<fs_runtime_t *> g_runtimes;
 
-void set_error(const fs_runtime_t *runtime, std::string message) {
+void set_error(const fs_runtime_t *runtime, std::string_view message) noexcept {
     g_error.runtime = runtime;
     g_error.length = std::min(message.size(), kMaxErrorBytes);
-    std::memcpy(g_error.message, message.data(), g_error.length);
+    if (g_error.length != 0u) {
+        std::memcpy(g_error.message, message.data(), g_error.length);
+    }
     g_error.message[g_error.length] = '\0';
 }
 
@@ -261,14 +276,17 @@ fs_status_t validate_array(const fs_runtime_t *runtime, const fs_array_view_t &v
             return FS_E_SHAPE;
         }
     }
+    if (static_cast<size_t>(view.stride_bytes[0]) < contiguous_stride) {
+        set_error(runtime, "array first-axis stride is smaller than one contiguous trailing row");
+        return FS_E_SHAPE;
+    }
     if (view.data_bytes < required || reinterpret_cast<uintptr_t>(view.data) % element != 0u) {
         set_error(runtime, "array data_bytes is too small or data is misaligned");
         return FS_E_SHAPE;
     }
     if (view.dtype == FS_DTYPE_F32 || view.dtype == FS_DTYPE_F64) {
         const auto *base = static_cast<const unsigned char *>(view.data);
-        size_t rest = 1u;
-        for (uint32_t axis = 1u; axis < view.ndim; ++axis) rest *= static_cast<size_t>(view.shape[axis]);
+        const size_t rest = contiguous_stride / element;
         for (int64_t d0 = 0; d0 < view.shape[0]; ++d0) {
             const auto *row0 = base + static_cast<size_t>(d0) * static_cast<size_t>(view.stride_bytes[0]);
             for (size_t i = 0u; i < rest; ++i) {
@@ -603,63 +621,86 @@ bool split_result_id(fs_result_id_t id, uint32_t *index, uint32_t *generation) {
 
 class ResultIdLease {
 public:
-    explicit ResultIdLease(fs_result_id_t result) {
-        uint32_t index = 0u;
-        uint32_t generation = 0u;
-        if (!split_result_id(result, &index, &generation)) {
-            return;
-        }
-        {
-            std::lock_guard<std::mutex> lock(g_result_mutex);
-            if (index < g_result_slots.size()) {
-                const ResultSlot &slot = g_result_slots[index];
-                if (slot.generation == generation) {
-                    payload_ = slot.payload;
+    explicit ResultIdLease(fs_result_id_t result) noexcept {
+        try {
+            uint32_t index = 0u;
+            uint32_t generation = 0u;
+            if (!split_result_id(result, &index, &generation)) {
+                return;
+            }
+            {
+                std::lock_guard<std::mutex> lock(g_result_mutex);
+                if (index < g_result_slots.size()) {
+                    const ResultSlot &slot = g_result_slots[index];
+                    if (slot.generation == generation) {
+                        payload_ = slot.payload;
+                    }
                 }
             }
-        }
 #if defined(FULLSEYE_C_API_TESTING)
-        if (payload_) pause_after_id_lease_for_test();
+            if (payload_) pause_after_id_lease_for_test();
 #endif
+        } catch (const std::bad_alloc &) {
+            status_ = FS_E_OUT_OF_MEMORY;
+        } catch (...) {
+            status_ = FS_E_INTERNAL;
+        }
     }
     const ResultPayload *get() const noexcept { return payload_.get(); }
     explicit operator bool() const noexcept { return static_cast<bool>(payload_); }
+    fs_status_t status() const noexcept { return status_; }
 
 private:
     std::shared_ptr<const ResultPayload> payload_;
+    fs_status_t status_ = FS_OK;
 };
 
 class RuntimeCall {
 public:
-    explicit RuntimeCall(fs_runtime_t *runtime) : runtime_(runtime) {
-        std::lock_guard<std::mutex> lock(g_runtime_mutex);
-        if (runtime_ == nullptr || g_runtimes.count(runtime_) == 0u
-            || runtime_->closing.load(std::memory_order_acquire)) {
-            return;
+    explicit RuntimeCall(fs_runtime_t *runtime) noexcept : runtime_(runtime) {
+        try {
+            std::lock_guard<std::mutex> lock(g_runtime_mutex);
+            if (runtime_ == nullptr || g_runtimes.count(runtime_) == 0u
+                || runtime_->closing.load(std::memory_order_acquire)) {
+                return;
+            }
+            runtime_->active.fetch_add(1u, std::memory_order_acq_rel);
+            entered_ = true;
+        } catch (const std::bad_alloc &) {
+            status_ = FS_E_OUT_OF_MEMORY;
+        } catch (...) {
+            status_ = FS_E_INTERNAL;
         }
-        runtime_->active.fetch_add(1u, std::memory_order_acq_rel);
-        entered_ = true;
     }
-    ~RuntimeCall() { finish(); }
+    ~RuntimeCall() noexcept { finish(); }
     bool entered() const noexcept { return entered_; }
+    fs_status_t status() const noexcept { return status_; }
 
 private:
-    void finish() {
-        if (runtime_ == nullptr || finished_ || !entered_) {
+    void finish() noexcept {
+        try {
+            if (runtime_ == nullptr || finished_ || !entered_) {
+                finished_ = true;
+                return;
+            }
             finished_ = true;
-            return;
-        }
-        finished_ = true;
-        std::lock_guard<std::mutex> lock(g_runtime_mutex);
-        const size_t remaining = runtime_->active.fetch_sub(1u, std::memory_order_acq_rel) - 1u;
-        if (remaining == 0u && runtime_->closing.load(std::memory_order_acquire)) {
-            g_runtimes.erase(runtime_);
-            delete runtime_;
+            std::lock_guard<std::mutex> lock(g_runtime_mutex);
+            const size_t remaining = runtime_->active.fetch_sub(1u, std::memory_order_acq_rel) - 1u;
+            if (remaining == 0u && runtime_->closing.load(std::memory_order_acquire)) {
+                g_runtimes.erase(runtime_);
+                delete runtime_;
+            }
+        } catch (...) {
+            // C ABI cleanup must not throw during stack unwinding. A mutex
+            // failure leaves the runtime alive rather than crossing C. /
+            // C ABI の後始末は巻き戻し中に例外を出さない。mutex 失敗時は C 境界を
+            // 越えず runtime を残す。
         }
     }
     fs_runtime_t *runtime_ = nullptr;
     bool entered_ = false;
     bool finished_ = false;
+    fs_status_t status_ = FS_OK;
 };
 
 fs_status_t access_item(const ResultPayload *result, size_t index, fs_value_kind_t expected,
@@ -734,37 +775,61 @@ extern "C" {
 
 #if defined(FULLSEYE_C_API_TESTING)
 FS_API fs_status_t FS_CALL fs_test_result_id_seed_next_generation(uint32_t generation) {
-    if (generation == 0u) return FS_E_INVALID_ARG;
-    std::lock_guard<std::mutex> lock(g_result_mutex);
-    if (g_free_result_slots.empty()) return FS_E_INVALID_ARG;
-    const uint32_t index = g_free_result_slots.back();
-    ResultSlot &slot = g_result_slots[index];
-    if (slot.payload || slot.retired) return FS_E_INVALID_ARG;
-    slot.generation = generation;
-    return FS_OK;
+    try {
+        if (generation == 0u) return FS_E_INVALID_ARG;
+        std::lock_guard<std::mutex> lock(g_result_mutex);
+        if (g_free_result_slots.empty()) return FS_E_INVALID_ARG;
+        const uint32_t index = g_free_result_slots.back();
+        ResultSlot &slot = g_result_slots[index];
+        if (slot.payload || slot.retired) return FS_E_INVALID_ARG;
+        slot.generation = generation;
+        return FS_OK;
+    } catch (const std::bad_alloc &) {
+        return FS_E_OUT_OF_MEMORY;
+    } catch (...) {
+        return FS_E_INTERNAL;
+    }
 }
 
 FS_API fs_status_t FS_CALL fs_test_result_id_pause_after_lease(int enabled) {
-    std::lock_guard<std::mutex> lock(g_test_lease_mutex);
-    g_test_pause_after_id_lease = enabled != 0;
-    g_test_id_lease_acquired = false;
-    g_test_id_lease_resume = !g_test_pause_after_id_lease;
-    return FS_OK;
+    try {
+        std::lock_guard<std::mutex> lock(g_test_lease_mutex);
+        g_test_pause_after_id_lease = enabled != 0;
+        g_test_id_lease_acquired = false;
+        g_test_id_lease_resume = !g_test_pause_after_id_lease;
+        return FS_OK;
+    } catch (const std::bad_alloc &) {
+        return FS_E_OUT_OF_MEMORY;
+    } catch (...) {
+        return FS_E_INTERNAL;
+    }
 }
 
 FS_API fs_status_t FS_CALL fs_test_result_id_wait_for_lease(uint32_t timeout_ms) {
-    std::unique_lock<std::mutex> lock(g_test_lease_mutex);
-    const bool acquired = g_test_lease_cv.wait_for(lock, std::chrono::milliseconds(timeout_ms), [] {
-        return g_test_id_lease_acquired;
-    });
-    return acquired ? FS_OK : FS_E_BUSY;
+    try {
+        std::unique_lock<std::mutex> lock(g_test_lease_mutex);
+        const bool acquired = g_test_lease_cv.wait_for(lock, std::chrono::milliseconds(timeout_ms), [] {
+            return g_test_id_lease_acquired;
+        });
+        return acquired ? FS_OK : FS_E_BUSY;
+    } catch (const std::bad_alloc &) {
+        return FS_E_OUT_OF_MEMORY;
+    } catch (...) {
+        return FS_E_INTERNAL;
+    }
 }
 
 FS_API fs_status_t FS_CALL fs_test_result_id_resume_lease(void) {
-    std::lock_guard<std::mutex> lock(g_test_lease_mutex);
-    g_test_id_lease_resume = true;
-    g_test_lease_cv.notify_all();
-    return FS_OK;
+    try {
+        std::lock_guard<std::mutex> lock(g_test_lease_mutex);
+        g_test_id_lease_resume = true;
+        g_test_lease_cv.notify_all();
+        return FS_OK;
+    } catch (const std::bad_alloc &) {
+        return FS_E_OUT_OF_MEMORY;
+    } catch (...) {
+        return FS_E_INTERNAL;
+    }
 }
 #endif
 
@@ -772,70 +837,70 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, f
     if (out != nullptr) {
         *out = nullptr;
     }
-    if (options == nullptr || out == nullptr) {
-        set_error(nullptr, "options and out must not be NULL");
-        return FS_E_INVALID_ARG;
-    }
-    if (options->struct_size < kRequiredInitSize) {
-        set_error(nullptr, "fs_init_options_t.struct_size is too small");
-        return FS_E_INVALID_ARG;
-    }
-    if (options->abi_major != FULLSEYE_ABI_VERSION_MAJOR
-        || options->abi_minor > FULLSEYE_ABI_VERSION_MINOR) {
-        set_error(nullptr, "requested ABI version is not compatible with this runtime");
-        return FS_E_UNSUPPORTED;
-    }
-    if ((options->flags & FS_INIT_ISOLATED) == 0u) {
-        set_error(nullptr, "FS_INIT_ISOLATED is mandatory");
-        return FS_E_INVALID_ARG;
-    }
-    const bool bounded_options = options->abi_minor >= 2u;
-    if (bounded_options && options->struct_size < kRequiredInitNSize) {
-        set_error(nullptr, "ABI 0.2 fs_init_options_t.struct_size is too small");
-        return FS_E_INVALID_ARG;
-    }
-    const char *environment_root = std::getenv("FULLSEYE_PYTHON_ROOT");
-    std::string root;
-    std::string home;
-    if (bounded_options) {
-        if ((options->runtime_root == nullptr && options->runtime_root_bytes != 0u)
-            || (options->runtime_root != nullptr && options->runtime_root_bytes == 0u)
-            || (options->python_home == nullptr && options->python_home_bytes != 0u)
-            || (options->python_home != nullptr && options->python_home_bytes == 0u)) {
-            set_error(nullptr, "ABI 0.2 runtime_root and python_home pointers must match their byte lengths");
+    try {
+        if (options == nullptr || out == nullptr) {
+            set_error(nullptr, "options and out must not be NULL");
             return FS_E_INVALID_ARG;
         }
-        if (options->runtime_root != nullptr) {
-            if (std::memchr(options->runtime_root, '\0', options->runtime_root_bytes) != nullptr) {
-                set_error(nullptr, "ABI 0.2 runtime_root must not contain NUL bytes");
+        if (options->struct_size < kRequiredInitSize) {
+            set_error(nullptr, "fs_init_options_t.struct_size is too small");
+            return FS_E_INVALID_ARG;
+        }
+        if (options->abi_major != FULLSEYE_ABI_VERSION_MAJOR
+            || options->abi_minor > FULLSEYE_ABI_VERSION_MINOR) {
+            set_error(nullptr, "requested ABI version is not compatible with this runtime");
+            return FS_E_UNSUPPORTED;
+        }
+        if ((options->flags & FS_INIT_ISOLATED) == 0u) {
+            set_error(nullptr, "FS_INIT_ISOLATED is mandatory");
+            return FS_E_INVALID_ARG;
+        }
+        const bool bounded_options = options->abi_minor >= 2u;
+        if (bounded_options && options->struct_size < kRequiredInitNSize) {
+            set_error(nullptr, "ABI 0.2 fs_init_options_t.struct_size is too small");
+            return FS_E_INVALID_ARG;
+        }
+        const char *environment_root = std::getenv("FULLSEYE_PYTHON_ROOT");
+        std::string root;
+        std::string home;
+        if (bounded_options) {
+            if ((options->runtime_root == nullptr && options->runtime_root_bytes != 0u)
+                || (options->runtime_root != nullptr && options->runtime_root_bytes == 0u)
+                || (options->python_home == nullptr && options->python_home_bytes != 0u)
+                || (options->python_home != nullptr && options->python_home_bytes == 0u)) {
+                set_error(nullptr, "ABI 0.2 runtime_root and python_home pointers must match their byte lengths");
                 return FS_E_INVALID_ARG;
             }
-            root.assign(options->runtime_root, options->runtime_root_bytes);
-        }
-        if (options->python_home != nullptr) {
-            if (std::memchr(options->python_home, '\0', options->python_home_bytes) != nullptr) {
-                set_error(nullptr, "ABI 0.2 python_home must not contain NUL bytes");
-                return FS_E_INVALID_ARG;
+            if (options->runtime_root != nullptr) {
+                if (std::memchr(options->runtime_root, '\0', options->runtime_root_bytes) != nullptr) {
+                    set_error(nullptr, "ABI 0.2 runtime_root must not contain NUL bytes");
+                    return FS_E_INVALID_ARG;
+                }
+                root.assign(options->runtime_root, options->runtime_root_bytes);
             }
-            home.assign(options->python_home, options->python_home_bytes);
+            if (options->python_home != nullptr) {
+                if (std::memchr(options->python_home, '\0', options->python_home_bytes) != nullptr) {
+                    set_error(nullptr, "ABI 0.2 python_home must not contain NUL bytes");
+                    return FS_E_INVALID_ARG;
+                }
+                home.assign(options->python_home, options->python_home_bytes);
+            }
+        } else {
+            root = options->runtime_root == nullptr ? "" : options->runtime_root;
+            home = options->python_home == nullptr ? "" : options->python_home;
         }
-    } else {
-        root = options->runtime_root == nullptr ? "" : options->runtime_root;
-        home = options->python_home == nullptr ? "" : options->python_home;
-    }
-    if (root.empty() && environment_root != nullptr && *environment_root != '\0') {
-        root = environment_root;
-    }
-    if (root.empty()) {
-        set_error(nullptr, "no Fullseye Python environment was specified; set runtime_root or "
-                           "FULLSEYE_PYTHON_ROOT to an environment containing the fullseye package");
-        return FS_E_NO_PYTHON;
-    }
-    try {
+        if (root.empty() && environment_root != nullptr && *environment_root != '\0') {
+            root = environment_root;
+        }
+        if (root.empty()) {
+            set_error(nullptr, "no Fullseye Python environment was specified; set runtime_root or "
+                               "FULLSEYE_PYTHON_ROOT to an environment containing the fullseye package");
+            return FS_E_NO_PYTHON;
+        }
         const PythonInitResult init = initialize_python(
             root, home, (options->flags & FS_INIT_ALLOW_HOST_PYTHON_UNSAFE) != 0u);
         if (init.status != FS_OK) {
-            set_error(nullptr, "CPython initialization failed: " + init.error);
+            set_error(nullptr, init.error);
             return init.status;
         }
         auto *runtime = new fs_runtime_t();
@@ -859,17 +924,23 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, f
 }
 
 FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime) {
-    if (runtime == nullptr) {
-        return;
-    }
-    std::lock_guard<std::mutex> lock(g_runtime_mutex);
-    if (g_runtimes.count(runtime) == 0u) {
-        return;
-    }
-    runtime->closing.store(true, std::memory_order_release);
-    if (runtime->active.load(std::memory_order_acquire) == 0u) {
-        g_runtimes.erase(runtime);
-        delete runtime;
+    try {
+        if (runtime == nullptr) {
+            return;
+        }
+        std::lock_guard<std::mutex> lock(g_runtime_mutex);
+        if (g_runtimes.count(runtime) == 0u) {
+            return;
+        }
+        runtime->closing.store(true, std::memory_order_release);
+        if (runtime->active.load(std::memory_order_acquire) == 0u) {
+            g_runtimes.erase(runtime);
+            delete runtime;
+        }
+    } catch (...) {
+        // Void C API functions cannot return a status. Never allow a C++
+        // exception to cross the ABI boundary. / void の C API は状態を返せないので、
+        // C++ 例外を ABI 境界の外へ出さない。
     }
 }
 
@@ -897,17 +968,25 @@ FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime, const char 
         set_error(runtime, "runtime, out_utf8, and out_bytes must not be NULL");
         return FS_E_INVALID_ARG;
     }
-    std::string query;
-    if (!copy_text_span(query_json, query_json_bytes, true, &query)) {
-        set_error(runtime, "query_json is NULL with a non-zero byte length");
+    if (query_json_bytes > kMaxJsonBytes) {
+        set_error(runtime, "query_json exceeds the 1 MiB C API byte limit");
         return FS_E_INVALID_ARG;
     }
-    RuntimeCall call(runtime);
-    if (!call.entered()) {
-        set_error(runtime, "runtime is closing");
-        return FS_E_BUSY;
-    }
     try {
+        std::string query;
+        if (!copy_text_span(query_json, query_json_bytes, true, &query)) {
+            set_error(runtime, "query_json is NULL with a non-zero byte length");
+            return FS_E_INVALID_ARG;
+        }
+        RuntimeCall call(runtime);
+        if (call.status() != FS_OK) {
+            set_error(runtime, "could not enter the runtime call");
+            return call.status();
+        }
+        if (!call.entered()) {
+            set_error(runtime, "runtime is closing");
+            return FS_E_BUSY;
+        }
         py::gil_scoped_acquire acquire;
         const py::object bridge = py::module_::import("fullseye.c_api_bridge");
         const std::string text = py::cast<std::string>(bridge.attr("find_ops")(
@@ -948,12 +1027,16 @@ FS_API fs_status_t FS_CALL fs_call(fs_runtime_t *runtime, const char *op_id,
         set_error(runtime, "runtime, C strings, inputs, and out must satisfy the ABI 0.1 contract");
         return FS_E_INVALID_ARG;
     }
-    RuntimeCall call(runtime);
-    if (!call.entered()) {
-        set_error(runtime, "runtime is closing");
-        return FS_E_BUSY;
-    }
     try {
+        RuntimeCall call(runtime);
+        if (call.status() != FS_OK) {
+            set_error(runtime, "could not enter the runtime call");
+            return call.status();
+        }
+        if (!call.entered()) {
+            set_error(runtime, "runtime is closing");
+            return FS_E_BUSY;
+        }
         py::gil_scoped_acquire acquire;
         py::list values;
         for (size_t index = 0; index < input_count; ++index) {
@@ -1020,19 +1103,31 @@ FS_API fs_status_t FS_CALL fs_call_id_n(fs_runtime_t *runtime, const char *op_id
         set_error(runtime, "runtime, op_id, inputs, and out must satisfy the C API contract");
         return FS_E_INVALID_ARG;
     }
-    std::string op;
-    std::string params;
-    if (!copy_text_span(op_id, op_id_bytes, false, &op)
-        || !copy_text_span(params_json, params_json_bytes, true, &params)) {
-        set_error(runtime, "a string pointer is NULL with a non-zero byte length");
+    if (op_id_bytes > kMaxOperatorIdBytes) {
+        set_error(runtime, "op_id exceeds the 256 B C API byte limit");
         return FS_E_INVALID_ARG;
     }
-    RuntimeCall call(runtime);
-    if (!call.entered()) {
-        set_error(runtime, "runtime is closing");
-        return FS_E_BUSY;
+    if (params_json_bytes > kMaxJsonBytes) {
+        set_error(runtime, "params_json exceeds the 1 MiB C API byte limit");
+        return FS_E_INVALID_ARG;
     }
     try {
+        std::string op;
+        std::string params;
+        if (!copy_text_span(op_id, op_id_bytes, false, &op)
+            || !copy_text_span(params_json, params_json_bytes, true, &params)) {
+            set_error(runtime, "a string pointer is NULL with a non-zero byte length");
+            return FS_E_INVALID_ARG;
+        }
+        RuntimeCall call(runtime);
+        if (call.status() != FS_OK) {
+            set_error(runtime, "could not enter the runtime call");
+            return call.status();
+        }
+        if (!call.entered()) {
+            set_error(runtime, "runtime is closing");
+            return FS_E_BUSY;
+        }
         py::gil_scoped_acquire acquire;
         py::list values;
         std::vector<ResultIdLease> borrowed_results;
@@ -1237,22 +1332,25 @@ FS_API void FS_CALL fs_result_release(fs_result_t *result) {
 
 FS_API fs_status_t FS_CALL fs_result_count_n(fs_result_id_t result, size_t *out_count) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     if (!lease || out_count == nullptr) return FS_E_INVALID_ARG;
     *out_count = lease.get()->items.size();
     return FS_OK;
 }
 
 FS_API fs_status_t FS_CALL fs_result_kind_n(fs_result_id_t result, size_t index,
-                                             fs_value_kind_t *out) {
+    fs_value_kind_t *out) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     if (!lease || out == nullptr || index >= lease.get()->items.size()) return FS_E_INVALID_ARG;
     *out = lease.get()->items[index].kind;
     return FS_OK;
 }
 
 FS_API fs_status_t FS_CALL fs_result_image_n(fs_result_id_t result, size_t index,
-                                              fs_image_view_t *out_borrowed) {
+                                               fs_image_view_t *out_borrowed) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     const Item *item = nullptr;
     const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_IMAGE, &item)
                                      : FS_E_INVALID_ARG;
@@ -1270,8 +1368,9 @@ FS_API fs_status_t FS_CALL fs_result_image_n(fs_result_id_t result, size_t index
 }
 
 FS_API fs_status_t FS_CALL fs_result_array_n(fs_result_id_t result, size_t index,
-                                              fs_array_view_t *out_borrowed) {
+                                               fs_array_view_t *out_borrowed) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     if (!lease || out_borrowed == nullptr || out_borrowed->struct_size < kRequiredArraySize
         || index >= lease.get()->items.size()) return FS_E_INVALID_ARG;
     const Item &item = lease.get()->items[index];
@@ -1292,8 +1391,9 @@ FS_API fs_status_t FS_CALL fs_result_array_n(fs_result_id_t result, size_t index
 }
 
 FS_API fs_status_t FS_CALL fs_result_region_runs_n(fs_result_id_t result, size_t index,
-                                                    const fs_run_t **out_borrowed, size_t *out_count) {
+                                                     const fs_run_t **out_borrowed, size_t *out_count) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     const Item *item = nullptr;
     const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_REGION, &item)
                                      : FS_E_INVALID_ARG;
@@ -1302,8 +1402,9 @@ FS_API fs_status_t FS_CALL fs_result_region_runs_n(fs_result_id_t result, size_t
 }
 
 FS_API fs_status_t FS_CALL fs_result_object_count_n(fs_result_id_t result, size_t index,
-                                                     size_t *out_count) {
+                                                      size_t *out_count) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     const Item *item = nullptr;
     const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_OBJECTSET, &item)
                                      : FS_E_INVALID_ARG;
@@ -1312,9 +1413,10 @@ FS_API fs_status_t FS_CALL fs_result_object_count_n(fs_result_id_t result, size_
 }
 
 FS_API fs_status_t FS_CALL fs_result_object_runs_n(fs_result_id_t result, size_t index,
-                                                    size_t object_index, const fs_run_t **out_borrowed,
-                                                    size_t *out_count) {
+                                                     size_t object_index, const fs_run_t **out_borrowed,
+                                                     size_t *out_count) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     const Item *item = nullptr;
     const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_OBJECTSET, &item)
                                      : FS_E_INVALID_ARG;
@@ -1324,6 +1426,7 @@ FS_API fs_status_t FS_CALL fs_result_object_runs_n(fs_result_id_t result, size_t
 
 FS_API fs_status_t FS_CALL fs_result_real_n(fs_result_id_t result, size_t index, double *out) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     const Item *item = nullptr;
     const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_REAL, &item)
                                      : FS_E_INVALID_ARG;
@@ -1332,8 +1435,9 @@ FS_API fs_status_t FS_CALL fs_result_real_n(fs_result_id_t result, size_t index,
 }
 
 FS_API fs_status_t FS_CALL fs_result_tuple_size_n(fs_result_id_t result, size_t index,
-                                                   size_t *out_count) {
+                                                    size_t *out_count) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     const Item *item = nullptr;
     const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_TUPLE, &item)
                                      : FS_E_INVALID_ARG;
@@ -1342,8 +1446,9 @@ FS_API fs_status_t FS_CALL fs_result_tuple_size_n(fs_result_id_t result, size_t 
 }
 
 FS_API fs_status_t FS_CALL fs_result_tuple_real_n(fs_result_id_t result, size_t index,
-                                                   size_t element_index, double *out) {
+                                                    size_t element_index, double *out) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     const Item *item = nullptr;
     const fs_status_t status = lease ? access_item(lease.get(), index, FS_VALUE_TUPLE, &item)
                                      : FS_E_INVALID_ARG;
@@ -1352,10 +1457,21 @@ FS_API fs_status_t FS_CALL fs_result_tuple_real_n(fs_result_id_t result, size_t 
 }
 
 FS_API fs_status_t FS_CALL fs_result_release_n(fs_result_id_t result) {
-    const fs_status_t status = release_result_id(result);
-    if (status != FS_OK) set_error(nullptr, "result ID is unknown or has already been released");
-    else clear_error(nullptr);
-    return status;
+    try {
+        const fs_status_t status = release_result_id(result);
+        if (status != FS_OK) set_error(nullptr, "result ID is unknown or has already been released");
+        else clear_error(nullptr);
+        return status;
+    } catch (const std::bad_alloc &) {
+        set_error(nullptr, "out of memory while releasing the result ID");
+        return FS_E_OUT_OF_MEMORY;
+    } catch (const std::exception &exc) {
+        set_error(nullptr, exc.what());
+        return FS_E_INTERNAL;
+    } catch (...) {
+        set_error(nullptr, "unknown error while releasing the result ID");
+        return FS_E_INTERNAL;
+    }
 }
 
 FS_API void FS_CALL fs_free(void *library_allocated) {
@@ -1387,12 +1503,16 @@ FS_API size_t FS_CALL fs_runtime_version(fs_runtime_t *runtime, char *buf, size_
     if (runtime == nullptr) {
         return 0u;
     }
-    RuntimeCall call(runtime);
-    if (!call.entered()) {
-        set_error(runtime, "runtime is closing");
-        return 0u;
-    }
     try {
+        RuntimeCall call(runtime);
+        if (call.status() != FS_OK) {
+            set_error(runtime, "could not enter the runtime call");
+            return 0u;
+        }
+        if (!call.entered()) {
+            set_error(runtime, "runtime is closing");
+            return 0u;
+        }
         py::gil_scoped_acquire acquire;
         const std::string version = py::cast<std::string>(py::module_::import("fullseye").attr("version")());
         const size_t required = version.size() + 1u;

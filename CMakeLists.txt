@@ -125,6 +125,9 @@ if(FULLSEYE_BUILD_NATIVE)
                    examples/c_runtime_initialization_failure.c)
     set_property(TARGET fullseye_c_runtime_initialization_failure PROPERTY C_STANDARD 11)
     target_link_libraries(fullseye_c_runtime_initialization_failure PRIVATE Fullseye::C)
+    add_executable(fullseye_c_text_span_limits tests/c_text_span_limits.c)
+    set_property(TARGET fullseye_c_text_span_limits PROPERTY C_STANDARD 11)
+    target_link_libraries(fullseye_c_text_span_limits PRIVATE Fullseye::C)
     add_test(NAME fullseye_c_lifecycle
              COMMAND fullseye_c_example ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME fullseye_cpp_lifecycle
@@ -141,5 +144,7 @@ if(FULLSEYE_BUILD_NATIVE)
              COMMAND fullseye_c_runtime_configuration ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME fullseye_c_runtime_initialization_failure
              COMMAND fullseye_c_runtime_initialization_failure)
+    add_test(NAME fullseye_c_text_span_limits
+             COMMAND fullseye_c_text_span_limits ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 endif()
