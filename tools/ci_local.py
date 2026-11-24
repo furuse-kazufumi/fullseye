@@ -162,7 +162,8 @@ PIP_AUDIT_ARGS = ["--python-version", "3.11", "--manylinux-glibc", "2.39"]
 #: ``tools/ci_always_run.txt`` が無い木で回す門(2026-11-10 の版の写し)。
 BUILTIN_GATES = [
     "tests/test_vacuous_assertions.py", "tests/test_type_alias_ledger.py",
-    "tests/test_test_durations_is_fresh.py", "tests/test_provenance_naming.py",
+    "tests/test_test_durations_is_fresh.py", "tests/test_execution_record.py", "tests/test_fsthreads.py",
+    "tests/test_provenance_naming.py",
     "tests/test_no_invalid_escape_sequences.py", "tests/test_svd_full_matrices.py", "tests/test_fssystem.py",
     "tests/test_docs_liquid_safe.py", "tests/test_no_stray_root_images_2026_11_01.py",
     "tests/test_review_fixes_lib2_2026_10_07.py",

@@ -15740,16 +15740,11 @@ def main(argv=None) -> int:
     import traceback
     try:
         from PySide6 import QtWidgets
-    except ImportError as e:
-        _msg = ('Fullseye Studio needs PySide6, which is not installed in this Python (%s).\n'
-                'Install it with:  %s -m pip install "PySide6>=6.5"' % (e, sys.executable))
-        print(_msg, file=sys.stderr)
-        if sys.platform == "win32" and sys.stderr is None:      # pythonw(ショートカット起動): コンソールが無い
-            try:
-                import ctypes
-                ctypes.windll.user32.MessageBoxW(None, _msg, "Fullseye Studio", 0x10)
-            except Exception:
-                pass
+    except (ImportError, OSError, UnicodeError) as e:
+        from fullseye import startup_errors
+        _msg = startup_errors.report(e, "Studio")
+        if startup_errors.is_consoleless_windows():
+            startup_errors.show_windows_message(_msg, "Fullseye Studio")
         return 1
     if sys.platform == "win32":
         # タスクバーで python のアイコンにまとめられず、Fullseye のアイコンで出るようにする
@@ -15776,10 +15771,20 @@ def main(argv=None) -> int:
         sys.__excepthook__(t, v, tb)
     sys.excepthook = _hook
 
-    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
-    win, _ = build_window()
-    win.show()
-    return app.exec()
+    try:
+        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+        win, _ = build_window()
+        win.show()
+        return app.exec()
+    except (ImportError, OSError, UnicodeError) as exc:
+        from fullseye import startup_errors
+        _msg = startup_errors.report(exc, "Studio")
+        try:
+            QtWidgets.QMessageBox.critical(None, "Fullseye Studio", _msg)
+        except Exception:
+            if startup_errors.is_consoleless_windows():
+                startup_errors.show_windows_message(_msg, "Fullseye Studio")
+        return 1
 
 
 if __name__ == "__main__":

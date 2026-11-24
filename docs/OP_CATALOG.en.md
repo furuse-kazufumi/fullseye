@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (495 examples)
+### 2-D image / signal / geometry (496 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -294,6 +294,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `shape_factors_closed_form` — ops: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
 - `walking_ops_tour` — ops: `capture_margin`, `com_from_silhouette`, `com_support_margin`, `contact_points`, `detect_obstacles`, `elevation_map`, `elevation_normals`, `elevation_step_edges`, `elevation_traversability`, `fill_gaps`, `foot_slip_metrics`, `foothold_candidates` (+12 more) `py -3.11 examples/walking_ops_tour.py`
 - `heightmap_depth_camera_tour` — ops: `clothoid_points`, `crop_rectangle2`, `dem_viewshed`, `elevation_map`, `fill_gaps`, `heightmap_depth_camera`, `road_surface_heightmap`, `surface_form_remove`, `world_camera` `py -3.11 examples/heightmap_depth_camera_tour.py`
+- `lane_ops_tour` — ops: `color_rule_mask`, `lane_boundary_fit`, `lane_center_path`, `pixel_to_world`, `plane_topview_color`, `stop_line_detect` `py -3.11 examples/lane_ops_tour.py`
 - `road_surface_tour` — ops: `blend`, `clothoid_points`, `crop_rectangle2`, `dem_slope`, `road_surface_heightmap`, `surface_form_remove` `py -3.11 examples/road_surface_tour.py`
 - `itokawa_gravity_tour` — ops: `mesh_slice_contours`, `polyhedron_clip_halfspace`, `polyhedron_gravity` `py -3.11 examples/itokawa_gravity_tour.py`
 
@@ -850,9 +851,9 @@ Ops that do not fit the one-image pipeline (two images, point sequences, variabl
 
 ## Operators by family (family → category, all ops)
 
-_3849 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
+_3854 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
 
-Families: **2d** 964 · **3d** 380 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+Families: **2d** 964 · **3d** 380 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 749 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -3643,7 +3644,7 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: none — Non-maximum suppression (Section 3.39). A pixel (x, y) survives only if, within the window, it is **≥ its preceding neighbors (the row above and the left in the same row) and > its following neighbors** (REQ-0337). This asymmetry is why exactly 1 pixel survives on a flat peak. Nonzero pixels of *mask* are not compared and are kept as is (nor are they used in comparisons for other pixels, REQ-0336). Suppressed pixels become 0 for U8 and INT16_MIN for S16 (REQ-0335). Neighbors that fall outside the window are not compared. · examples: `gallery_openvx_spec_values`
 
-### drive (744 ops / 55 categories)
+### drive (749 ops / 56 categories)
 
 The name says driving, but the content is a **ledger of physics-simulation and robot PoCs**: besides driving (courses, traffic, decisions, CARLA / CommonRoad), categories such as touch (tac*), peg-in-hole (peg*), polishing (polish), grinding (grind), cutting (cutting), granular media (granular / scoop), powder X-ray diffraction (pxrd) and ball games (ball / puck) live side by side. Look things up by category name.
 
@@ -4019,6 +4020,13 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `kendama_world` `table → table` GPU: none — A world of floor + ken (trick pose R_ken from kp, grip point kp["grip"] at ``hand``) + ball with hole + string. Origin on the floor, z up. The ball hangs below the cross-piece's string hole by the effective string length (kp["pendulum_length"]) (swung ``hang_deg`` from straight down toward ``hang_dir`` — with the diagonal (1, −1), the lateral offset is visible from both cameras at azimuth 0° and 90°). If ``p_ball`` is given, the ball is placed there. The floor is split into 0.25 m cells (as 1 large quad, any triangle reaching behind the camera is dropped whole and the floor vanishes). The return value's world["kendama"] = ``{"ken", "ball", "string"}`` (indices into objects) + ``"kp"``. · examples: `gallery_drive_world_objects`, `poc_kendama`
 - `string_mesh` `no input → any` GPU: none — A thin prism joining 2 points (the ball's string hole p_ball and the cross-piece's string hole p_cup) (4 sides + both ends, 8 vertices, 12 faces, outward-facing). Square cross-section of side 2·radius. ValueError if the two points coincide. · examples: `gallery_drive_world_objects`
 - `string_set` `table → any` GPU: none — Moves both ends of string i to (p_ball, p_cup) (rewrites only the vertices). ValueError for an object that is not a string. · examples: `gallery_drive_world_objects`
+
+#### drive / lane (5)
+- `color_rule_mask` `rgbimage × table → table` GPU: none — Classify RGB as white line, yellow line, or unknown with explicit HSV rules, returning masks and confidence. · examples: `lane_ops_tour`
+- `lane_boundary_fit` `keypoints → table` GPU: none — Robustly fit the lane boundary ``x=c0+c1*y+c2*y²`` to top-view points (lateral x, forward y). · examples: `lane_ops_tour`
+- `lane_center_path` `table × table → table` GPU: none — Return a lane-centre path and drivable band from the left and right boundaries. · examples: `lane_ops_tour`
+- `plane_topview_color` `rgbimage × matrix × matrix × signal → table` GPU: none — Project a ground plane into a colour-preserving top view and return a validity mask plus pixel-to-world coordinates. · examples: `lane_ops_tour`
+- `stop_line_detect` `labels × table → table` GPU: none — Detect the stop line and Japanese-style crosswalk as separate typed outputs. · examples: `lane_ops_tour`
 
 #### drive / lateral (21)
 - `ackermann_steer_angles` `any → table` GPU: none — Ackermann inner and outer wheel steering angles (turning radius R at the center of the rear axle, wheelbase L, track width t). · examples: `poc_driving_lateral`
@@ -5546,7 +5554,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 
 #### measure1d / scale (3)
 - `mm_per_px_from_reference` `measurement → measurement` GPU: none — Derives the pixel pitch in mm/px from a target of known size (scale bar, reference hole, gauge) — the calibration step. · examples: `example_inner_diameter_mm`, `example_scratch_width`
-- `pixel_to_world` `measurement → measurement` GPU: none — Converts one length measured in pixels to real-world mm (``value_px * mm_per_px``). · examples: `example_inner_diameter_mm`
+- `pixel_to_world` `measurement → measurement` GPU: none — Converts one length measured in pixels to real-world mm (``value_px * mm_per_px``). · examples: `example_inner_diameter_mm`, `lane_ops_tour`
 - `table_px_to_mm` `table → table` GPU: none — Adds mm columns to a measurement table (the return of ``measure_pairs`` / ``apply_metrology_model``). · examples: `example_inner_diameter_mm`, `example_scratch_width`
 
 ### roughness (9 ops / 3 categories)
