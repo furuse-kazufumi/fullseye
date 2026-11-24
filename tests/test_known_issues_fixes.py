@@ -311,7 +311,7 @@ def test_moments_region_2nd_invar_is_a_deprecated_alias():
 # §53 filtered_backprojection: source size is not present in a sinogram       #
 # --------------------------------------------------------------------------- #
 def test_filtered_backprojection_uses_explicit_size_for_the_source_grid():
-    """§53: default stays contractual; ``size=`` restores the source grid / 元の格子。"""
+    """§53: default stays contractual; explicit APIs restore the source grid / 元の格子。"""
     import tomography
 
     image = np.zeros((32, 32), np.float64)
@@ -319,6 +319,18 @@ def test_filtered_backprojection_uses_explicit_size_for_the_source_grid():
     sinogram = tomography.radon_transform(image)
     default = tomography.filtered_backprojection(sinogram)
     restored = tomography.filtered_backprojection(sinogram, size=image.shape[0])
+    restored_like = tomography.filtered_backprojection_like(sinogram, image)
     assert sinogram.shape[1] == 47
     assert default.shape == (33, 33)
     assert restored.shape == image.shape
+    assert restored_like.shape == image.shape
+    assert np.array_equal(restored_like, restored)
+
+
+def test_filtered_backprojection_like_refuses_a_non_square_reference_grid():
+    """§53: a rectangular source cannot be silently claimed as a square FBP grid."""
+    import tomography
+
+    sinogram = np.ones((12, 17), np.float64)
+    with pytest.raises(ValueError, match="square grid"):
+        tomography.filtered_backprojection_like(sinogram, np.zeros((24, 32)))

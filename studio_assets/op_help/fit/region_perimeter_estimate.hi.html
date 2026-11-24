@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">region_perimeter_estimate — FIT <code style="color:#22d3bf">fit</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.region_perimeter_estimate(region, method: &#x27;str&#x27; = &#x27;skimage&#x27;) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measure; measure.region_perimeter_estimate(region, method: &#x27;str&#x27; = &#x27;skimage&#x27;) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsfit.get(&quot;region_perimeter_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>चुने हुए estimator से binary region की परिधि मापता है。</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">method=&#x27;skimage&#x27;</code> uses <code style="color:#22d3bf">skimage.measure.perimeter</code> with its four-neighbour convention, the same estimator used by the existing <code style="color:#22d3bf">contlength</code> and <code style="color:#22d3bf">compactness</code> operators for a single connected component. <code style="color:#22d3bf">&#x27;crofton&#x27;</code> uses <code style="color:#22d3bf">skimage.measure.perimeter_crofton(..., directions=4)</code>. <code style="color:#22d3bf">&#x27;chain&#x27;</code> counts exposed four-direction pixel edges (a Freeman 4-chain length); it is available without scikit-image and is exact for an axis-aligned pixel square, but has a large positive bias for a circle.</p>
+<p>The value is in pixels and includes every foreground component and every hole. Foreground means <code style="color:#22d3bf">region &gt; 0.5</code>; an empty region returns <code style="color:#22d3bf">0.0</code>. This is a *measurement convention*, not a selector for a universally true perimeter:</p>
+<p>on the fixed closed-form probes (disc <code style="color:#22d3bf">r=96</code>, square side <code style="color:#22d3bf">128</code>), the ratios to truth are respectively <code style="color:#22d3bf">1.0518 / 0.9922</code> (<code style="color:#22d3bf">skimage</code>), <code style="color:#22d3bf">1.0016 / 0.9459</code> (<code style="color:#22d3bf">crofton</code>), and <code style="color:#22d3bf">1.2799 / 1.0000</code> (<code style="color:#22d3bf">chain</code>). Do not substitute its result into an existing feature threshold without revalidating that threshold.</p>
+<p><code style="color:#22d3bf">region</code> must be a finite numeric 2-D array. Invalid dimensionality, values, or a method other than <code style="color:#22d3bf">&#x27;skimage&#x27;</code>, <code style="color:#22d3bf">&#x27;crofton&#x27;</code> or <code style="color:#22d3bf">&#x27;chain&#x27;</code> raises <code style="color:#22d3bf">ValueError</code>; the scikit-image methods raise <code style="color:#22d3bf">ImportError</code> when that optional dependency is unavailable. 既存 op の既定値は変更しない。推定量を選ぶ必要があるときだけ、この関数を明示して使う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape_factors_closed_form">shape_factors_closed_form</a> — <code style="color:#22d3bf">py -3.11 examples/shape_factors_closed_form.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">fit</code>)</h3>
+<p><a style="color:#22d3bf" href="opfit:fit_circle_geometric">fit_circle_geometric</a> · <a style="color:#22d3bf" href="opfit:fit_curve_principal_axis">fit_curve_principal_axis</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measure.py — FIT operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

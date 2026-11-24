@@ -100,7 +100,7 @@ from stereo import (  # noqa: E402,F401
     speckle_filter, fill_disparity, disparity_confidence,
 )
 from measure import (line_profile, distance, angle,  # noqa: E402,F401
-                     fit_line, fit_circle, fit_circle_geometric,
+                     region_perimeter_estimate, fit_line, fit_circle, fit_circle_geometric,
                      fit_curve_principal_axis, fit_ellipse, fit_rectangle2,
                      fit_rectangle2_lsq)
 # 2026-11-09 op 点検: はみ出しを扱う NCC / 刻み指定の回転照合(ncc_locate / shape_locate の契約は不変)
@@ -1007,7 +1007,7 @@ from imagedraw import (  # noqa: E402,F401
 import tomography  # noqa: E402  (radon / FBP / SART / artifacts / CT-to-voxel)
 from tomography import (  # noqa: E402,F401
     projection_angles, sinogram_design, ellipse_phantom, ellipse_sinogram,
-    radon_transform, backproject_sinogram, filtered_backprojection,
+    radon_transform, backproject_sinogram, filtered_backprojection, filtered_backprojection_like,
     sart_reconstruct, beam_hardening_apply, beam_hardening_correct,
     ring_artifact_apply, ring_artifact_remove, metal_trace_interpolate,
     sinogram_center_of_rotation, sinogram_center_shift,
@@ -1283,7 +1283,7 @@ __all__ = [
     "match_descriptors", "match_keypoints",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
-    "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2", "fit_rectangle2_lsq",
+    "region_perimeter_estimate", "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2", "fit_rectangle2_lsq",
     "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3", "fit_surface_principal_axes",
     "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
     "measure3d", "regionprops3d", "ops3d", "pipeline3d",
@@ -1536,7 +1536,7 @@ __all__ = [
     "sirt_reconstruct", "os_sart_reconstruct", "tv_reconstruct", "ct_dual_energy_reconstruct",
     "tomography", "projection_angles", "sinogram_design", "ellipse_phantom",
     "ellipse_sinogram", "radon_transform", "backproject_sinogram",
-    "filtered_backprojection", "sart_reconstruct", "beam_hardening_apply",
+    "filtered_backprojection", "filtered_backprojection_like", "sart_reconstruct", "beam_hardening_apply",
     "beam_hardening_correct", "ring_artifact_apply", "ring_artifact_remove",
     "metal_trace_interpolate", "sinogram_center_of_rotation",
     "sinogram_center_shift", "radon_volume", "fbp_volume",

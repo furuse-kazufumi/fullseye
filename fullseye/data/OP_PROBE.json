@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3847, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3849, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -963,6 +963,7 @@
 {"name":"filter_by_volume","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"filter_kalman","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"filtered_backprojection","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"filtered_backprojection_like","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"find_caltab","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"find_checkerboard_corners","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"find_marks_and_pose","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -2543,6 +2544,7 @@
 {"name":"reg_open","status":"ok","in_sort":"region","out_sort":"region","probe_input":"op_probe.sample_input('region', structured=True)"},
 {"name":"region_boundary","status":"ok","in_sort":"region","out_sort":"region","probe_input":"op_probe.sample_input('region', structured=True)"},
 {"name":"region_growing","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"region_perimeter_estimate","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"region_props","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"regiongrowing","status":"ok","in_sort":"image","out_sort":"region","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"regiongrowing_mean","status":"ok","in_sort":"image","out_sort":"region","probe_input":"op_probe.sample_input('image', structured=True)"},

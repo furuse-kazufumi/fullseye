@@ -847,9 +847,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3847 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3849 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 964 · **3d** 378 · **fit** 4 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 44 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(964 ops / 49 categories)
 
@@ -2435,11 +2435,12 @@ _計 3847 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sampson_distance` `image2d × image2d → signal` GPU: なし — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 - `triangulate` `image2d × image2d → points` GPU: なし — DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。 · 例: `sfm_recon`
 
-### fit(3 ops / 2 categories)
+### fit(4 ops / 2 categories)
 
-#### fit / fit(2)
+#### fit / fit(3)
 - `fit_circle_geometric` `keypoints → table` GPU: なし — 短い円弧を含む ``(row, col)`` 点に幾何距離の最小二乗で円と半径を当てはめる。 · 例: `fit_ops_from_knowhow`
 - `fit_curve_principal_axis` `keypoints → table` GPU: なし — 斜めの曲がった縁を主軸へ回してから多項式 ``y'=f(x')`` を当てはめる。 · 例: `fit_ops_from_knowhow`
+- `region_perimeter_estimate` `region → measurement` GPU: なし — Estimate a binary region's perimeter with an explicit estimator / 推定量を明示して領域の周囲長を測る。 · 例: `shape_factors_closed_form`
 
 #### fit / registration(1)
 - `phase_correlation_shift` `image2d × image2d → table` GPU: なし — 2 枚の画像の位置合わせに必要なサブピクセル移動量を位相限定相関で求める。 · 例: `fit_ops_from_knowhow`
@@ -4496,7 +4497,7 @@ _計 3847 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `world_camera` `table × matrix × matrix → table` GPU: なし — 世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 例: `gsplat_trained_product`, `heightmap_depth_camera_tour`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
 - `world_move` `table → any` GPU: なし — 物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。 · 例: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
 
-### tomography(43 ops / 8 categories)
+### tomography(44 ops / 8 categories)
 
 #### tomography / artifact(5)
 - `beam_hardening_apply` `sinogram → sinogram` GPU: あり(許可リスト) — Turn a monochromatic sinogram into a **polychromatic** one — cupping. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`
@@ -4531,9 +4532,10 @@ _計 3847 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `projection_angles` `入力なし → signal` GPU: なし — The angle sequence of a scan, in **degrees**, as a 1-D float64 array. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`, `poc_ct_fidelity`, `tomography_reconstruct`
 - `sinogram_design` `入力なし → table` GPU: なし — What a scan geometry can and cannot resolve — **before** anything is built. · 例: `ct_reconstruction`, `tomography_reconstruct`
 
-#### tomography / reconstruct(3)
+#### tomography / reconstruct(4)
 - `backproject_sinogram` `sinogram → image2d` GPU: あり(許可リスト) — Plain, **un-filtered** back-projection — the blurred baseline. · 例: `ct_reconstruction`, `poc_ct_fidelity`
 - `filtered_backprojection` `sinogram → image2d` GPU: あり(許可リスト) — Filtered back-projection (FBP) — the standard CT reconstruction. · 例: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
+- `filtered_backprojection_like` `sinogram × image2d → image2d` GPU: なし — Run FBP on the square grid of ``reference`` / 参照画像と同じ正方格子で FBP を再構成する。 · 例: `ct_reconstruction`
 - `sart_reconstruct` `sinogram → image2d` GPU: なし — SART — simultaneous algebraic reconstruction, one angle at a time. · 例: `ct_reconstruction`
 
 #### tomography / spectral_xray(15)

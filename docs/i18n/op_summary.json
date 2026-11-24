@@ -33924,6 +33924,24 @@
    "ko": "더 이상 권장되지 않는 호환 별칭입니다. ``moments_region_2nd``를 직접 호출해 같은 값을 반환하고 ``DeprecationWarning``을 냅니다. 2.0에서 제거되기 전에 ``moments_region_2nd``로 옮기십시오.",
    "de": "Veralteter Kompatibilitätsalias. Ruft ``moments_region_2nd`` direkt auf, gibt denselben Wert zurück und erzeugt ``DeprecationWarning``; vor der Entfernung in 2.0 auf ``moments_region_2nd`` umstellen.",
    "hi": "Deprecated compatibility alias। यह सीधे ``moments_region_2nd`` को बुलाकर वही मान लौटाता है और ``DeprecationWarning`` देता है; 2.0 में हटने से पहले ``moments_region_2nd`` पर जाएँ।"
+  },
+  "fit/region_perimeter_estimate": {
+   "fp": "2d433defc9f2",
+   "en": "Estimate a binary region's perimeter with a chosen estimator.",
+   "zh": "使用明确选择的估计器测量二值区域的周长。",
+   "tw": "以明確選定的估計器量測二值區域的周長。",
+   "ko": "선택한 추정기로 이진 영역의 둘레를 측정합니다。",
+   "de": "Schätzt den Umfang einer binären Region mit einem ausdrücklich gewählten Schätzer。",
+   "hi": "चुने हुए estimator से binary region की परिधि मापता है。"
+  },
+  "tomography/filtered_backprojection_like": {
+   "fp": "176e6310b584",
+   "en": "Reconstruct FBP on the square grid of a reference image.",
+   "zh": "在参考图像的方形网格上进行 FBP 重建。",
+   "tw": "在參考影像的方形網格上進行 FBP 重建。",
+   "ko": "참조 영상의 정사각 격자에서 FBP를 재구성합니다。",
+   "de": "Rekonstruiert FBP auf dem quadratischen Gitter eines Referenzbildes。",
+   "hi": "संदर्भ image की वर्गाकार grid पर FBP reconstruct करता है。"
   }
  }
 }

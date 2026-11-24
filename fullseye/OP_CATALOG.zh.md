@@ -291,7 +291,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 **measurement**
 - `optics_four_f_processor` — op: `four_f_filter`, `fourier_plane_filter`, `highpass`, `identity`, `lowpass` `py -3.11 examples/optics_four_f_processor.py`
 - `scale_law_of_features` — op: `contlength`, `moments_region_2nd`, `moments_region_3rd`, `moments_region_central` `py -3.11 examples/scale_law_of_features.py`
-- `shape_factors_closed_form` — op: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
+- `shape_factors_closed_form` — op: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `region_perimeter_estimate`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
 - `walking_ops_tour` — op: `capture_margin`, `com_from_silhouette`, `com_support_margin`, `contact_points`, `detect_obstacles`, `elevation_map`, `elevation_normals`, `elevation_step_edges`, `elevation_traversability`, `fill_gaps`, `foot_slip_metrics`, `foothold_candidates`(另有 12 个) `py -3.11 examples/walking_ops_tour.py`
 - `heightmap_depth_camera_tour` — op: `clothoid_points`, `crop_rectangle2`, `dem_viewshed`, `elevation_map`, `fill_gaps`, `heightmap_depth_camera`, `road_surface_heightmap`, `surface_form_remove`, `world_camera` `py -3.11 examples/heightmap_depth_camera_tour.py`
 - `road_surface_tour` — op: `blend`, `clothoid_points`, `crop_rectangle2`, `dem_slope`, `road_surface_heightmap`, `surface_form_remove` `py -3.11 examples/road_surface_tour.py`
@@ -550,7 +550,7 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `machined_metal_and_materials` — op: `blast_normals`, `clearcoat_shade`, `corrosion_mask`, `finish_catalog`, `finish_shade`, `material_catalog`, `metallic_flake_normals`, `micro_normals`, `oren_nayar`, `rough_transmission`, `sheen_shade`, `slab_transmittance`(另有 5 个) `py -3.11 examples/machined_metal_and_materials.py`
 
 **tomography_3d**
-- `ct_reconstruction` — op: `backproject_sinogram`, `beam_hardening_apply`, `beam_hardening_correct`, `ellipse_phantom`, `ellipse_sinogram`, `filtered_backprojection`, `median`, `metal_trace_interpolate`, `projection_angles`, `radon_transform`, `ring_artifact_apply`, `ring_artifact_remove`(另有 4 个) `py -3.11 examples/ct_reconstruction.py`
+- `ct_reconstruction` — op: `backproject_sinogram`, `beam_hardening_apply`, `beam_hardening_correct`, `ellipse_phantom`, `ellipse_sinogram`, `filtered_backprojection`, `filtered_backprojection_like`, `median`, `metal_trace_interpolate`, `projection_angles`, `radon_transform`, `ring_artifact_apply`(另有 5 个) `py -3.11 examples/ct_reconstruction.py`
 - `ct_scan_modes` — op: `ct_adjoint_project`, `ct_forward_project`, `ct_scan_geometry`, `ellipsoid_phantom`, `ellipsoid_projections`, `fdk_reconstruct`, `os_sart_reconstruct`, `rmse`, `shepp_logan_3d`, `sirt_reconstruct`, `tv_reconstruct` `py -3.11 examples/ct_scan_modes.py`
 - `tomography_reconstruct` — op: `ellipse_phantom`, `fbp_volume`, `projection_angles`, `radon_volume`, `sinogram_design` `py -3.11 examples/tomography_reconstruct.py`
 - `ct_inspection` — op: `gaussian`, `otsu` `py -3.11 examples/ct_inspection.py`
@@ -849,9 +849,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 
 ## Operators by family(族 → 类别，全部 op)
 
-_共 3847 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
+_共 3849 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
 
-族一览: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族一览: **2d** 964 · **3d** 378 · **fit** 4 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 744 · **tomography** 44 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -2437,11 +2437,12 @@ _共 3847 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `sampson_distance` `image2d × image2d → signal` GPU: 无 — 对极约束的 Sampson 距离(一阶几何误差,逐对应)。→ (N,)。 · 示例: `two_view_pose`
 - `triangulate` `image2d × image2d → points` GPU: 无 — DLT 三角化:两视图的对应点 + 投影矩阵 → 3D 点。→ (N,3)。 · 示例: `sfm_recon`
 
-### fit (3 ops / 2 categories)
+### fit (4 ops / 2 categories)
 
-#### fit / fit (2)
+#### fit / fit (3)
 - `fit_circle_geometric` `keypoints → table` GPU: 无 — 用几何最小二乘法对包括短圆弧的（行、列）点拟合圆和半径。 · 示例: `fit_ops_from_knowhow`
 - `fit_curve_principal_axis` `keypoints → table` GPU: 无 — 将倾斜曲边旋转到主轴后拟合多项式 y'=f(x')。 · 示例: `fit_ops_from_knowhow`
+- `region_perimeter_estimate` `region → measurement` GPU: 无 — 使用明确选择的估计器测量二值区域的周长。 · 示例: `shape_factors_closed_form`
 
 #### fit / registration (1)
 - `phase_correlation_shift` `image2d × image2d → table` GPU: 无 — 用相位限定相关估计两幅图像对齐所需的亚像素平移。 · 示例: `fit_ops_from_knowhow`
@@ -4498,7 +4499,7 @@ _共 3847 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `world_camera` `table × matrix × matrix → table` GPU: 无 — 用相机拍摄世界：``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 示例: `gsplat_trained_product`, `heightmap_depth_camera_tour`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
 - `world_move` `table → any` GPU: 无 — 将物体 i(由资产放置的物体)移到新位姿 (x, y, yaw)(只改写顶点；面、标签、颜色不变)。 · 示例: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
 
-### tomography (43 ops / 8 categories)
+### tomography (44 ops / 8 categories)
 
 #### tomography / artifact (5)
 - `beam_hardening_apply` `sinogram → sinogram` GPU: 有(许可列表) — 把单色正弦图变成**多色**的 —— 杯状伪影的来源。 · 示例: `ct_reconstruction`, `poc_battery_ct_degradation`
@@ -4533,9 +4534,10 @@ _共 3847 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `projection_angles` `无输入 → signal` GPU: 无 — 扫描的角度序列,以**度**为单位的一维 float64 数组。 · 示例: `ct_reconstruction`, `poc_battery_ct_degradation`, `poc_ct_fidelity`, `tomography_reconstruct`
 - `sinogram_design` `无输入 → table` GPU: 无 — 这套扫描几何能解析什么、不能解析什么 —— **在动手之前**。 · 示例: `ct_reconstruction`, `tomography_reconstruct`
 
-#### tomography / reconstruct (3)
+#### tomography / reconstruct (4)
 - `backproject_sinogram` `sinogram → image2d` GPU: 有(许可列表) — **未滤波**的朴素反投影 —— 模糊的基线。 · 示例: `ct_reconstruction`, `poc_ct_fidelity`
 - `filtered_backprojection` `sinogram → image2d` GPU: 有(许可列表) — 滤波反投影(FBP)—— CT 重建的标准方法。 · 示例: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
+- `filtered_backprojection_like` `sinogram × image2d → image2d` GPU: 无 — 在参考图像的方形网格上进行 FBP 重建。 · 示例: `ct_reconstruction`
 - `sart_reconstruct` `sinogram → image2d` GPU: 无 — SART —— 同时代数重建,一次一个角度。 · 示例: `ct_reconstruction`
 
 #### tomography / spectral_xray (15)

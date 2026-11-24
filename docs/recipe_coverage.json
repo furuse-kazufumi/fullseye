@@ -203,7 +203,7 @@
   },
   {
    "family": "fit",
-   "ops": 3,
+   "ops": 4,
    "recipes": 2,
    "ops_used": 2
   },
@@ -425,7 +425,7 @@
   },
   {
    "family": "tomography",
-   "ops": 43,
+   "ops": 44,
    "recipes": 4,
    "ops_used": 6
   },

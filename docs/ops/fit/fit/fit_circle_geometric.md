@@ -46,7 +46,7 @@ circle. Non-finite, collinear, or fewer than three points are also rejected.
 
 ## 同カテゴリ(`fit`)
 
-[fit_curve_principal_axis](fit_curve_principal_axis.md)
+[region_perimeter_estimate](region_perimeter_estimate.md) · [fit_curve_principal_axis](fit_curve_principal_axis.md)
 
 ---
 *Provenance: measure.py — FIT operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

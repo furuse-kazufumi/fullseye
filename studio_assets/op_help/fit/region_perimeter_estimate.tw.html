@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">region_perimeter_estimate — FIT <code style="color:#22d3bf">fit</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.region_perimeter_estimate(region, method: &#x27;str&#x27; = &#x27;skimage&#x27;) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import measure; measure.region_perimeter_estimate(region, method: &#x27;str&#x27; = &#x27;skimage&#x27;) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsfit.get(&quot;region_perimeter_estimate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>:無(僅 CPU 參考實作)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>以明確選定的估計器量測二值區域的周長。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">method=&#x27;skimage&#x27;</code> uses <code style="color:#22d3bf">skimage.measure.perimeter</code> with its four-neighbour convention, the same estimator used by the existing <code style="color:#22d3bf">contlength</code> and <code style="color:#22d3bf">compactness</code> operators for a single connected component. <code style="color:#22d3bf">&#x27;crofton&#x27;</code> uses <code style="color:#22d3bf">skimage.measure.perimeter_crofton(..., directions=4)</code>. <code style="color:#22d3bf">&#x27;chain&#x27;</code> counts exposed four-direction pixel edges (a Freeman 4-chain length); it is available without scikit-image and is exact for an axis-aligned pixel square, but has a large positive bias for a circle.</p>
+<p>The value is in pixels and includes every foreground component and every hole. Foreground means <code style="color:#22d3bf">region &gt; 0.5</code>; an empty region returns <code style="color:#22d3bf">0.0</code>. This is a *measurement convention*, not a selector for a universally true perimeter:</p>
+<p>on the fixed closed-form probes (disc <code style="color:#22d3bf">r=96</code>, square side <code style="color:#22d3bf">128</code>), the ratios to truth are respectively <code style="color:#22d3bf">1.0518 / 0.9922</code> (<code style="color:#22d3bf">skimage</code>), <code style="color:#22d3bf">1.0016 / 0.9459</code> (<code style="color:#22d3bf">crofton</code>), and <code style="color:#22d3bf">1.2799 / 1.0000</code> (<code style="color:#22d3bf">chain</code>). Do not substitute its result into an existing feature threshold without revalidating that threshold.</p>
+<p><code style="color:#22d3bf">region</code> must be a finite numeric 2-D array. Invalid dimensionality, values, or a method other than <code style="color:#22d3bf">&#x27;skimage&#x27;</code>, <code style="color:#22d3bf">&#x27;crofton&#x27;</code> or <code style="color:#22d3bf">&#x27;chain&#x27;</code> raises <code style="color:#22d3bf">ValueError</code>; the scikit-image methods raise <code style="color:#22d3bf">ImportError</code> when that optional dependency is unavailable. 既存 op の既定値は変更しない。推定量を選ぶ必要があるときだけ、この関数を明示して使う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape_factors_closed_form">shape_factors_closed_form</a> — <code style="color:#22d3bf">py -3.11 examples/shape_factors_closed_form.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">measurement</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">fit</code>)</h3>
+<p><a style="color:#22d3bf" href="opfit:fit_circle_geometric">fit_circle_geometric</a> · <a style="color:#22d3bf" href="opfit:fit_curve_principal_axis">fit_curve_principal_axis</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measure.py — FIT 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

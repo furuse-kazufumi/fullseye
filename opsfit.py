@@ -6,6 +6,7 @@ _MOD = {"measure": measure, "filters_freq": filters_freq}
 
 _CATALOG = {
     "fit": [
+        ("region_perimeter_estimate", "measure", ["region"], "measurement"),
         ("fit_circle_geometric", "measure", ["keypoints"], "table"),
         ("fit_curve_principal_axis", "measure", ["keypoints"], "table"),
     ],

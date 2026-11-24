@@ -215,7 +215,7 @@ import accel_seam
 __all__ = [
     "projection_angles", "ellipse_phantom", "ellipse_sinogram",
     "radon_transform", "sinogram_design",
-    "backproject_sinogram", "filtered_backprojection", "sart_reconstruct",
+    "backproject_sinogram", "filtered_backprojection", "filtered_backprojection_like", "sart_reconstruct",
     "beam_hardening_apply", "beam_hardening_correct",
     "ring_artifact_apply", "ring_artifact_remove", "metal_trace_interpolate",
     "sinogram_center_of_rotation", "sinogram_center_shift",
@@ -229,7 +229,7 @@ __all__ = [
 TOMOGRAPHY = [
     "projection_angles", "ellipse_phantom", "ellipse_sinogram",
     "radon_transform", "sinogram_design",
-    "backproject_sinogram", "filtered_backprojection", "sart_reconstruct",
+    "backproject_sinogram", "filtered_backprojection", "filtered_backprojection_like", "sart_reconstruct",
     "beam_hardening_apply", "beam_hardening_correct",
     "ring_artifact_apply", "ring_artifact_remove", "metal_trace_interpolate",
     "sinogram_center_of_rotation", "sinogram_center_shift",
@@ -1397,6 +1397,41 @@ def filtered_backprojection(sinogram, angles_deg=None, size=None,
     d_theta = _span_weight(ang, span_deg, op)
     work = sino if kind == "none" else _filter_projections(sino, kind, cut)
     return _backproject(work, np.deg2rad(ang), sz) * d_theta
+
+
+def filtered_backprojection_like(sinogram, reference, angles_deg=None,
+                                 filter_name="ramp", cutoff=1.0, span_deg=None,
+                                 device="cpu"):
+    """Run FBP on the square grid of ``reference`` / 参照画像と同じ正方格子で FBP を再構成する。
+
+    This is the explicit companion to :func:`filtered_backprojection`, whose
+    established default remains the detector-derived inscribed square. The
+    sinogram does not contain the source side length, so it cannot recover that
+    choice on its own. Pass the image that was given to :func:`radon_transform`::
+
+        image = np.zeros((32, 32), np.float64)
+        sinogram = radon_transform(image)
+        reconstruction = filtered_backprojection_like(sinogram, image)
+        assert reconstruction.shape == image.shape
+
+    ``reference`` is a finite 2-D square image and supplies only the output grid;
+    its pixel values are deliberately not read. A rectangular reference is
+    refused rather than silently returning a square whose shape does not match:
+    2-D FBP currently reconstructs a square grid. This function cannot prove
+    that *reference* was the image that produced *sinogram*; keep that pairing in
+    the calling pipeline. All filter, angle, span, device and invalid-sinogram
+    contracts are those of :func:`filtered_backprojection`.
+    """
+    op = "filtered_backprojection_like"
+    ref = _as_image(reference, op, "reference")
+    if ref.shape[0] != ref.shape[1]:
+        raise ValueError("%s: reference has shape %r; FBP reconstructs a square grid, so pass the original square image explicitly"
+                         % (op, ref.shape))
+    return filtered_backprojection(
+        sinogram, angles_deg=angles_deg, size=int(ref.shape[0]),
+        filter_name=filter_name, cutoff=cutoff, span_deg=span_deg,
+        _op=op, device=device,
+    )
 
 
 def sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10,
