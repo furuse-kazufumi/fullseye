@@ -307,6 +307,54 @@ def test_evaluator_rejects_untracked_helper_at_pinned_commit(tmp_path, monkeypat
         bop._validate_official_bop_toolkit(toolkit, script)
 
 
+def test_evaluator_rejects_ignored_untracked_extension_at_pinned_commit(tmp_path, monkeypatch):
+    toolkit = tmp_path / "toolkit"
+    script, helper, commit = _make_synthetic_toolkit(toolkit)
+    monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", commit)
+    monkeypatch.setattr(
+        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+    ignored_extension = helper.with_name("pose_error_tampered.so")
+    (toolkit / ".git" / "info" / "exclude").write_text(
+        "bop_toolkit_lib/pose_error_tampered.so\n", encoding="utf-8")
+    ignored_extension.write_bytes(b"not a real extension")
+
+    with pytest.raises(ValueError, match="modified or untracked files"):
+        bop._validate_official_bop_toolkit(toolkit, script)
+
+
+def test_evaluator_rejects_replace_ref_that_masks_a_tampered_commit(tmp_path, monkeypatch):
+    toolkit = tmp_path / "toolkit"
+    script, helper, pinned_commit = _make_synthetic_toolkit(toolkit)
+    monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", pinned_commit)
+    monkeypatch.setattr(
+        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+    helper.write_text("VALUE = 'tampered'\n", encoding="utf-8")
+    _git(toolkit, "add", str(helper.relative_to(toolkit)))
+    _git(toolkit, "-c", "user.name=BOP fixture", "-c", "user.email=bop@example.invalid",
+         "commit", "-q", "-m", "tamper helper")
+    tampered_commit = _git(toolkit, "rev-parse", "HEAD")
+    _git(toolkit, "replace", pinned_commit, tampered_commit)
+    # Leave the tampered worktree in place while HEAD still displays the pinned ID.
+    _git(toolkit, "update-ref", "HEAD", pinned_commit)
+    assert _git(toolkit, "rev-parse", "HEAD") == pinned_commit
+
+    with pytest.raises(ValueError, match="modified or untracked files"):
+        bop._validate_official_bop_toolkit(toolkit, script)
+
+
+def test_evaluator_ignores_inherited_git_worktree_settings(tmp_path, monkeypatch):
+    toolkit = tmp_path / "toolkit"
+    script, _helper, commit = _make_synthetic_toolkit(toolkit)
+    monkeypatch.setattr(bop, "_BOP_TOOLKIT_COMMIT", commit)
+    monkeypatch.setattr(
+        bop, "_BOP19_EVALUATOR_SHA256", hashlib.sha256(script.read_bytes()).hexdigest())
+    monkeypatch.setenv("GIT_DIR", str(tmp_path / "not-a-git-directory"))
+    monkeypatch.setenv("GIT_WORK_TREE", str(tmp_path / "not-a-worktree"))
+    monkeypatch.setenv("GIT_INDEX_FILE", str(tmp_path / "not-an-index"))
+
+    bop._validate_official_bop_toolkit(toolkit, script)
+
+
 def test_evaluator_rejects_ref_to_nonexistent_pinned_commit(tmp_path, monkeypatch):
     toolkit = tmp_path / "toolkit"
     script, _helper, _commit = _make_synthetic_toolkit(toolkit)

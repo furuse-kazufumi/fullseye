@@ -57,6 +57,29 @@ _BOP_TOOLKIT_COMMIT = "cea62d651c7e395b2e1962b9749e4e89693c6ac4"
 _BOP19_EVALUATOR_SHA256 = "44a0fa020f53bec65dad351c4a188e2a21e3d8cbe554925e06c98315be3f57f4"
 
 
+def _toolkit_git_environment() -> dict[str, str]:
+    """Return an isolated environment for toolkit-integrity Git commands.
+
+    Git の置換参照と、親プロセスから渡った Git worktree/index 設定を検証に使わない。
+    """
+    environment = {
+        key: value for key, value in os.environ.items()
+        if not key.upper().startswith("GIT_")
+    }
+    environment["GIT_NO_REPLACE_OBJECTS"] = "1"
+    return environment
+
+
+def _run_toolkit_git(toolkit: Path, arguments: Sequence[str], **kwargs):
+    """Run a toolkit Git command with replacement refs and inherited Git state disabled.
+
+    固定公式 toolkit の検証では、replace ref と継承した Git 環境を必ず無効化する。
+    """
+    return subprocess.run(
+        ["git", "-C", str(toolkit), *arguments],
+        env=_toolkit_git_environment(), **kwargs)
+
+
 def _positive_id(value, name: str) -> int:
     if isinstance(value, (bool, np.bool_)):
         raise ValueError(f"{name} must be a positive integer")
@@ -560,39 +583,37 @@ def _validate_official_bop_toolkit(toolkit: Path, script: Path) -> None:
     if not script.is_file() or not (toolkit / "LICENSE").is_file():
         raise FileNotFoundError("toolkit_root must contain scripts/eval_bop19_pose.py and LICENSE")
     try:
-        top_level = subprocess.run(
-            ["git", "-C", str(toolkit), "rev-parse", "--show-toplevel"], check=True,
+        top_level = _run_toolkit_git(
+            toolkit, ["rev-parse", "--show-toplevel"], check=True,
             text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.strip()
-        commit = subprocess.run(
-            ["git", "-C", str(toolkit), "rev-parse", "HEAD"], check=True,
+        commit = _run_toolkit_git(
+            toolkit, ["rev-parse", "HEAD"], check=True,
             text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.strip().lower()
     except (OSError, subprocess.CalledProcessError) as exc:
         raise ValueError("toolkit_root must be the pinned official BOP toolkit git checkout") from exc
     if Path(top_level).resolve() != toolkit.resolve() or commit != _BOP_TOOLKIT_COMMIT:
         raise ValueError(f"toolkit_root must be BOP toolkit commit {_BOP_TOOLKIT_COMMIT}")
     try:
-        subprocess.run(
-            ["git", "-C", str(toolkit), "cat-file", "-e",
-             f"{_BOP_TOOLKIT_COMMIT}^{{commit}}"], check=True,
+        _run_toolkit_git(
+            toolkit, ["cat-file", "-e", f"{_BOP_TOOLKIT_COMMIT}^{{commit}}"], check=True,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except (OSError, subprocess.CalledProcessError) as exc:
         raise ValueError(
             f"toolkit_root does not contain pinned BOP toolkit commit {_BOP_TOOLKIT_COMMIT}"
         ) from exc
     try:
-        tracked_diff = subprocess.run(
-            ["git", "-C", str(toolkit), "diff", "--quiet", "--no-ext-diff",
-             _BOP_TOOLKIT_COMMIT, "--"],
+        tracked_diff = _run_toolkit_git(
+            toolkit, ["diff", "--quiet", "--no-ext-diff", _BOP_TOOLKIT_COMMIT, "--"],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        untracked = subprocess.run(
-            ["git", "-C", str(toolkit), "ls-files", "--others", "--exclude-standard"],
+        worktree_status = _run_toolkit_git(
+            toolkit, ["status", "--porcelain", "--ignored", "--untracked-files=all"],
             check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except (OSError, subprocess.CalledProcessError) as exc:
         raise ValueError("could not verify the pinned BOP toolkit worktree") from exc
     if tracked_diff.returncode not in (0, 1):
         detail = tracked_diff.stderr.decode(errors="replace").strip()
         raise ValueError(f"could not verify the pinned BOP toolkit worktree: {detail}")
-    if tracked_diff.returncode or untracked.stdout.strip():
+    if tracked_diff.returncode or worktree_status.stdout.strip():
         raise ValueError("pinned BOP toolkit checkout has modified or untracked files")
     script_digest = hashlib.sha256(script.read_bytes()).hexdigest()
     if script_digest != _BOP19_EVALUATOR_SHA256:
