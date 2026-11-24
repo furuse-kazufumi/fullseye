@@ -1,9 +1,10 @@
 """使い捨て runner で公開 Fullseye installer を端から端まで検査する / end-to-end test for the published installer.
 
-wheel 指定なしでは実作業を拒否する。CI は一時ディレクトリと各段の artifact log を渡し、
-開発者は ``--dry-run`` だけを使うため、手元の Start menu・registry・Claude 状態に触れない。
-This script refuses real work without a wheel argument. CI supplies a temporary directory
-and records every stage log; developers use ``--dry-run`` only, never touching local state.
+wheel 指定なしでは実作業を拒否する。GitHub Actions は一時ディレクトリと各段の artifact log を渡し、
+実物の Desktop / Start Menu / HKCU Uninstall 登録まで検査する。開発者は ``--dry-run`` だけを使う。
+This script refuses real work without a wheel argument. GitHub Actions supplies a temporary directory
+and records every stage log, including checks of the real Desktop / Start Menu / HKCU Uninstall registration.
+Developers use ``--dry-run`` unless they explicitly opt in to that real-user-state check.
 """
 from __future__ import annotations
 
@@ -60,6 +61,34 @@ def _bin(venv: Path, name: str) -> str:
 def _assert(path: Path, what: str) -> None:
     if not path.exists():
         raise RuntimeError("missing %s: %s" % (what, path))
+
+
+def _real_user_state_allowed(env: dict[str, str] | None = None) -> bool:
+    """実ユーザー状態に触れる E2E を許すのは GitHub Actions か明示 opt-in だけ / allow real-user-state E2E only in Actions or after explicit opt-in."""
+    e = os.environ if env is None else env
+    return e.get("CI") == "true" or e.get("FULLSEYE_E2E_ALLOW_REAL_USER_STATE") == "1"
+
+
+def _print_real_user_state_refusal(env: dict[str, str] | None = None) -> None:
+    """拒否の理由と安全な回し方を日英で表示する / print the refusal, reason, and safe ways to proceed in Japanese and English."""
+    e = os.environ if env is None else env
+    ci = e.get("CI", "<unset>")
+    allowed = e.get("FULLSEYE_E2E_ALLOW_REAL_USER_STATE", "<unset>")
+    message = (
+        "拒否しました: installer E2E の実行を要求しましたが、CI=%r、FULLSEYE_E2E_ALLOW_REAL_USER_STATE=%r です。\n"
+        "理由: この通し試験は実物の Desktop・Start Menu・HKCU Uninstall 登録を作成・削除して検証するため、"
+        "手元の利用者登録を誤って変えないようにしています。\n"
+        "回し方: 安全に手順だけを見るには `py -3.11 tools/installer_e2e.py --dry-run` を実行してください。"
+        "使い捨て Windows 環境で実検証するときだけ、GitHub Actions の CI=true で実行するか、"
+        "PowerShell で `$env:FULLSEYE_E2E_ALLOW_REAL_USER_STATE='1'` を設定してから `--wheel <wheel>` を付けて再実行してください。\n\n"
+        "Refused: installer E2E requested a real run, but CI=%r and FULLSEYE_E2E_ALLOW_REAL_USER_STATE=%r.\n"
+        "Why: this end-to-end test creates and removes the real Desktop, Start Menu, and HKCU Uninstall registration, "
+        "so it must not accidentally change a developer's user state.\n"
+        "How: inspect the plan safely with `py -3.11 tools/installer_e2e.py --dry-run`. "
+        "For a real check only on a disposable Windows machine, run in GitHub Actions with CI=true, or set "
+        "`$env:FULLSEYE_E2E_ALLOW_REAL_USER_STATE='1'` and rerun with `--wheel <wheel>`."
+    )
+    print(message % (ci, allowed, ci, allowed), flush=True)
 
 
 def _shortcut_path(root: Path) -> Path | None:
@@ -168,6 +197,9 @@ def main(argv: list[str] | None = None) -> int:
         ns.wheel = wheels[0]
     if ns.wheel is None and not ns.dry_run:
         ap.error("--wheel or --wheel-dir is required unless --dry-run is used")
+    if not ns.dry_run and not _real_user_state_allowed():
+        _print_real_user_state_refusal()
+        return 2
     root = (ns.workdir or Path(tempfile.mkdtemp(prefix="fullseye-installer-e2e-"))).resolve()
     wheel = (ns.wheel or Path("dist/fullseye.whl")).resolve()
     print("e2e workdir: %s" % root)

@@ -4,9 +4,9 @@
 方針:
 
 * **推測で消さない。** 消すのは台帳(``install_ledger.json``、``fullseye.shortcuts`` が登録時に書く)に載っている物だけ。
-  台帳に無い物、ユーザーが後から置いた物には触らない。台帳が無い古い状態でも、既知の決まった場所のショートカット
-  (Start Menu の Fullseye/Fullseye Studio.lnk、install.ps1 が作る Fullseye Studio.lnk、デスクトップの同名、Linux の
-  .desktop)だけは検出して消せる。
+  台帳に無い物、ユーザーが後から置いた物には触らない。台帳が無い古い状態では、既知の決まった場所の Windows
+  ショートカットも、現在アンインストールしている Python / pythonw を起動し ``-m studio`` を渡すと読めたときだけ消す。
+  Linux の既知の ``.desktop`` も中身を確かめてから扱う。
 * Studio の設定(QSettings / ``FULLSEYE_STUDIO_SETTINGS`` の ini)とキャッシュ(op_help-* / backend_probe.json*)は
   既定で**残す**。聞いて、y のときだけ消す。
 * 最後に ``pip uninstall -y fullseye`` を実行するか聞く(実行するコマンドを先に見せる)。自分自身を消すので、Windows で
@@ -29,6 +29,7 @@ import argparse
 import importlib.metadata
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -173,6 +174,44 @@ def _legacy_places(plat: str, dirs: Optional[Dict[str, Path]], registry: bool = 
     return out
 
 
+def _legacy_windows_shortcut_reason(path: str) -> Optional[str]:
+    """台帳なしの .lnk が**今の** Fullseye Python / pythonw と ``-m studio`` を指すか調べる / verify that a ledger-less .lnk targets this Fullseye Python / pythonw and ``-m studio``.
+
+    読めない・TargetPath が別の Python・引数が違う物は、利用者の同名ショートカットかもしれないため理由を返して残す。
+    Return a reason and leave the link alone when it cannot be read, targets another Python, or has different arguments.
+    """
+    p = Path(path)
+    try:
+        link = sc.read_lnk(p)
+    except Exception as e:  # noqa: BLE001 -- unreadable legacy links must fail closed
+        return ("%s の TargetPath / 引数を読めません(%s)。別のアプリのショートカットか確認できないため残します。"
+                "ショートカットのプロパティを確認し、Fullseye の旧版だと確認できた場合だけ手で削除してください / "
+                "cannot read TargetPath / arguments for %s (%s). It may be another application's shortcut, so it was left alone. "
+                "Inspect the shortcut properties and delete it manually only if you confirm it is an old Fullseye shortcut"
+                % (p, e, p, e))
+    target = link.get("Target", "")
+    args = link.get("Arguments", "")
+    expected = (str(Path(sys.executable)), str(Path(sys.executable).with_name("pythonw.exe")))
+    if not target:
+        return ("%s の TargetPath を読めません。別のアプリのショートカットか確認できないため残します。"
+                "ショートカットのプロパティを確認し、Fullseye の旧版だと確認できた場合だけ手で削除してください / "
+                "cannot read TargetPath for %s. It may be another application's shortcut, so it was left alone. "
+                "Inspect the shortcut properties and delete it manually only if you confirm it is an old Fullseye shortcut" % (p, p))
+    if not any(sc._same_path(target, candidate) for candidate in expected):
+        return ("%s の TargetPath %r は、今の Fullseye Python / pythonw (%r または %r) ではありません。"
+                "同名でも利用者の別環境のショートカットかもしれないため残します。ショートカットのプロパティを確認し、"
+                "Fullseye の旧版なら手で削除してください / %s TargetPath %r is not this Fullseye Python / pythonw (%r or %r). "
+                "A same-name shortcut may belong to another user environment, so it was left alone. Inspect the shortcut properties "
+                "and delete it manually if it is an old Fullseye shortcut"
+                % (p, target, expected[0], expected[1], p, target, expected[0], expected[1]))
+    if not re.search(r"(?<!\S)-m\s+studio(?:\s|$)", args, flags=re.IGNORECASE):
+        return ("%s は -m studio を渡していません(引数は %r)。同名でも利用者の別アプリのショートカットかもしれないため残します。"
+                "ショートカットのプロパティを確認し、Fullseye の旧版なら手で削除してください / %s does not pass -m studio "
+                "(its arguments are %r). A same-name shortcut may belong to another application, so it was left alone. "
+                "Inspect the shortcut properties and delete it manually if it is an old Fullseye shortcut" % (p, args, p, args))
+    return None
+
+
 def collect(*, ledger: Optional[Path] = None, dirs: Optional[Dict[str, Path]] = None,
             env: Optional[Dict[str, str]] = None, plat: Optional[str] = None,
             registry: bool = True, allow_keys: Iterable[str] = (),
@@ -187,7 +226,12 @@ def collect(*, ledger: Optional[Path] = None, dirs: Optional[Dict[str, Path]] = 
     made = []
     if legacy:
         for e in _legacy_places(plat, dirs, registry, tuple(allow_keys)):
-            why = sc.verify_fullseye_item(e["kind"], e["path"], plat=plat)       # 名前だけで消さない: Fullseye の物と中身で確かめる
+            if plat == "win" and e["kind"] == "file" and e["path"].lower().endswith(".lnk"):
+                # 台帳が無いなら、名前・場所・``-m studio`` だけでは足りない。同名の別環境の .lnk を消さない。
+                # Without a ledger, a name, location, and ``-m studio`` are insufficient: do not remove another environment's .lnk.
+                why = _legacy_windows_shortcut_reason(e["path"])
+            else:
+                why = sc.verify_fullseye_item(e["kind"], e["path"], plat=plat)   # 名前だけで消さない: Fullseye の物と中身で確かめる
             if why:
                 refused.append({"kind": e["kind"], "path": e["path"], "reason": why, "foreign": True})   # 利用者の物の可能性 = 異常ではない
             else:

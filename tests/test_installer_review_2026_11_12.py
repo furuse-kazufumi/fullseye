@@ -1171,14 +1171,17 @@ def test_S0_guards_refuse_paths_outside_tmp(tmp_path):
 def test_S1_legacy_and_ledger_items_are_deleted_only_when_the_content_says_they_are_fullseyes(tmp_path):
     import winreg
     dirs = _dirs(tmp_path)
-    # 台帳なし(legacy): 名前は同じでも、起動するのが Fullseye でない .lnk は消さない。install.ps1 形式(studio.py)は Fullseye の物
+    # 台帳なし(legacy): 同名でも別の Python を起動する .lnk は消さず、現在の Python が -m studio を起動する旧版 .lnk だけを消す。
+    # Without a ledger, leave a same-name link to another Python alone; remove only an old link from this Python that runs -m studio.
     other = dirs["desktop"] / "Fullseye Studio.lnk"
     other.parent.mkdir(parents=True)
-    shortcuts.write_lnk(other, Path(sys.executable), "-c print(1)", ROOT / "assets" / "fullseye.ico", tmp_path)
-    ps1 = dirs["start_menu"] / "Fullseye Studio.lnk"
-    shortcuts.write_lnk(ps1, Path(sys.executable), '"C:\\repo\\studio.py"', ROOT / "assets" / "fullseye.ico", tmp_path)
-    assert shortcuts.verify_fullseye_item("file", str(other)) is not None
-    assert shortcuts.verify_fullseye_item("file", str(ps1)) is None
+    other_python = tmp_path / "other" / "pythonw.exe"
+    shortcuts.write_lnk(other, other_python, "-P -m studio", ROOT / "assets" / "fullseye.ico", tmp_path)
+    legacy = dirs["start_menu"] / "Fullseye Studio.lnk"
+    shortcuts.write_lnk(legacy, Path(sys.executable), "-P -m studio", ROOT / "assets" / "fullseye.ico", tmp_path)
+    reason = uninstall._legacy_windows_shortcut_reason(str(other))
+    assert reason is not None and "TargetPath" in reason and "ショートカットのプロパティ" in reason
+    assert uninstall._legacy_windows_shortcut_reason(str(legacy)) is None
     (dirs["icon_dir"]).mkdir(parents=True)
     (dirs["icon_dir"] / "fullseye.ico").write_bytes(b"not an icon")
     (dirs["icon_dir"] / shortcuts.CMD_NAME).write_text("@echo hello\r\n", encoding="utf-8")
@@ -1191,14 +1194,15 @@ def test_S1_legacy_and_ledger_items_are_deleted_only_when_the_content_says_they_
                                  registry=False, allow_keys=(key,))
         made = {Path(i["path"]).name for i in plan["made"] if i["kind"] == "file"}
         refused = {Path(str(r["path"])).name: r["reason"] for r in plan["refused"]}
-        assert made == {"Fullseye Studio.lnk"} and str(ps1) in [i["path"] for i in plan["made"]]       # 起動が Fullseye の物だけ
+        assert made == {"Fullseye Studio.lnk"} and str(legacy) in [i["path"] for i in plan["made"]]    # 現在の Python が起動する物だけ
         assert "fullseye.ico" in refused and shortcuts.CMD_NAME in refused and key.rsplit("\\", 1)[-1] in refused
-        assert len(plan["refused"]) >= 3, plan["refused"]                                            # ico・cmd・キー・他人の lnk
+        assert Path(str(other)).name in refused and "TargetPath" in refused[other.name]
+        assert len(plan["refused"]) >= 4, plan["refused"]                                            # ico・cmd・キー・別環境の lnk
         assert all(r["foreign"] for r in plan["refused"])                                             # 利用者の物の可能性 = 異常ではない
         assert not any(i["kind"] == "regkey" for i in plan["made"])
         rc, out, _ = _un(tmp_path, tmp_path / "none.json", dirs, ["--yes"], allow=(key,))
         assert rc == 0 and other.exists() and (dirs["icon_dir"] / "fullseye.ico").exists() and shortcuts.regkey_exists(key)
-        assert not ps1.exists() and "NOT removed" in out and "does not start Fullseye Studio" in out
+        assert not legacy.exists() and "NOT removed" in out and str(other) in out and "TargetPath" in out
     finally:
         winreg.DeleteKey(winreg.HKEY_CURRENT_USER, key)
     # Fullseye が書いたキー(DisplayName / UninstallString)は確かめを通る
