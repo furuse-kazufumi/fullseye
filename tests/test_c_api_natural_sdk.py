@@ -20,7 +20,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def _run(args: list[str], *, cwd: Path, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(args, cwd=cwd, env=env, text=True, capture_output=True, check=True, timeout=600)
+    result = subprocess.run(args, cwd=cwd, env=env, text=True, capture_output=True, check=False, timeout=600)
+    if result.returncode:
+        raise AssertionError("consumer command failed (exit %d): %r\nstdout:\n%s\nstderr:\n%s" %
+                             (result.returncode, args, result.stdout, result.stderr))
+    return result
 
 
 def _config_with_runtime_root(directory: Path, runtime_root: Path) -> Path:
@@ -166,6 +170,11 @@ def test_external_consumer_uses_a_non_ascii_runtime_root(tmp_path):
     build = tmp_path / "unicode-consumer" / "build"
     env = os.environ.copy()
     env.pop("FULLSEYE_PYTHON_ROOT", None)
+    if sys.platform != "win32":
+        # The runtime root must remain UTF-8 even when a service starts under
+        # the portable POSIX C locale. / POSIX C locale でも UTF-8 root を保つ。
+        env["LC_ALL"] = "C"
+        env["LANG"] = "C"
     _run([cmake, "-S", str(ROOT / "examples" / "c_api" / "hello_cpp"), "-B", str(build),
           "-Dfullseye_DIR=" + str(cmake_dir)], cwd=tmp_path, env=env)
     _run([cmake, "--build", str(build)], cwd=tmp_path, env=env)

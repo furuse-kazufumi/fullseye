@@ -789,6 +789,17 @@ PythonInitResult initialize_python(const std::string &root, const std::string &h
             g_python_root = root;
             g_python_home = home;
         } else {
+            PyPreConfig preconfig;
+            PyPreConfig_InitIsolatedConfig(&preconfig);
+            // Runtime roots are UTF-8 data, independently of the process locale.
+            // runtime root は process locale に左右されない UTF-8 データとして扱う。
+            preconfig.utf8_mode = 1;
+            const PyStatus preinitialize_status = Py_PreInitialize(&preconfig);
+            if (PyStatus_Exception(preinitialize_status) != 0) {
+                return {FS_E_NO_PYTHON, preinitialize_status.err_msg == nullptr
+                        ? "could not enable UTF-8 mode for the embedded Python runtime"
+                        : preinitialize_status.err_msg};
+            }
             PyConfig config;
             PyConfig_InitIsolatedConfig(&config);
             config.install_signal_handlers = 0;

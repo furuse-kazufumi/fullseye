@@ -52,7 +52,8 @@ int main() {
   std::array<double, 9> pixels{0, .2, 0, .2, 1, .2, 0, .2, 0};
   auto image = fullseye::Image::from_buffer(pixels.data(), 3, 3);
   auto matches = fs.find("gaussian");
-  auto out = fs.call("gaussian", image, {{"a", 0.5}});
+  const fullseye::Runtime::Parameter blur{"a", 0.5};
+  auto out = fs.call("gaussian", image, {blur});
   return out.size() == 1 ? 0 : 1;
 }
 ```
@@ -73,7 +74,8 @@ auto image = fullseye::Image::from_buffer(pixels.data(), height, width);
 fullseye::Pipeline p = fs.load_pipeline("inspect.json");
 auto input = p.input();       // {"image", FS_VALUE_IMAGE}
 auto output = p.output();     // 例: {"result", FS_VALUE_REGION}
-auto out = p.run({{"image", image}});
+const fullseye::PipelineInput pipeline_input{"image", image};
+auto out = p.run({pipeline_input});
 ```
 
 `Pipeline` と `Result` は move-only RAII 型で、結果 ID と pipeline handle を自動で解放する。
@@ -166,6 +168,17 @@ Python のパスの手書きもせず `fs_runtime_create`、`registry:gaussian`�
 C ABI は fail-closed である。scope の無い op 名、未知の JSON key、NaN/Inf、形状・stride・
 buffer length の不整合は状態コードと `fs_last_error` で拒否する。既存の ABI 0.1 関数と
 `fullseye_abi.h` は互換のまま残る。
+
+## Rust の第 2 実装 / Rust second implementation
+
+`rust/fullseye_core` は仕様差分を見つけるための第 2 実装であり、現在は ABI 0.2 の部分集合を
+名乗る。ヘッダの ABI 0.3 で追加した Studio pipeline (`fs_pipeline_*`) は Rust 側に未実装なので、
+Rust library を pipeline consumer として使ってはならない。
+
+この部分集合には image / region / objectset / tuple の基本関数、`fs_gauss`、`fs_threshold`、
+`fs_connection`、`fs_measure_all`、`fs_select_shape` と `fs_apply` が含まれる。ABI parity test は
+Rust が名乗る版がヘッダ以下であることと、この実装済み関数集合だけを検証する。ヘッダと同じ
+最新版を名乗らせて未実装の pipeline を利用可能に見せることはしない。
 
 ## C++ の寿命・エラー・OpenCV
 
