@@ -55,9 +55,6 @@ def _require_volume(vol, name: str = "vol") -> np.ndarray:
     if not np.isfinite(v).all():
         raise ValueError("%s has non-finite voxel(s) (NaN/Inf) — refusing"
                          % (name,))
-    if v.size > MAX_VOXELS:
-        raise ValueError("%s: %d voxels exceeds the %d cap (volfreq.MAX_VOXELS)"
-                         % (name, v.size, MAX_VOXELS))
     return v
 
 

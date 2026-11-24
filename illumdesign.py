@@ -52,6 +52,8 @@ import math
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 MAX_EMITTERS = 4096
 MAX_MAP_ELEMENTS = 1 << 22
 MAX_HEIGHT_ELEMENTS = 1 << 22
@@ -323,11 +325,14 @@ def illumination_uniformity(irradiance, region_fraction=0.8):
     over the centre value, plus ``peak_offset_px`` (where the maximum sits
     relative to the centre — a mis-aimed ring shows up here).
     """
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        irradiance, "irradiance", "illumination_uniformity", MAX_MAP_ELEMENTS, expected_ndim=2)
     a = np.asarray(irradiance, dtype=np.float64)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            a, "irradiance", "illumination_uniformity", MAX_MAP_ELEMENTS, expected_ndim=2)
     if a.ndim != 2 or a.size == 0 or not np.all(np.isfinite(a)):
         raise ValueError("irradiance must be a finite 2-D map")
-    if a.size > MAX_MAP_ELEMENTS:
-        raise ValueError("map too large")
     if np.any(a < 0):
         raise ValueError("irradiance cannot be negative")
     f = _finite(region_fraction, "region_fraction", positive=True)

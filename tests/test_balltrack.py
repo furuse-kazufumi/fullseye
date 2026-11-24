@@ -86,6 +86,14 @@ def test_triangulate_dlt_skips_nan_views_and_fails_closed():
         BT.triangulate_dlt([uv1[0]], [P1], [K])
 
 
+def test_triangulate_dlt_refuses_mismatched_view_counts():
+    """三つの画像点に二つの pose / K を渡しても、三つ目を捨てず明示的に拒否する。"""
+    K, P1, P2 = _two_cams()
+    uvs = [[100.0, 120.0], [110.0, 130.0], [120.0, 140.0]]
+    with pytest.raises(ValueError, match=r"same number of views.*3, 2, 2"):
+        BT.triangulate_dlt(uvs, [P1, P2], [K, K])
+
+
 def test_track_triangulate_stitches_partially_overlapping_tracks():
     """カメラ A(コマ 0–7)と B(コマ 4–11)の軌跡 → 両方で見えたコマ 4–7 だけが返り、位置は真値と一致(1e-9)。1 台だけなら空。"""
     K, P1, P2 = _two_cams()

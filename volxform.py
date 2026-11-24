@@ -66,6 +66,8 @@ A malformed input raises ``ValueError`` naming the problem.
 from __future__ import annotations
 
 import numpy as np
+
+import arrayguard as _arrayguard
 from scipy import ndimage
 
 __all__ = [
@@ -93,7 +95,12 @@ def _require_volume(vol, name: str = "vol") -> np.ndarray:
 
     Rejects anything that is not exactly 3-D and any NaN / Inf — interpolation
     would smear a single poisoned voxel over a whole neighbourhood."""
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        vol, name, "volxform", MAX_VOXELS, expected_ndim=3)
     v = np.ascontiguousarray(vol, dtype=np.float64)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            v, name, "volxform", MAX_VOXELS, expected_ndim=3)
     if v.ndim != 3:
         raise ValueError("%s must be a 3-D (D, H, W) volume, got a %d-D array of shape %r"
                          % (name, v.ndim, tuple(np.shape(vol))))
@@ -101,10 +108,6 @@ def _require_volume(vol, name: str = "vol") -> np.ndarray:
         n = int((~np.isfinite(v)).sum())
         raise ValueError("%s has %d non-finite voxel(s) (NaN/Inf) — refusing "
                          "(interpolation would smear them)" % (name, n))
-    if v.size > MAX_VOXELS:
-        raise ValueError("%s: a %d-voxel volume (shape %r) exceeds the %d cap "
-                         "(volxform.MAX_VOXELS) — crop to an ROI or downsample first"
-                         % (name, v.size, v.shape, MAX_VOXELS))
     return v
 
 

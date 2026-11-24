@@ -25,6 +25,8 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
+
+import arrayguard as _arrayguard
 from scipy import ndimage as ndi
 
 import videocube
@@ -47,6 +49,7 @@ MAX_SERIES_ELEMENTS = 2 ** 26
 # 検査                                                                          #
 # --------------------------------------------------------------------------- #
 def _series(x: Any, op: str, name: str = "volseq", min_t: int = 2) -> np.ndarray:
+    raw_shape = _arrayguard.precheck_shape_and_elements(x, name, op, MAX_SERIES_ELEMENTS)
     if isinstance(x, (list, tuple)):
         vols = [np.asarray(v, dtype=np.float64) for v in x]
         if not vols or any(v.ndim != 3 or v.shape != vols[0].shape for v in vols):
@@ -54,23 +57,24 @@ def _series(x: Any, op: str, name: str = "volseq", min_t: int = 2) -> np.ndarray
         a = np.stack(vols, axis=0)
     else:
         a = np.asarray(x, dtype=np.float64)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(a, name, op, MAX_SERIES_ELEMENTS)
     if a.ndim != 4 or a.size == 0:
         raise ValueError(f"{op}: {name} must be a volume series (T, Z, Y, X), got shape {a.shape}")
     if a.shape[0] < min_t or min(a.shape[1:]) < 2:
         raise ValueError(f"{op}: {name} needs T >= {min_t} and Z, Y, X >= 2, got shape {a.shape}")
-    if a.size > MAX_SERIES_ELEMENTS:
-        raise ValueError(f"{op}: {name} has {a.size} elements > MAX_SERIES_ELEMENTS={MAX_SERIES_ELEMENTS}")
     if not np.isfinite(a).all():
         raise ValueError(f"{op}: {name} must be finite")
     return a
 
 
 def _vol(x: Any, op: str, name: str) -> np.ndarray:
+    raw_shape = _arrayguard.precheck_shape_and_elements(x, name, op, MAX_SERIES_ELEMENTS)
     a = np.asarray(x, dtype=np.float64)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(a, name, op, MAX_SERIES_ELEMENTS)
     if a.ndim != 3 or a.size == 0 or min(a.shape) < 2:
         raise ValueError(f"{op}: {name} must be a (Z, Y, X) volume with every side >= 2, got shape {a.shape}")
-    if a.size > MAX_SERIES_ELEMENTS:
-        raise ValueError(f"{op}: {name} has {a.size} elements > MAX_SERIES_ELEMENTS={MAX_SERIES_ELEMENTS}")
     if not np.isfinite(a).all():
         raise ValueError(f"{op}: {name} must be finite")
     return a

@@ -39,6 +39,8 @@ import math
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 
 __all__ = ["lockin_demodulate", "lockin_amplitude", "lockin_phase", "lockin_noise_floor",
            "lockin_walsh_codes", "lockin_separate", "lockin_ring_synthesize", "lockin_ring_normals",
@@ -312,9 +314,6 @@ def lockin_ring_synthesize(height, zenith_deg, n_sources, multipole, frames_per_
     n_periods`` frames and is demodulated with ``lockin_demodulate(video, 1.0, frames_per_period)``. White noise
     of standard deviation ``noise_sigma`` needs an explicit ``seed`` (no hidden random state)."""
     op = "lockin_ring_synthesize"
-    h = np.asarray(height, np.float64)
-    if h.ndim != 2 or h.shape[0] < 4 or h.shape[1] < 4 or not np.isfinite(h).all():
-        raise ValueError("%s: height must be a finite 2-D map of at least 4x4, got shape %r" % (op, np.shape(height)))
     z = _pos(zenith_deg, "zenith_deg", op)
     if z >= 90.0:
         raise ValueError("%s: zenith_deg must be below 90, got %g" % (op, z))
@@ -322,9 +321,24 @@ def lockin_ring_synthesize(height, zenith_deg, n_sources, multipole, frames_per_
     m = _int(multipole, "multipole", op, 0, s - 1)
     fpp = _int(frames_per_period, "frames_per_period", op, 3, 256)
     npd = _int(n_periods, "n_periods", op, 1, 64)
-    if fpp * npd * h.size > MAX_VIDEO_ELEMENTS:
-        raise ValueError("%s: %d frames of %r exceed the %d element cap" % (op, fpp * npd, h.shape, MAX_VIDEO_ELEMENTS))
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        height, "height output", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
+        multiplier=fpp * npd)
+    h = np.asarray(height, np.float64)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            h, "height output", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
+            multiplier=fpp * npd)
+    if h.ndim != 2 or h.shape[0] < 4 or h.shape[1] < 4 or not np.isfinite(h).all():
+        raise ValueError("%s: height must be a finite 2-D map of at least 4x4, got shape %r" % (op, np.shape(height)))
+    albedo_shape = None
+    if albedo is not None:
+        albedo_shape = _arrayguard.precheck_shape_and_elements(
+            albedo, "albedo", op, MAX_VIDEO_ELEMENTS, expected_ndim=2)
     rho = 1.0 if albedo is None else np.asarray(albedo, np.float64)
+    if albedo is not None and albedo_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            rho, "albedo", op, MAX_VIDEO_ELEMENTS, expected_ndim=2)
     if albedo is not None and (rho.shape != h.shape or not np.isfinite(rho).all() or (rho < 0).any()):
         raise ValueError("%s: albedo must be a finite non-negative map of the height's shape %r" % (op, h.shape))
     gy, gx = np.gradient(h)
@@ -395,15 +409,20 @@ def lockin_thermal_wave(depth, thermal_diffusivity, f_heat, frames_per_period, n
     brighter. ``nonuniformity`` is an optional positive map that multiplies the whole signal (uneven heating or emissivity:
     it changes the amplitude map and leaves the phase map alone). The transient of the first periods is not modelled."""
     op = "lockin_thermal_wave"
-    d = np.asarray(depth, np.float64)
-    if d.ndim != 2 or d.shape[0] < 4 or d.shape[1] < 4 or not np.isfinite(d).all() or (d <= 0.0).any():
-        raise ValueError("%s: depth must be a finite positive 2-D map (m) of at least 4x4, got shape %r" % (op, np.shape(depth)))
     al = _pos(thermal_diffusivity, "thermal_diffusivity", op)
     f = _pos(f_heat, "f_heat", op)
     fpp = _int(frames_per_period, "frames_per_period", op, 3, 256)
     npd = _int(n_periods, "n_periods", op, 1, 64)
-    if fpp * npd * d.size > MAX_VIDEO_ELEMENTS:
-        raise ValueError("%s: the sequence exceeds the %d element cap" % (op, MAX_VIDEO_ELEMENTS))
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        depth, "depth output", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
+        multiplier=fpp * npd)
+    d = np.asarray(depth, np.float64)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            d, "depth output", op, MAX_VIDEO_ELEMENTS, expected_ndim=2,
+            multiplier=fpp * npd)
+    if d.ndim != 2 or d.shape[0] < 4 or d.shape[1] < 4 or not np.isfinite(d).all() or (d <= 0.0).any():
+        raise ValueError("%s: depth must be a finite positive 2-D map (m) of at least 4x4, got shape %r" % (op, np.shape(depth)))
     om = 2.0 * np.pi * f
     mu = math.sqrt(2.0 * al / om)
     sig_l = (1.0 + 1.0j) * d / mu
@@ -413,7 +432,12 @@ def lockin_thermal_wave(depth, thermal_diffusivity, f_heat, frames_per_period, n
     rot = np.exp(2j * np.pi * np.arange(fpp * npd) / fpp)
     out = (zt[None] * rot[:, None, None]).real
     if nonuniformity is not None:
+        nonuniformity_shape = _arrayguard.precheck_shape_and_elements(
+            nonuniformity, "nonuniformity", op, MAX_VIDEO_ELEMENTS, expected_ndim=2)
         nu = np.asarray(nonuniformity, np.float64)
+        if nonuniformity_shape is None:
+            _arrayguard.precheck_shape_and_elements(
+                nu, "nonuniformity", op, MAX_VIDEO_ELEMENTS, expected_ndim=2)
         if nu.shape != d.shape or not np.isfinite(nu).all() or (nu <= 0.0).any():
             raise ValueError("%s: nonuniformity must be a finite positive map of the depth's shape %r" % (op, d.shape))
         out = out * nu[None]

@@ -81,6 +81,8 @@ import math
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 __all__ = [
     "sfp_dolp_model",
     "dolp_to_zenith",
@@ -140,7 +142,10 @@ def _real(a, name, op, ndim=None):
         raise ValueError("%s: %s is None" % (op, name))
     if np.ma.is_masked(a):
         raise ValueError("%s: %s is a masked array with masked entries" % (op, name))
+    raw_shape = _arrayguard.precheck_shape_and_elements(a, name, op, MAX_PIXELS * 4)
     arr = np.asarray(a)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(arr, name, op, MAX_PIXELS * 4)
     if arr.dtype.kind not in "iuf":
         raise ValueError("%s: %s must be a real numeric array, got dtype %s" % (op, name, arr.dtype))
     arr = arr.astype(np.float64)
@@ -148,8 +153,6 @@ def _real(a, name, op, ndim=None):
         raise ValueError("%s: %s must be %d-D, got shape %r" % (op, name, ndim, tuple(arr.shape)))
     if arr.size == 0:
         raise ValueError("%s: %s is empty" % (op, name))
-    if arr.size > MAX_PIXELS * 4:
-        raise ValueError("%s: %s has %d elements, over the cap %d" % (op, name, arr.size, MAX_PIXELS * 4))
     if not np.isfinite(arr).all():
         raise ValueError("%s: %s has %d non-finite value(s)" % (op, name, int((~np.isfinite(arr)).sum())))
     return arr

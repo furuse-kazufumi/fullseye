@@ -45,6 +45,8 @@ import os
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 import defectgen
 import photoncount
 import raytrace as RT
@@ -106,14 +108,17 @@ def _int(x, name, lo, hi):
 def _image(a, name="image"):
     if isinstance(a, (str, bytes, dict)):
         raise ValueError("%s must be a 2-D array, got %r" % (name, type(a).__name__))
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        a, name, "lensimage", MAX_IMAGE_PIXELS, expected_ndim=2)
     arr = np.asarray(a)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            arr, name, "lensimage", MAX_IMAGE_PIXELS, expected_ndim=2)
     if arr.dtype.kind not in "fiub":
         raise ValueError("%s must be numeric, got dtype %r" % (name, arr.dtype))
     arr = arr.astype(np.float64)
     if arr.ndim != 2 or arr.shape[0] < 2 or arr.shape[1] < 2:
         raise ValueError("%s must be a 2-D array of at least 2x2, got shape %r" % (name, arr.shape))
-    if arr.size > MAX_IMAGE_PIXELS:
-        raise ValueError("%s has %d pixels, above MAX_IMAGE_PIXELS=%d" % (name, arr.size, MAX_IMAGE_PIXELS))
     if not np.isfinite(arr).all():
         raise ValueError("%s contains non-finite values" % name)
     if arr.min() < 0.0:

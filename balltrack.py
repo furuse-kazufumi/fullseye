@@ -279,6 +279,13 @@ def reproject(points, pose, K) -> np.ndarray:
 def triangulate_dlt(uvs, poses, Ks) -> dict:
     """1 点の多視点三角測量(線形 DLT、SVD): ``uvs`` (C, 2)、``poses`` (C, 4, 4)、``Ks`` (C, 3, 3)。
     返り値 ``{"p" (3,), "reproj_rms" px, "n_views"}``。NaN の視点は飛ばす。2 視点未満なら ValueError。"""
+    try:
+        n_poses, n_Ks = len(poses), len(Ks)
+    except TypeError:
+        raise ValueError("poses and Ks must be sized camera sequences") from None
+    if len(uvs) != n_poses or n_poses != n_Ks:
+        raise ValueError("triangulate_dlt: uvs, poses and Ks must have the same number of views "
+                         "(got %d, %d, %d)" % (len(uvs), n_poses, n_Ks))
     U = np.asarray(uvs, np.float64).reshape(-1, 2)
     rows = []
     Ms = []

@@ -53,7 +53,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `aoi.py`
 
-- **L441** _(ja)_ — ★積の向きが符号を決める。``fb * conj(fa)`` の山は「``moving`` が ``reference`` に対してどれだけずれているか」に立つ(逆にすると符号が反転し、残差を測る ときに**逆向きへ戻して**しまうので、完全に一致する対でも残差が 1 を超える)。
+- **L445** _(ja)_ — ★積の向きが符号を決める。``fb * conj(fa)`` の山は「``moving`` が ``reference`` に対してどれだけずれているか」に立つ(逆にすると符号が反転し、残差を測る ときに**逆向きへ戻して**しまうので、完全に一致する対でも残差が 1 を超える)。
 
 ## `api.py`
 
@@ -85,16 +85,16 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `astrostack.py`
 
-- **L157** — ★Hypothesis test: we predicted that "there is no value in moving as long as it fits in one cache line (64B)" but were **wrong**. For float32 the crossover is at K≈17-19, close to 64B (K=16), but for float64 the actual crossover is K≈23-25 (about 200B) against a predicted K=8. It is decided by the **number of elements**, not the byte count —— the per-element fetch cost dominates. Moving while there are only a few is **actually slower** (1.4x slower at float64 K=5), so the crossover point is essential.
-- **L380** — ★MAD collapsing to 0 while the image is not flat = **quantization** (2026-09-08, hit by poc_thermal_radiometry). With integer DN, |x-med| is also an integer, so the sigma we can return is only a multiple of 1.4826 —— **0.0** for a real-image equivalent of σ=0.5, and σ=1.0 and σ=1.983 both give the **same 1.4826**. Silently returning 0 makes the threshold equal to the background, and downstream (star_detect) finds nothing. This is an entry point that returns a value, so instead of raising it speaks up (the caller can pick method="clip"). Refusing is the job of the side that produces the answer = star_detect.
-- **L617** — ★ The sole entry point for shot noise. With photons_per_unit=1, "expected value = lambda".
-- **L708** — ★ field_seed is fixed (the same sky), only seed is varied (a different observation).
-- **L781** — ★Until 2026-09-08 this gate's comment said "perfectly flat = noise cannot be measured". **It was the premise that was wrong** —— there is one more path by which σ becomes 0: when MAD collapses under integer DN (0.0 for a real image equivalent to σ=0.5). Returning empty for a non-flat image is not a conservative answer but a **wrong answer**; in fact, 2 point targets planted in a 200x200 integer frame were being returned as 0. We split the paths: if flat, return empty (no stars); if not flat, refuse.
-- **L1106** _(ja)_ — ★ 画像の外の中心は「flux 0・area 0・snr inf」を黙って返していた —— 拒否する。 画像の縁で欠けた開口は計算はできるが flux が系統的に少ないので ``truncated`` で印を付ける(area_px は欠けた後の面積)。
-- **L1344** _(ja)_ — 残差の sigma で下支えする。★ 以前は +inf に置き換えていたので **何も落とさず**、宇宙線がそのまま平均に入った。
-- **L1702** _(ja)_ — 束ねた sigma で下支えする。★ 以前は中央値画像の空間 MAD を使っていたが、 平坦な整数データではそれも 0 になり床が 1e-12 —— 読み出し雑音の +1 DN が 全部「宇宙線」になった(32x32x9 枚で真の宇宙線 1 に対し 871 画素)。
-- **L1743** — ★On a tie, pick the **bin with more raw votes**. A 3x3 smoothing gives the same sum whether seen from the left or the right of the true peak, so taking argmax on the smoothed value alone can pick "an empty bin next to the peak" —— exactly that happened in measurement: the true shift (-0.087, +0.996) had its votes 7 + 4 split in two at the bin boundary, and its centre, off by one bin, ended up with **0 votes** (frame_align wrongly fail-closed as "not overlapping"). A weight of 1e-6 is far smaller than the smoothed value's step (1/9), so it does not change the ranking when there is a real difference.
-- **L1766** — ★2026-09-08: also return the **height of the second-place peak**. For a star field there is one peak, but for repetitive structures (halftone dots, gratings, textiles) **peaks of the same height** line up shifted by a lattice vector, and whichever you pick "everyone agrees" = inlier_ratio becomes 1.00. The agreement rate is not "the probability the answer is correct", so we report **whether there was a single peak** as a separate number (0 = single peak, close to 1 = there are other equivalent candidates).
+- **L158** — ★Hypothesis test: we predicted that "there is no value in moving as long as it fits in one cache line (64B)" but were **wrong**. For float32 the crossover is at K≈17-19, close to 64B (K=16), but for float64 the actual crossover is K≈23-25 (about 200B) against a predicted K=8. It is decided by the **number of elements**, not the byte count —— the per-element fetch cost dominates. Moving while there are only a few is **actually slower** (1.4x slower at float64 K=5), so the crossover point is essential.
+- **L382** — ★MAD collapsing to 0 while the image is not flat = **quantization** (2026-09-08, hit by poc_thermal_radiometry). With integer DN, |x-med| is also an integer, so the sigma we can return is only a multiple of 1.4826 —— **0.0** for a real-image equivalent of σ=0.5, and σ=1.0 and σ=1.983 both give the **same 1.4826**. Silently returning 0 makes the threshold equal to the background, and downstream (star_detect) finds nothing. This is an entry point that returns a value, so instead of raising it speaks up (the caller can pick method="clip"). Refusing is the job of the side that produces the answer = star_detect.
+- **L619** — ★ The sole entry point for shot noise. With photons_per_unit=1, "expected value = lambda".
+- **L710** — ★ field_seed is fixed (the same sky), only seed is varied (a different observation).
+- **L783** — ★Until 2026-09-08 this gate's comment said "perfectly flat = noise cannot be measured". **It was the premise that was wrong** —— there is one more path by which σ becomes 0: when MAD collapses under integer DN (0.0 for a real image equivalent to σ=0.5). Returning empty for a non-flat image is not a conservative answer but a **wrong answer**; in fact, 2 point targets planted in a 200x200 integer frame were being returned as 0. We split the paths: if flat, return empty (no stars); if not flat, refuse.
+- **L1108** _(ja)_ — ★ 画像の外の中心は「flux 0・area 0・snr inf」を黙って返していた —— 拒否する。 画像の縁で欠けた開口は計算はできるが flux が系統的に少ないので ``truncated`` で印を付ける(area_px は欠けた後の面積)。
+- **L1346** _(ja)_ — 残差の sigma で下支えする。★ 以前は +inf に置き換えていたので **何も落とさず**、宇宙線がそのまま平均に入った。
+- **L1704** _(ja)_ — 束ねた sigma で下支えする。★ 以前は中央値画像の空間 MAD を使っていたが、 平坦な整数データではそれも 0 になり床が 1e-12 —— 読み出し雑音の +1 DN が 全部「宇宙線」になった(32x32x9 枚で真の宇宙線 1 に対し 871 画素)。
+- **L1745** — ★On a tie, pick the **bin with more raw votes**. A 3x3 smoothing gives the same sum whether seen from the left or the right of the true peak, so taking argmax on the smoothed value alone can pick "an empty bin next to the peak" —— exactly that happened in measurement: the true shift (-0.087, +0.996) had its votes 7 + 4 split in two at the bin boundary, and its centre, off by one bin, ended up with **0 votes** (frame_align wrongly fail-closed as "not overlapping"). A weight of 1e-6 is far smaller than the smoothed value's step (1/9), so it does not change the ranking when there is a real difference.
+- **L1768** — ★2026-09-08: also return the **height of the second-place peak**. For a star field there is one peak, but for repetitive structures (halftone dots, gratings, textiles) **peaks of the same height** line up shifted by a lattice vector, and whichever you pick "everyone agrees" = inlier_ratio becomes 1.00. The agreement rate is not "the probability the answer is correct", so we report **whether there was a single peak** as a separate number (0 = single peak, close to 1 = there are other equivalent candidates).
 
 ## `backend_safe.py`
 
@@ -218,7 +218,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `balltrack.py`
 
-- **L413** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F5): 以前は軸 = 歪対称部 / |歪対称部| で、コマ間がちょうど 180° だと 0 / 0 = NaN の ω を 返した。回転の対数は camera.rotation_log(π の近くは対称部から軸)に寄せる。ちょうど π では ω と −ω の区別は原理的に付かない(どちらも同じ R)。
+- **L420** _(ja)_ — ★2026-11-04(外部監査 v0.9.0 F5): 以前は軸 = 歪対称部 / |歪対称部| で、コマ間がちょうど 180° だと 0 / 0 = NaN の ω を 返した。回転の対数は camera.rotation_log(π の近くは対称部から軸)に寄せる。ちょうど π では ω と −ω の区別は原理的に付かない(どちらも同じ R)。
 
 ## `barcode1d.py`
 
@@ -330,8 +330,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `dualxray.py`
 
-- **L218** _(ja)_ — ★2026-10-15 探針で見つけた: Pb 50 mm でも e^{-130} は 0 にならず、正規化すると「ほぼ何も通らない」スペクトルが ふつうの顔で返っていた。透過が 1e-12 を切ったら値を返さず拒否する。
-- **L956** _(ja)_ — ★2026-10-15 探針で見つけた: Fe(26)より上は R がほとんど同じになる(80 kV・窓 20/45 keV の薄い板で Fe 4.403 / Ni 4.417 / Cu 4.418 / Zn 4.416 —— Cu と Zn は逆転する)。区別できない範囲を照合に入れると、 単調性の検査で拒否するか、雑音で Z が 26〜30 を飛び回る。照合は Fe までにし、それより重い R は範囲の外(NaN)。
+- **L225** _(ja)_ — ★2026-10-15 探針で見つけた: Pb 50 mm でも e^{-130} は 0 にならず、正規化すると「ほぼ何も通らない」スペクトルが ふつうの顔で返っていた。透過が 1e-12 を切ったら値を返さず拒否する。
+- **L963** _(ja)_ — ★2026-10-15 探針で見つけた: Fe(26)より上は R がほとんど同じになる(80 kV・窓 20/45 keV の薄い板で Fe 4.403 / Ni 4.417 / Cu 4.418 / Zn 4.416 —— Cu と Zn は逆転する)。区別できない範囲を照合に入れると、 単調性の検査で拒否するか、雑音で Z が 26〜30 を飛び回る。照合は Fe までにし、それより重い R は範囲の外(NaN)。
 
 ## `engine.py`
 
@@ -1984,9 +1984,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `hdrfusion.py`
 
-- **L300** _(ja)_ — ★両端(真っ黒・飽和)の重みは 0。ガウスの重みは端で 0.018 残るが、放射輝度の式は w·t² で 重みづけるので、飽和した長い露出(t が 256 倍なら t² は 65536 倍)が支配して応答が波打つ (雑音なしの列でも ln 誤差 ±0.7、実測)。端を 0 にすると消える。
-- **L386** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡): uint8 でも段数を「データの最大値 + 1」にしていたので、 どの露出も飽和していない系列で**最も明るい画素が飽和扱い**になり(Z >= L-1-margin)、 三角の重みも実際の段の幅でなくデータの幅に張られていた(未飽和の uint8 系列で 相対誤差の中央値が 256 段の 0.50 % に対し 0.69 %)。uint8 は満の値が 255 に決まるので 256 段。 uint16 などは 10/12/14 bit のセンサ値を入れるのが普通で満の値が dtype から 決まらないため、従来どおりデータの最大値 + 1(= 最も明るい段を飽和とみなす)。
-- **L461** _(ja)_ — ★mode="mirror"(d c b | a b c d)。"reflect"(d c b a | a b c d)だと 0 を挟んだ格子の偶奇が端で ずれ、端の画素の重みの和が 11/8 になって融合の端が 37 % 明るく飛ぶ(図で発見、2026-11-03)。
+- **L301** _(ja)_ — ★両端(真っ黒・飽和)の重みは 0。ガウスの重みは端で 0.018 残るが、放射輝度の式は w·t² で 重みづけるので、飽和した長い露出(t が 256 倍なら t² は 65536 倍)が支配して応答が波打つ (雑音なしの列でも ln 誤差 ±0.7、実測)。端を 0 にすると消える。
+- **L387** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡): uint8 でも段数を「データの最大値 + 1」にしていたので、 どの露出も飽和していない系列で**最も明るい画素が飽和扱い**になり(Z >= L-1-margin)、 三角の重みも実際の段の幅でなくデータの幅に張られていた(未飽和の uint8 系列で 相対誤差の中央値が 256 段の 0.50 % に対し 0.69 %)。uint8 は満の値が 255 に決まるので 256 段。 uint16 などは 10/12/14 bit のセンサ値を入れるのが普通で満の値が dtype から 決まらないため、従来どおりデータの最大値 + 1(= 最も明るい段を飽和とみなす)。
+- **L462** _(ja)_ — ★mode="mirror"(d c b | a b c d)。"reflect"(d c b a | a b c d)だと 0 を挟んだ格子の偶奇が端で ずれ、端の画素の重みの和が 11/8 になって融合の端が 37 % 明るく飛ぶ(図で発見、2026-11-03)。
 
 ## `honest_summary.py`
 
@@ -2022,8 +2022,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `imgforensics.py`
 
-- **L192** _(ja)_ — ★ complex は ComplexWarning だけで虚部を捨て、実部のハッシュを返していた。 文字列・object も同じく受け取らない
-- **L706** _(ja)_ — ★2026-10-18: 受けるのは 2-D の uint8 だけ。float の [0,1] を渡しても古い Pillow は mode="L" で生のバイト列を 読み替えて黙って通し(画素値は意味の無い数になる)、Pillow 13 で初めて "Invalid mode for data type" で落ちた。 試験 1 本がこの経路で無意味な入力を 1 か月使っていた。型を確かめてから渡す(mode は dtype から決まる)。
+- **L207** _(ja)_ — ★ complex は ComplexWarning だけで虚部を捨て、実部のハッシュを返していた。 文字列・object も同じく受け取らない
+- **L718** _(ja)_ — ★2026-10-18: 受けるのは 2-D の uint8 だけ。float の [0,1] を渡しても古い Pillow は mode="L" で生のバイト列を 読み替えて黙って通し(画素値は意味の無い数になる)、Pillow 13 で初めて "Invalid mode for data type" で落ちた。 試験 1 本がこの経路で無意味な入力を 1 か月使っていた。型を確かめてから渡す(mode は dtype から決まる)。
 
 ## `imgio.py`
 
@@ -2642,7 +2642,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `segcompare.py`
 
-- **L216** _(ja)_ — ★2026-10-07: 43*0.1/0.1 = 42.99999999999999 → floor で 1 voxel 手前に落ちた(spacing 0.1 で 1000 個中 47 個)。 整数のごく近く(相対 1e-9)は整数に寄せてから floor
+- **L219** _(ja)_ — ★2026-10-07: 43*0.1/0.1 = 42.99999999999999 → floor で 1 voxel 手前に落ちた(spacing 0.1 で 1000 個中 47 個)。 整数のごく近く(相対 1e-9)は整数に寄せてから floor
 
 ## `segmentation.py`
 
@@ -2650,8 +2650,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `sensitivity.py`
 
-- **L396** _(ja)_ — ★2026-10-15: 生きた列(影響ゼロでない列)が 1 本以下なら、組み合わせが 1 つも無いので交絡は定義上ない (以前は max_subset の範囲 2..2 に 1 が入って ValueError で落ちた。simcal で σ = 0 のボケの列が 0 になって踏んだ)。
-- **L418** _(ja)_ — ★大きさの等しい項の順と符号の基準は丸めの屑で決めない(simcal._fmt_combo と同じ、2026-10-15 に CI の Linux でだけ順が入れ替わった)。1e-6 で丸めて比べ、同点は宣言順。
+- **L400** _(ja)_ — ★2026-10-15: 生きた列(影響ゼロでない列)が 1 本以下なら、組み合わせが 1 つも無いので交絡は定義上ない (以前は max_subset の範囲 2..2 に 1 が入って ValueError で落ちた。simcal で σ = 0 のボケの列が 0 になって踏んだ)。
+- **L422** _(ja)_ — ★大きさの等しい項の順と符号の基準は丸めの屑で決めない(simcal._fmt_combo と同じ、2026-10-15 に CI の Linux でだけ順が入れ替わった)。1e-6 で丸めて比べ、同点は宣言順。
 
 ## `shapestats.py`
 

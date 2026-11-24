@@ -63,6 +63,13 @@ def test_weight_map_is_four_pi_and_ws_psnr_is_independent_definition():
     assert abs(O.ws_psnr(a, b) - 10 * np.log10(1 / np.mean((a-b)**2))) > 1
 
 
+def test_perspective_rig_refuses_mismatched_camera_counts():
+    """2 枚の画像を渡して 1 台の校正だけを再利用・黙殺することは許さない。"""
+    images = [np.zeros((8, 8)), np.ones((8, 8))]
+    with pytest.raises(ValueError, match=r"same length.*2, 1, 1"):
+        O.equirect_from_perspectives(images, [np.eye(3)], [np.eye(3)], (12, 24))
+
+
 def test_constant_resampling_has_no_seam():
     e = np.full((64, 128, 3), 0.375)
     cube = O.cubemap_from_equirect(e, 32)

@@ -195,8 +195,15 @@ def equirect_from_perspectives(images, extrinsics, intrinsics, out_shape, feathe
 
     **Raises** ``ValueError``: ``images`` is empty.
     """
-    if len(images) == 0:
+    try:
+        n_images, n_extrinsics, n_intrinsics = len(images), len(extrinsics), len(intrinsics)
+    except TypeError:
+        raise ValueError("images, extrinsics and intrinsics must be sized sequences") from None
+    if n_images == 0:
         raise ValueError("images must not be empty")
+    if n_images != n_extrinsics or n_images != n_intrinsics:
+        raise ValueError("images, extrinsics and intrinsics must have the same length "
+                         "(got %d, %d, %d)" % (n_images, n_extrinsics, n_intrinsics))
     h,w=out_shape; world=equirect_to_dir(h,w); num=None; den=np.zeros((h,w))
     for im,R,K in zip(images,extrinsics,intrinsics):
         im=np.asarray(im,float); local=world@np.asarray(R,float); z=local[...,2]

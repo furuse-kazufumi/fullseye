@@ -38,6 +38,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 __all__ = [
     "VolRLE", "vol_rle_encode", "vol_rle_decode",
     "vol_rle_volume", "vol_rle_bbox", "vol_rle_centroid",
@@ -141,15 +143,18 @@ def vol_rle_encode(vol_binary) -> VolRLE:
 
     空の入力(``vol_binary`` が 0 要素)は ValueError。
     """
-    if (len(vol_binary) if isinstance(vol_binary, (list, tuple)) else np.asarray(vol_binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        vol_binary, "vol_binary", "vol_rle_encode", MAX_VOXELS, expected_ndim=3)
+    if ((raw_shape is not None and 0 in raw_shape)
+            or (raw_shape is None and isinstance(vol_binary, (list, tuple)) and not vol_binary)):   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("vol_rle_encode: vol_binary is empty — pass at least one element")
     v = np.ascontiguousarray(vol_binary)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            v, "vol_binary", "vol_rle_encode", MAX_VOXELS, expected_ndim=3)
     if v.ndim != 3:
         raise ValueError("vol_binary must be a 3-D (D, H, W) volume, got %d-D"
                          % (v.ndim,))
-    if v.size > MAX_VOXELS:
-        raise ValueError("vol_rle_encode: %d voxels exceeds the %d cap"
-                         % (v.size, MAX_VOXELS))
     if v.dtype != bool:
         vf = v.astype(np.float64, copy=False)
         if not np.isfinite(vf).all():
