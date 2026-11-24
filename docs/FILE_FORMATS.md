@@ -10,7 +10,7 @@
 | AVI video | `.avi` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | BMP | `.bmp` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_iqatid.py`<br>`tests/test_raster.py`<br>+1 | — |
 | CSV | `.csv` | `cutting.cut_force_csv_load`<br>`fileio.table_read_csv`<br>`grind.ae_read_csv` | `fileio.table_write_csv` | `ae_read_csv`<br>`cut_force_csv_load`<br>`table_read_csv`<br>`table_write_csv` | stdlib / core | `tests/test_audit_extra_2026_11_04.py`<br>`tests/test_audit_file_formats.py`<br>+15 | `csv`<br>`pandas` |
-| DICOM | `.dcm` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
+| DICOM | `.dcm` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_execution_record.py`<br>`tests/test_public_api.py`<br>+2 | — |
 | DICOM | `.dicom` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
 | ASTM E57 | `.e57` | `fileio.e57_read` | `fileio.e57_write` | `e57_read`<br>`e57_write` | optional: pye57 | `tests/test_audit_file_formats.py`<br>`tests/test_fileio_e57.py`<br>+2 | `pye57` |
 | FITS | `.fits` | `fileio.astro_fits_read` | `fileio.astro_fits_write` | `astro_fits_read`<br>`astro_fits_write` | stdlib / core | `tests/test_fileio_scientific.py`<br>`tests/test_kendama_combo.py`<br>+1 | `astropy` |
@@ -20,7 +20,7 @@
 | IMG | `.img` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+4 | — |
 | JPEG | `.jpeg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_imgforensics.py`<br>+4 | — |
 | JPEG | `.jpg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_help_rendering.py`<br>+18 | — |
-| JSON | `.json` | `backends_auto.load_specs`<br>`defs_io.read_json`<br>`engine.load_pipeline`<br>`fullseye.jsonio.load_json`<br>+1 | `defs_io.write_json_atomic`<br>`fullseye.jsonio.save_json`<br>`fullseye.parambundle.save_params`<br>`studio_params_model.write_bundle_atomic` | — | optional: cv2, skimage, yaml | `tests/test_accel_bridge.py`<br>`tests/test_accel_label.py`<br>+202 | — |
+| JSON | `.json` | `backends_auto.load_specs`<br>`defs_io.read_json`<br>`engine.load_pipeline`<br>`fullseye.jsonio.load_json`<br>+1 | `defs_io.write_json_atomic`<br>`fullseye.jsonio.save_json`<br>`fullseye.parambundle.save_params`<br>`studio_params_model.write_bundle_atomic` | — | optional: cv2, skimage, yaml | `tests/test_accel_bridge.py`<br>`tests/test_accel_label.py`<br>+203 | — |
 | LAS | `.las` | `meshio_opt.read_las` | — | — | stdlib / core | `tests/test_accel_label.py`<br>`tests/test_backends.py`<br>+16 | — |
 | M4V | `.m4v` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | MetaImage | `.mha` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
@@ -48,7 +48,7 @@
 | PNG | `.png` | `raster.read_depth`<br>`raster.read_raster` | `imgio.save`<br>`studio_display.save_outputs` | — | optional: PIL, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+139 | — |
 | PPM | `.ppm` | — | `imgio.save` | — | optional: PIL, cv2 | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+107 | — |
 | XYZ text | `.pts` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_mesh.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+3 | — |
-| PY | `.py` | — | `studio_pymode.atomic_write_text` | — | 必須: PySide6 | `tests/test_abi_apply.py`<br>`tests/test_abi_conformance.py`<br>+428 | — |
+| PY | `.py` | — | `studio_pymode.atomic_write_text` | — | 必須: PySide6 | `tests/test_abi_apply.py`<br>`tests/test_abi_conformance.py`<br>+429 | — |
 | RAW raster | `.raw` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_article_media_tool_2026_11_11.py`<br>`tests/test_gfx2d.py`<br>+15 | — |
 | 3D Gaussian splat | `.splat` | `gsplatnp.gs_read_file` | — | `gs_read_file` | stdlib / core | `tests/test_gsviewer.py`<br>`tests/test_opsdrive.py`<br>+1 | — |
 | STL | `.stl` | `fileio.mesh_read_stl`<br>`mesh.read_mesh`<br>`mesh.read_points` | `fileio.mesh_write_stl`<br>`mesh.write_mesh` | `mesh_read_stl`<br>`mesh_write_stl` | stdlib / core | `tests/test_audit_file_formats.py`<br>`tests/test_fileio_mesh.py`<br>+8 | `stl`<br>`trimesh` |

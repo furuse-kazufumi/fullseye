@@ -3,6 +3,9 @@
 tests/test_vacuous_assertions.py
 tests/test_type_alias_ledger.py
 tests/test_test_durations_is_fresh.py
+# 規制実行の provenance・監査追記・BLAS 制御は fail-closed のため、PR ごとに明示して回す。
+tests/test_execution_record.py
+tests/test_fsthreads.py
 # ★2026-11-10(独立レビュー): repo 全体を走査する門。opsfileio.py にベンダ名と不正なエスケープを
 #   入れた改変で、依存の判定は 7 本中 6 本を選ばなかった(PR は緑・master で赤になる道)。
 #   ここに名指しで置き、加えて ci_select_tests.walks_repo が tests/ の走査を機械で見つけて足す

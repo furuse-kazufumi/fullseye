@@ -151,7 +151,7 @@
 
 共有 **3,852 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **73 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 947/947、型別台帳 2882/2882、單行門面 `fullseye.<名稱>` 770/1594 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 947/947、型別台帳 2882/2882、單行門面 `fullseye.<名稱>` 770/1610 —— **門面側僅涵蓋一半**。
 
 **內容實測**: 3852 篇中，附有可執行範例的 **3813** 篇(39 篇沒有)，用法說明 120 字以上的 **3653** 篇(199 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3852 篇全有。
 
@@ -314,7 +314,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 342 篇
+## 文件地圖 — 共 343 篇
 
 完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,852 篇運算子說明與 73 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
@@ -460,7 +460,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(255)
+**Other**(256)
 
 | 文件 | 內容 |
 |---|---|
@@ -534,6 +534,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`POC_QUALITY_CRITERIA.en.md`](POC_QUALITY_CRITERIA.en.md) | Quality criteria for PoCs, figures, videos and exhibits (for whoever asks and whoever builds) |
 | [`REALDATA_TLESS_6DOF.md`](REALDATA_TLESS_6DOF.md) | BOP T-LESS 実機深度 6 自由度 PoC _(ja)_ |
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | レシピの網羅(族・課題・型の繋がり・GPU 経路) _(ja)_ |
+| [`REGULATED_EXECUTION.md`](REGULATED_EXECUTION.md) | 規制実行記録の保証境界 / Regulated execution-record assurance boundary _(ja)_ |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
 | [`STUDIO_EDITOR_KEYS.md`](STUDIO_EDITOR_KEYS.md) | Studio のコードエディタ: 編集の操作とキー _(ja)_ |
 | [`STUDIO_GUIDE.de.md`](STUDIO_GUIDE.de.md) | Vollständiger Leitfaden zu Fullseye Studio |

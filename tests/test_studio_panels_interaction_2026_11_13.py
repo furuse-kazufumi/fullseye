@@ -2270,6 +2270,25 @@ def test_a_tab_group_the_program_builds_takes_the_side_of_its_settled_front(tmp_
         _close(app, win)
 
 
+def test_a_late_hidden_tab_row_inherits_current_strip_preferences(tmp_path, monkeypatch):
+    """A backend-created empty tab bar still gets both preferences before the app hides its row."""
+    from PySide6 import QtWidgets
+    app, win = _launch(monkeypatch, tmp_path / "s.ini")
+    try:
+        studio_panels.set_strip_mode(win, "left")
+        studio_panels.set_overflow_mode(win, "wrap")
+        bar = QtWidgets.QTabBar(win)
+        bar.setShape(QtWidgets.QTabBar.RoundedWest)
+        bar.show()
+        studio_panels.relayout(win)
+        row = win._panels["tab_rows"][id(bar)]
+        assert bar.property("fsNoTabRow") is True                       # the app hides the empty native row
+        assert row.strip.orientation == "v" and row.strip.mode == "wrap"
+    finally:
+        studio_panels.set_strip_mode(win, "auto"); studio_panels.set_overflow_mode(win, "scroll")
+        _close(app, win)
+
+
 # --------------------------------------------------------------------------- #
 # A3 — "Tools and tabs" and "When they do not fit" are in System settings too (Display), through the same
 # QActions as View, Window > Layout and the palette

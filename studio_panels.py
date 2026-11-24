@@ -1488,17 +1488,25 @@ def flow_classes():
             self._measure()
             self.follow_current(self.bar.currentIndex())
 
-        def place(self):
+        def apply_preferences(self):
+            """Give this tab strip the window's current side and overflow choices.
+
+            非表示の一枚用バーも TabRow として先に作られることがある。place() だけで設定すると、
+            その帯は次に表示されるまで古い既定値のままになるため、生成直後にもここを通す。
+            """
             st = _state(self.win)
+            self.strip.tr = st["tr"]
+            self.strip.set_orientation("v" if self.vertical() else "h")
+            self.strip.set_mode(st.get("overflow_mode", "scroll"))
+
+        def place(self):
             sig = self.signature()
             if sig != self.sig:
                 self.sig = sig
                 self.rebuild()
             if self.t1 is None:
                 self._measure()
-            self.strip.tr = st["tr"]
-            self.strip.set_orientation("v" if self.vertical() else "h")
-            self.strip.set_mode(st.get("overflow_mode", "scroll"))
+            self.apply_preferences()
             self.strip.thickness = self.t1
             self.strip.setGeometry(self.bar.rect())
             self.strip.raise_()
@@ -1960,6 +1968,7 @@ def relayout(win):
             row = rows.get(id(bar))
             if row is None or row.bar is not bar:
                 row = rows[id(bar)] = TabRow(win, bar)
+            row.apply_preferences()                 # also the hidden one-panel / empty rows created this turn
             no_tab_row = row.visible_dock_count() < 2
             if no_tab_row:
                 # Qt の offscreen Linux backend は 1 枚だけの QTabBar を残すことがある。

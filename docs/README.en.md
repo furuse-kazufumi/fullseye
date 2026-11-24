@@ -151,7 +151,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 **3,852 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **73 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 947/947, typed ledger 2882/2882, one-line facade `fullseye.<name>` 770/1594 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 947/947, typed ledger 2882/2882, one-line facade `fullseye.<name>` 770/1610 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
 **Measured substance**: of 3852 notes, **3813** link at least one runnable example (39 have none) and **3653** have a usage section of 120+ characters (199 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3852.
 
@@ -383,7 +383,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 342
+## Document map — all 343
 
 The complete map, so that **no document is unreachable from this index** (the 3,852 per-op notes and 73 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
@@ -529,7 +529,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(255)
+**Other**(256)
 
 | document | what it covers |
 |---|---|
@@ -603,6 +603,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`POC_QUALITY_CRITERIA.en.md`](POC_QUALITY_CRITERIA.en.md) | Quality criteria for PoCs, figures, videos and exhibits (for whoever asks and whoever builds) |
 | [`REALDATA_TLESS_6DOF.md`](REALDATA_TLESS_6DOF.md) | BOP T-LESS 実機深度 6 自由度 PoC _(ja)_ |
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | レシピの網羅(族・課題・型の繋がり・GPU 経路) _(ja)_ |
+| [`REGULATED_EXECUTION.md`](REGULATED_EXECUTION.md) | 規制実行記録の保証境界 / Regulated execution-record assurance boundary _(ja)_ |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
 | [`STUDIO_EDITOR_KEYS.md`](STUDIO_EDITOR_KEYS.md) | Studio のコードエディタ: 編集の操作とキー _(ja)_ |
 | [`STUDIO_GUIDE.de.md`](STUDIO_GUIDE.de.md) | Vollständiger Leitfaden zu Fullseye Studio |
