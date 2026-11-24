@@ -27,14 +27,20 @@ jobs:
           cmake -S . -B build-c-api-full -DFULLSEYE_BUILD_NATIVE=ON \
             -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
           cmake --build build-c-api-full --parallel 2
-      - name: Match every generated callable operator against direct Python
+      - name: Match the full generated ledger; skips are failures
         env:
           FULLSEYE_REQUIRE_OPTIONAL: "1"
           FULLSEYE_C_API_LIBRARY: ${{ github.workspace }}/build-c-api-full/libfullseye.so
-        run: >-
-          python -m pytest
-          tests/test_c_api_pybind11.py::test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe
-          -q
+        run: |
+          set -o pipefail
+          python -m pytest \
+            tests/test_c_api_pybind11.py::test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe \
+            tests/test_c_api_pybind11.py::test_generated_catalog_and_fs_find_ops_json_have_the_same_callable_rows \
+            -q -rs | tee pytest-full-registry.log
+          if grep -q 'SKIPPED' pytest-full-registry.log; then
+            echo 'full-registry gates must not skip' >&2
+            exit 1
+          fi
 
   c-api-asan:
     runs-on: ubuntu-latest

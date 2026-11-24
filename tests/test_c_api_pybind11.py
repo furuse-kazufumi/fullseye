@@ -329,6 +329,8 @@ def test_generated_catalog_and_fs_find_ops_json_have_the_same_callable_rows(abi)
 
     生成 JSON と ``fs_find_ops_json`` の両方が同じ呼出可能 ID を返すことを確認する。
     """
+    from conftest import requires_full_registry
+    requires_full_registry()
     import json
     from fullseye import c_api_bridge
 
