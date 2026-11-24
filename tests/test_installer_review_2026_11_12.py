@@ -396,7 +396,11 @@ def test_6_entries_with_wrong_types_are_dropped_not_crashed_on(tmp_path):
 
 # --------------------------------------------------------------------------- 7: デスクトップ
 @winonly
-def test_7_desktop_is_the_real_known_folder_not_userprofile_guess():
+def test_7_desktop_is_the_real_known_folder_not_userprofile_guess(monkeypatch):
+    # セッション隔離では SHGetKnownFolderPath を一時 Desktop に替える。ここは
+    # 製品時の契約だけを読む試験なので、既知フォルダー API を一度だけ実物へ戻す。
+    monkeypatch.delenv("FULLSEYE_TEST_ISOLATION", raising=False)
+    monkeypatch.delenv("FULLSEYE_TEST_DESKTOP", raising=False)
     import winreg
     with winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                         r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders") as k:
@@ -417,7 +421,8 @@ def test_15_relative_appdata_is_refused(tmp_path):
 
 # --------------------------------------------------------------------------- 8 / 10: テストが本物の台帳・レジストリを汚さない
 def test_8_session_ledger_is_isolated_and_fullseye_rag_does_not_write_the_real_one(tmp_path):
-    local = os.environ.get("LOCALAPPDATA")
+    from conftest import _REAL_ENV
+    local = _REAL_ENV.get("LOCALAPPDATA")
     real = (Path(local) / "Fullseye" / "setup" / "install_ledger.json") if WIN and local else \
         (shortcuts._xdg_data() / "fullseye" / "install_ledger.json")
     before = real.read_bytes() if real.is_file() else None
@@ -1128,14 +1133,30 @@ def test_S0_the_watcher_detects_a_changed_real_registration_and_is_otherwise_sta
         fake = tmp_path / "Desktop"
         fake.mkdir()
         monkeypatch.setenv("USERPROFILE", str(tmp_path))
-        before = real_install_snapshot()
+        before = real_install_snapshot(env=os.environ)
         (fake / "Fullseye Studio.lnk").write_bytes(b"x")
-        diff = snapshot_diff(before, real_install_snapshot())
+        diff = snapshot_diff(before, real_install_snapshot(env=os.environ))
         assert diff and "Fullseye Studio.lnk" in diff[0]
 
 
 def test_S0_the_installer_tests_cannot_name_the_real_uninstall_key():
-    assert shortcuts.UNINSTALL_KEY.startswith("Software\\FullseyeTest\\")           # conftest が差し替えている(別プロセスは対象外)
+    assert shortcuts.UNINSTALL_KEY.startswith("Software\\FullseyeTest\\")           # conftest と子プロセス用環境変数が差し替える
+
+
+@winonly
+def test_S0_session_isolation_redirects_known_folders_ledger_and_default_registry_writer(tmp_path):
+    """セッション既定の書込み先は、既知フォルダー API を含め全て試験用へ向く。"""
+    from conftest import _REAL_ENV
+    dirs = shortcuts.windows_dirs()
+    assert dirs["desktop"] == Path(os.environ["FULLSEYE_TEST_DESKTOP"])
+    assert dirs["start_menu"] == Path(os.environ["APPDATA"]) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Fullseye"
+    assert str(dirs["start_menu"]) != str(Path(_REAL_ENV["APPDATA"]) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Fullseye")
+    assert shortcuts.ledger_path() == Path(os.environ["FULLSEYE_LEDGER"])
+    key = shortcuts.register_uninstall_entry(tmp_path / "fullseye.ico", script=tmp_path / shortcuts.CMD_NAME)
+    try:
+        assert key == os.environ["FULLSEYE_ISOLATED_UNINSTALL_KEY"] and shortcuts.regkey_exists(key)
+    finally:
+        shortcuts.unregister_uninstall_entry(key)
 
 
 def test_S0_guards_refuse_paths_outside_tmp(tmp_path):
@@ -1432,12 +1453,12 @@ def test_V1_remove_item_refuses_a_registry_key_that_is_not_fullseyes(tmp_path):
 def test_V2_snapshot_tells_an_absent_setup_folder_from_an_empty_one(tmp_path, monkeypatch):
     from conftest import real_install_snapshot, snapshot_diff
     monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
-    before = real_install_snapshot()
+    before = real_install_snapshot(env=os.environ)
     assert before["setup_folder"] is None
     (tmp_path / "Fullseye" / "setup").mkdir(parents=True)                 # 空で新しく作られた
-    after = real_install_snapshot()
+    after = real_install_snapshot(env=os.environ)
     assert after["setup_folder"] == [] and snapshot_diff(before, after) and "absent -> present" in snapshot_diff(before, after)[0]
-    assert snapshot_diff(after, real_install_snapshot()) == []
+    assert snapshot_diff(after, real_install_snapshot(env=os.environ)) == []
 
 
 @winonly

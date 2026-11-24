@@ -72,6 +72,17 @@ def _known_desktop() -> Optional[Path]:
     """本物のデスクトップ(OneDrive の「既知のフォルダーの移動」で USERPROFILE\\Desktop とは違う場所になる)。
 
     SHGetKnownFolderPath(FOLDERID_Desktop)。取れなければ None。"""
+    # pytest の子プロセスも含めた隔離用。通常の利用者環境ではこの二つの変数を
+    # 見ないので、OneDrive 等で移動した本物の既知フォルダーを従来どおり使う。
+    # Test-only isolation, inherited by pytest child processes.  Normal user
+    # installs still use the real known folder (including OneDrive redirection).
+    isolated = os.environ.get("FULLSEYE_TEST_ISOLATION") == "1"
+    override = os.environ.get("FULLSEYE_TEST_DESKTOP") if isolated else None
+    if override:
+        p = Path(override)
+        if p.is_absolute():
+            return p
+        return None
     if sys.platform != "win32":
         return None
     try:
@@ -355,7 +366,13 @@ def read_lnk(lnk: Path) -> Dict[str, str]:
 # 消す(ユーザーが後から置いた物には触らない)。置き場は利用者のデータ領域
 # (Windows: %LOCALAPPDATA%/Fullseye/setup/、Linux: ~/.local/share/fullseye/)。環境変数 FULLSEYE_LEDGER で上書き。
 # kind: file / dir_if_empty / regkey(HKCU の下位キー)/ claude_skill(~/.claude/skills/fullseye-ops)
-UNINSTALL_KEY = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\Fullseye"
+_PRODUCTION_UNINSTALL_KEY = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\Fullseye"
+# テスト用の子プロセスは本物の「アプリと機能」登録を計画にも入れない。環境変数は
+# conftest だけが立て、通常の実行では常に上の製品キーになる。
+# Test child processes use a disposable key; ordinary runs always use the
+# production key above.
+UNINSTALL_KEY = (os.environ.get("FULLSEYE_ISOLATED_UNINSTALL_KEY")
+                 if os.environ.get("FULLSEYE_TEST_ISOLATION") == "1" else None) or _PRODUCTION_UNINSTALL_KEY
 LEDGER_KINDS = ("file", "dir_if_empty", "regkey", "claude_skill")
 
 

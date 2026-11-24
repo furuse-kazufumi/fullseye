@@ -71,12 +71,31 @@ function Test-LedgerEntry([object[]]$Entries, [string]$Kind, [string]$Path) {
     return $false
 }
 
+function Get-FullseyeKnownFolder([string]$Name) {
+    # pytest は Windows shell folder API の返す利用者の場所ではなく、一時フォルダを
+    # 渡す。通常のアンインストールでこの環境変数は無いので、実際の既知フォルダを使う。
+    # pytest redirects known folders to a temporary root.  Ordinary uninstall
+    # runs have no test override and keep the Windows-known-folder behaviour.
+    if ($env:FULLSEYE_TEST_ISOLATION -eq "1") {
+        $override = switch ($Name) {
+            "Desktop" { $env:FULLSEYE_TEST_DESKTOP; break }
+            "Programs" { $env:FULLSEYE_TEST_PROGRAMS; break }
+            "LocalApplicationData" { $env:FULLSEYE_TEST_LOCALAPPDATA; break }
+            default { $null }
+        }
+        if (-not [string]::IsNullOrWhiteSpace($override)) {
+            return $override
+        }
+    }
+    return [Environment]::GetFolderPath($Name)
+}
+
 function Invoke-LegacyLedgerFallback {
     # Python/fullseye が壊れたときだけの旧経路。名前だけでは消さず、台帳に記録された固定候補だけに限定する。
     # Legacy fallback for a broken package: names are never enough; only recorded fixed candidates are removable.
-    $desktop = [Environment]::GetFolderPath('Desktop')
-    $programs = [Environment]::GetFolderPath('Programs')
-    $localAppData = [Environment]::GetFolderPath('LocalApplicationData')
+    $desktop = Get-FullseyeKnownFolder 'Desktop'
+    $programs = Get-FullseyeKnownFolder 'Programs'
+    $localAppData = Get-FullseyeKnownFolder 'LocalApplicationData'
     $setupDir = Join-Path $localAppData "Fullseye\setup"
     $ledgerPath = if ([string]::IsNullOrWhiteSpace($env:FULLSEYE_LEDGER)) {
         Join-Path $setupDir "install_ledger.json"
@@ -96,7 +115,12 @@ function Invoke-LegacyLedgerFallback {
     if (-not [string]::IsNullOrWhiteSpace($programs)) {
         $candidates += (Join-Path $programs "Fullseye\Fullseye Studio.lnk")
     }
-    $registryPath = "Software\Microsoft\Windows\CurrentVersion\Uninstall\Fullseye"
+    $registryPath = if ($env:FULLSEYE_TEST_ISOLATION -eq "1" -and
+                         -not [string]::IsNullOrWhiteSpace($env:FULLSEYE_ISOLATED_UNINSTALL_KEY)) {
+        $env:FULLSEYE_ISOLATED_UNINSTALL_KEY
+    } else {
+        "Software\Microsoft\Windows\CurrentVersion\Uninstall\Fullseye"
+    }
     $registryDrivePath = "HKCU:\$registryPath"
     $entries = @()
     try {

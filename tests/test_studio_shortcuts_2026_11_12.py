@@ -297,6 +297,10 @@ def test_powershell_uninstaller_uses_the_ledger_before_a_guarded_legacy_fallback
     ps = (ROOT / "install" / "uninstall.ps1").read_text(encoding="utf-8")
     assert 'uninstall.main(["--uninstall", "--yes"], pip_externally_managed=True)' in ps
     assert "$ledgerProbe" in ps and "fullseye.uninstall" in ps
+    assert "function Get-FullseyeKnownFolder" in ps
+    assert "Get-FullseyeKnownFolder 'Desktop'" in ps
+    assert "Get-FullseyeKnownFolder 'Programs'" in ps
+    assert "FULLSEYE_ISOLATED_UNINSTALL_KEY" in ps
     assert "function Invoke-LegacyLedgerFallback" in ps
     fallback = ps.split("function Invoke-LegacyLedgerFallback", 1)[1].split("$venvPython", 1)[0]
     assert "ConvertFrom-Json" in fallback and "Test-LedgerEntry $entries \"file\" $path" in fallback
