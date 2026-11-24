@@ -292,13 +292,28 @@ def test_powershell_installer_uses_the_shared_cuda_rule_and_unicode_shortcut_wri
     assert "_ComLink" in (ROOT / "fullseye" / "shortcuts.py").read_text(encoding="utf-8")
 
 
-def test_powershell_uninstaller_covers_current_and_legacy_menus_and_fails_closed():
-    """新旧 Start Menu の .lnk を対象にし、pip 失敗を成功として表示しない。"""
+def test_powershell_uninstaller_uses_the_ledger_before_a_guarded_legacy_fallback():
+    """PowerShell は実行せず命令列を検査する / inspect the plan without executing PowerShell."""
     ps = (ROOT / "install" / "uninstall.ps1").read_text(encoding="utf-8")
-    assert 'Join-Path $programs "Fullseye"' in ps
-    assert "foreach ($dir in $shortcutDirs)" in ps
+    assert 'uninstall.main(["--uninstall", "--yes"], pip_externally_managed=True)' in ps
+    assert "$ledgerProbe" in ps and "fullseye.uninstall" in ps
+    assert "function Invoke-LegacyLedgerFallback" in ps
+    fallback = ps.split("function Invoke-LegacyLedgerFallback", 1)[1].split("$venvPython", 1)[0]
+    assert "ConvertFrom-Json" in fallback and "Test-LedgerEntry $entries \"file\" $path" in fallback
+    assert "Keep (not in ledger): $path" in fallback
+    assert "Test-LedgerEntry $entries \"regkey\" $registryPath" in fallback
+    assert "fullseye-uninstall.cmd" in fallback and "Apps & features" in fallback
+    assert "foreach ($path in $remove)" in fallback and "Remove-Item -LiteralPath $path -Force" in fallback
+    assert "Remove-Item -LiteralPath $lnkPath" not in ps
     assert "Stop-Uninstaller" in ps
     assert "if ($LASTEXITCODE -ne 0)" in ps
+
+
+def test_uninstaller_text_subprocesses_are_utf8_and_fail_soft():
+    """pip の子出力を Windows の code page に依存させない / decode child output as fail-soft UTF-8."""
+    src = (ROOT / "fullseye" / "uninstall.py").read_text(encoding="utf-8")
+    assert src.count("text=True") == 2
+    assert src.count('encoding="utf-8", errors="replace"') == 2
 
 
 # --------------------------------------------------------------------------- 台帳 / アンインストール
@@ -327,6 +342,22 @@ def _register(tmp_path, ledger, regkey):
 
 def _plat():
     return "win" if WIN else "linux"
+
+
+def test_uninstall_external_pip_mode_leaves_pip_to_the_calling_wrapper(tmp_path):
+    """PowerShell 用の同期 pip 経路は子プロセスを起こさない / the wrapper owns the pip step."""
+    out = io.StringIO()
+    dirs = _win_dirs(tmp_path) if WIN else _linux_dirs(tmp_path)
+
+    def no_pip_probe():
+        pytest.fail("externally managed pip must not be probed by fullseye.uninstall")
+
+    rc = uninstall.main(
+        ["--uninstall", "--yes", "--lang", "en"], is_tty=False, out=out,
+        ledger=tmp_path / "no-ledger.json", dirs=dirs, registry=False,
+        pip_check_fn=no_pip_probe, pip_externally_managed=True,
+    )
+    assert rc == 0 and "calling installer will run pip uninstall synchronously" in out.getvalue()
 
 
 def _test_keys(ledger):

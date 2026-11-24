@@ -80,6 +80,7 @@ M = {
         "pip_other": "pip uninstall の段は出しません: この Python に入っている fullseye は、いま動いている物と別の場所です(%s)。",
         "err": "エラー: %s",
         "pip_none": "pip uninstall の段は出しません: この Python に fullseye は pip で入っていません(%s)。",
+        "pip_external": "pip uninstall は呼び出し元が台帳の後始末後に同期実行します。",
         "later": "[この画面が閉じた直後に、後始末スクリプトが消すもの]",
         "q_skill": "Claude Code の skill(%s)も消しますか?",
         "skill_edited": "注意: %s の SKILL.md は同梱の原本から手で編集されています。既定では残します(消すと編集は戻せません)。",
@@ -117,6 +118,7 @@ M = {
                      "running now (%s).",
         "err": "error: %s",
         "pip_none": "Not offering pip uninstall: fullseye is not pip-installed in this Python (%s).",
+        "pip_external": "The calling installer will run pip uninstall synchronously after the ledger cleanup.",
         "later": "[Removed by the cleanup script right after this window closes]",
         "q_skill": "Also remove the Claude Code skill (%s)?",
         "skill_edited": "note: the SKILL.md in %s has been edited by hand relative to the shipped original. Kept by default (removing it cannot be undone).",
@@ -316,38 +318,37 @@ def remove_item(it: Dict[str, str], *, dirs: Optional[Dict[str, Path]] = None,
 
 
 # --------------------------------------------------------------------------- pip uninstall(別プロセス)
-_HELPER = (
-    "import os, sys, time, subprocess\n"
-    "pid, log = int(sys.argv[1]), sys.argv[2]\n"
-    "cmd = sys.argv[3:]\n"
-    "def alive(p):\n"
-    "    if sys.platform == 'win32':\n"
-    "        import ctypes\n"
-    "        h = ctypes.windll.kernel32.OpenProcess(0x00100000, False, p)\n"
-    "        if not h:\n"
-    "            return False\n"
-    "        r = ctypes.windll.kernel32.WaitForSingleObject(h, 0)\n"
-    "        ctypes.windll.kernel32.CloseHandle(h)\n"
-    "        return r == 258\n"
-    "    try:\n"
-    "        os.kill(p, 0)\n"
-    "        return True\n"
-    "    except OSError:\n"
-    "        return False\n"
-    "for _ in range(120):\n"
-    "    if not alive(pid):\n"
-    "        break\n"
-    "    time.sleep(0.25)\n"
-    "time.sleep(1.5)\n"
-    "out = ''\n"
-    "for attempt in range(3):\n"
-    "    r = subprocess.run(cmd, capture_output=True, text=True)\n"
-    "    out += 'attempt %d exit=%d\\n%s%s\\n' % (attempt + 1, r.returncode, r.stdout, r.stderr)\n"
-    "    if r.returncode == 0:\n"
-    "        break\n"
-    "    time.sleep(2)\n"
-    "open(log, 'w', encoding='utf-8').write(out)\n"
-)
+_HELPER = """import os, sys, time, subprocess
+pid, log = int(sys.argv[1]), sys.argv[2]
+cmd = sys.argv[3:]
+def alive(p):
+    if sys.platform == 'win32':
+        import ctypes
+        h = ctypes.windll.kernel32.OpenProcess(0x00100000, False, p)
+        if not h:
+            return False
+        r = ctypes.windll.kernel32.WaitForSingleObject(h, 0)
+        ctypes.windll.kernel32.CloseHandle(h)
+        return r == 258
+    try:
+        os.kill(p, 0)
+        return True
+    except OSError:
+        return False
+for _ in range(120):
+    if not alive(pid):
+        break
+    time.sleep(0.25)
+time.sleep(1.5)
+out = ''
+for attempt in range(3):
+    r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    out += 'attempt %d exit=%d\\n%s%s\\n' % (attempt + 1, r.returncode, r.stdout, r.stderr)
+    if r.returncode == 0:
+        break
+    time.sleep(2)
+open(log, 'w', encoding='utf-8').write(out)
+"""
 
 
 def pip_uninstall_command() -> List[str]:
@@ -405,7 +406,8 @@ def pip_status(python: Optional[str] = None, pkg_dir: Optional[Path] = None) -> 
     残るだけになる。先に ``-m pip --version`` で確かめて、無ければ段ごと飛ばす。"""
     py = python or sys.executable
     try:
-        r = subprocess.run([py, "-I", "-m", "pip", "--version"], capture_output=True, text=True, timeout=60,
+        r = subprocess.run([py, "-I", "-m", "pip", "--version"], capture_output=True, text=True,
+                           encoding="utf-8", errors="replace", timeout=60,
                            stdin=subprocess.DEVNULL, cwd=tempfile.gettempdir())
         has_pip = r.returncode == 0
     except (OSError, subprocess.SubprocessError):
@@ -451,7 +453,8 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
          ledger: Optional[Path] = None, dirs: Optional[Dict[str, Path]] = None,
          env: Optional[Dict[str, str]] = None, registry: bool = True, allow_keys: Iterable[str] = (),
          regtree: str = SETTINGS_REGTREE,
-         pip_check_fn: Optional[Callable[[], Tuple[str, str]]] = None) -> int:
+         pip_check_fn: Optional[Callable[[], Tuple[str, str]]] = None,
+         pip_externally_managed: bool = False) -> int:
     ap = argparse.ArgumentParser(prog="fullseye setup --uninstall", description="Uninstall what fullseye setup created.")
     ap.add_argument("--uninstall", action="store_true")
     ap.add_argument("--lang", choices=["ja", "en"], default=None)
@@ -512,11 +515,18 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
     say()
     cmd = pip_uninstall_command()
     cmd_txt = " ".join('"%s"' % c if " " in c else c for c in cmd)
-    pstate, pdetail = pip_check_fn()
+    if pip_externally_managed:
+        # install/uninstall.ps1 は台帳の後始末を先にこの関数へ委ね、pip は同じ Python で同期実行する。
+        # The PowerShell wrapper owns the synchronous pip step after this ledger cleanup.
+        pstate, pdetail = "external", ""
+    else:
+        pstate, pdetail = pip_check_fn()
     if pstate == "ok":
         say(m["cmd"] + "  " + cmd_txt)
     elif pstate == "no_pip":
         say(m["pip_nopip"] % uv_uninstall_hint())
+    elif pstate == "external":
+        say(m["pip_external"])
     else:
         say((m["pip_none"] if pstate == "none" else m["pip_other"]) % pdetail)
     say()
@@ -635,6 +645,8 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
         say(m["pip_no"] % cmd_txt)
     elif pstate == "no_pip":
         say(m["pip_nopip"] % uv_uninstall_hint())
+    elif pstate == "external":
+        say(m["pip_external"])
     else:
         say((m["pip_none"] if pstate == "none" else m["pip_other"]) % pdetail)
     if args.pause and is_tty:

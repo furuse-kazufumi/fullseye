@@ -3,11 +3,15 @@
     Uninstaller for Fullseye + Fullseye Studio (Windows).
 
 .DESCRIPTION
-    Removes the "Fullseye Studio" shortcuts from the Desktop and Start Menu and
-    uninstalls the `fullseye` package. If a project venv (<repo>\.venv) exists,
-    the package is removed from that venv; otherwise it is removed from the user
-    site-packages. The venv directory itself is kept unless -RemoveVenv is given.
-    The script is idempotent - missing shortcuts / package are silently skipped.
+    First removes only the files and registry entry recorded by Fullseye's install
+    ledger, then uninstalls the `fullseye` package. If a project venv
+    (<repo>\.venv) exists, the package is removed from that venv; otherwise it is
+    removed from the user site-packages. The venv directory itself is kept unless
+    -RemoveVenv is given. A broken or absent package uses a guarded legacy fallback:
+    it lists every candidate first and never removes a file absent from the ledger.
+    まず Fullseye の台帳に記録したファイルとレジストリ項目だけを消してから、
+    `fullseye` パッケージを削除します。パッケージが壊れているか無い場合だけ、
+    全候補を先に表示し、台帳に無いファイルを決して消さない旧経路に切り替えます。
 
 .PARAMETER RepoRoot
     Path to the Fullseye repository root. Defaults to the parent of this script's
@@ -50,30 +54,135 @@ Write-Host "Fullseye uninstaller" -ForegroundColor Green
 Write-Host "Repository: $RepoRoot"
 
 # --------------------------------------------------------------------------- #
-# 1. Remove shortcuts from Desktop and Start Menu.
+# 1. Prefer Fullseye's ledger-aware uninstaller. It verifies the ledger and file
+#    contents before removing a shortcut, icon, .cmd, or Apps & features entry.
+#    Fullseye の台帳対応アンインストーラを優先し、削除前に台帳と内容を検証する。
+#    pip is deliberately left to this wrapper so -RemoveVenv remains synchronous
+#    and fail-closed. / pip はこのラッパーで同期実行し、-RemoveVenv も失敗時に停止する。
 # --------------------------------------------------------------------------- #
-$shortcutName = "Fullseye Studio.lnk"
-$desktop  = [Environment]::GetFolderPath('Desktop')
-$programs = [Environment]::GetFolderPath('Programs')
-# Current installs use Programs\Fullseye; the two flat locations are legacy.
-# 現行の Programs\Fullseye と、旧版の平坦な二つの場所を対象にする。
-$shortcutDirs = @($desktop, $programs)
-if (-not [string]::IsNullOrWhiteSpace($programs)) {
-    $shortcutDirs += (Join-Path $programs "Fullseye")
-}
-foreach ($dir in $shortcutDirs) {
-    if ([string]::IsNullOrWhiteSpace($dir)) { continue }
-    $lnkPath = Join-Path $dir $shortcutName
-    if (Test-Path -LiteralPath $lnkPath) {
-        Remove-Item -LiteralPath $lnkPath -Force
-        Write-Host "Removed shortcut: $lnkPath"
+function Test-LedgerEntry([object[]]$Entries, [string]$Kind, [string]$Path) {
+    foreach ($entry in $Entries) {
+        if ($null -eq $entry) { continue }
+        if ([string]$entry.kind -eq $Kind -and
+            [string]::Equals([string]$entry.path, $Path, [StringComparison]::OrdinalIgnoreCase)) {
+            return $true
+        }
     }
+    return $false
+}
+
+function Invoke-LegacyLedgerFallback {
+    # Python/fullseye が壊れたときだけの旧経路。名前だけでは消さず、台帳に記録された固定候補だけに限定する。
+    # Legacy fallback for a broken package: names are never enough; only recorded fixed candidates are removable.
+    $desktop = [Environment]::GetFolderPath('Desktop')
+    $programs = [Environment]::GetFolderPath('Programs')
+    $localAppData = [Environment]::GetFolderPath('LocalApplicationData')
+    $setupDir = Join-Path $localAppData "Fullseye\setup"
+    $ledgerPath = if ([string]::IsNullOrWhiteSpace($env:FULLSEYE_LEDGER)) {
+        Join-Path $setupDir "install_ledger.json"
+    } else {
+        $env:FULLSEYE_LEDGER
+    }
+    $candidates = @(
+        (Join-Path $setupDir "fullseye.ico"),
+        (Join-Path $setupDir "fullseye-uninstall.cmd"),
+        (Join-Path $setupDir "fullseye-auto-shortcuts.json")
+    )
+    foreach ($dir in @($desktop, $programs)) {
+        if (-not [string]::IsNullOrWhiteSpace($dir)) {
+            $candidates += (Join-Path $dir "Fullseye Studio.lnk")
+        }
+    }
+    if (-not [string]::IsNullOrWhiteSpace($programs)) {
+        $candidates += (Join-Path $programs "Fullseye\Fullseye Studio.lnk")
+    }
+    $registryPath = "Software\Microsoft\Windows\CurrentVersion\Uninstall\Fullseye"
+    $registryDrivePath = "HKCU:\$registryPath"
+    $entries = @()
+    try {
+        if (-not (Test-Path -LiteralPath $ledgerPath)) { throw "the install ledger does not exist" }
+        $ledger = Get-Content -LiteralPath $ledgerPath -Raw -Encoding utf8 | ConvertFrom-Json
+        if ($null -eq $ledger.entries) { throw "the install ledger has no entries array" }
+        $entries = @($ledger.entries)
+    } catch {
+        Write-Host "Package cleanup is unavailable and the legacy ledger cannot be read: $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "Why: deleting by name could remove a file created by you with the same name."
+        Write-Host "Fix: run fullseye doctor, repair or reinstall Fullseye, then run this uninstaller again."
+        Write-Host "パッケージ後始末を使えず、旧台帳も読めません: $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "理由: 名前だけで消すと、同名で利用者が作成したファイルを消すおそれがあります。"
+        Write-Host "対処: fullseye doctor を実行し、Fullseye を修復または再導入してからこのアンインストーラを再実行してください。"
+        foreach ($path in $candidates) {
+            if (Test-Path -LiteralPath $path) { Write-Host "Kept (not in a readable ledger): $path" }
+        }
+        if (Test-Path -LiteralPath $registryDrivePath) { Write-Host "Kept (not in a readable ledger): $registryDrivePath" }
+        return
+    }
+
+    Write-Host "Legacy fallback plan (only paths recorded in the ledger will be removed):"
+    $remove = @()
+    foreach ($path in $candidates) {
+        if (-not (Test-Path -LiteralPath $path)) { continue }
+        if (Test-LedgerEntry $entries "file" $path) {
+            Write-Host "  Remove: $path"
+            $remove += $path
+        } else {
+            Write-Host "  Keep (not in ledger): $path"
+        }
+    }
+    $removeRegistry = $false
+    if (Test-Path -LiteralPath $registryDrivePath) {
+        if (Test-LedgerEntry $entries "regkey" $registryPath) {
+            Write-Host "  Remove: $registryDrivePath"
+            $removeRegistry = $true
+        } else {
+            Write-Host "  Keep (not in ledger): $registryDrivePath"
+        }
+    }
+    foreach ($path in $remove) {
+        Remove-Item -LiteralPath $path -Force
+        Write-Host "Removed recorded item: $path"
+    }
+    if ($removeRegistry) {
+        Remove-Item -LiteralPath $registryDrivePath -Force
+        Write-Host "Removed recorded Apps & features entry: $registryDrivePath"
+    }
+}
+
+$venvPython = Join-Path $RepoRoot ".venv\Scripts\python.exe"
+$ledgerProbe = "import fullseye, fullseye.uninstall"
+$ledgerCleanup = 'from fullseye import uninstall; raise SystemExit(uninstall.main(["--uninstall", "--yes"], pip_externally_managed=True))'
+$ledgerReady = $false
+try {
+    if (Test-Path -LiteralPath $venvPython) {
+        & $venvPython -I -c $ledgerProbe
+    } else {
+        & py -3.11 -I -c $ledgerProbe
+    }
+    $ledgerReady = ($LASTEXITCODE -eq 0)
+} catch {
+    $ledgerReady = $false
+}
+if ($ledgerReady) {
+    Write-Host "Removing Fullseye setup artifacts recorded in the install ledger..."
+    try {
+        if (Test-Path -LiteralPath $venvPython) {
+            & $venvPython -I -c $ledgerCleanup
+        } else {
+            & py -3.11 -I -c $ledgerCleanup
+        }
+    } catch {
+        Stop-Uninstaller "the ledger-based Fullseye cleanup could not be started: $($_.Exception.Message)" "The package was available, so falling back to names could delete a user-created file." "Run: fullseye doctor; then retry this uninstaller."
+    }
+    if ($LASTEXITCODE -ne 0) {
+        Stop-Uninstaller "the ledger-based Fullseye cleanup failed (exit code $LASTEXITCODE)." "The install ledger reported an item that could not be safely removed, so the name-based fallback was not used." "Run: fullseye doctor; inspect the listed paths; then retry this uninstaller."
+    }
+} else {
+    Invoke-LegacyLedgerFallback
 }
 
 # --------------------------------------------------------------------------- #
 # 2. Uninstall the fullseye package (from venv if present, else user-site).
 # --------------------------------------------------------------------------- #
-$venvPython = Join-Path $RepoRoot ".venv\Scripts\python.exe"
 try {
     if (Test-Path -LiteralPath $venvPython) {
         Write-Host "Uninstalling 'fullseye' from venv..."

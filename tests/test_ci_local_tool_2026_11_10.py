@@ -83,9 +83,10 @@ def _ok(detail: str = "ok") -> dict:
 # ---- 門の一覧 --------------------------------------------------------------------------------
 
 def test_builtin_gates_are_ten_distinct_existing_files():
+    # 写しは一覧のファイルと一緒に増える(11/25: 12 本)。下限 10 と重複なしを見る。
     gates = cl.BUILTIN_GATES
-    assert len(gates) == 10
-    assert len(set(gates)) == 10
+    assert len(gates) >= 10
+    assert len(set(gates)) == len(gates)
     missing = [g for g in gates if not (ROOT / g).is_file()]
     assert missing == []
 
