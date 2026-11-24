@@ -88,8 +88,9 @@ def test_public_figure_provenance_has_no_unexplained_omission():
     synced = json.loads((ROOT / "docs" / "licenses" / "public_figure_provenance.json").read_text(encoding="utf-8"))
     figures = {figure for entry in synced["records"] for figure in entry["figures"]}
     assert len(figures) == 65
-    assert all("Retrieved:" in record["source"] and "Licence:" in record["source"]
-               for record in records if "%s/%s" % (record["poc"], record["file"]) in figures)
+    published = [record for record in records if "%s/%s" % (record["poc"], record["file"]) in figures]
+    assert published, "公開の図に対応する記録が 0 件(空なら下の表明は無条件に通る)"
+    assert all("Retrieved:" in record["source"] and "Licence:" in record["source"] for record in published)
 
 
 def test_fintraffic_and_osm_attribution_is_on_figures_pages_and_readme():
