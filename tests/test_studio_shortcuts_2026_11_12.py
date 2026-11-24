@@ -180,7 +180,7 @@ def test_yes_runs_defaults_unattended_without_opening_a_window():
     rc, out = _run(["--yes", "--lang", "en"], f, tty=False)
     assert rc == 0
     assert not f.pip                         # Studio is now a standard dependency, not setup work
-    assert f.sc == [False] and not f.rag and not f.launch                      # default use = Studio only
+    assert f.sc == [False] and f.rag == [1] and not f.launch                   # default = Studio + Python + AI
     assert "never opens a window" in out and "[What was done]" in out
 
 
@@ -191,7 +191,7 @@ def test_interactive_answers_drive_every_step():
     assert rc == 0
     assert not f.pip and f.sc == [True] and f.rag == [1] and f.launch == [1]
     assert "claude mcp add fullseye" in out and '"mcpServers"' in out
-    assert "Command to run:" in out and out.index("Command to run:") < out.index("[What was done]")
+    assert "MCP setup" in out and out.index("MCP setup") < out.index("[What was done]")
 
 
 def test_interactive_refusals_do_nothing_and_enter_takes_defaults():
@@ -237,13 +237,11 @@ def _cli(*args, env_extra=None, stdin=subprocess.DEVNULL):
                           encoding="utf-8", env=env, stdin=stdin, timeout=120)
 
 
-def test_cli_no_args_prints_guidance_with_setup_first_and_exits_zero():
+def test_cli_no_args_prints_only_the_explicit_full_setup_command_and_exits_zero():
     r = _cli()
     assert r.returncode == 0
-    assert r.stdout.lstrip().startswith("Welcome to Fullseye. First time?  run:  fullseye setup")
-    assert "fullseye-studio --install-shortcuts" in r.stdout and "fullseye.apply(img" in r.stdout
-    assert "fullseye-rag" in r.stdout and "fullseye.mcp" in r.stdout
-    assert _cli(env_extra={"FULLSEYE_LANG": "ja"}).stdout.startswith("Fullseye へようこそ")
+    assert r.stdout == "fullseye setup --yes\n"
+    assert _cli(env_extra={"FULLSEYE_LANG": "ja"}).stdout == "fullseye setup --yes\n"
 
 
 def test_cli_existing_behaviour_is_kept():

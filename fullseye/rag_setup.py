@@ -24,6 +24,7 @@ fail-closed: どちらのモードでもコーパス実体が見つからなけ�
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import shutil
@@ -35,7 +36,27 @@ SKILL_NAME = "fullseye-ops"
 # install() が置く目印。``fullseye setup --uninstall`` は、既定の置き場の外にある skill を、この目印があるときだけ消す
 # (台帳が書き換えられても、同名の別のフォルダを丸ごと消さない)。
 MARKER_NAME = ".fullseye-installed"
+MANIFEST_NAME = "RAG_MANIFEST.json"
 _REPO_LINE = re.compile(r"^FULLSEYE_REPO = .*$", re.MULTILINE)
+
+# wheel は 3,000 超の source note でなく小さな検索索引を同梱し、checkout は下の
+# corpus 全体を持つ。manifest はこの境界を人と Claude skill に見える形で残す。
+# The wheel deliberately carries compact retrieval indexes, not the 3,000+ source
+# notes. A checkout carries every source corpus below; the manifest makes this boundary inspectable.
+_WHEEL_INDEXES = (
+    "OP_CATALOG.md", "SENSOR_PLAYBOOK.md", "data/OP_INDEX.json", "data/OP_NOTES.json",
+    "data/OP_SEARCH.json", "data/OP_CARDS.json", "data/OP_PROBE.json", "data/RECIPE_INDEX.json",
+    "data/OP_GRAPH.json", "data/OP_FAMILIES.json", "data/OP_SHAPES.json",
+    "data/SYSTEM_PARAMS.json", "data/TUNING_CARDS.json", "data/DEVICE_RULES.json",
+    "data/GPU_ACCEL_USE.json", "data/GPU_NATIVE.json", "data/MCP_INPUT_INDEPENDENT.json",
+)
+_REPO_CORPORA = (
+    ("operator notes and family guides", "docs/ops"),
+    ("capability recipes", "docs/capabilities"),
+    ("machine-readable operator index", "docs/OP_INDEX.json"),
+    ("worked examples", "examples"), ("3-D worked examples", "examples_3d"),
+    ("exhibits", "docs/articles/exhibits"), ("literature", "docs/literature"),
+)
 
 
 def find_repo() -> Path | None:
@@ -76,6 +97,33 @@ def _pin_line(repo: Path | None) -> str:
             "reinstall fullseye, or clone the repo for the full corpus")
     return ("FULLSEYE_REPO = %s  (pip install: catalog = OP_CATALOG.md here; "
             "full per-op notes = clone the GitHub repo)" % PKG.as_posix())
+
+
+def _entry(root: Path, title: str, rel: str) -> dict:
+    """RAG 部品を実パス・ファイル数で棚卸しする / inventory components with paths and file counts."""
+    path = root / rel
+    if not path.exists():
+        return {"name": title, "path": rel, "installed": False, "files": 0}
+    if path.is_dir():
+        files = sum(1 for p in path.rglob("*") if p.is_file())
+    else:
+        files = 1
+    return {"name": title, "path": path.as_posix(), "installed": True, "files": files}
+
+
+def inventory(repo: Path | None) -> dict:
+    """skill が読める同梱物を返す / make the checkout-versus-wheel corpus boundary explicit."""
+    if repo is not None:
+        components = [_entry(repo, title, rel) for title, rel in _REPO_CORPORA]
+        components += [_entry(PKG, "wheel retrieval index: " + rel, rel) for rel in _WHEEL_INDEXES]
+        mode, root = "checkout", repo
+    else:
+        components = [_entry(PKG, "wheel retrieval index: " + rel, rel) for rel in _WHEEL_INDEXES]
+        # ``examples`` is packaged; it is useful RAG evidence even in wheel mode.
+        components += [_entry(PKG.parent, "packaged examples", "examples"),
+                       _entry(PKG.parent, "Studio operator help", "studio_assets")]
+        mode, root = "wheel", PKG
+    return {"schema": 1, "mode": mode, "root": root.as_posix(), "components": components}
 
 
 def _backup_existing(dest: Path) -> Path | None:
@@ -129,6 +177,8 @@ def install(target_dir: Path, repo: Path | None = None, _auto_repo: bool = True,
             shutil.copy2(src, dest / rel)
     (dest / MARKER_NAME).write_text("installed by fullseye-rag; fullseye setup --uninstall may remove this folder\n",
                                     encoding="utf-8")
+    (dest / MANIFEST_NAME).write_text(json.dumps(inventory(repo), ensure_ascii=False, indent=2) + "\n",
+                                       encoding="utf-8")
     return dest
 
 
@@ -176,7 +226,7 @@ def skill_edited(dest: Path) -> bool:
     norm = lambda s: _REPO_LINE.sub("FULLSEYE_REPO = <pinned>", s.replace("\r\n", "\n"), count=1)    # noqa: E731
     if norm(text) != norm(orig):
         return True
-    return bool(present - shipped - {MARKER_NAME})
+    return bool(present - shipped - {MARKER_NAME, MANIFEST_NAME})
 
 
 def uninstall(target_dir: Path) -> bool:
@@ -227,6 +277,10 @@ def main(argv=None) -> int:
     else:
         print("corpus pinned to: %s (pip install — OP_CATALOG.md; "
               "clone the repo for the full per-op notes)" % PKG)
+    manifest = json.loads((dest / MANIFEST_NAME).read_text(encoding="utf-8"))
+    available = sum(1 for x in manifest["components"] if x["installed"])
+    print("RAG inventory: %d/%d components installed (%s) — %s" %
+          (available, len(manifest["components"]), manifest["mode"], dest / MANIFEST_NAME))
     print("next: open Claude Code anywhere and ask an image-processing question — "
           "the 'fullseye-ops' skill routes it through the corpus")
     print('try:  fullseye-rag search "remove noise"   (any of ja/en/zh/tw/ko/de)')

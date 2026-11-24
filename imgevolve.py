@@ -801,7 +801,9 @@ def main() -> int:
     #   `fullseye setup` は対話的な初期設定(fullseye/setup_cmd.py)。自前の argparse に丸ごと渡す。
     if len(sys.argv) == 1:
         from fullseye import setup_cmd as _sc
-        print(_sc.guidance(_sc.detect_lang()))
+        # 大容量の optional backend は勝手に始めず、初回通常コマンドには明示入口だけを 1 行で出す。
+        # Never begin a large optional install from a normal first command: print its explicit one-line entry only.
+        print(_sc.full_install_hint(_sc.detect_lang()) or "fullseye setup --yes")
         return 0
     if sys.argv[1] == "setup":
         from fullseye import setup_cmd as _sc

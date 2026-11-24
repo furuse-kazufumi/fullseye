@@ -25,6 +25,11 @@ Locate the repo root (contains `fullseye/` facade, `docs/ops/`, `examples/`,
 `examples_3d/`). If only the pip package is installed, clone the repo to get
 `docs/ops` — the corpus is repo content, not wheel content.
 
+The installer writes `RAG_MANIFEST.json` next to this SKILL.md. Read it before
+claiming a corpus is available: it inventories the installed operator indexes,
+recipes, examples, exhibits and literature, and explicitly distinguishes a full
+checkout from the compact pip-wheel index.
+
 ## Small-model workflow
 
 For a 14B–32B local model, keep context short and use this order:

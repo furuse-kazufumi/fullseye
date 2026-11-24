@@ -4,6 +4,7 @@
 --uninstall で消えること。fail-closed(テンプレ行の drift 検出)も検証する。
 """
 import sys
+import json
 from pathlib import Path
 
 import pytest
@@ -17,6 +18,10 @@ def test_install_pins_repo_path_and_uninstall_removes(tmp_path):
     assert dest == tmp_path / "fullseye-ops"
     text = (dest / "SKILL.md").read_text(encoding="utf-8")
     assert "FULLSEYE_REPO = %s" % rag.REPO.as_posix() in text
+    manifest = json.loads((dest / "RAG_MANIFEST.json").read_text(encoding="utf-8"))
+    assert manifest["mode"] == "checkout"
+    names = {row["name"] for row in manifest["components"]}
+    assert {"operator notes and family guides", "capability recipes", "worked examples", "exhibits", "literature"} <= names
     assert "(not pinned" not in text                      # placeholder fully replaced
     # the pinned corpus actually exists (the promise the skill makes to the AI)
     assert (rag.REPO / "docs" / "ops" / "INDEX.md").is_file()
@@ -63,6 +68,9 @@ def test_wheel_mode_pins_package_catalog(tmp_path):
     assert "FULLSEYE_REPO = %s" % core.PKG.as_posix() in text
     assert "OP_CATALOG.md" in text
     assert (core.PKG / "OP_CATALOG.md").is_file()                # the pin is real
+    manifest = json.loads((dest / core.MANIFEST_NAME).read_text(encoding="utf-8"))
+    assert manifest["mode"] == "wheel"
+    assert any(row["installed"] and "OP_SEARCH" in row["name"] for row in manifest["components"])
 
 
 def test_reinstall_backs_up_user_edited_skill(tmp_path):

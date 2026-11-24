@@ -15720,6 +15720,16 @@ def main(argv=None) -> int:
             _shortcuts.auto_register_on_first_command()
         except Exception:       # noqa: BLE001 -- convenience only; Studio still starts
             pass
+    # メニュー登録と同じ最初の通常起動では、GB 級になり得る導入を勝手に始めず、
+    # 全部入りの明示コマンドを 1 行だけ示す。--help/--version/登録専用には出さない。
+    if not argv:
+        try:
+            from fullseye import setup_cmd as _setup_cmd
+            hint = _setup_cmd.full_install_hint(_setup_cmd.detect_lang())
+            if hint:
+                print(hint)
+        except Exception:       # noqa: BLE001 -- a hint must never block Studio
+            pass
     if any(a in ("-h", "--help") for a in argv):
         print(_USAGE, end="")
         return 0

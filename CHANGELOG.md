@@ -9,6 +9,25 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### 1.2.0 — Studio is part of the standard installation (2026-11-24)
 
+- The portable default install now also includes the wheel-complete image/video/scientific I/O,
+  3-D interchange, reporting, device-adapter and symbol-reading dependencies. The PyPI wheel
+  audit covers CPython 3.11–3.14 on Windows amd64, Linux x86_64/aarch64 and macOS arm64; its
+  complete decision table and direct-wheel sizes are in `docs/INSTALLATION.md`. CUDA stacks,
+  render/hand-pose runtimes and packages with a missing target wheel remain opt-in.
+- `fullseye setup` now defaults to **everything possible** (Enter or `--yes`): it prints every
+  extra's pip command and direct-wheel size estimate, runs each group independently, and prints
+  an installed/failed/skipped table instead of letting one missing wheel abort all later groups.
+  The GPU group is selected only after CUDA is detected. First normal `fullseye` / `fullseye-studio`
+  use prints the explicit `fullseye setup --yes` command; it never starts a large install itself.
+- GPL-3.0-or-later `plyfile` remains confined to the independent `export-verify` test extra. It is
+  excluded from `setup --yes` so a product install does not accidentally gain a strong-copyleft
+  dependency; `fullseye setup --include export-verify` is the explicit opt-in.
+- The all-in setup installs the `fullseye-ops` RAG skill by default. Its new `RAG_MANIFEST.json`
+  inventories the corpus that is actually available: a checkout's notes, recipes, examples,
+  exhibits and literature, or the wheel's compact catalog and retrieval indexes. When Claude Code
+  is present, setup registers MCP by default with `fullseye-mcp` when available, otherwise with
+  the cwd-safe `python -P -m fullseye.mcp` fallback.
+- The C/C++ SDK header now ships in wheels at `fullseye/include/fullseye_abi.h`.
 - `pip install fullseye` now installs `PySide6-Essentials>=6.5` and `Pillow>=13.0`, so
   `fullseye-studio` starts without an extra. `gui` remains an empty compatibility alias and
   `all` contains only the remaining optional backends. Studio imports Qt lazily: a Python-only

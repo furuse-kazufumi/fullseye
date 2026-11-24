@@ -1,0 +1,174 @@
+"""使い捨て runner で公開 Fullseye installer を端から端まで検査する / end-to-end test for the published installer.
+
+wheel 指定なしでは実作業を拒否する。CI は一時ディレクトリと各段の artifact log を渡し、
+開発者は ``--dry-run`` だけを使うため、手元の Start menu・registry・Claude 状態に触れない。
+This script refuses real work without a wheel argument. CI supplies a temporary directory
+and records every stage log; developers use ``--dry-run`` only, never touching local state.
+"""
+from __future__ import annotations
+
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+from pathlib import Path
+
+
+def _quote(cmd: list[str]) -> str:
+    return " ".join('"%s"' % x if any(c.isspace() for c in x) else x for x in cmd)
+
+
+class E2E:
+    def __init__(self, root: Path, dry_run: bool):
+        self.root, self.dry_run = root, dry_run
+        self.logs = root / "logs"
+        if not dry_run:
+            self.logs.mkdir(parents=True, exist_ok=True)
+        self.env = dict(os.environ)
+        self.env.update({
+            "HOME": str(root / "home"), "USERPROFILE": str(root / "home"),
+            "APPDATA": str(root / "appdata"), "LOCALAPPDATA": str(root / "localappdata"),
+            "XDG_DATA_HOME": str(root / "xdg-data"), "XDG_CONFIG_HOME": str(root / "xdg-config"),
+            "FULLSEYE_LEDGER": str(root / "ledger" / "install_ledger.json"),
+            "FULLSEYE_CACHE_DIR": str(root / "cache"), "FULLSEYE_E2E_ALLOW_AUTO_SHORTCUTS": "1",
+            "PYTHONUTF8": "1",
+        })
+
+    def run(self, stage: str, cmd: list[str], *, check: bool = True, env: dict | None = None) -> subprocess.CompletedProcess | None:
+        print("[%s] %s" % (stage, _quote(cmd)), flush=True)
+        if self.dry_run:
+            return None
+        got = subprocess.run(cmd, cwd=self.root, env=env or self.env, text=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=1800)
+        (self.logs / (stage + ".log")).write_text(got.stdout, encoding="utf-8")
+        if check and got.returncode:
+            raise RuntimeError("%s failed (%s); see %s" % (stage, got.returncode, self.logs / (stage + ".log")))
+        return got
+
+
+def _bin(venv: Path, name: str) -> str:
+    return str(venv / ("Scripts" if os.name == "nt" else "bin") / (name + (".exe" if os.name == "nt" else "")))
+
+
+def _assert(path: Path, what: str) -> None:
+    if not path.exists():
+        raise RuntimeError("missing %s: %s" % (what, path))
+
+
+def _shortcut_path(root: Path) -> Path | None:
+    if os.name == "nt":
+        return root / "appdata" / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Fullseye" / "Fullseye Studio.lnk"
+    if sys.platform.startswith("linux"):
+        return root / "xdg-data" / "applications" / "fullseye-studio.desktop"
+    return None
+
+
+def _wait_gone(path: Path, seconds: int = 90) -> None:
+    deadline = time.monotonic() + seconds
+    while path.exists() and time.monotonic() < deadline:
+        time.sleep(1)
+    if path.exists():
+        raise RuntimeError("pip uninstall did not remove %s within %s seconds" % (path, seconds))
+
+
+def run_e2e(wheel: Path, root: Path, dry_run: bool) -> int:
+    e = E2E(root, dry_run)
+    venv = root / "venv"
+    py = _bin(venv, "python")
+    fs = _bin(venv, "fullseye")
+    studio = _bin(venv, "fullseye-studio")
+    rag = _bin(venv, "fullseye-rag")
+
+    e.run("01-create-venv", [sys.executable, "-m", "venv", str(venv)])
+    e.run("02-install-wheel", [py, "-m", "pip", "install", str(wheel)])
+    e.run("03-version", [fs, "--version"])
+    e.run("04-import", [py, "-c", "import fullseye; print(fullseye.version())"])
+    first = e.run("05-first-command", [fs])
+    if not dry_run and first.stdout != "fullseye setup --yes\n":
+        raise RuntimeError("first normal command did not print exactly the explicit all-in entry")
+    shortcut = _shortcut_path(root)
+    if not dry_run and shortcut is not None:
+        _assert(shortcut, "first-run Studio menu shortcut")
+        if os.name == "nt":
+            # 同梱の堅牢な .lnk parser で、名前だけでなくこの venv を指すことを検証する。
+            # The installed robust .lnk parser proves the entry points at this venv, not just its file name.
+            e.run("05b-link-target", [py, "-c", "from fullseye.shortcuts import read_lnk; import sys; "
+                  "p=read_lnk(sys.argv[1]); print(p); assert 'pythonw' in p['Target'].lower()", str(shortcut)])
+
+    setup = e.run("06-setup-all", [fs, "setup", "--yes", "--lang", "ja"], check=False)
+    if not dry_run:
+        if setup.returncode not in (0, 1):
+            raise RuntimeError("setup returned %s, expected 0 or 1" % setup.returncode)
+        if "[導入結果]" not in setup.stdout:
+            raise RuntimeError("setup did not print its per-extra result table")
+
+    skill = root / "home" / ".claude" / "skills" / "fullseye-ops"
+    if not dry_run:
+        _assert(skill / "SKILL.md", "RAG skill")
+        _assert(skill / "RAG_MANIFEST.json", "RAG inventory")
+    e.run("07a-rag-index", [py, "-c", "import fullseye; from pathlib import Path; "
+          "p=Path(fullseye.__file__).parent/'data'/'OP_SEARCH.json'; print(p); assert p.is_file()"])
+    e.run("07-rag-search", [rag, "search", "ノイズ除去"])
+
+    image = root / "input.png"
+    e.run("08-make-input", [py, "-c", "from PIL import Image; import sys; Image.new('L',(16,16),128).save(sys.argv[1])", str(image)])
+    e.run("09-one-operation", [fs, "apply", "sobel_amp", str(image), str(root / "output.png")])
+    studio_env = dict(e.env, QT_QPA_PLATFORM="offscreen")
+    smoke = ("from PySide6 import QtCore, QtWidgets; import studio; "
+             "app=QtWidgets.QApplication.instance() or QtWidgets.QApplication([]); "
+             "QtCore.QTimer.singleShot(200, app.quit); raise SystemExit(studio.main([]))")
+    e.run("10-studio-offscreen", [py, "-c", smoke], env=studio_env)
+
+    cpp = Path.cwd() / "examples" / "c_api" / "hello_cpp"
+    if cpp.is_file():
+        e.run("11-cpp-hello", [str(cpp)])
+    elif not dry_run:
+        (e.logs / "11-cpp-hello.log").write_text("SKIP: examples/c_api/hello_cpp is not present in this branch\n", encoding="utf-8")
+
+    e.run("12-uninstall", [fs, "setup", "--uninstall", "--yes", "--lang", "ja"], check=False)
+    if not dry_run:
+        if os.name == "nt":
+            installed_pkg = venv / "Lib" / "site-packages" / "fullseye"
+        else:
+            matches = list((venv / "lib").glob("python*/site-packages/fullseye"))
+            installed_pkg = matches[0] if matches else venv / "lib" / "fullseye"
+        _wait_gone(installed_pkg)  # pip の後始末プロセスは意図的に非同期 / intentionally asynchronous
+        if shortcut is not None and shortcut.exists():
+            raise RuntimeError("shortcut remained after uninstall: %s" % shortcut)
+        if skill.exists():
+            raise RuntimeError("RAG skill remained after uninstall: %s" % skill)
+        if os.name == "nt":
+            check = ("import winreg; "
+                     "k=r'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Fullseye'; "
+                     "\ntry: winreg.OpenKey(winreg.HKEY_CURRENT_USER,k)\nexcept FileNotFoundError: raise SystemExit(0)\nraise SystemExit(1)")
+            e.run("13-registry-gone", [sys.executable, "-c", check])
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--wheel", type=Path, help="wheel built by this commit (required except --dry-run)")
+    ap.add_argument("--wheel-dir", type=Path, help="directory containing exactly one built wheel")
+    ap.add_argument("--workdir", type=Path, default=None, help="disposable runner directory")
+    ap.add_argument("--dry-run", action="store_true", help="print the shared CI plan; do not create a venv or mutate state")
+    ns = ap.parse_args(argv)
+    if ns.wheel and ns.wheel_dir:
+        ap.error("use one of --wheel / --wheel-dir")
+    if ns.wheel_dir:
+        wheels = sorted(ns.wheel_dir.glob("*.whl"))
+        if len(wheels) != 1:
+            ap.error("--wheel-dir must contain exactly one wheel (found %d)" % len(wheels))
+        ns.wheel = wheels[0]
+    if ns.wheel is None and not ns.dry_run:
+        ap.error("--wheel or --wheel-dir is required unless --dry-run is used")
+    root = (ns.workdir or Path(tempfile.mkdtemp(prefix="fullseye-installer-e2e-"))).resolve()
+    wheel = (ns.wheel or Path("dist/fullseye.whl")).resolve()
+    print("e2e workdir: %s" % root)
+    return run_e2e(wheel, root, ns.dry_run)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

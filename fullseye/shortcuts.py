@@ -862,9 +862,13 @@ def auto_register_on_first_command(*, platform: Optional[str] = None, python: Op
     marker = auto_marker_path(platform=plat, dirs=dirs)
     if marker is None or marker.exists():
         return False
-    if e.get("FULLSEYE_NO_SHORTCUTS") or e.get("CI"):
+    # The e2e workflow runs only in a disposable GitHub runner and explicitly opts
+    # in to exercising the first-command branch.  Ordinary CI remains fail-closed:
+    # no shortcut is written merely because a test process was given a terminal.
+    e2e_auto = e.get("CI") and e.get("FULLSEYE_E2E_ALLOW_AUTO_SHORTCUTS") == "1"
+    if e.get("FULLSEYE_NO_SHORTCUTS") or (e.get("CI") and not e2e_auto):
         return False
-    if not (is_tty if is_tty is not None else _command_has_terminal()):
+    if not e2e_auto and not (is_tty if is_tty is not None else _command_has_terminal()):
         return False
     if _settings_disable_auto_shortcuts(e, plat):
         return False

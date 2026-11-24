@@ -171,9 +171,9 @@ Two more doors, both new since 0.1.11 and both honest about their limits:
 ## Install
 
 ```bash
-pip install fullseye         # PyPI: numpy/scipy core + Fullseye Studio (PySide6-Essentials) + Pillow
-pip install "fullseye[all]" # + opencv, scikit-image, PyWavelets, SimpleITK, kornia/torch, video I/O
-# from a checkout: pip install -e .   (per-backend extras: .[opencv] .[skimage] .[gpu] ...)
+pip install fullseye         # portable Studio, image/video/scientific I/O, 3-D interchange, reports and device adapters
+fullseye setup --yes         # try every remaining backend independently + RAG; CUDA group only when CUDA is detected
+# from a checkout: pip install -e .   (compatibility extras remain available: .[opencv] .[gpu] ...)
 ```
 
 `gui` remains a compatibility alias, so `pip install "fullseye[gui]"` still works but adds no
@@ -183,10 +183,10 @@ surface and audio playback features stay unavailable when their Qt add-ons are n
 PyPI: <https://pypi.org/project/fullseye/> · Source / issues / operator corpus:
 GitHub (linked from the PyPI sidebar). After installing, `fullseye-rag` sets up the
 Claude Code RAG skill; `py -3.11 tools/update_fullseye.py` updates a checkout without
-touching your environment (see `docs/AI_RAG_GUIDE.md`).
-
-Only numpy and scipy are required; every other backend is optional and only its own
-operators are affected when it is absent (graceful degradation). GPU is opt-in.
+touching your environment (see `docs/AI_RAG_GUIDE.md`). The [portable-wheel audit](docs/INSTALLATION.md)
+lists the standard dependencies, the packages that remain opt-in, and the exact
+OS/Python wheel criterion. GPU, specialised renderers, hand-pose models, and packages
+without a wheel for every supported target remain opt-in.
 
 ### Your first minute after `pip install`
 
@@ -196,24 +196,29 @@ menu (or the Linux application menu) and prints how to remove it. It uses the Py
 command, including a virtual environment. If you later delete the menu entry, Fullseye does not
 put it back.
 
-Use `fullseye setup` when you want the detailed, optional configuration flow:
+Use `fullseye setup --yes` for the detailed **install everything possible** flow:
 
 ```bash
-fullseye setup          # inspect optional backends / AI integration and choose extra settings
+fullseye setup --yes    # every compatible optional backend, RAG skill, and Claude MCP when Claude is installed
 ```
 
-It reports your Python / fullseye / Qt / optional dependencies / Claude Code integration, offers optional image
-backends and AI integration, and prints "what was done" and "next steps". `--yes` accepts every default unattended,
-`--dry-run` only shows the plan, `--lang ja|en` picks the language; with no terminal (CI, a pipe) it asks nothing
-and prints the guidance. Running `fullseye` with no arguments prints the same guidance. The pieces, if you prefer
-them one by one:
+It reports your Python / fullseye / Qt / optional dependencies / Claude Code integration, then shows each pip command
+and its direct-wheel size estimate before it runs. Each extra is installed independently: a failing wheel is recorded
+in the final table while the others continue. `--yes` accepts the all-in defaults unattended, `--dry-run` only shows
+the plan, `--lang ja|en` picks the language; with no terminal (CI, a pipe) it asks nothing and prints the guidance.
+Running `fullseye` with no arguments prints the all-in command but never starts a large install by itself. The pieces,
+if you prefer them one by one:
+
+`export-verify` is not part of the default all-in plan: its independent `plyfile` reader is GPL-3.0-or-later. This
+avoids adding strong copyleft to a product install by accident; explicitly opt in with
+`fullseye setup --include export-verify` when that test-only verifier is required.
 
 | I want to... | Run |
 |---|---|
 | open the GUI | `fullseye-studio` |
 | put Studio in the Start menu / on the desktop | `fullseye-studio --install-shortcuts` (add `--desktop`); undo: `--remove-shortcuts` |
 | use it from Python (3 lines) | `import fullseye, numpy as np` / `img = np.random.rand(64, 64)` / `fullseye.apply(img, "sobel_amp")` |
-| use it from an AI (Claude Code) | `fullseye-rag` (skill) and `claude mcp add fullseye -- python -m fullseye.mcp` |
+| use it from an AI (Claude Code) | `fullseye-rag` (skill + `RAG_MANIFEST.json`) and `claude mcp add fullseye -- python -P -m fullseye.mcp` |
 
 To suppress the one-time automatic registration, set `FULLSEYE_NO_SHORTCUTS=1`, or set the following item in the
 INI file named by `FULLSEYE_STUDIO_SETTINGS` (on Linux, the normal Studio config is
