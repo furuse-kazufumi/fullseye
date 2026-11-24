@@ -429,11 +429,17 @@ def _explain(exc: Any, op_name: Optional[str], stage_index: Optional[int], input
 
     if cls == "dependency":
         pkg, extra = _extra_of(exc, msg)
-        # Pillow と PySide6 は 1.2.0 から標準依存であり、空の extra を案内しない。
+        # Pillow / PySide6 / scikit-image と標準 I/O 群は標準依存であり、空の extra を案内しない。
         # Their absence is a broken installation, not an optional extra to suggest.
-        standard = (pkg or "").lower() in {"pil", "pillow", "pyside6"}
+        standard = (pkg or "").lower() in {"pil", "pillow", "pyside6", "skimage", "scikit-image",
+                                              "imageio", "tifffile", "matplotlib"}
         if standard:
-            pkg = "Pillow" if (pkg or "").lower() in {"pil", "pillow"} else "PySide6"
+            pkg = ("Pillow" if (pkg or "").lower() in {"pil", "pillow"}
+                   else "scikit-image" if (pkg or "").lower() in {"skimage", "scikit-image"}
+                   else "imageio" if (pkg or "").lower() == "imageio"
+                   else "tifffile" if (pkg or "").lower() == "tifffile"
+                   else "matplotlib" if (pkg or "").lower() == "matplotlib"
+                   else "PySide6")
             extra = None
         ext_ja = ("(extra: %s)" % extra) if extra else ""
         ext_en = (" (extra: %s)" % extra) if extra else ""

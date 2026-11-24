@@ -89,7 +89,7 @@ the entry later does not cause an ordinary command to recreate it. The successfu
 prints this one line:
 
 ```text
-スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)
+Registered Fullseye Studio in the Start menu (remove: fullseye-studio --remove-shortcuts)
 ```
 
 Set `FULLSEYE_NO_SHORTCUTS=1` to suppress it, or add this setting to the INI named by

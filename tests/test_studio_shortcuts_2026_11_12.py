@@ -258,6 +258,49 @@ def test_cli_setup_with_devnull_stdin_does_not_hang_or_change_anything():
     assert "not a terminal" in r.stdout
 
 
+def test_setup_dry_run_does_not_call_the_first_command_shortcut_writer(tmp_path, monkeypatch):
+    """setup は自身が dry-run を処理する前に、.lnk・台帳・レジストリへ触れてはいけない。"""
+    import imgevolve
+
+    shortcut = tmp_path / "Programs" / "Fullseye" / "Fullseye Studio.lnk"
+    registry = tmp_path / "registry-snapshot.json"
+    ledger = tmp_path / "install_ledger.json"
+    protected = (shortcut, registry, ledger)
+    before = {p: p.read_bytes() if p.is_file() else None for p in protected}
+    calls = []
+
+    def would_mutate():
+        calls.append(True)
+        for path in protected:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("changed", encoding="utf-8")
+
+    monkeypatch.setattr(shortcuts, "auto_register_on_first_command", would_mutate)
+    imgevolve._auto_register_studio_shortcut(["setup", "--dry-run"])
+    after = {p: p.read_bytes() if p.is_file() else None for p in protected}
+    assert calls == [] and after == before
+
+
+def test_powershell_installer_uses_the_shared_cuda_rule_and_unicode_shortcut_writer():
+    """旧 WScript は ANSI code page を通るため、全ての PowerShell 経路を共通 writer へ委譲する。"""
+    ps = (ROOT / "install" / "install.ps1").read_text(encoding="utf-8")
+    assert "from fullseye.setup_cmd import cuda_available" in ps
+    assert '"all-cpu"' in ps and '"${RepoRoot}[gpu]"' in ps
+    assert "WScript.Shell" not in ps and "CreateShortcut" not in ps
+    assert "shortcuts.install(desktop=True)" in ps
+    # この実装は Windows で IShellLinkW を使い、日本語の OneDrive / user path を同じ経路で守る。
+    assert "_ComLink" in (ROOT / "fullseye" / "shortcuts.py").read_text(encoding="utf-8")
+
+
+def test_powershell_uninstaller_covers_current_and_legacy_menus_and_fails_closed():
+    """新旧 Start Menu の .lnk を対象にし、pip 失敗を成功として表示しない。"""
+    ps = (ROOT / "install" / "uninstall.ps1").read_text(encoding="utf-8")
+    assert 'Join-Path $programs "Fullseye"' in ps
+    assert "foreach ($dir in $shortcutDirs)" in ps
+    assert "Stop-Uninstaller" in ps
+    assert "if ($LASTEXITCODE -ne 0)" in ps
+
+
 # --------------------------------------------------------------------------- 台帳 / アンインストール
 from fullseye import uninstall  # noqa: E402
 

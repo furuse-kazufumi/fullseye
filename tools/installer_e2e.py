@@ -34,7 +34,10 @@ class E2E:
             "XDG_DATA_HOME": str(root / "xdg-data"), "XDG_CONFIG_HOME": str(root / "xdg-config"),
             "FULLSEYE_LEDGER": str(root / "ledger" / "install_ledger.json"),
             "FULLSEYE_CACHE_DIR": str(root / "cache"), "FULLSEYE_E2E_ALLOW_AUTO_SHORTCUTS": "1",
-            "PYTHONUTF8": "1",
+            # CI の Windows runner が子プロセスをローカル code page で復号すると、
+            # 日本語を含む setup 出力が reader thread で落ちる。子にも UTF-8 を明示し、
+            # 親は常に同じ codec / fail-soft policy でログを残す。
+            "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8",
         })
 
     def run(self, stage: str, cmd: list[str], *, check: bool = True, env: dict | None = None) -> subprocess.CompletedProcess | None:
@@ -42,7 +45,8 @@ class E2E:
         if self.dry_run:
             return None
         got = subprocess.run(cmd, cwd=self.root, env=env or self.env, text=True,
-                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=1800)
+                             encoding="utf-8", errors="replace", stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT, timeout=1800)
         (self.logs / (stage + ".log")).write_text(got.stdout, encoding="utf-8")
         if check and got.returncode:
             raise RuntimeError("%s failed (%s); see %s" % (stage, got.returncode, self.logs / (stage + ".log")))

@@ -23,3 +23,10 @@ def test_e2e_source_explicitly_checks_the_artifacts_it_creates():
     text = (ROOT / "tools" / "installer_e2e.py").read_text(encoding="utf-8")
     for token in ("Fullseye Studio.lnk", "fullseye-studio.desktop", "RAG_MANIFEST.json", "OP_SEARCH.json", "registry-gone", "FULLSEYE_E2E_ALLOW_AUTO_SHORTCUTS"):
         assert token in text
+
+
+def test_e2e_forces_utf8_for_children_and_decodes_logs_fail_softly():
+    """Windows のローカル code page が日本語の子出力を壊しても、artifact log は必ず残す。"""
+    text = (ROOT / "tools" / "installer_e2e.py").read_text(encoding="utf-8")
+    assert '"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"' in text
+    assert 'encoding="utf-8", errors="replace"' in text

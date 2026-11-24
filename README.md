@@ -183,7 +183,7 @@ surface and audio playback features stay unavailable when their Qt add-ons are n
 PyPI: <https://pypi.org/project/fullseye/> · Source / issues / operator corpus:
 GitHub (linked from the PyPI sidebar). After installing, `fullseye-rag` sets up the
 Claude Code RAG skill; `py -3.11 tools/update_fullseye.py` updates a checkout without
-touching your environment (see `docs/AI_RAG_GUIDE.md`). The [portable-wheel audit](docs/INSTALLATION.md)
+touching your environment (see `docs/AI_RAG_GUIDE.md`). The [portable-wheel audit](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/INSTALLATION.md)
 lists the standard dependencies, the packages that remain opt-in, and the exact
 OS/Python wheel criterion. GPU, specialised renderers, hand-pose models, and packages
 without a wheel for every supported target remain opt-in.

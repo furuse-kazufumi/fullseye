@@ -373,9 +373,11 @@ jobs:
           python-version: "3.11"
           cache: pip
           cache-dependency-path: pyproject.toml
+      - name: pip と証明書を更新(eMudhra / emSign の中間 CA 失効 = pip>=26.2.2・certifi>=2026.10.19)
+        run: python -m pip install --upgrade "pip>=26.2.2" "certifi>=2026.10.19"
       - name: Build the wheel exercised by this job
         run: |
-          python -m pip install --upgrade "pip>=26.2.2" "certifi>=2026.10.19" "build==1.6.1"
+          python -m pip install "build==1.6.1"
           python -m build --wheel --outdir dist_e2e
       - name: Disposable full installer lifecycle
         run: python tools/installer_e2e.py --wheel-dir dist_e2e --workdir "${{ runner.temp }}/fullseye-installer-e2e"

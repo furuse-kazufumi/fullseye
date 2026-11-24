@@ -140,9 +140,15 @@ dev = ["pytest>=9.0.3", "pytest-cov>=4", "ruff>=0.4", "pytest-timeout>=2.3",
 # (2026-09-05 実測で 1 件)。`pytest -p randomly -n auto` が週次 CI の
 # `order-shuffle` ジョブと同じ走らせ方。
 # ★`flaky` は入れない —— 失敗を握り潰す道具であって、見つける道具ではない。
-# `all` はデスクトップ向け任意の画像ライブラリ・GPU・動画をまとめる。Studio は標準導入済み。
+# `all-cpu` は `all` から CUDA 群だけを外した Windows installer 用の明示的な集合。
+# `nvidia-smi` が確認できない PC に torch / kornia / CuPy を黙って落とさない。
+# `all` は従来どおり、CUDA のある機械で明示的に選べる全群を表す。
 # Industrial/robotics
 # adapters stay opt-in (a desktop user does not need pymodbus/asyncua by default).
+all-cpu = [
+  "opencv-python>=4.8.1.78", "PyWavelets>=1.4", "mitsuba>=3.5", "mahotas>=1.4",
+  "SimpleITK>=2.2", "mediapipe>=0.10", "pye57>=0.4", "astropy>=7.0",
+]
 all = [
   "opencv-python>=4.8.1.78", "PyWavelets>=1.4", "torch>=2.13", "kornia>=0.9",
   "cupy-cuda12x>=14; platform_system != 'Darwin'", "mitsuba>=3.5", "mahotas>=1.4",

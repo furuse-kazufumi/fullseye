@@ -46,6 +46,10 @@
         },
         {
           "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
+        {
+          "name": "fullseye:extra",
           "value": "export-verify"
         },
         {
@@ -231,6 +235,10 @@
         },
         {
           "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
+        {
+          "name": "fullseye:extra",
           "value": "extra"
         },
         {
@@ -273,6 +281,10 @@
         },
         {
           "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
+        {
+          "name": "fullseye:extra",
           "value": "handpose"
         },
         {
@@ -295,6 +307,10 @@
         {
           "name": "fullseye:extra",
           "value": "all"
+        },
+        {
+          "name": "fullseye:extra",
+          "value": "all-cpu"
         },
         {
           "name": "fullseye:extra",
@@ -388,6 +404,10 @@
         {
           "name": "fullseye:extra",
           "value": "all"
+        },
+        {
+          "name": "fullseye:extra",
+          "value": "all-cpu"
         },
         {
           "name": "fullseye:extra",
@@ -523,6 +543,10 @@
         {
           "name": "fullseye:extra",
           "value": "all"
+        },
+        {
+          "name": "fullseye:extra",
+          "value": "all-cpu"
         },
         {
           "name": "fullseye:extra",
@@ -762,6 +786,10 @@
         },
         {
           "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
+        {
+          "name": "fullseye:extra",
           "value": "wavelets"
         },
         {
@@ -839,6 +867,10 @@
         {
           "name": "fullseye:extra",
           "value": "all"
+        },
+        {
+          "name": "fullseye:extra",
+          "value": "all-cpu"
         },
         {
           "name": "fullseye:extra",

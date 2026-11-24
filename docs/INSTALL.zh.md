@@ -77,7 +77,7 @@ py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 `pip install fullseye` 后，首次在终端交互执行 `fullseye` 或 `fullseye-studio` 时，会在 Windows 开始菜单或 Linux 应用菜单中一次性注册 **Fullseye Studio**。虚拟环境的条目会使用该环境的 Python；用户后来删除该条目时，普通命令不会重建它。成功时显示：
 
 ```text
-スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)
+已在开始菜单中注册 Fullseye Studio（移除：fullseye-studio --remove-shortcuts）
 ```
 
 可设置 `FULLSEYE_NO_SHORTCUTS=1`，或在 `FULLSEYE_STUDIO_SETTINGS` 指定的 INI（Linux 默认 `~/.config/Fullseye/Studio.conf`）中设置以下项来停止自动注册。CI、无终端执行和隐藏开始菜单程序的 Windows 管理员策略都不会写入。详细的可选配置使用 `fullseye setup`。

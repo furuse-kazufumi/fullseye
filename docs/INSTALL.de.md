@@ -77,7 +77,7 @@ py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 Nach `pip install fullseye` registriert die erste interaktive Ausführung von `fullseye` oder `fullseye-studio` **Fullseye Studio** einmalig im Windows-Startmenü beziehungsweise im Linux-Anwendungsmenü. Ein Eintrag aus einer virtuellen Umgebung startet deren Python. Wird der Eintrag später gelöscht, erstellt ein normaler Befehl ihn nicht erneut. Bei Erfolg erscheint diese Zeile:
 
 ```text
-スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)
+Fullseye Studio wurde im Startmenü registriert (entfernen: fullseye-studio --remove-shortcuts)
 ```
 
 Zum Unterdrücken `FULLSEYE_NO_SHORTCUTS=1` setzen oder diesen Wert in die durch `FULLSEYE_STUDIO_SETTINGS` benannte INI schreiben (unter Linux normalerweise `~/.config/Fullseye/Studio.conf`). CI, Befehle ohne Terminal und eine Windows-Administratorrichtlinie, die Startmenüprogramme ausblendet, erstellen keinen Eintrag. Für die detaillierte optionale Einrichtung dient `fullseye setup`.

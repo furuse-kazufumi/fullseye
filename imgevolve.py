@@ -779,10 +779,11 @@ def _tolerate_unencodable_output() -> None:
 def _auto_register_studio_shortcut(argv) -> None:
     """対話コマンドの初回だけ Studio をメニューへ置く / one-time menu registration.
 
-    ``setup --uninstall`` は後始末そのものなので、登録を先に作り直してはいけない。
+    ``setup`` は登録するかを自分で尋ね、``--dry-run`` では何も変更しない。
+    ここで先に登録するとその契約を破るため、setup の全ての呼び方を通さない。
     ``shortcuts`` は標準ライブラリだけで、ここから PySide6 を import しない。
     """
-    if list(argv[:1]) == ["setup"] and "--uninstall" in argv[1:]:
+    if list(argv[:1]) == ["setup"]:
         return
     try:
         from fullseye import shortcuts

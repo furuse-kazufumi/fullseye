@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Fullseye + Fullseye Studio installer for Windows.
 
@@ -23,9 +23,9 @@
 
 .PARAMETER Extras
     Comma-separated pip "extras" to install. Default "all" installs every
-    optional backend (opencv / scikit-image / PyWavelets / torch / kornia /
-    mahotas / SimpleITK). Fullseye Studio and Pillow are standard dependencies,
-    so they are installed even without an extra.
+    compatible backend. The installer adds GPU dependencies only when
+    Fullseye's CUDA probe confirms an NVIDIA/CUDA environment. Fullseye Studio
+    and Pillow are standard dependencies, so they are installed even without an extra.
 
 .PARAMETER Minimal
     Install only the standard dependencies (core numpy/scipy + Studio + Pillow).
@@ -65,6 +65,17 @@ function Write-Section([string]$msg) {
     Write-Host "== $msg ==" -ForegroundColor Cyan
 }
 
+function Stop-Installer([string]$what, [string]$why, [string]$fix) {
+    # Windows users need the event, its reason, and a pasteable recovery command.
+    Write-Host "Installation stopped: $what" -ForegroundColor Red
+    Write-Host "Why: $why"
+    Write-Host "Fix: $fix"
+    Write-Host "発生したこと: $what" -ForegroundColor Red
+    Write-Host "理由: $why"
+    Write-Host "対処（そのまま貼り付け可能）: $fix"
+    exit 1
+}
+
 # --------------------------------------------------------------------------- #
 # 1. Resolve the repository root and sanity-check it.
 # --------------------------------------------------------------------------- #
@@ -76,13 +87,11 @@ $RepoRoot = (Resolve-Path -LiteralPath $RepoRoot).Path
 
 $pyproject = Join-Path $RepoRoot "pyproject.toml"
 if (-not (Test-Path -LiteralPath $pyproject)) {
-    Write-Error "pyproject.toml not found under '$RepoRoot'. Pass the repo root with -RepoRoot <path>."
-    exit 1
+    Stop-Installer "pyproject.toml was not found under ${RepoRoot}." "The selected folder is not a Fullseye checkout." "Pass its root: powershell -ExecutionPolicy Bypass -File install\install.ps1 -RepoRoot [path-to-fullseye]"
 }
 $studioPy = Join-Path $RepoRoot "studio.py"
 if (-not (Test-Path -LiteralPath $studioPy)) {
-    Write-Error "studio.py not found under '$RepoRoot'. Is this the Fullseye repository?"
-    exit 1
+    Stop-Installer "studio.py was not found under ${RepoRoot}." "The selected folder does not contain the Studio launcher." "Pass its root: powershell -ExecutionPolicy Bypass -File install\install.ps1 -RepoRoot [path-to-fullseye]"
 }
 
 Write-Host "Fullseye installer" -ForegroundColor Green
@@ -103,40 +112,39 @@ try {
     $pyOk = $false
 }
 if (-not $pyOk) {
-    Write-Host ""
-    Write-Host "Python 3.11 was not found (the 'py -3.11' launcher failed)." -ForegroundColor Red
-    Write-Host "Please install Python 3.11 (64-bit) from:"
-    Write-Host "    https://www.python.org/downloads/release/python-3119/"
-    Write-Host "During setup, tick 'Add python.exe to PATH' and 'py launcher'."
-    Write-Host "Then re-run this installer."
-    exit 1
+    Stop-Installer "Python 3.11 was not found (the 'py -3.11' launcher failed)." "The installer needs that interpreter to create its isolated environment." "Install Python 3.11 (64-bit) from https://www.python.org/downloads/release/python-3119/ with 'py launcher', then run this command again."
 }
 
 # --------------------------------------------------------------------------- #
 # 3. Decide the extras string.
 # --------------------------------------------------------------------------- #
+$installAll = (-not $Minimal) -and ($Extras.Trim().ToLowerInvariant() -eq "all")
 if ($Minimal) {
     $Extras = ""
+}
+elseif ($installAll) {
+    # ``all`` cannot subtract an extra. Start with this explicit CPU subset,
+    # then use setup_cmd.cuda_available() after the base install to add [gpu].
+    $Extras = "all-cpu"
 }
 Write-Host "Optional extras: [$Extras]"
 
 # The editable-install target. Brackets select the extras; this must stay a
 # single argument, so we build it as one quoted string.
-$pipTarget = if ([string]::IsNullOrWhiteSpace($Extras)) { $RepoRoot } else { "$RepoRoot[$Extras]" }
+$pipTarget = if ([string]::IsNullOrWhiteSpace($Extras)) { $RepoRoot } else { "${RepoRoot}[$Extras]" }
 
 # --------------------------------------------------------------------------- #
 # 4. Install (venv by default, or --user site with -UserSite).
 # --------------------------------------------------------------------------- #
 $venvDir    = Join-Path $RepoRoot ".venv"
 $venvPython = Join-Path $venvDir "Scripts\python.exe"
-$venvPythonw = Join-Path $venvDir "Scripts\pythonw.exe"
 
 if ($UserSite) {
     Write-Section "Installing into user site-packages"
     & py -3.11 -m pip install -U pip
-    if ($LASTEXITCODE -ne 0) { Write-Error "pip upgrade failed."; exit 1 }
+    if ($LASTEXITCODE -ne 0) { Stop-Installer "pip could not be upgraded (exit code $LASTEXITCODE)." "The Python package installer returned an error before Fullseye was installed." "Run: py -3.11 -m pip install -U pip; then rerun this installer. If it still fails, run: fullseye doctor" }
     & py -3.11 -m pip install --user -e $pipTarget
-    if ($LASTEXITCODE -ne 0) { Write-Error "pip install failed."; exit 1 }
+    if ($LASTEXITCODE -ne 0) { Stop-Installer "Fullseye could not be installed (exit code $LASTEXITCODE)." "pip rejected the requested dependencies or could not reach a package source." "Run: py -3.11 -m pip install --user -e `"${RepoRoot}`"; then rerun this installer. If it still fails, run: fullseye doctor" }
     $installPython = "py -3.11"
 }
 else {
@@ -146,74 +154,58 @@ else {
     } else {
         Write-Host "Creating venv: $venvDir"
         & py -3.11 -m venv $venvDir
-        if ($LASTEXITCODE -ne 0) { Write-Error "venv creation failed."; exit 1 }
+        if ($LASTEXITCODE -ne 0) { Stop-Installer "The virtual environment ${venvDir} could not be created (exit code $LASTEXITCODE)." "Python could not create the isolated install location." "Run: py -3.11 -m venv `"${venvDir}`"; then rerun this installer. If it still fails, run: fullseye doctor" }
     }
 
     Write-Section "Installing Fullseye (editable)"
     & $venvPython -m pip install -U pip
-    if ($LASTEXITCODE -ne 0) { Write-Error "pip upgrade failed."; exit 1 }
+    if ($LASTEXITCODE -ne 0) { Stop-Installer "pip in ${venvDir} could not be upgraded (exit code $LASTEXITCODE)." "The virtual environment package installer returned an error before Fullseye was installed." "Run: `"${venvPython}`" -m pip install -U pip; then rerun this installer. If it still fails, run: fullseye doctor" }
     & $venvPython -m pip install -e $pipTarget
-    if ($LASTEXITCODE -ne 0) { Write-Error "pip install failed."; exit 1 }
+    if ($LASTEXITCODE -ne 0) { Stop-Installer "Fullseye could not be installed into ${venvDir} (exit code $LASTEXITCODE)." "pip rejected the requested dependencies or could not reach a package source." "Run: `"${venvPython}`" -m pip install -e `"${RepoRoot}`"; then rerun this installer. If it still fails, run: fullseye doctor" }
     $installPython = $venvPython
 }
 
 # --------------------------------------------------------------------------- #
-# 5. Resolve the pythonw.exe used to launch the GUI without a console window.
+# 5. ``all`` の GPU 群は、Fullseye setup と同じ CUDA 判定でだけ追加する。
 # --------------------------------------------------------------------------- #
-function Resolve-Pythonw {
-    param([string]$VenvPythonw)
-    # Prefer the venv's windowed interpreter.
-    if (Test-Path -LiteralPath $VenvPythonw) { return $VenvPythonw }
-    # Otherwise derive pythonw.exe next to the interpreter the py launcher uses.
-    try {
-        $exe = & py -3.11 -c "import sys, os; print(os.path.join(os.path.dirname(sys.executable), 'pythonw.exe'))" 2>$null
-        if ($LASTEXITCODE -eq 0 -and $exe -and (Test-Path -LiteralPath $exe.Trim())) {
-            return $exe.Trim()
+if ($installAll) {
+    if ($UserSite) {
+        & py -3.11 -P -c "from fullseye.setup_cmd import cuda_available; raise SystemExit(0 if cuda_available() else 1)"
+    } else {
+        & $venvPython -P -c "from fullseye.setup_cmd import cuda_available; raise SystemExit(0 if cuda_available() else 1)"
+    }
+    if ($LASTEXITCODE -eq 0) {
+        Write-Section "Installing GPU extras (CUDA detected)"
+        if ($UserSite) {
+            & py -3.11 -m pip install --user -e "${RepoRoot}[gpu]"
+        } else {
+            & $venvPython -m pip install -e "${RepoRoot}[gpu]"
         }
-    } catch { }
-    # Last resort: the Windows windowed launcher on PATH.
-    $pyw = Get-Command pyw.exe -ErrorAction SilentlyContinue
-    if ($pyw) { return $pyw.Source }
-    return $null
+        $gpuRepair = if ($UserSite) { "py -3.11 -m pip install --user -e `"${RepoRoot}[gpu]`"; fullseye doctor" } else { "`"${venvPython}`" -m pip install -e `"${RepoRoot}[gpu]`"; fullseye doctor" }
+        if ($LASTEXITCODE -ne 0) { Stop-Installer "The CUDA GPU extras could not be installed (exit code $LASTEXITCODE)." "Fullseye detected CUDA, but pip could not install torch, kornia, or CuPy for this Python." "Run: $gpuRepair" }
+    } else {
+        Write-Host "CUDA was not detected; installed [all-cpu] and skipped the GPU group (torch, kornia, CuPy)." -ForegroundColor Yellow
+        Write-Host "Why: Fullseye's shared CUDA probe requires a working nvidia-smi, so this installer does not download GPU packages on a CPU-only PC."
+        Write-Host "Fix: install an NVIDIA driver/CUDA, confirm with nvidia-smi, then rerun: powershell -ExecutionPolicy Bypass -File install\install.ps1 -Extras all; diagnose with: fullseye doctor"
+        Write-Host "CUDA を検出できなかったため、[all-cpu] を入れ、GPU 群(torch / kornia / CuPy)は入れませんでした。" -ForegroundColor Yellow
+        Write-Host "理由: Fullseye 共通の CUDA 判定は nvidia-smi の成功を必要とするため、CPU 専用 PC に GPU パッケージをダウンロードしません。"
+        Write-Host "対処: NVIDIA driver/CUDA を入れ nvidia-smi で確認してから、powershell -ExecutionPolicy Bypass -File install\install.ps1 -Extras all を再実行してください。診断: fullseye doctor"
+    }
 }
 
 # --------------------------------------------------------------------------- #
-# 6. Create the shortcuts.
+# 6. Create Unicode-safe shortcuts through the package implementation.
 # --------------------------------------------------------------------------- #
 if (-not $NoShortcut) {
     Write-Section "Creating shortcuts"
-    $launcher = Resolve-Pythonw -VenvPythonw $venvPythonw
-    if ($null -eq $launcher) {
-        Write-Host "Could not locate pythonw.exe; skipping shortcut creation." -ForegroundColor Yellow
-        Write-Host "You can still launch with:  fullseye-studio   or   py -3.11 studio.py"
+    $shortcutCode = "from fullseye import shortcuts; [print('Created: ' + str(p)) for p in shortcuts.install(desktop=True)]"
+    if ($UserSite) {
+        & py -3.11 -P -c $shortcutCode
     } else {
-        $iconPath = Join-Path $RepoRoot "assets\fullseye.ico"
-        $shortcutName = "Fullseye Studio.lnk"
-        $desktop  = [Environment]::GetFolderPath('Desktop')
-        $programs = [Environment]::GetFolderPath('Programs')
-
-        $shell = New-Object -ComObject WScript.Shell
-        foreach ($dir in @($desktop, $programs)) {
-            if ([string]::IsNullOrWhiteSpace($dir)) { continue }
-            if (-not (Test-Path -LiteralPath $dir)) {
-                New-Item -ItemType Directory -Path $dir -Force | Out-Null
-            }
-            $lnkPath = Join-Path $dir $shortcutName
-            $sc = $shell.CreateShortcut($lnkPath)
-            $sc.TargetPath       = $launcher
-            # Quote the script path so a repo path with spaces still works.
-            $sc.Arguments        = '"' + $studioPy + '"'
-            $sc.WorkingDirectory = $RepoRoot
-            if (Test-Path -LiteralPath $iconPath) {
-                $sc.IconLocation = "$iconPath,0"
-            }
-            $sc.Description = "Fullseye Studio - visual image-processing pipeline workbench"
-            $sc.Save()
-            Write-Host "Created: $lnkPath"
-        }
-        Write-Host "Shortcut target : $launcher"
-        Write-Host "Shortcut args   : `"$studioPy`""
+        & $venvPython -P -c $shortcutCode
     }
+    $shortcutRepair = if ($UserSite) { "py -3.11 -P -m studio --install-shortcuts" } else { "`"${venvPython}`" -P -m studio --install-shortcuts" }
+    if ($LASTEXITCODE -ne 0) { Stop-Installer "The Fullseye Studio shortcut could not be created (exit code $LASTEXITCODE)." "The Unicode-safe Fullseye shortcut helper could not write the Start Menu or Desktop entry." "Run: fullseye doctor; then retry: $shortcutRepair" }
 }
 
 # --------------------------------------------------------------------------- #

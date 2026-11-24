@@ -70,7 +70,9 @@ def test_wheel_mode_pins_package_catalog(tmp_path):
     assert (core.PKG / "OP_CATALOG.md").is_file()                # the pin is real
     manifest = json.loads((dest / core.MANIFEST_NAME).read_text(encoding="utf-8"))
     assert manifest["mode"] == "wheel"
-    assert any(row["installed"] and "OP_SEARCH" in row["name"] for row in manifest["components"])
+    components = manifest["components"]
+    assert components, "the wheel RAG manifest must name at least one packaged component"
+    assert any(row["installed"] and "OP_SEARCH" in row["name"] for row in components)
 
 
 def test_reinstall_backs_up_user_edited_skill(tmp_path):

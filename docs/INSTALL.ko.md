@@ -77,7 +77,7 @@ py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 `pip install fullseye` 뒤 처음으로 대화형 터미널에서 `fullseye` 또는 `fullseye-studio`를 실행하면 Windows 시작 메뉴 또는 Linux 애플리케이션 메뉴에 **Fullseye Studio**를 한 번 등록합니다. 가상 환경 항목은 그 환경의 Python을 사용하며, 사용자가 나중에 항목을 지워도 일반 명령이 다시 만들지 않습니다. 성공하면 다음 한 줄을 표시합니다.
 
 ```text
-スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)
+시작 메뉴에 Fullseye Studio를 등록했습니다(제거: fullseye-studio --remove-shortcuts)
 ```
 
 `FULLSEYE_NO_SHORTCUTS=1`을 설정하거나 `FULLSEYE_STUDIO_SETTINGS`가 가리키는 INI(Linux 기본값은 `~/.config/Fullseye/Studio.conf`)에 다음 항목을 넣으면 중지할 수 있습니다. CI, 터미널 없는 실행, 시작 메뉴 프로그램을 숨기는 Windows 관리자 정책에서는 만들지 않습니다. 상세 선택 설정에는 `fullseye setup`을 사용하십시오.

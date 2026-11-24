@@ -77,7 +77,7 @@ py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 `pip install fullseye` 後，第一次在互動式終端執行 `fullseye` 或 `fullseye-studio` 時，會在 Windows 開始功能表或 Linux 應用程式選單一次註冊 **Fullseye Studio**。虛擬環境的項目會使用該環境的 Python；使用者後來刪除項目時，一般指令不會重建它。成功時顯示：
 
 ```text
-スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)
+已在開始功能表中註冊 Fullseye Studio（移除：fullseye-studio --remove-shortcuts）
 ```
 
 設定 `FULLSEYE_NO_SHORTCUTS=1`，或在 `FULLSEYE_STUDIO_SETTINGS` 指定的 INI（Linux 預設是 `~/.config/Fullseye/Studio.conf`）加入下列項目即可停用。CI、沒有端末的執行、以及隱藏開始功能表程式的 Windows 管理員原則都不會寫入。詳細的選用設定請使用 `fullseye setup`。
