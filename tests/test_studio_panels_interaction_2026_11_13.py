@@ -1298,7 +1298,7 @@ def test_tabs_context_menu_is_panel_menu_and_not_closable(tmp_path, monkeypatch)
         keys = ("variables", "compare", "ab")                               # one panel left: no tab row at all
         for k in keys[1:]:
             win._docks[k].hide()
-        _pump(app, 0.4)
+        assert _wait_for(app, lambda: _shown_tab_bars(win) == [])
         assert win._docks["variables"].isVisible()
         assert _shown_tab_bars(win) == []
     finally:

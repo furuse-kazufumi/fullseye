@@ -47,6 +47,18 @@ def _pump(sec=0.3):
         time.sleep(0.01)
 
 
+def _wait_for(predicate, sec=10.0):
+    """条件が満たされるまで Qt のイベントを処理して待つ。Wait while processing Qt events."""
+    from PySide6 import QtWidgets
+    end = time.monotonic() + sec
+    while time.monotonic() < end:
+        QtWidgets.QApplication.processEvents()
+        if predicate():
+            return True
+        time.sleep(0.01)
+    return bool(predicate())
+
+
 def _launch(tmp_path, monkeypatch, name="s.ini", start_mode="auto", time_limit=None):
     _app()
     ini = tmp_path / name
@@ -310,6 +322,7 @@ def test_2_gui_keeps_running_during_a_slow_program(tmp_path, monkeypatch):
         _key(win, QtCore.Qt.Key_F5)
         assert win._pymode.running
         QtCore.QTimer.singleShot(GUI_HEARTBEAT_DELAY_MS, heartbeat.set)
+        assert _wait_for(heartbeat.is_set, GUI_HEARTBEAT_DEADLINE_S)
         assert win._pymode.wait_idle(10)
         assert win._pymode.last.values["gui_heartbeat_seen"] is True
     finally:

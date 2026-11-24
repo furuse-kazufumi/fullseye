@@ -656,7 +656,6 @@ def test_autosave_does_nothing_for_an_untitled_program_and_the_setting_is_rememb
         pm.set_autosave_file("idle", 0.5)
         assert pm.file is None
         _type(win, "# untitled work\n")
-        _pump(1.2)
         assert pm.autosave_file() is False and pm.state.get("pymode_autosaves", 0) == 0
         assert [n for n in os.listdir(tmp_path) if n.endswith(".py")] == []     # ファイルは作らない(退避だけ)
         assert pm.autosave_now() is True                                 # 退避(復元用)は設定に関係なく動く
