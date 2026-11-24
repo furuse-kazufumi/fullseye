@@ -9,19 +9,19 @@ jobs:
   c-api-full-registry:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
         with:
           python-version: '3.11'
       - name: Install native and callable-op dependencies
-        run: python -m pip install -e '.[native,opencv,skimage,pil,volume]' pytest
+        run: python -m pip install -e '.[native,opencv,skimage,pil,volume,wavelets]' pytest
       - name: Install every backend that contributes to the full registry
         run: |
           pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.13"
           pip install "kornia>=0.9" "mahotas>=1.4"
           pip uninstall -y opencv-python
           pip install "opencv-contrib-python>=4.8.1.78"
-          python -c "import torch, kornia, mahotas, cv2; print(torch.__version__, cv2.__version__); assert hasattr(cv2, 'xfeatures2d')"
+          python -c "import torch, kornia, mahotas, pywt, cv2; print(torch.__version__, cv2.__version__, pywt.__version__); assert hasattr(cv2, 'xfeatures2d')"
       - name: Build the C API
         run: |
           cmake -S . -B build-c-api-full -DFULLSEYE_BUILD_NATIVE=ON \
@@ -45,8 +45,8 @@ jobs:
   c-api-asan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
         with:
           python-version: '3.11'
       - name: Install native development dependencies
@@ -60,6 +60,7 @@ jobs:
       - name: Run CTest and ctypes hardening tests under sanitizers
         env:
           ASAN_OPTIONS: detect_leaks=1
+          LSAN_OPTIONS: suppressions=${{ github.workspace }}/native/lsan.supp:print_suppressions=1
           FULLSEYE_C_API_LIBRARY: ${{ github.workspace }}/build-c-api-asan/libfullseye.so
         run: |
           export LD_PRELOAD="$(gcc -print-file-name=libasan.so)"

@@ -1,21 +1,45 @@
 /* Result-handle lifetime gate / 結果ハンドルの寿命を確かめる C の門。 */
 #include "fullseye.h"
 
-#include <stdatomic.h>
 #include <string.h>
 
 #ifdef _WIN32
 #include <process.h>
 #include <windows.h>
+
+/* MSVC C11 stdatomic support is not available on every supported toolchain.
+ * MSVC の C11 stdatomic 対応は、対応対象の toolchain すべてで利用できるわけではない。 */
+typedef volatile LONG start_flag_t;
+#define START_FLAG_INIT 0
+
+static int start_flag_load_acquire(start_flag_t *flag) {
+    return (int)InterlockedCompareExchange(flag, 0, 0);
+}
+
+static void start_flag_store_release(start_flag_t *flag, int value) {
+    (void)InterlockedExchange(flag, (LONG)value);
+}
 #else
 #include <pthread.h>
+#include <stdatomic.h>
+
+typedef atomic_int start_flag_t;
+#define START_FLAG_INIT ATOMIC_VAR_INIT(0)
+
+static int start_flag_load_acquire(start_flag_t *flag) {
+    return atomic_load_explicit(flag, memory_order_acquire);
+}
+
+static void start_flag_store_release(start_flag_t *flag, int value) {
+    atomic_store_explicit(flag, value, memory_order_release);
+}
 #endif
 
 enum { ACCESS_ITERATIONS = 1000 };
 
 typedef struct race_arg {
     fs_result_id_t result;
-    atomic_int start;
+    start_flag_t start;
     int ok;
 } race_arg_t;
 
@@ -31,7 +55,7 @@ static fs_input_t image_input(const double *pixels, size_t count) {
 
 static void read_during_release(race_arg_t *arg) {
     int index;
-    while (atomic_load_explicit(&arg->start, memory_order_acquire) == 0) {}
+    while (start_flag_load_acquire(&arg->start) == 0) {}
     arg->ok = 1;
     for (index = 0; index < ACCESS_ITERATIONS; ++index) {
         fs_value_kind_t kind = FS_VALUE_IMAGE;
@@ -66,7 +90,7 @@ int main(int argc, char **argv) {
     fs_runtime_t *runtime = NULL;
     fs_result_id_t result = 0u;
     fs_value_kind_t kind = FS_VALUE_IMAGE;
-    race_arg_t race = {0u, ATOMIC_VAR_INIT(0), 0};
+    race_arg_t race = {0u, START_FLAG_INIT, 0};
     int ok = 0;
     if (argc > 1) { options.runtime_root = argv[1]; options.runtime_root_bytes = strlen(argv[1]); }
     if (fs_runtime_create(&options, &runtime) != FS_OK) goto done;
@@ -82,14 +106,14 @@ int main(int argc, char **argv) {
 #ifdef _WIN32
     HANDLE thread = (HANDLE)_beginthreadex(NULL, 0, race_main, &race, 0, NULL);
     if (thread == NULL) goto done;
-    atomic_store_explicit(&race.start, 1, memory_order_release);
+    start_flag_store_release(&race.start, 1);
     if (fs_result_release_n(result) != FS_OK) { CloseHandle(thread); goto done; }
     WaitForSingleObject(thread, INFINITE);
     CloseHandle(thread);
 #else
     pthread_t thread;
     if (pthread_create(&thread, NULL, race_main, &race) != 0) goto done;
-    atomic_store_explicit(&race.start, 1, memory_order_release);
+    start_flag_store_release(&race.start, 1);
     if (fs_result_release_n(result) != FS_OK) { pthread_join(thread, NULL); goto done; }
     pthread_join(thread, NULL);
 #endif
