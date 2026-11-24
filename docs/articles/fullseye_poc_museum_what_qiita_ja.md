@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **149 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **150 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1764,7 +1764,7 @@ py -3.11 examples/poc_surface_defect_classifiers.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 49 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 50 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2207,6 +2207,44 @@ py -3.11 examples/poc_particle_sizing.py
 この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_particle_sizing)
 
 使用 op(ノートへ): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`blob_region`](https://furuse.work/ops/blob/extract/blob_region.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`circularity`](https://furuse.work/ops/2d/features/circularity.html) · [`distance_transform`](https://furuse.work/ops/2d/region/distance_transform.html)
+
+## No.2026.318 —— 薬学向け顕微鏡粒径 ―― 端と重なりを黙って1粒にせず、3基準と校正来歴を残す
+
+顕微鏡で撮った粒子を数えるとき、端で切れた粒子と重なった粒子を一粒として黙って数えると分布が変わる。合成した真値と比べ、採否の理由、個数・面積・体積の三つの基準、尺度の不確かさと校正来歴を同じ報告に残した。
+
+[![薬学向け顕微鏡粒径 ―― 端と重なりを黙って1粒にせず、3基準と校正来歴を残す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png)
+
+*↑ **薬学向け顕微鏡粒径 ―― 端と重なりを黙って1粒にせず、3基準と校正来歴を残す** ―― ステージミクロメータ、孤立円・楕円、低コントラスト、重なり、端切れを同じ合成画像に置き、真値と分割結果を比べた。孤立粒子の面積相当径の最大誤差は 0.165 px、端の1粒は理由付きで除外し、分割済みの重なり2粒を記録した。個数基準と体積基準のD50は 17.428 µm と 18.064 µm で別系列であり、レーザー回折と同一視しない。尺度 0.500000 ± 0.002500 µm/px を径と分位点へ伝播し、校正記録と粒子表のSHA-256を保存する。*
+
+[![重なり率を増やす系列。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/02_particle_overlap_rate_series_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/02_particle_overlap_rate_series.png)
+
+*↑ 測定の図 ―― 重なり率を増やす系列。連結成分数だけでは 2 粒を 1 粒として数える。*
+
+[![324粒子の別試料。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/03_compendial_particle_microscopy_large_validation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/03_compendial_particle_microscopy_large_validation.png)
+
+*↑ 324粒子の別試料。*
+
+[![number基準。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/04_compendial_particle_microscopy_large_validation_number_cdf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/04_compendial_particle_microscopy_large_validation_number_cdf.png)
+
+*↑ number基準。*
+
+[![area基準。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/05_compendial_particle_microscopy_large_validation_area_cdf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/05_compendial_particle_microscopy_large_validation_area_cdf.png)
+
+*↑ area基準。*
+
+[![volume基準。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/06_compendial_particle_microscopy_large_validation_volume_cdf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/06_compendial_particle_microscopy_large_validation_volume_cdf.png)
+
+*↑ volume基準。*
+
+```
+py -3.11 examples/poc_compendial_particle_microscopy.py
+```
+
+ソース: [examples/poc_compendial_particle_microscopy.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_compendial_particle_microscopy.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_compendial_particle_microscopy)
+
+使用 op(ノートへ): [`annotate_figure_grid`](https://furuse.work/ops/annotate/paper/annotate_figure_grid.html) · [`blob_count_interval`](https://furuse.work/ops/blob/split/blob_count_interval.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_seeds`](https://furuse.work/ops/blob/split/blob_seeds.html) · [`blob_split`](https://furuse.work/ops/blob/split/blob_split.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`mm_per_px_from_reference`](https://furuse.work/ops/measure1d/scale/mm_per_px_from_reference.html) · [`noise_sigma`](https://furuse.work/ops/astrostack/quality/noise_sigma.html) · [`particle_size_distribution`](https://furuse.work/ops/drive/pharma/particle_size_distribution.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
 
 ## No.2026.031 —— 光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが既知の符号のあいまいさ
 

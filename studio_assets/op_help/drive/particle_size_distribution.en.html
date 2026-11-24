@@ -5,64 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: none (CPU reference implementation only)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Calibrate a particle table and return reasoned acceptance, three-basis bins, D10/D50/D90 with confidence intervals, and provenance.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>D10/D50/D90 は、重複径を重みごとに集約した<b>重み付き経験分布の中点規約</b>で求める。<code style="color:#22d3bf">unsplit</code> と <code style="color:#22d3bf">ambiguous</code> の重なりは常に除外し、1 粒として黙って数えない。上流の <code style="color:#22d3bf">blob_split</code> と <code style="color:#22d3bf">blob_count_interval</code> に由来する成分 ID、分割根拠、来歴ハッシュ、上流の構造化 <code style="color:#22d3bf">blob_split</code> / <code style="color:#22d3bf">blob_count_interval</code> 記録、個数区間、決定可否が必須であり、op 内で再計算したダイジェストと一致しない入力は拒否する。<code style="color:#22d3bf">component_id</code> と上流 label は一対一、各行の一意な split label、面積、面積相当径は実際の <code style="color:#22d3bf">blob_split</code> 画像から再計算して照合する。これは同一実行内の整合性検査であり、署名または不変の外部成果物が無いので改ざん検知ではない。改ざん検知は実行記録と署名を備えた規制対応基盤で扱う。未決定行は <code style="color:#22d3bf">ambiguous</code> として除外する。<code style="color:#22d3bf">border_policy=&quot;correct&quot;</code> は端粒子について <code style="color:#22d3bf">border_inclusion_probability</code>、<code style="color:#22d3bf">border_corrected_diameter_px</code>、<code style="color:#22d3bf">border_corrected_area_px2</code> が揃う場合だけ Horvitz--Thompson の個数重み <code style="color:#22d3bf">1/p</code> と補正寸法を使う。尺度の標準不確かさは各径へ線形伝播し、分位点では決定的 bootstrap、尺度、端補正不確かさの感度再標本化を保守的に合成する。端補正の径・面積・包含確率は独立と明示した周辺正規不確かさとして扱うため、相関を持つ校正には使えない。物理範囲外の抽出値は切り詰めず再抽出する。有効粒子数が <code style="color:#22d3bf">MIN_EFFECTIVE_PARTICLES</code> 未満なら、母集団分位点を主張せず <code style="color:#22d3bf">insufficient_sample</code> を返す。bootstrap 区間は独立粒子の経験分布を再標本化する <b>分割後に受理された粒子に条件付けた区間</b>であり、端補正時は設計ベース保証ではなく実験的な不確かさである。</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>particles : table (dict of 1-D columns)</p>
-<p>必須列は <code style="color:#22d3bf">object_id</code>、<code style="color:#22d3bf">diameter_px</code>、<code style="color:#22d3bf">area_px2</code>、<code style="color:#22d3bf">diameter_unit=&quot;px&quot;</code>、</p>
-<p><code style="color:#22d3bf">area_unit=&quot;px2&quot;</code>、<code style="color:#22d3bf">touches_border</code>、<code style="color:#22d3bf">split_status</code>、<code style="color:#22d3bf">component_id</code>、</p>
-<p><code style="color:#22d3bf">split_evidence</code>、<code style="color:#22d3bf">upstream_provenance_hash</code>、<code style="color:#22d3bf">upstream_component_label</code>、<code style="color:#22d3bf">upstream_split_label</code>、<code style="color:#22d3bf">count_interval_lo</code>、</p>
-<p><code style="color:#22d3bf">count_interval_hi</code>、<code style="color:#22d3bf">count_determined</code>。来歴ハッシュは元の <code style="color:#22d3bf">blob_split</code> と</p>
-<p><code style="color:#22d3bf">blob_count_interval</code> の構造化記録を正規化して SHA-256 化したもの。</p>
-<p>状態は <code style="color:#22d3bf">isolated</code> / <code style="color:#22d3bf">split</code> / <code style="color:#22d3bf">unsplit</code> / <code style="color:#22d3bf">ambiguous</code>。</p>
-<p><code style="color:#22d3bf">major_axis_px</code> と <code style="color:#22d3bf">minor_axis_px</code> は任意。</p>
-<p>calibration : table (one-row dict)</p>
-<p><code style="color:#22d3bf">scale</code> = {<code style="color:#22d3bf">value</code>, <code style="color:#22d3bf">unit=&quot;mm/px&quot;</code>, <code style="color:#22d3bf">standard_uncertainty</code>} と</p>
-<p><code style="color:#22d3bf">calibrator_id</code>、<code style="color:#22d3bf">calibrated_at</code>、<code style="color:#22d3bf">valid_until</code>。<code style="color:#22d3bf">pixel_to_world</code> と同じ</p>
-<p>mm/px 契約だけを許す。</p>
-<p>border_policy : {&quot;include&quot;, &quot;exclude&quot;, &quot;correct&quot;}</p>
-<p>端粒子を切れた測定のまま含める、除外する、必要情報を使って補正する方針。</p>
-<p>measurement_date : str</p>
-<p>測定日 <code style="color:#22d3bf">YYYY-MM-DD</code>。省略不可。校正日より前、期限後なら拒否する。</p>
-<p>bin_edges : sequence or None</p>
-<p>物理径のビン端。None なら採用径の範囲に固定した対数 12 ビン。</p>
-<p>confidence : float</p>
-<p>両側信頼水準。</p>
-<p>bootstrap_samples : int</p>
-<p>決定的 bootstrap の反復数。200 以上。</p>
-<p>seed : int</p>
-<p>bootstrap の乱数種。</p>
-<p>upstream_records : dict</p>
-<p><code style="color:#22d3bf">{&quot;blob_split&quot;: blob_split出力, &quot;blob_count_interval&quot;: blob_count_interval出力}</code>。</p>
-<p>各行の <code style="color:#22d3bf">upstream_component_label</code> と個数記録、一意な <code style="color:#22d3bf">upstream_split_label</code>、</p>
-<p>面積、面積相当径を実際の split 画像と照合し、op がダイジェストを再計算する。</p>
-<p>面積は画素数の丸め幅 0.5 px2、径はその面積幅から導かれる範囲だけを許す。</p>
-<p>これは改ざん検知ではない。</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>table</p>
-<p><code style="color:#22d3bf">particle_rows</code>、<code style="color:#22d3bf">counts</code>、<code style="color:#22d3bf">bins</code>(number / area / volume)、<code style="color:#22d3bf">quantiles</code>、</p>
-<p><code style="color:#22d3bf">calibration_provenance</code>、<code style="color:#22d3bf">accepted_proportion_ci</code> を持つ。</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
-<p>ValueError</p>
-<p>空表、列不整合、非有限・非正、補正情報不足、校正期間外、採用粒子ゼロを拒否する。</p>
-<p>English: combine microscopy particles and a calibration record into an auditable report. Unresolved overlaps are excluded; border correction is refused without inclusion probability and corrected dimensions. Number, area and volume bases remain distinct and are not treated as an interchangeable laser-diffraction result.</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
-<p>&gt;&gt;&gt; p = {&quot;object_id&quot;: [&quot;p%d&quot; % i for i in range(30)], &quot;diameter_px&quot;: [10.] * 30, &quot;area_px2&quot;: [78.5] * 30,</p>
-<p>...      &quot;diameter_unit&quot;: &quot;px&quot;, &quot;area_unit&quot;: &quot;px2&quot;, &quot;touches_border&quot;: [False] * 30,</p>
-<p>...      &quot;split_status&quot;: [&quot;isolated&quot;] * 30, &quot;component_id&quot;: [&quot;c%d&quot; % i for i in range(30)],</p>
-<p>...      &quot;split_evidence&quot;: [&quot;blob_split + blob_count_interval&quot;] * 30,</p>
-<p>...      &quot;upstream_provenance_hash&quot;: [&quot;0&quot; * 64] * 30, &quot;upstream_split_label&quot;: list(range(1, 31)),</p>
-<p>...      &quot;count_interval_lo&quot;: [1] * 30,</p>
-<p>...      &quot;count_interval_hi&quot;: [1] * 30, &quot;count_determined&quot;: [True] * 30}</p>
-<p>&gt;&gt;&gt; c = {&quot;scale&quot;: {&quot;value&quot;: .002, &quot;unit&quot;: &quot;mm/px&quot;, &quot;standard_uncertainty&quot;: .00002},</p>
-<p>...      &quot;calibrator_id&quot;: &quot;SM-01&quot;, &quot;calibrated_at&quot;: &quot;2026-01-01&quot;, &quot;valid_until&quot;: &quot;2026-12-31&quot;}</p>
-<p>&gt;&gt;&gt; u = {&quot;blob_split&quot;: np.repeat(np.arange(1, 31), 79).reshape(1, -1),</p>
-<p>...      &quot;blob_count_interval&quot;: {&quot;components&quot;: {&quot;label&quot;: np.arange(1, 31), &quot;lo&quot;: np.ones(30, int),</p>
-<p>...      &quot;hi&quot;: np.ones(30, int), &quot;status&quot;: np.array([&quot;determined&quot;] * 30)}}}</p>
-<p>&gt;&gt;&gt; p[&quot;upstream_component_label&quot;] = list(range(1, 31)); p[&quot;upstream_provenance_hash&quot;] = [_upstream_provenance_digest(u)] * 30</p>
-<p>&gt;&gt;&gt; r = particle_size_distribution(p, c, measurement_date=&quot;2026-06-01&quot;, bootstrap_samples=200, upstream_records=u)</p>
-<p>&gt;&gt;&gt; r[&quot;counts&quot;][&quot;accepted_observed&quot;], r[&quot;particle_rows&quot;][0][&quot;diameter&quot;]</p>
-<p>(30, 0.02)</p>
+<p>D10/D50/D90 use a weighted empirical distribution with repeated diameters centred at their accumulated weight. Unsplit and ambiguous overlaps are excluded, never silently counted as one. Every row is tied to structured blob_split and blob_count_interval records: component IDs and nonzero split labels are one-to-one, and the operator recomputes the provenance digest, area and area-equivalent diameter from the split image. This is an internal consistency check, not tamper detection.</p>
+<p>Calibration is scale={value, unit=&quot;mm/px&quot;, standard_uncertainty} with identifier and validity dates. Out-of-period dates, nonfinite values, missing correction data and zero accepted particles are rejected. Border correction needs inclusion probability, corrected diameter and area, uses 1/p weighting, and propagates scale and correction uncertainty. Below the effective-particle threshold it returns insufficient_sample; number, area and volume bases remain distinct and are not interchangeable with laser diffraction.</p>
+<p>Returns reasoned particle rows, counts, three-basis bins, quantiles, calibration provenance and an accepted-proportion interval.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

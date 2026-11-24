@@ -391,7 +391,10 @@ def heap_synth_cone(phi_deg: float, radius_px: float, pitch: float = 1e-3, *, to
     # 真の体積: 回転積分 2π ∫ u c(u) du(細かい台形則)
     uu = np.linspace(0.0, xt, 20001)
     cu = cone_profile_px(uu, H, phi, toe_round_px, apex_blunt_px)
-    V = 2.0 * math.pi * float(np.trapezoid(uu * cu, uu)) * p ** 3
+    # NumPy 1.23+ is supported; ``trapezoid`` was added only in 1.20.  Keep
+    # the older spelling for the declared minimum dependency / 宣言した最小依存版でも積分する。
+    integrate = getattr(np, "trapezoid", np.trapz)
+    V = 2.0 * math.pi * float(integrate(uu * cu, uu)) * p ** 3
     truth = {"phi_deg": phi, "R_px": R, "H_px": H, "toe_px": xt, "V": V,
              "V_cone": math.pi / 3.0 * (R * p) ** 2 * (H * p), "ground_tilt_deg": beta,
              "apex_col": x0, "ground_row_at_centre": rows - g0}

@@ -6628,15 +6628,42 @@ def _b_gd_synth(pool, rng):
 
 def _b_pharma_psd(pool, rng):
     """顕微鏡粒径の粒子表と、有効期間内の一行校正表 / valid microscopy tables."""
-    diam = np.array([12.0, 20.0, 35.0]) * float(rng.uniform(0.9, 1.1))
+    # The operator deliberately rejects a loose feature table: every row must
+    # correspond to one actual split label and count-interval record.  Build
+    # that complete, internally consistent provenance here so the fuzzer tests
+    # the op rather than its documented fail-closed boundary.
+    import pharmaparticle as psd  # noqa: PLC0415
+
+    nominal_diam = np.array([12.0, 20.0, 35.0]) * float(rng.uniform(0.9, 1.1))
+    pixel_area = np.maximum(1, np.rint(np.pi * (nominal_diam / 2.0) ** 2).astype(int))
+    labels = np.arange(1, nominal_diam.size + 1, dtype=int)
+    # Use the actual integer label areas, including the area-equivalent
+    # diameter, rather than a continuous-circle surrogate.
+    diam = np.sqrt(4.0 * pixel_area / np.pi)
+    upstream_records = {
+        "blob_split": np.repeat(labels, pixel_area).reshape(1, -1),
+        "blob_count_interval": {"components": {
+            "label": labels, "lo": np.ones(labels.size, dtype=int),
+            "hi": np.ones(labels.size, dtype=int),
+            "status": np.asarray(["determined"] * labels.size),
+        }},
+    }
+    digest = psd._upstream_provenance_digest(upstream_records)
     particles = {"object_id": ["a", "b", "c"], "diameter_px": diam,
-                 "area_px2": np.pi * (diam / 2.0) ** 2,
-                 "touches_border": [False, False, False],
-                 "split_status": ["isolated", "split", "isolated"]}
-    calibration = {"scale_per_px": 0.5, "unit": "um/px", "uncertainty_per_px": 0.0025,
+                 "area_px2": pixel_area.astype(float), "diameter_unit": "px", "area_unit": "px2",
+                 "touches_border": [False, False, False], "split_status": ["isolated"] * labels.size,
+                 "component_id": ["component-%d" % label for label in labels],
+                 "split_evidence": ["blob_split + blob_count_interval:determined"] * labels.size,
+                 "upstream_provenance_hash": [digest] * labels.size,
+                 "upstream_component_label": labels, "upstream_split_label": labels,
+                 "count_interval_lo": np.ones(labels.size, dtype=int),
+                 "count_interval_hi": np.ones(labels.size, dtype=int),
+                 "count_determined": [True] * labels.size}
+    calibration = {"scale": {"value": 0.0005, "unit": "mm/px", "standard_uncertainty": 0.0000025},
                    "calibrator_id": "FUZZ-SM-1", "calibrated_at": "2026-01-01",
                    "valid_until": "2027-01-01"}
-    return (particles, calibration), {"measurement_date": "2026-06-01", "bootstrap_samples": 200, "seed": 776}
+    return (particles, calibration), {"measurement_date": "2026-06-01", "bootstrap_samples": 200,
+                                      "seed": 776, "upstream_records": upstream_records}
 
 
 def _b_gd_energy(pool, rng):

@@ -1756,7 +1756,7 @@ Ops used (notes): [`class_2dim_sup`](https://furuse.work/ops/segmentation/classi
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 49 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 50 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2201,6 +2201,44 @@ Source: [examples/poc_particle_sizing.py](https://github.com/furuse-kazufumi/ful
 This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_particle_sizing)
 
 Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`blob_region`](https://furuse.work/ops/blob/extract/blob_region.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`circularity`](https://furuse.work/ops/2d/features/circularity.html) · [`distance_transform`](https://furuse.work/ops/2d/region/distance_transform.html)
+
+## No.2026.318 —— Compendial Microscopy Particle Sizing — Keep Border and Overlap Decisions, Three Bases, and Calibration Provenance
+
+When microscopy particles are counted, silently treating clipped or overlapping objects as one changes the distribution. Against synthetic truth, this report keeps each acceptance reason, number/area/volume bases, scale uncertainty and calibration provenance together.
+
+[![Compendial Microscopy Particle Sizing — Keep Border and Overlap Decisions, Three Bases, and Calibration Provenance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png)
+
+*↑ **Compendial Microscopy Particle Sizing — Keep Border and Overlap Decisions, Three Bases, and Calibration Provenance** ―― A stage micrometer, isolated circles and ellipses, low contrast, overlaps and clipped borders are put in one synthetic image and compared with planted truth. The largest area-equivalent-diameter error for isolated particles is 0.165 px; one border particle is excluded with its reason and two split overlap particles are recorded. Number- and volume-weighted D50 are separate series, 17.428 and 18.064 µm, and are not treated as laser-diffraction results. A scale of 0.500000 ± 0.002500 µm/px propagates to diameters and quantiles; the calibration record and particle table SHA-256 are retained.*
+
+[![重なり率を増やす系列。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/02_particle_overlap_rate_series_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/02_particle_overlap_rate_series.png)
+
+*↑ The measurement ―― 重なり率を増やす系列。連結成分数だけでは 2 粒を 1 粒として数える。 (figure labels are in Japanese; the numbers are the same)*
+
+[![324粒子の別試料。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/03_compendial_particle_microscopy_large_validation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/03_compendial_particle_microscopy_large_validation.png)
+
+*↑ 324粒子の別試料。*
+
+[![number基準。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/04_compendial_particle_microscopy_large_validation_number_cdf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/04_compendial_particle_microscopy_large_validation_number_cdf.png)
+
+*↑ number基準。*
+
+[![area基準。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/05_compendial_particle_microscopy_large_validation_area_cdf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/05_compendial_particle_microscopy_large_validation_area_cdf.png)
+
+*↑ area基準。*
+
+[![volume基準。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/06_compendial_particle_microscopy_large_validation_volume_cdf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compendial_particle_microscopy/06_compendial_particle_microscopy_large_validation_volume_cdf.png)
+
+*↑ volume基準。*
+
+```
+py -3.11 examples/poc_compendial_particle_microscopy.py
+```
+
+Source: [examples/poc_compendial_particle_microscopy.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_compendial_particle_microscopy.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_compendial_particle_microscopy)
+
+Ops used (notes): [`annotate_figure_grid`](https://furuse.work/ops/annotate/paper/annotate_figure_grid.html) · [`blob_count_interval`](https://furuse.work/ops/blob/split/blob_count_interval.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_seeds`](https://furuse.work/ops/blob/split/blob_seeds.html) · [`blob_split`](https://furuse.work/ops/blob/split/blob_split.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`mm_per_px_from_reference`](https://furuse.work/ops/measure1d/scale/mm_per_px_from_reference.html) · [`noise_sigma`](https://furuse.work/ops/astrostack/quality/noise_sigma.html) · [`particle_size_distribution`](https://furuse.work/ops/drive/pharma/particle_size_distribution.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
 
 ## No.2026.031 —— Stress by Photoelasticity — Most Unwrapping Errors Are the Known Sign Ambiguity
 
