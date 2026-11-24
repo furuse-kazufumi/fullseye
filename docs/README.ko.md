@@ -314,7 +314,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 337건
+## 문서 지도 — 전 339건
 
 **색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,847건과 패밀리 가이드 73건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
@@ -459,7 +459,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(251)
+**Other**(253)
 
 | 문서 | 내용 |
 |---|---|
@@ -681,6 +681,8 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`hardening/table-sort-mixes-rows-and-spec-dicts.md`](hardening/table-sort-mixes-rows-and-spec-dicts.md) | id: table-sort-mixes-rows-and-spec-dicts |
 | [`hardening/unknown-operator-hides-missing-backend.md`](hardening/unknown-operator-hides-missing-backend.md) | id: unknown-operator-hides-missing-backend |
 | [`hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md`](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) | id: wrappers-were-scalars-and-hints-were-raw-type-errors |
+| [`licenses/DEPENDENCY_INVENTORY.md`](licenses/DEPENDENCY_INVENTORY.md) | Dependency licence inventory |
+| [`licenses/THIRD_PARTY_INVENTORY.md`](licenses/THIRD_PARTY_INVENTORY.md) | Third-party material inventory |
 | [`literature/convergent_numerics_light_transport.md`](literature/convergent_numerics_light_transport.md) | 文献層: 収束型数値計算と光輸送(厳選) _(ja)_ |
 | [`literature/electron_microscopy.md`](literature/electron_microscopy.md) | 文献層: 電子顕微鏡の撮像と計測(厳選) _(ja)_ |
 | [`literature/industrial_optical_sensing.md`](literature/industrial_optical_sensing.md) | 文献層: 工業用光学センシング(厳選) _(ja)_ |

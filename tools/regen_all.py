@@ -52,6 +52,7 @@ CHAIN = [
     #   spec を足して回し忘れても誰も気づけなかった)。
     (["gen_auto_specs_data.py"], "auto_specs_data.py(data/auto_specs/*.json の wheel 同梱用ミラー)"),
     (["tools/gen_sbom.py"], "docs/sbom/fullseye.cdx.json(pyproject.toml の宣言依存、未解決の CycloneDX SBOM)"),
+    (["tools/license_audit.py"], "docs/licenses の棚卸し + THIRD_PARTY_NOTICES.md + wheel 用の写し"),
     # ★2026-11-03: GPU の台帳 2 本は op ノートより前に。op ノートの GPU 欄は gpu_route(この 2 本と許可リスト)
     #   から書くので、後ろで台帳が変わるとノートが 1 周遅れになる。入力は commit した実測ログと許可リストだけ
     #   (registry を組むときに op_knob.json を読むが、表の中身には入らない —— ORDER_EXEMPT)。
@@ -176,6 +177,9 @@ CHAIN = [
 OUTPUTS = {
     "gen_auto_specs_data.py": ["auto_specs_data.py"],
     "tools/gen_sbom.py": ["docs/sbom/fullseye.cdx.json"],
+    "tools/license_audit.py": ["docs/licenses/DEPENDENCY_INVENTORY.md",
+                                "docs/licenses/THIRD_PARTY_INVENTORY.md",
+                                "THIRD_PARTY_NOTICES.md", "fullseye/THIRD_PARTY_NOTICES.md"],
     "imgevolve.py": ["docs/OP_INDEX.json"],
     "tools/gpu_tier_rules.py": ["docs/perf/GPU_TIERS.md"],
     "tools/gen_halcon_opencl_parity.py": ["docs/perf/HALCON_OPENCL_PARITY.md",
@@ -315,6 +319,7 @@ READS = {
         "docs/HALCON_PARITY.md", "docs/IMPL_DIFFERENTIAL.md",
         "docs/perf/GPU_TIERS.md", "docs/perf/HALCON_OPENCL_PARITY.md", "docs/perf/gpu_fill3_2026-11-02.md",   # docmap が題を読む(2026-11-02)
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
+        "docs/licenses/DEPENDENCY_INVENTORY.md", "docs/licenses/THIRD_PARTY_INVENTORY.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md", "docs/RECIPE_COVERAGE.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md",
         "docs/view2026/more.md", "docs/view2026/*/more.md",

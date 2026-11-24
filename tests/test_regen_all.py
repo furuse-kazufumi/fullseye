@@ -92,7 +92,7 @@ def test_classified_entries_still_exist():
 _OLD_ORDER = [
     # 2026-11-03 に足した段(tools/impl_differential.py)は旧順序の探針の外 —— 先頭に置いて逆順を作らない
     # GPU の台帳 2 段(2026-11-03 に足した)は今の鎖と同じ位置。旧順序の探針は op ノートの逆順を見るためのもの
-    "gen_auto_specs_data.py", "tools/gen_sbom.py", "tools/impl_differential.py", "tools/gen_device_rules.py", "tools/gen_accel_use.py",
+    "gen_auto_specs_data.py", "tools/gen_sbom.py", "tools/license_audit.py", "tools/impl_differential.py", "tools/gen_device_rules.py", "tools/gen_accel_use.py",
     "tools/opdocs.py", "tools/gen_op_catalog.py",
     "tools/gen_capabilities_index.py", "tools/gen_hardening_index.py", "tools/audit_fallbacks.py",
     "tools/gen_maturity.py",
