@@ -29,6 +29,7 @@ from __future__ import annotations
 import os
 import warnings
 import sys
+import hashlib
 from typing import Iterable, NamedTuple, Sequence
 
 import numpy as np
@@ -40,6 +41,11 @@ if _HERE not in sys.path:
 import ops as _ops  # noqa: E402  (the engine registry; imports its backends on load)
 import opnames as _opnames  # noqa: E402  (canonical op-name aliases, phase 1 of the naming cleanup)
 import backend_safe as _bs  # noqa: E402  (fallback ledger / strict mode — the one mediator)
+from execution_record import (  # noqa: E402  (規制実行 envelope / regulated execution envelope)
+    STOCHASTIC_OPERATOR_NAMES as _STOCHASTIC_OPERATOR_NAMES,
+    _execute_recorded,
+    _validation_enabled,
+)
 from fslib import FsValueError as _FsValueError  # noqa: E402  (FS_E_INVALID_ARG: input outside the declared domain)
 from backend_safe import FullseyeFallbackWarning  # noqa: E402,F401  (re-exported)
 import stereo  # noqa: E402  (numpy+scipy depth building blocks)
@@ -3019,9 +3025,42 @@ def _explain_gpu_failure(device, e):
                         % (device, why, type(e).__name__, str(e)[:200]))
 
 
+def _audit_op_name(name) -> str:
+    """監査用に op 名だけを正規化し、不正な文字列は digest にする / Normalize only an op name for audit.
+
+    呼び出しを検査する関数ではない。不正な名前に入力ファイルパスが入っていても JSONL に露出させない。
+    This is not call validation; an invalid string is digested so an accidental input path is not exposed.
+    """
+    if not isinstance(name, str):
+        return "<invalid:%s>" % type(name).__name__
+    try:
+        return _resolve(name).name
+    except Exception:  # noqa: BLE001 - 不正呼び出しは本体が正しい例外にする / body reports the caller error
+        if name in _nary_by_name():
+            return name
+        return "invalid-name-sha256:" + hashlib.sha256(name.encode("utf-8", "surrogatepass")).hexdigest()
+
+
+AUDIT_KNOB_NONFINITE_VALUE = "nonfinite"
+
+
+def _audit_knob(value):
+    """有効な knob だけ値を残す / Retain only a canonical-safe accepted scalar knob value."""
+    if isinstance(value, (bool, int, float, np.integer, np.floating)):
+        try:
+            normalized = float(value)
+            if np.isfinite(normalized):
+                return normalized
+            return {"invalid_value": AUDIT_KNOB_NONFINITE_VALUE}
+        except (TypeError, ValueError, OverflowError):
+            pass
+    return {"invalid_type": type(value).__name__}
+
+
 def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
           device: str = "cpu", on_error: str | None = None, template=None,
-          fast: bool | None = None, allow_nonfinite: bool = False):
+          fast: bool | None = None, allow_nonfinite: bool = False,
+          execution_context=None, audit_sink=None):
     """Apply one operator to *image* and return its raw output.
 
     image  -> image/region  : returns a float64 ndarray
@@ -3090,6 +3129,34 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     ``allow_nonfinite=True`` hands the array to the op unchanged (the single escape
     hatch; the answer is then whatever the implementation does with NaN).
     """
+    if _validation_enabled(execution_context):
+        op_name = _audit_op_name(name)
+        profile = execution_context.validation_profile
+        stages = [{"index": 0, "name": op_name, "a": _audit_knob(a), "b": _audit_knob(b)}]
+        parameters = {
+            "allow_nonfinite": False,
+            "coerce": bool(coerce),
+            "fast": False if fast is None else bool(fast),
+            "on_error": "raise",
+            "seed": profile.seed,
+            "template_present": template is not None,
+        }
+        inputs = [image] + ([] if template is None else [template])
+        return _execute_recorded(
+            context=execution_context, audit_sink=audit_sink, stages=stages,
+            normalized_parameters=parameters, inputs=inputs, requested_device=device,
+            stochastic=op_name in _STOCHASTIC_OPERATOR_NAMES,
+            operation=lambda: _apply_unrecorded(image, name, a, b, coerce, "cpu", "raise",
+                                                 template, fast, False),
+            degraded_reader=_bs.fallbacks,
+        )
+    return _apply_unrecorded(image, name, a, b, coerce, device, on_error,
+                             template, fast, allow_nonfinite)
+
+
+def _apply_unrecorded(image, name, a, b, coerce, device, on_error, template, fast,
+                      allow_nonfinite):
+    """既存の apply 本体 / The pre-existing unrecorded apply implementation."""
     policy = _policy(on_error)
     decision = _decide(device, (name,), getattr(image, "shape", None), 1)
     _DECISION.value = decision
@@ -3600,7 +3667,7 @@ def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast, entry=True):
 
 def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
                  coerce: bool = True, device: str = "cpu", on_error: str | None = None,
-                 fast: bool | None = None):
+                 fast: bool | None = None, execution_context=None, audit_sink=None):
     """Apply a sequence of operators, threading the array through each.
 
     *stages* is either a list of names (one shared ``a``/``b`` for the whole
@@ -3635,6 +3702,43 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     the same check as :func:`apply` (non-finite refused; outside 0..1 clamped and
     recorded, or refused under ``on_error="raise"``). See :func:`_check_chain_sorts`.
     """
+    if _validation_enabled(execution_context):
+        profile = execution_context.validation_profile
+        audit_stages = [{"index": 0, "name": "<validation-pending>"}]
+        prepared = {}
+
+        def _prepare_recorded_pipeline():
+            """段を一度 materialize して監査形にする / Materialize and normalize stages once for audit."""
+            value = stages if isinstance(stages, str) else list(stages)
+            norm = _normalise_stages(image, value, a, b)
+            prepared["stages"] = value
+            prepared["norm"] = norm
+            audit_stages[:] = [
+                {"index": i, "name": _audit_op_name(name), "a": sa, "b": sb}
+                for i, (name, sa, sb) in enumerate(norm)
+            ]
+
+        parameters = {
+            "coerce": bool(coerce),
+            "fast": False if fast is None else bool(fast),
+            "on_error": "raise",
+            "seed": profile.seed,
+        }
+        return _execute_recorded(
+            context=execution_context, audit_sink=audit_sink, stages=audit_stages,
+            normalized_parameters=parameters, inputs=[image], requested_device=device,
+            stochastic=lambda: any(_audit_op_name(name) in _STOCHASTIC_OPERATOR_NAMES
+                                   for name, _sa, _sb in prepared.get("norm", ())),
+            prepare=_prepare_recorded_pipeline,
+            operation=lambda: _run_pipeline_unrecorded(
+                image, prepared["stages"], a, b, coerce, "cpu", "raise", fast),
+            degraded_reader=_bs.fallbacks,
+        )
+    return _run_pipeline_unrecorded(image, stages, a, b, coerce, device, on_error, fast)
+
+
+def _run_pipeline_unrecorded(image, stages, a, b, coerce, device, on_error, fast):
+    """既存の pipeline 本体 / The pre-existing unrecorded pipeline implementation."""
     policy = _policy(on_error)
     requested, device = device, resolve_device(device)      # 値の検査はここ(段の検査より先)
     image, norm, ops_ = _prepare_pipeline(image, stages, a, b, policy)
