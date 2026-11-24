@@ -291436,11 +291436,11 @@
         "kind": "registry",
         "alias": "moments_region_2nd_invar",
         "module": "backend_safe",
-        "callable": "_safe(_sh_region_feat.<locals>.fn)"
+        "callable": "_safe(_deprecated_alias.<locals>.fn)"
       },
       "runtime_target": {
         "module": "backend_safe",
-        "callable": "_safe(_sh_region_feat.<locals>.fn)"
+        "callable": "_safe(_deprecated_alias.<locals>.fn)"
       },
       "verified_executable": true,
       "verification": {

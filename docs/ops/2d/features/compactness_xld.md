@@ -38,6 +38,12 @@ version: 1.1.1  # fullseye lib version this note was generated for
 HALCON の ``compactness_xld``（Shape factor for the compactness of contours
 or polygons.）**と同じ式**。
 
+**周囲長の規約:** ここではトレース済み XLD の隣接点どうしのユークリッド弧長を
+足す。領域版 ``compactness`` / ``contlength`` が使う ``skimage.measure.perimeter``
+とは別の推定量であり、同じ形でも絶対値を直接比べない。region の
+``perimeter`` と ``perimeter_crofton`` の実測バイアス表は ``compactness`` /
+``contlength`` の説明と ``docs/KNOWN_ISSUES.md`` §50 を参照。
+
 ★2026-09-26 まで ``/10`` して 1 で頭打ちしていた —— **領域版と同じ欠陥が輪郭版
 にも在った**。直した op の双子を見落とすと穴が半分残る
 (``docs/hardening/compactness-saturated-at-one.md``)。

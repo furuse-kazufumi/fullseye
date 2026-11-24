@@ -41,7 +41,7 @@ measure.moments_normalized`` 由来)。HALCON の ``moments_region_2nd``
 
 ★2026-09-26 まで ``min(1, ...)`` で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で**全部 1.0** になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(``docs/hardening/features-saturated-at-one.md``)。
 
-★**``moments_region_2nd_invar`` と同じ数を返す。** ``|μ20+μ02|`` は定義上 Hu の第 1 不変モーメントそのものなので、名前は 2 つでも量は 1 つである(HALCON では前者が 5 値、後者が 3 値の別演算子)。docs/KNOWN_ISSUES.md §52。
+★**``moments_region_2nd_invar`` はこの op の非推奨別名で、同じ数を返す。** ``|μ20+μ02|`` は定義上 Hu の第 1 不変モーメントそのものなので、別の量ではない。別名は 2.0 で削除予定で、呼ぶと ``DeprecationWarning`` を出す。HALCON では前者が 5 値、後者が 3 値の別演算子である。docs/KNOWN_ISSUES.md §52。
 
 ``a``, ``b`` は未使用。
 

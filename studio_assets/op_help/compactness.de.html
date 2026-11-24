@@ -12,10 +12,17 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness.chain.jpg">compactness: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kompaktheit <code style="color:#22d3bf">max(1, Umfang² / (4π · Fläche))</code>. Für einen Kreis ist sie 1 und wächst mit Länglichkeit, Rauheit und Löchern — <b>ohne obere Schranke</b>. Dieselbe Größe wie HALCONs <code style="color:#22d3bf">compactness</code> (Shape factor for the compactness of a region.).</p>
-<p>★Bis 2026-09-26 wurde <code style="color:#22d3bf">/10</code> gerechnet und mit <code style="color:#22d3bf">min(1.0, ...)</code> abgeschnitten -- ein Behelf, um den Wert in [0,1] zu halten, doch jede Form mit <code style="color:#22d3bf">Umfang²/(4π·Fläche)</code> über 10 (bei 2 px Breite ein Kratzer ab Länge 80) wurde <b>komplett auf 1.0 gedrückt</b>. Gerade bei Kratzern und Rissen, den Regionen, die man am meisten sehen will, kam also „andere Form, gleiche Zahl“ heraus. Der Wertebereich [0,1] war nie Teil des feature-Vertrags (<code style="color:#22d3bf">elliptic_axis</code> liefert 6.35, <code style="color:#22d3bf">r3_region_features</code> 18.1), es gab also keinen Grund, ihn zu stauchen -- <code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>.</p>
-<p>Wie bei HALCON wird mit <code style="color:#22d3bf">max(1, C)</code> <b>nach unten</b> abgeschnitten (weil die Pixelnäherung unter 1 fallen kann. HALCON 23.11 beschreibt <code style="color:#22d3bf">compactness</code> so: „C = max(1, C′)“, „The value of C is clipped to 1.0“, und die Zusicherung zum Rückgabewert lautet <code style="color:#22d3bf">Compactness &gt;= 1.0 || Compactness == 0</code>). Kreisscheiben mit Radius 3 bis 6 ergeben 1.0. Ist die Region leer, 0.</p>
-<p>★Bis 2026-11-05 (adversariale Prüfung, Runde 2, P2) stand in dieser Beschreibung „hier wird nicht abgeschnitten“ -- die Implementierung verwendet seit 2026-09-26 HALCONs <code style="color:#22d3bf">max(1, C)</code>, nur der Beschreibungstext war auf dem früheren Stand stehen geblieben.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p><b>周囲長の規約(この op は太字の行を使う)。</b> 絶対値は境界の推定量に載る。</p>
+<p>| 推定量 | 円 r=96 / 真値 | 正方形 128 / 真値 | この op |</p>
+<p>|---|---:|---:|---|</p>
+<p>| <b><code style="color:#22d3bf">skimage.measure.perimeter</code></b> | <b>1.0518</b> | <b>0.9922</b> | <b>使用する</b> |</p>
+<p>| <code style="color:#22d3bf">skimage.measure.perimeter_crofton</code> | 1.0016 | 0.9459 | 使用しない |</p>
+<p>したがって曲線では前者の偏りが解像度を上げても +5.18 % まで残り、Crofton へ替えれば円には寄るが軸平行の正方形で -5.41 % になる。推定量を替えても数値は互換ではない。<code style="color:#22d3bf">docs/KNOWN_ISSUES.md</code> §50。</p>
+<p>★2026-09-26 まで <code style="color:#22d3bf">/10</code> して <code style="color:#22d3bf">min(1.0, ...)</code> で切っていた —— 値を [0,1] に収めるための便宜だったが、<code style="color:#22d3bf">周囲長²/(4π・面積)</code> が 10 を超える形(幅 2 px なら長さ 80 以上の傷)を<b>全部 1.0 に潰していた</b>。傷や割れという、いちばん見たい領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも feature の契約ではない(<code style="color:#22d3bf">elliptic_axis</code> は 6.35、<code style="color:#22d3bf">r3_region_features</code> は 18.1 を返す)ので、潰す理由が無かった —— <code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>。</p>
+<p>HALCON と同じく <code style="color:#22d3bf">max(1, C)</code> と<b>下で</b>切る(画素近似で 1 を下回りうるため。HALCON 23.11 の <code style="color:#22d3bf">compactness</code> の説明: 「C = max(1, C′)」「The value of C is clipped to 1.0」、返り値の表明 <code style="color:#22d3bf">Compactness &gt;= 1.0 || Compactness == 0</code>)。半径 3〜6 の円板は 1.0 になる。領域が空なら 0。</p>
+<p>★2026-11-05(敵対的検証 第 2 巡 P2)まで、この説明は「ここでは切らない」と書いていた —— 実装は 2026-09-26 から HALCON の <code style="color:#22d3bf">max(1, C)</code> で、説明文だけがその前の方針のまま残っていた。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

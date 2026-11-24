@@ -1358,8 +1358,17 @@ def filtered_backprojection(sinogram, angles_deg=None, size=None,
     :param size: output side; ``None`` -> the inscribed square, the largest odd side
         under ``n_detectors / sqrt(2)``. The sinogram does not carry the source image's
         size, so this is **not** the size of the image given to :func:`radon_transform`:
-        a 32 x 32 image gives 47 detectors and a 33 x 33 default. Pass ``size=`` (the
-        source side) to get the source grid back; ``docs/KNOWN_ISSUES.md`` §53.
+        a 32 x 32 image gives 47 detectors and a 33 x 33 default. To reconstruct on
+        the original grid, pass the original side explicitly, for example::
+
+            image = np.zeros((32, 32), np.float64)
+            sinogram = radon_transform(image)
+            reconstruction = filtered_backprojection(sinogram, size=image.shape[0])
+            assert reconstruction.shape == image.shape
+
+        No warning can identify this mismatch when ``size`` is omitted: a sinogram
+        carries detector count but not the source side, and 32 and 33 are both valid
+        source grids for 47 detectors. ``docs/KNOWN_ISSUES.md`` §53.
     :param filter_name: one of :data:`FILTERS`.
     :param cutoff: fraction of Nyquist to keep, ``(0, 1]``.
     :param span_deg: angular range for the ``d(theta)`` weight; ``None`` -> the

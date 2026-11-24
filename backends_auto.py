@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import json
 import os
+import warnings
 
 import numpy as np
 
@@ -2069,7 +2070,7 @@ SEED: list[tuple] = [
     ("circularity", "features", REG, FEA, "region_feat", {"metric": "circularity"},
      '円形度 ``min(1, 面積 /(π・max²))``。``max`` は**重心から輪郭画素までの最大距離**\nで、円なら 1、細長い形や大きな出っ張り・穴があるほど小さい。連結成分が複数ある\n場合は最大面積のものだけを評価する。HALCON の ``circularity``（Shape factor for\nthe circularity (similarity to a circle) of a region.）**と同じ式**。\n\n★2026-09-26 まで等周比 ``4π・面積/周囲長²`` という**別の量**を返していた。\n名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が\n同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と**順序まで変わる**)。\n``docs/hardening/halcon-named-shape-factors.md``。\n\n``a``, ``b`` は未使用。'),
     ("compactness", "features", REG, FEA, "region_feat", {"metric": "compactness"},
-     'コンパクトさ ``max(1, 周囲長² / (4π・面積))``。円で 1、細長い/ぎざぎざ/穴が多いほど\n大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the\ncompactness of a region.）と同じ量。\n\n★2026-09-26 まで ``/10`` して ``min(1.0, ...)`` で切っていた —— 値を [0,1] に\n収めるための便宜だったが、``周囲長²/(4π・面積)`` が 10 を超える形(幅 2 px なら\n長さ 80 以上の傷)を**全部 1.0 に潰していた**。傷や割れという、いちばん見たい\n領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも\nfeature の契約ではない(``elliptic_axis`` は 6.35、``r3_region_features`` は\n18.1 を返す)ので、潰す理由が無かった ――\n``docs/hardening/compactness-saturated-at-one.md``。\n\nHALCON と同じく ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため。\nHALCON 23.11 の ``compactness`` の説明: 「C = max(1, C′)」「The value of C is\nclipped to 1.0」、返り値の表明 ``Compactness >= 1.0 || Compactness == 0``)。\n半径 3〜6 の円板は 1.0 になる。領域が空なら 0。\n\n★2026-11-05(敵対的検証 第 2 巡 P2)まで、この説明は「ここでは切らない」と\n書いていた —— 実装は 2026-09-26 から HALCON の ``max(1, C)`` で、説明文だけが\nその前の方針のまま残っていた。\n\n``a``, ``b`` は未使用。'),
+     'コンパクトさ ``max(1, 周囲長² / (4π・面積))``。円で 1、細長い/ぎざぎざ/穴が多いほど\n大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the\ncompactness of a region.）と同じ量。\n\n**周囲長の規約(この op は太字の行を使う)。** 絶対値は境界の推定量に載る。\n\n| 推定量 | 円 r=96 / 真値 | 正方形 128 / 真値 | この op |\n|---|---:|---:|---|\n| **``skimage.measure.perimeter``** | **1.0518** | **0.9922** | **使用する** |\n| ``skimage.measure.perimeter_crofton`` | 1.0016 | 0.9459 | 使用しない |\n\nしたがって曲線では前者の偏りが解像度を上げても +5.18 % まで残り、Crofton へ\n替えれば円には寄るが軸平行の正方形で -5.41 % になる。推定量を替えても数値は\n互換ではない。``docs/KNOWN_ISSUES.md`` §50。\n\n★2026-09-26 まで ``/10`` して ``min(1.0, ...)`` で切っていた —— 値を [0,1] に\n収めるための便宜だったが、``周囲長²/(4π・面積)`` が 10 を超える形(幅 2 px なら\n長さ 80 以上の傷)を**全部 1.0 に潰していた**。傷や割れという、いちばん見たい\n領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも\nfeature の契約ではない(``elliptic_axis`` は 6.35、``r3_region_features`` は\n18.1 を返す)ので、潰す理由が無かった ——\n``docs/hardening/compactness-saturated-at-one.md``。\n\nHALCON と同じく ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため。\nHALCON 23.11 の ``compactness`` の説明: 「C = max(1, C′)」「The value of C is\nclipped to 1.0」、返り値の表明 ``Compactness >= 1.0 || Compactness == 0``)。\n半径 3〜6 の円板は 1.0 になる。領域が空なら 0。\n\n★2026-11-05(敵対的検証 第 2 巡 P2)まで、この説明は「ここでは切らない」と\n書いていた —— 実装は 2026-09-26 から HALCON の ``max(1, C)`` で、説明文だけが\nその前の方針のまま残っていた。\n\n``a``, ``b`` は未使用。'),
     ("convexity", "features", REG, FEA, "region_feat", {"metric": "convexity"},
      '凸性 ``面積 / 凸包面積``(1 に近いほど凸形状に近い)。``skimage.\nmeasure.regionprops`` の ``area`` と ``area_convex`` の比。HALCON の\n``convexity``（Shape factor for the convexity of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("rectangularity", "features", REG, FEA, "region_feat", {"metric": "rectangularity"},
@@ -2109,15 +2110,15 @@ SEED: list[tuple] = [
     # ---- v11b increment: newly-enabled genuine families ------------------
     # region measurements
     ("contlength", "features", REG, FEA, "region_feat", {"metric": "perimeter"},
-     '領域の周囲長 [px] (``regionprops`` の ``perimeter``)。HALCON の ``contlength``（Contour length of a region.）と同じ量・同じ単位。\n\n★2026-09-26 まで画像の外周長 ``2*(H+W)`` で割って 1.0 で頭打ちにした値を返していた\n(30x70 の矩形で 0.2450、いまは 196.0)。\n``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``, ``b`` は未使用。'),
+     '領域の周囲長 [px] (``regionprops`` の ``perimeter``)。HALCON の ``contlength``（Contour length of a region.）と同じ量・同じ単位。\n\n**周囲長の規約(この op は太字の行を使う)。** 真の周囲長に対する実測比は次の\nとおりで、値は推定量を替えると互換ではない。\n\n| 推定量 | 円 r=96 / 真値 | 正方形 128 / 真値 | この op |\n|---|---:|---:|---|\n| **``skimage.measure.perimeter``** | **1.0518** | **0.9922** | **使用する** |\n| ``skimage.measure.perimeter_crofton`` | 1.0016 | 0.9459 | 使用しない |\n\n前者は曲線で +5.18 % の側へ、Crofton は軸平行で -5.41 % の側へ寄る。解像度を\n上げても規約差は消えない。``docs/KNOWN_ISSUES.md`` §50。\n\n★2026-09-26 まで画像の外周長 ``2*(H+W)`` で割って 1.0 で頭打ちにした値を返していた\n(30x70 の矩形で 0.2450、いまは 196.0)。\n``docs/hardening/dimensional-features-were-normalised.md``。\n\n``a``, ``b`` は未使用。'),
     ("area_holes", "features", REG, FEA, "region_feat", {"metric": "area_holes"},
      '領域内の穴が占める面積比 ``(穴埋め後面積 - 元面積) / 穴埋め後面積``。\n0 に近いほど穴が無く、1 に近いほど大半が穴という極端な形状を示す。HALCON\nの ``area_holes``（Compute the area of holes of regions.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("height_width_ratio", "features", REG, FEA, "region_feat", {"metric": "aspect"},
      '軸平行の外接矩形の縦横比 ``高さ / 幅``。上限は無く、縦長なら 1 を超える\n(160x4 なら 40.0)。HALCON の ``height_width_ratio``（Compute the width,\nheight, and aspect ratio of the surrounding rectangle parallel to the\ncoordinate axes.）が返す 3 値のうち **Ratio と同じ量**(Height と Width は\n画素の長さなので返していない —— docs/KNOWN_ISSUES.md §51)。\n\n★2026-09-26 まで ``min(1, 高さ/幅)`` で切っていたので、**縦長の対象が全部\n1.0** になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、\n**向きが変わった瞬間に情報が消える**。飽和は説明文に「仕様」として書かれて\nいたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ――\n``docs/hardening/features-saturated-at-one.md``。\n\n``a``, ``b`` は未使用。'),
     ("moments_region_2nd", "features", REG, FEA, "region_feat", {"metric": "moment2"},
-     '正規化中心 2 次モーメントの和の絶対値 ``|μ20 + μ02|``(``skimage.\nmeasure.moments_normalized`` 由来)。HALCON の ``moments_region_2nd``\n（Calculate the geometric moments of regions.）は本来 M20/M02/M11 を\nそれぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純\n加算した合成値で近似している(個々の方向成分は失われる)。\n\n★2026-09-26 まで ``min(1, ...)`` で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で**全部 1.0** になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(``docs/hardening/features-saturated-at-one.md``)。\n\n★**``moments_region_2nd_invar`` と同じ数を返す。** ``|μ20+μ02|`` は定義上 Hu の第 1 不変モーメントそのものなので、名前は 2 つでも量は 1 つである(HALCON では前者が 5 値、後者が 3 値の別演算子)。docs/KNOWN_ISSUES.md §52。\n\n``a``, ``b`` は未使用。'),
-    ("moments_region_2nd_invar", "features", REG, FEA, "region_feat", {"metric": "hu1"},
-     'Hu の第 1 不変モーメント(``skimage.measure.moments_hu`` の\n``hu[0]``)の絶対値。回転・スケール・平行移動に対して不変な形状記述子。\nHALCON の ``moments_region_2nd_invar``（Geometric moments of regions.）\nに相当する近似(HALCON 独自の相対不変モーメント定義とは厳密には異なり、\n古典的な Hu モーメントで代用している)。\n\n★**``moments_region_2nd`` と同じ数を返す。** 向こうが計算している``|μ20+μ02|`` は定義上 Hu の第 1 不変モーメントそのもので、名前は 2 つでも量は 1 つである。docs/KNOWN_ISSUES.md §52。\n\n``a``, ``b`` は未使用。'),
+     '正規化中心 2 次モーメントの和の絶対値 ``|μ20 + μ02|``(``skimage.\nmeasure.moments_normalized`` 由来)。HALCON の ``moments_region_2nd``\n（Calculate the geometric moments of regions.）は本来 M20/M02/M11 を\nそれぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純\n加算した合成値で近似している(個々の方向成分は失われる)。\n\n★2026-09-26 まで ``min(1, ...)`` で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で**全部 1.0** になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(``docs/hardening/features-saturated-at-one.md``)。\n\n★**``moments_region_2nd_invar`` はこの op の非推奨別名で、同じ数を返す。** ``|μ20+μ02|`` は定義上 Hu の第 1 不変モーメントそのものなので、別の量ではない。別名は 2.0 で削除予定で、呼ぶと ``DeprecationWarning`` を出す。HALCON では前者が 5 値、後者が 3 値の別演算子である。docs/KNOWN_ISSUES.md §52。\n\n``a``, ``b`` は未使用。'),
+    ("moments_region_2nd_invar", "features", REG, FEA, "region_feat", {"alias_of": "moments_region_2nd"},
+     '非推奨の互換別名。``moments_region_2nd`` をそのまま呼ぶので返り値は同一である。\n``moments_region_2nd_invar`` は 2.0 で削除予定で、呼ぶたびに ``DeprecationWarning``\nを出す。移行先は ``moments_region_2nd``。\n\nHALCON では両名は別の複数値演算子だが、この repo の 1 スカラー化では量が潰れて\n同一になった。docs/KNOWN_ISSUES.md §52。\n\n``a``, ``b`` は未使用。'),
     # Haralick texture (image -> feature)
     ("cooc_feature_matrix", "texture", IMG, FEA, "cooc", {"prop": "energy"},
      'グレーレベル共起行列(GLCM、``skimage.feature.graycomatrix``、16 階調\nに量子化、距離 ``1+3*a``、角度 0°)から Haralick テクスチャ特徴量\n``energy``(角二次モーメント、行列の値の集中度=テクスチャの均一性)を計算\nする。HALCON の ``cooc_feature_matrix``（Calculate gray value features\nfrom a co-occurrence matrix.）に相当(HALCON は複数の特徴量・複数角度を\n同時に返せるが、ここでは energy・角度 0° 固定に単純化)。\n\n``a`` が共起を取る画素間距離を 1〜4 の範囲で振る。\u2605``b >= 0.75`` で **0/45/90/135 度の 4 方向を平均**する(既定 ``b=0.5`` は従来どおり 0 度だけなので、既存の結果は 1 ビットも変わらない)。\n\n実写テクスチャ(brick / grass / gravel)を回して測ると(``poc_real_texture_invariance`` の節 6)、**効くかどうかは距離 ``a`` で変わる**:\n\n* まず ``a`` を伸ばすと**素材どうしの分解能そのものが潰れる**(0.0328 -> 0.0122、2.7 分の 1)。異方な brick の振れ幅は分解能の **0.30 -> 3.13 倍**へ膨らむ。\n* 4 方向平均は**等方な素材には短中距離で効く**(grass 0.23 -> 0.12、gravel 0.20 -> 0.11)。\n* 異方な brick には**距離 4 でだけ効き**(3.13 -> 1.54)、**距離 1 では逆に悪化する**(0.30 -> 0.56)。\n* 距離 4 まで来ると等方な grass すら改善しない(0.17 -> 0.19)—— 分解能が潰れたあとは平均しても取り返せない。\n\n**長い距離で使うときは、平均を掛ける前に素材がまだ分かれているかを確かめること。**なお「取り違えの回数」で測ると手順(補間の次数・切り出し方・角度の刻み)に敏感で、比(振れ幅 / 分解能)のほうが安定する。'),
@@ -2148,7 +2149,7 @@ SEED: list[tuple] = [
     ("circularity_xld", "features", CON, FEA, "xld", {"kind": "circularity"},
      '最大の輪郭について、シューレース公式の面積 ``F`` と、**囲まれた面積の重心**から\n輪郭点までの最大距離 ``max`` から ``min(1, F/(π・max²))`` を計算する\n(領域版 ``circularity`` の輪郭版)。HALCON の ``circularity_xld``\n（Shape factor for the circularity (similarity to a circle) of contours or\npolygons.）**と同じ式**。\n\n★2026-09-26 まで等周比 ``4π・面積/周囲長²`` という別の量だった。重心は点の\n平均ではなく面積の重心を使う —— 点が密な側に寄ってしまうため。\n\n``a``, ``b`` は未使用。'),
     ("compactness_xld", "features", CON, FEA, "xld", {"kind": "compactness"},
-     '最大の輪郭についてコンパクトさ ``max(1, 周囲長²/(4π・面積))`` を計算する\n(``compactness`` の輪郭版)。円で 1、細長い/ぎざぎざなほど大きく、**上限は無い**。\nHALCON の ``compactness_xld``（Shape factor for the compactness of contours\nor polygons.）**と同じ式**。\n\n★2026-09-26 まで ``/10`` して 1 で頭打ちしていた —— **領域版と同じ欠陥が輪郭版\nにも在った**。直した op の双子を見落とすと穴が半分残る\n(``docs/hardening/compactness-saturated-at-one.md``)。\n\n``a``, ``b`` は未使用。'),
+     '最大の輪郭についてコンパクトさ ``max(1, 周囲長²/(4π・面積))`` を計算する\n(``compactness`` の輪郭版)。円で 1、細長い/ぎざぎざなほど大きく、**上限は無い**。\nHALCON の ``compactness_xld``（Shape factor for the compactness of contours\nor polygons.）**と同じ式**。\n\n**周囲長の規約:** ここではトレース済み XLD の隣接点どうしのユークリッド弧長を\n足す。領域版 ``compactness`` / ``contlength`` が使う ``skimage.measure.perimeter``\nとは別の推定量であり、同じ形でも絶対値を直接比べない。region の\n``perimeter`` と ``perimeter_crofton`` の実測バイアス表は ``compactness`` /\n``contlength`` の説明と ``docs/KNOWN_ISSUES.md`` §50 を参照。\n\n★2026-09-26 まで ``/10`` して 1 で頭打ちしていた —— **領域版と同じ欠陥が輪郭版\nにも在った**。直した op の双子を見落とすと穴が半分残る\n(``docs/hardening/compactness-saturated-at-one.md``)。\n\n``a``, ``b`` は未使用。'),
     ("convexity_xld", "features", CON, FEA, "xld", {"kind": "convexity"},
      '最大の輪郭について凸性 ``輪郭の面積 / 凸包の面積`` を計算する\n(``cv2.convexHull`` + ``cv2.contourArea``)。cv2 が無い環境では ``MissingDependencyError`` で止まる(2026-10-25 までは常に 1.0 = 完全凸を返していた)。HALCON の ``convexity_xld``\n（Shape factor for the convexity of contours or polygons.）に相当。\n\n``a``, ``b`` は未使用。'),
     # XLD contour -> contour (transforms / closing)
@@ -2292,6 +2293,20 @@ def _safe(fn, out_sort=None):
     return guard(fn, out_sort)
 
 
+def _deprecated_alias(target, alias, canonical):
+    """Wrap *target* as a still-registered compatibility alias / 互換別名にする。"""
+    def fn(v, a, b):
+        warnings.warn(
+            "%s is deprecated and will be removed in 2.0; use %s instead"
+            % (alias, canonical),
+            DeprecationWarning,
+            stacklevel=3,
+        )
+        return target(v, a, b)
+    fn.__name__ = alias
+    return fn
+
+
 def _rebinarise(fn):
     """Restore the {0,1} region contract after an INTERPOLATING geometry op.
 
@@ -2333,7 +2348,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     silently compiled EVERY spec, fabricated names included.
     """
     real = _real_ops()
-    ops_out, seen, dropped = [], set(), []
+    ops_out, seen, dropped, compiled = [], set(), [], {}
     for s in load_specs():
         name = s.get("halcon", "")
         shape = s.get("shape", "")
@@ -2345,11 +2360,20 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             continue
         if name in seen:
             continue                        # one op per HALCON name (coverage de-dups anyway)
-        try:
-            fn = SHAPES[shape](s.get("params", {}))
-        except Exception:
-            dropped.append(("bad_params", name))
-            continue
+        params = s.get("params", {})
+        alias_of = params.get("alias_of")
+        if alias_of:
+            target = compiled.get(alias_of)
+            if target is None:
+                dropped.append(("missing_alias_target", name + ":" + alias_of))
+                continue
+            fn = _deprecated_alias(target, name, alias_of)
+        else:
+            try:
+                fn = SHAPES[shape](params)
+            except Exception:
+                dropped.append(("bad_params", name))
+                continue
         seen.add(name)
         out_sort = s.get("out_sort", "image")
         if shape == "geom" and out_sort == "region":
@@ -2363,6 +2387,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         # 空のまま登録すると「説明なし」の op になる(tests が数えている)。
         _op.doc = (s.get("doc") or "").strip()
         ops_out.append(_op)
+        compiled[name] = _op.fn
     build.dropped = dropped                 # introspectable for honest reporting
     return ops_out
 
