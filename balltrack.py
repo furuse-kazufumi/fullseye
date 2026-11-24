@@ -317,9 +317,15 @@ def track_triangulate(tracks, poses, Ks, n_frames: int) -> dict:
 
     空の入力(``tracks`` が 0 件)は ValueError。
     """
-    if isinstance(tracks, (list, tuple)) and len(tracks) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+    try:
+        C, n_poses, n_Ks = len(tracks), len(poses), len(Ks)
+    except TypeError:
+        raise ValueError("track_triangulate: tracks, poses, and Ks must be sized sequences") from None
+    if C == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("track_triangulate: tracks is empty — pass at least one item")
-    C = len(tracks)
+    if C != n_poses or C != n_Ks:
+        raise ValueError("track_triangulate: tracks, poses, and Ks must have the same "
+                         "number of views (got %d, %d, %d)" % (C, n_poses, n_Ks))
     uv = np.full((n_frames, C, 2), np.nan)
     for c, tr in enumerate(tracks):
         uv[tr["frame"], c, 0] = tr["col"]

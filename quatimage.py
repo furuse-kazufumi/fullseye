@@ -473,6 +473,21 @@ def _require_video(video, name: str, op: str, max_elements: int,
     if isinstance(video, (list, tuple)):
         if not video:
             raise ValueError("%s: %s is an empty frame list" % (op, name))
+        n_frames = len(video)
+        if n_frames > MAX_FRAMES:
+            raise ValueError("%s: %s has T=%d frames, over the %d cap "
+                             "(quatimage.MAX_FRAMES)" % (op, name, n_frames, MAX_FRAMES))
+        raw_shapes = [tuple(np.shape(f)) for f in video]
+        if any(len(shape) != 2 for shape in raw_shapes) or len(set(raw_shapes)) != 1:
+            raise ValueError("%s: %s frames have differing shapes: %r"
+                             % (op, name, sorted(set(raw_shapes))))
+        h, w = raw_shapes[0]
+        if n_frames * h * w > max_elements:
+            raise ValueError("%s: %s has T*H*W = %d elements (shape %r), over the %d "
+                             "cap — this operator holds three real volumes and one "
+                             "complex volume per band at once, so the cap is a memory "
+                             "bound, not a preference"
+                             % (op, name, n_frames * h * w, (n_frames, h, w), max_elements))
         frames = []
         for i, f in enumerate(video):
             frames.append(_require_image(f, "%s[%d]" % (name, i), op))

@@ -32,6 +32,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 __all__ = ["vol_fft_lowpass", "vol_fft_highpass", "vol_fft_bandpass",
            "VOLFREQ_OPS", "MAX_VOXELS"]
 
@@ -44,7 +46,12 @@ MAX_VOXELS = 1 << 27
 
 
 def _require_volume(vol, name: str = "vol") -> np.ndarray:
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        vol, name, "volfreq.MAX_VOXELS", MAX_VOXELS, expected_ndim=3)
     raw = np.asarray(vol)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            raw, name, "volfreq.MAX_VOXELS", MAX_VOXELS, expected_ndim=3)
     if raw.ndim != 3:
         raise ValueError("%s must be a 3-D (D, H, W) volume, got a %d-D array"
                          % (name, raw.ndim))

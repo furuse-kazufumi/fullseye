@@ -64,12 +64,31 @@ def _require_video(video, name, op, max_elements):
     if isinstance(video, (list, tuple)):
         if not video:
             raise ValueError("%s: %s is an empty frame list" % (op, name))
-        frames = [np.asarray(f) for f in video]
-        if any(f.ndim != 2 for f in frames) or len({f.shape for f in frames}) != 1:
+        n_frames = len(video)
+        if n_frames > MAX_FRAMES:
+            raise ValueError("%s: %s has %d frames, over the %d cap (lockin.MAX_FRAMES)"
+                             % (op, name, n_frames, MAX_FRAMES))
+        raw_shapes = [tuple(np.shape(f)) for f in video]
+        if any(len(shape) != 2 for shape in raw_shapes) or len(set(raw_shapes)) != 1:
             raise ValueError("%s: %s frames must be 2-D and of one shape" % (op, name))
+        h, w = raw_shapes[0]
+        if n_frames < 3:
+            raise ValueError("%s: %s has %d frames; at least 3 are needed to define a temporal frequency"
+                             % (op, name, n_frames))
+        if h < 1 or w < 1:
+            raise ValueError("%s: %s frames are empty" % (op, name))
+        if n_frames * h * w > max_elements:
+            raise ValueError("%s: %s has %d elements (shape %r), over the %d cap"
+                             % (op, name, n_frames * h * w, (n_frames, h, w), max_elements))
+        frames = [np.asarray(f) for f in video]
         arr = np.stack(frames, axis=0)
     else:
+        raw_shape = _arrayguard.precheck_shape_and_elements(
+            video, name, op, max_elements)
         arr = np.asarray(video)
+        if raw_shape is None:
+            _arrayguard.precheck_shape_and_elements(
+                arr, name, op, max_elements)
     if np.ma.is_masked(video):
         raise ValueError("%s: %s is a masked array; fill or drop the masked entries explicitly" % (op, name))
     if np.iscomplexobj(arr):

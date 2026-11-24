@@ -293,14 +293,17 @@ def _require_video(video, name: str, op: str, max_elements: int,
     if isinstance(video, (list, tuple)):
         if not video:
             raise ValueError("%s: %s is an empty frame list" % (op, name))
+        n_frames = len(video)
+        if n_frames > MAX_FRAMES:
+            raise ValueError("%s: %s has T=%d frames, over the %d cap (motionmag.MAX_FRAMES)"
+                             % (op, name, n_frames, MAX_FRAMES))
         raw_shapes = [np.shape(f) for f in video]
         if any(len(shape) != 2 for shape in raw_shapes):
             raise ValueError("%s: every %s frame must be 2-D" % (op, name))
         if len(set(raw_shapes)) != 1:
             raise ValueError("%s: %s frames have differing shapes: %r"
                              % (op, name, sorted(set(raw_shapes))))
-        raw_dtype = np.result_type(*[np.asarray(f).dtype for f in video])
-        validate_shape((len(video),) + raw_shapes[0], raw_dtype)
+        validate_shape((n_frames,) + raw_shapes[0], np.float64)
         frames = []
         for i, f in enumerate(video):
             if np.ma.is_masked(f):
