@@ -2,9 +2,9 @@
  * Fullseye embedded C API / Fullseye 埋め込み C API.
  *
  * The existing fullseye_abi.h remains the semantic L1 contract.  This header
- * adds the initial C SDK API (ABI 0.2) implemented by the pybind11 bridge.
+ * adds the C SDK API (ABI 0.2, extended in 0.3) implemented by the pybind11 bridge.
  * 既存の fullseye_abi.h を意味論上の L1 契約として保ち、このヘッダは pybind11
- * ブリッジが実装する、最初の C SDK API (ABI 0.2) を追加する。
+ * ブリッジが実装する C SDK API (ABI 0.2、0.3 で拡張) を追加する。
  */
 #ifndef FULLSEYE_H
 #define FULLSEYE_H
@@ -53,7 +53,11 @@ typedef enum fs_value_kind {
     FS_VALUE_FEATURE = FS_VALUE_REAL,
     FS_VALUE_TUPLE = 5,
     FS_VALUE_COLOR = 6,
-    FS_VALUE_VOLUME = 7
+    FS_VALUE_VOLUME = 7,
+    /* ABI 0.3 additions. Values are appended; existing numeric values stay
+     * frozen. / ABI 0.3 追加。既存の数値は変えず末尾に加える。 */
+    FS_VALUE_CONTOUR = 8,
+    FS_VALUE_POINTS = 9
 } fs_value_kind_t;
 
 enum {
@@ -115,6 +119,40 @@ typedef struct fs_array_view {
     { (uint32_t)sizeof(fs_array_view_t), NULL, 0u, 0u, {0, 0, 0, 0}, \
       {0, 0, 0, 0}, FS_DTYPE_F64 }
 
+/* Coordinate matrix used by points and contour components. ndim must be 2;
+ * shape is (N,2) or (N,3) for points and (N,2) for contours. Slots after
+ * ndim must be zero. N must be positive. / points と contour 要素に使う座標
+ * 行列。ndim は 2、points は (N,2)/(N,3)、contour は (N,2)。余剰 slot は
+ * ゼロ、N は正でなければならない。 */
+typedef fs_array_view_t fs_points_view_t;
+
+typedef struct fs_contour_part {
+    uint32_t struct_size;
+    fs_points_view_t points;
+    uint32_t closed;
+} fs_contour_part_t;
+
+#define FS_CONTOUR_PART_INIT \
+    { (uint32_t)sizeof(fs_contour_part_t), FS_ARRAY_VIEW_INIT, 0u }
+
+/* One typed contour value contains an image shape and one or more 2-D point
+ * sequences. contour_stride_bytes permits future tail extension without
+ * changing the array layout. / 画像 shape と 1 本以上の 2-D 点列からなる
+ * contour 値。要素末尾を将来拡張できるよう stride を明示する。 */
+typedef struct fs_contour_view {
+    uint32_t struct_size;
+    int64_t width;
+    int64_t height;
+    const fs_contour_part_t *contours;
+    size_t contours_bytes;
+    size_t contour_count;
+    size_t contour_stride_bytes;
+} fs_contour_view_t;
+
+#define FS_CONTOUR_VIEW_INIT \
+    { (uint32_t)sizeof(fs_contour_view_t), 0, 0, NULL, 0u, 0u, \
+      (size_t)sizeof(fs_contour_part_t) }
+
 typedef struct fs_input {
     uint32_t struct_size;
     fs_value_kind_t kind;
@@ -138,6 +176,7 @@ FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime);
  *   fs_runtime_create, fs_call, and      C SDK 0.2     fs_result_t* pointer
  *     fs_find_ops_json below
  *   fs_find_ops_json_n and fs_call_id_n  C SDK 0.2     fs_result_id_t
+ *   contour/points tails and accessors   C SDK 0.3     fs_result_id_t
  *
  * The C SDK is first published as 0.2. Its generation-ID call entry is named
  * fs_call_id_n so it cannot be mistaken for a pointer-result function.
@@ -171,18 +210,22 @@ typedef struct fs_input_n {
     fs_image_view_t image;
     fs_result_id_t result_id;
     size_t result_index;
-    /* ABI 0.2 extension: direct COLOR/VOLUME and FEATURE inputs.  Existing
+    /* ABI 0.2 extension: direct COLOR/VOLUME and FEATURE inputs. Existing
      * callers retain the prefix and use IMAGE or borrowed values. Direct
      * IMAGE/COLOR/VOLUME buffers are borrowed only for fs_call_id_n and are
      * not retained after it returns. / 直接配列は fs_call_id_n の呼出し中だけ
      * 借用し、戻った後は保持しない。 */
     fs_array_view_t array;
     double feature;
+    /* ABI 0.3 tail extension: direct contour and point-coordinate values.
+     * ABI 0.3 末尾追加: contour と点座標の直接入力。 */
+    fs_contour_view_t contour;
+    fs_points_view_t points;
 } fs_input_n_t;
 
 #define FS_INPUT_N_INIT \
     { (uint32_t)sizeof(fs_input_n_t), FS_VALUE_IMAGE, FS_IMAGE_VIEW_INIT, 0u, 0u, \
-      FS_ARRAY_VIEW_INIT, 0.0 }
+      FS_ARRAY_VIEW_INIT, 0.0, FS_CONTOUR_VIEW_INIT, FS_ARRAY_VIEW_INIT }
 
 FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime,
                                                const char *query_json,
@@ -242,6 +285,21 @@ FS_API fs_status_t FS_CALL fs_result_image_n(fs_result_id_t result, size_t index
                                               fs_image_view_t *out_borrowed);
 FS_API fs_status_t FS_CALL fs_result_array_n(fs_result_id_t result, size_t index,
                                               fs_array_view_t *out_borrowed);
+/* ABI 0.3 coordinate results. A contour part and its point buffer are borrowed
+ * until fs_result_release_n. / ABI 0.3 座標結果。contour 要素と点バッファは
+ * fs_result_release_n まで借用できる。 */
+FS_API fs_status_t FS_CALL fs_result_contour_count_n(fs_result_id_t result, size_t index,
+                                                      size_t *out_count);
+FS_API fs_status_t FS_CALL fs_result_contour_shape_n(fs_result_id_t result, size_t index,
+                                                      int64_t *out_width,
+                                                      int64_t *out_height);
+FS_API fs_status_t FS_CALL fs_result_contour_n(fs_result_id_t result, size_t index,
+                                                size_t contour_index,
+                                                fs_contour_part_t *out_borrowed,
+                                                int64_t *out_width,
+                                                int64_t *out_height);
+FS_API fs_status_t FS_CALL fs_result_points_n(fs_result_id_t result, size_t index,
+                                               fs_points_view_t *out_borrowed);
 FS_API fs_status_t FS_CALL fs_result_region_runs_n(fs_result_id_t result, size_t index,
                                                     const fs_run_t **out_borrowed,
                                                     size_t *out_count);

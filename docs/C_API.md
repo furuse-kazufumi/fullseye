@@ -1,6 +1,7 @@
 # Fullseye C SDK compatibility
 
-The pybind11 C SDK is first published as ABI 0.2. It is a development SDK: set
+The pybind11 C SDK is first published as ABI 0.2 and extended compatibly in
+ABI 0.3. It is a development SDK: set
 `fs_init_options_t.runtime_root` (with `runtime_root_bytes` for 0.2) or
 `FULLSEYE_PYTHON_ROOT` to an environment containing the `fullseye` package.
 
@@ -9,6 +10,7 @@ The pybind11 C SDK is first published as ABI 0.2. It is a development SDK: set
 | `fullseye_abi.h` public L1 contract | published 0.1 | Each function's declared opaque handle |
 | `fs_runtime_create`, `fs_find_ops_json`, `fs_call`, and pointer accessors | C SDK 0.2 | `fs_result_t *`, released by `fs_result_release` |
 | `fs_find_ops_json_n`, `fs_call_id_n`, and ID accessors | C SDK 0.2 | `fs_result_id_t`, released by `fs_result_release_n` |
+| `fs_input_n_t` contour/points tail and coordinate result accessors | C SDK 0.3 | Borrowed coordinate views, valid until `fs_result_release_n` |
 
 Use `fs_call_id_n` for new code that needs explicit byte spans and a checked,
 generation-tagged result ID. It rejects unknown and released IDs. A slot whose
@@ -39,7 +41,8 @@ cmake --build build-c-api
 
 `fs_call_id_n` derives its callable operators from the contract and registry
 type ledgers. An operator is callable when both its declared input and output
-are one of `image`, `region`, `color`, `volume`, or scalar `feature`; a row
+are one of `image`, `region`, `color`, `volume`, scalar `feature`, `contour`,
+or `points`; a row
 with another sort is rejected as `FS_E_UNSUPPORTED` with the declared-sort
 reason. This is fail-closed: it does not substitute an image or tuple for an
 unrepresentable value.
@@ -54,3 +57,19 @@ machine-readable ledger and complete help are generated in
 [`fullseye/data/C_API_OPS.json`](../fullseye/data/C_API_OPS.json) and
 [`C_API_OPS.md`](C_API_OPS.md); regenerate both with
 `py -3.11 tools/gen_c_api_ops.py`.
+
+ABI 0.3 appends `contour` and `points` fields to `fs_input_n_t`; no existing
+field or numeric enum value moved. `fs_points_view_t` is the same stable array
+layout as `fs_array_view_t`, restricted on direct input to a dense `(N,2)` or
+`(N,3)` matrix with `N > 0`; results may be an empty `(0,2)` or `(0,3)` matrix.
+A contour is an image `(height,width)` plus one or more
+`fs_contour_part_t` values. Every part is a non-empty `(N,2)` coordinate matrix
+and carries an explicit `closed` flag. `contours_bytes` and
+`contour_stride_bytes` bound the descriptor array.
+
+Coordinate views apply the same fail-closed checks as color and volume:
+supported dtype, positive dimensions and strides, zero unused shape/stride
+slots, contiguous inner axis, sufficient byte extent, alignment, and no NaN or
+infinity. Direct input memory is borrowed only during `fs_call_id_n`. Use
+`fs_result_points_n`, or `fs_result_contour_shape_n`,
+`fs_result_contour_count_n`, and `fs_result_contour_n` for borrowed outputs.
