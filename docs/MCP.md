@@ -40,9 +40,30 @@ claude mcp add fullseye -- fullseye-mcp
 cwd の `fullseye/` や同名の `.py`(`scipy.py` など)を import の先頭に置かない。Python を直接指定する必要がある場合だけ、
 safe path の `-P` を付けて登録する:
 `claude mcp add fullseye -- py -3.11 -P -m fullseye.mcp`。
-裸の `python -m fullseye.mcp` は登録に使わない。MCP 側は、実行された package が cwd の下にあり、installed wheel または
-PEP 610 editable install の場所と一致しなければ起動を拒否する。ただし Python が最初に cwd の完全な偽 `fullseye/` を選んだ場合、
-そのコードは MCP 側の検査より先に実行される。このため `fullseye-mcp` と `-P` のどちらかが入口である。
+裸の `python -m fullseye.mcp` は登録に使わない。MCP 側は、`-m` で実行された package が cwd / `PYTHONPATH` を問わず
+installed wheel または PEP 610 editable install の場所と一致しなければ起動を拒否する。ただし Python が最初に完全な偽
+`fullseye/` を選んだ場合、そのコードは MCP 側の検査より先に実行される。このため `fullseye-mcp` と `-P` のどちらかが入口である。
+
+### 脅威の範囲 / Threat scope
+
+プロジェクトのフォルダ(cwd)と、そこから相対パスで辿れるファイルは untrusted input として扱う。`-m` の位置照合は、
+実行された `fullseye` が wheel または PEP 610 editable の許可先に一致するかを cwd の内外を問わず確かめる。
+一方、利用者の `PYTHONPATH`、仮想環境、またはほかの `sys.path` 項目そのものを攻撃者が制御できる状況は、この入口の
+脅威モデルの外である。その環境変数を信用できない時は、まず環境を作り直し、`fullseye-mcp` を信頼できる仮想環境から起動する。
+
+The project cwd and every file reachable from it by a relative path are untrusted input. For a `-m` launch, the
+location check accepts only the installed wheel or PEP 610 editable location, regardless of whether the selected
+package came from cwd or another path entry. An attacker who controls the user's `PYTHONPATH`, virtual environment,
+or another `sys.path` entry is outside this entry-point threat model. If those settings are untrusted, rebuild the
+environment and start `fullseye-mcp` from a trusted virtual environment.
+
+metadata の無い素の source checkout は `-m` では拒否する。何が起きたかは package directory を含む英日両方のエラーで表示する。
+これはコピーした package を実行しないためで、`pip install -e .` を行うか `fullseye-mcp` を使えば直る。古い editable が
+distribution metadata から checkout を解決できない場合も同じである。
+
+A plain source checkout without distribution metadata is refused for `-m`; the bilingual error includes its package
+directory. This prevents a copied package from running. Fix it with `pip install -e .` or use `fullseye-mcp`. A legacy
+editable install is treated the same only when its distribution metadata cannot resolve the checkout.
 読み込める画像は既定で**同梱サンプルだけ**。自分の画像を読ませるには根を足す:
 
 ```
@@ -87,7 +108,7 @@ asyncio.run(main())
 - `py -3.11 -m fullseye.mcp` が読む fullseye が 1.1.0 以前だと、改行区切りの initialize に応えず、クライアントは
   時間切れか `Connection closed` で終わる。どの木を読んでいるかは `py -3.11 -c "import fullseye; print(fullseye.__file__)"`。
 - Claude Desktop の `claude_desktop_config.json` に書く形は、上と同じ command・args・env:
-  `{"mcpServers": {"fullseye": {"command": "py", "args": ["-3.11", "-m", "fullseye.mcp"], "env": {"PYTHONUTF8": "1"}}}}`
+  `{"mcpServers": {"fullseye": {"command": "fullseye-mcp", "args": [], "env": {"PYTHONUTF8": "1"}}}}`
   (この形を Claude Desktop の実物では確かめていない。確かめたのは公式クライアントで、同じ command・args・env)。
 
 ## MCP から実行できる op と、実行できない op

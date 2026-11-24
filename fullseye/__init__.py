@@ -79,28 +79,14 @@ def _distribution_package_roots() -> set[str]:
     return roots
 
 
-def _is_below(path: str, parent: str) -> bool:
-    """Whether canonical ``path`` is ``parent`` or below it, across drives.
+def _refuse_untrusted_package_for_mcp_server() -> None:
+    """Fail closed when ``-m`` selects a package outside the installed allow-list.
 
-    正規化済みの ``path`` が ``parent`` 自身または配下かを、Windows の別 drive
-    でも例外を出さずに調べる。
-    """
-    import os
-
-    try:
-        return os.path.commonpath((path, parent)) == parent
-    except ValueError:
-        return False
-
-
-def _refuse_untrusted_cwd_package_for_mcp_server() -> None:
-    """Fail closed for a ``-m`` MCP server imported from an uninstalled cwd copy.
-
-    ``python -m fullseye.mcp`` normally puts cwd before ``site-packages``.  Once
-    this package has been selected, compare its directory with the installed
-    wheel directory or the PEP 610 editable source directory recorded for the
-    ``fullseye`` distribution.  If the selected package is below cwd but is not
-    one of those declared locations, stop before loading any MCP code.
+    ``python -m fullseye.mcp`` can select a package from cwd or from another
+    ``sys.path`` entry.  Once this package has been selected, compare its
+    directory with the installed wheel directory or the PEP 610 editable source
+    directory recorded for the ``fullseye`` distribution.  If it is not one of
+    those declared locations, stop before loading any MCP code.
 
     This check cannot run before Python chooses the top-level ``fullseye``
     package: a wholly attacker-controlled ``cwd/fullseye`` can replace this file
@@ -111,7 +97,7 @@ def _refuse_untrusted_cwd_package_for_mcp_server() -> None:
 
     ``python -m fullseye.mcp`` は通常 cwd を ``site-packages`` より前に置く。この
     package が選ばれた後に、wheel の場所または PEP 610 editable install が記録した
-    source と実際の package directory を比べる。cwd 配下で、かつ登録済みの場所に
+    source と実際の package directory を比べる。cwd に限らず登録済みの場所に
     一致しなければ MCP code を読む前に止める。
 
     ただし、Python が完全に攻撃者管理の ``cwd/fullseye`` を最初に選んだ場合、この
@@ -126,20 +112,33 @@ def _refuse_untrusted_cwd_package_for_mcp_server() -> None:
         return
     try:
         package_dir = os.path.normcase(os.path.realpath(os.path.dirname(__file__)))
-        cwd = os.path.normcase(os.path.realpath(os.getcwd()))
     except (OSError, ValueError):
         raise RuntimeError(
-            "refusing to start fullseye MCP: cannot verify the package location; "
-            "use fullseye-mcp or python -P -m fullseye.mcp") from None
-    if _is_below(package_dir, cwd) and package_dir not in _distribution_package_roots():
+            "refusing to start fullseye MCP: cannot canonicalize the selected package "
+            "directory; only an installed wheel or a PEP 610 editable checkout is "
+            "accepted. This prevents an untrusted package location from starting the "
+            "MCP server. Use fullseye-mcp, or run `pip install -e .` and then use "
+            "python -P -m fullseye.mcp.\n"
+            "fullseye MCP の起動を拒否しました: 選ばれた package の場所を正規化できず、"
+            "installed wheel または PEP 610 の editable checkout だけを受け入れます。"
+            "信頼できない場所の package が MCP サーバを起動することを防ぐためです。"
+            "fullseye-mcp を使うか、`pip install -e .` の後に "
+            "python -P -m fullseye.mcp を使ってください。") from None
+    if package_dir not in _distribution_package_roots():
         raise RuntimeError(
-            "refusing to start fullseye MCP: fullseye was imported from the current "
-            "working directory instead of its installed or editable location; "
-            "use fullseye-mcp or python -P -m fullseye.mcp")
+            "refusing to start fullseye MCP: selected package directory %r is not an "
+            "installed wheel or a PEP 610 editable checkout. This prevents a copied or "
+            "untrusted package from starting the MCP server. Use fullseye-mcp, or run "
+            "`pip install -e .` and then use python -P -m fullseye.mcp.\n"
+            "fullseye MCP の起動を拒否しました: 選ばれた package directory %r は "
+            "installed wheel または PEP 610 の editable checkout ではありません。"
+            "コピーまたは信頼できない package が MCP サーバを起動することを防ぐためです。"
+            "fullseye-mcp を使うか、`pip install -e .` の後に "
+            "python -P -m fullseye.mcp を使ってください。" % (package_dir, package_dir))
 
 
-_refuse_untrusted_cwd_package_for_mcp_server()
-del _refuse_untrusted_cwd_package_for_mcp_server
+_refuse_untrusted_package_for_mcp_server()
+del _refuse_untrusted_package_for_mcp_server
 
 
 def _drop_the_cwd_entry_for_the_mcp_server() -> None:
