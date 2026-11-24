@@ -1450,6 +1450,16 @@ def flow_classes():
             b = self.bar
             return (b.count(), tuple(b.tabText(i) for i in range(b.count())), b.shape())
 
+        def visible_dock_count(self):
+            """Number of docked, shown panels represented by this Qt tab bar.
+
+            表示中かつ dock 済みのパネル数。Qt は hide() の最中も古いタブ数を返すことがあるため、
+            bar.count() ではなく dock の可視状態を正とする。
+            """
+            keys = {self.key_at(i) for i in range(self.bar.count())}
+            return sum(key is not None and not self.win._docks[key].isHidden()
+                       and not self.win._docks[key].isFloating() for key in keys)
+
         def _set_qss(self, qss):
             if qss != self.qss:
                 self.qss = qss
@@ -1559,7 +1569,8 @@ def flow_classes():
 
         def eventFilter(self, obj, ev):
             t = ev.type()
-            if t in (QtCore.QEvent.Resize, QtCore.QEvent.Show, QtCore.QEvent.FontChange):
+            if t in (QtCore.QEvent.Resize, QtCore.QEvent.Show, QtCore.QEvent.FontChange,
+                     QtCore.QEvent.LayoutRequest):
                 QtCore.QTimer.singleShot(0, self._safe_place)
             elif t in (QtCore.QEvent.FocusIn, QtCore.QEvent.FocusOut):
                 for tab in self.tabs:
@@ -1949,6 +1960,19 @@ def relayout(win):
             row = rows.get(id(bar))
             if row is None or row.bar is not bar:
                 row = rows[id(bar)] = TabRow(win, bar)
+            no_tab_row = row.visible_dock_count() < 2
+            if no_tab_row:
+                # Qt の offscreen Linux backend は 1 枚だけの QTabBar を残すことがある。
+                # The app owns the one-panel rule instead of relying on the backend to park it.
+                if not bar.property("fsNoTabRow"):
+                    bar.setProperty("fsNoTabRow", True)
+                    bar.hide()
+                row.strip.hide()
+                continue
+            if bar.property("fsNoTabRow"):
+                bar.setProperty("fsNoTabRow", False)
+                bar.show()
+            row.strip.show()
             row.place()
     st["tab_sides"] = areas
     for bar in st["titles"].values():               # tabbed or not: the band's name follows (D59)
@@ -3321,6 +3345,10 @@ def install(win, tr, settings=None):
         dock.dockLocationChanged.connect(lambda _a: watch.start())
         dock.topLevelChanged.connect(lambda _f: watch.start())
     follow = Follow(win); st["follow"] = follow
+    for dock in win._docks.values():
+        # offscreen では最後の sibling dock を隠しても native QTabBar に Resize/Show が届かない。
+        # The dock visibility signal is authoritative, so coalesce it into a fresh relayout.
+        dock.visibilityChanged.connect(follow.later)
     _default_registrations(win)
     tick = QtCore.QTimer(win); tick.setInterval(250)             # status read-outs: 4 times a second
     def read_status():

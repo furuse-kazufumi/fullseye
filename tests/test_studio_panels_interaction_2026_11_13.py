@@ -1299,8 +1299,12 @@ def test_tabs_context_menu_is_panel_menu_and_not_closable(tmp_path, monkeypatch)
         for k in keys[1:]:
             win._docks[k].hide()
         assert _wait_for(app, lambda: _shown_tab_bars(win) == [])
+        assert row.bar.property("fsNoTabRow") is True                       # Qt の platform layout でなくアプリが隠した / app-owned
         assert win._docks["variables"].isVisible()
         assert _shown_tab_bars(win) == []
+        win._docks["ab"].show()
+        assert _wait_for(app, lambda: row.bar.property("fsNoTabRow") is False
+                         and row.bar in _shown_tab_bars(win))               # 同じ signal 経路で復帰 / restored by it
     finally:
         _close(app, win)
 
