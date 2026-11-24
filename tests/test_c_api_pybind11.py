@@ -271,13 +271,15 @@ def _points(array: np.ndarray, *, dtype=4) -> tuple[InputN, np.ndarray]:
 def _contour(value: dict) -> tuple[InputN, tuple]:
     """Build a direct contour-set input / 複数点列の contour 入力を組む。"""
     arrays = [np.ascontiguousarray(points, dtype=np.float64) for points in value["cs"]]
+    closed_values = value.get("closed")
     parts = (ContourPart * len(arrays))()
     for index, points in enumerate(arrays):
         shape = (C.c_int64 * 4)(points.shape[0], 2, 0, 0)
         strides = (C.c_int64 * 4)(points.strides[0], points.strides[1], 0, 0)
         view = ArrayView(C.sizeof(ArrayView), int(points.ctypes.data), points.nbytes, 2,
                          shape, strides, 4)
-        closed = int(points.shape[0] > 1 and np.array_equal(points[0], points[-1]))
+        closed = (closed_values[index] if closed_values is not None
+                  else points.shape[0] > 1 and np.array_equal(points[0], points[-1]))
         parts[index] = ContourPart(C.sizeof(ContourPart), view, closed)
     height, width = value["shape"]
     view = ContourView(C.sizeof(ContourView), width, height, parts, C.sizeof(parts),
@@ -693,6 +695,9 @@ def test_points_accept_two_or_three_coordinates_and_match_python(abi, dimensions
     ("extra_shape", FS_E_SHAPE),
     ("extra_stride", FS_E_SHAPE),
     ("inner_stride", FS_E_SHAPE),
+    ("overlapping_outer_stride", FS_E_SHAPE),
+    ("wrong_ndim", FS_E_SHAPE),
+    ("wrong_coordinate_width", FS_E_SHAPE),
     ("unknown_dtype", FS_E_TYPE),
     ("nan", FS_E_INVALID_ARG),
     ("zero_points", FS_E_SHAPE),
@@ -708,6 +713,12 @@ def test_invalid_points_views_are_rejected(abi, case, expected):
         input_value.points.stride_bytes[2] = 8
     elif case == "inner_stride":
         input_value.points.stride_bytes[1] = 16
+    elif case == "overlapping_outer_stride":
+        input_value.points.stride_bytes[0] = 16
+    elif case == "wrong_ndim":
+        input_value.points.ndim = 1
+    elif case == "wrong_coordinate_width":
+        input_value.points.shape[1] = 4
     elif case == "unknown_dtype":
         input_value.points.dtype = 999
     elif case == "nan":
@@ -724,7 +735,11 @@ def test_invalid_points_views_are_rejected(abi, case, expected):
     ("extra_shape", FS_E_SHAPE),
     ("extra_stride", FS_E_SHAPE),
     ("inner_stride", FS_E_SHAPE),
+    ("overlapping_outer_stride", FS_E_SHAPE),
+    ("wrong_ndim", FS_E_SHAPE),
+    ("wrong_coordinate_width", FS_E_SHAPE),
     ("unknown_dtype", FS_E_TYPE),
+    ("invalid_closed", FS_E_INVALID_ARG),
     ("nan", FS_E_INVALID_ARG),
     ("zero_points", FS_E_SHAPE),
 ])
@@ -743,14 +758,38 @@ def test_invalid_contour_views_are_rejected(abi, case, expected):
         part.points.stride_bytes[2] = 8
     elif case == "inner_stride":
         part.points.stride_bytes[1] = 16
+    elif case == "overlapping_outer_stride":
+        part.points.stride_bytes[0] = 8
+    elif case == "wrong_ndim":
+        part.points.ndim = 1
+    elif case == "wrong_coordinate_width":
+        part.points.shape[1] = 3
     elif case == "unknown_dtype":
         part.points.dtype = 999
+    elif case == "invalid_closed":
+        part.closed = 2
     elif case == "nan":
         arrays[0][0, 0] = np.nan
     else:
         part.points.shape[0] = 0
     status, result = _call(abi, "registry:count_contours", [input_value])
     assert status == expected and not result.value
+
+
+@pytest.mark.parametrize("closed,expected", [(False, 8.0), (True, 12.0)])
+def test_contour_closed_flag_controls_the_implicit_last_segment(abi, closed, expected):
+    """The explicit flag maps to Python's repeated-endpoint convention.
+
+    明示した閉曲線フラグを Python の始点反復表現へ写し、最後の辺を落とさない。
+    """
+    points = np.array([[0.0, 0.0], [0.0, 3.0], [4.0, 0.0]])
+    input_value, keep = _contour({"shape": (8, 8), "cs": [points], "closed": [closed]})
+    status, result = _call(abi, "registry:total_length", [input_value])
+    assert keep is not None and status == FS_OK
+    try:
+        assert _c_output(abi[0], result, "feature") == expected
+    finally:
+        assert abi[0].fs_result_release_n(result) == FS_OK
 
 
 def test_null_input_array_unknown_ops_and_extra_json_are_rejected(abi):

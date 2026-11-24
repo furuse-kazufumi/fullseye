@@ -1550,6 +1550,7 @@ FS_API fs_status_t FS_CALL fs_result_array_n(fs_result_id_t result, size_t index
 FS_API fs_status_t FS_CALL fs_result_contour_count_n(fs_result_id_t result, size_t index,
                                                       size_t *out_count) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     if (!lease || out_count == nullptr || index >= lease.get()->items.size()) {
         return FS_E_INVALID_ARG;
     }
@@ -1562,6 +1563,7 @@ FS_API fs_status_t FS_CALL fs_result_contour_count_n(fs_result_id_t result, size
 FS_API fs_status_t FS_CALL fs_result_contour_shape_n(fs_result_id_t result, size_t index,
                                                       int64_t *out_width, int64_t *out_height) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     if (!lease || out_width == nullptr || out_height == nullptr
         || index >= lease.get()->items.size()) return FS_E_INVALID_ARG;
     const Item &item = lease.get()->items[index];
@@ -1576,6 +1578,7 @@ FS_API fs_status_t FS_CALL fs_result_contour_n(fs_result_id_t result, size_t ind
                                                 fs_contour_part_t *out_borrowed,
                                                 int64_t *out_width, int64_t *out_height) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     if (!lease || out_borrowed == nullptr || out_width == nullptr || out_height == nullptr
         || out_borrowed->struct_size < kRequiredContourPartSize
         || out_borrowed->points.struct_size < kRequiredArraySize
@@ -1607,6 +1610,7 @@ FS_API fs_status_t FS_CALL fs_result_contour_n(fs_result_id_t result, size_t ind
 FS_API fs_status_t FS_CALL fs_result_points_n(fs_result_id_t result, size_t index,
                                                fs_points_view_t *out_borrowed) {
     ResultIdLease lease(result);
+    if (lease.status() != FS_OK) return lease.status();
     if (!lease || out_borrowed == nullptr || out_borrowed->struct_size < kRequiredArraySize
         || index >= lease.get()->items.size()) return FS_E_INVALID_ARG;
     const Item &item = lease.get()->items[index];

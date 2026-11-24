@@ -158,15 +158,29 @@ def _input(value: dict):
     if kind == "contour":
         shape = tuple(value["shape"])
         cs = [np.asarray(points, dtype=np.float64) for points in value["cs"]]
+        closed = list(value["closed"])
         if (len(shape) != 2 or any(isinstance(dim, bool) or not isinstance(dim, (int, np.integer))
                                   or int(dim) <= 0 for dim in shape)):
             raise _Refuse(FS_E_TYPE, "contour shape must contain two positive integers")
         if not cs or any(points.ndim != 2 or points.shape[0] == 0 or points.shape[1] != 2
                          for points in cs):
             raise _Refuse(FS_E_TYPE, "contour must contain non-empty (N,2) point sequences")
+        if len(closed) != len(cs) or any(not isinstance(flag, (bool, np.bool_)) for flag in closed):
+            raise _Refuse(FS_E_TYPE, "contour closed flags must match the point sequences")
         if not all(np.isfinite(points).all() for points in cs):
             raise _Refuse(FS_E_INVALID_ARG, "contour contains NaN or infinity")
-        return {"shape": tuple(map(int, shape)), "cs": cs, "closed": list(value["closed"])}
+        # Python contours encode closure by repeating the first point. The C ABI
+        # carries it explicitly, so normalize both directions without guessing.
+        # Python の輪郭は始点の反復で閉曲線を表すため、C の明示フラグに従って正規化する。
+        normalized = []
+        for points, is_closed in zip(cs, closed):
+            repeats_first = points.shape[0] > 1 and np.array_equal(points[0], points[-1])
+            if is_closed and not repeats_first:
+                points = np.concatenate((points, points[:1]), axis=0)
+            elif not is_closed and repeats_first:
+                points = points[:-1]
+            normalized.append(points)
+        return {"shape": tuple(map(int, shape)), "cs": normalized}
     if kind == "feature":
         number = float(value["value"])
         if not math.isfinite(number):

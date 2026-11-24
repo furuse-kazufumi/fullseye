@@ -62,10 +62,13 @@ ABI 0.3 appends `contour` and `points` fields to `fs_input_n_t`; no existing
 field or numeric enum value moved. `fs_points_view_t` is the same stable array
 layout as `fs_array_view_t`, restricted on direct input to a dense `(N,2)` or
 `(N,3)` matrix with `N > 0`; results may be an empty `(0,2)` or `(0,3)` matrix.
-A contour is an image `(height,width)` plus one or more
-`fs_contour_part_t` values. Every part is a non-empty `(N,2)` coordinate matrix
-and carries an explicit `closed` flag. `contours_bytes` and
-`contour_stride_bytes` bound the descriptor array.
+A direct contour input is an image `(height,width)` plus one or more
+`fs_contour_part_t` values; an operator result may contain no parts. Every part
+is a non-empty `(N,2)` coordinate matrix and carries an explicit `closed` flag.
+`contours_bytes` and `contour_stride_bytes` bound the descriptor array. The flag is semantic: a
+closed C contour has an implicit last-to-first segment. The bridge maps it to
+the Python contour convention by repeating the first point when needed, and
+removes a repeated endpoint from a part explicitly marked open.
 
 Coordinate views apply the same fail-closed checks as color and volume:
 supported dtype, positive dimensions and strides, zero unused shape/stride
