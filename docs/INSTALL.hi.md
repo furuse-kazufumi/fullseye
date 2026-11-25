@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: f1044d971702 -->
+<!-- i18n-source-sha: 069c74805461 -->
 # Installation / Environment Setup — पूरी गाइड
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · **हिन्दी**
@@ -180,6 +180,7 @@ Embedded इस्तेमाल के मुख्य बिंदु:
 | `ModuleNotFoundError: No module named 'fullseye'` | install नहीं हुआ / path set नहीं | `pip install -e .`, या repository root को `PYTHONPATH` में जोड़ें |
 | `fullseye` / `fullseye-studio` command नहीं मिलता | console scripts register नहीं हुईं | `pip install -e .` चलाएँ। Install नहीं किया है तो `py -3.11 imgevolve.py` / `py -3.11 studio.py` इस्तेमाल करें |
 | Studio launch करते समय PySide6 ImportError | standard dependency टूटी हुई है | `pip install --force-reinstall fullseye` |
+| Linux पर Studio launch करते समय `ImportError: libEGL.so.1` आदि | Qt को चाहिए system libraries मौजूद नहीं (pip इन्हें install नहीं कर सकता) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3`। दूसरे distributions में उनके समान packages |
 | `apply` / `pipeline` पर `cannot read <path>` | standard Pillow dependency टूटी है या image खराब है | `pip install --force-reinstall fullseye`; फिर भी हो तो image जाँचें |
 | `read_image` / `write_image` (API) से cv2 ImportError | ये **सिर्फ़ OpenCV** वाले हैं | `pip install -e ".[opencv]"`। अगर Pillow से काम चलाना है, तो `fullseye.load` / `fullseye.save` इस्तेमाल करें |
 | अपेक्षित operator `list_ops` में नहीं है / `has` unknown लौटाता है | संबंधित backend install नहीं | मेल खाते extras जोड़ें (`skimage`/`wavelets`/`extra` आदि) |
