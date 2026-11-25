@@ -30,8 +30,12 @@ without scikit-image and is exact for an axis-aligned pixel square, but has a
 large positive bias for a circle.
 
 The value is in pixels and includes every foreground component and every hole.
-Foreground means ``region > 0.5``; an empty region returns ``0.0``. This is a
-*measurement convention*, not a selector for a universally true perimeter:
+Foreground means ``region > 0.5``. An empty input (``region`` with zero
+elements) returns an empty perimeter (reason: without foreground pixels,
+no exposed edge exists to measure); its numeric value is ``0.0``.
+空の入力(``region`` が 0 要素)は空の周囲長を返す(理由: 前景画素が無く、測る
+露出辺も無い)。数値は ``0.0`` となる。これは普遍的に真な周囲長を選ぶのでは
+なく、次の *measurement convention* である:
 on the fixed closed-form probes (disc ``r=96``, square side ``128``), the
 ratios to truth are respectively ``1.0518 / 0.9922`` (``skimage``),
 ``1.0016 / 0.9459`` (``crofton``), and ``1.2799 / 1.0000`` (``chain``).
