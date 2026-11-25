@@ -300,7 +300,7 @@
     {
       "module": "ops.py",
       "function": "module_requirements",
-      "line": 2678,
+      "line": 2680,
       "exception_types": [
         "Exception"
       ],
@@ -311,7 +311,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2747,
+      "line": 2749,
       "exception_types": [
         "Exception"
       ],
@@ -322,7 +322,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2755,
+      "line": 2757,
       "exception_types": [
         "Exception"
       ],
@@ -333,7 +333,7 @@
     {
       "module": "ops.py",
       "function": "_label_guarded_functions_with_their_op_name",
-      "line": 3034,
+      "line": 3036,
       "exception_types": [
         "AttributeError, TypeError"
       ],
@@ -344,7 +344,7 @@
     {
       "module": "ops.py",
       "function": "apply_genome",
-      "line": 3148,
+      "line": 3150,
       "exception_types": [
         "Exception"
       ],

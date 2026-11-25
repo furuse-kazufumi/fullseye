@@ -15,7 +15,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     assert set(opsdrive.categories()) == {"course", "world", "lidar", "ttc", "rss", "terrain",
                                           "ball", "balltrack", "ballworld", "racket", "roadjp",
                                           "kendama", "kendamaworld", "gsplat", "long", "env", "inf", "traffic", "decide", "lateral", "crossing", "pass",
-                                          "motion_io", "humanoid", "agv", "carla", "town", "japan", "commonroad", "pegsim", "tacsim", "tacslip", "tactorque", "puck", "pegfail", "granular", "tacscalib", "pegtactile", "cutting", "diabolo", "tacdome", "pegsym", "polish", "scoop", "grind", "ozaki", "swarmflow", "pxrd", "doseunif", "cuttouch", "roverslip", "polygrav", "braidpath", "walkterrain", "locomotion"}
+                                          "motion_io", "humanoid", "agv", "carla", "town", "japan", "commonroad", "pegsim", "tacsim", "tacslip", "tactorque", "puck", "pegfail", "granular", "tacscalib", "pegtactile", "cutting", "diabolo", "tacdome", "pegsym", "polish", "scoop", "grind", "pharma", "ozaki", "swarmflow", "pxrd", "doseunif", "cuttouch", "roverslip", "polygrav", "braidpath", "walkterrain", "locomotion", "lane"}
     # 288 → 292: gs_read_file + 動きのデータの入口 3(read_bvh / read_events / events_to_frames、2026-10-03)
     # 292 → 296: 歩くヒューマノイド 4(humanoid_clip_mesh / world_pose_humanoid / humanoid_impostors / world_camera_impostors)
     # 296 → 309: 工場・倉庫の AGV の群れ 13(agvfleet: 格子・CBS / 焦点探索 / 結合 A* / 優先度付き・ADG・VDA 5050)
@@ -58,7 +58,9 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     # 741 → 742: 抗力と回転の同時推定 1(ballistics.fit_spin_aero: fit_spin の C_d 自由版、条件数・相関・共分散を返す、2026-11-11。numpy)
     # 742 → 743: 道の面の高さ図 1(drivelateral.road_surface_heightmap: 横断の決まり・すりつけ・解析の真値、2026-11-15)
     # 743 → 744: 高さ図を深度カメラで撮る 1(terrain.heightmap_depth_camera: 光線を刻みで進める・ステレオの雑音則、2026-11-15)
-    assert len(opsdrive.OPSDRIVE) == 744
+    # 744 → 749: 銀座 v2 第1段の色規則・RGB俯瞰・境界・中央・停止線(2026-11-23)
+    # 749 → 750: 薬学向け顕微鏡粒径 1(採否・3基準・不確かさ・校正来歴、2026-11-23)
+    assert len(opsdrive.OPSDRIVE) == 750
     # 台帳の op は実装モジュールの __all__ に在る(逆は要らない: 補助関数は台帳に載せない)
     import drivecourse, driveworld, lidarsim, drivettc, rsssafety, driveterrain, ballistics, balltrack, ballworld, racket
     import roadjp
@@ -97,6 +99,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     import polish
     import scoop
     import grind
+    import pharmaparticle
     import ozakimm
     import swarmflow
     import pxrd
@@ -107,6 +110,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     import braidpath
     import terrain
     import locomotion
+    import laneops
     pub = (set(drivecourse.__all__) | set(driveworld.__all__) | set(lidarsim.__all__) | set(drivettc.__all__)
            | set(rsssafety.__all__) | set(driveterrain.__all__) | set(ballistics.__all__) | set(balltrack.__all__)
            | set(ballworld.__all__) | set(racket.__all__) | set(roadjp.__all__)
@@ -115,7 +119,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
            | set(drivedecide.__all__) | set(drivelateral.__all__)
            | set(drivecrossing.__all__) | set(drivepass.__all__) | set(motionio.__all__)
            | set(drivehumanoid.__all__) | set(agvfleet.__all__) | set(carlabridge.__all__) | set(drivetown.__all__) | set(drivejapan.__all__) | set(driveplateau.__all__) | set(drivecommonroad.__all__) | set(pegsim.__all__) | set(tacsim.__all__) | set(tacslip.__all__) | set(tactorque.__all__) | set(puck.__all__) | set(pegfail.__all__) | set(granular.__all__) | set(tacscalib.__all__) | set(pegtactile.__all__) | set(cutting.__all__) | set(diabolo.__all__) | set(tacdome.__all__) | set(pegsym.__all__) | set(polish.__all__) | set(scoop.__all__) | set(grind.__all__) | set(ozakimm.__all__) | set(swarmflow.__all__) | set(pxrd.__all__) | set(doseunif.__all__) | set(cuttouch.__all__) | set(roverslip.__all__) | set(polygrav.__all__) | set(braidpath.__all__)
-           | set(terrain.__all__) | set(locomotion.__all__))
+           | set(pharmaparticle.__all__) | set(terrain.__all__) | set(locomotion.__all__) | set(laneops.__all__))
     assert set(opsdrive.OPSDRIVE) <= pub, set(opsdrive.OPSDRIVE) - pub
 
 
@@ -132,7 +136,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "drive"]
-    assert len(rows) == 744
+    assert len(rows) == 750
     assert {r[3] for r in rows} == {"table", "image2d", "signal", "matrix", "scalar", "any", "points", "rgba", "rgb", "voxel", "normalmap",
                                  "depth", "mask", "measurement", "keypoints"}
 

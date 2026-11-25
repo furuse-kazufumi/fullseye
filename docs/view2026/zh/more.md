@@ -288,11 +288,11 @@ li, p, code { overflow-wrap: anywhere; }
 
 </div>
 
-[其他 187 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 189 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 
-PoC 283 个,另有机器人示例 2 个。展开分组即可加载缩略图。
+PoC 284 个,另有机器人示例 2 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -358,7 +358,7 @@ PoC 283 个,另有机器人示例 2 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>尺寸与形状测量</b> (53)</summary>
+<details class="vall"><summary><b>尺寸与形状测量</b> (54)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../../articles/assets/poc/poc_aoi_ct_traceability/story.en.gif" alt="Full visual inspection and sampled CT must assign the same index to each joint. Unequal-sided fiducials fixed this correspondence, then top-ranked candidates caught 19 % of interface-touching voids. Apparent void rankings can agree while most life-limiting parts are missed." loading="lazy" width="200" height="200"></picture><span>AOI 与 CT 对应</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../../articles/assets/poc/poc_asbuilt_wall_deviation/story.en.gif" alt="Point-cloud dimensions can confuse room heading or furniture with wall position. A room with known tilt and bulges was rotated, while its plane-pair error stayed at +2.24 mm. Bounding boxes grow with heading and sample count; plane fitting jumps to furniture when outliers become the majority." loading="lazy" width="200" height="200"></picture><span>竣工墙面偏差</span></a>
@@ -372,6 +372,7 @@ PoC 283 个,另有机器人示例 2 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_metal_grain_size/15_real_tbm_breaks.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_metal_grain_size/15_real_tbm_breaks.png"><img src="../../articles/assets/poc/poc_metal_grain_size/story.en.gif" alt="Gaps are cut into hand-traced real grain boundaries to see where the two counting methods drift by a full step. The intercept count holds until 33.1 % of the traced lines are gone, far longer than the planimetric count. Image processing that expects dark boundaries finds almost none of them on tint-etched photos." loading="lazy" width="200" height="200"></picture><span>晶粒度</span></a>
 <a href="../../articles/assets/poc/poc_multibeam_bathymetry/17_survey.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_multibeam_bathymetry.jpg" alt="多波束测深" width="200" height="200"><b>&#9654;</b><span>多波束测深</span></a>
 <a href="../../articles/assets/poc/poc_particle_sizing/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_particle_sizing/01_scene.png"><img src="../../articles/assets/poc/poc_particle_sizing/story.en.gif" alt="Particle Size Distribution From Images — Merging and Edge Cuts Pull Opposite Ways and Cancel" loading="lazy" width="200" height="200"></picture><span>粒度分布</span></a>
+<a href="../../articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png"><img src="../../articles/assets/poc/poc_compendial_particle_microscopy/story.en.gif" alt="Counting clipped or overlapping objects as one changes a microscopy size distribution. Synthetic truth shows a largest error of 0.165 px. Acceptance reasons and three bases remain with calibration provenance." loading="lazy" width="200" height="200"></picture><span>显微镜粒径分布</span></a>
 <a href="../../articles/assets/poc/poc_rail_corrugation/01_planted_components.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_rail_corrugation/01_planted_components.png"><img src="../../articles/assets/poc/poc_rail_corrugation/story.en.gif" alt="Measuring Rail with a Chord — At the Wavelengths Where the Transfer Function Is Zero, Any Amplitude Reads Zero" loading="lazy" width="200" height="200"></picture><span>钢轨波磨</span></a>
 <a href="../../articles/assets/poc/poc_real_coin_metrology/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_coin_metrology/01_scene.png"><img src="../../articles/assets/poc/poc_real_coin_metrology/story.en.gif" alt="Counting and Measuring Real Coins — A Correct Answer Is Not a Safe One" loading="lazy" width="200" height="200"></picture><span>实拍硬币</span></a>
 <a href="../../articles/assets/poc/poc_screw_thread_metrology/01_zero_spectrum.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_screw_thread_metrology/01_zero_spectrum.png"><img src="../../articles/assets/poc/poc_screw_thread_metrology/story.en.gif" alt="Pitch, Flank Angle and Pitch Diameter From a Thread Silhouette — Tilt Shows Up With Opposite Signs on the Two Flanks" loading="lazy" width="200" height="200"></picture><span>螺纹轮廓</span></a>

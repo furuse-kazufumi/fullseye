@@ -14,6 +14,7 @@
 #include <condition_variable>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <limits>
 #include <mutex>
 #include <new>
@@ -111,6 +112,66 @@ std::string g_python_home;
 std::mutex g_python_mutex;
 std::mutex g_runtime_mutex;
 std::unordered_set<fs_runtime_t *> g_runtimes;
+
+#if defined(FULLSEYE_C_API_TESTING)
+// CTest starts an isolated CPython in each standalone C/C++ executable.  The
+// production SDK deliberately keeps that interpreter alive until process exit:
+// a consumer can create, destroy, and create runtimes again without trying the
+// unsupported extension-module reinitialization sequence.  For the sanitizer
+// test build, however, finalizing at the executable boundary releases CPython
+// import state before LSan runs.  This path is compiled only for CTest builds;
+// it is never registered in the shipped library.
+// CTest は各 C/C++ 実行ファイルで独立 CPython を起動する。本番 SDK は、拡張
+// モジュールの未対応な再初期化を避けるため、利用者のプロセス終了まで解釈系を保持する。
+// ただし sanitizer 用の test build では、LSan より前に CPython の import 状態を
+// 解放するため、実行ファイル境界で finalize する。この経路は CTest build 専用で、
+// 出荷ライブラリには登録されない。
+std::once_flag g_test_python_finalize_registration;
+
+void finalize_owned_python_for_lsan_test() noexcept {
+    std::unique_lock<std::mutex> python_lock(g_python_mutex);
+    // A failed import can leave CPython partly initialized and owned by this
+    // library, but it has not established a usable Fullseye runtime.  Do not
+    // finalize that partial state at atexit: CPython owns its recovery path.
+    // import 失敗後は CPython が途中まで初期化され、library 所有のまま残る
+    // ことがあるが、利用可能な Fullseye runtime は未成立である。atexit で
+    // その途中状態を finalize せず、CPython 自身の復旧経路に任せる。
+    if (!g_python_owned || !g_python_ready || Py_IsInitialized() == 0) {
+        return;
+    }
+    {
+        std::lock_guard<std::mutex> runtime_lock(g_runtime_mutex);
+        // A test that exits with a live runtime did not exercise the documented
+        // lifecycle, so fail instead of making that error invisible to LSan.
+        if (!g_runtimes.empty()) {
+            std::abort();
+        }
+    }
+    // Py_FinalizeEx releases the GIL it owns.  Do not call PyGILState_Release
+    // afterwards: CPython's thread state no longer exists at that point.
+    // Py_FinalizeEx は取得中の GIL も解放する。終了後は CPython の thread state
+    // が無いので、PyGILState_Release を続けて呼んではならない。
+    (void)PyGILState_Ensure();
+    const int finalize_status = Py_FinalizeEx();
+    g_python_ready = false;
+    g_python_owned = false;
+    g_python_root.clear();
+    g_python_home.clear();
+    if (finalize_status < 0) {
+        std::abort();
+    }
+}
+
+void register_owned_python_finalizer_for_lsan_test() {
+    std::call_once(g_test_python_finalize_registration, [] {
+        // Registration failure means the sanitizer test cannot establish its
+        // promised cleanup boundary; abort rather than silently weakening it.
+        if (std::atexit(finalize_owned_python_for_lsan_test) != 0) {
+            std::abort();
+        }
+    });
+}
+#endif
 
 void set_error(const fs_runtime_t *runtime, std::string_view message) noexcept {
     g_error.runtime = runtime;
@@ -400,6 +461,50 @@ struct PythonInitResult {
     std::string error;
 };
 
+bool has_c_api_bridge_under_runtime_root(const std::string &root) noexcept {
+    try {
+        // C API paths are UTF-8 spans.  C++17 u8path preserves that contract on
+        // Windows; GCC 16 deprecates the C++17 spelling in favour of C++20's
+        // char8_t overload, which this ABI cannot require yet.
+        // C API の path は UTF-8 span なので、C++17 の u8path で Windows でも
+        // 契約を保つ。GCC 16 は C++20 の char8_t 版を促してこの表記を deprecated
+        // にするが、この ABI はまだ C++20 を要求できない。
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+        const std::filesystem::path root_path = std::filesystem::u8path(root);
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
+        const auto has_bridge = [](const std::filesystem::path &package_parent) {
+            std::error_code error;
+            return std::filesystem::is_regular_file(
+                package_parent / "fullseye" / "c_api_bridge.py", error) && !error;
+        };
+        std::error_code error;
+        return std::filesystem::is_directory(root_path, error) && !error
+            && (has_bridge(root_path)
+                || has_bridge(root_path / "site-packages")
+                || has_bridge(root_path / "Lib" / "site-packages")
+                || has_bridge(root_path / "runtime" / "site-packages"));
+    } catch (...) {
+        return false;
+    }
+}
+
+std::string missing_runtime_root_package_message(const std::string &root) {
+    return "runtime_root \"" + root
+        + "\" does not contain fullseye/c_api_bridge.py in a supported package layout / "
+          "runtime_root \"" + root
+        + "\" には対応する配置の fullseye/c_api_bridge.py がありません。"
+          " The C API rejects it so it cannot silently import a different ambient "
+          "Fullseye installation / C API は別の環境を誤って読み込まないため、この値を拒否します。"
+          " Set runtime_root to the checkout or environment root containing the Fullseye "
+          "package; on Windows, run fullseye doctor / Fullseye パッケージを含む checkout "
+          "または環境 root を runtime_root に指定してください。Windows では fullseye doctor を実行してください。";
+}
+
 PythonInitResult initialize_python(const std::string &root, const std::string &home,
                                    bool allow_host) {
     std::lock_guard<std::mutex> lock(g_python_mutex);
@@ -421,6 +526,9 @@ PythonInitResult initialize_python(const std::string &root, const std::string &h
                 return {FS_E_INVALID_ARG,
                         "the CPython runtime is already configured for a different runtime_root or python_home"};
             }
+            if (!has_c_api_bridge_under_runtime_root(root)) {
+                return {FS_E_NO_PYTHON, missing_runtime_root_package_message(root)};
+            }
             py::gil_scoped_acquire acquire;
             add_runtime_paths(root);
             py::module_::import("fullseye.c_api_bridge");
@@ -429,6 +537,9 @@ PythonInitResult initialize_python(const std::string &root, const std::string &h
                 return {FS_E_INVALID_ARG,
                         "FS_INIT_ISOLATED cannot use an existing CPython; set FS_INIT_ALLOW_HOST_PYTHON_UNSAFE to opt in to the host interpreter"};
             }
+            if (!has_c_api_bridge_under_runtime_root(root)) {
+                return {FS_E_NO_PYTHON, missing_runtime_root_package_message(root)};
+            }
             py::gil_scoped_acquire acquire;
             add_runtime_paths(root);
             py::module_::import("fullseye.c_api_bridge");
@@ -436,6 +547,9 @@ PythonInitResult initialize_python(const std::string &root, const std::string &h
             g_python_root = root;
             g_python_home = home;
         } else {
+            if (!has_c_api_bridge_under_runtime_root(root)) {
+                return {FS_E_NO_PYTHON, missing_runtime_root_package_message(root)};
+            }
             PyConfig config;
             PyConfig_InitIsolatedConfig(&config);
             config.install_signal_handlers = 0;
@@ -467,6 +581,9 @@ PythonInitResult initialize_python(const std::string &root, const std::string &h
                 PyEval_SaveThread();
                 return {FS_E_NO_PYTHON, "unknown error while importing fullseye.c_api_bridge"};
             }
+#if defined(FULLSEYE_C_API_TESTING)
+            register_owned_python_finalizer_for_lsan_test();
+#endif
             // CPython remains alive until process exit; native callers acquire
             // the GIL for every later call. / 終了まで生かし、各呼出しで GIL を取る。
             PyEval_SaveThread();

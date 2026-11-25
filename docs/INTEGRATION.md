@@ -58,7 +58,7 @@ be reorganised. Everything a consumer needs is re-exported from `fullseye`.
 
 ## From an LLM (MCP server, 0.1.11 PoC)
 
-`py -3.11 -m fullseye.mcp` is a stdio Model Context Protocol server (protocol
+`fullseye-mcp` is a stdio Model Context Protocol server (protocol
 `2025-06-18`). It exposes **9 tools, not 1,942**: search the catalog, read an operator's
 knowledge-layer note (with its pre-rendered, gate-verified figures as `resource_link`s),
 load a sample or a sandboxed image into a handle, apply one operator or a pipeline, and
@@ -127,7 +127,7 @@ plain C ABI there are no per-language bindings to maintain: Python (`ctypes`,
 toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1, CPython 3.11
 as of 2026-09-15) rather than which ones exist.
 
-What this is **not**: it is not the Python library (3,841 operators in the machine-readable
+What this is **not**: it is not the Python library (3,849 operators in the machine-readable
 index) in another language. Its
 purpose is to be a *second implementation* of a small contract, so that a differential
 fuzzer and a header-including C caller can find specification bugs the Python tests cannot
@@ -141,7 +141,7 @@ language wins, and the losses were SIMD losses; see `CHANGELOG.md` 0.1.11.
 **Every operator of the 2-D registry (947 single-input operators; the 964 2-D operators of the
 index minus the 17 n-ary ones; those whose backend is installed) is reachable through
 `fs_apply`; the five contract operators also have a native route. Look at `route`.** The typed
-ledgers (2,877 operators whose inputs are point clouds, signals, tables …) and the n-ary
+ledgers (2,885 operators whose inputs are point clouds, signals, tables …) and the n-ary
 operators cannot be carried by one image / region handle and are refused with a status code and
 a reason — a later stage, not a silent gap. `fs_apply(op, inputs, n_in, params_json, route_pref, outputs,
 out_cap, n_out, info)` names the operator as a string and takes its parameters as a JSON
@@ -181,6 +181,23 @@ about 24 MB) unpacked next to the cdylib, `fs_python_init("<that dir>")` as the 
 separate step (a borrowed numpy view must not outlive the Rust buffer it wraps —
 `borrow_from_array` and friends make that easy to get wrong, so the copy stays until a test
 pins the lifetime).
+
+### C SDK sanitizer scope
+
+The ASan-only CTest build finalizes its owned CPython at executable exit, but CPython 3.11,
+NumPy, and SciPy can still retain interpreter-global allocations. The CI suppression therefore
+matches `libpython3` only in that sanitizer job; it is not enabled for normal builds. This can
+hide a missing `DECREF` when its allocation was made inside CPython, so
+`test_released_c_api_calls_do_not_keep_growing_cpython_allocations` repeats the same released
+C API call 1,000 times and checks `sys.getallocatedblocks` after every 100 calls. Native
+allocations that do not pass through libpython remain LSan failures.
+
+ASan 専用 CTest build は実行ファイル終了時に自前で起動した CPython を finalize するが、
+CPython 3.11、NumPy、SciPy は解釈系全体の確保を残すことがある。このため CI の抑制は
+sanitizer job に限って `libpython3` に当て、通常 build では有効にしない。CPython 内部で
+確保した `DECREF` 漏れを隠し得る弱点は、同じ C API 呼出しを解放つきで 1,000 回実行し、
+100 回ごとの `sys.getallocatedblocks` が増え続けないことを検査して補う。libpython を通ら
+ない native 確保は引き続き LSan の失敗になる。
 
 ## Honest boundary
 

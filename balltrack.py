@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 __all__ = [
     "ball_detect", "ball_track", "kalman_ca", "triangulate_dlt", "track_triangulate", "bounce_detect",
     "marker_direction", "spin_from_markers", "spin_from_marker_sequence", "reproject",
@@ -279,6 +281,14 @@ def reproject(points, pose, K) -> np.ndarray:
 def triangulate_dlt(uvs, poses, Ks) -> dict:
     """1 点の多視点三角測量(線形 DLT、SVD): ``uvs`` (C, 2)、``poses`` (C, 4, 4)、``Ks`` (C, 3, 3)。
     返り値 ``{"p" (3,), "reproj_rms" px, "n_views"}``。NaN の視点は飛ばす。2 視点未満なら ValueError。"""
+    try:
+        n_poses, n_Ks = len(poses), len(Ks)
+    except TypeError:
+        raise ValueError("poses and Ks must be sized camera sequences") from None
+    if len(uvs) != n_poses or n_poses != n_Ks:
+        _arrayguard.refuse_count_mismatch(
+            "triangulate_dlt", {"uvs": len(uvs), "poses": n_poses, "Ks": n_Ks},
+            advice=_arrayguard.CAMERA_COUNT_ADVICE)
     U = np.asarray(uvs, np.float64).reshape(-1, 2)
     rows = []
     Ms = []
@@ -310,9 +320,16 @@ def track_triangulate(tracks, poses, Ks, n_frames: int) -> dict:
 
     空の入力(``tracks`` が 0 件)は ValueError。
     """
-    if isinstance(tracks, (list, tuple)) and len(tracks) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+    try:
+        C, n_poses, n_Ks = len(tracks), len(poses), len(Ks)
+    except TypeError:
+        raise ValueError("track_triangulate: tracks, poses, and Ks must be sized sequences") from None
+    if C == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("track_triangulate: tracks is empty — pass at least one item")
-    C = len(tracks)
+    if C != n_poses or C != n_Ks:
+        _arrayguard.refuse_count_mismatch(
+            "track_triangulate", {"tracks": C, "poses": n_poses, "Ks": n_Ks},
+            advice=_arrayguard.CAMERA_COUNT_ADVICE)
     uv = np.full((n_frames, C, 2), np.nan)
     for c, tr in enumerate(tracks):
         uv[tr["frame"], c, 0] = tr["col"]

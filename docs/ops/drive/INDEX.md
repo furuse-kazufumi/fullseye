@@ -1,4 +1,4 @@
-# DRIVE operator help — 744 ops in 55 categories
+# DRIVE operator help — 750 ops in 57 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -96,6 +96,10 @@
 
 [add_ken](kendamaworld/add_ken.md) · [add_string](kendamaworld/add_string.md) · [camera_perceiver](kendamaworld/camera_perceiver.md) · [ken_mesh](kendamaworld/ken_mesh.md) · [ken_set_pose](kendamaworld/ken_set_pose.md) · [ken_truth](kendamaworld/ken_truth.md) · [kendama_clearance](kendamaworld/kendama_clearance.md) · [kendama_pose](kendamaworld/kendama_pose.md) · [kendama_rig](kendamaworld/kendama_rig.md) · [kendama_world](kendamaworld/kendama_world.md) · [string_mesh](kendamaworld/string_mesh.md) · [string_set](kendamaworld/string_set.md)
 
+### lane (5)
+
+[color_rule_mask](lane/color_rule_mask.md) · [lane_boundary_fit](lane/lane_boundary_fit.md) · [lane_center_path](lane/lane_center_path.md) · [plane_topview_color](lane/plane_topview_color.md) · [stop_line_detect](lane/stop_line_detect.md)
+
 ### lateral (21)
 
 [ackermann_steer_angles](lateral/ackermann_steer_angles.md) · [bicycle_model_step](lateral/bicycle_model_step.md) · [clothoid_design](lateral/clothoid_design.md) · [clothoid_points](lateral/clothoid_points.md) · [curvature_speed_plan](lateral/curvature_speed_plan.md) · [curve_speed_limit](lateral/curve_speed_limit.md) · [design_min_radius](lateral/design_min_radius.md) · [fresnel_integrals](lateral/fresnel_integrals.md) · [friction_circle_usage](lateral/friction_circle_usage.md) · [lateral_offset](lateral/lateral_offset.md) · [offtracking_circle](lateral/offtracking_circle.md) · [pure_pursuit_circle_offset](lateral/pure_pursuit_circle_offset.md) · [pure_pursuit_curvature](lateral/pure_pursuit_curvature.md) · [rear_axle_path](lateral/rear_axle_path.md) · [road_surface_heightmap](lateral/road_surface_heightmap.md) · [stanley_steer](lateral/stanley_steer.md) · [stanley_straight_decay](lateral/stanley_straight_decay.md) · [steady_cornering](lateral/steady_cornering.md) · [time_to_line_crossing](lateral/time_to_line_crossing.md) · [turn_maneuver_check](lateral/turn_maneuver_check.md) · [understeer_gradient](lateral/understeer_gradient.md)
@@ -139,6 +143,10 @@
 ### pegtactile (19)
 
 [contact_candidates](pegtactile/contact_candidates.md) · [contact_state_from_wrench](pegtactile/contact_state_from_wrench.md) · [equivariance_check](pegtactile/equivariance_check.md) · [friction_from_single_contact](pegtactile/friction_from_single_contact.md) · [pad_context](pegtactile/pad_context.md) · [pad_loads_to_peg_wrench](pegtactile/pad_loads_to_peg_wrench.md) · [pad_marker_displacement](pegtactile/pad_marker_displacement.md) · [pad_params](pegtactile/pad_params.md) · [pad_shear_asymmetry](pegtactile/pad_shear_asymmetry.md) · [pad_tactile_frame](pegtactile/pad_tactile_frame.md) · [pad_tactile_read](pegtactile/pad_tactile_read.md) · [peg_wrench_to_pad_loads](pegtactile/peg_wrench_to_pad_loads.md) · [stall_verdict](pegtactile/stall_verdict.md) · [symmetric_peg_shape](pegtactile/symmetric_peg_shape.md) · [symmetry_order_contour](pegtactile/symmetry_order_contour.md) · [two_point_forces](pegtactile/two_point_forces.md) · [whitney_wrench](pegtactile/whitney_wrench.md) · [wrist_deflection_from_rgbd](pegtactile/wrist_deflection_from_rgbd.md) · [wrist_stiffness_fit](pegtactile/wrist_stiffness_fit.md)
+
+### pharma (1)
+
+[particle_size_distribution](pharma/particle_size_distribution.md)
 
 ### polish (13)
 

@@ -27,7 +27,7 @@ def _run(*args):
 def test_help_prints_the_usage_and_exits_0_without_starting_the_server(flag):
     p = _run(flag)
     assert p.returncode == 0, p.stderr[-800:]
-    assert "usage: python -m fullseye.mcp" in p.stdout, p.stdout[:800]
+    assert "usage: fullseye-mcp" in p.stdout, p.stdout[:800]
     assert "--demo" in p.stdout and "--coverage" in p.stdout and "claude mcp add fullseye" in p.stdout
     assert "ready:" not in p.stderr, p.stderr[-800:]          # サーバの起動の行(stderr)が無い = 起動していない
     assert "jsonrpc" not in p.stdout
@@ -36,6 +36,6 @@ def test_help_prints_the_usage_and_exits_0_without_starting_the_server(flag):
 def test_an_unknown_argument_prints_the_usage_and_exits_non_zero():
     p = _run("--no-such-flag")
     assert p.returncode == 2, (p.returncode, p.stderr[-800:])
-    assert "usage: python -m fullseye.mcp" in p.stderr and "--no-such-flag" in p.stderr, p.stderr[-800:]
+    assert "usage: fullseye-mcp" in p.stderr and "--no-such-flag" in p.stderr, p.stderr[-800:]
     assert p.stdout == "", p.stdout[:400]
     assert "ready:" not in p.stderr

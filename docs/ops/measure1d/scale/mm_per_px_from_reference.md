@@ -5,7 +5,7 @@ category: scale
 in: measurement
 out: measurement
 gpu: なし
-examples: [example_inner_diameter_mm, example_scratch_width]
+examples: [example_inner_diameter_mm, example_scratch_width, poc_compendial_particle_microscopy]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -46,6 +46,7 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 - [example_inner_diameter_mm](../../../../examples/example_inner_diameter_mm.py) — `py -3.11 examples/example_inner_diameter_mm.py`
 - [example_scratch_width](../../../../examples/example_scratch_width.py) — `py -3.11 examples/example_scratch_width.py`
+- [poc_compendial_particle_microscopy](../../../../examples/poc_compendial_particle_microscopy.py) — `py -3.11 examples/poc_compendial_particle_microscopy.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 

@@ -6,6 +6,7 @@ import ctypes as C
 import gc
 import json
 import os
+import sys
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -557,6 +558,50 @@ def test_result_owns_data_after_input_is_freed(abi):
     gc.collect()
     assert _runs(lib, result) == [(0, 1, 2), (1, 0, 1)]
     assert lib.fs_result_release_n(result) == FS_OK
+
+
+def test_released_c_api_calls_do_not_keep_growing_cpython_allocations(abi):
+    """同じ C API 呼出しを 1,000 回解放しても CPython の確保数は増え続けない。
+
+    ``native/lsan.supp`` は CPython / NumPy / SciPy の終了時グローバル状態を
+    ``libpython3`` で抑制する。そのため、CPython 内部で確保される Fullseye の
+    DECREF 漏れを ASan だけに任せず、この反復試験で検出する。
+
+    ``sys.getallocatedblocks`` is CPython-specific. It observes the same C ABI
+    ``contract:threshold`` call after every result handle is released, so a
+    retained Python object cannot be hidden solely by the LSan suppression.
+    """
+    if not hasattr(sys, "getallocatedblocks"):
+        pytest.skip("CPython getallocatedblocks is unavailable")
+    lib, _runtime = abi
+    pixels = np.array([[0.0, 1.0], [1.0, 0.0]], dtype=np.float64)
+    params = '{"lo":0.5,"hi":1.0}'
+
+    # Warm caches before the baseline; then measure every 100 released calls.
+    for _ in range(20):
+        status, result = _call(abi, "contract:threshold", [_image(pixels)], params)
+        assert status == FS_OK and result.value
+        assert lib.fs_result_release_n(result) == FS_OK
+    gc.collect()
+    samples = [sys.getallocatedblocks()]
+    for iteration in range(1, 1001):
+        status, result = _call(abi, "contract:threshold", [_image(pixels)], params)
+        assert status == FS_OK and result.value
+        assert lib.fs_result_release_n(result) == FS_OK
+        if iteration % 100 == 0:
+            gc.collect()
+            samples.append(sys.getallocatedblocks())
+
+    # CPython lazily interns import and signature objects during the early
+    # calls. On the 2026-11-25 ASan reproduction, the final 200 calls moved by
+    # 34 blocks after that cache settled; allow 64. A retained object per call
+    # would add hundreds of blocks in the same tail window.
+    # CPython は初期呼出しで import / signature 用の object を遅延 intern する。
+    # 2026-11-25 の ASan 再現では、cache が落ち着いた後の最後の 200 回は 34 block
+    # だけ動いたので 64 まで許す。呼出しごとの保持なら同じ区間で数百 block 増える。
+    tail_drift = samples[-1] - samples[-3]
+    assert tail_drift <= 64, "1,000 released C calls grew allocated blocks: %s (tail drift=%d)" % (
+        samples, tail_drift)
 
 
 @pytest.mark.parametrize("case,expected", [

@@ -101,6 +101,7 @@ import pegsym
 import polish
 import scoop
 import grind
+import pharmaparticle
 import ozakimm
 import swarmflow
 import pxrd
@@ -111,6 +112,7 @@ import polygrav
 import braidpath
 import terrain
 import locomotion
+import laneops
 import racket
 import roadjp
 import rsssafety
@@ -170,7 +172,7 @@ _MOD = {"opsdrive": _sys.modules[__name__], "drivecourse": drivecourse, "drivewo
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "gsviewer": gsviewer, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip, "polygrav": polygrav, "braidpath": braidpath, "terrain": terrain, "locomotion": locomotion}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "gsviewer": gsviewer, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "pharmaparticle": pharmaparticle, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip, "polygrav": polygrav, "braidpath": braidpath, "terrain": terrain, "locomotion": locomotion, "laneops": laneops}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -1091,6 +1093,10 @@ _CATALOG = {
         ("particle_image_synth", "grind", ["scalar", "scalar", "scalar"], "table"),
         ("particle_image_d50", "grind", ["image2d", "scalar"], "table"),
     ],
+    # 薬学向け顕微鏡粒径: 粒子表 × 校正表から判断・3 基準・不確かさ・来歴を一体で返す。
+    "pharma": [
+        ("particle_size_distribution", "pharmaparticle", ["table", "table"], "table"),
+    ],
     # 点の順に依らない FP64 の縮約(2026-10-05、Ozaki スキーム): 行列は matrix、点群は points (N, 3)、R・t と探針の表は table。
     # 真値は Python の整数で計算した正確な積(門は tests/test_ozakimm.py と PoC poc_reproducible_icp)。
     "ozaki": [
@@ -1240,6 +1246,15 @@ _CATALOG = {
         ("foot_slip_metrics", "locomotion", ["any", "mask", "points"], "table"),
         ("footstep_plan", "locomotion", ["mask"], "table"),
         ("static_contact_force_lp", "locomotion", ["points", "normals", "vector", "scalar", "scalar"], "table"),
+    ],
+    # 銀座 v2 第1段の古典的な線知覚(2026-11-23): RGBの色規則 → RGB保持の地面俯瞰 →
+    # 境界の頑健な二次曲線 → 中央と走行帯 → 横断歩道を棄却する停止線。学習済み重み・地図・semanticは使わない。
+    "lane": [
+        ("color_rule_mask", "laneops", ["rgbimage", "table"], "table"),
+        ("plane_topview_color", "laneops", ["rgbimage", "matrix", "matrix", "signal"], "table"),
+        ("lane_boundary_fit", "laneops", ["keypoints"], "table"),
+        ("lane_center_path", "laneops", ["table", "table"], "table"),
+        ("stop_line_detect", "laneops", ["labels", "table"], "table"),
     ],
 }
 

@@ -5,7 +5,7 @@ category: split
 in: mask
 out: table
 gpu: なし
-examples: [poc_dense_bubble_count]
+examples: [poc_compendial_particle_microscopy, poc_dense_bubble_count]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -110,6 +110,7 @@ Geom.* 28 (2002) 511 —— パーシステンス / Vincent & Soille, *IEEE TPAM
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_compendial_particle_microscopy](../../../../examples/poc_compendial_particle_microscopy.py) — `py -3.11 examples/poc_compendial_particle_microscopy.py`
 - [poc_dense_bubble_count](../../../../examples/poc_dense_bubble_count.py) — `py -3.11 examples/poc_dense_bubble_count.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

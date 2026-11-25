@@ -6626,6 +6626,46 @@ def _b_gd_synth(pool, rng):
     return (float(rng.uniform(20, 150)), float(rng.uniform(0.2, 0.5))), {}
 
 
+def _b_pharma_psd(pool, rng):
+    """顕微鏡粒径の粒子表と、有効期間内の一行校正表 / valid microscopy tables."""
+    # The operator deliberately rejects a loose feature table: every row must
+    # correspond to one actual split label and count-interval record.  Build
+    # that complete, internally consistent provenance here so the fuzzer tests
+    # the op rather than its documented fail-closed boundary.
+    import pharmaparticle as psd  # noqa: PLC0415
+
+    nominal_diam = np.array([12.0, 20.0, 35.0]) * float(rng.uniform(0.9, 1.1))
+    pixel_area = np.maximum(1, np.rint(np.pi * (nominal_diam / 2.0) ** 2).astype(int))
+    labels = np.arange(1, nominal_diam.size + 1, dtype=int)
+    # Use the actual integer label areas, including the area-equivalent
+    # diameter, rather than a continuous-circle surrogate.
+    diam = np.sqrt(4.0 * pixel_area / np.pi)
+    upstream_records = {
+        "blob_split": np.repeat(labels, pixel_area).reshape(1, -1),
+        "blob_count_interval": {"components": {
+            "label": labels, "lo": np.ones(labels.size, dtype=int),
+            "hi": np.ones(labels.size, dtype=int),
+            "status": np.asarray(["determined"] * labels.size),
+        }},
+    }
+    digest = psd._upstream_provenance_digest(upstream_records)
+    particles = {"object_id": ["a", "b", "c"], "diameter_px": diam,
+                 "area_px2": pixel_area.astype(float), "diameter_unit": "px", "area_unit": "px2",
+                 "touches_border": [False, False, False], "split_status": ["isolated"] * labels.size,
+                 "component_id": ["component-%d" % label for label in labels],
+                 "split_evidence": ["blob_split + blob_count_interval:determined"] * labels.size,
+                 "upstream_provenance_hash": [digest] * labels.size,
+                 "upstream_component_label": labels, "upstream_split_label": labels,
+                 "count_interval_lo": np.ones(labels.size, dtype=int),
+                 "count_interval_hi": np.ones(labels.size, dtype=int),
+                 "count_determined": [True] * labels.size}
+    calibration = {"scale": {"value": 0.0005, "unit": "mm/px", "standard_uncertainty": 0.0000025},
+                   "calibrator_id": "FUZZ-SM-1", "calibrated_at": "2026-01-01",
+                   "valid_until": "2027-01-01"}
+    return (particles, calibration), {"measurement_date": "2026-06-01", "bootstrap_samples": 200,
+                                      "seed": 776, "upstream_records": upstream_records}
+
+
 def _b_gd_energy(pool, rng):
     x1 = float(rng.uniform(200, 800))
     return (x1, x1 * float(rng.uniform(0.05, 0.8))), {"law": ("kick", "bond", "rittinger")[int(rng.integers(0, 3))]}
@@ -8062,6 +8102,61 @@ def _b_walk_contact_lp(pool, rng):
     return (P, np.tile(n, (2, 1)), np.array([0.0, 0.0, 0.8]), 30.0, mu), {}
 
 
+def _fuzz_lane():
+    """車線5 opの形と単位が揃った小さい合成入力 / coherent synthetic lane inputs."""
+    rgb = np.full((64, 64, 3), 0.18)
+    rgb[:, 12:15] = 0.9
+    rgb[:, 49:52] = (0.9, 0.75, 0.05)
+    K = np.array([[32.0, 0.0, 31.5], [0.0, 32.0, 31.5], [0.0, 0.0, 1.0]])
+    R = np.diag([1.0, -1.0, -1.0])
+    C = np.array([0.0, 0.0, 8.0])
+    y = np.linspace(0.0, 12.0, 41)
+    left = {"valid": True, "coefficients": np.array([-1.75, 0.01, 0.0]),
+            "observed_y": np.array([0.0, 12.0]), "confidence": 0.9}
+    right = {"valid": True, "coefficients": np.array([1.75, 0.01, 0.0]),
+             "observed_y": np.array([0.0, 12.0]), "confidence": 0.9}
+    labels = np.zeros((121, 61), np.int16)
+    labels[58:63, 6:55] = 1
+    H = np.array([[0.06, 0.0, -1.8], [0.0, -0.1, 12.0], [0.0, 0.0, 1.0]])
+    lane = {"path": np.c_[0.01 * y, y], "lane_width": 3.5, "pixel_to_world": H}
+    return {"rgb": rgb, "K": K, "R": R, "t": -R @ C, "y": y,
+            "left": left, "right": right, "labels": labels, "lane": lane}
+
+
+def _b_lane_color(pool, rng):
+    f = _fuzz_lane()
+    return (f["rgb"], {}), {}
+
+
+def _b_lane_topview(pool, rng):
+    f = _fuzz_lane()
+    return (f["rgb"], f["K"], f["R"], f["t"]), {"extent": 8.0, "res": 0.125}
+
+
+def _b_lane_boundary(pool, rng):
+    f = _fuzz_lane()
+    y = f["y"]
+    # Keep borderline off-line points: changing initial_outlier_weight must exercise
+    # the robust fit instead of testing the knob on an exactly perfect line.
+    local_rng = np.random.default_rng(7)
+    good = np.c_[-1.75 + 0.01 * y + local_rng.normal(0.0, 0.03, len(y)), y]
+    for _ in range(5):
+        outlier_y = local_rng.uniform(0.0, 12.0, 20)
+        outlier_x = (-1.75 + 0.01 * outlier_y
+                     + local_rng.choice([-1.0, 1.0], 20) * local_rng.uniform(0.08, 0.25, 20))
+    return (np.vstack([good, np.c_[outlier_x, outlier_y]]),), {"side": "left", "seed": 0}
+
+
+def _b_lane_center(pool, rng):
+    f = _fuzz_lane()
+    return (f["left"], f["right"]), {}
+
+
+def _b_lane_stop(pool, rng):
+    f = _fuzz_lane()
+    return (f["labels"], f["lane"]), {}
+
+
 OP_ARG_BUILDERS = {
     **_MV_BUILDERS,
     "archive_probe": lambda pool, rng: ((_archive_probe_payload(),), {}),
@@ -8566,6 +8661,7 @@ OP_ARG_BUILDERS = {
     "breakage_first_order_fit": _b_gd_first, "replicate_compare": _b_gd_rep, "ae_read_csv": _b_gd_aeread,
     "ae_band_power": _b_gd_band, "ae_size_correspondence": _b_gd_corr, "particle_image_synth": _b_gd_imsynth,
     "particle_image_d50": _b_gd_imd50,
+    "particle_size_distribution": _b_pharma_psd,
     "matmul_ozaki": _b_oz_mm_fixed, "matmul_reproducible": _b_oz_mm, "ozaki_error_bound": _b_oz_bound,
     "cross_covariance_reproducible": _b_oz_pts, "kabsch_reproducible": _b_oz_pts, "fp64_emulation_probe": _b_noargs,
     "sph_kernel": _b_sw_kernel, "sph_density_pressure": _b_sw_density, "swarm_simulate": _b_sw_sim,
@@ -8604,6 +8700,10 @@ OP_ARG_BUILDERS = {
     "convex_hull_gap": _b_hull_gap,
     "road_surface_heightmap": _b_road_surface,
     "heightmap_depth_camera": _b_heightmap_camera,
+    # 銀座 v2 第1段の車線・停止線(2026-11-23)
+    "color_rule_mask": _b_lane_color, "plane_topview_color": _b_lane_topview,
+    "lane_boundary_fit": _b_lane_boundary, "lane_center_path": _b_lane_center,
+    "stop_line_detect": _b_lane_stop,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

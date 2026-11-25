@@ -1,8 +1,8 @@
 {
- "n_ops": 3841,
+ "n_ops": 3849,
  "tiers": {
   "color": 12,
-  "ledger": 2877,
+  "ledger": 2885,
   "nary": 17,
   "registry": 935
  },
@@ -4941,6 +4941,21 @@
    "dim": "gfx2d",
    "in_sorts": [],
    "gpu_tier": "none"
+  },
+  {
+   "name": "color_rule_mask",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "lane",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgbimage",
+    "table"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "color_transfer",
@@ -17451,6 +17466,35 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "lane_boundary_fit",
+   "halcon": "",
+   "in_sort": "keypoints",
+   "out_sort": "table",
+   "category": "lane",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "keypoints"
+   ],
+   "gpu_tier": "partial"
+  },
+  {
+   "name": "lane_center_path",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lane",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "lane_change_follower_decel",
    "halcon": "",
    "in_sort": "any",
@@ -24076,6 +24120,21 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "particle_size_distribution",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pharma",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "particle_size_dx",
    "halcon": "",
    "in_sort": "table",
@@ -25758,6 +25817,23 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "plane_topview_color",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "lane",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgbimage",
+    "matrix",
+    "matrix",
+    "signal"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "plant_color_index",
    "halcon": "",
    "in_sort": "rgbimage",
@@ -26580,6 +26656,22 @@
    "gpu_tier": "partial"
   },
   {
+   "name": "pose_nms_symmetry",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "match_pose",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "table",
+    "points",
+    "table"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "pose_normalize",
    "halcon": "",
    "in_sort": null,
@@ -26706,6 +26798,21 @@
     "text",
     "scalar",
     "scalar"
+   ],
+   "gpu_tier": "none"
+  },
+  {
+   "name": "ppf_pose_hypotheses",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "match_pose",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "table",
+    "points"
    ],
    "gpu_tier": "none"
   },
@@ -34559,6 +34666,21 @@
     "jones"
    ],
    "gpu_tier": "suitable"
+  },
+  {
+   "name": "stop_line_detect",
+   "halcon": "",
+   "in_sort": "labels",
+   "out_sort": "table",
+   "category": "lane",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "labels",
+    "table"
+   ],
+   "gpu_tier": "partial"
   },
   {
    "name": "stop_line_plan",

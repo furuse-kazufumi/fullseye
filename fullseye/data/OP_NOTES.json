@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3841,
- "n_notes": 3847,
+ "n_ops": 3849,
+ "n_notes": 3855,
  "notes": {
   "vol_dilate": [
    {
@@ -11606,6 +11606,26 @@
     "path": "docs/ops/3d/match_pose/moment_axes.md"
    }
   ],
+  "pose_nms_symmetry": [
+   {
+    "op": "pose_nms_symmetry",
+    "dim": "3d",
+    "category": "match_pose",
+    "in": "table × points × table",
+    "out": "table",
+    "path": "docs/ops/3d/match_pose/pose_nms_symmetry.md"
+   }
+  ],
+  "ppf_pose_hypotheses": [
+   {
+    "op": "ppf_pose_hypotheses",
+    "dim": "3d",
+    "category": "match_pose",
+    "in": "table × points",
+    "out": "table",
+    "path": "docs/ops/3d/match_pose/ppf_pose_hypotheses.md"
+   }
+  ],
   "distance_ridge": [
    {
     "op": "distance_ridge",
@@ -19441,6 +19461,56 @@
     "path": "docs/ops/drive/kendamaworld/string_set.md"
    }
   ],
+  "color_rule_mask": [
+   {
+    "op": "color_rule_mask",
+    "dim": "drive",
+    "category": "lane",
+    "in": "rgbimage × table",
+    "out": "table",
+    "path": "docs/ops/drive/lane/color_rule_mask.md"
+   }
+  ],
+  "lane_boundary_fit": [
+   {
+    "op": "lane_boundary_fit",
+    "dim": "drive",
+    "category": "lane",
+    "in": "keypoints",
+    "out": "table",
+    "path": "docs/ops/drive/lane/lane_boundary_fit.md"
+   }
+  ],
+  "lane_center_path": [
+   {
+    "op": "lane_center_path",
+    "dim": "drive",
+    "category": "lane",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/lane/lane_center_path.md"
+   }
+  ],
+  "plane_topview_color": [
+   {
+    "op": "plane_topview_color",
+    "dim": "drive",
+    "category": "lane",
+    "in": "rgbimage × matrix × matrix × signal",
+    "out": "table",
+    "path": "docs/ops/drive/lane/plane_topview_color.md"
+   }
+  ],
+  "stop_line_detect": [
+   {
+    "op": "stop_line_detect",
+    "dim": "drive",
+    "category": "lane",
+    "in": "labels × table",
+    "out": "table",
+    "path": "docs/ops/drive/lane/stop_line_detect.md"
+   }
+  ],
   "ackermann_steer_angles": [
    {
     "op": "ackermann_steer_angles",
@@ -20857,6 +20927,16 @@
     "in": "signal × signal",
     "out": "table",
     "path": "docs/ops/drive/pegtactile/wrist_stiffness_fit.md"
+   }
+  ],
+  "particle_size_distribution": [
+   {
+    "op": "particle_size_distribution",
+    "dim": "drive",
+    "category": "pharma",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/pharma/particle_size_distribution.md"
    }
   ],
   "band_width_profile": [
