@@ -6626,6 +6626,46 @@ def _b_gd_synth(pool, rng):
     return (float(rng.uniform(20, 150)), float(rng.uniform(0.2, 0.5))), {}
 
 
+def _b_pharma_psd(pool, rng):
+    """顕微鏡粒径の粒子表と、有効期間内の一行校正表 / valid microscopy tables."""
+    # The operator deliberately rejects a loose feature table: every row must
+    # correspond to one actual split label and count-interval record.  Build
+    # that complete, internally consistent provenance here so the fuzzer tests
+    # the op rather than its documented fail-closed boundary.
+    import pharmaparticle as psd  # noqa: PLC0415
+
+    nominal_diam = np.array([12.0, 20.0, 35.0]) * float(rng.uniform(0.9, 1.1))
+    pixel_area = np.maximum(1, np.rint(np.pi * (nominal_diam / 2.0) ** 2).astype(int))
+    labels = np.arange(1, nominal_diam.size + 1, dtype=int)
+    # Use the actual integer label areas, including the area-equivalent
+    # diameter, rather than a continuous-circle surrogate.
+    diam = np.sqrt(4.0 * pixel_area / np.pi)
+    upstream_records = {
+        "blob_split": np.repeat(labels, pixel_area).reshape(1, -1),
+        "blob_count_interval": {"components": {
+            "label": labels, "lo": np.ones(labels.size, dtype=int),
+            "hi": np.ones(labels.size, dtype=int),
+            "status": np.asarray(["determined"] * labels.size),
+        }},
+    }
+    digest = psd._upstream_provenance_digest(upstream_records)
+    particles = {"object_id": ["a", "b", "c"], "diameter_px": diam,
+                 "area_px2": pixel_area.astype(float), "diameter_unit": "px", "area_unit": "px2",
+                 "touches_border": [False, False, False], "split_status": ["isolated"] * labels.size,
+                 "component_id": ["component-%d" % label for label in labels],
+                 "split_evidence": ["blob_split + blob_count_interval:determined"] * labels.size,
+                 "upstream_provenance_hash": [digest] * labels.size,
+                 "upstream_component_label": labels, "upstream_split_label": labels,
+                 "count_interval_lo": np.ones(labels.size, dtype=int),
+                 "count_interval_hi": np.ones(labels.size, dtype=int),
+                 "count_determined": [True] * labels.size}
+    calibration = {"scale": {"value": 0.0005, "unit": "mm/px", "standard_uncertainty": 0.0000025},
+                   "calibrator_id": "FUZZ-SM-1", "calibrated_at": "2026-01-01",
+                   "valid_until": "2027-01-01"}
+    return (particles, calibration), {"measurement_date": "2026-06-01", "bootstrap_samples": 200,
+                                      "seed": 776, "upstream_records": upstream_records}
+
+
 def _b_gd_energy(pool, rng):
     x1 = float(rng.uniform(200, 800))
     return (x1, x1 * float(rng.uniform(0.05, 0.8))), {"law": ("kick", "bond", "rittinger")[int(rng.integers(0, 3))]}
@@ -8621,6 +8661,7 @@ OP_ARG_BUILDERS = {
     "breakage_first_order_fit": _b_gd_first, "replicate_compare": _b_gd_rep, "ae_read_csv": _b_gd_aeread,
     "ae_band_power": _b_gd_band, "ae_size_correspondence": _b_gd_corr, "particle_image_synth": _b_gd_imsynth,
     "particle_image_d50": _b_gd_imd50,
+    "particle_size_distribution": _b_pharma_psd,
     "matmul_ozaki": _b_oz_mm_fixed, "matmul_reproducible": _b_oz_mm, "ozaki_error_bound": _b_oz_bound,
     "cross_covariance_reproducible": _b_oz_pts, "kabsch_reproducible": _b_oz_pts, "fp64_emulation_probe": _b_noargs,
     "sph_kernel": _b_sw_kernel, "sph_density_pressure": _b_sw_density, "swarm_simulate": _b_sw_sim,

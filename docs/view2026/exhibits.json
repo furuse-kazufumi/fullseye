@@ -5597,6 +5597,23 @@
    }
   },
   {
+   "id": "poc_compendial_particle_microscopy",
+   "group": "wing_metrology",
+   "media": "01_compendial_particle_microscopy_main.png",
+   "motion": false,
+   "thumb_src": "01_compendial_particle_microscopy_main_720.jpg",
+   "label": {
+    "ja": "顕微鏡の粒子径分布",
+    "en": "Microscopy particle sizing",
+    "zh": "显微镜粒径分布",
+    "tw": "顯微鏡粒徑分布",
+    "ko": "현미경 입도 분포",
+    "de": "Partikelgrößen aus der Mikroskopie",
+    "hi": "Microscopy particle sizing",
+    "fr": "Granulométrie au microscope"
+   }
+  },
+  {
    "id": "poc_photoelasticity",
    "group": "wing_metrology",
    "media": "03_load_and_isoclinics.mp4",
