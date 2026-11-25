@@ -171,6 +171,10 @@ Two more doors, both new since 0.1.11 and both honest about their limits:
 
 ## Install
 
+> **This README follows `master`; the PyPI release can lag behind it.** If a command described here
+> is missing after `pip install fullseye` (check `fullseye --version` against the [release notes](https://github.com/furuse-kazufumi/fullseye/blob/master/CHANGELOG.md)),
+> install the checkout instead: `git clone https://github.com/furuse-kazufumi/fullseye && cd fullseye && pip install -e .`
+
 ```bash
 pip install fullseye         # portable Studio, image/video/scientific I/O, 3-D interchange, reports and device adapters
 fullseye setup --yes         # try every remaining backend independently + RAG; CUDA group only when CUDA is detected
