@@ -158,6 +158,15 @@
       "requested": false
     },
     {
+      "name": "cmake",
+      "display_name": "cmake",
+      "version": "4.4.5",
+      "license_metadata": "Apache 2.0",
+      "class": "permissive",
+      "license_files": [],
+      "requested": false
+    },
+    {
       "name": "colorama",
       "display_name": "colorama",
       "version": "0.4.6",
@@ -932,6 +941,17 @@
       "requested": false
     },
     {
+      "name": "pybind11",
+      "display_name": "pybind11",
+      "version": "2.13.6",
+      "license_metadata": "BSD",
+      "class": "permissive",
+      "license_files": [
+        "LICENSE"
+      ],
+      "requested": false
+    },
+    {
       "name": "pycparser",
       "display_name": "pycparser",
       "version": "3.12",
@@ -1588,7 +1608,7 @@
     {
       "name": "zxing-cpp",
       "display_name": "zxing-cpp",
-      "version": "3.1.1",
+      "version": "3.2.0",
       "license_metadata": "Apache-2.0",
       "class": "permissive",
       "license_files": [],
