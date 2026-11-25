@@ -321,7 +321,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   param_specs.half_then_thirds_index 1(端の扱い・構造要素の形のつまみの対応。Studio と MCP の内側の部品)・
 #   studio_search.staples_for 1(検索の「定番」の群。Studio の内側)・studio 3(lang_from_locale ほか、GUI の内側)・
 #   backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。
-_HIDDEN_FUNCTIONS_TODAY = 1086
+# 2026-11-25 PR #355: 1086 + 2 = 1088。opspharma.get / opspharma.call は、公開済みの
+#   vial_spin_stop_sequence / track_moving_particles を引く・宣言 out 型で呼ぶ型付き台帳の入口。
+#   演算子本体は fullseye.ledger.<op> にも到達し、直接の台帳 API は docs の get 呼び出しで案内する。実測 1088。
+_HIDDEN_FUNCTIONS_TODAY = 1088
 
 
 def _hidden_total():

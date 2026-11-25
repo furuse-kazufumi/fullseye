@@ -49,6 +49,7 @@ def test_condition_a90_leaves_complete_separation_unestimated():
 
     result = POC.fit_condition_a90(rows)
 
+    assert len(result) == len(POC.ILLUMINATIONS) * len(POC.CONTRASTS)
     assert all(entry["fit"] is None for entry in result.values())
     assert all(POC._condition_a90_text(entry) == "a90: 求まらない（点が足りない）"
                for entry in result.values())

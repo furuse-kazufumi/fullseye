@@ -28,13 +28,19 @@ USP <1790> の文脈でしばしば引用される「100 µm 約 40 %、150 µm 
 Run:
     PYTHONPATH=. py -3.11 examples/poc_vial_particle_pod.py
     FULLSEYE_POC_BUDGET=reduced PYTHONPATH=. py -3.11 examples/poc_vial_particle_pod.py
-    FULLSEYE_FIGURE_DIR=C:/tmp/vial_figs PYTHONPATH=. py -3.11 examples/poc_vial_particle_pod.py
+    FULLSEYE_FIGURE_DIR=<output-directory> PYTHONPATH=. py -3.11 examples/poc_vial_particle_pod.py
+
+``FULLSEYE_FIGURE_DIR`` selects the figure output directory.  When it is not
+set, a ``fullseye/vial_particle_pod`` directory beneath the system temporary
+directory is used. ``FULLSEYE_FIGURE_DIR`` で図の出力先を指定でき、未指定時は
+システム一時ディレクトリの ``fullseye/vial_particle_pod`` を使う。
 """
 from __future__ import annotations
 
 import hashlib
 import os
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -42,6 +48,12 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+# Keep the PoC's default artefacts out of a checkout; callers can override it
+# with FULLSEYE_FIGURE_DIR before launching the script.  既定の成果物は作業木へ
+# 書かず、起動前の FULLSEYE_FIGURE_DIR で出力先を差し替えられる。
+if __name__ == "__main__":
+    os.environ.setdefault("FULLSEYE_FIGURE_DIR",
+                          str(Path(tempfile.gettempdir()) / "fullseye" / "vial_particle_pod"))
 import examplefig as figs  # noqa: E402
 from pod import pod_hitmiss_fit, proportion_interval  # noqa: E402
 from vialops import track_moving_particles, vial_spin_stop_sequence  # noqa: E402
