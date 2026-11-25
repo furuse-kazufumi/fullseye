@@ -139,8 +139,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 496 |
-| `tests/test_poc_scripts_run.py` が走らせる | 316 |
+| 2-D 台帳の例 | 497 |
+| `tests/test_poc_scripts_run.py` が走らせる | 317 |
 | `tests/test_example_scripts_run.py` が走らせる | 180 |
 | ディスク上の例のスクリプト(`examples/*.py`) | 505 |
 | うち 2-D 台帳の外(`examples2d.EXCLUDED`) | 8 |

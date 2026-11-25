@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3848,
- "n_notes": 3854,
+ "n_ops": 3847,
+ "n_notes": 3853,
  "notes": {
   "vol_dilate": [
    {
@@ -20909,6 +20909,16 @@
     "path": "docs/ops/drive/pegtactile/wrist_stiffness_fit.md"
    }
   ],
+  "particle_size_distribution": [
+   {
+    "op": "particle_size_distribution",
+    "dim": "drive",
+    "category": "pharma",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/pharma/particle_size_distribution.md"
+   }
+  ],
   "band_width_profile": [
    {
     "op": "band_width_profile",
@@ -34002,25 +34012,6 @@
     "in": "image2d",
     "out": "image2d",
     "path": "docs/ops/optics/wave/pupil_psf.md"
-   }
-  ],
-  "vial_spin_stop_sequence": [
-   {
-    "op": "vial_spin_stop_sequence",
-    "dim": "pharma",
-    "category": "synth",
-    "out": "video",
-    "path": "docs/ops/pharma/synth/vial_spin_stop_sequence.md"
-   }
-  ],
-  "track_moving_particles": [
-   {
-    "op": "track_moving_particles",
-    "dim": "pharma",
-    "category": "track",
-    "in": "video",
-    "out": "table",
-    "path": "docs/ops/pharma/track/track_moving_particles.md"
    }
   ],
   "photon_sample": [

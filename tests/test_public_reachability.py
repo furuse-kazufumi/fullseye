@@ -58,6 +58,11 @@ _INTERNAL = {
     # 2026-11-03 device="auto" の判断(損益分岐の表・空き VRAM・段ごとの経路)。利用者の入口は
     # fullseye.explain_device / resolve_device で、この部品は api の内側からだけ呼ぶ。
     "device_policy": 6,
+    # 2026-11-25: numpy_compat.trapezoid は NumPy 1/2 の積分関数名の違いを吸収する
+    # 配布済みの内部互換部品。公開 API ではなく、実測でも 1 本の不可視関数として残る。
+    # numpy_compat.trapezoid is a shipped internal compatibility shim for the
+    # NumPy 1/2 integration-name change; it is not a public API and remains one hidden function.
+    "numpy_compat": 1,
     # 2026-11-25 arrayguard: 大きさの上限と数の食い違いを、複写の前に日英の文で拒否する共通の部品
     # (refuse_cap_exceeded / refuse_count_mismatch / precheck_shape_and_elements)。op の内側からだけ呼ぶ。
     "arrayguard": 3,
@@ -324,9 +329,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   param_specs.half_then_thirds_index 1(端の扱い・構造要素の形のつまみの対応。Studio と MCP の内側の部品)・
 #   studio_search.staples_for 1(検索の「定番」の群。Studio の内側)・studio 3(lang_from_locale ほか、GUI の内側)・
 #   backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。
-# 2026-11-25 PR #355: opspharma.get / call / info(公開済み op を引く型付き台帳の入口。他の ops* と同じ 3 点)で +3。
-# 2026-11-25 arrayguard の 3 関数(op の内側の拒否の部品で op ではない)で +3。1086 + 3 + 3 = 1092。
-_HIDDEN_FUNCTIONS_TODAY = 1092
+# 2026-11-25 PR #355: opspharma.get / call / info(他の ops* と同じ台帳の入口 3 点)で +3。
+# 2026-11-25 numpy_compat.trapezoid(+1、上の _INTERNAL)と arrayguard の 3 関数(+3)。
+# 1086 + 3 + 1 + 3 = 1093。
+_HIDDEN_FUNCTIONS_TODAY = 1093
 
 
 def _hidden_total():
