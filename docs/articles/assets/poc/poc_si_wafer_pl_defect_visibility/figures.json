@@ -27,6 +27,7 @@
    360,
    846,
    3
-  ]
+  ],
+  "source": "Source: Sutinen et al., Dataset for Non-disruptive HF pretreatment to enhance defect visibility in silicon wafer manufacturing via photoluminescence imaging. URL: https://doi.org/10.5281/zenodo.19603335. Publication: Sutinen et al. (2026), related article https://doi.org/10.1088/1361-6641/aea702. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The Figure 6a trace is background-normalized and plotted by Fullseye."
  }
 ]

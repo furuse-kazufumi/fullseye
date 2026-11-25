@@ -117,7 +117,8 @@
    942,
    1050,
    3
-  ]
+  ],
+  "source": "Source: Lawin, Forssén, and Ovrén RGB-D / multi-frequency ToF raw-packet dataset. URL: https://doi.org/10.5281/zenodo.19608956. Publication: Lawin, Forssén, and Ovrén (2016), Efficient Multi-frequency Phase Unwrapping using Kernel Density Estimation, ECCV 2016. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The nine phase packets are decoded and visualized with Fullseye; source packets are not shipped."
  },
  {
   "file": "13_public_raw_margin.png",
@@ -127,7 +128,8 @@
    360,
    560,
    3
-  ]
+  ],
+  "source": "Source: Lawin, Forssén, and Ovrén RGB-D / multi-frequency ToF raw-packet dataset. URL: https://doi.org/10.5281/zenodo.19608956. Publication: Lawin, Forssén, and Ovrén (2016), Efficient Multi-frequency Phase Unwrapping using Kernel Density Estimation, ECCV 2016. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The nine phase packets are decoded and visualized with Fullseye; source packets are not shipped."
  },
  {
   "file": "14_flying_pixels_orbit.gif",

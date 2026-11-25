@@ -91,7 +91,8 @@
    3
   ],
   "csv": "09_real_by_shadow.csv",
-  "tsv": "09_real_by_shadow.tsv"
+  "tsv": "09_real_by_shadow.tsv",
+  "source": "Source: SIPV-EL: electroluminescence images and I-V curves of photovoltaic cells. URL: https://doi.org/10.5281/zenodo.14439369. Publication: Mateo-Romero, Hernández-Callejo, Alonso-Gómez, and Morales, SIPV-EL dataset. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Masks, dark-region measurements, labels, and Fullseye overlays are added as stated in the captions."
  },
  {
   "file": "10_real_el_overlay.png",
@@ -101,7 +102,8 @@
    919,
    1219,
    3
-  ]
+  ],
+  "source": "Source: SIPV-EL: electroluminescence images and I-V curves of photovoltaic cells. URL: https://doi.org/10.5281/zenodo.14439369. Publication: Mateo-Romero, Hernández-Callejo, Alonso-Gómez, and Morales, SIPV-EL dataset. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Masks, dark-region measurements, labels, and Fullseye overlays are added as stated in the captions."
  },
  {
   "file": "11_real_input_masks.png",
@@ -151,6 +153,7 @@
    720,
    720,
    3
-  ]
+  ],
+  "source": "Source: SIPV-EL: electroluminescence images and I-V curves of photovoltaic cells. URL: https://doi.org/10.5281/zenodo.14439369. Publication: Mateo-Romero, Hernández-Callejo, Alonso-Gómez, and Morales, SIPV-EL dataset. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Masks, dark-region measurements, labels, and Fullseye overlays are added as stated in the captions."
  }
 ]

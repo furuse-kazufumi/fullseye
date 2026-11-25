@@ -387,6 +387,10 @@ _OP_BRIDGE_SKIP = {
     # 2026-11-06: terrain.elevation_map は points → depth で自動的に橋が架かるが、返りはメートルの高さで、点の落ちない
     #   セルは nan(観測していない)。0..1 の画像に詰め直すと単位と「観測していない」が消え、穴が平らな地面に化ける。台帳から使う。
     "elevation_map",
+    # 2026-11-23: 車線知覚5本は複数の配列を束ねたtableを返す/受ける認識の鎖。
+    # 汎用の2-D橋にはカメラ較正、左右の意味、画素↔世界対応が無い。台帳とrecipeから使う。
+    "color_rule_mask", "plane_topview_color", "lane_boundary_fit",
+    "lane_center_path", "stop_line_detect",
 }
 
 

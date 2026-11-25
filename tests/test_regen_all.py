@@ -92,7 +92,7 @@ def test_classified_entries_still_exist():
 _OLD_ORDER = [
     # 2026-11-03 に足した段(tools/impl_differential.py)は旧順序の探針の外 —— 先頭に置いて逆順を作らない
     # GPU の台帳 2 段(2026-11-03 に足した)は今の鎖と同じ位置。旧順序の探針は op ノートの逆順を見るためのもの
-    "gen_auto_specs_data.py", "tools/gen_sbom.py", "tools/impl_differential.py", "tools/gen_device_rules.py", "tools/gen_accel_use.py",
+    "gen_auto_specs_data.py", "tools/gen_sbom.py", "tools/sync_figure_provenance.py", "tools/license_audit.py", "tools/impl_differential.py", "tools/gen_device_rules.py", "tools/gen_accel_use.py",
     "tools/opdocs.py", "tools/gen_op_catalog.py",
     "tools/gen_capabilities_index.py", "tools/gen_hardening_index.py", "tools/audit_fallbacks.py",
     "tools/gen_maturity.py",
@@ -157,6 +157,13 @@ def test_the_order_gate_catches_the_old_order():
         ("tools/gen_recipe_index.py", "tools/gen_op_facets.py"),
         # 2026-11-13: plan が入力の中身を読まない op(MCP_INPUT_INDEPENDENT)を経路から外す実測の読み。
         ("tools/gen_rag_benchmark_report.py", "tools/gen_mcp_input_independent.py"),
+        # pyproject.toml はこれらの後段でも実測で読む。旧順では gen_doc_counts が後ろで
+        # 件数の記述を更新するので、古い入力を読む逆順として必ず検出する。
+        ("tools/gen_mcp_input_independent.py", "tools/gen_doc_counts.py"),
+        ("tools/gen_recipe_index.py", "tools/gen_doc_counts.py"),
+        ("tools/gen_recipe_retrieval_report.py", "tools/gen_doc_counts.py"),
+        ("tools/measure_mcp_context.py", "tools/gen_doc_counts.py"),
+        ("tools/gen_rag_benchmark_report.py", "tools/gen_doc_counts.py"),
         # ViEW の Fullseye 使用門は配布用 OP_INDEX を読むので、gen_mcp_data より前では古い索引を見る。
         ("tools/gen_view2026_pages.py", "tools/gen_mcp_data.py"),
     } | {("tools/gen_docs_index_ops.py", w) for w in (
