@@ -81,8 +81,17 @@ the sharpest and the noisiest; ``"shepp-logan"``, ``"cosine"``, ``"hann"`` and
 :param size: output side; ``None`` -> the inscribed square, the largest odd side
     under ``n_detectors / sqrt(2)``. The sinogram does not carry the source image's
     size, so this is **not** the size of the image given to :func:`radon_transform`:
-    a 32 x 32 image gives 47 detectors and a 33 x 33 default. Pass ``size=`` (the
-    source side) to get the source grid back; ``docs/KNOWN_ISSUES.md`` §53.
+    a 32 x 32 image gives 47 detectors and a 33 x 33 default. To reconstruct on
+    the original grid, pass the original side explicitly, for example::
+
+        image = np.zeros((32, 32), np.float64)
+        sinogram = radon_transform(image)
+        reconstruction = filtered_backprojection(sinogram, size=image.shape[0])
+        assert reconstruction.shape == image.shape
+
+    No warning can identify this mismatch when ``size`` is omitted: a sinogram
+    carries detector count but not the source side, and 32 and 33 are both valid
+    source grids for 47 detectors. ``docs/KNOWN_ISSUES.md`` §53.
 :param filter_name: one of :data:`FILTERS`.
 :param cutoff: fraction of Nyquist to keep, ``(0, 1]``.
 :param span_deg: angular range for the ``d(theta)`` weight; ``None`` -> the
@@ -111,11 +120,11 @@ the sharpest and the noisiest; ``"shepp-logan"``, ``"cosine"``, ``"hann"`` and
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[radon_transform](../forward/radon_transform.md)
+[radon_transform](../forward/radon_transform.md) · [filtered_backprojection_like](filtered_backprojection_like.md)
 
 ## 同カテゴリ(`reconstruct`)
 
-[backproject_sinogram](backproject_sinogram.md) · [sart_reconstruct](sart_reconstruct.md)
+[backproject_sinogram](backproject_sinogram.md) · [filtered_backprojection_like](filtered_backprojection_like.md) · [sart_reconstruct](sart_reconstruct.md)
 
 ---
 *Provenance: tomography.py — TOMOGRAPHY operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

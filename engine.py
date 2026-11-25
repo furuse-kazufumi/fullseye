@@ -27,11 +27,43 @@ from typing import Iterable
 import numpy as np
 
 import api
+from fssystem import MAX_PROGRAM_STAGES, pipeline_stage_limit_message
 from json_safety import _loads_limited
 from studio_result import StageCache, assess_validity
 
 __all__ = ["FullseyeEngine", "diagnose_stages", "stage_name", "StageCache", "pipeline_states",
-           "check_pipeline_header", "load_pipeline", "load_pipeline_text", "pipeline_interface"]
+           "check_pipeline_header", "load_pipeline", "load_pipeline_text", "pipeline_interface",
+           "MAX_PROGRAM_STAGES"]
+
+
+def _comma_ops(text):
+    """Yield non-empty comma-separated op names without making a split list.
+
+    The engine needs this small scanner before it can decide whether a text
+    pipeline is inside :data:`MAX_PROGRAM_STAGES`; ``str.split`` would allocate
+    one string per untrusted stage before that decision.
+    """
+    text, start = str(text), 0
+    while True:
+        end = text.find(",", start)
+        part = text[start:] if end < 0 else text[start:end]
+        part = part.strip()
+        if part:
+            yield part
+        if end < 0:
+            return
+        start = end + 1
+
+
+def _checked_op_names(ops):
+    """Return at most the shared cap of op names, or reject before making a list."""
+    source = ((str(item).strip() for item in ops) if isinstance(ops, (list, tuple))
+              else _comma_ops(ops))
+    count = sum(1 for name in source if name)
+    if count > MAX_PROGRAM_STAGES:
+        raise ValueError(pipeline_stage_limit_message(count))
+    return ([str(item).strip() for item in ops if str(item).strip()]
+            if isinstance(ops, (list, tuple)) else list(_comma_ops(ops)))
 
 
 def _input_hash(image):
@@ -343,6 +375,8 @@ class FullseyeEngine:
         for i, st in enumerate(stages or []):
             if isinstance(st, (tuple, list)) and len(st) == 0:
                 continue                             # skip an empty/malformed stage entry
+            if len(self.stages) >= MAX_PROGRAM_STAGES:
+                raise ValueError(pipeline_stage_limit_message(len(self.stages) + 1))
             # ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、
             # {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。
             # 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
@@ -378,7 +412,11 @@ class FullseyeEngine:
         stages = d["stages"]
         if isinstance(stages, str):
             # ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
-            stages = [t.strip() for t in stages.split(",") if t.strip()]
+            stages = _checked_op_names(stages)
+        elif isinstance(stages, (list, tuple)) and len(stages) > MAX_PROGRAM_STAGES:
+            # Refuse the decoded list before __init__ normalises a stage or builds
+            # the engine's own list. A rejected file never leaves a partial pipeline.
+            raise ValueError(pipeline_stage_limit_message(len(stages)))
         built = cls(stages, name=d.get("name", name))
         return self._adopt(built) if self is not None else built
 
@@ -402,10 +440,7 @@ class FullseyeEngine:
     def from_ops(cls, self, ops, a: float = 0.5, b: float = 0.5,
                  name: str = "pipeline") -> "FullseyeEngine":
         """Build from a comma-separated ``--ops`` string, or a list of names (shared knobs)."""
-        if isinstance(ops, (list, tuple)):
-            names = [str(s).strip() for s in ops if str(s).strip()]
-        else:
-            names = [s.strip() for s in str(ops).split(",") if s.strip()]
+        names = _checked_op_names(ops)
         built = cls([(n, a, b) for n in names], name=name)
         return self._adopt(built) if self is not None else built
 

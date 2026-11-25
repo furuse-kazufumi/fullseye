@@ -1,4 +1,4 @@
-# TOMOGRAPHY operator help — 43 ops in 8 categories
+# TOMOGRAPHY operator help — 44 ops in 8 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/tomography/<category>/<op>.md` を走査。
 
@@ -24,9 +24,9 @@
 
 [projection_angles](layout/projection_angles.md) · [sinogram_design](layout/sinogram_design.md)
 
-### reconstruct (3)
+### reconstruct (4)
 
-[backproject_sinogram](reconstruct/backproject_sinogram.md) · [filtered_backprojection](reconstruct/filtered_backprojection.md) · [sart_reconstruct](reconstruct/sart_reconstruct.md)
+[backproject_sinogram](reconstruct/backproject_sinogram.md) · [filtered_backprojection](reconstruct/filtered_backprojection.md) · [filtered_backprojection_like](reconstruct/filtered_backprojection_like.md) · [sart_reconstruct](reconstruct/sart_reconstruct.md)
 
 ### spectral_xray (15)
 

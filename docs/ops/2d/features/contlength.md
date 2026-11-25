@@ -35,6 +35,17 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 領域の周囲長 [px] (``regionprops`` の ``perimeter``)。HALCON の ``contlength``（Contour length of a region.）と同じ量・同じ単位。
 
+**周囲長の規約(この op は太字の行を使う)。** 真の周囲長に対する実測比は次の
+とおりで、値は推定量を替えると互換ではない。
+
+| 推定量 | 円 r=96 / 真値 | 正方形 128 / 真値 | この op |
+|---|---:|---:|---|
+| **``skimage.measure.perimeter``** | **1.0518** | **0.9922** | **使用する** |
+| ``skimage.measure.perimeter_crofton`` | 1.0016 | 0.9459 | 使用しない |
+
+前者は曲線で +5.18 % の側へ、Crofton は軸平行で -5.41 % の側へ寄る。解像度を
+上げても規約差は消えない。``docs/KNOWN_ISSUES.md`` §50。
+
 ★2026-09-26 まで画像の外周長 ``2*(H+W)`` で割って 1.0 で頭打ちにした値を返していた
 (30x70 の矩形で 0.2450、いまは 196.0)。
 ``docs/hardening/dimensional-features-were-normalised.md``。

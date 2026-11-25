@@ -70,6 +70,10 @@ def validate_pipeline_dict(d):
         raise ValueError("not a pipeline file (no 'stages' key)")
     if not isinstance(raw, (list, tuple)):
         raise ValueError("'stages' must be a list, got %s" % type(raw).__name__)
+    if len(raw) > MAX_PROGRAM_STAGES:
+        # Reject the decoded payload before this validator resolves/normalises each
+        # stage and before PipelineModel.stages builds its mutable stage list.
+        raise ValueError(engine.pipeline_stage_limit_message(len(raw)))
     out = []
     for i, s in enumerate(raw):
         if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) not in (3, 4):
@@ -876,7 +880,14 @@ class PipelineModel:
         # The ONE normalisation point: whatever a loader hands over (parser tuples,
         # JSON lists, undo snapshots, recipes) becomes mutable [name, a, b] lists, so
         # set_knobs / knob drags can never hit "'tuple' does not support item assignment".
-        self._stages = [_normalise_stage(s) for s in (value or [])]
+        if value is None:
+            value = []
+        elif not hasattr(value, "__len__"):   # a generator: take at most one past the cap, never the whole stream
+            import itertools
+            value = list(itertools.islice(value, MAX_PROGRAM_STAGES + 1))
+        if len(value) > MAX_PROGRAM_STAGES:   # every loader funnels here: refuse before normalising / caching
+            raise ValueError(engine.pipeline_stage_limit_message(len(value)))
+        self._stages = [_normalise_stage(s) for s in value]
         self._thumbs.clear()                  # a new pipeline: nothing was computed for these stages before
         self._invalidate(0)
         self._notify_changed()
@@ -3763,6 +3774,46 @@ def _hdev_parse_op(line, lineno, errs, names):
 #: 解析のたびに空にし、解析の最後に「段になった行」だけを残す(``if 0 … endif`` の中や無効の行は知らせない)。
 _HDEV_CLAMPED: dict = {}
 
+#: Program の ``for N`` が展開してよい段数の上限。正本は :mod:`fssystem` で、
+#: engine/MCP と同じ値を使う。Studio は既存呼び手向けにこの公開別名を残す。
+#: The single source is ``fssystem.MAX_PROGRAM_STAGES``.
+MAX_PROGRAM_STAGES = engine.MAX_PROGRAM_STAGES
+
+#: ``for N`` の拒否は値・理由・そのまま取れる次の手を 1 文にする。英語をキーに i18n.json で翻訳する。
+_PROGRAM_STAGE_LIMIT_TEXT = (
+    "line %d: `for %d` would expand to %d stages, above Studio's limit of %d. "
+    "Studio keeps a visible row and cached result for every expanded stage, so a larger loop can exhaust memory "
+    "and stop the window responding. Use a smaller N, split the pipeline, or run a batch/CLI script."
+)
+
+_PROGRAM_PLAIN_STAGE_LIMIT_TEXT = (
+    "line %d: this would make %d stages, above Studio's limit of %d. "
+    "Studio keeps a visible row and cached result for every stage, so a larger pipeline can exhaust memory "
+    "and stop the window responding. Remove stages, split the pipeline, or run a batch/CLI script."
+)
+
+
+def _program_stage_limit_message(line, count, expanded, limit=MAX_PROGRAM_STAGES):
+    """大きすぎる Program ``for`` 展開を、値・理由・次の手つきで現地語へ拒否する。
+
+    Return a localised, actionable refusal for an oversized Program ``for`` expansion.
+
+    解析器は Qt 非依存のままにする。:func:`tr` はデータだけを引く関数で、Program を解析できる時点には
+    初期化済みである。``expanded`` は単なる繰り返し回数でなく、この入れ子での実際の段数なので、
+    拒否した値をそのまま伝えられる。
+    """
+    return tr(_PROGRAM_STAGE_LIMIT_TEXT) % (int(line), int(count), int(expanded), int(limit))
+
+
+def _program_plain_stage_limit_message(line, expanded, limit=MAX_PROGRAM_STAGES):
+    """素の Program 行が上限を超えるときの、値・理由・次の手つきの日英拒否文。
+
+    Return the localised actionable refusal for an ordinary Program line which
+    would exceed the shared stage cap. Unlike a ``for`` error, there is no repeat
+    count to show; ``expanded`` is the actual running total at the rejected line.
+    """
+    return tr(_PROGRAM_PLAIN_STAGE_LIMIT_TEXT) % (int(line), int(expanded), int(limit))
+
 
 def hdev_last_clamped():
     """直近の Program の解析で 0..1 に丸めたつまみの一覧(行の順。``"line 3: gaussian a=9 → 1"``)。"""
@@ -3831,6 +3882,19 @@ def parse_hdev_program_lines(text, names):
 
     pos = [0]
 
+    def append_stages(out, items, line):
+        """Append stages only while the local parse block stays within the hard cap.
+
+        Every recursive block uses this before extending its list, so plain lines
+        and a selected ``if`` branch cannot bypass the loop-expansion guard.
+        """
+        expanded = len(out) + len(items)
+        if expanded > MAX_PROGRAM_STAGES:
+            errs.append(_program_plain_stage_limit_message(line, expanded))
+            return False
+        out.extend(items)
+        return True
+
     def expect(kw, openln):
         if pos[0] < len(toks) and toks[pos[0]][0] == kw:
             pos[0] += 1
@@ -3847,11 +3911,25 @@ def parse_hdev_program_lines(text, names):
             if kind == "for":
                 try:
                     count = int(float(line.split()[1]))
-                except (IndexError, ValueError):
+                except (IndexError, OverflowError, ValueError):
                     errs.append("line %d: 'for' needs a count, e.g. 'for 3'" % n); count = 0
                 body = parse_block(("endfor",))
                 expect("endfor", n)
-                out += body * max(0, count)
+                # Do the multiplication only after checking the expanded size.  The old
+                # ``body * count`` accepted ``for 1000000`` and allocated the whole list
+                # on the GUI thread before the async runner could show progress or accept
+                # a stop request.  The normal PipelineModel cache still recomputes each
+                # accepted stage once, and the existing worker owns progress/stop at stage
+                # boundaries; this bound protects the synchronous parse/Apply boundary.
+                repeats = max(0, count)
+                expanded = len(out) + len(body) * repeats
+                if expanded > MAX_PROGRAM_STAGES:
+                    errs.append(_program_stage_limit_message(n, repeats, expanded))
+                elif body:
+                    # ``expanded`` was checked before this loop.  Extending one
+                    # bounded body at a time avoids materialising a second list.
+                    for _ in range(repeats):
+                        out.extend(body)
             elif kind == "if":
                 cond = _hdev_eval_cond(line[2:].strip())
                 then_body = parse_block(("else", "endif"))
@@ -3860,7 +3938,7 @@ def parse_hdev_program_lines(text, names):
                     pos[0] += 1
                     else_body = parse_block(("endif",))
                 expect("endif", n)
-                out += then_body if cond else else_body
+                append_stages(out, then_body if cond else else_body, n)
             elif kind == "while":
                 errs.append("line %d: 'while' not supported — use 'for N'" % n)
                 parse_block(("endwhile",)); expect("endwhile", n)
@@ -3880,10 +3958,16 @@ def parse_hdev_program_lines(text, names):
                     if n in byp_lines:
                         st = _normalise_stage(st)
                         st.bypass = True
-                    out.append((st, n))            # (stage, source line)
+                    append_stages(out, [(st, n)], n)  # (stage, source line)
         return out
 
     pairs = parse_block(())
+    # Defensive final gate: each append above is bounded, but keep the parser's
+    # public result fail-closed if a future control-flow form forgets that rule.
+    if len(pairs) > MAX_PROGRAM_STAGES:
+        errs.append(_program_plain_stage_limit_message(
+            pairs[MAX_PROGRAM_STAGES][1], len(pairs)))
+        pairs = pairs[:MAX_PROGRAM_STAGES]
     live = {n for st, n in pairs if not getattr(st, "bypass", False)}   # 実際に走る段の行だけ
     for ln in [ln for ln in _HDEV_CLAMPED if ln not in live]:
         del _HDEV_CLAMPED[ln]
@@ -6804,9 +6888,18 @@ def build_window(model=None):
             q = self.quiesce
             if q is not None:
                 try:
-                    q()
+                    stopped = q()
                 except Exception as e:
                     _log_soft_failure("could not stop run workers before close", e)
+                    ev.ignore()
+                    return
+                if stopped is False:
+                    # A running QThread must outlive neither its window nor its Python
+                    # wrapper.  Keep the window alive until the non-interruptible stage
+                    # returns; accepting this close would turn a bounded wait into Qt's
+                    # process-aborting "Destroyed while thread is still running".
+                    ev.ignore()
+                    return
             # ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。
             #   それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。
             #   以後の visibilityChanged は利用者の操作ではないので記録しない。
@@ -8705,7 +8798,20 @@ def build_window(model=None):
         if not stopped and done == n:
             state["worker_result"] = model.displayed_result
             show_result()
-            refresh_stage_list(select=len(model.stages) - 1 if model.stages else None)
+            # A Program Apply may contain display-text directives.  They must be
+            # painted after the worker result is rendered; painting them before
+            # the asynchronous render would let show_result clear them again.
+            getattr(win, "_apply_text_directives", lambda _text: None)("\n".join(model.directives))
+            # 固定したスナップショットの実行はキャッシュ結果だけを変え、Program 本文は変えない。
+            # Running a frozen snapshot changes cached results, not the Program text.
+            # ここでコードを再同期すると元の段→ソース行マップと実行中のカーソルを消してしまう。
+            # Re-syncing would discard that map and a breakpoint/step cursor set while this worker completed.
+            # スナップショット後にパイプラインが変わった場合だけ Program を作り直す。
+            # Only rebuild the Program when its pipeline changed after this snapshot was taken.
+            selected = selected_index()
+            refresh_stage_list(select=(selected if 0 <= selected < len(model.stages)
+                                       else (len(model.stages) - 1 if model.stages else None)),
+                               sync_code=(snap["token"] != _current_run_token()))
             if snap["token"] != _current_run_token():
                 run_banner.setText(tr("The completed result used settings from before the change"))
                 for widget in (run_banner, run_show, run_current):
@@ -8769,8 +8875,24 @@ def build_window(model=None):
             # finished() is emitted before QThread has necessarily completed all
             # thread-local cleanup.  wait() is the synchronization point that
             # makes deleting the worker (and releasing its wrapper) safe.
+            if self.thread is None:            # quiesce() retired it synchronously
+                return
             self.thread.wait()
-            _thread_finished(self.generation, self.thread)
+            self.retire()
+
+        def retire(self):
+            """GUI スレッドで、停止済み worker/thread の所有権を一度だけ外す。
+
+            Retire a stopped worker exactly once on the GUI thread.  ``quiesce``
+            calls this after a successful bounded ``wait`` so a closing window
+            never depends on a later queued ``QThread.finished`` delivery.
+            """
+            thread = self.thread
+            if thread is None:
+                return
+            if thread.isRunning():
+                raise RuntimeError("cannot retire a running Studio worker thread")
+            _thread_finished(self.generation, thread)
             run_ctl.finish_bridges.pop(self.generation, None)
             _delete_worker_on_gui_thread(self.worker)
             self.worker = None
@@ -8835,13 +8957,38 @@ def build_window(model=None):
     run_show.clicked.connect(show_completed_result)
     run_current.clicked.connect(start_run_async)
     def quiesce_run_workers(timeout_ms=5000):
-        """停止を要求し、生きている QThread をすべて quit + wait する(閉じる前・テストの後始末)。"""
+        """全 worker の停止を要求し、上限付きで待って GUI 側から退役する。
+
+        Request every worker stop, wait up to ``timeout_ms`` in total, then retire
+        every stopped worker on the GUI thread.  Return ``False`` without dropping
+        ownership when a current stage outlives the bound; callers must keep the
+        window alive rather than let Qt destroy a running ``QThread``.
+        """
+        import time
+
+        timeout_ms = max(0, int(timeout_ms))
+        deadline = time.monotonic() + timeout_ms / 1000.0
         for event in list(run_stop_events.values()):
             event.set()
-        for thread, _worker in list(run_ctl.threads.values()):
+        pairs = list(run_ctl.threads.items())
+        for _gen, (thread, _worker) in pairs:
             thread.quit()
-            thread.wait(timeout_ms)
+        timed_out = []
+        for gen, (thread, _worker) in pairs:
+            remaining_ms = max(0, int((deadline - time.monotonic()) * 1000))
+            if thread.isRunning() and not thread.wait(remaining_ms):
+                timed_out.append(gen)
+        if timed_out:
+            return False
+        # ``QThread.finished`` is queued to the GUI thread.  A close event cannot
+        # rely on another event-loop turn to deliver it: retire each known stopped
+        # worker now, while the window still owns every Python wrapper.
+        for gen, _pair in pairs:
+            bridge = run_ctl.finish_bridges.get(gen)
+            if bridge is not None:
+                bridge.retire()
         QtWidgets.QApplication.processEvents()
+        return not run_ctl.threads
 
     win.quiesce = quiesce_run_workers
     run_ctl.quiesce = quiesce_run_workers
@@ -12331,11 +12478,18 @@ def build_window(model=None):
         _set_stage_lines(src_lines)           # gutter <-> stage map for THIS text
         code_edit.clear_exec()                # 旧実行位置は新パイプラインと不整合 — Continue の誤表示防止
         code_status.setText("applied %d stage(s)" % len(stages))
-        refresh_stage_list(select=(len(stages) - 1) if stages else None)
+        # Apply 済みの Program は、展開前のテキストと段→行マップをすでに持っている。
+        # The applied Program already owns its unexpanded text and stage-to-line map.
+        # ここで同期すると for/if のソース行と実行位置を段の連番へ作り直してしまう。
+        # Syncing here would replace their source lines and execution position with stage indices.
+        refresh_stage_list(select=(len(stages) - 1) if stages else None, sync_code=False)
         n_err = len(state["errors"])
         apply_dev_directives(text, reclaim_stale=True)   # state/style directives — pre-render; stale program windows reclaimed
-        show_result()
-        apply_text_directives(text)           # dev_disp_text annotations — drawn on top of the render
+        # Program Apply used to call show_result() here, which computed every
+        # uncached stage on the GUI thread.  Reuse the normal frozen-snapshot
+        # worker so even a newly pasted 512-stage program keeps the window alive.
+        # _worker_done renders the result and then reapplies dev_disp_text.
+        start_run_async()
         if len(state["errors"]) > n_err:      # a directive was rejected (bad set_system …)
             code_status.setText("applied %d stage(s)  ·  ✕ %s"
                                 % (len(stages), truncate(state["errors"][-1][1], 100)))

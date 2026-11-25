@@ -279,3 +279,58 @@ def test_clahe_still_equalises_locally():
     out = np.asarray(ops.RT["clahe"](v, 0.5, AHE_B), np.float64)
     assert float(out[:, :32].std()) > 3 * float(v[:, :32].std())
     assert float(out[:, 32:].std()) > 3 * float(v[:, 32:].std())
+
+
+# --------------------------------------------------------------------------- #
+# §52 moments_region_2nd_invar: deprecated alias, not a second quantity       #
+# --------------------------------------------------------------------------- #
+def test_moments_region_2nd_invar_is_a_deprecated_alias():
+    """§52: legacy name warns and delegates bit-for-bit / 別名は警告して同じ値を返す。"""
+    import warnings
+
+    region = np.zeros((32, 40), np.float64)
+    region[6:25, 8:31] = 1.0
+    region[15:20, 18:25] = 0.0
+    canonical = np.asarray(ops.RT["moments_region_2nd"](region, 0.5, 0.5))
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        legacy = np.asarray(ops.RT["moments_region_2nd_invar"](region, 0.5, 0.5))
+    notices = [w for w in caught if issubclass(w.category, DeprecationWarning)]
+    assert len(notices) == 1
+    assert "moments_region_2nd_invar" in str(notices[0].message)
+    assert "removed in 2.0" in str(notices[0].message)
+    assert "moments_region_2nd" in str(notices[0].message)
+    assert np.array_equal(legacy, canonical)
+    # The compatibility op remains registered; the registry's two entries survive.
+    assert {"moments_region_2nd", "moments_region_2nd_invar"} <= set(ops.RT)
+    assert sum(o.name in {"moments_region_2nd", "moments_region_2nd_invar"}
+               for o in ops.REGISTRY) == 2
+
+
+# --------------------------------------------------------------------------- #
+# §53 filtered_backprojection: source size is not present in a sinogram       #
+# --------------------------------------------------------------------------- #
+def test_filtered_backprojection_uses_explicit_size_for_the_source_grid():
+    """§53: default stays contractual; explicit APIs restore the source grid / 元の格子。"""
+    import tomography
+
+    image = np.zeros((32, 32), np.float64)
+    image[10:22, 13:19] = 1.0
+    sinogram = tomography.radon_transform(image)
+    default = tomography.filtered_backprojection(sinogram)
+    restored = tomography.filtered_backprojection(sinogram, size=image.shape[0])
+    restored_like = tomography.filtered_backprojection_like(sinogram, image)
+    assert sinogram.shape[1] == 47
+    assert default.shape == (33, 33)
+    assert restored.shape == image.shape
+    assert restored_like.shape == image.shape
+    assert np.array_equal(restored_like, restored)
+
+
+def test_filtered_backprojection_like_refuses_a_non_square_reference_grid():
+    """§53: a rectangular source cannot be silently claimed as a square FBP grid."""
+    import tomography
+
+    sinogram = np.ones((12, 17), np.float64)
+    with pytest.raises(ValueError, match="square grid"):
+        tomography.filtered_backprojection_like(sinogram, np.zeros((24, 32)))
