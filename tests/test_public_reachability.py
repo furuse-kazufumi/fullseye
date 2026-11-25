@@ -58,6 +58,9 @@ _INTERNAL = {
     # 2026-11-03 device="auto" の判断(損益分岐の表・空き VRAM・段ごとの経路)。利用者の入口は
     # fullseye.explain_device / resolve_device で、この部品は api の内側からだけ呼ぶ。
     "device_policy": 6,
+    # 2026-11-25 arrayguard: 大きさの上限と数の食い違いを、複写の前に日英の文で拒否する共通の部品
+    # (refuse_cap_exceeded / refuse_count_mismatch / precheck_shape_and_elements)。op の内側からだけ呼ぶ。
+    "arrayguard": 3,
     "algo_codegen": 4, "algo_difftest": 8, "backends": 4, "backends_auto": 2,
     "backends_color": 3, "backends_cv2b": 1, "backends_dl": 3, "backends_extra": 1,
     "backends_halcon_ext": 1, "backends_kornia": 1, "backends_macro": 1,
@@ -321,10 +324,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   param_specs.half_then_thirds_index 1(端の扱い・構造要素の形のつまみの対応。Studio と MCP の内側の部品)・
 #   studio_search.staples_for 1(検索の「定番」の群。Studio の内側)・studio 3(lang_from_locale ほか、GUI の内側)・
 #   backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。
-# 2026-11-25 PR #355: 1086 + 2 = 1088。opspharma.get / opspharma.call は、公開済みの
-#   vial_spin_stop_sequence / track_moving_particles を引く・宣言 out 型で呼ぶ型付き台帳の入口。
-#   演算子本体は fullseye.ledger.<op> にも到達し、直接の台帳 API は docs の get 呼び出しで案内する。実測 1088。
-_HIDDEN_FUNCTIONS_TODAY = 1088
+# 2026-11-25 PR #355: opspharma.get / opspharma.call(公開済み op を引く型付き台帳の入口)で +2。
+# 2026-11-25 arrayguard の 3 関数(op の内側の拒否の部品で op ではない)で +3。1086 + 2 + 3 = 1091。
+_HIDDEN_FUNCTIONS_TODAY = 1091
 
 
 def _hidden_total():

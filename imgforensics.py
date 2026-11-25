@@ -99,6 +99,8 @@
 from __future__ import annotations
 
 import numpy as np
+
+import arrayguard as _arrayguard
 from scipy import fft as sfft
 from scipy import ndimage
 
@@ -187,7 +189,24 @@ def _as_image(image, name: str = "image", *, allow_color: bool = True) -> np.nda
     ここで落とすのは「1 枚のグレー地図を返す」という族の約束を守るためで、
     黙ってやらないよう docstring に書いてある。
     """
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        image, name, "imgforensics", MAX_PIXELS * 4,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
+    if raw_shape is not None:
+        if len(raw_shape) == 2:
+            _arrayguard.precheck_shape_and_elements(
+                image, name, "imgforensics", MAX_PIXELS, expected_ndim=2,
+                advice=_arrayguard.IMAGE_CAP_ADVICE)
+        elif len(raw_shape) == 3 and raw_shape[2] in (3, 4):
+            if raw_shape[0] * raw_shape[1] > MAX_PIXELS:
+                _arrayguard.refuse_cap_exceeded(
+                    "imgforensics", name, raw_shape[0] * raw_shape[1], MAX_PIXELS,
+                    shape=raw_shape, advice=_arrayguard.IMAGE_CAP_ADVICE)
     a = np.asarray(image)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            a, name, "imgforensics", MAX_PIXELS * 4,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if a.dtype.kind not in "biuf":
         # ★ complex は ComplexWarning だけで虚部を捨て、実部のハッシュを返していた。
         #   文字列・object も同じく受け取らない
@@ -203,9 +222,6 @@ def _as_image(image, name: str = "image", *, allow_color: bool = True) -> np.nda
         raise ValueError(f"{name}: (H, W) か (H, W, 3|4) が要る、shape={np.shape(image)}")
     if a.size == 0:
         raise ValueError(f"{name}: 空の配列")
-    if a.size > MAX_PIXELS:
-        raise ValueError(f"{name}: 画素数 {a.size} が上限 {MAX_PIXELS} を超える。"
-                         "ROI に切ってから渡すこと")
     if not np.all(np.isfinite(a)):
         raise ValueError(f"{name}: 非有限(NaN / Inf)を含む。上流が壊れている印なので"
                          "黙って 0 で埋めない")

@@ -32,6 +32,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 __all__ = ["vol_fft_lowpass", "vol_fft_highpass", "vol_fft_bandpass",
            "VOLFREQ_OPS", "MAX_VOXELS"]
 
@@ -44,7 +46,14 @@ MAX_VOXELS = 1 << 27
 
 
 def _require_volume(vol, name: str = "vol") -> np.ndarray:
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        vol, name, "volfreq.MAX_VOXELS", MAX_VOXELS, expected_ndim=3,
+        advice=_arrayguard.VOLUME_CAP_ADVICE)
     raw = np.asarray(vol)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            raw, name, "volfreq.MAX_VOXELS", MAX_VOXELS, expected_ndim=3,
+            advice=_arrayguard.VOLUME_CAP_ADVICE)
     if raw.ndim != 3:
         raise ValueError("%s must be a 3-D (D, H, W) volume, got a %d-D array"
                          % (name, raw.ndim))
@@ -55,9 +64,6 @@ def _require_volume(vol, name: str = "vol") -> np.ndarray:
     if not np.isfinite(v).all():
         raise ValueError("%s has non-finite voxel(s) (NaN/Inf) — refusing"
                          % (name,))
-    if v.size > MAX_VOXELS:
-        raise ValueError("%s: %d voxels exceeds the %d cap (volfreq.MAX_VOXELS)"
-                         % (name, v.size, MAX_VOXELS))
     return v
 
 

@@ -35,6 +35,8 @@ import math
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 import materials
 import photoncount
 
@@ -107,10 +109,19 @@ def _spectrum(spec, op):
 def _channels(ch, op):
     if not isinstance(ch, dict) or not {"energy_kev", "weights", "gain", "mode"} <= set(ch):
         raise ValueError("%s: channels must come from photon_counting_channels / dual_kvp_channels" % op)
+    try:
+        weight_shape = tuple(int(d) for d in np.shape(ch["weights"]))
+    except (TypeError, ValueError, OverflowError):
+        weight_shape = None
+    if weight_shape is not None and len(weight_shape) == 2 and weight_shape[0] > MAX_CHANNELS:
+        _arrayguard.refuse_cap_exceeded(
+            op, "channels", weight_shape[0], MAX_CHANNELS, shape=weight_shape,
+            advice=_arrayguard.CHANNEL_CAP_ADVICE,
+            unit=("channels", "チャンネル"))
     E = np.asarray(ch["energy_kev"], dtype=np.float64)
     W = np.asarray(ch["weights"], dtype=np.float64)
     g = np.asarray(ch["gain"], dtype=np.float64)
-    if W.ndim != 2 or W.shape[1] != E.size or g.shape != E.shape or W.shape[0] < 1 or W.shape[0] > MAX_CHANNELS:
+    if W.ndim != 2 or W.shape[1] != E.size or g.shape != E.shape or W.shape[0] < 1:
         raise ValueError("%s: channels have inconsistent shapes" % op)
     if not (np.all(np.isfinite(W)) and np.all(W >= 0) and np.all(np.isfinite(g)) and np.all(g > 0)):
         raise ValueError("%s: channel weights must be finite and >= 0" % op)

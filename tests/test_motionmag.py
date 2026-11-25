@@ -573,16 +573,22 @@ def test_degenerate_content_returns_zeros_not_garbage():
 
 def test_small_arguments_cannot_ask_for_a_large_allocation():
     """Every one of these is a few characters of input and gigabytes of output."""
-    with pytest.raises(ValueError, match="MAX_FRAMES"):
+    with pytest.raises(ValueError) as error:
         mm.temporal_bandpass(np.zeros((100000, 4, 4)), 3.0, 5.0, 32.0)
+    message = str(error.value)
+    assert "100,000 frames" in message and "4,096 frames" in message
+    assert "shorter clips" in message and "対処:" in message
     with pytest.raises(ValueError, match=r"\[1, 8\]"):
         mm.motion_magnify(GOOD, 2.0, 3.0, 5.0, 32.0, scales=64)
     with pytest.raises(ValueError, match=r"\[1, 16\]"):
         mm.motion_magnify(GOOD, 2.0, 3.0, 5.0, 32.0, orientations=1000)
-    with pytest.raises(ValueError, match="over the"):
+    with pytest.raises(ValueError, match="exceeding the limit") as error:
         # 300 MB of virtual clip from a single zero, via a zero-stride view
         mm.motion_magnify(np.lib.stride_tricks.as_strided(
             np.zeros(1), (300, 1024, 1024), (0, 0, 0)), 2.0, 3.0, 5.0, 32.0)
+    message = str(error.value)
+    assert "314,572,800 elements" in message and "4,194,304 elements" in message
+    assert "video[::2, ::2, ::2]" in message and "対処:" in message
     with pytest.raises(ValueError, match="cap"):
         mm.synthesize_translation((8192, 8192), 4, 0.5, 4.0, 32.0)
     with pytest.raises(ValueError, match=r"\[2, 4096\]"):
