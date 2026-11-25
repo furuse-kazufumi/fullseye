@@ -1,0 +1,303 @@
+{
+  "schema": 1,
+  "audited_at": "2026-11-24",
+  "records": [
+    {
+      "id": "ozgenel-concrete-crack",
+      "figures": ["poc_ai_built_inspection_scored/01_crack_real.png", "poc_crack_width/05_real_crack_rebin.png", "poc_crack_width/07_real_crack_samples.png"],
+      "source": "Ç. F. Özgenel, Concrete Crack Images for Classification, Mendeley Data v2",
+      "source_url": "https://doi.org/10.17632/5y9wdsg2zt.2",
+      "publication": "Özgenel (2019), Concrete Crack Images for Classification",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Gray conversion and the stated analysis overlays; no source pixels are shipped."
+    },
+    {
+      "id": "visa",
+      "figures": ["poc_ai_built_inspection_scored/02_candle_real.png", "poc_good_sample_variation_model/04_visa_explanation.png", "poc_template_tracking/06_real_candle_twin.gif"],
+      "source": "VisA visual anomaly dataset (candle / pcb1), Amazon Science",
+      "source_url": "https://github.com/amazon-science/spot-diff",
+      "publication": "Zou et al. (2022), Spot-the-Difference Self-Supervised Pre-training for Anomaly Detection and Segmentation, ECCV 2022",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "The individual figure captions state the crop, grayscale/downsampling, overlay, and synthetic camera-motion changes."
+    },
+    {
+      "id": "carla-0916",
+      "figures": ["poc_carla_bridge/01_carla_two_worlds.png"],
+      "source": "CARLA Simulator 0.9.16 assets, CARLA team",
+      "source_url": "https://carla.org/2025/09/16/release-0.9.16/",
+      "publication": "Dosovitskiy et al. (2017), CARLA: An Open Urban Driving Simulator, CoRL",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "CARLA RGB/semantic renders are paired with a separately rendered Fullseye world; no CARLA asset is redistributed."
+    },
+    {
+      "id": "qin-chromatic-confocal",
+      "figures": ["poc_chromatic_confocal/08_real_groove_from_paper_figures.png"],
+      "source": "Qin et al., A Kernel-Based Calibration Algorithm for Chromatic Confocal Line Sensors",
+      "source_url": "https://doi.org/10.3390/s24206649",
+      "publication": "Sensors 24(20):6649 (2024)",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Readings and fitted marks are overlaid on the paper's Figures 3(a) and 6(b)."
+    },
+    {
+      "id": "skimage-camera",
+      "figures": ["poc_code_matching_breakdown/05_highlight_sweep.gif"],
+      "source": "scikit-image sample image: camera",
+      "source_url": "https://scikit-image.org/docs/stable/api/skimage.data.html",
+      "publication": "scikit-image project sample-data documentation (no separate dataset paper supplied for this image)",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "A synthetic saturation sweep and tracking overlays were rendered from the sample image."
+    },
+    {
+      "id": "malecns-v10",
+      "figures": ["poc_connectome_motor_bottleneck/03_activity_flow.gif", "poc_flybrain_pointcloud/03_rotation.gif"],
+      "source": "Male CNS dataset v1.0, Janelia FlyEM / Google Research",
+      "source_url": "https://male-cns.janelia.org/",
+      "publication": "Male CNS dataset v1.0 release documentation",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Only the stated soma positions and superclass labels are rendered; graph activity and camera motion are Fullseye-derived."
+    },
+    {
+      "id": "osm-plateau-ginza",
+      "figures": ["poc_driving_japan_town/01_japan_town_topdown.png", "poc_driving_japan_town/02_japan_town_bird.png", "poc_driving_japan_town/03_japan_town_drive.gif", "poc_driving_japan_town/04_japan_town_frames.png", "poc_driving_japan_town/06_japan_road_table.png"],
+      "source": "OpenStreetMap road data (© OpenStreetMap contributors) and MLIT Project PLATEAU, Chuo-ku 3D city model",
+      "source_url": "https://www.openstreetmap.org/copyright ; https://www.geospatial.jp/ckan/dataset/plateau-13102-chuo-ku-2020",
+      "publication": "OpenStreetMap contributors; MLIT Project PLATEAU data documentation",
+      "license": "ODbL 1.0 (OpenStreetMap); PDL 1.0 / CC BY 4.0-compatible terms (PLATEAU)",
+      "license_url": "https://opendatacommons.org/licenses/odbl/1-0/ ; https://www.mlit.go.jp/plateau/site-policy/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Roads are rasterized and procedurally turned into a driving world; PLATEAU LOD1 footprints/heights are extruded. The source datasets themselves are not shipped."
+    },
+    {
+      "id": "kenney-driving-school",
+      "figures": ["poc_driving_school/02_world_oblique.png"],
+      "source": "Kenney Car Kit 3.1 and City Kit Roads 2.1",
+      "source_url": "https://kenney.nl/assets/car-kit ; https://kenney.nl/assets/city-kit-roads",
+      "publication": "Kenney asset release pages (no separate paper)",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Selected models are placed at physical scale; curbs, lane markings, and labels are generated by Fullseye."
+    },
+    {
+      "id": "hsi-polymers-pork",
+      "figures": ["poc_equipment_selection_map/06_real_data_ladder.png", "poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png", "poc_hyperspectral_foreign_matter/02_real_vs_model_band_depth.png", "poc_hyperspectral_foreign_matter/03_real_polymer_confusion.png", "poc_hyperspectral_foreign_matter/04_real_pork_belly.png", "poc_hyperspectral_foreign_matter/05_real_pork_roc.png", "poc_hyperspectral_foreign_matter/06_real_pork_confusion.png"],
+      "source": "Arbash et al., Polymers Hyperspectral Imaging (RODARE) and Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly (Zenodo)",
+      "source_url": "https://doi.org/10.14278/rodare.3390 ; https://doi.org/10.5281/zenodo.17242553",
+      "publication": "Arbash et al., Polymers Hyperspectral Imaging; Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "The figures use the documented band aggregation, train/test split, and analysis overlays; source cubes are not shipped."
+    },
+    {
+      "id": "raw-fabrid",
+      "figures": ["poc_fabric_defect/05_real_fabric.png", "poc_fabric_defect/06_real_defects.png", "poc_fabric_defect/07_real_input_defects.png", "poc_fabric_defect/08_real_result_auc_table.png"],
+      "source": "Pérez-Llorens, Albero-Albero, and Silvestre-Blanes, RAW-FABRID, Mendeley Data v1",
+      "source_url": "https://doi.org/10.17632/db6g85xsyg.1",
+      "publication": "RAW-FABRID dataset record",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "The synthetic defects, scoring maps, contours, and tables are Fullseye additions as stated in the captions."
+    },
+    {
+      "id": "liverpool-oct-paint",
+      "figures": ["poc_industrial_oct/01_real_paint_bscans.png"],
+      "source": "University of Liverpool Research Data Catalogue record 126, automotive paint OCT spectra",
+      "source_url": "https://datacat.liverpool.ac.uk/126/",
+      "publication": "University of Liverpool Research Data Catalogue record 126",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Raw spectra are reconstructed into B-scans and measured by Fullseye; the figure shows derived output."
+    },
+    {
+      "id": "lawin-itof",
+      "figures": ["poc_itof_multifreq/12_public_raw_unwrap.png", "poc_itof_multifreq/13_public_raw_margin.png"],
+      "source": "Lawin, Forssén, and Ovrén RGB-D / multi-frequency ToF raw-packet dataset",
+      "source_url": "https://doi.org/10.5281/zenodo.19608956",
+      "publication": "Lawin, Forssén, and Ovrén (2016), Efficient Multi-frequency Phase Unwrapping using Kernel Density Estimation, ECCV 2016",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "The nine phase packets are decoded and visualized with Fullseye; source packets are not shipped."
+    },
+    {
+      "id": "usgs-3dep",
+      "figures": ["poc_lidar_terrain_change/13_real_dod.png", "poc_lidar_terrain_change/14_real_fill.png", "poc_lidar_terrain_change/15_real_dod_still.png"],
+      "source": "U.S. Geological Survey 3D Elevation Program (3DEP) lidar and one-meter DEM",
+      "source_url": "https://www.usgs.gov/3d-elevation-program ; https://usgs-lidar-public.s3.amazonaws.com/",
+      "publication": "USGS 3DEP data documentation",
+      "license": "U.S. Government work / public domain",
+      "license_url": "https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Two dated point-cloud products are gridded, aligned, and differenced; derived plots carry the USGS credit and no-endorsement notice."
+    },
+    {
+      "id": "refractiveindex-info",
+      "figures": ["poc_material_optical_library/01_abbe_diagram.png"],
+      "source": "refractiveindex.info database of optical constants",
+      "source_url": "https://refractiveindex.info/about",
+      "publication": "Polyanskiy (2024), Refractiveindex.info database of optical constants, Scientific Data 11, 94, https://doi.org/10.1038/s41597-023-02898-2",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Abbe numbers are calculated from the database dispersion records; the plot is Fullseye-generated."
+    },
+    {
+      "id": "tbm-metallography",
+      "figures": ["poc_metal_grain_size/12_real_tbm_input.png", "poc_metal_grain_size/13_real_tbm_detect.png", "poc_metal_grain_size/14_real_tbm_color_detect.png", "poc_metal_grain_size/15_real_tbm_breaks.png"],
+      "source": "Texture Boundary in Metallography (TBM), Zenodo record 8386997",
+      "source_url": "https://doi.org/10.5281/zenodo.8386997",
+      "publication": "TBM dataset record",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Crops, boundary overlays, and Fullseye detection / break simulation are stated in the captions."
+    },
+    {
+      "id": "pmd-hammer",
+      "figures": ["poc_phase_measuring_deflectometry/15_real_grid_mirror.png"],
+      "source": "Kaufmann, Olufsen, and Fagerholt, Experimental data for force reconstruction using impact hammer and deflectometry, DataverseNO",
+      "source_url": "https://doi.org/10.18710/TKS7SI",
+      "publication": "Kaufmann et al. (2023), International Journal of Impact Engineering 171, 104369",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "retrieved": "2026-10-18 (original data retrieval, recorded by the PoC); provenance rechecked 2026-11-24",
+      "changes": "Frame crops and phase / force-analysis overlays are Fullseye-derived."
+    },
+    {
+      "id": "bulczak-amcw",
+      "figures": ["poc_pocket_interreflection/07_bulczak.png"],
+      "source": "Bulczak, Lambers, and Kolb, Quantified, Interactive Simulation of AMCW ToF Camera Including Multipath Effects",
+      "source_url": "https://doi.org/10.3390/s18010013",
+      "publication": "Sensors 18(1):13 (2018)",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Table 2 MAE values are quoted unchanged; Fullseye computes the displayed ratios."
+    },
+    {
+      "id": "dtu-pv-irt",
+      "figures": ["poc_pv_thermal_survey/11_real_dtu_conditions.png", "poc_pv_thermal_survey/12_real_detection_table.png"],
+      "source": "DTU PV IRT aerial thermal survey dataset",
+      "source_url": "https://doi.org/10.11583/DTU.29665346.v1",
+      "publication": "del Prado Santamaría et al., DTU PV plant - Drone Infrared Thermography Dataset: Influence of Irradiance and Altitude",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-08 (original data retrieval, SHA-256 recorded by realdata.py); provenance rechecked 2026-11-24",
+      "changes": "Thermal frames are binned and analyzed by Fullseye; the captions identify the derived condition and detection summaries."
+    },
+    {
+      "id": "lasiesta",
+      "figures": ["poc_real_bg_kalman_tracking/02_tracking_movie.gif"],
+      "source": "LASIESTA database, Universidad Politécnica de Madrid",
+      "source_url": "https://www.gti.ssr.upm.es/data/lasiesta_database",
+      "publication": "Cuevas, Yáñez, and García (2016), Computer Vision and Image Understanding 152, 103-117, https://doi.org/10.1016/j.cviu.2016.08.005",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Tracks, outlines, colour overlays, and the stated resampling/re-encoding are added; the derivative figure remains CC BY-SA 4.0."
+    },
+    {
+      "id": "bop-tless",
+      "figures": ["poc_real_tless_6dof/02_rgb_depth.png", "poc_registration_basin/06_real_scan_icp.gif"],
+      "source": "BOP T-LESS dataset",
+      "source_url": "https://bop.felk.cvut.cz/datasets/",
+      "publication": "Hodaň et al. (2017), T-LESS: An RGB-D Dataset for 6D Pose Estimation of Texture-less Objects, WACV, https://doi.org/10.1109/WACV.2017.8",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "The figures render selected RGB-D frames and reconstructed models with Fullseye pose/ICP overlays; source data are not shipped."
+    },
+    {
+      "id": "sutinen-si-pl",
+      "figures": ["poc_si_wafer_pl_defect_visibility/03_pl_real_groove_after_hf.png"],
+      "source": "Sutinen et al., Dataset for Non-disruptive HF pretreatment to enhance defect visibility in silicon wafer manufacturing via photoluminescence imaging",
+      "source_url": "https://doi.org/10.5281/zenodo.19603335",
+      "publication": "Sutinen et al. (2026), related article https://doi.org/10.1088/1361-6641/aea702",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "The Figure 6a trace is background-normalized and plotted by Fullseye."
+    },
+    {
+      "id": "schwarz-thin-film",
+      "figures": ["poc_simcal_thin_film/07_real_micrograph_calibration.png", "poc_simcal_thin_film/08_real_determined_vs_combinations.png", "poc_simcal_thin_film/09_real_undetermined_direction.png", "poc_thin_film_reflectometry/01_real_micrograph_thickness.png", "poc_thin_film_reflectometry/02_real_spectra.png"],
+      "source": "Schwarz et al. thin-film data, Zenodo record 13753754",
+      "source_url": "https://doi.org/10.5281/zenodo.13753754",
+      "publication": "Schwarz et al. (2024), Advanced Optical Materials, https://doi.org/10.1002/adom.202402502",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "The listed micrograph/table reductions, relabeling, averaging, model curves, and analysis panels are Fullseye-derived."
+    },
+    {
+      "id": "sipvel",
+      "figures": ["poc_solar_el_inspection/09_real_by_shadow.png", "poc_solar_el_inspection/10_real_el_overlay.png", "poc_solar_el_inspection/15_real_cover.png"],
+      "source": "SIPV-EL: electroluminescence images and I-V curves of photovoltaic cells",
+      "source_url": "https://doi.org/10.5281/zenodo.14439369",
+      "publication": "Mateo-Romero, Hernández-Callejo, Alonso-Gómez, and Morales, SIPV-EL dataset",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Masks, dark-region measurements, labels, and Fullseye overlays are added as stated in the captions."
+    },
+    {
+      "id": "empiar-10028",
+      "figures": ["poc_tem_ctf_thon_rings/12_real_empiar_10028.png"],
+      "source": "EMPIAR-10028",
+      "source_url": "https://www.ebi.ac.uk/empiar/EMPIAR-10028/",
+      "publication": "Wong et al. (2014), eLife 3:e03080",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Rows 1024-3071 of three micrographs are cropped and transformed into power spectra / fitted CTF² panels."
+    },
+    {
+      "id": "sanchez-arriaga-thin-film",
+      "figures": ["poc_thin_film_reflectometry/03_real_standards.png"],
+      "source": "Sánchez-Arriaga et al. thin-film standards data",
+      "source_url": "https://doi.org/10.15131/shef.data.23285603",
+      "publication": "Sánchez-Arriaga et al. (2023), Sensors 23, 5326, https://doi.org/10.3390/s23115326",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Repeated spectra are averaged and only the Fullseye fitting result is plotted."
+    },
+    {
+      "id": "weedy-rice",
+      "figures": ["poc_weed_rice_ratio/05_real_examples.png", "poc_weed_rice_ratio/10_real_channel_swap.png"],
+      "source": "Nguyen et al., WeedyRice-RGBMS, Mendeley Data v1",
+      "source_url": "https://doi.org/10.17632/vt4s83pxx6.1",
+      "publication": "Nguyen et al. (2025), A Dataset of Aligned RGB and Multispectral UAV Imagery for Semantic Segmentation of Weedy Rice",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "retrieved": "2026-11-24 (provenance source reviewed during this audit)",
+      "changes": "Images are resized/cropped with annotation and prediction overlays as stated in the captions."
+    },
+    {
+      "id": "fintraffic-osm-aggregate",
+      "figures": ["poc_public_camera_heading_real/01_sunset_track.png", "poc_public_camera_heading_real/02_sunset_follow.gif", "poc_public_camera_heading_real/03_naive_picks.png", "poc_public_camera_heading_real/04_jackknife.png", "poc_public_camera_heading_real/05_bloom_bias.png", "poc_public_camera_heading_real/06_numbers.png"],
+      "source": "Fintraffic / Digitraffic weather-camera history and OpenStreetMap road data (© OpenStreetMap contributors)",
+      "source_url": "https://www.digitraffic.fi/en/terms-of-service/ ; https://www.openstreetmap.org/copyright",
+      "publication": "Fintraffic terms of service; OpenStreetMap attribution and licence notice",
+      "license": "CC BY 4.0 (Fintraffic) and ODbL 1.0 (OpenStreetMap)",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/ ; https://opendatacommons.org/licenses/odbl/1-0/",
+      "retrieved": "2026-09-21 (Fintraffic acquisition recorded in the aggregate); provenance rechecked 2026-11-24",
+      "changes": "The wheel retains one derived nearest-road attribute record (bearing/ref/name/class) and camera-result aggregates, but no OSM geometry or raw camera image bytes. Figures add circle fits, pose estimates, and overlays."
+    }
+  ]
+}
