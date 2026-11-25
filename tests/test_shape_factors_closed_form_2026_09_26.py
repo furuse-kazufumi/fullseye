@@ -21,6 +21,7 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 import ops  # noqa: E402
+import fullseye as fs  # noqa: E402
 
 
 def _rect(h, w, n=160, top=20, left=20):
@@ -144,9 +145,46 @@ def test_the_perimeter_bias_is_still_what_the_doc_says():
     assert skm.perimeter_crofton(sq) / true_p < 0.96, "正方形で crofton のバイアスが消えた"
 
 
+@pytest.mark.parametrize(
+    "label,region,truth,ratios",
+    [
+        ("disc r=96", _disc(96), 2.0 * np.pi * 96,
+         {"skimage": 1.0518163777669416, "crofton": 1.001630046097798,
+          "chain": 1.279871000697325}),
+        ("square 128", _rect(128, 128, 136, 4, 4), 4.0 * 128,
+         {"skimage": 0.9921875, "crofton": 0.9458900725338723,
+          "chain": 1.0}),
+    ],
+)
+def test_region_perimeter_estimate_names_the_bias_against_closed_form(label, region, truth, ratios):
+    """§50: 選択式 API の各規約を解析周囲長に対して採点する。"""
+    skm = pytest.importorskip("skimage.measure")
+    assert fs.region_perimeter_estimate is not None
+    for method, ratio in ratios.items():
+        got = fs.region_perimeter_estimate(region, method=method)
+        assert got / truth == pytest.approx(ratio, abs=1e-12), \
+            "%s / %s の測定済みバイアスが変わった" % (label, method)
+    assert fs.region_perimeter_estimate(region, method="skimage") == pytest.approx(
+        skm.perimeter(region > 0.5, neighborhood=4))
+    assert fs.region_perimeter_estimate(region, method="crofton") == pytest.approx(
+        skm.perimeter_crofton(region > 0.5, directions=4))
+
+
+def test_region_perimeter_estimate_is_fail_closed_on_bad_contract_inputs():
+    """§50: 誤った規約名・形・非有限値をそれらしい周囲長へ黙って写さない。"""
+    with pytest.raises(ValueError, match="method must be"):
+        fs.region_perimeter_estimate(np.ones((8, 8)), method="auto")
+    with pytest.raises(ValueError, match="must be 2-D"):
+        fs.region_perimeter_estimate(np.ones((2, 8, 8)))
+    with pytest.raises(ValueError, match="NaN or infinity"):
+        fs.region_perimeter_estimate(np.full((8, 8), np.nan))
+    assert fs.region_perimeter_estimate(np.zeros((8, 8)), method="chain") == 0.0
+
+
 def test_the_doc_records_the_open_decision():
-    """§50 が「記録のみ・判断待ち」であることを文書側にも固定する。"""
+    """§50 の選択式 API と、既定値を変えない判断を文書側にも固定する。"""
     txt = open(os.path.join(ROOT, "docs", "KNOWN_ISSUES.md"), encoding="utf-8").read()
     assert "§50" in txt
     assert "perimeter_crofton" in txt
-    assert "決めていないこと" in txt, "判断待ちであることが書かれていない"
+    assert "region_perimeter_estimate" in txt
+    assert "既定を変えない" in txt

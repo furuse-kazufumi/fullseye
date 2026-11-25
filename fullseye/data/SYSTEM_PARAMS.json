@@ -218,13 +218,14 @@
       "status": "declared_not_applied"
     },
     "pipeline_max_stages": {
-      "default": 64,
+      "default": 512,
       "values": [
         16,
         32,
-        64
+        64,
+        512
       ],
-      "meaning": "Pipeline stage cap.",
+      "meaning": "Pipeline stage cap; it may tighten, but never exceeds MAX_PROGRAM_STAGES.",
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/mcp/server.py"

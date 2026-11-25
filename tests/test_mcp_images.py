@@ -27,6 +27,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 from fullseye.mcp import Catalog, call_tool  # noqa: E402
 from fullseye.mcp.handles import PREFIX, SAMPLE_DIR, HandleError, HandleStore  # noqa: E402
 from fullseye.mcp.server import ArgError, read_message, write_message  # noqa: E402
+from fssystem import MAX_PROGRAM_STAGES  # noqa: E402
 
 
 @pytest.fixture(scope="module")
@@ -476,10 +477,24 @@ def test_pipeline_escalates_the_first_bad_stage_not_the_last(cat, store, root):
     ({"stages": [{"a": 0.5}]}, "必須"),
     ({"stages": [{"op": "gaussian", "a": 2}]}, "以下"),
     ({"stages": "gaussian,otsu"}, "配列"),
-    ({"stages": [{"op": "gaussian"}] * 65}, "以下"),
+    ({"stages": [{"op": "gaussian"}] * (MAX_PROGRAM_STAGES + 1)}, "上限"),
 ])
 def test_bad_pipeline_arguments_are_refused(cat, store, bad, why):
     h = call_tool("fullseye_load_image", {"path": _sample()}, cat, store)["structuredContent"]["handle"]
     with pytest.raises(ArgError) as ei:
         call_tool("fullseye_pipeline", {"handle": h, **bad}, cat, store)
     assert why in str(ei.value), str(ei.value)
+
+
+def test_pipeline_stage_cap_refusal_names_value_reason_and_next_step(cat, store):
+    """513 stages are refused at MCP's boundary with an actionable bilingual message."""
+    h = call_tool("fullseye_load_image", {"path": _sample()}, cat, store)["structuredContent"]["handle"]
+    with pytest.raises(ArgError) as ei:
+        call_tool("fullseye_pipeline", {
+            "handle": h,
+            "stages": [{"op": "gaussian"}] * (MAX_PROGRAM_STAGES + 1),
+        }, cat, store)
+    message = str(ei.value)
+    assert str(MAX_PROGRAM_STAGES + 1) in message and str(MAX_PROGRAM_STAGES) in message
+    assert "memory" in message and "split the pipeline" in message
+    assert "パイプライン" in message and "段を減らす" in message

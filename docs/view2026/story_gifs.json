@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 227,
+  "target_count": 228,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -10049,6 +10049,223 @@
       "alt": {
         "ja": "粒度分布",
         "en": "Particle Size Distribution From Images — Merging and Edge Cuts Pull Opposite Ways and Cancel"
+      }
+    },
+    "poc_compendial_particle_microscopy": {
+      "representative": "01_compendial_particle_microscopy_main.png",
+      "status": "gif",
+      "selected": [
+        "01_compendial_particle_microscopy_main.png",
+        "02_particle_overlap_rate_series.png",
+        "03_compendial_particle_microscopy_large_validation.png",
+        "05_compendial_particle_microscopy_large_validation_area_cdf.png",
+        "06_compendial_particle_microscopy_large_validation_volume_cdf.png",
+        "07_compendial_particle_microscopy_accuracy_sweep.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_compendial_particle_microscopy/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_compendial_particle_microscopy_main.png",
+              "content_box": [
+                0,
+                69,
+                720,
+                551
+              ]
+            },
+            {
+              "file": "02_particle_overlap_rate_series.png",
+              "content_box": [
+                0,
+                265,
+                720,
+                159
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.541284
+            },
+            {
+              "file": "03_compendial_particle_microscopy_large_validation.png",
+              "content_box": [
+                0,
+                253,
+                720,
+                183
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.939494
+            },
+            {
+              "file": "05_compendial_particle_microscopy_large_validation_area_cdf.png",
+              "content_box": [
+                0,
+                171,
+                720,
+                347
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.075
+            },
+            {
+              "file": "06_compendial_particle_microscopy_large_validation_volume_cdf.png",
+              "content_box": [
+                0,
+                171,
+                720,
+                347
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.075
+            },
+            {
+              "file": "07_compendial_particle_microscopy_accuracy_sweep.png",
+              "content_box": [
+                0,
+                153,
+                720,
+                383
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.881402
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 202075,
+          "color_mad": [
+            0.1679,
+            0.0092,
+            0.1956,
+            0.0746,
+            0.0745,
+            0.0241
+          ],
+          "max_color_mad": 0.1956,
+          "source_sha256": "649c7de28dc993b5dbfaf6e414d0aaf46406040accde7b4e07dc1e825f0f5a90"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_compendial_particle_microscopy/story.en.gif",
+          "frames": [
+            {
+              "file": "01_compendial_particle_microscopy_main.png",
+              "content_box": [
+                0,
+                69,
+                720,
+                551
+              ]
+            },
+            {
+              "file": "02_particle_overlap_rate_series.png",
+              "content_box": [
+                0,
+                265,
+                720,
+                159
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 4.541284
+            },
+            {
+              "file": "03_compendial_particle_microscopy_large_validation.png",
+              "content_box": [
+                0,
+                253,
+                720,
+                183
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 3.939494
+            },
+            {
+              "file": "05_compendial_particle_microscopy_large_validation_area_cdf.png",
+              "content_box": [
+                0,
+                171,
+                720,
+                347
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.075
+            },
+            {
+              "file": "06_compendial_particle_microscopy_large_validation_volume_cdf.png",
+              "content_box": [
+                0,
+                171,
+                720,
+                347
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.075
+            },
+            {
+              "file": "07_compendial_particle_microscopy_accuracy_sweep.png",
+              "content_box": [
+                0,
+                153,
+                720,
+                383
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.881402
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 202075,
+          "color_mad": [
+            0.1679,
+            0.0092,
+            0.1956,
+            0.0746,
+            0.0745,
+            0.0241
+          ],
+          "max_color_mad": 0.1956,
+          "source_sha256": "9a90ca6b8126f6a7e16318a046b58739ccc6b4008bf7e6f20677a7c080d5ea78"
+        }
+      },
+      "en": {
+        "text": "not_audited",
+        "selected": [
+          "01_compendial_particle_microscopy_main.png",
+          "02_particle_overlap_rate_series.png",
+          "03_compendial_particle_microscopy_large_validation.png",
+          "05_compendial_particle_microscopy_large_validation_area_cdf.png",
+          "06_compendial_particle_microscopy_large_validation_volume_cdf.png",
+          "07_compendial_particle_microscopy_accuracy_sweep.png"
+        ],
+        "excluded_frames": [],
+        "not_english_ready": []
+      },
+      "reason": null,
+      "cover": "01_compendial_particle_microscopy_main.png",
+      "still": "articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png",
+      "stills": {
+        "ja": "articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png",
+        "en": "articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png"
+      },
+      "alt": {
+        "ja": "原画像→分割→真値と推定→個数/体積基準の径分布→失敗側。体積基準はレーザー回折との同一性を意味しない。",
+        "en": "Counting clipped or overlapping objects as one changes a microscopy size distribution. Synthetic truth shows a largest error of 0.165 px. Acceptance reasons and three bases remain with calibration provenance."
       }
     },
     "poc_rail_corrugation": {

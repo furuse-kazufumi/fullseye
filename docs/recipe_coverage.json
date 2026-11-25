@@ -101,7 +101,7 @@
   },
   {
    "family": "3d",
-   "ops": 378,
+   "ops": 380,
    "recipes": 26,
    "ops_used": 38
   },
@@ -185,7 +185,7 @@
   },
   {
    "family": "drive",
-   "ops": 749,
+   "ops": 750,
    "recipes": 10,
    "ops_used": 15
   },
@@ -203,7 +203,7 @@
   },
   {
    "family": "fit",
-   "ops": 3,
+   "ops": 4,
    "recipes": 2,
    "ops_used": 2
   },
@@ -425,7 +425,7 @@
   },
   {
    "family": "tomography",
-   "ops": 43,
+   "ops": 44,
    "recipes": 4,
    "ops_used": 6
   },

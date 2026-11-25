@@ -49,7 +49,7 @@ extern "C" {
  * runtime refuses to load a recipe from a different major version.
  * -------------------------------------------------------------------------- */
 #define FULLSEYE_ABI_VERSION_MAJOR 0
-#define FULLSEYE_ABI_VERSION_MINOR 1
+#define FULLSEYE_ABI_VERSION_MINOR 3
 
 /* --------------------------------------------------------------------------
  * R-1: status codes.  Every operator returns one of these.

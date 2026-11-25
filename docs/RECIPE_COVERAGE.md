@@ -30,7 +30,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | 族 | op 数 | レシピ | 使った op |
 |---|---:|---:|---:|
 | 2d | 964 | 90 | 99 |
-| 3d | 378 | 26 | 38 |
+| 3d | 380 | 26 | 38 |
 | acceptance | 8 | 1 | 1 |
 | acoustics | 27 | 4 | 6 |
 | annotate | 51 | 2 | 4 |
@@ -44,10 +44,10 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | conngraph | 28 | 2 | 4 |
 | converge | 6 | 2 | 2 |
 | dem | 25 | 2 | 3 |
-| drive | 749 | 10 | 15 |
+| drive | 750 | 10 | 15 |
 | emproof | 14 | 1 | 2 |
 | fileio | 28 | 2 | 4 |
-| fit | 3 | 2 | 2 |
+| fit | 4 | 2 | 2 |
 | flyvision | 22 | 3 | 6 |
 | generative | 42 | 3 | 5 |
 | geocam | 9 | 2 | 4 |
@@ -84,7 +84,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | specular | 20 | 6 | 6 |
 | symbol | 33 | 1 | 1 |
 | text | 3 | 3 | 3 |
-| tomography | 43 | 4 | 6 |
+| tomography | 44 | 4 | 6 |
 | videocube | 6 | 1 | 1 |
 | videostream | 16 | 2 | 4 |
 | volcolor | 11 | 3 | 3 |

@@ -288,11 +288,11 @@ li, p, code { overflow-wrap: anywhere; }
 
 </div>
 
-[PoC के अलावा 188 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 189 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 
-283 PoCs और 2 robot demos। group खोलने पर thumbnails load होते हैं।
+284 PoCs और 2 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -358,7 +358,7 @@ li, p, code { overflow-wrap: anywhere; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional और shape metrology</b> (53)</summary>
+<details class="vall"><summary><b>Dimensional और shape metrology</b> (54)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../../articles/assets/poc/poc_aoi_ct_traceability/story.en.gif" alt="Full visual inspection and sampled CT must assign the same index to each joint. Unequal-sided fiducials fixed this correspondence, then top-ranked candidates caught 19 % of interface-touching voids. Apparent void rankings can agree while most life-limiting parts are missed." loading="lazy" width="200" height="200"></picture><span>AOI-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../../articles/assets/poc/poc_asbuilt_wall_deviation/story.en.gif" alt="Point-cloud dimensions can confuse room heading or furniture with wall position. A room with known tilt and bulges was rotated, while its plane-pair error stayed at +2.24 mm. Bounding boxes grow with heading and sample count; plane fitting jumps to furniture when outliers become the majority." loading="lazy" width="200" height="200"></picture><span>As-built दीवारें</span></a>
@@ -372,6 +372,7 @@ li, p, code { overflow-wrap: anywhere; }
 <a href="../../articles/assets/poc/poc_metal_grain_size/15_real_tbm_breaks.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_metal_grain_size/15_real_tbm_breaks.png"><img src="../../articles/assets/poc/poc_metal_grain_size/story.en.gif" alt="Gaps are cut into hand-traced real grain boundaries to see where the two counting methods drift by a full step. The intercept count holds until 33.1 % of the traced lines are gone, far longer than the planimetric count. Image processing that expects dark boundaries finds almost none of them on tint-etched photos." loading="lazy" width="200" height="200"></picture><span>Grain size</span></a>
 <a href="../../articles/assets/poc/poc_multibeam_bathymetry/17_survey.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_multibeam_bathymetry.jpg" alt="Multibeam sonar" width="200" height="200"><b>&#9654;</b><span>Multibeam sonar</span></a>
 <a href="../../articles/assets/poc/poc_particle_sizing/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_particle_sizing/01_scene.png"><img src="../../articles/assets/poc/poc_particle_sizing/story.en.gif" alt="Particle Size Distribution From Images — Merging and Edge Cuts Pull Opposite Ways and Cancel" loading="lazy" width="200" height="200"></picture><span>Particle sizing</span></a>
+<a href="../../articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png"><img src="../../articles/assets/poc/poc_compendial_particle_microscopy/story.en.gif" alt="Counting clipped or overlapping objects as one changes a microscopy size distribution. Synthetic truth shows a largest error of 0.165 px. Acceptance reasons and three bases remain with calibration provenance." loading="lazy" width="200" height="200"></picture><span>Microscopy particle sizing</span></a>
 <a href="../../articles/assets/poc/poc_rail_corrugation/01_planted_components.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_rail_corrugation/01_planted_components.png"><img src="../../articles/assets/poc/poc_rail_corrugation/story.en.gif" alt="Measuring Rail with a Chord — At the Wavelengths Where the Transfer Function Is Zero, Any Amplitude Reads Zero" loading="lazy" width="200" height="200"></picture><span>Rail corrugation</span></a>
 <a href="../../articles/assets/poc/poc_real_coin_metrology/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_real_coin_metrology/01_scene.png"><img src="../../articles/assets/poc/poc_real_coin_metrology/story.en.gif" alt="Counting and Measuring Real Coins — A Correct Answer Is Not a Safe One" loading="lazy" width="200" height="200"></picture><span>Real coins</span></a>
 <a href="../../articles/assets/poc/poc_screw_thread_metrology/01_zero_spectrum.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_screw_thread_metrology/01_zero_spectrum.png"><img src="../../articles/assets/poc/poc_screw_thread_metrology/story.en.gif" alt="Pitch, Flank Angle and Pitch Diameter From a Thread Silhouette — Tilt Shows Up With Opposite Signs on the Two Flanks" loading="lazy" width="200" height="200"></picture><span>Screw threads</span></a>

@@ -1,8 +1,8 @@
 {
- "n_ops": 3846,
+ "n_ops": 3851,
  "tiers": {
   "color": 12,
-  "ledger": 2882,
+  "ledger": 2887,
   "nary": 17,
   "registry": 935
  },
@@ -11077,6 +11077,21 @@
     "sinogram"
    ],
    "gpu_tier": "required"
+  },
+  {
+   "name": "filtered_backprojection_like",
+   "halcon": "",
+   "in_sort": "sinogram",
+   "out_sort": "image2d",
+   "category": "reconstruct",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "sinogram",
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "find_caltab",
@@ -24120,6 +24135,21 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "particle_size_distribution",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pharma",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "particle_size_dx",
    "halcon": "",
    "in_sort": "table",
@@ -26641,6 +26671,22 @@
    "gpu_tier": "partial"
   },
   {
+   "name": "pose_nms_symmetry",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "match_pose",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "table",
+    "points",
+    "table"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "pose_normalize",
    "halcon": "",
    "in_sort": null,
@@ -26767,6 +26813,21 @@
     "text",
     "scalar",
     "scalar"
+   ],
+   "gpu_tier": "none"
+  },
+  {
+   "name": "ppf_pose_hypotheses",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "match_pose",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "table",
+    "points"
    ],
    "gpu_tier": "none"
   },
@@ -29029,6 +29090,20 @@
     "points"
    ],
    "gpu_tier": "partial"
+  },
+  {
+   "name": "region_perimeter_estimate",
+   "halcon": "",
+   "in_sort": "mask",
+   "out_sort": "measurement",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opsfit",
+   "dim": "fit",
+   "in_sorts": [
+    "mask"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "region_props",

@@ -11,6 +11,7 @@ import json
 import os
 import sys
 import warnings
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -25,21 +26,35 @@ if ROOT not in sys.path:
 # under test; silence them so a failing assertion is the only signal.
 warnings.filterwarnings("ignore")
 
+# conftest の import 時点なら、まだ pytest 用の環境変数で利用者の場所を差し
+# 替えていない。この控えは終了時の実物比較専用で、試験中に os.environ が変わって
+# も本物の Start Menu / Desktop / %LOCALAPPDATA% を見失わない。
+# Capture the user's paths before the session fixture redirects the process.
+# These are used only for read-only before/after checks of the real locations.
+_REAL_ENV = {name: os.environ.get(name) for name in
+             ("APPDATA", "LOCALAPPDATA", "USERPROFILE", "PUBLIC", "ProgramData")}
+
 
 # --------------------------------------------------------------------------- #
-# ★Studio の設定を**セッション全体で**使い捨て ini へ逃がす。                  #
+# ★利用者の Windows 登録をセッション全体で一時フォルダへ逃がす。                 #
 # --------------------------------------------------------------------------- #
-# `QSettings("Fullseye", "Studio")` はネイティブ格納庫(Windows ならレジストリ
-# HKCU\Software\Fullseye\Studio)に書く。隔離を**個々のテストファイル**に置いて
-# いたので、置き忘れたファイルから利用者の実レジストリが汚れていた。
+# `APPDATA` だけを差し替えても、SHGetKnownFolderPath / GetFolderPath は
+# OneDrive 等の実 Desktop / Start Menu を返す。また、子プロセスは conftest の
+# monkeypatch を知らない。そこで、すべてのテストと子プロセスに渡る環境変数を
+# 1 箇所で設定し、Python と PowerShell の既知フォルダー取得にも明示的な試験用
+# 上書きを渡す。HKCU の Apps & features は test-only のキーに切り替える。
 #
-# 2026-09-05 の監査で実害を確認: `recent_files` 10 件のうち 8 件が pytest の
-# 一時パス、`system\operator_timeout_ms` などの実値も残っていた。
-# (隔離は 3 ファイル中 2 つにしかなく、`test_studio_params.py` が素通しだった。)
-#
-# 個別に足すのをやめ、**セッション autouse でここに 1 つだけ**置く。
-# 環境変数は `studio._settings()` が見る唯一の入口なので、これで全テストが覆われる。
+# APPDATA alone is insufficient because Windows known-folder APIs ignore it.
+# This one session fixture redirects both the environment and the Python /
+# PowerShell known-folder shims inherited by every child process.  The actual
+# Apps & features key is never named by product code during a test session.
 _STUDIO_SETTINGS_ENV = "FULLSEYE_STUDIO_SETTINGS"
+_INSTALLER_ISOLATION_ENV = (
+    "APPDATA", "LOCALAPPDATA", "USERPROFILE", "FULLSEYE_LEDGER",
+    "FULLSEYE_CACHE_DIR", _STUDIO_SETTINGS_ENV, "FULLSEYE_TEST_ISOLATION",
+    "FULLSEYE_TEST_DESKTOP", "FULLSEYE_TEST_PROGRAMS",
+    "FULLSEYE_TEST_LOCALAPPDATA", "FULLSEYE_ISOLATED_UNINSTALL_KEY",
+)
 
 
 # --------------------------------------------------------------------------- #
@@ -83,7 +98,7 @@ def _have_backend(name: str) -> bool:
 #: レジストリから消え、op 名を直書きしたギャラリーと、レジストリから指紋を取る
 #: docs の drift 検査が落ちた。**op 集合が環境で変わる**のに、不変条件の側が
 #: 固定を仮定していた形。揃っていないなら skip、揃っている CI の py3.11 では実行。
-FULL_REGISTRY_BACKENDS = ("torch", "kornia", "mahotas", "cv2.xfeatures2d")
+FULL_REGISTRY_BACKENDS = ("torch", "kornia", "mahotas", "pywt", "cv2.xfeatures2d")
 
 
 def requires_full_registry() -> None:
@@ -110,18 +125,52 @@ def requires_backend(*names: str) -> None:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def _isolate_studio_settings(tmp_path_factory):
-    """テストが利用者のレジストリ / plist / 設定 ini に触れないようにする。"""
-    prev = os.environ.get(_STUDIO_SETTINGS_ENV)
-    ini = tmp_path_factory.mktemp("studio_settings") / "studio.ini"
+def _isolate_windows_installer_state(tmp_path_factory):
+    """登録先を一時フォルダへ替え、本物の既知フォルダーと HKCU Uninstall を隔離する。"""
+    old = {name: os.environ.get(name) for name in _INSTALLER_ISOLATION_ENV}
+    root = tmp_path_factory.mktemp("windows_installer_isolation")
+    ini = root / "settings" / "studio.ini"
+    ledger = root / "local" / "Fullseye" / "setup" / "install_ledger.json"
     os.environ[_STUDIO_SETTINGS_ENV] = str(ini)
+    os.environ["FULLSEYE_LEDGER"] = str(ledger)
+    os.environ["FULLSEYE_CACHE_DIR"] = str(root / "local" / "fullseye")
+    previous_uninstall_key = None
+    if sys.platform == "win32":
+        appdata = root / "roaming"
+        local = root / "local"
+        profile = root / "userprofile"
+        desktop = profile / "Desktop"
+        programs = appdata / "Microsoft" / "Windows" / "Start Menu" / "Programs"
+        for path in (appdata, local, profile, desktop, programs):
+            path.mkdir(parents=True, exist_ok=True)
+        isolated_key = r"Software\FullseyeTest\pytest_session"
+        os.environ.update({
+            "APPDATA": str(appdata),
+            "LOCALAPPDATA": str(local),
+            "USERPROFILE": str(profile),
+            "FULLSEYE_TEST_ISOLATION": "1",
+            "FULLSEYE_TEST_DESKTOP": str(desktop),
+            "FULLSEYE_TEST_PROGRAMS": str(programs),
+            "FULLSEYE_TEST_LOCALAPPDATA": str(local),
+            "FULLSEYE_ISOLATED_UNINSTALL_KEY": isolated_key,
+        })
+        # 同一プロセスで collection 済みのモジュールにも反映する。子プロセスは
+        # 上の環境変数を読んで同じ値を module import 時に選ぶ。
+        from fullseye import shortcuts
+        previous_uninstall_key = shortcuts.UNINSTALL_KEY
+        shortcuts.UNINSTALL_KEY = isolated_key
     try:
-        yield ini
+        yield root
     finally:
-        if prev is None:
-            os.environ.pop(_STUDIO_SETTINGS_ENV, None)
-        else:
-            os.environ[_STUDIO_SETTINGS_ENV] = prev
+        if previous_uninstall_key is not None:
+            from fullseye import shortcuts
+            shortcuts.UNINSTALL_KEY = previous_uninstall_key
+        for name, value in old.items():
+            if value is None:
+                os.environ.pop(name, None)
+            else:
+                os.environ[name] = value
+        drop_fullseye_test_regkey()
 
 
 def drop_fullseye_test_regkey():
@@ -152,25 +201,6 @@ def drop_fullseye_test_regkey():
     rec(winreg.HKEY_CURRENT_USER, r"Software\FullseyeTest")
 
 
-@pytest.fixture(scope="session", autouse=True)
-def _isolate_install_ledger(tmp_path_factory):
-    """``fullseye-rag`` / ``fullseye setup`` / ``fullseye.shortcuts`` が書く台帳を**セッション全体で**一時ファイルへ逃がす。
-
-    台帳の既定の置き場は利用者のデータ領域(%LOCALAPPDATA%/Fullseye/setup/install_ledger.json)。隔離を個々のテストに
-    置いていたので、置き忘れたテスト(test_rag_setup.py など)から本物の台帳に一時フォルダを指す行が残りうる。
-    セッション autouse でここに 1 つだけ置く(個別に FULLSEYE_LEDGER を向けるテストはそちらが優先)。"""
-    prev = os.environ.get("FULLSEYE_LEDGER")
-    os.environ["FULLSEYE_LEDGER"] = str(tmp_path_factory.mktemp("install_ledger") / "install_ledger.json")
-    try:
-        yield
-    finally:
-        if prev is None:
-            os.environ.pop("FULLSEYE_LEDGER", None)
-        else:
-            os.environ["FULLSEYE_LEDGER"] = prev
-        drop_fullseye_test_regkey()
-
-
 # --------------------------------------------------------------------------- #
 # ★本物の Fullseye の登録(デスクトップ・スタートメニュー・HKCU の Uninstall・setup フォルダ)を試験が触らないことの見張り #
 # --------------------------------------------------------------------------- #
@@ -178,15 +208,17 @@ def _isolate_install_ledger(tmp_path_factory):
 # デスクトップだけは SHGetKnownFolderPath で**本物**を引き、本物の ``Fullseye Studio.lnk`` と ``Uninstall\\Fullseye`` を消す
 # 対象に入れていた(実際に、利用者のデスクトップの ``Fullseye Studio.lnk`` が消えた)。個々の試験の注意では防げないので、
 # 試験群を回す前後で本物の一覧を取り、**差があれば失敗**させる(Windows だけ。fullseye は import しない)。
-_FS_FILE_NAMES = {"fullseye studio.lnk", "fullseye-uninstall.cmd", "fullseye.ico", "fullseye-studio.desktop"}
+_FS_FILE_NAMES = {"fullseye studio.lnk", "fullseye-uninstall.cmd", "fullseye.ico", "fullseye-studio.desktop",
+                  "fullseye-auto-shortcuts.json"}
 
 
-def real_install_snapshot() -> dict:
-    """本物の Fullseye 登録の一覧(読むだけ)。Windows 以外は空。"""
+def real_install_snapshot(env: dict | None = None) -> dict:
+    """Fullseye 登録の一覧を読むだけで取る。``env=None`` は必ず利用者の実物を読む。"""
     snap: dict = {}
     if sys.platform != "win32":
         return snap
     import winreg
+    e = _REAL_ENV if env is None else env
 
     def entry(p):
         try:
@@ -196,15 +228,16 @@ def real_install_snapshot() -> dict:
             return (p, None, None)
 
     desk = set()
-    try:
-        with winreg.OpenKey(winreg.HKEY_CURRENT_USER,
-                            r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders") as k:
-            desk.add(winreg.QueryValueEx(k, "Desktop")[0])
-    except OSError:
-        pass
-    for env, sub in (("USERPROFILE", "Desktop"), ("PUBLIC", "Desktop")):
-        if os.environ.get(env):
-            desk.add(os.path.join(os.environ[env], sub))
+    if env is None:
+        try:
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                                r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders") as k:
+                desk.add(winreg.QueryValueEx(k, "Desktop")[0])
+        except OSError:
+            pass
+    for name, sub in (("USERPROFILE", "Desktop"), ("PUBLIC", "Desktop")):
+        if e.get(name):
+            desk.add(os.path.join(e[name], sub))
     out = []
     for d in sorted(desk):
         try:
@@ -214,7 +247,7 @@ def real_install_snapshot() -> dict:
             pass
     snap["desktop"] = sorted(out)
     menus = []
-    for base in (os.environ.get("APPDATA"), os.environ.get("ProgramData")):
+    for base in (e.get("APPDATA"), e.get("ProgramData")):
         if not base:
             continue
         root = os.path.join(base, "Microsoft", "Windows", "Start Menu", "Programs")
@@ -246,7 +279,7 @@ def real_install_snapshot() -> dict:
     except OSError:
         pass
     snap["uninstall_keys"] = sorted(keys, key=str)
-    local = os.environ.get("LOCALAPPDATA")
+    local = e.get("LOCALAPPDATA")
     setup = None                            # None = フォルダが無い / [] = 在るが空(「空で新しく作られた」を検出するため区別する)
     if local:
         d = os.path.join(local, "Fullseye", "setup")
@@ -283,19 +316,15 @@ def _real_fullseye_registration_is_untouched():
                     + " | ".join(diff), pytrace=False)
 
 
-_INSTALLER_TEST_MODULES = {"test_installer_review_2026_11_12", "test_studio_shortcuts_2026_11_12", "test_rag_setup"}
-
-
 @pytest.fixture(autouse=True)
-def _installer_tests_never_name_the_real_uninstall_key(request, monkeypatch):
-    """インストーラの試験の間は、``fullseye.shortcuts.UNINSTALL_KEY`` を試験用の名前に差し替える
-    (「本物の Uninstall\\Fullseye」を、同じプロセスの試験が計画にも削除にも使えないようにする)。別プロセスで走らせる物は対象外。"""
-    if request.module.__name__ not in _INSTALLER_TEST_MODULES:
-        yield
-        return
-    from fullseye import shortcuts
-    monkeypatch.setattr(shortcuts, "UNINSTALL_KEY", r"Software\FullseyeTest\_stub_for_the_real_uninstall_key")
+def _real_fullseye_registration_is_unchanged_after_each_test(request):
+    """本物が変われば、その直後の nodeid を添えて失敗させる。"""
+    before = real_install_snapshot()
     yield
+    diff = snapshot_diff(before, real_install_snapshot())
+    if diff:
+        pytest.fail("the test changed the REAL Fullseye registration after %s (Desktop / Start menu / "
+                    "HKCU Uninstall / setup folder): %s" % (request.node.nodeid, " | ".join(diff)), pytrace=False)
 
 
 #: api の遮断器(プロセスで 1 つの集合)。開けたまま残すと、同じワーカーで後に走るテストの
@@ -325,6 +354,39 @@ def _isolate_api_breakers():
     """テストが開けた遮断器を次のテストへ持ち越さない(中で開けて中で確かめるのは従来どおり)。"""
     with _api_breakers_restored():
         yield
+
+
+@pytest.fixture(autouse=True)
+def _studio_run_workers_are_quiesced_after_each_test(request):
+    """Studio の実行ワーカーの QThread を、走ったまま次のテストへ持ち越さない(2026-11-26)。
+
+    1.2.0 で Apply / Run がワーカーのスレッドで走るようになり(#364)、窓を閉じずに終わる
+    テストが走ったままの QThread を残した。全テストが通った後、プロセスの終了時に Qt が
+    ``QThread: Destroyed while thread '' is still running`` で abort する(Linux CI の
+    full suite = exit 134、Windows = exit 127)。
+
+    各テストの後に、残っている Studio の窓ごとに本体の ``quiesce``(停止を要求し、上限付きで
+    待ち、GUI スレッドで退役させる —— 窓を閉じる時と同じ道)を呼ぶ。窓は閉じない:
+    module scope の fixture が窓を次のテストへ渡すことがあり、閉じる必要も無い(スレッドが
+    残らなければ abort は起きない)。上限内に止まらないワーカーは捨てずに、そのテストを
+    失敗させる(fail-closed)。PySide6 を読んでいないテストでは何もしない。
+    """
+    yield
+    qtw = sys.modules.get("PySide6.QtWidgets")
+    if qtw is None:
+        return
+    app = qtw.QApplication.instance()
+    if app is None:
+        return
+    stuck = 0
+    for w in list(app.topLevelWidgets()):
+        quiesce = getattr(w, "quiesce", None)
+        if callable(quiesce) and getattr(w, "_run_controller", None) is not None:
+            if not quiesce(timeout_ms=5000):
+                stuck += 1
+    if stuck:
+        pytest.fail("%s left %d Studio window(s) whose run worker did not stop within 5 s"
+                    % (request.node.nodeid, stuck), pytrace=False)
 
 
 # --------------------------------------------------------------------------- #

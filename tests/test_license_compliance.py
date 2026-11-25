@@ -64,6 +64,18 @@ def test_gpl_exception_is_limited_to_the_test_extra():
     assert module.requirement_scopes()["plyfile"] == ("export-verify",)
 
 
+def test_default_pyside6_essentials_uses_the_reviewed_lgpl_option():
+    """Studio Qt の標準導入は監査済み LGPL 選択肢を使う。 / Keep Studio on the reviewed LGPL option."""
+    module = _tool()
+    policy, _, _ = _ledgers(module)
+    record = policy["packages"]["pyside6-essentials"]
+    assert module.requirement_scopes()["pyside6-essentials"] == ("default",)
+    assert record["spdx"] == "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only"
+    assert record["class"] == "weak-copyleft"
+    assert any("LICENSES/LGPL-3.0-only.txt" in path for path in record["license_files"])
+    assert record["effect"].startswith("Default Studio Qt dependency")
+
+
 def test_full_setup_exclusion_is_the_single_gpl_source_of_truth():
     """GPL extra の既定除外は一箇所の台帳で決める。 / Keep the GPL default exclusion in one ledger."""
     module = _tool()
@@ -135,7 +147,7 @@ def test_wheel_notice_carries_bundled_material_and_bsd_text():
     text = (ROOT / "fullseye" / "THIRD_PARTY_NOTICES.md").read_text(encoding="utf-8")
     assert "kenney-car-kit" in text and "hokusai-great-wave" in text
     assert "BSD 3-Clause License" in text and "scikit-image team" in text
-    assert "Prepared 1.2.0" in text and "pybind11" in text and "pyside6-essentials" in text
+    assert "Pre-audited future default" in text and "pybind11" in text and "pyside6-essentials" in text
     assert (ROOT / "THIRD_PARTY_NOTICES.md").read_text(encoding="utf-8") == text
 
 

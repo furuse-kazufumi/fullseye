@@ -56,7 +56,7 @@ difference is entirely the partial-volume edge.
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[radon_transform](radon_transform.md)
+[radon_transform](radon_transform.md) · [filtered_backprojection_like](../reconstruct/filtered_backprojection_like.md)
 
 ## 同カテゴリ(`forward`)
 

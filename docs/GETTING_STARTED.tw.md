@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: c70ba3c329f3 -->
+<!-- i18n-source-sha: 4d7dab5a96bd -->
 # 快速上手（5 分鐘跑起來）
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · **繁體中文** · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -32,18 +32,18 @@ Fullseye 是一個**以 numpy 陣列作為輸入輸出的影像處理運算子�
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # 僅核心（numpy + scipy。所有 op 都看得到，需要 optional backend 的 op 呼叫時會指出缺少的 extra）
+py -3.11 -m pip install -e .          # Python API + Studio + Pillow；重型後端按需以 extra 加入
 ```
 
-核心**只靠 numpy 與 scipy** 就能運作。OpenCV / scikit-image / Pillow 等額外後端都是選配，即使沒有安裝，也只是該後端專屬的運算子會被停用而已（優雅降級）。實務上至少需要 OpenCV 或 Pillow 來讀寫影像檔案，建議額外安裝下列其中之一。
+核心 API 以 **numpy 與 scipy** 運作，標準 `pip install fullseye` 還會安裝 Studio 的 PySide6-Essentials 與影像 I/O 的 Pillow。只有 OpenCV / scikit-image 等較重後端是選配；未安裝時僅該後端專屬的運算子會停用（優雅降級）。
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # 影像 I/O + 來自 OpenCV 的運算子
-py -3.11 -m pip install -e ".[all]"       # 全部後端（opencv, skimage, pil, wavelets, gpu, extra）
-py -3.11 -m pip install -e ".[gui]"       # 若要使用 Fullseye Studio（PySide6）
+py -3.11 -m pip install -e ".[opencv]"    # OpenCV 專用影像 API 與 cv_* 運算子
+py -3.11 -m pip install -e ".[all]"       # 所有額外後端
+fullseye-studio                            # 標準安裝後即可啟動 Studio
 ```
 
-extras 的清單與說明整理在 [INSTALL.md](INSTALL.md)。要使用 GUI 需要 `[gui]`（或 `[all]` + `[gui]`）。
+extras 的清單與說明整理在 [INSTALL.md](INSTALL.md)。`gui` 與 `pil` 是相容舊安裝命令的空別名。
 
 > 也可以不安裝直接試用。把儲存庫根目錄（`<path-to-fullseye>`）設為工作目錄，並將該路徑加入環境變數 `PYTHONPATH`，`import fullseye` 就能運作。不過 `fullseye` / `fullseye-studio` 這兩個指令（主控台腳本）只有執行過 `pip install -e .` 之後才能使用。
 
@@ -110,7 +110,7 @@ out = fullseye.run_pipeline(frame, stages)
 
 ## 4. 視覺化建構（Fullseye Studio）
 
-不用寫程式，搜尋並排列運算子，用滑桿調整旋鈕，一段一段執行並即時檢視中間結果來建構流水線。需要 GUI extras（`pip install -e ".[gui]"` = PySide6）。
+不用寫程式，搜尋並排列運算子，用滑桿調整旋鈕，一段一段執行並即時檢視中間結果來建構流水線。Studio 屬於標準安裝。第一次在互動終端執行 `fullseye` 或 `fullseye-studio` 時，會一次性註冊到 Windows 開始選單或 Linux 應用程式選單；用 `FULLSEYE_NO_SHORTCUTS=1` 或 Studio 設定的 `shortcuts/auto_register=false` 可退出。
 
 ```powershell
 py -3.11 studio.py          # 或者已安裝的話: fullseye-studio
@@ -177,8 +177,8 @@ py -3.11 imgevolve.py pipeline in.png out.png --ops "gaussian,sobel_amp,otsu"
 |---|---|
 | `ModuleNotFoundError: No module named 'fullseye'` | 執行 `pip install -e .`，或把儲存庫根目錄加入 `PYTHONPATH` |
 | 沒有 `fullseye` / `fullseye-studio` 指令 | 主控台腳本是透過 `pip install -e .` 註冊的。未安裝時用 `py -3.11 imgevolve.py ...` / `py -3.11 studio.py` |
-| Studio 無法啟動 | 未安裝 GUI extras。`pip install -e ".[gui]"`（PySide6） |
-| `apply` / `pipeline` 出現 `cannot read ...` | 需為影像 I/O 安裝 OpenCV（`[opencv]`）或 Pillow（`[pil]`） |
+| Studio 無法啟動 | 標準相依套件損壞。`pip install --force-reinstall fullseye` |
+| `apply` / `pipeline` 出現 `cannot read ...` | 標準 Pillow 相依套件損壞或影像損壞。重裝 Fullseye 後檢查影像 |
 | 額外後端的運算子顯示為「unknown」 | 該後端尚未安裝。追加 `.[skimage]` `.[wavelets]` `.[extra]` 等 |
 
 更詳細的疑難排解請參考 [INSTALL.md](INSTALL.md)。

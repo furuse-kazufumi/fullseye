@@ -1,0 +1,416 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
+"""Typed-ledger C API bridge / 型台帳を正本にする C API ブリッジ。
+
+The callable set is derived from the contract and registry type ledgers.  An
+operator is callable exactly when both sides use only image, region, color,
+volume, feature, contour, or points; unsupported sorts are reported with their
+reason rather than silently omitted.  Parameter objects remain closed schemas.
+
+呼出可能集合は contract / registry の型台帳から導出する。入出力が image、region、
+color、volume、feature、contour、points だけの op を呼出可能とし、他の sort は
+黙って落とさず理由を返す。パラメータ JSON は従来どおり閉じた schema で検査する。
+"""
+from __future__ import annotations
+
+import inspect
+import json
+import math
+import traceback
+
+import numpy as np
+
+from json_safety import _loads_limited
+
+FS_OK = 0
+FS_E_INVALID_ARG = 1
+FS_E_TYPE = 2
+FS_E_NO_BACKEND = 5
+FS_E_UNSUPPORTED = 6
+FS_E_OUT_OF_MEMORY = 7
+FS_E_UNKNOWN_OP = 11
+FS_E_BAD_PARAMS = 12
+FS_E_PY_EXCEPTION = 13
+
+#: C SDK で値として運べる型。This is the sole reachability rule / 到達可能性の唯一の規則。
+ABI_SORTS = frozenset(("image", "region", "color", "volume", "feature", "contour", "points"))
+_ANN_SORT = {"FImage": "image", "Region": "region", "ObjectSet": "objectset"}
+_PIPELINE_KIND = {"image": "image", "region": "region", "color": "color",
+                  "volume": "volume", "feature": "feature"}
+
+
+class _Refuse(Exception):
+    """Carry one stable ABI status / 安定 ABI の状態コードを運ぶ。"""
+
+    def __init__(self, status: int, message: str):
+        super().__init__(message)
+        self.status = status
+
+
+def _reject_constant(name: str):
+    raise ValueError("%s is not a finite RFC 8259 number" % name)
+
+
+def _contract_entries() -> list[dict]:
+    """Read contract types from fslib signatures / fslib の注釈から contract 型を読む。"""
+    import fslib
+    from .abi_bridge import CONTRACT_OPS
+
+    rows = []
+    for name in CONTRACT_OPS:
+        sig = inspect.signature(getattr(fslib, name), eval_str=True)
+        first = next(iter(sig.parameters.values()))
+        in_sort = _ANN_SORT.get(getattr(first.annotation, "__name__", str(first.annotation)), "unknown")
+        ret = sig.return_annotation
+        out_sort = _ANN_SORT.get(getattr(ret, "__name__", str(ret)), "unknown")
+        rows.append({"id": "contract:" + name, "tier": "contract", "name": name,
+                     "in_sort": in_sort, "out_sort": out_sort})
+    return rows
+
+
+def _entries() -> list[dict]:
+    """Return all ledger rows and an explicit callable/rejection decision."""
+    import ops
+
+    rows = _contract_entries()
+    rows += [{"id": "registry:" + op.name, "tier": "registry", "name": op.name,
+              "in_sort": op.in_sort, "out_sort": op.out_sort,
+              "category": op.category, "halcon": op.halcon} for op in ops.REGISTRY]
+    for row in rows:
+        unsupported = sorted({row["in_sort"], row["out_sort"]} - ABI_SORTS)
+        row["callable"] = not unsupported
+        row["reason"] = "" if not unsupported else (
+            "C ABI cannot represent declared sort(s): " + ", ".join(unsupported))
+    return rows
+
+
+def catalog() -> dict:
+    """Machine-readable C SDK operator ledger / 機械可読 C SDK op 台帳。"""
+    rows = _entries()
+    callable_rows = [row for row in rows if row["callable"]]
+    return {"schema_version": 3, "abi_sorts": sorted(ABI_SORTS),
+            "n_ops": len(rows), "n_callable": len(callable_rows),
+            "n_rejected": len(rows) - len(callable_rows), "ops": rows}
+
+
+def catalog_json() -> str:
+    return json.dumps(catalog(), ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def _params(row: dict, text: str | None) -> dict:
+    try:
+        value = _loads_limited(text or "{}", label="params_json", parse_constant=_reject_constant)
+    except (ValueError, RecursionError) as exc:
+        raise _Refuse(FS_E_BAD_PARAMS, "params_json is not valid RFC 8259 JSON: %s" % exc) from exc
+    if not isinstance(value, dict):
+        raise _Refuse(FS_E_BAD_PARAMS, "params_json must be a JSON object")
+    if row["tier"] == "registry":
+        extra = set(value) - {"a", "b"}
+        if extra:
+            raise _Refuse(FS_E_BAD_PARAMS, "unknown parameter(s): %s" % ", ".join(sorted(extra)))
+        out = {"a": 0.5, "b": 0.5, **value}
+        for key, number in out.items():
+            if isinstance(number, bool) or not isinstance(number, (int, float)):
+                raise _Refuse(FS_E_BAD_PARAMS, "parameter %s must be a JSON number" % key)
+            if not math.isfinite(float(number)) or not 0.0 <= float(number) <= 1.0:
+                raise _Refuse(FS_E_BAD_PARAMS, "parameter %s must be finite and in [0, 1]" % key)
+            out[key] = float(number)
+        return out
+    from .abi_bridge import _contract_schema
+    from .mcp.server import ArgError, _validate
+    schema = _contract_schema(row["name"])
+    try:
+        _validate(schema, value)
+    except ArgError as exc:
+        raise _Refuse(FS_E_BAD_PARAMS, "op %r: %s" % (row["id"], exc)) from exc
+    return {key: value[key] if key in value else spec["default"]
+            for key, spec in schema["properties"].items()
+            if key in value or "default" in spec}
+
+
+def _runs_to_mask(height: int, width: int, raw: bytes) -> np.ndarray:
+    runs = np.frombuffer(raw, dtype=np.int32).reshape(-1, 3)
+    mask = np.zeros((height, width), dtype=bool)
+    for row, begin, end in runs:
+        mask[int(row), int(begin):int(end)] = True
+    return mask
+
+
+def _input(value: dict):
+    """Convert a native-owned value without coercion / 暗黙変換せず native 値を戻す。"""
+    import fslib
+
+    kind = value["kind"]
+    if kind == "image":
+        array = np.asarray(value["array"])
+        lo, hi = float(value["lo"]), float(value["hi"])
+        if array.dtype == np.float64:
+            return fslib.FImage(array, value_range=(lo, hi))
+        return fslib.FImage((array.astype(np.float64) - lo) / (hi - lo), value_range=(0.0, 1.0))
+    if kind == "region":
+        return fslib.Region(_runs_to_mask(value["h"], value["w"], value["runs"]))
+    if kind in ("color", "volume"):
+        return np.asarray(value["array"], dtype=np.float64)
+    if kind == "points":
+        points = np.asarray(value["array"], dtype=np.float64)
+        if points.ndim != 2 or points.shape[0] == 0 or points.shape[1] not in (2, 3):
+            raise _Refuse(FS_E_TYPE, "points must have shape (N,2) or (N,3) with N > 0")
+        if not np.isfinite(points).all():
+            raise _Refuse(FS_E_INVALID_ARG, "points contain NaN or infinity")
+        return points
+    if kind == "contour":
+        shape = tuple(value["shape"])
+        cs = [np.asarray(points, dtype=np.float64) for points in value["cs"]]
+        closed = list(value["closed"])
+        if (len(shape) != 2 or any(isinstance(dim, bool) or not isinstance(dim, (int, np.integer))
+                                  or int(dim) <= 0 for dim in shape)):
+            raise _Refuse(FS_E_TYPE, "contour shape must contain two positive integers")
+        if not cs or any(points.ndim != 2 or points.shape[0] == 0 or points.shape[1] != 2
+                         for points in cs):
+            raise _Refuse(FS_E_TYPE, "contour must contain non-empty (N,2) point sequences")
+        if len(closed) != len(cs) or any(not isinstance(flag, (bool, np.bool_)) for flag in closed):
+            raise _Refuse(FS_E_TYPE, "contour closed flags must match the point sequences")
+        if not all(np.isfinite(points).all() for points in cs):
+            raise _Refuse(FS_E_INVALID_ARG, "contour contains NaN or infinity")
+        # Python contours encode closure by repeating the first point. The C ABI
+        # carries it explicitly, so normalize both directions without guessing.
+        # Python の輪郭は始点の反復で閉曲線を表すため、C の明示フラグに従って正規化する。
+        normalized = []
+        for points, is_closed in zip(cs, closed):
+            repeats_first = points.shape[0] > 1 and np.array_equal(points[0], points[-1])
+            if is_closed and not repeats_first:
+                points = np.concatenate((points, points[:1]), axis=0)
+            elif not is_closed and repeats_first:
+                points = points[:-1]
+            normalized.append(points)
+        return {"shape": tuple(map(int, shape)), "cs": normalized}
+    if kind == "feature":
+        number = float(value["value"])
+        if not math.isfinite(number):
+            raise _Refuse(FS_E_INVALID_ARG, "feature must be finite")
+        return number
+    raise _Refuse(FS_E_TYPE, "unsupported input kind: %r" % kind)
+
+
+def _output(value, row: dict) -> dict:
+    """Copy one declared result type / 宣言された出力型だけを複製する。"""
+    import fslib
+
+    sort = row["out_sort"]
+    if sort == "region":
+        array = (value._mask if isinstance(value, fslib.Region)
+                 else value.pixels if isinstance(value, fslib.FImage) else np.asarray(value))
+        if array.ndim != 2:
+            raise _Refuse(FS_E_UNSUPPORTED, "%s returned a non-2-D region" % row["id"])
+        if not np.isfinite(array).all():
+            raise _Refuse(FS_E_UNSUPPORTED,
+                          "%s returned a region containing NaN or infinity" % row["id"])
+        runs = np.ascontiguousarray(fslib.Region(array > 0.5).runs(), dtype=np.int32)
+        return {"kind": "region", "h": int(array.shape[0]), "w": int(array.shape[1]),
+                "runs": runs.tobytes()}
+    if sort == "feature":
+        array = np.asarray(value, dtype=np.float64).reshape(-1)
+        if array.size != 1 or not np.isfinite(array[0]):
+            raise _Refuse(FS_E_UNSUPPORTED, "%s returned a non-finite or non-scalar feature" % row["id"])
+        return {"kind": "feature", "value": float(array[0])}
+    if sort == "contour":
+        if not isinstance(value, dict) or "shape" not in value or "cs" not in value:
+            raise _Refuse(FS_E_UNSUPPORTED, "%s returned an invalid contour object" % row["id"])
+        shape = tuple(value["shape"])
+        if (len(shape) != 2 or any(isinstance(dim, bool) or not isinstance(dim, (int, np.integer))
+                                  or int(dim) <= 0 for dim in shape)):
+            raise _Refuse(FS_E_UNSUPPORTED, "%s returned an invalid contour shape" % row["id"])
+        if not isinstance(value["cs"], (list, tuple)) or not value["cs"]:
+            raise _Refuse(
+                FS_E_UNSUPPORTED,
+                "%s returned 0 contour sequences; the C ABI requires at least 1 non-empty (N,2) "
+                "sequence / %s は輪郭列を 0 本返しました。C ABI は空でない (N,2) 点列を 1 本以上 "
+                "要求します。少なくとも 1 本の点列を返してください" % (row["id"], row["id"]),
+            )
+        contours = []
+        for raw in value["cs"]:
+            points = np.asarray(raw, dtype=np.float64)
+            if points.ndim != 2 or points.shape[0] == 0 or points.shape[1] != 2:
+                raise _Refuse(FS_E_UNSUPPORTED, "%s returned an invalid contour point sequence" % row["id"])
+            if not np.isfinite(points).all():
+                raise _Refuse(FS_E_INVALID_ARG, "operator output contains NaN or infinity")
+            points = np.ascontiguousarray(points, dtype=np.float64)
+            closed = bool(points.shape[0] > 1 and np.array_equal(points[0], points[-1]))
+            contours.append({"points": points.tobytes(), "count": int(points.shape[0]),
+                             "closed": closed})
+        return {"kind": "contour", "h": int(shape[0]), "w": int(shape[1]),
+                "contours": contours}
+    if isinstance(value, fslib.FImage):
+        value = value.pixels
+    array = np.asarray(value, dtype=np.float64)
+    want_dims = {"image": (2,), "color": (3,), "volume": (3, 4), "points": (2,)}[sort]
+    if (array.ndim not in want_dims or (sort == "color" and array.shape[-1] != 3)
+            or (sort == "points" and (array.shape[0] == 0 or array.shape[1] not in (2, 3)))):
+        if sort == "points" and array.ndim == 2 and array.shape[0] == 0:
+            raise _Refuse(
+                FS_E_UNSUPPORTED,
+                "%s returned points shape %s; the C ABI requires shape (N,2) or (N,3) with N > 0 / "
+                "%s は点列 shape %s を返しました。C ABI では N > 0 が必要です。少なくとも 1 点を "
+                "含む (N,2) または (N,3) を返してください" % (row["id"], array.shape, row["id"], array.shape),
+            )
+        raise _Refuse(FS_E_UNSUPPORTED, "%s returned shape %s, not declared %s" %
+                      (row["id"], array.shape, sort))
+    if not np.isfinite(array).all():
+        raise _Refuse(FS_E_INVALID_ARG, "operator output contains NaN or infinity")
+    array = np.ascontiguousarray(array, dtype=np.float64)
+    if sort == "image":
+        return {"kind": "image", "h": int(array.shape[0]), "w": int(array.shape[1]),
+                "lo": 0.0, "hi": 1.0, "pixels": array.tobytes()}
+    return {"kind": sort, "shape": list(map(int, array.shape)), "pixels": array.tobytes()}
+
+
+def _run(row: dict, input_value, params: dict):
+    if row["tier"] == "contract":
+        import fslib
+        return getattr(fslib, row["name"])(input_value, **params)
+    import fullseye
+    value = input_value
+    if row["in_sort"] == "image":
+        if not hasattr(input_value, "pixels"):
+            raise _Refuse(FS_E_TYPE, "registry image input is not an image")
+        value = np.asarray(input_value.pixels, dtype=np.float64)
+        lo, hi = input_value.value_range
+        value = (value - lo) / (hi - lo) if (lo, hi) != (0.0, 1.0) else value
+    elif row["in_sort"] == "region":
+        value = np.asarray(input_value._mask, dtype=np.float64)
+    return fullseye.apply(value, row["name"], params["a"], params["b"], coerce=False,
+                          device="cpu", on_error="raise", allow_nonfinite=False)
+
+
+def call(op_id: str, inputs: list[dict], params_json: str | None) -> dict:
+    """Run one scoped ledger op, fail closed, and never leak Python exceptions."""
+    try:
+        by_id = {row["id"]: row for row in _entries()}
+        row = by_id.get(op_id)
+        if row is None:
+            if ":" not in op_id:
+                raise _Refuse(FS_E_UNKNOWN_OP, "operator IDs must include a contract: or registry: scope")
+            raise _Refuse(FS_E_UNKNOWN_OP, "unknown operator ID: %s" % op_id)
+        if not row["callable"]:
+            raise _Refuse(FS_E_UNSUPPORTED, "%s is not C-callable: %s" % (op_id, row["reason"]))
+        if len(inputs) != 1:
+            raise _Refuse(FS_E_INVALID_ARG, "%s requires exactly one input" % op_id)
+        value = _input(inputs[0])
+        actual = inputs[0]["kind"]
+        if actual != row["in_sort"]:
+            raise _Refuse(FS_E_TYPE, "%s requires %s, not %s" % (op_id, row["in_sort"], actual))
+        output = _run(row, value, _params(row, params_json))
+        return {"status": FS_OK, "message": "", "outputs": [_output(output, row)]}
+    except _Refuse as exc:
+        return {"status": exc.status, "message": str(exc), "outputs": []}
+    except MemoryError:
+        return {"status": FS_E_OUT_OF_MEMORY, "message": "out of memory", "outputs": []}
+    except (TypeError, ValueError) as exc:
+        return {"status": FS_E_TYPE, "message": "%s: %s" % (type(exc).__name__, str(exc)[:400]), "outputs": []}
+    except Exception as exc:  # noqa: BLE001 -- C ABI must classify every Python exception
+        return {"status": FS_E_PY_EXCEPTION,
+                "message": "%s: %s\n%s" % (type(exc).__name__, str(exc)[:400], traceback.format_exc()[-800:]),
+                "outputs": []}
+
+
+def find_ops(query_json: str | None) -> str:
+    """Return generated-ledger callable rows / 生成台帳の呼出可能行を返す。"""
+    try:
+        value = _loads_limited(query_json or "{}", label="query_json", parse_constant=_reject_constant)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("query_json is not valid RFC 8259 JSON: %s" % exc) from exc
+    if not isinstance(value, dict) or set(value) - {"query", "limit"}:
+        raise ValueError("query_json must be an object containing only query and limit")
+    query = value.get("query", "")
+    if not isinstance(query, str):
+        raise ValueError("query must be a string")
+    rows = [row for row in _entries() if row["callable"] and query.lower() in row["id"].lower()]
+    limit = value.get("limit", len(rows))
+    if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+        raise ValueError("limit must be an integer in [1, 1000]")
+    return json.dumps({"schema_version": 3, "n_callable": len(rows), "ops": rows[:limit]},
+                      ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def _load_pipeline_document(text: str, *, where: str):
+    """Use the public saved-pipeline gate, never a native lookalike.
+
+    Keeping this call through ``fullseye.load_pipeline_text`` is intentional:
+    the CLI, Python application and C/C++ bridge must reject the same Studio
+    JSON for the same reason. / C/C++ 用に別の JSON reader を作らず、公開の
+    load_pipeline_text を通して CLI/Python と同じ拒否理由に揃える。
+    """
+    import fullseye
+
+    pipeline = fullseye.load_pipeline_text(text, where=where)
+    interface = fullseye.pipeline_interface(pipeline)
+    for endpoint in interface["inputs"] + interface["outputs"]:
+        if endpoint["sort"] not in _PIPELINE_KIND:
+            raise ValueError(
+                "%s: endpoint %r has sort %r, which the C API cannot carry. This is refused because an embedded "
+                "pipeline must preserve its declared type; choose a pipeline ending in image, region, color, volume "
+                "or feature." % (where, endpoint["name"], endpoint["sort"]))
+    return pipeline, interface
+
+
+def pipeline_load_json(text: str) -> dict:
+    """Validate a UTF-8 Studio document and return its named C API interface."""
+    if not isinstance(text, str):
+        raise TypeError("pipeline JSON must be UTF-8 text")
+    _pipeline, interface = _load_pipeline_document(text, where="C API pipeline JSON")
+    return interface
+
+
+def _pipeline_input_value(value: dict, expected_sort: str):
+    """Translate an ABI value to the exact public engine input representation."""
+    raw = _input(value)
+    if expected_sort == "image":
+        if not hasattr(raw, "pixels"):
+            raise _Refuse(FS_E_TYPE, "pipeline input 'image' must be an image")
+        pixels = np.asarray(raw.pixels, dtype=np.float64)
+        lo, hi = raw.value_range
+        return (pixels - lo) / (hi - lo) if (lo, hi) != (0.0, 1.0) else pixels
+    if expected_sort == "region":
+        if not hasattr(raw, "_mask"):
+            raise _Refuse(FS_E_TYPE, "pipeline input 'image' must be a region")
+        return np.asarray(raw._mask, dtype=np.float64)
+    if expected_sort in ("color", "volume"):
+        return np.asarray(raw, dtype=np.float64)
+    if expected_sort == "feature":
+        return float(raw)
+    raise _Refuse(FS_E_UNSUPPORTED, "pipeline declares unsupported input sort %r" % expected_sort)
+
+
+def pipeline_run_json(text: str, inputs: list[dict]) -> dict:
+    """Run one validated Studio pipeline via exactly the Python engine used by CLI."""
+    try:
+        pipeline, interface = _load_pipeline_document(text, where="C API pipeline JSON")
+        expected = interface["inputs"]
+        if len(inputs) != len(expected):
+            raise _Refuse(FS_E_INVALID_ARG,
+                          "pipeline expects %d named input(s) (%s), got %d. Supply the 'image' input exactly once."
+                          % (len(expected), ", ".join(x["name"] for x in expected), len(inputs)))
+        item = inputs[0]
+        actual = item.get("kind")
+        want = expected[0]["sort"]
+        if actual != want:
+            raise _Refuse(FS_E_TYPE,
+                          "pipeline input 'image' requires %s, got %s. This is rejected before stage 1 so a saved "
+                          "pipeline cannot silently reinterpret data; pass a %s value or choose a matching pipeline."
+                          % (want, actual, want))
+        result = pipeline.run(_pipeline_input_value(item, want), coerce=False)
+        output = interface["outputs"][0]
+        return {"status": FS_OK, "message": "", "outputs": [_output(result, {
+            "id": "pipeline:" + pipeline.name, "out_sort": output["sort"]})]}
+    except _Refuse as exc:
+        return {"status": exc.status, "message": str(exc), "outputs": []}
+    except MemoryError:
+        return {"status": FS_E_OUT_OF_MEMORY, "message": "out of memory while running the pipeline", "outputs": []}
+    except (TypeError, ValueError) as exc:
+        return {"status": FS_E_BAD_PARAMS,
+                "message": "pipeline execution was refused: %s. Fix the named stage or input, then reload the saved "
+                           "Studio pipeline." % str(exc), "outputs": []}
+    except Exception as exc:  # noqa: BLE001 -- no Python exception crosses the C ABI
+        return {"status": FS_E_PY_EXCEPTION,
+                "message": "pipeline execution raised %s: %s. Check the stage named by the exception and its input "
+                           "constraints, then correct the Studio pipeline." % (type(exc).__name__, str(exc)[:400]),
+                "outputs": []}
