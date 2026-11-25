@@ -1,0 +1,129 @@
+diameter_px	axis_ratio	phase_px	noise_sigma	psf_sigma_px	threshold	background_gradient	abs_error_px (accepted only)	accepted	rejection_reason
+12	1	0.15	0.01	0.4	0.55	0	0.005165	True	accepted
+12	1	0.15	0.01	0.4	0.55	0.12	0.005165	True	accepted
+12	1	0.15	0.01	0.4	0.68	0	0.005165	True	accepted
+12	1	0.15	0.01	0.4	0.68	0.12	0.005165	True	accepted
+12	1	0.15	0.01	1	0.55	0	0.005165	True	accepted
+12	1	0.15	0.01	1	0.55	0.12	0.005165	True	accepted
+12	1	0.15	0.01	1	0.68	0	1.540550	True	accepted
+12	1	0.15	0.01	1	0.68	0.12	1.493452	True	accepted
+12	1	0.15	0.04	0.4	0.55	0	0.005165	True	accepted
+12	1	0.15	0.04	0.4	0.55	0.12	0.005165	True	accepted
+12	1	0.15	0.04	0.4	0.68	0		False	oversegmentation
+12	1	0.15	0.04	0.4	0.68	0.12		False	oversegmentation
+12	1	0.15	0.04	1	0.55	0	0.005165	True	accepted
+12	1	0.15	0.04	1	0.55	0.12	0.153016	True	accepted
+12	1	0.15	0.04	1	0.68	0		False	oversegmentation
+12	1	0.15	0.04	1	0.68	0.12		False	oversegmentation
+12	1	0.65	0.01	0.4	0.55	0	0.153016	True	accepted
+12	1	0.65	0.01	0.4	0.55	0.12	0.153016	True	accepted
+12	1	0.65	0.01	0.4	0.68	0	0.153016	True	accepted
+12	1	0.65	0.01	0.4	0.68	0.12	0.153016	True	accepted
+12	1	0.65	0.01	1	0.55	0	0.153016	True	accepted
+12	1	0.65	0.01	1	0.55	0.12	0.153016	True	accepted
+12	1	0.65	0.01	1	0.68	0	1.865755	True	accepted
+12	1	0.65	0.01	1	0.68	0.12	1.773623	True	accepted
+12	1	0.65	0.04	0.4	0.55	0	0.153016	True	accepted
+12	1	0.65	0.04	0.4	0.55	0.12	0.153016	True	accepted
+12	1	0.65	0.04	0.4	0.68	0		False	oversegmentation
+12	1	0.65	0.04	0.4	0.68	0.12		False	oversegmentation
+12	1	0.65	0.04	1	0.55	0	0.257335	True	accepted
+12	1	0.65	0.04	1	0.55	0.12	0.412171	True	accepted
+12	1	0.65	0.04	1	0.68	0		False	oversegmentation
+12	1	0.65	0.04	1	0.68	0.12		False	oversegmentation
+12	1.8	0.15	0.01	0.4	0.55	0	0.047793	True	accepted
+12	1.8	0.15	0.01	0.4	0.55	0.12	0.047793	True	accepted
+12	1.8	0.15	0.01	0.4	0.68	0	0.047793	True	accepted
+12	1.8	0.15	0.01	0.4	0.68	0.12	0.047793	True	accepted
+12	1.8	0.15	0.01	1	0.55	0	0.100518	True	accepted
+12	1.8	0.15	0.01	1	0.55	0.12	0.047793	True	accepted
+12	1.8	0.15	0.01	1	0.68	0	1.727325	True	accepted
+12	1.8	0.15	0.01	1	0.68	0.12	1.540550	True	accepted
+12	1.8	0.15	0.04	0.4	0.55	0	0.047793	True	accepted
+12	1.8	0.15	0.04	0.4	0.55	0.12	0.047793	True	accepted
+12	1.8	0.15	0.04	0.4	0.68	0		False	oversegmentation
+12	1.8	0.15	0.04	0.4	0.68	0.12		False	oversegmentation
+12	1.8	0.15	0.04	1	0.55	0	0.100518	True	accepted
+12	1.8	0.15	0.04	1	0.55	0.12	0.205287	True	accepted
+12	1.8	0.15	0.04	1	0.68	0		False	oversegmentation
+12	1.8	0.15	0.04	1	0.68	0.12		False	oversegmentation
+12	1.8	0.65	0.01	0.4	0.55	0	0.047793	True	accepted
+12	1.8	0.65	0.01	0.4	0.55	0.12	0.047793	True	accepted
+12	1.8	0.65	0.01	0.4	0.68	0	0.047793	True	accepted
+12	1.8	0.65	0.01	0.4	0.68	0.12	0.047793	True	accepted
+12	1.8	0.65	0.01	1	0.55	0	0.153016	True	accepted
+12	1.8	0.65	0.01	1	0.55	0.12	0.047793	True	accepted
+12	1.8	0.65	0.01	1	0.68	0	1.587484	True	accepted
+12	1.8	0.65	0.01	1	0.68	0.12	1.680870	True	accepted
+12	1.8	0.65	0.04	0.4	0.55	0	0.047793	True	accepted
+12	1.8	0.65	0.04	0.4	0.55	0.12	0.047793	True	accepted
+12	1.8	0.65	0.04	0.4	0.68	0	0.047793	True	accepted
+12	1.8	0.65	0.04	0.4	0.68	0.12		False	oversegmentation
+12	1.8	0.65	0.04	1	0.55	0	0.205287	True	accepted
+12	1.8	0.65	0.04	1	0.55	0.12	0.153016	True	accepted
+12	1.8	0.65	0.04	1	0.68	0		False	oversegmentation
+12	1.8	0.65	0.04	1	0.68	0.12		False	oversegmentation
+20	1	0.15	0.01	0.4	0.55	0	0.068850	True	accepted
+20	1	0.15	0.01	0.4	0.55	0.12	0.068850	True	accepted
+20	1	0.15	0.01	0.4	0.68	0	0.068850	True	accepted
+20	1	0.15	0.01	0.4	0.68	0.12	0.068850	True	accepted
+20	1	0.15	0.01	1	0.55	0	0.026744	True	accepted
+20	1	0.15	0.01	1	0.55	0.12	0.026744	True	accepted
+20	1	0.15	0.01	1	0.68	0	1.557654	True	accepted
+20	1	0.15	0.01	1	0.68	0.12	1.528102	True	accepted
+20	1	0.15	0.04	0.4	0.55	0	0.068850	True	accepted
+20	1	0.15	0.04	0.4	0.55	0.12	0.068850	True	accepted
+20	1	0.15	0.04	0.4	0.68	0	0.068850	True	accepted
+20	1	0.15	0.04	0.4	0.68	0.12		False	oversegmentation
+20	1	0.15	0.04	1	0.55	0	0.090220	True	accepted
+20	1	0.15	0.04	1	0.55	0.12	0.185060	True	accepted
+20	1	0.15	0.04	1	0.68	0		False	oversegmentation
+20	1	0.15	0.04	1	0.68	0.12		False	oversegmentation
+20	1	0.65	0.01	0.4	0.55	0	0.058507	True	accepted
+20	1	0.65	0.01	0.4	0.55	0.12	0.058507	True	accepted
+20	1	0.65	0.01	0.4	0.68	0	0.058507	True	accepted
+20	1	0.65	0.01	0.4	0.68	0.12	0.058507	True	accepted
+20	1	0.65	0.01	1	0.55	0	0.090220	True	accepted
+20	1	0.65	0.01	1	0.55	0.12	0.058507	True	accepted
+20	1	0.65	0.01	1	0.68	0	1.763389	True	accepted
+20	1	0.65	0.01	1	0.68	0.12	1.734118	True	accepted
+20	1	0.65	0.04	0.4	0.55	0	0.058507	True	accepted
+20	1	0.65	0.04	0.4	0.55	0.12	0.058507	True	accepted
+20	1	0.65	0.04	0.4	0.68	0		False	oversegmentation
+20	1	0.65	0.04	0.4	0.68	0.12		False	oversegmentation
+20	1	0.65	0.04	1	0.55	0	0.216575	True	accepted
+20	1	0.65	0.04	1	0.55	0.12	0.153496	True	accepted
+20	1	0.65	0.04	1	0.68	0		False	oversegmentation
+20	1	0.65	0.04	1	0.68	0.12		False	oversegmentation
+20	1.8	0.15	0.01	0.4	0.55	0	0.090220	True	accepted
+20	1.8	0.15	0.01	0.4	0.55	0.12	0.090220	True	accepted
+20	1.8	0.15	0.01	0.4	0.68	0	0.090220	True	accepted
+20	1.8	0.15	0.01	0.4	0.68	0.12	0.090220	True	accepted
+20	1.8	0.15	0.01	1	0.55	0	0.153496	True	accepted
+20	1.8	0.15	0.01	1	0.55	0.12	0.121883	True	accepted
+20	1.8	0.15	0.01	1	0.68	0	1.850969	True	accepted
+20	1.8	0.15	0.01	1	0.68	0.12	1.734118	True	accepted
+20	1.8	0.15	0.04	0.4	0.55	0	0.090220	True	accepted
+20	1.8	0.15	0.04	0.4	0.55	0.12	0.090220	True	accepted
+20	1.8	0.15	0.04	0.4	0.68	0		False	oversegmentation
+20	1.8	0.15	0.04	0.4	0.68	0.12		False	oversegmentation
+20	1.8	0.15	0.04	1	0.55	0	0.373416	True	accepted
+20	1.8	0.15	0.04	1	0.55	0.12	0.216575	True	accepted
+20	1.8	0.15	0.04	1	0.68	0		False	oversegmentation
+20	1.8	0.15	0.04	1	0.68	0.12		False	oversegmentation
+20	1.8	0.65	0.01	0.4	0.55	0	0.005070	True	accepted
+20	1.8	0.65	0.01	0.4	0.55	0.12	0.005070	True	accepted
+20	1.8	0.65	0.01	0.4	0.68	0	0.005070	True	accepted
+20	1.8	0.65	0.01	0.4	0.68	0.12	0.005070	True	accepted
+20	1.8	0.65	0.01	1	0.55	0	0.026744	True	accepted
+20	1.8	0.65	0.01	1	0.55	0.12	0.005070	True	accepted
+20	1.8	0.65	0.01	1	0.68	0	1.704807	True	accepted
+20	1.8	0.65	0.01	1	0.68	0.12	1.646066	True	accepted
+20	1.8	0.65	0.04	0.4	0.55	0	0.005070	True	accepted
+20	1.8	0.65	0.04	0.4	0.55	0.12	0.005070	True	accepted
+20	1.8	0.65	0.04	0.4	0.68	0		False	oversegmentation
+20	1.8	0.65	0.04	0.4	0.68	0.12		False	oversegmentation
+20	1.8	0.65	0.04	1	0.55	0	0.185060	True	accepted
+20	1.8	0.65	0.04	1	0.55	0.12	0.185060	True	accepted
+20	1.8	0.65	0.04	1	0.68	0		False	oversegmentation
+20	1.8	0.65	0.04	1	0.68	0.12		False	oversegmentation
