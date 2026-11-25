@@ -46,7 +46,7 @@ part — remesh first (:func:`mesh_isotropic_remesh`).
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [mesh_select_lod](mesh_select_lod.md)
+[ppf_pose_hypotheses](../match_pose/ppf_pose_hypotheses.md) · [pose_nms_symmetry](../match_pose/pose_nms_symmetry.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [mesh_select_lod](mesh_select_lod.md)
 
 ## 同カテゴリ(`resolution`)
 

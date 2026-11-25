@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 056a87b1bfa1 -->
+<!-- i18n-source-sha: f1044d971702 -->
 # Installation / Environment Setup — Complete Guide
 
 [日本語](./INSTALL.md) · **English** · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -7,9 +7,10 @@ A guide to setting up Fullseye (working name imgevolve) for any purpose, from a 
 machine to embedded Linux. If you only want it running in five minutes,
 [GETTING_STARTED.md](GETTING_STARTED.en.md) is the shortcut.
 
-Fullseye's design principle is **"a core that runs on numpy + scipy alone" + "every heavy
-dependency is optional."** Without an extra backend, only the operators specific to that backend
-are disabled; the core always runs (graceful degradation).
+Fullseye's Python API core runs on **numpy + scipy**. A standard `pip install fullseye` also
+installs Studio (PySide6-Essentials) and Pillow; the heavy image-processing backends remain
+optional. Without an extra backend, only the operators specific to that backend are disabled
+(graceful degradation).
 
 ---
 
@@ -19,7 +20,7 @@ are disabled; the core always runs (graceful degradation).
 |---|---|
 | Python | **3.11** (`pyproject.toml` sets `requires-python = ">=3.11"`; development and testing use 3.11) |
 | Run command | Windows: `py -3.11` / Linux: `python3.11` |
-| Core dependencies | `numpy>=1.23`, `scipy>=1.10` (pulled in automatically by `pip install -e .`) |
+| Standard dependencies | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0` (pulled in automatically by `pip install -e .`) |
 | OS | Windows 10/11, Linux (embedded included). macOS works too, wherever Python runs |
 
 ---
@@ -30,7 +31,7 @@ Do an editable install from the repository root.
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .            # core only (numpy + scipy; every op is listed, and an op that needs an optional backend names the missing extra when called)
+py -3.11 -m pip install -e .            # standard: Python API + Studio + Pillow; an op that needs an optional backend names the missing extra when called
 ```
 
 Additional backends are selected through **extras** (defined in `pyproject.toml`'s
@@ -40,31 +41,31 @@ Additional backends are selected through **extras** (defined in `pyproject.toml`
 |---|---|---|
 | `opencv` | `opencv-python>=4.8.1.78` | image file I/O (required by the `apply`/`pipeline` CLI), the `cv_*` operators |
 | `skimage` | `scikit-image>=0.20` | the `sk_*` / `xsk_*` families (the base for many auto-generated operators) |
-| `pil` | `Pillow>=13.0` | image I/O fallback, the `xpil_*` family (emboss/posterize/solarize, etc.) |
+| `pil` | none (Pillow is standard) | compatibility alias; image I/O fallback and the `xpil_*` family are ready by default |
 | `wavelets` | `PyWavelets>=1.4` | the wavelet family (VisuShrink / subbands / packets, etc.) |
 | `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | the GPU batch backend (`accel.py`/`bench.py`), the `xkor_*` (kornia) family |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow, etc.), mahotas-derived (Zernike / pftas, etc.) |
-| `gui` | `PySide6>=6.5` | **Fullseye Studio** (`studio.py` / `fullseye-studio`) |
-| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile` (no CuPy; the full GPU set is `fullseye[gpu]`. Per PyTorch's install guide, the default torch on Linux is the CUDA build and may bring CUDA components (nvidia-* wheels) with it. For CPU-only use, install torch first from the CPU-only index: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | all operators and backends |
+| `gui` | none (Studio is standard) | compatibility alias; **Fullseye Studio** (`studio.py` / `fullseye-studio`) starts after `pip install fullseye` |
+| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile` (no CuPy; the full GPU set is `fullseye[gpu]`. Per PyTorch's install guide, the default torch on Linux is the CUDA build and may bring CUDA components (nvidia-* wheels) with it. For CPU-only use, install torch first from the CPU-only index: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | all operators and backends |
 
 Rules of thumb:
 
 ```powershell
-# the common minimum for real work + image I/O (no GUI, code/CLI-centric)
+# the common minimum for real work + image I/O (Studio is already standard)
 py -3.11 -m pip install -e ".[opencv]"
 
-# also use the GUI (Studio)
+# the former spelling remains compatible (`gui` is an empty alias)
 py -3.11 -m pip install -e ".[opencv,gui]"
 
-# fully loaded (GUI included; since `all` does not include GUI, add `gui`)
-py -3.11 -m pip install -e ".[all,gui]"
+# fully loaded (Studio is already standard)
+py -3.11 -m pip install -e ".[all]"
 
 # also try the GPU batch path (needs a CUDA-capable torch)
 py -3.11 -m pip install -e ".[gpu]"
 ```
 
-> `all` does **not** include `gui` (the GUI is kept separate because it serves a distinct purpose).
-> If you use Studio, always add `gui` explicitly.
+> Studio and Pillow are standard dependencies. `gui` and `pil` are empty compatibility aliases
+> for existing install commands.
 
 A successful install gives you the following **two console scripts** (`[project.scripts]`).
 
@@ -79,6 +80,26 @@ To try it without installing, put the repository root on `PYTHONPATH` and `impor
 ```powershell
 $env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
+```
+
+After `pip install fullseye`, the first interactive execution of `fullseye` or
+`fullseye-studio` registers **Fullseye Studio** once in the Windows Start menu or Linux
+application menu. A virtual environment's menu entry starts that environment's Python. Deleting
+the entry later does not cause an ordinary command to recreate it. The successful registration
+prints this one line:
+
+```text
+Registered Fullseye Studio in the Start menu (remove: fullseye-studio --remove-shortcuts)
+```
+
+Set `FULLSEYE_NO_SHORTCUTS=1` to suppress it, or add this setting to the INI named by
+`FULLSEYE_STUDIO_SETTINGS` (the normal Linux Studio file is `~/.config/Fullseye/Studio.conf`).
+CI, commands without a terminal, and a Windows administrator policy that hides Start-menu
+programs do not create an entry. Use `fullseye setup` for detailed optional configuration.
+
+```ini
+[shortcuts]
+auto_register=false
 ```
 
 ---
@@ -148,9 +169,9 @@ Key points for embedded use:
   out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
   ```
 
-- **When you do need file I/O** (`fullseye.load` / `fullseye.save`, `imgevolve.py run`, examples), it
-  works if you have **either OpenCV or Pillow** (`imgio` falls back automatically). If you want to
-  keep an embedded footprint small, Pillow (`[pil]`) is the lighter of the two.
+- **When you do need file I/O** (`fullseye.load` / `fullseye.save`, `imgevolve.py run`, examples),
+  the standard Pillow dependency is available. OpenCV is needed only for `read_image` / `write_image`
+  and the `cv_*` family.
 - You can split the work as **design on the dev machine, execution on the embedded machine.** Build
   the pipeline in Studio on the dev machine and export the JSON; on the embedded machine you just run
   `FullseyeEngine.load("pipeline.json").run(frame)` (no GUI). See [ENGINE.md](ENGINE.md) for details.
@@ -169,8 +190,8 @@ Key points for embedded use:
 |---|---|---|
 | `ModuleNotFoundError: No module named 'fullseye'` | not installed / path not set | `pip install -e .`, or add the repository root to `PYTHONPATH` |
 | `fullseye` / `fullseye-studio` command not found | console scripts not registered | run `pip install -e .`. If not installed, use `py -3.11 imgevolve.py` / `py -3.11 studio.py` |
-| PySide6 ImportError when launching Studio | GUI extras not installed | `pip install -e ".[gui]"` |
-| `cannot read <path>` on `apply` / `pipeline` | no image I/O backend | `pip install -e ".[opencv]"` (or `[pil]`) |
+| PySide6 ImportError when launching Studio | broken standard dependency | `pip install --force-reinstall fullseye` |
+| `cannot read <path>` on `apply` / `pipeline` | broken standard Pillow dependency, or a damaged image | `pip install --force-reinstall fullseye`; if that does not help, inspect the image |
 | cv2 ImportError from `read_image` / `write_image` (API) | these are **OpenCV-only** | `pip install -e ".[opencv]"`. If you want to get by with Pillow, use `fullseye.load` / `fullseye.save` |
 | An operator you expected is missing from `list_ops` / `has` returns unknown | the relevant backend is not installed | add the matching extras (`skimage`/`wavelets`/`extra`, etc.) |
 | GPU batch (`accel`/`bench`) is slow on the CPU | `torch` is the CPU build | on GPU use `--device cuda`. On CPU, trivially pointwise work loses to the conversion cost (by design) |
