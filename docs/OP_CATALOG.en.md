@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (497 examples)
+### 2-D image / signal / geometry (498 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -67,6 +67,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `example_scratch_width` — ops: `bothat`, `gen_measure_rectangle2`, `lines_gauss`, `measure_pairs`, `mm_per_px_from_reference`, `table_px_to_mm`, `tophat` `py -3.11 examples/example_scratch_width.py`
 - `poc_dimensional_inspection` — ops: `add_metrology_object_circle_measure`, `add_metrology_object_ellipse_measure`, `add_metrology_object_generic`, `add_metrology_object_line_measure`, `add_metrology_object_rectangle2_measure`, `align_metrology_model`, `apply_metrology_model`, `create_metrology_model`, `ellipse`, `erf`, `fuzzy_measure_pairing`, `gen_measure_arc` (+8 more) `py -3.11 examples/poc_dimensional_inspection.py`
 - `poc_compendial_particle_microscopy` — ops: `annotate_figure_grid`, `blob_count_interval`, `blob_distance`, `blob_features`, `blob_label`, `blob_seeds`, `blob_split`, `ellipse`, `mm_per_px_from_reference`, `noise_sigma`, `particle_size_distribution`, `threshold` `py -3.11 examples/poc_compendial_particle_microscopy.py`
+- `poc_vial_particle_pod` — ops: `axes_transform`, `data_to_pixel`, `pod_hitmiss_fit`, `proportion_interval`, `text_box`, `track_moving_particles`, `vial_spin_stop_sequence` `py -3.11 examples/poc_vial_particle_pod.py`
 - `poc_star_astrometry` — ops: `erf`, `gaussian`, `noise_sigma`, `psf_fit`, `star_detect`, `vector_to_similarity` `py -3.11 examples/poc_star_astrometry.py`
 - `poc_surface_roughness` — ops: `profile_params`, `rms`, `surface_filter`, `surface_form_remove`, `surface_params`, `surface_psd`, `surface_synth_psd` `py -3.11 examples/poc_surface_roughness.py`
 - `poc_dic_strain` — ops: `axes_frame`, `axes_transform`, `erf`, `piv_cross_correlate`, `plot_series`, `strain_from_displacement`, `text_box`, `ticks` `py -3.11 examples/poc_dic_strain.py`

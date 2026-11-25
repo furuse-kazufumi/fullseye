@@ -13,11 +13,11 @@ camera data.  The flow is low-Reynolds-number / isolated-sphere Stokes drag with
 geometric wall handling; glass and liquid refraction are visual cues, not a ray
 trace or a CFD solution.
 
-公開資料を画像の転載なしに観察項目として使った。Seidenader V90 の公開資料は
-白/黒背景、底・肩からの Tyndall 光、回転後も動く粒子を記載する。Jambon et al.
-(2024, *Eur J Hosp Pharm*, doi:10.1136/ejhpharm-2024-004143) の公開図と本文は、
-AVI の高出力 LED 背面照明と回転後撮像を記載する。Corning の公開 application
-note (CLSCPT-AN-1018) は、ガラスの屈折率差が反射と透過を変えることを記載する。
+公開資料を画像の転載なしに観察項目として使った。公開資料は白/黒背景、底・肩からの
+Tyndall 光、回転後も動く粒子、高出力 LED 背面照明と回転後撮像を記載する。ガラス容器
+メーカーの公開 application note は、ガラスの屈折率差が反射と透過を変えることを記載する。
+出典表示: Seidenader V90 の公開資料; Jambon et al. (2024, *Eur J Hosp Pharm*,
+doi:10.1136/ejhpharm-2024-004143); Corning application note CLSCPT-AN-1018.
 この PoC はそれらの見え方（ガラス縁、メニスカス、曲面底、明視野の暗粒子、
 暗視野の明粒子）だけを合成し、第三者の画像データは取り込まない。
 

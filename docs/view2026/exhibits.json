@@ -5614,6 +5614,23 @@
    }
   },
   {
+   "id": "poc_vial_particle_pod",
+   "group": "wing_metrology",
+   "media": "01_spin_stop_tracks.png",
+   "motion": false,
+   "thumb_src": "01_spin_stop_tracks_720.jpg",
+   "label": {
+    "ja": "回転停止後のバイアル粒子検査",
+    "en": "Vial particle inspection after spin stop",
+    "zh": "旋停后的西林瓶颗粒检查",
+    "tw": "旋停後的西林瓶微粒檢查",
+    "ko": "회전 정지 후 바이알 입자 검사",
+    "de": "Partikelprüfung im Fläschchen nach Drehstopp",
+    "hi": "Spin stop के बाद vial particle inspection",
+    "fr": "Inspection de particules en flacon après arrêt de rotation"
+   }
+  },
+  {
    "id": "poc_photoelasticity",
    "group": "wing_metrology",
    "media": "03_load_and_isoclinics.mp4",

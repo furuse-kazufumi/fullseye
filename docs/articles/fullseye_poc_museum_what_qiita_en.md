@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**150 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**151 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1817,7 +1817,7 @@ Ops used (notes): [`class_2dim_sup`](https://furuse.work/ops/segmentation/classi
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 50 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 51 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2304,6 +2304,38 @@ Source: [examples/poc_compendial_particle_microscopy.py](https://github.com/furu
 This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_compendial_particle_microscopy)
 
 Ops used (notes): [`annotate_figure_grid`](https://furuse.work/ops/annotate/paper/annotate_figure_grid.html) · [`blob_count_interval`](https://furuse.work/ops/blob/split/blob_count_interval.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_seeds`](https://furuse.work/ops/blob/split/blob_seeds.html) · [`blob_split`](https://furuse.work/ops/blob/split/blob_split.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`mm_per_px_from_reference`](https://furuse.work/ops/measure1d/scale/mm_per_px_from_reference.html) · [`noise_sigma`](https://furuse.work/ops/astrostack/quality/noise_sigma.html) · [`particle_size_distribution`](https://furuse.work/ops/drive/pharma/particle_size_distribution.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
+
+## No.2026.320 —— Vial Particle Inspection After Spin Stop — Particle POD by Lighting and Contrast on an Independent Holdout
+
+After rotation stops, particles and bubbles keep moving while scratches remain still. The pooled independent holdout has a ninety-percent detection diameter of 164.20 µm. Back and side illumination place planted truth, matched tracks and a miss-side case in one view.
+
+[![Vial Particle Inspection After Spin Stop — Particle POD by Lighting and Contrast on an Independent Holdout](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/01_spin_stop_tracks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/01_spin_stop_tracks.png)
+
+*↑ **Vial Particle Inspection After Spin Stop — Particle POD by Lighting and Contrast on an Independent Holdout** ―― Known truth for particles, bubbles and stationary scratches is overlaid on a decaying post-stop swirl, and back- and side-lit inputs yield tracks in one coordinate system. In an independent holdout of 84 trials, 62 hit and 22 miss; the pooled POD fit has a90 164.20 µm and a one-sided 95% upper bound of 231.20 µm. The clean holdout has 0/20 false particles (95% upper bound 0.1391); the life-size tracking view, diameter-by-contrast POD, condition-specific a90 table and miss case come from the same run.*
+
+Terms: POD — A curve giving the probability that a specified inspection procedure detects a flaw as a function of flaw size or another explanatory variable.
+
+[![灰色破線は USP<1790> 文脈の手作業検査の参考観測値(100/150/200 µm = 40/70/95%%)であり、規格の基準でも本 AVI の合否基準でもない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/02_pod_by_diameter_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/02_pod_by_diameter_contrast.png)
+
+*↑ The measurement ―― 灰色破線は USP<1790> 文脈の手作業検査の参考観測値(100/150/200 µm = 40/70/95%%)であり、規格の基準でも本 AVI の合否基準でもない。各パネルの下に同じ条件の GLM a90/a90/95 を記し、見出しの値だけが全条件をまとめた値である。凡例は実線、青い点+区間、灰色破線を実際と同じ色・形で描く。 (figure labels are in Japanese; the numbers are the same)*
+
+[![各行は独立 holdout のその条件だけで fit した GLM。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/03_pod_condition_a90_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/03_pod_condition_a90.png)
+
+*↑ 各行は独立 holdout のその条件だけで fit した GLM。*
+
+[![丸の真値粒子に対応する十字が3コマ未満で、事前固定の検出規則では hit にしない例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/04_miss_representative_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/04_miss_representative.png)
+
+*↑ 丸の真値粒子に対応する十字が3コマ未満で、事前固定の検出規則では hit にしない例。*
+
+```
+py -3.11 examples/poc_vial_particle_pod.py
+```
+
+Source: [examples/poc_vial_particle_pod.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_vial_particle_pod.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_vial_particle_pod)
+
+Ops used (notes): [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html) · [`proportion_interval`](https://furuse.work/ops/spc/pod/proportion_interval.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`track_moving_particles`](https://furuse.work/ops/pharma/track/track_moving_particles.html) · [`vial_spin_stop_sequence`](https://furuse.work/ops/pharma/synth/vial_spin_stop_sequence.html)
 
 ## No.2026.031 —— Stress by Photoelasticity — Most Unwrapping Errors Are the Known Sign Ambiguity
 
