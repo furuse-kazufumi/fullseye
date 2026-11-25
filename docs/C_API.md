@@ -224,14 +224,14 @@ buffer length の不整合は状態コードと `fs_last_error` で拒否する�
 
 ## Rust の第 2 実装 / Rust second implementation
 
-`rust/fullseye_core` は仕様差分を見つけるための第 2 実装であり、現在は ABI 0.2 の部分集合を
-名乗る。ヘッダの ABI 0.3 で追加した Studio pipeline (`fs_pipeline_*`) は Rust 側に未実装なので、
+`rust/fullseye_core` は仕様差分を見つけるための第 2 実装で、`fullseye_abi.h` と同じ L1 ABI 0.3
+を名乗る。pybind11 C SDK の Studio pipeline 拡張 (`fs_pipeline_*`) は Rust 側に未実装なので、
 Rust library を pipeline consumer として使ってはならない。
 
 この部分集合には image / region / objectset / tuple の基本関数、`fs_gauss`、`fs_threshold`、
 `fs_connection`、`fs_measure_all`、`fs_select_shape` と `fs_apply` が含まれる。ABI parity test は
-Rust が名乗る版がヘッダ以下であることと、この実装済み関数集合だけを検証する。ヘッダと同じ
-最新版を名乗らせて未実装の pipeline を利用可能に見せることはしない。
+Rust が名乗る L1 ABI 版がヘッダと一致すること、この実装済み関数集合だけを export すること、
+pipeline API を export しないことを検証する。
 
 ## C++ の寿命・エラー・OpenCV
 
