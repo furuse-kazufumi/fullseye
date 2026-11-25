@@ -64,6 +64,7 @@ __all__ = [
     "SYSTEM_PARAMS", "set_system", "get_system", "query_system",
     "system", "reset_system", "system_snapshot", "PROFILES", "save_profile", "resolve_profile",
     "PLAN_MAX_EXPANSIONS_DEFAULT", "PLAN_MAX_GENERATED_DEFAULT", "PLAN_WALL_SAFETY_MS",
+    "MAX_PROGRAM_STAGES", "pipeline_stage_limit_message",
 ]
 
 
@@ -86,6 +87,29 @@ PLAN_MAX_GENERATED_DEFAULT = 100_000
 # EN: Emergency wall-clock fuse in milliseconds, over 7x the 7.8 s CI worst-case estimate from
 # the generated-candidate cap; normal searches stop at deterministic limits before reaching it.
 PLAN_WALL_SAFETY_MS = 60_000
+
+#: Studio、埋め込み engine、MCP が共通で受け入れるパイプライン段数の上限。
+#: Shared hard cap for Studio, the embedded engine, and MCP pipeline inputs. Studio
+#: retains a row and a cached value per accepted stage, so this bound prevents an
+#: imported or generated program from allocating an unbounded working set.
+MAX_PROGRAM_STAGES = 512
+
+
+def pipeline_stage_limit_message(count, limit=MAX_PROGRAM_STAGES):
+    """段数上限の利用者向け拒否文を日英で返す。
+
+    Return the bilingual, actionable refusal shared by non-GUI pipeline readers.
+    Values are passed in rather than inferred so the message states the observed
+    stage count and the enforced cap exactly.
+    """
+    return (
+        "Pipeline has %d stages; the maximum is %d. Each stage can retain a visible row and cached "
+        "result, so accepting more can exhaust memory and stop the application responding. "
+        "Remove stages, split the pipeline, or run it as a batch/CLI script.\n"
+        "パイプラインは %d 段ですが、上限は %d 段です。各段の表示行とキャッシュを保持するため、"
+        "これ以上を受け入れるとメモリを使い切り、アプリケーションが応答しなくなるおそれがあります。"
+        "段を減らす、処理列を分ける、または batch/CLI スクリプトで実行してください。"
+    ) % (int(count), int(limit), int(count), int(limit))
 
 
 #: 登録済みシステムパラメータ。
@@ -181,8 +205,10 @@ SYSTEM_PARAMS = {
     "mcp_op_memory_limit_bytes": {"values": (268435456, 1073741824, 2147483648), "default": 2147483648, "tightens_only": True,
                                   "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",),
                                   "doc": "Memory-growth cap for one ledger op run in the isolated MCP worker; the worker stops itself when it is exceeded."},
-    "pipeline_max_stages": {"values": (16, 32, 64), "default": 64, "tightens_only": True,
-                            "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Pipeline stage cap."},
+    "pipeline_max_stages": {"values": (16, 32, 64, MAX_PROGRAM_STAGES), "default": MAX_PROGRAM_STAGES,
+                            "tightens_only": True, "affects_numbers": False,
+                            "applied_by": ("fullseye/mcp/server.py",),
+                            "doc": "Pipeline stage cap; it may tighten, but never exceeds MAX_PROGRAM_STAGES."},
     "random_seed": {"values": (0, 1, 42), "default": 0, "tightens_only": False,
                     "affects_numbers": True, "applied_by": None, "doc": "Reserved default seed; stochastic ops receive profile seeds explicitly."},
     "tile_size": {"values": (256, 512, 1024), "default": 512, "tightens_only": False,
