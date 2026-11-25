@@ -18,18 +18,18 @@
 | tier | 件数 |
 |---|---:|
 | `required` | 49 |
-| `suitable` | 2205 |
-| `partial` | 653 |
-| `none` | 940 |
-| **合計** | **3847** |
+| `suitable` | 2206 |
+| `partial` | 654 |
+| `none` | 941 |
+| **合計** | **3850** |
 
 ## GPU 対応率
 
 指標 = `gpu_status=あり` の件数 ÷ (`required` + `suitable`) の件数(件数÷全体ではない)。現状値をそのまま書く(低くてよい)。
 
 - gpu 経路あり: **173**
-- `required` + `suitable`: **2254**
-- **GPU 対応率 = 7.7%** (173 / 2254)
+- `required` + `suitable`: **2255**
+- **GPU 対応率 = 7.7%** (173 / 2255)
 
 正直な内訳: gpu 経路を持つ op のうち 50 件は `partial`(領域モルフォロジ等)、0 件は `none` で、分母には入らない(分子にのみ計上)。
 
@@ -223,6 +223,7 @@
 | imaging_sim | 0 | 2 | 0 | 4 | 6 |
 | intensityreg | 0 | 6 | 0 | 0 | 6 |
 | interp_poly | 0 | 5 | 1 | 0 | 6 |
+| lane | 0 | 2 | 2 | 2 | 6 |
 | lensmerit | 0 | 0 | 0 | 6 | 6 |
 | level | 0 | 5 | 0 | 1 | 6 |
 | linescan | 0 | 1 | 0 | 5 | 6 |
@@ -255,7 +256,6 @@
 | freeform | 0 | 3 | 2 | 0 | 5 |
 | gcode | 0 | 1 | 2 | 2 | 5 |
 | information | 0 | 5 | 0 | 0 | 5 |
-| lane | 0 | 2 | 2 | 1 | 5 |
 | lensconfig | 0 | 0 | 0 | 5 | 5 |
 | light | 0 | 5 | 0 | 0 | 5 |
 | match_pose | 0 | 2 | 3 | 0 | 5 |
@@ -443,6 +443,7 @@
 | robust | 0 | 2 | 0 | 0 | 2 |
 | sample | 0 | 2 | 0 | 0 | 2 |
 | series | 0 | 2 | 0 | 0 | 2 |
+| sign | 0 | 1 | 1 | 0 | 2 |
 | stack | 0 | 2 | 0 | 0 | 2 |
 | stimulus | 0 | 2 | 0 | 0 | 2 |
 | suspect | 0 | 0 | 2 | 0 | 2 |
