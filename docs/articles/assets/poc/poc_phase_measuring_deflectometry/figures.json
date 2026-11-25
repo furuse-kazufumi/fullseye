@@ -155,7 +155,8 @@
    412,
    606,
    3
-  ]
+  ],
+  "source": "Source: Kaufmann, Olufsen, and Fagerholt, Experimental data for force reconstruction using impact hammer and deflectometry, DataverseNO. URL: https://doi.org/10.18710/TKS7SI. Publication: Kaufmann et al. (2023), International Journal of Impact Engineering 171, 104369. Licence: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/). Retrieved: 2026-10-18 (original data retrieval, recorded by the PoC); provenance rechecked 2026-11-24. Changes: Frame crops and phase / force-analysis overlays are Fullseye-derived."
  },
  {
   "file": "16_real_phase_two_methods.png",

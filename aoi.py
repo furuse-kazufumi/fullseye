@@ -83,6 +83,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 #: 受け取る画像の画素数の上限(倍精度へ昇格する前に確かめる)。
 MAX_IMAGE_ELEMENTS = 1 << 24
 
@@ -120,7 +122,14 @@ def _require_image(a, name: str, op: str) -> np.ndarray:
                          "fill or drop them explicitly" % (op, name))
     if isinstance(a, (str, bytes)):
         raise ValueError("%s: %s is a string — expected a 2-D array of numbers" % (op, name))
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        a, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     arr = np.asarray(a)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            arr, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if arr.dtype.kind == "c":
         raise ValueError("%s: %s is complex — expected a real image" % (op, name))
     if arr.dtype.kind not in "fiub":
@@ -130,9 +139,6 @@ def _require_image(a, name: str, op: str) -> np.ndarray:
         raise ValueError("%s: %s must be a 2-D image, got shape %r" % (op, name, arr.shape))
     if arr.shape[0] < 2 or arr.shape[1] < 2:
         raise ValueError("%s: %s must be at least 2x2, got %r" % (op, name, arr.shape))
-    if arr.size > MAX_IMAGE_ELEMENTS:
-        raise ValueError("%s: %s has %d pixels, over the %d cap (aoi.MAX_IMAGE_ELEMENTS)"
-                         % (op, name, arr.size, MAX_IMAGE_ELEMENTS))
     if not np.isfinite(arr).all():
         raise ValueError("%s: %s has %d non-finite pixel(s) — a NaN/Inf here spreads over the "
                          "whole result, so it is refused rather than propagated"

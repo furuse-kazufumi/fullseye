@@ -705,13 +705,16 @@ def test_size_caps_fire_before_the_float64_promotion():
     the wrong side of the conversion this test would try to allocate ~2 GB
     instead of raising."""
     huge_q = np.broadcast_to(np.zeros((1, 1, 4), np.float32), (8192, 8192, 4))
-    with pytest.raises(ValueError, match="cap"):
+    with pytest.raises(ValueError, match="exceeding the limit") as error:
         qi.quat_norm(huge_q)
+    message = str(error.value)
+    assert "268,435,456 elements" in message and "67,108,864 elements" in message
+    assert "scipy.ndimage.zoom" in message and "対処:" in message
     huge_i = np.broadcast_to(np.zeros((1, 1), np.float32), (8192, 8192))
-    with pytest.raises(ValueError, match="cap"):
+    with pytest.raises(ValueError, match="exceeding the limit"):
         qi.riesz_transform(huge_i)
     huge_rgb = np.broadcast_to(np.zeros((1, 1, 3), np.float32), (8192, 8192, 3))
-    with pytest.raises(ValueError, match="cap"):
+    with pytest.raises(ValueError, match="exceeding the limit"):
         qi.rgb_to_quaternion(huge_rgb)
 
 

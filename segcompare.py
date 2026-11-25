@@ -53,13 +53,20 @@ import math
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 MAX_SEG_PIXELS = 500_000_000
 
 
 def _labels(x, name, op):
     if isinstance(x, (str, bytes)) or np.ma.is_masked(x):
         raise ValueError("%s: %s must be an integer label array" % (op, name))
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        x, name, op, MAX_SEG_PIXELS, advice=_arrayguard.IMAGE_CAP_ADVICE)
     a = np.asarray(x)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            a, name, op, MAX_SEG_PIXELS, advice=_arrayguard.IMAGE_CAP_ADVICE)
     if a.dtype.kind == "b":
         a = a.astype(np.int64)
     if a.dtype.kind == "f":
@@ -72,8 +79,6 @@ def _labels(x, name, op):
         raise ValueError("%s: %s must be a 2-D or 3-D label array, got %d-D" % (op, name, a.ndim))
     if a.size == 0:
         raise ValueError("%s: %s is empty" % (op, name))
-    if a.size > MAX_SEG_PIXELS:
-        raise ValueError("%s: %s has %d pixels, over the %d cap" % (op, name, a.size, MAX_SEG_PIXELS))
     return a
 
 
