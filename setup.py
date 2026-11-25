@@ -26,6 +26,7 @@ _SDK_PAYLOAD = (
     (os.path.join("native", "fullseye_c_api.cpp"),
      os.path.join("fullseye", "sdk", "src", "fullseye_c_api.cpp")),
 )
+_REL_ABI_HEADER = os.path.join("fullseye", "include", "fullseye_abi.h")
 
 
 def _has_html(d):
@@ -64,6 +65,15 @@ class build_py(_build_py):
             target = os.path.join(self.build_lib, target_rel)
             os.makedirs(os.path.dirname(target), exist_ok=True)
             self.copy_file(source, target)
+        # C/C++ consumers of ``pip install fullseye`` need the public ABI header too.
+        # Keep the repository-root header authoritative; this is a build-time copy so
+        # the source tree never has two editable copies that can drift.
+        header = os.path.join(os.path.dirname(__file__), "fullseye_abi.h")
+        if not os.path.isfile(header):
+            raise SystemExit("C/C++ SDK header is missing: %s" % header)
+        header_dst = os.path.join(self.build_lib, _REL_ABI_HEADER)
+        os.makedirs(os.path.dirname(header_dst), exist_ok=True)
+        shutil.copyfile(header, header_dst)
 
 
 class sdist(_sdist):
@@ -75,6 +85,12 @@ class sdist(_sdist):
         dst = os.path.join(base_dir, _REL_ARCHIVE)
         n, size = helpstore.pack_archive(helpstore.HELP_DIR, dst)
         print("helpstore: packed %d help pages into the sdist (%.2f MB)" % (n, size / 1e6))
+        header = os.path.join(base_dir, "fullseye_abi.h")
+        if not os.path.isfile(header):
+            raise SystemExit("C/C++ SDK header is missing from sdist inputs: %s" % header)
+        header_dst = os.path.join(base_dir, _REL_ABI_HEADER)
+        os.makedirs(os.path.dirname(header_dst), exist_ok=True)
+        shutil.copyfile(header, header_dst)
 
 
 setup(cmdclass={"build_py": build_py, "sdist": sdist})
