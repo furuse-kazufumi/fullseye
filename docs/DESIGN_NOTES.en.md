@@ -1793,10 +1793,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L156** _(ja)_ — ★2026-11-22(独立レビュー): script.py の引数に ``-m fullseye.mcp`` があるだけで、 script.py のフォルダを外していた。パッケージの import 中に sys.argv[0] が ``-m`` の本物の -m 起動だけに限る。
 - **L639** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
 - **L687** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L917** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
-- **L925** _(ja)_ — ★ 署名の注釈(表示専用): ラッパーは (*args, **kw) だが、実体 ``fn`` の署名を ``__signature__`` に載せ、補完 / ``inspect.signature`` / help() で引数名と既定値が見えるようにする。 呼び出し契約は変えない(受け方は ``mod.call(key, *args, **kw)`` のまま。束縛は実体が行う)。 アクセス時にだけ作る(import 時には何もしない)。署名が取れない実体は注釈なしで素通し。 Display-only signature annotation; the call contract is unchanged; built lazily per access.
-- **L1450** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1569** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L918** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L926** _(ja)_ — ★ 署名の注釈(表示専用): ラッパーは (*args, **kw) だが、実体 ``fn`` の署名を ``__signature__`` に載せ、補完 / ``inspect.signature`` / help() で引数名と既定値が見えるようにする。 呼び出し契約は変えない(受け方は ``mod.call(key, *args, **kw)`` のまま。束縛は実体が行う)。 アクセス時にだけ作る(import 時には何もしない)。署名が取れない実体は注釈なしで素通し。 Display-only signature annotation; the call contract is unchanged; built lazily per access.
+- **L1451** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1570** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/evaluation/metrics.py`
 
@@ -3111,9 +3111,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_mcp_images.py`
 
-- **L331** _(ja)_ — ★最初 `ones + inf` にしていて、有限部が定数なので免除 op でも「定数」判定になり 落ちた —— それは診断器が正しい。確かめたいのは「免除 op なら非有限を異常と 言わない」だけなので、有限部に変化のある入力にする。
-- **L366** _(ja)_ — ★2026-11-15(独立レビュー): 入力の無い台帳 op(abbe_number など)は fullseye_apply でも handle を省ける。 handle が要る op で無ければ、サーバが理由つきで断る(tests/test_mcp_review_fixes_2026_11_15.py)。
-- **L370** _(ja)_ — ★2026-11-13: 入力の無い台帳 op(照明の設計・合成の入口)だけの pipeline は handle を要らないので、 required から handle を外した(受ける要求を広げるだけ。handle を渡す従来の要求はそのまま通る)。
+- **L332** _(ja)_ — ★最初 `ones + inf` にしていて、有限部が定数なので免除 op でも「定数」判定になり 落ちた —— それは診断器が正しい。確かめたいのは「免除 op なら非有限を異常と 言わない」だけなので、有限部に変化のある入力にする。
+- **L367** _(ja)_ — ★2026-11-15(独立レビュー): 入力の無い台帳 op(abbe_number など)は fullseye_apply でも handle を省ける。 handle が要る op で無ければ、サーバが理由つきで断る(tests/test_mcp_review_fixes_2026_11_15.py)。
+- **L371** _(ja)_ — ★2026-11-13: 入力の無い台帳 op(照明の設計・合成の入口)だけの pipeline は handle を要らないので、 required から handle を外した(受ける要求を広げるだけ。handle を渡す従来の要求はそのまま通る)。
 
 ## `tests/test_mcp_isolated_ops_2026_11_13.py`
 

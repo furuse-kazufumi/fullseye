@@ -721,6 +721,7 @@ def capabilities() -> dict:
             "device": device.capabilities()}
 
 import opnames as _opnames  # noqa: E402  (canonical op-name aliases, phase 1 of the naming cleanup)
+from fssystem import pipeline_stage_limit_message  # noqa: E402,F401
 
 
 def _warn_ambiguous_ledger_name(name):
@@ -1323,7 +1324,7 @@ __all__ = [
     "metriccontract", "MetricContractError", "Attempt", "attempt", "attempt_all",
     "DIRECTIONS", "worst_case", "value_or_worst", "best_of", "rank_attempts",
     "fssystem", "set_system", "get_system", "query_system", "system",
-    "reset_system", "system_snapshot",
+    "reset_system", "system_snapshot", "pipeline_stage_limit_message",
     "fsthreads", "blas_threads",
     "annotate", "opsannotate", "measure_text", "text_box", "arrow", "leader_line",
     "label_points", "crosshair", "legend_box", "color_bar", "scale_bar",
