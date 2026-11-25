@@ -6888,9 +6888,18 @@ def build_window(model=None):
             q = self.quiesce
             if q is not None:
                 try:
-                    q()
+                    stopped = q()
                 except Exception as e:
                     _log_soft_failure("could not stop run workers before close", e)
+                    ev.ignore()
+                    return
+                if stopped is False:
+                    # A running QThread must outlive neither its window nor its Python
+                    # wrapper.  Keep the window alive until the non-interruptible stage
+                    # returns; accepting this close would turn a bounded wait into Qt's
+                    # process-aborting "Destroyed while thread is still running".
+                    ev.ignore()
+                    return
             # ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。
             #   それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。
             #   以後の visibilityChanged は利用者の操作ではないので記録しない。
@@ -8866,8 +8875,24 @@ def build_window(model=None):
             # finished() is emitted before QThread has necessarily completed all
             # thread-local cleanup.  wait() is the synchronization point that
             # makes deleting the worker (and releasing its wrapper) safe.
+            if self.thread is None:            # quiesce() retired it synchronously
+                return
             self.thread.wait()
-            _thread_finished(self.generation, self.thread)
+            self.retire()
+
+        def retire(self):
+            """GUI スレッドで、停止済み worker/thread の所有権を一度だけ外す。
+
+            Retire a stopped worker exactly once on the GUI thread.  ``quiesce``
+            calls this after a successful bounded ``wait`` so a closing window
+            never depends on a later queued ``QThread.finished`` delivery.
+            """
+            thread = self.thread
+            if thread is None:
+                return
+            if thread.isRunning():
+                raise RuntimeError("cannot retire a running Studio worker thread")
+            _thread_finished(self.generation, thread)
             run_ctl.finish_bridges.pop(self.generation, None)
             _delete_worker_on_gui_thread(self.worker)
             self.worker = None
@@ -8932,13 +8957,38 @@ def build_window(model=None):
     run_show.clicked.connect(show_completed_result)
     run_current.clicked.connect(start_run_async)
     def quiesce_run_workers(timeout_ms=5000):
-        """停止を要求し、生きている QThread をすべて quit + wait する(閉じる前・テストの後始末)。"""
+        """全 worker の停止を要求し、上限付きで待って GUI 側から退役する。
+
+        Request every worker stop, wait up to ``timeout_ms`` in total, then retire
+        every stopped worker on the GUI thread.  Return ``False`` without dropping
+        ownership when a current stage outlives the bound; callers must keep the
+        window alive rather than let Qt destroy a running ``QThread``.
+        """
+        import time
+
+        timeout_ms = max(0, int(timeout_ms))
+        deadline = time.monotonic() + timeout_ms / 1000.0
         for event in list(run_stop_events.values()):
             event.set()
-        for thread, _worker in list(run_ctl.threads.values()):
+        pairs = list(run_ctl.threads.items())
+        for _gen, (thread, _worker) in pairs:
             thread.quit()
-            thread.wait(timeout_ms)
+        timed_out = []
+        for gen, (thread, _worker) in pairs:
+            remaining_ms = max(0, int((deadline - time.monotonic()) * 1000))
+            if thread.isRunning() and not thread.wait(remaining_ms):
+                timed_out.append(gen)
+        if timed_out:
+            return False
+        # ``QThread.finished`` is queued to the GUI thread.  A close event cannot
+        # rely on another event-loop turn to deliver it: retire each known stopped
+        # worker now, while the window still owns every Python wrapper.
+        for gen, _pair in pairs:
+            bridge = run_ctl.finish_bridges.get(gen)
+            if bridge is not None:
+                bridge.retire()
         QtWidgets.QApplication.processEvents()
+        return not run_ctl.threads
 
     win.quiesce = quiesce_run_workers
     run_ctl.quiesce = quiesce_run_workers
