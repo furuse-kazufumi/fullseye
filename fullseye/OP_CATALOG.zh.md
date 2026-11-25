@@ -15,7 +15,7 @@ Fullseye 是一个可解释的经典/几何视觉 Physical-AI 工具包。本台
 
 _Worked examples 的标题与说明只有日文。本版不假装已翻译，只按 id 列出每个示例、它调用的 op(取自 op 笔记中的示例链接；最多 12 个，其余只给个数)以及运行它的命令。说明见日文版目录 `OP_CATALOG.md`。_
 
-### 2-D 图像/信号/几何(498 例)
+### 2-D 图像/信号/几何(497 例)
 
 **fileio**
 - `fileio_scientific_roundtrip` — op: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -296,7 +296,6 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 - `walking_ops_tour` — op: `capture_margin`, `com_from_silhouette`, `com_support_margin`, `contact_points`, `detect_obstacles`, `elevation_map`, `elevation_normals`, `elevation_step_edges`, `elevation_traversability`, `fill_gaps`, `foot_slip_metrics`, `foothold_candidates`(另有 12 个) `py -3.11 examples/walking_ops_tour.py`
 - `heightmap_depth_camera_tour` — op: `clothoid_points`, `crop_rectangle2`, `dem_viewshed`, `elevation_map`, `fill_gaps`, `heightmap_depth_camera`, `road_surface_heightmap`, `surface_form_remove`, `world_camera` `py -3.11 examples/heightmap_depth_camera_tour.py`
 - `lane_ops_tour` — op: `color_rule_mask`, `lane_boundary_fit`, `lane_center_path`, `pixel_to_world`, `plane_topview_color`, `stop_line_detect` `py -3.11 examples/lane_ops_tour.py`
-- `poc_ginza_stage2_ops` — op: `circularity`, `color_rule_mask`, `curvature_speed_plan`, `gamma`, `lane_boundary_fit`, `lane_curve_estimate`, `regular_shape_classify`, `road_sign_rule_classify`, `text_box` `py -3.11 examples/poc_ginza_stage2_ops.py`
 - `road_surface_tour` — op: `blend`, `clothoid_points`, `crop_rectangle2`, `dem_slope`, `road_surface_heightmap`, `surface_form_remove` `py -3.11 examples/road_surface_tour.py`
 - `itokawa_gravity_tour` — op: `mesh_slice_contours`, `polyhedron_clip_halfspace`, `polyhedron_gravity` `py -3.11 examples/itokawa_gravity_tour.py`
 
@@ -613,11 +612,12 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 **space**
 - `poc_star_tracker` — op:(没有 op 笔记链接到此例) `py -3.11 examples/poc_star_tracker.py`
 
-### 3-D 点云/体数据/曲面(125 例)
+### 3-D 点云/体数据/曲面(126 例)
 
 **registration**
 - `cad_to_scan` — op:(没有 op 笔记链接到此例) `py -3.11 examples_3d/cad_to_scan.py`
 - `find_surface_pose_bracket` — op: `find_surface_pose` `py -3.11 examples_3d/find_surface_pose_bracket.py`
+- `bop_pose_stage1` — op: `pose_nms_symmetry`, `ppf_pose_hypotheses` `py -3.11 examples_3d/bop_pose_stage1.py`
 - `auto_register` — op:(没有 op 笔记链接到此例) `py -3.11 examples_3d/auto_register.py`
 - `reg_eval` — op: `inlier_ratio`, `registration_recall`, `rmse_inliers`, `rotation_translation_error` `py -3.11 examples_3d/reg_eval.py`
 - `two_view_pose` — op: `fundamental_8point`, `recover_pose`, `sampson_distance` `py -3.11 examples_3d/two_view_pose.py`
@@ -852,9 +852,9 @@ _Worked examples 的标题与说明只有日文。本版不假装已翻译，只
 
 ## Operators by family(族 → 类别，全部 op)
 
-_共 3856 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
+_共 3855 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`(笔记 = `docs/ops/<族>/<类别>/<op>.md`)。台账族的 op 用 `fs.ledger.<op>` 调用。_
 
-族一览: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 753 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族一览: **2d** 964 · **3d** 380 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 750 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -1081,7 +1081,7 @@ _共 3856 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `area_frac` (halcon: `area_center`) `region → feature` GPU: 仅在链中(lbl_area_frac) — 返回区域所占像素比例（面积占比）的特征量。与 HALCON 的 ``area_center``（Area and center of regions.）不同，只返回面积而不计算重心（仅对应其部分功能）。 · 示例: `gallery2d_features`, `shape_factors_closed_form`, `threshold_family_agreement`
 - `area_holes` (halcon: `area_holes`) `region → feature` GPU: 仅在链中(lbl_area_holes) — 区域内孔洞所占的面积比 ``(填补孔洞后的面积 - 原始面积) / 填补孔洞后的面积``。越接近 0 表示孔洞越少,越接近 1 表示是大部分为孔洞的极端形状。相当于 HALCON 的 ``area_holes``(Compute the area of holes of regions.)。 · 示例: `gallery2d_features`
 - `blob_count` (halcon: `count_obj`) `region → feature` GPU: 仅在链中(lbl_blob_count) — 区域中连通成分的个数(HALCON `count_obj`)。 · 示例: `gallery2d_features`, `mcp_task_score`, `poc_real_coin_metrology`, `quickstart`
-- `circularity` (halcon: `circularity`) `region → feature` GPU: 仅在链中(lbl_circularity) — 圆形度 ``min(1, 面积 /(π·max²))``,``max`` 是**从重心到轮廓像素的最大距离**。圆为 1,越细长或有大的凸起/孔洞则越小。存在多个连通分量时只评估面积最大的一个。与 HALCON 的 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)**是同一个公式**。 · 示例: `gallery2d_features`, `poc_cell_counting`, `poc_ginza_stage2_ops`, `poc_particle_sizing`, `poc_rotation_invariance_audit`, `shape_factors_closed_form`
+- `circularity` (halcon: `circularity`) `region → feature` GPU: 仅在链中(lbl_circularity) — 圆形度 ``min(1, 面积 /(π·max²))``,``max`` 是**从重心到轮廓像素的最大距离**。圆为 1,越细长或有大的凸起/孔洞则越小。存在多个连通分量时只评估面积最大的一个。与 HALCON 的 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)**是同一个公式**。 · 示例: `gallery2d_features`, `poc_cell_counting`, `poc_particle_sizing`, `poc_rotation_invariance_audit`, `shape_factors_closed_form`
 - `circularity_xld` (halcon: `circularity_xld`) `contour → feature` GPU: 无 — 对最大的轮廓,用鞋带公式的面积 ``F`` 和从**所围面积的重心**到轮廓点的最大距离 ``max`` 计算 ``min(1, F/(π·max²))``(区域版 ``circularity`` 的轮廓版)。与 HALCON 的 ``circularity_xld``(Shape factor for the circularity (similarity to a circle) of contours or polygons.)**是同一个公式**。 · 示例: `gallery2d_features`
 - `compactness` (halcon: `compactness`) `region → feature` GPU: 仅在链中(lbl_compactness) — 紧凑度 ``max(1, 周长² / (4π·面积))``。圆为 1，越细长/越粗糙/孔洞越多则越大，**没有上限**。与 HALCON 的 ``compactness``（Shape factor for the compactness of a region.）是同一个量。 · 示例: `gallery2d_features`, `shape_factors_closed_form`
 - `compactness_xld` (halcon: `compactness_xld`) `contour → feature` GPU: 无 — 对最大的轮廓计算紧凑度 ``max(1, 周长²/(4π·面积))``(区域版 ``compactness`` 的轮廓版)。圆为 1,越细长/越粗糙则越大,**没有上限**。与 HALCON 的 ``compactness_xld``(Shape factor for the compactness of contours or polygons.)**是同一个公式**。 · 示例: `gallery2d_features`
@@ -1220,7 +1220,7 @@ _共 3856 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `f2_bit_slice` (halcon: `bit_slice`) `image → image` GPU: 有(许可列表) — 8 位量化后提取一个位平面。 0..1 中的归一化“a”选择平面“round(7*a)”（0 = LSB，1 = MSB）； ``b`` 被忽略。返回 {0,1}。 · 示例: `gallery2d_gray_arith`
 - `f2_expand_domain` (halcon: `expand_domain_gray`) `image → image` GPU: 有(许可列表) — 将图像的定义域(非零区域)向外扩展一个边距,新增的像素设为最近的已有灰度值。``a`` 设置边距宽度(1..7 px);``b`` 被忽略。 · 示例: `gallery2d_gray_arith`
 - `f2_lut_trans` (halcon: `lut_trans`) `image → image` GPU: 有(f2_lut_trans) — 通过单调(无 gamma)灰度值查找表对图像进行变换。该 256 项表是一条对比度 sigmoid 曲线，其增益由 ``a`` 设定、拐点由 ``b`` 设定，并按端点归一化使其覆盖 [0,1]；随后图像在其 8 位量化值上进行真正的查表操作。 · 示例: `gallery2d_gray_arith`
-- `gamma` (halcon: `pow_image`) `image → image` GPU: 有(gamma_image) — 伽马校正（幂次变换）。相当于 HALCON 的 ``pow_image``（Raise an image to a power.）。 · 示例: `gallery2d_gray_arith`, `poc_ginza_stage2_ops`, `poc_itof_multifreq`, `poc_simcal_thin_film`
+- `gamma` (halcon: `pow_image`) `image → image` GPU: 有(gamma_image) — 伽马校正（幂次变换）。相当于 HALCON 的 ``pow_image``（Raise an image to a power.）。 · 示例: `gallery2d_gray_arith`, `poc_itof_multifreq`, `poc_simcal_thin_film`
 - `gamma_image` (halcon: `gamma_image`) `image → image` GPU: 无 — 伽玛校正 ``x ** (0.3 + 2.5*a)``。``a`` 越接近 0，指数越接近 0.3，会提升暗部；``a`` 越接近 1，指数越接近 2.8，会压暗暗部、增强对比度。用作 HALCON ``gamma_image``（Perform a gamma encoding or decoding of an image.）的替代。 · 示例: `gallery2d_gray_arith`
 - `illuminate` (halcon: `illuminate`) `image → image` GPU: 有(illuminate) — 非锐化蒙版式的局部对比度增强。将高斯模糊(半径 ``3+12*a``)得到的 ``sm`` 与原图相减得到差分 ``x - sm``,再加回原图,从而在保留低频照明不均的同时提升局部边缘与纹理。是 HALCON 的 ``illuminate``(Illuminate image.)的替代实现。 · 示例: `gallery2d_gray_arith`, `poc_document_scan`, `poc_matrix_code_reading`
 - `image_standardize` `image → image` GPU: 无 — 对图像进行标准化，并将带符号偏差映射为 ``[0,1]`` 强度图像。 · 示例: `gallery2d_gray_arith`
@@ -1922,7 +1922,7 @@ _共 3856 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` GPU: 无 — 主轴方向 [度],折叠到 [0,180) 并除以 180。 · 示例: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` GPU: 无 — 全最小二乘直线残差 RMS = sqrt(协方差较小的特征值)。 · 示例: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d (378 ops / 68 categories)
+### 3d (380 ops / 68 categories)
 
 点云、体数据、网格与深度的 op(`ops3d.OPS3D`)。作为函数调用。
 
@@ -2114,12 +2114,14 @@ _共 3856 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `match_points_ncc` `points × points → position` GPU: 无 — 点群间匹配(结构=point cloud × 方法=NCC、变换=splat)。在 scene 中定位 model。 · 示例: `matching_localize`
 - `match_shape_3d` `voxel × voxel → position` GPU: 无 — 3D 形状(梯度方向)匹配 = 2D shapematch_gpu 的 voxel 版(「轮廓匹配」)。 · 示例: `matching_localize`
 
-#### 3d / match_pose (5)
+#### 3d / match_pose (7)
 - `find_surface_pose` `points × points → pose` GPU: 无 — 通过点对特征（PPF）投票和 ICP，求出已知物体（模型点云）在场景点云中的位置（``pose``）。 · 示例: `find_surface_pose_bracket`
 - `match_logpolar_z` `voxel × voxel → rot_scale` GPU: 无 — 用 log-polar × 相位相关(Fourier-Mellin)恢复 **绕 z 旋转 + 各向同性缩放**。 · 示例: `shape_desc_pose`
 - `match_pca` `points × points → pose` GPU: 无 — PCA 位姿匹配(结构=point cloud × 方法=主轴对齐)。 · 示例: `shape_desc_pose`
 - `match_phase_3d` `voxel × voxel → shift` GPU: 无 — 3D 相位相关(FFT)。返回把 b 对齐到 a 的整数位移 (dz,dy,dx)。 · 示例: `shape_desc_pose`
 - `moment_axes` `points → axes` GPU: 无 — 点群/加权点的 **重心 + 主轴**(惯性张量的特征向量)。位姿估计的基础。 · 示例: `itokawa_pose_canonical`
+- `pose_nms_symmetry` `table × points × table → table` GPU: 无 — 仅抑制模型空间距离阈值内由对称性等价的位姿。 · 示例: `bop_pose_stage1`
+- `ppf_pose_hypotheses` `table × points → table` GPU: 无 — 返回 PPF 投票得分最高的 N 个位姿，而不是将投票压缩为单个位姿。 · 示例: `bop_pose_stage1`
 
 #### 3d / medial (13)
 - `distance_ridge` `voxel → voxel` GPU: 有(许可列表) — 把 EDT 的脊(距离场的局部极大)提取为中轴。返回 (ridge_mask, edt)。 · 示例: `pcl_geodesic`
@@ -3643,7 +3645,7 @@ _共 3856 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: 无 — 非极大值抑制(3.39 节)。像素 (x, y) 仅当在窗口内**对前面的邻居(上方各行以及同一行左侧)≥、对后面的邻居 >** 时才保留(REQ-0337)。平坦峰顶只保留 1 个像素正是由于这种不对称。*mask* 的非零像素不参与比较，原样保留 (也不用于其他像素的比较，REQ-0336)。被抑制的像素在 U8 时为 0，S16 时为 INT16_MIN(REQ-0335)。超出窗口的邻居不比较。 · 示例: `gallery_openvx_spec_values`
 
-### drive (753 ops / 58 categories)
+### drive (750 ops / 57 categories)
 
 名字是驾驶，内容却是**物理仿真与机器人 PoC 的台账**: 除驾驶(赛道、交通、决策、CARLA / CommonRoad)外，触觉(tac*)、peg-in-hole(peg*)、抛光(polish)、磨削(grind)、切削(cutting)、粉体(granular / scoop)、粉末 X 射线衍射(pxrd)、球类(ball / puck)等作为类别共存其中。请按类别名查找。
 
@@ -4020,11 +4022,10 @@ _共 3856 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `string_mesh` `无输入 → any` GPU: 无 — 连接 2 点(球的穿绳孔 p_ball 与皿胴的穿绳孔 p_cup)的细棱柱(4 个侧面 + 两端，8 个顶点 12 个面，朝外)。截面为边长 2·radius 的正方形。两点重合则 ValueError。 · 示例: `gallery_drive_world_objects`
 - `string_set` `table → any` GPU: 无 — 将绳 i 的两端重新放到 (p_ball, p_cup)(只改写顶点)。不是绳的物体则 ValueError。 · 示例: `gallery_drive_world_objects`
 
-#### drive / lane (6)
-- `color_rule_mask` `rgbimage × table → table` GPU: 无 — 用明确的 HSV 规则将 RGB 分为白线、黄线或未知,并返回掩码与置信度。 · 示例: `lane_ops_tour`, `poc_ginza_stage2_ops`
-- `lane_boundary_fit` `keypoints → table` GPU: 无 — 对俯视点(横向 x、前向 y)稳健拟合车道边界 ``x=c0+c1*y+c2*y²``。 · 示例: `lane_ops_tour`, `poc_ginza_stage2_ops`
+#### drive / lane (5)
+- `color_rule_mask` `rgbimage × table → table` GPU: 无 — 用明确的 HSV 规则将 RGB 分为白线、黄线或未知,并返回掩码与置信度。 · 示例: `lane_ops_tour`
+- `lane_boundary_fit` `keypoints → table` GPU: 无 — 对俯视点(横向 x、前向 y)稳健拟合车道边界 ``x=c0+c1*y+c2*y²``。 · 示例: `lane_ops_tour`
 - `lane_center_path` `table × table → table` GPU: 无 — 由左右边界返回车道中心路径与可行驶带。 · 示例: `lane_ops_tour`
-- `lane_curve_estimate` `table × table → table` GPU: 无 — 由左右二次边界在一个表中返回车道中心、弧长和带符号曲率。 · 示例: `poc_ginza_stage2_ops`
 - `plane_topview_color` `rgbimage × matrix × matrix × signal → table` GPU: 无 — 将地面平面投影为保留 RGB 的俯视图,并返回有效掩码及像素与世界坐标的对应关系。 · 示例: `lane_ops_tour`
 - `stop_line_detect` `labels × table → table` GPU: 无 — 将停止线和日式人行横道作为独立的类型化输出进行检测。 · 示例: `lane_ops_tour`
 
@@ -4033,7 +4034,7 @@ _共 3856 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `bicycle_model_step` `any → any` GPU: 无 — 线性 2 轮等效模型的 1 步(经典 4 阶 Runge–Kutta，步内 δ 与 u 恒定)。 · 示例: `poc_driving_lateral`
 - `clothoid_design` `无输入 → table` GPU: 无 — 用长度 L 的回旋曲线连接直线 → 圆(半径 R)时的各项量。 · 示例: `poc_driving_lateral`
 - `clothoid_points` `无输入 → table` GPU: 无 — 曲率随弧长线性变化 κ(s) = κ₀ + (κ₁ − κ₀) s / length 的曲线(回旋曲线的一部分；κ₀ = κ₁ 时为圆弧或直线)上的点。 · 示例: `heightmap_depth_camera_tour`, `poc_driving_lateral`, `road_surface_tour`
-- `curvature_speed_plan` `any → table` GPU: 无 — 由曲率序列构造速度上限，并通过前向、后向 2 遍处理满足加减速上限的速度规划(经典方法)。 · 示例: `poc_driving_lateral`, `poc_ginza_stage2_ops`
+- `curvature_speed_plan` `any → table` GPU: 无 — 由曲率序列构造速度上限，并通过前向、后向 2 遍处理满足加减速上限的速度规划(经典方法)。 · 示例: `poc_driving_lateral`
 - `curve_speed_limit` `any → any` GPU: 无 — 在超高 i、横向滑动摩擦系数 f 的曲线(半径 R)上不向外侧滑出的上限速度 v = √(g R (i + f)/(1 − i f)) [m/s]。 · 示例: `gallery_drive_lateral_env`
 - `design_min_radius` `any → any` GPU: 无 — 道路构造令解说 (3) 式的最小曲线半径 R = V² / (127 (i + f)) [m] (V 单位为 km/h)。 · 示例: `gallery_drive_lateral_env`
 - `fresnel_integrals` `any → any` GPU: 无 — 菲涅耳积分 C(x) = ∫₀ˣ cos(π t²/2) dt、S(x) = ∫₀ˣ sin(π t²/2) dt(奇函数)。 · 示例: `gallery_drive_lateral_env`
@@ -4326,10 +4327,6 @@ _共 3856 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 - `tilt_wedge_retained` `scalar × scalar × scalar × scalar → table` GPU: 无 — 在口部无壁的容器(底长 ``L``，后壁垂直于底面且足够高)中以深度 ``h0`` 平铺的粉体，口部朝下倾斜 θ 时残留的量(2 维截面，准静态，**自行推导**)。 · 示例: `poc_powder_scoop_pour`
 - `tilted_surface_read` `image2d × scalar × scalar × scalar × scalar → table` GPU: 无 — 从倾斜容器的侧视图像(覆盖率)读取容器内残留粉体的截面积及后部平坦面的高度。 · 示例: `poc_powder_scoop_pour`
 - `two_view_volume` `image2d × image2d × scalar → table` GPU: 无 — 由 2 个正交方向的侧视图像求体积 —— 以每行的 2 条弦 ``W_a``、``W_b`` 为轴的椭圆之和 ``V = Σ f π (W_a/2)(W_b/2) pitch³``。 · 示例: `poc_powder_scoop_pour`
-
-#### drive / sign (2)
-- `regular_shape_classify` `contour → table` GPU: 无 — 用顶点数和等周圆形度将轮廓分为三角形、八边形、圆或未知。 · 示例: `poc_ginza_stage2_ops`
-- `road_sign_rule_classify` `rgbimage × contour × table → table` GPU: 无 — 根据 RGB 和轮廓形状按规则分类日本式停车、限速候选或禁止驶入标志。 · 示例: `poc_ginza_stage2_ops`
 
 #### drive / swarmflow (12)
 - `obstacle_fit_doublet` `table → table` GPU: 无 — 将圆柱绕流的势流 u − i v = U (1 − R²/(z − z_c)²) 拟合到速度场(实现 2，2 维非线性最小二乘)。 · 示例: `poc_swarm_obstacle_from_flow`
@@ -4830,7 +4827,7 @@ _共 3856 ops / 60 families。排列顺序与笔记位置同 `docs/ops/INDEX.md`
 
 #### annotate / text (2)
 - `measure_text` `text → table` GPU: 无 — 在**画之前**先测量文字。放不下就折行或缩小,再不行就抛异常。 · 示例: `annotate_gallery`, `annotate_paper_tour`, `poc_diabolo_model_and_vision`, `poc_interferometry_step`, `poc_nir_silicon_transmission`, `poc_polarization_specular`, `poc_shape_from_polarization`
-- `text_box` `image2d × text → image2d` GPU: 仅在链中(许可列表) — 带衬底(半透明板)的文字。**溢出不静默裁切,而是抛异常**。 · 示例: `anim3d_lens_aberrations`, `annotate_gallery`, `annotate_paper_tour`, `drawlist_deferred`, `poc_active_contours`, `poc_agv_fleet`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_beam_modal_video`, `poc_cad_scan_deviation`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_chromatic_confocal`, `poc_code_matching_breakdown`, `poc_connectome_across_worms`, `poc_crack_width_timeseries`, `poc_ct_void_morphology`, `poc_dehazing`, `poc_dem_terrain`, `poc_dense_bubble_count`, `poc_diabolo_model_and_vision`, `poc_dic_strain`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_traffic`, `poc_driving_weather`, `poc_emva1288_sensor`, `poc_eye_to_brain`, `poc_flybrain_pointcloud`, `poc_focus_stacking`, `poc_food_cutting_measure`, `poc_ginza_stage2_ops`, `poc_granular_heap_repose`, `poc_graph_hierarchy_segmentation`, `poc_hyperspectral_foreign_matter`, `poc_illumination_cone_vs_na`, `poc_interferometry_step`, `poc_kendama`, `poc_leak_localization`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_lidar_terrain_change`, `poc_livestock_body_volume`, `poc_machine_condition_fusion`, `poc_malecns_activity_wave`, `poc_material_optical_library`, `poc_measurement_system_analysis`, `poc_mesh_quality_repair`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_multibeam_bathymetry`, `poc_nir_silicon_transmission`, `poc_noncoaxial_optics`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_phase_measuring_deflectometry`, `poc_photoelasticity`, `poc_pixel_shift`, `poc_polarization_specular`, `poc_powder_scoop_pour`, `poc_print_warpage_risk`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_rotation_invariance_audit`, `poc_rover_slip_risk_path`, `poc_segmentation_gauntlet`, `poc_sem_tem_same_particle`, `poc_simcal_pixel_shift`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_spectrometer_illumination`, `poc_stockpile_volume`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_swarm_obstacle_from_flow`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_tacscalib_sphere_lut`, `poc_telecentric_metrology`, `poc_tem_ctf_thon_rings`, `poc_template_tracking`, `poc_thin_film_reflectometry`, `poc_threshold_transfer_after_normalization`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_ttc_rss`, `poc_video_physics_consistency`, `poc_world_terrain`, `poc_wound_area_tracking`, `poc_xyt_event_surface`, `poc_zebra_stripes_fly_eye`
+- `text_box` `image2d × text → image2d` GPU: 仅在链中(许可列表) — 带衬底(半透明板)的文字。**溢出不静默裁切,而是抛异常**。 · 示例: `anim3d_lens_aberrations`, `annotate_gallery`, `annotate_paper_tour`, `drawlist_deferred`, `poc_active_contours`, `poc_agv_fleet`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_beam_modal_video`, `poc_cad_scan_deviation`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_chromatic_confocal`, `poc_code_matching_breakdown`, `poc_connectome_across_worms`, `poc_crack_width_timeseries`, `poc_ct_void_morphology`, `poc_dehazing`, `poc_dem_terrain`, `poc_dense_bubble_count`, `poc_diabolo_model_and_vision`, `poc_dic_strain`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_traffic`, `poc_driving_weather`, `poc_emva1288_sensor`, `poc_eye_to_brain`, `poc_flybrain_pointcloud`, `poc_focus_stacking`, `poc_food_cutting_measure`, `poc_granular_heap_repose`, `poc_graph_hierarchy_segmentation`, `poc_hyperspectral_foreign_matter`, `poc_illumination_cone_vs_na`, `poc_interferometry_step`, `poc_kendama`, `poc_leak_localization`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_lidar_terrain_change`, `poc_livestock_body_volume`, `poc_machine_condition_fusion`, `poc_malecns_activity_wave`, `poc_material_optical_library`, `poc_measurement_system_analysis`, `poc_mesh_quality_repair`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_multibeam_bathymetry`, `poc_nir_silicon_transmission`, `poc_noncoaxial_optics`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_phase_measuring_deflectometry`, `poc_photoelasticity`, `poc_pixel_shift`, `poc_polarization_specular`, `poc_powder_scoop_pour`, `poc_print_warpage_risk`, `poc_pxrd_phase_peel`, `poc_real_sem_metal_layer`, `poc_real_tless_6dof`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_rotation_invariance_audit`, `poc_rover_slip_risk_path`, `poc_segmentation_gauntlet`, `poc_sem_tem_same_particle`, `poc_simcal_pixel_shift`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_spectrometer_illumination`, `poc_stockpile_volume`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_swarm_obstacle_from_flow`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_tacscalib_sphere_lut`, `poc_telecentric_metrology`, `poc_tem_ctf_thon_rings`, `poc_template_tracking`, `poc_thin_film_reflectometry`, `poc_threshold_transfer_after_normalization`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_ttc_rss`, `poc_video_physics_consistency`, `poc_world_terrain`, `poc_wound_area_tracking`, `poc_xyt_event_surface`, `poc_zebra_stripes_fly_eye`
 
 ### gfx2d (44 ops / 9 categories)
 

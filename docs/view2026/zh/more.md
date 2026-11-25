@@ -288,7 +288,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 </div>
 
-[其他 188 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 189 个使用示例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 

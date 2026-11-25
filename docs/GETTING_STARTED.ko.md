@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: c70ba3c329f3 -->
+<!-- i18n-source-sha: 4d7dab5a96bd -->
 # 시작하기 (5분 만에 실행하기)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · **한국어** · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -38,21 +38,20 @@ Fullseye는 **numpy 배열을 입력·출력으로 하는 이미지 처리 연�
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # 코어만(numpy + scipy. 모든 op가 보이고, optional backend가 필요한 op는 호출 시 부족한 extra를 알려 줌)
+py -3.11 -m pip install -e .          # Python API + Studio + Pillow; 무거운 backend는 필요할 때만 extra로 추가
 ```
 
-코어는 **numpy와 scipy만으로** 동작합니다. OpenCV / scikit-image / Pillow 등 추가 백엔드는 선택 사항이며, 설치되어
-있지 않아도 해당 백엔드 고유의 연산자만 비활성화될 뿐입니다(우아한 저하, graceful degradation). 실무에서는 최소한
-이미지 파일 읽기/쓰기에 OpenCV나 Pillow가 필요하므로, 다음 중 하나를 추가로 설치해 두면 편리합니다.
+코어 API는 **numpy와 scipy**로 동작하며, 표준 `pip install fullseye`는 Studio용 PySide6-Essentials와 이미지 I/O용
+Pillow도 설치합니다. OpenCV / scikit-image 같은 무거운 추가 백엔드만 선택 사항이며, 없으면 해당 백엔드 고유의
+연산자만 비활성화됩니다(우아한 저하, graceful degradation).
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # 이미지 I/O + OpenCV 유래 연산자
-py -3.11 -m pip install -e ".[all]"       # 전체 백엔드(opencv, skimage, pil, wavelets, gpu, extra)
-py -3.11 -m pip install -e ".[gui]"       # Fullseye Studio(PySide6)를 사용한다면
+py -3.11 -m pip install -e ".[opencv]"    # OpenCV 전용 이미지 API와 cv_* 연산자
+py -3.11 -m pip install -e ".[all]"       # 모든 추가 백엔드
+fullseye-studio                            # 표준 설치 뒤 Studio를 바로 시작
 ```
 
-extras 목록과 의미는 [INSTALL.md](INSTALL.md)에 정리되어 있습니다. GUI를 사용하려면 `[gui]`(또는 `[all]` + `[gui]`)가
-필요합니다.
+extras 목록과 의미는 [INSTALL.md](INSTALL.md)에 정리되어 있습니다. `gui`와 `pil`은 기존 설치 명령을 위한 빈 호환 별칭입니다.
 
 > 설치하지 않고 시험해 볼 수도 있습니다. 저장소 최상위 디렉터리(`<path-to-fullseye>`)를 작업 디렉터리로 하고, 환경 변수
 > `PYTHONPATH`에 그 경로를 등록하면 `import fullseye`는 동작합니다. 다만 `fullseye` / `fullseye-studio`라는 명령(콘솔
@@ -135,7 +134,7 @@ out = fullseye.run_pipeline(frame, stages)
 ## 4. 시각적으로 조립한다 (Fullseye Studio)
 
 코드를 작성하지 않고, 연산자를 검색해 배치하고, 다이얼을 슬라이더로 돌리고, 한 단계씩 실행하며 중간 결과를 눈으로
-보면서 조립할 수 있습니다. GUI extras(`pip install -e ".[gui]"` = PySide6)가 필요합니다.
+보면서 조립할 수 있습니다. Studio는 표준 설치에 포함됩니다. 처음 대화형 터미널에서 `fullseye` 또는 `fullseye-studio`를 실행하면 Windows 시작 메뉴나 Linux 앱 메뉴에 한 번만 등록됩니다. 원하지 않으면 `FULLSEYE_NO_SHORTCUTS=1` 또는 Studio 설정의 `shortcuts/auto_register=false`를 사용합니다.
 
 ```powershell
 py -3.11 studio.py          # 또는 설치되어 있다면: fullseye-studio
@@ -220,8 +219,8 @@ py -3.11 imgevolve.py pipeline in.png out.png --ops "gaussian,sobel_amp,otsu"
 |---|---|
 | `ModuleNotFoundError: No module named 'fullseye'` | `pip install -e .`를 실행하거나, 저장소 최상위 디렉터리를 `PYTHONPATH`에 등록 |
 | `fullseye` / `fullseye-studio` 명령이 없음 | 콘솔 스크립트는 `pip install -e .`로 등록됩니다. 설치하지 않았다면 `py -3.11 imgevolve.py ...` / `py -3.11 studio.py`를 사용 |
-| Studio가 실행되지 않음 | GUI extras 미설치. `pip install -e ".[gui]"`(PySide6) |
-| `apply` / `pipeline`에서 `cannot read ...` | 이미지 I/O용으로 OpenCV(`[opencv]`)나 Pillow(`[pil]`)를 설치 |
+| Studio가 실행되지 않음 | 표준 의존성이 손상됨. `pip install --force-reinstall fullseye` |
+| `apply` / `pipeline`에서 `cannot read ...` | 표준 Pillow 의존성 또는 이미지가 손상됨. Fullseye 재설치 후 이미지를 확인 |
 | 추가 백엔드의 연산자가 "unknown"으로 표시됨 | 해당 백엔드가 미설치. `.[skimage]` `.[wavelets]` `.[extra]` 등을 추가 |
 
 더 상세한 문제 해결은 [INSTALL.md](INSTALL.md)를 참조하세요.

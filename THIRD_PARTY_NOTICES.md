@@ -83,6 +83,7 @@ The following direct dependencies are not copied into the Fullseye wheel. Their 
 
 - `astropy` — BSD-3-Clause (permissive)
 - `asyncua` — LGPL-3.0-or-later (weak-copyleft)
+- `cmake` — Apache-2.0 AND BSD-3-Clause (permissive)
 - `cupy-cuda12x` — MIT (permissive)
 - `hypothesis` — MPL-2.0 (weak-copyleft)
 - `imageio` — BSD-2-Clause (permissive)
@@ -105,13 +106,14 @@ The following direct dependencies are not copied into the Fullseye wheel. Their 
 - `pillow` — MIT-CMU (permissive)
 - `pip-audit` — Apache-2.0 (permissive)
 - `plyfile` — GPL-3.0-or-later (strong-copyleft)
+- `pybind11` — BSD-3-Clause (permissive)
 - `pye57` — MIT (permissive)
 - `pygltflib` — MIT (permissive)
 - `pymodbus` — BSD-3-Clause (permissive)
 - `pynrrd` — MIT (permissive)
 - `pypcd4` — BSD-3-Clause (permissive)
 - `pyserial` — BSD-3-Clause (permissive)
-- `pyside6` — LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only (weak-copyleft)
+- `pyside6-essentials` — LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only (weak-copyleft)
 - `pytest` — MIT (permissive)
 - `pytest-cov` — MIT (permissive)
 - `pytest-randomly` — MIT (permissive)
@@ -129,11 +131,9 @@ The following direct dependencies are not copied into the Fullseye wheel. Their 
 - `trimesh` — MIT (permissive)
 - `zxing-cpp` — Apache-2.0 (permissive)
 
-## Prepared 1.2.0 default-dependency notices
+## Pre-audited future default-dependency notices
 
-- `pillow` — MIT-CMU. Optional today and planned default 1.2.0 image I/O dependency; installed by pip, not bundled.
 - `pyside6` — LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only. Optional today and planned default 1.2.0 GUI dependency. Fullseye imports it dynamically only when Studio is used; do not vendor or statically link Qt/PySide. The Python environment must permit replacing PySide6/Qt, and notices plus corresponding-source information supplied by the PySide6 distributor must remain available.
-- `pyside6-essentials` — LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only. Candidate planned default 1.2.0 replacement for PySide6. Apply the same dynamic-link, replaceability and notice conditions; do not select it until Studio's required modules are verified.
 - `pybind11` — BSD-3-Clause. Planned default 1.2.0 header-only SDK build dependency; if SDK headers are copied into a wheel, retain this license notice.
 
 For PySide6/Qt, Fullseye dynamically imports the binding only when Studio is used. Keep the installed PySide6/Qt distribution replaceable and retain the notices and corresponding-source information provided by that distributor. A Fullseye commercial licence does not grant Qt commercial rights.

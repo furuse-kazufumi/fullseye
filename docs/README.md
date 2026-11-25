@@ -70,7 +70,7 @@
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 10 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 506 本のうち、門が実際に走らせるもの 502 本。
+例 506 本のうち、門が実際に走らせるもの 501 本。
 
 ### 版ごとの op の数
 
@@ -101,7 +101,7 @@
 
 <!-- poc-index:start -->
 
-## PoC シリーズ — 真値つきで実問題を解いた 318 本
+## PoC シリーズ — 真値つきで実問題を解いた 317 本
 
 どれも**真値を閉形式か合成で厳密に持ち、ゼロ点(何もしない場合)を必ず併記**します。壊れ方は 1 つの指標に畳まず別々に数え、原因は対照群で分けます。全文と実行手順は [examples/README.md](../examples/README.md)。
 
@@ -139,7 +139,6 @@
 | 振動 (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) 動画からのモード同定(f は当たる、ζ が先に嘘をつく)<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) モーション拡大の振幅精度(拡大は測るための道具か) |
 | 色 (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) 色恒常性(どの手法にも「効く条件」があり、勝ち続ける手法は無い) |
 | fileio (1) | [`poc_real_file_formats`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py) 実物の科学データファイルを 5 形式読み、外の読み手と公表値で採点する(FITS・NIfTI・MRC・OME-TIFF・E57) |
-| measurement (1) | [`poc_ginza_stage2_ops`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ginza_stage2_ops.py) 銀座v2第2段 —— 緩曲線の中心・曲率・速度上限と日本式標識の形を学習なしで読む |
 | 正対化 (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) 書類スキャンの台形補正と影除去(良いところ取りは無い) |
 | space (1) | [`poc_star_tracker`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py) 星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める |
 | 断層 (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) CT 再構成の忠実度(投影数を減らすとどこで壊れるか) |
@@ -152,18 +151,18 @@
 
 ## オペレータを探す
 
-**3,856 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **73 本の族ガイド**があります。次元ごとの入口:
+**3,855 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **73 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 947/947、型つき台帳 2886/2886、1 行ファサード `fullseye.<名前>` 770/1594。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 947/947、型つき台帳 2885/2885、1 行ファサード `fullseye.<名前>` 772/1608。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3856 本のうち、実行できる例が付いているのは **3817 本**(39 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3657 本**(199 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3856 本すべてにある。
+**ノートの中身の実測**: 3855 本のうち、実行できる例が付いているのは **3816 本**(39 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3656 本**(199 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3855 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
 | `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 964 | [INDEX](ops/2d/INDEX.md) |
-| `drive` | 753 | [INDEX](ops/drive/INDEX.md) |
+| `drive` | 750 | [INDEX](ops/drive/INDEX.md) |
 | `optics` — レンズ・収差・光線追跡・照明設計 | 506 | [INDEX](ops/optics/INDEX.md) · [ガイド](ops/optics/guides/optics_imaging.md) |
-| `3d` — 点群 / メッシュ / 体積 / SDF / 6-DoF | 378 | [INDEX](ops/3d/INDEX.md) |
+| `3d` — 点群 / メッシュ / 体積 / SDF / 6-DoF | 380 | [INDEX](ops/3d/INDEX.md) |
 | `math` — 数値・線形代数 | 115 | [INDEX](ops/math/INDEX.md) · [ガイド](ops/math/guides/math_metrology.md) |
 | `reprconv` — 表現の橋渡し(型と型のあいだ) | 63 | [INDEX](ops/reprconv/INDEX.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [ガイド](ops/segmentation/guides/halcon_segmentation.md) |
@@ -381,9 +380,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 343 本
+## ドキュメント地図 — 全 348 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,856 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,855 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
@@ -526,7 +525,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(257)
+**そのほか**(262)
 
 | 文書 | 内容 |
 |---|---|
@@ -542,9 +541,13 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`AI_RAG_GUIDE.tw.md`](AI_RAG_GUIDE.tw.md) | 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code） |
 | [`AI_RAG_GUIDE.zh.md`](AI_RAG_GUIDE.zh.md) | 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code） |
 | [`BENCH_VS_OPENCV.en.md`](BENCH_VS_OPENCV.en.md) | imgevolve GPU op vs OpenCV (CPU) throughput benchmark |
+| [`BOP_STAGE1_VALIDATION.md`](BOP_STAGE1_VALIDATION.md) | BOP 第1段の公式評価検証 |
 | [`CAPABILITIES.en.md`](CAPABILITIES.en.md) | What Fullseye can do |
 | [`CAPABILITIES.md`](CAPABILITIES.md) | Fullseye でできること |
 | [`CHAIN_FUZZ.en.md`](CHAIN_FUZZ.en.md) | Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains |
+| [`C_API.md`](C_API.md) | Fullseye C SDK compatibility |
+| [`C_API_OPS.md`](C_API_OPS.md) | C SDK callable operators |
+| [`C_API_SDK.md`](C_API_SDK.md) | C/C++ SDK runtime requirement |
 | [`DESIGN_NOTES.de.md`](DESIGN_NOTES.de.md) | Fullseye-Entwurfsnotizen (aus den ★-Kommentaren im Quellcode erzeugt) |
 | [`DESIGN_NOTES.en.md`](DESIGN_NOTES.en.md) | Fullseye design notes (generated from the ★ comments in the source) |
 | [`DESIGN_NOTES.ko.md`](DESIGN_NOTES.ko.md) | Fullseye 설계 판단 모음(소스의 ★ 주석에서 생성) |
@@ -589,6 +592,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`INSTALL.ko.md`](INSTALL.ko.md) | 설치 / 환경 구축 완전 가이드 |
 | [`INSTALL.tw.md`](INSTALL.tw.md) | 安裝 / 環境建置完整指南 |
 | [`INSTALL.zh.md`](INSTALL.zh.md) | 安装 / 环境搭建完全指南 |
+| [`INSTALLATION.md`](INSTALLATION.md) | Portable full installation (2026-11-24 wheel audit) |
 | [`MATCH_3D_MATRIX.en.md`](MATCH_3D_MATRIX.en.md) | fullseye 3D Vision Toolkit (for Physical AI, differentiating from HALCON/OpenCV) |
 | [`MATURITY.md`](MATURITY.md) | 成熟度台帳(Maturity) |
 | [`MCP.md`](MCP.md) | Fullseye を MCP(Model Context Protocol)から使う |
