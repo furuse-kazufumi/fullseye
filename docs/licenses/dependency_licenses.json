@@ -1,10 +1,11 @@
 {
   "schema": 1,
-  "audited_at": "2026-11-24",
-  "evidence": "Windows CPython 3.11: pip --dry-run --ignore-installed resolved all declared extras to 132 distributions. Direct-package metadata and installed-distribution LICENSE/NOTICE files were inspected where available; exact files are recorded per package. This is an inventory, not legal advice.",
+  "audited_at": "2026-11-25",
+  "evidence": "Windows CPython 3.11: pip --dry-run --ignore-installed resolved all declared extras to 134 distributions. Direct-package metadata and installed-distribution LICENSE/NOTICE files were inspected where available; exact files are recorded per package. This is an inventory, not legal advice.",
   "packages": {
     "asyncua": {"spdx": "LGPL-3.0-or-later", "class": "weak-copyleft", "license_files": ["asyncua distribution LICENSE"], "effect": "Optional OPC UA adapter. Keep dynamically installed and provide the LGPL notice; do not statically combine it.", "commercial": "The commercial Fullseye license does not replace asyncua's LGPL obligations."},
     "astropy": {"spdx": "BSD-3-Clause", "class": "permissive", "license_files": ["astropy-*.dist-info/licenses/LICENSE.rst"], "effect": "Test-only export verifier; no dependency files are bundled in the Fullseye wheel.", "commercial": "No additional condition from Fullseye's commercial license."},
+    "cmake": {"spdx": "Apache-2.0 AND BSD-3-Clause", "class": "permissive", "license_files": ["cmake-*.dist-info/licenses/LICENSE_Apache_20", "cmake-*.dist-info/licenses/LICENSE_BSD_3"], "effect": "Optional native-SDK build tool; installed by pip and not bundled in the Fullseye wheel. Retain both notices if its files are redistributed.", "commercial": "No additional condition from Fullseye's commercial license."},
     "cupy-cuda12x": {"spdx": "MIT", "class": "permissive", "license_files": ["cupy-cuda12x distribution LICENSE"], "effect": "Optional GPU backend; CUDA runtime terms remain a separate NVIDIA matter.", "commercial": "No additional condition from Fullseye's commercial license."},
     "hypothesis": {"spdx": "MPL-2.0", "class": "weak-copyleft", "license_files": ["hypothesis-*.dist-info/licenses/LICENSE.txt"], "effect": "Development-only test tool; not bundled in the wheel.", "commercial": "No additional condition from Fullseye's commercial license."},
     "imageio": {"spdx": "BSD-2-Clause", "class": "permissive", "license_files": ["imageio-*.dist-info/licenses/LICENSE"], "effect": "Optional image I/O; installed by pip, not bundled.", "commercial": "No additional condition from Fullseye's commercial license."},
