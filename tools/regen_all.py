@@ -52,6 +52,8 @@ CHAIN = [
     #   spec を足して回し忘れても誰も気づけなかった)。
     (["gen_auto_specs_data.py"], "auto_specs_data.py(data/auto_specs/*.json の wheel 同梱用ミラー)"),
     (["tools/gen_sbom.py"], "docs/sbom/fullseye.cdx.json(pyproject.toml の宣言依存、未解決の CycloneDX SBOM)"),
+    (["tools/sync_figure_provenance.py"], "docs/articles/assets/poc/**/figures.json(公開図の出典欄を監査台帳から同期)"),
+    (["tools/license_audit.py"], "docs/licenses の棚卸し + THIRD_PARTY_NOTICES.md + wheel 用の写し"),
     # ★2026-11-03: GPU の台帳 2 本は op ノートより前に。op ノートの GPU 欄は gpu_route(この 2 本と許可リスト)
     #   から書くので、後ろで台帳が変わるとノートが 1 周遅れになる。入力は commit した実測ログと許可リストだけ
     #   (registry を組むときに op_knob.json を読むが、表の中身には入らない —— ORDER_EXEMPT)。
@@ -177,6 +179,10 @@ CHAIN = [
 OUTPUTS = {
     "gen_auto_specs_data.py": ["auto_specs_data.py"],
     "tools/gen_sbom.py": ["docs/sbom/fullseye.cdx.json"],
+    "tools/sync_figure_provenance.py": ["docs/articles/assets/poc/*/figures.json"],
+    "tools/license_audit.py": ["docs/licenses/DEPENDENCY_INVENTORY.md",
+                                "docs/licenses/THIRD_PARTY_INVENTORY.md",
+                                "THIRD_PARTY_NOTICES.md", "fullseye/THIRD_PARTY_NOTICES.md"],
     "imgevolve.py": ["docs/OP_INDEX.json"],
     "tools/gen_c_api_ops.py": ["fullseye/data/C_API_OPS.json", "docs/C_API_OPS.md"],
     "tools/gpu_tier_rules.py": ["docs/perf/GPU_TIERS.md"],
@@ -223,7 +229,9 @@ OUTPUTS = {
     "tools/gen_design_notes.py": ["docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md", "docs/design_notes.json"],
     "tools/gen_docs_index_ops.py": ["docs/README.md", "docs/README.*.md", "docs/articles/README.md"],
     "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md",
-                                 "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
+                                 "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md",
+                                 "README.md", "docs/INTEGRATION.md", "CITATION.cff",
+                                 "pyproject.toml"],
     "tools/gen_mcp_data.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/OP_NOTES.json",
                               "fullseye/data/OP_SEARCH.json", "fullseye/data/OP_CARDS.json",
                               "fullseye/data/OP_PROBE.json", "fullseye/data/op_knob.json",
@@ -283,10 +291,13 @@ MAY_OUTPUTS = {
 
 
 #: 各段が読む、**他の段の**生成物(自分の出力を読み比べるのは書かなくてよい)。
-#: gen_sbom が読むのは手書きの pyproject.toml だけなので、この表には行を持たない。
-#: gen_sbom reads only the hand-written pyproject.toml, so it has no row in this generated-input table.
+#: gen_doc_counts は最後に pyproject.toml の件数表記だけを更新する。先行段は依存宣言を
+#: 持ち、値を使わないことを ORDER_EXEMPT で明示する。
+#: gen_doc_counts updates only count prose in pyproject.toml at the end. Earlier readers declare
+#: it and ORDER_EXEMPT records why the count cannot affect their results.
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
 READS = {
+    "tools/license_audit.py": ["docs/articles/assets/poc/*/figures.json"],
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
     "tools/gen_c_api_ops.py": ["fullseye/data/OP_INDEX.json"],
     "tools/gpu_tier_rules.py": ["docs/OP_INDEX.json"],
@@ -298,8 +309,9 @@ READS = {
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/type_connectivity.py": ["docs/OP_INDEX.json"],
     "tools/gen_wingpoc_gallery.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json", "docs/articles/exhibits/exhibit_numbers.json",
-                                      "docs/articles/exhibits/glossary.json"],
-    "tools/gen_view2026_story_gifs.py": ["docs/articles/assets/poc/*_720.jpg"],
+                                      "docs/articles/exhibits/glossary.json", "docs/articles/assets/poc/*/figures.json"],
+    "tools/gen_view2026_story_gifs.py": ["docs/articles/assets/poc/*_720.jpg",
+                                          "docs/articles/assets/poc/*/figures.json"],
     "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json",
                                       "docs/view2026/story_gifs.json",
                                       "fullseye/data/OP_INDEX.json"],
@@ -318,6 +330,7 @@ READS = {
         "docs/HALCON_PARITY.md", "docs/IMPL_DIFFERENTIAL.md",
         "docs/perf/GPU_TIERS.md", "docs/perf/HALCON_OPENCL_PARITY.md", "docs/perf/gpu_fill3_2026-11-02.md",   # docmap が題を読む(2026-11-02)
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
+        "docs/licenses/DEPENDENCY_INVENTORY.md", "docs/licenses/THIRD_PARTY_INVENTORY.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md", "docs/RECIPE_COVERAGE.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md",
         "docs/view2026/more.md", "docs/view2026/*/more.md",
@@ -347,8 +360,9 @@ READS = {
                                              "fullseye/data/TUNING_CARDS.json",
                                              "fullseye/data/MCP_INPUT_INDEPENDENT.json"],
     "tools/gen_literature_counts.py": ["docs/ops/*"],
-    "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md", "fullseye/data/DEVICE_RULES.json",
-                                "fullseye/data/GPU_ACCEL_USE.json"],
+    "tools/gen_doc_counts.py": ["README.md", "docs/README.md", "docs/README.*.md",
+                                  "docs/OP_INDEX.json", "fullseye/data/DEVICE_RULES.json",
+                                  "fullseye/data/GPU_ACCEL_USE.json"],
     # registry(api)を組むときに op のつまみ表を読む(書く段 gen_mcp_data は鎖の前にある)
     "tools/gen_device_rules.py": ["fullseye/data/op_knob.json"],
     "tools/gen_gpu_routes.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/RECIPE_INDEX.json",
@@ -357,6 +371,27 @@ READS = {
     "tools/opdocs.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json"],
     "tools/gen_op_catalog.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json"],
 }
+
+#: pyproject.toml の依存・version 等は鎖の入力だが、最後の件数文だけは gen_doc_counts が
+#: 更新する。実測された全読取段を一箇所で宣言する。
+#: Dependency/version fields of pyproject.toml feed these stages; gen_doc_counts changes only its
+#: final count prose. Declare every measured reader here.
+_PYPROJECT_COUNT_READERS = (
+    "tools/license_audit.py",  # 2026-11-25: 依存の版と extras を pyproject から読む(件数表記は使わない)
+    "tools/gen_sbom.py", "tools/gen_device_rules.py", "imgevolve.py",
+    "tools/halcon_compat_profile.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
+    "tools/gen_wingpoc_gallery.py", "tools/gen_mcp_data.py", "tools/gen_c_api_ops.py",
+    "tools/gen_view2026_pages.py",
+    "tools/gen_trust_block.py", "tools/gen_recipe_coverage.py", "tools/gen_design_notes.py",
+    "tools/gen_docs_index_ops.py",
+    "tools/gen_mcp_input_independent.py",
+    "tools/gen_recipe_index.py", "tools/gen_recipe_retrieval_report.py",
+    "tools/measure_mcp_context.py", "tools/gen_rag_benchmark_report.py", "tools/gen_gpu_routes.py",
+)
+for _stage in _PYPROJECT_COUNT_READERS:
+    READS.setdefault(_stage, []).append("pyproject.toml")
+READS["tools/gen_trust_block.py"].append("README.md")
+READS["tools/gen_docs_index_ops.py"].append("docs/INTEGRATION.md")
 
 #: 順序の例外 —— 読むが、後ろの段が書いてもよいもの。(段, READS のパターン) → 理由。
 _SHARED_README = ("README*.md は gen_trust_block(trust ブロック)と gen_docs_index_ops(ops / poc / "
@@ -368,6 +403,12 @@ _SHIPPED_DIAG = ("同梱の複製は `imgevolve.py index` の**標準出力の�
                  "索引を読むので後ろでなければならず、ここは構造的に循環する。")
 _DOCMAP_COUNT = ("gen_docs_index_ops は文書地図に載せるため AI_RAG_GUIDE の題だけを読む。"
                  "gen_doc_counts が後で変更するのは本文中の件数だけなので、地図の生成結果には影響しない。")
+_LATE_COUNT_PROSE = ("gen_doc_counts は鎖の最後に pyproject.toml の現行 op 件数だけを更新する。"
+                     "先行段が読む dependency / version 等は変えず、結果へ影響しない。")
+_LATE_PUBLIC_COUNT = ("gen_doc_counts は trust ブロック更新後に root README の冒頭にある現行 op 件数だけを更新する。"
+                      "gen_trust_block の別マーカー区間には影響しない。")
+_LATE_INTEGRATION_COUNT = ("gen_doc_counts は docmap 作成後に docs/INTEGRATION.md の現行 op 件数だけを更新する。"
+                           "gen_docs_index_ops が読む題・地図の構造には影響しない。")
 ORDER_EXEMPT = {
     ("tools/gen_trust_block.py", "docs/README.md"): _SHARED_README,
     ("tools/gen_trust_block.py", "docs/README.*.md"): _SHARED_README,
@@ -379,6 +420,8 @@ ORDER_EXEMPT = {
     ("tools/gen_docs_index_ops.py", "docs/README.*.md"): _SHARED_README,
     ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.md"): _DOCMAP_COUNT,
     ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.*.md"): _DOCMAP_COUNT,
+    ("tools/gen_trust_block.py", "README.md"): _LATE_PUBLIC_COUNT,
+    ("tools/gen_docs_index_ops.py", "docs/INTEGRATION.md"): _LATE_INTEGRATION_COUNT,
     # 文書地図は docs/perf/pipeline_routes.md の題(1 行目、生成器に固定の文)だけを読む。表の中身は
     # gen_gpu_routes が鎖の最後(規則表とレシピの索引の後)で書くが、題は変わらないので地図に影響しない。
     ("tools/gen_device_rules.py", "fullseye/data/op_knob.json"): (
@@ -391,6 +434,14 @@ ORDER_EXEMPT = {
         "gen_docs_index_ops は文書地図に載せるため pipeline_routes.md の題だけを読む。題は gen_gpu_routes の"
         "固定の文で、後で書き直されるのは表の中身だけなので、地図の生成結果には影響しない。"),
 }
+# gen_doc_counts の**前**に読む段だけが、最後の件数更新に対する順序例外を要する。
+# 後段の読取は実測 READS として残すが、既に更新済みなので ORDER_EXEMPT は不要。
+# Only readers before gen_doc_counts need a late-write order exemption; later readers
+# stay in READS for audit tracing without an exemption.
+_PYPROJECT_PRE_COUNT_READERS = _PYPROJECT_COUNT_READERS[:
+    _PYPROJECT_COUNT_READERS.index("tools/gen_mcp_input_independent.py")]
+ORDER_EXEMPT.update({(stage, "pyproject.toml"): _LATE_COUNT_PROSE
+                     for stage in _PYPROJECT_PRE_COUNT_READERS})
 
 #: **CHAIN に入れないものと、その理由**(2026-09-09)。
 #:

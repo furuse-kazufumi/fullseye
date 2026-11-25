@@ -7,6 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### MCP: cwd の `fullseye/` による入口の乗っ取りを 1.2.0 で塞いだ(2026-11-24)
+
+Claude Code の登録は `claude mcp add fullseye -- fullseye-mcp` を既定にした。console script は cwd を
+`sys.path` の先頭に置かないので、プロジェクトに置かれた偽の `fullseye/` を読む前に、インストール済みの
+MCP サーバを起動する。Python を直接指定する場合は `claude mcp add fullseye -- python -P -m fullseye.mcp` を
+同じ安全な代替として案内する。`python -m fullseye.mcp` の本体側も、実際に読まれた package が cwd の下にあり、
+wheel または PEP 610 editable install の登録先と一致しなければ理由を出して止まる。Python が cwd の完全な偽 package を
+先に選んだ場合は本体より前にそのコードが動くため、入口は console script または `-P` で固定する。
+
 ### MCP: find_ops は MCP で走る op を優先する(2026-11-22)
 
 PR #322 の追加後、「ステレオカメラで距離を測りたい」では MCP で走らない `heightmap_depth_camera` が
@@ -40,8 +49,9 @@ Codex が PR #318 を読み取り専用で読んだ指摘(Python は走らせて
   出どころ(`spec.origin`)が fullseye の置き場所の中の物だけを読む。
 - サーバ本体も同じ根: `python -m fullseye.mcp` で起動すると、起動の時に cwd の `opsoptics.py` / `scipy.py` を本物より先に
   import した。`-m fullseye.mcp` で起動した時だけ、`sys.path[0]` の cwd を外す(fullseye の置き場所そのものが cwd の時は
-  外さない)。スクリプトの引数が偶然 `-m fullseye.mcp` に一致する場合も外さない。**残る穴**: cwd に `fullseye/` という名のフォルダがあると、この直しより前に乗っ取られる。登録の命令に `-P`
-  (`python -P -m fullseye.mcp`)を付ければ防げる。
+  外さない)。スクリプトの引数が偶然 `-m fullseye.mcp` に一致する場合も外さない。**残る穴は 1.2.0 で閉じた**:
+  `fullseye-mcp` を登録の既定入口にし、`python -P -m fullseye.mcp` を代替にした。`-m` 側も cwd 下の未登録 package を理由付きで
+  拒否する。ただし完全な偽 package は本体より先に実行されうるため、この入口の外では防御を約束しない。
 - 作業プロセスの出力の上限: 配列しか数えず、文字列・数の list・dict は 0 と数えていた。`max_elements` は配列の要素と
   配列でない値・dict / list の数の和、`max_result_bytes` は配列のバイト + 文字列の長さ + 他の値 1 つ 8 バイト。メモリの
   見張りと囲いは結果を送り終えるまで掛けたまま(以前は op が返った所で止め、JSON にする間は上限の外だった)。返事の

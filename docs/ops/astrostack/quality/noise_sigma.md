@@ -5,7 +5,7 @@ category: quality
 in: image2d
 out: measurement
 gpu: なし
-examples: [astro_stacking, poc_colocalization_crosstalk, poc_search_sweep_width, poc_star_astrometry, poc_thermal_radiometry]
+examples: [astro_stacking, poc_colocalization_crosstalk, poc_compendial_particle_microscopy, poc_search_sweep_width, poc_star_astrometry, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ Returns ``float``(*image* と同じ単位)。
 
 - [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
 - [poc_colocalization_crosstalk](../../../../examples/poc_colocalization_crosstalk.py) — `py -3.11 examples/poc_colocalization_crosstalk.py`
+- [poc_compendial_particle_microscopy](../../../../examples/poc_compendial_particle_microscopy.py) — `py -3.11 examples/poc_compendial_particle_microscopy.py`
 - [poc_search_sweep_width](../../../../examples/poc_search_sweep_width.py) — `py -3.11 examples/poc_search_sweep_width.py`
 - [poc_star_astrometry](../../../../examples/poc_star_astrometry.py) — `py -3.11 examples/poc_star_astrometry.py`
 - [poc_thermal_radiometry](../../../../examples/poc_thermal_radiometry.py) — `py -3.11 examples/poc_thermal_radiometry.py`

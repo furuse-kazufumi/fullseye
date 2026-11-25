@@ -9,9 +9,9 @@
 It chains typed operators, checks them against ground truth produced by physics simulation,
 and hands them to AI assistants through MCP and RAG.
 
-**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,841
+**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,847
 operators in the machine-readable index, `docs/OP_INDEX.json`: 947 single-input 2-D operators +
-17 n-ary + 2,877 in the typed ledgers, each with a per-operator note), the family guides, and the
+17 n-ary + 2,883 in the typed ledgers, each with a per-operator note), the family guides, and the
 release notes.
 
 **What it can do: [CAPABILITIES.en.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/CAPABILITIES.en.md)** — an index organised by
@@ -116,7 +116,7 @@ The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebu
 | `validated-public-real-data` | an example on public measured data runs in a gate | 10 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 503 examples, 499 are actually run by a gate.
+Of 505 examples, 501 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -165,8 +165,9 @@ Two more doors, both new since 0.1.11 and both honest about their limits:
 
 | Door | For | Run this first | Status |
 |---|---|---|---|
-| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. A `full` and a smaller `minimal` tool profile (the tool list is `tools/list`; see docs/MCP.md), strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). From MCP, 2,456 can be run (the type graph has 3,842 entries) — the ledger ops (optics and lighting design, synthetic inputs, px→mm) in an isolated worker with a time and memory limit; the rest are read-only and say why. A verdict of ok checks the output's shape, not whether the value is right. Checked with the official `mcp` Python client (initialize → tools/list → tools/call). [`docs/MCP.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MCP.md) |
-| **From C / C++** | embedding into an existing product | `pip install fullseye`, then use `-Dfullseye_DIR="$(python -m fullseye.sdk --cmakedir)"` in a normal CMake consumer project | Header/source SDK and CMake Config ship in the standard wheel. The consumer compiler builds the pybind11 bridge for its own ABI; `Runtime()` automatically uses the Python environment that located the Config. [Five-minute C/C++ start](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md) |
+| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `fullseye-mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. A `full` and a smaller `minimal` tool profile (the tool list is `tools/list`; see docs/MCP.md), strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). From MCP, 2,456 can be run (the type graph has 3,842 entries) — the ledger ops (optics and lighting design, synthetic inputs, px→mm) in an isolated worker with a time and memory limit; the rest are read-only and say why. A verdict of ok checks the output's shape, not whether the value is right. Checked with the official `mcp` Python client (initialize → tools/list → tools/call). [`docs/MCP.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MCP.md) |
+| **From C / C++ (native SDK)** | embedding into an existing product | `pip install fullseye`, then use `-Dfullseye_DIR="$(python -m fullseye.sdk --cmakedir)"` in a normal CMake consumer project | Header/source SDK and CMake Config ship in the standard wheel. The consumer compiler builds the pybind11 bridge for its own ABI; `Runtime()` automatically uses the Python environment that located the Config. [Five-minute C/C++ start](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md) |
+| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](https://github.com/furuse-kazufumi/fullseye/tree/master/rust/fullseye_core/examples) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (947 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the n-ary 2-D operators and the typed-ledger operators (counts: the index line at the top), whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
 
 ## Install
 
@@ -176,7 +177,15 @@ pip install "fullseye[all]" # + opencv, scikit-image, Pillow, PyWavelets, Simple
 # from a checkout: pip install -e .   (per-backend extras: .[opencv] .[skimage] .[gpu] ...)
 ```
 
+`export-verify` is deliberately outside the full default: it contains `plyfile` (GPL-3.0-or-later) solely for independent export verification; install it only when needed with `pip install "fullseye[export-verify]"`.
+
+### Fintraffic and OpenStreetMap attribution
+
+The wheel distributes `examples/data/fintraffic_sun_2026_09_20.json`, a small analysis aggregate: it has no raw camera-image bytes or OpenStreetMap geometry, but it retains one nearest-road attribute record (bearing, reference, name and highway class). Treat that retained OSM-derived record conservatively as a possible Derivative Database. Keep **© OpenStreetMap contributors** and the [ODbL 1.0 notice](https://opendatacommons.org/licenses/odbl/1-0/) with any redistribution; Fintraffic requires the attribution “Source: Fintraffic / digitraffic.fi, license CC 4.0 BY” and a [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) link. See the source and modification detail in `docs/licenses/THIRD_PARTY_INVENTORY.md`.
+
 **After installing, run `fullseye setup`** (see "Your first minute after `pip install`" below).
+If Windows startup behaves unexpectedly, run **`fullseye doctor`** for checked causes and copyable repairs; see
+[Windows troubleshooting](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/TROUBLESHOOTING.en.md).
 
 PyPI: <https://pypi.org/project/fullseye/> · Source / issues / operator corpus:
 GitHub (linked from the PyPI sidebar). After installing, `fullseye-rag` sets up the
@@ -192,6 +201,7 @@ operators are affected when it is absent (graceful degradation). GPU is opt-in.
 
 ```bash
 fullseye setup          # checks your environment, then asks one question at a time (Enter = default)
+fullseye doctor         # read-only startup diagnosis; add --json for automation, --fix asks before a safe repair
 ```
 
 It reports your Python / fullseye / Qt / optional dependencies / Claude Code integration, then asks what you want
@@ -206,7 +216,7 @@ arguments prints the same guidance. The pieces, if you prefer them one by one:
 | open the GUI | `fullseye-studio` (needs `pip install "fullseye[gui]"`) |
 | put Studio in the Start menu / on the desktop | `fullseye-studio --install-shortcuts` (add `--desktop`); undo: `--remove-shortcuts` |
 | use it from Python (3 lines) | `import fullseye, numpy as np` / `img = np.random.rand(64, 64)` / `fullseye.apply(img, "sobel_amp")` |
-| use it from an AI (Claude Code) | `fullseye-rag` (skill) and `claude mcp add fullseye -- python -m fullseye.mcp` |
+| use it from an AI (Claude Code) | `fullseye-rag` (skill) and `claude mcp add fullseye -- fullseye-mcp` (or `claude mcp add fullseye -- python -P -m fullseye.mcp`) |
 
 ### Uninstalling
 
@@ -280,7 +290,7 @@ knobs in `[0, 1]`. Feature operators return a Python float; contour operators a 
 
 ## Operator library
 
-**3,841 typed operators** (964 2-D in the registry, 17 of them n-ary, + 2,877 in the typed ledgers,
+**3,847 typed operators** (964 2-D in the registry, 17 of them n-ary, + 2,883 in the typed ledgers,
 the 3-D ledger among them), covering denoising, smoothing, sharpening,
 thresholding/segmentation, morphology, edge/corner/blob detection, distance
 transforms, color-space conversion, texture/shape features, contours, and the 3-D
@@ -307,20 +317,20 @@ py -3.11 imgevolve.py coverage               # honest coverage numbers
 Adding one operator makes evolution, code generation, the catalog, and the
 machine-readable index (`docs/OP_INDEX.json`) follow automatically.
 
-**How to call one** — the 3,841 operators are not all reachable the same way. Measured on this
+**How to call one** — the 3,847 operators are not all reachable the same way. Measured on this
 version (`fullseye.list_ops(include_ledger=True)`, then `hasattr` per name):
 
 | way of calling | reaches | what it covers |
 |---|---|---|
 | `fullseye.apply(img, "name")` / `fullseye.run_pipeline` | the 2-D registry (947 single-input + 17 n-ary, by name) | the evolvable vocabulary |
 | `fullseye.op.<name>(img)` | 947 (935 registry + 12 colour) | the same 2-D ops, by attribute |
-| `fullseye.ledger.<name>(...)` | all 2,877 typed-ledger ops | everything outside the 2-D registry |
-| `fullseye.<name>(...)` directly | only 770 of the 3,841 (767 ledger + 3 registry) | the rest raise `AttributeError` with a pointer to the right entry |
+| `fullseye.ledger.<name>(...)` | all 2,883 typed-ledger ops | everything outside the 2-D registry |
+| `fullseye.<name>(...)` directly | only 770 of the 3,847 (767 ledger + 3 registry) | the rest raise `AttributeError` with a pointer to the right entry |
 
 So `fullseye.<name>` is a convenience for a minority of names; when a name is not an attribute of
 `fullseye`, call it with `fullseye.apply` (2-D ops, `fullseye.op.<name>`) or `fullseye.ledger.<name>` /
 `fullseye.op_run("name")` (ledger ops). `fullseye.list_ops()` lists only the 964 2-D ops by default;
-pass `include_ledger=True` for the full 3,841.
+pass `include_ledger=True` for the full 3,847.
 
 ![Real outputs of classic 2-D vision operators — edges, segmentation, contour measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
 
@@ -425,7 +435,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | **Read the whole story end to end (long-form)** | [`docs/articles/fullseye_overview_qiita_en.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md) |
 | See what the operators produce (result gallery) | `docs/GALLERY.md` |
 | Browse the paper exhibits (op demos and the PoC museum, en/ja; accession numbers in `exhibit_numbers.json`) | `docs/articles/exhibits/` |
-| Look up any of the 3,841 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Look up any of the 3,847 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
 | Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
 | Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |

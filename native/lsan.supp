@@ -1,17 +1,21 @@
-# CPython 3.11 keeps interpreter-global import state and extension-module
-# registries until process exit.  In the ASan CTest executables the leak
-# stacks begin in libpython's Py_InitializeFromConfig, then enter pybind11's
-# initialize_interpreter before this library's runtime boundary.
+# CPython 3.11 and its extension modules retain interpreter-global state even
+# after the sanitizer-only CTest build calls Py_FinalizeEx at executable exit.
+# The runner's full 64-frame traces show those remaining allocations originate
+# in libpython, NumPy, or SciPy rather than Fullseye's native ownership tables.
 #
-# CPython 3.11 はインタプリタ全体の import 状態と拡張モジュールの登録表をプロセス終了
-# まで保持する。ASan の CTest 実行ファイルで出る leak stack は libpython の
-# Py_InitializeFromConfig から始まり、pybind11 の initialize_interpreter を経て
-# 本ライブラリの runtime 境界へ入る。
+# CPython 3.11 と拡張モジュールは、sanitizer 専用 CTest build が実行ファイル終了時に
+# Py_FinalizeEx を呼んだ後にも、解釈系全体の状態を残す。runner で 64 frame を採った
+# 結果、残る確保は Fullseye の native 所有表でなく libpython、NumPy、SciPy に由来する。
 #
-# Keep this to the single CPython initialization function.  It deliberately
-# does not name a Fullseye function, so a leak allocated by our own code after
-# startup remains visible to LSan.
+# This intentionally matches libpython3 only, and only the ASan CI job loads
+# this file.  It can hide a missing Fullseye DECREF when that allocation was
+# made inside CPython, so tests/test_c_api_pybind11.py repeats the same released
+# C-API threshold call 1,000 times and checks that sys.getallocatedblocks does
+# not keep increasing. Native allocations whose stack never enters libpython
+# remain visible to LSan.
 #
-# CPython 初期化関数だけに限定する。Fullseye の関数名は含めないため、起動後に本実装
-# が確保して漏らしたメモリは LSan に残る。
-leak:Py_InitializeFromConfig
+# libpython3 だけに当て、読み込むのは ASan CI job に限る。ただし CPython 内部で確保した
+# Fullseye の DECREF 漏れも隠れ得るため、tests/test_c_api_pybind11.py は同じ C API の
+# threshold 呼出しを解放つきで 1,000 回繰り返し、sys.getallocatedblocks が増え続けない
+# ことを確認する。stack が libpython に入らない native 確保は LSan に残る。
+leak:libpython3

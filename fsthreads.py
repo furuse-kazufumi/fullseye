@@ -348,6 +348,11 @@ def _reapply_locked(ctl):
     無視されるので、掛け替えの間だけこのスレッドが制御を取り(``force=True``)、終わったら手放す。
     """
     want = _ACTIVE[-1][1] if _ACTIVE else None
+    # 規制実行の上限は、内側の通常段や別 thread の通常段で緩めてはいけない。
+    # A validation ceiling must survive nested and cross-thread ordinary tiers.
+    ceilings = [cap for _token, cap, is_ceiling in _ACTIVE if is_ceiling]
+    if want is not None and ceilings:
+        want = min(want, *ceilings)
     if want == _HELD["cap"]:
         return
     if _RELEASE is not None:
@@ -374,7 +379,7 @@ def _cap_holds(ctl, want):
 
 
 def _leave_locked(ctl, token):
-    for i, (t, _c) in enumerate(_ACTIVE):
+    for i, (t, _c, _is_ceiling) in enumerate(_ACTIVE):
         if t is token:
             del _ACTIVE[i]
             break
@@ -382,7 +387,7 @@ def _leave_locked(ctl, token):
 
 
 @contextlib.contextmanager
-def _apply(cap):
+def _apply(cap, *, ceiling=False):
     ctl = _controller() if cap is not None else None
     if ctl is None:
         _COUNTS["skipped"] += 1
@@ -391,7 +396,7 @@ def _apply(cap):
     _COUNTS["limited"] += 1
     token = object()
     with _STATE_LOCK:
-        _ACTIVE.append((token, int(cap)))
+        _ACTIVE.append((token, int(cap), bool(ceiling)))
         try:
             _reapply_locked(ctl)
         except BaseException:
@@ -432,6 +437,20 @@ def blas_threads(n):
     if int(n) < 1:
         raise ValueError(f"blas_threads(n) needs n >= 1, got {n!r}")
     with _apply(int(n)) as applied:
+        yield applied
+
+
+@contextlib.contextmanager
+def _validation_threads(n):
+    """規制実行中に緩まない BLAS 上限 / A BLAS ceiling that nested tiers cannot relax.
+
+    BLAS の状態は process 全体で共有されるため、この文脈が生きている間は別 thread の
+    :func:`for_decomposition` も上限を超えない。Because the BLAS state is process-wide,
+    ordinary contexts in other threads also remain under this ceiling while it is active.
+    """
+    if int(n) < 1:
+        raise ValueError(f"validation thread limit needs n >= 1, got {n!r}")
+    with _apply(int(n), ceiling=True) as applied:
         yield applied
 
 

@@ -1,4 +1,4 @@
-/* Missing explicit runtime reports every recovery step / 消えた明示 runtime の診断門。 */
+/* Missing explicit runtime fails closed before ambient discovery / 明示 runtime の不在は環境探索前に拒否する門。 */
 #include "fullseye.h"
 
 #include <string.h>
@@ -13,7 +13,11 @@ int main(int argc, char **argv) {
     options.runtime_root_bytes = strlen(missing_root);
     if (fs_runtime_create(&options, &runtime) != FS_E_NO_PYTHON || runtime != NULL) return 1;
     (void)fs_last_error(NULL, message, sizeof(message));
-    if (strstr(message, "Tried:") == NULL || strstr(message, "explicit runtime_root") == NULL) return 1;
-    if (strstr(message, "Fix in PowerShell:") == NULL || strstr(message, "relink") == NULL) return 2;
+    if (strstr(message, missing_root) == NULL
+        || strstr(message, "does not contain fullseye/c_api_bridge.py") == NULL
+        || strstr(message, "対応する配置の fullseye/c_api_bridge.py がありません") == NULL
+        || strstr(message, "Set runtime_root") == NULL
+        || strstr(message, "runtime_root に指定してください") == NULL
+        || strstr(message, "fullseye doctor") == NULL) return 1;
     return 0;
 }

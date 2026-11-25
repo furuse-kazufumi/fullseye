@@ -61,9 +61,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3630,
+    "executable": 3636,
     "reasons": {
-      "python_signature": 2665,
+      "python_signature": 2671,
       "registry": 964
     },
     "not_executable_reasons": {
@@ -390,9 +390,9 @@
   },
   "counts": {
     "nodes": 103,
-    "edges": 3845,
+    "edges": 3851,
     "conversion_pairs": 426,
-    "conversion_edge_incidence": 2531
+    "conversion_edge_incidence": 2538
   },
   "nodes": [
     {
@@ -829,7 +829,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 26,
-      "consumed_by": 28,
+      "consumed_by": 29,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -851,7 +851,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 15,
-      "consumed_by": 17,
+      "consumed_by": 18,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -906,7 +906,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 94,
-      "consumed_by": 264,
+      "consumed_by": 266,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1181,7 +1181,7 @@
       "container": "dense_array",
       "size_hint": "input-dependent",
       "produced_by": 42,
-      "consumed_by": 48,
+      "consumed_by": 50,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1335,7 +1335,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 164,
-      "consumed_by": 428,
+      "consumed_by": 429,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1422,8 +1422,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1277,
-      "consumed_by": 601,
+      "produced_by": 1283,
+      "consumed_by": 607,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -173731,6 +173731,108 @@
       "source_ref": "S00021"
     },
     {
+      "op": "particle_size_distribution",
+      "inputs": [
+        "table",
+        "table"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "input_roles": [
+        "particles",
+        "calibration"
+      ],
+      "runtime_target": {
+        "module": "pharmaparticle",
+        "callable": "particle_size_distribution"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "pharmaparticle",
+        "callable": "particle_size_distribution"
+      },
+      "parameter_schema": [
+        {
+          "name": "border_policy",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "exclude"
+        },
+        {
+          "name": "measurement_date",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "bin_edges",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "confidence",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.95
+        },
+        {
+          "name": "bootstrap_samples",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 2000
+        },
+        {
+          "name": "seed",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 776
+        },
+        {
+          "name": "upstream_records",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
       "op": "matmul_ozaki",
       "inputs": [
         "matrix",
@@ -180962,6 +181064,336 @@
           "verified_through_mcp_pipeline"
         ]
       },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "color_rule_mask",
+      "inputs": [
+        "rgbimage",
+        "table"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "laneops",
+        "callable": "color_rule_mask"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "laneops",
+        "callable": "color_rule_mask"
+      },
+      "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "plane_topview_color",
+      "inputs": [
+        "rgbimage",
+        "matrix",
+        "matrix",
+        "signal"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "input_roles": [
+        "image",
+        "K",
+        "R",
+        "t"
+      ],
+      "runtime_target": {
+        "module": "laneops",
+        "callable": "plane_topview_color"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "laneops",
+        "callable": "plane_topview_color"
+      },
+      "parameter_schema": [
+        {
+          "name": "z",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.0
+        },
+        {
+          "name": "centre",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "extent",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 30.0
+        },
+        {
+          "name": "res",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "fill",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "lane_boundary_fit",
+      "inputs": [
+        "keypoints"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "laneops",
+        "callable": "lane_boundary_fit"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "laneops",
+        "callable": "lane_boundary_fit"
+      },
+      "parameter_schema": [
+        {
+          "name": "side",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "unknown"
+        },
+        {
+          "name": "ransac_threshold",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.18
+        },
+        {
+          "name": "ransac_iterations",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 300
+        },
+        {
+          "name": "initial_outlier_weight",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.25
+        },
+        {
+          "name": "seed",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "lane_center_path",
+      "inputs": [
+        "table",
+        "table"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "input_roles": [
+        "left",
+        "right"
+      ],
+      "runtime_target": {
+        "module": "laneops",
+        "callable": "lane_center_path"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "laneops",
+        "callable": "lane_center_path"
+      },
+      "parameter_schema": [
+        {
+          "name": "lane_width",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 3.5
+        },
+        {
+          "name": "samples",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 51
+        },
+        {
+          "name": "band_inset",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.2
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "stop_line_detect",
+      "inputs": [
+        "labels",
+        "table"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "runtime_target": {
+        "module": "laneops",
+        "callable": "stop_line_detect"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "laneops",
+        "callable": "stop_line_detect"
+      },
+      "parameter_schema": [],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
       "source_ref": "S00021"
     },

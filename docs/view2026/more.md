@@ -316,11 +316,11 @@ li, p, code { overflow-wrap: anywhere; }
 
 </div>
 
-[PoC 以外の使用例 187 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 188 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 
-PoC 283 本と、ロボットの例 2 本。グループを開くとサムネイルが出ます。
+PoC 284 本と、ロボットの例 2 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -386,7 +386,7 @@ PoC 283 本と、ロボットの例 2 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>寸法・形状計測</b> (53)</summary>
+<details class="vall"><summary><b>寸法・形状計測</b> (54)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png"><img src="../articles/assets/poc/poc_aoi_ct_traceability/story.ja.gif" alt="One populated region in top view and reconstructed attenuation slices. The same central joint is traceable to its internal void; rings and metal streaks arise in projection reconstruction." loading="lazy" width="200" height="200"></picture><span>AOI と CT の対応</span></a>
 <a href="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="../articles/assets/poc/poc_asbuilt_wall_deviation/story.ja.gif" alt="竣工した壁の歪み" loading="lazy" width="200" height="200"></picture><span>竣工した壁の歪み</span></a>
@@ -400,6 +400,7 @@ PoC 283 本と、ロボットの例 2 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_metal_grain_size/15_real_tbm_breaks.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_metal_grain_size/15_real_tbm_breaks.png"><img src="../articles/assets/poc/poc_metal_grain_size/story.ja.gif" alt="途切れは人工(相関長 8 px)。粒界は専門家の手描きで、写真から検出したものではない。TBM: Texture Boundary in Metallography, Zenodo 8386997 (doi:10.5281/zenodo.8386997), CC BY 4.0" loading="lazy" width="200" height="200"></picture><span>結晶粒度</span></a>
 <a href="../articles/assets/poc/poc_multibeam_bathymetry/17_survey.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_multibeam_bathymetry.jpg" alt="多ビーム測深" width="200" height="200"><b>&#9654;</b><span>多ビーム測深</span></a>
 <a href="../articles/assets/poc/poc_particle_sizing/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_particle_sizing/01_scene.png"><img src="../articles/assets/poc/poc_particle_sizing/story.ja.gif" alt="粒度分布" loading="lazy" width="200" height="200"></picture><span>粒度分布</span></a>
+<a href="../articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_compendial_particle_microscopy/01_compendial_particle_microscopy_main.png"><img src="../articles/assets/poc/poc_compendial_particle_microscopy/story.ja.gif" alt="原画像→分割→真値と推定→個数/体積基準の径分布→失敗側。体積基準はレーザー回折との同一性を意味しない。" loading="lazy" width="200" height="200"></picture><span>顕微鏡の粒子径分布</span></a>
 <a href="../articles/assets/poc/poc_rail_corrugation/01_planted_components.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_rail_corrugation/01_planted_components.png"><img src="../articles/assets/poc/poc_rail_corrugation/story.ja.gif" alt="レールの波状摩耗" loading="lazy" width="200" height="200"></picture><span>レールの波状摩耗</span></a>
 <a href="../articles/assets/poc/poc_real_coin_metrology/01_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_real_coin_metrology/01_scene.png"><img src="../articles/assets/poc/poc_real_coin_metrology/story.ja.gif" alt="背景は行 0.427 -> 0.161。それでも素の大域 Otsu が真値 24 枚を当てる。" loading="lazy" width="200" height="200"></picture><span>実写のコイン</span></a>
 <a href="../articles/assets/poc/poc_screw_thread_metrology/01_zero_spectrum.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../articles/assets/poc/poc_screw_thread_metrology/01_zero_spectrum.png"><img src="../articles/assets/poc/poc_screw_thread_metrology/story.ja.gif" alt="幅の系列は上下輪郭(P/2 ずれ)の和なので基本波が消える。" loading="lazy" width="200" height="200"></picture><span>ねじの輪郭</span></a>

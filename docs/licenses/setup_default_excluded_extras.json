@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "default_setup_excluded_extras": [
+    {
+      "extra": "export-verify",
+      "dependency": "plyfile",
+      "license": "GPL-3.0-or-later",
+      "reason": "GPL-3.0 dependency used only for independent export verification; it is excluded from the full setup default.",
+      "pip_install": "pip install \"fullseye[export-verify]\"",
+      "setup_include": "fullseye setup --include export-verify"
+    }
+  ]
+}

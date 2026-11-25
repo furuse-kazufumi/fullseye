@@ -48,6 +48,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
+import calib
 
 __all__ = [
     "polygon_peg", "polygon_offset", "polygon_fit_check", "rotation_window", "polygon_two_point_depth",
@@ -375,34 +376,16 @@ def plane_topview(image, K, R, t, z: float = 0.0, centre=(0.0, 0.0), extent: flo
     画像の外の格子点は ``fill``。返り = (S, S) の濃淡(カラーは輝度にする)。
     **Raises** ValueError: 画像が 2-D 濃淡か (H, W, 3/4) でない、K・R が 3×3 でない、t が 3 成分でない、extent ≤ 0、res ≤ 0、S > 4096。"""
     g = _gray(image)
-    Km, Rm = np.asarray(K, np.float64), np.asarray(R, np.float64)
-    tv = np.asarray(t, np.float64).reshape(-1)
-    if Km.shape != (3, 3) or Rm.shape != (3, 3) or tv.shape != (3,):
-        raise ValueError("plane_topview: K and R must be 3x3, t must have 3 components")
-    if not (float(extent) > 0.0 and float(res) > 0.0):
-        raise ValueError("plane_topview: extent and res must be > 0")
-    S = int(round(float(extent) / float(res)))
-    if S < 8 or S > 4096:
-        raise ValueError("plane_topview: extent/res gives %d px (need 8..4096)" % S)
-    c = (S - 1) / 2.0
-    ii, jj = np.mgrid[0:S, 0:S].astype(np.float64)
-    X = float(centre[0]) + (jj - c) * float(res)
-    Y = float(centre[1]) - (ii - c) * float(res)
-    Pw = np.stack([X, Y, np.full_like(X, float(z))], axis=-1).reshape(-1, 3)
-    Pc = Pw @ Rm.T + tv
-    zc = Pc[:, 2]
-    with np.errstate(divide="ignore", invalid="ignore"):
-        u = Km[0, 0] * Pc[:, 0] / zc + Km[0, 1] * Pc[:, 1] / zc + Km[0, 2]
-        v = Km[1, 1] * Pc[:, 1] / zc + Km[1, 2]
-    Hh, Ww = g.shape
-    ok = (zc > 0) & (u >= 0) & (u <= Ww - 1) & (v >= 0) & (v <= Hh - 1)
-    out = np.full(S * S, float(fill))
-    u0 = np.clip(np.floor(u[ok]).astype(int), 0, Ww - 2)
-    v0 = np.clip(np.floor(v[ok]).astype(int), 0, Hh - 2)
-    fu, fv = u[ok] - u0, v[ok] - v0
-    out[ok] = ((1 - fu) * (1 - fv) * g[v0, u0] + fu * (1 - fv) * g[v0, u0 + 1] + (1 - fu) * fv * g[v0 + 1, u0]
-               + fu * fv * g[v0 + 1, u0 + 1])
-    return out.reshape(S, S)
+    maps = calib._plane_topview_projection(
+        g.shape, K, R, t, z=z, centre=centre, extent=extent, res=res, op="plane_topview")
+    rows, cols, ok = maps["image_row"], maps["image_col"], maps["valid"]
+    out = np.full(rows.shape, float(fill))
+    r0 = np.clip(np.floor(rows[ok]).astype(int), 0, g.shape[0] - 2)
+    c0 = np.clip(np.floor(cols[ok]).astype(int), 0, g.shape[1] - 2)
+    fr, fc = rows[ok] - r0, cols[ok] - c0
+    out[ok] = ((1 - fc) * (1 - fr) * g[r0, c0] + fc * (1 - fr) * g[r0, c0 + 1]
+               + (1 - fc) * fr * g[r0 + 1, c0] + fc * fr * g[r0 + 1, c0 + 1])
+    return out
 
 
 def symmetry_fold(angle: float, n: int) -> float:

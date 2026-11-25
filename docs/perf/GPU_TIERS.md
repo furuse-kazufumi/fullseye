@@ -18,18 +18,18 @@
 | tier | 件数 |
 |---|---:|
 | `required` | 49 |
-| `suitable` | 2203 |
-| `partial` | 651 |
-| `none` | 938 |
-| **合計** | **3841** |
+| `suitable` | 2205 |
+| `partial` | 653 |
+| `none` | 940 |
+| **合計** | **3847** |
 
 ## GPU 対応率
 
 指標 = `gpu_status=あり` の件数 ÷ (`required` + `suitable`) の件数(件数÷全体ではない)。現状値をそのまま書く(低くてよい)。
 
 - gpu 経路あり: **173**
-- `required` + `suitable`: **2252**
-- **GPU 対応率 = 7.7%** (173 / 2252)
+- `required` + `suitable`: **2254**
+- **GPU 対応率 = 7.7%** (173 / 2254)
 
 正直な内訳: gpu 経路を持つ op のうち 50 件は `partial`(領域モルフォロジ等)、0 件は `none` で、分母には入らない(分子にのみ計上)。
 
@@ -255,6 +255,7 @@
 | freeform | 0 | 3 | 2 | 0 | 5 |
 | gcode | 0 | 1 | 2 | 2 | 5 |
 | information | 0 | 5 | 0 | 0 | 5 |
+| lane | 0 | 2 | 2 | 1 | 5 |
 | lensconfig | 0 | 0 | 0 | 5 | 5 |
 | light | 0 | 5 | 0 | 0 | 5 |
 | match_pose | 0 | 2 | 3 | 0 | 5 |
@@ -485,6 +486,7 @@
 | null | 0 | 1 | 0 | 0 | 1 |
 | orientation | 0 | 1 | 0 | 0 | 1 |
 | palette | 0 | 1 | 0 | 0 | 1 |
+| pharma | 0 | 0 | 0 | 1 | 1 |
 | polyhedron | 0 | 0 | 1 | 0 | 1 |
 | pose | 0 | 0 | 1 | 0 | 1 |
 | raycast | 0 | 0 | 1 | 0 | 1 |

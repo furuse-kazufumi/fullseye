@@ -579,6 +579,11 @@ EXAMPLES = [
                 "平面で 1e-9・丘で中央値 1e-4 m 以内(当たる画素も同じ)。道 → 深度(雑音つき)→ depth_to_points → "
                 "elevation_map → 車線の窓で縦断・横勾配が真値に戻る。雑音は σ_z = z²σ_d/(f b) どおり、壁の向こうには "
                 "当たらず dem_viewshed と矛盾しない。"},
+    {"id": "lane_ops_tour", "task": "measurement", "data": "synthetic",
+     "name": "RGBから白・黄車線と停止線を読む —— 学習なしの車線知覚5 op",
+     "summary": "trans_from_rgbを使う明示的なHSV規則、RGB保持の地面俯瞰、ransac_lineを初期値にした頑健な二次境界、"
+                "左右または片側からの中央と走行帯、直交幅と縞間隔で横断歩道を棄却する停止線検出を接続する。照明・gamma、"
+                "曲線の外れ値と遮蔽、点順変更、片側欠測、回転した停止線を、既知の色・係数・距離と比較する。"},
     {"id": "road_surface_tour", "task": "measurement", "data": "synthetic",
      "name": "横断の決まりを持つ道の面を、セルごとの解析の真値つきで作る —— road_surface_heightmap",
      "summary": "直線の道は世界の座標の閉形式 z = g·x − c·|y| に 1e-12、半径 35 m のヘアピン(clothoid_points の線形)は "
@@ -834,6 +839,14 @@ EXAMPLES = [
                 "BBBC005(CC0)の小さい物体で個数の相対誤差 0.34 %(連結成分 9.4 %)、大きい物体は 300 枚中 286 枚で数を返さず誤り 0。"
                 "水電解の泡(PEMWE、CC BY 4.0)の形を並べた半合成で自信をもった誤り 2/65、ALCON2009 型の採点(重心が泡の矩形に入るか)"
                 "は決まった塊で 0.95。★形の許しを孤立した泡の 95 % に合わせると誤りが 3 % → 19 % に増える矛盾を掃引で示す。"},
+    {"id": "poc_compendial_particle_microscopy", "task": "metrology", "data": "synthetic",
+     "name": "薬学向け顕微鏡粒径 ―― 端と重なりを黙って1粒にせず、3基準と校正来歴を残す",
+     "summary": "ステージミクロメータ、孤立円・楕円、低コントラスト、重なり、端切れを同じ合成画像に置き、"
+                "`blob_label` / `blob_features` / `blob_split` から新 op `particle_size_distribution` へ渡す。"
+                "孤立粒子の面積相当径は真値から最大 **0.165 px**、端1個を理由つきで除外し、分割済み重なり2個を記録。"
+                "個数基準 D50 **17.428 µm** と体積基準 D50 **18.064 µm** を別系列で示し、レーザー回折と同一視しない。"
+                "尺度0.500000 ± 0.002500 µm/pxを径と分位点へ伝播し、校正記録と粒子表のSHA-256も保存する。"
+                "重なり率0.05〜0.75の系列では連結成分が常に1でも、深い側は個数を区間で返す。"},
     {"id": "poc_template_tracking", "task": "registration", "data": "synthetic",
      "name": "テンプレート追跡(見失うより先に、静かにずれる)",
      "summary": "既知の相似変換で動画を合成して真値を握る。ゼロ点(更新なし全域探索)の床は"
