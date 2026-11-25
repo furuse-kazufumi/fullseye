@@ -95,6 +95,8 @@ from __future__ import annotations
 import numpy as np
 from scipy import ndimage
 
+import arrayguard as _arrayguard
+
 __all__ = [
     "vol_frangi", "vol_sato", "vol_hessian_blobness",
     # 形態計測(ステレオロジー)—— HALCON はボクセル型を持たないので全部こちら側
@@ -130,13 +132,24 @@ MAX_EIGEN_VOXELS = 1 << 24
 # --------------------------------------------------------------------------- #
 # fail-closed input helpers                                                    #
 # --------------------------------------------------------------------------- #
-def _require_volume(vol, name: str = "vol", check_finite: bool = True) -> np.ndarray:
+def _require_volume(vol, name: str = "vol", check_finite: bool = True, *,
+                    cap: int | None = None, op: str = "volops",
+                    cap_name: str = "MAX_VOXELS") -> np.ndarray:
     """Coerce to a contiguous ``(D, H, W)`` float64 array or raise ``ValueError``.
 
     Rejects anything that is not exactly 3-D, and (by default) any NaN / Inf —
     a poisoned voxel would propagate through every derivative and corrupt the
     whole downstream result silently."""
+    if cap is None:
+        cap = MAX_VOXELS
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        vol, name, "%s (volops.%s)" % (op, cap_name), cap, expected_ndim=3,
+        advice=_arrayguard.VOLUME_CAP_ADVICE)
     v = np.ascontiguousarray(vol, dtype=np.float64)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            v, name, "%s (volops.%s)" % (op, cap_name), cap, expected_ndim=3,
+            advice=_arrayguard.VOLUME_CAP_ADVICE)
     if v.ndim != 3:
         raise ValueError("%s must be a 3-D (D, H, W) volume, got a %d-D array of shape %r"
                          % (name, v.ndim, tuple(np.shape(vol))))
@@ -323,7 +336,8 @@ def vol_frangi(vol, scales=(1, 2, 3), alpha=0.5, beta=0.5, c=None,
     Returns a ``(D, H, W)`` float64 volume in ``[0, 1]``. Reference: Frangi et al.,
     MICCAI 1998.
     """
-    v = _require_volume(vol)
+    v = _require_volume(vol, cap=MAX_EIGEN_VOXELS, op="vol_frangi",
+                        cap_name="MAX_EIGEN_VOXELS")
     _check_voxels(v, MAX_EIGEN_VOXELS, "vol_frangi", "MAX_EIGEN_VOXELS")
     a2 = 2.0 * float(alpha) ** 2
     b2 = 2.0 * float(beta) ** 2
@@ -369,7 +383,8 @@ def vol_sato(vol, scales=(1, 2, 3), black_ridges=False):
     suppress plate- or blob-like structure), but a robust, well-cited tube
     detector. Reference: Sato et al., Medical Image Analysis 1998.
     """
-    v = _require_volume(vol)
+    v = _require_volume(vol, cap=MAX_EIGEN_VOXELS, op="vol_sato",
+                        cap_name="MAX_EIGEN_VOXELS")
     _check_voxels(v, MAX_EIGEN_VOXELS, "vol_sato", "MAX_EIGEN_VOXELS")
     tol = _structure_floor(v)
     out = np.zeros_like(v)
@@ -402,7 +417,8 @@ def vol_hessian_blobness(vol, scale, black_ridges=False):
     """
     if (len(vol) if isinstance(vol, (list, tuple)) else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("vol_hessian_blobness: vol is empty — pass at least one element")
-    v = _require_volume(vol)
+    v = _require_volume(vol, cap=MAX_EIGEN_VOXELS, op="vol_hessian_blobness",
+                        cap_name="MAX_EIGEN_VOXELS")
     _check_voxels(v, MAX_EIGEN_VOXELS, "vol_hessian_blobness", "MAX_EIGEN_VOXELS")
     sigma = _iter_scales(scale, "scale")[0]
     e1, e2, e3 = _eigvalsh_sym3(*_hessian_components(v, sigma))
