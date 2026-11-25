@@ -4,6 +4,7 @@ Load a pipeline (JSON / ops string / dict), introspect its sorts, validate it,
 tune knobs, and execute it (whole / up-to / stepwise). These are the guarantees
 another project (or the embedded runtime) relies on."""
 import json
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -192,3 +193,62 @@ def test_identity_threads_the_sort_instead_of_matching_everything():
     assert FullseyeEngine.from_ops("gaussian,identity").output_sort() == "image"
     assert FullseyeEngine.from_ops("gaussian,otsu,identity").output_sort() == "region"
     assert FullseyeEngine.from_ops("identity").output_sort() == "any"   # nothing to thread
+
+
+def test_public_saved_pipeline_loader_and_cli_share_the_closed_validation_gate(tmp_path):
+    """Studio JSON has one strict public reader / Python と CLI の保存ファイル門を共有する。"""
+    import imgevolve
+    import fullseye
+
+    good = tmp_path / "inspect.json"
+    good.write_text(json.dumps({"fullseye_pipeline": 1, "name": "inspect",
+                                "stages": [["gaussian", 0.2, 0.5], ["threshold", 0.5, 0.5]]}),
+                    encoding="utf-8")
+    loaded = fullseye.load_pipeline(good)
+    assert fullseye.pipeline_interface(loaded) == {
+        "inputs": [{"name": "image", "sort": "image"}],
+        "outputs": [{"name": "result", "sort": "region"}],
+    }
+    assert np.array_equal(loaded.run(_img()), FullseyeEngine.from_dict(json.loads(good.read_text())).run(_img()))
+
+    bad = tmp_path / "bad.json"
+    bad.write_text(json.dumps({"stages": [["not_an_operator", 0.5, 0.5]], "typo": True}), encoding="utf-8")
+    with pytest.raises(ValueError) as raised:
+        fullseye.load_pipeline(bad)
+    message = str(raised.value)
+    assert "unsupported key" in message and "'typo'" in message and "save the pipeline again from Studio" in message
+    args = SimpleNamespace(pipeline=str(bad), a=0.5, b=0.5, describe=True, to_python=False,
+                           inp=None, stepwise=False, out=None, upto=None)
+    with pytest.raises(ValueError, match="unsupported key"):
+        imgevolve.cmd_run(args)
+
+
+def test_saved_pipeline_name_is_a_string_and_stage_aliases_are_unambiguous():
+    """Saved JSON never coerces its name or silently chooses one conflicting stage alias.
+
+    保存名は文字列だけを受け、dict stage が ``op`` と ``name`` を併記するときは同値だけを
+    受ける。こうして C/C++ SDK を含む全保存JSON入口で同じ意味になる。
+    """
+    non_string_name = json.dumps({"fullseye_pipeline": 1, "name": 17,
+                                  "stages": [["gaussian", 0.5, 0.5]]})
+    with pytest.raises(ValueError) as raised:
+        engine.load_pipeline_text(non_string_name)
+    message = str(raised.value)
+    assert all(fragment in message for fragment in ("'name' must be a JSON string", "17", "str()", "は JSON 文字列"))
+
+    same_alias = engine.load_pipeline_text(json.dumps({
+        "fullseye_pipeline": 1,
+        "name": "same-alias",
+        "stages": [{"op": "gaussian", "name": "gaussian", "a": 0.2, "b": 0.5}],
+    }))
+    assert same_alias.name == "same-alias" and same_alias.op_names() == ["gaussian"]
+
+    conflicting_alias = json.dumps({
+        "fullseye_pipeline": 1,
+        "name": "conflict",
+        "stages": [{"op": "gaussian", "name": "threshold", "a": 0.2, "b": 0.5}],
+    })
+    with pytest.raises(ValueError) as raised:
+        engine.load_pipeline_text(conflicting_alias)
+    message = str(raised.value)
+    assert all(fragment in message for fragment in ("'op' is 'gaussian'", "'name' is 'threshold'", "one stage", "operator は 1 つ"))

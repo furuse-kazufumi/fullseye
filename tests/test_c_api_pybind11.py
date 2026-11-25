@@ -26,6 +26,7 @@ FS_E_RANGE = 4
 FS_E_NO_PYTHON = 10
 FS_E_UNKNOWN_OP = 11
 FS_E_BAD_PARAMS = 12
+FS_E_BUSY = 14
 FS_E_UNSUPPORTED = 6
 FS_E_INTERNAL = 9
 FS_VALUE_IMAGE = 1
@@ -79,6 +80,11 @@ class InputN(C.Structure):
                 ("contour", ContourView), ("points", ArrayView)]
 
 
+class PipelineInputN(C.Structure):
+    _fields_ = [("struct_size", C.c_uint32), ("name", C.c_char_p), ("name_bytes", C.c_size_t),
+                ("value", InputN)]
+
+
 class Run(C.Structure):
     _fields_ = [("row", C.c_int32), ("col_begin", C.c_int32), ("col_end", C.c_int32)]
 
@@ -108,6 +114,12 @@ def _bind(lib):
     lib.fs_find_ops_json_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t,
                                         C.POINTER(C.c_void_p), C.POINTER(C.c_size_t)]
     lib.fs_find_ops_json_n.restype = C.c_int
+    lib.fs_find_ops_json.argtypes = [C.c_void_p, C.c_void_p, C.POINTER(C.c_void_p),
+                                     C.POINTER(C.c_size_t)]
+    lib.fs_find_ops_json.restype = C.c_int
+    lib.fs_call.argtypes = [C.c_void_p, C.c_void_p, C.POINTER(Input), C.c_size_t,
+                            C.c_void_p, C.POINTER(C.c_void_p)]
+    lib.fs_call.restype = C.c_int
     lib.fs_free.argtypes = [C.c_void_p]
     lib.fs_free.restype = None
     lib.fs_result_release_n.argtypes = [C.c_uint64]
@@ -143,6 +155,25 @@ def _bind(lib):
     lib.fs_result_tuple_real_n.restype = C.c_int
     lib.fs_result_real_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.c_double)]
     lib.fs_result_real_n.restype = C.c_int
+    lib.fs_pipeline_load_json_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t, C.POINTER(C.c_void_p)]
+    lib.fs_pipeline_load_json_n.restype = C.c_int
+    lib.fs_pipeline_load_path_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t, C.POINTER(C.c_void_p)]
+    lib.fs_pipeline_load_path_n.restype = C.c_int
+    lib.fs_pipeline_destroy.argtypes = [C.c_void_p]
+    lib.fs_pipeline_destroy.restype = None
+    lib.fs_pipeline_input_count.argtypes = [C.c_void_p]
+    lib.fs_pipeline_input_count.restype = C.c_size_t
+    lib.fs_pipeline_output_count.argtypes = [C.c_void_p]
+    lib.fs_pipeline_output_count.restype = C.c_size_t
+    lib.fs_pipeline_input_info.argtypes = [C.c_void_p, C.c_size_t, C.POINTER(C.c_void_p),
+                                            C.POINTER(C.c_size_t), C.POINTER(C.c_int)]
+    lib.fs_pipeline_input_info.restype = C.c_int
+    lib.fs_pipeline_output_info.argtypes = [C.c_void_p, C.c_size_t, C.POINTER(C.c_void_p),
+                                             C.POINTER(C.c_size_t), C.POINTER(C.c_int)]
+    lib.fs_pipeline_output_info.restype = C.c_int
+    lib.fs_pipeline_run_n.argtypes = [C.c_void_p, C.POINTER(PipelineInputN), C.c_size_t,
+                                      C.POINTER(C.c_uint64)]
+    lib.fs_pipeline_run_n.restype = C.c_int
     lib.fs_last_error.argtypes = [C.c_void_p, C.c_char_p, C.c_size_t]
     lib.fs_last_error.restype = C.c_size_t
     lib.fs_test_result_id_seed_next_generation.argtypes = [C.c_uint32]
@@ -191,6 +222,18 @@ def _call(abi, op: str, inputs: list[Input], params="{}"):
     status = lib.fs_call_id_n(runtime, op_bytes, len(op_bytes), array, len(inputs),
                            params_bytes, len(params_bytes), C.byref(result))
     return status, result
+
+
+def _error(lib, runtime) -> str:
+    size = lib.fs_last_error(runtime, None, 0)
+    buf = C.create_string_buffer(size)
+    lib.fs_last_error(runtime, buf, size)
+    return buf.value.decode("utf-8")
+
+
+def _pipeline_input(name: str, value: InputN) -> PipelineInputN:
+    encoded = name.encode("utf-8")
+    return PipelineInputN(C.sizeof(PipelineInputN), encoded, len(encoded), value)
 
 
 def _runs(lib, result, index=0):
@@ -990,17 +1033,63 @@ def test_bounded_strings_do_not_require_nul_and_legacy_entrypoint_remains_abi_0_
     assert lib.fs_call_id_n(runtime, op, C.sizeof(op), C.byref(_image(pixels)), 1,
                          params, C.sizeof(params), C.byref(result)) == FS_OK
     assert lib.fs_result_release_n(result) == FS_OK
-    legacy = lib.fs_call
-    legacy.argtypes = [C.c_void_p, C.c_char_p, C.POINTER(Input), C.c_size_t,
-                       C.c_char_p, C.POINTER(C.c_void_p)]
-    legacy.restype = C.c_int
     legacy_result = C.c_void_p()
     old_input = Input(C.sizeof(Input), FS_VALUE_IMAGE, _image(pixels).image, None, 0)
-    assert legacy(runtime, b"contract:threshold", C.byref(old_input), 1,
-                  b'{"lo":0.5,"hi":1.0}', C.byref(legacy_result)) == FS_OK
+    assert lib.fs_call(runtime, b"contract:threshold", C.byref(old_input), 1,
+                       b'{"lo":0.5,"hi":1.0}', C.byref(legacy_result)) == FS_OK
     lib.fs_result_release.argtypes = [C.c_void_p]
     lib.fs_result_release.restype = None
     lib.fs_result_release(legacy_result)
+
+
+def test_legacy_c_strings_accept_the_exact_limit_and_reject_limit_plus_one_with_remedy(abi):
+    """ABI 0.1 scans exactly one byte past its 256 B / 1 MiB limits, never farther.
+
+    旧 ABI の NUL 文字列は上限ちょうどを Python 側まで通し、+1 B は値・上限・修復方法を
+    含む文で、Python に渡す前に拒否する。
+    """
+    lib, runtime = abi
+    max_op, max_json = 256, 1024 * 1024
+    pixels = np.ones((2, 2), dtype=np.float64)
+    old_input = Input(C.sizeof(Input), FS_VALUE_IMAGE, _image(pixels).image, None, 0)
+
+    query_at_limit = C.create_string_buffer(b"{}" + b" " * (max_json - 2))
+    found = C.c_void_p()
+    found_bytes = C.c_size_t()
+    assert lib.fs_find_ops_json(runtime, query_at_limit, C.byref(found), C.byref(found_bytes)) == FS_OK
+    try:
+        assert found.value and found_bytes.value > 1
+    finally:
+        lib.fs_free(found)
+
+    op_at_limit = C.create_string_buffer(b"contract:threshold" + b" " * (max_op - len(b"contract:threshold")))
+    legacy_result = C.c_void_p()
+    assert lib.fs_call(runtime, op_at_limit, None, 0, C.create_string_buffer(b"{}"),
+                       C.byref(legacy_result)) == FS_E_UNKNOWN_OP
+
+    params_at_limit = C.create_string_buffer(b'{"lo":0.5,"hi":1.0}' + b" " *
+                                             (max_json - len(b'{"lo":0.5,"hi":1.0}')))
+    assert lib.fs_call(runtime, C.create_string_buffer(b"contract:threshold"), C.byref(old_input), 1,
+                       params_at_limit, C.byref(legacy_result)) == FS_OK
+    lib.fs_result_release(legacy_result)
+
+    op_plus_one = (C.c_char * (max_op + 1)).from_buffer_copy(b"x" * (max_op + 1))
+    assert lib.fs_call(runtime, op_plus_one, None, 0, C.create_string_buffer(b"{}"),
+                       C.byref(legacy_result)) == FS_E_INVALID_ARG
+    message = _error(lib, runtime)
+    assert all(fragment in message for fragment in ("op_id", "257", "256", "fs_call_id_n", "少なくとも", "上限"))
+
+    params_plus_one = (C.c_char * (max_json + 1)).from_buffer_copy(b" " * (max_json + 1))
+    assert lib.fs_call(runtime, C.create_string_buffer(b"contract:threshold"), None, 0,
+                       params_plus_one, C.byref(legacy_result)) == FS_E_INVALID_ARG
+    message = _error(lib, runtime)
+    assert all(fragment in message for fragment in ("params_json", "1048577", "1048576", "fs_call_id_n", "少なくとも", "上限"))
+
+    query_plus_one = (C.c_char * (max_json + 1)).from_buffer_copy(b" " * (max_json + 1))
+    assert lib.fs_find_ops_json(runtime, query_plus_one, C.byref(found), C.byref(found_bytes)) == FS_E_INVALID_ARG
+    assert not found.value and found_bytes.value == 0
+    message = _error(lib, runtime)
+    assert all(fragment in message for fragment in ("query_json", "1048577", "1048576", "fs_find_ops_json_n", "少なくとも", "上限"))
 
 
 def test_released_and_unknown_result_handles_are_rejected_and_double_release_errors(abi):
@@ -1072,3 +1161,122 @@ def test_release_and_accessor_concurrency_keeps_the_handle_lifetime_safe(abi):
     assert status == FS_OK and count == 8
     assert lib.fs_result_region_runs_n(result, 0, C.byref(C.POINTER(Run)()), C.byref(C.c_size_t())) == FS_E_INVALID_ARG
     assert lib.fs_test_result_id_pause_after_lease(0) == FS_OK
+
+
+def test_saved_pipeline_path_reports_named_types_and_matches_python_after_json_replacement(abi, tmp_path):
+    """One C DLL, two Studio JSON saves: C and Python agree / 再ビルドなしの差し替え差分門。"""
+    lib, runtime = abi
+    path = tmp_path / "inspect.json"
+    document = {"fullseye_pipeline": 1, "name": "inspect", "stages": [["threshold", 0.5, 0.5]]}
+    path.write_text(json.dumps(document), encoding="utf-8")
+    pipeline = C.c_void_p()
+    path_bytes = os.fsencode(path)
+    assert lib.fs_pipeline_load_path_n(runtime, path_bytes, len(path_bytes), C.byref(pipeline)) == FS_OK
+    try:
+        assert lib.fs_pipeline_input_count(pipeline) == lib.fs_pipeline_output_count(pipeline) == 1
+        name = C.c_void_p()
+        name_bytes = C.c_size_t()
+        kind = C.c_int()
+        assert lib.fs_pipeline_input_info(pipeline, 0, C.byref(name), C.byref(name_bytes), C.byref(kind)) == FS_OK
+        try:
+            assert C.string_at(name, name_bytes.value - 1) == b"image"
+            assert kind.value == FS_VALUE_IMAGE
+        finally:
+            lib.fs_free(name)
+        assert lib.fs_pipeline_output_info(pipeline, 0, C.byref(name), C.byref(name_bytes), C.byref(kind)) == FS_OK
+        try:
+            assert C.string_at(name, name_bytes.value - 1) == b"result"
+            assert kind.value == FS_VALUE_REGION
+        finally:
+            lib.fs_free(name)
+
+        pixels = np.array([[0.0, 0.2, 0.0], [0.2, 1.0, 0.2], [0.0, 0.2, 0.0]], dtype=np.float64)
+        result = C.c_uint64()
+        named = _pipeline_input("image", _image(pixels.copy()))
+        assert lib.fs_pipeline_run_n(pipeline, C.byref(named), 1, C.byref(result)) == FS_OK
+        try:
+            c_first = _runs(lib, result)
+        finally:
+            assert lib.fs_result_release_n(result) == FS_OK
+        python_first = fullseye.load_pipeline(path).run(pixels.copy())
+        assert c_first == _direct_runs(fslib.Region(np.asarray(python_first) > 0.5))
+    finally:
+        lib.fs_pipeline_destroy(pipeline)
+
+    # Only the saved JSON changes.  The already-built native DLL is reused.
+    document["stages"][0][1] = 0.1
+    path.write_text(json.dumps(document), encoding="utf-8")
+    replaced = C.c_void_p()
+    assert lib.fs_pipeline_load_path_n(runtime, path_bytes, len(path_bytes), C.byref(replaced)) == FS_OK
+    try:
+        result = C.c_uint64()
+        named = _pipeline_input("image", _image(pixels.copy()))
+        assert lib.fs_pipeline_run_n(replaced, C.byref(named), 1, C.byref(result)) == FS_OK
+        try:
+            c_second = _runs(lib, result)
+        finally:
+            assert lib.fs_result_release_n(result) == FS_OK
+        python_second = fullseye.load_pipeline(path).run(pixels.copy())
+        assert c_second == _direct_runs(fslib.Region(np.asarray(python_second) > 0.5))
+        assert c_second != c_first
+    finally:
+        lib.fs_pipeline_destroy(replaced)
+
+
+def test_c_pipeline_after_runtime_destroy_stays_busy_with_a_bilingual_cause_and_fix(abi):
+    """The C ABI retains FS_E_BUSY, but explains the destroyed-runtime ordering.
+
+    C の所有権規約では pipeline を残したまま runtime を先に破棄すると run は busy のまま。
+    ただし原因と pipeline/runtime の正しい破棄順を日英で返す。
+    """
+    lib, _shared_runtime = abi
+    root = os.fsencode(ROOT)
+    options = InitOptions(C.sizeof(InitOptions), root, None, 3, 0, 2, len(root), 0)
+    runtime = C.c_void_p()
+    assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_OK
+    pipeline = C.c_void_p()
+    payload = json.dumps({"fullseye_pipeline": 1, "name": "inspect",
+                          "stages": [["threshold", 0.5, 0.5]]}).encode("utf-8")
+    assert lib.fs_pipeline_load_json_n(runtime, payload, len(payload), C.byref(pipeline)) == FS_OK
+    try:
+        lib.fs_runtime_destroy(runtime)
+        pixels = np.ones((2, 2), dtype=np.float64)
+        result = C.c_uint64()
+        named = _pipeline_input("image", _image(pixels))
+        assert lib.fs_pipeline_run_n(pipeline, C.byref(named), 1, C.byref(result)) == FS_E_BUSY
+        message = _error(lib, runtime)
+        assert all(fragment in message for fragment in (
+            "destroyed before this pipeline", "Destroy the pipeline first",
+            "Runtime が pipeline より先に破棄", "pipeline を先に破棄"))
+    finally:
+        lib.fs_pipeline_destroy(pipeline)
+
+
+@pytest.mark.parametrize("document, required", [
+    ({"stages": [["not_an_operator", 0.5, 0.5]]}, ("stage 1", "unknown operator", "Choose an operator")),
+    ({"stages": [["threshold", 0.5, 0.5], ["gaussian", 0.5, 0.5]]},
+     ("stage 1", "outputs 'region'", "converting operator")),
+    ({"stages": [["gaussian", 0.5, 0.5]], "typo": True}, ("unsupported key", "'typo'", "remove")),
+])
+def test_saved_pipeline_rejections_name_the_problem_reason_and_fix(abi, document, required):
+    """Unknown op, bad type chain and extra key never reach execution / 親切な fail-closed 門。"""
+    lib, runtime = abi
+    payload = json.dumps(document).encode("utf-8")
+    pipeline = C.c_void_p()
+    assert lib.fs_pipeline_load_json_n(runtime, payload, len(payload), C.byref(pipeline)) == FS_E_BAD_PARAMS
+    assert not pipeline.value
+    message = _error(lib, runtime)
+    for fragment in required:
+        assert fragment in message
+
+
+def test_saved_pipeline_path_and_file_bytes_are_bounded_before_open_or_parse(abi):
+    """Hostile spans cannot force path scans or JSON allocation / path・file 上限の門。"""
+    lib, runtime = abi
+    pipeline = C.c_void_p()
+    too_long_path = (C.c_char * 98302)(*([ord("x")] * 98302))
+    assert lib.fs_pipeline_load_path_n(runtime, too_long_path, C.sizeof(too_long_path), C.byref(pipeline)) == FS_E_INVALID_ARG
+    assert "98301-byte limit" in _error(lib, runtime)
+    payload = b" " * (1024 * 1024 + 1)
+    assert lib.fs_pipeline_load_json_n(runtime, payload, len(payload), C.byref(pipeline)) == FS_E_INVALID_ARG
+    assert "1 MiB limit" in _error(lib, runtime)

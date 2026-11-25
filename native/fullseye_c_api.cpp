@@ -9,16 +9,22 @@
 #include <algorithm>
 #include <atomic>
 #include <cmath>
+#include <cstdio>
 #include <cstdint>
 #include <chrono>
 #include <condition_variable>
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <iterator>
 #include <limits>
 #include <mutex>
 #include <new>
 #include <memory>
+#include <optional>
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -26,7 +32,26 @@
 #include <utility>
 #include <vector>
 
+#ifdef _WIN32
+#  ifndef WIN32_LEAN_AND_MEAN
+#    define WIN32_LEAN_AND_MEAN
+#  endif
+#  include <windows.h>
+#elif defined(__APPLE__)
+#  include <mach-o/dyld.h>
+#else
+#  include <unistd.h>
+#endif
+
 namespace py = pybind11;
+
+#ifndef FULLSEYE_DEFAULT_RUNTIME_ROOT
+#  define FULLSEYE_DEFAULT_RUNTIME_ROOT ""
+#endif
+
+#ifndef FULLSEYE_DEFAULT_PYTHON_HOME
+#  define FULLSEYE_DEFAULT_PYTHON_HOME ""
+#endif
 
 static_assert(sizeof(fs_run_t) == 3u * sizeof(int32_t), "fs_run_t must contain three int32 values");
 
@@ -46,13 +71,18 @@ constexpr uint32_t kTypedInputNSize =
     static_cast<uint32_t>(offsetof(fs_input_n_t, feature) + sizeof(double));
 constexpr uint32_t kCoordinateInputNSize =
     static_cast<uint32_t>(offsetof(fs_input_n_t, points) + sizeof(fs_points_view_t));
-constexpr uint32_t kRequiredArraySize =
-    static_cast<uint32_t>(offsetof(fs_array_view_t, dtype) + sizeof(fs_dtype_t));
 constexpr uint32_t kRequiredContourPartSize =
     static_cast<uint32_t>(offsetof(fs_contour_part_t, closed) + sizeof(uint32_t));
 constexpr uint32_t kRequiredContourSize =
     static_cast<uint32_t>(offsetof(fs_contour_view_t, contour_stride_bytes) + sizeof(size_t));
-constexpr size_t kMaxErrorBytes = 4096u;
+constexpr uint32_t kRequiredPipelineInputNSize =
+    static_cast<uint32_t>(offsetof(fs_pipeline_input_n_t, value) + sizeof(fs_input_n_t));
+constexpr uint32_t kRequiredArraySize =
+    static_cast<uint32_t>(offsetof(fs_array_view_t, dtype) + sizeof(fs_dtype_t));
+// Discovery reports retain every candidate and both repair command sets, so a
+// short fixed error slot would hide the last remedy. / 全候補と二系統の修復手順を
+// 保つため、短い固定バッファで末尾を切らない。
+constexpr size_t kMaxErrorBytes = 16384u;
 // Windows extended-length paths are limited to 32,767 UTF-16 code units.
 // UTF-8 needs at most three bytes per UTF-16 code unit: a BMP scalar uses at
 // most three bytes, and a supplementary scalar uses four bytes across its
@@ -76,6 +106,12 @@ constexpr size_t kMaxOperatorIdBytes = 256u;
 // payload でなく制御用文書なので、1 MiB で閉じた schema には足り、悪意ある
 // span 長を std::string の確保まで通さない。
 constexpr size_t kMaxJsonBytes = 1024u * 1024u;
+// A saved Studio pipeline is control JSON, not pixel data.  Apply the same
+// cap to its text and its on-disk file before JSON/Python can allocate. /
+// Studio 保存 pipeline は画素でなく制御 JSON なので、JSON/Python が確保する前に
+// 本文とファイルへ同じ上限を掛ける。
+constexpr size_t kMaxPipelineBytes = kMaxJsonBytes;
+constexpr const char kSdkAbiVersion[] = "0.3";
 
 struct OwnedContour {
     std::vector<double> points;
@@ -461,6 +497,127 @@ struct PythonInitResult {
     std::string error;
 };
 
+struct RuntimeAttempt {
+    std::string source;
+    std::string location;
+    std::string outcome;
+};
+
+struct RuntimeDiscovery {
+    bool found = false;
+    std::string root;
+    std::string home;
+    std::string source;
+    std::vector<RuntimeAttempt> attempts;
+};
+
+std::filesystem::path utf8_path(const std::string &value) {
+#ifdef _WIN32
+    if (value.size() > static_cast<size_t>(std::numeric_limits<int>::max())) {
+        throw std::runtime_error("UTF-8 path exceeds the Windows API limit");
+    }
+    const int count = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, value.data(),
+                                          static_cast<int>(value.size()), nullptr, 0);
+    if (count <= 0) throw std::runtime_error("path is not valid UTF-8");
+    std::wstring wide(static_cast<size_t>(count), L'\0');
+    if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, value.data(), static_cast<int>(value.size()),
+                            wide.data(), count) != count) {
+        throw std::runtime_error("path is not valid UTF-8");
+    }
+    return std::filesystem::path(wide);
+#else
+    return std::filesystem::path(value);
+#endif
+}
+
+std::string path_utf8(const std::filesystem::path &value) {
+    const auto bytes = value.u8string();
+    return std::string(bytes.begin(), bytes.end());
+}
+
+std::string linked_python_home() {
+#ifdef _WIN32
+    char name[32]{};
+    std::snprintf(name, sizeof(name), "python%d%d.dll", PY_MAJOR_VERSION, PY_MINOR_VERSION);
+    const HMODULE module = GetModuleHandleA(name);
+    if (module == nullptr) return "";
+    std::vector<wchar_t> path(32768u, L'\0');
+    const DWORD count = GetModuleFileNameW(module, path.data(), static_cast<DWORD>(path.size()));
+    if (count == 0u || count >= path.size()) return "";
+    return path_utf8(std::filesystem::path(std::wstring(path.data(), count)).parent_path());
+#else
+    return "";
+#endif
+}
+
+std::string trim_ascii(std::string value) {
+    const auto first = value.find_first_not_of(" \t\r\n");
+    if (first == std::string::npos) return "";
+    const auto last = value.find_last_not_of(" \t\r\n");
+    return value.substr(first, last - first + 1u);
+}
+
+std::string embedding_python_home(const std::string &home) {
+    if (home.empty()) return linked_python_home();
+    try {
+        const std::filesystem::path configured = utf8_path(home);
+        std::error_code error;
+        const std::filesystem::path venv_config = configured / "pyvenv.cfg";
+        if (!std::filesystem::is_regular_file(venv_config, error) || error) return home;
+        std::ifstream input(venv_config, std::ios::binary);
+        std::string line;
+        while (std::getline(input, line)) {
+            const size_t equals = line.find('=');
+            if (equals == std::string::npos || trim_ascii(line.substr(0u, equals)) != "home") continue;
+            const std::string base = trim_ascii(line.substr(equals + 1u));
+            if (!base.empty()) return path_utf8(utf8_path(base));
+        }
+    } catch (...) {
+        // Keep the caller's declared home: CPython reports a precise startup
+        // error if it is invalid. / 読めない場合は指定値を保ち、無効なら CPython の
+        // 起動診断をそのまま返す。
+    }
+    return home;
+}
+
+bool compatible_runtime_root(const std::string &root, std::string *why) {
+    try {
+        if (root.empty()) {
+            *why = "not specified";
+            return false;
+        }
+        const std::filesystem::path base = utf8_path(root);
+        std::error_code error;
+        if (!std::filesystem::is_directory(base, error)) {
+            *why = "directory does not exist";
+            return false;
+        }
+        const std::filesystem::path package = base / "fullseye";
+        if (!std::filesystem::is_regular_file(package / "__init__.py", error)) {
+            *why = "fullseye is not installed (missing fullseye/__init__.py)";
+            return false;
+        }
+        const std::filesystem::path abi_file = package / "sdk" / "ABI_VERSION";
+        if (!std::filesystem::is_regular_file(abi_file, error)) {
+            *why = "SDK ABI version file is missing (fullseye/sdk/ABI_VERSION)";
+            return false;
+        }
+        std::ifstream input(abi_file, std::ios::binary);
+        std::string version((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+        version = trim_ascii(version);
+        if (version != kSdkAbiVersion) {
+            *why = "SDK ABI version " + (version.empty() ? std::string("is empty") : version)
+                + " does not match required " + kSdkAbiVersion;
+            return false;
+        }
+        *why = "compatible fullseye SDK ABI " + std::string(kSdkAbiVersion);
+        return true;
+    } catch (const std::exception &exc) {
+        *why = std::string("could not inspect the path: ") + exc.what();
+        return false;
+    }
+}
+
 bool has_c_api_bridge_under_runtime_root(const std::string &root) noexcept {
     try {
         // C API paths are UTF-8 spans.  C++17 u8path preserves that contract on
@@ -505,6 +662,282 @@ std::string missing_runtime_root_package_message(const std::string &root) {
           "または環境 root を runtime_root に指定してください。Windows では fullseye doctor を実行してください。";
 }
 
+void try_runtime_root(RuntimeDiscovery *discovery, const std::string &source,
+                      const std::string &root, const std::string &home) {
+    if (discovery->found) return;
+    std::string why;
+    const bool compatible = compatible_runtime_root(root, &why);
+    discovery->attempts.push_back({source, root.empty() ? "(none)" : root,
+                                   compatible ? "usable: " + why : why});
+    if (compatible) {
+        discovery->found = true;
+        discovery->root = root;
+        discovery->home = embedding_python_home(home);
+        discovery->source = source;
+    }
+}
+
+void try_runtime_prefix(RuntimeDiscovery *discovery, const std::string &source,
+                        const std::string &prefix) {
+    if (discovery->found) return;
+    if (prefix.empty()) {
+        try_runtime_root(discovery, source, "", "");
+        return;
+    }
+    const std::filesystem::path base = utf8_path(prefix);
+    try_runtime_root(discovery, source + " (root)", path_utf8(base), prefix);
+    if (discovery->found) return;
+    try_runtime_root(discovery, source + " (Windows site-packages)",
+                     path_utf8(base / "Lib" / "site-packages"), prefix);
+    if (discovery->found) return;
+    std::error_code error;
+    const std::filesystem::path lib = base / "lib";
+    if (!std::filesystem::is_directory(lib, error)) {
+        discovery->attempts.push_back({source + " (POSIX site-packages)", path_utf8(lib),
+                                       "directory does not exist"});
+        return;
+    }
+    bool had_python_directory = false;
+    for (const auto &entry : std::filesystem::directory_iterator(lib, error)) {
+        if (error) break;
+        const std::string name = entry.path().filename().string();
+        if (name.rfind("python", 0u) != 0u) continue;
+        had_python_directory = true;
+        try_runtime_root(discovery, source + " (POSIX site-packages)",
+                         path_utf8(entry.path() / "site-packages"), prefix);
+        if (discovery->found) return;
+    }
+    if (!had_python_directory) {
+        discovery->attempts.push_back({source + " (POSIX site-packages)", path_utf8(lib),
+                                       "no lib/python*/site-packages directory"});
+    }
+}
+
+std::optional<std::string> json_string_field(const std::string &text, const char *field) {
+    const std::string key = std::string("\"") + field + "\"";
+    const size_t key_at = text.find(key);
+    if (key_at == std::string::npos) return std::nullopt;
+    size_t at = text.find(':', key_at + key.size());
+    if (at == std::string::npos) return std::nullopt;
+    ++at;
+    while (at < text.size() && (text[at] == ' ' || text[at] == '\t' || text[at] == '\r' || text[at] == '\n')) ++at;
+    if (at >= text.size() || text[at++] != '\"') return std::nullopt;
+    std::string value;
+    while (at < text.size()) {
+        const char character = text[at++];
+        if (character == '\"') return value;
+        if (character != '\\') {
+            value.push_back(character);
+            continue;
+        }
+        if (at >= text.size()) return std::nullopt;
+        const char escaped = text[at++];
+        switch (escaped) {
+            case '\"': value.push_back('\"'); break;
+            case '\\': value.push_back('\\'); break;
+            case '/': value.push_back('/'); break;
+            case 'b': value.push_back('\b'); break;
+            case 'f': value.push_back('\f'); break;
+            case 'n': value.push_back('\n'); break;
+            case 'r': value.push_back('\r'); break;
+            case 't': value.push_back('\t'); break;
+            default: return std::nullopt;  // Manifests use UTF-8, never \u escapes.
+        }
+    }
+    return std::nullopt;
+}
+
+std::string executable_directory() {
+#ifdef _WIN32
+    std::vector<wchar_t> path(32768u, L'\0');
+    const DWORD count = GetModuleFileNameW(nullptr, path.data(), static_cast<DWORD>(path.size()));
+    if (count == 0u || count >= path.size()) return "";
+    return path_utf8(std::filesystem::path(std::wstring(path.data(), count)).parent_path());
+#elif defined(__APPLE__)
+    uint32_t count = 0u;
+    (void)_NSGetExecutablePath(nullptr, &count);
+    std::vector<char> path(static_cast<size_t>(count) + 1u, '\0');
+    if (_NSGetExecutablePath(path.data(), &count) != 0) return "";
+    return path_utf8(std::filesystem::path(path.data()).parent_path());
+#else
+    std::vector<char> path(32768u, '\0');
+    const ssize_t count = readlink("/proc/self/exe", path.data(), path.size() - 1u);
+    if (count <= 0) return "";
+    path[static_cast<size_t>(count)] = '\0';
+    return path_utf8(std::filesystem::path(path.data()).parent_path());
+#endif
+}
+
+std::string home_from_python_executable(const std::string &python) {
+    if (python.empty()) return "";
+    const std::filesystem::path directory = utf8_path(python).parent_path();
+    const std::string leaf = directory.filename().string();
+    return path_utf8((leaf == "Scripts" || leaf == "bin") ? directory.parent_path() : directory);
+}
+
+void try_runtime_manifest(RuntimeDiscovery *discovery) {
+    if (discovery->found) return;
+    const std::string directory = executable_directory();
+    if (directory.empty()) {
+        discovery->attempts.push_back({"adjacent fullseye_runtime.json", "(current executable)",
+                                       "could not determine executable directory"});
+        return;
+    }
+    const std::filesystem::path manifest = utf8_path(directory) / "fullseye_runtime.json";
+    std::error_code error;
+    if (!std::filesystem::is_regular_file(manifest, error)) {
+        discovery->attempts.push_back({"adjacent fullseye_runtime.json", path_utf8(manifest), "file does not exist"});
+        return;
+    }
+    std::ifstream input(manifest, std::ios::binary);
+    const std::string text((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+    const auto root = json_string_field(text, "runtime_root");
+    const auto version = json_string_field(text, "sdk_abi_version");
+    if (!root || !version) {
+        discovery->attempts.push_back({"adjacent fullseye_runtime.json", path_utf8(manifest),
+                                       "invalid manifest: runtime_root or sdk_abi_version is missing"});
+        return;
+    }
+    if (*version != kSdkAbiVersion) {
+        discovery->attempts.push_back({"adjacent fullseye_runtime.json", path_utf8(manifest),
+                                       "SDK ABI version " + *version + " does not match required " + kSdkAbiVersion});
+        return;
+    }
+    const auto home = json_string_field(text, "python_home");
+    const auto python = json_string_field(text, "python_executable");
+    try_runtime_root(discovery, "adjacent fullseye_runtime.json", *root,
+                     home ? *home : (python ? home_from_python_executable(*python) : ""));
+}
+
+#ifdef _WIN32
+std::string utf8_from_wide(const std::wstring &value) {
+    if (value.empty()) return "";
+    const int count = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, value.data(),
+                                          static_cast<int>(value.size()), nullptr, 0, nullptr, nullptr);
+    if (count <= 0) return "";
+    std::string result(static_cast<size_t>(count), '\0');
+    if (WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, value.data(), static_cast<int>(value.size()),
+                            result.data(), count, nullptr, nullptr) != count) return "";
+    return result;
+}
+
+bool try_pep514_hive(RuntimeDiscovery *discovery, HKEY hive) {
+    HKEY core = nullptr;
+    if (RegOpenKeyExW(hive, L"Software\\Python\\PythonCore", 0u, KEY_READ, &core) != ERROR_SUCCESS) return false;
+    bool found_installation = false;
+    for (DWORD index = 0u; !discovery->found; ++index) {
+        wchar_t name[256]{};
+        DWORD length = static_cast<DWORD>(std::size(name) - 1u);
+        if (RegEnumKeyExW(core, index, name, &length, nullptr, nullptr, nullptr, nullptr) != ERROR_SUCCESS) break;
+        const std::wstring key_name = std::wstring(name, length) + L"\\InstallPath";
+        HKEY install = nullptr;
+        if (RegOpenKeyExW(core, key_name.c_str(), 0u, KEY_READ, &install) != ERROR_SUCCESS) continue;
+        wchar_t value[32768]{};
+        DWORD type = 0u;
+        DWORD bytes = sizeof(value) - sizeof(wchar_t);
+        const LONG result = RegQueryValueExW(install, nullptr, nullptr, &type,
+                                             reinterpret_cast<LPBYTE>(value), &bytes);
+        RegCloseKey(install);
+        if (result != ERROR_SUCCESS || (type != REG_SZ && type != REG_EXPAND_SZ)) continue;
+        found_installation = true;
+        try_runtime_prefix(discovery, "PEP 514 registry", utf8_from_wide(value));
+    }
+    RegCloseKey(core);
+    return found_installation;
+}
+#endif
+
+void try_path_python3(RuntimeDiscovery *discovery) {
+#ifndef _WIN32
+    const char *path_value = std::getenv("PATH");
+    if (path_value == nullptr || *path_value == '\0') {
+        discovery->attempts.push_back({"PATH python3", "(PATH)", "PATH is empty"});
+        return;
+    }
+    std::stringstream paths(path_value);
+    std::string directory;
+    bool found_executable = false;
+    while (std::getline(paths, directory, ':') && !discovery->found) {
+        const std::filesystem::path executable = (directory.empty() ? std::filesystem::path(".")
+                                                                       : utf8_path(directory)) / "python3";
+        std::error_code error;
+        if (!std::filesystem::is_regular_file(executable, error)) continue;
+        found_executable = true;
+        try_runtime_prefix(discovery, "PATH python3", home_from_python_executable(path_utf8(executable)));
+    }
+    if (!discovery->found && !found_executable) {
+        discovery->attempts.push_back({"PATH python3", "python3", "executable was not found"});
+    }
+#endif
+}
+
+RuntimeDiscovery discover_runtime(const std::string &explicit_root, const std::string &explicit_home) {
+    RuntimeDiscovery discovery;
+    if (!explicit_root.empty()) try_runtime_root(&discovery, "explicit runtime_root", explicit_root, explicit_home);
+    if (!discovery.found) {
+        const char *environment_root = std::getenv("FULLSEYE_PYTHON_ROOT");
+        const char *venv_home = std::getenv("VIRTUAL_ENV");
+        const char *conda_home = std::getenv("CONDA_PREFIX");
+        const std::string environment_home = venv_home != nullptr && *venv_home != '\0' ? venv_home
+            : (conda_home != nullptr && *conda_home != '\0' ? conda_home : linked_python_home());
+        if (environment_root == nullptr || *environment_root == '\0') {
+            discovery.attempts.push_back({"FULLSEYE_PYTHON_ROOT", "(not set)", "not specified"});
+        } else {
+            try_runtime_root(&discovery, "FULLSEYE_PYTHON_ROOT", environment_root, environment_home);
+            if (!discovery.found) try_runtime_prefix(&discovery, "FULLSEYE_PYTHON_ROOT", environment_root);
+        }
+    }
+    if (!discovery.found) try_runtime_manifest(&discovery);
+    const char *venv = std::getenv("VIRTUAL_ENV");
+    if (!discovery.found) try_runtime_prefix(&discovery, "VIRTUAL_ENV", venv == nullptr ? "" : venv);
+    const char *conda = std::getenv("CONDA_PREFIX");
+    if (!discovery.found) try_runtime_prefix(&discovery, "CONDA_PREFIX", conda == nullptr ? "" : conda);
+#ifdef _WIN32
+    if (!discovery.found) {
+        const bool user_registry = try_pep514_hive(&discovery, HKEY_CURRENT_USER);
+        const bool machine_registry = discovery.found ? false : try_pep514_hive(&discovery, HKEY_LOCAL_MACHINE);
+        if (!discovery.found && !user_registry && !machine_registry) {
+            discovery.attempts.push_back({"PEP 514 registry", "HKCU/HKLM Software\\Python\\PythonCore",
+                                          "no registered Python installation"});
+        }
+    }
+#else
+    if (!discovery.found) try_path_python3(&discovery);
+#endif
+    if (!discovery.found && FULLSEYE_DEFAULT_RUNTIME_ROOT[0] != '\0') {
+        try_runtime_root(&discovery, "embedded build-time fallback", FULLSEYE_DEFAULT_RUNTIME_ROOT,
+                         FULLSEYE_DEFAULT_PYTHON_HOME);
+    } else if (!discovery.found) {
+        discovery.attempts.push_back({"embedded build-time fallback", "(not compiled in)", "not available"});
+    }
+    return discovery;
+}
+
+std::string discovery_report(const RuntimeDiscovery &discovery) {
+    std::ostringstream output;
+    if (discovery.found) {
+        output << "Fullseye runtime discovery (CPython was not started).\n"
+               << "Selected " << discovery.source << ": " << discovery.root << "\n";
+    } else {
+        output << "Fullseye could not find a compatible Python runtime.\n"
+               << "Why: every candidate was absent, incomplete, or built for a different SDK ABI (expected "
+               << kSdkAbiVersion << ").\n";
+    }
+    output << "Tried:\n";
+    for (const RuntimeAttempt &attempt : discovery.attempts) {
+        output << "- " << attempt.source << ": " << attempt.location << " -- " << attempt.outcome << "\n";
+    }
+    if (!discovery.found) {
+        output << "Fix in PowerShell:\n"
+               << "py -3.11 -m pip install fullseye\n"
+               << "py -3.11 -m fullseye.sdk relink .\\build\n"
+               << "Fix in bash:\n"
+               << "python3 -m pip install fullseye\n"
+               << "python3 -m fullseye.sdk relink ./build\n";
+    }
+    return output.str();
+}
+
 PythonInitResult initialize_python(const std::string &root, const std::string &home,
                                    bool allow_host) {
     std::lock_guard<std::mutex> lock(g_python_mutex);
@@ -518,6 +951,12 @@ PythonInitResult initialize_python(const std::string &root, const std::string &h
                     "the existing CPython host requires FS_INIT_ALLOW_HOST_PYTHON_UNSAFE"};
         }
         return {};
+    }
+    std::string compatibility;
+    if (!compatible_runtime_root(root, &compatibility)) {
+        return {FS_E_NO_PYTHON,
+                "the selected Fullseye Python runtime became unusable: " + compatibility
+                + ". Run: python -m fullseye.sdk relink <executable-directory>."};
     }
     try {
         const bool was_running = Py_IsInitialized() != 0;
@@ -547,6 +986,17 @@ PythonInitResult initialize_python(const std::string &root, const std::string &h
             g_python_root = root;
             g_python_home = home;
         } else {
+            PyPreConfig preconfig;
+            PyPreConfig_InitIsolatedConfig(&preconfig);
+            // Runtime roots are UTF-8 data, independently of the process locale.
+            // runtime root は process locale に左右されない UTF-8 データとして扱う。
+            preconfig.utf8_mode = 1;
+            const PyStatus preinitialize_status = Py_PreInitialize(&preconfig);
+            if (PyStatus_Exception(preinitialize_status) != 0) {
+                return {FS_E_NO_PYTHON, preinitialize_status.err_msg == nullptr
+                        ? "could not enable UTF-8 mode for the embedded Python runtime"
+                        : preinitialize_status.err_msg};
+            }
             if (!has_c_api_bridge_under_runtime_root(root)) {
                 return {FS_E_NO_PYTHON, missing_runtime_root_package_message(root)};
             }
@@ -846,6 +1296,7 @@ Item python_to_item(const py::dict &value) {
 
 struct fs_runtime {
     std::atomic<size_t> active{0u};
+    std::atomic<size_t> pipeline_refs{0u};
     std::atomic<bool> closing{false};
 };
 
@@ -968,7 +1419,8 @@ private:
             finished_ = true;
             std::lock_guard<std::mutex> lock(g_runtime_mutex);
             const size_t remaining = runtime_->active.fetch_sub(1u, std::memory_order_acq_rel) - 1u;
-            if (remaining == 0u && runtime_->closing.load(std::memory_order_acquire)) {
+            if (remaining == 0u && runtime_->pipeline_refs.load(std::memory_order_acquire) == 0u
+                && runtime_->closing.load(std::memory_order_acquire)) {
                 g_runtimes.erase(runtime_);
                 delete runtime_;
             }
@@ -1003,6 +1455,17 @@ bool copy_text_span(const char *text, size_t bytes, bool optional, std::string *
         return optional && bytes == 0u;
     }
     out->assign(text, bytes);
+    return true;
+}
+
+// ABI 0.1 has NUL-terminated strings rather than explicit spans.  Never call
+// strlen on them: a missing terminator must be rejected before it can walk or
+// copy unbounded memory. / ABI 0.1 は明示長でなく NUL 終端文字列を受ける。
+// strlen は使わず、終端がない文字列を無制限に走査・複写する前に拒否する。
+bool legacy_c_string_bytes(const char *text, size_t maximum, size_t *out_bytes) noexcept {
+    const void *const nul = std::memchr(text, '\0', maximum + 1u);
+    if (nul == nullptr) return false;
+    *out_bytes = static_cast<const char *>(nul) - text;
     return true;
 }
 
@@ -1052,6 +1515,18 @@ fs_status_t release_result_id(fs_result_id_t result) {
 }
 
 }  // namespace
+
+struct PipelineEndpoint {
+    std::string name;
+    fs_value_kind_t kind = FS_VALUE_IMAGE;
+};
+
+struct fs_pipeline {
+    fs_runtime_t *runtime = nullptr;
+    std::string json;
+    std::vector<PipelineEndpoint> inputs;
+    std::vector<PipelineEndpoint> outputs;
+};
 
 extern "C" {
 
@@ -1115,6 +1590,27 @@ FS_API fs_status_t FS_CALL fs_test_result_id_resume_lease(void) {
 }
 #endif
 
+FS_API size_t FS_CALL fs_runtime_diagnose(char *buf, size_t capacity) {
+    try {
+        const std::string message = discovery_report(discover_runtime("", ""));
+        const size_t needed = message.size() + 1u;
+        if (buf != nullptr && capacity != 0u) {
+            const size_t copied = std::min(message.size(), capacity - 1u);
+            if (copied != 0u) std::memcpy(buf, message.data(), copied);
+            buf[copied] = '\0';
+        }
+        return needed;
+    } catch (...) {
+        static constexpr char fallback[] = "Fullseye runtime discovery could not inspect this process.";
+        if (buf != nullptr && capacity != 0u) {
+            const size_t copied = std::min(sizeof(fallback) - 1u, capacity - 1u);
+            std::memcpy(buf, fallback, copied);
+            buf[copied] = '\0';
+        }
+        return sizeof(fallback);
+    }
+}
+
 FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, fs_runtime_t **out) {
     if (out != nullptr) {
         *out = nullptr;
@@ -1142,7 +1638,6 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, f
             set_error(nullptr, "ABI 0.2 fs_init_options_t.struct_size is too small");
             return FS_E_INVALID_ARG;
         }
-        const char *environment_root = std::getenv("FULLSEYE_PYTHON_ROOT");
         std::string root;
         std::string home;
         if (bounded_options) {
@@ -1176,20 +1671,38 @@ FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options, f
             root = options->runtime_root == nullptr ? "" : options->runtime_root;
             home = options->python_home == nullptr ? "" : options->python_home;
         }
-        if (root.empty() && environment_root != nullptr && *environment_root != '\0') {
-            root = environment_root;
+        // Preserve the one-interpreter-per-process contract before automatic
+        // recovery can consider a different environment. / 同一 process の
+        // Python 設定が固定済みなら、自動探索より先に明示指定の食い違いを拒否する。
+        if (!root.empty()) {
+            std::lock_guard<std::mutex> lock(g_python_mutex);
+            if (g_python_ready && root != g_python_root) {
+                set_error(nullptr, "the CPython runtime is already configured for a different runtime_root or python_home");
+                return FS_E_INVALID_ARG;
+            }
         }
-        if (root.empty()) {
-            set_error(nullptr, "no Fullseye Python environment was specified; set runtime_root or "
-                               "FULLSEYE_PYTHON_ROOT to an environment containing the fullseye package");
+        // An explicit root is a caller's isolation boundary: reject an invalid
+        // one here instead of falling through to automatic discovery, which
+        // could silently import an unrelated ambient Fullseye installation.
+        // 明示 runtime_root は呼出し側の分離境界なので、無効なら自動探索へ
+        // 落とさずここで拒否し、無関係な環境の Fullseye を誤 import しない。
+        if (!root.empty() && !has_c_api_bridge_under_runtime_root(root)) {
+            set_error(nullptr, missing_runtime_root_package_message(root));
+            return FS_E_NO_PYTHON;
+        }
+        const RuntimeDiscovery discovery = discover_runtime(root, home);
+        if (!discovery.found) {
+            set_error(nullptr, discovery_report(discovery));
             return FS_E_NO_PYTHON;
         }
         const PythonInitResult init = initialize_python(
-            root, home, (options->flags & FS_INIT_ALLOW_HOST_PYTHON_UNSAFE) != 0u);
+            discovery.root, discovery.home,
+            (options->flags & FS_INIT_ALLOW_HOST_PYTHON_UNSAFE) != 0u);
         if (init.status != FS_OK) {
             set_error(nullptr, init.error);
             return init.status;
         }
+        std::clog << "Fullseye runtime: using " << discovery.source << ": " << discovery.root << '\n';
         auto *runtime = new fs_runtime_t();
         {
             std::lock_guard<std::mutex> lock(g_runtime_mutex);
@@ -1220,7 +1733,8 @@ FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime) {
             return;
         }
         runtime->closing.store(true, std::memory_order_release);
-        if (runtime->active.load(std::memory_order_acquire) == 0u) {
+        if (runtime->active.load(std::memory_order_acquire) == 0u
+            && runtime->pipeline_refs.load(std::memory_order_acquire) == 0u) {
             g_runtimes.erase(runtime);
             delete runtime;
         }
@@ -1233,13 +1747,19 @@ FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime) {
 
 FS_API fs_status_t FS_CALL fs_find_ops_json(fs_runtime_t *runtime, const char *query_json,
                                              char **out_utf8, size_t *out_bytes) {
+    if (out_utf8 != nullptr) *out_utf8 = nullptr;
+    if (out_bytes != nullptr) *out_bytes = 0u;
     if (query_json == nullptr) {
-        if (out_utf8 != nullptr) *out_utf8 = nullptr;
-        if (out_bytes != nullptr) *out_bytes = 0u;
         set_error(runtime, "query_json must not be NULL");
         return FS_E_INVALID_ARG;
     }
-    return fs_find_ops_json_n(runtime, query_json, std::strlen(query_json), out_utf8, out_bytes);
+    size_t query_json_bytes = 0u;
+    if (!legacy_c_string_bytes(query_json, kMaxJsonBytes, &query_json_bytes)) {
+        set_error(runtime,
+                  "fs_find_ops_json query_json is at least 1048577 bytes before its NUL terminator; the limit is 1048576 bytes (1 MiB). It is refused because ABI 0.1 must bound text before it reaches Python. Pass NUL-terminated JSON of 1048576 bytes or less, or use fs_find_ops_json_n with its explicit byte length. / fs_find_ops_json の query_json は終端 NUL まで少なくとも 1048577 B あり、上限 1048576 B (1 MiB) を超えています。ABI 0.1 では Python に渡す前に文字列長を制限するため拒否します。1048576 B 以下で NUL 終端した JSON を渡すか、明示的なバイト長を取る fs_find_ops_json_n を使ってください。");
+        return FS_E_INVALID_ARG;
+    }
+    return fs_find_ops_json_n(runtime, query_json, query_json_bytes, out_utf8, out_bytes);
 }
 
 FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime, const char *query_json,
@@ -1312,6 +1832,18 @@ FS_API fs_status_t FS_CALL fs_call(fs_runtime_t *runtime, const char *op_id,
     if (runtime == nullptr || op_id == nullptr || params_json == nullptr || out == nullptr
         || (input_count != 0u && inputs == nullptr)) {
         set_error(runtime, "runtime, C strings, inputs, and out must satisfy the ABI 0.1 contract");
+        return FS_E_INVALID_ARG;
+    }
+    size_t op_id_bytes = 0u;
+    if (!legacy_c_string_bytes(op_id, kMaxOperatorIdBytes, &op_id_bytes)) {
+        set_error(runtime,
+                  "fs_call op_id is at least 257 bytes before its NUL terminator; the limit is 256 bytes. It is refused because ABI 0.1 must bound an operator ID before it reaches Python. Pass a NUL-terminated op_id of 256 bytes or less, or use fs_call_id_n with its explicit byte length. / fs_call の op_id は終端 NUL まで少なくとも 257 B あり、上限 256 B を超えています。ABI 0.1 では Python に渡す前に operator ID を制限するため拒否します。256 B 以下で NUL 終端した op_id を渡すか、明示的なバイト長を取る fs_call_id_n を使ってください。");
+        return FS_E_INVALID_ARG;
+    }
+    size_t params_json_bytes = 0u;
+    if (!legacy_c_string_bytes(params_json, kMaxJsonBytes, &params_json_bytes)) {
+        set_error(runtime,
+                  "fs_call params_json is at least 1048577 bytes before its NUL terminator; the limit is 1048576 bytes (1 MiB). It is refused because ABI 0.1 must bound JSON before it reaches Python. Pass NUL-terminated JSON of 1048576 bytes or less, or use fs_call_id_n with its explicit byte length. / fs_call の params_json は終端 NUL まで少なくとも 1048577 B あり、上限 1048576 B (1 MiB) を超えています。ABI 0.1 では Python に渡す前に JSON を制限するため拒否します。1048576 B 以下で NUL 終端した JSON を渡すか、明示的なバイト長を取る fs_call_id_n を使ってください。");
         return FS_E_INVALID_ARG;
     }
     try {
@@ -1513,6 +2045,329 @@ FS_API fs_status_t FS_CALL fs_call_id_n(fs_runtime_t *runtime, const char *op_id
         return FS_E_INTERNAL;
     } catch (...) {
         set_error(runtime, "unknown error while running the operator");
+        return FS_E_INTERNAL;
+    }
+}
+
+FS_API fs_status_t FS_CALL fs_pipeline_load_json_n(fs_runtime_t *runtime,
+                                                    const char *pipeline_json,
+                                                    size_t pipeline_json_bytes,
+                                                    fs_pipeline_t **out) {
+    if (out != nullptr) *out = nullptr;
+    if (runtime == nullptr || pipeline_json == nullptr || out == nullptr) {
+        set_error(runtime, "pipeline load needs a runtime, UTF-8 JSON bytes, and an output handle; pass the Studio Save pipeline JSON and retry");
+        return FS_E_INVALID_ARG;
+    }
+    if (pipeline_json_bytes == 0u || pipeline_json_bytes > kMaxPipelineBytes) {
+        set_error(runtime, "pipeline JSON is empty or exceeds the 1 MiB limit; a saved pipeline is control JSON, not image data. Re-save the Studio pipeline without embedded data and retry");
+        return FS_E_INVALID_ARG;
+    }
+    if (std::memchr(pipeline_json, '\0', pipeline_json_bytes) != nullptr) {
+        set_error(runtime, "pipeline JSON contains a NUL byte and is not UTF-8 JSON; save it again from Studio as a UTF-8 .json file");
+        return FS_E_INVALID_ARG;
+    }
+    try {
+        RuntimeCall call(runtime);
+        if (call.status() != FS_OK) {
+            set_error(runtime, "could not enter the runtime while loading the pipeline");
+            return call.status();
+        }
+        if (!call.entered()) {
+            set_error(runtime, "the runtime is closing, so the pipeline cannot be loaded; keep Runtime alive until loading finishes");
+            return FS_E_BUSY;
+        }
+        std::string json(pipeline_json, pipeline_json_bytes);
+        py::gil_scoped_acquire acquire;
+        const py::object bridge = py::module_::import("fullseye.c_api_bridge");
+        const py::dict schema = py::cast<py::dict>(bridge.attr("pipeline_load_json")(json));
+        auto pipeline = std::make_unique<fs_pipeline>();
+        pipeline->runtime = runtime;
+        pipeline->json = std::move(json);
+        const auto append_endpoints = [&schema](const char *key, std::vector<PipelineEndpoint> *out_endpoints) {
+            const py::list rows = py::cast<py::list>(schema[key]);
+            for (const py::handle row_handle : rows) {
+                const py::dict row = py::cast<py::dict>(row_handle);
+                const std::string name = py::cast<std::string>(row["name"]);
+                const std::string sort = py::cast<std::string>(row["sort"]);
+                fs_value_kind_t kind = FS_VALUE_IMAGE;
+                if (sort == "image") kind = FS_VALUE_IMAGE;
+                else if (sort == "region") kind = FS_VALUE_REGION;
+                else if (sort == "color") kind = FS_VALUE_COLOR;
+                else if (sort == "volume") kind = FS_VALUE_VOLUME;
+                else if (sort == "feature") kind = FS_VALUE_FEATURE;
+                else throw std::runtime_error("pipeline endpoint has a sort the C API cannot carry: " + sort);
+                if (name.empty() || name.size() > kMaxOperatorIdBytes || name.find('\0') != std::string::npos) {
+                    throw std::runtime_error("pipeline endpoint name is empty, too long, or contains a NUL byte");
+                }
+                out_endpoints->push_back({name, kind});
+            }
+        };
+        append_endpoints("inputs", &pipeline->inputs);
+        append_endpoints("outputs", &pipeline->outputs);
+        if (pipeline->inputs.empty() || pipeline->outputs.empty()) {
+            set_error(runtime, "pipeline declares no concrete input or output; add at least one typed Studio stage, save, then retry");
+            return FS_E_UNSUPPORTED;
+        }
+        {
+            std::lock_guard<std::mutex> lock(g_runtime_mutex);
+            if (g_runtimes.count(runtime) == 0u || runtime->closing.load(std::memory_order_acquire)) {
+                set_error(runtime, "the runtime closed while the pipeline was loading; keep Runtime alive and retry");
+                return FS_E_BUSY;
+            }
+            runtime->pipeline_refs.fetch_add(1u, std::memory_order_acq_rel);
+        }
+        *out = pipeline.release();
+        clear_error(runtime);
+        return FS_OK;
+    } catch (const py::error_already_set &exc) {
+        set_error(runtime, std::string("pipeline JSON was refused before execution: ") + exc.what()
+                  + ". Correct the reported Studio stage or schema field, save again, then reload it");
+        return FS_E_BAD_PARAMS;
+    } catch (const std::bad_alloc &) {
+        set_error(runtime, "out of memory while validating the pipeline; reduce the saved pipeline size and retry");
+        return FS_E_OUT_OF_MEMORY;
+    } catch (const std::exception &exc) {
+        set_error(runtime, std::string("pipeline JSON was refused before execution: ") + exc.what()
+                  + ". Correct the reported Studio stage or schema field, save again, then reload it");
+        return FS_E_BAD_PARAMS;
+    } catch (...) {
+        set_error(runtime, "pipeline JSON could not be validated; save the pipeline again from Studio and retry");
+        return FS_E_INTERNAL;
+    }
+}
+
+FS_API fs_status_t FS_CALL fs_pipeline_load_path_n(fs_runtime_t *runtime,
+                                                    const char *path_utf8, size_t path_bytes,
+                                                    fs_pipeline_t **out) {
+    if (out != nullptr) *out = nullptr;
+    if (runtime == nullptr || path_utf8 == nullptr || out == nullptr) {
+        set_error(runtime, "pipeline path loading needs a runtime, UTF-8 path, and output handle; pass the saved Studio .json path and retry");
+        return FS_E_INVALID_ARG;
+    }
+    if (path_bytes == 0u || path_bytes > kMaxRuntimePathBytes) {
+        set_error(runtime, "pipeline path is empty or exceeds the 98301-byte limit; shorten the UTF-8 path and retry");
+        return FS_E_INVALID_ARG;
+    }
+    if (std::memchr(path_utf8, '\0', path_bytes) != nullptr) {
+        set_error(runtime, "pipeline path contains a NUL byte; pass one UTF-8 filesystem path from Studio Save pipeline");
+        return FS_E_INVALID_ARG;
+    }
+    try {
+        const std::filesystem::path path = utf8_path(std::string(path_utf8, path_bytes));
+        std::error_code error;
+        if (!std::filesystem::is_regular_file(path, error)) {
+            set_error(runtime, "pipeline path is not a readable regular file; check the saved .json path and permissions, then retry");
+            return FS_E_INVALID_ARG;
+        }
+        const uintmax_t size = std::filesystem::file_size(path, error);
+        if (error || size > kMaxPipelineBytes) {
+            set_error(runtime, "pipeline file cannot be read or exceeds the 1 MiB limit; a saved pipeline is control JSON. Re-save without embedded data and retry");
+            return FS_E_INVALID_ARG;
+        }
+        std::ifstream source(path, std::ios::binary);
+        std::string json((std::istreambuf_iterator<char>(source)), std::istreambuf_iterator<char>());
+        if (!source.good() && !source.eof()) {
+            set_error(runtime, "pipeline file could not be read completely; check the path and permissions, then retry");
+            return FS_E_INVALID_ARG;
+        }
+        if (json.size() != static_cast<size_t>(size) || json.size() > kMaxPipelineBytes) {
+            set_error(runtime, "pipeline file changed while it was read or exceeds the 1 MiB limit; save a stable Studio JSON file and retry");
+            return FS_E_INVALID_ARG;
+        }
+        return fs_pipeline_load_json_n(runtime, json.data(), json.size(), out);
+    } catch (const std::exception &exc) {
+        set_error(runtime, std::string("pipeline path could not be opened: ") + exc.what()
+                  + ". Check that it is a UTF-8 Studio .json path and retry");
+        return FS_E_INVALID_ARG;
+    } catch (...) {
+        set_error(runtime, "pipeline path could not be opened; check the UTF-8 path and retry");
+        return FS_E_INTERNAL;
+    }
+}
+
+FS_API void FS_CALL fs_pipeline_destroy(fs_pipeline_t *pipeline) {
+    try {
+        if (pipeline == nullptr) return;
+        fs_runtime_t *runtime = pipeline->runtime;
+        {
+            std::lock_guard<std::mutex> lock(g_runtime_mutex);
+            if (runtime != nullptr && g_runtimes.count(runtime) != 0u) {
+                const size_t remaining = runtime->pipeline_refs.fetch_sub(1u, std::memory_order_acq_rel) - 1u;
+                if (remaining == 0u && runtime->active.load(std::memory_order_acquire) == 0u
+                    && runtime->closing.load(std::memory_order_acquire)) {
+                    g_runtimes.erase(runtime);
+                    delete runtime;
+                }
+            }
+        }
+        delete pipeline;
+    } catch (...) {
+        // A void C destructor must never let C++ cross the ABI boundary.
+    }
+}
+
+FS_API size_t FS_CALL fs_pipeline_input_count(const fs_pipeline_t *pipeline) {
+    return pipeline == nullptr ? 0u : pipeline->inputs.size();
+}
+
+FS_API size_t FS_CALL fs_pipeline_output_count(const fs_pipeline_t *pipeline) {
+    return pipeline == nullptr ? 0u : pipeline->outputs.size();
+}
+
+static fs_status_t pipeline_endpoint_info(const fs_pipeline_t *pipeline, size_t index, bool input,
+                                          char **out_name_utf8, size_t *out_name_bytes,
+                                          fs_value_kind_t *out_kind) {
+    if (out_name_utf8 != nullptr) *out_name_utf8 = nullptr;
+    if (out_name_bytes != nullptr) *out_name_bytes = 0u;
+    if (pipeline == nullptr || out_name_utf8 == nullptr || out_name_bytes == nullptr || out_kind == nullptr) {
+        return FS_E_INVALID_ARG;
+    }
+    const std::vector<PipelineEndpoint> &endpoints = input ? pipeline->inputs : pipeline->outputs;
+    if (index >= endpoints.size()) return FS_E_INVALID_ARG;
+    const PipelineEndpoint &endpoint = endpoints[index];
+    char *name = static_cast<char *>(std::malloc(endpoint.name.size() + 1u));
+    if (name == nullptr) return FS_E_OUT_OF_MEMORY;
+    std::memcpy(name, endpoint.name.data(), endpoint.name.size());
+    name[endpoint.name.size()] = '\0';
+    *out_name_utf8 = name;
+    *out_name_bytes = endpoint.name.size() + 1u;
+    *out_kind = endpoint.kind;
+    return FS_OK;
+}
+
+FS_API fs_status_t FS_CALL fs_pipeline_input_info(const fs_pipeline_t *pipeline, size_t index,
+                                                   char **out_name_utf8, size_t *out_name_bytes,
+                                                   fs_value_kind_t *out_kind) {
+    return pipeline_endpoint_info(pipeline, index, true, out_name_utf8, out_name_bytes, out_kind);
+}
+
+FS_API fs_status_t FS_CALL fs_pipeline_output_info(const fs_pipeline_t *pipeline, size_t index,
+                                                    char **out_name_utf8, size_t *out_name_bytes,
+                                                    fs_value_kind_t *out_kind) {
+    return pipeline_endpoint_info(pipeline, index, false, out_name_utf8, out_name_bytes, out_kind);
+}
+
+FS_API fs_status_t FS_CALL fs_pipeline_run_n(fs_pipeline_t *pipeline,
+                                             const fs_pipeline_input_n_t *inputs, size_t input_count,
+                                             fs_result_id_t *out) {
+    if (out != nullptr) *out = 0u;
+    if (pipeline == nullptr || out == nullptr || (input_count != 0u && inputs == nullptr)) {
+        set_error(nullptr, "pipeline run needs a live pipeline, its named inputs, and an output result ID");
+        return FS_E_INVALID_ARG;
+    }
+    fs_runtime_t *runtime = pipeline->runtime;
+    if (input_count != pipeline->inputs.size()) {
+        set_error(runtime, "pipeline input count does not match its declared interface; query fs_pipeline_input_info, pass every named input exactly once, then retry");
+        return FS_E_INVALID_ARG;
+    }
+    try {
+        RuntimeCall call(runtime);
+        if (call.status() != FS_OK) {
+            set_error(runtime, "could not enter the runtime while running the pipeline");
+            return call.status();
+        }
+        if (!call.entered()) {
+            set_error(runtime,
+                      "The runtime was destroyed before this pipeline could run (it is closing). Destroy the pipeline first, or keep the runtime alive until fs_pipeline_destroy returns. / Runtime が pipeline より先に破棄されたため実行できません（closing 中です）。pipeline を先に破棄するか、fs_pipeline_destroy が戻るまで runtime を生かしてください。");
+            return FS_E_BUSY;
+        }
+        py::gil_scoped_acquire acquire;
+        py::list values;
+        std::vector<ResultIdLease> borrowed_results;
+        for (size_t index = 0u; index < input_count; ++index) {
+            const fs_pipeline_input_n_t &input = inputs[index];
+            const PipelineEndpoint &expected = pipeline->inputs[index];
+            if (input.struct_size < kRequiredPipelineInputNSize || input.name == nullptr
+                || input.name_bytes == 0u || input.name_bytes > kMaxOperatorIdBytes
+                || std::memchr(input.name, '\0', input.name_bytes) != nullptr) {
+                set_error(runtime, "pipeline input name or struct_size is invalid; use FS_PIPELINE_INPUT_N_INIT and the exact UTF-8 name returned by fs_pipeline_input_info");
+                return FS_E_INVALID_ARG;
+            }
+            const std::string name(input.name, input.name_bytes);
+            if (name != expected.name) {
+                set_error(runtime, "pipeline input name does not match the declared endpoint; query fs_pipeline_input_info and pass its exact name, because positional guesses can send data to the wrong stage");
+                return FS_E_INVALID_ARG;
+            }
+            const fs_input_n_t &value = input.value;
+            if (value.struct_size < kRequiredInputNSize) {
+                set_error(runtime, "embedded fs_input_n_t.struct_size is too small; initialize it with FS_INPUT_N_INIT before running the pipeline");
+                return FS_E_INVALID_ARG;
+            }
+            if (value.kind != expected.kind) {
+                set_error(runtime, "pipeline input kind does not match the declared endpoint; query fs_pipeline_input_info and pass that kind, because a saved pipeline never coerces one declared type into another");
+                return FS_E_TYPE;
+            }
+            if (value.result_id != 0u) {
+                borrowed_results.emplace_back(value.result_id);
+                const ResultPayload *borrowed = borrowed_results.back().get();
+                if (borrowed == nullptr || value.result_index >= borrowed->items.size()) {
+                    set_error(runtime, "pipeline input references an unknown or released result ID; keep the producing Result alive until this call returns");
+                    return FS_E_INVALID_ARG;
+                }
+                const Item &item = borrowed->items[value.result_index];
+                if (item.kind != value.kind) {
+                    set_error(runtime, "pipeline input kind does not match the borrowed result; query its kind and pass the declared pipeline input type");
+                    return FS_E_TYPE;
+                }
+                values.append(item_to_python(item));
+            } else if (value.kind == FS_VALUE_IMAGE) {
+                const fs_status_t status = validate_image(runtime, value.image);
+                if (status != FS_OK) return status;
+                values.append(image_to_python(value.image));
+            } else if (value.kind == FS_VALUE_COLOR || value.kind == FS_VALUE_VOLUME) {
+                if (value.struct_size < kTypedInputNSize) {
+                    set_error(runtime, "pipeline color/volume input needs the extended fs_input_n_t; initialize with FS_INPUT_N_INIT and fill array");
+                    return FS_E_UNSUPPORTED;
+                }
+                const fs_status_t status = validate_array(runtime, value.array, value.kind);
+                if (status != FS_OK) return status;
+                values.append(array_to_python(value.array, value.kind));
+            } else if (value.kind == FS_VALUE_FEATURE) {
+                if (value.struct_size < kTypedInputNSize || !std::isfinite(value.feature)) {
+                    set_error(runtime, "pipeline feature input must be a finite extended fs_input_n_t value; pass a finite scalar and retry");
+                    return value.struct_size < kTypedInputNSize ? FS_E_UNSUPPORTED : FS_E_INVALID_ARG;
+                }
+                py::dict feature;
+                feature["kind"] = "feature";
+                feature["value"] = value.feature;
+                values.append(std::move(feature));
+            } else {
+                set_error(runtime, "this pipeline input kind needs a borrowed result or a supported typed C value; inspect the declared endpoint and supply a matching value");
+                return FS_E_INVALID_ARG;
+            }
+        }
+        const py::object bridge = py::module_::import("fullseye.c_api_bridge");
+        const py::dict answer = py::cast<py::dict>(bridge.attr("pipeline_run_json")(pipeline->json, values));
+        const fs_status_t status = static_cast<fs_status_t>(py::cast<int>(answer["status"]));
+        if (status != FS_OK) {
+            set_error(runtime, py::cast<std::string>(answer["message"]));
+            return status;
+        }
+        auto payload = std::make_shared<ResultPayload>();
+        for (const py::handle value : py::cast<py::list>(answer["outputs"])) {
+            payload->items.push_back(python_to_item(py::cast<py::dict>(value)));
+        }
+        const fs_result_id_t id = register_result(std::move(payload));
+        if (id == 0u) {
+            set_error(runtime, "pipeline result handle table is exhausted; release completed result IDs before running more pipelines");
+            return FS_E_OUT_OF_MEMORY;
+        }
+        *out = id;
+        clear_error(runtime);
+        return FS_OK;
+    } catch (const py::error_already_set &exc) {
+        set_error(runtime, std::string("pipeline execution failed: ") + exc.what()
+                  + ". Check the named Studio stage and its input contract, correct it, then reload the pipeline");
+        return FS_E_PY_EXCEPTION;
+    } catch (const std::bad_alloc &) {
+        set_error(runtime, "out of memory while running the pipeline; reduce the input size or split the workflow, then retry");
+        return FS_E_OUT_OF_MEMORY;
+    } catch (const std::exception &exc) {
+        set_error(runtime, std::string("pipeline execution failed: ") + exc.what()
+                  + ". Check the named Studio stage and its input contract, correct it, then reload the pipeline");
+        return FS_E_INTERNAL;
+    } catch (...) {
+        set_error(runtime, "pipeline execution failed unexpectedly; inspect the saved Studio stages and retry with a smaller input");
         return FS_E_INTERNAL;
     }
 }

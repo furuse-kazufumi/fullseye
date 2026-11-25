@@ -151,7 +151,7 @@
 
 **3,857개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **73개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 947/947, 타입 台帳 2887/2887, 한 줄 파사드 `fullseye.<이름>` 774/1611 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 947/947, 타입 台帳 2887/2887, 한 줄 파사드 `fullseye.<이름>` 774/1614 — **파사드는 아직 절반**.
 
 **내용 실측**: 3857건 중 실행 가능한 예제가 붙은 것은 **3818**건(39건은 없음), 사용법이 120자 이상인 것은 **3658**건(199건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3857건 모두.
 
@@ -479,9 +479,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`CAPABILITIES.en.md`](CAPABILITIES.en.md) | What Fullseye can do |
 | [`CAPABILITIES.md`](CAPABILITIES.md) | What Fullseye can do → [`CAPABILITIES.en.md`](CAPABILITIES.en.md) · 원문 _(ja)_ |
 | [`CHAIN_FUZZ.en.md`](CHAIN_FUZZ.en.md) | Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains |
-| [`C_API.md`](C_API.md) | Fullseye C SDK compatibility |
+| [`C_API.md`](C_API.md) | Fullseye C/C++ SDK |
 | [`C_API_OPS.md`](C_API_OPS.md) | C SDK callable operators |
-| [`C_API_SDK.md`](C_API_SDK.md) | C/C++ SDK runtime requirement |
+| [`C_API_SDK.md`](C_API_SDK.md) | C/C++ SDK の導入 _(ja)_ |
 | [`DESIGN_NOTES.de.md`](DESIGN_NOTES.de.md) | Fullseye-Entwurfsnotizen (aus den ★-Kommentaren im Quellcode erzeugt) |
 | [`DESIGN_NOTES.en.md`](DESIGN_NOTES.en.md) | Fullseye design notes (generated from the ★ comments in the source) |
 | [`DESIGN_NOTES.ko.md`](DESIGN_NOTES.ko.md) | Fullseye 설계 판단 모음(소스의 ★ 주석에서 생성) |
