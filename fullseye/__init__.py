@@ -663,7 +663,9 @@ with warnings.catch_warnings():
     # 3-D 合成パイプライン(pipeline3d が import できない環境では api 側の代役 = 呼ぶと ImportError)
     from api import (  # noqa: E402,F401
         register_pointclouds, align_cad_to_scan, measure_plane, inspect_roundness, match_sdf, register_auto)
-    from engine import FullseyeEngine, diagnose_stages, pipeline_states  # noqa: E402,F401  (pipeline runtime)
+    from engine import (  # noqa: E402,F401  (pipeline runtime)
+        FullseyeEngine, diagnose_stages, pipeline_states, load_pipeline, load_pipeline_text, pipeline_interface,
+    )
     # engine-layer result state + memory-bounded stage cache (Qt-free; the browser Studio consumes these)
     from studio_result import (  # noqa: E402,F401
         StageCache, assess_validity, input_reference, resolve_input_ref, file_sha256, cache_summary_text,
@@ -1060,6 +1062,7 @@ __all__ = [
     "op_find", "op_run", "op_path", "op_assist", "op_presets", "op_producers",
     "op_consumers", "op_accepts", "op_sorts",
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories", "knob_summary",
+    "load_pipeline", "load_pipeline_text", "pipeline_interface",
     "ExecutionContext", "ArtifactRef", "SoftwareInventory", "ExecutionRecord",
     "ValidationProfile", "AuditSink", "AuditCheckpoint", "AuditVerification",
     "ValidationProfileError", "SoftwareProvenanceError", "AuditWriteError", "AuditIntegrityError",

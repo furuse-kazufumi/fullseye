@@ -35,6 +35,11 @@ if(FULLSEYE_BUILD_NATIVE)
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/fullseye>)
   target_link_libraries(fullseye_c_api PRIVATE pybind11::embed)
+  if(MSVC)
+    # C ABI errors include Japanese remediation alongside English. / C ABI の
+    # エラーには英語と日本語の修復手順を載せる。
+    target_compile_options(fullseye_c_api PRIVATE /utf-8)
+  endif()
   if(MINGW)
     # The SDK DLL must not depend on a compiler installation being on PATH.
     # SDK DLL はコンパイラー導入先の PATH に依存させない。
@@ -88,7 +93,7 @@ if(FULLSEYE_BUILD_NATIVE)
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
           LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
           ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-  install(FILES fullseye.h fullseye.hpp fullseye_abi.h
+  install(FILES fullseye.h fullseye.hpp fullseye_opencv.hpp fullseye_abi.h
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fullseye)
   install(EXPORT FullseyeTargets NAMESPACE Fullseye::
           DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Fullseye)
@@ -139,6 +144,15 @@ if(FULLSEYE_BUILD_NATIVE)
     add_executable(fullseye_c_runtime_path_limits tests/c_runtime_path_limits.c)
     set_property(TARGET fullseye_c_runtime_path_limits PROPERTY C_STANDARD 11)
     target_link_libraries(fullseye_c_runtime_path_limits PRIVATE Fullseye::C)
+    add_executable(fullseye_c_missing_runtime_root tests/c_missing_runtime_root.c)
+    set_property(TARGET fullseye_c_missing_runtime_root PROPERTY C_STANDARD 11)
+    target_link_libraries(fullseye_c_missing_runtime_root PRIVATE Fullseye::C)
+    add_executable(fullseye_c_runtime_diagnose tests/c_runtime_diagnose.c)
+    set_property(TARGET fullseye_c_runtime_diagnose PROPERTY C_STANDARD 11)
+    target_link_libraries(fullseye_c_runtime_diagnose PRIVATE Fullseye::C)
+    add_executable(fullseye_cpp_header_safety tests/cpp_header_safety.cpp)
+    target_compile_features(fullseye_cpp_header_safety PRIVATE cxx_std_20)
+    target_link_libraries(fullseye_cpp_header_safety PRIVATE Fullseye::CXX)
     add_test(NAME fullseye_c_lifecycle
              COMMAND fullseye_c_example ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME fullseye_cpp_lifecycle
@@ -159,5 +173,12 @@ if(FULLSEYE_BUILD_NATIVE)
              COMMAND fullseye_c_text_span_limits ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME fullseye_c_runtime_path_limits
              COMMAND fullseye_c_runtime_path_limits)
+    add_test(NAME fullseye_c_missing_runtime_root
+             COMMAND fullseye_c_missing_runtime_root
+                     ${CMAKE_CURRENT_BINARY_DIR}/fullseye-runtime-root-does-not-exist)
+    add_test(NAME fullseye_c_runtime_diagnose
+             COMMAND fullseye_c_runtime_diagnose)
+    add_test(NAME fullseye_cpp_header_safety
+             COMMAND fullseye_cpp_header_safety)
   endif()
 endif()

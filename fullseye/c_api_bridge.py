@@ -34,6 +34,8 @@ FS_E_PY_EXCEPTION = 13
 #: C SDK で値として運べる型。This is the sole reachability rule / 到達可能性の唯一の規則。
 ABI_SORTS = frozenset(("image", "region", "color", "volume", "feature"))
 _ANN_SORT = {"FImage": "image", "Region": "region", "ObjectSet": "objectset"}
+_PIPELINE_KIND = {"image": "image", "region": "region", "color": "color",
+                  "volume": "volume", "feature": "feature"}
 
 
 class _Refuse(Exception):
@@ -259,3 +261,88 @@ def find_ops(query_json: str | None) -> str:
         raise ValueError("limit must be an integer in [1, 1000]")
     return json.dumps({"schema_version": 2, "n_callable": len(rows), "ops": rows[:limit]},
                       ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def _load_pipeline_document(text: str, *, where: str):
+    """Use the public saved-pipeline gate, never a native lookalike.
+
+    Keeping this call through ``fullseye.load_pipeline_text`` is intentional:
+    the CLI, Python application and C/C++ bridge must reject the same Studio
+    JSON for the same reason. / C/C++ 用に別の JSON reader を作らず、公開の
+    load_pipeline_text を通して CLI/Python と同じ拒否理由に揃える。
+    """
+    import fullseye
+
+    pipeline = fullseye.load_pipeline_text(text, where=where)
+    interface = fullseye.pipeline_interface(pipeline)
+    for endpoint in interface["inputs"] + interface["outputs"]:
+        if endpoint["sort"] not in _PIPELINE_KIND:
+            raise ValueError(
+                "%s: endpoint %r has sort %r, which the C API cannot carry. This is refused because an embedded "
+                "pipeline must preserve its declared type; choose a pipeline ending in image, region, color, volume "
+                "or feature." % (where, endpoint["name"], endpoint["sort"]))
+    return pipeline, interface
+
+
+def pipeline_load_json(text: str) -> dict:
+    """Validate a UTF-8 Studio document and return its named C API interface."""
+    if not isinstance(text, str):
+        raise TypeError("pipeline JSON must be UTF-8 text")
+    _pipeline, interface = _load_pipeline_document(text, where="C API pipeline JSON")
+    return interface
+
+
+def _pipeline_input_value(value: dict, expected_sort: str):
+    """Translate an ABI value to the exact public engine input representation."""
+    raw = _input(value)
+    if expected_sort == "image":
+        if not hasattr(raw, "pixels"):
+            raise _Refuse(FS_E_TYPE, "pipeline input 'image' must be an image")
+        pixels = np.asarray(raw.pixels, dtype=np.float64)
+        lo, hi = raw.value_range
+        return (pixels - lo) / (hi - lo) if (lo, hi) != (0.0, 1.0) else pixels
+    if expected_sort == "region":
+        if not hasattr(raw, "_mask"):
+            raise _Refuse(FS_E_TYPE, "pipeline input 'image' must be a region")
+        return np.asarray(raw._mask, dtype=np.float64)
+    if expected_sort in ("color", "volume"):
+        return np.asarray(raw, dtype=np.float64)
+    if expected_sort == "feature":
+        return float(raw)
+    raise _Refuse(FS_E_UNSUPPORTED, "pipeline declares unsupported input sort %r" % expected_sort)
+
+
+def pipeline_run_json(text: str, inputs: list[dict]) -> dict:
+    """Run one validated Studio pipeline via exactly the Python engine used by CLI."""
+    try:
+        pipeline, interface = _load_pipeline_document(text, where="C API pipeline JSON")
+        expected = interface["inputs"]
+        if len(inputs) != len(expected):
+            raise _Refuse(FS_E_INVALID_ARG,
+                          "pipeline expects %d named input(s) (%s), got %d. Supply the 'image' input exactly once."
+                          % (len(expected), ", ".join(x["name"] for x in expected), len(inputs)))
+        item = inputs[0]
+        actual = item.get("kind")
+        want = expected[0]["sort"]
+        if actual != want:
+            raise _Refuse(FS_E_TYPE,
+                          "pipeline input 'image' requires %s, got %s. This is rejected before stage 1 so a saved "
+                          "pipeline cannot silently reinterpret data; pass a %s value or choose a matching pipeline."
+                          % (want, actual, want))
+        result = pipeline.run(_pipeline_input_value(item, want), coerce=False)
+        output = interface["outputs"][0]
+        return {"status": FS_OK, "message": "", "outputs": [_output(result, {
+            "id": "pipeline:" + pipeline.name, "out_sort": output["sort"]})]}
+    except _Refuse as exc:
+        return {"status": exc.status, "message": str(exc), "outputs": []}
+    except MemoryError:
+        return {"status": FS_E_OUT_OF_MEMORY, "message": "out of memory while running the pipeline", "outputs": []}
+    except (TypeError, ValueError) as exc:
+        return {"status": FS_E_BAD_PARAMS,
+                "message": "pipeline execution was refused: %s. Fix the named stage or input, then reload the saved "
+                           "Studio pipeline." % str(exc), "outputs": []}
+    except Exception as exc:  # noqa: BLE001 -- no Python exception crosses the C ABI
+        return {"status": FS_E_PY_EXCEPTION,
+                "message": "pipeline execution raised %s: %s. Check the stage named by the exception and its input "
+                           "constraints, then correct the Studio pipeline." % (type(exc).__name__, str(exc)[:400]),
+                "outputs": []}
