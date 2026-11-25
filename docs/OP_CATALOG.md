@@ -610,11 +610,12 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **space**
 - **星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める** — 固定 seed の合成星表 196 星と PSF・光子雑音・読み出し雑音を含む 128×128 像を作り、star_detect の 18 検出(真の星 16 + ホットピクセル 2)を三角形の角距離で全星表へ照合し、偽点を捨てて kabsch で姿勢を推定する。誤対応 0・偽点棄却 2/2・姿勢角誤差 0.0046 度。太陽・月の迷光、星不足、高速回転の星の流れは未計算の限界。 `py -3.11 examples/poc_star_tracker.py`
 
-### 3-D 点群/体積/曲面(125 例)
+### 3-D 点群/体積/曲面(126 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
 - **L字金具の6-DoF姿勢を点群から初期値なしで求める(PPF投票+ICP)** — find_surface_pose(HALCON find_surface_model 相当)の呼び出し例。回転対称の無い L 字金具を65°回転+並進で置き、点の3割を間引き・順序入替・雑音0.01を足した場面から姿勢を復元。回転誤差0.21°・並進誤差0.006。単位行列から始めたICPだけの対照は回転誤差5.2°。 `py -3.11 examples_3d/find_surface_pose_bracket.py`
+- **BOP上位N姿勢・対称性NMS・CSV往復を合成点群で検証** — 符号付き回転と並進を与えた非対称点群から PPF 上位 N 姿勢を復元し、対称性 NMS と BOPPoseEstimate の CSV 往復までを、再配布可能な合成値だけで検証する。 `py -3.11 examples_3d/bop_pose_stage1.py`
 - **手法を自動選択する点群登録** — 2点群の近さを見て、近ければ ICP・大きく離れていれば FPFH+ICP を自動選択する(手法指定不要)。 `py -3.11 examples_3d/auto_register.py`
 - **登録品質の評価(recall/RMSE/inlier)** — 登録結果が成功か失敗かを inlier率・RMSE・recall で定量化。対応ゼロでは NaN を返し捏造しない。 `py -3.11 examples_3d/reg_eval.py`
 - **2視点からの相対カメラ姿勢(SfM初期化)** — 2枚の画像の対応点から基礎/基本行列を解き、相対カメラ姿勢と3D点を復元する(単眼SfM/VOの初手)。 `py -3.11 examples_3d/two_view_pose.py`
@@ -849,9 +850,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3853 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3855 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 750 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 964 · **3d** 380 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 750 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(964 ops / 49 categories)
 
@@ -1919,7 +1920,7 @@ _計 3853 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` GPU: なし — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · 例: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` GPU: なし — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · 例: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d(378 ops / 68 categories)
+### 3d(380 ops / 68 categories)
 
 点群・体積・メッシュ・深度の op(`ops3d.OPS3D`)。関数として呼ぶ。
 
@@ -2111,12 +2112,14 @@ _計 3853 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `match_points_ncc` `points × points → position` GPU: なし — 点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。 · 例: `matching_localize`
 - `match_shape_3d` `voxel × voxel → position` GPU: なし — 3D 形状ベース(勾配方向)マッチング = 2D shapematch_gpu の voxel 版(「輪郭マッチング」)。 · 例: `matching_localize`
 
-#### 3d / match_pose(5)
+#### 3d / match_pose(7)
 - `find_surface_pose` `points × points → pose` GPU: なし — 既知の物体(モデル点群)が場面の点群のどこにあるかを、点対特徴(PPF)の投票と ICP で求める(``pose``)。 · 例: `find_surface_pose_bracket`
 - `match_logpolar_z` `voxel × voxel → rot_scale` GPU: なし — log-polar × 位相相関(Fourier-Mellin)で **z 軸回転 + 等方スケール**を復元。 · 例: `shape_desc_pose`
 - `match_pca` `points × points → pose` GPU: なし — PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。 · 例: `shape_desc_pose`
 - `match_phase_3d` `voxel × voxel → shift` GPU: なし — 3D 位相相関(FFT)。b を a に合わせる整数シフト (dz,dy,dx) を返す。 · 例: `shape_desc_pose`
 - `moment_axes` `points → axes` GPU: なし — 点群/重み付き点の **重心 + 主軸**(慣性テンソルの固有ベクトル)。姿勢推定の基礎。 · 例: `itokawa_pose_canonical`
+- `pose_nms_symmetry` `table × points × table → table` GPU: なし — Suppress only symmetry-equivalent poses within a model-space distance. · 例: `bop_pose_stage1`
+- `ppf_pose_hypotheses` `table × points → table` GPU: なし — Return the top-N PPF poses instead of collapsing the vote to one pose. · 例: `bop_pose_stage1`
 
 #### 3d / medial(13)
 - `distance_ridge` `voxel → voxel` GPU: あり(許可リスト) — EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。 · 例: `pcl_geodesic`

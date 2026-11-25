@@ -328,6 +328,45 @@ jobs:
           FULLSEYE_WHEEL_PYTHON: .wheelenv/bin/python
         run: pytest tests/test_mcp_wheel.py tests/test_abi_wheel.py -q -ra
 
+  bop-official-golden:
+    name: pinned official BOP19 golden fixture
+    needs: changes
+    if: needs.changes.outputs.docs-only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: pip と証明書を更新(eMudhra / emSign の中間 CA 失効 = pip>=26.2.2・certifi>=2026.10.19)
+        run: python -m pip install --upgrade "pip>=26.2.2" "certifi>=2026.10.19"
+      - name: Install EGL libraries for the official VSD renderer
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q libegl1 libgl1 libgl1-mesa-dri
+      - name: Checkout the recorded official BOP toolkit revision
+        env:
+          BOP_TOOLKIT_COMMIT: cea62d651c7e395b2e1962b9749e4e89693c6ac4
+        run: |
+          git clone https://github.com/thodan/bop_toolkit.git bop_toolkit
+          git -C bop_toolkit checkout --detach "$BOP_TOOLKIT_COMMIT"
+          test "$(git -C bop_toolkit rev-parse HEAD)" = "$BOP_TOOLKIT_COMMIT"
+          test "$(sha256sum bop_toolkit/scripts/eval_bop19_pose.py | cut -d' ' -f1)" = "953a016e47a31ed05a5032302b8154722049d8dd953aeb7794ecedbf607bfcce"
+      - name: Run the real official BOP19 driver on the synthetic fixture
+        env:
+          BOP_TOOLKIT_ROOT: ${{ github.workspace }}/bop_toolkit
+          EGL_PLATFORM: surfaceless
+          LIBGL_ALWAYS_SOFTWARE: "1"
+          PYTHONDONTWRITEBYTECODE: "1"
+          VISPY_USE_APP: egl
+        run: |
+          cp -a ./bop_toolkit "$RUNNER_TEMP/bop_toolkit_install"
+          pip install -e . pytest "$RUNNER_TEMP/bop_toolkit_install"
+          pytest -q tests/test_bop_official_golden_2026_11_23.py
+
   # Windows だけの試験(.lnk の読み戻し・HKCU のレジストリ・後始末 .cmd の実走)は ubuntu では走らない(skip される)。
   # 2026-11-12(インストーラの独立レビュー 2 回目): それらを windows-latest で実際に走らせる。core だけを入れ、この 2 ファイルだけを回す。
   windows-installer:
