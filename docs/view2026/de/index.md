@@ -12,7 +12,7 @@
 
 Kachel antippen öffnet Video oder Abbildung (▶ = bewegt).
 
-Diese Seite zeigt nur 30 Exponate. Die übrigen 285 stehen auf der [Zusatzseite](more.md).
+Diese Seite zeigt nur 30 Exponate. Die übrigen 286 stehen auf der [Zusatzseite](more.md).
 
 <style>
 .vlang { font-size: 14px; line-height: 2; }

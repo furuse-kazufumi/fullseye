@@ -17,7 +17,8 @@
    633,
    1694,
    3
-  ]
+  ],
+  "source": "Source: BOP T-LESS dataset. URL: https://bop.felk.cvut.cz/datasets/. Publication: Hodaň et al. (2017), T-LESS: An RGB-D Dataset for 6D Pose Estimation of Texture-less Objects, WACV, https://doi.org/10.1109/WACV.2017.8. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The figures render selected RGB-D frames and reconstructed models with Fullseye pose/ICP overlays; source data are not shipped."
  },
  {
   "file": "03_mssd_by_object.png",

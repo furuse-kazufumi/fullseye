@@ -68,11 +68,11 @@ one is an integral transform, and the only thing they share is a word.
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[radon_transform](../forward/radon_transform.md)
+[radon_transform](../forward/radon_transform.md) · [filtered_backprojection_like](filtered_backprojection_like.md)
 
 ## 同カテゴリ(`reconstruct`)
 
-[filtered_backprojection](filtered_backprojection.md) · [sart_reconstruct](sart_reconstruct.md)
+[filtered_backprojection](filtered_backprojection.md) · [filtered_backprojection_like](filtered_backprojection_like.md) · [sart_reconstruct](sart_reconstruct.md)
 
 ---
 *Provenance: tomography.py — TOMOGRAPHY operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

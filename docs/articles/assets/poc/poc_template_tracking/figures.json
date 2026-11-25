@@ -83,6 +83,7 @@
    600,
    960,
    3
-  ]
+  ],
+  "source": "Source: VisA visual anomaly dataset (candle / pcb1), Amazon Science. URL: https://github.com/amazon-science/spot-diff. Publication: Zou et al. (2022), Spot-the-Difference Self-Supervised Pre-training for Anomaly Detection and Segmentation, ECCV 2022. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The individual figure captions state the crop, grayscale/downsampling, overlay, and synthetic camera-motion changes."
  }
 ]

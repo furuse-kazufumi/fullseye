@@ -17944,6 +17944,26 @@
    "de": "Bestimmt per Punktpaar-Merkmal-(PPF-)Abstimmung und ICP, wo ein bekanntes Objekt (Modellpunktwolke) in einer Szenenpunktwolke liegt (``pose``).",
    "hi": "पॉइंट-पेयर फ़ीचर (PPF) वोटिंग और ICP से ज्ञात वस्तु (मॉडल पॉइंट क्लाउड) दृश्य पॉइंट क्लाउड में कहाँ है, यह निकालता है (``pose``)।"
   },
+  "3d/ppf_pose_hypotheses": {
+   "fp": "56a10f7c4219",
+   "ja": "PPF 投票を最良の1姿勢にまとめず、上位 N 件の姿勢を返す。",
+   "en": "Return the top-N PPF poses instead of collapsing the vote to one pose.",
+   "zh": "返回 PPF 投票得分最高的 N 个位姿，而不是将投票压缩为单个位姿。",
+   "tw": "傳回 PPF 投票得分最高的 N 個姿態，而不是將投票壓縮為單一姿態。",
+   "ko": "PPF 투표를 하나의 최적 자세로 합치지 않고 상위 N개 자세를 반환합니다.",
+   "de": "Liefert die N besten PPF-Posen, statt die Abstimmung auf eine einzige Pose zu reduzieren.",
+   "hi": "PPF मतदान को एक सर्वोत्तम pose में समेटने के बजाय शीर्ष N poses लौटाता है।"
+  },
+  "3d/pose_nms_symmetry": {
+   "fp": "e09074d51d9e",
+   "ja": "モデル空間の距離内にある、対称性で等価な姿勢だけを抑制する。",
+   "en": "Suppress only symmetry-equivalent poses within a model-space distance.",
+   "zh": "仅抑制模型空间距离阈值内由对称性等价的位姿。",
+   "tw": "僅抑制模型空間距離閾值內由對稱性等價的姿態。",
+   "ko": "모델 공간 거리 안에서 대칭적으로 동등한 자세만 억제합니다.",
+   "de": "Unterdrückt nur symmetrieäquivalente Posen innerhalb eines Abstands im Modellraum.",
+   "hi": "मॉडल-स्पेस दूरी के भीतर केवल symmetry-equivalent poses को दबाता है।"
+  },
   "spc/proportion_interval": {
    "fp": "40a502123fae",
    "en": "Return the point estimate and confidence limits for the binomial proportion ``k/n`` (``table``).",
@@ -25073,6 +25093,15 @@
    "ko": "로그 정규 **체적** 분포를 장치와 같은 구간에 할당한 입도 분포(참값 포함).",
    "de": "Partikelgrößenverteilung aus einer log-normalen Verteilung nach **Volumen**, auf dieselben Klassen wie das Gerät aufgeteilt (mit Ground Truth).",
    "hi": "log-normal **volume** distribution को instrument वाले ही size class में बाँटकर बना particle size distribution (ground truth सहित)।"
+  },
+  "drive/particle_size_distribution": {
+   "fp": "0ca60b7b4b6a",
+   "en": "Calibrates a particle table and returns acceptance reasons, bins on three bases, D10/D50/D90 with confidence intervals, and provenance.",
+   "zh": "校准粒子表，并返回采纳理由、三种基准的分箱、带置信区间的 D10/D50/D90 以及溯源信息。",
+   "tw": "校正粒子表，並回傳採納理由、三種基準的分箱、附信賴區間的 D10/D50/D90 與溯源資訊。",
+   "ko": "입자 표를 보정하고, 채택 사유, 세 기준의 빈, 신뢰구간을 포함한 D10/D50/D90 및 이력을 반환합니다.",
+   "de": "Kalibriert eine Partikeltabelle und gibt Annahmegründe, Klassen nach drei Grundlagen, D10/D50/D90 mit Konfidenzintervallen und die Herkunft zurück.",
+   "hi": "particle table को calibrate करता है और स्वीकार/अस्वीकार के कारण, तीन आधारों के bins, confidence intervals सहित D10/D50/D90 और provenance लौटाता है।"
   },
   "drive/comminution_energy": {
    "fp": "a302fe749662",
@@ -33920,6 +33949,33 @@
    "ko": "**항력과 회전을 동시에 읽습니다**(:func:`fit_spin`의 C_d 자유 버전): 궤적 (t_i, p_i)(바운드를 포함하지 않는 구간)에 항력 + 마그누스의 운동 방정식을 (p₀, v₀, ω, C_d)의 10개 매개변수로 Levenberg–Marquardt로 피팅합니다(``fit_cl=True``이면 양력 계수의 배율 κ도 자유롭게 하여 11개 매개변수).",
    "de": "**Liest Luftwiderstand und Spin gemeinsam**(:func:`fit_spin` mit freiem C_d): passt die Bewegungsgleichungen mit Luftwiderstand + Magnus an eine Trajektorie (t_i, p_i) (ein Intervall ohne Abpraller) mit den 10 Parametern (p₀, v₀, ω, C_d) per Levenberg–Marquardt an (``fit_cl=True`` gibt auch den Auftriebs-Skalenfaktor κ frei, also 11 Parameter).",
    "hi": "**drag और spin को एक साथ पढ़ता है** (:func:`fit_spin` का C_d-मुक्त रूप): trajectory (t_i, p_i) (बिना उछाल वाला अंतराल) पर drag + Magnus के गति समीकरणों को (p₀, v₀, ω, C_d) के 10 parameters से Levenberg–Marquardt द्वारा fit करता है (``fit_cl=True`` से lift coefficient का scale κ भी मुक्त हो जाता है, कुल 11 parameters)।"
+  },
+  "2d/moments_region_2nd_invar": {
+   "fp": "922a4dfe624c",
+   "en": "Deprecated compatibility alias. It calls ``moments_region_2nd`` directly, returns the same value, and emits ``DeprecationWarning``; use ``moments_region_2nd`` before removal in 2.0.",
+   "zh": "已弃用的兼容别名。它直接调用 ``moments_region_2nd`` 并返回相同的值，同时发出 ``DeprecationWarning``；请在 2.0 删除前改用 ``moments_region_2nd``。",
+   "tw": "已棄用的相容別名。它直接呼叫 ``moments_region_2nd`` 並回傳相同的值，同時發出 ``DeprecationWarning``；請在 2.0 移除前改用 ``moments_region_2nd``。",
+   "ko": "더 이상 권장되지 않는 호환 별칭입니다. ``moments_region_2nd``를 직접 호출해 같은 값을 반환하고 ``DeprecationWarning``을 냅니다. 2.0에서 제거되기 전에 ``moments_region_2nd``로 옮기십시오.",
+   "de": "Veralteter Kompatibilitätsalias. Ruft ``moments_region_2nd`` direkt auf, gibt denselben Wert zurück und erzeugt ``DeprecationWarning``; vor der Entfernung in 2.0 auf ``moments_region_2nd`` umstellen.",
+   "hi": "Deprecated compatibility alias। यह सीधे ``moments_region_2nd`` को बुलाकर वही मान लौटाता है और ``DeprecationWarning`` देता है; 2.0 में हटने से पहले ``moments_region_2nd`` पर जाएँ।"
+  },
+  "fit/region_perimeter_estimate": {
+   "fp": "2d433defc9f2",
+   "en": "Estimate a binary region's perimeter with a chosen estimator.",
+   "zh": "使用明确选择的估计器测量二值区域的周长。",
+   "tw": "以明確選定的估計器量測二值區域的周長。",
+   "ko": "선택한 추정기로 이진 영역의 둘레를 측정합니다。",
+   "de": "Schätzt den Umfang einer binären Region mit einem ausdrücklich gewählten Schätzer。",
+   "hi": "चुने हुए estimator से binary region की परिधि मापता है。"
+  },
+  "tomography/filtered_backprojection_like": {
+   "fp": "176e6310b584",
+   "en": "Reconstruct FBP on the square grid of a reference image.",
+   "zh": "在参考图像的方形网格上进行 FBP 重建。",
+   "tw": "在參考影像的方形網格上進行 FBP 重建。",
+   "ko": "참조 영상의 정사각 격자에서 FBP를 재구성합니다。",
+   "de": "Rekonstruiert FBP auf dem quadratischen Gitter eines Referenzbildes。",
+   "hi": "संदर्भ image की वर्गाकार grid पर FBP reconstruct करता है。"
   }
  }
 }

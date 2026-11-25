@@ -12,6 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness_xld.chain.jpg">compactness_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>For the largest contour, computes the compactness <code style="color:#22d3bf">max(1, perimeter^2/(4pi * area))</code> (the contour counterpart of <code style="color:#22d3bf">compactness</code>). It is 1 for a circle and grows with elongation and roughness, with <b>no upper bound</b>. <b>The same formula as</b> HALCON&#x27;s <code style="color:#22d3bf">compactness_xld</code> (Shape factor for the compactness of contours or polygons.).</p>
+<p>Perimeter convention: this sums Euclidean arc lengths of traced-XLD points, unlike the skimage.measure.perimeter used by region compactness and contlength. Do not compare absolute values directly; see docs/KNOWN_ISSUES.md ?50.</p>
 <p>★Until 2026-09-26 it applied <code style="color:#22d3bf">/10</code> and levelled off at 1 -- <b>the same defect as in the region version existed in the contour version too</b>. If you overlook the twin of a fixed op, half of the hole remains (<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>).</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

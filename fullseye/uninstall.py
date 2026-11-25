@@ -4,9 +4,9 @@
 方針:
 
 * **推測で消さない。** 消すのは台帳(``install_ledger.json``、``fullseye.shortcuts`` が登録時に書く)に載っている物だけ。
-  台帳に無い物、ユーザーが後から置いた物には触らない。台帳が無い古い状態でも、既知の決まった場所のショートカット
-  (Start Menu の Fullseye/Fullseye Studio.lnk、install.ps1 が作る Fullseye Studio.lnk、デスクトップの同名、Linux の
-  .desktop)だけは検出して消せる。
+  台帳に無い物、ユーザーが後から置いた物には触らない。台帳が無い古い状態では、既知の決まった場所の Windows
+  ショートカットも、現在アンインストールしている Python / pythonw を起動し ``-m studio`` を渡すと読めたときだけ消す。
+  Linux の既知の ``.desktop`` も中身を確かめてから扱う。
 * Studio の設定(QSettings / ``FULLSEYE_STUDIO_SETTINGS`` の ini)とキャッシュ(op_help-* / backend_probe.json*)は
   既定で**残す**。聞いて、y のときだけ消す。
 * 最後に ``pip uninstall -y fullseye`` を実行するか聞く(実行するコマンドを先に見せる)。自分自身を消すので、Windows で
@@ -29,6 +29,7 @@ import argparse
 import importlib.metadata
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -80,6 +81,7 @@ M = {
         "pip_other": "pip uninstall の段は出しません: この Python に入っている fullseye は、いま動いている物と別の場所です(%s)。",
         "err": "エラー: %s",
         "pip_none": "pip uninstall の段は出しません: この Python に fullseye は pip で入っていません(%s)。",
+        "pip_external": "pip uninstall は呼び出し元が台帳の後始末後に同期実行します。",
         "later": "[この画面が閉じた直後に、後始末スクリプトが消すもの]",
         "q_skill": "Claude Code の skill(%s)も消しますか?",
         "skill_edited": "注意: %s の SKILL.md は同梱の原本から手で編集されています。既定では残します(消すと編集は戻せません)。",
@@ -117,6 +119,7 @@ M = {
                      "running now (%s).",
         "err": "error: %s",
         "pip_none": "Not offering pip uninstall: fullseye is not pip-installed in this Python (%s).",
+        "pip_external": "The calling installer will run pip uninstall synchronously after the ledger cleanup.",
         "later": "[Removed by the cleanup script right after this window closes]",
         "q_skill": "Also remove the Claude Code skill (%s)?",
         "skill_edited": "note: the SKILL.md in %s has been edited by hand relative to the shipped original. Kept by default (removing it cannot be undone).",
@@ -154,12 +157,13 @@ def _legacy_places(plat: str, dirs: Optional[Dict[str, Path]], registry: bool = 
         d.update(dirs or {})
         prog = d["start_menu"].parent                      # .../Programs
         cands = [d["start_menu"] / (sc.APP_NAME + ".lnk"), prog / (sc.APP_NAME + ".lnk"),
-                 d["desktop"] / (sc.APP_NAME + ".lnk"), d["icon_dir"] / "fullseye.ico", d["icon_dir"] / sc.CMD_NAME]
+                 d["desktop"] / (sc.APP_NAME + ".lnk"), d["icon_dir"] / "fullseye.ico", d["icon_dir"] / sc.CMD_NAME,
+                 d["icon_dir"] / sc.AUTO_SHORTCUT_MARKER]
         keys = [k for k in (([sc.UNINSTALL_KEY] if registry else []) + list(allow_keys)) if sc.regkey_exists(k)]
     elif plat == "linux":
         d = sc._linux_dirs(dirs)
         cands = [d["apps"] / "fullseye-studio.desktop", d["desktop"] / "fullseye-studio.desktop",
-                 d["icon_dir"] / "fullseye-studio.png"]
+                 d["icon_dir"] / "fullseye-studio.png", d["icon_dir"] / sc.AUTO_SHORTCUT_MARKER]
     else:
         return out
     for p in cands:
@@ -168,6 +172,44 @@ def _legacy_places(plat: str, dirs: Optional[Dict[str, Path]], registry: bool = 
     for k in dict.fromkeys(keys):
         out.append({"kind": "regkey", "path": k})
     return out
+
+
+def _legacy_windows_shortcut_reason(path: str) -> Optional[str]:
+    """台帳なしの .lnk が**今の** Fullseye Python / pythonw と ``-m studio`` を指すか調べる / verify that a ledger-less .lnk targets this Fullseye Python / pythonw and ``-m studio``.
+
+    読めない・TargetPath が別の Python・引数が違う物は、利用者の同名ショートカットかもしれないため理由を返して残す。
+    Return a reason and leave the link alone when it cannot be read, targets another Python, or has different arguments.
+    """
+    p = Path(path)
+    try:
+        link = sc.read_lnk(p)
+    except Exception as e:  # noqa: BLE001 -- unreadable legacy links must fail closed
+        return ("%s の TargetPath / 引数を読めません(%s)。別のアプリのショートカットか確認できないため残します。"
+                "ショートカットのプロパティを確認し、Fullseye の旧版だと確認できた場合だけ手で削除してください / "
+                "cannot read TargetPath / arguments for %s (%s). It may be another application's shortcut, so it was left alone. "
+                "Inspect the shortcut properties and delete it manually only if you confirm it is an old Fullseye shortcut"
+                % (p, e, p, e))
+    target = link.get("Target", "")
+    args = link.get("Arguments", "")
+    expected = (str(Path(sys.executable)), str(Path(sys.executable).with_name("pythonw.exe")))
+    if not target:
+        return ("%s の TargetPath を読めません。別のアプリのショートカットか確認できないため残します。"
+                "ショートカットのプロパティを確認し、Fullseye の旧版だと確認できた場合だけ手で削除してください / "
+                "cannot read TargetPath for %s. It may be another application's shortcut, so it was left alone. "
+                "Inspect the shortcut properties and delete it manually only if you confirm it is an old Fullseye shortcut" % (p, p))
+    if not any(sc._same_path(target, candidate) for candidate in expected):
+        return ("%s の TargetPath %r は、今の Fullseye Python / pythonw (%r または %r) ではありません。"
+                "同名でも利用者の別環境のショートカットかもしれないため残します。ショートカットのプロパティを確認し、"
+                "Fullseye の旧版なら手で削除してください / %s TargetPath %r is not this Fullseye Python / pythonw (%r or %r). "
+                "A same-name shortcut may belong to another user environment, so it was left alone. Inspect the shortcut properties "
+                "and delete it manually if it is an old Fullseye shortcut"
+                % (p, target, expected[0], expected[1], p, target, expected[0], expected[1]))
+    if not re.search(r"(?<!\S)-m\s+studio(?:\s|$)", args, flags=re.IGNORECASE):
+        return ("%s は -m studio を渡していません(引数は %r)。同名でも利用者の別アプリのショートカットかもしれないため残します。"
+                "ショートカットのプロパティを確認し、Fullseye の旧版なら手で削除してください / %s does not pass -m studio "
+                "(its arguments are %r). A same-name shortcut may belong to another application, so it was left alone. "
+                "Inspect the shortcut properties and delete it manually if it is an old Fullseye shortcut" % (p, args, p, args))
+    return None
 
 
 def collect(*, ledger: Optional[Path] = None, dirs: Optional[Dict[str, Path]] = None,
@@ -184,7 +226,12 @@ def collect(*, ledger: Optional[Path] = None, dirs: Optional[Dict[str, Path]] = 
     made = []
     if legacy:
         for e in _legacy_places(plat, dirs, registry, tuple(allow_keys)):
-            why = sc.verify_fullseye_item(e["kind"], e["path"], plat=plat)       # 名前だけで消さない: Fullseye の物と中身で確かめる
+            if plat == "win" and e["kind"] == "file" and e["path"].lower().endswith(".lnk"):
+                # 台帳が無いなら、名前・場所・``-m studio`` だけでは足りない。同名の別環境の .lnk を消さない。
+                # Without a ledger, a name, location, and ``-m studio`` are insufficient: do not remove another environment's .lnk.
+                why = _legacy_windows_shortcut_reason(e["path"])
+            else:
+                why = sc.verify_fullseye_item(e["kind"], e["path"], plat=plat)   # 名前だけで消さない: Fullseye の物と中身で確かめる
             if why:
                 refused.append({"kind": e["kind"], "path": e["path"], "reason": why, "foreign": True})   # 利用者の物の可能性 = 異常ではない
             else:
@@ -315,38 +362,37 @@ def remove_item(it: Dict[str, str], *, dirs: Optional[Dict[str, Path]] = None,
 
 
 # --------------------------------------------------------------------------- pip uninstall(別プロセス)
-_HELPER = (
-    "import os, sys, time, subprocess\n"
-    "pid, log = int(sys.argv[1]), sys.argv[2]\n"
-    "cmd = sys.argv[3:]\n"
-    "def alive(p):\n"
-    "    if sys.platform == 'win32':\n"
-    "        import ctypes\n"
-    "        h = ctypes.windll.kernel32.OpenProcess(0x00100000, False, p)\n"
-    "        if not h:\n"
-    "            return False\n"
-    "        r = ctypes.windll.kernel32.WaitForSingleObject(h, 0)\n"
-    "        ctypes.windll.kernel32.CloseHandle(h)\n"
-    "        return r == 258\n"
-    "    try:\n"
-    "        os.kill(p, 0)\n"
-    "        return True\n"
-    "    except OSError:\n"
-    "        return False\n"
-    "for _ in range(120):\n"
-    "    if not alive(pid):\n"
-    "        break\n"
-    "    time.sleep(0.25)\n"
-    "time.sleep(1.5)\n"
-    "out = ''\n"
-    "for attempt in range(3):\n"
-    "    r = subprocess.run(cmd, capture_output=True, text=True)\n"
-    "    out += 'attempt %d exit=%d\\n%s%s\\n' % (attempt + 1, r.returncode, r.stdout, r.stderr)\n"
-    "    if r.returncode == 0:\n"
-    "        break\n"
-    "    time.sleep(2)\n"
-    "open(log, 'w', encoding='utf-8').write(out)\n"
-)
+_HELPER = """import os, sys, time, subprocess
+pid, log = int(sys.argv[1]), sys.argv[2]
+cmd = sys.argv[3:]
+def alive(p):
+    if sys.platform == 'win32':
+        import ctypes
+        h = ctypes.windll.kernel32.OpenProcess(0x00100000, False, p)
+        if not h:
+            return False
+        r = ctypes.windll.kernel32.WaitForSingleObject(h, 0)
+        ctypes.windll.kernel32.CloseHandle(h)
+        return r == 258
+    try:
+        os.kill(p, 0)
+        return True
+    except OSError:
+        return False
+for _ in range(120):
+    if not alive(pid):
+        break
+    time.sleep(0.25)
+time.sleep(1.5)
+out = ''
+for attempt in range(3):
+    r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    out += 'attempt %d exit=%d\\n%s%s\\n' % (attempt + 1, r.returncode, r.stdout, r.stderr)
+    if r.returncode == 0:
+        break
+    time.sleep(2)
+open(log, 'w', encoding='utf-8').write(out)
+"""
 
 
 def pip_uninstall_command() -> List[str]:
@@ -404,7 +450,8 @@ def pip_status(python: Optional[str] = None, pkg_dir: Optional[Path] = None) -> 
     残るだけになる。先に ``-m pip --version`` で確かめて、無ければ段ごと飛ばす。"""
     py = python or sys.executable
     try:
-        r = subprocess.run([py, "-I", "-m", "pip", "--version"], capture_output=True, text=True, timeout=60,
+        r = subprocess.run([py, "-I", "-m", "pip", "--version"], capture_output=True, text=True,
+                           encoding="utf-8", errors="replace", timeout=60,
                            stdin=subprocess.DEVNULL, cwd=tempfile.gettempdir())
         has_pip = r.returncode == 0
     except (OSError, subprocess.SubprocessError):
@@ -450,7 +497,8 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
          ledger: Optional[Path] = None, dirs: Optional[Dict[str, Path]] = None,
          env: Optional[Dict[str, str]] = None, registry: bool = True, allow_keys: Iterable[str] = (),
          regtree: str = SETTINGS_REGTREE,
-         pip_check_fn: Optional[Callable[[], Tuple[str, str]]] = None) -> int:
+         pip_check_fn: Optional[Callable[[], Tuple[str, str]]] = None,
+         pip_externally_managed: bool = False) -> int:
     ap = argparse.ArgumentParser(prog="fullseye setup --uninstall", description="Uninstall what fullseye setup created.")
     ap.add_argument("--uninstall", action="store_true")
     ap.add_argument("--lang", choices=["ja", "en"], default=None)
@@ -511,11 +559,18 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
     say()
     cmd = pip_uninstall_command()
     cmd_txt = " ".join('"%s"' % c if " " in c else c for c in cmd)
-    pstate, pdetail = pip_check_fn()
+    if pip_externally_managed:
+        # install/uninstall.ps1 は台帳の後始末を先にこの関数へ委ね、pip は同じ Python で同期実行する。
+        # The PowerShell wrapper owns the synchronous pip step after this ledger cleanup.
+        pstate, pdetail = "external", ""
+    else:
+        pstate, pdetail = pip_check_fn()
     if pstate == "ok":
         say(m["cmd"] + "  " + cmd_txt)
     elif pstate == "no_pip":
         say(m["pip_nopip"] % uv_uninstall_hint())
+    elif pstate == "external":
+        say(m["pip_external"])
     else:
         say((m["pip_none"] if pstate == "none" else m["pip_other"]) % pdetail)
     say()
@@ -634,6 +689,8 @@ def main(argv: Optional[Sequence[str]] = None, *, input_fn: Optional[Callable[[s
         say(m["pip_no"] % cmd_txt)
     elif pstate == "no_pip":
         say(m["pip_nopip"] % uv_uninstall_hint())
+    elif pstate == "external":
+        say(m["pip_external"])
     else:
         say((m["pip_none"] if pstate == "none" else m["pip_other"]) % pdetail)
     if args.pause and is_tty:

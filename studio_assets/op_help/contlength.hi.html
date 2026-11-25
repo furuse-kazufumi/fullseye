@@ -12,6 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/contlength.chain.jpg">contlength: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region की परिधि pixels में (<code style="color:#22d3bf">regionprops</code> का <code style="color:#22d3bf">perimeter</code>) — HALCON के <code style="color:#22d3bf">contlength</code> (Contour length of a region.) जैसी ही मात्रा, उसी unit में।</p>
+<p>?????? ?? ????: ?? op skimage.measure.perimeter (r=96 ????? 1.0518; 128-???? 0.9922) ????? ???? ??, Crofton (1.0016; 0.9459) ????? resolution ????-???? ???? ??????? docs/KNOWN_ISSUES.md ?50?</p>
 <p>★2026-09-26 तक इसे image की बाहरी परिधि <code style="color:#22d3bf">2*(H+W)</code> से भाग देकर 1.0 पर काट दिया जाता था (30x70 आयत पर 0.2450, अब 196.0)। <code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>।</p>
 <p><code style="color:#22d3bf">a</code> और <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

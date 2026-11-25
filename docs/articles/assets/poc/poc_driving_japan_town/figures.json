@@ -7,7 +7,8 @@
    700,
    900,
    3
-  ]
+  ],
+  "source": "Source: OpenStreetMap road data (© OpenStreetMap contributors) and MLIT Project PLATEAU, Chuo-ku 3D city model. URL: https://www.openstreetmap.org/copyright ; https://www.geospatial.jp/ckan/dataset/plateau-13102-chuo-ku-2020. Publication: OpenStreetMap contributors; MLIT Project PLATEAU data documentation. Licence: ODbL 1.0 (OpenStreetMap); PDL 1.0 / CC BY 4.0-compatible terms (PLATEAU) (https://opendatacommons.org/licenses/odbl/1-0/ ; https://www.mlit.go.jp/plateau/site-policy/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Roads are rasterized and procedurally turned into a driving world; PLATEAU LOD1 footprints/heights are extruded. The source datasets themselves are not shipped."
  },
  {
   "file": "02_japan_town_bird.png",
@@ -17,7 +18,8 @@
    800,
    1280,
    3
-  ]
+  ],
+  "source": "Source: OpenStreetMap road data (© OpenStreetMap contributors) and MLIT Project PLATEAU, Chuo-ku 3D city model. URL: https://www.openstreetmap.org/copyright ; https://www.geospatial.jp/ckan/dataset/plateau-13102-chuo-ku-2020. Publication: OpenStreetMap contributors; MLIT Project PLATEAU data documentation. Licence: ODbL 1.0 (OpenStreetMap); PDL 1.0 / CC BY 4.0-compatible terms (PLATEAU) (https://opendatacommons.org/licenses/odbl/1-0/ ; https://www.mlit.go.jp/plateau/site-policy/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Roads are rasterized and procedurally turned into a driving world; PLATEAU LOD1 footprints/heights are extruded. The source datasets themselves are not shipped."
  },
  {
   "file": "03_japan_town_drive.gif",
@@ -31,7 +33,8 @@
   "animated": true,
   "frames": 28,
   "frames_written": 24,
-  "fps": 2.0
+  "fps": 2.0,
+  "source": "Source: OpenStreetMap road data (© OpenStreetMap contributors) and MLIT Project PLATEAU, Chuo-ku 3D city model. URL: https://www.openstreetmap.org/copyright ; https://www.geospatial.jp/ckan/dataset/plateau-13102-chuo-ku-2020. Publication: OpenStreetMap contributors; MLIT Project PLATEAU data documentation. Licence: ODbL 1.0 (OpenStreetMap); PDL 1.0 / CC BY 4.0-compatible terms (PLATEAU) (https://opendatacommons.org/licenses/odbl/1-0/ ; https://www.mlit.go.jp/plateau/site-policy/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Roads are rasterized and procedurally turned into a driving world; PLATEAU LOD1 footprints/heights are extruded. The source datasets themselves are not shipped."
  },
  {
   "file": "04_japan_town_frames.png",
@@ -41,7 +44,8 @@
    894,
    2610,
    3
-  ]
+  ],
+  "source": "Source: OpenStreetMap road data (© OpenStreetMap contributors) and MLIT Project PLATEAU, Chuo-ku 3D city model. URL: https://www.openstreetmap.org/copyright ; https://www.geospatial.jp/ckan/dataset/plateau-13102-chuo-ku-2020. Publication: OpenStreetMap contributors; MLIT Project PLATEAU data documentation. Licence: ODbL 1.0 (OpenStreetMap); PDL 1.0 / CC BY 4.0-compatible terms (PLATEAU) (https://opendatacommons.org/licenses/odbl/1-0/ ; https://www.mlit.go.jp/plateau/site-policy/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Roads are rasterized and procedurally turned into a driving world; PLATEAU LOD1 footprints/heights are extruded. The source datasets themselves are not shipped."
  },
  {
   "file": "05_japan_furniture.png",
@@ -63,7 +67,8 @@
    3
   ],
   "csv": "06_japan_road_table.csv",
-  "tsv": "06_japan_road_table.tsv"
+  "tsv": "06_japan_road_table.tsv",
+  "source": "Source: OpenStreetMap road data (© OpenStreetMap contributors) and MLIT Project PLATEAU, Chuo-ku 3D city model. URL: https://www.openstreetmap.org/copyright ; https://www.geospatial.jp/ckan/dataset/plateau-13102-chuo-ku-2020. Publication: OpenStreetMap contributors; MLIT Project PLATEAU data documentation. Licence: ODbL 1.0 (OpenStreetMap); PDL 1.0 / CC BY 4.0-compatible terms (PLATEAU) (https://opendatacommons.org/licenses/odbl/1-0/ ; https://www.mlit.go.jp/plateau/site-policy/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Roads are rasterized and procedurally turned into a driving world; PLATEAU LOD1 footprints/heights are extruded. The source datasets themselves are not shipped."
  },
  {
   "file": "07_japan_speed.png",

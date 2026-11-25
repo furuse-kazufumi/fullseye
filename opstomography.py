@@ -7,7 +7,7 @@
 1 つも無かった。`radon` / `sinogram` / `iradon` / `fbp` / `art` / `sirt` に該当
 する関数はゼロ(`backproject` は別物 = 深度マップで画素を 3-D に持ち上げる
 カメラ用の関数で、こちらは積分変換)。本レジストリはその欠けていた側の台帳
-(tomography.py、17 op / 6 カテゴリ)。
+(tomography.py、18 op / 6 カテゴリ)。
 
 来歴は公開文献のみ(docs/PROVENANCE.md の naming rule に従い、特定の製品・
 企業を動機にも名前にも使わない): Radon 1917(変換と反転)/ Kak & Slaney 1988
@@ -128,6 +128,7 @@ _CATALOG = {
     "reconstruct": [
         ("backproject_sinogram", "tomography", ["sinogram"], "image2d"),
         ("filtered_backprojection", "tomography", ["sinogram"], "image2d"),
+        ("filtered_backprojection_like", "tomography", ["sinogram", "image2d"], "image2d"),
         ("sart_reconstruct", "tomography", ["sinogram"], "image2d"),
     ],
     "artifact": [
@@ -216,7 +217,7 @@ def categories():
 #: 宣言 out 型と素の返りの橋渡し(ops3d / ops1d / opsmath / opsoptics /
 #: opsphoton / opsinterferometry と同じ一級機構)。
 #:
-#: **現在は空 — 意図的に**。tomography の 17 op はすべて宣言型そのもの
+#: **現在は空 — 意図的に**。tomography の 18 op はすべて宣言型そのもの
 #: (ndarray / float / dict)を素で返す設計にしてある。とくに
 #: ``sinogram_center_of_rotation`` は「(オフセット, 残差, 信頼度) タプル」では
 #: なく **float だけ**を返す — adapter を要らなくするためではなく、1 op = 1 量
@@ -228,7 +229,7 @@ RESULT_ADAPTERS = {
     # 既存の images(同じ場面の画像の並び)にする —— (C, H, W) を voxel と宣言すると、体積の op(marching cubes …)が
     # エネルギーのチャネルを奥行きとして黙って処理する(型を分ける基準「混ぜると例外でなくもっともらしく間違う」)。
     # 基底分解は「拒否した画素の数」を厚みと一緒に dict で返し(fail-closed の記録を捨てない)、宣言型は厚みの並び
-    # (拒否した画素は NaN のまま)。tomography の 17 op は従来どおり素の返りが宣言型(adapter 無し)。
+    # (拒否した画素は NaN のまま)。tomography の 18 op は従来どおり素の返りが宣言型(adapter 無し)。
     "xray_channel_projection": lambda r: [np.asarray(c) for c in r],
     "basis_material_decompose": lambda r: [np.asarray(c) for c in r["thickness"]],
 }
