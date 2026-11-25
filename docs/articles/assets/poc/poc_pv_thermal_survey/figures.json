@@ -109,7 +109,8 @@
    1992,
    1502,
    3
-  ]
+  ],
+  "source": "Source: DTU PV IRT aerial thermal survey dataset. URL: https://doi.org/10.11583/DTU.29665346.v1. Publication: del Prado Santamaría et al., DTU PV plant - Drone Infrared Thermography Dataset: Influence of Irradiance and Altitude. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-08 (original data retrieval, SHA-256 recorded by realdata.py); provenance rechecked 2026-11-24. Changes: Thermal frames are binned and analyzed by Fullseye; the captions identify the derived condition and detection summaries."
  },
  {
   "file": "12_real_detection_table.png",
@@ -121,6 +122,7 @@
    3
   ],
   "csv": "12_real_detection_table.csv",
-  "tsv": "12_real_detection_table.tsv"
+  "tsv": "12_real_detection_table.tsv",
+  "source": "Source: DTU PV IRT aerial thermal survey dataset. URL: https://doi.org/10.11583/DTU.29665346.v1. Publication: del Prado Santamaría et al., DTU PV plant - Drone Infrared Thermography Dataset: Influence of Irradiance and Altitude. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-08 (original data retrieval, SHA-256 recorded by realdata.py); provenance rechecked 2026-11-24. Changes: Thermal frames are binned and analyzed by Fullseye; the captions identify the derived condition and detection summaries."
  }
 ]

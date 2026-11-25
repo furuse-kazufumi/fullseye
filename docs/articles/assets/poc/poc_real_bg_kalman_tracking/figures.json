@@ -22,7 +22,8 @@
   "animated": true,
   "frames": 40,
   "frames_written": 40,
-  "fps": 10.0
+  "fps": 10.0,
+  "source": "Source: LASIESTA database, Universidad Politécnica de Madrid. URL: https://www.gti.ssr.upm.es/data/lasiesta_database. Publication: Cuevas, Yáñez, and García (2016), Computer Vision and Image Understanding 152, 103-117, https://doi.org/10.1016/j.cviu.2016.08.005. Licence: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Tracks, outlines, colour overlays, and the stated resampling/re-encoding are added; the derivative figure remains CC BY-SA 4.0."
  },
  {
   "file": "03_masks_i_oc_01.png",

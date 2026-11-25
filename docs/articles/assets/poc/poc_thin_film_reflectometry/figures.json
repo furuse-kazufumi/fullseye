@@ -7,7 +7,8 @@
    400,
    1400,
    3
-  ]
+  ],
+  "source": "Source: Schwarz et al. thin-film data, Zenodo record 13753754. URL: https://doi.org/10.5281/zenodo.13753754. Publication: Schwarz et al. (2024), Advanced Optical Materials, https://doi.org/10.1002/adom.202402502. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The listed micrograph/table reductions, relabeling, averaging, model curves, and analysis panels are Fullseye-derived."
  },
  {
   "file": "02_real_spectra.png",
@@ -17,7 +18,8 @@
    720,
    1503,
    3
-  ]
+  ],
+  "source": "Source: Schwarz et al. thin-film data, Zenodo record 13753754. URL: https://doi.org/10.5281/zenodo.13753754. Publication: Schwarz et al. (2024), Advanced Optical Materials, https://doi.org/10.1002/adom.202402502. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The listed micrograph/table reductions, relabeling, averaging, model curves, and analysis panels are Fullseye-derived."
  },
  {
   "file": "03_real_standards.png",
@@ -27,7 +29,8 @@
    720,
    1120,
    3
-  ]
+  ],
+  "source": "Source: Sánchez-Arriaga et al. thin-film standards data. URL: https://doi.org/10.15131/shef.data.23285603. Publication: Sánchez-Arriaga et al. (2023), Sensors 23, 5326, https://doi.org/10.3390/s23115326. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Repeated spectra are averaged and only the Fullseye fitting result is plotted."
  },
  {
   "file": "04_fringes_vs_thickness.png",
