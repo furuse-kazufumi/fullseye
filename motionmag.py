@@ -109,6 +109,8 @@ from math import comb
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 __all__ = [
     "band_snr",
     "complex_steerable_decompose",
@@ -272,35 +274,40 @@ def _require_video(video, name: str, op: str, max_elements: int,
                              % (op, name, len(shape), tuple(shape)))
         t, h, w = shape
         if t > MAX_FRAMES:
-            raise ValueError("%s: %s has T=%d frames, over the %d cap (motionmag.MAX_FRAMES)"
-                             % (op, name, t, MAX_FRAMES))
+            _arrayguard.refuse_cap_exceeded(
+                op, "%s frame count" % name, t, MAX_FRAMES, shape=None,
+                advice=_arrayguard.VIDEO_CAP_ADVICE, unit=("frames", "フレーム"),
+                input_dtype=dtype)
         if h * w > MAX_FRAME_PIXELS:
-            raise ValueError("%s: %s frames are %dx%d = %d pixels, over the %d cap "
-                             "(motionmag.MAX_FRAME_PIXELS)"
-                             % (op, name, h, w, h * w, MAX_FRAME_PIXELS))
+            _arrayguard.refuse_cap_exceeded(
+                op, "%s frame pixels" % name, h * w, MAX_FRAME_PIXELS,
+                shape=tuple(shape), advice=_arrayguard.VIDEO_CAP_ADVICE,
+                unit=("pixels", "画素"), input_dtype=dtype)
         elements = int(t) * int(h) * int(w)
         if elements > np.iinfo(np.int64).max:
             raise ValueError("%s: %s shape %r overflows an int64 element count (dtype %s)"
                              % (op, name, tuple(shape), np.dtype(dtype)))
-        estimated_bytes = elements * np.dtype(np.float64).itemsize
         if elements > max_elements:
-            raise ValueError(
-                "%s: %s shape %r dtype %s has %d elements; estimated float64 copy "
-                "is %d bytes, over the %d-element cap"
-                % (op, name, tuple(shape), np.dtype(dtype), elements,
-                   estimated_bytes, max_elements))
+            _arrayguard.refuse_cap_exceeded(
+                op, name, elements, max_elements, shape=tuple(shape),
+                advice=_arrayguard.VIDEO_CAP_ADVICE, input_dtype=dtype)
 
     if isinstance(video, (list, tuple)):
         if not video:
             raise ValueError("%s: %s is an empty frame list" % (op, name))
+        n_frames = len(video)
+        if n_frames > MAX_FRAMES:
+            _arrayguard.refuse_cap_exceeded(
+                op, "%s frame count" % name, n_frames, MAX_FRAMES, shape=None,
+                advice=_arrayguard.VIDEO_CAP_ADVICE, unit=("frames", "フレーム"))
+        input_dtype = getattr(video[0], "dtype", None)
         raw_shapes = [np.shape(f) for f in video]
         if any(len(shape) != 2 for shape in raw_shapes):
             raise ValueError("%s: every %s frame must be 2-D" % (op, name))
         if len(set(raw_shapes)) != 1:
             raise ValueError("%s: %s frames have differing shapes: %r"
                              % (op, name, sorted(set(raw_shapes))))
-        raw_dtype = np.result_type(*[np.asarray(f).dtype for f in video])
-        validate_shape((len(video),) + raw_shapes[0], raw_dtype)
+        validate_shape((n_frames,) + raw_shapes[0], input_dtype)
         frames = []
         for i, f in enumerate(video):
             if np.ma.is_masked(f):
@@ -322,7 +329,7 @@ def _require_video(video, name: str, op: str, max_elements: int,
                              % (op, name, sorted(shapes)))
         vid = np.stack(frames, axis=0)
     else:
-        validate_shape(np.shape(video), np.asarray(video).dtype)
+        validate_shape(np.shape(video), getattr(video, "dtype", None))
         if np.ma.is_masked(video):
             raise ValueError("%s: %s is a masked array with masked entries — "
                              "fill or drop them explicitly" % (op, name))
@@ -340,20 +347,22 @@ def _require_video(video, name: str, op: str, max_elements: int,
                          "frequency is undefined below that)"
                          % (op, name, t, min_frames))
     if t > MAX_FRAMES:
-        raise ValueError("%s: %s has T=%d frames, over the %d cap "
-                         "(motionmag.MAX_FRAMES)" % (op, name, t, MAX_FRAMES))
+        _arrayguard.refuse_cap_exceeded(
+            op, "%s frame count" % name, t, MAX_FRAMES, shape=None,
+            advice=_arrayguard.VIDEO_CAP_ADVICE, unit=("frames", "フレーム"),
+            input_dtype=vid.dtype)
     if h < 4 or w < 4:
         raise ValueError("%s: %s frames are %dx%d; at least 4x4 is needed for an "
                          "oriented band to be sampled at all" % (op, name, h, w))
     if h * w > MAX_FRAME_PIXELS:
-        raise ValueError("%s: %s frames are %dx%d = %d pixels, over the %d cap "
-                         "(motionmag.MAX_FRAME_PIXELS)"
-                         % (op, name, h, w, h * w, MAX_FRAME_PIXELS))
+        _arrayguard.refuse_cap_exceeded(
+            op, "%s frame pixels" % name, h * w, MAX_FRAME_PIXELS,
+            shape=tuple(vid.shape), advice=_arrayguard.VIDEO_CAP_ADVICE,
+            unit=("pixels", "画素"), input_dtype=vid.dtype)
     if vid.size > max_elements:
-        raise ValueError("%s: %s has T*H*W = %d elements (shape %r), over the %d "
-                         "cap — this operator holds several complex copies of the "
-                         "clip at once, so the cap is a memory bound, not a "
-                         "preference" % (op, name, vid.size, vid.shape, max_elements))
+        _arrayguard.refuse_cap_exceeded(
+            op, name, vid.size, max_elements, shape=tuple(vid.shape),
+            advice=_arrayguard.VIDEO_CAP_ADVICE, input_dtype=vid.dtype)
     if not np.isfinite(vid).all():
         n = int((~np.isfinite(vid)).sum())
         raise ValueError("%s: %s has %d non-finite sample(s) (NaN/Inf) — refusing"
