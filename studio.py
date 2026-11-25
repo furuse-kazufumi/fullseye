@@ -8975,9 +8975,24 @@ def build_window(model=None):
             thread.quit()
         timed_out = []
         for gen, (thread, _worker) in pairs:
-            remaining_ms = max(0, int((deadline - time.monotonic()) * 1000))
-            if thread.isRunning() and not thread.wait(remaining_ms):
-                timed_out.append(gen)
+            # ``QThread.start()`` は呼び済みでも、close は native thread が
+            # ``isRunning()`` へ移る前に来られる。既に running のときだけ待つと
+            # その起動直後の thread を取り落とし、window より長生きして process
+            # exit で Python を abort させる。``isFinished()`` は start 前に false、
+            # Qt の cleanup 完了後だけ true なので、ここで所有権を外す判定にする。
+            # ``wait()`` は native start transition 前には即 return しうるため、上限付きで再試行する。
+            # QThread.start() has already been called, but close can race with its
+            # native transition into isRunning().  isFinished() is the ownership
+            # predicate; bounded retry covers wait() returning before that transition.
+            while not thread.isFinished():
+                remaining_ms = max(0, int((deadline - time.monotonic()) * 1000))
+                if remaining_ms <= 0:
+                    timed_out.append(gen)
+                    break
+                thread.quit()
+                thread.wait(min(remaining_ms, 10))
+                if not thread.isFinished():
+                    time.sleep(0.001)
         if timed_out:
             return False
         # ``QThread.finished`` is queued to the GUI thread.  A close event cannot
