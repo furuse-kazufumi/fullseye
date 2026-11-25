@@ -3690,14 +3690,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L53** _(ja)_ — 総合案内。★既存の Qiita 枠がこのファイルを指しているので、名前を変えない ―― 外部リンク・LGTM・ストックはこの URL に付いている。館の入口に充てるのが筋。
 - **L160** _(ja)_ — 1 展示に出す静止画の追加枚数。★2 枚固定をやめる(2026-09-24)
-- **L504** _(ja)_ — ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで 以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
-- **L523** _(ja)_ — ★alt も本文の説明と同じ切り方(括弧の中で切らない)。長さだけで切ると 6400 本中 200 本が括弧の途中で 終わっていた(2026-11-09、機材選びの 8 回目の確認)
-- **L534** _(ja)_ — ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい 説明は主図と 2 枚目が持っている)。2026-09-24 に 2 枚固定をやめた。
-- **L560** _(ja)_ — ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚 作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘 「生成した数百枚はどこにあるのか記事からは分からない」)。
-- **L585** _(ja)_ — ★解説板の「この部屋の {n} 点」は**生成で埋める**。手書きの数は腐る ―― 10 翼中 9 翼が展示 53 点の頃の数を名乗ったままだった(産業検査は 10 と 書いて実際 27、2026-09-25)。例外は出ず、門も赤くならない。 `.format` は使わない(解説板に別の波括弧が在ると壊れるため)。
-- **L634** _(ja)_ — 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
-- **L640** _(ja)_ — 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
-- **L746** _(ja)_ — ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
+- **L520** _(ja)_ — ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで 以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
+- **L539** _(ja)_ — ★alt も本文の説明と同じ切り方(括弧の中で切らない)。長さだけで切ると 6400 本中 200 本が括弧の途中で 終わっていた(2026-11-09、機材選びの 8 回目の確認)
+- **L550** _(ja)_ — ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい 説明は主図と 2 枚目が持っている)。2026-09-24 に 2 枚固定をやめた。
+- **L578** _(ja)_ — ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚 作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘 「生成した数百枚はどこにあるのか記事からは分からない」)。
+- **L603** _(ja)_ — ★解説板の「この部屋の {n} 点」は**生成で埋める**。手書きの数は腐る ―― 10 翼中 9 翼が展示 53 点の頃の数を名乗ったままだった(産業検査は 10 と 書いて実際 27、2026-09-25)。例外は出ず、門も赤くならない。 `.format` は使わない(解説板に別の波括弧が在ると壊れるため)。
+- **L652** _(ja)_ — 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
+- **L658** _(ja)_ — 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
+- **L764** _(ja)_ — ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
 
 ## `tools/gen_wingstudio_gallery.py`
 
@@ -3773,19 +3773,19 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tools/regen_all.py`
 
 - **L49** _(ja)_ — ★最上流。`auto_specs_data.py` は backends_auto が registry を組む入力(wheel 同梱の data/auto_specs/*.json の複製)なので、registry を読む下流すべてより先に回す。 2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、 spec を足して回し忘れても誰も気づけなかった)。
-- **L55** _(ja)_ — ★2026-11-03: GPU の台帳 2 本は op ノートより前に。op ノートの GPU 欄は gpu_route(この 2 本と許可リスト) から書くので、後ろで台帳が変わるとノートが 1 周遅れになる。入力は commit した実測ログと許可リストだけ (registry を組むときに op_knob.json を読むが、表の中身には入らない —— ORDER_EXEMPT)。
-- **L60** — ★Das einzige generierte Artefakt außerhalb von `tools/`. Genau deshalb wurde es übersehen — wer Generatoren unter `tools/*.py` sucht, findet dieses nie.
-- **L62** — ★2026-10-15: von Platz 16 auf Platz 2 vorgezogen. Die einzige Eingabe ist die Registry (es liest keine Ausgabe einer anderen Stufe), doch gen_capabilities_index und gen_trust_block lasen diese Datei **vorher** — nimmt ein Merge, der Ops hinzufügt, beim Index die Mainline-Seite, fehlen im veralteten Index die neuen Ops und die Kette bricht ab (bei der Integration wurde `imgevolve.py index` von Hand vorab ausgeführt). Die Reihenfolge prüft `order_violations()` anhand von OUTPUTS / READS unten.
-- **L68** _(ja)_ — ★索引の直後(docs/OP_INDEX.json を読む)。GPU tier と HALCON OpenCL 対応行列。
-- **L90** _(ja)_ — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
-- **L109** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
-- **L113** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
-- **L121** — ★2026-10-15: ohne `--md` **schrieb es nichts** (es gab nur eine Zusammenfassung auf stdout aus). docs/CONVERSION_MATRIX.md blieb auf dem Stand vom 2026-09-02 ("59 Typen / 164 Konversionspaare") stehen, und da --check "eine Stufe, die nichts schreibt" nicht als Drift sieht, lief es sechs Wochen lang durch. Jetzt weist `trace_problems()` eine Stufe zurück, die ihre deklarierten Ausgaben nicht einmal berührt.
-- **L137** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
-- **L450** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
-- **L914** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L929** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L977** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
+- **L57** _(ja)_ — ★2026-11-03: GPU の台帳 2 本は op ノートより前に。op ノートの GPU 欄は gpu_route(この 2 本と許可リスト) から書くので、後ろで台帳が変わるとノートが 1 周遅れになる。入力は commit した実測ログと許可リストだけ (registry を組むときに op_knob.json を読むが、表の中身には入らない —— ORDER_EXEMPT)。
+- **L62** — ★Das einzige generierte Artefakt außerhalb von `tools/`. Genau deshalb wurde es übersehen — wer Generatoren unter `tools/*.py` sucht, findet dieses nie.
+- **L64** — ★2026-10-15: von Platz 16 auf Platz 2 vorgezogen. Die einzige Eingabe ist die Registry (es liest keine Ausgabe einer anderen Stufe), doch gen_capabilities_index und gen_trust_block lasen diese Datei **vorher** — nimmt ein Merge, der Ops hinzufügt, beim Index die Mainline-Seite, fehlen im veralteten Index die neuen Ops und die Kette bricht ab (bei der Integration wurde `imgevolve.py index` von Hand vorab ausgeführt). Die Reihenfolge prüft `order_violations()` anhand von OUTPUTS / READS unten.
+- **L70** _(ja)_ — ★索引の直後(docs/OP_INDEX.json を読む)。GPU tier と HALCON OpenCL 対応行列。
+- **L92** _(ja)_ — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
+- **L111** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
+- **L115** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
+- **L123** — ★2026-10-15: ohne `--md` **schrieb es nichts** (es gab nur eine Zusammenfassung auf stdout aus). docs/CONVERSION_MATRIX.md blieb auf dem Stand vom 2026-09-02 ("59 Typen / 164 Konversionspaare") stehen, und da --check "eine Stufe, die nichts schreibt" nicht als Drift sieht, lief es sechs Wochen lang durch. Jetzt weist `trace_problems()` eine Stufe zurück, die ihre deklarierten Ausgaben nicht einmal berührt.
+- **L139** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
+- **L460** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
+- **L924** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L939** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L987** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `tools_geom.py`
 

@@ -49,7 +49,8 @@
    605,
    1576,
    3
-  ]
+  ],
+  "source": "Source: Pérez-Llorens, Albero-Albero, and Silvestre-Blanes, RAW-FABRID, Mendeley Data v1. URL: https://doi.org/10.17632/db6g85xsyg.1. Publication: RAW-FABRID dataset record. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The synthetic defects, scoring maps, contours, and tables are Fullseye additions as stated in the captions."
  },
  {
   "file": "06_real_defects.png",
@@ -59,7 +60,8 @@
    1159,
    1576,
    3
-  ]
+  ],
+  "source": "Source: Pérez-Llorens, Albero-Albero, and Silvestre-Blanes, RAW-FABRID, Mendeley Data v1. URL: https://doi.org/10.17632/db6g85xsyg.1. Publication: RAW-FABRID dataset record. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The synthetic defects, scoring maps, contours, and tables are Fullseye additions as stated in the captions."
  },
  {
   "file": "07_real_input_defects.png",
@@ -69,7 +71,8 @@
    647,
    1074,
    3
-  ]
+  ],
+  "source": "Source: Pérez-Llorens, Albero-Albero, and Silvestre-Blanes, RAW-FABRID, Mendeley Data v1. URL: https://doi.org/10.17632/db6g85xsyg.1. Publication: RAW-FABRID dataset record. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The synthetic defects, scoring maps, contours, and tables are Fullseye additions as stated in the captions."
  },
  {
   "file": "08_real_result_auc_table.png",
@@ -81,7 +84,8 @@
    3
   ],
   "csv": "08_real_result_auc_table.csv",
-  "tsv": "08_real_result_auc_table.tsv"
+  "tsv": "08_real_result_auc_table.tsv",
+  "source": "Source: Pérez-Llorens, Albero-Albero, and Silvestre-Blanes, RAW-FABRID, Mendeley Data v1. URL: https://doi.org/10.17632/db6g85xsyg.1. Publication: RAW-FABRID dataset record. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The synthetic defects, scoring maps, contours, and tables are Fullseye additions as stated in the captions."
  },
  {
   "file": "09_real_limit_lowcut_diff.png",

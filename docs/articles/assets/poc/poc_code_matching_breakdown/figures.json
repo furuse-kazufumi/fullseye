@@ -55,7 +55,8 @@
   "animated": true,
   "frames": 16,
   "frames_written": 16,
-  "fps": 3.0
+  "fps": 3.0,
+  "source": "Source: scikit-image sample image: camera. URL: https://scikit-image.org/docs/stable/api/skimage.data.html. Publication: scikit-image project sample-data documentation (no separate dataset paper supplied for this image). Licence: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: A synthetic saturation sweep and tracking overlays were rendered from the sample image."
  },
  {
   "file": "06_score_maps_occlusion40.png",

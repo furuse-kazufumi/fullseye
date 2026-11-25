@@ -7,7 +7,8 @@
    1581,
    1630,
    3
-  ]
+  ],
+  "source": "Source: University of Liverpool Research Data Catalogue record 126, automotive paint OCT spectra. URL: https://datacat.liverpool.ac.uk/126/. Publication: University of Liverpool Research Data Catalogue record 126. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Raw spectra are reconstructed into B-scans and measured by Fullseye; the figure shows derived output."
  },
  {
   "file": "02_real_thickness_table.png",
