@@ -99,6 +99,7 @@ CHAIN = [
     (["tools/gen_view2026_story_gifs.py"], "ViEW2026 の 2-D 展示を流れで見せる story GIF と台帳"),
     # 索引と op ノートの後(複製するので)。ViEW の Fullseye 使用門は配布用 OP_INDEX を読むので、gen_mcp_data より前では古い索引を見る。
     (["tools/gen_mcp_data.py"], "fullseye/data operator search, cards, and probe metadata"),
+    (["tools/gen_c_api_ops.py"], "C SDK の型閉包 op 台帳(JSON + help)"),
     (["tools/gen_view2026_pages.py"], "docs/view2026/**/{index,more}.md(論文の QR の行き先、正本は exhibits.json)"),
     # gen_maturity の後(maturity.json を読む)、索引の後(docs/OP_INDEX.json と照合する)。
     # README*.md は gen_docs_index_ops も書くが、マーカーが別なので互いの中身には触れない
@@ -183,6 +184,7 @@ OUTPUTS = {
                                 "docs/licenses/THIRD_PARTY_INVENTORY.md",
                                 "THIRD_PARTY_NOTICES.md", "fullseye/THIRD_PARTY_NOTICES.md"],
     "imgevolve.py": ["docs/OP_INDEX.json"],
+    "tools/gen_c_api_ops.py": ["fullseye/data/C_API_OPS.json", "docs/C_API_OPS.md"],
     "tools/gpu_tier_rules.py": ["docs/perf/GPU_TIERS.md"],
     "tools/gen_halcon_opencl_parity.py": ["docs/perf/HALCON_OPENCL_PARITY.md",
                                           "docs/perf/halcon_opencl_parity.json"],
@@ -297,6 +299,7 @@ MAY_OUTPUTS = {
 READS = {
     "tools/license_audit.py": ["docs/articles/assets/poc/*/figures.json"],
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
+    "tools/gen_c_api_ops.py": ["fullseye/data/OP_INDEX.json"],
     "tools/gpu_tier_rules.py": ["docs/OP_INDEX.json"],
     "tools/gen_halcon_opencl_parity.py": ["docs/OP_INDEX.json"],
     "tools/gen_gpu_fill3_report.py": ["docs/perf/GPU_TIERS.md", "docs/perf/halcon_opencl_parity.json"],
@@ -323,7 +326,7 @@ READS = {
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
-        "docs/TYPE_CONNECTIVITY.md",
+        "docs/TYPE_CONNECTIVITY.md", "docs/C_API_OPS.md",
         "docs/HALCON_PARITY.md", "docs/IMPL_DIFFERENTIAL.md",
         "docs/perf/GPU_TIERS.md", "docs/perf/HALCON_OPENCL_PARITY.md", "docs/perf/gpu_fill3_2026-11-02.md",   # docmap が題を読む(2026-11-02)
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
@@ -377,7 +380,8 @@ _PYPROJECT_COUNT_READERS = (
     "tools/license_audit.py",  # 2026-11-25: 依存の版と extras を pyproject から読む(件数表記は使わない)
     "tools/gen_sbom.py", "tools/gen_device_rules.py", "imgevolve.py",
     "tools/halcon_compat_profile.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
-    "tools/gen_wingpoc_gallery.py", "tools/gen_mcp_data.py", "tools/gen_view2026_pages.py",
+    "tools/gen_wingpoc_gallery.py", "tools/gen_mcp_data.py", "tools/gen_c_api_ops.py",
+    "tools/gen_view2026_pages.py",
     "tools/gen_trust_block.py", "tools/gen_recipe_coverage.py", "tools/gen_design_notes.py",
     "tools/gen_docs_index_ops.py",
     "tools/gen_mcp_input_independent.py",

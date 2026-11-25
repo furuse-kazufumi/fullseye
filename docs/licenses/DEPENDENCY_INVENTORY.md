@@ -16,6 +16,7 @@ The package wheel does not vendor these distributions: pip installs them into th
 |---|---|---|---|---|---|
 | astropy | export-verify | BSD-3-Clause | permissive | astropy-*.dist-info/licenses/LICENSE.rst | Test-only export verifier; no dependency files are bundled in the Fullseye wheel. No additional condition from Fullseye's commercial license. |
 | asyncua | opcua | LGPL-3.0-or-later | weak-copyleft | asyncua distribution LICENSE | Optional OPC UA adapter. Keep dynamically installed and provide the LGPL notice; do not statically combine it. The commercial Fullseye license does not replace asyncua's LGPL obligations. |
+| cmake | native | Apache-2.0 AND BSD-3-Clause | permissive | cmake-*.dist-info/licenses/LICENSE_Apache_20, cmake-*.dist-info/licenses/LICENSE_BSD_3 | Optional native-SDK build tool; installed by pip and not bundled in the Fullseye wheel. Retain both notices if its files are redistributed. No additional condition from Fullseye's commercial license. |
 | cupy-cuda12x | gpu | MIT | permissive | cupy-cuda12x distribution LICENSE | Optional GPU backend; CUDA runtime terms remain a separate NVIDIA matter. No additional condition from Fullseye's commercial license. |
 | hypothesis | dev | MPL-2.0 | weak-copyleft | hypothesis-*.dist-info/licenses/LICENSE.txt | Development-only test tool; not bundled in the wheel. No additional condition from Fullseye's commercial license. |
 | imageio | all, raster, video | BSD-2-Clause | permissive | imageio-*.dist-info/licenses/LICENSE | Optional image I/O; installed by pip, not bundled. No additional condition from Fullseye's commercial license. |
@@ -38,6 +39,7 @@ The package wheel does not vendor these distributions: pip installs them into th
 | pillow | all, gui, pil | MIT-CMU | permissive | pillow-*.dist-info/licenses/LICENSE | Optional today and planned default 1.2.0 image I/O dependency; installed by pip, not bundled. No additional condition from Fullseye's commercial license. |
 | pip-audit | dev | Apache-2.0 | permissive | pip_audit-*.dist-info/licenses/LICENSE | Development-only audit tool; not bundled. No additional condition from Fullseye's commercial license. |
 | plyfile | export-verify | GPL-3.0-or-later | strong-copyleft | plyfile-*.dist-info/licenses/COPYING | Restricted to the export-verify test extra and never imported by shipped code or included in the wheel. Do not put this dependency in a product installation without a separate GPL compliance decision. |
+| pybind11 | native | BSD-3-Clause | permissive | pybind11-*.dist-info/LICENSE | Planned default 1.2.0 header-only SDK build dependency; if SDK headers are copied into a wheel, retain this license notice. No additional condition from Fullseye's commercial license. |
 | pye57 | e57, export-verify | MIT | permissive | pye57-*.dist-info/licenses/LICENSE | Optional E57 reader; its bundled libE57 notices remain in the pye57 distribution. No additional condition from Fullseye's commercial license. |
 | pygltflib | gltf | MIT | permissive | pygltflib-*.dist-info/licenses/LICENSE | Optional glTF reader; installed by pip, not bundled. No additional condition from Fullseye's commercial license. |
 | pymodbus | modbus | BSD-3-Clause | permissive | pymodbus distribution LICENSE | Optional Modbus adapter; installed by pip, not bundled. No additional condition from Fullseye's commercial license. |
@@ -73,7 +75,7 @@ The package wheel does not vendor these distributions: pip installs them into th
 
 ## Transitive resolution snapshot
 
-This is a measured Windows resolver snapshot, captured with `py -3.11 -m pip install --dry-run --ignore-installed --report <file> .[all-extras]` on Python 3.11 / win32. It contains 132 distributions: permissive 121, strong-copyleft 1, weak-copyleft 10. It is an audit snapshot rather than a lock file; regenerate and review it when dependency ranges change.
+This is a measured Windows resolver snapshot, captured with `py -3.11 -m pip install --dry-run --ignore-installed --report <file> .[all-extras]` on Python 3.11 / win32. It contains 134 distributions: permissive 123, strong-copyleft 1, weak-copyleft 10. It is an audit snapshot rather than a lock file; regenerate and review it when dependency ranges change.
 
 | Distribution | resolved version | PyPI metadata licence evidence | class | metadata licence files |
 |---|---|---|---|---|
@@ -89,6 +91,7 @@ This is a measured Windows resolver snapshot, captured with `py -3.11 -m pip ins
 | certifi | 2026.11.20 | MPL-2.0 | weak-copyleft | LICENSE |
 | cffi | 2.1.1 | MIT-0 | permissive | LICENSE |
 | charset-normalizer | 3.5.3 | MIT | permissive | LICENSE |
+| cmake | 4.4.5 | Apache 2.0 | permissive | — |
 | colorama | 0.4.6 | License :: OSI Approved :: BSD License | permissive | LICENSE.txt |
 | contourpy | 1.3.3 | BSD 3-Clause License Copyright (c) 2021-2025, ContourPy Developers. All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 1. Re... | permissive | — |
 | coverage | 7.17.5 | Apache-2.0 | permissive | LICENSE.txt, NOTICE.txt |
@@ -154,6 +157,7 @@ This is a measured Windows resolver snapshot, captured with `py -3.11 -m pip ins
 | pluggy | 1.7.0 | MIT | permissive | LICENSE |
 | plyfile | 1.1.5 | GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/> Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.... | strong-copyleft | — |
 | py-serializable | 2.2.0 | Apache-2.0 | permissive | LICENSE |
+| pybind11 | 2.13.6 | BSD | permissive | LICENSE |
 | pycparser | 3.12 | BSD-3-Clause | permissive | LICENSE |
 | pydantic | 2.14.4 | MIT | permissive | LICENSE |
 | pydantic_core | 2.50.5 | MIT | permissive | LICENSE |
@@ -208,4 +212,4 @@ This is a measured Windows resolver snapshot, captured with `py -3.11 -m pip ins
 | urllib3 | 2.8.0 | MIT | permissive | LICENSE.txt |
 | wait_for2 | 0.4.1 | Apache-2.0 | permissive | LICENSE, NOTICE |
 | wrapt | 2.5.2 | BSD-2-Clause | permissive | LICENSE |
-| zxing-cpp | 3.1.1 | Apache-2.0 | permissive | — |
+| zxing-cpp | 3.2.0 | Apache-2.0 | permissive | — |
