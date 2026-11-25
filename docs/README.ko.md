@@ -68,7 +68,7 @@
 | `validated-public-real-data` | 공개 실측 데이터를 쓰는 예가 게이트에서 실제로 실행됨 | 10 |
 | `validated-hardware` | 실기로 검증(외부 보고를 수리한 경우에만) | 0 |
 
-예 505건 중 게이트가 실제로 실행하는 것은 501건.
+예 506건 중 게이트가 실제로 실행하는 것은 501건.
 
 ### 버전별 연산자 수
 
@@ -149,18 +149,18 @@
 
 ## 연산자 찾기
 
-**3,853개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **73개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**3,855개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **73개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 947/947, 타입 台帳 2883/2883, 한 줄 파사드 `fullseye.<이름>` 770/1594 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 947/947, 타입 台帳 2885/2885, 한 줄 파사드 `fullseye.<이름>` 772/1608 — **파사드는 아직 절반**.
 
-**내용 실측**: 3853건 중 실행 가능한 예제가 붙은 것은 **3814**건(39건은 없음), 사용법이 120자 이상인 것은 **3654**건(199건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3853건 모두.
+**내용 실측**: 3855건 중 실행 가능한 예제가 붙은 것은 **3816**건(39건은 없음), 사용법이 120자 이상인 것은 **3656**건(199건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3855건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
 | `2d` | 964 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 750 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 506 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
-| `3d` | 378 | [INDEX](ops/3d/INDEX.md) |
+| `3d` | 380 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 115 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `reprconv` | 63 | [INDEX](ops/reprconv/INDEX.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
@@ -314,9 +314,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 347건
+## 문서 지도 — 전 348건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,853건과 패밀리 가이드 73건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,855건과 패밀리 가이드 73건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 
@@ -459,7 +459,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(261)
+**Other**(262)
 
 | 문서 | 내용 |
 |---|---|
@@ -475,6 +475,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`AI_RAG_GUIDE.tw.md`](AI_RAG_GUIDE.tw.md) | 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code） _(tw)_ |
 | [`AI_RAG_GUIDE.zh.md`](AI_RAG_GUIDE.zh.md) | 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code） _(zh)_ |
 | [`BENCH_VS_OPENCV.en.md`](BENCH_VS_OPENCV.en.md) | imgevolve GPU op vs OpenCV (CPU) throughput benchmark |
+| [`BOP_STAGE1_VALIDATION.md`](BOP_STAGE1_VALIDATION.md) | BOP 第1段の公式評価検証 _(ja)_ |
 | [`CAPABILITIES.en.md`](CAPABILITIES.en.md) | What Fullseye can do |
 | [`CAPABILITIES.md`](CAPABILITIES.md) | What Fullseye can do → [`CAPABILITIES.en.md`](CAPABILITIES.en.md) · 원문 _(ja)_ |
 | [`CHAIN_FUZZ.en.md`](CHAIN_FUZZ.en.md) | Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains |

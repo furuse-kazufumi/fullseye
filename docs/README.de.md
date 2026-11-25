@@ -68,7 +68,7 @@ Die 101 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, vo
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 10 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 505 Beispielen werden 501 tatsächlich von einem Gate ausgeführt.
+Von 506 Beispielen werden 501 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
@@ -149,18 +149,18 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**3,853 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **73 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**3,855 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **73 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2883/2883, Fassade `fullseye.<name>` 770/1594 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2885/2885, Fassade `fullseye.<name>` 772/1608 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3853 Notizen verweisen **3814** auf mindestens ein lauffähiges Beispiel (39 ohne), **3654** haben einen Nutzungsabschnitt ab 120 Zeichen (199 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3853.
+**Gemessener Inhalt**: von 3855 Notizen verweisen **3816** auf mindestens ein lauffähiges Beispiel (39 ohne), **3656** haben einen Nutzungsabschnitt ab 120 Zeichen (199 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3855.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
 | `2d` | 964 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 750 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 506 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
-| `3d` | 378 | [INDEX](ops/3d/INDEX.md) |
+| `3d` | 380 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 115 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `reprconv` | 63 | [INDEX](ops/reprconv/INDEX.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
@@ -314,9 +314,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 347
+## Dokumentkarte — alle 348
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,853 Operator-Notizen und 73 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,855 Operator-Notizen und 73 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 
@@ -459,7 +459,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(261)
+**Other**(262)
 
 | Dokument | Inhalt |
 |---|---|
@@ -475,6 +475,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`AI_RAG_GUIDE.tw.md`](AI_RAG_GUIDE.tw.md) | 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code） _(tw)_ |
 | [`AI_RAG_GUIDE.zh.md`](AI_RAG_GUIDE.zh.md) | 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code） _(zh)_ |
 | [`BENCH_VS_OPENCV.en.md`](BENCH_VS_OPENCV.en.md) | imgevolve GPU op vs OpenCV (CPU) throughput benchmark |
+| [`BOP_STAGE1_VALIDATION.md`](BOP_STAGE1_VALIDATION.md) | BOP 第1段の公式評価検証 _(ja)_ |
 | [`CAPABILITIES.en.md`](CAPABILITIES.en.md) | What Fullseye can do |
 | [`CAPABILITIES.md`](CAPABILITIES.md) | What Fullseye can do → [`CAPABILITIES.en.md`](CAPABILITIES.en.md) · Original _(ja)_ |
 | [`CHAIN_FUZZ.en.md`](CHAIN_FUZZ.en.md) | Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains |
