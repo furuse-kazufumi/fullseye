@@ -63,6 +63,11 @@ _INTERNAL = {
     # 2026-11-03 device="auto" の判断(損益分岐の表・空き VRAM・段ごとの経路)。利用者の入口は
     # fullseye.explain_device / resolve_device で、この部品は api の内側からだけ呼ぶ。
     "device_policy": 6,
+    # 2026-11-25: numpy_compat.trapezoid は NumPy 1/2 の積分関数名の違いを吸収する
+    # 配布済みの内部互換部品。公開 API ではなく、実測でも 1 本の不可視関数として残る。
+    # numpy_compat.trapezoid is a shipped internal compatibility shim for the
+    # NumPy 1/2 integration-name change; it is not a public API and remains one hidden function.
+    "numpy_compat": 1,
     "algo_codegen": 4, "algo_difftest": 8, "backends": 4, "backends_auto": 2,
     "backends_color": 3, "backends_cv2b": 1, "backends_dl": 3, "backends_extra": 1,
     "backends_halcon_ext": 1, "backends_kornia": 1, "backends_macro": 1,
@@ -501,7 +506,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   呼び出し元の sys.settrace / threading.settrace / sys.monitoring を検出する)で 1568 → 1569(この機械の実測)。
 # 2026-11-25 origin/master を統合後に実測: arrayguard の 3 本も、op の内側で入力を拒む部品なので
 # _INTERNAL に入れる。1569 → 1572。
-_HIDDEN_FUNCTIONS_TODAY = 1572
+#   (master 統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1572
+# 2026-11-25 origin/master(#347 の numpy_compat.trapezoid +1、上の _INTERNAL)を merge: 1572 + 1 = 1573。
+_HIDDEN_FUNCTIONS_TODAY = 1573
 
 
 def _hidden_total():

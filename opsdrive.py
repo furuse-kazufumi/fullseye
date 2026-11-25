@@ -101,6 +101,7 @@ import pegsym
 import polish
 import scoop
 import grind
+import pharmaparticle
 import ozakimm
 import swarmflow
 import pxrd
@@ -171,7 +172,7 @@ _MOD = {"opsdrive": _sys.modules[__name__], "drivecourse": drivecourse, "drivewo
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "gsviewer": gsviewer, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip, "polygrav": polygrav, "braidpath": braidpath, "terrain": terrain, "locomotion": locomotion, "laneops": laneops}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "gsviewer": gsviewer, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "pharmaparticle": pharmaparticle, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip, "polygrav": polygrav, "braidpath": braidpath, "terrain": terrain, "locomotion": locomotion, "laneops": laneops}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -1091,6 +1092,10 @@ _CATALOG = {
         ("ae_size_correspondence", "grind", ["signal", "signal"], "table"),
         ("particle_image_synth", "grind", ["scalar", "scalar", "scalar"], "table"),
         ("particle_image_d50", "grind", ["image2d", "scalar"], "table"),
+    ],
+    # 薬学向け顕微鏡粒径: 粒子表 × 校正表から判断・3 基準・不確かさ・来歴を一体で返す。
+    "pharma": [
+        ("particle_size_distribution", "pharmaparticle", ["table", "table"], "table"),
     ],
     # 点の順に依らない FP64 の縮約(2026-10-05、Ozaki スキーム): 行列は matrix、点群は points (N, 3)、R・t と探針の表は table。
     # 真値は Python の整数で計算した正確な積(門は tests/test_ozakimm.py と PoC poc_reproducible_icp)。
