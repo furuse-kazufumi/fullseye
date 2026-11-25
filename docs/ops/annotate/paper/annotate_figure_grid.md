@@ -5,7 +5,7 @@ category: paper
 in: images
 out: image2d
 gpu: あり(許可リスト)
-examples: [paper_figure, poc_flybrain_pointcloud, poc_itof_multifreq, poc_pixel_shift]
+examples: [paper_figure, poc_compendial_particle_microscopy, poc_flybrain_pointcloud, poc_itof_multifreq, poc_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ ValueError
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [paper_figure](../../../../examples/paper_figure.py) — `py -3.11 examples/paper_figure.py`
+- [poc_compendial_particle_microscopy](../../../../examples/poc_compendial_particle_microscopy.py) — `py -3.11 examples/poc_compendial_particle_microscopy.py`
 - [poc_flybrain_pointcloud](../../../../examples/poc_flybrain_pointcloud.py) — `py -3.11 examples/poc_flybrain_pointcloud.py`
 - [poc_itof_multifreq](../../../../examples/poc_itof_multifreq.py) — `py -3.11 examples/poc_itof_multifreq.py`
 - [poc_pixel_shift](../../../../examples/poc_pixel_shift.py) — `py -3.11 examples/poc_pixel_shift.py`

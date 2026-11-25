@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">particle_size_distribution — DRIVE <code style="color:#22d3bf">pharma</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_distribution(particles, calibration, *, border_policy=&#x27;exclude&#x27;, measurement_date=None, bin_edges=None, confidence=0.95, bootstrap_samples=2000, seed=776, upstream_records=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pharmaparticle; pharmaparticle.particle_size_distribution(particles, calibration, *, border_policy=&#x27;exclude&#x27;, measurement_date=None, bin_edges=None, confidence=0.95, bootstrap_samples=2000, seed=776, upstream_records=None)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_distribution&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Kalibriert eine Partikeltabelle und gibt Annahmegründe, Klassen nach drei Grundlagen, D10/D50/D90 mit Konfidenzintervallen und die Herkunft zurück.</p>
+<p>Nicht getrennte (<code style="color:#22d3bf">unsplit</code>) und mehrdeutige (<code style="color:#22d3bf">ambiguous</code>) Überlagerungen werden stets ausgeschlossen und nicht stillschweigend als ein Partikel gezählt. Eine Randkorrektur erfolgt nur, wenn Einschlusswahrscheinlichkeit, korrigierter Durchmesser und korrigierte Fläche vollständig vorliegen; verwendet wird das Horvitz--Thompson-Gewicht 1/p. Die Standardunsicherheit der Kalibrierung wird linear auf jeden Durchmesser übertragen und bei Quantilen mit deterministischen Bootstrap-Intervallen kombiniert.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameter</h4>
+<p>particles: Tabelle mit object_id, diameter_px, area_px2, touches_border und split_status (isolated/split/unsplit/ambiguous); Haupt- und Nebenachse sind optional.</p>
+<p>calibration: einzeilige Tabelle mit scale_per_px, unit, uncertainty_per_px, calibrator_id, calibrated_at und valid_until.</p>
+<p>border_policy: include, exclude oder correct. measurement_date: ISO-Datum. bin_edges: physikalische Klassengrenzen. confidence: zweiseitiges Niveau. bootstrap_samples: mindestens 200. seed: Zufallsstartwert.</p>
+<p>Ergebnis ist eine Tabelle mit Partikelzeilen, Zählungen, Klassen nach Anzahl/Fläche/Volumen, Quantilen, Kalibrierprovenienz und Annahmeanteilsintervall. Leere, inkonsistente, nichtendliche oder nichtpositive Daten, fehlende Korrekturangaben, ungültige Kalibrierdaten und null angenommene Partikel lösen ValueError aus. Die drei Gewichtungen bleiben getrennt und gelten nicht als austauschbares Laserbeugungsergebnis.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_compendial_particle_microscopy">poc_compendial_particle_microscopy</a> — <code style="color:#22d3bf">py -3.11 examples/poc_compendial_particle_microscopy.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">pharma</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pharmaparticle.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

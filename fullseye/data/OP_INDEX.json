@@ -1,8 +1,8 @@
 {
- "n_ops": 3849,
+ "n_ops": 3847,
  "tiers": {
   "color": 12,
-  "ledger": 2885,
+  "ledger": 2883,
   "nary": 17,
   "registry": 935
  },
@@ -17523,21 +17523,6 @@
    "gpu_tier": "none"
   },
   {
-   "name": "lane_curve_estimate",
-   "halcon": "",
-   "in_sort": "table",
-   "out_sort": "table",
-   "category": "lane",
-   "tier": "ledger",
-   "ledger": "opsdrive",
-   "dim": "drive",
-   "in_sorts": [
-    "table",
-    "table"
-   ],
-   "gpu_tier": "none"
-  },
-  {
    "name": "laplace_inverse_talbot",
    "halcon": "",
    "in_sort": "signal",
@@ -24135,6 +24120,21 @@
    "gpu_tier": "suitable"
   },
   {
+   "name": "particle_size_distribution",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pharma",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ],
+   "gpu_tier": "none"
+  },
+  {
    "name": "particle_size_dx",
    "halcon": "",
    "in_sort": "table",
@@ -29294,20 +29294,6 @@
    "gpu_tier": "suitable"
   },
   {
-   "name": "regular_shape_classify",
-   "halcon": "",
-   "in_sort": "contour",
-   "out_sort": "table",
-   "category": "sign",
-   "tier": "ledger",
-   "ledger": "opsdrive",
-   "dim": "drive",
-   "in_sorts": [
-    "contour"
-   ],
-   "gpu_tier": "partial"
-  },
-  {
    "name": "relative_illumination",
    "halcon": "",
    "in_sort": null,
@@ -30236,22 +30222,6 @@
     "scalar"
    ],
    "gpu_tier": "none"
-  },
-  {
-   "name": "road_sign_rule_classify",
-   "halcon": "",
-   "in_sort": "rgbimage",
-   "out_sort": "table",
-   "category": "sign",
-   "tier": "ledger",
-   "ledger": "opsdrive",
-   "dim": "drive",
-   "in_sorts": [
-    "rgbimage",
-    "contour",
-    "table"
-   ],
-   "gpu_tier": "suitable"
   },
   {
    "name": "road_surface_heightmap",

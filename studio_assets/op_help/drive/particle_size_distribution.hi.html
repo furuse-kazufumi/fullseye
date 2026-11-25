@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">particle_size_distribution — DRIVE <code style="color:#22d3bf">pharma</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_distribution(particles, calibration, *, border_policy=&#x27;exclude&#x27;, measurement_date=None, bin_edges=None, confidence=0.95, bootstrap_samples=2000, seed=776, upstream_records=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pharmaparticle; pharmaparticle.particle_size_distribution(particles, calibration, *, border_policy=&#x27;exclude&#x27;, measurement_date=None, bin_edges=None, confidence=0.95, bootstrap_samples=2000, seed=776, upstream_records=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_distribution&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>particle table को calibrate करता है और स्वीकार/अस्वीकार के कारण, तीन आधारों के bins, confidence intervals सहित D10/D50/D90 और provenance लौटाता है।</p>
+<p>बिना विभाजित (<code style="color:#22d3bf">unsplit</code>) और अस्पष्ट (<code style="color:#22d3bf">ambiguous</code>) overlap को हमेशा बाहर रखा जाता है; उन्हें चुपचाप एक कण नहीं गिना जाता। Border correction केवल inclusion probability, corrected diameter और corrected area तीनों मिलने पर होता है और Horvitz--Thompson count weight 1/p लगाता है। Calibration standard uncertainty हर diameter तक linear रूप से पहुँचती है और quantile के deterministic bootstrap sampling interval से जोड़ी जाती है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>particles: object_id, diameter_px, area_px2, touches_border और split_status (isolated/split/unsplit/ambiguous) वाली table; major/minor axis वैकल्पिक हैं।</p>
+<p>calibration: scale_per_px, unit, uncertainty_per_px, calibrator_id, calibrated_at और valid_until वाली one-row table।</p>
+<p>border_policy: include, exclude या correct। measurement_date: ISO date। bin_edges: physical diameter edges। confidence: two-sided level। bootstrap_samples: कम से कम 200। seed: random seed।</p>
+<p>particle_rows, counts, number/area/volume bins, quantiles, calibration provenance और accepted-proportion interval वाली table लौटती है। खाली या असंगत data, non-finite/non-positive मान, correction की कमी, invalid calibration date और शून्य accepted particles पर ValueError आता है। तीन weighting bases अलग रहते हैं और laser-diffraction result के बराबर नहीं माने जाते।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_compendial_particle_microscopy">poc_compendial_particle_microscopy</a> — <code style="color:#22d3bf">py -3.11 examples/poc_compendial_particle_microscopy.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pharma</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pharmaparticle.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
