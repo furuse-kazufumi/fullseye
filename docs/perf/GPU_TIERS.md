@@ -18,18 +18,18 @@
 | tier | 件数 |
 |---|---:|
 | `required` | 49 |
-| `suitable` | 2205 |
+| `suitable` | 2207 |
 | `partial` | 653 |
 | `none` | 942 |
-| **合計** | **3849** |
+| **合計** | **3851** |
 
 ## GPU 対応率
 
 指標 = `gpu_status=あり` の件数 ÷ (`required` + `suitable`) の件数(件数÷全体ではない)。現状値をそのまま書く(低くてよい)。
 
 - gpu 経路あり: **173**
-- `required` + `suitable`: **2254**
-- **GPU 対応率 = 7.7%** (173 / 2254)
+- `required` + `suitable`: **2256**
+- **GPU 対応率 = 7.7%** (173 / 2256)
 
 正直な内訳: gpu 経路を持つ op のうち 50 件は `partial`(領域モルフォロジ等)、0 件は `none` で、分母には入らない(分子にのみ計上)。
 
@@ -116,6 +116,7 @@
 | noncoaxial | 0 | 1 | 0 | 12 | 13 |
 | oct | 0 | 3 | 0 | 10 | 13 |
 | polish | 0 | 10 | 0 | 3 | 13 |
+| synth | 0 | 9 | 4 | 0 | 13 |
 | walkterrain | 0 | 13 | 0 | 0 | 13 |
 | 3d | 0 | 12 | 0 | 0 | 12 |
 | artificial-life | 0 | 12 | 0 | 0 | 12 |
@@ -134,7 +135,6 @@
 | signal | 0 | 11 | 1 | 0 | 12 |
 | swarmflow | 0 | 5 | 0 | 7 | 12 |
 | symmetry | 0 | 8 | 4 | 0 | 12 |
-| synth | 0 | 8 | 4 | 0 | 12 |
 | tacdome | 0 | 7 | 0 | 5 | 12 |
 | world | 0 | 0 | 1 | 11 | 12 |
 | construct | 0 | 1 | 8 | 2 | 11 |
@@ -504,6 +504,7 @@
 | texture-feature | 0 | 1 | 0 | 0 | 1 |
 | texture/shape-feature | 0 | 1 | 0 | 0 | 1 |
 | theorem | 0 | 1 | 0 | 0 | 1 |
+| track | 0 | 1 | 0 | 0 | 1 |
 | trajectory | 0 | 0 | 1 | 0 | 1 |
 | tuning | 0 | 1 | 0 | 0 | 1 |
 | watershed | 0 | 1 | 0 | 0 | 1 |
