@@ -125,12 +125,12 @@ def test_missing_optional_dependency_names_the_extra_not_a_data_fix():
     dep = [e for e in info["evidence"] if e["kind"] == "dependency"][0]
     assert dep["package"] == "fullseye_no_such_extra_module_xyz"
     assert set(_kinds(info)) == {"open_log"}                     # 入力を直す提案は出さない
-    # extra の名前: 既知の依存は ops.OPTIONAL_DEPS から
+    # 標準依存へ移した skimage は空の互換 extra ではなく本体の再導入を案内する。
     e2 = ModuleNotFoundError("No module named 'skimage'", name="skimage")
     i2 = se.explain_failure(e2, op_name="sk_canny")
     dep2 = [e for e in i2["evidence"] if e["kind"] == "dependency"][0]
-    assert dep2["extra"] == "skimage" and dep2["install"] == 'pip install "fullseye[skimage]"'
-    assert "skimage" in i2["cause"]["ja"] and "skimage" in i2["cause"]["en"]
+    assert dep2["extra"] is None and dep2["install"] == "pip install --force-reinstall fullseye"
+    assert "scikit-image" in i2["cause"]["ja"] and "scikit-image" in i2["cause"]["en"]
     # 本物の MissingBackendError(KeyError の子)も依存として読む
     e3 = api.MissingBackendError("operator 'sk_x' exists but is not available here; Install with "
                                  'pip install "fullseye[skimage]"')

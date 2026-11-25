@@ -391,7 +391,7 @@
   "counts": {
     "nodes": 103,
     "edges": 3853,
-    "conversion_pairs": 427,
+    "conversion_pairs": 426,
     "conversion_edge_incidence": 2540
   },
   "nodes": [
@@ -795,8 +795,8 @@
       "sort": "image",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 738,
-      "consumed_by": 1114,
+      "produced_by": 737,
+      "consumed_by": 1113,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -927,7 +927,7 @@
       "sort": "measurement",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 100,
+      "produced_by": 99,
       "consumed_by": 6,
       "generator": true,
       "type_check": true,
@@ -1027,7 +1027,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 85,
-      "consumed_by": 311,
+      "consumed_by": 313,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1137,7 +1137,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 197,
-      "consumed_by": 176,
+      "consumed_by": 175,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1357,7 +1357,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 8,
-      "consumed_by": 11,
+      "consumed_by": 10,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1422,8 +1422,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1283,
-      "consumed_by": 607,
+      "produced_by": 1285,
+      "consumed_by": 610,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -7323,6 +7323,160 @@
           "verified_through_mcp_pipeline"
         ]
       },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00001"
+    },
+    {
+      "op": "ppf_pose_hypotheses",
+      "inputs": [
+        "table",
+        "points"
+      ],
+      "output": "table",
+      "category": "3d",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00001"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00001"
+        }
+      ],
+      "runtime_target": {
+        "module": "ppf",
+        "callable": "ppf_pose_hypotheses"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ppf",
+        "callable": "ppf_pose_hypotheses"
+      },
+      "parameter_schema": [
+        {
+          "name": "scene_normals",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "top_n",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 5
+        },
+        {
+          "name": "ref_fraction",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.3
+        },
+        {
+          "name": "refine",
+          "type": "bool",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": true
+        },
+        {
+          "name": "k_normals",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 16
+        },
+        {
+          "name": "seed",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00001"
+    },
+    {
+      "op": "pose_nms_symmetry",
+      "inputs": [
+        "table",
+        "points",
+        "table"
+      ],
+      "output": "table",
+      "category": "3d",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00001"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00001"
+        }
+      ],
+      "input_roles": [
+        "hypotheses",
+        "model_points",
+        "symmetries"
+      ],
+      "runtime_target": {
+        "module": "ppf",
+        "callable": "pose_nms_symmetry"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ppf",
+        "callable": "pose_nms_symmetry"
+      },
+      "parameter_schema": [
+        {
+          "name": "distance_threshold",
+          "type": "float",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "top_n",
+          "type": "int | None",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
       "source_ref": "S00001"
     },
@@ -34660,55 +34814,6 @@
       },
       "bundle_semantics": "unknown",
       "source_ref": "S00001"
-    },
-    {
-      "op": "region_perimeter_estimate",
-      "inputs": [
-        "region"
-      ],
-      "output": "measurement",
-      "category": "fit",
-      "family": null,
-      "family_candidate": null,
-      "family_candidate_source": null,
-      "type_semantics": "typed",
-      "consumes_input": true,
-      "executable": true,
-      "compute": {
-        "structure": "unknown",
-        "intensity": "memory_or_unknown",
-        "source_ref": "S00003"
-      },
-      "implementations": [
-        {
-          "backend": "python/registry",
-          "status": "available",
-          "source_ref": "S00003"
-        }
-      ],
-      "runtime_target": {
-        "module": "measure",
-        "callable": "region_perimeter_estimate"
-      },
-      "executor": {
-        "kind": "python",
-        "module": "measure",
-        "callable": "region_perimeter_estimate"
-      },
-      "parameter_schema": [
-        {
-          "name": "method",
-          "type": "str",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": "skimage"
-        }
-      ],
-      "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
-      "bundle_semantics": "unknown",
-      "source_ref": "S00003"
     },
     {
       "op": "fit_circle_geometric",
@@ -202135,88 +202240,6 @@
       "source_ref": "S00034"
     },
     {
-      "op": "filtered_backprojection_like",
-      "inputs": [
-        "sinogram",
-        "image"
-      ],
-      "output": "image",
-      "category": "tomography",
-      "family": null,
-      "family_candidate": null,
-      "family_candidate_source": null,
-      "type_semantics": "typed",
-      "consumes_input": true,
-      "executable": true,
-      "compute": {
-        "structure": "unknown",
-        "intensity": "memory_or_unknown",
-        "source_ref": "S00034"
-      },
-      "implementations": [
-        {
-          "backend": "python/registry",
-          "status": "available",
-          "source_ref": "S00034"
-        }
-      ],
-      "runtime_target": {
-        "module": "tomography",
-        "callable": "filtered_backprojection_like"
-      },
-      "executor": {
-        "kind": "python",
-        "module": "tomography",
-        "callable": "filtered_backprojection_like"
-      },
-      "parameter_schema": [
-        {
-          "name": "angles_deg",
-          "type": "unannotated",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": null
-        },
-        {
-          "name": "filter_name",
-          "type": "unannotated",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": "ramp"
-        },
-        {
-          "name": "cutoff",
-          "type": "unannotated",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": 1.0
-        },
-        {
-          "name": "span_deg",
-          "type": "unannotated",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": null
-        },
-        {
-          "name": "device",
-          "type": "unannotated",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": "cpu"
-        }
-      ],
-      "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
-      "bundle_semantics": "unknown",
-      "source_ref": "S00034"
-    },
-    {
       "op": "sart_reconstruct",
       "inputs": [
         "sinogram"
@@ -291999,11 +292022,11 @@
         "kind": "registry",
         "alias": "moments_region_2nd_invar",
         "module": "backend_safe",
-        "callable": "_safe(_deprecated_alias.<locals>.fn)"
+        "callable": "_safe(_sh_region_feat.<locals>.fn)"
       },
       "runtime_target": {
         "module": "backend_safe",
-        "callable": "_safe(_deprecated_alias.<locals>.fn)"
+        "callable": "_safe(_sh_region_feat.<locals>.fn)"
       },
       "verified_executable": true,
       "verification": {

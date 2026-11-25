@@ -55,6 +55,7 @@ import detect  # noqa: E402  (object segmentation / description / identification
 import registration  # noqa: E402  (rigid point-cloud registration: Kabsch + ICP)
 import deformreg  # noqa: E402  (deformable image registration: Thirion's demons + field warp)
 import ppf  # noqa: E402  (6-DoF surface matching by Point Pair Features -> object pose for grasping)
+import bop  # noqa: E402  (BOP local dataset I/O, pose CSV and official validation scoring)
 import pointcloud  # noqa: E402  (point-cloud geometry: normals, voxel downsample)
 import pcseg  # noqa: E402  (point-cloud segmentation/fitting: RANSAC plane/sphere/cylinder, clusters, OBB)
 import mesh  # noqa: E402  (3-D object import: OBJ/STL/PLY/OFF -> vertices, points, voxels)
@@ -196,7 +197,16 @@ from registration import (  # noqa: E402,F401
     kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register, feature_register,
     icp_gated, point_to_plane_icp_gated,
 )
-from ppf import ppf_model, surface_match, find_surface_pose  # noqa: E402,F401
+from ppf import (  # noqa: E402,F401
+    PoseHypothesis, ppf_model, surface_match, find_surface_pose,
+    ppf_pose_hypotheses, pose_nms_symmetry,
+)
+from bop import (  # noqa: E402,F401
+    BOPPoseEstimate, read_bop_camera, read_bop_scene_image, read_bop_model,
+    read_bop_models_info, bop_symmetry_transforms,
+    write_bop_results_csv, read_bop_results_csv, write_bop_val_targets,
+    evaluate_bop19_pose,
+)
 from pointcloud import (  # noqa: E402,F401
     estimate_normals, voxel_downsample,
     remove_statistical_outliers, remove_radius_outliers, fpfh,
@@ -1199,7 +1209,11 @@ __all__ = [
     "icp_gated", "point_to_plane_icp_gated",
     "ncc_map_partial", "ncc_locate_ex", "shape_locate_fine",
     "pca_align", "register", "feature_register",
-    "ppf", "ppf_model", "surface_match", "find_surface_pose",
+    "ppf", "PoseHypothesis", "ppf_model", "surface_match", "find_surface_pose",
+    "ppf_pose_hypotheses", "pose_nms_symmetry",
+    "bop", "BOPPoseEstimate", "read_bop_camera", "read_bop_scene_image", "read_bop_model",
+    "read_bop_models_info", "bop_symmetry_transforms", "write_bop_results_csv",
+    "read_bop_results_csv", "write_bop_val_targets", "evaluate_bop19_pose",
     "pointcloud", "estimate_normals", "voxel_downsample",
     "remove_statistical_outliers", "remove_radius_outliers", "fpfh",
     "pcseg", "fit_plane", "fit_plane_ransac", "fit_sphere_ransac", "fit_cylinder_ransac",
@@ -1963,8 +1977,10 @@ def _explain_unregistered(name: str) -> str | None:
     deps = _ops.OPTIONAL_DEPS
     if missing:
         pips = ", ".join(deps.get(m, (m, None))[0] for m in missing)
-        extras = sorted({deps[m][1] for m in missing if m in deps})
-        lines = ['pip install "fullseye[%s]"' % e for e in extras]
+        extras = sorted({deps[m][1] for m in missing if m in deps and deps[m][1]})
+        standard = [m for m in missing if m in deps and deps[m][1] is None]
+        lines = (["pip install --upgrade fullseye"] if standard else [])
+        lines += ['pip install "fullseye[%s]"' % e for e in extras]
         lines += ["pip install %s" % m for m in missing if m not in deps]   # 語彙に無い依存も置き去りにしない
         pip_line = " or ".join(lines)
         if all(m in _ops.OPTIONAL_IN_ALL for m in missing):

@@ -4,55 +4,55 @@
   "ja": {
    "pages": 3852,
    "pages_with_example": 3813,
-   "pages_ja_summary_of_english_source": 962
+   "pages_ja_summary_of_english_source": 964
   },
   "en": {
    "pages": 3852,
    "pages_with_example": 3813,
-   "pages_with_kana": 450,
+   "pages_with_kana": 451,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8832
+   "kana_free_share": 0.8829
   },
   "zh": {
    "pages": 3852,
    "pages_with_example": 3813,
-   "pages_with_kana": 450,
+   "pages_with_kana": 451,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8832
+   "kana_free_share": 0.8829
   },
   "tw": {
    "pages": 3852,
    "pages_with_example": 3813,
-   "pages_with_kana": 450,
+   "pages_with_kana": 451,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8832
+   "kana_free_share": 0.8829
   },
   "ko": {
    "pages": 3852,
    "pages_with_example": 3813,
-   "pages_with_kana": 450,
+   "pages_with_kana": 451,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8832
+   "kana_free_share": 0.8829
   },
   "de": {
    "pages": 3852,
    "pages_with_example": 3813,
-   "pages_with_kana": 450,
+   "pages_with_kana": 451,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8832
+   "kana_free_share": 0.8829
   },
   "hi": {
    "pages": 3852,
    "pages_with_example": 3813,
-   "pages_with_kana": 450,
+   "pages_with_kana": 451,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8832
+   "kana_free_share": 0.8829
   }
  },
  "frame_strings": {

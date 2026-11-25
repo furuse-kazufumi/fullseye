@@ -25,6 +25,11 @@ Locate the repo root (contains `fullseye/` facade, `docs/ops/`, `examples/`,
 `examples_3d/`). If only the pip package is installed, clone the repo to get
 `docs/ops` — the corpus is repo content, not wheel content.
 
+The installer writes `RAG_MANIFEST.json` next to this SKILL.md. Read it before
+claiming a corpus is available: it inventories the installed operator indexes,
+recipes, examples, exhibits and literature, and explicitly distinguishes a full
+checkout from the compact pip-wheel index.
+
 ## Small-model workflow
 
 For a 14B–32B local model, keep context short and use this order:
@@ -59,9 +64,9 @@ Fullseye ships **3855 operator notes** in **60 families** — one generated Mark
 
 **The 60 families, by size:**
 
-**2d** 964 · **3d** 378 · **drive** 750 · **optics** 506 · **math** 115 · **reprconv** 63 · **segmentation** 59 · **annotate** 51 · **oned** 49 · **mv** 47 · **gfx2d** 44 · **tomography** 44 · **generative** 42 · **imgmetrics** 42 · **spc** 41 · **symbol** 33 · **calib** 29 · **piv** 29 · **conngraph** 28 · **fileio** 28 · **acoustics** 27 · **dem** 25 · **printpath** 23 · **flyvision** 22 · **graph** 20 · **specular** 20 · **quat** 19 · **multivar** 18 · **lightfield** 17 · **measure1d** 17 · **photon** 17 · **shape2d** 17 · **imgforensics** 16 · **shapestat** 16 · **videostream** 16 · **astrostack** 14 · **emproof** 14 · **live4d** 14 · **matchreg** 12 · **profile** 12 · **blob** 11 · **colortransport** 11 · **volcolor** 11 · **llmcore** 10 · **simcal** 10 · **vx** 10 · **geocam** 9 · **interferometry** 9 · **motionmag** 9 · **roughness** 9 · **acceptance** 8 · **aoi** 8 · **rangedoppler** 8 · **codematch** 6 · **converge** 6 · **videocube** 6 · **residue** 5 · **cadmap** 4 · **fit** 4 · **text** 3.
+**2d** 964 · **3d** 380 · **drive** 750 · **optics** 506 · **math** 115 · **reprconv** 63 · **segmentation** 59 · **annotate** 51 · **oned** 49 · **mv** 47 · **gfx2d** 44 · **tomography** 43 · **generative** 42 · **imgmetrics** 42 · **spc** 41 · **symbol** 33 · **calib** 29 · **piv** 29 · **conngraph** 28 · **fileio** 28 · **acoustics** 27 · **dem** 25 · **printpath** 23 · **flyvision** 22 · **graph** 20 · **specular** 20 · **quat** 19 · **multivar** 18 · **lightfield** 17 · **measure1d** 17 · **photon** 17 · **shape2d** 17 · **imgforensics** 16 · **shapestat** 16 · **videostream** 16 · **astrostack** 14 · **emproof** 14 · **live4d** 14 · **matchreg** 12 · **profile** 12 · **blob** 11 · **colortransport** 11 · **volcolor** 11 · **llmcore** 10 · **simcal** 10 · **vx** 10 · **geocam** 9 · **interferometry** 9 · **motionmag** 9 · **roughness** 9 · **acceptance** 8 · **aoi** 8 · **rangedoppler** 8 · **codematch** 6 · **converge** 6 · **videocube** 6 · **residue** 5 · **cadmap** 4 · **fit** 3 · **text** 3.
 
-★ `2d` and `3d` hold 1342 of the 3855 notes, so **grepping only those two directories misses 2513**. Among what it misses are the 15 physical-measurement families (769 notes) that are the reason to reach for this library instead of a general-purpose CV package: `optics` (506), `tomography` (44), `piv` (29), `acoustics` (27), `dem` (25), `specular` (20), `quat` (19), `lightfield` (17), `photon` (17), `imgforensics` (16), `astrostack` (14), `interferometry` (9), `motionmag` (9), `roughness` (9), `rangedoppler` (8). Start at `docs/ops/INDEX.md`, which lists every family with its size.
+★ `2d` and `3d` hold 1344 of the 3855 notes, so **grepping only those two directories misses 2511**. Among what it misses are the 15 physical-measurement families (768 notes) that are the reason to reach for this library instead of a general-purpose CV package: `optics` (506), `tomography` (43), `piv` (29), `acoustics` (27), `dem` (25), `specular` (20), `quat` (19), `lightfield` (17), `photon` (17), `imgforensics` (16), `astrostack` (14), `interferometry` (9), `motionmag` (9), `roughness` (9), `rangedoppler` (8). Start at `docs/ops/INDEX.md`, which lists every family with its size.
 
 <!-- opdocs:corpus-map end -->
 

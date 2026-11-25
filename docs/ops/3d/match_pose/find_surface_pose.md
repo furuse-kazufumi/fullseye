@@ -53,7 +53,7 @@ dict を返し、台帳 ``fullseye.ledger.find_surface_pose`` は ``pose`` の�
 
 ## 同カテゴリ(`match_pose`)
 
-[match_phase_3d](match_phase_3d.md) · [match_pca](match_pca.md) · [moment_axes](moment_axes.md) · [match_logpolar_z](match_logpolar_z.md)
+[match_phase_3d](match_phase_3d.md) · [match_pca](match_pca.md) · [ppf_pose_hypotheses](ppf_pose_hypotheses.md) · [pose_nms_symmetry](pose_nms_symmetry.md) · [moment_axes](moment_axes.md) · [match_logpolar_z](match_logpolar_z.md)
 
 ---
 *Provenance: ppf.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -11606,6 +11606,26 @@
     "path": "docs/ops/3d/match_pose/moment_axes.md"
    }
   ],
+  "pose_nms_symmetry": [
+   {
+    "op": "pose_nms_symmetry",
+    "dim": "3d",
+    "category": "match_pose",
+    "in": "table × points × table",
+    "out": "table",
+    "path": "docs/ops/3d/match_pose/pose_nms_symmetry.md"
+   }
+  ],
+  "ppf_pose_hypotheses": [
+   {
+    "op": "ppf_pose_hypotheses",
+    "dim": "3d",
+    "category": "match_pose",
+    "in": "table × points",
+    "out": "table",
+    "path": "docs/ops/3d/match_pose/ppf_pose_hypotheses.md"
+   }
+  ],
   "distance_ridge": [
    {
     "op": "distance_ridge",
