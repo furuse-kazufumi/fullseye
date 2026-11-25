@@ -7,7 +7,8 @@
    360,
    560,
    3
-  ]
+  ],
+  "source": "Source: refractiveindex.info database of optical constants. URL: https://refractiveindex.info/about. Publication: Polyanskiy (2024), Refractiveindex.info database of optical constants, Scientific Data 11, 94, https://doi.org/10.1038/s41597-023-02898-2. Licence: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Abbe numbers are calculated from the database dispersion records; the plot is Fullseye-generated."
  },
  {
   "file": "02_glass_catalogue.png",

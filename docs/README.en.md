@@ -305,7 +305,7 @@ arguments prints the same guidance. The pieces, if you prefer them one by one:
 | open the GUI | `fullseye-studio` (needs `pip install "fullseye[gui]"`) |
 | put Studio in the Start menu / on the desktop | `fullseye-studio --install-shortcuts` (add `--desktop`); undo: `--remove-shortcuts` |
 | use it from Python (3 lines) | `import fullseye, numpy as np` / `img = np.random.rand(64, 64)` / `fullseye.apply(img, "sobel_amp")` |
-| use it from an AI (Claude Code) | `fullseye-rag` (skill) and `claude mcp add fullseye -- python -m fullseye.mcp` |
+| use it from an AI (Claude Code) | `fullseye-rag` (skill) and `claude mcp add fullseye -- fullseye-mcp` (or `claude mcp add fullseye -- python -P -m fullseye.mcp`) |
 
 ### Uninstalling
 
@@ -753,6 +753,8 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`hardening/table-sort-mixes-rows-and-spec-dicts.md`](hardening/table-sort-mixes-rows-and-spec-dicts.md) | id: table-sort-mixes-rows-and-spec-dicts |
 | [`hardening/unknown-operator-hides-missing-backend.md`](hardening/unknown-operator-hides-missing-backend.md) | id: unknown-operator-hides-missing-backend |
 | [`hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md`](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) | id: wrappers-were-scalars-and-hints-were-raw-type-errors |
+| [`licenses/DEPENDENCY_INVENTORY.md`](licenses/DEPENDENCY_INVENTORY.md) | Dependency licence inventory |
+| [`licenses/THIRD_PARTY_INVENTORY.md`](licenses/THIRD_PARTY_INVENTORY.md) | Third-party material inventory |
 | [`literature/convergent_numerics_light_transport.md`](literature/convergent_numerics_light_transport.md) | 文献層: 収束型数値計算と光輸送(厳選) _(ja)_ |
 | [`literature/electron_microscopy.md`](literature/electron_microscopy.md) | 文献層: 電子顕微鏡の撮像と計測(厳選) _(ja)_ |
 | [`literature/industrial_optical_sensing.md`](literature/industrial_optical_sensing.md) | 文献層: 工業用光学センシング(厳選) _(ja)_ |

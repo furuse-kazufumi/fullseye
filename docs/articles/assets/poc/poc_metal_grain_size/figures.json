@@ -121,7 +121,8 @@
    605,
    1054,
    3
-  ]
+  ],
+  "source": "Source: Texture Boundary in Metallography (TBM), Zenodo record 8386997. URL: https://doi.org/10.5281/zenodo.8386997. Publication: TBM dataset record. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Crops, boundary overlays, and Fullseye detection / break simulation are stated in the captions."
  },
  {
   "file": "13_real_tbm_detect.png",
@@ -131,7 +132,8 @@
    605,
    1054,
    3
-  ]
+  ],
+  "source": "Source: Texture Boundary in Metallography (TBM), Zenodo record 8386997. URL: https://doi.org/10.5281/zenodo.8386997. Publication: TBM dataset record. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Crops, boundary overlays, and Fullseye detection / break simulation are stated in the captions."
  },
  {
   "file": "14_real_tbm_color_detect.png",
@@ -141,7 +143,8 @@
    605,
    1054,
    3
-  ]
+  ],
+  "source": "Source: Texture Boundary in Metallography (TBM), Zenodo record 8386997. URL: https://doi.org/10.5281/zenodo.8386997. Publication: TBM dataset record. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Crops, boundary overlays, and Fullseye detection / break simulation are stated in the captions."
  },
  {
   "file": "15_real_tbm_breaks.png",
@@ -151,7 +154,8 @@
    605,
    1054,
    3
-  ]
+  ],
+  "source": "Source: Texture Boundary in Metallography (TBM), Zenodo record 8386997. URL: https://doi.org/10.5281/zenodo.8386997. Publication: TBM dataset record. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Crops, boundary overlays, and Fullseye detection / break simulation are stated in the captions."
  },
  {
   "file": "16_real_tbm_cliff.png",

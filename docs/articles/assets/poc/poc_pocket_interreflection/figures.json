@@ -71,6 +71,7 @@
    3
   ],
   "csv": "07_bulczak.csv",
-  "tsv": "07_bulczak.tsv"
+  "tsv": "07_bulczak.tsv",
+  "source": "Source: Bulczak, Lambers, and Kolb, Quantified, Interactive Simulation of AMCW ToF Camera Including Multipath Effects. URL: https://doi.org/10.3390/s18010013. Publication: Sensors 18(1):13 (2018). Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Table 2 MAE values are quoted unchanged; Fullseye computes the displayed ratios."
  }
 ]

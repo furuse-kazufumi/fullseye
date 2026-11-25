@@ -26,6 +26,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PROJECT_PATH = REPO_ROOT / "pyproject.toml"
 DEFAULT_OUTPUT_PATH = REPO_ROOT / "docs" / "sbom" / "fullseye.cdx.json"
+DEFAULT_LICENSE_POLICY_PATH = REPO_ROOT / "docs" / "licenses" / "dependency_licenses.json"
 
 # Fixed CycloneDX and project metadata. / 固定する CycloneDX・プロジェクトのメタデータ。
 BOM_FORMAT = "CycloneDX"
@@ -147,6 +148,26 @@ def load_pyproject(path: Path) -> dict[str, Any]:
     return project
 
 
+def load_license_policy(path: Path) -> dict[str, dict[str, str]]:
+    """監査済みの SPDX 式を読む。 / Read audited SPDX expressions fail-closed."""
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RequirementError("cannot read dependency license policy: %s" % exc) from exc
+    packages = document.get("packages")
+    if not isinstance(packages, dict):
+        raise RequirementError("dependency license policy has no packages object")
+    result = {}
+    for name, record in packages.items():
+        if not isinstance(name, str) or not isinstance(record, dict):
+            raise RequirementError("dependency license policy contains an invalid record")
+        expression = record.get("spdx")
+        if not isinstance(expression, str) or not expression.strip():
+            raise RequirementError("dependency license policy lacks SPDX expression for %s" % name)
+        result[normalise_name(name)] = {"spdx": expression.strip()}
+    return result
+
+
 def _string_list(value: Any, where: str) -> list[str]:
     """依存の配列を fail-closed で検査する。 / Validate a dependency list fail-closed."""
     if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
@@ -209,7 +230,10 @@ def _properties(record: RequirementRecord) -> list[dict[str, str]]:
     return [{"name": name, "value": value} for name, value in sorted(values)]
 
 
-def build_sbom(project_path: Path = DEFAULT_PROJECT_PATH) -> dict[str, Any]:
+def build_sbom(
+    project_path: Path = DEFAULT_PROJECT_PATH,
+    license_policy_path: Path | None = None,
+) -> dict[str, Any]:
     """プロジェクト宣言から CycloneDX 文書を組む。 / Build a CycloneDX document from project declarations."""
     project = load_pyproject(project_path)
     name = project.get("name")
@@ -221,6 +245,11 @@ def build_sbom(project_path: Path = DEFAULT_PROJECT_PATH) -> dict[str, Any]:
     normalised_project_name = normalise_name(name)
     root_ref = "%s%s@%s" % (PYPI_PURL_PREFIX, normalised_project_name, version)
     records = collect_requirements(project)
+    # Isolated parser tests pass temporary projects; production generation must
+    # instead fail closed when a declared dependency has no reviewed SPDX record.
+    if license_policy_path is None and project_path.resolve() == DEFAULT_PROJECT_PATH.resolve():
+        license_policy_path = DEFAULT_LICENSE_POLICY_PATH
+    license_policy = load_license_policy(license_policy_path) if license_policy_path else {}
     components = []
     required_refs = []
     dependency_entries = []
@@ -234,6 +263,13 @@ def build_sbom(project_path: Path = DEFAULT_PROJECT_PATH) -> dict[str, Any]:
             "scope": SCOPE_REQUIRED if record.required else SCOPE_OPTIONAL,
             "properties": _properties(record),
         }
+        if license_policy:
+            policy_record = license_policy.get(record.name)
+            if policy_record is None:
+                raise RequirementError(
+                    "declared dependency lacks audited license record: %s" % record.name
+                )
+            component["licenses"] = [{"expression": policy_record["spdx"]}]
         components.append(component)
         dependency_entries.append({"ref": bom_ref, "dependsOn": []})
         if record.required:
@@ -268,10 +304,13 @@ def build_sbom(project_path: Path = DEFAULT_PROJECT_PATH) -> dict[str, Any]:
     }
 
 
-def render_sbom(project_path: Path = DEFAULT_PROJECT_PATH) -> str:
+def render_sbom(
+    project_path: Path = DEFAULT_PROJECT_PATH,
+    license_policy_path: Path | None = None,
+) -> str:
     """固定した JSON 形式で描画する。 / Render with fixed JSON formatting."""
     return json.dumps(
-        build_sbom(project_path),
+        build_sbom(project_path, license_policy_path),
         indent=JSON_INDENT,
         ensure_ascii=False,
         sort_keys=False,

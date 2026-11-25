@@ -16,11 +16,11 @@
 | FITS | `.fits` | `fileio.astro_fits_read` | `fileio.astro_fits_write` | `astro_fits_read`<br>`astro_fits_write` | stdlib / core | `tests/test_fileio_scientific.py`<br>`tests/test_kendama_combo.py`<br>+1 | `astropy` |
 | GIF | `.gif` | — | `examplefig.save_gif`<br>`projmap.save_gif`<br>`videocube.video_write_gif` | `video_write_gif` | optional: PIL, fullseye, mujoco | `tests/test_article_media_tool_2026_11_11.py`<br>`tests/test_docs_index_reachable.py`<br>+17 | — |
 | glTF | `.gltf` | `meshio_opt.read_gltf`<br>`meshio_opt.read_gltf_merged` | — | — | stdlib / core | `tests/test_mesh.py`<br>`tests/test_meshio_opt.py`<br>+1 | — |
-| Radiance HDR | `.hdr` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_hdrfusion.py`<br>`tests/test_public_api.py`<br>+5 | — |
+| Radiance HDR | `.hdr` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_caps_before_conversion_2026_11_24.py`<br>`tests/test_hdrfusion.py`<br>+6 | — |
 | IMG | `.img` | `volio.read_volume` | `specops.write_envi`<br>`volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+4 | — |
 | JPEG | `.jpeg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_imgforensics.py`<br>+4 | — |
 | JPEG | `.jpg` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_docs_index_reachable.py`<br>`tests/test_help_rendering.py`<br>+18 | — |
-| JSON | `.json` | `backends_auto.load_specs`<br>`fullseye.jsonio.load_json` | `fullseye.jsonio.save_json` | — | optional: cv2, skimage | `tests/test_accel_bridge.py`<br>`tests/test_accel_label.py`<br>+180 | — |
+| JSON | `.json` | `backends_auto.load_specs`<br>`fullseye.jsonio.load_json` | `fullseye.jsonio.save_json` | — | optional: cv2, skimage | `tests/test_accel_bridge.py`<br>`tests/test_accel_label.py`<br>+181 | — |
 | LAS | `.las` | `meshio_opt.read_las` | — | — | stdlib / core | `tests/test_accel_label.py`<br>`tests/test_backends.py`<br>+10 | — |
 | M4V | `.m4v` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | MetaImage | `.mha` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+1 | — |
@@ -54,7 +54,7 @@
 | TIFF | `.tif` | `raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `imgio.save`<br>`volio.write_volume` | — | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+84 | — |
 | TIFF | `.tiff` | `fileio.ome_tiff_read`<br>`raster.read_depth`<br>`raster.read_raster`<br>`volio.read_volume` | `fileio.ome_tiff_write`<br>`imgio.save`<br>`volio.write_volume` | `ome_tiff_read`<br>`ome_tiff_write` | optional: PIL, SimpleITK, cv2, imageio, tifffile | `tests/test_acquire.py`<br>`tests/test_acquire_contract.py`<br>+85 | — |
 | Text/XYZ | `.txt` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_acquire_contract.py`<br>`tests/test_anim3d_i18n_builders_2026_10_25.py`<br>+35 | — |
-| VOL | `.vol` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_ctscan.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+27 | — |
+| VOL | `.vol` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_caps_before_conversion_2026_11_24.py`<br>`tests/test_ctscan.py`<br>+30 | — |
 | WAV | `.wav` | `dsp.read_wav` | `dsp.write_wav` | `read_wav`<br>`write_wav` | stdlib / core | `tests/test_chain_type_contracts.py`<br>`tests/test_docstring_audit_wave1_2026_10_22.py`<br>+19 | — |
 | WebM video | `.webm` | — | `video.write_video` | — | optional: PIL, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | Excel workbook | `.xlsx` | — | `fullseye.xlsxio.save_xlsx_report` | — | optional: openpyxl | `tests/test_inspect_batch.py`<br>`tests/test_redteam_io_2026_11_05.py`<br>+2 | — |

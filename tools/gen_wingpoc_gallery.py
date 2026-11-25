@@ -175,6 +175,22 @@ def _more_statics(figs, pick, second):
     return [rest[min(int(i * step), len(rest) - 1)] for i in range(MORE_STATICS)]
 
 
+def _provenance_lines(figures, lang: str) -> list[str]:
+    """表示する図の重複しない出典をページにも載せる / Render unique provenance for shown figures."""
+    sources = []
+    for fig in figures:
+        source = str(fig.get("source", "")).strip()
+        if source and source not in sources:
+            sources.append(source)
+    if not sources:
+        return []
+    heading = "### 図の出典" if lang == "ja" else "### Figure provenance"
+    lines = [heading, ""]
+    for source in sources:
+        lines += [source, ""]
+    return lines
+
+
 _OPEN, _CLOSE = "(（[「『", ")）]」』"
 
 
@@ -549,6 +565,8 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         else:
             cap_line = ("*↑ The animation ―― %s*" % sub) if sub else "*↑ The animation*"
         lines += ["[![%s](%s)](%s)" % (alt, full3, full3), "", cap_line, ""] + _sa_lines(ex["id"], fig["file"], lang)
+    shown_figures = [pick] + ([second] if second is not None else []) + list(more or []) + list(extras or [])
+    lines += _provenance_lines(shown_figures, lang)
     # 生成の内幕(サムネ URL・FULLSEYE_FIGURE_DIR・数字の出所)は記事に出さない
     # (ユーザー指示 2026-09-07「読者の ROI と関係ない独自ルールは書かない」)。
     lines += [

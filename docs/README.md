@@ -306,7 +306,7 @@ Python / fullseye / Qt / 任意依存 / Claude Code 連携の状態を表示し�
 | 画面で触る | `fullseye-studio`(`pip install "fullseye[gui]"` が必要) |
 | スタートメニュー / デスクトップに置く | `fullseye-studio --install-shortcuts`(`--desktop` を足すとデスクトップにも)、戻す = `--remove-shortcuts` |
 | Python から 3 行で | `import fullseye, numpy as np` / `img = np.random.rand(64, 64)` / `fullseye.apply(img, "sobel_amp")` |
-| AI(Claude Code)から | `fullseye-rag`(skill)と `claude mcp add fullseye -- python -m fullseye.mcp` |
+| AI(Claude Code)から | `fullseye-rag`(skill)と `claude mcp add fullseye -- fullseye-mcp` (`claude mcp add fullseye -- python -P -m fullseye.mcp` も可) |
 
 ### アンインストール
 
@@ -750,6 +750,8 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`hardening/table-sort-mixes-rows-and-spec-dicts.md`](hardening/table-sort-mixes-rows-and-spec-dicts.md) | id: table-sort-mixes-rows-and-spec-dicts |
 | [`hardening/unknown-operator-hides-missing-backend.md`](hardening/unknown-operator-hides-missing-backend.md) | id: unknown-operator-hides-missing-backend |
 | [`hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md`](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) | id: wrappers-were-scalars-and-hints-were-raw-type-errors |
+| [`licenses/DEPENDENCY_INVENTORY.md`](licenses/DEPENDENCY_INVENTORY.md) | Dependency licence inventory |
+| [`licenses/THIRD_PARTY_INVENTORY.md`](licenses/THIRD_PARTY_INVENTORY.md) | Third-party material inventory |
 | [`literature/convergent_numerics_light_transport.md`](literature/convergent_numerics_light_transport.md) | 文献層: 収束型数値計算と光輸送(厳選) |
 | [`literature/electron_microscopy.md`](literature/electron_microscopy.md) | 文献層: 電子顕微鏡の撮像と計測(厳選) |
 | [`literature/industrial_optical_sensing.md`](literature/industrial_optical_sensing.md) | 文献層: 工業用光学センシング(厳選) |
