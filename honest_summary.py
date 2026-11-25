@@ -23,6 +23,28 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
+def _compatibility_profile_lines() -> list[str]:
+    """Return the H15 profile table from its committed source / 正本から H15 表を作る。"""
+    path = os.path.join(HERE, "docs", "halcon_compat_profile.json")
+    with open(path, encoding="utf-8") as f:
+        profile = json.load(f)
+    counts = profile.get("profiles", {})
+    names = ("contract_verified", "functional_analogue", "unknown")
+    if set(counts) != set(names) or any(not isinstance(counts[name], int) or counts[name] < 0
+                                        for name in names):
+        raise ValueError("docs/halcon_compat_profile.json has invalid profile counts")
+    return [
+        "## Compatibility profile (H15)",
+        "",
+        "| profile | ops |",
+        "|---|---:|",
+        *["| %s | %d |" % (name, counts[name]) for name in names],
+        "",
+        "Unknown is never promoted to PASS.",
+        "",
+    ]
+
+
 def main() -> int:
     import ops as R
     import halcon_coverage as HC
@@ -131,6 +153,7 @@ def main() -> int:
         "- Coverage counts a nearest functional analogue, not signature-level parity.",
         "",
     ]
+    lines.extend(_compatibility_profile_lines())
     md = os.path.join(HERE, "docs", "HALCON_PARITY.md")
     open(md, "w", encoding="utf-8").write("\n".join(lines))
     print("\n".join(lines[3:14]))

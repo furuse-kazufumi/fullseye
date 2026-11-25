@@ -11,8 +11,8 @@
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/moments_region_2nd_invar.chain.jpg">moments_region_2nd_invar: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>Hu 第一不變矩(<code style="color:#22d3bf">skimage.measure.moments_hu</code> 的 <code style="color:#22d3bf">hu[0]</code>)的絕對值。是對旋轉、縮放、平移不變的形狀描述子。相當於 HALCON 的 <code style="color:#22d3bf">moments_region_2nd_invar</code>(Geometric moments of regions.)的近似(嚴格來說與 HALCON 獨有的相對不變矩定義不同,而是以經典的 Hu 矩代替)。</p>
-<p>★<b>回傳與 <code style="color:#22d3bf">moments_region_2nd</code> 相同的數。</b> 那邊計算的 <code style="color:#22d3bf">|μ20+μ02|</code> 依定義正是 Hu 的第 1 不變矩,名稱有 2 個,量只有 1 個。docs/KNOWN_ISSUES.md §52。</p>
+<p>已棄用的相容別名。它直接呼叫 <code style="color:#22d3bf">moments_region_2nd</code> 並回傳相同的值，同時發出 <code style="color:#22d3bf">DeprecationWarning</code>；請在 2.0 移除前改用 <code style="color:#22d3bf">moments_region_2nd</code>。</p>
+<p>HALCON ??????????????????????????????????docs/KNOWN_ISSUES.md ?52?</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

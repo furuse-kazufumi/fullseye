@@ -151,11 +151,11 @@
 
 ## オペレータを探す
 
-**3,855 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **73 本の族ガイド**があります。次元ごとの入口:
+**3,857 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **73 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 947/947、型つき台帳 2885/2885、1 行ファサード `fullseye.<名前>` 772/1609。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 947/947、型つき台帳 2887/2887、1 行ファサード `fullseye.<名前>` 774/1611。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3855 本のうち、実行できる例が付いているのは **3816 本**(39 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3656 本**(199 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3855 本すべてにある。
+**ノートの中身の実測**: 3857 本のうち、実行できる例が付いているのは **3818 本**(39 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3658 本**(199 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3857 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -170,7 +170,7 @@
 | `oned` | 49 | [INDEX](ops/oned/INDEX.md) |
 | `mv` | 47 | [INDEX](ops/mv/INDEX.md) · [ガイド](ops/mv/guides/machine_vision_classics.md) |
 | `gfx2d` — 描画 | 44 | [INDEX](ops/gfx2d/INDEX.md) |
-| `tomography` — 断層 | 43 | [INDEX](ops/tomography/INDEX.md) |
+| `tomography` — 断層 | 44 | [INDEX](ops/tomography/INDEX.md) |
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [ガイド](ops/generative/guides/generative_art.md) |
 | `imgmetrics` — 画質の指標 | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [ガイド](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
@@ -217,7 +217,7 @@
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [ガイド](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` — CAD 対応づけ | 4 | [INDEX](ops/cadmap/INDEX.md) |
-| `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
+| `fit` | 4 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 名前で引くなら `py -3.11 imgevolve.py ops --search edge`、全 op の対応表は [OP_CATALOG.md](OP_CATALOG.md)、次元をまたぐ入口は [ops/INDEX.md](ops/INDEX.md)。
@@ -382,7 +382,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 348 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,855 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,857 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
@@ -472,7 +472,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 | 文書 | 内容 |
 |---|---|
-| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Known Issues — 調べた欠陥の記録(2026-08-30 開始、最終の節は §52 = 2026-09-26) |
+| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Known Issues — 調べた欠陥の記録(2026-08-30 開始、最終の節は §53 = 2026-11-24) |
 | [`STATUS.md`](STATUS.md) | imgevolve — status / plan (plan_ref) |
 | [`ACCURACY_BENCH.md`](ACCURACY_BENCH.md) | Accuracy benchmark — champion vs null (holdout) |
 | [`BENCH_VS_OPENCV.md`](BENCH_VS_OPENCV.md) | imgevolve GPU op vs OpenCV(CPU)処理速度ベンチ |

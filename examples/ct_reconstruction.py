@@ -12,6 +12,7 @@
       → radon_transform                  数値投影(保存則で真値と突き合わせる)
       → backproject_sinogram             フィルタ無しの下限
       → filtered_backprojection          標準の再構成
+      → filtered_backprojection_like     元の正方格子を明示して再構成
       → sart_reconstruct                 反復解法
       → sinogram_center_of_rotation      回転中心のずれを測る
       → sinogram_center_shift            そのずれを直す
@@ -145,6 +146,14 @@ def main():
     ok = True
     angles = T.projection_angles(N_VIEWS, 180.0, "uniform")
 
+    # §53: the default FBP grid comes from detector count, not source shape.
+    # Keep the source grid as an explicit second input when that pairing matters.
+    source_grid = np.zeros((32, 32), np.float64)
+    source_grid[10:22, 13:19] = 1.0
+    source_sino = T.radon_transform(source_grid)
+    source_restored = T.filtered_backprojection_like(source_sino, source_grid)
+    assert source_restored.shape == source_grid.shape
+
     # ------------------------------------------------------------------ #
     _rule("1) 撮る前に決まる限界 と、閉形式の真値")
     # ------------------------------------------------------------------ #
@@ -154,6 +163,8 @@ def main():
     print(f"   分解できる最小構造   = {d['resolvable_feature_mm']:.2f} mm (Nyquist)")
     print(f"   完全標本化に要る視点 = {d['views_for_full_sampling']} 本 "
           f"(実際 {N_VIEWS} 本 -> {d['undersampling_factor']:.2f}x, {d['verdict']})")
+    print(f"   §53 元格子の明示復元   = {source_sino.shape[1]} 検出器 -> "
+          f"{source_restored.shape} (filtered_backprojection_like)")
 
     phantom = T.ellipse_phantom(SIZE, SAMPLE, supersample=4)
     mass_closed = np.pi * (R_OUT_MM ** 2 - R_VOID_MM ** 2) / PIX_MM ** 2 * RHO
@@ -537,7 +548,7 @@ def main():
     print(f"\nPASS: 投影 -> 再構成 -> 外径 {m_fbp['outer_mm']:.3f} mm "
           f"(真値 {2 * R_OUT_MM:.2f} mm, {m_fbp['outer_mm'] / (2 * R_OUT_MM) - 1:+.2%}) "
           f"/ 空洞 {m_fbp['void_mm']:.3f} mm (真値 {2 * R_VOID_MM:.2f} mm) まで閉じた。")
-    print(f"      tomography 17 op のうち 15 op を実行 "
+    print(f"      tomography 18 op のうち 16 op を実行 "
           f"(残る 2 op = radon_volume / fbp_volume は 3-D 側で、"
           f"examples/tomography_reconstruct.py が通す)。")
     return ok

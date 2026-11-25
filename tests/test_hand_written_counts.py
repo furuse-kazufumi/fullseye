@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import pathlib
 import re
+import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -44,8 +45,16 @@ def _allowed() -> dict[int, str]:
              and "guides" not in p.parts]
     import ops3d
     n3d = len(ops3d.list_ops())          # 3-D 台帳の op(1 本は別台帳と同名なので索引では 1 少ない)
+    tools = str(ROOT / "tools")
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
+    import opdocs
+    families = dict((name, count) for name, count, _categories, _guides
+                    in opdocs.corpus_families())
+    physical_notes = sum(families[name] for name in opdocs._MEASUREMENT_FAMILIES)
     out = {idx["n_ops"]: "索引の全 op", t["ledger"]: "型つき台帳", single: "単入力の 2-D",
-           single + t["nary"]: "2-D(n-ary 込み)", len(notes): "ノート", n3d: "3-D 台帳の op"}
+           single + t["nary"]: "2-D(n-ary 込み)", len(notes): "ノート", n3d: "3-D 台帳の op",
+           physical_notes: "SKILL.md の生成ブロック: tools/opdocs.py の物理計測 15 族のノート数"}
     assert n3d > 300 and len(notes) > 3000, "数え損ねている: 3-D %d / ノート %d" % (n3d, len(notes))
     out.update(_OTHER)
     return out

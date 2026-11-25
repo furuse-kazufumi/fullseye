@@ -33,17 +33,20 @@ rgbimage 2 / video 2。**volume・color・rgbimage・video は 3-D を受ける�
 最大で割って**チャネル間の比を壊します**(灰色エッジ法の角度誤差が自前
 Sobel 1.03 度 → 画像ごと 4.17 度 → ch ごと 27.86 度、ゼロ点 29.14 度)。
 
-どちらに倒すかは契約の決めなので、ここでは `on_error="raise"` のときだけ
-拒否し、既定では台帳に記録して見えるようにしています。選択肢と測定値は
-`docs/KNOWN_ISSUES.md`。
+既定は数値を変えず、`FullseyeFallbackWarning` を op ごとに 1 回だけ出して台帳に
+記録する。`extra_checks="on"` または `on_error="raise"` では入口で拒否する。
+2.0 では既定も拒否へ切り替える予定。選択肢と測定値は
+`docs/KNOWN_ISSUES.md` §34。
 """
 from __future__ import annotations
 
 import numpy as np
 import pytest
+import warnings
 
 import api
 import fullseye as fs
+import ops
 
 
 def _color(bmid=0.40):
@@ -74,7 +77,7 @@ def test_channel_unsafe_ops_are_listed(name):
 @pytest.mark.parametrize("name", _LEAKY_SAMPLE)
 def test_raise_policy_refuses_a_colour_image(name):
     """``on_error="raise"`` では拒否すること(fail-closed 側の出口)。"""
-    with pytest.raises(ValueError, match="色軸"):
+    with pytest.raises(ValueError, match="cross colour channels"):
         fs.apply(_color(), name, on_error="raise")
 
 
@@ -85,6 +88,33 @@ def test_default_policy_still_returns_and_records(name):
     out = np.asarray(fs.apply(_color(), name))
     assert out.shape[:2] == (16, 16), out.shape
     assert name in fs.fallback_counts(), "%s: 記録されていない" % name
+
+
+def test_default_rgb_warning_is_once_and_keeps_the_historical_numbers():
+    """§34: 既定は 1 回だけ警告し、計算結果そのものは動かさない。"""
+    rgb = _color()
+    expected = np.asarray(ops.RT["gauss_filter"](rgb, 0.5, 0.5))
+    fs.clear_fallbacks(reset_warnings=True)
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        got = np.asarray(fs.apply(rgb, "gauss_filter"))
+        again = np.asarray(fs.apply(rgb, "gauss_filter"))
+    notices = [w for w in caught if issubclass(w.category, fs.FullseyeFallbackWarning)]
+    assert len(notices) == 1
+    text = str(notices[0].message)
+    assert "gauss_filter" in text
+    assert "Process each channel separately" in text
+    assert "convert the image to grayscale" in text
+    assert np.array_equal(got, expected)
+    assert np.array_equal(again, expected)
+    assert fs.fallback_counts()["gauss_filter"] == 2
+
+
+def test_extra_checks_refuses_a_colour_image_even_under_default_policy():
+    """§34 の opt-in は、既定の fail-soft 方針より優先して拒否する。"""
+    with fs.system(extra_checks="on"):
+        with pytest.raises(ValueError, match="cross colour channels"):
+            fs.apply(_color(), "gauss_filter")
 
 
 @pytest.mark.parametrize("name", _LEAKY_SAMPLE + _CLEAN_SAMPLE)
@@ -128,6 +158,8 @@ def test_the_clean_sample_really_does_not_leak():
 
 
 def test_counts_match_the_recorded_measurement():
-    """台帳の本数が `KNOWN_ISSUES` に書いた数と一致していること。"""
-    assert len(api._CHANNEL_UNSAFE_IMAGE_OPS) == 78
-    assert len(api._CHANNEL_UNSAFE_REGION_OPS) == 11
+    """機械的に列挙した台帳が、測定済みの 89 本を下回らないこと。"""
+    names = tuple(sorted(api._CHANNEL_UNSAFE_OPS))
+    assert len(names) >= 89
+    assert set(names) == api._CHANNEL_UNSAFE_IMAGE_OPS | api._CHANNEL_UNSAFE_REGION_OPS
+    assert all(api.find_op(name) is not None for name in names)
