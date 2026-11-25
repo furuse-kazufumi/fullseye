@@ -64,6 +64,25 @@ def test_lane_curve_estimate_preserves_explicit_bev_mapping_and_fails_closed():
         laneops.lane_curve_estimate(left, right, samples=5)
 
 
+def test_lane_rgb_and_curve_empty_or_constant_inputs_fail_closed_with_kind_guidance():
+    """空/一定入力は、誤った曲率でなく理由と直し方を返す / reject without a fake curve."""
+    with pytest.raises(ValueError) as empty_rgb:
+        laneops.color_rule_mask(np.empty((0, 16, 3)), {})
+    message = str(empty_rgb.value)
+    assert "(0, 16, 3)" in message and "no lane evidence" in message
+    assert "color_rule_mask" in message and "車線根拠" in message and "np.zeros" in message
+
+    constant = laneops.color_rule_mask(np.full((32, 32, 3), 0.6), {})
+    assert np.all(constant["labels"] == laneops.UNKNOWN_LABEL)
+    assert not constant["white_mask"].any() and not constant["yellow_mask"].any()
+
+    with pytest.raises(ValueError) as no_boundaries:
+        laneops.lane_curve_estimate(None, None)
+    message = str(no_boundaries.value)
+    assert "left=None and right=None" in message and "No centre or curvature" in message
+    assert "lane_boundary_fit" in message and "同定できない" in message
+
+
 def _regular_vertices(count, radius=30.0, angle=0.0, centre=(64.0, 64.0)):
     theta = angle + 2.0 * math.pi * np.arange(count) / count
     return np.c_[centre[0] + radius * np.cos(theta),
@@ -201,3 +220,24 @@ def test_road_sign_dimensions_and_invalid_inputs_fail_closed():
         roadsign.road_sign_rule_classify(image[:-1], contour)
     with pytest.raises(ValueError, match="exactly one contour"):
         roadsign.regular_shape_classify({"shape": image.shape[:2], "cs": contour["cs"] * 2})
+
+
+def test_sign_empty_and_constant_inputs_reject_or_return_unknown_with_kind_guidance():
+    image, contour = _sign("no_entry")
+    with pytest.raises(ValueError) as empty_image:
+        roadsign.road_sign_rule_classify(np.empty((0, 32, 3)), contour)
+    message = str(empty_image.value)
+    assert "(0, 32, 3)" in message and "no colour/layout evidence" in message
+    assert "Decode one sign crop" in message and "配色・配置の根拠" in message
+
+    with pytest.raises(ValueError) as empty_contour:
+        roadsign.regular_shape_classify({"shape": image.shape[:2], "cs": []})
+    message = str(empty_contour.value)
+    assert "0 loops" in message and "not identifiable" in message
+    assert "Segment one sign crop" in message and "同定できない" in message
+
+    constant = np.full_like(image, 0.5)
+    got = roadsign.road_sign_rule_classify(constant, contour, {})
+    assert got["label"] == "unknown"
+    assert "RGB range is 0" in got["reason"] and "returning unknown" in got["reason"]
+    assert "recrop the complete sign" in got["reason"] and "根拠がない" in got["reason"]

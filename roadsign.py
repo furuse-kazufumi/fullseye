@@ -99,7 +99,14 @@ def _contour_points(contour, op):
         raise ValueError("%s: contour shape must contain two positive integers" % op)
     cs = contour["cs"]
     if not isinstance(cs, (list, tuple)) or len(cs) != 1:
-        raise ValueError("%s: exactly one contour loop is required" % op)
+        actual = len(cs) if isinstance(cs, (list, tuple)) else type(cs).__name__
+        raise ValueError(
+            "%s: contour has %r loops; exactly one contour loop is required and it must be non-empty / "
+            "輪郭loop数は%rで、loopがちょうど1本かつ空でないことが必要です. "
+            "Shape and orientation are not identifiable without one closed boundary / 閉じた境界1本なしでは"
+            "形と向きを同定できないため拒否します. Segment one sign crop, close its outer contour, and "
+            "retry with {'shape': (H,W), 'cs': [points]} / 標識cropを1個分割し、外周を閉じて"
+            "{'shape': (H,W), 'cs': [points]}で再試行してください" % (op, actual, actual))
     points = np.asarray(cs[0], np.float64)
     if points.ndim != 2 or points.shape[1] != 2 or len(points) < MIN_CONTOUR_POINTS:
         raise ValueError("%s: contour loop must be an (N >= %d, 2) array" % (op, MIN_CONTOUR_POINTS))
@@ -395,7 +402,13 @@ def road_sign_rule_classify(image, contour, rules=None):
     """
     rgb = np.asarray(image, np.float64)
     if rgb.ndim != 3 or rgb.shape[2] != 3 or min(rgb.shape[:2]) < 1:
-        raise ValueError("road_sign_rule_classify: image must be a non-empty (H, W, 3) RGB array")
+        raise ValueError(
+            "road_sign_rule_classify: image shape is %r; a non-empty (H, W, 3) RGB crop is required / "
+            "画像形状は%rで、空でない(H, W, 3) RGB cropが必要です. "
+            "The crop is rejected because no colour/layout evidence exists in an empty or non-RGB image / "
+            "空またはRGBでない画像には配色・配置の根拠がないため拒否します. "
+            "Decode one sign crop to RGB in [0,1] and retry with a matching contour shape / 標識1個を"
+            "[0,1]のRGBへ復号し、同じshapeの輪郭とともに再試行してください" % (rgb.shape, rgb.shape))
     if not np.all(np.isfinite(rgb)) or np.any((rgb < 0.0) | (rgb > 1.0)):
         raise ValueError("road_sign_rule_classify: RGB values must be finite and in [0, 1]")
     points, shape = _contour_points(contour, "road_sign_rule_classify")
@@ -439,10 +452,17 @@ def road_sign_rule_classify(image, contour, rules=None):
     }
     bar = _largest_white_bar(white, mask)
     label = "unknown"
+    constant_range = float(np.max(rgb) - np.min(rgb))
     reason = "unsupported or ambiguous colour/shape combination"
     nominal_size = None
     confidence = 0.0
-    if (geometry["label"] == "triangle" and triangle_orientation["inverted"]
+    if constant_range <= 1e-12:
+        reason = ("road_sign_rule_classify: RGB range is %.3g (constant crop); colour/layout evidence is "
+                  "absent, so returning unknown / RGB範囲は%.3gの一定cropで、配色・配置の根拠がないため"
+                  "unknownを返します; recrop the complete sign or check decoder/exposure, then retry / "
+                  "標識全体を切り出すか復号・露出を確認して再試行してください"
+                  % (constant_range, constant_range))
+    elif (geometry["label"] == "triangle" and triangle_orientation["inverted"]
             and features["red_fraction"] >= STOP_MIN_RED_FRACTION
             and features["white_fraction"] >= STOP_MIN_WHITE_FRACTION):
         label = "stop_jp"

@@ -68,7 +68,7 @@
 | `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 10 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
-504 個範例中,檢查實際執行的有 500 個。
+505 個範例中,檢查實際執行的有 501 個。
 
 ### 各版本的運算子數
 
@@ -99,7 +99,7 @@
 
 <!-- poc-index:start -->
 
-## PoC 系列 — 帶真值求解的 316 個實際問題
+## PoC 系列 — 帶真值求解的 317 個實際問題
 
 每一個都具有閉式或合成的真值，並必定附上零點(什麼都不做)。失敗方式分開計數，原因以對照組區分。完整列表: [examples/README.md](../examples/README.md)。
 
@@ -137,6 +137,7 @@
 | vibration (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) Modal identification from video — frequency survives to the end, damping lies first<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure? |
 | colour (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) Colour Constancy (White Balance) — No Method Works, Only Conditions Do |
 | fileio (1) | [`poc_real_file_formats`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_file_formats.py) Reading Real Scientific Data Files in Five Formats — Scored Against Independent Readers and Published Values, and One Reader Bug Fixed |
+| measurement (1) | [`poc_ginza_stage2_ops`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ginza_stage2_ops.py) 銀座v2第2段 —— 緩曲線の中心・曲率・速度上限と日本式標識の形を学習なしで読む _(ja)_ |
 | rectification (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth |
 | space (1) | [`poc_star_tracker`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py) How One Star Image Reveals Satellite Attitude |
 | tomography (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) Where CT Reconstruction Starts to Break as Projections Are Removed |
@@ -149,16 +150,16 @@
 
 ## 尋找運算子
 
-共有 **3,852 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **73 篇族群指南**。依維度的入口:
+共有 **3,855 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **73 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 947/947、型別台帳 2882/2882、單行門面 `fullseye.<名稱>` 770/1594 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 947/947、型別台帳 2885/2885、單行門面 `fullseye.<名稱>` 770/1594 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 3852 篇中，附有可執行範例的 **3813** 篇(39 篇沒有)，用法說明 120 字以上的 **3653** 篇(199 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3852 篇全有。
+**內容實測**: 3855 篇中，附有可執行範例的 **3816** 篇(39 篇沒有)，用法說明 120 字以上的 **3656** 篇(199 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3855 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
 | `2d` | 964 | [INDEX](ops/2d/INDEX.md) |
-| `drive` | 749 | [INDEX](ops/drive/INDEX.md) |
+| `drive` | 752 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 506 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 378 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 115 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
@@ -314,9 +315,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 340 篇
+## 文件地圖 — 共 342 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,852 篇運算子說明與 73 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,855 篇運算子說明與 73 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 
@@ -459,7 +460,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(254)
+**Other**(256)
 
 | 文件 | 內容 |
 |---|---|

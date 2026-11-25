@@ -241,7 +241,14 @@ def _finite_rgb(image, op):
     """Return finite HxWx3 RGB in [0,1] / 有限な RGB を返す。"""
     rgb = np.asarray(image, np.float64)
     if rgb.ndim != 3 or rgb.shape[2] != 3 or min(rgb.shape[:2]) < 1:
-        raise ValueError("%s: image must be a non-empty (H, W, 3) RGB array" % op)
+        raise ValueError(
+            "%s: image shape is %r; a non-empty (H, W, 3) RGB array is required / "
+            "画像形状は%rで、空でない(H, W, 3) RGBが必要です. "
+            "The op is rejected because an empty or non-RGB image carries no lane evidence / "
+            "空またはRGBでない画像には車線根拠がないため拒否します. "
+            "Provide a decoded RGB crop, for example np.zeros((32, 32, 3)), then verify that "
+            "color_rule_mask returns non-unknown pixels / np.zeros((32, 32, 3))等の復号済みRGBを渡し、"
+            "color_rule_maskがunknown以外を返すことを確認してください" % (op, rgb.shape, rgb.shape))
     if not np.all(np.isfinite(rgb)) or np.any((rgb < 0.0) | (rgb > 1.0)):
         raise ValueError("%s: RGB values must be finite and in [0, 1]" % op)
     return rgb
@@ -764,6 +771,14 @@ def lane_curve_estimate(left, right, *, lane_width=DEFAULT_LANE_WIDTH_M,
         assert abs(out["curvature"][0] - .004) < 1e-10
     """
     op = "lane_curve_estimate"
+    if left is None and right is None:
+        raise ValueError(
+            "lane_curve_estimate: left=None and right=None; at least one valid fitted boundary is required / "
+            "left=Noneかつright=Noneで、少なくとも一方の有効な当てはめ境界が必要です. "
+            "No centre or curvature can be identified without observed lane points / 観測車線点なしでは"
+            "中央も曲率も同定できないため拒否します. Run color_rule_mask, convert a non-empty colour "
+            "mask to BEV points, and call lane_boundary_fit before retrying / color_rule_maskの非空maskを"
+            "BEV点へ変換し、lane_boundary_fitを実行してから再試行してください")
     count = int(samples)
     if count < CURVE_MIN_PATH_POINTS:
         raise ValueError("%s: samples must be >= %d" % (op, CURVE_MIN_PATH_POINTS))
