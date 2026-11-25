@@ -5,6 +5,8 @@ modal hooks stubbed, the same harness the reviewer's reproducers used."""
 import json
 import math
 import os
+import threading
+import time
 
 import numpy as np
 import pytest
@@ -36,6 +38,9 @@ def win(app):
     yield w, model
     w._knob_timer.stop()
     w.close()
+    app.processEvents()
+    assert not w._run_controller.threads
+    assert not w._run_controller.finish_bridges
 
 
 def _apply(win, text):
@@ -103,6 +108,60 @@ def test_f2_parser_reports_source_line_per_stage():
     assert not errs
     assert [s[0] for s in st] == ["gaussian", "gaussian", "otsu"]
     assert lines == [4, 4, 6]
+
+
+def test_f2_capped_stage_setter_keeps_unrolled_source_line_map(app, win):
+    """上限付き setter を通しても Apply の worker は Program 行を消さない。
+
+    The capped normalising setter must not let Apply's worker erase Program lines.
+    """
+    w, model = win
+    prog = ("dev_set_color ('cyan')\nfor 2\n"
+            "gaussian (0.4, 0.5)\nendfor\notsu (0.5, 0.5)\n")
+    _apply(w, prog)
+    # 上限用の generator 経路は段のリストを作り直すが、Apply 所有のソース行マップは残す。
+    # The cap's generator route rebuilds the stage list while Apply's source-line map remains.
+    model.stages = (tuple(stage) for stage in model.stages)
+    app.processEvents()
+    ed = w._program["edit"]
+    assert ed.toPlainText().splitlines() == prog.splitlines()
+    assert w._state["stage_lines"] == [3, 3, 5]
+    ed.breakpoints = {3}
+    w._program["run"](True)
+    app.processEvents()
+    assert ed._exec_line == 3 and w._stage_list.currentRow() == 0
+
+
+def test_f2_quiesce_keeps_ownership_on_timeout_then_retires_the_apply_worker(app, win, monkeypatch):
+    """閉じる時は、停止できない段の QThread を捨てず、停止後に GUI 側で片付ける。
+
+    Closing must retain a worker that exceeds its bounded wait, then retire it on
+    the GUI thread as soon as its current non-interruptible stage returns.
+    """
+    w, _model = win
+    entered, release = threading.Event(), threading.Event()
+
+    def held(value, _stages, **_kwargs):
+        entered.set()
+        assert release.wait(5), "test worker was not released"
+        return value
+
+    monkeypatch.setattr(studio.api, "run_pipeline", held)
+    _apply(w, "gaussian (0.5, 0.5)")
+    deadline = time.monotonic() + 5.0
+    while not entered.is_set() and time.monotonic() < deadline:
+        app.processEvents()
+        time.sleep(0.005)
+    assert entered.is_set(), "Apply worker did not start"
+    try:
+        assert w.quiesce(timeout_ms=1) is False
+        assert w._run_controller.threads
+        assert w._run_controller.finish_bridges
+    finally:
+        release.set()
+    assert w.quiesce(timeout_ms=5000) is True
+    assert not w._run_controller.threads
+    assert not w._run_controller.finish_bridges
 
 
 # ----------------------------------------------------------------- F3 knobs

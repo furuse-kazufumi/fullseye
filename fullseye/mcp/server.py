@@ -34,7 +34,7 @@ from typing import Any
 import numpy as np
 
 from json_safety import MAX_JSON_DEPTH, _json_depth as json_depth
-from fssystem import get_system
+from fssystem import MAX_PROGRAM_STAGES, get_system, pipeline_stage_limit_message
 
 from .catalog import Catalog, CatalogError, SOURCES
 from .diagnose import side_by_side, stats_of, verdict_of
@@ -199,7 +199,7 @@ TOOLS: dict[str, dict] = {
         "inputSchema": {"type": "object", "properties": {
             "start_sort": {"type": "string"},
             "bindings": {"type":"object","additionalProperties":_HANDLE},
-            "stages": {"type": "array", "minItems": 1, "maxItems": 64, "items": {"type": "object",
+            "stages": {"type": "array", "minItems": 1, "maxItems": MAX_PROGRAM_STAGES, "items": {"type": "object",
                 "properties": {"op": {"type": "string", "maxLength": 120},
                                "inputs": _STAGE_INPUTS,
                                "params": _STAGE_PARAMS,
@@ -322,7 +322,7 @@ TOOLS: dict[str, dict] = {
                 "assume_cuda": {"type":"boolean", "description": (
                     "dry_run のとき、GPU の無い機械でも CUDA・CuPy のある機械として経路表だけで決める")},
                 "stages": {
-                    "type": "array", "minItems": 1, "maxItems": 64,
+                    "type": "array", "minItems": 1, "maxItems": MAX_PROGRAM_STAGES,
                     "items": {
                         "type": "object",
                             "properties": {
@@ -573,7 +573,10 @@ def _validate(schema: dict, args: Any) -> dict:
             if len(value) < spec.get("minItems", 0):
                 raise ArgError("%s は%d 段以上" % (path,spec["minItems"]))
             if len(value) > spec.get("maxItems", 10**9):
-                raise ArgError("%s は%d以下" % (path,spec["maxItems"]))
+                if path.split(".")[-1] == "stages" and spec["maxItems"] == MAX_PROGRAM_STAGES:
+                    raise ArgError(pipeline_stage_limit_message(len(value)))
+                raise ArgError("%s は %d 個ですが、上限は %d 個です / %s has %d items; the maximum is %d"
+                               % (path, len(value), spec["maxItems"], path, len(value), spec["maxItems"]))
             for i, item in enumerate(value):
                 check(spec.get("items", {}), item, "%s[%d]" % (path, i), depth + 1)
         elif not kind:
@@ -1724,7 +1727,9 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                       max_stages: int | None = None, bindings: dict | None = None,
                       store: HandleStore | None = None, outputs: list[str] | None = None) -> dict:
     """Shared non-executing pipeline validator used by both MCP entry points."""
-    max_stages = int(max_stages or get_system("pipeline_max_stages"))
+    # The system parameter may make the MCP boundary stricter, but no caller can
+    # loosen the shared Studio/engine hard cap.
+    max_stages = min(int(max_stages or get_system("pipeline_max_stages")), MAX_PROGRAM_STAGES)
     errors, normalized = [], []
     from fullseye.opsearch import _graph, known_sorts, normalize_sort
     def normalize_ref(ref):
@@ -1743,7 +1748,8 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
         errors.append({"layer": "pipeline", "stage": 0, "reason": "empty_pipeline", "candidates": []})
     if len(stages) > max_stages:
         errors.append({"layer": "pipeline", "stage": 0, "reason": "too_many_stages",
-                       "value": len(stages), "limit": max_stages, "candidates": []})
+                       "value": len(stages), "limit": max_stages, "candidates": [],
+                       "detail": pipeline_stage_limit_message(len(stages), max_stages)})
     graph_edges = {
         e["op"]: {**e, "inputs": [normalize_sort(x) for x in e.get("inputs", ())],
                   "output": normalize_sort(e.get("output"))}
