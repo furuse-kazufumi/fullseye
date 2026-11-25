@@ -2539,6 +2539,13 @@ def _check_input_range(v, op):
 #: 2-D 画像として読める 3-D 配列の最終軸の長さ(グレー 1 / RGB 3 / RGBA 4)。これ以外は体積。
 _IMAGE_LAST_AXIS_OK = (1, 3, 4)
 
+#: ``map::`` の辺が基底演算を積んだ ``seq<image>`` に適用する、画素独立な
+#: 2-D op。A stacked sequence is not a volume here: each slice is processed
+#: independently, so the direct array call is exactly the per-slice map.  Keep
+#: this in sync with ``tools/gen_op_facets.py``; the volume-axis regression test
+#: compares this set with the generated map edges.
+_STACK_POINTWISE_2D_OPS = frozenset(("companding_mu_law",))
+
 
 def _check_image_volume_axis(v, op):
     """Return the 3-D-volume-as-2-D-image error, or ``None``.
@@ -2551,6 +2558,11 @@ def _check_image_volume_axis(v, op):
     as gray/RGB/RGBA; any other 3-D shape is a volume.
     """
     if op.in_sort not in ("image", "region"):
+        return None
+    # ``map::companding_mu_law`` は根拠付き seq<image> edge / a grounded
+    # seq<image> edge. The base op is pointwise, so (N,H,W) is exactly the
+    # per-2-D-slice map; this documented stack is not a 3-D spatial volume.
+    if op.name in _STACK_POINTWISE_2D_OPS:
         return None
     arr = v if isinstance(v, np.ndarray) else None
     if arr is None or arr.ndim != 3 or arr.shape[-1] in _IMAGE_LAST_AXIS_OK:

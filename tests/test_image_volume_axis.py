@@ -5,6 +5,8 @@
 ``extra_checks='on'`` のときは既定方針でも image/region op が入口で断る。
 """
 import warnings
+import json
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -37,9 +39,17 @@ def test_opt_in_refuses_a_volume_for_image_and_region_ops():
 
 
 def test_volume_axis_warning_guard_covers_all_declared_2d_ops():
-    """§34: (8,8,8) の入口警告は image/region 全 688 本で同じ機構を通る。"""
-    targets = [op for op in ops.REGISTRY if op.in_sort in ("image", "region")]
-    assert len(targets) == 688, "3-D volume probe population changed; remeasure and update §34"
+    """§34: volume inputs warn; generated per-slice maps are the one safe exception / 立体は警告する。"""
+    all_2d = [op for op in ops.REGISTRY if op.in_sort in ("image", "region")]
+    names = {op.name for op in all_2d}
+    assert api._STACK_POINTWISE_2D_OPS <= names
+    graph = json.loads((Path(__file__).resolve().parents[1] / "fullseye" / "data" /
+                        "OP_GRAPH.json").read_text(encoding="utf-8"))
+    map_bases = {edge["op"].removeprefix("map::") for edge in graph["edges"]
+                 if edge["op"].startswith("map::")}
+    assert api._STACK_POINTWISE_2D_OPS == map_bases
+    targets = [op for op in all_2d if op.name not in api._STACK_POINTWISE_2D_OPS]
+    assert targets, "the volume-axis guard lost every non-map 2-D op"
     assert all(api._check_image_volume_axis(VOL, op) is not None for op in targets)
 
     # The input guard is the production path before a backend runs. Call it directly
@@ -57,6 +67,20 @@ def test_volume_axis_warning_guard_covers_all_declared_2d_ops():
         assert all(counts.get(op.name) == 1 for op in targets)
     finally:
         fs.clear_fallbacks(reset_warnings=True)
+
+
+def test_lifted_map_base_runs_as_the_documented_per_slice_stack():
+    """A map base accepts seq<image> and equals the 2-D slice calls / map の各枚を正しく通す。"""
+    stack = np.random.default_rng(2).random((3, 8, 8))
+    expected = np.stack([fs.apply(slice_, "companding_mu_law", on_error="raise")
+                         for slice_ in stack])
+    fs.clear_fallbacks(reset_warnings=True)
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        actual = fs.apply(stack, "companding_mu_law", on_error="raise")
+    assert np.allclose(actual, expected, atol=1e-12)
+    assert not [w for w in caught if issubclass(w.category, fs.FullseyeFallbackWarning)]
+    assert "companding_mu_law" not in fs.fallback_counts()
 
 
 def test_opt_in_keeps_colour_and_gray_images_working():
