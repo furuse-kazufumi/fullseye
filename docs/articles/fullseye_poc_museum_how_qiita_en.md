@@ -2828,7 +2828,7 @@ Ops used (notes): [`fill_up`](https://furuse.work/ops/2d/region/fill_up.html) ·
 
 ## No.2026.319 —— Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules
 
-This reads gentle lanes and Japanese sign appearances without a trained model. On the independent synthetic holdout, centre-error p95 is 0.106704 m, the maximum is 0.477989 m, and sign macro F1 is 0.927885 (38/40); the same run also keeps the failure side in its figures.
+Camera calibration and a quadratic fit locate the gentle lane centre. On the synthetic holdout, the upper-tail centre error was 0.106704 m. Stop and speed-limit-candidate classifications appear alongside failure examples.
 
 [![Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/01_first_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/01_first.png)
 

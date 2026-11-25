@@ -5159,8 +5159,8 @@
    "caption_ja": "白・黄の合成RGBから、明示したカメラ/BEV較正、色規則、二次境界の当てはめで車線中心と符号つき曲率を出し、横加速度上限から速度上限を計算する。e-Gov別表第二の寸法・配色で合成した一時停止、最高速度候補、車両進入禁止は、頂点数・円形度・HSV配置だけで分類する。調整用と生成条件を分けたfull holdoutでは、車線20件すべてが有効で中心誤差p95は0.106704 m、最大は0.477989 mだった。標識40件は38件正解、macro F1は0.927885だった。図は同じ実行の入力→出力→解析真値と、劣化を単独で強めた破綻曲線・失敗例を示す。主張は、この合成holdout族に限る。",
    "caption_en": "From synthetic white-and-yellow RGB, explicit camera/BEV calibration, colour rules and a quadratic boundary fit produce lane centre and signed curvature; the lateral-acceleration limit then gives the speed limit. Stop, speed-limit-candidate and no-entry appearances synthesised from the dimensions and colours in e-Gov Appended Table 2 are classified using only vertex count, circularity and HSV layout. On the full holdout with separate generation settings, all 20 lane cases were valid: centre-error p95 was 0.106704 m and the maximum was 0.477989 m. Of 40 sign cases, 38 were correct and macro F1 was 0.927885. The figures show same-run input → output → analytic truth, plus one-axis-at-a-time breakdown curves and failure examples. The claim is limited to this synthetic holdout family.",
    "run": "py -3.11 examples/poc_ginza_stage2_ops.py",
-   "lead_ja": "緩いカーブの車線と日本式標識を、学習済みモデルを使わずに読む。独立した合成holdoutでは中心誤差p95が0.106704 m、最大が0.477989 m、標識のmacro F1が0.927885（38/40）で、破綻する側も同じ実行の図に残した。",
-   "lead_en": "This reads gentle lanes and Japanese sign appearances without a trained model. On the independent synthetic holdout, centre-error p95 is 0.106704 m, the maximum is 0.477989 m, and sign macro F1 is 0.927885 (38/40); the same run also keeps the failure side in its figures."
+  "lead_ja": "カメラ較正と二次境界で、緩い車線の中心を求める。合成holdoutでの中心誤差の九十五パーセンタイルは0.106704 mだった。一時停止などの標識分類と失敗例も図に示す。",
+  "lead_en": "Camera calibration and a quadratic fit locate the gentle lane centre. On the synthetic holdout, the upper-tail centre error was 0.106704 m. Stop and speed-limit-candidate classifications appear alongside failure examples."
   }
  ]
 }

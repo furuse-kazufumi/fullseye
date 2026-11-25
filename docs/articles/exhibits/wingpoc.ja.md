@@ -8135,7 +8135,7 @@ py -3.11 examples/poc_cloth_towel_corners_synth.py
 
 ## No.2026.319 —— 銀座v2第2段 —— 緩い車線の中心・符号つき曲率・速度上限と日本式標識の形を古典規則で読む
 
-緩いカーブの車線と日本式標識を、学習済みモデルを使わずに読む。独立した合成holdoutでは中心誤差p95が0.106704 m、最大が0.477989 m、標識のmacro F1が0.927885（38/40）で、破綻する側も同じ実行の図に残した。
+カメラ較正と二次境界で、緩い車線の中心を求める。合成holdoutでの中心誤差の九十五パーセンタイルは0.106704 mだった。一時停止などの標識分類と失敗例も図に示す。
 
 [![銀座v2第2段 —— 緩い車線の中心・符号つき曲率・速度上限と日本式標識の形を古典規則で読む](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/01_first_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/01_first.png)
 

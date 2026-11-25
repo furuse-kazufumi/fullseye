@@ -44,11 +44,14 @@ def airy_intensity(theta, diameter_um):
 def scattering_kernel(diameters=DIAMETERS, samples=25):
     """Ring-integrated Fraunhofer kernel; columns have unit total signal."""
     diameters=np.asarray(diameters,float)
+    # NumPy 1.x uses trapz; NumPy 2.x calls the same integration trapezoid.
+    # NumPy 1.x は trapz、NumPy 2.x は同じ積分を trapezoid と呼ぶ。
+    integrate = getattr(np, "trapezoid", np.trapz)
     k = np.empty((len(THETA_EDGES)-1, len(diameters)))
     for i, (a, b) in enumerate(zip(THETA_EDGES[:-1], THETA_EDGES[1:])):
         th = np.geomspace(a, b, samples)
         for j, d in enumerate(diameters):
-            k[i, j] = np.trapezoid(airy_intensity(th, d) * 2*np.pi*np.sin(th), th)
+            k[i, j] = integrate(airy_intensity(th, d) * 2*np.pi*np.sin(th), th)
     return k / np.maximum(k.sum(axis=0, keepdims=True), 1e-30)
 
 

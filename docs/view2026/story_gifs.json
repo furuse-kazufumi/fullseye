@@ -18600,7 +18600,7 @@
       },
       "alt": {
         "ja": "Same-run input -> output -> analytic truth. Japanese sign dimensions/colours: e-Gov Appended Table 2, revision 335M50004002003_20260901_508M60000802003.",
-        "en": "This reads gentle lanes and Japanese sign appearances without a trained model. On the independent synthetic holdout, centre-error p95 is 0.106704 m, the maximum is 0.477989 m, and sign macro F1 is 0.927885 (38/40); the same run also keeps the failure side in its figures."
+        "en": "Camera calibration and a quadratic fit locate the gentle lane centre. On the synthetic holdout, the upper-tail centre error was 0.106704 m. Stop and speed-limit-candidate classifications appear alongside failure examples."
       }
     },
     "poc_driving_commonroad": {
