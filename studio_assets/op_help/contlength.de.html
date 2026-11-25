@@ -12,15 +12,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/contlength.chain.jpg">contlength: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Umfang einer Region in Pixeln (<code style="color:#22d3bf">perimeter</code> aus <code style="color:#22d3bf">regionprops</code>) — dieselbe Größe in derselben Einheit wie HALCONs <code style="color:#22d3bf">contlength</code> (Contour length of a region.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>周囲長の規約(この op は太字の行を使う)。</b> 真の周囲長に対する実測比は次のとおりで、値は推定量を替えると互換ではない。</p>
-<p>| 推定量 | 円 r=96 / 真値 | 正方形 128 / 真値 | この op |</p>
-<p>|---|---:|---:|---|</p>
-<p>| <b><code style="color:#22d3bf">skimage.measure.perimeter</code></b> | <b>1.0518</b> | <b>0.9922</b> | <b>使用する</b> |</p>
-<p>| <code style="color:#22d3bf">skimage.measure.perimeter_crofton</code> | 1.0016 | 0.9459 | 使用しない |</p>
-<p>前者は曲線で +5.18 % の側へ、Crofton は軸平行で -5.41 % の側へ寄る。解像度を上げても規約差は消えない。<code style="color:#22d3bf">docs/KNOWN_ISSUES.md</code> §50。</p>
-<p>★2026-09-26 まで画像の外周長 <code style="color:#22d3bf">2*(H+W)</code> で割って 1.0 で頭打ちにした値を返していた(30x70 の矩形で 0.2450、いまは 196.0)。<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>Umfangskonvention: Dieses op verwendet skimage.measure.perimeter (Kreis r=96: 1.0518; Quadrat 128: 0.9922), nicht Crofton (1.0016; 0.9459). Aufl?sung beseitigt den Konventionsunterschied nicht. docs/KNOWN_ISSUES.md ?50.</p>
+<p>★Bis 2026-09-26 wurde er durch die Bildrandlänge <code style="color:#22d3bf">2*(H+W)</code> geteilt und bei 1,0 abgeschnitten (0,2450 für ein 30x70-Rechteck; jetzt 196,0). <code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>.</p>
+<p><code style="color:#22d3bf">a</code> und <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
