@@ -1,5 +1,17 @@
 # Fullseye C/C++ SDK
 
+The pybind11 C SDK is first published as ABI 0.2 and extended compatibly in
+ABI 0.3. It is a development SDK: set
+`fs_init_options_t.runtime_root` (with `runtime_root_bytes` for 0.2) or
+`FULLSEYE_PYTHON_ROOT` to an environment containing the `fullseye` package.
+
+| Surface | Version | Result lifetime |
+| --- | --- | --- |
+| `fullseye_abi.h` public L1 contract | published 0.1 | Each function's declared opaque handle |
+| `fs_runtime_create`, `fs_find_ops_json`, `fs_call`, and pointer accessors | C SDK 0.2 | `fs_result_t *`, released by `fs_result_release` |
+| `fs_find_ops_json_n`, `fs_call_id_n`, and ID accessors | C SDK 0.2 | `fs_result_id_t`, released by `fs_result_release_n` |
+| `fs_input_n_t` contour/points tail and coordinate result accessors | C SDK 0.3 | Borrowed coordinate views, valid until `fs_result_release_n` |
+
 ## 5 分で動かす / Five-minute start
 
 `pip install fullseye` だけで C/C++ 用のヘッダ、pybind11 ブリッジのソース、CMake
@@ -14,6 +26,47 @@ cmake --build build
 ```
 
 PowerShell では `python` の代わりに導入した Python を明示してもよい。
+
+## Typed operator reachability
+
+`fs_call_id_n` derives its callable operators from the contract and registry
+type ledgers. An operator is callable when both its declared input and output
+are one of `image`, `region`, `color`, `volume`, scalar `feature`, `contour`,
+or `points`; a row
+with another sort is rejected as `FS_E_UNSUPPORTED` with the declared-sort
+reason. This is fail-closed: it does not substitute an image or tuple for an
+unrepresentable value.
+
+`fs_input_n_t` carries direct `image`, `color`, `volume`, and `feature` inputs.
+Color uses a 3-D `(H, W, 3)` `fs_array_view_t`; volume uses a dense 3-D or 4-D
+`fs_array_view_t`. Shape and stride slots after `ndim` must be zero, and every
+axis after the first must be contiguous for all four supported dtypes. Feature
+is a finite `double`. Use `fs_result_array_n`
+for color or volume outputs and `fs_result_real_n` for feature outputs. The
+machine-readable ledger and complete help are generated in
+[`fullseye/data/C_API_OPS.json`](../fullseye/data/C_API_OPS.json) and
+[`C_API_OPS.md`](C_API_OPS.md); regenerate both with
+`py -3.11 tools/gen_c_api_ops.py`.
+
+ABI 0.3 appends `contour` and `points` fields to `fs_input_n_t`; no existing
+field or numeric enum value moved. `fs_points_view_t` is the same stable array
+layout as `fs_array_view_t`, restricted on direct input to a dense `(N,2)` or
+`(N,3)` matrix with `N > 0`; results may be an empty `(0,2)` or `(0,3)` matrix.
+A direct contour input is an image `(height,width)` plus one or more
+`fs_contour_part_t` values; an operator result may contain no parts. Every part
+is a non-empty `(N,2)` coordinate matrix and carries an explicit `closed` flag.
+`contours_bytes` and `contour_stride_bytes` bound the descriptor array. The flag is semantic: a
+closed C contour has an implicit last-to-first segment. The bridge maps it to
+the Python contour convention by repeating the first point when needed, and
+removes a repeated endpoint from a part explicitly marked open.
+
+Coordinate views apply the same fail-closed checks as color and volume:
+supported dtype, positive dimensions and strides, zero unused shape/stride
+slots, contiguous inner axis, sufficient byte extent, alignment, and no NaN or
+infinity. Direct input memory is borrowed only during `fs_call_id_n`. Use
+`fs_result_points_n`, or `fs_result_contour_shape_n`,
+`fs_result_contour_count_n`, and `fs_result_contour_n` for borrowed outputs.
+## Five-minute start (continued)
 
 ```powershell
 py -3.11 -m pip install fullseye
@@ -171,14 +224,14 @@ buffer length の不整合は状態コードと `fs_last_error` で拒否する�
 
 ## Rust の第 2 実装 / Rust second implementation
 
-`rust/fullseye_core` は仕様差分を見つけるための第 2 実装であり、現在は ABI 0.2 の部分集合を
-名乗る。ヘッダの ABI 0.3 で追加した Studio pipeline (`fs_pipeline_*`) は Rust 側に未実装なので、
+`rust/fullseye_core` は仕様差分を見つけるための第 2 実装で、`fullseye_abi.h` と同じ L1 ABI 0.3
+を名乗る。pybind11 C SDK の Studio pipeline 拡張 (`fs_pipeline_*`) は Rust 側に未実装なので、
 Rust library を pipeline consumer として使ってはならない。
 
 この部分集合には image / region / objectset / tuple の基本関数、`fs_gauss`、`fs_threshold`、
 `fs_connection`、`fs_measure_all`、`fs_select_shape` と `fs_apply` が含まれる。ABI parity test は
-Rust が名乗る版がヘッダ以下であることと、この実装済み関数集合だけを検証する。ヘッダと同じ
-最新版を名乗らせて未実装の pipeline を利用可能に見せることはしない。
+Rust が名乗る L1 ABI 版がヘッダと一致すること、この実装済み関数集合だけを export すること、
+pipeline API を export しないことを検証する。
 
 ## C++ の寿命・エラー・OpenCV
 

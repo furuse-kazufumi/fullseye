@@ -195,6 +195,31 @@ public:
         }
         return count;
     }
+    fs_points_view_t points(size_t index = 0u) const {
+        fs_points_view_t view = FS_ARRAY_VIEW_INIT;
+        const fs_status_t status = fs_result_points_n(value_, index, &view);
+        if (status != FS_OK) {
+            throw Error(status, std::string("Fullseye result.points failed (") + status_name(status) + ")");
+        }
+        return view;
+    }
+    size_t contour_count(size_t index = 0u) const {
+        size_t count = 0u;
+        const fs_status_t status = fs_result_contour_count_n(value_, index, &count);
+        if (status != FS_OK) {
+            throw Error(status, std::string("Fullseye result.contour_count failed (") + status_name(status) + ")");
+        }
+        return count;
+    }
+    fs_contour_part_t contour(size_t contour_index, int64_t &width, int64_t &height,
+                              size_t index = 0u) const {
+        fs_contour_part_t part = FS_CONTOUR_PART_INIT;
+        const fs_status_t status = fs_result_contour_n(value_, index, contour_index, &part, &width, &height);
+        if (status != FS_OK) {
+            throw Error(status, std::string("Fullseye result.contour failed (") + status_name(status) + ")");
+        }
+        return part;
+    }
     // The returned pixels are borrowed and remain valid while *this remains
     // alive. / 返す画素は借用で、この Result の寿命まで有効。
     ImageView image(size_t index = 0u) const {
@@ -330,6 +355,20 @@ private:
     std::shared_ptr<fs_runtime_t> runtime_;
     fs_pipeline_t *value_ = nullptr;
 };
+
+inline fs_input_n_t points_input(const fs_points_view_t &points) {
+    fs_input_n_t input = FS_INPUT_N_INIT;
+    input.kind = FS_VALUE_POINTS;
+    input.points = points;
+    return input;
+}
+
+inline fs_input_n_t contour_input(const fs_contour_view_t &contour) {
+    fs_input_n_t input = FS_INPUT_N_INIT;
+    input.kind = FS_VALUE_CONTOUR;
+    input.contour = contour;
+    return input;
+}
 
 class Runtime {
 public:

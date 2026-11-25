@@ -3,12 +3,12 @@
 
 The callable set is derived from the contract and registry type ledgers.  An
 operator is callable exactly when both sides use only image, region, color,
-volume, or feature; unsupported sorts are reported with their reason rather
-than silently omitted.  Parameter objects remain closed schemas.
+volume, feature, contour, or points; unsupported sorts are reported with their
+reason rather than silently omitted.  Parameter objects remain closed schemas.
 
 呼出可能集合は contract / registry の型台帳から導出する。入出力が image、region、
-color、volume、feature だけの op を呼出可能とし、他の sort は黙って落とさず理由を
-返す。パラメータ JSON は従来どおり閉じた schema で検査する。
+color、volume、feature、contour、points だけの op を呼出可能とし、他の sort は
+黙って落とさず理由を返す。パラメータ JSON は従来どおり閉じた schema で検査する。
 """
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ FS_E_BAD_PARAMS = 12
 FS_E_PY_EXCEPTION = 13
 
 #: C SDK で値として運べる型。This is the sole reachability rule / 到達可能性の唯一の規則。
-ABI_SORTS = frozenset(("image", "region", "color", "volume", "feature"))
+ABI_SORTS = frozenset(("image", "region", "color", "volume", "feature", "contour", "points"))
 _ANN_SORT = {"FImage": "image", "Region": "region", "ObjectSet": "objectset"}
 _PIPELINE_KIND = {"image": "image", "region": "region", "color": "color",
                   "volume": "volume", "feature": "feature"}
@@ -87,7 +87,7 @@ def catalog() -> dict:
     """Machine-readable C SDK operator ledger / 機械可読 C SDK op 台帳。"""
     rows = _entries()
     callable_rows = [row for row in rows if row["callable"]]
-    return {"schema_version": 2, "abi_sorts": sorted(ABI_SORTS),
+    return {"schema_version": 3, "abi_sorts": sorted(ABI_SORTS),
             "n_ops": len(rows), "n_callable": len(callable_rows),
             "n_rejected": len(rows) - len(callable_rows), "ops": rows}
 
@@ -150,6 +150,39 @@ def _input(value: dict):
         return fslib.Region(_runs_to_mask(value["h"], value["w"], value["runs"]))
     if kind in ("color", "volume"):
         return np.asarray(value["array"], dtype=np.float64)
+    if kind == "points":
+        points = np.asarray(value["array"], dtype=np.float64)
+        if points.ndim != 2 or points.shape[0] == 0 or points.shape[1] not in (2, 3):
+            raise _Refuse(FS_E_TYPE, "points must have shape (N,2) or (N,3) with N > 0")
+        if not np.isfinite(points).all():
+            raise _Refuse(FS_E_INVALID_ARG, "points contain NaN or infinity")
+        return points
+    if kind == "contour":
+        shape = tuple(value["shape"])
+        cs = [np.asarray(points, dtype=np.float64) for points in value["cs"]]
+        closed = list(value["closed"])
+        if (len(shape) != 2 or any(isinstance(dim, bool) or not isinstance(dim, (int, np.integer))
+                                  or int(dim) <= 0 for dim in shape)):
+            raise _Refuse(FS_E_TYPE, "contour shape must contain two positive integers")
+        if not cs or any(points.ndim != 2 or points.shape[0] == 0 or points.shape[1] != 2
+                         for points in cs):
+            raise _Refuse(FS_E_TYPE, "contour must contain non-empty (N,2) point sequences")
+        if len(closed) != len(cs) or any(not isinstance(flag, (bool, np.bool_)) for flag in closed):
+            raise _Refuse(FS_E_TYPE, "contour closed flags must match the point sequences")
+        if not all(np.isfinite(points).all() for points in cs):
+            raise _Refuse(FS_E_INVALID_ARG, "contour contains NaN or infinity")
+        # Python contours encode closure by repeating the first point. The C ABI
+        # carries it explicitly, so normalize both directions without guessing.
+        # Python の輪郭は始点の反復で閉曲線を表すため、C の明示フラグに従って正規化する。
+        normalized = []
+        for points, is_closed in zip(cs, closed):
+            repeats_first = points.shape[0] > 1 and np.array_equal(points[0], points[-1])
+            if is_closed and not repeats_first:
+                points = np.concatenate((points, points[:1]), axis=0)
+            elif not is_closed and repeats_first:
+                points = points[:-1]
+            normalized.append(points)
+        return {"shape": tuple(map(int, shape)), "cs": normalized}
     if kind == "feature":
         number = float(value["value"])
         if not math.isfinite(number):
@@ -179,11 +212,46 @@ def _output(value, row: dict) -> dict:
         if array.size != 1 or not np.isfinite(array[0]):
             raise _Refuse(FS_E_UNSUPPORTED, "%s returned a non-finite or non-scalar feature" % row["id"])
         return {"kind": "feature", "value": float(array[0])}
+    if sort == "contour":
+        if not isinstance(value, dict) or "shape" not in value or "cs" not in value:
+            raise _Refuse(FS_E_UNSUPPORTED, "%s returned an invalid contour object" % row["id"])
+        shape = tuple(value["shape"])
+        if (len(shape) != 2 or any(isinstance(dim, bool) or not isinstance(dim, (int, np.integer))
+                                  or int(dim) <= 0 for dim in shape)):
+            raise _Refuse(FS_E_UNSUPPORTED, "%s returned an invalid contour shape" % row["id"])
+        if not isinstance(value["cs"], (list, tuple)) or not value["cs"]:
+            raise _Refuse(
+                FS_E_UNSUPPORTED,
+                "%s returned 0 contour sequences; the C ABI requires at least 1 non-empty (N,2) "
+                "sequence / %s は輪郭列を 0 本返しました。C ABI は空でない (N,2) 点列を 1 本以上 "
+                "要求します。少なくとも 1 本の点列を返してください" % (row["id"], row["id"]),
+            )
+        contours = []
+        for raw in value["cs"]:
+            points = np.asarray(raw, dtype=np.float64)
+            if points.ndim != 2 or points.shape[0] == 0 or points.shape[1] != 2:
+                raise _Refuse(FS_E_UNSUPPORTED, "%s returned an invalid contour point sequence" % row["id"])
+            if not np.isfinite(points).all():
+                raise _Refuse(FS_E_INVALID_ARG, "operator output contains NaN or infinity")
+            points = np.ascontiguousarray(points, dtype=np.float64)
+            closed = bool(points.shape[0] > 1 and np.array_equal(points[0], points[-1]))
+            contours.append({"points": points.tobytes(), "count": int(points.shape[0]),
+                             "closed": closed})
+        return {"kind": "contour", "h": int(shape[0]), "w": int(shape[1]),
+                "contours": contours}
     if isinstance(value, fslib.FImage):
         value = value.pixels
     array = np.asarray(value, dtype=np.float64)
-    want_dims = {"image": (2,), "color": (3,), "volume": (3, 4)}[sort]
-    if array.ndim not in want_dims or (sort == "color" and array.shape[-1] != 3):
+    want_dims = {"image": (2,), "color": (3,), "volume": (3, 4), "points": (2,)}[sort]
+    if (array.ndim not in want_dims or (sort == "color" and array.shape[-1] != 3)
+            or (sort == "points" and (array.shape[0] == 0 or array.shape[1] not in (2, 3)))):
+        if sort == "points" and array.ndim == 2 and array.shape[0] == 0:
+            raise _Refuse(
+                FS_E_UNSUPPORTED,
+                "%s returned points shape %s; the C ABI requires shape (N,2) or (N,3) with N > 0 / "
+                "%s は点列 shape %s を返しました。C ABI では N > 0 が必要です。少なくとも 1 点を "
+                "含む (N,2) または (N,3) を返してください" % (row["id"], array.shape, row["id"], array.shape),
+            )
         raise _Refuse(FS_E_UNSUPPORTED, "%s returned shape %s, not declared %s" %
                       (row["id"], array.shape, sort))
     if not np.isfinite(array).all():
@@ -259,7 +327,7 @@ def find_ops(query_json: str | None) -> str:
     limit = value.get("limit", len(rows))
     if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
         raise ValueError("limit must be an integer in [1, 1000]")
-    return json.dumps({"schema_version": 2, "n_callable": len(rows), "ops": rows[:limit]},
+    return json.dumps({"schema_version": 3, "n_callable": len(rows), "ops": rows[:limit]},
                       ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 

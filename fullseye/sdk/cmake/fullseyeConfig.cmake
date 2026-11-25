@@ -102,9 +102,23 @@ if(WIN32)
   get_filename_component(_fullseye_python_bin "${fullseye_PYTHON_EXECUTABLE}" DIRECTORY)
   set(_fullseye_python_runtime
       "${_fullseye_python_bin}/python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}.dll")
+  # venv's Scripts directory normally has no DLL; FindPython resolves the
+  # selected interpreter's base runtime directory.  Search only that declared
+  # development-runtime location, never PATH. / venv の Scripts には通常 DLL
+  # が無いので、FindPython が解決した base runtime だけを探し、PATH は見ない。
+  if(NOT EXISTS "${_fullseye_python_runtime}")
+    foreach(_fullseye_python_runtime_dir IN LISTS Python_RUNTIME_LIBRARY_DIRS)
+      set(_fullseye_candidate_runtime
+          "${_fullseye_python_runtime_dir}/python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}.dll")
+      if(EXISTS "${_fullseye_candidate_runtime}")
+        set(_fullseye_python_runtime "${_fullseye_candidate_runtime}")
+        break()
+      endif()
+    endforeach()
+  endif()
   if(NOT EXISTS "${_fullseye_python_runtime}")
     message(FATAL_ERROR
-      "Fullseye could not locate Python's runtime DLL next to ${fullseye_PYTHON_EXECUTABLE}")
+      "Fullseye could not locate Python's runtime DLL for ${fullseye_PYTHON_EXECUTABLE}")
   endif()
   add_custom_command(TARGET fullseye_source_bridge POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
