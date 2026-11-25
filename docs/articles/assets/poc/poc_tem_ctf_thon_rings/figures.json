@@ -121,7 +121,8 @@
    585,
    1516,
    3
-  ]
+  ],
+  "source": "Source: EMPIAR-10028. URL: https://www.ebi.ac.uk/empiar/EMPIAR-10028/. Publication: Wong et al. (2014), eLife 3:e03080. Licence: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Rows 1024-3071 of three micrographs are cropped and transformed into power spectra / fitted CTF² panels."
  },
  {
   "file": "13_real_micrograph_part1_001.png",

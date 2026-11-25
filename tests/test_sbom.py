@@ -150,3 +150,15 @@ def test_basic_cyclonedx_shape_and_unique_references():
         assert not missing, "component is missing required keys: %s" % sorted(missing)
         assert "version" not in component, "declared ranges must not be exact component versions"
         assert "@" not in component["purl"], "dependency purl must not claim an exact version"
+
+
+def test_every_declared_dependency_has_the_reviewed_spdx_expression():
+    """SBOM の依存ライセンス欄を台帳と両方向で照合する。 / Match SBOM licences to the reviewed ledger."""
+    policy_path = ROOT / "docs" / "licenses" / "dependency_licenses.json"
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))["packages"]
+    components = _load_generated()["components"]
+    assert len(policy) >= len(components), "license policy unexpectedly shrank"
+    for component in components:
+        name = component["name"]
+        expected = policy[name]["spdx"]
+        assert component.get("licenses") == [{"expression": expected}], name
