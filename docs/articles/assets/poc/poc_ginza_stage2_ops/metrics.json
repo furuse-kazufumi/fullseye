@@ -1225,14 +1225,14 @@
     }
   },
   "figures": [
-    "C:\\dev\\projects\\imgevolve_wt_ginza-stage2\\docs\\articles\\assets\\poc\\poc_ginza_stage2_ops\\01_first.png",
-    "C:\\dev\\projects\\imgevolve_wt_ginza-stage2\\docs\\articles\\assets\\poc\\poc_ginza_stage2_ops\\02_middle.png",
-    "C:\\dev\\projects\\imgevolve_wt_ginza-stage2\\docs\\articles\\assets\\poc\\poc_ginza_stage2_ops\\03_last.png",
-    "C:\\dev\\projects\\imgevolve_wt_ginza-stage2\\docs\\articles\\assets\\poc\\poc_ginza_stage2_ops\\04_contact_sheet.png",
-    "C:\\dev\\projects\\imgevolve_wt_ginza-stage2\\docs\\articles\\assets\\poc\\poc_ginza_stage2_ops\\05_breakdown_lane_error.png",
-    "C:\\dev\\projects\\imgevolve_wt_ginza-stage2\\docs\\articles\\assets\\poc\\poc_ginza_stage2_ops\\06_breakdown_lane_valid.png",
-    "C:\\dev\\projects\\imgevolve_wt_ginza-stage2\\docs\\articles\\assets\\poc\\poc_ginza_stage2_ops\\07_breakdown_sign_f1.png",
-    "C:\\dev\\projects\\imgevolve_wt_ginza-stage2\\docs\\articles\\assets\\poc\\poc_ginza_stage2_ops\\08_breakdown_failure.png"
+    "01_first.png",
+    "02_middle.png",
+    "03_last.png",
+    "04_contact_sheet.png",
+    "05_breakdown_lane_error.png",
+    "06_breakdown_lane_valid.png",
+    "07_breakdown_sign_f1.png",
+    "08_breakdown_failure.png"
   ],
   "metrics": {
     "holdout": {

@@ -1001,7 +1001,8 @@ def main(argv=None):
     start = time.perf_counter()
     ci = os.environ.get("CI", "") == "1"
     payload, artifacts = run_suite(ci=ci)
-    payload["figures"] = render_figures(payload, artifacts)
+    # 公開する結果ファイルに手元の絶対パスを残さない: 図の場所は FULLSEYE_FIGURE_DIR からの名前だけを記録する。
+    payload["figures"] = [os.path.basename(path) for path in render_figures(payload, artifacts)]
     payload["runtime_seconds"] = float(time.perf_counter() - start)
     text = json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False)
     print(text)
