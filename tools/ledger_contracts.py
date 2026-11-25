@@ -1572,19 +1572,28 @@ def _bop_builders():
     import ppf
 
     grid = np.linspace(0.0, 1.0, 6)
-    points = np.array([(3.0 * x, 2.0 * y, 0.15 * x * y)
-                       for x in grid for y in grid])
-    normals = points - points.mean(axis=0)
-    normals /= np.linalg.norm(normals, axis=1)[:, None]
-    descriptor = ppf.ppf_model(points, normals, angle_bins=24)
+    base = np.array([(3.0 * x, 2.0 * y, 0.15 * x * y)
+                     for x in grid for y in grid])
+    wall = np.array([(0.2 * x, 2.0 * y, 1.3 * z)
+                     for x in (0.0, 1.0) for y in grid for z in grid[1:]])
+    points = np.vstack((base, wall))
+    # ``k_normals`` is read only when scene normals are estimated.  Use the
+    # same oriented estimator for descriptor and scene; the base plus wall is
+    # non-coplanar, so k=8 and k=32 make observably different hypotheses.
+    # ``k_normals`` は場面法線を推定するときだけ読む。曲面と壁を合わせた点群で
+    # 記述子側・場面側とも同じ推定器を使い、k=8 と k=32 の仮説を実測で分ける。
+    descriptor = ppf.ppf_model(points, angle_bins=24)
     scene = points + np.array([0.3, -0.2, 1.4])
     first = ppf.PoseHypothesis(np.eye(3), np.zeros(3), 9, 0.9, 0.9, 0.1)
-    second = ppf.PoseHypothesis(np.eye(3), np.array([2.0, 0.0, 0.0]),
+    # The hook sweeps the 0.1 default to 0.05 and 0.2.  Put this duplicate
+    # 0.125 units away so only the latter suppresses it.
+    # hook は既定 0.1 を 0.05 / 0.2 に振る。重複候補を 0.125 離し、後者だけで抑制する。
+    second = ppf.PoseHypothesis(np.eye(3), np.array([0.125, 0.0, 0.0]),
                                 8, 0.8, 0.8, 0.2)
     return {
         "ppf_pose_hypotheses": lambda pool, rng: (
-            [descriptor, scene], {"scene_normals": normals, "top_n": 1,
-                                  "ref_fraction": 0.5, "refine": False, "seed": 3}),
+            [descriptor, scene], {"top_n": 1, "ref_fraction": 0.5,
+                                  "refine": False, "seed": 3}),
         "pose_nms_symmetry": lambda pool, rng: (
             [[first, second], points, [np.eye(4)]],
             {"distance_threshold": 0.1, "top_n": 2}),
