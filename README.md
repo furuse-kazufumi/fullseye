@@ -180,6 +180,12 @@ fullseye setup --yes         # try every remaining backend independently + RAG; 
 duplicate dependency. `PySide6-Essentials` provides Studio's required Qt modules; its optional 3-D
 surface and audio playback features stay unavailable when their Qt add-ons are not installed.
 
+`export-verify` is deliberately outside the full default: it contains `plyfile` (GPL-3.0-or-later) solely for independent export verification; install it only when needed with `pip install "fullseye[export-verify]"`.
+
+### Fintraffic and OpenStreetMap attribution
+
+The wheel distributes `examples/data/fintraffic_sun_2026_09_20.json`, a small analysis aggregate: it has no raw camera-image bytes or OpenStreetMap geometry, but it retains one nearest-road attribute record (bearing, reference, name and highway class). Treat that retained OSM-derived record conservatively as a possible Derivative Database. Keep **© OpenStreetMap contributors** and the [ODbL 1.0 notice](https://opendatacommons.org/licenses/odbl/1-0/) with any redistribution; Fintraffic requires the attribution “Source: Fintraffic / digitraffic.fi, license CC 4.0 BY” and a [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) link. See the source and modification detail in `docs/licenses/THIRD_PARTY_INVENTORY.md`.
+
 **After installing, run `fullseye setup`** (see "Your first minute after `pip install`" below).
 If Windows startup behaves unexpectedly, run **`fullseye doctor`** for checked causes and copyable repairs; see
 [Windows troubleshooting](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/TROUBLESHOOTING.en.md).

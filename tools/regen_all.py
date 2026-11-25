@@ -52,6 +52,8 @@ CHAIN = [
     #   spec を足して回し忘れても誰も気づけなかった)。
     (["gen_auto_specs_data.py"], "auto_specs_data.py(data/auto_specs/*.json の wheel 同梱用ミラー)"),
     (["tools/gen_sbom.py"], "docs/sbom/fullseye.cdx.json(pyproject.toml の宣言依存、未解決の CycloneDX SBOM)"),
+    (["tools/sync_figure_provenance.py"], "docs/articles/assets/poc/**/figures.json(公開図の出典欄を監査台帳から同期)"),
+    (["tools/license_audit.py"], "docs/licenses の棚卸し + THIRD_PARTY_NOTICES.md + wheel 用の写し"),
     # ★2026-11-03: GPU の台帳 2 本は op ノートより前に。op ノートの GPU 欄は gpu_route(この 2 本と許可リスト)
     #   から書くので、後ろで台帳が変わるとノートが 1 周遅れになる。入力は commit した実測ログと許可リストだけ
     #   (registry を組むときに op_knob.json を読むが、表の中身には入らない —— ORDER_EXEMPT)。
@@ -176,6 +178,10 @@ CHAIN = [
 OUTPUTS = {
     "gen_auto_specs_data.py": ["auto_specs_data.py"],
     "tools/gen_sbom.py": ["docs/sbom/fullseye.cdx.json"],
+    "tools/sync_figure_provenance.py": ["docs/articles/assets/poc/*/figures.json"],
+    "tools/license_audit.py": ["docs/licenses/DEPENDENCY_INVENTORY.md",
+                                "docs/licenses/THIRD_PARTY_INVENTORY.md",
+                                "THIRD_PARTY_NOTICES.md", "fullseye/THIRD_PARTY_NOTICES.md"],
     "imgevolve.py": ["docs/OP_INDEX.json"],
     "tools/gpu_tier_rules.py": ["docs/perf/GPU_TIERS.md"],
     "tools/gen_halcon_opencl_parity.py": ["docs/perf/HALCON_OPENCL_PARITY.md",
@@ -289,6 +295,7 @@ MAY_OUTPUTS = {
 #: it and ORDER_EXEMPT records why the count cannot affect their results.
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
 READS = {
+    "tools/license_audit.py": ["docs/articles/assets/poc/*/figures.json"],
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
     "tools/gpu_tier_rules.py": ["docs/OP_INDEX.json"],
     "tools/gen_halcon_opencl_parity.py": ["docs/OP_INDEX.json"],
@@ -299,8 +306,9 @@ READS = {
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/type_connectivity.py": ["docs/OP_INDEX.json"],
     "tools/gen_wingpoc_gallery.py": ["fullseye/data/DEVICE_RULES.json", "fullseye/data/GPU_ACCEL_USE.json", "docs/articles/exhibits/exhibit_numbers.json",
-                                      "docs/articles/exhibits/glossary.json"],
-    "tools/gen_view2026_story_gifs.py": ["docs/articles/assets/poc/*_720.jpg"],
+                                      "docs/articles/exhibits/glossary.json", "docs/articles/assets/poc/*/figures.json"],
+    "tools/gen_view2026_story_gifs.py": ["docs/articles/assets/poc/*_720.jpg",
+                                          "docs/articles/assets/poc/*/figures.json"],
     "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json",
                                       "docs/view2026/story_gifs.json",
                                       "fullseye/data/OP_INDEX.json"],
@@ -319,6 +327,7 @@ READS = {
         "docs/HALCON_PARITY.md", "docs/IMPL_DIFFERENTIAL.md",
         "docs/perf/GPU_TIERS.md", "docs/perf/HALCON_OPENCL_PARITY.md", "docs/perf/gpu_fill3_2026-11-02.md",   # docmap が題を読む(2026-11-02)
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
+        "docs/licenses/DEPENDENCY_INVENTORY.md", "docs/licenses/THIRD_PARTY_INVENTORY.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md", "docs/RECIPE_COVERAGE.md",
         "docs/view2026/index.md", "docs/view2026/*/index.md",
         "docs/view2026/more.md", "docs/view2026/*/more.md",
@@ -365,6 +374,7 @@ READS = {
 #: Dependency/version fields of pyproject.toml feed these stages; gen_doc_counts changes only its
 #: final count prose. Declare every measured reader here.
 _PYPROJECT_COUNT_READERS = (
+    "tools/license_audit.py",  # 2026-11-25: 依存の版と extras を pyproject から読む(件数表記は使わない)
     "tools/gen_sbom.py", "tools/gen_device_rules.py", "imgevolve.py",
     "tools/halcon_compat_profile.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
     "tools/gen_wingpoc_gallery.py", "tools/gen_mcp_data.py", "tools/gen_view2026_pages.py",
