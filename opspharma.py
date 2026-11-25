@@ -36,6 +36,14 @@ def call(name, *args, **kwargs):
     return RESULT_ADAPTERS[name](result) if name in RESULT_ADAPTERS else result
 
 
+def info(name):
+    """op のメタ情報(category / module / in / out / func / doc)。
+
+    Metadata of one op: category, module, declared input/output sorts, callable and doc line.
+    """
+    return OPSPHARMA[name]
+
+
 def _frames(result):
     return result[0]
 
