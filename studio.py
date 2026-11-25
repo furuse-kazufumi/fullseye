@@ -8793,7 +8793,16 @@ def build_window(model=None):
             # painted after the worker result is rendered; painting them before
             # the asynchronous render would let show_result clear them again.
             getattr(win, "_apply_text_directives", lambda _text: None)("\n".join(model.directives))
-            refresh_stage_list(select=len(model.stages) - 1 if model.stages else None)
+            # 固定したスナップショットの実行はキャッシュ結果だけを変え、Program 本文は変えない。
+            # Running a frozen snapshot changes cached results, not the Program text.
+            # ここでコードを再同期すると元の段→ソース行マップと実行中のカーソルを消してしまう。
+            # Re-syncing would discard that map and a breakpoint/step cursor set while this worker completed.
+            # スナップショット後にパイプラインが変わった場合だけ Program を作り直す。
+            # Only rebuild the Program when its pipeline changed after this snapshot was taken.
+            selected = selected_index()
+            refresh_stage_list(select=(selected if 0 <= selected < len(model.stages)
+                                       else (len(model.stages) - 1 if model.stages else None)),
+                               sync_code=(snap["token"] != _current_run_token()))
             if snap["token"] != _current_run_token():
                 run_banner.setText(tr("The completed result used settings from before the change"))
                 for widget in (run_banner, run_show, run_current):
@@ -12419,7 +12428,11 @@ def build_window(model=None):
         _set_stage_lines(src_lines)           # gutter <-> stage map for THIS text
         code_edit.clear_exec()                # 旧実行位置は新パイプラインと不整合 — Continue の誤表示防止
         code_status.setText("applied %d stage(s)" % len(stages))
-        refresh_stage_list(select=(len(stages) - 1) if stages else None)
+        # Apply 済みの Program は、展開前のテキストと段→行マップをすでに持っている。
+        # The applied Program already owns its unexpanded text and stage-to-line map.
+        # ここで同期すると for/if のソース行と実行位置を段の連番へ作り直してしまう。
+        # Syncing here would replace their source lines and execution position with stage indices.
+        refresh_stage_list(select=(len(stages) - 1) if stages else None, sync_code=False)
         n_err = len(state["errors"])
         apply_dev_directives(text, reclaim_stale=True)   # state/style directives — pre-render; stale program windows reclaimed
         # Program Apply used to call show_result() here, which computed every

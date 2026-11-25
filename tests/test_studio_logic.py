@@ -105,6 +105,28 @@ def test_f2_parser_reports_source_line_per_stage():
     assert lines == [4, 4, 6]
 
 
+def test_f2_capped_stage_setter_keeps_unrolled_source_line_map(app, win):
+    """上限付き setter を通しても Apply の worker は Program 行を消さない。
+
+    The capped normalising setter must not let Apply's worker erase Program lines.
+    """
+    w, model = win
+    prog = ("dev_set_color ('cyan')\nfor 2\n"
+            "gaussian (0.4, 0.5)\nendfor\notsu (0.5, 0.5)\n")
+    _apply(w, prog)
+    # 上限用の generator 経路は段のリストを作り直すが、Apply 所有のソース行マップは残す。
+    # The cap's generator route rebuilds the stage list while Apply's source-line map remains.
+    model.stages = (tuple(stage) for stage in model.stages)
+    app.processEvents()
+    ed = w._program["edit"]
+    assert ed.toPlainText().splitlines() == prog.splitlines()
+    assert w._state["stage_lines"] == [3, 3, 5]
+    ed.breakpoints = {3}
+    w._program["run"](True)
+    app.processEvents()
+    assert ed._exec_line == 3 and w._stage_list.currentRow() == 0
+
+
 # ----------------------------------------------------------------- F3 knobs
 def test_f3_slider_b_leaves_knob_a_untouched(app, win):
     w, model = win
