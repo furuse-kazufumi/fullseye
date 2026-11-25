@@ -156,3 +156,22 @@ def test_sbom_has_a_license_expression_for_every_component():
     sbom = json.loads((ROOT / "docs" / "sbom" / "fullseye.cdx.json").read_text(encoding="utf-8"))
     assert len(sbom["components"]) >= 40
     assert all(component.get("licenses") for component in sbom["components"])
+
+
+def test_data_provenance_counts_only_git_tracked_files(tmp_path):
+    """.gitignore の局所生成物は配布されないので出典の記録を求めない。 / Ignored local artefacts need no provenance record."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("license_audit_tracked", ROOT / "tools" / "license_audit.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    stray = ROOT / "data" / "auto_functional_gate.json"
+    existed = stray.exists()
+    if not existed:
+        stray.write_text("{}", encoding="utf-8")
+    try:
+        shipped = mod._shipped_data_files()
+        assert shipped, "git が追跡する data/ のファイルが 0 件(空なら下の表明は無条件に通る)"
+        assert "data/auto_functional_gate.json" not in shipped
+    finally:
+        if not existed:
+            stray.unlink()

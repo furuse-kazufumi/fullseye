@@ -66,6 +66,23 @@ class AuditError(ValueError):
     """台帳または入力の不整合。 / An audit ledger or input is inconsistent."""
 
 
+def _shipped_data_files() -> list[str]:
+    """data/ の下で git が追跡しているファイルだけを返す(.gitignore の局所生成物を数えない)。
+
+    Return only git-tracked files under data/. Local artefacts that .gitignore
+    excludes (for example data/auto_functional_gate.json written by verify_auto.py)
+    are never distributed, so they need no provenance record. Outside a git
+    checkout (an unpacked sdist) every file on disk is counted, as before.
+    """
+    import subprocess
+    try:
+        out = subprocess.run(["git", "-C", str(ROOT), "ls-files", "-z", "--", "data"],
+                             capture_output=True, check=True, timeout=60).stdout
+    except (OSError, subprocess.SubprocessError):
+        return [path.relative_to(ROOT).as_posix() for path in (ROOT / "data").glob("**/*") if path.is_file()]
+    return sorted(name for name in out.decode("utf-8").split("\0") if name and (ROOT / name).is_file())
+
+
 def normalise(name: str) -> str:
     """PEP 503 の名前にそろえる。 / Normalise a distribution name per PEP 503."""
     return _NORMALISE.sub("-", name).lower()
@@ -304,8 +321,8 @@ def validate(policy: dict[str, Any], assets: dict[str, Any], resolution: dict[st
     if wheel_count < 10:
         raise AuditError("too few wheel third-party files were counted")
     third_party_data = [
-        path.relative_to(ROOT).as_posix() for path in (ROOT / "data").glob("**/*")
-        if path.is_file() and path.name != "README.md" and not path.name.startswith(".")
+        rel for rel in _shipped_data_files()
+        if Path(rel).name != "README.md" and not Path(rel).name.startswith(".")
     ]
     first_party_data = (
         "data/auto_specs/*", "data/gaussbonnet/genus*.npz", "data/macro_champions.json", "data/wave0_pins.json",
