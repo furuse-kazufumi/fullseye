@@ -58,8 +58,13 @@ be reorganised. Everything a consumer needs is re-exported from `fullseye`.
 
 ## From an LLM (MCP server, 0.1.11 PoC)
 
-`fullseye-mcp` is a stdio Model Context Protocol server (protocol
-`2025-06-18`). It exposes **9 tools, not 1,942**: search the catalog, read an operator's
+`fullseye-mcp` is a dual-era stdio Model Context Protocol server. Modern clients use
+protocol `2026-07-28`: they call `server/discover` and put their protocol version and
+capabilities in every request's `_meta`, with no `initialize` handshake. Handshake-era
+clients remain compatible through `initialize`; Fullseye negotiates `2025-11-25` and
+`2025-06-18`, returning the requested revision when supported. A client that supports
+both eras can probe `server/discover` and continue modern when it succeeds, while older
+clients keep their existing wire behavior. It exposes **9 tools, not 1,942**: search the catalog, read an operator's
 knowledge-layer note (with its pre-rendered, gate-verified figures as `resource_link`s),
 load a sample or a sandboxed image into a handle, apply one operator or a pipeline, and
 inspect a handle, and fix the text inside an image against the string it should read

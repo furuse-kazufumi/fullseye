@@ -70,7 +70,38 @@ editable install is treated the same only when its distribution metadata cannot 
 set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP_ROOT = "...")
 ```
 
-## 公式の mcp Python クライアントで確かめる(initialize → tools/list → tools/call)
+## protocol 2026-07-28 と 2025-11-25 以前の両対応
+
+Fullseye は、MCP の二つの era を同じ stdio サーバで扱う。
+
+- **modern (`2026-07-28`)**: handshake は無い。`server/discover`、`tools/list`、
+  `tools/call` の各要求が `_meta` に `io.modelcontextprotocol/protocolVersion` と
+  `io.modelcontextprotocol/clientCapabilities` を持つ。必須 metadata の欠落・型違いは
+  `-32602`、未対応版は対応版一覧を添えた `-32022`。成功結果には
+  `resultType: "complete"` が付き、`server/discover` と `tools/list` は `ttlMs` と
+  `cacheScope` を返す。modern では `initialize`、`ping`、`logging/setLevel` は無く、
+  `-32601` になる。
+- **legacy (`2025-11-25` / `2025-06-18`)**: 従来どおり `initialize` →
+  `notifications/initialized` の後に tool を呼ぶ。要求版が二つの対応版のどちらかなら
+  同じ版を返し、未知版や `initialize` で modern 版を名乗った場合は legacy の最新版
+  `2025-11-25` を counter-offer する。既存結果には `resultType` を足さず、wire shape を維持する。
+
+era は接続状態でなく要求ごとに決める。`initialize` の後でも、modern metadata を持つ次の
+要求は modern として処理する。逆に `_meta` が無い、または protocolVersion key が無い要求は
+旧クライアント互換の legacy 要求である。判定した era と拒否理由は stderr に記録し、stdout は
+JSON-RPC 専用のままにする。
+
+`2025-11-25` で増えた icons、URL mode elicitation、sampling の tool call、tasks は任意、または
+capability を広告した場合だけ必要で、Fullseye は広告しない。広告する tools の schema は有効な
+JSON Schema object で、2020-12 の既定 dialect を使う。このため tools capability だけを広告する
+サーバとして、2025-11-25 の必須差分を満たす。根拠は MCP 一次仕様の
+[2025-11-25 changelog](https://modelcontextprotocol.io/specification/2025-11-25/changelog)、
+[legacy lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle)、
+[2026-07-28 versioning](https://modelcontextprotocol.io/specification/2026-07-28/basic/versioning)、
+[discovery](https://modelcontextprotocol.io/specification/2026-07-28/server/discover)、
+[tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)である。
+
+## 公式の mcp Python クライアントで legacy 手順を確かめる(initialize → tools/list → tools/call)
 
 サーバは MCP の stdio の決まり(1 行に 1 通の JSON。Claude Code・Claude Desktop・公式 SDK が使う形)と、
 従来の Content-Length の枠の両方に応える(1.1.1 から)。1 通は 64 MiB まで(どちらの枠も)、Content-Length 枠の
@@ -78,7 +109,8 @@ set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP
 id は UTF-8 で表せる文字列・数・null だけ(他は -32600)。文字列と dict の鍵の対になっていないサロゲートも -32700。
 Content-Length が分かる枠を断る時は、その本文を小さな塊で読み捨ててから次の枠を読む。1 行目が JSON object / array でも
 「名前: 値」の見出しでもなければ、その 1 行だけを -32700 にして次の行を新しい 1 通として読む。公式の `mcp` Python クライアント(1.23.3 で確認)で、
-次の例が initialize → tools/list(24 道具)→ tools/call(照明の設計)まで通る:
+次の例は明示的に legacy の initialize → tools/list(24 道具)→ tools/call(照明の設計)を通す。
+modern 対応クライアントは先に `server/discover` を送り、成功すれば initialize 無しで進める:
 
 ```python
 import asyncio

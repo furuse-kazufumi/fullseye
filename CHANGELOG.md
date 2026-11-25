@@ -9,6 +9,22 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## 1.2.0 — 2026-11-24
 
+### MCP: protocol 2026-07-28 と initialize-era の両対応
+
+- stdio サーバに stateless な `2026-07-28` 経路を追加した。`server/discover` は対応版・
+  tools capability・serverInfo・cache hint を返し、modern の `tools/list` / `tools/call` は
+  `resultType: "complete"` を返す。要求ごとの `_meta` で era を決めるため、legacy の
+  initialize 後に来た modern 要求も接続状態に引かれず処理する。
+- modern の必須 metadata の欠落と型違いは `-32602`、未対応版は対応版一覧つきの
+  `-32022`、modern から消えた `ping` / `initialize` / `logging/setLevel` は `-32601`。
+  判定した era と拒否理由は stderr に監査記録し、stdout は JSON-RPC 専用のままにした。
+- legacy は既存の応答形を維持し、`initialize` で `2025-06-18` と `2025-11-25` を交渉する。
+  2025-11-25 changelog の icons、URL mode elicitation、sampling tools、tasks は任意または
+  capability 広告時の機能であること、tools schema の 2020-12 既定を満たすことを確認したため、
+  未知版への counter-offer は legacy の最新版 `2025-11-25` とした。
+- 実 subprocess を使う dual-era stdio 試験 12 件を追加した。対応版定数を空にする破壊では
+  8 件、discover から必須 `ttlMs` を消す破壊では 1 件が失敗し、門が空を通さないことを確認した。
+
 ### 既知の不具合 §34・§50・§52・§53
 
 - §34: 色チャネルを空間軸として跨ぐ 2-D op 89 本へ `(H, W, 3|4)` を渡すと、既定の
