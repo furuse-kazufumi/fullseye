@@ -373,6 +373,10 @@ _CATALOG = {
         # facade には在ったのに OP_GRAPH にも台帳にも無く、レシピから points -> 姿勢 の鎖が組めなかった
         # (recipebook book_3d の MISSING_OPS)。返りの dict は adapter で pose の正典 (R, t) にする。
         ("find_surface_pose", "ppf", ["points", "points"], "pose", False),
+        # 再利用 PPF descriptor(table)から複数姿勢を保ち、対称性 NMS は別段にして
+        # 「票はあるが同じ解ばかり」と「別個体」を混ぜない。
+        ("ppf_pose_hypotheses", "ppf", ["table", "points"], "table", False),
+        ("pose_nms_symmetry", "ppf", ["table", "points", "table"], "table", False),
         ("moment_axes", "match3d", ["points"], "axes", False),
         ("match_logpolar_z", "match3d", ["voxel", "voxel"], "rot_scale", True),
     ],

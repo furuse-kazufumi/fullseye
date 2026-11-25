@@ -16,6 +16,7 @@ sys.path.insert(0, str(REPO))
 # re-exports: tools/update_fullseye.py と tests がこのシム経由で使う
 from fullseye.rag_setup import (  # noqa: F401
     _REPO_LINE,
+    MANIFEST_NAME,
     SKILL_NAME,
     default_target,
     uninstall,

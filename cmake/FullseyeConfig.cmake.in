@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+set(Fullseye_DEVELOPMENT_SDK TRUE)
+set(Fullseye_RUNTIME_REQUIREMENT
+    "Set fs_init_options_t.runtime_root (and runtime_root_bytes for ABI 0.2) or FULLSEYE_PYTHON_ROOT to a Python environment with fullseye installed.")
+message(STATUS "Fullseye is a development SDK: CPython and the fullseye package are not bundled.")
+
+include("${CMAKE_CURRENT_LIST_DIR}/FullseyeTargets.cmake")
+check_required_components(Fullseye)

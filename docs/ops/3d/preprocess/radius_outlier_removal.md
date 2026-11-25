@@ -64,7 +64,7 @@ Notes
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[points_to_voxel](../transform/points_to_voxel.md) · [gaussians_to_voxel](../transform/gaussians_to_voxel.md) · [estimate_point_normals](../transform/estimate_point_normals.md) · [to_points](../transform/to_points.md) · [match_points_ncc](../match_localize/match_points_ncc.md) · [match_pca](../match_pose/match_pca.md) · [find_surface_pose](../match_pose/find_surface_pose.md) · [moment_axes](../match_pose/moment_axes.md)
+[points_to_voxel](../transform/points_to_voxel.md) · [gaussians_to_voxel](../transform/gaussians_to_voxel.md) · [estimate_point_normals](../transform/estimate_point_normals.md) · [to_points](../transform/to_points.md) · [match_points_ncc](../match_localize/match_points_ncc.md) · [match_pca](../match_pose/match_pca.md) · [find_surface_pose](../match_pose/find_surface_pose.md) · [ppf_pose_hypotheses](../match_pose/ppf_pose_hypotheses.md)
 
 ## 同カテゴリ(`preprocess`)
 

@@ -20,8 +20,8 @@
 | `required` | 49 |
 | `suitable` | 2205 |
 | `partial` | 653 |
-| `none` | 940 |
-| **合計** | **3847** |
+| `none` | 942 |
+| **合計** | **3849** |
 
 ## GPU 対応率
 
@@ -191,6 +191,7 @@
 | feature_register | 1 | 1 | 5 | 0 | 7 |
 | fiber | 0 | 0 | 2 | 5 | 7 |
 | gsplat | 4 | 0 | 0 | 3 | 7 |
+| match_pose | 0 | 2 | 3 | 2 | 7 |
 | matched | 0 | 6 | 1 | 0 | 7 |
 | perceptual | 0 | 7 | 0 | 0 | 7 |
 | photometric | 2 | 5 | 0 | 0 | 7 |
@@ -258,7 +259,6 @@
 | lane | 0 | 2 | 2 | 1 | 5 |
 | lensconfig | 0 | 0 | 0 | 5 | 5 |
 | light | 0 | 5 | 0 | 0 | 5 |
-| match_pose | 0 | 2 | 3 | 0 | 5 |
 | matching | 0 | 5 | 0 | 0 | 5 |
 | measure1d | 0 | 5 | 0 | 0 | 5 |
 | optics | 0 | 0 | 5 | 0 | 5 |

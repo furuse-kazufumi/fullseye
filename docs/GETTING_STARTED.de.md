@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: c70ba3c329f3 -->
+<!-- i18n-source-sha: 4d7dab5a96bd -->
 # Erste Schritte (in 5 Minuten startklar)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · **Deutsch** · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -41,22 +41,21 @@ Voraussetzung: **Python 3.11** (unter Windows `py -3.11`, unter Linux `python3.1
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # nur der Kern (numpy + scipy; alle Ops sind sichtbar, ein Op mit optionalem Backend nennt beim Aufruf das fehlende Extra)
+py -3.11 -m pip install -e .          # Python-API + Studio + Pillow; schwere Backends nur bei Bedarf per Extra ergänzen
 ```
 
-Der Kern läuft **allein mit numpy und scipy**. Zusätzliche Backends wie OpenCV / scikit-image / Pillow sind optional;
-fehlen sie, werden lediglich die für dieses Backend spezifischen Operatoren deaktiviert (graceful degradation). In der
-Praxis braucht man mindestens OpenCV oder Pillow zum Lesen/Schreiben von Bilddateien — es lohnt sich also, eines der
-folgenden zusätzlich zu installieren.
+Die Kern-API läuft mit **numpy und scipy**, und ein normales `pip install fullseye` installiert zusätzlich
+PySide6-Essentials für Studio und Pillow für Bild-I/O. Nur schwerere Backends wie OpenCV / scikit-image sind optional;
+fehlen sie, werden lediglich die für dieses Backend spezifischen Operatoren deaktiviert (graceful degradation).
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # Bild-I/O + Operatoren auf Basis von OpenCV
-py -3.11 -m pip install -e ".[all]"       # alle Backends (opencv, skimage, pil, wavelets, gpu, extra)
-py -3.11 -m pip install -e ".[gui]"       # falls Fullseye Studio (PySide6) genutzt werden soll
+py -3.11 -m pip install -e ".[opencv]"    # OpenCV-exklusive Bild-API und cv_*-Operatoren
+py -3.11 -m pip install -e ".[all]"       # alle zusätzlichen Backends
+fullseye-studio                            # Studio startet nach der Standardinstallation
 ```
 
-Die Liste der Extras samt Bedeutung ist in [INSTALL.md](INSTALL.md) zusammengefasst. Für die GUI wird `[gui]`
-(oder `[all]` + `[gui]`) benötigt.
+Die Liste der Extras samt Bedeutung ist in [INSTALL.md](INSTALL.md) zusammengefasst. `gui` und `pil` sind leere
+Kompatibilitätsaliase für bestehende Installationsbefehle.
 
 > Man kann es auch ohne Installation ausprobieren. Setzen Sie das Repository-Wurzelverzeichnis
 > (`<path-to-fullseye>`) als Arbeitsverzeichnis und tragen Sie diesen Pfad in die Umgebungsvariable `PYTHONPATH`
@@ -146,8 +145,9 @@ out = fullseye.run_pipeline(frame, stages)
 ## 4. Visuell aufbauen (Fullseye Studio)
 
 Ohne eine Zeile Code zu schreiben: Operatoren suchen und anordnen, Regler per Schieberegler drehen, Stufe für Stufe
-ausführen und die Zwischenergebnisse direkt betrachten. Dafür werden die GUI-Extras benötigt
-(`pip install -e ".[gui]"` = PySide6).
+ausführen und die Zwischenergebnisse direkt betrachten. Studio gehört zur Standardinstallation. Beim ersten
+interaktiven `fullseye`- oder `fullseye-studio`-Aufruf wird es einmalig im Windows-Startmenü oder Linux-App-Menü
+registriert; `FULLSEYE_NO_SHORTCUTS=1` oder `shortcuts/auto_register=false` in den Studio-Einstellungen verhindert dies.
 
 ```powershell
 py -3.11 studio.py          # oder, falls installiert: fullseye-studio
@@ -239,8 +239,8 @@ verwenden Sie stattdessen `run_pipeline` (Python) oder Studio, wie oben beschrie
 |---|---|
 | `ModuleNotFoundError: No module named 'fullseye'` | `pip install -e .` ausführen oder das Repository-Wurzelverzeichnis in `PYTHONPATH` eintragen |
 | Kein Befehl `fullseye` / `fullseye-studio` vorhanden | Die Konsolen-Skripte werden erst durch `pip install -e .` registriert. Ohne Installation `py -3.11 imgevolve.py ...` bzw. `py -3.11 studio.py` verwenden |
-| Studio startet nicht | GUI-Extras nicht installiert. `pip install -e ".[gui]"` (PySide6) |
-| `apply` / `pipeline` meldet `cannot read ...` | Für Bild-I/O OpenCV (`[opencv]`) oder Pillow (`[pil]`) installieren |
+| Studio startet nicht | Standardabhängigkeit beschädigt. `pip install --force-reinstall fullseye` |
+| `apply` / `pipeline` meldet `cannot read ...` | Standard-Pillow-Abhängigkeit oder Bild beschädigt. Fullseye neu installieren und Bild prüfen |
 | Operatoren eines zusätzlichen Backends erscheinen als "unknown" | Das betreffende Backend ist nicht installiert. `.[skimage]`, `.[wavelets]`, `.[extra]` usw. ergänzen |
 
 Eine ausführlichere Fehlersuche findet sich in [INSTALL.md](INSTALL.md).

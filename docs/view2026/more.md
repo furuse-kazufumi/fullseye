@@ -316,7 +316,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 </div>
 
-[PoC 以外の使用例 188 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 189 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 

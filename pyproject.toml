@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fullseye"
 version = "1.1.1"
-description = "Image inspection, 3-D measurement and physics simulation in Python: a numpy-native library of typed operators (3,847 typed ops in the machine-readable index: imaging, point clouds, optics, metrology), checked against simulated ground truth and handed to AI assistants through MCP and RAG, with an evolutionary pipeline designer and honest holdout gating"
+description = "Image inspection, 3-D measurement and physics simulation in Python: a numpy-native library of typed operators (3,849 typed ops in the machine-readable index: imaging, point clouds, optics, metrology), checked against simulated ground truth and handed to AI assistants through MCP and RAG, with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -28,8 +28,8 @@ classifiers = [
   "Topic :: Multimedia :: Graphics :: 3D Modeling",
   "Typing :: Typed",
 ]
-# The core (75 ops) runs on numpy + scipy alone. Everything else is optional and
-# only its own operators are affected when a backend is absent (graceful degradation).
+# CLI / library の核は numpy + scipy で動き、Studio は標準導入に含める。
+# The optional image-processing backends remain opt-in.
 #
 # threadpoolctl (BSD-3, pure Python, no dependencies of its own, ~40 KB) is the one
 # addition: it is the only portable way to cap BLAS threads around a decomposition.
@@ -44,7 +44,19 @@ classifiers = [
 # 求めると入れられる人が減るので、0 件のうち最も古い版にとどめる。修正版の無い脆弱性は
 # docs/security/pip_audit_allowlist.json に理由と期限つきで書く。
 # scipy 1.9 → 1.10: PYSEC-2023-102(CVE-2023-25399)。numpy 1.23 と threadpoolctl 3.1 は 0 件のまま。
-dependencies = ["numpy>=1.23", "scipy>=1.10", "threadpoolctl>=3.1"]
+# ``pip install fullseye`` is the portable desktop distribution.  The packages below
+# were checked against PyPI wheels on 2026-11-24 for CPython 3.11--3.14 on
+# win_amd64, manylinux x86_64/aarch64 and macOS arm64 (``docs/INSTALLATION.md``).
+# GPU/render/hand-pose stacks and packages with a missing platform wheel stay opt-in.
+dependencies = [
+  "numpy>=1.23", "scipy>=1.10", "threadpoolctl>=3.1",
+  "PySide6-Essentials>=6.5", "Pillow>=13.0",
+  "scikit-image>=0.20", "imageio>=2.28", "imageio-ffmpeg>=0.4", "tifffile>=2023.1",
+  "soundfile>=0.12", "pygltflib>=1.16", "laspy>=2.5", "lazrs>=0.5", "pypcd4>=1.4",
+  "openpyxl>=3.1", "pandas>=2.0", "trimesh>=4.0", "numpy-stl>=3.0",
+  "mrcfile>=1.5", "pynrrd>=1.1", "nibabel>=5.3", "matplotlib>=3.5", "pyserial>=3.5",
+  "pymodbus>=3.0", "zxing-cpp>=2.2", "paho-mqtt>=1.6", "asyncua>=1.0",
+]
 
 # PyPI ⇄ GitHub の相互リンク(PyPI プロジェクトページのサイドバーに出る)。
 # 公開リポジトリ名は公開名 fullseye(リネーム時はここを追従させる)。
@@ -60,14 +72,20 @@ Documentation = "https://furuse.work/"
 "Validation reports" = "https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml"
 
 [project.optional-dependencies]
+# Native SDK build tools are deliberately absent from the normal wheel install.
+# ネイティブ SDK のビルド道具は通常の wheel 導入には含めない。
+native = ["pybind11==2.13.6", "cmake>=3.21,<5"]
 # 下限を上げた extras(2026-10-24、OSV の件数は旧い下限の版で数えた):
 #   opencv-python 4.6 → 4.8.1.78: GHSA-qr4w-53vh-m672 / PYSEC-2023-183(同梱 libwebp)の 2 件
 #   Pillow 9 → 13.0: 72 件。13.0.0 は Python 3.11 以上 —— 3.10 を外した理由
 #   torch 2.0 → 2.13: 28 件(GHSA-53q9-r3pm-6pq6 = CVE-2025-32434 ほか)。最後の修正は
 #     GHSA-rrmf-rvhw-rf47(CVE-2025-3000、2.13.0)
 opencv = ["opencv-python>=4.8.1.78"]
-skimage = ["scikit-image>=0.20"]
-pil = ["Pillow>=13.0"]
+# These backends are now portable standard dependencies.  Keep the extra names as
+# empty compatibility aliases so existing requirements files continue to resolve.
+skimage = []
+# Pillow は標準依存。既存の ``fullseye[pil]`` を壊さない空の互換別名。
+pil = []
 wavelets = ["PyWavelets>=1.4"]
 # ★2026-11-03(完成度監査 段 0-5): CuPy を足した(numpy/scipy の実装を GPU で走らせる経路が使う)。
 #   cupy-cuda12x の wheel は Linux と Windows だけ —— macOS で `[gpu]` ごと入らなくならないよう印で外す。
@@ -79,20 +97,20 @@ gpu = ["torch>=2.13", "kornia>=0.9", "cupy-cuda12x>=14; platform_system != 'Darw
 # あるのでビルド不要。**必須にはしない** —— 内蔵ラスタライザだけでも動く設計を保つ。
 gi = ["mitsuba>=3.5"]
 extra = ["mahotas>=1.4", "SimpleITK>=2.2"]
-# Studio(fullseye-studio)。Pillow は画像の復号器: これが無いと README の勧める入れ方で Studio の「最初の 3 手」の
-# 1 手目(見本の画像を開く)が "No module named 'PIL'" で失敗した(2026-11-13、配布物の検証 M1)。下限は pil と同じ。
-gui = ["PySide6>=6.5", "Pillow>=13.0"]
+# Studio は標準依存(Pyside6-Essentials + Pillow)。gui は既存の
+# ``pip install fullseye[gui]`` を壊さないための空の互換別名。
+gui = []
 handpose = ["mediapipe>=0.10"]
-video = ["imageio>=2.28", "imageio-ffmpeg>=0.4"]
-audio = ["soundfile>=0.12"]          # non-WAV audio (mp3/flac/ogg); WAV is built-in
-volume = ["SimpleITK>=2.2", "tifffile>=2023.1"]   # volumetric/medical import: DICOM/NIfTI/NRRD/MetaImage/TIFF -> volume sort
-raster = ["imageio>=2.28", "tifffile>=2023.1"]    # bit-depth-preserving raster (16-bit/float/PFM) + metric depth I/O
-gltf = ["pygltflib>=1.16"]                        # glTF 2.0 / GLB object import
-lidar = ["laspy>=2.5", "lazrs>=0.5"]              # LAS / LAZ LiDAR point clouds
-pcd = ["pypcd4>=1.4"]                             # PCD binary / binary_compressed point clouds
-xlsx = ["openpyxl>=3.1"]                           # Excel (.xlsx) レポート出力(fullseye.save_xlsx_report、測定表+画像)
-e57 = ["pye57>=0.4"]                              # ASTM E57 point-cloud import/export (MIT, libE57 wheel)
-export-verify = ["pandas>=2.0", "trimesh>=4.0", "numpy-stl>=3.0", "plyfile>=1.0", "pye57>=0.4", "astropy>=7.0", "mrcfile>=1.5", "pynrrd>=1.1", "nibabel>=5.3", "tifffile>=2023.1"] # テスト専用の独立リーダー(GPL の plyfile は配布コードから import しない)
+video = []
+audio = []                         # non-WAV audio (mp3/flac/ogg); WAV is built-in
+volume = ["SimpleITK>=2.2"]       # SimpleITK has no current all-platform wheel set
+raster = []                         # bit-depth-preserving raster + metric depth I/O
+gltf = []                           # glTF 2.0 / GLB object import
+lidar = []                          # LAS / LAZ LiDAR point clouds
+pcd = []                            # PCD binary / binary_compressed point clouds
+xlsx = []                           # Excel (.xlsx) reports
+e57 = ["pye57>=0.4"]               # ASTM E57: Linux aarch64 wheel is unavailable
+export-verify = ["pye57>=0.4", "astropy>=7.0", "plyfile>=1.0"]  # test-only readers; plyfile is GPL-3.0 and needs explicit setup --include
 # 2026-09-05: deptry(依存の宣言漏れ検査)で見つけた —— 出荷モジュール
 # contours_xld / regions_gen が `matplotlib.path.Path` を**関数内で遅延 import**
 # しており、どの extra にも宣言が無かった。import は通るので clean install の
@@ -100,19 +118,19 @@ export-verify = ["pandas>=2.0", "trimesh>=4.0", "numpy-stl>=3.0", "plyfile>=1.0"
 # (fail-soft が「機能が入っていない」を隠す典型)。宣言して利用者が選べるようにする。
 # より良い直しは自前の `point_in_polygon`(厳密述語、既に公開 API にある)へ
 # 置き換えること —— 境界の扱いが変わりうるので 0.1.9 で検証してから。
-polygon = ["matplotlib>=3.5"]                     # 多角形の塗りつぶし(点の内外判定)
-threed = ["torch>=2.13", "scikit-image>=0.20", "SimpleITK>=2.2"]   # 3-D toolkit: GPU descriptors (feat_*), marching cubes, DICOM/volume I/O
+polygon = []                                       # matplotlib is standard
+threed = ["torch>=2.13", "SimpleITK>=2.2"]       # GPU descriptors + DICOM/volume I/O
 # --- connectivity (device control / industrial + Physical-AI comms) ---
 # The native transports (TCP/UDP/Modbus-TCP/HTTP) need nothing beyond stdlib;
 # these extras add optional protocol/device adapters.
-serial = ["pyserial>=3.5"]
-modbus = ["pymodbus>=3.0"]            # Modbus RTU (Modbus TCP is built-in)
+serial = []
+modbus = []                              # Modbus RTU (Modbus TCP is built-in)
 # 記号の読み取りの第 2 の読み取り器(symzxing.read_symbols_zxing)。zxing-cpp は Apache-2.0。
 # 自前の読み取り器(barcode1d / qrsym / dmsym)だけで族は動く —— これは比較と、自前に無い
 # 体系(PDF417 / Aztec / DataBar …)のため。zbar(pyzbar)は LGPL なので仲介しない。
-symbols = ["zxing-cpp>=2.2"]
-mqtt = ["paho-mqtt>=1.6"]
-opcua = ["asyncua>=1.0"]
+symbols = []
+mqtt = []
+opcua = []
 # contributor toolchain (CI mirror)。道具は「今日踏んだ失敗の型」で選んでいる ——
 # timeout=ハング、hypothesis=退化入力の性質検査、randomly=状態漏れ、
 # pip-audit=依存の既知脆弱性、ruff=黙って消える定義(F601 で実害を 1 件検出)。
@@ -125,12 +143,19 @@ dev = ["pytest>=9.0.3", "pytest-cov>=4", "ruff>=0.4", "pytest-timeout>=2.3",
 # (2026-09-05 実測で 1 件)。`pytest -p randomly -n auto` が週次 CI の
 # `order-shuffle` ジョブと同じ走らせ方。
 # ★`flaky` は入れない —— 失敗を握り潰す道具であって、見つける道具ではない。
-# `all` = the full desktop app (image libs + GPU + GUI + video). Industrial/robotics
+# `all-cpu` は `all` から CUDA 群だけを外した Windows installer 用の明示的な集合。
+# `nvidia-smi` が確認できない PC に torch / kornia / CuPy を黙って落とさない。
+# `all` は従来どおり、CUDA のある機械で明示的に選べる全群を表す。
+# Industrial/robotics
 # adapters stay opt-in (a desktop user does not need pymodbus/asyncua by default).
+all-cpu = [
+  "opencv-python>=4.8.1.78", "PyWavelets>=1.4", "mitsuba>=3.5", "mahotas>=1.4",
+  "SimpleITK>=2.2", "mediapipe>=0.10", "pye57>=0.4", "astropy>=7.0",
+]
 all = [
-  "opencv-python>=4.8.1.78", "scikit-image>=0.20", "Pillow>=13.0", "PyWavelets>=1.4",
-  "torch>=2.13", "kornia>=0.9", "mahotas>=1.4", "SimpleITK>=2.2",
-  "PySide6>=6.5", "imageio>=2.28", "imageio-ffmpeg>=0.4", "tifffile>=2023.1",
+  "opencv-python>=4.8.1.78", "PyWavelets>=1.4", "torch>=2.13", "kornia>=0.9",
+  "cupy-cuda12x>=14; platform_system != 'Darwin'", "mitsuba>=3.5", "mahotas>=1.4",
+  "SimpleITK>=2.2", "mediapipe>=0.10", "pye57>=0.4", "astropy>=7.0",
 ]
 
 [project.scripts]
@@ -150,7 +175,7 @@ fullseye-mcp = "fullseye.mcp.server:main"      # cwd-safe MCP stdio server entry
 # テストは緑、wheel からは丸ごと消える —— root モジュールが落ちた事故 3 回と同じ族。
 # サブパッケージを足したらここにも足す(tests/test_packaging_subpackages.py が数える)。
 packages = ["fullseye", "fullseye.mcp", "fullseye.evaluation", "fullseye.recipebook", "studio_assets", "examples_3d", "examples"]
-py-modules = [
+py-modules = ["numpy_compat", "pharmaparticle", 
   # `torch_lazy` is the lazy torch/torch.nn.functional shim imported by
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
@@ -263,15 +288,7 @@ py-modules = [
   "backends_aug", "backends_alife", "backends_alife2", "backends_tactile", "backends_deform",
   "backends_texture",
   "backends_macro", "macro_champions_data", "auto_specs_data", "halcon_names_data",
-  "imgops_nary", "scale", "stereo", "terrain", "locomotion", "laneops",
-  # 2026-11-25: opsdrive は particle_size_distribution のため pharmaparticle を import し、
-  # numpy_compat は出荷コードが読む NumPy 1/2 互換部品。非 editable wheel に両方が
-  # 無いと、registry が名前を載せても operator を読み込めない。
-  # opsdrive imports pharmaparticle for particle_size_distribution, while shipped
-  # code imports numpy_compat for NumPy 1/2 compatibility. Both must ship in a
-  # non-editable wheel or the registry can name an operator that cannot load.
-  "numpy_compat", "pharmaparticle",
-  "occupancy", "imgio", "detect", "registration", "deformreg", "ppf", "pose",
+  "imgops_nary", "scale", "stereo", "terrain", "locomotion", "laneops", "occupancy", "imgio", "detect", "registration", "deformreg", "ppf", "bop", "pose",
   "unified", "sim_source", "oss_adapter", "filters_flow", "matching3d",
   "calib", "matching", "mosaic", "objmodel3d", "pose_quat", "reconstruction", "transforms",
   "pointcloud", "pcseg", "mesh", "meshio_opt", "volio", "raster", "render3d", "camera", "odometry", "grasp", "meshrepair", "volops", "volregion", "volgray", "volxform", "volprobe", "volfreq", "volrestore", "handpose", "complexops", "specops", "flow", "motion", "sceneflow", "features", "events", "video", "videops", "engine", "graphengine", "acquire", "fullseye_comm", "device", "dsp", "funct1d", "mathops", "mathtransforms", "mathnumerics", "mathspectral", "mathestimation", "mathgeometry", "predicates", "precision_union", "geompred", "matappear", "glassmirror", "metalfinish", "surfacelib", "opassist", "ops1d", "opsmath", "optics",
@@ -405,6 +422,9 @@ py-modules = [
               #   tests/test_wheel_package_data_2026_11_13.py が「列挙した名前は checkout に在る」を数える。
               # device="auto" の実測の表(device_policy が読む。tools/gen_device_rules.py が生ログから作る)
               "data/DEVICE_RULES.json",
+              # C SDK が公開する型付き op の生成台帳(tools/gen_c_api_ops.py)。
+              # docs/C_API_OPS.md と同じ run から生成し、wheel でも検索・監査できるよう同梱する。
+              "data/C_API_OPS.json",
               # 実測で採用した機械的 GPU の許可リスト(gpu_shadow.run_allowed が読む)
               "data/gpu_auto_allow.json",
               # gpu_route が読む実測の台帳: 手書き経路の場面(領域の解析の族、tools/gen_gpu_routes.py)と

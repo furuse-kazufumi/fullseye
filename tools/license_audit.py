@@ -29,6 +29,7 @@ ASSET_INVENTORY = LICENSE_DIR / "THIRD_PARTY_INVENTORY.md"
 NOTICES = ROOT / "THIRD_PARTY_NOTICES.md"
 WHEEL_NOTICES = ROOT / "fullseye" / "THIRD_PARTY_NOTICES.md"
 OUTPUTS = (DEPENDENCY_INVENTORY, ASSET_INVENTORY, NOTICES, WHEEL_NOTICES)
+PREAUDITED_FUTURE_DEFAULTS = ("pyside6", "pybind11")
 
 _NORMALISE = re.compile(r"[-_.]+")
 _REQ_NAME = re.compile(r"^\s*([A-Za-z0-9][A-Za-z0-9._-]*)")
@@ -279,9 +280,9 @@ def validate(policy: dict[str, Any], assets: dict[str, Any], resolution: dict[st
             raise AuditError("invalid license class for %s" % name)
         if record["class"] in {"non-commercial", "unknown"}:
             raise AuditError("default or extra dependency is not distributable: %s" % name)
-    for name in ("pillow", "pyside6", "pyside6-essentials", "pybind11"):
+    for name in PREAUDITED_FUTURE_DEFAULTS:
         if name not in packages:
-            raise AuditError("1.2.0 planned dependency is not pre-audited: %s" % name)
+            raise AuditError("future default dependency is not pre-audited: %s" % name)
     exceptions = policy.get("strong_copyleft_exceptions", {})
     excluded = default_setup_exclusions()
     strong_extras: set[str] = set()
@@ -372,7 +373,7 @@ def render_dependency_inventory(policy: dict[str, Any], resolution: dict[str, An
         "## Items requiring a decision first",
         "",
         "- `plyfile` is GPL-3.0-or-later. It is limited to the `export-verify` test extra and is not bundled in the wheel. The full setup default must exclude that extra; use `fullseye setup --include export-verify` only when independent export verification is needed.",
-        "- `PySide6` is currently optional but planned for the 1.2.0 default installation. Use it only as a dynamically imported, replaceable dependency; retain Qt/PySide notices and use a Qt commercial licence if the LGPL route is unsuitable. Fullseye's commercial licence does not change Qt's licence.",
+        "- `PySide6-Essentials` is a default dependency under its LGPL-3.0-only option. It remains dynamically imported and replaceable; retain the PySide6/Qt notices and source information supplied by its distributor. Use a Qt commercial licence if that LGPL route is unsuitable. Fullseye's commercial licence does not change Qt's licence.",
         "- `examples/data/fintraffic_sun_2026_09_20.json` carries an ODbL provenance question. It is reported separately in the material inventory; decide Produced Work vs Derivative Database before a commercial redistribution.",
         "",
         "## Direct declarations",
@@ -390,12 +391,12 @@ def render_dependency_inventory(policy: dict[str, Any], resolution: dict[str, An
         ))
     lines += [
         "",
-        "## Prepared 1.2.0 default-dependency notices",
+        "## Pre-audited future default-dependency notices",
         "",
         "| Candidate | SPDX expression | condition before making it default |",
         "|---|---|---|",
     ]
-    for name in ("pillow", "pyside6", "pyside6-essentials", "pybind11"):
+    for name in PREAUDITED_FUTURE_DEFAULTS:
         record = packages[name]
         lines.append("| %s | %s | %s |" % (name, _md(record["spdx"]), _md(record["effect"])))
     components = resolution["components"]
@@ -520,10 +521,10 @@ def render_notices(policy: dict[str, Any], assets: dict[str, Any]) -> str:
         lines.append("- `%s` — %s (%s)" % (name, record["spdx"], record["class"]))
     lines += [
         "",
-        "## Prepared 1.2.0 default-dependency notices",
+        "## Pre-audited future default-dependency notices",
         "",
     ]
-    for name in ("pillow", "pyside6", "pyside6-essentials", "pybind11"):
+    for name in PREAUDITED_FUTURE_DEFAULTS:
         record = policy["packages"][name]
         lines.append("- `%s` — %s. %s" % (name, record["spdx"], record["effect"]))
     lines += [
