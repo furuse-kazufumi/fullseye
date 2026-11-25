@@ -292,7 +292,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 **measurement**
 - `optics_four_f_processor` — ops: `four_f_filter`, `fourier_plane_filter`, `highpass`, `identity`, `lowpass` `py -3.11 examples/optics_four_f_processor.py`
 - `scale_law_of_features` — ops: `contlength`, `moments_region_2nd`, `moments_region_3rd`, `moments_region_central` `py -3.11 examples/scale_law_of_features.py`
-- `shape_factors_closed_form` — ops: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
+- `shape_factors_closed_form` — ops: `area_frac`, `circularity`, `compactness`, `convexity`, `rectangularity`, `region_perimeter_estimate`, `roundness` `py -3.11 examples/shape_factors_closed_form.py`
 - `walking_ops_tour` — ops: `capture_margin`, `com_from_silhouette`, `com_support_margin`, `contact_points`, `detect_obstacles`, `elevation_map`, `elevation_normals`, `elevation_step_edges`, `elevation_traversability`, `fill_gaps`, `foot_slip_metrics`, `foothold_candidates` (+12 more) `py -3.11 examples/walking_ops_tour.py`
 - `heightmap_depth_camera_tour` — ops: `clothoid_points`, `crop_rectangle2`, `dem_viewshed`, `elevation_map`, `fill_gaps`, `heightmap_depth_camera`, `road_surface_heightmap`, `surface_form_remove`, `world_camera` `py -3.11 examples/heightmap_depth_camera_tour.py`
 - `lane_ops_tour` — ops: `color_rule_mask`, `lane_boundary_fit`, `lane_center_path`, `pixel_to_world`, `plane_topview_color`, `stop_line_detect` `py -3.11 examples/lane_ops_tour.py`
@@ -552,7 +552,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `machined_metal_and_materials` — ops: `blast_normals`, `clearcoat_shade`, `corrosion_mask`, `finish_catalog`, `finish_shade`, `material_catalog`, `metallic_flake_normals`, `micro_normals`, `oren_nayar`, `rough_transmission`, `sheen_shade`, `slab_transmittance` (+5 more) `py -3.11 examples/machined_metal_and_materials.py`
 
 **tomography_3d**
-- `ct_reconstruction` — ops: `backproject_sinogram`, `beam_hardening_apply`, `beam_hardening_correct`, `ellipse_phantom`, `ellipse_sinogram`, `filtered_backprojection`, `median`, `metal_trace_interpolate`, `projection_angles`, `radon_transform`, `ring_artifact_apply`, `ring_artifact_remove` (+4 more) `py -3.11 examples/ct_reconstruction.py`
+- `ct_reconstruction` — ops: `backproject_sinogram`, `beam_hardening_apply`, `beam_hardening_correct`, `ellipse_phantom`, `ellipse_sinogram`, `filtered_backprojection`, `filtered_backprojection_like`, `median`, `metal_trace_interpolate`, `projection_angles`, `radon_transform`, `ring_artifact_apply` (+5 more) `py -3.11 examples/ct_reconstruction.py`
 - `ct_scan_modes` — ops: `ct_adjoint_project`, `ct_forward_project`, `ct_scan_geometry`, `ellipsoid_phantom`, `ellipsoid_projections`, `fdk_reconstruct`, `os_sart_reconstruct`, `rmse`, `shepp_logan_3d`, `sirt_reconstruct`, `tv_reconstruct` `py -3.11 examples/ct_scan_modes.py`
 - `tomography_reconstruct` — ops: `ellipse_phantom`, `fbp_volume`, `projection_angles`, `radon_volume`, `sinogram_design` `py -3.11 examples/tomography_reconstruct.py`
 - `ct_inspection` — ops: `gaussian`, `otsu` `py -3.11 examples/ct_inspection.py`
@@ -851,9 +851,9 @@ Ops that do not fit the one-image pipeline (two images, point sequences, variabl
 
 ## Operators by family (family → category, all ops)
 
-_3853 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
+_3855 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
 
-Families: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 750 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+Families: **2d** 964 · **3d** 378 · **fit** 4 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 750 · **tomography** 44 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -1115,7 +1115,7 @@ Pipeline ops that take one image and return one image / region / contour / featu
 - `length_xld` (halcon: `length_xld`) `contour → feature` GPU: none — The total length obtained by summing the segment lengths (Euclidean distance between adjacent points) of all contours. When there are multiple contours, they are all added together. Equivalent to HALCON's ``length_xld`` (Length of contours or polygons.). · examples: `gallery2d_features`
 - `min_max_gray` (halcon: `min_max_gray`) `image → feature` GPU: none — Returns only the maximum gray value of the image (``x.max()``). HALCON's ``min_max_gray`` (Determine the minimum and maximum gray values within regions.) is originally an operator that returns both the minimum and maximum, but this stand-in implements only the maximum, so the minimum information is lost (an approximation with missing data -- to be honest, it computes only half of what its name 'min_max' implies). · examples: `gallery2d_features`
 - `moments_region_2nd` (halcon: `moments_region_2nd`) `region → feature` GPU: yes (lbl_moments_region_2nd) — The absolute value of the sum of the normalized central second-order moments, ``|mu20 + mu02|`` (derived from ``skimage.measure.moments_normalized``). HALCON's ``moments_region_2nd`` (Calculate the geometric moments of regions.) originally returns M20/M02/M11 separately, but this stand-in approximates them with a composite value obtained by simply adding the two components to reduce them to a single scalar (the individual directional components are lost). · examples: `gallery2d_features`, `scale_law_of_features`
-- `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` GPU: yes (lbl_moments_region_2nd_invar) — The absolute value of Hu's first invariant moment (``hu[0]`` from ``skimage.measure.moments_hu``). A shape descriptor invariant to rotation, scale, and translation. An approximation of HALCON's ``moments_region_2nd_invar`` (Geometric moments of regions.) -- strictly speaking, it differs from HALCON's own definition of relative invariant moments, and substitutes the classical Hu moments instead. · examples: `gallery2d_features`, `poc_rotation_invariance_audit`
+- `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` GPU: yes (lbl_moments_region_2nd_invar) — Deprecated compatibility alias. It calls ``moments_region_2nd`` directly, returns the same value, and emits ``DeprecationWarning``; use ``moments_region_2nd`` before removal in 2.0. · examples: `gallery2d_features`, `poc_rotation_invariance_audit`
 - `moments_region_2nd_rel_invar` (halcon: `moments_region_2nd_rel_invar`) `region → feature` GPU: yes (lbl_moments_region_2nd_rel_invar) — The absolute value of Hu's third invariant moment (``hu[2]``). Note that the name (``2nd_rel_invar``) and the implementation (Hu's third invariant) do not strictly correspond — this is not HALCON's own "second-order relative invariant moment" but simply an approximation assigned from the generic Hu invariant-moment series. A stand-in for HALCON's ``moments_region_2nd_rel_invar`` (Geometric moments of regions.). · examples: `gallery2d_features`
 - `moments_region_3rd` (halcon: `moments_region_3rd`) `region → feature` GPU: inside a chain only (lbl_moments_region_3rd) — The absolute value of the sum of normalized central third-order moments, ``|μ30 + μ03|``. This is the third-order version of ``moments_region_2nd``, also an approximation using a composite value obtained by simply summing multiple components (the individual directional components are lost). Corresponds to HALCON's ``moments_region_3rd`` (Geometric moments of regions.). · examples: `gallery2d_features`, `scale_law_of_features`
 - `moments_region_3rd_invar` (halcon: `moments_region_3rd_invar`) `region → feature` GPU: yes (lbl_moments_region_3rd_invar) — The absolute value of Hu's fourth invariant moment (``hu[3]``). Assigned sequentially from the Hu moment array as one of the ``moments_region_*_invar`` series (an approximation without strict correspondence to HALCON's own definition). A stand-in for HALCON's ``moments_region_3rd_invar`` (Geometric moments of regions.). · examples: `gallery2d_features`
@@ -2439,11 +2439,12 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 - `sampson_distance` `image2d × image2d → signal` GPU: none — The Sampson distance of the epipolar constraint (the first-order geometric error, per correspondence). → (N,). · examples: `two_view_pose`
 - `triangulate` `image2d × image2d → points` GPU: none — DLT triangulation: correspondences from two views plus the projection matrices → 3-D points. → (N,3). · examples: `sfm_recon`
 
-### fit (3 ops / 2 categories)
+### fit (4 ops / 2 categories)
 
-#### fit / fit (2)
+#### fit / fit (3)
 - `fit_circle_geometric` `keypoints → table` GPU: none — Fit a circle and radius to (row, col) points, including short arcs, by geometric least squares. · examples: `fit_ops_from_knowhow`
 - `fit_curve_principal_axis` `keypoints → table` GPU: none — Rotate a slanted curved edge to its principal axis, then fit polynomial y'=f(x'). · examples: `fit_ops_from_knowhow`
+- `region_perimeter_estimate` `mask → measurement` GPU: none — Estimate a binary region's perimeter with a chosen estimator. · examples: `shape_factors_closed_form`
 
 #### fit / registration (1)
 - `phase_correlation_shift` `image2d × image2d → table` GPU: none — Estimate the subpixel translation needed to align two images by phase-only correlation. · examples: `fit_ops_from_knowhow`
@@ -4510,7 +4511,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `world_camera` `table × matrix × matrix → table` GPU: none — Shoots the world with a camera: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``. · examples: `gsplat_trained_product`, `heightmap_depth_camera_tour`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
 - `world_move` `table → any` GPU: none — Moves object i (one placed from an asset) to a new pose (x, y, yaw) (rewrites only the vertices; faces, labels and colors are unchanged). · examples: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
 
-### tomography (43 ops / 8 categories)
+### tomography (44 ops / 8 categories)
 
 #### tomography / artifact (5)
 - `beam_hardening_apply` `sinogram → sinogram` GPU: yes (allow-list) — Turn a monochromatic sinogram into a **polychromatic** one — cupping. · examples: `ct_reconstruction`, `poc_battery_ct_degradation`
@@ -4545,9 +4546,10 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `projection_angles` `no input → signal` GPU: none — The angle sequence of a scan, in **degrees**, as a 1-D float64 array. · examples: `ct_reconstruction`, `poc_battery_ct_degradation`, `poc_ct_fidelity`, `tomography_reconstruct`
 - `sinogram_design` `no input → table` GPU: none — What a scan geometry can and cannot resolve — **before** anything is built. · examples: `ct_reconstruction`, `tomography_reconstruct`
 
-#### tomography / reconstruct (3)
+#### tomography / reconstruct (4)
 - `backproject_sinogram` `sinogram → image2d` GPU: yes (allow-list) — Plain, **un-filtered** back-projection — the blurred baseline. · examples: `ct_reconstruction`, `poc_ct_fidelity`
 - `filtered_backprojection` `sinogram → image2d` GPU: yes (allow-list) — Filtered back-projection (FBP) — the standard CT reconstruction. · examples: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
+- `filtered_backprojection_like` `sinogram × image2d → image2d` GPU: none — Reconstruct FBP on the square grid of a reference image. · examples: `ct_reconstruction`
 - `sart_reconstruct` `sinogram → image2d` GPU: none — SART — simultaneous algebraic reconstruction, one angle at a time. · examples: `ct_reconstruction`
 
 #### tomography / spectral_xray (15)

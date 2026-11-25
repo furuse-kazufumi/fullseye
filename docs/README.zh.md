@@ -149,11 +149,11 @@
 
 ## 查找算子
 
-共有 **3,853 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **73 篇族指南**。按维度的入口:
+共有 **3,855 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **73 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 947/947、类型化台账 2883/2883、单行门面 `fullseye.<名称>` 770/1594 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 947/947、类型化台账 2885/2885、单行门面 `fullseye.<名称>` 772/1596 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3853 篇中，附有可运行示例的 **3814** 篇(39 篇没有)，用法说明 120 字以上的 **3654** 篇(199 篇仅一行)。结构(调用形式、类型、可衔接算子)3853 篇全有。
+**内容实测**: 3855 篇中，附有可运行示例的 **3816** 篇(39 篇没有)，用法说明 120 字以上的 **3656** 篇(199 篇仅一行)。结构(调用形式、类型、可衔接算子)3855 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -168,7 +168,7 @@
 | `oned` | 49 | [INDEX](ops/oned/INDEX.md) |
 | `mv` | 47 | [INDEX](ops/mv/INDEX.md) · [guide](ops/mv/guides/machine_vision_classics.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
-| `tomography` | 43 | [INDEX](ops/tomography/INDEX.md) |
+| `tomography` | 44 | [INDEX](ops/tomography/INDEX.md) |
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
 | `imgmetrics` | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
@@ -215,7 +215,7 @@
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
-| `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
+| `fit` | 4 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 按名称检索用 `py -3.11 imgevolve.py ops --search edge`;全部算子的对照表见 [OP_CATALOG.md](OP_CATALOG.md)，跨维度入口见 [ops/INDEX.md](ops/INDEX.md)。
@@ -316,7 +316,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 343 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,853 篇算子说明与 73 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,855 篇算子说明与 73 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 
@@ -406,7 +406,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 | 文档 | 内容 |
 |---|---|
-| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Known Issues — 調べた欠陥の記録(2026-08-30 開始、最終の節は §52 = 2026-09-26) _(ja)_ |
+| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Known Issues — 調べた欠陥の記録(2026-08-30 開始、最終の節は §53 = 2026-11-24) _(ja)_ |
 | [`STATUS.md`](STATUS.md) | imgevolve — status / plan (plan_ref) |
 | [`ACCURACY_BENCH.md`](ACCURACY_BENCH.md) | Accuracy benchmark — champion vs null (holdout) |
 | [`BENCH_VS_OPENCV.md`](BENCH_VS_OPENCV.md) | imgevolve GPU op vs OpenCV (CPU) throughput benchmark → [`BENCH_VS_OPENCV.en.md`](BENCH_VS_OPENCV.en.md) · 原文 _(ja)_ |
