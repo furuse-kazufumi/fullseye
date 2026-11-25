@@ -1,8 +1,8 @@
 {
- "n_ops": 3847,
+ "n_ops": 3849,
  "tiers": {
   "color": 12,
-  "ledger": 2883,
+  "ledger": 2885,
   "nary": 17,
   "registry": 935
  },
@@ -37551,6 +37551,20 @@
    "gpu_tier": "none"
   },
   {
+   "name": "track_moving_particles",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "track",
+   "tier": "ledger",
+   "ledger": "opspharma",
+   "dim": "pharma",
+   "in_sorts": [
+    "video"
+   ],
+   "gpu_tier": "suitable"
+  },
+  {
    "name": "track_sight_distance",
    "halcon": "",
    "in_sort": "any",
@@ -38419,6 +38433,18 @@
     "mesh"
    ],
    "gpu_tier": "partial"
+  },
+  {
+   "name": "vial_spin_stop_sequence",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "video",
+   "category": "synth",
+   "tier": "ledger",
+   "ledger": "opspharma",
+   "dim": "pharma",
+   "in_sorts": [],
+   "gpu_tier": "suitable"
   },
   {
    "name": "video360_tile_coverage",
