@@ -50,7 +50,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install native development dependencies
-        run: python -m pip install -e '.[native]'
+        run: python -m pip install -e '.[native]' pytest
       - name: Build the C API with AddressSanitizer and UBSan
         run: >-
           cmake -S . -B build-c-api-asan -DFULLSEYE_BUILD_NATIVE=ON
