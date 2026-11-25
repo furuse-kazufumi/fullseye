@@ -55,6 +55,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 __all__ = [
     "vol_window_level", "vol_equalize", "vol_gamma", "vol_stretch",
     "VOLGRAY_OPS", "MAX_VOXELS",
@@ -80,7 +82,14 @@ def _require_volume(vol, name: str = "vol", check_finite: bool = True) -> np.nda
     Rejects anything that is not exactly 3-D, and (by default) any NaN / Inf —
     a poisoned voxel would corrupt every histogram / percentile / range
     computation downstream silently."""
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        vol, name, "volgray.MAX_VOXELS", MAX_VOXELS, expected_ndim=3,
+        advice=_arrayguard.VOLUME_CAP_ADVICE)
     v = np.ascontiguousarray(vol, dtype=np.float64)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            v, name, "volgray.MAX_VOXELS", MAX_VOXELS, expected_ndim=3,
+            advice=_arrayguard.VOLUME_CAP_ADVICE)
     if v.ndim != 3:
         raise ValueError("%s must be a 3-D (D, H, W) volume, got a %d-D array of shape %r"
                          % (name, v.ndim, tuple(np.shape(vol))))
