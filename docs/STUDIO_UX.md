@@ -6,6 +6,62 @@ each choice), and *how to keep improving* it. Everything below is verifiable:
 the logic is Qt-free and unit-tested (`tests/test_studio.py`), and the window is
 built head­lessly in the suite.
 
+## P-08〜P-19 の確認と残る手作業（2026-11-24）
+
+| 項目 | 内容 | 現在の状態 | この枝での扱い |
+|---|---|---|---|
+| P-08 | 手書きヘルプの日本語 | 1.1.1 で `gaussian` / `otsu` / `sobel_mag` を日英で照合済み | 直さない。既存の内容・リンク・実装照合テストを再確認した。 |
+| P-09 | 定番の検索結果 | 1.1.1 の「定番」欄が先頭に出る | 直さない。日英 20 語で、表示上位 5 件に期待する op が入る回帰テストを追加した。 |
+| P-13 | 範囲外のつまみ | 1.1.1 で端へ丸めた値を行番号つきで表示する | 直さない。有限値・無効行の扱いを既存テストで確認した。 |
+| P-14 | 汎用 algorithm op の混在 | PR [#340](https://github.com/furuse-kazufumi/fullseye/pull/340)（未マージ）が read-only 分離と CLI 案内を実装済み | 同じ実装を作らない。#340 がマージされるまでこの枝では変更しない。 |
+| P-16 | タブとヘッダの二重表示 | PR #340 が dock/tab の配置と表示を変更済み | 同じ実装を作らない。#340 がマージされるまでこの枝では変更しない。 |
+| P-17 | カラー画像を輝度へ読む知らせ | 1.1.1 で状態バーに理由を表示する | 直さない。読み方を変えず、通知だけを保つ既存テストを再確認した。 |
+| P-18 | 窓の題 | PR #340 が保存状態を含む題の更新を実装済み | 同じ実装を作らない。#340 がマージされるまでこの枝では変更しない。 |
+| P-19 | 検索結果行の幅 | 1.1.1 で折返しとボタン位置を修正済み | 直さない。offscreen の幅変更テストを再確認した。 |
+
+### Program の `for N` の上限と実行状態
+
+`for N … endfor` は展開後の段数を `MAX_PROGRAM_STAGES = 512` で止める。上限を超えると Apply は現在の
+パイプラインを変更しない。表示する文には、行番号・`N`・展開後の段数・上限、止める理由（各段の行と
+キャッシュが必要なため）、続ける手段（`N` を小さくする、処理列を分ける、batch/CLI に移す）を入れる。
+上限内の処理は既存の段キャッシュで各段を一度ずつ増分計算し、非同期の通常実行では段番号の進捗と
+停止要求を表示する。停止は実行中の op を無理に中断せず、次の段の境界で受けるため、すでに表示している
+結果と処理列を壊さない。Program の Apply も同じ凍結スナップショットの worker へ渡すため、新しく貼り付けた
+処理列の初回表示で GUI スレッドが全段を同期計算することはない。Apply に含まれる `dev_disp_text` は worker の
+結果を表示した後に重ねる。
+
+同じ「重い処理を GUI スレッドで同期実行し、進捗・停止が無い」候補は、次の 4 経路である。今回の
+`for N` 修正とは別の設計単位なので、隠して「対応済み」とは書かない。
+
+| 経路 | 場所 | 現在の限界 |
+|---|---|---|
+| 段の選択・つまみ変更のライブ表示 | `show_result()` → `model.result_upto()` | キャッシュに無い結果を同期計算する。重い処理は Run all または Program Apply で worker に渡す。 |
+| Program の Run / Step / Continue | `studio.py` の `run_program` / `step_program` / `continue_program` | 個々の op が重いと UI を待たせる。重い処理は Run all または Program Apply を使う。 |
+| Holdout validation | `run_holdout` を呼ぶ Run ▸ Holdout | 画像ごとの進捗と停止がない。 |
+| Run a ledger op | `run_ledger_op` を呼ぶ台帳 op ダイアログ | 1 回の op が重いとダイアログを待たせる。 |
+
+### 手で確認する手順（Windows / Linux / macOS）
+
+offscreen CI は 150% と 200% でウィンドウを `grab()` し、論理サイズに対する device-pixel ratio、検索欄の
+表示領域、256 px まであるアプリアイコンを確認する。Windows の実 DPI、IME、Linux/macOS のウィンドウ
+マネージャは CI では再現できないため、次を出荷前に手で行う。
+
+1. Windows の「設定 ▸ システム ▸ ディスプレイ」で 150%、次に 200% を選び、Studio を**再起動**する。検索欄、定番の行、Program、停止ボタン、状態バーが切れず、アイコンと文字がぼやけないことを確認する。
+2. 日本語 IME を有効にし、Operators の検索欄と Program に「あ」「二値化」を変換・確定して入力する。変換中の下線が消えず、Enter が変換を確定した後だけ検索/挿入を行うことを確認する。
+3. Linux（Wayland と X11 の少なくとも使う方）と macOS では、100% と OS の拡大率で同じ検索・Program・dock の操作を行う。外部モニターを抜き差しした後も、主ウィンドウと浮かせたパネルが表示範囲内に残ることを確認する。
+4. `for 513` の 1 段ループを Apply し、値・理由・次の手を含む拒否文が出て、直前の処理列と表示結果が残ることを確認する。次に `for 3` で同じ op を実行し、進捗表示と「停止要求」を確認する。
+
+## P-08–P-19 status and remaining manual checks (2026-11-24)
+
+P-08, P-09, P-13, P-17 and P-19 are already fixed on `master` by 1.1.1 and are covered by their
+existing regression tests. This branch adds a 20-query Japanese/English top-five search gate and the
+bounded `for N` parser. P-14, P-16 and P-18 are already being changed in the open [PR #340](https://github.com/furuse-kazufumi/fullseye/pull/340); this branch deliberately does not duplicate those changes.
+
+Offscreen CI captures the Studio window at 150% and 200%, checks its device-pixel ratio, the visible
+search viewport and the 256 px application icon. It cannot prove platform window-manager behaviour or
+IME composition. Repeat the four numbered checks above on Windows, Linux and macOS before release;
+they specify the scale settings, controls, IME input and safe `for N` behaviour to observe.
+
 ## Design system (derived from the brand mark)
 
 The palette is taken from the Fullseye icon (`assets/fullseye.ico`) so the app and
