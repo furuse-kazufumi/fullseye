@@ -173,9 +173,9 @@ li, p, code { overflow-wrap: anywhere; }
 <summary><b>試してみる</b> (Python 3.11)</summary>
 
 ```
-pip install fullseye
 git clone https://github.com/furuse-kazufumi/fullseye
 cd fullseye
+pip install -e ".[opencv]"
 python examples/poc_focus_stacking.py
 ```
 

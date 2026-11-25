@@ -154,9 +154,9 @@ Voir aussi la [page des suppléments : autres PoC](more.md).
 <summary><b>Essayer</b> (Python 3.11)</summary>
 
 ```
-pip install fullseye
 git clone https://github.com/furuse-kazufumi/fullseye
 cd fullseye
+pip install -e ".[opencv]"
 python examples/poc_focus_stacking.py
 ```
 

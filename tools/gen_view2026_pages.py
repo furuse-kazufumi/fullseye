@@ -161,10 +161,15 @@ REDIRECT = """<script>
 })();
 </script>"""
 
+# ★2026-11-26(初めて使う人の手順を新しい環境で実走): 以前は `pip install fullseye` → clone → 実行 の順だった。
+#   PyPI の版(当時 1.1.1 = numpy+scipy だけ)と clone した master のコードが混ざり、
+#   焦点合成の PoC が使う `xcv2_lap_var`(OpenCV)が無くて exit 1(3 秒)で落ちた。
+#   clone した木そのものを `[opencv]` 付きで入れると、新しい venv で PASS・23 秒・図 7 枚。
+#   順序と extra は tests/test_view2026_try_steps.py が見張る。
 TRY_CMD = """```
-pip install fullseye
 git clone https://github.com/furuse-kazufumi/fullseye
 cd fullseye
+pip install -e ".[opencv]"
 python examples/poc_focus_stacking.py
 ```"""
 
