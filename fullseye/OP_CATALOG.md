@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(496 例)
+### 2-D 画像/信号/幾何(497 例)
 
 **fileio**
 - **科学画像・体積を標準形式で受け渡す** — FITS の WCS、MRC/NRRD/NIfTI の単位つき geometry、OME-TIFF の TCZYX・物理サイズ・チャネル名をメモリ上で往復して自己検査する。 `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -64,6 +64,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **円形部品の内径を mm まで(校正 1 個がサブピクセル精度の 500 倍効く)** — Ø10.000 mm の的(半径 100 px)と Ø6.130 mm の穴(61.3 px)を同じ画素ピッチ 0.050 mm/px で合成し、`otsu` → `area_center` の粗い中心 → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` で内径を mm に。★半径の偏り −0.011 px、内径 −0.4 µm。★公称倍率(作動距離 4 % ずれ)で換算すると −246 µm。★円周の 25 % が欠けても半径は返り(−5.0 px)、欠けは `rms`(0.067 → 1.90)と縁の点数(128 → 54)で見張る。 `py -3.11 examples/example_inner_diameter_mm.py`
 - **微細スクラッチの検出と幅計測(幅 1〜3 px は measure_pairs の危険域)** — 被覆率で描いた幅 1〜5 px の暗い傷(ぼけ σ=0.7)を真値に、`lines_gauss` の検出、`measure_pairs` の幅、輝度欠損の積分を並べる。★`lines_gauss` は暗線も明線も同じ輪郭にし(極性も幅も返さない)、`tophat` は暗線に 0 を返す(`bothat` が応答)。★`measure_pairs` は細いほど大きい側へ偏る —— 幅 1 px で +2.25 px(σ=1.0)/ +1.67 px(σ=0.5)、3 px で +0.78 / +0.35、5 px で +0.06 / +0.01 —— しかも失敗を返さない。積分法は全幅で 1e-4 px 以内。mm は基準帯(40 px = 2.000 mm)を同じ op で測った校正値を通すだけ。 `py -3.11 examples/example_scratch_width.py`
 - **部品の寸法検査(サブピクセル計測と、埋もれていた実装の実地評価)** — SDF から解析的に部品を作り、既知の PSF と画素積分で合成して真値を握る。ゼロ点(大津の整数幅)比 **41 倍**、スロット幅の偏り -0.5000 → -0.0113 px、合成不確かさ 0.0196 px = 0.245 um。★壊れるのは「ぼけ」ではなく**エッジ間距離 / PSF 幅**で、3.09 を切ると偏り 0.05 px 超 —— しかも 1.58 まで「対が見つかった」と答え続ける(失敗を返さない)。★**縁の定義を宣言しないと16 px = 200 um 動く**(サブピクセルの 3 桁上)。丸い縁は必ず小さく出る(直径誤差 ≈ -σ²/ρ を実測で確認)。真値をきりの良い整数に置くと副画素の周期誤差が消えることも示す。 `py -3.11 examples/poc_dimensional_inspection.py`
+- **薬学向け顕微鏡粒径 ―― 端と重なりを黙って1粒にせず、3基準と校正来歴を残す** — ステージミクロメータ、孤立円・楕円、低コントラスト、重なり、端切れを同じ合成画像に置き、`blob_label` / `blob_features` / `blob_split` から新 op `particle_size_distribution` へ渡す。孤立粒子の面積相当径は真値から最大 **0.165 px**、端1個を理由つきで除外し、分割済み重なり2個を記録。個数基準 D50 **17.428 µm** と体積基準 D50 **18.064 µm** を別系列で示し、レーザー回折と同一視しない。尺度0.500000 ± 0.002500 µm/pxを径と分位点へ伝播し、校正記録と粒子表のSHA-256も保存する。重なり率0.05〜0.75の系列では連結成分が常に1でも、深い側は個数を区間で返す。 `py -3.11 examples/poc_compendial_particle_microscopy.py`
 - **星の位置を測る(理論下限を下回ったら、それは推定できていない印)** — 既知の天球座標に星を置き、既知の投影と PSF で合成するのでプレート定数まで真値が既知。**理論下限(Fisher)を下回った手法はゼロ**で、暗い端で下回って見えるゼロ点は真のずれへの感度 0.038 = 初期値を返しているだけ(散らばり0.2790 px は 1/√12 = 0.2887 と一致)。★予想が外れた 2 件: 既知 PSF の相関は標本化不足に**弱く**(FWHM 1.0 で 4 手法中最悪)、飽和画素を捨てる処置は**捨て方で符号が変わる**(重心なら 10 倍悪化、当てはめなら 121 倍改善)。偽解は 4000 回で 0 件でも「起きない」ではなく「測れていない」—— 総当たり通り数を掛けて初めて期待 5.77 件という使える数字になる。 `py -3.11 examples/poc_star_astrometry.py`
 - **表面粗さ(同じデータで Sa は合格・Sz は不合格になる標本間隔がある)** — PSD を指定して高さ場を合成するので Sq の真値が解析的に分かる。標本間隔 8 µm で**Sa は -3.5%(合格)なのに Sz は -19.8%(不合格)**。Sz は評価領域を広げると単調に増える = 「どれだけ長く見たか」を測っている。**最も頑健なのは Sa ではなくSq**(予想が外れた。折り返しは 2 次モーメントを保つ)。 `py -3.11 examples/poc_surface_roughness.py`
 - **DIC ひずみ計測(2 度の回転が 600 µε の嘘のひずみを作る)** — 斑点の中心を変形写像で移してから描き直すので、真値が補間を通らず厳密。`piv_cross_correlate` が偏り 0.0002 px / 散らばり 0.0022 px(ゼロ点比 167 倍)で optical flow を 1 桁上回り、明るさ 0.7 倍 +0.15 でも 3.7e-15 px しか動かない。**剛体回転 2 度で微小ひずみが -699 µε(鋼の降伏の 3 割)を返す**——Green-Lagrange は代数的には 0 だが、実測では勾配の誤差が乗って推定器によっては悪化する。だから既定を置いてはいけない。★この PoC の所見は**一度書き直している**(既存の PIV 23 op を見落とした)。 `py -3.11 examples/poc_dic_strain.py`
@@ -848,9 +849,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3853 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 964 · **3d** 378 · **fit** 4 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 749 · **tomography** 44 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 750 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(964 ops / 49 categories)
 
@@ -1112,7 +1113,7 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `length_xld` (halcon: `length_xld`) `contour → feature` GPU: なし — すべての輪郭の線分長(隣接点間のユークリッド距離)を合計した総延長。 複数の輪郭がある場合はまとめて加算する。HALCON の ``length_xld``（Length of contours or polygons.）に相当。 · 例: `gallery2d_features`
 - `min_max_gray` (halcon: `min_max_gray`) `image → feature` GPU: なし — 画像の最大階調値のみを返す(``x.max()``)。HALCON の ``min_max_gray`` （Determine the minimum and maximum gray values within regions.）は本来 最小値と最大値の**両方**を返す演算子だが、この代役では最大値のみを実装 しており最小値の情報は失われる(データが欠落した近似 ―― 名前が示す 「min_max」の半分しか計算していない点は正直に明記しておく)。 · 例: `gallery2d_features`
 - `moments_region_2nd` (halcon: `moments_region_2nd`) `region → feature` GPU: あり(lbl_moments_region_2nd) — 正規化中心 2 次モーメントの和の絶対値 ``|μ20 + μ02|``(``skimage. measure.moments_normalized`` 由来)。HALCON の ``moments_region_2nd`` （Calculate the geometric moments of regions.）は本来 M20/M02/M11 を それぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純 加算した合成値で近似している(個々の方向成分は失われる)。 · 例: `gallery2d_features`, `scale_law_of_features`
-- `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` GPU: あり(lbl_moments_region_2nd_invar) — 非推奨の互換別名。``moments_region_2nd`` をそのまま呼ぶので返り値は同一である。 ``moments_region_2nd_invar`` は 2.0 で削除予定で、呼ぶたびに ``DeprecationWarning`` を出す。移行先は ``moments_region_2nd``。 · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
+- `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` GPU: あり(lbl_moments_region_2nd_invar) — Hu の第 1 不変モーメント(``skimage.measure.moments_hu`` の ``hu[0]``)の絶対値。回転・スケール・平行移動に対して不変な形状記述子。 HALCON の ``moments_region_2nd_invar``（Geometric moments of regions.） に相当する近似(HALCON 独自の相対不変モーメント定義とは厳密には異なり、 古典的な Hu モーメントで代用している)。 · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
 - `moments_region_2nd_rel_invar` (halcon: `moments_region_2nd_rel_invar`) `region → feature` GPU: あり(lbl_moments_region_2nd_rel_invar) — Hu の第 3 不変モーメント(``hu[2]``)の絶対値。名前(2nd_rel_invar)と 実装(Hu の 3 番目の不変量)が厳密には対応していない点に注意 ―― HALCON 独自の「2 次相対不変モーメント」ではなく、汎用の Hu 不変モーメント系列 から割り当てただけの近似。HALCON の ``moments_region_2nd_rel_invar`` （Geometric moments of regions.）の代役。 · 例: `gallery2d_features`
 - `moments_region_3rd` (halcon: `moments_region_3rd`) `region → feature` GPU: 鎖の中だけ(lbl_moments_region_3rd) — 正規化中心 3 次モーメントの和の絶対値 ``|μ30 + μ03|``。 ``moments_region_2nd`` の 3 次版で、こちらも複数成分を単純加算した合成値 による近似(個々の方向成分は失われる)。HALCON の ``moments_region_3rd``（Geometric moments of regions.）に相当。 · 例: `gallery2d_features`, `scale_law_of_features`
 - `moments_region_3rd_invar` (halcon: `moments_region_3rd_invar`) `region → feature` GPU: あり(lbl_moments_region_3rd_invar) — Hu の第 4 不変モーメント(``hu[3]``)の絶対値。``moments_region_*_invar`` 系列の一つとして Hu モーメント配列から順番に割り当てている(HALCON 独自の 定義との厳密な対応はない近似)。HALCON の ``moments_region_3rd_invar`` （Geometric moments of regions.）の代役。 · 例: `gallery2d_features`
@@ -1604,7 +1605,7 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` GPU: なし — Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標準偏差からローカルにしきい値を決める手法で、照明ムラのある文書画像の二値化(文字抽出)向けに設計されている。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` GPU: なし — SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` GPU: あり(許可リスト) — Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` GPU: あり(threshold) — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_ai_built_inspection_scored`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_bg_kalman_tracking`, `poc_real_sem_metal_layer`, `poc_real_walnut_cbct`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` GPU: あり(threshold) — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_ai_built_inspection_scored`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_compendial_particle_microscopy`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_bg_kalman_tracking`, `poc_real_sem_metal_layer`, `poc_real_walnut_cbct`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` GPU: なし — Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、 窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値 を決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。 HALCON の ``var_threshold``（Threshold an image by local mean and standard deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。 · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` GPU: なし — 分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、 暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を 返す。HALCON の ``watersheds``（Extract watersheds and basins from an image.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` GPU: なし — 実装は ``watersheds`` と同一(``kind: "watershed"``)。HALCON の ``watersheds_threshold``（Extract watershed basins from an image using a threshold.）は本来、隣接する集水域を統合する深さのしきい値を持つ演算子 だが、この代役では統合しきい値を実装せず ``watersheds`` と同じ結果を返す (近似の限界)。 · 例: `gallery2d_segmentation`
@@ -2436,12 +2437,11 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sampson_distance` `image2d × image2d → signal` GPU: なし — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 - `triangulate` `image2d × image2d → points` GPU: なし — DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。 · 例: `sfm_recon`
 
-### fit(4 ops / 2 categories)
+### fit(3 ops / 2 categories)
 
-#### fit / fit(3)
+#### fit / fit(2)
 - `fit_circle_geometric` `keypoints → table` GPU: なし — 短い円弧を含む ``(row, col)`` 点に幾何距離の最小二乗で円と半径を当てはめる。 · 例: `fit_ops_from_knowhow`
 - `fit_curve_principal_axis` `keypoints → table` GPU: なし — 斜めの曲がった縁を主軸へ回してから多項式 ``y'=f(x')`` を当てはめる。 · 例: `fit_ops_from_knowhow`
-- `region_perimeter_estimate` `mask → measurement` GPU: なし — Estimate a binary region's perimeter with an explicit estimator / 推定量を明示して領域の周囲長を測る。 · 例: `shape_factors_closed_form`
 
 #### fit / registration(1)
 - `phase_correlation_shift` `image2d × image2d → table` GPU: なし — 2 枚の画像の位置合わせに必要なサブピクセル移動量を位相限定相関で求める。 · 例: `fit_ops_from_knowhow`
@@ -3640,7 +3640,7 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 #### vx / suppress(1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: なし — 非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で**自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には >** の ときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す (他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。 · 例: `gallery_openvx_spec_values`
 
-### drive(749 ops / 56 categories)
+### drive(750 ops / 57 categories)
 
 名前は運転だが、中身は**物理シミュレーションとロボットの PoC の台帳**: 運転(コース・交通・判断・CARLA / CommonRoad)に加え、触覚(tac*)・peg-in-hole(peg*)・研磨(polish)・研削(grind)・切削(cutting)・粉体(granular / scoop)・粉末 X 線回折(pxrd)・球技(ball / puck)などがカテゴリとして同居している。カテゴリ名で引くこと。
 
@@ -4190,6 +4190,9 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wrist_deflection_from_rgbd` `rgb × image2d × matrix × matrix × signal × signal × scalar → table` GPU: 鎖の中だけ(許可リスト) — 手首 RGB-D 1 枚から手首の並進たわみと傾き: ペグの画素(pegsim の色分類)→ depth の点群 → PCA の軸 → 既知半径の円柱当てはめ (:func:`pegsim.cylinder_fit_known_radius`)→ 世界系の軸の直線 → 搬送台の系(エンコーダで既知の位置 ``carriage_pos`` を引く)で ヒンジの高さ z = ``hinge_z`` を通る点 = (Δx, Δy)。軸の向きから傾き (θ_x, θ_y) を atan2 で。円柱の軸方向の位置は見えないので Δz は出さない(正直に: 手首の z 圧縮は k̂ と触覚の F_z で補う、:func:`pegtactile_process_episode`)。 返り ``dx``・``dy``・``axis``・``tilt_x``・``tilt_y``・``rms_cyl``・``n_pts``。 **Raises** ValueError: 形が合わない、ペグの画素が 50 未満(見えない)。 · 例: `gallery_drive_peg`
 - `wrist_stiffness_fit` `signal × signal → table` GPU: なし — 手首のたわみ Δx(手首カメラ)と、ペグが受ける接触力の同じ成分 F から k = Σ FΔx / ΣΔx²(原点を通る最小二乗、準静的な釣り合い F_contact + F_spring ≈ 0 ⇒ F_contact = kΔx)。回転(角と モーメント)にも同じ式で使える。返り ``k``・``r2``・``rms_N``・``n``・``span``。 **Raises** ValueError: 点が 3 未満、形が違う、有限でない、Δx の幅が ``min_span`` 未満(悪条件: 動いていないばねの k は決まらない)。 · 例: `poc_peg_insertion_tactile`
 
+#### drive / pharma(1)
+- `particle_size_distribution` `table × table → table` GPU: なし — 粒子表を校正し、採否理由、3 基準のビン、D10/D50/D90 と信頼区間、来歴を返す。 · 例: `poc_compendial_particle_microscopy`
+
 #### drive / polish(13)
 - `band_width_profile` `image2d × scalar × scalar → table` GPU: なし — 直線の一筆(``along`` の向き)で拭けた帯の幅を、帯に直交する線ごとに副画素で読む: しきい値を最初に越える所と最後に越える所を 隣の画素との線形補間で求め、その差 × res。返り ``widths``(線ごと、読めない線は NaN)、``centres``(帯の中心の位置 [m]、 地図の座標)、``valid``、``median``。帯が 1 本である前提(複数の帯は外側どうしの幅になる)。 **Raises** ValueError: 画像の検査、res ≤ 0、along が x / y でない、しきい値が非有限。 · 例: `poc_polish_wipe_measure`
 - `coat_image` `image2d × scalar → image2d` GPU: なし — 除去の深さの地図 → 汚れ(膜)の残った板を真上から撮った画像 [0, 1]。残った厚さ t = clip(h0 − h, 0, h0)、明るさ I = bare · exp(−τ t/h0)(Beer–Lambert、τ = ``optical_depth`` は膜全体の光学的厚さ)+ 正規の雑音 ``noise``。 **Raises** ValueError: 地図が 2-D でない・非有限、coat ≤ 0、τ ≤ 0、bare が (0, 1] の外、noise < 0。 · 例: `poc_polish_wipe_measure`
@@ -4505,7 +4508,7 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `world_camera` `table × matrix × matrix → table` GPU: なし — 世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 例: `gsplat_trained_product`, `heightmap_depth_camera_tour`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
 - `world_move` `table → any` GPU: なし — 物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。 · 例: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
 
-### tomography(44 ops / 8 categories)
+### tomography(43 ops / 8 categories)
 
 #### tomography / artifact(5)
 - `beam_hardening_apply` `sinogram → sinogram` GPU: あり(許可リスト) — Turn a monochromatic sinogram into a **polychromatic** one — cupping. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`
@@ -4540,10 +4543,9 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `projection_angles` `入力なし → signal` GPU: なし — The angle sequence of a scan, in **degrees**, as a 1-D float64 array. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`, `poc_ct_fidelity`, `tomography_reconstruct`
 - `sinogram_design` `入力なし → table` GPU: なし — What a scan geometry can and cannot resolve — **before** anything is built. · 例: `ct_reconstruction`, `tomography_reconstruct`
 
-#### tomography / reconstruct(4)
+#### tomography / reconstruct(3)
 - `backproject_sinogram` `sinogram → image2d` GPU: あり(許可リスト) — Plain, **un-filtered** back-projection — the blurred baseline. · 例: `ct_reconstruction`, `poc_ct_fidelity`
 - `filtered_backprojection` `sinogram → image2d` GPU: あり(許可リスト) — Filtered back-projection (FBP) — the standard CT reconstruction. · 例: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
-- `filtered_backprojection_like` `sinogram × image2d → image2d` GPU: なし — Run FBP on the square grid of ``reference`` / 参照画像と同じ正方格子で FBP を再構成する。 · 例: `ct_reconstruction`
 - `sart_reconstruct` `sinogram → image2d` GPU: なし — SART — simultaneous algebraic reconstruction, one angle at a time. · 例: `ct_reconstruction`
 
 #### tomography / spectral_xray(15)
@@ -4778,7 +4780,7 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `annotate_colorbar` `image2d × image2d → image2d` GPU: あり(許可リスト) — 画像(image2d)を返す: スカラ場を LUT で色分けして重ね、カラーバーを添える。 · 例: `paper_figure`, `poc_thin_film_reflectometry`
 - `annotate_dimension` `image2d → image2d` GPU: あり(許可リスト) — 画像(image2d)を返す: 寸法線(両端矢じり + 補助線 + 値と単位)。 · 例: `paper_figure`
 - `annotate_dimension_layout` `入力なし → table` GPU: なし — table(dict)を返す: 寸法線の幾何(寸法線・補助線・文字位置)を閉形式で決める。 · 例: `paper_figure`
-- `annotate_figure_grid` `images → image2d` GPU: あり(許可リスト) — 画像(image2d)を返す: 画像 + 見出しを一枚の図に組む(余白一定・パネル文字つき)。 · 例: `paper_figure`, `poc_flybrain_pointcloud`, `poc_itof_multifreq`, `poc_pixel_shift`
+- `annotate_figure_grid` `images → image2d` GPU: あり(許可リスト) — 画像(image2d)を返す: 画像 + 見出しを一枚の図に組む(余白一定・パネル文字つき)。 · 例: `paper_figure`, `poc_compendial_particle_microscopy`, `poc_flybrain_pointcloud`, `poc_itof_multifreq`, `poc_pixel_shift`
 - `annotate_figure_grid_layout` `入力なし → table` GPU: なし — table(dict)を返す: 多パネル図の組版(セル・パネル・見出し帯の矩形)を閉形式で。 · 例: `paper_figure`
 - `annotate_inset` `image2d → image2d` GPU: なし — 画像(image2d)を返す: 元枠の拡大を隅に差し込み、対応する角を線で結ぶ。 · 例: `paper_figure`, `poc_real_defect_floor`
 - `annotate_inset_layout` `入力なし → table` GPU: なし — table(dict)を返す: 拡大差し込みの置き場所と倍率を閉形式で決める。 · 例: `paper_figure`
@@ -4814,7 +4816,7 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### annotate / shape(4)
 - `arc` `image2d → image2d` GPU: あり(許可リスト) — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。 · 例: `annotate_gallery`, `poc_mixed_case_depalletizing`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_real_walnut_cbct`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` GPU: なし — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_camera_calibration`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_mixed_case_depalletizing`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_bg_kalman_tracking`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
+- `ellipse` `image2d → image2d` GPU: なし — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。 · 例: `annotate_gallery`, `poc_camera_calibration`, `poc_compendial_particle_microscopy`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_mixed_case_depalletizing`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_bg_kalman_tracking`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: あり(許可リスト) — 多角形の塗り(偶奇規則の交差判定 ―― :mod:`imagedraw` は輪郭のみ)。 · 例: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: あり(許可リスト) — 角丸の矩形(``fill=True`` で塗り)。下敷きや囲みに使う。 · 例: `annotate_gallery`, `poc_machine_condition_fusion`
 
@@ -5433,7 +5435,7 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 #### astrostack / quality(3)
 - `frame_quality` `image2d → table` GPU: なし — 1 枚の品質を数える —— 鋭さ・FWHM・背景・真円度、そして選別用の点。 · 例: `astro_stacking`
 - `lucky_select` `images → indices` GPU: あり(許可リスト) — 品質点の上位 ``keep_fraction`` だけを採る —— lucky imaging の選別。 · 例: `astro_stacking`, `poc_astro_photometry`
-- `noise_sigma` `image2d → measurement` GPU: なし — 背景の雑音 sigma を頑健に推定する(星に汚されない一つの実数)。 · 例: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
+- `noise_sigma` `image2d → measurement` GPU: なし — 背景の雑音 sigma を頑健に推定する(星に汚されない一つの実数)。 · 例: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_compendial_particle_microscopy`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
 
 #### astrostack / stack(2)
 - `drizzle_resample` `images → image2d` GPU: なし — Drizzle —— 副画素でずれた複数フレームから細かい格子を作る(面積保存)。 · 例: `astro_stacking`, `poc_astro_photometry`, `poc_pixel_shift`, `poc_superresolution_limits`
@@ -5550,7 +5552,7 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `create_metrology_model` (halcon: `create_metrology_model`) `入力なし → metrologymodel` GPU: なし — 空の計測モデルを作る(create_metrology_model)。 · 例: `example_inner_diameter_mm`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`
 
 #### measure1d / scale(3)
-- `mm_per_px_from_reference` `measurement → measurement` GPU: なし — 既知寸法の的(スケールバー・基準穴・ゲージ)から画素ピッチ mm/px を出す(校正)。 · 例: `example_inner_diameter_mm`, `example_scratch_width`
+- `mm_per_px_from_reference` `measurement → measurement` GPU: なし — 既知寸法の的(スケールバー・基準穴・ゲージ)から画素ピッチ mm/px を出す(校正)。 · 例: `example_inner_diameter_mm`, `example_scratch_width`, `poc_compendial_particle_microscopy`
 - `pixel_to_world` `measurement → measurement` GPU: なし — 画素で測った長さ 1 個を実寸 mm にする(``value_px * mm_per_px``)。 · 例: `example_inner_diameter_mm`, `lane_ops_tour`
 - `table_px_to_mm` `table → table` GPU: なし — 計測結果の表(``measure_pairs`` / ``apply_metrology_model`` の返り)に mm 列を足す。 · 例: `example_inner_diameter_mm`, `example_scratch_width`
 
@@ -5642,7 +5644,7 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 ### blob(11 ops / 5 categories)
 
 #### blob / connect(1)
-- `blob_label` `mask → labels2d` GPU: 鎖の中だけ(許可リスト) — 二値領域を連結成分に分け、``int32`` のラベル画像(背景 0、物体 1..n)を返す。 · 例: `blob_split_tour`, `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_dense_bubble_count`, `poc_em_split_merge_score`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_gravitational_lens_invariants`, `poc_leaf_disease_area`, `poc_machine_condition_fusion`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_pipe_wall_loss`, `poc_powder_grinding_ae`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_segmentation_gauntlet`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
+- `blob_label` `mask → labels2d` GPU: 鎖の中だけ(許可リスト) — 二値領域を連結成分に分け、``int32`` のラベル画像(背景 0、物体 1..n)を返す。 · 例: `blob_split_tour`, `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`, `poc_em_split_merge_score`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_gravitational_lens_invariants`, `poc_leaf_disease_area`, `poc_machine_condition_fusion`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_pipe_wall_loss`, `poc_powder_grinding_ae`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_segmentation_gauntlet`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
 
 #### blob / extract(3)
 - `blob_boundaries` `labels2d → mask` GPU: なし — 物体の輪郭(1 画素幅、bool)。**隣り合う物体の境目も残る**。 · 例: `poc_gear_tooth_metrology`, `poc_real_sem_metal_layer`
@@ -5650,17 +5652,17 @@ _計 3854 ops / 60 families。並びとノートの在り処は `docs/ops/INDEX.
 - `blob_region` `labels2d → mask` GPU: なし — 物体 1 個を二値領域(bool)として抜く。``index`` は **1 起点**。 · 例: `poc_gear_tooth_metrology`, `poc_particle_sizing`
 
 #### blob / measure(1)
-- `blob_features` `labels2d → table` GPU: なし — 物体ごとの形の特徴量を、**鍵ごとに 1 本の配列**で返す。 · 例: `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_dense_bubble_count`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_leaf_disease_area`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
+- `blob_features` `labels2d → table` GPU: なし — 物体ごとの形の特徴量を、**鍵ごとに 1 本の配列**で返す。 · 例: `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_leaf_disease_area`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
 
 #### blob / select(2)
 - `blob_select` `labels2d → labels2d` GPU: なし — 特徴量が ``[vmin, vmax]`` に入る物体だけ残す(**番号は 1 から振り直す**)。 · 例: `poc_particle_sizing`, `poc_pipe_wall_loss`, `poc_pv_thermal_survey`, `poc_solar_el_inspection`, `poc_weld_radiograph_porosity`
 - `blob_select_largest` `labels2d → labels2d` GPU: なし — 面積の大きい順に ``count`` 個だけ残す(**番号は面積の降順に振り直す**)。 · 例: `poc_am_thermal_to_ct`, `poc_gear_tooth_metrology`, `poc_solder_fillet_aoi`, `poc_wound_area_tracking`
 
 #### blob / split(4)
-- `blob_count_interval` `mask → table` GPU: なし — 重なった物体を数える。**決まらないときは個数ではなく区間を返す**(fail-closed)。 · 例: `poc_dense_bubble_count`
-- `blob_distance` `mask → image2d` GPU: あり(許可リスト) — 前景の各画素から**いちばん近い背景まで**の距離。単位は ``spacing`` 倍。 · 例: `blob_split_tour`, `poc_bone_trabecular_thickness`, `poc_dense_bubble_count`, `poc_real_sem_metal_layer`, `poc_segmentation_gauntlet`
-- `blob_seeds` `image2d → labels2d` GPU: なし — h-maxima の種。**``h`` は ``distance`` と同じ単位の絶対値**。 · 例: `blob_split_tour`, `poc_dense_bubble_count`
-- `blob_split` `labels2d × labels2d × image2d → labels2d` GPU: なし — 種から**高いところ順に**領域を広げて、融合した塊を割る(分水嶺)。 · 例: `blob_split_tour`, `poc_dense_bubble_count`
+- `blob_count_interval` `mask → table` GPU: なし — 重なった物体を数える。**決まらないときは個数ではなく区間を返す**(fail-closed)。 · 例: `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`
+- `blob_distance` `mask → image2d` GPU: あり(許可リスト) — 前景の各画素から**いちばん近い背景まで**の距離。単位は ``spacing`` 倍。 · 例: `blob_split_tour`, `poc_bone_trabecular_thickness`, `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`, `poc_real_sem_metal_layer`, `poc_segmentation_gauntlet`
+- `blob_seeds` `image2d → labels2d` GPU: なし — h-maxima の種。**``h`` は ``distance`` と同じ単位の絶対値**。 · 例: `blob_split_tour`, `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`
+- `blob_split` `labels2d × labels2d × image2d → labels2d` GPU: なし — 種から**高いところ順に**領域を広げて、融合した塊を割る(分水嶺)。 · 例: `blob_split_tour`, `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`
 
 ### dem(25 ops / 5 categories)
 

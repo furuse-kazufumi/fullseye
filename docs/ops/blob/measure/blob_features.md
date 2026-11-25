@@ -5,7 +5,7 @@ category: measure
 in: labels2d
 out: table
 gpu: なし
-examples: [poc_am_thermal_to_ct, poc_bone_trabecular_thickness, poc_bump_coplanarity, poc_dense_bubble_count, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_peg_insertion_tactile, poc_print_warpage_risk, poc_pv_thermal_survey, poc_real_coin_metrology, poc_real_sem_metal_layer, poc_rotation_invariance_audit, poc_sea_ice_concentration, poc_sem_wafer_defect_edge_bias, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
+examples: [poc_am_thermal_to_ct, poc_bone_trabecular_thickness, poc_bump_coplanarity, poc_compendial_particle_microscopy, poc_dense_bubble_count, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_peg_insertion_tactile, poc_print_warpage_risk, poc_pv_thermal_survey, poc_real_coin_metrology, poc_real_sem_metal_layer, poc_rotation_invariance_audit, poc_sea_ice_concentration, poc_sem_wafer_defect_edge_bias, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -75,6 +75,7 @@ Examples
 - [poc_am_thermal_to_ct](../../../../examples/poc_am_thermal_to_ct.py) — `py -3.11 examples/poc_am_thermal_to_ct.py`
 - [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
 - [poc_bump_coplanarity](../../../../examples/poc_bump_coplanarity.py) — `py -3.11 examples/poc_bump_coplanarity.py`
+- [poc_compendial_particle_microscopy](../../../../examples/poc_compendial_particle_microscopy.py) — `py -3.11 examples/poc_compendial_particle_microscopy.py`
 - [poc_dense_bubble_count](../../../../examples/poc_dense_bubble_count.py) — `py -3.11 examples/poc_dense_bubble_count.py`
 - [poc_fresco_craquelure](../../../../examples/poc_fresco_craquelure.py) — `py -3.11 examples/poc_fresco_craquelure.py`
 - [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`

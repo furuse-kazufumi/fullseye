@@ -61,9 +61,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3637,
+    "executable": 3636,
     "reasons": {
-      "python_signature": 2672,
+      "python_signature": 2671,
       "registry": 964
     },
     "not_executable_reasons": {
@@ -390,9 +390,9 @@
   },
   "counts": {
     "nodes": 103,
-    "edges": 3852,
-    "conversion_pairs": 427,
-    "conversion_edge_incidence": 2540
+    "edges": 3851,
+    "conversion_pairs": 426,
+    "conversion_edge_incidence": 2538
   },
   "nodes": [
     {
@@ -795,8 +795,8 @@
       "sort": "image",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 738,
-      "consumed_by": 1114,
+      "produced_by": 737,
+      "consumed_by": 1113,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -927,7 +927,7 @@
       "sort": "measurement",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 100,
+      "produced_by": 99,
       "consumed_by": 6,
       "generator": true,
       "type_check": true,
@@ -1137,7 +1137,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 197,
-      "consumed_by": 176,
+      "consumed_by": 175,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1357,7 +1357,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 8,
-      "consumed_by": 11,
+      "consumed_by": 10,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1422,8 +1422,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1282,
-      "consumed_by": 605,
+      "produced_by": 1283,
+      "consumed_by": 607,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -34660,55 +34660,6 @@
       },
       "bundle_semantics": "unknown",
       "source_ref": "S00001"
-    },
-    {
-      "op": "region_perimeter_estimate",
-      "inputs": [
-        "region"
-      ],
-      "output": "measurement",
-      "category": "fit",
-      "family": null,
-      "family_candidate": null,
-      "family_candidate_source": null,
-      "type_semantics": "typed",
-      "consumes_input": true,
-      "executable": true,
-      "compute": {
-        "structure": "unknown",
-        "intensity": "memory_or_unknown",
-        "source_ref": "S00003"
-      },
-      "implementations": [
-        {
-          "backend": "python/registry",
-          "status": "available",
-          "source_ref": "S00003"
-        }
-      ],
-      "runtime_target": {
-        "module": "measure",
-        "callable": "region_perimeter_estimate"
-      },
-      "executor": {
-        "kind": "python",
-        "module": "measure",
-        "callable": "region_perimeter_estimate"
-      },
-      "parameter_schema": [
-        {
-          "name": "method",
-          "type": "str",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": "skimage"
-        }
-      ],
-      "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
-      "bundle_semantics": "unknown",
-      "source_ref": "S00003"
     },
     {
       "op": "fit_circle_geometric",
@@ -173780,6 +173731,108 @@
       "source_ref": "S00021"
     },
     {
+      "op": "particle_size_distribution",
+      "inputs": [
+        "table",
+        "table"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "input_roles": [
+        "particles",
+        "calibration"
+      ],
+      "runtime_target": {
+        "module": "pharmaparticle",
+        "callable": "particle_size_distribution"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "pharmaparticle",
+        "callable": "particle_size_distribution"
+      },
+      "parameter_schema": [
+        {
+          "name": "border_policy",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "exclude"
+        },
+        {
+          "name": "measurement_date",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "bin_edges",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "confidence",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.95
+        },
+        {
+          "name": "bootstrap_samples",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 2000
+        },
+        {
+          "name": "seed",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 776
+        },
+        {
+          "name": "upstream_records",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
       "op": "matmul_ozaki",
       "inputs": [
         "matrix",
@@ -202029,88 +202082,6 @@
           "verified_through_mcp_pipeline"
         ]
       },
-      "bundle_semantics": "unknown",
-      "source_ref": "S00034"
-    },
-    {
-      "op": "filtered_backprojection_like",
-      "inputs": [
-        "sinogram",
-        "image"
-      ],
-      "output": "image",
-      "category": "tomography",
-      "family": null,
-      "family_candidate": null,
-      "family_candidate_source": null,
-      "type_semantics": "typed",
-      "consumes_input": true,
-      "executable": true,
-      "compute": {
-        "structure": "unknown",
-        "intensity": "memory_or_unknown",
-        "source_ref": "S00034"
-      },
-      "implementations": [
-        {
-          "backend": "python/registry",
-          "status": "available",
-          "source_ref": "S00034"
-        }
-      ],
-      "runtime_target": {
-        "module": "tomography",
-        "callable": "filtered_backprojection_like"
-      },
-      "executor": {
-        "kind": "python",
-        "module": "tomography",
-        "callable": "filtered_backprojection_like"
-      },
-      "parameter_schema": [
-        {
-          "name": "angles_deg",
-          "type": "unannotated",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": null
-        },
-        {
-          "name": "filter_name",
-          "type": "unannotated",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": "ramp"
-        },
-        {
-          "name": "cutoff",
-          "type": "unannotated",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": 1.0
-        },
-        {
-          "name": "span_deg",
-          "type": "unannotated",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": null
-        },
-        {
-          "name": "device",
-          "type": "unannotated",
-          "required": false,
-          "range": "undocumented",
-          "unit": "undocumented",
-          "default": "cpu"
-        }
-      ],
-      "verified_executable": false,
-      "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
       "source_ref": "S00034"
     },
@@ -291897,11 +291868,11 @@
         "kind": "registry",
         "alias": "moments_region_2nd_invar",
         "module": "backend_safe",
-        "callable": "_safe(_deprecated_alias.<locals>.fn)"
+        "callable": "_safe(_sh_region_feat.<locals>.fn)"
       },
       "runtime_target": {
         "module": "backend_safe",
-        "callable": "_safe(_deprecated_alias.<locals>.fn)"
+        "callable": "_safe(_sh_region_feat.<locals>.fn)"
       },
       "verified_executable": true,
       "verification": {
