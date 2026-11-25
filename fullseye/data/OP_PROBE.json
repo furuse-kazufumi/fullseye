@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3855, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3857, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
