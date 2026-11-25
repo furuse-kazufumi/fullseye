@@ -99,6 +99,7 @@ from scipy import ndimage
 from scipy.optimize import least_squares
 from scipy.special import erf
 
+import arrayguard as _arrayguard
 import defectgen
 import fit_transform
 import mosaic
@@ -285,17 +286,20 @@ def _shape(shape):
 
 def _require_image(a, name, op):
     """2-D の有限 float64 画像。"""
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        a, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     arr = np.asarray(a, dtype=np.float64)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            arr, name, op, MAX_IMAGE_ELEMENTS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if arr.ndim != 2:
         raise ValueError("%s: %s must be a 2-D image, got shape %r"
                          % (op, name, arr.shape))
     if arr.shape[0] < 2 or arr.shape[1] < 2:
         raise ValueError("%s: %s must be at least 2x2, got %r"
                          % (op, name, arr.shape))
-    if arr.size > MAX_IMAGE_ELEMENTS:
-        raise ValueError("%s: %s has %d pixels, over the %d cap "
-                         "(astrostack.MAX_IMAGE_ELEMENTS)"
-                         % (op, name, arr.size, MAX_IMAGE_ELEMENTS))
     if not np.isfinite(arr).all():
         raise ValueError("%s: %s has %d non-finite pixel(s)"
                          % (op, name, int((~np.isfinite(arr)).sum())))
