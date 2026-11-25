@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">filtered_backprojection_like — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sinogram × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filtered_backprojection_like(sinogram, reference, angles_deg=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, device=&#x27;cpu&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tomography; tomography.filtered_backprojection_like(sinogram, reference, angles_deg=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, device=&#x27;cpu&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opstomography.get(&quot;filtered_backprojection_like&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>संदर्भ image की वर्गाकार grid पर FBP reconstruct करता है。</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>This is the explicit companion to <code style="color:#22d3bf">filtered_backprojection</code>, whose established default remains the detector-derived inscribed square. The sinogram does not contain the source side length, so it cannot recover that choice on its own. Pass the image that was given to <code style="color:#22d3bf">radon_transform</code>::</p>
+<p>image = np.zeros((32, 32), np.float64)</p>
+<p>sinogram = radon_transform(image)</p>
+<p>reconstruction = filtered_backprojection_like(sinogram, image)</p>
+<p>assert reconstruction.shape == image.shape</p>
+<p><code style="color:#22d3bf">reference</code> is a finite 2-D square image and supplies only the output grid; its pixel values are deliberately not read. A rectangular reference is refused rather than silently returning a square whose shape does not match:</p>
+<p>2-D FBP currently reconstructs a square grid. This function cannot prove that *reference* was the image that produced *sinogram*; keep that pairing in the calling pipeline. All filter, angle, span, device and invalid-sinogram contracts are those of <code style="color:#22d3bf">filtered_backprojection</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="optomography:radon_transform">radon_transform</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">reconstruct</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -47,7 +47,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | drive | 750 | 10 | 15 |
 | emproof | 14 | 1 | 2 |
 | fileio | 28 | 2 | 4 |
-| fit | 3 | 2 | 2 |
+| fit | 4 | 2 | 2 |
 | flyvision | 22 | 3 | 6 |
 | generative | 42 | 3 | 5 |
 | geocam | 9 | 2 | 4 |
@@ -84,7 +84,7 @@ GPU の切り替わり = 隣り合う 2 段で、片方だけが pipeline 文脈
 | specular | 20 | 6 | 6 |
 | symbol | 33 | 1 | 1 |
 | text | 3 | 3 | 3 |
-| tomography | 43 | 4 | 6 |
+| tomography | 44 | 4 | 6 |
 | videocube | 6 | 1 | 1 |
 | videostream | 16 | 2 | 4 |
 | volcolor | 11 | 3 | 3 |

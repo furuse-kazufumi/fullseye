@@ -42,7 +42,7 @@ Z について線形に補間した値が実効 Z。厚みの効果(ビーム硬
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[radon_transform](../forward/radon_transform.md)
+[radon_transform](../forward/radon_transform.md) · [filtered_backprojection_like](../reconstruct/filtered_backprojection_like.md)
 
 ## 同カテゴリ(`spectral_xray`)
 

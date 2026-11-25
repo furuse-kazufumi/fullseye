@@ -149,11 +149,11 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**3,855 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **73 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**3,857 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **73 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2885/2885, Fassade `fullseye.<name>` 772/1609 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2887/2887, Fassade `fullseye.<name>` 774/1611 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3855 Notizen verweisen **3816** auf mindestens ein lauffähiges Beispiel (39 ohne), **3656** haben einen Nutzungsabschnitt ab 120 Zeichen (199 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3855.
+**Gemessener Inhalt**: von 3857 Notizen verweisen **3818** auf mindestens ein lauffähiges Beispiel (39 ohne), **3658** haben einen Nutzungsabschnitt ab 120 Zeichen (199 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3857.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
@@ -168,7 +168,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `oned` | 49 | [INDEX](ops/oned/INDEX.md) |
 | `mv` | 47 | [INDEX](ops/mv/INDEX.md) · [guide](ops/mv/guides/machine_vision_classics.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
-| `tomography` | 43 | [INDEX](ops/tomography/INDEX.md) |
+| `tomography` | 44 | [INDEX](ops/tomography/INDEX.md) |
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
 | `imgmetrics` | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
@@ -215,7 +215,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
-| `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
+| `fit` | 4 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 Nach Namen suchen mit `py -3.11 imgevolve.py ops --search edge`; die vollständige Tabelle ist [OP_CATALOG.md](OP_CATALOG.md), der dimensionsübergreifende Einstieg [ops/INDEX.md](ops/INDEX.md).
@@ -316,7 +316,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 348
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,855 Operator-Notizen und 73 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,857 Operator-Notizen und 73 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 
@@ -406,7 +406,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 
 | Dokument | Inhalt |
 |---|---|
-| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Known Issues — 調べた欠陥の記録(2026-08-30 開始、最終の節は §52 = 2026-09-26) _(ja)_ |
+| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Known Issues — 調べた欠陥の記録(2026-08-30 開始、最終の節は §53 = 2026-11-24) _(ja)_ |
 | [`STATUS.md`](STATUS.md) | imgevolve — status / plan (plan_ref) |
 | [`ACCURACY_BENCH.md`](ACCURACY_BENCH.md) | Accuracy benchmark — champion vs null (holdout) |
 | [`BENCH_VS_OPENCV.md`](BENCH_VS_OPENCV.md) | imgevolve GPU op vs OpenCV (CPU) throughput benchmark → [`BENCH_VS_OPENCV.en.md`](BENCH_VS_OPENCV.en.md) · Original _(ja)_ |

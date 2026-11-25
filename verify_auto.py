@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import warnings
 
 import numpy as np
 
@@ -115,6 +116,7 @@ def run(verbose_failures=False):
     specs = BA.load_specs()
     real = BA._real_ops()
     results = []
+    compiled = {}
     for s in specs:
         name, shape, in_s, out_s = (s["halcon"], s["shape"], s["in_sort"], s["out_sort"])
         if name not in real:
@@ -125,13 +127,26 @@ def run(verbose_failures=False):
         if shape not in BA.SHAPES:
             results.append((name, "drop_shape", shape))
             continue
-        try:
-            fn = BA.SHAPES[shape](s.get("params", {}))
-        except Exception as e:
-            results.append((name, "bad_params", repr(e)))
-            continue
+        params = s.get("params", {})
+        alias_of = params.get("alias_of")
+        if alias_of:
+            target = compiled.get(alias_of)
+            if target is None:
+                results.append((name, "bad_params", "missing alias target: %s" % alias_of))
+                continue
+            # ``backends_auto.build`` と同じ alias wrapper を gate する / Gate
+            # the compiled wrapper rather than the raw shape factory, so a
+            # compatibility alias cannot disappear from the parity count.
+            fn = BA._deprecated_alias(target, name, alias_of)
+        else:
+            try:
+                fn = BA.SHAPES[shape](params)
+            except Exception as e:
+                results.append((name, "bad_params", repr(e)))
+                continue
         if shape == "geom" and out_s == "region":
             fn = BA._rebinarise(fn)         # gate the op `build` compiles, not the raw factory
+        compiled[name] = fn
         base = inputs.get(in_s)
         if base is None:
             results.append((name, "no_input", in_s))
@@ -140,7 +155,11 @@ def run(verbose_failures=False):
         ok_all, changed_any, reason = True, False, ""
         for (a, b) in ((0.3, 0.4), (0.6, 0.7), (0.15, 0.85)):
             try:
-                out = fn(ref if not isinstance(ref, np.ndarray) else ref.copy(), a, b)
+                # 非推奨 alias も実行するが migration warning は門の根拠ではない /
+                # Execute aliases, but their expected migration warnings are not evidence.
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", DeprecationWarning)
+                    out = fn(ref if not isinstance(ref, np.ndarray) else ref.copy(), a, b)
             except Exception as e:
                 ok_all, reason = False, "raise:%s" % repr(e)[:80]
                 break

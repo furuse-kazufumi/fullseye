@@ -83,24 +83,26 @@ SCALE_LAW: dict[str, tuple[float, ...]] = {
     "euler_number":             (0.0,),
     "sk_euler":                 (0.0,),
     # --- モーメント族 ---------------------------------------------------------
-    # ★HALCON の同名演算子は**正規化しない**中心モーメントを返すので、本来は
-    #   p=4 / 5 / 8 になる。この repo は 1 スカラーへ合成する際に Hu の正規化
-    #   不変量を使っており p=0 である(docs/KNOWN_ISSUES.md §52、巡 13 で直す)。
-    #   ここは **あるべき値**を書き、直るまで strict xfail で開いたままにする ——
-    #   免除台帳に「例外」として畳み込むと、直ったことに誰も気づけない。
-    "moments_region_2nd":       (4.0,),
+    # ``moments_region_2nd_invar`` は 1.2.0 からこの値の非推奨別名になった。
+    # 両方が Hu の第 1 不変モーメントとして無次元なのは実装どおりの契約で、別名の
+    # 回帰は tests/test_known_issues_fixes.py が警告と同値性を検査する。
+    "moments_region_2nd":       (0.0,),
     "moments_region_3rd":       (5.0,),
     "moments_region_central":   (8.0,),
     # 正規化つきは尺度不変が正しい
-    "moments_region_2nd_invar": (0.0,),
     "moments_region_2nd_rel_invar": (0.0,),
     "moments_region_3rd_invar": (0.0,),
     "moments_region_central_invar": (0.0,),
 }
 
-#: ★§52 が直るまで落ちる 3 本。`strict=True` なので、**直った瞬間に「予期せぬ成功」で
-#: 落ちて**この表を直せと言ってくる(黙って通り続ける免除にしない)。
-_OPEN_DEFECT_52 = {"moments_region_2nd", "moments_region_3rd", "moments_region_central"}
+#: 2 次の重複名(§52)は 1.2.0 で別名へ整理した。残る 3 次 / central の寸法量の
+#: 非パリティは別の未解決問題なので、strict xfail を維持する。直った瞬間に「予期
+#: せぬ成功」で落ち、宣言表の更新を要求する(黙って通り続ける免除にしない)。
+_OPEN_MOMENT_DIMENSION_DEFECTS = {"moments_region_3rd", "moments_region_central"}
+
+#: ``moments_region_2nd_invar`` は 1.2.0 から canonical op の非推奨別名で、同値性と
+#: DeprecationWarning は既知不具合の回帰試験が担保する。尺度法則をもう一度走らせない。
+_DEPRECATED_ALIASES = {"moments_region_2nd_invar"}
 
 
 def _shape():
@@ -137,11 +139,12 @@ def _exponents(name, ks=(2, 3)):
 
 REGION_FEATURE_OPS = sorted(
     o.name for o in ops._BY_NAME.values()
-    if o.in_sort == "region" and o.out_sort in ("feature", "match", "counts"))
+    if o.in_sort == "region" and o.out_sort in ("feature", "match", "counts")
+    and o.name not in _DEPRECATED_ALIASES)
 
 
 # --------------------------------------------------------------------------- #
-@pytest.mark.parametrize("name", [n for n in SCALE_LAW if n not in _OPEN_DEFECT_52])
+@pytest.mark.parametrize("name", [n for n in SCALE_LAW if n not in _OPEN_MOMENT_DIMENSION_DEFECTS])
 def test_the_feature_follows_its_declared_scale_law(name):
     """k 倍に拡大したら k^p 倍になる(p は宣言表のもの)。"""
     want = np.array(SCALE_LAW[name], np.float64)
@@ -155,12 +158,12 @@ def test_the_feature_follows_its_declared_scale_law(name):
             % (name, label, np.round(got, 3), want))
 
 
-@pytest.mark.parametrize("name", sorted(_OPEN_DEFECT_52))
-@pytest.mark.xfail(strict=True, reason="docs/KNOWN_ISSUES.md §52: HALCON の同名演算子は"
-                                       "正規化しない中心モーメントを返すが、この repo は"
-                                       "Hu の正規化不変量を 1 スカラーに合成している")
+@pytest.mark.parametrize("name", sorted(_OPEN_MOMENT_DIMENSION_DEFECTS))
+@pytest.mark.xfail(strict=True, reason="HALCON の同名演算子は"
+                                        "正規化しない中心モーメントを返すが、この repo は"
+                                        "Hu の正規化不変量を 1 スカラーに合成している")
 def test_the_moment_ops_carry_halcons_dimension(name):
-    """★開いたままの欠陥を、免除でなく **strict xfail** で持つ。
+    """★残る尺度不一致を、免除でなく **strict xfail** で持つ。
 
     直った瞬間に「予期せぬ成功」で落ち、`SCALE_LAW` の更新を要求する。
     免除台帳に畳み込むと、**直ったことに誰も気づけない**。
@@ -185,6 +188,7 @@ def test_every_region_feature_op_declares_a_scale_law():
         % (missing, os.path.basename(__file__)))
     extra = [n for n in SCALE_LAW if n not in ops.RT]
     assert not extra, "宣言表に実在しない op がある(消えた op の行が残っている): %s" % extra
+    assert _DEPRECATED_ALIASES <= set(ops.RT)
 
 
 def test_the_law_would_catch_a_normalised_feature():

@@ -46,7 +46,7 @@ undefined.
 
 ## 同カテゴリ(`fit`)
 
-[fit_circle_geometric](fit_circle_geometric.md)
+[region_perimeter_estimate](region_perimeter_estimate.md) · [fit_circle_geometric](fit_circle_geometric.md)
 
 ---
 *Provenance: measure.py — FIT operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
