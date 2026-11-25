@@ -33,6 +33,7 @@ import math
 
 import numpy as np
 
+import arrayguard as _arrayguard
 from metriccontract import MetricContractError
 
 __all__ = ["iv_richardson_lucy_until"]
@@ -94,14 +95,19 @@ def iv_richardson_lucy_until(image=None, psf_sigma=1.5, psf=None, noise="poisson
     op = "iv_richardson_lucy_until"
     if image is None:
         image = _example_counts()
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        image, "image", op, MAX_PIXELS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     try:
         y0 = np.asarray(image, dtype=np.float64)
     except (TypeError, ValueError):
         raise ValueError("%s: image must be numeric" % op) from None
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            y0, "image", op, MAX_PIXELS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if y0.ndim != 2 or min(y0.shape) < 8:
         raise ValueError("%s: image must be 2-D and at least 8 x 8, got shape %s" % (op, y0.shape))
-    if y0.size > MAX_PIXELS:
-        raise ValueError("%s: image has %d pixels (cap %d)" % (op, y0.size, MAX_PIXELS))
     if not np.isfinite(y0).all():
         raise ValueError("%s: image contains NaN or inf" % op)
     if noise not in ("poisson", "gaussian"):

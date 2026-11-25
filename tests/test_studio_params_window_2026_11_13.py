@@ -1226,9 +1226,18 @@ def test_show_params_window_reuses_the_window_of_a_parent(qapp, ini, tmp_path):
     parent.deleteLater()
 
 
-def _answer(app, label: str, log: list) -> None:
-    """次に出るモーダルの箱の、``label`` のボタンを押す(出なければ 3 秒で諦めて箱を閉じる = 試験は落ちる)。"""
-    state = {"tries": 0}
+def _answer(app, label: str, log: list) -> dict:
+    """次に出るモーダルの箱の ``label`` を押す。3 秒で箱を閉じて試験を失敗させる。
+
+    Press ``label`` on the next modal box.  After three seconds, close every
+    visible confirmation box and leave an explicit failure marker: a GUI test
+    must never leave ``QMessageBox.exec()`` waiting without a bound.
+    """
+    state = {"tries": 0, "timed_out": False}
+
+    def visible_boxes():
+        return [widget for widget in app.topLevelWidgets()
+                if isinstance(widget, QtWidgets.QMessageBox) and widget.isVisible()]
 
     def go():
         box = app.activeModalWidget()
@@ -1236,6 +1245,12 @@ def _answer(app, label: str, log: list) -> None:
         if not isinstance(box, QtWidgets.QMessageBox):
             if state["tries"] < 300:
                 QtCore.QTimer.singleShot(10, go)
+            else:
+                # 見つからない箱を待ち続けず、見えている確認を閉じて失敗を残す。
+                # Never leave a nested event loop open when the expected box was not found.
+                state["timed_out"] = True
+                for visible in visible_boxes():
+                    visible.reject()
             return
         hit = [b for b in box.buttons() if b.text() == label]
         log.append((box.text(), box.informativeText(), sorted(b.text() for b in box.buttons())))
@@ -1245,6 +1260,7 @@ def _answer(app, label: str, log: list) -> None:
             box.reject()
 
     QtCore.QTimer.singleShot(0, go)
+    return state
 
 
 def test_the_three_question_boxes_ask_in_the_ui_language(qapp, ini, tmp_path):
@@ -1254,15 +1270,17 @@ def test_the_three_question_boxes_ask_in_the_ui_language(qapp, ini, tmp_path):
     tr = M.make_tr("ja")
     log: list = []
     answers = []
+    guards = []
     for label, want in (("Save and close", "save"), ("Close without saving", "discard"), ("Cancel", "cancel")):
-        _answer(qapp, tr(label), log)
+        guards.append(_answer(qapp, tr(label), log))
         answers.append(p._ask_unsaved_box(["day.json"]) == want)
     for label, want in (("Save anyway", True), ("Cancel", False)):
-        _answer(qapp, tr(label), log)
+        guards.append(_answer(qapp, tr(label), log))
         answers.append(p._ask_losses_box("day.json", ["a", "b"]) is want)
     for label, want in (("Overwrite anyway", "overwrite"), ("Reload", "reload"), ("Cancel", "cancel")):
-        _answer(qapp, tr(label), log)
+        guards.append(_answer(qapp, tr(label), log))
         answers.append(p._ask_overwrite_box("day.json", "changed") == want)
+    assert not any(guard["timed_out"] for guard in guards), guards
     assert answers == [True] * 8 and len(log) == 8
     assert log[0][0] == tr("%d bundle(s) have unsaved changes: %s") % (1, "day.json")
     want = sorted([tr("Save and close"), tr("Close without saving"), tr("Cancel")])

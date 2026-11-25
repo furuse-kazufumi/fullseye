@@ -56,6 +56,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #: 数字は不可視な関数の本数で、増減しても意図的なら書き換えてよい。
 _INTERNAL = {
     "accel_bridge": 9, "accel_vol": 3,
+    # 2026-11-25: arrayguard は op 入力の検査だけを担う内部層 3 本。
+    "arrayguard": 3,
     # 2026-11-12 safe_xml(fix/safe-xml-parse-2026-11-12): XML を DOCTYPE・実体の増幅なしで読む内部の層 4 本。
     # 利用者は各形式の読み込み(CommonRoad・OSM・OME-TIFF・SVG・3MF …)から使う。公開するかは担当の判断。
     # 2026-11-03 device="auto" の判断(損益分岐の表・空き VRAM・段ごとの経路)。利用者の入口は
@@ -497,7 +499,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   oss_adapter.camera / features / flow / stereo。届いていなかった物を正直に数え直した(増えたのではない)。
 # 2026-11-23 Studio の外部 tracer の知らせ: studio_program.external_tracer 1 本(Studio の GUI の内側。
 #   呼び出し元の sys.settrace / threading.settrace / sys.monitoring を検出する)で 1568 → 1569(この機械の実測)。
-_HIDDEN_FUNCTIONS_TODAY = 1569
+# 2026-11-25 origin/master を統合後に実測: arrayguard の 3 本も、op の内側で入力を拒む部品なので
+# _INTERNAL に入れる。1569 → 1572。
+_HIDDEN_FUNCTIONS_TODAY = 1572
 
 
 def _hidden_total():

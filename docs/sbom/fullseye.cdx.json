@@ -52,6 +52,11 @@
           "name": "fullseye:specifier",
           "value": ">=7.0"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
+        }
       ]
     },
     {
@@ -72,6 +77,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=1.0"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "LGPL-3.0-or-later"
         }
       ]
     },
@@ -98,6 +108,11 @@
           "name": "fullseye:specifier",
           "value": ">=14"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
       ]
     },
     {
@@ -118,6 +133,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=6.100"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MPL-2.0"
         }
       ]
     },
@@ -143,6 +163,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=0.4"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-2-Clause"
         }
       ]
     },
@@ -173,6 +198,11 @@
           "name": "fullseye:specifier",
           "value": ">=2.28"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-2-Clause"
+        }
       ]
     },
     {
@@ -198,6 +228,11 @@
           "name": "fullseye:specifier",
           "value": ">=0.9"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "Apache-2.0"
+        }
       ]
     },
     {
@@ -219,6 +254,11 @@
           "name": "fullseye:specifier",
           "value": ">=2.5"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-2-Clause"
+        }
       ]
     },
     {
@@ -239,6 +279,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=0.5"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
         }
       ]
     },
@@ -265,6 +310,11 @@
           "name": "fullseye:specifier",
           "value": ">=1.4"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
       ]
     },
     {
@@ -285,6 +335,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=3.5"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "PSF-2.0"
         }
       ]
     },
@@ -307,6 +362,11 @@
           "name": "fullseye:specifier",
           "value": ">=0.10"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "Apache-2.0"
+        }
       ]
     },
     {
@@ -327,6 +387,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=3.5"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
         }
       ]
     },
@@ -349,6 +414,11 @@
           "name": "fullseye:specifier",
           "value": ">=1.5"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
+        }
       ]
     },
     {
@@ -369,6 +439,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=5.3"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
         }
       ]
     },
@@ -391,6 +466,11 @@
           "name": "fullseye:specifier",
           "value": ">=3.0"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
+        }
       ]
     },
     {
@@ -407,6 +487,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=1.23"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
         }
       ]
     },
@@ -433,6 +518,11 @@
           "name": "fullseye:specifier",
           "value": ">=4.8.1.78"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "Apache-2.0"
+        }
       ]
     },
     {
@@ -453,6 +543,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=3.1"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
         }
       ]
     },
@@ -475,6 +570,11 @@
           "name": "fullseye:specifier",
           "value": ">=1.6"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "EPL-2.0 OR BSD-3-Clause"
+        }
       ]
     },
     {
@@ -495,6 +595,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=2.0"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
         }
       ]
     },
@@ -525,6 +630,11 @@
           "name": "fullseye:specifier",
           "value": ">=13.0"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT-CMU"
+        }
       ]
     },
     {
@@ -546,6 +656,11 @@
           "name": "fullseye:specifier",
           "value": ">=2.7"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "Apache-2.0"
+        }
       ]
     },
     {
@@ -566,6 +681,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=1.0"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "GPL-3.0-or-later"
         }
       ]
     },
@@ -592,6 +712,11 @@
           "name": "fullseye:specifier",
           "value": ">=0.4"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
       ]
     },
     {
@@ -612,6 +737,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=1.16"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
         }
       ]
     },
@@ -634,6 +764,11 @@
           "name": "fullseye:specifier",
           "value": ">=3.0"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
+        }
       ]
     },
     {
@@ -654,6 +789,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=1.1"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
         }
       ]
     },
@@ -676,6 +816,11 @@
           "name": "fullseye:specifier",
           "value": ">=1.4"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
+        }
       ]
     },
     {
@@ -696,6 +841,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=3.5"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
         }
       ]
     },
@@ -722,6 +872,11 @@
           "name": "fullseye:specifier",
           "value": ">=6.5,!=6.12.0"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only"
+        }
       ]
     },
     {
@@ -742,6 +897,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=4"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
         }
       ]
     },
@@ -764,6 +924,11 @@
           "name": "fullseye:specifier",
           "value": ">=3.15"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
       ]
     },
     {
@@ -784,6 +949,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=2.3"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
         }
       ]
     },
@@ -806,6 +976,11 @@
           "name": "fullseye:specifier",
           "value": ">=3.5"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
       ]
     },
     {
@@ -826,6 +1001,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=9.0.3"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
         }
       ]
     },
@@ -852,6 +1032,11 @@
           "name": "fullseye:specifier",
           "value": ">=1.4"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT AND BSD-3-Clause"
+        }
       ]
     },
     {
@@ -873,6 +1058,11 @@
           "name": "fullseye:specifier",
           "value": ">=6.0"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
       ]
     },
     {
@@ -893,6 +1083,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=0.4"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
         }
       ]
     },
@@ -923,6 +1118,11 @@
           "name": "fullseye:specifier",
           "value": ">=0.20"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
+        }
       ]
     },
     {
@@ -939,6 +1139,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=1.10"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
         }
       ]
     },
@@ -973,6 +1178,11 @@
           "name": "fullseye:specifier",
           "value": ">=2.2"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "Apache-2.0"
+        }
       ]
     },
     {
@@ -994,6 +1204,11 @@
           "name": "fullseye:specifier",
           "value": ">=0.12"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
+        }
       ]
     },
     {
@@ -1010,6 +1225,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=3.1"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
         }
       ]
     },
@@ -1044,6 +1264,11 @@
           "name": "fullseye:specifier",
           "value": ">=2023.1"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
+        }
       ]
     },
     {
@@ -1073,6 +1298,11 @@
           "name": "fullseye:specifier",
           "value": ">=2.13"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause"
+        }
       ]
     },
     {
@@ -1094,6 +1324,11 @@
           "name": "fullseye:specifier",
           "value": ">=4.0"
         }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
       ]
     },
     {
@@ -1114,6 +1349,11 @@
         {
           "name": "fullseye:specifier",
           "value": ">=2.2"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "Apache-2.0"
         }
       ]
     }

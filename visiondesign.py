@@ -46,6 +46,8 @@ from __future__ import annotations
 
 import numpy as np
 
+import arrayguard as _arrayguard
+
 import optics
 
 __all__ = [
@@ -332,14 +334,18 @@ def image_formation(scene, f_number=8.0, pixel_pitch_um=3.45,
     (``defocus_px`` may be 0), or ``vignetting`` is on without
     ``image_distance_mm``.
     """
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        scene, "scene", "image_formation", MAX_IMAGE_PIXELS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     img = np.asarray(scene, dtype=np.float64)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            img, "scene", "image_formation", MAX_IMAGE_PIXELS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if img.ndim != 2:
         raise ValueError("scene must be a 2-D image, got a %d-D array" % img.ndim)
     if img.size == 0:
         raise ValueError("scene is empty")
-    if img.size > MAX_IMAGE_PIXELS:
-        raise ValueError("scene has %d pixels, above MAX_IMAGE_PIXELS=%d — crop "
-                         "or downsample first" % (img.size, MAX_IMAGE_PIXELS))
     if not np.isfinite(img).all():
         raise ValueError("scene has non-finite pixel(s) (NaN/Inf)")
     n = _pos(f_number, "f_number")

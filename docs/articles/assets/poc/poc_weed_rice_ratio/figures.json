@@ -51,7 +51,8 @@
    897,
    1000,
    3
-  ]
+  ],
+  "source": "Source: Nguyen et al., WeedyRice-RGBMS, Mendeley Data v1. URL: https://doi.org/10.17632/vt4s83pxx6.1. Publication: Nguyen et al. (2025), A Dataset of Aligned RGB and Multispectral UAV Imagery for Semantic Segmentation of Weedy Rice. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Images are resized/cropped with annotation and prediction overlays as stated in the captions."
  },
  {
   "file": "06_fraction_scatter.png",
@@ -107,6 +108,7 @@
    615,
    670,
    3
-  ]
+  ],
+  "source": "Source: Nguyen et al., WeedyRice-RGBMS, Mendeley Data v1. URL: https://doi.org/10.17632/vt4s83pxx6.1. Publication: Nguyen et al. (2025), A Dataset of Aligned RGB and Multispectral UAV Imagery for Semantic Segmentation of Weedy Rice. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Images are resized/cropped with annotation and prediction overlays as stated in the captions."
  }
 ]

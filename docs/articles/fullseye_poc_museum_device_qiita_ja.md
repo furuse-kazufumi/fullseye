@@ -246,6 +246,10 @@ py -3.11 examples/poc_polarization_specular.py
 
 *↑ 合成の場面。*
 
+### 図の出典
+
+Source: DTU PV IRT aerial thermal survey dataset. URL: https://doi.org/10.11583/DTU.29665346.v1. Publication: del Prado Santamaría et al., DTU PV plant - Drone Infrared Thermography Dataset: Influence of Irradiance and Altitude. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-08 (original data retrieval, SHA-256 recorded by realdata.py); provenance rechecked 2026-11-24. Changes: Thermal frames are binned and analyzed by Fullseye; the captions identify the derived condition and detection summaries.
+
 ```
 py -3.11 examples/poc_pv_thermal_survey.py
 ```
@@ -602,6 +606,10 @@ Rothaug ほかの metal-2 SEM データ(14.65 nm/px、CC BY 4.0、DOI 10.17617/3
 
 *↑ 線幅の偏りの中央値。*
 
+### 図の出典
+
+Rothaug et al., A Real-World Metal-Layer SEM Image Dataset with Partial Labels, Edmond/MPG, DOI 10.17617/3.HY5SYN, CC BY 4.0; paper DOI 10.1145/3605769.3624000
+
 ```
 py -3.11 examples/poc_real_sem_metal_layer.py
 ```
@@ -770,6 +778,10 @@ py -3.11 examples/poc_tdi_linescan.py
 
 *↑ 動く図 ―― 左 = その枚の Bayer の生の値(画素ごとにフィルタの色で表示、センサの位置へずらして描く)、右 = 合わせた格子に R・G・B が揃っていく様子。最後は 1 枚のデモザイクと 4 枚の合成(24 × 24 画素を 10 倍)。*
 
+### 図の出典
+
+データ: PixelShift200(G. Qian, Y. Wang, J. Gu, C. Dong, W. Heidrich, B. Ghanem, J. S. Ren, "Rethinking Learning-based Demosaicing, Denoising, and Super-Resolution Pipeline", ICCP 2022, arXiv:1905.02538)、https://huggingface.co/datasets/guochengqian/PixelShift200 、CC BY 4.0。場面 pixelshift_5(ISO 12233 系の解像チャート)の .ARW 4 枚の一部の行と、著者の合成済み RGGB(.mat)の一部の列。改変: 切り出し・白の釣り合い・ガンマ・拡大。
+
 ```
 py -3.11 examples/poc_pixel_shift.py
 ```
@@ -856,6 +868,10 @@ py -3.11 examples/poc_itof_multifreq.py
 
 *↑ 動く図 ―― 試料腕に溶融石英 12 mm の分散の不一致。補償の係数 a2 を 0 から 35.6 µm² まで動かすと、PMMA / PC / PS の 3 層の界面がにじみから線に締まる(横 0.6 mm、光路 130〜380 µm)。*
 
+### 図の出典
+
+Source: University of Liverpool Research Data Catalogue record 126, automotive paint OCT spectra. URL: https://datacat.liverpool.ac.uk/126/. Publication: University of Liverpool Research Data Catalogue record 126. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Raw spectra are reconstructed into B-scans and measured by Fullseye; the figure shows derived output.
+
 ```
 py -3.11 examples/poc_industrial_oct.py
 ```
@@ -897,6 +913,12 @@ py -3.11 examples/poc_industrial_oct.py
 [![膜厚を 0 → 1.5 µm に振ると縞が増え、色が周期的に巡りながら淡くなる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/12_thickness_sweep.gif)
 
 *↑ 動く図 ―― 膜厚を 0 → 1.5 µm に振ると縞が増え、色が周期的に巡りながら淡くなる。*
+
+### 図の出典
+
+Source: Schwarz et al. thin-film data, Zenodo record 13753754. URL: https://doi.org/10.5281/zenodo.13753754. Publication: Schwarz et al. (2024), Advanced Optical Materials, https://doi.org/10.1002/adom.202402502. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The listed micrograph/table reductions, relabeling, averaging, model curves, and analysis panels are Fullseye-derived.
+
+Source: Sánchez-Arriaga et al. thin-film standards data. URL: https://doi.org/10.15131/shef.data.23285603. Publication: Sánchez-Arriaga et al. (2023), Sensors 23, 5326, https://doi.org/10.3390/s23115326. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Repeated spectra are averaged and only the Fullseye fitting result is plotted.
 
 ```
 py -3.11 examples/poc_thin_film_reflectometry.py
@@ -1022,6 +1044,10 @@ py -3.11 examples/poc_virtual_sem_kv_cd_bse.py
 
 *↑ EMPIAR-10028 part1_001 の 1024 × 1024 画素(1.34 Å/画素)。*
 
+### 図の出典
+
+EMPIAR-10028(W. Wong ら, eLife 3, e03080, 2014)、CC0。Micrographs_part1/001・002、part2/001 の 1024〜3071 行を切り出し、パワースペクトルを計算した(改変)。著者の値は各写真の CTFFIND3 のログ。
+
 ```
 py -3.11 examples/poc_tem_ctf_thon_rings.py
 ```
@@ -1103,6 +1129,10 @@ py -3.11 examples/poc_spectrometer_illumination.py
 [![格子の向きを 0〜180° に回したときの暗視野(4 方位から戻した a、b、θ で描く)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/07_rotating_grating.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/07_rotating_grating.gif)
 
 *↑ 動く図 ―― 格子の向きを 0〜180° に回したときの暗視野(4 方位から戻した a、b、θ で描く)。繊維が格子の感度の向きに直交すると暗くなり、明暗の帯が向きの場に沿って流れる。*
+
+### 図の出典
+
+Sanchez-Lara, V. & Garcia-Pinto, D. (2025) Talbot Lau Phase Contrast Images. Zenodo. https://doi.org/10.5281/zenodo.16944391 (CC BY 4.0). 改変: 2×2 の画素を束ね、Fullseye の op で 3 像に分けた
 
 ```
 py -3.11 examples/poc_grating_interferometry.py

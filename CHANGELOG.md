@@ -64,6 +64,15 @@ PySide6 6.12.0 の SIGABRT で隠れていた Linux の赤を、WSL(Ubuntu 24.04
 - 終了の確認そのものが例外を出した時(翻訳の表の行の書式が壊れている等)に、確認を出さずにプロセスが落ちる道を塞いだ(閉じない側に倒し、英語の文で聞き直す)。聞き直す窓も 2 回続けて壊れた時だけ閉じ、その前に未保存の物(処理手順・Program の未適用の文・エディタのタブ)の写しを `studio_crash.log` の隣に `studio_unsaved_*` として書き、置き場をログに残す。
 - 検索欄の Enter で op が入った後は、欄の語を選んでおく(続けて打つ語が前の語を置き換える)。段を入れた時は、前の Enter の「入れませんでした」の文をステータスから消す。見本の画像・合成のデモ画像に替えた時に窓の題を付け直す(前の写真の名前が残っていた)。
 
+### MCP: cwd の `fullseye/` による入口の乗っ取りを 1.2.0 で塞いだ(2026-11-24)
+
+Claude Code の登録は `claude mcp add fullseye -- fullseye-mcp` を既定にした。console script は cwd を
+`sys.path` の先頭に置かないので、プロジェクトに置かれた偽の `fullseye/` を読む前に、インストール済みの
+MCP サーバを起動する。Python を直接指定する場合は `claude mcp add fullseye -- python -P -m fullseye.mcp` を
+同じ安全な代替として案内する。`python -m fullseye.mcp` の本体側も、実際に読まれた package が cwd の下にあり、
+wheel または PEP 610 editable install の登録先と一致しなければ理由を出して止まる。Python が cwd の完全な偽 package を
+先に選んだ場合は本体より前にそのコードが動くため、入口は console script または `-P` で固定する。
+
 ### MCP: find_ops は MCP で走る op を優先する(2026-11-22)
 
 PR #322 の追加後、「ステレオカメラで距離を測りたい」では MCP で走らない `heightmap_depth_camera` が

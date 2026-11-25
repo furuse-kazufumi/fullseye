@@ -7,7 +7,8 @@
    1534,
    5170,
    3
-  ]
+  ],
+  "source": "Source: CARLA Simulator 0.9.16 assets, CARLA team. URL: https://carla.org/2025/09/16/release-0.9.16/. Publication: Dosovitskiy et al. (2017), CARLA: An Open Urban Driving Simulator, CoRL. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: CARLA RGB/semantic renders are paired with a separately rendered Fullseye world; no CARLA asset is redistributed."
  },
  {
   "file": "02_carla_depth_error.png",
