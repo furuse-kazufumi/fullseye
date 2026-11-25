@@ -185,6 +185,13 @@ def run_e2e(wheel: Path, root: Path, dry_run: bool) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # The runner console is cp1252; stage lines and child output contain Japanese. Never crash on printing.
+    # CI の Windows の端末は cp1252。段の行と子の出力に日本語が入るので、表示で落ちないようにする。
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--wheel", type=Path, help="wheel built by this commit (required except --dry-run)")
     ap.add_argument("--wheel-dir", type=Path, help="directory containing exactly one built wheel")
