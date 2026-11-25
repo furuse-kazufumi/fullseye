@@ -49,11 +49,7 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
         with:
           python-version: '3.11'
-      - name: Install native and color-view test dependencies
-        # ``tests/test_c_api_pybind11.py`` exercises the typed color view through
-        # ``registry:rgb1_to_gray``.  That operator is registered by
-        # ``backends_color`` only when its cv2 backend is importable; keep this
-        # focused ASan job independent of the other optional registry backends.
+      - name: Install native and color-view (OpenCV) test dependencies
         run: python -m pip install -e '.[native,opencv]' pytest
       - name: Build the C API with AddressSanitizer and UBSan
         run: >-
