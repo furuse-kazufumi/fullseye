@@ -1150,6 +1150,9 @@ def test_S0_the_watcher_detects_a_changed_real_registration_and_is_otherwise_sta
         assert diff and "Fullseye Studio.lnk" in diff[0]
 
 
+# 鍵の差し替えは conftest の Windows 分岐だけで行う(Linux/macOS にはレジストリが無く、実キーに触れる経路も無い)。
+# The key swap happens only in conftest's Windows branch; other platforms have no registry to touch.
+@winonly
 def test_S0_the_installer_tests_cannot_name_the_real_uninstall_key():
     assert shortcuts.UNINSTALL_KEY.startswith("Software\\FullseyeTest\\")           # conftest と子プロセス用環境変数が差し替える
 
