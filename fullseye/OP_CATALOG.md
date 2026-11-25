@@ -851,9 +851,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3857 ops / 61 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3859 ops / 61 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 964 · **3d** 380 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **pharma** 2 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 750 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 964 · **3d** 380 · **fit** 4 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **pharma** 2 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 750 · **tomography** 44 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(964 ops / 49 categories)
 
@@ -1115,7 +1115,7 @@ _計 3857 ops / 61 families。並びとノートの在り処は `docs/ops/INDEX.
 - `length_xld` (halcon: `length_xld`) `contour → feature` GPU: なし — すべての輪郭の線分長(隣接点間のユークリッド距離)を合計した総延長。 複数の輪郭がある場合はまとめて加算する。HALCON の ``length_xld``（Length of contours or polygons.）に相当。 · 例: `gallery2d_features`
 - `min_max_gray` (halcon: `min_max_gray`) `image → feature` GPU: なし — 画像の最大階調値のみを返す(``x.max()``)。HALCON の ``min_max_gray`` （Determine the minimum and maximum gray values within regions.）は本来 最小値と最大値の**両方**を返す演算子だが、この代役では最大値のみを実装 しており最小値の情報は失われる(データが欠落した近似 ―― 名前が示す 「min_max」の半分しか計算していない点は正直に明記しておく)。 · 例: `gallery2d_features`
 - `moments_region_2nd` (halcon: `moments_region_2nd`) `region → feature` GPU: あり(lbl_moments_region_2nd) — 正規化中心 2 次モーメントの和の絶対値 ``|μ20 + μ02|``(``skimage. measure.moments_normalized`` 由来)。HALCON の ``moments_region_2nd`` （Calculate the geometric moments of regions.）は本来 M20/M02/M11 を それぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純 加算した合成値で近似している(個々の方向成分は失われる)。 · 例: `gallery2d_features`, `scale_law_of_features`
-- `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` GPU: あり(lbl_moments_region_2nd_invar) — Hu の第 1 不変モーメント(``skimage.measure.moments_hu`` の ``hu[0]``)の絶対値。回転・スケール・平行移動に対して不変な形状記述子。 HALCON の ``moments_region_2nd_invar``（Geometric moments of regions.） に相当する近似(HALCON 独自の相対不変モーメント定義とは厳密には異なり、 古典的な Hu モーメントで代用している)。 · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
+- `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` GPU: あり(lbl_moments_region_2nd_invar) — 非推奨の互換別名。``moments_region_2nd`` をそのまま呼ぶので返り値は同一である。 ``moments_region_2nd_invar`` は 2.0 で削除予定で、呼ぶたびに ``DeprecationWarning`` を出す。移行先は ``moments_region_2nd``。 · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
 - `moments_region_2nd_rel_invar` (halcon: `moments_region_2nd_rel_invar`) `region → feature` GPU: あり(lbl_moments_region_2nd_rel_invar) — Hu の第 3 不変モーメント(``hu[2]``)の絶対値。名前(2nd_rel_invar)と 実装(Hu の 3 番目の不変量)が厳密には対応していない点に注意 ―― HALCON 独自の「2 次相対不変モーメント」ではなく、汎用の Hu 不変モーメント系列 から割り当てただけの近似。HALCON の ``moments_region_2nd_rel_invar`` （Geometric moments of regions.）の代役。 · 例: `gallery2d_features`
 - `moments_region_3rd` (halcon: `moments_region_3rd`) `region → feature` GPU: 鎖の中だけ(lbl_moments_region_3rd) — 正規化中心 3 次モーメントの和の絶対値 ``|μ30 + μ03|``。 ``moments_region_2nd`` の 3 次版で、こちらも複数成分を単純加算した合成値 による近似(個々の方向成分は失われる)。HALCON の ``moments_region_3rd``（Geometric moments of regions.）に相当。 · 例: `gallery2d_features`, `scale_law_of_features`
 - `moments_region_3rd_invar` (halcon: `moments_region_3rd_invar`) `region → feature` GPU: あり(lbl_moments_region_3rd_invar) — Hu の第 4 不変モーメント(``hu[3]``)の絶対値。``moments_region_*_invar`` 系列の一つとして Hu モーメント配列から順番に割り当てている(HALCON 独自の 定義との厳密な対応はない近似)。HALCON の ``moments_region_3rd_invar`` （Geometric moments of regions.）の代役。 · 例: `gallery2d_features`
@@ -2441,11 +2441,12 @@ _計 3857 ops / 61 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sampson_distance` `image2d × image2d → signal` GPU: なし — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 - `triangulate` `image2d × image2d → points` GPU: なし — DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。 · 例: `sfm_recon`
 
-### fit(3 ops / 2 categories)
+### fit(4 ops / 2 categories)
 
-#### fit / fit(2)
+#### fit / fit(3)
 - `fit_circle_geometric` `keypoints → table` GPU: なし — 短い円弧を含む ``(row, col)`` 点に幾何距離の最小二乗で円と半径を当てはめる。 · 例: `fit_ops_from_knowhow`
 - `fit_curve_principal_axis` `keypoints → table` GPU: なし — 斜めの曲がった縁を主軸へ回してから多項式 ``y'=f(x')`` を当てはめる。 · 例: `fit_ops_from_knowhow`
+- `region_perimeter_estimate` `mask → measurement` GPU: なし — Estimate a binary region's perimeter with an explicit estimator / 推定量を明示して領域の周囲長を測る。 · 例: `shape_factors_closed_form`
 
 #### fit / registration(1)
 - `phase_correlation_shift` `image2d × image2d → table` GPU: なし — 2 枚の画像の位置合わせに必要なサブピクセル移動量を位相限定相関で求める。 · 例: `fit_ops_from_knowhow`
@@ -4520,7 +4521,7 @@ _計 3857 ops / 61 families。並びとノートの在り処は `docs/ops/INDEX.
 - `world_camera` `table × matrix × matrix → table` GPU: なし — 世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 例: `gsplat_trained_product`, `heightmap_depth_camera_tour`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
 - `world_move` `table → any` GPU: なし — 物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。 · 例: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
 
-### tomography(43 ops / 8 categories)
+### tomography(44 ops / 8 categories)
 
 #### tomography / artifact(5)
 - `beam_hardening_apply` `sinogram → sinogram` GPU: あり(許可リスト) — Turn a monochromatic sinogram into a **polychromatic** one — cupping. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`
@@ -4555,9 +4556,10 @@ _計 3857 ops / 61 families。並びとノートの在り処は `docs/ops/INDEX.
 - `projection_angles` `入力なし → signal` GPU: なし — The angle sequence of a scan, in **degrees**, as a 1-D float64 array. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`, `poc_ct_fidelity`, `tomography_reconstruct`
 - `sinogram_design` `入力なし → table` GPU: なし — What a scan geometry can and cannot resolve — **before** anything is built. · 例: `ct_reconstruction`, `tomography_reconstruct`
 
-#### tomography / reconstruct(3)
+#### tomography / reconstruct(4)
 - `backproject_sinogram` `sinogram → image2d` GPU: あり(許可リスト) — Plain, **un-filtered** back-projection — the blurred baseline. · 例: `ct_reconstruction`, `poc_ct_fidelity`
 - `filtered_backprojection` `sinogram → image2d` GPU: あり(許可リスト) — Filtered back-projection (FBP) — the standard CT reconstruction. · 例: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
+- `filtered_backprojection_like` `sinogram × image2d → image2d` GPU: なし — Run FBP on the square grid of ``reference`` / 参照画像と同じ正方格子で FBP を再構成する。 · 例: `ct_reconstruction`
 - `sart_reconstruct` `sinogram → image2d` GPU: なし — SART — simultaneous algebraic reconstruction, one angle at a time. · 例: `ct_reconstruction`
 
 #### tomography / spectral_xray(15)

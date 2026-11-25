@@ -88,7 +88,7 @@
 | `hessian` | b | 2 | 2 |  |  | hessian_determinant(det H、-> voxel)と hessian_vesselness(Frangi 1998、-> voxel)を足した。2026-11-05: 産み手が torch の hessian3d だけで、素の pip install(torch なし)では受け手 2 本に入力が届かなかったので、numpy と scipy だけの産み手 reprconv.voxel_to_hessian(voxel -> hessian、ガウス微分の尺度 sigma、sigma=0 は hessian3d と同じ 3 タップ核)を足した。 | hessian3d の 6 成分を受ける op が 0(行き止まり)。vol_frangi / vol_hessian_blobness は体積から自分で Hessian を作るので、与えられた Hessian からは何も計算できなかった。 | match3d.hessian3d の返り(list の torch 6 本)を実測。grep 'hessian\/frangi\/vessel\/eigen' を op 名・HALCON 名で引いた(sk_hessian / xsk_hessian_eig は 2-D の image -> image)。 |
 | `histcube` | ok | 1 | 1 |  |  | none | dToF の到達時刻ヒストグラム立方体。dtof_cube_simulate が作り dtof_cube_depth が受ける(実機の入口は SPAD 装置)。 | backends_typed の TYPE_TO_SORT コメント(histcube を既定語彙から外した理由)。 |
 | `image` | ok | 460 | 571 | カメラの取り込み(acquire の normalised 画像)と画像ファイル。2-D レジストリの起点。 | 人が見る絵としての出口(Studio・図)。 | none | 2-D レジストリの (H,W) float [0,1]。台帳の image2d と同じ物(alias)。 | SORT_ALIASES(tools/gen_op_facets.py / studio_search.py / tools/gen_capabilities_index.py)で image2d -> image。 |
-| `image2d` | a | 277 | 427 | 台帳側の画像の入口(合成・ファイル)。 | 台帳側の絵の出口(図・Studio・ファイルに書き出す画像)。 | none | 2-D レジストリの image と同じ (H,W) float。名前が 2 つあるのは 2 つの登録面(レジストリと型つき台帳)の歴史で、境界ごとに alias で同一視される(TYPE_TO_SORT['image2d'] = 'image')。値の契約の差: image は [0,1]、image2d は値域を持たない(実測値の画像)ので、改名でまとめると契約が崩れる。直さない(揺れとして記録)。 | backends_typed.TYPE_TO_SORT、api._RANGE_CONTRACT_SORTS = {image, color}。 |
+| `image2d` | a | 278 | 428 | 台帳側の画像の入口(合成・ファイル)。 | 台帳側の絵の出口(図・Studio・ファイルに書き出す画像)。 | none | 2-D レジストリの image と同じ (H,W) float。名前が 2 つあるのは 2 つの登録面(レジストリと型つき台帳)の歴史で、境界ごとに alias で同一視される(TYPE_TO_SORT['image2d'] = 'image')。値の契約の差: image は [0,1]、image2d は値域を持たない(実測値の画像)ので、改名でまとめると契約が崩れる。直さない(揺れとして記録)。 | backends_typed.TYPE_TO_SORT、api._RANGE_CONTRACT_SORTS = {image, color}。 |
 | `images` | ok | 20 | 44 | 多フレームの取り込み(同じ視点の束)。 |  | none | 同じ視点の画像の束 (N,H,W)。産 19 / 受 37。 | tools/gen_op_facets.py ACQUIRABLE['images'](多フレームの取り込み)。 |
 | `indices` | ok | 10 | 4 |  |  | none | 整数の添字。labels との往復、select_points、この版で indices_to_positions が出口に加わった。 | reprconv.indices_to_labels。 |
 | `jones` | b | 2 | 2 |  |  | jones_state(azimuth_deg, ellipticity_deg, amplitude) -> jones を足した。stokes_from_jones の符号の約束に合わせ、stokes_analyze で方位角と楕円率が戻る(実測 10 度 / -15 度が 1e-15 で戻る)。 | Jones ベクトル(長さ 2 の複素 (Ex, Ey))を作れるのは jones_apply だけで、その jones_apply 自身が jones を入力に取る —— 最初の 1 本を作る op が無く、入口から届かなかった(jones_element が作るのは 2x2 の行列 = cimage で、ベクトルではない)。 | optics.jones_apply / jones_element / stokes_from_jones の docstring を読み、grep 'jones' を op 名で引いた。opsoptics のコメント『jones — 長さ 2 固定の complex 1-D』。 |
@@ -98,11 +98,11 @@
 | `labels2d` | ok | 15 | 33 |  |  | none | 2-D のラベル画像。産 12 / 受 32。 | opssegmentation。 |
 | `lightfield` | ok | 4 | 21 | ライトフィールドカメラ(格子状の視点)。 |  | none | 4-D (V,U,H,W) のライトフィールド。産 4 / 受 21。 | tools/gen_op_facets.py ACQUIRABLE['lightfield']、TYPE_TO_SORT['lightfield']。 |
 | `lut` | d | 1 | 2 | color_lut() が引数(色の段)だけで作る色の対応表。 |  | none | 第 1 入力の数え方では行き止まりに見えるが、color_bar / color_grade が第 2 入力として受けている。作り方は合成が正しい。 | OP_INDEX: color_bar の in_sorts = [image2d, lut]、color_grade = [rgb, lut]。 |
-| `mask` | a | 19 | 31 |  |  | none | 2-D レジストリの region(0/1 の (H,W))と同じ物を blob 族が mask と呼ぶ。境界ごとに alias で同一視される(実測 2026-09-15、gen_capabilities_index のコメント)。直さない(揺れとして記録)。 | SORT_ALIASES の mask -> region。 |
+| `mask` | a | 19 | 32 |  |  | none | 2-D レジストリの region(0/1 の (H,W))と同じ物を blob 族が mask と呼ぶ。境界ごとに alias で同一視される(実測 2026-09-15、gen_capabilities_index のコメント)。直さない(揺れとして記録)。 | SORT_ALIASES の mask -> region。 |
 | `match` | b | 8 | 1 |  |  | match_component(match, index) -> measurement を台帳(opsreprconv)に足した。2-D レジストリの候補(進化のゲノム)は動かさないため、レジストリには足していない(tests/test_wave0.py が match の候補数を固定している)。 | 2-D レジストリの 1-D 結果ベクトル(area_center = (面積, 行, 列)、ncc_locate = (相関, 行, 列) など 8 op)を受ける op が 0(行き止まり)。HALCON では Row / Column を個別に次へ渡すのが普通の使い方。 | ops.MATCH、backends_auto の MAT = 'match' のコメント。grep 'match' を op 名・in_sort で引いた。 |
 | `matrix` | ok | 94 | 208 | 引数だけで作る行列(内部行列・変換行列・設計行列)。 |  | none | 一般の 2-D 数値行列(線形代数)。産 91 / 受 191。 | ops.MATRIX、OP_INDEX で in_sorts = [] の作り手 13。 |
 | `measurehandle` | d | 3 | 4 | gen_measure_rectangle2 / gen_measure_arc が測定窓の幾何(中心・向き・長さ)から作る HALCON の測定ハンドル。 |  | none | ハンドルは引数から作るものなので入口が正しい。 | opsmeasure1d の caliper カテゴリ。 |
-| `measurement` | c | 99 | 6 |  | 台帳の数 1 個(長さ・角度・誤差)。測定値そのもの。 | none | 台帳の数 1 個。産 94 / 受 6 で、測った結果そのものなので終端で正しい。 | TYPE_TO_SORT['measurement'] = 'feature'(2-D の feature と同じ席)。 |
+| `measurement` | c | 100 | 6 |  | 台帳の数 1 個(長さ・角度・誤差)。測定値そのもの。 | none | 台帳の数 1 個。産 94 / 受 6 で、測った結果そのものなので終端で正しい。 | TYPE_TO_SORT['measurement'] = 'feature'(2-D の feature と同じ席)。 |
 | `mesh` | ok | 23 | 49 | メッシュファイル(STL / OBJ / OFF / PLY の読み込み)。 |  | none | 三角メッシュ (vertices, faces)。産 23 / 受 49。 | opsfileio の mesh_read_stl / mesh_read_obj / mesh_read_off。 |
 | `metrics` | ok | 2 | 2 |  |  | none | 画質指標の測定記録(条件つき)。metrics_table が出口。 | opsimgmetrics.NEW_SORTS['metrics']。 |
 | `metrologymodel` | d | 2 | 7 | create_metrology_model() が空のモデルを作り、add_metrology_object_* で幾何を足す HALCON の流儀。 |  | none | モデルは画像から作るのではなく設計値から組むものなので入口が正しい。 | opsmeasure1d / HALCON create_metrology_model。 |
@@ -138,7 +138,7 @@
 | `shift` | ok | 2 | 1 |  |  | none | 整数の 3-D 平行移動。vector との往復。 | reprconv.shift_to_vector。 |
 | `signal` | ok | 164 | 310 | センサ・音声の時系列(ファイル・取り込み)。 |  | none | 1-D 配列(プロファイル・スペクトル・センサ系列)。産 161 / 受 306。 | ops.SIGNAL、ops1d の docstring(1-D データの源流 3 つ)。 |
 | `simmodel` | d | 2 | 5 | simcal_model() が op の鎖とノブ(単位・範囲・雑音)の宣言から作る順モデル。 |  | none | シミュレーションの模型は設計から組むものなので入口が正しい。simcal_observe(simmodel, images)で実測と結びつく。 | simcal.simcal_model の docstring。 |
-| `sinogram` | ok | 8 | 10 | CT 装置の投影データ(角度 × 検出器)。 |  | none | CT のサイノグラム(角度 × 検出器)。産 8 / 受 10。 | opstomography(radon / fbp の族)。 |
+| `sinogram` | ok | 8 | 11 | CT 装置の投影データ(角度 × 検出器)。 |  | none | CT のサイノグラム(角度 × 検出器)。産 8 / 受 10。 | opstomography(radon / fbp の族)。 |
 | `sinostack` | ok | 1 | 1 |  |  | none | 体積のサイノグラム束。radon_volume と fbp_volume の往復で閉じる。 | opstomography の radon_volume / fbp_volume。 |
 | `sprites` | ok | 1 | 2 |  |  | none | 同形 rgba の list。tilemap_render / parallax_layers が受ける。 | opsgfx2d の docstring『sprites』。 |
 | `stokes` | ok | 3 | 2 |  |  | none | Stokes ベクトル。mueller_apply / stokes_analyze が受ける。 | opsoptics / opsspecular。 |

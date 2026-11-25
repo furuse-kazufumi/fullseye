@@ -38,7 +38,7 @@ R = L_low / L_high(低エネルギーと高エネルギーの対数減衰の比)
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[radon_transform](../forward/radon_transform.md)
+[radon_transform](../forward/radon_transform.md) · [filtered_backprojection_like](../reconstruct/filtered_backprojection_like.md)
 
 ## 同カテゴリ(`spectral_xray`)
 

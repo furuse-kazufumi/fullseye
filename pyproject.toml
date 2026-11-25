@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fullseye"
 version = "1.1.1"
-description = "Image inspection, 3-D measurement and physics simulation in Python: a numpy-native library of typed operators (3,851 typed ops in the machine-readable index: imaging, point clouds, optics, metrology), checked against simulated ground truth and handed to AI assistants through MCP and RAG, with an evolutionary pipeline designer and honest holdout gating"
+description = "Image inspection, 3-D measurement and physics simulation in Python: a numpy-native library of typed operators (3,853 typed ops in the machine-readable index: imaging, point clouds, optics, metrology), checked against simulated ground truth and handed to AI assistants through MCP and RAG, with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -56,6 +56,10 @@ dependencies = [
   "openpyxl>=3.1", "pandas>=2.0", "trimesh>=4.0", "numpy-stl>=3.0",
   "mrcfile>=1.5", "pynrrd>=1.1", "nibabel>=5.3", "matplotlib>=3.5", "pyserial>=3.5",
   "pymodbus>=3.0", "zxing-cpp>=2.2", "paho-mqtt>=1.6", "asyncua>=1.0",
+  # pybind11 is a header-only build dependency for the source SDK shipped in the
+  # wheel. It is never imported by ``import fullseye`` and pip does not compile
+  # native code; a C/C++ consumer's CMake build uses the headers only.
+  "pybind11==2.13.6",
 ]
 
 # PyPI ⇄ GitHub の相互リンク(PyPI プロジェクトページのサイドバーに出る)。
@@ -72,9 +76,10 @@ Documentation = "https://furuse.work/"
 "Validation reports" = "https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml"
 
 [project.optional-dependencies]
-# Native SDK build tools are deliberately absent from the normal wheel install.
-# ネイティブ SDK のビルド道具は通常の wheel 導入には含めない。
-native = ["pybind11==2.13.6", "cmake>=3.21,<5"]
+# Kept as a no-op compatibility spelling. The C/C++ source SDK and pybind11
+# headers are installed by default; CMake itself remains a system build tool.
+# 互換用の空 alias。SDK と pybind11 ヘッダは標準導入、CMake は利用側のビルド道具。
+native = []
 # 下限を上げた extras(2026-10-24、OSV の件数は旧い下限の版で数えた):
 #   opencv-python 4.6 → 4.8.1.78: GHSA-qr4w-53vh-m672 / PYSEC-2023-183(同梱 libwebp)の 2 件
 #   Pillow 9 → 13.0: 72 件。13.0.0 は Python 3.11 以上 —— 3.10 を外した理由
@@ -174,7 +179,7 @@ fullseye-mcp = "fullseye.mcp.server:main"      # cwd-safe MCP stdio server entry
 # 作ったら `fullseye/mcp/*` は 0 エントリだった(2026-09-15 実測)。import は通り、
 # テストは緑、wheel からは丸ごと消える —— root モジュールが落ちた事故 3 回と同じ族。
 # サブパッケージを足したらここにも足す(tests/test_packaging_subpackages.py が数える)。
-packages = ["fullseye", "fullseye.mcp", "fullseye.evaluation", "fullseye.recipebook", "studio_assets", "examples_3d", "examples"]
+packages = ["fullseye", "fullseye.sdk", "fullseye.mcp", "fullseye.evaluation", "fullseye.recipebook", "studio_assets", "examples_3d", "examples"]
 py-modules = ["numpy_compat", "pharmaparticle", 
   # `torch_lazy` is the lazy torch/torch.nn.functional shim imported by
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
@@ -432,7 +437,10 @@ py-modules = ["numpy_compat", "pharmaparticle",
               "data/GPU_ACCEL_USE.json", "data/GPU_NATIVE.json",
               # 採点(fullseye_score_pipeline)が断る「入力の中身に依存しない op」の一覧
               # (tools/gen_mcp_input_independent.py が機械的に作る)
-              "data/MCP_INPUT_INDEPENDENT.json"]
+               "data/MCP_INPUT_INDEPENDENT.json",
+               # Header/source SDK payload. setup.py stages the three headers
+               # and bridge source into these paths while building the wheel.
+               "sdk/ABI_VERSION", "sdk/cmake/*.cmake", "sdk/include/fullseye/*.h", "sdk/src/*.cpp"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).

@@ -7,6 +7,33 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+## 1.2.0 — 2026-11-24
+
+### 既知の不具合 §34・§50・§52・§53
+
+- §34: 色チャネルを空間軸として跨ぐ 2-D op 89 本へ `(H, W, 3|4)` を渡すと、既定の
+  数値は変えず `FullseyeFallbackWarning` を op ごとに 1 回だけ出す。警告には op 名と
+  「チャネルごとに処理する / 灰色へ変換する」回避策を出す。`extra_checks='on'` は
+  既定の fail-soft 方針より強く入口で拒否する。`on_error='raise'` も拒否する。2.0 では
+  既定も拒否へ切り替える予定。最終軸が 1/3/4 でない 3-D 立体を 2-D op へ渡す同根の
+  問題も、既定の 1 回警告と `extra_checks='on'` の拒否へ統一した。89 本の一覧は
+  `sorted(api._CHANNEL_UNSAFE_OPS)` から機械的に出し、試験は下限・登録・警告回数・
+  数値不変を検査する。follow-up では `(8,8,8)` を image / region の全 688 本へ入口で
+  通し、688/688 が 1 回警告・記録されることを全数門にした。
+- §50: `compactness` と `contlength` の説明に、現在使う
+  `skimage.measure.perimeter` と `perimeter_crofton` の周囲長バイアス表を明記した。
+  例として円 r=96 は 1.0518 / 1.0016、正方形 128 は 0.9922 / 0.9459。follow-up では
+  `region_perimeter_estimate(region, method='skimage'|'crofton'|'chain')` を追加し、選択を
+  明示できるようにした（chain は同じ円で 1.2799、正方形で 1.0000）。既存値は変えていない。
+- §52: `moments_region_2nd_invar` を `moments_region_2nd` の非推奨別名にした。公開名と
+  台帳エントリは残るため op 数は変わらず、旧名は同じ実装を呼んで `DeprecationWarning` を
+  出す。2.0 で削除予定。
+- §53: `filtered_backprojection` の既定の出力辺長は契約どおり据え置き、元の格子へ戻す
+  `size=image.shape[0]` の例を docstring と op 説明に追加した。sinogram は元画像の辺長を
+  持たず不一致を判定できないため、`size` 省略時の警告は出さない。follow-up では別 op
+  `filtered_backprojection_like(sinogram, image)` を追加し、既存契約を変えず元の正方格子を
+  明示できるようにした。
+
 ### 1.2.0 — Studio is part of the standard installation (2026-11-24)
 
 - The portable default install now also includes the wheel-complete image/video/scientific I/O,

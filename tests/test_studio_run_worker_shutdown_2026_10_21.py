@@ -53,6 +53,24 @@ def test_overlapping_workers_close_cleanly_in_fresh_process():
             for iteration in range(total):
                 iteration_started = time.monotonic()
                 timeout = first_timeout if iteration == 0 else steady_timeout
+                # Program Apply は worker を作った直後に close されうる。ここでは
+                # QThread.start() が Python 呼出しと native ``isRunning()`` の間でも、
+                # quiesce が Qt の終了通知まで所有権を保つことを回帰させる。
+                # Program Apply may be closed immediately after making a worker;
+                # quiesce must retain ownership until Qt reports it finished.
+                immediate_model = studio.PipelineModel(studio.demo_image(16))
+                immediate_model.stages = [["gaussian", 0.2, 0.5]]
+                immediate, _ = studio.build_window(immediate_model)
+                immediate._start_run_async()
+                assert immediate.quiesce(timeout_ms=int(timeout * 1000))
+                assert not immediate._run_controller.threads
+                assert not immediate._run_controller.finish_bridges
+                immediate.close_guard = None
+                immediate.close()
+                immediate.deleteLater()
+                QtCore.QCoreApplication.sendPostedEvents(
+                    None, QtCore.QEvent.DeferredDelete)
+                app.processEvents()
                 print(f"iteration {iteration} start {iteration_started:.3f}",
                       file=sys.stderr, flush=True)
                 model = studio.PipelineModel(studio.demo_image(16))
@@ -106,7 +124,7 @@ def test_overlapping_workers_close_cleanly_in_fresh_process():
     )
     env = os.environ.copy()
     env.setdefault("QT_QPA_PLATFORM", "offscreen")
-    env["FULLSEYE_STUDIO_SHUTDOWN_REPEATS"] = "30"
+    repeats = env.setdefault("FULLSEYE_STUDIO_SHUTDOWN_REPEATS", "30")
     # The child dumps all thread stacks at 100 s and exits; the parent waits
     # longer so that dump (not an empty kill) is what a stall reports.  60 s
     # was hit once on a loaded CI runner with no output at all (2026-10-23).
@@ -127,5 +145,5 @@ def test_overlapping_workers_close_cleanly_in_fresh_process():
         pytest.fail("Studio worker child did not finish in 150 s\n"
                     + out + err[-8000:])
     assert result.returncode == 0, result.stdout + result.stderr
-    assert "codex_last: 30/30 passed" in result.stdout
+    assert "codex_last: %s/%s passed" % (repeats, repeats) in result.stdout
     assert "Fatal Python error" not in result.stderr

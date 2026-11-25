@@ -321,7 +321,7 @@ with warnings.catch_warnings():
         subsurface_approx, rough_transmission,
         op_find, op_run, op_path, op_assist, op_presets, op_producers,
         op_consumers, op_accepts, op_sorts,
-        fit_line, fit_circle, fit_circle_geometric, fit_curve_principal_axis, phase_correlation_shift, fit_ellipse, fit_rectangle2, fit_rectangle2_lsq,
+        region_perimeter_estimate, fit_line, fit_circle, fit_circle_geometric, fit_curve_principal_axis, phase_correlation_shift, fit_ellipse, fit_rectangle2, fit_rectangle2_lsq,
         fit_line3, fit_plane3, fit_sphere3, fit_circle3, fit_surface_principal_axes,
         smallest_box3, smallest_box3_axis, fit_box3, smallest_sphere3, inner_box3,
         measure3d, regionprops3d, ops3d, pipeline3d,
@@ -542,7 +542,7 @@ with warnings.catch_warnings():
         sirt_reconstruct, os_sart_reconstruct, tv_reconstruct, ct_dual_energy_reconstruct,
         tomography, projection_angles, sinogram_design, ellipse_phantom,
         ellipse_sinogram, radon_transform, backproject_sinogram,
-        filtered_backprojection, sart_reconstruct, beam_hardening_apply,
+        filtered_backprojection, filtered_backprojection_like, sart_reconstruct, beam_hardening_apply,
         beam_hardening_correct, ring_artifact_apply, ring_artifact_remove,
         metal_trace_interpolate, sinogram_center_of_rotation,
         sinogram_center_shift, radon_volume, fbp_volume,
@@ -663,7 +663,9 @@ with warnings.catch_warnings():
     # 3-D 合成パイプライン(pipeline3d が import できない環境では api 側の代役 = 呼ぶと ImportError)
     from api import (  # noqa: E402,F401
         register_pointclouds, align_cad_to_scan, measure_plane, inspect_roundness, match_sdf, register_auto)
-    from engine import FullseyeEngine, diagnose_stages, pipeline_states  # noqa: E402,F401  (pipeline runtime)
+    from engine import (  # noqa: E402,F401  (pipeline runtime)
+        FullseyeEngine, diagnose_stages, pipeline_states, load_pipeline, load_pipeline_text, pipeline_interface,
+    )
     # engine-layer result state + memory-bounded stage cache (Qt-free; the browser Studio consumes these)
     from studio_result import (  # noqa: E402,F401
         StageCache, assess_validity, input_reference, resolve_input_ref, file_sha256, cache_summary_text,
@@ -725,6 +727,7 @@ def capabilities() -> dict:
             "device": device.capabilities()}
 
 import opnames as _opnames  # noqa: E402  (canonical op-name aliases, phase 1 of the naming cleanup)
+from fssystem import pipeline_stage_limit_message  # noqa: E402,F401
 
 
 def _warn_ambiguous_ledger_name(name):
@@ -1059,6 +1062,7 @@ __all__ = [
     "op_find", "op_run", "op_path", "op_assist", "op_presets", "op_producers",
     "op_consumers", "op_accepts", "op_sorts",
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories", "knob_summary",
+    "load_pipeline", "load_pipeline_text", "pipeline_interface",
     "ExecutionContext", "ArtifactRef", "SoftwareInventory", "ExecutionRecord",
     "ValidationProfile", "AuditSink", "AuditCheckpoint", "AuditVerification",
     "ValidationProfileError", "SoftwareProvenanceError", "AuditWriteError", "AuditIntegrityError",
@@ -1187,7 +1191,7 @@ __all__ = [
     "event_rate_map", "time_surface", "warp_frame", "contrast_maximization",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
-    "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2", "fit_rectangle2_lsq",
+    "region_perimeter_estimate", "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2", "fit_rectangle2_lsq",
     "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3", "fit_surface_principal_axes",
     "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
     "measure3d", "regionprops3d", "ops3d", "pipeline3d",
@@ -1331,7 +1335,7 @@ __all__ = [
     "metriccontract", "MetricContractError", "Attempt", "attempt", "attempt_all",
     "DIRECTIONS", "worst_case", "value_or_worst", "best_of", "rank_attempts",
     "fssystem", "set_system", "get_system", "query_system", "system",
-    "reset_system", "system_snapshot",
+    "reset_system", "system_snapshot", "pipeline_stage_limit_message",
     "fsthreads", "blas_threads",
     "annotate", "opsannotate", "measure_text", "text_box", "arrow", "leader_line",
     "label_points", "crosshair", "legend_box", "color_bar", "scale_bar",
@@ -1376,7 +1380,7 @@ __all__ = [
     "sirt_reconstruct", "os_sart_reconstruct", "tv_reconstruct", "ct_dual_energy_reconstruct",
     "tomography", "projection_angles", "sinogram_design", "ellipse_phantom",
     "ellipse_sinogram", "radon_transform", "backproject_sinogram",
-    "filtered_backprojection", "sart_reconstruct", "beam_hardening_apply",
+    "filtered_backprojection", "filtered_backprojection_like", "sart_reconstruct", "beam_hardening_apply",
     "beam_hardening_correct", "ring_artifact_apply", "ring_artifact_remove",
     "metal_trace_interpolate", "sinogram_center_of_rotation",
     "sinogram_center_shift", "radon_volume", "fbp_volume",

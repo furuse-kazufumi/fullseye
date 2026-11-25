@@ -356,6 +356,39 @@ def _isolate_api_breakers():
         yield
 
 
+@pytest.fixture(autouse=True)
+def _studio_run_workers_are_quiesced_after_each_test(request):
+    """Studio の実行ワーカーの QThread を、走ったまま次のテストへ持ち越さない(2026-11-26)。
+
+    1.2.0 で Apply / Run がワーカーのスレッドで走るようになり(#364)、窓を閉じずに終わる
+    テストが走ったままの QThread を残した。全テストが通った後、プロセスの終了時に Qt が
+    ``QThread: Destroyed while thread '' is still running`` で abort する(Linux CI の
+    full suite = exit 134、Windows = exit 127)。
+
+    各テストの後に、残っている Studio の窓ごとに本体の ``quiesce``(停止を要求し、上限付きで
+    待ち、GUI スレッドで退役させる —— 窓を閉じる時と同じ道)を呼ぶ。窓は閉じない:
+    module scope の fixture が窓を次のテストへ渡すことがあり、閉じる必要も無い(スレッドが
+    残らなければ abort は起きない)。上限内に止まらないワーカーは捨てずに、そのテストを
+    失敗させる(fail-closed)。PySide6 を読んでいないテストでは何もしない。
+    """
+    yield
+    qtw = sys.modules.get("PySide6.QtWidgets")
+    if qtw is None:
+        return
+    app = qtw.QApplication.instance()
+    if app is None:
+        return
+    stuck = 0
+    for w in list(app.topLevelWidgets()):
+        quiesce = getattr(w, "quiesce", None)
+        if callable(quiesce) and getattr(w, "_run_controller", None) is not None:
+            if not quiesce(timeout_ms=5000):
+                stuck += 1
+    if stuck:
+        pytest.fail("%s left %d Studio window(s) whose run worker did not stop within 5 s"
+                    % (request.node.nodeid, stuck), pytrace=False)
+
+
 # --------------------------------------------------------------------------- #
 # Deterministic input battery, one bank per sort.                             #
 # --------------------------------------------------------------------------- #

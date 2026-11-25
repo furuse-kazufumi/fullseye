@@ -5,6 +5,7 @@ from __future__ import annotations
 import numpy as np
 
 __all__ = ["line_profile", "distance", "angle", "profile_stats",
+           "region_perimeter_estimate",
            "fit_line", "fit_circle", "fit_circle_geometric",
            "fit_curve_principal_axis", "fit_ellipse", "fit_rectangle2",
            "fit_rectangle2_lsq"]
@@ -41,6 +42,72 @@ def profile_stats(prof) -> dict:
     g = np.abs(np.gradient(p if p.ndim == 1 else p.mean(-1)))
     return {"n": int(len(p)), "min": float(np.min(p)), "max": float(np.max(p)),
             "mean": float(np.mean(p)), "edge_at": int(np.argmax(g))}
+
+
+def region_perimeter_estimate(region, method: str = "skimage") -> float:
+    """Estimate a binary region's perimeter with an explicit estimator / 推定量を明示して領域の周囲長を測る。
+
+    ``method='skimage'`` uses ``skimage.measure.perimeter`` with its four-neighbour
+    convention, the same estimator used by the existing ``contlength`` and
+    ``compactness`` operators for a single connected component. ``'crofton'`` uses
+    ``skimage.measure.perimeter_crofton(..., directions=4)``. ``'chain'`` counts
+    exposed four-direction pixel edges (a Freeman 4-chain length); it is available
+    without scikit-image and is exact for an axis-aligned pixel square, but has a
+    large positive bias for a circle.
+
+    The value is in pixels and includes every foreground component and every hole.
+    Foreground means ``region > 0.5``. An empty input (``region`` with zero
+    elements) returns an empty perimeter (reason: without foreground pixels,
+    no exposed edge exists to measure); its numeric value is ``0.0``.
+    空の入力(``region`` が 0 要素)は空の周囲長を返す(理由: 前景画素が無く、測る
+    露出辺も無い)。数値は ``0.0`` となる。これは普遍的に真な周囲長を選ぶのでは
+    なく、次の *measurement convention* である:
+    on the fixed closed-form probes (disc ``r=96``, square side ``128``), the
+    ratios to truth are respectively ``1.0518 / 0.9922`` (``skimage``),
+    ``1.0016 / 0.9459`` (``crofton``), and ``1.2799 / 1.0000`` (``chain``).
+    Do not substitute its result into an existing feature threshold without
+    revalidating that threshold.
+
+    ``region`` must be a finite numeric 2-D array. Invalid dimensionality, values,
+    or a method other than ``'skimage'``, ``'crofton'`` or ``'chain'`` raises
+    ``ValueError``; the scikit-image methods raise ``ImportError`` when that
+    optional dependency is unavailable. 既存 op の既定値は変更しない。推定量を
+    選ぶ必要があるときだけ、この関数を明示して使う。
+    """
+    if method not in ("skimage", "crofton", "chain"):
+        raise ValueError("region_perimeter_estimate: method must be 'skimage', 'crofton', or 'chain', got %r"
+                         % (method,))
+    try:
+        arr = np.asarray(region)
+    except Exception as exc:  # noqa: BLE001 - turn coercion failures into the API contract
+        raise ValueError("region_perimeter_estimate: region must be a numeric 2-D array") from exc
+    if arr.ndim != 2:
+        raise ValueError("region_perimeter_estimate: region must be 2-D, got shape %r" % (arr.shape,))
+    if arr.dtype.kind not in "biufc":
+        raise ValueError("region_perimeter_estimate: region must be numeric, got dtype %s" % arr.dtype)
+    if arr.dtype.kind == "c":
+        raise ValueError("region_perimeter_estimate: region must be real-valued, got complex dtype")
+    if not np.isfinite(arr).all():
+        raise ValueError("region_perimeter_estimate: region contains NaN or infinity")
+    mask = np.asarray(arr > 0.5, bool)
+    if not mask.any():
+        return 0.0
+    if method == "chain":
+        # Pixel-edge perimeter: every foreground/background transition is one
+        # four-direction Freeman-chain step; image borders are background too.
+        edges = (int(mask[0].sum()) + int(mask[-1].sum())
+                 + int(mask[:, 0].sum()) + int(mask[:, -1].sum())
+                 + int(np.count_nonzero(mask[1:, :] != mask[:-1, :]))
+                 + int(np.count_nonzero(mask[:, 1:] != mask[:, :-1])))
+        return float(edges)
+    try:
+        from skimage import measure as skmeasure
+    except ImportError as exc:
+        raise ImportError("region_perimeter_estimate: method=%r requires scikit-image; use method='chain' or install scikit-image"
+                          % method) from exc
+    if method == "skimage":
+        return float(skmeasure.perimeter(mask, neighborhood=4))
+    return float(skmeasure.perimeter_crofton(mask, directions=4))
 
 
 # --------------------------------------------------------------------------- #

@@ -25,22 +25,22 @@ class InstallComponent:
 
 
 SDK_LAYOUT = {
-    "headers": "include/fullseye",
-    "runtime_windows": "bin",
-    "library": "lib",
-    "cmake_config": "lib/cmake/Fullseye",
-    "python_runtime": "runtime/python",
-    "site_packages": "runtime/site-packages",
+    "headers": "fullseye/sdk/include/fullseye",
+    "bridge_source": "fullseye/sdk/src",
+    "cmake_config": "fullseye/sdk/cmake",
+    "runtime_abi": "fullseye/sdk/ABI_VERSION",
+    "sdk_cli": "python -m fullseye.sdk",
 }
 
 INSTALL_COMPONENTS = {
     "sdk": InstallComponent(
         component_id="sdk",
-        selectable=True,
-        python_extra="native",
+        selectable=False,
+        python_extra=None,
         destinations=tuple(SDK_LAYOUT.values()),
-        development_only=True,
-        runtime_note=("The SDK does not bundle CPython or fullseye. Set runtime_root or "
-                      "FULLSEYE_PYTHON_ROOT to a Python environment with fullseye installed."),
+        development_only=False,
+        runtime_note=("Installed by default with pip install fullseye. Run python -m fullseye.sdk "
+                      "--cmakedir and call fullseye_deploy_runtime(app); relink a moved environment "
+                      "with python -m fullseye.sdk relink <executable-directory>."),
     ),
 }

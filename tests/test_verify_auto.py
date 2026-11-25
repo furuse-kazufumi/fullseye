@@ -56,6 +56,14 @@ def test_region_geom_specs_are_gated_as_build_compiles_them(tmp_path, monkeypatc
         assert name in art["passing_ops"]
 
 
+def test_deprecated_alias_specs_are_gated_as_build_compiles_them(tmp_path, monkeypatch):
+    """The alias wrapper is executed by build and by the gate / 別名を生の factory で落とさない。"""
+    monkeypatch.setattr(VA, "HERE", str(tmp_path))
+    art = VA.run()
+    assert "moments_region_2nd_invar" in art["passing_ops"]
+    assert "moments_region_2nd_invar" not in dict(art["failures"])
+
+
 def test_gate_fails_closed_without_reference(tmp_path, monkeypatch):
     """No real-name reference => every name-tagged spec is dropped, none passes."""
     monkeypatch.setattr(VA, "HERE", str(tmp_path))

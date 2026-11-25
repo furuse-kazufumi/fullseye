@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3851,
- "n_notes": 3857,
+ "n_ops": 3853,
+ "n_notes": 3859,
  "notes": {
   "vol_dilate": [
    {
@@ -24080,6 +24080,16 @@
     "path": "docs/ops/fit/fit/fit_curve_principal_axis.md"
    }
   ],
+  "region_perimeter_estimate": [
+   {
+    "op": "region_perimeter_estimate",
+    "dim": "fit",
+    "category": "fit",
+    "in": "mask",
+    "out": "measurement",
+    "path": "docs/ops/fit/fit/region_perimeter_estimate.md"
+   }
+  ],
   "phase_correlation_shift": [
    {
     "op": "phase_correlation_shift",
@@ -38101,6 +38111,16 @@
     "in": "sinogram",
     "out": "image2d",
     "path": "docs/ops/tomography/reconstruct/filtered_backprojection.md"
+   }
+  ],
+  "filtered_backprojection_like": [
+   {
+    "op": "filtered_backprojection_like",
+    "dim": "tomography",
+    "category": "reconstruct",
+    "in": "sinogram × image2d",
+    "out": "image2d",
+    "path": "docs/ops/tomography/reconstruct/filtered_backprojection_like.md"
    }
   ],
   "sart_reconstruct": [

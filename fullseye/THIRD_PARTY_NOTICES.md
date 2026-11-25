@@ -83,7 +83,6 @@ The following direct dependencies are not copied into the Fullseye wheel. Their 
 
 - `astropy` — BSD-3-Clause (permissive)
 - `asyncua` — LGPL-3.0-or-later (weak-copyleft)
-- `cmake` — Apache-2.0 AND BSD-3-Clause (permissive)
 - `cupy-cuda12x` — MIT (permissive)
 - `hypothesis` — MPL-2.0 (weak-copyleft)
 - `imageio` — BSD-2-Clause (permissive)

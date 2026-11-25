@@ -12,6 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness_xld.chain.jpg">compactness_xld: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가장 큰 윤곽에 대해 콤팩트니스 <code style="color:#22d3bf">max(1, 둘레²/(4π・면적))</code>를 계산한다(영역판 <code style="color:#22d3bf">compactness</code>의 윤곽판). 원이면 1이고 가늘고 길수록, 울퉁불퉁할수록 커지며 <b>상한이 없다</b>. HALCON의 <code style="color:#22d3bf">compactness_xld</code>(Shape factor for the compactness of contours or polygons.)와 <b>같은 식</b>이다.</p>
+<p>?? ??: ???? ?? XLD ?? ???? ? ??? ??? ?? compactness? contlength? skimage.measure.perimeter? ???. ???? ?? ???? ???. docs/KNOWN_ISSUES.md ?50.</p>
 <p>★2026-09-26까지 <code style="color:#22d3bf">/10</code>을 한 뒤 1에서 포화시키고 있었다 —— <b>영역 버전과 같은 결함이 윤곽 버전에도 있었다</b>. 고친 op의 쌍둥이를 놓치면 구멍이 절반 남는다(<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>).</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

@@ -37,12 +37,23 @@ version: 1.1.1  # fullseye lib version this note was generated for
 大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the
 compactness of a region.）と同じ量。
 
+**周囲長の規約(この op は太字の行を使う)。** 絶対値は境界の推定量に載る。
+
+| 推定量 | 円 r=96 / 真値 | 正方形 128 / 真値 | この op |
+|---|---:|---:|---|
+| **``skimage.measure.perimeter``** | **1.0518** | **0.9922** | **使用する** |
+| ``skimage.measure.perimeter_crofton`` | 1.0016 | 0.9459 | 使用しない |
+
+したがって曲線では前者の偏りが解像度を上げても +5.18 % まで残り、Crofton へ
+替えれば円には寄るが軸平行の正方形で -5.41 % になる。推定量を替えても数値は
+互換ではない。``docs/KNOWN_ISSUES.md`` §50。
+
 ★2026-09-26 まで ``/10`` して ``min(1.0, ...)`` で切っていた —— 値を [0,1] に
 収めるための便宜だったが、``周囲長²/(4π・面積)`` が 10 を超える形(幅 2 px なら
 長さ 80 以上の傷)を**全部 1.0 に潰していた**。傷や割れという、いちばん見たい
 領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも
 feature の契約ではない(``elliptic_axis`` は 6.35、``r3_region_features`` は
-18.1 を返す)ので、潰す理由が無かった ――
+18.1 を返す)ので、潰す理由が無かった ——
 ``docs/hardening/compactness-saturated-at-one.md``。
 
 HALCON と同じく ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため。

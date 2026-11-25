@@ -1,8 +1,8 @@
 {
- "n_ops": 3851,
+ "n_ops": 3853,
  "tiers": {
   "color": 12,
-  "ledger": 2887,
+  "ledger": 2889,
   "nary": 17,
   "registry": 935
  },
@@ -11077,6 +11077,21 @@
     "sinogram"
    ],
    "gpu_tier": "required"
+  },
+  {
+   "name": "filtered_backprojection_like",
+   "halcon": "",
+   "in_sort": "sinogram",
+   "out_sort": "image2d",
+   "category": "reconstruct",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "sinogram",
+    "image2d"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "find_caltab",
@@ -29075,6 +29090,20 @@
     "points"
    ],
    "gpu_tier": "partial"
+  },
+  {
+   "name": "region_perimeter_estimate",
+   "halcon": "",
+   "in_sort": "mask",
+   "out_sort": "measurement",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opsfit",
+   "dim": "fit",
+   "in_sorts": [
+    "mask"
+   ],
+   "gpu_tier": "suitable"
   },
   {
    "name": "region_props",
