@@ -2387,7 +2387,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         # 空のまま登録すると「説明なし」の op になる(tests が数えている)。
         _op.doc = (s.get("doc") or "").strip()
         ops_out.append(_op)
-        compiled[name] = _op.fn
+        # Keep the implementation function before wrapping it in ``Op``.  ``Op``
+        # is a public constructor contract, and callers may supply a compatible
+        # lightweight implementation that deliberately exposes no ``fn`` field.
+        compiled[name] = fn
     build.dropped = dropped                 # introspectable for honest reporting
     return ops_out
 
