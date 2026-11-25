@@ -396,17 +396,28 @@ def test_6_entries_with_wrong_types_are_dropped_not_crashed_on(tmp_path):
 
 # --------------------------------------------------------------------------- 7: デスクトップ
 @winonly
-def test_7_desktop_is_the_real_known_folder_not_userprofile_guess(monkeypatch):
-    # セッション隔離では SHGetKnownFolderPath を一時 Desktop に替える。ここは
-    # 製品時の契約だけを読む試験なので、既知フォルダー API を一度だけ実物へ戻す。
-    monkeypatch.delenv("FULLSEYE_TEST_ISOLATION", raising=False)
+def test_7_desktop_is_the_real_known_folder_not_userprofile_guess(monkeypatch, tmp_path):
+    # 隔離は残したまま、既知フォルダー API の層だけを OneDrive 移動後の Desktop
+    # に差し替える。実ユーザーのレジストリ、Desktop、または OneDrive は読まない。
+    # Keep isolation enabled and replace only the known-folder API layer with a
+    # redirected Desktop; never read the real user's registry, Desktop, or OneDrive.
+    api_desktop = tmp_path / "OneDrive - Fullseye" / "Desktop"
+    isolated_profile = tmp_path / "isolated-profile"
+    api_desktop.mkdir(parents=True)
+    isolated_profile.mkdir()
+    calls = []
+
+    def known_desktop_from_api():
+        calls.append(True)
+        return api_desktop
+
     monkeypatch.delenv("FULLSEYE_TEST_DESKTOP", raising=False)
-    import winreg
-    with winreg.OpenKey(winreg.HKEY_CURRENT_USER,
-                        r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders") as k:
-        shell_desktop = Path(winreg.QueryValueEx(k, "Desktop")[0])
+    monkeypatch.setenv("USERPROFILE", str(isolated_profile))
+    monkeypatch.setattr(shortcuts, "_known_desktop_from_api", known_desktop_from_api)
     got = shortcuts.windows_dirs()["desktop"]
-    assert got == shell_desktop and got.is_absolute()
+    assert calls == [True]
+    assert got == api_desktop and got.is_absolute()
+    assert got != isolated_profile / "Desktop"
     # テスト用の env 渡しは従来どおり USERPROFILE\Desktop(実機の場所に依存しない)
     d = shortcuts.windows_dirs({"APPDATA": r"C:\a", "LOCALAPPDATA": r"C:\l", "USERPROFILE": r"C:\u"})
     assert d["desktop"] == Path(r"C:\u") / "Desktop"

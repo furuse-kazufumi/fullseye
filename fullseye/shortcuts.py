@@ -68,21 +68,14 @@ def icon_source(kind: str = "ico") -> Path:
                         "reinstall fullseye (pip install --force-reinstall fullseye)" % name)
 
 
-def _known_desktop() -> Optional[Path]:
-    """本物のデスクトップ(OneDrive の「既知のフォルダーの移動」で USERPROFILE\\Desktop とは違う場所になる)。
+def _known_desktop_from_api() -> Optional[Path]:
+    """SHGetKnownFolderPath で Desktop を返す。/ Return Desktop from SHGetKnownFolderPath.
 
-    SHGetKnownFolderPath(FOLDERID_Desktop)。取れなければ None。"""
-    # pytest の子プロセスも含めた隔離用。通常の利用者環境ではこの二つの変数を
-    # 見ないので、OneDrive 等で移動した本物の既知フォルダーを従来どおり使う。
-    # Test-only isolation, inherited by pytest child processes.  Normal user
-    # installs still use the real known folder (including OneDrive redirection).
-    isolated = os.environ.get("FULLSEYE_TEST_ISOLATION") == "1"
-    override = os.environ.get("FULLSEYE_TEST_DESKTOP") if isolated else None
-    if override:
-        p = Path(override)
-        if p.is_absolute():
-            return p
-        return None
+    OneDrive の「既知のフォルダーの移動」後も USERPROFILE\\Desktop を推測せず、
+    Windows が返した絶対パスをそのまま返す。取得不能なら None を返す。
+    Do not guess USERPROFILE\\Desktop after OneDrive Known Folder Move; return
+    the absolute path Windows reports, or None when it cannot be obtained.
+    """
     if sys.platform != "win32":
         return None
     try:
@@ -104,8 +97,29 @@ def _known_desktop() -> Optional[Path]:
             ctypes.windll.ole32.CoTaskMemFree(ctypes.c_void_p(out.value))
         p = Path(path)
         return p if p.is_absolute() else None
-    except Exception:       # noqa: BLE001 — 取れなければ USERPROFILE\\Desktop に倒す
+    except Exception:       # noqa: BLE001 — API が使えなければ None / return None when the API is unavailable
         return None
+
+
+def _known_desktop() -> Optional[Path]:
+    """既知の Desktop を返す。/ Return the known Desktop path.
+
+    隔離試験では API の戻り値を一時パスに差し替え、通常の利用者環境では
+    SHGetKnownFolderPath の値を返す。In isolated tests, replace the API result
+    with a temporary path; in normal use, return SHGetKnownFolderPath's value.
+    """
+    # pytest の子プロセスも含めた隔離用。通常の利用者環境ではこの二つの変数を
+    # 見ないので、OneDrive 等で移動した本物の既知フォルダーを従来どおり使う。
+    # Test-only isolation, inherited by pytest child processes.  Normal user
+    # installs still use the real known folder (including OneDrive redirection).
+    isolated = os.environ.get("FULLSEYE_TEST_ISOLATION") == "1"
+    override = os.environ.get("FULLSEYE_TEST_DESKTOP") if isolated else None
+    if override:
+        p = Path(override)
+        if p.is_absolute():
+            return p
+        return None
+    return _known_desktop_from_api()
 
 
 def _abs_env(e: Dict[str, str], name: str) -> Optional[str]:
