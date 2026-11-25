@@ -42,6 +42,14 @@
       "properties": [
         {
           "name": "fullseye:extra",
+          "value": "all"
+        },
+        {
+          "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
+        {
+          "name": "fullseye:extra",
           "value": "export-verify"
         },
         {
@@ -64,12 +72,8 @@
       "bom-ref": "dependency:asyncua:0d08a0f64fe43bd3",
       "name": "asyncua",
       "purl": "pkg:pypi/asyncua",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "opcua"
-        },
         {
           "name": "fullseye:requirement",
           "value": "asyncua>=1.0"
@@ -118,6 +122,10 @@
       "purl": "pkg:pypi/cupy-cuda12x",
       "scope": "optional",
       "properties": [
+        {
+          "name": "fullseye:extra",
+          "value": "all"
+        },
         {
           "name": "fullseye:extra",
           "value": "gpu"
@@ -172,16 +180,8 @@
       "bom-ref": "dependency:imageio-ffmpeg:f8511f02ec792e47",
       "name": "imageio-ffmpeg",
       "purl": "pkg:pypi/imageio-ffmpeg",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "all"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "video"
-        },
         {
           "name": "fullseye:requirement",
           "value": "imageio-ffmpeg>=0.4"
@@ -202,20 +202,8 @@
       "bom-ref": "dependency:imageio:282cbb94388e225e",
       "name": "imageio",
       "purl": "pkg:pypi/imageio",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "all"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "raster"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "video"
-        },
         {
           "name": "fullseye:requirement",
           "value": "imageio>=2.28"
@@ -266,12 +254,8 @@
       "bom-ref": "dependency:laspy:9cdde403a0a95ed6",
       "name": "laspy",
       "purl": "pkg:pypi/laspy",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "lidar"
-        },
         {
           "name": "fullseye:requirement",
           "value": "laspy>=2.5"
@@ -292,12 +276,8 @@
       "bom-ref": "dependency:lazrs:b3e559ac76d0e7f8",
       "name": "lazrs",
       "purl": "pkg:pypi/lazrs",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "lidar"
-        },
         {
           "name": "fullseye:requirement",
           "value": "lazrs>=0.5"
@@ -326,6 +306,10 @@
         },
         {
           "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
+        {
+          "name": "fullseye:extra",
           "value": "extra"
         },
         {
@@ -348,12 +332,8 @@
       "bom-ref": "dependency:matplotlib:2f5491f9521f5efc",
       "name": "matplotlib",
       "purl": "pkg:pypi/matplotlib",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "polygon"
-        },
         {
           "name": "fullseye:requirement",
           "value": "matplotlib>=3.5"
@@ -376,6 +356,14 @@
       "purl": "pkg:pypi/mediapipe",
       "scope": "optional",
       "properties": [
+        {
+          "name": "fullseye:extra",
+          "value": "all"
+        },
+        {
+          "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
         {
           "name": "fullseye:extra",
           "value": "handpose"
@@ -404,6 +392,14 @@
       "properties": [
         {
           "name": "fullseye:extra",
+          "value": "all"
+        },
+        {
+          "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
+        {
+          "name": "fullseye:extra",
           "value": "gi"
         },
         {
@@ -426,12 +422,8 @@
       "bom-ref": "dependency:mrcfile:d39db71613c770b8",
       "name": "mrcfile",
       "purl": "pkg:pypi/mrcfile",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "export-verify"
-        },
         {
           "name": "fullseye:requirement",
           "value": "mrcfile>=1.5"
@@ -452,12 +444,8 @@
       "bom-ref": "dependency:nibabel:4fffd841ff2aecd4",
       "name": "nibabel",
       "purl": "pkg:pypi/nibabel",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "export-verify"
-        },
         {
           "name": "fullseye:requirement",
           "value": "nibabel>=5.3"
@@ -478,12 +466,8 @@
       "bom-ref": "dependency:numpy-stl:4a2653c496f105ae",
       "name": "numpy-stl",
       "purl": "pkg:pypi/numpy-stl",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "export-verify"
-        },
         {
           "name": "fullseye:requirement",
           "value": "numpy-stl>=3.0"
@@ -534,6 +518,10 @@
         },
         {
           "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
+        {
+          "name": "fullseye:extra",
           "value": "opencv"
         },
         {
@@ -556,12 +544,8 @@
       "bom-ref": "dependency:openpyxl:ea35272b15ad0d1f",
       "name": "openpyxl",
       "purl": "pkg:pypi/openpyxl",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "xlsx"
-        },
         {
           "name": "fullseye:requirement",
           "value": "openpyxl>=3.1"
@@ -582,12 +566,8 @@
       "bom-ref": "dependency:paho-mqtt:278ef57f810f7c0a",
       "name": "paho-mqtt",
       "purl": "pkg:pypi/paho-mqtt",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "mqtt"
-        },
         {
           "name": "fullseye:requirement",
           "value": "paho-mqtt>=1.6"
@@ -608,12 +588,8 @@
       "bom-ref": "dependency:pandas:802b713af4cdf3a1",
       "name": "pandas",
       "purl": "pkg:pypi/pandas",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "export-verify"
-        },
         {
           "name": "fullseye:requirement",
           "value": "pandas>=2.0"
@@ -634,20 +610,8 @@
       "bom-ref": "dependency:pillow:712a69576be02cdb",
       "name": "pillow",
       "purl": "pkg:pypi/pillow",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "all"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "gui"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "pil"
-        },
         {
           "name": "fullseye:requirement",
           "value": "Pillow>=13.0"
@@ -750,6 +714,14 @@
       "properties": [
         {
           "name": "fullseye:extra",
+          "value": "all"
+        },
+        {
+          "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
+        {
+          "name": "fullseye:extra",
           "value": "e57"
         },
         {
@@ -776,12 +748,8 @@
       "bom-ref": "dependency:pygltflib:1588c1c8ac24794d",
       "name": "pygltflib",
       "purl": "pkg:pypi/pygltflib",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "gltf"
-        },
         {
           "name": "fullseye:requirement",
           "value": "pygltflib>=1.16"
@@ -802,12 +770,8 @@
       "bom-ref": "dependency:pymodbus:3fe92f2ca359cebc",
       "name": "pymodbus",
       "purl": "pkg:pypi/pymodbus",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "modbus"
-        },
         {
           "name": "fullseye:requirement",
           "value": "pymodbus>=3.0"
@@ -828,12 +792,8 @@
       "bom-ref": "dependency:pynrrd:270b5915aaeee8a3",
       "name": "pynrrd",
       "purl": "pkg:pypi/pynrrd",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "export-verify"
-        },
         {
           "name": "fullseye:requirement",
           "value": "pynrrd>=1.1"
@@ -854,12 +814,8 @@
       "bom-ref": "dependency:pypcd4:0e644a45e07e1643",
       "name": "pypcd4",
       "purl": "pkg:pypi/pypcd4",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "pcd"
-        },
         {
           "name": "fullseye:requirement",
           "value": "pypcd4>=1.4"
@@ -880,12 +836,8 @@
       "bom-ref": "dependency:pyserial:09e5cd7debbb7a09",
       "name": "pyserial",
       "purl": "pkg:pypi/pyserial",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "serial"
-        },
         {
           "name": "fullseye:requirement",
           "value": "pyserial>=3.5"
@@ -903,22 +855,14 @@
     },
     {
       "type": "library",
-      "bom-ref": "dependency:pyside6:1358b201c6ced04a",
-      "name": "pyside6",
-      "purl": "pkg:pypi/pyside6",
-      "scope": "optional",
+      "bom-ref": "dependency:pyside6-essentials:06ed693474a410b3",
+      "name": "pyside6-essentials",
+      "purl": "pkg:pypi/pyside6-essentials",
+      "scope": "required",
       "properties": [
         {
-          "name": "fullseye:extra",
-          "value": "all"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "gui"
-        },
-        {
           "name": "fullseye:requirement",
-          "value": "PySide6>=6.5"
+          "value": "PySide6-Essentials>=6.5"
         },
         {
           "name": "fullseye:specifier",
@@ -1074,6 +1018,10 @@
         },
         {
           "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
+        {
+          "name": "fullseye:extra",
           "value": "wavelets"
         },
         {
@@ -1122,20 +1070,8 @@
       "bom-ref": "dependency:scikit-image:accab0e959097b1e",
       "name": "scikit-image",
       "purl": "pkg:pypi/scikit-image",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "all"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "skimage"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "threed"
-        },
         {
           "name": "fullseye:requirement",
           "value": "scikit-image>=0.20"
@@ -1186,6 +1122,10 @@
         },
         {
           "name": "fullseye:extra",
+          "value": "all-cpu"
+        },
+        {
+          "name": "fullseye:extra",
           "value": "extra"
         },
         {
@@ -1216,12 +1156,8 @@
       "bom-ref": "dependency:soundfile:ac273e32324e6de0",
       "name": "soundfile",
       "purl": "pkg:pypi/soundfile",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "audio"
-        },
         {
           "name": "fullseye:requirement",
           "value": "soundfile>=0.12"
@@ -1264,24 +1200,8 @@
       "bom-ref": "dependency:tifffile:2779e5a2ad25ea42",
       "name": "tifffile",
       "purl": "pkg:pypi/tifffile",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "all"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "export-verify"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "raster"
-        },
-        {
-          "name": "fullseye:extra",
-          "value": "volume"
-        },
         {
           "name": "fullseye:requirement",
           "value": "tifffile>=2023.1"
@@ -1336,12 +1256,8 @@
       "bom-ref": "dependency:trimesh:f4bba1d0e0a3376e",
       "name": "trimesh",
       "purl": "pkg:pypi/trimesh",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "export-verify"
-        },
         {
           "name": "fullseye:requirement",
           "value": "trimesh>=4.0"
@@ -1362,12 +1278,8 @@
       "bom-ref": "dependency:zxing-cpp:d99771976a107258",
       "name": "zxing-cpp",
       "purl": "pkg:pypi/zxing-cpp",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "symbols"
-        },
         {
           "name": "fullseye:requirement",
           "value": "zxing-cpp>=2.2"
@@ -1388,9 +1300,33 @@
     {
       "ref": "pkg:pypi/fullseye@1.1.1",
       "dependsOn": [
+        "dependency:asyncua:0d08a0f64fe43bd3",
+        "dependency:imageio-ffmpeg:f8511f02ec792e47",
+        "dependency:imageio:282cbb94388e225e",
+        "dependency:laspy:9cdde403a0a95ed6",
+        "dependency:lazrs:b3e559ac76d0e7f8",
+        "dependency:matplotlib:2f5491f9521f5efc",
+        "dependency:mrcfile:d39db71613c770b8",
+        "dependency:nibabel:4fffd841ff2aecd4",
+        "dependency:numpy-stl:4a2653c496f105ae",
         "dependency:numpy:0ea3e51cd447c867",
+        "dependency:openpyxl:ea35272b15ad0d1f",
+        "dependency:paho-mqtt:278ef57f810f7c0a",
+        "dependency:pandas:802b713af4cdf3a1",
+        "dependency:pillow:712a69576be02cdb",
+        "dependency:pygltflib:1588c1c8ac24794d",
+        "dependency:pymodbus:3fe92f2ca359cebc",
+        "dependency:pynrrd:270b5915aaeee8a3",
+        "dependency:pypcd4:0e644a45e07e1643",
+        "dependency:pyserial:09e5cd7debbb7a09",
+        "dependency:pyside6-essentials:06ed693474a410b3",
+        "dependency:scikit-image:accab0e959097b1e",
         "dependency:scipy:7b4a15d34b14013a",
-        "dependency:threadpoolctl:1a8416879673e721"
+        "dependency:soundfile:ac273e32324e6de0",
+        "dependency:threadpoolctl:1a8416879673e721",
+        "dependency:tifffile:2779e5a2ad25ea42",
+        "dependency:trimesh:f4bba1d0e0a3376e",
+        "dependency:zxing-cpp:d99771976a107258"
       ]
     },
     {
@@ -1522,7 +1458,7 @@
       "dependsOn": []
     },
     {
-      "ref": "dependency:pyside6:1358b201c6ced04a",
+      "ref": "dependency:pyside6-essentials:06ed693474a410b3",
       "dependsOn": []
     },
     {

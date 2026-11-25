@@ -15712,6 +15712,24 @@ def main(argv=None) -> int:
     # ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication
     #   を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
     argv = list(sys.argv[1:] if argv is None else argv)
+    # 普通の最初の起動だけ、Studio 自身もメニュー登録の入口にする。明示した
+    # install/remove はそれぞれの CLI が扱う(特に remove の直前に作り直さない)。
+    if "--install-shortcuts" not in argv and "--remove-shortcuts" not in argv:
+        try:
+            from fullseye import shortcuts as _shortcuts
+            _shortcuts.auto_register_on_first_command()
+        except Exception:       # noqa: BLE001 -- convenience only; Studio still starts
+            pass
+    # メニュー登録と同じ最初の通常起動では、GB 級になり得る導入を勝手に始めず、
+    # 全部入りの明示コマンドを 1 行だけ示す。--help/--version/登録専用には出さない。
+    if not argv:
+        try:
+            from fullseye import setup_cmd as _setup_cmd
+            hint = _setup_cmd.full_install_hint(_setup_cmd.detect_lang())
+            if hint:
+                print(hint)
+        except Exception:       # noqa: BLE001 -- a hint must never block Studio
+            pass
     if any(a in ("-h", "--help") for a in argv):
         print(_USAGE, end="")
         return 0

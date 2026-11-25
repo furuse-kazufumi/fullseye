@@ -1963,8 +1963,10 @@ def _explain_unregistered(name: str) -> str | None:
     deps = _ops.OPTIONAL_DEPS
     if missing:
         pips = ", ".join(deps.get(m, (m, None))[0] for m in missing)
-        extras = sorted({deps[m][1] for m in missing if m in deps})
-        lines = ['pip install "fullseye[%s]"' % e for e in extras]
+        extras = sorted({deps[m][1] for m in missing if m in deps and deps[m][1]})
+        standard = [m for m in missing if m in deps and deps[m][1] is None]
+        lines = (["pip install --upgrade fullseye"] if standard else [])
+        lines += ['pip install "fullseye[%s]"' % e for e in extras]
         lines += ["pip install %s" % m for m in missing if m not in deps]   # 語彙に無い依存も置き去りにしない
         pip_line = " or ".join(lines)
         if all(m in _ops.OPTIONAL_IN_ALL for m in missing):

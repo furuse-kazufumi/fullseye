@@ -179,20 +179,19 @@ def test_yes_runs_defaults_unattended_without_opening_a_window():
     f = Fakes()
     rc, out = _run(["--yes", "--lang", "en"], f, tty=False)
     assert rc == 0
-    assert len(f.pip) == 1 and any(a.startswith("PySide6") for a in f.pip[0])   # missing gui -> pip (faked)
-    assert f.pip[0][1:4] == ["-m", "pip", "install"]
-    assert f.sc == [False] and not f.rag and not f.launch                      # default use = Studio only
+    assert not f.pip                         # Studio is now a standard dependency, not setup work
+    assert f.sc == [False] and f.rag == [1] and not f.launch                   # default = Studio + Python + AI
     assert "never opens a window" in out and "[What was done]" in out
 
 
 def test_interactive_answers_drive_every_step():
     f = Fakes()
-    # uses=1,3 / start-menu y / desktop y / install deps y / rag y / open studio y
+    # uses=1,3 / start-menu y / desktop y / RAG y / open studio y
     rc, out = _run(["--lang", "en"], f, answers=["1,3", "y", "y", "y", "y", "y"])
     assert rc == 0
-    assert len(f.pip) == 1 and f.sc == [True] and f.rag == [1] and f.launch == [1]
+    assert not f.pip and f.sc == [True] and f.rag == [1] and f.launch == [1]
     assert "claude mcp add fullseye" in out and '"mcpServers"' in out
-    assert "Command to run:" in out and out.index("Command to run:") < out.index("[What was done]")
+    assert "MCP setup" in out and out.index("MCP setup") < out.index("[What was done]")
 
 
 def test_interactive_refusals_do_nothing_and_enter_takes_defaults():
@@ -202,11 +201,10 @@ def test_interactive_refusals_do_nothing_and_enter_takes_defaults():
     assert "(no changes)" in out
 
 
-def test_pip_failure_is_reported_and_setup_continues():
+def test_setup_does_not_try_to_reinstall_a_missing_standard_gui_dependency():
     f = Fakes(pip_rc=1)
     rc, out = _run(["--yes", "--lang", "en"], f, tty=False)
-    # 失敗した段があれば終了コードは 1(続行はする)。0 は選んだ段が全部できたときだけ
-    assert rc == 1 and "dependency install failed (exit code 1)" in out and f.sc == [False]
+    assert rc == 0 and not f.pip and f.sc == [False]
 
 
 def test_bad_answer_is_asked_again():
@@ -217,8 +215,9 @@ def test_bad_answer_is_asked_again():
 
 def test_requirements_come_from_pyproject_extras_not_the_package_itself():
     reqs = setup_cmd.requirements_for(["gui", "opencv"])
-    assert any(r.lower().startswith("pyside6") for r in reqs) and any(r.lower().startswith("opencv") for r in reqs)
-    assert len(reqs) >= 2, reqs                                       # 空の列に対する not any は無条件に通る
+    assert setup_cmd.requirements_for(["gui"]) == []                 # compatibility alias; PySide6 is standard
+    assert any(r.lower().startswith("opencv") for r in reqs)
+    assert len(reqs) >= 1, reqs                                       # 空の列に対する not any は無条件に通る
     assert not any(r.lower().startswith("fullseye") for r in reqs)
     assert setup_cmd.pip_command(["x"])[:4] == [sys.executable, "-m", "pip", "install"]
 
@@ -238,13 +237,11 @@ def _cli(*args, env_extra=None, stdin=subprocess.DEVNULL):
                           encoding="utf-8", env=env, stdin=stdin, timeout=120)
 
 
-def test_cli_no_args_prints_guidance_with_setup_first_and_exits_zero():
+def test_cli_no_args_prints_only_the_explicit_full_setup_command_and_exits_zero():
     r = _cli()
     assert r.returncode == 0
-    assert r.stdout.lstrip().startswith("Welcome to Fullseye. First time?  run:  fullseye setup")
-    assert "fullseye-studio --install-shortcuts" in r.stdout and "fullseye.apply(img" in r.stdout
-    assert "fullseye-rag" in r.stdout and "fullseye.mcp" in r.stdout
-    assert _cli(env_extra={"FULLSEYE_LANG": "ja"}).stdout.startswith("Fullseye へようこそ")
+    assert r.stdout == "fullseye setup --yes\n"
+    assert _cli(env_extra={"FULLSEYE_LANG": "ja"}).stdout == "fullseye setup --yes\n"
 
 
 def test_cli_existing_behaviour_is_kept():
@@ -259,6 +256,68 @@ def test_cli_setup_with_devnull_stdin_does_not_hang_or_change_anything():
     r = _cli("setup", stdin=subprocess.DEVNULL)
     assert r.returncode == 0 and "fullseye setup" in r.stdout
     assert "not a terminal" in r.stdout
+
+
+def test_setup_dry_run_does_not_call_the_first_command_shortcut_writer(tmp_path, monkeypatch):
+    """setup は自身が dry-run を処理する前に、.lnk・台帳・レジストリへ触れてはいけない。"""
+    import imgevolve
+
+    shortcut = tmp_path / "Programs" / "Fullseye" / "Fullseye Studio.lnk"
+    registry = tmp_path / "registry-snapshot.json"
+    ledger = tmp_path / "install_ledger.json"
+    protected = (shortcut, registry, ledger)
+    before = {p: p.read_bytes() if p.is_file() else None for p in protected}
+    calls = []
+
+    def would_mutate():
+        calls.append(True)
+        for path in protected:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("changed", encoding="utf-8")
+
+    monkeypatch.setattr(shortcuts, "auto_register_on_first_command", would_mutate)
+    imgevolve._auto_register_studio_shortcut(["setup", "--dry-run"])
+    after = {p: p.read_bytes() if p.is_file() else None for p in protected}
+    assert calls == [] and after == before
+
+
+def test_powershell_installer_uses_the_shared_cuda_rule_and_unicode_shortcut_writer():
+    """旧 WScript は ANSI code page を通るため、全ての PowerShell 経路を共通 writer へ委譲する。"""
+    ps = (ROOT / "install" / "install.ps1").read_text(encoding="utf-8")
+    assert "from fullseye.setup_cmd import cuda_available" in ps
+    assert '"all-cpu"' in ps and '"${RepoRoot}[gpu]"' in ps
+    assert "WScript.Shell" not in ps and "CreateShortcut" not in ps
+    assert "shortcuts.install(desktop=True)" in ps
+    # この実装は Windows で IShellLinkW を使い、日本語の OneDrive / user path を同じ経路で守る。
+    assert "_ComLink" in (ROOT / "fullseye" / "shortcuts.py").read_text(encoding="utf-8")
+
+
+def test_powershell_uninstaller_uses_the_ledger_before_a_guarded_legacy_fallback():
+    """PowerShell は実行せず命令列を検査する / inspect the plan without executing PowerShell."""
+    ps = (ROOT / "install" / "uninstall.ps1").read_text(encoding="utf-8")
+    assert 'uninstall.main(["--uninstall", "--yes"], pip_externally_managed=True)' in ps
+    assert "$ledgerProbe" in ps and "fullseye.uninstall" in ps
+    assert "function Get-FullseyeKnownFolder" in ps
+    assert "Get-FullseyeKnownFolder 'Desktop'" in ps
+    assert "Get-FullseyeKnownFolder 'Programs'" in ps
+    assert "FULLSEYE_ISOLATED_UNINSTALL_KEY" in ps
+    assert "function Invoke-LegacyLedgerFallback" in ps
+    fallback = ps.split("function Invoke-LegacyLedgerFallback", 1)[1].split("$venvPython", 1)[0]
+    assert "ConvertFrom-Json" in fallback and "Test-LedgerEntry $entries \"file\" $path" in fallback
+    assert "Keep (not in ledger): $path" in fallback
+    assert "Test-LedgerEntry $entries \"regkey\" $registryPath" in fallback
+    assert "fullseye-uninstall.cmd" in fallback and "Apps & features" in fallback
+    assert "foreach ($path in $remove)" in fallback and "Remove-Item -LiteralPath $path -Force" in fallback
+    assert "Remove-Item -LiteralPath $lnkPath" not in ps
+    assert "Stop-Uninstaller" in ps
+    assert "if ($LASTEXITCODE -ne 0)" in ps
+
+
+def test_uninstaller_text_subprocesses_are_utf8_and_fail_soft():
+    """pip の子出力を Windows の code page に依存させない / decode child output as fail-soft UTF-8."""
+    src = (ROOT / "fullseye" / "uninstall.py").read_text(encoding="utf-8")
+    assert src.count("text=True") == 2
+    assert src.count('encoding="utf-8", errors="replace"') == 2
 
 
 # --------------------------------------------------------------------------- 台帳 / アンインストール
@@ -287,6 +346,22 @@ def _register(tmp_path, ledger, regkey):
 
 def _plat():
     return "win" if WIN else "linux"
+
+
+def test_uninstall_external_pip_mode_leaves_pip_to_the_calling_wrapper(tmp_path):
+    """PowerShell 用の同期 pip 経路は子プロセスを起こさない / the wrapper owns the pip step."""
+    out = io.StringIO()
+    dirs = _win_dirs(tmp_path) if WIN else _linux_dirs(tmp_path)
+
+    def no_pip_probe():
+        pytest.fail("externally managed pip must not be probed by fullseye.uninstall")
+
+    rc = uninstall.main(
+        ["--uninstall", "--yes", "--lang", "en"], is_tty=False, out=out,
+        ledger=tmp_path / "no-ledger.json", dirs=dirs, registry=False,
+        pip_check_fn=no_pip_probe, pip_externally_managed=True,
+    )
+    assert rc == 0 and "calling installer will run pip uninstall synchronously" in out.getvalue()
 
 
 def _test_keys(ledger):
