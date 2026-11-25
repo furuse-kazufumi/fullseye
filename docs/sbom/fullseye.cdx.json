@@ -91,32 +91,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "dependency:cmake:46651f03960eb478",
-      "name": "cmake",
-      "purl": "pkg:pypi/cmake",
-      "scope": "optional",
-      "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "native"
-        },
-        {
-          "name": "fullseye:requirement",
-          "value": "cmake>=3.21,<5"
-        },
-        {
-          "name": "fullseye:specifier",
-          "value": ">=3.21,<5"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "Apache-2.0 AND BSD-3-Clause"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "dependency:cupy-cuda12x:484a81c63f6822ce",
       "name": "cupy-cuda12x",
       "purl": "pkg:pypi/cupy-cuda12x",
@@ -684,12 +658,8 @@
       "bom-ref": "dependency:pybind11:15d579d579fe7eea",
       "name": "pybind11",
       "purl": "pkg:pypi/pybind11",
-      "scope": "optional",
+      "scope": "required",
       "properties": [
-        {
-          "name": "fullseye:extra",
-          "value": "native"
-        },
         {
           "name": "fullseye:requirement",
           "value": "pybind11==2.13.6"
@@ -1314,6 +1284,7 @@
         "dependency:paho-mqtt:278ef57f810f7c0a",
         "dependency:pandas:802b713af4cdf3a1",
         "dependency:pillow:712a69576be02cdb",
+        "dependency:pybind11:15d579d579fe7eea",
         "dependency:pygltflib:1588c1c8ac24794d",
         "dependency:pymodbus:3fe92f2ca359cebc",
         "dependency:pynrrd:270b5915aaeee8a3",
@@ -1335,10 +1306,6 @@
     },
     {
       "ref": "dependency:asyncua:0d08a0f64fe43bd3",
-      "dependsOn": []
-    },
-    {
-      "ref": "dependency:cmake:46651f03960eb478",
       "dependsOn": []
     },
     {
