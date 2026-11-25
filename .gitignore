@@ -72,3 +72,4 @@ prof.out
 *.prof
 # Generated cache of scene_registry.py (rewritten on demand by _cache_xml; one file embeds a local venv path).
 .scene_cache/
+build-c-api*/

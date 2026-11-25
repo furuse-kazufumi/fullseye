@@ -60,6 +60,9 @@ Documentation = "https://furuse.work/"
 "Validation reports" = "https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml"
 
 [project.optional-dependencies]
+# Native SDK build tools are deliberately absent from the normal wheel install.
+# ネイティブ SDK のビルド道具は通常の wheel 導入には含めない。
+native = ["pybind11==2.13.6", "cmake>=3.21,<5"]
 # 下限を上げた extras(2026-10-24、OSV の件数は旧い下限の版で数えた):
 #   opencv-python 4.6 → 4.8.1.78: GHSA-qr4w-53vh-m672 / PYSEC-2023-183(同梱 libwebp)の 2 件
 #   Pillow 9 → 13.0: 72 件。13.0.0 は Python 3.11 以上 —— 3.10 を外した理由
@@ -427,6 +430,9 @@ py-modules = [
               #   tests/test_wheel_package_data_2026_11_13.py が「列挙した名前は checkout に在る」を数える。
               # device="auto" の実測の表(device_policy が読む。tools/gen_device_rules.py が生ログから作る)
               "data/DEVICE_RULES.json",
+              # C SDK が公開する型付き op の生成台帳(tools/gen_c_api_ops.py)。
+              # docs/C_API_OPS.md と同じ run から生成し、wheel でも検索・監査できるよう同梱する。
+              "data/C_API_OPS.json",
               # 実測で採用した機械的 GPU の許可リスト(gpu_shadow.run_allowed が読む)
               "data/gpu_auto_allow.json",
               # gpu_route が読む実測の台帳: 手書き経路の場面(領域の解析の族、tools/gen_gpu_routes.py)と
