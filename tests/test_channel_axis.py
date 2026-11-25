@@ -47,6 +47,7 @@ import warnings
 import api
 import fullseye as fs
 import ops
+from conftest import requires_full_registry
 
 
 def _color(bmid=0.40):
@@ -159,7 +160,12 @@ def test_the_clean_sample_really_does_not_leak():
 
 def test_counts_match_the_recorded_measurement():
     """機械的に列挙した台帳が、測定済みの 89 本を下回らないこと。"""
+    # xmh_regmin / xmh_selfmatch は mahotas が入った完全レジストリにだけ登録される。
+    # これは全数の測定台帳と生きたレジストリを突き合わせる門なので、optional
+    # backend を意図して入れない py3.12/3.14 では skip する。
+    requires_full_registry()
     names = tuple(sorted(api._CHANNEL_UNSAFE_OPS))
     assert len(names) >= 89
     assert set(names) == api._CHANNEL_UNSAFE_IMAGE_OPS | api._CHANNEL_UNSAFE_REGION_OPS
-    assert all(api.find_op(name) is not None for name in names)
+    missing = [name for name in names if api.find_op(name) is None]
+    assert not missing, "channel-axis ledger names absent from the registry: %s" % missing
