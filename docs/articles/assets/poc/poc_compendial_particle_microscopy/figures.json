@@ -1,0 +1,72 @@
+[
+ {
+  "file": "01_compendial_particle_microscopy_main.png",
+  "name": "compendial_particle_microscopy_main",
+  "caption": "原画像→分割→真値と推定→個数/体積基準の径分布→失敗側。体積基準はレーザー回折との同一性を意味しない。",
+  "shape": [
+   1137,
+   1486,
+   3
+  ]
+ },
+ {
+  "file": "02_particle_overlap_rate_series.png",
+  "name": "particle_overlap_rate_series",
+  "caption": "重なり率を増やす系列。連結成分数だけでは 2 粒を 1 粒として数える。",
+  "shape": [
+   436,
+   1980,
+   3
+  ]
+ },
+ {
+  "file": "03_compendial_particle_microscopy_large_validation.png",
+  "name": "compendial_particle_microscopy_large_validation",
+  "caption": "324粒子の別試料。低コントラスト、重なり、端粒子を含み、損失と条件付き区間を併記する。",
+  "shape": [
+   1818,
+   7162,
+   3
+  ]
+ },
+ {
+  "file": "04_compendial_particle_microscopy_large_validation_number_cdf.png",
+  "name": "compendial_particle_microscopy_large_validation_number_cdf",
+  "caption": "number基準。受理推定粒子と一意対応する真値だけの条件付きCDF。",
+  "shape": [
+   1400,
+   2905,
+   3
+  ]
+ },
+ {
+  "file": "05_compendial_particle_microscopy_large_validation_area_cdf.png",
+  "name": "compendial_particle_microscopy_large_validation_area_cdf",
+  "caption": "area基準。受理推定粒子と一意対応する真値だけの条件付きCDF。",
+  "shape": [
+   1400,
+   2905,
+   3
+  ]
+ },
+ {
+  "file": "06_compendial_particle_microscopy_large_validation_volume_cdf.png",
+  "name": "compendial_particle_microscopy_large_validation_volume_cdf",
+  "caption": "volume基準。受理推定粒子と一意対応する真値だけの条件付きCDF。",
+  "shape": [
+   1400,
+   2905,
+   3
+  ]
+ },
+ {
+  "file": "07_compendial_particle_microscopy_accuracy_sweep.png",
+  "name": "compendial_particle_microscopy_accuracy_sweep",
+  "caption": "全128条件のうち、受理条件に条件付けた誤差と、理由別の拒否率。",
+  "shape": [
+   371,
+   698,
+   3
+  ]
+ }
+]

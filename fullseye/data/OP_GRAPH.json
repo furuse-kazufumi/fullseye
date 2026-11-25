@@ -61,9 +61,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3635,
+    "executable": 3636,
     "reasons": {
-      "python_signature": 2670,
+      "python_signature": 2671,
       "registry": 964
     },
     "not_executable_reasons": {
@@ -390,7 +390,7 @@
   },
   "counts": {
     "nodes": 103,
-    "edges": 3850,
+    "edges": 3851,
     "conversion_pairs": 426,
     "conversion_edge_incidence": 2538
   },
@@ -1422,8 +1422,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1282,
-      "consumed_by": 605,
+      "produced_by": 1283,
+      "consumed_by": 607,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -173727,6 +173727,108 @@
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "mcp_probe": "sample_run_failed",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00021"
+    },
+    {
+      "op": "particle_size_distribution",
+      "inputs": [
+        "table",
+        "table"
+      ],
+      "output": "table",
+      "category": "drive",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00021"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00021"
+        }
+      ],
+      "input_roles": [
+        "particles",
+        "calibration"
+      ],
+      "runtime_target": {
+        "module": "pharmaparticle",
+        "callable": "particle_size_distribution"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "pharmaparticle",
+        "callable": "particle_size_distribution"
+      },
+      "parameter_schema": [
+        {
+          "name": "border_policy",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "exclude"
+        },
+        {
+          "name": "measurement_date",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "bin_edges",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "confidence",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.95
+        },
+        {
+          "name": "bootstrap_samples",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 2000
+        },
+        {
+          "name": "seed",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 776
+        },
+        {
+          "name": "upstream_records",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        }
+      ],
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
       "source_ref": "S00021"
     },
