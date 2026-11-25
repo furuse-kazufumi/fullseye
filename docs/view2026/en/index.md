@@ -12,7 +12,7 @@
 
 Tap a tile to open the video or figure (▶ = moving).
 
-This page shows only 30 exhibits. The other 285 are on the [Extras page](more.md).
+This page shows only 30 exhibits. The other 286 are on the [Extras page](more.md).
 
 <style>
 .vlang { font-size: 14px; line-height: 2; }

@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3854, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3853, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -2135,6 +2135,7 @@
 {"name":"particle_image_d50","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"particle_image_synth","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"particle_render","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"particle_size_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"particle_size_dx","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"particle_size_oversize","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"particle_size_read","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -2332,7 +2333,6 @@
 {"name":"polyhedron_clip_halfspace","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"polyhedron_gravity","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"pose_error","status":"not_in_registry","reason":"not executable by fullseye.apply"},
-{"name":"pose_nms_symmetry","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"pose_normalize","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"pose_to_matrix","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"position_to_points","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -2347,7 +2347,6 @@
 {"name":"power_ln","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"power_real","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"powerlaw_linear_contact","status":"not_in_registry","reason":"not executable by fullseye.apply"},
-{"name":"ppf_pose_hypotheses","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"predict_amber_onset","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"predict_fringe_phase_error","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"premultiply","status":"not_in_registry","reason":"not executable by fullseye.apply"},

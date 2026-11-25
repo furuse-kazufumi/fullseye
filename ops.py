@@ -2629,29 +2629,31 @@ import io as _io  # noqa: E402  (module_requirements がソースを読む)
 #: ``api._resolve`` が未登録の名前を引かれたときに索引から不足 extra を案内する。
 OP_MODULE: dict[str, str] = {op.name: "ops" for op in REGISTRY}
 
-#: optional 依存の import 名 → (pip 配布名, ``pyproject.toml`` の extra 名)。
-#: ★pyproject の optional-dependencies と食い違うと案内が嘘になるので
+#: 外部依存の import 名 → (pip 配布名, ``pyproject.toml`` の extra 名または None)。
+#: ``None`` は標準依存であり、壊れた導入には ``fullseye[extra]`` でなく本体の再導入を案内する。
+#: ★pyproject の依存表と食い違うと案内が嘘になるので
 #: ``tests/test_usability_review_2026_09_19.py`` が突き合わせる。
-OPTIONAL_DEPS: dict[str, tuple[str, str]] = {
-    "skimage": ("scikit-image", "skimage"),
+OPTIONAL_DEPS: dict[str, tuple[str, str | None]] = {
+    "skimage": ("scikit-image", None),
     "cv2": ("opencv-python", "opencv"),
-    "PIL": ("Pillow", "pil"),
+    "PIL": ("Pillow", None),
     "pywt": ("PyWavelets", "wavelets"),
     "torch": ("torch", "gpu"),
     "kornia": ("kornia", "gpu"),
     "mahotas": ("mahotas", "extra"),
     "SimpleITK": ("SimpleITK", "extra"),
     "mitsuba": ("mitsuba", "gi"),
-    "imageio": ("imageio", "video"),
-    "tifffile": ("tifffile", "volume"),
-    "matplotlib": ("matplotlib", "polygon"),
+    "imageio": ("imageio", None),
+    "tifffile": ("tifffile", None),
+    "matplotlib": ("matplotlib", None),
     "mediapipe": ("mediapipe", "handpose"),
 }
 
 #: ``fullseye[all]`` に入っている import 名(pyproject の ``all`` と test が突き合わせる)。
 #: 案内文が「(or fullseye[all])」と言えるのは不足がこの集合に収まるときだけ。
 OPTIONAL_IN_ALL: frozenset = frozenset({"skimage", "cv2", "PIL", "pywt", "torch", "kornia",
-                                        "mahotas", "SimpleITK", "imageio", "tifffile"})
+                                        "mahotas", "SimpleITK", "imageio", "tifffile", "matplotlib",
+                                        "mediapipe", "mitsuba"})
 
 _MODULE_REQUIREMENTS_CACHE: dict[str, list[str]] = {}
 

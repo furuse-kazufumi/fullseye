@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3848,
- "n_notes": 3854,
+ "n_ops": 3847,
+ "n_notes": 3853,
  "notes": {
   "vol_dilate": [
    {
@@ -11606,26 +11606,6 @@
     "path": "docs/ops/3d/match_pose/moment_axes.md"
    }
   ],
-  "pose_nms_symmetry": [
-   {
-    "op": "pose_nms_symmetry",
-    "dim": "3d",
-    "category": "match_pose",
-    "in": "table × points × table",
-    "out": "table",
-    "path": "docs/ops/3d/match_pose/pose_nms_symmetry.md"
-   }
-  ],
-  "ppf_pose_hypotheses": [
-   {
-    "op": "ppf_pose_hypotheses",
-    "dim": "3d",
-    "category": "match_pose",
-    "in": "table × points",
-    "out": "table",
-    "path": "docs/ops/3d/match_pose/ppf_pose_hypotheses.md"
-   }
-  ],
   "distance_ridge": [
    {
     "op": "distance_ridge",
@@ -20927,6 +20907,16 @@
     "in": "signal × signal",
     "out": "table",
     "path": "docs/ops/drive/pegtactile/wrist_stiffness_fit.md"
+   }
+  ],
+  "particle_size_distribution": [
+   {
+    "op": "particle_size_distribution",
+    "dim": "drive",
+    "category": "pharma",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/pharma/particle_size_distribution.md"
    }
   ],
   "band_width_profile": [

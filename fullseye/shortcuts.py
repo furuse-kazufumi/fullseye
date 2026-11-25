@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import ctypes
+import configparser
 import importlib.util
 import json
 import os
@@ -27,7 +28,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Callable, Dict, Iterable, List, Optional, Tuple
 
 APP_NAME = "Fullseye Studio"
 FOLDER_NAME = "Fullseye"
@@ -35,6 +36,8 @@ STUDIO_ARGS = "-P -m studio"       # -P: sys.path[0](作業フォルダ)を足�
 CMD_NAME = "fullseye-uninstall.cmd"   # Python に頼らない後始末スクリプト(「アプリと機能」の UninstallString)
 UNINSTALL_FROM_CMD_ENV = "FULLSEYE_UNINSTALL_FROM_CMD"    # この .cmd から呼ばれたとき 1。Python 側は走行中の .cmd を消さない
 APP_ID = "Fullseye.Studio"          # studio.py の SetCurrentProcessExplicitAppUserModelID と同じ綴り
+AUTO_SHORTCUT_MARKER = "fullseye-auto-shortcuts.json"
+_AUTO_SHORTCUT_MARKER_TEXT = '{"kind":"fullseye_auto_shortcuts","version":1}\n'
 _PKG_DIR = Path(__file__).resolve().parent
 _ROOT = _PKG_DIR.parent
 
@@ -65,10 +68,14 @@ def icon_source(kind: str = "ico") -> Path:
                         "reinstall fullseye (pip install --force-reinstall fullseye)" % name)
 
 
-def _known_desktop() -> Optional[Path]:
-    """本物のデスクトップ(OneDrive の「既知のフォルダーの移動」で USERPROFILE\\Desktop とは違う場所になる)。
+def _known_desktop_from_api() -> Optional[Path]:
+    """SHGetKnownFolderPath で Desktop を返す。/ Return Desktop from SHGetKnownFolderPath.
 
-    SHGetKnownFolderPath(FOLDERID_Desktop)。取れなければ None。"""
+    OneDrive の「既知のフォルダーの移動」後も USERPROFILE\\Desktop を推測せず、
+    Windows が返した絶対パスをそのまま返す。取得不能なら None を返す。
+    Do not guess USERPROFILE\\Desktop after OneDrive Known Folder Move; return
+    the absolute path Windows reports, or None when it cannot be obtained.
+    """
     if sys.platform != "win32":
         return None
     try:
@@ -90,8 +97,29 @@ def _known_desktop() -> Optional[Path]:
             ctypes.windll.ole32.CoTaskMemFree(ctypes.c_void_p(out.value))
         p = Path(path)
         return p if p.is_absolute() else None
-    except Exception:       # noqa: BLE001 — 取れなければ USERPROFILE\\Desktop に倒す
+    except Exception:       # noqa: BLE001 — API が使えなければ None / return None when the API is unavailable
         return None
+
+
+def _known_desktop() -> Optional[Path]:
+    """既知の Desktop を返す。/ Return the known Desktop path.
+
+    隔離試験では API の戻り値を一時パスに差し替え、通常の利用者環境では
+    SHGetKnownFolderPath の値を返す。In isolated tests, replace the API result
+    with a temporary path; in normal use, return SHGetKnownFolderPath's value.
+    """
+    # pytest の子プロセスも含めた隔離用。通常の利用者環境ではこの二つの変数を
+    # 見ないので、OneDrive 等で移動した本物の既知フォルダーを従来どおり使う。
+    # Test-only isolation, inherited by pytest child processes.  Normal user
+    # installs still use the real known folder (including OneDrive redirection).
+    isolated = os.environ.get("FULLSEYE_TEST_ISOLATION") == "1"
+    override = os.environ.get("FULLSEYE_TEST_DESKTOP") if isolated else None
+    if override:
+        p = Path(override)
+        if p.is_absolute():
+            return p
+        return None
+    return _known_desktop_from_api()
 
 
 def _abs_env(e: Dict[str, str], name: str) -> Optional[str]:
@@ -352,7 +380,13 @@ def read_lnk(lnk: Path) -> Dict[str, str]:
 # 消す(ユーザーが後から置いた物には触らない)。置き場は利用者のデータ領域
 # (Windows: %LOCALAPPDATA%/Fullseye/setup/、Linux: ~/.local/share/fullseye/)。環境変数 FULLSEYE_LEDGER で上書き。
 # kind: file / dir_if_empty / regkey(HKCU の下位キー)/ claude_skill(~/.claude/skills/fullseye-ops)
-UNINSTALL_KEY = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\Fullseye"
+_PRODUCTION_UNINSTALL_KEY = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\Fullseye"
+# テスト用の子プロセスは本物の「アプリと機能」登録を計画にも入れない。環境変数は
+# conftest だけが立て、通常の実行では常に上の製品キーになる。
+# Test child processes use a disposable key; ordinary runs always use the
+# production key above.
+UNINSTALL_KEY = (os.environ.get("FULLSEYE_ISOLATED_UNINSTALL_KEY")
+                 if os.environ.get("FULLSEYE_TEST_ISOLATION") == "1" else None) or _PRODUCTION_UNINSTALL_KEY
 LEDGER_KINDS = ("file", "dir_if_empty", "regkey", "claude_skill")
 
 
@@ -456,7 +490,8 @@ def ledger_forget(kind: str, target: object, path: Optional[Path] = None) -> Non
 # --------------------------------------------------------------------------- 台帳の中身を検証する(許可制)
 # 台帳は利用者が書き換えられる JSON(環境変数 FULLSEYE_LEDGER で別のファイルにも差し替えられる)。台帳に書いて
 # あるからといって何でも消さない: setup が作る物の**名前**と**置き場**だけを許す。
-_FILE_NAMES = frozenset({APP_NAME + ".lnk", "fullseye.ico", CMD_NAME, "fullseye-studio.desktop", "fullseye-studio.png"})
+_FILE_NAMES = frozenset({APP_NAME + ".lnk", "fullseye.ico", CMD_NAME, "fullseye-studio.desktop", "fullseye-studio.png",
+                         AUTO_SHORTCUT_MARKER})
 
 
 def _norm(p: object) -> str:
@@ -572,6 +607,10 @@ def verify_fullseye_item(kind: str, path: str, *, plat: Optional[str] = None) ->
             ok = head[:8] == _PNG_MAGIC
         elif low == CMD_NAME.lower():
             ok = b"Fullseye uninstall helper" in head
+        elif low == AUTO_SHORTCUT_MARKER.lower():
+            # Windows の text mode は CRLF だが、marker の JSON 意味は同じ。
+            # Text mode uses CRLF on Windows; the marker JSON means the same thing.
+            ok = head.replace(b"\r\n", b"\n") == _AUTO_SHORTCUT_MARKER_TEXT.encode("utf-8")
         elif low.endswith(".desktop"):
             ok = b"Name=" + APP_NAME.encode() in head and b"-m studio" in head
         else:
@@ -716,6 +755,7 @@ def uninstall_cmd_text(*, python: object, uninstaller: object, lnks: Iterable[ob
         if x.parent.name == FOLDER_NAME:
             L.append('rmdir "%s" 2>nul' % _cmd_val(x.parent))
     L += ['del "%~dp0fullseye.ico" 2>nul',
+          'del "%%~dp0%s" 2>nul' % AUTO_SHORTCUT_MARKER,
           'del "%~dp0install_ledger.json" 2>nul',
           'reg delete "HKCU\\%s" /f >nul 2>&1' % _cmd_val(regkey),
           "echo Done. (Studio settings, the cache and any Claude Code skill were kept.)",
@@ -740,6 +780,140 @@ def _linux_dirs(dirs: Optional[Dict[str, Path]]) -> Dict[str, Path]:
          "desktop": Path.home() / "Desktop"}
     d.update(dirs or {})
     return d
+
+
+def auto_marker_path(*, platform: Optional[str] = None, dirs: Optional[Dict[str, Path]] = None) -> Optional[Path]:
+    """自動登録を済ませた印の場所 / path of the auto-registration marker."""
+    plat = _platform(platform)
+    if plat == "win":
+        d = dict(windows_dirs())
+        d.update(dirs or {})
+        return d["icon_dir"] / AUTO_SHORTCUT_MARKER
+    if plat == "linux":
+        return _linux_dirs(dirs)["icon_dir"] / AUTO_SHORTCUT_MARKER
+    return None
+
+
+def _is_auto_marker(path: object, *, platform: Optional[str] = None, dirs: Optional[Dict[str, Path]] = None) -> bool:
+    marker = auto_marker_path(platform=platform, dirs=dirs)
+    return marker is not None and _norm(path) == _norm(marker)
+
+
+def _settings_disable_auto_shortcuts(env: Dict[str, str], plat: str) -> bool:
+    """設定の ``[shortcuts] auto_register=false`` を Qt なしで読む / read the opt-out."""
+    raw = env.get("FULLSEYE_STUDIO_SETTINGS", "")
+    if raw:
+        p = Path(raw)
+    elif plat == "linux":
+        p = Path(env.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "Fullseye" / "Studio.conf"
+    elif plat == "win":
+        # QSettings("Fullseye", "Studio") は Windows ではこの native registry key を使う。
+        # Reading it directly keeps this command path Qt-free.
+        try:
+            import winreg
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Fullseye\Studio\shortcuts") as key:
+                value = str(winreg.QueryValueEx(key, "auto_register")[0]).strip().lower()
+        except (ImportError, OSError, TypeError, ValueError):
+            return False
+        return value in {"0", "false", "no", "off"}
+    else:
+        return False
+    if not p.is_file():
+        return False
+    try:
+        cfg = configparser.ConfigParser()
+        cfg.read(p, encoding="utf-8")
+        value = cfg.get("shortcuts", "auto_register", fallback="true").strip().lower()
+    except (OSError, UnicodeError, configparser.Error):
+        return False
+    return value in {"0", "false", "no", "off"}
+
+
+def _start_menu_policy_blocks_registration() -> bool:
+    """管理者の Explorer 方針が Start menu を隠すか / check the Windows policy."""
+    if sys.platform != "win32":
+        return False
+    try:
+        import winreg
+    except ImportError:
+        return True
+    key = r"Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"
+    for hive in (winreg.HKEY_CURRENT_USER, winreg.HKEY_LOCAL_MACHINE):
+        try:
+            with winreg.OpenKey(hive, key) as k:
+                for value_name in ("NoStartMenuMorePrograms", "NoStartMenuSubFolders"):
+                    try:
+                        if int(winreg.QueryValueEx(k, value_name)[0]):
+                            return True
+                    except (OSError, TypeError, ValueError):
+                        pass
+        except OSError:
+            pass
+    return False
+
+
+def _command_has_terminal() -> bool:
+    """既存 setup と同じ本物の端末判定 / use its GetConsoleMode-aware terminal check."""
+    try:
+        from fullseye.setup_cmd import _stdin_is_terminal
+        return bool(_stdin_is_terminal() and sys.stdout and sys.stdout.isatty())
+    except Exception:       # noqa: BLE001 -- uncertainty must not create a file
+        return False
+
+
+def mark_auto_shortcuts_complete(*, platform: Optional[str] = None, dirs: Optional[Dict[str, Path]] = None,
+                                 ledger: Optional[Path] = None) -> Optional[Path]:
+    """自動登録済みの印を原子的に書き台帳へ載せる / atomically record completion."""
+    marker = auto_marker_path(platform=platform, dirs=dirs)
+    if marker is None:
+        return None
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    tmp = marker.with_name(marker.name + ".tmp")
+    tmp.write_text(_AUTO_SHORTCUT_MARKER_TEXT, encoding="utf-8")
+    os.replace(tmp, marker)
+    ledger_record("file", marker, ledger)
+    return marker
+
+
+def auto_register_on_first_command(*, platform: Optional[str] = None, python: Optional[str] = None,
+                                   dirs: Optional[Dict[str, Path]] = None, ledger: Optional[Path] = None,
+                                   env: Optional[Dict[str, str]] = None, is_tty: Optional[bool] = None,
+                                   policy_fn: Optional[Callable[[], bool]] = None,
+                                   install_fn: Optional[Callable[..., List[Path]]] = None, out=None) -> bool:
+    """最初の対話コマンドで Studio を一度だけ登録 / register Studio once on the first user command.
+
+    ``FULLSEYE_NO_SHORTCUTS=1``、INI の ``[shortcuts] auto_register=false``、CI、端末なし、
+    または Windows の Start menu 方針では書かない。成功時だけ印を残すので、利用者が
+    .lnk / .desktop を消したあとも通常のコマンドは作り直さない。
+    """
+    plat = _platform(platform)
+    if plat not in ("win", "linux"):
+        return False
+    e = os.environ if env is None else env
+    marker = auto_marker_path(platform=plat, dirs=dirs)
+    if marker is None or marker.exists():
+        return False
+    # The e2e workflow runs only in a disposable GitHub runner and explicitly opts
+    # in to exercising the first-command branch.  Ordinary CI remains fail-closed:
+    # no shortcut is written merely because a test process was given a terminal.
+    e2e_auto = e.get("CI") and e.get("FULLSEYE_E2E_ALLOW_AUTO_SHORTCUTS") == "1"
+    if e.get("FULLSEYE_NO_SHORTCUTS") or (e.get("CI") and not e2e_auto):
+        return False
+    if not e2e_auto and not (is_tty if is_tty is not None else _command_has_terminal()):
+        return False
+    if _settings_disable_auto_shortcuts(e, plat):
+        return False
+    if (policy_fn or _start_menu_policy_blocks_registration)():
+        return False
+    try:
+        made = (install_fn or install)(python=python, platform=plat, dirs=dirs, ledger=ledger)
+        if not made:
+            return False
+        mark_auto_shortcuts_complete(platform=plat, dirs=dirs, ledger=ledger)
+    except (OSError, ShortcutError):
+        return False
+    print("スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)", file=out or sys.stdout)
+    return True
 
 
 def install(desktop: bool = False, *, python: Optional[str] = None, platform: Optional[str] = None,
@@ -863,8 +1037,10 @@ def _rmdir_quiet(folder: Path) -> None:
 def _known_default_files(plat: str, d: Dict[str, Path]) -> List[Path]:
     """台帳が無いとき(古い状態)に消してよい既知の場所: 既定の登録先の物だけ(デスクトップは台帳が無ければ触らない)。"""
     if plat == "win":
-        return [d["start_menu"] / (APP_NAME + ".lnk"), d["icon_dir"] / "fullseye.ico", d["icon_dir"] / CMD_NAME]
-    return [d["apps"] / "fullseye-studio.desktop", d["icon_dir"] / "fullseye-studio.png"]
+        return [d["start_menu"] / (APP_NAME + ".lnk"), d["icon_dir"] / "fullseye.ico", d["icon_dir"] / CMD_NAME,
+                d["icon_dir"] / AUTO_SHORTCUT_MARKER]
+    return [d["apps"] / "fullseye-studio.desktop", d["icon_dir"] / "fullseye-studio.png",
+            d["icon_dir"] / AUTO_SHORTCUT_MARKER]
 
 
 def remove(*, platform: Optional[str] = None, dirs: Optional[Dict[str, Path]] = None,
@@ -892,6 +1068,11 @@ def remove(*, platform: Optional[str] = None, dirs: Optional[Dict[str, Path]] = 
     else:
         todo = [(e["kind"], e) for e in ents if e["kind"] == "file" or (e["kind"] == "regkey" and plat == "win")]
     for kind, e in todo:
+        # ``--remove-shortcuts`` は uninstall ではなく明示した一時的な除去である。
+        # Keep the marker so an ordinary command cannot recreate a shortcut the user removed.
+        # ``fullseye setup --uninstall`` が marker を含めて後始末する。
+        if kind == "file" and _is_auto_marker(e["path"], platform=plat, dirs=dirs):
+            continue
         why = check_ledger_item(kind, e["path"], plat=plat, dirs=dirs, allow_keys=allow_keys)
         if why is None and entry_foreign(e):
             why = "%s was created by another Python environment (%s); left alone" % (e["path"], entry_foreign(e))
@@ -929,8 +1110,9 @@ def run_cli(install_mode: bool, desktop: bool = False, *, out=None) -> int:
         if install_mode:
             if not gui_available():
                 print('warning: PySide6 is not installed, so the shortcut will open nothing yet. '
-                      'Run: %s -m pip install "PySide6>=6.5"' % sys.executable, file=out)
+                      'Reinstall fullseye: %s -m pip install --force-reinstall fullseye' % sys.executable, file=out)
             made = install(desktop=desktop)
+            mark_auto_shortcuts_complete(platform=plat)
             for p in made:
                 print("registered: %s" % p, file=out)
             print("done. Start menu: search for '%s'." % APP_NAME if plat == "win"

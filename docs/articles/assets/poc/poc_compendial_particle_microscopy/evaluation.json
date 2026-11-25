@@ -1,0 +1,466 @@
+{
+  "arrays": {
+    "accuracy_sweep": {
+      "dtype": "<f8",
+      "finite_count": 776874,
+      "max": 1.0,
+      "mean": 0.9335869393916407,
+      "min": 0.05,
+      "nan_count": 0,
+      "sha256": "b99be89e8acacc7e57caa3f5cc4680defeaf4d4796f9b00deb040f44a8ef7ad7",
+      "shape": [
+        371,
+        698,
+        3
+      ],
+      "std": 0.20103329337943998
+    },
+    "estimated_diameter_px": {
+      "dtype": "<f8",
+      "finite_count": 6,
+      "max": 44.13679308065777,
+      "mean": 36.915759820642535,
+      "min": 31.975167777860612,
+      "nan_count": 0,
+      "sha256": "1c74442c0adba9bd4c5388725456d524a76e567e24975b82af3c3a69a9508747",
+      "shape": [
+        6
+      ],
+      "std": 3.8564056150877772
+    },
+    "large_area_cdf": {
+      "dtype": "<f8",
+      "finite_count": 12201000,
+      "max": 1.0,
+      "mean": 0.9603235924544902,
+      "min": 0.0,
+      "nan_count": 0,
+      "sha256": "666ec38df480bb6febdde712f1b8e3b7d3984d29b876044dc988847adac1fdf4",
+      "shape": [
+        1400,
+        2905,
+        3
+      ],
+      "std": 0.15954001481701585
+    },
+    "large_figure": {
+      "dtype": "<f8",
+      "finite_count": 39061548,
+      "max": 1.0,
+      "mean": 0.9460568425421367,
+      "min": 0.0,
+      "nan_count": 0,
+      "sha256": "2d9d2fcf86dc59a484c7f156a7f7b675c38e52079d3649a0699a528c44f74c8b",
+      "shape": [
+        1818,
+        7162,
+        3
+      ],
+      "std": 0.1805562747518051
+    },
+    "large_number_cdf": {
+      "dtype": "<f8",
+      "finite_count": 12201000,
+      "max": 1.0,
+      "mean": 0.9594851943062183,
+      "min": 0.0,
+      "nan_count": 0,
+      "sha256": "c9d7a1626f02d59e075e2c46678c0197ac5ef1afa736385d293026a7951df9a5",
+      "shape": [
+        1400,
+        2905,
+        3
+      ],
+      "std": 0.16112681854916688
+    },
+    "large_raw": {
+      "dtype": "<f8",
+      "finite_count": 313600,
+      "max": 0.855840852944971,
+      "mean": 0.7390852176622573,
+      "min": 0.16963146106029808,
+      "nan_count": 0,
+      "sha256": "f37cc1c480598da1d02547fc4017eb4390720c81ef0bd329fea9a8ba0c12ca00",
+      "shape": [
+        560,
+        560
+      ],
+      "std": 0.20802248994974318
+    },
+    "large_segmentation": {
+      "dtype": "<i4",
+      "finite_count": 313600,
+      "max": 299.0,
+      "mean": 19.303702168367348,
+      "min": 0.0,
+      "nan_count": 0,
+      "sha256": "63189d534e38b09f478d0460ce62d98c0db25941a6e00282cb7fc19233fca3c4",
+      "shape": [
+        560,
+        560
+      ],
+      "std": 59.06625236708275
+    },
+    "large_volume_cdf": {
+      "dtype": "<f8",
+      "finite_count": 12201000,
+      "max": 1.0,
+      "mean": 0.9600859655899605,
+      "min": 0.0,
+      "nan_count": 0,
+      "sha256": "b8f658380ff4cb184d3bbeacb8d3f78dd92e19d3a3a42584913c4cd7aa4960ed",
+      "shape": [
+        1400,
+        2905,
+        3
+      ],
+      "std": 0.15988872285716713
+    },
+    "main_figure": {
+      "dtype": "<f8",
+      "finite_count": 5068746,
+      "max": 1.0,
+      "mean": 0.9209049654378522,
+      "min": 0.0,
+      "nan_count": 0,
+      "sha256": "f01570c964c6b4fdf7e63455cba36bd0683f92fdaa811b14a63ab02b51623f92",
+      "shape": [
+        1137,
+        1486,
+        3
+      ],
+      "std": 0.16878499253957777
+    },
+    "raw": {
+      "dtype": "<f8",
+      "finite_count": 153600,
+      "max": 0.8468122482351546,
+      "mean": 0.7913551432558661,
+      "min": 0.03311381847343518,
+      "nan_count": 0,
+      "sha256": "8c037f347eb8278cf7579a9d22f19281bd44d361689a6f8f0197b670b514504c",
+      "shape": [
+        320,
+        480
+      ],
+      "std": 0.13100942949423727
+    },
+    "segmentation": {
+      "dtype": "<i4",
+      "finite_count": 153600,
+      "max": 6.0,
+      "mean": 0.15081380208333334,
+      "min": 0.0,
+      "nan_count": 0,
+      "sha256": "3c4950e5df5065c5ebfe58cbef99b6713b0962d056c63071e8d607170a2fa14b",
+      "shape": [
+        320,
+        480
+      ],
+      "std": 0.7976829983465669
+    },
+    "truth_diameter_px": {
+      "dtype": "<f8",
+      "finite_count": 6,
+      "max": 48.0,
+      "mean": 39.2449979983984,
+      "min": 34.0,
+      "nan_count": 0,
+      "sha256": "7745638bfdfcc0dbcfb61f6766baf508eeaf991e33802da6ef88b49b117fae31",
+      "shape": [
+        6
+      ],
+      "std": 4.453103648659631
+    }
+  },
+  "case": "poc_compendial_particle_microscopy",
+  "evaluation_manifest_schema": 1,
+  "figures": [
+    {
+      "caption": "原画像→分割→真値と推定→個数/体積基準の径分布→失敗側。体積基準はレーザー回折との同一性を意味しない。",
+      "file": "01_compendial_particle_microscopy_main.png",
+      "name": "compendial_particle_microscopy_main",
+      "shape": [
+        1137,
+        1486,
+        3
+      ]
+    },
+    {
+      "caption": "重なり率を増やす系列。連結成分数だけでは 2 粒を 1 粒として数える。",
+      "file": "02_particle_overlap_rate_series.png",
+      "name": "particle_overlap_rate_series",
+      "shape": [
+        436,
+        1980,
+        3
+      ]
+    },
+    {
+      "caption": "324粒子の別試料。低コントラスト、重なり、端粒子を含み、損失と条件付き区間を併記する。",
+      "file": "03_compendial_particle_microscopy_large_validation.png",
+      "name": "compendial_particle_microscopy_large_validation",
+      "shape": [
+        1818,
+        7162,
+        3
+      ]
+    },
+    {
+      "caption": "number基準。受理推定粒子と一意対応する真値だけの条件付きCDF。",
+      "file": "04_compendial_particle_microscopy_large_validation_number_cdf.png",
+      "name": "compendial_particle_microscopy_large_validation_number_cdf",
+      "shape": [
+        1400,
+        2905,
+        3
+      ]
+    },
+    {
+      "caption": "area基準。受理推定粒子と一意対応する真値だけの条件付きCDF。",
+      "file": "05_compendial_particle_microscopy_large_validation_area_cdf.png",
+      "name": "compendial_particle_microscopy_large_validation_area_cdf",
+      "shape": [
+        1400,
+        2905,
+        3
+      ]
+    },
+    {
+      "caption": "volume基準。受理推定粒子と一意対応する真値だけの条件付きCDF。",
+      "file": "06_compendial_particle_microscopy_large_validation_volume_cdf.png",
+      "name": "compendial_particle_microscopy_large_validation_volume_cdf",
+      "shape": [
+        1400,
+        2905,
+        3
+      ]
+    },
+    {
+      "caption": "全128条件のうち、受理条件に条件付けた誤差と、理由別の拒否率。",
+      "file": "07_compendial_particle_microscopy_accuracy_sweep.png",
+      "name": "compendial_particle_microscopy_accuracy_sweep",
+      "shape": [
+        371,
+        698,
+        3
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "detail": "isolated circle/ellipse/low contrast",
+      "expected": 1.5,
+      "measured": 0.1651515426114898,
+      "name": "circle-and-ellipse-pixelisation",
+      "passed": true,
+      "relation": "<",
+      "tolerance": 0.0
+    },
+    {
+      "detail": "n_eff",
+      "expected": 30,
+      "measured": 4.0,
+      "name": "small-sample-quantiles-suppressed",
+      "passed": true,
+      "relation": "<",
+      "tolerance": 0
+    },
+    {
+      "detail": "one clipped particle",
+      "expected": 1,
+      "measured": 1,
+      "name": "border-excluded",
+      "passed": true,
+      "relation": "==",
+      "tolerance": 0
+    },
+    {
+      "detail": "two split rows",
+      "expected": 2,
+      "measured": 2,
+      "name": "overlap-split-recorded",
+      "passed": true,
+      "relation": "==",
+      "tolerance": 0
+    },
+    {
+      "detail": "um",
+      "expected": 0.0,
+      "measured": 7.993791944465154e-05,
+      "name": "scale-uncertainty-propagated",
+      "passed": true,
+      "relation": ">",
+      "tolerance": 0.0
+    },
+    {
+      "detail": "exact SHA-256",
+      "expected": "3c4950e5df5065c5ebfe58cbef99b6713b0962d056c63071e8d607170a2fa14b",
+      "measured": "3c4950e5df5065c5ebfe58cbef99b6713b0962d056c63071e8d607170a2fa14b",
+      "name": "same-seed-array-hash",
+      "passed": true,
+      "relation": "==",
+      "tolerance": 0
+    },
+    {
+      "detail": "ambiguous sweep cases",
+      "expected": 1,
+      "measured": 3,
+      "name": "deep-overlap-not-silently-one",
+      "passed": true,
+      "relation": ">=",
+      "tolerance": 0
+    },
+    {
+      "detail": "mm",
+      "expected": 0.006043921384370463,
+      "measured": 0.00643810562393344,
+      "name": "large-sample-truth-inside-number-D50-interval",
+      "passed": true,
+      "relation": "within",
+      "tolerance": 0.006808258418748817
+    },
+    {
+      "detail": "factorial conditions",
+      "expected": 128,
+      "measured": 128,
+      "name": "accuracy-sweep-is-labelled-with-its-range",
+      "passed": true,
+      "relation": "==",
+      "tolerance": 0
+    },
+    {
+      "detail": "px at 1080p",
+      "expected": 22.0,
+      "measured": 24.685714285714287,
+      "name": "cdf-minimum-text-height-at-1080p",
+      "passed": true,
+      "relation": ">=",
+      "tolerance": 0.0
+    },
+    {
+      "detail": "px at 1080p",
+      "expected": 22.0,
+      "measured": 23.762376237623762,
+      "name": "large-validation-minimum-text-height-at-1080p",
+      "passed": true,
+      "relation": ">=",
+      "tolerance": 0.0
+    },
+    {
+      "detail": "exact SHA-256",
+      "expected": "f01570c964c6b4fdf7e63455cba36bd0683f92fdaa811b14a63ab02b51623f92",
+      "measured": "f01570c964c6b4fdf7e63455cba36bd0683f92fdaa811b14a63ab02b51623f92",
+      "name": "deterministic-main-figure",
+      "passed": true,
+      "relation": "==",
+      "tolerance": 0
+    },
+    {
+      "detail": "exact JSON",
+      "expected": 0,
+      "measured": 0,
+      "name": "same-environment-manifest",
+      "passed": true,
+      "relation": "==",
+      "tolerance": 0
+    }
+  ],
+  "metrics": {
+    "calibration_sha256": "89a8e20f6efd2517d9062dab9685fa675f332964ff77a9dfe9688d62a23345a7",
+    "max_simple_diameter_error_px": 0.1651515426114898
+  },
+  "seed": 776,
+  "truth": {
+    "fields": {
+      "centres": {
+        "dtype": "<f8",
+        "finite_count": 12,
+        "max": 474.0,
+        "mean": 215.33333333333334,
+        "min": 80.0,
+        "nan_count": 0,
+        "sha256": "b4cde1d523952fde78b0f5357c06011a01f67c62b9726f1d0cbdfeb9c5627b0f",
+        "shape": [
+          6,
+          2
+        ],
+        "std": 106.59607038827566
+      },
+      "diameter_px": {
+        "dtype": "<f8",
+        "finite_count": 6,
+        "max": 48.0,
+        "mean": 39.2449979983984,
+        "min": 34.0,
+        "nan_count": 0,
+        "sha256": "7745638bfdfcc0dbcfb61f6766baf508eeaf991e33802da6ef88b49b117fae31",
+        "shape": [
+          6
+        ],
+        "std": 4.453103648659631
+      },
+      "inside": {
+        "dtype": "|b1",
+        "finite_count": 6,
+        "max": 1.0,
+        "mean": 0.8333333333333334,
+        "min": 0.0,
+        "nan_count": 0,
+        "sha256": "1a7c2d6c816e6f4c3de424f74b801e59a2f8b419094ab4d341447250c4c0c222",
+        "shape": [
+          6
+        ],
+        "std": 0.37267799624996495
+      },
+      "major_minor_px": {
+        "dtype": "<f8",
+        "finite_count": 12,
+        "max": 54.0,
+        "mean": 39.666666666666664,
+        "min": 26.0,
+        "nan_count": 0,
+        "sha256": "81b5e03437b43b356bd2c14f9e21503bb04c0da11e486c46a583fbde2e80f2ff",
+        "shape": [
+          6,
+          2
+        ],
+        "std": 7.203394261658103
+      },
+      "overlap_status": {
+        "dtype": "<i4",
+        "finite_count": 6,
+        "max": 1.0,
+        "mean": 0.3333333333333333,
+        "min": 0.0,
+        "nan_count": 0,
+        "sha256": "9dcb5c9be1d1e0bb4b842075cc26b5f917007229b9920d6d46c46536c3c235c4",
+        "shape": [
+          6
+        ],
+        "std": 0.4714045207910317
+      }
+    },
+    "frames": {
+      "centres": "image-row-col-raw",
+      "diameter_px": "index",
+      "inside": "index",
+      "major_minor_px": "index",
+      "overlap_status": "index"
+    },
+    "masks": {},
+    "provenance": {
+      "generator": "analytic ellipses",
+      "processing_stage": "raw-pre-isp"
+    },
+    "seed": 776,
+    "units": {
+      "centres": "px",
+      "diameter_px": "px",
+      "inside": "bool",
+      "major_minor_px": "px",
+      "overlap_status": "code"
+    }
+  },
+  "videos": {}
+}

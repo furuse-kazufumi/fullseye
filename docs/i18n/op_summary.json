@@ -25094,6 +25094,15 @@
    "de": "Partikelgrößenverteilung aus einer log-normalen Verteilung nach **Volumen**, auf dieselben Klassen wie das Gerät aufgeteilt (mit Ground Truth).",
    "hi": "log-normal **volume** distribution को instrument वाले ही size class में बाँटकर बना particle size distribution (ground truth सहित)।"
   },
+  "drive/particle_size_distribution": {
+   "fp": "0ca60b7b4b6a",
+   "en": "Calibrates a particle table and returns acceptance reasons, bins on three bases, D10/D50/D90 with confidence intervals, and provenance.",
+   "zh": "校准粒子表，并返回采纳理由、三种基准的分箱、带置信区间的 D10/D50/D90 以及溯源信息。",
+   "tw": "校正粒子表，並回傳採納理由、三種基準的分箱、附信賴區間的 D10/D50/D90 與溯源資訊。",
+   "ko": "입자 표를 보정하고, 채택 사유, 세 기준의 빈, 신뢰구간을 포함한 D10/D50/D90 및 이력을 반환합니다.",
+   "de": "Kalibriert eine Partikeltabelle und gibt Annahmegründe, Klassen nach drei Grundlagen, D10/D50/D90 mit Konfidenzintervallen und die Herkunft zurück.",
+   "hi": "particle table को calibrate करता है और स्वीकार/अस्वीकार के कारण, तीन आधारों के bins, confidence intervals सहित D10/D50/D90 और provenance लौटाता है।"
+  },
   "drive/comminution_energy": {
    "fp": "a302fe749662",
    "en": "Closed forms of the comminution laws (Reddy Eqs. (1) and (5)-(7)). Give **exactly one** of ``x_product`` and ``energy``.",

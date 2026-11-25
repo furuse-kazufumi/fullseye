@@ -15,7 +15,7 @@ Fullseye is a Physical-AI toolkit for explainable classical / geometric vision. 
 
 _The titles and descriptions of the worked examples are written in Japanese only. Rather than pass them off as translated, this edition lists each example by its id, the ops it calls (from the example links of the op notes; at most 12, the rest as a count) and the command that runs it. The descriptions are in the Japanese catalogue `OP_CATALOG.md`._
 
-### 2-D image / signal / geometry (496 examples)
+### 2-D image / signal / geometry (497 examples)
 
 **fileio**
 - `fileio_scientific_roundtrip` — ops: `astro_fits_read`, `astro_fits_write`, `em_mrc_read`, `em_mrc_write`, `nifti_read`, `nifti_write`, `nrrd_read`, `nrrd_write`, `ome_tiff_read`, `ome_tiff_write` `py -3.11 examples/fileio_scientific_roundtrip.py`
@@ -66,6 +66,7 @@ _The titles and descriptions of the worked examples are written in Japanese only
 - `example_inner_diameter_mm` — ops: `add_metrology_object_circle_measure`, `apply_metrology_model`, `area_center`, `create_metrology_model`, `gaussian`, `mm_per_px_from_reference`, `otsu`, `pixel_to_world`, `table_px_to_mm` `py -3.11 examples/example_inner_diameter_mm.py`
 - `example_scratch_width` — ops: `bothat`, `gen_measure_rectangle2`, `lines_gauss`, `measure_pairs`, `mm_per_px_from_reference`, `table_px_to_mm`, `tophat` `py -3.11 examples/example_scratch_width.py`
 - `poc_dimensional_inspection` — ops: `add_metrology_object_circle_measure`, `add_metrology_object_ellipse_measure`, `add_metrology_object_generic`, `add_metrology_object_line_measure`, `add_metrology_object_rectangle2_measure`, `align_metrology_model`, `apply_metrology_model`, `create_metrology_model`, `ellipse`, `erf`, `fuzzy_measure_pairing`, `gen_measure_arc` (+8 more) `py -3.11 examples/poc_dimensional_inspection.py`
+- `poc_compendial_particle_microscopy` — ops: `annotate_figure_grid`, `blob_count_interval`, `blob_distance`, `blob_features`, `blob_label`, `blob_seeds`, `blob_split`, `ellipse`, `mm_per_px_from_reference`, `noise_sigma`, `particle_size_distribution`, `threshold` `py -3.11 examples/poc_compendial_particle_microscopy.py`
 - `poc_star_astrometry` — ops: `erf`, `gaussian`, `noise_sigma`, `psf_fit`, `star_detect`, `vector_to_similarity` `py -3.11 examples/poc_star_astrometry.py`
 - `poc_surface_roughness` — ops: `profile_params`, `rms`, `surface_filter`, `surface_form_remove`, `surface_params`, `surface_psd`, `surface_synth_psd` `py -3.11 examples/poc_surface_roughness.py`
 - `poc_dic_strain` — ops: `axes_frame`, `axes_transform`, `erf`, `piv_cross_correlate`, `plot_series`, `strain_from_displacement`, `text_box`, `ticks` `py -3.11 examples/poc_dic_strain.py`
@@ -611,12 +612,11 @@ _The titles and descriptions of the worked examples are written in Japanese only
 **space**
 - `poc_star_tracker` — ops: (not linked from any op note) `py -3.11 examples/poc_star_tracker.py`
 
-### 3-D point cloud / volume / surface (126 examples)
+### 3-D point cloud / volume / surface (125 examples)
 
 **registration**
 - `cad_to_scan` — ops: (not linked from any op note) `py -3.11 examples_3d/cad_to_scan.py`
 - `find_surface_pose_bracket` — ops: `find_surface_pose` `py -3.11 examples_3d/find_surface_pose_bracket.py`
-- `bop_pose_stage1` — ops: `pose_nms_symmetry`, `ppf_pose_hypotheses` `py -3.11 examples_3d/bop_pose_stage1.py`
 - `auto_register` — ops: (not linked from any op note) `py -3.11 examples_3d/auto_register.py`
 - `reg_eval` — ops: `inlier_ratio`, `registration_recall`, `rmse_inliers`, `rotation_translation_error` `py -3.11 examples_3d/reg_eval.py`
 - `two_view_pose` — ops: `fundamental_8point`, `recover_pose`, `sampson_distance` `py -3.11 examples_3d/two_view_pose.py`
@@ -851,9 +851,9 @@ Ops that do not fit the one-image pipeline (two images, point sequences, variabl
 
 ## Operators by family (family → category, all ops)
 
-_3854 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
+_3853 ops / 60 families in total. The order and the location of the notes are the same as `docs/ops/INDEX.md` (note = `docs/ops/<family>/<category>/<op>.md`). Ops of the ledger families are called as `fs.ledger.<op>`._
 
-Families: **2d** 964 · **3d** 380 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 749 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+Families: **2d** 964 · **3d** 378 · **fit** 3 · **math** 115 · **optics** 506 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 750 · **tomography** 43 · **volcolor** 11 · **reprconv** 63 · **fileio** 28 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 8 · **matchreg** 12 · **calib** 29 · **acceptance** 8 · **symbol** 33 · **mv** 47 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 17 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d (964 ops / 49 categories)
 
@@ -1607,7 +1607,7 @@ Pipeline ops that take one image and return one image / region / contour / featu
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` GPU: none — Sauvola's local adaptive thresholding. Determines the threshold locally from the local mean and standard deviation around each pixel -- designed for binarizing (text extraction from) document images with uneven illumination. · examples: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` GPU: none — Superpixel segmentation by SLIC (Simple Linear Iterative Clustering). Performs k-means clustering in a combined color (here, gray value) and coordinate space, dividing the image into regions of roughly equal size. Here it returns the boundaries of the segmentation result as a region. · examples: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` GPU: yes (allow-list) — Global thresholding by Yen's maximum correlation criterion. Chooses the threshold by maximizing an entropy-based measure of the histogram -- yet another automatic thresholding method distinct from Otsu's and Li's methods. · examples: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` GPU: yes (threshold) — Global thresholding. Equivalent to HALCON's ``threshold`` (Segment an image using global threshold.). · examples: `gallery2d_segmentation`, `poc_ai_built_inspection_scored`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_bg_kalman_tracking`, `poc_real_sem_metal_layer`, `poc_real_walnut_cbct`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` GPU: yes (threshold) — Global thresholding. Equivalent to HALCON's ``threshold`` (Segment an image using global threshold.). · examples: `gallery2d_segmentation`, `poc_ai_built_inspection_scored`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_compendial_particle_microscopy`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_real_bg_kalman_tracking`, `poc_real_sem_metal_layer`, `poc_real_walnut_cbct`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` GPU: none — Sauvola's local adaptive binarization (``skimage.filters.threshold_sauvola``, window size ``2*int(a*6)+3``). Since the threshold is determined using both the local mean and local standard deviation, it is more robust to uneven illumination and low-contrast documents than ``dyn_threshold``. An approximation corresponding to HALCON's ``var_threshold`` (Threshold an image by local mean and standard deviation analysis) -- the formulation follows a similar idea, but Sauvola's formula and HALCON's formula have different coefficients, so the numerical results are not identical. · examples: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` GPU: none — Watershed segmentation. Treats the gradient image as terrain, uses dark regions (``x < 0.2+0.3*a``) as markers to find the watershed lines, and returns those boundary lines. Corresponds to HALCON's ``watersheds`` (Extract watersheds and basins from an image). · examples: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` GPU: none — The implementation is identical to ``watersheds`` (``kind: "watershed"``). HALCON's ``watersheds_threshold`` (Extract watershed basins from an image using a threshold) is originally an operator with a depth threshold that merges adjacent catchment basins, but this substitute does not implement the merge threshold and returns the same result as ``watersheds`` (a limitation of the approximation). · examples: `gallery2d_segmentation`
@@ -1921,7 +1921,7 @@ Pipeline ops that take one image and return one image / region / contour / featu
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` GPU: none — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · examples: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` GPU: none — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · examples: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d (380 ops / 68 categories)
+### 3d (378 ops / 68 categories)
 
 Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as functions.
 
@@ -2113,14 +2113,12 @@ Ops for point clouds, volumes, meshes and depth (`ops3d.OPS3D`). Call them as fu
 - `match_points_ncc` `points × points → position` GPU: none — Point-set to point-set matching (structure = point cloud × method = NCC, transform = splat). Locates the model within the scene. · examples: `matching_localize`
 - `match_shape_3d` `voxel × voxel → position` GPU: none — 3-D shape-based (gradient-orientation) matching = the voxel version of the 2-D shapematch_gpu ("contour matching"). · examples: `matching_localize`
 
-#### 3d / match_pose (7)
+#### 3d / match_pose (5)
 - `find_surface_pose` `points × points → pose` GPU: none — Find where a known object (model point cloud) lies in a scene point cloud by point-pair-feature (PPF) voting and ICP (``pose``). · examples: `find_surface_pose_bracket`
 - `match_logpolar_z` `voxel × voxel → rot_scale` GPU: none — Recover **rotation about z and isotropic scale** by log-polar × phase correlation (Fourier-Mellin). · examples: `shape_desc_pose`
 - `match_pca` `points × points → pose` GPU: none — PCA pose matching (structure = point cloud × method = principal-axis alignment). · examples: `shape_desc_pose`
 - `match_phase_3d` `voxel × voxel → shift` GPU: none — 3-D phase correlation (FFT). Returns the integer shift (dz, dy, dx) that aligns b to a. · examples: `shape_desc_pose`
 - `moment_axes` `points → axes` GPU: none — The **centroid and principal axes** (the eigenvectors of the inertia tensor) of a point set or weighted points. The basis of pose estimation. · examples: `itokawa_pose_canonical`
-- `pose_nms_symmetry` `table × points × table → table` GPU: none — Suppress only symmetry-equivalent poses within a model-space distance. · examples: `bop_pose_stage1`
-- `ppf_pose_hypotheses` `table × points → table` GPU: none — Return the top-N PPF poses instead of collapsing the vote to one pose. · examples: `bop_pose_stage1`
 
 #### 3d / medial (13)
 - `distance_ridge` `voxel → voxel` GPU: yes (allow-list) — Extract the ridge of the EDT (the local maxima of the distance field) as the medial axis. Returns (ridge_mask, edt). · examples: `pcl_geodesic`
@@ -3644,7 +3642,7 @@ The layer above the lens and below the pixel. Geometric optics (thin-lens imagin
 #### vx / suppress (1)
 - `vx_nonmax_suppression` `image2d → image2d` GPU: none — Non-maximum suppression (Section 3.39). A pixel (x, y) survives only if, within the window, it is **≥ its preceding neighbors (the row above and the left in the same row) and > its following neighbors** (REQ-0337). This asymmetry is why exactly 1 pixel survives on a flat peak. Nonzero pixels of *mask* are not compared and are kept as is (nor are they used in comparisons for other pixels, REQ-0336). Suppressed pixels become 0 for U8 and INT16_MIN for S16 (REQ-0335). Neighbors that fall outside the window are not compared. · examples: `gallery_openvx_spec_values`
 
-### drive (749 ops / 56 categories)
+### drive (750 ops / 57 categories)
 
 The name says driving, but the content is a **ledger of physics-simulation and robot PoCs**: besides driving (courses, traffic, decisions, CARLA / CommonRoad), categories such as touch (tac*), peg-in-hole (peg*), polishing (polish), grinding (grind), cutting (cutting), granular media (granular / scoop), powder X-ray diffraction (pxrd) and ball games (ball / puck) live side by side. Look things up by category name.
 
@@ -4193,6 +4191,9 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `whitney_wrench` `table × text × scalar × scalar × scalar × scalar → table` GPU: none — Closed-form contact wrench (Whitney's quasi-static plane, synthetic with ground truth): for a peg with tilt θ (top of the axis toward +x) and tip depth ``depth`` (from the mouth plane), applies the normal forces ``fn_tip``, ``fn_mouth`` and downward-sliding Coulomb friction μ, with ``state`` = ``"one_point"`` (tip rim on the −x wall) / ``"mouth"`` (shank on the +x rim of the narrowest section) / ``"two_point"`` (both). For two points, the shank also touches the rim at depth = W + l₂(θ) (closed form). ``g`` is the grasp point (if omitted, peg length − 8 mm along the axis from the tip). Returns ``F``, ``M_g`` (about the grasp point), ``g``, ``tip``, ``axis``, ``points``. **Raises** ValueError: state outside the vocabulary, θ outside (0, π/2), depth, μ or a normal force not finite or negative. · examples: `gallery_drive_peg`, `poc_peg_insertion_tactile`
 - `wrist_deflection_from_rgbd` `rgb × image2d × matrix × matrix × signal × signal × scalar → table` GPU: inside a chain only (allow-list) — Translational deflection and tilt of the wrist from 1 wrist RGB-D frame: peg pixels (pegsim color classification) → depth point cloud → PCA axis → cylinder fit with known radius (:func:`pegsim.cylinder_fit_known_radius`) → axis line in the world frame → in the carriage frame (subtracting the encoder-known position ``carriage_pos``), the point at hinge height z = ``hinge_z`` = (Δx, Δy). Tilt (θ_x, θ_y) from the axis direction via atan2. The cylinder's axial position is not visible, so Δz is not reported (honestly: the wrist's z compression is covered by k̂ and the tactile F_z, :func:`pegtactile_process_episode`). Returns ``dx``, ``dy``, ``axis``, ``tilt_x``, ``tilt_y``, ``rms_cyl``, ``n_pts``. **Raises** ValueError: shapes do not match, fewer than 50 peg pixels (not visible). · examples: `gallery_drive_peg`
 - `wrist_stiffness_fit` `signal × signal → table` GPU: none — From the wrist deflection Δx (wrist camera) and the same component F of the contact force on the peg, k = Σ FΔx / ΣΔx² (least squares through the origin; quasi-static balance F_contact + F_spring ≈ 0 ⇒ F_contact = kΔx). The same formula also works for rotation (angle and moment). Returns ``k``, ``r2``, ``rms_N``, ``n``, ``span``. **Raises** ValueError: fewer than 3 points, shape mismatch, non-finite, range of Δx below ``min_span`` (ill-conditioned: k of a spring that does not move is undetermined). · examples: `poc_peg_insertion_tactile`
+
+#### drive / pharma (1)
+- `particle_size_distribution` `table × table → table` GPU: none — Calibrates a particle table and returns acceptance reasons, bins on three bases, D10/D50/D90 with confidence intervals, and provenance. · examples: `poc_compendial_particle_microscopy`
 
 #### drive / polish (13)
 - `band_width_profile` `image2d × scalar × scalar → table` GPU: none — Reads, with subpixel precision, the width of the band wiped by a straight stroke (direction ``along``) on each line perpendicular to the band: the first and last threshold crossings are found by linear interpolation with the neighboring pixel, and their difference × res is the width. Returns ``widths`` (per line; NaN for unreadable lines), ``centres`` (band center positions [m], in map coordinates), ``valid``, ``median``. Assumes 1 band (several bands give the width between the outermost edges). **Raises** ValueError: image checks, res ≤ 0, along not x / y, non-finite threshold. · examples: `poc_polish_wipe_measure`
@@ -4781,7 +4782,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `annotate_colorbar` `image2d × image2d → image2d` GPU: yes (allow-list) — Returns an image (image2d): a scalar field colour-mapped through a LUT and overlaid, with a colour bar. · examples: `paper_figure`, `poc_thin_film_reflectometry`
 - `annotate_dimension` `image2d → image2d` GPU: yes (allow-list) — Returns an image (image2d): a dimension line (arrowheads at both ends, extension lines, value and unit). · examples: `paper_figure`
 - `annotate_dimension_layout` `no input → table` GPU: none — Returns a table (dict): the geometry of a dimension line (line, extension lines, text position) in closed form. · examples: `paper_figure`
-- `annotate_figure_grid` `images → image2d` GPU: yes (allow-list) — Returns an image (image2d): images plus captions laid out as one figure (constant margins, panel letters). · examples: `paper_figure`, `poc_flybrain_pointcloud`, `poc_itof_multifreq`, `poc_pixel_shift`
+- `annotate_figure_grid` `images → image2d` GPU: yes (allow-list) — Returns an image (image2d): images plus captions laid out as one figure (constant margins, panel letters). · examples: `paper_figure`, `poc_compendial_particle_microscopy`, `poc_flybrain_pointcloud`, `poc_itof_multifreq`, `poc_pixel_shift`
 - `annotate_figure_grid_layout` `no input → table` GPU: none — Returns a table (dict): the typesetting of a multi-panel figure (cell, panel and caption-band rectangles) in closed form. · examples: `paper_figure`
 - `annotate_inset` `image2d → image2d` GPU: none — Returns an image (image2d): a magnified inset in a corner, with lines joining the matching corners. · examples: `paper_figure`, `poc_real_defect_floor`
 - `annotate_inset_layout` `no input → table` GPU: none — Returns a table (dict): where the magnified inset goes and at what factor, in closed form. · examples: `paper_figure`
@@ -4817,7 +4818,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 
 #### annotate / shape (4)
 - `arc` `image2d → image2d` GPU: yes (allow-list) — A circular arc. Angles are in degrees, **clockwise from the screen x-axis** (because row points down). · examples: `annotate_gallery`, `poc_mixed_case_depalletizing`, `poc_optics_drawings`, `poc_plenoptic_camera`, `poc_polish_wipe_measure`, `poc_real_walnut_cbct`, `poc_weld_radiograph_porosity`
-- `ellipse` `image2d → image2d` GPU: none — An ellipse (rotated by ``angle_deg``, filled with ``fill=True``). · examples: `annotate_gallery`, `poc_camera_calibration`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_mixed_case_depalletizing`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_bg_kalman_tracking`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
+- `ellipse` `image2d → image2d` GPU: none — An ellipse (rotated by ``angle_deg``, filled with ``fill=True``). · examples: `annotate_gallery`, `poc_camera_calibration`, `poc_compendial_particle_microscopy`, `poc_dimensional_inspection`, `poc_driving_crossing`, `poc_driving_lateral`, `poc_driving_pass`, `poc_dual_energy_xray`, `poc_interferometry_step`, `poc_machine_condition_fusion`, `poc_mixed_case_depalletizing`, `poc_peg_insertion_tactile`, `poc_polarization_specular`, `poc_public_camera_heading_real`, `poc_real_bg_kalman_tracking`, `poc_real_chessboard_undistort`, `poc_real_file_formats`, `poc_real_sem_metal_layer`, `poc_real_stereo_multiscanline`, `poc_real_tless_6dof`
 - `filled_polygon` `image2d × pairs → image2d` GPU: yes (allow-list) — A filled polygon (even-odd crossing rule — :mod:`imagedraw` only outlines). · examples: `annotate_gallery`, `poc_driving_decisions`
 - `rounded_rect` `image2d → image2d` GPU: yes (allow-list) — A rounded rectangle (filled with ``fill=True``). For backing plates and enclosing boxes. · examples: `annotate_gallery`, `poc_machine_condition_fusion`
 
@@ -5436,7 +5437,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 #### astrostack / quality (3)
 - `frame_quality` `image2d → table` GPU: none — Score one frame — sharpness, FWHM, background, roundness, and a point for selection. · examples: `astro_stacking`
 - `lucky_select` `images → indices` GPU: yes (allow-list) — Keep only the top ``keep_fraction`` by quality score — the lucky-imaging cut. · examples: `astro_stacking`, `poc_astro_photometry`
-- `noise_sigma` `image2d → measurement` GPU: none — Robustly estimate the background noise sigma (one real number that the stars cannot spoil). · examples: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
+- `noise_sigma` `image2d → measurement` GPU: none — Robustly estimate the background noise sigma (one real number that the stars cannot spoil). · examples: `astro_stacking`, `poc_colocalization_crosstalk`, `poc_compendial_particle_microscopy`, `poc_search_sweep_width`, `poc_star_astrometry`, `poc_thermal_radiometry`
 
 #### astrostack / stack (2)
 - `drizzle_resample` `images → image2d` GPU: none — Drizzle — build a finer grid from several sub-pixel-shifted frames (area-conserving). · examples: `astro_stacking`, `poc_astro_photometry`, `poc_pixel_shift`, `poc_superresolution_limits`
@@ -5553,7 +5554,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `create_metrology_model` (halcon: `create_metrology_model`) `no input → metrologymodel` GPU: none — Creates an empty metrology model (create_metrology_model). · examples: `example_inner_diameter_mm`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_telecentric_metrology`
 
 #### measure1d / scale (3)
-- `mm_per_px_from_reference` `measurement → measurement` GPU: none — Derives the pixel pitch in mm/px from a target of known size (scale bar, reference hole, gauge) — the calibration step. · examples: `example_inner_diameter_mm`, `example_scratch_width`
+- `mm_per_px_from_reference` `measurement → measurement` GPU: none — Derives the pixel pitch in mm/px from a target of known size (scale bar, reference hole, gauge) — the calibration step. · examples: `example_inner_diameter_mm`, `example_scratch_width`, `poc_compendial_particle_microscopy`
 - `pixel_to_world` `measurement → measurement` GPU: none — Converts one length measured in pixels to real-world mm (``value_px * mm_per_px``). · examples: `example_inner_diameter_mm`, `lane_ops_tour`
 - `table_px_to_mm` `table → table` GPU: none — Adds mm columns to a measurement table (the return of ``measure_pairs`` / ``apply_metrology_model``). · examples: `example_inner_diameter_mm`, `example_scratch_width`
 
@@ -5645,7 +5646,7 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 ### blob (11 ops / 5 categories)
 
 #### blob / connect (1)
-- `blob_label` `mask → labels2d` GPU: inside a chain only (allow-list) — Splits a binary region into connected components and returns an ``int32`` label image (background 0, objects 1..n). · examples: `blob_split_tour`, `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_dense_bubble_count`, `poc_em_split_merge_score`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_gravitational_lens_invariants`, `poc_leaf_disease_area`, `poc_machine_condition_fusion`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_pipe_wall_loss`, `poc_powder_grinding_ae`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_segmentation_gauntlet`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
+- `blob_label` `mask → labels2d` GPU: inside a chain only (allow-list) — Splits a binary region into connected components and returns an ``int32`` label image (background 0, objects 1..n). · examples: `blob_split_tour`, `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`, `poc_em_split_merge_score`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_gravitational_lens_invariants`, `poc_leaf_disease_area`, `poc_machine_condition_fusion`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_pipe_wall_loss`, `poc_powder_grinding_ae`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_segmentation_gauntlet`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
 
 #### blob / extract (3)
 - `blob_boundaries` `labels2d → mask` GPU: none — Object outlines (1 pixel wide, bool). **The borders between adjacent objects are kept as well**. · examples: `poc_gear_tooth_metrology`, `poc_real_sem_metal_layer`
@@ -5653,17 +5654,17 @@ The name says driving, but the content is a **ledger of physics-simulation and r
 - `blob_region` `labels2d → mask` GPU: none — Extracts 1 object as a binary region (bool). ``index`` is **1-based**. · examples: `poc_gear_tooth_metrology`, `poc_particle_sizing`
 
 #### blob / measure (1)
-- `blob_features` `labels2d → table` GPU: none — Returns the shape features of each object as **1 array per key**. · examples: `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_dense_bubble_count`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_leaf_disease_area`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
+- `blob_features` `labels2d → table` GPU: none — Returns the shape features of each object as **1 array per key**. · examples: `poc_am_thermal_to_ct`, `poc_bone_trabecular_thickness`, `poc_bump_coplanarity`, `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_leaf_disease_area`, `poc_metal_grain_size`, `poc_nuclei_ploidy`, `poc_particle_sizing`, `poc_particle_tracking`, `poc_peg_insertion_tactile`, `poc_print_warpage_risk`, `poc_pv_thermal_survey`, `poc_real_coin_metrology`, `poc_real_sem_metal_layer`, `poc_rotation_invariance_audit`, `poc_sea_ice_concentration`, `poc_sem_wafer_defect_edge_bias`, `poc_solar_el_inspection`, `poc_solder_fillet_aoi`, `poc_traffic_counting`, `poc_vessel_network`, `poc_weld_radiograph_porosity`, `poc_wound_area_tracking`
 
 #### blob / select (2)
 - `blob_select` `labels2d → labels2d` GPU: none — Keeps only the objects whose feature value lies in ``[vmin, vmax]`` (**the numbers are reassigned starting from 1**). · examples: `poc_particle_sizing`, `poc_pipe_wall_loss`, `poc_pv_thermal_survey`, `poc_solar_el_inspection`, `poc_weld_radiograph_porosity`
 - `blob_select_largest` `labels2d → labels2d` GPU: none — Keeps only ``count`` objects in order of decreasing area (**the numbers are reassigned in descending order of area**). · examples: `poc_am_thermal_to_ct`, `poc_gear_tooth_metrology`, `poc_solder_fillet_aoi`, `poc_wound_area_tracking`
 
 #### blob / split (4)
-- `blob_count_interval` `mask → table` GPU: none — Counts overlapping objects. **When the count cannot be determined, returns an interval instead of a number** (fail-closed). · examples: `poc_dense_bubble_count`
-- `blob_distance` `mask → image2d` GPU: yes (allow-list) — Distance from each foreground pixel **to the nearest background**. The unit is multiples of ``spacing``. · examples: `blob_split_tour`, `poc_bone_trabecular_thickness`, `poc_dense_bubble_count`, `poc_real_sem_metal_layer`, `poc_segmentation_gauntlet`
-- `blob_seeds` `image2d → labels2d` GPU: none — h-maxima seeds. **``h`` is an absolute value in the same units as ``distance``**. · examples: `blob_split_tour`, `poc_dense_bubble_count`
-- `blob_split` `labels2d × labels2d × image2d → labels2d` GPU: none — Grows regions from the seeds **in order from the highest points** and splits merged clumps (watershed). · examples: `blob_split_tour`, `poc_dense_bubble_count`
+- `blob_count_interval` `mask → table` GPU: none — Counts overlapping objects. **When the count cannot be determined, returns an interval instead of a number** (fail-closed). · examples: `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`
+- `blob_distance` `mask → image2d` GPU: yes (allow-list) — Distance from each foreground pixel **to the nearest background**. The unit is multiples of ``spacing``. · examples: `blob_split_tour`, `poc_bone_trabecular_thickness`, `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`, `poc_real_sem_metal_layer`, `poc_segmentation_gauntlet`
+- `blob_seeds` `image2d → labels2d` GPU: none — h-maxima seeds. **``h`` is an absolute value in the same units as ``distance``**. · examples: `blob_split_tour`, `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`
+- `blob_split` `labels2d × labels2d × image2d → labels2d` GPU: none — Grows regions from the seeds **in order from the highest points** and splits merged clumps (watershed). · examples: `blob_split_tour`, `poc_compendial_particle_microscopy`, `poc_dense_bubble_count`
 
 ### dem (25 ops / 5 categories)
 

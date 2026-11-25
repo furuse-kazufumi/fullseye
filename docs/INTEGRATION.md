@@ -182,6 +182,23 @@ separate step (a borrowed numpy view must not outlive the Rust buffer it wraps �
 `borrow_from_array` and friends make that easy to get wrong, so the copy stays until a test
 pins the lifetime).
 
+### C SDK sanitizer scope
+
+The ASan-only CTest build finalizes its owned CPython at executable exit, but CPython 3.11,
+NumPy, and SciPy can still retain interpreter-global allocations. The CI suppression therefore
+matches `libpython3` only in that sanitizer job; it is not enabled for normal builds. This can
+hide a missing `DECREF` when its allocation was made inside CPython, so
+`test_released_c_api_calls_do_not_keep_growing_cpython_allocations` repeats the same released
+C API call 1,000 times and checks `sys.getallocatedblocks` after every 100 calls. Native
+allocations that do not pass through libpython remain LSan failures.
+
+ASan 専用 CTest build は実行ファイル終了時に自前で起動した CPython を finalize するが、
+CPython 3.11、NumPy、SciPy は解釈系全体の確保を残すことがある。このため CI の抑制は
+sanitizer job に限って `libpython3` に当て、通常 build では有効にしない。CPython 内部で
+確保した `DECREF` 漏れを隠し得る弱点は、同じ C API 呼出しを解放つきで 1,000 回実行し、
+100 回ごとの `sys.getallocatedblocks` が増え続けないことを検査して補う。libpython を通ら
+ない native 確保は引き続き LSan の失敗になる。
+
 ## Honest boundary
 
 Fullseye is classical (numpy/scipy, no learned detectors/segmenters/priors). It

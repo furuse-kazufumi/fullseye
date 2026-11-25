@@ -13,7 +13,7 @@
 
 ■ 構造的に到達不能 (0) ― 不動点で閉じても届かない
 
-■ 専用ビルダで到達している op (405) ― 型プールだけでは届かない
+■ 専用ビルダで到達している op (406) ― 型プールだけでは届かない
    acceptance_error_budget
    acceptance_verdict
    acoustic_interface_coefficients
@@ -245,6 +245,7 @@
    pad_tactile_frame
    pad_tactile_read
    panel_grid
+   particle_size_distribution
    particle_size_dx
    particle_size_oversize
    particle_step

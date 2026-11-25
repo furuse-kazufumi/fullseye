@@ -2,7 +2,8 @@
 
 Fullseye（作業名 imgevolve）を、開発機から組み込み Linux まで、目的に応じて構築するためのガイドです。5 分で動かすだけなら [GETTING_STARTED.md](GETTING_STARTED.md) が近道です。
 
-Fullseye の設計方針は **「numpy + scipy だけで動くコア」+「重い依存はすべて optional」**。追加バックエンドが無くても、そのバックエンド固有のオペレータだけが無効になるだけで、コアは常に動きます（graceful degradation）。
+Fullseye の Python API の核は **numpy + scipy** で動きます。標準の `pip install fullseye` は Studio
+（PySide6-Essentials）と Pillow も導入し、重い画像処理バックエンドは optional のままです。追加バックエンドが無くても、そのバックエンド固有のオペレータだけが無効になります（graceful degradation）。
 
 ---
 
@@ -12,7 +13,7 @@ Fullseye の設計方針は **「numpy + scipy だけで動くコア」+「重�
 |---|---|
 | Python | **3.11**（`pyproject.toml` の `requires-python = ">=3.11"`。開発・検証は 3.11） |
 | 実行コマンド | Windows: `py -3.11` / Linux: `python3.11` |
-| コア依存 | `numpy>=1.23`, `scipy>=1.10`（`pip install -e .` で自動導入） |
+| 標準依存 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0`（`pip install -e .` で自動導入） |
 | OS | Windows 10/11、Linux（組み込み含む）。macOS も Python が動けば可 |
 
 ---
@@ -23,7 +24,7 @@ Fullseye の設計方針は **「numpy + scipy だけで動くコア」+「重�
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .            # コアのみ（numpy + scipy。全 op が見え、optional backend の要る op は呼ぶと不足の extra を言う）
+py -3.11 -m pip install -e .            # 標準: Python API + Studio + Pillow。optional backend の要る op は不足の extra を言う
 ```
 
 追加バックエンドは **extras** で選びます（`pyproject.toml` の `[project.optional-dependencies]` が実体）。
@@ -32,30 +33,30 @@ py -3.11 -m pip install -e .            # コアのみ（numpy + scipy。全 op 
 |---|---|---|
 | `opencv` | `opencv-python>=4.8.1.78` | 画像ファイル I/O（`apply`/`pipeline` CLI が必須とする）、`cv_*` 系オペレータ |
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` 系（多数の自動生成オペレータの土台） |
-| `pil` | `Pillow>=13.0` | 画像 I/O のフォールバック、`xpil_*` 系（emboss/posterize/solarize 等） |
+| `pil` | なし（Pillow は標準依存） | 互換別名。画像 I/O のフォールバック、`xpil_*` 系（emboss/posterize/solarize 等）は標準で使える |
 | `wavelets` | `PyWavelets>=1.4` | ウェーブレット系（VisuShrink/サブバンド/パケット等） |
 | `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU バッチバックエンド（`accel.py`/`bench.py`）、`xkor_*`（kornia）系 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`（curvature flow 等）、mahotas 由来（Zernike/pftas 等） |
-| `gui` | `PySide6>=6.5` | **Fullseye Studio**（`studio.py` / `fullseye-studio`） |
-| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile`（CuPy は入らない。GPU 一式は `fullseye[gpu]`。PyTorch の案内では Linux の既定の torch は CUDA 版で、CUDA の部品(nvidia-* の wheel)も一緒に入ることがある。CPU だけで使うなら、先に CPU 版の入手先から `pip install torch --index-url https://download.pytorch.org/whl/cpu` で torch を入れておく） | 全オペレータ・バックエンド |
+| `gui` | なし（Studio は標準依存） | 互換別名。**Fullseye Studio**（`studio.py` / `fullseye-studio`）は `pip install fullseye` だけで起動できる |
+| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`（CuPy は入らない。GPU 一式は `fullseye[gpu]`。PyTorch の案内では Linux の既定の torch は CUDA 版で、CUDA の部品(nvidia-* の wheel)も一緒に入ることがある。CPU だけで使うなら、先に CPU 版の入手先から `pip install torch --index-url https://download.pytorch.org/whl/cpu` で torch を入れておく） | 全オペレータ・バックエンド |
 
 使い分けの目安:
 
 ```powershell
-# 実務でよく使う最小＋画像 I/O（GUI 不要、コード/CLI 中心）
+# 実務でよく使う最小＋画像 I/O（Studio は標準で入る）
 py -3.11 -m pip install -e ".[opencv]"
 
-# GUI（Studio）も使う
+# 以前の指定も互換のため有効（gui は空の別名）
 py -3.11 -m pip install -e ".[opencv,gui]"
 
-# フル装備（GUI 込み。all は GUI を含まないので gui を併記）
-py -3.11 -m pip install -e ".[all,gui]"
+# フル装備（Studio はすでに標準依存）
+py -3.11 -m pip install -e ".[all]"
 
 # GPU バッチ経路も試す（要 CUDA 対応 torch）
 py -3.11 -m pip install -e ".[gpu]"
 ```
 
-> `all` には **`gui` は含まれません**（GUI は用途が分かれるため別枠）。Studio を使うなら必ず `gui` を明示的に足してください。
+> Studio と Pillow は標準依存です。`gui` / `pil` は既存の install 指定を壊さないための空の互換別名です。
 
 インストールが成功すると、次の **2 つのコンソールスクリプト**が使えるようになります（`[project.scripts]`）。
 
@@ -69,6 +70,19 @@ py -3.11 -m pip install -e ".[gpu]"
 ```powershell
 $env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
+```
+
+`pip install fullseye` 後、端末から最初に `fullseye` または `fullseye-studio` を実行すると、Windows はスタートメニュー、Linux はアプリケーションメニューへ **Fullseye Studio** を一度だけ登録します。仮想環境ならその Python を指します。利用者が削除した登録は作り直しません。画面には次の 1 行が出ます。
+
+```text
+スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)
+```
+
+止めるには `FULLSEYE_NO_SHORTCUTS=1` を設定するか、`FULLSEYE_STUDIO_SETTINGS` が指す INI（Linux の既定は `~/.config/Fullseye/Studio.conf`）に次を書きます。CI、端末の無い実行、Windows のスタートメニューを隠す管理者ポリシーでは作りません。詳しい任意設定は `fullseye setup` で行います。
+
+```ini
+[shortcuts]
+auto_register=false
 ```
 
 ---
@@ -132,7 +146,7 @@ python3.11 -m pip install -e .        # numpy + scipy のみ。GUI/torch/opencv 
   out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
   ```
 
-- **ファイル I/O が必要なとき**（`fullseye.load` / `fullseye.save`、`imgevolve.py run`、examples）は **OpenCV か Pillow のどちらか**があれば動きます（`imgio` が自動でフォールバック）。組み込みで軽さを優先するなら Pillow（`[pil]`）が小さめです。
+- **ファイル I/O が必要なとき**（`fullseye.load` / `fullseye.save`、`imgevolve.py run`、examples）は、標準依存の Pillow が使えます。OpenCV が必要なのは `read_image` / `write_image` と `cv_*` 系だけです。
 - **設計は開発機、実行は組み込み機**という分業ができます。開発機の Studio でパイプラインを組んで JSON を書き出し、組み込み機では `FullseyeEngine.load("pipeline.json").run(frame)` で実行するだけ（GUI 不要）。詳細は [ENGINE.md](ENGINE.md)。
 - **知覚スタック**（stereo / terrain / flow / detect / registration / pose）も numpy + scipy で動きます（`fullseye.disparity_map` など）。ロボット/ビジョン用途で追加依存なしに使えます。
 
@@ -146,8 +160,8 @@ python3.11 -m pip install -e .        # numpy + scipy のみ。GUI/torch/opencv 
 |---|---|---|
 | `ModuleNotFoundError: No module named 'fullseye'` | 未インストール／パス未設定 | `pip install -e .`、または `PYTHONPATH` にリポジトリ直下を追加 |
 | `fullseye` / `fullseye-studio` コマンドが見つからない | コンソールスクリプト未登録 | `pip install -e .` を実行。未インストールなら `py -3.11 imgevolve.py` / `py -3.11 studio.py` |
-| Studio 起動時に PySide6 の ImportError | GUI extras 未導入 | `pip install -e ".[gui]"` |
-| `apply` / `pipeline` で `cannot read <path>` | 画像 I/O バックエンド無し | `pip install -e ".[opencv]"`（または `[pil]`） |
+| Studio 起動時に PySide6 の ImportError | 標準依存の破損 | `pip install --force-reinstall fullseye` |
+| `apply` / `pipeline` で `cannot read <path>` | Pillow を含む標準依存の破損、または壊れた画像 | `pip install --force-reinstall fullseye`。直らなければ画像を確認 |
 | `read_image` / `write_image`（API）で cv2 の ImportError | これらは **OpenCV 専用** | `pip install -e ".[opencv]"`。Pillow で済ませたいなら `fullseye.load` / `fullseye.save` を使う |
 | `list_ops` に期待したオペレータが無い / `has` が unknown | 該当バックエンド未導入 | 対応する extras（`skimage`/`wavelets`/`extra` 等）を追加 |
 | GPU バッチ（`accel`/`bench`）が CPU で遅い | `torch` が CPU 版 | GPU では `--device cuda`。CPU では自明な pointwise は変換コストで不利（設計どおり） |
