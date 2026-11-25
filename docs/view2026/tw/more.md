@@ -292,7 +292,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## 全部看
 
-PoC 283 個,另有機器人範例 2 個。展開分組即可載入縮圖。
+PoC 284 個,另有機器人範例 2 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -439,7 +439,7 @@ PoC 283 個,另有機器人範例 2 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>幾何與校正</b> (26)</summary>
+<details class="vall"><summary><b>幾何與校正</b> (27)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>以真實影像校正薄膜模型(可確定的係數與無法確定的組合)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><img src="../../articles/assets/poc/poc_camera_calibration/story.en.gif" alt="A small reprojection error does not guarantee a correct focal length. Re-rendering a real board nearly face-on kept the reprojection error about the same, but the focal-length error grew at least 28-fold over a tilted board. The warning is the spread of the focal-length estimate, not the reprojection error." loading="lazy" width="200" height="200"></picture><span>重投影誤差很小，焦距仍會偏</span></a>
@@ -449,6 +449,7 @@ PoC 283 個,另有機器人範例 2 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_carla_bridge/01_carla_two_worlds.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_carla_bridge/01_carla_two_worlds.png"><img src="../../articles/assets/poc/poc_carla_bridge/story.en.gif" alt="One Scene, Two Worlds — Scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World" loading="lazy" width="200" height="200"></picture><span>兩個世界拍攝</span></a>
 <a href="../../articles/assets/poc/poc_driving_town/04_town_drive_through.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_driving_town.jpg" alt="組裝城鎮" width="200" height="200"><b>&#9654;</b><span>組裝城鎮</span></a>
 <a href="../../articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_driving_japan_town.jpg" alt="真實日本城鎮" width="200" height="200"><b>&#9654;</b><span>真實日本城鎮</span></a>
+<a href="../../articles/assets/poc/poc_ginza_stage2_ops/01_first.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ginza_stage2_ops/01_first.png"><img src="../../articles/assets/poc/poc_ginza_stage2_ops/story.en.gif" alt="This reads gentle lanes and Japanese sign appearances without a trained model. On the independent synthetic holdout, centre-error p95 is 0.106704 m, the maximum is 0.477989 m, and sign macro F1 is 0.927885 (38/40); the same run also keeps the failure side in its figures." loading="lazy" width="200" height="200"></picture><span>銀座v2車道與標誌</span></a>
 <a href="../../articles/assets/poc/poc_driving_commonroad/01_commonroad_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_driving_commonroad/01_commonroad_scene.png"><img src="../../articles/assets/poc/poc_driving_commonroad/story.en.gif" alt="Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge — CommonRoad Public Scenarios and TUM's Official Checker" loading="lazy" width="200" height="200"></picture><span>CommonRoad 評分</span></a>
 <a href="../../articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pegsim_insertion.jpg" alt="插銷入孔" width="200" height="200"><b>&#9654;</b><span>插銷入孔</span></a>
 <a href="../../articles/assets/poc/poc_air_hockey_intercept/02_airhockey_prediction_cone_narrows.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_air_hockey_intercept.jpg" alt="空氣曲棍球" width="200" height="200"><b>&#9654;</b><span>空氣曲棍球</span></a>

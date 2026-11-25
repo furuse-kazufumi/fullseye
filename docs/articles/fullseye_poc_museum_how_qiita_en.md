@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**114 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**115 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1822,7 +1822,7 @@ Ops used (notes): [`atan2_image`](https://furuse.work/ops/mv/gray/atan2_image.ht
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 28 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 29 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -2825,6 +2825,50 @@ Source: [examples/poc_cloth_towel_corners_synth.py](https://github.com/furuse-ka
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth)
 
 Ops used (notes): [`fill_up`](https://furuse.work/ops/2d/region/fill_up.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_corner_harris`](https://furuse.work/ops/2d/edges/sk_corner_harris.html) · [`sk_find_contours`](https://furuse.work/ops/2d/contour/sk_find_contours.html) · [`xg_gen_polygons`](https://furuse.work/ops/2d/xldgeom/xg_gen_polygons.html)
+
+## No.2026.318 —— Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules
+
+This reads gentle lanes and Japanese sign appearances without a trained model. On the independent synthetic holdout, centre-error p95 is 0.106704 m, the maximum is 0.477989 m, and sign macro F1 is 0.927885 (38/40); the same run also keeps the failure side in its figures.
+
+[![Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/01_first_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/01_first.png)
+
+*↑ **Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules** ―― From synthetic white-and-yellow RGB, explicit camera/BEV calibration, colour rules and a quadratic boundary fit produce lane centre and signed curvature; the lateral-acceleration limit then gives the speed limit. Stop, speed-limit-candidate and no-entry appearances synthesised from the dimensions and colours in e-Gov Appended Table 2 are classified using only vertex count, circularity and HSV layout. On the full holdout with separate generation settings, all 20 lane cases were valid: centre-error p95 was 0.106704 m and the maximum was 0.477989 m. Of 40 sign cases, 38 were correct and macro F1 was 0.927885. The figures show same-run input → output → analytic truth, plus one-axis-at-a-time breakdown curves and failure examples. The claim is limited to this synthetic holdout family.*
+
+[![Same-run input -> output -> analytic truth.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/02_middle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/02_middle.png)
+
+*↑ The measurement ―― Same-run input -> output -> analytic truth. Japanese sign dimensions/colours: e-Gov Appended Table 2, revision 335M50004002003_20260901_508M60000802003. (figure labels are in Japanese; the numbers are the same)*
+
+[![Same-run input -> output -> analytic truth.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/03_last_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/03_last.png)
+
+*↑ Same-run input -> output -> analytic truth.*
+
+[![First / middle / last: input-output-truth plus the supported and rejected sign sides.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/04_contact_sheet_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/04_contact_sheet.png)
+
+*↑ First / middle / last: input-output-truth plus the supported and rejected sign sides.*
+
+[![A rejected case is not hidden from the centre-error curve. / 拒否例を誤差集計から隠さない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/06_breakdown_lane_valid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/06_breakdown_lane_valid.png)
+
+*↑ A rejected case is not hidden from the centre-error curve. / 拒否例を誤差集計から隠さない。*
+
+[![Each perturbation is swept alone; every prediction, including unknown, is scored.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/07_breakdown_sign_f1_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/07_breakdown_sign_f1.png)
+
+*↑ Each perturbation is swept alone; every prediction, including unknown, is scored.*
+
+### Figure provenance
+
+CULane/BDD100K category-bracketed practitioner image-space envelope
+
+Mapillary Traffic Sign Dataset category-bracketed practitioner image-space envelope
+
+```
+py -3.11 examples/poc_ginza_stage2_ops.py
+```
+
+Source: [examples/poc_ginza_stage2_ops.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ginza_stage2_ops.py)
+
+This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ginza_stage2_ops)
+
+Ops used (notes): [`circularity`](https://furuse.work/ops/2d/features/circularity.html) · [`color_rule_mask`](https://furuse.work/ops/drive/lane/color_rule_mask.html) · [`curvature_speed_plan`](https://furuse.work/ops/drive/lateral/curvature_speed_plan.html) · [`gamma`](https://furuse.work/ops/2d/gray/gamma.html) · [`lane_boundary_fit`](https://furuse.work/ops/drive/lane/lane_boundary_fit.html) · [`lane_curve_estimate`](https://furuse.work/ops/drive/lane/lane_curve_estimate.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`regular_shape_classify`](https://furuse.work/ops/drive/sign/regular_shape_classify.html) · [`road_sign_rule_classify`](https://furuse.work/ops/drive/sign/road_sign_rule_classify.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 

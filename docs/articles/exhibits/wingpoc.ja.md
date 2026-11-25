@@ -7091,7 +7091,7 @@ py -3.11 examples/poc_real_bg_kalman_tracking.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 28 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 29 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -8094,6 +8094,50 @@ py -3.11 examples/poc_cloth_towel_corners_synth.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth)
 
 使用 op(ノートへ): [`fill_up`](https://furuse.work/ops/2d/region/fill_up.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_corner_harris`](https://furuse.work/ops/2d/edges/sk_corner_harris.html) · [`sk_find_contours`](https://furuse.work/ops/2d/contour/sk_find_contours.html) · [`xg_gen_polygons`](https://furuse.work/ops/2d/xldgeom/xg_gen_polygons.html)
+
+## No.2026.318 —— 銀座v2第2段 —— 緩い車線の中心・符号つき曲率・速度上限と日本式標識の形を古典規則で読む
+
+緩いカーブの車線と日本式標識を、学習済みモデルを使わずに読む。独立した合成holdoutでは中心誤差p95が0.106704 m、最大が0.477989 m、標識のmacro F1が0.927885（38/40）で、破綻する側も同じ実行の図に残した。
+
+[![銀座v2第2段 —— 緩い車線の中心・符号つき曲率・速度上限と日本式標識の形を古典規則で読む](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/01_first_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/01_first.png)
+
+*↑ **銀座v2第2段 —— 緩い車線の中心・符号つき曲率・速度上限と日本式標識の形を古典規則で読む** ―― 白・黄の合成RGBから、明示したカメラ/BEV較正、色規則、二次境界の当てはめで車線中心と符号つき曲率を出し、横加速度上限から速度上限を計算する。e-Gov別表第二の寸法・配色で合成した一時停止、最高速度候補、車両進入禁止は、頂点数・円形度・HSV配置だけで分類する。調整用と生成条件を分けたfull holdoutでは、車線20件すべてが有効で中心誤差p95は0.106704 m、最大は0.477989 mだった。標識40件は38件正解、macro F1は0.927885だった。図は同じ実行の入力→出力→解析真値と、劣化を単独で強めた破綻曲線・失敗例を示す。主張は、この合成holdout族に限る。*
+
+[![Same-run input -> output -> analytic truth.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/02_middle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/02_middle.png)
+
+*↑ 測定の図 ―― Same-run input -> output -> analytic truth. Japanese sign dimensions/colours: e-Gov Appended Table 2, revision 335M50004002003_20260901_508M60000802003.*
+
+[![Same-run input -> output -> analytic truth.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/03_last_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/03_last.png)
+
+*↑ Same-run input -> output -> analytic truth.*
+
+[![First / middle / last: input-output-truth plus the supported and rejected sign sides.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/04_contact_sheet_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/04_contact_sheet.png)
+
+*↑ First / middle / last: input-output-truth plus the supported and rejected sign sides.*
+
+[![A rejected case is not hidden from the centre-error curve. / 拒否例を誤差集計から隠さない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/06_breakdown_lane_valid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/06_breakdown_lane_valid.png)
+
+*↑ A rejected case is not hidden from the centre-error curve. / 拒否例を誤差集計から隠さない。*
+
+[![Each perturbation is swept alone; every prediction, including unknown, is scored.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/07_breakdown_sign_f1_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/07_breakdown_sign_f1.png)
+
+*↑ Each perturbation is swept alone; every prediction, including unknown, is scored.*
+
+### 図の出典
+
+CULane/BDD100K category-bracketed practitioner image-space envelope
+
+Mapillary Traffic Sign Dataset category-bracketed practitioner image-space envelope
+
+```
+py -3.11 examples/poc_ginza_stage2_ops.py
+```
+
+ソース: [examples/poc_ginza_stage2_ops.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ginza_stage2_ops.py)
+
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ginza_stage2_ops)
+
+使用 op(ノートへ): [`circularity`](https://furuse.work/ops/2d/features/circularity.html) · [`color_rule_mask`](https://furuse.work/ops/drive/lane/color_rule_mask.html) · [`curvature_speed_plan`](https://furuse.work/ops/drive/lateral/curvature_speed_plan.html) · [`gamma`](https://furuse.work/ops/2d/gray/gamma.html) · [`lane_boundary_fit`](https://furuse.work/ops/drive/lane/lane_boundary_fit.html) · [`lane_curve_estimate`](https://furuse.work/ops/drive/lane/lane_curve_estimate.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`regular_shape_classify`](https://furuse.work/ops/drive/sign/regular_shape_classify.html) · [`road_sign_rule_classify`](https://furuse.work/ops/drive/sign/road_sign_rule_classify.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ### 色・分離ウィング ―― 「効く手法」は無い、あるのは効く条件だけ
 

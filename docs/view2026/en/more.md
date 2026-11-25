@@ -320,7 +320,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## See everything
 
-283 PoCs plus 2 robot demos. Open a group to load its thumbnails.
+284 PoCs plus 2 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -467,7 +467,7 @@ li, p, code { overflow-wrap: anywhere; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Geometry and calibration</b> (26)</summary>
+<details class="vall"><summary><b>Geometry and calibration</b> (27)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png"><img src="../../articles/assets/poc/poc_simcal_thin_film/story.en.gif" alt="Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine" loading="lazy" width="200" height="200"></picture><span>Calibrating a thin-film model to real images (determined coefficients vs combinations)</span></a>
 <a href="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_camera_calibration/06_real_board.png"><img src="../../articles/assets/poc/poc_camera_calibration/story.en.gif" alt="A small reprojection error does not guarantee a correct focal length. Re-rendering a real board nearly face-on kept the reprojection error about the same, but the focal-length error grew at least 28-fold over a tilted board. The warning is the spread of the focal-length estimate, not the reprojection error." loading="lazy" width="200" height="200"></picture><span>Small reprojection error, wrong focal length</span></a>
@@ -477,6 +477,7 @@ li, p, code { overflow-wrap: anywhere; }
 <a href="../../articles/assets/poc/poc_carla_bridge/01_carla_two_worlds.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_carla_bridge/01_carla_two_worlds.png"><img src="../../articles/assets/poc/poc_carla_bridge/story.en.gif" alt="One Scene, Two Worlds — Scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World" loading="lazy" width="200" height="200"></picture><span>Two worlds (CARLA)</span></a>
 <a href="../../articles/assets/poc/poc_driving_town/04_town_drive_through.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_driving_town.jpg" alt="Assembling a town" width="200" height="200"><b>&#9654;</b><span>Assembling a town</span></a>
 <a href="../../articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_driving_japan_town.jpg" alt="A real Japanese town" width="200" height="200"><b>&#9654;</b><span>A real Japanese town</span></a>
+<a href="../../articles/assets/poc/poc_ginza_stage2_ops/01_first.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_ginza_stage2_ops/01_first.png"><img src="../../articles/assets/poc/poc_ginza_stage2_ops/story.en.gif" alt="This reads gentle lanes and Japanese sign appearances without a trained model. On the independent synthetic holdout, centre-error p95 is 0.106704 m, the maximum is 0.477989 m, and sign macro F1 is 0.927885 (38/40); the same run also keeps the failure side in its figures." loading="lazy" width="200" height="200"></picture><span>Ginza v2 lanes and signs</span></a>
 <a href="../../articles/assets/poc/poc_driving_commonroad/01_commonroad_scene.png"><picture><source media="(prefers-reduced-motion: reduce)" srcset="../../articles/assets/poc/poc_driving_commonroad/01_commonroad_scene.png"><img src="../../articles/assets/poc/poc_driving_commonroad/story.en.gif" alt="Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge — CommonRoad Public Scenarios and TUM's Official Checker" loading="lazy" width="200" height="200"></picture><span>CommonRoad scoring</span></a>
 <a href="../../articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pegsim_insertion.jpg" alt="Peg-in-hole" width="200" height="200"><b>&#9654;</b><span>Peg-in-hole</span></a>
 <a href="../../articles/assets/poc/poc_air_hockey_intercept/02_airhockey_prediction_cone_narrows.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_air_hockey_intercept.jpg" alt="Air hockey" width="200" height="200"><b>&#9654;</b><span>Air hockey</span></a>

@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 227,
+  "target_count": 228,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -18171,6 +18171,219 @@
       "alt": {
         "ja": "同じ場面を 2 つの世界で: 左から CARLA の RGB、同じ内部パラメータ・取り付けで自前の世界を描き直した像、CARLA の意味分割を Fullseye のラベルに写した像、自前の世界のラベル(面の真値)。CARLA 0.9.16 の像はアセットが CC-BY(CARLA team)。",
         "en": "One Scene, Two Worlds — Scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World"
+      }
+    },
+    "poc_ginza_stage2_ops": {
+      "representative": "01_first.png",
+      "status": "gif",
+      "selected": [
+        "01_first.png",
+        "02_middle.png",
+        "04_contact_sheet.png",
+        "05_breakdown_lane_error.png",
+        "06_breakdown_lane_valid.png",
+        "08_breakdown_failure.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_ginza_stage2_ops/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_first.png",
+              "content_box": [
+                0,
+                154,
+                720,
+                381
+              ]
+            },
+            {
+              "file": "02_middle.png",
+              "content_box": [
+                0,
+                154,
+                720,
+                381
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.889117
+            },
+            {
+              "file": "04_contact_sheet.png",
+              "content_box": [
+                0,
+                67,
+                720,
+                556
+              ]
+            },
+            {
+              "file": "05_breakdown_lane_error.png",
+              "content_box": [
+                0,
+                175,
+                720,
+                340
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.12037
+            },
+            {
+              "file": "06_breakdown_lane_valid.png",
+              "content_box": [
+                0,
+                150,
+                720,
+                389
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.851852
+            },
+            {
+              "file": "08_breakdown_failure.png",
+              "content_box": [
+                0,
+                154,
+                720,
+                381
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.889117
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 315437,
+          "color_mad": [
+            0.2459,
+            0.2958,
+            0.3435,
+            0.1332,
+            0.0736,
+            0.1051
+          ],
+          "max_color_mad": 0.3435,
+          "source_sha256": "069f483dcc07fe18715a7e29c250c061db76822da2a598929d15fd3dc721ae6f"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_ginza_stage2_ops/story.en.gif",
+          "frames": [
+            {
+              "file": "01_first.png",
+              "content_box": [
+                0,
+                154,
+                720,
+                381
+              ]
+            },
+            {
+              "file": "02_middle.png",
+              "content_box": [
+                0,
+                154,
+                720,
+                381
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.889117
+            },
+            {
+              "file": "04_contact_sheet.png",
+              "content_box": [
+                0,
+                67,
+                720,
+                556
+              ]
+            },
+            {
+              "file": "05_breakdown_lane_error.png",
+              "content_box": [
+                0,
+                175,
+                720,
+                340
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 2.12037
+            },
+            {
+              "file": "06_breakdown_lane_valid.png",
+              "content_box": [
+                0,
+                150,
+                720,
+                389
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.851852
+            },
+            {
+              "file": "08_breakdown_failure.png",
+              "content_box": [
+                0,
+                154,
+                720,
+                381
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.889117
+            }
+          ],
+          "frame_count": 6,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 315437,
+          "color_mad": [
+            0.2459,
+            0.2958,
+            0.3435,
+            0.1332,
+            0.0736,
+            0.1051
+          ],
+          "max_color_mad": 0.3435,
+          "source_sha256": "62c1b6a3ee5c779adda2818e9af594b5d99f972d9833556ff2cb103ef8050497"
+        }
+      },
+      "en": {
+        "text": "not_audited",
+        "selected": [
+          "01_first.png",
+          "02_middle.png",
+          "04_contact_sheet.png",
+          "05_breakdown_lane_error.png",
+          "06_breakdown_lane_valid.png",
+          "08_breakdown_failure.png"
+        ],
+        "excluded_frames": [],
+        "not_english_ready": []
+      },
+      "reason": null,
+      "cover": "01_first.png",
+      "still": "articles/assets/poc/poc_ginza_stage2_ops/01_first.png",
+      "stills": {
+        "ja": "articles/assets/poc/poc_ginza_stage2_ops/01_first.png",
+        "en": "articles/assets/poc/poc_ginza_stage2_ops/01_first.png"
+      },
+      "alt": {
+        "ja": "Same-run input -> output -> analytic truth. Japanese sign dimensions/colours: e-Gov Appended Table 2, revision 335M50004002003_20260901_508M60000802003.",
+        "en": "This reads gentle lanes and Japanese sign appearances without a trained model. On the independent synthetic holdout, centre-error p95 is 0.106704 m, the maximum is 0.477989 m, and sign macro F1 is 0.927885 (38/40); the same run also keeps the failure side in its figures."
       }
     },
     "poc_driving_commonroad": {

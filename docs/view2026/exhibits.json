@@ -6797,6 +6797,23 @@
    }
   },
   {
+   "id": "poc_ginza_stage2_ops",
+   "group": "wing_geometry",
+   "media": "01_first.png",
+   "motion": false,
+   "thumb_src": "01_first_720.jpg",
+   "label": {
+    "ja": "銀座v2の車線と標識",
+    "en": "Ginza v2 lanes and signs",
+    "zh": "银座v2车道与标志",
+    "tw": "銀座v2車道與標誌",
+    "ko": "긴자v2 차선과 표지",
+    "de": "Ginza v2: Fahrspuren und Schilder",
+    "hi": "Ginza v2 lanes and signs",
+    "fr": "Voies et panneaux Ginza v2"
+   }
+  },
+  {
    "id": "poc_driving_commonroad",
    "group": "wing_geometry",
    "media": "01_commonroad_scene.png",
