@@ -396,13 +396,28 @@ def test_6_entries_with_wrong_types_are_dropped_not_crashed_on(tmp_path):
 
 # --------------------------------------------------------------------------- 7: デスクトップ
 @winonly
-def test_7_desktop_is_the_real_known_folder_not_userprofile_guess():
-    import winreg
-    with winreg.OpenKey(winreg.HKEY_CURRENT_USER,
-                        r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders") as k:
-        shell_desktop = Path(winreg.QueryValueEx(k, "Desktop")[0])
+def test_7_desktop_is_the_real_known_folder_not_userprofile_guess(monkeypatch, tmp_path):
+    # 隔離は残したまま、既知フォルダー API の層だけを OneDrive 移動後の Desktop
+    # に差し替える。実ユーザーのレジストリ、Desktop、または OneDrive は読まない。
+    # Keep isolation enabled and replace only the known-folder API layer with a
+    # redirected Desktop; never read the real user's registry, Desktop, or OneDrive.
+    api_desktop = tmp_path / "OneDrive - Fullseye" / "Desktop"
+    isolated_profile = tmp_path / "isolated-profile"
+    api_desktop.mkdir(parents=True)
+    isolated_profile.mkdir()
+    calls = []
+
+    def known_desktop_from_api():
+        calls.append(True)
+        return api_desktop
+
+    monkeypatch.delenv("FULLSEYE_TEST_DESKTOP", raising=False)
+    monkeypatch.setenv("USERPROFILE", str(isolated_profile))
+    monkeypatch.setattr(shortcuts, "_known_desktop_from_api", known_desktop_from_api)
     got = shortcuts.windows_dirs()["desktop"]
-    assert got == shell_desktop and got.is_absolute()
+    assert calls == [True]
+    assert got == api_desktop and got.is_absolute()
+    assert got != isolated_profile / "Desktop"
     # テスト用の env 渡しは従来どおり USERPROFILE\Desktop(実機の場所に依存しない)
     d = shortcuts.windows_dirs({"APPDATA": r"C:\a", "LOCALAPPDATA": r"C:\l", "USERPROFILE": r"C:\u"})
     assert d["desktop"] == Path(r"C:\u") / "Desktop"
@@ -417,7 +432,8 @@ def test_15_relative_appdata_is_refused(tmp_path):
 
 # --------------------------------------------------------------------------- 8 / 10: テストが本物の台帳・レジストリを汚さない
 def test_8_session_ledger_is_isolated_and_fullseye_rag_does_not_write_the_real_one(tmp_path):
-    local = os.environ.get("LOCALAPPDATA")
+    from conftest import _REAL_ENV
+    local = _REAL_ENV.get("LOCALAPPDATA")
     real = (Path(local) / "Fullseye" / "setup" / "install_ledger.json") if WIN and local else \
         (shortcuts._xdg_data() / "fullseye" / "install_ledger.json")
     before = real.read_bytes() if real.is_file() else None
@@ -649,7 +665,8 @@ def test_12_uninstall_script_text_is_fixed_names_only_and_escapes_percent():
     s = shortcuts.uninstall_cmd_text(python=Path(r"C:\Py 3\a%b\python.exe"), uninstaller=Path(r"C:\x\uninstall.py"),
                                      lnks=[Path(r"C:\sm\Fullseye\Fullseye Studio.lnk")], regkey=shortcuts.UNINSTALL_KEY)
     assert 'set "FS_PY=C:\\Py 3\\a%%b\\python.exe"' in s and "\r\n" in s
-    assert s.count("del ") == 5 and 'del "C:\\sm\\Fullseye\\Fullseye Studio.lnk"' in s       # lnk / ico / ledger / 自分自身(Python 経路と fallback 経路の 2 か所)
+    assert s.count("del ") == 6 and 'del "C:\\sm\\Fullseye\\Fullseye Studio.lnk"' in s       # lnk / ico / marker / ledger / 自分自身(Python 経路と fallback 経路の 2 か所)
+    assert 'del "%~dp0fullseye-auto-shortcuts.json" 2>nul' in s
     assert "rmdir" in s and "rmdir /s" not in s and "rd /s" not in s and "rmdir /q" not in s        # 再帰削除はしない
     with pytest.raises(shortcuts.ShortcutError):
         shortcuts.uninstall_cmd_text(python=Path('C:\\a"b\\python.exe'), uninstaller=Path("u"), lnks=[], regkey="k")
@@ -1070,9 +1087,14 @@ def test_R8_exit_codes_follow_the_table(tmp_path):
 
 
 def test_R8_setup_exits_nonzero_when_a_step_failed():
-    from test_studio_shortcuts_2026_11_12 import Fakes, _run
+    from test_studio_shortcuts_2026_11_12 import Fakes, _info, _run
     f = Fakes(pip_rc=1)
-    rc, out = _run(["--yes", "--lang", "en"], f, tty=False)
+    k = f.kw(answers=["2", "y"], tty=True)
+    info = _info(gui=True)
+    info["probes"]["opencv"]["installed"] = False
+    k["info"] = info
+    rc = setup_cmd.main(["--lang", "en"], **k)
+    out = k["out"].getvalue()
     assert rc == 1 and "dependency install failed" in out
     f2 = Fakes()
     k = f2.kw(tty=False)
@@ -1122,14 +1144,33 @@ def test_S0_the_watcher_detects_a_changed_real_registration_and_is_otherwise_sta
         fake = tmp_path / "Desktop"
         fake.mkdir()
         monkeypatch.setenv("USERPROFILE", str(tmp_path))
-        before = real_install_snapshot()
+        before = real_install_snapshot(env=os.environ)
         (fake / "Fullseye Studio.lnk").write_bytes(b"x")
-        diff = snapshot_diff(before, real_install_snapshot())
+        diff = snapshot_diff(before, real_install_snapshot(env=os.environ))
         assert diff and "Fullseye Studio.lnk" in diff[0]
 
 
+# 鍵の差し替えは conftest の Windows 分岐だけで行う(Linux/macOS にはレジストリが無く、実キーに触れる経路も無い)。
+# The key swap happens only in conftest's Windows branch; other platforms have no registry to touch.
+@winonly
 def test_S0_the_installer_tests_cannot_name_the_real_uninstall_key():
-    assert shortcuts.UNINSTALL_KEY.startswith("Software\\FullseyeTest\\")           # conftest が差し替えている(別プロセスは対象外)
+    assert shortcuts.UNINSTALL_KEY.startswith("Software\\FullseyeTest\\")           # conftest と子プロセス用環境変数が差し替える
+
+
+@winonly
+def test_S0_session_isolation_redirects_known_folders_ledger_and_default_registry_writer(tmp_path):
+    """セッション既定の書込み先は、既知フォルダー API を含め全て試験用へ向く。"""
+    from conftest import _REAL_ENV
+    dirs = shortcuts.windows_dirs()
+    assert dirs["desktop"] == Path(os.environ["FULLSEYE_TEST_DESKTOP"])
+    assert dirs["start_menu"] == Path(os.environ["APPDATA"]) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Fullseye"
+    assert str(dirs["start_menu"]) != str(Path(_REAL_ENV["APPDATA"]) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Fullseye")
+    assert shortcuts.ledger_path() == Path(os.environ["FULLSEYE_LEDGER"])
+    key = shortcuts.register_uninstall_entry(tmp_path / "fullseye.ico", script=tmp_path / shortcuts.CMD_NAME)
+    try:
+        assert key == os.environ["FULLSEYE_ISOLATED_UNINSTALL_KEY"] and shortcuts.regkey_exists(key)
+    finally:
+        shortcuts.unregister_uninstall_entry(key)
 
 
 def test_S0_guards_refuse_paths_outside_tmp(tmp_path):
@@ -1144,14 +1185,17 @@ def test_S0_guards_refuse_paths_outside_tmp(tmp_path):
 def test_S1_legacy_and_ledger_items_are_deleted_only_when_the_content_says_they_are_fullseyes(tmp_path):
     import winreg
     dirs = _dirs(tmp_path)
-    # 台帳なし(legacy): 名前は同じでも、起動するのが Fullseye でない .lnk は消さない。install.ps1 形式(studio.py)は Fullseye の物
+    # 台帳なし(legacy): 同名でも別の Python を起動する .lnk は消さず、現在の Python が -m studio を起動する旧版 .lnk だけを消す。
+    # Without a ledger, leave a same-name link to another Python alone; remove only an old link from this Python that runs -m studio.
     other = dirs["desktop"] / "Fullseye Studio.lnk"
     other.parent.mkdir(parents=True)
-    shortcuts.write_lnk(other, Path(sys.executable), "-c print(1)", ROOT / "assets" / "fullseye.ico", tmp_path)
-    ps1 = dirs["start_menu"] / "Fullseye Studio.lnk"
-    shortcuts.write_lnk(ps1, Path(sys.executable), '"C:\\repo\\studio.py"', ROOT / "assets" / "fullseye.ico", tmp_path)
-    assert shortcuts.verify_fullseye_item("file", str(other)) is not None
-    assert shortcuts.verify_fullseye_item("file", str(ps1)) is None
+    other_python = tmp_path / "other" / "pythonw.exe"
+    shortcuts.write_lnk(other, other_python, "-P -m studio", ROOT / "assets" / "fullseye.ico", tmp_path)
+    legacy = dirs["start_menu"] / "Fullseye Studio.lnk"
+    shortcuts.write_lnk(legacy, Path(sys.executable), "-P -m studio", ROOT / "assets" / "fullseye.ico", tmp_path)
+    reason = uninstall._legacy_windows_shortcut_reason(str(other))
+    assert reason is not None and "TargetPath" in reason and "ショートカットのプロパティ" in reason
+    assert uninstall._legacy_windows_shortcut_reason(str(legacy)) is None
     (dirs["icon_dir"]).mkdir(parents=True)
     (dirs["icon_dir"] / "fullseye.ico").write_bytes(b"not an icon")
     (dirs["icon_dir"] / shortcuts.CMD_NAME).write_text("@echo hello\r\n", encoding="utf-8")
@@ -1164,14 +1208,15 @@ def test_S1_legacy_and_ledger_items_are_deleted_only_when_the_content_says_they_
                                  registry=False, allow_keys=(key,))
         made = {Path(i["path"]).name for i in plan["made"] if i["kind"] == "file"}
         refused = {Path(str(r["path"])).name: r["reason"] for r in plan["refused"]}
-        assert made == {"Fullseye Studio.lnk"} and str(ps1) in [i["path"] for i in plan["made"]]       # 起動が Fullseye の物だけ
+        assert made == {"Fullseye Studio.lnk"} and str(legacy) in [i["path"] for i in plan["made"]]    # 現在の Python が起動する物だけ
         assert "fullseye.ico" in refused and shortcuts.CMD_NAME in refused and key.rsplit("\\", 1)[-1] in refused
-        assert len(plan["refused"]) >= 3, plan["refused"]                                            # ico・cmd・キー・他人の lnk
+        assert Path(str(other)).name in refused and "TargetPath" in refused[other.name]
+        assert len(plan["refused"]) >= 4, plan["refused"]                                            # ico・cmd・キー・別環境の lnk
         assert all(r["foreign"] for r in plan["refused"])                                             # 利用者の物の可能性 = 異常ではない
         assert not any(i["kind"] == "regkey" for i in plan["made"])
         rc, out, _ = _un(tmp_path, tmp_path / "none.json", dirs, ["--yes"], allow=(key,))
         assert rc == 0 and other.exists() and (dirs["icon_dir"] / "fullseye.ico").exists() and shortcuts.regkey_exists(key)
-        assert not ps1.exists() and "NOT removed" in out and "does not start Fullseye Studio" in out
+        assert not legacy.exists() and "NOT removed" in out and str(other) in out and "TargetPath" in out
     finally:
         winreg.DeleteKey(winreg.HKEY_CURRENT_USER, key)
     # Fullseye が書いたキー(DisplayName / UninstallString)は確かめを通る
@@ -1426,12 +1471,12 @@ def test_V1_remove_item_refuses_a_registry_key_that_is_not_fullseyes(tmp_path):
 def test_V2_snapshot_tells_an_absent_setup_folder_from_an_empty_one(tmp_path, monkeypatch):
     from conftest import real_install_snapshot, snapshot_diff
     monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
-    before = real_install_snapshot()
+    before = real_install_snapshot(env=os.environ)
     assert before["setup_folder"] is None
     (tmp_path / "Fullseye" / "setup").mkdir(parents=True)                 # 空で新しく作られた
-    after = real_install_snapshot()
+    after = real_install_snapshot(env=os.environ)
     assert after["setup_folder"] == [] and snapshot_diff(before, after) and "absent -> present" in snapshot_diff(before, after)[0]
-    assert snapshot_diff(after, real_install_snapshot()) == []
+    assert snapshot_diff(after, real_install_snapshot(env=os.environ)) == []
 
 
 @winonly

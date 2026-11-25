@@ -390,7 +390,8 @@ _OP_BRIDGE_SKIP = {
     # 2026-11-23: 車線知覚5本は複数の配列を束ねたtableを返す/受ける認識の鎖。
     # 汎用の2-D橋にはカメラ較正、左右の意味、画素↔世界対応が無い。台帳とrecipeから使う。
     "color_rule_mask", "plane_topview_color", "lane_boundary_fit",
-    "lane_center_path", "stop_line_detect",
+    "lane_center_path", "lane_curve_estimate", "stop_line_detect",
+    "regular_shape_classify", "road_sign_rule_classify",
 }
 
 

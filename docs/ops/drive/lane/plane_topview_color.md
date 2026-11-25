@@ -71,7 +71,7 @@ nonsingular positive-focal K and a proper orthogonal R before any sampling.
 
 ## 同カテゴリ(`lane`)
 
-[color_rule_mask](color_rule_mask.md) · [lane_boundary_fit](lane_boundary_fit.md) · [lane_center_path](lane_center_path.md) · [stop_line_detect](stop_line_detect.md)
+[color_rule_mask](color_rule_mask.md) · [lane_boundary_fit](lane_boundary_fit.md) · [lane_center_path](lane_center_path.md) · [lane_curve_estimate](lane_curve_estimate.md) · [stop_line_detect](stop_line_detect.md)
 
 ---
 *Provenance: laneops.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

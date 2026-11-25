@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**114 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**115 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -676,6 +676,10 @@ Sim-to-real calibration (simcal) of pixel-shift offsets, pixel aperture and the 
 
 *↑ 【実データ】ピクセルシフト 4 枚の未加工 RAW の 1 枚目(白の釣り合いを掛けたモザイクのまま、256 × 1152 画素を 2 倍)。*
 
+### Figure provenance
+
+データ: PixelShift200(G. Qian, Y. Wang, J. Gu, C. Dong, W. Heidrich, B. Ghanem, J. S. Ren, "Rethinking Learning-based Demosaicing, Denoising, and Super-Resolution Pipeline", ICCP 2022, arXiv:1905.02538)、https://huggingface.co/datasets/guochengqian/PixelShift200 、CC BY 4.0。場面 pixelshift_5(ISO 12233 系の解像チャート)の .ARW 4 枚の一部の行と、著者の合成済み RGGB(.mat)の一部の列。改変: 切り出し・白の釣り合い・ガンマ・拡大。
+
 ```
 py -3.11 examples/poc_simcal_pixel_shift.py
 ```
@@ -877,6 +881,10 @@ Terms: cone-beam CT — A CT geometry in which a point source illuminates a flat
 [![低い側は実データ、高い側は閉形式の合成 + 実測の 2 枚から作った雑音。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/08_dual_energy_synthetic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/08_dual_energy_synthetic.png)
 
 *↑ 低い側は実データ、高い側は閉形式の合成 + 実測の 2 枚から作った雑音。*
+
+### Figure provenance
+
+Der Sarkissian, Lucka, van Eijnatten, Colacicco, Coban & Batenburg, A cone-beam X-ray CT data collection designed for machine learning, Sci. Data 6, 215 (2019), doi:10.1038/s41597-019-0235-y; data doi:10.5281/zenodo.2686726, CC BY 4.0 (Creative Commons Attribution 4.0 International)
 
 ```
 py -3.11 tools/fetch_walnut_cbct.py && py -3.11 examples/poc_real_walnut_cbct.py
@@ -1153,6 +1161,10 @@ When identical parts sit side by side, template correlation differs only slightl
 [![動画(30 フレーム + 最後で 2 秒止め、5 fps): 同じ 1 枚目のテンプレートを更新なし全域探索で追う(ゼロ点)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/05_twin_vs_flat_occluder.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/05_twin_vs_flat_occluder.gif)
 
 *↑ The animation ―― 動画(30 フレーム + 最後で 2 秒止め、5 fps): 同じ 1 枚目のテンプレートを更新なし全域探索で追う(ゼロ点)。3 フレーム目から真の対象の 70 % を左から隠す。左 = 平坦な遮蔽物: ピークは平均 0.745 まで下がってしきい値 0.843 を割る(「見失った?」と正直に言う)が、位置は平均 0.78 px で追えている(見失い 0 / 27)。右 = そっくりな別物体が 51 px 離れて一緒に流れる: 最初の遮蔽フレームで複製に乗り換え、平均誤差 46.13 px、見失い 27 / 27 —— それなのにピークは平均 0.856 でしきい値を超え、27 / 27 フレームで「見つけた」と報告する。下段の紫(突出度)は右で平均 0.111 としきい値 0.304 を割って取り違えを疑うが、追えている左でも平均 0.203 で同じく割る —— 突出度が測っているのは曖昧さで、正しさではない*
+
+### Figure provenance
+
+Source: VisA visual anomaly dataset (candle / pcb1), Amazon Science. URL: https://github.com/amazon-science/spot-diff. Publication: Zou et al. (2022), Spot-the-Difference Self-Supervised Pre-training for Anomaly Detection and Segmentation, ECCV 2022. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The individual figure captions state the crop, grayscale/downsampling, overlay, and synthetic camera-motion changes.
 
 ```
 py -3.11 examples/poc_template_tracking.py
@@ -1790,6 +1802,14 @@ Three indoor sequences of LASIESTA (Universidad Politécnica de Madrid, CC BY-SA
 
 *↑ 真値の物体が見えているコマだけを打った。*
 
+### Figure provenance
+
+LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005; Universidad Politécnica de Madrid), CC BY-SA 4.0. Changes: tracks, outlines and colour overlays drawn on the frames; frames enlarged 2x (nearest neighbour) or shown at 1x, placed side by side with masks; a background image estimated from the frames; re-encoded as PNG / JPEG / GIF. この図は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/)。This figure is licensed under CC BY-SA 4.0, not Apache-2.0 (see NOTICE). Changes as listed in NOTICE
+
+Source: LASIESTA database, Universidad Politécnica de Madrid. URL: https://www.gti.ssr.upm.es/data/lasiesta_database. Publication: Cuevas, Yáñez, and García (2016), Computer Vision and Image Understanding 152, 103-117, https://doi.org/10.1016/j.cviu.2016.08.005. Licence: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Tracks, outlines, colour overlays, and the stated resampling/re-encoding are added; the derivative figure remains CC BY-SA 4.0.
+
+LASIESTA (C. Cuevas, E. M. Yáñez, N. García, Computer Vision and Image Understanding 152, 103-117 (2016), doi:10.1016/j.cviu.2016.08.005), CC BY-SA 4.0. Numbers measured against the dataset's labels; no frame pixels in this figure
+
 ```
 py -3.11 examples/poc_real_bg_kalman_tracking.py
 ```
@@ -1802,7 +1822,7 @@ Ops used (notes): [`atan2_image`](https://furuse.work/ops/mv/gray/atan2_image.ht
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 28 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 29 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -1910,6 +1930,10 @@ Terms: ICP — A registration method that alternates nearest-point correspondenc
 
 *↑ 180/160、500/500、1000/1000は132対象の完走値。*
 
+### Figure provenance
+
+Source: BOP T-LESS dataset. URL: https://bop.felk.cvut.cz/datasets/. Publication: Hodaň et al. (2017), T-LESS: An RGB-D Dataset for 6D Pose Estimation of Texture-less Objects, WACV, https://doi.org/10.1109/WACV.2017.8. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The figures render selected RGB-D frames and reconstructed models with Fullseye pose/ICP overlays; source data are not shipped.
+
 ```
 py -3.11 examples/poc_real_tless_6dof.py
 ```
@@ -1988,6 +2012,10 @@ Terms: ICP — A registration method that alternates nearest-point correspondenc
 
 *↑ The animation ―― 点対点 ICP を 1 反復ずつ動かす(fs.icp(max_iter=1) を前回の姿勢から連鎖)。灰 = 目標の点群、色 = 動かしている点群(斜めから見た正射影)。同じ回転軸で初期回転ずれだけを 30 / 90 / 150 度と変え、並進ずれは直径の 10 %。反復予算は本文の点対点 ICP と同じ 60 回で、その後の回転誤差: 30 度 → 0.6 度(成功)、90 度 → 0.6 度(成功)、150 度 → 179.5 度(失敗)。下の曲線は回転誤差の推移(対数、灰線 = 成功のしきい値 3 度)。動画専用に取り直した 1 組の点群での 1 試行の軌跡で、成功率は第 2 章の表。*
 
+### Figure provenance
+
+Source: BOP T-LESS dataset. URL: https://bop.felk.cvut.cz/datasets/. Publication: Hodaň et al. (2017), T-LESS: An RGB-D Dataset for 6D Pose Estimation of Texture-less Objects, WACV, https://doi.org/10.1109/WACV.2017.8. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The figures render selected RGB-D frames and reconstructed models with Fullseye pose/ICP overlays; source data are not shipped.
+
 ```
 py -3.11 examples/poc_registration_basin.py
 ```
@@ -2039,6 +2067,10 @@ The author's wish: "put the finished form of everything we built into the most r
 [![コマごとの数字。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/04_carla_pair_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/04_carla_pair_table.png)
 
 *↑ コマごとの数字。*
+
+### Figure provenance
+
+Source: CARLA Simulator 0.9.16 assets, CARLA team. URL: https://carla.org/2025/09/16/release-0.9.16/. Publication: Dosovitskiy et al. (2017), CARLA: An Open Urban Driving Simulator, CoRL. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: CARLA RGB/semantic renders are paired with a separately rendered Fullseye world; no CARLA asset is redistributed.
 
 ```
 py -3.11 examples/poc_carla_bridge.py
@@ -2123,6 +2155,10 @@ The author's wish: "if possible, do it on a Japanese map". The bundled maps of e
 [![左の車線中心を通して走る車載カメラ(JP 法規パック): 赤で停止 → 2 秒で青 → 発進、一時停止では止まって確認。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)
 
 *↑ The animation ―― 左の車線中心を通して走る車載カメラ(JP 法規パック): 赤で停止 → 2 秒で青 → 発進、一時停止では止まって確認。道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Project PLATEAU*
+
+### Figure provenance
+
+Source: OpenStreetMap road data (© OpenStreetMap contributors) and MLIT Project PLATEAU, Chuo-ku 3D city model. URL: https://www.openstreetmap.org/copyright ; https://www.geospatial.jp/ckan/dataset/plateau-13102-chuo-ku-2020. Publication: OpenStreetMap contributors; MLIT Project PLATEAU data documentation. Licence: ODbL 1.0 (OpenStreetMap); PDL 1.0 / CC BY 4.0-compatible terms (PLATEAU) (https://opendatacommons.org/licenses/odbl/1-0/ ; https://www.mlit.go.jp/plateau/site-policy/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Roads are rasterized and procedurally turned into a driving world; PLATEAU LOD1 footprints/heights are extruded. The source datasets themselves are not shipped.
 
 ```
 py -3.11 examples/poc_driving_japan_town.py
@@ -2516,6 +2552,10 @@ The synthetic PoC (poc_public_camera_heading) got away with 'the sun is a small 
 
 *↑ one camera out of 807 stations gave a sun track of 4 or more frames on 2026-09-20/21 (2 more had 3 frames and were left out); the vanishing point of i…*
 
+### Figure provenance
+
+Source: Fintraffic / Digitraffic weather-camera history and OpenStreetMap road data (© OpenStreetMap contributors). URL: https://www.digitraffic.fi/en/terms-of-service/ ; https://www.openstreetmap.org/copyright. Publication: Fintraffic terms of service; OpenStreetMap attribution and licence notice. Licence: CC BY 4.0 (Fintraffic) and ODbL 1.0 (OpenStreetMap) (https://creativecommons.org/licenses/by/4.0/ ; https://opendatacommons.org/licenses/odbl/1-0/). Retrieved: 2026-09-21 (Fintraffic acquisition recorded in the aggregate); provenance rechecked 2026-11-24. Changes: The wheel retains one derived nearest-road attribute record (bearing/ref/name/class) and camera-result aggregates, but no OSM geometry or raw camera image bytes. Figures add circle fits, pose estimates, and overlays.
+
 ```
 py -3.11 examples/poc_public_camera_heading_real.py
 ```
@@ -2553,6 +2593,12 @@ Fit the coefficients of a thin-film forward model to real images, and give no nu
 [![材料表の n を固定し、膜厚・色温度・利得・ガンマ・周辺減光を区画(40 px 角)の平均に合わせた: d = 86.6 nm(基準 98.5 nm と -12 %)、T = 6224 K、γ = 2.51。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/07_real_micrograph_calibration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/07_real_micrograph_calibration.png)
 
 *↑ 材料表の n を固定し、膜厚・色温度・利得・ガンマ・周辺減光を区画(40 px 角)の平均に合わせた: d = 86.6 nm(基準 98.5 nm と -12 %)、T = 6224 K、γ = 2.51。*
+
+### Figure provenance
+
+Source: Schwarz et al. thin-film data, Zenodo record 13753754. URL: https://doi.org/10.5281/zenodo.13753754. Publication: Schwarz et al. (2024), Advanced Optical Materials, https://doi.org/10.1002/adom.202402502. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The listed micrograph/table reductions, relabeling, averaging, model curves, and analysis panels are Fullseye-derived.
+
+Schwarz et al., Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502; data Zenodo 10.5281/zenodo.13753754 (CC BY 4.0). Modified: re-labelled and rounded table / micrograph downsized to 640x360, block means.
 
 ```
 py -3.11 examples/poc_simcal_thin_film.py
@@ -2780,6 +2826,50 @@ This run produced **4 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`fill_up`](https://furuse.work/ops/2d/region/fill_up.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_corner_harris`](https://furuse.work/ops/2d/edges/sk_corner_harris.html) · [`sk_find_contours`](https://furuse.work/ops/2d/contour/sk_find_contours.html) · [`xg_gen_polygons`](https://furuse.work/ops/2d/xldgeom/xg_gen_polygons.html)
 
+## No.2026.319 —— Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules
+
+Camera calibration and a quadratic fit locate the gentle lane centre. On the synthetic holdout, the upper-tail centre error was 0.106704 m. Stop and speed-limit-candidate classifications appear alongside failure examples.
+
+[![Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/01_first_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/01_first.png)
+
+*↑ **Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules** ―― From synthetic white-and-yellow RGB, explicit camera/BEV calibration, colour rules and a quadratic boundary fit produce lane centre and signed curvature; the lateral-acceleration limit then gives the speed limit. Stop, speed-limit-candidate and no-entry appearances synthesised from the dimensions and colours in e-Gov Appended Table 2 are classified using only vertex count, circularity and HSV layout. On the full holdout with separate generation settings, all 20 lane cases were valid: centre-error p95 was 0.106704 m and the maximum was 0.477989 m. Of 40 sign cases, 38 were correct and macro F1 was 0.927885. The figures show same-run input → output → analytic truth, plus one-axis-at-a-time breakdown curves and failure examples. The claim is limited to this synthetic holdout family.*
+
+[![Same-run input -> output -> analytic truth.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/02_middle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/02_middle.png)
+
+*↑ The measurement ―― Same-run input -> output -> analytic truth. Japanese sign dimensions/colours: e-Gov Appended Table 2, revision 335M50004002003_20260901_508M60000802003. (figure labels are in Japanese; the numbers are the same)*
+
+[![Same-run input -> output -> analytic truth.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/03_last_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/03_last.png)
+
+*↑ Same-run input -> output -> analytic truth.*
+
+[![First / middle / last: input-output-truth plus the supported and rejected sign sides.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/04_contact_sheet_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/04_contact_sheet.png)
+
+*↑ First / middle / last: input-output-truth plus the supported and rejected sign sides.*
+
+[![A rejected case is not hidden from the centre-error curve. / 拒否例を誤差集計から隠さない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/06_breakdown_lane_valid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/06_breakdown_lane_valid.png)
+
+*↑ A rejected case is not hidden from the centre-error curve. / 拒否例を誤差集計から隠さない。*
+
+[![Each perturbation is swept alone; every prediction, including unknown, is scored.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/07_breakdown_sign_f1_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ginza_stage2_ops/07_breakdown_sign_f1.png)
+
+*↑ Each perturbation is swept alone; every prediction, including unknown, is scored.*
+
+### Figure provenance
+
+CULane/BDD100K category-bracketed practitioner image-space envelope
+
+Mapillary Traffic Sign Dataset category-bracketed practitioner image-space envelope
+
+```
+py -3.11 examples/poc_ginza_stage2_ops.py
+```
+
+Source: [examples/poc_ginza_stage2_ops.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ginza_stage2_ops.py)
+
+This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ginza_stage2_ops)
+
+Ops used (notes): [`circularity`](https://furuse.work/ops/2d/features/circularity.html) · [`color_rule_mask`](https://furuse.work/ops/drive/lane/color_rule_mask.html) · [`curvature_speed_plan`](https://furuse.work/ops/drive/lateral/curvature_speed_plan.html) · [`gamma`](https://furuse.work/ops/2d/gray/gamma.html) · [`lane_boundary_fit`](https://furuse.work/ops/drive/lane/lane_boundary_fit.html) · [`lane_curve_estimate`](https://furuse.work/ops/drive/lane/lane_curve_estimate.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`regular_shape_classify`](https://furuse.work/ops/drive/sign/regular_shape_classify.html) · [`road_sign_rule_classify`](https://furuse.work/ops/drive/sign/road_sign_rule_classify.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
 ### The Colour and Separation Wing — There Is No Method That Works, Only Conditions Under Which One Does
 
 Estimating the illuminant to restore colour, peeling the layers of a painting with multiple wavelengths, separating specular reflection with polarisation. The 13 exhibits here synthesise linear radiance from known spectral reflectances, known illuminants and the Fresnel equations, then compare the separation against that truth.
@@ -2910,6 +3000,10 @@ So that the observing optics (lenses, windows, mirrors, films) and the observed 
 
 *↑ The animation ―― 厚さ 0.05 → 3 mm: 吸収端が長波長側へ押され、1.1 µm の肩が消えていく。薄いダイなら 1.0 µm 台でも透け、厚いウェハは 1.2 µm 以上。*
 
+### Figure provenance
+
+Source: refractiveindex.info database of optical constants. URL: https://refractiveindex.info/about. Publication: Polyanskiy (2024), Refractiveindex.info database of optical constants, Scientific Data 11, 94, https://doi.org/10.1038/s41597-023-02898-2. Licence: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Abbe numbers are calculated from the database dispersion records; the plot is Fullseye-generated.
+
 ```
 py -3.11 examples/poc_material_optical_library.py
 ```
@@ -2951,6 +3045,10 @@ The back side of a silicon die is inspected with near-infrared light, where sili
 [![ウェハを 30 µm から 1.5 mm まで厚くすると、最良の LED が長波長へ滑っていく。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif)
 
 *↑ The animation ―― ウェハを 30 µm から 1.5 mm まで厚くすると、最良の LED が長波長へ滑っていく。*
+
+### Figure provenance
+
+ダイ写真: ZeptoBars (Mikhail Svarichevsky), Wikimedia Commons, CC BY 3.0 (https://creativecommons.org/licenses/by/3.0)。配線の形を明るさのしきい値で取り出す改変あり
 
 ```
 py -3.11 examples/poc_nir_silicon_transmission.py
@@ -3155,6 +3253,10 @@ Terms: SAM — A classifier that compares spectra by the angle between their vec
 [![0.95〜1.65 µm を 20 nm おきに掃く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif)
 
 *↑ The animation ―― 0.95〜1.65 µm を 20 nm おきに掃く。1.2 µm 付近で樹脂片が明るく、1.45 µm(水)で殻と木片が暗く沈む —— 1 帯域では分からない異物が、帯域を動かすと順に浮かぶ。*
+
+### Figure provenance
+
+Source: Arbash et al., Polymers Hyperspectral Imaging (RODARE) and Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly (Zenodo). URL: https://doi.org/10.14278/rodare.3390 ; https://doi.org/10.5281/zenodo.17242553. Publication: Arbash et al., Polymers Hyperspectral Imaging; Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The figures use the documented band aggregation, train/test split, and analysis overlays; source cubes are not shipped.
 
 ```
 py -3.11 examples/poc_hyperspectral_foreign_matter.py
@@ -3678,6 +3780,10 @@ Terms: LiDAR — A sensor that measures range using laser light, commonly by tim
 
 *↑ The animation ―― 主図(動画、640 × 360・30 fps・12 秒): 前半は傾斜 25 度の斜面を北の上空から横切り、時期 1 の点群(8 pt/m²、樹冠に当たった点 = 緑)を見せる(動画専用の乱数で作った別の標本)。後半は時期 2 の地形の周りを回り、色を DoD の鉛直差から M3C2 の法線距離へ塗り替える(同じ尺度 ±1.2 m、青 = 下がった)。崩壊中心の深さは DoD 1.212 m / M3C2 1.096 m で比 1.105(sec 25 度 = 1.103)。有意な core の M3C2 土量は掘削 142.3 / 堆積 107.7 m³(真値 164.2 / 133.7)。黒っぽい所は測れなかった core。*
 
+### Figure provenance
+
+Source: U.S. Geological Survey 3D Elevation Program (3DEP) lidar and one-meter DEM. URL: https://www.usgs.gov/3d-elevation-program ; https://usgs-lidar-public.s3.amazonaws.com/. Publication: USGS 3DEP data documentation. Licence: U.S. Government work / public domain (https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Two dated point-cloud products are gridded, aligned, and differenced; derived plots carry the USGS credit and no-endorsement notice.
+
 ```
 py -3.11 examples/poc_lidar_terrain_change.py
 ```
@@ -4150,6 +4256,10 @@ The author's idea: put Itokawa (about 535 m) next to the venue buildings and the
 
 *↑ The measurement ―― 南から見た影絵。ホテル棟 142 m とイトカワの厚み(約 209〜244 m)を同じ縮尺で (figure labels are in Japanese; the numbers are the same)*
 
+### Figure provenance
+
+「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)(https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020)を加工して作成。7 部位の抜き出し・局所座標への変換・三角形分割は Fullseye 側の加工で、国土交通省の成果物ではない。 イトカワ: Gaskell の形状モデル(PDS 小天体ノード)から間引いた点群。
+
 ```
 py -3.11 examples/poc_plateau_venue_lod2.py
 ```
@@ -4242,6 +4352,10 @@ In this simulation, models of several depth-sensing methods measure one part in 
 
 *↑ The animation ―― 何を入れ(同じ部品・4 材質)→ 何を比べ(5 方式の生の画像と測った形)→ 何が分かったか(どこで壊れるか)を約 51 秒で。*
 
+### Figure provenance
+
+Hodaň et al., T-LESS: An RGB-D Dataset for 6D Pose Estimation of Texture-less Objects, WACV 2017, https://doi.org/10.1109/WACV.2017.8, CC BY 4.0(切り出して表示)
+
 ```
 py -3.11 examples/poc_3d_sensor_modalities.py
 ```
@@ -4279,6 +4393,10 @@ On one public desk depth sequence, frame-to-frame alignment was checked against 
 [![trim は選ぶ側の RMS が最小のものを選び、採点する側の RMS を「合わせない」(最弱の基準)と比べた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/06_splits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/06_splits.png)
 
 *↑ trim は選ぶ側の RMS が最小のものを選び、採点する側の RMS を「合わせない」(最弱の基準)と比べた。*
+
+### Figure provenance
+
+TUM RGB-D benchmark, freiburg1_xyz (Sturm, Engelhard, Endres, Burgard, Cremers, IROS 2012), CC BY 4.0, https://cvg.cit.tum.de/data/datasets/rgbd-dataset; 5 枚おき 32 枚の深度のみ、画像は無改変
 
 ```
 py -3.11 examples/poc_real_tum_rgbd_slam.py

@@ -12,7 +12,7 @@
 
 Touchez une vignette pour ouvrir la vidéo ou la figure (▶ = animé).
 
-Cette page ne présente que 30 démonstrations. Les 285 autres se trouvent sur la [page des suppléments](more.md).
+Cette page ne présente que 30 démonstrations. Les 287 autres se trouvent sur la [page des suppléments](more.md).
 
 <style>
 .vlang { font-size: 14px; line-height: 2; }

@@ -101,6 +101,7 @@ import pegsym
 import polish
 import scoop
 import grind
+import pharmaparticle
 import ozakimm
 import swarmflow
 import pxrd
@@ -114,6 +115,7 @@ import locomotion
 import laneops
 import racket
 import roadjp
+import roadsign
 import rsssafety
 import inspect as _inspect
 import sys as _sys
@@ -170,8 +172,8 @@ del _name, _param
 _MOD = {"opsdrive": _sys.modules[__name__], "drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidarsim, "drivettc": drivettc,
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
-        "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "gsviewer": gsviewer, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip, "polygrav": polygrav, "braidpath": braidpath, "terrain": terrain, "locomotion": locomotion, "laneops": laneops}
+        "roadjp": roadjp, "roadsign": roadsign,
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "gsviewer": gsviewer, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "pharmaparticle": pharmaparticle, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip, "polygrav": polygrav, "braidpath": braidpath, "terrain": terrain, "locomotion": locomotion, "laneops": laneops}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -1092,6 +1094,10 @@ _CATALOG = {
         ("particle_image_synth", "grind", ["scalar", "scalar", "scalar"], "table"),
         ("particle_image_d50", "grind", ["image2d", "scalar"], "table"),
     ],
+    # 薬学向け顕微鏡粒径: 粒子表 × 校正表から判断・3 基準・不確かさ・来歴を一体で返す。
+    "pharma": [
+        ("particle_size_distribution", "pharmaparticle", ["table", "table"], "table"),
+    ],
     # 点の順に依らない FP64 の縮約(2026-10-05、Ozaki スキーム): 行列は matrix、点群は points (N, 3)、R・t と探針の表は table。
     # 真値は Python の整数で計算した正確な積(門は tests/test_ozakimm.py と PoC poc_reproducible_icp)。
     "ozaki": [
@@ -1249,7 +1255,14 @@ _CATALOG = {
         ("plane_topview_color", "laneops", ["rgbimage", "matrix", "matrix", "signal"], "table"),
         ("lane_boundary_fit", "laneops", ["keypoints"], "table"),
         ("lane_center_path", "laneops", ["table", "table"], "table"),
+        ("lane_curve_estimate", "laneops", ["table", "table"], "table"),
         ("stop_line_detect", "laneops", ["labels", "table"], "table"),
+    ],
+    # 銀座 v2 第2段の標識形状(2026-11-24): XLD輪郭の頂点数+円形度と、e-Gov別表第二の
+    # 赤・白・青の配色を別々に測る。速度の数字はこの形状規則から推定しない。
+    "sign": [
+        ("regular_shape_classify", "roadsign", ["contour"], "table"),
+        ("road_sign_rule_classify", "roadsign", ["rgbimage", "contour", "table"], "table"),
     ],
 }
 

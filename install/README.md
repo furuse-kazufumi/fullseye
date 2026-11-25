@@ -21,13 +21,12 @@ Fullseye（画像処理オペレータライブラリ / パイプライン設計
     "py launcher" を入れておくと確実）。
   - Linux/macOS: `python3.11`（無ければ `python3`）が 3.10 以上であること。
 - インターネット接続（pip が依存パッケージを取得します）。
-- 既定の `all,gui` は **torch / opencv などを含み数百 MB～** になります。
+- 既定の `all` は **torch / opencv などを含み数百 MB～** になります。
   軽く済ませたい場合は後述の `--minimal` / `-Minimal` を使ってください。
 
 > **extras について（重要）**
-> Fullseye Studio の GUI は `gui` extra（PySide6）に依存します。
-> pyproject の `all` extra には **GUI が含まれない**ため、本インストーラは
-> 既定で **`all,gui`** をインストールします（`all` の全バックエンド＋GUI）。
+> Fullseye Studio と Pillow は標準依存です。`gui` extra は既存の指定との互換用の空の別名で、
+> 本インストーラの既定 `all` は Studio に加えて任意の全バックエンドを導入します。
 
 ---
 
@@ -37,17 +36,17 @@ PowerShell を開き、リポジトリのルートで実行します
 （エクスプローラで `install.ps1` を右クリック →「PowerShell で実行」でも可）。
 
 ```powershell
-# 標準（venv + 全 extras + GUI、ショートカット作成）
+# 標準（venv + 全 optional extras + 標準 Studio、ショートカット作成）
 powershell -ExecutionPolicy Bypass -File install\install.ps1
 
-# 軽量（core + GUI のみ。torch/opencv 等の重い依存を省く）
+# 軽量（標準依存の Studio + Pillow。torch/opencv 等の重い依存を省く）
 powershell -ExecutionPolicy Bypass -File install\install.ps1 -Minimal
 
 # venv を作らず user-site へ入れる
 powershell -ExecutionPolicy Bypass -File install\install.ps1 -UserSite
 
-# extras を明示指定（例: GUI + OpenCV + scikit-image）
-powershell -ExecutionPolicy Bypass -File install\install.ps1 -Extras "gui,opencv,skimage"
+# extras を明示指定（例: OpenCV + scikit-image。gui は互換用の空別名）
+powershell -ExecutionPolicy Bypass -File install\install.ps1 -Extras "opencv,skimage"
 
 # ショートカットを作らない
 powershell -ExecutionPolicy Bypass -File install\install.ps1 -NoShortcut
@@ -88,9 +87,9 @@ chmod +x install/install.sh install/uninstall.sh
 ### オプション（Linux/macOS）
 
 ```bash
-bash install/install.sh --minimal                 # core + GUI のみ
+bash install/install.sh --minimal                 # 標準 Studio + Pillow のみ
 bash install/install.sh --user-site               # venv を作らず --user
-bash install/install.sh --extras "gui,opencv"     # extras を明示
+bash install/install.sh --extras "opencv"         # extras を明示
 bash install/install.sh --no-shortcut             # .desktop を作らない
 bash install/install.sh --repo /path/to/imgevolve # リポジトリを明示
 ```
@@ -131,12 +130,12 @@ bash install/uninstall.sh --remove-venv   # venv ごと削除
 
 - **GUI が起動しない / PySide6 が無いと言われる**
   `-Minimal`（Windows）/ `--minimal`（Linux）でも **GUI（PySide6）は入ります**。
-  それでも駄目な場合は venv の pip で `pip install PySide6>=6.5` を試してください。
+  それでも駄目な場合は venv の pip で `pip install --force-reinstall fullseye` を実行してください。
   Linux では追加のシステムライブラリ（例: `libEGL`, `libxkbcommon`, `xcb` 系）が
   必要になることがあります。ディストリのパッケージで補ってください。
 
 - **torch / opencv のダウンロードが重い・失敗する**
-  `-Minimal` / `--minimal`（`gui` extra のみ）で導入すれば、Studio と core の
+  `-Minimal` / `--minimal`（標準依存のみ）で導入すれば、Studio と core の
   ~75 オペレータは動きます。個別バックエンドは後から
   `pip install -e ".[opencv]"` のように追加できます。
 
@@ -153,11 +152,11 @@ bash install/uninstall.sh --remove-venv   # venv ごと削除
 
 ```
 python -m venv <tmp>
-<tmp>/Scripts/python -m pip install -e "<repo>[gui]"
+<tmp>/Scripts/python -m pip install -e "<repo>"
 python -c "import fullseye, PySide6, numpy, scipy"   # -> OK
 # コンソールスクリプト fullseye(.exe) / fullseye-studio(.exe) が生成される
 ```
 
-`gui` extra（core + PySide6）での editable インストールと import は確認済みです。
+標準依存（core + PySide6-Essentials + Pillow）での editable インストールと import は確認済みです。
 `all`（torch 等）を含む完全版はダウンロードが大きいため各環境で実行してください。
 （経路・仕組みは同一です。）

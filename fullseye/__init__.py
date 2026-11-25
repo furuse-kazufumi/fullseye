@@ -20,6 +20,127 @@ import warnings
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+def _mcp_module_invocation() -> bool:
+    """Return whether this import is the real ``python -m fullseye.mcp`` path.
+
+    ``python -m fullseye.mcp`` の本物の起動経路で import 中かを返す。
+    """
+    import sys
+
+    argv = list(getattr(sys, "orig_argv", None) or [])
+    if sys.argv[:1] != ["-m"] or "-m" not in argv:
+        return False
+    at = argv.index("-m")
+    return argv[at + 1:at + 2] == ["fullseye.mcp"]
+
+
+def _distribution_package_roots() -> set[str]:
+    """Return canonical package directories declared by the installed distribution.
+
+    Wheel installs declare ``site-packages/fullseye`` through the distribution
+    metadata.  A PEP 610 editable install instead declares its checkout in
+    ``direct_url.json``; both are accepted.  Missing or malformed metadata is
+    intentionally an empty allow-list, so the caller can fail closed.
+
+    wheel は metadata に ``site-packages/fullseye`` を記録する。PEP 610 の
+    editable install は ``direct_url.json`` に checkout を記録するので、両方を
+    許可する。metadata が無い・壊れている場合は空の許可表を返し、呼び出し側を
+    fail-closed にする。
+    """
+    import importlib.metadata as metadata
+    import json
+    import os
+    from urllib.parse import unquote, urlparse
+    from urllib.request import url2pathname
+
+    roots: set[str] = set()
+    try:
+        dist = metadata.distribution("fullseye")
+    except metadata.PackageNotFoundError:
+        return roots
+
+    def add(path: str) -> None:
+        try:
+            candidate = os.path.normcase(os.path.realpath(path))
+        except (OSError, ValueError):
+            return
+        if os.path.isfile(os.path.join(candidate, "__init__.py")):
+            roots.add(candidate)
+
+    add(str(dist.locate_file("fullseye")))
+    try:
+        direct_url = json.loads(dist.read_text("direct_url.json") or "{}")
+        parsed = urlparse(str(direct_url.get("url", "")))
+        editable = bool(direct_url.get("dir_info", {}).get("editable"))
+        if editable and parsed.scheme == "file":
+            add(os.path.join(url2pathname(unquote(parsed.path)), "fullseye"))
+    except (OSError, TypeError, ValueError):
+        pass
+    return roots
+
+
+def _refuse_untrusted_package_for_mcp_server() -> None:
+    """Fail closed when ``-m`` selects a package outside the installed allow-list.
+
+    ``python -m fullseye.mcp`` can select a package from cwd or from another
+    ``sys.path`` entry.  Once this package has been selected, compare its
+    directory with the installed wheel directory or the PEP 610 editable source
+    directory recorded for the ``fullseye`` distribution.  If it is not one of
+    those declared locations, stop before loading any MCP code.
+
+    This check cannot run before Python chooses the top-level ``fullseye``
+    package: a wholly attacker-controlled ``cwd/fullseye`` can replace this file
+    and execute first.  Use the ``fullseye-mcp`` console script (the default
+    registration command) or ``python -P -m fullseye.mcp``; both keep cwd out of
+    that initial package lookup.  The check still protects accidental copied or
+    stale package trees that execute this code.
+
+    ``python -m fullseye.mcp`` は通常 cwd を ``site-packages`` より前に置く。この
+    package が選ばれた後に、wheel の場所または PEP 610 editable install が記録した
+    source と実際の package directory を比べる。cwd に限らず登録済みの場所に
+    一致しなければ MCP code を読む前に止める。
+
+    ただし、Python が完全に攻撃者管理の ``cwd/fullseye`` を最初に選んだ場合、この
+    file 自体を置換できるため検査より先にその code が走る。既定の
+    ``fullseye-mcp`` console script、または ``python -P -m fullseye.mcp`` を使う。
+    どちらも最初の package lookup から cwd を外す。この検査は、この code を実行した
+    偶発的な copied/stale package tree を fail-closed にする。
+    """
+    import os
+
+    if not _mcp_module_invocation():
+        return
+    try:
+        package_dir = os.path.normcase(os.path.realpath(os.path.dirname(__file__)))
+    except (OSError, ValueError):
+        raise RuntimeError(
+            "refusing to start fullseye MCP: cannot canonicalize the selected package "
+            "directory; only an installed wheel or a PEP 610 editable checkout is "
+            "accepted. This prevents an untrusted package location from starting the "
+            "MCP server. Use fullseye-mcp, or run `pip install -e .` and then use "
+            "python -P -m fullseye.mcp.\n"
+            "fullseye MCP の起動を拒否しました: 選ばれた package の場所を正規化できず、"
+            "installed wheel または PEP 610 の editable checkout だけを受け入れます。"
+            "信頼できない場所の package が MCP サーバを起動することを防ぐためです。"
+            "fullseye-mcp を使うか、`pip install -e .` の後に "
+            "python -P -m fullseye.mcp を使ってください。") from None
+    if package_dir not in _distribution_package_roots():
+        raise RuntimeError(
+            "refusing to start fullseye MCP: selected package directory %r is not an "
+            "installed wheel or a PEP 610 editable checkout. This prevents a copied or "
+            "untrusted package from starting the MCP server. Use fullseye-mcp, or run "
+            "`pip install -e .` and then use python -P -m fullseye.mcp.\n"
+            "fullseye MCP の起動を拒否しました: 選ばれた package directory %r は "
+            "installed wheel または PEP 610 の editable checkout ではありません。"
+            "コピーまたは信頼できない package が MCP サーバを起動することを防ぐためです。"
+            "fullseye-mcp を使うか、`pip install -e .` の後に "
+            "python -P -m fullseye.mcp を使ってください。" % (package_dir, package_dir))
+
+
+_refuse_untrusted_package_for_mcp_server()
+del _refuse_untrusted_package_for_mcp_server
+
+
 def _drop_the_cwd_entry_for_the_mcp_server() -> None:
     """``python -m fullseye.mcp`` で起動した時だけ、``sys.path[0]``(cwd)を外す。他の使い方では何もしない。
 
@@ -32,15 +153,9 @@ def _drop_the_cwd_entry_for_the_mcp_server() -> None:
     import sys
     if getattr(sys.flags, "safe_path", False) or not sys.path:
         return
-    argv = list(getattr(sys, "orig_argv", None) or [])
     # ★2026-11-22(独立レビュー): script.py の引数に ``-m fullseye.mcp`` があるだけで、
     #   script.py のフォルダを外していた。パッケージの import 中に sys.argv[0] が ``-m`` の本物の -m 起動だけに限る。
-    if sys.argv[:1] != ["-m"]:
-        return
-    if "-m" not in argv:
-        return
-    at = argv.index("-m")
-    if argv[at + 1:at + 2] != ["fullseye.mcp"]:
+    if not _mcp_module_invocation():
         return
     try:
         first = os.path.normcase(os.path.realpath(sys.path[0] or os.getcwd()))
@@ -89,7 +204,11 @@ with warnings.catch_warnings():
         icp_gated, point_to_plane_icp_gated,
         ncc_map_partial, ncc_locate_ex, shape_locate_fine,
         pca_align, register, feature_register,
-        ppf, ppf_model, surface_match, find_surface_pose,
+        ppf, PoseHypothesis, ppf_model, surface_match, find_surface_pose,
+        ppf_pose_hypotheses, pose_nms_symmetry,
+        bop, BOPPoseEstimate, read_bop_camera, read_bop_scene_image, read_bop_model,
+        read_bop_models_info, bop_symmetry_transforms, write_bop_results_csv,
+        read_bop_results_csv, write_bop_val_targets, evaluate_bop19_pose,
         pointcloud, estimate_normals, voxel_downsample,
         remove_statistical_outliers, remove_radius_outliers, fpfh,
         pcseg, fit_plane, fit_plane_ransac, fit_sphere_ransac, fit_cylinder_ransac,
@@ -606,6 +725,7 @@ def capabilities() -> dict:
             "device": device.capabilities()}
 
 import opnames as _opnames  # noqa: E402  (canonical op-name aliases, phase 1 of the naming cleanup)
+from fssystem import pipeline_stage_limit_message  # noqa: E402,F401
 
 
 def _warn_ambiguous_ledger_name(name):
@@ -913,6 +1033,12 @@ from fullseye.fixture import (  # noqa: E402,F401
 # 意味で op を引く(6 言語の要約・BM25、索引は fullseye/data/OP_SEARCH.json —— RAG の入口、2026-10-07)。
 from fullseye.opsearch import search_ops  # noqa: E402,F401
 from fslib import connection_opts  # noqa: E402,F401
+from execution_record import (  # noqa: E402,F401  (規制実行型 / regulated execution types)
+    ArtifactRef, AuditCheckpoint, AuditIntegrityError, AuditSink, AuditVerification,
+    AuditWriteError, ExecutionContext, ExecutionRecord, SoftwareInventory, SoftwareProvenanceError,
+    ValidationProfile, ValidationProfileError, artifact_ref, canonical_json,
+    canonical_json_bytes, verify_audit_file,
+)
 
 __all__ = [
     "op", "ledger", "connection_opts",
@@ -934,6 +1060,10 @@ __all__ = [
     "op_find", "op_run", "op_path", "op_assist", "op_presets", "op_producers",
     "op_consumers", "op_accepts", "op_sorts",
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories", "knob_summary",
+    "ExecutionContext", "ArtifactRef", "SoftwareInventory", "ExecutionRecord",
+    "ValidationProfile", "AuditSink", "AuditCheckpoint", "AuditVerification",
+    "ValidationProfileError", "SoftwareProvenanceError", "AuditWriteError", "AuditIntegrityError",
+    "canonical_json", "canonical_json_bytes", "artifact_ref", "verify_audit_file",
     "fallbacks", "fallback_counts", "fallback_overflow", "clear_fallbacks", "FullseyeFallbackWarning",
     "strict_mode", "set_match_template", "FAILED_BACKENDS", "ambiguous_aliases", "reset_gpu", "gpu_open_ops",
     "reset_fast", "fast_open_ops", "MissingBackendError", "MissingDependencyError",
@@ -960,7 +1090,11 @@ __all__ = [
     "icp_gated", "point_to_plane_icp_gated",
     "ncc_map_partial", "ncc_locate_ex", "shape_locate_fine",
     "pca_align", "register", "feature_register",
-    "ppf", "ppf_model", "surface_match", "find_surface_pose",
+    "ppf", "PoseHypothesis", "ppf_model", "surface_match", "find_surface_pose",
+    "ppf_pose_hypotheses", "pose_nms_symmetry",
+    "bop", "BOPPoseEstimate", "read_bop_camera", "read_bop_scene_image", "read_bop_model",
+    "read_bop_models_info", "bop_symmetry_transforms", "write_bop_results_csv",
+    "read_bop_results_csv", "write_bop_val_targets", "evaluate_bop19_pose",
     "pointcloud", "estimate_normals", "voxel_downsample",
     "remove_statistical_outliers", "remove_radius_outliers", "fpfh",
     "pcseg", "fit_plane", "fit_plane_ransac", "fit_sphere_ransac", "fit_cylinder_ransac",
@@ -1198,7 +1332,7 @@ __all__ = [
     "metriccontract", "MetricContractError", "Attempt", "attempt", "attempt_all",
     "DIRECTIONS", "worst_case", "value_or_worst", "best_of", "rank_attempts",
     "fssystem", "set_system", "get_system", "query_system", "system",
-    "reset_system", "system_snapshot",
+    "reset_system", "system_snapshot", "pipeline_stage_limit_message",
     "fsthreads", "blas_threads",
     "annotate", "opsannotate", "measure_text", "text_box", "arrow", "leader_line",
     "label_points", "crosshair", "legend_box", "color_bar", "scale_bar",

@@ -1,4 +1,4 @@
-# DRIVE operator help — 749 ops in 56 categories
+# DRIVE operator help — 753 ops in 58 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -96,9 +96,9 @@
 
 [add_ken](kendamaworld/add_ken.md) · [add_string](kendamaworld/add_string.md) · [camera_perceiver](kendamaworld/camera_perceiver.md) · [ken_mesh](kendamaworld/ken_mesh.md) · [ken_set_pose](kendamaworld/ken_set_pose.md) · [ken_truth](kendamaworld/ken_truth.md) · [kendama_clearance](kendamaworld/kendama_clearance.md) · [kendama_pose](kendamaworld/kendama_pose.md) · [kendama_rig](kendamaworld/kendama_rig.md) · [kendama_world](kendamaworld/kendama_world.md) · [string_mesh](kendamaworld/string_mesh.md) · [string_set](kendamaworld/string_set.md)
 
-### lane (5)
+### lane (6)
 
-[color_rule_mask](lane/color_rule_mask.md) · [lane_boundary_fit](lane/lane_boundary_fit.md) · [lane_center_path](lane/lane_center_path.md) · [plane_topview_color](lane/plane_topview_color.md) · [stop_line_detect](lane/stop_line_detect.md)
+[color_rule_mask](lane/color_rule_mask.md) · [lane_boundary_fit](lane/lane_boundary_fit.md) · [lane_center_path](lane/lane_center_path.md) · [lane_curve_estimate](lane/lane_curve_estimate.md) · [plane_topview_color](lane/plane_topview_color.md) · [stop_line_detect](lane/stop_line_detect.md)
 
 ### lateral (21)
 
@@ -144,6 +144,10 @@
 
 [contact_candidates](pegtactile/contact_candidates.md) · [contact_state_from_wrench](pegtactile/contact_state_from_wrench.md) · [equivariance_check](pegtactile/equivariance_check.md) · [friction_from_single_contact](pegtactile/friction_from_single_contact.md) · [pad_context](pegtactile/pad_context.md) · [pad_loads_to_peg_wrench](pegtactile/pad_loads_to_peg_wrench.md) · [pad_marker_displacement](pegtactile/pad_marker_displacement.md) · [pad_params](pegtactile/pad_params.md) · [pad_shear_asymmetry](pegtactile/pad_shear_asymmetry.md) · [pad_tactile_frame](pegtactile/pad_tactile_frame.md) · [pad_tactile_read](pegtactile/pad_tactile_read.md) · [peg_wrench_to_pad_loads](pegtactile/peg_wrench_to_pad_loads.md) · [stall_verdict](pegtactile/stall_verdict.md) · [symmetric_peg_shape](pegtactile/symmetric_peg_shape.md) · [symmetry_order_contour](pegtactile/symmetry_order_contour.md) · [two_point_forces](pegtactile/two_point_forces.md) · [whitney_wrench](pegtactile/whitney_wrench.md) · [wrist_deflection_from_rgbd](pegtactile/wrist_deflection_from_rgbd.md) · [wrist_stiffness_fit](pegtactile/wrist_stiffness_fit.md)
 
+### pharma (1)
+
+[particle_size_distribution](pharma/particle_size_distribution.md)
+
 ### polish (13)
 
 [band_width_profile](polish/band_width_profile.md) · [coat_image](polish/coat_image.md) · [coat_thickness_from_image](polish/coat_thickness_from_image.md) · [polish_scene_mjcf](polish/polish_scene_mjcf.md) · [preston_coefficient_fit](polish/preston_coefficient_fit.md) · [preston_pressure_kernel](polish/preston_pressure_kernel.md) · [preston_removal_map](polish/preston_removal_map.md) · [preston_track_profile](polish/preston_track_profile.md) · [raster_wipe_area](polish/raster_wipe_area.md) · [removal_depth_from_heights](polish/removal_depth_from_heights.md) · [winkler_polish_run](polish/winkler_polish_run.md) · [wipe_band_width](polish/wipe_band_width.md) · [wipe_coverage](polish/wipe_coverage.md)
@@ -179,6 +183,10 @@
 ### scoop (15)
 
 [pour_scene_mjcf](scoop/pour_scene_mjcf.md) · [revolution_volume_side](scoop/revolution_volume_side.md) · [scoop_count](scoop/scoop_count.md) · [scoop_image_limit](scoop/scoop_image_limit.md) · [scoop_scene_mjcf](scoop/scoop_scene_mjcf.md) · [scoop_synth_side](scoop/scoop_synth_side.md) · [scoop_volume_read](scoop/scoop_volume_read.md) · [spoon_bowl_volume](scoop/spoon_bowl_volume.md) · [stream_areal_density](scoop/stream_areal_density.md) · [stream_flux_read](scoop/stream_flux_read.md) · [stream_synth](scoop/stream_synth.md) · [tilt_pour_rate](scoop/tilt_pour_rate.md) · [tilt_wedge_retained](scoop/tilt_wedge_retained.md) · [tilted_surface_read](scoop/tilted_surface_read.md) · [two_view_volume](scoop/two_view_volume.md)
+
+### sign (2)
+
+[regular_shape_classify](sign/regular_shape_classify.md) · [road_sign_rule_classify](sign/road_sign_rule_classify.md)
 
 ### swarmflow (12)
 

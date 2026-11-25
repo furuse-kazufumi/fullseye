@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">regular_shape_classify — DRIVE <code style="color:#22d3bf">sign</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.regular_shape_classify(contour, *, simplify_tolerance=0.012)</code> (die Implementierung direkt: <code style="color:#22d3bf">import roadsign; roadsign.regular_shape_classify(contour, *, simplify_tolerance=0.012)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;regular_shape_classify&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: nein (nur CPU-Referenzimplementierung)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Klassifiziert eine Kontur anhand von Eckenzahl und isoperimetrischer Rundheit als Dreieck, Achteck, Kreis oder unbekannt.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>contour : contour</p>
+<p><code style="color:#22d3bf">{&quot;shape&quot;: (H,W), &quot;cs&quot;: [Nx2]}</code>。行・列順の閉じた輪郭を1本だけ受ける。</p>
+<p>simplify_tolerance : float</p>
+<p>輪郭bbox対角に対するRDP許容距離の比。既定0.012。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>table</p>
+<p><code style="color:#22d3bf">label</code>、RDPの<code style="color:#22d3bf">vertex_count</code>/<code style="color:#22d3bf">vertices</code>、<code style="color:#22d3bf">circularity=4πA/P²</code>、</p>
+<p>面積、周長、確信度。欠け・凹み・閾値境界は <code style="color:#22d3bf">unknown</code>。</p>
+<p>English: simplify one ordered closed contour with scale-relative RDP, then combine vertex count with isoperimetric circularity.  It recognises triangle, octagon, and circle only; partial, concave, or threshold-boundary contours are rejected as unknown. Rotation and uniform scale do not affect the features.</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import roadsign</p>
+<p>t = np.linspace(0., 2*np.pi, 65)</p>
+<p>c = np.c_[32 + 20*np.sin(t), 32 + 20*np.cos(t)]</p>
+<p>out = roadsign.regular_shape_classify({&quot;shape&quot;:(65,65), &quot;cs&quot;:[c]})</p>
+<p>assert out[&quot;label&quot;] == &quot;circle&quot; and out[&quot;circularity&quot;] &gt; .99</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ginza_stage2_ops">poc_ginza_stage2_ops</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ginza_stage2_ops.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">sign</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:road_sign_rule_classify">road_sign_rule_classify</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roadsign.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

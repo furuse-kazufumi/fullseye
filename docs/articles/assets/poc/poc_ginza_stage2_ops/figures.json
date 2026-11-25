@@ -1,0 +1,85 @@
+[
+ {
+  "file": "01_first.png",
+  "name": "first",
+  "caption": "Same-run input -> output -> analytic truth. Japanese sign dimensions/colours: e-Gov Appended Table 2, revision 335M50004002003_20260901_508M60000802003.",
+  "shape": [
+   974,
+   1840,
+   3
+  ]
+ },
+ {
+  "file": "02_middle.png",
+  "name": "middle",
+  "caption": "Same-run input -> output -> analytic truth. Japanese sign dimensions/colours: e-Gov Appended Table 2, revision 335M50004002003_20260901_508M60000802003.",
+  "shape": [
+   974,
+   1840,
+   3
+  ]
+ },
+ {
+  "file": "03_last.png",
+  "name": "last",
+  "caption": "Same-run input -> output -> analytic truth. Japanese sign dimensions/colours: e-Gov Appended Table 2, revision 335M50004002003_20260901_508M60000802003.",
+  "shape": [
+   974,
+   1840,
+   3
+  ]
+ },
+ {
+  "file": "04_contact_sheet.png",
+  "name": "contact_sheet",
+  "caption": "First / middle / last: input-output-truth plus the supported and rejected sign sides.",
+  "shape": [
+   1420,
+   1840,
+   3
+  ]
+ },
+ {
+  "file": "05_breakdown_lane_error.png",
+  "name": "breakdown_lane_error",
+  "caption": "Each perturbation is swept alone on the disjoint holdout family. Missing points are explicit rejections; see breakdown_lane_valid. / 各劣化を単独で強め、欠点は拒否。",
+  "shape": [
+   1080,
+   2290,
+   3
+  ],
+  "source": "CULane/BDD100K category-bracketed practitioner image-space envelope"
+ },
+ {
+  "file": "06_breakdown_lane_valid.png",
+  "name": "breakdown_lane_valid",
+  "caption": "A rejected case is not hidden from the centre-error curve. / 拒否例を誤差集計から隠さない。",
+  "shape": [
+   1080,
+   2000,
+   3
+  ],
+  "source": "CULane/BDD100K category-bracketed practitioner image-space envelope"
+ },
+ {
+  "file": "07_breakdown_sign_f1.png",
+  "name": "breakdown_sign_f1",
+  "caption": "Each perturbation is swept alone; every prediction, including unknown, is scored.",
+  "shape": [
+   1080,
+   2000,
+   3
+  ],
+  "source": "Mapillary Traffic Sign Dataset category-bracketed practitioner image-space envelope"
+ },
+ {
+  "file": "08_breakdown_failure.png",
+  "name": "breakdown_failure",
+  "caption": "Holdout-only scene family; the displayed values are recomputed in this figure run.",
+  "shape": [
+   974,
+   1840,
+   3
+  ]
+ }
+]

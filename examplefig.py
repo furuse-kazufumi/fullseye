@@ -42,6 +42,7 @@ from __future__ import annotations
 import atexit
 import hashlib
 import json
+import math
 import os
 import re
 import sys
@@ -714,13 +715,21 @@ def _panel(v, signed=False, title="", gray=False, vrange=None, colorbar=False,
 
 def save_grid(name: str, panels, captions=None, title=None, ncols=2,
               signed=False, caption: str = "", gray=False, vrange=None,
-              colorbar=False, unit="", cmap=None, kind=None) -> Path | None:
+              colorbar=False, unit="", cmap=None, kind=None, *,
+              font_size=14, min_font_size=9, caption_h=32,
+              letters=True) -> Path | None:
     """複数の画像を 1 枚の多パネル図に組んで書く(:func:`annotate_figure_grid`)。
 
     ``signed`` と ``gray`` は 1 個の bool でも、パネルごとの列でもよい。
     ``gray=True`` のパネルは疑似カラーにせずグレースケールで塗る(強度そのもの
     を「絵」として見せる量に使う。詳細は :func:`_to_rgb8`)。
     ``vrange`` は ``(lo, hi)`` 1 つ(全パネル共通)か、パネルごとの列(``None`` = そのパネルは自動)。
+    ``font_size``、``min_font_size``、``caption_h``、``letters`` は注釈グリッドへ渡し、
+    発表媒体に応じて文字寸法、caption帯、パネル記号を明示的に制御する。
+
+    English: the keyword-only typography options are forwarded to
+    :func:`annotate_figure_grid`; callers can set the initial/minimum font size,
+    caption-band height, and panel-letter visibility without changing image data.
     """
     count = len(panels)
     def per_panel(value, *, pair_is_scalar=False):
@@ -766,8 +775,10 @@ def save_grid(name: str, panels, captions=None, title=None, ncols=2,
         # 画素の四角を増やす最近傍を避け、双三次補間する。
         for factor in _grid_upscales(imgs, caps):
             try:
-                fig = fs.annotate_figure_grid(_upscale(imgs, factor), captions=caps,
-                                              ncols=ncols, title=title)
+                fig = fs.annotate_figure_grid(
+                    _upscale(imgs, factor), captions=caps, ncols=ncols, title=title,
+                    font_size=font_size, min_font_size=min_font_size,
+                    caption_h=caption_h, letters=letters)
             except ValueError as exc:
                 if "does not fit" not in str(exc) or factor == _GRID_UPSCALES[-1]:
                     raise
@@ -927,12 +938,15 @@ def _render_heatmap(values, xvalues, yvalues, xlabel: str = "", ylabel: str = ""
 
 def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", size=(560, 360),
                 xlim=None, ylim=None, kinds=None, styles=None, colors=None, aspect=None,
-                scale=None, legend_position=None):
+                scale=None, legend_position=None, vertical_markers=None, text_size=None):
     """:func:`save_plot` の絵だけを返す(``(h, w, 3)`` float、[0, 1])。ファイルは書かない。
 
     ★2026-10-03 に切り出した。Studio の結果ビューが 1-D 系列や表の列を**同じ見た目の
     グラフ**で見せるため(Studio は系列を「Nothing to display」としか言えなかった)。
-    引数の意味は :func:`save_plot` と同じ。描けなければ例外(呼び手が扱う)。
+    引数の意味は :func:`save_plot` と同じ。``vertical_markers`` は
+    ``{"x": データ座標, "color": 役名, "label": 札, "label_row": 行}`` の列で、
+    実際の axes transform を使って軸の高さいっぱいに縦線を引き、札を軸外の専用帯へ置く。
+    ``text_size`` は目盛り・凡例・軸名・札の論理 px 下限。描けなければ例外(呼び手が扱う)。
     """
     import fullseye as fs
     if not series:
@@ -940,6 +954,11 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
     # 直接描画は Studio などの画面表示にも使うため等倍を既定にする。発表資料へ
     # 保存する経路だけが FULLSEYE_FIGURE_SCALE を解決して明示的に渡す。
     s = _figure_scale(1 if scale is None else scale)
+    if text_size is not None and (isinstance(text_size, bool) or int(text_size) != text_size or text_size < 10):
+        raise ValueError("render_plot: text_size must be an integer >= 10")
+    tick_text = (10 if text_size is None else int(text_size)) * s
+    secondary_text = (11 if text_size is None else int(text_size)) * s
+    title_text = (13 if text_size is None else int(text_size) + 2) * s
     logical_w, logical_h = size
     w, h = logical_w * s, logical_h * s
     img = np.full((h, w, 3), 1.0)
@@ -953,8 +972,36 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
         xl = (xl[0] - 0.5, xl[1] + 0.5)
     pad = 0.06 * (yl[1] - yl[0] or 1.0)
     yl = (yl[0] - pad, yl[1] + pad)
+    marker_specs = []
+    marker_rows = 0
+    if vertical_markers is not None:
+        if isinstance(vertical_markers, (str, bytes, dict)):
+            raise ValueError("render_plot: vertical_markers must be a sequence of marker dicts")
+        for marker in vertical_markers:
+            if not isinstance(marker, dict) or not all(key in marker for key in ("x", "color", "label")):
+                raise ValueError("render_plot: each vertical marker needs x, color, and label")
+            x_value = float(marker["x"])
+            row = marker.get("label_row", 0)
+            if not math.isfinite(x_value) or isinstance(row, bool) or int(row) != row or row < 0:
+                raise ValueError("render_plot: vertical marker x/label_row is invalid")
+            if not xl[0] <= x_value <= xl[1]:
+                raise ValueError("render_plot: vertical marker x is outside xlim")
+            marker_specs.append({"x": x_value, "color": marker["color"],
+                                 "label": str(marker["label"]), "label_row": int(row)})
+            marker_rows = max(marker_rows, int(row) + 1)
+    marker_row_h = 0
+    marker_band_h = 0
+    if marker_specs:
+        marker_row_h = max(int(fs.measure_text(marker["label"], font_size=secondary_text)["height"])
+                           for marker in marker_specs) + 8 * s
+        marker_band_h = marker_rows * marker_row_h + 4 * s
+    bottom_margin = max(64 * s, 2 * secondary_text + 12 * s)
+    rect = (72 * s, 44 * s + marker_band_h, (logical_w - 96) * s,
+            h - 44 * s - marker_band_h - bottom_margin)
+    if rect[3] < 2:
+        raise ValueError("render_plot: vertical marker label band leaves no plotting area")
     if aspect == "equal":
-        pw, ph = (logical_w - 96) * s, (logical_h - 108) * s  # 下の rect と同じ大きさ
+        pw, ph = rect[2], rect[3]
         sx, sy = (xl[1] - xl[0]) / pw, (yl[1] - yl[0]) / ph
         if sx > sy:
             c_, half = 0.5 * (yl[0] + yl[1]), 0.5 * sx * ph
@@ -966,13 +1013,12 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
         raise ValueError("save_plot: aspect は None か 'equal'")
     # ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって
     #   「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
-    rect = (72 * s, 44 * s, (logical_w - 96) * s, (logical_h - 108) * s)
     ax = fs.axes_transform(rect, xl, yl)
     xt, yt = fs.nice_ticks(xl[0], xl[1], 6), fs.nice_ticks(yl[0], yl[1], 5)
     img = np.asarray(fs.grid_lines(img, ax, xticks=xt, yticks=yt, alpha=0.25))
     img = np.asarray(fs.axes_frame(img, ax, width=1 * s))
     img = np.asarray(fs.ticks(img, ax, xticks=xt, yticks=yt,
-                              tick_len=5 * s, font_size=10 * s))
+                              tick_len=5 * s, font_size=tick_text))
     plain = img.copy()                              # データを描く前(凡例の置き場所を選ぶのに使う)
     # 役名は annotate の配色表にあるものだけ("accent" は無い)。
     colours = ("reference", "emphasis", "right", "wrong", "neutral")
@@ -1008,6 +1054,23 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
                                         color=c, width=2 * s, marker_size=3 * s, **extra))
         if label and (c, label) not in legend:
             legend.append((c, label))
+    marker_boxes = []
+    for marker in marker_specs:
+        px = int(round(float(fs.data_to_pixel(ax, [marker["x"]], [yl[0]])[0][0])))
+        img = np.asarray(fs.draw_line(img, (px, rect[1]), (px, rect[1] + rect[3] - 1),
+                                      color=marker["color"], width=3 * s))
+        measured = fs.measure_text(marker["label"], font_size=secondary_text)
+        half_width = (int(measured["width"]) + 10) // 2
+        label_x = min(max(px, half_width + 2 * s), img.shape[1] - half_width - 2 * s)
+        label_y = 44 * s + marker["label_row"] * marker_row_h
+        box = (label_x - half_width, label_y,
+               label_x + half_width, label_y + int(measured["height"]) + 10)
+        if any(box[0] < old[2] and old[0] < box[2] and box[1] < old[3] and old[1] < box[3]
+               for old in marker_boxes):
+            raise ValueError("render_plot: vertical marker labels overlap in their outside band")
+        marker_boxes.append(box)
+        img = np.asarray(fs.text_box(img, marker["label"], (label_x, label_y), anchor="ct",
+                                     font_size=secondary_text, box_color=(1.0, 1.0, 1.0)))
     if len(legend) > 1:
         # ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと
         #   減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を
@@ -1021,7 +1084,7 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
         best, best_cost, box_w = "rt", None, 0
         for corner in ("rt", "lt", "rb", "lb"):
             probe = np.asarray(fs.legend_box(np.ones_like(img), legend, pos[corner], anchor=corner,
-                                             markers=True, font_size=11 * s,
+                                             markers=True, font_size=secondary_text,
                                              swatch=11 * s, pad=6 * s))
             box = np.abs(probe - 1.0).max(axis=2) > 0.02
             cols = np.flatnonzero(box.any(axis=0))
@@ -1038,19 +1101,19 @@ def render_plot(series, xlabel: str = "", ylabel: str = "", title: str = "", siz
             wide[:, :img.shape[1]] = img
             img = np.asarray(fs.legend_box(wide, legend,
                                            (img.shape[1] + 4 * s, y0 + 6 * s), anchor="lt",
-                                           markers=True, font_size=11 * s,
+                                            markers=True, font_size=secondary_text,
                                            swatch=11 * s, pad=6 * s))
         else:
             img = np.asarray(fs.legend_box(img, legend, pos[best], anchor=best,
-                                           markers=True, font_size=11 * s,
+                                           markers=True, font_size=secondary_text,
                                            swatch=11 * s, pad=6 * s))
     if title:
         img = np.asarray(fs.text_box(img, title, (10 * s, 8 * s), anchor="lt",
-                                     font_size=13 * s))
+                                     font_size=title_text))
     foot = (xlabel + ("   |   " if xlabel and ylabel else "") + ylabel).strip()
     if foot:
         img = np.asarray(fs.text_box(img, foot, (10 * s, h - 10 * s), anchor="lb",
-                                     font_size=11 * s))
+                                     font_size=secondary_text))
     return img
 
 
@@ -1063,7 +1126,7 @@ COL_W_MIN = 56
 COL_GAP = 22
 
 
-def _column_widths(header, rows, col_w=None, scale=1) -> list[int]:
+def _column_widths(header, rows, col_w=None, scale=1, font_size=None) -> list[int]:
     """表の列幅を **中身を測って**決める(:func:`fullseye.measure_text`)。
 
     ★2026-09-06 まで固定 110 px だった。数字だけの列でも 110 px 取り、
@@ -1079,13 +1142,15 @@ def _column_widths(header, rows, col_w=None, scale=1) -> list[int]:
     out = []
     for j in range(ncol):
         cells = [str(header[j])] + [str(r[j]) for r in rows if j < len(r)]
-        wide = max(int(fs.measure_text(c, font_size=11 * scale)["width"]) for c in cells)
+        actual_font_size = 11 * scale if font_size is None else int(font_size)
+        wide = max(int(fs.measure_text(c, font_size=actual_font_size)["width"]) for c in cells)
         requested = int(col_w) * scale if col_w is not None else 0
         out.append(int(max(COL_W_MIN * scale, requested, wide + COL_GAP * scale)))
     return out
 
 
-def _table_layout(header, rows, title: str = "", col_w=None, row_h=24, scale=None):
+def _table_layout(header, rows, title: str = "", col_w=None, row_h=24, scale=None,
+                  font_size=None, title_font_size=None):
     """表の寸法と全セルの文字外接矩形を、描画前の実測だけから返す。
 
     セル内に改行があれば、その行だけを高くする。返した ``cell_rects`` は全組を調べ、
@@ -1095,16 +1160,21 @@ def _table_layout(header, rows, title: str = "", col_w=None, row_h=24, scale=Non
     import fullseye as fs
 
     s = _figure_scale(1 if scale is None else scale)
+    body_font = (11 if font_size is None else int(font_size)) * s
+    heading_font = (13 if title_font_size is None else int(title_font_size)) * s
+    if body_font < 1 or heading_font < 1:
+        raise ValueError("table font sizes must be positive")
     ncol = len(header)
     all_rows = [list(header)] + [list(row[:ncol]) for row in rows]
-    measured = [[fs.measure_text(str(cell), font_size=11 * s) for cell in row]
+    measured = [[fs.measure_text(str(cell), font_size=body_font) for cell in row]
                 for row in all_rows]
-    widths = _column_widths(header, rows, col_w, scale=s)
+    widths = _column_widths(header, rows, col_w, scale=s, font_size=body_font)
     xs = [14 * s + sum(widths[:j]) for j in range(ncol)]
     row_steps = [max(int(row_h) * s,
                      max((int(m["height"]) for m in row), default=0) + 2 * s)
                  for row in measured]
-    ys, y = [], 40 * s
+    title_measure = fs.measure_text(str(title), font_size=heading_font) if title else None
+    ys, y = [], max(40 * s, (8 * s + int(title_measure["height"]) + 12 * s) if title_measure else 0)
     for step in row_steps:
         ys.append(y)
         y += step
@@ -1120,19 +1190,20 @@ def _table_layout(header, rows, title: str = "", col_w=None, row_h=24, scale=Non
                 raise AssertionError("table cell text overlaps: row/col %r and %r" %
                                      ((a[4], a[5]), (b[4], b[5])))
     table_w = 24 * s + sum(widths)
-    title_w = (int(fs.measure_text(str(title), font_size=13 * s)["width"]) + 24 * s
-               if title else 0)
+    title_w = int(title_measure["width"]) + 24 * s if title_measure else 0
     return {"scale": s, "widths": widths, "xs": xs, "ys": ys,
             "cell_rects": cell_rects, "width": max(table_w, title_w),
-            "height": 56 * s + sum(row_steps)}
+            "height": y + 16 * s, "body_font": body_font,
+            "heading_font": heading_font}
 
 
-def _render_table(header, rows, title: str = "", col_w=None, row_h=24, scale=None):
+def _render_table(header, rows, title: str = "", col_w=None, row_h=24, scale=None,
+                  font_size=None, title_font_size=None):
     """表の画像だけを返す。寸法・文字・余白を同じ倍率で描く。"""
     import fullseye as fs
 
     layout = _table_layout(header, rows, title=title, col_w=col_w, row_h=row_h,
-                           scale=scale)
+                           scale=scale, font_size=font_size, title_font_size=title_font_size)
     s = layout["scale"]
     ncol = len(header)
     xs = layout["xs"]
@@ -1141,15 +1212,15 @@ def _render_table(header, rows, title: str = "", col_w=None, row_h=24, scale=Non
     img = np.full((h, w, 3), 1.0)
     if title:
         img = np.asarray(fs.text_box(img, title, (12 * s, 8 * s), anchor="lt",
-                                     font_size=13 * s))
+                                     font_size=layout["heading_font"]))
     for j, cell in enumerate(header):
         img = np.asarray(fs.text_box(img, str(cell), (xs[j], ys[0]),
-                                     anchor="lt", font_size=11 * s, color="emphasis"))
+                                     anchor="lt", font_size=layout["body_font"], color="emphasis"))
     for i, row in enumerate(rows):
         for j, cell in enumerate(row[:ncol]):
             img = np.asarray(fs.text_box(img, str(cell),
                                          (xs[j], ys[i + 1]),
-                                         anchor="lt", font_size=11 * s,
+                                         anchor="lt", font_size=layout["body_font"],
                                          box_alpha=0.0, border=0))
     return img
 

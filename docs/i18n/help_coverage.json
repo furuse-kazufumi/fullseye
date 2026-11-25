@@ -2,57 +2,57 @@
  "_": "Studio op ヘルプの多言語被覆(生成物 —— tools/opdocs.py coverage が書く)。frame_strings = 枠の対訳表の訳済み件数(枠は全言語そろっている)、languages.* = 本文側の実測(要約が訳されているか・かなの残る頁)。tests/test_help_rendering.py が後退(訳済み比率の低下・未訳の増加)を落とす。",
  "languages": {
   "ja": {
-   "pages": 3849,
-   "pages_with_example": 3810,
-   "pages_ja_summary_of_english_source": 962
+   "pages": 3855,
+   "pages_with_example": 3816,
+   "pages_ja_summary_of_english_source": 964
   },
   "en": {
-   "pages": 3849,
-   "pages_with_example": 3810,
-   "pages_with_kana": 449,
+   "pages": 3855,
+   "pages_with_example": 3816,
+   "pages_with_kana": 454,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8833
+   "kana_free_share": 0.8822
   },
   "zh": {
-   "pages": 3849,
-   "pages_with_example": 3810,
-   "pages_with_kana": 449,
+   "pages": 3855,
+   "pages_with_example": 3816,
+   "pages_with_kana": 454,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8833
+   "kana_free_share": 0.8822
   },
   "tw": {
-   "pages": 3849,
-   "pages_with_example": 3810,
-   "pages_with_kana": 449,
+   "pages": 3855,
+   "pages_with_example": 3816,
+   "pages_with_kana": 454,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8833
+   "kana_free_share": 0.8822
   },
   "ko": {
-   "pages": 3849,
-   "pages_with_example": 3810,
-   "pages_with_kana": 449,
+   "pages": 3855,
+   "pages_with_example": 3816,
+   "pages_with_kana": 454,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8833
+   "kana_free_share": 0.8822
   },
   "de": {
-   "pages": 3849,
-   "pages_with_example": 3810,
-   "pages_with_kana": 449,
+   "pages": 3855,
+   "pages_with_example": 3816,
+   "pages_with_kana": 454,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8833
+   "kana_free_share": 0.8822
   },
   "hi": {
-   "pages": 3849,
-   "pages_with_example": 3810,
-   "pages_with_kana": 449,
+   "pages": 3855,
+   "pages_with_example": 3816,
+   "pages_with_kana": 454,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8833
+   "kana_free_share": 0.8822
   }
  },
  "frame_strings": {

@@ -7,7 +7,8 @@
    302,
    1656,
    3
-  ]
+  ],
+  "source": "Source: Arbash et al., Polymers Hyperspectral Imaging (RODARE) and Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly (Zenodo). URL: https://doi.org/10.14278/rodare.3390 ; https://doi.org/10.5281/zenodo.17242553. Publication: Arbash et al., Polymers Hyperspectral Imaging; Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The figures use the documented band aggregation, train/test split, and analysis overlays; source cubes are not shipped."
  },
  {
   "file": "02_real_vs_model_band_depth.png",
@@ -17,7 +18,8 @@
    800,
    1520,
    3
-  ]
+  ],
+  "source": "Source: Arbash et al., Polymers Hyperspectral Imaging (RODARE) and Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly (Zenodo). URL: https://doi.org/10.14278/rodare.3390 ; https://doi.org/10.5281/zenodo.17242553. Publication: Arbash et al., Polymers Hyperspectral Imaging; Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The figures use the documented band aggregation, train/test split, and analysis overlays; source cubes are not shipped."
  },
  {
   "file": "03_real_polymer_confusion.png",
@@ -29,7 +31,8 @@
    3
   ],
   "csv": "03_real_polymer_confusion.csv",
-  "tsv": "03_real_polymer_confusion.tsv"
+  "tsv": "03_real_polymer_confusion.tsv",
+  "source": "Source: Arbash et al., Polymers Hyperspectral Imaging (RODARE) and Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly (Zenodo). URL: https://doi.org/10.14278/rodare.3390 ; https://doi.org/10.5281/zenodo.17242553. Publication: Arbash et al., Polymers Hyperspectral Imaging; Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The figures use the documented band aggregation, train/test split, and analysis overlays; source cubes are not shipped."
  },
  {
   "file": "04_real_pork_belly.png",
@@ -39,7 +42,8 @@
    1150,
    3216,
    3
-  ]
+  ],
+  "source": "Source: Arbash et al., Polymers Hyperspectral Imaging (RODARE) and Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly (Zenodo). URL: https://doi.org/10.14278/rodare.3390 ; https://doi.org/10.5281/zenodo.17242553. Publication: Arbash et al., Polymers Hyperspectral Imaging; Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The figures use the documented band aggregation, train/test split, and analysis overlays; source cubes are not shipped."
  },
  {
   "file": "05_real_pork_roc.png",
@@ -49,7 +53,8 @@
    1040,
    1040,
    3
-  ]
+  ],
+  "source": "Source: Arbash et al., Polymers Hyperspectral Imaging (RODARE) and Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly (Zenodo). URL: https://doi.org/10.14278/rodare.3390 ; https://doi.org/10.5281/zenodo.17242553. Publication: Arbash et al., Polymers Hyperspectral Imaging; Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The figures use the documented band aggregation, train/test split, and analysis overlays; source cubes are not shipped."
  },
  {
   "file": "06_real_pork_confusion.png",
@@ -61,7 +66,8 @@
    3
   ],
   "csv": "06_real_pork_confusion.csv",
-  "tsv": "06_real_pork_confusion.tsv"
+  "tsv": "06_real_pork_confusion.tsv",
+  "source": "Source: Arbash et al., Polymers Hyperspectral Imaging (RODARE) and Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly (Zenodo). URL: https://doi.org/10.14278/rodare.3390 ; https://doi.org/10.5281/zenodo.17242553. Publication: Arbash et al., Polymers Hyperspectral Imaging; Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The figures use the documented band aggregation, train/test split, and analysis overlays; source cubes are not shipped."
  },
  {
   "file": "07_tray_rgb_vs_hyperspectral.png",

@@ -776,8 +776,25 @@ def _tolerate_unencodable_output() -> None:
             pass
 
 
-def main() -> int:
+def _auto_register_studio_shortcut(argv) -> None:
+    """対話コマンドの初回だけ Studio をメニューへ置く / one-time menu registration.
+
+    ``setup`` は登録するかを自分で尋ね、``--dry-run`` では何も変更しない。
+    ここで先に登録するとその契約を破るため、setup の全ての呼び方を通さない。
+    ``shortcuts`` は標準ライブラリだけで、ここから PySide6 を import しない。
+    """
+    if list(argv[:1]) == ["setup"]:
+        return
+    try:
+        from fullseye import shortcuts
+        shortcuts.auto_register_on_first_command()
+    except Exception:       # noqa: BLE001 -- an optional convenience must not break a CLI command
+        pass
+
+
+def _main() -> int:
     _tolerate_unencodable_output()
+    _auto_register_studio_shortcut(sys.argv[1:])
     # ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、
     # `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
     # ★利用者向けの名乗りは fullseye(imgevolve は旧作業名)。checkout 開発者向けの綴りは epilog にだけ残す。
@@ -785,11 +802,16 @@ def main() -> int:
     #   `fullseye setup` は対話的な初期設定(fullseye/setup_cmd.py)。自前の argparse に丸ごと渡す。
     if len(sys.argv) == 1:
         from fullseye import setup_cmd as _sc
-        print(_sc.guidance(_sc.detect_lang()))
+        # 大容量の optional backend は勝手に始めず、初回通常コマンドには明示入口だけを 1 行で出す。
+        # Never begin a large optional install from a normal first command: print its explicit one-line entry only.
+        print(_sc.full_install_hint(_sc.detect_lang()) or "fullseye setup --yes")
         return 0
     if sys.argv[1] == "setup":
         from fullseye import setup_cmd as _sc
         return _sc.main(sys.argv[2:])
+    if sys.argv[1] == "doctor":
+        from fullseye import doctor as _doctor
+        return _doctor.main(sys.argv[2:])
     ap = argparse.ArgumentParser(prog=_prog() if _prog().startswith("python -m") else None,
                                  description=__doc__.replace("py -3.11 imgevolve.py", _prog())
                                  .replace("imgevolve — single CLI", "fullseye — single CLI", 1),
@@ -891,8 +913,22 @@ def main() -> int:
     p.add_argument("rest", nargs="*", help=argparse.SUPPRESS)
     p.set_defaults(fn=lambda a: __import__("fullseye.setup_cmd", fromlist=["main"]).main(a.rest))
 
+    p = sub.add_parser("doctor", help="diagnose Windows/Python startup problems; --json for automation, --fix asks first")
+    p.add_argument("rest", nargs="*", help=argparse.SUPPRESS)
+    p.set_defaults(fn=lambda a: __import__("fullseye.doctor", fromlist=["main"]).main(a.rest))
+
     a = ap.parse_args()
     return a.fn(a)
+
+
+def main() -> int:
+    """CLI の入口で起動例外を案内へ変え、元の traceback も残す。 / Explain startup failures without hiding tracebacks."""
+    try:
+        return _main()
+    except (ImportError, OSError, UnicodeError) as exc:
+        from fullseye import startup_errors
+        startup_errors.report(exc, "CLI")
+        return 1
 
 
 if __name__ == "__main__":

@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ppf_pose_hypotheses — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ppf_pose_hypotheses(model: &#x27;dict&#x27;, scene_points, scene_normals=None, top_n: &#x27;int&#x27; = 5, ref_fraction: &#x27;float&#x27; = 0.3, refine: &#x27;bool&#x27; = True, k_normals: &#x27;int&#x27; = 16, seed: &#x27;int&#x27; = 0) -&gt; &#x27;list[PoseHypothesis]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ppf; ppf.ppf_pose_hypotheses(model: &#x27;dict&#x27;, scene_points, scene_normals=None, top_n: &#x27;int&#x27; = 5, ref_fraction: &#x27;float&#x27; = 0.3, refine: &#x27;bool&#x27; = True, k_normals: &#x27;int&#x27; = 16, seed: &#x27;int&#x27; = 0) -&gt; &#x27;list[PoseHypothesis]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;ppf_pose_hypotheses&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: なし(CPU 参照実装のみ)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>PPF 投票を最良の1姿勢にまとめず、上位 N 件の姿勢を返す。</p>
+<p><code style="color:#22d3bf">model</code> is the reusable descriptor from <code style="color:#22d3bf">ppf_model</code>.  Each result is</p>
+<p>a <code style="color:#22d3bf">PoseHypothesis</code> containing <code style="color:#22d3bf">R</code>, <code style="color:#22d3bf">t</code>, raw votes, a bounded score, inlier fraction and ICP RMSE.  The score is <code style="color:#22d3bf">inlier_fraction / (1 + rmse / model_diameter)</code>; it is used only for ranking and is not a calibrated probability.  The inlier distance is two PPF distance steps.  With <code style="color:#22d3bf">refine=False</code> RMSE is measured from the voted pose rather than reported as NaN.</p>
+<p>Empty/non-finite input, bad normals, invalid <code style="color:#22d3bf">top_n</code>/<code style="color:#22d3bf">ref_fraction</code> and an accumulator with no votes raise <code style="color:#22d3bf">ValueError</code>.  The returned list can contain symmetry-equivalent or same-instance poses; pass it to <code style="color:#22d3bf">pose_nms_symmetry</code> when those should be merged.</p>
+<p>既存 PPF 表から最良1件へ潰さず上位 N 姿勢を返す。返りは R、t、票、順位用 score、インライア率、ICP RMSE を持つ。空、非有限値、法線不正、無投票は fail-closed。対称で等価な候補の統合は <code style="color:#22d3bf">pose_nms_symmetry</code> が担う。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; x = np.linspace(-1.0, 1.0, 6)</p>
+<p>&gt;&gt;&gt; model_points = np.array([(a, b, 0.2*a*b) for a in x for b in x])</p>
+<p>&gt;&gt;&gt; normals = np.tile([0.0, 0.0, 1.0], (len(model_points), 1))</p>
+<p>&gt;&gt;&gt; descriptor = ppf_model(model_points, normals, angle_bins=24)</p>
+<p>&gt;&gt;&gt; t_true = np.array([0.3, -0.2, 1.4])</p>
+<p>&gt;&gt;&gt; scene = model_points + t_true</p>
+<p>&gt;&gt;&gt; poses = ppf_pose_hypotheses(descriptor, scene, normals, top_n=2, seed=3)</p>
+<p>&gt;&gt;&gt; bool(np.linalg.norm(poses[0].t - t_true) &lt; 1e-6)</p>
+<p>True</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:bop_pose_stage1">bop_pose_stage1</a> — <code style="color:#22d3bf">py -3.11 examples_3d/bop_pose_stage1.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:pose_nms_symmetry">pose_nms_symmetry</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_select_lod">mesh_select_lod</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">match_pose</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:match_phase_3d">match_phase_3d</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:find_surface_pose">find_surface_pose</a> · <a style="color:#22d3bf" href="op3d:pose_nms_symmetry">pose_nms_symmetry</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:match_logpolar_z">match_logpolar_z</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ppf.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

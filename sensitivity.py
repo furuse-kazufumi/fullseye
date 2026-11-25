@@ -45,6 +45,7 @@ import math
 
 import numpy as np
 
+import arrayguard as _arrayguard
 import doe as _doe
 
 __all__ = ["doe_morris", "sens_morris", "doe_saltelli", "sens_sobol", "mv_confounding", "mv_residual_pca"]
@@ -370,14 +371,19 @@ def mv_confounding(S=None, names=None, threshold=10.0, log_params=False, max_sub
         S = np.column_stack([g[:, 0], g[:, 0] * 1.001 + 0.001 * g[:, 1], g[:, 1]])
         names = ["n", "d", "gain"]
         log_params = True
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        S, "S", op, MAX_ELEMENTS, expected_ndim=2,
+        advice=_arrayguard.MATRIX_CAP_ADVICE)
     try:
         A = np.asarray(S, dtype=np.float64)
     except (TypeError, ValueError):
         raise ValueError("%s: S must be numeric" % op) from None
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            A, "S", op, MAX_ELEMENTS, expected_ndim=2,
+            advice=_arrayguard.MATRIX_CAP_ADVICE)
     if A.ndim != 2 or A.shape[0] < 2 or A.shape[1] < 2:
         raise ValueError("%s: S must be (observations >= 2, parameters >= 2), got shape %s" % (op, A.shape))
-    if A.size > MAX_ELEMENTS:
-        raise ValueError("%s: S has %d elements (cap %d)" % (op, A.size, MAX_ELEMENTS))
     if not np.isfinite(A).all():
         raise ValueError("%s: S contains NaN or inf" % op)
     K = A.shape[1]
@@ -491,14 +497,19 @@ def mv_residual_pca(R=None, noise_sigma=None, n_perm=100, seed=0) -> dict:
     if R is None:
         rng = np.random.default_rng(0)
         R = 0.1 * rng.normal(size=(20, 64)) + np.outer(rng.normal(size=20), np.sin(np.linspace(0, 3, 64)))
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        R, "R", op, MAX_ELEMENTS, expected_ndim=2,
+        advice=_arrayguard.MATRIX_CAP_ADVICE)
     try:
         A = np.asarray(R, dtype=np.float64)
     except (TypeError, ValueError):
         raise ValueError("%s: R must be numeric" % op) from None
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            A, "R", op, MAX_ELEMENTS, expected_ndim=2,
+            advice=_arrayguard.MATRIX_CAP_ADVICE)
     if A.ndim != 2 or A.shape[0] < 3 or A.shape[1] < 3:
         raise ValueError("%s: R must be (observations >= 3, variables >= 3), got shape %s" % (op, A.shape))
-    if A.size > MAX_ELEMENTS:
-        raise ValueError("%s: R has %d elements (cap %d)" % (op, A.size, MAX_ELEMENTS))
     if not np.isfinite(A).all():
         raise ValueError("%s: R contains NaN or inf" % op)
     n, p = A.shape

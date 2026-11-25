@@ -13,7 +13,10 @@
   "drive/plane_topview_color": {"fp":"6906aaedaf79","en":"Project a ground plane into a colour-preserving top view and return a validity mask plus pixel-to-world coordinates.","zh":"将地面平面投影为保留 RGB 的俯视图,并返回有效掩码及像素与世界坐标的对应关系。","tw":"將地面平面投影為保留 RGB 的俯視圖,並回傳有效遮罩及像素與世界座標的對應關係。","ko":"지면 평면을 RGB를 보존한 하향식 영상으로 투영하고 유효 마스크와 픽셀↔세계 좌표 대응을 반환한다.","de":"Projiziert eine Bodenebene in eine farberhaltende Draufsicht und gibt Gültigkeitsmaske sowie Pixel-Welt-Zuordnung zurück.","hi":"Ground plane को रंग बनाए रखते हुए top view में project करता है और validity mask तथा pixel↔world coordinates लौटाता है।"},
   "drive/lane_boundary_fit": {"fp":"773541e09148","en":"Robustly fit the lane boundary ``x=c0+c1*y+c2*y²`` to top-view points (lateral x, forward y).","zh":"对俯视点(横向 x、前向 y)稳健拟合车道边界 ``x=c0+c1*y+c2*y²``。","tw":"對俯視點(橫向 x、前向 y)穩健擬合車道邊界 ``x=c0+c1*y+c2*y²``。","ko":"하향식 점(가로 x, 전방 y)에 차선 경계 ``x=c0+c1*y+c2*y²`` 를 강건하게 맞춘다.","de":"Passt die Fahrspurgrenze ``x=c0+c1*y+c2*y²`` robust an Draufsichtspunkte (quer x, vorwärts y) an.","hi":"Top-view points (पार्श्व x, आगे y) पर lane boundary ``x=c0+c1*y+c2*y²`` को robust ढंग से fit करता है।"},
   "drive/lane_center_path": {"fp":"6d57dd4d9b46","en":"Return a lane-centre path and drivable band from the left and right boundaries.","zh":"由左右边界返回车道中心路径与可行驶带。","tw":"由左右邊界回傳車道中心路徑與可行駛帶。","ko":"좌우 경계에서 차선 중심 경로와 주행 가능 띠를 반환한다.","de":"Gibt aus linker und rechter Begrenzung einen Spurmittelpfad und ein befahrbares Band zurück.","hi":"बाईं और दाईं boundaries से lane-centre path और drivable band लौटाता है।"},
+  "drive/lane_curve_estimate": {"fp":"8912bea2a55d","en":"Return lane centre, arc length, and signed curvature in one table from the left and right quadratic boundaries.","zh":"由左右二次边界在一个表中返回车道中心、弧长和带符号曲率。","tw":"由左右二次邊界在一個表中回傳車道中心、弧長和帶符號曲率。","ko":"좌우 이차 경계에서 차선 중심, 호 길이, 부호 있는 곡률을 하나의 표로 반환한다.","de":"Gibt aus den linken und rechten quadratischen Begrenzungen Spurmitte, Bogenlänge und vorzeichenbehaftete Krümmung in einer Tabelle zurück.","hi":"बाईं और दाईं quadratic boundaries से lane centre, arc length और signed curvature एक table में लौटाता है।"},
   "drive/stop_line_detect": {"fp":"60189ea97687","en":"Detect the stop line and Japanese-style crosswalk as separate typed outputs.","zh":"将停止线和日式人行横道作为独立的类型化输出进行检测。","tw":"將停止線和日式行人穿越道作為獨立的型別化輸出進行偵測。","ko":"정지선과 일본식 횡단보도를 별도의 형식化된 출력으로 검출한다.","de":"Erkennt Haltelinie und japanischen Fußgängerüberweg als getrennte typisierte Ausgaben.","hi":"स्टॉप लाइन और जापानी शैली के क्रॉसवॉक को अलग-अलग टाइप किए गए आउटपुट के रूप में पहचानता है।"},
+  "drive/regular_shape_classify": {"fp":"ff14aff62fad","en":"Classify a contour as triangle, octagon, circle, or unknown from vertex count and isoperimetric circularity.","zh":"用顶点数和等周圆形度将轮廓分为三角形、八边形、圆或未知。","tw":"用頂點數和等周圓形度將輪廓分為三角形、八邊形、圓或未知。","ko":"꼭짓점 수와 등주 원형도로 윤곽을 삼각형, 팔각형, 원 또는 미상으로 분류한다.","de":"Klassifiziert eine Kontur anhand von Eckenzahl und isoperimetrischer Rundheit als Dreieck, Achteck, Kreis oder unbekannt.","hi":"vertex count और isoperimetric circularity से contour को triangle, octagon, circle या unknown में वर्गीकृत करता है।"},
+  "drive/road_sign_rule_classify": {"fp":"c3c7899bd9cc","en":"Rule-classify a Japanese stop sign, speed-limit candidate, or no-entry sign from RGB and contour shape.","zh":"根据 RGB 和轮廓形状按规则分类日本式停车、限速候选或禁止驶入标志。","tw":"根據 RGB 和輪廓形狀按規則分類日本式停車、速限候選或禁止進入標誌。","ko":"RGB와 윤곽 형상으로 일본식 일시정지, 제한속도 후보 또는 진입금지 표지를 규칙 분류한다.","de":"Klassifiziert anhand von RGB und Konturform regelbasiert ein japanisches Stoppschild, einen Geschwindigkeitskandidaten oder ein Einfahrtsverbot.","hi":"RGB और contour shape से जापानी stop sign, speed-limit candidate या no-entry sign को नियमों से वर्गीकृत करता है।"},
   "drive/heightmap_depth_camera": {"fp":"caedba26dc85","en":"Render a height map (elevation map / DEM) directly with a pinhole depth camera (rays marched over the heights at a fixed step).","zh":"用针孔深度相机直接拍摄高度图(高程图/DEM)(光线以固定步长在高度面上行进)。","tw":"用針孔深度相機直接拍攝高度圖(高程圖/DEM)(光線以固定步長在高度面上前進)。","ko":"높이 지도(표고도·DEM)를 핀홀 깊이 카메라로 직접 촬영한다(광선을 일정한 간격으로 높이 면 위로 진행).","de":"Eine Höhenkarte (Geländemodell / DEM) direkt mit einer Lochkamera-Tiefenkamera aufnehmen (Strahlen in festen Schritten über die Höhen geführt).","hi":"height map (elevation map / DEM) को सीधे pinhole depth camera से लेना (किरणों को स्थिर step में ऊँचाई की सतह के ऊपर आगे बढ़ाकर)।"},
   "drive/road_surface_heightmap": {"fp":"2d8397738503","en":"Road surface height map from a centre-line alignment and cross-section rules, with the per-cell analytic truth (grade and cross slope).","zh":"由中心线线形与横断面规则生成路面高度图,并给出每个单元的解析真值(纵坡与横坡)。","tw":"由中心線線形與橫斷面規則產生路面高度圖,並給出每個格子的解析真值(縱坡與橫坡)。","ko":"중심선 선형과 횡단 규칙으로 도로 면의 높이 지도와 셀별 해석적 참값(종단 경사·횡단 경사)을 만든다.","de":"Höhenkarte einer Straßenoberfläche aus Achslinie und Querschnittsregeln, mit der analytischen Wahrheit je Zelle (Längs- und Querneigung).","hi":"centre-line alignment और cross-section नियमों से सड़क सतह का height map, हर cell के analytic सत्य मान (grade और cross slope) के साथ।"},
   "3d/convex_hull_gap": {"fp":"dc64b4585983","en":"Gap (shortest distance) between the convex hulls of two vertex sets, returned with certified lower and upper bounds.","zh":"两个顶点集合的凸包之间的间隙(最短距离),连同有保证的上下界一起返回。","tw":"兩個頂點集合的凸包之間的間隙(最短距離),連同有保證的上下界一起回傳。","ko":"두 꼭짓점 집합의 볼록 껍질 사이의 간격(최단 거리)을 보증된 상한·하한과 함께 반환한다.","de":"Abstand (kürzeste Distanz) zwischen den konvexen Hüllen zweier Punktmengen, zusammen mit garantierten unteren und oberen Schranken.","hi":"दो vertex sets के convex hulls के बीच का gap (सबसे छोटी दूरी), प्रमाणित lower और upper bounds के साथ।"},
@@ -17944,6 +17947,26 @@
    "de": "Bestimmt per Punktpaar-Merkmal-(PPF-)Abstimmung und ICP, wo ein bekanntes Objekt (Modellpunktwolke) in einer Szenenpunktwolke liegt (``pose``).",
    "hi": "पॉइंट-पेयर फ़ीचर (PPF) वोटिंग और ICP से ज्ञात वस्तु (मॉडल पॉइंट क्लाउड) दृश्य पॉइंट क्लाउड में कहाँ है, यह निकालता है (``pose``)।"
   },
+  "3d/ppf_pose_hypotheses": {
+   "fp": "56a10f7c4219",
+   "ja": "PPF 投票を最良の1姿勢にまとめず、上位 N 件の姿勢を返す。",
+   "en": "Return the top-N PPF poses instead of collapsing the vote to one pose.",
+   "zh": "返回 PPF 投票得分最高的 N 个位姿，而不是将投票压缩为单个位姿。",
+   "tw": "傳回 PPF 投票得分最高的 N 個姿態，而不是將投票壓縮為單一姿態。",
+   "ko": "PPF 투표를 하나의 최적 자세로 합치지 않고 상위 N개 자세를 반환합니다.",
+   "de": "Liefert die N besten PPF-Posen, statt die Abstimmung auf eine einzige Pose zu reduzieren.",
+   "hi": "PPF मतदान को एक सर्वोत्तम pose में समेटने के बजाय शीर्ष N poses लौटाता है।"
+  },
+  "3d/pose_nms_symmetry": {
+   "fp": "e09074d51d9e",
+   "ja": "モデル空間の距離内にある、対称性で等価な姿勢だけを抑制する。",
+   "en": "Suppress only symmetry-equivalent poses within a model-space distance.",
+   "zh": "仅抑制模型空间距离阈值内由对称性等价的位姿。",
+   "tw": "僅抑制模型空間距離閾值內由對稱性等價的姿態。",
+   "ko": "모델 공간 거리 안에서 대칭적으로 동등한 자세만 억제합니다.",
+   "de": "Unterdrückt nur symmetrieäquivalente Posen innerhalb eines Abstands im Modellraum.",
+   "hi": "मॉडल-स्पेस दूरी के भीतर केवल symmetry-equivalent poses को दबाता है।"
+  },
   "spc/proportion_interval": {
    "fp": "40a502123fae",
    "en": "Return the point estimate and confidence limits for the binomial proportion ``k/n`` (``table``).",
@@ -25073,6 +25096,15 @@
    "ko": "로그 정규 **체적** 분포를 장치와 같은 구간에 할당한 입도 분포(참값 포함).",
    "de": "Partikelgrößenverteilung aus einer log-normalen Verteilung nach **Volumen**, auf dieselben Klassen wie das Gerät aufgeteilt (mit Ground Truth).",
    "hi": "log-normal **volume** distribution को instrument वाले ही size class में बाँटकर बना particle size distribution (ground truth सहित)।"
+  },
+  "drive/particle_size_distribution": {
+   "fp": "0ca60b7b4b6a",
+   "en": "Calibrates a particle table and returns acceptance reasons, bins on three bases, D10/D50/D90 with confidence intervals, and provenance.",
+   "zh": "校准粒子表，并返回采纳理由、三种基准的分箱、带置信区间的 D10/D50/D90 以及溯源信息。",
+   "tw": "校正粒子表，並回傳採納理由、三種基準的分箱、附信賴區間的 D10/D50/D90 與溯源資訊。",
+   "ko": "입자 표를 보정하고, 채택 사유, 세 기준의 빈, 신뢰구간을 포함한 D10/D50/D90 및 이력을 반환합니다.",
+   "de": "Kalibriert eine Partikeltabelle und gibt Annahmegründe, Klassen nach drei Grundlagen, D10/D50/D90 mit Konfidenzintervallen und die Herkunft zurück.",
+   "hi": "particle table को calibrate करता है और स्वीकार/अस्वीकार के कारण, तीन आधारों के bins, confidence intervals सहित D10/D50/D90 और provenance लौटाता है।"
   },
   "drive/comminution_energy": {
    "fp": "a302fe749662",

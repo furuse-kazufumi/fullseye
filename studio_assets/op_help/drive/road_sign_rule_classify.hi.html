@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">road_sign_rule_classify — DRIVE <code style="color:#22d3bf">sign</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage × contour × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_sign_rule_classify(image, contour, rules=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roadsign; roadsign.road_sign_rule_classify(image, contour, rules=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;road_sign_rule_classify&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: नहीं (केवल CPU reference implementation)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>RGB और contour shape से जापानी stop sign, speed-limit candidate या no-entry sign को नियमों से वर्गीकृत करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>image : (H, W, 3) rgbimage</p>
+<p>0..1の標識crop。輪郭と同じ画素座標。</p>
+<p>contour : contour</p>
+<p><code style="color:#22d3bf">regular_shape_classify</code> と同じXLD輪郭。</p>
+<p>rules : table or None</p>
+<p>HSVしきい値の名前付き上書き。既定値はモジュール定数として公開する。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>table</p>
+<p><code style="color:#22d3bf">label</code> は <code style="color:#22d3bf">stop_jp</code>、<code style="color:#22d3bf">speed_limit_candidate</code>、<code style="color:#22d3bf">no_entry</code>、<code style="color:#22d3bf">unknown</code>。</p>
+<p>形、赤/白/青の面積率、外周/内側配色、白帯の形、確信度、棄却理由も返す。</p>
+<p>出典: e-Gov「道路標識、区画線及び道路標示に関する命令」別表第二、Law ID <code style="color:#22d3bf">335M50004002003</code>、Revision <code style="color:#22d3bf">335M50004002003_20260901_508M60000802003</code> (2026-11-25確認)。一時停止(330-A)は赤い逆三角形、最高速度(323)は赤枠・白地・青文字の円、車両進入禁止(303)は赤地・白横帯の円。図示寸法は順に一辺0.80 m、直径0.60 m、直径0.60 m。</p>
+<p><code style="color:#22d3bf">speed_limit_candidate</code> は速度標識らしい外形までで、数字も規制内容も確定しない。数字認識には別の検証済みOCR/テンプレート照合が必要である。赤い八角形は日本の一時停止ではないため <code style="color:#22d3bf">unknown</code> に棄却する。</p>
+<p>English: combine the contour op with explicit HSV/layout rules for the three supported Japanese appearances.  A circular red border is only a <code style="color:#22d3bf">speed_limit_candidate</code>; no numeric limit is inferred without a separate validated digit recogniser.  A red octagon is deliberately rejected because Japanese stop sign 330-A is an inverted triangle. The normative dimensions and colours above come from e-Gov Appended Table 2.</p>
+<p>呼び出し例::</p>
+<p>import numpy as np</p>
+<p>import roadsign</p>
+<p>t = np.linspace(0., 2*np.pi, 65)</p>
+<p>c = np.c_[32 + 24*np.sin(t), 32 + 24*np.cos(t)]</p>
+<p>rgb = np.zeros((65,65,3)); rgb[...,0] = .8</p>
+<p>rgb[28:37, 14:51] = 1.</p>
+<p>out = roadsign.road_sign_rule_classify(rgb, {&quot;shape&quot;:(65,65), &quot;cs&quot;:[c]}, {})</p>
+<p>assert out[&quot;label&quot;] == &quot;no_entry&quot;</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ginza_stage2_ops">poc_ginza_stage2_ops</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ginza_stage2_ops.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">sign</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:regular_shape_classify">regular_shape_classify</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roadsign.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -6626,6 +6626,46 @@ def _b_gd_synth(pool, rng):
     return (float(rng.uniform(20, 150)), float(rng.uniform(0.2, 0.5))), {}
 
 
+def _b_pharma_psd(pool, rng):
+    """顕微鏡粒径の粒子表と、有効期間内の一行校正表 / valid microscopy tables."""
+    # The operator deliberately rejects a loose feature table: every row must
+    # correspond to one actual split label and count-interval record.  Build
+    # that complete, internally consistent provenance here so the fuzzer tests
+    # the op rather than its documented fail-closed boundary.
+    import pharmaparticle as psd  # noqa: PLC0415
+
+    nominal_diam = np.array([12.0, 20.0, 35.0]) * float(rng.uniform(0.9, 1.1))
+    pixel_area = np.maximum(1, np.rint(np.pi * (nominal_diam / 2.0) ** 2).astype(int))
+    labels = np.arange(1, nominal_diam.size + 1, dtype=int)
+    # Use the actual integer label areas, including the area-equivalent
+    # diameter, rather than a continuous-circle surrogate.
+    diam = np.sqrt(4.0 * pixel_area / np.pi)
+    upstream_records = {
+        "blob_split": np.repeat(labels, pixel_area).reshape(1, -1),
+        "blob_count_interval": {"components": {
+            "label": labels, "lo": np.ones(labels.size, dtype=int),
+            "hi": np.ones(labels.size, dtype=int),
+            "status": np.asarray(["determined"] * labels.size),
+        }},
+    }
+    digest = psd._upstream_provenance_digest(upstream_records)
+    particles = {"object_id": ["a", "b", "c"], "diameter_px": diam,
+                 "area_px2": pixel_area.astype(float), "diameter_unit": "px", "area_unit": "px2",
+                 "touches_border": [False, False, False], "split_status": ["isolated"] * labels.size,
+                 "component_id": ["component-%d" % label for label in labels],
+                 "split_evidence": ["blob_split + blob_count_interval:determined"] * labels.size,
+                 "upstream_provenance_hash": [digest] * labels.size,
+                 "upstream_component_label": labels, "upstream_split_label": labels,
+                 "count_interval_lo": np.ones(labels.size, dtype=int),
+                 "count_interval_hi": np.ones(labels.size, dtype=int),
+                 "count_determined": [True] * labels.size}
+    calibration = {"scale": {"value": 0.0005, "unit": "mm/px", "standard_uncertainty": 0.0000025},
+                   "calibrator_id": "FUZZ-SM-1", "calibrated_at": "2026-01-01",
+                   "valid_until": "2027-01-01"}
+    return (particles, calibration), {"measurement_date": "2026-06-01", "bootstrap_samples": 200,
+                                      "seed": 776, "upstream_records": upstream_records}
+
+
 def _b_gd_energy(pool, rng):
     x1 = float(rng.uniform(200, 800))
     return (x1, x1 * float(rng.uniform(0.05, 0.8))), {"law": ("kick", "bond", "rittinger")[int(rng.integers(0, 3))]}
@@ -8117,6 +8157,55 @@ def _b_lane_stop(pool, rng):
     return (f["labels"], f["lane"]), {}
 
 
+def _b_lane_curve(pool, rng):
+    """整合した左右境界を曲率opへ渡す / feed coherent boundaries to the curve op."""
+    f = _fuzz_lane()
+    left = {**f["left"], "coefficients": np.array([-1.75, 0.01, 0.002])}
+    right = {**f["right"], "coefficients": np.array([1.75, 0.01, 0.002])}
+    return (left, right), {"camera_height": 1.6, "seed": 0}
+
+
+def _b_road_sign(pool, rng):
+    """同一座標系の一時停止cropと輪郭 / matched Japanese-stop crop and contour."""
+    shape = (129, 129)
+    rows, cols = np.mgrid[0:shape[0], 0:shape[1]].astype(np.float64)
+    rows += 0.5
+    cols += 0.5
+    centre = np.array([64.0, 64.0])
+    radius = 32.0
+    image = np.full((*shape, 3), 0.12, np.float64)
+    theta = 2.0 * np.pi * np.arange(3) / 3.0
+    vertices = np.c_[centre[0] + radius * np.cos(theta),
+                     centre[1] + radius * np.sin(theta)]
+    pieces = []
+    for start, end in zip(vertices, np.roll(vertices, -1, axis=0)):
+        t = np.arange(16, dtype=np.float64) / 16.0
+        pieces.append(start[None] * (1.0 - t[:, None]) + end[None] * t[:, None])
+    points = np.vstack(pieces)
+
+    def polygon_mask(polygon):
+        """偶奇則で小輪郭を塗る / fill the small contour by the even-odd rule."""
+        inside = np.zeros(shape, bool)
+        previous = polygon[-1]
+        for current in polygon:
+            r0, c0 = previous
+            r1, c1 = current
+            crosses = (r0 > rows) != (r1 > rows)
+            at_col = (c1 - c0) * (rows - r0) / (r1 - r0 + np.finfo(float).eps) + c0
+            inside ^= crosses & (cols < at_col)
+            previous = current
+        return inside
+
+    outer = polygon_mask(points)
+    image[outer] = (0.90, 0.04, 0.04)
+    image[polygon_mask(centre + 0.84 * (points - centre))] = (0.94, 0.94, 0.94)
+    image[polygon_mask(centre + 0.72 * (points - centre))] = (0.90, 0.04, 0.04)
+    bar = outer & (np.abs(rows - 61.0) <= 2.0) & (np.abs(cols - 64.0) <= 16.0)
+    image[bar] = (0.94, 0.94, 0.94)
+    contour = {"shape": shape, "cs": [points]}
+    return (image, contour), {}
+
+
 OP_ARG_BUILDERS = {
     **_MV_BUILDERS,
     "archive_probe": lambda pool, rng: ((_archive_probe_payload(),), {}),
@@ -8621,6 +8710,7 @@ OP_ARG_BUILDERS = {
     "breakage_first_order_fit": _b_gd_first, "replicate_compare": _b_gd_rep, "ae_read_csv": _b_gd_aeread,
     "ae_band_power": _b_gd_band, "ae_size_correspondence": _b_gd_corr, "particle_image_synth": _b_gd_imsynth,
     "particle_image_d50": _b_gd_imd50,
+    "particle_size_distribution": _b_pharma_psd,
     "matmul_ozaki": _b_oz_mm_fixed, "matmul_reproducible": _b_oz_mm, "ozaki_error_bound": _b_oz_bound,
     "cross_covariance_reproducible": _b_oz_pts, "kabsch_reproducible": _b_oz_pts, "fp64_emulation_probe": _b_noargs,
     "sph_kernel": _b_sw_kernel, "sph_density_pressure": _b_sw_density, "swarm_simulate": _b_sw_sim,
@@ -8663,6 +8753,8 @@ OP_ARG_BUILDERS = {
     "color_rule_mask": _b_lane_color, "plane_topview_color": _b_lane_topview,
     "lane_boundary_fit": _b_lane_boundary, "lane_center_path": _b_lane_center,
     "stop_line_detect": _b_lane_stop,
+    # 銀座 v2 第2段の曲率・日本式標識 / Ginza v2 stage-two curve and Japanese signs.
+    "lane_curve_estimate": _b_lane_curve, "road_sign_rule_classify": _b_road_sign,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: c70ba3c329f3 -->
+<!-- i18n-source-sha: 4d7dab5a96bd -->
 # Getting started (running in 5 minutes)
 
 [日本語](./GETTING_STARTED.md) · **English** · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -41,22 +41,22 @@ Prerequisite: **Python 3.11** (`py -3.11` on Windows, `python3.11` on Linux).
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # core only (numpy + scipy; every op is listed, and an op that needs an optional backend names the missing extra when called)
+py -3.11 -m pip install -e .          # Python API + Studio + Pillow; add heavy backends only when needed
 ```
 
-The core runs on **numpy and scipy alone**. Extra backends such as OpenCV / scikit-image / Pillow
-are optional; if one isn't installed, only that backend's own operators are disabled (graceful
-degradation). In practice you need at least OpenCV or Pillow for reading and writing image files,
-so adding one of these makes life easier:
+The core API runs on **numpy and scipy**, and a standard `pip install fullseye` also installs
+PySide6-Essentials for Studio and Pillow for image I/O. Only heavier extra backends such as OpenCV
+and scikit-image are optional; if one isn't installed, only that backend's own operators are
+disabled (graceful degradation).
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # image I/O + OpenCV-derived operators
-py -3.11 -m pip install -e ".[all]"       # all backends (opencv, skimage, pil, wavelets, gpu, extra)
-py -3.11 -m pip install -e ".[gui]"       # if you want Fullseye Studio (PySide6)
+py -3.11 -m pip install -e ".[opencv]"    # OpenCV-only image API and cv_* operators
+py -3.11 -m pip install -e ".[all]"       # every additional backend
+fullseye-studio                            # Studio starts after the standard install
 ```
 
-The list of extras and what each means is collected in [INSTALL.md](INSTALL.md). To use the GUI
-you need `[gui]` (or `[all]` + `[gui]`).
+The list of extras and what each means is collected in [INSTALL.md](INSTALL.md). `gui` and `pil`
+are empty compatibility aliases for existing install commands.
 
 > You can also try it without installing. Make the repository root (`<path-to-fullseye>`) your
 > working directory and put that path on the `PYTHONPATH` environment variable, and `import
@@ -145,7 +145,9 @@ out = fullseye.run_pipeline(frame, stages)
 
 Without writing code, you can search for operators and lay them out, turn the knobs with sliders,
 run them one stage at a time, and assemble the pipeline while watching the intermediate results.
-The GUI extras (`pip install -e ".[gui]"` = PySide6) are required.
+Studio is part of the standard installation. On the first interactive `fullseye` or
+`fullseye-studio` command it registers once in the Windows Start menu or Linux app menu; set
+`FULLSEYE_NO_SHORTCUTS=1` or `shortcuts/auto_register=false` in Studio settings to opt out.
 
 ```powershell
 py -3.11 studio.py          # or, if installed: fullseye-studio
@@ -237,8 +239,8 @@ stage, use `run_pipeline` (Python) above, or Studio.
 |---|---|
 | `ModuleNotFoundError: No module named 'fullseye'` | run `pip install -e .`, or put the repo root on `PYTHONPATH` |
 | no `fullseye` / `fullseye-studio` command | console scripts are registered by `pip install -e .`. If not installed, use `py -3.11 imgevolve.py ...` / `py -3.11 studio.py` |
-| Studio won't start | GUI extras not installed. `pip install -e ".[gui]"` (PySide6) |
-| `cannot read ...` in `apply` / `pipeline` | install OpenCV (`[opencv]`) or Pillow (`[pil]`) for image I/O |
+| Studio won't start | broken standard dependency. `pip install --force-reinstall fullseye` |
+| `cannot read ...` in `apply` / `pipeline` | broken standard Pillow dependency, or a damaged image. Reinstall Fullseye, then inspect the image |
 | an extra backend's operator is "unknown" | that backend isn't installed. Add `.[skimage]` `.[wavelets]` `.[extra]`, etc. |
 
 For fuller troubleshooting see [INSTALL.md](INSTALL.md).

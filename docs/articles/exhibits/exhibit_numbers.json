@@ -173,6 +173,10 @@
    "accessioned": "2026-09-07",
    "no": "2026.062"
   },
+  "poc_compendial_particle_microscopy": {
+   "accessioned": "2026-11-23",
+   "no": "2026.318"
+  },
   "poc_complex_plane_fields": {
    "accessioned": "2026-09-22",
    "no": "2026.138"
@@ -424,6 +428,10 @@
   "poc_geodetic_height_frames": {
    "accessioned": "2026-09-08",
    "no": "2026.098"
+  },
+  "poc_ginza_stage2_ops": {
+   "accessioned": "2026-11-25",
+   "no": "2026.319"
   },
   "poc_glyph_typo_detection": {
    "accessioned": "2026-09-17",

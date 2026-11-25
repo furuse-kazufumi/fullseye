@@ -108,11 +108,17 @@ def test_module_requirements_is_static_and_sees_lazy_imports():
 def test_optional_deps_table_matches_pyproject_extras():
     tomllib = pytest.importorskip("tomllib")
     with open(os.path.join(ROOT, "pyproject.toml"), "rb") as f:
-        extras = tomllib.load(f)["project"]["optional-dependencies"]
+        project = tomllib.load(f)["project"]
+    extras = project["optional-dependencies"]
+    standard = project["dependencies"]
     for imp, (pip, extra) in ops.OPTIONAL_DEPS.items():
-        assert extra in extras, (imp, extra)
-        assert any(req.lower().startswith(pip.lower()) for req in extras[extra]), (imp, pip, extras[extra])
-        in_all = any(req.lower().startswith(pip.lower()) for req in extras["all"])
+        if extra is None:
+            assert any(req.lower().startswith(pip.lower()) for req in standard), (imp, pip, standard)
+        else:
+            assert extra in extras, (imp, extra)
+            assert any(req.lower().startswith(pip.lower()) for req in extras[extra]), (imp, pip, extras[extra])
+        in_all = (any(req.lower().startswith(pip.lower()) for req in standard) or
+                  any(req.lower().startswith(pip.lower()) for req in extras["all"]))
         assert in_all == (imp in ops.OPTIONAL_IN_ALL), (imp, pip, in_all)
 
 
