@@ -292,7 +292,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## सब कुछ देखें
 
-284 PoCs और 2 robot demos। group खोलने पर thumbnails load होते हैं।
+285 PoCs और 2 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 

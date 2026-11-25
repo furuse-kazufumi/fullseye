@@ -2826,7 +2826,7 @@ This run produced **4 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`fill_up`](https://furuse.work/ops/2d/region/fill_up.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_corner_harris`](https://furuse.work/ops/2d/edges/sk_corner_harris.html) · [`sk_find_contours`](https://furuse.work/ops/2d/contour/sk_find_contours.html) · [`xg_gen_polygons`](https://furuse.work/ops/2d/xldgeom/xg_gen_polygons.html)
 
-## No.2026.318 —— Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules
+## No.2026.319 —— Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules
 
 This reads gentle lanes and Japanese sign appearances without a trained model. On the independent synthetic holdout, centre-error p95 is 0.106704 m, the maximum is 0.477989 m, and sign macro F1 is 0.927885 (38/40); the same run also keeps the failure side in its figures.
 

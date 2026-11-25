@@ -320,7 +320,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## ぜんぶ見る
 
-PoC 284 本と、ロボットの例 2 本。グループを開くとサムネイルが出ます。
+PoC 285 本と、ロボットの例 2 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 

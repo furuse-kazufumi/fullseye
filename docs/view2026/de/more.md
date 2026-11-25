@@ -292,7 +292,7 @@ In diesem Abschnitt sind Titel und Zusammenfassungen übersetzt; die ausführlic
 
 ## Alles ansehen
 
-284 PoCs und 2 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+285 PoCs und 2 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 

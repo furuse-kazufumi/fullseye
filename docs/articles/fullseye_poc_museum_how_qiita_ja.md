@@ -2826,7 +2826,7 @@ py -3.11 examples/poc_cloth_towel_corners_synth.py
 
 使用 op(ノートへ): [`fill_up`](https://furuse.work/ops/2d/region/fill_up.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`sk_corner_harris`](https://furuse.work/ops/2d/edges/sk_corner_harris.html) · [`sk_find_contours`](https://furuse.work/ops/2d/contour/sk_find_contours.html) · [`xg_gen_polygons`](https://furuse.work/ops/2d/xldgeom/xg_gen_polygons.html)
 
-## No.2026.318 —— 銀座v2第2段 —— 緩い車線の中心・符号つき曲率・速度上限と日本式標識の形を古典規則で読む
+## No.2026.319 —— 銀座v2第2段 —— 緩い車線の中心・符号つき曲率・速度上限と日本式標識の形を古典規則で読む
 
 緩いカーブの車線と日本式標識を、学習済みモデルを使わずに読む。独立した合成holdoutでは中心誤差p95が0.106704 m、最大が0.477989 m、標識のmacro F1が0.927885（38/40）で、破綻する側も同じ実行の図に残した。
 

@@ -200,13 +200,13 @@
 
 ## `backends_typed.py`
 
-- **L500** — ★2026-10-07: 空入力を op が**正しく拒否した後**、ここが空配列の平均 = NaN を返して いた(8 op。外側の guard が置き換えるので有限に見え、台帳にだけ source=output で 残っていた)。拒否の後始末が 0/0 を作らないよう、空なら 0.0。
-- **L577** — ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより **a だけを配線して b を『未使用』と書く**ほうが正しい。
-- **L595** — ★2026-10-07: 相対スケールの端が定義域の外へ出ていた 2 本(契約電池で、端の knob が **全入力で**拒否されていた)。両端は a=0.5 の値が相対スケールと同じになるよう選んだ (window 10 / k 3)—— 既定の挙動と図の主図は動かない。整数の既定を持つ引数は ``_make_runner`` が整数に丸めて渡す。
-- **L601** — ★2026-10-18: points_render の不透明度は (0, 1] —— 既定 1.0 の相対スケールは a > 0.5 で 1 を超えて拒否。 足跡の半径は 0.5〜4 画素(a=0.5 で 2.25)。
-- **L614** — ★2026-10-07 実測: ``tb_cx_apply_transfer_function`` は H を 32x32 固定で束縛していたので 32x32 以外のスペクトルでは**全入力・全 knob で**拒否していた(契約電池 24x24、図 128x128)。 ``tb_temporal_band_power`` / ``tb_temporal_bandpass`` は帯域 [3, 5] Hz 固定で、12 フレーム / 32 fps の探針(ビン間隔 2.67 Hz)には帯域内のビンが無く、契約電池で一度も計算されていなかった。
-- **L808** — ★cleandoc で共通の字下げを外してから継ぐ(2026-10-11)。.strip() だけだと 1 行目以外が 4 字下げのまま残り、 字下げの無い橋渡し文を後ろに足すため後段の cleandoc も最小字下げ 0 と見て外さない → docs/ops の Markdown で空行の後の本文がコードブロックとして表示されていた(tb_ 146 本)。
-- **L893** — ★2026-09-05 まで ``tools/chain_fuzz``(非同梱)を sys.path 操作で読んでいた。 wheel では失敗し、下の build() が黙って [] を返すので tb_* 143 op が消えていた。
+- **L501** — ★2026-10-07: 空入力を op が**正しく拒否した後**、ここが空配列の平均 = NaN を返して いた(8 op。外側の guard が置き換えるので有限に見え、台帳にだけ source=output で 残っていた)。拒否の後始末が 0/0 を作らないよう、空なら 0.0。
+- **L578** — ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより **a だけを配線して b を『未使用』と書く**ほうが正しい。
+- **L596** — ★2026-10-07: 相対スケールの端が定義域の外へ出ていた 2 本(契約電池で、端の knob が **全入力で**拒否されていた)。両端は a=0.5 の値が相対スケールと同じになるよう選んだ (window 10 / k 3)—— 既定の挙動と図の主図は動かない。整数の既定を持つ引数は ``_make_runner`` が整数に丸めて渡す。
+- **L602** — ★2026-10-18: points_render の不透明度は (0, 1] —— 既定 1.0 の相対スケールは a > 0.5 で 1 を超えて拒否。 足跡の半径は 0.5〜4 画素(a=0.5 で 2.25)。
+- **L615** — ★2026-10-07 実測: ``tb_cx_apply_transfer_function`` は H を 32x32 固定で束縛していたので 32x32 以外のスペクトルでは**全入力・全 knob で**拒否していた(契約電池 24x24、図 128x128)。 ``tb_temporal_band_power`` / ``tb_temporal_bandpass`` は帯域 [3, 5] Hz 固定で、12 フレーム / 32 fps の探針(ビン間隔 2.67 Hz)には帯域内のビンが無く、契約電池で一度も計算されていなかった。
+- **L809** — ★cleandoc で共通の字下げを外してから継ぐ(2026-10-11)。.strip() だけだと 1 行目以外が 4 字下げのまま残り、 字下げの無い橋渡し文を後ろに足すため後段の cleandoc も最小字下げ 0 と見て外さない → docs/ops の Markdown で空行の後の本文がコードブロックとして表示されていた(tb_ 146 本)。
+- **L894** — ★2026-09-05 まで ``tools/chain_fuzz``(非同梱)を sys.path 操作で読んでいた。 wheel では失敗し、下の build() が黙って [] を返すので tb_* 143 op が消えていた。
 
 ## `ballistics.py`
 
@@ -357,10 +357,10 @@
 - **L488** — ★例の本文を落とさない。図が出ないのは残念だが、数字は出さねばならない。
 - **L527** — ★ここで :func:`_to_rgb8` に丸投げしてはいけない。あれは (H,W) を `colorize_depth` に渡すが、**その中で 1 枚ずつ正規化される**ので、 全コマ 0 の画と全コマ 1 の画が同じ色になる(2026-09-09 に試験が捕まえた)。 値域を明示して渡すことで、初めて尺度が 1 つになる。
 - **L592** — ★Pillow は**直前とまったく同じコマを 1 枚に畳む**(その分の時間は前の コマの表示時間に足されるので、動きの速さは変わらない)。書いた後で 数え、渡した数と違えば台帳に**両方**残す —— 「72 コマの GIF」と 言いながら中身が 40 コマ、を黙って通さないため。
-- **L760** — ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や 24×24 の縮小マップは PoC で普通に出るのに、エラーは 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、 呼び手ごとに拡大を書かせず、ここで 1 度だけ補間する。入力が十分大きければ 1 倍のままなので実データの解像度を保つ。拡大が必要な小画像だけは、発表図で 画素の四角を増やす最近傍を避け、双三次補間する。
-- **L1004** — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
-- **L1016** — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
-- **L1065** — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
+- **L768** — ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や 24×24 の縮小マップは PoC で普通に出るのに、エラーは 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、 呼び手ごとに拡大を書かせず、ここで 1 度だけ補間する。入力が十分大きければ 1 倍のままなので実データの解像度を保つ。拡大が必要な小画像だけは、発表図で 画素の四角を増やす最近傍を避け、双三次補間する。
+- **L1014** — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
+- **L1026** — ★2026-10-21: 棒を 1 本ずつ別の系列にした図(色を棒ごとに変えるため)は、系列の中に x が 1 つしか なく plot_series が間隔を知れないので、棒が描画域の 70 % の幅になり隣と重なった(製造公差 PoC の 歩留まりの対比図で目視)。棒の x を**全系列**から集め、その最小間隔(棒が 1 本しかなければ目盛りの 間隔)を画素に直して、1 点の系列にだけ bar_width として渡す。複数点の系列は従来どおり自分の間隔。
+- **L1075** — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -2298,8 +2298,8 @@
 
 ## `opsdrive.py`
 
-- **L126** — ★2026-11-03(レシピの e2e が見つけた宣言の嘘): RSS の 8 op は台帳で入力を ``["table"]``(rss_params の表)と 宣言しているのに、素の関数は速さ・間隔が先で表は 3〜4 番目(``rss_longitudinal_same(v_rear, v_front, p)``)。 宣言どおり表を第 1 引数に渡すと ``fs.ledger.rss_longitudinal_same(p, v_rear=20, v_front=15)`` が ``TypeError: got multiple values for argument 'v_rear'`` で落ち、型で繋ぐ鎖 ``rss_params -> rss_*`` が組めなかった。 素の関数(rsssafety.* と facade)の並びは公開の約束なので変えず、**台帳の入口だけ**を「表が先」の並びにする: ``(p, v_rear, v_front, p_front=None)`` など(残りの引数の順は素の関数のまま)。``__wrapped__`` で同じ op の identity を保ち、``__signature__`` で OP_GRAPH の引数表も宣言どおり(表が第 1 スロット)になる。 旧い並び(第 1 引数が速さ・間隔の数)で呼んでいた呼び手(連鎖ファザーの builder など)はそのまま素の関数へ渡す。 第 1 引数が dict のときだけ新しい並びと読む —— 素の関数の第 1 引数はどれも数(速さ・間隔)なので取り違えは 起きない。表を第 1 引数と名前つき引数の両方で渡したら TypeError(fail-closed)。
-- **L1210** — 融合は同じ格子の高さ図の list = images。★terrain.slope_map は載せない: dem_slope(method="central") と内側が ビット一致で、縁と穴の扱いだけが違う(slope_map の docstring)。surface_normals は ops3d の測光の op と名前が 重なり、terrain_surface_normals は facade の正式名なので elevation_normals の名で載せる。traversability(1 語)は elevation_traversability、step_edges は cell の効かない台帳の入口 elevation_step_edges(どれも terrain.py の入口)。
+- **L127** — ★2026-11-03(レシピの e2e が見つけた宣言の嘘): RSS の 8 op は台帳で入力を ``["table"]``(rss_params の表)と 宣言しているのに、素の関数は速さ・間隔が先で表は 3〜4 番目(``rss_longitudinal_same(v_rear, v_front, p)``)。 宣言どおり表を第 1 引数に渡すと ``fs.ledger.rss_longitudinal_same(p, v_rear=20, v_front=15)`` が ``TypeError: got multiple values for argument 'v_rear'`` で落ち、型で繋ぐ鎖 ``rss_params -> rss_*`` が組めなかった。 素の関数(rsssafety.* と facade)の並びは公開の約束なので変えず、**台帳の入口だけ**を「表が先」の並びにする: ``(p, v_rear, v_front, p_front=None)`` など(残りの引数の順は素の関数のまま)。``__wrapped__`` で同じ op の identity を保ち、``__signature__`` で OP_GRAPH の引数表も宣言どおり(表が第 1 スロット)になる。 旧い並び(第 1 引数が速さ・間隔の数)で呼んでいた呼び手(連鎖ファザーの builder など)はそのまま素の関数へ渡す。 第 1 引数が dict のときだけ新しい並びと読む —— 素の関数の第 1 引数はどれも数(速さ・間隔)なので取り違えは 起きない。表を第 1 引数と名前つき引数の両方で渡したら TypeError(fail-closed)。
+- **L1211** — 融合は同じ格子の高さ図の list = images。★terrain.slope_map は載せない: dem_slope(method="central") と内側が ビット一致で、縁と穴の扱いだけが違う(slope_map の docstring)。surface_normals は ops3d の測光の op と名前が 重なり、terrain_surface_normals は facade の正式名なので elevation_normals の名で載せる。traversability(1 語)は elevation_traversability、step_edges は cell の効かない台帳の入口 elevation_step_edges(どれも terrain.py の入口)。
 
 ## `opsfit.py`
 
@@ -3477,21 +3477,21 @@
 - **L7167** — ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が 無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。 窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、 effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
 - **L7378** — ★obs2 の 2 点目は台車 0 の終点から (−0.15, 1.0) ずらした所: 射影の角 0.1 → 0.2 rad で終点と点の順が入れ替わり、 組紐語が変わる(角が「効かないノブ」に見えない入力。類が同じかは角に依らない —— それは門が別に見る)。
 - **L7705** — ★以前の 8 画素周期の敷き詰め(7 x 7)は得点 1 の一致が 49 か所あり、上位 max_matches = 10 が 全部 1 になって min_score が出力に現れなかった(2026-11-04 の統合で直した)。
-- **L9119** — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L9245** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
-- **L9380** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
-- **L9589** — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L9591** — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-- **L9593** — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-- **L9596** — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
-- **L9603** — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
-- **L9605** — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
-- **L9608** — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
-- **L9610** — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
-- **L9612** — ★2026-10-19: 最適化後の処方(R = inf)を返す
-- **L9614** — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
-- **L9637** — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L9763** — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L9170** — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L9296** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
+- **L9431** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
+- **L9640** — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L9642** — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L9644** — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
+- **L9647** — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
+- **L9654** — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
+- **L9656** — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
+- **L9659** — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
+- **L9661** — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
+- **L9663** — ★2026-10-19: 最適化後の処方(R = inf)を返す
+- **L9665** — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
+- **L9688** — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L9814** — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 

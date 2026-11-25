@@ -61,7 +61,7 @@
 | `cimage` | ok | 10 | 15 |  |  | none | 2-D 複素画像。産 10 / 受 15。 | TYPE_TO_SORT['cimage']。 |
 | `color` | ok | 5 | 11 | カラーカメラの取り込み(acquire の RGB)。2-D レジストリの色画像。 |  | none | 2-D レジストリの (H,W,3) 色画像。台帳の rgbimage / rgb とは分けてある(色の符号化が違うと黙って値がずれる。opsimgmetrics.NEW_SORTS の実測)。 | ops.COLOR、opsimgmetrics.NEW_SORTS['rgb']。 |
 | `conn_graph` | ok | 6 | 20 |  |  | none | n×n の重みつき有向隣接行列。消費 20。これまで入口は synapse_table だけで、synapse_table を作る op が無かったため画像からも表からも届かなかった。この版で knn_graph_to_conn_graph(graph ->)と synapse_table_from_table(table -> synapse_table)が入口になった。 | opsconngraph の docstring『型語彙』。 |
-| `contour` | ok | 43 | 67 |  |  | none | XLD 輪郭 dict。2-D レジストリの主要型(産 43 / 受 66)。 | docs/ADDING_OPS.md の Sort contract。 |
+| `contour` | ok | 43 | 69 |  |  | none | XLD 輪郭 dict。2-D レジストリの主要型(産 43 / 受 66)。 | docs/ADDING_OPS.md の Sort contract。 |
 | `coordgrid` | d | 1 | 6 | grid_coords() が引数だけで作る座標格子(SDF を評価する場所)。画像から作るものではない。 |  | none | SDF 族の評価点。入口は合成(grid_coords)が正しい。 | OP_INDEX: grid_coords の in_sorts = []。消費は *_sdf 6 op。 |
 | `countrate` | ok | 3 | 3 |  |  | none | 光子のレート [Hz]。counts との往復(gate 時間つき)がある。 | reprconv.countrate_to_counts / counts_to_countrate。 |
 | `counts` | ok | 13 | 17 |  |  | none | 光子カウント(非負の 1-D)。産 13 / 受 17。countrate との往復は gate 時間つき。 | TYPE_TO_SORT['counts']、opsphoton の族、reprconv.counts_to_countrate。 |
@@ -124,7 +124,7 @@
 | `rgb` | ok | 58 | 36 | 台帳の描画・合成(gfx2d)の色画像。 | 人が見る色の絵(gfx2d の合成結果・図)。 | none | (H,W,3) の色(符号化を特定しない 3 チャネル)。rgbimage と分けた理由は opsimgmetrics.NEW_SORTS(L* が 32.53 でなく 5.72 と静かに出る実測)。 | opsimgmetrics.NEW_SORTS['rgb']。 |
 | `rgba` | ok | 11 | 7 |  | 合成した絵(ストレート α)。 | none | (H,W,4) ストレート α。rgba_premul と分けた理由は opsgfx2d の docstring。 | opsgfx2d の docstring(rgba / rgba_premul を分けた理由)。 |
 | `rgba_premul` | ok | 2 | 2 |  |  | none | 乗算済み α。premultiply / unpremultiply の往復で閉じる。 | opsgfx2d の premultiply / unpremultiply / alpha_composite_premul。 |
-| `rgbimage` | ok | 42 | 40 |  | 線形 RGB の絵(断面・可視化の出口、Studio で見せる)。 | none | 線形 RGB (H,W,3)。pointmap / normalmap と同形だが意味が違うので分けた(opsspecular のコメント)。 | TYPE_TO_SORT['rgbimage']。 |
+| `rgbimage` | ok | 42 | 41 |  | 線形 RGB の絵(断面・可視化の出口、Studio で見せる)。 | none | 線形 RGB (H,W,3)。pointmap / normalmap と同形だが意味が違うので分けた(opsspecular のコメント)。 | TYPE_TO_SORT['rgbimage']。 |
 | `rgbvideo` | ok | 8 | 4 |  | 展示と Studio へ渡す色動画(opsconngraph の docstring『受ける op は無い(出口)』)。 | none | (F,H,W,3) の色動画。受ける op は無く、展示と Studio へ渡す出口。 | opsconngraph の docstring『rgbvideo』。 |
 | `rgbvolume` | ok | 3 | 2 |  |  | none | 色つき体積。断面・MPR の rgbimage が出口。 | opsvolcolor(vol_label_slice_rgb / vol_label_mpr_rgb が受ける)。 |
 | `rle_region` | ok | 5 | 7 |  |  | none | ランレングスの 3-D 領域。産 5 / 受 7。 | ops3d rle_region。 |
@@ -144,7 +144,7 @@
 | `stokes` | ok | 3 | 2 |  |  | none | Stokes ベクトル。mueller_apply / stokes_analyze が受ける。 | opsoptics / opsspecular。 |
 | `sweep` | d | 2 | 3 | 掃引軸に沿って標本化した強度(白色干渉・クロマティック共焦点)。作り手は *_simulate の合成だけで、実機の分光器・z 走査の出力が入口。 |  | none | 掃引信号は計測器が出すもの。合成の作り手が入口として正しい。 | opsinterferometry のコメント『sweep — 掃引軸に沿って標本化した非負の 1-D 強度』。 |
 | `synapse_table` | b | 1 | 1 |  |  | synapse_table_from_table(table, pre, post, count) -> synapse_table を足した(id が 0 以上の整数であることを確かめる)。 | graph_from_synapses が受けるのに作る op が 0(入口なし)。コネクトームは CSV で来るので table から作れるのが自然。 | grep 'synapse' を op 名で引き、作り手 0。opsfileio.table_read_csv(text -> table)はある。 |
-| `table` | c | 1283 | 531 | CSV / 設定の表(table_read_csv、引数だけで作る表)。 | 報告書・測定結果の表(列名 -> 配列)。 | none | 産 1166 / 受 482。最も多い終端。dict を返す op の欄を次の op へ渡すつなぎが無かったので、この版で table_field_image2d / _signal / _matrix / _measurement を足した(vx_sobel3x3 -> vx_magnitude、swt_map -> text_candidates、flow_from_depth_motion -> ttc_from_flow、label_extent の width)。 | opsfileio table_read_csv / table_write_csv。 |
+| `table` | c | 1286 | 533 | CSV / 設定の表(table_read_csv、引数だけで作る表)。 | 報告書・測定結果の表(列名 -> 配列)。 | none | 産 1166 / 受 482。最も多い終端。dict を返す op の欄を次の op へ渡すつなぎが無かったので、この版で table_field_image2d / _signal / _matrix / _measurement を足した(vx_sobel3x3 -> vx_magnitude、swt_map -> text_candidates、flow_from_depth_motion -> ttc_from_flow、label_extent の width)。 | opsfileio table_read_csv / table_write_csv。 |
 | `text` | c | 13 | 29 | ファイルの中身(CSV・OBJ・XYZ の文字列)。 | 書き出す文字列(CSV・G-code・報告)。 | none | 文字列。読み込みの入口であり書き出しの終端。 | opsfileio(*_read_* は text を受け、table_write_csv は text を返す)。 |
 | `tokens` | b | 8 | 10 | LLM の活性(Q / K / V の (T, d) 行列)。外のモデルから来る。 |  | tokens_to_matrix(-> matrix)を足した。出る側は一般の行列でよい(mat_cond などが掛かる)。逆向き matrix -> tokens は軸の順を確かめられないので足さない。 | 注意機構の演算族の値。入口は外(d)で正しいが、出口が 1 つも無かった: tokens と attnmap を受ける op は全部 tokens か attnmap を返すので、表・測定値・絵のどれにも出られなかった(終端へ届かない)。 | opsllmcore の _CATALOG 10 op の出力を全部見た。tokens を matrix と分けた理由は opsllmcore の docstring(入る側で転置が黙って通る)。 |
 | `transport_plan` | ok | 2 | 2 |  |  | none | 最適輸送の計画。apply_transport / transport_cost が受ける。 | opscolortransport。 |

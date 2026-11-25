@@ -292,7 +292,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## 전부 보기
 
-PoC 284개와 로봇 예 2개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 285개와 로봇 예 2개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 

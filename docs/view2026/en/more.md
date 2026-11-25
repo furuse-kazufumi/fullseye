@@ -320,7 +320,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## See everything
 
-284 PoCs plus 2 robot demos. Open a group to load its thumbnails.
+285 PoCs plus 2 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 

@@ -34,7 +34,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 
 | Article | Wings | Exhibits |
 |---|---|---:|
-| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 149 |
+| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 150 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 115 |
 | [A Metrology Museum on Paper — The Instrument Wing (sensors and instruments reproduced from physics)](https://qiita.com/furuse-kazufumi/items/43e090b439d9d9183f60) | The Instrument | 33 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
@@ -61,14 +61,14 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 ## Recently added (newest first)
 
-- 2026-11-25 — No.2026.318 Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules
+- 2026-11-25 — No.2026.319 Ginza v2 Stage 2 — Reading Gentle-Lane Centre, Signed Curvature, Speed Limit and Japanese Sign Shape with Classical Rules
+- 2026-11-23 — No.2026.318 Compendial Microscopy Particle Sizing — Keep Border and Overlap Decisions, Three Bases, and Calibration Provenance
 - 2026-11-12 — No.2026.315 A Circle-Mark Calibration Plate End to End (Synthetic Imaging): Binary-Centroid Quantisation Sets an fx Floor of About 0.2 % rms (−0.45 to +0.33 % Without Noise, Depending on the Layout)
 - 2026-11-12 — No.2026.316 Sorting Defects on Rendered (Synthetic) Metal Patches with Trained Classifiers: Scratches Along the Grinding Lay Are Missed About 2 Times in 3 (Cause Unidentified), and Unseen-Pit Rejection Is No Better Than a One-Feature Outlier Test
 - 2026-11-12 — No.2026.317 Finding Towel Corners, Sides and Creases with Classical Image Processing (Synthetic Rendering): A Plain Rectangle Fit Is Best, the General Polygon Only Ties It in Chroma, and Everything Degrades with Close Table Colours and Wrinkles of 3 mm or More
 - 2026-11-11 — No.2026.313 Reading Drag and Spin from a Trajectory at Once — A Missed C_L Coefficient Drags the Spin Along, and a Narrow Spin-Ratio Range Cannot Separate Them (Measuring When It Can Be Read in a Self-Made, Different-Model World)
 - 2026-11-11 — No.2026.312 Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and a Model Error the Residual Does Not Show
 - 2026-11-11 — No.2026.311 CT of Casting Voids: The RMSE Winner Lost on Void Volume Measured by Deficit (32³ Synthetic; Binarised Volume Reverses It)
-- 2026-11-11 — No.2026.314 Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Better Than Not Aligning and 0.45 to 0.82 Times a Constant-Velocity Guess Depending on How the Split Picks the Tuning (One Sequence of 32 Frames), and Window Residuals Cannot Settle the Square Law (TUM RGB-D)
 
 ## Applying it to your own problem
 

@@ -292,7 +292,7 @@ li, p, code { overflow-wrap: anywhere; }
 
 ## 全部看
 
-PoC 284 个,另有机器人示例 2 个。展开分组即可加载缩略图。
+PoC 285 个,另有机器人示例 2 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
