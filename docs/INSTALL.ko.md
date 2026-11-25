@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 069c74805461 -->
+<!-- i18n-source-sha: 301a8cc4c65e -->
 # 설치 / 환경 구축 완전 가이드
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -163,7 +163,7 @@ python3.11 -m pip install -e .        # 표준 설치에는 Studio/Pillow 포함
 | `ModuleNotFoundError: No module named 'fullseye'` | 미설치 / 경로 미설정 | `pip install -e .` 실행, 또는 저장소 최상위 디렉터리를 `PYTHONPATH`에 추가 |
 | `fullseye` / `fullseye-studio` 명령을 찾을 수 없음 | 콘솔 스크립트 미등록 | `pip install -e .`를 실행. 설치하지 않으려면 `py -3.11 imgevolve.py` / `py -3.11 studio.py` |
 | Studio 실행 시 PySide6의 ImportError | 표준 의존성 손상 | `pip install --force-reinstall fullseye` |
-| Linux에서 Studio 실행 시 `ImportError: libEGL.so.1` 등 | Qt가 쓰는 시스템 라이브러리 부족(pip로는 설치되지 않음) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3`. 다른 배포판은 해당 패키지 |
+| Linux에서 Studio 실행 시 `ImportError: libEGL.so.1` 등 | Qt가 쓰는 시스템 라이브러리 부족(pip로는 설치되지 않음) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 libxcb-cursor0` (`libxcb-cursor0`은 xcb로 화면에 창을 띄울 때 필요. CI는 나머지 4개로 offscreen 실행을 확인). 다른 배포판은 해당 패키지 |
 | `apply` / `pipeline`에서 `cannot read <path>` | 표준 Pillow 의존성 손상 또는 이미지 손상 | `pip install --force-reinstall fullseye`; 계속되면 이미지를 확인 |
 | `read_image` / `write_image`(API)에서 cv2의 ImportError | 이들은 **OpenCV 전용** | `pip install -e ".[opencv]"`. Pillow만으로 해결하고 싶다면 `fullseye.load` / `fullseye.save`를 사용 |
 | `list_ops`에 기대한 오퍼레이터가 없음 / `has`가 unknown | 해당 백엔드 미도입 | 대응하는 extras(`skimage`/`wavelets`/`extra` 등)를 추가 |

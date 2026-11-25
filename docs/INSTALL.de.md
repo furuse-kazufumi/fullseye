@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 069c74805461 -->
+<!-- i18n-source-sha: 301a8cc4c65e -->
 # Installations- und Einrichtungshandbuch
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch** · [हिन्दी](./INSTALL.hi.md)
@@ -163,7 +163,7 @@ Wichtige Punkte für den Einsatz im eingebetteten Umfeld:
 | `ModuleNotFoundError: No module named 'fullseye'` | nicht installiert / Pfad nicht gesetzt | `pip install -e .` ausführen oder das Repository-Wurzelverzeichnis zu `PYTHONPATH` hinzufügen |
 | Befehl `fullseye` / `fullseye-studio` wird nicht gefunden | Konsolenskripte nicht registriert | `pip install -e .` ausführen. Ohne Installation: `py -3.11 imgevolve.py` / `py -3.11 studio.py` |
 | ImportError für PySide6 beim Start von Studio | Standardabhängigkeit beschädigt | `pip install --force-reinstall fullseye` |
-| `ImportError: libEGL.so.1` o. Ä. beim Start von Studio unter Linux | von Qt benötigte Systembibliotheken fehlen (pip kann sie nicht installieren) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3`. Andere Distributionen: die entsprechenden Pakete |
+| `ImportError: libEGL.so.1` o. Ä. beim Start von Studio unter Linux | von Qt benötigte Systembibliotheken fehlen (pip kann sie nicht installieren) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 libxcb-cursor0` (`libxcb-cursor0` wird benötigt, um das Fenster über xcb auf dem Bildschirm anzuzeigen; CI prüft den Offscreen-Start mit den übrigen vier). Andere Distributionen: die entsprechenden Pakete |
 | `cannot read <path>` bei `apply` / `pipeline` | Standardabhängigkeit Pillow beschädigt oder Bild beschädigt | `pip install --force-reinstall fullseye`; falls das nicht hilft, Bild prüfen |
 | ImportError für cv2 bei `read_image` / `write_image` (API) | diese sind **ausschließlich für OpenCV** | `pip install -e ".[opencv]"`. Wer stattdessen Pillow nutzen möchte, verwendet `fullseye.load` / `fullseye.save` |
 | erwarteter Operator fehlt in `list_ops` / `has` liefert unknown | zugehöriges Backend nicht installiert | passendes Extra hinzufügen (`skimage`/`wavelets`/`extra` usw.) |

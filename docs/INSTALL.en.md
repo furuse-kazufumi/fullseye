@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 069c74805461 -->
+<!-- i18n-source-sha: 301a8cc4c65e -->
 # Installation / Environment Setup — Complete Guide
 
 [日本語](./INSTALL.md) · **English** · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -191,7 +191,7 @@ Key points for embedded use:
 | `ModuleNotFoundError: No module named 'fullseye'` | not installed / path not set | `pip install -e .`, or add the repository root to `PYTHONPATH` |
 | `fullseye` / `fullseye-studio` command not found | console scripts not registered | run `pip install -e .`. If not installed, use `py -3.11 imgevolve.py` / `py -3.11 studio.py` |
 | PySide6 ImportError when launching Studio | broken standard dependency | `pip install --force-reinstall fullseye` |
-| `ImportError: libEGL.so.1` (or similar) when launching Studio on Linux | system libraries Qt needs are missing (pip cannot install them) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3`. Other distributions: the equivalent packages |
+| `ImportError: libEGL.so.1` (or similar) when launching Studio on Linux | system libraries Qt needs are missing (pip cannot install them) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 libxcb-cursor0` (`libxcb-cursor0` is needed to show the window on screen via xcb; CI checks the offscreen start with the other four). Other distributions: the corresponding packages |
 | `cannot read <path>` on `apply` / `pipeline` | broken standard Pillow dependency, or a damaged image | `pip install --force-reinstall fullseye`; if that does not help, inspect the image |
 | cv2 ImportError from `read_image` / `write_image` (API) | these are **OpenCV-only** | `pip install -e ".[opencv]"`. If you want to get by with Pillow, use `fullseye.load` / `fullseye.save` |
 | An operator you expected is missing from `list_ops` / `has` returns unknown | the relevant backend is not installed | add the matching extras (`skimage`/`wavelets`/`extra`, etc.) |
