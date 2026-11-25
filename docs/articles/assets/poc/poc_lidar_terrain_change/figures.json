@@ -147,7 +147,8 @@
    643,
    810,
    3
-  ]
+  ],
+  "source": "Source: U.S. Geological Survey 3D Elevation Program (3DEP) lidar and one-meter DEM. URL: https://www.usgs.gov/3d-elevation-program ; https://usgs-lidar-public.s3.amazonaws.com/. Publication: USGS 3DEP data documentation. Licence: U.S. Government work / public domain (https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Two dated point-cloud products are gridded, aligned, and differenced; derived plots carry the USGS credit and no-endorsement notice."
  },
  {
   "file": "14_real_fill.png",
@@ -157,7 +158,8 @@
    840,
    2040,
    3
-  ]
+  ],
+  "source": "Source: U.S. Geological Survey 3D Elevation Program (3DEP) lidar and one-meter DEM. URL: https://www.usgs.gov/3d-elevation-program ; https://usgs-lidar-public.s3.amazonaws.com/. Publication: USGS 3DEP data documentation. Licence: U.S. Government work / public domain (https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Two dated point-cloud products are gridded, aligned, and differenced; derived plots carry the USGS credit and no-endorsement notice."
  },
  {
   "file": "15_real_dod_still.png",
@@ -167,6 +169,7 @@
    720,
    720,
    3
-  ]
+  ],
+  "source": "Source: U.S. Geological Survey 3D Elevation Program (3DEP) lidar and one-meter DEM. URL: https://www.usgs.gov/3d-elevation-program ; https://usgs-lidar-public.s3.amazonaws.com/. Publication: USGS 3DEP data documentation. Licence: U.S. Government work / public domain (https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Two dated point-cloud products are gridded, aligned, and differenced; derived plots carry the USGS credit and no-endorsement notice."
  }
 ]

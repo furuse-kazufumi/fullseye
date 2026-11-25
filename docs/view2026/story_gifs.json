@@ -364,7 +364,7 @@
             0.0944
           ],
           "max_color_mad": 1.073,
-          "source_sha256": "ebbe0b3b80a0109eace0aca4c83d9dabcfcb0ea91cb4eebf3ad5ed5b6e13db7b"
+          "source_sha256": "ff3591c41b0a95fa46e3362b622b7c71ae525682c9cfb15813d1e9174b32bf24"
         },
         "en": {
           "path": "articles/assets/poc/poc_industrial_oct/story.en.gif",
@@ -449,7 +449,7 @@
             0.0944
           ],
           "max_color_mad": 1.073,
-          "source_sha256": "9f5280e1c530803e434917b96deb2154087932ae9983a4c2742cfa07b92a5d7b"
+          "source_sha256": "71231ec20fc0bf9490e983426f54bb9a09c4d6677d63b81b30aff191f9904384"
         }
       },
       "thumbnail": {
@@ -590,7 +590,7 @@
             0.5347
           ],
           "max_color_mad": 1.5068,
-          "source_sha256": "ad1cbef7bee4be7acd2109fa57d1dc099843fa02c48d4753efd194ad8ead4032"
+          "source_sha256": "71e9b784c3f89c6751744cab38c72d49584bc6d7ab1e46c24e0d91707aefff44"
         },
         "en": {
           "path": "articles/assets/poc/poc_hyperspectral_foreign_matter/story.en.gif",
@@ -682,7 +682,7 @@
             0.5347
           ],
           "max_color_mad": 1.5068,
-          "source_sha256": "575d6207181e34eec810076332c30afbefb0535803c7dbe50d4065d01bebcd3b"
+          "source_sha256": "1a4fa8c90e0cf35a5aedd6c0957deccb92bcb6540a3b91826f7409fe41df87cd"
         }
       },
       "thumbnail": {
@@ -816,7 +816,7 @@
             1.7194
           ],
           "max_color_mad": 1.7194,
-          "source_sha256": "e7333ac48861d595fa6b5cf9c5f7fa18015f576236ff86770a099bd568089437"
+          "source_sha256": "f740a968c1acf8c710889b5e8bf7634a21d9ca3bb833d663e26ade0147c454e7"
         },
         "en": {
           "path": "articles/assets/poc/poc_thin_film_reflectometry/story.en.gif",
@@ -904,7 +904,7 @@
             1.7194
           ],
           "max_color_mad": 1.7194,
-          "source_sha256": "b9541c4e7c9c23c2ee30c49bd8c6952bc7d8e9dee6fce38a9802746e247353c1"
+          "source_sha256": "eef7c73c5c3290fa7f52dd32ec10267e0943c6b47201724f7922e616e6dd1101"
         }
       },
       "thumbnail": {
@@ -2326,7 +2326,7 @@
             0.0404
           ],
           "max_color_mad": 1.3054,
-          "source_sha256": "741cfc120a4477ef65b362b501ba4bbee41581918134164dace17006fa3e4442"
+          "source_sha256": "249e0c05cc117ed68086d82b928679aa422d16f7f2c6c408becb79f8339782ee"
         },
         "en": {
           "path": "articles/assets/poc/poc_good_sample_variation_model/story.en.gif",
@@ -2407,7 +2407,7 @@
             0.0404
           ],
           "max_color_mad": 1.3054,
-          "source_sha256": "39c9948389260c471001d6f34c8f6fa78849faa016f7fe48f9e050e44b7cb78f"
+          "source_sha256": "d9e0a2e845c0bf08e0272e8238dff703173f323918224edc41b6b7a81614181d"
         }
       },
       "thumbnail": {
@@ -3770,7 +3770,7 @@
             0.1518
           ],
           "max_color_mad": 0.5299,
-          "source_sha256": "fb0a2d8298698a86304c595824c7ea10cb56528e2d4b63567e27b339e3858408"
+          "source_sha256": "37441d82d4781b95f570ff03ceb635de8f1a5c43fa12c80cff74af6d8c3de500"
         },
         "en": {
           "path": "articles/assets/poc/poc_crack_width/story.en.gif",
@@ -3820,7 +3820,7 @@
             0.1518
           ],
           "max_color_mad": 0.5299,
-          "source_sha256": "2c8427155f9a76776a4de2819a66ec18e74b4fcade19dfe6de723a47fcc831eb"
+          "source_sha256": "8e93851d334ce19d05a95f9ba6bba8aa33adf8596d75679dc4176c5896a5593f"
         }
       },
       "en": {
@@ -3899,7 +3899,7 @@
             0.0865
           ],
           "max_color_mad": 0.4969,
-          "source_sha256": "062908f9e27600b737be93790443830fbb63e3906d1a55a40fac007f054aa3ba"
+          "source_sha256": "5be4aef9a21f173cf223ad8c8797e28a9c340780f91535ec941d18a001feee16"
         },
         "en": {
           "path": "articles/assets/poc/poc_fabric_defect/story.en.gif",
@@ -3945,7 +3945,7 @@
             0.0865
           ],
           "max_color_mad": 0.4969,
-          "source_sha256": "bb97adc3ea8c997ca605e4cdf92c589c7aec2a696b011581e380b258ecf56979"
+          "source_sha256": "c8a285c009708e6ae5096edaa137c647355cb27aa01d2a0f92d0781744064574"
         }
       },
       "en": {
@@ -5340,7 +5340,7 @@
             0.0462
           ],
           "max_color_mad": 1.757,
-          "source_sha256": "ec2ab38a13cc7429e84536819c595a88989ca7e74b6e540f7e5c105d1e4efbee"
+          "source_sha256": "be1b6ce74d40f900bd40e61d9968c384d6d9246567c99bef44edf701b67f1bd3"
         },
         "en": {
           "path": "articles/assets/poc/poc_solar_el_inspection/15_real_cover.png",
@@ -9745,7 +9745,7 @@
             0.1772
           ],
           "max_color_mad": 2.5586,
-          "source_sha256": "8f9c083ad35f54c39acc78ff29027d8e97a1d477818f302366f6265d68eb6aef"
+          "source_sha256": "32a6e349c82c39d3646cce828bc570bb84e5df97e450b9868355865f5399a75e"
         },
         "en": {
           "path": "articles/assets/poc/poc_metal_grain_size/story.en.gif",
@@ -9819,7 +9819,7 @@
             0.1772
           ],
           "max_color_mad": 2.5586,
-          "source_sha256": "54621ac5df4dac7ab52a4d12cda63cb0df4b43da08c1e9de85068e08b45bcd75"
+          "source_sha256": "119501ef5912119e5d88e86228e708a886cb5a1230277f560c4030fc37b7e0c5"
         }
       },
       "en": {
@@ -13135,7 +13135,7 @@
             0.1545
           ],
           "max_color_mad": 0.1545,
-          "source_sha256": "dd70ee90021e78f301696f40a44e493d018347ed7a922ccef38a5d828eb68497"
+          "source_sha256": "9ca0c3f78d449ef51362de47ded651b60fb065c7471cdd1deb0f26d31640b8fe"
         },
         "en": {
           "path": "articles/assets/poc/poc_si_wafer_pl_defect_visibility/story.en.gif",
@@ -13185,7 +13185,7 @@
             0.1545
           ],
           "max_color_mad": 0.1545,
-          "source_sha256": "e84b64768edd3a66af954b05f3a53d4160092f8e494b8fcbda4c28515b2898a0"
+          "source_sha256": "f3dd057cc972677b35d8ef442fc6d8bdbb0cf8f2eed9b3f4fbcb0f8adcabb08f"
         }
       },
       "en": {
@@ -13306,7 +13306,7 @@
             0.2506
           ],
           "max_color_mad": 0.8371,
-          "source_sha256": "304761e9f8a5346828751e8103d50b24f6740523948fae1b641d1e6347515d56"
+          "source_sha256": "97a217fb40203dc243d2df53e925d5b62190aedd53e791e926df61295a4628b6"
         },
         "en": {
           "path": "articles/assets/poc/poc_chromatic_confocal/story.en.gif",
@@ -13391,7 +13391,7 @@
             0.2506
           ],
           "max_color_mad": 0.8371,
-          "source_sha256": "21f23fad2622970b60080afed9086538eac2108684d2770fe3128a547d384d8d"
+          "source_sha256": "a6354cc1df5363f4fe068ec1e62ce9236bfd417b0bab9a0ff95d15baf5fa6eb9"
         }
       },
       "en": {
@@ -13714,7 +13714,7 @@
             0.1598
           ],
           "max_color_mad": 0.4202,
-          "source_sha256": "ad70a256a03b405f3282747adb5b282b4a8058c31ec184f86bfef372021de69c"
+          "source_sha256": "5a8145db32f49d246ba2615acf2cbeb34f48efca327a62bcb0b59197f859e57e"
         },
         "en": {
           "path": "articles/assets/poc/poc_simcal_thin_film/story.en.gif",
@@ -13801,7 +13801,7 @@
             0.1598
           ],
           "max_color_mad": 0.4202,
-          "source_sha256": "df472565cb3594c2d433852e7b909b58900daf9a343b7978ddc322b59ff3346d"
+          "source_sha256": "72adf662f04bf1017341a313562f1fb94ccb87e8db9726a4c26d66500b8ce34b"
         }
       },
       "en": {
@@ -14745,7 +14745,7 @@
             0.044
           ],
           "max_color_mad": 0.1604,
-          "source_sha256": "3ae81756d250afbd32972dfb6151f2b89a2df3b50e1b8b319765194bc35e55aa"
+          "source_sha256": "5cde3b13c2fb36edccbb22407c19d83baf2d34e93f52b55531c951bc4bb06661"
         },
         "en": {
           "path": "articles/assets/poc/poc_material_optical_library/story.en.gif",
@@ -14832,7 +14832,7 @@
             0.044
           ],
           "max_color_mad": 0.1604,
-          "source_sha256": "8b34fc2fde33c4b715833575034ced4e21735d7a6a72780bb46eaf9fc2bc6ae6"
+          "source_sha256": "f9d5648e28d212b0395d32447bd5ef715157ec329031f2dcc1489da120c563be"
         }
       },
       "en": {
@@ -16028,7 +16028,7 @@
             0.0479
           ],
           "max_color_mad": 1.5845,
-          "source_sha256": "4a37fabd13f204a088e7098ce0751c3aebc80ff0b792662d3a55f9edaf3aef22"
+          "source_sha256": "09a18e55b69d43099c1c1c85a3159b813d7f2976b1574e1d7324c5b66ea62000"
         },
         "en": {
           "path": "articles/assets/poc/poc_lidar_terrain_change/story.en.gif",
@@ -16113,7 +16113,7 @@
             0.0479
           ],
           "max_color_mad": 0.9128,
-          "source_sha256": "91dad17605e1690273c624ff2a2c0b6e8292e159ddd8634e2af6a5f087509f7e"
+          "source_sha256": "6220017ab2c0a6a665f4434eced13293c3b68f606e55386ecf311ecff05ef1fe"
         }
       },
       "thumbnail": {
@@ -18319,7 +18319,7 @@
             0.0797
           ],
           "max_color_mad": 0.8215,
-          "source_sha256": "22782a74c537236c5f35ae7d75fd8327828cde6be9aba6d9824ba500aa23b9fa"
+          "source_sha256": "2c8dbf7296b016bee9bf3a3ed7c44dae86ac848d0dc4fce1e41e020293f4384d"
         },
         "en": {
           "path": "articles/assets/poc/poc_carla_bridge/story.en.gif",
@@ -18365,7 +18365,7 @@
             0.0797
           ],
           "max_color_mad": 0.8215,
-          "source_sha256": "8e5630800edec02899472c57c93790231634af478cea07c82b3bc4b50bded7c8"
+          "source_sha256": "a21361e9115338a1519c12be97e23363f3c7c8499ca75eec2795ac0f6bfca6ef"
         }
       },
       "en": {
@@ -20463,7 +20463,7 @@
             2.8496
           ],
           "max_color_mad": 3.5906,
-          "source_sha256": "7ab1c186d6f3878583ae1690893aa7a50e432ec3ef464bc10d02b18d47a63dd5"
+          "source_sha256": "8be2b7781430723f76fdae6d2e9b7b6b97603dd5908b28b85340bf2949e3ee36"
         },
         "en": {
           "path": "articles/assets/poc/poc_itof_multifreq/story.en.gif",
@@ -20551,7 +20551,7 @@
             2.8496
           ],
           "max_color_mad": 3.5906,
-          "source_sha256": "0de33092b1b216d135af6bdf44d753c4817606cada782c835cdc7d68c6560109"
+          "source_sha256": "fa2887ceea4b2a588cbf57661cb3897560e67cc1e619903920d4ab6a6a1db313"
         }
       },
       "thumbnail": {
@@ -25563,7 +25563,7 @@
             0.6903
           ],
           "max_color_mad": 0.6903,
-          "source_sha256": "7f8a434a2bfdfb64997eb2db79121328ba1a2d6d7a40cca6aafe9f0165ac79f7"
+          "source_sha256": "863cd321c866bef8ca35a5b896a52df51a6d7191fe09e607a5db30a5eac2e21b"
         },
         "en": {
           "path": "articles/assets/poc/poc_pv_thermal_survey/story.en.gif",
@@ -25633,7 +25633,7 @@
             0.6903
           ],
           "max_color_mad": 0.6903,
-          "source_sha256": "0a7a7e4df5b9cb06fccc2a81400beb3f21e76137e659395c39aec1f4c4a0d9a4"
+          "source_sha256": "8a1d458a4f9a7138f8132d2786603d831ed273d79ddb226b68b32b447022e81c"
         }
       },
       "en": {
@@ -29801,7 +29801,7 @@
             0.044
           ],
           "max_color_mad": 0.8357,
-          "source_sha256": "3f78948bd5859a7b8f9141ebe99a07d7ab4feb81ff47a58bed3777e4cb3ed6c9"
+          "source_sha256": "785a9fecb514ab2e61c5903662f22796423ac7e6bc2b10448269b42f2a6d8258"
         },
         "en": {
           "path": "articles/assets/poc/poc_pocket_interreflection/story.en.gif",
@@ -29886,7 +29886,7 @@
             0.044
           ],
           "max_color_mad": 0.8357,
-          "source_sha256": "db9ed3cf7a04fee0849d4d5db6ec39291d6cf40546328ab431307f3b7283450e"
+          "source_sha256": "c7b9cdd3c51eaf03baa1f689a862db8cd05890af3c462535abb88f533852aa21"
         }
       },
       "en": {
@@ -32413,7 +32413,7 @@
             2.0497
           ],
           "max_color_mad": 2.3547,
-          "source_sha256": "8f690b2a967680408f1a6cbd725e763639e4de465a63e0b7ad187140133e13f4"
+          "source_sha256": "e8562e874dde56e6ccb6eb210986a8852c8f53f2f7d86fd8fb1f2e5c0263f513"
         },
         "en": {
           "path": "articles/assets/poc/poc_weed_rice_ratio/story.en.gif",
@@ -32503,7 +32503,7 @@
             2.0497
           ],
           "max_color_mad": 2.3547,
-          "source_sha256": "d44de17525e899c7c84ba535dab7ba8dbd547d6fafed5f8290c0e5457e4eae42"
+          "source_sha256": "f2f8ec58c310f67918a89d63dfc01a41fa3a18e8fc804adc83e846ee4451ef99"
         }
       },
       "thumbnail": {
@@ -34404,7 +34404,7 @@
             0.0657
           ],
           "max_color_mad": 2.7264,
-          "source_sha256": "6be7aef4f9fefd303007f12c36aa758cd97095a718d06dafdf83e95607bc948f"
+          "source_sha256": "c7001fdab750c0e7127e17a2adec2c6ff4441f3ef483c46178460c30ca259267"
         },
         "en": {
           "path": "articles/assets/poc/poc_real_tless_6dof/story.en.gif",
@@ -34491,7 +34491,7 @@
             0.0657
           ],
           "max_color_mad": 2.7264,
-          "source_sha256": "0fed5ef32cfd1f8c5bb09e891220fbc355761f6a0c0b14e63d91a567cc32df2d"
+          "source_sha256": "21f515373a10666c67902428504e63b19b8de022febc7de52f30a0c45cf13620"
         }
       },
       "en": {
@@ -38003,7 +38003,7 @@
             0.0199
           ],
           "max_color_mad": 0.9635,
-          "source_sha256": "6bd19b3cf22c5b8721b03cca7cd35dcde1ae8b0e766418e23bfc50e901724ac6"
+          "source_sha256": "500febe866fb943f5f2b3859c51891e8cdd0bc0e629e181b933ff060c05471f0"
         },
         "en": {
           "path": "articles/assets/poc/poc_ai_built_inspection_scored/story.en.gif",
@@ -38097,7 +38097,7 @@
             0.0199
           ],
           "max_color_mad": 0.9635,
-          "source_sha256": "23aec64075fc0b8d1a6052eba52bf897ce05e8077eb08959b283ecd4232c0dfb"
+          "source_sha256": "07a4a856992681407ec4a0257774af02cbaf9a300756263be2ab4ef10f76124f"
         }
       },
       "thumbnail": {
@@ -38233,7 +38233,7 @@
             0.1151
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "644d3ac9ffe00a156e040e8723c292336e3a188cb014e12d959b8c0569f68bf9"
+          "source_sha256": "5e5b624b53eba4d689f5e9c46ddaccf54e300e24ae264ff4c1ec2e843e776005"
         },
         "en": {
           "path": "articles/assets/poc/poc_equipment_selection_map/story.en.gif",
@@ -38323,7 +38323,7 @@
             0.1151
           ],
           "max_color_mad": 0.7573,
-          "source_sha256": "72c01cab8d58ddf2c984563c247b1b752f883c687e2f52458dbdc714eb6090cd"
+          "source_sha256": "5e4312f0446c9c3b746a3dc679c407264ce1d7bd0f5efc191384bdcbd3d374a4"
         }
       },
       "thumbnail": {

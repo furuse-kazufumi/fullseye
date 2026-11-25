@@ -208,6 +208,10 @@ py -3.11 examples/poc_bump_coplanarity.py
 
 *↑ 緑はひびの中心ではなく片側の縁に寄りやすく、地や別のひびへ飛ぶ列もある(断面の最大が経路から 3 px より外の断面は 1 枚あたり中央値 18 %、経路が断面の半値幅の区間の外に出る断面は 9 %)。*
 
+### 図の出典
+
+Source: Ç. F. Özgenel, Concrete Crack Images for Classification, Mendeley Data v2. URL: https://doi.org/10.17632/5y9wdsg2zt.2. Publication: Özgenel (2019), Concrete Crack Images for Classification. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Gray conversion and the stated analysis overlays; no source pixels are shipped.
+
 ```
 py -3.11 examples/poc_crack_width.py
 ```
@@ -247,6 +251,10 @@ py -3.11 examples/poc_crack_width.py
 [![区間は画像単位のブートストラップ 2000 回。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/08_real_result_auc_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/08_real_result_auc_table.png)
 
 *↑ 区間は画像単位のブートストラップ 2000 回。*
+
+### 図の出典
+
+Source: Pérez-Llorens, Albero-Albero, and Silvestre-Blanes, RAW-FABRID, Mendeley Data v1. URL: https://doi.org/10.17632/db6g85xsyg.1. Publication: RAW-FABRID dataset record. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The synthetic defects, scoring maps, contours, and tables are Fullseye additions as stated in the captions.
 
 ```
 py -3.11 examples/poc_fabric_defect.py
@@ -557,6 +565,10 @@ py -3.11 examples/poc_recycling_sorting.py
 [![灰色は格子を割った後の像(1.25 で割って [0,1))、青は暗部判定。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/12_real_process_degrid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/12_real_process_degrid.png)
 
 *↑ 灰色は格子を割った後の像(1.25 で割って [0,1])、青は暗部判定。*
+
+### 図の出典
+
+Source: SIPV-EL: electroluminescence images and I-V curves of photovoltaic cells. URL: https://doi.org/10.5281/zenodo.14439369. Publication: Mateo-Romero, Hernández-Callejo, Alonso-Gómez, and Morales, SIPV-EL dataset. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Masks, dark-region measurements, labels, and Fullseye overlays are added as stated in the captions.
 
 ```
 py -3.11 examples/poc_solar_el_inspection.py
@@ -1058,6 +1070,10 @@ py -3.11 examples/poc_sam_hybrid_bonding_voids.py
 
 *↑ 幅 5 µm の溝の中心コントラスト対拡散長(閉形式)。*
 
+### 図の出典
+
+Source: Sutinen et al., Dataset for Non-disruptive HF pretreatment to enhance defect visibility in silicon wafer manufacturing via photoluminescence imaging. URL: https://doi.org/10.5281/zenodo.19603335. Publication: Sutinen et al. (2026), related article https://doi.org/10.1088/1361-6641/aea702. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The Figure 6a trace is background-normalized and plotted by Fullseye.
+
 ```
 py -3.11 examples/poc_si_wafer_pl_defect_visibility.py
 ```
@@ -1144,6 +1160,17 @@ py -3.11 examples/poc_illumination_cone_vs_na.py
 
 *↑ 動く図 ―― 飽和したハイライトを 0 → 60 % まで広げる(camera、CC0)。白 = 正解、橙 = NCC、青 = OCM、緑 = ISC、紫 = SCC。NCC は最初の数コマで光の縁へ飛ぶ。*
 
+### 図の出典
+
+camera — scikit-image (CC0 (Lav Varshney))
+astronaut — scikit-image (Public domain (NASA))
+coffee — scikit-image (CC0 (Rachel Michetti))
+chelsea — scikit-image (CC0 (Stefan van der Walt))
+clock — scikit-image (Public domain (Stefan van der Walt))
+gravel — CC0Textures (CC0)
+
+Source: scikit-image sample image: camera. URL: https://scikit-image.org/docs/stable/api/skimage.data.html. Publication: scikit-image project sample-data documentation (no separate dataset paper supplied for this image). Licence: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: A synthetic saturation sweep and tracking overlays were rendered from the sample image.
+
 ```
 py -3.11 examples/poc_code_matching_breakdown.py
 ```
@@ -1177,6 +1204,12 @@ py -3.11 examples/poc_code_matching_breakdown.py
 [![画素ごとに独立な正規の良品(合成)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/05_far_declared_vs_measured_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/05_far_declared_vs_measured.png)
 
 *↑ 画素ごとに独立な正規の良品(合成)。*
+
+### 図の出典
+
+VisA (Zou et al., ECCV 2022), github.com/amazon-science/spot-diff, CC BY 4.0; gray + 4x4 mean downsampling
+
+Source: VisA visual anomaly dataset (candle / pcb1), Amazon Science. URL: https://github.com/amazon-science/spot-diff. Publication: Zou et al. (2022), Spot-the-Difference Self-Supervised Pre-training for Anomaly Detection and Segmentation, ECCV 2022. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The individual figure captions state the crop, grayscale/downsampling, overlay, and synthetic camera-motion changes.
 
 ```
 py -3.11 examples/poc_good_sample_variation_model.py
@@ -1259,6 +1292,12 @@ py -3.11 examples/poc_patch_anomaly.py
 [![2 つの泡が近づいて融合していく。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/12_pair_merging.gif)
 
 *↑ 動く図 ―― 2 つの泡が近づいて融合していく。色 = 距離変換(内接円の半径)、白い十字 = 確かな山、橙 = あいまいな山。くびれが浅くなると 2 番目の山が帯に落ち、やがて消える。*
+
+### 図の出典
+
+Colliard-Granero et al., PEMWE oxygen bubble optical video recording, Zenodo doi:10.5281/zenodo.10184579, CC BY 4.0. Masks thresholded at 127; bubble shapes re-placed (semi-synthetic).
+
+BBBC005v1 (Ljosa et al., Nature Methods 2012), https://bbbc.broadinstitute.org/BBBC005, CC0 1.0. Ground-truth masks read as is.
 
 ```
 py -3.11 examples/poc_dense_bubble_count.py
@@ -1554,6 +1593,10 @@ NACA の技術報告 TN 898(1943 年、NASA NTRS、著作権の欄は Public Use
 
 *↑ 開いた語彙 = 学習頁の語 230 語、閉じた語彙 = 試験頁の語も入れた 380 語(許される文字列が先に分かる場合の上限)。*
 
+### 図の出典
+
+A. E. McPherson, Adaptor for Measuring Principal Strains with Tuckerman Strain Gage, NACA Technical Note 898 (1943), NASA NTRS 19930084880 — Copyright: Public Use Permitted
+
 ```
 py -3.11 examples/poc_real_typewritten_ocr.py
 ```
@@ -1636,6 +1679,12 @@ py -3.11 examples/poc_mixed_case_depalletizing.py
 
 *↑ 第 1 便 = 道具が文脈長を渡していなかった(古い発言が捨てられた疑い)。*
 
+### 図の出典
+
+Source: Ç. F. Özgenel, Concrete Crack Images for Classification, Mendeley Data v2. URL: https://doi.org/10.17632/5y9wdsg2zt.2. Publication: Özgenel (2019), Concrete Crack Images for Classification. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Gray conversion and the stated analysis overlays; no source pixels are shipped.
+
+Source: VisA visual anomaly dataset (candle / pcb1), Amazon Science. URL: https://github.com/amazon-science/spot-diff. Publication: Zou et al. (2022), Spot-the-Difference Self-Supervised Pre-training for Anomaly Detection and Segmentation, ECCV 2022. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The individual figure captions state the crop, grayscale/downsampling, overlay, and synthetic camera-motion changes.
+
 ```
 py -3.11 examples/poc_ai_built_inspection_scored.py
 ```
@@ -1679,6 +1728,10 @@ py -3.11 examples/poc_ai_built_inspection_scored.py
 [![同じ 4 種の欠陥を照明 6 × レンズ 2 で撮った見本を左に、その組の a90/95(種の組の中央値)を右の地図に埋めていく。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/07_equipment_map_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_equipment_selection_map/07_equipment_map_explained.gif)
 
 *↑ 動く図 ―― 同じ 4 種の欠陥を照明 6 × レンズ 2 で撮った見本を左に、その組の a90/95(種の組の中央値)を右の地図に埋めていく。最後に題材ごとに分かったことと、最良・安くて足りる組を枠で示す。*
+
+### 図の出典
+
+Source: Arbash et al., Polymers Hyperspectral Imaging (RODARE) and Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly (Zenodo). URL: https://doi.org/10.14278/rodare.3390 ; https://doi.org/10.5281/zenodo.17242553. Publication: Arbash et al., Polymers Hyperspectral Imaging; Ghimpeteanu et al., A Hyperspectral Image Dataset for Identifying Foreign Objects on Pork Belly. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: The figures use the documented band aggregation, train/test split, and analysis overlays; source cubes are not shipped.
 
 ```
 py -3.11 examples/poc_equipment_selection_map.py
@@ -2117,6 +2170,10 @@ py -3.11 examples/poc_gear_tooth_metrology.py
 [![10-0-768 の 4 枚。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/12_real_tbm_input_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/12_real_tbm_input.png)
 
 *↑ 10-0-768 の 4 枚。*
+
+### 図の出典
+
+Source: Texture Boundary in Metallography (TBM), Zenodo record 8386997. URL: https://doi.org/10.5281/zenodo.8386997. Publication: TBM dataset record. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Crops, boundary overlays, and Fullseye detection / break simulation are stated in the captions.
 
 ```
 py -3.11 examples/poc_metal_grain_size.py
@@ -3290,6 +3347,10 @@ py -3.11 examples/poc_moire_alignment.py
 
 *↑ 動く図 ―― ワークを ±3 mm 上下させる。通常のレンズだけ像が伸び縮みし(水色の線 = 合焦面の輪郭)、穴の底が隠れる。*
 
+### 図の出典
+
+A. W. Stark, A. Osadare, M. Guo, G. J. Gentsch, D. Boettger, G. Brehm, C. Franke, "Telecentric stereo 3D imaging with isotropic micrometer resolution bridges macro- and microscale in small Lepidopterans", Scientific Reports 15, 28690 (2025), doi:10.1038/s41598-025-13795-6. 画像: figshare collection doi:10.6084/m9.figshare.c.7652423(item 28322132 / 28322006 / 28322036、A. Stark)。CC BY 4.0。改変: グレースケール化・縮小・計測の線の描き込み。
+
 ```
 py -3.11 examples/poc_telecentric_metrology.py
 ```
@@ -3429,6 +3490,10 @@ py -3.11 examples/poc_noncoaxial_optics.py
 [![【実画像】学習の測定線の残差を、リングごと・30° ごとに平均した(点の数は 4 以上)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/03_real_ring_discrepancy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/03_real_ring_discrepancy.png)
 
 *↑ 【実画像】学習の測定線の残差を、リングごと・30° ごとに平均した(点の数は 4 以上)。*
+
+### 図の出典
+
+A. W. Stark, A. Osadare, M. Guo, G. J. Gentsch, D. Boettger, G. Brehm, C. Franke, "Telecentric stereo 3D imaging with isotropic micrometer resolution bridges macro- and microscale in small Lepidopterans", Scientific Reports 15, 28690 (2025), doi:10.1038/s41598-025-13795-6. 画像: figshare collection doi:10.6084/m9.figshare.c.7652423(item 28322132 / 28322006 / 28322036、A. Stark)。CC BY 4.0。改変: グレースケール化・縮小・計測の線の描き込み。
 
 ```
 py -3.11 examples/poc_simcal_telecentric.py
@@ -3598,6 +3663,16 @@ py -3.11 examples/poc_light_section_step_weld_floor.py
 
 *↑ 参照実装(astropy / nibabel / mrcfile / tifffile)と配布元の公表値で採点した。*
 
+### 図の出典
+
+Sloan Digital Sky Survey DR16 r-band frames (public domain data; images CC BY, credit SDSS), resampled by NASA GSFC SkyView with the area-weighted Clip sampler
+
+OpenNeuro ds000117 (Wakeman, Apšvalka & Henson; doi:10.18112/openneuro.ds000117.v2.0.0), CC0
+
+EMDB EMD-3197 (Hagen et al. 2015, doi:10.1016/j.cell.2015.11.029), distributed without restriction; wwPDB archive CC0 1.0
+
+libE57 E57 example data (bunny, Stanford 3D Scanning Repository origin), not redistributed
+
 ```
 py -3.11 examples/poc_real_file_formats.py
 ```
@@ -3627,6 +3702,10 @@ TBM(Zenodo 8386997、CC BY 4.0)の色で腐食した多結晶の金属組織 320
 [![学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_grain_skiz/04_numbers.png)
 
 *↑ 学習 = 元画像の番号が偶数の 152 枚、評価 = 奇数の 168 枚。*
+
+### 図の出典
+
+TBM: Texture Boundary in Metallography (Zenodo record 8386997, doi:10.5281/zenodo.8386997), CC BY 4.0. Micrograph crops and expert boundary drawings shown unmodified except for nearest-neighbour enlargement and drawn overlays
 
 ```
 py -3.11 examples/poc_real_grain_skiz.py
@@ -4037,6 +4116,10 @@ py -3.11 examples/poc_em_second_opinion.py
 [![every number, with the bar it had to clear](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/06_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/06_numbers.png)
 
 *↑ every number, with the bar it had to clear*
+
+### 図の出典
+
+Source: Male CNS dataset v1.0, Janelia FlyEM / Google Research. URL: https://male-cns.janelia.org/. Publication: Male CNS dataset v1.0 release documentation. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Only the stated soma positions and superclass labels are rendered; graph activity and camera motion are Fullseye-derived.
 
 ```
 py -3.11 examples/poc_connectome_motor_bottleneck.py
@@ -4463,6 +4546,12 @@ MaleCNS v1.0(Janelia FlyEM × Google Research、雄の全中枢神経系、CC BY
 [![背腹の軸まわりに 1 周(36 コマ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)
 
 *↑ 動く図 ―― 背腹の軸まわりに 1 周(36 コマ)。どのコマも points_render の 1 回の呼び出し。MaleCNS v1.0(CC BY 4.0)*
+
+### 図の出典
+
+Male CNS dataset v1.0 (minconf 0.5), Janelia FlyEM / Google Research, https://male-cns.janelia.org/, CC BY 4.0 (creativecommons.org/licenses/by/4.0) - soma positions and superclass labels; brain somata selected (VNC, ascending and z >= 60,000 excluded), otherwise unchanged
+
+Source: Male CNS dataset v1.0, Janelia FlyEM / Google Research. URL: https://male-cns.janelia.org/. Publication: Male CNS dataset v1.0 release documentation. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Only the stated soma positions and superclass labels are rendered; graph activity and camera motion are Fullseye-derived.
 
 ```
 py -3.11 examples/poc_flybrain_pointcloud.py
@@ -5219,6 +5308,10 @@ py -3.11 examples/poc_gravitational_lens_invariants.py
 [![正の重みは雑草イネの側。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/09_lda_weights_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/09_lda_weights.png)
 
 *↑ 正の重みは雑草イネの側。*
+
+### 図の出典
+
+Source: Nguyen et al., WeedyRice-RGBMS, Mendeley Data v1. URL: https://doi.org/10.17632/vt4s83pxx6.1. Publication: Nguyen et al. (2025), A Dataset of Aligned RGB and Multispectral UAV Imagery for Semantic Segmentation of Weedy Rice. Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Images are resized/cropped with annotation and prediction overlays as stated in the captions.
 
 ```
 py -3.11 examples/poc_weed_rice_ratio.py

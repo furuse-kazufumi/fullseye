@@ -79,6 +79,8 @@ import math
 from typing import Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
+
+import arrayguard as _arrayguard
 from scipy import ndimage as ndi
 from scipy import sparse
 from scipy.sparse import csgraph
@@ -106,14 +108,19 @@ def _image(x, name: str, op: str, min_side: int = 1) -> np.ndarray:
     """2-D の有限な実数画像に揃える(bool / 整数は float64 に)。"""
     if isinstance(x, (str, bytes, dict)) or np.ma.is_masked(x):
         raise ValueError("%s: %s must be a 2-D real image" % (op, name))
+    raw_shape = _arrayguard.precheck_shape_and_elements(
+        x, name, op, MAX_PIXELS, expected_ndim=2,
+        advice=_arrayguard.IMAGE_CAP_ADVICE)
     a = np.asarray(x)
+    if raw_shape is None:
+        _arrayguard.precheck_shape_and_elements(
+            a, name, op, MAX_PIXELS, expected_ndim=2,
+            advice=_arrayguard.IMAGE_CAP_ADVICE)
     if a.dtype.kind not in "biuf":
         raise ValueError("%s: %s has dtype %s — must be real" % (op, name, a.dtype))
     a = a.astype(np.float64)
     if a.ndim != 2 or a.shape[0] < min_side or a.shape[1] < min_side:
         raise ValueError("%s: %s must be a 2-D image of at least %d x %d, got shape %r" % (op, name, min_side, min_side, a.shape))
-    if a.size > MAX_PIXELS:
-        raise ValueError("%s: %s has %d pixels > MAX_PIXELS=%d" % (op, name, a.size, MAX_PIXELS))
     if not np.isfinite(a).all():
         raise ValueError("%s: %s has non-finite values" % (op, name))
     return a

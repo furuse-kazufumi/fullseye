@@ -81,6 +81,7 @@
    759,
    771,
    3
-  ]
+  ],
+  "source": "Source: Qin et al., A Kernel-Based Calibration Algorithm for Chromatic Confocal Line Sensors. URL: https://doi.org/10.3390/s24206649. Publication: Sensors 24(20):6649 (2024). Licence: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Retrieved: 2026-11-24 (provenance source reviewed during this audit). Changes: Readings and fitted marks are overlaid on the paper's Figures 3(a) and 6(b)."
  }
 ]

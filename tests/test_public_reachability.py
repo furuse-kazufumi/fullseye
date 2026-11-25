@@ -63,6 +63,9 @@ _INTERNAL = {
     # numpy_compat.trapezoid is a shipped internal compatibility shim for the
     # NumPy 1/2 integration-name change; it is not a public API and remains one hidden function.
     "numpy_compat": 1,
+    # 2026-11-25 arrayguard: 大きさの上限と数の食い違いを、複写の前に日英の文で拒否する共通の部品
+    # (refuse_cap_exceeded / refuse_count_mismatch / precheck_shape_and_elements)。op の内側からだけ呼ぶ。
+    "arrayguard": 3,
     "algo_codegen": 4, "algo_difftest": 8, "backends": 4, "backends_auto": 2,
     "backends_color": 3, "backends_cv2b": 1, "backends_dl": 3, "backends_extra": 1,
     "backends_halcon_ext": 1, "backends_kornia": 1, "backends_macro": 1,
@@ -326,9 +329,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   param_specs.half_then_thirds_index 1(端の扱い・構造要素の形のつまみの対応。Studio と MCP の内側の部品)・
 #   studio_search.staples_for 1(検索の「定番」の群。Studio の内側)・studio 3(lang_from_locale ほか、GUI の内側)・
 #   backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。
-# 2026-11-25 numpy_compat.trapezoid を wheel に同梱後も公開経路には出さない(上の _INTERNAL)。
-# 実測の不可視関数総数は 1087。
-_HIDDEN_FUNCTIONS_TODAY = 1087
+# 2026-11-25 numpy_compat.trapezoid(+1、上の _INTERNAL)と arrayguard の 3 関数(+3)。
+# 1086 + 1 + 3 = 1090。
+_HIDDEN_FUNCTIONS_TODAY = 1090
 
 
 def _hidden_total():

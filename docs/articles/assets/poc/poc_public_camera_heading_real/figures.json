@@ -7,7 +7,8 @@
    720,
    1280,
    3
-  ]
+  ],
+  "source": "Source: Fintraffic / Digitraffic weather-camera history and OpenStreetMap road data (© OpenStreetMap contributors). URL: https://www.digitraffic.fi/en/terms-of-service/ ; https://www.openstreetmap.org/copyright. Publication: Fintraffic terms of service; OpenStreetMap attribution and licence notice. Licence: CC BY 4.0 (Fintraffic) and ODbL 1.0 (OpenStreetMap) (https://creativecommons.org/licenses/by/4.0/ ; https://opendatacommons.org/licenses/odbl/1-0/). Retrieved: 2026-09-21 (Fintraffic acquisition recorded in the aggregate); provenance rechecked 2026-11-24. Changes: The wheel retains one derived nearest-road attribute record (bearing/ref/name/class) and camera-result aggregates, but no OSM geometry or raw camera image bytes. Figures add circle fits, pose estimates, and overlays."
  },
  {
   "file": "02_sunset_follow.gif",
@@ -21,7 +22,8 @@
   "animated": true,
   "frames": 8,
   "frames_written": 8,
-  "fps": 1.5
+  "fps": 1.5,
+  "source": "Source: Fintraffic / Digitraffic weather-camera history and OpenStreetMap road data (© OpenStreetMap contributors). URL: https://www.digitraffic.fi/en/terms-of-service/ ; https://www.openstreetmap.org/copyright. Publication: Fintraffic terms of service; OpenStreetMap attribution and licence notice. Licence: CC BY 4.0 (Fintraffic) and ODbL 1.0 (OpenStreetMap) (https://creativecommons.org/licenses/by/4.0/ ; https://opendatacommons.org/licenses/odbl/1-0/). Retrieved: 2026-09-21 (Fintraffic acquisition recorded in the aggregate); provenance rechecked 2026-11-24. Changes: The wheel retains one derived nearest-road attribute record (bearing/ref/name/class) and camera-result aggregates, but no OSM geometry or raw camera image bytes. Figures add circle fits, pose estimates, and overlays."
  },
  {
   "file": "03_naive_picks.png",
@@ -31,7 +33,8 @@
    654,
    1480,
    3
-  ]
+  ],
+  "source": "Source: Fintraffic / Digitraffic weather-camera history and OpenStreetMap road data (© OpenStreetMap contributors). URL: https://www.digitraffic.fi/en/terms-of-service/ ; https://www.openstreetmap.org/copyright. Publication: Fintraffic terms of service; OpenStreetMap attribution and licence notice. Licence: CC BY 4.0 (Fintraffic) and ODbL 1.0 (OpenStreetMap) (https://creativecommons.org/licenses/by/4.0/ ; https://opendatacommons.org/licenses/odbl/1-0/). Retrieved: 2026-09-21 (Fintraffic acquisition recorded in the aggregate); provenance rechecked 2026-11-24. Changes: The wheel retains one derived nearest-road attribute record (bearing/ref/name/class) and camera-result aggregates, but no OSM geometry or raw camera image bytes. Figures add circle fits, pose estimates, and overlays."
  },
  {
   "file": "04_jackknife.png",
@@ -41,7 +44,8 @@
    360,
    707,
    3
-  ]
+  ],
+  "source": "Source: Fintraffic / Digitraffic weather-camera history and OpenStreetMap road data (© OpenStreetMap contributors). URL: https://www.digitraffic.fi/en/terms-of-service/ ; https://www.openstreetmap.org/copyright. Publication: Fintraffic terms of service; OpenStreetMap attribution and licence notice. Licence: CC BY 4.0 (Fintraffic) and ODbL 1.0 (OpenStreetMap) (https://creativecommons.org/licenses/by/4.0/ ; https://opendatacommons.org/licenses/odbl/1-0/). Retrieved: 2026-09-21 (Fintraffic acquisition recorded in the aggregate); provenance rechecked 2026-11-24. Changes: The wheel retains one derived nearest-road attribute record (bearing/ref/name/class) and camera-result aggregates, but no OSM geometry or raw camera image bytes. Figures add circle fits, pose estimates, and overlays."
  },
  {
   "file": "05_bloom_bias.png",
@@ -51,7 +55,8 @@
    360,
    560,
    3
-  ]
+  ],
+  "source": "Source: Fintraffic / Digitraffic weather-camera history and OpenStreetMap road data (© OpenStreetMap contributors). URL: https://www.digitraffic.fi/en/terms-of-service/ ; https://www.openstreetmap.org/copyright. Publication: Fintraffic terms of service; OpenStreetMap attribution and licence notice. Licence: CC BY 4.0 (Fintraffic) and ODbL 1.0 (OpenStreetMap) (https://creativecommons.org/licenses/by/4.0/ ; https://opendatacommons.org/licenses/odbl/1-0/). Retrieved: 2026-09-21 (Fintraffic acquisition recorded in the aggregate); provenance rechecked 2026-11-24. Changes: The wheel retains one derived nearest-road attribute record (bearing/ref/name/class) and camera-result aggregates, but no OSM geometry or raw camera image bytes. Figures add circle fits, pose estimates, and overlays."
  },
  {
   "file": "06_numbers.png",
@@ -63,6 +68,7 @@
    3
   ],
   "csv": "06_numbers.csv",
-  "tsv": "06_numbers.tsv"
+  "tsv": "06_numbers.tsv",
+  "source": "Source: Fintraffic / Digitraffic weather-camera history and OpenStreetMap road data (© OpenStreetMap contributors). URL: https://www.digitraffic.fi/en/terms-of-service/ ; https://www.openstreetmap.org/copyright. Publication: Fintraffic terms of service; OpenStreetMap attribution and licence notice. Licence: CC BY 4.0 (Fintraffic) and ODbL 1.0 (OpenStreetMap) (https://creativecommons.org/licenses/by/4.0/ ; https://opendatacommons.org/licenses/odbl/1-0/). Retrieved: 2026-09-21 (Fintraffic acquisition recorded in the aggregate); provenance rechecked 2026-11-24. Changes: The wheel retains one derived nearest-road attribute record (bearing/ref/name/class) and camera-result aggregates, but no OSM geometry or raw camera image bytes. Figures add circle fits, pose estimates, and overlays."
  }
 ]
