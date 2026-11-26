@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 301a8cc4c65e -->
+<!-- i18n-source-sha: a41db9bf8a6f -->
 # Installations- und Einrichtungshandbuch
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch** · [हिन्दी](./INSTALL.hi.md)
