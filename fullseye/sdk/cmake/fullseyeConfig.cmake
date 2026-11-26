@@ -75,6 +75,15 @@ target_compile_features(fullseye_source_bridge PUBLIC cxx_std_20)
 target_compile_definitions(fullseye_source_bridge PRIVATE
   FULLSEYE_BUILD
   PYBIND11_SIMPLE_GIL_MANAGEMENT)
+if(MSVC)
+  # The bridge source and the public headers contain UTF-8 Japanese text. Without /utf-8,
+  # MSVC reads them in the system code page (932 on Japanese Windows) and a string literal
+  # breaks (C2001). PUBLIC so a consumer that includes the headers reads them the same way.
+  # bridge のソースと公開ヘッダは UTF-8 の日本語を含む。/utf-8 が無いと MSVC は既定の
+  # コードページ(日本語 Windows は 932)で読み、文字列リテラルが壊れる(C2001)。
+  target_compile_options(fullseye_source_bridge PUBLIC /utf-8)
+  target_compile_definitions(fullseye_source_bridge PRIVATE NOMINMAX)
+endif()
 target_include_directories(fullseye_source_bridge PUBLIC "${fullseye_SDK_INCLUDE_DIR}")
 target_link_libraries(fullseye_source_bridge PRIVATE pybind11::embed)
 if(MINGW)

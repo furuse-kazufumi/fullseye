@@ -36,6 +36,11 @@
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN
 #  endif
+// <windows.h> の min / max マクロは std::min / std::numeric_limits<>::max を壊す(MSVC で C2589)。
+// Keep <windows.h> from defining min / max macros that break std::min and numeric_limits<>::max on MSVC.
+#  ifndef NOMINMAX
+#    define NOMINMAX
+#  endif
 #  include <windows.h>
 #elif defined(__APPLE__)
 #  include <mach-o/dyld.h>
