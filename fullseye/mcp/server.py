@@ -40,7 +40,20 @@ from .catalog import Catalog, CatalogError, SOURCES
 from .diagnose import side_by_side, stats_of, verdict_of
 from .handles import HandleError, HandleStore, value_nbytes
 
-PROTOCOL_VERSION = "2025-06-18"
+#: Supported revisions live here so discovery, rejection, and legacy negotiation
+#: cannot drift / 対応版はここだけに置き、発見・拒否・旧版交渉の食い違いを防ぐ。
+MODERN_VERSIONS = ("2026-07-28",)
+LEGACY_VERSIONS = ("2025-06-18", "2025-11-25")
+#: Backward-compatible name used by the demo and downstream imports.  It means
+#: the newest initialize-era revision / demo と外部 import 用の旧名。initialize 世代の最新版。
+PROTOCOL_VERSION = LEGACY_VERSIONS[-1]
+PROTOCOL_VERSION_META = "io.modelcontextprotocol/protocolVersion"
+CLIENT_CAPABILITIES_META = "io.modelcontextprotocol/clientCapabilities"
+CLIENT_INFO_META = "io.modelcontextprotocol/clientInfo"
+LOG_LEVEL_META = "io.modelcontextprotocol/logLevel"
+SERVER_INFO_META = "io.modelcontextprotocol/serverInfo"
+DISCOVERY_TTL_MS = 300_000
+CACHE_SCOPE = "public"
 SERVER_NAME = "fullseye"
 #: llmesh/mcp/validator.py の ``_MAX_RAW_BYTES`` と同じ。超えたら typed tree を落とす。
 MAX_STRUCTURED_BYTES = int(get_system("mcp_response_budget"))   # import 時の既定(schema の説明用)
@@ -524,6 +537,15 @@ class ArgError(ValueError):
 
     def __init__(self, message: str, *, data: dict | None = None):
         super().__init__(message)
+        self.data = data
+
+
+class ProtocolRequestError(ValueError):
+    """Modern MCP protocol rejection / modern MCP のプロトコル拒否。"""
+
+    def __init__(self, code: int, message: str, *, data: dict | None = None):
+        super().__init__(message)
+        self.code = code
         self.data = data
 
 
@@ -2798,10 +2820,91 @@ def _inspect(a: dict, store: HandleStore, *,
 # --------------------------------------------------------------------------- #
 # ディスパッチ                                                                  #
 # --------------------------------------------------------------------------- #
-def handle_initialize(_params: dict) -> dict:
-    return {"protocolVersion": PROTOCOL_VERSION,
+def handle_initialize(params: dict) -> dict:
+    """Negotiate an initialize-era revision / initialize 世代の版を交渉する。
+
+    Revision 2025-11-25 adds optional icons, URL elicitation, sampling tools, and
+    tasks; Fullseye advertises none of those optional capabilities.  Its advertised
+    tool schemas are valid JSON Schema objects and use the required 2020-12 default,
+    so no mandatory 2025-11-25 field is omitted.  Input-schema failures keep the
+    established legacy response behavior here; the 2026 modern route maps them to
+    tool execution errors without changing existing clients.
+
+    2025-11-25 で増えた icons・URL elicitation・sampling tools・tasks は任意で、
+    Fullseye はそれらを広告しない。広告する tool schema は有効な JSON Schema object で
+    必須の既定 dialect 2020-12 を使うため、2025-11-25 の必須項目は欠けない。
+    既存 client の互換のため legacy の入力違反応答は維持し、modern 経路だけ tool error にする。
+    """
+    requested = params.get("protocolVersion")
+    negotiated = requested if requested in LEGACY_VERSIONS else LEGACY_VERSIONS[-1]
+    return {"protocolVersion": negotiated,
             "capabilities": {"tools": {"listChanged": False}},
             "serverInfo": {"name": SERVER_NAME, "version": _version()}}
+
+
+def _server_info() -> dict:
+    """Return stateless server identity / 状態に依存しない server identity を返す。"""
+    return {"name": SERVER_NAME, "version": _version()}
+
+
+def _modern_version(params: dict) -> str | None:
+    """Return a validated modern revision, or None for an unmarked legacy request.
+
+    ``_meta`` が無い、または protocolVersion key が無い要求だけ legacy とみなす。
+    key がある要求は型・必須能力・対応版を要求ごとに fail-closed で検査する。
+    """
+    if "_meta" not in params:
+        return None
+    meta = params["_meta"]
+    if not isinstance(meta, dict):
+        raise ProtocolRequestError(-32602, "params._meta must be an object")
+    if PROTOCOL_VERSION_META not in meta:
+        return None
+    version = meta[PROTOCOL_VERSION_META]
+    if not isinstance(version, str):
+        raise ProtocolRequestError(-32602, "%s must be a string" % PROTOCOL_VERSION_META)
+    capabilities = meta.get(CLIENT_CAPABILITIES_META)
+    if not isinstance(capabilities, dict):
+        detail = "is required" if CLIENT_CAPABILITIES_META not in meta else "must be an object"
+        raise ProtocolRequestError(-32602, "%s %s" % (CLIENT_CAPABILITIES_META, detail))
+    if CLIENT_INFO_META in meta and not isinstance(meta[CLIENT_INFO_META], dict):
+        raise ProtocolRequestError(-32602, "%s must be an object" % CLIENT_INFO_META)
+    if LOG_LEVEL_META in meta and not isinstance(meta[LOG_LEVEL_META], str):
+        raise ProtocolRequestError(-32602, "%s must be a string" % LOG_LEVEL_META)
+    if version not in MODERN_VERSIONS:
+        raise ProtocolRequestError(
+            -32022, "Unsupported protocol version",
+            data={"supported": list(MODERN_VERSIONS), "requested": version})
+    return version
+
+
+def handle_server_discover(params: dict) -> dict:
+    """Build the cacheable 2026 discovery result / 2026 discovery 結果を作る。"""
+    extra = set(params) - {"_meta"}
+    if extra:
+        raise ProtocolRequestError(-32602, "server/discover params only accepts _meta")
+    return {
+        "resultType": "complete",
+        "supportedVersions": list(MODERN_VERSIONS),
+        "capabilities": {"tools": {}},
+        "_meta": {SERVER_INFO_META: _server_info()},
+        "instructions": "Search the Fullseye catalog before selecting and calling image operators.",
+        "ttlMs": DISCOVERY_TTL_MS,
+        "cacheScope": CACHE_SCOPE,
+    }
+
+
+def _modern_result(result: dict, *, cacheable_list: bool = False) -> dict:
+    """Add fields required on modern results / modern 結果の必須 field を加える。"""
+    modern = dict(result)
+    modern["resultType"] = "complete"
+    meta = dict(modern.get("_meta") or {})
+    meta[SERVER_INFO_META] = _server_info()
+    modern["_meta"] = meta
+    if cacheable_list:
+        modern["ttlMs"] = DISCOVERY_TTL_MS
+        modern["cacheScope"] = CACHE_SCOPE
+    return modern
 
 
 def _version() -> str:
@@ -3609,7 +3712,11 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
 
 
 def dispatch(msg: dict, cat: Catalog, store: HandleStore | None = None) -> dict | None:
-    """1 メッセージを処理。通知(id 無し)には返さない。"""
+    """Route one request by its own era metadata; never reply to notifications.
+
+    各要求自身の ``_meta`` で modern / legacy を判定する。initialize の有無など
+    connection state は modern の意味を変えず、通知(id 無し)には返さない。
+    """
     if not isinstance(msg, dict) or msg.get("jsonrpc") != "2.0":
         return _err(_reply_id(msg.get("id")) if isinstance(msg, dict) else None, -32600, "JSON-RPC 2.0 でない")
     req_id = msg.get("id")
@@ -3629,18 +3736,47 @@ def dispatch(msg: dict, cat: Catalog, store: HandleStore | None = None) -> dict 
         return None if is_notification else _err(
             req_id, -32602, "params はオブジェクトでなければならない(%s)" % type(params).__name__)
     try:
-        if method == "initialize":
+        modern_version = _modern_version(params)
+        modern = modern_version is not None
+        _log("request", "era=modern" if modern else "era=legacy",
+             ("version=" + modern_version) if modern_version else "version=initialize-era", repr(method))
+        if modern and method == "server/discover":
+            res = handle_server_discover(params)
+        elif modern and method not in ("tools/list", "tools/call"):
+            if is_notification:
+                return None
+            _log("reject", "era=modern", repr(method), "-32601 method not available")
+            return _err(req_id, -32601, "method is not available in modern MCP: %r" % method)
+        elif method == "initialize":
             res = handle_initialize(params)
         elif method == "ping":
             res = {}
         elif method == "tools/list":
+            if modern and "cursor" in params and not isinstance(params["cursor"], str):
+                raise ProtocolRequestError(-32602, "params.cursor must be a string")
             res = handle_tools_list(params)
+            if modern:
+                res = _modern_result(res, cacheable_list=True)
         elif method == "tools/call":
             name = params.get("name")
             if not isinstance(name, str):
                 raise ArgError("params.name は tool 名の文字列でなければならない(%s)"
                                % type(name).__name__)
-            res = call_tool(name, params.get("arguments"), cat, store)
+            arguments = params.get("arguments")
+            if modern and arguments is not None and not isinstance(arguments, dict):
+                raise ProtocolRequestError(-32602, "params.arguments must be an object")
+            if modern and (name not in TOOLS or name not in _profile_tool_names(
+                    os.environ.get("FULLSEYE_MCP_PROFILE", "full"))):
+                raise ProtocolRequestError(-32602, "unknown or unavailable tool: %r" % name)
+            try:
+                res = call_tool(name, arguments, cat, store)
+            except ArgError as exc:
+                if not modern:
+                    raise
+                _log("tools/call", name, "era=modern", "isError", str(exc)[:200])
+                res = _tool_error(str(exc), {"error": "invalid_arguments"})
+            if modern:
+                res = _modern_result(res)
             _log("tools/call", name, "ok" if not res.get("isError") else "isError")
         elif method in ("notifications/initialized", "notifications/cancelled"):
             return None
@@ -3648,6 +3784,9 @@ def dispatch(msg: dict, cat: Catalog, store: HandleStore | None = None) -> dict 
             if is_notification:
                 return None
             return _err(req_id, -32601, "知らない method: %r" % method)
+    except ProtocolRequestError as exc:
+        _log("reject", "era=modern", repr(method), exc.code, str(exc)[:200])
+        return None if is_notification else _err(req_id, exc.code, str(exc), data=exc.data)
     except ArgError as exc:
         _log("tools/call", repr(params.get("name"))[:80], "-32602", str(exc)[:200])
         return None if is_notification else _err(req_id, -32602, str(exc), data=exc.data)

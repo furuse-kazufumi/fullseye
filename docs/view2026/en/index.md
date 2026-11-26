@@ -8,11 +8,11 @@
 
 **Presenting: Thu 3 Dec 2026, 14:40–15:50 JST, Interactive Session 2, IS2-19** (Pacifico Yokohama, Annex Hall)
 
-<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="One 3-D scene turned into picture, depth, normals, shadow mask and edges, each processed further" width="640" height="468"><div class="vt"><p>Fullseye is a foundation for image inspection, 3-D measurement and physics simulation. It hands typed classic image-processing operators and physics simulation (including sensing such as optical design) to an AI through MCP and RAG, lets it work out a combination for each task, and solves the task interactively while checking type consistency and evaluating against ground truth that the physics and imaging simulation produces. Open source (Apache-2.0).</p><p><a href="about.html">About Fullseye (reading)</a></p></div></div>
+<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="One 3-D scene turned into picture, depth, normals, shadow mask and edges, each processed further" width="640" height="468"><div class="vt"><p>Fullseye is a foundation for image inspection, 3-D measurement and physics simulation. It hands typed classic image-processing operators and physics simulation (including sensing such as optical design) to an AI through MCP and RAG, lets it work out a combination for each task, and solves the task interactively while checking type consistency and evaluating against ground truth that the physics and imaging simulation produces. Open source (Apache-2.0).</p><p>Also callable from C/C++ (preview): a development SDK that calls 805 op as C functions (it embeds Python with pybind11; use it by pointing it to a Python environment with Fullseye installed). Details → <a href="https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md"><code>C_API.md</code></a></p><p><a href="about.html">About Fullseye (reading)</a></p></div></div>
 
 Tap a tile to open the video or figure (▶ = moving).
 
-This page shows only 30 exhibits. The other 286 are on the [Extras page](more.md).
+This page shows only 30 exhibits. The other 287 are on the [Extras page](more.md).
 
 <style>
 .vlang { font-size: 14px; line-height: 2; }
@@ -158,9 +158,9 @@ See [Extras: more PoCs](more.md), too.
 <summary><b>Try it</b> (Python 3.11)</summary>
 
 ```
-pip install fullseye
 git clone https://github.com/furuse-kazufumi/fullseye
 cd fullseye
+pip install -e ".[opencv]"
 python examples/poc_focus_stacking.py
 ```
 

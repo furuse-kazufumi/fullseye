@@ -725,10 +725,19 @@ def test_lighting_identity_needs_the_maker_because_of_oem_relabelling():
 
 
 def test_light_catalog_ships_no_invented_vendor_specs():
-    """既定は一般形状のみ。配光・波長・実体寸法はデータシートにしかないので捏造しない。"""
-    assert all(v["maker"] == "generic" for k, v in OS.light_catalog().items()
-               if not k.startswith("TestBrand") and not k.startswith("CCS")
-               and not k.startswith("OtherBrand"))
+    """既定は一般形状のみ。配光・波長・実体寸法はデータシートにしかないので捏造しない。
+
+    2026-11-26: プロセス内の表は ``register_light``(op としても登録されている)を回す他の試験や
+    例が書き足すので、試験の順番しだいで「Acme」などが混ざって落ちた。出荷時の表を見るため、
+    optscene を別名で読み直した新しいモジュールのカタログを検査する。
+    """
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_optscene_pristine", OS.__file__)
+    fresh = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(fresh)
+    shipped = fresh.light_catalog()
+    assert shipped, "出荷時の照明カタログが空"
+    assert all(v["maker"] == "generic" for k, v in shipped.items() if not k.startswith("CCS"))
 
 
 def test_covers_sensor_refuses_a_lens_without_an_image_circle_by_name():

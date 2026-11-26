@@ -8157,12 +8157,35 @@ def _b_lane_stop(pool, rng):
     return (f["labels"], f["lane"]), {}
 
 
+def _b_vial_moving_track(pool, rng):
+    """Return a motion path and a faint stationary scratch for tracker knobs.
+
+    The inter-frame step lies between the half-default (5 px) and default
+    (10 px) ``max_displacement_px`` values.  Thus changing the public linkage
+    radius changes track IDs.  The moving 1x2 target is retained by the default
+    ``min_area_px=2`` but rejected at 4 px.  The stationary 2x2 patch lies
+    between the 0.0275 and 0.055 ``static_threshold`` probe values.  All three
+    public controls therefore change a non-degenerate video result.
+
+    連続フレームで 7 px 動く明るい 1x2 標的と、淡い静止 2x2 傷を返す。これは
+    ``max_displacement_px`` の半分の既定値 5 px と既定値 10 px の間にあり、
+    ``min_area_px=2`` と 4、および ``static_threshold=0.0275`` と 0.055 の
+    間にも入る。非退化な動画上で 3 つの公開パラメータが実際に効くことを確かめる。
+    """
+    frames = np.zeros((4, 32, 32), dtype=float)
+    for frame, row in enumerate((4, 11, 18, 25)):
+        frames[frame, row:row + 1, 14:16] = 0.8
+        frames[frame, 14:16, 4:6] = 0.04
+    return (frames,), {"threshold": 0.2, "min_area_px": 2}
+
+
 OP_ARG_BUILDERS = {
     **_MV_BUILDERS,
     "archive_probe": lambda pool, rng: ((_archive_probe_payload(),), {}),
     "archive_list": lambda pool, rng: ((_archive_probe_payload(),), {}),
     "archive_extract": _b_archive_extract,
     "archive_create": lambda pool, rng: (({"probe.txt": b"fullseye archive probe\n"}, "zip"), {}),
+    "track_moving_particles": _b_vial_moving_track,
     "symmetry_difference_map": _b_symmetry_comparison,
     "symmetry_score": _b_symmetry_comparison,
     # --- CT のスキャン方式(2026-11-02): 体積・投影の形は幾何(8 view・8^3)と合わせる --- #

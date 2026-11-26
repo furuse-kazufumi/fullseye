@@ -5,7 +5,7 @@ category: plot
 in: axes × signal × signal
 out: pairs
 gpu: 鎖の中だけ(許可リスト)
-examples: [annotate_gallery, poc_beam_modal_video, poc_camera_calibration, poc_crack_width_timeseries, poc_moire_alignment, poc_motion_magnification, poc_real_sem_metal_layer, poc_real_tless_6dof, poc_strain_history, poc_structure_4d_deterioration, poc_superresolution_limits, poc_traffic_counting, poc_wound_area_tracking, poc_xyt_event_surface]
+examples: [annotate_gallery, poc_beam_modal_video, poc_camera_calibration, poc_crack_width_timeseries, poc_moire_alignment, poc_motion_magnification, poc_real_sem_metal_layer, poc_real_tless_6dof, poc_strain_history, poc_structure_4d_deterioration, poc_superresolution_limits, poc_traffic_counting, poc_vial_particle_pod, poc_wound_area_tracking, poc_xyt_event_surface]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -81,6 +81,7 @@ Notes
 - [poc_structure_4d_deterioration](../../../../examples/poc_structure_4d_deterioration.py) — `py -3.11 examples/poc_structure_4d_deterioration.py`
 - [poc_superresolution_limits](../../../../examples/poc_superresolution_limits.py) — `py -3.11 examples/poc_superresolution_limits.py`
 - [poc_traffic_counting](../../../../examples/poc_traffic_counting.py) — `py -3.11 examples/poc_traffic_counting.py`
+- [poc_vial_particle_pod](../../../../examples/poc_vial_particle_pod.py) — `py -3.11 examples/poc_vial_particle_pod.py`
 - [poc_wound_area_tracking](../../../../examples/poc_wound_area_tracking.py) — `py -3.11 examples/poc_wound_area_tracking.py`
 - [poc_xyt_event_surface](../../../../examples/poc_xyt_event_surface.py) — `py -3.11 examples/poc_xyt_event_surface.py`
 

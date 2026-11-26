@@ -329,9 +329,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #   param_specs.half_then_thirds_index 1(端の扱い・構造要素の形のつまみの対応。Studio と MCP の内側の部品)・
 #   studio_search.staples_for 1(検索の「定番」の群。Studio の内側)・studio 3(lang_from_locale ほか、GUI の内側)・
 #   backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。
+# 2026-11-25 PR #355: opspharma.get / call / info(他の ops* と同じ台帳の入口 3 点)で +3。
 # 2026-11-25 numpy_compat.trapezoid(+1、上の _INTERNAL)と arrayguard の 3 関数(+3)。
-# 1086 + 1 + 3 = 1090。
-_HIDDEN_FUNCTIONS_TODAY = 1090
+# 1086 + 3 + 1 + 3 = 1093。
+_HIDDEN_FUNCTIONS_TODAY = 1093
 
 
 def _hidden_total():

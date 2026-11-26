@@ -1,6 +1,6 @@
 {
   "method": "Business-language queries contain no operator names. recall_at_2: the expected existing recipe is in the top 2. e2e_task_recipe_hit_at_2: one of the top-2 MCP-runnable recipes contains an op PR #224's judge expects. blind_*_hit_at_3: queries written from docs/ops without seeing the recipes; a top-3 recipe has that family / one of the listed ops.",
-  "recipes_in_index": 275,
+  "recipes_in_index": 276,
   "recipes_mcp": 132,
   "recall_at_2": 0.6666666666666666,
   "queries": [
@@ -201,7 +201,7 @@
       "judge": "judge_dolp_mean",
       "top_2": [
         "Sense — degree of linear polarization map from four analyzer angles (0/45/90/135)",
-        "Preprocess — stack N frames with sigma clipping (noise drops as 1/sqrt N)"
+        "Inspect — glossy (specular) area from polarization: DoLP map, threshold, area fraction"
       ],
       "hit": true
     },
@@ -548,7 +548,7 @@
       "top_3": [
         "Inspect — image fidelity report of a noisy capture (PSNR / RMSE with conditions)",
         "Measure — sub-pixel shift between two images (phase correlation)",
-        "Inspect — perceptual colour difference ΔE*ab against a reference colour"
+        "Inspect — track moving matter after a pharmaceutical vial spin-stop"
       ],
       "family_hit": true,
       "op_hit": true
@@ -635,8 +635,8 @@
       "query": "実験計画法で少ない試行回数の条件表を作り、各因子の主効果を解析したい",
       "top_3": [
         "Analyze — response-surface optimum of a central composite experiment",
-        "Simulate — SEM secondary-electron image of a sloped facet",
-        "Sense — indirect ToF depth with dual-frequency phase unwrapping"
+        "Inspect — track moving matter after a pharmaceutical vial spin-stop",
+        "Simulate — SEM secondary-electron image of a sloped facet"
       ],
       "family_hit": true,
       "op_hit": false
@@ -910,7 +910,7 @@
     "before_label": "master a8b9c1f249 (recipes.py 25 recipes), 2026-11-03",
     "recipes_in_index": {
       "before": 25,
-      "after": 275
+      "after": 276
     },
     "recipes_mcp": {
       "before": 25,
@@ -943,16 +943,16 @@
     },
     {
       "source": "fullseye/recipebook RECIPES",
-      "found": 250,
-      "included": 250,
+      "found": 251,
+      "included": 251,
       "excluded": 0,
       "reason": null
     },
     {
       "source": "examples/poc_*.py",
-      "found": 317,
+      "found": 318,
       "included": 0,
-      "excluded": 317,
+      "excluded": 318,
       "reason": "PoC programs are arbitrary Python; a linear MCP pipeline cannot be extracted statically without guessing."
     },
     {
@@ -964,9 +964,9 @@
     },
     {
       "source": "docs/**/*.md",
-      "found": 4453,
+      "found": 4456,
       "included": 0,
-      "excluded": 4453,
+      "excluded": 4456,
       "reason": "Documentation contains prose and snippets, not a statically unambiguous inventory of MCP stages."
     }
   ]

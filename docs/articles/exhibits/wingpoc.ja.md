@@ -1809,7 +1809,7 @@ py -3.11 examples/poc_surface_defect_classifiers.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 50 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 51 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2294,6 +2294,38 @@ py -3.11 examples/poc_compendial_particle_microscopy.py
 この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_compendial_particle_microscopy)
 
 使用 op(ノートへ): [`annotate_figure_grid`](https://furuse.work/ops/annotate/paper/annotate_figure_grid.html) · [`blob_count_interval`](https://furuse.work/ops/blob/split/blob_count_interval.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_seeds`](https://furuse.work/ops/blob/split/blob_seeds.html) · [`blob_split`](https://furuse.work/ops/blob/split/blob_split.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`mm_per_px_from_reference`](https://furuse.work/ops/measure1d/scale/mm_per_px_from_reference.html) · [`noise_sigma`](https://furuse.work/ops/astrostack/quality/noise_sigma.html) · [`particle_size_distribution`](https://furuse.work/ops/drive/pharma/particle_size_distribution.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
+
+## No.2026.320 —— 回転停止後のバイアル異物検査 ―― 照明・コントラスト別の粒子 POD を独立 holdout で測る
+
+回転を止めた後も、粒子と気泡は流れ、傷は動かない。独立 holdout の全条件をまとめた粒径閾値は 164.20 µm だった。背面照明と側面照明で、真値と対応する軌跡、見逃し側を同じ画面に置く。
+
+[![回転停止後のバイアル異物検査 ―― 照明・コントラスト別の粒子 POD を独立 holdout で測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/01_spin_stop_tracks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/01_spin_stop_tracks.png)
+
+*↑ **回転停止後のバイアル異物検査 ―― 照明・コントラスト別の粒子 POD を独立 holdout で測る** ―― 停止後に指数減衰する旋回流へ、粒子・気泡・静止傷の既知の真値を重ね、背面照明と側面照明の入力から同じ座標系の軌跡を得た。独立 holdout 84 trial では 62 hit / 22 miss で、全条件をまとめた POD fit の a90 は 164.20 µm、片側 95% 上限は 231.20 µm だった。清浄 holdout の偽粒子は 0/20（95% 上限 0.1391）で、原寸の追跡図、径×コントラストの POD、条件別 a90、見逃し例を同じ実行から出した。*
+
+用語: POD — 欠陥の大きさなどの説明変数に対し、定めた検査手順が欠陥を検出する確率を表す曲線。
+
+[![灰色破線は USP<1790> 文脈の手作業検査の参考観測値(100/150/200 µm = 40/70/95%%)であり、規格の基準でも本 AVI の合否基準でもない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/02_pod_by_diameter_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/02_pod_by_diameter_contrast.png)
+
+*↑ 測定の図 ―― 灰色破線は USP<1790> 文脈の手作業検査の参考観測値(100/150/200 µm = 40/70/95%%)であり、規格の基準でも本 AVI の合否基準でもない。各パネルの下に同じ条件の GLM a90/a90/95 を記し、見出しの値だけが全条件をまとめた値である。凡例は実線、青い点+区間、灰色破線を実際と同じ色・形で描く。*
+
+[![各行は独立 holdout のその条件だけで fit した GLM。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/03_pod_condition_a90_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/03_pod_condition_a90.png)
+
+*↑ 各行は独立 holdout のその条件だけで fit した GLM。*
+
+[![丸の真値粒子に対応する十字が3コマ未満で、事前固定の検出規則では hit にしない例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/04_miss_representative_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vial_particle_pod/04_miss_representative.png)
+
+*↑ 丸の真値粒子に対応する十字が3コマ未満で、事前固定の検出規則では hit にしない例。*
+
+```
+py -3.11 examples/poc_vial_particle_pod.py
+```
+
+ソース: [examples/poc_vial_particle_pod.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_vial_particle_pod.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_vial_particle_pod)
+
+使用 op(ノートへ): [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html) · [`proportion_interval`](https://furuse.work/ops/spc/pod/proportion_interval.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`track_moving_particles`](https://furuse.work/ops/pharma/track/track_moving_particles.html) · [`vial_spin_stop_sequence`](https://furuse.work/ops/pharma/synth/vial_spin_stop_sequence.html)
 
 ## No.2026.031 —— 光弾性で応力を測る ―― 巻き戻しの外れは、ほとんどが既知の符号のあいまいさ
 

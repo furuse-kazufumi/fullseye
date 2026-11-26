@@ -9,9 +9,9 @@
 It chains typed operators, checks them against ground truth produced by physics simulation,
 and hands them to AI assistants through MCP and RAG.
 
-**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,851
+**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,853
 operators in the machine-readable index, `docs/OP_INDEX.json`: 947 single-input 2-D operators +
-17 n-ary + 2,887 in the typed ledgers, each with a per-operator note), the family guides, and the
+17 n-ary + 2,889 in the typed ledgers, each with a per-operator note), the family guides, and the
 release notes.
 
 **What it can do: [CAPABILITIES.en.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/CAPABILITIES.en.md)** — an index organised by
@@ -116,7 +116,7 @@ The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebu
 | `validated-public-real-data` | an example on public measured data runs in a gate | 10 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 506 examples, 501 are actually run by a gate.
+Of 507 examples, 502 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -170,6 +170,10 @@ Two more doors, both new since 0.1.11 and both honest about their limits:
 | **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](https://github.com/furuse-kazufumi/fullseye/tree/master/rust/fullseye_core/examples) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (947 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the n-ary 2-D operators and the typed-ledger operators (counts: the index line at the top), whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
 
 ## Install
+
+> **This README follows `master`; the PyPI release can lag behind it.** If a command described here
+> is missing after `pip install fullseye` (check `fullseye --version` against the [release notes](https://github.com/furuse-kazufumi/fullseye/blob/master/CHANGELOG.md)),
+> install the checkout instead: `git clone https://github.com/furuse-kazufumi/fullseye && cd fullseye && pip install -e .`
 
 ```bash
 pip install fullseye         # portable Studio, image/video/scientific I/O, 3-D interchange, reports and device adapters
@@ -315,7 +319,7 @@ knobs in `[0, 1]`. Feature operators return a Python float; contour operators a 
 
 ## Operator library
 
-**3,851 typed operators** (964 2-D in the registry, 17 of them n-ary, + 2,887 in the typed ledgers,
+**3,853 typed operators** (964 2-D in the registry, 17 of them n-ary, + 2,889 in the typed ledgers,
 the 3-D ledger among them), covering denoising, smoothing, sharpening,
 thresholding/segmentation, morphology, edge/corner/blob detection, distance
 transforms, color-space conversion, texture/shape features, contours, and the 3-D
@@ -342,20 +346,20 @@ py -3.11 imgevolve.py coverage               # honest coverage numbers
 Adding one operator makes evolution, code generation, the catalog, and the
 machine-readable index (`docs/OP_INDEX.json`) follow automatically.
 
-**How to call one** — the 3,851 operators are not all reachable the same way. Measured on this
+**How to call one** — the 3,853 operators are not all reachable the same way. Measured on this
 version (`fullseye.list_ops(include_ledger=True)`, then `hasattr` per name):
 
 | way of calling | reaches | what it covers |
 |---|---|---|
 | `fullseye.apply(img, "name")` / `fullseye.run_pipeline` | the 2-D registry (947 single-input + 17 n-ary, by name) | the evolvable vocabulary |
 | `fullseye.op.<name>(img)` | 947 (935 registry + 12 colour) | the same 2-D ops, by attribute |
-| `fullseye.ledger.<name>(...)` | all 2,887 typed-ledger ops | everything outside the 2-D registry |
-| `fullseye.<name>(...)` directly | only 770 of the 3,851 (767 ledger + 3 registry) | the rest raise `AttributeError` with a pointer to the right entry |
+| `fullseye.ledger.<name>(...)` | all 2,889 typed-ledger ops | everything outside the 2-D registry |
+| `fullseye.<name>(...)` directly | only 770 of the 3,853 (767 ledger + 3 registry) | the rest raise `AttributeError` with a pointer to the right entry |
 
 So `fullseye.<name>` is a convenience for a minority of names; when a name is not an attribute of
 `fullseye`, call it with `fullseye.apply` (2-D ops, `fullseye.op.<name>`) or `fullseye.ledger.<name>` /
 `fullseye.op_run("name")` (ledger ops). `fullseye.list_ops()` lists only the 964 2-D ops by default;
-pass `include_ledger=True` for the full 3,851.
+pass `include_ledger=True` for the full 3,853.
 
 ![Real outputs of classic 2-D vision operators — edges, segmentation, contour measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
 
@@ -460,7 +464,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | **Read the whole story end to end (long-form)** | [`docs/articles/fullseye_overview_qiita_en.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md) |
 | See what the operators produce (result gallery) | `docs/GALLERY.md` |
 | Browse the paper exhibits (op demos and the PoC museum, en/ja; accession numbers in `exhibit_numbers.json`) | `docs/articles/exhibits/` |
-| Look up any of the 3,851 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Look up any of the 3,853 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
 | Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
 | Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |

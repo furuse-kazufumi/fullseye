@@ -5,7 +5,7 @@ category: pod
 in: 
 out: table
 gpu: なし
-examples: [proportion_interval_audit]
+examples: [poc_vial_particle_pod, proportion_interval_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 1.1.1  # fullseye lib version this note was generated for
@@ -42,6 +42,7 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_vial_particle_pod](../../../../examples/poc_vial_particle_pod.py) — `py -3.11 examples/poc_vial_particle_pod.py`
 - [proportion_interval_audit](../../../../examples/proportion_interval_audit.py) — `py -3.11 examples/proportion_interval_audit.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

@@ -732,7 +732,7 @@ def _registry_adapters():
                  "opsgfx2d", "opsimgmetrics", "opscolortransport",
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
-                 "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
+                 "opsmeasure1d", "opsblob", "opsflyvision", "opsspc", "opspharma",
                  "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opsmatchreg", "opscalib", "opsacceptance", "opssymbol", "opsmv", "opsgenerative",
                  "opssegmentation"):
         try:
@@ -877,6 +877,13 @@ def catalog():
     for n, m in opsspc.OPSSPC.items():
         if m["func"] is not None:
             ops.append((n, "spc", list(m["in"]), m["out"], m["func"]))
+    # バイアル回転停止の合成・追跡(opsp harma)。画像列は既存の ``video``
+    # (T,H,W) をそのまま使い、真値と軌跡表は table で返す。新しい型語彙を
+    # 増やさず、既存の時系列処理と接続する。
+    import opspharma
+    for n, m in opspharma.OPSPHARMA.items():
+        if m["func"] is not None:
+            ops.append((n, "pharma", list(m["in"]), m["out"], m["func"]))
     # 配線行列の不変量(opsgraph 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 4 op はすべて matrix(正方の隣接行列)→ table(整数の恒等式・ヌルとの比・
     # 次数の配列の dict)。コネクトーム / 血管網 / 配管図を同じ物差しで測る族で、

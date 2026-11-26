@@ -58,8 +58,13 @@ be reorganised. Everything a consumer needs is re-exported from `fullseye`.
 
 ## From an LLM (MCP server, 0.1.11 PoC)
 
-`fullseye-mcp` is a stdio Model Context Protocol server (protocol
-`2025-06-18`). It exposes **9 tools, not 1,942**: search the catalog, read an operator's
+`fullseye-mcp` is a dual-era stdio Model Context Protocol server. Modern clients use
+protocol `2026-07-28`: they call `server/discover` and put their protocol version and
+capabilities in every request's `_meta`, with no `initialize` handshake. Handshake-era
+clients remain compatible through `initialize`; Fullseye negotiates `2025-11-25` and
+`2025-06-18`, returning the requested revision when supported. A client that supports
+both eras can probe `server/discover` and continue modern when it succeeds, while older
+clients keep their existing wire behavior. It exposes **9 tools, not 1,942**: search the catalog, read an operator's
 knowledge-layer note (with its pre-rendered, gate-verified figures as `resource_link`s),
 load a sample or a sandboxed image into a handle, apply one operator or a pipeline, and
 inspect a handle, and fix the text inside an image against the string it should read
@@ -127,7 +132,7 @@ plain C ABI there are no per-language bindings to maintain: Python (`ctypes`,
 toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1, CPython 3.11
 as of 2026-09-15) rather than which ones exist.
 
-What this is **not**: it is not the Python library (3,851 operators in the machine-readable
+What this is **not**: it is not the Python library (3,853 operators in the machine-readable
 index) in another language. Its
 purpose is to be a *second implementation* of a small contract, so that a differential
 fuzzer and a header-including C caller can find specification bugs the Python tests cannot
@@ -141,7 +146,7 @@ language wins, and the losses were SIMD losses; see `CHANGELOG.md` 0.1.11.
 **Every operator of the 2-D registry (947 single-input operators; the 964 2-D operators of the
 index minus the 17 n-ary ones; those whose backend is installed) is reachable through
 `fs_apply`; the five contract operators also have a native route. Look at `route`.** The typed
-ledgers (2,887 operators whose inputs are point clouds, signals, tables …) and the n-ary
+ledgers (2,889 operators whose inputs are point clouds, signals, tables …) and the n-ary
 operators cannot be carried by one image / region handle and are refused with a status code and
 a reason — a later stage, not a silent gap. `fs_apply(op, inputs, n_in, params_json, route_pref, outputs,
 out_cap, n_out, info)` names the operator as a string and takes its parameters as a JSON

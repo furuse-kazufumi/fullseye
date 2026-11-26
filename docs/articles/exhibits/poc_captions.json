@@ -1238,6 +1238,20 @@
    "lead_en": "Counting clipped or overlapping objects as one changes a microscopy size distribution. Synthetic truth shows a largest error of 0.165 px. Acceptance reasons and three bases remain with calibration provenance."
   },
   {
+   "id": "poc_vial_particle_pod",
+   "wing": "wing_metrology",
+   "added": "2026-11-25",
+   "numbers_source": "log",
+   "figure": "spin_stop_tracks",
+   "title_ja": "回転停止後のバイアル異物検査 ―― 照明・コントラスト別の粒子 POD を独立 holdout で測る",
+   "title_en": "Vial Particle Inspection After Spin Stop — Particle POD by Lighting and Contrast on an Independent Holdout",
+   "caption_ja": "停止後に指数減衰する旋回流へ、粒子・気泡・静止傷の既知の真値を重ね、背面照明と側面照明の入力から同じ座標系の軌跡を得た。独立 holdout 84 trial では 62 hit / 22 miss で、全条件をまとめた POD fit の a90 は 164.20 µm、片側 95% 上限は 231.20 µm だった。清浄 holdout の偽粒子は 0/20（95% 上限 0.1391）で、原寸の追跡図、径×コントラストの POD、条件別 a90、見逃し例を同じ実行から出した。",
+   "caption_en": "Known truth for particles, bubbles and stationary scratches is overlaid on a decaying post-stop swirl, and back- and side-lit inputs yield tracks in one coordinate system. In an independent holdout of 84 trials, 62 hit and 22 miss; the pooled POD fit has a90 164.20 µm and a one-sided 95% upper bound of 231.20 µm. The clean holdout has 0/20 false particles (95% upper bound 0.1391); the life-size tracking view, diameter-by-contrast POD, condition-specific a90 table and miss case come from the same run.",
+   "run": "py -3.11 examples/poc_vial_particle_pod.py",
+   "lead_ja": "回転を止めた後も、粒子と気泡は流れ、傷は動かない。独立 holdout の全条件をまとめた粒径閾値は 164.20 µm だった。背面照明と側面照明で、真値と対応する軌跡、見逃し側を同じ画面に置く。",
+   "lead_en": "After rotation stops, particles and bubbles keep moving while scratches remain still. The pooled independent holdout has a ninety-percent detection diameter of 164.20 µm. Back and side illumination place planted truth, matched tracks and a miss-side case in one view."
+  },
+  {
    "id": "poc_particle_tracking",
    "wing": "wing_xyt",
    "added": "2026-09-06",

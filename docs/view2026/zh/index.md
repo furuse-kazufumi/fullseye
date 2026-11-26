@@ -8,11 +8,11 @@
 
 **发表:2026 年 12 月 3 日(周四)14:40–15:50(日本时间),互动环节 2,IS2-19**(横滨 Pacifico,Annex Hall)
 
-<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="从同一个三维场景取出图像、深度、法线、阴影和边缘并分别处理的示意图" width="640" height="468"><div class="vt"><p>Fullseye 是图像检测、三维测量与物理仿真的平台。通过 MCP 和 RAG,把类型化的经典图像处理算子与包含光学设计等传感在内的物理仿真交给 AI,让它针对每个课题考虑组合方式,并在类型一致性检查以及对照物理与成像仿真生成的真值的评估下,以对话方式解决课题。开源(Apache-2.0)。</p></div></div>
+<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="从同一个三维场景取出图像、深度、法线、阴影和边缘并分别处理的示意图" width="640" height="468"><div class="vt"><p>Fullseye 是图像检测、三维测量与物理仿真的平台。通过 MCP 和 RAG,把类型化的经典图像处理算子与包含光学设计等传感在内的物理仿真交给 AI,让它针对每个课题考虑组合方式,并在类型一致性检查以及对照物理与成像仿真生成的真值的评估下,以对话方式解决课题。开源(Apache-2.0)。</p><p>也可从 C/C++ 调用（预览）：面向开发的 SDK，可将 805 个 op 作为 C 函数调用（通过 pybind11 嵌入 Python；指定已安装 Fullseye 的 Python 环境即可使用）。说明 → <a href="https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md"><code>C_API.md</code></a></p></div></div>
 
 点按图块即可打开视频或图(▶ = 动态)。
 
-本页只展示 30 件展品。其余 286 件在[附加页](more.md)。
+本页只展示 30 件展品。其余 287 件在[附加页](more.md)。
 
 <style>
 .vlang { font-size: 14px; line-height: 2; }
@@ -154,9 +154,9 @@ li, p, code { overflow-wrap: anywhere; }
 <summary><b>试一试</b> (Python 3.11)</summary>
 
 ```
-pip install fullseye
 git clone https://github.com/furuse-kazufumi/fullseye
 cd fullseye
+pip install -e ".[opencv]"
 python examples/poc_focus_stacking.py
 ```
 

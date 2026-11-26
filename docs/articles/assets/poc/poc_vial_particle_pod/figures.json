@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_spin_stop_tracks.png",
+  "name": "spin_stop_tracks",
+  "caption": "公開 AVI 資料の照明・容器形状の特徴を合成した入力→真値→追跡。第三者画像は不使用。明るい背景では粒子を暗く、側面/Tyndall では明るく描く。各時点の下段は粒子の原寸 crop を 4×にした小窓で、最近傍拡大はこの明記済み表示だけに使う。",
+  "shape": [
+   1217,
+   3424,
+   3
+  ]
+ },
+ {
+  "file": "02_pod_by_diameter_contrast.png",
+  "name": "pod_by_diameter_contrast",
+  "caption": "灰色破線は USP<1790> 文脈の手作業検査の参考観測値(100/150/200 µm = 40/70/95%%)であり、規格の基準でも本 AVI の合否基準でもない。各パネルの下に同じ条件の GLM a90/a90/95 を記し、見出しの値だけが全条件をまとめた値である。凡例は実線、青い点+区間、灰色破線を実際と同じ色・形で描く。",
+  "shape": [
+   2031,
+   3760,
+   3
+  ]
+ },
+ {
+  "file": "03_pod_condition_a90.png",
+  "name": "pod_condition_a90",
+  "caption": "各行は独立 holdout のその条件だけで fit した GLM。a90/95 は a90 の片側 95% 上限。完全分離など n=10/径では推定できない行は、数値を補わず「求まらない（点が足りない）」と記す。全条件をまとめた値は POD 図の見出しだけに別記する。",
+  "shape": [
+   454,
+   1250,
+   3
+  ],
+  "csv": "03_pod_condition_a90.csv",
+  "tsv": "03_pod_condition_a90.tsv"
+ },
+ {
+  "file": "04_miss_representative.png",
+  "name": "miss_representative",
+  "caption": "丸の真値粒子に対応する十字が3コマ未満で、事前固定の検出規則では hit にしない例。",
+  "shape": [
+   268,
+   286,
+   3
+  ]
+ }
+]

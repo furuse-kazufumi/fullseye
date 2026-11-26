@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: f1044d971702 -->
+<!-- i18n-source-sha: 301a8cc4c65e -->
 # 安裝 / 環境建置完整指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -163,6 +163,7 @@ python3.11 -m pip install -e .        # 標準安裝含 Studio/Pillow；不需�
 | `ModuleNotFoundError: No module named 'fullseye'` | 未安裝 / 路徑未設定 | 執行 `pip install -e .`，或將儲存庫根目錄加入 `PYTHONPATH` |
 | 找不到 `fullseye` / `fullseye-studio` 指令 | 主控台指令稿未註冊 | 執行 `pip install -e .`。若不安裝，可用 `py -3.11 imgevolve.py` / `py -3.11 studio.py` |
 | Studio 啟動時出現 PySide6 的 ImportError | 標準相依套件損壞 | `pip install --force-reinstall fullseye` |
+| 在 Linux 上啟動 Studio 時出現 `ImportError: libEGL.so.1` 等 | 缺少 Qt 所需的系統函式庫(pip 無法安裝) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 libxcb-cursor0`(`libxcb-cursor0` 用於透過 xcb 在螢幕上顯示視窗;CI 以其餘 4 個確認 offscreen 啟動)。其他發行版請安裝對應的套件 |
 | `apply` / `pipeline` 出現 `cannot read <path>` | 標準 Pillow 相依套件損壞，或影像已損壞 | `pip install --force-reinstall fullseye`；若仍失敗，請檢查影像 |
 | `read_image` / `write_image`(API)出現 cv2 的 ImportError | 這兩者 **專屬於 OpenCV** | `pip install -e ".[opencv]"`。若只想用 Pillow，請改用 `fullseye.load` / `fullseye.save` |
 | `list_ops` 中缺少預期的運算子 / `has` 顯示 unknown | 對應後端未安裝 | 加入相應的 extras(`skimage`/`wavelets`/`extra` 等) |

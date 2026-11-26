@@ -132,7 +132,10 @@ bash install/uninstall.sh --remove-venv   # venv ごと削除
   `-Minimal`（Windows）/ `--minimal`（Linux）でも **GUI（PySide6）は入ります**。
   それでも駄目な場合は venv の pip で `pip install --force-reinstall fullseye` を実行してください。
   Linux では追加のシステムライブラリ（例: `libEGL`, `libxkbcommon`, `xcb` 系）が
-  必要になることがあります。ディストリのパッケージで補ってください。
+  必要になることがあります。`ImportError: libEGL.so.1` などが出たら、Debian/Ubuntu では
+  `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 libxcb-cursor0`、
+  他のディストリでは対応するパッケージを入れてください（`libxcb-cursor0` は画面に窓を出す xcb 起動に要る。
+  CI の installer e2e は残りの 4 つで offscreen 起動を確かめている）。
 
 - **torch / opencv のダウンロードが重い・失敗する**
   `-Minimal` / `--minimal`（標準依存のみ）で導入すれば、Studio と core の

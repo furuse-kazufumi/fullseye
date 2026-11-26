@@ -161,6 +161,7 @@ python3.11 -m pip install -e .        # numpy + scipy のみ。GUI/torch/opencv 
 | `ModuleNotFoundError: No module named 'fullseye'` | 未インストール／パス未設定 | `pip install -e .`、または `PYTHONPATH` にリポジトリ直下を追加 |
 | `fullseye` / `fullseye-studio` コマンドが見つからない | コンソールスクリプト未登録 | `pip install -e .` を実行。未インストールなら `py -3.11 imgevolve.py` / `py -3.11 studio.py` |
 | Studio 起動時に PySide6 の ImportError | 標準依存の破損 | `pip install --force-reinstall fullseye` |
+| Linux で Studio 起動時に `ImportError: libEGL.so.1` など | Qt が使うシステムライブラリの不足(pip では入らない) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 libxcb-cursor0`(`libxcb-cursor0` は画面に窓を出す xcb 起動に要る。CI は残りの 4 つで offscreen 起動を確かめている)。他のディストリでは対応するパッケージ |
 | `apply` / `pipeline` で `cannot read <path>` | Pillow を含む標準依存の破損、または壊れた画像 | `pip install --force-reinstall fullseye`。直らなければ画像を確認 |
 | `read_image` / `write_image`（API）で cv2 の ImportError | これらは **OpenCV 専用** | `pip install -e ".[opencv]"`。Pillow で済ませたいなら `fullseye.load` / `fullseye.save` を使う |
 | `list_ops` に期待したオペレータが無い / `has` が unknown | 該当バックエンド未導入 | 対応する extras（`skimage`/`wavelets`/`extra` 等）を追加 |
