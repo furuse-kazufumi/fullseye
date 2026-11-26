@@ -948,7 +948,9 @@ def _canonical_stage(i: int, s, where: str) -> list:
         raise defs_io.DefinitionError("%s: stage %d: operator name must be text" % (where, i))
     op = api.find_op(name)
     if op is None:
-        raise defs_io.DefinitionError("%s: stage %d: unknown operator %r" % (where, i, name))
+        raise defs_io.DefinitionError(
+            "%s: stage %d: unknown operator %r. Choose an operator listed by fullseye.list_ops() "
+            "and save the pipeline again from Studio." % (where, i, name))
     for label, v in (("a", a), ("b", b)):
         if not math.isfinite(v) or not 0.0 <= v <= 1.0:
             raise defs_io.DefinitionError("%s: stage %d (%s): knob %s must be in [0, 1], got %r"
