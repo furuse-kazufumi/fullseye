@@ -85,7 +85,18 @@ class sdist(_sdist):
         dst = os.path.join(base_dir, _REL_ARCHIVE)
         n, size = helpstore.pack_archive(helpstore.HELP_DIR, dst)
         print("helpstore: packed %d help pages into the sdist (%.2f MB)" % (n, size / 1e6))
+        # setuptools 84.2.1 on Windows can leave this root-level header out of
+        # the release tree even though MANIFEST.in and SOURCES.txt contain it.
+        # Copy the authoritative source explicitly, then fail closed if either
+        # side is missing. / Windows の setuptools 84.2.1 では MANIFEST.in と
+        # SOURCES.txt に載る root header が release tree から抜けることがある。
+        # 正本を明示的に写し、入力か出力が欠けたら fail-closed にする。
+        source_header = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fullseye_abi.h")
+        if not os.path.isfile(source_header):
+            raise SystemExit("C/C++ SDK header is missing: %s" % source_header)
         header = os.path.join(base_dir, "fullseye_abi.h")
+        if not os.path.isfile(header):
+            shutil.copyfile(source_header, header)
         if not os.path.isfile(header):
             raise SystemExit("C/C++ SDK header is missing from sdist inputs: %s" % header)
         header_dst = os.path.join(base_dir, _REL_ABI_HEADER)
