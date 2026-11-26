@@ -18871,7 +18871,7 @@ def main(argv=None) -> int:
         from fullseye import startup_errors
         _msg = startup_errors.report(exc, "Studio")
         try:
-            QtWidgets.QMessageBox.critical(None, "Fullseye Studio", _msg)
+            _default_error(None, "Fullseye Studio", _msg)
         except Exception:
                  if startup_errors.is_consoleless_windows():
                      startup_errors.show_windows_message(_msg, "Fullseye Studio")
