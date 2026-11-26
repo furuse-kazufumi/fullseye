@@ -8,7 +8,7 @@
 
 **발표: 2026년 12월 3일(목) 14:40–15:50(일본 시간), 인터랙티브 세션 2, IS2-19**(파시피코 요코하마 아넥스 홀)
 
-<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="하나의 3차원 장면에서 그림·깊이·법선·그림자·가장자리를 꺼내 처리한 그림" width="640" height="468"><div class="vt"><p>Fullseye는 영상 검사·3차원 계측·물리 시뮬레이션의 기반입니다. 타입을 가진 고전 영상 처리 연산자와 광학 설계 등 센싱을 포함한 물리 시뮬레이션을 MCP와 RAG로 AI에 넘겨, 과제마다 조합을 생각하게 하고, 타입 정합성과, 물리·촬상 시뮬레이션이 만든 참값에 비춘 평가로 확인하면서 대화형으로 과제를 풉니다. 오픈 소스(Apache-2.0).</p><p>C/C++에서도 호출할 수 있습니다(프리뷰): 682개 op를 C 함수로 호출하는 개발용 SDK(pybind11로 Python을 임베드하는 방식이며, Fullseye가 설치된 Python 환경을 지정해 사용). 설명 → <a href="https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md"><code>C_API.md</code></a></p></div></div>
+<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="하나의 3차원 장면에서 그림·깊이·법선·그림자·가장자리를 꺼내 처리한 그림" width="640" height="468"><div class="vt"><p>Fullseye는 영상 검사·3차원 계측·물리 시뮬레이션의 기반입니다. 타입을 가진 고전 영상 처리 연산자와 광학 설계 등 센싱을 포함한 물리 시뮬레이션을 MCP와 RAG로 AI에 넘겨, 과제마다 조합을 생각하게 하고, 타입 정합성과, 물리·촬상 시뮬레이션이 만든 참값에 비춘 평가로 확인하면서 대화형으로 과제를 풉니다. 오픈 소스(Apache-2.0).</p><p>C/C++에서도 호출할 수 있습니다(프리뷰): 805개 op를 C 함수로 호출하는 개발용 SDK(pybind11로 Python을 임베드하는 방식이며, Fullseye가 설치된 Python 환경을 지정해 사용). 설명 → <a href="https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md"><code>C_API.md</code></a></p></div></div>
 
 타일을 누르면 동영상·그림이 열립니다(▶ = 움직임).
 

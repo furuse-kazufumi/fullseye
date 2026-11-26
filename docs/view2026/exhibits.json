@@ -239,14 +239,14 @@
     "fr": "Fullseye est une base pour l'inspection d'images, la mesure 3D et la simulation physique. Elle transmet à une IA, via MCP et RAG, des opérateurs typés de traitement d'images classique et la simulation physique (y compris la simulation de capteurs, comme la conception optique), lui fait déterminer une combinaison adaptée à chaque tâche, et résout la tâche de manière interactive tout en vérifiant la cohérence des types et en évaluant par rapport à la vérité terrain produite par la simulation physique et d'imagerie. Open source (Apache-2.0)."
    },
    "c_api_preview": {
-    "ja": "C/C++ からも呼べます(プレビュー): 682 の op を C の関数として呼べる開発用 SDK(pybind11 で Python を埋め込む方式。Fullseye を入れた Python 環境を指定して使う)。説明 →",
-    "en": "Also callable from C/C++ (preview): a development SDK that calls 682 op as C functions (it embeds Python with pybind11; use it by pointing it to a Python environment with Fullseye installed). Details →",
-    "zh": "也可从 C/C++ 调用（预览）：面向开发的 SDK，可将 682 个 op 作为 C 函数调用（通过 pybind11 嵌入 Python；指定已安装 Fullseye 的 Python 环境即可使用）。说明 →",
-    "tw": "也可從 C/C++ 呼叫（預覽）：面向開發的 SDK，可將 682 個 op 作為 C 函式呼叫（透過 pybind11 嵌入 Python；指定已安裝 Fullseye 的 Python 環境即可使用）。說明 →",
-    "ko": "C/C++에서도 호출할 수 있습니다(프리뷰): 682개 op를 C 함수로 호출하는 개발용 SDK(pybind11로 Python을 임베드하는 방식이며, Fullseye가 설치된 Python 환경을 지정해 사용). 설명 →",
-    "de": "Auch aus C/C++ aufrufbar (Vorschau): ein Entwicklungs-SDK, das 682 op als C-Funktionen aufruft (es bettet Python mit pybind11 ein; verwenden Sie dafür eine Python-Umgebung mit installiertem Fullseye). Beschreibung →",
-    "hi": "C/C++ से भी कॉल कर सकते हैं (प्रीव्यू): 682 op को C फ़ंक्शन के रूप में कॉल करने वाला डेवलपमेंट SDK (pybind11 से Python एम्बेड करता है; Fullseye इंस्टॉल किए हुए Python परिवेश को निर्दिष्ट करके इस्तेमाल करें)। विवरण →",
-    "fr": "Également appelable depuis C/C++ (aperçu) : un SDK de développement qui appelle 682 op comme fonctions C (il embarque Python avec pybind11 ; utilisez-le en indiquant un environnement Python où Fullseye est installé). Détails →"
+    "ja": "C/C++ からも呼べます(プレビュー): {n_c_api} の op を C の関数として呼べる開発用 SDK(pybind11 で Python を埋め込む方式。Fullseye を入れた Python 環境を指定して使う)。説明 →",
+    "en": "Also callable from C/C++ (preview): a development SDK that calls {n_c_api} op as C functions (it embeds Python with pybind11; use it by pointing it to a Python environment with Fullseye installed). Details →",
+    "zh": "也可从 C/C++ 调用（预览）：面向开发的 SDK，可将 {n_c_api} 个 op 作为 C 函数调用（通过 pybind11 嵌入 Python；指定已安装 Fullseye 的 Python 环境即可使用）。说明 →",
+    "tw": "也可從 C/C++ 呼叫（預覽）：面向開發的 SDK，可將 {n_c_api} 個 op 作為 C 函式呼叫（透過 pybind11 嵌入 Python；指定已安裝 Fullseye 的 Python 環境即可使用）。說明 →",
+    "ko": "C/C++에서도 호출할 수 있습니다(프리뷰): {n_c_api}개 op를 C 함수로 호출하는 개발용 SDK(pybind11로 Python을 임베드하는 방식이며, Fullseye가 설치된 Python 환경을 지정해 사용). 설명 →",
+    "de": "Auch aus C/C++ aufrufbar (Vorschau): ein Entwicklungs-SDK, das {n_c_api} op als C-Funktionen aufruft (es bettet Python mit pybind11 ein; verwenden Sie dafür eine Python-Umgebung mit installiertem Fullseye). Beschreibung →",
+    "hi": "C/C++ से भी कॉल कर सकते हैं (प्रीव्यू): {n_c_api} op को C फ़ंक्शन के रूप में कॉल करने वाला डेवलपमेंट SDK (pybind11 से Python एम्बेड करता है; Fullseye इंस्टॉल किए हुए Python परिवेश को निर्दिष्ट करके इस्तेमाल करें)। विवरण →",
+    "fr": "Également appelable depuis C/C++ (aperçu) : un SDK de développement qui appelle {n_c_api} op comme fonctions C (il embarque Python avec pybind11 ; utilisez-le en indiquant un environnement Python où Fullseye est installé). Détails →"
    },
   "try": {
    "ja": "試してみる",

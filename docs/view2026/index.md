@@ -8,7 +8,7 @@
 
 **発表: 2026 年 12 月 3 日(木) 14:40〜15:50、インタラクティブセッション 2、IS2-19**(パシフィコ横浜 アネックスホール)
 
-<div class="vintro"><img src="thumbs/fullseye_intro.jpg" alt="1 つの 3-D の場面から、絵・深度・法線・影・縁を取り出して処理した図" width="640" height="468"><div class="vt"><p>Fullseye は、画像検査・三次元計測・物理シミュレーションの基盤です。型を持つ古典画像処理の op と、光学設計などのセンシングを含む物理シミュレーションを MCP と RAG で AI に渡し、課題ごとに組み合わせを考えさせ、型整合性と、物理・撮像シミュレーションが作る真値に照らした評価で確かめながら、対話的に課題を解きます。オープンソース(Apache-2.0)。</p><p>C/C++ からも呼べます(プレビュー): 682 の op を C の関数として呼べる開発用 SDK(pybind11 で Python を埋め込む方式。Fullseye を入れた Python 環境を指定して使う)。説明 → <a href="https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md"><code>C_API.md</code></a></p><p><a href="about.html">Fullseye とは(読み物)</a></p></div></div>
+<div class="vintro"><img src="thumbs/fullseye_intro.jpg" alt="1 つの 3-D の場面から、絵・深度・法線・影・縁を取り出して処理した図" width="640" height="468"><div class="vt"><p>Fullseye は、画像検査・三次元計測・物理シミュレーションの基盤です。型を持つ古典画像処理の op と、光学設計などのセンシングを含む物理シミュレーションを MCP と RAG で AI に渡し、課題ごとに組み合わせを考えさせ、型整合性と、物理・撮像シミュレーションが作る真値に照らした評価で確かめながら、対話的に課題を解きます。オープンソース(Apache-2.0)。</p><p>C/C++ からも呼べます(プレビュー): 805 の op を C の関数として呼べる開発用 SDK(pybind11 で Python を埋め込む方式。Fullseye を入れた Python 環境を指定して使う)。説明 → <a href="https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md"><code>C_API.md</code></a></p><p><a href="about.html">Fullseye とは(読み物)</a></p></div></div>
 
 タイルを押すと動画・図が開きます(▶ = 動く)。
 

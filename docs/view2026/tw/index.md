@@ -8,7 +8,7 @@
 
 **發表:2026 年 12 月 3 日(週四)14:40–15:50(日本時間),互動場次 2,IS2-19**(橫濱 Pacifico,Annex Hall)
 
-<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="從同一個三維場景取出影像、深度、法線、陰影與邊緣並分別處理的示意圖" width="640" height="468"><div class="vt"><p>Fullseye 是影像檢測、三維量測與物理模擬的平台。透過 MCP 與 RAG,把型別化的古典影像處理運算子與包含光學設計等感測在內的物理模擬交給 AI,讓它針對每個課題思考組合方式,並在型別一致性檢查以及對照物理與成像模擬產生的真值的評估下,以對話方式解決課題。開放原始碼(Apache-2.0)。</p><p>也可從 C/C++ 呼叫（預覽）：面向開發的 SDK，可將 682 個 op 作為 C 函式呼叫（透過 pybind11 嵌入 Python；指定已安裝 Fullseye 的 Python 環境即可使用）。說明 → <a href="https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md"><code>C_API.md</code></a></p></div></div>
+<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="從同一個三維場景取出影像、深度、法線、陰影與邊緣並分別處理的示意圖" width="640" height="468"><div class="vt"><p>Fullseye 是影像檢測、三維量測與物理模擬的平台。透過 MCP 與 RAG,把型別化的古典影像處理運算子與包含光學設計等感測在內的物理模擬交給 AI,讓它針對每個課題思考組合方式,並在型別一致性檢查以及對照物理與成像模擬產生的真值的評估下,以對話方式解決課題。開放原始碼(Apache-2.0)。</p><p>也可從 C/C++ 呼叫（預覽）：面向開發的 SDK，可將 805 個 op 作為 C 函式呼叫（透過 pybind11 嵌入 Python；指定已安裝 Fullseye 的 Python 環境即可使用）。說明 → <a href="https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md"><code>C_API.md</code></a></p></div></div>
 
 點按圖塊即可開啟影片或圖(▶ = 動態)。
 

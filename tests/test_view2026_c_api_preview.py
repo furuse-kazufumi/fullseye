@@ -27,7 +27,8 @@ def test_c_api_preview_is_below_the_about_paragraph_in_all_languages() -> None:
         ui = {key: value[lang] for key, value in data["ui"].items()}
         page = G.build(data, lang)
         intro = page[page.index('<div class="vintro">'):page.index("</div></div>", page.index('<div class="vintro">'))]
-        assert intro.index(ui["about"]) < intro.index(ui["c_api_preview"]), lang
+        line = G._esc(ui["c_api_preview"].replace("{n_c_api}", str(G.c_api_callable_count())))
+        assert intro.index(G._esc(ui["about"])) < intro.index(line), lang
         assert intro.count('href="%s"' % G.C_API_DOC_URL) == 1, lang
         assert 'href="C_API.md"' not in intro, lang
 
@@ -38,8 +39,15 @@ def test_c_api_preview_count_matches_the_generated_c_sdk_ledger() -> None:
     ledger = json.loads(C_API_OPS.read_text(encoding="utf-8"))
     expected = ledger["n_callable"]
     assert expected == sum(row["callable"] for row in ledger["ops"])
+    assert G.c_api_callable_count() == expected
     data = G.load()
     for lang in LANGS:
         text = data["ui"]["c_api_preview"][lang]
-        found = re.findall(r"\d+", text)
-        assert found == [str(expected)], (lang, found, expected)
+        # 数は手で書かない: 差し込み口が 1 つで、ほかに数字は無い(pybind11 は名前なので除く)
+        assert text.count("{n_c_api}") == 1, lang
+        assert re.findall(r"\d+", text.replace("pybind11", "")) == [], lang
+        page = G.build(data, lang)
+        intro = page[page.index('<div class="vintro">'):page.index("</div></div>", page.index('<div class="vintro">'))]
+        assert "{n_c_api}" not in page, lang
+        line = G._esc(text.replace("{n_c_api}", str(expected)))
+        assert line in intro and str(expected) in line, (lang, expected)
