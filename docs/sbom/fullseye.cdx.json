@@ -13,10 +13,10 @@
     },
     "component": {
       "type": "library",
-      "bom-ref": "pkg:pypi/fullseye@1.1.1",
+      "bom-ref": "pkg:pypi/fullseye@1.2.0",
       "name": "fullseye",
-      "version": "1.1.1",
-      "purl": "pkg:pypi/fullseye@1.1.1",
+      "version": "1.2.0",
+      "purl": "pkg:pypi/fullseye@1.2.0",
       "licenses": [
         {
           "license": {
@@ -1294,7 +1294,7 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:pypi/fullseye@1.1.1",
+      "ref": "pkg:pypi/fullseye@1.2.0",
       "dependsOn": [
         "dependency:asyncua:0d08a0f64fe43bd3",
         "dependency:imageio-ffmpeg:f8511f02ec792e47",
