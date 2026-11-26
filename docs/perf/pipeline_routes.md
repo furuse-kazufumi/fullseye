@@ -4,7 +4,7 @@
 **前** = 領域の解析の族(`accel_label.ADOPTED`、34 op)を経路から外した場合、**後** = 今の経路。
 `assume_cuda=True` は CUDA・CuPy・空き VRAM のある機械として経路表だけで決める(GPU の無い CI でも同じ表)。
 
-| 2 段以上のレシピ 224 本・587 段 | GPU の段 | 全段 GPU | 切り替わり | 往復の見込み |
+| 2 段以上のレシピ 225 本・589 段 | GPU の段 | 全段 GPU | 切り替わり | 往復の見込み |
 |---|---:|---:|---:|---:|
 | 前 | 163 | 8 | 136 | 127 |
 | 後 | 200 | 33 | 103 | 127 |
@@ -261,6 +261,7 @@
 | Inspect — score a segmentation split error (variation of information) | 0 / 0 | 0 / 0 | seg_inject_split[CPU:not_listed] → seg_variation_of_information[CPU:not_listed] |
 | Inspect — detect a scene cut in a noisy video stream | 1 / 1 | 1 / 1 | temporal_bilateral[GPU] → scene_cut_detection[CPU:below_measured_size] |
 | Inspect — moving object mask in a flickering video (deflicker + background model) | 0 / 0 | 0 / 0 | deflicker[CPU:below_measured_size] → running_gaussian_foreground[CPU:not_listed] |
+| Inspect — track moving matter after a pharmaceutical vial spin-stop | 0 / 0 | 0 / 0 | vial_spin_stop_sequence[CPU:not_listed] → track_moving_particles[CPU:not_listed] |
 | Calibrate — camera gain from a captured test chart (simulation calibration) | 0 / 0 | 0 / 0 | simcal_model[CPU:not_listed] → simcal_observe[CPU:not_listed] → simcal_fit[CPU:not_listed] → simcal_report[CPU:not_listed] |
 | Analyze — attention as a key-value lookup (RMSNorm → scores → softmax → mix) | 0 / 0 | 0 / 0 | rms_norm[CPU:not_listed] → attention_scores[CPU:not_listed] → attention_weights[CPU:not_listed] → attention_apply[CPU:not_listed] |
 | Measure — observed order of convergence of a grid study (GCI) | 0 / 0 | 0 / 0 | conv_observed_order[CPU:not_listed] |

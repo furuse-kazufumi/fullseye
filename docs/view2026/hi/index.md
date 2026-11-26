@@ -8,11 +8,11 @@
 
 **प्रस्तुति: गुरुवार 3 दिसंबर 2026, 14:40–15:50 JST, Interactive Session 2, IS2-19** (Pacifico Yokohama, Annex Hall)
 
-<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="एक 3-D दृश्य से चित्र, depth, normals, shadow और edges निकालकर उन्हें आगे प्रोसेस करने का चित्र" width="640" height="468"><div class="vt"><p>Fullseye image inspection, 3-D measurement और physics simulation का foundation है। यह typed classic image-processing operators और physics simulation (optical design जैसी sensing सहित) को MCP और RAG के ज़रिए AI को देता है, हर task के लिए combination सोचने देता है, और type consistency तथा physics और imaging simulation से बने ground truth के evaluation से जाँचते हुए task को interactive तरीके से हल करता है। Open source (Apache-2.0)।</p></div></div>
+<div class="vintro"><img src="../thumbs/fullseye_intro.jpg" alt="एक 3-D दृश्य से चित्र, depth, normals, shadow और edges निकालकर उन्हें आगे प्रोसेस करने का चित्र" width="640" height="468"><div class="vt"><p>Fullseye image inspection, 3-D measurement और physics simulation का foundation है। यह typed classic image-processing operators और physics simulation (optical design जैसी sensing सहित) को MCP और RAG के ज़रिए AI को देता है, हर task के लिए combination सोचने देता है, और type consistency तथा physics और imaging simulation से बने ground truth के evaluation से जाँचते हुए task को interactive तरीके से हल करता है। Open source (Apache-2.0)।</p><p>C/C++ से भी कॉल कर सकते हैं (प्रीव्यू): 805 op को C फ़ंक्शन के रूप में कॉल करने वाला डेवलपमेंट SDK (pybind11 से Python एम्बेड करता है; Fullseye इंस्टॉल किए हुए Python परिवेश को निर्दिष्ट करके इस्तेमाल करें)। विवरण → <a href="https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md"><code>C_API.md</code></a></p></div></div>
 
 tile पर tap करने से video या figure खुलता है (▶ = चलता हुआ)।
 
-इस पृष्ठ पर केवल 30 प्रदर्शन हैं। बाकी 286 [अतिरिक्त पृष्ठ](more.md) पर हैं।
+इस पृष्ठ पर केवल 30 प्रदर्शन हैं। बाकी 287 [अतिरिक्त पृष्ठ](more.md) पर हैं।
 
 <style>
 .vlang { font-size: 14px; line-height: 2; }
@@ -154,9 +154,9 @@ li, p, code { overflow-wrap: anywhere; }
 <summary><b>आज़माएँ</b> (Python 3.11)</summary>
 
 ```
-pip install fullseye
 git clone https://github.com/furuse-kazufumi/fullseye
 cd fullseye
+pip install -e ".[opencv]"
 python examples/poc_focus_stacking.py
 ```
 

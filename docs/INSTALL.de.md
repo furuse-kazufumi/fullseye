@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: e25193670f30 -->
+<!-- i18n-source-sha: 301a8cc4c65e -->
 # Installations- und Einrichtungshandbuch
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch** · [हिन्दी](./INSTALL.hi.md)
@@ -15,7 +15,7 @@ Der Python-API-Kern von Fullseye läuft mit **numpy + scipy**. Ein normales `pip
 |---|---|
 | Python | **3.11** (`requires-python = ">=3.11"` in `pyproject.toml`; Entwicklung und Verifikation erfolgen mit 3.11) |
 | Ausführungsbefehl | Windows: `py -3.11` / Linux: `python3.11` |
-| Standardabhängigkeiten | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5,!=6.12.0`, `Pillow>=13.0` (werden durch `pip install -e .` automatisch installiert) |
+| Standardabhängigkeiten | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0` (werden durch `pip install -e .` automatisch installiert) |
 | Betriebssystem | Windows 10/11, Linux (auch eingebettet). Auch macOS funktioniert, solange Python läuft |
 
 ---
@@ -41,8 +41,6 @@ Zusätzliche Backends werden über **Extras** ausgewählt (definiert unter `[pro
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow usw.), von mahotas abgeleitet (Zernike/pftas usw.) |
 | `gui` | keine (Studio ist Standardabhängigkeit) | Kompatibilitätsalias; **Fullseye Studio** startet nach `pip install fullseye` |
 | `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile` (ohne CuPy; den vollständigen GPU-Satz liefert `fullseye[gpu]`. Laut der Installationsanleitung von PyTorch ist das Standard-torch unter Linux der CUDA-Build und kann CUDA-Komponenten (nvidia-*-Wheels) mitbringen. Für reinen CPU-Betrieb torch vorher aus dem CPU-Index installieren: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | alle Operatoren und Backends |
-
-Die Studio-Standardanforderung ist `PySide6-Essentials>=6.5,!=6.12.0`. Version 6.12.0 ist ausgeschlossen, weil sie unter Linux einen SIGABRT reproduzierte.
 
 Empfehlung zur Auswahl:
 
@@ -165,6 +163,7 @@ Wichtige Punkte für den Einsatz im eingebetteten Umfeld:
 | `ModuleNotFoundError: No module named 'fullseye'` | nicht installiert / Pfad nicht gesetzt | `pip install -e .` ausführen oder das Repository-Wurzelverzeichnis zu `PYTHONPATH` hinzufügen |
 | Befehl `fullseye` / `fullseye-studio` wird nicht gefunden | Konsolenskripte nicht registriert | `pip install -e .` ausführen. Ohne Installation: `py -3.11 imgevolve.py` / `py -3.11 studio.py` |
 | ImportError für PySide6 beim Start von Studio | Standardabhängigkeit beschädigt | `pip install --force-reinstall fullseye` |
+| `ImportError: libEGL.so.1` o. Ä. beim Start von Studio unter Linux | von Qt benötigte Systembibliotheken fehlen (pip kann sie nicht installieren) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 libxcb-cursor0` (`libxcb-cursor0` wird benötigt, um das Fenster über xcb auf dem Bildschirm anzuzeigen; CI prüft den Offscreen-Start mit den übrigen vier). Andere Distributionen: die entsprechenden Pakete |
 | `cannot read <path>` bei `apply` / `pipeline` | Standardabhängigkeit Pillow beschädigt oder Bild beschädigt | `pip install --force-reinstall fullseye`; falls das nicht hilft, Bild prüfen |
 | ImportError für cv2 bei `read_image` / `write_image` (API) | diese sind **ausschließlich für OpenCV** | `pip install -e ".[opencv]"`. Wer stattdessen Pillow nutzen möchte, verwendet `fullseye.load` / `fullseye.save` |
 | erwarteter Operator fehlt in `list_ops` / `has` liefert unknown | zugehöriges Backend nicht installiert | passendes Extra hinzufügen (`skimage`/`wavelets`/`extra` usw.) |

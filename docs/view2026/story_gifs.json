@@ -8,7 +8,7 @@
   "color_mad_limit": 6.0,
   "first_duration_ms": 2500,
   "other_duration_ms": 1600,
-  "target_count": 228,
+  "target_count": 229,
   "crop_aspect_range": [
     0.42,
     2.4
@@ -10266,6 +10266,163 @@
       "alt": {
         "ja": "原画像→分割→真値と推定→個数/体積基準の径分布→失敗側。体積基準はレーザー回折との同一性を意味しない。",
         "en": "Counting clipped or overlapping objects as one changes a microscopy size distribution. Synthetic truth shows a largest error of 0.165 px. Acceptance reasons and three bases remain with calibration provenance."
+      }
+    },
+    "poc_vial_particle_pod": {
+      "representative": "01_spin_stop_tracks.png",
+      "status": "gif",
+      "selected": [
+        "01_spin_stop_tracks.png",
+        "02_pod_by_diameter_contrast.png",
+        "03_pod_condition_a90.png",
+        "04_miss_representative.png"
+      ],
+      "excluded_frames": [],
+      "variants": {
+        "ja": {
+          "path": "articles/assets/poc/poc_vial_particle_pod/story.ja.gif",
+          "frames": [
+            {
+              "file": "01_spin_stop_tracks.png",
+              "content_box": [
+                0,
+                217,
+                720,
+                256
+              ]
+            },
+            {
+              "file": "02_pod_by_diameter_contrast.png",
+              "content_box": [
+                0,
+                150,
+                720,
+                389
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.851305
+            },
+            {
+              "file": "03_pod_condition_a90.png",
+              "content_box": [
+                0,
+                214,
+                720,
+                262
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.753304
+            },
+            {
+              "file": "04_miss_representative.png",
+              "content_box": [
+                0,
+                7,
+                720,
+                675
+              ]
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 347676,
+          "color_mad": [
+            0.1529,
+            0.101,
+            0.0374,
+            0.2069
+          ],
+          "max_color_mad": 0.2069,
+          "source_sha256": "3b6537790102f58bd1126f13be76b6d371fcc657e891c88f9753e9af1e11fb15"
+        },
+        "en": {
+          "path": "articles/assets/poc/poc_vial_particle_pod/story.en.gif",
+          "frames": [
+            {
+              "file": "01_spin_stop_tracks.png",
+              "content_box": [
+                0,
+                217,
+                720,
+                256
+              ]
+            },
+            {
+              "file": "02_pod_by_diameter_contrast.png",
+              "content_box": [
+                0,
+                150,
+                720,
+                389
+              ],
+              "contain_reason": "aspect_within_2_4",
+              "source_aspect": 1.851305
+            },
+            {
+              "file": "03_pod_condition_a90.png",
+              "content_box": [
+                0,
+                214,
+                720,
+                262
+              ],
+              "contain_reason": "protected_both_edges",
+              "source_aspect": 2.753304
+            },
+            {
+              "file": "04_miss_representative.png",
+              "content_box": [
+                0,
+                7,
+                720,
+                675
+              ]
+            }
+          ],
+          "frame_count": 4,
+          "durations_ms": [
+            2500,
+            1600,
+            1600,
+            1600
+          ],
+          "bytes": 347676,
+          "color_mad": [
+            0.1529,
+            0.101,
+            0.0374,
+            0.2069
+          ],
+          "max_color_mad": 0.2069,
+          "source_sha256": "09a272c1f5406c0b98109fca6964ccd1cd3e33829290bde1843b9b7f19bd5910"
+        }
+      },
+      "en": {
+        "text": "not_audited",
+        "selected": [
+          "01_spin_stop_tracks.png",
+          "02_pod_by_diameter_contrast.png",
+          "03_pod_condition_a90.png",
+          "04_miss_representative.png"
+        ],
+        "excluded_frames": [],
+        "not_english_ready": []
+      },
+      "reason": null,
+      "cover": "01_spin_stop_tracks.png",
+      "still": "articles/assets/poc/poc_vial_particle_pod/01_spin_stop_tracks.png",
+      "stills": {
+        "ja": "articles/assets/poc/poc_vial_particle_pod/01_spin_stop_tracks.png",
+        "en": "articles/assets/poc/poc_vial_particle_pod/01_spin_stop_tracks.png"
+      },
+      "alt": {
+        "ja": "公開 AVI 資料の照明・容器形状の特徴を合成した入力→真値→追跡。第三者画像は不使用。明るい背景では粒子を暗く、側面/Tyndall では明るく描く。各時点の下段は粒子の原寸 crop を 4×にした小窓で、最近傍拡大はこの明記済み表示だけに使う。",
+        "en": "After rotation stops, particles and bubbles keep moving while scratches remain still. The pooled independent holdout has a ninety-percent detection diameter of 164.20 µm. Back and side illumination place planted truth, matched tracks and a miss-side case in one view."
       }
     },
     "poc_rail_corrugation": {

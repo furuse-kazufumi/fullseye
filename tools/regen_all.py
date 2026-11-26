@@ -314,7 +314,8 @@ READS = {
                                           "docs/articles/assets/poc/*/figures.json"],
     "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json",
                                       "docs/view2026/story_gifs.json",
-                                      "fullseye/data/OP_INDEX.json"],
+                                      "fullseye/data/OP_INDEX.json",
+                                      "fullseye/data/C_API_OPS.json"],   # C/C++ の行の op 数
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],

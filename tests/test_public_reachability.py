@@ -508,7 +508,9 @@ def test_pending_exposure_shrinks_when_fixed():
 # _INTERNAL に入れる。1569 → 1572。
 #   (master 統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1572
 # 2026-11-25 origin/master(#347 の numpy_compat.trapezoid +1、上の _INTERNAL)を merge: 1572 + 1 = 1573。
-_HIDDEN_FUNCTIONS_TODAY = 1573
+#   (master 統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1573
+# 2026-11-26 origin/master(#373: PR #355 の opspharma.get / call / info +3)を merge: 1573 + 3 = 1576。
+_HIDDEN_FUNCTIONS_TODAY = 1576
 
 
 def _hidden_total():

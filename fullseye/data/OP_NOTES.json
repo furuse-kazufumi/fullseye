@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3851,
- "n_notes": 3857,
+ "n_ops": 3853,
+ "n_notes": 3859,
  "notes": {
   "vol_dilate": [
    {
@@ -34042,6 +34042,25 @@
     "in": "image2d",
     "out": "image2d",
     "path": "docs/ops/optics/wave/pupil_psf.md"
+   }
+  ],
+  "vial_spin_stop_sequence": [
+   {
+    "op": "vial_spin_stop_sequence",
+    "dim": "pharma",
+    "category": "synth",
+    "out": "video",
+    "path": "docs/ops/pharma/synth/vial_spin_stop_sequence.md"
+   }
+  ],
+  "track_moving_particles": [
+   {
+    "op": "track_moving_particles",
+    "dim": "pharma",
+    "category": "track",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/pharma/track/track_moving_particles.md"
    }
   ],
   "photon_sample": [

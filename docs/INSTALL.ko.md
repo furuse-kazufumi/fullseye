@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: e25193670f30 -->
+<!-- i18n-source-sha: 301a8cc4c65e -->
 # 설치 / 환경 구축 완전 가이드
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -15,7 +15,7 @@ Fullseye의 Python API 코어는 **numpy + scipy**로 동작합니다. 표준 `p
 |---|---|
 | Python | **3.11**(`pyproject.toml`의 `requires-python = ">=3.11"`. 개발·검증은 3.11 사용) |
 | 실행 명령 | Windows: `py -3.11` / Linux: `python3.11` |
-| 표준 의존성 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5,!=6.12.0`, `Pillow>=13.0`(`pip install -e .`로 자동 설치) |
+| 표준 의존성 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0`(`pip install -e .`로 자동 설치) |
 | OS | Windows 10/11, Linux(임베디드 포함). Python이 동작하면 macOS도 가능 |
 
 ---
@@ -41,8 +41,6 @@ py -3.11 -m pip install -e .            # 표준: Python API + Studio + Pillow. 
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 등), mahotas 유래(Zernike/pftas 등) |
 | `gui` | 없음(Studio는 표준 의존성) | 호환 별칭. `pip install fullseye`만으로 **Fullseye Studio**를 시작할 수 있음 |
 | `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`(CuPy 제외. GPU 일체는 `fullseye[gpu]`. PyTorch 설치 안내에 따르면 Linux의 기본 torch는 CUDA 빌드이며 CUDA 구성 요소(nvidia-* wheel)가 함께 설치될 수 있다. CPU만 쓴다면 먼저 CPU 전용 인덱스에서 torch를 설치한다: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | 모든 오퍼레이터·백엔드 |
-
-Studio의 표준 요구 사항은 `PySide6-Essentials>=6.5,!=6.12.0`입니다. Linux에서 SIGABRT가 재현된 6.12.0은 제외합니다.
 
 사용 기준:
 
@@ -165,6 +163,7 @@ python3.11 -m pip install -e .        # 표준 설치에는 Studio/Pillow 포함
 | `ModuleNotFoundError: No module named 'fullseye'` | 미설치 / 경로 미설정 | `pip install -e .` 실행, 또는 저장소 최상위 디렉터리를 `PYTHONPATH`에 추가 |
 | `fullseye` / `fullseye-studio` 명령을 찾을 수 없음 | 콘솔 스크립트 미등록 | `pip install -e .`를 실행. 설치하지 않으려면 `py -3.11 imgevolve.py` / `py -3.11 studio.py` |
 | Studio 실행 시 PySide6의 ImportError | 표준 의존성 손상 | `pip install --force-reinstall fullseye` |
+| Linux에서 Studio 실행 시 `ImportError: libEGL.so.1` 등 | Qt가 쓰는 시스템 라이브러리 부족(pip로는 설치되지 않음) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 libxcb-cursor0` (`libxcb-cursor0`은 xcb로 화면에 창을 띄울 때 필요. CI는 나머지 4개로 offscreen 실행을 확인). 다른 배포판은 해당 패키지 |
 | `apply` / `pipeline`에서 `cannot read <path>` | 표준 Pillow 의존성 손상 또는 이미지 손상 | `pip install --force-reinstall fullseye`; 계속되면 이미지를 확인 |
 | `read_image` / `write_image`(API)에서 cv2의 ImportError | 이들은 **OpenCV 전용** | `pip install -e ".[opencv]"`. Pillow만으로 해결하고 싶다면 `fullseye.load` / `fullseye.save`를 사용 |
 | `list_ops`에 기대한 오퍼레이터가 없음 / `has`가 unknown | 해당 백엔드 미도입 | 대응하는 extras(`skimage`/`wavelets`/`extra` 등)를 추가 |

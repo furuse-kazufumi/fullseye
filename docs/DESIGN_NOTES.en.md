@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 661 of 2101. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 657 of 2051. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `_archive_tarxz.py`
@@ -337,13 +337,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L152** _(ja)_ — ★2026-11-05(敵対的検証 C13): 以前は ``tuple(st)[1:3]`` で段を読み、dict 段は鍵の名前 ("op" / "a")を float にしようとして ValueError、``(name, {"a": ..})`` は float(dict) の TypeError だった(run_pipeline は同じ段を受ける)。名前は stage_name、ノブは api._normalise_stage の 1 本。
 - **L285** _(ja)_ — ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
-- **L387** _(ja)_ — ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、 {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
-- **L394** _(ja)_ — ★2026-11-05(敵対的検証 C3): ノブの読み方は run_pipeline と同じ api._normalise_stage 1 本。 以前はここだけ別の読み方で、dict 段の未知キー({"op": "threshold", "A": 0.9} の打ち間違い)と 4 要素目(("threshold", 0.9, 0.5, 0.1))を黙って捨て、文字列ノブ "0.9" を float() で通していた —— run_pipeline は同じ段を TypeError で断る。同じ段は入口によらず同じ意味・同じ拒否。
-- **L415** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107): {"stages": None} が 0 段のエンジンになり、run が入力をそのまま 返していた(壊れた設定が「成功」)。[] は文書どおり恒等、None / 数値は設定の壊れ。
-- **L421** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
-- **L521** _(ja)_ — ★範囲外は断る(2026-09-20、GenSpark N40): --upto 9 / -1 が黙って全段 / 0 段になっていた
-- **L573** — ★2026-11-04 external audit E4: each stage used to go through ``run_pipeline(prev, [st])`` on its own, so the chain-wide checks of :meth:`run` (sort chain, knobs, non-finite entry) never saw the whole pipeline -- ``otsu,invert`` ran here while ``run`` refuses it. Prepare the whole chain first (runs nothing), then resume stage by stage on the same runner Studio's stage cache uses (``entry`` only for the first stage).
-- **L581** _(ja)_ — ★2026-11-05(敵対的検証 C6): (1) 入口の契約(uint8 の /255 と台帳記録、extra_checks の値域、 strict での拒否)は**キャッシュに当たっても毎回**通す —— 以前は第 1 段が当たると飛び、 strict + extra_checks="on" で run() が断る画像を暖まった run_cached() は返していた。 (2) 結果を変える状態を鍵に入れる: 照合用テンプレート(ops._MATCH_CTX、スレッドローカル)と fssystem の全パラメータ —— 以前はテンプレート A の答えをテンプレート B で返した。 (3) 計算中に劣化台帳へ記録が残った段はキャッシュしない(当たると記録が消え、fallback の値が 「成功」に見えた)。次の呼び出しでもう一度計算され、同じ記録が残る。
+- **L380** _(ja)_ — ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、 {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
+- **L387** _(ja)_ — ★2026-11-05(敵対的検証 C3): ノブの読み方は run_pipeline と同じ api._normalise_stage 1 本。 以前はここだけ別の読み方で、dict 段の未知キー({"op": "threshold", "A": 0.9} の打ち間違い)と 4 要素目(("threshold", 0.9, 0.5, 0.1))を黙って捨て、文字列ノブ "0.9" を float() で通していた —— run_pipeline は同じ段を TypeError で断る。同じ段は入口によらず同じ意味・同じ拒否。
+- **L408** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107): {"stages": None} が 0 段のエンジンになり、run が入力をそのまま 返していた(壊れた設定が「成功」)。[] は文書どおり恒等、None / 数値は設定の壊れ。
+- **L414** _(ja)_ — ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
+- **L514** _(ja)_ — ★範囲外は断る(2026-09-20、GenSpark N40): --upto 9 / -1 が黙って全段 / 0 段になっていた
+- **L566** — ★2026-11-04 external audit E4: each stage used to go through ``run_pipeline(prev, [st])`` on its own, so the chain-wide checks of :meth:`run` (sort chain, knobs, non-finite entry) never saw the whole pipeline -- ``otsu,invert`` ran here while ``run`` refuses it. Prepare the whole chain first (runs nothing), then resume stage by stage on the same runner Studio's stage cache uses (``entry`` only for the first stage).
+- **L574** _(ja)_ — ★2026-11-05(敵対的検証 C6): (1) 入口の契約(uint8 の /255 と台帳記録、extra_checks の値域、 strict での拒否)は**キャッシュに当たっても毎回**通す —— 以前は第 1 段が当たると飛び、 strict + extra_checks="on" で run() が断る画像を暖まった run_cached() は返していた。 (2) 結果を変える状態を鍵に入れる: 照合用テンプレート(ops._MATCH_CTX、スレッドローカル)と fssystem の全パラメータ —— 以前はテンプレート A の答えをテンプレート B で返した。 (3) 計算中に劣化台帳へ記録が残った段はキャッシュしない(当たると記録が消え、fallback の値が 「成功」に見えた)。次の呼び出しでもう一度計算され、同じ記録が残る。
 
 ## `evis_fullseye_bridge.py`
 
@@ -1792,11 +1792,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L156** _(ja)_ — ★2026-11-22(独立レビュー): script.py の引数に ``-m fullseye.mcp`` があるだけで、 script.py のフォルダを外していた。パッケージの import 中に sys.argv[0] が ``-m`` の本物の -m 起動だけに限る。
 - **L643** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L696** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L927** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
-- **L935** _(ja)_ — ★ 署名の注釈(表示専用): ラッパーは (*args, **kw) だが、実体 ``fn`` の署名を ``__signature__`` に載せ、補完 / ``inspect.signature`` / help() で引数名と既定値が見えるようにする。 呼び出し契約は変えない(受け方は ``mod.call(key, *args, **kw)`` のまま。束縛は実体が行う)。 アクセス時にだけ作る(import 時には何もしない)。署名が取れない実体は注釈なしで素通し。 Display-only signature annotation; the call contract is unchanged; built lazily per access.
-- **L1472** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1593** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L693** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L924** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L932** _(ja)_ — ★ 署名の注釈(表示専用): ラッパーは (*args, **kw) だが、実体 ``fn`` の署名を ``__signature__`` に載せ、補完 / ``inspect.signature`` / help() で引数名と既定値が見えるようにする。 呼び出し契約は変えない(受け方は ``mod.call(key, *args, **kw)`` のまま。束縛は実体が行う)。 アクセス時にだけ作る(import 時には何もしない)。署名が取れない実体は注釈なしで素通し。 Display-only signature annotation; the call contract is unchanged; built lazily per access.
+- **L1462** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1581** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/evaluation/metrics.py`
 
@@ -1845,55 +1845,55 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fullseye/mcp/server.py`
 
-- **L68** _(ja)_ — 段(stage)の引数の 1 行の説明(fullseye_pipeline と fullseye_validate_pipeline で同じ)。★2026-11-13(報告 7)
-- **L126** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): ハンドラは a.get("lang") を読むのに schema に無く、 additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
-- **L183** _(ja)_ — ★2026-11-13: ハンドラは budget_tokens を読むのに schema に無く、上限を上げる手が無かった
-- **L288** _(ja)_ — ★2026-11-15(独立レビュー): 入力の無い台帳 op も handle を必須にしていて、docs/MCP.md の 「apply から呼べる」と合わなかった。handle が要るかは op で決まるので、_apply / _apply_isolated で断る。
-- **L475** _(ja)_ — ★2026-11-09: 真値付きの課題を作る道具と、組んだ処理を真値で採点する道具(full プロファイルだけ)。 「LLM が組む → 型の門 → 実行」の後ろに「真値で採点 → 合否 → 直させる」を足して輪を閉じる。 真値はサーバ側(fullseye/mcp/tasks.py の TaskStore)に task_id で持ち、返り値には載せない。
-- **L668** _(ja)_ — ★2026-11-15: 深い入れ子を「json.loads の RecursionError を受ける」で断っていたが、Python 3.14 の json.loads は 10 万段でも RecursionError を出さずに読む(同じ 1 通が 3.11 では -32700、3.14 では巨大な入れ子の値として 先へ進み -32602 になった —— master の CI の py3.14 で発覚)。版に頼らず、読む前に深さを数えて断る。 開き括弧の総数が上限以下なら深さも上限以下なので、数えない(普通の 1 通はここで終わる)。
-- **L678** _(ja)_ — ★2026-11-22(独立レビュー): ``"\ud800"`` のような JSON は json.loads が文字列として 返すが、応答の UTF-8 には書けない。本文にサロゲートの escape がある時だけ、 木全体を明示のスタックで見る。
-- **L685** _(ja)_ — ★2026-11-13: 3,000 段の入れ子 1 通でサーバが落ちていた(json.loads の RecursionError を受けていなかった)。
-- **L712** _(ja)_ — ★2026-11-22(独立レビュー): 1 行目が見出しでも 64 MiB まで読んでいた。まず見出しの 上限まで読み、空白後の先頭が ``{`` / ``[`` の時だけ改行区切りの上限まで読み足す。
-- **L744** _(ja)_ — ★2026-11-22(独立レビュー 2 回目): JSON object / array でない壊れた 1 行を見出しの 塊の始まりとして、後続の改行区切り要求まで空行なしに読み捨てていた。この物理行の 残りだけを捨てて断り、次の行は新しい 1 通として読む。
-- **L777** _(ja)_ — ★2026-11-22(独立レビュー): 断った枠の本文を次の改行区切り要求として実行し、Content-Length の相手とも以後ずっと位置がずれた。形の正しい Content-Length が 1 つの値に決まる時は、 上限外でも小さな塊でその本文を読み捨ててから断る。値が無い・非 10 進・複数に分かれる時は、 本文の終わりを決められないので読み捨てない(fail-closed で -32700 にはする)。
-- **L841** _(ja)_ — ★2026-11-15(外部レビュー、Codex): この最後の網が allow_nan の既定(True)のままで、id が NaN の要求には ``"id": NaN`` をまた書いた。id は JSON-RPC の形(文字列・数・null)の時だけ返し、網も厳密に書く。
-- **L845** _(ja)_ — ★2026-11-22(独立レビュー): 最後の網もサロゲートの id を再利用し、2 回目の符号化で落ちた。 検査済み id で一度だけ作り、それでも書けなければ id null の固定 ASCII の -32603 に倒す。
-- **L1166** _(ja)_ — ★2026-11-13: 台帳にある op にも「registry 層に無い」とだけ返し、「近い名前」に同じ名前を出していた。
-- **L1586** _(ja)_ — 判定 ok の範囲(★2026-11-13、C)。同じ画像に 4 通りの処理で 1.0 / 46.3 / 75.0 / 1285.0 が全部 ok で返り、 ok が「値が正しい」と読まれていた。判定は出力の形だけを見る。
-- **L1636** _(ja)_ — ★2026-11-15(独立レビュー): 結果の大きさは作業プロセスの側で数えて断る(以前は .npy を全部読んでから _enforce_pixel_limit が断っていた。親に同じくらいの一時的な確保と、一時フォルダへの書き込みが起きた)。
-- **L1868** _(ja)_ — ★2026-11-08: a/b を params の中に入れた形は、知らない引数として断るだけでは直し方が分からない
-- **L1926** _(ja)_ — ★2026-11-15: 台帳 op(隔離して走る)は、profile から引いた値も台帳の仕様で検査する。 直に書いた値だけを検査していて、profile を経た値は型も大きさも見ずに作業プロセスへ渡っていた (数の引数に文字列の profile を渡すと検証は通り、走らせてから op が断った)。
-- **L1934** _(ja)_ — ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、 pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
-- **L2009** _(ja)_ — ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の 台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。 印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
-- **L2120** _(ja)_ — ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、 値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
-- **L2202** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)も fullseye_apply から呼べる(pipeline と同じ経路)
-- **L2403** _(ja)_ — ★2026-11-15: 解決した後の値を必ず検査する(以前は {"ref"} / {"profile"} で書いた引数を飛ばしていた)。 profile の値は仕様に合えば通る。ref の先(配列・表)は台帳 op の引数にできないので、ここで断る (数 1 個の入力は上の literal_inputs の道で受ける)。
-- **L2442** _(ja)_ — ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、 extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。 全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
-- **L2532** _(ja)_ — ★2026-11-13: 複素数の配列(Jones ベクトルなど)をそのまま tolist すると JSON にできず、道具ごと落ちた
-- **L2630** _(ja)_ — 本文は段ごとに 1 行(★2026-11-13: 以前は結果の JSON を丸ごと 1 行に繋いでいて、どの段がなぜ 止まったかを本文から読めなかった)。
-- **L2671** _(ja)_ — 最後の段が配列か registry の値: 従来どおり、判定とその範囲を書く(★2026-11-15: 以前は、途中に表を返す 台帳 op が 1 つでもあると、最後の値と判定の範囲が本文から落ちた)。
-- **L2714** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
-- **L2889** _(ja)_ — ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
-- **L2892** _(ja)_ — ★2026-11-13(報告 10 / S6): NaN・Infinity(JSON の決まりに無い定数、または封筒の中の非有限の数)を受けていた。 取り込みの前に断る(他の入口と同じく、非有限は受けない)。
-- **L2895** _(ja)_ — ★2026-11-15: json(文字列)の中の深い入れ子。1 通の枠の深さの上限(MAX_JSON_DEPTH)は文字列の中の括弧を 数えないので、同じ上限をここでも読む前に当てる。当てる前は版で答えが割れ、どちらも -32603(内部エラー) だった: py3.11 は約 1,000 段から RecursionError、py3.14 は 10 万段で Stack overflow(実測)。
-- **L3278** _(ja)_ — ★2026-11-10(独立レビュー第 4 巡): pass_fail / coarse では、双子で落ちたことを返り値で区別しない (reason は out_of_tolerance、形も許容外の不合格と同じ)。区別すると「本体には合っていた」ことが分かり、 本体と双子の探索を 2 回に分けられた(計数の 13/20 が 20 回以内に合格)。区別は監査記録にだけ残す。 coarse で見せる段階は、落ちた側(双子)の指標から作る。
-- **L3285** _(ja)_ — ★2026-11-10(独立レビュー第 2 巡 N2): 以前は stderr の score-audit 行に誤差を書いていた。MCP の クライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が pass_fail の 上限を迂回して誤差を読めた。
-- **L3319** _(ja)_ — ★2026-11-22(独立レビュー): Windows の予約デバイス名を HTML の名前として通した。
-- **L3326** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 名前を変えれば何枚でも書け、サーバが終わるまで残った(200 枚で 11.8 MB)。 置き場が新しい物から max_viewer_files 枚・max_viewer_bytes バイトまでを持ち、超えたら古い物から消す。
-- **L3354** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal=" " が search_ops の ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
-- **L3379** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
-- **L3408** _(ja)_ — ★2026-11-22: 呼び手は結果を MCP で走らせる。PR #322 の heightmap_depth_camera(光線が 当たらない所は NaN)が、走る binocular_disparity_ms を上位 5 件から押し出したため、MCP の 経路だけで有界に降格する。search_ops と tools/opsearch_eval.py の順位は変えない。 executable_only: 多めに引いて MCP で走る op だけを残す(順位は検索のまま)
-- **L3418** _(ja)_ — ★2026-11-22(独立レビュー): retry_ops は op_limit で切っていなかった(search_ops は k = op_limit*8 まで retry 行を作るので、既定で最大 40 行が返り、proposals とも食い違った)。
-- **L3430** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
-- **L3458** _(ja)_ — ★2026-11-13(報告 6): proposals は ops / retry_ops / recipes の行を丸ごと写していて、応答の半分が重複だった (検証の 1 回で ops 2.6 KB に proposals 4.3 KB)。順番と種類だけの参照にする(中身は元の一覧を読む)。
-- **L3535** _(ja)_ — ★2026-11-13(報告 5): 落とした名前が structuredContent の奥にしか無かった。本文の先頭に 1 行で書く
-- **L3543** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
-- **L3566** _(ja)_ — ★2026-11-13(報告 13): 名前だけで、来歴・ライセンス・何が写っているかが分からなかった。 samples(名前の一覧)は従来どおり、詳しい行は sample_details に足す(ホストのパスは出さない)。
-- **L3617** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 配列・辞書・真偽値の id をそのまま返していた。JSON-RPC 2.0 の id は 文字列・数・null だけ。形の違う id の要求は、id を null にして -32600 で断る。
-- **L3623** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
-- **L3670** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
-- **L3678** _(ja)_ — ★2026-11-15(外部レビューの直しの検証): 最初の 1 通が読めない時、-32700 を Content-Length 枠で返していた (枠が決まるのは読めた 1 通から)。改行区切りの公式のクライアントはその返事を読めない。NaN・重複した鍵を 断るようにしたので、起き得る場面が増えた。壊れた 1 通の枠が分かれば、その枠で返す。
-- **L3688** _(ja)_ — ★2026-11-13: 本文が null の 1 通で黙って終了していた。要求の形でない本文は -32600 を返して続ける (配列 = JSON-RPC のバッチは受け付けない)。
+- **L81** _(ja)_ — 段(stage)の引数の 1 行の説明(fullseye_pipeline と fullseye_validate_pipeline で同じ)。★2026-11-13(報告 7)
+- **L139** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): ハンドラは a.get("lang") を読むのに schema に無く、 additionalProperties: false で渡せなかった。要約の言語(既定は問い合わせから判定)。
+- **L196** _(ja)_ — ★2026-11-13: ハンドラは budget_tokens を読むのに schema に無く、上限を上げる手が無かった
+- **L301** _(ja)_ — ★2026-11-15(独立レビュー): 入力の無い台帳 op も handle を必須にしていて、docs/MCP.md の 「apply から呼べる」と合わなかった。handle が要るかは op で決まるので、_apply / _apply_isolated で断る。
+- **L488** _(ja)_ — ★2026-11-09: 真値付きの課題を作る道具と、組んだ処理を真値で採点する道具(full プロファイルだけ)。 「LLM が組む → 型の門 → 実行」の後ろに「真値で採点 → 合否 → 直させる」を足して輪を閉じる。 真値はサーバ側(fullseye/mcp/tasks.py の TaskStore)に task_id で持ち、返り値には載せない。
+- **L690** _(ja)_ — ★2026-11-15: 深い入れ子を「json.loads の RecursionError を受ける」で断っていたが、Python 3.14 の json.loads は 10 万段でも RecursionError を出さずに読む(同じ 1 通が 3.11 では -32700、3.14 では巨大な入れ子の値として 先へ進み -32602 になった —— master の CI の py3.14 で発覚)。版に頼らず、読む前に深さを数えて断る。 開き括弧の総数が上限以下なら深さも上限以下なので、数えない(普通の 1 通はここで終わる)。
+- **L700** _(ja)_ — ★2026-11-22(独立レビュー): ``"\ud800"`` のような JSON は json.loads が文字列として 返すが、応答の UTF-8 には書けない。本文にサロゲートの escape がある時だけ、 木全体を明示のスタックで見る。
+- **L707** _(ja)_ — ★2026-11-13: 3,000 段の入れ子 1 通でサーバが落ちていた(json.loads の RecursionError を受けていなかった)。
+- **L734** _(ja)_ — ★2026-11-22(独立レビュー): 1 行目が見出しでも 64 MiB まで読んでいた。まず見出しの 上限まで読み、空白後の先頭が ``{`` / ``[`` の時だけ改行区切りの上限まで読み足す。
+- **L766** _(ja)_ — ★2026-11-22(独立レビュー 2 回目): JSON object / array でない壊れた 1 行を見出しの 塊の始まりとして、後続の改行区切り要求まで空行なしに読み捨てていた。この物理行の 残りだけを捨てて断り、次の行は新しい 1 通として読む。
+- **L799** _(ja)_ — ★2026-11-22(独立レビュー): 断った枠の本文を次の改行区切り要求として実行し、Content-Length の相手とも以後ずっと位置がずれた。形の正しい Content-Length が 1 つの値に決まる時は、 上限外でも小さな塊でその本文を読み捨ててから断る。値が無い・非 10 進・複数に分かれる時は、 本文の終わりを決められないので読み捨てない(fail-closed で -32700 にはする)。
+- **L863** _(ja)_ — ★2026-11-15(外部レビュー、Codex): この最後の網が allow_nan の既定(True)のままで、id が NaN の要求には ``"id": NaN`` をまた書いた。id は JSON-RPC の形(文字列・数・null)の時だけ返し、網も厳密に書く。
+- **L867** _(ja)_ — ★2026-11-22(独立レビュー): 最後の網もサロゲートの id を再利用し、2 回目の符号化で落ちた。 検査済み id で一度だけ作り、それでも書けなければ id null の固定 ASCII の -32603 に倒す。
+- **L1188** _(ja)_ — ★2026-11-13: 台帳にある op にも「registry 層に無い」とだけ返し、「近い名前」に同じ名前を出していた。
+- **L1608** _(ja)_ — 判定 ok の範囲(★2026-11-13、C)。同じ画像に 4 通りの処理で 1.0 / 46.3 / 75.0 / 1285.0 が全部 ok で返り、 ok が「値が正しい」と読まれていた。判定は出力の形だけを見る。
+- **L1658** _(ja)_ — ★2026-11-15(独立レビュー): 結果の大きさは作業プロセスの側で数えて断る(以前は .npy を全部読んでから _enforce_pixel_limit が断っていた。親に同じくらいの一時的な確保と、一時フォルダへの書き込みが起きた)。
+- **L1890** _(ja)_ — ★2026-11-08: a/b を params の中に入れた形は、知らない引数として断るだけでは直し方が分からない
+- **L1948** _(ja)_ — ★2026-11-15: 台帳 op(隔離して走る)は、profile から引いた値も台帳の仕様で検査する。 直に書いた値だけを検査していて、profile を経た値は型も大きさも見ずに作業プロセスへ渡っていた (数の引数に文字列の profile を渡すと検証は通り、走らせてから op が断った)。
+- **L1956** _(ja)_ — ★2026-11-08(AI が組んだ検査の PoC、作者と独立の検証): 検証は a/b の範囲を見ておらず、 pipeline の入力スキーマ(0〜1)が断る値(threshold の a=128)を「正しい」と返していた。同じ規則で断る。
+- **L2031** _(ja)_ — ★2026-11-05(敵対的検証、契約の疑い「台帳の並行消去」を探針で確認): 以前は clear_fallbacks() で **プロセス全体の台帳を消して**から fallbacks() を読んでいた —— MCP を同じプロセスで呼ぶ利用者の 台帳が 1 回の fullseye_apply で空になり、別スレッドの記録がこの呼び出しの degraded に混ざった。 印(mark)からこのスレッドの記録だけを読む(台帳は消さない)。
+- **L2142** _(ja)_ — ★2026-11-05(敵対的検証): 非有限を黙って null にしない(fail-closed)。木ごと省き、 値はハンドル(value_handle)から読む —— 他の経路(write_message)と同じく NaN を JSON に書かない。
+- **L2224** _(ja)_ — ★2026-11-13: 台帳 op(光学・照明・合成の入口 …)も fullseye_apply から呼べる(pipeline と同じ経路)
+- **L2425** _(ja)_ — ★2026-11-15: 解決した後の値を必ず検査する(以前は {"ref"} / {"profile"} で書いた引数を飛ばしていた)。 profile の値は仕様に合えば通る。ref の先(配列・表)は台帳 op の引数にできないので、ここで断る (数 1 個の入力は上の literal_inputs の道で受ける)。
+- **L2464** _(ja)_ — ★2026-11-05(敵対的検証 C2): 以前は CPU の段が registered.fn を直接呼び、fullseye_apply (fullseye.apply(on_error="raise"))が持つ入口の契約(dtype、非有限、ノブ、空・次元、 extra_checks)を全部飛ばしていた —— uint8 200 のハンドルに gaussian が uint8 200 を返した。 全段を同じ入口に通す。テンプレートも apply(template=...) で同じ検査を受ける。
+- **L2554** _(ja)_ — ★2026-11-13: 複素数の配列(Jones ベクトルなど)をそのまま tolist すると JSON にできず、道具ごと落ちた
+- **L2652** _(ja)_ — 本文は段ごとに 1 行(★2026-11-13: 以前は結果の JSON を丸ごと 1 行に繋いでいて、どの段がなぜ 止まったかを本文から読めなかった)。
+- **L2693** _(ja)_ — 最後の段が配列か registry の値: 従来どおり、判定とその範囲を書く(★2026-11-15: 以前は、途中に表を返す 台帳 op が 1 つでもあると、最後の値と判定の範囲が本文から落ちた)。
+- **L2736** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
+- **L2992** _(ja)_ — ★2026-11-05(敵対的検証 C10): 宣言された形を、確保する**前**にサーバの上限で検査する (116 バイトの RLE 封筒で 576 MB を確保してから HandleStore.put が断っていた)。
+- **L2995** _(ja)_ — ★2026-11-13(報告 10 / S6): NaN・Infinity(JSON の決まりに無い定数、または封筒の中の非有限の数)を受けていた。 取り込みの前に断る(他の入口と同じく、非有限は受けない)。
+- **L2998** _(ja)_ — ★2026-11-15: json(文字列)の中の深い入れ子。1 通の枠の深さの上限(MAX_JSON_DEPTH)は文字列の中の括弧を 数えないので、同じ上限をここでも読む前に当てる。当てる前は版で答えが割れ、どちらも -32603(内部エラー) だった: py3.11 は約 1,000 段から RecursionError、py3.14 は 10 万段で Stack overflow(実測)。
+- **L3381** _(ja)_ — ★2026-11-10(独立レビュー第 4 巡): pass_fail / coarse では、双子で落ちたことを返り値で区別しない (reason は out_of_tolerance、形も許容外の不合格と同じ)。区別すると「本体には合っていた」ことが分かり、 本体と双子の探索を 2 回に分けられた(計数の 13/20 が 20 回以内に合格)。区別は監査記録にだけ残す。 coarse で見せる段階は、落ちた側(双子)の指標から作る。
+- **L3388** _(ja)_ — ★2026-11-10(独立レビュー第 2 巡 N2): 以前は stderr の score-audit 行に誤差を書いていた。MCP の クライアントは stdio サーバの stderr をファイルに残すので、ファイルを読める agent が pass_fail の 上限を迂回して誤差を読めた。
+- **L3422** _(ja)_ — ★2026-11-22(独立レビュー): Windows の予約デバイス名を HTML の名前として通した。
+- **L3429** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 名前を変えれば何枚でも書け、サーバが終わるまで残った(200 枚で 11.8 MB)。 置き場が新しい物から max_viewer_files 枚・max_viewer_bytes バイトまでを持ち、超えたら古い物から消す。
+- **L3457** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 D10): schema を通る want="" / goal=" " が search_ops の ValueError のまま抜けて -32603(内部エラー)になっていた。空白だけの語は引数違反(-32602)。
+- **L3482** _(ja)_ — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
+- **L3511** _(ja)_ — ★2026-11-22: 呼び手は結果を MCP で走らせる。PR #322 の heightmap_depth_camera(光線が 当たらない所は NaN)が、走る binocular_disparity_ms を上位 5 件から押し出したため、MCP の 経路だけで有界に降格する。search_ops と tools/opsearch_eval.py の順位は変えない。 executable_only: 多めに引いて MCP で走る op だけを残す(順位は検索のまま)
+- **L3521** _(ja)_ — ★2026-11-22(独立レビュー): retry_ops は op_limit で切っていなかった(search_ops は k = op_limit*8 まで retry 行を作るので、既定で最大 40 行が返り、proposals とも食い違った)。
+- **L3533** _(ja)_ — ★2026-11-03: 索引に Python で呼ぶレシピ(台帳 op、kw 引数つき)が入った。MCP の pipeline で 走らないレシピを出すと、組めない手順を勧めることになるので runner="mcp" だけを返す。
+- **L3561** _(ja)_ — ★2026-11-13(報告 6): proposals は ops / retry_ops / recipes の行を丸ごと写していて、応答の半分が重複だった (検証の 1 回で ops 2.6 KB に proposals 4.3 KB)。順番と種類だけの参照にする(中身は元の一覧を読む)。
+- **L3638** _(ja)_ — ★2026-11-13(報告 5): 落とした名前が structuredContent の奥にしか無かった。本文の先頭に 1 行で書く
+- **L3646** _(ja)_ — ★2026-11-05(敵対的検証 第 2 巡 T3): 上限 64 を固定で渡しており(schema に max_stages は無い)、 pipeline_max_stages=16 の下で validate tool は 40 段を valid、pipeline tool は拒否と割れた。 None = validate_pipeline が fssystem の pipeline_max_stages を読む(pipeline と同じ上限)。
+- **L3669** _(ja)_ — ★2026-11-13(報告 13): 名前だけで、来歴・ライセンス・何が写っているかが分からなかった。 samples(名前の一覧)は従来どおり、詳しい行は sample_details に足す(ホストのパスは出さない)。
+- **L3724** _(ja)_ — ★2026-11-15(外部レビュー、Codex): 配列・辞書・真偽値の id をそのまま返していた。JSON-RPC 2.0 の id は 文字列・数・null だけ。形の違う id の要求は、id を null にして -32600 で断る。
+- **L3730** _(ja)_ — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
+- **L3809** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
+- **L3817** _(ja)_ — ★2026-11-15(外部レビューの直しの検証): 最初の 1 通が読めない時、-32700 を Content-Length 枠で返していた (枠が決まるのは読めた 1 通から)。改行区切りの公式のクライアントはその返事を読めない。NaN・重複した鍵を 断るようにしたので、起き得る場面が増えた。壊れた 1 通の枠が分かれば、その枠で返す。
+- **L3827** _(ja)_ — ★2026-11-13: 本文が null の 1 通で黙って終了していた。要求の形でない本文は -32600 を返して続ける (配列 = JSON-RPC のバッチは受け付けない)。
 
 ## `fullseye/opsearch.py`
 
@@ -1910,8 +1910,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fullseye/shortcuts.py`
 
-- **L187** _(ja)_ — ★.lnk は IShellLinkW(Unicode の COM)を ctypes で直接呼んで読み書きする。 以前は PowerShell の WScript.Shell(``$lnk.TargetPath = ...``)だったが、WSH の ShortcutLink は文字列を**システムの ANSI コードページ**で持つので、そのコードページに無い文字(英語の Windows の日本語のユーザー名、日本語の Windows のタイ語・ヘブライ語 など)が ``?`` に化けて ``Unable to save shortcut`` になった(2026-11-13、CI の windows-latest で判明。環境変数で渡した文字は PowerShell まで無傷で届いていて、壊すのは WSH の COM 層)。IShellLinkW + IPersistFile は全部 Unicode で、PowerShell も Add-Type も要らない(Constrained Language Mode でも動く)。COM が使えない環境のためだけに、従来の PowerShell 経路を残す。
-- **L740** _(ja)_ — ★`if errorlevel 1` は「1 以上」の判定で、DLL が無いときの負の終了コード(0xC0000135 = -1073741515)を見逃す。 終了コードが 0 かどうかで分岐する `||` / `&&` を使う。
+- **L182** _(ja)_ — ★.lnk は IShellLinkW(Unicode の COM)を ctypes で直接呼んで読み書きする。 以前は PowerShell の WScript.Shell(``$lnk.TargetPath = ...``)だったが、WSH の ShortcutLink は文字列を**システムの ANSI コードページ**で持つので、そのコードページに無い文字(英語の Windows の日本語のユーザー名、日本語の Windows のタイ語・ヘブライ語 など)が ``?`` に化けて ``Unable to save shortcut`` になった(2026-11-13、CI の windows-latest で判明。環境変数で渡した文字は PowerShell まで無傷で届いていて、壊すのは WSH の COM 層)。IShellLinkW + IPersistFile は全部 Unicode で、PowerShell も Add-Type も要らない(Constrained Language Mode でも動く)。COM が使えない環境のためだけに、従来の PowerShell 経路を残す。
+- **L735** _(ja)_ — ★`if errorlevel 1` は「1 以上」の判定で、DLL が無いときの負の終了コード(0xC0000135 = -1073741515)を見逃す。 終了コードが 0 かどうかで分岐する `||` / `&&` を使う。
 
 ## `fullseye/validation_kit.py`
 
@@ -2031,8 +2031,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L124** — Maps said to keep their order readable even with colour-vision deficiency (P/D type). ★``cividis``'s approximate LUT has 6 control points and a coarse colour-difference spacing, and does not meet the :data:`PERCEPTUAL_SAFE` criterion (measured dE max/median 2.23). Adding control points would let it enter both -- since hand-copying primary-source values has a prior record of typos, this is held until the source can be confirmed.
 - **L712** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N209): 順は save(path, arr)。逆に呼ぶと「path must be ... got ndarray」で 止まってはいたが、逆順だとは言わなかった。配列が path に、文字列が arr に来たら、それを言う。
 - **L721** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N120): PFM は float 専用の形式なのに、既定の 8 bit 経路が 0..255 の 値を float32 として書き、読むと 0..1 に clip されて別画像になっていた(往復 max|Δ| 0.98)。 PFM の既定は float(無損失)。
-- **L960** _(ja)_ — ★2026-09-20(GenSpark 第 18 報 N78): 無い・ディレクトリ・読めない、が全部同じ文だった。
-- **L999** — ★2026-11-05 redteam I23: coordinates were "%g" (6 significant digits) under "property float": a UTM easting 352145.12 came back 352145 (errors of metres).
+- **L915** _(ja)_ — ★2026-09-20(GenSpark 第 18 報 N78): 無い・ディレクトリ・読めない、が全部同じ文だった。
+- **L954** — ★2026-11-05 redteam I23: coordinates were "%g" (6 significant digits) under "property float": a UTM easting 352145.12 came back 352145 (errors of metres).
 
 ## `imgmetrics.py`
 
@@ -2451,7 +2451,6 @@ This repository records *why* things are the way they are in **comments in the s
 ## `param_specs.py`
 
 - **L105** _(ja)_ — ★2026-11-12: gaussian / mean_box / median の b は 2026-09-17 から端の扱いを選ぶのに、ここは UNUSED のままで、 Studio は「b (–) · この op では使いません」と出してつまみを無効にしていた。区切りが等間隔でない (0.5 までが 1 つ目)ので、等幅のバケツ("bucket")でなく専用の写し方 "half_then_thirds" を使う。
-- **L652** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー): 検索が空の時の一覧と「定番」の欄に出る op のうち 33 op・50 本のつまみが、 動かしても何も変わらないのに動かせた(M3 の症状。直したのは sobel_amp の 1 つだけだった)。下の 49 本は、実装が 引数を 1 度も読まない事を実装から確かめた物: 族で共有する関数ではその op の枝と前置き、それ以外は関数の バイトコード(``studio._impl_reads_knob``)。auto_threshold / binary_threshold は a・b を ``ops._otsu`` に渡すだけで、 ``_otsu`` はどちらも使わない。残りの 1 本(cv_hough_circles の a)は円の中心の最小の間隔で、本当に効く。 どの行も ``tests/test_studio_search_staples_2026_11_12.py::test_knobs_shown_as_unused_really_do_nothing`` が 実際に振って確かめる(動いたら落ちる)。
 
 ## `pcseg.py`
 
@@ -2698,80 +2697,47 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `studio.py`
 
-- **L405** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
-- **L414** — ★ Right-click on the figure itself (user 2026-09-06: "it would be nice to be able to right-click what is shown as a figure and copy it to the clipboard"). A Studio UI convention of this repo —— **the display side must let you do everything from a right-click too**. It can do the same as the button row below (do not make it one or the other).
-- **L1120** _(ja)_ — ★2026-11-05(敵対的検証 C6 の兄弟): engine.run_cached と同じく、結果を変える状態 —— 照合用 テンプレート(ops._MATCH_CTX)と fssystem の全パラメータ —— も文脈に入れる(変われば全段を捨てる)。
-- **L1758** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
-- **L1768** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
-- **L1791** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
-- **L1802** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
-- **L2395** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
-- **L3767** _(ja)_ — ★2026-11-12: この 3 本の b は「未使用」("")と書いていたが、2026-09-17 から端の扱いを選ぶ(ops._border)。
-- **L4211** _(ja)_ — ★2026-11-12: `gaussian (nan, 0.5)` が a=1.0 として黙って走っていた(max/min が NaN を素通しする)
-- **L4213** _(ja)_ — ★P-13(2026-11-12): 0..1 の外の値はここで黙って丸めていた。丸めた事実を行ごとに残す(apply_program が画面に出す)。
-- **L5040** _(ja)_ — ★2026-11-12: op を選ぶたびに右パネルが約 190px 広がった。typed 欄が spec の種類で 0〜110px と 変わり、隠れると幅ゼロになっていたため。常に同じ幅を取る(隠れても保つ)。
-- **L5093** _(ja)_ — ★2026-11-12: 前の spec の範囲が残っていた(percentile の後に開くと 5..95 のままで 1.0 に届かず、int の後だと右端が knob 0.04 になって窓が黙って 3 に変わる)。
-- **L5449** _(ja)_ — ★2026-11-12: 380x380 の下限は主画像欄(MDI の中)より大きく、欄の下が切れた(窓に合わせても収まらない)。 欄に収まる下限にする。別窓(tools=True)は従来どおり。
-- **L6604** _(ja)_ — ★2026-11-12: i18n.json の最上位に置かれた行は、上の一覧に載っているものしか読んでいなかった。 検索結果の見出し(Applicable to the current input / Needs preprocessing / Other)やボタン (Try on current data / Help)は訳が表にあるのに、日本語 UI でも英語のままだった。 最上位の「言語コード → 文」の行は全部読む(節の名前は除く)。
-- **L7520** _(ja)_ — ★2026-11-12 IDE 第 1 便: 窓(build_window)が入れる受け手。None なら何もしない(部品単体でも動く)。
-- **L7525** _(ja)_ — ★2026-11-13 Python のモード(studio_pymode): True を返す受け手が居る間、行の装飾は PyEditAssist が描く。
-- **L7722** _(ja)_ — ★2026-11-12 IDE 第 1 便: ホバーヘルプ / 構文エラーの印 / キー経路 # ------------------------------------------------------------------ #
-- **L8015** — ★2026-11-12: the ONE maker of icon-only buttons. Square from the density table (studio_theme.DENSITY: 24 px / icon 16, main actions 28 px / icon 20); `w` is kept in the signature for callers but no longer sets the size. iconOnly=true lets the QSS give it padding:4px.
-- **L8115** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー): 従来は例外が Qt の仮想関数の外へ出て、確認を出さずに Python ごと落ちた(access violation)。閉じない側に倒し、表を通らない英語の文で聞き直す。
-- **L8122** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
-- **L8139** _(ja)_ — ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。 それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。 以後の visibilityChanged は利用者の操作ではないので記録しない。
-- **L8258** _(ja)_ — ★2026-11-13(初回起動の点検): F1 は「選んでいる op のヘルプ」(HDevelop と同じ)。一覧はヘルプの奥にあって、 実際に走らせた入出力の図のある op のヘルプに自力で気づけなかった。ショートカットの一覧は Ctrl+F1 へ。
-- **L8495** _(ja)_ — ★2026-11-13(初回起動の点検): 伸びる幅を run_box に渡すと、一時的な文(flash)を描く欄が幅 0 になり、 「入れられない理由」などの文が画面に一度も出なかった。空いた幅は文と画素の読み取りの欄へ。
-- **L8503** _(ja)_ — ★2026-11-13(初回起動の点検 M9): 表に行がある文は UI の言語で(書式つきの文は呼ぶ所で tr() を通す)
-- **L8666** _(ja)_ — ★2026-11-12: 行は op 名を先頭に(説明が長いと名前が右へ切れていた、P-09)。前処理は「先に: a → この op」と 別の行に書く(従来は「出力: region → otsu」と出力の後ろに繋がり、順序が逆に読めた)。
-- **L8682** _(ja)_ — ★P-19(2026-11-12): 説明は行の幅いっぱいに折り返し、ボタンはその下の右寄せに置く。従来は横並びで、 折り返さない説明文の幅で行が伸び、「今のデータで試す」「ヘルプ」が横スクロールの先に隠れていた。
-- **L8725** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー): 高さは、一覧に入って様式(字の大きさ)が決まった後の値で求める。 行を一覧に入れる前に 1 度だけ求めていた為、様式の適用の前の字の高さで計算され、行が増えるほど足りなく なった(3 行のカードは余白で足りたが、「先に: …」の付く 4 行のカードは下が 4 px 欠けた)。
-- **L8799** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー): 読めたかは load_sample の返り値で決める。従来は「段の op 名の並びが 見本と同じか」で推測し、同じ見本を開いてつまみだけ調整していた人が破棄の確認をキャンセルしても、 「読めた」と見なして画像を見本の画像に置き換えていた。
-- **L8880** _(ja)_ — ★P-09(2026-11-12): 入門の語(「二値化」「回転」…)に当たる定番の op を、検索の順位とは別に先頭へ出す。 3 群の中身と並びは変えない(studio_search の約束)。前処理が要る定番は行の中に手順(→ op)が出る。
-- **L8888** _(ja)_ — ★2026-11-13(初回起動の点検 M12): 現場の言葉(傷・打痕 …)に当たる同梱の FA の見本。定番の直後に置く (Enter で入る行 = 先頭の op は変わらない)。定番が無い時は一番下。
-- **L8986** _(ja)_ — ★2026-11-13(初回起動の点検 S2): 最初の段でも、読み込んだ画像を受けられない op(beatcube 用の レーダーの op・点群・数列 …)は、スイッチが入っている間は並べない。
-- **L8989** _(ja)_ — ★2026-11-13(S2): 一覧は定番から始める。1 入力の段として入れられない op(2 入力・未導入・一般アルゴリズム)は 末尾へ回して薄く出し、理由を行に持たせる(従来は先頭の 17 行が全部「入れられない op」だった)。
-- **L9017** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L9044** _(ja)_ — ★2026-11-12: 注記の行は一覧に譲り、全文はチェックボックスのツールチップに出す(件数・理由はそこで読める)
-- **L9385** — ★2026-11-13: one row of three radios + two spin boxes (range 1e100 -> a very wide minimum) made this panel at least ~700 px wide; shown in a 1024 px window it left 288 px for the image. Two rows.
-- **L9399** — ★2026-11-13: a label with a pixmap is never narrower than the pixmap, so the panel could only grow (664 px minimum; 288 px left for the image in a 1024 px window). The width follows the panel.
-- **L10293** _(ja)_ — ★2026-11-12(B-2): 段の型違いは静的な検査と実行時の例外の両方が同じ内容を言い、Problems に 2 行並んでいた。 静的な誤りのある段は、その行(より具体的)だけを残す。
-- **L10856** _(ja)_ — ★2026-11-12: これは「いまの設定を同期で計算した結果」で、どの worker 世代でもない。 状態バーが古い「表示中の結果: 世代 N」を言い続けないよう印を付ける(_update_attribution が読む)
-- **L11501** _(ja)_ — (★2026-11-12: + の直後に「未計算」のまま・つまみの途中で古い文字のままだった)
-- **L11780** _(ja)_ — ★2026-11-13: 索引には載っているが 1 入力の段として入れられない op(一般アルゴリズム・2 入力・ optional backend が未導入)。以前は add_stage の KeyError がスロットの中で消えて、何も起きなかった。 理由は UI の言語で、ステータスバーと + ボタンの上の欄の両方に出す(初回起動の点検 S2)。
-- **L11818** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー 3 回目): 前の Enter の「入れませんでした」の文を消す。残すと、入れた 後も最大 6 秒「追加していません」と読めた。段の計算が出す文(エラー等)は、この後の show_result が出す。
-- **L11921** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L12096** _(ja)_ — ★2026-11-12: 全画素を float64 のカラーで復号し直していた(8000×6000 の JPEG で 0.96 秒・2.46 GB)。 Pillow があれば、ヘッダのモードを見てから 256 px 以内に縮めた絵で比べる。無ければ小さいファイルだけ従来の道。
-- **L12136** _(ja)_ — ★P-17(2026-11-12): カラーのファイルは輝度にして読む(処理列は 2-D)。黙って灰色にせず、そう言う。
-- **L12179** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー 3 回目): 題を付け直す。従来は前に開いた写真のファイル名が題に残った (File ▸ Sample images でも、M12 で入口が増えた検索の「見本を開く」でも)。
-- **L13119** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L13275** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L13673** _(ja)_ — ★2026-11-13(第 3 回レビュー S6): 前は QMessageBox.question(Yes | No) で既定を渡しておらず、Enter で 「Yes(捨てる)」だった。終了の時と同じ確認(CONFIRM_HOOK = Discard / Cancel。既定も Esc も Cancel)を通す
-- **L13723** _(ja)_ — ★2026-11-13(第 3 回レビュー S3): 外で変わったかは**生のバイト**の印で決める。前は UTF-8 の文字として 読み、読めない(cp932 など)と「変わっていない」として聞かずに上書きした。読めない・印が無い時は 「変わった」(聞く側)。外で消されたファイルは作り直すだけなので聞かない
-- **L13750** _(ja)_ — ★2026-11-13(レビュー M5): ファイルから開いた Python は、初回の実行の前に確認する(run_code)。 Python のモードの「ファイルから開いた Python」と同じ約束を、ドラッグ&ドロップと「開く」にも効かせる
-- **L13792** _(ja)_ — ★2026-11-13(第 2 回レビュー R4): **走らせるのは常に画面の文面**(一時の写し)。以前は、未編集のタブは ディスクのファイルを走らせていたので、開いた後でファイルが書き換わると、確認の窓に出した文面と違う物が 走り、確認した後の書き換えは聞かずに走った。元のファイルの場所は PYTHONPATH に足す(隣の .py を import できる)。
-- **L13963** _(ja)_ — ★2026-11-13(第 2 回レビュー R10): ファイル(プロジェクトのパラメータなど)から読んだ文面をエディタへ 送った物は「ファイルから開いた Python」と同じ: 初回の実行の前に確認する
-- **L14185** _(ja)_ — ★2026-11-12 / 11-13: 選んでいない時は、見えている順で最初の「この環境で入れられ、前の段の出力を 受けられる」行(定番の欄を含む。経緯は _search_enter_target)。
-- **L14192** _(ja)_ — ★2026-11-15: 入れられる行はあるが、どれも前の段の出力を受けられない(または、名前を正確に 打った op が受けられない)。黙って ERROR の段を作らず、入れずに理由を言う(行をクリックで 選べば、従来どおりその行が入る)。
-- **L14214** _(ja)_ — ★2026-11-15: 台帳の op の名前を正確に打って Enter。段には入らないので、行のボタンと同じ 「台帳の op を実行」の窓を今の画像で開き、理由を 1 行で言う(従来は隣の別の op が黙って入った)。
-- **L14221** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー 3 回目): 入った後は語を選んでおく。続けて打つ語が前の語を 置き換える(従来は「二値化」の後に「ノイズ」と打つと「二値化ノイズ」で検索した)。
-- **L14264** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L14350** _(ja)_ — ★2026-11-13: やり直しは Ctrl+Shift+Z と Ctrl+Y のどちらでも。有効・無効は、フォーカスのある方の履歴に合わせる
-- **L14563** _(ja)_ — ★P-13(2026-11-12): `gaussian (9.0, -3.0)` は通り、ライブラリが 0..1 に丸めて走らせる (FullseyeFallbackWarning が出るだけで、画面は何も言わなかった)。どの値を何として走らせたかを言う。
-- **L14777** _(ja)_ — -- ★2026-11-12 IDE 第 1 便: Program の構文エラーを Problems・波線・ガターへ(B-1)-------------- #
-- **L15049** _(ja)_ — ★2026-11-12(B-3): パネルを閉じたまま実行すると、一覧は実行前の『? · control』のまま古かった。 開いた(タブの裏から前へ出た)時に、キャッシュから作り直す(計算はしない)。 dock の visibilityChanged(True) は窓の配置次第で届かないので、中身の部品の Show で受ける。
-- **L15451** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
-- **L15524** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
-- **L15527** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
-- **L16460** _(ja)_ — ★2026-11-13: Python のファイルへの自動保存(既定は切。メニュー Run ▸ Program mode ▸ Autosave と同じ設定)
-- **L17225** _(ja)_ — ★2026-11-13(第 3 回レビュー S5): 開く前の Program の文面(未適用の編集)は、上の確認で「捨てる」と答えた物。 編集欄にフォーカスがあっても、開いた段の列から文面を作り直す(作り直さないと、捨てたはずの文面が残り、 Apply で開いたパイプラインがその文面に置き換わった)。setPlainText なので Undo の履歴も空になる。
-- **L17348** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
-- **L17367** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
-- **L17432** _(ja)_ — ★2026-11-13: ini の設定は、1 件だけの列を str で返す。そのまま回すとパスが 1 文字ずつの項目になっていた。
-- **L17628** _(ja)_ — ★2026-11-12 IDE 第 1 便 / STUDIO_UX_RULES §1: Program 欄の機能にも「メニュー・パレット・キー」の入口を付ける。 キーは欄にフォーカスがある時だけ(欄の部品が先に受ける)。ウィンドウ全体の Ctrl+F / Ctrl+H / F1 は奪わない。
-- **L18641** _(ja)_ — ★2026-11-13 Program 欄の Python のモード(studio_pymode)。差し込み口は win._pymode だけ。
-- **L18654** _(ja)_ — ★2026-11-13: Program 欄がどちらの書き方か(パイプライン / Python)を、パネルの題と窓の下の状態の帯にも出す。 パネルの題の帯に状態を並べる側は、ここ(_pm_panel_title)で受け取る文字列か win._pymode.mode_title() を使う。
-- **L18782** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L371** _(ja)_ — ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
+- **L380** — ★ Right-click on the figure itself (user 2026-09-06: "it would be nice to be able to right-click what is shown as a figure and copy it to the clipboard"). A Studio UI convention of this repo —— **the display side must let you do everything from a right-click too**. It can do the same as the button row below (do not make it one or the other).
+- **L1018** _(ja)_ — ★2026-11-05(敵対的検証 C6 の兄弟): engine.run_cached と同じく、結果を変える状態 —— 照合用 テンプレート(ops._MATCH_CTX)と fssystem の全パラメータ —— も文脈に入れる(変われば全段を捨てる)。
+- **L1653** _(ja)_ — ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
+- **L1663** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
+- **L1686** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
+- **L1697** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
+- **L2290** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
+- **L3570** _(ja)_ — ★2026-11-12: この 3 本の b は「未使用」("")と書いていたが、2026-09-17 から端の扱いを選ぶ(ops._border)。
+- **L3762** _(ja)_ — ★2026-11-12: `gaussian (nan, 0.5)` が a=1.0 として黙って走っていた(max/min が NaN を素通しする)
+- **L3764** _(ja)_ — ★P-13(2026-11-12): 0..1 の外の値はここで黙って丸めていた。丸めた事実を行ごとに残す(apply_program が画面に出す)。
+- **L4439** _(ja)_ — ★2026-11-12: op を選ぶたびに右パネルが約 190px 広がった。typed 欄が spec の種類で 0〜110px と 変わり、隠れると幅ゼロになっていたため。常に同じ幅を取る(隠れても保つ)。
+- **L4492** _(ja)_ — ★2026-11-12: 前の spec の範囲が残っていた(percentile の後に開くと 5..95 のままで 1.0 に届かず、int の後だと右端が knob 0.04 になって窓が黙って 3 に変わる)。
+- **L4834** _(ja)_ — ★2026-11-12: 380x380 の下限は主画像欄(MDI の中)より大きく、欄の下が切れた(窓に合わせても収まらない)。 欄に収まる下限にする。別窓(tools=True)は従来どおり。
+- **L5973** _(ja)_ — ★2026-11-12: i18n.json の最上位に置かれた行は、上の一覧に載っているものしか読んでいなかった。 検索結果の見出し(Applicable to the current input / Needs preprocessing / Other)やボタン (Try on current data / Help)は訳が表にあるのに、日本語 UI でも英語のままだった。 最上位の「言語コード → 文」の行は全部読む(節の名前は除く)。
+- **L6886** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+- **L6903** _(ja)_ — ★2026-11-12(P-01): 窓を閉じると Qt が dock を全部 hide し visibilityChanged(False) を撃つ。 それを「利用者が閉じた」と記録していたので、**何も触らず終了→再起動**でパネルが消えた。 以後の visibilityChanged は利用者の操作ではないので記録しない。
+- **L7384** _(ja)_ — ★2026-11-12: 行は op 名を先頭に(説明が長いと名前が右へ切れていた、P-09)。前処理は「先に: a → この op」と 別の行に書く(従来は「出力: region → otsu」と出力の後ろに繋がり、順序が逆に読めた)。
+- **L7400** _(ja)_ — ★P-19(2026-11-12): 説明は行の幅いっぱいに折り返し、ボタンはその下の右寄せに置く。従来は横並びで、 折り返さない説明文の幅で行が伸び、「今のデータで試す」「ヘルプ」が横スクロールの先に隠れていた。
+- **L7472** _(ja)_ — ★P-09(2026-11-12): 入門の語(「二値化」「回転」…)に当たる定番の op を、検索の順位とは別に先頭へ出す。 3 群の中身と並びは変えない(studio_search の約束)。前処理が要る定番は行の中に手順(→ op)が出る。
+- **L7572** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L7590** _(ja)_ — ★2026-11-12: 注記の行は一覧に譲り、全文はチェックボックスのツールチップに出す(件数・理由はそこで読める)
+- **L9156** _(ja)_ — ★2026-11-12: これは「いまの設定を同期で計算した結果」で、どの worker 世代でもない。 状態バーが古い「表示中の結果: 世代 N」を言い続けないよう印を付ける(_update_attribution が読む)
+- **L9730** _(ja)_ — (★2026-11-12: + の直後に「未計算」のまま・つまみの途中で古い文字のままだった)
+- **L9960** _(ja)_ — ★2026-11-13: 索引には載っているが、この環境では呼べない op(optional backend が未導入)。 以前は add_stage の KeyError がスロットの中で消えて、何も起きなかった。
+- **L10078** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L10240** _(ja)_ — ★2026-11-12: 全画素を float64 のカラーで復号し直していた(8000×6000 の JPEG で 0.96 秒・2.46 GB)。 Pillow があれば、ヘッダのモードを見てから 256 px 以内に縮めた絵で比べる。無ければ小さいファイルだけ従来の道。
+- **L10277** _(ja)_ — ★P-17(2026-11-12): カラーのファイルは輝度にして読む(処理列は 2-D)。黙って灰色にせず、そう言う。
+- **L11208** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L11364** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L12213** _(ja)_ — ★2026-11-12: 選んでいないときに入れるのは**検索の 1 位**。先頭に出している「定番」の欄は対象にしない (「canny edge」で Enter を押すと sobel_amp が入っていた —— レビューの指摘)。定番は自分で選んだ時だけ。
+- **L12215** _(ja)_ — ★2026-11-13: その中でも「この環境で入れられる」最初の行(1 位が未導入の backend の op だと、 Enter が何もしなかった)。入れられる行が 1 つも無ければ 1 位を渡し、add_op が理由を言う。
+- **L12261** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L12512** _(ja)_ — ★P-13(2026-11-12): `gaussian (9.0, -3.0)` は通り、ライブラリが 0..1 に丸めて走らせる (FullseyeFallbackWarning が出るだけで、画面は何も言わなかった)。どの値を何として走らせたかを言う。
+- **L13191** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+- **L13264** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+- **L13267** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+- **L14756** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
+- **L14775** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+- **L14839** _(ja)_ — ★2026-11-13: ini の設定は、1 件だけの列を str で返す。そのまま回すとパスが 1 文字ずつの項目になっていた。
+- **L15881** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `studio_errors.py`
 
@@ -2779,19 +2745,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `studio_result.py`
 
-- **L64** _(ja)_ — ★2026-10-04: bool の配列(占有格子など、台帳の op が返す)は np.round が bool へ書き戻せず落ちた —— bool はそのまま二値
+- **L48** _(ja)_ — ★2026-10-04: bool の配列(占有格子など、台帳の op が返す)は np.round が bool へ書き戻せず落ちた —— bool はそのまま二値
 
 ## `studio_search.py`
 
-- **L46** _(ja)_ — 入門の語 → 定番の op(★2026-11-12、使い勝手の点検 P-09)。 「二値化」で `hx_close_edges`、「回転」で `rope_rotate`、「ラベリング」で `polar_unwrap` が先頭に出ていた (検索は説明文の語の重みで並べるので、3,800 本の中で基本の op が埋もれる)。 検索の順位(``search_ops``)は変えず、**別の欄 ``staples``** として返す —— 画面はそれを先頭の「定番」に出す。
-- **L50** _(ja)_ — 当て方(★2026-11-12 の独立レビューで部分一致の誤爆が出たので締めた。`顕微鏡` → mirror、`account` → ラベリング、 `nothing` → skeleton、`knowledge` → エッジ など): * 英語は**単語として**当てる(問い合わせを英数字の語に切り、表の語と完全一致。2 語の句は連続する語として)。 * 日本語は部分文字列で当てるが、先に :data:`STAPLE_EXCLUDE_JA` の語(別の意味の複合語)を問い合わせから除く。 :data:`STAPLE_STANDALONE_JA` の短い語(シミ・ロット・熱 …)は、同じ種類の字に挟まれていない時だけ当てる。 * 問い合わせに ``_`` がある(op 名を打っている途中)、または語のどれかが op 名そのもの(``canny edge`` の ``canny``)なら、定番は出さない —— 名前で探している人の先頭に別の op を置かない。 op は索引に在るものだけ返す(表の全 op が索引に在ることは試験で数える)。
-- **L94** _(ja)_ — ---- 現場の言葉(★2026-11-13、初回起動の点検 M12: 「傷」「へこみ」「熱」で 0 件だった)。欠陥の種類ごとに、 1 枚の濃淡画像で最初に試す op(背景を引く・細い筋を強める・局所しきい値 …)。X 線・CT の語は足さない。
-- **L110** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー): 先頭は clahe。scale_image_max(値域を広げる)は、同梱の画像のように すでに 0〜1 いっぱいの絵では何も変わらなかった(coins で平均の変化 0.0024。ほかの組の先頭は 0.24〜0.42)。
-- **L122** _(ja)_ — 現場の言葉 → 同梱の FA の見本(``recipes`` の名前。見本ごとに自分の画像を持つ)。★2026-11-13(初回起動の点検 M12): 傷・打痕の見本があるのに、検索から届かなかった。当て方は :data:`STAPLES` と同じ(英語は単語、日本語は部分文字列、 op 名を含む問い合わせには出さない)。どの語も :data:`STAPLES` にもある(画面では定番の直後に並ぶ)。 X 線・CT の見本(溶接の気孔)には語を当てない。
-- **L137** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー): M12 で足した shading / temperature / marking が、別の分野の句の中で当たっていた (shape from shading → 汚れの定番、color temperature → 熱の定番、lane marking → 刻印の定番)。
-- **L145** _(ja)_ — ★表の語は、2026-11-12 の 2 回目の独立レビューで、部分一致の誤爆を避けるため**意図して**狭めた(f54982b9f9): 単独の「鏡」(顕微鏡・望遠鏡)・「左右」「上下」(上下限・左右対称)・「ラベル」(ラベル文字列)では定番を出さず、 「鏡像」「左右反転」「上下反転」「左右を」「上下を」「ラベル付け」「ラベリング」で出す(試験 test_bare_ambiguous_words_*)。
-- **L148** _(ja)_ — ★2026-11-15: 「ひびき」「きずな」(平仮名の語は助詞が続くので、前後の字では区別できない)と「色温度」を足した。
-- **L154** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー 2 本): M12 で足した「シミ」「ロット」「ムラ」「熱」などは部分文字列で当てていた為、 「シミュレーション」(同梱の日本語の文書 24 本に出る)で汚れの定番、「スロット」「プロット」「パイロット」で刻印の定番と 見本、「タイムラプス」「ヒストグラムライン」でムラの定番、「加熱処理」「熱延鋼板」で熱の定番が先頭に出て、M1 の後は Enter でそれが入った(11/12 に「鏡」「左右」「ラベル」を狭めたのと同じ型)。「ミラー」(ハーフミラー・ドアミラー)も同じ扱いにした。 複合語で当てたい物は表に書く(熱画像・発熱・ロットコード・ミラーリング …)。
+- **L45** _(ja)_ — 入門の語 → 定番の op(★2026-11-12、使い勝手の点検 P-09)。 「二値化」で `hx_close_edges`、「回転」で `rope_rotate`、「ラベリング」で `polar_unwrap` が先頭に出ていた (検索は説明文の語の重みで並べるので、3,800 本の中で基本の op が埋もれる)。 検索の順位(``search_ops``)は変えず、**別の欄 ``staples``** として返す —— 画面はそれを先頭の「定番」に出す。
+- **L49** _(ja)_ — 当て方(★2026-11-12 の独立レビューで部分一致の誤爆が出たので締めた。`顕微鏡` → mirror、`account` → ラベリング、 `nothing` → skeleton、`knowledge` → エッジ など): * 英語は**単語として**当てる(問い合わせを英数字の語に切り、表の語と完全一致。2 語の句は連続する語として)。 * 日本語は部分文字列で当てるが、先に :data:`STAPLE_EXCLUDE_JA` の語(別の意味の複合語)を問い合わせから除く。 * 問い合わせに ``_`` がある(op 名を打っている途中)、または語のどれかが op 名そのもの(``canny edge`` の ``canny``)なら、定番は出さない —— 名前で探している人の先頭に別の op を置かない。 op は索引に在るものだけ返す(表の全 op が索引に在ることは試験で数える)。
+- **L101** _(ja)_ — ★表の語は、2026-11-12 の 2 回目の独立レビューで、部分一致の誤爆を避けるため**意図して**狭めた(f54982b9f9): 単独の「鏡」(顕微鏡・望遠鏡)・「左右」「上下」(上下限・左右対称)・「ラベル」(ラベル文字列)では定番を出さず、 「鏡像」「左右反転」「上下反転」「左右を」「上下を」「ラベル付け」「ラベリング」で出す(試験 test_bare_ambiguous_words_*)。
 
 ## `superquadric.py`
 
@@ -2816,14 +2776,14 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L39** _(ja)_ — ★利用者の Windows 登録をセッション全体で一時フォルダへ逃がす。 # --------------------------------------------------------------------------- # `APPDATA` だけを差し替えても、SHGetKnownFolderPath / GetFolderPath は OneDrive 等の実 Desktop / Start Menu を返す。また、子プロセスは conftest の monkeypatch を知らない。そこで、すべてのテストと子プロセスに渡る環境変数を 1 箇所で設定し、Python と PowerShell の既知フォルダー取得にも明示的な試験用 上書きを渡す。HKCU の Apps & features は test-only のキーに切り替える。 APPDATA alone is insufficient because Windows known-folder APIs ignore it. This one session fixture redirects both the environment and the Python / PowerShell known-folder shims inherited by every child process. The actual Apps & features key is never named by product code during a test session.
 - **L61** — ★ Declaration of tests that need an optional backend. # --------------------------------------------------------------------------- # The CI note long said "do not install torch/kornia (**corresponding tests graceful skip**)", but a measurement on 2026-09-05 showed that was **not true** —— the target tests did not skip but failed with `ImportError: this operator needs the optional 'torch' backend` (14 of them). There was only a note, and no mechanism to verify it mechanically. Here we consolidate the declaration into a single entrance. The aim is **both directions**: * an environment without the backend -> skip (make the note true) * an environment where the backend **should be present** -> do not allow skip, make it fail (`FULLSEYE_REQUIRE_OPTIONAL=1`. The CI py3.11 job sets this) With only one direction, a genuine regression quietly turns into a skip (the same form as `feedback_failsoft_hides_permanently_dead_ops`).
-- **L219** _(ja)_ — ★本物の Fullseye の登録(デスクトップ・スタートメニュー・HKCU の Uninstall・setup フォルダ)を試験が触らないことの見張り # --------------------------------------------------------------------------- # 2026-11-12(3 回目の独立レビュー): インストーラの試験(.cmd 経由で uninstall を呼ぶ物)が、環境変数を一時フォルダへ向けても デスクトップだけは SHGetKnownFolderPath で**本物**を引き、本物の ``Fullseye Studio.lnk`` と ``Uninstall\\Fullseye`` を消す 対象に入れていた(実際に、利用者のデスクトップの ``Fullseye Studio.lnk`` が消えた)。個々の試験の注意では防げないので、 試験群を回す前後で本物の一覧を取り、**差があれば失敗**させる(Windows だけ。fullseye は import しない)。
-- **L473** _(ja)_ — ★2026-09-14 追加。ここまで探針バンクは 6 sort しか無く、**901 op のうち 151 本 (16.8 %)が契約ゲート 3 本(例外を投げない / 非有限を出さない / 決定的)を 一度も実行されていなかった** —— `PROBELESS_OPS_BUDGET = 151` というラチェットで 本数だけ凍結し、「本来の直しは BANKS を全 in_sort へ広げること」と自分で書いて あった。その本来の直しをここで入れる。 形の出どころは推測ではない: `backends_bridge._EMPTY_OF` が 12 sort すべての **正準の最小値**を宣言しており(そこが sort の定義そのもの)、`problems.py` の `_points_stack` / `_signal_stack` などが実データの作り方を持っている。 各バンクは既存の作法に合わせ、**普通の値・定数 0・定数 1・退化形**を混ぜる (定数と退化形が「走った」と「意味のある出力」を分ける —— [[feedback_ran_is_not_meaningful_output]])。 --------------------------------------------------------------------------- #
-- **L496** _(ja)_ — ★点群は**連結なものと非連結なものの両方**を置く。`tb_geodesic_distances` が 不達を `inf` で表すのは契約どおりで、`ops.NONFINITE_IS_MEANINGFUL` に 「1.0 に潰すと『届かない』が『近い』に化ける」と宣言済み。 ここで一度 `normal` をわざと連結にして有限性ゲートを緑にしかけたが、 それは**欠陥を隠す方向**だった —— 直すべきは門が台帳を見ていないこと。 `normal` は橋でつないだ現実的な形、`two_clusters` は非連結を撃つ探針。
-- **L563** _(ja)_ — ★**特異行列は必ず置く。** 一度ここから外しかけたが、それは誤りだった —— `tb_mat_cond` が特異行列で `inf` を返すのは**契約どおり**で、`ops.py` の `NONFINITE_IS_MEANINGFUL` に「厳密に特異な行列は s_min=0 なので inf が 正しい答え。有限に潰すと『十分に良条件』と読めてしまう」と**既に宣言済み** だった。落ちていたのは op ではなく、**有限性ゲートがその台帳を見ていない** こと。探針を削って緑にするのは、欠陥を隠す行為。 (同じ註に 2026-09-05 の教訓が書いてある ——「自分の probe では特異行列を 作っていなかったので tb_mat_cond を取りこぼした」。探針から外すのは その取りこぼしを**わざと再現する**ことになる。)
-- **L681** _(ja)_ — ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield / beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、 **一度に全部入れて切り分け不能にしない**よう次の段で足す。
-- **L689** _(ja)_ — ★第 3 段(2026-09-17): 戻りの橋 ``feature_to_img`` が入るまで、feature を **入力**に取る op は 1 本も無かった(作る op は 125 本ある)。門が「探針の 無い op が 1 本に増えた」と正しく落ちて教えた。
-- **L734** _(ja)_ — ★2026-10-07: ここに ``return`` があり、上の docstring(sort 既定の帯を捨てない) に反して override のある 10 op は sort 既定の帯を一度も通っていなかった。 sort 既定は「拒否が明示の fail-closed で記録される」ことの検査として通す (test_op_contracts.KNOWN_FALLS_BACK_ON_EDGE に by-design として載る)。
-- **L753** _(ja)_ — ★CI: PR では変更に関係するテストだけ / 片はファイル単位で分ける(2026-11-10) # --------------------------------------------------------------------------- # どちらも環境変数があるときだけ働く(手元の `pytest` は何も変わらない)。 FULLSEYE_CI_SELECTION=<一覧のファイル> tools/ci_select_tests.py が書いた一覧に無いテストを外す FULLSEYE_CI_SHARD=k/N ファイル単位の LPT で N 片に分け、k 片目だけ残す (例外: SPLIT_BY_TEST のファイルはテスト単位。PoC の門) 選ぶ規則と、選ばなかったテストを master・毎日の full suite で回す約束は CONTRIBUTING.md の「CI: which tests run where」。 一覧が読めない・1 件も当たらないときは**止める**(黙って 0 件で緑にしない)。
+- **L205** _(ja)_ — ★本物の Fullseye の登録(デスクトップ・スタートメニュー・HKCU の Uninstall・setup フォルダ)を試験が触らないことの見張り # --------------------------------------------------------------------------- # 2026-11-12(3 回目の独立レビュー): インストーラの試験(.cmd 経由で uninstall を呼ぶ物)が、環境変数を一時フォルダへ向けても デスクトップだけは SHGetKnownFolderPath で**本物**を引き、本物の ``Fullseye Studio.lnk`` と ``Uninstall\\Fullseye`` を消す 対象に入れていた(実際に、利用者のデスクトップの ``Fullseye Studio.lnk`` が消えた)。個々の試験の注意では防げないので、 試験群を回す前後で本物の一覧を取り、**差があれば失敗**させる(Windows だけ。fullseye は import しない)。
+- **L459** _(ja)_ — ★2026-09-14 追加。ここまで探針バンクは 6 sort しか無く、**901 op のうち 151 本 (16.8 %)が契約ゲート 3 本(例外を投げない / 非有限を出さない / 決定的)を 一度も実行されていなかった** —— `PROBELESS_OPS_BUDGET = 151` というラチェットで 本数だけ凍結し、「本来の直しは BANKS を全 in_sort へ広げること」と自分で書いて あった。その本来の直しをここで入れる。 形の出どころは推測ではない: `backends_bridge._EMPTY_OF` が 12 sort すべての **正準の最小値**を宣言しており(そこが sort の定義そのもの)、`problems.py` の `_points_stack` / `_signal_stack` などが実データの作り方を持っている。 各バンクは既存の作法に合わせ、**普通の値・定数 0・定数 1・退化形**を混ぜる (定数と退化形が「走った」と「意味のある出力」を分ける —— [[feedback_ran_is_not_meaningful_output]])。 --------------------------------------------------------------------------- #
+- **L482** _(ja)_ — ★点群は**連結なものと非連結なものの両方**を置く。`tb_geodesic_distances` が 不達を `inf` で表すのは契約どおりで、`ops.NONFINITE_IS_MEANINGFUL` に 「1.0 に潰すと『届かない』が『近い』に化ける」と宣言済み。 ここで一度 `normal` をわざと連結にして有限性ゲートを緑にしかけたが、 それは**欠陥を隠す方向**だった —— 直すべきは門が台帳を見ていないこと。 `normal` は橋でつないだ現実的な形、`two_clusters` は非連結を撃つ探針。
+- **L549** _(ja)_ — ★**特異行列は必ず置く。** 一度ここから外しかけたが、それは誤りだった —— `tb_mat_cond` が特異行列で `inf` を返すのは**契約どおり**で、`ops.py` の `NONFINITE_IS_MEANINGFUL` に「厳密に特異な行列は s_min=0 なので inf が 正しい答え。有限に潰すと『十分に良条件』と読めてしまう」と**既に宣言済み** だった。落ちていたのは op ではなく、**有限性ゲートがその台帳を見ていない** こと。探針を削って緑にするのは、欠陥を隠す行為。 (同じ註に 2026-09-05 の教訓が書いてある ——「自分の probe では特異行列を 作っていなかったので tb_mat_cond を取りこぼした」。探針から外すのは その取りこぼしを**わざと再現する**ことになる。)
+- **L667** _(ja)_ — ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield / beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、 **一度に全部入れて切り分け不能にしない**よう次の段で足す。
+- **L675** _(ja)_ — ★第 3 段(2026-09-17): 戻りの橋 ``feature_to_img`` が入るまで、feature を **入力**に取る op は 1 本も無かった(作る op は 125 本ある)。門が「探針の 無い op が 1 本に増えた」と正しく落ちて教えた。
+- **L720** _(ja)_ — ★2026-10-07: ここに ``return`` があり、上の docstring(sort 既定の帯を捨てない) に反して override のある 10 op は sort 既定の帯を一度も通っていなかった。 sort 既定は「拒否が明示の fail-closed で記録される」ことの検査として通す (test_op_contracts.KNOWN_FALLS_BACK_ON_EDGE に by-design として載る)。
+- **L739** _(ja)_ — ★CI: PR では変更に関係するテストだけ / 片はファイル単位で分ける(2026-11-10) # --------------------------------------------------------------------------- # どちらも環境変数があるときだけ働く(手元の `pytest` は何も変わらない)。 FULLSEYE_CI_SELECTION=<一覧のファイル> tools/ci_select_tests.py が書いた一覧に無いテストを外す FULLSEYE_CI_SHARD=k/N ファイル単位の LPT で N 片に分け、k 片目だけ残す (例外: SPLIT_BY_TEST のファイルはテスト単位。PoC の門) 選ぶ規則と、選ばなかったテストを master・毎日の full suite で回す約束は CONTRIBUTING.md の「CI: which tests run where」。 一覧が読めない・1 件も当たらないときは**止める**(黙って 0 件で緑にしない)。
 
 ## `tests/test_abi_apply.py`
 
@@ -2906,7 +2866,6 @@ This repository records *why* things are the way they are in **comments in the s
 - **L214** _(ja)_ — ★2026-11-11: SPLIT_BY_TEST(PoC の門)の 1 件ごとの記録値は台本の重さではない(一括実行の時間が片の 最初の 1 件に付く)ので、そのファイルはファイルの記録の平均で数える(配る側と同じ物差し)
 - **L970** _(ja)_ — ★PoC の門はテスト単位で片に散らす(2026-11-11、SPLIT_BY_TEST) # --------------------------------------------------------------------------- # run 42982984881: py3.12 片 1 = 71 分。片 1 は tests/test_poc_scripts_run.py の 310 本だけで、このファイル 1 つ(3,738 秒)が 6 片の平均(約 3,507 秒)を超えるので、ファイル単位では持った片が必ず最長になっていた。
 - **L1015** _(ja)_ — ★2026-11-13: 床は `poc_total > 3000` だった = 2026-10-22 の記録の値(PoC 3,738 秒 / 全体 21,041 秒)。master の run 43348040276 の実測を取り込むと PoC は 1,904 秒 / 全体 14,346 秒(縮小モードの実測)で、PoC のファイルは もう均等な 1 片(2,391 秒)より軽く、「ファイルが下限」は実の数では成り立たない。実の記録では配り方の不変条件を、 「最長の片を短くする」は実の id のまま PoC の重さだけを均等な 1 片の 1.5 倍まで増やした記録で確かめる。
-- **L1027** _(ja)_ — ★2026-11-24: 実の記録では、1 ファイル(PoC 以外は分けない)が均等な 1 片より重いことがある (tests/test_studio_panels_interaction_2026_11_13.py = 44 件で約 3,720 秒、run 45244055568 の片 5)。 その時の最良は「最も重いファイル 1 本」なので、上限はそれと均等な 1 片の 1.02 倍の大きい方。
 
 ## `tests/test_ci_wheel_check_paths.py`
 
@@ -3312,22 +3271,17 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_public_reachability.py`
 
-- **L123** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.vision.gsplat.<名前>` 経由で届く(2026-10-02 訂正: `fullseye.op.<名前>` は存在しない。 unified registry を公開経路として数えたら 17 モジュールが島でなくなり行を消した)。 ここに残る 1〜6 本は各モジュールのデモ入口(`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
-- **L132** _(ja)_ — ★2026-10-02: py-modules の数え漏れ(68 → 408 本)と facade 経路の数え忘れを直して初めて見えた 9 本。 内部の道具(CLI・ヘルプ書庫・n-ary の組立て・Studio の索引・標本データの取得・大画像の実行補助)、 api が別名で包むもの(mesh_decimate → mesh_decimate_preserving)、fs.<module>.<fn> でだけ届くもの (pipeline3d の合成 op 6 本 —— 2026-10-02 に fs.<名前> から出して行を消した)。 (watershed3d の 3 本は 2026-10-02 に台帳 opssegmentation の watershed3d へ載せて行を消した。)
-- **L139** _(ja)_ — ★2026-11-03: Reed-Solomon(GF(256) の表・符号化・復号)は記号の読み取りの族の内部部品。 利用者は qr_* / dm_* / grade_datacode2d の返す訂正語数として使う(体そのものは op にしない)。
-- **L142** _(ja)_ — ★2026-11-04(統合 GPU): GPU 第 2・3 便(#240)の計算核の継ぎ目。accel_seam は contextvars で核だけを差し替える 部品(kernel / use)、accel_typed は型付き op の GPU 経路の入口 call / call_candidate と torch の核 k_*(実測で計 14 本)。 利用者は各 op の device 引数(既定 cpu)から使い、核そのものは op にしない。第 2・3 便のブランチは ここに書いていなかった(統合で門が赤になって分かった)。
-- **L147** _(ja)_ — ★2026-11-04(統合 GPU): 第 5 便の accel_label(連結成分のラベル付けと領域ごとの集計の torch 経路、label / table)。 accel が import する核で、利用者は領域解析の op の device 引数から使う。
-- **L150** _(ja)_ — ★2026-11-13(integrate/studio-1-2-0、Python のモードを Studio に繋いだ便): Studio の GUI の内側の部品。どれも studio.py が import する画面の部品で、利用者の入口は Studio の窓(fullseye-studio)。op にも facade にも出さない。 実測(この枝): studio_project 23(Project のパネル。種類の表・木・開く先)・studio_pymode 19(Program 欄の Python のモード: モードの状態・実行の橋・出力の欄・信頼の確認・ファイルの開閉・行の基準の変換)・ studio_pyedit_syntax 22(色分けの字句・括弧の対応)・studio_pyedit_complete 35(補完・シグネチャ・ホバーの 供給元)・studio_pyedit_values 29→30(値の要約・ウォッチの評価。統合後の実測は 30)・studio_pyedit_i18n 5(部品の対訳)・ studio_pyedit_qt 9(PyEditAssist ほか Qt の部品)・studio_pyedit_vars_qt 14(変数・ウォッチ・浮いた窓)。 2026-11-13 2 便目(続行は止まった所から・文の言語・独立レビューの直し): studio_pymode 19 → 20(PauseGate の 受け渡しに使う部品)。studio_program_i18n 4(実行系・検査の英語の文を UI の言語へ: placeholders / line_label / localize / line_number_of。画面に出す所だけが使う)。studio_pyedit_safe 9(実行後の値を利用者のコードを 走らせずに調べる: 型だけの判定・ライブラリの型か・静的な名前。補完と変数の欄の内側)。 2026-11-13 3 便目(第 2 回レビューの直し): studio_pyedit_safe 9 → 15(型の記述子で読む class_dict / mro_of / name_of、同一性の tin、実体で決める is_library_class、利用者のコードを呼ばない exception_text)、 studio_pyedit_values 30 → 31(stray_threads: 残った __repr__ 用のスレッドの一覧)。
-- **L164** _(ja)_ — ★2026-11-13(feat/studio-blockselect): コードエディタの矩形選択・複数カーソル・行の操作。Studio の GUI の内側の 部品で、利用者の入口は Studio のエディタ(キー・右クリックのメニュー)。op にも facade にも出さない。 studio_editops 43(Qt なし: 見た目の桁 ↔ 文字の位置・箱 → 行ごとの選択・編集の計画・括弧・キーの表・対訳)、 studio_editops_qt 7(EditOps / install / uninstall / get と、キーの当たりの検査 3 本)。 2026-11-13 feat/studio-keymap: studio_editops_qt 7 → 8(apply_bindings: キーの登録簿から今のキーを全部の エディタへ配る入口)。
-- **L170** _(ja)_ — ★2026-11-13(feat/studio-keymap): 利用者が決められるショートカットキー。Studio の GUI の内側の部品で、利用者の 入口は Studio の Tools ▸ キーボードのショートカットの設定…(とキーそのもの)。op にも facade にも出さない。 studio_keymap 25(Qt なし: 登録簿・範囲・正規化・型・Keymap・当たりの判定・保存の形・読み込みの検査・文の書き換え・ 一覧と検索・対訳)、studio_keymap_qt 8(install / apply_keymap / get / 設定の窓と記録の欄 / 制御役 / 窓の組み込みのキーを集める collect_fixed / キーの出来事の読み方 event_keys)。
-- **L175** _(ja)_ — ★2026-11-13(feat/studio-params): パラメータの束を並べて見る・直す窓(受け入れ表 D3)。Studio の GUI の内側の部品で、 利用者の入口は窓(python -m studio_params_qt / Studio のメニュー)。束そのものの入口は fullseye.load_params ほか (fullseye.parambundle)で、こちらは op にも facade にも出さない。実測: studio_params_model 17(ParamsModel・ Outcome・列 / 行 / 木の型・読む read_bundle・原子的に書く write_bundle_atomic・編集の解釈 parse_edit・対訳 make_tr ほか)、 studio_params_qt 5(ParamsPanel・ParamsWindow・ParamsTreeModel・show_params_window・main)。
-- **L186** _(ja)_ — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
-- **L208** _(ja)_ — ★2026-10-02: コメント行の ``[[feedback_...]]`` で非貪欲の ``\]`` が止まり、py-modules 407 本のうち 68 本しか数えていなかった(339 本が門に映らない)。コメントを剥いでから囲みを取る。
-- **L218** _(ja)_ — ★2026-10-07: optional 依存が無いと import できない出荷モジュール ``{module: 許す欠落依存}``。 以前は ``except Exception: continue`` で**どんな import 失敗も**母数から黙って外していた —— 壊れたモジュールは「不可視の関数」の数にも島の検査にも入らず、ラチェットはむしろ緑に寄る。 ここに無いモジュールの import 失敗、ここにあっても別の理由の失敗は赤。
-- **L264** _(ja)_ — ★2026-11-23: 下位モジュールは数えない。dir(fullseye) には「その時までに import された」下位モジュールも 並ぶ(fullseye.uninstall を import する試験が先に集められると "uninstall" が公開の名前に見え、 studio_editops_qt.uninstall が届くことになった。Linux CI の gates でだけ赤だった理由)。モジュールは 呼べる関数ではない。除いても他の行の数は変わらない(この機械の実測、モジュール 129 本)。
-- **L271** _(ja)_ — ★2026-10-02: 4 つ目の公開経路 = 知覚 facade(fullseye.vision.<群>.<関数>、halcon_facade_map.json の "module.func" が実体)。HALCON 章の実装(segmentation.py 等)はここからだけ届いていた。 py-modules の数え漏れ(68 → 408 本)を直した途端に 35 モジュールが「見えない」と出たが、 その多くは facade 経由で届く。利用者が呼べる経路は全部数える。
-- **L279** _(ja)_ — ★2026-10-02: 5 つ目の公開経路 = unified registry(``fs.vision.<名前空間>.<op>``)。3DGS などの op は 文字列 "module.func" から ``_lazy_call`` で登録され、facade map にも台帳にも名前が出ない (sugar_mesh・tsdf_mesh・route_planning 等)。"module.func" 形の ``module`` 欄だけを数える (``fs.apply('x')`` のような呼び出し式は関数名ではない)。
-- **L387** _(ja)_ — と k_* 計 14 本。利用者は device 引数から使う。★第 2・3 便のブランチはこの上限を書き換えていなかった)= 999。実測も 999。 2026-11-02 GPU 第 4 便: 一括経路 lens_gpu / polar_gpu の下回りの部品(op でなく、raytrace / optics と同じ定義を (M, W, R) で計算する)。実測 948 → 977。公開 op として載せる判断は次の便。 2026-11-04 統合 GPU: 999 + 35(第 4 便 lens_gpu 22・polar_gpu 13。ブランチの注記は 29 だが、その後の commit 21ba71f0bf / 959c474b26 で増えた分が数え直されていなかった)= 1034。実測も 1034。 2026-11-02 opsmv 台帳(工業用ビジョンの定番 47 op): 台帳の内部 API 4 本、除算モデルの 2 本 (distort_division / undistort_division、op の部品)、opassist.ledger_halcon_map。実測 948 → 955。 2026-11-04 統合 GPU: 1034 + 7(opsmv)= 1041。実測も 1041。 2026-11-02 gpu_shadow(機械的 GPU の影の層 10 本)。CuPy は任意依存で、入口は gpu_shadow.apply / run_allowed。実測 948 → 958。 2026-11-04 統合 GPU: 1041 + 11(gpu_shadow。ブランチの注記は 10 本、実測は 11 本 = GpuAutoError / ShadowImporter / Stats / allowed_ops / available / get_shadow / resident_ops / run_allowed / shadow_fn / to_cpu / to_gpu)= 1052。実測も 1052。 2026-11-03 GPU 第 5 便: device_policy(auto の判断 6 本)・gpu_route(GPU 経路を決める唯一の関数と Route 型、 実行の入口の 9 本)・gpu_shadow の鎖の 2 本(pipeline_ops / run_chain)。利用者の入口は fullseye.explain_device と fullseye_describe の gpu_paths で、部品そのものは公開経路に載せない。実測 958 → 975。 2026-11-04 統合 GPU: 1052 + 19(第 5 便 device_policy 6・gpu_route 9・gpu_shadow の鎖 2・accel_label 2。 ブランチの注記は 17、accel_label の 2 本が数えられていなかった)= 1071。実測も 1071。 2026-11-05 敵対的検証の統合(integrate/redteam-2026-11-05、claims D6/D7): 1071 + 2。 halcon_coverage.source_breakdown_text(成熟度の文面を出所別に組む補助。呼ぶのは honest_summary だけ)と realdata.mark_read(PoC が「実データを読んだ」印を記録に足す補助。呼ぶのは data: real の例だけで、op ではない)。 同じ便の source_of / covered_by_source はモジュールの中でしか使わないので _ を付けて内部にした(数えない)。 2026-11-12 1.1.1(fix/studio-p-items-2026-11-12): 1073 + 11 = 1084。safe_xml 4(上の注記)・ param_specs.half_then_thirds_index 1(端の扱い・構造要素の形のつまみの対応。Studio と MCP の内側の部品)・ studio_search.staples_for 1(検索の「定番」の群。Studio の内側)・studio 3(lang_from_locale ほか、GUI の内側)・ backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。 (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1084 2026-11-12 Studio の Python のモード(feat/studio-program-vars-2026-11-12): 分岐元 f54982b9f9 の実測が既に 1077(この行の 1073 より 4 多い。前の便で数え直されていなかった)。そこへ + 46 = 1123。 studio_program(Program 欄の実行系・記録・メモ化・助言・記法の変換。Studio と前置き fullseye.studio_prelude が使う「GUI の内側の部品」で、studio_search と同じ扱い。書いている最中の指摘・補完・ホバー・ファイルの実行・対話の評価・止められなかった実行の一覧の入口を含む)の 37 本と、 defs_io(定義ファイルの種類に依らない層: 印・版の移行・原子的な書き込み・配列の別ファイル参照の検査) の 9 本。defs_io の利用者の入口は fullseye.read_def / write_def / load_pipeline で、種類を足す側の 部品(register_kind など)は公開経路に載せない。実測 1077 → 1123。 2026-11-12 1.1.1 の枝(653de27616)を merge: + 6 = 1129(safe_xml 4・param_specs 1・studio_search 1。 その枝そのものでもこの機械の実測は 1083 で、行の数字 1073 は数え直されていなかった)。 (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1129 2026-11-13 統合の枝 integrate/studio-1-2-0-2026-11-13: 1129 → 1288(+159、この機械の実測)。内訳: 上の _INTERNAL に 足した GUI の内側の 8 モジュール 157 本(studio_project 23・studio_pymode 19・pyedit の 6 本 115)、 studio_program.params_search_dirs 1(load_params の相対パスを探す順。GUI の内側)、 統合の merge で既に 1 本増えていた分 1(1129 → 1153 の報告のうち studio_project を除いた残り。studio は 90 → 89)。 (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1288 2026-11-13 master(1.1.1 の最終 d62109bb65)を merge: + 2 = 1290(safe_xml 4 → 6: xml_limits と上限の部品)。 (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1290 2026-11-13 同じ枝の 2 便目: 1290 → 1305(+15、この機械の実測)。内訳: 上の _INTERNAL の studio_program_i18n 4・ studio_pyedit_safe 9・studio_pymode + 1、studio_program.starter_program 1(例の文面を UI の言語で返す。GUI の内側)。 (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1305 2026-11-13 同じ枝の 3 便目(第 2 回レビューの直し): 1305 → 1313(+8、この機械の実測)。内訳: studio_pyedit_safe 6・ studio_pyedit_values 1・studio_program.program_threads 1(プログラムが残したスレッドの一覧。GUI の内側)。 (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1313 2026-11-13 同じ枝の 4 便目(確認の窓・Undo・自動保存): 1313 → 1317(+4)。studio.CONFIRM_ACTION_HOOK(差し替え口。既定の窓の関数を指す)・studio.confirm_action(やり直しの効かない 操作の前に聞く入口)・studio.studio_pymode_autosave_range(設定の画面の範囲)・studio_batch.existing_outputs (一括処理が上書きする既存のファイルの数。確認の文に使う)。どれも GUI の内側。 2026-11-15 同じ枝(第 3 回レビューの直しの確かめ): 1319 → 1321(+2)。studio_pyedit_safe 15 → 17: static_getattr (型の記述子だけで属性を引く。補完・ホバーがメタクラスの __getattribute__ を呼ばない)・static_parameters (利用者の関数の引数の並びを __code__ から。既定値を文字にしない)。どちらも補完と変数の欄の内側。 (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1321 2026-11-12 見た目の第 1 段(feat/studio-console-theme-2026-11-12): 1084 + 20 = 1104。studio_theme 19 (配色・密度・コントラストの表と QSS。Studio の内側)・studio.dock_layout_usable 1。実測 1104。 2026-11-13 origin/master(1086 = 1084 + 2)を merge: 1104 + 2 = 1106。実測 1106。 2026-11-13 見た目の第 2 段: 1106 + 46 = 1152。studio_panels 25・studio_theme 21(コードの書体・怪しい文字・色の門)。実測 1152。 2026-11-13 要件 5(≡ の項目): 1152 + 3 = 1155。studio_panels の button_action / sync_button_actions / short_name。 2026-11-13 要件 8(左上のコマ送り): 1155 + 5 = 1160。studio_panels の icon_frames / system_reduces_motion / reduce_motion / reduce_motion_action / brand_wrap。 2026-11-13 要件 7(コードの色の表): 1160 + 2 = 1162。studio_theme の code_colour_table / ground_report。 2026-11-15 A1〜A3・D104 の便(11 本: show_principal / normalise_overflow_mode / scroll_arrow / flow_plan / scroll_reach / flow_classes / declare_strip / adopt_image_strip / panel_ledger / set_overflow_mode / all_strips。その便で台帳を上げていなかった)と D01〜D03 の上の帯(5 本: tool_tip / mode_switch / compose_top_tips / glyph_action / fix_hand)。Studio の窓の内側の部品で op ではない: 1162 + 16 = 1178。実測 1178。 2026-11-15 題の帯とメニューの便(D14 D59 D98 D100 D111): label_text / plain_text / drop_repeated_titles。Studio の窓の内側の部品で op ではない: 1178 + 3 = 1181。実測 1181。 2026-11-15 パネルの一覧の便(D20 D21 D60): panel_order。Studio の窓の内側の部品で op ではない: 1181 + 1 = 1182。実測 1182。 2026-11-15 左上の終わり方と絵の印の便(D99 D130): studio_panels.end_state・studio_theme.ui_families。Studio の窓の内側の部品で op ではない: 1182 + 2 = 1184。実測 1184。 2026-11-15 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない: 1184 + 2 = 1186。実測 1186。 2026-11-15 作業モードの「*」の便(D128): mode_differs / mode_watch / mode_chosen。Studio の窓の内側の部品で op ではない: 1186 + 3 = 1189。実測 1189。 (見た目の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1189 2026-11-15 統合の枝に見た目の枝(feat/studio-console-theme-2026-11-12、1a3f70d772)を merge: 合わせ目 1086 から 統合 +235・見た目 +103 = 1424(同じ名前の足し合いは無い。数は合わせた木の実測で確かめる)。 (初回の枝を合わせる前の値) _HIDDEN_FUNCTIONS_TODAY = 1424 2026-11-13(Studio の初回起動の点検の直し): 1086 + 15 = 1101。studio 13・studio_search 1(上の _INTERNAL の注記)と、 studio.CLOSE_CONFIRM_HOOK 1(M10 の終了の確認の差し替え口。関数を指す名前なので総数に入る)。どれも GUI の内側の部品で、op ではない。 (初回の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1101 2026-11-15 統合の枝に初回の枝(fix/studio-firstrun-2026-11-13、288feeec4e)を merge: 1424 + 15 = 1439 (初回の枝が合わせ目 1086 から足した studio 13・studio_search 1・CLOSE_CONFIRM_HOOK 1)。 (キーの枝を合わせる前の値) _HIDDEN_FUNCTIONS_TODAY = 1439 キーの枝(feat/studio-keymap-2026-11-13、分岐元 1924e8b955 = 1305)の便: 2026-11-13 feat/studio-blockselect: 1305 → 1355(+50、この機械の実測)。上の _INTERNAL の studio_editops 43・ studio_editops_qt 7 のうち、公開経路の名前と重ならない分。 (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1355 2026-11-13 feat/studio-keymap: 1355 → 1389(+34、この機械の実測)。上の _INTERNAL の studio_keymap 25・ studio_keymap_qt 8 と studio_editops_qt + 1 のうち、公開経路の名前と重ならない分。 (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1389 2026-11-13 feat/studio-keymap レビュー 1 回目の直し C1(dropped_commands: 起動で捨てた上書きを数える): 1389 → 1390(+1、この機械の実測)。studio_keymap 25 → 26・studio_keymap_qt 8 → 8。 (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1390 2026-11-13 feat/studio-keymap B5 1.2-B(family / same_key_different_family: 同じキー・違う意味を数える G13(b')): 1390 → 1392(+2、この機械の実測)。studio_keymap 26 → 28・studio_keymap_qt 8 → 8。 (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1392 2026-11-15 キーの設定(D123: tooltip_text): 1392 → 1393(+1、この機械の実測)。studio_keymap 28 → 29・studio_keymap_qt 8 → 8。 (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1393 2026-11-15 矩形選択の部品(D95: retranslate_all = 言語の切り替えの後に文を付け直す): 1393 → 1394(+1、この機械の実測)。studio_editops_qt 8 → 9。 (キーの枝の値) _HIDDEN_FUNCTIONS_TODAY = 1394 2026-11-15 統合の枝にキーの枝を merge: 1439 + (1394 - 1305 = 89: studio_editops 43・studio_editops_qt 9・ studio_keymap 29・studio_keymap_qt 8 の公開経路と重ならない分) = 1528。 2026-11-15 実測で studio は 107(統合 93 と初回 103 の和集合。片方が消した名前を他方が持っていた)。 (束の枝を合わせる前の値) _HIDDEN_FUNCTIONS_TODAY = 1529 2026-11-13 feat/studio-params(パラメータの窓): 1305 → 1327(+22、この機械の実測)。内訳: 上の _INTERNAL の studio_params_model 17・studio_params_qt 5。 (束の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1327 2026-11-15 統合の枝に束の枝を merge: 1529 + (1327 - 1305 = 22: studio_params_model 17・studio_params_qt 5) = 1551。 2026-11-22 Studio adversarial review: strict JSON / checked settings の内部 2 層を追加し、1551 → 1556(実測)。 2026-11-23 配置の項目の wrapper を残さない直し: studio_theme +6(LayoutEntry と読む口 5 本)で 1556 → 1562(この機械の実測)。 2026-11-23 Linux のコードの字の直し: studio_theme +1(is_code_pitch)で 1562 → 1563(この機械の実測)。 2026-11-23 下位モジュールの名前を公開の名前に数えない直し: 1563 → 1568(+5、この機械の実測)。名前が fullseye の下位モジュールと同じだっただけで届く事にされていた scene_registry.motion と oss_adapter.camera / features / flow / stereo。届いていなかった物を正直に数え直した(増えたのではない)。 2026-11-23 Studio の外部 tracer の知らせ: studio_program.external_tracer 1 本(Studio の GUI の内側。 呼び出し元の sys.settrace / threading.settrace / sys.monitoring を検出する)で 1568 → 1569(この機械の実測)。 2026-11-25 origin/master を統合後に実測: arrayguard の 3 本も、op の内側で入力を拒む部品なので _INTERNAL に入れる。1569 → 1572。 (master 統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1572 2026-11-25 origin/master(#347 の numpy_compat.trapezoid +1、上の _INTERNAL)を merge: 1572 + 1 = 1573。
+- **L93** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.vision.gsplat.<名前>` 経由で届く(2026-10-02 訂正: `fullseye.op.<名前>` は存在しない。 unified registry を公開経路として数えたら 17 モジュールが島でなくなり行を消した)。 ここに残る 1〜6 本は各モジュールのデモ入口(`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
+- **L102** _(ja)_ — ★2026-10-02: py-modules の数え漏れ(68 → 408 本)と facade 経路の数え忘れを直して初めて見えた 9 本。 内部の道具(CLI・ヘルプ書庫・n-ary の組立て・Studio の索引・標本データの取得・大画像の実行補助)、 api が別名で包むもの(mesh_decimate → mesh_decimate_preserving)、fs.<module>.<fn> でだけ届くもの (pipeline3d の合成 op 6 本 —— 2026-10-02 に fs.<名前> から出して行を消した)。 (watershed3d の 3 本は 2026-10-02 に台帳 opssegmentation の watershed3d へ載せて行を消した。)
+- **L109** _(ja)_ — ★2026-11-03: Reed-Solomon(GF(256) の表・符号化・復号)は記号の読み取りの族の内部部品。 利用者は qr_* / dm_* / grade_datacode2d の返す訂正語数として使う(体そのものは op にしない)。
+- **L112** _(ja)_ — ★2026-11-04(統合 GPU): GPU 第 2・3 便(#240)の計算核の継ぎ目。accel_seam は contextvars で核だけを差し替える 部品(kernel / use)、accel_typed は型付き op の GPU 経路の入口 call / call_candidate と torch の核 k_*(実測で計 14 本)。 利用者は各 op の device 引数(既定 cpu)から使い、核そのものは op にしない。第 2・3 便のブランチは ここに書いていなかった(統合で門が赤になって分かった)。
+- **L117** _(ja)_ — ★2026-11-04(統合 GPU): 第 5 便の accel_label(連結成分のラベル付けと領域ごとの集計の torch 経路、label / table)。 accel が import する核で、利用者は領域解析の op の device 引数から使う。
+- **L126** _(ja)_ — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
+- **L148** _(ja)_ — ★2026-10-02: コメント行の ``[[feedback_...]]`` で非貪欲の ``\]`` が止まり、py-modules 407 本のうち 68 本しか数えていなかった(339 本が門に映らない)。コメントを剥いでから囲みを取る。
+- **L158** _(ja)_ — ★2026-10-07: optional 依存が無いと import できない出荷モジュール ``{module: 許す欠落依存}``。 以前は ``except Exception: continue`` で**どんな import 失敗も**母数から黙って外していた —— 壊れたモジュールは「不可視の関数」の数にも島の検査にも入らず、ラチェットはむしろ緑に寄る。 ここに無いモジュールの import 失敗、ここにあっても別の理由の失敗は赤。
+- **L192** _(ja)_ — ★2026-10-02: 4 つ目の公開経路 = 知覚 facade(fullseye.vision.<群>.<関数>、halcon_facade_map.json の "module.func" が実体)。HALCON 章の実装(segmentation.py 等)はここからだけ届いていた。 py-modules の数え漏れ(68 → 408 本)を直した途端に 35 モジュールが「見えない」と出たが、 その多くは facade 経由で届く。利用者が呼べる経路は全部数える。
+- **L200** _(ja)_ — ★2026-10-02: 5 つ目の公開経路 = unified registry(``fs.vision.<名前空間>.<op>``)。3DGS などの op は 文字列 "module.func" から ``_lazy_call`` で登録され、facade map にも台帳にも名前が出ない (sugar_mesh・tsdf_mesh・route_planning 等)。"module.func" 形の ``module`` 欄だけを数える (``fs.apply('x')`` のような呼び出し式は関数名ではない)。
+- **L308** _(ja)_ — と k_* 計 14 本。利用者は device 引数から使う。★第 2・3 便のブランチはこの上限を書き換えていなかった)= 999。実測も 999。 2026-11-02 GPU 第 4 便: 一括経路 lens_gpu / polar_gpu の下回りの部品(op でなく、raytrace / optics と同じ定義を (M, W, R) で計算する)。実測 948 → 977。公開 op として載せる判断は次の便。 2026-11-04 統合 GPU: 999 + 35(第 4 便 lens_gpu 22・polar_gpu 13。ブランチの注記は 29 だが、その後の commit 21ba71f0bf / 959c474b26 で増えた分が数え直されていなかった)= 1034。実測も 1034。 2026-11-02 opsmv 台帳(工業用ビジョンの定番 47 op): 台帳の内部 API 4 本、除算モデルの 2 本 (distort_division / undistort_division、op の部品)、opassist.ledger_halcon_map。実測 948 → 955。 2026-11-04 統合 GPU: 1034 + 7(opsmv)= 1041。実測も 1041。 2026-11-02 gpu_shadow(機械的 GPU の影の層 10 本)。CuPy は任意依存で、入口は gpu_shadow.apply / run_allowed。実測 948 → 958。 2026-11-04 統合 GPU: 1041 + 11(gpu_shadow。ブランチの注記は 10 本、実測は 11 本 = GpuAutoError / ShadowImporter / Stats / allowed_ops / available / get_shadow / resident_ops / run_allowed / shadow_fn / to_cpu / to_gpu)= 1052。実測も 1052。 2026-11-03 GPU 第 5 便: device_policy(auto の判断 6 本)・gpu_route(GPU 経路を決める唯一の関数と Route 型、 実行の入口の 9 本)・gpu_shadow の鎖の 2 本(pipeline_ops / run_chain)。利用者の入口は fullseye.explain_device と fullseye_describe の gpu_paths で、部品そのものは公開経路に載せない。実測 958 → 975。 2026-11-04 統合 GPU: 1052 + 19(第 5 便 device_policy 6・gpu_route 9・gpu_shadow の鎖 2・accel_label 2。 ブランチの注記は 17、accel_label の 2 本が数えられていなかった)= 1071。実測も 1071。 2026-11-05 敵対的検証の統合(integrate/redteam-2026-11-05、claims D6/D7): 1071 + 2。 halcon_coverage.source_breakdown_text(成熟度の文面を出所別に組む補助。呼ぶのは honest_summary だけ)と realdata.mark_read(PoC が「実データを読んだ」印を記録に足す補助。呼ぶのは data: real の例だけで、op ではない)。 同じ便の source_of / covered_by_source はモジュールの中でしか使わないので _ を付けて内部にした(数えない)。 2026-11-12 1.1.1(fix/studio-p-items-2026-11-12): 1073 + 11 = 1084。safe_xml 4(上の注記)・ param_specs.half_then_thirds_index 1(端の扱い・構造要素の形のつまみの対応。Studio と MCP の内側の部品)・ studio_search.staples_for 1(検索の「定番」の群。Studio の内側)・studio 3(lang_from_locale ほか、GUI の内側)・ backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。 2026-11-25 PR #355: opspharma.get / call / info(他の ops* と同じ台帳の入口 3 点)で +3。 2026-11-25 numpy_compat.trapezoid(+1、上の _INTERNAL)と arrayguard の 3 関数(+3)。 1086 + 3 + 1 + 3 = 1093。
 
 ## `tests/test_pxrd.py`
 
@@ -3422,17 +3376,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_studio.py`
 
-- **L962** — ★`setDefaultFormat` only affects the no-argument constructor, and Studio's `QSettings("Fullseye", "Studio")` was fixed to the registry —— this fixture isolated nothing (2026-09-05; pytest's paths were left in the registry). Point the main-side entry `studio._settings()` at an ini via an environment variable.
-- **L2090** — ★Building `QSettings("Fullseye", "Studio")` directly bypasses the isolation and writes into **the user's registry** (real harm confirmed in the 2026-09-05 audit). Keep the settings entry point to one.
+- **L948** — ★`setDefaultFormat` only affects the no-argument constructor, and Studio's `QSettings("Fullseye", "Studio")` was fixed to the registry —— this fixture isolated nothing (2026-09-05; pytest's paths were left in the registry). Point the main-side entry `studio._settings()` at an ini via an environment variable.
+- **L2070** — ★Building `QSettings("Fullseye", "Studio")` directly bypasses the isolation and writes into **the user's registry** (real harm confirmed in the 2026-09-05 audit). Keep the settings entry point to one.
 
 ## `tests/test_studio_compare_pin_sync_2026_10_20.py`
 
-- **L277** _(ja)_ — ★2026-11-12: gaussian の b は端の扱いを選ぶ(未使用ではなかった)。本当に未使用のつまみで確かめる。
-
-## `tests/test_studio_firstrun_2026_11_13.py`
-
-- **L886** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー): 以前は「列を基準に見えている」事を確かめていて、列そのものが窓に出て いなくても通った(この大きさ 1366 では出ていなかった)。列は、手順の文を切らずに置ける幅の時だけ出る。字の幅は 環境のフォントで変わるので、窓を広げていき、出た所で「窓に見えている」事と押せる事を確かめる。
-- **L949** _(ja)_ — ★2026-11-15(PR #316 の独立レビュー): N は押して開く表の行の数。以前はラベル付けの個数(96)を出していて、 表(小さな粒を落とす)は 63 行だった。この試験も、表を開く事だけを見て行の数と比べていなかった。
+- **L274** _(ja)_ — ★2026-11-12: gaussian の b は端の扱いを選ぶ(未使用ではなかった)。本当に未使用のつまみで確かめる。
 
 ## `tests/test_studio_input_assign_2026_10_21.py`
 
@@ -3442,7 +3391,6 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L129** _(ja)_ — ★2026-10-13: 抜き取りを「名前の SHA-1 の小さい順に 60 本」にした。等間隔の抜き取り (names[::len//60])は、前の方に op が 8 本足されただけで 60 本がまるごとずれ、 見本で走る数が 26 → 17 に落ちて門が鳴った(偏光の 8 op は 1 本も抜き取りに入っていない = 窓の欠陥ではなく抜き取りの揺れ)。名前の指紋で選べば、op を足しても既存の 60 本は 新しい名前が指紋の上位に割り込むときしか変わらない。この抜き取りの実測は 60 本中 22 本。
 - **L143** _(ja)_ — ★返り値が None の op(tid2013_root はデータの置き場が無ければ None を返す)は、窓でも 「kind: none」で out = None になる。例外が出たかでなく**値が返ったか**で比べる (2026-10-05: 台帳が 63 本増えて抜き取りの 60 本がずれ、tid2013_root が入って鳴った)。
-- **L178** — ★2026-11-15: a panel's own key (Alt+M = its menu) fires only while the focus is inside that panel, so two panels may share it; a window-wide action on the same key, or a panel inside another one with the same key, is still ambiguous
 
 ## `tests/test_studio_logic.py`
 
@@ -3455,11 +3403,6 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_studio_params.py`
 
 - **L275** _(ja)_ — ★2026-11-12: gaussian / median の b は端の扱いを選ぶ(「b=–」= 未使用と書いていたのは誤り)
-
-## `tests/test_studio_untranslated_ledger_2026_11_13.py`
-
-- **L129** _(ja)_ — ★2026-11-15: 隠れている部品も数える(タブの裏・畳んだ欄。見えている部品だけだと 4、全部で 17)
-- **L170** _(ja)_ — ★範囲外(2026-11-15、PR #316 の独立レビュー 3 回目): op の一覧の行のツールヒントは、ほぼ全部が英語のまま (op 名・HALCON の別名・category・sort)。台帳は数えない。訳し始めたら、ここを台帳の件数に替える。
 
 ## `tests/test_telecentric.py`
 
@@ -3534,21 +3477,21 @@ This repository records *why* things are the way they are in **comments in the s
 - **L7167** _(ja)_ — ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が 無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。 窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、 effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
 - **L7378** _(ja)_ — ★obs2 の 2 点目は台車 0 の終点から (−0.15, 1.0) ずらした所: 射影の角 0.1 → 0.2 rad で終点と点の順が入れ替わり、 組紐語が変わる(角が「効かないノブ」に見えない入力。類が同じかは角に依らない —— それは門が別に見る)。
 - **L7705** _(ja)_ — ★以前の 8 画素周期の敷き詰め(7 x 7)は得点 1 の一致が 49 か所あり、上位 max_matches = 10 が 全部 1 になって min_score が出力に現れなかった(2026-11-04 の統合で直した)。
-- **L9119** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L9245** — ★Until 2026-09-02 it was ``lambda v: True`` = **since the predicate is counted as "present", it's worse than absent** (the inspection script also counts it as "has a predicate"). Measured, it let through even None / 42 / a string / a dict. The canon was decided by **running all** of the 6 consuming op (reprconv's pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar): all 6 op accept only the two shapes above, and everything else becomes a named fail-closed with "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (measured). Since **(2,N) is not accepted**, the 3 adapters that were collapsing a 2-tuple into (2,N) with np.stack were fixed to axis=1. Two arrays of differing length (histogram's counts/edges) are also not a "pair" and are rejected.
-- **L9380** — ★"Exactly 2 elements" is **deliberately different** from pose (which allows info via `len >= 2`). Measured 2026-09-02: the 4 existing consumers that take a mesh as one argument (face_normals / vertex_normals / mesh_area / vertex_curvature) emit "mesh must be a 2-element tuple (vertices, faces)" for a 3-tuple, and cadmap's `_mesh` and render3d._mesh_arrays also accept only 2 elements. In other words **the canon for this repo's mesh sort is a 2-tuple**, and an extra element is not "more information" but a type-level lie that wipes out everything downstream. The sole exception `voxel_to_mesh` (which returns (v, f, n)) now has the canonical order extracted in ops3d.RESULT_ADAPTERS (treated the same as gicp / vol_label).
-- **L9589** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L9591** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-- **L9593** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-- **L9596** _(ja)_ — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
-- **L9603** _(ja)_ — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
-- **L9605** _(ja)_ — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
-- **L9608** _(ja)_ — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
-- **L9610** _(ja)_ — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
-- **L9612** _(ja)_ — ★2026-10-19: 最適化後の処方(R = inf)を返す
-- **L9614** _(ja)_ — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
-- **L9637** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L9763** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L9142** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L9268** — ★Until 2026-09-02 it was ``lambda v: True`` = **since the predicate is counted as "present", it's worse than absent** (the inspection script also counts it as "has a predicate"). Measured, it let through even None / 42 / a string / a dict. The canon was decided by **running all** of the 6 consuming op (reprconv's pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar): all 6 op accept only the two shapes above, and everything else becomes a named fail-closed with "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (measured). Since **(2,N) is not accepted**, the 3 adapters that were collapsing a 2-tuple into (2,N) with np.stack were fixed to axis=1. Two arrays of differing length (histogram's counts/edges) are also not a "pair" and are rejected.
+- **L9403** — ★"Exactly 2 elements" is **deliberately different** from pose (which allows info via `len >= 2`). Measured 2026-09-02: the 4 existing consumers that take a mesh as one argument (face_normals / vertex_normals / mesh_area / vertex_curvature) emit "mesh must be a 2-element tuple (vertices, faces)" for a 3-tuple, and cadmap's `_mesh` and render3d._mesh_arrays also accept only 2 elements. In other words **the canon for this repo's mesh sort is a 2-tuple**, and an extra element is not "more information" but a type-level lie that wipes out everything downstream. The sole exception `voxel_to_mesh` (which returns (v, f, n)) now has the canonical order extracted in ops3d.RESULT_ADAPTERS (treated the same as gicp / vol_label).
+- **L9612** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L9614** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L9616** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
+- **L9619** _(ja)_ — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
+- **L9626** _(ja)_ — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
+- **L9628** _(ja)_ — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
+- **L9631** _(ja)_ — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
+- **L9633** _(ja)_ — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
+- **L9635** _(ja)_ — ★2026-10-19: 最適化後の処方(R = inf)を返す
+- **L9637** _(ja)_ — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
+- **L9660** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L9786** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 
@@ -3556,8 +3499,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tools/ci_local.py`
 
-- **L1369** _(ja)_ — ★再利用のたびに中身を確かめる。2026-11-10 実測: 揃え直しが途中で落ちた venv(cv2 が空)を stamp だけ見て再利用し、全数の 720 件が「backend が無い」で落ちた。
-- **L1384** _(ja)_ — ★--force-reinstall: 揃え直しの道では上の `-e .[opencv]` が opencv-python を入れ直し、その uninstall が contrib と共有の cv2/ を消す。contrib は「最新なので何もしない」ため cv2 が空になった(2026-11-10 実測)。
+- **L1368** _(ja)_ — ★再利用のたびに中身を確かめる。2026-11-10 実測: 揃え直しが途中で落ちた venv(cv2 が空)を stamp だけ見て再利用し、全数の 720 件が「backend が無い」で落ちた。
+- **L1383** _(ja)_ — ★--force-reinstall: 揃え直しの道では上の `-e .[opencv]` が opencv-python を入れ直し、その uninstall が contrib と共有の cv2/ を消す。contrib は「最新なので何もしない」ため cv2 が空になった(2026-11-10 実測)。
 
 ## `tools/ci_select_tests.py`
 
@@ -3687,9 +3630,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tools/gen_view2026_pages.py`
 
-- **L278** _(ja)_ — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
-- **L345** _(ja)_ — ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
-- **L348** _(ja)_ — ★2026-11-12: 本ページ(ja/en)に載せるのは tier が showcase / featured の展示だけ(MAIN_LIMIT 本まで)。
+- **L175** _(ja)_ — ★2026-11-26(初めて使う人の手順を新しい環境で実走): 以前は `pip install fullseye` → clone → 実行 の順だった。 PyPI の版(当時 1.1.1 = numpy+scipy だけ)と clone した master のコードが混ざり、 焦点合成の PoC が使う `xcv2_lap_var`(OpenCV)が無くて exit 1(3 秒)で落ちた。 clone した木そのものを `[opencv]` 付きで入れると、新しい venv で PASS・23 秒・図 7 枚。 順序と extra は tests/test_view2026_try_steps.py が見張る。
+- **L294** _(ja)_ — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
+- **L361** _(ja)_ — ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
+- **L364** _(ja)_ — ★2026-11-12: 本ページ(ja/en)に載せるのは tier が showcase / featured の展示だけ(MAIN_LIMIT 本まで)。
 
 ## `tools/gen_view2026_story_gifs.py`
 
@@ -3791,22 +3735,22 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tools/opdocs.py`
 
-- **L158** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) was registered yet **had not a single note under docs/ops** —— it appears in OP_CATALOG, but with no per-op note (type contract, pitfalls, related ops) it was entirely missing from the RAG corpus. We noticed when `poc_web_roll_periodicity` added 2 to dsp.
-- **L271** _(ja)_ — ★2026-11-06(1.0.0 の文書の門): 知識ガイドの訳を原文の横に置くと、``*/guides/*.md`` の glob が訳を**別のガイドとして**数えていた(17 本 → 51 本。訳は front matter に原文の ``guide:`` / ``applies_to`` を写すので、op の頁に同じガイドが 3 回並ぶ)。訳は原文に紐付けて扱う。
-- **L1028** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
-- **L1101** — ★The n-ary (multi-input) tier. Until 2026-09-09 **17 operators had no note at all** (`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2`…). They appear in `OP_INDEX.json` as tier `nary`, but with no note under `docs/ops/` they could **never be retrieved from the RAG corpus**. The reason it went unnoticed is plain: this code walked only `ops.REGISTRY`, and `ops.REGISTRY` (899) matches the 2-D note count (899) — so counting from the registry side it looked complete. It only shows when you count across tiers.
-- **L1143** — ★2026-09-07: ``OPS3D[...]["doc"]`` is, at registration time, just **the first line of the docstring** cut out (ops3d._build). Using it for a note's "usage" turns it into a single line no matter how many paragraphs the implementation writes —— the 3-D share of "494 ops with a one-line usage" was caused by this truncation (many ops have long docstrings themselves). Read the function's docstring in full, as for the ledger dim.
-- **L1167** — ★ A bridging op (``tb_<name>``) has the same implementation as the ledger's ``<name>``, and examples are written under the ledger name. Until 2026-09-06, 147 of them were "zero examples," but that only meant we had not counted that **examples calling the same implementation exist under a different name**. Inherit the ledger-side examples and note explicitly in the note that they are "examples of the original op" (so as not to lie).
-- **L1226** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
-- **L1492** — ★An n-ary operator cannot be called through `fullseye.apply` — that is the one-image model. Writing the one-image call form here makes **the note lie**, and telling the reader how to call the operator is the note's only job, so a wrong call form is worse than none. The public route is `fullseye.FullseyeGraph`.
-- **L1511** — ★2026-09-07: **Write the public path first**. This only wrote a direct import of the implementation module and did not surface `fullseye.ledger.<name>`, which users actually use (all 1,244 ops other than 2-D). The reason PoCs repeatedly reported "not in fs.<name>" was not that the name was missing but that **the entry point was not written**.
-- **L1969** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
-- **L2009** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
-- **L2020** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
-- **L2029** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
-- **L2187** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
-- **L2356** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
-- **L3064** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L160** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) was registered yet **had not a single note under docs/ops** —— it appears in OP_CATALOG, but with no per-op note (type contract, pitfalls, related ops) it was entirely missing from the RAG corpus. We noticed when `poc_web_roll_periodicity` added 2 to dsp.
+- **L273** _(ja)_ — ★2026-11-06(1.0.0 の文書の門): 知識ガイドの訳を原文の横に置くと、``*/guides/*.md`` の glob が訳を**別のガイドとして**数えていた(17 本 → 51 本。訳は front matter に原文の ``guide:`` / ``applies_to`` を写すので、op の頁に同じガイドが 3 回並ぶ)。訳は原文に紐付けて扱う。
+- **L1030** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
+- **L1103** — ★The n-ary (multi-input) tier. Until 2026-09-09 **17 operators had no note at all** (`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2`…). They appear in `OP_INDEX.json` as tier `nary`, but with no note under `docs/ops/` they could **never be retrieved from the RAG corpus**. The reason it went unnoticed is plain: this code walked only `ops.REGISTRY`, and `ops.REGISTRY` (899) matches the 2-D note count (899) — so counting from the registry side it looked complete. It only shows when you count across tiers.
+- **L1145** — ★2026-09-07: ``OPS3D[...]["doc"]`` is, at registration time, just **the first line of the docstring** cut out (ops3d._build). Using it for a note's "usage" turns it into a single line no matter how many paragraphs the implementation writes —— the 3-D share of "494 ops with a one-line usage" was caused by this truncation (many ops have long docstrings themselves). Read the function's docstring in full, as for the ledger dim.
+- **L1169** — ★ A bridging op (``tb_<name>``) has the same implementation as the ledger's ``<name>``, and examples are written under the ledger name. Until 2026-09-06, 147 of them were "zero examples," but that only meant we had not counted that **examples calling the same implementation exist under a different name**. Inherit the ledger-side examples and note explicitly in the note that they are "examples of the original op" (so as not to lie).
+- **L1228** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
+- **L1494** — ★An n-ary operator cannot be called through `fullseye.apply` — that is the one-image model. Writing the one-image call form here makes **the note lie**, and telling the reader how to call the operator is the note's only job, so a wrong call form is worse than none. The public route is `fullseye.FullseyeGraph`.
+- **L1513** — ★2026-09-07: **Write the public path first**. This only wrote a direct import of the implementation module and did not surface `fullseye.ledger.<name>`, which users actually use (all 1,244 ops other than 2-D). The reason PoCs repeatedly reported "not in fs.<name>" was not that the name was missing but that **the entry point was not written**.
+- **L1971** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
+- **L2011** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
+- **L2022** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
+- **L2031** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
+- **L2189** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
+- **L2358** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+- **L3066** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 
@@ -3837,10 +3781,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L115** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
 - **L123** — ★2026-10-15: it had no `--md` and **wrote nothing** (it only printed a summary to stdout). docs/CONVERSION_MATRIX.md went stale at the 2026-09-02 values ("59 types / 164 conversion pairs"), and since --check cannot see "a stage that writes nothing" as drift, it passed for six weeks. Now `trace_problems()` rejects a stage that does not even touch its declared outputs.
 - **L139** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
-- **L460** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
-- **L933** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L948** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L996** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
+- **L461** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
+- **L928** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L943** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L991** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
 
 ## `tools_geom.py`
 

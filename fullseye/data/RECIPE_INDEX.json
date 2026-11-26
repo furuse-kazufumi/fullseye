@@ -9520,7 +9520,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 362
+        "line": 372
       },
       "when_ja": "衝突余裕時間(TTC) — 深度画像と自車の動きから、障害物にぶつかるまでの時間(秒)を求める",
       "index_text": {
@@ -9562,7 +9562,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 373
+        "line": 383
       },
       "when_ja": "拡大焦点(FoE) — 2 つのカメラ姿勢から、画像上で車が向かっている点の位置を求める",
       "index_text": {
@@ -9604,7 +9604,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 382
+        "line": 392
       },
       "when_ja": "自動運転の安全車間距離 — RSS の縦方向ルールで、後続車が保つべき最小車間距離(m)を求める",
       "index_text": {
@@ -9645,7 +9645,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 394
+        "line": 404
       },
       "when_ja": "RSS の同方向の最小安全距離 — 前の車が最大の制動で止まっても、後ろの車が反応時間 ρ のあいだ加速してから制動して止まれる車間 [m](Shalev-Shwartz 2017 の Lemma 2、ad-rss-lib の保守的な定数)。パラメータの表を第 1 引数に、速さを名前つきで渡す。真値は閉形式。",
       "index_text": {
@@ -9689,7 +9689,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 405
+        "line": 415
       },
       "when_ja": "運転者のふらつき — 車線内の横ずれを OU 過程として、戻りの速さとノイズの大きさを推定する",
       "index_text": {
@@ -9727,7 +9727,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 414
+        "line": 424
       },
       "when_ja": "ロボット組立(ペグインホール) — 軸と穴のすきま比と、かじらずに挿入できる傾き角を求める",
       "index_text": {
@@ -9770,7 +9770,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 423
+        "line": 433
       },
       "when_ja": "到来方向推定 — アレイアンテナ・マイクアレイの信号から MUSIC 法で音源・電波源の方位(度)を求める",
       "index_text": {
@@ -9819,7 +9819,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 432
+        "line": 442
       },
       "when_ja": "根の個数 — 偏角の原理で円の内側にある多項式の零点の数を数え、安定判別に使う",
       "index_text": {
@@ -9853,7 +9853,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 441
+        "line": 451
       },
       "when_ja": "条件数 — 計測データの共分散行列の条件数を求め、ばらつきの偏り・解の不安定さを調べる",
       "index_text": {
@@ -9887,7 +9887,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 449
+        "line": 459
       },
       "when_ja": "主軸解析 — 共分散行列の固有値分解で、データのばらつきの主方向と分散を求める",
       "index_text": {
@@ -9929,7 +9929,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 458
+        "line": 468
       },
       "when_ja": "振動解析 — バンドパスフィルタ後の振動・音響信号から主周波数・RMS・クレストファクタなどを求める",
       "index_text": {
@@ -9966,7 +9966,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 466
+        "line": 476
       },
       "when_ja": "ゼロ交差の計数 — 1 次元プロファイルを平滑化してゼロ交差を数え、パルス・歯・周期を数える",
       "index_text": {
@@ -10000,7 +10000,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 474
+        "line": 484
       },
       "when_ja": "振幅計測 — ヒルベルト変換の包絡線から振動・打音・AE 信号の振幅レベルを求める",
       "index_text": {
@@ -10035,7 +10035,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 482
+        "line": 492
       },
       "when_ja": "工程能力 — 規格上限・下限に対する工程能力指数 Cp・Cpk を個々の測定値から求める",
       "index_text": {
@@ -10066,7 +10066,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 489
+        "line": 499
       },
       "when_ja": "管理図(X̄-R) — 群分けした測定値から中心線と管理限界を求め、工程の安定を監視する",
       "index_text": {
@@ -10107,7 +10107,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 497
+        "line": 507
       },
       "when_ja": "良品学習による欠陥検出 — 良品画像から画素ごとのばらつきを学習し、外れた画素を欠陥として出す",
       "index_text": {
@@ -10144,7 +10144,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 505
+        "line": 515
       },
       "when_ja": "非破壊検査の検出確率(POD) — 信号とき裂寸法の関係から a50・a90 など検出できる最小欠陥寸法を求める",
       "index_text": {
@@ -10178,7 +10178,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 513
+        "line": 523
       },
       "when_ja": "ネットワーク解析 — シナプス表からグラフを作り、ラプラシアン固有値で連結の強さを調べる",
       "index_text": {
@@ -10218,7 +10218,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 521
+        "line": 531
       },
       "when_ja": "ネットワークのクラスタ — 弱い結合を除いてから、神経回路網の独立した回路の数を数える",
       "index_text": {
@@ -10253,7 +10253,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 530
+        "line": 540
       },
       "when_ja": "最短経路 — 粘菌の輸送モデルで重み付きネットワーク上の最短経路と長さを求める",
       "index_text": {
@@ -10284,7 +10284,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 537
+        "line": 547
       },
       "when_ja": "閉ループの計数 — 有向グラフの 3 頂点の循環(フィードバック・デッドロック)の数を数える",
       "index_text": {
@@ -10326,7 +10326,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 544
+        "line": 554
       },
       "when_ja": "実験計画法 — 中心複合計画で実験し、応答曲面を当てはめて最適条件(停留点)を求める",
       "index_text": {
@@ -10372,7 +10372,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 553
+        "line": 563
       },
       "when_ja": "感度解析 — Sobol' 指数でモデルの出力ばらつきにどの入力因子が効いているかを求める",
       "index_text": {
@@ -10408,7 +10408,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 563
+        "line": 573
       },
       "when_ja": "主成分分析(PCA) — 多変量データの主成分・寄与率を求め、必要な成分数を判断する",
       "index_text": {
@@ -10451,7 +10451,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 572
+        "line": 582
       },
       "when_ja": "セグメンテーション評価 — 細胞・神経の分割誤り(過分割)を情報の変動量(ビット)で評価する",
       "index_text": {
@@ -10494,7 +10494,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 582
+        "line": 592
       },
       "when_ja": "シーンチェンジ検出 — ノイズのある動画を時間方向に平滑化し、フレーム間ヒストグラム差でカット点を見つける",
       "index_text": {
@@ -10533,7 +10533,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 590
+        "line": 600
       },
       "when_ja": "動体検出 — 照明のちらつきを補正してから背景モデルで動いている物体の領域を抽出する",
       "index_text": {
@@ -10544,6 +10544,55 @@
         "ko": "Inspect — moving object mask in a flickering video (deflicker + background model) segment inspection videostream  mains-lamp flicker (±6 % global gain per frame) makes a background model fire everywhere; deflicker normalises frame brightness first, then the per-pixel running Gaussian (Wren Pfinder) marks only the moving part. Output: 0/1 masks per frame; last-frame area in px. 프레임별 휘도 플리커 제거 → ``(T, H, W)``(``video``). 적응적 단일 가우스 전경 마스크를 프레임별로 → 0/1 ``(T, H, W)``(``video``).",
         "de": "Inspect — moving object mask in a flickering video (deflicker + background model) segment inspection videostream  mains-lamp flicker (±6 % global gain per frame) makes a background model fire everywhere; deflicker normalises frame brightness first, then the per-pixel running Gaussian (Wren Pfinder) marks only the moving part. Output: 0/1 masks per frame; last-frame area in px. Luminanz-Entflackern pro Bild → ``(T, H, W)`` (``video``). Adaptive Einzel-Gauß-Vordergrundmasken pro Bild → 0/1 ``(T, H, W)`` (``video``).",
         "hi": "Inspect — moving object mask in a flickering video (deflicker + background model) segment inspection videostream  mains-lamp flicker (±6 % global gain per frame) makes a background model fire everywhere; deflicker normalises frame brightness first, then the per-pixel running Gaussian (Wren Pfinder) marks only the moving part. Output: 0/1 masks per frame; last-frame area in px. हर frame पर luminance deflicker → ``(T, H, W)`` (``video``)। हर frame पर adaptive single-Gaussian foreground mask → 0/1 ``(T, H, W)`` (``video``)।"
+      }
+    },
+    {
+      "name": "Inspect — track moving matter after a pharmaceutical vial spin-stop",
+      "task": "track",
+      "family": "pharma",
+      "task_class": "inspection",
+      "halcon": null,
+      "runner": "python",
+      "input_sort": null,
+      "output_sort": "table",
+      "stages": [
+        {
+          "op": "vial_spin_stop_sequence",
+          "kw": {
+            "shape": "$aux.shape",
+            "n_frames": "$aux.n_frames",
+            "particle_contrast": "$aux.particle_contrast",
+            "n_particles": "$aux.n_particles",
+            "n_bubbles": "$aux.n_bubbles",
+            "n_scratches": "$aux.n_scratches",
+            "noise_sigma": "$aux.noise_sigma",
+            "seed": "$aux.seed"
+          }
+        },
+        {
+          "op": "track_moving_particles",
+          "kw": {
+            "threshold": 0.025,
+            "min_area_px": 2,
+            "static_threshold": 0.055
+          }
+        }
+      ],
+      "when": "generate a deterministic bright-field vial sequence containing two particles, one bubble and one stationary scratch, then separate moving residuals from stationary glass detail and link detections across frames. The gates verify that the requested sequence length reaches the tracker and that its table covers the known final frame; object classes remain conservative 2-D moving/scratch labels.",
+      "image": null,
+      "source": {
+        "path": "fullseye/recipebook/book_misc.py",
+        "line": 609
+      },
+      "when_ja": "医薬品バイアルの回転停止後を模擬した明視野画像列を作り、時間中央値との差から動く異物と静止したガラス傷を分けてフレーム間で追跡する。要求した枚数が追跡器へ渡り、既知の最終フレームまで軌跡表が得られることを確かめる。",
+      "index_text": {
+        "ja": "Inspect — track moving matter after a pharmaceutical vial spin-stop track inspection pharma  generate a deterministic bright-field vial sequence containing two particles, one bubble and one stationary scratch, then separate moving residuals from stationary glass detail and link detections across frames. The gates verify that the requested sequence length reaches the tracker and that its table covers the known final frame; object classes remain conservative 2-D moving/scratch labels. 医薬品バイアルの回転停止後を模擬した明視野画像列を作り、時間中央値との差から動く異物と静止したガラス傷を分けてフレーム間で追跡する。要求した枚数が追跡器へ渡り、既知の最終フレームまで軌跡表が得られることを確かめる。 回転停止後のバイアル画像列と物体ごとの真値軌跡を作る。 画像列から動く物と静止したガラス傷を分け、軌跡表を返す。",
+        "en": "Inspect — track moving matter after a pharmaceutical vial spin-stop track inspection pharma  generate a deterministic bright-field vial sequence containing two particles, one bubble and one stationary scratch, then separate moving residuals from stationary glass detail and link detections across frames. The gates verify that the requested sequence length reaches the tracker and that its table covers the known final frame; object classes remain conservative 2-D moving/scratch labels. Generate a post-spin-stop vial image sequence and per-object ground-truth trajectories. Separate moving objects and stationary glass scratches in an image sequence and return a trajectory table.",
+        "zh": "Inspect — track moving matter after a pharmaceutical vial spin-stop track inspection pharma  generate a deterministic bright-field vial sequence containing two particles, one bubble and one stationary scratch, then separate moving residuals from stationary glass detail and link detections across frames. The gates verify that the requested sequence length reaches the tracker and that its table covers the known final frame; object classes remain conservative 2-D moving/scratch labels. 生成旋停后的西林瓶图像序列及逐物体真值轨迹。 在图像序列中分离运动物体与静止玻璃划痕，并返回轨迹表。",
+        "tw": "Inspect — track moving matter after a pharmaceutical vial spin-stop track inspection pharma  generate a deterministic bright-field vial sequence containing two particles, one bubble and one stationary scratch, then separate moving residuals from stationary glass detail and link detections across frames. The gates verify that the requested sequence length reaches the tracker and that its table covers the known final frame; object classes remain conservative 2-D moving/scratch labels. 產生旋停後的西林瓶影像序列及逐物體真值軌跡。 在影像序列中分離運動物體與靜止玻璃刮痕，並回傳軌跡表。",
+        "ko": "Inspect — track moving matter after a pharmaceutical vial spin-stop track inspection pharma  generate a deterministic bright-field vial sequence containing two particles, one bubble and one stationary scratch, then separate moving residuals from stationary glass detail and link detections across frames. The gates verify that the requested sequence length reaches the tracker and that its table covers the known final frame; object classes remain conservative 2-D moving/scratch labels. 회전 정지 후 바이알 영상 시퀀스와 물체별 정답 궤적을 생성합니다. 영상 시퀀스에서 움직이는 물체와 정지한 유리 흠집을 분리하고 궤적 표를 반환합니다.",
+        "de": "Inspect — track moving matter after a pharmaceutical vial spin-stop track inspection pharma  generate a deterministic bright-field vial sequence containing two particles, one bubble and one stationary scratch, then separate moving residuals from stationary glass detail and link detections across frames. The gates verify that the requested sequence length reaches the tracker and that its table covers the known final frame; object classes remain conservative 2-D moving/scratch labels. Erzeugt eine Bildsequenz eines Vials nach dem Rotationsstopp und Grundwahrheits-Trajektorien je Objekt. Trennt bewegte Objekte und stationäre Kratzer im Glas in einer Bildfolge und gibt eine Trajektorientabelle zurück.",
+        "hi": "Inspect — track moving matter after a pharmaceutical vial spin-stop track inspection pharma  generate a deterministic bright-field vial sequence containing two particles, one bubble and one stationary scratch, then separate moving residuals from stationary glass detail and link detections across frames. The gates verify that the requested sequence length reaches the tracker and that its table covers the known final frame; object classes remain conservative 2-D moving/scratch labels. Spin रुकने के बाद vial image sequence और हर object की ground-truth trajectory बनाता है। Image sequence में चलती वस्तुओं और स्थिर कांच खरोंचों को अलग करके trajectory table लौटाता है।"
       }
     },
     {
@@ -10583,7 +10632,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 599
+        "line": 626
       },
       "when_ja": "カメラ校正 — テストチャートの撮影画像にシミュレーションを当てはめ、ゲイン・オフセットを推定する",
       "index_text": {
@@ -10634,7 +10683,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 611
+        "line": 638
       },
       "when_ja": "アテンションの計算 — Transformer の注意機構を正規化・スコア・ソフトマックス・重み付き和に分けて計算",
       "index_text": {
@@ -10669,7 +10718,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 621
+        "line": 648
       },
       "when_ja": "格子収束性の検証 — 3 段階の格子の解から観測収束次数と GCI を求め、シミュレーションの収束を確認",
       "index_text": {
@@ -10705,7 +10754,7 @@
       "image": null,
       "source": {
         "path": "fullseye/recipebook/book_misc.py",
-        "line": 628
+        "line": 655
       },
       "when_ja": "不動点反復 — Anderson 加速で反復計算の不動点を求め、残差履歴と誤差の上界を報告する",
       "index_text": {
@@ -11575,16 +11624,16 @@
     },
     {
       "source": "fullseye/recipebook RECIPES",
-      "found": 250,
-      "included": 250,
+      "found": 251,
+      "included": 251,
       "excluded": 0,
       "reason": null
     },
     {
       "source": "examples/poc_*.py",
-      "found": 317,
+      "found": 318,
       "included": 0,
-      "excluded": 317,
+      "excluded": 318,
       "reason": "PoC programs are arbitrary Python; a linear MCP pipeline cannot be extracted statically without guessing."
     },
     {
@@ -11596,9 +11645,9 @@
     },
     {
       "source": "docs/**/*.md",
-      "found": 4458,
+      "found": 4456,
       "included": 0,
-      "excluded": 4458,
+      "excluded": 4456,
       "reason": "Documentation contains prose and snippets, not a statically unambiguous inventory of MCP stages."
     }
   ]

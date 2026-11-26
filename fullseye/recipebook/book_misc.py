@@ -3,8 +3,8 @@
 inspection statistics (``spc``), connectome graphs (``conngraph``), weighted graphs and paths
 (``graph``), design of experiments and multivariate analysis (``multivar``), segmentation
 proof-reading (``emproof``), streaming video (``videostream``), simulation calibration
-(``simcal``), transformer attention kernels (``llmcore``) and convergence verification
-(``converge``).
+(``simcal``), pharmaceutical vial inspection (``pharma``), transformer attention kernels
+(``llmcore``) and convergence verification (``converge``).
 
 Every sample is synthetic with a closed-form answer (a time to collision Z / v, the RSS formula,
 an OU process with known θ, a sine of known frequency, the Cpk of a known normal process, the
@@ -341,6 +341,16 @@ def mx_babylonian(variant: int):
             "truth": {"root": math.sqrt(c)}}
 
 
+def mx_vial_spin_stop(variant: int):
+    """A seeded spin-stop vial sequence with known frame bounds. / 既知のフレーム範囲を持つ回転停止バイアル列。"""
+    n_frames = 10 + 2 * variant
+    return {"value": None,
+            "aux": {"shape": (72, 56), "n_frames": n_frames, "particle_contrast": 0.28,
+                    "n_particles": 2, "n_bubbles": 1, "n_scratches": 1,
+                    "noise_sigma": 0.002, "seed": 3 + 4 * variant},
+            "truth": {"n_frames": n_frames, "last_frame": n_frames - 1}}
+
+
 SAMPLES = {
     "mx_wall_approach": mx_wall_approach, "mx_rss_follow": mx_rss_follow, "mx_ou_wobble": mx_ou_wobble,
     "mx_peg_hole": mx_peg_hole, "mx_doa_angles": mx_doa_angles, "mx_poly_roots": mx_poly_roots,
@@ -350,7 +360,7 @@ SAMPLES = {
     "mx_ccd_response": mx_ccd_response, "mx_sobol_linear": mx_sobol_linear, "mx_seg_labels": mx_seg_labels,
     "mx_scene_cut_clip": mx_scene_cut_clip, "mx_flicker_clip": mx_flicker_clip, "mx_simcal_gain": mx_simcal_gain,
     "mx_attention_lookup": mx_attention_lookup, "mx_grid_study": mx_grid_study, "mx_babylonian": mx_babylonian,
-    "mx_sine_crossings": mx_sine_crossings,
+    "mx_sine_crossings": mx_sine_crossings, "mx_vial_spin_stop": mx_vial_spin_stop,
 }
 
 
@@ -595,6 +605,23 @@ RECIPES = [
      "note": "mains-lamp flicker (±6 % global gain per frame) makes a background model fire everywhere; deflicker "
              "normalises frame brightness first, then the per-pixel running Gaussian (Wren Pfinder) marks only the "
              "moving part. Output: 0/1 masks per frame; last-frame area in px."},
+    # ---------------------------------------------------------------- pharma
+    {"name": "Inspect — track moving matter after a pharmaceutical vial spin-stop", "family": "pharma",
+     "task": "track", "task_class": "inspection", "halcon": None, "input_sort": None,
+     "sample": "mx_vial_spin_stop",
+     "stages": [{"op": "vial_spin_stop_sequence",
+                 "kw": {"shape": "$aux.shape", "n_frames": "$aux.n_frames",
+                        "particle_contrast": "$aux.particle_contrast", "n_particles": "$aux.n_particles",
+                        "n_bubbles": "$aux.n_bubbles", "n_scratches": "$aux.n_scratches",
+                        "noise_sigma": "$aux.noise_sigma", "seed": "$aux.seed"}},
+                {"op": "track_moving_particles",
+                 "kw": {"threshold": 0.025, "min_area_px": 2, "static_threshold": 0.055}}],
+     "expect": [{"get": ["$s1", "@len"], "equals": "n_frames"},
+                {"get": ["frame", "@max"], "equals": "last_frame"}],
+     "note": "generate a deterministic bright-field vial sequence containing two particles, one bubble and one "
+             "stationary scratch, then separate moving residuals from stationary glass detail and link detections "
+             "across frames. The gates verify that the requested sequence length reaches the tracker and that its "
+             "table covers the known final frame; object classes remain conservative 2-D moving/scratch labels."},
     # ---------------------------------------------------------------- simcal
     {"name": "Calibrate — camera gain from a captured test chart (simulation calibration)", "family": "simcal",
      "task": "calibrate", "task_class": "simulation", "halcon": "Calibration", "input_sort": None,
@@ -669,6 +696,9 @@ FAILED_ATTEMPTS = [
 
 #: 本ごとの日本語ノート(この本で足したレシピ。notes_ja.py の表と合わせて引く)。
 NOTES_JA = {
+    "Inspect — track moving matter after a pharmaceutical vial spin-stop":
+        "医薬品バイアルの回転停止後を模擬した明視野画像列を作り、時間中央値との差から動く異物と静止したガラス傷を分けて"
+        "フレーム間で追跡する。要求した枚数が追跡器へ渡り、既知の最終フレームまで軌跡表が得られることを確かめる。",
     "Measure — RSS minimum safe gap behind a braking lead car (rss_params -> rss_longitudinal_same)":
         "RSS の同方向の最小安全距離 — 前の車が最大の制動で止まっても、後ろの車が反応時間 ρ のあいだ加速してから"
         "制動して止まれる車間 [m](Shalev-Shwartz 2017 の Lemma 2、ad-rss-lib の保守的な定数)。"

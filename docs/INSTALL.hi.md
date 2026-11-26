@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: e25193670f30 -->
+<!-- i18n-source-sha: 301a8cc4c65e -->
 # Installation / Environment Setup — पूरी गाइड
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · **हिन्दी**
@@ -19,7 +19,7 @@ Fullseye का Python API core **numpy + scipy** पर चलता है। 
 |---|---|
 | Python | **3.11** (`pyproject.toml` में `requires-python = ">=3.11"` set है; development और testing 3.11 पर होती है) |
 | चलाने का command | Windows: `py -3.11` / Linux: `python3.11` |
-| Standard dependencies | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5,!=6.12.0`, `Pillow>=13.0` (`pip install -e .` से अपने-आप install होती हैं) |
+| Standard dependencies | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0` (`pip install -e .` से अपने-आप install होती हैं) |
 | OS | Windows 10/11, Linux (embedded सहित)। जहाँ Python चलता है, वहाँ macOS पर भी काम करता है |
 
 ---
@@ -46,8 +46,6 @@ py -3.11 -m pip install -e .            # standard: Python API + Studio + Pillow
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow आदि), mahotas से बने (Zernike / pftas आदि) |
 | `gui` | none (Studio standard है) | compatibility alias; `pip install fullseye` के बाद **Fullseye Studio** शुरू होता है |
 | `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile` (CuPy नहीं; पूरा GPU set `fullseye[gpu]` से। PyTorch के install guide के अनुसार Linux पर default torch CUDA build है और साथ में CUDA components (nvidia-* wheels) भी आ सकते हैं। केवल CPU के लिए पहले CPU-only index से torch install करें: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | सभी operators और backends |
-
-Studio की standard requirement `PySide6-Essentials>=6.5,!=6.12.0` है। Linux पर SIGABRT दोहराने के कारण 6.12.0 को exclude किया गया है।
 
 मोटे तौर पर नियम:
 
@@ -182,6 +180,7 @@ Embedded इस्तेमाल के मुख्य बिंदु:
 | `ModuleNotFoundError: No module named 'fullseye'` | install नहीं हुआ / path set नहीं | `pip install -e .`, या repository root को `PYTHONPATH` में जोड़ें |
 | `fullseye` / `fullseye-studio` command नहीं मिलता | console scripts register नहीं हुईं | `pip install -e .` चलाएँ। Install नहीं किया है तो `py -3.11 imgevolve.py` / `py -3.11 studio.py` इस्तेमाल करें |
 | Studio launch करते समय PySide6 ImportError | standard dependency टूटी हुई है | `pip install --force-reinstall fullseye` |
+| Linux पर Studio launch करते समय `ImportError: libEGL.so.1` आदि | Qt को चाहिए system libraries मौजूद नहीं (pip इन्हें install नहीं कर सकता) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 libxcb-cursor0` (`libxcb-cursor0` xcb से screen पर window दिखाने के लिए चाहिए; CI बाकी 4 से offscreen launch जाँचता है)। दूसरे distributions में उनके समान packages |
 | `apply` / `pipeline` पर `cannot read <path>` | standard Pillow dependency टूटी है या image खराब है | `pip install --force-reinstall fullseye`; फिर भी हो तो image जाँचें |
 | `read_image` / `write_image` (API) से cv2 ImportError | ये **सिर्फ़ OpenCV** वाले हैं | `pip install -e ".[opencv]"`। अगर Pillow से काम चलाना है, तो `fullseye.load` / `fullseye.save` इस्तेमाल करें |
 | अपेक्षित operator `list_ops` में नहीं है / `has` unknown लौटाता है | संबंधित backend install नहीं | मेल खाते extras जोड़ें (`skimage`/`wavelets`/`extra` आदि) |

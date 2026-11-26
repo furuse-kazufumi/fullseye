@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: e25193670f30 -->
+<!-- i18n-source-sha: 301a8cc4c65e -->
 # 安裝 / 環境建置完整指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -15,7 +15,7 @@ Fullseye 的 Python API 核心使用 **numpy + scipy**。標準的 `pip install 
 |---|---|
 | Python | **3.11**(`pyproject.toml` 中 `requires-python = ">=3.11"`；開發與驗證使用 3.11) |
 | 執行指令 | Windows: `py -3.11` / Linux: `python3.11` |
-| 標準相依套件 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5,!=6.12.0`, `Pillow>=13.0`(`pip install -e .` 會自動安裝) |
+| 標準相依套件 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0`(`pip install -e .` 會自動安裝) |
 | 作業系統 | Windows 10/11、Linux(含嵌入式)。只要 Python 能執行，macOS 也可以 |
 
 ---
@@ -41,8 +41,6 @@ py -3.11 -m pip install -e .            # 標準：Python API + Studio + Pillow�
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 等)、源自 mahotas(Zernike/pftas 等) |
 | `gui` | 無（Studio 為標準相依套件） | 相容別名；`pip install fullseye` 後即可啟動 **Fullseye Studio** |
 | `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`(不含 CuPy；完整的 GPU 套件請用 `fullseye[gpu]`。依 PyTorch 的安裝說明，Linux 上預設的 torch 是 CUDA 版，可能會一併裝入 CUDA 元件(nvidia-* 的 wheel)。只用 CPU 時，請先從 CPU 版的來源安裝 torch：`pip install torch --index-url https://download.pytorch.org/whl/cpu`) | 全部運算子與後端 |
-
-Studio 的標準需求是 `PySide6-Essentials>=6.5,!=6.12.0`。6.12.0 因在 Linux 重現 SIGABRT 而被排除。
 
 使用建議：
 
@@ -165,6 +163,7 @@ python3.11 -m pip install -e .        # 標準安裝含 Studio/Pillow；不需�
 | `ModuleNotFoundError: No module named 'fullseye'` | 未安裝 / 路徑未設定 | 執行 `pip install -e .`，或將儲存庫根目錄加入 `PYTHONPATH` |
 | 找不到 `fullseye` / `fullseye-studio` 指令 | 主控台指令稿未註冊 | 執行 `pip install -e .`。若不安裝，可用 `py -3.11 imgevolve.py` / `py -3.11 studio.py` |
 | Studio 啟動時出現 PySide6 的 ImportError | 標準相依套件損壞 | `pip install --force-reinstall fullseye` |
+| 在 Linux 上啟動 Studio 時出現 `ImportError: libEGL.so.1` 等 | 缺少 Qt 所需的系統函式庫(pip 無法安裝) | Debian/Ubuntu: `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 libxcb-cursor0`(`libxcb-cursor0` 用於透過 xcb 在螢幕上顯示視窗;CI 以其餘 4 個確認 offscreen 啟動)。其他發行版請安裝對應的套件 |
 | `apply` / `pipeline` 出現 `cannot read <path>` | 標準 Pillow 相依套件損壞，或影像已損壞 | `pip install --force-reinstall fullseye`；若仍失敗，請檢查影像 |
 | `read_image` / `write_image`(API)出現 cv2 的 ImportError | 這兩者 **專屬於 OpenCV** | `pip install -e ".[opencv]"`。若只想用 Pillow，請改用 `fullseye.load` / `fullseye.save` |
 | `list_ops` 中缺少預期的運算子 / `has` 顯示 unknown | 對應後端未安裝 | 加入相應的 extras(`skimage`/`wavelets`/`extra` 等) |

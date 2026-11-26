@@ -236,8 +236,18 @@
    "ko": "Fullseye는 영상 검사·3차원 계측·물리 시뮬레이션의 기반입니다. 타입을 가진 고전 영상 처리 연산자와 광학 설계 등 센싱을 포함한 물리 시뮬레이션을 MCP와 RAG로 AI에 넘겨, 과제마다 조합을 생각하게 하고, 타입 정합성과, 물리·촬상 시뮬레이션이 만든 참값에 비춘 평가로 확인하면서 대화형으로 과제를 풉니다. 오픈 소스(Apache-2.0).",
    "de": "Fullseye ist eine Plattform für Bildprüfung, 3-D-Messung und Physiksimulation. Sie übergibt typisierte Operatoren der klassischen Bildverarbeitung und Physiksimulation (einschließlich Sensorik wie Optikdesign) über MCP und RAG an eine KI, lässt sie für jede Aufgabe eine Kombination ausarbeiten und löst die Aufgabe interaktiv, geprüft durch Typkonsistenz und Bewertung gegen Ground Truth, die die Physik- und Bildgebungssimulation erzeugt. Open Source (Apache-2.0).",
    "hi": "Fullseye image inspection, 3-D measurement और physics simulation का foundation है। यह typed classic image-processing operators और physics simulation (optical design जैसी sensing सहित) को MCP और RAG के ज़रिए AI को देता है, हर task के लिए combination सोचने देता है, और type consistency तथा physics और imaging simulation से बने ground truth के evaluation से जाँचते हुए task को interactive तरीके से हल करता है। Open source (Apache-2.0)।",
-   "fr": "Fullseye est une base pour l'inspection d'images, la mesure 3D et la simulation physique. Elle transmet à une IA, via MCP et RAG, des opérateurs typés de traitement d'images classique et la simulation physique (y compris la simulation de capteurs, comme la conception optique), lui fait déterminer une combinaison adaptée à chaque tâche, et résout la tâche de manière interactive tout en vérifiant la cohérence des types et en évaluant par rapport à la vérité terrain produite par la simulation physique et d'imagerie. Open source (Apache-2.0)."
-  },
+    "fr": "Fullseye est une base pour l'inspection d'images, la mesure 3D et la simulation physique. Elle transmet à une IA, via MCP et RAG, des opérateurs typés de traitement d'images classique et la simulation physique (y compris la simulation de capteurs, comme la conception optique), lui fait déterminer une combinaison adaptée à chaque tâche, et résout la tâche de manière interactive tout en vérifiant la cohérence des types et en évaluant par rapport à la vérité terrain produite par la simulation physique et d'imagerie. Open source (Apache-2.0)."
+   },
+   "c_api_preview": {
+    "ja": "C/C++ からも呼べます(プレビュー): {n_c_api} の op を C の関数として呼べる開発用 SDK(pybind11 で Python を埋め込む方式。Fullseye を入れた Python 環境を指定して使う)。説明 →",
+    "en": "Also callable from C/C++ (preview): a development SDK that calls {n_c_api} op as C functions (it embeds Python with pybind11; use it by pointing it to a Python environment with Fullseye installed). Details →",
+    "zh": "也可从 C/C++ 调用（预览）：面向开发的 SDK，可将 {n_c_api} 个 op 作为 C 函数调用（通过 pybind11 嵌入 Python；指定已安装 Fullseye 的 Python 环境即可使用）。说明 →",
+    "tw": "也可從 C/C++ 呼叫（預覽）：面向開發的 SDK，可將 {n_c_api} 個 op 作為 C 函式呼叫（透過 pybind11 嵌入 Python；指定已安裝 Fullseye 的 Python 環境即可使用）。說明 →",
+    "ko": "C/C++에서도 호출할 수 있습니다(프리뷰): {n_c_api}개 op를 C 함수로 호출하는 개발용 SDK(pybind11로 Python을 임베드하는 방식이며, Fullseye가 설치된 Python 환경을 지정해 사용). 설명 →",
+    "de": "Auch aus C/C++ aufrufbar (Vorschau): ein Entwicklungs-SDK, das {n_c_api} op als C-Funktionen aufruft (es bettet Python mit pybind11 ein; verwenden Sie dafür eine Python-Umgebung mit installiertem Fullseye). Beschreibung →",
+    "hi": "C/C++ से भी कॉल कर सकते हैं (प्रीव्यू): {n_c_api} op को C फ़ंक्शन के रूप में कॉल करने वाला डेवलपमेंट SDK (pybind11 से Python एम्बेड करता है; Fullseye इंस्टॉल किए हुए Python परिवेश को निर्दिष्ट करके इस्तेमाल करें)। विवरण →",
+    "fr": "Également appelable depuis C/C++ (aperçu) : un SDK de développement qui appelle {n_c_api} op comme fonctions C (il embarque Python avec pybind11 ; utilisez-le en indiquant un environnement Python où Fullseye est installé). Détails →"
+   },
   "try": {
    "ja": "試してみる",
    "en": "Try it",
@@ -5611,6 +5621,23 @@
     "de": "Partikelgrößen aus der Mikroskopie",
     "hi": "Microscopy particle sizing",
     "fr": "Granulométrie au microscope"
+   }
+  },
+  {
+   "id": "poc_vial_particle_pod",
+   "group": "wing_metrology",
+   "media": "01_spin_stop_tracks.png",
+   "motion": false,
+   "thumb_src": "01_spin_stop_tracks_720.jpg",
+   "label": {
+    "ja": "回転停止後のバイアル粒子検査",
+    "en": "Vial particle inspection after spin stop",
+    "zh": "旋停后的西林瓶颗粒检查",
+    "tw": "旋停後的西林瓶微粒檢查",
+    "ko": "회전 정지 후 바이알 입자 검사",
+    "de": "Partikelprüfung im Fläschchen nach Drehstopp",
+    "hi": "Spin stop के बाद vial particle inspection",
+    "fr": "Inspection de particules en flacon après arrêt de rotation"
    }
   },
   {

@@ -20370,6 +20370,85 @@
     "stages": [
      {
       "on": "cpu",
+      "op": "vial_spin_stop_sequence",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "cpu",
+      "op": "track_moving_particles",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": [
+     {
+      "expected": null,
+      "got": null,
+      "index": 0,
+      "op": "vial_spin_stop_sequence",
+      "reason": "unknown_op"
+     },
+     {
+      "expected": null,
+      "got": null,
+      "index": 1,
+      "op": "track_moving_particles",
+      "reason": "unknown_op"
+     }
+    ]
+   },
+   "before": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
+      "op": "vial_spin_stop_sequence",
+      "path": "cpu",
+      "reason": "not_listed"
+     },
+     {
+      "on": "cpu",
+      "op": "track_moving_particles",
+      "path": "cpu",
+      "reason": "not_listed"
+     }
+    ],
+    "switches": [],
+    "type_breaks": [
+     {
+      "expected": null,
+      "got": null,
+      "index": 0,
+      "op": "vial_spin_stop_sequence",
+      "reason": "unknown_op"
+     },
+     {
+      "expected": null,
+      "got": null,
+      "index": 1,
+      "op": "track_moving_particles",
+      "reason": "unknown_op"
+     }
+    ]
+   },
+   "recipe": "Inspect — track moving matter after a pharmaceutical vial spin-stop",
+   "stages": [
+    "vial_spin_stop_sequence",
+    "track_moving_particles"
+   ]
+  },
+  {
+   "after": {
+    "n_gpu_stages": 0,
+    "n_switches": 0,
+    "n_transfers": 0,
+    "stages": [
+     {
+      "on": "cpu",
       "op": "simcal_model",
       "path": "cpu",
       "reason": "not_listed"
@@ -22324,16 +22403,16 @@
   "after": {
    "all_gpu_recipes": 33,
    "gpu_stages": 200,
-   "recipes": 224,
-   "stages": 587,
+   "recipes": 225,
+   "stages": 589,
    "switches": 103,
    "transfers": 127
   },
   "before": {
    "all_gpu_recipes": 8,
    "gpu_stages": 163,
-   "recipes": 224,
-   "stages": 587,
+   "recipes": 225,
+   "stages": 589,
    "switches": 136,
    "transfers": 127
   }
