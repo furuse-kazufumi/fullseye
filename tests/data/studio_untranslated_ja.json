@@ -4,7 +4,6 @@
  "literals": [
   ["ERROR_HOOK", "Could not save image"],
   ["ERROR_HOOK", "Could not save screenshot"],
-  ["critical", "Fullseye Studio"],
   ["flash", "%s %s: %s vertices, %s triangles (joints at qpos = 0)"],
   ["flash", "%s: values [%.4g, %.4g] mapped to [0, 1]"],
   ["flash", "3-D surface needs OpenGL — unavailable in this display session"],
