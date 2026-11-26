@@ -1165,6 +1165,10 @@
    "accessioned": "2026-09-06",
    "no": "2026.048"
   },
+  "poc_vial_particle_pod": {
+   "accessioned": "2026-11-25",
+   "no": "2026.320"
+  },
   "poc_video_cube": {
    "accessioned": "2026-09-21",
    "no": "2026.127"
@@ -1271,6 +1275,11 @@
   }
  },
  "retired": {
+  "poc_ginza_stage2_ops": {
+   "accessioned": "2026-11-25",
+   "no": "2026.319",
+   "reason": "Reserved by concurrent PR #365; preserve the serial until that accession merges."
+  },
   "star_tracker": {
    "accessioned": "2026-10-26",
    "no": "2026.278",

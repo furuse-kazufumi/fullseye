@@ -88,6 +88,8 @@ LEDGER_DIMS = {
                   "module": "flyvision", "family": "fly_vision"},
     "spc": {"registry": "opsspc", "table": "OPSSPC",
             "module": "spc", "family": "statistical_process_control"},
+    "pharma": {"registry": "opspharma", "table": "OPSPHARMA",
+               "module": "vialops", "family": "pharmaceutical_vial_inspection"},
     "graph": {"registry": "opsgraph", "table": "OPSGRAPH",
               "module": "graphinv", "family": "graph_invariants"},
     "text": {"registry": "opstext", "table": "OPSTEXT",

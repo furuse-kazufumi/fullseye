@@ -43,7 +43,7 @@ _LEDGERS = (
     ("opsspecular", "OPSSPECULAR"), ("opsmotionmag", "OPSMOTIONMAG"),
     ("opsquat", "OPSQUAT"), ("opsrangedoppler", "OPSRANGEDOPPLER"),
     ("opsacoustics", "OPSACOUSTICS"), ("opsinterferometry", "OPSINTERFEROMETRY"),
-    ("opsflyvision", "OPSFLYVISION"), ("opsspc", "OPSSPC"), ("opsgraph", "OPSGRAPH"),
+    ("opsflyvision", "OPSFLYVISION"), ("opsspc", "OPSSPC"), ("opspharma", "OPSPHARMA"), ("opsgraph", "OPSGRAPH"),
     ("opstext", "OPSTEXT"), ("opsresidue", "OPSRESIDUE"),
     # 2026-10-15: 実験計画・多変量解析・感度解析。新語 design(符号化と自然単位を 1 つに持つ計画)。
     ("opsmultivar", "OPSMULTIVAR"),
