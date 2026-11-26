@@ -172,6 +172,8 @@ def test_the_order_gate_catches_the_old_order():
         ("tools/gen_rag_benchmark_report.py", "tools/gen_doc_counts.py"),
         # ViEW の Fullseye 使用門は配布用 OP_INDEX を読むので、gen_mcp_data より前では古い索引を見る。
         ("tools/gen_view2026_pages.py", "tools/gen_mcp_data.py"),
+        # 2026-11-26: ViEW の C/C++ の行は op 数を C SDK 台帳(gen_c_api_ops が書く)から差し込む。
+        ("tools/gen_view2026_pages.py", "tools/gen_c_api_ops.py"),
     } | {("tools/gen_docs_index_ops.py", w) for w in (
         "tools/gen_examples3d_doc.py", "tools/gen_sensor_playbook.py", "catalog.py",
         "references.py", "samples.py", "tools/conversion_matrix.py", "tools/type_connectivity.py",
