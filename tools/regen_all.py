@@ -802,6 +802,9 @@ EXCLUDED = {
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
     # ---- 2026-11-10: CI の道具(PR のテストの選択・依存の版の比較・全数の失敗の記録)。CI の作業場にだけ書く ----
+    "tools/installer_e2e.py": ("配布 wheel を使い捨ての CI 作業場で検査する道具。venv・ログ・"
+                                 "メニュー・台帳は --workdir の外部一時領域だけに作り、"
+                                 "repo の生成物は書かない。"),
     "tools/pages_site.py": ("Pages の配備の道具(GitHub Actions が組んだ _site から参照されない articles/assets を外し、リンクの実在と大きさを検める)。書くのは --out・--report-json・--summary-md の指す CI の作業場と、--site の指す _site(配備物)だけ。コミット物は書かない。"),
     "tools/ci_select_tests.py": "CI の道具。PR の変更から回すテストを選び、一覧(--tests-file・--early-list)と GITHUB_OUTPUT を CI の作業場に書く。コミット物は書かない。",
     "tools/ci_deps_drift.py": "CI の道具。pip freeze / dry-run の解決結果を CI の作業場に書き、最後の全数の run と版を比べる。コミット物は書かない。",

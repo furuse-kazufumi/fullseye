@@ -733,7 +733,7 @@ pub extern "C" fn fs_abi_version(major: *mut i32, minor: *mut i32) -> c_int {
     }
     unsafe {
         *major = 0;
-        *minor = 2;
+        *minor = 3;
     }
     FS_OK
 }

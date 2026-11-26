@@ -33,13 +33,12 @@ version: 1.1.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Hu の第 1 不変モーメント(``skimage.measure.moments_hu`` の
-``hu[0]``)の絶対値。回転・スケール・平行移動に対して不変な形状記述子。
-HALCON の ``moments_region_2nd_invar``（Geometric moments of regions.）
-に相当する近似(HALCON 独自の相対不変モーメント定義とは厳密には異なり、
-古典的な Hu モーメントで代用している)。
+非推奨の互換別名。``moments_region_2nd`` をそのまま呼ぶので返り値は同一である。
+``moments_region_2nd_invar`` は 2.0 で削除予定で、呼ぶたびに ``DeprecationWarning``
+を出す。移行先は ``moments_region_2nd``。
 
-★**``moments_region_2nd`` と同じ数を返す。** 向こうが計算している``|μ20+μ02|`` は定義上 Hu の第 1 不変モーメントそのもので、名前は 2 つでも量は 1 つである。docs/KNOWN_ISSUES.md §52。
+HALCON では両名は別の複数値演算子だが、この repo の 1 スカラー化では量が潰れて
+同一になった。docs/KNOWN_ISSUES.md §52。
 
 ``a``, ``b`` は未使用。
 

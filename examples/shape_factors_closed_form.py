@@ -16,7 +16,8 @@
    領域で「形が違うのに同じ数」が返っていた
 3. ★**周囲長の推定には、解像度を上げても消えないバイアスが在る** ——
    しかも 2 つある推定量が**逆の形で外す**。どちらを使うかは測定の規約であって、
-   片方が正しいという話ではない(``docs/KNOWN_ISSUES.md`` §50)
+   片方が正しいという話ではない(``docs/KNOWN_ISSUES.md`` §50)。必要なら
+   ``region_perimeter_estimate(..., method=...)`` で規約を明示して選ぶ
 
 4. ★**HALCON と同じ名前の op は、HALCON と同じ数を返すか** —— 名前を借りて
    別の量を返すと、HALCON のレシピを移してきた人が同じしきい値で違う判定を得る
@@ -98,6 +99,19 @@ def the_perimeter_bias_does_not_vanish() -> list:
         rows.append(("正方形 %d" % side, skm.perimeter(reg) / true_p,
                      skm.perimeter_crofton(reg) / true_p))
     return rows
+
+
+def perimeter_estimators_against_truth() -> list:
+    """選択式の3規約を同じ閉形式の円・正方形に掛け、比を返す。"""
+    shapes = [
+        ("円 r=96", disc(96), 2.0 * np.pi * 96),
+        ("正方形 128", rect(128, 128, 136, 4, 4), 4.0 * 128),
+    ]
+    return [
+        (label, method, fs.region_perimeter_estimate(region, method=method), truth)
+        for label, region, truth in shapes
+        for method in ("skimage", "crofton", "chain")
+    ]
 
 
 #: HALCON のオペレータ文書にある定義(2026-09-26 に一次情報で確認)。
@@ -183,7 +197,27 @@ def main() -> int:
     print("      絶対値は、この規約の選択に載っている(docs/KNOWN_ISSUES.md §50)。")
 
     print()
-    print("4) HALCON と同名の op は、HALCON の式と同じ数を返すか")
+    print("4) 規約を選ぶときは、名前と閉形式に対する偏りを一緒に出す")
+    print("   %-12s %-10s %12s %12s %10s" % ("形", "推定量", "実測", "真値", "比"))
+    measured = {}
+    for label, method, got, truth in perimeter_estimators_against_truth():
+        ratio = got / truth
+        measured[label, method] = ratio
+        print("   %-12s %-10s %12.4f %12.4f %10.4f" %
+              (label, method, got, truth, ratio))
+    np.testing.assert_allclose(measured["円 r=96", "skimage"], 1.0518163777669416,
+                               rtol=0, atol=1e-12)
+    np.testing.assert_allclose(measured["円 r=96", "crofton"], 1.001630046097798,
+                               rtol=0, atol=1e-12)
+    np.testing.assert_allclose(measured["正方形 128", "skimage"], 0.9921875,
+                               rtol=0, atol=1e-12)
+    np.testing.assert_allclose(measured["正方形 128", "crofton"], 0.9458900725338723,
+                               rtol=0, atol=1e-12)
+    assert measured["円 r=96", "chain"] > 1.27
+    assert measured["正方形 128", "chain"] == 1.0
+
+    print()
+    print("5) HALCON と同名の op は、HALCON の式と同じ数を返すか")
     print("   %-10s %-14s %10s %10s" % ("形", "op", "fullseye", "HALCON"))
     worst = 0.0
     for label, name, got, want in the_same_name_gives_the_same_number():

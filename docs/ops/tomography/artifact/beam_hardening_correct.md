@@ -63,7 +63,7 @@ objects, and nothing in the sinogram says which case you are in.
 
 ## 型が繋がる次の op(`sinogram` を入力に取れる)
 
-[backproject_sinogram](../reconstruct/backproject_sinogram.md) · [filtered_backprojection](../reconstruct/filtered_backprojection.md) · [sart_reconstruct](../reconstruct/sart_reconstruct.md) · [beam_hardening_apply](beam_hardening_apply.md) · [ring_artifact_apply](ring_artifact_apply.md) · [ring_artifact_remove](ring_artifact_remove.md) · [metal_trace_interpolate](metal_trace_interpolate.md) · [sinogram_center_of_rotation](../geometry/sinogram_center_of_rotation.md)
+[backproject_sinogram](../reconstruct/backproject_sinogram.md) · [filtered_backprojection](../reconstruct/filtered_backprojection.md) · [filtered_backprojection_like](../reconstruct/filtered_backprojection_like.md) · [sart_reconstruct](../reconstruct/sart_reconstruct.md) · [beam_hardening_apply](beam_hardening_apply.md) · [ring_artifact_apply](ring_artifact_apply.md) · [ring_artifact_remove](ring_artifact_remove.md) · [metal_trace_interpolate](metal_trace_interpolate.md)
 
 ## 同カテゴリ(`artifact`)
 

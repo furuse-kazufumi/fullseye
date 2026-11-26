@@ -9,8 +9,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### 依存: PySide6 6.12.0 を除く(2026-11-23)
 
-`gui` ・ `all` の extras の PySide6 を `PySide6>=6.5,!=6.12.0` にした(`fullseye setup` の代わりの表・起動と
-ショートカットの案内文・導入の文書 7 言語・install/README・SBOM も同じ)。
+標準依存の Qt binding を `PySide6-Essentials>=6.5,!=6.12.0` にした(`gui` は空の互換別名のまま。
+`fullseye setup` の代わりの表・起動とショートカットの案内文・導入の文書 7 言語・install/README・SBOM も同じ)。
 
 - **根拠(同じコードの A/B)**: Linux CI(Python 3.11)で PySide6 6.12.0 だと full suite の 6 組が全部
   SIGABRT で止まり、gates の作業スレッドの試験が `none_dealloc` で落ちた。PySide6 だけ 6.11.1 にした
@@ -63,6 +63,69 @@ PySide6 6.12.0 の SIGABRT で隠れていた Linux の赤を、WSL(Ubuntu 24.04
 - 日本語の画面に残っていた英語: 窓の部品のツールヒント(英語のまま 17、うち Program 欄 4。起動時に見えている部品だけで数えると 99 → 4)、ステータスの文・エラーの題・確認の文。op の一覧の行のツールヒント(op 名・HALCON の別名・category・sort)は英語のまま(範囲外。台帳も数えない)。訳していない文は台帳(`tests/data/studio_untranslated_ja.json`: 文 175・ツールヒント 17)で数える。中国語・韓国語・ドイツ語・ヒンディー語の画面では、今回日本語を足した文は英語のまま(日本語だけの行 294 → 473)。
 - 終了の確認そのものが例外を出した時(翻訳の表の行の書式が壊れている等)に、確認を出さずにプロセスが落ちる道を塞いだ(閉じない側に倒し、英語の文で聞き直す)。聞き直す窓も 2 回続けて壊れた時だけ閉じ、その前に未保存の物(処理手順・Program の未適用の文・エディタのタブ)の写しを `studio_crash.log` の隣に `studio_unsaved_*` として書き、置き場をログに残す。
 - 検索欄の Enter で op が入った後は、欄の語を選んでおく(続けて打つ語が前の語を置き換える)。段を入れた時は、前の Enter の「入れませんでした」の文をステータスから消す。見本の画像・合成のデモ画像に替えた時に窓の題を付け直す(前の写真の名前が残っていた)。
+## 1.2.0 — 2026-11-24
+
+### 既知の不具合 §34・§50・§52・§53
+
+- §34: 色チャネルを空間軸として跨ぐ 2-D op 89 本へ `(H, W, 3|4)` を渡すと、既定の
+  数値は変えず `FullseyeFallbackWarning` を op ごとに 1 回だけ出す。警告には op 名と
+  「チャネルごとに処理する / 灰色へ変換する」回避策を出す。`extra_checks='on'` は
+  既定の fail-soft 方針より強く入口で拒否する。`on_error='raise'` も拒否する。2.0 では
+  既定も拒否へ切り替える予定。最終軸が 1/3/4 でない 3-D 立体を 2-D op へ渡す同根の
+  問題も、既定の 1 回警告と `extra_checks='on'` の拒否へ統一した。89 本の一覧は
+  `sorted(api._CHANNEL_UNSAFE_OPS)` から機械的に出し、試験は下限・登録・警告回数・
+  数値不変を検査する。follow-up では `(8,8,8)` を image / region の全 688 本へ入口で
+  通し、688/688 が 1 回警告・記録されることを全数門にした。
+- §50: `compactness` と `contlength` の説明に、現在使う
+  `skimage.measure.perimeter` と `perimeter_crofton` の周囲長バイアス表を明記した。
+  例として円 r=96 は 1.0518 / 1.0016、正方形 128 は 0.9922 / 0.9459。follow-up では
+  `region_perimeter_estimate(region, method='skimage'|'crofton'|'chain')` を追加し、選択を
+  明示できるようにした（chain は同じ円で 1.2799、正方形で 1.0000）。既存値は変えていない。
+- §52: `moments_region_2nd_invar` を `moments_region_2nd` の非推奨別名にした。公開名と
+  台帳エントリは残るため op 数は変わらず、旧名は同じ実装を呼んで `DeprecationWarning` を
+  出す。2.0 で削除予定。
+- §53: `filtered_backprojection` の既定の出力辺長は契約どおり据え置き、元の格子へ戻す
+  `size=image.shape[0]` の例を docstring と op 説明に追加した。sinogram は元画像の辺長を
+  持たず不一致を判定できないため、`size` 省略時の警告は出さない。follow-up では別 op
+  `filtered_backprojection_like(sinogram, image)` を追加し、既存契約を変えず元の正方格子を
+  明示できるようにした。
+
+### 1.2.0 — Studio is part of the standard installation (2026-11-24)
+
+- The portable default install now also includes the wheel-complete image/video/scientific I/O,
+  3-D interchange, reporting, device-adapter and symbol-reading dependencies. The PyPI wheel
+  audit covers CPython 3.11–3.14 on Windows amd64, Linux x86_64/aarch64 and macOS arm64; its
+  complete decision table and direct-wheel sizes are in `docs/INSTALLATION.md`. CUDA stacks,
+  render/hand-pose runtimes and packages with a missing target wheel remain opt-in.
+- `fullseye setup` now defaults to **everything possible** (Enter or `--yes`): it prints every
+  extra's pip command and direct-wheel size estimate, runs each group independently, and prints
+  an installed/failed/skipped table instead of letting one missing wheel abort all later groups.
+  The GPU group is selected only after CUDA is detected. First normal `fullseye` / `fullseye-studio`
+  use prints the explicit `fullseye setup --yes` command; it never starts a large install itself.
+- GPL-3.0-or-later `plyfile` remains confined to the independent `export-verify` test extra. It is
+  excluded from `setup --yes` so a product install does not accidentally gain a strong-copyleft
+  dependency; `fullseye setup --include export-verify` is the explicit opt-in.
+- The all-in setup installs the `fullseye-ops` RAG skill by default. Its new `RAG_MANIFEST.json`
+  inventories the corpus that is actually available: a checkout's notes, recipes, examples,
+  exhibits and literature, or the wheel's compact catalog and retrieval indexes. When Claude Code
+  is present, setup registers MCP by default with `fullseye-mcp` when available, otherwise with
+  the cwd-safe `python -P -m fullseye.mcp` fallback.
+- The C/C++ SDK header now ships in wheels at `fullseye/include/fullseye_abi.h`.
+- `pip install fullseye` now installs `PySide6-Essentials>=6.5,!=6.12.0` and `Pillow>=13.0`, so
+  `fullseye-studio` starts without an extra. `gui` remains an empty compatibility alias and
+  `all` contains only the remaining optional backends. Studio imports Qt lazily: a Python-only
+  `import fullseye` does not load `PySide6`.
+- Studio needs the Essentials modules `QtCore`, `QtGui`, `QtWidgets`, and `QtSvg`.
+  `QtDataVisualization` (3-D surface) and `QtMultimedia` (audio playback) remain existing
+  best-effort features and are disabled when their add-on modules are absent. On Windows/Python
+  3.11, the measured expanded dependency footprint for Essentials + Pillow was **228.4 MiB**;
+  full PySide6 + Pillow was **666.7 MiB**, so the standard install avoids **438.3 MiB (65.7%)**.
+- The first interactive `fullseye` or `fullseye-studio` command registers Fullseye Studio once
+  in the Windows Start menu / Linux application menu through the existing ledger. It prints the
+  removal command, uses the invoking venv's Python, never recreates an entry that the user later
+  removes, and its marker is removed by `fullseye setup --uninstall` and Apps & features.
+  `FULLSEYE_NO_SHORTCUTS=1`, `[shortcuts] auto_register=false` in the Studio INI, CI,
+  no-terminal invocation, and Windows Start-menu policy suppress the write.
 
 ### MCP: cwd の `fullseye/` による入口の乗っ取りを 1.2.0 で塞いだ(2026-11-24)
 

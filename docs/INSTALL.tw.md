@@ -1,11 +1,11 @@
-<!-- i18n-source-sha: 9a5287d609f4 -->
+<!-- i18n-source-sha: e25193670f30 -->
 # 安裝 / 環境建置完整指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
 
 這是一份從開發機到嵌入式 Linux、依用途建置 Fullseye(工作代號 imgevolve)的指南。若只想在 5 分鐘內跑起來，[GETTING_STARTED.md](GETTING_STARTED.md) 是比較快的捷徑。
 
-Fullseye 的設計方針是 **「僅靠 numpy + scipy 即可運作的核心」+「所有重量級相依套件皆為選用」**。即使沒有額外的後端，也只是該後端專屬的運算子會被停用，核心永遠能運作(優雅降級)。
+Fullseye 的 Python API 核心使用 **numpy + scipy**。標準的 `pip install fullseye` 也會安裝 Studio（PySide6-Essentials）與 Pillow；重量級影像處理後端仍為選用。沒有額外後端時，只會停用該後端專屬的運算子（優雅降級）。
 
 ---
 
@@ -15,7 +15,7 @@ Fullseye 的設計方針是 **「僅靠 numpy + scipy 即可運作的核心」+�
 |---|---|
 | Python | **3.11**(`pyproject.toml` 中 `requires-python = ">=3.11"`；開發與驗證使用 3.11) |
 | 執行指令 | Windows: `py -3.11` / Linux: `python3.11` |
-| 核心相依套件 | `numpy>=1.23`, `scipy>=1.10`(`pip install -e .` 會自動安裝) |
+| 標準相依套件 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5,!=6.12.0`, `Pillow>=13.0`(`pip install -e .` 會自動安裝) |
 | 作業系統 | Windows 10/11、Linux(含嵌入式)。只要 Python 能執行，macOS 也可以 |
 
 ---
@@ -26,7 +26,7 @@ Fullseye 的設計方針是 **「僅靠 numpy + scipy 即可運作的核心」+�
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .            # 僅核心（numpy + scipy。所有 op 都看得到，需要 optional backend 的 op 呼叫時會指出缺少的 extra）
+py -3.11 -m pip install -e .            # 標準：Python API + Studio + Pillow；需要 optional backend 的 op 會指出缺少的 extra
 ```
 
 額外的後端透過 **extras** 選擇(實際定義在 `pyproject.toml` 的 `[project.optional-dependencies]` 中)。
@@ -35,30 +35,32 @@ py -3.11 -m pip install -e .            # 僅核心（numpy + scipy。所有 op 
 |---|---|---|
 | `opencv` | `opencv-python>=4.8.1.78` | 影像檔案 I/O(`apply`/`pipeline` CLI 必需)、`cv_*` 系列運算子 |
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` 系列(眾多自動產生運算子的基礎) |
-| `pil` | `Pillow>=13.0` | 影像 I/O 的備援方案、`xpil_*` 系列(emboss/posterize/solarize 等) |
+| `pil` | 無（Pillow 為標準相依套件） | 相容別名；影像 I/O 備援方案與 `xpil_*` 系列預設可用 |
 | `wavelets` | `PyWavelets>=1.4` | 小波系列(VisuShrink/子頻帶/小波封包等) |
 | `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU 批次後端(`accel.py`/`bench.py`)、`xkor_*`(kornia)系列 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 等)、源自 mahotas(Zernike/pftas 等) |
-| `gui` | `PySide6>=6.5,!=6.12.0` | **Fullseye Studio**(`studio.py` / `fullseye-studio`) |
-| `all` | `opencv-python`, `scikit-image`, `Pillow`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `PySide6`, `imageio`, `imageio-ffmpeg`, `tifffile`(不含 CuPy；完整的 GPU 套件請用 `fullseye[gpu]`。依 PyTorch 的安裝說明，Linux 上預設的 torch 是 CUDA 版，可能會一併裝入 CUDA 元件(nvidia-* 的 wheel)。只用 CPU 時，請先從 CPU 版的來源安裝 torch：`pip install torch --index-url https://download.pytorch.org/whl/cpu`) | 全部運算子與後端 |
+| `gui` | 無（Studio 為標準相依套件） | 相容別名；`pip install fullseye` 後即可啟動 **Fullseye Studio** |
+| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`(不含 CuPy；完整的 GPU 套件請用 `fullseye[gpu]`。依 PyTorch 的安裝說明，Linux 上預設的 torch 是 CUDA 版，可能會一併裝入 CUDA 元件(nvidia-* 的 wheel)。只用 CPU 時，請先從 CPU 版的來源安裝 torch：`pip install torch --index-url https://download.pytorch.org/whl/cpu`) | 全部運算子與後端 |
+
+Studio 的標準需求是 `PySide6-Essentials>=6.5,!=6.12.0`。6.12.0 因在 Linux 重現 SIGABRT 而被排除。
 
 使用建議：
 
 ```powershell
-# 實務上常用的最小配置 + 影像 I/O(不需要 GUI，以程式碼/命令列為主)
+# 實務上常用的最小配置 + 影像 I/O（Studio 已是標準相依套件）
 py -3.11 -m pip install -e ".[opencv]"
 
-# 也要使用 GUI(Studio)
+# 舊寫法仍相容（`gui` 是空別名）
 py -3.11 -m pip install -e ".[opencv,gui]"
 
-# 完整配備(含 GUI。all 不含 GUI，因此需另外加上 gui)
-py -3.11 -m pip install -e ".[all,gui]"
+# 完整配備（Studio 已是標準相依套件）
+py -3.11 -m pip install -e ".[all]"
 
 # 也想嘗試 GPU 批次路徑(需要支援 CUDA 的 torch)
 py -3.11 -m pip install -e ".[gpu]"
 ```
 
-> `all` **不包含 `gui`**(GUI 用途不同，單獨劃分)。若要使用 Studio，請務必明確加上 `gui`。
+> Studio 和 Pillow 是標準相依套件。`gui` 與 `pil` 是為既有安裝指令保留的空相容別名。
 
 安裝成功後，以下 **兩個主控台指令稿** 即可使用(`[project.scripts]`)。
 
@@ -72,6 +74,19 @@ py -3.11 -m pip install -e ".[gpu]"
 ```powershell
 $env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
+```
+
+`pip install fullseye` 後，第一次在互動式終端執行 `fullseye` 或 `fullseye-studio` 時，會在 Windows 開始功能表或 Linux 應用程式選單一次註冊 **Fullseye Studio**。虛擬環境的項目會使用該環境的 Python；使用者後來刪除項目時，一般指令不會重建它。成功時顯示：
+
+```text
+已在開始功能表中註冊 Fullseye Studio（移除：fullseye-studio --remove-shortcuts）
+```
+
+設定 `FULLSEYE_NO_SHORTCUTS=1`，或在 `FULLSEYE_STUDIO_SETTINGS` 指定的 INI（Linux 預設是 `~/.config/Fullseye/Studio.conf`）加入下列項目即可停用。CI、沒有端末的執行、以及隱藏開始功能表程式的 Windows 管理員原則都不會寫入。詳細的選用設定請使用 `fullseye setup`。
+
+```ini
+[shortcuts]
+auto_register=false
 ```
 
 ---
@@ -118,10 +133,10 @@ bash install/install.sh
 
 ## (e) 最小配置 / 嵌入式(embedded Linux)
 
-Fullseye 的核心設計成 **僅靠 numpy + scipy** 即可運作。對於不需要 GUI、GPU、重量級後端的嵌入式用途，只安裝核心就已足夠。
+Fullseye 的 Python API 核心設計成 **僅靠 numpy + scipy** 即可運作；標準安裝也會帶有 Studio 與 Pillow。對於不使用 GUI、GPU、重量級後端的嵌入式用途，仍可只使用這部分 API。
 
 ```bash
-python3.11 -m pip install -e .        # 僅 numpy + scipy。不需要 GUI/torch/opencv
+python3.11 -m pip install -e .        # 標準安裝含 Studio/Pillow；不需要 torch/opencv
 ```
 
 嵌入式用法要點：
@@ -135,7 +150,7 @@ python3.11 -m pip install -e .        # 僅 numpy + scipy。不需要 GUI/torch/
   out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
   ```
 
-- **需要檔案 I/O 時**(`fullseye.load` / `fullseye.save`、`imgevolve.py run`、examples)，只要具備 **OpenCV 或 Pillow 其中之一** 即可運作(`imgio` 會自動回退)。若嵌入式場景以輕量為優先，Pillow(`[pil]`)體積較小。
+- **需要檔案 I/O 時**(`fullseye.load` / `fullseye.save`、`imgevolve.py run`、examples)，具備 **OpenCV 或 Pillow 其中之一** 即可運作(`imgio` 會自動回退)；Pillow 已是標準相依套件。
 - 可以做到 **設計在開發機、執行在嵌入式機** 的分工。在開發機的 Studio 中建立管線並匯出 JSON，嵌入式機上只需 `FullseyeEngine.load("pipeline.json").run(frame)` 即可執行(不需要 GUI)。詳情請參見 [ENGINE.md](ENGINE.md)。
 - **感知堆疊**(stereo / terrain / flow / detect / registration / pose)同樣僅靠 numpy + scipy 運作(如 `fullseye.disparity_map`)。在機器人/視覺用途中無需額外相依套件即可使用。
 
@@ -149,8 +164,8 @@ python3.11 -m pip install -e .        # 僅 numpy + scipy。不需要 GUI/torch/
 |---|---|---|
 | `ModuleNotFoundError: No module named 'fullseye'` | 未安裝 / 路徑未設定 | 執行 `pip install -e .`，或將儲存庫根目錄加入 `PYTHONPATH` |
 | 找不到 `fullseye` / `fullseye-studio` 指令 | 主控台指令稿未註冊 | 執行 `pip install -e .`。若不安裝，可用 `py -3.11 imgevolve.py` / `py -3.11 studio.py` |
-| Studio 啟動時出現 PySide6 的 ImportError | 未安裝 GUI extras | `pip install -e ".[gui]"` |
-| `apply` / `pipeline` 出現 `cannot read <path>` | 沒有影像 I/O 後端 | `pip install -e ".[opencv]"`(或 `[pil]`) |
+| Studio 啟動時出現 PySide6 的 ImportError | 標準相依套件損壞 | `pip install --force-reinstall fullseye` |
+| `apply` / `pipeline` 出現 `cannot read <path>` | 標準 Pillow 相依套件損壞，或影像已損壞 | `pip install --force-reinstall fullseye`；若仍失敗，請檢查影像 |
 | `read_image` / `write_image`(API)出現 cv2 的 ImportError | 這兩者 **專屬於 OpenCV** | `pip install -e ".[opencv]"`。若只想用 Pillow，請改用 `fullseye.load` / `fullseye.save` |
 | `list_ops` 中缺少預期的運算子 / `has` 顯示 unknown | 對應後端未安裝 | 加入相應的 extras(`skimage`/`wavelets`/`extra` 等) |
 | GPU 批次(`accel`/`bench`)在 CPU 上很慢 | `torch` 為 CPU 版本 | GPU 上請使用 `--device cuda`。CPU 上單純的逐點運算因轉換成本而處於劣勢(設計本就如此) |

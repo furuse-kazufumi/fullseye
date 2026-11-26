@@ -41,7 +41,7 @@ units for *distance*). Returns ``{"level", "error_px", "n_faces",
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md)
+[ppf_pose_hypotheses](../match_pose/ppf_pose_hypotheses.md) · [pose_nms_symmetry](../match_pose/pose_nms_symmetry.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`resolution`)
 

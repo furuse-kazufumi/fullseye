@@ -2,9 +2,9 @@
  * Fullseye embedded C API / Fullseye 埋め込み C API.
  *
  * The existing fullseye_abi.h remains the semantic L1 contract.  This header
- * adds the initial C SDK API (ABI 0.2) implemented by the pybind11 bridge.
+ * adds the C SDK API (ABI 0.3) implemented by the pybind11 bridge.
  * 既存の fullseye_abi.h を意味論上の L1 契約として保ち、このヘッダは pybind11
- * ブリッジが実装する、最初の C SDK API (ABI 0.2) を追加する。
+ * ブリッジが実装する C SDK API (ABI 0.3) を追加する。
  */
 #ifndef FULLSEYE_H
 #define FULLSEYE_H
@@ -38,6 +38,7 @@ extern "C" {
 
 typedef struct fs_runtime fs_runtime_t;
 typedef struct fs_result fs_result_t;
+typedef struct fs_pipeline fs_pipeline_t;
 /* A generation-tagged, opaque result handle for the ABI 0.2 C SDK API.
  * ABI 0.2 の長さ付き API が返す世代付き不透明結果ハンドル。 */
 typedef uint64_t fs_result_id_t;
@@ -53,7 +54,11 @@ typedef enum fs_value_kind {
     FS_VALUE_FEATURE = FS_VALUE_REAL,
     FS_VALUE_TUPLE = 5,
     FS_VALUE_COLOR = 6,
-    FS_VALUE_VOLUME = 7
+    FS_VALUE_VOLUME = 7,
+    /* ABI 0.3 additions. Values are appended; existing numeric values stay
+     * frozen. / ABI 0.3 追加。既存の数値は変えず末尾に加える。 */
+    FS_VALUE_CONTOUR = 8,
+    FS_VALUE_POINTS = 9
 } fs_value_kind_t;
 
 enum {
@@ -115,6 +120,40 @@ typedef struct fs_array_view {
     { (uint32_t)sizeof(fs_array_view_t), NULL, 0u, 0u, {0, 0, 0, 0}, \
       {0, 0, 0, 0}, FS_DTYPE_F64 }
 
+/* Coordinate matrix used by points and contour components. ndim must be 2;
+ * shape is (N,2) or (N,3) for points and (N,2) for contours. Slots after
+ * ndim must be zero. N must be positive. / points と contour 要素に使う座標
+ * 行列。ndim は 2、points は (N,2)/(N,3)、contour は (N,2)。余剰 slot は
+ * ゼロ、N は正でなければならない。 */
+typedef fs_array_view_t fs_points_view_t;
+
+typedef struct fs_contour_part {
+    uint32_t struct_size;
+    fs_points_view_t points;
+    uint32_t closed;
+} fs_contour_part_t;
+
+#define FS_CONTOUR_PART_INIT \
+    { (uint32_t)sizeof(fs_contour_part_t), FS_ARRAY_VIEW_INIT, 0u }
+
+/* One typed contour value contains an image shape and one or more 2-D point
+ * sequences. contour_stride_bytes permits future tail extension without
+ * changing the array layout. / 画像 shape と 1 本以上の 2-D 点列からなる
+ * contour 値。要素末尾を将来拡張できるよう stride を明示する。 */
+typedef struct fs_contour_view {
+    uint32_t struct_size;
+    int64_t width;
+    int64_t height;
+    const fs_contour_part_t *contours;
+    size_t contours_bytes;
+    size_t contour_count;
+    size_t contour_stride_bytes;
+} fs_contour_view_t;
+
+#define FS_CONTOUR_VIEW_INIT \
+    { (uint32_t)sizeof(fs_contour_view_t), 0, 0, NULL, 0u, 0u, \
+      (size_t)sizeof(fs_contour_part_t) }
+
 typedef struct fs_input {
     uint32_t struct_size;
     fs_value_kind_t kind;
@@ -130,6 +169,10 @@ typedef struct fs_input {
 FS_API fs_status_t FS_CALL fs_runtime_create(const fs_init_options_t *options,
                                               fs_runtime_t **out);
 FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime);
+/* Inspect runtime discovery without starting CPython.  The returned size includes
+ * the trailing NUL, as with fs_last_error. / CPython を起動せず探索結果を返す。
+ * 戻り値は fs_last_error と同様に終端 NUL を含む。 */
+FS_API size_t FS_CALL fs_runtime_diagnose(char *buf, size_t capacity);
 
 /* Compatibility map / 互換性表:
  *
@@ -138,19 +181,25 @@ FS_API void FS_CALL fs_runtime_destroy(fs_runtime_t *runtime);
  *   fs_runtime_create, fs_call, and      C SDK 0.2     fs_result_t* pointer
  *     fs_find_ops_json below
  *   fs_find_ops_json_n and fs_call_id_n  C SDK 0.2     fs_result_id_t
+ *   contour/points tails and accessors   C SDK 0.3     fs_result_id_t
  *
  * The C SDK is first published as 0.2. Its generation-ID call entry is named
  * fs_call_id_n so it cannot be mistaken for a pointer-result function.
  * C SDK は 0.2 として最初に公開する。世代付き ID を返す入口は
  * fs_call_id_n とし、ポインタ結果の関数名と混同しない。
  *
- * Pointer entry points accept valid NUL-terminated C strings. Result
- * pointers must not be used after fs_result_release(); that is undefined.
- * Direct input buffers are borrowed only for the duration of fs_call() or
- * fs_call_id_n(); the library does not retain their pointers after return.
- * ABI 0.1 旧入口は有効な NUL 終端 C 文字列を受ける。fs_result_release() 後の
- * 結果ポインタ利用は未定義で、呼出し側の責任。直接入力のバッファは fs_call()
- * または fs_call_id_n() の呼出し中だけ借用し、復帰後はポインタを保持しない。 */
+ * Pointer entry points accept valid NUL-terminated C strings.  Their legacy
+ * strings are scanned only through their explicit C SDK caps: fs_call() op_id
+ * is at most 256 B and params_json, and fs_find_ops_json() query_json, are at
+ * most 1 MiB.  A missing NUL within that bound is rejected. Result pointers
+ * must not be used after fs_result_release(); that is undefined. Direct input
+ * buffers are borrowed only for the duration of fs_call() or fs_call_id_n();
+ * the library does not retain their pointers after return. / ABI 0.1 旧入口は
+ * 有効な NUL 終端 C 文字列を受ける。旧文字列は C SDK の明示上限までしか走査しない:
+ * fs_call() の op_id は 256 B 以下、params_json と fs_find_ops_json() の
+ * query_json は 1 MiB 以下であり、この範囲に NUL がなければ拒否する。
+ * fs_result_release() 後の結果ポインタ利用は未定義で、呼出し側の責任。直接入力の
+ * バッファは fs_call() または fs_call_id_n() の呼出し中だけ借用し、復帰後は保持しない。 */
 FS_API fs_status_t FS_CALL fs_find_ops_json(fs_runtime_t *runtime,
                                              const char *query_json,
                                              char **out_utf8,
@@ -175,18 +224,38 @@ typedef struct fs_input_n {
     fs_image_view_t image;
     fs_result_id_t result_id;
     size_t result_index;
-    /* ABI 0.2 extension: direct COLOR/VOLUME and FEATURE inputs.  Existing
+    /* ABI 0.2 extension: direct COLOR/VOLUME and FEATURE inputs. Existing
      * callers retain the prefix and use IMAGE or borrowed values. Direct
      * IMAGE/COLOR/VOLUME buffers are borrowed only for fs_call_id_n and are
      * not retained after it returns. / 直接配列は fs_call_id_n の呼出し中だけ
      * 借用し、戻った後は保持しない。 */
     fs_array_view_t array;
     double feature;
+    /* ABI 0.3 tail extension: direct contour and point-coordinate values.
+     * ABI 0.3 末尾追加: contour と点座標の直接入力。 */
+    fs_contour_view_t contour;
+    fs_points_view_t points;
 } fs_input_n_t;
 
 #define FS_INPUT_N_INIT \
     { (uint32_t)sizeof(fs_input_n_t), FS_VALUE_IMAGE, FS_IMAGE_VIEW_INIT, 0u, 0u, \
-      FS_ARRAY_VIEW_INIT, 0.0 }
+      FS_ARRAY_VIEW_INIT, 0.0, FS_CONTOUR_VIEW_INIT, FS_ARRAY_VIEW_INIT }
+
+/* ABI 0.3 named pipeline input.  The Studio linear pipeline format currently
+ * declares exactly one endpoint, named "image"; keeping the name in the ABI
+ * makes a future multi-input format additive instead of positional.  name is
+ * UTF-8 and need not end in NUL. / ABI 0.3 の名前付き pipeline 入力。現在の
+ * Studio 線形 pipeline は "image" という 1 本だけを宣言するが、ABI に名前を
+ * 持たせて将来の複数入力を位置依存にしない。name は UTF-8、終端 NUL は不要。 */
+typedef struct fs_pipeline_input_n {
+    uint32_t struct_size;
+    const char *name;
+    size_t name_bytes;
+    fs_input_n_t value;
+} fs_pipeline_input_n_t;
+
+#define FS_PIPELINE_INPUT_N_INIT \
+    { (uint32_t)sizeof(fs_pipeline_input_n_t), NULL, 0u, FS_INPUT_N_INIT }
 
 FS_API fs_status_t FS_CALL fs_find_ops_json_n(fs_runtime_t *runtime,
                                                const char *query_json,
@@ -201,6 +270,43 @@ FS_API fs_status_t FS_CALL fs_call_id_n(fs_runtime_t *runtime,
                                          const char *params_json,
                                          size_t params_json_bytes,
                                          fs_result_id_t *out);
+
+/* ABI 0.3 saved Studio pipeline API.  Both loaders validate the closed Studio
+ * JSON schema, every stage name and the complete sort chain before they return
+ * a handle.  Path and JSON spans are UTF-8 and need not end in NUL.  Paths are
+ * limited to the same bound as runtime paths; JSON text and files are limited
+ * to 1 MiB. / ABI 0.3 の Studio 保存 pipeline API。両 loader は閉じた JSON
+ * schema、全段の op 名、全体の型連鎖を、ハンドルを返す前に検査する。 */
+FS_API fs_status_t FS_CALL fs_pipeline_load_json_n(fs_runtime_t *runtime,
+                                                    const char *pipeline_json,
+                                                    size_t pipeline_json_bytes,
+                                                    fs_pipeline_t **out);
+FS_API fs_status_t FS_CALL fs_pipeline_load_path_n(fs_runtime_t *runtime,
+                                                    const char *path_utf8,
+                                                    size_t path_bytes,
+                                                    fs_pipeline_t **out);
+FS_API void FS_CALL fs_pipeline_destroy(fs_pipeline_t *pipeline);
+FS_API size_t FS_CALL fs_pipeline_input_count(const fs_pipeline_t *pipeline);
+FS_API size_t FS_CALL fs_pipeline_output_count(const fs_pipeline_t *pipeline);
+/* Allocate the endpoint name with malloc; free it with fs_free.  out_bytes
+ * includes the trailing NUL. / endpoint 名は malloc で確保し fs_free で解放する。
+ * out_bytes は終端 NUL を含む。 */
+FS_API fs_status_t FS_CALL fs_pipeline_input_info(const fs_pipeline_t *pipeline,
+                                                   size_t index,
+                                                   char **out_name_utf8,
+                                                   size_t *out_name_bytes,
+                                                   fs_value_kind_t *out_kind);
+FS_API fs_status_t FS_CALL fs_pipeline_output_info(const fs_pipeline_t *pipeline,
+                                                    size_t index,
+                                                    char **out_name_utf8,
+                                                    size_t *out_name_bytes,
+                                                    fs_value_kind_t *out_kind);
+/* Inputs must name every declared endpoint exactly once.  The result is a
+ * generation-tagged result ID and follows fs_result_*_n ownership rules. */
+FS_API fs_status_t FS_CALL fs_pipeline_run_n(fs_pipeline_t *pipeline,
+                                             const fs_pipeline_input_n_t *inputs,
+                                             size_t input_count,
+                                             fs_result_id_t *out);
 
 /* Borrowed result views remain valid through fs_result_release().
  * 借用結果は fs_result_release() まで有効。 */
@@ -246,6 +352,21 @@ FS_API fs_status_t FS_CALL fs_result_image_n(fs_result_id_t result, size_t index
                                               fs_image_view_t *out_borrowed);
 FS_API fs_status_t FS_CALL fs_result_array_n(fs_result_id_t result, size_t index,
                                               fs_array_view_t *out_borrowed);
+/* ABI 0.3 coordinate results. A contour part and its point buffer are borrowed
+ * until fs_result_release_n. / ABI 0.3 座標結果。contour 要素と点バッファは
+ * fs_result_release_n まで借用できる。 */
+FS_API fs_status_t FS_CALL fs_result_contour_count_n(fs_result_id_t result, size_t index,
+                                                      size_t *out_count);
+FS_API fs_status_t FS_CALL fs_result_contour_shape_n(fs_result_id_t result, size_t index,
+                                                      int64_t *out_width,
+                                                      int64_t *out_height);
+FS_API fs_status_t FS_CALL fs_result_contour_n(fs_result_id_t result, size_t index,
+                                                size_t contour_index,
+                                                fs_contour_part_t *out_borrowed,
+                                                int64_t *out_width,
+                                                int64_t *out_height);
+FS_API fs_status_t FS_CALL fs_result_points_n(fs_result_id_t result, size_t index,
+                                               fs_points_view_t *out_borrowed);
 FS_API fs_status_t FS_CALL fs_result_region_runs_n(fs_result_id_t result, size_t index,
                                                     const fs_run_t **out_borrowed,
                                                     size_t *out_count);

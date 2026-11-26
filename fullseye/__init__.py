@@ -204,7 +204,11 @@ with warnings.catch_warnings():
         icp_gated, point_to_plane_icp_gated,
         ncc_map_partial, ncc_locate_ex, shape_locate_fine,
         pca_align, register, feature_register,
-        ppf, ppf_model, surface_match, find_surface_pose,
+        ppf, PoseHypothesis, ppf_model, surface_match, find_surface_pose,
+        ppf_pose_hypotheses, pose_nms_symmetry,
+        bop, BOPPoseEstimate, read_bop_camera, read_bop_scene_image, read_bop_model,
+        read_bop_models_info, bop_symmetry_transforms, write_bop_results_csv,
+        read_bop_results_csv, write_bop_val_targets, evaluate_bop19_pose,
         pointcloud, estimate_normals, voxel_downsample,
         remove_statistical_outliers, remove_radius_outliers, fpfh,
         pcseg, fit_plane, fit_plane_ransac, fit_sphere_ransac, fit_cylinder_ransac,
@@ -317,7 +321,7 @@ with warnings.catch_warnings():
         subsurface_approx, rough_transmission,
         op_find, op_run, op_path, op_assist, op_presets, op_producers,
         op_consumers, op_accepts, op_sorts,
-        fit_line, fit_circle, fit_circle_geometric, fit_curve_principal_axis, phase_correlation_shift, fit_ellipse, fit_rectangle2, fit_rectangle2_lsq,
+        region_perimeter_estimate, fit_line, fit_circle, fit_circle_geometric, fit_curve_principal_axis, phase_correlation_shift, fit_ellipse, fit_rectangle2, fit_rectangle2_lsq,
         fit_line3, fit_plane3, fit_sphere3, fit_circle3, fit_surface_principal_axes,
         smallest_box3, smallest_box3_axis, fit_box3, smallest_sphere3, inner_box3,
         measure3d, regionprops3d, ops3d, pipeline3d,
@@ -538,7 +542,7 @@ with warnings.catch_warnings():
         sirt_reconstruct, os_sart_reconstruct, tv_reconstruct, ct_dual_energy_reconstruct,
         tomography, projection_angles, sinogram_design, ellipse_phantom,
         ellipse_sinogram, radon_transform, backproject_sinogram,
-        filtered_backprojection, sart_reconstruct, beam_hardening_apply,
+        filtered_backprojection, filtered_backprojection_like, sart_reconstruct, beam_hardening_apply,
         beam_hardening_correct, ring_artifact_apply, ring_artifact_remove,
         metal_trace_interpolate, sinogram_center_of_rotation,
         sinogram_center_shift, radon_volume, fbp_volume,
@@ -659,10 +663,11 @@ with warnings.catch_warnings():
     # 3-D 合成パイプライン(pipeline3d が import できない環境では api 側の代役 = 呼ぶと ImportError)
     from api import (  # noqa: E402,F401
         register_pointclouds, align_cad_to_scan, measure_plane, inspect_roundness, match_sdf, register_auto)
-    from engine import FullseyeEngine, diagnose_stages, pipeline_states  # noqa: E402,F401  (pipeline runtime)
-    # Studio のパイプラインファイル(.json)を読む入口(Python のモードの load_pipeline と同じ物、2026-11-12)
-    from engine import PipelineFile, load_pipeline, pipeline_from_dict  # noqa: E402,F401
-    # 定義ファイル(JSON)の種類に依らない層: 印(kind / version)を見て振り分ける読み書き
+    from engine import (  # noqa: E402,F401  (pipeline runtime)
+        FullseyeEngine, PipelineFile, diagnose_stages, pipeline_states,
+        load_pipeline, load_pipeline_text, pipeline_interface, pipeline_from_dict,
+    )
+    # 定義ファイル(JSON)の種類に依らない公開入口。Public definition-file I/O.
     from defs_io import read_def, write_def, DefinitionError  # noqa: E402,F401
     # engine-layer result state + memory-bounded stage cache (Qt-free; the browser Studio consumes these)
     from studio_result import (  # noqa: E402,F401
@@ -725,6 +730,7 @@ def capabilities() -> dict:
             "device": device.capabilities()}
 
 import opnames as _opnames  # noqa: E402  (canonical op-name aliases, phase 1 of the naming cleanup)
+from fssystem import pipeline_stage_limit_message  # noqa: E402,F401
 
 
 def _warn_ambiguous_ledger_name(name):
@@ -1031,8 +1037,8 @@ from fullseye.fixture import (  # noqa: E402,F401
 )
 # 意味で op を引く(6 言語の要約・BM25、索引は fullseye/data/OP_SEARCH.json —— RAG の入口、2026-10-07)。
 from fullseye.opsearch import search_ops  # noqa: E402,F401
-# パラメータの束(2026-11-12): ファイル(JSON / TOML / YAML)から読み、op の引数だけを取り出して渡す層。
-# 台帳 op ではなく facade の入出力ユーティリティ(fullseye/parambundle.py)。fs.apply の契約も既存 op の引数も変えない。
+# パラメータの束(2026-11-12): JSON / TOML / YAML から読み、op の引数だけを取り出す公開層。
+# Parameter bundles are facade I/O utilities, not registry operators.
 from fullseye.parambundle import (  # noqa: E402,F401
     ParamBundle, load_params, save_params, params_compare, param_grid, param_zip, sweep, run_params,
     ParamError, MissingParam,
@@ -1065,6 +1071,8 @@ __all__ = [
     "op_find", "op_run", "op_path", "op_assist", "op_presets", "op_producers",
     "op_consumers", "op_accepts", "op_sorts",
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories", "knob_summary",
+    "load_pipeline", "load_pipeline_text", "pipeline_interface", "PipelineFile", "pipeline_from_dict",
+    "read_def", "write_def", "DefinitionError",
     "ExecutionContext", "ArtifactRef", "SoftwareInventory", "ExecutionRecord",
     "ValidationProfile", "AuditSink", "AuditCheckpoint", "AuditVerification",
     "ValidationProfileError", "SoftwareProvenanceError", "AuditWriteError", "AuditIntegrityError",
@@ -1095,7 +1103,11 @@ __all__ = [
     "icp_gated", "point_to_plane_icp_gated",
     "ncc_map_partial", "ncc_locate_ex", "shape_locate_fine",
     "pca_align", "register", "feature_register",
-    "ppf", "ppf_model", "surface_match", "find_surface_pose",
+    "ppf", "PoseHypothesis", "ppf_model", "surface_match", "find_surface_pose",
+    "ppf_pose_hypotheses", "pose_nms_symmetry",
+    "bop", "BOPPoseEstimate", "read_bop_camera", "read_bop_scene_image", "read_bop_model",
+    "read_bop_models_info", "bop_symmetry_transforms", "write_bop_results_csv",
+    "read_bop_results_csv", "write_bop_val_targets", "evaluate_bop19_pose",
     "pointcloud", "estimate_normals", "voxel_downsample",
     "remove_statistical_outliers", "remove_radius_outliers", "fpfh",
     "pcseg", "fit_plane", "fit_plane_ransac", "fit_sphere_ransac", "fit_cylinder_ransac",
@@ -1189,12 +1201,11 @@ __all__ = [
     "event_rate_map", "time_surface", "warp_frame", "contrast_maximization",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
-    "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2", "fit_rectangle2_lsq",
+    "region_perimeter_estimate", "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2", "fit_rectangle2_lsq",
     "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3", "fit_surface_principal_axes",
     "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
     "measure3d", "regionprops3d", "ops3d", "pipeline3d",
     "FullseyeEngine", "diagnose_stages", "graphengine", "FullseyeGraph",
-    "PipelineFile", "load_pipeline", "pipeline_from_dict", "read_def", "write_def", "DefinitionError",
     "pipeline_states", "StageCache", "assess_validity", "input_reference", "resolve_input_ref", "file_sha256",
     "cache_summary_text",
     "Camera", "list_cameras", "open_framegrabber", "grab_image", "close_framegrabber",
@@ -1334,7 +1345,7 @@ __all__ = [
     "metriccontract", "MetricContractError", "Attempt", "attempt", "attempt_all",
     "DIRECTIONS", "worst_case", "value_or_worst", "best_of", "rank_attempts",
     "fssystem", "set_system", "get_system", "query_system", "system",
-    "reset_system", "system_snapshot",
+    "reset_system", "system_snapshot", "pipeline_stage_limit_message",
     "fsthreads", "blas_threads",
     "annotate", "opsannotate", "measure_text", "text_box", "arrow", "leader_line",
     "label_points", "crosshair", "legend_box", "color_bar", "scale_bar",
@@ -1379,7 +1390,7 @@ __all__ = [
     "sirt_reconstruct", "os_sart_reconstruct", "tv_reconstruct", "ct_dual_energy_reconstruct",
     "tomography", "projection_angles", "sinogram_design", "ellipse_phantom",
     "ellipse_sinogram", "radon_transform", "backproject_sinogram",
-    "filtered_backprojection", "sart_reconstruct", "beam_hardening_apply",
+    "filtered_backprojection", "filtered_backprojection_like", "sart_reconstruct", "beam_hardening_apply",
     "beam_hardening_correct", "ring_artifact_apply", "ring_artifact_remove",
     "metal_trace_interpolate", "sinogram_center_of_rotation",
     "sinogram_center_shift", "radon_volume", "fbp_volume",

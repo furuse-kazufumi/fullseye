@@ -29,8 +29,15 @@
 <p>:param size: output side; <code style="color:#22d3bf">None</code> -&gt; the inscribed square, the largest odd side</p>
 <p>under <code style="color:#22d3bf">n_detectors / sqrt(2)</code>. The sinogram does not carry the source image&#x27;s</p>
 <p>size, so this is <b>not</b> the size of the image given to <code style="color:#22d3bf">radon_transform</code>:</p>
-<p>a 32 x 32 image gives 47 detectors and a 33 x 33 default. Pass <code style="color:#22d3bf">size=</code> (the</p>
-<p>source side) to get the source grid back; <code style="color:#22d3bf">docs/KNOWN_ISSUES.md</code> §53.</p>
+<p>a 32 x 32 image gives 47 detectors and a 33 x 33 default. To reconstruct on</p>
+<p>the original grid, pass the original side explicitly, for example::</p>
+<p>image = np.zeros((32, 32), np.float64)</p>
+<p>sinogram = radon_transform(image)</p>
+<p>reconstruction = filtered_backprojection(sinogram, size=image.shape[0])</p>
+<p>assert reconstruction.shape == image.shape</p>
+<p>No warning can identify this mismatch when <code style="color:#22d3bf">size</code> is omitted: a sinogram</p>
+<p>carries detector count but not the source side, and 32 and 33 are both valid</p>
+<p>source grids for 47 detectors. <code style="color:#22d3bf">docs/KNOWN_ISSUES.md</code> §53.</p>
 <p>:param filter_name: one of <code style="color:#22d3bf">FILTERS</code>. :param cutoff: fraction of Nyquist to keep, <code style="color:#22d3bf">(0, 1]</code>. :param span_deg: angular range for the <code style="color:#22d3bf">d(theta)</code> weight; <code style="color:#22d3bf">None</code> -&gt; the</p>
 <p>range the views actually cover, inferred from the angle list (exact for</p>
 <p>a uniform grid over any span and for any full-coverage irregular set</p>
@@ -50,9 +57,9 @@
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ct_fidelity">poc_ct_fidelity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ct_fidelity.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sem_tem_same_particle">poc_sem_tem_same_particle</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sem_tem_same_particle.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image2d</code> 作为输入)</h3>
-<p><a style="color:#22d3bf" href="optomography:radon_transform">radon_transform</a></p>
+<p><a style="color:#22d3bf" href="optomography:radon_transform">radon_transform</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection_like">filtered_backprojection_like</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">reconstruct</code>)</h3>
-<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a></p>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection_like">filtered_backprojection_like</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: tomography.py — TOMOGRAPHY 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

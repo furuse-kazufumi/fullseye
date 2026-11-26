@@ -27,10 +27,43 @@ from typing import Iterable
 import numpy as np
 
 import api
+from fssystem import MAX_PROGRAM_STAGES, pipeline_stage_limit_message
 from json_safety import _loads_limited
 from studio_result import StageCache, assess_validity
 
-__all__ = ["FullseyeEngine", "diagnose_stages", "stage_name", "StageCache", "pipeline_states", "check_pipeline_header"]
+__all__ = ["FullseyeEngine", "diagnose_stages", "stage_name", "StageCache", "pipeline_states",
+           "check_pipeline_header", "load_pipeline", "load_pipeline_text", "pipeline_interface",
+           "PipelineFile", "pipeline_from_dict", "MAX_PROGRAM_STAGES"]
+
+
+def _comma_ops(text):
+    """Yield non-empty comma-separated op names without making a split list.
+
+    The engine needs this small scanner before it can decide whether a text
+    pipeline is inside :data:`MAX_PROGRAM_STAGES`; ``str.split`` would allocate
+    one string per untrusted stage before that decision.
+    """
+    text, start = str(text), 0
+    while True:
+        end = text.find(",", start)
+        part = text[start:] if end < 0 else text[start:end]
+        part = part.strip()
+        if part:
+            yield part
+        if end < 0:
+            return
+        start = end + 1
+
+
+def _checked_op_names(ops):
+    """Return at most the shared cap of op names, or reject before making a list."""
+    source = ((str(item).strip() for item in ops) if isinstance(ops, (list, tuple))
+              else _comma_ops(ops))
+    count = sum(1 for name in source if name)
+    if count > MAX_PROGRAM_STAGES:
+        raise ValueError(pipeline_stage_limit_message(count))
+    return ([str(item).strip() for item in ops if str(item).strip()]
+            if isinstance(ops, (list, tuple)) else list(_comma_ops(ops)))
 
 
 def _input_hash(image):
@@ -274,6 +307,21 @@ def diagnose_stages(stages) -> list[dict]:
 #: パイプラインのファイル(``to_dict`` / Studio の Save pipeline が書く JSON)の版。印 ``fullseye_pipeline`` の値。
 PIPELINE_FORMAT_VERSION = 1
 
+# Saved Studio pipelines are control-plane JSON, never image payloads.  Bound
+# files at the public file entry before decoding them so a mistaken image path
+# or an untrusted file cannot allocate without limit. / Studio 保存 pipeline は
+# 画素でなく制御用 JSON なので、公開ファイル入口で復号前に上限を掛け、画像を
+# 間違えて渡した場合や信頼できないファイルで無制限に確保しない。
+MAX_PIPELINE_FILE_BYTES = 1024 * 1024
+_PIPELINE_FILE_KEYS = frozenset((
+    "fullseye_pipeline", "name", "stages",
+    # Studio round-trip metadata.  These are the only non-runtime keys emitted by
+    # PipelineModel.to_dict / PipelineFile.save; arbitrary keys remain fail-closed.
+    "directives", "input", "pinned",
+    # defs_io's self-describing envelope.
+    "fullseye_kind", "version", "created_by",
+))
+
 
 def check_pipeline_header(d, *, where: str = "pipeline file") -> None:
     """パイプラインのファイルの **版の印** を読むときに検査する(各読み手がここを呼ぶ。形式は変えない)。
@@ -334,6 +382,8 @@ class FullseyeEngine:
         for i, st in enumerate(stages or []):
             if isinstance(st, (tuple, list)) and len(st) == 0:
                 continue                             # skip an empty/malformed stage entry
+            if len(self.stages) >= MAX_PROGRAM_STAGES:
+                raise ValueError(pipeline_stage_limit_message(len(self.stages) + 1))
             # ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、
             # {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。
             # 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
@@ -369,14 +419,24 @@ class FullseyeEngine:
         stages = d["stages"]
         if isinstance(stages, str):
             # ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
-            stages = [t.strip() for t in stages.split(",") if t.strip()]
+            stages = _checked_op_names(stages)
+        elif isinstance(stages, (list, tuple)) and len(stages) > MAX_PROGRAM_STAGES:
+            # Refuse the decoded list before __init__ normalises a stage or builds
+            # the engine's own list. A rejected file never leaves a partial pipeline.
+            raise ValueError(pipeline_stage_limit_message(len(stages)))
         built = cls(stages, name=d.get("name", name))
         return self._adopt(built) if self is not None else built
 
     @_hybridmethod
     def load(cls, self, path: str) -> "FullseyeEngine":
         """Load a pipeline from the JSON that Studio's "Save pipeline" writes.
-        ``FullseyeEngine.load(path)`` returns a new engine; ``engine.load(path)`` loads into ``engine``."""
+        ``FullseyeEngine.load(path)`` returns a new engine; ``engine.load(path)`` loads into ``engine``.
+
+        This legacy engine method intentionally keeps accepting in-memory Studio
+        metadata used by older GUI files.  New application/file boundaries
+        should use :func:`load_pipeline`, the closed-schema gate shared by the
+        CLI and C/C++ SDK.
+        """
         path = os.fspath(path)
         with open(path, encoding="utf-8") as f:
             d = _loads_limited(f.read(), label="pipeline JSON")
@@ -387,10 +447,7 @@ class FullseyeEngine:
     def from_ops(cls, self, ops, a: float = 0.5, b: float = 0.5,
                  name: str = "pipeline") -> "FullseyeEngine":
         """Build from a comma-separated ``--ops`` string, or a list of names (shared knobs)."""
-        if isinstance(ops, (list, tuple)):
-            names = [str(s).strip() for s in ops if str(s).strip()]
-        else:
-            names = [s.strip() for s in str(ops).split(",") if s.strip()]
+        names = _checked_op_names(ops)
         built = cls([(n, a, b) for n in names], name=name)
         return self._adopt(built) if self is not None else built
 
@@ -647,6 +704,102 @@ class FullseyeEngine:
             self.name, len(self.stages), self.to_ops() or "<empty>")
 
 
+def _pipeline_problem(where: str, problem: dict) -> ValueError:
+    """Make structural rejection useful at every file-reading entry / 構造拒否を全入口で親切にする。"""
+    stage = int(problem.get("index", -1)) + 1
+    op = problem.get("op", "<unknown>")
+    message = str(problem.get("message", "invalid pipeline stage"))
+    if "sort_mismatch" == problem.get("kind"):
+        fix = "Make the preceding stage produce the input sort this operator expects, or insert a converting operator."
+    elif "unknown operator" in message:
+        fix = "Choose an operator listed by fullseye.list_ops() and save the pipeline again from Studio."
+    else:
+        fix = "Correct this stage in Studio, save the pipeline again, then reload the file."
+    return ValueError(
+        "%s: stage %d (%s) is invalid: %s. The file is refused before execution because a saved "
+        "pipeline must have one unambiguous, type-safe meaning. %s" % (where, stage, op, message, fix))
+
+
+def _validate_file_pipeline_dict(value: object, *, where: str) -> dict:
+    """Reject non-Studio keys and malformed documents before constructing an engine.
+
+    ``FullseyeEngine.from_dict`` remains the in-memory construction API.  This
+    narrower gate is for JSON files/text crossing an application boundary, and
+    is shared by CLI, Python, C and C++ so they cannot disagree about a saved
+    Studio pipeline. / ``from_dict`` はメモリ上の構築 API のままとし、この狭い
+    門はアプリ境界を越す JSON 用で、CLI/Python/C/C++ が同じ Studio 保存物を同じ
+    ように拒否する。
+    """
+    if not isinstance(value, dict):
+        raise ValueError("%s: expected a JSON object with 'stages', got %s. A Studio pipeline is an object; save it "
+                         "again with Studio's Save pipeline command." % (where, type(value).__name__))
+    check_pipeline_header(value, where=where)
+    extra = sorted(set(value) - _PIPELINE_FILE_KEYS)
+    if extra:
+        raise ValueError("%s: unsupported key(s): %s. They are refused because a saved pipeline has a closed schema; "
+                         "remove the key(s) or save the pipeline again from Studio." %
+                         (where, ", ".join(repr(key) for key in extra)))
+    if "stages" not in value:
+        raise ValueError("%s: missing required key 'stages'. The file cannot name work to run; save the pipeline again "
+                         "from Studio." % where)
+    if "name" in value and not isinstance(value["name"], str):
+        raise ValueError(
+            "%s: 'name' must be a JSON string, got %r (%s). It is refused because converting it with str() would "
+            "change the saved pipeline's declared identity. Set 'name' to a string such as \"inspection\", then "
+            "save and retry. / %s: 'name' は JSON 文字列である必要がありますが、%r (%s) でした。str() への変換で保存 "
+            "pipeline の宣言名が変わるため拒否します。'name' を \"inspection\" のような文字列にして保存し直してください。"
+            % (where, value["name"], type(value["name"]).__name__, where, value["name"], type(value["name"]).__name__))
+    return value
+
+
+def _load_pipeline_text(text: str | bytes, *, where: str = "pipeline JSON") -> PipelineFile:
+    """Load, validate and prepare a Studio pipeline JSON document without running it.
+
+    Unknown operators, bad stage keys and sort mismatches are rejected here,
+    before the first operator can run.  This is the canonical saved-pipeline
+    gate used by :func:`load_pipeline`, the CLI and the native SDK bridge.
+    """
+    if not isinstance(text, (str, bytes)):
+        raise TypeError("%s: expected UTF-8 JSON text, got %s. Pass the contents of a Studio .json file."
+                        % (where, type(text).__name__))
+    from json_strict import UntrustedJSONError, loads_untrusted
+    try:
+        document = loads_untrusted(text, label=where, max_bytes=MAX_PIPELINE_FILE_BYTES)
+    except UnicodeDecodeError as exc:
+        raise ValueError("%s: bytes are not valid UTF-8 (%s). Save the Studio pipeline as UTF-8 JSON and retry."
+                         % (where, exc)) from exc
+    except json.JSONDecodeError as exc:
+        raise ValueError("%s: not valid JSON (line %d, column %d: %s)"
+                         % (where, exc.lineno, exc.colno, exc.msg)) from None
+    except UntrustedJSONError as exc:
+        raise ValueError("%s: %s" % (where, exc)) from None
+    return pipeline_from_dict(document, where=where)
+
+
+# Public spelling kept as an alias so the repository has exactly one
+# ``def load_pipeline...`` definition: the file/recipe entry below.
+load_pipeline_text = _load_pipeline_text
+load_pipeline_text.__name__ = "load_pipeline_text"
+
+
+def pipeline_interface(pipeline: FullseyeEngine) -> dict:
+    """Return the single named input/output interface of a Studio linear pipeline.
+
+    Studio's saved linear pipeline format has one value flowing from its first
+    stage to its last.  Name those endpoints explicitly for language bindings
+    instead of making C/C++ callers guess positional conventions.
+    """
+    if not isinstance(pipeline, FullseyeEngine) or not pipeline.stages:
+        raise ValueError("pipeline interface needs a validated, non-empty Studio pipeline. Load it with fullseye.load_pipeline().")
+    input_sort, output_sort = pipeline.input_sort(), pipeline.output_sort()
+    if input_sort == "any" or output_sort == "any" or input_sort is None or output_sort is None:
+        raise ValueError("pipeline %r has no concrete input/output sort (input=%r, output=%r). Start and end with "
+                         "operators that declare a concrete sort before embedding it." %
+                         (pipeline.name, input_sort, output_sort))
+    return {"inputs": [{"name": "image", "sort": input_sort}],
+            "outputs": [{"name": "result", "sort": output_sort}]}
+
+
 def _knob_literal(v) -> str:
     """A knob as Python source that evaluates to the SAME float (``repr`` = shortest round trip).
 
@@ -810,13 +963,22 @@ def pipeline_from_dict(d, where: str = "pipeline") -> PipelineFile:
     印(版)の検査と移行は ``defs_io.check_marker``(版の検査の正本)。段は :data:`STAGE_FORMS` の形を
     正本 ``[op, a, b(, true)]`` へ寄せ、op は台帳に在る物(別名は正規の名前へ)、つまみは有限で 0..1。"""
     import defs_io
+    # Graph files keep the established header diagnostic used by the CLI/C API;
+    # defs_io then owns the newer kind/version envelope checks for definitions.
+    if isinstance(d, dict) and "fullseye_graph" in d:
+        check_pipeline_header(d, where=where)
     _kind, d = defs_io.check_marker(d, where, PIPELINE_KIND)
+    d = _validate_file_pipeline_dict(d, where=where)
     raw = d.get("stages")
     if not isinstance(raw, list):
         raise defs_io.DefinitionError("%s: 'stages' must be a list, got %s" % (where, type(raw).__name__))
     out = [_canonical_stage(i, s, where) for i, s in enumerate(raw, 1)]
     src = {k: v for k, v in d.items() if k not in defs_io.MARKER_KEYS}
-    return PipelineFile(out, name=str(d.get("name") or "pipeline"), source=src)
+    pipeline = PipelineFile(out, name=d.get("name") or "pipeline", source=src)
+    problems = pipeline.validate()
+    if problems:
+        raise _pipeline_problem(where, problems[0])
+    return pipeline
 
 
 def _pipeline_reader(d: dict, where: str) -> PipelineFile:
@@ -832,7 +994,7 @@ def _pipeline_writer(obj) -> dict:
 
 
 def load_pipeline(path, search_dirs=None) -> PipelineFile:
-    """パイプラインを名前で読む(``fullseye.read_def(path, kind="pipeline")`` の薄い別名 + レシピ名)。
+    """パイプラインを名前で読み、全公開入口と同じ fail-closed の門を通す。
 
     *path* が ``.json`` なら Studio が保存したファイル、そうでなければ ``fullseye.recipes`` のレシピ名。
     相対パスは *search_dirs* の順に探す(既定: 走っているスクリプトの場所 → 今の作業場所)。Studio の
@@ -858,4 +1020,15 @@ def load_pipeline(path, search_dirs=None) -> PipelineFile:
         import sys
         main = getattr(sys.modules.get("__main__"), "__file__", None)
         search_dirs = ([os.path.dirname(os.path.abspath(main))] if main else []) + [os.getcwd()]
-    return defs_io.read_def(name, kind=PIPELINE_KIND, search_dirs=search_dirs)
+    found = defs_io.find_file(name, search_dirs)
+    try:
+        with open(found, "rb") as source:
+            body = source.read(MAX_PIPELINE_FILE_BYTES + 1)
+    except OSError as exc:
+        raise ValueError("pipeline file %r cannot be read: %s. Check the path and permissions, then retry."
+                         % (found, exc)) from exc
+    pipeline = load_pipeline_text(body, where="pipeline file %s" % found)
+    if not pipeline.source.get("name"):
+        pipeline.name = os.path.splitext(os.path.basename(found))[0]
+    pipeline.path = found
+    return pipeline

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3847,
- "n_notes": 3853,
+ "n_ops": 3851,
+ "n_notes": 3857,
  "notes": {
   "vol_dilate": [
    {
@@ -11604,6 +11604,26 @@
     "in": "points",
     "out": "axes",
     "path": "docs/ops/3d/match_pose/moment_axes.md"
+   }
+  ],
+  "pose_nms_symmetry": [
+   {
+    "op": "pose_nms_symmetry",
+    "dim": "3d",
+    "category": "match_pose",
+    "in": "table × points × table",
+    "out": "table",
+    "path": "docs/ops/3d/match_pose/pose_nms_symmetry.md"
+   }
+  ],
+  "ppf_pose_hypotheses": [
+   {
+    "op": "ppf_pose_hypotheses",
+    "dim": "3d",
+    "category": "match_pose",
+    "in": "table × points",
+    "out": "table",
+    "path": "docs/ops/3d/match_pose/ppf_pose_hypotheses.md"
    }
   ],
   "distance_ridge": [
@@ -24058,6 +24078,16 @@
     "in": "keypoints",
     "out": "table",
     "path": "docs/ops/fit/fit/fit_curve_principal_axis.md"
+   }
+  ],
+  "region_perimeter_estimate": [
+   {
+    "op": "region_perimeter_estimate",
+    "dim": "fit",
+    "category": "fit",
+    "in": "mask",
+    "out": "measurement",
+    "path": "docs/ops/fit/fit/region_perimeter_estimate.md"
    }
   ],
   "phase_correlation_shift": [
@@ -38062,6 +38092,16 @@
     "in": "sinogram",
     "out": "image2d",
     "path": "docs/ops/tomography/reconstruct/filtered_backprojection.md"
+   }
+  ],
+  "filtered_backprojection_like": [
+   {
+    "op": "filtered_backprojection_like",
+    "dim": "tomography",
+    "category": "reconstruct",
+    "in": "sinogram × image2d",
+    "out": "image2d",
+    "path": "docs/ops/tomography/reconstruct/filtered_backprojection_like.md"
    }
   ],
   "sart_reconstruct": [

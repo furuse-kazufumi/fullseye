@@ -38,6 +38,22 @@ LIBNAME = {"win32": "fullseye_core.dll", "darwin": "libfullseye_core.dylib"}.get
 FS_DTYPE_F64 = 4
 
 
+# The Rust spike reports the full L1 header ABI version, but deliberately omits
+# the pybind11 C SDK pipeline extension. / Rust は L1 header と同じ ABI 版を
+# 名乗るが、pybind11 C SDK の pipeline 拡張は実装しない。
+RUST_L1_FUNCTIONS = {
+    "fs_abi_version", "fs_apply", "fs_catalog_json", "fs_connection",
+    "fs_gauss", "fs_image_absolute", "fs_image_create", "fs_image_dtype",
+    "fs_image_range", "fs_image_release", "fs_image_shape", "fs_measure_all",
+    "fs_objectset_count", "fs_objectset_region", "fs_objectset_release",
+    "fs_python_available", "fs_python_init", "fs_region_area", "fs_region_release",
+    "fs_region_run_count", "fs_region_runs", "fs_select_shape", "fs_threshold",
+    "fs_tuple_elem_type", "fs_tuple_get_int", "fs_tuple_get_real", "fs_tuple_length",
+    "fs_tuple_release",
+}
+RUST_TEST_ONLY_EXPORTS = {"fs_debug_copy_pixels"}
+
+
 class FsRun(C.Structure):
     _fields_ = [("row", C.c_int32), ("col_begin", C.c_int32), ("col_end", C.c_int32)]
 
@@ -409,7 +425,7 @@ def test_select_shape_rejects_what_the_contract_calls_a_caller_error(rust):
 
 
 def test_abi_version_matches_the_header(rust):
-    """第 2 実装が名乗る ABI 版が、ヘッダの版と一致する。"""
+    """Rust の L1 ABI 版は header と一致し、C SDK pipeline は公開しない。"""
     src = (ROOT / "fullseye_abi.h").read_text(encoding="utf-8")
     import re
     mj = int(re.search(r"FULLSEYE_ABI_VERSION_MAJOR\s+(\d+)", src).group(1))
@@ -417,4 +433,14 @@ def test_abi_version_matches_the_header(rust):
     a, b = C.c_int32(), C.c_int32()
     assert rust.fs_abi_version(C.byref(a), C.byref(b)) == 0
     assert (a.value, b.value) == (mj, mn), (
-        "Rust 実装の ABI 版 %d.%d がヘッダの %d.%d と違う" % (a.value, b.value, mj, mn))
+        "Rust 実装の ABI 版 %d.%d がヘッダの %d.%d と違う" %
+        (a.value, b.value, mj, mn))
+
+    rust_source = (CRATE / "src" / "lib.rs").read_text(encoding="utf-8")
+    exported = set(re.findall(r'pub extern "C" fn (fs_[A-Za-z0-9_]+)', rust_source))
+    assert exported == RUST_L1_FUNCTIONS | RUST_TEST_ONLY_EXPORTS
+    assert all(hasattr(rust, name) for name in RUST_L1_FUNCTIONS)
+    assert not hasattr(rust, "fs_pipeline_load_path_n")
+
+    docs = (ROOT / "docs" / "C_API.md").read_text(encoding="utf-8")
+    assert "L1 ABI 0.3" in docs and "fs_pipeline_*" in docs

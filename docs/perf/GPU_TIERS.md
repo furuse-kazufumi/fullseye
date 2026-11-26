@@ -18,18 +18,18 @@
 | tier | 件数 |
 |---|---:|
 | `required` | 49 |
-| `suitable` | 2205 |
+| `suitable` | 2207 |
 | `partial` | 653 |
-| `none` | 940 |
-| **合計** | **3847** |
+| `none` | 942 |
+| **合計** | **3851** |
 
 ## GPU 対応率
 
 指標 = `gpu_status=あり` の件数 ÷ (`required` + `suitable`) の件数(件数÷全体ではない)。現状値をそのまま書く(低くてよい)。
 
 - gpu 経路あり: **173**
-- `required` + `suitable`: **2254**
-- **GPU 対応率 = 7.7%** (173 / 2254)
+- `required` + `suitable`: **2256**
+- **GPU 対応率 = 7.7%** (173 / 2256)
 
 正直な内訳: gpu 経路を持つ op のうち 50 件は `partial`(領域モルフォロジ等)、0 件は `none` で、分母には入らない(分子にのみ計上)。
 
@@ -161,6 +161,7 @@
 | xldgeom | 0 | 0 | 10 | 0 | 10 |
 | ballworld | 0 | 1 | 0 | 8 | 9 |
 | drawing | 0 | 1 | 0 | 8 | 9 |
+| fit | 0 | 5 | 2 | 2 | 9 |
 | lenssolve | 0 | 0 | 0 | 9 | 9 |
 | lockin | 0 | 7 | 0 | 2 | 9 |
 | ocr | 0 | 4 | 0 | 5 | 9 |
@@ -170,7 +171,6 @@
 | ttc | 0 | 6 | 1 | 2 | 9 |
 | watervision | 0 | 5 | 0 | 4 | 9 |
 | curvature | 0 | 6 | 2 | 0 | 8 |
-| fit | 0 | 4 | 2 | 2 | 8 |
 | grating_interf | 0 | 3 | 0 | 5 | 8 |
 | hdr | 0 | 6 | 0 | 2 | 8 |
 | itof | 0 | 2 | 0 | 6 | 8 |
@@ -181,6 +181,7 @@
 | moire_align | 0 | 3 | 0 | 5 | 8 |
 | motion | 1 | 7 | 0 | 0 | 8 |
 | post | 0 | 7 | 0 | 1 | 8 |
+| reconstruct | 3 | 1 | 4 | 0 | 8 |
 | shape_from_polarization | 0 | 8 | 0 | 0 | 8 |
 | tolerancing | 0 | 0 | 0 | 8 | 8 |
 | annotate3d | 0 | 6 | 1 | 0 | 7 |
@@ -191,6 +192,7 @@
 | feature_register | 1 | 1 | 5 | 0 | 7 |
 | fiber | 0 | 0 | 2 | 5 | 7 |
 | gsplat | 4 | 0 | 0 | 3 | 7 |
+| match_pose | 0 | 2 | 3 | 2 | 7 |
 | matched | 0 | 6 | 1 | 0 | 7 |
 | perceptual | 0 | 7 | 0 | 0 | 7 |
 | photometric | 2 | 5 | 0 | 0 | 7 |
@@ -198,7 +200,6 @@
 | pod | 0 | 1 | 0 | 6 | 7 |
 | prepare | 2 | 3 | 0 | 2 | 7 |
 | radiosity | 1 | 1 | 3 | 2 | 7 |
-| reconstruct | 3 | 0 | 4 | 0 | 7 |
 | regionprops | 0 | 6 | 1 | 0 | 7 |
 | roadjp | 0 | 2 | 0 | 5 | 7 |
 | robust_fit | 0 | 0 | 7 | 0 | 7 |
@@ -258,7 +259,6 @@
 | lane | 0 | 2 | 2 | 1 | 5 |
 | lensconfig | 0 | 0 | 0 | 5 | 5 |
 | light | 0 | 5 | 0 | 0 | 5 |
-| match_pose | 0 | 2 | 3 | 0 | 5 |
 | matching | 0 | 5 | 0 | 0 | 5 |
 | measure1d | 0 | 5 | 0 | 0 | 5 |
 | optics | 0 | 0 | 5 | 0 | 5 |

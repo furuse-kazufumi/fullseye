@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: c3e09847755f -->
+<!-- i18n-source-sha: 4ca011ce05e1 -->
 # Fullseye Dokumentationsindex
 
 <img src="assets/img/fullseye_256.png" alt="Fullseye-Logo" width="80" height="80">
@@ -68,7 +68,7 @@ Die 101 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, vo
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 10 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 505 Beispielen werden 501 tatsächlich von einem Gate ausgeführt.
+Von 506 Beispielen werden 501 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
@@ -149,18 +149,18 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**3,853 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **73 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**3,857 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **73 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2883/2883, Fassade `fullseye.<name>` 770/1610 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2887/2887, Fassade `fullseye.<name>` 774/1629 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3853 Notizen verweisen **3814** auf mindestens ein lauffähiges Beispiel (39 ohne), **3654** haben einen Nutzungsabschnitt ab 120 Zeichen (199 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3853.
+**Gemessener Inhalt**: von 3857 Notizen verweisen **3818** auf mindestens ein lauffähiges Beispiel (39 ohne), **3658** haben einen Nutzungsabschnitt ab 120 Zeichen (199 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3857.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
 | `2d` | 964 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 750 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 506 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
-| `3d` | 378 | [INDEX](ops/3d/INDEX.md) |
+| `3d` | 380 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 115 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `reprconv` | 63 | [INDEX](ops/reprconv/INDEX.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
@@ -168,7 +168,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `oned` | 49 | [INDEX](ops/oned/INDEX.md) |
 | `mv` | 47 | [INDEX](ops/mv/INDEX.md) · [guide](ops/mv/guides/machine_vision_classics.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
-| `tomography` | 43 | [INDEX](ops/tomography/INDEX.md) |
+| `tomography` | 44 | [INDEX](ops/tomography/INDEX.md) |
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
 | `imgmetrics` | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
@@ -215,7 +215,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
-| `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
+| `fit` | 4 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 Nach Namen suchen mit `py -3.11 imgevolve.py ops --search edge`; die vollständige Tabelle ist [OP_CATALOG.md](OP_CATALOG.md), der dimensionsübergreifende Einstieg [ops/INDEX.md](ops/INDEX.md).
@@ -294,6 +294,8 @@ py -3.11 imgevolve.py run pipeline.json in.png --out result.png
 py -3.11 imgevolve.py coverage                  # ehrliche Abdeckungszahlen
 ```
 
+Studio verwendet die Standardabhängigkeit `PySide6-Essentials>=6.5,!=6.12.0`; Version 6.12.0 ist wegen eines reproduzierten SIGABRT unter Linux ausgeschlossen.
+
 Aus Python heraus:
 
 ```python
@@ -314,9 +316,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 351
+## Dokumentkarte — alle 353
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,853 Operator-Notizen und 73 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,857 Operator-Notizen und 73 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(13)
 
@@ -407,7 +409,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 
 | Dokument | Inhalt |
 |---|---|
-| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Known Issues — 調べた欠陥の記録(2026-08-30 開始、最終の節は §52 = 2026-09-26) _(ja)_ |
+| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Known Issues — 調べた欠陥の記録(2026-08-30 開始、最終の節は §53 = 2026-11-24) _(ja)_ |
 | [`STATUS.md`](STATUS.md) | imgevolve — status / plan (plan_ref) |
 | [`ACCURACY_BENCH.md`](ACCURACY_BENCH.md) | Accuracy benchmark — champion vs null (holdout) |
 | [`BENCH_VS_OPENCV.md`](BENCH_VS_OPENCV.md) | imgevolve GPU op vs OpenCV (CPU) throughput benchmark → [`BENCH_VS_OPENCV.en.md`](BENCH_VS_OPENCV.en.md) · Original _(ja)_ |
@@ -460,7 +462,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(264)
+**Other**(266)
 
 | Dokument | Inhalt |
 |---|---|
@@ -476,12 +478,13 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`AI_RAG_GUIDE.tw.md`](AI_RAG_GUIDE.tw.md) | 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code） _(tw)_ |
 | [`AI_RAG_GUIDE.zh.md`](AI_RAG_GUIDE.zh.md) | 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code） _(zh)_ |
 | [`BENCH_VS_OPENCV.en.md`](BENCH_VS_OPENCV.en.md) | imgevolve GPU op vs OpenCV (CPU) throughput benchmark |
+| [`BOP_STAGE1_VALIDATION.md`](BOP_STAGE1_VALIDATION.md) | BOP 第1段の公式評価検証 _(ja)_ |
 | [`CAPABILITIES.en.md`](CAPABILITIES.en.md) | What Fullseye can do |
 | [`CAPABILITIES.md`](CAPABILITIES.md) | What Fullseye can do → [`CAPABILITIES.en.md`](CAPABILITIES.en.md) · Original _(ja)_ |
 | [`CHAIN_FUZZ.en.md`](CHAIN_FUZZ.en.md) | Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains |
-| [`C_API.md`](C_API.md) | Fullseye C SDK compatibility |
+| [`C_API.md`](C_API.md) | Fullseye C/C++ SDK |
 | [`C_API_OPS.md`](C_API_OPS.md) | C SDK callable operators |
-| [`C_API_SDK.md`](C_API_SDK.md) | C/C++ SDK runtime requirement |
+| [`C_API_SDK.md`](C_API_SDK.md) | C/C++ SDK の導入 _(ja)_ |
 | [`DESIGN_NOTES.de.md`](DESIGN_NOTES.de.md) | Fullseye-Entwurfsnotizen (aus den ★-Kommentaren im Quellcode erzeugt) |
 | [`DESIGN_NOTES.en.md`](DESIGN_NOTES.en.md) | Fullseye design notes (generated from the ★ comments in the source) |
 | [`DESIGN_NOTES.ko.md`](DESIGN_NOTES.ko.md) | Fullseye 설계 판단 모음(소스의 ★ 주석에서 생성) |
@@ -526,6 +529,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`INSTALL.ko.md`](INSTALL.ko.md) | 설치 / 환경 구축 완전 가이드 |
 | [`INSTALL.tw.md`](INSTALL.tw.md) | 安裝 / 環境建置完整指南 _(tw)_ |
 | [`INSTALL.zh.md`](INSTALL.zh.md) | 安装 / 环境搭建完全指南 _(zh)_ |
+| [`INSTALLATION.md`](INSTALLATION.md) | Portable full installation (2026-11-24 wheel audit) |
 | [`MATCH_3D_MATRIX.en.md`](MATCH_3D_MATRIX.en.md) | fullseye 3D Vision Toolkit (for Physical AI, differentiating from HALCON/OpenCV) |
 | [`MATURITY.md`](MATURITY.md) | 成熟度台帳(Maturity) _(ja)_ |
 | [`MCP.md`](MCP.md) | Fullseye を MCP(Model Context Protocol)から使う _(ja)_ |

@@ -26,13 +26,18 @@ FS_E_RANGE = 4
 FS_E_NO_PYTHON = 10
 FS_E_UNKNOWN_OP = 11
 FS_E_BAD_PARAMS = 12
+FS_E_BUSY = 14
 FS_E_UNSUPPORTED = 6
+FS_E_INTERNAL = 9
 FS_VALUE_IMAGE = 1
 FS_VALUE_REGION = 2
 FS_VALUE_OBJECTSET = 3
 FS_VALUE_FEATURE = 4
 FS_VALUE_COLOR = 6
 FS_VALUE_VOLUME = 7
+FS_VALUE_CONTOUR = 8
+FS_VALUE_POINTS = 9
+
 class InitOptions(C.Structure):
     _fields_ = [("struct_size", C.c_uint32), ("runtime_root", C.c_char_p),
                 ("python_home", C.c_char_p), ("flags", C.c_uint32),
@@ -53,6 +58,16 @@ class ArrayView(C.Structure):
                 ("stride_bytes", C.c_int64 * 4), ("dtype", C.c_int)]
 
 
+class ContourPart(C.Structure):
+    _fields_ = [("struct_size", C.c_uint32), ("points", ArrayView), ("closed", C.c_uint32)]
+
+
+class ContourView(C.Structure):
+    _fields_ = [("struct_size", C.c_uint32), ("width", C.c_int64), ("height", C.c_int64),
+                ("contours", C.POINTER(ContourPart)), ("contours_bytes", C.c_size_t),
+                ("contour_count", C.c_size_t), ("contour_stride_bytes", C.c_size_t)]
+
+
 class Input(C.Structure):
     _fields_ = [("struct_size", C.c_uint32), ("kind", C.c_int), ("image", ImageView),
                 ("result", C.c_void_p), ("result_index", C.c_size_t)]
@@ -61,7 +76,13 @@ class Input(C.Structure):
 class InputN(C.Structure):
     _fields_ = [("struct_size", C.c_uint32), ("kind", C.c_int), ("image", ImageView),
                 ("result_id", C.c_uint64), ("result_index", C.c_size_t),
-                ("array", ArrayView), ("feature", C.c_double)]
+                ("array", ArrayView), ("feature", C.c_double),
+                ("contour", ContourView), ("points", ArrayView)]
+
+
+class PipelineInputN(C.Structure):
+    _fields_ = [("struct_size", C.c_uint32), ("name", C.c_char_p), ("name_bytes", C.c_size_t),
+                ("value", InputN)]
 
 
 class Run(C.Structure):
@@ -82,6 +103,8 @@ def _library_path() -> Path:
 
 
 def _bind(lib):
+    lib.fs_abi_version.argtypes = [C.POINTER(C.c_int32), C.POINTER(C.c_int32)]
+    lib.fs_abi_version.restype = C.c_int
     lib.fs_runtime_create.argtypes = [C.POINTER(InitOptions), C.POINTER(C.c_void_p)]
     lib.fs_runtime_create.restype = C.c_int
     lib.fs_runtime_destroy.argtypes = [C.c_void_p]
@@ -91,6 +114,12 @@ def _bind(lib):
     lib.fs_find_ops_json_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t,
                                         C.POINTER(C.c_void_p), C.POINTER(C.c_size_t)]
     lib.fs_find_ops_json_n.restype = C.c_int
+    lib.fs_find_ops_json.argtypes = [C.c_void_p, C.c_void_p, C.POINTER(C.c_void_p),
+                                     C.POINTER(C.c_size_t)]
+    lib.fs_find_ops_json.restype = C.c_int
+    lib.fs_call.argtypes = [C.c_void_p, C.c_void_p, C.POINTER(Input), C.c_size_t,
+                            C.c_void_p, C.POINTER(C.c_void_p)]
+    lib.fs_call.restype = C.c_int
     lib.fs_free.argtypes = [C.c_void_p]
     lib.fs_free.restype = None
     lib.fs_result_release_n.argtypes = [C.c_uint64]
@@ -101,6 +130,17 @@ def _bind(lib):
     lib.fs_result_image_n.restype = C.c_int
     lib.fs_result_array_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(ArrayView)]
     lib.fs_result_array_n.restype = C.c_int
+    lib.fs_result_contour_count_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.c_size_t)]
+    lib.fs_result_contour_count_n.restype = C.c_int
+    lib.fs_result_contour_shape_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.c_int64),
+                                              C.POINTER(C.c_int64)]
+    lib.fs_result_contour_shape_n.restype = C.c_int
+    lib.fs_result_contour_n.argtypes = [C.c_uint64, C.c_size_t, C.c_size_t,
+                                        C.POINTER(ContourPart), C.POINTER(C.c_int64),
+                                        C.POINTER(C.c_int64)]
+    lib.fs_result_contour_n.restype = C.c_int
+    lib.fs_result_points_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(ArrayView)]
+    lib.fs_result_points_n.restype = C.c_int
     lib.fs_result_region_runs_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.POINTER(Run)),
                                            C.POINTER(C.c_size_t)]
     lib.fs_result_region_runs_n.restype = C.c_int
@@ -115,6 +155,25 @@ def _bind(lib):
     lib.fs_result_tuple_real_n.restype = C.c_int
     lib.fs_result_real_n.argtypes = [C.c_uint64, C.c_size_t, C.POINTER(C.c_double)]
     lib.fs_result_real_n.restype = C.c_int
+    lib.fs_pipeline_load_json_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t, C.POINTER(C.c_void_p)]
+    lib.fs_pipeline_load_json_n.restype = C.c_int
+    lib.fs_pipeline_load_path_n.argtypes = [C.c_void_p, C.c_void_p, C.c_size_t, C.POINTER(C.c_void_p)]
+    lib.fs_pipeline_load_path_n.restype = C.c_int
+    lib.fs_pipeline_destroy.argtypes = [C.c_void_p]
+    lib.fs_pipeline_destroy.restype = None
+    lib.fs_pipeline_input_count.argtypes = [C.c_void_p]
+    lib.fs_pipeline_input_count.restype = C.c_size_t
+    lib.fs_pipeline_output_count.argtypes = [C.c_void_p]
+    lib.fs_pipeline_output_count.restype = C.c_size_t
+    lib.fs_pipeline_input_info.argtypes = [C.c_void_p, C.c_size_t, C.POINTER(C.c_void_p),
+                                            C.POINTER(C.c_size_t), C.POINTER(C.c_int)]
+    lib.fs_pipeline_input_info.restype = C.c_int
+    lib.fs_pipeline_output_info.argtypes = [C.c_void_p, C.c_size_t, C.POINTER(C.c_void_p),
+                                             C.POINTER(C.c_size_t), C.POINTER(C.c_int)]
+    lib.fs_pipeline_output_info.restype = C.c_int
+    lib.fs_pipeline_run_n.argtypes = [C.c_void_p, C.POINTER(PipelineInputN), C.c_size_t,
+                                      C.POINTER(C.c_uint64)]
+    lib.fs_pipeline_run_n.restype = C.c_int
     lib.fs_last_error.argtypes = [C.c_void_p, C.c_char_p, C.c_size_t]
     lib.fs_last_error.restype = C.c_size_t
     lib.fs_test_result_id_seed_next_generation.argtypes = [C.c_uint32]
@@ -132,7 +191,7 @@ def abi():
     lib = C.CDLL(str(_library_path()))
     _bind(lib)
     root = os.fsencode(ROOT)
-    options = InitOptions(C.sizeof(InitOptions), root, None, 3, 0, 2, len(root), 0)
+    options = InitOptions(C.sizeof(InitOptions), root, None, 3, 0, 3, len(root), 0)
     runtime = C.c_void_p()
     assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_OK
     yield lib, runtime
@@ -146,11 +205,13 @@ def _image(array: np.ndarray, *, data_bytes=None, width=None, height=None, strid
                      array.shape[1] if width is None else width,
                      array.shape[0] if height is None else height,
                      array.strides[0] if stride is None else stride, dtype, lo, hi)
-    return InputN(C.sizeof(InputN), FS_VALUE_IMAGE, view, 0, 0, ArrayView(), 0.0)
+    return InputN(C.sizeof(InputN), FS_VALUE_IMAGE, view, 0, 0, ArrayView(), 0.0,
+                  ContourView(), ArrayView())
 
 
 def _borrow(kind: int, result, index=0) -> InputN:
-    return InputN(C.sizeof(InputN), kind, ImageView(), result, index, ArrayView(), 0.0)
+    return InputN(C.sizeof(InputN), kind, ImageView(), result, index, ArrayView(), 0.0,
+                  ContourView(), ArrayView())
 
 
 def _call(abi, op: str, inputs: list[Input], params="{}"):
@@ -161,6 +222,18 @@ def _call(abi, op: str, inputs: list[Input], params="{}"):
     status = lib.fs_call_id_n(runtime, op_bytes, len(op_bytes), array, len(inputs),
                            params_bytes, len(params_bytes), C.byref(result))
     return status, result
+
+
+def _error(lib, runtime) -> str:
+    size = lib.fs_last_error(runtime, None, 0)
+    buf = C.create_string_buffer(size)
+    lib.fs_last_error(runtime, buf, size)
+    return buf.value.decode("utf-8")
+
+
+def _pipeline_input(name: str, value: InputN) -> PipelineInputN:
+    encoded = name.encode("utf-8")
+    return PipelineInputN(C.sizeof(PipelineInputN), encoded, len(encoded), value)
 
 
 def _runs(lib, result, index=0):
@@ -195,7 +268,8 @@ def _typed_array(array: np.ndarray, kind: int) -> tuple[InputN, np.ndarray]:
     strides = (C.c_int64 * 4)(*list(values.strides), *([0] * (4 - values.ndim)))
     view = ArrayView(C.sizeof(ArrayView), int(values.ctypes.data), values.nbytes, values.ndim,
                      shape, strides, 4)
-    return InputN(C.sizeof(InputN), kind, ImageView(), 0, 0, view, 0.0), values
+    return InputN(C.sizeof(InputN), kind, ImageView(), 0, 0, view, 0.0,
+                  ContourView(), ArrayView()), values
 
 
 def _typed_array_with_dtype(shape, kind: int, dtype: int, numpy_dtype) -> tuple[InputN, np.ndarray]:
@@ -206,7 +280,8 @@ def _typed_array_with_dtype(shape, kind: int, dtype: int, numpy_dtype) -> tuple[
     full_strides = (C.c_int64 * 4)(*layout.strides, *([0] * (4 - len(shape))))
     view = ArrayView(C.sizeof(ArrayView), int(values.ctypes.data), values.nbytes, len(shape),
                      full_shape, full_strides, dtype)
-    return InputN(C.sizeof(InputN), kind, ImageView(), 0, 0, view, 0.0), values
+    return InputN(C.sizeof(InputN), kind, ImageView(), 0, 0, view, 0.0,
+                  ContourView(), ArrayView()), values
 
 
 def _typed_array_view(values: np.ndarray, owner: np.ndarray, kind: int) -> InputN:
@@ -221,7 +296,40 @@ def _typed_array_view(values: np.ndarray, owner: np.ndarray, kind: int) -> Input
 
 
 def _feature(value: float) -> InputN:
-    return InputN(C.sizeof(InputN), FS_VALUE_FEATURE, ImageView(), 0, 0, ArrayView(), value)
+    return InputN(C.sizeof(InputN), FS_VALUE_FEATURE, ImageView(), 0, 0, ArrayView(), value,
+                  ContourView(), ArrayView())
+
+
+def _points(array: np.ndarray, *, dtype=4) -> tuple[InputN, np.ndarray]:
+    """Build a direct (N,2)/(N,3) coordinate input / 座標入力を組む。"""
+    values = np.ascontiguousarray(array, dtype=np.float64)
+    shape = (C.c_int64 * 4)(values.shape[0], values.shape[1], 0, 0)
+    strides = (C.c_int64 * 4)(values.strides[0], values.strides[1], 0, 0)
+    view = ArrayView(C.sizeof(ArrayView), int(values.ctypes.data), values.nbytes, 2,
+                     shape, strides, dtype)
+    return InputN(C.sizeof(InputN), FS_VALUE_POINTS, ImageView(), 0, 0, ArrayView(), 0.0,
+                  ContourView(), view), values
+
+
+def _contour(value: dict) -> tuple[InputN, tuple]:
+    """Build a direct contour-set input / 複数点列の contour 入力を組む。"""
+    arrays = [np.ascontiguousarray(points, dtype=np.float64) for points in value["cs"]]
+    closed_values = value.get("closed")
+    parts = (ContourPart * len(arrays))()
+    for index, points in enumerate(arrays):
+        shape = (C.c_int64 * 4)(points.shape[0], 2, 0, 0)
+        strides = (C.c_int64 * 4)(points.strides[0], points.strides[1], 0, 0)
+        view = ArrayView(C.sizeof(ArrayView), int(points.ctypes.data), points.nbytes, 2,
+                         shape, strides, 4)
+        closed = (closed_values[index] if closed_values is not None
+                  else points.shape[0] > 1 and np.array_equal(points[0], points[-1]))
+        parts[index] = ContourPart(C.sizeof(ContourPart), view, closed)
+    height, width = value["shape"]
+    view = ContourView(C.sizeof(ContourView), width, height, parts, C.sizeof(parts),
+                       len(parts), C.sizeof(ContourPart))
+    input_value = InputN(C.sizeof(InputN), FS_VALUE_CONTOUR, ImageView(), 0, 0,
+                         ArrayView(), 0.0, view, ArrayView())
+    return input_value, (arrays, parts)
 
 
 def _c_output(lib, result, sort: str):
@@ -236,6 +344,32 @@ def _c_output(lib, result, sort: str):
         assert lib.fs_result_image_n(result, 0, C.byref(view)) == FS_OK
         return np.ctypeslib.as_array(C.cast(view.data, C.POINTER(C.c_double)),
                                      shape=(view.height * view.width,)).reshape(view.height, view.width).copy()
+    if sort == "contour":
+        count = C.c_size_t()
+        assert lib.fs_result_contour_count_n(result, 0, C.byref(count)) == FS_OK
+        width, height = C.c_int64(), C.c_int64()
+        assert lib.fs_result_contour_shape_n(result, 0, C.byref(width), C.byref(height)) == FS_OK
+        contours = []
+        closed = []
+        for contour_index in range(count.value):
+            part = ContourPart(C.sizeof(ContourPart), ArrayView(C.sizeof(ArrayView)), 0)
+            width, height = C.c_int64(), C.c_int64()
+            assert lib.fs_result_contour_n(result, 0, contour_index, C.byref(part),
+                                           C.byref(width), C.byref(height)) == FS_OK
+            shape = (part.points.shape[0], part.points.shape[1])
+            points = np.ctypeslib.as_array(C.cast(part.points.data, C.POINTER(C.c_double)),
+                                           shape=(int(np.prod(shape)),)).reshape(shape).copy()
+            contours.append(points)
+            closed.append(bool(part.closed))
+        return {"shape": (height.value, width.value), "cs": contours, "closed": closed}
+    if sort == "points":
+        view = ArrayView(C.sizeof(ArrayView))
+        assert lib.fs_result_points_n(result, 0, C.byref(view)) == FS_OK
+        shape = tuple(view.shape[:view.ndim])
+        if shape[0] == 0:
+            return np.empty(shape, dtype=np.float64)
+        return np.ctypeslib.as_array(C.cast(view.data, C.POINTER(C.c_double)),
+                                     shape=(int(np.prod(shape)),)).reshape(shape).copy()
     view = ArrayView(C.sizeof(ArrayView))
     assert lib.fs_result_array_n(result, 0, C.byref(view)) == FS_OK
     shape = tuple(view.shape[:view.ndim])
@@ -248,13 +382,21 @@ def _direct_registry(op, value):
                           on_error="raise", allow_nonfinite=False)
 
 
+def test_runtime_reports_abi_0_3(abi):
+    """The new tail is advertised without changing the major / major を変えず 0.3 を返す。"""
+    lib, _runtime = abi
+    major, minor = C.c_int32(), C.c_int32()
+    assert lib.fs_abi_version(C.byref(major), C.byref(minor)) == FS_OK
+    assert (major.value, minor.value) == (0, 3)
+
+
 def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(abi):
     """All generated callable rows traverse C and match the direct Python call exactly.
 
     全生成対象を既存 ``inputs_for`` 探針で C 経由・Python 直呼びの両方に通す。配列は
     byte-for-byte equality; scalar feature も同じ一回の呼出しで比較する。
     """
-    from conftest import inputs_for, requires_full_registry
+    from conftest import copy_input, inputs_for, requires_full_registry
     requires_full_registry()
     import ops
     from fullseye import c_api_bridge
@@ -274,10 +416,22 @@ def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(ab
             candidates = [("normal", np.linspace(0.0, 1.0, 64, dtype=np.float64).reshape(8, 8))]
         else:
             candidates = list(inputs_for(row["in_sort"], row["name"]))
-        candidate = next((value for name, value in candidates if name in {"normal", "unit"}), candidates[0][1])
+        candidate = next((value for name, value in candidates if name == "override"),
+                         next((value for name, value in candidates if name in {"normal", "unit"}),
+                              candidates[0][1]))
+        if row["name"] in {"select_contours", "select_contours_xld"}:
+            angles = np.linspace(0.0, 2.0 * np.pi, 44, endpoint=True)
+            candidate = {"shape": (32, 32), "cs": [np.column_stack((
+                16.0 + 10.0 * np.sin(angles), 16.0 + 10.0 * np.cos(angles)))]}
         held = []
         borrowed = []
-        if row["in_sort"] != "feature":
+        if row["in_sort"] == "contour":
+            c_input = copy_input(candidate)
+            direct_input = copy_input(candidate)
+            assert len(c_input["cs"]) == len(direct_input["cs"])
+            assert all(np.shares_memory(left, right) is False
+                       for left, right in zip(c_input["cs"], direct_input["cs"]))
+        elif row["in_sort"] != "feature":
             c_input = np.array(candidate, dtype=np.float64, order="C", copy=True)
             direct_input = np.array(candidate, dtype=np.float64, order="C", copy=True)
             assert np.shares_memory(c_input, direct_input) is False, row["id"]
@@ -297,6 +451,12 @@ def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(ab
         elif row["in_sort"] == "volume":
             input_value, keep = _typed_array(c_input, FS_VALUE_VOLUME)
             held.append(keep)
+        elif row["in_sort"] == "contour":
+            input_value, keep = _contour(c_input)
+            held.append(keep)
+        elif row["in_sort"] == "points":
+            input_value, keep = _points(c_input)
+            held.append(keep)
         else:
             input_value = _feature(float(candidate))
             direct_input = float(candidate)
@@ -305,7 +465,29 @@ def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(ab
         status, result = _call(abi, row["id"], [input_value], params)
         error = C.create_string_buffer(1024)
         lib.fs_last_error(_runtime, error, len(error))
-        assert status == FS_OK, "%s: %s" % (row["id"], error.value.decode("utf-8"))
+        message = error.value.decode("utf-8")
+        if status != FS_OK:
+            try:
+                if row["tier"] == "contract":
+                    direct = getattr(fslib, row["name"])(fslib.FImage(direct_input), **(
+                        {"lo": 0.5, "hi": 1.0} if row["name"] == "threshold"
+                        else {"sigma": 0.5} if row["name"] == "gauss" else {}))
+                else:
+                    direct = _direct_registry(registry[row["name"]], direct_input)
+                if row["out_sort"] == "contour":
+                    assert status == FS_E_UNSUPPORTED and not direct["cs"], (row["id"], message)
+                    assert "0 contour sequences" in message and "at least 1" in message
+                elif row["out_sort"] == "points":
+                    assert status == FS_E_UNSUPPORTED and np.asarray(direct).shape[0] == 0, (row["id"], message)
+                    assert "N > 0" in message and "少なくとも 1" in message
+                else:
+                    pytest.fail("%s: %s" % (row["id"], message))
+                exercised.append(row["id"])
+            finally:
+                assert not result.value
+                for seed in borrowed:
+                    assert lib.fs_result_release_n(seed) == FS_OK
+            continue
         try:
             if row["tier"] == "contract":
                 fn = getattr(fslib, row["name"])
@@ -321,6 +503,14 @@ def test_every_typed_c_sdk_operator_matches_direct_python_on_a_contract_probe(ab
                 assert got == expected, row["id"]
             elif row["out_sort"] == "feature":
                 assert got == float(direct), row["id"]
+            elif row["out_sort"] == "contour":
+                assert got["shape"] == tuple(direct["shape"]), row["id"]
+                assert len(got["cs"]) == len(direct["cs"]), row["id"]
+                for actual_points, expected_points in zip(got["cs"], direct["cs"]):
+                    np.testing.assert_array_equal(actual_points, expected_points, err_msg=row["id"])
+                expected_closed = [bool(len(points) > 1 and np.array_equal(points[0], points[-1]))
+                                   for points in direct["cs"]]
+                assert got["closed"] == expected_closed, row["id"]
             else:
                 expected = direct.pixels if isinstance(direct, fslib.FImage) else np.asarray(direct)
                 np.testing.assert_array_equal(got, expected, err_msg=row["id"])
@@ -593,6 +783,165 @@ def test_color_and_volume_views_reject_unknown_dtype(abi, kind, shape, op):
     assert status == FS_E_TYPE and not result.value
 
 
+@pytest.mark.parametrize("dimensions", [2, 3])
+def test_points_accept_two_or_three_coordinates_and_match_python(abi, dimensions):
+    """Both declared coordinate widths cross the ABI without aliasing / 2/3 次元を照合する。"""
+    lib, _runtime = abi
+    c_points = np.arange(15, dtype=np.float64).reshape(5, 3)[:, :dimensions].copy()
+    direct_points = c_points.copy()
+    assert np.shares_memory(c_points, direct_points) is False
+    input_value, keep = _points(c_points)
+    status, result = _call(abi, "registry:tb_arc_length", [input_value])
+    assert keep is not None and status == FS_OK
+    try:
+        got = _c_output(lib, result, "feature")
+        expected = _direct_registry(next(op for op in __import__("ops").REGISTRY
+                                         if op.name == "tb_arc_length"), direct_points)
+        assert got == float(expected)
+    finally:
+        assert lib.fs_result_release_n(result) == FS_OK
+
+
+@pytest.mark.parametrize("case,expected", [
+    ("short_buffer", FS_E_SHAPE),
+    ("extra_shape", FS_E_SHAPE),
+    ("extra_stride", FS_E_SHAPE),
+    ("inner_stride", FS_E_SHAPE),
+    ("overlapping_outer_stride", FS_E_SHAPE),
+    ("wrong_ndim", FS_E_SHAPE),
+    ("wrong_coordinate_width", FS_E_SHAPE),
+    ("unknown_dtype", FS_E_TYPE),
+    ("nan", FS_E_INVALID_ARG),
+    ("zero_points", FS_E_SHAPE),
+])
+def test_invalid_points_views_are_rejected(abi, case, expected):
+    values = np.arange(12, dtype=np.float64).reshape(4, 3)
+    input_value, keep = _points(values)
+    if case == "short_buffer":
+        input_value.points.data_bytes -= 1
+    elif case == "extra_shape":
+        input_value.points.shape[2] = 1
+    elif case == "extra_stride":
+        input_value.points.stride_bytes[2] = 8
+    elif case == "inner_stride":
+        input_value.points.stride_bytes[1] = 16
+    elif case == "overlapping_outer_stride":
+        input_value.points.stride_bytes[0] = 16
+    elif case == "wrong_ndim":
+        input_value.points.ndim = 1
+    elif case == "wrong_coordinate_width":
+        input_value.points.shape[1] = 4
+    elif case == "unknown_dtype":
+        input_value.points.dtype = 999
+    elif case == "nan":
+        keep[0, 0] = np.nan
+    else:
+        input_value.points.shape[0] = 0
+    status, result = _call(abi, "registry:tb_arc_length", [input_value])
+    assert status == expected and not result.value
+
+
+@pytest.mark.parametrize("case,expected", [
+    ("short_descriptor_buffer", FS_E_SHAPE),
+    ("short_point_buffer", FS_E_SHAPE),
+    ("extra_shape", FS_E_SHAPE),
+    ("extra_stride", FS_E_SHAPE),
+    ("inner_stride", FS_E_SHAPE),
+    ("overlapping_outer_stride", FS_E_SHAPE),
+    ("wrong_ndim", FS_E_SHAPE),
+    ("wrong_coordinate_width", FS_E_SHAPE),
+    ("unknown_dtype", FS_E_TYPE),
+    ("invalid_closed", FS_E_INVALID_ARG),
+    ("nan", FS_E_INVALID_ARG),
+    ("zero_points", FS_E_SHAPE),
+])
+def test_invalid_contour_views_are_rejected(abi, case, expected):
+    points = np.array([[1.0, 1.0], [1.0, 5.0], [5.0, 1.0], [1.0, 1.0]])
+    input_value, keep = _contour({"shape": (8, 8), "cs": [points]})
+    arrays, _parts = keep
+    part = input_value.contour.contours[0]
+    if case == "short_descriptor_buffer":
+        input_value.contour.contours_bytes = 0
+    elif case == "short_point_buffer":
+        part.points.data_bytes -= 1
+    elif case == "extra_shape":
+        part.points.shape[2] = 1
+    elif case == "extra_stride":
+        part.points.stride_bytes[2] = 8
+    elif case == "inner_stride":
+        part.points.stride_bytes[1] = 16
+    elif case == "overlapping_outer_stride":
+        part.points.stride_bytes[0] = 8
+    elif case == "wrong_ndim":
+        part.points.ndim = 1
+    elif case == "wrong_coordinate_width":
+        part.points.shape[1] = 3
+    elif case == "unknown_dtype":
+        part.points.dtype = 999
+    elif case == "invalid_closed":
+        part.closed = 2
+    elif case == "nan":
+        arrays[0][0, 0] = np.nan
+    else:
+        part.points.shape[0] = 0
+    status, result = _call(abi, "registry:count_contours", [input_value])
+    assert status == expected and not result.value
+
+
+@pytest.mark.parametrize(("sort", "value", "actual", "contract"), [
+    ("contour", {"shape": (8, 8), "cs": []}, "0 contour sequences", "at least 1"),
+    ("points", np.empty((0, 2)), "shape (0, 2)", "N > 0"),
+])
+def test_python_bridge_refuses_empty_coordinate_outputs_with_the_abi_contract(sort, value, actual, contract):
+    """Empty coordinate output names its value, positive-N contract, and repair / 空出力を値・約束・直し方付きで拒む。"""
+    from fullseye import c_api_bridge
+
+    with pytest.raises(c_api_bridge._Refuse) as caught:
+        c_api_bridge._output(value, {"id": "registry:test_coordinate_output", "out_sort": sort})
+    message = str(caught.value)
+    assert caught.value.status == FS_E_UNSUPPORTED
+    assert actual in message and contract in message and "C ABI" in message
+    assert "少なくとも 1" in message and "返してください" in message
+
+
+@pytest.mark.parametrize(("output", "actual", "contract"), [
+    ({"kind": "contour", "h": 8, "w": 8, "contours": []}, "0 contour sequences", "at least 1"),
+    ({"kind": "points", "shape": [0, 2], "pixels": b""}, "shape (0, 2)", "N > 0"),
+])
+def test_native_bridge_refuses_empty_coordinate_outputs_with_the_abi_contract(
+        abi, monkeypatch, output, actual, contract):
+    """Native result conversion independently rejects the same empty ABI outputs / native 側も同じ空出力を拒む。"""
+    from fullseye import c_api_bridge
+
+    monkeypatch.setattr(c_api_bridge, "call", lambda *_args: {
+        "status": FS_OK, "message": "", "outputs": [output],
+    })
+    lib, runtime = abi
+    status, result = _call(abi, "contract:threshold", [_image(np.ones((2, 2)))])
+    error = C.create_string_buffer(1024)
+    lib.fs_last_error(runtime, error, len(error))
+    message = error.value.decode("utf-8")
+    assert status == FS_E_INTERNAL and not result.value
+    assert actual in message and contract in message and "C ABI" in message
+    assert "少なくとも 1" in message and "返してください" in message
+
+
+@pytest.mark.parametrize("closed,expected", [(False, 8.0), (True, 12.0)])
+def test_contour_closed_flag_controls_the_implicit_last_segment(abi, closed, expected):
+    """The explicit flag maps to Python's repeated-endpoint convention.
+
+    明示した閉曲線フラグを Python の始点反復表現へ写し、最後の辺を落とさない。
+    """
+    points = np.array([[0.0, 0.0], [0.0, 3.0], [4.0, 0.0]])
+    input_value, keep = _contour({"shape": (8, 8), "cs": [points], "closed": [closed]})
+    status, result = _call(abi, "registry:total_length", [input_value])
+    assert keep is not None and status == FS_OK
+    try:
+        assert _c_output(abi[0], result, "feature") == expected
+    finally:
+        assert abi[0].fs_result_release_n(result) == FS_OK
+
+
 def test_null_input_array_unknown_ops_and_extra_json_are_rejected(abi):
     lib, runtime = abi
     result = C.c_uint64()
@@ -684,17 +1033,63 @@ def test_bounded_strings_do_not_require_nul_and_legacy_entrypoint_remains_abi_0_
     assert lib.fs_call_id_n(runtime, op, C.sizeof(op), C.byref(_image(pixels)), 1,
                          params, C.sizeof(params), C.byref(result)) == FS_OK
     assert lib.fs_result_release_n(result) == FS_OK
-    legacy = lib.fs_call
-    legacy.argtypes = [C.c_void_p, C.c_char_p, C.POINTER(Input), C.c_size_t,
-                       C.c_char_p, C.POINTER(C.c_void_p)]
-    legacy.restype = C.c_int
     legacy_result = C.c_void_p()
     old_input = Input(C.sizeof(Input), FS_VALUE_IMAGE, _image(pixels).image, None, 0)
-    assert legacy(runtime, b"contract:threshold", C.byref(old_input), 1,
-                  b'{"lo":0.5,"hi":1.0}', C.byref(legacy_result)) == FS_OK
+    assert lib.fs_call(runtime, b"contract:threshold", C.byref(old_input), 1,
+                       b'{"lo":0.5,"hi":1.0}', C.byref(legacy_result)) == FS_OK
     lib.fs_result_release.argtypes = [C.c_void_p]
     lib.fs_result_release.restype = None
     lib.fs_result_release(legacy_result)
+
+
+def test_legacy_c_strings_accept_the_exact_limit_and_reject_limit_plus_one_with_remedy(abi):
+    """ABI 0.1 scans exactly one byte past its 256 B / 1 MiB limits, never farther.
+
+    旧 ABI の NUL 文字列は上限ちょうどを Python 側まで通し、+1 B は値・上限・修復方法を
+    含む文で、Python に渡す前に拒否する。
+    """
+    lib, runtime = abi
+    max_op, max_json = 256, 1024 * 1024
+    pixels = np.ones((2, 2), dtype=np.float64)
+    old_input = Input(C.sizeof(Input), FS_VALUE_IMAGE, _image(pixels).image, None, 0)
+
+    query_at_limit = C.create_string_buffer(b"{}" + b" " * (max_json - 2))
+    found = C.c_void_p()
+    found_bytes = C.c_size_t()
+    assert lib.fs_find_ops_json(runtime, query_at_limit, C.byref(found), C.byref(found_bytes)) == FS_OK
+    try:
+        assert found.value and found_bytes.value > 1
+    finally:
+        lib.fs_free(found)
+
+    op_at_limit = C.create_string_buffer(b"contract:threshold" + b" " * (max_op - len(b"contract:threshold")))
+    legacy_result = C.c_void_p()
+    assert lib.fs_call(runtime, op_at_limit, None, 0, C.create_string_buffer(b"{}"),
+                       C.byref(legacy_result)) == FS_E_UNKNOWN_OP
+
+    params_at_limit = C.create_string_buffer(b'{"lo":0.5,"hi":1.0}' + b" " *
+                                             (max_json - len(b'{"lo":0.5,"hi":1.0}')))
+    assert lib.fs_call(runtime, C.create_string_buffer(b"contract:threshold"), C.byref(old_input), 1,
+                       params_at_limit, C.byref(legacy_result)) == FS_OK
+    lib.fs_result_release(legacy_result)
+
+    op_plus_one = (C.c_char * (max_op + 1)).from_buffer_copy(b"x" * (max_op + 1))
+    assert lib.fs_call(runtime, op_plus_one, None, 0, C.create_string_buffer(b"{}"),
+                       C.byref(legacy_result)) == FS_E_INVALID_ARG
+    message = _error(lib, runtime)
+    assert all(fragment in message for fragment in ("op_id", "257", "256", "fs_call_id_n", "少なくとも", "上限"))
+
+    params_plus_one = (C.c_char * (max_json + 1)).from_buffer_copy(b" " * (max_json + 1))
+    assert lib.fs_call(runtime, C.create_string_buffer(b"contract:threshold"), None, 0,
+                       params_plus_one, C.byref(legacy_result)) == FS_E_INVALID_ARG
+    message = _error(lib, runtime)
+    assert all(fragment in message for fragment in ("params_json", "1048577", "1048576", "fs_call_id_n", "少なくとも", "上限"))
+
+    query_plus_one = (C.c_char * (max_json + 1)).from_buffer_copy(b" " * (max_json + 1))
+    assert lib.fs_find_ops_json(runtime, query_plus_one, C.byref(found), C.byref(found_bytes)) == FS_E_INVALID_ARG
+    assert not found.value and found_bytes.value == 0
+    message = _error(lib, runtime)
+    assert all(fragment in message for fragment in ("query_json", "1048577", "1048576", "fs_find_ops_json_n", "少なくとも", "上限"))
 
 
 def test_released_and_unknown_result_handles_are_rejected_and_double_release_errors(abi):
@@ -766,3 +1161,122 @@ def test_release_and_accessor_concurrency_keeps_the_handle_lifetime_safe(abi):
     assert status == FS_OK and count == 8
     assert lib.fs_result_region_runs_n(result, 0, C.byref(C.POINTER(Run)()), C.byref(C.c_size_t())) == FS_E_INVALID_ARG
     assert lib.fs_test_result_id_pause_after_lease(0) == FS_OK
+
+
+def test_saved_pipeline_path_reports_named_types_and_matches_python_after_json_replacement(abi, tmp_path):
+    """One C DLL, two Studio JSON saves: C and Python agree / 再ビルドなしの差し替え差分門。"""
+    lib, runtime = abi
+    path = tmp_path / "inspect.json"
+    document = {"fullseye_pipeline": 1, "name": "inspect", "stages": [["threshold", 0.5, 0.5]]}
+    path.write_text(json.dumps(document), encoding="utf-8")
+    pipeline = C.c_void_p()
+    path_bytes = os.fsencode(path)
+    assert lib.fs_pipeline_load_path_n(runtime, path_bytes, len(path_bytes), C.byref(pipeline)) == FS_OK
+    try:
+        assert lib.fs_pipeline_input_count(pipeline) == lib.fs_pipeline_output_count(pipeline) == 1
+        name = C.c_void_p()
+        name_bytes = C.c_size_t()
+        kind = C.c_int()
+        assert lib.fs_pipeline_input_info(pipeline, 0, C.byref(name), C.byref(name_bytes), C.byref(kind)) == FS_OK
+        try:
+            assert C.string_at(name, name_bytes.value - 1) == b"image"
+            assert kind.value == FS_VALUE_IMAGE
+        finally:
+            lib.fs_free(name)
+        assert lib.fs_pipeline_output_info(pipeline, 0, C.byref(name), C.byref(name_bytes), C.byref(kind)) == FS_OK
+        try:
+            assert C.string_at(name, name_bytes.value - 1) == b"result"
+            assert kind.value == FS_VALUE_REGION
+        finally:
+            lib.fs_free(name)
+
+        pixels = np.array([[0.0, 0.2, 0.0], [0.2, 1.0, 0.2], [0.0, 0.2, 0.0]], dtype=np.float64)
+        result = C.c_uint64()
+        named = _pipeline_input("image", _image(pixels.copy()))
+        assert lib.fs_pipeline_run_n(pipeline, C.byref(named), 1, C.byref(result)) == FS_OK
+        try:
+            c_first = _runs(lib, result)
+        finally:
+            assert lib.fs_result_release_n(result) == FS_OK
+        python_first = fullseye.load_pipeline(path).run(pixels.copy())
+        assert c_first == _direct_runs(fslib.Region(np.asarray(python_first) > 0.5))
+    finally:
+        lib.fs_pipeline_destroy(pipeline)
+
+    # Only the saved JSON changes.  The already-built native DLL is reused.
+    document["stages"][0][1] = 0.1
+    path.write_text(json.dumps(document), encoding="utf-8")
+    replaced = C.c_void_p()
+    assert lib.fs_pipeline_load_path_n(runtime, path_bytes, len(path_bytes), C.byref(replaced)) == FS_OK
+    try:
+        result = C.c_uint64()
+        named = _pipeline_input("image", _image(pixels.copy()))
+        assert lib.fs_pipeline_run_n(replaced, C.byref(named), 1, C.byref(result)) == FS_OK
+        try:
+            c_second = _runs(lib, result)
+        finally:
+            assert lib.fs_result_release_n(result) == FS_OK
+        python_second = fullseye.load_pipeline(path).run(pixels.copy())
+        assert c_second == _direct_runs(fslib.Region(np.asarray(python_second) > 0.5))
+        assert c_second != c_first
+    finally:
+        lib.fs_pipeline_destroy(replaced)
+
+
+def test_c_pipeline_after_runtime_destroy_stays_busy_with_a_bilingual_cause_and_fix(abi):
+    """The C ABI retains FS_E_BUSY, but explains the destroyed-runtime ordering.
+
+    C の所有権規約では pipeline を残したまま runtime を先に破棄すると run は busy のまま。
+    ただし原因と pipeline/runtime の正しい破棄順を日英で返す。
+    """
+    lib, _shared_runtime = abi
+    root = os.fsencode(ROOT)
+    options = InitOptions(C.sizeof(InitOptions), root, None, 3, 0, 2, len(root), 0)
+    runtime = C.c_void_p()
+    assert lib.fs_runtime_create(C.byref(options), C.byref(runtime)) == FS_OK
+    pipeline = C.c_void_p()
+    payload = json.dumps({"fullseye_pipeline": 1, "name": "inspect",
+                          "stages": [["threshold", 0.5, 0.5]]}).encode("utf-8")
+    assert lib.fs_pipeline_load_json_n(runtime, payload, len(payload), C.byref(pipeline)) == FS_OK
+    try:
+        lib.fs_runtime_destroy(runtime)
+        pixels = np.ones((2, 2), dtype=np.float64)
+        result = C.c_uint64()
+        named = _pipeline_input("image", _image(pixels))
+        assert lib.fs_pipeline_run_n(pipeline, C.byref(named), 1, C.byref(result)) == FS_E_BUSY
+        message = _error(lib, runtime)
+        assert all(fragment in message for fragment in (
+            "destroyed before this pipeline", "Destroy the pipeline first",
+            "Runtime が pipeline より先に破棄", "pipeline を先に破棄"))
+    finally:
+        lib.fs_pipeline_destroy(pipeline)
+
+
+@pytest.mark.parametrize("document, required", [
+    ({"stages": [["not_an_operator", 0.5, 0.5]]}, ("stage 1", "unknown operator", "Choose an operator")),
+    ({"stages": [["threshold", 0.5, 0.5], ["gaussian", 0.5, 0.5]]},
+     ("stage 1", "outputs 'region'", "converting operator")),
+    ({"stages": [["gaussian", 0.5, 0.5]], "typo": True}, ("unsupported key", "'typo'", "remove")),
+])
+def test_saved_pipeline_rejections_name_the_problem_reason_and_fix(abi, document, required):
+    """Unknown op, bad type chain and extra key never reach execution / 親切な fail-closed 門。"""
+    lib, runtime = abi
+    payload = json.dumps(document).encode("utf-8")
+    pipeline = C.c_void_p()
+    assert lib.fs_pipeline_load_json_n(runtime, payload, len(payload), C.byref(pipeline)) == FS_E_BAD_PARAMS
+    assert not pipeline.value
+    message = _error(lib, runtime)
+    for fragment in required:
+        assert fragment in message
+
+
+def test_saved_pipeline_path_and_file_bytes_are_bounded_before_open_or_parse(abi):
+    """Hostile spans cannot force path scans or JSON allocation / path・file 上限の門。"""
+    lib, runtime = abi
+    pipeline = C.c_void_p()
+    too_long_path = (C.c_char * 98302)(*([ord("x")] * 98302))
+    assert lib.fs_pipeline_load_path_n(runtime, too_long_path, C.sizeof(too_long_path), C.byref(pipeline)) == FS_E_INVALID_ARG
+    assert "98301-byte limit" in _error(lib, runtime)
+    payload = b" " * (1024 * 1024 + 1)
+    assert lib.fs_pipeline_load_json_n(runtime, payload, len(payload), C.byref(pipeline)) == FS_E_INVALID_ARG
+    assert "1 MiB limit" in _error(lib, runtime)

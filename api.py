@@ -55,6 +55,7 @@ import detect  # noqa: E402  (object segmentation / description / identification
 import registration  # noqa: E402  (rigid point-cloud registration: Kabsch + ICP)
 import deformreg  # noqa: E402  (deformable image registration: Thirion's demons + field warp)
 import ppf  # noqa: E402  (6-DoF surface matching by Point Pair Features -> object pose for grasping)
+import bop  # noqa: E402  (BOP local dataset I/O, pose CSV and official validation scoring)
 import pointcloud  # noqa: E402  (point-cloud geometry: normals, voxel downsample)
 import pcseg  # noqa: E402  (point-cloud segmentation/fitting: RANSAC plane/sphere/cylinder, clusters, OBB)
 import mesh  # noqa: E402  (3-D object import: OBJ/STL/PLY/OFF -> vertices, points, voxels)
@@ -106,7 +107,7 @@ from stereo import (  # noqa: E402,F401
     speckle_filter, fill_disparity, disparity_confidence,
 )
 from measure import (line_profile, distance, angle,  # noqa: E402,F401
-                     fit_line, fit_circle, fit_circle_geometric,
+                     region_perimeter_estimate, fit_line, fit_circle, fit_circle_geometric,
                      fit_curve_principal_axis, fit_ellipse, fit_rectangle2,
                      fit_rectangle2_lsq)
 # 2026-11-09 op 点検: はみ出しを扱う NCC / 刻み指定の回転照合(ncc_locate / shape_locate の契約は不変)
@@ -196,7 +197,16 @@ from registration import (  # noqa: E402,F401
     kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register, feature_register,
     icp_gated, point_to_plane_icp_gated,
 )
-from ppf import ppf_model, surface_match, find_surface_pose  # noqa: E402,F401
+from ppf import (  # noqa: E402,F401
+    PoseHypothesis, ppf_model, surface_match, find_surface_pose,
+    ppf_pose_hypotheses, pose_nms_symmetry,
+)
+from bop import (  # noqa: E402,F401
+    BOPPoseEstimate, read_bop_camera, read_bop_scene_image, read_bop_model,
+    read_bop_models_info, bop_symmetry_transforms,
+    write_bop_results_csv, read_bop_results_csv, write_bop_val_targets,
+    evaluate_bop19_pose,
+)
 from pointcloud import (  # noqa: E402,F401
     estimate_normals, voxel_downsample,
     remove_statistical_outliers, remove_radius_outliers, fpfh,
@@ -1013,7 +1023,7 @@ from imagedraw import (  # noqa: E402,F401
 import tomography  # noqa: E402  (radon / FBP / SART / artifacts / CT-to-voxel)
 from tomography import (  # noqa: E402,F401
     projection_angles, sinogram_design, ellipse_phantom, ellipse_sinogram,
-    radon_transform, backproject_sinogram, filtered_backprojection,
+    radon_transform, backproject_sinogram, filtered_backprojection, filtered_backprojection_like,
     sart_reconstruct, beam_hardening_apply, beam_hardening_correct,
     ring_artifact_apply, ring_artifact_remove, metal_trace_interpolate,
     sinogram_center_of_rotation, sinogram_center_shift,
@@ -1199,7 +1209,11 @@ __all__ = [
     "icp_gated", "point_to_plane_icp_gated",
     "ncc_map_partial", "ncc_locate_ex", "shape_locate_fine",
     "pca_align", "register", "feature_register",
-    "ppf", "ppf_model", "surface_match", "find_surface_pose",
+    "ppf", "PoseHypothesis", "ppf_model", "surface_match", "find_surface_pose",
+    "ppf_pose_hypotheses", "pose_nms_symmetry",
+    "bop", "BOPPoseEstimate", "read_bop_camera", "read_bop_scene_image", "read_bop_model",
+    "read_bop_models_info", "bop_symmetry_transforms", "write_bop_results_csv",
+    "read_bop_results_csv", "write_bop_val_targets", "evaluate_bop19_pose",
     "pointcloud", "estimate_normals", "voxel_downsample",
     "remove_statistical_outliers", "remove_radius_outliers", "fpfh",
     "pcseg", "fit_plane", "fit_plane_ransac", "fit_sphere_ransac", "fit_cylinder_ransac",
@@ -1289,7 +1303,7 @@ __all__ = [
     "match_descriptors", "match_keypoints",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
-    "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2", "fit_rectangle2_lsq",
+    "region_perimeter_estimate", "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2", "fit_rectangle2_lsq",
     "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3", "fit_surface_principal_axes",
     "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
     "measure3d", "regionprops3d", "ops3d", "pipeline3d",
@@ -1542,7 +1556,7 @@ __all__ = [
     "sirt_reconstruct", "os_sart_reconstruct", "tv_reconstruct", "ct_dual_energy_reconstruct",
     "tomography", "projection_angles", "sinogram_design", "ellipse_phantom",
     "ellipse_sinogram", "radon_transform", "backproject_sinogram",
-    "filtered_backprojection", "sart_reconstruct", "beam_hardening_apply",
+    "filtered_backprojection", "filtered_backprojection_like", "sart_reconstruct", "beam_hardening_apply",
     "beam_hardening_correct", "ring_artifact_apply", "ring_artifact_remove",
     "metal_trace_interpolate", "sinogram_center_of_rotation",
     "sinogram_center_shift", "radon_volume", "fbp_volume",
@@ -1963,8 +1977,10 @@ def _explain_unregistered(name: str) -> str | None:
     deps = _ops.OPTIONAL_DEPS
     if missing:
         pips = ", ".join(deps.get(m, (m, None))[0] for m in missing)
-        extras = sorted({deps[m][1] for m in missing if m in deps})
-        lines = ['pip install "fullseye[%s]"' % e for e in extras]
+        extras = sorted({deps[m][1] for m in missing if m in deps and deps[m][1]})
+        standard = [m for m in missing if m in deps and deps[m][1] is None]
+        lines = (["pip install --upgrade fullseye"] if standard else [])
+        lines += ['pip install "fullseye[%s]"' % e for e in extras]
         lines += ["pip install %s" % m for m in missing if m not in deps]   # 語彙に無い依存も置き去りにしない
         pip_line = " or ".join(lines)
         if all(m in _ops.OPTIONAL_IN_ALL for m in missing):
@@ -2420,9 +2436,10 @@ def _policy(on_error):
 #   色が混ざり、チャネルごとに 3 回呼ぶと自己正規化する op が各チャネルを
 #   自分の最大で割ってチャネル間の比を壊す(灰色エッジ法の角度誤差が
 #   自前 Sobel 1.03 度 -> 画像ごと 4.17 度 -> ch ごと 27.86 度、ゼロ点 29.14 度)。
-#   どちらに倒すかは**契約の決め**なので、ここでは既定の数値は 1 つも変えず、
-#   `on_error="raise"` のときだけ拒否し、既定では台帳に記録して見えるようにする。
-#   詳細と選択肢は docs/KNOWN_ISSUES.md。
+#   どちらに倒すかは**契約の決め**なので、ここでは既定の数値は 1 つも変えない。
+#   既定では FullseyeFallbackWarning を op ごとに 1 回だけ出して台帳へ記録し、
+#   `extra_checks="on"` または `on_error="raise"` では入口で拒否する。2.0 では
+#   既定も拒否へ切り替える予定。詳細と選択肢は docs/KNOWN_ISSUES.md §34。
 _CHANNEL_UNSAFE_IMAGE_OPS = frozenset((
     "bilateral_filter", "bothat", "corner_response", "cv_bilateral",
     "deviation_image", "diff_of_gauss", "dog", "dots_image",
@@ -2457,17 +2474,23 @@ _CHANNEL_UNSAFE_OPS = _CHANNEL_UNSAFE_IMAGE_OPS | _CHANNEL_UNSAFE_REGION_OPS
 
 
 def _check_channel_axis(v, op):
-    """(H, W, 3|4) を 3 本目の空間軸として扱ってしまう op を指す例外、または None。"""
+    """Return the RGB/RGBA channel-axis error for an unsafe 2-D op, else ``None``.
+
+    The default policy records this as a once-per-op
+    :class:`FullseyeFallbackWarning` and preserves the historical numeric result.
+    ``extra_checks='on'`` and ``on_error='raise'`` refuse it at the input boundary.
+    """
     if op.name not in _CHANNEL_UNSAFE_OPS:
         return None
     arr = v if isinstance(v, np.ndarray) else None
     if arr is None or arr.ndim != 3 or arr.shape[-1] not in (3, 4):
         return None
     return ValueError(
-        "op %r は 2-D の %s 用で、(H, W, %d) を渡すと**色軸を 3 本目の空間軸として "
-        "扱う**(近傍演算が色を跨ぐ。2026-09-06 の全数計測で image 78 本 / "
-        "region 11 本がこの形)。チャネルごとに呼ぶ手もあるが、自己正規化する op は "
-        "チャネル間の比を壊す —— docs/KNOWN_ISSUES.md を読んでから決めること。"
+        "op %r is a 2-D %s op: an (H, W, %d) RGB/RGBA array makes its neighbourhood "
+        "operation cross colour channels. Process each channel separately or convert the image "
+        "to grayscale before calling this op; see docs/KNOWN_ISSUES.md §34. "
+        "The default policy preserves the historical numeric result but warns once per op; "
+        "extra_checks='on' or on_error='raise' refuses this input."
         % (op.name, op.in_sort, arr.shape[-1]))
 
 
@@ -2532,20 +2555,30 @@ def _check_input_range(v, op):
 #: 2-D 画像として読める 3-D 配列の最終軸の長さ(グレー 1 / RGB 3 / RGBA 4)。これ以外は体積。
 _IMAGE_LAST_AXIS_OK = (1, 3, 4)
 
+#: ``map::`` の辺が基底演算を積んだ ``seq<image>`` に適用する、画素独立な
+#: 2-D op。A stacked sequence is not a volume here: each slice is processed
+#: independently, so the direct array call is exactly the per-slice map.  Keep
+#: this in sync with ``tools/gen_op_facets.py``; the volume-axis regression test
+#: compares this set with the generated map edges.
+_STACK_POINTWISE_2D_OPS = frozenset(("companding_mu_law",))
+
 
 def _check_image_volume_axis(v, op):
-    """``extra_checks='on'`` のとき、image/region 用の op に**立体**(最終軸が 1/3/4 でない 3-D 配列)が渡るのを断る。
+    """Return the 3-D-volume-as-2-D-image error, or ``None``.
 
-    既定の挙動は変えない(opt-in)。``_NDIM_OK["image"] = (2, 3)`` は (H, W, 3) のカラー画像を通すために
-    3-D をわざと受けるが、その結果 8x8x8 のような**立体**も例外なしで通り、同じ形が返る
-    (docs/KNOWN_ISSUES.md §34 の同じ根 —— 色軸と空間軸を入口で区別していない)。
-    ここでは「最終軸が 1/3/4 の 3-D = カラー」「それ以外 = 立体」と読み、立体は volume 型の op へ導く。
-    Opt-in sibling of the range check: an (8, 8, 8) array is a volume, not a colour image; the 2-D op
-    would silently run it as a stack. Default behaviour unchanged.
+    ``_NDIM_OK["image"] = (2, 3)`` deliberately admits colour images, which also
+    admitted an ``(8, 8, 8)`` volume to 2-D ops. This is the same missing axis
+    distinction as the RGB channel problem in §34. The default policy preserves
+    the historical numerical result but warns once per op; ``extra_checks='on'``
+    and ``on_error='raise'`` reject it. Here a final axis of 1/3/4 is interpreted
+    as gray/RGB/RGBA; any other 3-D shape is a volume.
     """
     if op.in_sort not in ("image", "region"):
         return None
-    if _fssys().get_system("extra_checks") != "on":
+    # ``map::companding_mu_law`` は根拠付き seq<image> edge / a grounded
+    # seq<image> edge. The base op is pointwise, so (N,H,W) is exactly the
+    # per-2-D-slice map; this documented stack is not a 3-D spatial volume.
+    if op.name in _STACK_POINTWISE_2D_OPS:
         return None
     arr = v if isinstance(v, np.ndarray) else None
     if arr is None or arr.ndim != 3 or arr.shape[-1] in _IMAGE_LAST_AXIS_OK:
@@ -2553,8 +2586,9 @@ def _check_image_volume_axis(v, op):
     return ValueError(
         "op %r is a 2-D %s op but got a 3-D array of shape %s (last axis %d is not 1/3/4, so it is not a "
         "colour image). A volume needs a volume op (see fullseye.op_find); to run the 2-D op per slice, "
-        "loop over the first axis. extra_checks='on' refuses it; drop that system setting if the stack "
-        "is deliberate" % (op.name, op.in_sort, arr.shape, arr.shape[-1]))
+        "loop over the first axis. The default policy preserves the historical numeric result but warns "
+        "once per op; extra_checks='on' or on_error='raise' refuses this input."
+        % (op.name, op.in_sort, arr.shape, arr.shape[-1]))
 
 
 def _fssys():
@@ -2605,11 +2639,17 @@ def _annotate_raw(e, name, v) -> None:
 
 
 def _guard_input(v, op, policy):
-    err = (_check_input_empty(v, op) or _check_input_sort(v, op) or _check_channel_axis(v, op)
-           or _check_input_range(v, op) or _check_image_volume_axis(v, op))
+    channel_axis = _check_channel_axis(v, op)
+    volume_axis = _check_image_volume_axis(v, op)
+    err = (_check_input_empty(v, op) or _check_input_sort(v, op) or channel_axis
+           or _check_input_range(v, op) or volume_axis)
     if err is None:
         return
-    if policy == "raise":
+    # §34's opt-in is deliberately stronger than the normal fallback policy:
+    # the caller has asked the facade to distinguish colour/volume axes, so
+    # continuing with a plausible 2-D answer would contradict that request.
+    if (policy == "raise" or (_fssys().get_system("extra_checks") == "on"
+                               and (channel_axis is not None or volume_axis is not None))):
         raise err
     _bs.record(op.name, err, op.out_sort, source="input")
 
@@ -3517,6 +3557,12 @@ def _normalise_stage(i, st, a=0.5, b=0.5) -> tuple:
     if isinstance(st, str):
         name, sa, sb = st, a, b
     elif isinstance(st, dict):
+        if "op" in st and "name" in st and st["op"] != st["name"]:
+            raise TypeError(
+                "stage %d: 'op' is %r but 'name' is %r. It is refused because one stage must name exactly one "
+                "operator. Keep one key, or give both the same operator name. / stage %d: 'op' は %r、'name' は %r "
+                "です。1 段が指せる operator は 1 つだけなので拒否します。片方の key を残すか、両方を同じ operator 名にしてください。"
+                % (i, st["op"], st["name"], i, st["op"], st["name"]))
         name = st.get("op", st.get("name"))
         if not isinstance(name, str):
             raise TypeError("stage %d: a dict stage needs 'op' (or 'name'), got keys %s"

@@ -3205,7 +3205,10 @@ def install(win, tr, settings=None):
         dock.installEventFilter(esc)
         if key in PRINCIPAL:                     # D104: Qt refuses the close of a principal (Alt+F4, close())
             dock.setFeatures(dock.features() & ~QtWidgets.QDockWidget.DockWidgetClosable)
-        dock.visibilityChanged.connect(lambda _v: sync(win))
+        # Qt can emit visibilityChanged while tearing down the last dock, after
+        # the StudioWindow C++ object is gone. / 最後の dock の破棄中は窓の C++
+        # 本体が先に消えることがあるため、生存中だけ配置を同期する。
+        dock.visibilityChanged.connect(lambda _v: _alive(win) and sync(win))
         # 2026-11-15 (integration): the bar names the panel by its title also after the title changes
         # (the Python mode renames the code dock with its mode)
         dock.windowTitleChanged.connect(lambda t, btn=b: _alive(btn) and (

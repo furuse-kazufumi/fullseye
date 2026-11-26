@@ -70,7 +70,7 @@
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 10 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 505 本のうち、門が実際に走らせるもの 501 本。
+例 506 本のうち、門が実際に走らせるもの 501 本。
 
 ### 版ごとの op の数
 
@@ -151,18 +151,18 @@
 
 ## オペレータを探す
 
-**3,853 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **73 本の族ガイド**があります。次元ごとの入口:
+**3,857 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **73 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 947/947、型つき台帳 2883/2883、1 行ファサード `fullseye.<名前>` 770/1610。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 947/947、型つき台帳 2887/2887、1 行ファサード `fullseye.<名前>` 774/1629。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3853 本のうち、実行できる例が付いているのは **3814 本**(39 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3654 本**(199 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3853 本すべてにある。
+**ノートの中身の実測**: 3857 本のうち、実行できる例が付いているのは **3818 本**(39 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3658 本**(199 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3857 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
 | `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 964 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 750 | [INDEX](ops/drive/INDEX.md) |
 | `optics` — レンズ・収差・光線追跡・照明設計 | 506 | [INDEX](ops/optics/INDEX.md) · [ガイド](ops/optics/guides/optics_imaging.md) |
-| `3d` — 点群 / メッシュ / 体積 / SDF / 6-DoF | 378 | [INDEX](ops/3d/INDEX.md) |
+| `3d` — 点群 / メッシュ / 体積 / SDF / 6-DoF | 380 | [INDEX](ops/3d/INDEX.md) |
 | `math` — 数値・線形代数 | 115 | [INDEX](ops/math/INDEX.md) · [ガイド](ops/math/guides/math_metrology.md) |
 | `reprconv` — 表現の橋渡し(型と型のあいだ) | 63 | [INDEX](ops/reprconv/INDEX.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [ガイド](ops/segmentation/guides/halcon_segmentation.md) |
@@ -170,7 +170,7 @@
 | `oned` | 49 | [INDEX](ops/oned/INDEX.md) |
 | `mv` | 47 | [INDEX](ops/mv/INDEX.md) · [ガイド](ops/mv/guides/machine_vision_classics.md) |
 | `gfx2d` — 描画 | 44 | [INDEX](ops/gfx2d/INDEX.md) |
-| `tomography` — 断層 | 43 | [INDEX](ops/tomography/INDEX.md) |
+| `tomography` — 断層 | 44 | [INDEX](ops/tomography/INDEX.md) |
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [ガイド](ops/generative/guides/generative_art.md) |
 | `imgmetrics` — 画質の指標 | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [ガイド](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
@@ -217,7 +217,7 @@
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [ガイド](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` — CAD 対応づけ | 4 | [INDEX](ops/cadmap/INDEX.md) |
-| `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
+| `fit` | 4 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 名前で引くなら `py -3.11 imgevolve.py ops --search edge`、全 op の対応表は [OP_CATALOG.md](OP_CATALOG.md)、次元をまたぐ入口は [ops/INDEX.md](ops/INDEX.md)。
@@ -360,6 +360,8 @@ py -3.11 imgevolve.py run pipeline.json in.png --out result.png
 py -3.11 imgevolve.py coverage                  # honest な被覆数
 ```
 
+Studio は標準依存 `PySide6-Essentials>=6.5,!=6.12.0` を使います。Linux で SIGABRT が再現した 6.12.0 は除外しています。
+
 Python から:
 
 ```python
@@ -380,9 +382,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 351 本
+## ドキュメント地図 — 全 353 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,853 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,857 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(13)
 
@@ -473,7 +475,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 | 文書 | 内容 |
 |---|---|
-| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Known Issues — 調べた欠陥の記録(2026-08-30 開始、最終の節は §52 = 2026-09-26) |
+| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Known Issues — 調べた欠陥の記録(2026-08-30 開始、最終の節は §53 = 2026-11-24) |
 | [`STATUS.md`](STATUS.md) | imgevolve — status / plan (plan_ref) |
 | [`ACCURACY_BENCH.md`](ACCURACY_BENCH.md) | Accuracy benchmark — champion vs null (holdout) |
 | [`BENCH_VS_OPENCV.md`](BENCH_VS_OPENCV.md) | imgevolve GPU op vs OpenCV(CPU)処理速度ベンチ |
@@ -526,7 +528,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(264)
+**そのほか**(266)
 
 | 文書 | 内容 |
 |---|---|
@@ -542,12 +544,13 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`AI_RAG_GUIDE.tw.md`](AI_RAG_GUIDE.tw.md) | 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code） |
 | [`AI_RAG_GUIDE.zh.md`](AI_RAG_GUIDE.zh.md) | 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code） |
 | [`BENCH_VS_OPENCV.en.md`](BENCH_VS_OPENCV.en.md) | imgevolve GPU op vs OpenCV (CPU) throughput benchmark |
+| [`BOP_STAGE1_VALIDATION.md`](BOP_STAGE1_VALIDATION.md) | BOP 第1段の公式評価検証 |
 | [`CAPABILITIES.en.md`](CAPABILITIES.en.md) | What Fullseye can do |
 | [`CAPABILITIES.md`](CAPABILITIES.md) | Fullseye でできること |
 | [`CHAIN_FUZZ.en.md`](CHAIN_FUZZ.en.md) | Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains |
-| [`C_API.md`](C_API.md) | Fullseye C SDK compatibility |
+| [`C_API.md`](C_API.md) | Fullseye C/C++ SDK |
 | [`C_API_OPS.md`](C_API_OPS.md) | C SDK callable operators |
-| [`C_API_SDK.md`](C_API_SDK.md) | C/C++ SDK runtime requirement |
+| [`C_API_SDK.md`](C_API_SDK.md) | C/C++ SDK の導入 |
 | [`DESIGN_NOTES.de.md`](DESIGN_NOTES.de.md) | Fullseye-Entwurfsnotizen (aus den ★-Kommentaren im Quellcode erzeugt) |
 | [`DESIGN_NOTES.en.md`](DESIGN_NOTES.en.md) | Fullseye design notes (generated from the ★ comments in the source) |
 | [`DESIGN_NOTES.ko.md`](DESIGN_NOTES.ko.md) | Fullseye 설계 판단 모음(소스의 ★ 주석에서 생성) |
@@ -592,6 +595,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`INSTALL.ko.md`](INSTALL.ko.md) | 설치 / 환경 구축 완전 가이드 |
 | [`INSTALL.tw.md`](INSTALL.tw.md) | 安裝 / 環境建置完整指南 |
 | [`INSTALL.zh.md`](INSTALL.zh.md) | 安装 / 环境搭建完全指南 |
+| [`INSTALLATION.md`](INSTALLATION.md) | Portable full installation (2026-11-24 wheel audit) |
 | [`MATCH_3D_MATRIX.en.md`](MATCH_3D_MATRIX.en.md) | fullseye 3D Vision Toolkit (for Physical AI, differentiating from HALCON/OpenCV) |
 | [`MATURITY.md`](MATURITY.md) | 成熟度台帳(Maturity) |
 | [`MCP.md`](MCP.md) | Fullseye を MCP(Model Context Protocol)から使う |

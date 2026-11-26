@@ -65,7 +65,10 @@ jobs:
           ASAN_OPTIONS: detect_leaks=1:fast_unwind_on_malloc=0:malloc_context_size=64
           LSAN_OPTIONS: suppressions=${{ github.workspace }}/native/lsan.supp:print_suppressions=1
           FULLSEYE_C_API_LIBRARY: ${{ github.workspace }}/build-c-api-asan/libfullseye.so
+        # pytest loads the C++ ABI bridge with ctypes, after ASan has started. Preload its
+        # C++ exception runtime too, so ASan can intercept __cxa_throw when a Python
+        # validation error crosses pybind11. (Kept outside run: so no comment leads the script.)
         run: |
-          export LD_PRELOAD="$(gcc -print-file-name=libasan.so)"
+          export LD_PRELOAD="$(gcc -print-file-name=libasan.so):$(g++ -print-file-name=libstdc++.so)"
           ctest --test-dir build-c-api-asan --output-on-failure
           python -m pytest tests/test_c_api_pybind11.py -q

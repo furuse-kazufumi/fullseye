@@ -18,6 +18,15 @@ from setuptools.command.sdist import sdist as _sdist
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 _REL_ARCHIVE = os.path.join("studio_assets", "op_help_html.tar.xz")
+_SDK_PAYLOAD = (
+    ("fullseye.h", os.path.join("fullseye", "sdk", "include", "fullseye", "fullseye.h")),
+    ("fullseye.hpp", os.path.join("fullseye", "sdk", "include", "fullseye", "fullseye.hpp")),
+    ("fullseye_opencv.hpp", os.path.join("fullseye", "sdk", "include", "fullseye", "fullseye_opencv.hpp")),
+    ("fullseye_abi.h", os.path.join("fullseye", "sdk", "include", "fullseye", "fullseye_abi.h")),
+    (os.path.join("native", "fullseye_c_api.cpp"),
+     os.path.join("fullseye", "sdk", "src", "fullseye_c_api.cpp")),
+)
+_REL_ABI_HEADER = os.path.join("fullseye", "include", "fullseye_abi.h")
 
 
 def _has_html(d):
@@ -46,6 +55,25 @@ class build_py(_build_py):
             print("helpstore: copied the sdist's archive into %s" % dst)
         else:
             raise SystemExit("helpstore: no op_help HTML and no %s —— 書庫の無い wheel は作らない" % _REL_ARCHIVE)
+        # The native SDK is source-only package data. Pip installation copies
+        # these files but never invokes a compiler; a consumer's CMake build
+        # compiles the bridge for its own ABI. / SDK はソース同梱だけで、pip
+        # 導入時にコンパイルしない。利用者の CMake が自分の ABI 向けに組む。
+        root = os.path.dirname(os.path.abspath(__file__))
+        for source_rel, target_rel in _SDK_PAYLOAD:
+            source = os.path.join(root, source_rel)
+            target = os.path.join(self.build_lib, target_rel)
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            self.copy_file(source, target)
+        # C/C++ consumers of ``pip install fullseye`` need the public ABI header too.
+        # Keep the repository-root header authoritative; this is a build-time copy so
+        # the source tree never has two editable copies that can drift.
+        header = os.path.join(os.path.dirname(__file__), "fullseye_abi.h")
+        if not os.path.isfile(header):
+            raise SystemExit("C/C++ SDK header is missing: %s" % header)
+        header_dst = os.path.join(self.build_lib, _REL_ABI_HEADER)
+        os.makedirs(os.path.dirname(header_dst), exist_ok=True)
+        shutil.copyfile(header, header_dst)
 
 
 class sdist(_sdist):
@@ -57,6 +85,12 @@ class sdist(_sdist):
         dst = os.path.join(base_dir, _REL_ARCHIVE)
         n, size = helpstore.pack_archive(helpstore.HELP_DIR, dst)
         print("helpstore: packed %d help pages into the sdist (%.2f MB)" % (n, size / 1e6))
+        header = os.path.join(base_dir, "fullseye_abi.h")
+        if not os.path.isfile(header):
+            raise SystemExit("C/C++ SDK header is missing from sdist inputs: %s" % header)
+        header_dst = os.path.join(base_dir, _REL_ABI_HEADER)
+        os.makedirs(os.path.dirname(header_dst), exist_ok=True)
+        shutil.copyfile(header, header_dst)
 
 
 setup(cmdclass={"build_py": build_py, "sdist": sdist})
