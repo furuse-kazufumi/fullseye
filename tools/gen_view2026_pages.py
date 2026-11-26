@@ -70,6 +70,17 @@ DATA = BASE / "exhibits.json"
 STORY_DATA = BASE / "story_gifs.json"
 GH_EXAMPLE = "%s/blob/master/examples/%s.py"
 QIITA = "https://qiita.com/furuse-kazufumi/items/"
+C_API_DOC_URL = "https://github.com/furuse-kazufumi/fullseye/blob/master/docs/C_API.md"
+C_API_OPS_PATH = Path(__file__).resolve().parents[1] / "fullseye" / "data" / "C_API_OPS.json"
+
+
+def c_api_callable_count() -> int:
+    """C SDK 台帳(生成物)の n_callable。ページの数は手で書かず、ここから差し込む。"""
+    ledger = json.loads(C_API_OPS_PATH.read_text(encoding="utf-8"))
+    n = ledger["n_callable"]
+    if n != sum(row["callable"] for row in ledger["ops"]):
+        raise ValueError("C_API_OPS.json: n_callable does not match the per-op rows")
+    return n
 JA_MARK = "_(ja)_"                     # tools/i18n_status.py の印と同じ
 PIXEL = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
 STORIES = json.loads(STORY_DATA.read_text(encoding="utf-8"))["entries"] if STORY_DATA.is_file() else {}
@@ -774,8 +785,10 @@ def _intro(d: dict, lang: str, up: str, ui: dict) -> list[str]:
     if lang in ABOUT_LANGS:
         link = '<p><a href="about.html">%s</a></p>' % ("Fullseye とは(読み物)" if lang == "ja" else "About Fullseye (reading)")
     alt = html.escape(ui["intro_alt"], quote=True)
+    c_api = '<p>%s <a href="%s"><code>C_API.md</code></a></p>' % (_esc(ui["c_api_preview"].replace("{n_c_api}", str(c_api_callable_count()))), C_API_DOC_URL)
     return ['<div class="vintro"><img src="%s%s" alt="%s" width="%d" height="%d">'
-            '<div class="vt"><p>%s</p>%s</div></div>' % (up, src, alt, w, h, _esc(ui["about"]), link), ""]
+            '<div class="vt"><p>%s</p>%s%s</div></div>' %
+            (up, src, alt, w, h, _esc(ui["about"]), c_api, link), ""]
 
 
 def _card(d: dict, e: dict, lang: str, up: str, docs: str, media, body: str, label: str | None = None,
