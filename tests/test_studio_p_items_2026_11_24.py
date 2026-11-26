@@ -275,12 +275,30 @@ win, _model = studio.build_window()
 win.resize(1280, 860)
 win.show()
 deadline = time.monotonic() + 8.0
-while not (win.isVisible() and win._search_ui["list"].viewport().width() > 0):
+
+
+def _settled():
+    # 2026-11-26: Studio 1.2.0 の初回の配置は「画像 + コード」で、Operators のパネルは左端のパネルの帯から開く
+    # (tests/test_studio_first_minute_2026_11_12.py)。帯のボタンで開いた後、検索欄が見えて窓の中に入るまでを
+    # 条件で待つ(固定 sleep ではない)。
+    # The first-run arrangement is image + code; Operators opens from the panel bar. Wait on the condition.
+    edit = win._search_ui["edit"]
+    if not (win.isVisible() and edit.isVisible() and win._search_ui["list"].viewport().width() > 0):
+        return False
+    corner = edit.mapTo(win, edit.rect().bottomRight())
+    return 0 < corner.x() <= win.width() and 0 < corner.y() <= win.height()
+
+
+app.processEvents()
+if win._docks["operators"].isHidden():
+    win._panels["buttons"]["operators"].click()
+while not _settled():
     app.processEvents(QtCore.QEventLoop.AllEvents, 50)
     if time.monotonic() >= deadline:
         raise RuntimeError("Studio did not become visible before the condition timeout")
 pixmap = win.grab()
 search = win._search_ui["edit"]
+assert search.isVisible() and not search.visibleRegion().isEmpty(), "the search box is not on screen"
 bottom_right = search.mapTo(win, search.rect().bottomRight())
 print(json.dumps({
     "dpr": pixmap.devicePixelRatio(),
