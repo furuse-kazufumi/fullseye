@@ -48,8 +48,7 @@ def scattering_kernel(diameters=DIAMETERS, samples=25):
     for i, (a, b) in enumerate(zip(THETA_EDGES[:-1], THETA_EDGES[1:])):
         th = np.geomspace(a, b, samples)
         for j, d in enumerate(diameters):
-            integrate = getattr(np, "trapezoid", np.trapz)
-            k[i, j] = integrate(airy_intensity(th, d) * 2*np.pi*np.sin(th), th)
+            k[i, j] = np.trapezoid(airy_intensity(th, d) * 2*np.pi*np.sin(th), th)
     return k / np.maximum(k.sum(axis=0, keepdims=True), 1e-30)
 
 
