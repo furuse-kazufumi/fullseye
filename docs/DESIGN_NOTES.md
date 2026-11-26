@@ -3628,9 +3628,10 @@
 
 ## `tools/gen_view2026_pages.py`
 
-- **L278** — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
-- **L345** — ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
-- **L348** — ★2026-11-12: 本ページ(ja/en)に載せるのは tier が showcase / featured の展示だけ(MAIN_LIMIT 本まで)。
+- **L164** — ★2026-11-26(初めて使う人の手順を新しい環境で実走): 以前は `pip install fullseye` → clone → 実行 の順だった。 PyPI の版(当時 1.1.1 = numpy+scipy だけ)と clone した master のコードが混ざり、 焦点合成の PoC が使う `xcv2_lap_var`(OpenCV)が無くて exit 1(3 秒)で落ちた。 clone した木そのものを `[opencv]` 付きで入れると、新しい venv で PASS・23 秒・図 7 枚。 順序と extra は tests/test_view2026_try_steps.py が見張る。
+- **L283** — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
+- **L350** — ★2026-11-08: 目玉の集合と並びの正本は featured_ids(build_view2026_featured_batch.py もこれだけを目玉にする)。
+- **L353** — ★2026-11-12: 本ページ(ja/en)に載せるのは tier が showcase / featured の展示だけ(MAIN_LIMIT 本まで)。
 
 ## `tools/gen_view2026_story_gifs.py`
 
