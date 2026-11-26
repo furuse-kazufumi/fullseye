@@ -158,9 +158,9 @@ See [Extras: more PoCs](more.md), too.
 <summary><b>Try it</b> (Python 3.11)</summary>
 
 ```
-pip install fullseye
 git clone https://github.com/furuse-kazufumi/fullseye
 cd fullseye
+pip install -e ".[opencv]"
 python examples/poc_focus_stacking.py
 ```
 
