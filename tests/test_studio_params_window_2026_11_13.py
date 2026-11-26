@@ -1303,13 +1303,20 @@ def test_main_refuses_a_dangling_lang_option(capsys):
 from PySide6.QtTest import QTest  # noqa: E402
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def fusion(qapp):
-    """見た目と配置の門は Qt の様式を Fusion に固定して数える(設計書 P14-9)。"""
+    """見た目と配置の門は Qt の様式を Fusion に固定して数える(設計書 P14-9)。
+
+    module scope: ``setStyle`` は生きている全ウィジェットに様式を当て直す。試験ごとに往復させると、
+    同じプロセスで先に走った試験のウィジェットの数だけ遅くなり、CI の shard が時間切れになった(2026-11-27)。
+    すでに Fusion なら何もしない。"""
     before = qapp.style().name()
-    qapp.setStyle("Fusion")
+    changed = before.lower() != "fusion"
+    if changed:
+        qapp.setStyle("Fusion")
     yield qapp
-    qapp.setStyle(before)
+    if changed:
+        qapp.setStyle(before)
 
 
 def _collect_real_boxes(monkeypatch, key):
