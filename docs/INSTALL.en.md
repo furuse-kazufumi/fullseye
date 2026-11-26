@@ -20,7 +20,7 @@ optional. Without an extra backend, only the operators specific to that backend 
 |---|---|
 | Python | **3.11** (`pyproject.toml` sets `requires-python = ">=3.11"`; development and testing use 3.11) |
 | Run command | Windows: `py -3.11` / Linux: `python3.11` |
-| Standard dependencies | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0` (pulled in automatically by `pip install -e .`) |
+| Standard dependencies | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5,!=6.12.0`, `Pillow>=13.0` (pulled in automatically by `pip install -e .`) |
 | OS | Windows 10/11, Linux (embedded included). macOS works too, wherever Python runs |
 
 ---
@@ -47,6 +47,8 @@ Additional backends are selected through **extras** (defined in `pyproject.toml`
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow, etc.), mahotas-derived (Zernike / pftas, etc.) |
 | `gui` | none (Studio is standard) | compatibility alias; **Fullseye Studio** (`studio.py` / `fullseye-studio`) starts after `pip install fullseye` |
 | `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile` (no CuPy; the full GPU set is `fullseye[gpu]`. Per PyTorch's install guide, the default torch on Linux is the CUDA build and may bring CUDA components (nvidia-* wheels) with it. For CPU-only use, install torch first from the CPU-only index: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | all operators and backends |
+
+Studio's standard requirement is `PySide6-Essentials>=6.5,!=6.12.0`. Version 6.12.0 is excluded because it reproducibly causes SIGABRT on Linux.
 
 Rules of thumb:
 

@@ -15,7 +15,7 @@ Fullseye 的 Python API 核心使用 **numpy + scipy**。标准的 `pip install 
 |---|---|
 | Python | **3.11**(`pyproject.toml` 中 `requires-python = ">=3.11"`；开发与验证使用 3.11) |
 | 执行命令 | Windows: `py -3.11` / Linux: `python3.11` |
-| 标准依赖 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0`(`pip install -e .` 会自动安装) |
+| 标准依赖 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5,!=6.12.0`, `Pillow>=13.0`(`pip install -e .` 会自动安装) |
 | 操作系统 | Windows 10/11、Linux(含嵌入式)。只要 Python 能运行，macOS 也可以 |
 
 ---
@@ -41,6 +41,8 @@ py -3.11 -m pip install -e .            # 标准：Python API + Studio + Pillow�
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 等)、源自 mahotas(Zernike/pftas 等) |
 | `gui` | 无（Studio 为标准依赖） | 兼容别名；`pip install fullseye` 后即可启动 **Fullseye Studio** |
 | `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`(不含 CuPy；完整的 GPU 套件请用 `fullseye[gpu]`。按 PyTorch 的安装说明，Linux 上默认的 torch 是 CUDA 版，可能会一并装入 CUDA 组件(nvidia-* 的 wheel)。只用 CPU 时，请先从 CPU 版的来源安装 torch：`pip install torch --index-url https://download.pytorch.org/whl/cpu`) | 全部算子与后端 |
+
+Studio 的标准要求是 `PySide6-Essentials>=6.5,!=6.12.0`。由于 6.12.0 在 Linux 上可复现 SIGABRT，因此将其排除。
 
 使用建议：
 
