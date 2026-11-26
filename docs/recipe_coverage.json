@@ -1,18 +1,16 @@
 {
  "summary": {
-  "recipes": 275,
+  "recipes": 276,
   "recipes_py": 25,
-  "recipebook": 250,
-  "multi_stage": 224,
+  "recipebook": 251,
+  "multi_stage": 225,
   "families_total": 61,
-  "families_covered": 60,
-  "families_uncovered": [
-   "pharma"
-  ],
+  "families_covered": 61,
+  "families_uncovered": [],
   "task_class": {
    "3d": 38,
    "analysis": 24,
-   "inspection": 60,
+   "inspection": 61,
    "measurement": 74,
    "optics": 8,
    "preprocess": 38,
@@ -46,12 +44,12 @@
   },
   "runner": {
    "mcp": 132,
-   "python": 143
+   "python": 144
   },
-  "truth_gated": 251,
+  "truth_gated": 252,
   "type_cuts_total": 0,
   "recipes_with_type_cuts": 0,
-  "distinct_ops": 420,
+  "distinct_ops": 422,
   "categories_2d_total": 49,
   "categories_2d_covered": 25,
   "categories_2d_uncovered": [
@@ -83,7 +81,7 @@
   "gpu": {
    "snapshot_commit": "a3f91eae72f851e870e6a45294ecfc44ded9cb10",
    "recipes_measured": 247,
-   "recipes_unmeasured": 28,
+   "recipes_unmeasured": 29,
    "recipes_with_gpu_stage": 127,
    "switches_total": 96,
    "switch_histogram": {
@@ -326,8 +324,8 @@
   {
    "family": "pharma",
    "ops": 2,
-   "recipes": 0,
-   "ops_used": 0
+   "recipes": 1,
+   "ops_used": 2
   },
   {
    "family": "photon",
@@ -5070,6 +5068,27 @@
    "gpu_stages": 1,
    "gpu_unmeasured_ops": [],
    "gpu_switches": 1
+  },
+  {
+   "name": "Inspect — track moving matter after a pharmaceutical vial spin-stop",
+   "source": "recipebook",
+   "family": "pharma",
+   "task_class": "inspection",
+   "halcon": null,
+   "runner": "python",
+   "stages": 2,
+   "ops": [
+    "vial_spin_stop_sequence",
+    "track_moving_particles"
+   ],
+   "type_cuts": 0,
+   "truth_gate": true,
+   "gpu_stages": null,
+   "gpu_unmeasured_ops": [
+    "vial_spin_stop_sequence",
+    "track_moving_particles"
+   ],
+   "gpu_switches": null
   },
   {
    "name": "Calibrate — camera gain from a captured test chart (simulation calibration)",
