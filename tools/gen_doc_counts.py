@@ -75,11 +75,18 @@ def generate() -> None:
     # 冒頭だけ。後段の生成ブロックにある網羅率の分母などは、その生成器の責務。
     for path in sorted(DOCS.glob("README*.md")):
         body = path.read_text(encoding="utf-8")
-        head, sep, tail = body.partition("\n---\n")
+        intro_start = 0
+        if body.startswith("---\n"):
+            frontmatter_end = body.find("\n---\n", 4)
+            if frontmatter_end < 0:
+                raise RuntimeError("%s: front matter が閉じていない" % path)
+            intro_start = frontmatter_end + len("\n---\n")
+        prefix = body[:intro_start]
+        head, sep, tail = body[intro_start:].partition("\n---\n")
         changed, n = re.subn(r"\*\*\d+\*\*", "**%d**" % nops, head, count=1)
         if n != 1:
             raise RuntimeError("%s: 冒頭の op 件数が %d 件" % (path, n))
-        path.write_text(changed + sep + tail, encoding="utf-8", newline="\n")
+        path.write_text(prefix + changed + sep + tail, encoding="utf-8", newline="\n")
 
     for path in sorted(DOCS.glob("AI_RAG_GUIDE*.md")):
         lang = path.name.split(".")[1] if path.name.count(".") > 1 else "ja"
