@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: a41db9bf8a6f -->
+---
+title: "Installation / Environment Setup — पूरी गाइड"
+description: "Fullseye के installation विकल्प, optional dependencies और verification steps।"
+lang: hi
+---
+<!-- i18n-source-sha: d8305ffb363f -->
 # Installation / Environment Setup — पूरी गाइड
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · **हिन्दी**

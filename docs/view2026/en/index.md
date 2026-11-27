@@ -1,3 +1,10 @@
+---
+title: "ViEW2026 presentation — Fullseye"
+description: "Explore the Fullseye image-inspection, 3-D measurement, and physics-simulation examples presented at ViEW2026."
+lang: en
+image: /view2026/thumbs/fullseye_intro.jpg
+---
+
 <div class="vlang" markdown="1">
 
 [日本語](../index.md) · **English** · [简体中文](../zh/index.md) · [繁體中文](../tw/index.md) · [한국어](../ko/index.md) · [Deutsch](../de/index.md) · [हिन्दी](../hi/index.md) · [Français](../fr/index.md)

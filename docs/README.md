@@ -1,3 +1,8 @@
+---
+title: "Fullseye ドキュメント索引"
+description: "Fullseyeの文書索引と、導入・実行・Studio利用の入口をまとめています。"
+lang: ja
+---
 # Fullseye ドキュメント索引
 
 <img src="assets/img/fullseye_256.png" alt="Fullseye のロゴ" width="80" height="80">

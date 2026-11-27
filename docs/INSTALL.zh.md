@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: a41db9bf8a6f -->
+---
+title: "安装 / 环境搭建完全指南"
+description: "本页说明Fullseye的安装方式、可选依赖项和验证步骤。"
+lang: zh-CN
+---
+<!-- i18n-source-sha: d8305ffb363f -->
 # 安装 / 环境搭建完全指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · **简体中文** · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)

@@ -1,3 +1,8 @@
+---
+title: "インストール / 環境構築 完全ガイド"
+description: "Fullseyeのインストール方法、追加依存関係、導入確認を説明します。"
+lang: ja
+---
 # インストール / 環境構築 完全ガイド
 
 Fullseye（作業名 imgevolve）を、開発機から組み込み Linux まで、目的に応じて構築するためのガイドです。5 分で動かすだけなら [GETTING_STARTED.md](GETTING_STARTED.md) が近道です。

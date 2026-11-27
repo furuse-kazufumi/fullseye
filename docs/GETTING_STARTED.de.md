@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: 4d7dab5a96bd -->
+---
+title: "Erste Schritte (in 5 Minuten startklar)"
+description: "Installieren Sie Fullseye und führen Sie in fünf Minuten Ihren ersten Operator aus."
+lang: de
+---
+<!-- i18n-source-sha: 9490788b3ffb -->
 # Erste Schritte (in 5 Minuten startklar)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · **Deutsch** · [हिन्दी](./GETTING_STARTED.hi.md)

@@ -1,3 +1,8 @@
+---
+title: "Fullseye 文件索引"
+description: "本頁彙整Fullseye文件索引，以及安裝、執行與Studio使用入口。"
+lang: zh-Hant
+---
 <!-- i18n-source-sha: c3e09847755f -->
 # Fullseye 文件索引
 

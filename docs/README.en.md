@@ -1,3 +1,8 @@
+---
+title: "Fullseye Documentation Index"
+description: "This page is the Fullseye documentation index and starting point for installation, execution, and Studio."
+lang: en
+---
 <!-- i18n-source-sha: c3e09847755f -->
 # Fullseye Documentation Index
 

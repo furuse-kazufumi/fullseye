@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: a41db9bf8a6f -->
+---
+title: "安裝 / 環境建置完整指南"
+description: "本頁說明Fullseye的安裝方式、選用相依套件與驗證步驟。"
+lang: zh-Hant
+---
+<!-- i18n-source-sha: d8305ffb363f -->
 # 安裝 / 環境建置完整指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)

@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: 1e1e22bcd08c -->
+---
+title: "The complete guide to Fullseye Studio"
+description: "A guide to Fullseye Studio features and keyboard controls."
+lang: en
+---
+<!-- i18n-source-sha: ff004dd0e885 -->
 # The complete guide to Fullseye Studio
 
 A purpose search groups candidates by whether they fit the current input, need preprocessing, or belong elsewhere. You can try a candidate once without adding a stage. Failures in the Problems pane show the cause, location, and concrete next actions for reselecting input, comparing values, opening the log, editing a knob, or finding a suggested stage.

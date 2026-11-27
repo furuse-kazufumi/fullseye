@@ -1,3 +1,8 @@
+---
+title: "Fullseye 文档索引"
+description: "本页汇总Fullseye文档索引以及安装、运行和Studio使用入口。"
+lang: zh-CN
+---
 <!-- i18n-source-sha: c3e09847755f -->
 # Fullseye 文档索引
 

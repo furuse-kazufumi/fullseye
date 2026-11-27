@@ -39,6 +39,19 @@ def test_committed_pages_are_current():
     assert G.main(["--check"]) == 0
 
 
+def test_pages_have_localized_sharing_metadata():
+    """共有カードの題・説明・言語・画像は、8言語の生成物に直接入れる。"""
+    d = G.load()
+    for lang in d["langs"]:
+        for text in (G.build(d, lang), G.build_more(d, lang)):
+            front = text.split("---", 2)[1]
+            title, description = G.PAGE_META[lang]
+            assert "lang: " + ({"zh": "zh-CN", "tw": "zh-Hant"}.get(lang, lang)) in front
+            assert "description:" in front and "image: /view2026/thumbs/fullseye_intro.jpg" in front
+            assert title in front or G.MORE_TEXT[lang]["title"] in front
+            assert description in front or G.MORE_TEXT[lang]["intro"] in front
+
+
 def test_every_capability_doc_is_on_every_page():
     caps = G.capabilities()
     assert len(caps) >= 30, "docs/capabilities/ の件数が縮んでいる"

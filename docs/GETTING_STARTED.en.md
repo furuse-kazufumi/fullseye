@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: 4d7dab5a96bd -->
+---
+title: "Getting started (running in 5 minutes)"
+description: "Install Fullseye and run your first operator in five minutes."
+lang: en
+---
+<!-- i18n-source-sha: 9490788b3ffb -->
 # Getting started (running in 5 minutes)
 
 [日本語](./GETTING_STARTED.md) · **English** · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)

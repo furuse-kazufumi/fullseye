@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: 1e1e22bcd08c -->
+---
+title: "Fullseye Studio 完全指南"
+description: "本指南介绍Fullseye Studio的功能和键盘操作。"
+lang: zh-CN
+---
+<!-- i18n-source-sha: ff004dd0e885 -->
 # Fullseye Studio 完全指南
 
 繁重处理不会冻结窗口。底部区域显示当前阶段和进度；停止请求会在下一个阶段边界得到确认。若运行期间设置发生变化，界面会标明显示结果的代次，并可选择查看旧设置的完成结果或用当前设置重新运行。

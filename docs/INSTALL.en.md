@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: a41db9bf8a6f -->
+---
+title: "Installation / Environment Setup — Complete Guide"
+description: "Fullseye installation options, optional dependencies, and verification steps."
+lang: en
+---
+<!-- i18n-source-sha: d8305ffb363f -->
 # Installation / Environment Setup — Complete Guide
 
 [日本語](./INSTALL.md) · **English** · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)

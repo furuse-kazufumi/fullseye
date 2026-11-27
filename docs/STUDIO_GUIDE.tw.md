@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: 1e1e22bcd08c -->
+---
+title: "Fullseye Studio 完全指南"
+description: "本指南介紹Fullseye Studio的功能與鍵盤操作。"
+lang: zh-Hant
+---
+<!-- i18n-source-sha: ff004dd0e885 -->
 # Fullseye Studio 完全指南
 
 繁重處理不會凍結視窗。底部區域顯示目前階段與進度；停止要求會在下一個階段邊界確認。若執行期間設定有變，介面會標示顯示結果的世代，並可選擇查看舊設定的完成結果或用目前設定重新執行。

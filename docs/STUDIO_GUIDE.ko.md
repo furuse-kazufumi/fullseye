@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: 1e1e22bcd08c -->
+---
+title: "Fullseye Studio 완전 가이드"
+description: "Fullseye Studio 기능과 키보드 조작을 설명하는 안내서입니다."
+lang: ko
+---
+<!-- i18n-source-sha: ff004dd0e885 -->
 # Fullseye Studio 완전 가이드
 
 무거운 처리는 창을 멈추지 않고 실행됩니다. 아래 영역에는 현재 단계와 진행률이 표시되며, 중지 요청은 다음 단계 경계에서 확인됩니다. 실행 중 설정이 바뀌면 표시 결과의 세대를 밝히고, 이전 설정의 완료 결과를 보거나 현재 설정으로 다시 실행할 수 있습니다.

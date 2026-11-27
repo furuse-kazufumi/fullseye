@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: 4d7dab5a96bd -->
+---
+title: "शुरुआत करें (5 मिनट में चालू)"
+description: "Fullseye इंस्टॉल करके पाँच मिनट में अपना पहला operator चलाने की प्रक्रिया।"
+lang: hi
+---
+<!-- i18n-source-sha: 9490788b3ffb -->
 # शुरुआत करें (5 मिनट में चालू)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · **हिन्दी**

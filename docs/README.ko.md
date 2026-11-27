@@ -1,3 +1,8 @@
+---
+title: "Fullseye 문서 색인"
+description: "Fullseye 문서 색인과 설치·실행·Studio 사용의 시작점을 정리한 페이지입니다."
+lang: ko
+---
 <!-- i18n-source-sha: c3e09847755f -->
 # Fullseye 문서 색인
 

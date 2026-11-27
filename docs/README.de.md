@@ -1,3 +1,8 @@
+---
+title: "Fullseye Dokumentationsindex"
+description: "Diese Seite bündelt den Fullseye-Dokumentationsindex und die Einstiege in Installation, Ausführung und Studio."
+lang: de
+---
 <!-- i18n-source-sha: c3e09847755f -->
 # Fullseye Dokumentationsindex
 

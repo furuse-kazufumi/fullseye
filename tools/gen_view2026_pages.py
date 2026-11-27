@@ -708,6 +708,31 @@ MORE_TEXT = {
     },
 }
 
+#: 公開ページの共有カード。題には所属名を入れず、ViEW2026 は各言語で「発表」とする。
+#: Sharing-card metadata. Titles name the ViEW2026 presentation, never an affiliation.
+PAGE_META = {
+    "ja": ("ViEW2026 発表 — Fullseye", "ViEW2026で発表するFullseyeの画像検査・三次元計測・物理シミュレーション事例を紹介します。"),
+    "en": ("ViEW2026 presentation — Fullseye", "Explore the Fullseye image-inspection, 3-D measurement, and physics-simulation examples presented at ViEW2026."),
+    "zh": ("ViEW2026 发表 — Fullseye", "本页介绍ViEW2026上发表的Fullseye图像检测、三维测量与物理仿真实例。"),
+    "tw": ("ViEW2026 發表 — Fullseye", "本頁介紹ViEW2026上發表的Fullseye影像檢測、三維量測與物理模擬實例。"),
+    "ko": ("ViEW2026 발표 — Fullseye", "ViEW2026에서 발표하는Fullseye의 영상 검사·3차원 계측·물리 시뮬레이션 사례를 소개합니다."),
+    "de": ("ViEW2026-Präsentation — Fullseye", "Diese Seite zeigt die auf der ViEW2026 präsentierten Fullseye-Beispiele für Bildprüfung, 3-D-Messung und Physiksimulation."),
+    "hi": ("ViEW2026 प्रस्तुति — Fullseye", "यह पृष्ठViEW2026 में प्रस्तुतFullseye के image inspection, 3-D measurement और physics simulation उदाहरण दिखाता है।"),
+    "fr": ("Présentation ViEW2026 — Fullseye", "Cette page présente les exemples Fullseye d’inspection d’images, de mesure 3D et de simulation physique présentés à ViEW2026."),
+}
+
+
+def _front_matter(lang: str, *, more: bool = False) -> list[str]:
+    """ページ固有の SEO 情報。 / Page-specific SEO metadata."""
+    title, description = PAGE_META[lang]
+    if more:
+        title = MORE_TEXT[lang]["title"] + " — ViEW2026"
+        description = MORE_TEXT[lang]["intro"]
+    yaml_lang = {"zh": "zh-CN", "tw": "zh-Hant"}.get(lang, lang)
+    return ["---", "title: %s" % json.dumps(title, ensure_ascii=False),
+            "description: %s" % json.dumps(description, ensure_ascii=False),
+            "lang: %s" % yaml_lang, "image: /view2026/thumbs/fullseye_intro.jpg", "---", ""]
+
 
 def youtube_url_for(e: dict, lang: str) -> str:
     """展示の YouTube URL を言語別に解決する。未登録なら空文字。"""
@@ -1019,7 +1044,7 @@ def build(d: dict, lang: str) -> str:
         name = d["ui"]["lang_name"][l]
         sw.append("**%s**" % name if l == lang else
                   "[%s](%s)" % (name, up + ("index.md" if l == "ja" else l + "/index.md")))
-    out = ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
+    out = _front_matter(lang) + ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
            "# Fullseye — ViEW2026", "", ui["session"], ""]
     out += _intro(d, lang, up, ui)
     out += [ui["tap"], ""]
@@ -1077,7 +1102,7 @@ def build_more(d: dict, lang: str) -> str:
         name = d["ui"]["lang_name"][l]
         sw.append("**%s**" % name if l == lang else
                   "[%s](%s)" % (name, up + ("more.md" if l == "ja" else l + "/more.md")))
-    out = ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
+    out = _front_matter(lang, more=True) + ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
            "# " + MORE_TEXT[lang]["title"], "", MORE_TEXT[lang]["intro"], "", MORE_TEXT[lang]["back"], "",
            STYLE, ""]
     text = MAIN_TEXT[lang]

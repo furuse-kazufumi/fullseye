@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: a41db9bf8a6f -->
+---
+title: "설치 / 환경 구축 완전 가이드"
+description: "Fullseye 설치 방법, 선택 의존성, 설치 확인 절차를 설명합니다."
+lang: ko
+---
+<!-- i18n-source-sha: d8305ffb363f -->
 # 설치 / 환경 구축 완전 가이드
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)

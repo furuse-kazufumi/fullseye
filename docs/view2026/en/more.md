@@ -1,3 +1,10 @@
+---
+title: "Extras: more PoCs — ViEW2026"
+description: "This page also includes examples that are less polished than the exhibits on the main page. The figures for each exhibit come from its PoC run record."
+lang: en
+image: /view2026/thumbs/fullseye_intro.jpg
+---
+
 <div class="vlang" markdown="1">
 
 [日本語](../more.md) · **English** · [简体中文](../zh/more.md) · [繁體中文](../tw/more.md) · [한국어](../ko/more.md) · [Deutsch](../de/more.md) · [हिन्दी](../hi/more.md) · [Français](../fr/more.md)

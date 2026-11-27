@@ -18,6 +18,11 @@
 # (v2.16.1 のソースで確認)ので、"" を書けば倒れない。倒れたら tools/pages_site.py check の門 4 が落とす。
 url: "https://furuse.work"
 baseurl: ""
+title: Fullseye
+description: 画像検査・三次元計測・物理シミュレーションのための Python ライブラリ
+lang: ja
+plugins:
+  - jekyll-sitemap
 
 include:
   - _fig

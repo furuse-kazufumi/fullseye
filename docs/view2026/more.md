@@ -1,3 +1,10 @@
+---
+title: "おまけ:そのほかの PoC — ViEW2026"
+description: "本ページの展示ほど仕上げていない作例も含みます。各展示の数字は PoC の実行記録から採りました。"
+lang: ja
+image: /view2026/thumbs/fullseye_intro.jpg
+---
+
 <div class="vlang" markdown="1">
 
 **日本語** · [English](en/more.md) · [简体中文](zh/more.md) · [繁體中文](tw/more.md) · [한국어](ko/more.md) · [Deutsch](de/more.md) · [हिन्दी](hi/more.md) · [Français](fr/more.md)

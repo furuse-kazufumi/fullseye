@@ -1,4 +1,9 @@
-<!-- i18n-source-sha: a41db9bf8a6f -->
+---
+title: "Installations- und Einrichtungshandbuch"
+description: "Installationswege, optionale Abhängigkeiten und Prüfschritte für Fullseye."
+lang: de
+---
+<!-- i18n-source-sha: d8305ffb363f -->
 # Installations- und Einrichtungshandbuch
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch** · [हिन्दी](./INSTALL.hi.md)
