@@ -538,7 +538,7 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         translated_sub = (ex.get("second_figure_caption_" + lang) or sub).strip()
         # ★alt も本文の説明と同じ切り方(括弧の中で切らない)。長さだけで切ると 6400 本中 200 本が括弧の途中で
         #   終わっていた(2026-11-09、機材選びの 8 回目の確認)
-        alt = (_first_sentence(sub, 120) if sub else ("測定の図" if lang == "ja" else "measurement")).replace("]", ")")
+        alt = _second_figure_alt(ex, sub, lang)
         if lang == "ja":
             cap_line = ("*↑ 測定の図 ―― %s*" % translated_sub) if translated_sub else "*↑ 測定の図*"
         else:
@@ -553,17 +553,17 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         full4 = RAW + ex["id"] + "/" + fig["file"]
         th4 = RAW + ex["id"] + "/" + _thumb(ex["id"], fig["file"])
         sub_ = _first_sentence(fig.get("caption") or "")
-        alt = (sub_ if sub_ else "図").replace("]", ")")             # 説明の行と同じ 1 文(括弧は閉じている)
-        cap_line = ("*↑ %s*" % sub_) if sub_ else "*↑ この回の図*"
+        # 英語altと未訳表示を一緒に決める / Decide the English alt and translation marker together.
+        alt, cap_line = _extra_figure_copy(fig, sub_, lang)
         lines += ["[![%s](%s)](%s)" % (alt, th4, full4), "", cap_line, ""] + _sa_lines(ex["id"], fig["file"], lang)
     for fig in (extras or []):
         full3 = RAW + ex["id"] + "/" + fig["file"]
         sub = (fig.get("caption") or "").strip()
-        alt = (_first_sentence(sub, 120) if sub else ("動く図" if lang == "ja" else "animation")).replace("]", ")")
-        if lang == "ja":
-            cap_line = ("*↑ 動く図 ―― %s*" % sub) if sub else "*↑ 動く図*"
-        else:
-            cap_line = ("*↑ The animation ―― %s*" % sub) if sub else "*↑ The animation*"
+        # altは英語だけにする。
+        # Keep alt text English.
+        # 日本語の説明を残す場合は未訳だと明示する。
+        # Mark any retained Japanese caption as untranslated.
+        alt, cap_line = _animation_copy(fig, sub, lang)
         lines += ["[![%s](%s)](%s)" % (alt, full3, full3), "", cap_line, ""] + _sa_lines(ex["id"], fig["file"], lang)
     shown_figures = [pick] + ([second] if second is not None else []) + list(more or []) + list(extras or [])
     lines += _provenance_lines(shown_figures, lang)
@@ -785,6 +785,41 @@ def main() -> int:
         n = sum(1 for e in cap["exhibits"] if e["wing"] in p["wings"])
         print("  %-18s %3d 展示  %s" % (p["slug"], n, os.path.basename(part_path(p["slug"], "ja"))))
     return 0
+
+
+def _second_figure_alt(ex: dict, caption: str, lang: str) -> str:
+    """2枚目のaltを英語化する / Return localized alt text for the second figure."""
+    source = caption if lang == "ja" else (ex.get("second_figure_caption_en") or "measurement")
+    return _first_sentence(source, 120).replace("]", ")")
+
+
+def _extra_figure_copy(fig: dict, caption: str, lang: str) -> tuple[str, str]:
+    """追加静止画のaltと説明を返す / Return alt and caption for an extra still."""
+    if lang == "ja":
+        return ((caption or "図").replace("]", ")"),
+                ("*↑ %s*" % caption) if caption else "*↑ この回の図*")
+    translated = _first_sentence(fig.get("caption_en") or "")
+    alt = (translated or "figure").replace("]", ")")
+    if translated:
+        return alt, "*↑ %s*" % translated
+    tail = " (figure labels are in Japanese; the numbers are the same)"
+    return alt, (("*↑ Figure from this exhibit ―― %s%s*" % (caption, tail))
+                 if caption else "*↑ Figure from this exhibit*")
+
+
+def _animation_copy(fig: dict, caption: str, lang: str) -> tuple[str, str]:
+    """動く図のaltと説明を返す / Return alt and caption for an animation."""
+    translated = (fig.get("caption_en") or "").strip()
+    if lang == "ja":
+        alt = _first_sentence(caption, 120) if caption else "動く図"
+        cap = ("*↑ 動く図 ―― %s*" % caption) if caption else "*↑ 動く図*"
+        return alt.replace("]", ")"), cap
+    alt = _first_sentence(translated, 120) if translated else "animation"
+    if translated:
+        return alt.replace("]", ")"), "*↑ The animation ―― %s*" % translated
+    tail = " (figure labels are in Japanese; the numbers are the same)"
+    cap = ("*↑ The animation ―― %s%s*" % (caption, tail)) if caption else "*↑ The animation*"
+    return alt.replace("]", ")"), cap
 
 
 if __name__ == "__main__":
