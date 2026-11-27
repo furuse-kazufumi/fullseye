@@ -3,7 +3,7 @@ title: "Getting started (running in 5 minutes)"
 description: "Install Fullseye and run your first operator in five minutes."
 lang: en
 ---
-<!-- i18n-source-sha: 018e1a97157e -->
+<!-- i18n-source-sha: e8f52b68c5e9 -->
 # Getting started (running in 5 minutes)
 
 <!-- i18n-switcher -->
@@ -89,7 +89,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image (gradient magnitude)
 seg   = fullseye.apply(frame, "otsu")          # image → region (0/1 binary)
 n     = fullseye.apply(seg,   "count_obj")     # region → feature (object count = Python float)
-print(n)                                       # e.g. 316.0
+print(n)                                       # e.g. 25.0
 ```
 
 > **The argument order is `apply(image, name, a, b)`** — the first argument is the array, the
@@ -122,10 +122,10 @@ print(n)                                       # e.g. 316.0
 You can discover what operators exist like this:
 
 ```python
-fullseye.op_names()                 # all registry operator names (860, as of 2026-09-03)
+fullseye.op_names()                 # all registry operator names
 fullseye.list_ops(search="edge")    # substring search over name / HALCON name / category
 fullseye.list_ops(sort="region")    # filter by input sort
-fullseye.categories()               # 47 categories
+fullseye.categories()               # list of categories
 ```
 
 ---
@@ -144,7 +144,7 @@ out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
 This is "smooth → edge magnitude → Otsu threshold", a typical example of turning an image into a
-binary edge map. **20** ready-to-use combinations (recipes) ship with it.
+binary edge map. Use `recipes.names()` to list the recipes included with Fullseye.
 
 ```python
 import recipes

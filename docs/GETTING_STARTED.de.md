@@ -3,7 +3,7 @@ title: "Erste Schritte (in 5 Minuten startklar)"
 description: "Installieren Sie Fullseye und führen Sie in fünf Minuten Ihren ersten Operator aus."
 lang: de
 ---
-<!-- i18n-source-sha: 018e1a97157e -->
+<!-- i18n-source-sha: e8f52b68c5e9 -->
 # Erste Schritte (in 5 Minuten startklar)
 
 <!-- i18n-switcher -->
@@ -88,7 +88,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image (Gradientenstärke)
 seg   = fullseye.apply(frame, "otsu")          # image → region (0/1-Binärbild)
 n     = fullseye.apply(seg,   "count_obj")     # region → feature (Objektanzahl = Python float)
-print(n)                                       # z. B.: 316.0
+print(n)                                       # z. B.: 25.0
 ```
 
 > **Die Argumentreihenfolge lautet `apply(image, name, a, b)`** — das erste Argument ist das Array, das zweite der
@@ -122,10 +122,10 @@ print(n)                                       # z. B.: 316.0
 Welche Operatoren es gibt, lässt sich so herausfinden:
 
 ```python
-fullseye.op_names()                 # alle registrierten Operatornamen (860 Stück, Stand 2026-09-03)
+fullseye.op_names()                 # alle registrierten Operatornamen
 fullseye.list_ops(search="edge")    # Teilstring-Suche über Name / HALCON-Name / Kategorie
 fullseye.list_ops(sort="region")    # Filterung nach Eingabe-sort
-fullseye.categories()               # 47 Kategorien
+fullseye.categories()               # Liste der Kategorien
 ```
 
 ---
@@ -144,8 +144,7 @@ out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
 Das ist "Smoothing (Glättung) → Kantenstärke → Otsu-Binarisierung", ein typisches Beispiel dafür, wie aus einem
-Bild eine binäre Kantenkarte erzeugt wird. **20 sofort einsatzbereite Kombinationen** (Rezepte) sind bereits
-mitgeliefert.
+Bild eine binäre Kantenkarte erzeugt wird. Mit `recipes.names()` lassen sich die mitgelieferten Rezepte auflisten.
 
 ```python
 import recipes

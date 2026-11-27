@@ -3,7 +3,7 @@ title: "快速上手（5 分鐘跑起來）"
 description: "本頁說明如何安裝Fullseye，並在五分鐘內執行第一個運算子。"
 lang: zh-Hant
 ---
-<!-- i18n-source-sha: 018e1a97157e -->
+<!-- i18n-source-sha: e8f52b68c5e9 -->
 # 快速上手（5 分鐘跑起來）
 
 <!-- i18n-switcher -->
@@ -73,7 +73,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image（梯度強度）
 seg   = fullseye.apply(frame, "otsu")          # image → region（0/1 二值）
 n     = fullseye.apply(seg,   "count_obj")     # region → feature（物件數＝Python float）
-print(n)                                       # 例如: 316.0
+print(n)                                       # 例如: 25.0
 ```
 
 > **參數順序是 `apply(image, name, a, b)`** — 第 1 個參數是陣列，第 2 個參數是運算子名稱。反過來傳的話，
@@ -91,10 +91,10 @@ print(n)                                       # 例如: 316.0
 可以用下面的方式查詢有哪些運算子。
 
 ```python
-fullseye.op_names()                 # 全部已註冊的運算子名稱（860 個，截至 2026-09-03）
+fullseye.op_names()                 # 全部已註冊的運算子名稱
 fullseye.list_ops(search="edge")    # 依名稱 / HALCON 名稱 / 分類做部分比對搜尋
 fullseye.list_ops(sort="region")    # 依輸入 sort 篩選
-fullseye.categories()               # 47 個分類
+fullseye.categories()               # 分類清單
 ```
 
 ---
@@ -111,7 +111,7 @@ out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
-這是「smooth（平滑）→ 邊緣強度 → Otsu 二值化」，從影像產生二值邊緣圖的典型範例。系統內建了 **20 個**可直接使用的組合(範例配方)。
+這是「smooth（平滑）→ 邊緣強度 → Otsu 二值化」，從影像產生二值邊緣圖的典型範例。可用 `recipes.names()` 查看內建配方清單。
 
 ```python
 import recipes

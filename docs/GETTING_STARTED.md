@@ -71,7 +71,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image（勾配強度）
 seg   = fullseye.apply(frame, "otsu")          # image → region（0/1 の二値）
 n     = fullseye.apply(seg,   "count_obj")     # region → feature（オブジェクト数＝Python float）
-print(n)                                       # 例: 316.0
+print(n)                                       # 例: 25.0
 ```
 
 > **引数の順は `apply(image, name, a, b)`** — 第 1 引数が配列、第 2 引数が op 名です。逆に渡すと
@@ -89,10 +89,10 @@ print(n)                                       # 例: 316.0
 どんなオペレータがあるかは次で探せます。
 
 ```python
-fullseye.op_names()                 # 全レジストリ・オペレータ名（860 個、2026-09-03 時点）
+fullseye.op_names()                 # 全レジストリ・オペレータ名
 fullseye.list_ops(search="edge")    # 名前 / HALCON 名 / カテゴリを部分一致で検索
 fullseye.list_ops(sort="region")    # 入力 sort で絞り込み
-fullseye.categories()               # 47 カテゴリ
+fullseye.categories()               # カテゴリの一覧
 ```
 
 ---
@@ -109,7 +109,7 @@ out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
-これは「smooth（平滑化）→ エッジ強度 → Otsu 二値化」で、画像から二値のエッジマップを作る典型例です。すぐ使える組み合わせ（レシピ）は **20 個**同梱されています。
+これは「smooth（平滑化）→ エッジ強度 → Otsu 二値化」で、画像から二値のエッジマップを作る典型例です。同梱レシピの一覧は `recipes.names()` で確認できます。
 
 ```python
 import recipes

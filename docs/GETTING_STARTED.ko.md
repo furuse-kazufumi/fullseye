@@ -3,7 +3,7 @@ title: "시작하기 (5분 만에 실행하기)"
 description: "Fullseye를 설치하고5분 안에 첫 연산자를 실행하는 방법을 설명합니다."
 lang: ko
 ---
-<!-- i18n-source-sha: 018e1a97157e -->
+<!-- i18n-source-sha: e8f52b68c5e9 -->
 # 시작하기 (5분 만에 실행하기)
 
 <!-- i18n-switcher -->
@@ -83,7 +83,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image(그래디언트 강도)
 seg   = fullseye.apply(frame, "otsu")          # image → region(0/1 이진)
 n     = fullseye.apply(seg,   "count_obj")     # region → feature(객체 수 = Python float)
-print(n)                                       # 예: 316.0
+print(n)                                       # 예: 25.0
 ```
 
 > **인자 순서는 `apply(image, name, a, b)`** — 첫 번째 인자가 배열, 두 번째 인자가 연산자 이름입니다. 반대로
@@ -113,10 +113,10 @@ print(n)                                       # 예: 316.0
 어떤 연산자가 있는지는 다음으로 찾을 수 있습니다.
 
 ```python
-fullseye.op_names()                 # 전체 레지스트리 연산자 이름(860개, 2026-09-03 기준)
+fullseye.op_names()                 # 전체 레지스트리 연산자 이름
 fullseye.list_ops(search="edge")    # 이름 / HALCON 이름 / 카테고리로 부분 일치 검색
 fullseye.list_ops(sort="region")    # 입력 sort로 필터링
-fullseye.categories()               # 47개 카테고리
+fullseye.categories()               # 카테고리 목록
 ```
 
 ---
@@ -134,7 +134,7 @@ out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
 이것은 "smooth(평활화) → 에지 강도 → Otsu 이진화"로, 이미지에서 이진 에지 맵을 만드는 전형적인 예입니다.
-바로 쓸 수 있는 조합(레시피)이 **20개** 동봉되어 있습니다.
+동봉된 레시피 목록은 `recipes.names()`로 확인할 수 있습니다.
 
 ```python
 import recipes

@@ -3,7 +3,7 @@ title: "快速上手（5 分钟运行起来）"
 description: "本页介绍如何安装Fullseye并在五分钟内运行第一个算子。"
 lang: zh-CN
 ---
-<!-- i18n-source-sha: 018e1a97157e -->
+<!-- i18n-source-sha: e8f52b68c5e9 -->
 # 快速上手（5 分钟运行起来）
 
 <!-- i18n-switcher -->
@@ -73,7 +73,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image（梯度强度）
 seg   = fullseye.apply(frame, "otsu")          # image → region（0/1 二值）
 n     = fullseye.apply(seg,   "count_obj")     # region → feature（对象数＝Python float）
-print(n)                                       # 例如: 316.0
+print(n)                                       # 例如: 25.0
 ```
 
 > **参数顺序是 `apply(image, name, a, b)`** — 第 1 个参数是数组，第 2 个参数是算子名。反过来传的话，
@@ -91,10 +91,10 @@ print(n)                                       # 例如: 316.0
 可以用下面的方式查找有哪些算子。
 
 ```python
-fullseye.op_names()                 # 全部注册的算子名（860 个，截至 2026-09-03）
+fullseye.op_names()                 # 全部注册的算子名
 fullseye.list_ops(search="edge")    # 按名称 / HALCON 名 / 分类做部分匹配搜索
 fullseye.list_ops(sort="region")    # 按输入 sort 筛选
-fullseye.categories()               # 47 个分类
+fullseye.categories()               # 分类列表
 ```
 
 ---
@@ -111,7 +111,7 @@ out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
-这是"smooth（平滑）→ 边缘强度 → Otsu 二值化"，从图像生成二值边缘图的典型例子。系统内置了 **20 个**可以直接使用的组合(配方)。
+这是"smooth（平滑）→ 边缘强度 → Otsu 二值化"，从图像生成二值边缘图的典型例子。可用 `recipes.names()` 查看内置配方列表。
 
 ```python
 import recipes

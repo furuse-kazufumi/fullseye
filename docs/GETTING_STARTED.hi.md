@@ -3,7 +3,7 @@ title: "शुरुआत करें (5 मिनट में चालू)"
 description: "Fullseye इंस्टॉल करके पाँच मिनट में अपना पहला operator चलाने की प्रक्रिया।"
 lang: hi
 ---
-<!-- i18n-source-sha: 018e1a97157e -->
+<!-- i18n-source-sha: e8f52b68c5e9 -->
 # शुरुआत करें (5 मिनट में चालू)
 
 <!-- i18n-switcher -->
@@ -87,7 +87,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image (gradient magnitude)
 seg   = fullseye.apply(frame, "otsu")          # image → region (0/1 binary)
 n     = fullseye.apply(seg,   "count_obj")     # region → feature (object count = Python float)
-print(n)                                       # e.g. 316.0
+print(n)                                       # e.g. 25.0
 ```
 
 > **Argument का क्रम `apply(image, name, a, b)` है** — पहला argument array है,
@@ -120,10 +120,10 @@ print(n)                                       # e.g. 316.0
 कौन-कौन से operators मौजूद हैं, यह आप ऐसे पता कर सकते हैं:
 
 ```python
-fullseye.op_names()                 # all registry operator names (860, as of 2026-09-03)
+fullseye.op_names()                 # all registry operator names
 fullseye.list_ops(search="edge")    # substring search over name / HALCON name / category
 fullseye.list_ops(sort="region")    # filter by input sort
-fullseye.categories()               # 47 categories
+fullseye.categories()               # list of categories
 ```
 
 ---
@@ -142,7 +142,7 @@ out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
 यह "smooth → edge magnitude → Otsu threshold" है, image को
-binary edge map में बदलने का एक आम example। इसके साथ **20** तैयार combinations (recipes) आते हैं।
+binary edge map में बदलने का एक आम example। शामिल recipes की सूची `recipes.names()` से देखें।
 
 ```python
 import recipes
