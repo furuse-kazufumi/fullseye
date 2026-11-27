@@ -3,7 +3,7 @@ title: "शुरुआत करें (5 मिनट में चालू)"
 description: "Fullseye इंस्टॉल करके पाँच मिनट में अपना पहला operator चलाने की प्रक्रिया।"
 lang: hi
 ---
-<!-- i18n-source-sha: 23d8d444e717 -->
+<!-- i18n-source-sha: 018e1a97157e -->
 # शुरुआत करें (5 मिनट में चालू)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · **हिन्दी**
@@ -189,7 +189,7 @@ py -3.11 studio.py          # or, if installed: fullseye-studio
 
 जोड़ी गई pipeline को आप `--ops` string या Python code के रूप में **Export (Ctrl+E)** कर सकते हैं, और **Save
 pipeline (Ctrl+Shift+S)** से JSON के रूप में save कर सकते हैं। सारी सुविधाएँ और shortcuts
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md) में हैं; app के अंदर **F1** list दिखाता है।
+[STUDIO_GUIDE.md](STUDIO_GUIDE.md) में हैं; app के अंदर **Ctrl+F1** shortcut list और **F1** चुने हुए op की help दिखाता है।
 
 ---
 

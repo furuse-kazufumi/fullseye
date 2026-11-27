@@ -3,7 +3,7 @@ title: "Getting started (running in 5 minutes)"
 description: "Install Fullseye and run your first operator in five minutes."
 lang: en
 ---
-<!-- i18n-source-sha: 23d8d444e717 -->
+<!-- i18n-source-sha: 018e1a97157e -->
 # Getting started (running in 5 minutes)
 
 [日本語](./GETTING_STARTED.md) · **English** · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -193,7 +193,7 @@ It has three panels.
 
 You can **Export (Ctrl+E)** the assembled pipeline as an `--ops` string or Python code, and **Save
 pipeline (Ctrl+Shift+S)** it as JSON. All features and shortcuts are in
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md); inside the app, **F1** shows the list.
+[STUDIO_GUIDE.md](STUDIO_GUIDE.md); inside the app, **Ctrl+F1** shows the shortcut list and **F1** shows help for the selected op.
 
 ---
 

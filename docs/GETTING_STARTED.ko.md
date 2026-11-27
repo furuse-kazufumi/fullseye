@@ -3,7 +3,7 @@ title: "시작하기 (5분 만에 실행하기)"
 description: "Fullseye를 설치하고5분 안에 첫 연산자를 실행하는 방법을 설명합니다."
 lang: ko
 ---
-<!-- i18n-source-sha: 23d8d444e717 -->
+<!-- i18n-source-sha: 018e1a97157e -->
 # 시작하기 (5분 만에 실행하기)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · **한국어** · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -173,8 +173,8 @@ py -3.11 studio.py          # 또는 설치되어 있다면: fullseye-studio
   뷰어(Ctrl+4)는 우클릭으로 Reset view / 1인칭(원근) 전환 / Wireframe / Save screenshot을 할 수 있습니다.
 
 조립한 파이프라인은 **Export(Ctrl+E)**로 `--ops` 문자열이나 Python 코드로 내보낼 수 있고, **Save pipeline
-(Ctrl+Shift+S)**로 JSON으로 저장할 수 있습니다. 전체 기능과 단축키는 [STUDIO_GUIDE.md](STUDIO_GUIDE.md)를, 앱
-내에서는 **F1**로 목록이 나옵니다.
+(Ctrl+Shift+S)**로 JSON으로 저장할 수 있습니다. 전체 기능과 단축키는 [STUDIO_GUIDE.md](STUDIO_GUIDE.md)를 참고하세요. 앱
+내에서는 **Ctrl+F1**로 단축키 목록을 열고, **F1**로 선택한 op의 도움말을 엽니다.
 
 ---
 

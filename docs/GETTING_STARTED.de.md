@@ -3,7 +3,7 @@ title: "Erste Schritte (in 5 Minuten startklar)"
 description: "Installieren Sie Fullseye und führen Sie in fünf Minuten Ihren ersten Operator aus."
 lang: de
 ---
-<!-- i18n-source-sha: 23d8d444e717 -->
+<!-- i18n-source-sha: 018e1a97157e -->
 # Erste Schritte (in 5 Minuten startklar)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · **Deutsch** · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -193,7 +193,7 @@ Der Aufbau besteht aus 3 Bereichen.
 
 Die aufgebaute Pipeline lässt sich mit **Export (Strg+E)** als `--ops`-String oder als Python-Code exportieren und
 mit **Save pipeline (Strg+Umschalt+S)** als JSON speichern. Sämtliche Funktionen und Tastenkürzel finden sich in
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md), innerhalb der Anwendung zeigt **F1** eine Übersicht.
+[STUDIO_GUIDE.md](STUDIO_GUIDE.md); in der Anwendung zeigt **Strg+F1** die Tastenkürzel und **F1** die Hilfe zum ausgewählten op.
 
 ---
 

@@ -3,7 +3,7 @@ title: "快速上手（5 分鐘跑起來）"
 description: "本頁說明如何安裝Fullseye，並在五分鐘內執行第一個運算子。"
 lang: zh-Hant
 ---
-<!-- i18n-source-sha: 23d8d444e717 -->
+<!-- i18n-source-sha: 018e1a97157e -->
 # 快速上手（5 分鐘跑起來）
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · **繁體中文** · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -134,7 +134,7 @@ py -3.11 studio.py          # 或者已安裝的話: fullseye-studio
 - **中央（Pipeline）**: 已排列階段的清單。可拖曳或用 Ctrl+↑/↓ 調整順序，調整選取階段的**旋鈕 a / b**。旋鈕永遠是 0..1 的值，但**對於有專屬顯示規格的運算子（`param_specs.py`）可依實際單位操作** — `gaussian` 用 σ（px，滑桿 + 帶單位的數值輸入框），`median` 用 3/5/7/9 的下拉選單選核心大小，`reg_erode` 用整數輸入框指定疊代次數，`aug_barrel` 的 b 用「pincushion」核取方塊表示。右側的 0..1 數值輸入框永遠是原始值（供精確輸入）。這些規格是依 ops.py 中的換算公式（如 `0.3 + 2.7·a`）手寫，並透過測試與實作互相核對（`tests/test_studio_params.py`）。沒有規格的運算子仍是原本的 2 個 0..1 滑桿。階段清單也會以顯示單位書寫（`gaussian (blur σ=1.08 px, b=–)`）。**Reset（Home）→ Step（Ctrl+→）→ Run all（Ctrl+Enter）**可逐段執行，也可以一次執行到底。
 - **右側（Image / Perception / Analysis）**: 縮放/平移顯示結果影像、直方圖、Inspector（檢查 image / region / feature 的值）、v14 的感知面板（光流 / 立體深度等）。**在影像檢視上按右鍵**可執行 Fit / 1:1 / Zoom / Save result / Save view as shown / Copy / Display mode / 3D surface（與選單相同的動作）。另外開啟的繪圖視窗也附有 Fit·1:1·±·Save 的小工具列與相同的右鍵選單，3-D 檢視器（Ctrl+4）可透過右鍵切換 Reset view / 第一人稱(透視) / Wireframe / Save screenshot。
 
-建好的流水線可用 **Export（Ctrl+E）** 匯出為 `--ops` 字串或 Python 程式碼，也可用 **Save pipeline（Ctrl+Shift+S）** 儲存為 JSON。完整功能與快捷鍵請見 [STUDIO_GUIDE.md](STUDIO_GUIDE.md)，應用程式內按 **F1** 即可顯示一覽表。
+建好的流水線可用 **Export（Ctrl+E）** 匯出為 `--ops` 字串或 Python 程式碼，也可用 **Save pipeline（Ctrl+Shift+S）** 儲存為 JSON。完整功能與快捷鍵請見 [STUDIO_GUIDE.md](STUDIO_GUIDE.md)，應用程式內按 **Ctrl+F1** 顯示快捷鍵一覽，按 **F1** 顯示目前所選 op 的說明。
 
 ---
 
