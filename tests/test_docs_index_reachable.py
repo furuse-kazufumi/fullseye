@@ -51,6 +51,10 @@ ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 INDEX = DOCS / "README.md"
 
+# 公開対象外の作業記録は、公開索引から到達できてはいけない。
+# Working notes excluded from the site must not be reachable from its public index.
+_PUBLIC_EXCLUDES = {DOCS / "SESSION_SUMMARY.md"}
+
 #: 索引の言語版。ja(README.md)以外は同じ生成ブロックを持つ。
 LANGS = ["", "en", "zh", "tw", "ko", "de"]
 
@@ -116,7 +120,8 @@ def _reachable(root: Path = INDEX) -> set:
 
 
 def _all_md() -> list:
-    return sorted(p.resolve() for p in DOCS.rglob("*.md"))
+    excluded = {p.resolve() for p in _PUBLIC_EXCLUDES}
+    return sorted(p.resolve() for p in DOCS.rglob("*.md") if p.resolve() not in excluded)
 
 
 @pytest.mark.parametrize("lang", LANGS, ids=lambda x: x or "ja")
