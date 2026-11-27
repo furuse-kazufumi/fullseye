@@ -240,7 +240,8 @@ def test_m1_enter_inserts_the_highlighted_first_row(launch, query, want):
     assert cur is first, (query, cur and cur.data(QtCore.Qt.UserRole), first.data(QtCore.Qt.UserRole))
     name = cur.data(QtCore.Qt.UserRole)
     if want.endswith("*"):
-        assert want[:-1] in name and name != "sobel_amp", name
+        # kornia が無い環境(既定の pip install、CI の py3.12 以降)では検索 1 位の xkor_canny が挿入できず、次の行の edges_image(backends_auto の skimage Canny)が入る。どちらも Canny。
+        assert (want[:-1] in name or name == "edges_image") and name != "sobel_amp", name
     else:
         assert name == want
     n0 = len(model.stages)

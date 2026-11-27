@@ -434,7 +434,9 @@ def test_enter_inserts_the_first_row_on_screen_staples_included(tmp_path, monkey
         n1 = len(model.stages)
         ui["edit"].returnPressed.emit(); _pump(0.3)
         assert len(model.stages) == n1 + 1
-        assert "canny" in model.stages[-1][0] and model.stages[-1][0] != "sobel_amp", model.stages[-1][0]
+        # kornia が無い環境(既定の pip install、CI の py3.12 以降)では検索 1 位の xkor_canny が挿入できず、次の行の edges_image(backends_auto の skimage Canny)が入る。どちらも Canny。
+        got = model.stages[-1][0]
+        assert ("canny" in got or got == "edges_image") and got != "sobel_amp", got
     finally:
         _close_window(studio, win)
 

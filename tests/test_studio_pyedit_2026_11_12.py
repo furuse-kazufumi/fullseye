@@ -250,7 +250,7 @@ def test_scanner_matches_tokenize_on_real_files():
         lines = text.split("\n")
         cc = char_cats(text, "base")
         expect_comment, expect_number, in_string = set(), set(), set()
-        f_string_chars = set()
+        f_string_chars, f_open = set(), []
         for tok in tokenize.generate_tokens(io.StringIO(text).readline):
             (sr, sc), (er, ec) = tok.start, tok.end
             if tok.type == tokenize.COMMENT:
@@ -264,6 +264,15 @@ def test_scanner_matches_tokenize_on_real_files():
                     b = ec if r == er else len(lines[r - 1])
                     for c in range(a, b):
                         (f_string_chars if is_f else in_string).add((r - 1, c))
+            elif tokenize.tok_name[tok.type] in ("FSTRING_START", "TSTRING_START"):   # 3.12 以降(t は 3.14)
+                f_open.append((sr, sc))
+            elif tokenize.tok_name[tok.type] in ("FSTRING_END", "TSTRING_END"):
+                r0, c0 = f_open.pop()
+                if not f_open:                                   # 入れ子の外側が閉じた所で、始めから終わりまでを数える
+                    for r in range(r0, er + 1):
+                        a = c0 if r == r0 else 0
+                        b = ec if r == er else len(lines[r - 1])
+                        f_string_chars.update((r - 1, c) for c in range(a, b))
         got_comment = {(r, c) for r, row in enumerate(cc) for c, k in enumerate(row) if k == "comment"}
         got_number = {(r, c) for r, row in enumerate(cc) for c, k in enumerate(row) if k == "number"}
         got_string = {(r, c) for r, row in enumerate(cc) for c, k in enumerate(row) if k == "string"}
