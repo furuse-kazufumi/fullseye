@@ -242,14 +242,24 @@ def test_check_ignores_assets_not_in_repo(tmp_path):
     assert rep["gates"]["gate1_assets_present"]
 
 
-def test_broken_internal_links_are_reported_not_gated(tmp_path):
+def test_broken_internal_links_below_the_measured_ratchet_pass(tmp_path):
     site, docs = make_site(tmp_path)
     rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
     assert rep["ok"] and rep["gates"]["gate5_no_broken_asset_links"]
     targets = {b["target"] for b in rep["broken_internal_links"]}
-    # assets 以外の解決できない内部リンクは報告だけ(門 5 は assets だけを見る)
+    # 既知の残件は許すが、門6の上限を超えて増やすことは許さない。
     assert targets == {"no/such/page.html"}
     assert rep["broken_internal_links_count"] == 1 and rep["broken_asset_links_count"] == 0
+    assert rep["gates"]["gate6_internal_link_ratchet"]
+
+
+def test_one_new_broken_internal_link_over_the_ratchet_fails(tmp_path, monkeypatch):
+    site, docs = make_site(tmp_path)
+    monkeypatch.setattr(ps, "MAX_BROKEN_INTERNAL_LINKS", 0)
+    rep = ps.run_check(str(site), str(docs), 10**9, 1, 1)
+    assert rep["broken_internal_links_count"] == 1
+    assert not rep["gates"]["gate6_internal_link_ratchet"]
+    assert not rep["ok"]
 
 
 def test_size_gate_boundary(tmp_path):
@@ -312,8 +322,9 @@ def test_check_report_json_fields_cli(tmp_path):
                 "site_bytes", "max_bytes", "margin_bytes", "missing_assets", "broken_internal_links_count",
                 "broken_internal_links", "broken_asset_links", "gates", "ok", "seconds"):
         assert key in rep, key
-    assert set(rep["gates"]) == {"gate1_assets_present", "gate2_size", "gate3_min_pages", "gate3_min_kept_assets",
-                                 "gate4_page_wiring", "gate5_no_broken_asset_links"}
+        assert set(rep["gates"]) == {"gate1_assets_present", "gate2_size", "gate3_min_pages", "gate3_min_kept_assets",
+                                     "gate4_page_wiring", "gate5_no_broken_asset_links",
+                                     "gate6_internal_link_ratchet"}
     assert rep["strict_asset_references"] >= len(set(REFERENCED.values()))
     assert "門 1" in md.read_text(encoding="utf-8")
 

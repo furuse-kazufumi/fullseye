@@ -1,0 +1,31 @@
+---
+layout: default
+title: "ページが見つかりません / Page not found"
+description: "Fullseyeの公開サイトで見つからないリポジトリ内リンクを案内します。"
+lang: ja
+permalink: /404.html
+---
+
+<h1>ページが見つかりません / Page not found</h1>
+
+<p id="repo-note">このURLがサンプルやソースコードを指す場合は、GitHubの同じ場所へ移動します。<br>
+If this URL points to an example or source file, you will be sent to the same path on GitHub.</p>
+
+<p><a href="/">文書索引へ戻る / Return to the documentation index</a></p>
+<p><a href="https://github.com/furuse-kazufumi/fullseye">GitHubでリポジトリを開く / Open the repository on GitHub</a></p>
+
+<script>
+(function () {
+  "use strict";
+  var path = window.location.pathname;
+  var allowed = ["/examples/", "/examples_3d/", "/tools/", "/tests/", "/fullseye/", "/rust/"];
+  var matched = allowed.some(function (prefix) { return path.indexOf(prefix) === 0; });
+  if (!matched || /%(?:2f|5c)/i.test(path)) return;
+  var parts;
+  try { parts = decodeURIComponent(path).split("/"); } catch (_error) { return; }
+  if (parts.some(function (part) { return part === "." || part === ".."; })) return;
+  var leaf = parts[parts.length - 1];
+  var kind = path.slice(-1) === "/" || leaf.indexOf(".") < 0 ? "tree" : "blob";
+  window.location.replace("https://github.com/furuse-kazufumi/fullseye/" + kind + "/master" + path);
+}());
+</script>

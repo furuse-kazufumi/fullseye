@@ -146,25 +146,25 @@ contour 出力(`edges_sub_pix`)は XLD の実点群をオーバーレイに焼�
 
 ## 2. `examples_3d/_gallery/` — 3D 事例の hero 画像 / ターンテーブル GIF
 
-全図版は `examples_3d/_gallery/` に置かれている実データ。パスはこのページからの相対パスで、
-GitHub 上でそのまま表示されます。
+全図版は `examples_3d/_gallery/` に置かれている実データです。サムネイルは公開サイトと
+GitHub の両方で表示できるよう、リポジトリの raw URL を使っています。
 
 | サムネ | ファイル | 説明 | 生成元スクリプト |
 |---|---|---|---|
-| <img src="../examples_3d/_gallery/render_beauty_hero.png" width="180"> | `render_beauty_hero.png` | 全レンダリング品質層(鏡面ハイライト・アンビエントオクルージョン・接地影・SSAA・トーンマップ)を一発合成する hero レンダラ `render_beauty` の出力(peanut形メッシュ、金属マテリアル) | `examples_3d/render_beauty.py` |
-| <img src="../examples_3d/_gallery/gear_hero.png" width="180"> | `gear_hero.png` | 平歯車(スパーギア、12枚歯)の hero レンダ | 特定不能(推定: `examples_3d/rotational_symmetry_fold.py` の `build_gear()` 由来メッシュだが、この画像を焼いた再生成スクリプトは現在のツリーに見当たらない — honest disclosure として明記) |
-| <img src="../examples_3d/_gallery/hand_hero.png" width="180"> | `hand_hero.png` | 手続き的に組んだ手全体の骨格(手根骨8・中手骨5・指骨14、カプセルSDF)の hero レンダ | 特定不能(推定: `examples_3d/procedural_hand.py` の `build_hand_bones()` 由来メッシュだが、この画像を焼いた再生成スクリプトは現在のツリーに見当たらない) |
-| <img src="../examples_3d/_gallery/fit_primitives_ext.png" width="180"> | `fit_primitives_ext.png` | 円錐・トーラス・3軸楕円体を点群に当てはめる拡張プリミティブフィッティング(円筒・球・平面までの既存RANSACでは扱えない曲率変化形状) | `examples_3d/fit_primitives_ext.py` |
-| <img src="../examples_3d/_gallery/hull_bounds.png" width="180"> | `hull_bounds.png` | 点群を囲むプリミティブ群(convex hull / AABB / OBB は既存opの再掲、新規opは最小包含球 `min_enclosing_sphere` の1本のみ) | `examples_3d/hull_bounds.py` |
-| <img src="../examples_3d/_gallery/mesh_decimate.png" width="180"> | `mesh_decimate.png` | QEM edge-collapse による境界保存・多様体厳格なメッシュ簡略化(`decimate_qem_manifold`)を、素朴なランダム間引きおよび既存opの `decimate_qem` と実測比較 | `examples_3d/mesh_decimate.py` |
-| <img src="../examples_3d/_gallery/mesh_props.png" width="180"> | `mesh_props.png` | 三角形メッシュの法線・表面積・平均曲率(離散Laplace-Beltrami)の計測。icosphereの解析解(4πR²)と比較 | `examples_3d/mesh_props.py` |
-| <img src="../examples_3d/_gallery/mesh_smooth.png" width="180"> | `mesh_smooth.png` | ノイズの乗った球メッシュの平滑化。素朴なLaplacian平滑化(収縮する)とTaubin平滑化(収縮しない帯域通過フィルタ)の比較 | `examples_3d/mesh_smooth.py` |
-| <img src="../examples_3d/_gallery/render_ao.png" width="180"> | `render_ao.png` | アンビエントオクルージョン(頂点ごとの半球レイキャストで接触部・凹部を選択的に暗化) | `examples_3d/render_ao.py` |
-| <img src="../examples_3d/_gallery/render_shade.png" width="180"> | `render_shade.png` | 法線マップへの Phong 鏡面ハイライトおよび MatCap シェーディング | `examples_3d/render_shade.py` |
-| <img src="../examples_3d/_gallery/render_shadow.png" width="180"> | `render_shadow.png` | shadow mapping によるキャスト影・半影(ソフトシャドウ、面光源近似) | `examples_3d/render_shadow.py` |
-| <img src="../examples_3d/_gallery/render_ssaa.png" width="180"> | `render_ssaa.png` | スーパーサンプリング(SSAA)によるメッシュ輪郭のジャギー除去 | `examples_3d/render_ssaa.py` |
-| <img src="../examples_3d/_gallery/render_tonemap.png" width="180"> | `render_tonemap.png` | HDRレンダの Reinhard / ACES トーンマッピング(素朴クリップとの比較、階調保持を実証) | `examples_3d/render_tonemap.py` |
-| <img src="../examples_3d/_gallery/watershed3d.png" width="180"> | `watershed3d.png` | 接触した2物体を距離変換+分水嶺(watershed)で分離(連結成分ラベリングでは1個に融合してしまうケース) | `examples_3d/watershed3d.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/render_beauty_hero.png" width="180"> | `render_beauty_hero.png` | 全レンダリング品質層(鏡面ハイライト・アンビエントオクルージョン・接地影・SSAA・トーンマップ)を一発合成する hero レンダラ `render_beauty` の出力(peanut形メッシュ、金属マテリアル) | `examples_3d/render_beauty.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/gear_hero.png" width="180"> | `gear_hero.png` | 平歯車(スパーギア、12枚歯)の hero レンダ | 特定不能(推定: `examples_3d/rotational_symmetry_fold.py` の `build_gear()` 由来メッシュだが、この画像を焼いた再生成スクリプトは現在のツリーに見当たらない — honest disclosure として明記) |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/hand_hero.png" width="180"> | `hand_hero.png` | 手続き的に組んだ手全体の骨格(手根骨8・中手骨5・指骨14、カプセルSDF)の hero レンダ | 特定不能(推定: `examples_3d/procedural_hand.py` の `build_hand_bones()` 由来メッシュだが、この画像を焼いた再生成スクリプトは現在のツリーに見当たらない) |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/fit_primitives_ext.png" width="180"> | `fit_primitives_ext.png` | 円錐・トーラス・3軸楕円体を点群に当てはめる拡張プリミティブフィッティング(円筒・球・平面までの既存RANSACでは扱えない曲率変化形状) | `examples_3d/fit_primitives_ext.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/hull_bounds.png" width="180"> | `hull_bounds.png` | 点群を囲むプリミティブ群(convex hull / AABB / OBB は既存opの再掲、新規opは最小包含球 `min_enclosing_sphere` の1本のみ) | `examples_3d/hull_bounds.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/mesh_decimate.png" width="180"> | `mesh_decimate.png` | QEM edge-collapse による境界保存・多様体厳格なメッシュ簡略化(`decimate_qem_manifold`)を、素朴なランダム間引きおよび既存opの `decimate_qem` と実測比較 | `examples_3d/mesh_decimate.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/mesh_props.png" width="180"> | `mesh_props.png` | 三角形メッシュの法線・表面積・平均曲率(離散Laplace-Beltrami)の計測。icosphereの解析解(4πR²)と比較 | `examples_3d/mesh_props.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/mesh_smooth.png" width="180"> | `mesh_smooth.png` | ノイズの乗った球メッシュの平滑化。素朴なLaplacian平滑化(収縮する)とTaubin平滑化(収縮しない帯域通過フィルタ)の比較 | `examples_3d/mesh_smooth.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/render_ao.png" width="180"> | `render_ao.png` | アンビエントオクルージョン(頂点ごとの半球レイキャストで接触部・凹部を選択的に暗化) | `examples_3d/render_ao.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/render_shade.png" width="180"> | `render_shade.png` | 法線マップへの Phong 鏡面ハイライトおよび MatCap シェーディング | `examples_3d/render_shade.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/render_shadow.png" width="180"> | `render_shadow.png` | shadow mapping によるキャスト影・半影(ソフトシャドウ、面光源近似) | `examples_3d/render_shadow.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/render_ssaa.png" width="180"> | `render_ssaa.png` | スーパーサンプリング(SSAA)によるメッシュ輪郭のジャギー除去 | `examples_3d/render_ssaa.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/render_tonemap.png" width="180"> | `render_tonemap.png` | HDRレンダの Reinhard / ACES トーンマッピング(素朴クリップとの比較、階調保持を実証) | `examples_3d/render_tonemap.py` |
+| <img src="https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/watershed3d.png" width="180"> | `watershed3d.png` | 接触した2物体を距離変換+分水嶺(watershed)で分離(連結成分ラベリングでは1個に融合してしまうケース) | `examples_3d/watershed3d.py` |
 | (GIF — GitHub上でアニメ表示) | `showcase_turntable_pod.gif` | SDF生成の hero pod を金属マテリアルで1回転させるターンテーブル | `tools/gen_showcase_gifs.py`(`build_pod`) |
 | (GIF) | `showcase_turntable_itokawa.gif` | 小惑星 25143 Itokawa の実形状モデル(49,152 面、間引きなし)の周りをカメラと太陽が一周(位相角 45°): 適応テッセレーション 1.5 m・帯域制限起伏・角ばった岩 D^-3.1・Hapke・太陽視直径 0.53° の影・環境光ゼロ | `tools/gen_itokawa_turntable.py` |
 | (GIF) | `showcase_turntable_skeleton.gif` | 手骨CTボリュームを骨色マテリアルで1回転(骨格標本風) | `tools/gen_showcase_gifs.py`(`build_skeleton`、subject=hand-bone CT) |
