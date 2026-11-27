@@ -213,7 +213,10 @@ def _sdk_doctor() -> Optional[dict[str, Any]]:
         run = subprocess.run([sys.executable, "-m", "fullseye.sdk", "--doctor", "--json"],
                              capture_output=True, text=True, encoding="utf-8", timeout=20, check=False)
         data: Any = json.loads(run.stdout) if run.stdout.strip() else {"raw": run.stderr.strip()}
-        return {"status": "ok" if run.returncode == 0 else "warning", "result": data}
+        if run.returncode != 0 or not isinstance(data, dict) or "missing" not in data:
+            return {"status": "warning", "result": data}
+        # C/C++ SDK は任意の機能: 部品が足りないのは問題ではなく知らせ(info)。
+        return {"status": "info" if data["missing"] else "ok", "result": data}
     except (OSError, subprocess.TimeoutExpired, ValueError) as exc:
         return {"status": "warning", "result": {"error": "%s: %s" % (type(exc).__name__, exc)}}
 
@@ -545,6 +548,17 @@ def format_report(report: dict[str, Any], lang: str = "en") -> str:
                 lines.extend(("  PowerShell: %s" % command["powershell"], "  bash: %s" % command["bash"]))
     if shown.get("sdk") is not None:
         lines += ["", ("[SDK] 委譲した診断: %s" if lang == "ja" else "[SDK] delegated doctor: %s") % shown["sdk"]["status"]]
+        sdk_result = shown["sdk"].get("result")
+        if isinstance(sdk_result, dict) and "missing" in sdk_result:
+            missing = ", ".join(sdk_result["missing"])
+            if lang == "ja":
+                lines.append(("  C/C++ SDK(任意)に足りない部品: %s。" % missing) if missing
+                             else "  C/C++ SDK の前提の部品は揃っています。")
+                lines.append("  利用側のビルドまで確かめる: python -m fullseye.sdk --doctor")
+            else:
+                lines.append(("  Missing for the optional C/C++ SDK: %s." % missing) if missing
+                             else "  The C/C++ SDK prerequisites are present.")
+                lines.append("  To also build the consumer probe: python -m fullseye.sdk --doctor")
     lines += ["", ("[SETUP] 環境確認: %s" if lang == "ja" else "[SETUP] environment probe: %s") %
               shown["setup_environment"]["status"]]
     again = _render_command(_argv(sys.executable, "-m", "fullseye", "doctor"))

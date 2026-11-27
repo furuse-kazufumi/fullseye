@@ -131,6 +131,8 @@ bash install/uninstall.sh --remove-venv   # venv ごと削除
 - **GUI が起動しない / PySide6 が無いと言われる**
   `-Minimal`（Windows）/ `--minimal`（Linux）でも **GUI（PySide6）は入ります**。
   それでも駄目な場合は venv の pip で `pip install --force-reinstall fullseye` を実行してください。
+  標準要件は `PySide6-Essentials>=6.5,!=6.12.0` です。Linux で SIGABRT が再現した
+  6.12.0 は除外しているため、個別にその版を上書きしないでください。
   Linux では追加のシステムライブラリ（例: `libEGL`, `libxkbcommon`, `xcb` 系）が
   必要になることがあります。`ImportError: libEGL.so.1` などが出たら、Debian/Ubuntu では
   `sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3 libxcb-cursor0`、

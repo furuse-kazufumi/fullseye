@@ -8,7 +8,7 @@ gpu: なし
 examples: [convex_hull_gap_clearance]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.1  # fullseye lib version this note was generated for
+version: 1.2.0  # fullseye lib version this note was generated for
 ---
 
 # convex_hull_gap — 3D `bounds` op

@@ -128,6 +128,86 @@
   "hi": "हिन्दी"
  },
  "tooltips": {
+  "Auto-update the display (HDevelop dev_update). Uncheck to edit / run without the display cost, then check to refresh.": {
+   "ja": "表示を自動で更新します(HDevelop の dev_update)。外すと表示の手間なしに編集・実行でき、入れ直すと表示が追いつきます。",
+   "zh": "自动更新显示(HDevelop 的 dev_update)。取消勾选后编辑和运行不再花时间刷新显示,重新勾选即刷新。",
+   "tw": "自動更新顯示(HDevelop 的 dev_update)。取消勾選後編輯與執行不再花時間重繪顯示,重新勾選即更新。",
+   "ko": "표시를 자동으로 갱신합니다(HDevelop의 dev_update). 끄면 표시 비용 없이 편집·실행하고, 다시 켜면 표시가 갱신됩니다.",
+   "de": "Anzeige automatisch aktualisieren (dev_update in HDevelop). Abwählen, um ohne Anzeigeaufwand zu bearbeiten / auszuführen; wieder anwählen aktualisiert die Anzeige.",
+   "hi": "डिस्प्ले अपने-आप अपडेट होता है (HDevelop का dev_update)। हटाने पर डिस्प्ले के खर्च के बिना संपादन / रन कर सकते हैं; फिर चुनने पर डिस्प्ले ताज़ा होता है।"
+  },
+  "Insert operator into the pipeline with a, b (Enter / double-click)": {
+   "ja": "a, b で処理手順に op を追加 (Enter / ダブルクリック)",
+   "zh": "用 a, b 把算子插入处理流程 (Enter / 双击)",
+   "tw": "用 a, b 把運算子插入處理流程 (Enter / 雙擊)",
+   "ko": "a, b로 연산자를 처리 순서에 추가 (Enter / 더블 클릭)",
+   "de": "Operator mit a, b in die Pipeline einfügen (Eingabe / Doppelklick)",
+   "hi": "a, b के साथ operator को pipeline में जोड़ें (Enter / डबल-क्लिक)"
+  },
+  "Run once on the loaded image — pipeline NOT changed (HDevelop single-step execution)": {
+   "ja": "読み込んだ画像で 1 回実行 — 処理手順は変えない(HDevelop の 1 段実行)",
+   "zh": "在已载入的图像上运行一次 — 不改变处理流程(HDevelop 单步执行)",
+   "tw": "在已載入的影像上執行一次 — 不改變處理流程(HDevelop 單步執行)",
+   "ko": "불러온 이미지에서 한 번 실행 — 처리 순서는 바꾸지 않음(HDevelop 단일 단계 실행)",
+   "de": "Einmal auf dem geladenen Bild ausführen — Pipeline bleibt unverändert (HDevelop-Einzelschritt)",
+   "hi": "लोड की गई image पर एक बार चलाएँ — pipeline नहीं बदलती (HDevelop single-step)"
+  },
+  "Operator help (image-processing details)": {
+   "ja": "op のヘルプ(画像処理の詳しい説明)",
+   "zh": "算子帮助(图像处理详解)",
+   "tw": "運算子說明(影像處理詳解)",
+   "ko": "연산자 도움말(영상 처리 상세)",
+   "de": "Operator-Hilfe (Details zur Bildverarbeitung)",
+   "hi": "Operator सहायता (image-processing विवरण)"
+  },
+  "Continue: resume from the execution line to the next breakpoint / end (pause via breakpoints, resume here)": {
+   "ja": "続行: 実行中の行から次のブレークポイントまたは最後まで進める(ブレークポイントで止め、ここで再開)",
+   "zh": "继续: 从执行行运行到下一个断点或结尾(用断点暂停,在此恢复)",
+   "tw": "繼續: 從執行行執行到下一個中斷點或結尾(用中斷點暫停,在此繼續)",
+   "ko": "계속: 실행 줄부터 다음 중단점 또는 끝까지 진행(중단점에서 멈추고 여기서 재개)",
+   "de": "Fortsetzen: von der Ausführungszeile bis zum nächsten Haltepunkt / Ende (Pause über Haltepunkte, hier fortsetzen)",
+   "hi": "जारी रखें: निष्पादन पंक्ति से अगले breakpoint / अंत तक (breakpoint पर रुकें, यहाँ से फिर शुरू करें)"
+  },
+  "Apply → parse the code and replace the pipeline": {
+   "ja": "適用 → コードを解析して処理手順を置き換える",
+   "zh": "应用 → 解析代码并替换流水线",
+   "tw": "套用 → 解析程式碼並取代管線",
+   "ko": "적용 → 코드를 해석해 파이프라인을 교체",
+   "de": "Anwenden → Code einlesen und die Pipeline ersetzen",
+   "hi": "लागू करें → कोड पढ़कर pipeline बदलें"
+  },
+  "Sync ← regenerate the code from the current pipeline": {
+   "ja": "同期 ← 今の処理手順からコードを作り直す",
+   "zh": "同步 ← 从当前流水线重新生成代码",
+   "tw": "同步 ← 從目前管線重新產生程式碼",
+   "ko": "동기화 ← 현재 파이프라인에서 코드를 다시 생성",
+   "de": "Abgleichen ← Code aus der aktuellen Pipeline neu erzeugen",
+   "hi": "सिंक ← मौजूदा pipeline से कोड फिर बनाएँ"
+  },
+  "Display the selected variable in a NEW graphics window": {
+   "ja": "選んだ変数を新しいグラフィックス窓に表示",
+   "zh": "在新的图形窗口中显示所选变量",
+   "tw": "在新的圖形視窗中顯示所選變數",
+   "ko": "선택한 변수를 새 그래픽 창에 표시",
+   "de": "Ausgewählte Variable in einem NEUEN Grafikfenster anzeigen",
+   "hi": "चुने गए variable को नई graphics window में दिखाएँ"
+  },
+  "Display the selected variable in the CURRENT graphics window (double-clicking the variable does the same)": {
+   "ja": "選んだ変数を今のグラフィックス窓に表示(変数をダブルクリックしても同じ)",
+   "zh": "在当前图形窗口中显示所选变量(双击变量效果相同)",
+   "tw": "在目前的圖形視窗中顯示所選變數(按兩下變數效果相同)",
+   "ko": "선택한 변수를 현재 그래픽 창에 표시(변수를 더블클릭해도 같음)",
+   "de": "Ausgewählte Variable im AKTUELLEN Grafikfenster anzeigen (Doppelklick auf die Variable tut dasselbe)",
+   "hi": "चुने गए variable को मौजूदा graphics window में दिखाएँ (variable पर double-click भी यही करता है)"
+  },
+  "Remove the selected watch row": {
+   "ja": "選んだ監視式の行を消す",
+   "zh": "删除所选的监视行",
+   "tw": "刪除所選的監看列",
+   "ko": "선택한 감시식 행 삭제",
+   "de": "Ausgewählte Überwachungszeile entfernen",
+   "hi": "चुनी गई watch पंक्ति हटाएँ"
+  },
   "Load an image file (Ctrl+O)": {
    "ja": "画像ファイルを開く (Ctrl+O)",
    "zh": "加载图像文件 (Ctrl+O)",
@@ -416,13 +496,13 @@
    "de": "HTML-Hilfe des gewählten Operators anzeigen (Details zur Bildverarbeitung)",
    "hi": "चुने गए operator की HTML help दिखाएँ (image-processing का विवरण)"
   },
-  "Freeze the current pipeline and its result as A, then compare it with what you change next (Window > Panels > A / B)": {
-   "ja": "いまの処理列とその結果を A として固定し、このあと変えたものと比べます(Window > Panels > A / B)",
-   "zh": "把当前流水线及其结果固定为 A,与之后的修改作比较(Window > Panels > A / B)",
-   "tw": "把目前流程及其結果固定為 A,與之後的修改作比較(Window > Panels > A / B)",
-   "ko": "현재 파이프라인과 그 결과를 A로 고정하고 이후의 변경과 비교합니다(Window > Panels > A / B)",
-   "de": "Heftet die aktuelle Pipeline samt Ergebnis als A an und vergleicht sie mit dem, was Sie danach ändern (Window > Panels > A / B)",
-   "hi": "वर्तमान पाइपलाइन और उसके परिणाम को A के रूप में पिन करें, फिर आगे के बदलावों से तुलना करें (Window > Panels > A / B)"
+  "Freeze the current pipeline and its result as A, then compare it with what you change next (the A / B panel shows both)": {
+   "ja": "いまの処理列とその結果を A として固定し、このあと変えたものと比べます(「A/B 比較」のパネルに並びます)",
+   "zh": "把当前流水线及其结果固定为 A,与之后的修改作比较(两者并排显示在 A / B 面板中)",
+   "tw": "把目前流程及其結果固定為 A,與之後的修改作比較(兩者並排顯示在 A / B 面板中)",
+   "ko": "현재 파이프라인과 그 결과를 A로 고정하고 이후의 변경과 비교합니다(A / B 패널에 나란히 표시됩니다)",
+   "de": "Heftet die aktuelle Pipeline samt Ergebnis als A an und vergleicht sie mit dem, was Sie danach ändern (der Bereich A / B zeigt beide)",
+   "hi": "वर्तमान पाइपलाइन और उसके परिणाम को A के रूप में पिन करें, फिर आगे के बदलावों से तुलना करें (A / B पैनल दोनों दिखाता है)"
   }
  },
  "guide": {
@@ -435,6 +515,561 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "Browse the 2-D worked examples: read the code, run it in place, copy it": {"ja": "2-D の作例の一覧: コードを読み、その場で走らせ、写せます", "zh": "浏览 2-D 示例: 阅读代码、就地运行、复制", "tw": "瀏覽 2-D 範例: 閱讀程式碼、就地執行、複製", "ko": "2-D 예제 둘러보기: 코드를 읽고, 그 자리에서 실행하고, 복사합니다", "de": "2-D-Beispiele durchsehen: Code lesen, direkt ausführen, kopieren", "hi": "2-D उदाहरण देखें: कोड पढ़ें, वहीं चलाएँ, कॉपी करें"},
+  "You can drop files here": {"ja": "ファイルを落とせます", "zh": "可以把文件拖到这里", "tw": "可以把檔案拖到這裡", "ko": "여기에 파일을 끌어다 놓을 수 있습니다", "de": "Dateien hier ablegen", "hi": "फ़ाइलें यहाँ छोड़ी जा सकती हैं"},
+  "Images, a folder, 3-D, video, audio, .py and .json open by drag and drop — see the list": {"ja": "画像・フォルダ・3-D・動画・音声・.py・.json はドラッグ&ドロップで開けます(一覧を見る)", "zh": "图像、文件夹、3-D、视频、音频、.py 和 .json 可通过拖放打开 — 查看列表", "tw": "影像、資料夾、3-D、影片、音訊、.py 與 .json 可用拖放開啟 — 查看清單", "ko": "이미지, 폴더, 3-D, 동영상, 오디오, .py, .json은 끌어다 놓아 열 수 있습니다 — 목록 보기", "de": "Bilder, Ordner, 3-D, Video, Audio, .py und .json lassen sich per Drag-and-drop öffnen — siehe Liste", "hi": "छवियाँ, फ़ोल्डर, 3-D, वीडियो, ऑडियो, .py और .json खींचकर छोड़ने से खुलते हैं — सूची देखें"},
+  "Tools and tabs": {
+   "ja": "道具とタブ",
+   "zh": "工具和标签",
+   "tw": "工具與分頁",
+   "ko": "도구와 탭",
+   "de": "Werkzeuge und Reiter",
+   "hi": "औज़ार और टैब"
+  },
+  "When they do not fit": {
+   "ja": "収まらない時",
+   "zh": "放不下时",
+   "tw": "放不下時",
+   "ko": "들어가지 않을 때",
+   "de": "Wenn es nicht passt",
+   "hi": "न समाने पर"
+  },
+  "* = rearranged since this mode was chosen; choose the mode again to return to its arrangement": {
+   "ja": "* = このモードを選んだ後に並べ替えました。もう一度このモードを選ぶと、その配置に戻ります",
+   "zh": "* = 选择此模式后已重新排列;再次选择该模式即可回到它的布局",
+   "tw": "* = 選擇此模式後已重新排列;再次選擇該模式即可回到它的配置",
+   "ko": "* = 이 모드를 고른 뒤에 배치를 바꿨습니다. 같은 모드를 다시 고르면 그 배치로 돌아갑니다",
+   "de": "* = seit der Wahl dieses Modus umgeordnet; den Modus erneut wählen, um zu seiner Anordnung zurückzukehren",
+   "hi": "* = यह मोड चुनने के बाद व्यवस्था बदली गई; उसी मोड को फिर चुनने पर उसकी व्यवस्था लौट आती है"
+  },
+  "Stopped": {
+   "ja": "止めました",
+   "zh": "已停止",
+   "tw": "已停止",
+   "ko": "멈췄습니다",
+   "de": "Angehalten",
+   "hi": "रोका गया"
+  },
+  "No panel by that name": {
+   "ja": "その名前のパネルはありません",
+   "zh": "没有这个名称的面板",
+   "tw": "沒有這個名稱的面板",
+   "ko": "그 이름의 패널이 없습니다",
+   "de": "Kein Bereich mit diesem Namen",
+   "hi": "इस नाम का कोई पैनल नहीं"
+  },
+  "Run the code": {
+   "ja": "コードを実行",
+   "zh": "运行代码",
+   "tw": "執行程式碼",
+   "ko": "코드 실행",
+   "de": "Code ausführen",
+   "hi": "कोड चलाएँ"
+  },
+  "Continue to the next breakpoint": {
+   "ja": "次のブレークポイントまで続ける",
+   "zh": "继续到下一个断点",
+   "tw": "繼續到下一個中斷點",
+   "ko": "다음 중단점까지 계속",
+   "de": "Bis zum nächsten Haltepunkt fortsetzen",
+   "hi": "अगले ब्रेकपॉइंट तक जारी रखें"
+  },
+  "Step one line": {
+   "ja": "1 行進める",
+   "zh": "单步执行一行",
+   "tw": "逐行執行一行",
+   "ko": "한 줄 진행",
+   "de": "Eine Zeile weiter",
+   "hi": "एक पंक्ति आगे बढ़ें"
+  },
+  "Clear the run marks": {
+   "ja": "実行の印を消す",
+   "zh": "清除运行标记",
+   "tw": "清除執行標記",
+   "ko": "실행 표시 지우기",
+   "de": "Laufmarkierungen löschen",
+   "hi": "रन के निशान हटाएँ"
+  },
+  "Apply the code to the pipeline": {
+   "ja": "コードを処理手順に適用",
+   "zh": "把代码应用到处理流程",
+   "tw": "把程式碼套用到處理流程",
+   "ko": "코드를 처리 순서에 적용",
+   "de": "Code auf die Pipeline anwenden",
+   "hi": "कोड को pipeline पर लागू करें"
+  },
+  "Regenerate the code from the pipeline": {
+   "ja": "処理手順からコードを作り直す",
+   "zh": "根据处理流程重新生成代码",
+   "tw": "依處理流程重新產生程式碼",
+   "ko": "처리 순서에서 코드를 다시 만들기",
+   "de": "Code aus der Pipeline neu erzeugen",
+   "hi": "pipeline से कोड फिर से बनाएँ"
+  },
+  "Display in a new window": {
+   "ja": "新しい窓に表示",
+   "zh": "在新窗口中显示",
+   "tw": "在新視窗中顯示",
+   "ko": "새 창에 표시",
+   "de": "In neuem Fenster anzeigen",
+   "hi": "नई विंडो में दिखाएँ"
+  },
+  "Display in the current window": {
+   "ja": "今の窓に表示",
+   "zh": "在当前窗口中显示",
+   "tw": "在目前視窗中顯示",
+   "ko": "현재 창에 표시",
+   "de": "Im aktuellen Fenster anzeigen",
+   "hi": "मौजूदा विंडो में दिखाएँ"
+  },
+  "Remove the watch row": {
+   "ja": "監視式の行を消す",
+   "zh": "删除监视行",
+   "tw": "刪除監看列",
+   "ko": "감시 행 지우기",
+   "de": "Überwachungszeile entfernen",
+   "hi": "वॉच की पंक्ति हटाएँ"
+  },
+  "Insert into the pipeline": {
+   "ja": "処理手順に追加",
+   "zh": "插入处理流程",
+   "tw": "插入處理流程",
+   "ko": "처리 순서에 추가",
+   "de": "In die Pipeline einfügen",
+   "hi": "pipeline में जोड़ें"
+  },
+  "Run once (pipeline unchanged)": {
+   "ja": "1 回だけ実行(処理手順は変えない)",
+   "zh": "只运行一次(不改变处理流程)",
+   "tw": "只執行一次(不改變處理流程)",
+   "ko": "한 번만 실행(처리 순서는 그대로)",
+   "de": "Einmal ausführen (Pipeline unverändert)",
+   "hi": "एक बार चलाएँ (pipeline नहीं बदलता)"
+  },
+  "Operator help": {
+   "ja": "op のヘルプ",
+   "zh": "算子帮助",
+   "tw": "運算子說明",
+   "ko": "연산자 도움말",
+   "de": "Operatorhilfe",
+   "hi": "operator सहायता"
+  },
+  "Work mode": {
+   "ja": "作業モード",
+   "zh": "工作模式",
+   "tw": "工作模式",
+   "ko": "작업 모드",
+   "de": "Arbeitsmodus",
+   "hi": "कार्य मोड"
+  },
+  "choose which panels are shown; the name on the button is the mode in use": {
+   "ja": "どのパネルを出すかを選ぶ。ボタンの名前が今のモード",
+   "zh": "选择显示哪些面板;按钮上的名称就是当前模式",
+   "tw": "選擇顯示哪些面板;按鈕上的名稱就是目前模式",
+   "ko": "어떤 패널을 보일지 고릅니다. 버튼의 이름이 지금의 모드",
+   "de": "wählen, welche Bereiche gezeigt werden; der Name auf der Schaltfläche ist der aktuelle Modus",
+   "hi": "कौन-से पैनल दिखें चुनें; बटन पर लिखा नाम ही अभी का मोड है"
+  },
+  "When they do not fit: scroll": {
+   "ja": "収まらない時: 送る",
+   "zh": "放不下时: 滚动",
+   "tw": "放不下時: 捲動",
+   "ko": "들어가지 않을 때: 스크롤",
+   "de": "Wenn es nicht passt: blättern",
+   "hi": "न समाने पर: स्क्रॉल करें"
+  },
+  "When they do not fit: wrap onto more rows": {
+   "ja": "収まらない時: 折り返す(数段組)",
+   "zh": "放不下时: 换行(多行)",
+   "tw": "放不下時: 換行(多列)",
+   "ko": "들어가지 않을 때: 줄 바꿈(여러 줄)",
+   "de": "Wenn es nicht passt: umbrechen (mehrere Reihen)",
+   "hi": "न समाने पर: कई पंक्तियों में लपेटें"
+  },
+  "Scroll back — show the ones before (or turn the mouse wheel)": {
+   "ja": "前へ送る — 前の物を見せる(マウスのホイールでも)",
+   "zh": "向前滚动 — 显示前面的项(也可用鼠标滚轮)",
+   "tw": "向前捲動 — 顯示前面的項目(也可用滑鼠滾輪)",
+   "ko": "앞으로 — 앞의 항목을 보입니다(마우스 휠로도)",
+   "de": "Zurückblättern — die vorderen zeigen (oder das Mausrad drehen)",
+   "hi": "पीछे स्क्रॉल — पहले वाले दिखाएँ (या माउस व्हील घुमाएँ)"
+  },
+  "Scroll on — show the ones after (or turn the mouse wheel)": {
+   "ja": "次へ送る — 後の物を見せる(マウスのホイールでも)",
+   "zh": "向后滚动 — 显示后面的项(也可用鼠标滚轮)",
+   "tw": "向後捲動 — 顯示後面的項目(也可用滑鼠滾輪)",
+   "ko": "뒤로 — 뒤의 항목을 보입니다(마우스 휠로도)",
+   "de": "Weiterblättern — die hinteren zeigen (oder das Mausrad drehen)",
+   "hi": "आगे स्क्रॉल — बाद वाले दिखाएँ (या माउस व्हील घुमाएँ)"
+  },
+  "Reduce motion": {
+   "ja": "動きを減らす",
+   "zh": "减少动画",
+   "tw": "減少動畫",
+   "ko": "움직임 줄이기",
+   "de": "Bewegung reduzieren",
+   "hi": "गति कम करें"
+  },
+  "Keep the icon still while something runs (until changed here, Windows' own animation setting is followed)": {
+   "ja": "処理中もアイコンを動かさない(ここで変えるまでは Windows のアニメーションの設定に従う)",
+   "zh": "处理时图标保持不动(在此更改之前,遵循 Windows 的动画设置)",
+   "tw": "處理時圖示保持不動(在此變更之前,依照 Windows 的動畫設定)",
+   "ko": "처리 중에도 아이콘을 움직이지 않음(여기서 바꾸기 전까지는 Windows 애니메이션 설정을 따름)",
+   "de": "Das Symbol bewegt sich während einer Arbeit nicht (bis zur Änderung hier gilt die Animationseinstellung von Windows)",
+   "hi": "काम चलते समय icon स्थिर रहे (यहाँ बदलने तक Windows की animation सेटिंग मानी जाती है)"
+  },
+  "Opening %s": {
+   "ja": "%s を開いています",
+   "zh": "正在打开 %s",
+   "tw": "正在開啟 %s",
+   "ko": "%s 여는 중",
+   "de": "%s wird geöffnet",
+   "hi": "%s खोला जा रहा है"
+  },
+  "Loading sample: %s": {
+   "ja": "サンプルを読み込み中: %s",
+   "zh": "正在加载示例: %s",
+   "tw": "正在載入範例: %s",
+   "ko": "샘플 불러오는 중: %s",
+   "de": "Beispiel wird geladen: %s",
+   "hi": "नमूना लोड हो रहा है: %s"
+  },
+  "Searching: %s": {
+   "ja": "検索中: %s",
+   "zh": "正在搜索: %s",
+   "tw": "正在搜尋: %s",
+   "ko": "검색 중: %s",
+   "de": "Suche: %s",
+   "hi": "खोज रहे हैं: %s"
+  },
+  "More tools": {
+   "ja": "ほかの道具",
+   "zh": "更多工具",
+   "tw": "更多工具",
+   "ko": "도구 더 보기",
+   "de": "Weitere Werkzeuge",
+   "hi": "और उपकरण"
+  },
+  "Done": {
+   "ja": "完了",
+   "zh": "完成",
+   "tw": "完成",
+   "ko": "완료",
+   "de": "Fertig",
+   "hi": "पूर्ण"
+  },
+  "Failed": {
+   "ja": "失敗",
+   "zh": "失败",
+   "tw": "失敗",
+   "ko": "실패",
+   "de": "Fehlgeschlagen",
+   "hi": "विफल"
+  },
+  "Panel menu": {
+   "ja": "パネルのメニュー",
+   "zh": "面板菜单",
+   "tw": "面板選單",
+   "ko": "패널 메뉴",
+   "de": "Bereichsmenü",
+   "hi": "पैनल मेनू"
+  },
+  "Shown: %d / %d": {
+   "ja": "表示 %d / %d",
+   "zh": "显示 %d / %d",
+   "tw": "顯示 %d / %d",
+   "ko": "표시 %d / %d",
+   "de": "Angezeigt: %d / %d",
+   "hi": "दिख रहे: %d / %d"
+  },
+  "Stages: %d": {
+   "ja": "段 %d",
+   "zh": "阶段 %d",
+   "tw": "階段 %d",
+   "ko": "단계 %d",
+   "de": "Stufen: %d",
+   "hi": "चरण: %d"
+  },
+  "Errors: %d": {
+   "ja": "エラー %d",
+   "zh": "错误 %d",
+   "tw": "錯誤 %d",
+   "ko": "오류 %d",
+   "de": "Fehler: %d",
+   "hi": "त्रुटियाँ: %d"
+  },
+  "Variables: %d": {
+   "ja": "変数 %d",
+   "zh": "变量 %d",
+   "tw": "變數 %d",
+   "ko": "변수 %d",
+   "de": "Variablen: %d",
+   "hi": "चर: %d"
+  },
+  "Tools and tabs: automatic (on the left when the panel is wide)": {
+   "ja": "道具とタブ: 自動(横長のパネルでは左に縦並び)",
+   "zh": "工具和标签: 自动(面板较宽时放在左侧)",
+   "tw": "工具與分頁: 自動(面板較寬時放在左側)",
+   "ko": "도구와 탭: 자동(패널이 가로로 길면 왼쪽에)",
+   "de": "Werkzeuge und Reiter: automatisch (links, wenn der Bereich breit ist)",
+   "hi": "औज़ार और टैब: स्वचालित (चौड़े पैनल में बाईं ओर)"
+  },
+  "Tools and tabs: on top": {
+   "ja": "道具とタブ: 上に横並び",
+   "zh": "工具和标签: 在上方",
+   "tw": "工具與分頁: 在上方",
+   "ko": "도구와 탭: 위에",
+   "de": "Werkzeuge und Reiter: oben",
+   "hi": "औज़ार और टैब: ऊपर"
+  },
+  "Tools and tabs: on the left": {
+   "ja": "道具とタブ: 左に縦並び",
+   "zh": "工具和标签: 在左侧",
+   "tw": "工具與分頁: 在左側",
+   "ko": "도구와 탭: 왼쪽에",
+   "de": "Werkzeuge und Reiter: links",
+   "hi": "औज़ार और टैब: बाईं ओर"
+  },
+  "Code font": {
+   "ja": "コードの書体",
+   "zh": "代码字体",
+   "tw": "程式碼字型",
+   "ko": "코드 글꼴",
+   "de": "Code-Schrift",
+   "hi": "कोड फ़ॉन्ट"
+  },
+  "Automatic": {
+   "ja": "自動",
+   "zh": "自动",
+   "tw": "自動",
+   "ko": "자동",
+   "de": "Automatisch",
+   "hi": "स्वचालित"
+  },
+  "Panel bar": {
+   "ja": "パネルの帯",
+   "zh": "面板栏",
+   "tw": "面板列",
+   "ko": "패널 막대",
+   "de": "Bereichsleiste",
+   "hi": "पैनल पट्टी"
+  },
+  "Click: show or hide. Right-click: separate window or dock.": {
+   "ja": "クリック: 出す / しまう。右クリック: 別ウィンドウ / 本体に戻す。",
+   "zh": "单击: 显示或隐藏。右键: 独立窗口或停靠。",
+   "tw": "按一下: 顯示或隱藏。右鍵: 獨立視窗或停駐。",
+   "ko": "클릭: 표시 / 숨기기. 오른쪽 클릭: 별도 창 / 도킹.",
+   "de": "Klick: ein- oder ausblenden. Rechtsklick: eigenes Fenster oder andocken.",
+   "hi": "क्लिक: दिखाएँ या छिपाएँ। राइट-क्लिक: अलग विंडो या डॉक।"
+  },
+  "Separate window": {
+   "ja": "別ウィンドウにする",
+   "zh": "独立窗口",
+   "tw": "獨立視窗",
+   "ko": "별도 창으로",
+   "de": "Eigenes Fenster",
+   "hi": "अलग विंडो"
+  },
+  "Dock in the main window": {
+   "ja": "本体の窓に戻す",
+   "zh": "停靠到主窗口",
+   "tw": "停駐到主視窗",
+   "ko": "기본 창에 도킹",
+   "de": "Im Hauptfenster andocken",
+   "hi": "मुख्य विंडो में डॉक करें"
+  },
+  "Hide": {
+   "ja": "しまう",
+   "zh": "隐藏",
+   "tw": "隱藏",
+   "ko": "숨기기",
+   "de": "Ausblenden",
+   "hi": "छिपाएँ"
+  },
+  "Show": {
+   "ja": "出す",
+   "zh": "显示",
+   "tw": "顯示",
+   "ko": "표시",
+   "de": "Einblenden",
+   "hi": "दिखाएँ"
+  },
+  "Layout": {
+   "ja": "レイアウト",
+   "zh": "布局",
+   "tw": "版面配置",
+   "ko": "배치",
+   "de": "Anordnung",
+   "hi": "लेआउट"
+  },
+  "Reset panel layout": {
+   "ja": "パネル配置を元に戻す",
+   "zh": "重置面板布局",
+   "tw": "重設面板配置",
+   "ko": "패널 배치 초기화",
+   "de": "Bereichsanordnung zurücksetzen",
+   "hi": "पैनल लेआउट रीसेट करें"
+  },
+  "Code on the left (tall)": {
+   "ja": "コードを左に(縦長)",
+   "zh": "代码在左侧(竖长)",
+   "tw": "程式碼在左側(直長)",
+   "ko": "코드를 왼쪽에(세로로 길게)",
+   "de": "Code links (hoch)",
+   "hi": "कोड बाईं ओर (लंबा)"
+  },
+  "Code at the bottom (wide)": {
+   "ja": "コードを下に(横長)",
+   "zh": "代码在底部(横宽)",
+   "tw": "程式碼在底部(橫寬)",
+   "ko": "코드를 아래에(가로로 넓게)",
+   "de": "Code unten (breit)",
+   "hi": "कोड नीचे (चौड़ा)"
+  },
+  "Dock all panels": {
+   "ja": "すべてのパネルを戻す",
+   "zh": "停靠所有面板",
+   "tw": "停駐所有面板",
+   "ko": "모든 패널 도킹",
+   "de": "Alle Bereiche andocken",
+   "hi": "सभी पैनल डॉक करें"
+  },
+  "Build pipeline": {
+   "ja": "処理を組む",
+   "zh": "构建流程",
+   "tw": "建立流程",
+   "ko": "파이프라인 만들기",
+   "de": "Pipeline bauen",
+   "hi": "पाइपलाइन बनाएँ"
+  },
+  "Compare results": {
+   "ja": "結果を比べる",
+   "zh": "比较结果",
+   "tw": "比較結果",
+   "ko": "결과 비교",
+   "de": "Vergleichen",
+   "hi": "परिणामों की तुलना"
+  },
+  "Inspect values": {
+   "ja": "数値を調べる",
+   "zh": "查看数值",
+   "tw": "檢視數值",
+   "ko": "값 확인",
+   "de": "Werte prüfen",
+   "hi": "मान जाँचें"
+  },
+  "Make code": {
+   "ja": "コードにする",
+   "zh": "生成代码",
+   "tw": "產生程式碼",
+   "ko": "코드로 만들기",
+   "de": "Code erzeugen",
+   "hi": "कोड बनाएँ"
+  },
+  "Image focus": {
+   "ja": "画像だけ大きく",
+   "zh": "仅放大图像",
+   "tw": "僅放大影像",
+   "ko": "이미지만 크게",
+   "de": "Bildfokus",
+   "hi": "केवल छवि बड़ी"
+  },
+  "Find panel": {
+   "ja": "パネルを探す",
+   "zh": "查找面板",
+   "tw": "尋找面板",
+   "ko": "패널 찾기",
+   "de": "Bereich suchen",
+   "hi": "पैनल खोजें"
+  },
+  "Find panel…": {
+   "ja": "パネルを探す…",
+   "zh": "查找面板…",
+   "tw": "尋找面板…",
+   "ko": "패널 찾기…",
+   "de": "Bereich suchen…",
+   "hi": "पैनल खोजें…"
+  },
+  "Leave image focus": {
+   "ja": "画像だけ大きくを終了",
+   "zh": "退出图像放大",
+   "tw": "結束影像放大",
+   "ko": "이미지만 크게 끝내기",
+   "de": "Bildfokus beenden",
+   "hi": "छवि फ़ोकस छोड़ें"
+  },
+  "Work modes": {
+   "ja": "作業モード",
+   "zh": "工作模式",
+   "tw": "工作模式",
+   "ko": "작업 모드",
+   "de": "Arbeitsmodi",
+   "hi": "कार्य मोड"
+  },
+  "Auto-update": {
+   "ja": "自動更新",
+   "zh": "自动更新",
+   "tw": "自動更新",
+   "ko": "자동 업데이트",
+   "de": "Auto-Update",
+   "hi": "स्वतः अद्यतन"
+  },
+  "Colour scheme": {
+   "ja": "配色",
+   "zh": "配色方案",
+   "tw": "配色方案",
+   "ko": "색 구성",
+   "de": "Farbschema",
+   "hi": "रंग योजना"
+  },
+  "Density": {
+   "ja": "表示の密度",
+   "zh": "显示密度",
+   "tw": "顯示密度",
+   "ko": "표시 밀도",
+   "de": "Dichte",
+   "hi": "घनत्व"
+  },
+  "Instrument (dark)": {
+   "ja": "計器盤(暗い)",
+   "zh": "仪表盘(深色)",
+   "tw": "儀表板(深色)",
+   "ko": "계기판(어두움)",
+   "de": "Instrument (dunkel)",
+   "hi": "उपकरण पटल (गहरा)"
+  },
+  "Machine panel (light)": {
+   "ja": "操作盤(明るい)",
+   "zh": "操作面板(浅色)",
+   "tw": "操作面板(淺色)",
+   "ko": "조작반(밝음)",
+   "de": "Bedienfeld (hell)",
+   "hi": "मशीन पैनल (हल्का)"
+  },
+  "Compact": {
+   "ja": "詰める",
+   "zh": "紧凑",
+   "tw": "緊湊",
+   "ko": "촘촘하게",
+   "de": "Kompakt",
+   "hi": "सघन"
+  },
+  "Standard": {
+   "ja": "標準",
+   "zh": "标准",
+   "tw": "標準",
+   "ko": "표준",
+   "de": "Standard",
+   "hi": "मानक"
+  },
+  "value %s (%s) / shown %s / range %s – %s": {
+   "ja": "値 %s (%s) / 表示 %s / レンジ %s〜%s",
+   "zh": "值 %s (%s) / 显示 %s / 范围 %s – %s",
+   "tw": "值 %s (%s) / 顯示 %s / 範圍 %s – %s",
+   "ko": "값 %s (%s) / 표시 %s / 범위 %s – %s",
+   "de": "Wert %s (%s) / angezeigt %s / Bereich %s – %s",
+   "hi": "मान %s (%s) / दिखाया %s / सीमा %s – %s"
+  },
     "border handling": {"ja": "端の扱い", "zh": "边界处理", "tw": "邊界處理", "ko": "가장자리 처리", "de": "Randbehandlung", "hi": "किनारे का व्यवहार"},
     "element shape": {"ja": "構造要素の形", "zh": "结构元素形状", "tw": "結構元素形狀", "ko": "구조 요소 모양", "de": "Form des Strukturelements", "hi": "संरचना तत्व का आकार"},
     "border handling — b ≤ 0.5 reflect, then nearest / constant (0) / wrap": {"ja": "端の扱い — b ≤ 0.5 は reflect(折り返し)、その先は nearest / constant(0)/ wrap", "zh": "边界处理 — b ≤ 0.5 为 reflect,之后为 nearest / constant(0)/ wrap", "tw": "邊界處理 — b ≤ 0.5 為 reflect,之後為 nearest / constant(0)/ wrap", "ko": "가장자리 처리 — b ≤ 0.5는 reflect, 그다음 nearest / constant(0) / wrap", "de": "Randbehandlung — b ≤ 0,5 reflect, danach nearest / constant (0) / wrap", "hi": "किनारे का व्यवहार — b ≤ 0.5 पर reflect, फिर nearest / constant (0) / wrap"},
@@ -515,7 +1150,7 @@
    "zh": "运行(&R)",
    "tw": "執行(&R)",
    "ko": "실행(&R)",
-   "de": "&Ausführen",
+   "de": "A&usführen",
    "hi": "रन (&R)"
   },
   "&Window": {
@@ -2053,7 +2688,1198 @@
    "ko": "값 5개",
    "de": "5 Werte",
    "hi": "5 मान"
-  }
+  },
+  "knobs on this line: %s": {
+   "ja": "この行のつまみ: %s",
+   "zh": "本行的旋钮: %s",
+   "tw": "本行的旋鈕: %s",
+   "ko": "이 줄의 노브: %s",
+   "de": "Regler in dieser Zeile: %s",
+   "hi": "इस पंक्ति के नॉब: %s"
+  },
+  "did you mean %s?": {
+   "ja": "もしかして: %s?",
+   "zh": "您是不是想输入: %s?",
+   "tw": "您是不是想輸入: %s?",
+   "ko": "혹시 이것인가요: %s?",
+   "de": "Meinten Sie: %s?",
+   "hi": "क्या आपका मतलब था: %s?"
+  },
+  "Find": {
+   "ja": "検索",
+   "zh": "查找",
+   "tw": "尋找",
+   "ko": "찾기",
+   "de": "Suchen",
+   "hi": "खोजें"
+  },
+  "Replace with": {
+   "ja": "置換後の文字列",
+   "zh": "替换为",
+   "tw": "取代為",
+   "ko": "바꿀 내용",
+   "de": "Ersetzen durch",
+   "hi": "इससे बदलें"
+  },
+  "Replace": {
+   "ja": "置換",
+   "zh": "替换",
+   "tw": "取代",
+   "ko": "바꾸기",
+   "de": "Ersetzen",
+   "hi": "बदलें"
+  },
+  "Replace all": {
+   "ja": "すべて置換",
+   "zh": "全部替换",
+   "tw": "全部取代",
+   "ko": "모두 바꾸기",
+   "de": "Alle ersetzen",
+   "hi": "सभी बदलें"
+  },
+  "Match case": {
+   "ja": "大文字小文字を区別",
+   "zh": "区分大小写",
+   "tw": "區分大小寫",
+   "ko": "대소문자 구분",
+   "de": "Groß-/Kleinschreibung beachten",
+   "hi": "अक्षर-भेद मानें"
+  },
+  "Find previous": {
+   "ja": "前を検索",
+   "zh": "查找上一个",
+   "tw": "尋找上一個",
+   "ko": "이전 찾기",
+   "de": "Vorheriges suchen",
+   "hi": "पिछला खोजें"
+  },
+  "Find next": {
+   "ja": "次を検索",
+   "zh": "查找下一个",
+   "tw": "尋找下一個",
+   "ko": "다음 찾기",
+   "de": "Nächstes suchen",
+   "hi": "अगला खोजें"
+  },
+  "Close": {
+   "ja": "閉じる",
+   "zh": "关闭",
+   "tw": "關閉",
+   "ko": "닫기",
+   "de": "Schließen",
+   "hi": "बंद करें"
+  },
+  "%d matches": {
+   "ja": "%d 件",
+   "zh": "%d 处匹配",
+   "tw": "%d 處符合",
+   "ko": "%d건 일치",
+   "de": "%d Treffer",
+   "hi": "%d मिलान"
+  },
+  "no match": {
+   "ja": "一致なし",
+   "zh": "无匹配",
+   "tw": "無符合",
+   "ko": "일치 없음",
+   "de": "kein Treffer",
+   "hi": "कोई मिलान नहीं"
+  },
+  "%d replaced": {
+   "ja": "%d 件を置換しました",
+   "zh": "已替换 %d 处",
+   "tw": "已取代 %d 處",
+   "ko": "%d건 바꿈",
+   "de": "%d ersetzt",
+   "hi": "%d बदले गए"
+  },
+  "not an operator: %s": {
+   "ja": "op ではありません: %s",
+   "zh": "不是算子: %s",
+   "tw": "不是運算子: %s",
+   "ko": "연산자가 아닙니다: %s",
+   "de": "kein Operator: %s",
+   "hi": "ऑपरेटर नहीं है: %s"
+  },
+  "no operator under the cursor": {
+   "ja": "カーソルの下に op がありません",
+   "zh": "光标下没有算子",
+   "tw": "游標下沒有運算子",
+   "ko": "커서 아래에 연산자가 없습니다",
+   "de": "Kein Operator unter dem Cursor",
+   "hi": "कर्सर के नीचे कोई ऑपरेटर नहीं"
+  },
+  "not computed": {
+   "ja": "未計算",
+   "zh": "未计算",
+   "tw": "未計算",
+   "ko": "미계산",
+   "de": "nicht berechnet",
+   "hi": "गणना नहीं हुई"
+  },
+  "x=%d  y=%d   value %s (%s) / shown %s / range %s to %s": {"ja": "x=%d  y=%d   値 %s (%s) / 表示 %s / レンジ %s〜%s", "zh": "x=%d  y=%d   值 %s (%s) / 显示 %s / 范围 %s〜%s", "tw": "x=%d  y=%d   值 %s (%s) / 顯示 %s / 範圍 %s〜%s", "ko": "x=%d  y=%d   값 %s (%s) / 표시 %s / 범위 %s〜%s", "de": "x=%d  y=%d   Wert %s (%s) / Anzeige %s / Bereich %s bis %s", "hi": "x=%d  y=%d   मान %s (%s) / प्रदर्शित %s / सीमा %s से %s"},
+  "Customize keyboard shortcuts…": {"ja": "キーボードのショートカットの設定…", "zh": "自定义键盘快捷键…", "tw": "自訂鍵盤快速鍵…", "ko": "키보드 단축키 설정…", "de": "Tastenkürzel anpassen…", "hi": "कीबोर्ड शॉर्टकट अनुकूलित करें…"},
+  "Parameters…": {"ja": "パラメータ…", "zh": "参数…", "tw": "參數…", "ko": "매개변수…", "de": "Parameter…", "hi": "पैरामीटर…"},
+  "Open the parameter window: several parameter files side by side, the rows that differ marked, edited and saved": {"ja": "パラメータの窓を開く: 複数のパラメータのファイルを並べ、違う行に印を付け、直して保存する", "zh": "打开参数窗口:并排显示多个参数文件,标出不同的行,可编辑并保存", "tw": "開啟參數視窗:並排顯示多個參數檔案,標出不同的列,可編輯並儲存", "ko": "매개변수 창 열기: 여러 매개변수 파일을 나란히 놓고 다른 행을 표시하며 고쳐서 저장", "de": "Parameterfenster öffnen: mehrere Parameterdateien nebeneinander, abweichende Zeilen markiert, bearbeiten und speichern", "hi": "पैरामीटर विंडो खोलें: कई पैरामीटर फ़ाइलें साथ-साथ, अलग पंक्तियाँ चिह्नित, बदलें और सहेजें"},
+  "Value %s (%s) / Shown %s / Range %s to %s": {
+   "ja": "値 %s (%s) / 表示 %s / レンジ %s〜%s",
+   "zh": "值 %s (%s) / 显示 %s / 范围 %s〜%s",
+   "tw": "值 %s (%s) / 顯示 %s / 範圍 %s〜%s",
+   "ko": "값 %s (%s) / 표시 %s / 범위 %s〜%s",
+   "de": "Wert %s (%s) / Anzeige %s / Bereich %s bis %s",
+   "hi": "मान %s (%s) / प्रदर्शित %s / सीमा %s से %s"
+  },
+  "Replace the selected match and go to the next one": {
+   "ja": "選んでいる一致を置き換えて、次の一致へ移ります",
+   "zh": "替换当前选中的匹配并跳到下一个",
+   "tw": "取代目前選取的符合項並跳到下一個",
+   "ko": "선택한 일치 항목을 바꾸고 다음으로 이동합니다",
+   "de": "Ersetzt den markierten Treffer und springt zum nächsten",
+   "hi": "चुने हुए मिलान को बदलें और अगले पर जाएँ"
+  },
+  "Replace every match (one Undo brings them all back)": {
+   "ja": "すべての一致を置き換えます(元に戻す 1 回で全部戻ります)",
+   "zh": "替换所有匹配(一次撤销即可全部还原)",
+   "tw": "取代所有符合項(一次復原即可全部還原)",
+   "ko": "모든 일치 항목을 바꿉니다(실행 취소 한 번으로 모두 되돌립니다)",
+   "de": "Ersetzt alle Treffer (ein Rückgängig stellt alles wieder her)",
+   "hi": "सभी मिलान बदलें (एक Undo से सब वापस आ जाता है)"
+  },
+  "Run selected lines": {
+   "ja": "選んだ行だけ実行",
+   "zh": "仅运行选中的行",
+   "tw": "僅執行選取的行",
+   "ko": "선택한 줄만 실행",
+   "de": "Nur markierte Zeilen ausführen",
+   "hi": "चुनी हुई पंक्तियाँ ही चलाएँ"
+  },
+  "Run only the stages of the Program lines you selected (the stages before them come from the cache; Ctrl+Return in the Program with a selection does the same)": {
+   "ja": "Program で選んだ行の段だけを実行します(その前の段はキャッシュから取ります。Program で行を選んだ状態の Ctrl+Return も同じです)",
+   "zh": "仅运行 Program 中所选行对应的阶段(之前的阶段取自缓存;在 Program 中选中行后按 Ctrl+Return 效果相同)",
+   "tw": "僅執行 Program 中所選行對應的階段(之前的階段取自快取;在 Program 中選取行後按 Ctrl+Return 效果相同)",
+   "ko": "Program에서 선택한 줄의 단계만 실행합니다(앞 단계는 캐시에서 가져옵니다. Program에서 줄을 선택하고 Ctrl+Return을 눌러도 같습니다)",
+   "de": "Führt nur die Stufen der markierten Program-Zeilen aus (die Stufen davor kommen aus dem Cache; Strg+Eingabe im Program mit Auswahl tut dasselbe)",
+   "hi": "Program में चुनी पंक्तियों के चरण ही चलाएँ (पहले के चरण कैश से आते हैं; Program में चयन के साथ Ctrl+Return भी यही करता है)"
+  },
+  "no stage in the selected lines": {
+   "ja": "選んだ行に段がありません",
+   "zh": "所选行中没有阶段",
+   "tw": "所選行中沒有階段",
+   "ko": "선택한 줄에 단계가 없습니다",
+   "de": "Keine Stufe in den markierten Zeilen",
+   "hi": "चुनी पंक्तियों में कोई चरण नहीं"
+  },
+  "ran line %d": {
+   "ja": "%d 行目を実行しました",
+   "zh": "已运行第 %d 行",
+   "tw": "已執行第 %d 行",
+   "ko": "%d번째 줄 실행",
+   "de": "Zeile %d ausgeführt",
+   "hi": "पंक्ति %d चलाई गई"
+  },
+  "ran lines %d–%d": {
+   "ja": "%d〜%d 行目を実行しました",
+   "zh": "已运行第 %d〜%d 行",
+   "tw": "已執行第 %d〜%d 行",
+   "ko": "%d〜%d번째 줄 실행",
+   "de": "Zeilen %d–%d ausgeführt",
+   "hi": "पंक्तियाँ %d–%d चलाई गईं"
+  },
+  "Find in Program": {
+   "ja": "Program 内を検索",
+   "zh": "在 Program 中查找",
+   "tw": "在 Program 中尋找",
+   "ko": "Program에서 찾기",
+   "de": "Im Program suchen",
+   "hi": "Program में खोजें"
+  },
+  "Replace in Program": {
+   "ja": "Program 内を置換",
+   "zh": "在 Program 中替换",
+   "tw": "在 Program 中取代",
+   "ko": "Program에서 바꾸기",
+   "de": "Im Program ersetzen",
+   "hi": "Program में बदलें"
+  },
+  "Find next in Program": {
+   "ja": "Program 内で次を検索",
+   "zh": "在 Program 中查找下一个",
+   "tw": "在 Program 中尋找下一個",
+   "ko": "Program에서 다음 찾기",
+   "de": "Im Program nächsten suchen",
+   "hi": "Program में अगला खोजें"
+  },
+  "Find previous in Program": {
+   "ja": "Program 内で前を検索",
+   "zh": "在 Program 中查找上一个",
+   "tw": "在 Program 中尋找上一個",
+   "ko": "Program에서 이전 찾기",
+   "de": "Im Program vorherigen suchen",
+   "hi": "Program में पिछला खोजें"
+  },
+  "Comment / uncomment lines": {
+   "ja": "行コメントの付け外し",
+   "zh": "切换行注释",
+   "tw": "切換行註解",
+   "ko": "줄 주석 켜기/끄기",
+   "de": "Zeilenkommentar umschalten",
+   "hi": "पंक्ति टिप्पणी चालू/बंद"
+  },
+  "Bigger editor text": {
+   "ja": "エディタの文字を大きく",
+   "zh": "放大编辑器文字",
+   "tw": "放大編輯器文字",
+   "ko": "편집기 글자 크게",
+   "de": "Editor-Text vergrößern",
+   "hi": "संपादक का पाठ बड़ा करें"
+  },
+  "Smaller editor text": {
+   "ja": "エディタの文字を小さく",
+   "zh": "缩小编辑器文字",
+   "tw": "縮小編輯器文字",
+   "ko": "편집기 글자 작게",
+   "de": "Editor-Text verkleinern",
+   "hi": "संपादक का पाठ छोटा करें"
+  },
+  "Help for the operator under the cursor": {
+   "ja": "カーソル下の op のヘルプ",
+   "zh": "光标下算子的帮助",
+   "tw": "游標下運算子的說明",
+   "ko": "커서 아래 연산자 도움말",
+   "de": "Hilfe zum Operator unter dem Cursor",
+   "hi": "कर्सर के नीचे के ऑपरेटर की सहायता"
+  },
+  "Search inside the Program text (the operator search box keeps Ctrl+F elsewhere)": {
+   "ja": "Program の文字列の中を検索します(Program 以外にいる時の Ctrl+F は op の検索欄のままです)",
+   "zh": "在 Program 文本中查找(不在 Program 时 Ctrl+F 仍是算子搜索框)",
+   "tw": "在 Program 文字中尋找(不在 Program 時 Ctrl+F 仍是運算子搜尋框)",
+   "ko": "Program 텍스트 안에서 찾습니다(Program 밖에서는 Ctrl+F가 연산자 검색창 그대로입니다)",
+   "de": "Sucht im Program-Text (außerhalb des Program bleibt Strg+F die Operatorsuche)",
+   "hi": "Program पाठ के भीतर खोजें (Program के बाहर Ctrl+F ऑपरेटर खोज ही रहता है)"
+  },
+  "Search and replace inside the Program text; Replace all is one undo step": {
+   "ja": "Program の文字列を検索して置換します。すべて置換は 1 回の元に戻すで戻ります",
+   "zh": "在 Program 文本中查找并替换;全部替换只需一次撤销",
+   "tw": "在 Program 文字中尋找並取代;全部取代只需一次復原",
+   "ko": "Program 텍스트에서 찾아 바꿉니다. 모두 바꾸기는 실행 취소 한 번으로 되돌립니다",
+   "de": "Sucht und ersetzt im Program-Text; Alle ersetzen ist ein einziger Rückgängig-Schritt",
+   "hi": "Program पाठ में खोजें और बदलें; सभी बदलना एक Undo में वापस होता है"
+  },
+  "Go to the next match of the Program search": {
+   "ja": "Program 内の検索で、次の一致へ移ります",
+   "zh": "跳到 Program 搜索的下一个匹配",
+   "tw": "跳到 Program 搜尋的下一個符合項",
+   "ko": "Program 검색의 다음 일치로 이동합니다",
+   "de": "Springt zum nächsten Treffer der Program-Suche",
+   "hi": "Program खोज के अगले मिलान पर जाएँ"
+  },
+  "Go to the previous match of the Program search": {
+   "ja": "Program 内の検索で、前の一致へ移ります",
+   "zh": "跳到 Program 搜索的上一个匹配",
+   "tw": "跳到 Program 搜尋的上一個符合項",
+   "ko": "Program 검색의 이전 일치로 이동합니다",
+   "de": "Springt zum vorherigen Treffer der Program-Suche",
+   "hi": "Program खोज के पिछले मिलान पर जाएँ"
+  },
+  "Toggle the line comment (* ) on the selected Program lines; one undo step": {
+   "ja": "選んだ Program の行の行コメント(* )を付け外します。元に戻すは 1 回です",
+   "zh": "切换所选 Program 行的行注释(* );一次撤销即可还原",
+   "tw": "切換所選 Program 行的行註解(* );一次復原即可還原",
+   "ko": "선택한 Program 줄의 줄 주석(* )을 켜거나 끕니다. 실행 취소 한 번으로 되돌립니다",
+   "de": "Schaltet den Zeilenkommentar (* ) der markierten Program-Zeilen um; ein Rückgängig-Schritt",
+   "hi": "चुनी Program पंक्तियों की टिप्पणी (* ) चालू/बंद करें; एक Undo"
+  },
+  "Make the Program text one point bigger (6 to 32; also Ctrl + mouse wheel)": {
+   "ja": "Program の文字を 1 ポイント大きくします(6〜32。Ctrl+マウスホイールでも変えられます)",
+   "zh": "将 Program 文字放大 1 磅(6 到 32;也可用 Ctrl+鼠标滚轮)",
+   "tw": "將 Program 文字放大 1 點(6 到 32;也可用 Ctrl+滑鼠滾輪)",
+   "ko": "Program 글자를 1pt 키웁니다(6~32. Ctrl+마우스 휠로도 바꿀 수 있습니다)",
+   "de": "Vergrößert den Program-Text um einen Punkt (6 bis 32; auch Strg + Mausrad)",
+   "hi": "Program पाठ को 1 पॉइंट बड़ा करें (6 से 32; Ctrl + माउस व्हील से भी)"
+  },
+  "Make the Program text one point smaller (6 to 32; also Ctrl + mouse wheel)": {
+   "ja": "Program の文字を 1 ポイント小さくします(6〜32。Ctrl+マウスホイールでも変えられます)",
+   "zh": "将 Program 文字缩小 1 磅(6 到 32;也可用 Ctrl+鼠标滚轮)",
+   "tw": "將 Program 文字縮小 1 點(6 到 32;也可用 Ctrl+滑鼠滾輪)",
+   "ko": "Program 글자를 1pt 줄입니다(6~32. Ctrl+마우스 휠로도 바꿀 수 있습니다)",
+   "de": "Verkleinert den Program-Text um einen Punkt (6 bis 32; auch Strg + Mausrad)",
+   "hi": "Program पाठ को 1 पॉइंट छोटा करें (6 से 32; Ctrl + माउस व्हील से भी)"
+  },
+  "Open the help of the operator the Program cursor is on; the keyboard shortcuts list stays on F1": {
+   "ja": "Program のカーソルがある op のヘルプを開きます(F1 はこれまでどおりキー一覧です)",
+   "zh": "打开 Program 光标所在算子的帮助(F1 仍是快捷键列表)",
+   "tw": "開啟 Program 游標所在運算子的說明(F1 仍是快捷鍵列表)",
+   "ko": "Program 커서가 있는 연산자의 도움말을 엽니다(F1은 그대로 단축키 목록입니다)",
+   "de": "Öffnet die Hilfe des Operators unter dem Program-Cursor (F1 zeigt weiterhin die Tastenkürzel)",
+   "hi": "Program कर्सर वाले ऑपरेटर की सहायता खोलें (F1 अब भी कीबोर्ड शॉर्टकट सूची है)"
+  },
+  "%s already has files. Only the missing sub-folders will be created; nothing is overwritten.\nContinue?": {
+   "ja": "%s には既にファイルがあります。足りないサブフォルダだけを作り、何も上書きしません。\n続けますか?",
+   "zh": "%s 中已有文件。只会创建缺少的子文件夹,不会覆盖任何内容。\n是否继续?",
+   "tw": "%s 中已有檔案。只會建立缺少的子資料夾,不會覆蓋任何內容。\n是否繼續?",
+   "ko": "%s에는 이미 파일이 있습니다. 없는 하위 폴더만 만들고 아무것도 덮어쓰지 않습니다.\n계속할까요?",
+   "de": "%s enthält bereits Dateien. Es werden nur die fehlenden Unterordner angelegt; nichts wird überschrieben.\nFortfahren?",
+   "hi": "%s में पहले से फ़ाइलें हैं। केवल कमी वाले उप-फ़ोल्डर बनेंगे; कुछ भी ओवरराइट नहीं होगा।\nजारी रखें?"
+  },
+  "%s is not opened here (other file). Right-click: Show in file manager": {
+   "ja": "%s はここでは開きません(その他のファイル)。右クリック: エクスプローラーで表示",
+   "zh": "%s 不在此处打开(其他文件)。右键:在文件管理器中显示",
+   "tw": "%s 不在此處開啟(其他檔案)。右鍵:在檔案管理員中顯示",
+   "ko": "%s은(는) 여기서 열지 않습니다(기타 파일). 오른쪽 클릭: 파일 관리자에서 보기",
+   "de": "%s wird hier nicht geöffnet (andere Datei). Rechtsklick: Im Dateimanager zeigen",
+   "hi": "%s यहाँ नहीं खुलती (अन्य फ़ाइल)। राइट-क्लिक: फ़ाइल मैनेजर में दिखाएँ"
+  },
+  "(cut: the file is larger than 1 MB)": {
+   "ja": "(省略: ファイルが 1 MB より大きい)",
+   "zh": "(已截断:文件大于 1 MB)",
+   "tw": "(已截斷:檔案大於 1 MB)",
+   "ko": "(생략: 파일이 1 MB보다 큼)",
+   "de": "(gekürzt: Datei ist größer als 1 MB)",
+   "hi": "(काटा गया: फ़ाइल 1 MB से बड़ी है)"
+  },
+  "(no recent folders)": {
+   "ja": "(最近のフォルダはありません)",
+   "zh": "(没有最近的文件夹)",
+   "tw": "(沒有最近的資料夾)",
+   "ko": "(최근 폴더 없음)",
+   "de": "(keine zuletzt verwendeten Ordner)",
+   "hi": "(कोई हाल का फ़ोल्डर नहीं)"
+  },
+  "A link: shown, but not followed (the tree stays inside the project folder)": {
+   "ja": "リンク: 表示しますが辿りません(木はプロジェクトのフォルダの外へ出ません)",
+   "zh": "链接:显示但不跟随(树不会超出项目文件夹)",
+   "tw": "連結:顯示但不跟隨(樹不會超出專案資料夾)",
+   "ko": "링크: 표시하지만 따라가지 않습니다(트리는 프로젝트 폴더 밖으로 나가지 않습니다)",
+   "de": "Verknüpfung: wird gezeigt, aber nicht verfolgt (der Baum bleibt im Projektordner)",
+   "hi": "लिंक: दिखता है पर अनुसरण नहीं होता (ट्री प्रोजेक्ट फ़ोल्डर के भीतर ही रहता है)"
+  },
+  "All": {
+   "ja": "すべて",
+   "zh": "全部",
+   "tw": "全部",
+   "ko": "전체",
+   "de": "Alle",
+   "hi": "सभी"
+  },
+  "Choose a folder: it becomes the project and its files are listed in the Project panel": {
+   "ja": "フォルダを選ぶと、それがプロジェクトになり、中のファイルがプロジェクトのパネルに並びます",
+   "zh": "选择一个文件夹:它成为项目,其中的文件会列在“项目”面板中",
+   "tw": "選擇一個資料夾:它成為專案,其中的檔案會列在「專案」面板中",
+   "ko": "폴더를 고르면 그것이 프로젝트가 되고 안의 파일이 프로젝트 패널에 나열됩니다",
+   "de": "Ordner wählen: er wird das Projekt, seine Dateien erscheinen im Projekt-Panel",
+   "hi": "एक फ़ोल्डर चुनें: वही प्रोजेक्ट बनता है और उसकी फ़ाइलें प्रोजेक्ट पैनल में दिखती हैं"
+  },
+  "Choose a folder: it becomes the project. Nothing is written into it": {
+   "ja": "フォルダを選ぶと、それがプロジェクトになります。フォルダの中には何も書き込みません",
+   "zh": "选择一个文件夹:它成为项目。不会向其中写入任何内容",
+   "tw": "選擇一個資料夾:它成為專案。不會向其中寫入任何內容",
+   "ko": "폴더를 고르면 그것이 프로젝트가 됩니다. 폴더 안에는 아무것도 쓰지 않습니다",
+   "de": "Ordner wählen: er wird das Projekt. Es wird nichts hineingeschrieben",
+   "hi": "एक फ़ोल्डर चुनें: वही प्रोजेक्ट बनता है। उसमें कुछ नहीं लिखा जाता"
+  },
+  "Close the project folder": {
+   "ja": "プロジェクトのフォルダを閉じる",
+   "zh": "关闭项目文件夹",
+   "tw": "關閉專案資料夾",
+   "ko": "프로젝트 폴더 닫기",
+   "de": "Projektordner schließen",
+   "hi": "प्रोजेक्ट फ़ोल्डर बंद करें"
+  },
+  "Compare side by side": {
+   "ja": "並べて比べる",
+   "zh": "并排比较",
+   "tw": "並排比較",
+   "ko": "나란히 비교",
+   "de": "Nebeneinander vergleichen",
+   "hi": "साथ-साथ तुलना करें"
+  },
+  "Copy path": {
+   "ja": "パスをコピー",
+   "zh": "复制路径",
+   "tw": "複製路徑",
+   "ko": "경로 복사",
+   "de": "Pfad kopieren",
+   "hi": "पथ कॉपी करें"
+  },
+  "Copy relative path": {
+   "ja": "相対パスをコピー",
+   "zh": "复制相对路径",
+   "tw": "複製相對路徑",
+   "ko": "상대 경로 복사",
+   "de": "Relativen Pfad kopieren",
+   "hi": "सापेक्ष पथ कॉपी करें"
+  },
+  "Copy the full path": {
+   "ja": "フルパスをコピーします",
+   "zh": "复制完整路径",
+   "tw": "複製完整路徑",
+   "ko": "전체 경로를 복사합니다",
+   "de": "Kopiert den vollständigen Pfad",
+   "hi": "पूरा पथ कॉपी करें"
+  },
+  "Copy the path relative to the project folder": {
+   "ja": "プロジェクトのフォルダからの相対パスをコピーします",
+   "zh": "复制相对于项目文件夹的路径",
+   "tw": "複製相對於專案資料夾的路徑",
+   "ko": "프로젝트 폴더 기준의 상대 경로를 복사합니다",
+   "de": "Kopiert den Pfad relativ zum Projektordner",
+   "hi": "प्रोजेक्ट फ़ोल्डर के सापेक्ष पथ कॉपी करें"
+  },
+  "Could not create the folder": {
+   "ja": "フォルダを作れませんでした",
+   "zh": "无法创建文件夹",
+   "tw": "無法建立資料夾",
+   "ko": "폴더를 만들 수 없습니다",
+   "de": "Ordner konnte nicht angelegt werden",
+   "hi": "फ़ोल्डर नहीं बन सका"
+  },
+  "Could not create the pipeline": {
+   "ja": "パイプラインを作れませんでした",
+   "zh": "无法创建管线",
+   "tw": "無法建立管線",
+   "ko": "파이프라인을 만들 수 없습니다",
+   "de": "Pipeline konnte nicht angelegt werden",
+   "hi": "पाइपलाइन नहीं बन सकी"
+  },
+  "Could not create the project": {
+   "ja": "プロジェクトを作れませんでした",
+   "zh": "无法创建项目",
+   "tw": "無法建立專案",
+   "ko": "프로젝트를 만들 수 없습니다",
+   "de": "Projekt konnte nicht angelegt werden",
+   "hi": "प्रोजेक्ट नहीं बन सका"
+  },
+  "Could not move": {
+   "ja": "移動できませんでした",
+   "zh": "无法移动",
+   "tw": "無法移動",
+   "ko": "이동할 수 없습니다",
+   "de": "Verschieben nicht möglich",
+   "hi": "स्थानांतरित नहीं हो सका"
+  },
+  "Could not open the folder": {
+   "ja": "フォルダを開けませんでした",
+   "zh": "无法打开文件夹",
+   "tw": "無法開啟資料夾",
+   "ko": "폴더를 열 수 없습니다",
+   "de": "Ordner konnte nicht geöffnet werden",
+   "hi": "फ़ोल्डर नहीं खुल सका"
+  },
+  "Could not rename": {
+   "ja": "名前を変更できませんでした",
+   "zh": "无法重命名",
+   "tw": "無法重新命名",
+   "ko": "이름을 바꿀 수 없습니다",
+   "de": "Umbenennen nicht möglich",
+   "hi": "नाम नहीं बदला जा सका"
+  },
+  "Create a folder inside the project": {
+   "ja": "プロジェクトの中にフォルダを作ります",
+   "zh": "在项目内创建文件夹",
+   "tw": "在專案內建立資料夾",
+   "ko": "프로젝트 안에 폴더를 만듭니다",
+   "de": "Legt einen Ordner im Projekt an",
+   "hi": "प्रोजेक्ट के भीतर फ़ोल्डर बनाएँ"
+  },
+  "Create a project folder with the standard sub-folders: images, pipelines, programs, params, results": {
+   "ja": "標準のサブフォルダ(images / pipelines / programs / params / results)を持つプロジェクトのフォルダを作ります",
+   "zh": "创建带有标准子文件夹(images / pipelines / programs / params / results)的项目文件夹",
+   "tw": "建立帶有標準子資料夾(images / pipelines / programs / params / results)的專案資料夾",
+   "ko": "표준 하위 폴더(images / pipelines / programs / params / results)를 가진 프로젝트 폴더를 만듭니다",
+   "de": "Legt einen Projektordner mit den Standard-Unterordnern an: images, pipelines, programs, params, results",
+   "hi": "मानक उप-फ़ोल्डरों (images / pipelines / programs / params / results) के साथ प्रोजेक्ट फ़ोल्डर बनाएँ"
+  },
+  "Create an empty pipeline file (in pipelines/ unless you chose a folder)": {
+   "ja": "空のパイプラインのファイルを作ります(フォルダを選んでいなければ pipelines/ の中)",
+   "zh": "创建空管线文件(未选择文件夹时放在 pipelines/ 中)",
+   "tw": "建立空管線檔案(未選擇資料夾時放在 pipelines/ 中)",
+   "ko": "빈 파이프라인 파일을 만듭니다(폴더를 고르지 않으면 pipelines/ 안)",
+   "de": "Legt eine leere Pipeline-Datei an (in pipelines/, sofern kein Ordner gewählt ist)",
+   "hi": "खाली पाइपलाइन फ़ाइल बनाएँ (फ़ोल्डर न चुना हो तो pipelines/ में)"
+  },
+  "Create folder": {
+   "ja": "フォルダを作る",
+   "zh": "创建文件夹",
+   "tw": "建立資料夾",
+   "ko": "폴더 만들기",
+   "de": "Ordner anlegen",
+   "hi": "फ़ोल्डर बनाएँ"
+  },
+  "File name": {
+   "ja": "ファイル名",
+   "zh": "文件名",
+   "tw": "檔案名稱",
+   "ko": "파일 이름",
+   "de": "Dateiname",
+   "hi": "फ़ाइल का नाम"
+  },
+  "Filter by name": {
+   "ja": "名前で絞り込む",
+   "zh": "按名称筛选",
+   "tw": "依名稱篩選",
+   "ko": "이름으로 거르기",
+   "de": "Nach Namen filtern",
+   "hi": "नाम से छाँटें"
+  },
+  "Folder name": {
+   "ja": "フォルダ名",
+   "zh": "文件夹名",
+   "tw": "資料夾名稱",
+   "ko": "폴더 이름",
+   "de": "Ordnername",
+   "hi": "फ़ोल्डर का नाम"
+  },
+  "Image: double-click opens it as the input image": {
+   "ja": "画像: ダブルクリックで入力画像として開きます",
+   "zh": "图像:双击作为输入图像打开",
+   "tw": "影像:按兩下作為輸入影像開啟",
+   "ko": "이미지: 더블클릭하면 입력 이미지로 엽니다",
+   "de": "Bild: Doppelklick öffnet es als Eingabebild",
+   "hi": "छवि: डबल-क्लिक से इनपुट छवि के रूप में खुलती है"
+  },
+  "Images": {
+   "ja": "画像",
+   "zh": "图像",
+   "tw": "影像",
+   "ko": "이미지",
+   "de": "Bilder",
+   "hi": "छवियाँ"
+  },
+  "It is not a folder, or it no longer exists.": {
+   "ja": "フォルダではないか、もう存在しません。",
+   "zh": "它不是文件夹,或已不存在。",
+   "tw": "它不是資料夾,或已不存在。",
+   "ko": "폴더가 아니거나 더 이상 존재하지 않습니다.",
+   "de": "Es ist kein Ordner oder existiert nicht mehr.",
+   "hi": "यह फ़ोल्डर नहीं है या अब मौजूद नहीं है।"
+  },
+  "Move to %s/": {
+   "ja": "%s/ へ移す",
+   "zh": "移到 %s/",
+   "tw": "移到 %s/",
+   "ko": "%s/(으)로 이동",
+   "de": "Nach %s/ verschieben",
+   "hi": "%s/ में ले जाएँ"
+  },
+  "New folder": {
+   "ja": "新しいフォルダ",
+   "zh": "新建文件夹",
+   "tw": "新增資料夾",
+   "ko": "새 폴더",
+   "de": "Neuer Ordner",
+   "hi": "नया फ़ोल्डर"
+  },
+  "New name": {
+   "ja": "新しい名前",
+   "zh": "新名称",
+   "tw": "新名稱",
+   "ko": "새 이름",
+   "de": "Neuer Name",
+   "hi": "नया नाम"
+  },
+  "New pipeline": {
+   "ja": "新しいパイプライン",
+   "zh": "新建管线",
+   "tw": "新增管線",
+   "ko": "새 파이프라인",
+   "de": "Neue Pipeline",
+   "hi": "नई पाइपलाइन"
+  },
+  "New project": {
+   "ja": "新しいプロジェクト",
+   "zh": "新建项目",
+   "tw": "新增專案",
+   "ko": "새 프로젝트",
+   "de": "Neues Projekt",
+   "hi": "नया प्रोजेक्ट"
+  },
+  "New project…": {
+   "ja": "新しいプロジェクト…",
+   "zh": "新建项目…",
+   "tw": "新增專案…",
+   "ko": "새 프로젝트…",
+   "de": "Neues Projekt…",
+   "hi": "नया प्रोजेक्ट…"
+  },
+  "Open": {
+   "ja": "開く",
+   "zh": "打开",
+   "tw": "開啟",
+   "ko": "열기",
+   "de": "Öffnen",
+   "hi": "खोलें"
+  },
+  "Open a folder and its images, pipelines and definition files are listed here.": {
+   "ja": "フォルダを開くと、画像・パイプライン・定義のファイルがここに並びます。",
+   "zh": "打开文件夹后,图像、管线和定义文件会列在这里。",
+   "tw": "開啟資料夾後,影像、管線和定義檔案會列在這裡。",
+   "ko": "폴더를 열면 이미지·파이프라인·정의 파일이 여기에 나열됩니다.",
+   "de": "Öffnen Sie einen Ordner: Bilder, Pipelines und Definitionsdateien erscheinen hier.",
+   "hi": "फ़ोल्डर खोलने पर छवियाँ, पाइपलाइन और परिभाषा फ़ाइलें यहाँ सूचीबद्ध होती हैं।"
+  },
+  "Open folder": {
+   "ja": "フォルダを開く",
+   "zh": "打开文件夹",
+   "tw": "開啟資料夾",
+   "ko": "폴더 열기",
+   "de": "Ordner öffnen",
+   "hi": "फ़ोल्डर खोलें"
+  },
+  "Open folder…": {
+   "ja": "フォルダを開く…",
+   "zh": "打开文件夹…",
+   "tw": "開啟資料夾…",
+   "ko": "폴더 열기…",
+   "de": "Ordner öffnen…",
+   "hi": "फ़ोल्डर खोलें…"
+  },
+  "Open the file in the place its kind belongs to": {
+   "ja": "ファイルを、その種類の行き先で開きます",
+   "zh": "在其种类对应的位置打开文件",
+   "tw": "在其種類對應的位置開啟檔案",
+   "ko": "파일을 그 종류에 맞는 곳에서 엽니다",
+   "de": "Öffnet die Datei dort, wo ihre Art hingehört",
+   "hi": "फ़ाइल को उसके प्रकार की जगह पर खोलें"
+  },
+  "Open the folder of bundled sample images to see how the tree works": {
+   "ja": "同梱のサンプル画像のフォルダを開いて、木の使い方を見ます",
+   "zh": "打开自带示例图像文件夹,查看树的用法",
+   "tw": "開啟隨附範例影像資料夾,查看樹的用法",
+   "ko": "동봉된 샘플 이미지 폴더를 열어 트리 사용법을 봅니다",
+   "de": "Öffnet den Ordner mit den mitgelieferten Beispielbildern, um den Baum auszuprobieren",
+   "hi": "साथ आए नमूना छवियों का फ़ोल्डर खोलकर ट्री का उपयोग देखें"
+  },
+  "Open the sample folder": {
+   "ja": "サンプルのフォルダを開く",
+   "zh": "打开示例文件夹",
+   "tw": "開啟範例資料夾",
+   "ko": "샘플 폴더 열기",
+   "de": "Beispielordner öffnen",
+   "hi": "नमूना फ़ोल्डर खोलें"
+  },
+  "Other file: not opened here; use Show in file manager": {
+   "ja": "その他のファイル: ここでは開きません。「エクスプローラーで表示」を使います",
+   "zh": "其他文件:不在此处打开;请用“在文件管理器中显示”",
+   "tw": "其他檔案:不在此處開啟;請用「在檔案管理員中顯示」",
+   "ko": "기타 파일: 여기서 열지 않습니다. '파일 관리자에서 보기'를 사용하세요",
+   "de": "Andere Datei: wird hier nicht geöffnet; „Im Dateimanager zeigen“ verwenden",
+   "hi": "अन्य फ़ाइल: यहाँ नहीं खुलती; “फ़ाइल मैनेजर में दिखाएँ” का उपयोग करें"
+  },
+  "Other files": {
+   "ja": "その他のファイル",
+   "zh": "其他文件",
+   "tw": "其他檔案",
+   "ko": "기타 파일",
+   "de": "Andere Dateien",
+   "hi": "अन्य फ़ाइलें"
+  },
+  "Parameters": {
+   "ja": "パラメータ",
+   "zh": "参数",
+   "tw": "參數",
+   "ko": "파라미터",
+   "de": "Parameter",
+   "hi": "पैरामीटर"
+  },
+  "Parameters / definitions: double-click shows the text, read-only": {
+   "ja": "パラメータ・定義: ダブルクリックで中身を読み取り専用で表示します",
+   "zh": "参数/定义:双击以只读方式显示文本",
+   "tw": "參數/定義:按兩下以唯讀方式顯示文字",
+   "ko": "파라미터/정의: 더블클릭하면 읽기 전용으로 내용을 보여 줍니다",
+   "de": "Parameter/Definitionen: Doppelklick zeigt den Text schreibgeschützt",
+   "hi": "पैरामीटर/परिभाषाएँ: डबल-क्लिक से पाठ केवल-पढ़ने के रूप में दिखता है"
+  },
+  "Pipeline: double-click opens it as the current pipeline": {
+   "ja": "パイプライン: ダブルクリックでいまのパイプラインとして開きます",
+   "zh": "管线:双击作为当前管线打开",
+   "tw": "管線:按兩下作為目前管線開啟",
+   "ko": "파이프라인: 더블클릭하면 현재 파이프라인으로 엽니다",
+   "de": "Pipeline: Doppelklick öffnet sie als aktuelle Pipeline",
+   "hi": "पाइपलाइन: डबल-क्लिक से वर्तमान पाइपलाइन के रूप में खुलती है"
+  },
+  "Pipelines": {
+   "ja": "パイプライン",
+   "zh": "管线",
+   "tw": "管線",
+   "ko": "파이프라인",
+   "de": "Pipelines",
+   "hi": "पाइपलाइनें"
+  },
+  "Project": {
+   "ja": "プロジェクト",
+   "zh": "项目",
+   "tw": "專案",
+   "ko": "프로젝트",
+   "de": "Projekt",
+   "hi": "प्रोजेक्ट"
+  },
+  "Project folder name": {
+   "ja": "プロジェクトのフォルダ名",
+   "zh": "项目文件夹名称",
+   "tw": "專案資料夾名稱",
+   "ko": "프로젝트 폴더 이름",
+   "de": "Name des Projektordners",
+   "hi": "प्रोजेक्ट फ़ोल्डर का नाम"
+  },
+  "Python": {
+   "ja": "Python",
+   "zh": "Python",
+   "tw": "Python",
+   "ko": "Python",
+   "de": "Python",
+   "hi": "Python"
+  },
+  "Python mode comes in the next version: %s was not run": {
+   "ja": "Python のモードは次の版で対応します: %s は実行していません",
+   "zh": "Python 模式将在下一版提供:%s 未被运行",
+   "tw": "Python 模式將在下一版提供:%s 未被執行",
+   "ko": "Python 모드는 다음 버전에서 제공됩니다: %s은(는) 실행하지 않았습니다",
+   "de": "Der Python-Modus kommt in der nächsten Version: %s wurde nicht ausgeführt",
+   "hi": "Python मोड अगले संस्करण में आएगा: %s चलाई नहीं गई"
+  },
+  "Python: not run when opened; the Python mode comes in the next version": {
+   "ja": "Python: 開いても実行しません。Python のモードは次の版で対応します",
+   "zh": "Python:打开时不运行;Python 模式将在下一版提供",
+   "tw": "Python:開啟時不執行;Python 模式將在下一版提供",
+   "ko": "Python: 열어도 실행하지 않습니다. Python 모드는 다음 버전에서 제공됩니다",
+   "de": "Python: wird beim Öffnen nicht ausgeführt; der Python-Modus kommt in der nächsten Version",
+   "hi": "Python: खोलने पर चलती नहीं; Python मोड अगले संस्करण में आएगा"
+  },
+  "Recent folders": {
+   "ja": "最近のフォルダ",
+   "zh": "最近的文件夹",
+   "tw": "最近的資料夾",
+   "ko": "최근 폴더",
+   "de": "Zuletzt verwendete Ordner",
+   "hi": "हाल के फ़ोल्डर"
+  },
+  "Rename": {
+   "ja": "名前の変更",
+   "zh": "重命名",
+   "tw": "重新命名",
+   "ko": "이름 바꾸기",
+   "de": "Umbenennen",
+   "hi": "नाम बदलें"
+  },
+  "Rename this file or folder (it stays inside the project)": {
+   "ja": "このファイルまたはフォルダの名前を変えます(プロジェクトの中に留まります)",
+   "zh": "重命名此文件或文件夹(仍在项目内)",
+   "tw": "重新命名此檔案或資料夾(仍在專案內)",
+   "ko": "이 파일이나 폴더의 이름을 바꿉니다(프로젝트 안에 머뭅니다)",
+   "de": "Benennt diese Datei oder diesen Ordner um (bleibt im Projekt)",
+   "hi": "इस फ़ाइल या फ़ोल्डर का नाम बदलें (प्रोजेक्ट के भीतर ही रहता है)"
+  },
+  "Results": {
+   "ja": "出力",
+   "zh": "输出",
+   "tw": "輸出",
+   "ko": "출력",
+   "de": "Ergebnisse",
+   "hi": "परिणाम"
+  },
+  "Select two or more images to see them side by side": {
+   "ja": "画像を 2 つ以上選ぶと、並べて見られます",
+   "zh": "选择两张或更多图像即可并排查看",
+   "tw": "選擇兩張或更多影像即可並排檢視",
+   "ko": "이미지를 두 개 이상 고르면 나란히 볼 수 있습니다",
+   "de": "Zwei oder mehr Bilder wählen, um sie nebeneinander zu sehen",
+   "hi": "दो या अधिक छवियाँ चुनें, साथ-साथ देखने के लिए"
+  },
+  "Show in file manager": {
+   "ja": "エクスプローラーで表示",
+   "zh": "在文件管理器中显示",
+   "tw": "在檔案管理員中顯示",
+   "ko": "파일 관리자에서 보기",
+   "de": "Im Dateimanager zeigen",
+   "hi": "फ़ाइल मैनेजर में दिखाएँ"
+  },
+  "Show only one kind of file": {
+   "ja": "1 つの種類のファイルだけを表示します",
+   "zh": "只显示一种文件",
+   "tw": "只顯示一種檔案",
+   "ko": "한 종류의 파일만 표시합니다",
+   "de": "Zeigt nur eine Dateiart",
+   "hi": "केवल एक प्रकार की फ़ाइलें दिखाएँ"
+  },
+  "Show only the files whose name contains this text": {
+   "ja": "名前にこの文字を含むファイルだけを表示します",
+   "zh": "只显示名称包含此文字的文件",
+   "tw": "只顯示名稱包含此文字的檔案",
+   "ko": "이름에 이 글자가 들어 있는 파일만 표시합니다",
+   "de": "Zeigt nur Dateien, deren Name diesen Text enthält",
+   "hi": "केवल वे फ़ाइलें दिखाएँ जिनके नाम में यह पाठ है"
+  },
+  "Show the Project panel: the project folder as a tree of files": {
+   "ja": "プロジェクトのパネルを表示します(プロジェクトのフォルダをファイルの木で見せます)",
+   "zh": "显示“项目”面板:以文件树显示项目文件夹",
+   "tw": "顯示「專案」面板:以檔案樹顯示專案資料夾",
+   "ko": "프로젝트 패널을 표시합니다(프로젝트 폴더를 파일 트리로 보여 줍니다)",
+   "de": "Zeigt das Projekt-Panel: den Projektordner als Dateibaum",
+   "hi": "प्रोजेक्ट पैनल दिखाएँ: प्रोजेक्ट फ़ोल्डर को फ़ाइल-ट्री के रूप में"
+  },
+  "Show the file in the file manager (it is not opened)": {
+   "ja": "ファイルをエクスプローラーで表示します(開きはしません)",
+   "zh": "在文件管理器中显示该文件(不打开)",
+   "tw": "在檔案管理員中顯示該檔案(不開啟)",
+   "ko": "파일 관리자에서 파일을 보여 줍니다(열지는 않습니다)",
+   "de": "Zeigt die Datei im Dateimanager (sie wird nicht geöffnet)",
+   "hi": "फ़ाइल को फ़ाइल मैनेजर में दिखाएँ (खोली नहीं जाती)"
+  },
+  "Show the selected images side by side": {
+   "ja": "選んだ画像を並べて見せます",
+   "zh": "并排显示所选图像",
+   "tw": "並排顯示所選影像",
+   "ko": "선택한 이미지를 나란히 보여 줍니다",
+   "de": "Zeigt die gewählten Bilder nebeneinander",
+   "hi": "चुनी हुई छवियाँ साथ-साथ दिखाएँ"
+  },
+  "Standard folder (images / pipelines / programs / params / results)": {
+   "ja": "標準のフォルダ(images / pipelines / programs / params / results)",
+   "zh": "标准文件夹(images / pipelines / programs / params / results)",
+   "tw": "標準資料夾(images / pipelines / programs / params / results)",
+   "ko": "표준 폴더(images / pipelines / programs / params / results)",
+   "de": "Standardordner (images / pipelines / programs / params / results)",
+   "hi": "मानक फ़ोल्डर (images / pipelines / programs / params / results)"
+  },
+  "The content does not match the folder it is in. Move it to the standard folder": {
+   "ja": "中身がいまのフォルダと合っていません。標準のフォルダへ移します",
+   "zh": "内容与所在文件夹不符。移到标准文件夹",
+   "tw": "內容與所在資料夾不符。移到標準資料夾",
+   "ko": "내용이 현재 폴더와 맞지 않습니다. 표준 폴더로 옮깁니다",
+   "de": "Der Inhalt passt nicht zum Ordner. In den Standardordner verschieben",
+   "hi": "सामग्री वर्तमान फ़ोल्डर से मेल नहीं खाती। मानक फ़ोल्डर में ले जाएँ"
+  },
+  "The content is a %s but it sits in %s/. Move it to %s/?": {
+   "ja": "中身は「%s」ですが %s/ にあります。%s/ へ移しますか?",
+   "zh": "内容是“%s”,但位于 %s/。是否移到 %s/?",
+   "tw": "內容是「%s」,但位於 %s/。是否移到 %s/?",
+   "ko": "내용은 '%s'인데 %s/에 있습니다. %s/(으)로 옮길까요?",
+   "de": "Der Inhalt ist „%s“, liegt aber in %s/. Nach %s/ verschieben?",
+   "hi": "सामग्री “%s” है पर %s/ में रखी है। %s/ में ले जाएँ?"
+  },
+  "The last project folder is gone: %s": {
+   "ja": "前回のプロジェクトのフォルダが見つかりません: %s",
+   "zh": "上次的项目文件夹已不存在:%s",
+   "tw": "上次的專案資料夾已不存在:%s",
+   "ko": "지난번 프로젝트 폴더를 찾을 수 없습니다: %s",
+   "de": "Der zuletzt verwendete Projektordner existiert nicht mehr: %s",
+   "hi": "पिछला प्रोजेक्ट फ़ोल्डर नहीं मिला: %s"
+  },
+  "The project folder. Double-click a file to open it; right-click for more": {
+   "ja": "プロジェクトのフォルダです。ファイルをダブルクリックで開き、右クリックで他の操作ができます",
+   "zh": "项目文件夹。双击文件打开;右键可进行更多操作",
+   "tw": "專案資料夾。按兩下檔案開啟;按右鍵可進行更多操作",
+   "ko": "프로젝트 폴더입니다. 파일을 더블클릭해 열고, 오른쪽 클릭으로 다른 작업을 합니다",
+   "de": "Der Projektordner. Doppelklick öffnet eine Datei; Rechtsklick für mehr",
+   "hi": "प्रोजेक्ट फ़ोल्डर। फ़ाइल खोलने के लिए डबल-क्लिक करें; और विकल्पों के लिए राइट-क्लिक करें"
+  },
+  "The project has no %s/ folder yet. Create it?": {
+   "ja": "このプロジェクトには %s/ のフォルダがまだありません。作りますか?",
+   "zh": "此项目还没有 %s/ 文件夹。是否创建?",
+   "tw": "此專案還沒有 %s/ 資料夾。是否建立?",
+   "ko": "이 프로젝트에는 아직 %s/ 폴더가 없습니다. 만들까요?",
+   "de": "Das Projekt hat noch keinen Ordner %s/. Anlegen?",
+   "hi": "प्रोजेक्ट में अभी %s/ फ़ोल्डर नहीं है। बनाएँ?"
+  },
+  "Where should the new project go?": {
+   "ja": "新しいプロジェクトをどこに作りますか?",
+   "zh": "新项目要放在哪里?",
+   "tw": "新專案要放在哪裡?",
+   "ko": "새 프로젝트를 어디에 만들까요?",
+   "de": "Wo soll das neue Projekt angelegt werden?",
+   "hi": "नया प्रोजेक्ट कहाँ बनाएँ?"
+  },
+  "copied: %s": {
+   "ja": "コピーしました: %s",
+   "zh": "已复制:%s",
+   "tw": "已複製:%s",
+   "ko": "복사함: %s",
+   "de": "kopiert: %s",
+   "hi": "कॉपी किया: %s"
+  },
+  "created %s": {
+   "ja": "%s を作りました",
+   "zh": "已创建 %s",
+   "tw": "已建立 %s",
+   "ko": "%s을(를) 만들었습니다",
+   "de": "%s angelegt",
+   "hi": "%s बनाई गई"
+  },
+  "moved to %s/": {
+   "ja": "%s/ へ移しました",
+   "zh": "已移到 %s/",
+   "tw": "已移到 %s/",
+   "ko": "%s/(으)로 옮겼습니다",
+   "de": "nach %s/ verschoben",
+   "hi": "%s/ में ले जाया गया"
+  },
+  "project folder: %s": {
+   "ja": "プロジェクトのフォルダ: %s",
+   "zh": "项目文件夹:%s",
+   "tw": "專案資料夾:%s",
+   "ko": "프로젝트 폴더: %s",
+   "de": "Projektordner: %s",
+   "hi": "प्रोजेक्ट फ़ोल्डर: %s"
+  },
+  "read-only": {
+   "ja": "読み取り専用",
+   "zh": "只读",
+   "tw": "唯讀",
+   "ko": "읽기 전용",
+   "de": "schreibgeschützt",
+   "hi": "केवल-पढ़ने"
+  },
+  "Float: Project": {
+   "ja": "切り離す: プロジェクト",
+   "zh": "浮动:项目",
+   "tw": "浮動:專案",
+   "ko": "분리: 프로젝트",
+   "de": "Abdocken: Projekt",
+   "hi": "अलग करें: प्रोजेक्ट"
+  },
+  "A program is already running: press Stop (Ctrl+F2) first": {"ja": "プログラムが実行中です。先に停止(Ctrl+F2)を押してください", "zh": "程序正在运行：请先按停止(Ctrl+F2)", "tw": "程式正在執行：請先按停止(Ctrl+F2)", "ko": "프로그램이 실행 중입니다. 먼저 중지(Ctrl+F2)를 누르세요", "de": "Ein Programm läuft bereits: zuerst Stopp (Strg+F2) drücken", "hi": "एक प्रोग्राम पहले से चल रहा है: पहले रोकें (Ctrl+F2) दबाएँ"},
+  "A program is running: stop it first (Ctrl+F2)": {"ja": "プログラムが実行中です。先に止めてください(Ctrl+F2)", "zh": "程序正在运行：请先停止(Ctrl+F2)", "tw": "程式正在執行：請先停止(Ctrl+F2)", "ko": "프로그램이 실행 중입니다. 먼저 중지하세요(Ctrl+F2)", "de": "Ein Programm läuft: zuerst anhalten (Strg+F2)", "hi": "प्रोग्राम चल रहा है: पहले इसे रोकें (Ctrl+F2)"},
+  "Breakpoint condition": {"ja": "ブレークポイントの条件", "zh": "断点条件", "tw": "中斷點條件", "ko": "중단점 조건", "de": "Haltepunkt-Bedingung", "hi": "ब्रेकपॉइंट की शर्त"},
+  "Breakpoint condition…": {"ja": "ブレークポイントの条件…", "zh": "断点条件…", "tw": "中斷點條件…", "ko": "중단점 조건…", "de": "Haltepunkt-Bedingung…", "hi": "ब्रेकपॉइंट की शर्त…"},
+  "Cancel": {"ja": "キャンセル", "zh": "取消", "tw": "取消", "ko": "취소", "de": "Abbrechen", "hi": "रद्द करें"},
+  "Clear output": {"ja": "出力を消す", "zh": "清除输出", "tw": "清除輸出", "ko": "출력 지우기", "de": "Ausgabe leeren", "hi": "आउटपुट साफ़ करें"},
+  "Clear the Output pane under the Program": {"ja": "Program 欄の下の出力の欄を消します", "zh": "清除 Program 下方的输出窗格", "tw": "清除 Program 下方的輸出窗格", "ko": "Program 아래의 출력 창을 지웁니다", "de": "Den Ausgabebereich unter dem Programm leeren", "hi": "Program के नीचे का आउटपुट पैन साफ़ करें"},
+  "Continue": {"ja": "続行", "zh": "继续", "tw": "繼續", "ko": "계속", "de": "Fortsetzen", "hi": "जारी रखें"},
+  "Convert to Python": {"ja": "Python にする", "zh": "转换为 Python", "tw": "轉換為 Python", "ko": "Python으로 변환", "de": "In Python umwandeln", "hi": "Python में बदलें"},
+  "Converted the pipeline to Python (Ctrl+Z restores the previous Python text)": {"ja": "パイプラインを Python にしました(Ctrl+Z で前の Python の文面に戻ります)", "zh": "已将流水线转换为 Python(Ctrl+Z 恢复之前的 Python 文本)", "tw": "已將管線轉換為 Python(Ctrl+Z 還原先前的 Python 文字)", "ko": "파이프라인을 Python으로 변환했습니다(Ctrl+Z로 이전 Python 텍스트 복원)", "de": "Pipeline in Python umgewandelt (Strg+Z stellt den vorherigen Python-Text wieder her)", "hi": "पाइपलाइन को Python में बदला गया (Ctrl+Z पिछला Python पाठ लौटाता है)"},
+  "Could not convert to Python: %s": {"ja": "Python にできませんでした: %s", "zh": "无法转换为 Python:%s", "tw": "無法轉換為 Python:%s", "ko": "Python으로 변환할 수 없습니다: %s", "de": "Umwandlung in Python nicht möglich: %s", "hi": "Python में नहीं बदला जा सका: %s"},
+  "Could not open file": {"ja": "ファイルを開けませんでした", "zh": "无法打开文件", "tw": "無法開啟檔案", "ko": "파일을 열 수 없습니다", "de": "Datei konnte nicht geöffnet werden", "hi": "फ़ाइल नहीं खुल सकी"},
+  "Could not save": {"ja": "保存できませんでした", "zh": "无法保存", "tw": "無法儲存", "ko": "저장할 수 없습니다", "de": "Speichern nicht möglich", "hi": "सहेजा नहीं जा सका"},
+  "Debug": {"ja": "Debug(デバッグ)", "zh": "Debug(调试)", "tw": "Debug(偵錯)", "ko": "Debug(디버그)", "de": "Debug", "hi": "Debug (डिबग)"},
+  "Debug stops at breakpoints and steps line by line; Release runs faster without the line hook (breakpoints do not stop)": {"ja": "Debug はブレークポイントで止まり 1 行ずつ進めます。Release は行フックなしで速く走ります(ブレークポイントでは止まりません)", "zh": "Debug 在断点处停止并可逐行执行;Release 不使用行钩子,运行更快(断点不会停止)", "tw": "Debug 會在中斷點停止並可逐行執行;Release 不使用行掛鉤,執行更快(中斷點不會停止)", "ko": "Debug는 중단점에서 멈추고 한 줄씩 실행합니다. Release는 줄 훅 없이 더 빠르게 실행됩니다(중단점에서 멈추지 않음)", "de": "Debug hält an Haltepunkten und geht zeilenweise; Release läuft ohne Zeilen-Hook schneller (Haltepunkte halten nicht)", "hi": "Debug ब्रेकपॉइंट पर रुकता है और पंक्ति-दर-पंक्ति चलता है; Release लाइन हुक के बिना तेज़ चलता है (ब्रेकपॉइंट पर नहीं रुकता)"},
+  "Debugging ended": {"ja": "デバッグを終えました", "zh": "调试已结束", "tw": "偵錯已結束", "ko": "디버깅을 종료했습니다", "de": "Debuggen beendet", "hi": "डिबगिंग समाप्त"},
+  "F5 continue, F6 step, Ctrl+F2 stop": {"ja": "F5 続行・F6 1 行・Ctrl+F2 停止", "zh": "F5 继续、F6 单步、Ctrl+F2 停止", "tw": "F5 繼續、F6 單步、Ctrl+F2 停止", "ko": "F5 계속, F6 한 줄, Ctrl+F2 중지", "de": "F5 fortsetzen, F6 Einzelschritt, Strg+F2 anhalten", "hi": "F5 जारी, F6 एक पंक्ति, Ctrl+F2 रोकें"},
+  "New Python program": {"ja": "新しい Python のプログラム", "zh": "新建 Python 程序", "tw": "新增 Python 程式", "ko": "새 Python 프로그램", "de": "Neues Python-Programm", "hi": "नया Python प्रोग्राम"},
+  "New program": {"ja": "新しいプログラム", "zh": "新建程序", "tw": "新增程式", "ko": "새 프로그램", "de": "Neues Programm", "hi": "नया प्रोग्राम"},
+  "No code in the selected lines": {"ja": "選んだ行にコードがありません", "zh": "所选行中没有代码", "tw": "所選的行中沒有程式碼", "ko": "선택한 줄에 코드가 없습니다", "de": "Kein Code in den ausgewählten Zeilen", "hi": "चुनी गई पंक्तियों में कोई कोड नहीं"},
+  "Not a Python expression: %s": {"ja": "Python の式ではありません: %s", "zh": "不是 Python 表达式:%s", "tw": "不是 Python 運算式:%s", "ko": "Python 식이 아닙니다: %s", "de": "Kein Python-Ausdruck: %s", "hi": "Python व्यंजक नहीं है: %s"},
+  "Not run: the program was not confirmed": {"ja": "実行しませんでした: プログラムを確認していません", "zh": "未运行:程序未经确认", "tw": "未執行:程式未經確認", "ko": "실행하지 않음: 프로그램을 확인하지 않았습니다", "de": "Nicht ausgeführt: das Programm wurde nicht bestätigt", "hi": "नहीं चलाया: प्रोग्राम की पुष्टि नहीं हुई"},
+  "Not run: this program came from a file and was not confirmed.": {"ja": "実行しませんでした: このプログラムはファイルから来ていて、確認されていません。", "zh": "未运行:此程序来自文件且未经确认。", "tw": "未執行:此程式來自檔案且未經確認。", "ko": "실행하지 않음: 이 프로그램은 파일에서 왔으며 확인되지 않았습니다.", "de": "Nicht ausgeführt: dieses Programm stammt aus einer Datei und wurde nicht bestätigt.", "hi": "नहीं चलाया: यह प्रोग्राम एक फ़ाइल से आया और इसकी पुष्टि नहीं हुई।"},
+  "Open Python program": {"ja": "Python のプログラムを開く", "zh": "打开 Python 程序", "tw": "開啟 Python 程式", "ko": "Python 프로그램 열기", "de": "Python-Programm öffnen", "hi": "Python प्रोग्राम खोलें"},
+  "Open Python program…": {"ja": "Python のプログラムを開く…", "zh": "打开 Python 程序…", "tw": "開啟 Python 程式…", "ko": "Python 프로그램 열기…", "de": "Python-Programm öffnen…", "hi": "Python प्रोग्राम खोलें…"},
+  "Open a .py file in the Program (Python mode). It does not run until you confirm it once": {"ja": ".py を Program 欄に開きます(Python のモード)。一度確認するまで実行しません", "zh": "在 Program 中打开 .py 文件(Python 模式)。确认一次之前不会运行", "tw": "在 Program 中開啟 .py 檔案(Python 模式)。確認一次之前不會執行", "ko": ".py 파일을 Program에 엽니다(Python 모드). 한 번 확인하기 전에는 실행하지 않습니다", "de": "Eine .py-Datei im Programm öffnen (Python-Modus). Sie läuft erst nach einmaliger Bestätigung", "hi": "Program में .py फ़ाइल खोलें (Python मोड)। एक बार पुष्टि करने तक यह नहीं चलती"},
+  "Open the Python example": {"ja": "Python の例を開く", "zh": "打开 Python 示例", "tw": "開啟 Python 範例", "ko": "Python 예제 열기", "de": "Python-Beispiel öffnen", "hi": "Python उदाहरण खोलें"},
+  "Open the example": {"ja": "例を開く", "zh": "打开示例", "tw": "開啟範例", "ko": "예제 열기", "de": "Beispiel öffnen", "hi": "उदाहरण खोलें"},
+  "Output (print, notes and errors; click a line with 'line N' to go there)": {"ja": "出力(print・知らせ・誤り。行番号のある行を押すとその行へ)", "zh": "输出(print、提示和错误;点击带行号的行可跳转)", "tw": "輸出(print、提示與錯誤;點擊帶行號的行可跳轉)", "ko": "출력(print, 알림, 오류; 줄 번호가 있는 줄을 누르면 그 줄로 이동)", "de": "Ausgabe (print, Hinweise und Fehler; Klick auf eine Zeile mit Zeilennummer springt dorthin)", "hi": "आउटपुट (print, सूचनाएँ और त्रुटियाँ; 'line N' वाली पंक्ति पर क्लिक करके वहाँ जाएँ)"},
+  "Pipeline mode": {"ja": "パイプラインのモード", "zh": "流水线模式", "tw": "管線模式", "ko": "파이프라인 모드", "de": "Pipeline-Modus", "hi": "पाइपलाइन मोड"},
+  "Pipeline mode: the stage list is the source": {"ja": "パイプラインのモード: 段の列が正本", "zh": "流水线模式:阶段列表为准", "tw": "管線模式:階段清單為準", "ko": "파이프라인 모드: 단계 목록이 원본", "de": "Pipeline-Modus: die Stufenliste ist maßgeblich", "hi": "पाइपलाइन मोड: चरण सूची मूल है"},
+  "Pipeline mode: the stage list is the source; the Program shows it as code": {"ja": "パイプラインのモード: 段の列が正本で、Program 欄はそれをコードで見せます", "zh": "流水线模式:阶段列表为准,Program 以代码显示它", "tw": "管線模式:階段清單為準,Program 以程式碼顯示它", "ko": "파이프라인 모드: 단계 목록이 원본이며 Program은 이를 코드로 보여줍니다", "de": "Pipeline-Modus: die Stufenliste ist maßgeblich; das Programm zeigt sie als Code", "hi": "पाइपलाइन मोड: चरण सूची मूल है; Program इसे कोड के रूप में दिखाता है"},
+  "Pipeline: the stage list is the source": {"ja": "パイプライン: 段の列が正本", "zh": "流水线:阶段列表为准", "tw": "管線:階段清單為準", "ko": "파이프라인: 단계 목록이 원본", "de": "Pipeline: die Stufenliste ist maßgeblich", "hi": "पाइपलाइन: चरण सूची मूल है"},
+  "Put the example program (a sample image, four ops, a variable and an if) into the Program": {"ja": "例のプログラム(同梱の画像・op 4 つ・変数・if)を Program 欄に入れます", "zh": "将示例程序(示例图像、4 个算子、变量和 if)放入 Program", "tw": "將範例程式(範例影像、4 個運算子、變數與 if)放入 Program", "ko": "예제 프로그램(샘플 이미지, 연산 4개, 변수와 if)을 Program에 넣습니다", "de": "Das Beispielprogramm (Beispielbild, vier Operatoren, eine Variable und ein if) ins Programm setzen", "hi": "उदाहरण प्रोग्राम (नमूना छवि, चार ऑप, एक चर और एक if) Program में डालें"},
+  "Python mode": {"ja": "Python のモード", "zh": "Python 模式", "tw": "Python 模式", "ko": "Python 모드", "de": "Python-Modus", "hi": "Python मोड"},
+  "Python mode: the Program text is the source; the stage list records each run": {"ja": "Python のモード: Program 欄の文面が正本で、段の列は実行ごとの記録です", "zh": "Python 模式:Program 文本为准,阶段列表记录每次运行", "tw": "Python 模式:Program 文字為準,階段清單記錄每次執行", "ko": "Python 모드: Program 텍스트가 원본이며 단계 목록은 실행마다 기록합니다", "de": "Python-Modus: der Programmtext ist maßgeblich; die Stufenliste protokolliert jeden Lauf", "hi": "Python मोड: Program का पाठ मूल है; चरण सूची हर रन को दर्ज करती है"},
+  "Python mode: the text is the source — press Run (F5)": {"ja": "Python のモード: 文面が正本です。実行(F5)を押してください", "zh": "Python 模式:文本为准,请按运行(F5)", "tw": "Python 模式:文字為準,請按執行(F5)", "ko": "Python 모드: 텍스트가 원본입니다. 실행(F5)을 누르세요", "de": "Python-Modus: der Text ist maßgeblich — Ausführen (F5) drücken", "hi": "Python मोड: पाठ ही मूल है — चलाएँ (F5) दबाएँ"},
+  "Python mode: the text is the source; the stage list records each run": {"ja": "Python のモード: 文面が正本で、段の列は実行ごとの記録です", "zh": "Python 模式:文本为准,阶段列表记录每次运行", "tw": "Python 模式:文字為準,階段清單記錄每次執行", "ko": "Python 모드: 텍스트가 원본이며 단계 목록은 실행마다 기록합니다", "de": "Python-Modus: der Text ist maßgeblich; die Stufenliste protokolliert jeden Lauf", "hi": "Python मोड: पाठ मूल है; चरण सूची हर रन को दर्ज करती है"},
+  "Python: the text is the source": {"ja": "Python: 文面が正本", "zh": "Python:文本为准", "tw": "Python:文字為準", "ko": "Python: 텍스트가 원본", "de": "Python: der Text ist maßgeblich", "hi": "Python: पाठ मूल है"},
+  "Python: opens in the Program (Python mode); it runs only after you confirm it once": {"ja": "Python: Program 欄に Python のモードで開きます。一度確認した後にだけ実行します", "zh": "Python:在 Program 中以 Python 模式打开;确认一次后才会运行", "tw": "Python:在 Program 中以 Python 模式開啟;確認一次後才會執行", "ko": "Python: Program에 Python 모드로 엽니다. 한 번 확인한 후에만 실행합니다", "de": "Python: öffnet im Programm (Python-Modus); läuft erst nach einmaliger Bestätigung", "hi": "Python: Program में (Python मोड) खुलता है; एक बार पुष्टि के बाद ही चलता है"},
+  "Quit Fullseye Studio": {"ja": "Fullseye Studio を終了", "zh": "退出 Fullseye Studio", "tw": "結束 Fullseye Studio", "ko": "Fullseye Studio 종료", "de": "Fullseye Studio beenden", "hi": "Fullseye Studio बंद करें"},
+  "Record (read-only): %d op call(s), %d recalculated, %d from cache": {"ja": "記録(読み取り専用): op の呼び出し %d 回、再計算 %d、使い回し %d", "zh": "记录(只读):%d 次算子调用,重新计算 %d,来自缓存 %d", "tw": "記錄(唯讀):%d 次運算子呼叫,重新計算 %d,來自快取 %d", "ko": "기록(읽기 전용): 연산 호출 %d회, 재계산 %d, 캐시 재사용 %d", "de": "Protokoll (schreibgeschützt): %d Operator-Aufruf(e), %d neu berechnet, %d aus dem Cache", "hi": "रिकॉर्ड (केवल पढ़ें): %d ऑप कॉल, %d पुनर्गणना, %d कैश से"},
+  "Record (read-only): run the program (F5) and each op call appears here": {"ja": "記録(読み取り専用): プログラムを実行(F5)すると op の呼び出しが 1 行ずつここに出ます", "zh": "记录(只读):运行程序(F5)后,每次算子调用都会显示在这里", "tw": "記錄(唯讀):執行程式(F5)後,每次運算子呼叫都會顯示在這裡", "ko": "기록(읽기 전용): 프로그램을 실행(F5)하면 연산 호출이 한 줄씩 여기에 나옵니다", "de": "Protokoll (schreibgeschützt): Programm ausführen (F5), dann erscheint hier jeder Operator-Aufruf", "hi": "रिकॉर्ड (केवल पढ़ें): प्रोग्राम चलाएँ (F5) और हर ऑप कॉल यहाँ दिखेगी"},
+  "Release": {"ja": "Release(リリース)", "zh": "Release(发布)", "tw": "Release(發行)", "ko": "Release(릴리스)", "de": "Release", "hi": "Release (रिलीज़)"},
+  "Release cannot step line by line: switch to Debug": {"ja": "Release では 1 行ずつ進められません。Debug に切り替えてください", "zh": "Release 无法逐行执行:请切换到 Debug", "tw": "Release 無法逐行執行:請切換到 Debug", "ko": "Release에서는 한 줄씩 실행할 수 없습니다. Debug로 전환하세요", "de": "Release kann nicht zeilenweise ausführen: zu Debug wechseln", "hi": "Release पंक्ति-दर-पंक्ति नहीं चल सकता: Debug पर जाएँ"},
+  "Release does not stop at breakpoints: switch to Debug to use them": {"ja": "Release ではブレークポイントで止まりません。使うには Debug に切り替えてください", "zh": "Release 不会在断点处停止:要使用断点请切换到 Debug", "tw": "Release 不會在中斷點停止:要使用中斷點請切換到 Debug", "ko": "Release에서는 중단점에서 멈추지 않습니다. 사용하려면 Debug로 전환하세요", "de": "Release hält nicht an Haltepunkten: zum Verwenden zu Debug wechseln", "hi": "Release ब्रेकपॉइंट पर नहीं रुकता: उन्हें उपयोग करने के लिए Debug पर जाएँ"},
+  "Remove the condition": {"ja": "条件を外す", "zh": "移除条件", "tw": "移除條件", "ko": "조건 제거", "de": "Bedingung entfernen", "hi": "शर्त हटाएँ"},
+  "Run Python program": {"ja": "Python のプログラムを実行", "zh": "运行 Python 程序", "tw": "執行 Python 程式", "ko": "Python 프로그램 실행", "de": "Python-Programm ausführen", "hi": "Python प्रोग्राम चलाएँ"},
+  "Run it": {"ja": "実行する", "zh": "运行", "tw": "執行", "ko": "실행", "de": "Ausführen", "hi": "चलाएँ"},
+  "Run the Python program (F5). When stopped at a breakpoint: continue": {"ja": "Python のプログラムを実行(F5)。ブレークポイントで止まっていれば続行", "zh": "运行 Python 程序(F5)。在断点处停止时:继续", "tw": "執行 Python 程式(F5)。在中斷點停止時:繼續", "ko": "Python 프로그램 실행(F5). 중단점에서 멈춰 있으면 계속", "de": "Python-Programm ausführen (F5). Am Haltepunkt: fortsetzen", "hi": "Python प्रोग्राम चलाएँ (F5)। ब्रेकपॉइंट पर रुका हो तो: जारी रखें"},
+  "Run the Python program (also F5; continue when stopped)": {"ja": "Python のプログラムを実行(F5 でも。止まっていれば続行)", "zh": "运行 Python 程序(也可按 F5;停止时继续)", "tw": "執行 Python 程式(也可按 F5;停止時繼續)", "ko": "Python 프로그램 실행(F5도 가능, 멈춰 있으면 계속)", "de": "Python-Programm ausführen (auch F5; angehalten: fortsetzen)", "hi": "Python प्रोग्राम चलाएँ (F5 भी; रुका हो तो जारी)"},
+  "Run the program (F5): print output, notes and errors appear here.": {"ja": "プログラムを実行(F5)すると、print の出力・知らせ・誤りがここに出ます。", "zh": "运行程序(F5):print 输出、提示和错误会显示在这里。", "tw": "執行程式(F5):print 輸出、提示與錯誤會顯示在這裡。", "ko": "프로그램을 실행(F5)하면 print 출력, 알림, 오류가 여기에 나옵니다.", "de": "Programm ausführen (F5): print-Ausgabe, Hinweise und Fehler erscheinen hier.", "hi": "प्रोग्राम चलाएँ (F5): print आउटपुट, सूचनाएँ और त्रुटियाँ यहाँ दिखेंगी।"},
+  "Run this Python program?": {"ja": "この Python のプログラムを実行しますか?", "zh": "运行此 Python 程序?", "tw": "執行此 Python 程式?", "ko": "이 Python 프로그램을 실행할까요?", "de": "Dieses Python-Programm ausführen?", "hi": "यह Python प्रोग्राम चलाएँ?"},
+  "Run with the line hook: breakpoints and steps work": {"ja": "行フックありで実行: ブレークポイントと 1 行実行が効きます", "zh": "使用行钩子运行:断点和单步有效", "tw": "使用行掛鉤執行:中斷點與單步有效", "ko": "줄 훅으로 실행: 중단점과 한 줄 실행이 동작합니다", "de": "Mit Zeilen-Hook ausführen: Haltepunkte und Einzelschritte funktionieren", "hi": "लाइन हुक के साथ चलाएँ: ब्रेकपॉइंट और स्टेप काम करते हैं"},
+  "Run without the line hook (faster); breakpoints do not stop": {"ja": "行フックなしで実行(速い)。ブレークポイントでは止まりません", "zh": "不使用行钩子运行(更快);断点不会停止", "tw": "不使用行掛鉤執行(更快);中斷點不會停止", "ko": "줄 훅 없이 실행(더 빠름). 중단점에서 멈추지 않습니다", "de": "Ohne Zeilen-Hook ausführen (schneller); Haltepunkte halten nicht", "hi": "लाइन हुक के बिना चलाएँ (तेज़); ब्रेकपॉइंट पर नहीं रुकता"},
+  "Save Python program": {"ja": "Python のプログラムを保存", "zh": "保存 Python 程序", "tw": "儲存 Python 程式", "ko": "Python 프로그램 저장", "de": "Python-Programm speichern", "hi": "Python प्रोग्राम सहेजें"},
+  "Save Python program as": {"ja": "名前を付けて Python のプログラムを保存", "zh": "Python 程序另存为", "tw": "Python 程式另存新檔", "ko": "Python 프로그램을 다른 이름으로 저장", "de": "Python-Programm speichern unter", "hi": "Python प्रोग्राम इस नाम से सहेजें"},
+  "Save Python program as…": {"ja": "名前を付けて Python のプログラムを保存…", "zh": "Python 程序另存为…", "tw": "Python 程式另存新檔…", "ko": "Python 프로그램을 다른 이름으로 저장…", "de": "Python-Programm speichern unter…", "hi": "Python प्रोग्राम इस नाम से सहेजें…"},
+  "Save the Python program (.py)": {"ja": "Python のプログラムを保存します(.py)", "zh": "保存 Python 程序(.py)", "tw": "儲存 Python 程式(.py)", "ko": "Python 프로그램을 저장합니다(.py)", "de": "Das Python-Programm speichern (.py)", "hi": "Python प्रोग्राम सहेजें (.py)"},
+  "Save the Python program under a new name (.py)": {"ja": "Python のプログラムを新しい名前で保存します(.py)", "zh": "以新名称保存 Python 程序(.py)", "tw": "以新名稱儲存 Python 程式(.py)", "ko": "Python 프로그램을 새 이름으로 저장합니다(.py)", "de": "Das Python-Programm unter neuem Namen speichern (.py)", "hi": "Python प्रोग्राम को नए नाम से सहेजें (.py)"},
+  "Set or clear a breakpoint on the cursor line": {"ja": "カーソルの行のブレークポイントを付ける・外す", "zh": "在光标所在行设置或清除断点", "tw": "在游標所在行設定或清除中斷點", "ko": "커서가 있는 줄의 중단점을 설정하거나 해제합니다", "de": "Haltepunkt in der Cursorzeile setzen oder entfernen", "hi": "कर्सर वाली पंक्ति पर ब्रेकपॉइंट लगाएँ या हटाएँ"},
+  "Start Studio in": {"ja": "起動時のモード", "zh": "启动时的模式", "tw": "啟動時的模式", "ko": "시작 시 모드", "de": "Studio starten im", "hi": "Studio इस मोड में शुरू करें"},
+  "Start a new Python program in the Program": {"ja": "Program 欄で新しい Python のプログラムを始めます", "zh": "在 Program 中开始新的 Python 程序", "tw": "在 Program 中開始新的 Python 程式", "ko": "Program에서 새 Python 프로그램을 시작합니다", "de": "Ein neues Python-Programm im Programm beginnen", "hi": "Program में नया Python प्रोग्राम शुरू करें"},
+  "Step": {"ja": "1 行", "zh": "单步", "tw": "單步", "ko": "한 줄", "de": "Schritt", "hi": "एक पंक्ति"},
+  "Stop at line %d only when this Python expression is true:": {"ja": "この Python の式が真のときだけ %d 行目で止める:", "zh": "仅当此 Python 表达式为真时在第 %d 行停止:", "tw": "僅當此 Python 運算式為真時在第 %d 行停止:", "ko": "이 Python 식이 참일 때만 %d번째 줄에서 멈춤:", "de": "Nur in Zeile %d anhalten, wenn dieser Python-Ausdruck wahr ist:", "hi": "पंक्ति %d पर तभी रुकें जब यह Python व्यंजक सत्य हो:"},
+  "Stop at the cursor line only when a Python expression is true": {"ja": "Python の式が真のときだけカーソルの行で止める", "zh": "仅当 Python 表达式为真时在光标行停止", "tw": "僅當 Python 運算式為真時在游標行停止", "ko": "Python 식이 참일 때만 커서 줄에서 멈춤", "de": "Nur in der Cursorzeile anhalten, wenn ein Python-Ausdruck wahr ist", "hi": "कर्सर पंक्ति पर तभी रुकें जब Python व्यंजक सत्य हो"},
+  "Stop requested": {"ja": "停止を要求しました", "zh": "已请求停止", "tw": "已要求停止", "ko": "중지를 요청했습니다", "de": "Anhalten angefordert", "hi": "रोकने का अनुरोध किया गया"},
+  "Stop the program": {"ja": "プログラムを止める", "zh": "停止程序", "tw": "停止程式", "ko": "프로그램 중지", "de": "Programm anhalten", "hi": "प्रोग्राम रोकें"},
+  "Stop the running Python program": {"ja": "実行中の Python のプログラムを止めます", "zh": "停止正在运行的 Python 程序", "tw": "停止正在執行的 Python 程式", "ko": "실행 중인 Python 프로그램을 중지합니다", "de": "Das laufende Python-Programm anhalten", "hi": "चल रहे Python प्रोग्राम को रोकें"},
+  "Stop the running program (Ctrl+F2)": {"ja": "実行中のプログラムを止める(Ctrl+F2)", "zh": "停止正在运行的程序(Ctrl+F2)", "tw": "停止正在執行的程式(Ctrl+F2)", "ko": "실행 중인 프로그램 중지(Ctrl+F2)", "de": "Das laufende Programm anhalten (Strg+F2)", "hi": "चल रहे प्रोग्राम को रोकें (Ctrl+F2)"},
+  "Stop the running program (Ctrl+F2). The Stop button and time limit are not guaranteed while an external tracer (a debugger or coverage) is active.": {"ja": "実行中のプログラムを止めます(Ctrl+F2)。外部のトレーサー(デバッガーまたはカバレッジ)が動いている間は、Stop ボタンと時間の上限による停止を保証しません。", "zh": "停止正在运行的程序(Ctrl+F2)。外部跟踪器(调试器或覆盖率工具)处于活动状态时，不保证 Stop 按钮和时间上限能停止程序。", "tw": "停止正在執行的程式(Ctrl+F2)。外部追蹤器(除錯器或涵蓋率工具)正在運作時，不保證 Stop 按鈕和時間上限能停止程式。", "ko": "실행 중인 프로그램을 중지합니다(Ctrl+F2). 외부 추적기(디버거나 커버리지)가 활성화된 동안에는 Stop 버튼과 시간 제한에 의한 중지를 보장하지 않습니다.", "de": "Das laufende Programm anhalten (Strg+F2). Solange ein externer Tracer (Debugger oder Coverage) aktiv ist, ist das Anhalten über die Stoppschaltfläche oder das Zeitlimit nicht garantiert.", "hi": "चल रहे प्रोग्राम को रोकें (Ctrl+F2)। जब कोई बाहरी ट्रेसर (डीबगर या कवरेज) सक्रिय हो, तब Stop बटन या समय सीमा से रुकने की गारंटी नहीं है।"},
+  "Stop may not take effect: another tracer (a debugger or coverage) is active in this Python.": {"ja": "停止が効かない場合があります: この Python では別のトレーサー(デバッガーまたはカバレッジ)が動いています。", "zh": "停止可能不会生效: 此 Python 中有另一个跟踪器(调试器或覆盖率工具)处于活动状态。", "tw": "停止可能不會生效: 此 Python 中有另一個追蹤器(除錯器或涵蓋率工具)正在運作。", "ko": "중지가 적용되지 않을 수 있습니다: 이 Python에서 다른 추적기(디버거나 커버리지)가 활성화되어 있습니다.", "de": "Stopp wirkt möglicherweise nicht: In diesem Python ist ein anderer Tracer (Debugger oder Coverage) aktiv.", "hi": "रुकना प्रभावी न हो सकता है: इस Python में कोई दूसरा ट्रेसर (डीबगर या कवरेज) सक्रिय है।"},
+  "Switch Debug / Release": {"ja": "Debug / Release を切り替え", "zh": "切换 Debug / Release", "tw": "切換 Debug / Release", "ko": "Debug / Release 전환", "de": "Debug / Release umschalten", "hi": "Debug / Release बदलें"},
+  "Switch Python / Pipeline mode": {"ja": "Python / パイプラインのモードを切り替え", "zh": "切换 Python / 流水线模式", "tw": "切換 Python / 管線模式", "ko": "Python / 파이프라인 모드 전환", "de": "Python-/Pipeline-Modus umschalten", "hi": "Python / पाइपलाइन मोड बदलें"},
+  "Switch the Program between Python mode and Pipeline mode (each keeps its own text)": {"ja": "Program 欄を Python のモードとパイプラインのモードで切り替えます(それぞれの文面を持ちます)", "zh": "在 Python 模式和流水线模式之间切换 Program(各自保留文本)", "tw": "在 Python 模式與管線模式之間切換 Program(各自保留文字)", "ko": "Program을 Python 모드와 파이프라인 모드 사이에서 전환합니다(각각 자기 텍스트를 유지)", "de": "Das Programm zwischen Python- und Pipeline-Modus umschalten (jeder behält seinen Text)", "hi": "Program को Python मोड और पाइपलाइन मोड के बीच बदलें (हर एक अपना पाठ रखता है)"},
+  "Switch the Python run between Debug and Release": {"ja": "Python の実行を Debug と Release で切り替えます", "zh": "在 Debug 和 Release 之间切换 Python 运行", "tw": "在 Debug 與 Release 之間切換 Python 執行", "ko": "Python 실행을 Debug와 Release 사이에서 전환합니다", "de": "Den Python-Lauf zwischen Debug und Release umschalten", "hi": "Python रन को Debug और Release के बीच बदलें"},
+  "The Program text is the source; F5 runs it as Python and the stage list records the run": {"ja": "Program 欄の文面が正本。F5 で Python として実行し、段の列は実行の記録になります", "zh": "Program 文本为准;F5 以 Python 运行,阶段列表记录运行", "tw": "Program 文字為準;F5 以 Python 執行,階段清單記錄執行", "ko": "Program 텍스트가 원본입니다. F5로 Python으로 실행하고 단계 목록은 실행을 기록합니다", "de": "Der Programmtext ist maßgeblich; F5 führt ihn als Python aus und die Stufenliste protokolliert den Lauf", "hi": "Program का पाठ मूल है; F5 इसे Python के रूप में चलाता है और चरण सूची रन दर्ज करती है"},
+  "The Python program %s has unsaved changes. Save them?": {"ja": "Python のプログラム %s に保存していない変更があります。保存しますか?", "zh": "Python 程序 %s 有未保存的更改。要保存吗?", "tw": "Python 程式 %s 有未儲存的變更。要儲存嗎?", "ko": "Python 프로그램 %s에 저장하지 않은 변경이 있습니다. 저장할까요?", "de": "Das Python-Programm %s hat ungespeicherte Änderungen. Speichern?", "hi": "Python प्रोग्राम %s में बिना सहेजे परिवर्तन हैं। सहेजें?"},
+  "The last mode": {"ja": "前回のまま", "zh": "上次的模式", "tw": "上次的模式", "ko": "지난번 모드", "de": "Der zuletzt genutzte Modus", "hi": "पिछला मोड"},
+  "The program changed since it stopped: running again from the top": {"ja": "止まった後にプログラムが変わりました。上から実行し直します", "zh": "程序在停止后已更改:从头重新运行", "tw": "程式在停止後已變更:從頭重新執行", "ko": "멈춘 뒤 프로그램이 바뀌었습니다. 처음부터 다시 실행합니다", "de": "Das Programm wurde seit dem Anhalten geändert: läuft erneut von oben", "hi": "रुकने के बाद प्रोग्राम बदल गया: ऊपर से फिर चला रहे हैं"},
+  "The stage list is the source; the Program shows it as code (HDevelop style)": {"ja": "段の列が正本。Program 欄はそれをコード(HDevelop 風)で見せます", "zh": "阶段列表为准;Program 以代码(HDevelop 风格)显示它", "tw": "階段清單為準;Program 以程式碼(HDevelop 風格)顯示它", "ko": "단계 목록이 원본입니다. Program은 이를 코드(HDevelop 스타일)로 보여줍니다", "de": "Die Stufenliste ist maßgeblich; das Programm zeigt sie als Code (HDevelop-Stil)", "hi": "चरण सूची मूल है; Program इसे कोड (HDevelop शैली) में दिखाता है"},
+  "This program came from %s.\n\nPython runs on this PC with your permissions: it can read and change files. Run it only if you trust it.\n\nStudio remembers your answer for this exact text; if the file changes, it asks again.": {"ja": "このプログラムは %s から来ました。\n\nPython はこの PC 上であなたの権限で実行され、ファイルを読み書きできます。信頼できる場合だけ実行してください。\n\nStudio はこの文面に対する答えを覚えます。ファイルが変われば、もう一度聞きます。", "zh": "此程序来自 %s。\n\nPython 会以你的权限在这台电脑上运行:它可以读取和更改文件。只有在你信任它时才运行。\n\nStudio 会针对此文本记住你的回答;如果文件更改,会再次询问。", "tw": "此程式來自 %s。\n\nPython 會以你的權限在這台電腦上執行:它可以讀取和變更檔案。只有在你信任它時才執行。\n\nStudio 會針對此文字記住你的回答;如果檔案變更,會再次詢問。", "ko": "이 프로그램은 %s에서 왔습니다.\n\nPython은 이 PC에서 사용자 권한으로 실행되며 파일을 읽고 바꿀 수 있습니다. 신뢰할 때만 실행하세요.\n\nStudio는 이 텍스트에 대한 답을 기억합니다. 파일이 바뀌면 다시 묻습니다.", "de": "Dieses Programm stammt aus %s.\n\nPython läuft auf diesem PC mit Ihren Rechten: es kann Dateien lesen und ändern. Nur ausführen, wenn Sie ihm vertrauen.\n\nStudio merkt sich Ihre Antwort für genau diesen Text; ändert sich die Datei, fragt es erneut.", "hi": "यह प्रोग्राम %s से आया है।\n\nPython इस पीसी पर आपकी अनुमतियों से चलता है: यह फ़ाइलें पढ़ और बदल सकता है। केवल भरोसा हो तो चलाएँ।\n\nStudio इस सटीक पाठ के लिए आपका उत्तर याद रखता है; फ़ाइल बदलने पर फिर पूछता है।"},
+  "Toggle breakpoint": {"ja": "ブレークポイントを付ける / 外す", "zh": "切换断点", "tw": "切換中斷點", "ko": "중단점 설정/해제", "de": "Haltepunkt umschalten", "hi": "ब्रेकपॉइंट लगाएँ / हटाएँ"},
+  "Toggle breakpoint (F9)": {"ja": "ブレークポイントを付ける / 外す(F9)", "zh": "切换断点(F9)", "tw": "切換中斷點(F9)", "ko": "중단점 설정/해제(F9)", "de": "Haltepunkt umschalten (F9)", "hi": "ब्रेकपॉइंट लगाएँ / हटाएँ (F9)"},
+  "Turn the pipeline into an equivalent Python program (same line numbers) and switch to Python mode": {"ja": "パイプラインを同じ働きの Python のプログラム(行番号は同じ)にして、Python のモードへ切り替えます", "zh": "将流水线转换为等效的 Python 程序(行号相同)并切换到 Python 模式", "tw": "將管線轉換為等效的 Python 程式(行號相同)並切換到 Python 模式", "ko": "파이프라인을 같은 동작의 Python 프로그램(줄 번호 동일)으로 바꾸고 Python 모드로 전환합니다", "de": "Die Pipeline in ein gleichwertiges Python-Programm (gleiche Zeilennummern) umwandeln und in den Python-Modus wechseln", "hi": "पाइपलाइन को समतुल्य Python प्रोग्राम (वही पंक्ति संख्याएँ) में बदलें और Python मोड पर जाएँ"},
+  "a file": {"ja": "ファイル", "zh": "文件", "tw": "檔案", "ko": "파일", "de": "einer Datei", "hi": "एक फ़ाइल"},
+  "condition: %s": {"ja": "条件: %s", "zh": "条件:%s", "tw": "條件:%s", "ko": "조건: %s", "de": "Bedingung: %s", "hi": "शर्त: %s"},
+  "could not display the result: %s": {"ja": "結果を表示できませんでした: %s", "zh": "无法显示结果:%s", "tw": "無法顯示結果:%s", "ko": "결과를 표시할 수 없습니다: %s", "de": "Ergebnis konnte nicht angezeigt werden: %s", "hi": "परिणाम नहीं दिखाया जा सका: %s"},
+  "internal error: %s": {"ja": "内部の誤り: %s", "zh": "内部错误:%s", "tw": "內部錯誤:%s", "ko": "내부 오류: %s", "de": "Interner Fehler: %s", "hi": "आंतरिक त्रुटि: %s"},
+  "line %d: click to show this result and go to the line": {"ja": "%d 行目: 押すとこの結果を表示し、その行へ移ります", "zh": "第 %d 行:点击显示此结果并跳到该行", "tw": "第 %d 行:點擊顯示此結果並跳到該行", "ko": "%d번째 줄: 누르면 이 결과를 보여 주고 그 줄로 이동합니다", "de": "Zeile %d: klicken, um dieses Ergebnis zu zeigen und zur Zeile zu springen", "hi": "पंक्ति %d: यह परिणाम दिखाने और उस पंक्ति पर जाने के लिए क्लिक करें"},
+  "not saved to a file yet": {"ja": "まだファイルに保存していません", "zh": "尚未保存到文件", "tw": "尚未儲存到檔案", "ko": "아직 파일에 저장하지 않았습니다", "de": "noch nicht in einer Datei gespeichert", "hi": "अभी फ़ाइल में सहेजा नहीं गया"},
+  "opened %s (not run: F5 runs it after you confirm it once)": {"ja": "%s を開きました(実行はしていません。一度確認すると F5 で実行します)", "zh": "已打开 %s(未运行:确认一次后按 F5 运行)", "tw": "已開啟 %s(未執行:確認一次後按 F5 執行)", "ko": "%s을(를) 열었습니다(실행 안 함: 한 번 확인하면 F5로 실행)", "de": "%s geöffnet (nicht ausgeführt: F5 führt es nach einmaliger Bestätigung aus)", "hi": "%s खोला गया (नहीं चलाया: एक बार पुष्टि के बाद F5 इसे चलाता है)"},
+  "ran in %.0f ms (%s)  ·  %d op call(s), %d from cache": {"ja": "%.0f ms で実行(%s) · op の呼び出し %d 回、使い回し %d", "zh": "运行 %.0f ms(%s) · %d 次算子调用,%d 次来自缓存", "tw": "執行 %.0f ms(%s) · %d 次運算子呼叫,%d 次來自快取", "ko": "%.0f ms에 실행(%s) · 연산 호출 %d회, 캐시 재사용 %d", "de": "in %.0f ms ausgeführt (%s)  ·  %d Operator-Aufruf(e), %d aus dem Cache", "hi": "%.0f ms में चला (%s)  ·  %d ऑप कॉल, %d कैश से"},
+  "run": {"ja": "実行", "zh": "运行", "tw": "執行", "ko": "실행", "de": "Lauf", "hi": "रन"},
+  "running…": {"ja": "実行中…", "zh": "运行中…", "tw": "執行中…", "ko": "실행 중…", "de": "läuft…", "hi": "चल रहा है…"},
+  "%d directive(s) in this file are not applied yet — press Apply in the Program pane to apply them": {"ja": "このファイルの指示 %d 件はまだ適用していません。Program 欄の Apply で適用します", "zh": "此文件中的 %d 条指令尚未应用 — 在 Program 窗格中按 Apply 应用", "tw": "此檔案中的 %d 條指令尚未套用 — 在 Program 窗格中按 Apply 套用", "ko": "이 파일의 지시 %d개는 아직 적용하지 않았습니다 — Program 창에서 Apply를 눌러 적용하세요", "de": "%d Direktive(n) in dieser Datei sind noch nicht angewendet — zum Anwenden im Programmbereich auf Apply drücken", "hi": "इस फ़ाइल के %d निर्देश अभी लागू नहीं हुए — लागू करने के लिए Program पैन में Apply दबाएँ"},
+  "settings not saved": {"ja": "設定を保存できませんでした", "zh": "设置未保存", "tw": "設定未儲存", "ko": "설정을 저장하지 못했습니다", "de": "Einstellungen nicht gespeichert", "hi": "सेटिंग्स सहेजी नहीं गईं"},
+  "saved %s": {"ja": "%s を保存しました", "zh": "已保存 %s", "tw": "已儲存 %s", "ko": "%s 저장함", "de": "%s gespeichert", "hi": "%s सहेजा गया"},
+  "stop requested…": {"ja": "停止を要求しました…", "zh": "已请求停止…", "tw": "已要求停止…", "ko": "중지 요청함…", "de": "Anhalten angefordert…", "hi": "रोकने का अनुरोध…"},
+  "stopped at line %d (breakpoint)": {"ja": "%d 行目で止まりました(ブレークポイント)", "zh": "在第 %d 行停止(断点)", "tw": "在第 %d 行停止(中斷點)", "ko": "%d번째 줄에서 멈춤(중단점)", "de": "in Zeile %d angehalten (Haltepunkt)", "hi": "पंक्ति %d पर रुका (ब्रेकपॉइंट)"},
+  "stopped at line %d (step)": {"ja": "%d 行目で止まりました(1 行実行)", "zh": "在第 %d 行停止(单步)", "tw": "在第 %d 行停止(單步)", "ko": "%d번째 줄에서 멈춤(한 줄 실행)", "de": "in Zeile %d angehalten (Einzelschritt)", "hi": "पंक्ति %d पर रुका (एक पंक्ति)"},
+  "untitled.py": {"ja": "無題.py", "zh": "未命名.py", "tw": "未命名.py", "ko": "제목없음.py", "de": "unbenannt.py", "hi": "बेनाम.py"},
+  "— no op calls in this run —": {"ja": "— この実行では op を呼んでいません —", "zh": "— 本次运行没有算子调用 —", "tw": "— 本次執行沒有運算子呼叫 —", "ko": "— 이번 실행에서 연산 호출 없음 —", "de": "— in diesem Lauf keine Operator-Aufrufe —", "hi": "— इस रन में कोई ऑप कॉल नहीं —"},
+  "↺ cache": {"ja": "↺ 使い回し", "zh": "↺ 缓存", "tw": "↺ 快取", "ko": "↺ 캐시", "de": "↺ Cache", "hi": "↺ कैश"},
+  "▶ run lines %d–%d (in the last run's names)": {"ja": "▶ %d–%d 行目を実行(直前の実行の名前で)", "zh": "▶ 运行第 %d–%d 行(使用上次运行的名称)", "tw": "▶ 執行第 %d–%d 行(使用上次執行的名稱)", "ko": "▶ %d–%d번째 줄 실행(직전 실행의 이름으로)", "de": "▶ Zeilen %d–%d ausführen (mit den Namen des letzten Laufs)", "hi": "▶ पंक्तियाँ %d–%d चलाएँ (पिछले रन के नामों में)"},
+  "⚠ out of date: the text changed from line %d — run again": {"ja": "⚠ 古い記録: %d 行目から文面が変わりました。実行し直してください", "zh": "⚠ 已过时:文本从第 %d 行起已更改,请重新运行", "tw": "⚠ 已過時:文字從第 %d 行起已變更,請重新執行", "ko": "⚠ 오래된 기록: %d번째 줄부터 텍스트가 바뀌었습니다. 다시 실행하세요", "de": "⚠ veraltet: der Text hat sich ab Zeile %d geändert — erneut ausführen", "hi": "⚠ पुराना: पाठ पंक्ति %d से बदल गया — फिर चलाएँ"},
+  "⟳ calc": {"ja": "⟳ 計算", "zh": "⟳ 计算", "tw": "⟳ 計算", "ko": "⟳ 계산", "de": "⟳ berechnet", "hi": "⟳ गणना"},
+  "Program mode": {"ja": "プログラムのモード", "zh": "程序模式", "tw": "程式模式", "ko": "프로그램 모드", "de": "Programm-Modus", "hi": "प्रोग्राम मोड"},
+  "Step: run one line and stop (F6, Debug only)": {"ja": "1 行: 1 行実行して止まる(F6、Debug のみ)", "zh": "单步:执行一行后停止(F6,仅 Debug)", "tw": "單步:執行一行後停止(F6,僅 Debug)", "ko": "한 줄: 한 줄 실행 후 멈춤(F6, Debug만)", "de": "Schritt: eine Zeile ausführen und anhalten (F6, nur Debug)", "hi": "एक पंक्ति: एक पंक्ति चलाकर रुकें (F6, केवल Debug)"},
+  "Step: run one line and stop (also F6; Debug only)": {"ja": "1 行: 1 行実行して止まる(F6 でも。Debug のみ)", "zh": "单步:执行一行后停止(也可按 F6;仅 Debug)", "tw": "單步:執行一行後停止(也可按 F6;僅 Debug)", "ko": "한 줄: 한 줄 실행 후 멈춤(F6도 가능, Debug만)", "de": "Schritt: eine Zeile ausführen und anhalten (auch F6; nur Debug)", "hi": "एक पंक्ति: एक पंक्ति चलाकर रुकें (F6 भी; केवल Debug)"},
+  "Record of the last run: one row per op call (line, op, knobs, output, time, recalculated or from cache). Click a row to show its result": {"ja": "直前の実行の記録: op の呼び出しごとに 1 行(行・op・つまみ・出力・時間・再計算か使い回しか)。行を押すとその結果を表示", "zh": "上次运行的记录:每次算子调用一行(行、算子、参数、输出、时间、重新计算或来自缓存)。点击一行显示其结果", "tw": "上次執行的記錄:每次運算子呼叫一行(行、運算子、參數、輸出、時間、重新計算或來自快取)。點擊一行顯示其結果", "ko": "직전 실행의 기록: 연산 호출마다 한 줄(줄, 연산, 손잡이, 출력, 시간, 재계산 또는 캐시). 줄을 누르면 그 결과를 표시", "de": "Protokoll des letzten Laufs: eine Zeile je Operator-Aufruf (Zeile, Operator, Regler, Ausgabe, Zeit, neu berechnet oder aus dem Cache). Klick auf eine Zeile zeigt ihr Ergebnis", "hi": "पिछले रन का रिकॉर्ड: हर ऑप कॉल की एक पंक्ति (पंक्ति, ऑप, नॉब, आउटपुट, समय, पुनर्गणना या कैश से)। परिणाम देखने के लिए पंक्ति पर क्लिक करें"},
+  "Watch expressions and their values, evaluated again each time the program stops or finishes": {"ja": "ウォッチの式とその値。プログラムが止まるか終わるたびに評価し直します", "zh": "监视表达式及其值,程序每次停止或结束时重新求值", "tw": "監看運算式及其值,程式每次停止或結束時重新求值", "ko": "감시 식과 그 값. 프로그램이 멈추거나 끝날 때마다 다시 평가합니다", "de": "Überwachte Ausdrücke und ihre Werte, neu ausgewertet bei jedem Anhalten oder Ende des Programms", "hi": "वॉच व्यंजक और उनके मान, हर बार प्रोग्राम रुकने या खत्म होने पर फिर से गणना"},
+  "Completions: Up / Down to choose, Enter or Tab to insert, Esc to close": {"ja": "補完の候補: 上下で選び、Enter か Tab で入れ、Esc で閉じる", "zh": "补全:上下选择,Enter 或 Tab 插入,Esc 关闭", "tw": "補全:上下選擇,Enter 或 Tab 插入,Esc 關閉", "ko": "자동 완성: 위/아래로 고르고 Enter 또는 Tab으로 넣고 Esc로 닫기", "de": "Vervollständigung: mit Auf/Ab wählen, Enter oder Tab fügt ein, Esc schließt", "hi": "पूर्णता: ऊपर / नीचे से चुनें, Enter या Tab से डालें, Esc से बंद करें"},
+  "Which mode the Program is in when Studio starts": {"ja": "Studio を起動したときの Program 欄のモード", "zh": "Studio 启动时 Program 所处的模式", "tw": "Studio 啟動時 Program 所處的模式", "ko": "Studio를 시작할 때 Program의 모드", "de": "In welchem Modus das Programm beim Start von Studio ist", "hi": "Studio शुरू होने पर Program किस मोड में हो"},
+  "New program. F5 runs it; img is the image open in Studio.": {"ja": "新しいプログラム。F5 で実行します。img は Studio で開いている画像です。", "zh": "新程序。按 F5 运行;img 是 Studio 中打开的图像。", "tw": "新程式。按 F5 執行;img 是 Studio 中開啟的影像。", "ko": "새 프로그램. F5로 실행합니다. img는 Studio에서 연 이미지입니다.", "de": "Neues Programm. F5 führt es aus; img ist das in Studio geöffnete Bild.", "hi": "नया प्रोग्राम। F5 इसे चलाता है; img वह छवि है जो Studio में खुली है।"},
+  "in %s(): its local variables are listed too": {"ja": "%s() の中: その関数の局所変数も一覧に出しています", "zh": "在 %s() 中:也列出了它的局部变量", "tw": "在 %s() 中:也列出了它的區域變數", "ko": "%s() 안: 그 함수의 지역 변수도 목록에 나옵니다", "de": "in %s(): die lokalen Variablen sind ebenfalls aufgelistet", "hi": "%s() के अंदर: इसके स्थानीय चर भी सूची में हैं"},
+  "1. Press F5: the example in the Program runs": {"ja": "1. F5 を押す: Program 欄の例が実行されます", "zh": "1. 按 F5:运行 Program 中的示例", "tw": "1. 按 F5:執行 Program 中的範例", "ko": "1. F5를 누르기: Program의 예제가 실행됩니다", "de": "1. F5 drücken: das Beispiel im Program läuft", "hi": "1. F5 दबाएँ: Program का उदाहरण चलता है"},
+  "2. The picture, the record and the variables appear": {"ja": "2. 絵・実行の記録・変数が出ます", "zh": "2. 显示图像、运行记录和变量", "tw": "2. 顯示影像、執行記錄和變數", "ko": "2. 그림, 실행 기록, 변수가 나옵니다", "de": "2. Bild, Protokoll und Variablen erscheinen", "hi": "2. चित्र, रिकॉर्ड और चर दिखाई देते हैं"},
+  "3. Change a number in the code and press F5 again": {"ja": "3. コードの数字を変えて、もう一度 F5", "zh": "3. 修改代码中的数字,再按 F5", "tw": "3. 修改程式碼中的數字,再按 F5", "ko": "3. 코드의 숫자를 바꾸고 다시 F5", "de": "3. Eine Zahl im Code ändern und erneut F5 drücken", "hi": "3. कोड में कोई संख्या बदलें और फिर F5 दबाएँ"},
+  "A local variable of a function cannot be changed here": {"ja": "関数の局所変数は、ここでは書き換えられません", "zh": "函数的局部变量不能在这里修改", "tw": "函式的區域變數不能在這裡修改", "ko": "함수의 지역 변수는 여기서 바꿀 수 없습니다", "de": "Eine lokale Variable einer Funktion lässt sich hier nicht ändern", "hi": "फ़ंक्शन का स्थानीय चर यहाँ नहीं बदला जा सकता"},
+  "This name is not a variable of the program any more: run it again": {"ja": "この名前は、もうプログラムの変数ではありません。もう一度実行してください", "zh": "这个名字已不是程序的变量:请重新运行", "tw": "這個名稱已不是程式的變數:請重新執行", "ko": "이 이름은 더 이상 프로그램의 변수가 아닙니다. 다시 실행하세요", "de": "Dieser Name ist keine Variable des Programms mehr: erneut ausführen", "hi": "यह नाम अब प्रोग्राम का चर नहीं है: इसे फिर से चलाएँ"},
+  "Not run: the Program is in Pipeline mode (switch to Python mode to run Python)": {"ja": "実行していません: Program 欄はパイプラインのモードです(Python を実行するには Python のモードへ切り替えてください)", "zh": "未运行:Program 处于管线模式(要运行 Python 请切换到 Python 模式)", "tw": "未執行:Program 處於管線模式(要執行 Python 請切換到 Python 模式)", "ko": "실행하지 않았습니다: Program이 파이프라인 모드입니다(Python을 실행하려면 Python 모드로 바꾸세요)", "de": "Nicht ausgeführt: das Program ist im Pipeline-Modus (zum Ausführen von Python in den Python-Modus wechseln)", "hi": "नहीं चलाया: Program पाइपलाइन मोड में है (Python चलाने के लिए Python मोड में जाएँ)"},
+  "… (%d earlier characters not shown)": {"ja": "…(これより前の %d 文字は表示していません)", "zh": "…(之前的 %d 个字符未显示)", "tw": "…(之前的 %d 個字元未顯示)", "ko": "…(앞쪽 %d자는 표시하지 않았습니다)", "de": "… (%d frühere Zeichen nicht angezeigt)", "hi": "… (पहले के %d वर्ण नहीं दिखाए गए)"},
+  "Not run: a value in the Variables or Watch panel is still running its own code in the background (%d) — wait until it ends or restart Studio": {"ja": "実行していません: 変数かウォッチの欄の値が、まだ背景で自分のコードを実行しています(%d 件)— 終わるまで待つか、Studio を起動し直してください", "zh": "未运行:变量或监视栏中的某个值仍在后台运行它自己的代码(%d 个)— 请等它结束,或重新启动 Studio", "tw": "未執行:變數或監看欄中的某個值仍在背景執行它自己的程式碼(%d 個)— 請等它結束,或重新啟動 Studio", "ko": "실행하지 않았습니다: 변수 또는 감시 창의 값이 아직 백그라운드에서 자기 코드를 실행하고 있습니다(%d개) — 끝날 때까지 기다리거나 Studio를 다시 시작하세요", "de": "Nicht ausgeführt: ein Wert im Variablen- oder Überwachungsfeld führt im Hintergrund noch seinen eigenen Code aus (%d) — warten, bis er endet, oder Studio neu starten", "hi": "नहीं चलाया: Variables या Watch पैनल का कोई मान अभी भी पृष्ठभूमि में अपना कोड चला रहा है (%d) — उसके समाप्त होने तक प्रतीक्षा करें या Studio फिर से शुरू करें"},
+  "Threads started by an earlier run are still running (%s): they can change files, the environment and the working folder while this program runs": {"ja": "前の実行が起こしたスレッドがまだ動いています(%s): このプログラムの実行中に、ファイル・環境変数・作業フォルダを書き換える可能性があります", "zh": "之前的运行启动的线程仍在运行(%s):在此程序运行期间,它们可能修改文件、环境变量和工作文件夹", "tw": "先前的執行啟動的執行緒仍在執行(%s):在此程式執行期間,它們可能修改檔案、環境變數和工作資料夾", "ko": "이전 실행이 시작한 스레드가 아직 돌고 있습니다(%s): 이 프로그램이 도는 동안 파일, 환경 변수, 작업 폴더를 바꿀 수 있습니다", "de": "Von einem früheren Lauf gestartete Threads laufen noch (%s): sie können Dateien, die Umgebung und den Arbeitsordner ändern, während dieses Programm läuft", "hi": "पिछले रन द्वारा शुरू किए गए थ्रेड अभी भी चल रहे हैं (%s): इस प्रोग्राम के चलते समय वे फ़ाइलें, परिवेश और कार्य फ़ोल्डर बदल सकते हैं"},
+  "The shown value is not an image (%s): nothing is displayed": {"ja": "show した値は画像ではありません(%s): 何も表示しません", "zh": "show 的值不是图像(%s):不显示任何内容", "tw": "show 的值不是影像(%s):不顯示任何內容", "ko": "show한 값은 이미지가 아닙니다(%s): 아무것도 표시하지 않습니다", "de": "Der gezeigte Wert ist kein Bild (%s): es wird nichts angezeigt", "hi": "दिखाया गया मान छवि नहीं है (%s): कुछ भी प्रदर्शित नहीं किया गया"},
+  "The file changed on disk after it was opened: this tab still shows (and runs) the text it was opened with": {"ja": "開いた後でディスクのファイルが変わりました: このタブは開いた時の文面のまま(実行するのも画面の文面)です", "zh": "文件在打开后已在磁盘上更改:此标签页仍显示(并运行)打开时的文本", "tw": "檔案在開啟後已在磁碟上變更:此分頁仍顯示(並執行)開啟時的文字", "ko": "연 뒤에 디스크의 파일이 바뀌었습니다: 이 탭은 열었을 때의 글을 그대로 보여 주고 실행합니다", "de": "Die Datei wurde nach dem Öffnen auf der Platte geändert: dieser Tab zeigt (und startet) weiterhin den Text vom Öffnen", "hi": "खोलने के बाद डिस्क पर फ़ाइल बदल गई: यह टैब अब भी वही पाठ दिखाता (और चलाता) है जो खोलते समय था"},
+  "Undo the last edit of the Program text (Ctrl+Z)": {"ja": "Program の文面の直前の編集を元に戻す(Ctrl+Z)", "zh": "撤销 Program 文本的上一次编辑(Ctrl+Z)", "tw": "復原 Program 文字的上一次編輯(Ctrl+Z)", "ko": "Program 글의 마지막 편집을 되돌리기(Ctrl+Z)", "de": "Die letzte Änderung am Programmtext rückgängig machen (Strg+Z)", "hi": "Program पाठ का पिछला संपादन पूर्ववत करें (Ctrl+Z)"},
+  "Redo the edit that was undone (Ctrl+Y or Ctrl+Shift+Z)": {"ja": "元に戻した編集をやり直す(Ctrl+Y か Ctrl+Shift+Z)", "zh": "重做被撤销的编辑(Ctrl+Y 或 Ctrl+Shift+Z)", "tw": "重做被復原的編輯(Ctrl+Y 或 Ctrl+Shift+Z)", "ko": "되돌린 편집을 다시 하기(Ctrl+Y 또는 Ctrl+Shift+Z)", "de": "Die rückgängig gemachte Änderung wiederholen (Strg+Y oder Strg+Umschalt+Z)", "hi": "पूर्ववत किया गया संपादन फिर से करें (Ctrl+Y या Ctrl+Shift+Z)"},
+  "Undo the last edit: the Program text when the Program has the focus, otherwise the stage list": {"ja": "直前の編集を元に戻す: Program 欄にフォーカスがあれば文面を、そうでなければ段の列を", "zh": "撤销上一次编辑:焦点在 Program 时撤销文本,否则撤销步骤列表", "tw": "復原上一次編輯:焦點在 Program 時復原文字,否則復原步驟列表", "ko": "마지막 편집을 되돌리기: Program에 포커스가 있으면 글을, 아니면 단계 목록을", "de": "Letzte Änderung rückgängig: den Programmtext, wenn das Program den Fokus hat, sonst die Stufenliste", "hi": "पिछला संपादन पूर्ववत करें: Program पर फ़ोकस हो तो पाठ, अन्यथा चरण सूची"},
+  "Redo what was undone (Ctrl+Y or Ctrl+Shift+Z): the Program text when the Program has the focus, otherwise the stage list": {"ja": "元に戻した操作をやり直す(Ctrl+Y か Ctrl+Shift+Z): Program 欄にフォーカスがあれば文面を、そうでなければ段の列を", "zh": "重做被撤销的操作(Ctrl+Y 或 Ctrl+Shift+Z):焦点在 Program 时为文本,否则为步骤列表", "tw": "重做被復原的操作(Ctrl+Y 或 Ctrl+Shift+Z):焦點在 Program 時為文字,否則為步驟列表", "ko": "되돌린 것을 다시 하기(Ctrl+Y 또는 Ctrl+Shift+Z): Program에 포커스가 있으면 글을, 아니면 단계 목록을", "de": "Rückgängig Gemachtes wiederholen (Strg+Y oder Strg+Umschalt+Z): den Programmtext, wenn das Program den Fokus hat, sonst die Stufenliste", "hi": "पूर्ववत किया हुआ फिर से करें (Ctrl+Y या Ctrl+Shift+Z): Program पर फ़ोकस हो तो पाठ, अन्यथा चरण सूची"},
+  "Autosave to the file": {"ja": "ファイルへの自動保存", "zh": "自动保存到文件", "tw": "自動儲存到檔案", "ko": "파일로 자동 저장", "de": "Automatisch in die Datei speichern", "hi": "फ़ाइल में स्वतः सहेजना"},
+  "Autosave: off": {"ja": "自動保存: 切", "zh": "自动保存:关", "tw": "自動儲存:關", "ko": "자동 저장: 끔", "de": "Automatisches Speichern: aus", "hi": "स्वतः सहेजना: बंद"},
+  "Autosave: after a pause in typing": {"ja": "自動保存: 打つのを止めてから", "zh": "自动保存:停止输入之后", "tw": "自動儲存:停止輸入之後", "ko": "자동 저장: 입력을 멈춘 뒤", "de": "Automatisches Speichern: nach einer Tipp-Pause", "hi": "स्वतः सहेजना: टाइप करना रुकने के बाद"},
+  "Autosave: when the Program loses the focus": {"ja": "自動保存: Program 欄からフォーカスが外れた時", "zh": "自动保存:Program 失去焦点时", "tw": "自動儲存:Program 失去焦點時", "ko": "자동 저장: Program이 포커스를 잃을 때", "de": "Automatisches Speichern: wenn das Program den Fokus verliert", "hi": "स्वतः सहेजना: जब Program से फ़ोकस हटे"},
+  "Save the Python file by itself while you type. Off by default. A program that has no file yet is only kept in the crash-recovery backup; a file changed by another program is never overwritten": {"ja": "打っている間に Python のファイルを自動で保存します。既定は切。まだファイルの無いプログラムは復元用の退避だけに残り、ほかのプログラムが書き換えたファイルは上書きしません", "zh": "在输入时自动保存 Python 文件。默认关闭。还没有文件的程序只保留在崩溃恢复备份中;被其他程序修改过的文件绝不会被覆盖", "tw": "在輸入時自動儲存 Python 檔案。預設關閉。還沒有檔案的程式只保留在當機復原備份中;被其他程式修改過的檔案絕不會被覆寫", "ko": "입력하는 동안 Python 파일을 스스로 저장합니다. 기본은 끔. 아직 파일이 없는 프로그램은 복구용 백업에만 남고, 다른 프로그램이 바꾼 파일은 덮어쓰지 않습니다", "de": "Speichert die Python-Datei beim Tippen von selbst. Standardmäßig aus. Ein Programm ohne Datei bleibt nur in der Wiederherstellungs-Sicherung; eine von einem anderen Programm geänderte Datei wird nie überschrieben", "hi": "टाइप करते समय Python फ़ाइल अपने आप सहेजता है। डिफ़ॉल्ट रूप से बंद। जिस प्रोग्राम की अभी फ़ाइल नहीं है वह केवल क्रैश-रिकवरी बैकअप में रहता है; किसी दूसरे प्रोग्राम द्वारा बदली गई फ़ाइल कभी अधिलेखित नहीं होती"},
+  "How long after the last keystroke the file is saved (autosave after a pause in typing)": {"ja": "最後に打ってから何秒後に保存するか(打つのを止めてからの自動保存)", "zh": "最后一次按键后多久保存文件(停止输入后的自动保存)", "tw": "最後一次按鍵後多久儲存檔案(停止輸入後的自動儲存)", "ko": "마지막 입력 뒤 얼마 후에 저장할지(입력을 멈춘 뒤의 자동 저장)", "de": "Wie lange nach dem letzten Tastendruck gespeichert wird (automatisches Speichern nach einer Tipp-Pause)", "hi": "अंतिम कुंजी दबाने के कितनी देर बाद फ़ाइल सहेजी जाए (टाइप रुकने के बाद स्वतः सहेजना)"},
+  "Autosave the Python file": {"ja": "Python のファイルの自動保存", "zh": "自动保存 Python 文件", "tw": "自動儲存 Python 檔案", "ko": "Python 파일 자동 저장", "de": "Python-Datei automatisch speichern", "hi": "Python फ़ाइल स्वतः सहेजें"},
+  "Autosave delay": {"ja": "自動保存までの時間", "zh": "自动保存延迟", "tw": "自動儲存延遲", "ko": "자동 저장 지연", "de": "Verzögerung des automatischen Speicherns", "hi": "स्वतः सहेजने की देरी"},
+  "Autosave to the file: off": {"ja": "ファイルへの自動保存: 切", "zh": "自动保存到文件:关", "tw": "自動儲存到檔案:關", "ko": "파일로 자동 저장: 끔", "de": "Automatisches Speichern in die Datei: aus", "hi": "फ़ाइल में स्वतः सहेजना: बंद"},
+  "Autosave to the file: %.1f s after you stop typing": {"ja": "ファイルへの自動保存: 打つのを止めてから %.1f 秒後", "zh": "自动保存到文件:停止输入 %.1f 秒后", "tw": "自動儲存到檔案:停止輸入 %.1f 秒後", "ko": "파일로 자동 저장: 입력을 멈춘 뒤 %.1f초 후", "de": "Automatisches Speichern in die Datei: %.1f s nach dem letzten Tippen", "hi": "फ़ाइल में स्वतः सहेजना: टाइप रोकने के %.1f सेकंड बाद"},
+  "Autosave to the file: when the Program loses the focus": {"ja": "ファイルへの自動保存: Program 欄からフォーカスが外れた時", "zh": "自动保存到文件:Program 失去焦点时", "tw": "自動儲存到檔案:Program 失去焦點時", "ko": "파일로 자동 저장: Program이 포커스를 잃을 때", "de": "Automatisches Speichern in die Datei: wenn das Program den Fokus verliert", "hi": "फ़ाइल में स्वतः सहेजना: जब Program से फ़ोकस हटे"},
+  "Not autosaved: %s was changed on disk by another program — Save (Ctrl+Alt+S) asks before it overwrites that; open the file again to read it": {"ja": "自動保存していません: %s はほかのプログラムがディスク上で書き換えました — 保存(Ctrl+Alt+S)は上書きの前に確認します。読み直すにはファイルを開き直してください", "zh": "未自动保存:%s 已被其他程序在磁盘上修改 — 保存(Ctrl+Alt+S)会在覆盖前询问;要读取它请重新打开文件", "tw": "未自動儲存:%s 已被其他程式在磁碟上修改 — 儲存(Ctrl+Alt+S)會在覆寫前詢問;要讀取它請重新開啟檔案", "ko": "자동 저장하지 않았습니다: %s을(를) 다른 프로그램이 디스크에서 바꿨습니다 — 저장(Ctrl+Alt+S)은 덮어쓰기 전에 묻습니다. 읽으려면 파일을 다시 여세요", "de": "Nicht automatisch gespeichert: %s wurde von einem anderen Programm auf der Platte geändert — Speichern (Strg+Alt+S) fragt vor dem Überschreiben; zum Einlesen die Datei erneut öffnen", "hi": "स्वतः नहीं सहेजा: %s को किसी दूसरे प्रोग्राम ने डिस्क पर बदल दिया — सहेजें (Ctrl+Alt+S) अधिलेखन से पहले पूछता है; उसे पढ़ने के लिए फ़ाइल फिर से खोलें"},
+  "not autosaved": {"ja": "自動保存していません", "zh": "未自动保存", "tw": "未自動儲存", "ko": "자동 저장 안 됨", "de": "nicht automatisch gespeichert", "hi": "स्वतः नहीं सहेजा"},
+  "%s was changed by another program while Studio was closed: the Program shows your unsaved text; saving asks before it replaces the file": {"ja": "%s は、Studio を閉じている間に別のプログラムが書き換えました: Program 欄には保存していない文面を出しています。保存すると、ファイルを置き換える前に確認します", "zh": "%s 在 Studio 关闭期间被其他程序修改:Program 栏显示的是未保存的文本;保存时会在替换文件前询问", "tw": "%s 在 Studio 關閉期間被其他程式修改:Program 欄顯示的是未儲存的文字;儲存時會在取代檔案前詢問", "ko": "%s 은(는) Studio가 닫혀 있는 동안 다른 프로그램이 바꾸었습니다: Program 칸에는 저장하지 않은 글을 보여 줍니다. 저장하면 파일을 바꾸기 전에 묻습니다", "de": "%s wurde von einem anderen Programm geändert, während Studio geschlossen war: das Programm-Feld zeigt Ihren nicht gespeicherten Text; beim Speichern wird vor dem Ersetzen der Datei gefragt", "hi": "Studio बंद रहने के दौरान %s को किसी दूसरे प्रोग्राम ने बदल दिया: Program में आपका सहेजा न गया पाठ दिख रहा है; सहेजने पर फ़ाइल बदलने से पहले पूछा जाएगा"},
+  "Could not read %s: the Program shows the unsaved text kept from the last session; saving asks before it replaces the file": {"ja": "%s を読めませんでした: Program 欄には、前回の保存していない文面を出しています。保存すると、ファイルを置き換える前に確認します", "zh": "无法读取 %s:Program 栏显示的是上次保留的未保存文本;保存时会在替换文件前询问", "tw": "無法讀取 %s:Program 欄顯示的是上次保留的未儲存文字;儲存時會在取代檔案前詢問", "ko": "%s 을(를) 읽을 수 없었습니다: Program 칸에는 지난번에 저장하지 않은 글을 보여 줍니다. 저장하면 파일을 바꾸기 전에 묻습니다", "de": "%s konnte nicht gelesen werden: das Programm-Feld zeigt den nicht gespeicherten Text der letzten Sitzung; beim Speichern wird vor dem Ersetzen der Datei gefragt", "hi": "%s पढ़ा नहीं जा सका: Program में पिछले सत्र का सहेजा न गया पाठ दिख रहा है; सहेजने पर फ़ाइल बदलने से पहले पूछा जाएगा"},
+  "Could not autosave %s: %s": {"ja": "%s を自動保存できませんでした: %s", "zh": "无法自动保存 %s:%s", "tw": "無法自動儲存 %s:%s", "ko": "%s을(를) 자동 저장하지 못했습니다: %s", "de": "%s ließ sich nicht automatisch speichern: %s", "hi": "%s को स्वतः नहीं सहेज सका: %s"},
+  "autosaved %s": {"ja": "自動保存 %s", "zh": "已自动保存 %s", "tw": "已自動儲存 %s", "ko": "자동 저장 %s", "de": "automatisch gespeichert %s", "hi": "स्वतः सहेजा %s"},
+  "Saved to %s automatically (%s)": {"ja": "%s へ自動で保存しました(%s)", "zh": "已自动保存到 %s(%s)", "tw": "已自動儲存到 %s(%s)", "ko": "%s에 자동으로 저장했습니다(%s)", "de": "Automatisch in %s gespeichert (%s)", "hi": "%s में अपने आप सहेजा (%s)"},
+  "after a pause in typing": {"ja": "打つのを止めてから", "zh": "停止输入之后", "tw": "停止輸入之後", "ko": "입력을 멈춘 뒤", "de": "nach einer Tipp-Pause", "hi": "टाइप रुकने के बाद"},
+  "the Program lost the focus": {"ja": "Program 欄からフォーカスが外れた", "zh": "Program 失去了焦点", "tw": "Program 失去了焦點", "ko": "Program이 포커스를 잃음", "de": "das Program verlor den Fokus", "hi": "Program से फ़ोकस हटा"},
+  "Sync the Program": {"ja": "Program を同期", "zh": "同步 Program", "tw": "同步 Program", "ko": "Program 동기화", "de": "Program synchronisieren", "hi": "Program सिंक करें"},
+  "The Program text has comments, blank lines or for / if blocks that the stage list does not keep. Sync rebuilds the text from the stage list, one line per stage: those parts are lost and Ctrl+Z does not bring them back.": {"ja": "Program の文面に、段の列が持たないコメント・空行・for / if があります。同期は段の列から 1 段 1 行で文面を作り直すので、それらは失われ、Ctrl+Z でも戻りません。", "zh": "Program 文本中有步骤列表不会保留的注释、空行或 for / if 块。同步会根据步骤列表重建文本(每个步骤一行):这些部分会丢失,Ctrl+Z 也无法恢复。", "tw": "Program 文字中有步驟列表不會保留的註解、空行或 for / if 區塊。同步會根據步驟列表重建文字(每個步驟一行):這些部分會遺失,Ctrl+Z 也無法復原。", "ko": "Program 글에 단계 목록이 보존하지 않는 주석, 빈 줄, for / if 블록이 있습니다. 동기화는 단계 목록에서 단계마다 한 줄로 글을 다시 만듭니다. 그 부분은 사라지며 Ctrl+Z로도 돌아오지 않습니다.", "de": "Der Programmtext enthält Kommentare, Leerzeilen oder for-/if-Blöcke, die die Stufenliste nicht behält. Sync baut den Text aus der Stufenliste neu auf, eine Zeile je Stufe: diese Teile gehen verloren, und Strg+Z bringt sie nicht zurück.", "hi": "Program पाठ में टिप्पणियाँ, खाली पंक्तियाँ या for / if खंड हैं जिन्हें चरण सूची नहीं रखती। सिंक चरण सूची से पाठ फिर बनाता है, हर चरण की एक पंक्ति: वे भाग खो जाते हैं और Ctrl+Z उन्हें वापस नहीं लाता।"},
+  "Rebuild the text": {"ja": "文面を作り直す", "zh": "重建文本", "tw": "重建文字", "ko": "글을 다시 만들기", "de": "Text neu aufbauen", "hi": "पाठ फिर बनाएँ"},
+  "Reset the Program": {"ja": "Program をリセット", "zh": "重置 Program", "tw": "重設 Program", "ko": "Program 초기화", "de": "Program zurücksetzen", "hi": "Program रीसेट करें"},
+  "The Program text has edits that were not applied. Reset throws them away and rebuilds the text from the stage list; Ctrl+Z does not bring them back.": {"ja": "Program の文面に、適用していない編集があります。リセットはそれを捨てて、段の列から文面を作り直します。Ctrl+Z でも戻りません。", "zh": "Program 文本中有尚未应用的编辑。重置会丢弃它们并根据步骤列表重建文本;Ctrl+Z 无法恢复。", "tw": "Program 文字中有尚未套用的編輯。重設會捨棄它們並根據步驟列表重建文字;Ctrl+Z 無法復原。", "ko": "Program 글에 적용하지 않은 편집이 있습니다. 초기화는 그것을 버리고 단계 목록에서 글을 다시 만듭니다. Ctrl+Z로도 돌아오지 않습니다.", "de": "Der Programmtext enthält nicht angewendete Änderungen. Zurücksetzen verwirft sie und baut den Text aus der Stufenliste neu auf; Strg+Z bringt sie nicht zurück.", "hi": "Program पाठ में ऐसे संपादन हैं जो लागू नहीं किए गए। रीसेट उन्हें हटा देता है और चरण सूची से पाठ फिर बनाता है; Ctrl+Z उन्हें वापस नहीं लाता।"},
+  "Discard the edits": {"ja": "編集を捨てる", "zh": "丢弃编辑", "tw": "捨棄編輯", "ko": "편집 버리기", "de": "Änderungen verwerfen", "hi": "संपादन हटाएँ"},
+  "Pin the result": {"ja": "結果を固定", "zh": "固定结果", "tw": "固定結果", "ko": "결과 고정", "de": "Ergebnis anheften", "hi": "परिणाम पिन करें"},
+  "%d snapshots are already pinned. Pinning this result drops the oldest one (%s): its pipeline and its picture cannot be brought back.": {"ja": "すでに %d 個の固定があります。この結果を固定すると、一番古い固定(%s)が捨てられます。そのパイプラインと絵は戻せません。", "zh": "已固定 %d 个快照。固定此结果会丢弃最旧的一个(%s):它的管线和图像无法恢复。", "tw": "已固定 %d 個快照。固定此結果會捨棄最舊的一個(%s):它的管線和影像無法復原。", "ko": "이미 %d개의 스냅숏이 고정되어 있습니다. 이 결과를 고정하면 가장 오래된 것(%s)이 버려집니다. 그 파이프라인과 그림은 되돌릴 수 없습니다.", "de": "Es sind bereits %d Schnappschüsse angeheftet. Das Anheften dieses Ergebnisses verwirft den ältesten (%s): seine Pipeline und sein Bild lassen sich nicht zurückholen.", "hi": "%d स्नैपशॉट पहले से पिन हैं। इस परिणाम को पिन करने पर सबसे पुराना (%s) हट जाता है: उसकी पाइपलाइन और चित्र वापस नहीं लाए जा सकते।"},
+  "Drop the oldest and pin": {"ja": "一番古い固定を捨てて固定する", "zh": "丢弃最旧的并固定", "tw": "捨棄最舊的並固定", "ko": "가장 오래된 것을 버리고 고정", "de": "Ältesten verwerfen und anheften", "hi": "सबसे पुराना हटाकर पिन करें"},
+  "Keep the current result": {"ja": "今の結果を採る", "zh": "保留当前结果", "tw": "保留目前結果", "ko": "현재 결과 유지", "de": "Aktuelles Ergebnis behalten", "hi": "वर्तमान परिणाम रखें"},
+  "The pinned snapshot %s is dropped: its pipeline and its picture cannot be brought back.": {"ja": "固定 %s が捨てられます。そのパイプラインと絵は戻せません。", "zh": "固定的快照 %s 将被丢弃:它的管线和图像无法恢复。", "tw": "固定的快照 %s 將被捨棄:它的管線和影像無法復原。", "ko": "고정한 스냅숏 %s이(가) 버려집니다. 그 파이프라인과 그림은 되돌릴 수 없습니다.", "de": "Der angeheftete Schnappschuss %s wird verworfen: seine Pipeline und sein Bild lassen sich nicht zurückholen.", "hi": "पिन किया गया स्नैपशॉट %s हट जाता है: उसकी पाइपलाइन और चित्र वापस नहीं लाए जा सकते।"},
+  "Drop the snapshot": {"ja": "固定を捨てる", "zh": "丢弃快照", "tw": "捨棄快照", "ko": "스냅숏 버리기", "de": "Schnappschuss verwerfen", "hi": "स्नैपशॉट हटाएँ"},
+  "The panels go back to the default arrangement. The arrangement you have now is lost unless it was saved as a layout (Window ▸ Layout ▸ Save).": {"ja": "パネルが既定の配置に戻ります。今の配置は、レイアウトとして保存していなければ失われます(ウィンドウ ▸ レイアウト ▸ 保存)。", "zh": "面板将回到默认布局。当前的布局如果没有保存为布局(窗口 ▸ 布局 ▸ 保存)就会丢失。", "tw": "面板將回到預設配置。目前的配置如果沒有儲存為配置(視窗 ▸ 配置 ▸ 儲存)就會遺失。", "ko": "패널이 기본 배치로 돌아갑니다. 지금의 배치는 레이아웃으로 저장하지 않았다면 사라집니다(창 ▸ 레이아웃 ▸ 저장).", "de": "Die Panels kehren zur Standardanordnung zurück. Die jetzige Anordnung geht verloren, wenn sie nicht als Layout gespeichert wurde (Fenster ▸ Layout ▸ Speichern).", "hi": "पैनल डिफ़ॉल्ट व्यवस्था में लौट जाते हैं। अभी की व्यवस्था खो जाती है यदि उसे लेआउट के रूप में सहेजा नहीं गया (विंडो ▸ लेआउट ▸ सहेजें)।"},
+  "Reset the layout": {"ja": "配置をリセットする", "zh": "重置布局", "tw": "重設配置", "ko": "배치 초기화", "de": "Layout zurücksetzen", "hi": "लेआउट रीसेट करें"},
+  "Clear recent": {"ja": "最近使ったファイルを消す", "zh": "清除最近的文件", "tw": "清除最近的檔案", "ko": "최근 목록 지우기", "de": "Zuletzt verwendete löschen", "hi": "हाल की सूची साफ़ करें"},
+  "The list of %d recently opened file(s) is erased. The files themselves are not touched; the list cannot be brought back.": {"ja": "最近開いたファイル %d 件の一覧を消します。ファイルそのものには触りません。一覧は戻せません。", "zh": "将清除最近打开的 %d 个文件的列表。文件本身不受影响;列表无法恢复。", "tw": "將清除最近開啟的 %d 個檔案的清單。檔案本身不受影響;清單無法復原。", "ko": "최근에 연 파일 %d개의 목록을 지웁니다. 파일 자체는 건드리지 않습니다. 목록은 되돌릴 수 없습니다.", "de": "Die Liste der %d zuletzt geöffneten Datei(en) wird gelöscht. Die Dateien selbst bleiben unberührt; die Liste lässt sich nicht zurückholen.", "hi": "हाल में खोली गई %d फ़ाइल(ों) की सूची मिटा दी जाती है। फ़ाइलें स्वयं नहीं छुई जातीं; सूची वापस नहीं लाई जा सकती।"},
+  "Clear the list": {"ja": "一覧を消す", "zh": "清除列表", "tw": "清除清單", "ko": "목록 지우기", "de": "Liste löschen", "hi": "सूची साफ़ करें"},
+  "Save layout": {"ja": "レイアウトを保存", "zh": "保存布局", "tw": "儲存配置", "ko": "레이아웃 저장", "de": "Layout speichern", "hi": "लेआउट सहेजें"},
+  "A layout named '%s' already exists. Saving replaces it with the arrangement you have now; the old one cannot be brought back.": {"ja": "'%s' という名前のレイアウトがすでにあります。保存すると今の配置で置き換わり、古い方は戻せません。", "zh": "名为 '%s' 的布局已存在。保存会用当前的布局替换它;旧的无法恢复。", "tw": "名為 '%s' 的配置已存在。儲存會用目前的配置取代它;舊的無法復原。", "ko": "'%s'(이)라는 레이아웃이 이미 있습니다. 저장하면 지금의 배치로 바뀌며 이전 것은 되돌릴 수 없습니다.", "de": "Ein Layout namens '%s' existiert bereits. Speichern ersetzt es durch die jetzige Anordnung; das alte lässt sich nicht zurückholen.", "hi": "'%s' नाम का लेआउट पहले से मौजूद है। सहेजने पर वह अभी की व्यवस्था से बदल जाता है; पुराना वापस नहीं लाया जा सकता।"},
+  "Replace the layout": {"ja": "レイアウトを置き換える", "zh": "替换布局", "tw": "取代配置", "ko": "레이아웃 바꾸기", "de": "Layout ersetzen", "hi": "लेआउट बदलें"},
+  "Delete layout": {"ja": "レイアウトを削除", "zh": "删除布局", "tw": "刪除配置", "ko": "레이아웃 삭제", "de": "Layout löschen", "hi": "लेआउट हटाएँ"},
+  "The saved layout '%s' is deleted. It cannot be brought back.": {"ja": "保存したレイアウト '%s' を削除します。戻せません。", "zh": "将删除已保存的布局 '%s'。无法恢复。", "tw": "將刪除已儲存的配置 '%s'。無法復原。", "ko": "저장한 레이아웃 '%s'을(를) 삭제합니다. 되돌릴 수 없습니다.", "de": "Das gespeicherte Layout '%s' wird gelöscht. Es lässt sich nicht zurückholen.", "hi": "सहेजा गया लेआउट '%s' हटा दिया जाता है। इसे वापस नहीं लाया जा सकता।"},
+  "Delete the layout": {"ja": "レイアウトを削除する", "zh": "删除布局", "tw": "刪除配置", "ko": "레이아웃 삭제", "de": "Layout löschen", "hi": "लेआउट हटाएँ"},
+  "Apply to folder": {"ja": "フォルダに適用", "zh": "应用到文件夹", "tw": "套用到資料夾", "ko": "폴더에 적용", "de": "Auf Ordner anwenden", "hi": "फ़ोल्डर पर लागू करें"},
+  "The output folder already has results: %d output file(s) of this batch and %s. Running overwrites them; the old files cannot be brought back.": {"ja": "出力先にすでに結果があります: この一括処理の出力ファイル %d 個と %s。実行すると上書きされ、古いファイルは戻せません。", "zh": "输出文件夹中已有结果:此批处理的 %d 个输出文件和 %s。运行会覆盖它们;旧文件无法恢复。", "tw": "輸出資料夾中已有結果:此批次處理的 %d 個輸出檔案和 %s。執行會覆寫它們;舊檔案無法復原。", "ko": "출력 폴더에 이미 결과가 있습니다: 이 일괄 처리의 출력 파일 %d개와 %s. 실행하면 덮어쓰며 이전 파일은 되돌릴 수 없습니다.", "de": "Der Ausgabeordner enthält bereits Ergebnisse: %d Ausgabedatei(en) dieses Stapels und %s. Der Lauf überschreibt sie; die alten Dateien lassen sich nicht zurückholen.", "hi": "आउटपुट फ़ोल्डर में पहले से परिणाम हैं: इस बैच की %d आउटपुट फ़ाइल(ें) और %s। चलाने पर वे अधिलेखित हो जाती हैं; पुरानी फ़ाइलें वापस नहीं लाई जा सकतीं।"},
+  "summary.csv": {"ja": "summary.csv", "zh": "summary.csv", "tw": "summary.csv", "ko": "summary.csv", "de": "summary.csv", "hi": "summary.csv"},
+  "no summary.csv": {"ja": "summary.csv は無し", "zh": "没有 summary.csv", "tw": "沒有 summary.csv", "ko": "summary.csv 없음", "de": "keine summary.csv", "hi": "कोई summary.csv नहीं"},
+  "Overwrite and run": {"ja": "上書きして実行する", "zh": "覆盖并运行", "tw": "覆寫並執行", "ko": "덮어쓰고 실행", "de": "Überschreiben und ausführen", "hi": "अधिलेखित करके चलाएँ"},
+  "Save Python file": {"ja": "Python のファイルを保存", "zh": "保存 Python 文件", "tw": "儲存 Python 檔案", "ko": "Python 파일 저장", "de": "Python-Datei speichern", "hi": "Python फ़ाइल सहेजें"},
+  "%s was changed on disk by another program after it was opened here. Saving replaces that version with the text of this tab; it cannot be brought back.": {"ja": "%s は、ここで開いた後にほかのプログラムがディスク上で書き換えました。保存するとその版がこのタブの文面で置き換わり、戻せません。", "zh": "%s 在此处打开之后已被其他程序在磁盘上修改。保存会用此标签页的文本替换那个版本;无法恢复。", "tw": "%s 在此處開啟之後已被其他程式在磁碟上修改。儲存會用此分頁的文字取代那個版本;無法復原。", "ko": "%s은(는) 여기서 연 뒤에 다른 프로그램이 디스크에서 바꿨습니다. 저장하면 그 판이 이 탭의 글로 바뀌며 되돌릴 수 없습니다.", "de": "%s wurde nach dem Öffnen von einem anderen Programm auf der Platte geändert. Speichern ersetzt jene Fassung durch den Text dieses Tabs; sie lässt sich nicht zurückholen.", "hi": "%s को यहाँ खोलने के बाद किसी दूसरे प्रोग्राम ने डिस्क पर बदल दिया। सहेजने पर वह संस्करण इस टैब के पाठ से बदल जाता है; उसे वापस नहीं लाया जा सकता।"},
+  "Overwrite the file": {"ja": "ファイルを上書きする", "zh": "覆盖文件", "tw": "覆寫檔案", "ko": "파일 덮어쓰기", "de": "Datei überschreiben", "hi": "फ़ाइल अधिलेखित करें"},
+  "The Output pane has %d line(s) of print output, notes and errors from the runs so far. Clearing erases them; they cannot be brought back.": {"ja": "出力の欄に、これまでの実行の print・知らせ・誤りが %d 行あります。消すと戻せません。", "zh": "输出栏中有此前运行的 %d 行 print 输出、提示和错误。清除后无法恢复。", "tw": "輸出欄中有先前執行的 %d 行 print 輸出、提示和錯誤。清除後無法復原。", "ko": "출력 창에 지금까지의 실행에서 나온 print 출력, 알림, 오류가 %d줄 있습니다. 지우면 되돌릴 수 없습니다.", "de": "Das Ausgabefeld enthält %d Zeile(n) mit print-Ausgaben, Hinweisen und Fehlern der bisherigen Läufe. Löschen entfernt sie; sie lassen sich nicht zurückholen.", "hi": "आउटपुट पैनल में अब तक के रन की %d पंक्ति(याँ) print आउटपुट, सूचनाएँ और त्रुटियाँ हैं। साफ़ करने पर वे मिट जाती हैं; उन्हें वापस नहीं लाया जा सकता।"},
+  "Clear the output": {"ja": "出力を消す", "zh": "清除输出", "tw": "清除輸出", "ko": "출력 지우기", "de": "Ausgabe löschen", "hi": "आउटपुट साफ़ करें"},
+  "%s was changed on disk by another program after Studio read it. Saving replaces that version with the text in the Program; it cannot be brought back.": {"ja": "%s は、Studio が読んだ後にほかのプログラムがディスク上で書き換えました。保存するとその版が Program 欄の文面で置き換わり、戻せません。", "zh": "%s 在 Studio 读取之后已被其他程序在磁盘上修改。保存会用 Program 中的文本替换那个版本;无法恢复。", "tw": "%s 在 Studio 讀取之後已被其他程式在磁碟上修改。儲存會用 Program 中的文字取代那個版本;無法復原。", "ko": "%s은(는) Studio가 읽은 뒤에 다른 프로그램이 디스크에서 바꿨습니다. 저장하면 그 판이 Program의 글로 바뀌며 되돌릴 수 없습니다.", "de": "%s wurde, nachdem Studio es gelesen hat, von einem anderen Programm auf der Platte geändert. Speichern ersetzt jene Fassung durch den Text im Program; sie lässt sich nicht zurückholen.", "hi": "Studio के पढ़ने के बाद %s को किसी दूसरे प्रोग्राम ने डिस्क पर बदल दिया। सहेजने पर वह संस्करण Program के पाठ से बदल जाता है; उसे वापस नहीं लाया जा सकता।"},
+  "%s already exists. Saving replaces it; the old file cannot be brought back.": {"ja": "%s はすでにあります。保存すると置き換わり、古いファイルは戻せません。", "zh": "%s 已存在。保存会替换它;旧文件无法恢复。", "tw": "%s 已存在。儲存會取代它;舊檔案無法復原。", "ko": "%s이(가) 이미 있습니다. 저장하면 바뀌며 이전 파일은 되돌릴 수 없습니다.", "de": "%s existiert bereits. Speichern ersetzt die Datei; die alte lässt sich nicht zurückholen.", "hi": "%s पहले से मौजूद है। सहेजने पर वह बदल जाती है; पुरानी फ़ाइल वापस नहीं लाई जा सकती।"},
+  "A Python program is still running (or stopped at a breakpoint). Closing Studio stops it: what it has computed so far is lost.": {"ja": "Python のプログラムがまだ実行中(またはブレークポイントで停止中)です。Studio を閉じると止まり、ここまで計算した物は失われます。", "zh": "Python 程序仍在运行(或停在断点处)。关闭 Studio 会停止它:到目前为止计算的结果将丢失。", "tw": "Python 程式仍在執行(或停在中斷點)。關閉 Studio 會停止它:到目前為止計算的結果將遺失。", "ko": "Python 프로그램이 아직 실행 중(또는 중단점에서 멈춤)입니다. Studio를 닫으면 멈추며 지금까지 계산한 것은 사라집니다.", "de": "Ein Python-Programm läuft noch (oder steht an einem Haltepunkt). Das Schließen von Studio hält es an: das bisher Berechnete geht verloren.", "hi": "एक Python प्रोग्राम अभी चल रहा है (या ब्रेकपॉइंट पर रुका है)। Studio बंद करने पर वह रुक जाता है: अब तक की गणना खो जाती है।"},
+  "Stop it and quit": {"ja": "止めて終了する", "zh": "停止并退出", "tw": "停止並結束", "ko": "멈추고 끝내기", "de": "Anhalten und beenden", "hi": "रोककर बाहर निकलें"},
+  "Remove the watch expression": {"ja": "ウォッチの式を消す", "zh": "移除监视表达式", "tw": "移除監看運算式", "ko": "감시 식 제거", "de": "Überwachten Ausdruck entfernen", "hi": "वॉच व्यंजक हटाएँ"},
+  "The watch expression  %s  is removed from the list. It cannot be brought back (you can type it again).": {"ja": "ウォッチの式  %s  を一覧から消します。戻せません(打ち直すことはできます)。", "zh": "监视表达式  %s  将从列表中移除。无法恢复(可以重新输入)。", "tw": "監看運算式  %s  將從清單中移除。無法復原(可以重新輸入)。", "ko": "감시 식  %s  을(를) 목록에서 지웁니다. 되돌릴 수 없습니다(다시 입력할 수는 있습니다).", "de": "Der überwachte Ausdruck  %s  wird aus der Liste entfernt. Er lässt sich nicht zurückholen (man kann ihn neu eingeben).", "hi": "वॉच व्यंजक  %s  सूची से हटा दिया जाता है। इसे वापस नहीं लाया जा सकता (आप इसे फिर से लिख सकते हैं)।"},
+  "Remove it": {"ja": "消す", "zh": "移除", "tw": "移除", "ko": "제거", "de": "Entfernen", "hi": "हटाएँ"},
+  "Pipeline": {"ja": "パイプライン", "zh": "管线", "tw": "管線", "ko": "파이프라인", "de": "Pipeline", "hi": "पाइपलाइन"},
+  "Program (code) — Python": {"ja": "コード — Python", "zh": "代码 — Python", "tw": "程式碼 — Python", "ko": "코드 — Python", "de": "Programm (Code) — Python", "hi": "प्रोग्राम (कोड) — Python"},
+  "Program (code) — Pipeline": {"ja": "コード — パイプライン", "zh": "代码 — 管线", "tw": "程式碼 — 管線", "ko": "코드 — 파이프라인", "de": "Programm (Code) — Pipeline", "hi": "प्रोग्राम (कोड) — पाइपलाइन"},
+  "Program: %s": {"ja": "コード: %s", "zh": "代码:%s", "tw": "程式碼:%s", "ko": "코드: %s", "de": "Programm: %s", "hi": "प्रोग्राम: %s"},
+  "Run as Python": {"ja": "Python として実行", "zh": "作为 Python 运行", "tw": "作為 Python 執行", "ko": "Python으로 실행", "de": "Als Python ausführen", "hi": "Python के रूप में चलाएँ"},
+  "Run the Program text as Python (F5). When stopped at a breakpoint: continue": {"ja": "Program の文面を Python として実行(F5)。ブレークポイントで止まっている時は続行", "zh": "把 Program 文本作为 Python 运行(F5)。停在断点时:继续", "tw": "把 Program 文字作為 Python 執行(F5)。停在中斷點時:繼續", "ko": "Program 글을 Python으로 실행(F5). 중단점에서 멈춰 있으면: 계속", "de": "Den Programmtext als Python ausführen (F5). An einem Haltepunkt: fortsetzen", "hi": "Program पाठ को Python के रूप में चलाएँ (F5)। ब्रेकपॉइंट पर रुके होने पर: जारी रखें"},
+  "Run the Program as a pipeline: every line, timing each; stops at a breakpoint": {"ja": "Program をパイプラインとして実行: 全部の行を、行ごとの時間つきで。ブレークポイントで止まります", "zh": "把 Program 作为管线运行:逐行执行并计时;在断点处停止", "tw": "把 Program 作為管線執行:逐行執行並計時;在中斷點停止", "ko": "Program을 파이프라인으로 실행: 모든 줄을 줄마다 시간을 재며. 중단점에서 멈춤", "de": "Das Program als Pipeline ausführen: jede Zeile, jeweils mit Zeit; hält an einem Haltepunkt", "hi": "Program को पाइपलाइन के रूप में चलाएँ: हर पंक्ति, समय के साथ; ब्रेकपॉइंट पर रुकता है"},
+  "The Program is in Pipeline mode, but this text looks like Python. Click for the choices (nothing is switched by itself)": {"ja": "Program 欄はパイプラインのモードですが、この文面は Python に見えます。押すと選択肢が出ます(勝手には切り替えません)", "zh": "Program 处于管线模式,但这段文本看起来像 Python。点击查看选项(不会自动切换)", "tw": "Program 處於管線模式,但這段文字看起來像 Python。點擊查看選項(不會自動切換)", "ko": "Program은 파이프라인 모드인데 이 글은 Python처럼 보입니다. 누르면 선택지가 나옵니다(저절로 바뀌지 않습니다)", "de": "Das Program ist im Pipeline-Modus, dieser Text sieht aber nach Python aus. Klicken für die Auswahl (nichts wird von selbst umgeschaltet)", "hi": "Program पाइपलाइन मोड में है, पर यह पाठ Python जैसा दिखता है। विकल्पों के लिए क्लिक करें (अपने आप कुछ नहीं बदलता)"},
+  "The Program is in Python mode, but this text looks like a pipeline. Click for the choices (nothing is switched by itself)": {"ja": "Program 欄は Python のモードですが、この文面はパイプラインの書き方に見えます。押すと選択肢が出ます(勝手には切り替えません)", "zh": "Program 处于 Python 模式,但这段文本看起来像管线。点击查看选项(不会自动切换)", "tw": "Program 處於 Python 模式,但這段文字看起來像管線。點擊查看選項(不會自動切換)", "ko": "Program은 Python 모드인데 이 글은 파이프라인처럼 보입니다. 누르면 선택지가 나옵니다(저절로 바뀌지 않습니다)", "de": "Das Program ist im Python-Modus, dieser Text sieht aber nach einer Pipeline aus. Klicken für die Auswahl (nichts wird von selbst umgeschaltet)", "hi": "Program Python मोड में है, पर यह पाठ पाइपलाइन जैसा दिखता है। विकल्पों के लिए क्लिक करें (अपने आप कुछ नहीं बदलता)"},
+  "This text is Python: F5 runs it as Python and the stage list records the run": {"ja": "この文面は Python です: F5 は Python として実行し、段の欄は実行の記録になります", "zh": "这段文本是 Python:F5 将其作为 Python 运行,步骤列表记录运行", "tw": "這段文字是 Python:F5 將其作為 Python 執行,步驟列表記錄執行", "ko": "이 글은 Python입니다: F5는 Python으로 실행하고 단계 목록은 실행을 기록합니다", "de": "Dieser Text ist Python: F5 führt ihn als Python aus, die Stufenliste protokolliert den Lauf", "hi": "यह पाठ Python है: F5 इसे Python के रूप में चलाता है और चरण सूची रन दर्ज करती है"},
+  "This text is a pipeline: the stage list is the source and F5 runs the stages": {"ja": "この文面はパイプラインです: 段の列が正本で、F5 は段を実行します", "zh": "这段文本是管线:步骤列表是正本,F5 运行各步骤", "tw": "這段文字是管線:步驟列表是正本,F5 執行各步驟", "ko": "이 글은 파이프라인입니다: 단계 목록이 원본이며 F5는 단계를 실행합니다", "de": "Dieser Text ist eine Pipeline: die Stufenliste ist die Quelle, F5 führt die Stufen aus", "hi": "यह पाठ पाइपलाइन है: चरण सूची स्रोत है और F5 चरण चलाता है"},
+  "Move this text to Python mode": {"ja": "この文面を Python のモードへ移す", "zh": "把这段文本移到 Python 模式", "tw": "把這段文字移到 Python 模式", "ko": "이 글을 Python 모드로 옮기기", "de": "Diesen Text in den Python-Modus übernehmen", "hi": "इस पाठ को Python मोड में ले जाएँ"},
+  "Switch to Python mode (this text stays in Pipeline mode)": {"ja": "Python のモードへ切り替える(この文面はパイプラインのモードに残ります)", "zh": "切换到 Python 模式(这段文本留在管线模式)", "tw": "切換到 Python 模式(這段文字留在管線模式)", "ko": "Python 모드로 바꾸기(이 글은 파이프라인 모드에 남습니다)", "de": "In den Python-Modus wechseln (dieser Text bleibt im Pipeline-Modus)", "hi": "Python मोड में जाएँ (यह पाठ पाइपलाइन मोड में रहता है)"},
+  "Convert this text to Python": {"ja": "この文面を Python に変換する", "zh": "把这段文本转换为 Python", "tw": "把這段文字轉換為 Python", "ko": "이 글을 Python으로 변환", "de": "Diesen Text in Python umwandeln", "hi": "इस पाठ को Python में बदलें"},
+  "Switch to Pipeline mode (this text stays in Python mode)": {"ja": "パイプラインのモードへ切り替える(この文面は Python のモードに残ります)", "zh": "切换到管线模式(这段文本留在 Python 模式)", "tw": "切換到管線模式(這段文字留在 Python 模式)", "ko": "파이프라인 모드로 바꾸기(이 글은 Python 모드에 남습니다)", "de": "In den Pipeline-Modus wechseln (dieser Text bleibt im Python-Modus)", "hi": "पाइपलाइन मोड में जाएँ (यह पाठ Python मोड में रहता है)"},
+  "Switch to Pipeline mode": {"ja": "パイプラインのモードへ切り替える", "zh": "切换到管线模式", "tw": "切換到管線模式", "ko": "파이프라인 모드로 바꾸기", "de": "In den Pipeline-Modus wechseln", "hi": "पाइपलाइन मोड में जाएँ"},
+  "Switch to Python mode": {"ja": "Python のモードへ切り替える", "zh": "切换到 Python 模式", "tw": "切換到 Python 模式", "ko": "Python 모드로 바꾸기", "de": "In den Python-Modus wechseln", "hi": "Python मोड में जाएँ"},
+  "Moved the text to Python mode (Ctrl+Z restores the previous Python text)": {"ja": "文面を Python のモードへ移しました(Ctrl+Z で前の Python の文面に戻ります)", "zh": "已把文本移到 Python 模式(Ctrl+Z 恢复之前的 Python 文本)", "tw": "已把文字移到 Python 模式(Ctrl+Z 復原先前的 Python 文字)", "ko": "글을 Python 모드로 옮겼습니다(Ctrl+Z로 이전 Python 글로 돌아갑니다)", "de": "Text in den Python-Modus übernommen (Strg+Z stellt den vorherigen Python-Text wieder her)", "hi": "पाठ Python मोड में ले जाया गया (Ctrl+Z पिछला Python पाठ लौटाता है)"},
+  "Run as Python (F5 / Ctrl+R)": {"ja": "Python として実行(F5 / Ctrl+R)", "zh": "作为 Python 运行(F5 / Ctrl+R)", "tw": "作為 Python 執行(F5 / Ctrl+R)", "ko": "Python으로 실행(F5 / Ctrl+R)", "de": "Als Python ausführen (F5 / Strg+R)", "hi": "Python के रूप में चलाएँ (F5 / Ctrl+R)"},
+  "Run the Program text as Python. Also F5 or Ctrl+R from any panel": {"ja": "Program の文面を Python として実行。どのパネルからでも F5 か Ctrl+R で同じ", "zh": "把 Program 文本作为 Python 运行。在任何面板中按 F5 或 Ctrl+R 也一样", "tw": "把 Program 文字作為 Python 執行。在任何面板中按 F5 或 Ctrl+R 也一樣", "ko": "Program 글을 Python으로 실행. 어느 패널에서든 F5 또는 Ctrl+R로도 같음", "de": "Den Programmtext als Python ausführen. Auch mit F5 oder Strg+R aus jedem Bereich", "hi": "Program पाठ को Python के रूप में चलाएँ। किसी भी पैनल से F5 या Ctrl+R से भी"},
+  "Run the Program text as Python (debugger Run); when stopped at a breakpoint: continue": {"ja": "Program の文面を Python として実行(デバッガーの実行)。ブレークポイントで止まっている時は続行", "zh": "把 Program 文本作为 Python 运行(调试器的运行);停在断点时:继续", "tw": "把 Program 文字作為 Python 執行(偵錯器的執行);停在中斷點時:繼續", "ko": "Program 글을 Python으로 실행(디버거 실행). 중단점에서 멈춰 있으면: 계속", "de": "Den Programmtext als Python ausführen (Debugger-Ausführen); an einem Haltepunkt: fortsetzen", "hi": "Program पाठ को Python के रूप में चलाएँ (डीबगर रन); ब्रेकपॉइंट पर रुके होने पर: जारी रखें"},
+  "Run the Program text as Python (Ctrl+Enter)": {"ja": "Program の文面を Python として実行(Ctrl+Enter)", "zh": "把 Program 文本作为 Python 运行(Ctrl+Enter)", "tw": "把 Program 文字作為 Python 執行(Ctrl+Enter)", "ko": "Program 글을 Python으로 실행(Ctrl+Enter)", "de": "Den Programmtext als Python ausführen (Strg+Eingabe)", "hi": "Program पाठ को Python के रूप में चलाएँ (Ctrl+Enter)"},
+  "This text mixes the pipeline syntax and Python (line %d is in the other syntax). Click for the choices (nothing is switched by itself)": {"ja": "この文面はパイプラインの書き方と Python が混ざっています(%d 行目がもう一方の書き方)。押すと選択肢が出ます(勝手には切り替えません)", "zh": "这段文本混用了管线写法和 Python(第 %d 行是另一种写法)。点击查看选项(不会自动切换)", "tw": "這段文字混用了管線寫法和 Python(第 %d 行是另一種寫法)。點擊查看選項(不會自動切換)", "ko": "이 글에는 파이프라인 문법과 Python이 섞여 있습니다(%d번째 줄이 다른 문법). 누르면 선택지가 나옵니다(저절로 바뀌지 않습니다)", "de": "Dieser Text mischt die Pipeline-Syntax und Python (Zeile %d ist in der anderen Syntax). Klicken für die Auswahl (nichts wird von selbst umgeschaltet)", "hi": "इस पाठ में पाइपलाइन सिंटैक्स और Python मिले हुए हैं (पंक्ति %d दूसरे सिंटैक्स में है)। विकल्पों के लिए क्लिक करें (अपने आप कुछ नहीं बदलता)"},
+  "Go to line %d": {"ja": "%d 行目へ移る", "zh": "转到第 %d 行", "tw": "移至第 %d 行", "ko": "%d번째 줄로 이동", "de": "Zu Zeile %d springen", "hi": "पंक्ति %d पर जाएँ"},
+  "Fit the image to this window": {"ja": "画像をこの窓に合わせる", "zh": "使图像适合此窗口", "tw": "讓影像符合此視窗大小", "ko": "이 창에 이미지 맞추기", "de": "Bild an dieses Fenster anpassen", "hi": "छवि को इस विंडो में फ़िट करें"},
+  "Zoom this window in": {"ja": "この窓を拡大する", "zh": "在此窗口中放大", "tw": "在此視窗中放大", "ko": "이 창에서 확대", "de": "In diesem Fenster hineinzoomen", "hi": "इस विंडो में ज़ूम इन करें"},
+  "Zoom this window out": {"ja": "この窓を縮小する", "zh": "在此窗口中缩小", "tw": "在此視窗中縮小", "ko": "이 창에서 축소", "de": "In diesem Fenster herauszoomen", "hi": "इस विंडो में ज़ूम आउट करें"},
+  "Save image…": {"ja": "画像を保存…", "zh": "保存图像…", "tw": "儲存影像…", "ko": "이미지 저장…", "de": "Bild speichern…", "hi": "छवि सहेजें…"},
+  "Save this window's image as a PNG": {"ja": "この窓の画像を PNG で保存する", "zh": "将此窗口的图像保存为 PNG", "tw": "將此視窗的影像儲存為 PNG", "ko": "이 창의 이미지를 PNG로 저장", "de": "Bild dieses Fensters als PNG speichern", "hi": "इस विंडो की छवि को PNG के रूप में सहेजें"},
+  "Copy this window's image to the clipboard": {"ja": "この窓の画像をクリップボードへ写す", "zh": "将此窗口的图像复制到剪贴板", "tw": "將此視窗的影像複製到剪貼簿", "ko": "이 창의 이미지를 클립보드에 복사", "de": "Bild dieses Fensters in die Zwischenablage kopieren", "hi": "इस विंडो की छवि को क्लिपबोर्ड पर कॉपी करें"},
+  "Add the expression as a watch (Enter in the box does the same)": {"ja": "この式をウォッチに足す(欄で Enter でも同じ)", "zh": "将表达式添加为监视项(在框中按 Enter 也一样)", "tw": "將運算式加入監看項目(在方框中按 Enter 也一樣)", "ko": "식을 감시 항목으로 추가(상자에서 Enter를 눌러도 같음)", "de": "Ausdruck zur Überwachung hinzufügen (Eingabe im Feld bewirkt dasselbe)", "hi": "एक्सप्रेशन को वॉच में जोड़ें (बॉक्स में Enter दबाने पर भी यही होता है)"},
+  "Back": {"ja": "戻る", "zh": "后退", "tw": "上一頁", "ko": "뒤로", "de": "Zurück", "hi": "पीछे"},
+  "Copy this operator's signature to the clipboard": {"ja": "この op の呼び出しの形をクリップボードへ写す", "zh": "将此算子的签名复制到剪贴板", "tw": "將此運算子的簽章複製到剪貼簿", "ko": "이 연산자의 시그니처를 클립보드에 복사", "de": "Signatur dieses Operators in die Zwischenablage kopieren", "hi": "इस ऑपरेटर का सिग्नेचर क्लिपबोर्ड पर कॉपी करें"},
+  "Edit the pipeline as HDevelop-style code: `op (a, b)` (or `op a b`), `*`/`#` comments, and control flow `for N … endfor` / `if … else … endif`.\nType for autocomplete; click the gutter to toggle a breakpoint; Step / Run (timed).": {"ja": "パイプラインを HDevelop 風のコードで書く: `op (a, b)`(または `op a b`)、`*` / `#` で注釈、流れは `for N … endfor` / `if … else … endif`。\n打つと候補が出ます。行番号の欄を押すとブレークポイント。Step / Run(時間つき)。", "zh": "以 HDevelop 风格代码编辑管线：`op (a, b)`（或 `op a b`）、`*`/`#` 注释，以及控制流 `for N … endfor` / `if … else … endif`。\n输入时自动补全；单击行号栏切换断点；Step / Run（计时）。", "tw": "以 HDevelop 風格程式碼編輯管線：`op (a, b)`（或 `op a b`）、`*`/`#` 註解，以及控制流程 `for N … endfor` / `if … else … endif`。\n輸入時自動完成；按一下行號欄切換中斷點；Step / Run（計時）。", "ko": "파이프라인을 HDevelop 스타일 코드로 편집: `op (a, b)`(또는 `op a b`), `*`/`#` 주석, 제어 흐름 `for N … endfor` / `if … else … endif`.\n입력하면 자동 완성됩니다. 줄 번호 영역을 클릭해 중단점을 전환하고 Step / Run(시간 측정)을 사용합니다.", "de": "Pipeline als Code im HDevelop-Stil bearbeiten: `op (a, b)` (oder `op a b`), Kommentare mit `*`/`#` und Kontrollfluss mit `for N … endfor` / `if … else … endif`.\nTippen für die Autovervollständigung; in die Randleiste klicken, um einen Haltepunkt umzuschalten; Step / Run (mit Zeitmessung).", "hi": "पाइपलाइन को HDevelop-शैली के कोड के रूप में संपादित करें: `op (a, b)` (या `op a b`), `*`/`#` टिप्पणियाँ और कंट्रोल फ़्लो `for N … endfor` / `if … else … endif`।\nअपने-आप पूरा करने के लिए टाइप करें; ब्रेकपॉइंट चालू या बंद करने के लिए गटर पर क्लिक करें; Step / Run (समय सहित)।"},
+  "Forward": {"ja": "進む", "zh": "前进", "tw": "下一頁", "ko": "앞으로", "de": "Vorwärts", "hi": "आगे"},
+  "How to render the 2-D result: gray, region overlay (a region drawn on the source image), a false-colour palette, shaded relief, or height": {"ja": "2-D の結果の描き方: 灰色・領域の重ね描き(元の画像の上に領域を描く)・疑似カラーの色表・陰影起伏・高さ", "zh": "2-D 结果的渲染方式：灰度、区域叠加(在源图像上绘制区域)、伪彩色调色板、阴影浮雕或高度", "tw": "2-D 結果的呈現方式：灰階、區域疊加(在來源影像上繪製區域)、偽彩色調色盤、陰影浮雕或高度", "ko": "2-D 결과 표시 방식: 회색조, 영역 오버레이(원본 이미지 위에 영역 표시), 의사 색상 팔레트, 음영 기복 또는 높이", "de": "Darstellung des 2-D-Ergebnisses: Graustufen, Regionsüberlagerung (Region auf dem Quellbild), Falschfarbenpalette, Schummerung oder Höhe", "hi": "2-D परिणाम दिखाने का तरीका: ग्रे, रीजन ओवरले (स्रोत छवि पर बना रीजन), छद्म-रंग पैलेट, छायांकित उभार या ऊँचाई"},
+  "Jump to any operator's help (2-D image ops, 3-D point/mesh/volume ops, and the ledger families: math / optics / imgmetrics / …)": {"ja": "どの op のヘルプへも飛ぶ(2-D の画像の op、3-D の点・メッシュ・ボリュームの op、台帳の系統: math / optics / imgmetrics / …)", "zh": "跳转到任意算子的帮助(2-D 图像算子、3-D 点/网格/体积算子，以及台账系列：math / optics / imgmetrics / …)", "tw": "跳至任一運算子的說明(2-D 影像運算子、3-D 點/網格/體積運算子，以及台帳系列：math / optics / imgmetrics / …)", "ko": "모든 연산자의 도움말로 이동(2-D 이미지 연산, 3-D 점/메시/볼륨 연산 및 원장 계열: math / optics / imgmetrics / …)", "de": "Zur Hilfe eines beliebigen Operators springen (2-D-Bildoperatoren, 3-D-Punkt-/Mesh-/Volumenoperatoren und Ledger-Familien: math / optics / imgmetrics / …)", "hi": "किसी भी ऑपरेटर की सहायता पर जाएँ (2-D छवि ऑपरेटर, 3-D पॉइंट/मेश/वॉल्यूम ऑपरेटर और लेजर परिवार: math / optics / imgmetrics / …)"},
+  "Load a second frame B for two-frame perception (flow / stereo)": {"ja": "2 枚で見る知覚(流れ / ステレオ)のための 2 枚目の画像 B を読む", "zh": "为双帧感知(光流/立体)加载第二帧 B", "tw": "載入第二個影格 B，以進行雙影格感知(光流/立體)", "ko": "두 프레임 인식(흐름/스테레오)을 위한 두 번째 프레임 B 불러오기", "de": "Zweites Bild B für die Zwei-Bild-Wahrnehmung laden (Fluss/Stereo)", "hi": "दो-फ़्रेम परसेप्शन (फ़्लो/स्टीरियो) के लिए दूसरा फ़्रेम B लोड करें"},
+  "Run the selected perception mode on frames A + B": {"ja": "選んだ知覚のモードを画像 A + B で実行する", "zh": "对帧 A + B 运行所选感知模式", "tw": "對影格 A + B 執行所選的感知模式", "ko": "프레임 A + B에 선택한 인식 모드 실행", "de": "Gewählten Wahrnehmungsmodus auf Bild A + B ausführen", "hi": "फ़्रेम A + B पर चुना हुआ परसेप्शन मोड चलाएँ"},
+  "Watch expressions, re-evaluated live against the SELECTED variable.\n`v` = selected variable's value, `np` = numpy, `img` = input frame.\ne.g.  v.mean()   np.percentile(v, 99)   (v > 0.5).sum()": {"ja": "ウォッチの式。選んでいる変数に対して、その場で評価し直します。\n`v` = 選んでいる変数の値、`np` = numpy、`img` = 入力の画像。\n例:  v.mean()   np.percentile(v, 99)   (v > 0.5).sum()", "zh": "监视表达式；针对所选变量实时重新求值。\n`v` = 所选变量的值，`np` = numpy，`img` = 输入帧。\n例如  v.mean()   np.percentile(v, 99)   (v > 0.5).sum()", "tw": "監看運算式；針對所選變數即時重新求值。\n`v` = 所選變數的值，`np` = numpy，`img` = 輸入影格。\n例如  v.mean()   np.percentile(v, 99)   (v > 0.5).sum()", "ko": "감시 식입니다. 선택한 변수에 대해 실시간으로 다시 계산합니다.\n`v` = 선택한 변수의 값, `np` = numpy, `img` = 입력 프레임.\n예:  v.mean()   np.percentile(v, 99)   (v > 0.5).sum()", "de": "Überwachungsausdrücke, die laufend für die AUSGEWÄHLTE Variable neu ausgewertet werden.\n`v` = Wert der ausgewählten Variablen, `np` = numpy, `img` = Eingabebild.\nz. B.  v.mean()   np.percentile(v, 99)   (v > 0.5).sum()", "hi": "वॉच एक्सप्रेशन, जिन्हें चुने हुए वेरिएबल के लिए तुरंत फिर से आँका जाता है।\n`v` = चुने हुए वेरिएबल का मान, `np` = numpy, `img` = इनपुट फ़्रेम।\nउदाहरण:  v.mean()   np.percentile(v, 99)   (v > 0.5).sum()"},
+  "raw knob (0..1)": {"ja": "つまみの生の値(0..1)", "zh": "旋钮原始值(0..1)", "tw": "旋鈕原始值(0..1)", "ko": "원시 노브 값(0..1)", "de": "Roher Reglerwert (0..1)", "hi": "नॉब का मूल मान (0..1)"},
+  "Read this image": {"ja": "この画像を読む", "zh": "读取此图像", "tw": "讀取此影像", "ko": "이 이미지 읽기", "de": "Dieses Bild lesen", "hi": "इस छवि को पढ़ें"},
+  "Read the image file saved with this pipeline now and check it against its SHA-256": {"ja": "このパイプラインと一緒に保存した画像ファイルを今読み、SHA-256 で照らします", "zh": "现在读取随此流水线保存的图像文件,并用 SHA-256 核对", "tw": "現在讀取與此管線一起儲存的影像檔,並以 SHA-256 核對", "ko": "이 파이프라인과 함께 저장한 이미지 파일을 지금 읽고 SHA-256으로 확인합니다", "de": "Die mit dieser Pipeline gespeicherte Bilddatei jetzt lesen und per SHA-256 prüfen", "hi": "इस पाइपलाइन के साथ सहेजी गई छवि फ़ाइल अभी पढ़ें और SHA-256 से जाँचें"},
+  "Use this different image": {"ja": "この異なる画像を使う", "zh": "使用此不同的图像", "tw": "使用這個不同的影像", "ko": "이 다른 이미지 사용", "de": "Dieses abweichende Bild verwenden", "hi": "इस अलग छवि का उपयोग करें"},
+  "Use the different image already read into memory without reading the file again": {"ja": "すでにメモリへ読み込んだ異なる画像を使い、ファイルは読み直しません", "zh": "使用已读入内存的不同图像,不再读取文件", "tw": "使用已讀入記憶體的不同影像,不再讀取檔案", "ko": "이미 메모리로 읽은 다른 이미지를 사용하고 파일은 다시 읽지 않습니다", "de": "Das bereits in den Speicher gelesene abweichende Bild verwenden, ohne die Datei erneut zu lesen", "hi": "फ़ाइल को दोबारा पढ़े बिना मेमोरी में पहले से पढ़ी गई अलग छवि का उपयोग करें"},
+  "This image differs from the one saved with the pipeline": {"ja": "保存時と異なる画像です", "zh": "此图像与随管线保存的图像不同", "tw": "此影像與隨管線儲存的影像不同", "ko": "이 이미지는 파이프라인과 함께 저장된 이미지와 다릅니다", "de": "Dieses Bild unterscheidet sich von dem mit der Pipeline gespeicherten Bild", "hi": "यह छवि पाइपलाइन के साथ सहेजी गई छवि से अलग है"},
+  "Open a different image file instead of the saved input": {"ja": "保存した入力の代わりに、別の画像ファイルを開きます", "zh": "打开其他图像文件来代替保存的输入", "tw": "開啟其他影像檔來代替儲存的輸入", "ko": "저장된 입력 대신 다른 이미지 파일을 엽니다", "de": "Statt der gespeicherten Eingabe eine andere Bilddatei öffnen", "hi": "सहेजे गए इनपुट के बजाय कोई दूसरी छवि फ़ाइल खोलें"},
+  "Continue with the image already on screen; the result is marked as not using the saved input": {"ja": "今表示している画像で続けます。結果には、保存した入力を使っていないと印を付けます", "zh": "使用当前显示的图像继续;结果会标明未使用保存的输入", "tw": "使用目前顯示的影像繼續;結果會標明未使用儲存的輸入", "ko": "지금 화면의 이미지로 계속합니다. 결과에는 저장된 입력을 쓰지 않았다고 표시합니다", "de": "Mit dem angezeigten Bild fortfahren; das Ergebnis wird als nicht mit der gespeicherten Eingabe berechnet markiert", "hi": "स्क्रीन पर मौजूद छवि के साथ जारी रखें; परिणाम पर लिखा रहेगा कि सहेजा गया इनपुट उपयोग नहीं हुआ"},
+  "Choose another image…": {"ja": "別の画像を選ぶ…", "zh": "选择其他图像…", "tw": "選擇其他影像…", "ko": "다른 이미지 선택…", "de": "Anderes Bild auswählen…", "hi": "दूसरी छवि चुनें…"},
+  "Keep the current image": {"ja": "現在の画像を使う", "zh": "保留当前图像", "tw": "保留目前影像", "ko": "현재 이미지 유지", "de": "Aktuelles Bild behalten", "hi": "मौजूदा छवि रखें"},
+  "The saved input is not loaded yet. Choose how Studio should continue.": {"ja": "保存された入力画像はまだ読み込まれていません。Studio がどう続けるかを選んでください。", "zh": "尚未加载保存的输入图像。请选择 Studio 的继续方式。", "tw": "尚未載入儲存的輸入影像。請選擇 Studio 的繼續方式。", "ko": "저장된 입력 이미지를 아직 불러오지 않았습니다. Studio가 계속할 방법을 선택하세요.", "de": "Die gespeicherte Eingabe ist noch nicht geladen. Wählen Sie, wie Studio fortfahren soll.", "hi": "सहेजी गई इनपुट छवि अभी लोड नहीं हुई है। चुनें कि Studio कैसे आगे बढ़े।"},
+  "This result uses the current image, not the input saved with the pipeline.": {"ja": "この結果は、パイプラインと一緒に保存された入力ではなく、現在の画像を使っています。", "zh": "此结果使用当前图像，而不是随管线保存的输入。", "tw": "此結果使用目前影像，而不是隨管線儲存的輸入。", "ko": "이 결과는 파이프라인과 함께 저장된 입력이 아니라 현재 이미지를 사용합니다.", "de": "Dieses Ergebnis verwendet das aktuelle Bild, nicht die mit der Pipeline gespeicherte Eingabe.", "hi": "यह परिणाम पाइपलाइन के साथ सहेजे गए इनपुट के बजाय मौजूदा छवि का उपयोग करता है।"}
  },
   "pending_translation": {
     "_note": "Rows with a Japanese text only. Other languages are NOT yet translated: the UI shows the English text for them (never a machine translation labelled as done). tests/test_studio_first_minute_2026_11_12.py counts the rows still pending per language. When a row gets all languages, move it into strings.",
@@ -2114,7 +3940,6 @@
     "Float: Program (code)": {"ja": "別窓にする: コード"},
     "Float: Variables & Objects": {"ja": "別窓にする: 変数とオブジェクト"},
     "Graphics windows": {"ja": "グラフィクス窓"},
-    "Layout": {"ja": "レイアウト"},
     "Balanced (default)": {"ja": "バランス(既定)"},
     "Graphics focus": {"ja": "画像を重視"},
     "Code focus": {"ja": "コードを重視"},
@@ -2127,7 +3952,6 @@
     "○ Displayed image": {"ja": "○ 現在の表示画像"},
     "○ Both": {"ja": "○ 両方"},
     "More": {"ja": "その他"},
-    "Reset panel layout": {"ja": "パネル配置を元に戻す"},
     "Run all (F5 / Ctrl+R)": {"ja": "すべて実行 (F5 / Ctrl+R)"},
     "Step (F6)": {"ja": "1 段実行 (F6)"},
     "Reset to start (Shift+F5)": {"ja": "最初に戻す (Shift+F5)"},
@@ -2140,7 +3964,6 @@
     "Operator timings": {"ja": "op ごとの時間"},
     "All off  (dev_update_off)": {"ja": "すべて切る  (dev_update_off)"},
     "All on  (dev_update_on)": {"ja": "すべて入れる  (dev_update_on)"},
-    "Auto-update": {"ja": "自動更新"},
     "Fill": {"ja": "塗りつぶし"},
     "Margin (outline)": {"ja": "縁取り(輪郭)"},
     "Orange": {"ja": "オレンジ"},
@@ -2152,7 +3975,6 @@
     "Magenta": {"ja": "マゼンタ"},
     "White": {"ja": "白"},
     "Float all panels (multi-display)": {"ja": "すべてのパネルを別窓にする(マルチディスプレイ)"},
-    "Dock all panels": {"ja": "すべてのパネルを戻す"},
     "Detach graphics window": {"ja": "グラフィクス窓を切り離す"},
     "Reattach graphics window": {"ja": "グラフィクス窓を戻す"},
     "PIPELINE": {"ja": "処理手順"},
@@ -2164,23 +3986,13 @@
     "OPERATORS": {"ja": "処理(op)"},
     "Copy sig": {"ja": "署名をコピー"},
     "Open image": {"ja": "画像を開く"},
-    "Apply to folder": {"ja": "フォルダに適用"},
     "Export": {"ja": "書き出し"},
-    "Find panel": {"ja": "パネルを探す"},
     "Display:": {"ja": "表示:"},
     "Auto per image": {"ja": "各画像で自動"},
     "Shared by compared images": {"ja": "比較画像で共通"},
     "Manual": {"ja": "手動"},
     "add watch…  (v = selected variable, np = numpy)": {"ja": "監視式を追加…  (v = 選んだ変数、np = numpy)"},
     "search / autocomplete operators…": {"ja": "op を検索 / 補完…"},
-    "Build pipeline": {"ja": "処理を組む"},
-    "Compare results": {"ja": "結果を比べる"},
-    "Inspect values": {"ja": "数値を調べる"},
-    "Make code": {"ja": "コードにする"},
-    "Image focus": {"ja": "画像だけ大きく"},
-    "Find panel…": {"ja": "パネルを探す…"},
-    "Leave image focus": {"ja": "画像だけ大きくを終了"},
-    "Work modes": {"ja": "作業モード"},
     "Operators": {"ja": "処理を選ぶ"},
     "Pipeline · Parameters": {"ja": "処理手順と調整"},
     "Display · Analysis": {"ja": "表示と分析"},
@@ -2225,7 +4037,6 @@
     "Failures": {"ja": "失敗一覧"},
     "Save to": {"ja": "保存先"},
     "Save the raw values": {"ja": "元の数値を保存"},
-    "Could not save": {"ja": "保存できませんでした"},
     "Saved: %s": {"ja": "保存しました: %s"},
     "Batch 0/%d": {"ja": "バッチ 0/%d"},
     "Batch %d/%d: %s": {"ja": "バッチ %d/%d: %s"},
@@ -2262,7 +4073,8 @@
   "Freeze the current pipeline and input settings, then apply them to every image in a folder, one by one": {"ja": "いまの処理と入力設定を固定して、フォルダ内の画像へ順番に適用します"},
   "First steps": {"ja": "最初の 3 手"},
   "1. Open a sample: File ▸ Sample images": {"ja": "1. サンプルを開く(ファイル ▸ サンプル画像)"},
-  "2. Select an operator in the Operators panel and press +": {"ja": "2. 「処理を選ぶ」パネルで op を選び、+ を押す"},
+  "cannot run: %s": {"ja": "実行できません: %s"},
+  "2. Open Operators from the panel bar on the left, select an operator and press +": {"ja": "2. 左端の帯から「処理を選ぶ」を出し、op を選んで + を押す"},
   "3. Press ▶▶ to run": {"ja": "3. ▶▶ で実行"},
   "Hide these steps. Help ▸ First steps shows them again": {"ja": "この案内を閉じます。ヘルプ ▸ 最初の 3 手 でもう一度出せます"},
   "Show the three first steps over the image again": {"ja": "最初の 3 手の案内を画像の上にもう一度出します"},
@@ -2350,6 +4162,178 @@
   "window σ": {"ja": "窓の σ"},
   "σ1 (fine)": {"ja": "σ1(細かい)"},
   "σ2 (coarse)": {"ja": "σ2(粗い)"},
-  "impl: %s": {"ja": "実装: %s"}
+  "impl: %s": {"ja": "実装: %s"},
+  "‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: fullseye algo run %s": {"ja": "「%s」は数列・数を扱う一般アルゴリズムの op です。画像の処理手順には入りません(コマンドで実行: fullseye algo run %s)"},
+  "‘%s’ takes two or more inputs, so it cannot be added as a single pipeline stage — it was not added": {"ja": "「%s」は入力が 2 つ以上要る op なので、1 入力の段としては入れられません(追加していません)"},
+  "‘%s’ is not available in this environment (its optional backend is not installed) — it was not added to the pipeline": {"ja": "「%s」はこの環境では使えません(追加のパッケージが未導入)。処理手順には追加していません"},
+  "cannot be added as a stage": {"ja": "段としては入れられません"},
+  "First stage: showing %d of %d operators that can take the loaded input ('%s').": {"ja": "最初の段: %d / %d 件を表示しています(読み込んだ入力 '%s' を受けられる op)。"},
+  "Samples": {"ja": "見本"},
+  "Sample pipeline with its own image": {"ja": "見本の処理手順(専用の画像つき)"},
+  "Open sample": {"ja": "見本を開く"},
+  "Load this sample pipeline and the image it was made for": {"ja": "この見本の処理手順と、見本の画像を読み込みます"},
+  "This sample is not available here: %s": {"ja": "この見本はここでは使えません: %s"},
+  "Discard": {"ja": "破棄"},
+  "Save and close": {"ja": "保存して閉じる"},
+  "Close without saving": {"ja": "保存せずに閉じる"},
+  "%d unsaved stage(s)": {"ja": "未保存の段 %d 個"},
+  "unapplied Program edits": {"ja": "Program 欄の未適用の編集"},
+  "%d unsaved editor tab(s)": {"ja": "未保存のエディタのタブ %d 個"},
+  "%s has %s.": {"ja": "%sに、%sがあります。"},
+  "The current pipeline": {"ja": "現在の処理手順"},
+  " and ": {"ja": "、"},
+  "Discard them?": {"ja": "破棄しますか?"},
+  "Save the pipeline before closing?": {"ja": "閉じる前に処理手順を保存しますか?"},
+  "Close without saving them?": {"ja": "保存せずに閉じますか?"},
+  "Load sample pipeline": {"ja": "見本の処理手順を読み込む"},
+  "Open pipeline": {"ja": "処理手順を開く"},
+  "loaded sample '%s' — its code is now in the Program panel": {"ja": "見本「%s」を読み込みました。コードは Program 欄にあります"},
+  "loaded sample '%s' — the gallery stays open": {"ja": "見本「%s」を読み込みました(一覧の窓は開いたままです)"},
+  "undo %s(%d more)": {"ja": "元に戻しました %s(あと %d 回)"},
+  "redo %s(%d more)": {"ja": "やり直しました %s(あと %d 回)"},
+  "inserted `%s` at line %d of the Program (Apply to run)": {"ja": "「%s」を Program の %d 行目に入れました(Apply で実行)"},
+  "load an image first (File ▸ Open image / Synthetic demo)": {"ja": "先に画像を読み込んでください(ファイル ▸ 画像を開く / 合成デモ)"},
+  "⚠ ran %s once but it FELL BACK (%s) — the window shows the sort fallback, not a result": {"ja": "⚠ %s を 1 回実行しましたが、代わりの値に落ちました(%s)。窓に出ているのは型の既定値で、結果ではありません"},
+  "ran %s once — result in a new graphics window (pipeline unchanged)": {"ja": "%s を 1 回実行しました。結果は新しいグラフィックス窓に(処理手順は変えていません)"},
+  "ran %s once → Graphics %d (pipeline unchanged)": {"ja": "%s を 1 回実行しました → グラフィックス %d(処理手順は変えていません)"},
+  "ran %s once → %s (pipeline unchanged)": {"ja": "%s を 1 回実行しました → %s(処理手順は変えていません)"},
+  "loaded %s": {"ja": "%s を読み込みました"},
+  "loaded sample image: %s": {"ja": "見本の画像を読み込みました: %s"},
+  "saved %s  ·  (Ctrl+Shift+S saves the pipeline itself)": {"ja": "%s を保存しました(処理手順そのものは Ctrl+Shift+S で保存)"},
+  "nothing to save — run the pipeline first": {"ja": "保存する物がありません。先に処理手順を実行してください"},
+  "nothing to save in this window": {"ja": "この窓には保存する物がありません"},
+  "nothing to copy — run the pipeline first": {"ja": "写す物がありません。先に処理手順を実行してください"},
+  "copied result image (pipeline output) to clipboard": {"ja": "結果の画像(処理手順の出力)をクリップボードに写しました"},
+  "pipeline cleared": {"ja": "処理手順を空にしました"},
+  "recent file no longer exists: %s": {"ja": "最近のファイルがもうありません: %s"},
+  "Operator reference": {"ja": "op の一覧"},
+  "Samples & code": {"ja": "見本とコード"},
+  "Command palette": {"ja": "コマンドパレット"},
+  "Fullseye Studio — guide": {"ja": "Fullseye Studio の案内"},
+  "Could not open image": {"ja": "画像を開けませんでした"},
+  "Could not load sample image": {"ja": "見本の画像を読み込めませんでした"},
+  "Sample pipeline": {"ja": "見本の処理手順"},
+  "Run once": {"ja": "1 回だけ実行"},
+  "Could not save pipeline": {"ja": "処理手順を保存できませんでした"},
+  "Could not open pipeline": {"ja": "処理手順を開けませんでした"},
+  "Could not save graphics window": {"ja": "グラフィックス窓を保存できませんでした"},
+  "A short guide in the selected language": {"ja": "選んだ言語の短い案内"},
+  "About this application": {"ja": "このアプリについて"},
+  "Actual size 1:1 (Ctrl+Alt+1)": {"ja": "原寸 1:1(Ctrl+Alt+1)"},
+  "Advance one pipeline stage (debugger Step) — works from any panel": {"ja": "処理手順を 1 段進める(デバッガのステップ)。どのパネルからでも使えます"},
+  "Advance one pipeline stage. Also F6 from any panel": {"ja": "処理手順を 1 段進める。どのパネルからでも F6 でも進めます"},
+  "Argument a (0..1) used by Insert and Run once — its meaning is shown above": {"ja": "「+」と「1 回だけ実行」が使う引数 a(0〜1)。意味は上に出ます"},
+  "Argument a — the label shows its role for the selected operator": {"ja": "引数 a。ラベルに、選んでいる op でのつまみの役割が出ます"},
+  "Argument b (0..1) used by Insert and Run once": {"ja": "「+」と「1 回だけ実行」が使う引数 b(0〜1)"},
+  "Argument b — the label shows its role for the selected operator": {"ja": "引数 b。ラベルに、選んでいる op でのつまみの役割が出ます"},
+  "Auto-update the display (HDevelop dev_update). Uncheck to edit / run without the display cost, then check to refresh.": {"ja": "表示を自動で更新する(HDevelop の dev_update)。外すと表示の手間なしで編集・実行でき、入れ直すと表示を更新します。"},
+  "Browse all 3-D operators (point-cloud / mesh / volume) with their generated help pages and type-compatible neighbours": {"ja": "3-D の op(点群・メッシュ・ボリューム)を、生成したヘルプと型の合う隣の op と一緒に一覧する"},
+  "Browse every operator with its sorts + HALCON alias": {"ja": "すべての op を、入出力の型と HALCON の対応名つきで一覧する"},
+  "Browse the 2-D geometric-vision worked examples (morph / shape descriptors / drawing), run and copy their code": {"ja": "2-D 幾何ビジョンの作例(モルフォロジー・形状記述子・描画)を見て、実行し、コードを写す"},
+  "Browse the 3-D vision worked examples (real Itokawa / skeleton-CT / synthetic) and copy their code": {"ja": "3-D ビジョンの作例(実データのイトカワ・骨格 CT・合成)を見て、コードを写す"},
+  "Browse the sample gallery — preview each sample's code before loading it": {"ja": "見本の一覧を開く。読み込む前に各見本のコードを確かめられます"},
+  "Cascade the open graphics windows": {"ja": "開いているグラフィックス窓を重ねて並べる"},
+  "Close Fullseye Studio": {"ja": "Fullseye Studio を閉じる"},
+  "Copy the pipeline output image (not the LUT/overlay view) to the clipboard": {"ja": "処理手順の出力の画像(LUT・重ね描きの表示ではない)をクリップボードに写す"},
+  "Edit": {"ja": "編集"},
+  "Edit and run Python scripts against the repo — open any worked example as editable code, F5 to run in a subprocess": {"ja": "Python のスクリプトを編集して実行する。作例を編集できるコードとして開き、F5 で別のプロセスで実行します"},
+  "Every file type Studio opens by drag and drop: what opens it, ASCII / binary, needed packages": {"ja": "ドラッグ&ドロップで開けるファイルの種類: 何で開くか・ASCII かバイナリか・必要なパッケージ"},
+  "Export as an --ops string and Python code": {"ja": "--ops の文字列と Python のコードに書き出す"},
+  "Export this pipeline as an --ops string and Python (Ctrl+E)": {"ja": "この処理手順を --ops の文字列と Python に書き出す(Ctrl+E)"},
+  "File": {"ja": "ファイル"},
+  "Fit the image to the view": {"ja": "画像を表示の大きさに合わせる"},
+  "Fit to window (Ctrl+0)": {"ja": "窓に合わせる(Ctrl+0)"},
+  "Float: Variables  Objects": {"ja": "切り離す: 変数とオブジェクト"},
+  "Insert a copy of the selected stage after it": {"ja": "選んでいる段の複製を、そのすぐ後に入れる"},
+  "Insert operator into the pipeline with a, b (Enter / double-click)": {"ja": "op を a・b の値で処理手順に入れる(Enter・ダブルクリックでも)"},
+  "Jump to the operator search box": {"ja": "op の検索欄へ移る"},
+  "Knob a — type an exact value (0..1)": {"ja": "つまみ a。値を直接入れる(0〜1)"},
+  "Knob b — type an exact value (0..1)": {"ja": "つまみ b。値を直接入れる(0〜1)"},
+  "Load a pipeline from JSON": {"ja": "JSON から処理手順を読み込む"},
+  "Load a sample pipeline and see its code": {"ja": "見本の処理手順を読み込み、そのコードを見る"},
+  "Load an image file as the base frame": {"ja": "画像のファイルを元の画像として読み込む"},
+  "Load the built-in synthetic demo scene": {"ja": "内蔵の合成デモ画像を読み込む"},
+  "More — panels, command palette, help": {"ja": "その他: パネル・コマンドパレット・ヘルプ"},
+  "Move the selected stage earlier": {"ja": "選んでいる段を 1 つ前へ"},
+  "Move the selected stage later": {"ja": "選んでいる段を 1 つ後へ"},
+  "Move the selected stage to the end": {"ja": "選んでいる段を最後へ"},
+  "Move the selected stage to the front": {"ja": "選んでいる段を最初へ"},
+  "Open a pipeline from JSON (Ctrl+Shift+O)": {"ja": "JSON の処理手順を開く(Ctrl+Shift+O)"},
+  "Open a rotatable 3-D surface of the result": {"ja": "結果を回せる 3-D の曲面で開く"},
+  "Open images (or drop images / a folder) to look at them: zoom, pixel values, histogram": {"ja": "画像を開いて(画像やフォルダを落としても)見る: 拡大・画素の値・ヒストグラム"},
+  "Open the GitHub issue tracker — bug reports, operator requests and accuracy/honesty reports all have templates": {"ja": "GitHub の問題の受付を開く(不具合・op の要望・精度と正直さの報告に雛形があります)"},
+  "Open the interactive 3-D viewer (point cloud / mesh file, orbit / zoom / pan)": {"ja": "対話の 3-D ビューアを開く(点群・メッシュのファイル、回転・拡大・移動)"},
+  "Open the ledger-op window with the shown result as its image input": {"ja": "表示中の結果を画像の入力にして、台帳の op の実行窓を開く"},
+  "Operator help (image-processing details)": {"ja": "op のヘルプ(画像処理の詳しい説明)"},
+  "Per-region / per-cluster feature table with two-way highlight (rows ↔ image / 3-D view)": {"ja": "領域・クラスタごとの特徴量の表。行と画像(3-D の表示)が互いに光ります"},
+  "Pick a ready-made sample — it loads into the pipeline and its code appears in the Program panel": {"ja": "用意された見本を選ぶ。処理手順に読み込まれ、コードが Program 欄に出ます"},
+  "Pick any of the typed-ledger ops, fill its arguments in typed fields, run it on a synthetic sample or the current image, and copy the one-line Python that does the same": {"ja": "型つき台帳の op を選び、型に合った欄で引数を入れ、合成の見本か今の画像で実行し、同じ事をする 1 行の Python を写す"},
+  "Pipeline problems (unknown op / sort mismatch / runtime error).\nDouble-click to jump to the offending stage.": {"ja": "処理手順の問題(知らない op・型の不一致・実行時のエラー)。\nダブルクリックで、問題のある段へ移ります。"},
+  "Play the GPU-learned evis walk as Fullseye perceives it (RGB · depth · DVS events)": {"ja": "GPU で学習した evis の歩行を、Fullseye の知覚(RGB・深度・DVS のイベント)で再生する"},
+  "Pop the active graphics window out of the workspace into its own window": {"ja": "選んでいるグラフィックス窓を作業域から自分の窓へ切り離す"},
+  "Put this pipeline into the Python Editor as a runnable script (reads the open image)": {"ja": "この処理手順を、そのまま走るスクリプトとして Python エディタへ入れる(開いている画像を読みます)"},
+  "Redo the last undone pipeline edit": {"ja": "元に戻した処理手順の編集をやり直す"},
+  "Remove all stages": {"ja": "すべての段を消す"},
+  "Remove the selected pipeline stage": {"ja": "選んでいる段を消す"},
+  "Reset zoom to 1:1": {"ja": "拡大を 1:1 に戻す"},
+  "Return a detached graphics window to the workspace": {"ja": "切り離したグラフィックス窓を作業域へ戻す"},
+  "Run all — show the final result (Ctrl+Enter)": {"ja": "すべて実行し、最終の結果を見せる(Ctrl+Enter)"},
+  "Run any operator or action by name": {"ja": "op や操作を名前で探して実行する"},
+  "Run exported Python in an isolated interpreter and compare every stage with the GUI": {"ja": "書き出した Python を隔離した Python で実行し、すべての段を GUI と比べる"},
+  "Run once on the loaded image — pipeline NOT changed (HDevelop single-step execution)": {"ja": "読み込んだ画像に 1 回だけ実行する。処理手順は変えません(HDevelop の 1 段実行)"},
+  "Run the current pipeline over a folder of validation images and report results": {"ja": "今の処理手順を検証用の画像のフォルダに掛けて、結果を報告する"},
+  "Run the whole pipeline to the final result (debugger Run). Applies unapplied Program edits first": {"ja": "処理手順を最後まで実行する(デバッガの実行)。Program 欄の未適用の編集を先に適用します"},
+  "Save current layout as": {"ja": "今の配置に名前を付けて保存"},
+  "Save pipeline to JSON (Ctrl+Shift+S)": {"ja": "処理手順を JSON に保存する(Ctrl+Shift+S)"},
+  "Save the graphics window exactly as displayed (LUT / overlay applied)": {"ja": "グラフィックス窓を表示どおり(LUT・重ね描きを掛けた絵)に保存する"},
+  "Save the pipeline OUTPUT (the raw array, not the LUT/overlay view) as a PNG": {"ja": "処理手順の出力(LUT・重ね描きの表示ではない生の配列)を PNG で保存する"},
+  "Save the pipeline to JSON": {"ja": "処理手順を JSON に保存する"},
+  "See a clip or a z-stack as a cube: drag to orbit, slide the cut plane, click the slit scan to jump to that frame (Video Summagator, CHI 2012, re-implemented with numpy)": {"ja": "動画や z スタックを立方体で見る: ドラッグで回す・切断面を動かす・スリットスキャンを押すとそのコマへ移る(Video Summagator、CHI 2012 を numpy で再実装)"},
+  "Show all keyboard shortcuts": {"ja": "キーボードのショートカットを全部見る"},
+  "Show the final pipeline result. Also F5 or Ctrl+R from any panel": {"ja": "処理手順の最終の結果を見せる。どのパネルからでも F5・Ctrl+R でも"},
+  "Show the raw image (before stage 1). Also Shift+F5 from any panel": {"ja": "元の画像(1 段目の前)を見せる。どのパネルからでも Shift+F5 でも"},
+  "Show the raw image — restart the step-through": {"ja": "元の画像を見せる(ステップ実行をやり直す)"},
+  "Show the raw image, before stage 1 (Home)": {"ja": "元の画像(1 段目の前)を見せる(Home)"},
+  "Stimulate the eye column under the mouse and watch the response travel the wiring (MaleCNS right eye + hubs; synthetic surrogate without the cache)": {"ja": "マウスの下の目の柱を刺激し、応答が配線を伝わる様子を見る(MaleCNS の右目と中継の神経。キャッシュが無い時は合成の代わり)"},
+  "Switch the selected stage off for now: it passes its input through unchanged (not a removal; press again to switch it on)": {"ja": "選んでいる段を一時的に止める: 入力をそのまま通します(消すのではありません。もう一度押すと戻ります)"},
+  "System settings": {"ja": "システムの設定"},
+  "The pipeline. Each row: op, knobs, and the result state after that stage.\nDrag a row to reorder, or use ↑/↓ (Ctrl+↑ / Ctrl+↓).": {"ja": "処理手順。各行は op・つまみ・その段の後の結果の状態。\n行をドラッグするか ↑/↓(Ctrl+↑ / Ctrl+↓)で並べ替えます。"},
+  "The selected operator's input→output sorts, HALCON alias and what each knob does": {"ja": "選んでいる op の入出力の型・HALCON の対応名・各つまみの働き"},
+  "Tile the open graphics windows": {"ja": "開いているグラフィックス窓をタイル状に並べる"},
+  "Tools": {"ja": "ツール"},
+  "Undo the last pipeline edit": {"ja": "直前の処理手順の編集を元に戻す"},
+  "Variables  Objects": {"ja": "変数とオブジェクト"},
+  "View": {"ja": "表示"},
+  "Window": {"ja": "ウィンドウ"},
+  "Zoom in (Ctrl+=)": {"ja": "拡大(Ctrl+=)"},
+  "Zoom out (Ctrl+-)": {"ja": "縮小(Ctrl+-)"},
+  "Zoom the image in": {"ja": "画像を拡大する"},
+  "Zoom the image out": {"ja": "画像を縮小する"},
+  "current result: shape · dtype · value range": {"ja": "今の結果: 形・データ型・値の範囲"},
+  "image view": {"ja": "画像の表示"},
+  "pixel read-out": {"ja": "画素の読み取り"},
+  "Show the implementation": {"ja": "実装を見る"},
+  "Show the line of the selected stage's implementation that uses a and b": {"ja": "選んだ段の実装のうち、a と b を使う行を見せます"},
+  "the output did not change at 0.1 / 0.5 / 0.9 on the sample input (measured)": {"ja": "見本の入力では 0.1 / 0.5 / 0.9 で出力が変わらなかった(実測)"},
+  "Nothing to run yet: add an operator first (type in the operator search box and press Enter, or select one and press +)": {"ja": "まだ実行する物がありません。先に op を入れてください(op の検索欄に打って Enter、または選んで +)"},
+  "No operator help matches '%s'": {"ja": "「%s」に当たる op のヘルプがありません"},
+  "'%s' → %s": {"ja": "「%s」→ %s"},
+  "‘%s’ is a typed-ledger op: it takes typed inputs, so it runs in Tools ▸ Run a ledger op (Ctrl+Shift+L), not as a pipeline stage": {"ja": "「%s」は型つきの入力を取る台帳の op です。処理手順の段ではなく、ツール ▸ 台帳の op を実行(Ctrl+Shift+L)で動かします"},
+  "Open in Run a ledger op": {"ja": "台帳の op を実行で開く"},
+  "Studio cannot open '%s'. Help ▸ Files you can open lists what it can (images, folders, 3-D, video, audio …)": {"ja": "「%s」は開けません。開けるファイルは ヘルプ ▸ 開けるファイル にあります(画像・フォルダ・3-D・動画・音声 …)"},
+  "Insert into pipeline": {"ja": "処理手順に入れる"},
+  "Run once (preview)": {"ja": "1 回だけ実行(試し)"},
+  "Operator help…": {"ja": "op のヘルプ…"},
+  "Help for the selected operator": {"ja": "選んでいる op のヘルプ"},
+  "Open the help of the operator selected in the list, or of the selected stage (with nothing selected: all keyboard shortcuts)": {"ja": "一覧で選んでいる op(段の一覧で選んでいれば、その段の op)のヘルプを開く。何も選んでいなければショートカットの一覧"},
+  "Examples (%d)": {"ja": "作例(%d)"},
+  "Examples": {"ja": "作例"},
+  "See as a table (%d)": {"ja": "表で見る(%d 個)"},
+  "Feature inspection: area, centre, circularity … of every region in a table; a row lights its region up in the image (Ctrl+F5)": {"ja": "特徴量の検査: 領域ごとの面積・重心・円形度 … を表に。行を押すと、その領域が絵の上で光ります(Ctrl+F5)"},
+  "None of the listed operators takes '%s' (the output of stage %d, %s). Click a row to add it anyway, or add the step its card names first.": {"ja": "一覧の op は、どれも '%s'(段 %d、%s の出力)を受けられません。それでも入れる時は行をクリックして選ぶか、行に出ている「先に: …」の op を先に入れてください。"},
+  "Discard changes?": {"ja": "変更を破棄しますか?"},
+  "'%s' has unsaved changes — close anyway?": {"ja": "「%s」に保存していない変更があります。閉じますか?"},
+  "‘%s’ takes '%s', not '%s' (the output of stage %d, %s) — it was not added. Click its row to add it anyway.": {"ja": "‘%s’ は '%s' を受けます。前の段の出力は '%s'(段 %d、%s)なので、入れませんでした。それでも入れる時は、その行をクリックして選んでください。"},
+  "On: operators whose input type does not match the output of the stage before the insertion point are hidden (they would be refused before running). Nothing is converted. Off: list every operator.": {"ja": "オン: 入力の型が、挿入位置の前の段の出力と合わない op を隠します(入れても実行の前に断られる op です)。型の変換はしません。オフ: すべての op を並べます。"}
  }
 }

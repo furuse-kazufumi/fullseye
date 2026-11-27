@@ -240,6 +240,9 @@ def test_op_browser_general_tier_is_readonly_offscreen():
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
     win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     op_list, btns = win._op_list, win._op_buttons
+    # 2026-11-13(S2): 「前段の出力を受けられる op だけ表示」が入っていると、最初の段でも画像を受けない
+    # 一般アルゴリズムの op は隠れる。スイッチを切れば並ぶ(読み取り専用のまま)。
+    win._ops_fit["check"].setChecked(False)
     names = [op_list.item(i).data(QtCore.Qt.UserRole) for i in range(op_list.count())]
     assert "gaussian" in names                   # image ops present
     assert "strfind" in names and "gauss_solve" in names   # general tier shown in the browser
@@ -383,7 +386,8 @@ def test_program_editor_and_help_exclude_general_tier_offscreen():
     import algo
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
     win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
-    # the browser SHOWS the general tier (read-only) ...
+    # the browser SHOWS the general tier (read-only) when the type switch is off (2026-11-13, S2) ...
+    win._ops_fit["check"].setChecked(False)
     shown = [win._op_list.item(i).data(QtCore.Qt.UserRole) for i in range(win._op_list.count())]
     assert set(algo.algo_names()) <= set(shown)
     # ... but the code parser / autocomplete / Help picker names EXCLUDE it
@@ -552,11 +556,11 @@ def test_remove_keeps_a_neighbour_selected():
     m = studio.PipelineModel(studio.demo_image(48))
     m.add_stage("gaussian"); m.add_stage("otsu")
     win, model = studio.build_window(m)
-    win._stage_list.setCurrentRow(1)                     # select the last stage -> knobs live
-    # the raw 0..1 spins are live for any selected stage (a slider is greyed for a
-    # knob the op's spec marks unused — otsu reads neither — so test the spins)
+    win._stage_list.setCurrentRow(1)                     # select the last stage (otsu)
+    # 2026-11-13(初回起動の点検 M3): otsu は a も b も読まないので、生の 0..1 の欄も含めて止まる
+    # (以前は生の欄だけ動かせた)。残った段(gaussian)を選ぶと動く。
     sa, sb = (r.raw for r in win._knob_rows)
-    assert sa.isEnabled() and sb.isEnabled()
+    assert not sa.isEnabled() and not sb.isEnabled()
     win._actions["remove"].trigger()                     # remove it
     # neighbour (now the last, index 0) stays selected; knobs describe it
     assert win._stage_list.currentRow() == 0
@@ -643,7 +647,10 @@ def test_shortcuts_help_action_wired():
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert "shortcuts" in win._actions
-    assert win._actions["shortcuts"].shortcut().toString() == "F1"
+    # 2026-11-13(初回起動の点検): F1 は選んでいる op のヘルプ。ショートカットの一覧は Ctrl+F1
+    assert win._actions["shortcuts"].shortcut().toString() == "Ctrl+F1"
+    # 2026-11-22 統合: キーの設定が初回の枝の selected_help を help_here として採る(WIRING 1 章 / studio_keymap.ADOPTED)
+    assert win._actions["help_here"].shortcut().toString() == "F1"
 
 
 def test_sample_code_helper():
@@ -723,7 +730,8 @@ def _app():
 
 
 def _slider_handle_amber_px(enabled):
-    """Render a themed QSlider and count AMBER (enabled-handle) pixels."""
+    """Render a themed QSlider and count enabled-handle pixels (the scheme's accent colour;
+    2026-11-12: the handle moved from amber — a state colour — to the accent)."""
     from PySide6 import QtWidgets, QtGui, QtCore
     app = _app()
     w = QtWidgets.QWidget()
@@ -736,9 +744,12 @@ def _slider_handle_amber_px(enabled):
     img = w.grab().toImage().convertToFormat(QtGui.QImage.Format_RGB32)
     arr = np.frombuffer(img.constBits(), np.uint8).reshape(
         img.height(), img.bytesPerLine() // 4, 4)
-    amber = ((np.abs(arr[:, :, 2].astype(int) - 0xF5) < 12)
-             & (np.abs(arr[:, :, 1].astype(int) - 0xA5) < 12)
-             & (np.abs(arr[:, :, 0].astype(int) - 0x24) < 12))
+    import studio_theme
+    h = studio_theme.PALETTES[studio_theme.DEFAULT_THEME]["accent"].lstrip("#")
+    r_, g_, b_ = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    amber = ((np.abs(arr[:, :, 2].astype(int) - r_) < 12)
+             & (np.abs(arr[:, :, 1].astype(int) - g_) < 12)
+             & (np.abs(arr[:, :, 0].astype(int) - b_) < 12))
     w.hide()
     return int(amber.sum())
 
@@ -820,7 +831,10 @@ def test_knob_tick_costs_one_pipeline_evaluation():
     sa.setValue(sa.value() + 7)
     assert calls["n"] == 1, "expected 1 pipeline evaluation per knob tick, got %d" % calls["n"]
     # the slider spans gaussian's DISPLAYED σ range (param_specs); map its position back
-    assert model.stages[3][1] == pytest.approx(win._knob_rows[0].pos_to_knob(sa.value()))
+    # 2026-11-13(L6): スライダの値は、同じ目盛り・同じ表示になる最短の小数で持つ(コードに 0.8466666666666667 と出ない)
+    ka = win._knob_rows[0]
+    assert model.stages[3][1] == ka.short_knob(ka.pos_to_knob(sa.value()))
+    assert model.stages[3][1] == pytest.approx(ka.pos_to_knob(sa.value()), abs=0.005)
     assert win._state["dirty"] is True
     # the debounce timer carries the (expensive) per-stage summary refresh
     assert win._knob_timer.isActive()
@@ -1550,18 +1564,19 @@ def test_default_layout_is_image_dominant():
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert isinstance(win.centralWidget(), QtWidgets.QMdiArea)          # image workspace is central
-    # Program (code) = wide bottom strip; Operators = compact right column (visible)
+    # Program (code) = wide bottom strip; Operators = compact right column
     assert win.dockWidgetArea(win._docks["program"]) == QtCore.Qt.BottomDockWidgetArea
     assert win.dockWidgetArea(win._docks["operators"]) == QtCore.Qt.RightDockWidgetArea
-    assert not win._docks["program"].isHidden() and not win._docks["operators"].isHidden()
-    # the inspection panels start HIDDEN (on-demand) so the image owns the workspace.
-    # 2026-11-12 (P-15): Pipeline · Parameters is the exception -- its tab sits next to Operators
-    # from the first launch (a first-time user could not find the knobs behind a hidden dock).
-    for key in ("variables", "pipeline", "display"):
+    assert not win._docks["program"].isHidden()
+    # 2026-11-13 (stage 2): the image and the code are the principals; EVERY other panel starts
+    # hidden and comes from the panel bar (one always-visible icon button each). This replaces the
+    # 2026-11-12 exception (P-15: the Pipeline · Parameters tab shown from the first launch so a
+    # first-time user finds the knobs) -- the knobs are now one click away on the bar instead.
+    for key in ("operators", "variables", "pipeline", "display"):
         assert win.dockWidgetArea(win._docks[key]) == QtCore.Qt.RightDockWidgetArea, key
-    for key in ("variables", "display"):
-        assert win._docks[key].isHidden(), "%s should start hidden (on-demand)" % key
-    assert not win._docks["pipeline"].isHidden()
+        assert win._docks[key].isHidden(), "%s should start hidden (on the panel bar)" % key
+        assert win._panels["buttons"][key].toolTip().startswith(win._docks[key].windowTitle())
+    assert len(win._panels["buttons"]) == len(win._docks) == 8          # + the Project dock (integration)
     # each on-demand panel has a toggle action (toolbar + Window ▸ Panels) to bring it back
     for key in ("variables", "pipeline", "display"):
         assert win._docks[key].toggleViewAction() is not None
@@ -1591,9 +1606,13 @@ def test_operator_arg_labels_reflect_selected_op():
     select("otsu")                         # curated as both-unused
     assert lbl_a.text() == "a (–)" and lbl_b.text() == "b (–)"
     assert not sa.isEnabled() and not sb.isEnabled()
-    # an un-curated op keeps the plain letters and both knobs enabled
+    # an un-curated op keeps the plain letters and both knobs enabled (one with no knob spec either:
+    # 2026-11-13 the list starts from the staples, and sobel_amp now has a source-checked "unused" spec)
+    import param_specs
     noncur = next(ol.item(i).data(QtCore.Qt.UserRole) for i in range(ol.count())
-                  if ol.item(i).data(QtCore.Qt.UserRole) not in studio._ARG_ROLES)
+                  if ol.item(i).data(QtCore.Qt.UserRole) not in studio._ARG_ROLES
+                  and all(param_specs.is_generic(param_specs.spec_for(ol.item(i).data(QtCore.Qt.UserRole))[k])
+                          for k in "ab"))
     select(noncur)
     assert lbl_a.text() == "a" and lbl_b.text() == "b"
     assert sa.isEnabled() and sb.isEnabled()
@@ -1721,7 +1740,7 @@ def test_holdout_action_and_report_are_wired():
     from PySide6 import QtCore, QtGui, QtWidgets
     _app()
     win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
-    assert win._actions["holdout"].shortcut() == QtGui.QKeySequence("Ctrl+H")
+    assert win._actions["holdout"].shortcut() == QtGui.QKeySequence("Ctrl+Alt+H")  # WIRING 4 章 D11
     assert callable(win._show_holdout)
     # the report renderer builds a table from a summary (dismiss the modal via a timer)
     summary = {"n": 2, "n_ok": 1, "n_err": 1, "mean_ms": 1.2, "mean_metric": 0.5,
@@ -1770,7 +1789,8 @@ def test_window_menu_is_grouped_into_submenus():
     assert list(sub_by_title) == ["Panels", "Graphics windows", "Layout"]
     assert not [a for a in wmenu.actions() if not a.menu() and not a.isSeparator()]  # nothing flat
     panel_items = [a.text() for a in sub_by_title["Panels"].actions()]
-    assert "Float: Operators" in panel_items and "Float all panels (multi-display)" in panel_items
+    assert "Separate window: Operators" in panel_items and "Float all panels (multi-display)" in panel_items
+    assert not [t for t in panel_items if t.startswith("Float: ")]      # D100: one word, one entry per panel
     assert "Reset panel layout" in panel_items
     gfx_items = [a.text() for a in sub_by_title["Graphics windows"].actions()]
     assert "New graphics window" in gfx_items and "Detach graphics window" in gfx_items
@@ -2095,7 +2115,14 @@ def test_window_title_and_recent_files(tmp_path):
         labels = [a.text() for a in win._recent_menu.actions()]
         assert any("myflow.json" in l for l in labels) and any("cell.png" in l for l in labels)
         assert "Clear recent" in labels
-        next(a for a in win._recent_menu.actions() if a.text() == "Clear recent").trigger()
+        asked = []
+        old_hook = studio.CONFIRM_ACTION_HOOK                       # 2026-11-13: 一覧を消す前に聞く(戻せないので)
+        studio.CONFIRM_ACTION_HOOK = lambda parent, title, text, action: asked.append(title) or True
+        try:
+            next(a for a in win._recent_menu.actions() if a.text() == "Clear recent").trigger()
+        finally:
+            studio.CONFIRM_ACTION_HOOK = old_hook
+        assert asked == ["Clear recent"]
         assert win._recent_menu.actions()[0].text() == "(no recent files)"
     finally:
         S.setValue("recent_files", saved)
@@ -2241,7 +2268,9 @@ def test_no_ambiguous_shortcuts_and_ctrl_d_duplicate():
     acts = win._actions
     assert acts["demo"].shortcut().toString() == ""
     assert acts["duplicate_stage"].shortcut().toString() == "Ctrl+D"
-    scs = [a.shortcut().toString() for a in acts.values() if a.shortcut().toString()]
+    from PySide6 import QtCore
+    scs = [a.shortcut().toString() for a in acts.values()
+           if a.shortcut().toString() and a.shortcutContext() != QtCore.Qt.WidgetShortcut]     # 欄の中だけのキーは別の文脈
     dups = [s for s, c in Counter(scs).items() if c > 1]
     assert not dups, "ambiguous shortcuts across actions: %s" % dups
 

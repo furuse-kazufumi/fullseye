@@ -411,7 +411,7 @@ DOC_GROUPS = [
         "GETTING_STARTED.md", "INSTALL.md", "STUDIO_GUIDE.md", "STUDIO_UX.md",
         "EXAMPLES.md", "EXAMPLES_3D.md", "GALLERY.md", "REPRODUCE.md",
         "CONSUMER_APPLICATIONS.md", "3DGS_USAGE.md", "TERRAIN_WALK.md",
-        "GSPLAT_NATIVE_WINDOWS.md"]),
+        "GSPLAT_NATIVE_WINDOWS.md", "PARAM_BUNDLE.md"]),
     ("ref", "オペレータのリファレンス", "Operator reference", [
         "OPERATORS.md", "OP_CATALOG.md", "OP_CATALOG.en.md", "OP_CATALOG.zh.md", "OP_COMBINATION_MATRIX.md",
         "CONVERSION_MATRIX.md", "CONNECTIVITY.md", "MATCH_3D_MATRIX.md",

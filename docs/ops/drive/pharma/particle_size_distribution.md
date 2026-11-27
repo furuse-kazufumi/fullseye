@@ -8,7 +8,7 @@ gpu: なし
 examples: [poc_compendial_particle_microscopy]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.1  # fullseye lib version this note was generated for
+version: 1.2.0  # fullseye lib version this note was generated for
 ---
 
 # particle_size_distribution — DRIVE `pharma` op

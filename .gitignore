@@ -43,6 +43,8 @@ studio_ui_steps.jsonl
 studio_ui_report.json
 studio_ui_crash.log
 studio_crash.log
+# copies of unsaved work kept when the quit confirmation failed twice (studio.py)
+studio_unsaved_*
 out/ui_harness_shots/
 .venv-gsplat/
 .venv*/

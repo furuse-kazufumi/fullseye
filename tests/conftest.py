@@ -124,6 +124,20 @@ def requires_backend(*names: str) -> None:
     pytest.skip("optional backend not installed: %s" % what)
 
 
+@pytest.fixture(autouse=True)
+def _no_leftover_value_helper_threads():
+    """変数の欄・ウォッチが利用者のコード(``__repr__``・式)のために起こしたスレッドが、時間切れの後も残っている間は、
+    新しいスレッドを起こさない(``studio_pyedit_values.stray_threads``。2026-11-13 第 2 回レビュー R5)。わざと止まらない
+    式を使う試験の残りが、同じワーカーの次の試験を「表示していません」にしないよう、試験の前に終わるのを待つ。"""
+    mod = sys.modules.get("studio_pyedit_values")
+    if mod is not None and hasattr(mod, "stray_threads"):
+        import time
+        end = time.monotonic() + 10.0
+        while mod.stray_threads() and time.monotonic() < end:
+            time.sleep(0.02)
+    yield
+
+
 @pytest.fixture(scope="session", autouse=True)
 def _isolate_windows_installer_state(tmp_path_factory):
     """登録先を一時フォルダへ替え、本物の既知フォルダーと HKCU Uninstall を隔離する。"""

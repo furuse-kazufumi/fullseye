@@ -13,7 +13,7 @@ Fullseye の Python API の核は **numpy + scipy** で動きます。標準の 
 |---|---|
 | Python | **3.11**（`pyproject.toml` の `requires-python = ">=3.11"`。開発・検証は 3.11） |
 | 実行コマンド | Windows: `py -3.11` / Linux: `python3.11` |
-| 標準依存 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0`（`pip install -e .` で自動導入） |
+| 標準依存 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5,!=6.12.0`, `Pillow>=13.0`（`pip install -e .` で自動導入） |
 | OS | Windows 10/11、Linux（組み込み含む）。macOS も Python が動けば可 |
 
 ---
@@ -39,6 +39,8 @@ py -3.11 -m pip install -e .            # 標準: Python API + Studio + Pillow�
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`（curvature flow 等）、mahotas 由来（Zernike/pftas 等） |
 | `gui` | なし（Studio は標準依存） | 互換別名。**Fullseye Studio**（`studio.py` / `fullseye-studio`）は `pip install fullseye` だけで起動できる |
 | `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`（CuPy は入らない。GPU 一式は `fullseye[gpu]`。PyTorch の案内では Linux の既定の torch は CUDA 版で、CUDA の部品(nvidia-* の wheel)も一緒に入ることがある。CPU だけで使うなら、先に CPU 版の入手先から `pip install torch --index-url https://download.pytorch.org/whl/cpu` で torch を入れておく） | 全オペレータ・バックエンド |
+
+Studio の標準要件は `PySide6-Essentials>=6.5,!=6.12.0` です。Linux で SIGABRT が再現した 6.12.0 は除外しています。
 
 使い分けの目安:
 

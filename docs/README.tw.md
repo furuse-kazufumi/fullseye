@@ -35,7 +35,7 @@
 
 這裡的數字都不是手寫的: `tools/gen_trust_block.py` 依據 `docs/` 中的量測資料(`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`)產生本節,若本節與資料不一致,`tests/test_trust_block.py` 就會失敗。每個數字都附有量測時的版本與日期。
 
-**回歸測試 29,285 個** — 包含在 1.1.1 中,commit `d62109bb65`,2026-11-13 以 `pytest --collect-only` 計數(安裝了全部選用後端的環境。未安裝時,依賴該後端的測試不會被收集,數量會較少)。
+**回歸測試 32,138 個** — 包含在 1.2.0 中,commit `06ed5bcd72`,2026-11-26 以 `pytest --collect-only` 計數(安裝了全部選用後端的環境。未安裝時,依賴該後端的測試不會被收集,數量會較少)。
 
 ### 新增一個運算子時,有哪些檢查會驗證它
 
@@ -59,7 +59,7 @@
 
 ### 驗證階段
 
-101 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 1.1.1)產生;階段定義見 [MATURITY.md](MATURITY.md))。
+101 項能力依驗證方式分類的數量(`docs/maturity.json`,由 `tools/gen_maturity.py` 從目前的程式碼樹(pyproject 版本 1.2.0)產生;階段定義見 [MATURITY.md](MATURITY.md))。
 
 | 階段 | 含義 | 能力 |
 |---|---|---|
@@ -88,7 +88,7 @@
 | 0.9.0 | 2026-11-04 | 3,752 | 2,788 | 966 | 297 | 26,045 |
 | 1.0.0 | 2026-11-06 | 3,811 | 2,847 | 1,017 | 299 | 27,660 |
 | 1.1.0 | 2026-11-12 | 3,838 | 2,874 | 1,017 | 315 | 28,758 |
-| 1.1.1 | 2026-11-13 | 3,838 | 2,874 | 1,017 | 315 | 29,285 |
+| 1.2.0 | 2026-11-26 | 3,853 | 2,889 | 1,017 | 318 | 32,138 |
 
 - 0.1.0–0.1.8 的 HALCON 對應數 323 是當時的記錄值;自 0.1.9 起依修訂後的計數方式為 979(並非新增了 656 個實作)。
 - 0.2.0 首次將型別化台帳納入索引: 918 → 1,942 是計數口徑的變更,並非新的實作(台帳自 0.1.6 起就存在,但在索引之外)。
@@ -151,7 +151,7 @@
 
 共有 **3,859 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **73 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 947/947、型別台帳 2889/2889、單行門面 `fullseye.<名稱>` 774/1614 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 947/947、型別台帳 2889/2889、單行門面 `fullseye.<名稱>` 774/1629 —— **門面側僅涵蓋一半**。
 
 **內容實測**: 3859 篇中，附有可執行範例的 **3820** 篇(39 篇沒有)，用法說明 120 字以上的 **3660** 篇(199 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3859 篇全有。
 
@@ -315,11 +315,11 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 348 篇
+## 文件地圖 — 共 353 篇
 
 完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,859 篇運算子說明與 73 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
-**Getting started**(12)
+**Getting started**(13)
 
 | 文件 | 內容 |
 |---|---|
@@ -335,6 +335,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`3DGS_USAGE.md`](3DGS_USAGE.md) | Fullseye 3DGS —— 使用方法（一行指令） → [`3DGS_USAGE.tw.md`](3DGS_USAGE.tw.md) · 原文 _(ja)_ |
 | [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | Walking a Character Over Terrain (sim-native, no GPU required) → [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) · 原文 _(ja)_ |
 | [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure → [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) · 原文 _(ja)_ |
+| [`PARAM_BUNDLE.md`](PARAM_BUNDLE.md) | パラメータを束で持ち、ファイルから読んで op に渡す _(ja)_ |
 
 **Operator reference**(11)
 
@@ -460,7 +461,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(262)
+**Other**(266)
 
 | 文件 | 內容 |
 |---|---|
@@ -541,12 +542,16 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | レシピの網羅(族・課題・型の繋がり・GPU 経路) _(ja)_ |
 | [`REGULATED_EXECUTION.md`](REGULATED_EXECUTION.md) | 規制実行記録の保証境界 / Regulated execution-record assurance boundary _(ja)_ |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
+| [`STUDIO_EDITOR_KEYS.md`](STUDIO_EDITOR_KEYS.md) | Studio のコードエディタ: 編集の操作とキー _(ja)_ |
 | [`STUDIO_GUIDE.de.md`](STUDIO_GUIDE.de.md) | Vollständiger Leitfaden zu Fullseye Studio |
 | [`STUDIO_GUIDE.en.md`](STUDIO_GUIDE.en.md) | The complete guide to Fullseye Studio |
 | [`STUDIO_GUIDE.hi.md`](STUDIO_GUIDE.hi.md) | Fullseye Studio की पूरी गाइड |
 | [`STUDIO_GUIDE.ko.md`](STUDIO_GUIDE.ko.md) | Fullseye Studio 완전 가이드 |
 | [`STUDIO_GUIDE.tw.md`](STUDIO_GUIDE.tw.md) | Fullseye Studio 完全指南 |
 | [`STUDIO_GUIDE.zh.md`](STUDIO_GUIDE.zh.md) | Fullseye Studio 完全指南 _(zh)_ |
+| [`STUDIO_KEYBOARD.md`](STUDIO_KEYBOARD.md) | Studio のキーボードのショートカット(キーを自分で決める) _(ja)_ |
+| [`STUDIO_PARAMS_WINDOW.md`](STUDIO_PARAMS_WINDOW.md) | パラメータの窓(束を並べて見る・直す) _(ja)_ |
+| [`STUDIO_PROGRAM_LANGUAGE.md`](STUDIO_PROGRAM_LANGUAGE.md) | Studio の Program 欄: 従来のモードと Python のモード _(ja)_ |
 | [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) | Walking a Character Over Terrain (sim-native, no GPU required) |
 | [`TROUBLESHOOTING.en.md`](TROUBLESHOOTING.en.md) | Windows troubleshooting |
 | [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) | Windows troubleshooting → [`TROUBLESHOOTING.en.md`](TROUBLESHOOTING.en.md) · 原文 _(ja)_ |

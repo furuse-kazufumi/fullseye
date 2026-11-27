@@ -479,6 +479,11 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    # ---- 2026-11-23: Studio 1.2.0 の共通の門の一方向の台帳(PR #340 の CI で未分類と出た) ----
+    "tools/studio_interaction_ledger.py": ("Studio 1.2.0 の共通の門(tests/test_studio_interaction_gates_2026_11_13.py)が"
+                                           "見つけた件数の一方向の台帳 tests/data/studio_interaction_ledger.json を書く道具。"
+                                           "--shrink は直った物だけを消し、新しい物は足さない(足すのは人が理由と独立のレビュー"
+                                           "つきで)。回すたびに台帳が変わり得るので drift 検査の鎖には入れず、直した時に人が回す。"),
     # ---- 2026-11-13: 台帳 op を MCP の隔離した子プロセスで走らせる実測の台帳 ----
     "tools/mcp_isolated_probe.py": ("台帳 op を MCP の作業プロセス(fullseye/mcp/opworker.py)で見本の入力つきで実際に走らせ、"
                                     "時間(5 秒)とメモリ(1 GiB)の上限・ファイルとネットの砂場・道具の経路を通った物だけを "
@@ -904,6 +909,7 @@ NOT_A_GENERATOR = {
     "projmap.py": "ライブラリ(save_gif は呼び手がパスを渡す)。__main__ は数値の表を表示するだけ。",
     "sim_source.py": "ライブラリ(save_* は呼び手が dir を渡す)。__main__ はカメラ情報を表示するだけ。",
     "studio.py": "GUI アプリ(Studio)。保存は利用者の操作で、指定された場所へ。",
+    "studio_params_qt.py": "GUI の窓(パラメータの束を並べて見る・直す)。保存は利用者の操作で、開いたファイルか「名前を付けて保存」の先へ(repo の生成物は書かない)。",
     "verify_auto.py": "門(auto op の機能ゲート)。結果 data/auto_functional_gate.json は gitignore。",
     "halcon_scrape.py": "取得スクリプト(ネットワーク)。出力 data/halcon_operators.json は gitignore の手元キャッシュ。",
     "tools/plateau_fetch.py": "取得スクリプト(HTTP Range で PLATEAU の zip から抜く)。出力先は repo の外。",

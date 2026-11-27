@@ -13,10 +13,10 @@
     },
     "component": {
       "type": "library",
-      "bom-ref": "pkg:pypi/fullseye@1.1.1",
+      "bom-ref": "pkg:pypi/fullseye@1.2.0",
       "name": "fullseye",
-      "version": "1.1.1",
-      "purl": "pkg:pypi/fullseye@1.1.1",
+      "version": "1.2.0",
+      "purl": "pkg:pypi/fullseye@1.2.0",
       "licenses": [
         {
           "license": {
@@ -825,18 +825,18 @@
     },
     {
       "type": "library",
-      "bom-ref": "dependency:pyside6-essentials:06ed693474a410b3",
+      "bom-ref": "dependency:pyside6-essentials:60e329f71a9bdbfb",
       "name": "pyside6-essentials",
       "purl": "pkg:pypi/pyside6-essentials",
       "scope": "required",
       "properties": [
         {
           "name": "fullseye:requirement",
-          "value": "PySide6-Essentials>=6.5"
+          "value": "PySide6-Essentials>=6.5,!=6.12.0"
         },
         {
           "name": "fullseye:specifier",
-          "value": ">=6.5"
+          "value": ">=6.5,!=6.12.0"
         }
       ],
       "licenses": [
@@ -1006,6 +1006,32 @@
       "licenses": [
         {
           "expression": "MIT AND BSD-3-Clause"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "dependency:pyyaml:d7b2213b93141d16",
+      "name": "pyyaml",
+      "purl": "pkg:pypi/pyyaml",
+      "scope": "optional",
+      "properties": [
+        {
+          "name": "fullseye:extra",
+          "value": "yaml"
+        },
+        {
+          "name": "fullseye:requirement",
+          "value": "PyYAML>=6.0"
+        },
+        {
+          "name": "fullseye:specifier",
+          "value": ">=6.0"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
         }
       ]
     },
@@ -1268,7 +1294,7 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:pypi/fullseye@1.1.1",
+      "ref": "pkg:pypi/fullseye@1.2.0",
       "dependsOn": [
         "dependency:asyncua:0d08a0f64fe43bd3",
         "dependency:imageio-ffmpeg:f8511f02ec792e47",
@@ -1290,7 +1316,7 @@
         "dependency:pynrrd:270b5915aaeee8a3",
         "dependency:pypcd4:0e644a45e07e1643",
         "dependency:pyserial:09e5cd7debbb7a09",
-        "dependency:pyside6-essentials:06ed693474a410b3",
+        "dependency:pyside6-essentials:60e329f71a9bdbfb",
         "dependency:scikit-image:accab0e959097b1e",
         "dependency:scipy:7b4a15d34b14013a",
         "dependency:soundfile:ac273e32324e6de0",
@@ -1425,7 +1451,7 @@
       "dependsOn": []
     },
     {
-      "ref": "dependency:pyside6-essentials:06ed693474a410b3",
+      "ref": "dependency:pyside6-essentials:60e329f71a9bdbfb",
       "dependsOn": []
     },
     {
@@ -1450,6 +1476,10 @@
     },
     {
       "ref": "dependency:pywavelets:4c9ae8d8e4363634",
+      "dependsOn": []
+    },
+    {
+      "ref": "dependency:pyyaml:d7b2213b93141d16",
       "dependsOn": []
     },
     {

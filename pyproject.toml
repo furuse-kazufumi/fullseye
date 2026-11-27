@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullseye"
-version = "1.1.1"
+version = "1.2.0"
 description = "Image inspection, 3-D measurement and physics simulation in Python: a numpy-native library of typed operators (3,853 typed ops in the machine-readable index: imaging, point clouds, optics, metrology), checked against simulated ground truth and handed to AI assistants through MCP and RAG, with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -50,7 +50,8 @@ classifiers = [
 # GPU/render/hand-pose stacks and packages with a missing platform wheel stay opt-in.
 dependencies = [
   "numpy>=1.23", "scipy>=1.10", "threadpoolctl>=3.1",
-  "PySide6-Essentials>=6.5", "Pillow>=13.0",
+  # 6.12.0 aborts the Linux Studio test process; 6.11.1 passes the same A/B run.
+  "PySide6-Essentials>=6.5,!=6.12.0", "Pillow>=13.0",
   "scikit-image>=0.20", "imageio>=2.28", "imageio-ffmpeg>=0.4", "tifffile>=2023.1",
   "soundfile>=0.12", "pygltflib>=1.16", "laspy>=2.5", "lazrs>=0.5", "pypcd4>=1.4",
   "openpyxl>=3.1", "pandas>=2.0", "trimesh>=4.0", "numpy-stl>=3.0",
@@ -91,6 +92,9 @@ opencv = ["opencv-python>=4.8.1.78"]
 skimage = []
 # Pillow は標準依存。既存の ``fullseye[pil]`` を壊さない空の互換別名。
 pil = []
+# ★2026-11-12: パラメータの束(fs.load_params)を YAML で書きたい人向け。**必須にしない**
+# (JSON と TOML は標準だけで読む)。safe_load 後も型・重複・展開量の門を通す。
+yaml = ["PyYAML>=6.0"]
 wavelets = ["PyWavelets>=1.4"]
 # ★2026-11-03(完成度監査 段 0-5): CuPy を足した(numpy/scipy の実装を GPU で走らせる経路が使う)。
 #   cupy-cuda12x の wheel は Linux と Windows だけ —— macOS で `[gpu]` ごと入らなくならないよう印で外す。
@@ -325,7 +329,10 @@ py-modules = ["numpy_compat", "pharmaparticle",
   # opsmv: 工業用ビジョンの定番の演算の台帳(2026-11-02)。ステレオ・幾何の再標本化・古典形態学・
   # カルマン背景・分類器の入口・文字行。実体は mvimage / mvstereo / mvmorph / mvtrack / mvclass / mvtext。
   "opsmv", "mvimage", "mvstereo", "mvmorph", "mvtrack", "mvclass", "mvtext",
-  "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "studio_result", "sample_images", "sample_data", "accuracy_bench",
+  "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout",
+  # Studio 1.2.0 の部品と定義ファイルの層(master 取り込みで py-modules から落ちていた 22 本を戻す。2026-11-26)
+  "defs_io", "json_strict", "studio_editops", "studio_editops_qt", "studio_keymap", "studio_keymap_qt", "studio_panels", "studio_params_model", "studio_params_qt", "studio_program", "studio_program_i18n", "studio_project", "studio_pyedit_complete", "studio_pyedit_i18n", "studio_pyedit_qt", "studio_pyedit_safe", "studio_pyedit_syntax", "studio_pyedit_values", "studio_pyedit_vars_qt", "studio_pymode", "studio_settings", "studio_theme",
+  "studio_result", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
   "samples", "references", "codegen", "difftest", "parity", "accel", "accel_bridge", "accel_match", "accel_seam", "accel_typed", "accel_vol", "bench",

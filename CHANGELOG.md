@@ -7,8 +7,68 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
-## 1.2.0 — 2026-11-24
+## 1.2.0 — 2026-11-26
 
+1.2.0 は、Studio を標準インストールへ含め、Python 以外から使う C/C++ API と、環境診断の
+`fullseye doctor` を追加した。`fullseye-mcp` は MCP protocol 2026-07-28 と従来の initialize-era の
+両方を扱う。1.1.1 以降に利用者から見える変更と直しを以下にまとめる。
+
+### 依存: PySide6 6.12.0 を除く(2026-11-23)
+
+標準依存の Qt binding を `PySide6-Essentials>=6.5,!=6.12.0` にした(`gui` は空の互換別名のまま。
+`fullseye setup` の代わりの表・起動とショートカットの案内文・導入の文書 7 言語・install/README・SBOM も同じ)。
+
+- **根拠(同じコードの A/B)**: Linux CI(Python 3.11)で PySide6 6.12.0 だと full suite の 6 組が全部
+  SIGABRT で止まり、gates の作業スレッドの試験が `none_dealloc` で落ちた。PySide6 だけ 6.11.1 にした
+  下書き PR #343(閉じた)では 1 組も止まらない。
+- **原因の切り分け**: Linux の 6.12.0 の wheel では `QTimer.singleShot(0, callable)` の 1 回ごとに `None` の
+  参照数が 1 減り、Python の slot へ繋いだ `Signal.emit()` の 1 回ごとに `True` の参照数が 1 減る
+  (WSL の Ubuntu 24.04 / CPython 3.11.15 で 200 回あたり −219 と −200。6.11.1 ではどちらも ±1 以内)。
+  3.11 では `None` / `True` は不死でないので、窓の作り直しを繰り返すと `none_dealloc` / `bool_dealloc` で
+  落ちる(3.12 以降は不死なので表に出ない)。Windows の 6.12.0 の wheel では減らなかった(CPython 3.11.9)。
+- 門: `tests/test_pyside6_excludes_6_12_0_2026_11_23.py`。
+
+### 直し — Studio のプロジェクト: Windows の根付きの形を OS に依らず断る(2026-11-23)
+
+`studio_project.resolve_inside` が Linux で `C:\x` ・ `C:x` ・ `\\srv\share\x` ・ `\x` を「プロジェクトの中の、
+そういう名前のファイル」として通していた(`os.path` が posixpath のため)。Linux では realpath の検査が効いて
+いて**外へは出なかった**(悪用はできない)が、同じ名前は Windows では根付きになる。字句の拒否を OS に依らない
+形にした。3-D の表示の命令(`disp_points3d` など)が UNC のパイプラインのパスを Linux で見落としていたのも
+同じ型で直した。試験: `tests/test_studio_project_rooted_forms_2026_11_23.py`(posixpath に差し替えて Windows の
+上でも Linux の意味で検査する)。
+
+### Studio: 外のトレーサの下では止めるボタンを保証しない(2026-11-23)
+
+デバッガやカバレッジなど外のトレーサ(`sys.settrace` ・ `threading.settrace` ・ `sys.monitoring`)の下では、Program の止めるボタンと時間の上限は保証しない(`docs/STUDIO_PROGRAM_LANGUAGE.md` と止めるボタンのツールヒント)。止めるボタンを押した時と、時間の上限・止められずに終わった時に外のトレーサがあれば、出力の欄に「停止が効かない場合があります」と 1 回だけ出す(`studio_program.external_tracer()`)。CI の full suite は `--cov` で走るので、止める動き・速さを測る試験 10 本は外のトレーサの下では理由つきで skip し、新しいジョブ `untraced`(--cov 無し、`FULLSEYE_REQUIRE_UNTRACED=1` で skip を許さない)で必ず回す(一覧は `tools/ci_untraced_tests.txt`)。
+
+### 直し — Studio: Linux でだけ赤かった試験(2026-11-23)
+
+PySide6 6.12.0 の SIGABRT で隠れていた Linux の赤を、WSL(Ubuntu 24.04 / PySide6 6.11.1)で 1 件ずつ再現してから直した。
+
+- **コードの字**(製品): Linux の既定の `Noto Sans Mono CJK JP` は半角が全部同じ幅で全角がちょうど 2 倍(この表の決まりどおり)なのに、fontconfig が spacing=dual と申告するので Qt は fixedPitch を False と言う。設定の一覧が既定の字を隠していた。字幅を実測する `studio_theme.is_code_pitch` で判定する(Windows で選ばれる字は変わらない)。試験の判定も Qt の申告でなく字幅の実測にした。
+- **キーの設定の窓**(製品): 絞り込みで行の見え隠れを変えた直後、Linux では行の配置が遅れて、選んだ行へ巻き戻らなかった。配置を済ませてから中央へ巻く。
+- **時間の試験**(試験): 「止められない呼び出し」の代わりの `time.sleep` は有限なので、遅い CI では見張りの猶予より先に戻り、別の結果になっていた。試験が放すまで戻らない C の待ち(`threading.Lock.acquire`)に替えた(`tests/studio_timingkit.py`)。GUI が止まらない事は、実行中に GUI の側から合図が届く事で確かめる。
+- **入力のパスの文**(試験): Linux の一時フォルダは根付きのパス(`rooted paths are refused`)で、ドライブ付き(`absolute path`)ではない。両方の形を全部の OS で確かめる。
+- **窓の題の帯・表の見出し・タブの帯**(試験): 題の帯の「青」は題の字の副画素のにじみ(字を消すと帯は役割の色だけ)、見出しの 1 点は 1 px の境界線に当たっていた。帯は字を消して、見出しは面で測る。
+- **閉じた窓の後に残る最上位の部品**(試験): `id()` は C++ が持つ部品では列挙のたびに別の wrapper になり得るので、C++ の番地で比べる。
+
+- **公開経路の門**(試験): `studio_editops_qt` が Linux CI の gates でだけ「島でなくなった」と出たのは、`dir(fullseye)` に import 済みの下位モジュールも並ぶため。`fullseye.uninstall` を import する試験が先に集められると "uninstall" が公開の名前に見えた(試験の順の差で、OS の差ではない)。下位モジュールは公開の名前に数えない。名前の偶然の一致で届く事にされていた 5 本(`scene_registry.motion` ・ `oss_adapter.camera` ほか)を数え直し、総数は 1563 → 1568。
+
+### 直し — Studio を初めて起動した人のつまずき(初回起動の点検 2026-11-13 と、その独立レビュー 2 本)
+
+- **挙動が変わる点**: `F1` は「選んでいる op のヘルプ」になった(ショートカットの一覧は `Ctrl+F1`。以前は `F1` が一覧)。`Ctrl+Y` でもやり直せる(以前は `Ctrl+Shift+Z` だけ)。`docs/STUDIO_GUIDE`(7 言語)と `STUDIO_UX` の表も直した。
+- 起動した窓は、同梱の見本の画像 coins で始まる(合成のデモ画像は滑らかで、ぼかしや見本の 1 番目を掛けても絵が変わらなかった)。`build_window()` を直接呼ぶ埋め込みの既定は変えていない。
+- op の一覧(検索が空の時)は定番(gaussian・median・sobel_amp・otsu・threshold …)から始まる。1 入力の段として入れられない op(2 入力・未導入・台帳の op)は末尾に薄く出し、入れようとした時は理由を画面の言語で言う。最初の段でも、読み込んだ画像を受けられない op は並べない。
+- 検索して Enter: 見えている先頭の行(定番を含む)が入り、入る行は押す前から選ばれている。**前の段の出力を受けられない行は選ばない**(領域を出す段の後に「ノイズ」+ Enter で、画像を取る median が入って段が type mismatch の ERROR になっていた)。受けられる行が 1 つも無い時は、入れずに理由を言う(行をクリックで選べば入る)。op 名を正確に打った時はその行が対象で、入れられない op は理由を言う(台帳の op は「台帳の op を実行」の窓を開く)。以前は隣の別の op が黙って入った。
+- 検索に現場の言葉(傷・打痕・欠け・ひび・汚れ・シミ・ムラ・異物・熱・錆・刻印・穴の数、英語も)と、同梱の FA の見本 4 本。「シミ」「ロット」「ムラ」「熱」などの短い語は、別の語の中(シミュレーション・スロット・タイムラプス・加熱処理)では当てない。
+- 終了の確認は「保存して閉じる / 保存せずに閉じる / キャンセル」(既定と Esc はキャンセル)を画面の言語で。見本を読んだだけなら聞かない。見本を読んだ後の編集(段の追加・つまみ・バイパス・`dev_*` の行・Pin as A)は、終了の時も別の見本を読む時も聞く。Python エディタのタブを閉じる確認も「破棄 / キャンセル」(既定はキャンセル。以前は Enter で破棄だった)。
+- 検索の「見本を開く」で破棄の確認をキャンセルした時、開いていた画像が見本の画像に置き換わる事があったのを直した。
+- 画素の読み取りに座標(x・y)が出る。ステータスバーの一時的な文(「読み込みました」など)が、欄の幅が 0 で一度も出ていなかったのを直した。
+- 結果が領域の時、画像の上に「表で見る(N 個)」(特徴量の検査を開く。N は表の行の数)。書き出しのボタンに「Python」の字。「最初の 3 手」の帯に、幅がある時だけ「作例(N)」「ファイルを落とせます」。最初の op を + / ダブルクリックで入れた時は「処理手順と調整」のタブが 1 度だけ前に出る(検索欄の Enter で入れた時は切り替えない。実装は落ちる不具合の直し 5a45178425 に同梱され、試験は 9d53efe29a。5a45178425 だけを revert すると両方が戻る)。
+- つまみ: 役割の表に無い op を「(未使用)」と言わない。実装が読まないつまみ(定番の op の 49 本と sobel_amp)は灰色にして動かせなくした。実装の式は「実装を見る」を押した時だけ、選んだ op の分を出す。スライダの値は最短の小数(`0.847`)。
+- 日本語の画面に残っていた英語: 窓の部品のツールヒント(英語のまま 17、うち Program 欄 4。起動時に見えている部品だけで数えると 99 → 4)、ステータスの文・エラーの題・確認の文。op の一覧の行のツールヒント(op 名・HALCON の別名・category・sort)は英語のまま(範囲外。台帳も数えない)。訳していない文は台帳(`tests/data/studio_untranslated_ja.json`: 文 175・ツールヒント 17)で数える。中国語・韓国語・ドイツ語・ヒンディー語の画面では、今回日本語を足した文は英語のまま(日本語だけの行 294 → 473)。
+- 終了の確認そのものが例外を出した時(翻訳の表の行の書式が壊れている等)に、確認を出さずにプロセスが落ちる道を塞いだ(閉じない側に倒し、英語の文で聞き直す)。聞き直す窓も 2 回続けて壊れた時だけ閉じ、その前に未保存の物(処理手順・Program の未適用の文・エディタのタブ)の写しを `studio_crash.log` の隣に `studio_unsaved_*` として書き、置き場をログに残す。
+- 検索欄の Enter で op が入った後は、欄の語を選んでおく(続けて打つ語が前の語を置き換える)。段を入れた時は、前の Enter の「入れませんでした」の文をステータスから消す。見本の画像・合成のデモ画像に替えた時に窓の題を付け直す(前の写真の名前が残っていた)。
 ### MCP: protocol 2026-07-28 と initialize-era の両対応
 
 - stdio サーバに stateless な `2026-07-28` 経路を追加した。`server/discover` は対応版・
@@ -71,7 +131,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   is present, setup registers MCP by default with `fullseye-mcp` when available, otherwise with
   the cwd-safe `python -P -m fullseye.mcp` fallback.
 - The C/C++ SDK header now ships in wheels at `fullseye/include/fullseye_abi.h`.
-- `pip install fullseye` now installs `PySide6-Essentials>=6.5` and `Pillow>=13.0`, so
+- `pip install fullseye` now installs `PySide6-Essentials>=6.5,!=6.12.0` and `Pillow>=13.0`, so
   `fullseye-studio` starts without an extra. `gui` remains an empty compatibility alias and
   `all` contains only the remaining optional backends. Studio imports Qt lazily: a Python-only
   `import fullseye` does not load `PySide6`.
@@ -129,9 +189,8 @@ Codex が PR #318 を読み取り専用で読んだ指摘(Python は走らせて
   出どころ(`spec.origin`)が fullseye の置き場所の中の物だけを読む。
 - サーバ本体も同じ根: `python -m fullseye.mcp` で起動すると、起動の時に cwd の `opsoptics.py` / `scipy.py` を本物より先に
   import した。`-m fullseye.mcp` で起動した時だけ、`sys.path[0]` の cwd を外す(fullseye の置き場所そのものが cwd の時は
-  外さない)。スクリプトの引数が偶然 `-m fullseye.mcp` に一致する場合も外さない。**残る穴は 1.2.0 で閉じた**:
-  `fullseye-mcp` を登録の既定入口にし、`python -P -m fullseye.mcp` を代替にした。`-m` 側も cwd 下の未登録 package を理由付きで
-  拒否する。ただし完全な偽 package は本体より先に実行されうるため、この入口の外では防御を約束しない。
+  外さない)。スクリプトの引数が偶然 `-m fullseye.mcp` に一致する場合も外さない。**残る穴**: cwd に `fullseye/` という名のフォルダがあると、この直しより前に乗っ取られる。登録の命令に `-P`
+  (`python -P -m fullseye.mcp`)を付ければ防げる。
 - 作業プロセスの出力の上限: 配列しか数えず、文字列・数の list・dict は 0 と数えていた。`max_elements` は配列の要素と
   配列でない値・dict / list の数の和、`max_result_bytes` は配列のバイト + 文字列の長さ + 他の値 1 つ 8 バイト。メモリの
   見張りと囲いは結果を送り終えるまで掛けたまま(以前は op が返った所で止め、JSON にする間は上限の外だった)。返事の
@@ -430,6 +489,31 @@ AI の役で MCP を使った検証(2026-11-13)で、optics の op は MCP か�
 ### 直し — インストール体験(setup / ショートカット / アンインストール): 独立レビュー(2026-11-12)1 回目の 16 件と 2 回目の 11 件
 
 - **扱いの内訳**: 1 回目の指摘は、番号 1〜16 を直し、番号の外に挙げた既知の制約 3 件(下の 3 行)は直していない(未確認のため)。2 回目の指摘 11 件(下の「2 回目」)は全部この節で直した。
+### Studio のプロジェクト(フォルダ)とファイルのツリー(第 2 便)
+
+- プロジェクト = フォルダそのもの。新しいパネル『プロジェクト』(左側のドック、既定は隠す)にフォルダを木で出す。配置・開いていたフォルダ・木の開閉は Studio の設定側にフォルダのパスをキーに持ち、フォルダの中には何も書かない。消えたフォルダは黙って空の状態に戻して 1 行で知らせる。実装は新しい `studio_project.py`(上半分は Qt なし: 種類の判定・標準の並びの表・フォルダの外へ出るパスの拒否・リンクの判定・新しいプロジェクト・食い違いの検出)。
+- ファイルの種類は中身で決める(画像 / パイプライン / Python / パラメータ・定義 / その他)。JSON は先頭 64 KB だけ読み `fullseye_kind`(無ければ今の保存形式の形)で判定、YAML・TOML・XML は読み込まず拡張子で決める。ダブルクリックの行き先は種類ごとに 1 つ(画像 = 入力画像、パイプライン = 既存の開く経路(未保存なら確認)、Python = 案内だけで import も実行もしない、定義 = 読み取り専用のテキスト窓)。
+- 標準の並び images / pipelines / programs / params / results を `studio_project.STANDARD_FOLDERS` の 1 つの表で決める(Studio の外からも import できる)。『新しいプロジェクト…』で 5 つを作り、既存のファイルは上書きしない。保存・開くの初期位置は種類で決まり(pipelines/・images/・results/)、無ければ聞いてから作る。中身の種類と置き場所が食い違うファイルには印(⚠)を付け、右クリックの『pipelines/ へ移す』で移す(プロジェクトの中だけ、同名があれば止める)。標準でない並びのフォルダもそのまま開ける。
+- 木の上に名前の絞り込みと種類の絞り込み。右クリック(開く / 並べて比べる / 新規 / 名前の変更 / エクスプローラーで表示 / パスのコピー)。削除は無い。シンボリックリンク・ジャンクションは木に出すが辿らない。名前の変更・新規はプロジェクトの外へ出る名前(`..`・絶対パス)を理由を言って断る。窓の題にプロジェクト名。入口: File メニュー(フォルダを開く…・新しいプロジェクト…・最近のフォルダ)・コマンドパレット(日本語と英語の語)・表示メニューのパネル一覧・パネルを探す・Ctrl+Shift+J・パネルへのフォルダのドロップ。
+
+### Studio の IDE としての使いやすさ(第 1 便)
+
+- Program 欄のホバーヘルプ: op 名の上にカーソルを置くと、補完 popup と同じシグネチャ文とその行のつまみの実単位(blur σ=… px)を出す。op 名でない語では出さない(候補 1)。
+- 補完の順位: 完全一致 → 前方一致(短い名前が先)→ その他。`gaus` で gaussian が先頭になる。Tab で確定する挙動は変えない(B-9)。
+- Program の構文エラー(未知の op・数でない引数・閉じていない for/if など)を Problems に『line N: …』で出し、該当行に波線とガターの赤印を付ける。Problems の行を押すとその行へカーソルが移る。直すと印も消える(候補 2・B-1)。
+- 未知の op に『もしかして』(綴りの近い op 名を 3 件まで)をエラー文へ足す(候補 8)。
+- 段の型違いが Problems に同じ内容で 2 行出ていたのを、静的な検査の 1 行にした(B-2)。
+- Program 欄の中の検索と置換: Ctrl+F(検索)/ Ctrl+H(置換つき)で欄の下に検索帯が出る。Enter / F3 で次、Shift+F3 で前(末尾から先頭へ戻る)、Esc で閉じる、大文字小文字の区別の切り替え、全置換は 1 回の Undo で戻る。Program 欄にフォーカスが無い時の Ctrl+F は従来どおり op の検索欄へ(候補 3・B-4)。
+- Program 欄で Ctrl+/ により選んだ行(選びが無ければカーソルの行)の行コメント `* ` を付け外す。全部がコメントなら外し、1 行でも違えば全部に付ける。空行は触らない。1 回の Undo で戻る(候補 4)。
+- Program 欄でカーソル下の op のヘルプを Shift+F1 で開く(op 名でない語では開かず、状態行に 1 行)。F1 は従来どおりキー一覧のまま(候補 5・B-10)。
+- Program 欄で Ctrl+ホイール / Ctrl++ / Ctrl+- により文字サイズを 1pt ずつ変える(6〜32、設定 `ui/mono_font_pt` に保存して再起動後も保つ。行番号の欄も追従)(候補 12)。
+- Variables パネルを閉じたまま実行しても、開いた時にキャッシュから最新の型・サムネに作り直す(『? · control』が残らない)(候補 6・B-3)。
+- 日本語固定だった画素値の読み出し(値 / 表示 / レンジ)、段の行の『未計算 / not computed』の併記、状態行の `Run: done / Result: …` を言語の切り替えに追従させた(英語は英語だけ、6 言語を i18n.json の strings へ。pending_translation は増やしていない)。状態行は言語を切り替えると新しい言語で出し直す(B-5・B-7)。
+- Program で選んだ行だけを実行(Run メニューの『選んだ行だけ実行』= Ctrl+Alt+Return、Program で行を選んだ状態の Ctrl+Return も同じ。選びが無い Ctrl+Return は従来どおり Run all)。前の段はキャッシュから取り、選んだ行より後ろの段は計算しない。状態行に『ran line N』(候補 10)。
+- ROI を決めると、Inspector に `roi: 100x100` とその範囲だけの min / max / mean / std を足す(解除で消える)。これまで Inspector は ROI を無視して全画像の値のままだった(候補 7・B-6)。
+- 第 1 便の機能の入口をそろえた: Program 内の検索 / 置換 / 次 / 前、行コメント、op ヘルプ、文字サイズ、選んだ行の実行を、メニュー(編集・表示・ヘルプ・実行)・コマンドパレット(日本語と英語の語・別名 `PALETTE_WORDS`)・キー(Program 欄にフォーカスがある時だけ)から同じ名前で辿れる。
+
+### 直し — インストール体験(setup / ショートカット / アンインストール): 独立レビュー(2026-11-12)の 16 件
 
 - 台帳の中身を**許可制**で検証してから消す(`shortcuts.check_ledger_item`): file は setup が作る名前(`Fullseye Studio.lnk` / `fullseye.ico` / `fullseye-uninstall.cmd` / `fullseye-studio.desktop` / png)と置き場(スタートメニューの `Fullseye`・デスクトップ・setup フォルダ・Linux の applications / icons)、dir_if_empty は setup が作ったフォルダ、regkey は `Uninstall\Fullseye` の完全一致、claude_skill は `default_target()` の直下か `fullseye-rag` が置く目印(`.fullseye-installed`)がある物だけ。許可外は消さず「台帳にあるが消さなかったもの」として理由つきで出す(終了コード 1)。書き換えた台帳(`thesis.docx`)や `FULLSEYE_LEDGER` の差し替えで任意のファイルが消えた事故を止めた。試験用キー `Software\fullseyetest\` は本番コードから外し、テストが引数 `allow_keys` で渡す。
 - 台帳の各項目に作った環境(`sys.prefix`)を記録し、別の環境が作った物は `--yes` でも残して警告(venv A で登録 → B で登録 → A から uninstall で B のショートカットが消えていた)。
@@ -492,6 +576,17 @@ AI の役で MCP を使った検証(2026-11-13)で、optics の op は MCP か�
 何を変えたか: 検査を小さな関数 `engine.check_pipeline_header(d, *, where=...)`(定数 `engine.PIPELINE_FORMAT_VERSION = 1`)にして、`FullseyeEngine.from_dict` と `studio.validate_pipeline_dict` の 2 か所から呼ぶ(ほかの読み手はこの 2 つを通る)。`fullseye_pipeline` があるとき値が整数の 1 でなければ(99・`"banana"`・`1.0`・`true`・`null`)`ValueError`、`fullseye_graph` だけのファイルも `ValueError`(「何を期待し、何が来たか」を言う)。印の無い古いファイル(`stages` だけ)は今までどおり読む(警告は付けない)。形式は変えていない(書く側は `fullseye_pipeline: 1` のまま)。別の担当が進めている封筒 `fullseye_kind` は見ない。
 
 挙動が変わる点: 印が整数の 1 でないファイル(99・文字列など)と、グラフのファイルが断られる。リポジトリ内の全ファイル(`examples/data/` など)の印は 1 で、正常なファイルの読み結果は変わらない。実測: tests/test_pipeline_header_mark_2026_11_12.py(62 本)を含む、Engine・Studio・studio_lite・CLI・XML の試験 555 本が通る。
+### パラメータの束(`fullseye/parambundle.py`、2026-11-12)
+
+パラメータを束で持ち、ファイルから読んで op にまとめて渡す層(画面に依らない部分)。使い方は `docs/PARAM_BUNDLE.md`。`fs.apply` の契約も既存 op の引数も変えない(追加のみ)。
+
+- 新しい公開名 10 個: `load_params`(JSON / TOML / YAML → `ParamBundle`、読み取り専用の対応表。`p.fx`・`p["camera.fx"]`・`p.camera.fx`・`p.origin(key)`)、`save_params`(JSON のみ・`allow_nan=False`・原子的)、`params_compare`(複数の束を並べた比較表。`"0.55 um"` と `"550 nm"` は同じと判定)、`param_grid` / `param_zip`(件数の上限と見積もりを先に出して断る)、`sweep`、`run_params`(`fs.run_params("undistort_image", img, params=p)`)、`ParamBundle`、`ParamError`、`MissingParam`。名前を `run` にしなかったのは、`tests/test_public_reachability.py` が名前で届き方を数えるため、他の 7 モジュールの `run` 関数が「公開経路から届く」扱いに変わって台帳が崩れるから。
+- `p.for_op(op_name)` は op が受ける引数だけの dict。完全一致 → 同義の綴りの表(7 群 21 綴り)→ `K` を fx, fy, cx, cy から作る固定の導出。単位は引数名の接尾辞が決め、10 の冪の単位は `Decimal` で 1 回だけ変換(`v*1e-3` は 10 万個中 2 万 3 千個が 1 ULP ずれる)。`report=True` で写した・変換した・導出した事実を記録として返す。
+- 黙って捨てない: 未使用キーの一覧と `strict=True`、不足する必須引数(必要な名前・束にある名前・導出の手がかり)、単位違い、型違い、曖昧な綴り(`MissingParam` / `UnitMismatch` / `ParamTypeError` / `UnusedParams` / `AmbiguousParam`)。
+- 読んだあとの門: 数の欄の文字列・真偽、キー重複、非有限の数、YAML は `safe_load` のみ(`1e-3` が文字列になる罠・アンカーの展開上限・日付は文字列へ)。参照 `{"$param": ...}`(TOML は `{ ref = ... }`)の循環検出、`include` は同じ階層以下のみ(`..`・絶対パス・リンクは断る)。JSONC / JSON5 は受けない。式や任意のコードは許さない。
+- 検分後の直し: YAML の素のスカラーは YAML 1.2 の core schema で読み、1.1 なら別の値になる素のスカラー(`NO` `yes` `010` `12:30:00` など)は行番号つきで断る。`with_` は既にあるキーだけ(打ち間違いは `ParamError`、足すのは `added`、グリッドの軸は `allow_new=True`)。`for_op(require_any=True)` と `strict=True` は「1 つも渡らない」を `MissingParam` にし、`run_params` は警告を出す。
+- optional extra `yaml`(`pip install "fullseye[yaml]"`、PyYAML)を `pyproject.toml` に追加。必須の依存は増えない。
+- 入れなかった物: TOML / YAML への書き出しとコメントを保つ差分書き込み(JSON にコメントは無く、`tomllib` は読むだけ)、パイプライン全体を走査する `sweep`、束を閲覧・編集する窓、MCP の `$bundle`。
 
 ### 直し — `safe_xml` と版の印の検査: 独立レビュー(2026-11-12)3 回目の指摘
 

@@ -8,7 +8,7 @@ gpu: 鎖の中だけ(許可リスト)
 examples: [heightmap_depth_camera_tour, poc_polish_wipe_measure, poc_pv_thermal_survey, poc_surface_roughness, road_surface_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 1.1.1  # fullseye lib version this note was generated for
+version: 1.2.0  # fullseye lib version this note was generated for
 ---
 
 # surface_form_remove — ROUGHNESS `prepare` op

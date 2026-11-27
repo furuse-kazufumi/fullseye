@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "command": "py -3.11 -m pip install --dry-run --ignore-installed --report <file> .[all-extras]",
+  "command": "py -3.11 -m pip install --dry-run --ignore-installed --report <file> .[all,dev,export-verify]",
   "environment": {
     "implementation_name": "cpython",
     "python_version": "3.11",
@@ -155,15 +155,6 @@
       "license_files": [
         "LICENSE"
       ],
-      "requested": false
-    },
-    {
-      "name": "cmake",
-      "display_name": "cmake",
-      "version": "4.4.5",
-      "license_metadata": "Apache 2.0",
-      "class": "permissive",
-      "license_files": [],
       "requested": false
     },
     {
@@ -342,7 +333,7 @@
     {
       "name": "fonttools",
       "display_name": "fonttools",
-      "version": "4.68.0",
+      "version": "4.69.1",
       "license_metadata": "MIT",
       "class": "permissive",
       "license_files": [
@@ -365,7 +356,7 @@
     {
       "name": "fullseye",
       "display_name": "fullseye",
-      "version": "1.1.1",
+      "version": "1.2.0",
       "license_metadata": "Apache-2.0",
       "class": "permissive",
       "license_files": [
@@ -1094,53 +1085,9 @@
       "requested": false
     },
     {
-      "name": "pyside6",
-      "display_name": "PySide6",
-      "version": "6.12.0",
-      "license_metadata": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
-      "class": "weak-copyleft",
-      "license_files": [
-        "LicenseRef-Qt-Commercial.txt"
-      ],
-      "requested": false
-    },
-    {
-      "name": "pyside6-addons",
-      "display_name": "PySide6_Addons",
-      "version": "6.12.0",
-      "license_metadata": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
-      "class": "weak-copyleft",
-      "license_files": [
-        "LicenseRef-Qt-Commercial.txt"
-      ],
-      "requested": false
-    },
-    {
       "name": "pyside6-essentials",
       "display_name": "PySide6_Essentials",
-      "version": "6.12.0",
-      "license_metadata": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
-      "class": "weak-copyleft",
-      "license_files": [
-        "LicenseRef-Qt-Commercial.txt"
-      ],
-      "requested": false
-    },
-    {
-      "name": "pyside6-pdf",
-      "display_name": "PySide6_Pdf",
-      "version": "6.12.0.140",
-      "license_metadata": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
-      "class": "weak-copyleft",
-      "license_files": [
-        "LicenseRef-Qt-Commercial.txt"
-      ],
-      "requested": false
-    },
-    {
-      "name": "pyside6-webengine",
-      "display_name": "PySide6_WebEngine",
-      "version": "6.12.0.140",
+      "version": "6.11.3",
       "license_metadata": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
       "class": "weak-copyleft",
       "license_files": [
@@ -1339,7 +1286,7 @@
     {
       "name": "shiboken6",
       "display_name": "shiboken6",
-      "version": "6.12.0",
+      "version": "6.11.3",
       "license_metadata": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
       "class": "weak-copyleft",
       "license_files": [

@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 301a8cc4c65e -->
+<!-- i18n-source-sha: a41db9bf8a6f -->
 # Installations- und Einrichtungshandbuch
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch** · [हिन्दी](./INSTALL.hi.md)
@@ -15,7 +15,7 @@ Der Python-API-Kern von Fullseye läuft mit **numpy + scipy**. Ein normales `pip
 |---|---|
 | Python | **3.11** (`requires-python = ">=3.11"` in `pyproject.toml`; Entwicklung und Verifikation erfolgen mit 3.11) |
 | Ausführungsbefehl | Windows: `py -3.11` / Linux: `python3.11` |
-| Standardabhängigkeiten | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0` (werden durch `pip install -e .` automatisch installiert) |
+| Standardabhängigkeiten | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5,!=6.12.0`, `Pillow>=13.0` (werden durch `pip install -e .` automatisch installiert) |
 | Betriebssystem | Windows 10/11, Linux (auch eingebettet). Auch macOS funktioniert, solange Python läuft |
 
 ---
@@ -41,6 +41,8 @@ Zusätzliche Backends werden über **Extras** ausgewählt (definiert unter `[pro
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow usw.), von mahotas abgeleitet (Zernike/pftas usw.) |
 | `gui` | keine (Studio ist Standardabhängigkeit) | Kompatibilitätsalias; **Fullseye Studio** startet nach `pip install fullseye` |
 | `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile` (ohne CuPy; den vollständigen GPU-Satz liefert `fullseye[gpu]`. Laut der Installationsanleitung von PyTorch ist das Standard-torch unter Linux der CUDA-Build und kann CUDA-Komponenten (nvidia-*-Wheels) mitbringen. Für reinen CPU-Betrieb torch vorher aus dem CPU-Index installieren: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | alle Operatoren und Backends |
+
+Die Standardanforderung von Studio ist `PySide6-Essentials>=6.5,!=6.12.0`. Version 6.12.0 ist ausgeschlossen, da sie unter Linux reproduzierbar SIGABRT verursacht.
 
 Empfehlung zur Auswahl:
 

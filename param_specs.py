@@ -170,6 +170,9 @@ PARAM_SPECS: dict[str, dict[str, dict[str, Any]]] = {
                           "blur σ of the mask = 0.5 + 1.5·b", "0.5 + 1.5 * b")},
     # ---- edges ----
     "sobel_mag": {"a": UNUSED, "b": UNUSED},
+    # 2026-11-13(Studio の初回起動の点検 M3): 実装は np.hypot(sobel(x, 1), sobel(x, 0)) を正規化するだけで a・b を読まない
+    # (検索が空の時の一覧の 3 番目。つまみが 2 本動かせたのに何も変わらなかった)。
+    "sobel_amp": {"a": UNUSED, "b": UNUSED},
     "laplace": {"a": UNUSED, "b": UNUSED},
     "prewitt_mag": {"a": UNUSED, "b": UNUSED},
     "roberts_mag": {"a": UNUSED, "b": UNUSED},
@@ -643,17 +646,41 @@ def _seeded_cache() -> dict[str, dict[str, dict]]:
         return {}
 
 
+#: op → そのつまみを実装が読まない字("a" / "b" / "ab")。:data:`PARAM_SPECS` に手書きの行が無い op のつまみを
+#: 「未使用」として出す(Studio は灰色にして動かせなくする)。もう片方のつまみの出し方(docs から拾った名前・一般の
+#: 0〜1)は変えない。
+#: ★2026-11-15(PR #316 の独立レビュー): 検索が空の時の一覧と「定番」の欄に出る op のうち 33 op・50 本のつまみが、
+#: 動かしても何も変わらないのに動かせた(M3 の症状。直したのは sobel_amp の 1 つだけだった)。下の 49 本は、実装が
+#: 引数を 1 度も読まない事を実装から確かめた物: 族で共有する関数ではその op の枝と前置き、それ以外は関数の
+#: バイトコード(``studio._impl_reads_knob``)。auto_threshold / binary_threshold は a・b を ``ops._otsu`` に渡すだけで、
+#: ``_otsu`` はどちらも使わない。残りの 1 本(cv_hough_circles の a)は円の中心の最小の間隔で、本当に効く。
+#: どの行も ``tests/test_studio_search_staples_2026_11_12.py::test_knobs_shown_as_unused_really_do_nothing`` が
+#: 実際に振って確かめる(動いたら落ちる)。
+UNUSED_KNOBS: dict[str, str] = {
+    "equ_histo_image": "ab", "invert_image": "ab", "fill_up": "ab", "connect_and_holes": "ab", "area_center": "ab",
+    "skeleton": "ab", "distance_transform": "ab", "fft_image": "ab", "hx_plane_deviation": "ab",
+    "scale_image_max": "ab", "convexity": "ab", "count_obj": "ab", "sk_convex": "ab", "xsk_sato": "ab",
+    "sk_clear_border": "ab", "auto_threshold": "ab", "binary_threshold": "ab",
+    "rotate_image": "b", "mirror_image": "b", "dilation_circle": "b", "erosion_circle": "b", "opening_circle": "b",
+    "closing_circle": "b", "hough_line_trans": "b", "watersheds": "b", "mean_image": "b", "edges_image": "b",
+    "dilation_rectangle1": "b", "erosion_rectangle1": "b", "select_shape": "b", "sk_dog": "b", "sk_sauvola": "b",
+}
+
+
 def spec_for(op_name: str, seeded: bool = True) -> dict[str, dict[str, Any]]:
     """``{"a": spec, "b": spec}`` for an op: hand-written table first, then the
-    docs/docstring seeds (label only), then the generic 0..1 float pair."""
+    docs/docstring seeds (label only), then the generic 0..1 float pair. A knob listed in
+    :data:`UNUSED_KNOBS` is the unused spec whatever the other sources say."""
     hand = PARAM_SPECS.get(op_name)
     if hand is not None:
-        return {"a": dict(hand["a"]), "b": dict(hand["b"])}
-    if seeded:
-        s = _seeded_cache().get(op_name)
-        if s is not None:
-            return {"a": dict(s["a"]), "b": dict(s["b"])}
-    return {"a": dict(GENERIC_FLOAT), "b": dict(GENERIC_FLOAT)}
+        out = {"a": dict(hand["a"]), "b": dict(hand["b"])}
+    else:
+        s = _seeded_cache().get(op_name) if seeded else None
+        out = ({"a": dict(s["a"]), "b": dict(s["b"])} if s is not None
+               else {"a": dict(GENERIC_FLOAT), "b": dict(GENERIC_FLOAT)})
+    for letter in UNUSED_KNOBS.get(op_name, ""):
+        out[letter] = dict(UNUSED)
+    return out
 
 
 def is_generic(spec: dict) -> bool:

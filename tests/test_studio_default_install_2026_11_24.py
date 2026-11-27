@@ -47,7 +47,7 @@ def test_default_dependencies_ship_studio_and_gui_extra_is_a_compatibility_alias
     data = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     deps = {x.lower() for x in data["project"]["dependencies"]}
     extras = data["project"]["optional-dependencies"]
-    assert "pyside6-essentials>=6.5" in deps and "pillow>=13.0" in deps
+    assert "pyside6-essentials>=6.5,!=6.12.0" in deps and "pillow>=13.0" in deps
     assert extras["gui"] == [] and extras["pil"] == []
     assert not any("pyside6" in x.lower() or "pillow" in x.lower() for x in extras["all"])
 

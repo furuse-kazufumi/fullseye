@@ -17,3 +17,4 @@ tests/test_fssystem.py
 tests/test_docs_liquid_safe.py
 tests/test_no_stray_root_images_2026_11_01.py
 tests/test_review_fixes_lib2_2026_10_07.py
+tests/test_ci_untraced_studio_2026_11_23.py

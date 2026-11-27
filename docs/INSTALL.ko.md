@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 301a8cc4c65e -->
+<!-- i18n-source-sha: a41db9bf8a6f -->
 # 설치 / 환경 구축 완전 가이드
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -15,7 +15,7 @@ Fullseye의 Python API 코어는 **numpy + scipy**로 동작합니다. 표준 `p
 |---|---|
 | Python | **3.11**(`pyproject.toml`의 `requires-python = ">=3.11"`. 개발·검증은 3.11 사용) |
 | 실행 명령 | Windows: `py -3.11` / Linux: `python3.11` |
-| 표준 의존성 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0`(`pip install -e .`로 자동 설치) |
+| 표준 의존성 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5,!=6.12.0`, `Pillow>=13.0`(`pip install -e .`로 자동 설치) |
 | OS | Windows 10/11, Linux(임베디드 포함). Python이 동작하면 macOS도 가능 |
 
 ---
@@ -41,6 +41,8 @@ py -3.11 -m pip install -e .            # 표준: Python API + Studio + Pillow. 
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 등), mahotas 유래(Zernike/pftas 등) |
 | `gui` | 없음(Studio는 표준 의존성) | 호환 별칭. `pip install fullseye`만으로 **Fullseye Studio**를 시작할 수 있음 |
 | `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`(CuPy 제외. GPU 일체는 `fullseye[gpu]`. PyTorch 설치 안내에 따르면 Linux의 기본 torch는 CUDA 빌드이며 CUDA 구성 요소(nvidia-* wheel)가 함께 설치될 수 있다. CPU만 쓴다면 먼저 CPU 전용 인덱스에서 torch를 설치한다: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | 모든 오퍼레이터·백엔드 |
+
+Studio의 표준 요구 사항은 `PySide6-Essentials>=6.5,!=6.12.0`이다. Linux에서 SIGABRT가 재현되므로 6.12.0은 제외한다.
 
 사용 기준:
 

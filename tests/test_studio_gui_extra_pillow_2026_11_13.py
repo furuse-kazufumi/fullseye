@@ -48,7 +48,7 @@ def test_gui_and_pil_are_empty_compatibility_aliases_for_standard_dependencies()
     with open(ROOT / "pyproject.toml", "rb") as f:
         deps = tomllib.load(f)["project"]["dependencies"]
     assert ex["gui"] == [] and ex["pil"] == []
-    assert "PySide6-Essentials>=6.5" in deps and "Pillow>=13.0" in deps
+    assert "PySide6-Essentials>=6.5,!=6.12.0" in deps and "Pillow>=13.0" in deps
 
 
 def test_setup_does_not_reinstall_standard_compatibility_aliases():

@@ -386,7 +386,7 @@ def test_stage_row_says_not_computed_in_japanese_only_for_a_stage_that_was_never
         win._apply_language("en"); _pump(0.2)
     rows = _rows(win)
     assert len(rows) >= 3, rows
-    assert any("未計算 / not computed" in r or "再計算が必要 / recompute needed" in r for r in rows), rows
+    assert any("not computed" in r or "再計算が必要 / recompute needed" in r for r in rows), rows      # 2026-11-12 B-7: 未計算は英語だけ
 
 
 def test_english_mode_texts_are_unchanged(win):
@@ -437,7 +437,17 @@ def _visible_rows(lst):
     return n
 
 
+def _open_operators(win):
+    """2026-11-13 (stage 2): the first run is image + code; the operators panel comes from the panel bar.
+    Measured on a hidden panel, the list is Qt's never-laid-out 640 x 480 and every row counts as visible."""
+    if win._docks["operators"].isHidden():
+        win._panels["buttons"]["operators"].click()
+        _pump(0.4)
+    assert win._docks["operators"].isVisible() and win._op_list.isVisible()
+
+
 def test_operator_list_shows_six_or_more_rows_at_1280x673(win):
+    _open_operators(win)
     lst = win._op_list
     assert _visible_rows(lst) >= 6, "op の一覧が %d 行しか見えない(高さ %d)" % (_visible_rows(lst), lst.height())
     # op を選んだ状態でも(署名欄が伸びても一覧は 6 行を保つ)
@@ -453,10 +463,12 @@ def test_operator_list_shows_six_or_more_rows_at_1280x673(win):
 
 def test_operator_list_uses_all_the_free_height_in_a_tall_window(tmp_path, monkeypatch):
     small, _m = _launch(tmp_path, monkeypatch, (1280, 673), name="a.ini")
+    _open_operators(small)
     h_small = small._op_list.height()
     _close(small)
     big, _m2 = _launch(tmp_path, monkeypatch, (1920, 1080), name="b.ini")
     try:
+        _open_operators(big)
         assert big._op_list.height() >= h_small + 300, (h_small, big._op_list.height())
         assert _visible_rows(big._op_list) >= 12, _visible_rows(big._op_list)
     finally:
@@ -464,6 +476,7 @@ def test_operator_list_uses_all_the_free_height_in_a_tall_window(tmp_path, monke
 
 
 def test_operator_list_still_has_rows_after_a_search(win):
+    _open_operators(win)                                         # a hidden list is 640 x 480 and passes anything
     se = win._search_ui["edit"]
     se.setText("blur"); win._search_ui["search_now"]("blur"); _pump(0.4)
     lst = win._op_list
@@ -478,7 +491,10 @@ def test_stage_description_is_not_cut_off_and_impl_is_translated(win):
     win._op_buttons["insert"].click(); _pump(0.3)
     win._docks["pipeline"].show(); win._docks["pipeline"].raise_(); _pump(0.4)
     d = win._stage_detail
-    assert d.wordWrap() and "impl:" in d.text()
+    # 2026-11-13(初回起動の点検 M4): 実装の式は既定で畳み、「Show the implementation」で全文を出す
+    assert d.wordWrap() and "impl:" not in d.text()
+    win._impl_toggle.setChecked(True); _pump(0.2)
+    assert "impl:" in d.text()
     assert d.height() >= d.heightForWidth(d.width()), "説明欄が文の高さに足りず、下の行が切れる: %d < %d" % (d.height(), d.heightForWidth(d.width()))
     # 幅を変えても追従する
     win.resize(1500, 800); _pump(0.4)

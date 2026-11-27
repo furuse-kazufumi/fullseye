@@ -32,6 +32,7 @@ import numpy as np
 __all__ = [
     "current_sort_of", "search_grouped", "search_zero_results_help",
     "SORT_ALIASES", "canonical_sort", "clear_caches", "STAPLES", "STAPLE_EXCLUDE_JA", "staples_for",
+    "SAMPLE_TERMS", "samples_for", "STAPLE_STANDALONE_JA", "STAPLE_COMPOUND_OK_JA",
 ]
 
 #: 台帳の型名 → 2-D レジストリの型名(同じものを指す対)。比べる前にこれで寄せる。
@@ -51,6 +52,7 @@ GROUPS = ("applicable", "needs_preprocessing", "other")
 #:
 #: * 英語は**単語として**当てる(問い合わせを英数字の語に切り、表の語と完全一致。2 語の句は連続する語として)。
 #: * 日本語は部分文字列で当てるが、先に :data:`STAPLE_EXCLUDE_JA` の語(別の意味の複合語)を問い合わせから除く。
+#:   :data:`STAPLE_STANDALONE_JA` の短い語(シミ・ロット・熱 …)は、同じ種類の字に挟まれていない時だけ当てる。
 #: * 問い合わせに ``_`` がある(op 名を打っている途中)、または語のどれかが op 名そのもの(``canny edge`` の
 #:   ``canny``)なら、定番は出さない —— 名前で探している人の先頭に別の op を置かない。
 #:
@@ -71,7 +73,7 @@ STAPLES = (
     (("回転", "rotate", "rotation"), ("rotate_image",)),
     (("拡大", "縮小", "リサイズ", "resize", "zoom"), ("zoom_image_factor", "zoom_image_size")),
     (("反転", "ネガ", "invert", "negative"), ("invert_image",)),
-    (("鏡像", "ミラー", "左右反転", "上下反転", "左右を", "上下を", "mirror", "flip"), ("mirror_image",)),
+    (("鏡像", "ミラー", "ミラーリング", "左右反転", "上下反転", "左右を", "上下を", "mirror", "flip"), ("mirror_image",)),
     (("膨張", "太らせ", "dilate", "dilation"), ("dilation_circle", "dilation_rectangle1")),
     (("収縮", "細らせ", "erosion", "erode"), ("erosion_circle", "erosion_rectangle1")),
     (("オープニング", "opening"), ("opening_circle",)),
@@ -89,11 +91,53 @@ STAPLES = (
     (("差分", "引き算", "difference", "subtract"), ("abs_diff_image", "sub_image")),
     (("フーリエ", "周波数", "fft", "fourier"), ("fft_image",)),
     (("領域分割", "ウォーターシェッド", "watershed"), ("watersheds",)),
+    # ---- 現場の言葉(★2026-11-13、初回起動の点検 M12: 「傷」「へこみ」「熱」で 0 件だった)。欠陥の種類ごとに、
+    # 1 枚の濃淡画像で最初に試す op(背景を引く・細い筋を強める・局所しきい値 …)。X 線・CT の語は足さない。
+    (("傷", "きず", "キズ", "擦り傷", "引っかき", "scratch", "scratches", "scuff"),
+     ("sk_rolling_ball", "bothat", "sk_frangi", "dyn_threshold")),
+    (("へこみ", "凹み", "くぼみ", "窪み", "打痕", "dent", "dents"),
+     ("hx_plane_deviation", "sk_rolling_ball", "tophat", "dyn_threshold")),
+    (("欠け", "チッピング", "chipping", "chipped"), ("otsu", "fill_up", "sk_convex", "convexity")),
+    (("割れ", "ひび", "ヒビ", "クラック", "亀裂", "crack", "cracks", "fissure"),
+     ("sk_frangi", "bothat", "xsk_sato", "dyn_threshold")),
+    (("汚れ", "よごれ", "シミ", "染み", "stain", "stains", "dirt", "smudge"),
+     ("sk_rolling_ball", "dyn_threshold", "local_threshold", "sk_dog")),
+    (("ムラ", "シェーディング", "mura", "shading", "uneven", "unevenness", "non-uniform"),
+     ("sk_rolling_ball", "highpass", "sk_sauvola", "clahe")),
+    (("異物", "ゴミ", "ごみ", "埃", "ほこり", "繊維", "foreign matter", "foreign fibre", "foreign fiber", "debris",
+      "dust", "contamination"),
+     ("tophat", "bothat", "dyn_threshold", "select_shape")),
+    # ★2026-11-15(PR #316 の独立レビュー): 先頭は clahe。scale_image_max(値域を広げる)は、同梱の画像のように
+    # すでに 0〜1 いっぱいの絵では何も変わらなかった(coins で平均の変化 0.0024。ほかの組の先頭は 0.24〜0.42)。
+    (("熱", "熱画像", "熱分布", "発熱", "過熱", "熱源", "サーモ", "赤外", "温度", "thermal", "thermography", "infrared",
+      "temperature", "hot spot"),
+     ("clahe", "scale_image_max", "threshold", "local_max")),
+    (("錆", "サビ", "腐食", "rust", "corrosion"), ("std_filter", "dyn_threshold", "local_threshold", "gabor")),
+    (("刻印", "印字", "ロット", "ロットコード", "ロットナンバー", "engraved", "lot code", "marking", "ocr"),
+     ("adaptive_gauss_thresh", "otsu", "dyn_threshold", "select_shape")),
+    (("穴の数", "穴を数え", "穴の個数", "count holes", "hole count"),
+     ("otsu", "sk_clear_border", "count_obj", "connect_and_holes")),
+)
+
+#: 現場の言葉 → 同梱の FA の見本(``recipes`` の名前。見本ごとに自分の画像を持つ)。★2026-11-13(初回起動の点検 M12):
+#: 傷・打痕の見本があるのに、検索から届かなかった。当て方は :data:`STAPLES` と同じ(英語は単語、日本語は部分文字列、
+#: op 名を含む問い合わせには出さない)。どの語も :data:`STAPLES` にもある(画面では定番の直後に並ぶ)。
+#: X 線・CT の見本(溶接の気孔)には語を当てない。
+SAMPLE_TERMS = (
+    (("傷", "きず", "キズ", "擦り傷", "引っかき", "scratch", "scratches", "scuff"), ("FA — scratch on hairline metal",)),
+    (("へこみ", "凹み", "くぼみ", "窪み", "打痕", "dent", "dents", "異物", "繊維", "foreign matter", "foreign fibre",
+      "foreign fiber"), ("FA — dent and foreign fibre on resin",)),
+    (("刻印", "印字", "ロット", "ロットコード", "ロットナンバー", "engraved", "lot code", "marking", "ocr"),
+     ("FA — engraved lot code (binarize for OCR)",)),
+    (("穴の数", "穴を数え", "穴の個数", "count holes", "hole count"), ("FA — count holes in a back-lit plate",)),
 )
 
 #: 英語の句で、別の意味になるもの(「edge preserving」の edge でエッジ検出を出さない)。問い合わせから除いてから当てる。
 #: その句自身が表の語でもあるとき(「edge preserving」は bilateral の語)は、その表の語だけは除く前の問い合わせで当てる。
-STAPLE_EXCLUDE_EN = ("edge preserving",)
+#: ★2026-11-15(PR #316 の独立レビュー): M12 で足した shading / temperature / marking が、別の分野の句の中で当たっていた
+#: (shape from shading → 汚れの定番、color temperature → 熱の定番、lane marking → 刻印の定番)。
+STAPLE_EXCLUDE_EN = ("edge preserving", "shape from shading", "phong shading", "color temperature",
+                     "colour temperature", "lane marking", "road marking")
 
 #: 日本語の部分一致で、別の意味になる複合語。問い合わせから除いてから当てる。
 #: ここに在る語が表の語そのものでもあるとき(「左右反転」は mirror の語で、かつ「反転」= invert から除きたい)は、
@@ -101,8 +145,22 @@ STAPLE_EXCLUDE_EN = ("edge preserving",)
 #: ★表の語は、2026-11-12 の 2 回目の独立レビューで、部分一致の誤爆を避けるため**意図して**狭めた(f54982b9f9):
 #: 単独の「鏡」(顕微鏡・望遠鏡)・「左右」「上下」(上下限・左右対称)・「ラベル」(ラベル文字列)では定番を出さず、
 #: 「鏡像」「左右反転」「上下反転」「左右を」「上下を」「ラベル付け」「ラベリング」で出す(試験 test_bare_ambiguous_words_*)。
+#: ★2026-11-15: 「ひびき」「きずな」(平仮名の語は助詞が続くので、前後の字では区別できない)と「色温度」を足した。
 STAPLE_EXCLUDE_JA = ("エッジ保存", "エッジを保", "顕微鏡", "望遠鏡", "内視鏡", "鏡面", "楕円", "半円", "同心円",
-                     "ノイズ付加", "ノイズを加", "ノイズを足", "境界条件", "輪郭線の長さ", "左右反転", "上下反転")
+                     "ノイズ付加", "ノイズを加", "ノイズを足", "境界条件", "輪郭線の長さ", "左右反転", "上下反転",
+                     "ひびき", "きずな", "色温度")
+
+#: 単独の語としてだけ当てる短い語: 片仮名の語は前後が片仮名・長音でない時、漢字 1 字の語は前後が漢字でない時だけ当たる。
+#: ★2026-11-15(PR #316 の独立レビュー 2 本): M12 で足した「シミ」「ロット」「ムラ」「熱」などは部分文字列で当てていた為、
+#: 「シミュレーション」(同梱の日本語の文書 24 本に出る)で汚れの定番、「スロット」「プロット」「パイロット」で刻印の定番と
+#: 見本、「タイムラプス」「ヒストグラムライン」でムラの定番、「加熱処理」「熱延鋼板」で熱の定番が先頭に出て、M1 の後は
+#: Enter でそれが入った(11/12 に「鏡」「左右」「ラベル」を狭めたのと同じ型)。「ミラー」(ハーフミラー・ドアミラー)も同じ扱いにした。
+#: 複合語で当てたい物は表に書く(熱画像・発熱・ロットコード・ミラーリング …)。
+STAPLE_STANDALONE_JA = ("キズ", "ヒビ", "シミ", "ムラ", "ゴミ", "サビ", "ロット", "ミラー", "熱")
+
+#: 3 字以下の片仮名の語のうち、複合語の中でも同じ意味なので部分文字列のまま当てる語(ノイズリダクション・ステップエッジ・
+#: ネガポジ・サーモグラフィ)。3 字以下の片仮名の語は、ここか :data:`STAPLE_STANDALONE_JA` のどちらかに必ず入れる(試験が数える)。
+STAPLE_COMPOUND_OK_JA = ("エッジ", "ノイズ", "ネガ", "サーモ")
 
 #: 定番の欄に出す件数の上限
 STAPLES_MAX = 6
@@ -516,49 +574,90 @@ def search_grouped(query: str, current_value: Any = None, current_sort: Optional
     return out
 
 
+def _staple_query_forms(query: str):
+    """:func:`staples_for` と :func:`samples_for` が語を当てる形 ``(q, padded, padded_rest, q_ja)``。
+
+    当てない問い合わせ(空、``_`` を含む = op 名を打っている途中、語のどれかが op 名そのもの)は None。"""
+    if not isinstance(query, str) or not query.strip():
+        return None
+    import re
+    import unicodedata
+    q = unicodedata.normalize("NFKC", query).lower()
+    if "_" in q:                                       # op 名を打っている途中(circle_fit、area_open …)
+        return None
+    words = re.findall(r"[a-z0-9]+", q)
+    if any(_row_of(w) is not None for w in words) or _row_of(q.strip()) is not None:
+        return None                                    # 名前で探している(canny edge、median blur、threshold)
+    padded = " " + " ".join(words) + " "
+    padded_rest = padded
+    for phrase in STAPLE_EXCLUDE_EN:                   # 「edge preserving」の edge でエッジ検出を出さない
+        padded_rest = padded_rest.replace(" " + phrase + " ", "  ")      # 当たった句は全部除く(1 つ目で止めない)
+    q_ja = q
+    for phrase in STAPLE_EXCLUDE_JA:
+        q_ja = q_ja.replace(phrase, " ")
+    return q, padded, padded_rest, q_ja
+
+
+def _staple_term_hit(term: str, forms) -> bool:
+    """表の語 *term* が問い合わせ(:func:`_staple_query_forms` の形)に当たるか。英語は単語(句)、日本語は部分文字列。"""
+    import re
+    import unicodedata
+    q, padded, padded_rest, q_ja = forms
+    t = unicodedata.normalize("NFKC", term).lower()
+    if re.fullmatch(r"[a-z0-9 ]+", t):
+        t = " ".join(t.split())
+        return (" " + t + " ") in (padded if t in STAPLE_EXCLUDE_EN else padded_rest)   # 単語(句)として
+    hay = q if t in STAPLE_EXCLUDE_JA else q_ja
+    if t in STAPLE_STANDALONE_JA:
+        return _standalone_hit(t, hay)                                                # 短い語は単独の語として
+    return t in hay                                                                   # 日本語は部分文字列
+
+
+def _standalone_hit(term: str, hay: str) -> bool:
+    """*term* が *hay* の中に、同じ種類の字(片仮名と長音どうし・漢字どうし)に挟まれずに出てくるか。
+
+    「シミ」は「シミを探す」「シミ抜き」に当たり、「シミュレーション」には当たらない。「熱」は「熱を見たい」に当たり、
+    「加熱処理」「熱延鋼板」には当たらない。"""
+    import re
+    cls = "ァ-ヺー" if re.fullmatch("[ァ-ヺー]+", term) else "一-鿿々"
+    return re.search("(?<![%s])%s(?![%s])" % (cls, re.escape(term), cls), hay) is not None
+
+
 def staples_for(query: str) -> list:
     """問い合わせに当たる定番の op 名(:data:`STAPLES` の表の順、重複なし、索引に在るものだけ、最大 :data:`STAPLES_MAX`)。
 
     当たる語が無ければ空のリスト。文字は NFKC で寄せて小文字にしてから、表の語を**部分文字列**として探す
     (「画像を二値化したい」でも「二値化」に当たる)。
     """
-    if not isinstance(query, str) or not query.strip():
+    forms = _staple_query_forms(query)
+    if forms is None:
         return []
-    import re
-    import unicodedata
-    q = unicodedata.normalize("NFKC", query).lower()
-    if "_" in q:                                       # op 名を打っている途中(circle_fit、area_open …)
-        return []
-    words = re.findall(r"[a-z0-9]+", q)
-    if any(_row_of(w) is not None for w in words) or _row_of(q.strip()) is not None:
-        return []                                      # 名前で探している(canny edge、median blur、threshold)
-    padded = " " + " ".join(words) + " "
-    for phrase in STAPLE_EXCLUDE_EN:                   # 「edge preserving」の edge でエッジ検出を出さない
-        if (" " + phrase + " ") in padded:
-            padded_rest = padded.replace(" " + phrase + " ", "  ")
-            break
-    else:
-        padded_rest = padded
-    q_ja = q
-    for phrase in STAPLE_EXCLUDE_JA:
-        q_ja = q_ja.replace(phrase, " ")
     out: list = []
     for terms, ops in STAPLES:
-        hit = False
-        for t in terms:
-            t = unicodedata.normalize("NFKC", t).lower()
-            if re.fullmatch(r"[a-z0-9 ]+", t):
-                t = " ".join(t.split())
-                hit = (" " + t + " ") in (padded if t in STAPLE_EXCLUDE_EN else padded_rest)   # 単語(句)として
-            else:
-                hit = t in (q if t in STAPLE_EXCLUDE_JA else q_ja)        # 日本語は部分文字列
-            if hit:
-                break
-        if hit:
+        if any(_staple_term_hit(t, forms) for t in terms):
             for name in ops:
                 if name not in out and _row_of(name) is not None:
                     out.append(name)
     return out[:STAPLES_MAX]
+
+
+def samples_for(query: str) -> list:
+    """問い合わせに当たる同梱の FA の見本の名前(:data:`SAMPLE_TERMS` の表の順、重複なし、``recipes`` に在るものだけ)。
+
+    当て方は :func:`staples_for` と同じ。当たる語が無ければ空のリスト。"""
+    forms = _staple_query_forms(query)
+    if forms is None:
+        return []
+    try:
+        import recipes
+        have = set(recipes.names())
+    except Exception:                                  # noqa: BLE001 -- 見本が読めない環境では出さない
+        return []
+    out: list = []
+    for terms, names in SAMPLE_TERMS:
+        if any(_staple_term_hit(t, forms) for t in terms):
+            out.extend(n for n in names if n in have and n not in out)
+    return out
 
 
 def _staple_hit(name: str, lang: Optional[str]) -> dict:

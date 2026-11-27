@@ -40,6 +40,7 @@ import importlib
 import io
 import os
 import re
+import types
 import warnings
 
 import pytest
@@ -55,6 +56,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #: 数字は不可視な関数の本数で、増減しても意図的なら書き換えてよい。
 _INTERNAL = {
     "accel_bridge": 9, "accel_vol": 3,
+    # 2026-11-25: arrayguard は op 入力の検査だけを担う内部層 3 本。
+    "arrayguard": 3,
+    # 2026-11-12 safe_xml(fix/safe-xml-parse-2026-11-12): XML を DOCTYPE・実体の増幅なしで読む内部の層 4 本。
+    # 利用者は各形式の読み込み(CommonRoad・OSM・OME-TIFF・SVG・3MF …)から使う。公開するかは担当の判断。
     # 2026-11-03 device="auto" の判断(損益分岐の表・空き VRAM・段ごとの経路)。利用者の入口は
     # fullseye.explain_device / resolve_device で、この部品は api の内側からだけ呼ぶ。
     "device_policy": 6,
@@ -63,9 +68,6 @@ _INTERNAL = {
     # numpy_compat.trapezoid is a shipped internal compatibility shim for the
     # NumPy 1/2 integration-name change; it is not a public API and remains one hidden function.
     "numpy_compat": 1,
-    # 2026-11-25 arrayguard: 大きさの上限と数の食い違いを、複写の前に日英の文で拒否する共通の部品
-    # (refuse_cap_exceeded / refuse_count_mismatch / precheck_shape_and_elements)。op の内側からだけ呼ぶ。
-    "arrayguard": 3,
     "algo_codegen": 4, "algo_difftest": 8, "backends": 4, "backends_auto": 2,
     "backends_color": 3, "backends_cv2b": 1, "backends_dl": 3, "backends_extra": 1,
     "backends_halcon_ext": 1, "backends_kornia": 1, "backends_macro": 1,
@@ -80,6 +82,9 @@ _INTERNAL = {
     # safe_xml_parse / safe_xml_parse_zip_member / safe_xml_iterparse)。利用者は各形式の読み込み(CommonRoad・OSM・
     # OME-TIFF・SVG・3MF・CityGML …)から使う。公開の op にするかは 1.2.0 の定義ファイルの層で決める。
     "safe_xml": 6,
+    # 2026-11-22 Studio adversarial review: 利用者が選んだ JSON と QSettings の内部安全層。
+    # 公開 op ではなく、Studio / defs_io / ParamBundle の既存入口から使う(不可視関数は各 3 本、実測)。
+    "json_strict": 3, "studio_settings": 3,
     "param_specs": 11, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
     # GPU 第 4 便: 一括経路。op でなく、raytrace / optics と同じ定義を (M, W, R) で計算する下回りの部品。
@@ -89,7 +94,36 @@ _INTERNAL = {
     # studio_search / studio_errors 2026-10-20: Studio の論理層(Qt 非依存)。UI への配線は次の片。
     #   search 6 本(current_sort_of / search_grouped / search_zero_results_help / canonical_sort / clear_caches / nearest_op_names)
     #   errors 3 本(explain_failure / format_failure / localize)。studio と同じ「GUI の内側の部品」で、テストが直接呼ぶ。
-    "studio": 90, "studio_errors": 3, "studio_search": 7, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    # studio_theme 2026-11-12(feat/studio-console-theme): 配色・密度の表と QSS を組む関数 19 本(Qt 非依存)。
+    #   Studio の見た目の内側の部品で op ではない。studio +1 は dock_layout_usable(保存した配置の検査)。
+    # studio_theme 2026-11-13(第 2 段): +21 = コードの書体(候補の表から選ぶ・部品へ当てる・後から出来た窓を見張る・設定の一覧)、
+    #   怪しい文字の検出と印(suspicious_chars / mark_code)、色の見分けの門(lab / delta_e / simulate_cvd / distinct_report)。
+    # studio_theme +2 2026-11-13(要件 7): コードの色の表(code_colour_table)と下地の見分けの門(ground_report)。
+    # studio_theme +1 2026-11-15: 左上の終わり方と絵の印の便(D99 D130): studio_panels.end_state・studio_theme.ui_families。Studio の窓の内側の部品で op ではない
+    # studio_theme +1 2026-11-15: 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない
+    # studio_theme +6 2026-11-23: 配置の項目を wrapper を残さずに読む口(is_python_layout / release_layout_item /
+    #   layout_entries / layout_widgets / release_layout_item_wrappers と LayoutEntry)。native crash の直し。Studio の窓の内側の部品で op ではない
+    # studio_theme +1 2026-11-23: is_code_pitch(コードの字の幅を実測で判定する。Linux の Noto Sans Mono CJK JP は
+    #   Qt の申告では fixedPitch でない)。Studio の窓の内側の部品で op ではない
+    "studio_theme": 51,
+    # studio_panels 2026-11-13(第 2 段): パネルの帯・dock ⇔ 別ウィンドウ・配置の保存と復元・横長のパネルで
+    #   道具とタブを左へ・題の帯へ状態と ≡ を登録する口・左上の進捗の表示 25 本。Studio の窓の内側の部品で op ではない(studio.py からは短い呼び出しだけ。試験が直接呼ぶ)。
+    # studio_panels +3 2026-11-13(要件 5): パネルのボタンの QAction(button_action / sync_button_actions)と、
+    #   ツールチップからメニューの項目名を切る short_name。
+    # studio_panels +5 2026-11-13(要件 8): 処理中のアイコンのコマ送り(icon_frames)、動きを減らす設定
+    #   (system_reduces_motion / reduce_motion / reduce_motion_action)、同期の仕事を左上に出す brand_wrap。
+    # studio_panels +16 2026-11-15: A1〜A3・D104 の便(11 本: show_principal / normalise_overflow_mode / scroll_arrow / flow_plan / scroll_reach / flow_classes / declare_strip / adopt_image_strip / panel_ledger / set_overflow_mode / all_strips。その便で台帳を上げていなかった)と D01〜D03 の上の帯(5 本: tool_tip / mode_switch / compose_top_tips / glyph_action / fix_hand)。Studio の窓の内側の部品で op ではない
+    # studio_panels +3 2026-11-15: 題の帯とメニューの便(D14 D59 D98 D100 D111): label_text / plain_text / drop_repeated_titles。Studio の窓の内側の部品で op ではない
+    # studio_panels +1 2026-11-15: パネルの一覧の便(D20 D21 D60): panel_order。Studio の窓の内側の部品で op ではない
+    # studio_panels +1 2026-11-15: 左上の終わり方と絵の印の便(D99 D130): studio_panels.end_state・studio_theme.ui_families。Studio の窓の内側の部品で op ではない
+    # studio_panels +1 2026-11-15: 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない
+    # studio_panels +3 2026-11-15: 作業モードの「*」の便(D128): mode_differs / mode_watch / mode_chosen。Studio の窓の内側の部品で op ではない
+    "studio_panels": 58,
+    # studio / studio_search 2026-11-13(初回起動の点検の直し、fix/studio-firstrun-2026-11-13): studio +13(op_insertable /
+    #   not_insertable_text / starter_ops / entry_sort_of / op_is_ledger / sample_menu_order / format_pixel_readout /
+    #   knob_dead_measured / knob_use / knob_role_text / help_plain_markup / plain_summary / help_query_target)、
+    #   studio_search +1(samples_for)。どれも GUI の内側の部品で、試験が直接呼ぶ。
+    "studio": 107, "studio_errors": 3, "studio_search": 8, "studio_roundtrip": 5, "studio_batch": 7, "studio_display": 8, "studio_layout": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
@@ -117,6 +151,42 @@ _INTERNAL = {
     # ★2026-11-04(統合 GPU): 第 5 便の accel_label(連結成分のラベル付けと領域ごとの集計の torch 経路、label / table)。
     #   accel が import する核で、利用者は領域解析の op の device 引数から使う。
     "accel_label": 2,
+    # ★2026-11-13(integrate/studio-1-2-0、Python のモードを Studio に繋いだ便): Studio の GUI の内側の部品。どれも
+    #   studio.py が import する画面の部品で、利用者の入口は Studio の窓(fullseye-studio)。op にも facade にも出さない。
+    #   実測(この枝): studio_project 23(Project のパネル。種類の表・木・開く先)・studio_pymode 19(Program 欄の
+    #   Python のモード: モードの状態・実行の橋・出力の欄・信頼の確認・ファイルの開閉・行の基準の変換)・
+    #   studio_pyedit_syntax 22(色分けの字句・括弧の対応)・studio_pyedit_complete 35(補完・シグネチャ・ホバーの
+    #   供給元)・studio_pyedit_values 29→30(値の要約・ウォッチの評価。統合後の実測は 30)・studio_pyedit_i18n 5(部品の対訳)・
+    #   studio_pyedit_qt 9(PyEditAssist ほか Qt の部品)・studio_pyedit_vars_qt 14(変数・ウォッチ・浮いた窓)。
+    #   2026-11-13 2 便目(続行は止まった所から・文の言語・独立レビューの直し): studio_pymode 19 → 20(PauseGate の
+    #   受け渡しに使う部品)。studio_program_i18n 4(実行系・検査の英語の文を UI の言語へ: placeholders / line_label /
+    #   localize / line_number_of。画面に出す所だけが使う)。studio_pyedit_safe 9(実行後の値を利用者のコードを
+    #   走らせずに調べる: 型だけの判定・ライブラリの型か・静的な名前。補完と変数の欄の内側)。
+    #   2026-11-13 3 便目(第 2 回レビューの直し): studio_pyedit_safe 9 → 15(型の記述子で読む class_dict / mro_of /
+    #   name_of、同一性の tin、実体で決める is_library_class、利用者のコードを呼ばない exception_text)、
+    #   studio_pyedit_values 30 → 31(stray_threads: 残った __repr__ 用のスレッドの一覧)。
+    "studio_project": 23, "studio_pymode": 22, "studio_pyedit_syntax": 22, "studio_pyedit_complete": 35,
+    "studio_pyedit_values": 31, "studio_pyedit_i18n": 5, "studio_pyedit_qt": 9, "studio_pyedit_vars_qt": 14,
+    "studio_program_i18n": 4, "studio_pyedit_safe": 17,
+    # ★2026-11-13(feat/studio-blockselect): コードエディタの矩形選択・複数カーソル・行の操作。Studio の GUI の内側の
+    #   部品で、利用者の入口は Studio のエディタ(キー・右クリックのメニュー)。op にも facade にも出さない。
+    #   studio_editops 43(Qt なし: 見た目の桁 ↔ 文字の位置・箱 → 行ごとの選択・編集の計画・括弧・キーの表・対訳)、
+    #   studio_editops_qt 7(EditOps / install / uninstall / get と、キーの当たりの検査 3 本)。
+    #   2026-11-13 feat/studio-keymap: studio_editops_qt 7 → 8(apply_bindings: キーの登録簿から今のキーを全部の
+    #   エディタへ配る入口)。
+    # ★2026-11-13(feat/studio-keymap): 利用者が決められるショートカットキー。Studio の GUI の内側の部品で、利用者の
+    #   入口は Studio の Tools ▸ キーボードのショートカットの設定…(とキーそのもの)。op にも facade にも出さない。
+    #   studio_keymap 25(Qt なし: 登録簿・範囲・正規化・型・Keymap・当たりの判定・保存の形・読み込みの検査・文の書き換え・
+    #   一覧と検索・対訳)、studio_keymap_qt 8(install / apply_keymap / get / 設定の窓と記録の欄 / 制御役 /
+    #   窓の組み込みのキーを集める collect_fixed / キーの出来事の読み方 event_keys)。
+    "studio_editops": 43, "studio_editops_qt": 9,
+    "studio_keymap": 29, "studio_keymap_qt": 8,
+    # ★2026-11-13(feat/studio-params): パラメータの束を並べて見る・直す窓(受け入れ表 D3)。Studio の GUI の内側の部品で、
+    #   利用者の入口は窓(python -m studio_params_qt / Studio のメニュー)。束そのものの入口は fullseye.load_params ほか
+    #   (fullseye.parambundle)で、こちらは op にも facade にも出さない。実測: studio_params_model 17(ParamsModel・
+    #   Outcome・列 / 行 / 木の型・読む read_bundle・原子的に書く write_bundle_atomic・編集の解釈 parse_edit・対訳 make_tr ほか)、
+    #   studio_params_qt 5(ParamsPanel・ParamsWindow・ParamsTreeModel・show_params_window・main)。
+    "studio_params_model": 17, "studio_params_qt": 5,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -181,13 +251,32 @@ def _import_shipped(name):
                              % (name, type(e).__name__, e)) from e
 
 
+def _public_attribute_names(namespace):
+    """*namespace* の公開の属性名(``_`` 始まりと、import 済みの下位モジュールを除く)。"""
+    return {n for n in dir(namespace)
+            if not n.startswith("_") and not isinstance(getattr(namespace, n, None), types.ModuleType)}
+
+
+def test_public_names_do_not_depend_on_which_submodules_were_imported():
+    """下位モジュールを import しても公開の名前は増えない(試験の順で門の答えが変わらない)。"""
+    importlib.import_module("fullseye")
+    before = _public_names()
+    importlib.import_module("fullseye.uninstall")
+    importlib.import_module("fullseye.setup_cmd")
+    assert _public_names() == before
+
+
 def _public_names():
     """公開経路 3 つの名前を集める(facade / 型つき台帳 / 進化する 2-D op)。"""
     import fullseye as fs
     import ops
 
-    names = {n for n in dir(fs) if not n.startswith("_")}
-    names |= {n for n in dir(fs.ledger) if not n.startswith("_")}
+    # ★2026-11-23: 下位モジュールは数えない。dir(fullseye) には「その時までに import された」下位モジュールも
+    #   並ぶ(fullseye.uninstall を import する試験が先に集められると "uninstall" が公開の名前に見え、
+    #   studio_editops_qt.uninstall が届くことになった。Linux CI の gates でだけ赤だった理由)。モジュールは
+    #   呼べる関数ではない。除いても他の行の数は変わらない(この機械の実測、モジュール 129 本)。
+    names = _public_attribute_names(fs)
+    names |= _public_attribute_names(fs.ledger)
     names |= {o.name for o in ops.REGISTRY}
     # ★2026-10-02: 4 つ目の公開経路 = 知覚 facade(fullseye.vision.<群>.<関数>、halcon_facade_map.json の
     #   "module.func" が実体)。HALCON 章の実装(segmentation.py 等)はここからだけ届いていた。
@@ -329,10 +418,99 @@ def test_pending_exposure_shrinks_when_fixed():
 #   param_specs.half_then_thirds_index 1(端の扱い・構造要素の形のつまみの対応。Studio と MCP の内側の部品)・
 #   studio_search.staples_for 1(検索の「定番」の群。Studio の内側)・studio 3(lang_from_locale ほか、GUI の内側)・
 #   backend_safe.which_outside_cwd 1・engine.check_pipeline_header 1。どれも GUI・読み込み・外部コマンド探しの内側の部品で、op ではない。実測 1084。
-# 2026-11-25 PR #355: opspharma.get / call / info(他の ops* と同じ台帳の入口 3 点)で +3。
-# 2026-11-25 numpy_compat.trapezoid(+1、上の _INTERNAL)と arrayguard の 3 関数(+3)。
-# 1086 + 3 + 1 + 3 = 1093。
-_HIDDEN_FUNCTIONS_TODAY = 1093
+#   (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1084
+# 2026-11-12 Studio の Python のモード(feat/studio-program-vars-2026-11-12): 分岐元 f54982b9f9 の実測が既に
+#   1077(この行の 1073 より 4 多い。前の便で数え直されていなかった)。そこへ + 46 = 1123。
+#   studio_program(Program 欄の実行系・記録・メモ化・助言・記法の変換。Studio と前置き
+#   fullseye.studio_prelude が使う「GUI の内側の部品」で、studio_search と同じ扱い。書いている最中の指摘・補完・ホバー・ファイルの実行・対話の評価・止められなかった実行の一覧の入口を含む)の 37 本と、
+#   defs_io(定義ファイルの種類に依らない層: 印・版の移行・原子的な書き込み・配列の別ファイル参照の検査)
+#   の 9 本。defs_io の利用者の入口は fullseye.read_def / write_def / load_pipeline で、種類を足す側の
+#   部品(register_kind など)は公開経路に載せない。実測 1077 → 1123。
+# 2026-11-12 1.1.1 の枝(653de27616)を merge: + 6 = 1129(safe_xml 4・param_specs 1・studio_search 1。
+#   その枝そのものでもこの機械の実測は 1083 で、行の数字 1073 は数え直されていなかった)。
+#   (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1129
+# 2026-11-13 統合の枝 integrate/studio-1-2-0-2026-11-13: 1129 → 1288(+159、この機械の実測)。内訳: 上の _INTERNAL に
+#   足した GUI の内側の 8 モジュール 157 本(studio_project 23・studio_pymode 19・pyedit の 6 本 115)、
+#   studio_program.params_search_dirs 1(load_params の相対パスを探す順。GUI の内側)、
+#   統合の merge で既に 1 本増えていた分 1(1129 → 1153 の報告のうち studio_project を除いた残り。studio は 90 → 89)。
+#   (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1288
+# 2026-11-13 master(1.1.1 の最終 d62109bb65)を merge: + 2 = 1290(safe_xml 4 → 6: xml_limits と上限の部品)。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1290
+# 2026-11-13 同じ枝の 2 便目: 1290 → 1305(+15、この機械の実測)。内訳: 上の _INTERNAL の studio_program_i18n 4・
+#   studio_pyedit_safe 9・studio_pymode + 1、studio_program.starter_program 1(例の文面を UI の言語で返す。GUI の内側)。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1305
+# 2026-11-13 同じ枝の 3 便目(第 2 回レビューの直し): 1305 → 1313(+8、この機械の実測)。内訳: studio_pyedit_safe 6・
+#   studio_pyedit_values 1・studio_program.program_threads 1(プログラムが残したスレッドの一覧。GUI の内側)。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1313
+# 2026-11-13 同じ枝の 4 便目(確認の窓・Undo・自動保存): 1313 → 1317(+4)。studio.CONFIRM_ACTION_HOOK(差し替え口。既定の窓の関数を指す)・studio.confirm_action(やり直しの効かない
+#   操作の前に聞く入口)・studio.studio_pymode_autosave_range(設定の画面の範囲)・studio_batch.existing_outputs
+#   (一括処理が上書きする既存のファイルの数。確認の文に使う)。どれも GUI の内側。
+# 2026-11-15 同じ枝(第 3 回レビューの直しの確かめ): 1319 → 1321(+2)。studio_pyedit_safe 15 → 17: static_getattr
+#   (型の記述子だけで属性を引く。補完・ホバーがメタクラスの __getattribute__ を呼ばない)・static_parameters
+#   (利用者の関数の引数の並びを __code__ から。既定値を文字にしない)。どちらも補完と変数の欄の内側。
+#   (統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1321
+# 2026-11-12 見た目の第 1 段(feat/studio-console-theme-2026-11-12): 1084 + 20 = 1104。studio_theme 19
+#   (配色・密度・コントラストの表と QSS。Studio の内側)・studio.dock_layout_usable 1。実測 1104。
+# 2026-11-13 origin/master(1086 = 1084 + 2)を merge: 1104 + 2 = 1106。実測 1106。
+# 2026-11-13 見た目の第 2 段: 1106 + 46 = 1152。studio_panels 25・studio_theme 21(コードの書体・怪しい文字・色の門)。実測 1152。
+# 2026-11-13 要件 5(≡ の項目): 1152 + 3 = 1155。studio_panels の button_action / sync_button_actions / short_name。
+# 2026-11-13 要件 8(左上のコマ送り): 1155 + 5 = 1160。studio_panels の icon_frames / system_reduces_motion /
+#   reduce_motion / reduce_motion_action / brand_wrap。
+# 2026-11-13 要件 7(コードの色の表): 1160 + 2 = 1162。studio_theme の code_colour_table / ground_report。
+# 2026-11-15 A1〜A3・D104 の便(11 本: show_principal / normalise_overflow_mode / scroll_arrow / flow_plan / scroll_reach / flow_classes / declare_strip / adopt_image_strip / panel_ledger / set_overflow_mode / all_strips。その便で台帳を上げていなかった)と D01〜D03 の上の帯(5 本: tool_tip / mode_switch / compose_top_tips / glyph_action / fix_hand)。Studio の窓の内側の部品で op ではない: 1162 + 16 = 1178。実測 1178。
+# 2026-11-15 題の帯とメニューの便(D14 D59 D98 D100 D111): label_text / plain_text / drop_repeated_titles。Studio の窓の内側の部品で op ではない: 1178 + 3 = 1181。実測 1181。
+# 2026-11-15 パネルの一覧の便(D20 D21 D60): panel_order。Studio の窓の内側の部品で op ではない: 1181 + 1 = 1182。実測 1182。
+# 2026-11-15 左上の終わり方と絵の印の便(D99 D130): studio_panels.end_state・studio_theme.ui_families。Studio の窓の内側の部品で op ではない: 1182 + 2 = 1184。実測 1184。
+# 2026-11-15 見た目の便(D17 D120 D121 D122): studio_panels.theme_mdi・studio_theme.mark_prose。Studio の窓の内側の部品で op ではない: 1184 + 2 = 1186。実測 1186。
+# 2026-11-15 作業モードの「*」の便(D128): mode_differs / mode_watch / mode_chosen。Studio の窓の内側の部品で op ではない: 1186 + 3 = 1189。実測 1189。
+#   (見た目の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1189
+# 2026-11-15 統合の枝に見た目の枝(feat/studio-console-theme-2026-11-12、1a3f70d772)を merge: 合わせ目 1086 から
+#   統合 +235・見た目 +103 = 1424(同じ名前の足し合いは無い。数は合わせた木の実測で確かめる)。
+#   (初回の枝を合わせる前の値) _HIDDEN_FUNCTIONS_TODAY = 1424
+# 2026-11-13(Studio の初回起動の点検の直し): 1086 + 15 = 1101。studio 13・studio_search 1(上の _INTERNAL の注記)と、
+#   studio.CLOSE_CONFIRM_HOOK 1(M10 の終了の確認の差し替え口。関数を指す名前なので総数に入る)。どれも GUI の内側の部品で、op ではない。
+#   (初回の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1101
+# 2026-11-15 統合の枝に初回の枝(fix/studio-firstrun-2026-11-13、288feeec4e)を merge: 1424 + 15 = 1439
+#   (初回の枝が合わせ目 1086 から足した studio 13・studio_search 1・CLOSE_CONFIRM_HOOK 1)。
+#   (キーの枝を合わせる前の値) _HIDDEN_FUNCTIONS_TODAY = 1439
+# キーの枝(feat/studio-keymap-2026-11-13、分岐元 1924e8b955 = 1305)の便:
+# 2026-11-13 feat/studio-blockselect: 1305 → 1355(+50、この機械の実測)。上の _INTERNAL の studio_editops 43・
+#   studio_editops_qt 7 のうち、公開経路の名前と重ならない分。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1355
+# 2026-11-13 feat/studio-keymap: 1355 → 1389(+34、この機械の実測)。上の _INTERNAL の studio_keymap 25・
+#   studio_keymap_qt 8 と studio_editops_qt + 1 のうち、公開経路の名前と重ならない分。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1389
+# 2026-11-13 feat/studio-keymap レビュー 1 回目の直し C1(dropped_commands: 起動で捨てた上書きを数える): 1389 → 1390(+1、この機械の実測)。studio_keymap 25 → 26・studio_keymap_qt 8 → 8。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1390
+# 2026-11-13 feat/studio-keymap B5 1.2-B(family / same_key_different_family: 同じキー・違う意味を数える G13(b')): 1390 → 1392(+2、この機械の実測)。studio_keymap 26 → 28・studio_keymap_qt 8 → 8。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1392
+# 2026-11-15 キーの設定(D123: tooltip_text): 1392 → 1393(+1、この機械の実測)。studio_keymap 28 → 29・studio_keymap_qt 8 → 8。
+#   (その時の値) _HIDDEN_FUNCTIONS_TODAY = 1393
+# 2026-11-15 矩形選択の部品(D95: retranslate_all = 言語の切り替えの後に文を付け直す): 1393 → 1394(+1、この機械の実測)。studio_editops_qt 8 → 9。
+#   (キーの枝の値) _HIDDEN_FUNCTIONS_TODAY = 1394
+# 2026-11-15 統合の枝にキーの枝を merge: 1439 + (1394 - 1305 = 89: studio_editops 43・studio_editops_qt 9・
+#   studio_keymap 29・studio_keymap_qt 8 の公開経路と重ならない分) = 1528。
+#   2026-11-15 実測で studio は 107(統合 93 と初回 103 の和集合。片方が消した名前を他方が持っていた)。
+#   (束の枝を合わせる前の値) _HIDDEN_FUNCTIONS_TODAY = 1529
+# 2026-11-13 feat/studio-params(パラメータの窓): 1305 → 1327(+22、この機械の実測)。内訳: 上の _INTERNAL の
+#   studio_params_model 17・studio_params_qt 5。
+#   (束の枝の値) _HIDDEN_FUNCTIONS_TODAY = 1327
+# 2026-11-15 統合の枝に束の枝を merge: 1529 + (1327 - 1305 = 22: studio_params_model 17・studio_params_qt 5) = 1551。
+# 2026-11-22 Studio adversarial review: strict JSON / checked settings の内部 2 層を追加し、1551 → 1556(実測)。
+# 2026-11-23 配置の項目の wrapper を残さない直し: studio_theme +6(LayoutEntry と読む口 5 本)で 1556 → 1562(この機械の実測)。
+# 2026-11-23 Linux のコードの字の直し: studio_theme +1(is_code_pitch)で 1562 → 1563(この機械の実測)。
+# 2026-11-23 下位モジュールの名前を公開の名前に数えない直し: 1563 → 1568(+5、この機械の実測)。名前が
+#   fullseye の下位モジュールと同じだっただけで届く事にされていた scene_registry.motion と
+#   oss_adapter.camera / features / flow / stereo。届いていなかった物を正直に数え直した(増えたのではない)。
+# 2026-11-23 Studio の外部 tracer の知らせ: studio_program.external_tracer 1 本(Studio の GUI の内側。
+#   呼び出し元の sys.settrace / threading.settrace / sys.monitoring を検出する)で 1568 → 1569(この機械の実測)。
+# 2026-11-25 origin/master を統合後に実測: arrayguard の 3 本も、op の内側で入力を拒む部品なので
+# _INTERNAL に入れる。1569 → 1572。
+#   (master 統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1572
+# 2026-11-25 origin/master(#347 の numpy_compat.trapezoid +1、上の _INTERNAL)を merge: 1572 + 1 = 1573。
+#   (master 統合前の値) _HIDDEN_FUNCTIONS_TODAY = 1573
+# 2026-11-26 origin/master(#373: PR #355 の opspharma.get / call / info +3)を merge: 1573 + 3 = 1576。
+_HIDDEN_FUNCTIONS_TODAY = 1576
 
 
 def _hidden_total():
@@ -367,6 +545,40 @@ def test_hidden_function_total_does_not_grow():
     )
 
 
+def _why_not_an_island(name):
+    """*name* が島でなくなった理由(どの関数が、どの公開経路の名前と重なったか・関数が無いか)を 1 行にする。"""
+    mod = _import_shipped(name)
+    if mod is None:
+        return "%s: optional dependency missing" % name
+    fns = sorted(n for n in dir(mod) if not n.startswith("_") and callable(getattr(mod, n))
+                 and getattr(getattr(mod, n), "__module__", "") == name)
+    if not fns:
+        foreign = sorted((n, getattr(getattr(mod, n), "__module__", "")) for n in dir(mod)
+                         if not n.startswith("_") and callable(getattr(mod, n)))
+        return "%s: no function of its own (file %s; callables %s)" % (name, getattr(mod, "__file__", "?"), foreign[:20])
+    import fullseye as fs
+    import ops
+    routes = {
+        "fullseye": {n for n in dir(fs) if not n.startswith("_")},
+        "fullseye.ledger": {n for n in dir(fs.ledger) if not n.startswith("_")},
+        "ops.REGISTRY": {o.name for o in ops.REGISTRY},
+    }
+    reg = fs.vision._ensure()
+    uops = reg._ops.values() if isinstance(reg._ops, dict) else reg._ops
+    unified = {}
+    for u in uops:
+        if isinstance(u.module, str):
+            unified.setdefault(u.module.rpartition(".")[2], []).append(u.module)
+    hits = []
+    for f in fns:
+        where = [r for r, names in routes.items() if f in names]
+        if f in unified:
+            where.append("vision registry %s" % unified[f][:3])
+        if where:
+            hits.append("%s via %s" % (f, ", ".join(where)))
+    return "%s: %s" % (name, "; ".join(hits) or "functions %s (route not found here)" % fns)
+
+
 def test_internal_rows_are_still_islands():
     """_INTERNAL の行は「1 本も届かない島」であり続けること(届くようになったら行を消す)。
 
@@ -378,7 +590,7 @@ def test_internal_rows_are_still_islands():
     stale = sorted(n for n in _INTERNAL if n not in now)
     assert not stale, (
         "公開経路から届くようになったのに _INTERNAL に残っている: " + ", ".join(stale)
-        + "  —— この表から行を消すこと。"
+        + "  —— この表から行を消すこと。\n  " + "\n  ".join(_why_not_an_island(n) for n in stale)
     )
 
 

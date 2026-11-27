@@ -151,13 +151,42 @@ def _doctor() -> int:
         try:
             subprocess.run(configure, check=True, text=True, timeout=180)
             subprocess.run(build, check=True, text=True, timeout=300)
-            executable = project / "build" / ("app.exe" if sys.platform == "win32" else "app")
+            name = "app.exe" if sys.platform == "win32" else "app"
+            # Visual Studio などの複数構成のジェネレータは build/<Config>/ に置く。
+            # Multi-config generators (Visual Studio) put the binary in build/<Config>/.
+            found = [project / "build" / name] + sorted((project / "build").glob("*/" + name))
+            executable = next((path for path in found if path.is_file()), found[0])
             subprocess.run([str(executable)], check=True, text=True, timeout=120)
         except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
-            print("MISSING OR BROKEN: the consumer build did not complete: %s" % exc, file=sys.stderr)
-            _print_prerequisite_table(["compiler", "python_headers", "pybind11"], stream=sys.stderr)
+            # 前提の部品は上で見つかっている。ここで「部品が無い」と言うと、入れ直しても直らない案内になる。
+            print("BROKEN: the prerequisites were found, but the consumer build or run did not complete: %s\n"
+                  "This is a build error, not a missing part; reinstalling the parts above will not fix it. "
+                  "Read the compiler output above, and report it with your compiler and CMake versions.\n"
+                  "前提の部品は見つかりましたが、利用側のビルドか実行が完了しませんでした。部品の入れ直しでは "
+                  "直りません。上のコンパイラの出力を確認してください。" % exc, file=sys.stderr)
             return 1
     print("OK: compiler, Python development headers, pybind11, and hello_cpp")
+    return 0
+
+
+def _doctor_json() -> int:
+    """Print the prerequisite check as JSON without building / ビルドせずに前提の確認だけを JSON で出す。
+
+    ``fullseye doctor`` が使う軽い入口。利用側のビルドまで確かめるのは ``python -m fullseye.sdk --doctor``。
+    C/C++ SDK は任意の機能なので、部品が足りなくても終了コードは 0(足りない物は ``missing`` に入る)。"""
+    import contextlib
+    import io
+    with contextlib.redirect_stdout(io.StringIO()):
+        missing, cmake = _missing_prerequisites()
+    print(json.dumps({
+        "schema": 1,
+        "python": sys.executable,
+        "cmake": cmake,
+        "missing": missing,
+        "remedies": {component: _platform_commands(component) for component in missing},
+        "build_probe": "not_run",
+        "build_probe_command": "python -m fullseye.sdk --doctor",
+    }, ensure_ascii=False))
     return 0
 
 
@@ -206,7 +235,11 @@ def main(argv: list[str] | None = None) -> int:
     group.add_argument("--includedir", action="store_true", help="print public header directory")
     group.add_argument("--python", action="store_true", help="print this Python executable")
     group.add_argument("--doctor", action="store_true", help="check and build the C++ consumer probe")
+    parser.add_argument("--json", action="store_true",
+                        help="with --doctor: print the prerequisite check as JSON and skip the build probe")
     args = parser.parse_args(argv)
+    if args.json and not args.doctor:
+        parser.error("--json is only valid with --doctor")
     if args.cmakedir:
         print(_cmake_dir())
     elif args.includedir:
@@ -214,7 +247,7 @@ def main(argv: list[str] | None = None) -> int:
     elif args.python:
         print(sys.executable)
     else:
-        return _doctor()
+        return _doctor_json() if args.json else _doctor()
     return 0
 
 

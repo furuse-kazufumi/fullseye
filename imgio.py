@@ -783,6 +783,8 @@ def save(path: str, arr, depth=None) -> None:
 
 
 _JPEG_MAGIC = b"\xff\xd8\xff"
+#: 切れた JPEG の EOI を探す末尾 byte 数。Tail size used for the JPEG EOI fallback check.
+_JPEG_TAIL_BYTES = 4096
 
 
 def _check_jpeg_complete(path: str) -> None:
@@ -809,7 +811,7 @@ def _check_jpeg_complete(path: str) -> None:
             if not head.startswith(_JPEG_MAGIC):
                 return
             fh.seek(0, 2)
-            fh.seek(max(0, fh.tell() - 4096))
+            fh.seek(max(0, fh.tell() - _JPEG_TAIL_BYTES))
             tail = fh.read()
     except OSError:
         return
@@ -860,6 +862,49 @@ def _to01_by_depth(im):
         lo, hi = float(info.min), float(info.max)
         return (a.astype(np.float64) - lo) / (hi - lo)
     return np.clip(a.astype(np.float64), 0.0, 1.0)
+
+
+def _load_bytes(data: bytes, color: bool = False, source: str = "<confirmed input>"):
+    """同じ byte 列を再度ファイルへ触れず画像へ復号する。Decode in-memory image bytes.
+
+    This is the consent path used by Studio: the caller hashes and passes the
+    very same immutable bytes, closing the hash-then-reopen TOCTOU window. Common
+    PNG/JPEG/BMP/TIFF data is decoded by OpenCV, with Pillow as the fallback.
+    """
+    import io
+
+    if not isinstance(data, bytes):
+        raise TypeError("_load_bytes: data must be bytes, got %r" % (type(data).__name__,))
+    if data.startswith(_JPEG_MAGIC):
+        try:
+            from PIL import Image
+        except Exception:  # pragma: no cover - Pillow absent
+            if b"\xff\xd9" not in data[-_JPEG_TAIL_BYTES:]:
+                raise ValueError("cannot decode image: %s (truncated JPEG: no EOI marker)" % source)
+        else:
+            try:
+                with Image.open(io.BytesIO(data)) as check:
+                    check.draft(None, (max(1, check.width // 8), max(1, check.height // 8)))
+                    check.load()
+            except OSError as exc:
+                raise ValueError("cannot decode image: %s (truncated or corrupt JPEG: %s)"
+                                 % (source, exc)) from exc
+    cv2 = _cv2()
+    if cv2 is not None:
+        flag = (cv2.IMREAD_COLOR if color else cv2.IMREAD_GRAYSCALE) | cv2.IMREAD_ANYDEPTH
+        buf = np.frombuffer(data, dtype=np.uint8)
+        im = cv2.imdecode(buf, flag) if buf.size else None
+        if im is not None:
+            if color:
+                im = im[:, :, ::-1]
+            return _to01_by_depth(im)
+    try:
+        from PIL import Image, ImageOps
+        im = ImageOps.exif_transpose(Image.open(io.BytesIO(data)))
+        im = im.convert("RGB") if color else im.convert("L")
+        return np.asarray(im, np.float64) / 255.0
+    except Exception as exc:
+        raise ValueError("cannot decode image bytes: %s (%s)" % (source, exc)) from exc
 
 
 def _load_via_fallback(path: str, color: bool):

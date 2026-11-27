@@ -50,7 +50,12 @@ def test_smoke_run_measures_every_op(smoke_report):
 
 
 def test_smoke_run_is_fast_enough_for_ci(smoke_report):
-    """< 5 s。遅くなったら harness が重くなった合図(op が遅いのとは別問題)。"""
+    """< 5 s。遅くなったら harness が重くなった合図(op が遅いのとは別問題)。
+
+    速さの判定なので、カバレッジなど外のトレーサの下では skip し、--cov 無しの CI のジョブ untraced で測る
+    (2026-11-23、full suite の --cov の下で 5.21 s)。"""
+    import studio_timingkit as timing
+    timing.requires_no_external_tracer()
     assert smoke_report["_wall_s"] < 5.0, "smoke took %.2f s" % smoke_report["_wall_s"]
 
 

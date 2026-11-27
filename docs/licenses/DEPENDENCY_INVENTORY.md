@@ -52,6 +52,7 @@ The package wheel does not vendor these distributions: pip installs them into th
 | pytest-timeout | dev | MIT | permissive | pytest_timeout-*.dist-info/licenses/LICENSE | Development-only test tool; not bundled. No additional condition from Fullseye's commercial license. |
 | pytest-xdist | dev | MIT | permissive | pytest_xdist-*.dist-info/licenses/LICENSE | Development-only test tool; not bundled. No additional condition from Fullseye's commercial license. |
 | pywavelets | all, all-cpu, wavelets | MIT AND BSD-3-Clause | permissive | pywavelets-*.dist-info/licenses/LICENSE, pywavelets-*.dist-info/licenses/licenses_bundled/LICENSE_numpy.txt | Optional wavelet backend; installed by pip, not bundled. No additional condition from Fullseye's commercial license. |
+| pyyaml | yaml | MIT | permissive | PyYAML-*.dist-info/LICENSE | Optional YAML parameter-bundle reader; installed by pip, not bundled. No additional condition from Fullseye's commercial license. |
 | ruff | dev | MIT | permissive | ruff-*.dist-info/licenses/LICENSE | Development-only lint tool; not bundled. No additional condition from Fullseye's commercial license. |
 | scikit-image | default | BSD-3-Clause | permissive | scikit_image-*.dist-info/LICENSE.txt | Optional backend. Four sample images copied into studio_assets retain its BSD notice. No additional condition from Fullseye's commercial license. |
 | scipy | default | BSD-3-Clause | permissive | scipy-*.dist-info/LICENSE.txt | Core runtime dependency; installed by pip, not copied into the Fullseye wheel. No additional condition from Fullseye's commercial license. |
@@ -72,7 +73,7 @@ The package wheel does not vendor these distributions: pip installs them into th
 
 ## Transitive resolution snapshot
 
-This is a measured Windows resolver snapshot, captured with `py -3.11 -m pip install --dry-run --ignore-installed --report <file> .[all-extras]` on Python 3.11 / win32. It contains 134 distributions: permissive 123, strong-copyleft 1, weak-copyleft 10. It is an audit snapshot rather than a lock file; regenerate and review it when dependency ranges change.
+This is a measured Windows resolver snapshot, captured with `py -3.11 -m pip install --dry-run --ignore-installed --report <file> .[all,dev,export-verify]` on Python 3.11 / win32. It contains 129 distributions: permissive 122, strong-copyleft 1, weak-copyleft 6. It is an audit snapshot rather than a lock file; regenerate and review it when dependency ranges change.
 
 | Distribution | resolved version | PyPI metadata licence evidence | class | metadata licence files |
 |---|---|---|---|---|
@@ -88,7 +89,6 @@ This is a measured Windows resolver snapshot, captured with `py -3.11 -m pip ins
 | certifi | 2026.11.20 | MPL-2.0 | weak-copyleft | LICENSE |
 | cffi | 2.1.1 | MIT-0 | permissive | LICENSE |
 | charset-normalizer | 3.5.3 | MIT | permissive | LICENSE |
-| cmake | 4.4.5 | Apache 2.0 | permissive | — |
 | colorama | 0.4.6 | License :: OSI Approved :: BSD License | permissive | LICENSE.txt |
 | contourpy | 1.3.3 | BSD 3-Clause License Copyright (c) 2021-2025, ContourPy Developers. All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 1. Re... | permissive | — |
 | coverage | 7.17.5 | Apache-2.0 | permissive | LICENSE.txt, NOTICE.txt |
@@ -105,9 +105,9 @@ This is a measured Windows resolver snapshot, captured with `py -3.11 -m pip ins
 | execnet | 2.1.2 | MIT | permissive | LICENSE |
 | filelock | 4.3.1 | MIT | permissive | LICENSE |
 | flatbuffers | 25.12.19 | Apache 2.0 | permissive | — |
-| fonttools | 4.68.0 | MIT | permissive | LICENSE, LICENSE.external |
+| fonttools | 4.69.1 | MIT | permissive | LICENSE, LICENSE.external |
 | fsspec | 2026.9.0 | BSD-3-Clause | permissive | LICENSE |
-| fullseye | 1.1.1 | Apache-2.0 | permissive | AUTHORS, LICENSE, NOTICE |
+| fullseye | 1.2.0 | Apache-2.0 | permissive | AUTHORS, LICENSE, NOTICE |
 | hypothesis | 6.170.17 | MPL-2.0 | weak-copyleft | LICENSE.txt |
 | idna | 3.20 | BSD-3-Clause | permissive | LICENSE.md |
 | ImageIO | 2.38.2 | BSD-2-Clause | permissive | LICENSE |
@@ -168,11 +168,7 @@ This is a measured Windows resolver snapshot, captured with `py -3.11 -m pip ins
 | pypcd4 | 1.5.1 | BSD 3-Clause License Copyright (c) 2018, Daniel Maturana Copyright (c) 2023-present, MAP IV, Inc. All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the follo... | permissive | LICENSE.txt |
 | pyquaternion | 0.9.9 | MIT | permissive | — |
 | pyserial | 3.5 | BSD | permissive | — |
-| PySide6 | 6.12.0 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | weak-copyleft | LicenseRef-Qt-Commercial.txt |
-| PySide6_Addons | 6.12.0 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | weak-copyleft | LicenseRef-Qt-Commercial.txt |
-| PySide6_Essentials | 6.12.0 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | weak-copyleft | LicenseRef-Qt-Commercial.txt |
-| PySide6_Pdf | 6.12.0.140 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | weak-copyleft | LicenseRef-Qt-Commercial.txt |
-| PySide6_WebEngine | 6.12.0.140 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | weak-copyleft | LicenseRef-Qt-Commercial.txt |
+| PySide6_Essentials | 6.11.3 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | weak-copyleft | LicenseRef-Qt-Commercial.txt |
 | pytest | 9.2.0 | MIT | permissive | LICENSE |
 | pytest-cov | 7.1.0 | MIT | permissive | AUTHORS.rst, LICENSE |
 | pytest-randomly | 5.1.0 | MIT | permissive | LICENSE |
@@ -190,7 +186,7 @@ This is a measured Windows resolver snapshot, captured with `py -3.11 -m pip ins
 | scikit-image | 0.26.0 | Files: * Copyright: 2009-2022 the scikit-image team License: BSD-3-Clause Files: doc/source/themes/scikit-image/layout.html Copyright: 2007-2010 the Sphinx team License: BSD-3-Clause Files: skimage/feature/_canny.py skimage/filters/edges... | permissive | — |
 | scipy | 1.17.1 | Copyright (c) 2001-2002 Enthought, Inc. 2003, SciPy Developers. All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 1. Redist... | permissive | — |
 | setuptools | 84.2.1 | MIT | permissive | LICENSE |
-| shiboken6 | 6.12.0 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | weak-copyleft | LicenseRef-Qt-Commercial.txt |
+| shiboken6 | 6.11.3 | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only | weak-copyleft | LicenseRef-Qt-Commercial.txt |
 | simpleitk | 2.5.8 | Apache-2.0 | permissive | LICENSE, NOTICE |
 | sortedcontainers | 2.4.0 | Apache 2.0 | permissive | — |
 | sounddevice | 0.5.6 | MIT | permissive | LICENSE |

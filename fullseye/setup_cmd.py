@@ -50,6 +50,9 @@ PROBES = [
 ]
 # importlib.metadata で取れないとき(checkout 直読みなど)の代替。
 _FALLBACK_REQ = {
+    # gui is an empty compatibility extra, but keep the standard requirement here
+    # so checkout-side diagnostics and regression tests share one exact constraint.
+    "gui": ["PySide6-Essentials>=6.5,!=6.12.0"],
     "opencv": ["opencv-python>=4.8.1.78"],
     "wavelets": ["PyWavelets>=1.4"],
     "gpu": ["torch>=2.13", "kornia>=0.9", "cupy-cuda12x>=14; platform_system != 'Darwin'"],

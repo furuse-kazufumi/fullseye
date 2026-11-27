@@ -1,0 +1,201 @@
+{
+ "_note": "studio_editops (box selection and line operations) UI strings. English is the key; ja / zh / tw / ko / de. Generated together with studio_editops.ui_strings().",
+ "strings": {
+  "Extend box selection up": {
+   "ja": "矩形選択を上へ広げる",
+   "zh": "向上扩展矩形选择",
+   "tw": "向上擴展矩形選取",
+   "ko": "상자 선택을 위로 확장",
+   "de": "Blockauswahl nach oben erweitern"
+  },
+  "Extend box selection down": {
+   "ja": "矩形選択を下へ広げる",
+   "zh": "向下扩展矩形选择",
+   "tw": "向下擴展矩形選取",
+   "ko": "상자 선택을 아래로 확장",
+   "de": "Blockauswahl nach unten erweitern"
+  },
+  "Extend box selection left": {
+   "ja": "矩形選択を左へ広げる",
+   "zh": "向左扩展矩形选择",
+   "tw": "向左擴展矩形選取",
+   "ko": "상자 선택을 왼쪽으로 확장",
+   "de": "Blockauswahl nach links erweitern"
+  },
+  "Extend box selection right": {
+   "ja": "矩形選択を右へ広げる",
+   "zh": "向右扩展矩形选择",
+   "tw": "向右擴展矩形選取",
+   "ko": "상자 선택을 오른쪽으로 확장",
+   "de": "Blockauswahl nach rechts erweitern"
+  },
+  "Add next occurrence to the selection": {
+   "ja": "次の一致を選択に足す",
+   "zh": "将下一个匹配项加入选择",
+   "tw": "將下一個相符項加入選取",
+   "ko": "다음 일치 항목을 선택에 추가",
+   "de": "Nächstes Vorkommen zur Auswahl hinzufügen"
+  },
+  "Cancel box selection": {
+   "ja": "矩形選択をやめる",
+   "zh": "取消矩形选择",
+   "tw": "取消矩形選取",
+   "ko": "상자 선택 취소",
+   "de": "Blockauswahl aufheben"
+  },
+  "Duplicate line": {
+   "ja": "行を複製",
+   "zh": "复制当前行",
+   "tw": "複製目前行",
+   "ko": "줄 복제",
+   "de": "Zeile duplizieren"
+  },
+  "Move line up": {
+   "ja": "行を上へ移動",
+   "zh": "向上移动行",
+   "tw": "向上移動行",
+   "ko": "줄을 위로 이동",
+   "de": "Zeile nach oben verschieben"
+  },
+  "Move line down": {
+   "ja": "行を下へ移動",
+   "zh": "向下移动行",
+   "tw": "向下移動行",
+   "ko": "줄을 아래로 이동",
+   "de": "Zeile nach unten verschieben"
+  },
+  "Delete line": {
+   "ja": "行を削除",
+   "zh": "删除行",
+   "tw": "刪除行",
+   "ko": "줄 삭제",
+   "de": "Zeile löschen"
+  },
+  "Toggle line comment": {
+   "ja": "行コメントの切り替え",
+   "zh": "切换行注释",
+   "tw": "切換行註解",
+   "ko": "줄 주석 전환",
+   "de": "Zeilenkommentar umschalten"
+  },
+  "Indent": {
+   "ja": "字下げ",
+   "zh": "增加缩进",
+   "tw": "增加縮排",
+   "ko": "들여쓰기",
+   "de": "Einrücken"
+  },
+  "Outdent": {
+   "ja": "字下げを戻す",
+   "zh": "减少缩进",
+   "tw": "減少縮排",
+   "ko": "내어쓰기",
+   "de": "Ausrücken"
+  },
+  "Go to matching bracket": {
+   "ja": "対応する括弧へ移動",
+   "zh": "转到匹配的括号",
+   "tw": "移至對應的括號",
+   "ko": "짝이 맞는 괄호로 이동",
+   "de": "Zur zugehörigen Klammer springen"
+  },
+  "Trim trailing whitespace": {
+   "ja": "行末の空白を削除",
+   "zh": "删除行尾空白",
+   "tw": "刪除行尾空白",
+   "ko": "줄 끝 공백 제거",
+   "de": "Leerzeichen am Zeilenende entfernen"
+  },
+  "Box selection": {
+   "ja": "矩形選択",
+   "zh": "矩形选择",
+   "tw": "矩形選取",
+   "ko": "상자 선택",
+   "de": "Blockauswahl"
+  },
+  "Line operations": {
+   "ja": "行の操作",
+   "zh": "行操作",
+   "tw": "行操作",
+   "ko": "줄 작업",
+   "de": "Zeilenoperationen"
+  },
+  "Editor display": {
+   "ja": "エディタの表示",
+   "zh": "编辑器显示",
+   "tw": "編輯器顯示",
+   "ko": "편집기 표시",
+   "de": "Editoranzeige"
+  },
+  "How to use box selection…": {
+   "ja": "矩形選択の使い方…",
+   "zh": "矩形选择的用法…",
+   "tw": "矩形選取的用法…",
+   "ko": "상자 선택 사용법…",
+   "de": "So funktioniert die Blockauswahl…"
+  },
+  "Column rulers at 79 and 99": {
+   "ja": "79 桁と 99 桁の目安の線",
+   "zh": "第 79 列和第 99 列的参考线",
+   "tw": "第 79 欄與第 99 欄的參考線",
+   "ko": "79열과 99열 안내선",
+   "de": "Hilfslinien bei Spalte 79 und 99"
+  },
+  "Trim trailing whitespace on save": {
+   "ja": "保存の時に行末の空白を削除",
+   "zh": "保存时删除行尾空白",
+   "tw": "儲存時刪除行尾空白",
+   "ko": "저장할 때 줄 끝 공백 제거",
+   "de": "Beim Speichern Leerzeichen am Zeilenende entfernen"
+  },
+  "no matching bracket": {
+   "ja": "対応する括弧がありません",
+   "zh": "没有匹配的括号",
+   "tw": "沒有對應的括號",
+   "ko": "짝이 맞는 괄호가 없습니다",
+   "de": "keine zugehörige Klammer"
+  },
+  "no other occurrence": {
+   "ja": "ほかに一致がありません",
+   "zh": "没有其他匹配项",
+   "tw": "沒有其他相符項",
+   "ko": "다른 일치 항목이 없습니다",
+   "de": "kein weiteres Vorkommen"
+  },
+  "%d lines trimmed": {
+   "ja": "%d 行の行末の空白を削除しました",
+   "zh": "已删除 %d 行的行尾空白",
+   "tw": "已刪除 %d 行的行尾空白",
+   "ko": "%d개 줄의 끝 공백을 제거했습니다",
+   "de": "%d Zeilen bereinigt"
+  },
+  "box: %d lines": {
+   "ja": "矩形選択: %d 行",
+   "zh": "矩形选择: %d 行",
+   "tw": "矩形選取: %d 行",
+   "ko": "상자 선택: %d줄",
+   "de": "Blockauswahl: %d Zeilen"
+  },
+  "Box (column) selection\n\nAlt + drag: select a box\nAlt + Shift + arrow keys: grow or shrink the box\nAlt + Shift + click: a box from the cursor to the click\nCtrl + Alt + Up / Down: add a cursor above / below\nTyping, Delete, Backspace, Tab: applied to every line of the box\nCtrl + C / X / V: copy, cut and paste row by row\nAlt + Shift + . : add the next occurrence of the selected word\nEsc or a plain click: back to one cursor\n\nColumns are counted as they look: a full-width character is 2 columns and a tab runs to the next tab stop. Lines that do not reach the left edge of the box are left out.": {
+   "ja": "矩形選択(箱形の選択)\n\nAlt + ドラッグ: 箱で選ぶ\nAlt + Shift + 矢印キー: 箱を広げる・縮める\nAlt + Shift + クリック: カーソルからクリックした所までを箱にする\nCtrl + Alt + ↑ / ↓: 上・下にカーソルを足す\n文字を打つ・Delete・Backspace・Tab: 箱の全部の行に効く\nCtrl + C / X / V: 行ごとにコピー・切り取り・貼り付け\nAlt + Shift + . : 選んでいる語の次の一致を選択に足す\nEsc か普通のクリック: カーソル 1 つへ戻る\n\n桁は見た目で数えます。全角の文字は 2 桁、タブは次のタブ位置までです。箱の左端に届かない行は選択に入りません。",
+   "zh": "矩形(列)选择\n\nAlt + 拖动: 选择一个矩形\nAlt + Shift + 方向键: 扩大或缩小矩形\nAlt + Shift + 单击: 从光标到单击位置的矩形\nCtrl + Alt + ↑ / ↓: 在上方 / 下方添加光标\n输入、Delete、Backspace、Tab: 作用于矩形的每一行\nCtrl + C / X / V: 按行复制、剪切、粘贴\nAlt + Shift + . : 将所选单词的下一个匹配项加入选择\nEsc 或普通单击: 回到单个光标\n\n列按显示宽度计算: 全角字符占 2 列,制表符延伸到下一个制表位。到不了矩形左边缘的行不会被选中。",
+   "tw": "矩形(欄)選取\n\nAlt + 拖曳: 選取一個矩形\nAlt + Shift + 方向鍵: 擴大或縮小矩形\nAlt + Shift + 按一下: 從游標到按下位置的矩形\nCtrl + Alt + ↑ / ↓: 在上方 / 下方加入游標\n輸入、Delete、Backspace、Tab: 作用於矩形的每一行\nCtrl + C / X / V: 逐行複製、剪下、貼上\nAlt + Shift + . : 將所選字詞的下一個相符項加入選取\nEsc 或一般的按一下: 回到單一游標\n\n欄位依顯示寬度計算: 全形字元佔 2 欄,定位字元延伸到下一個定位點。到不了矩形左邊緣的行不會被選取。",
+   "ko": "상자(열) 선택\n\nAlt + 끌기: 상자로 선택\nAlt + Shift + 화살표 키: 상자를 넓히거나 좁히기\nAlt + Shift + 클릭: 커서에서 클릭한 곳까지 상자로 선택\nCtrl + Alt + ↑ / ↓: 위 / 아래에 커서 추가\n입력, Delete, Backspace, Tab: 상자의 모든 줄에 적용\nCtrl + C / X / V: 줄 단위로 복사, 잘라내기, 붙여넣기\nAlt + Shift + . : 선택한 단어의 다음 일치 항목을 선택에 추가\nEsc 또는 일반 클릭: 커서 하나로 돌아가기\n\n열은 보이는 폭으로 셉니다. 전각 문자는 2열, 탭은 다음 탭 위치까지입니다. 상자의 왼쪽 끝에 닿지 않는 줄은 선택되지 않습니다.",
+   "de": "Blockauswahl (Spaltenauswahl)\n\nAlt + Ziehen: einen Block auswählen\nAlt + Umschalt + Pfeiltasten: Block vergrößern oder verkleinern\nAlt + Umschalt + Klick: Block vom Cursor bis zum Klick\nStrg + Alt + Auf / Ab: Cursor darüber / darunter hinzufügen\nTippen, Entf, Rücktaste, Tab: wirkt auf jede Zeile des Blocks\nStrg + C / X / V: zeilenweise kopieren, ausschneiden, einfügen\nAlt + Umschalt + . : nächstes Vorkommen des gewählten Worts hinzufügen\nEsc oder ein normaler Klick: zurück zu einem Cursor\n\nSpalten zählen nach der Darstellung: ein Zeichen voller Breite belegt 2 Spalten, ein Tabulator reicht bis zum nächsten Tabstopp. Zeilen, die den linken Rand des Blocks nicht erreichen, bleiben außen vor."
+  },
+  "Some keys were changed in the keyboard settings:": {
+   "ja": "キーの設定で変えたキー:",
+   "zh": "在键盘设置中更改过的按键:",
+   "tw": "在鍵盤設定中變更過的按鍵:",
+   "ko": "키보드 설정에서 바꾼 키:",
+   "de": "In den Tastenkürzel-Einstellungen geänderte Tasten:"
+  },
+  "Close": {
+   "ja": "閉じる",
+   "zh": "关闭",
+   "tw": "關閉",
+   "ko": "닫기",
+   "de": "Schließen"
+  }
+ }
+}

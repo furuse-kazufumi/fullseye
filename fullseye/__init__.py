@@ -664,8 +664,11 @@ with warnings.catch_warnings():
     from api import (  # noqa: E402,F401
         register_pointclouds, align_cad_to_scan, measure_plane, inspect_roundness, match_sdf, register_auto)
     from engine import (  # noqa: E402,F401  (pipeline runtime)
-        FullseyeEngine, diagnose_stages, pipeline_states, load_pipeline, load_pipeline_text, pipeline_interface,
+        FullseyeEngine, PipelineFile, diagnose_stages, pipeline_states,
+        load_pipeline, load_pipeline_text, pipeline_interface, pipeline_from_dict,
     )
+    # 定義ファイル(JSON)の種類に依らない公開入口。Public definition-file I/O.
+    from defs_io import read_def, write_def, DefinitionError  # noqa: E402,F401
     # engine-layer result state + memory-bounded stage cache (Qt-free; the browser Studio consumes these)
     from studio_result import (  # noqa: E402,F401
         StageCache, assess_validity, input_reference, resolve_input_ref, file_sha256, cache_summary_text,
@@ -1034,6 +1037,12 @@ from fullseye.fixture import (  # noqa: E402,F401
 )
 # 意味で op を引く(6 言語の要約・BM25、索引は fullseye/data/OP_SEARCH.json —— RAG の入口、2026-10-07)。
 from fullseye.opsearch import search_ops  # noqa: E402,F401
+# パラメータの束(2026-11-12): JSON / TOML / YAML から読み、op の引数だけを取り出す公開層。
+# Parameter bundles are facade I/O utilities, not registry operators.
+from fullseye.parambundle import (  # noqa: E402,F401
+    ParamBundle, load_params, save_params, params_compare, param_grid, param_zip, sweep, run_params,
+    ParamError, MissingParam,
+)
 from fslib import connection_opts  # noqa: E402,F401
 from execution_record import (  # noqa: E402,F401  (規制実行型 / regulated execution types)
     ArtifactRef, AuditCheckpoint, AuditIntegrityError, AuditSink, AuditVerification,
@@ -1062,7 +1071,8 @@ __all__ = [
     "op_find", "op_run", "op_path", "op_assist", "op_presets", "op_producers",
     "op_consumers", "op_accepts", "op_sorts",
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories", "knob_summary",
-    "load_pipeline", "load_pipeline_text", "pipeline_interface",
+    "load_pipeline", "load_pipeline_text", "pipeline_interface", "PipelineFile", "pipeline_from_dict",
+    "read_def", "write_def", "DefinitionError",
     "ExecutionContext", "ArtifactRef", "SoftwareInventory", "ExecutionRecord",
     "ValidationProfile", "AuditSink", "AuditCheckpoint", "AuditVerification",
     "ValidationProfileError", "SoftwareProvenanceError", "AuditWriteError", "AuditIntegrityError",
@@ -1469,6 +1479,8 @@ __all__ = [
     "glyph_correct_spec", "glyph_find_plate", "glyph_rewrite_line",
     "glyph_find_text_lines", "glyph_make_spec",
     "search_ops",
+    "ParamBundle", "load_params", "save_params", "params_compare", "param_grid", "param_zip", "sweep", "run_params",
+    "ParamError", "MissingParam",
     "JSON_SORTS", "to_jsonable", "to_json", "from_jsonable", "from_json",
     "save_json", "load_json", "to_json_lines", "from_json_lines",
     "is_envelope", "as_value", "apply_json",

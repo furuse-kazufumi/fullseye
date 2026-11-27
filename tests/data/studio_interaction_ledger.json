@@ -1,0 +1,2969 @@
+{
+ "_note": "Studio 1.2.0 common gates: one-way ledger (more than this fails; fixed items are removed with --shrink). Written by tools/studio_interaction_ledger.py --create on the integration tree after step 2 (STUDIO_INTERACTION_RULES 5.0). D numbers are given from the kind of place, as a guide.",
+ "gates": {
+  "G09(a)": {
+   "title": "confirmation boxes / input windows built directly (outside confirm_action / ask_text)",
+   "owners": "D49 D50 D80 D88 D106 D107",
+   "count": 15,
+   "examined_at_creation": 23318,
+   "items": [
+    {
+     "d": "D106",
+     "where": "studio.py::_default_close_confirm",
+     "text": "QMessageBox #1",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D106",
+     "where": "studio.py::_default_confirm",
+     "text": "QMessageBox #1"
+    },
+    {
+     "d": "D106",
+     "where": "studio.py::_default_confirm_action",
+     "text": "QMessageBox #1"
+    },
+    {
+     "d": "D106",
+     "where": "studio.py::_default_error",
+     "text": "QMessageBox.critical #1"
+    },
+    {
+     "d": "D107",
+     "where": "studio.py::build_window._ask_text",
+     "text": "QInputDialog.getText #1"
+    },
+    {
+     "d": "D107",
+     "where": "studio.py::build_window._prompt_save_layout",
+     "text": "QInputDialog.getText #1"
+    },
+    {
+     "d": "D106",
+     "where": "studio.py::build_window.open_system_settings",
+     "text": "QDialogButtonBox #1"
+    },
+    {
+     "d": "D106",
+     "where": "studio.py::build_window.show_batch_dialog.show_failures",
+     "text": "QMessageBox.warning #1"
+    },
+    {
+     "d": "D106",
+     "where": "studio.py::build_window.show_guide",
+     "text": "QMessageBox.information #1"
+    },
+    {
+     "d": "D106",
+     "where": "studio_editops_qt.py::EditOps.show_howto",
+     "text": "QMessageBox #1",
+     "reason": "merged with [キー] feat/studio-keymap-2026-11-13: the rectangular-selection part's own boxes (studio_editops_qt), not yet on confirm_action (B4 D106 / 1.3 parts)"
+    },
+    {
+     "d": "D106",
+     "where": "studio_keymap_qt.py::KeyboardDialog._confirm_box",
+     "text": "QMessageBox #1",
+     "reason": "merged with [キー] feat/studio-keymap-2026-11-13: the rectangular-selection part's own boxes (studio_editops_qt), not yet on confirm_action (B4 D106 / 1.3 parts)"
+    },
+    {
+     "d": "D106",
+     "where": "studio_keymap_qt.py::KeyboardDialog._inform",
+     "text": "QMessageBox.warning #1",
+     "reason": "merged with [キー] feat/studio-keymap-2026-11-13: the rectangular-selection part's own boxes (studio_editops_qt), not yet on confirm_action (B4 D106 / 1.3 parts)"
+    },
+    {
+     "d": "D107",
+     "where": "studio_pymode.py::_default_condition",
+     "text": "QInputDialog.getText #1"
+    },
+    {
+     "d": "D50",
+     "where": "studio_pymode.py::_default_save",
+     "text": "QMessageBox.question #1"
+    },
+    {
+     "d": "D49",
+     "where": "studio_pymode.py::_default_trust",
+     "text": "QMessageBox #1"
+    }
+   ]
+  },
+  "G09(b')": {
+   "title": "confirmation kinds that the making function does not build with default = Esc = Cancel, no standard buttons and translated words",
+   "owners": "D49 D50 D80 D106 D107",
+   "count": 5,
+   "examined_at_creation": 5,
+   "items": [
+    {
+     "d": "D106",
+     "where": "studio.confirm_action kind=changed",
+     "text": "no making function"
+    },
+    {
+     "d": "D106",
+     "where": "studio.confirm_action kind=run",
+     "text": "no making function"
+    },
+    {
+     "d": "D107",
+     "where": "studio.confirm_action kind=text",
+     "text": "no making function"
+    },
+    {
+     "d": "D49",
+     "where": "studio.confirm_action kind=trust",
+     "text": "no making function"
+    },
+    {
+     "d": "D50",
+     "where": "studio.confirm_action kind=unsaved",
+     "text": "no making function"
+    }
+   ]
+  },
+  "G13(b')": {
+   "title": "keys of the window bound to two commands of different meaning",
+   "owners": "D11 D127 D94",
+   "count": 0,
+   "examined_at_creation": 70,
+   "items": []
+  },
+  "G13(c)": {
+   "title": "menu-bar mnemonics used twice in one language (7 languages)",
+   "owners": "D13",
+   "count": 0,
+   "examined_at_creation": 49,
+   "items": []
+  },
+  "G15(a')": {
+   "title": "text shown untranslated in a non-English UI language (6 languages, matched against the source)",
+   "owners": "D14 D15 D30 D35 D107 D108 D119",
+   "count": 545,
+   "examined_at_creation": 2569,
+   "items": [
+    {
+     "d": "D15",
+     "where": "de button",
+     "text": "Apply to folder…"
+    },
+    {
+     "d": "D15",
+     "where": "de button",
+     "text": "Export…"
+    },
+    {
+     "d": "D15",
+     "where": "de button",
+     "text": "Open image…"
+    },
+    {
+     "d": "D15",
+     "where": "de button",
+     "text": "Run all"
+    },
+    {
+     "d": "D15",
+     "where": "de button",
+     "text": "Synthetic demo"
+    },
+    {
+     "d": "D35",
+     "where": "de dock title",
+     "text": "A / B"
+    },
+    {
+     "d": "D35",
+     "where": "de dock title",
+     "text": "Display · Analysis"
+    },
+    {
+     "d": "D35",
+     "where": "de dock title",
+     "text": "Operators"
+    },
+    {
+     "d": "D35",
+     "where": "de dock title",
+     "text": "Pipeline · Parameters"
+    },
+    {
+     "d": "D35",
+     "where": "de dock title",
+     "text": "Variables & Objects",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D35",
+     "where": "de group title",
+     "text": "ANALYSIS"
+    },
+    {
+     "d": "D35",
+     "where": "de group title",
+     "text": "DISPLAY && PERCEPTION"
+    },
+    {
+     "d": "D35",
+     "where": "de group title",
+     "text": "EXPORT && I/O"
+    },
+    {
+     "d": "D35",
+     "where": "de group title",
+     "text": "PIPELINE"
+    },
+    {
+     "d": "D35",
+     "where": "de group title",
+     "text": "SAMPLE PIPELINES"
+    },
+    {
+     "d": "D35",
+     "where": "de group title",
+     "text": "SELECTED STAGE · KNOBS"
+    },
+    {
+     "d": "D15",
+     "where": "de label",
+     "text": "1. Open a sample: File ▸ Sample images"
+    },
+    {
+     "d": "D15",
+     "where": "de label",
+     "text": "2. Open Operators from the panel bar on the left, select an operator and press +"
+    },
+    {
+     "d": "D15",
+     "where": "de label",
+     "text": "3. Press ▶▶ to run"
+    },
+    {
+     "d": "D15",
+     "where": "de label",
+     "text": "First steps"
+    },
+    {
+     "d": "D15",
+     "where": "de label",
+     "text": "hover over the image for pixel coordinates + value"
+    },
+    {
+     "d": "D15",
+     "where": "de label",
+     "text": "ready"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "(no recent files)"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "3D surface"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "3D viewer…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "A / B"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "About Fullseye Studio"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Actual size (1:1)"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "All off  (dev_update_off)"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "All on  (dev_update_on)"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Apply to folder…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Balanced (default)"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Blue"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Clear pipeline"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Code focus"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Color"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Command palette…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Compound eye → brain (connectome wave)…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Copy result image"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Cyan"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Detach graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Display mode"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Display updates"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Display · Analysis"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Duplicate stage"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Export…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Feature inspection…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Fill"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "First steps"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Fit to window"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Float all panels (multi-display)"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Focus operator search"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Graphics focus"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Graphics windows"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Green"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Help for the selected operator",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Image Viewer…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Keyboard shortcuts"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Magenta"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Margin (outline)"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Move stage down"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Move stage to bottom"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Move stage to top"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Move stage up"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Open Recent"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Open image…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Open pipeline…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Operator reference…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Operator timings"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Operators"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Orange"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Panels"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Pipeline · Parameters"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Program counter"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Quit"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Reattach graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Red"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Redo"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Region style"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Remove stage"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Reset to start"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Run all"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Sample images"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Save current layout as…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Save pipeline…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Save result…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Save view as shown…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Step forward"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Synthetic demo"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Undo"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Validate on holdout…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Variable window"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Variables && Objects"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Verify exported Python…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Video cube (space × time volume)…"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "White"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Yellow"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Zoom in"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "Zoom out"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "height (color)"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "region overlay"
+    },
+    {
+     "d": "D108",
+     "where": "de menu",
+     "text": "shaded relief"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Actual size 1:1 (Ctrl+Alt+1)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Fit to window (Ctrl+0)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Hide these steps. Help ▸ First steps shows them again"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Zoom in (Ctrl+=)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "de tooltip",
+     "text": "Zoom out (Ctrl+-)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D15",
+     "where": "hi button",
+     "text": "Apply to folder…"
+    },
+    {
+     "d": "D15",
+     "where": "hi button",
+     "text": "Export…"
+    },
+    {
+     "d": "D15",
+     "where": "hi button",
+     "text": "Open image…"
+    },
+    {
+     "d": "D15",
+     "where": "hi button",
+     "text": "Run all"
+    },
+    {
+     "d": "D15",
+     "where": "hi button",
+     "text": "Synthetic demo"
+    },
+    {
+     "d": "D35",
+     "where": "hi dock title",
+     "text": "A / B"
+    },
+    {
+     "d": "D35",
+     "where": "hi dock title",
+     "text": "Display · Analysis"
+    },
+    {
+     "d": "D35",
+     "where": "hi dock title",
+     "text": "Operators"
+    },
+    {
+     "d": "D35",
+     "where": "hi dock title",
+     "text": "Pipeline · Parameters"
+    },
+    {
+     "d": "D35",
+     "where": "hi dock title",
+     "text": "Variables & Objects",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D35",
+     "where": "hi group title",
+     "text": "ANALYSIS"
+    },
+    {
+     "d": "D35",
+     "where": "hi group title",
+     "text": "DISPLAY && PERCEPTION"
+    },
+    {
+     "d": "D35",
+     "where": "hi group title",
+     "text": "EXPORT && I/O"
+    },
+    {
+     "d": "D35",
+     "where": "hi group title",
+     "text": "PIPELINE"
+    },
+    {
+     "d": "D35",
+     "where": "hi group title",
+     "text": "SAMPLE PIPELINES"
+    },
+    {
+     "d": "D35",
+     "where": "hi group title",
+     "text": "SELECTED STAGE · KNOBS"
+    },
+    {
+     "d": "D15",
+     "where": "hi label",
+     "text": "1. Open a sample: File ▸ Sample images"
+    },
+    {
+     "d": "D15",
+     "where": "hi label",
+     "text": "2. Open Operators from the panel bar on the left, select an operator and press +"
+    },
+    {
+     "d": "D15",
+     "where": "hi label",
+     "text": "3. Press ▶▶ to run"
+    },
+    {
+     "d": "D15",
+     "where": "hi label",
+     "text": "First steps"
+    },
+    {
+     "d": "D15",
+     "where": "hi label",
+     "text": "hover over the image for pixel coordinates + value"
+    },
+    {
+     "d": "D15",
+     "where": "hi label",
+     "text": "ready"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "(no recent files)"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "3D surface"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "3D viewer…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "A / B"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "About Fullseye Studio"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Actual size (1:1)"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "All off  (dev_update_off)"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "All on  (dev_update_on)"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Apply to folder…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Balanced (default)"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Blue"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Clear pipeline"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Code focus"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Color"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Command palette…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Compound eye → brain (connectome wave)…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Copy result image"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Cyan"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Detach graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Display mode"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Display updates"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Display · Analysis"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Duplicate stage"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Export…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Feature inspection…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Fill"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "First steps"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Fit to window"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Float all panels (multi-display)"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Focus operator search"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Graphics focus"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Graphics windows"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Green"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Help for the selected operator",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Image Viewer…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Keyboard shortcuts"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Magenta"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Margin (outline)"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Move stage down"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Move stage to bottom"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Move stage to top"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Move stage up"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Open Recent"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Open image…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Open pipeline…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Operator reference…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Operator timings"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Operators"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Orange"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Panels"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Pipeline · Parameters"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Program counter"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Quit"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Reattach graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Red"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Redo"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Region style"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Remove stage"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Reset to start"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Run all"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Sample images"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Save current layout as…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Save pipeline…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Save result…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Save view as shown…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Step forward"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Synthetic demo"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Undo"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Validate on holdout…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Variable window"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Variables && Objects"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Verify exported Python…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Video cube (space × time volume)…"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "White"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Yellow"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Zoom in"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "Zoom out"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "height (color)"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "region overlay"
+    },
+    {
+     "d": "D108",
+     "where": "hi menu",
+     "text": "shaded relief"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Actual size 1:1 (Ctrl+Alt+1)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Fit to window (Ctrl+0)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Hide these steps. Help ▸ First steps shows them again"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Zoom in (Ctrl+=)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "hi tooltip",
+     "text": "Zoom out (Ctrl+-)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D119",
+     "where": "hi window title",
+     "text": "untitled — Fullseye Studio - [Graphics 1]"
+    },
+    {
+     "d": "D119",
+     "where": "ja window title",
+     "text": "untitled — Fullseye Studio - [Graphics 1]"
+    },
+    {
+     "d": "D15",
+     "where": "ko button",
+     "text": "Apply to folder…"
+    },
+    {
+     "d": "D15",
+     "where": "ko button",
+     "text": "Export…"
+    },
+    {
+     "d": "D15",
+     "where": "ko button",
+     "text": "Open image…"
+    },
+    {
+     "d": "D15",
+     "where": "ko button",
+     "text": "Run all"
+    },
+    {
+     "d": "D15",
+     "where": "ko button",
+     "text": "Synthetic demo"
+    },
+    {
+     "d": "D35",
+     "where": "ko dock title",
+     "text": "A / B"
+    },
+    {
+     "d": "D35",
+     "where": "ko dock title",
+     "text": "Display · Analysis"
+    },
+    {
+     "d": "D35",
+     "where": "ko dock title",
+     "text": "Operators"
+    },
+    {
+     "d": "D35",
+     "where": "ko dock title",
+     "text": "Pipeline · Parameters"
+    },
+    {
+     "d": "D35",
+     "where": "ko dock title",
+     "text": "Variables & Objects",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D35",
+     "where": "ko group title",
+     "text": "ANALYSIS"
+    },
+    {
+     "d": "D35",
+     "where": "ko group title",
+     "text": "DISPLAY && PERCEPTION"
+    },
+    {
+     "d": "D35",
+     "where": "ko group title",
+     "text": "EXPORT && I/O"
+    },
+    {
+     "d": "D35",
+     "where": "ko group title",
+     "text": "PIPELINE"
+    },
+    {
+     "d": "D35",
+     "where": "ko group title",
+     "text": "SAMPLE PIPELINES"
+    },
+    {
+     "d": "D35",
+     "where": "ko group title",
+     "text": "SELECTED STAGE · KNOBS"
+    },
+    {
+     "d": "D15",
+     "where": "ko label",
+     "text": "1. Open a sample: File ▸ Sample images"
+    },
+    {
+     "d": "D15",
+     "where": "ko label",
+     "text": "2. Open Operators from the panel bar on the left, select an operator and press +"
+    },
+    {
+     "d": "D15",
+     "where": "ko label",
+     "text": "3. Press ▶▶ to run"
+    },
+    {
+     "d": "D15",
+     "where": "ko label",
+     "text": "First steps"
+    },
+    {
+     "d": "D15",
+     "where": "ko label",
+     "text": "hover over the image for pixel coordinates + value"
+    },
+    {
+     "d": "D15",
+     "where": "ko label",
+     "text": "ready"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "(no recent files)"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "3D surface"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "3D viewer…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "A / B"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "About Fullseye Studio"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Actual size (1:1)"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "All off  (dev_update_off)"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "All on  (dev_update_on)"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Apply to folder…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Balanced (default)"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Blue"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Clear pipeline"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Code focus"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Color"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Command palette…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Compound eye → brain (connectome wave)…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Copy result image"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Cyan"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Detach graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Display mode"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Display updates"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Display · Analysis"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Duplicate stage"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Export…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Feature inspection…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Fill"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "First steps"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Fit to window"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Float all panels (multi-display)"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Focus operator search"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Graphics focus"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Graphics windows"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Green"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Help for the selected operator",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Image Viewer…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Keyboard shortcuts"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Magenta"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Margin (outline)"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Move stage down"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Move stage to bottom"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Move stage to top"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Move stage up"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Open Recent"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Open image…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Open pipeline…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Operator reference…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Operator timings"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Operators"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Orange"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Panels"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Pipeline · Parameters"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Program counter"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Quit"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Reattach graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Red"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Redo"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Region style"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Remove stage"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Reset to start"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Run all"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Sample images"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Save current layout as…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Save pipeline…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Save result…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Save view as shown…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Step forward"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Synthetic demo"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Undo"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Validate on holdout…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Variable window"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Variables && Objects"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Verify exported Python…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Video cube (space × time volume)…"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "White"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Yellow"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Zoom in"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "Zoom out"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "height (color)"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "region overlay"
+    },
+    {
+     "d": "D108",
+     "where": "ko menu",
+     "text": "shaded relief"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Actual size 1:1 (Ctrl+Alt+1)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Fit to window (Ctrl+0)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Hide these steps. Help ▸ First steps shows them again"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Zoom in (Ctrl+=)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "ko tooltip",
+     "text": "Zoom out (Ctrl+-)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D119",
+     "where": "ko window title",
+     "text": "untitled — Fullseye Studio - [Graphics 1]"
+    },
+    {
+     "d": "D15",
+     "where": "tw button",
+     "text": "Apply to folder…"
+    },
+    {
+     "d": "D15",
+     "where": "tw button",
+     "text": "Export…"
+    },
+    {
+     "d": "D15",
+     "where": "tw button",
+     "text": "Open image…"
+    },
+    {
+     "d": "D15",
+     "where": "tw button",
+     "text": "Run all"
+    },
+    {
+     "d": "D15",
+     "where": "tw button",
+     "text": "Synthetic demo"
+    },
+    {
+     "d": "D35",
+     "where": "tw dock title",
+     "text": "A / B"
+    },
+    {
+     "d": "D35",
+     "where": "tw dock title",
+     "text": "Display · Analysis"
+    },
+    {
+     "d": "D35",
+     "where": "tw dock title",
+     "text": "Operators"
+    },
+    {
+     "d": "D35",
+     "where": "tw dock title",
+     "text": "Pipeline · Parameters"
+    },
+    {
+     "d": "D35",
+     "where": "tw dock title",
+     "text": "Variables & Objects",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D35",
+     "where": "tw group title",
+     "text": "ANALYSIS"
+    },
+    {
+     "d": "D35",
+     "where": "tw group title",
+     "text": "DISPLAY && PERCEPTION"
+    },
+    {
+     "d": "D35",
+     "where": "tw group title",
+     "text": "EXPORT && I/O"
+    },
+    {
+     "d": "D35",
+     "where": "tw group title",
+     "text": "PIPELINE"
+    },
+    {
+     "d": "D35",
+     "where": "tw group title",
+     "text": "SAMPLE PIPELINES"
+    },
+    {
+     "d": "D35",
+     "where": "tw group title",
+     "text": "SELECTED STAGE · KNOBS"
+    },
+    {
+     "d": "D15",
+     "where": "tw label",
+     "text": "1. Open a sample: File ▸ Sample images"
+    },
+    {
+     "d": "D15",
+     "where": "tw label",
+     "text": "2. Open Operators from the panel bar on the left, select an operator and press +"
+    },
+    {
+     "d": "D15",
+     "where": "tw label",
+     "text": "3. Press ▶▶ to run"
+    },
+    {
+     "d": "D15",
+     "where": "tw label",
+     "text": "First steps"
+    },
+    {
+     "d": "D15",
+     "where": "tw label",
+     "text": "hover over the image for pixel coordinates + value"
+    },
+    {
+     "d": "D15",
+     "where": "tw label",
+     "text": "ready"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "(no recent files)"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "3D surface"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "3D viewer…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "A / B"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "About Fullseye Studio"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Actual size (1:1)"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "All off  (dev_update_off)"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "All on  (dev_update_on)"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Apply to folder…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Balanced (default)"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Blue"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Clear pipeline"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Code focus"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Color"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Command palette…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Compound eye → brain (connectome wave)…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Copy result image"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Cyan"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Detach graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Display mode"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Display updates"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Display · Analysis"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Duplicate stage"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Export…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Feature inspection…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Fill"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "First steps"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Fit to window"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Float all panels (multi-display)"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Focus operator search"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Graphics focus"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Graphics windows"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Green"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Help for the selected operator",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Image Viewer…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Keyboard shortcuts"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Magenta"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Margin (outline)"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Move stage down"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Move stage to bottom"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Move stage to top"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Move stage up"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Open Recent"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Open image…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Open pipeline…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Operator reference…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Operator timings"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Operators"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Orange"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Panels"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Pipeline · Parameters"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Program counter"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Quit"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Reattach graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Red"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Redo"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Region style"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Remove stage"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Reset to start"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Run all"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Sample images"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Save current layout as…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Save pipeline…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Save result…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Save view as shown…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Step forward"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Synthetic demo"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Undo"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Validate on holdout…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Variable window"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Variables && Objects"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Verify exported Python…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Video cube (space × time volume)…"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "White"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Yellow"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Zoom in"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "Zoom out"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "height (color)"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "region overlay"
+    },
+    {
+     "d": "D108",
+     "where": "tw menu",
+     "text": "shaded relief"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Actual size 1:1 (Ctrl+Alt+1)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Fit to window (Ctrl+0)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Hide these steps. Help ▸ First steps shows them again"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Zoom in (Ctrl+=)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "tw tooltip",
+     "text": "Zoom out (Ctrl+-)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D119",
+     "where": "tw window title",
+     "text": "untitled — Fullseye Studio - [Graphics 1]"
+    },
+    {
+     "d": "D15",
+     "where": "zh button",
+     "text": "Apply to folder…"
+    },
+    {
+     "d": "D15",
+     "where": "zh button",
+     "text": "Export…"
+    },
+    {
+     "d": "D15",
+     "where": "zh button",
+     "text": "Open image…"
+    },
+    {
+     "d": "D15",
+     "where": "zh button",
+     "text": "Run all"
+    },
+    {
+     "d": "D15",
+     "where": "zh button",
+     "text": "Synthetic demo"
+    },
+    {
+     "d": "D35",
+     "where": "zh dock title",
+     "text": "A / B"
+    },
+    {
+     "d": "D35",
+     "where": "zh dock title",
+     "text": "Display · Analysis"
+    },
+    {
+     "d": "D35",
+     "where": "zh dock title",
+     "text": "Operators"
+    },
+    {
+     "d": "D35",
+     "where": "zh dock title",
+     "text": "Pipeline · Parameters"
+    },
+    {
+     "d": "D35",
+     "where": "zh dock title",
+     "text": "Variables & Objects",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D35",
+     "where": "zh group title",
+     "text": "ANALYSIS"
+    },
+    {
+     "d": "D35",
+     "where": "zh group title",
+     "text": "DISPLAY && PERCEPTION"
+    },
+    {
+     "d": "D35",
+     "where": "zh group title",
+     "text": "EXPORT && I/O"
+    },
+    {
+     "d": "D35",
+     "where": "zh group title",
+     "text": "PIPELINE"
+    },
+    {
+     "d": "D35",
+     "where": "zh group title",
+     "text": "SAMPLE PIPELINES"
+    },
+    {
+     "d": "D35",
+     "where": "zh group title",
+     "text": "SELECTED STAGE · KNOBS"
+    },
+    {
+     "d": "D15",
+     "where": "zh label",
+     "text": "1. Open a sample: File ▸ Sample images"
+    },
+    {
+     "d": "D15",
+     "where": "zh label",
+     "text": "2. Open Operators from the panel bar on the left, select an operator and press +"
+    },
+    {
+     "d": "D15",
+     "where": "zh label",
+     "text": "3. Press ▶▶ to run"
+    },
+    {
+     "d": "D15",
+     "where": "zh label",
+     "text": "First steps"
+    },
+    {
+     "d": "D15",
+     "where": "zh label",
+     "text": "hover over the image for pixel coordinates + value"
+    },
+    {
+     "d": "D15",
+     "where": "zh label",
+     "text": "ready"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "(no recent files)"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "3D surface"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "3D viewer…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "A / B"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "About Fullseye Studio"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Actual size (1:1)"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "All off  (dev_update_off)"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "All on  (dev_update_on)"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Apply to folder…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Balanced (default)"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Blue"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Clear pipeline"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Code focus"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Color"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Command palette…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Compound eye → brain (connectome wave)…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Copy result image"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Cyan"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Detach graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Display mode"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Display updates"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Display · Analysis"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Duplicate stage"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Export…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Feature inspection…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Fill"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "First steps"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Fit to window"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Float all panels (multi-display)"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Focus operator search"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Graphics focus"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Graphics windows"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Green"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Help for the selected operator",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Image Viewer…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Keyboard shortcuts"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Magenta"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Margin (outline)"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Move stage down"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Move stage to bottom"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Move stage to top"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Move stage up"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Open Recent"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Open image…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Open pipeline…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Operator reference…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Operator timings"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Operators"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Orange"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Panels"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Pipeline · Parameters"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Program counter"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Quit"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Reattach graphics window"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Red"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Redo"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Region style"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Remove stage"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Reset to start"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Run all"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Sample images"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Save current layout as…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Save pipeline…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Save result…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Save view as shown…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Step forward"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Synthetic demo"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Undo"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Validate on holdout…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Variable window"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Variables && Objects"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Verify exported Python…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Video cube (space × time volume)…"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "White"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Yellow"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Zoom in"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "Zoom out"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "height (color)"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "region overlay"
+    },
+    {
+     "d": "D108",
+     "where": "zh menu",
+     "text": "shaded relief"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Actual size 1:1 (Ctrl+Alt+1)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Fit to window (Ctrl+0)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Hide these steps. Help ▸ First steps shows them again"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Zoom in (Ctrl+=)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D30",
+     "where": "zh tooltip",
+     "text": "Zoom out (Ctrl+-)",
+     "reason": "merged with [初回] fix/studio-firstrun-2026-11-13 (PR #316): its quit box (Cancel by default, B4 D50 folds it into confirm_action kind=unsaved) / its ja-only rows (its policy: no machine translation) made these English texts i18n sources; zh/tw/ko/de/hi showed the same English before the merge"
+    },
+    {
+     "d": "D119",
+     "where": "zh window title",
+     "text": "untitled — Fullseye Studio - [Graphics 1]"
+    }
+   ]
+  },
+  "G15(b)": {
+   "title": "display texts whose '&' Qt eats as a mnemonic",
+   "owners": "D14",
+   "count": 9,
+   "examined_at_creation": 2647,
+   "items": [
+    {
+     "d": "D14",
+     "where": "de menu",
+     "text": "Samples & code…"
+    },
+    {
+     "d": "D14",
+     "where": "de menu",
+     "text": "Öffnebare Dateien (Drag & Drop)…"
+    },
+    {
+     "d": "D14",
+     "where": "en menu",
+     "text": "Files you can open (drag & drop)…"
+    },
+    {
+     "d": "D14",
+     "where": "en menu",
+     "text": "Samples & code…"
+    },
+    {
+     "d": "D14",
+     "where": "hi menu",
+     "text": "Samples & code…"
+    },
+    {
+     "d": "D14",
+     "where": "hi menu",
+     "text": "खोली जा सकने वाली फ़ाइलें (drag & drop)…"
+    },
+    {
+     "d": "D14",
+     "where": "ko menu",
+     "text": "Samples & code…"
+    },
+    {
+     "d": "D14",
+     "where": "tw menu",
+     "text": "Samples & code…"
+    },
+    {
+     "d": "D14",
+     "where": "zh menu",
+     "text": "Samples & code…"
+    }
+   ]
+  },
+  "G04(c')(d')": {
+   "title": "missing or non-distinct QSS rules QToolButton:checked / :disabled, QPushButton:disabled",
+   "owners": "D02 D03 D37",
+   "count": 0,
+   "examined_at_creation": 6,
+   "items": []
+  },
+  "G01(a)(f)(g)": {
+   "title": "title bands: non-principal x not 18 px, principal hidden or with an x, rightmost not the menu",
+   "owners": "D57 D61 D97 D104 D105",
+   "count": 0,
+   "examined_at_creation": 8,
+   "items": []
+  }
+ }
+}

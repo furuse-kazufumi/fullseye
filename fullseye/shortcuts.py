@@ -173,6 +173,11 @@ def pythonw_path(python: Optional[str] = None) -> Path:
                         "Reinstall Python with the standard installer, or run from a normal Python/venv." % exe)
 
 
+#: Studio の標準 GUI 要件。6.12.0 は Linux で SIGABRT になるため除く。
+#: Standard Studio GUI requirement; 6.12.0 is excluded after the Linux A/B run.
+PYSIDE6_REQUIREMENT = "PySide6-Essentials>=6.5,!=6.12.0"
+
+
 def gui_available() -> bool:
     """Studio の GUI 部品(PySide6)が見えるか(ショートカットが何も起きない物にならないよう警告に使う)。"""
     return importlib.util.find_spec("PySide6") is not None

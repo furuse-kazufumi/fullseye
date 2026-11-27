@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 301a8cc4c65e -->
+<!-- i18n-source-sha: a41db9bf8a6f -->
 # 安裝 / 環境建置完整指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -15,7 +15,7 @@ Fullseye 的 Python API 核心使用 **numpy + scipy**。標準的 `pip install 
 |---|---|
 | Python | **3.11**(`pyproject.toml` 中 `requires-python = ">=3.11"`；開發與驗證使用 3.11) |
 | 執行指令 | Windows: `py -3.11` / Linux: `python3.11` |
-| 標準相依套件 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5`, `Pillow>=13.0`(`pip install -e .` 會自動安裝) |
+| 標準相依套件 | `numpy>=1.23`, `scipy>=1.10`, `PySide6-Essentials>=6.5,!=6.12.0`, `Pillow>=13.0`(`pip install -e .` 會自動安裝) |
 | 作業系統 | Windows 10/11、Linux(含嵌入式)。只要 Python 能執行，macOS 也可以 |
 
 ---
@@ -41,6 +41,8 @@ py -3.11 -m pip install -e .            # 標準：Python API + Studio + Pillow�
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 等)、源自 mahotas(Zernike/pftas 等) |
 | `gui` | 無（Studio 為標準相依套件） | 相容別名；`pip install fullseye` 後即可啟動 **Fullseye Studio** |
 | `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`(不含 CuPy；完整的 GPU 套件請用 `fullseye[gpu]`。依 PyTorch 的安裝說明，Linux 上預設的 torch 是 CUDA 版，可能會一併裝入 CUDA 元件(nvidia-* 的 wheel)。只用 CPU 時，請先從 CPU 版的來源安裝 torch：`pip install torch --index-url https://download.pytorch.org/whl/cpu`) | 全部運算子與後端 |
+
+Studio 的標準需求是 `PySide6-Essentials>=6.5,!=6.12.0`。由於 6.12.0 在 Linux 上可重現 SIGABRT，因此予以排除。
 
 使用建議：
 

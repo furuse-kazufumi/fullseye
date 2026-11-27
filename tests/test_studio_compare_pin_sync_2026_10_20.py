@@ -62,6 +62,9 @@ def _window3():
 @pytest.fixture(autouse=True)
 def _no_modal_confirm(monkeypatch):
     monkeypatch.setattr(studio, "CONFIRM_HOOK", lambda parent, title, text: True)
+    # 2026-11-13: 固定を捨てる操作(3 つ目の固定・「今の結果を採る」)は先に聞く。ここの試験は「実行する」と答える
+    # (聞く事そのものは tests/test_studio_undo_autosave_confirm_2026_11_13.py が数える)
+    monkeypatch.setattr(studio, "CONFIRM_ACTION_HOOK", lambda parent, title, text, action: True)
     yield
     studio._UI_LANG["code"] = "en"
 
@@ -477,7 +480,9 @@ def test_b7_pin_action_exists_and_the_dock_starts_hidden_and_empty():
     win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert win._docks["ab"].isHidden()
     assert "pin_a" in win._actions
-    shortcuts = [a.shortcut().toString() for a in win._actions.values() if not a.shortcut().isEmpty()]
+    from PySide6 import QtCore
+    shortcuts = [a.shortcut().toString() for a in win._actions.values()
+                 if not a.shortcut().isEmpty() and a.shortcutContext() != QtCore.Qt.WidgetShortcut]   # 欄の中だけのキーは別の文脈
     assert len(shortcuts) == len(set(shortcuts)), "a shortcut is used twice"
     win._docks["ab"].show()
     win._ab["refresh"]()

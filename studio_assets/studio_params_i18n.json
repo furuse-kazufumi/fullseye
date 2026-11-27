@@ -1,0 +1,1077 @@
+{
+ "_note": "Parameter bundle window (studio_params_qt / studio_params_model): English is the source text; 6 languages (ja, zh, tw, ko, de, hi). Same shape as studio_pyedit_i18n.json.",
+ "strings": {
+  "%s is already open in this window": {
+   "ja": "%s はこの窓で既に開いています",
+   "zh": "%s 已在此窗口中打开",
+   "tw": "%s 已在此視窗中開啟",
+   "ko": "%s은(는) 이 창에 이미 열려 있습니다",
+   "de": "%s ist in diesem Fenster bereits geöffnet",
+   "hi": "%s इस विंडो में पहले से खुला है"
+  },
+  "%s is read-only here (TOML is read but not written); use Save As to make a JSON, YAML or XML copy": {
+   "ja": "%s はここでは読むだけです(TOML は読めますが書けません)。「名前を付けて保存」で JSON / YAML / XML の写しを作れます",
+   "zh": "%s 在此处为只读(TOML 只能读取,不能写入);请用“另存为”生成 JSON、YAML 或 XML 副本",
+   "tw": "%s 在此處為唯讀(TOML 只能讀取,不能寫入);請用「另存新檔」產生 JSON、YAML 或 XML 複本",
+   "ko": "%s은(는) 여기서 읽기 전용입니다(TOML은 읽기만 가능). '다른 이름으로 저장'으로 JSON, YAML, XML 사본을 만드세요",
+   "de": "%s ist hier schreibgeschützt (TOML wird gelesen, aber nicht geschrieben); mit „Speichern unter“ eine JSON-, YAML- oder XML-Kopie anlegen",
+   "hi": "%s यहाँ केवल पढ़ने के लिए है (TOML पढ़ा जाता है, लिखा नहीं जाता); JSON, YAML या XML प्रति बनाने के लिए «इस नाम से सेव करें» का उपयोग करें"
+  },
+  "there is no such column": {
+   "ja": "その列はありません",
+   "zh": "没有这一列",
+   "tw": "沒有這一欄",
+   "ko": "그런 열이 없습니다",
+   "de": "Diese Spalte gibt es nicht",
+   "hi": "ऐसा कोई स्तंभ नहीं है"
+  },
+  "%s: this bundle has no such key (copy a value from another column to add it)": {
+   "ja": "%s: この束にそのキーはありません(別の列から値を写すと足せます)",
+   "zh": "%s: 此参数组中没有这个键(从其他列复制值即可添加)",
+   "tw": "%s: 此參數組中沒有這個鍵(從其他欄複製值即可加入)",
+   "ko": "%s: 이 묶음에 그 키가 없습니다(다른 열에서 값을 복사하면 추가됩니다)",
+   "de": "%s: Dieses Bündel hat diesen Schlüssel nicht (Wert aus einer anderen Spalte kopieren, um ihn anzulegen)",
+   "hi": "%s: इस बंडल में ऐसी कोई कुंजी नहीं है (जोड़ने के लिए किसी दूसरे स्तंभ से मान कॉपी करें)"
+  },
+  "%s: this field is true / false; %r is neither": {
+   "ja": "%s: この欄は true / false です。%r はどちらでもありません",
+   "zh": "%s: 此栏为 true / false;%r 两者都不是",
+   "tw": "%s: 此欄為 true / false;%r 兩者都不是",
+   "ko": "%s: 이 칸은 true / false입니다. %r은(는) 둘 다 아닙니다",
+   "de": "%s: Dieses Feld ist true / false; %r ist keines von beiden",
+   "hi": "%s: यह फ़ील्ड true / false है; %r दोनों में से कोई नहीं है"
+  },
+  "%s: this field holds a number; %r is not a number": {
+   "ja": "%s: この欄は数です。%r は数ではありません",
+   "zh": "%s: 此栏是数值;%r 不是数值",
+   "tw": "%s: 此欄是數值;%r 不是數值",
+   "ko": "%s: 이 칸은 숫자입니다. %r은(는) 숫자가 아닙니다",
+   "de": "%s: Dieses Feld enthält eine Zahl; %r ist keine Zahl",
+   "hi": "%s: इस फ़ील्ड में संख्या होती है; %r संख्या नहीं है"
+  },
+  "%s: this field holds a plain number; %r has a unit, which would change its type": {
+   "ja": "%s: この欄は単位なしの数です。%r は単位つきで、型が変わってしまいます",
+   "zh": "%s: 此栏是不带单位的数值;%r 带有单位,会改变其类型",
+   "tw": "%s: 此欄是不帶單位的數值;%r 帶有單位,會改變其型別",
+   "ko": "%s: 이 칸은 단위 없는 숫자입니다. %r은(는) 단위가 있어 형이 바뀝니다",
+   "de": "%s: Dieses Feld enthält eine reine Zahl; %r hat eine Einheit und würde den Typ ändern",
+   "hi": "%s: इस फ़ील्ड में बिना इकाई की संख्या होती है; %r में इकाई है, जिससे इसका प्रकार बदल जाएगा"
+  },
+  "%s: this field holds a number with a unit (such as 550 nm); %r is not one": {
+   "ja": "%s: この欄は単位つきの数です(例: 550 nm)。%r はそうなっていません",
+   "zh": "%s: 此栏是带单位的数值(如 550 nm);%r 不是",
+   "tw": "%s: 此欄是帶單位的數值(如 550 nm);%r 不是",
+   "ko": "%s: 이 칸은 단위가 붙은 숫자입니다(예: 550 nm). %r은(는) 그렇지 않습니다",
+   "de": "%s: Dieses Feld enthält eine Zahl mit Einheit (z. B. 550 nm); %r ist keine",
+   "hi": "%s: इस फ़ील्ड में इकाई वाली संख्या होती है (जैसे 550 nm); %r ऐसी नहीं है"
+  },
+  "%s: the unit must stay a %s unit; %r is a %s unit": {
+   "ja": "%s: 単位は %s の単位のままにします。%r は %s の単位です",
+   "zh": "%s: 单位必须仍是 %s 单位;%r 是 %s 单位",
+   "tw": "%s: 單位必須仍是 %s 單位;%r 是 %s 單位",
+   "ko": "%s: 단위는 %s 단위여야 합니다. %r은(는) %s 단위입니다",
+   "de": "%s: Die Einheit muss eine %s-Einheit bleiben; %r ist eine %s-Einheit",
+   "hi": "%s: इकाई %s की इकाई ही रहनी चाहिए; %r तो %s की इकाई है"
+  },
+  "%s: this field holds text; %r would be read back as a number with a unit": {
+   "ja": "%s: この欄は文字です。%r は読み直すと単位つきの数になってしまいます",
+   "zh": "%s: 此栏是文本;%r 重新读取时会变成带单位的数值",
+   "tw": "%s: 此欄是文字;%r 重新讀取時會變成帶單位的數值",
+   "ko": "%s: 이 칸은 문자입니다. %r은(는) 다시 읽으면 단위가 붙은 숫자가 됩니다",
+   "de": "%s: Dieses Feld enthält Text; %r würde als Zahl mit Einheit zurückgelesen",
+   "hi": "%s: इस फ़ील्ड में पाठ होता है; %r दोबारा पढ़ने पर इकाई वाली संख्या बन जाएगा"
+  },
+  "%s: this field holds a list such as [1, 2, 3]; %r is not a list of plain values": {
+   "ja": "%s: この欄は [1, 2, 3] のような列です。%r は値の列になっていません",
+   "zh": "%s: 此栏是 [1, 2, 3] 这样的列表;%r 不是由普通值组成的列表",
+   "tw": "%s: 此欄是 [1, 2, 3] 這樣的清單;%r 不是由一般值組成的清單",
+   "ko": "%s: 이 칸은 [1, 2, 3] 같은 목록입니다. %r은(는) 값의 목록이 아닙니다",
+   "de": "%s: Dieses Feld enthält eine Liste wie [1, 2, 3]; %r ist keine Liste einfacher Werte",
+   "hi": "%s: इस फ़ील्ड में [1, 2, 3] जैसी सूची होती है; %r सादे मानों की सूची नहीं है"
+  },
+  "%s: this list holds %s values; %r would add %s": {
+   "ja": "%s: この列の中身は %s です。%r は %s を混ぜてしまいます",
+   "zh": "%s: 此列表的内容是 %s;%r 会混入 %s",
+   "tw": "%s: 此清單的內容是 %s;%r 會混入 %s",
+   "ko": "%s: 이 목록의 내용은 %s입니다. %r은(는) %s을(를) 섞게 됩니다",
+   "de": "%s: Diese Liste enthält %s-Werte; %r würde %s hinzufügen",
+   "hi": "%s: इस सूची में %s मान हैं; %r से %s जुड़ जाएगा"
+  },
+  "%s: the value is unchanged": {
+   "ja": "%s: 値は変わっていません",
+   "zh": "%s: 值没有变化",
+   "tw": "%s: 值沒有變化",
+   "ko": "%s: 값이 바뀌지 않았습니다",
+   "de": "%s: Der Wert ist unverändert",
+   "hi": "%s: मान नहीं बदला"
+  },
+  "%s: %s has no value to copy": {
+   "ja": "%s: %s に写す値がありません",
+   "zh": "%s: %s 中没有可复制的值",
+   "tw": "%s: %s 中沒有可複製的值",
+   "ko": "%s: %s에 복사할 값이 없습니다",
+   "de": "%s: %s hat keinen Wert zum Kopieren",
+   "hi": "%s: %s में कॉपी करने के लिए कोई मान नहीं है"
+  },
+  "%s: both columns already hold the same value": {
+   "ja": "%s: 2 つの列の値は既に同じです",
+   "zh": "%s: 两列的值已经相同",
+   "tw": "%s: 兩欄的值已經相同",
+   "ko": "%s: 두 열의 값이 이미 같습니다",
+   "de": "%s: Beide Spalten enthalten bereits denselben Wert",
+   "hi": "%s: दोनों स्तंभों में पहले से एक ही मान है"
+  },
+  "there is nothing to copy: the columns do not differ": {
+   "ja": "写す物がありません: 2 つの列に違いがありません",
+   "zh": "没有可复制的内容:两列没有差异",
+   "tw": "沒有可複製的內容:兩欄沒有差異",
+   "ko": "복사할 것이 없습니다: 두 열에 차이가 없습니다",
+   "de": "Nichts zu kopieren: Die Spalten unterscheiden sich nicht",
+   "hi": "कॉपी करने को कुछ नहीं है: स्तंभों में कोई अंतर नहीं है"
+  },
+  "%s: the type changed from %s to %s": {
+   "ja": "%s: 型が %s から %s に変わりました",
+   "zh": "%s: 类型已从 %s 变为 %s",
+   "tw": "%s: 型別已從 %s 變為 %s",
+   "ko": "%s: 형이 %s에서 %s(으)로 바뀌었습니다",
+   "de": "%s: Der Typ hat sich von %s zu %s geändert",
+   "hi": "%s: प्रकार %s से बदलकर %s हो गया"
+  },
+  "%s: the key was added to %s": {
+   "ja": "%s: キーを %s に足しました",
+   "zh": "%s: 已将该键添加到 %s",
+   "tw": "%s: 已將該鍵加入 %s",
+   "ko": "%s: 키를 %s에 추가했습니다",
+   "de": "%s: Der Schlüssel wurde zu %s hinzugefügt",
+   "hi": "%s: कुंजी %s में जोड़ी गई"
+  },
+  "nothing to undo": {
+   "ja": "戻す物がありません",
+   "zh": "没有可撤销的操作",
+   "tw": "沒有可復原的操作",
+   "ko": "되돌릴 것이 없습니다",
+   "de": "Nichts rückgängig zu machen",
+   "hi": "पूर्ववत करने को कुछ नहीं है"
+  },
+  "nothing to redo": {
+   "ja": "やり直す物がありません",
+   "zh": "没有可重做的操作",
+   "tw": "沒有可重做的操作",
+   "ko": "다시 실행할 것이 없습니다",
+   "de": "Nichts zu wiederholen",
+   "hi": "फिर से करने को कुछ नहीं है"
+  },
+  "edit %s": {
+   "ja": "%s の編集",
+   "zh": "编辑 %s",
+   "tw": "編輯 %s",
+   "ko": "%s 편집",
+   "de": "%s bearbeiten",
+   "hi": "%s का संपादन"
+  },
+  "copy %s": {
+   "ja": "%s の写し",
+   "zh": "复制 %s",
+   "tw": "複製 %s",
+   "ko": "%s 복사",
+   "de": "%s kopieren",
+   "hi": "%s की कॉपी"
+  },
+  "copy %d value(s) to %s": {
+   "ja": "%d 個の値を %s へ写す",
+   "zh": "将 %d 个值复制到 %s",
+   "tw": "將 %d 個值複製到 %s",
+   "ko": "값 %d개를 %s(으)로 복사",
+   "de": "%d Wert(e) nach %s kopieren",
+   "hi": "%d मान %s में कॉपी करना"
+  },
+  "%s has no file yet; use Save As": {
+   "ja": "%s にはまだファイルがありません。「名前を付けて保存」を使います",
+   "zh": "%s 还没有文件;请使用“另存为”",
+   "tw": "%s 還沒有檔案;請使用「另存新檔」",
+   "ko": "%s에는 아직 파일이 없습니다. '다른 이름으로 저장'을 사용하세요",
+   "de": "%s hat noch keine Datei; „Speichern unter“ verwenden",
+   "hi": "%s की अभी कोई फ़ाइल नहीं है; «इस नाम से सेव करें» का उपयोग करें"
+  },
+  "%s: cannot write %s here (writable: .json, .yaml / .yml, .xml)": {
+   "ja": "%s: %s はここでは書けません(書けるのは .json / .yaml / .yml / .xml)",
+   "zh": "%s: 此处无法写入 %s(可写入:.json、.yaml / .yml、.xml)",
+   "tw": "%s: 此處無法寫入 %s(可寫入:.json、.yaml / .yml、.xml)",
+   "ko": "%s: 여기서는 %s을(를) 쓸 수 없습니다(쓸 수 있는 형식: .json, .yaml / .yml, .xml)",
+   "de": "%s: %s kann hier nicht geschrieben werden (schreibbar: .json, .yaml / .yml, .xml)",
+   "hi": "%s: %s यहाँ नहीं लिखा जा सकता (लिखे जा सकते हैं: .json, .yaml / .yml, .xml)"
+  },
+  "%s changed on disk after it was read; reload it, or save again to overwrite": {
+   "ja": "%s は読んだ後にディスクの上で変わっています。読み直すか、上書きするならもう一度保存します",
+   "zh": "%s 在读取后已在磁盘上发生变化;请重新加载,或再次保存以覆盖",
+   "tw": "%s 在讀取後已在磁碟上發生變化;請重新載入,或再次儲存以覆寫",
+   "ko": "%s은(는) 읽은 뒤 디스크에서 바뀌었습니다. 다시 읽거나, 덮어쓰려면 다시 저장하세요",
+   "de": "%s wurde nach dem Lesen auf dem Datenträger geändert; neu laden oder zum Überschreiben erneut speichern",
+   "hi": "%s पढ़े जाने के बाद डिस्क पर बदल गई है; इसे फिर से लोड करें, या ऊपर लिखने के लिए दोबारा सेव करें"
+  },
+  "%s no longer exists on disk; saving will create it again": {
+   "ja": "%s はディスクの上にもうありません。保存すると作り直します",
+   "zh": "%s 已不在磁盘上;保存将重新创建它",
+   "tw": "%s 已不在磁碟上;儲存將重新建立它",
+   "ko": "%s은(는) 디스크에 더 이상 없습니다. 저장하면 다시 만듭니다",
+   "de": "%s existiert nicht mehr auf dem Datenträger; beim Speichern wird die Datei neu angelegt",
+   "hi": "%s अब डिस्क पर नहीं है; सेव करने पर यह फिर से बन जाएगी"
+  },
+  "saving %s drops some things from the file": {
+   "ja": "%s を保存すると、ファイルから失われる物があります",
+   "zh": "保存 %s 会丢失文件中的部分内容",
+   "tw": "儲存 %s 會遺失檔案中的部分內容",
+   "ko": "%s을(를) 저장하면 파일에서 사라지는 것이 있습니다",
+   "de": "Beim Speichern von %s geht einiges aus der Datei verloren",
+   "hi": "%s को सेव करने पर फ़ाइल से कुछ चीज़ें हट जाएँगी"
+  },
+  "could not save %s: the written file does not read back the same at %s (the file on disk is unchanged)": {
+   "ja": "%s を保存できません: 書いた物を読み直すと %s が同じになりません(ディスクの上のファイルは変わっていません)",
+   "zh": "无法保存 %s: 写出的文件重新读取后 %s 不一致(磁盘上的文件未改变)",
+   "tw": "無法儲存 %s: 寫出的檔案重新讀取後 %s 不一致(磁碟上的檔案未改變)",
+   "ko": "%s을(를) 저장할 수 없습니다: 쓴 파일을 다시 읽으면 %s이(가) 같지 않습니다(디스크의 파일은 그대로입니다)",
+   "de": "%s konnte nicht gespeichert werden: Die geschriebene Datei liest sich bei %s nicht gleich zurück (die Datei auf dem Datenträger ist unverändert)",
+   "hi": "%s सेव नहीं हो सकी: लिखी गई फ़ाइल दोबारा पढ़ने पर %s पर वैसी नहीं रही (डिस्क की फ़ाइल नहीं बदली)"
+  },
+  "saved %s": {
+   "ja": "%s を保存しました",
+   "zh": "已保存 %s",
+   "tw": "已儲存 %s",
+   "ko": "%s을(를) 저장했습니다",
+   "de": "%s gespeichert",
+   "hi": "%s सहेजा गया"
+  },
+  "%s has no unsaved changes": {
+   "ja": "%s に未保存の変更はありません",
+   "zh": "%s 没有未保存的更改",
+   "tw": "%s 沒有未儲存的變更",
+   "ko": "%s에 저장하지 않은 변경이 없습니다",
+   "de": "%s hat keine ungespeicherten Änderungen",
+   "hi": "%s में बिना सहेजे कोई परिवर्तन नहीं है"
+  },
+  "values from the included file(s) %s are written into this file and the include line is dropped": {
+   "ja": "include で読んだ %s の値がこのファイルに書き込まれ、include の行は消えます",
+   "zh": "通过 include 读取的 %s 的值会写入此文件,include 行将被删除",
+   "tw": "透過 include 讀取的 %s 的值會寫入此檔案,include 行將被移除",
+   "ko": "include로 읽은 %s의 값이 이 파일에 기록되고 include 줄은 사라집니다",
+   "de": "Werte aus den eingebundenen Dateien %s werden in diese Datei geschrieben, die include-Zeile entfällt",
+   "hi": "include की गई फ़ाइलों %s के मान इसी फ़ाइल में लिखे जाते हैं और include वाली पंक्ति हट जाती है"
+  },
+  "%d reference(s) to another key are written as plain values": {
+   "ja": "別のキーへの参照 %d 個が、ただの値として書かれます",
+   "zh": "%d 个对其他键的引用将写成普通值",
+   "tw": "%d 個對其他鍵的參照將寫成一般值",
+   "ko": "다른 키에 대한 참조 %d개가 일반 값으로 기록됩니다",
+   "de": "%d Verweis(e) auf andere Schlüssel werden als einfache Werte geschrieben",
+   "hi": "दूसरी कुंजी के %d संदर्भ सादे मानों के रूप में लिखे जाते हैं"
+  },
+  "comments are not kept (%d line(s))": {
+   "ja": "コメントは残りません(%d 行)",
+   "zh": "注释不会保留(%d 行)",
+   "tw": "註解不會保留(%d 行)",
+   "ko": "주석은 남지 않습니다(%d줄)",
+   "de": "Kommentare bleiben nicht erhalten (%d Zeile(n))",
+   "hi": "टिप्पणियाँ नहीं रखी जातीं (%d पंक्तियाँ)"
+  },
+  "YAML anchors and aliases are expanded (%d)": {
+   "ja": "YAML のアンカーとエイリアスは展開されます(%d 個)",
+   "zh": "YAML 的锚点和别名会被展开(%d 个)",
+   "tw": "YAML 的錨點和別名會被展開(%d 個)",
+   "ko": "YAML 앵커와 별칭은 펼쳐집니다(%d개)",
+   "de": "YAML-Anker und -Aliase werden aufgelöst (%d)",
+   "hi": "YAML के anchor और alias खोलकर लिखे जाते हैं (%d)"
+  },
+  "layout is normalised (indentation, quoting, number spelling such as 1.50 -> 1.5)": {
+   "ja": "書き方はそろえ直されます(字下げ・引用符・数の書き方。例: 1.50 -> 1.5)",
+   "zh": "格式会被规范化(缩进、引号、数值写法,如 1.50 -> 1.5)",
+   "tw": "格式會被正規化(縮排、引號、數值寫法,如 1.50 -> 1.5)",
+   "ko": "서식이 정리됩니다(들여쓰기, 따옴표, 숫자 표기. 예: 1.50 -> 1.5)",
+   "de": "Das Layout wird vereinheitlicht (Einrückung, Anführungszeichen, Zahlenschreibweise wie 1.50 -> 1.5)",
+   "hi": "लिखावट एक-सी कर दी जाती है (इंडेंट, उद्धरण चिह्न, संख्या का रूप जैसे 1.50 -> 1.5)"
+  },
+  "the file is written as %s (it was read as %s)": {
+   "ja": "ファイルは %s で書かれます(読んだ時は %s)",
+   "zh": "文件将以 %s 写出(读取时为 %s)",
+   "tw": "檔案將以 %s 寫出(讀取時為 %s)",
+   "ko": "파일은 %s(으)로 기록됩니다(읽을 때는 %s)",
+   "de": "Die Datei wird als %s geschrieben (gelesen wurde sie als %s)",
+   "hi": "फ़ाइल %s के रूप में लिखी जाती है (पढ़ी %s के रूप में गई थी)"
+  },
+  "%s changed on disk": {
+   "ja": "%s がディスクの上で変わりました",
+   "zh": "%s 已在磁盘上发生变化",
+   "tw": "%s 已在磁碟上發生變化",
+   "ko": "%s이(가) 디스크에서 바뀌었습니다",
+   "de": "%s wurde auf dem Datenträger geändert",
+   "hi": "%s डिस्क पर बदल गई"
+  },
+  "%s was removed from disk": {
+   "ja": "%s がディスクの上から消えました",
+   "zh": "%s 已从磁盘上移除",
+   "tw": "%s 已從磁碟上移除",
+   "ko": "%s이(가) 디스크에서 사라졌습니다",
+   "de": "%s wurde vom Datenträger entfernt",
+   "hi": "%s डिस्क से हटा दी गई"
+  },
+  "reloaded %s": {
+   "ja": "%s を読み直しました",
+   "zh": "已重新加载 %s",
+   "tw": "已重新載入 %s",
+   "ko": "%s을(를) 다시 읽었습니다",
+   "de": "%s neu geladen",
+   "hi": "%s फिर से लोड की गई"
+  },
+  "the last run read no key of the open bundles": {
+   "ja": "直前の実行は、開いている束のキーを読んでいません",
+   "zh": "上次运行没有读取已打开参数组中的任何键",
+   "tw": "上次執行沒有讀取已開啟參數組中的任何鍵",
+   "ko": "직전 실행은 열려 있는 묶음의 키를 읽지 않았습니다",
+   "de": "Der letzte Lauf hat keinen Schlüssel der geöffneten Bündel gelesen",
+   "hi": "पिछले रन ने खुले बंडलों की कोई कुंजी नहीं पढ़ी"
+  },
+  "the last run read %d key(s)": {
+   "ja": "直前の実行が読んだキー: %d 個",
+   "zh": "上次运行读取了 %d 个键",
+   "tw": "上次執行讀取了 %d 個鍵",
+   "ko": "직전 실행이 읽은 키: %d개",
+   "de": "Der letzte Lauf hat %d Schlüssel gelesen",
+   "hi": "पिछले रन ने %d कुंजियाँ पढ़ीं"
+  },
+  "Parameters": {
+   "ja": "パラメータ",
+   "zh": "参数",
+   "tw": "參數",
+   "ko": "파라미터",
+   "de": "Parameter",
+   "hi": "पैरामीटर"
+  },
+  "Key": {
+   "ja": "キー",
+   "zh": "键",
+   "tw": "鍵",
+   "ko": "키",
+   "de": "Schlüssel",
+   "hi": "कुंजी"
+  },
+  "Key: the name of the value. Sections fold.": {
+   "ja": "キー: 値の名前。節は折りたためます",
+   "zh": "键:值的名称。分节可以折叠",
+   "tw": "鍵:值的名稱。分節可以摺疊",
+   "ko": "키: 값의 이름. 절은 접을 수 있습니다",
+   "de": "Schlüssel: der Name des Werts. Abschnitte lassen sich einklappen.",
+   "hi": "कुंजी: मान का नाम। अनुभाग मोड़े जा सकते हैं।"
+  },
+  "not saved to a file yet": {
+   "ja": "まだファイルに保存していません",
+   "zh": "尚未保存到文件",
+   "tw": "尚未儲存到檔案",
+   "ko": "아직 파일로 저장하지 않았습니다",
+   "de": "noch nicht in einer Datei gespeichert",
+   "hi": "अभी फ़ाइल में सहेजा नहीं गया"
+  },
+  "On save:": {
+   "ja": "保存すると:",
+   "zh": "保存时:",
+   "tw": "儲存時:",
+   "ko": "저장하면:",
+   "de": "Beim Speichern:",
+   "hi": "सेव करने पर:"
+  },
+  "read-only": {
+   "ja": "読み取り専用",
+   "zh": "只读",
+   "tw": "唯讀",
+   "ko": "읽기 전용",
+   "de": "schreibgeschützt",
+   "hi": "केवल-पढ़ने"
+  },
+  "the bundles hold different values": {
+   "ja": "束によって値が違います",
+   "zh": "各参数组的值不同",
+   "tw": "各參數組的值不同",
+   "ko": "묶음마다 값이 다릅니다",
+   "de": "Die Bündel enthalten unterschiedliche Werte",
+   "hi": "बंडलों में मान अलग-अलग हैं"
+  },
+  "not in every bundle": {
+   "ja": "一部の束にありません",
+   "zh": "并非每个参数组都有",
+   "tw": "並非每個參數組都有",
+   "ko": "일부 묶음에 없습니다",
+   "de": "nicht in jedem Bündel vorhanden",
+   "hi": "हर बंडल में नहीं है"
+  },
+  "same value, written differently": {
+   "ja": "値は同じで、書き方が違います",
+   "zh": "值相同,写法不同",
+   "tw": "值相同,寫法不同",
+   "ko": "값은 같고 표기가 다릅니다",
+   "de": "gleicher Wert, anders geschrieben",
+   "hi": "मान वही है, लिखावट अलग है"
+  },
+  "read by the last run": {
+   "ja": "直前の実行が読みました",
+   "zh": "上次运行已读取",
+   "tw": "上次執行已讀取",
+   "ko": "직전 실행이 읽었습니다",
+   "de": "vom letzten Lauf gelesen",
+   "hi": "पिछले रन ने पढ़ा"
+  },
+  "changed, not saved yet (bold)": {
+   "ja": "変更して未保存(太字)",
+   "zh": "已更改,尚未保存(粗体)",
+   "tw": "已變更,尚未儲存(粗體)",
+   "ko": "변경 후 미저장(굵게)",
+   "de": "geändert, noch nicht gespeichert (fett)",
+   "hi": "बदला गया, अभी सहेजा नहीं गया (मोटे अक्षर)"
+  },
+  "%d differing row(s) inside": {
+   "ja": "この中に違う行が %d 行",
+   "zh": "其中有 %d 行不同",
+   "tw": "其中有 %d 列不同",
+   "ko": "이 안에 다른 행 %d개",
+   "de": "%d abweichende Zeile(n) darin",
+   "hi": "इसके भीतर %d पंक्तियाँ अलग हैं"
+  },
+  "%d row(s) not in every bundle": {
+   "ja": "一部の束に無い行が %d 行",
+   "zh": "%d 行并非每个参数组都有",
+   "tw": "%d 列並非每個參數組都有",
+   "ko": "일부 묶음에 없는 행 %d개",
+   "de": "%d Zeile(n) nicht in jedem Bündel",
+   "hi": "%d पंक्तियाँ हर बंडल में नहीं हैं"
+  },
+  "%s is not in %s": {
+   "ja": "%s は %s にありません",
+   "zh": "%s 不在 %s 中",
+   "tw": "%s 不在 %s 中",
+   "ko": "%s은(는) %s에 없습니다",
+   "de": "%s ist nicht in %s",
+   "hi": "%s, %s में नहीं है"
+  },
+  "saved value: %s": {
+   "ja": "保存済みの値: %s",
+   "zh": "已保存的值: %s",
+   "tw": "已儲存的值: %s",
+   "ko": "저장된 값: %s",
+   "de": "gespeicherter Wert: %s",
+   "hi": "सहेजा हुआ मान: %s"
+  },
+  "true / false": {
+   "ja": "真偽",
+   "zh": "布尔值",
+   "tw": "布林值",
+   "ko": "참 / 거짓",
+   "de": "wahr / falsch",
+   "hi": "सही / गलत"
+  },
+  "whole number": {
+   "ja": "整数",
+   "zh": "整数",
+   "tw": "整數",
+   "ko": "정수",
+   "de": "ganze Zahl",
+   "hi": "पूर्णांक"
+  },
+  "number": {
+   "ja": "数",
+   "zh": "数值",
+   "tw": "數值",
+   "ko": "숫자",
+   "de": "Zahl",
+   "hi": "संख्या"
+  },
+  "number with a unit": {
+   "ja": "単位つきの数",
+   "zh": "带单位的数值",
+   "tw": "帶單位的數值",
+   "ko": "단위가 붙은 숫자",
+   "de": "Zahl mit Einheit",
+   "hi": "इकाई वाली संख्या"
+  },
+  "text": {
+   "ja": "文字",
+   "zh": "文本",
+   "tw": "文字",
+   "ko": "문자",
+   "de": "Text",
+   "hi": "पाठ"
+  },
+  "list": {
+   "ja": "列",
+   "zh": "列表",
+   "tw": "清單",
+   "ko": "목록",
+   "de": "Liste",
+   "hi": "सूची"
+  },
+  "Open": {
+   "ja": "開く",
+   "zh": "打开",
+   "tw": "開啟",
+   "ko": "열기",
+   "de": "Öffnen",
+   "hi": "खोलें"
+  },
+  "open parameter files in place of the ones shown": {
+   "ja": "今の束と入れ替えて、パラメータのファイルを開きます",
+   "zh": "打开参数文件,替换当前显示的文件",
+   "tw": "開啟參數檔案,取代目前顯示的檔案",
+   "ko": "지금 보이는 묶음 대신 파라미터 파일을 엽니다",
+   "de": "Parameterdateien anstelle der angezeigten öffnen",
+   "hi": "दिख रही फ़ाइलों की जगह पैरामीटर फ़ाइलें खोलें"
+  },
+  "Add column": {
+   "ja": "列を足す",
+   "zh": "添加列",
+   "tw": "新增欄",
+   "ko": "열 추가",
+   "de": "Spalte hinzufügen",
+   "hi": "स्तंभ जोड़ें"
+  },
+  "add parameter files beside the ones shown": {
+   "ja": "今の束の横に、パラメータのファイルを足します",
+   "zh": "在当前显示的文件旁添加参数文件",
+   "tw": "在目前顯示的檔案旁加入參數檔案",
+   "ko": "지금 보이는 묶음 옆에 파라미터 파일을 추가합니다",
+   "de": "Parameterdateien neben den angezeigten hinzufügen",
+   "hi": "दिख रही फ़ाइलों के बगल में पैरामीटर फ़ाइलें जोड़ें"
+  },
+  "Remove column": {
+   "ja": "列を外す",
+   "zh": "移除列",
+   "tw": "移除欄",
+   "ko": "열 제거",
+   "de": "Spalte entfernen",
+   "hi": "स्तंभ हटाएँ"
+  },
+  "take the selected bundle out of the table (the file stays)": {
+   "ja": "選んでいる束を表から外します(ファイルは残ります)",
+   "zh": "将所选参数组从表中移出(文件保留)",
+   "tw": "將所選參數組從表中移出(檔案保留)",
+   "ko": "선택한 묶음을 표에서 뺍니다(파일은 남습니다)",
+   "de": "das gewählte Bündel aus der Tabelle nehmen (die Datei bleibt)",
+   "hi": "चुने हुए बंडल को तालिका से हटाएँ (फ़ाइल बनी रहती है)"
+  },
+  "Save": {
+   "ja": "保存",
+   "zh": "保存",
+   "tw": "儲存",
+   "ko": "저장",
+   "de": "Speichern",
+   "hi": "सेव करें"
+  },
+  "write every changed bundle back to its file": {
+   "ja": "変更した束を全部、それぞれのファイルへ書き戻します",
+   "zh": "将所有已更改的参数组写回各自的文件",
+   "tw": "將所有已變更的參數組寫回各自的檔案",
+   "ko": "변경한 묶음을 모두 각자의 파일에 다시 씁니다",
+   "de": "jedes geänderte Bündel in seine Datei zurückschreiben",
+   "hi": "हर बदले हुए बंडल को उसकी फ़ाइल में वापस लिखें"
+  },
+  "Save As": {
+   "ja": "名前を付けて保存",
+   "zh": "另存为",
+   "tw": "另存新檔",
+   "ko": "다른 이름으로 저장",
+   "de": "Speichern unter",
+   "hi": "इस नाम से सेव करें"
+  },
+  "write the selected bundle to a new JSON, YAML or XML file": {
+   "ja": "選んでいる束を、新しい JSON / YAML / XML のファイルへ書きます",
+   "zh": "将所选参数组写入新的 JSON、YAML 或 XML 文件",
+   "tw": "將所選參數組寫入新的 JSON、YAML 或 XML 檔案",
+   "ko": "선택한 묶음을 새 JSON, YAML, XML 파일에 씁니다",
+   "de": "das gewählte Bündel in eine neue JSON-, YAML- oder XML-Datei schreiben",
+   "hi": "चुने हुए बंडल को नई JSON, YAML या XML फ़ाइल में लिखें"
+  },
+  "Reload": {
+   "ja": "読み直す",
+   "zh": "重新加载",
+   "tw": "重新載入",
+   "ko": "다시 읽기",
+   "de": "Neu laden",
+   "hi": "फिर से लोड करें"
+  },
+  "read the selected bundle again from its file": {
+   "ja": "選んでいる束をファイルから読み直します",
+   "zh": "从文件重新读取所选参数组",
+   "tw": "從檔案重新讀取所選參數組",
+   "ko": "선택한 묶음을 파일에서 다시 읽습니다",
+   "de": "das gewählte Bündel erneut aus seiner Datei lesen",
+   "hi": "चुने हुए बंडल को उसकी फ़ाइल से दोबारा पढ़ें"
+  },
+  "Undo": {
+   "ja": "元に戻す",
+   "zh": "撤销",
+   "tw": "復原",
+   "ko": "실행 취소",
+   "de": "Rückgängig",
+   "hi": "पूर्ववत करें"
+  },
+  "take back the last change": {
+   "ja": "直前の変更を戻します",
+   "zh": "撤回上一次更改",
+   "tw": "撤回上一次變更",
+   "ko": "직전 변경을 되돌립니다",
+   "de": "die letzte Änderung zurücknehmen",
+   "hi": "पिछला बदलाव वापस लें"
+  },
+  "Redo": {
+   "ja": "やり直し",
+   "zh": "重做",
+   "tw": "重做",
+   "ko": "다시 실행",
+   "de": "Wiederholen",
+   "hi": "फिर से करें"
+  },
+  "apply the change again": {
+   "ja": "戻した変更をもう一度当てます",
+   "zh": "再次应用该更改",
+   "tw": "再次套用該變更",
+   "ko": "되돌린 변경을 다시 적용합니다",
+   "de": "die Änderung erneut anwenden",
+   "hi": "बदलाव को दोबारा लागू करें"
+  },
+  "Copy to column": {
+   "ja": "列へ写す",
+   "zh": "复制到列",
+   "tw": "複製到欄",
+   "ko": "열로 복사",
+   "de": "In Spalte kopieren",
+   "hi": "स्तंभ में कॉपी करें"
+  },
+  "copy the selected value, or every differing value, to another bundle": {
+   "ja": "選んでいる値、または違う値の全部を、別の束へ写します",
+   "zh": "将所选值或所有不同的值复制到另一个参数组",
+   "tw": "將所選值或所有不同的值複製到另一個參數組",
+   "ko": "선택한 값 또는 다른 값 전부를 다른 묶음으로 복사합니다",
+   "de": "den gewählten Wert oder alle abweichenden Werte in ein anderes Bündel kopieren",
+   "hi": "चुना हुआ मान, या हर अलग मान, दूसरे बंडल में कॉपी करें"
+  },
+  "Differences only": {
+   "ja": "違う行だけ",
+   "zh": "仅显示差异",
+   "tw": "僅顯示差異",
+   "ko": "다른 행만",
+   "de": "Nur Unterschiede",
+   "hi": "केवल अंतर"
+  },
+  "show only the rows where the bundles differ": {
+   "ja": "束によって違う行だけを出します",
+   "zh": "只显示各参数组不同的行",
+   "tw": "只顯示各參數組不同的列",
+   "ko": "묶음마다 다른 행만 보여 줍니다",
+   "de": "nur die Zeilen zeigen, in denen sich die Bündel unterscheiden",
+   "hi": "केवल वे पंक्तियाँ दिखाएँ जिनमें बंडल अलग हैं"
+  },
+  "Search keys": {
+   "ja": "キーを検索",
+   "zh": "搜索键",
+   "tw": "搜尋鍵",
+   "ko": "키 검색",
+   "de": "Schlüssel suchen",
+   "hi": "कुंजियाँ खोजें"
+  },
+  "show only the keys that contain this text": {
+   "ja": "この文字を含むキーだけを出します",
+   "zh": "只显示包含此文本的键",
+   "tw": "只顯示包含此文字的鍵",
+   "ko": "이 문자를 포함한 키만 보여 줍니다",
+   "de": "nur die Schlüssel zeigen, die diesen Text enthalten",
+   "hi": "केवल वे कुंजियाँ दिखाएँ जिनमें यह पाठ है"
+  },
+  "Parameter bundles side by side: rows are keys, columns are files. Open JSON, TOML, YAML or XML files, or drop them here.": {
+   "ja": "パラメータの束を横に並べて見る・直す場所です。行はキー、列はファイル。JSON / TOML / YAML / XML のファイルを開くか、ここへ落とします。",
+   "zh": "并排查看和修改参数组:行是键,列是文件。打开 JSON、TOML、YAML 或 XML 文件,或将其拖放到这里。",
+   "tw": "並排檢視和修改參數組:列是鍵,欄是檔案。開啟 JSON、TOML、YAML 或 XML 檔案,或將其拖放到這裡。",
+   "ko": "파라미터 묶음을 나란히 보고 고치는 곳입니다. 행은 키, 열은 파일입니다. JSON, TOML, YAML, XML 파일을 열거나 여기에 끌어다 놓으세요.",
+   "de": "Parameterbündel nebeneinander: Zeilen sind Schlüssel, Spalten sind Dateien. JSON-, TOML-, YAML- oder XML-Dateien öffnen oder hier ablegen.",
+   "hi": "पैरामीटर बंडल साथ-साथ: पंक्तियाँ कुंजियाँ हैं, स्तंभ फ़ाइलें हैं। JSON, TOML, YAML या XML फ़ाइलें खोलें, या उन्हें यहाँ छोड़ें।"
+  },
+  "Open files": {
+   "ja": "ファイルを開く",
+   "zh": "打开文件",
+   "tw": "開啟檔案",
+   "ko": "파일 열기",
+   "de": "Dateien öffnen",
+   "hi": "फ़ाइलें खोलें"
+  },
+  "Open the example": {
+   "ja": "例を開く",
+   "zh": "打开示例",
+   "tw": "開啟範例",
+   "ko": "예제 열기",
+   "de": "Beispiel öffnen",
+   "hi": "उदाहरण खोलें"
+  },
+  "Two bundles of the same rig (day and night) to try comparing and copying": {
+   "ja": "同じ装置の 2 つの束(昼と夜)。比べる・写すを試せます",
+   "zh": "同一装置的两个参数组(白天和夜间),可用来试用比较和复制",
+   "tw": "同一裝置的兩個參數組(白天和夜間),可用來試用比較和複製",
+   "ko": "같은 장치의 두 묶음(낮과 밤). 비교와 복사를 시험해 볼 수 있습니다",
+   "de": "Zwei Bündel desselben Aufbaus (Tag und Nacht) zum Ausprobieren von Vergleichen und Kopieren",
+   "hi": "एक ही रिग के दो बंडल (दिन और रात), तुलना और कॉपी आज़माने के लिए"
+  },
+  "%d bundle(s)": {
+   "ja": "束 %d 個",
+   "zh": "%d 个参数组",
+   "tw": "%d 個參數組",
+   "ko": "묶음 %d개",
+   "de": "%d Bündel",
+   "hi": "%d बंडल"
+  },
+  "%d of %d row(s)": {
+   "ja": "%d / %d 行",
+   "zh": "%d / %d 行",
+   "tw": "%d / %d 列",
+   "ko": "%d / %d행",
+   "de": "%d von %d Zeilen",
+   "hi": "%d / %d पंक्तियाँ"
+  },
+  "%d row(s)": {
+   "ja": "%d 行",
+   "zh": "%d 行",
+   "tw": "%d 列",
+   "ko": "%d행",
+   "de": "%d Zeilen",
+   "hi": "%d पंक्तियाँ"
+  },
+  "%d differ": {
+   "ja": "違う行 %d",
+   "zh": "%d 行不同",
+   "tw": "%d 列不同",
+   "ko": "다른 행 %d",
+   "de": "%d abweichend",
+   "hi": "%d अलग"
+  },
+  "%d not in every bundle": {
+   "ja": "一部に無い行 %d",
+   "zh": "%d 行不全",
+   "tw": "%d 列不全",
+   "ko": "일부에 없는 행 %d",
+   "de": "%d nicht überall",
+   "hi": "%d हर बंडल में नहीं"
+  },
+  "%d unsaved": {
+   "ja": "未保存 %d",
+   "zh": "%d 个未保存",
+   "tw": "%d 個未儲存",
+   "ko": "미저장 %d",
+   "de": "%d ungespeichert",
+   "hi": "%d बिना सहेजे"
+  },
+  "undone: %s": {
+   "ja": "元に戻しました: %s",
+   "zh": "已撤销: %s",
+   "tw": "已復原: %s",
+   "ko": "되돌렸습니다: %s",
+   "de": "Rückgängig gemacht: %s",
+   "hi": "पूर्ववत किया गया: %s"
+  },
+  "redone: %s": {
+   "ja": "やり直しました: %s",
+   "zh": "已重做: %s",
+   "tw": "已重做: %s",
+   "ko": "다시 실행했습니다: %s",
+   "de": "Wiederholt: %s",
+   "hi": "फिर से किया गया: %s"
+  },
+  "copied %d value(s) to %s": {
+   "ja": "%d 個の値を %s へ写しました",
+   "zh": "已将 %d 个值复制到 %s",
+   "tw": "已將 %d 個值複製到 %s",
+   "ko": "값 %d개를 %s(으)로 복사했습니다",
+   "de": "%d Wert(e) nach %s kopiert",
+   "hi": "%d मान %s में कॉपी किए गए"
+  },
+  "Copy %s to %s": {
+   "ja": "%s を %s へ写す",
+   "zh": "将 %s 复制到 %s",
+   "tw": "將 %s 複製到 %s",
+   "ko": "%s을(를) %s(으)로 복사",
+   "de": "%s nach %s kopieren",
+   "hi": "%s को %s में कॉपी करें"
+  },
+  "Copy every differing value from %s to %s": {
+   "ja": "違う値を全部 %s から %s へ写す",
+   "zh": "将所有不同的值从 %s 复制到 %s",
+   "tw": "將所有不同的值從 %s 複製到 %s",
+   "ko": "다른 값을 모두 %s에서 %s(으)로 복사",
+   "de": "Alle abweichenden Werte von %s nach %s kopieren",
+   "hi": "हर अलग मान %s से %s में कॉपी करें"
+  },
+  "Select a value first": {
+   "ja": "先に値を選びます",
+   "zh": "请先选择一个值",
+   "tw": "請先選擇一個值",
+   "ko": "먼저 값을 선택하세요",
+   "de": "Zuerst einen Wert auswählen",
+   "hi": "पहले कोई मान चुनें"
+  },
+  "not saved: %s": {
+   "ja": "保存していません: %s",
+   "zh": "未保存: %s",
+   "tw": "未儲存: %s",
+   "ko": "저장하지 않았습니다: %s",
+   "de": "Nicht gespeichert: %s",
+   "hi": "सहेजा नहीं गया: %s"
+  },
+  "Reload reads it again": {
+   "ja": "「読み直す」で読み直せます",
+   "zh": "“重新加载”可再次读取",
+   "tw": "「重新載入」可再次讀取",
+   "ko": "'다시 읽기'로 다시 읽을 수 있습니다",
+   "de": "„Neu laden“ liest die Datei erneut",
+   "hi": "«फिर से लोड करें» इसे दोबारा पढ़ता है"
+  },
+  "Cancel": {
+   "ja": "キャンセル",
+   "zh": "取消",
+   "tw": "取消",
+   "ko": "취소",
+   "de": "Abbrechen",
+   "hi": "रद्द करें"
+  },
+  "Saving %s rewrites the whole file. These are not kept:": {
+   "ja": "%s を保存すると、ファイル全体を書き直します。次の物は残りません:",
+   "zh": "保存 %s 会重写整个文件。以下内容不会保留:",
+   "tw": "儲存 %s 會重寫整個檔案。以下內容不會保留:",
+   "ko": "%s을(를) 저장하면 파일 전체를 다시 씁니다. 다음은 남지 않습니다:",
+   "de": "Beim Speichern von %s wird die ganze Datei neu geschrieben. Nicht erhalten bleiben:",
+   "hi": "%s को सेव करने पर पूरी फ़ाइल दोबारा लिखी जाती है। ये चीज़ें नहीं रहतीं:"
+  },
+  "Save anyway": {
+   "ja": "それでも保存",
+   "zh": "仍然保存",
+   "tw": "仍然儲存",
+   "ko": "그래도 저장",
+   "de": "Trotzdem speichern",
+   "hi": "फिर भी सेव करें"
+  },
+  "Open parameter files": {
+   "ja": "パラメータのファイルを開く",
+   "zh": "打开参数文件",
+   "tw": "開啟參數檔案",
+   "ko": "파라미터 파일 열기",
+   "de": "Parameterdateien öffnen",
+   "hi": "पैरामीटर फ़ाइलें खोलें"
+  },
+  "Close": {
+   "ja": "閉じる",
+   "zh": "关闭",
+   "tw": "關閉",
+   "ko": "닫기",
+   "de": "Schließen",
+   "hi": "बंद करें"
+  },
+  "Save and close": {
+   "ja": "保存して閉じる",
+   "zh": "保存并关闭",
+   "tw": "儲存並關閉",
+   "ko": "저장하고 닫기",
+   "de": "Speichern und schließen",
+   "hi": "सेव करके बंद करें"
+  },
+  "Close without saving": {
+   "ja": "保存せずに閉じる",
+   "zh": "不保存并关闭",
+   "tw": "不儲存並關閉",
+   "ko": "저장하지 않고 닫기",
+   "de": "Schließen ohne Speichern",
+   "hi": "बिना सेव किए बंद करें"
+  },
+  "Save and open": {
+   "ja": "保存して開く",
+   "zh": "保存并打开",
+   "tw": "儲存並開啟",
+   "ko": "저장하고 열기",
+   "de": "Speichern und öffnen",
+   "hi": "सेव करके खोलें"
+  },
+  "Open without saving": {
+   "ja": "保存せずに開く",
+   "zh": "不保存并打开",
+   "tw": "不儲存並開啟",
+   "ko": "저장하지 않고 열기",
+   "de": "Öffnen ohne Speichern",
+   "hi": "बिना सेव किए खोलें"
+  },
+  "Save and remove": {
+   "ja": "保存して外す",
+   "zh": "保存并移除",
+   "tw": "儲存並移除",
+   "ko": "저장하고 제거",
+   "de": "Speichern und entfernen",
+   "hi": "सेव करके हटाएँ"
+  },
+  "Remove without saving": {
+   "ja": "保存せずに外す",
+   "zh": "不保存并移除",
+   "tw": "不儲存並移除",
+   "ko": "저장하지 않고 제거",
+   "de": "Entfernen ohne Speichern",
+   "hi": "बिना सेव किए हटाएँ"
+  },
+  "Overwrite anyway": {
+   "ja": "このまま上書き",
+   "zh": "仍然覆盖",
+   "tw": "仍然覆寫",
+   "ko": "그대로 덮어쓰기",
+   "de": "Trotzdem überschreiben",
+   "hi": "फिर भी ऊपर लिखें"
+  },
+  "%d bundle(s) have unsaved changes: %s": {
+   "ja": "%d 個の束に未保存の変更があります: %s",
+   "zh": "%d 个参数组有未保存的更改: %s",
+   "tw": "%d 個參數組有未儲存的變更: %s",
+   "ko": "%d개 묶음에 저장하지 않은 변경이 있습니다: %s",
+   "de": "%d Bündel haben ungespeicherte Änderungen: %s",
+   "hi": "%d बंडल में बिना सहेजे परिवर्तन हैं: %s"
+  },
+  "%s has unsaved changes; reloading reads the file again and drops them": {
+   "ja": "%s に未保存の変更があります。読み直すとファイルを読み込み直し、変更は消えます",
+   "zh": "%s 有未保存的更改;重新加载会重新读取文件并丢弃这些更改",
+   "tw": "%s 有未儲存的變更;重新載入會重新讀取檔案並捨棄這些變更",
+   "ko": "%s에 저장하지 않은 변경이 있습니다. 다시 읽으면 파일을 다시 읽고 변경은 사라집니다",
+   "de": "%s hat ungespeicherte Änderungen; Neu laden liest die Datei erneut und verwirft sie",
+   "hi": "%s में बिना सहेजे परिवर्तन हैं; फिर से लोड करने पर फ़ाइल दोबारा पढ़ी जाती है और वे हट जाते हैं"
+  },
+  "example: %s": {
+   "ja": "例: %s",
+   "zh": "示例: %s",
+   "tw": "範例: %s",
+   "ko": "예: %s",
+   "de": "Beispiel: %s",
+   "hi": "उदाहरण: %s"
+  },
+  "not a parameter file: %s": {
+   "ja": "パラメータのファイルではありません: %s",
+   "zh": "不是参数文件: %s",
+   "tw": "不是參數檔案: %s",
+   "ko": "파라미터 파일이 아닙니다: %s",
+   "de": "keine Parameterdatei: %s",
+   "hi": "पैरामीटर फ़ाइल नहीं है: %s"
+  },
+  "only files can be dropped here": {
+   "ja": "ここへ落とせるのはファイルだけです",
+   "zh": "这里只能拖放文件",
+   "tw": "這裡只能拖放檔案",
+   "ko": "여기에는 파일만 놓을 수 있습니다",
+   "de": "hier können nur Dateien abgelegt werden",
+   "hi": "यहाँ केवल फ़ाइलें छोड़ी जा सकती हैं"
+  },
+  "open .json, .toml, .yaml / .yml or .xml": {
+   "ja": "開けるのは .json・.toml・.yaml / .yml・.xml",
+   "zh": "可打开 .json、.toml、.yaml / .yml 或 .xml",
+   "tw": "可開啟 .json、.toml、.yaml / .yml 或 .xml",
+   "ko": ".json, .toml, .yaml / .yml, .xml 파일을 열 수 있습니다",
+   "de": "geöffnet werden .json, .toml, .yaml / .yml oder .xml",
+   "hi": ".json, .toml, .yaml / .yml या .xml खोली जा सकती हैं"
+  },
+  "Could not open %s (%s)": {
+   "ja": "%s を開けません(%s)",
+   "zh": "无法打开 %s(%s)",
+   "tw": "無法開啟 %s(%s)",
+   "ko": "%s을(를) 열 수 없습니다(%s)",
+   "de": "%s kann nicht geöffnet werden (%s)",
+   "hi": "%s नहीं खुल सकी (%s)"
+  },
+  "could not save %s; the file on disk is unchanged (%s)": {
+   "ja": "%s を保存できません。ディスクの上のファイルは変わっていません(%s)",
+   "zh": "无法保存 %s;磁盘上的文件未改变(%s)",
+   "tw": "無法儲存 %s;磁碟上的檔案未改變(%s)",
+   "ko": "%s을(를) 저장할 수 없습니다. 디스크의 파일은 그대로입니다(%s)",
+   "de": "%s konnte nicht gespeichert werden; die Datei auf dem Datenträger ist unverändert (%s)",
+   "hi": "%s सेव नहीं हो सकी; डिस्क की फ़ाइल नहीं बदली (%s)"
+  },
+  "No match: \"%s\"": {
+   "ja": "該当なし: \"%s\"",
+   "zh": "无匹配: \"%s\"",
+   "tw": "無符合: \"%s\"",
+   "ko": "일치 없음: \"%s\"",
+   "de": "Keine Treffer: \"%s\"",
+   "hi": "कोई मिलान नहीं: \"%s\""
+  },
+  "Clear the search": {
+   "ja": "検索を消す",
+   "zh": "清除搜索",
+   "tw": "清除搜尋",
+   "ko": "검색 지우기",
+   "de": "Suche löschen",
+   "hi": "खोज साफ़ करें"
+  },
+  "The bundles do not differ": {
+   "ja": "束の間に違う行はありません",
+   "zh": "参数组之间没有差异",
+   "tw": "參數組之間沒有差異",
+   "ko": "묶음 사이에 다른 행이 없습니다",
+   "de": "Die Bündel unterscheiden sich nicht",
+   "hi": "बंडलों में कोई अंतर नहीं है"
+  },
+  "Show every row": {
+   "ja": "全部の行を出す",
+   "zh": "显示所有行",
+   "tw": "顯示所有列",
+   "ko": "모든 행 표시",
+   "de": "Alle Zeilen zeigen",
+   "hi": "सभी पंक्तियाँ दिखाएँ"
+  },
+  "the bundle does not allow this change (%s)": {
+   "ja": "束の決まりで、この変更はできません(%s)",
+   "zh": "参数组的规则不允许此更改(%s)",
+   "tw": "參數組的規則不允許此變更(%s)",
+   "ko": "묶음의 규칙상 이 변경은 할 수 없습니다(%s)",
+   "de": "Die Regeln des Bündels lassen diese Änderung nicht zu (%s)",
+   "hi": "बंडल के नियम यह बदलाव नहीं होने देते (%s)"
+  },
+  "not available now: %s": {
+   "ja": "今は押せません: %s",
+   "zh": "现在不可用: %s",
+   "tw": "目前無法使用: %s",
+   "ko": "지금은 사용할 수 없습니다: %s",
+   "de": "Zurzeit nicht verfügbar: %s",
+   "hi": "अभी उपलब्ध नहीं: %s"
+  },
+  "open a file first": {
+   "ja": "先にファイルを開きます",
+   "zh": "请先打开文件",
+   "tw": "請先開啟檔案",
+   "ko": "먼저 파일을 여세요",
+   "de": "Zuerst eine Datei öffnen",
+   "hi": "पहले कोई फ़ाइल खोलें"
+  },
+  "select a column first": {
+   "ja": "先に列を選びます",
+   "zh": "请先选择一列",
+   "tw": "請先選擇一欄",
+   "ko": "먼저 열을 선택하세요",
+   "de": "Zuerst eine Spalte auswählen",
+   "hi": "पहले कोई स्तंभ चुनें"
+  },
+  "the selected bundle has no file yet": {
+   "ja": "選んでいる束にはまだファイルがありません",
+   "zh": "所选参数组还没有文件",
+   "tw": "所選參數組還沒有檔案",
+   "ko": "선택한 묶음에는 아직 파일이 없습니다",
+   "de": "Das gewählte Bündel hat noch keine Datei",
+   "hi": "चुने हुए बंडल की अभी कोई फ़ाइल नहीं है"
+  },
+  "nothing has changed": {
+   "ja": "変更がありません",
+   "zh": "没有更改",
+   "tw": "沒有變更",
+   "ko": "변경된 내용이 없습니다",
+   "de": "Nichts wurde geändert",
+   "hi": "कुछ नहीं बदला है"
+  },
+  "open two or more bundles first": {
+   "ja": "先に束を 2 つ以上開きます",
+   "zh": "请先打开两个或更多参数组",
+   "tw": "請先開啟兩個以上的參數組",
+   "ko": "먼저 묶음을 둘 이상 여세요",
+   "de": "Zuerst zwei oder mehr Bündel öffnen",
+   "hi": "पहले दो या अधिक बंडल खोलें"
+  }
+ }
+}

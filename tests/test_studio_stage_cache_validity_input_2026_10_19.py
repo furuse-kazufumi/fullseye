@@ -15,6 +15,10 @@ import api
 import studio
 
 _OPS4 = ["gaussian", "sobel_amp", "invert", "otsu"]
+#: drive-absolute path の拒否理由 / reason for rejecting drive-absolute paths.
+_DRIVE_ABSOLUTE_REASON = "absolute path"
+#: rooted path の拒否理由 / reason for rejecting rooted paths.
+_ROOTED_REASON = "rooted paths are refused"
 
 
 def _counting(monkeypatch, names):
@@ -347,7 +351,8 @@ def test_c1_roundtrip_with_tmp_path(tmp_path):
     m2.load_dict(d2)
     assert m2.input_ref == ref
     res = studio.resolve_input_ref(m2.input_ref, str(tmp_path))
-    assert res["status"] == "ok" and res["path"] == str(p) and res["message"] == ""
+    assert res["status"] == "relinked" and res["path"] == str(p)
+    assert "relinked" in res["message"]
 
 
 def test_c2_changed_file_is_a_nonfatal_warning(tmp_path):
@@ -360,11 +365,16 @@ def test_c2_changed_file_is_a_nonfatal_warning(tmp_path):
     assert "input file changed since save" in res["message"]
 
 
-def test_c3_missing_file_message(tmp_path):
-    ref = {"path": str(tmp_path / "gone" / "in.png"), "sha256": "0" * 64, "shape": [2, 2], "dtype": "float64"}
+@pytest.mark.parametrize(("given", "reason"), [
+    ("C:/gone/in.png", _DRIVE_ABSOLUTE_REASON),
+    ("/gone/in.png", _ROOTED_REASON),
+])
+def test_c3_missing_file_message(tmp_path, given, reason):
+    ref = {"path": given, "sha256": "0" * 64, "shape": [2, 2], "dtype": "float64"}
     res = studio.resolve_input_ref(ref, str(tmp_path))
-    assert res["status"] == "missing" and res["path"] is None
-    assert res["message"] == "input not found: %s" % ref["path"]
+    assert res["status"] == "needs_confirmation" and res["path"] is None
+    assert res["reason"] == reason
+    assert res["message"] == "input was not read automatically (%s): %s" % (reason, given)
 
 
 def test_c4_relink_by_basename_next_to_the_json(tmp_path):
@@ -420,6 +430,8 @@ def test_c6_open_pipe_offscreen_reports_in_problems(tmp_path):
     win._open_pipe_path(str(pj))
     texts = [win._problems_list.item(i).text() for i in range(win._problems_list.count())]
     assert texts
-    assert any("input not found: %s" % p in t for t in texts)
+    native_reason = (_ROOTED_REASON if str(p).replace("\\", "/").startswith("/")
+                     else _DRIVE_ABSOLUTE_REASON)
+    assert any("not read automatically (%s): %s" % (native_reason, p) in t for t in texts)
     assert model.image is keep                                 # kept the current image
     win.close()

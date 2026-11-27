@@ -35,12 +35,14 @@ import flow          # v14 perception panel
 import motion
 import stereo
 import terrain
-from studio_search import search_grouped, search_zero_results_help
+from studio_search import samples_for, search_grouped, search_zero_results_help
 import studio_errors
 import studio_roundtrip
 import studio_batch
 import studio_display
 import studio_layout
+import studio_project
+import studio_settings
 
 
 # --------------------------------------------------------------------------- #
@@ -146,17 +148,39 @@ def validate_pinned(d):
     return out
 
 
-#: Program lines that are display / config DIRECTIVES (not pipeline stages) and are
-#: therefore persisted next to the stages in a pipeline file (key ``directives``).
-_DIRECTIVE_PREFIXES = ("dev_", "set_system", "disp_")
+_FILE_READING_DIRECTIVES = {"disp_points3d", "disp_mesh3d", "disp_object_model_3d"}
+
+#: Studio の標準 GUI 要件。6.12.0 は Linux で試験が SIGABRT になるので除く。
+#: Standard Studio GUI requirement; exclude 6.12.0 after the Linux A/B run.
+PYSIDE6_REQUIREMENT = "PySide6-Essentials>=6.5,!=6.12.0"
+
+
+def _is_unc_path(path):
+    """共有 helper で UNC/device path を見分ける。Recognise network/device paths lexically."""
+    return _folder_problem(path) is not None
+
+
+def _relative_data_path(path):
+    """共有 helper で相対データ path を検査する。Validate a relative data path lexically."""
+    value = str(path)
+    problem = _plain_relative_path_problem(value)
+    if problem:
+        raise ValueError(problem)
+    return value
+
+
+def _is_supported_directive_line(line):
+    """許可表に head が完全一致する directive 行だけを認める。Require an exact directive allowlist match."""
+    head = _dev_op_head(_hdev_strip_comment(line))
+    return head in (_DEV_DIRECTIVES | _CONFIG_DIRECTIVES | _DISP_DIRECTIVES)
 
 
 def validate_directives(d):
     """Validate the optional ``directives`` key of a pipeline payload → list of str.
 
     Absent → ``[]`` (files written before the key existed stay loadable). Present →
-    must be a list of program lines that each start with a directive operator
-    (``dev_*`` / ``set_system`` / ``disp_*``); anything else is rejected, so a stage
+    must be a list of program lines whose operator is in Studio's exact directive
+    allowlist; anything else is rejected, so a stage
     can never sneak into the pipeline through the directive channel (fail-closed)."""
     if not isinstance(d, dict):
         raise ValueError("not a pipeline file (expected a JSON object)")
@@ -171,9 +195,15 @@ def validate_directives(d):
         if not isinstance(ln, str):
             raise ValueError("directive %d must be text, got %r" % (i + 1, truncate(ln, 40)))
         s = ln.strip()
-        if not s.startswith(_DIRECTIVE_PREFIXES):
-            raise ValueError("directive %d is not a dev_* / set_system / disp_* line: %r"
+        if not _is_supported_directive_line(s):
+            raise ValueError("directive %d is not a supported directive line: %r"
                              % (i + 1, truncate(s, 60)))
+        head = _dev_op_head(_hdev_strip_comment(s))
+        if head in _FILE_READING_DIRECTIVES:
+            args = _parse_dev_args(_hdev_strip_comment(s))
+            problem = _plain_relative_path_problem(str(args[0]) if args else "")
+            if problem:
+                raise ValueError("directive %d: %s" % (i + 1, problem))
         out.append(ln.rstrip())
     return out
 
@@ -234,7 +264,11 @@ def _crash_log_path():
 def _log_soft_failure(context, exc):
     """Record a non-fatal failure (settings that could not be saved, …) in the same
     ``studio_crash.log`` the crash hooks write, and on stderr. Never raises."""
-    msg = "%s: %s: %s" % (context, type(exc).__name__, exc)
+    _log_line("%s: %s: %s" % (context, type(exc).__name__, exc))
+
+
+def _log_line(msg):
+    """Append one line to ``studio_crash.log`` and to stderr. Never raises."""
     try:
         path = _crash_log_path()
         with open(path, "a", encoding="utf-8") as fh:
@@ -438,16 +472,79 @@ def _default_error(parent, title, text):                      # pragma: no cover
 
 
 def _default_confirm(parent, title, text):                    # pragma: no cover - GUI
+    """「捨てる / キャンセル」の確認。ボタンの字は UI の言語(Qt の標準ボタンは Qt の翻訳が無いと英語のまま)。"""
     from PySide6 import QtWidgets
-    btn = QtWidgets.QMessageBox.question(
-        parent, title, text,
-        QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel,
-        QtWidgets.QMessageBox.Cancel)
-    return btn == QtWidgets.QMessageBox.Discard
+    box = QtWidgets.QMessageBox(parent)
+    box.setIcon(QtWidgets.QMessageBox.Question)
+    box.setWindowTitle(title); box.setText(text)
+    b_discard = box.addButton(tr("Discard"), QtWidgets.QMessageBox.DestructiveRole)
+    b_cancel = box.addButton(tr("Cancel"), QtWidgets.QMessageBox.RejectRole)
+    box.setDefaultButton(b_cancel); box.setEscapeButton(b_cancel)
+    box.exec()
+    return box.clickedButton() is b_discard
+
+
+def _default_confirm_action(parent, title, text, action):
+    """「やり直しの効かない操作」の確認の窓: 何が失われるかを *text* に書き、押せるのは *action*(実行する)と
+    キャンセル。**既定のボタンはキャンセル**(Enter・Esc のどちらでも何も起きない)。「次から聞かない」は付けない。
+    画面の無い実行(offscreen)では窓を出せないので、安全な側(実行しない)を返す。"""
+    from PySide6 import QtWidgets
+    if os.environ.get("QT_QPA_PLATFORM") == "offscreen":
+        return False
+    box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, title, text, QtWidgets.QMessageBox.NoButton, parent)
+    go = box.addButton(action, QtWidgets.QMessageBox.DestructiveRole)
+    cancel = box.addButton(tr("Cancel"), QtWidgets.QMessageBox.RejectRole)
+    box.setDefaultButton(cancel)
+    box.setEscapeButton(cancel)
+    box.exec()
+    return box.clickedButton() is go
+
+
+def _default_close_confirm(parent, title, text, can_save):    # pragma: no cover - GUI
+    """終了の確認(★2026-11-13、初回起動の点検 M10)。返り値は ``"save"`` / ``"discard"`` / ``"cancel"``。
+
+    ボタンは「保存して閉じる」(保存できる時だけ)・「保存せずに閉じる」・「キャンセル」(既定・Esc)。従来は
+    Cancel と Discard の 2 つで、字も英語だった。:data:`CONFIRM_HOOK` が差し替えてある時(試験・埋め込み)は
+    モーダルを出さず、その答え(True = 捨てて閉じる)に従う。"""
+    if CONFIRM_HOOK is not _default_confirm:
+        return "discard" if CONFIRM_HOOK(parent, title, text) else "cancel"
+    from PySide6 import QtWidgets
+    box = QtWidgets.QMessageBox(parent)
+    box.setIcon(QtWidgets.QMessageBox.Question)
+    box.setWindowTitle(title); box.setText(text)
+    b_save = box.addButton(tr("Save and close"), QtWidgets.QMessageBox.AcceptRole) if can_save else None
+    b_discard = box.addButton(tr("Close without saving"), QtWidgets.QMessageBox.DestructiveRole)
+    b_cancel = box.addButton(tr("Cancel"), QtWidgets.QMessageBox.RejectRole)
+    box.setDefaultButton(b_cancel); box.setEscapeButton(b_cancel)
+    box.exec()
+    hit = box.clickedButton()
+    if b_save is not None and hit is b_save:
+        return "save"
+    return "discard" if hit is b_discard else "cancel"
+
+
+def _fmt_or_english(translated, english, *args):
+    """``translated % args``; when the translated row's format does not fit the arguments, ``english % args``.
+
+    ★2026-11-15(PR #316 の独立レビュー): 終了の確認の文が翻訳の表を通るようになり、表の行から %d が落ちると文の
+    組み立てが TypeError になった(確認が出ない)。壊れた訳より原文。"""
+    try:
+        return translated % args
+    except (TypeError, ValueError):
+        return english % args
 
 
 ERROR_HOOK = _default_error       # (parent, title, text) -> None
 CONFIRM_HOOK = _default_confirm   # (parent, title, text) -> bool (True = go ahead)
+#: (parent, title, text, can_save) -> "save" | "discard" | "cancel"(終了の確認だけが使う)
+CLOSE_CONFIRM_HOOK = _default_close_confirm
+#: CONFIRM_ACTION_HOOK(parent, 題, 何が失われるか, 実行のボタンの名前) -> bool(True = 実行する)。試験は差し替えて数える。
+CONFIRM_ACTION_HOOK = _default_confirm_action
+
+
+def confirm_action(parent, title, text, action) -> bool:
+    """やり直しの効かない操作の前に聞く(:data:`CONFIRM_ACTION_HOOK`)。True = 実行してよい。"""
+    return bool(CONFIRM_ACTION_HOOK(parent, title, text, action))
 KNOB_DEBOUNCE_MS = 160            # coalesce knob drags before re-running step_states
 
 RUN_WORKER_I18N_KEYS = (
@@ -545,11 +642,13 @@ def _run_worker_class(QtCore):
 def _settings():
     """Studio の QSettings。既定はネイティブ(レジストリ / plist / ini)、
     `FULLSEYE_STUDIO_SETTINGS` が指す ini があればそちら。"""
-    from PySide6 import QtCore          # noqa: PLC0415  (Qt はこのモジュールでは遅延 import)
-    ini = os.environ.get("FULLSEYE_STUDIO_SETTINGS", "")
-    if ini:
-        return QtCore.QSettings(ini, QtCore.QSettings.IniFormat)
-    return QtCore.QSettings("Fullseye", "Studio")
+    return studio_settings.open_settings()
+
+
+def _write_settings(values=(), *, remove=(), settings=None, what="settings"):
+    """既存の ``_settings`` monkeypatch seam を保った検査つき書込み。Checked write through the test seam."""
+    return studio_settings.write_settings(values, remove=remove,
+                                          settings=settings if settings is not None else _settings(), what=what)
 
 
 #: a cache entry whose value was dropped to stay under the memory budget (key/timing kept).
@@ -570,7 +669,8 @@ def _stage_key(s):
 # これらの純関数(妥当性判定・入力参照・段キャッシュ)は engine 層 studio_result.py が正本。
 # Qt の外(ブラウザ版)と共有し、ここでは再エクスポートして studio.X の呼び口を保つ。
 from studio_result import (  # noqa: E402
-    assess_validity, file_sha256, input_reference, resolve_input_ref,
+    assess_validity, file_sha256, input_reference, resolve_input_ref, _read_confirmed_input,
+    _plain_relative_path_problem, _folder_problem, _walk_inside,
     _valid_input_ref, _is_binary, StageCache, array_nbytes,
     CACHE_BUDGET_BYTES, over_budget, cache_summary_text,
 )
@@ -831,6 +931,8 @@ class PipelineModel:
         self.input_path = None
         #: the "input" reference read by the last load_dict (None for files without one)
         self.input_ref = None
+        #: 「現在画像を使う」で保持した保存入力参照。Saved input reference retained by Keep.
+        self.kept_input_ref = None
         #: pinned snapshots (Studio slice 3), oldest first, at most MAX_PINS; saved under "pinned"
         self.pins: list = []
         #: the snapshot the last :meth:`pin` call pushed out (None if none was dropped)
@@ -1516,7 +1618,9 @@ class PipelineModel:
              "stages": [[st[0], st[1], st[2]] + ([True] if _is_bypassed(st) else []) for st in self.stages]}
         if self.directives:                          # key only when used: old files stay byte-identical
             d["directives"] = list(self.directives)
-        if self.input_path:                          # the input reference (path as given + sha256 of the file)
+        if self.kept_input_ref is not None:          # Keep は全キーを原文どおり保持する。Preserve every key exactly.
+            d["input"] = dict(self.kept_input_ref)
+        elif self.input_path:                        # the input reference (path as given + sha256 of the file)
             try:
                 d["input"] = input_reference(self.input_path, self.image)
             except OSError:
@@ -1539,6 +1643,7 @@ class PipelineModel:
         self.stages = stages
         self.directives = directives
         self.input_ref = _valid_input_ref(d.get("input"))    # a malformed "input" is ignored, never fatal
+        self.kept_input_ref = None                    # 新しい pipeline は自身の参照を持つ。It owns its reference.
         self.pins = [PinnedSnapshot(p["stages"], p["input"], p["display"], p["note"], self._img_ver)
                      for p in pinned]
         self.last_dropped_pin = None
@@ -2781,16 +2886,176 @@ def _downsample_grid(hm, max_side=140):
     return h[::ry, ::rx]
 
 
-# Dark, modern IDE design system (QSS). The palette is taken from the Fullseye
-# brand mark (assets/fullseye.ico): deep navy ground, a teal primary accent for
-# interaction/selection, and an amber secondary for section titles / knob handles
-# — the "bullseye" that the whole product is named for.
-NAVY_0, NAVY_1, NAVY_2 = "#14161d", "#1b1e28", "#232734"
-LINE = "#2c313f"
-TEXT, MUTED = "#e2e5ec", "#8b91a0"
-TEAL, TEAL_HI = "#17b8a6", "#22d3bf"
-AMBER = "#f5a524"
-INK = "#0c1116"
+# Colour schemes live in studio_theme.py, by ROLE (2026-11-12 decision: ① Instrument is the
+# default dark scheme, ③ Machine panel the light one; red / amber / green are state colours only).
+# The old constant NAMES stay for other code / branches that read them; their VALUES now come
+# from the default scheme. Code in this file asks for a role at the moment it paints (_C), so a
+# scheme switch reaches every part (per-widget sheets, painted gutters, icons, highlighters).
+import weakref as _weakref                     # noqa: E402
+import studio_theme                            # noqa: E402
+import studio_panels                           # noqa: E402  (panel bar, dock <-> separate window, saved layout)
+
+_LEGACY = studio_theme.legacy_constants(studio_theme.PALETTES[studio_theme.DEFAULT_THEME])
+NAVY_0, NAVY_1, NAVY_2 = _LEGACY["NAVY_0"], _LEGACY["NAVY_1"], _LEGACY["NAVY_2"]
+LINE = _LEGACY["LINE"]
+TEXT, MUTED = _LEGACY["TEXT"], _LEGACY["MUTED"]
+TEAL, TEAL_HI = _LEGACY["TEAL"], _LEGACY["TEAL_HI"]
+AMBER = _LEGACY["AMBER"]
+INK = _LEGACY["INK"]
+
+
+def _C(role):
+    """The active scheme's colour for one role (studio_theme.ROLES). KeyError for an unknown role."""
+    return studio_theme.colour(role)
+
+
+#: Everything themed after it was built: re-filled / re-drawn on a scheme switch.
+_THEMED = {"styles": [], "icons": [], "highlighters": _weakref.WeakSet(), "surrounds": _weakref.WeakSet()}
+
+
+def _themed_style(widget, template):
+    """A per-widget style sheet written with {role} placeholders (studio_theme.fill)."""
+    widget.setStyleSheet(studio_theme.fill(template))
+    _THEMED["styles"].append((_weakref.ref(widget), template))
+
+
+def _themed_icon(target, name, role="text"):
+    """A line icon (``_icon``) drawn in a role colour; redrawn when the scheme changes."""
+    from PySide6 import QtGui, QtCore   # noqa: PLC0415
+    target.setIcon(_icon(QtGui, QtCore, name, _C(role)))
+    _THEMED["icons"].append((_weakref.ref(target), name, role))
+
+
+def _surround_view(view):
+    """The ground around an image: neutral grey (chroma 0) in every scheme."""
+    from PySide6 import QtGui   # noqa: PLC0415
+    view.setBackgroundBrush(QtGui.QColor(_C("surround")))
+    _THEMED["surrounds"].add(view)
+
+
+#: old Navy / Teal hex in generated help HTML -> role (themed when the page is shown)
+_HTML_HEX = {"#f5a524": "title", "#8b91a0": "muted", "#22d3bf": "accent_hi", "#17b8a6": "accent",
+             "#12141b": "chrome", "#2c313f": "line"}
+_HTML_HEX_RE = re.compile("|".join(re.escape(h) for h in _HTML_HEX), re.I)
+
+
+def _themed_html(html):
+    """Help pages are generated with fixed colours (their tests pin the text); show them in the scheme."""
+    return _HTML_HEX_RE.sub(lambda m: _C(_HTML_HEX[m.group(0).lower()]), html or "")
+
+
+def _refresh_themed():
+    """Re-apply every themed style / icon / highlighter / image ground. Dead widgets are dropped."""
+    from PySide6 import QtGui, QtCore   # noqa: PLC0415
+    keep = []
+    for ref, template in _THEMED["styles"]:
+        w = ref()
+        if w is None:
+            continue
+        try:
+            w.setStyleSheet(studio_theme.fill(template))
+            keep.append((ref, template))
+        except RuntimeError:                       # the C++ object is gone
+            pass
+    _THEMED["styles"] = keep
+    keep = []
+    for ref, name, role in _THEMED["icons"]:
+        t = ref()
+        if t is None:
+            continue
+        try:
+            t.setIcon(_icon(QtGui, QtCore, name, _C(role)))
+            keep.append((ref, name, role))
+        except RuntimeError:
+            pass
+    _THEMED["icons"] = keep
+    for hl in list(_THEMED["highlighters"]):
+        try:
+            hl.retint()
+        except RuntimeError:
+            pass
+    for v in list(_THEMED["surrounds"]):
+        try:
+            v.setBackgroundBrush(QtGui.QColor(_C("surround")))
+        except RuntimeError:
+            pass
+
+
+def _apply_density(win):
+    """Rows, gaps and icon buttons from studio_theme.DENSITY (the one table).
+
+    List / tree / combo rows come from the style sheet (text + pad); here: table rows, lists that
+    show thumbnails (thumbnail + 4), layout margins / spacing (frame inside, title gap, row gap,
+    group gap, 4 px between neighbouring clickable things), labels that took spare height, and
+    the square icon-only buttons (iconOnly=true)."""
+    from PySide6 import QtWidgets, QtCore   # noqa: PLC0415
+    d = studio_theme.density()
+    row = studio_theme.row_height(win.fontMetrics().height())
+    for t in win.findChildren(QtWidgets.QTableWidget):
+        vh = t.verticalHeader()
+        vh.setMinimumSectionSize(min(row, vh.minimumSectionSize()))
+        vh.setDefaultSectionSize(row)
+    thumbs = [(getattr(win, "_stage_list", None), _STAGE_THUMB[1]),
+              ((getattr(win, "_variables", None) or {}).get("list"), 44)]        # 44 = build_window's _VAR_THUMB
+    for lw, th in thumbs:
+        if lw is not None:
+            lw.setStyleSheet("QListWidget::item { height:%dpx; }" % max(row, th + 4))
+    ol = getattr(win, "_op_list", None)          # the op list keeps its own rule (text + pad, 1.1.1)
+    if ol is not None:
+        ol.setStyleSheet("QListWidget::item { padding: 0px 6px; height: %dpx; }"
+                         % (ol.fontMetrics().height() + d["row_pad"]))
+    skip = (QtWidgets.QToolBar, QtWidgets.QStatusBar, QtWidgets.QMainWindow, QtWidgets.QDockWidget,
+            QtWidgets.QMdiSubWindow, QtWidgets.QTabBar, QtWidgets.QMenuBar)
+    for lay in win.findChildren(QtWidgets.QLayout):
+        w = lay.parentWidget()
+        if w is None or isinstance(w, skip) or w.objectName() in ("view_tools",):
+            continue
+        widgets = studio_theme.layout_widgets(lay)     # never itemAt here: see studio_theme.LayoutEntry
+        if isinstance(w, QtWidgets.QGroupBox) and lay is w.layout():
+            lay.setContentsMargins(d["inner"], d["title_gap"], d["inner"], d["inner"])
+        elif lay is w.layout():
+            m = lay.contentsMargins()
+            if max(m.left(), m.top(), m.right(), m.bottom()) > 0:
+                lay.setContentsMargins(d["unit"], d["unit"], d["unit"], d["unit"])
+        else:
+            lay.setContentsMargins(0, 0, 0, 0)
+        if any(isinstance(x, QtWidgets.QGroupBox) for x in widgets):
+            sp = d["group_gap"]
+        elif sum(isinstance(x, QtWidgets.QAbstractButton) for x in widgets) >= 2:
+            sp = d["click_gap"]
+        else:
+            sp = d["row_gap"]
+        if lay.spacing() >= 0 and not isinstance(lay, QtWidgets.QFormLayout):
+            lay.setSpacing(sp)
+        if isinstance(lay, QtWidgets.QFormLayout):
+            lay.setVerticalSpacing(d["row_gap"])
+    for w in win.findChildren(QtWidgets.QLabel) + win.findChildren(QtWidgets.QCheckBox) \
+            + win.findChildren(QtWidgets.QRadioButton):
+        if isinstance(w, QtWidgets.QLabel) and (w.wordWrap() or w.pixmap() is not None and not w.pixmap().isNull()):
+            continue
+        pol = w.sizePolicy()
+        if pol.verticalPolicy() == QtWidgets.QSizePolicy.Preferred:
+            pol.setVerticalPolicy(QtWidgets.QSizePolicy.Maximum)
+            w.setSizePolicy(pol)
+    for b in win.findChildren(QtWidgets.QToolButton):
+        if not b.property("iconOnly") or b.property("keepSize"):
+            continue
+        main = bool(b.property("accent"))
+        side = d["main_btn"] if main else d["icon_btn"]
+        ic = d["main_icon"] if main else d["icon"]
+        b.setFixedSize(side + (8 if b.menu() is not None else 0), side)
+        b.setIconSize(QtCore.QSize(ic, ic))
+    for name in ("main_tools", "work_modes"):
+        tb = win.findChild(QtWidgets.QToolBar, name)
+        if tb is not None:
+            tb.setIconSize(QtCore.QSize(d["icon"], d["icon"]))
+
+
+def dock_layout_usable(win, keys=("program", "operators", "pipeline")):
+    """A restored panel layout is usable when at least one main panel is not hidden
+    (a well-formed state that hides every panel used to be accepted — 2026-11-12)."""
+    docks = getattr(win, "_docks", {}) or {}
+    return any(k in docks and not docks[k].isHidden() for k in keys)
 
 
 # --------------------------------------------------------------------------- #
@@ -2833,6 +3098,27 @@ def region_feature_objects(result, min_area=1):
     mode = "labels" if _is_binary(arr) else "otsu"
     thr = "none" if mode == "labels" else "otsu"
     return detect.segment_objects(arr, threshold=thr, min_area=int(min_area)), mode
+
+
+#: 特徴量の検査の表に出す領域の上限(大きい順に。表と絵の上の印が固まらないように)
+REGION_TABLE_MAX = 500
+
+
+def _region_table_min_area(size):
+    """特徴量の検査の表から落とす小さな粒の面積の下限: 画像の約 20 ppm、1 画素以上(雑音の多い二値化で、1 画素の
+    領域が何千と並んで表が固まらないように)。"""
+    return max(1, int(round(size * 2e-5)))
+
+
+def _region_table_count(raw):
+    """特徴量の検査の表が、二値の結果 *raw* に出す行の数(``region_feature_objects`` と同じ 8 連結・0.5 より上、
+    上の面積の下限と行の上限も同じ)。領域ごとの特徴は計算しない(ラベル付けと画素数の集計だけ)。"""
+    from scipy import ndimage as _ndi
+    lab, n = _ndi.label(np.asarray(raw) > 0.5, structure=np.ones((3, 3), bool))
+    if not n:
+        return 0
+    areas = np.bincount(lab.ravel(), minlength=n + 1)[1:]
+    return int(min(REGION_TABLE_MAX, np.count_nonzero(areas >= _region_table_min_area(lab.size))))
 
 
 def region_feature_table(objs, names, image=None):
@@ -3452,99 +3738,10 @@ def mesh_edges(F, cap=60000):
     return None if e.shape[0] > int(cap) else e
 
 _OP_ROW_PAD = 4          # op の一覧の行の高さ = 文字の高さ + これ(px)
-THEME = f"""
-QWidget {{ background:{NAVY_0}; color:{TEXT}; font-size:12px;
-    font-family:"Segoe UI","Yu Gothic UI","Meiryo","Nirmala UI","Noto Sans Devanagari",system-ui,sans-serif; }}
-QMainWindow, QDialog {{ background:{NAVY_0}; }}
-QLabel {{ color:{TEXT}; background:transparent; }}
-QLabel[muted="true"] {{ color:{MUTED}; }}
-QLabel[hint="true"] {{ color:{MUTED}; font-family:Consolas,"Cascadia Mono",monospace; }}
-
-QMenuBar {{ background:#12141b; color:#c7cbd6; border-bottom:1px solid #262b38; padding:1px 4px; }}
-QMenuBar::item {{ background:transparent; padding:3px 9px; border-radius:4px; }}
-QMenuBar::item:selected {{ background:{NAVY_2}; color:{TEAL_HI}; }}
-QMenu {{ background:{NAVY_1}; border:1px solid {LINE}; border-radius:5px; padding:3px; }}
-QMenu::item {{ padding:4px 24px 4px 12px; border-radius:4px; }}
-QMenu::item:selected {{ background:{TEAL}; color:{INK}; }}
-QMenu::separator {{ height:1px; background:{LINE}; margin:4px 6px; }}
-
-QToolBar {{ background:#12141b; border:none; border-bottom:1px solid #262b38; spacing:3px; padding:2px 6px; }}
-QToolButton {{ background:{NAVY_2}; border:1px solid {LINE}; border-radius:4px; padding:3px 9px; color:{TEXT}; }}
-QToolButton:hover {{ border-color:{TEAL}; color:{TEAL_HI}; }}
-QToolButton:pressed {{ background:{TEAL}; color:{INK}; }}
-QToolButton[accent="true"] {{ background:{TEAL}; color:{INK}; border:none; font-weight:700; }}
-QToolButton[accent="true"]:hover {{ background:{TEAL_HI}; }}
-QToolButton:focus {{ border:1px solid {TEAL_HI}; padding:3px 9px; }}
-
-/* Dockable tool windows (VS/HDevelop-style). Compact title bars, square-ish. */
-QDockWidget {{ titlebar-close-icon:none; titlebar-normal-icon:none;
-    font-size:11px; color:{MUTED}; }}
-QDockWidget::title {{ background:#161922; padding:7px 8px; border:1px solid #262b38;
-    border-bottom:2px solid {TEAL}; text-transform:uppercase; letter-spacing:1px;
-    text-align:left; }}
-QDockWidget::title:hover {{ background:{NAVY_2}; }}
-QDockWidget::close-button, QDockWidget::float-button {{
-    background:transparent; border:none; padding:0; icon-size:12px; }}
-QMdiArea {{ background:{NAVY_0}; }}
-QMdiSubWindow {{ background:{NAVY_1}; }}
-QMdiSubWindow > QWidget {{ border:1px solid #262b38; }}
-
-QGroupBox {{ background:{NAVY_1}; border:1px solid #262b38; border-radius:6px;
-    margin-top:9px; padding:6px 7px 7px 7px; }}
-QGroupBox::title {{ subcontrol-origin:margin; subcontrol-position:top left; left:8px; top:0px;
-    padding:0px 6px; color:{AMBER}; font-size:10px; font-weight:700; letter-spacing:1px; }}
-
-QLineEdit,QComboBox,QPlainTextEdit,QListWidget,QSpinBox {{ background:{NAVY_2};
-    border:1px solid {LINE}; border-radius:4px; padding:2px 7px;
-    selection-background-color:{TEAL}; selection-color:{INK}; }}
-QLineEdit:focus,QComboBox:focus,QPlainTextEdit:focus,QListWidget:focus,QSpinBox:focus {{
-    border:1px solid {TEAL_HI}; }}
-QListWidget::item {{ padding:2px 6px; border-radius:3px; }}
-QListWidget::item:hover {{ background:#232a36; }}
-QListWidget::item:selected {{ background:{TEAL}; color:{INK}; }}
-QComboBox::drop-down {{ border:none; width:18px; }}
-QComboBox QAbstractItemView {{ background:{NAVY_1}; border:1px solid {LINE}; border-radius:5px;
-    selection-background-color:{TEAL}; selection-color:{INK}; outline:none; }}
-
-QPushButton {{ background:{NAVY_2}; border:1px solid {LINE}; border-radius:4px; padding:3px 10px; color:{TEXT}; }}
-QPushButton:hover {{ background:#262b38; border-color:{TEAL}; }}
-QPushButton:pressed {{ background:{TEAL}; color:{INK}; }}
-QPushButton:disabled {{ color:#5b6270; border-color:#232734; background:#191c25; }}
-QPushButton[accent="true"] {{ background:{TEAL}; color:{INK}; border:none; font-weight:700; }}
-QPushButton[accent="true"]:hover {{ background:{TEAL_HI}; }}
-/* Visible keyboard focus. A blanket universal-selector outline reset used to erase
-   the focus ring on every widget, leaving keyboard users with no idea where focus
-   was; each interactive widget now carries an explicit teal :focus border. */
-QPushButton:focus {{ border:1px solid {TEAL_HI}; padding:3px 10px; }}
-QTabBar::tab {{ background:{NAVY_1}; color:{MUTED}; padding:3px 10px; border:1px solid #262b38;
-    border-bottom:none; border-top-left-radius:4px; border-top-right-radius:4px; }}
-QTabBar::tab:selected {{ background:{NAVY_2}; color:{TEAL_HI}; }}
-
-QSlider::groove:horizontal {{ height:6px; background:{LINE}; border-radius:3px; }}
-QSlider::handle:horizontal {{ width:16px; background:{AMBER}; border-radius:8px; margin:-6px 0; }}
-QSlider::handle:horizontal:hover {{ background:#ffb841; }}
-QSlider::sub-page:horizontal {{ background:{TEAL}; border-radius:3px; }}
-/* Qt QSS orders the sub-control BEFORE the pseudo-state. Writing the state first
-   (widget-state, then sub-control) silently never matches, which is why a disabled
-   slider used to keep painting the enabled-looking amber handle. */
-QSlider::handle:horizontal:disabled {{ background:#3d424e; }}
-QSlider::sub-page:horizontal:disabled {{ background:#2a2f3b; }}
-QSlider::groove:horizontal:disabled {{ background:#232734; }}
-QSlider::handle:horizontal:focus {{ border:2px solid {TEAL_HI}; }}
-
-QScrollBar:vertical {{ background:transparent; width:12px; margin:2px; }}
-QScrollBar::handle:vertical {{ background:{LINE}; border-radius:6px; min-height:28px; }}
-QScrollBar::handle:vertical:hover {{ background:#3a4152; }}
-QScrollBar:horizontal {{ background:transparent; height:12px; margin:2px; }}
-QScrollBar::handle:horizontal {{ background:{LINE}; border-radius:6px; min-width:28px; }}
-QScrollBar::add-line,QScrollBar::sub-line {{ height:0; width:0; }}
-QSplitter::handle {{ background:#262b38; }}
-QSplitter::handle:horizontal {{ width:2px; }}
-QStatusBar {{ background:#12141b; color:{MUTED}; border-top:1px solid #262b38; }}
-QStatusBar QLabel {{ color:{MUTED}; }}
-QStatusBar::item {{ border:none; }}
-QToolTip {{ background:{INK}; color:{TEXT}; border:1px solid {TEAL}; border-radius:6px; padding:6px 8px; }}
-"""
+#: The window style sheet of the default scheme / density / English (kept as a name: code and tests
+#: read it). The live window is styled by ``studio_theme.build_qss`` with the user's scheme,
+#: density and UI language (font stack) — see ``apply_theme`` in build_window.
+THEME = studio_theme.build_qss(studio_theme.DEFAULT_THEME, "en", studio_theme.DEFAULT_DENSITY)
 
 _ICON_PATH = next((q for q in (os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_assets", "fullseye.ico"),
                                os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "fullseye.ico"))
@@ -3609,22 +3806,259 @@ def op_arg_roles(name):
     return _ARG_ROLES.get(name, ("", ""))
 
 
-def op_impl_source(name):
+_KNOB_DEAD = {}
+
+
+def knob_dead_measured(name):
+    """``docs/ops/_fig/figures.json`` の実測で、0.1 / 0.5 / 0.9 と振っても出力が同じだったつまみ(``{"a", "b"}`` の部分集合)。
+
+    図を作った 1 枚の入力での実測なので、ほかの入力では効く事がある(2026-11-13 に 2 つの入力で確かめ直すと 769 件中
+    11 件が動いた)。だから**無効にする根拠には使わず**、文の言い方にだけ使う。docs の無い環境では空。"""
+    if "_all" not in _KNOB_DEAD:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs", "ops", "_fig", "figures.json")
+        try:
+            with open(path, encoding="utf-8") as f:
+                ops_ = json.load(f).get("ops", {})
+            _KNOB_DEAD["_all"] = {n: frozenset(m.get("knob_dead") or ()) for n, m in ops_.items()
+                                  if isinstance(m, dict) and m.get("status") == "ok"}
+        except (OSError, ValueError, AttributeError):
+            _KNOB_DEAD["_all"] = {}
+    return _KNOB_DEAD["_all"].get(name, frozenset())
+
+
+def knob_use(name, letter):
+    """``(state, why)``: does op *name* read knob *letter*?
+
+    * ``("unused", "table")`` / ``("unused", "spec")`` — the curated role table says ``""`` or the knob spec says
+      unused. Both are checked against the implementation by a test (test_knobs_shown_as_unused_really_do_nothing),
+      so only these grey the knob out.
+    * ``("used", ...)`` — a curated role or a spec label names what it does.
+    * ``("unknown", "measured")`` — nothing names it, and the figure run measured no change (wording only).
+    * ``("unknown", "")`` — nothing tells. ★2026-11-13(初回起動の点検 M3): 以前はこの場合も「(未使用)」と書いていた
+      (xkor_bilateral・sk_rolling_ball は a を使うのに「未使用」)。"""
+    if name in _ARG_ROLES:
+        role = _ARG_ROLES[name][0 if letter == "a" else 1]
+        return ("used", "table") if role else ("unused", "table")
+    try:
+        spec = param_specs.spec_for(name)[letter]
+    except Exception:                                   # noqa: BLE001 -- 分からないなら「分からない」
+        spec = {}
+    if spec.get("kind") == "unused":
+        return "unused", "spec"
+    if spec.get("label"):
+        return "used", "spec"
+    if letter in knob_dead_measured(name):
+        return "unknown", "measured"
+    return "unknown", ""
+
+
+def knob_role_text(name, letter, role=None):
+    """「つまみ a — …」の …(UI の言語): 役割 / (未使用) / 実測の事実 / 実装を参照。"""
+    if role:
+        return tr(role)
+    use, why = knob_use(name, letter)
+    if use == "unused":
+        return tr("(unused)")
+    lab = ""
+    try:
+        lab = param_specs.spec_for(name)[letter].get("label") or ""
+    except Exception:                                   # noqa: BLE001
+        pass
+    if lab:
+        return tr(lab)
+    if why == "measured":
+        return tr("the output did not change at 0.1 / 0.5 / 0.9 on the sample input (measured)")
+    return tr("see impl")
+
+
+#: 「実装を見る」を開いた時に出す字数の上限(超えた分は「…」。つまみの欄を画面の外へ押し出さない)
+IMPL_OPEN_LIMIT = 600
+
+
+def _impl_callable(name):
+    """The function that implements op *name*, under the safety wrapper (None for an unknown op)."""
+    op = api.find_op(name)
+    if op is None:
+        return None
+    try:
+        return inspect.unwrap(op.fn)
+    except ValueError:                                      # a wrapper cycle
+        return op.fn
+
+
+def _impl_function(name):
+    """``(func_def, selectors)``: the parsed implementation of op *name* and the string-valued variables of its
+    closure (``{"kind": "sobel"}`` — what a function shared by a family of ops switches on). None when the source
+    cannot be read or parsed as one function (a lambda inside a table, a C extension)."""
+    import ast
+    import textwrap
+    fn = _impl_callable(name)
+    if fn is None:
+        return None
+    try:
+        tree = ast.parse(textwrap.dedent(inspect.getsource(fn)))
+    except (OSError, TypeError, SyntaxError, ValueError):
+        return None
+    func = tree.body[0] if tree.body else None
+    if not isinstance(func, ast.FunctionDef):
+        return None
+    selectors = {}
+    code, cells = getattr(fn, "__code__", None), getattr(fn, "__closure__", None)
+    if code is not None and cells:
+        for var, cell in zip(code.co_freevars, cells):
+            try:
+                value = cell.cell_contents
+            except ValueError:                              # an empty cell
+                continue
+            if isinstance(value, str):
+                selectors[var] = value
+    return func, selectors
+
+
+def _kind_test(test, selectors):
+    """None when *test* is not a plain ``kind == "x"`` / ``kind in ("x", …)`` on one of *selectors*; else
+    ``(variable, holds)``."""
+    import ast
+    if not (isinstance(test, ast.Compare) and len(test.ops) == 1 and isinstance(test.left, ast.Name)
+            and test.left.id in selectors):
+        return None
+    value, comp = selectors[test.left.id], test.comparators[0]
+    if isinstance(test.ops[0], ast.Eq) and isinstance(comp, ast.Constant):
+        return test.left.id, comp.value == value
+    if (isinstance(test.ops[0], ast.In) and isinstance(comp, (ast.Tuple, ast.List, ast.Set))
+            and all(isinstance(e, ast.Constant) for e in comp.elts)):
+        return test.left.id, any(e.value == value for e in comp.elts)
+    return None
+
+
+def _impl_body(func):
+    import ast
+    body = list(func.body)
+    if (body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant)
+            and isinstance(body[0].value.value, str)):
+        body = body[1:]                                     # the docstring
+    return body
+
+
+def _dispatch_vars(func, selectors):
+    """The closure variables *func* switches on at its top level (``{"kind"}``; empty for a plain function)."""
+    import ast
+    found = set()
+    for stmt in _impl_body(func):
+        node = stmt
+        while isinstance(node, ast.If):
+            got = _kind_test(node.test, selectors)
+            if got is not None:
+                found.add(got[0])
+            node = node.orelse[0] if len(node.orelse) == 1 else None
+    return found
+
+
+def _kind_branch(func, selectors):
+    """The statements of a shared dispatcher that may run for this op: everything before the ``if kind == …`` test
+    that holds and ends in ``return`` / ``raise`` — minus the bodies of the plain tests that do not hold — and
+    that test's body. None when *func* is not such a dispatcher or no such test is found (then the whole function
+    is the honest answer). Only branches proven not to run are dropped; a test this reader does not understand
+    stays, as written.
+
+    Most 2-D ops are one branch of a function shared by a family (``sobel_amp`` is ``kind == "sobel"`` of the
+    function that also holds prewitt / roberts / kirsch / frei; ``auto_threshold`` is ``method == "otsu"``)."""
+    import ast
+    switch = _dispatch_vars(func, selectors)
+    if not switch:
+        return None
+
+    pre = []
+    for stmt in _impl_body(func):
+        if not isinstance(stmt, ast.If) or _kind_test(stmt.test, selectors) is None:
+            pre.append(stmt)                                # 振り分けでない文(読み切れない形の if も)はそのまま残す
+            continue
+        node = stmt
+        while True:
+            got = _kind_test(node.test, selectors)
+            if got is None:
+                return None                                 # elif の途中に読み切れない条件: 追わない
+            if got[1]:
+                if isinstance(node.body[-1], (ast.Return, ast.Raise)):
+                    return pre + list(node.body)
+                pre.extend(node.body)                       # 成り立つが下へ抜ける枝(前置きの検査など): 続きへ
+                break
+            if len(node.orelse) == 1 and isinstance(node.orelse[0], ast.If):
+                node = node.orelse[0]
+                continue
+            if node.orelse:
+                return None                                 # 最後の else(既定の枝): 追わない
+            break
+    return None
+
+
+def _impl_reads_knob(name, letter):
+    """Does the implementation of op *name* read knob *letter* (``"a"`` / ``"b"``)? True / False, or None when it
+    cannot be told (``*args``, a shared dispatcher whose branch cannot be isolated).
+
+    For one branch of a shared dispatcher: does the set-up or the op's own branch name the parameter. For any other
+    function (a plain ``def``, a lambda): does its bytecode load the parameter. A parameter the code never names
+    cannot change the output; one that is passed on (``_otsu(v, a, b)``) counts as read here even when the callee
+    ignores it."""
+    import ast
+    import dis
+    fn = _impl_callable(name)
+    code = getattr(fn, "__code__", None)
+    index = 1 if letter == "a" else 2
+    if code is None or code.co_flags & (inspect.CO_VARARGS | inspect.CO_VARKEYWORDS) or code.co_argcount <= index:
+        return None
+    param = code.co_varnames[index]
+    parsed = _impl_function(name)
+    if parsed is not None and _dispatch_vars(*parsed):
+        stmts = _kind_branch(*parsed)
+        if stmts is None:
+            return None
+        return any(isinstance(n, ast.Name) and n.id == param for s in stmts for n in ast.walk(s))
+    if param in code.co_cellvars:
+        return True                                         # an inner function captures it
+    for ins in dis.get_instructions(code):
+        if ins.argval == param or (isinstance(ins.argval, tuple) and param in ins.argval):
+            return True
+    return False
+
+
+def op_impl_source(name, limit=220, mark_cut=False):
     """The operative expression of an op's implementation (honest, universal answer
     to 'what do a and b do'): e.g. gaussian -> 'gaussian_filter(v, sigma=0.3 + 2.7 * a)'.
-    Empty string if the source is unavailable (C-extension, lambda without source)."""
+    Empty string if the source is unavailable (C-extension, lambda without source).
+    ``limit`` cuts the text (None = everything); ``mark_cut`` appends " …" where it was cut.
+
+    ★2026-11-15(PR #316 の独立レビュー): 族で共有する振り分け関数の op は、その op の枝だけを出す(前置きの文 +
+    ``if kind == "…"`` の中身。注釈は落ちる)。従来は最初の ``return`` より後ろを全部出していて、sobel_amp に
+    prewitt・roberts・kirsch・frei の枝と内部の検証メモまで 1,738 字、rotate_image に 6,026 字が出た。"""
+    import ast
     op = api.find_op(name)
     if op is None:
         return ""
-    try:
-        src = " ".join(inspect.getsource(op.fn).split())
-    except (OSError, TypeError):
-        return ""
-    body = src.split("return ", 1)
-    return (body[1] if len(body) == 2 else src)[:220]
+    text = ""
+    parsed = _impl_function(name)
+    stmts = _kind_branch(*parsed) if parsed is not None else None
+    if stmts:                                               # 族で共有する関数の、この op の枝
+        try:
+            if len(stmts) == 1 and isinstance(stmts[0], ast.Return) and stmts[0].value is not None:
+                text = ast.unparse(stmts[0].value)
+            else:
+                text = "; ".join(" ".join(ast.unparse(s).split()) for s in stmts)
+        except Exception:                                   # noqa: BLE001 -- 取り出せない時は下の従来の道
+            text = ""
+    if not text:
+        try:
+            src = " ".join(inspect.getsource(op.fn).split())
+        except (OSError, TypeError):
+            return ""
+        body = src.split("return ", 1)
+        text = body[1] if len(body) == 2 else src
+    if limit and len(text) > limit:
+        return text[:limit] + (" …" if mark_cut else "")
+    return text
 
 
-def op_signature_detail(row) -> str:
+def op_signature_detail(row, impl_limit=220, mark_cut=False) -> str:
     """Rich multi-line signature for the operator panel: the sort/category/HALCON
     line, each knob's role, and the implementation expression. Answers the user's
     'the arguments can't be judged' by showing exactly what a and b control."""
@@ -3638,9 +4072,9 @@ def op_signature_detail(row) -> str:
                    row.get("provenance") or "(none)", row["name"]))
     lines = [op_detail(row)]
     a_role, b_role = op_arg_roles(row["name"])
-    lines.append(tr("knob a — %s") % (tr(a_role) if a_role else tr("(unused)") if a_role == "" else tr("see impl")))
-    lines.append(tr("knob b — %s") % (tr(b_role) if b_role else tr("(unused)") if b_role == "" else tr("see impl")))
-    src = op_impl_source(row["name"])
+    lines.append(tr("knob a — %s") % knob_role_text(row["name"], "a", a_role))     # M3: 表に無い op を「未使用」と言わない
+    lines.append(tr("knob b — %s") % knob_role_text(row["name"], "b", b_role))
+    src = op_impl_source(row["name"], impl_limit, mark_cut)
     if src:
         lines.append(tr("impl: %s") % src)
     return "\n".join(lines)
@@ -3740,6 +4174,21 @@ def _hdev_strip_comment(line):
     return s
 
 
+def _did_you_mean(name, names, limit=3):
+    """未知の op 名に綴りの近い op 名を最大 *limit* 件(`` — did you mean a, b?``)。無ければ空文字。
+
+    近さは difflib の一致率(綴りの打ち違い)を先に、次に「入力を含む名前」(``canny`` → ``canny_edge``)。"""
+    import difflib
+    low = str(name).lower()
+    pool = sorted(names)
+    close = difflib.get_close_matches(low, pool, n=limit, cutoff=0.6)
+    out = list(close)
+    if len(low) >= 3:
+        out += [n for n in pool if low in n.lower() and n not in out]
+    out = out[:limit]
+    return (" \u2014 " + tr("did you mean %s?") % ", ".join(out)) if out else ""
+
+
 def _hdev_parse_op(line, lineno, errs, names):
     """Parse one operator statement — HDevelop `op (a, b)` or the terse `op a b`.
     Returns (name, a, b) clamped to [0,1], or None (appending an error)."""
@@ -3752,7 +4201,7 @@ def _hdev_parse_op(line, lineno, errs, names):
         parts = line.split()
         name, args = parts[0], parts[1:]
     if name not in names:
-        errs.append("line %d: unknown op '%s'" % (lineno, name)); return None
+        errs.append("line %d: unknown op '%s'%s" % (lineno, name, _did_you_mean(name, names))); return None
     try:
         a = float(args[0]) if len(args) > 0 and args[0] != "" else 0.5
         b = float(args[1]) if len(args) > 1 and args[1] != "" else 0.5
@@ -4121,8 +4570,132 @@ def _ops_accepting(rows, sort):
     return [r for r in rows if engine._compatible(sort, r.get("in_sort") or "")]
 
 
+#: 検索が空の時の op の一覧の先頭(この順)。続きは ``studio_search.STAPLES`` の各組の先頭の op(定番の表が正本)。
+STARTER_HEAD = ("gaussian", "median", "sobel_amp", "otsu", "threshold")
+
+#: 1 入力の段として入れられない理由(英語が原文。画面へは ``tr()`` を通す)
+NOT_INSERTABLE_TEXT = {
+    "general": "‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: fullseye algo run %s",
+    "two_input": "‘%s’ takes two or more inputs, so it cannot be added as a single pipeline stage "
+                 "— it was not added",
+    "unavailable": "‘%s’ is not available in this environment (its optional backend is not installed) "
+                   "— it was not added to the pipeline",
+    # M13(2026-11-13): 型つきの入力を取る台帳の op。従来は「未導入」と言い、試すとライブラリの英語の文のモーダルだった
+    "ledger": "‘%s’ is a typed-ledger op: it takes typed inputs, so it runs in Tools ▸ Run a ledger op "
+              "(Ctrl+Shift+L), not as a pipeline stage",
+}
+
+
+def op_is_ledger(name):
+    """True when *name* is a typed-ledger op of the shipped index (runs with typed inputs, not as a 1-image stage)."""
+    try:
+        return (api._shipped_index().get(name) or {}).get("tier") == "ledger"
+    except Exception:                               # noqa: BLE001 -- 索引が読めなければ台帳の op とは言わない
+        return False
+
+
+def op_insertable(name, row=None):
+    """``(ok, reason)``: can *name* be inserted as a single pipeline stage here?
+
+    ``reason`` is ``""`` when it can, else a key of :data:`NOT_INSERTABLE_TEXT`: ``"general"`` (the read-only
+    general-algorithm tier), ``"two_input"`` (needs a second image/region) or ``"unavailable"`` (its optional
+    backend is not installed). The same rule ``add_op`` refuses by, so the list never promises more than Insert does.
+    """
+    if row is None:
+        row = _op_row(name)
+    if row and row.get("backend") == "general":
+        return False, "general"
+    if api.find_op(name) is not None:
+        return True, ""
+    if op_is_ledger(name):
+        return False, "ledger"
+    try:
+        two_input = name in api._nary_by_name()
+    except Exception:                               # noqa: BLE001 - 理由の言い分けだけの為に落とさない
+        two_input = False
+    return False, ("two_input" if two_input else "unavailable")
+
+
+def not_insertable_text(name, reason):
+    """The sentence shown when *name* cannot be inserted, in the UI language."""
+    text = tr(NOT_INSERTABLE_TEXT[reason])
+    return text % ((name, name) if text.count("%s") == 2 else name)
+
+
+def starter_ops():
+    """The ops the browse list starts from: :data:`STARTER_HEAD`, then the first op of every staple group
+    (``studio_search.STAPLES``), without repeats, keeping only what can be inserted in this environment."""
+    import studio_search
+    names = list(STARTER_HEAD)
+    for _terms, ops_ in studio_search.STAPLES:
+        if ops_ and ops_[0] not in names:
+            names.append(ops_[0])
+    return [n for n in names if op_insertable(n)[0]]
+
+
+#: 最初の段(入力の画像を直接受ける段)で、2 次元の濃淡・二値・ラベルの画像が入れる入力の型。
+#: ``image`` はそのまま、``region`` は入口で二値化して合わせる(``api._coerce_input``)、``any`` は何でも。
+_ENTRY_2D_SORTS = ("image", "region")
+
+
+def entry_sort_of(value):
+    """The sort of the loaded input as the FIRST stage meets it (``"image"`` / ``"region"`` / ``"volume"`` …),
+    or None when it cannot be told (then the list is not narrowed)."""
+    import studio_search
+    return studio_search.canonical_sort(studio_search.current_sort_of(value))
+
+
+def _ops_accepting_entry(rows, entry_sort):
+    """The rows whose first input can take the LOADED input at the first stage; all rows when unknown.
+
+    A 2-D grey / binary / label image enters ``image`` ops as it is and ``region`` ops through the entry
+    coercion; every other declared input (``beatcube``, ``points``, ``seq`` …) cannot take it, so those rows
+    are hidden while the switch is on (they only HIDE — one click on the switch lists them again)."""
+    rows = list(rows)
+    if entry_sort is None:
+        return rows
+    if entry_sort in ("image", "region", "labels2d"):
+        ok = set(_ENTRY_2D_SORTS)
+        return [r for r in rows if (r.get("in_sort") or "") in ok or (r.get("in_sort") or "") == engine._ANY]
+    return [r for r in rows if engine._compatible(entry_sort, r.get("in_sort") or "")]
+
+
+#: 画素の読み取りの 1 行(英語が原文。画面へは ``tr()`` を通す)。座標は画像の配列の (x = 列, y = 行)。
+PIXEL_READOUT_TEXT = "x=%d  y=%d   value %s (%s) / shown %s / range %s to %s"
+
+
+def format_pixel_readout(info, x, y):
+    """``studio_display.pixel_readout`` の結果を、座標つきの 1 行に(UI の言語)。
+
+    ★2026-11-13(初回起動の点検 M5): 案内は「座標と値が出ます」なのに座標が出ず、文は英語の UI でも日本語だった。"""
+    value = info["value"]
+    value_text = value if isinstance(value, str) else format(value, ".4g")
+    shown = "—" if info["display_value"] is None else str(info["display_value"])
+    return tr(PIXEL_READOUT_TEXT) % (int(x), int(y), value_text, info["dtype"], shown,
+                                     format(info["lo"], ".4g"), format(info["hi"], ".4g"))
+
+
 #: Sample image the dev_* visualization demo loads (a collected, license-clean image).
 HDEV_VISUAL_DEMO_IMAGE = "coins"
+
+#: 利用者が起動した窓に最初に出す画像(同梱の見本。来歴とライセンスは studio_assets/sample_images/manifest.json
+#: の coins = skimage.data、BSD / public domain)。ぼかし・メディアン・エッジ・二値化・粒の計数のどれでも見た目が
+#: はっきり変わる(初回起動の点検 M2: 合成のデモ画像は滑らかで、ぼかしと見本の 1 番目を掛けても変わらなかった。
+#: 実測の平均の変化 gaussian 0.004 → 0.034、median 0.001 → 0.030)。
+#: ``build_window()`` の既定(``demo_image``)は変えない —— 試験 14 本(25 か所)と埋め込みの窓の前提を動かさない。
+STARTUP_SAMPLE_IMAGE = "coins"
+
+
+def sample_menu_order(names):
+    """File ▸ Sample images の並び: :data:`STARTUP_SAMPLE_IMAGE` を先頭に、残りは manifest の順。
+
+    「最初の 3 手」の 1 手目(File ▸ Sample images)を文字どおりに辿って先頭を開いても、変化の見える画像になる
+    (従来の先頭は滑らかな gradient で、2・3 手目のぼかしを掛けても絵が変わらなかった)。"""
+    names = list(names)
+    if STARTUP_SAMPLE_IMAGE in names:
+        names.remove(STARTUP_SAMPLE_IMAGE)
+        names.insert(0, STARTUP_SAMPLE_IMAGE)
+    return names
 
 #: An HDevelop-style program that actually USES the dev_* visualization directives:
 #: segment the coins, then draw the region as a coloured outline with a text label.
@@ -4179,6 +4752,25 @@ def shortcut_table(items):
         seen.add(key)
         rows.append((str(label).replace("…", "").strip(), sc))
     return rows
+
+
+#: コマンドパレットの別名(日本語・英語・やりたいことの言い方)。action の鍵 -> 空白区切りの語。
+#: 表示する名前(label)はそのまま、検索のときだけ label + この語に当てる(STUDIO_UX_RULES §6)。
+PALETTE_WORDS = {
+    "project_open": "project folder open folder files explorer tree プロジェクト フォルダ フォルダを開く ファイル ツリー エクスプローラ ctrl+shift+j",
+    "project_new": "project new project create folder プロジェクト 新しいプロジェクト 新規 フォルダ作成 ファイル ツリー",
+    "project_panel": "project folder files explorer tree panel プロジェクト フォルダ ファイル ツリー エクスプローラ パネル",
+    "params_window": "parameters parameter bundle bundles compare json yaml toml xml パラメータ 束 比べる 設定ファイル",
+    "program_find": "find search 検索 探す 見つける 文字列 テキスト検索 ctrl+f",
+    "program_replace": "replace substitute find and replace 置換 置き換え 置き換える 一括置換 ctrl+h",
+    "program_find_next": "find next next match 次を検索 次へ 次の一致 f3",
+    "program_find_prev": "find previous previous match 前を検索 前へ 前の一致 shift+f3",
+    "program_comment": "comment uncomment toggle comment out コメント コメントアウト コメント解除 行コメント 無効化 ctrl+/",
+    "program_help_here": "help operator reference docs documentation ヘルプ 説明 リファレンス op オペレータ 使い方 f1 shift+f1",
+    "program_font_bigger": "font size zoom in bigger larger text 文字サイズ 文字 拡大 大きく フォント ズーム",
+    "program_font_smaller": "font size zoom out smaller text 文字サイズ 文字 縮小 小さく フォント ズーム",
+    "run_selection": "run selection selected lines partial run 選んだ行 選択 部分実行 一部だけ 実行",
+}
 
 
 def palette_filter(labels, query):
@@ -4408,6 +5000,15 @@ def _knob_row_class(QtWidgets, QtCore):
             if slider:
                 self.slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
                 self.slider.setRange(0, 100)
+                # 選んだ spec が choice / bool だと slider は隠れる。Linux の style では表示中だけ
+                # 15 px の最小幅を持つため、段を選ぶたびに dock の最小幅まで変わっていた。横は
+                # layout の stretch で割り当て、size hint は幅の下限に数えない。
+                # A choice/bool spec hides the slider. Some Linux styles otherwise add its 15 px
+                # minimum only while visible, making the dock minimum depend on the selected stage.
+                _slider_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Ignored,
+                                                       QtWidgets.QSizePolicy.Fixed)
+                _slider_policy.setRetainSizeWhenHidden(True)  # spacing / 配置の間隔も spec 間で一定にする
+                self.slider.setSizePolicy(_slider_policy)
                 self.slider.setToolTip("Knob %s (0..1) — meaning depends on the selected op" % letter)
                 self.slider.valueChanged.connect(self._from_slider)
             if raw is None:
@@ -4502,7 +5103,7 @@ def _knob_row_class(QtWidgets, QtCore):
             self.typed.setVisible(page is not None)
             if self.slider:
                 self.slider.setVisible(kind not in ("choice", "bool"))
-            tip = sp.get("doc") or ""
+            tip = tr(sp.get("doc") or "")
             src = sp.get("source")
             if src and src not in ("docstring", "docs/ops"):
                 tip = (tip + "\n" if tip else "") + "source: " + src
@@ -4513,13 +5114,14 @@ def _knob_row_class(QtWidgets, QtCore):
             self.label.setText(_spec_head(sp, self.letter))
 
         def set_enabled(self, on):
-            """Enable/disable the editing widgets; an 'unused' knob keeps only the raw
-            spin live (honest: the op never reads it, but the value is still stored)."""
+            """Enable/disable the editing widgets. An 'unused' knob is greyed out entirely, the raw 0..1 box
+            included (★2026-11-13 M3: the raw box stayed live, so otsu's knobs could be "moved" for nothing);
+            the stored value is still shown."""
             unused = self.spec.get("kind") == "unused"
             if self.slider:
                 self.slider.setEnabled(bool(on) and not unused)
             self.typed.setEnabled(bool(on) and not unused)
-            self.raw.setEnabled(bool(on))
+            self.raw.setEnabled(bool(on) and not unused)
 
         # ---- value mapping ---------------------------------------------------- #
         def _float_steps(self):
@@ -4590,8 +5192,21 @@ def _knob_row_class(QtWidgets, QtCore):
             if self.changed is not None:
                 self.changed(knob, source)
 
+        def short_knob(self, knob):
+            """L6: the shortest decimal (2..6 places) of *knob* that lands on the same slider position and the
+            same shown value, so the code reads ``bilateral (0.847, 0.5)`` instead of
+            ``(0.8466666666666667, 0.5)`` and reads back to exactly the stored knob (repr round-trips)."""
+            k = min(1.0, max(0.0, float(knob)))
+            pos = self.knob_to_pos(k)
+            shown = PS.format_display(self.spec, k)
+            for places in range(2, 7):
+                q = round(k, places)
+                if 0.0 <= q <= 1.0 and self.knob_to_pos(q) == pos and PS.format_display(self.spec, q) == shown:
+                    return q
+            return k
+
         def _from_slider(self, pos):
-            self._emit(self.pos_to_knob(pos), "slider")
+            self._emit(self.short_knob(self.pos_to_knob(pos)), "slider")
 
         def _from_raw(self, v):
             self._emit(float(v), "raw")
@@ -4603,7 +5218,7 @@ def _knob_row_class(QtWidgets, QtCore):
                 v = self.combo.currentIndex()
             elif kind == "bool":
                 v = self.check.isChecked()
-            self._emit(PS.display_to_knob(sp, v), "typed")
+            self._emit(PS.display_to_knob(sp, v), "typed")         # 打った値はそのまま(L6 の短縮はスライダだけ)
 
         def typed_value(self):
             """The current DISPLAYED value (what the typed widget shows)."""
@@ -4695,7 +5310,7 @@ class _ViewSyncMixin:
             return
         if self._cross is None:
             self._cross = QtWidgets.QGraphicsPathItem()
-            pen = QtGui.QPen(QtGui.QColor(AMBER))
+            pen = QtGui.QPen(QtGui.QColor(_C("annot")))
             pen.setCosmetic(True)
             pen.setWidth(1)
             self._cross.setPen(pen)
@@ -4737,7 +5352,7 @@ def _sync_view_class(QtWidgets, QtGui, QtCore):
             self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
             self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
             self.setMouseTracking(True)
-            self.setBackgroundBrush(QtGui.QColor(NAVY_1))
+            _surround_view(self)                     # compare panes: neutral ground like the main view
             self.setMinimumSize(120, 90)
             self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
             self._pm = None
@@ -4809,7 +5424,7 @@ def _sync_view_class(QtWidgets, QtGui, QtCore):
             if self._pm is None and self._msg:
                 painter.save()
                 painter.resetTransform()
-                painter.setPen(QtGui.QColor(MUTED))
+                painter.setPen(QtGui.QColor(_C("muted")))
                 painter.drawText(self.viewport().rect(), QtCore.Qt.AlignCenter | QtCore.Qt.TextWordWrap, self._msg)
                 painter.restore()
 
@@ -4830,7 +5445,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self._item = self._scene.addPixmap(QtGui.QPixmap())
             self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
             self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
-            self.setBackgroundBrush(QtGui.QColor("#202020"))
+            _surround_view(self)
             # ★2026-11-12: 380x380 の下限は主画像欄(MDI の中)より大きく、欄の下が切れた(窓に合わせても収まらない)。
             #   欄に収まる下限にする。別窓(tools=True)は従来どおり。
             self.setMinimumSize(380, 380) if tools else self.setMinimumSize(200, 140)
@@ -4862,7 +5477,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
                 act = QtGui.QAction(text, self)
                 act.setToolTip(tip); act.setStatusTip(tip)
                 if icon:
-                    act.setIcon(_icon(QtGui, QtCore, icon, TEXT))
+                    _themed_icon(act, icon)
                 act.triggered.connect(lambda _=False: cb())
                 return act
             self.actions = {
@@ -4884,7 +5499,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             sub-window widget stays the ImageView (``_graphics_view_of`` contract)."""
             strip = QtWidgets.QWidget(self)
             strip.setObjectName("view_tools")
-            strip.setStyleSheet("#view_tools { background: rgba(18,20,27,180); border-radius: 6px; }")
+            _themed_style(strip, "#view_tools {{ background: {chrome_rgba}; border-radius: 6px; }}")
             lay = QtWidgets.QHBoxLayout(strip)
             lay.setContentsMargins(3, 3, 3, 3); lay.setSpacing(2)
             self.tool_buttons = {}
@@ -4893,6 +5508,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
                 b.setDefaultAction(self.actions[key])
                 b.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
                 b.setIconSize(QtCore.QSize(16, 16)); b.setFixedSize(24, 24)
+                b.setProperty("iconOnly", True); b.setProperty("keepSize", True)   # overlay strip: fixed 24 px
                 b.setAccessibleName(self.actions[key].text())
                 b.setCursor(QtCore.Qt.PointingHandCursor)
                 lay.addWidget(b)
@@ -5011,7 +5627,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             if rect is None:
                 return
             x0, y0, x1, y1 = rect
-            pen = QtGui.QPen(QtGui.QColor(AMBER))
+            pen = QtGui.QPen(QtGui.QColor(_C("annot")))
             pen.setCosmetic(True); pen.setStyle(QtCore.Qt.DashLine)
             self._roi_item = self._scene.addRect(QtCore.QRectF(x0, y0, x1 - x0, y1 - y0), pen)
             self._roi_item.setZValue(50)
@@ -5086,9 +5702,9 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             w = max(self.viewport().width(), 420)
             h = max(self.viewport().height(), 300)
             pm = QtGui.QPixmap(w, h)
-            pm.fill(QtGui.QColor("#12141b"))
+            pm.fill(QtGui.QColor(_C("chrome")))
             p = QtGui.QPainter(pm)
-            p.setPen(QtGui.QColor("#aab0bf"))        # P-20: was #8b91a0 (about 5:1) -> a clearly readable grey
+            p.setPen(QtGui.QColor(_C("text")))       # P-20: a clearly readable text colour on the chrome ground
             f = p.font(); f.setPointSize(13); p.setFont(f)
             # P-03: wrap long messages (a type-mismatch sentence used to be one line cut off on both sides)
             p.drawText(pm.rect().adjusted(32, 24, -32, -24),
@@ -5111,8 +5727,8 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
                 lab.setObjectName("view_notice")
                 lab.setWordWrap(True)
                 lab.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-                lab.setStyleSheet("#view_notice { background: #5a3a00; color: #fff1cf; border: 1px solid #c88a1c;"
-                                  " border-radius: 6px; padding: 6px 10px; }")
+                _themed_style(lab, "#view_notice {{ background: {warn_bg}; color: {text}; border: 1px solid {warn};"
+                                   " border-radius: 6px; padding: 6px 10px; }}")
                 lab.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, False)
                 self._notice = lab
             lab.setText(text)
@@ -5476,7 +6092,7 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                 self._frame = self.frame_rgb()
             qi = _to_qimage(self._frame, QtGui)
             p = QtGui.QPainter(self)
-            p.fillRect(self.rect(), QtGui.QColor(NAVY_0))
+            p.fillRect(self.rect(), QtGui.QColor(_C("bg0")))
             if qi is not None:
                 # centred, unscaled (frame is already sized to the short side)
                 x0 = (self.width() - qi.width()) // 2
@@ -5518,7 +6134,7 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                 hint = (head + "   drag=orbit · wheel=zoom · shift/middle-drag=pan"
                         " · R=reset · F=walk%s"
                         % (" · W=wire" if self._edges is not None else ""))
-            p.setPen(QtGui.QColor(MUTED))
+            p.setPen(QtGui.QColor(_C("muted")))
             p.drawText(8, self.height() - 8, hint)
             p.end()
 
@@ -5821,7 +6437,8 @@ def _icon(QtGui, QtCore, name, color=TEXT, px=40):
     labels — tooltips carry the meaning). Rendered at 2× and marked HiDPI so it
     stays sharp when Qt scales it down to an 18 px button icon. Cached per
     (name, color, px) since the same glyph is reused across many buttons."""
-    key = (name, color, px)
+    off_colour = _C("off")                       # D03: the disabled look of the same shape
+    key = (name, color, px, off_colour)
     hit = _ICON_CACHE.get(key)
     if hit is not None:
         return hit
@@ -5932,8 +6549,22 @@ def _icon(QtGui, QtCore, name, color=TEXT, px=40):
         ell(8.5, 8.5, 3, 3, fill=True)
     p.end()
     ic = QtGui.QIcon(pm)
+    ic.addPixmap(_tinted(QtGui, QtCore, pm, off_colour), QtGui.QIcon.Disabled)
     _ICON_CACHE[key] = ic
     return ic
+
+
+def _tinted(QtGui, QtCore, pm, colour):
+    """The same pixmap with every drawn pixel in ``colour`` (alpha kept): the disabled icon (D03)."""
+    out = QtGui.QPixmap(pm.size())
+    out.setDevicePixelRatio(pm.devicePixelRatio())
+    out.fill(QtCore.Qt.transparent)
+    p = QtGui.QPainter(out)
+    p.drawPixmap(0, 0, pm)
+    p.setCompositionMode(QtGui.QPainter.CompositionMode_SourceIn)
+    p.fillRect(out.rect(), QtGui.QColor(colour))
+    p.end()
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -5995,7 +6626,7 @@ WORK_MODE_TIP_EN = {
     "inspect": "Shows Display · Analysis (large) and Variables & Objects next to the image, for reading values",
     "code": "Shows the Program (code) panel large next to the image, for editing the pipeline as text",
 }
-PANEL_NAME_EN = {"operators": "Operators", "pipeline": "Pipeline · Parameters", "display": "Display · Analysis",
+PANEL_NAME_EN = {"project": "Project", "operators": "Operators", "pipeline": "Pipeline · Parameters", "display": "Display · Analysis",
                  "program": "Program (code)", "variables": "Variables & Objects", "compare": "Stage in → out",
                  "ab": "A / B", "result": "Result image"}
 
@@ -6061,6 +6692,21 @@ def lang_from_locale(name, languages=None):
     else:
         code = base
     return code if code in langs else "en"
+
+
+def studio_pymode_autosave_range():
+    """ファイルへの自動保存の「打つのを止めてから」の秒数の範囲(studio_pymode の値。import を遅らせる)。"""
+    import studio_pymode
+    return studio_pymode.AUTOSAVE_IDLE_RANGE_S
+
+
+#: 起動時の案内(最初の 3 手)。Program 欄のモードごとに 3 行(画面の文は英語が正、訳は i18n.json の strings)。
+FIRST_STEPS_PIPELINE = ("1. Open a sample: File ▸ Sample images",
+                        "2. Open Operators from the panel bar on the left, select an operator and press +",
+                        "3. Press ▶▶ to run")
+FIRST_STEPS_PYTHON = ("1. Press F5: the example in the Program runs",
+                      "2. The picture, the record and the variables appear",
+                      "3. Change a number in the code and press F5 again")
 
 
 def tr(text):
@@ -6158,6 +6804,49 @@ def _abs_fig_src(html, help_dir):
 _NO_HELP_PAGE_NOTE = "No help page has been written for this operator yet. The signature and category above come from its registration."
 
 
+_HELP_EMPH = re.compile(r"<p>\*(?!\*)((?:(?!</p>)[^*])+?)\*</p>")       # 中に <code> などの印があってもよい
+_HELP_STRONG = re.compile(r"<p>\*\*([^*<]+?)\*\*")
+
+
+def help_plain_markup(html_text):
+    """L3(2026-11-13、初回起動の点検): 生成したヘルプに Markdown の強調が生のまま残っていた
+    (``<p>*図は合成の入力…*</p>``・``<p>**つまみ a を振る**…``、2-D のヘルプ 6,947 枚)。段落が丸ごと強調の形と、
+    段落の頭の太字だけを直す(式の ``*`` ・``**`` は段落の頭に来ないので触らない)。"""
+    html_text = _HELP_EMPH.sub(r"<p><em>\1</em></p>", html_text)
+    return _HELP_STRONG.sub(r"<p><b>\1</b>", html_text)
+
+
+def plain_summary(text):
+    """L3: 検索のカードの説明から reST / Markdown の印(````x````・```x```)を外す(生のまま出ていた)。"""
+    t = re.sub(r"``(.+?)``", r"\1", text or "")
+    return re.sub(r"`([^`\n]+)`", r"\1", t)
+
+
+def help_query_target(text, names, halcon=None):
+    """M15(2026-11-13、初回起動の点検): ヘルプの検索欄に打った語 → 開く項目(*names* の 1 つ)、無ければ None。
+
+    完全一致(大文字小文字を問わない)→ HALCON の名前の完全一致(``connection`` → その対応の op)→ 前方一致の最短 →
+    部分一致の最短。従来は欄の自動補完が登録順の最初の前方一致を選び、``select_shape`` と打つと
+    ``select_shape_xld`` が開いた。表に無い語の Enter は、欄に新しい行として足されるだけだった。"""
+    q = (text or "").strip().lower()
+    if not q:
+        return None
+    names = list(names)
+    exact = [n for n in names if n.lower() == q]
+    if exact:
+        return exact[0]
+    if halcon:
+        have = set(names)
+        hits = sorted(n for n, h in halcon.items() if h and str(h).lower() == q and n in have)
+        if hits:
+            return hits[0]
+    for pick in ((lambda n: n.lower().startswith(q)), (lambda n: q in n.lower())):
+        hits = sorted((n for n in names if pick(n)), key=lambda n: (len(n), n))
+        if hits:
+            return hits[0]
+    return None
+
+
 def op_help_html(name, lang="en", meta=None, dim="2d"):
     """Rich HTML help for one operator. Lookup order (see studio_assets/op_help/):
       1. op_help/<name>.<lang>.html   language-specific
@@ -6184,7 +6873,7 @@ def op_help_html(name, lang="en", meta=None, dim="2d"):
         if os.path.exists(p):
             try:
                 with open(p, encoding="utf-8") as f:
-                    return _abs_fig_src(f.read(), _help_fig_root())
+                    return help_plain_markup(_abs_fig_src(f.read(), _help_fig_root()))
             except Exception:
                 break
     m = meta or {}
@@ -6327,18 +7016,28 @@ def _python_highlighter_class(QtGui, QtCore):
     class PythonHighlighter(QtGui.QSyntaxHighlighter):
         def __init__(self, doc):
             super().__init__(doc)
-            self._str_fmt = _fmt("#9ece6a")
+            self._str_fmt = _fmt(_C("syn_str"))
             self._rules = [
                 (re.compile(r"\b(?:%s)\b" % "|".join(keyword.kwlist)),
-                 _fmt("#e0af68", bold=True)),                                # keywords
-                (re.compile(r"\b(?:self|cls)\b"), _fmt("#ff9e64")),
-                (re.compile(r"\b\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\b"), _fmt("#ff9e64")),
+                 _fmt(_C("syn_kw"), bold=True)),                             # keywords
+                (re.compile(r"\b(?:self|cls)\b"), _fmt(_C("syn_num"))),
+                (re.compile(r"\b\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\b"), _fmt(_C("syn_num"))),
                 (re.compile(r"(?:(?<=\bdef\s)|(?<=\bclass\s))\w+"),
-                 _fmt("#7dcfff", bold=True)),
-                (re.compile(r"@\w+(?:\.\w+)*"), _fmt("#bb9af7")),            # decorators
+                 _fmt(_C("syn_def"), bold=True)),
+                (re.compile(r"@\w+(?:\.\w+)*"), _fmt(_C("syn_deco"))),         # decorators
                 (re.compile(r"'[^'\n]*'|\"[^\"\n]*\""), self._str_fmt),      # 1-line strings
-                (re.compile(r"#[^\n]*"), _fmt("#565f89", italic=True)),      # comments
+                (re.compile(r"#[^\n]*"), _fmt(_C("syn_cmt"), italic=True)),   # comments (4.5:1 in both schemes)
             ]
+            self._fmt_roles = [(self._str_fmt, "syn_str")] + [
+                (f, r) for (_rx, f), r in zip(self._rules, ("syn_kw", "syn_num", "syn_num", "syn_def",
+                                                            "syn_deco", "syn_str", "syn_cmt"))]
+            _THEMED["highlighters"].add(self)
+
+        def retint(self):
+            """Scheme switch: recolour the formats in place and re-highlight."""
+            for f, role in self._fmt_roles:
+                f.setForeground(QtGui.QColor(_C(role)))
+            self.rehighlight()
 
         def highlightBlock(self, text):
             for rx, fmt in self._rules:
@@ -6573,8 +7272,8 @@ def _code_editor_class(QtWidgets, QtGui, QtCore):
 
         def paint_gutter(self, ev):
             p = QtGui.QPainter(self._gutter)
-            p.fillRect(ev.rect(), QtGui.QColor("#12141b"))
-            p.setPen(QtGui.QColor("#565f89"))
+            p.fillRect(ev.rect(), QtGui.QColor(_C("gutter")))
+            p.setPen(QtGui.QColor(_C("muted")))
             block = self.firstVisibleBlock()
             n = block.blockNumber()
             top = self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
@@ -6640,8 +7339,193 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
         def mousePressEvent(self, ev):
             self._editor.gutter_click(ev)
 
+    class _FindEdit(QtWidgets.QLineEdit):
+        """検索欄・置換欄。Esc / F3 / Shift+F3 / Ctrl+F / Ctrl+H をウィンドウの同じキー(op の検索・ホールドアウト)
+        より先に受ける。"""
+
+        def __init__(self, bar):
+            super().__init__()
+            self._bar = bar
+
+        def event(self, ev):
+            if ev.type() == QtCore.QEvent.ShortcutOverride:
+                k, m = ev.key(), ev.modifiers()
+                ctrl = bool(m & QtCore.Qt.ControlModifier)
+                if k in (QtCore.Qt.Key_Escape, QtCore.Qt.Key_F3) or (ctrl and k in (QtCore.Qt.Key_F, QtCore.Qt.Key_H)):
+                    ev.accept()
+                    return True
+            return super().event(ev)
+
+        def keyPressEvent(self, ev):
+            k, m = ev.key(), ev.modifiers()
+            shift = bool(m & QtCore.Qt.ShiftModifier)
+            ctrl = bool(m & QtCore.Qt.ControlModifier)
+            if k == QtCore.Qt.Key_Escape:
+                self._bar.close_bar(); return
+            if k == QtCore.Qt.Key_F3:
+                self._bar.step(backward=shift); return
+            if ctrl and k in (QtCore.Qt.Key_F, QtCore.Qt.Key_H):
+                self._bar.open(replace=(k == QtCore.Qt.Key_H)); return
+            if k in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
+                if self is self._bar.replace_edit:
+                    self._bar.replace_one()
+                else:
+                    self._bar.step(backward=shift)
+                return
+            super().keyPressEvent(ev)
+
+    class _FindBar(QtWidgets.QWidget):
+        """Program 欄の下に出す検索・置換の帯(★2026-11-12 IDE 第 1 便, B-4)。
+        Ctrl+F = 検索、Ctrl+H = 置換つき、F3 / Shift+F3 = 次 / 前、Esc = 閉じる。全置換は 1 回の Undo で戻る。"""
+
+        def __init__(self, editor):
+            super().__init__()
+            self._ed = editor
+            self.setObjectName("ProgramFindBar")
+            lay = QtWidgets.QVBoxLayout(self)
+            lay.setContentsMargins(2, 2, 2, 2); lay.setSpacing(2)
+            row1 = QtWidgets.QHBoxLayout(); row1.setSpacing(3)
+            self.find_edit = _FindEdit(self)
+            self.find_edit.setPlaceholderText(tr("Find"))
+            self.find_edit.setClearButtonEnabled(True)
+            self.case = QtWidgets.QCheckBox("Aa")
+            self.case.setToolTip(tr("Match case"))
+            self.btn_prev = QtWidgets.QToolButton(); self.btn_prev.setText("\u2191")
+            self.btn_prev.setToolTip(tr("Find previous"))
+            self.btn_next = QtWidgets.QToolButton(); self.btn_next.setText("\u2193")
+            self.btn_next.setToolTip(tr("Find next"))
+            self.btn_close = QtWidgets.QToolButton(); self.btn_close.setText("\u2715")
+            self.btn_close.setToolTip(tr("Close"))
+            self.count = QtWidgets.QLabel(""); self.count.setProperty("hint", True)
+            for w_ in (self.find_edit,):
+                row1.addWidget(w_, 1)
+            for w_ in (self.case, self.btn_prev, self.btn_next, self.count, self.btn_close):
+                row1.addWidget(w_)
+            lay.addLayout(row1)
+            self.replace_row = QtWidgets.QWidget()
+            row2 = QtWidgets.QHBoxLayout(self.replace_row); row2.setContentsMargins(0, 0, 0, 0); row2.setSpacing(3)
+            self.replace_edit = _FindEdit(self)
+            self.replace_edit.setPlaceholderText(tr("Replace with"))
+            self.btn_replace = QtWidgets.QPushButton(tr("Replace"))
+            self.btn_replace_all = QtWidgets.QPushButton(tr("Replace all"))
+            self.btn_replace.setToolTip(tr("Replace the selected match and go to the next one"))
+            self.btn_replace_all.setToolTip(tr("Replace every match (one Undo brings them all back)"))
+            row2.addWidget(self.replace_edit, 1); row2.addWidget(self.btn_replace); row2.addWidget(self.btn_replace_all)
+            lay.addWidget(self.replace_row)
+            self.btn_next.clicked.connect(lambda _=False: self.step(False))
+            self.btn_prev.clicked.connect(lambda _=False: self.step(True))
+            self.btn_close.clicked.connect(lambda _=False: self.close_bar())
+            self.btn_replace.clicked.connect(lambda _=False: self.replace_one())
+            self.btn_replace_all.clicked.connect(lambda _=False: self.replace_all())
+            self.find_edit.textChanged.connect(lambda _t: self._update_count())
+            self.case.toggled.connect(lambda _c: self._update_count())
+            self.hide()
+
+        # -- 開く・閉じる --
+        def open(self, replace=False, seed=None):
+            self.show()
+            self.replace_row.setVisible(bool(replace))
+            if seed:
+                self.find_edit.setText(seed)
+            self.find_edit.setFocus()
+            self.find_edit.selectAll()
+            self._update_count()
+
+        def close_bar(self):
+            self.hide()
+            self._ed.setFocus()
+
+        # -- 検索 --
+        def _flags(self, backward=False):
+            fl = QtGui.QTextDocument.FindFlag(0)
+            if self.case.isChecked():
+                fl |= QtGui.QTextDocument.FindCaseSensitively
+            if backward:
+                fl |= QtGui.QTextDocument.FindBackward
+            return fl
+
+        def matches(self):
+            """本文の中の一致の数。"""
+            q = self.find_edit.text()
+            if not q:
+                return 0
+            doc, n = self._ed.document(), 0
+            c = doc.find(q, 0, self._flags())
+            while not c.isNull():
+                n += 1
+                c = doc.find(q, c, self._flags())
+            return n
+
+        def _update_count(self):
+            q = self.find_edit.text()
+            n = self.matches() if q else 0
+            self.count.setText("" if not q else (tr("%d matches") % n if n else tr("no match")))
+            return n
+
+        def step(self, backward=False):
+            """次(``backward`` なら前)の一致へ移る。末尾まで行ったら先頭から(戻って来る)。見つけたら True。"""
+            q = self.find_edit.text()
+            if not q:
+                return False
+            ed = self._ed
+            if ed.find(q, self._flags(backward)):
+                return True
+            cur = ed.textCursor()
+            cur.movePosition(QtGui.QTextCursor.End if backward else QtGui.QTextCursor.Start)
+            ed.setTextCursor(cur)
+            found = ed.find(q, self._flags(backward))
+            if not found:
+                self.count.setText(tr("no match"))
+            return found
+
+        # -- 置換 --
+        def replace_one(self):
+            """いま選んでいる一致を置き換えて次へ。選んでいなければ次の一致を選ぶだけ。"""
+            q = self.find_edit.text()
+            if not q:
+                return False
+            ed = self._ed
+            sel = ed.textCursor().selectedText()
+            same = (sel == q) if self.case.isChecked() else (sel.lower() == q.lower())
+            if same:
+                ed.textCursor().insertText(self.replace_edit.text())
+            ok = self.step(False)
+            self._update_count()
+            return ok
+
+        def replace_all(self):
+            """全件を置き換える。**1 回の Undo で全部戻る**(編集ブロックで包む)。置き換えた件数を返す。"""
+            q, r = self.find_edit.text(), self.replace_edit.text()
+            if not q:
+                return 0
+            doc = self._ed.document()
+            guard = QtGui.QTextCursor(doc)
+            guard.beginEditBlock()
+            n = 0
+            try:
+                c = doc.find(q, 0, self._flags())
+                while not c.isNull():
+                    c.insertText(r)
+                    n += 1
+                    c = doc.find(q, c, self._flags())      # 置換した文の後ろから(置換語に q を含んでも無限にならない)
+            finally:
+                guard.endEditBlock()
+            self.count.setText(tr("%d replaced") % n)
+            if self._ed.on_message is not None:
+                self._ed.on_message(tr("%d replaced") % n)
+            return n
+
     class ProgramEditor(QtWidgets.QPlainTextEdit):
-        BREAK = "#e5484d"
+        BREAK = property(lambda self: _C("err"))     # breakpoint dot: the error colour of the scheme
+        #: ★2026-11-12 IDE 第 1 便: 窓(build_window)が入れる受け手。None なら何もしない(部品単体でも動く)。
+        on_open_help = None        # (op 名) -> None   : Shift+F1 で op のヘルプを開く
+        on_message = None          # (文) -> None      : 状態行へ 1 行
+        on_font_change = None      # (pt) -> None      : 文字サイズの保存と全欄への反映
+        on_run_selection = None    # () -> None        : 選んだ行だけを実行
+        #: ★2026-11-13 Python のモード(studio_pymode): True を返す受け手が居る間、行の装飾は PyEditAssist が描く。
+        assist_hook = None         # () -> bool
+        comment_prefix = "*"       # Ctrl+/ の行コメント(パイプラインの記法 "*"、Python のモード "#")
+        legacy_completion = True   # op 名の QCompleter(Python のモードでは PyEditAssist の補完に任せる)
 
         def __init__(self, words=(), parent=None, tip=None):
             super().__init__(parent)
@@ -6673,6 +7557,9 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             self._completer.setMaxVisibleItems(12)
             self._completer.activated.connect(self._insert_completion)
             self._query = ""
+            self._words = set(words)
+            self._errors = {}                 # 1-based 行 -> 構文エラーの文(波線とガターの赤印)
+            self._ide_init()
 
         # -- gutter geometry / painting --
         def gutter_width(self):
@@ -6699,7 +7586,7 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
 
         def paint_gutter(self, ev):
             p = QtGui.QPainter(self._gutter)
-            p.fillRect(ev.rect(), QtGui.QColor("#12141b"))
+            p.fillRect(ev.rect(), QtGui.QColor(_C("gutter")))
             block = self.firstVisibleBlock()
             n = block.blockNumber()
             top = self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
@@ -6713,12 +7600,14 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     if ln in self.breakpoints:      # breakpoint dot
                         p.setBrush(QtGui.QColor(self.BREAK)); p.setPen(QtCore.Qt.NoPen)
                         p.drawEllipse(3, int(top) + (fm.height() - 8) // 2, 8, 8)
-                    p.setPen(QtGui.QColor("#e5484d" if ln == self._exec_line else "#6b7280"))
+                    p.setPen(QtGui.QColor(_C("err") if ln == self._exec_line else _C("muted")))
                     p.drawText(0, int(top), numw, fm.height(),
                                QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter, str(ln))
+                    if ln in self._errors:          # 構文エラーの行: ガターの右端に赤い印
+                        p.fillRect(w - 5, int(top), 4, fm.height(), QtGui.QColor(self.BREAK))
                     ms = self.timings.get(ln)
                     if ms is not None:              # per-line execution time
-                        p.setPen(QtGui.QColor("#17b8a6"))
+                        p.setPen(QtGui.QColor(_C("accent")))
                         p.drawText(0, int(top), w - 4, fm.height(),
                                    QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter, "%.1fms" % ms)
                 block = block.next()
@@ -6738,6 +7627,7 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                     ln = n + 1
                     self.breakpoints.symmetric_difference_update({ln})
                     self._gutter.update()
+                    self._highlight()                       # Python のモード: 行の色(PyEditAssist)も付け直す
                     return
                 block = block.next(); n += 1
                 top = bottom; bottom = top + self.blockBoundingRect(block).height()
@@ -6758,9 +7648,12 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             self._gutter.update()
 
         def _highlight(self):
+            hook = self.assist_hook
+            if hook is not None and hook():                 # Python のモード: 印は PyEditAssist が 1 回で描く
+                return
             sels = []
             cur = QtWidgets.QTextEdit.ExtraSelection()
-            cur.format.setBackground(QtGui.QColor("#1f2430"))
+            cur.format.setBackground(QtGui.QColor(_C("curline")))
             cur.format.setProperty(QtGui.QTextFormat.FullWidthSelection, True)
             cur.cursor = self.textCursor(); cur.cursor.clearSelection()
             sels.append(cur)
@@ -6769,11 +7662,22 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                 blk = doc.findBlockByNumber(self._exec_line - 1)
                 if blk.isValid():
                     ex = QtWidgets.QTextEdit.ExtraSelection()
-                    ex.format.setBackground(QtGui.QColor("#14342f"))
+                    ex.format.setBackground(QtGui.QColor(_C("execline")))
                     ex.format.setProperty(QtGui.QTextFormat.FullWidthSelection, True)
                     c = self.textCursor(); c.setPosition(blk.position()); c.clearSelection()
                     ex.cursor = c
                     sels.append(ex)
+            for ln in sorted(getattr(self, "_errors", {})):          # 構文エラーの行は波線
+                blk = self.document().findBlockByNumber(ln - 1)
+                if not blk.isValid():
+                    continue
+                sq = QtWidgets.QTextEdit.ExtraSelection()
+                sq.format.setUnderlineStyle(QtGui.QTextCharFormat.WaveUnderline)
+                sq.format.setUnderlineColor(QtGui.QColor(self.BREAK))
+                c = QtGui.QTextCursor(blk)
+                c.select(QtGui.QTextCursor.LineUnderCursor)
+                sq.cursor = c
+                sels.append(sq)
             self.setExtraSelections(sels)
 
         # -- autocomplete --
@@ -6789,8 +7693,18 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             self.setTextCursor(c)
 
         def completion_candidates(self, prefix, limit=50):
-            """打った語に対する候補(順位 → 名前順)。Qt を使わずに試験できる入口。"""
-            return self._index.search(prefix, limit=limit)
+            """打った語に対する候補(順位 → 名前順)。Qt を使わずに試験できる入口。
+
+            ★2026-11-12(B-9): 完全一致 → 前方一致(**短い名前が先**: ``gaus`` で gaussian が gauss_filter より前)→
+            それ以外(opsearch の順位のまま)。前方一致の中が索引順だったので、完全に近い名前が 3 番目に沈んでいた。"""
+            names = self._index.search(prefix, limit=None)
+            q = prefix.strip().lower()
+            if q:
+                def _cls(n):
+                    low = n.lower()
+                    return 0 if low == q else (1 if low.startswith(q) else 2)
+                names = sorted(names, key=lambda n: (_cls(n), len(n) if _cls(n) == 1 else 0))   # 安定: 同順位は元の順
+            return names if limit is None else names[:limit]
 
         def _fill_model(self, prefix):
             self._model.clear()
@@ -6804,13 +7718,264 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                 self._model.appendRow(it)
             self._query = prefix
 
+        # ------------------------------------------------------------------ #
+        # ★2026-11-12 IDE 第 1 便: ホバーヘルプ / 構文エラーの印 / キー経路        #
+        # ------------------------------------------------------------------ #
+        def _ide_init(self):
+            """IDE 部品の初期化(__init__ の最後から)。"""
+            self.find_bar = _FindBar(self)             # 置き場は窓の側(欄の下)。この欄は持ち主として動かす
+
+        def open_find(self, replace=False):
+            """検索帯を開く(Ctrl+F / Ctrl+H)。1 行だけ選んでいれば、それを検索語にする。"""
+            sel = self.textCursor().selectedText()
+            seed = sel if (sel and "\u2029" not in sel and len(sel) <= 200) else None
+            self.find_bar.open(replace, seed)
+
+        def word_under_cursor(self):
+            """カーソル下(または直前)の識別子。無ければ空文字。"""
+            import re
+            cur = self.textCursor()
+            text, i = cur.block().text(), cur.positionInBlock()
+            for m in re.finditer(r"[A-Za-z_][A-Za-z0-9_]*", text):
+                if m.start() <= i <= m.end():
+                    return m.group(0)
+            return ""
+
+        def help_for_word(self):
+            """カーソル下の op のヘルプを開く(Shift+F1)。op 名でなければ開かず、状態行に 1 行。
+            F1 の割り当て(キー一覧)は変えない。"""
+            w = self.word_under_cursor()
+            if w and w in self._words:
+                if self.on_open_help is not None:
+                    self.on_open_help(w)
+                return True
+            self._say(tr("not an operator: %s") % w if w else tr("no operator under the cursor"))
+            return False
+
+        def _relayout_gutter(self):
+            self._update_gutter_width()
+            cr = self.contentsRect()
+            self._gutter.setGeometry(QtCore.QRect(cr.left(), cr.top(), self.gutter_width(), cr.height()))
+
+        def zoom(self, delta):
+            """文字サイズを *delta* pt 変える(6〜32 の範囲)。窓があれば設定へ保存し全部のコード欄へ反映する。"""
+            cur = self.font().pointSize()
+            pt = max(6, min(32, cur + int(delta)))
+            if pt == cur:
+                return pt
+            if self.on_font_change is not None:
+                self.on_font_change(pt)
+            else:
+                f = self.font(); f.setPointSize(pt); self.setFont(f)
+            self._relayout_gutter()
+            return pt
+
+        def wheelEvent(self, ev):
+            if ev.modifiers() & QtCore.Qt.ControlModifier:        # Ctrl+ホイール: 文字サイズ(上 = 大きく)
+                dy = ev.angleDelta().y()
+                if dy:
+                    self.zoom(1 if dy > 0 else -1)
+                ev.accept()
+                return
+            super().wheelEvent(ev)
+
+        def toggle_comment(self):
+            """選んだ行(選びが無ければカーソルの行)の行コメント ``* `` を付け外す(Ctrl+/)。
+
+            対象の行が**全部**コメントなら外し、1 行でもコメントでなければ全部に付ける。空行は触らない。
+            選びが次の行の行頭で終わっていれば、その行は含めない。全体で 1 回の Undo。"""
+            cur = self.textCursor()
+            doc = self.document()
+            first = doc.findBlock(cur.selectionStart())
+            last = doc.findBlock(cur.selectionEnd())
+            if cur.hasSelection() and last.blockNumber() > first.blockNumber() and cur.selectionEnd() == last.position():
+                last = last.previous()
+            blocks, b = [], first
+            while b.isValid() and b.blockNumber() <= last.blockNumber():
+                if b.text().strip():
+                    blocks.append(b)
+                b = b.next()
+            if not blocks:
+                return 0
+            cp = self.comment_prefix or "*"
+            uncomment = all(x.text().lstrip().startswith(cp) for x in blocks)
+            guard = QtGui.QTextCursor(doc)
+            guard.beginEditBlock()
+            try:
+                for blk in blocks:
+                    t = blk.text()
+                    c = QtGui.QTextCursor(blk)
+                    if uncomment:
+                        ind = len(t) - len(t.lstrip())
+                        c.setPosition(blk.position() + ind)
+                        c.movePosition(QtGui.QTextCursor.Right, QtGui.QTextCursor.KeepAnchor,
+                                       len(cp) + 1 if t[ind:ind + len(cp) + 1] == cp + " " else len(cp))
+                        c.removeSelectedText()
+                    else:
+                        c.setPosition(blk.position())
+                        c.insertText(cp + " ")
+            finally:
+                guard.endEditBlock()
+            return len(blocks)
+
+        def _say(self, text):
+            if self.on_message is not None:
+                self.on_message(text)
+
+        def set_errors(self, errors):
+            """構文エラーを 1-based 行 -> 文 で受け、波線とガターの赤印を付け直す(空なら全部消える)。"""
+            self._errors = dict(errors or {})
+            self._highlight()
+            self._gutter.update()
+
+        def errors(self):
+            return dict(self._errors)
+
+        def goto_line(self, ln, focus=True):
+            """1-based の行へカーソルを移す(Problems の行を押したとき)。"""
+            blk = self.document().findBlockByNumber(max(1, int(ln)) - 1)
+            if not blk.isValid():
+                blk = self.document().lastBlock()
+            c = self.textCursor(); c.setPosition(blk.position()); self.setTextCursor(c)
+            self.ensureCursorVisible()
+            if focus:
+                self.setFocus()
+
+        def _word_at(self, vp_pos):
+            """ビューポート座標の下にある識別子 -> (語, 1-based 行)。行の右端の外・空白なら ("", 行)。"""
+            import re
+            cur = self.cursorForPosition(vp_pos)
+            text, i = cur.block().text(), cur.positionInBlock()
+            ln = cur.blockNumber() + 1
+            r = self.cursorRect(cur)
+            if vp_pos.x() > r.x() + self.fontMetrics().horizontalAdvance("9") * 1.5 and i >= len(text):
+                return "", ln
+            for m in re.finditer(r"[A-Za-z_][A-Za-z0-9_]*", text):
+                if m.start() <= i <= m.end():
+                    return m.group(0), ln
+            return "", ln
+
+        def hover_text(self, word, ln):
+            """カーソル下の語に出すヘルプ文(op 名: 補完と同じシグネチャ文 + その行のつまみの実単位)。
+            op 名でなく、その行にエラーも無ければ None。"""
+            import re
+            parts = []
+            if ln in self._errors:
+                parts.append("\u2715 " + self._errors[ln])
+            if word and word in self._words and self._tip is not None:
+                try:
+                    parts.append(self._tip(word))
+                except Exception:                      # noqa: BLE001 - ヘルプが作れなくても窓は壊さない
+                    pass
+                line = self.document().findBlockByNumber(ln - 1).text()
+                rest = line[line.find(word) + len(word):] if word in line else ""
+                nums = re.findall(r"[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?", rest)
+                try:
+                    a = float(nums[0]) if len(nums) > 0 else 0.5
+                    b = float(nums[1]) if len(nums) > 1 else 0.5
+                    parts.append(tr("knobs on this line: %s") % stage_knob_text(
+                        word, max(0.0, min(1.0, a)), max(0.0, min(1.0, b))))
+                except Exception:                      # noqa: BLE001
+                    pass
+            return "\n\n".join(parts) if parts else None
+
+        def _tooltip_event(self, ev, vp_pos):
+            word, ln = self._word_at(vp_pos)
+            if not word and ln not in self._errors:
+                return False                           # 余白: 欄全体の汎用ヒントに任せる
+            text = self.hover_text(word, ln)
+            if text:
+                QtWidgets.QToolTip.showText(ev.globalPos(), text, self.viewport())
+            else:
+                QtWidgets.QToolTip.hideText()          # op 名でない語: 何も出さない
+            ev.accept()
+            return True
+
+        def viewportEvent(self, ev):
+            if ev.type() == QtCore.QEvent.ToolTip and self._tooltip_event(ev, ev.pos()):
+                return True
+            return super().viewportEvent(ev)
+
+        def _ide_action(self, ev):
+            """このキーが IDE 動作なら名前を返す(ウィンドウの同じキーより先に、ShortcutOverride でも使う)。"""
+            k, m, K = ev.key(), ev.modifiers(), QtCore.Qt
+            ctrl, shift = bool(m & K.ControlModifier), bool(m & K.ShiftModifier)
+            if m & K.AltModifier or m & K.MetaModifier:
+                return None
+            if ctrl and k in (K.Key_Plus, K.Key_Equal):            # Ctrl++ / Ctrl+=(Shift の有無は問わない)
+                return "zoom_in"
+            if ctrl and not shift and k == K.Key_Minus:
+                return "zoom_out"
+            if ctrl and not shift:
+                if k == K.Key_F:
+                    return "find"
+                if k == K.Key_H:
+                    return "replace"
+                if k == K.Key_Slash:
+                    return "comment"
+                if k in (K.Key_Return, K.Key_Enter) and self.on_run_selection is not None and self.textCursor().hasSelection():
+                    return "run_selection"                           # 選びがある時の Ctrl+Return は「選んだ行だけ」
+                # <<IDE-KEYS-2>>
+            if not ctrl:
+                if k == K.Key_F3:
+                    return "prev" if shift else "next"
+                if k == K.Key_Escape and not shift and self.find_bar.isVisible():
+                    return "close_find"
+                if k == K.Key_F1 and shift:
+                    return "help"                                   # Shift+F1: カーソル下の op のヘルプ(F1 は変えない)
+                # <<IDE-KEYS-3>>
+            return None
+
+        def event(self, ev):
+            if ev.type() == QtCore.QEvent.ToolTip:     # 欄そのものに送られた ToolTip(座標は欄の座標)
+                if self._tooltip_event(ev, self.viewport().mapFrom(self, ev.pos())):
+                    return True
+            if ev.type() == QtCore.QEvent.ShortcutOverride and self._ide_action(ev):
+                ev.accept()                            # ウィンドウ側の同じキー(Ctrl+F / Ctrl+H …)より先に受ける
+                return True
+            return super().event(ev)
+
+        def _ide_do(self, action):
+            """IDE 動作を実行する。"""
+            if action == "find":
+                self.open_find(False)
+            elif action == "replace":
+                self.open_find(True)
+            elif action in ("next", "prev"):
+                if not self.find_bar.find_edit.text():
+                    self.open_find(False)               # 検索語がまだ無い: 帯を開いて入力へ
+                else:
+                    self.find_bar.step(backward=(action == "prev"))
+            elif action == "close_find":
+                self.find_bar.close_bar()
+            elif action == "comment":
+                self.toggle_comment()
+            elif action == "help":
+                self.help_for_word()
+            elif action == "zoom_in":
+                self.zoom(1)
+            elif action == "zoom_out":
+                self.zoom(-1)
+            elif action == "run_selection":
+                self.on_run_selection()
+            # <<IDE-DO-4>>
+
         def keyPressEvent(self, ev):
             comp = self._completer
             if comp.popup().isVisible() and ev.key() in (
                     QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return, QtCore.Qt.Key_Escape,
                     QtCore.Qt.Key_Tab, QtCore.Qt.Key_Backtab):
                 ev.ignore(); return
+            act = self._ide_action(ev)
+            if act:
+                comp.popup().hide()
+                self._ide_do(act)
+                ev.accept()
+                return
             super().keyPressEvent(ev)
+            if not self.legacy_completion:                   # Python のモード: 補完は PyEditAssist(二重に出さない)
+                comp.popup().hide()
+                return
             prefix = self._text_under_cursor()
             if len(prefix) >= 2 and (prefix[0].isalpha() or prefix[0] == "_"):
                 if prefix != self._query:
@@ -6828,8 +7993,12 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
     return ProgramEditor
 
 
-def build_window(model=None):
+def build_window(model=None, start_mode="pipeline"):
     """Construct (but do not exec) the main window. Returns (window, model).
+
+    *start_mode* (2026-11-13, Python のモード): ``"pipeline"`` = 今までどおり(試験・ライブラリの既定)、
+    ``"python"`` = Python のモードで開く、``"auto"`` = 設定に従う(既定は「前回のまま」、初回は Python。
+    ``fullseye-studio`` の起動 = :func:`main` はこれ)。
 
     The window is a QMainWindow with a menu bar (all actions + keyboard
     shortcuts), a branded toolbar, a status bar (hover read-out + transient
@@ -6843,18 +8012,24 @@ def build_window(model=None):
         actions live behind one small button instead of a row of wide ones."""
         tip = tr(tip)                                     # P-05: hints go through the i18n table like every label
         b = QtWidgets.QToolButton()
-        b.setIcon(_icon(QtGui, QtCore, icon_name, INK if accent else TEXT))
-        b.setIconSize(QtCore.QSize(18, 18))
+        # ★2026-11-12: the ONE maker of icon-only buttons. Square from the density table
+        #   (studio_theme.DENSITY: 24 px / icon 16, main actions 28 px / icon 20); `w` is kept in the
+        #   signature for callers but no longer sets the size. iconOnly=true lets the QSS give it padding:4px.
+        _d = studio_theme.density()
+        side = _d["main_btn"] if accent else _d["icon_btn"]
+        _themed_icon(b, icon_name, "accent_ink" if accent else "text")
+        b.setIconSize(QtCore.QSize(_d["main_icon"] if accent else _d["icon"], _d["main_icon"] if accent else _d["icon"]))
         b.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         b.setToolTip(tip); b.setAccessibleName(tip)
         b.setCursor(QtCore.Qt.PointingHandCursor)
-        b.setFixedSize(w, 28)
+        b.setProperty("iconOnly", True)
+        b.setFixedSize(side, side)
         if accent:
             b.setProperty("accent", True)
         if menu is not None:
             b.setMenu(menu)
             b.setPopupMode(QtWidgets.QToolButton.InstantPopup)
-            b.setFixedSize(w + 8, 28)                     # room for the ▾ arrow
+            b.setFixedSize(side + 8, side)                # room for the ▾ arrow
         return b
 
     _starts_on_demo = model is None            # a window we built ourselves starts on the synthetic demo scene
@@ -6878,11 +8053,72 @@ def build_window(model=None):
                 # 表示直後(寸法が確定してから)に 1 回だけ。保存済みレイアウトがある起動では立てない(P-01 を壊さない)
                 QtCore.QTimer.singleShot(0, self.apply_first_layout)
 
+        _close_guard_failures = 0
+        #: ``() -> [(suffix, text), ...]``: what the user made that is not on disk (installed by build_window).
+        rescue_unsaved = None
+
+        def _ask_close_after_guard_failure(self, exc):
+            """The unsaved-work check itself failed: ask in plain English (no translation table). True = close.
+
+            聞く事もできなかった時は閉じない。2 回続けてどちらも失敗した時だけ閉じる(閉じられない窓にしない)。
+            ★2026-11-15(PR #316 の独立レビュー 3 回目): その時は、閉じる前に作った物の写しを studio_crash.log の
+            隣に書き、置き場をログに残す(聞かずに閉じる唯一の道で、黙って失わない)。"""
+            try:
+                answer = CLOSE_CONFIRM_HOOK(
+                    self, "Quit Fullseye Studio",
+                    "The check for unsaved work failed (%s: %s).\nClose without saving?"
+                    % (type(exc).__name__, truncate(exc, 120)), False)
+            except Exception as e2:                        # noqa: BLE001 -- 聞く事もできない
+                _log_soft_failure("the fallback close confirmation failed too", e2)
+                self._close_guard_failures += 1
+                if self._close_guard_failures >= 2:
+                    self._keep_a_copy_before_closing()
+                    return True
+                return False
+            self._close_guard_failures = 0
+            return answer == "discard"
+
+        def _keep_a_copy_before_closing(self):
+            """Write each unsaved piece (``rescue_unsaved``) next to ``studio_crash.log`` and log the paths.
+            Returns the written paths. Never raises: a copy that cannot be written is logged, and the window
+            still closes (a window that can never close is the worse failure)."""
+            written = []
+            try:
+                pieces = list(self.rescue_unsaved() or []) if self.rescue_unsaved is not None else []
+            except Exception as exc:                       # noqa: BLE001 -- 中身を読めなくても閉じる道は塞がない
+                _log_soft_failure("could not read the unsaved work to keep a copy", exc)
+                return written
+            if not pieces:
+                return written
+            import datetime
+            stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + "_%d" % os.getpid()
+            folder = os.path.dirname(os.path.abspath(_crash_log_path()))
+            for suffix, text in pieces:
+                path = os.path.join(folder, "studio_unsaved_%s_%s" % (stamp, suffix))
+                try:
+                    _atomic_write_text(path, text)
+                except Exception as exc:                   # noqa: BLE001
+                    _log_soft_failure("could not keep a copy of the unsaved work in %s" % path, exc)
+                    continue
+                written.append(path)
+            if written:
+                _log_line("closed without asking (the close confirmation failed twice); "
+                          "a copy of the unsaved work was kept: " + " | ".join(written))
+            return written
+
         def closeEvent(self, ev):
             guard = self.close_guard
-            if guard is not None and not guard():
-                ev.ignore()
-                return
+            if guard is not None:
+                try:
+                    ok = guard()
+                except Exception as e:                     # noqa: BLE001 -- 確認が壊れても、聞かずに閉じない
+                    # ★2026-11-15(PR #316 の独立レビュー): 従来は例外が Qt の仮想関数の外へ出て、確認を出さずに
+                    # Python ごと落ちた(access violation)。閉じない側に倒し、表を通らない英語の文で聞き直す。
+                    _log_soft_failure("the close confirmation failed", e)
+                    ok = self._ask_close_after_guard_failure(e)
+                if not ok:
+                    ev.ignore()
+                    return
             # ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が
             # 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
             q = self.quiesce
@@ -6905,11 +8141,8 @@ def build_window(model=None):
             #   以後の visibilityChanged は利用者の操作ではないので記録しない。
             self._closing = True
             try:                              # remember window position + panel layout
-                if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-                    s = _settings()
-                    s.setValue("geometry", self.saveGeometry())
-                    s.setValue("windowState", self.saveState())
-                    s.setValue("layout_version", "3")
+                if studio_panels.persist_enabled():
+                    studio_panels.save_layout(self, _settings())
             except Exception as e:
                 _log_soft_failure("could not save window geometry/layout", e)
             ev.accept()
@@ -6940,7 +8173,14 @@ def build_window(model=None):
     win.setAcceptDrops(True)
     win.resize(1320, 860)
     win.setMinimumSize(900, 560)      # every dock strip + a usable graphics view still fit
-    win.setStyleSheet(THEME)
+    try:                                   # colour scheme + density from the settings (bad value -> default)
+        _ts = _settings()
+        studio_theme.set_current(str(_ts.value("ui/theme", studio_theme.DEFAULT_THEME)),
+                                 str(_ts.value("ui/density", studio_theme.DEFAULT_DENSITY)))
+    except Exception as _e:                # noqa: BLE001 - a broken store must not stop the window
+        _log_soft_failure("could not read the colour scheme setting", _e)
+        studio_theme.set_current(studio_theme.DEFAULT_THEME, studio_theme.DEFAULT_DENSITY)
+    win.setStyleSheet(studio_theme.build_qss(lang=_UI_LANG["code"], text_px=win.fontMetrics().height()))
     if os.path.exists(_ICON_PATH):
         win.setWindowIcon(QtGui.QIcon(_ICON_PATH))
 
@@ -6983,12 +8223,14 @@ def build_window(model=None):
     act_top = _act("Move stage to top", "Ctrl+Shift+Up", "Move the selected stage to the front")
     act_bottom = _act("Move stage to bottom", "Ctrl+Shift+Down", "Move the selected stage to the end")
     act_focus_search = _act("Focus operator search", "Ctrl+F", "Jump to the operator search box")
-    act_undo = _act("Undo", "Ctrl+Z", "Undo the last pipeline edit")
-    act_redo = _act("Redo", "Ctrl+Shift+Z", "Redo the last undone pipeline edit")
+    act_undo = _act("Undo", "Ctrl+Z", "Undo the last edit: the Program text when the Program has the focus, "
+                    "otherwise the stage list")
+    act_redo = _act("Redo", "Ctrl+Shift+Z", "Redo what was undone (Ctrl+Y or Ctrl+Shift+Z): the Program text when "
+                    "the Program has the focus, otherwise the stage list")
     act_undo.setEnabled(False); act_redo.setEnabled(False)
     act_pin = _act("Pin as A", "Ctrl+Shift+A",
                    "Freeze the current pipeline and its result as A, then compare it with what you change next "
-                   "(Window > Panels > A / B)")
+                   "(the A / B panel shows both)")
     act_zin = _act("Zoom in", "Ctrl+=", "Zoom the image in")
     act_zout = _act("Zoom out", "Ctrl+-", "Zoom the image out")
     act_fit = _act("Fit to window", "Ctrl+0", "Fit the image to the view")
@@ -6997,6 +8239,9 @@ def build_window(model=None):
     act_reset = _act("Reset to start", "Home", "Show the raw image (before stage 1). Also Shift+F5 from any panel")
     act_step = _act("Step forward", "Ctrl+Right", "Advance one pipeline stage. Also F6 from any panel")
     act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result. Also F5 or Ctrl+R from any panel")
+    act_run_sel = _act("Run selected lines", "Ctrl+Alt+Return",
+                       "Run only the stages of the Program lines you selected (the stages before them come from the cache; "
+                       "Ctrl+Return in the Program with a selection does the same)")
     act_roundtrip = _act("Verify exported Python…", "Ctrl+Shift+R",
                          "Run exported Python in an isolated interpreter and compare every stage with the GUI")
     act_batch = _act("Apply to folder…", None,
@@ -7010,7 +8255,12 @@ def build_window(model=None):
     act_viewer3d = _act("3D viewer…", "Ctrl+Alt+4",
                         "Open the interactive 3-D viewer (point cloud / mesh file, "
                         "orbit / zoom / pan)")
-    act_shortcuts = _act("Keyboard shortcuts", "F1", "Show all keyboard shortcuts")
+    # ★2026-11-13(初回起動の点検): F1 は「選んでいる op のヘルプ」(HDevelop と同じ)。一覧はヘルプの奥にあって、
+    # 実際に走らせた入出力の図のある op のヘルプに自力で気づけなかった。ショートカットの一覧は Ctrl+F1 へ。
+    act_shortcuts = _act("Keyboard shortcuts", "Ctrl+F1", "Show all keyboard shortcuts")
+    act_selected_help = _act("Help for the selected operator", "F1",
+                             "Open the help of the operator selected in the list, or of the selected stage "
+                             "(with nothing selected: all keyboard shortcuts)")
     act_op_help = _act("Operator reference…", "Shift+F1", "Browse every operator with its sorts + HALCON alias")
     act_samples = _act("Samples & code…", None, "Load a sample pipeline and see its code")
     act_about = _act("About Fullseye Studio", None, "About this application")
@@ -7047,6 +8297,14 @@ def build_window(model=None):
         win._menus[key] = mm
         return mm
 
+    # 第 2 便: プロジェクト = フォルダ。入口は File メニュー・パレット・パネル一覧・「パネルを探す」・キー・パネルへのフォルダのドロップ
+    act_project_open = _act("Open folder…", None, "Choose a folder: it becomes the project and its files are listed in the Project panel")
+    act_project_new = _act("New project…", None, "Create a project folder with the standard sub-folders: images, pipelines, programs, params, results")
+    act_project_panel = _act("Project", "Ctrl+Shift+J", "Show the Project panel: the project folder as a tree of files")
+    # D87 (2026-11-15, integration of [束]): the parameter bundles side by side (studio_params_qt), from the Window menu
+    # and the palette. It opens empty or with the files it had open before.
+    act_params_window = _act("Parameters…", None, "Open the parameter window: several parameter files side by side, "
+                             "the rows that differ marked, edited and saved")
     m = _menu(mb, "&File", "file")
     act_viewer = _act("Image Viewer…", "Ctrl+Shift+I",    # ★O は Open pipeline と重なり、どちらも発火しなかった
                       "Open images (or drop images / a folder) to look at them: zoom, pixel values, histogram")
@@ -7054,11 +8312,14 @@ def build_window(model=None):
     m.addSeparator()
     m.addAction(act_open_pipe); m.addAction(act_save_pipe); m.addAction(act_export)  # pipeline docs
     win._recent_menu = _menu(m, "Open Recent", "recent")     # populated by _rebuild_recent_menu()
+    m.addAction(act_project_open); m.addAction(act_project_new)
+    win._recent_folders_menu = _menu(m, "Recent folders", "recent_folders")
+    m.addSeparator()
     m.addAction(act_samples)                                  # sample pipelines + code gallery
     sample_img_menu = _menu(m, "Sample images", "sample_images")   # collected license-clean images
     try:
         import sample_images as _si
-        for _nm in _si.names():
+        for _nm in sample_menu_order(_si.names()):         # M2: 起動時の画像を先頭に
             _a = QtGui.QAction(_nm, win)
             _a.triggered.connect(lambda _=False, nm=_nm: win._load_sample_image(nm))
             sample_img_menu.addAction(_a)
@@ -7102,7 +8363,7 @@ def build_window(model=None):
     menu_view.addSeparator()          # Display mode submenu + 3D surface appended once the display combo exists
     m = _menu(mb, "&Run", "run")
     m.addAction(act_reset); m.addAction(act_step)
-    m.addSeparator(); m.addAction(act_runall)
+    m.addSeparator(); m.addAction(act_runall); m.addAction(act_run_sel)
     m.addAction(act_batch)
     m.addAction(act_roundtrip)
     m.addSeparator(); m.addAction(act_holdout)
@@ -7161,6 +8422,7 @@ def build_window(model=None):
         lambda _=False: QtGui.QDesktopServices.openUrl(QtCore.QUrl(_FEEDBACK_URL)))
     win._act_feedback = act_feedback; win._feedback_url = _FEEDBACK_URL
     m.addAction(act_feedback); m.addSeparator()
+    m.addAction(act_selected_help)
     m.addAction(act_shortcuts); m.addSeparator(); m.addAction(act_about)
 
     # ---- branded toolbar (icon-only; tooltips carry the meaning) ------------- #
@@ -7169,14 +8431,11 @@ def build_window(model=None):
     tb.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
     tb.setIconSize(QtCore.QSize(18, 18))
     win.addToolBar(tb)
-    if os.path.exists(_ICON_PATH):
-        brand = QtWidgets.QLabel()
-        brand.setPixmap(QtGui.QIcon(_ICON_PATH).pixmap(22, 22))
-        brand.setStyleSheet("padding:0 6px;")
-        tb.addWidget(brand)
-    title = QtWidgets.QLabel("Fullseye Studio")
-    title.setStyleSheet("font-size:15px; font-weight:800; color:%s; padding:0 4px;" % AMBER)
-    tb.addWidget(title)
+    # icon + name; while something runs the same frame is the progress read-out (studio_panels, 2026-11-13)
+    win._brand = studio_panels.make_brand_status(
+        win, "Fullseye Studio", QtGui.QIcon(_ICON_PATH) if os.path.exists(_ICON_PATH) else None,
+        _log_soft_failure, tr, reduce=lambda: studio_panels.reduce_motion(_settings()))
+    tb.addWidget(win._brand)
     spacer = QtWidgets.QWidget()
     spacer.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
     tb.addWidget(spacer)
@@ -7184,8 +8443,10 @@ def build_window(model=None):
     # tooltips (already set on each action) name them.
     for _a, _ic in ((act_demo, "demo"), (act_open_img, "open"), (act_runall, "playplay"),
                     (act_batch, "apply"), (act_export, "export"), (act_pin, "eye")):
-        _a.setIcon(_icon(QtGui, QtCore, _ic, TEXT))
+        _themed_icon(_a, _ic)
         tb.addAction(_a)
+    # (2026-11-15, integration) D01 / P04: the top band's buttons are pictures; words only on Run and Examples.
+    # The first-run branch's word "Python" beside the export picture is in its tooltip ("... and Python").
 
     # Central document area = an MDI workspace of graphics windows (HDevelop-style:
     # multiple image/result windows the user can open, tile, cascade and float).
@@ -7231,13 +8492,16 @@ def build_window(model=None):
     for widget in (run_attr, run_status, run_progress, run_stop, run_banner, run_show, run_current):
         run_lay.addWidget(widget)
     run_progress.hide(); run_stop.hide(); run_banner.hide(); run_show.hide(); run_current.hide()
-    status.addPermanentWidget(run_box, 1)
+    # ★2026-11-13(初回起動の点検): 伸びる幅を run_box に渡すと、一時的な文(flash)を描く欄が幅 0 になり、
+    # 「入れられない理由」などの文が画面に一度も出なかった。空いた幅は文と画素の読み取りの欄へ。
+    status.addPermanentWidget(run_box, 0)
     win._run_ui = {"box": run_box, "attribution": run_attr, "status": run_status,
                    "progress": run_progress, "stop": run_stop, "banner": run_banner,
                    "show_result": run_show, "run_current": run_current}
 
     def flash(msg):
-        status.showMessage(msg, 6000)
+        # ★2026-11-13(初回起動の点検 M9): 表に行がある文は UI の言語で(書式つきの文は呼ぶ所で tr() を通す)
+        status.showMessage(tr(msg), 6000)
 
     # -- left: operator browser + samples ------------------------------------ #
     left = QtWidgets.QWidget(); lv = QtWidgets.QVBoxLayout(left); lv.setSpacing(6)
@@ -7354,6 +8618,10 @@ def build_window(model=None):
     # op, the typed widget shows the same value in the op's own units (param_specs).
     op_row_a = KnobRow("a", win, raw=op_a_spin, slider=False)
     op_row_b = KnobRow("b", win, raw=op_b_spin, slider=False)
+    # The browser shows lbl_a / lbl_b, so these rows' own name labels are never placed: without a parent they
+    # outlived every closed window as top-level widgets (2 per window, 2026-11-23). They go with their row.
+    for _krow in (op_row_a, op_row_b):
+        _krow.destroyed.connect(_krow.label.deleteLater)
     argrow.addWidget(lbl_a, 0, 0); argrow.addWidget(op_a_spin, 0, 1); argrow.addWidget(op_row_a.typed, 0, 2)
     argrow.addWidget(lbl_b, 1, 0); argrow.addWidget(op_b_spin, 1, 1); argrow.addWidget(op_row_b.typed, 1, 2)
     argrow.setColumnStretch(1, 1)
@@ -7365,7 +8633,21 @@ def build_window(model=None):
     lv.addWidget(_group(QtWidgets, "OPERATORS", olay), 1)
 
     search_state = {"rows": {g: [] for g in ("applicable", "needs_preprocessing", "other")},
-                    "chips": [], "groups": {}}
+                    "chips": [], "groups": {}, "generation": 0, "clearing": False}
+
+    def _clear_op_list_and_search_state():
+        """Clear with refits paused, then discard wrappers / 再調整を止めて消し、旧 wrapper を破棄する。"""
+        search_state["clearing"] = True
+        try:
+            op_list.clear()
+        finally:
+            search_state["generation"] += 1
+            search_state["chips"] = []
+            search_state["groups"] = {}
+            search_state["rows"] = {
+                group: [] for group in ("staples", "applicable", "needs_preprocessing", "other")
+            }
+            search_state["clearing"] = False
 
     def _search_current_value():
         try:
@@ -7383,7 +8665,7 @@ def build_window(model=None):
         needs_pre = group == "needs_preprocessing" or row.get("group") == "needs_preprocessing"
         # ★2026-11-12: 行は op 名を先頭に(説明が長いと名前が右へ切れていた、P-09)。前処理は「先に: a → この op」と
         # 別の行に書く(従来は「出力: region → otsu」と出力の後ろに繋がり、順序が逆に読めた)。
-        label_ = (row.get("label") or "").strip()
+        label_ = plain_summary((row.get("label") or "").strip())       # L3: ``x`` を生のまま出さない
         if len(label_) > 64:
             label_ = label_[:63] + "…"
         text_ = row["name"] + ("  —  " + label_ if label_ and label_ != row["name"] else "")
@@ -7395,7 +8677,7 @@ def build_window(model=None):
         tip = ", ".join(row.get("why") or [])
         if row.get("tier") == "unavailable":
             tip = (tip + "\n" if tip else "") + tr("Missing optional extra: %s") % row["name"].split("_")[0]
-            it.setFlags(QtCore.Qt.NoItemFlags); it.setForeground(QtGui.QColor(MUTED))
+            it.setFlags(QtCore.Qt.NoItemFlags); it.setForeground(QtGui.QColor(_C("muted")))
         it.setToolTip(tip); op_list.addItem(it)
         # ★P-19(2026-11-12): 説明は行の幅いっぱいに折り返し、ボタンはその下の右寄せに置く。従来は横並びで、
         # 折り返さない説明文の幅で行が伸び、「今のデータで試す」「ヘルプ」が横スクロールの先に隠れていた。
@@ -7404,12 +8686,20 @@ def build_window(model=None):
         h = QtWidgets.QHBoxLayout(); h.setContentsMargins(0, 0, 0, 0); h.addStretch(1); v_.addLayout(h)
         run = QtWidgets.QPushButton(tr("Try on current data")); help_ = QtWidgets.QPushButton(tr("Help"))
         enabled = row.get("tier") != "unavailable"; run.setEnabled(enabled); help_.setEnabled(enabled)
-        run.clicked.connect(lambda _=False, n=row["name"]: run_op_once(n, _search_current_value()))
+        if row.get("tier") == "ledger" and api.find_op(row["name"]) is None:
+            # M13: 台帳の op は「台帳の op を実行」の窓で(型つきの入力の欄がある)。今の画像を入力にして開く
+            run.setText(tr("Open in Run a ledger op"))
+            run.setToolTip(tr(NOT_INSERTABLE_TEXT["ledger"]) % row["name"])
+            run.clicked.connect(lambda _=False, n=row["name"]: win._open_ledger_runner(n, prefer_image=True))
+        else:
+            run.clicked.connect(lambda _=False, n=row["name"]: run_op_once(n, _search_current_value()))
         help_.clicked.connect(lambda _=False, n=row["name"]: show_op_help(n))
         h.addWidget(run); h.addWidget(help_)
-        entry = dict(row, text=text_, item=it, try_button=run, help_button=help_, label_widget=label, box=box)
+        entry = dict(row, text=text_, item=it, try_button=run, help_button=help_, label_widget=label, box=box,
+                     _list_generation=search_state["generation"])
         _fit_search_row(entry)
         op_list.setItemWidget(it, box)
+        _fit_search_row(entry)        # 一覧に入った後(様式の字の大きさが決まった後)にもう一度(下の注記)
         search_state["rows"][group].append(entry)
 
     def _fit_search_head(head):
@@ -7432,7 +8722,18 @@ def build_window(model=None):
                 b.setMinimumWidth(0)
                 b.setSizePolicy(QtWidgets.QSizePolicy.Maximum if b.sizeHint().width() * 2 < lw
                                 else QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Fixed)
+            # ★2026-11-15(PR #316 の独立レビュー): 高さは、一覧に入って様式(字の大きさ)が決まった後の値で求める。
+            # 行を一覧に入れる前に 1 度だけ求めていた為、様式の適用の前の字の高さで計算され、行が増えるほど足りなく
+            # なった(3 行のカードは余白で足りたが、「先に: …」の付く 4 行のカードは下が 4 px 欠けた)。
+            for _w in (box, label, run, entry["help_button"]):
+                _w.ensurePolished()
             hh = label.heightForWidth(lw) + run.sizeHint().height() + 2 + 8
+            # L3(2026-11-13): 3 行目の下が欠けた。箱の配置そのものが要る高さ(余白・間隔込み)も見て、字の下がりの分を足す
+            _lay = box.layout()
+            if _lay is not None and _lay.hasHeightForWidth():
+                _lay.invalidate()
+                hh = max(hh, _lay.heightForWidth(vw - 2))
+            hh += label.fontMetrics().descent() + 2
             box.setFixedWidth(vw - 2)
             it.setSizeHint(QtCore.QSize(vw - 2, hh))
         else:                              # まだ表示されていない(幅が決まっていない)ときは従来どおり
@@ -7443,6 +8744,8 @@ def build_window(model=None):
         パネルを狭めると行の幅が前のまま残り、ボタンが画面の外へ出ていた = P-19 の症状が戻る)。"""
         def eventFilter(self, obj, ev):
             if ev.type() == QtCore.QEvent.Resize:
+                if search_state["clearing"]:
+                    return False                    # clear owns the old items / clear 中は旧 item に触れない
                 for head in search_state["groups"].values():
                     try:
                         _fit_search_head(head)
@@ -7450,6 +8753,8 @@ def build_window(model=None):
                         pass
                 for rows in search_state["rows"].values():
                     for entry in rows:
+                        if entry.get("_list_generation") != search_state["generation"]:
+                            continue                  # stale wrappers must never be touched / 古い wrapper は触らない
                         try:
                             _fit_search_row(entry)
                         except RuntimeError:               # 行の部品が破棄済み(次の検索で作り直される)
@@ -7458,12 +8763,115 @@ def build_window(model=None):
     _search_row_refit = _SearchRowRefit(op_list)
     op_list.installEventFilter(_search_row_refit)
 
+    def _add_search_samples(names):
+        """検索の結果に「見本」の群を足す(M12)。行の「見本を開く」は、見本の処理手順とその見本の画像を読む。"""
+        head = QtWidgets.QListWidgetItem("▾ " + tr("Samples"))
+        head.setData(QtCore.Qt.UserRole + 4, "samples"); head.setFlags(QtCore.Qt.ItemIsEnabled)
+        op_list.addItem(head); search_state["groups"]["samples"] = head; _fit_search_head(head)
+        search_state["rows"]["samples"] = []
+        for name in names:
+            text_ = name + "\n" + tr("Sample pipeline with its own image")
+            it = QtWidgets.QListWidgetItem(text_)
+            it.setData(QtCore.Qt.UserRole + 6, name)          # op の行ではない(UserRole は空 = Enter の対象にならない)
+            op_list.addItem(it)
+            box = QtWidgets.QWidget(); v_ = QtWidgets.QVBoxLayout(box); v_.setContentsMargins(4, 3, 4, 3); v_.setSpacing(2)
+            label = QtWidgets.QLabel(text_); label.setWordWrap(True); v_.addWidget(label)
+            h = QtWidgets.QHBoxLayout(); h.setContentsMargins(0, 0, 0, 0); h.addStretch(1); v_.addLayout(h)
+            run = QtWidgets.QPushButton(tr("Open sample"))
+            run.setToolTip(tr("Load this sample pipeline and the image it was made for"))
+            run.clicked.connect(lambda _=False, n=name: open_search_sample(n))
+            help_ = QtWidgets.QPushButton(tr("Help")); help_.setEnabled(False); help_.hide()
+            h.addWidget(run)
+            entry = {"name": name, "text": text_, "item": it, "try_button": run, "help_button": help_,
+                     "label_widget": label, "box": box, "_list_generation": search_state["generation"]}
+            _fit_search_row(entry)
+            op_list.setItemWidget(it, box)
+            _fit_search_row(entry)
+            search_state["rows"]["samples"].append(entry)
+
+    def open_search_sample(name):
+        """検索の「見本」の行から、見本の処理手順(サンプルの処理手順の欄と同じ読み方)と、その見本の画像を開く。"""
+        idx = samples.findText(name)
+        if idx <= 0:
+            flash(tr("This sample is not available here: %s") % name)
+            return False
+        samples.blockSignals(True); samples.setCurrentIndex(idx); samples.blockSignals(False)
+        # ★2026-11-15(PR #316 の独立レビュー): 読めたかは load_sample の返り値で決める。従来は「段の op 名の並びが
+        # 見本と同じか」で推測し、同じ見本を開いてつまみだけ調整していた人が破棄の確認をキャンセルしても、
+        # 「読めた」と見なして画像を見本の画像に置き換えていた。
+        if not load_sample(idx):                           # 確認・元に戻す・Program の欄は欄と同じ
+            return False                                   # 取り消された / 読めなかった: 画像にも触らない
+        image = (recipes.get(name) or {}).get("image")
+        if image:
+            load_sample_image(image)
+        return True
+    win._open_search_sample = open_search_sample
+
+    def _search_row_takes_upstream(name):
+        """Would op *name*, put in at the insertion point, be accepted by the stage before it?
+
+        The rule the runtime refuses a chain by (declared sorts, ``engine._compatible`` — the one the type filter
+        of the browse list uses). The first stage is matched at the entry and an open ('any') upstream takes
+        everything, so neither narrows; an op the registry does not know is not judged here.
+
+        ★2026-11-15(PR #316 の独立レビュー): M1 で「定番」を Enter の対象に戻した時、この確かめが無かった。前の段が
+        領域(otsu の後)で「ノイズ」+ Enter を押すと、定番の median(image を取る)が入り、段は type mismatch の
+        ERROR になった(otsu の後の 1 語 + Enter で ERROR の段: 日本語 35 語中 34・英語 40 語中 36)。"""
+        try:
+            fit_sort, _prev = _ops_upstream()
+        except Exception as exc:                            # noqa: BLE001 -- 型が読めない時は絞らない
+            _log_soft_failure("could not tell the upstream sort for the search", exc)
+            return True
+        if fit_sort in (None, engine._ANY):
+            return True
+        row = _op_row(name)
+        return row is None or engine._compatible(fit_sort, row.get("in_sort") or "")
+
+    def _search_exact_row():
+        """The row whose op name is exactly what is typed (case-insensitive; spaces count as ``_``), or None."""
+        q = "_".join(search.text().strip().lower().split())
+        if not q:
+            return None
+        for i in range(op_list.count()):
+            item = op_list.item(i)
+            nm = item.data(QtCore.Qt.UserRole)
+            if nm and not item.isHidden() and nm.lower() == q:
+                return item
+        return None
+
+    def _search_enter_target():
+        """The row Enter acts on: the row named exactly like the query, else the first row on screen, top to
+        bottom, that can be inserted here AND takes the output of the stage before the insertion point.
+
+        ★2026-11-13(初回起動の点検 M1): 「定番」の欄も含めて、見えている順の最初の行。11/12 は「canny edge」で
+        Enter を押すと定番の sobel_amp が入った為に定番を外していたが、op 名を含む問い合わせ(canny edge・median blur)
+        では ``studio_search.staples_for`` が定番を出さない(先頭は検索の 1 位 = canny の op)ので、外す理由が無くなった。
+        外したままだと「blur」で先頭に見える gaussian ではなく下の欄の 1 位(xkor_bilateral)が入っていた。
+        畳んだ群の行・この環境で入れられない行(2 入力・未導入)・前の段の出力を受けられない行は飛ばす。
+
+        ★2026-11-15(PR #316 の独立レビュー): op 名を正確に打った時は、その行(入れられない op でも)。従来は
+        ``abs_diff_image`` + Enter で 1 行目(2 入力なので入らない)を黙って飛ばし、2 行目の別の op が入っていた。
+        入れられない行は ``_insert_searched_op`` が理由を言う(台帳の op は実行の窓を開く)。"""
+        exact = _search_exact_row()
+        if exact is not None:
+            nm = exact.data(QtCore.Qt.UserRole)
+            if not op_insertable(nm)[0] or _search_row_takes_upstream(nm):
+                return exact
+            return None        # 名前は合うが、前の段の出力を受けられない: 選ばない(隣の op も入れない。Enter は理由を言う)
+        for i in range(op_list.count()):
+            item = op_list.item(i)
+            nm = item.data(QtCore.Qt.UserRole)
+            if not nm or item.isHidden() or not (item.flags() & QtCore.Qt.ItemIsEnabled):
+                continue
+            if op_insertable(nm)[0] and _search_row_takes_upstream(nm):
+                return item
+        return None
+
     def grouped_search(query=None):
         q = search.text().strip() if query is None else str(query)
         if query is not None and search.text() != q:
             search.blockSignals(True); search.setText(q); search.blockSignals(False)
-        op_list.clear(); search_state["chips"] = []; search_state["groups"] = {}
-        search_state["rows"] = {g: [] for g in ("staples", "applicable", "needs_preprocessing", "other")}
+        _clear_op_list_and_search_state()
         result = search_grouped(q, current_value=_search_current_value(), k=40,
                                 lang=_UI_LANG.get("code", "en"))
         headers = {"applicable": tr("Applicable to the current input"),
@@ -7477,6 +8885,11 @@ def build_window(model=None):
             op_list.addItem(head); search_state["groups"]["staples"] = head; _fit_search_head(head)
             for row in result["staples"]:
                 _add_search_row("staples", row)
+        # ★2026-11-13(初回起動の点検 M12): 現場の言葉(傷・打痕 …)に当たる同梱の FA の見本。定番の直後に置く
+        # (Enter で入る行 = 先頭の op は変わらない)。定番が無い時は一番下。
+        _sample_names = samples_for(q)
+        if _sample_names and result.get("staples"):
+            _add_search_samples(_sample_names)
         if count:
             for group, title_ in headers.items():
                 head = QtWidgets.QListWidgetItem("▾ " + title_)
@@ -7499,7 +8912,15 @@ def build_window(model=None):
                 h.addWidget(b); search_state["chips"].append(b)
             h.addStretch(1); chip = QtWidgets.QListWidgetItem(); op_list.addItem(chip)
             chip.setSizeHint(chiprow.sizeHint()); op_list.setItemWidget(chip, chiprow)
+        if _sample_names and not result.get("staples"):
+            _add_search_samples(_sample_names)
+        _target = _search_enter_target()          # M1: Enter で入る行を、押す前から選択状態で見せる
+        if _target is not None:
+            op_list.setCurrentItem(_target)      # 無ければ何も選ばない(Enter は入れずに理由を言う)
         return result
+    grouped_search = studio_panels.brand_wrap(          # the first search builds the index: the corner says so
+        win._brand, grouped_search,
+        lambda query=None: tr(studio_panels.S_SEARCHING) % (search.text().strip() if query is None else query))
 
     def _ops_insert_position():
         """Where Insert / double-click will put the next stage (the same rule as ``add_op``):
@@ -7518,9 +8939,25 @@ def build_window(model=None):
     def _ops_upstream():
         return _upstream_sort(model.stages, _ops_insert_position())
 
-    def _ops_fit_note_text(fit_sort, prev, shown, total):
+    def _ops_entry_sort():
+        """The loaded input's sort when the insertion point is the first stage and the switch is on, else None."""
+        if not ops_fit_only.isChecked() or _ops_upstream()[0] is not None:
+            return None
+        try:
+            return entry_sort_of(model.image)
+        except Exception as exc:                        # noqa: BLE001 -- 型が読めない入力では絞らない
+            _log_soft_failure("could not tell the sort of the loaded input", exc)
+            return None
+
+    def _ops_fit_key():
+        return (ops_fit_only.isChecked(), _ops_upstream()[0], _ops_entry_sort())
+
+    def _ops_fit_note_text(fit_sort, prev, shown, total, entry_sort=None):
         if not ops_fit_only.isChecked():
             return tr("Showing every operator (the type filter is off).")
+        if fit_sort is None and entry_sort is not None:
+            return (tr("First stage: showing %d of %d operators that can take the loaded input ('%s').")
+                    % (shown, total, entry_sort))
         if fit_sort is None:
             return tr("First stage: every operator is listed (the input image is matched at the entry).")
         if fit_sort == engine._ANY:
@@ -7538,12 +8975,20 @@ def build_window(model=None):
         # insertion point moves (e.g. right after Insert), and Run once / Insert act on it
         _cur = op_list.currentItem()
         keep = _cur.data(QtCore.Qt.UserRole) if _cur is not None else None
-        op_list.clear()
+        _clear_op_list_and_search_state()
         fit_sort, fit_prev = _ops_upstream()
-        ops_fit_state["key"] = (ops_fit_only.isChecked(), fit_sort)
+        entry_sort = _ops_entry_sort()
+        ops_fit_state["key"] = (ops_fit_only.isChecked(), fit_sort, entry_sort)
         fit_names = None
         if ops_fit_only.isChecked() and fit_sort not in (None, engine._ANY):
             fit_names = {r["name"] for r in _ops_accepting(all_ops, fit_sort)}
+        elif entry_sort is not None:
+            # ★2026-11-13(初回起動の点検 S2): 最初の段でも、読み込んだ画像を受けられない op(beatcube 用の
+            # レーダーの op・点群・数列 …)は、スイッチが入っている間は並べない。
+            fit_names = {r["name"] for r in _ops_accepting_entry(all_ops, entry_sort)}
+        # ★2026-11-13(S2): 一覧は定番から始める。1 入力の段として入れられない op(2 入力・未導入・一般アルゴリズム)は
+        # 末尾へ回して薄く出し、理由を行に持たせる(従来は先頭の 17 行が全部「入れられない op」だった)。
+        starters = {n: i for i, n in enumerate(starter_ops())} if c == "all categories" else {}
         ranked = []
         in_category = 0
         for r in all_ops:
@@ -7576,21 +9021,31 @@ def build_window(model=None):
             hal = (r.get("halcon") or "").lower()
             rank = (0 if not kw or nm == kw else 1 if nm.startswith(kw) else 2 if kw in nm
                     else 3 if kw in hal else 4)
-            ranked.append((rank, r))
-        ranked.sort(key=lambda t: t[0])
-        for _rank, r in ranked:
-            it = QtWidgets.QListWidgetItem(f"{r['name']}   [{r['in_sort']} → {r['out_sort']}]")
+            _ok, _why = op_insertable(r["name"], r)
+            _lead = ((0, starters[r["name"]]) if _ok and r["name"] in starters
+                     else (1, 0) if _ok else (2, 0))
+            ranked.append((_lead, rank, r, _why))
+        ranked.sort(key=lambda t: (t[0], t[1]))
+        for _lead, _rank, r, _why in ranked:
+            _text = f"{r['name']}   [{r['in_sort']} → {r['out_sort']}]"
+            if _why:
+                _text += "   · " + tr("cannot be added as a stage")
+            it = QtWidgets.QListWidgetItem(_text)
             it.setData(QtCore.Qt.UserRole, r["name"])
             it.setToolTip(op_tooltip(r))
+            if _why:
+                it.setData(QtCore.Qt.UserRole + 5, _why)
+                it.setForeground(QtGui.QColor(MUTED))
             op_list.addItem(it)
             if keep is not None and r["name"] == keep:
                 op_list.setCurrentItem(it)
-        _note = _ops_fit_note_text(fit_sort, fit_prev, len(ranked), in_category)
+        _note = _ops_fit_note_text(fit_sort, fit_prev, len(ranked), in_category, entry_sort)
         ops_fit_note.setText(_note)
         # ★2026-11-12: 注記の行は一覧に譲り、全文はチェックボックスのツールチップに出す(件数・理由はそこで読める)
         _base = ops_fit_only.property("base_tip")
         if _base is None:
             _base = ops_fit_only.toolTip(); ops_fit_only.setProperty("base_tip", _base)
+        _base = tr(_base) if _base else _base           # base_tip is the English source (2026-11-13)
         ops_fit_only.setToolTip((_base + "\n\n" if _base else "") + _note)
 
     def _ops_follow_upstream():
@@ -7598,7 +9053,7 @@ def build_window(model=None):
         A typed query keeps its own grouping by the current value (``grouped_search``)."""
         if search.text().strip():
             return
-        if (ops_fit_only.isChecked(), _ops_upstream()[0]) != ops_fit_state.get("key"):
+        if _ops_fit_key() != ops_fit_state.get("key"):
             refill_ops()
     refill_ops()
 
@@ -7629,7 +9084,31 @@ def build_window(model=None):
         erow.addWidget(_b)
     play.addLayout(erow)
     problems_label = QtWidgets.QLabel("Problems"); problems_label.setProperty("muted", True)
-    play.addWidget(problems_label); play.addWidget(problems_list)
+    input_confirm_bar = QtWidgets.QFrame(); input_confirm_bar.setObjectName("input_confirm_bar")
+    input_confirm_layout = QtWidgets.QVBoxLayout(input_confirm_bar)
+    input_confirm_layout.setContentsMargins(4, 4, 4, 4); input_confirm_layout.setSpacing(3)
+    input_confirm_label = QtWidgets.QLabel(""); input_confirm_label.setWordWrap(True)
+    input_confirm_layout.addWidget(input_confirm_label)
+    input_confirm_actions = QtWidgets.QHBoxLayout(); input_confirm_layout.addLayout(input_confirm_actions)
+    input_confirm_buttons = {}
+    for _key, _source, _object_name, _tip in (
+            ("read", "Read this image", "input_confirm_read",
+             "Read the image file saved with this pipeline now and check it against its SHA-256"),
+            ("adopt", "Use this different image", "input_confirm_adopt",
+             "Use the different image already read into memory without reading the file again"),
+            ("choose", "Choose another image…", "input_confirm_choose",
+             "Open a different image file instead of the saved input"),
+            ("keep", "Keep the current image", "input_confirm_keep",
+             "Continue with the image already on screen; the result is marked as not using the saved input")):
+        _button = QtWidgets.QPushButton(tr(_source), input_confirm_bar)
+        _button.setObjectName(_object_name)
+        _button.setToolTip(tr(_tip))
+        _button.clicked.connect(lambda _=False, k=_key: win._input_confirm[k]())
+        input_confirm_actions.addWidget(_button)
+        input_confirm_buttons[_key] = _button
+    input_confirm_buttons["adopt"].hide()
+    input_confirm_bar.hide()
+    play.addWidget(problems_label); play.addWidget(input_confirm_bar); play.addWidget(problems_list)
     mv.addWidget(_group(QtWidgets, "PIPELINE", play), 1)
 
     stage_detail = QtWidgets.QLabel("select a stage to tune its knobs")
@@ -7652,8 +9131,15 @@ def build_window(model=None):
     krow_a.set_enabled(False); krow_b.set_enabled(False)
     _ra = QtWidgets.QHBoxLayout(); _ra.addWidget(sa, 1); _ra.addWidget(krow_a.typed); _ra.addWidget(spin_a)
     _rb = QtWidgets.QHBoxLayout(); _rb.addWidget(sb, 1); _rb.addWidget(krow_b.typed); _rb.addWidget(spin_b)
+    # M4(2026-11-13): 実装の式は既定で畳む(途中で切れた式が先頭に出ていた)。押すと全文。
+    impl_toggle = QtWidgets.QToolButton(); impl_toggle.setCheckable(True)
+    impl_toggle.setText("Show the implementation")
+    impl_toggle.setToolTip("Show the line of the selected stage's implementation that uses a and b")
+    impl_toggle.setVisible(False)
+    win._impl_toggle = impl_toggle
     klay = QtWidgets.QVBoxLayout()
-    klay.addWidget(stage_detail); klay.addWidget(la); klay.addLayout(_ra)
+    klay.addWidget(stage_detail); klay.addWidget(impl_toggle, 0, QtCore.Qt.AlignLeft)
+    klay.addWidget(la); klay.addLayout(_ra)
     klay.addWidget(lb); klay.addLayout(_rb)
     # ---- Studio slice 3 A: "try nearby values" strip (collapsed by default; computes only when open) ---- #
     strip_toggle = QtWidgets.QToolButton()
@@ -7700,6 +9186,7 @@ def build_window(model=None):
     win._op_knob_rows = (op_row_a, op_row_b)
 
     b_export = _tbtn("export", "Export this pipeline as an --ops string and Python (Ctrl+E)")
+    # (2026-11-15, integration) P04: a picture in the panel's strip like its neighbours; the tooltip says Python
     b_savep = _tbtn("save", "Save pipeline to JSON (Ctrl+Shift+S)")
     b_openp = _tbtn("open", "Open a pipeline from JSON (Ctrl+Shift+O)")
     xrow = QtWidgets.QHBoxLayout()
@@ -7734,11 +9221,23 @@ def build_window(model=None):
         itop.addWidget(w_)
     itop.addSpacing(8)
     _vline = QtWidgets.QFrame(); _vline.setFrameShape(QtWidgets.QFrame.VLine)
-    _vline.setStyleSheet("color:%s;" % LINE); itop.addWidget(_vline); itop.addSpacing(8)
+    _themed_style(_vline, "color:{line};"); itop.addWidget(_vline); itop.addSpacing(8)
     for w_ in (b_zin, b_zout, b_fit, b_11):
         itop.addWidget(w_)
+    # 気づける入口(2026-11-13、初回起動の点検): 結果が領域の時だけ「表で見る(N 個)」。特徴量の検査(領域ごとの面積・
+    # 重心・円形度の表、行を押すと絵で光る、CSV)はツールのメニューの奥にあって、自力では気づけなかった。
+    b_regions = QtWidgets.QToolButton(); b_regions.setObjectName("see_regions_table")
+    b_regions.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+    b_regions.setToolTip("Feature inspection: area, centre, circularity … of every region in a table; "
+                         "a row lights its region up in the image (Ctrl+F5)")
+    b_regions.setCursor(QtCore.Qt.PointingHandCursor); b_regions.setVisible(False)
+    b_regions.clicked.connect(lambda _=False: act_featins.trigger())
+    win._b_regions = b_regions
     itop.addStretch(1)
     ilay.addLayout(itop); ilay.addWidget(view, 1)
+    # (2026-11-15, integration) the entrance is a word button that comes and goes: it stands over the image's
+    # top-left corner, not in the image window's strip of pictures (D24) and not in its layout
+    b_regions.setParent(view); b_regions.move(8, 8)
     ilay.setContentsMargins(4, 4, 4, 4); ilay.setSpacing(4)
     image_panel = QtWidgets.QWidget(); image_panel.setLayout(ilay)
     image_panel.setObjectName("graphics_primary")
@@ -7746,18 +9245,66 @@ def build_window(model=None):
 
     # ---- P-12 (2026-11-12): the first three steps, over the image until the user closes it ---------- #
     first_steps = QtWidgets.QFrame(); first_steps.setObjectName("first_steps")
-    first_steps.setStyleSheet("#first_steps { background: %s; border: 1px solid %s; border-radius: 6px; }"
-                              % (NAVY_2, TEAL))
+    _themed_style(first_steps, "#first_steps {{ background: {bg2}; border: 1px solid {accent}; border-radius: 6px; }}")
     _fs_lay = QtWidgets.QHBoxLayout(first_steps); _fs_lay.setContentsMargins(10, 2, 4, 2); _fs_lay.setSpacing(14)
     _fs_title = QtWidgets.QLabel("First steps"); _fs_title.setStyleSheet("font-weight:700;")
     _fs_lay.addWidget(_fs_title)
-    for _txt in ("1. Open a sample: File ▸ Sample images",
-                 "2. Select an operator in the Operators panel and press +",
-                 "3. Press ▶▶ to run"):
-        _fs_step = QtWidgets.QLabel(_txt)
-        _fs_step.setMinimumWidth(1)        # ★2026-11-12: 折り返さず 1 行(狭い欄では右が切れる。全文はツールチップ)
+    _fs_labels = []
+
+    class _StepLabel(QtWidgets.QLabel):
+        """One step of the band, on one line (D126). When the band is narrower than the three steps, the step
+        ends with … (2026-11-15, [初回] D28 / D47: a plain label cut its sentence in the middle of a glyph right
+        beside the next step - "File ▸ Sa| 2. Open Operators"). The whole step is the tooltip."""
+
+        def drawn_text(self):
+            return self.fontMetrics().elidedText(self.text(), QtCore.Qt.ElideRight, self.contentsRect().width())
+
+        def minimumSizeHint(self):
+            return QtCore.QSize(self.fontMetrics().horizontalAdvance("1. …"), super().minimumSizeHint().height())
+
+        def paintEvent(self, ev):
+            p = QtGui.QPainter(self)
+            self.style().drawItemText(p, self.contentsRect(), int(self.alignment()) | int(QtCore.Qt.TextSingleLine),
+                                      self.palette(), self.isEnabled(), self.drawn_text(),
+                                      QtGui.QPalette.WindowText)
+            p.end()
+
+    for _txt in FIRST_STEPS_PIPELINE:
+        _fs_step = _StepLabel(_txt)        # 折り返さず 1 行(狭い欄では … で終える。全文はツールチップ。最小は「1. …」)
         _fs_step.setToolTip(_txt)
         _fs_lay.addWidget(_fs_step, 0)
+        _fs_labels.append(_fs_step)
+    win._first_steps_labels = _fs_labels   # ★2026-11-13: 文は Program 欄のモードに合わせて入れ替える(_pm_first_steps)
+    _fs_steps = _fs_labels                 # the first-run branch's name for the same three labels
+    # 気づける入口(2026-11-13): 作例(2-D の作例の一覧、その場で走る)と、落とせるファイルの一覧への入口を帯に
+    try:
+        import examples2d as _ex2d
+        _n_examples = len(_ex2d.names())
+    except Exception as exc:                                # noqa: BLE001 -- 一覧が読めなければ数を出さない
+        _log_soft_failure("could not count the 2-D examples", exc)
+        _n_examples = 0
+
+    def _fs_examples_text():
+        return tr("Examples (%d)") % _n_examples if _n_examples else tr("Examples")
+    _fs_link_css = ("QToolButton {{ color: {accent}; border: none; background: transparent; text-decoration: underline; "
+                    "padding: 0 2px; margin: 0; }}")          # the scheme's accent (filled again on a switch)
+    _fs_examples = QtWidgets.QToolButton(); _fs_examples.setText(_fs_examples_text())
+    _fs_examples.setToolTip("Browse the 2-D worked examples: read the code, run it in place, copy it")
+    _fs_drop = QtWidgets.QToolButton(); _fs_drop.setText("You can drop files here")
+    _fs_drop.setToolTip("Images, a folder, 3-D, video, audio, .py and .json open by drag and drop — see the list")
+    # 2 つを小さい字で縦に重ねた 1 列(帯の高さの中)。手順の文の幅は削らない: 置く幅が無い時は列ごと隠す
+    _fs_links = QtWidgets.QWidget(); _fs_links.setObjectName("fs_links")
+    _fs_links.setStyleSheet("#fs_links { background: transparent; }")
+    _fs_ll = QtWidgets.QVBoxLayout(_fs_links); _fs_ll.setContentsMargins(0, 0, 0, 0); _fs_ll.setSpacing(0)
+    for _b in (_fs_examples, _fs_drop):
+        _themed_style(_b, _fs_link_css); _b.setCursor(QtCore.Qt.PointingHandCursor)
+        _f = _b.font(); _f.setPointSizeF(max(7.0, _f.pointSizeF() - 1.0)); _b.setFont(_f)
+        _b.setFixedHeight(QtGui.QFontMetrics(_f).height() + 1)       # 2 行で帯の高さ(40px)に収まる
+        _fs_ll.addWidget(_b, 0, QtCore.Qt.AlignLeft)
+    _fs_lay.addWidget(_fs_links, 0)
+    _fs_examples.clicked.connect(lambda _=False: win._act_2d_examples.trigger())
+    _fs_drop.clicked.connect(lambda _=False: act_formats.trigger())
+    win._first_steps_links = {"examples": _fs_examples, "drop": _fs_drop, "column": _fs_links}
     _fs_lay.addStretch(1)
     _fs_close = QtWidgets.QToolButton(); _fs_close.setText("✕")
     _fs_close.setToolTip("Hide these steps. Help ▸ First steps shows them again")
@@ -7774,11 +9321,30 @@ def build_window(model=None):
     def _close_first_steps(_=False):
         first_steps.hide()
         try:
-            _settings().setValue("ui/first_steps_dismissed", "1")
+            _write_settings({"ui/first_steps_dismissed": "1"}, what="first-steps preference")
         except Exception as exc:                            # noqa: BLE001
             _log_soft_failure("could not remember that the first steps were closed", exc)
 
     first_steps.setVisible(not _first_steps_dismissed())
+
+    def _fs_fit_links():
+        """帯の幅が、手順の文を切らずに作例・ファイルの列も置ける時だけ列を出す(入口のために手順の文を削らない)。"""
+        m = _fs_lay.contentsMargins()
+        parts = [_fs_title] + _fs_steps + [_fs_close]
+        need = (m.left() + m.right() + sum(w.sizeHint().width() for w in parts)
+                + _fs_lay.spacing() * len(parts))
+        room = first_steps.width() >= need + _fs_links.sizeHint().width()
+        if _fs_links.isVisibleTo(first_steps) != room:
+            _fs_links.setVisible(room)
+    win._fs_fit_links = _fs_fit_links
+
+    class _FsFit(QtCore.QObject):
+        def eventFilter(self, obj, ev):
+            if ev.type() in (QtCore.QEvent.Resize, QtCore.QEvent.Show):
+                _fs_fit_links()
+            return False
+    _fs_fit_filter = _FsFit(first_steps)
+    first_steps.installEventFilter(_fs_fit_filter)
     _fs_close.clicked.connect(_close_first_steps)
     act_first_steps.triggered.connect(lambda _=False: first_steps.show())
     win._first_steps = first_steps
@@ -7814,18 +9380,27 @@ def build_window(model=None):
         _spin.setEnabled(False)
     range_note = QtWidgets.QLabel("Display only. The source data is not changed")
     range_note.setProperty("hint", True); range_note.setWordWrap(True)
-    range_warning = QtWidgets.QLabel(""); range_warning.setStyleSheet("color:#ffb841;")
+    range_warning = QtWidgets.QLabel(""); _themed_style(range_warning, "color:{warn};")
     range_warning.hide()
-    rrow = QtWidgets.QHBoxLayout()
-    for _widget in (range_each, range_shared, range_manual, QtWidgets.QLabel("lo"), range_lo,
-                    QtWidgets.QLabel("hi"), range_hi):
+    # ★2026-11-13: one row of three radios + two spin boxes (range 1e100 -> a very wide minimum) made this
+    #   panel at least ~700 px wide; shown in a 1024 px window it left 288 px for the image. Two rows.
+    rrow = QtWidgets.QHBoxLayout(); rrow2 = QtWidgets.QHBoxLayout()
+    for _widget in (range_each, range_shared, range_manual):
         rrow.addWidget(_widget)
-    dlay.addLayout(drow); dlay.addLayout(rrow); dlay.addWidget(range_note)
+    rrow.addStretch(1)
+    for _widget in (QtWidgets.QLabel("lo"), range_lo, QtWidgets.QLabel("hi"), range_hi):
+        rrow2.addWidget(_widget, 1 if isinstance(_widget, QtWidgets.QDoubleSpinBox) else 0)
+    range_lo.setMinimumWidth(96); range_hi.setMinimumWidth(96)
+    dlay.addLayout(drow); dlay.addLayout(rrow); dlay.addLayout(rrow2); dlay.addWidget(range_note)
     dlay.addWidget(range_warning); dlay.addLayout(prow)
     rv.addWidget(_group(QtWidgets, "DISPLAY & PERCEPTION", dlay))
 
     hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(64)
-    hist_view.setStyleSheet("background:#12141b; border:1px solid #262b38; border-radius:6px;")
+    # ★2026-11-13: a label with a pixmap is never narrower than the pixmap, so the panel could only grow
+    #   (664 px minimum; 288 px left for the image in a 1024 px window). The width follows the panel.
+    hist_view.setMinimumWidth(120); hist_view.setScaledContents(True)   # narrower than the pixmap: scale, do not clip
+    hist_view.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Fixed)
+    _themed_style(hist_view, "background:{chrome}; border:1px solid {line}; border-radius:6px;")
     inspector = QtWidgets.QPlainTextEdit(); inspector.setReadOnly(True); inspector.setFixedHeight(150)
     inspector.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
     alay = QtWidgets.QVBoxLayout()
@@ -7849,7 +9424,8 @@ def build_window(model=None):
                          "Type for autocomplete; click the gutter to toggle a breakpoint; Step / Run (timed).")
     # P-11 (2026-11-12): these hints named keys that are not bound here (Ctrl+Shift+Return, F10, and an F5 that
     # runs the whole pipeline) -- the keys that exist are Run all F5 / Step F6 / Reset Shift+F5 in the Run menu.
-    c_run = _tbtn("play", "Run every line, timing each; stops at a breakpoint", accent=True)
+    c_run = _tbtn("play", "Run the Program as a pipeline: every line, timing each; stops at a breakpoint",
+                  accent=True)
     c_cont = _tbtn("playplay", "Continue: resume from the execution line to the next "
                    "breakpoint / end (pause via breakpoints, resume here)")
     c_step = _tbtn("step", "Execute one more line and show its result")
@@ -7863,7 +9439,7 @@ def build_window(model=None):
     for _cb in (c_run, c_cont, c_step, c_reset, c_apply, c_sync):
         crow.addWidget(_cb)
     crow.addStretch(1)
-    cvl.addLayout(crow); cvl.addWidget(code_edit, 1); cvl.addWidget(code_status)
+    cvl.addLayout(crow); cvl.addWidget(code_edit, 1); cvl.addWidget(code_edit.find_bar); cvl.addWidget(code_status)
 
     # -- variables & objects window (HDevelop variable window) --------------- #
     var_list = QtWidgets.QListWidget()
@@ -7923,6 +9499,8 @@ def build_window(model=None):
     dock_disp = _mk_dock("Display · Analysis", right, "dock_display")
     dock_code = _mk_dock("Program (code)", code_w, "dock_program")
     dock_vars = _mk_dock("Variables & Objects", var_w, "dock_variables")
+    proj_w = QtWidgets.QWidget()                      # 第 2 便: プロジェクト(フォルダ)のツリー。中身は build_panel が作る
+    dock_project = _mk_dock("Project", proj_w, "dock_project")
 
     SyncView = _sync_view_class(QtWidgets, QtGui, QtCore)
     sync_group = ViewSyncGroup()                          # Stage in -> out panes + A / B panes (+ the main view, optionally)
@@ -8027,6 +9605,8 @@ def build_window(model=None):
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_ab)
     win.tabifyDockWidget(dock_ops, dock_ab)                         # A / B tabbed in
     dock_ops.raise_()
+    win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_project)   # 第 2 便: 左側。既定は隠す(右の列と画像の比率を崩さない)
+    dock_project.hide()
     # The inspection panels (Variables & Objects, Pipeline·Params, Display·Analysis) are
     # on-demand — the user keeps them undocked / shown only when needed — so they start
     # hidden and the image owns the workspace. Toolbar + Window ▸ Panels toggles bring
@@ -8049,7 +9629,8 @@ def build_window(model=None):
             pass
     win.apply_first_layout = _apply_first_run_ratio
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
-                  "program": dock_code, "variables": dock_vars, "compare": dock_cmp, "ab": dock_ab}
+                  "program": dock_code, "variables": dock_vars, "compare": dock_cmp, "ab": dock_ab,
+                  "project": dock_project}
     # Work modes are view state only.  The central result is registered alongside
     # the real docks so the Qt-free preset model can describe focus and sizing.
     win._layout_panels = dict(win._docks)
@@ -8063,12 +9644,15 @@ def build_window(model=None):
     win.addToolBar(QtCore.Qt.TopToolBarArea, mode_bar)
     mode_group = QtGui.QActionGroup(win); mode_group.setExclusive(True)
     for _mode_id, _action in work_mode_actions.items():
-        mode_group.addAction(_action); mode_bar.addAction(_action)
-    mode_bar.addSeparator(); mode_bar.addAction(act_focus_image); mode_bar.addAction(act_find_panel)
+        mode_group.addAction(_action)
+    studio_panels.mode_switch(win, mode_bar, work_mode_actions)   # D01: one switch for the four work modes
+    mode_bar.addSeparator(); mode_bar.addAction(studio_panels.glyph_action(win, act_focus_image, "image_focus"))
+    mode_bar.addAction(studio_panels.glyph_action(win, act_find_panel, "find_panel"))
 
     def _save_layout_state():
         try:
-            _settings().setValue("studio/work_mode_layout", studio_layout.to_json(win._layout_state))
+            _write_settings({"studio/work_mode_layout": studio_layout.to_json(win._layout_state)},
+                            what="work-mode layout")
         except Exception as exc:
             _log_soft_failure("could not save work-mode layout", exc)
 
@@ -8107,23 +9691,38 @@ def build_window(model=None):
             _apply_layout_state(); _save_layout_state()
 
     def find_panel_dialog():
+        old = getattr(win, "_panel_search_dialog", None)   # D20: one window; asked again, it comes forward
+        try:
+            if old is not None and old.isVisible():
+                old.raise_(); old.activateWindow()
+                return old
+        except RuntimeError:
+            pass
         dialog = QtWidgets.QDialog(win); dialog.setWindowTitle(tr("Find panel"))
         layout = QtWidgets.QVBoxLayout(dialog)
         query = QtWidgets.QLineEdit(); query.setPlaceholderText(tr("Type a panel name…"))
         found = QtWidgets.QListWidget(); layout.addWidget(query); layout.addWidget(found)
         def refill(text=""):
             found.clear()
-            for panel in studio_layout.find_panels(text):
-                item = QtWidgets.QListWidgetItem(tr(PANEL_NAME_EN[panel]))
+            for panel in studio_panels.panel_order(win, studio_layout.find_panels(text)):   # D21: the bar's order
+                item = QtWidgets.QListWidgetItem(win._docks[panel].windowTitle())
                 item.setData(QtCore.Qt.UserRole, panel); found.addItem(item)
+            if found.count():
+                found.setCurrentRow(0)                     # Enter in the box opens the first one
+            else:
+                item = QtWidgets.QListWidgetItem(tr("No panel by that name"))
+                item.setFlags(QtCore.Qt.NoItemFlags); found.addItem(item)
         def reveal(item):
-            panel = item.data(QtCore.Qt.UserRole)
+            panel = item.data(QtCore.Qt.UserRole) if item is not None else None
+            if panel is None:
+                return
             if panel != "result":
                 win._layout_state = studio_layout.set_override(
                     win._layout_state, panel, visible=True, collapsed=False)
                 _apply_layout_state(); win._docks[panel].raise_(); _save_layout_state()
             dialog.accept()
         query.textChanged.connect(refill); found.itemActivated.connect(reveal)
+        query.returnPressed.connect(lambda: reveal(found.currentItem()))
         refill(); dialog.resize(380, 300); query.setFocus(); dialog.show()
         win._panel_search_dialog = dialog
         return dialog
@@ -8162,7 +9761,7 @@ def build_window(model=None):
     _more_menu = QtWidgets.QMenu("More", win)
     win._more_menu = _more_menu                          # retain (shiboken ownership)
     _panels_sub = QtWidgets.QMenu("Panels", _more_menu); win._more_menu_panels = _panels_sub
-    for _d in (dock_vars, dock_disp, dock_pipe, dock_cmp, dock_ab, dock_ops, dock_code):
+    for _d in (dock_vars, dock_disp, dock_pipe, dock_cmp, dock_ab, dock_ops, dock_code, dock_project):
         _panels_sub.addAction(_d.toggleViewAction())
     _more_menu.addMenu(_panels_sub)
     _more_menu.addSeparator()
@@ -8235,6 +9834,10 @@ def build_window(model=None):
         sub.setWindowTitle(title or ("Graphics %d" % h))
         sub.resize(440, 360)
         sub.show()
+        studio_panels.adopt_image_strip(win, gv, "graphics_%d" % h)   # its strip turns / scrolls like every panel's
+        _loc = getattr(win, "_localize", None)    # (2026-11-15, D30) its tools speak the UI language and follow
+        if _loc is not None and widget is None:   # a later switch (the window's language pass knows them)
+            _loc(gv)
         win._graphics_windows.append(sub)
         win._current_gfx = sub                     # a freshly opened window becomes current
         _update_current_indicator()
@@ -8287,7 +9890,7 @@ def build_window(model=None):
     # a permanent indicator when display updates are OFF, so a frozen display never
     # reads as a broken one (HDevelop dev_update_off state).
     win._update_label = QtWidgets.QLabel("")
-    win._update_label.setStyleSheet("QLabel{color:%s;}" % AMBER)
+    _themed_style(win._update_label, "QLabel{{color:{warn};}}")      # display updates OFF = caution
     win.statusBar().addPermanentWidget(win._update_label)
     mdi.subWindowActivated.connect(_set_current_gfx)
     win._current_view = _current_view
@@ -8303,7 +9906,7 @@ def build_window(model=None):
     act_cascade = _act("Cascade graphics windows", None, "Cascade the open graphics windows")
     act_reset_layout = _act("Reset panel layout", None, "Restore the default tool-panel layout")
     menu_panels = _menu(menu_windows, "Panels", "panels")
-    for _d in (dock_ops, dock_pipe, dock_disp, dock_code, dock_vars):
+    for _d in (dock_ops, dock_pipe, dock_disp, dock_code, dock_vars, dock_project):
         menu_panels.addAction(_d.toggleViewAction())
     menu_panels.addSeparator()             # Float all/Dock all + per-panel Float appended below
     menu_graphics = _menu(menu_windows, "Graphics windows", "graphics")
@@ -8319,16 +9922,22 @@ def build_window(model=None):
     act_cascade.triggered.connect(mdi.cascadeSubWindows)
 
     def reset_layout():
-        if getattr(win, "_default_state", None) is not None:
-            win.restoreState(win._default_state)
-        for _d in win._docks.values():
-            _d.show()
-    act_reset_layout.triggered.connect(reset_layout)
+        studio_panels.reset_layout(win, _settings())     # the first-run arrangement: image + code
+    def reset_layout_asked(_=False):
+        if not confirm_action(win, tr("Reset panel layout"),
+                              tr("The panels go back to the default arrangement. The arrangement you have now is "
+                                 "lost unless it was saved as a layout (Window ▸ Layout ▸ Save)."),
+                              tr("Reset the layout")):
+            return
+        reset_layout()
+    act_reset_layout.triggered.connect(reset_layout_asked)
     win._reset_layout = reset_layout
+    win._reset_layout_asked = reset_layout_asked
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
              "dirty": False, "code_dirty": False, "errors": [], "perception_error": None,
              "program_error": None, "structured_errors": [], "stage_lines": None,
-             "renders": 0, "image_path": None, "input_sample": "__demo__" if _starts_on_demo else None, "pipe_path": None,
+             "renders": 0, "image_path": None, "input_sample": "__demo__" if _starts_on_demo else None,
+             "pipe_path": None, "input_pending": None,
              "roi": None,                    # (x0, y0, x1, y1) region of interest of the main view (Shift + drag), or None
              # HDevelop dev_update_{window,var,pc,time}: whether the graphics window,
              # variable window, execution cursor and per-line timings auto-update during
@@ -8349,6 +9958,13 @@ def build_window(model=None):
              # HDevelop dev_set_draw / dev_set_color / dev_set_line_width: how a region
              # result is drawn over the source in the 'region overlay' display mode.
              "draw": {"mode": "fill", "color": (0.96, 0.62, 0.14), "line_width": 1, "alpha": 0.5}}
+
+    def _settings_failure(reason):
+        """設定の永続化失敗をこの窓に残す。Keep and flash the active window's settings failure."""
+        state["settings_error"] = reason
+        flash(reason)
+
+    studio_settings.set_failure_reporter(_settings_failure)
     pmodel = PerceptionModel()
 
     # -- behaviour --
@@ -8360,13 +9976,41 @@ def build_window(model=None):
         state["dirty"] = True
         _set_title()
 
+    def _pipeline_saved_form():
+        """処理手順のうち、ファイルに保存され、利用者が変えられる物: 段(名前・a・b・バイパス)・dev_* / set_system
+        の行・固定した結果(``model.to_dict()`` の stages / directives / pinned と同じ中身。入力の参照は含めない)。"""
+        return ([[st[0], st[1], st[2], _is_bypassed(st)] for st in model.stages],
+                list(model.directives), [p.to_dict() for p in model.pins])
+
+    def _pipeline_unsaved():
+        """段に、保存していない変更があるか。
+
+        ★2026-11-13(初回起動の点検 M10): 見本を読んだだけ(読んだ時のまま)なら無い事にする —— 見本の後に
+        別の見本を選ぶ・終了するたびに「破棄しますか」と聞かれていた。読んだ時の形は ``state["sample_stages"]`` に覚える。
+
+        ★2026-11-15(PR #316 の独立レビュー 2 本): 比べるのは保存される形の全部(``_pipeline_saved_form``)。段の名前・
+        a・b だけを比べていた為、見本の後の段のバイパス・dev_* の行の Apply・Pin as A が「見本のまま」と見なされ、
+        聞かずに捨てられた。保存・ファイルから開いた後は、ファイルが基準(覚えた形は捨てる)。"""
+        if not (state.get("dirty") and model.stages):
+            return False
+        pristine = state.get("sample_stages")
+        return not (pristine is not None and _pipeline_saved_form() == pristine)
+
     def _set_title():
         """Window title = <pipeline>* — <image> — Fullseye Studio (star = unsaved)."""
         pp = state.get("pipe_path"); ip = state.get("image_path")
-        star = "*" if (state.get("dirty") and model.stages) else ""
+        star = "*" if _pipeline_unsaved() else ""
         seg = (os.path.basename(pp) if pp else "untitled") + star
+        _pm = getattr(win, "_pymode", None)
+        _pseg = _pm.title_segment() if _pm is not None else None
+        if _pseg:                                                # Python のモード: 開いているプログラムと未保存の印
+            seg = _pseg
         if ip:
             seg += " — " + os.path.basename(ip)
+        _pj = getattr(win, "_project", None)
+        _pr = _pj["root"]() if _pj else None
+        if _pr:                                                  # 第 2 便: どのプロジェクトを見ているかが題に出る
+            seg += " — " + tr("Project") + ": " + (os.path.basename(_pr.rstrip("\\/")) or _pr)
         win.setWindowTitle(seg + " — Fullseye Studio")
     win._set_title = _set_title
 
@@ -8391,17 +10035,19 @@ def build_window(model=None):
             pass
         if show_modal:
             try:
-                ERROR_HOOK(win, title, studio_errors.format_failure(
+                ERROR_HOOK(win, tr(title), studio_errors.format_failure(       # 題も UI の言語で(M9)
                     info, _UI_LANG.get("code", "en")))
             except Exception:             # a stubbed/absent dialog must never crash us
                 pass
     win._report_error = report_error
 
-    def confirm_discard(title, what="the current pipeline"):
-        """True if it is OK to throw away unsaved work — unsaved pipeline stages OR
-        unapplied Program-editor edits (Codex #9). When neither is pending, no prompt."""
-        pipe_dirty = state["dirty"] and bool(model.stages)
+    def _unsaved_work():
+        """``(pipe_dirty, code_dirty, ed_dirty, parts)``: 保存していない物と、それを言う句(UI の言語)。"""
+        pipe_dirty = _pipeline_unsaved()
         code_dirty = bool(state.get("code_dirty"))
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active and _pm.pipe_dirty:
+            code_dirty = True                 # Python のモードにいる間、未適用のパイプラインの文面は別の文書に残っている
         # Python Editor の未保存タブも数える(アプリ終了経路のデータ損失防止)。
         # Count unsaved Python-Editor tabs too — the app-quit path must not
         # silently discard them (only per-tab close prompted before this fix).
@@ -8412,17 +10058,44 @@ def build_window(model=None):
             if tabs is not None:
                 ed_dirty = sum(1 for i in range(tabs.count())
                                if getattr(tabs.widget(i), "_dirty", False))
-        if not (pipe_dirty or code_dirty or ed_dirty):
-            return True
         parts = []
         if pipe_dirty:
-            parts.append("%d unsaved stage(s)" % len(model.stages))
+            parts.append(_fmt_or_english(tr("%d unsaved stage(s)"), "%d unsaved stage(s)", len(model.stages)))
         if code_dirty:
-            parts.append("unapplied Program edits")
+            parts.append(tr("unapplied Program edits"))
         if ed_dirty:
-            parts.append("%d unsaved editor tab(s)" % ed_dirty)
-        return bool(CONFIRM_HOOK(
-            win, title, "%s has %s.\nDiscard them?" % (what.capitalize(), " and ".join(parts))))
+            parts.append(_fmt_or_english(tr("%d unsaved editor tab(s)"), "%d unsaved editor tab(s)", ed_dirty))
+        return pipe_dirty, code_dirty, ed_dirty, parts
+
+    def _unsaved_sentence(what, parts):
+        return _fmt_or_english(tr("%s has %s."), "%s has %s.",
+                               tr(what[:1].upper() + what[1:]), tr(" and ").join(parts))
+
+    def confirm_discard(title, what="the current pipeline"):
+        """True if it is OK to throw away unsaved work — unsaved pipeline stages OR
+        unapplied Program-editor edits (Codex #9). When neither is pending, no prompt.
+        The title and the sentence are in the UI language (2026-11-13, M9)."""
+        _pipe, _code, _ed, parts = _unsaved_work()
+        if not parts:
+            return True
+        return bool(CONFIRM_HOOK(win, tr(title), _unsaved_sentence(what, parts) + "\n" + tr("Discard them?")))
+
+    def close_guard():
+        """終了の確認(★2026-11-13、初回起動の点検 M10): 保存して閉じる / 保存せずに閉じる / キャンセル(既定)。
+
+        「保存して閉じる」は段が未保存で、ほかに未保存の物(Program の未適用の編集・エディタのタブ)が無い時だけ出す
+        (保存できるのは処理手順だけなので、ほかの物を黙って失わない)。保存の窓を取り消したら閉じない。"""
+        pipe_dirty, code_dirty, ed_dirty, parts = _unsaved_work()
+        if not parts:
+            return True
+        can_save = bool(pipe_dirty and not code_dirty and not ed_dirty)
+        text = (_unsaved_sentence("the current pipeline", parts) + "\n"
+                + (tr("Save the pipeline before closing?") if can_save else tr("Close without saving them?")))
+        answer = CLOSE_CONFIRM_HOOK(win, tr("Quit Fullseye Studio"), text, can_save)
+        if answer == "save" and can_save:
+            save_pipe()
+            return not _pipeline_unsaved()
+        return answer == "discard"
 
     _icon_cache = {}
     _KIND_GLYPH = {"table": "\u25a6", "feature": "#", "series": "~", "array": "\u25a3", "contour": "\u2307",
@@ -8435,7 +10108,7 @@ def build_window(model=None):
         if ic is None:
             tw, th = _STAGE_THUMB
             pm = QtGui.QPixmap(tw, th)
-            pm.fill(QtGui.QColor(NAVY_1))
+            pm.fill(QtGui.QColor(_C("bg1")))
             pt = QtGui.QPainter(pm)
             pt.setPen(QtGui.QColor(tone))
             f = pt.font(); f.setPointSize(13); pt.setFont(f)
@@ -8451,7 +10124,7 @@ def build_window(model=None):
         qi = QtGui.QImage(a.data, w, h, 3 * w, QtGui.QImage.Format_RGB888).copy()
         tw, th = _STAGE_THUMB
         pm = QtGui.QPixmap(tw, th)
-        pm.fill(QtGui.QColor(NAVY_1))
+        pm.fill(QtGui.QColor(_C("bg1")))
         pt = QtGui.QPainter(pm)
         pt.drawImage((tw - w) // 2, (th - h) // 2, qi)
         pt.end()
@@ -8474,20 +10147,20 @@ def build_window(model=None):
             if pv["status"] == "ready":
                 th = pv["thumb"]
                 it.setIcon(_thumb_icon(th) if th is not None
-                           else _glyph_icon(_KIND_GLYPH.get(pv["kind"], "\u00b7"), TEAL))
+                           else _glyph_icon(_KIND_GLYPH.get(pv["kind"], "\u00b7"), _C("accent")))
                 it.setToolTip(base)
             elif pv["status"] == "stale":
-                it.setIcon(_glyph_icon("\u21bb", AMBER))
+                it.setIcon(_glyph_icon("\u21bb", _C("warn")))
                 it.setToolTip(_pair("再計算が必要", "recompute needed") + "\n\n" + base)
             elif pv["status"] == "evicted":
                 th = pv["thumb"]                       # still current: only the full array was dropped
-                it.setIcon(_thumb_icon(th) if th is not None else _glyph_icon("\u25cc", MUTED))
+                it.setIcon(_thumb_icon(th) if th is not None else _glyph_icon("\u25cc", _C("muted")))
                 it.setToolTip((_pair("値は予算で解放", "evicted (budget): the picture is current, the array is recomputed on demand")
                                if _UI_LANG["code"] != "ja" else
                                "値は予算で解放: 絵は最新のまま。配列は必要になったとき計算し直す") + "\n\n" + base)
             else:
-                it.setIcon(_glyph_icon("\u2026", MUTED))
-                it.setToolTip(_pair("未計算", "not computed") + "\n\n" + base)
+                it.setIcon(_glyph_icon("\u2026", _C("muted")))
+                it.setToolTip(tr("not computed") + "\n\n" + base)
             it.setData(QtCore.Qt.UserRole + 2, pv["status"])
     win._update_stage_icons = update_stage_icons
 
@@ -8532,7 +10205,7 @@ def build_window(model=None):
                 summ = _pair("値は予算で解放", "evicted (budget): recomputed on demand") \
                     if _UI_LANG["code"] != "ja" else "値は予算で解放: 必要になったとき計算し直す"
             else:
-                summ = _pair("未計算", "not computed")
+                summ = tr("not computed")
             ms = times[i] if (i < len(times) and st) else None
             tstr = ("  ·  %.1f ms" % ms) if isinstance(ms, (int, float)) else ""
             mem = mems[i] if (i < len(mems) and st) else None
@@ -8549,17 +10222,17 @@ def build_window(model=None):
             it.setToolTip(op_tooltip(row) if row else name)
             if warn:                                  # ran, but the result needs a look (a warning, not an error)
                 why = "; ".join(st.get("reasons", []))
-                it.setForeground(QtGui.QColor("#c9a227"))
+                it.setForeground(QtGui.QColor(_C("warn")))
                 it.setToolTip("⚠ result needs review: %s\n(Studio only reports this; the result is shown as computed.)\n\n%s"
                               % (why, it.toolTip()))
                 validity_rows.append({"index": i, "op": name, "severity": "warning", "glyph": "⚠",
                                       "message": why})
-            if st.get("kind") == "error":             # mark a stage that raised at runtime
-                it.setForeground(QtGui.QColor(AMBER))
+            if st.get("kind") == "error":             # mark a stage that raised at runtime: the ERROR colour
+                it.setForeground(QtGui.QColor(_C("err")))
                 it.setToolTip("runtime error: " + truncate(st.get("message", "")))
             if byp:                                   # switched off: greyed + struck through, still in its place
                 _f = it.font(); _f.setStrikeOut(True); it.setFont(_f)
-                it.setForeground(QtGui.QColor(MUTED))
+                it.setForeground(QtGui.QColor(_C("muted")))
                 it.setToolTip(tr("bypassed: this stage passes its input through unchanged (Ctrl+B switches it on again)")
                               + "\n\n" + it.toolTip())
             it.setData(QtCore.Qt.UserRole + 1, it.toolTip())    # the row's own tooltip; icons add a status line
@@ -8570,7 +10243,7 @@ def build_window(model=None):
             hint = QtWidgets.QListWidgetItem(
                 "— empty — double-click an operator, or drop an image/.json here, to start —")
             hint.setFlags(QtCore.Qt.NoItemFlags)        # non-selectable hint
-            hint.setForeground(QtGui.QColor(MUTED))
+            hint.setForeground(QtGui.QColor(_C("muted")))
             stage_list.addItem(hint)
         if select is not None and 0 <= select < len(model.stages):
             stage_list.setCurrentRow(select)           # still blocked -> no extra render
@@ -8588,15 +10261,40 @@ def build_window(model=None):
         via engine.diagnose_stages) + runtime errors (a stage that raised) + the last
         perception failure (which used to be a status-bar flash you could easily miss)."""
         problems_list.clear()
+        syntax_rows = state.get("program_syntax_errors") or []      # Program の構文エラー(行つき)。先頭に並べる
+        for ln_, msg_ in syntax_rows:
+            it = QtWidgets.QListWidgetItem("\u2715 " + truncate(msg_, 200))
+            it.setData(QtCore.Qt.UserRole, -1)
+            it.setData(QtCore.Qt.UserRole + 20, ln_)                # 押すとその行へカーソルが移る
+            it.setForeground(QtGui.QColor(AMBER))
+            problems_list.addItem(it)
+        pending_input = state.get("input_pending")
+        held_input = pending_input.get("held") if pending_input else None
+        pending_text = (tr("This image differs from the one saved with the pipeline") if held_input else
+                        tr("The saved input is not loaded yet. Choose how Studio should continue."))
+        input_confirm_label.setText(pending_text)
+        input_confirm_bar.setVisible(bool(pending_input))
+        input_confirm_buttons["adopt"].setVisible(bool(held_input))
+        if pending_input:
+            it = QtWidgets.QListWidgetItem(pending_text)
+            it.setData(QtCore.Qt.UserRole, -1)
+            it.setForeground(QtGui.QColor(_C("warn")))
+            problems_list.addItem(it)
         _act_idx = [k for k, st in enumerate(model.stages) if not _is_bypassed(st)]
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:
+            return                                         # ★2026-11-13 Python のモード: 段の列の検査は出さない(正本でない)
         if len(_act_idx) == len(model.stages):
             probs = list(engine.diagnose_stages(model.stages))     # static checks
         else:                                                      # a bypassed stage is not part of the chain
             probs = [dict(p, index=_act_idx[p["index"]]) if 0 <= p.get("index", -1) < len(_act_idx) else p
                      for p in engine.diagnose_stages([model.stages[k] for k in _act_idx])]
         if states:
+            # ★2026-11-12(B-2): 段の型違いは静的な検査と実行時の例外の両方が同じ内容を言い、Problems に 2 行並んでいた。
+            #   静的な誤りのある段は、その行(より具体的)だけを残す。
+            _static_bad = {p["index"] for p in probs if p["severity"] == "error"}
             for s in states:                                    # runtime errors
-                if (s.get("state") or {}).get("kind") == "error":
+                if (s.get("state") or {}).get("kind") == "error" and s["index"] not in _static_bad:
                     probs.append({"index": s["index"], "op": s["op"], "severity": "error",
                                   "message": "runtime: " + truncate(s["state"].get("message", ""))})
         if states is not None:
@@ -8609,26 +10307,26 @@ def build_window(model=None):
                                               truncate(p.get("op", "?"), 40),
                                               truncate(p["message"])))
             it.setData(QtCore.Qt.UserRole, p["index"])
-            it.setForeground(QtGui.QColor(AMBER if p["severity"] == "error" else "#c9a227"))
+            it.setForeground(QtGui.QColor(_C("err") if p["severity"] == "error" else _C("warn")))
             problems_list.addItem(it)
         perr = state.get("perception_error")
         if perr:
             it = QtWidgets.QListWidgetItem("✕ perception (%s): %s" % (perr[0], truncate(perr[1])))
             it.setData(QtCore.Qt.UserRole, -1)
-            it.setForeground(QtGui.QColor(AMBER))
+            it.setForeground(QtGui.QColor(_C("err")))
             problems_list.addItem(it)
         rerr = state.get("program_error")                       # last Program Run/Step/Continue failure
         if rerr:
             it = QtWidgets.QListWidgetItem("✕ program run: stage %d (%s): %s"
                                            % (rerr[0] + 1, truncate(rerr[1], 40), truncate(rerr[2])))
             it.setData(QtCore.Qt.UserRole, rerr[0])
-            it.setForeground(QtGui.QColor(AMBER))
+            it.setForeground(QtGui.QColor(_C("err")))
             problems_list.addItem(it)
         notes = state.get("input_notes") or []
         for msg in notes:                                       # saved-input reference could not be matched cleanly
             it = QtWidgets.QListWidgetItem("⚠ input: %s" % truncate(msg, 160))
             it.setData(QtCore.Qt.UserRole, -1)
-            it.setForeground(QtGui.QColor("#c9a227"))
+            it.setForeground(QtGui.QColor(_C("warn")))
             problems_list.addItem(it)
         pin_bad = [(k, p) for k, p in enumerate(model.pins) if p.error]
         for k, p in pin_bad:                                    # a pinned snapshot whose picture could not be rebuilt
@@ -8636,13 +10334,13 @@ def build_window(model=None):
             it = QtWidgets.QListWidgetItem("⚠ %s を再計算できません / cannot recompute %s: %s"
                                            % (lab, lab, truncate(p.error, 120)))
             it.setData(QtCore.Qt.UserRole, -1)
-            it.setForeground(QtGui.QColor("#c9a227"))
+            it.setForeground(QtGui.QColor(_C("warn")))
             problems_list.addItem(it)
         roundtrip = state.get("roundtrip_report")
         if roundtrip is not None and not roundtrip.ok:
             it = QtWidgets.QListWidgetItem("✕ " + roundtrip.describe(_UI_LANG.get("code", "en")))
             it.setData(QtCore.Qt.UserRole, roundtrip.first_mismatch)
-            it.setForeground(QtGui.QColor(AMBER))
+            it.setForeground(QtGui.QColor(_C("err")))
             problems_list.addItem(it)
         # Structured runtime failures keep the full cause/place/next-action text and
         # put the proposed actions beside it.  Nothing here mutates input data.
@@ -8652,7 +10350,7 @@ def build_window(model=None):
             idx_ = info_.get("place", {}).get("stage")
             it.setData(QtCore.Qt.UserRole, idx_ if idx_ is not None else -1)
             it.setData(QtCore.Qt.UserRole + 10, info_)
-            it.setForeground(QtGui.QColor(AMBER))
+            it.setForeground(QtGui.QColor(_C("err")))
             problems_list.addItem(it)
             box = QtWidgets.QWidget()
             lay = QtWidgets.QVBoxLayout(box); lay.setContentsMargins(3, 3, 3, 3)
@@ -8672,11 +10370,11 @@ def build_window(model=None):
             box.adjustSize()
             it.setSizeHint(box.sizeHint())
             problems_list.setItemWidget(it, box)
-        if not probs and not perr and not rerr and not notes and not pin_bad \
+        if not probs and not perr and not rerr and not notes and not pin_bad and not syntax_rows and not pending_input \
                 and not (roundtrip is not None and not roundtrip.ok) \
                 and not state.get("structured_errors"):
             hint = QtWidgets.QListWidgetItem(tr("no problems"))
-            hint.setForeground(QtGui.QColor(MUTED))
+            hint.setForeground(QtGui.QColor(_C("muted")))
             hint.setData(QtCore.Qt.UserRole, -1)
             problems_list.addItem(hint)
 
@@ -8788,6 +10486,7 @@ def build_window(model=None):
             return
         n = len(run_snapshots[gen]["stages"])
         done = run_completed.get(gen, 0)
+        win._run_outcome = "stopped" if stopped else ("done" if done == n else "failed")   # D99: read when the bar hides
         run_stop.setEnabled(False); run_progress.hide(); run_stop.hide()
         if stopped:
             text = tr("Stopped (%d/%d stages completed)") % (done, n)
@@ -9058,6 +10757,7 @@ def build_window(model=None):
             if gen != run_ctl.latest_generation:
                 run_ctl.history.append((gen, "batch-dropped", result.done))
                 return
+            win._run_outcome = "stopped" if result.stopped else ("failed" if result.failed else "done")   # D99
             run_progress.hide(); run_stop.hide(); run_stop.setEnabled(False)
             win._last_batch_result = result
             skipped = sum(status_name == "skipped" for status_name in result.statuses.values())
@@ -9160,6 +10860,7 @@ def build_window(model=None):
             view.set_message(tr("Pipeline error") + "\n\n%s\n\n" % truncate(e, 700)
                              + tr("(details: Problems list, Display · Analysis panel)"))
             inspector.setPlainText("pipeline error: %s" % e)
+            state["insp_base"] = None
             win._img_info.setText("pipeline error")
             hist_view.clear(); state["result"] = None; state["raw"] = None
             return
@@ -9190,7 +10891,8 @@ def build_window(model=None):
         _v, _why = assess_validity(val)
         if _v is False:
             insp += "\n\n⚠ result needs review: %s" % "; ".join(_why)
-        inspector.setPlainText(insp)
+        state["insp_base"], state["insp_val"] = insp, val          # ROI を後から動かした時、本文はここから作り直す
+        inspector.setPlainText(insp + _roi_inspection(val))
         if prev is not None and prev.get("image") is not None:
             qi = _to_qimage(prev["image"], QtGui)
             if qi is not None:
@@ -9446,6 +11148,27 @@ def build_window(model=None):
             strip_timer.start(KNOB_DEBOUNCE_MS * 2)
 
     # ---- region of interest of the main view (Shift + drag; Shift + click clears) ------------- #
+    def _roi_inspection(val):
+        """★2026-11-12(B-6): ROI があれば、その範囲だけの大きさと min / max / mean / std を Inspector へ足す。
+        ROI が無い・画像でない・画像に掛からない時は空文字。"""
+        roi = state.get("roi")
+        if roi is None or not isinstance(val, np.ndarray) or val.dtype.kind not in "biuf" or val.ndim not in (2, 3):
+            return ""
+        part = crop_roi(val, roi)
+        if part is val:
+            return ""
+        a = np.asarray(part, np.float64)
+        fin = a[np.isfinite(a)]
+        head = "\n\nroi: %dx%d  (x %d..%d, y %d..%d)" % (part.shape[1], part.shape[0], roi[0], roi[2], roi[1], roi[3])
+        if fin.size == 0:
+            return head + "\nroi: no finite values"
+        return head + "\nroi min: %.4g  max: %.4g  mean: %.4g  std: %.4g" % (
+            fin.min(), fin.max(), fin.mean(), fin.std())
+
+    def _refresh_roi_inspector():
+        if state.get("insp_base") is not None:
+            inspector.setPlainText(state["insp_base"] + _roi_inspection(state.get("insp_val")))
+
     def set_roi(rect):
         r = None
         if rect is not None:
@@ -9454,6 +11177,7 @@ def build_window(model=None):
                 r = (x0, y0, x1, y1)
         state["roi"] = r
         view.set_roi_rect(r)
+        _refresh_roi_inspector()
         _strip_schedule()
     win._set_roi = set_roi
     view.roi_cb = set_roi
@@ -9501,7 +11225,7 @@ def build_window(model=None):
         if cut > 0:
             pt.drawPixmap(0, 0, pa, 0, 0, cut, pa.height())
         if 0 < cut < pa.width():
-            pt.setPen(QtGui.QPen(QtGui.QColor(AMBER), 1))
+            pt.setPen(QtGui.QPen(QtGui.QColor(_C("annot")), 1))
             pt.drawLine(cut, 0, cut, pa.height())
         pt.end()
         return out
@@ -9543,7 +11267,7 @@ def build_window(model=None):
             ab_changes.addItem(e["text"])
         if ab_changes.count() == 0:
             _h = QtWidgets.QListWidgetItem(tr("no changes since %s") % lab)
-            _h.setForeground(QtGui.QColor(MUTED))
+            _h.setForeground(QtGui.QColor(_C("muted")))
             ab_changes.addItem(_h)
         ab_atitle.setText(lab + (": " + pin.note if pin.note else ""))
         ab_btitle.setText(tr("B: now") + ((" · " + tr("Generation %d") % model.displayed_generation)
@@ -9682,8 +11406,18 @@ def build_window(model=None):
         mark_dirty()
         _refresh_problems_only()
         update_ab()
-    act_pin.triggered.connect(lambda _=False: pin_as_a())
+    def pin_as_a_asked(_=False):
+        """固定の入口(メニュー・キー・「両方残す」): 3 つ目を固定すると一番古い固定が押し出される。戻せないので先に聞く。"""
+        if len(model.pins) >= MAX_PINS and not confirm_action(
+                win, tr("Pin the result"),
+                tr("%d snapshots are already pinned. Pinning this result drops the oldest one (%s): its pipeline "
+                   "and its picture cannot be brought back.") % (len(model.pins), _pin_label(0)),
+                tr("Drop the oldest and pin")):
+            return
+        pin_as_a()
+    act_pin.triggered.connect(pin_as_a_asked)
     win._pin_a = pin_as_a
+    win._pin_a_asked = pin_as_a_asked
 
     def restore_a():
         pin = _ref_pin()
@@ -9709,9 +11443,44 @@ def build_window(model=None):
         update_ab()
 
     def keep_both():
-        pin_as_a()
+        pin_as_a_asked()
 
-    ab_restore.clicked.connect(restore_a); ab_adopt.clicked.connect(adopt_b); ab_keep.clicked.connect(keep_both)
+    def adopt_b_asked(_=False):
+        """「今の結果を採る」: 固定した方が捨てられる。戻せないので先に聞く。"""
+        pin = _ref_pin()
+        if pin is None:
+            return
+        if not confirm_action(win, tr("Keep the current result"),
+                              tr("The pinned snapshot %s is dropped: its pipeline and its picture cannot be brought "
+                                 "back.") % _pin_label(model.pins.index(pin)), tr("Drop the snapshot")):
+            return
+        adopt_b()
+
+    ab_restore.clicked.connect(restore_a); ab_adopt.clicked.connect(adopt_b_asked); ab_keep.clicked.connect(keep_both)
+
+    def _update_region_table_button():
+        """結果が 2-D の領域(0 / 1)なら「表で見る(N 個)」を出す。N は押して開く表の行の数(``_region_table_count``)。
+
+        ★2026-11-15(PR #316 の独立レビュー): 従来はラベル付けの個数をそのまま出していて、表が落とす小さな粒
+        (面積の下限)と行の上限を見ていなかった(coins + otsu で「表で見る(96 個)」→ 開く表は 63 行)。"""
+        raw = state.get("raw")
+        n = 0
+        try:
+            if isinstance(raw, np.ndarray) and raw.ndim == 2 and raw.size and _cheap_is_binary(raw):
+                n = _region_table_count(raw)
+        except Exception as exc:                            # noqa: BLE001 -- 入口の数え間違いで表示を止めない
+            _log_soft_failure("could not count the regions of the result", exc)
+            n = 0
+        if n > 0:
+            b_regions.setText(tr("See as a table (%d)") % n)
+        b_regions.setVisible(n > 0)
+
+    def _readout_follow_input():
+        """L8: 入力の画像を読み替えたら、前の画像の読み取りを消して案内に戻す(古い値が残っていた)。"""
+        img = model.image
+        if state.get("readout_input") is not img:
+            state["readout_input"] = img
+            readout.setText(tr("hover over the image for pixel coordinates + value"))
 
     def show_result(refresh_rows=True):
         """Render the current result. The whole body is guarded, not just the
@@ -9723,7 +11492,9 @@ def build_window(model=None):
             return                            # dev_update_window('off'): no auto-display
         state["renders"] += 1
         try:
+            _readout_follow_input()
             _render()
+            _update_region_table_button()
             _update_attribution()
             if refresh_rows and state.get("shown_live") and not run_ctl.running:
                 # 画像は今この瞬間に計算した結果。段の欄(キャッシュだけを読む)も追いつかせる
@@ -9789,12 +11560,35 @@ def build_window(model=None):
                 la.setText("%s  ·  %s" % (la.text(), a_role))
             if b_role and param_specs.is_generic(specs["b"]) and specs["b"].get("kind") != "unused":
                 lb.setText("%s  ·  %s" % (lb.text(), b_role))
-            stage_detail.setText(op_signature_detail(row) if row else name)
+            stage_detail.setText(_stage_detail_text(row) if row else name)
             stage_detail_fit.refresh()
         else:
             stage_detail.setText(tr("select a stage to tune its knobs"))
+        impl_toggle.setVisible(bool(valid and row and op_impl_source(name)))
         krow_a.set_enabled(valid); krow_b.set_enabled(valid)
+        if valid:
+            # M3: 表か spec が未使用と言うつまみは、値の欄も含めて動かせない(役割の表に無い op は止めない)
+            for krow, lab, letter in ((krow_a, la, "a"), (krow_b, lb, "b")):
+                if knob_use(name, letter)[0] == "unused":
+                    krow.set_enabled(False)
+                    if krow.spec.get("kind") != "unused":
+                        lab.setText("%s  ·  %s" % (lab.text(), tr("unused by this op")))
         update_actions()
+
+    def _stage_detail_text(row):
+        """M4: 選んだ段の説明。実装の式は「Show the implementation」を押した時だけ(その op の枝。長い実装は
+        :data:`IMPL_OPEN_LIMIT` 字で切って「…」を付ける —— つまみの欄を画面の外へ押し出さない)。"""
+        if impl_toggle.isChecked():
+            return op_signature_detail(row, impl_limit=IMPL_OPEN_LIMIT, mark_cut=True)
+        return op_panel_signature(row)
+
+    def _refresh_stage_detail(_on=None):
+        i = selected_index()
+        if 0 <= i < len(model.stages):
+            row = _op_row(model.stages[i][0])
+            if row:
+                stage_detail.setText(_stage_detail_text(row)); stage_detail_fit.refresh()
+    impl_toggle.toggled.connect(_refresh_stage_detail)
 
     def on_stage_selected():
         _ops_follow_upstream()
@@ -9894,7 +11688,16 @@ def build_window(model=None):
     win._knob_drag_base = None
     _UNDO_CAP = 100
 
-    def _sync_undo_actions():
+    def _undo_target_is_text():
+        """「元に戻す / やり直し」の相手は、フォーカスのある方: Program 欄(文面の Undo)か、それ以外(段の操作の Undo)。"""
+        w = QtWidgets.QApplication.focusWidget()
+        return w is not None and (w is code_edit or code_edit.isAncestorOf(w))
+
+    def _sync_undo_actions(*_a):
+        if _undo_target_is_text():
+            d = code_edit.document()
+            act_undo.setEnabled(d.isUndoAvailable()); act_redo.setEnabled(d.isRedoAvailable())
+            return
         act_undo.setEnabled(bool(win._undo_stack))
         act_redo.setEnabled(bool(win._redo_stack))
 
@@ -9933,7 +11736,7 @@ def build_window(model=None):
         lab = getattr(snap, "label", None)
         win._redo_stack.append(_snapshot(lab))
         _restore_stages(snap)
-        flash("undo %s(%d more)" % ((lab + " ") if lab else "", len(win._undo_stack)))
+        flash(tr("undo %s(%d more)") % ((lab + " ") if lab else "", len(win._undo_stack)))
 
     def redo():
         if not win._redo_stack:
@@ -9942,34 +11745,44 @@ def build_window(model=None):
         lab = getattr(snap, "label", None)
         win._undo_stack.append(_snapshot(lab))
         _restore_stages(snap)
-        flash("redo %s(%d more)" % ((lab + " ") if lab else "", len(win._redo_stack)))
+        flash(tr("redo %s(%d more)") % ((lab + " ") if lab else "", len(win._redo_stack)))
+    def undo_focused():
+        """Edit ▸ Undo: Program 欄にフォーカスがあれば文面を、そうでなければ段の操作を戻す。"""
+        if _undo_target_is_text():
+            code_edit.undo()
+        else:
+            undo()
+        _sync_undo_actions()
+
+    def redo_focused():
+        if _undo_target_is_text():
+            code_edit.redo()
+        else:
+            redo()
+        _sync_undo_actions()
     win._undo = undo
     win._redo = redo
+    win._undo_focused = undo_focused
+    win._redo_focused = redo_focused
+    win._sync_undo_actions = _sync_undo_actions
     win._push_undo = push_undo
 
-    def add_op(item):
+    def add_op(item, raise_tab=True):
+        """Insert the op of *item* after the insertion point. ``raise_tab=False`` (Enter in the search box)
+        leaves the tabs as they are — see ``_show_pipeline_tab_once``. True when a stage (or, with unapplied
+        Program edits, a Program line) went in."""
         name = item.data(QtCore.Qt.UserRole)
         if not name:
-            return
+            return False
         row = _op_row(name)
-        if row and row.get("backend") == "general":     # double-click on a read-only general op
-            flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
-                  "fullseye algo run %s" % (name, name))
-            return
-        if api.find_op(name) is None:
-            # ★2026-11-13: 索引には載っているが、この環境では呼べない op(optional backend が未導入)。
-            # 以前は add_stage の KeyError がスロットの中で消えて、何も起きなかった。
-            try:
-                two_input = name in api._nary_by_name()
-            except Exception:                       # noqa: BLE001 - 理由の言い分けだけの為に、入れる操作を落とさない
-                two_input = False
-            if two_input:
-                flash("‘%s’ takes two or more inputs, so it cannot be added as a single pipeline stage "
-                      "— it was not added" % name)
-            else:
-                flash("‘%s’ is not available in this environment (its optional backend is not installed) "
-                      "— it was not added to the pipeline" % name)
-            return
+        _ok, _why = op_insertable(name, row)
+        if not _ok:
+            # ★2026-11-13: 索引には載っているが 1 入力の段として入れられない op(一般アルゴリズム・2 入力・
+            # optional backend が未導入)。以前は add_stage の KeyError がスロットの中で消えて、何も起きなかった。
+            # 理由は UI の言語で、ステータスバーと + ボタンの上の欄の両方に出す(初回起動の点検 S2)。
+            _say = not_insertable_text(name, _why)
+            flash(_say); op_param.setText(_say); op_param_fit.refresh()
+            return False
         a_val, b_val = op_a_spin.value(), op_b_spin.value()
         line = "%s (%r, %r)" % (name, float(a_val), float(b_val))   # repr: full precision
         if state.get("code_dirty"):
@@ -9979,8 +11792,8 @@ def build_window(model=None):
             # never clobber what the user typed (Codex #9).
             ln = _insert_program_line(line, code_edit.textCursor().blockNumber() + 1)
             code_status.setText("● inserted %s on line %d — Apply to run the program" % (name, ln))
-            flash("inserted `%s` at line %d of the Program (Apply to run)" % (line, ln))
-            return
+            flash(tr("inserted `%s` at line %d of the Program (Apply to run)") % (line, ln))
+            return True
         push_undo()
         # Insertion point = the Program cursor (which follows the selected stage, so a
         # selected stage still means "insert right after it"; no selection = the end).
@@ -10002,8 +11815,34 @@ def build_window(model=None):
             _set_stage_lines(lines)
         mark_dirty()
         refresh_stage_list(select=newpos)
+        # ★2026-11-15(PR #316 の独立レビュー 3 回目): 前の Enter の「入れませんでした」の文を消す。残すと、入れた
+        # 後も最大 6 秒「追加していません」と読めた。段の計算が出す文(エラー等)は、この後の show_result が出す。
+        status.clearMessage()
         show_result()
         _place_program_cursor(_stage_line(newpos))
+        if raise_tab:
+            _show_pipeline_tab_once()
+        return True
+
+    def _show_pipeline_tab_once():
+        """気づける入口(2026-11-13、初回起動の点検): この窓で最初の op を入れた時に 1 度だけ、段ごとの途中の絵・個数・
+        時間・メモリとつまみのある「処理手順と調整」のタブを前へ(op の一覧と同じ所にタブで重なり、隠れている時だけ)。
+
+        ★2026-11-15(PR #316 の独立レビュー): 前へ出す時は、キーボードの焦点も段の一覧へ移す。従来は焦点が隠れた
+        op の一覧の側(検索欄・一覧・+ ボタン)に残り、続けて打った字や Enter が見えない所で op を足していた。
+        検索欄の Enter で入れた時はタブを切り替えない(``add_op(..., raise_tab=False)``)—— 検索欄は見えたまま、
+        続けて打つ字はそこに入る。"""
+        if state.get("pipeline_tab_shown") or len(model.stages) != 1:
+            return
+        state["pipeline_tab_shown"] = True
+        try:
+            if dock_pipe in win.tabifiedDockWidgets(dock_ops) and dock_pipe.visibleRegion().isEmpty():
+                dock_pipe.raise_()
+                _fw = win.focusWidget()
+                if _fw is not None and (_fw is dock_ops or dock_ops.isAncestorOf(_fw)):
+                    stage_list.setFocus(QtCore.Qt.OtherFocusReason)
+        except Exception as exc:                            # noqa: BLE001 -- 入口のために段の追加を落とさない
+            _log_soft_failure("could not bring the pipeline tab forward", exc)
 
     def _insert_program_line(text, after_line):
         """Insert *text* as a new editor line after 1-based *after_line* (0 = at the
@@ -10061,8 +11900,12 @@ def build_window(model=None):
             name = cur.data(QtCore.Qt.UserRole)
         row = _op_row(name)
         if row and row.get("backend") == "general":
-            flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
-                  "fullseye algo run %s" % (name, name))
+            flash(not_insertable_text(name, "general"))       # M9: S2 と同じ文(UI の言語)
+            return
+        if api.find_op(name) is None and op_is_ledger(name):
+            # M13: ライブラリの英語の文のモーダルではなく、台帳の op の窓を今の画像で開く
+            flash(not_insertable_text(name, "ledger"))
+            win._open_ledger_runner(name, prefer_image=True)
             return
         base = _search_current_value() if base is None else base
         if base is None:
@@ -10093,25 +11936,26 @@ def build_window(model=None):
                 # window so the single-shot preview never clobbers the pipeline result
                 new_graphics_window(pm, title)
                 if fell:
-                    flash("⚠ ran %s once but it FELL BACK (%s) — the window shows the sort fallback, not a result"
+                    flash(tr("⚠ ran %s once but it FELL BACK (%s) — the window shows the sort fallback, not a result")
                           % (name, fell[-1]["error"][:110]))
                 else:
-                    flash("ran %s once — result in a new graphics window (pipeline unchanged)" % name)
+                    flash(tr("ran %s once — result in a new graphics window (pipeline unchanged)") % name)
             else:
                 # a secondary window is current: reuse it (HDevelop dev_display) so
                 # repeated Run-once tuning doesn't spawn a new window every time
                 v = _current_view()
                 v.set_pixmap(pm); v.fit(); v.set_data(out)
-                flash("ran %s once → Graphics %d (pipeline unchanged)" % (name, _current_handle()))
+                flash(tr("ran %s once → Graphics %d (pipeline unchanged)") % (name, _current_handle()))
         else:                                   # scalar feature / contour: no raster preview
             d = inspect_result(out)
-            flash("ran %s once → %s (pipeline unchanged)" % (name, d.get("value", d.get("kind", "result"))))
+            flash(tr("ran %s once → %s (pipeline unchanged)") % (name, d.get("value", d.get("kind", "result"))))
         win._last_run_once = {"op": name, "a": a, "b": b, "result": out}
     win._run_op_once = run_op_once
     win._op_arg_spins = (op_a_spin, op_b_spin)
     win._op_list = op_list
     win._op_buttons = {"insert": b_insert, "run_once": b_run_once, "help": b_help}
     win._op_list = op_list            # exposed for tests (verify the general tier is read-only)
+    win._op_param = op_param          # the line above the + button (signature / why an op was not added)
 
     class _OpTipFilter(QtCore.QObject):
         """Hovering an op row shows that op's own one-sentence description (first sentence of its help page in the
@@ -10122,7 +11966,11 @@ def build_window(model=None):
                 name = item.data(QtCore.Qt.UserRole) if item is not None else None
                 row = (_row_by_name.get(name) or _op_row(name)) if isinstance(name, str) and name else None
                 if row:
-                    QtWidgets.QToolTip.showText(ev.globalPos(), op_tooltip(row, _UI_LANG["code"]), op_list)
+                    _tip = op_tooltip(row, _UI_LANG["code"])
+                    _why = item.data(QtCore.Qt.UserRole + 5)
+                    if _why in NOT_INSERTABLE_TEXT:                # 入れられない行は、理由を先に
+                        _tip = not_insertable_text(name, _why) + "\n\n" + _tip
+                    QtWidgets.QToolTip.showText(ev.globalPos(), _tip, op_list)
                     return True
             return False
     _op_tip_filter = _OpTipFilter(win)
@@ -10156,6 +12004,9 @@ def build_window(model=None):
 
     def reset_to_raw():
         """Show the pre-pipeline (raw) image — the start of the step-through."""
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # Python のモード: 止まっている Debug を終え、入力を見せる
+            _pm.reset(); return
         state["view_raw"] = True
         if stage_list.currentRow() == -1:
             on_stage_selected()                             # no row change -> refresh explicitly
@@ -10163,28 +12014,33 @@ def build_window(model=None):
             stage_list.setCurrentRow(-1)                    # currentRowChanged -> on_stage_selected
 
     def load_sample(idx):
+        """Load the sample pipeline at *idx* of the combo. True when it was loaded; False when the discard prompt
+        was cancelled or the sample could not be read (the caller must not go on as if it had been loaded)."""
         if idx <= 0:
-            return
+            return False
         if not confirm_discard("Load sample pipeline"):
             samples.blockSignals(True); samples.setCurrentIndex(0); samples.blockSignals(False)
-            return
+            return False
         try:
             snap = [_copy_stage(st) for st in model.stages]
             model.load_recipe(samples.itemText(idx))
         except Exception as e:
-            report_error("Sample pipeline", e); return
+            report_error("Sample pipeline", e); return False
         win._undo_stack.append(snap)          # only a SUCCESSFUL load forks history
         if len(win._undo_stack) > _UNDO_CAP:
             del win._undo_stack[0]
         win._redo_stack.clear(); _sync_undo_actions()
         mark_dirty()
+        state["sample_stages"] = _pipeline_saved_form()              # M10: 見本のままなら未保存と言わない
+        _set_title()
         refresh_stage_list(select=len(model.stages) - 1)
         show_result()
-        flash("loaded sample '%s' — its code is now in the Program panel" % samples.itemText(idx))
+        flash(tr("loaded sample '%s' — its code is now in the Program panel") % samples.itemText(idx))
         try:                                  # surface the code so the sample is easy to read/run
             win._docks["program"].show(); win._docks["program"].raise_()
         except Exception:
             pass
+        return True
 
     def remove():
         i = selected_index()
@@ -10271,7 +12127,10 @@ def build_window(model=None):
         state["image_path"] = os.path.abspath(path)
         state["input_sample"] = None
         model.input_path = state["image_path"]        # snapshots (A / B) compare the input by file
+        model.kept_input_ref = None
         state["input_notes"] = []                     # notes belong to the previously opened project's input
+        state["input_pending"] = None                 # an explicitly opened image resolves saved-input choice
+        view.set_notice(None)
         state["fit_next"] = True                      # a new image should fit the view
         _push_recent(path); _set_title()
         # ★P-17(2026-11-12): カラーのファイルは輝度にして読む(処理列は 2-D)。黙って灰色にせず、そう言う。
@@ -10279,23 +12138,30 @@ def build_window(model=None):
             flash(tr("loaded %s — a colour file, read as greyscale (the pipeline works on one channel)")
                   % os.path.basename(path))
         else:
-            flash("loaded " + os.path.basename(path))
+            flash(tr("loaded %s") % os.path.basename(path))
         show_result()
         return True
 
+    _load_image_path = studio_panels.brand_wrap(       # the corner says what is being opened (2026-11-13)
+        win._brand, _load_image_path, lambda p: tr(studio_panels.S_OPENING) % os.path.basename(str(p)))
     win._load_image_path = _load_image_path          # exposed for tests
 
     def load_image():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(
-            win, "Open image", "", "Images (%s)" % " ".join("*" + e for e in IMAGE_FILE_EXTS))
+            win, "Open image", _proj_path("image"), "Images (%s)" % " ".join("*" + e for e in IMAGE_FILE_EXTS))
         if path:
-            _load_image_path(path)
+            return _load_image_path(path)
+        return False
 
     def use_demo():
         model.set_image(demo_image()); state["fit_next"] = True
         state["image_path"] = None; state["input_notes"] = []      # not a file: nothing to reference when saving
         state["input_sample"] = "__demo__"
         model.input_path = None
+        # Menu choices are explicit input choices, so they replace a reference retained by "Keep".
+        # メニューからの選択は明示的な入力選択なので、「現在画像を使う」で保持した参照を置き換える。
+        model.kept_input_ref = None
+        _set_title()                                   # 題に前の画像のファイル名を残さない(見本の画像と同じ)
         show_result()
 
     def load_sample_image(name):
@@ -10308,13 +12174,43 @@ def build_window(model=None):
         state["image_path"] = None; state["input_notes"] = []
         state["input_sample"] = name
         model.input_path = None
+        model.kept_input_ref = None                  # 見本の選択も明示入力。A selected sample is explicit input.
         state["fit_next"] = True
-        flash("loaded sample image: " + name); show_result()
+        # ★2026-11-15(PR #316 の独立レビュー 3 回目): 題を付け直す。従来は前に開いた写真のファイル名が題に残った
+        # (File ▸ Sample images でも、M12 で入口が増えた検索の「見本を開く」でも)。
+        _set_title()
+        flash(tr("loaded sample image: %s") % name); show_result()
+    load_sample_image = studio_panels.brand_wrap(
+        win._brand, load_sample_image, lambda n: tr(studio_panels.S_SAMPLE) % n,
+        ok=lambda _r, n: state.get("input_sample") == n)
     win._load_sample_image = load_sample_image
+
+    def first_launch_scene():
+        """利用者が起動した窓が最初に見せる画像(``main()`` が呼ぶ。初回起動の点検 M2)。
+
+        :data:`STARTUP_SAMPLE_IMAGE` を File ▸ Sample images と同じ読み方で開く。同梱されていない時は合成の
+        デモ画像のまま(``build_window()`` の既定)。開けたら True。"""
+        try:
+            import sample_images
+            if sample_images.path(STARTUP_SAMPLE_IMAGE) is None:
+                return False
+        except Exception as exc:                            # noqa: BLE001 -- 見本が読めない環境でも起動は続ける
+            _log_soft_failure("could not find the startup sample image", exc)
+            return False
+        load_sample_image(STARTUP_SAMPLE_IMAGE)
+        return state.get("input_sample") == STARTUP_SAMPLE_IMAGE
+    win._first_launch_scene = first_launch_scene
 
     def load_visual_demo():
         """dev_* visualization demo: load the coins sample image and a Program that
         actually USES the HDevelop dev_set_draw / dev_set_color / dev_disp_text ops."""
+        if not confirm_discard("Load the dev_* demo"):
+            return
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:      # Python の文面を置き換えない: パイプラインのモードへ(Python の文面は残る)
+            _pm.set_mode("pipeline", announce=False)
+            if _pm.active:
+                return                          # 実行中などで切り替えられなかった
         load_sample_image(HDEV_VISUAL_DEMO_IMAGE)
         code_edit.setPlainText(HDEV_VISUAL_DEMO)
         apply_program()
@@ -10332,7 +12228,7 @@ def build_window(model=None):
         return raw if isinstance(raw, np.ndarray) else None
 
     def _save_array(arr, title, default, what):
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, title, default,
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, title, _proj_path("result", default),
                                                         "PNG (*.png);;All files (*)")
         if not path:
             return
@@ -10343,9 +12239,9 @@ def build_window(model=None):
         # Ctrl+S saves a PNG of the RESULT; the dirty '*' tracks the PIPELINE. If the
         # pipeline has unsaved edits, say which key saves it so the star isn't a mystery.
         if state.get("dirty") and model.stages:
-            flash("saved %s  ·  (Ctrl+Shift+S saves the pipeline itself)" % os.path.basename(path))
+            flash(tr("saved %s  ·  (Ctrl+Shift+S saves the pipeline itself)") % os.path.basename(path))
         else:
-            flash("saved " + os.path.basename(path))
+            flash(tr("saved %s") % os.path.basename(path))
 
     def save_result():
         arr = _result_array()
@@ -10362,7 +12258,7 @@ def build_window(model=None):
         arr = _result_array()
         if arr is None:
             flash("nothing to save — run the pipeline first"); return
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save to"), "result", "All files (*)")
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save to"), _proj_path("result", "result"), "All files (*)")
         if not path:
             return
         try:
@@ -10377,7 +12273,7 @@ def build_window(model=None):
         arr = _result_array()
         if arr is None:
             flash("nothing to save — run the pipeline first"); return
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save the raw values"), "result.npy",
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, tr("Save the raw values"), _proj_path("result", "result.npy"),
                                                         "NumPy (*.npy)")
         if not path:
             return
@@ -10415,7 +12311,7 @@ def build_window(model=None):
             return
         if not pm.save(path):
             report_error("Could not save graphics window", path); return
-        flash("saved " + os.path.basename(path))
+        flash(tr("saved %s") % os.path.basename(path))
     win._save_secondary_view = _save_secondary_view
 
     def copy_result():
@@ -10621,6 +12517,14 @@ def build_window(model=None):
                 plan = build_plan()
             except Exception as exc:
                 report_error(tr("Cannot start the batch"), exc); return
+            n_img, has_summary = studio_batch.existing_outputs(plan)
+            if (n_img or has_summary) and not confirm_action(
+                    dlg, tr("Apply to folder"),
+                    tr("The output folder already has results: %d output file(s) of this batch and %s. "
+                       "Running overwrites them; the old files cannot be brought back.")
+                    % (n_img, tr("summary.csv") if has_summary else tr("no summary.csv")),
+                    tr("Overwrite and run")):
+                return
             summary.setText(plan.summary()); execute.setEnabled(False)
             start_batch_async(plan)
 
@@ -10675,7 +12579,7 @@ def build_window(model=None):
             status = "ok" if rec["ok"] else ("error: " + rec["error"][:60])
             it = QtWidgets.QTableWidgetItem(status)
             if not rec["ok"]:
-                it.setForeground(QtGui.QColor(AMBER))
+                it.setForeground(QtGui.QColor(_C("err")))
             tbl.setItem(r, 1, it)
             tbl.setItem(r, 2, QtWidgets.QTableWidgetItem("%.1f" % rec["ms"]))
             tbl.setItem(r, 3, QtWidgets.QTableWidgetItem("" if rec["metric"] is None else "%.3f" % rec["metric"]))
@@ -10725,7 +12629,7 @@ def build_window(model=None):
     act_holdout.triggered.connect(show_holdout)
 
     def show_about():
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("About Fullseye Studio")
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("About Fullseye Studio"))
         tag_dialog(dlg, "system")
         v = QtWidgets.QVBoxLayout(dlg)
         row = QtWidgets.QHBoxLayout()
@@ -10747,7 +12651,7 @@ def build_window(model=None):
 
     def show_shortcuts():
         rows = shortcut_table([(a.text(), a.shortcut().toString()) for a in win._actions.values()])
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Keyboard shortcuts")
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Keyboard shortcuts"))
         tag_dialog(dlg, "reference")
         v = QtWidgets.QVBoxLayout(dlg)
         tbl = QtWidgets.QTableWidget(len(rows), 2)
@@ -10766,7 +12670,7 @@ def build_window(model=None):
         dlg.resize(460, 540); dlg.exec()
 
     def show_op_reference():
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Operator reference")
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Operator reference"))
         tag_dialog(dlg, "reference")
         v = QtWidgets.QVBoxLayout(dlg)
         srch = QtWidgets.QLineEdit(); srch.setPlaceholderText("search operators…")
@@ -10860,8 +12764,8 @@ def build_window(model=None):
         orig_close = dlg.closeEvent
 
         def _close(ev):
-            _settings().setValue(
-                "dialogs/%s_geometry" % key, dlg.saveGeometry())
+            _write_settings({"dialogs/%s_geometry" % key: dlg.saveGeometry()},
+                            what="dialog geometry")
             orig_close(ev)
         dlg.closeEvent = _close
 
@@ -10874,7 +12778,7 @@ def build_window(model=None):
         if getattr(win, "_samples_dlg", None) is not None:
             win._samples_dlg.show(); win._samples_dlg.raise_(); win._samples_dlg.activateWindow()
             return
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Samples & code")
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Samples & code"))
         tag_dialog(dlg, "reference")
         dlg.setModal(False)                        # lives beside Studio, not on top of it
         h = QtWidgets.QHBoxLayout(dlg)
@@ -10946,13 +12850,20 @@ def build_window(model=None):
                 return
             if not confirm_discard("Load sample pipeline"):
                 return
+            snap = _snapshot("load sample")
             try:
                 model.load_recipe(it.text())
             except Exception as e:
                 report_error("Sample pipeline", e); return
+            win._undo_stack.append(snap)          # 置き換えた段の列は Ctrl+Z で戻る(他の読み込みと同じ)
+            if len(win._undo_stack) > _UNDO_CAP:
+                del win._undo_stack[0]
+            win._redo_stack.clear(); _sync_undo_actions()
             mark_dirty()
+            state["sample_stages"] = _pipeline_saved_form()              # M10: 見本のままなら未保存と言わない
+            _set_title()
             refresh_stage_list(select=len(model.stages) - 1); show_result()
-            flash("loaded sample '%s' — the gallery stays open" % it.text())
+            flash(tr("loaded sample '%s' — the gallery stays open") % it.text())
 
         left = QtWidgets.QVBoxLayout()
         lbl = QtWidgets.QLabel("Sample pipelines"); lbl.setProperty("muted", True)
@@ -11028,7 +12939,7 @@ def build_window(model=None):
 
         def show3d(n):
             if n:
-                br.setHtml(op_help_html_3d(n, reg.get(n)))
+                br.setHtml(_themed_html(op_help_html_3d(n, reg.get(n))))
 
         def _select(n):
             for row in range(lst.count()):
@@ -11050,11 +12961,11 @@ def build_window(model=None):
                         with open(p, encoding="utf-8") as f:
                             src = f.read()
                         esc = src.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                        br.setHtml("<h2 style='color:#f5a524'>%s</h2>"
+                        br.setHtml(_themed_html("<h2 style='color:#f5a524'>%s</h2>"
                                    "<p style='color:#8b91a0'>実行できる検証済みサンプル · "
                                    "<code>py -3.11 examples_3d/%s.py</code></p>"
                                    "<pre style='background:#12141b;border:1px solid #2c313f;"
-                                   "padding:6px;color:#22d3bf'>%s</pre>" % (ex, ex, esc))
+                                   "padding:6px;color:#22d3bf'>%s</pre>" % (ex, ex, esc)))
                     except Exception:
                         pass
                 else:
@@ -11742,6 +13653,8 @@ def build_window(model=None):
             ed.on_open_ledger_op = lambda name: win._open_ledger_runner(name)   # エディタ → 実行窓
             ed._hl = Highlighter(ed.document())
             ed._path = path; ed._hint = hint; ed._dirty = False
+            ed._disk_text = text if path else None    # 開いた時のディスクの中身
+            ed._disk_stamp = None                     # 開いた時のディスクの生のバイトの印(open_path が入れる)
             ed.setPlainText(text)
             ed.textChanged.connect(lambda ed=ed: _mark_dirty(ed))
             tabs_ed.setCurrentIndex(tabs_ed.addTab(ed, _tab_title(ed)))
@@ -11757,11 +13670,10 @@ def build_window(model=None):
             if ed is None:
                 return
             if ed._dirty and ed.toPlainText().strip():
-                r = QtWidgets.QMessageBox.question(
-                    dlg, "Discard changes?",
-                    "'%s' has unsaved changes — close anyway?" % _tab_title(ed),
-                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                if r != QtWidgets.QMessageBox.Yes:
+                # ★2026-11-13(第 3 回レビュー S6): 前は QMessageBox.question(Yes | No) で既定を渡しておらず、Enter で
+                #   「Yes(捨てる)」だった。終了の時と同じ確認(CONFIRM_HOOK = Discard / Cancel。既定も Esc も Cancel)を通す
+                if not CONFIRM_HOOK(dlg, tr("Discard changes?"),
+                                    tr("'%s' has unsaved changes — close anyway?") % _tab_title(ed)):
                     return
             tabs_ed.removeTab(i); ed.deleteLater()
         tabs_ed.tabCloseRequested.connect(close_tab)
@@ -11784,11 +13696,12 @@ def build_window(model=None):
             if ed is None:
                 return False
             try:
-                with open(path, "w", encoding="utf-8") as f:
-                    f.write(ed.toPlainText())
+                _atomic_write_text(path, ed.toPlainText())
             except Exception as e:
                 report_error("save", e); return False
             ed._path = path; ed._dirty = False; _sync_tab(ed)
+            ed._disk_text = ed.toPlainText()          # 今ディスクに在る中身(外で変わったかの基準)
+            ed._disk_stamp = studio_pymode._file_stamp(path)   # 書いた直後のバイトの印(大きさ, SHA-256)
             flash("saved " + os.path.basename(path))
             return True
 
@@ -11807,17 +13720,36 @@ def build_window(model=None):
             if ed is None:
                 return
             if ed._path:
+                # ★2026-11-13(第 3 回レビュー S3): 外で変わったかは**生のバイト**の印で決める。前は UTF-8 の文字として
+                #   読み、読めない(cp932 など)と「変わっていない」として聞かずに上書きした。読めない・印が無い時は
+                #   「変わった」(聞く側)。外で消されたファイルは作り直すだけなので聞かない
+                changed = False
+                if os.path.isfile(ed._path):
+                    now = studio_pymode._file_stamp(ed._path)
+                    known = getattr(ed, "_disk_stamp", None)
+                    changed = now is None or known is None or now != known
+                if changed and not confirm_action(
+                        dlg, tr("Save Python file"),
+                        tr("%s was changed on disk by another program after it was opened here. Saving replaces "
+                           "that version with the text of this tab; it cannot be brought back.")
+                        % os.path.basename(ed._path), tr("Overwrite the file")):
+                    return
                 save_to(ed._path)
             else:
                 do_save_as()
 
         def open_path(path):
             try:
-                with open(path, "r", encoding="utf-8") as f:
-                    text = f.read()
+                with open(path, "rb") as f:
+                    raw = f.read()
+                text = raw.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n")   # 今までの読み方(改行を揃える)
             except Exception as e:
                 report_error("open", e); return
-            open_tab(text, os.path.basename(path), path=path)
+            ed = open_tab(text, os.path.basename(path), path=path)
+            ed._disk_stamp = studio_pymode._bytes_stamp(raw)   # 文面と同じ 1 回の読みから作る
+            # ★2026-11-13(レビュー M5): ファイルから開いた Python は、初回の実行の前に確認する(run_code)。
+            #   Python のモードの「ファイルから開いた Python」と同じ約束を、ドラッグ&ドロップと「開く」にも効かせる
+            ed._from_file = True
 
         def do_open():
             p, _f = QtWidgets.QFileDialog.getOpenFileName(
@@ -11850,26 +13782,43 @@ def build_window(model=None):
             text = ed.toPlainText()
             if not text.strip():
                 flash("nothing to run — the editor is empty"); return
-            script = ed._path
-            scratch = None                    # set when running from a temp copy
-            if script is None or ed._dirty:
-                # unsaved buffers run from a scratch copy — Run never forces a Save
-                import tempfile
-                d = os.path.join(tempfile.gettempdir(), "fullseye_studio")
+            if getattr(ed, "_from_file", False) and not getattr(ed, "_confirmed", False):
+                # ファイルから開いた Python: 確認が済むまで走らせない(同じ中身なら次からは聞かない。中身が変われば聞き直す)。
+                # 確認した後にこのタブで直した文面は、利用者が打った物として扱う(Python のモードと同じ)
+                _pm = getattr(win, "_pymode", None)
+                if _pm is None or not _pm.confirm_file_program(text, ed._path or getattr(ed, "_origin", None)):
+                    status.setText(tr("Not run: the program was not confirmed")); return
+                ed._confirmed = True
+            # ★2026-11-13(第 2 回レビュー R4): **走らせるのは常に画面の文面**(一時の写し)。以前は、未編集のタブは
+            #   ディスクのファイルを走らせていたので、開いた後でファイルが書き換わると、確認の窓に出した文面と違う物が
+            #   走り、確認した後の書き換えは聞かずに走った。元のファイルの場所は PYTHONPATH に足す(隣の .py を import できる)。
+            notice = ""
+            if ed._path and not ed._dirty:
                 try:
-                    os.makedirs(d, exist_ok=True)
-                    script = scratch = os.path.join(d, "scratch_%d.py" % os.getpid())
-                    with open(script, "w", encoding="utf-8") as f:
-                        f.write(text)
-                except Exception as e:
-                    report_error("run", e); return
-            out.setPlainText("$ py %s\n\n" % os.path.basename(script))
+                    with open(ed._path, "r", encoding="utf-8") as f:
+                        if f.read() != text:
+                            notice = tr("The file changed on disk after it was opened: this tab still shows (and "
+                                        "runs) the text it was opened with") + "\n"
+                except (OSError, UnicodeDecodeError):
+                    pass
+            import tempfile
+            d = os.path.join(tempfile.gettempdir(), "fullseye_studio")
+            try:
+                os.makedirs(d, exist_ok=True)
+                script = scratch = os.path.join(d, "scratch_%d.py" % os.getpid())
+                with open(script, "w", encoding="utf-8") as f:
+                    f.write(text)
+            except Exception as e:
+                report_error("run", e); return
+            shown_name = os.path.basename(ed._path) if ed._path else os.path.basename(script)
+            out.setPlainText(notice + "$ py %s\n\n" % shown_name)
             status.setText("running…")
             proc = QtCore.QProcess(dlg)
             proc.setProcessChannelMode(QtCore.QProcess.MergedChannels)
             proc.setWorkingDirectory(repo_root)
             env = QtCore.QProcessEnvironment.systemEnvironment()
-            env.insert("PYTHONPATH", repo_root + os.pathsep + env.value("PYTHONPATH"))
+            _here = (os.path.dirname(os.path.abspath(ed._path)) + os.pathsep) if ed._path else ""
+            env.insert("PYTHONPATH", _here + repo_root + os.pathsep + env.value("PYTHONPATH"))
             env.insert("PYTHONUTF8", "1")
             # UI 言語をライブラリ層(fsi18n)へ伝播 — スクリプトが出す fsi18n.msg()
             # 経由のメッセージが Studio の言語設定に追従する(docs/I18N.md)
@@ -11982,7 +13931,7 @@ def build_window(model=None):
     win._pipeline_script = pipeline_script
     win._main_view = view                                # 右クリックの項目をテストで数える
 
-    def open_code_window(title, text):
+    def open_code_window(title, text, source_path=None):
         # A read-only, syntax-highlighted CODE window inside the MDI area — the sample-
         # browsing counterpart of a graphics window (user spec 2026-08-30: comparing
         # several samples and copying fragments between them is everyday work in an
@@ -12008,7 +13957,15 @@ def build_window(model=None):
             QtWidgets.QApplication.clipboard().setText(ed.toPlainText())
             flash("copied '%s' to the clipboard" % title)
         b_copy.clicked.connect(_copy_all)
-        b_edit.clicked.connect(lambda _=False: show_python_editor(ed.toPlainText(), title))
+        def _open_in_editor(_=False):
+            show_python_editor(ed.toPlainText(), title)
+            if source_path:
+                # ★2026-11-13(第 2 回レビュー R10): ファイル(プロジェクトのパラメータなど)から読んだ文面をエディタへ
+                #   送った物は「ファイルから開いた Python」と同じ: 初回の実行の前に確認する
+                _cur = win._pyedit["editor"]()
+                if _cur is not None:
+                    _cur._from_file = True; _cur._origin = source_path
+        b_edit.clicked.connect(_open_in_editor)
         sub = mdi.addSubWindow(w)
         sub.setWindowTitle(title)
         sub.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -12023,8 +13980,7 @@ def build_window(model=None):
     def add_op_by_name(n):
         row = _op_row(n)
         if row and row.get("backend") == "general":     # palette: general ops are run-via-CLI only
-            flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
-                  "fullseye algo run %s" % (n, n))
+            flash(not_insertable_text(n, "general"))
             return
         push_undo()
         model.add_stage(n)
@@ -12036,8 +13992,9 @@ def build_window(model=None):
         # actions first, then samples, recent files, then every operator — run by name,
         # keyboard-only. Disabled (context-unavailable) actions are skipped so the palette
         # never offers a command that would silently no-op.
-        items = [("▸ " + a.text().replace("…", "").strip(), a.trigger)
+        items = [("▸ " + studio_panels.plain_text(a.text()).replace("…", "").strip(), a.trigger)
                  for a in win._actions.values() if a is not act_palette and a.isEnabled()]
+        action_keys = [k for k, a in win._actions.items() if a is not act_palette and a.isEnabled()]
         items += [("sample: " + nm, (lambda idx=i + 1: load_sample(idx)))
                   for i, nm in enumerate(recipes.names())]
         items += [("recent: " + os.path.basename(p), (lambda p=p: _open_recent(p)))
@@ -12046,7 +14003,10 @@ def build_window(model=None):
         # 台帳の op は「実行窓をその op で開く」(Ctrl+P → 名前 → Enter の 3 手で試せる。2026-10-03)
         items += [("ledger: " + n, (lambda n=n: win._open_ledger_runner(n))) for n in ledger_op_names()]
         labels = [lbl for lbl, _ in items]
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Command palette")
+        # 検索に当てる文字列 = 表示名 + 別名の語(日本語・英語)。先頭の action だけが別名を持つ
+        hay = [(lbl + " " + PALETTE_WORDS.get(action_keys[i], "")) if i < len(action_keys) else lbl
+               for i, lbl in enumerate(labels)]
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Command palette"))
         tag_dialog(dlg, "editor")
         v = QtWidgets.QVBoxLayout(dlg)
         ed = QtWidgets.QLineEdit(); ed.setPlaceholderText("type an action or operator…  (Enter to run)")
@@ -12055,7 +14015,7 @@ def build_window(model=None):
 
         def refill(_=None):
             lst.clear()
-            for i in palette_filter(labels, ed.text())[:200]:
+            for i in palette_filter(hay, ed.text())[:200]:
                 it = QtWidgets.QListWidgetItem(labels[i])
                 it.setData(QtCore.Qt.UserRole, i)
                 lst.addItem(it)
@@ -12081,7 +14041,7 @@ def build_window(model=None):
         ed.returnPressed.connect(run_sel)
         lst.itemActivated.connect(lambda _=None: run_sel())   # covers Enter AND double-click
         refill(); dlg.resize(560, 440); ed.setFocus()
-        win._palette = {"filter": palette_filter, "labels": labels, "run": run_sel,
+        win._palette = {"filter": palette_filter, "labels": labels, "hay": hay, "run": run_sel,
                         "edit": ed, "list": lst, "state": pal}
         dlg.exec()
 
@@ -12169,14 +14129,13 @@ def build_window(model=None):
         lbl_b.setText(_knob_label("b", b_role, curated, specs["b"]))
         # only disable a knob we KNOW is unused (curated "" or a source-verified spec);
         # never for an un-curated op
-        a_unused = (curated and a_role == "") or specs["a"].get("kind") == "unused"
-        b_unused = (curated and b_role == "") or specs["b"].get("kind") == "unused"
+        # M3: 表か spec が未使用と言う時だけ止める(役割の表に無い op を「未使用」と言わない)
+        a_unused = knob_use(name, "a")[0] == "unused"
+        b_unused = knob_use(name, "b")[0] == "unused"
         op_a_spin.setEnabled(not a_unused); op_row_a.typed.setEnabled(not a_unused)
         op_b_spin.setEnabled(not b_unused); op_row_b.typed.setEnabled(not b_unused)
-        lbl_a.setToolTip(a_role or specs["a"].get("doc")
-                         or ("(unused by %s)" % name if a_unused else "argument a"))
-        lbl_b.setToolTip(b_role or specs["b"].get("doc")
-                         or ("(unused by %s)" % name if b_unused else "argument b"))
+        lbl_a.setToolTip(tr(a_role) if a_role else specs["a"].get("doc") or knob_role_text(name, "a", a_role))
+        lbl_b.setToolTip(tr(b_role) if b_role else specs["b"].get("doc") or knob_role_text(name, "b", b_role))
         b_insert.setEnabled(True); b_help.setEnabled(True); b_run_once.setEnabled(True)
     op_list.currentItemChanged.connect(on_op_selected)
     def _toggle_search_group(item):
@@ -12201,30 +14160,67 @@ def build_window(model=None):
     b_run_once.clicked.connect(lambda _=False: run_op_once())
     # itemActivated fires on BOTH Enter and double-click (one signal), so keyboard-only
     # pipeline building works and there is no double-insert from wiring two signals.
-    op_list.itemActivated.connect(add_op)
+    def _on_op_item_activated(it):
+        """Enter / ダブルクリック: 検索の「見本」の行(M12)は見本を開き、それ以外は add_op。
+
+        ★先に行を読んでから振り分ける。add_op は一覧を作り直して行を消すので、2 つ目の受け手が後から同じ行を読むと
+        Python ごと落ちた(access violation、2026-11-13 の全体の試験で発覚)。"""
+        sample = it.data(QtCore.Qt.UserRole + 6) if it is not None else None
+        if sample:
+            win._open_search_sample(sample)
+            return
+        add_op(it)
+    op_list.itemActivated.connect(_on_op_item_activated)
 
     def _insert_searched_op():
-        """Enter in the search box inserts the highlighted (or first) filtered op."""
-        if search.text().strip():
+        """Enter in the search box inserts the highlighted row (the first insertable row on screen, see
+        ``_search_enter_target``; a row the user clicked stays the choice)."""
+        if search.text().strip() and search_timer.isActive():
+            # 打った直後(表示がまだ前の語の結果)だけ検索し直す。結果が出ている時に作り直すと、
+            # 利用者がクリックで選んだ行が消えていた。
             search_timer.stop()
             grouped_search(search.text().strip())
         it = op_list.currentItem()
-        if it is None or not it.data(QtCore.Qt.UserRole):
-            # ★2026-11-12: 選んでいないときに入れるのは**検索の 1 位**。先頭に出している「定番」の欄は対象にしない
-            # (「canny edge」で Enter を押すと sobel_amp が入っていた —— レビューの指摘)。定番は自分で選んだ時だけ。
-            # ★2026-11-13: その中でも「この環境で入れられる」最初の行(1 位が未導入の backend の op だと、
-            # Enter が何もしなかった)。入れられる行が 1 つも無ければ 1 位を渡し、add_op が理由を言う。
-            hits = [op_list.item(i) for i in range(op_list.count())
-                    if op_list.item(i).data(QtCore.Qt.UserRole)
-                    and op_list.item(i).data(QtCore.Qt.UserRole + 3) != "staples"]
-
-            def _addable(item):
-                nm = item.data(QtCore.Qt.UserRole)
-                row = _op_row(nm)
-                return not (row and row.get("backend") == "general") and api.find_op(nm) is not None
-            it = next((h for h in hits if _addable(h)), hits[0] if hits else None)
-        if it is not None:
-            add_op(it)
+        if it is None or not it.data(QtCore.Qt.UserRole) or it.isHidden():
+            # ★2026-11-12 / 11-13: 選んでいない時は、見えている順で最初の「この環境で入れられ、前の段の出力を
+            # 受けられる」行(定番の欄を含む。経緯は _search_enter_target)。
+            it = _search_enter_target()
+            if it is None:
+                _rows = [op_list.item(i) for i in range(op_list.count())
+                         if op_list.item(i).data(QtCore.Qt.UserRole) and not op_list.item(i).isHidden()]
+                if any(op_insertable(r.data(QtCore.Qt.UserRole))[0] for r in _rows):
+                    # ★2026-11-15: 入れられる行はあるが、どれも前の段の出力を受けられない(または、名前を正確に
+                    # 打った op が受けられない)。黙って ERROR の段を作らず、入れずに理由を言う(行をクリックで
+                    # 選べば、従来どおりその行が入る)。
+                    _sort, _prev = _ops_upstream()
+                    _exact = _search_exact_row()
+                    if _exact is not None:
+                        _xn = _exact.data(QtCore.Qt.UserRole)
+                        _say = (tr("‘%s’ takes '%s', not '%s' (the output of stage %d, %s) — it was not added. "
+                                   "Click its row to add it anyway.")
+                                % (_xn, (_op_row(_xn) or {}).get("in_sort") or "?", _sort, _prev[0] + 1, _prev[1]))
+                    else:
+                        _say = (tr("None of the listed operators takes '%s' (the output of stage %d, %s). "
+                                   "Click a row to add it anyway, or add the step its card names first.")
+                                % (_sort, _prev[0] + 1, _prev[1]))
+                    flash(_say); op_param.setText(_say); op_param_fit.refresh()
+                    return
+                # 入れられる行が 1 つも無い: 先頭の op の行を渡し、add_op が理由を UI の言語で言う
+                it = _rows[0] if _rows else None
+        if it is None:
+            return
+        _nm = it.data(QtCore.Qt.UserRole)
+        if op_insertable(_nm)[1] == "ledger" and it is _search_exact_row():
+            # ★2026-11-15: 台帳の op の名前を正確に打って Enter。段には入らないので、行のボタンと同じ
+            # 「台帳の op を実行」の窓を今の画像で開き、理由を 1 行で言う(従来は隣の別の op が黙って入った)。
+            _say = not_insertable_text(_nm, "ledger")
+            flash(_say); op_param.setText(_say); op_param_fit.refresh()
+            win._open_ledger_runner(_nm, prefer_image=True)
+            return
+        if add_op(it, raise_tab=False):         # 検索欄は見えたまま(キーは見えている欄に入る)
+            # ★2026-11-15(PR #316 の独立レビュー 3 回目): 入った後は語を選んでおく。続けて打つ語が前の語を
+            # 置き換える(従来は「二値化」の後に「ノイズ」と打つと「二値化ノイズ」で検索した)。
+            search.selectAll()
     search.returnPressed.connect(_insert_searched_op)
     win._search_ui = {
         "edit": search, "list": op_list, "timer": search_timer, "search_now": grouped_search,
@@ -12233,6 +14229,10 @@ def build_window(model=None):
     }
 
     def jump_to_problem(item):
+        ln_ = item.data(QtCore.Qt.UserRole + 20)
+        if isinstance(ln_, int) and ln_ > 0:                # Program の構文エラー: その行へカーソルを移す
+            code_edit.goto_line(ln_)
+            return
         idx = item.data(QtCore.Qt.UserRole)
         if idx is not None and 0 <= idx < len(model.stages):
             stage_list.setCurrentRow(idx)
@@ -12255,6 +14255,9 @@ def build_window(model=None):
     # ONE handler each for Reset / Step / Run all — the pipeline-strip buttons, the Run
     # menu actions and the debugger F-keys below all share them (no duplicated lambdas)
     def _do_step():
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # ★2026-11-13 Python のモード: F6 = 1 行実行
+            _pm.step(); return
         step_to(min(selected_index() + 1, len(model.stages) - 1))
 
     def _do_run_all():
@@ -12262,22 +14265,38 @@ def build_window(model=None):
         # N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は
         # 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。
         # 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # ★2026-11-13 Python のモード: F5 = 実行 / 続行
+            _pm.run(); return
         prog = getattr(win, "_program", None)
         if state.get("code_dirty") and prog:
             prog["apply"]()
             if state.get("code_dirty"):
                 return
+        if not model.stages:
+            _say_pipeline_is_empty()
+            return
         step_to(len(model.stages) - 1)
         _flash_run_validity()
 
+    def _say_pipeline_is_empty():
+        """L10(2026-11-13、初回起動の点検): 空のパイプラインで F5 を押しても何も起きず、何も言わなかった。"""
+        flash(tr("Nothing to run yet: add an operator first (type in the operator search box and press Enter, "
+                 "or select one and press +)"))
+
     def _do_run_all_async():
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:
+            _pm.run(); return
         prog = getattr(win, "_program", None)
         if state.get("code_dirty") and prog:
             prog["apply"]()
             if state.get("code_dirty"):
                 return
-        if model.stages:
-            stage_list.setCurrentRow(len(model.stages) - 1)
+        if not model.stages:
+            _say_pipeline_is_empty()                    # L10
+            return
+        stage_list.setCurrentRow(len(model.stages) - 1)
         start_run_async()
 
     def _flash_run_validity():
@@ -12290,12 +14309,16 @@ def build_window(model=None):
             return                                    # a stage raised: the Problems list says which
         v, why = assess_validity(val)
         cache_line = "  \u00b7  " + cache_summary_text(model.cache_summary())   # idea 113/114: cache range
+
+        def _say_run(msg):
+            state["run_flash_text"] = msg          # 言語を切り替えた時、この文が出ていれば作り直す(B-5)
+            flash(msg)
         if v is False:
-            flash(tr("Run: done / Result: needs review (%s)") % "; ".join(why) + cache_line)
+            _say_run(tr("Run: done / Result: needs review (%s)") % "; ".join(why) + cache_line)
         elif v is None:
-            flash(tr("Run: done / Result: validity not judged") + cache_line)
+            _say_run(tr("Run: done / Result: validity not judged") + cache_line)
         else:
-            flash(tr("Run: done / Result: valid (as reported by the op)") + cache_line)
+            _say_run(tr("Run: done / Result: valid (as reported by the op)") + cache_line)
     win._do_step = _do_step; win._do_run_all = _do_run_all; win._do_reset = reset_to_raw
     b_reset.clicked.connect(reset_to_raw)
     b_step.clicked.connect(_do_step)
@@ -12323,7 +14346,24 @@ def build_window(model=None):
     act_top.triggered.connect(lambda: move_to_end(True))
     act_bottom.triggered.connect(lambda: move_to_end(False))
     act_focus_search.triggered.connect(lambda: (search.setFocus(), search.selectAll()))
-    act_undo.triggered.connect(undo); act_redo.triggered.connect(redo)
+    act_undo.triggered.connect(undo_focused); act_redo.triggered.connect(redo_focused)
+    # ★2026-11-13: やり直しは Ctrl+Shift+Z と Ctrl+Y のどちらでも。有効・無効は、フォーカスのある方の履歴に合わせる
+    act_redo.setShortcuts([QtGui.QKeySequence("Ctrl+Shift+Z"), QtGui.QKeySequence("Ctrl+Y")])
+    code_edit.undoAvailable.connect(_sync_undo_actions); code_edit.redoAvailable.connect(_sync_undo_actions)
+    def _focus_moved(*_a):
+        try:
+            _sync_undo_actions()
+        except RuntimeError:                              # 閉じた窓の部品(フォーカスの合図はアプリ全体で 1 本)
+            _drop_focus_hook()
+
+    def _drop_focus_hook(*_a):
+        try:
+            QtWidgets.QApplication.instance().focusChanged.disconnect(_focus_moved)
+        except (RuntimeError, TypeError, AttributeError):
+            pass
+    QtWidgets.QApplication.instance().focusChanged.connect(_focus_moved)
+    win.destroyed.connect(_drop_focus_hook)
+    win._drop_focus_hook = _drop_focus_hook
     act_zin.triggered.connect(lambda: view.zoom(1.25)); act_zout.triggered.connect(lambda: view.zoom(0.8))
     act_fit.triggered.connect(view.fit); act_11.triggered.connect(view.reset_zoom)
     act_reset.triggered.connect(reset_to_raw)
@@ -12411,11 +14451,14 @@ def build_window(model=None):
             return v                                  # switched off: the value passes through
         return api.run_pipeline(v, [(name, a, b)], coerce=(i == 0))
 
-    def sync_program():
+    def sync_program(force=False):
         # Never clobber what the user is typing OR unapplied edits (Codex #9): the
         # editor keeps the user's code until they Apply it or Reset — a pipeline
         # change no longer silently overwrites hand-written, not-yet-applied code.
-        if code_edit.hasFocus() or state.get("code_dirty"):
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # ★2026-11-13 Python のモード: 文面が正本。段の列から作り直さない
+            return
+        if not force and (code_edit.hasFocus() or state.get("code_dirty")):
             return
         code_edit.blockSignals(True)
         # 適用済みの dev_* / set_system 行は残す(モデル再生成で消さない)。HDevelop の
@@ -12441,6 +14484,9 @@ def build_window(model=None):
     def _on_code_changed():
         # A real user edit (sync_program blocks signals around its own setPlainText,
         # so this only fires for typing) → mark the Program as having unapplied edits.
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and (_pm.active or _pm._suspend_text):   # Python のモード: 「未適用」は無い / 色分けの付け外し
+            _pm.on_text_changed(); return
         state["code_dirty"] = True
         code_status.setText("● unapplied edits — Apply to run, or Reset to discard")
     code_edit.textChanged.connect(_on_code_changed)
@@ -12461,6 +14507,9 @@ def build_window(model=None):
     win._mark_unapplied = _mark_unapplied
 
     def apply_program():
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # Python のモード: 文面が正本。適用は無い
+            flash(tr("Python mode: the text is the source — press Run (F5)")); return
         text = code_edit.toPlainText()        # capture first: refresh_stage_list rewrites the editor
         stages, errs, src_lines = parse_hdev_program_lines(text, op_names)
         if errs:
@@ -12488,8 +14537,10 @@ def build_window(model=None):
         # dev_* / set_system 行を退避 — sync_program の再生成後もエディタに残す
         # (以前は Apply でディレクティブ行が消え、再 Apply の意味が変わっていた)
         state["dev_lines"] = [ln.rstrip() for ln in text.splitlines()
-                              if ln.strip().startswith(_DIRECTIVE_PREFIXES)]
+                              if _is_supported_directive_line(ln)]
         model.directives = list(state["dev_lines"])      # persisted with the pipeline (F11)
+        state["directives_pending"] = 0
+        _set_title()                          # 題の * は dev_* の行も見る(上の mark_dirty の時点では、まだ前の行)
         _set_stage_lines(src_lines)           # gutter <-> stage map for THIS text
         code_edit.clear_exec()                # 旧実行位置は新パイプラインと不整合 — Continue の誤表示防止
         code_status.setText("applied %d stage(s)" % len(stages))
@@ -12521,7 +14572,7 @@ def build_window(model=None):
         try:
             v = model.result_upto(-1)     # the raw base image
         except Exception as e:
-            code_status.setText("cannot run: %s" % e); return
+            code_status.setText(tr("cannot run: %s") % e); return
         state["program_error"] = None
         timings, last, hit_bp = {}, -1, False
         for i, (name, a, b) in enumerate(model.stages):
@@ -12624,8 +14675,82 @@ def build_window(model=None):
         code_edit.set_exec_line(max(0, int(line) - 1))
         continue_program()
 
+    def run_selection():
+        """★2026-11-12 IDE 第 1 便(候補 10): Program で選んだ行(選びが無ければカーソルの行)の段だけを実行する。
+
+        その前の段の出力は段のキャッシュから取る(古ければそこだけ計算する)。選んだ行より後ろの段は計算しない。
+        未適用の編集があれば、先に適用する(行と段の対応が変わるので)。"""
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # Python のモード: 選んだ行を直前の実行の名前空間で
+            _pm.run_selection(); return
+        if state.get("code_dirty"):
+            apply_program()
+            if state.get("code_dirty"):
+                return
+        cur = code_edit.textCursor()
+        doc = code_edit.document()
+        l1 = doc.findBlock(cur.selectionStart()).blockNumber() + 1
+        end_blk = doc.findBlock(cur.selectionEnd())
+        l2 = end_blk.blockNumber() + 1
+        if cur.hasSelection() and l2 > l1 and cur.selectionEnd() == end_blk.position():
+            l2 -= 1                                   # 選びが次の行の行頭で終わっていれば、その行は含めない
+        idx = [i for i in range(len(model.stages)) if l1 <= _stage_line(i) <= l2]
+        if not idx:
+            code_status.setText(tr("no stage in the selected lines"))
+            flash(tr("no stage in the selected lines"))
+            return
+        first, last = idx[0], idx[-1]
+        state["program_error"] = None
+        try:
+            v = model.result_upto(first - 1)          # 上流はキャッシュ(first == 0 なら入力画像)
+        except Exception as e:
+            code_status.setText(tr("cannot run: %s") % e); return
+        timings = dict(code_edit.timings)
+        t_sum = 0.0
+        for i in range(first, last + 1):
+            name, a, b = model.stages[i]
+            t0 = _time.perf_counter()
+            try:
+                v = _run_stage(v, i, name, a, b)
+            except Exception as e:
+                _fail_stage(i, name, e, timings, "run", [v]); return
+            dt = (_time.perf_counter() - t0) * 1000.0
+            t_sum += dt
+            timings[_stage_line(i)] = dt
+        if state["dev_update"]["time"]:
+            code_edit.set_timings(timings)
+        if state["dev_update"]["pc"]:
+            code_edit.set_exec_line(_stage_line(last))
+        stage_list.setCurrentRow(last)
+        refresh_stage_list(select=last, sync_code=False)
+        ln_a, ln_b = _stage_line(first), _stage_line(last)
+        code_status.setText((tr("ran line %d") % ln_a if ln_a == ln_b else tr("ran lines %d\u2013%d") % (ln_a, ln_b))
+                            + "  \u00b7  %.1f ms" % t_sum)
+
+    act_run_sel.triggered.connect(lambda _=False: run_selection())
+    code_edit.on_run_selection = run_selection
+
     c_apply.clicked.connect(apply_program)
-    c_sync.clicked.connect(sync_program)
+    def _generated_program_text():
+        """Sync が Program 欄に書く文面(適用済みの表示の指示 + 段の列から作った行)。"""
+        dev_lines = state.get("dev_lines") or []
+        body = program_text_from_model()
+        return "\n".join(dev_lines) + "\n" + body if dev_lines else body
+
+    def sync_program_asked(_=False):
+        """Sync のボタン: 適用済みの文面にコメント・空行・for / if が残っていて、作り直すとそれが消える時は先に聞く
+        (段の列を変えた時の自動の作り直しは聞かない: 段の列が正本、という決まりの動き)。"""
+        _pm = getattr(win, "_pymode", None)
+        if not (_pm is not None and _pm.active) and not state.get("code_dirty") \
+                and code_edit.toPlainText().strip() != _generated_program_text().strip():
+            if not confirm_action(win, tr("Sync the Program"),
+                                  tr("The Program text has comments, blank lines or for / if blocks that the stage "
+                                     "list does not keep. Sync rebuilds the text from the stage list, one line per "
+                                     "stage: those parts are lost and Ctrl+Z does not bring them back."),
+                                  tr("Rebuild the text")):
+                return
+        sync_program()
+    c_sync.clicked.connect(sync_program_asked)
     c_run.clicked.connect(lambda: run_program(True))
     c_cont.clicked.connect(lambda: continue_program())
     c_step.clicked.connect(step_program)
@@ -12634,11 +14759,78 @@ def build_window(model=None):
         sync_program()
         code_edit.clear_exec()
         code_status.setText("ready")
-    c_reset.clicked.connect(reset_program)
+    def reset_program_asked(_=False):
+        """Reset のボタン: 未適用の編集があれば、捨てる前に聞く(捨てた文面は Ctrl+Z でも戻らない)。"""
+        if state.get("code_dirty") and not confirm_action(
+                win, tr("Reset the Program"),
+                tr("The Program text has edits that were not applied. Reset throws them away and rebuilds the text "
+                   "from the stage list; Ctrl+Z does not bring them back."), tr("Discard the edits")):
+            return
+        reset_program()
+    c_reset.clicked.connect(reset_program_asked)
     win._program = {"edit": code_edit, "apply": apply_program, "run": run_program,
                     "step": step_program, "continue": continue_program, "run_from": run_from,
                     "parse": parse_program, "text": program_text_from_model,
-                    "status": lambda: code_status, "stage_line": _stage_line}
+                    "status": lambda: code_status, "stage_line": _stage_line,
+                    "run_selection": run_selection}
+
+    # -- ★2026-11-12 IDE 第 1 便: Program の構文エラーを Problems・波線・ガターへ(B-1)-------------- #
+    def check_program_syntax(*_):
+        """Program 欄の本文を解析し、エラー(行つき)を Problems と欄の波線・ガターの赤印へ出す。
+        直すと印も消える。実行系には触らない(parse_program の結果を読むだけ)。"""
+        _pm = getattr(win, "_pymode", None)
+        if _pm is not None and _pm.active:                  # Python のモード: studio_program.check_program(実行しない)
+            _pm.check_now(); return
+        if _pm is not None:
+            _pm.update_badge()                              # パイプラインのモードなのに Python らしい文面、を札に出す
+        text = code_edit.toPlainText()
+        errs_ = []
+        saved = dict(_HDEV_CLAMPED)                       # 解析は「丸めたつまみ」の控えを作り直す。apply の結果を壊さない
+        try:
+            if not re.search(r"(?im)^\s*for\s+\d{6,}", text):      # 巨大な for の展開で欄が固まらない
+                errs_ = list(parse_program(text)[1])
+        except Exception:                                  # noqa: BLE001 - 検査が欄の入力を邪魔しない
+            errs_ = []
+        finally:
+            _HDEV_CLAMPED.clear(); _HDEV_CLAMPED.update(saved)
+        rows = []
+        for e in errs_:
+            m_ = re.search(r"line (\d+)", e)
+            ln_ = min(max(int(m_.group(1)), 1), code_edit.blockCount()) if m_ else 1
+            rows.append((ln_, e))
+        if rows == state.get("program_syntax_errors", []) and bool(rows) == bool(code_edit.errors()):
+            return
+        state["program_syntax_errors"] = rows
+        per_line = {}
+        for ln_, e in rows:
+            per_line[ln_] = (per_line[ln_] + "; " + e) if ln_ in per_line else e
+        code_edit.set_errors(per_line)
+        try:
+            _refresh_problems_only()
+        except Exception as exc:                           # noqa: BLE001
+            _log_soft_failure("could not refresh the problems list after a syntax check", exc)
+
+    _syntax_timer = QtCore.QTimer(win)
+    _syntax_timer.setSingleShot(True)
+    _syntax_timer.setInterval(250)
+    _syntax_timer.timeout.connect(check_program_syntax)
+    code_edit.document().contentsChanged.connect(_syntax_timer.start)   # 打つたび・sync_program の書き換えでも
+    c_apply.clicked.connect(check_program_syntax)
+    _apply_raw = win._program["apply"]
+
+    def _apply_and_check():
+        _apply_raw()
+        check_program_syntax()
+    win._program["apply"] = _apply_and_check
+    win._program["check"] = check_program_syntax
+    _fb = code_edit.find_bar
+    win._program["find"] = {"bar": _fb, "find_edit": _fb.find_edit, "replace_edit": _fb.replace_edit,
+                            "case": _fb.case, "next": _fb.btn_next, "prev": _fb.btn_prev,
+                            "replace": _fb.btn_replace, "replace_all": _fb.btn_replace_all,
+                            "close": _fb.btn_close, "count": _fb.count}
+    code_edit.on_message = lambda m_: flash(m_)
+    code_edit.on_open_help = lambda n_: show_op_help(n_)
+    code_edit.on_font_change = lambda pt_: _apply_mono_font(pt_)
 
     # -- variables & objects window wiring (inspect / display any stage output) - #
     def _var_entries():
@@ -12659,7 +14851,7 @@ def build_window(model=None):
         try:
             val = model.cached_result(it.data(QtCore.Qt.UserRole))
             if val is None:
-                var_inspect.setPlainText((_pair("未計算", "not computed") + (" (run or step to this stage)" if _UI_LANG["code"] != "ja"
+                var_inspect.setPlainText((tr("not computed") + (" (run or step to this stage)" if _UI_LANG["code"] != "ja"
                                           else "(実行するか、この段まで進めると計算されます)")))
             else:
                 var_inspect.setPlainText(format_inspection(inspect_result(val)))
@@ -12673,7 +14865,7 @@ def build_window(model=None):
 
     def _save_watches():
         exprs = [watch_table.item(r, 0).text() for r in range(watch_table.rowCount())]
-        _settings().setValue("watch/expressions", exprs)
+        _write_settings({"watch/expressions": exprs}, what="watch expressions")
 
     def refresh_watches():
         # every watch row is evaluated against the SELECTED variable; a failing
@@ -12742,11 +14934,11 @@ def build_window(model=None):
         shp = xld.get("shape") or (1, 1)
         H, W = max(int(shp[0]), 1), max(int(shp[1]), 1)
         pm = QtGui.QPixmap(_VAR_THUMB, _VAR_THUMB)
-        pm.fill(QtGui.QColor(NAVY_1))                 # match the panel background
+        pm.fill(QtGui.QColor(_C("bg1")))              # match the panel background
         if cs:
             p = QtGui.QPainter(pm)
             p.setRenderHint(QtGui.QPainter.Antialiasing, True)
-            pen = QtGui.QPen(QtGui.QColor(TEAL)); pen.setWidthF(1.2); p.setPen(pen)
+            pen = QtGui.QPen(QtGui.QColor(_C("accent"))); pen.setWidthF(1.2); p.setPen(pen)
             s = (_VAR_THUMB - 2) / max(H, W)          # uniform scale, keep aspect, 1px margin
             ox, oy = (_VAR_THUMB - s * W) / 2.0, (_VAR_THUMB - s * H) / 2.0
             for c in cs:
@@ -12808,7 +15000,7 @@ def build_window(model=None):
             it = var_list.item(r)
             idx = it.data(QtCore.Qt.UserRole)
             pending = isinstance(idx, int) and idx > frontier
-            it.setForeground(QtGui.QColor(MUTED) if pending else QtGui.QBrush())
+            it.setForeground(QtGui.QColor(_C("muted")) if pending else QtGui.QBrush())
             base = it.text().split("   ", 1)
             tag = base[1] if len(base) == 2 else ""
             want = (tag.replace(" · pending", "") + (" · pending" if pending else ""))
@@ -12854,12 +15046,22 @@ def build_window(model=None):
     v_disp.clicked.connect(lambda: display_variable("new"))
     v_here.clicked.connect(lambda: display_variable("current"))
     win._variables = {"list": var_list, "refresh": refresh_variables, "display": display_variable}
+    # ★2026-11-12(B-3): パネルを閉じたまま実行すると、一覧は実行前の『? · control』のまま古かった。
+    #   開いた(タブの裏から前へ出た)時に、キャッシュから作り直す(計算はしない)。
+    #   dock の visibilityChanged(True) は窓の配置次第で届かないので、中身の部品の Show で受ける。
+    class _ShowWatcher(QtCore.QObject):
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.Show:
+                QtCore.QTimer.singleShot(0, refresh_variables)
+            return False
+    win._var_show_watcher = _ShowWatcher(win)
+    var_w.installEventFilter(win._var_show_watcher)
     win._contour_icon = _contour_icon                # exposed for the headless thumbnail test
 
     # -- dedicated Operator Help dialog (HTML: args / usage / sample code / links) - #
     help_browser = QtWidgets.QTextBrowser()
     help_browser.setOpenLinks(False)          # custom op:/sample:/run: anchors handled below
-    help_browser.setStyleSheet("QTextBrowser{background:#1b1e28;border:1px solid #2c313f;}")
+    _themed_style(help_browser, "QTextBrowser{{background:{bg1};border:1px solid {line};}}")
     help_dialog = QtWidgets.QDialog(win)       # dedicated, non-modal (good for multi-monitor)
     help_dialog.setWindowTitle("Operator help — Fullseye Studio")
     help_dialog.resize(560, 640)
@@ -12901,7 +15103,9 @@ def build_window(model=None):
                 _help_entries[_disp] = (_dim, _n); _help_led.append(_disp)
     except Exception:
         pass
-    help_pick.addItems(list(op_names) + _help_d3 + _help_led)
+    # M15: 名前の順に並べる(欄の自動補完は並びの最初の前方一致を選ぶので、select_shape が select_shape_xld より先に)
+    help_pick.addItems(sorted(op_names) + sorted(_help_d3) + sorted(_help_led))
+    help_pick.setInsertPolicy(QtWidgets.QComboBox.NoInsert)       # 打った語を新しい行として足さない
     help_pick.setToolTip("Jump to any operator's help (2-D image ops, 3-D point/mesh/volume ops, "
                          "and the ledger families: math / optics / imgmetrics / …)")
     hd_copy = QtWidgets.QPushButton("Copy sig")
@@ -12932,11 +15136,11 @@ def build_window(model=None):
                     row = _o3.OPS3D.get(name)
                 except Exception:
                     row = None
-            help_browser.setHtml(bar + op_help_html(name, _lang, meta=row, dim=dim))
+            help_browser.setHtml(_themed_html(bar + op_help_html(name, _lang, meta=row, dim=dim)))
             disp = "%s  (3D)" % name if dim == "3d" else "%s  (%s)" % (name, dim)
         else:
             row = _op_row(name) or {"in_sort": "?", "out_sort": "?"}
-            help_browser.setHtml(bar + op_help_html(name, _lang, row))
+            help_browser.setHtml(_themed_html(bar + op_help_html(name, _lang, row)))
             disp = name
         i = help_pick.findText(disp)
         if i >= 0:
@@ -12957,7 +15161,7 @@ def build_window(model=None):
             except Exception:
                 break
             _help_cur.update(kind="guide", name=stem, dim="2d")
-            help_browser.setHtml(help_lang_bar(stem, "2d", lang, "guide") + body)
+            help_browser.setHtml(_themed_html(help_lang_bar(stem, "2d", lang, "guide") + body))
             flash("opened guide: " + stem)
             return
         flash("guide not built: run `py -3.11 tools/opdocs.py html`")
@@ -12987,6 +15191,13 @@ def build_window(model=None):
         elif s.startswith("sample:") or s.startswith("run:"):   # load a sample pipeline
             import urllib.parse as _up
             code = _up.unquote(s.split(":", 1)[1])
+            if not confirm_discard("Load the sample from help"):
+                return
+            _pm = getattr(win, "_pymode", None)
+            if _pm is not None and _pm.active:  # Python の文面を置き換えない: パイプラインのモードへ(Python の文面は残る)
+                _pm.set_mode("pipeline", announce=False)
+                if _pm.active:
+                    return
             code_edit.setPlainText(code)
             apply_program()
             if s.startswith("run:"):
@@ -13005,12 +15216,12 @@ def build_window(model=None):
                     with open(p, encoding="utf-8") as f:
                         src = f.read()
                     esc = src.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                    help_browser.setHtml(
+                    help_browser.setHtml(_themed_html(
                         "<h2 style='color:#f5a524'>%s</h2>"
                         "<p style='color:#8b91a0'>実行できる検証済みサンプル · "
                         "<code>py -3.11 %s/%s.py</code></p>"
                         "<pre style='background:#12141b;border:1px solid #2c313f;padding:6px;"
-                        "color:#22d3bf'>%s</pre>" % (ex, sub, ex, esc))
+                        "color:#22d3bf'>%s</pre>" % (ex, sub, ex, esc)))
                     flash("opened example source: " + ex)
                 except Exception:
                     pass
@@ -13022,6 +15233,24 @@ def build_window(model=None):
     # in that order (unpacking the tuple directly would swap them: name<-dim, dim<-name).
     help_pick.currentTextChanged.connect(
         lambda t: show_op_help(_help_entries[t][1], _help_entries[t][0]) if t in _help_entries else None)
+
+    def _help_pick_enter():
+        """M15: Enter で、打った語に一番近い項目を開く(完全一致 → HALCON の名前 → 前方一致 → 部分一致)。"""
+        ed_ = help_pick.lineEdit()
+        text = ed_.text()
+        if ed_.hasSelectedText() and ed_.selectionStart() + len(ed_.selectedText()) == len(text):
+            text = text[:ed_.selectionStart()]             # 自動補完が足した尾は、打った語ではない
+        target = help_query_target(text, list(_help_entries),
+                                   {r["name"]: r.get("halcon") for r in all_ops if r.get("halcon")})
+        if target is None:
+            flash(tr("No operator help matches '%s'") % text.strip())
+            return
+        if target.lower() != text.strip().lower():
+            flash(tr("'%s' → %s") % (text.strip(), target))
+        help_pick.blockSignals(True); help_pick.setCurrentIndex(help_pick.findText(target))
+        help_pick.blockSignals(False)
+        show_op_help(_help_entries[target][1], _help_entries[target][0])
+    help_pick.lineEdit().returnPressed.connect(_help_pick_enter)
     def _copy_help_sig():
         t = help_pick.currentText()
         entry = _help_entries.get(t)
@@ -13054,10 +15283,15 @@ def build_window(model=None):
     sync_panels()
 
     # right-click context menus (dev-IDE density: act where you point) --------- #
-    def _ctx_menu(widget, actions_fn):
+    def _ctx_menu(widget, actions_fn, select_under_cursor=False):
         widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 
         def _show(pos):
+            if select_under_cursor:
+                # L11(2026-11-13): 右クリックした行を先に選ぶ(選ぶ前の一覧では何も出なかった)
+                hit = widget.itemAt(pos)
+                if hit is not None and widget.currentItem() is not hit:
+                    widget.setCurrentItem(hit)
             items = actions_fn()
             if not items:
                 return
@@ -13075,11 +15309,20 @@ def build_window(model=None):
         cur = op_list.currentItem()
         if cur is None:
             return []
+        sample = cur.data(QtCore.Qt.UserRole + 6)
+        if sample:                                         # 検索の「見本」の行(M12)
+            return [(tr("Open sample"), lambda: open_search_sample(sample))]
         name = cur.data(QtCore.Qt.UserRole)
-        return [("Insert into pipeline", lambda: add_op(cur)),
-                ("Run once (preview)", run_op_once),
-                ("---", None),
-                ("Operator help…", lambda: show_op_help(name))]
+        if not name:                                       # 群の見出しの行
+            return []
+        ok, why = op_insertable(name)
+        items = []
+        if ok:
+            items += [(tr("Insert into pipeline"), lambda: add_op(cur)), (tr("Run once (preview)"), run_op_once)]
+        elif why == "ledger":
+            items.append((tr("Open in Run a ledger op"), lambda: win._open_ledger_runner(name, prefer_image=True)))
+        items += [("---", None), (tr("Operator help…"), lambda: show_op_help(name))]
+        return items
 
     def _stage_ctx():
         i = stage_list.currentRow()
@@ -13141,13 +15384,30 @@ def build_window(model=None):
                 ("---", None),
                 ("Inspect (panel)", show_variable_inspection)]
 
-    win._ctx = {"operators": _ctx_menu(op_list, _op_ctx),
+    win._ctx = {"operators": _ctx_menu(op_list, _op_ctx, select_under_cursor=True),
                 "pipeline": _ctx_menu(stage_list, _stage_ctx),
                 "variables": _ctx_menu(var_list, _var_ctx)}
     win._variables["popup"] = inspect_variable_popup     # right-click "Inspect in popup…"
 
     act_palette.triggered.connect(show_palette)
     act_shortcuts.triggered.connect(show_shortcuts)
+
+    def show_selected_op_help():
+        """F1: 段の一覧に入力の焦点があれば選んでいる段の op、なければ一覧で選んでいる op、どちらも無ければショートカットの一覧。"""
+        name = None
+        i = selected_index()
+        if stage_list.hasFocus() and 0 <= i < len(model.stages):
+            name = model.stages[i][0]
+        if not name:
+            cur = op_list.currentItem()
+            name = cur.data(QtCore.Qt.UserRole) if cur is not None else None
+        if not name and 0 <= i < len(model.stages):
+            name = model.stages[i][0]
+        if name:
+            show_op_help(name)
+        else:
+            show_shortcuts()
+    act_selected_help.triggered.connect(show_selected_op_help)
     act_op_help.triggered.connect(
         lambda: show_op_help((op_list.currentItem().data(QtCore.Qt.UserRole))
                              if op_list.currentItem() else (op_names[0] if op_names else "")))
@@ -13489,7 +15749,7 @@ def build_window(model=None):
             table.setSortingEnabled(True)
             table.resizeColumnsToContents()
 
-        MAX_REGIONS = 500                        # table/HUD runaway guard (freeze prevention)
+        MAX_REGIONS = REGION_TABLE_MAX           # table/HUD runaway guard (freeze prevention)
 
         def _refresh_2d():
             raw = state.get("raw")
@@ -13498,7 +15758,7 @@ def build_window(model=None):
                     # speckle guard: scale the minimum region area with the image
                     # (~20 ppm, floor 1 px) so a noisy segmentation cannot flood
                     # the table with thousands of 1-px regions and freeze the UI
-                    min_area = max(1, int(round(raw.size * 2e-5)))
+                    min_area = _region_table_min_area(raw.size)
                     objs, seg = region_feature_objects(raw, min_area=min_area)
                 except Exception as e:
                     objs, seg = [], "error: %s" % truncate(e, 60)
@@ -13752,7 +16012,7 @@ def build_window(model=None):
     act_upd.setToolTip("Auto-update the display (HDevelop dev_update). Uncheck to edit / run "
                        "without the display cost, then check to refresh.")
     act_upd.triggered.connect(lambda on: set_dev_update("all", on))
-    tb.addAction(act_upd); win._dev_update_actions["_toolbar"] = act_upd
+    tb.addAction(studio_panels.glyph_action(win, act_upd, "auto_update")); win._dev_update_actions["_toolbar"] = act_upd
 
     def _set_part(r1, c1, r2, c2):
         """dev_set_part: set the displayed image part of the CURRENT graphics window."""
@@ -13857,23 +16117,44 @@ def build_window(model=None):
 
         def _disp_3d(name, args, slot):
             path = str(args[0]) if args else ""
-            if path and not os.path.isabs(path):
-                # a relative path in a user's program means "relative to where I
-                # ran Studio" (process cwd) — resolve there first; fall back to
-                # the studio.py directory only when the cwd candidate is missing
-                # (keeps shipped demo programs working from any cwd).
-                cand = os.path.abspath(path)
-                if not os.path.exists(cand):
-                    alt = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
-                    if os.path.exists(alt):
-                        cand = alt
-                path = cand
             sub = next((s for s in win._graphics_windows
                         if s in mdi.subWindowList()
                         and getattr(s, "_fs_disp3d_slot", None) == slot), None)
             try:
                 if not path:
                     raise ValueError("%s needs a file path argument" % name)
+                pipe_path = state.get("pipe_path")
+                if pipe_path:
+                    # 字句の検査は dirname の前に、パイプラインのパスそのものへ(Linux の dirname は
+                    # ``\\server\share\pipe.json`` を "" にし、UNC の形を落とす)。
+                    folder = os.path.dirname(str(pipe_path)) or os.curdir
+                    base_problem = _folder_problem(str(pipe_path)) or _folder_problem(folder)
+                    if base_problem:
+                        raise ValueError("3-D file was not read because %s" % base_problem)
+                    path_problem = _plain_relative_path_problem(path)
+                    if path_problem:
+                        raise ValueError(path_problem)
+                    candidate, stopped = _walk_inside(folder, path)
+                    if stopped:
+                        raise ValueError("3-D file was not read: %s" % stopped)
+                    path = candidate
+                else:
+                    path_problem = _folder_problem(path)
+                    if path_problem:
+                        raise ValueError("network/device paths are refused")
+                if not pipe_path and not os.path.isabs(path):
+                    # ファイルを開いていない手入力では従来どおり cwd、次に Studio の隣を探す。
+                    # With no pipeline file, preserve the cwd -> studio.py-directory lookup.
+                    cwd = os.getcwd()
+                    cwd_problem = _folder_problem(cwd)
+                    if cwd_problem:
+                        raise ValueError("3-D file was not read because the current folder is on a network/device path")
+                    cand = os.path.abspath(os.path.join(cwd, path))
+                    if not os.path.exists(cand):
+                        alt = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+                        if os.path.exists(alt):
+                            cand = alt
+                    path = cand
                 if name == "disp_mesh3d":
                     import mesh as meshmod
                     V, F = validate_mesh_faces(*meshmod.read_mesh(path)[:2])
@@ -14046,11 +16327,11 @@ def build_window(model=None):
             return None
 
     def _persist_system():
-        s = _settings(); s.beginGroup("system")
-        s.setValue("threads", int(state["system"]["threads"]))
-        s.setValue("operator_timeout_ms", int(state["system"]["operator_timeout_ms"]))
-        s.setValue("max_graphics_windows", int(state["system"]["max_graphics_windows"]))
-        s.endGroup()
+        return _write_settings({
+            "system/threads": int(state["system"]["threads"]),
+            "system/operator_timeout_ms": int(state["system"]["operator_timeout_ms"]),
+            "system/max_graphics_windows": int(state["system"]["max_graphics_windows"]),
+        }, what="system settings")
 
     def _get_system_param(name):
         """get_system: read a HALCON-style system parameter (live where applicable)."""
@@ -14100,18 +16381,13 @@ def build_window(model=None):
         pipeline program editor + open Python Editor tabs) and persist it; a new
         CodeEditor picks the persisted value up on construction."""
         pt = max(6, min(int(pt), 32))
-        _settings().setValue("ui/mono_font_pt", pt)
-        for ed in [code_edit] + ([win._pyedit["tabs"].widget(i)
-                                  for i in range(win._pyedit["tabs"].count())]
-                                 if getattr(win, "_pyedit", None) else []):
-            f = ed.font(); f.setPointSize(pt); ed.setFont(f)
-            # widget-level rule outranks the app QSS (which pins QPlainTextEdit fonts)
-            ed.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace; "
-                             "font-size:%dpt;" % pt)
-            ed.setTabStopDistance(4 * ed.fontMetrics().horizontalAdvance(" "))
+        _write_settings({"ui/mono_font_pt": pt}, what="editor font setting")
+        # the typeface and where it applies are decided in studio_theme (CODE_FONTS, code_surfaces)
+        studio_theme.refresh_code_fonts(pt)
         return pt
     win._apply_mono_font = _apply_mono_font
-    try:        # apply the persisted size to the program editor at startup
+    try:        # apply the persisted size (and the user's own family, if any) at startup
+        studio_theme.set_code_family(_settings().value("ui/mono_font_family", ""))
         _apply_mono_font(int(_settings()
                              .value("ui/mono_font_pt", 10)))
     except (TypeError, ValueError):
@@ -14170,21 +16446,73 @@ def build_window(model=None):
         fpt.setValue(int(sset.value("ui/mono_font_pt", 10)))
         fpt.setToolTip("Monospace font size for the program editor, Python Editor tabs "
                        "and code windows.")
+        ffam = QtWidgets.QComboBox()             # code family: "" = studio_theme's table decides
+        ffam.addItem(tr("Automatic"), "")
+        for _f in studio_theme.code_font_choices():
+            ffam.addItem(_f, _f)
+        ffam.setCurrentIndex(max(0, ffam.findData(str(sset.value("ui/mono_font_family", "") or ""))))
+        ffam.setToolTip("Typeface of every place that shows or takes code. Automatic: the first installed face "
+                        "whose full-width characters are exactly two half-width cells (BIZ UDGothic, MS Gothic).")
         interp = QtWidgets.QLineEdit(str(sset.value("pyedit/interpreter", "") or ""))
         interp.setPlaceholderText(sys.executable + "   (empty = this Studio's Python)")
         interp.setToolTip("Interpreter used by the Python Editor's Run. Empty = the Python "
                           "running Studio. A non-existent path is refused (fail-closed).")
+        # ★2026-11-13: Python のファイルへの自動保存(既定は切。メニュー Run ▸ Program mode ▸ Autosave と同じ設定)
+        _pm_set = getattr(win, "_pymode", None)
+        asave = QtWidgets.QComboBox()
+        for _lab in ("Autosave: off", "Autosave: after a pause in typing", "Autosave: when the Program loses the focus"):
+            asave.addItem(tr(_lab))
+        asave.setToolTip(tr("Save the Python file by itself while you type. Off by default. A program that has no "
+                            "file yet is only kept in the crash-recovery backup; a file changed by another program "
+                            "is never overwritten"))
+        asave_s = QtWidgets.QDoubleSpinBox(); asave_s.setDecimals(1); asave_s.setSingleStep(0.5); asave_s.setSuffix(" s")
+        asave_s.setRange(*studio_pymode_autosave_range())
+        asave_s.setToolTip(tr("How long after the last keystroke the file is saved (autosave after a pause in typing)"))
+        if _pm_set is not None:
+            asave.setCurrentIndex(("off", "idle", "focus").index(_pm_set.autosave_file_mode()))
+            asave_s.setValue(_pm_set.autosave_idle_s())
+        dlg._autosave_mode = asave; dlg._autosave_delay = asave_s
         chk = QtWidgets.QLabel("fail-closed  (the runtime refuses degraded operators)")
-        chk.setStyleSheet("QLabel{color:%s;}" % MUTED)
+        _themed_style(chk, "QLabel{{color:{muted};}}")
         _settings_page("Execution", [("Threads (thread_num)", th),
                                      ("Operator timeout", to),
                                      ("Error checking (set_check)", chk)])
         _settings_page("Windows", [("Max graphics windows", mw)])
-        _settings_page("Display", [("Default display mode", dmode),
+        scheme = QtWidgets.QComboBox()
+        for _k in studio_theme.THEMES:
+            scheme.addItem(tr(studio_theme.THEME_LABELS[_k]), _k)
+        scheme.setCurrentIndex(studio_theme.THEMES.index(studio_theme.current_name()))
+        scheme.setToolTip(tr("Colour scheme") + " — applied now and restored on startup.")
+        scheme.currentIndexChanged.connect(lambda _i: win._apply_theme(theme=scheme.currentData()))
+        dens = QtWidgets.QComboBox()
+        for _k in studio_theme.DENSITIES:
+            dens.addItem(tr(studio_theme.DENSITY_LABELS[_k]), _k)
+        dens.setCurrentIndex(studio_theme.DENSITIES.index(studio_theme.current_density()))
+        dens.setToolTip(tr("Density") + " — applied now and restored on startup.")
+        dens.currentIndexChanged.connect(lambda _i: win._apply_theme(level=dens.currentData()))
+        dlg._theme_combos = (scheme, dens)
+        # A3: tools and tabs / when they do not fit - the same QActions as View and Window > Layout
+        strip_box, flow_box = QtWidgets.QComboBox(), QtWidgets.QComboBox()
+        for _box, _prefix, _modes, _now in (
+                (strip_box, "strip_", studio_panels.STRIP_MODES, win._panels["strip_mode"]),
+                (flow_box, "overflow_", studio_panels.OVERFLOW_MODES, win._panels["overflow_mode"])):
+            for _m in _modes:
+                _box.addItem(studio_panels.plain_text(win._actions[_prefix + _m].text()).split(": ", 1)[-1], _m)
+            _box.setCurrentIndex(max(0, _box.findData(_now)))
+            _box.currentIndexChanged.connect(
+                lambda _i, b=_box, p=_prefix: win._actions[p + b.currentData()].trigger())
+        strip_box.setToolTip(tr("Tools and tabs") + " — applied now and restored on startup.")
+        flow_box.setToolTip(tr("When they do not fit") + " — applied now and restored on startup.")
+        dlg._strip_combos = (strip_box, flow_box)
+        _settings_page("Display", [("Colour scheme", scheme), ("Density", dens),
+                                   ("Tools and tabs", strip_box), ("When they do not fit", flow_box),
+                                   ("Default display mode", dmode),
                                    ("Region draw (dev_set_draw)", drawm),
                                    ("Region line width", drawlw)])
-        _settings_page("Editor", [("Editor font size", fpt),
-                                  ("Python Editor interpreter", interp)])
+        _settings_page("Editor", [("Editor font size", fpt), ("Code font", ffam),
+                                  ("Python Editor interpreter", interp),
+                                  ("Autosave the Python file", asave),
+                                  ("Autosave delay", asave_s)])
         cat_tree.currentItemChanged.connect(
             lambda it, _prev=None: it is not None
             and stack.setCurrentIndex(it.data(0, QtCore.Qt.UserRole)))
@@ -14197,6 +16525,7 @@ def build_window(model=None):
         root.addWidget(bb)
         dlg.resize(640, 420)
         dlg._tree = cat_tree; dlg._stack = stack     # test / scripting hooks
+        dlg._code_font = ffam; dlg._code_pt = fpt
         win._system_dialog = dlg               # for headless tests
         # NOTE: no win._localize here — this dialog is rebuilt per-open with tr() at
         # build time; registering tr()-produced text would poison the English baseline
@@ -14204,18 +16533,29 @@ def build_window(model=None):
             _set_system_param("thread_num", th.value())
             _set_system_param("operator_timeout", to.value())
             _set_system_param("max_graphics_windows", mw.value())
+            system_reason = _persist_system()
             win._set_display_mode(dmode.currentText())
-            sset.setValue("display/default_mode", dmode.currentText())
             set_draw_style(mode=drawm.currentText(), line_width=drawlw.value())
-            sset.setValue("draw/mode", drawm.currentText())
-            sset.setValue("draw/line_width", drawlw.value())
+            studio_theme.set_code_family(ffam.currentData())
             _apply_mono_font(fpt.value())
             ip = interp.text().strip()
+            values = {
+                "display/default_mode": dmode.currentText(),
+                "draw/mode": drawm.currentText(),
+                "draw/line_width": drawlw.value(),
+                "ui/mono_font_family": ffam.currentData(),
+                "ui/mono_font_pt": fpt.value(),
+            }
             if ip and not os.path.isfile(ip):
                 report_error("Python Editor interpreter",
                              "not a file (kept previous): %s" % ip)
             else:
-                sset.setValue("pyedit/interpreter", ip)
+                values["pyedit/interpreter"] = ip
+            reason = _write_settings(values, settings=sset, what="preferences")
+            if _pm_set is not None:
+                _pm_set.set_autosave_file(("off", "idle", "focus")[asave.currentIndex()], asave_s.value())
+            if system_reason or reason:
+                return                         # 理由は write_settings が出した。「applied」とは言わない
             flash("settings applied (threads %d · timeout %d ms · windows ≤%d · font %dpt)"
                   % (th.value(), to.value(), mw.value(), fpt.value()))
     win._open_system_settings = open_system_settings
@@ -14268,6 +16608,17 @@ def build_window(model=None):
         return dlg
     win._open_physical_ai_viewer = open_physical_ai_viewer
     win._latest_evis_perception = _latest_evis_perception
+
+    def _sync_physical_ai_item():
+        """M14(2026-11-13、初回起動の点検): 素材(知覚 GIF)が無い時はメニューに出さない(開くと「未生成です」だけの窓だった)。
+        メニューを開くたびに見直す(GIF を作った後は、再起動しなくても出る)。"""
+        try:
+            act_physical_ai.setVisible(_latest_evis_perception() is not None)
+        except Exception as exc:                            # noqa: BLE001 -- メニューを開く操作を落とさない
+            _log_soft_failure("could not look for the evis perception GIF", exc)
+    _sync_physical_ai_item()
+    menu_tools.aboutToShow.connect(_sync_physical_ai_item)
+    win._sync_physical_ai_item = _sync_physical_ai_item
 
     # ------------------------------------------------------------------ Compound eye → brain(2026-09-20)
     def open_eye_brain_panel():
@@ -14682,7 +17033,7 @@ def build_window(model=None):
 
     def save_pipe():
         import json
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save pipeline", "pipeline.json",
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save pipeline", _proj_path("pipeline", "pipeline.json"),
                                                         "JSON (*.json)")
         if not path:
             return
@@ -14692,17 +17043,132 @@ def build_window(model=None):
         except Exception as e:                                # permission / bad path / full disk
             report_error("Could not save pipeline", "%s\n\n%s" % (path, e)); return
         state["dirty"] = False                                # now matches a file on disk
+        state["sample_stages"] = None                         # 以後の基準はファイル(見本の形に戻しても未保存)
         state["pipe_path"] = os.path.abspath(path)
         _push_recent(path); _set_title()
-        flash("saved " + os.path.basename(path))
+        flash(tr("saved %s") % os.path.basename(path))
+
+    def _pending_notice():
+        """確認待ちの結果を誤認させない表示文。Notice that prevents pending input/result confusion."""
+        return tr("The saved input is not loaded yet. Choose how Studio should continue.")
+
+    def _decode_confirmed_input(held):
+        """保持済みの同じバイト列を復号する。Decode the same bytes already held after confirmation."""
+        message = ""
+        try:
+            arr = imgio._load_bytes(held["data"], source=held["path"])
+        except Exception as exc:                            # noqa: BLE001
+            arr = None
+            message = "input could not be decoded after confirmation: %s" % exc
+        if arr is not None:
+            return arr, message
+        # バイト列から復号できない形式はパスの予備 reader を使うが、保持時と同じファイルだけを採用する。
+        # For path-only formats, require the path to retain the digest of the held bytes.
+        try:
+            arr = imgio.load(held["path"])
+            same_bytes = file_sha256(held["path"]) == held["sha256"]
+        except Exception as exc:                            # noqa: BLE001
+            return None, "input could not be decoded after confirmation: %s" % exc
+        if not same_bytes:
+            return None, "input file changed while it was being read: %s" % held["path"]
+        return arr, message
+
+    def _finish_confirmed_input(arr, path, note=""):
+        """確認した入力を現在画像にする。Make the confirmed input the current image."""
+        model.set_image(arr)
+        state["image_path"] = os.path.abspath(path)
+        state["input_sample"] = None
+        model.input_path = state["image_path"]
+        model.kept_input_ref = None
+        state["fit_next"] = True
+        state["input_pending"] = None
+        state["input_notes"] = [note] if note else []
+        _push_recent(path); _set_title()
+        show_result()
+        if note:
+            view.set_notice(note); flash(note)
+        else:
+            view.set_notice(None); flash(tr("loaded %s") % os.path.basename(path))
+        return True
+
+    def _input_confirm_read():
+        """明示確認後に一度だけ saved input を読み hash と復号へ使う。Read once after consent."""
+        pending = state.get("input_pending")
+        if not pending:
+            return False
+        result = _read_confirmed_input(pending["ref"], pending["base_dir"])
+        if result.get("data") is None:
+            state["input_notes"] = [result["message"]]
+            view.set_notice(_pending_notice() + "\n" + result["message"])
+            _refresh_problems_only(); flash(result["message"])
+            return False
+        held = {"data": result["data"], "sha256": hashlib.sha256(result["data"]).hexdigest(),
+                "path": result["path"]}
+        if result["status"] == "changed":
+            message = tr("This image differs from the one saved with the pipeline")
+            pending["held"] = held
+            state["input_notes"] = [message]
+            view.set_notice(_pending_notice() + "\n" + message)
+            _refresh_problems_only(); flash(message)
+            return False
+        arr, message = _decode_confirmed_input(held)
+        if arr is None:
+            state["input_notes"] = [message]
+            view.set_notice(_pending_notice() + "\n" + message)
+            _refresh_problems_only(); flash(message)
+            return False
+        return _finish_confirmed_input(arr, held["path"])
+
+    def _input_confirm_adopt():
+        """保持した不一致画像だけを再読取りせず採用する。Adopt only the held mismatching image."""
+        pending = state.get("input_pending")
+        held = pending.get("held") if pending else None
+        if not held:
+            return False
+        arr, message = _decode_confirmed_input(held)
+        if arr is None:
+            state["input_notes"] = [message]
+            view.set_notice(_pending_notice() + "\n" + message)
+            _refresh_problems_only(); flash(message)
+            return False
+        note = tr("This image differs from the one saved with the pipeline")
+        return _finish_confirmed_input(arr, held["path"], note)
+
+    def _input_confirm_choose():
+        """通常の画像選択で pending/kept input を置き換える。Replace it via the normal chooser."""
+        if not state.get("input_pending") and model.kept_input_ref is None:
+            return False
+        loaded = load_image()
+        if loaded:
+            _refresh_problems_only()
+        return bool(loaded)
+
+    def _input_confirm_keep():
+        """現在画像を使う選択を可視の注記と共に確定する。Keep current image with a visible note."""
+        pending = state.get("input_pending")
+        if not pending:
+            return False
+        model.kept_input_ref = dict(pending["ref"])
+        state["input_pending"] = None
+        message = tr("This result uses the current image, not the input saved with the pipeline.")
+        state["input_notes"] = [message]
+        view.set_notice(message)
+        _refresh_problems_only(); flash(message)
+        return True
+
+    win._input_confirm = {
+        "read": _input_confirm_read,
+        "adopt": _input_confirm_adopt,
+        "choose": _input_confirm_choose,
+        "keep": _input_confirm_keep,
+    }
 
     def _open_pipe_path(path):
-        import json
         if not confirm_discard("Open pipeline"):
             return
         try:
-            with open(path, encoding="utf-8") as fh:          # missing / permission
-                data = engine._loads_limited(fh.read(), label="pipeline JSON")
+            from json_strict import read_untrusted
+            data = read_untrusted(path, label="pipeline JSON")
             snap = [_copy_stage(st) for st in model.stages]
             model.load_dict(data, recompute_pins=False)       # schema + op-name validation; pins after the image
             win._undo_stack.append(snap)                      # fork history only on success
@@ -14715,14 +17181,20 @@ def build_window(model=None):
             report_error("Could not open pipeline", "%s\n\n%s" % (path, e)); return
         state["pipe_path"] = os.path.abspath(path)
         state["dirty"] = False                            # freshly loaded == matches the file
+        state["sample_stages"] = None                     # 基準はファイル
         # the file's directives (or none) replace the previous program's dev_* lines —
         # they never leak from one pipeline into the next (F11 review finding)
         state["dev_lines"] = list(model.directives)
         state["code_dirty"] = False
-        code_edit.breakpoints.clear()
+        _pm = getattr(win, "_pymode", None)
+        if _pm is None or not _pm.active:                 # Python のモードの間、編集欄の印は Python の文面の物(消さない。
+            code_edit.breakpoints.clear()                 # パイプラインの文面の印は on_pipeline_opened が消す)
         state["input_notes"] = []
+        state["input_pending"] = None
+        view.set_notice(None)
         if model.input_ref:                               # the input the project was saved with
-            res = resolve_input_ref(model.input_ref, os.path.dirname(os.path.abspath(path)))
+            base_dir = os.path.dirname(os.path.abspath(path))
+            res = resolve_input_ref(model.input_ref, base_dir)
             if res["path"]:
                 if _load_image_path(res["path"]):         # ok / relinked: silent; changed: loaded + warned
                     if res["status"] == "changed":
@@ -14731,23 +17203,143 @@ def build_window(model=None):
                         flash(res["message"])
                 else:
                     state["input_notes"] = ["input could not be read: %s" % res["path"]]
+            elif res["status"] == "needs_confirmation":
+                state["input_pending"] = {
+                    "given": res["given"], "reason": res["reason"],
+                    "base_dir": base_dir, "ref": dict(model.input_ref),
+                }
+                state["input_notes"] = [res["message"]]
             else:
                 state["input_notes"] = [res["message"]]   # missing: keep the current image
         model.recompute_pins()                            # snapshots are saved without their pictures: rebuild them now
         refresh_stage_list(select=len(model.stages) - 1)
         update_ab()
-        if model.directives:
-            apply_dev_directives("\n".join(model.directives), reclaim_stale=True)
         show_result()
-        if model.directives:
-            apply_text_directives("\n".join(model.directives))
+        if state.get("input_pending"):
+            dock_pipe.show(); dock_pipe.raise_()             # choices must be visible, not buried in a tabbed dock
+            view.set_notice(_pending_notice())
         _push_recent(path); _set_title()
-        flash("loaded " + os.path.basename(path))
+        flash(tr("loaded %s") % os.path.basename(path))
+        if _pm is not None:                                  # パイプラインのファイルはパイプラインのモードで見せる
+            _pm.on_pipeline_opened(path)
+        # ★2026-11-13(第 3 回レビュー S5): 開く前の Program の文面(未適用の編集)は、上の確認で「捨てる」と答えた物。
+        #   編集欄にフォーカスがあっても、開いた段の列から文面を作り直す(作り直さないと、捨てたはずの文面が残り、
+        #   Apply で開いたパイプラインがその文面に置き換わった)。setPlainText なので Undo の履歴も空になる。
+        sync_program(force=True)
+        if _pm is None or not _pm.active:
+            if model.directives:
+                n_directives = len(model.directives)
+                pending = tr("%d directive(s) in this file are not applied yet — press Apply in the Program pane to apply them") % n_directives
+                state["directives_pending"] = n_directives
+                code_status.setText(pending)
+                flash(pending)
+            else:
+                state["directives_pending"] = 0
+                code_status.setText("ready")                 # directive が無いファイルは従来どおり
+        if state.get("input_pending"):
+            view.set_notice(_pending_notice())                # sync_program clears its own stale-result notice
     win._open_pipe_path = _open_pipe_path
     win._refresh_stage_list = refresh_stage_list
 
+    # ---- 第 2 便: プロジェクト(フォルダ)のパネル。行き先は種類ごとに 1 つの関数 -------------------------------------- #
+    def open_python_file(path):
+        """プロジェクトの .py を開く行き先(1 か所)。Program 欄に Python のモードで開く。**開いただけでは import も
+        exec もしない**(初回の実行の前に確認する。studio_pymode)。"""
+        state["python_note"] = path
+        _pm = getattr(win, "_pymode", None)
+        if _pm is None:
+            flash(tr("Python mode comes in the next version: %s was not run") % os.path.basename(path))
+            return False
+        return _pm.open_program(path)
+    win._open_python_file = open_python_file
+
+    def open_params_file(path):
+        """プロジェクトのパラメータ・定義(.json / .toml / .yaml / .yml / .xml)を開く行き先(1 か所)。いまは読み取り専用の表示。"""
+        try:
+            text, cut = studio_project.read_text_limited(path)
+        except OSError as e:
+            report_error("Could not open file", "%s\n\n%s" % (path, e)); return None
+        title = os.path.basename(path) + " (" + tr("read-only") + ")"
+        sub_ = open_code_window(title, text + ("\n\n... " + tr("(cut: the file is larger than 1 MB)") if cut else ""),
+                                source_path=os.path.abspath(path))
+        return sub_
+    win._open_params_file = open_params_file
+
+    def _proj_path(kind, default=""):
+        """プロジェクトが開いている間の、保存・開くダイアログの初期位置(種類の置き場所。無ければ聞く)。閉じていれば *default*。"""
+        pj = getattr(win, "_project", None)
+        if not pj or not pj["root"]():
+            return default
+        d = pj["ensure_kind_dir"](kind)
+        return (os.path.join(d, default) if default else d) if d else default
+    win._proj_path = _proj_path
+
+    def _pick_dir(title, start):
+        return QtWidgets.QFileDialog.getExistingDirectory(win, title, start or "")
+
+    def _ask_text(title, label, default):
+        text, ok = QtWidgets.QInputDialog.getText(win, title, label, QtWidgets.QLineEdit.Normal, default)
+        return text if ok else None
+
+    def _rebuild_recent_folders():
+        menu = win._recent_folders_menu
+        menu.clear()
+        paths = win._project["recent"]()
+        if not paths:
+            menu.addAction(tr("(no recent folders)")).setEnabled(False); return
+        for p_ in paths:
+            a_ = menu.addAction(os.path.basename(p_.rstrip("\\/")) or p_); a_.setToolTip(p_)
+            a_.triggered.connect(lambda _=False, x=p_: win._project["open_dir"](x))
+
+    def _project_changed():
+        _set_title(); _rebuild_recent_folders()
+        pj = win._project
+        if pj["root"]():
+            win._layout_state = studio_layout.set_override(win._layout_state, "project", visible=True, collapsed=False)
+            _apply_layout_state(); dock_project.raise_(); _save_layout_state()
+
+    _sample_dir = None
+    try:
+        import sample_images as _si_
+        if os.path.isdir(getattr(_si_, "_DIR", "")) and any(
+                f_.lower().endswith(IMAGE_FILE_EXTS) for f_ in os.listdir(_si_._DIR)):
+            _sample_dir = _si_._DIR
+    except Exception:                                      # noqa: BLE001 - サンプルが無くてもパネルは動く(ボタンを付けない)
+        _sample_dir = None
+    win._project = studio_project.build_panel(proj_w, {
+        "tr": tr, "flash": lambda m_: flash(m_), "settings": _settings, "image_exts": IMAGE_FILE_EXTS,
+        "open_image": lambda p_: _load_image_path(p_), "open_pipeline": lambda p_: _open_pipe_path(p_),
+        "open_python": lambda p_: open_python_file(p_), "open_params": lambda p_: open_params_file(p_),
+        "compare_images": lambda ps_: show_image_viewer(list(ps_)),
+        "confirm": lambda t_, x_: bool(CONFIRM_HOOK(win, t_, x_)), "warn": lambda t_, x_: ERROR_HOOK(win, t_, x_),
+        "pick_dir": _pick_dir, "ask_text": _ask_text, "sample_dir": _sample_dir, "on_change": _project_changed})
+    act_project_open.triggered.connect(lambda _=False: win._project["choose_dir"]())
+    act_project_new.triggered.connect(lambda _=False: win._project["new_project"]())
+
+    def _show_project_panel():
+        win._layout_state = studio_layout.set_override(win._layout_state, "project", visible=True, collapsed=False)
+        _apply_layout_state(); dock_project.show(); dock_project.raise_(); _save_layout_state()
+        win._project["tree"].setFocus()
+    act_project_panel.triggered.connect(lambda _=False: _show_project_panel())
+
+    def _params_strip_rule(w_, h_, now_):
+        return studio_panels.strip_side(w_, h_, now_, win._panels.get("strip_mode", "auto"))
+
+    def open_params_window(paths=()):
+        """D87: the parameter window, as [束] REPORT 8.5 wires it (lang= so its own table is used; the strip,
+        its side rule and the overflow mode of every other panel)."""
+        import studio_params_qt as _pq
+        return _pq.show_params_window(
+            win, list(paths), tr, settings=_settings, confirm=confirm_action, lang=win._lang,
+            strip=lambda: studio_panels.flow_classes()["FlowStrip"]("tools", "params"),
+            strip_rule=_params_strip_rule, overflow=win._panels.get("overflow_mode", "scroll"))
+    win._open_params_window = open_params_window
+    act_params_window.triggered.connect(lambda _=False: open_params_window())
+    win._show_project_panel = _show_project_panel
+    _rebuild_recent_folders()
+
     def open_pipe():
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", "", "JSON (*.json)")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", _proj_path("pipeline"), "JSON (*.json)")
         if path:
             _open_pipe_path(path)
 
@@ -14792,9 +17384,10 @@ def build_window(model=None):
         handled = any(kinds[k] for k in ("images", "scripts", "pipelines", "models3d", "videos", "arrays", "events",
                                          "documents", "audio"))
         if kinds["other"] and not handled:
-            flash("drop: unsupported file '%s' — drop images / a folder, .py, .json, 3-D (ply, splat, obj, stl, pcd, "
-                  "glb, las, urdf, bvh, swc, nii, dcm …), video (mp4, avi, animated gif, hdf), events (x y t p), "
-                  ".md / .svg, audio (wav, mp3, flac …) or .npy" % os.path.basename(kinds["other"][0]))
+            # L9(2026-11-13、初回起動の点検): 300 字の英語の形式の並びだった。1 行で言い、一覧の在りかを指す
+            _what = os.path.basename(kinds["other"][0])
+            flash(tr("Studio cannot open '%s'. Help ▸ Files you can open lists what it can (images, folders, "
+                     "3-D, video, audio …)") % _what)
 
     def _open_events(path):
         """イベントカメラのファイル → 極性つきのコマ (T, H, W) → 動画の立方体(ON = 明、OFF = 暗、0 = 灰)。"""
@@ -14841,7 +17434,7 @@ def build_window(model=None):
         return [x for x in (v or []) if isinstance(x, str)]
 
     def _save_recent(paths):
-        _settings().setValue(_RECENT_KEY, paths[:_RECENT_MAX])
+        _write_settings({_RECENT_KEY: paths[:_RECENT_MAX]}, what="recent files")
         _rebuild_recent_menu()
 
     def _push_recent(path):
@@ -14851,7 +17444,7 @@ def build_window(model=None):
 
     def _open_recent(path):
         if not os.path.exists(path):
-            flash("recent file no longer exists: " + os.path.basename(path))
+            flash(tr("recent file no longer exists: %s") % os.path.basename(path))
             _save_recent([x for x in _recent_paths()
                           if os.path.normcase(x) != os.path.normcase(os.path.abspath(path))])
             return
@@ -14869,7 +17462,12 @@ def build_window(model=None):
             a = menu.addAction(os.path.basename(pth)); a.setToolTip(pth)
             a.triggered.connect(lambda _=False, x=pth: _open_recent(x))
         menu.addSeparator()
-        menu.addAction("Clear recent").triggered.connect(lambda: _save_recent([]))
+        def _clear_recent_asked(_=False):
+            if confirm_action(win, tr("Clear recent"),
+                              tr("The list of %d recently opened file(s) is erased. The files themselves are not "
+                                 "touched; the list cannot be brought back.") % len(paths), tr("Clear the list")):
+                _save_recent([])
+        menu.addAction("Clear recent").triggered.connect(_clear_recent_asked)
     win._rebuild_recent_menu = _rebuild_recent_menu
 
     b_savep.clicked.connect(save_pipe); b_openp.clicked.connect(open_pipe)
@@ -14882,26 +17480,33 @@ def build_window(model=None):
             info = studio_display.pixel_readout(raw, rng, y, x)
             if info is None:
                 return
-            value = info["value"]
-            value_text = value if isinstance(value, str) else format(value, ".4g")
-            shown = "—" if info["display_value"] is None else str(info["display_value"])
-            readout.setText("値 %s (%s) / 表示 %s / レンジ %s〜%s" % (
-                value_text, info["dtype"], shown, format(info["lo"], ".4g"),
-                format(info["hi"], ".4g")))
+            readout.setText(format_pixel_readout(info, x, y))          # M5: 座標つき、UI の言語
         elif np.ndim(v) == 0:
             readout.setText(f"x={x}  y={y}   value={float(v):.4f}")
         else:
             readout.setText(f"x={x}  y={y}   RGB=({float(v[0]):.3f},{float(v[1]):.3f},{float(v[2]):.3f})")
     view.hover_cb = on_hover
+    win._readout = readout
     win._format_display_readout = lambda image, rng, y, x: (
-        None if studio_display.pixel_readout(image, rng, y, x) is None else
-        "値 %s (%s) / 表示 %s / レンジ %s〜%s" % (
-            (lambda z: z if isinstance(z, str) else format(z, ".4g"))(
-                studio_display.pixel_readout(image, rng, y, x)["value"]),
-            studio_display.pixel_readout(image, rng, y, x)["dtype"],
-            studio_display.pixel_readout(image, rng, y, x)["display_value"],
-            format(studio_display.pixel_readout(image, rng, y, x)["lo"], ".4g"),
-            format(studio_display.pixel_readout(image, rng, y, x)["hi"], ".4g")))
+        lambda info: None if info is None else format_pixel_readout(info, x, y))(
+            studio_display.pixel_readout(image, rng, y, x))
+    win._readout = readout
+
+    def _rehide_readout():
+        if status.currentMessage() and readout.isVisible():
+            readout.hide()
+            # QStatusBar 自身と同じ印: 明示的に隠した事にしない(文が消えた時に QStatusBar が読み取りを出し直せる)
+            readout.setAttribute(QtCore.Qt.WA_WState_ExplicitShowHide, False)
+
+    class _ReadoutGuard(QtCore.QObject):
+        """一時的な文が出ている間に読み取りの欄が出たら隠し直す(2026-11-13、M5 の続き)。
+        QStatusBar は並べ直すたびに普通の欄を出し直すので、実行中に右の欄が変わると文と読み取りが重なって描かれた。"""
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.Show and status.currentMessage():
+                QtCore.QTimer.singleShot(0, _rehide_readout)
+            return False
+    _readout_guard = _ReadoutGuard(readout)
+    readout.installEventFilter(_readout_guard)
 
     def _display_settings_changed(*_):
         manual = range_manual.isChecked()
@@ -14948,7 +17553,44 @@ def build_window(model=None):
         if not _w.toolTip():
             _w.setToolTip(_n)
 
-    win.close_guard = lambda: confirm_discard("Quit Fullseye Studio")
+    win.close_guard = lambda: ((getattr(win, "_pymode", None) is None or win._pymode.confirm_close())
+                               and close_guard())
+
+    def _rescue_unsaved():
+        """``[(suffix, text), ...]`` of the unsaved work (the same three things the quit confirmation counts):
+        the pipeline as Save pipeline writes it (opens with Open pipeline), the unapplied Program text and
+        each unsaved Python-editor tab. Nothing is run or evaluated; the texts are written as they are.
+
+        Each piece is read on its own (the quit confirmation that failed may have failed on one of them):
+        when it cannot tell whether the pipeline is unsaved, it keeps a copy anyway."""
+        out = []
+        try:
+            pipe_dirty = _pipeline_unsaved()
+        except Exception as exc:                            # noqa: BLE001 -- 分からない時は写す側に倒す
+            _log_soft_failure("could not tell whether the pipeline is unsaved", exc)
+            pipe_dirty = bool(model.stages)
+        try:
+            if pipe_dirty:
+                out.append(("pipeline.json", json.dumps(model.to_dict(), indent=2)))
+        except Exception as exc:                            # noqa: BLE001
+            _log_soft_failure("could not write out the pipeline to keep a copy", exc)
+        try:
+            if state.get("code_dirty"):
+                out.append(("program.txt", code_edit.toPlainText()))
+        except Exception as exc:                            # noqa: BLE001
+            _log_soft_failure("could not read the Program text to keep a copy", exc)
+        try:
+            pe = state.get("pyedit")
+            tabs = pe.get("tabs") if pe is not None else None
+            if tabs is not None:
+                for i in range(tabs.count()):
+                    ed = tabs.widget(i)
+                    if getattr(ed, "_dirty", False):
+                        out.append(("editor_tab%d.py" % (i + 1), ed.toPlainText()))
+        except Exception as exc:                            # noqa: BLE001
+            _log_soft_failure("could not read the editor tabs to keep a copy", exc)
+        return out
+    win.rescue_unsaved = _rescue_unsaved
     win._perception = {"model": pmodel, "mode": percep_mode, "run": run_perception}
     win._flash = flash
     win._state = state                                   # for tests / headless driving
@@ -14971,19 +17613,69 @@ def build_window(model=None):
         "zoom_in": act_zin, "zoom_out": act_zout, "fit": act_fit,
         "actual_size": act_11, "surface_3d": act_3d, "reset": act_reset, "step": act_step,
         "run_all": act_runall, "holdout": act_holdout, "palette": act_palette, "shortcuts": act_shortcuts,
+        "selected_help": act_selected_help,
         "verify_exported": act_roundtrip, "batch_apply": act_batch,
         "feature_inspection": act_featins, "viewer_3d": act_viewer3d,
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
         "dbg_run": act_dbg_run, "dbg_step": act_dbg_step, "dbg_reset": act_dbg_reset,
         "duplicate_stage": act_dup, "bypass": act_bypass, "move_top": act_top, "move_bottom": act_bottom,
-        "focus_search": act_focus_search, "pin_a": act_pin,
+        "focus_search": act_focus_search, "pin_a": act_pin, "run_selection": act_run_sel,
+        "project_open": act_project_open, "project_new": act_project_new, "project_panel": act_project_panel,
+        "params_window": act_params_window,
     }
     win._actions.update(_palette_extra)                 # Tools ▸ Run a ledger op もパレットから
+
+    # ★2026-11-12 IDE 第 1 便 / STUDIO_UX_RULES §1: Program 欄の機能にも「メニュー・パレット・キー」の入口を付ける。
+    #   キーは欄にフォーカスがある時だけ(欄の部品が先に受ける)。ウィンドウ全体の Ctrl+F / Ctrl+H / F1 は奪わない。
+    def _program_action(key, text, shortcuts, tip, do, menu_key):
+        a = _act(text, None, tip)
+        a.setShortcuts([QtGui.QKeySequence(s_) for s_ in shortcuts])
+        a.setShortcutContext(QtCore.Qt.WidgetShortcut)      # Program 欄にフォーカスがある時だけ(窓全体のキーと別の文脈)
+        code_edit.addAction(a)
+
+        def _go(_=False):
+            win._docks["program"].show(); win._docks["program"].raise_()
+            code_edit.setFocus()
+            do()
+        a.triggered.connect(_go)
+        win._actions[key] = a
+        win._menus[menu_key].addAction(a)
+        return a
+    _edit_sep = win._menus["edit"].addSeparator()
+    _program_action("program_find", "Find in Program", ["Ctrl+F"],
+                    "Search inside the Program text (the operator search box keeps Ctrl+F elsewhere)",
+                    lambda: code_edit.open_find(False), "edit")
+    _program_action("program_replace", "Replace in Program", ["Ctrl+H"],
+                    "Search and replace inside the Program text; Replace all is one undo step",
+                    lambda: code_edit.open_find(True), "edit")
+    _program_action("program_find_next", "Find next in Program", ["F3"],
+                    "Go to the next match of the Program search", lambda: code_edit._ide_do("next"), "edit")
+    _program_action("program_find_prev", "Find previous in Program", ["Shift+F3"],
+                    "Go to the previous match of the Program search", lambda: code_edit._ide_do("prev"), "edit")
+    _program_action("program_comment", "Comment / uncomment lines", ["Ctrl+/"],
+                    "Toggle the line comment (* ) on the selected Program lines; one undo step",
+                    lambda: code_edit.toggle_comment(), "edit")
+    _program_action("program_font_bigger", "Bigger editor text", ["Ctrl++", "Ctrl+="],
+                    "Make the Program text one point bigger (6 to 32; also Ctrl + mouse wheel)",
+                    lambda: code_edit.zoom(1), "view")
+    _program_action("program_font_smaller", "Smaller editor text", ["Ctrl+-"],
+                    "Make the Program text one point smaller (6 to 32; also Ctrl + mouse wheel)",
+                    lambda: code_edit.zoom(-1), "view")
+    _program_action("program_help_here", "Help for the operator under the cursor", ["Shift+F1"],
+                    "Open the help of the operator the Program cursor is on; the keyboard shortcuts list stays on F1",
+                    lambda: code_edit.help_for_word(), "help")
     win.addAction(act_focus_search)          # app-wide Ctrl+F -> operator search
+    win.addAction(act_project_panel)         # 第 2 便: Ctrl+Shift+J = プロジェクトのパネル(ほかの割り当てと重ならない)
+    QtCore.QTimer.singleShot(0, lambda: win._project["restore"]())   # 最後に開いていたフォルダと木の開閉を戻す
     # -- multi-monitor: pop every tool panel out as its own top-level window --- #
     def float_all_panels(floating=True):
-        for d in win._docks.values():
-            d.setFloating(floating)
+        for _k, d in win._docks.items():
+            if floating and d.isHidden():
+                continue                          # D60: only the panels that are shown become windows
+            if floating:
+                studio_panels.toggle_float(win, _k, True)     # by the main window, on a screen
+            else:
+                d.setFloating(False)
         if win._flash:
             win._flash("panels floated for multi-display" if floating else "panels re-docked")
     act_float_all = _act("Float all panels (multi-display)", None,
@@ -14992,6 +17684,7 @@ def build_window(model=None):
     menu_panels.addAction(act_float_all); menu_panels.addAction(act_dock_all)
     act_float_all.triggered.connect(lambda: float_all_panels(True))
     act_dock_all.triggered.connect(lambda: float_all_panels(False))
+    win._actions["dock_all"] = act_dock_all; win._actions["reset_layout"] = act_reset_layout   # one QAction each (studio_panels)
     win._float_all_panels = float_all_panels
 
     # -- per-panel float control (finer than all-or-nothing float) ------------ #
@@ -15039,7 +17732,7 @@ def build_window(model=None):
             top = QtWidgets.QMainWindow(win)
             top.setWindowFlag(QtCore.Qt.Window, True)
             top.setWindowTitle((title or "Graphics") + " — detached")
-            top.setStyleSheet(THEME)
+            top.setStyleSheet(win.styleSheet())
             if os.path.exists(_ICON_PATH):
                 top.setWindowIcon(QtGui.QIcon(_ICON_PATH))
             if inner is not None:
@@ -15087,17 +17780,11 @@ def build_window(model=None):
     def _persist_presets():
         if os.environ.get("QT_QPA_PLATFORM") == "offscreen":
             return                                 # tests keep presets in-memory only
-        try:
-            s = _settings()
-            s.beginGroup("layout_presets"); s.remove("")
-            for nm, (geo, st) in win._preset_store.items():
-                s.beginGroup(nm)
-                s.setValue("geometry", geo); s.setValue("state", st)
-                s.endGroup()
-            s.endGroup()
-        except Exception as e:
-            _log_soft_failure("could not save layout presets", e)
-            flash("could not save layout presets: %s" % truncate(e, 100))
+        values = {}
+        for nm, (geo, st) in win._preset_store.items():
+            values["layout_presets/%s/geometry" % nm] = geo
+            values["layout_presets/%s/state" % nm] = st
+        _write_settings(values, remove=["layout_presets"], what="layout presets")
 
     def save_layout_preset(name):
         """Capture the current window geometry + full dock/toolbar arrangement under
@@ -15138,7 +17825,10 @@ def build_window(model=None):
 
     # built-in deterministic arrangements (no saved state needed)
     def layout_balanced():
-        win._reset_layout()                        # restore factory state + show all docks
+        win._reset_layout()                        # the first-run arrangement ...
+        for _k in ("operators", "pipeline", "display", "program", "variables"):
+            win._docks[_k].show()                  # ... then every main panel (the rest stay on the panel bar)
+        win._docks["operators"].raise_()
         win._flash and win._flash("layout: balanced (default)")
 
     def layout_graphics_focus():
@@ -15168,11 +17858,19 @@ def build_window(model=None):
 
     layouts_menu = _menu(menu_windows, "Layout", "layout")
 
+    win._confirm_action = lambda t_, x_, a_: confirm_action(win, t_, x_, a_)
+
     def _prompt_save_layout():
         try:
             name, ok = QtWidgets.QInputDialog.getText(win, "Save layout", "Layout name:")
             if ok and str(name).strip():
-                save_layout_preset(str(name).strip())
+                _nm = str(name).strip()
+                if _nm in win._preset_store and not confirm_action(
+                        win, tr("Save layout"),
+                        tr("A layout named '%s' already exists. Saving replaces it with the arrangement you have now; "
+                           "the old one cannot be brought back.") % _nm, tr("Replace the layout")):
+                    return
+                save_layout_preset(_nm)
         except Exception:
             pass
 
@@ -15192,17 +17890,13 @@ def build_window(model=None):
                     lambda _=False, n=nm: apply_layout_preset(n))
             for nm in sorted(win._preset_store):
                 layouts_menu.addAction("Delete layout: %s" % nm).triggered.connect(
-                    lambda _=False, n=nm: delete_layout_preset(n))
+                    lambda _=False, n=nm: confirm_action(
+                        win, tr("Delete layout"),
+                        tr("The saved layout '%s' is deleted. It cannot be brought back.") % n,
+                        tr("Delete the layout")) and delete_layout_preset(n))
     win._rebuild_layouts_menu = _rebuild_layouts_menu
     win._layouts_menu = layouts_menu
-
-    # per-panel float as flat items in Panels (avoids a 3rd nesting level) + reset
-    menu_panels.addSeparator()
-    for _k, _lbl in (("operators", "Operators"), ("pipeline", "Pipeline · Parameters"),
-                     ("display", "Display · Analysis"), ("program", "Program (code)"),
-                     ("variables", "Variables & Objects")):
-        menu_panels.addAction("Float: %s" % _lbl).triggered.connect(
-            lambda _=False, k=_k: float_panel(k, True))
+    # (D100: the per-panel "Separate window: X" entries are studio_panels' - one per panel, one word)
     menu_panels.addSeparator()
     menu_panels.addAction(act_reset_layout)
     # graphics detach/reattach live under the Graphics windows submenu
@@ -15331,6 +18025,7 @@ def build_window(model=None):
         win._label_en.update(labels)
         _apply_tooltips(tips)
         _apply_labels(labels)
+        studio_theme.release_layout_item_wrappers()      # its filled layouts were put together in Python
         return root
     win._localize = localize
 
@@ -15340,11 +18035,24 @@ def build_window(model=None):
         try:
             samples.setItemText(0, tr("— load a sample —"))
             cat.setItemText(0, tr("all categories"))
+            _pj = getattr(win, "_project", None)
+            if _pj:                                          # 第 2 便: プロジェクトのパネル(絞り込みの選択肢・標準フォルダの表示名)
+                _pj["retranslate"](); _pj["reload"]()
+            _fs_examples.setText(_fs_examples_text())        # 帯の「作例(492)」(数つきの文は表の行で引けない)
+            _fs_fit_links()                                  # 文の長さが言語で変わる
+            _update_region_table_button()                    # 「表で見る(N 個)」(数つきの文)
+            refill_ops()                                     # 行の「段としては入れられません」と注記(S2)
             on_op_selected(op_list.currentItem())
             win._knob_spec_op = None                         # つまみの名前を言語で作り直す(spec は同じ)
             i = selected_index()
             refresh_stage_list(select=i if 0 <= i < len(model.stages) else None,
                                sync_code=not model.stages)
+            _cur_msg = status.currentMessage()
+            if _cur_msg and _cur_msg == state.get("run_flash_text"):     # 状態行の『Run: done / Result: …』を新しい言語で
+                _flash_run_validity()
+            _pm = getattr(win, "_pymode", None)
+            if _pm is not None:                              # ★2026-11-13 Python のモードの欄・入口も今の言語へ
+                _pm.retranslate()
         except Exception as exc:                             # noqa: BLE001 -- 表示の再構築が窓を壊さない
             _log_soft_failure("could not rebuild translated texts after a language switch", exc)
 
@@ -15364,14 +18072,71 @@ def build_window(model=None):
         _apply_labels()
         _update_current_indicator()
         _relocalize_dynamic()
+        if getattr(win, "_apply_theme", None) is not None:
+            win._apply_theme(save=False)          # the UI font stack is per language
         for code, a in win._lang_actions.items():
             a.setChecked(code == win._lang)
-        try:
-            if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-                _settings().setValue("lang", win._lang)
-        except Exception:
-            pass
+        _pw = getattr(win, "_params_window", None)           # D87: the parameter window follows (8.5)
+        if _pw is not None:
+            try:
+                _pw.set_lang(win._lang)
+            except RuntimeError:                         # closed and gone
+                win._params_window = None
+        if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
+            _write_settings({"lang": win._lang}, what="language setting")
+        # rebuilt rows and panels: no wrapper of a Qt-made layout item may outlive its item (studio_theme.LayoutEntry)
+        studio_theme.release_layout_item_wrappers()
     win._apply_language = apply_language
+
+    # ---- colour scheme + density (studio_theme.py; decision 2026-11-12) ------------------------ #
+    def apply_theme(theme=None, level=None, save=True):
+        """Switch scheme and / or density now: style sheet (with the UI language's font stack),
+        every themed widget / icon / highlighter / image ground, the density pass. Saved for next start."""
+        studio_theme.set_current(theme, level)
+        qss = studio_theme.build_qss(lang=_UI_LANG["code"], text_px=win.fontMetrics().height())
+        win.setStyleSheet(qss)
+        for _top in list(getattr(win, "_detached_graphics", []) or []):
+            try:
+                _top.setStyleSheet(qss)
+            except RuntimeError:
+                pass
+        _refresh_themed()
+        _apply_density(win)
+        studio_panels.refresh(win, tr, _UI_LANG["code"])
+        studio_theme.apply_code_fonts(win)            # the density pass rewrote the op list's own sheet
+        _theme_menu.setTitle(tr("Colour scheme")); _density_menu.setTitle(tr("Density"))
+        for _k, _a in win._theme_actions.items():
+            _a.setChecked(_k == studio_theme.current_name())
+            _a.setText(tr(studio_theme.THEME_LABELS[_k]))
+            _a.setToolTip(tr("Colour scheme") + ": " + tr(studio_theme.THEME_LABELS[_k]))
+        for _k, _a in win._density_actions.items():
+            _a.setChecked(_k == studio_theme.current_density())
+            _a.setText(tr(studio_theme.DENSITY_LABELS[_k]))
+            _a.setToolTip(tr("Density") + ": " + tr(studio_theme.DENSITY_LABELS[_k]))
+        if save:
+            _write_settings({"ui/theme": studio_theme.current_name(),
+                             "ui/density": studio_theme.current_density()},
+                            what="colour scheme settings")
+        win.update()
+    win._apply_theme = apply_theme
+    win._theme_actions, win._density_actions = {}, {}
+    _theme_menu = menu_view.addMenu(tr("Colour scheme"))
+    _density_menu = menu_view.addMenu(tr("Density"))
+    win._theme_menus = (_theme_menu, _density_menu)        # retain (shiboken ownership)
+    _tg = QtGui.QActionGroup(win); _tg.setExclusive(True)
+    for _k in studio_theme.THEMES:
+        _a = QtGui.QAction(tr(studio_theme.THEME_LABELS[_k]), win); _a.setCheckable(True); _tg.addAction(_a)
+        _a.setToolTip(tr("Colour scheme") + ": " + tr(studio_theme.THEME_LABELS[_k]))
+        _a.triggered.connect(lambda _c=False, k=_k: apply_theme(theme=k))
+        _theme_menu.addAction(_a); win._theme_actions[_k] = _a; win._actions["theme_" + _k] = _a
+    _dg = QtGui.QActionGroup(win); _dg.setExclusive(True)
+    for _k in studio_theme.DENSITIES:
+        _a = QtGui.QAction(tr(studio_theme.DENSITY_LABELS[_k]), win); _a.setCheckable(True); _dg.addAction(_a)
+        _a.setToolTip(tr("Density") + ": " + tr(studio_theme.DENSITY_LABELS[_k]))
+        _a.triggered.connect(lambda _c=False, k=_k: apply_theme(level=k))
+        _density_menu.addAction(_a); win._density_actions[_k] = _a; win._actions["density_" + _k] = _a
+    win._theme_groups = (_tg, _dg)
+    win._actions["reduce_motion"] = studio_panels.reduce_motion_action(win, menu_view, _settings, tr)
 
     # Data-driven from studio_assets/i18n.json 'languages' — add a language there,
     # no code change. English is always present as the base.
@@ -15384,7 +18149,7 @@ def build_window(model=None):
 
     def show_guide():
         try:
-            QtWidgets.QMessageBox.information(win, "Fullseye Studio — guide",
+            QtWidgets.QMessageBox.information(win, tr("Fullseye Studio — guide"),
                                              HELP_I18N.get(win._lang, HELP_I18N["en"]))
         except Exception:
             pass
@@ -15395,7 +18160,7 @@ def build_window(model=None):
         dlg = QtWidgets.QDialog(win); tag_dialog(dlg, "reference"); dlg.setModal(False)
         dlg.setWindowTitle(tr("Files you can open"))
         lay = QtWidgets.QVBoxLayout(dlg)
-        tb_ = QtWidgets.QTextBrowser(); tb_.setHtml(_drop_formats_html()); lay.addWidget(tb_)
+        tb_ = QtWidgets.QTextBrowser(); tb_.setHtml(_themed_html(_drop_formats_html())); lay.addWidget(tb_)
         dlg._browser = tb_
         dlg.resize(860, 620); dlg.show()
         win._last_formats_help = dlg
@@ -15688,8 +18453,9 @@ def build_window(model=None):
                     mapping = {p: w.currentText() for p, w in st["column_widgets"].items()}
                     check_text = gauge_rr_data_check(st["csv"]["table"], mapping)
                     st["data_check"].setText(check_text)
-                    _settings().setValue(mapping_key(st["csv"]["signature"]),
-                                         json.dumps(mapping, ensure_ascii=False, sort_keys=True))
+                    _write_settings({mapping_key(st["csv"]["signature"]):
+                                     json.dumps(mapping, ensure_ascii=False, sort_keys=True)},
+                                    what="CSV column mapping")
                 data, dnames, kwargs, prov, from_sample = gather()
                 st["script"] = ledger_script(st["op"], prov, kwargs, from_sample,
                                              image_path=state.get("image_path"),
@@ -15792,6 +18558,28 @@ def build_window(model=None):
     except Exception:
         pass
 
+    win._panel_buttons = {                       # panel buttons -> the panel menus (studio_panels); a name the window
+        "program": {"run": c_run, "continue": c_cont, "step": c_step, "reset": c_reset, "apply": c_apply, "sync": c_sync},
+        "variables": {"display_new": v_disp, "display_here": v_here, "watch_remove": w_del},
+        "ab": {"restore": ab_restore, "adopt": ab_adopt, "keep": ab_keep},       # has in win._actions = that QAction
+        "operators": {"insert": b_insert, "run_once": b_run_once, "help": b_help},
+        "pipeline": {"remove": b_rm, "move_up": b_up, "move_down": b_dn, "reset": b_reset, "step": b_step,
+                     "run_all": b_runall, "open_pipeline": b_openp, "save_pipeline": b_savep, "export": b_export},
+        "graphics_1": {"open_image": b_load, "demo": b_demo, "save_result": b_save, "zoom_in": b_zin,
+                       "zoom_out": b_zout, "fit": b_fit, "actual_size": b_11}}
+    for _lab in (readout, win._img_info, op_param, stage_detail):   # D121: figures and signatures keep the code face;
+        _lab.setProperty("figures", True)                           # every other hint label is a sentence (UI face)
+    win._panel_strips = {                        # each panel's tool strip: (its row of buttons, what it stands beside;
+        "program": (crow, None), "operators": (oprow, None), "pipeline": (erow, None, xrow),   # None = the whole
+        # panel; a third: rows whose buttons join the strip as more groups - the Pipeline's Export & I/O)
+        "variables": (vrow, None), "ab": (_abbtn, None), "graphics_1": (itop, view)}
+    studio_panels.install(win, tr, _settings)   # panel bar + title bands + first-run arrangement (image + code)
+    menu_panels.addSeparator()
+    menu_panels.addAction(act_params_window)    # D87: Window ▸ Panels ▸ Parameters… (keep Window grouped)
+    studio_theme.watch_code_fonts(QtWidgets.QApplication.instance())   # dialogs / editor tabs built later
+    win._brand_follow = studio_panels.follow_progress(      # runs / batches; D99: how the run really ended
+        win._brand, run_progress, run_status, outcome=lambda: getattr(win, "_run_outcome", "done"))
+    apply_theme(save=False)                  # scheme + density on every widget built above (2026-11-12)
     # Default (factory) panel layout — captured before any saved layout is applied,
     # so "Reset panel layout" always has somewhere to go back to.
     win._default_state = win.saveState()
@@ -15805,21 +18593,13 @@ def build_window(model=None):
     except (TypeError, ValueError) as exc:
         _log_soft_failure("could not restore work-mode layout", exc)
     try:                                     # restore the user's remembered geometry + layout
-        if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
-            s = _settings()
-            geo = s.value("geometry")
-            # Only reuse a saved dock layout from the SAME layout version. The current
-            # default (v3: image-dominant central, Program tall on the right, op/var
-            # panels compact) differs from older saves, so a stale windowState is
-            # ignored and the new default shows.
-            st = s.value("windowState") if str(s.value("layout_version")) == "3" else None
-            if geo:
-                win.restoreGeometry(geo)
-            if st:
-                win.restoreState(st)
-                _restored_dock_state = True
-    except Exception:
-        pass
+        if studio_panels.persist_enabled():
+            # Only a saved dock layout of the SAME layout version is reused (studio_panels.LAYOUT_VERSION);
+            # a blob restoreState refuses, or one that hides every main panel, leaves the first-run
+            # arrangement (2026-11-12).
+            _restored_dock_state = studio_panels.restore_layout(win, _settings(), dock_layout_usable)
+    except Exception as _e:                  # noqa: BLE001 - a broken store must not stop the window
+        _log_soft_failure("could not restore the saved panel layout", _e)
     win.first_layout_pending = not _restored_dock_state     # 保存済みの dock 配置を使った起動では比を触らない
     if _restore_work_layout:
         win._apply_layout_state()
@@ -15858,9 +18638,130 @@ def build_window(model=None):
                     pass
                 break
 
+    # ★2026-11-13 Program 欄の Python のモード(studio_pymode)。差し込み口は win._pymode だけ。
+    import studio_pymode
+
+    def _pm_show_value(v):
+        state["worker_result"] = v
+        show_result(refresh_rows=False)
+
+    def _pm_show_panel(name):
+        try:
+            win._layout_state = studio_layout.set_override(win._layout_state, name, visible=True, collapsed=False)
+            _apply_layout_state(); win._docks[name].show(); win._docks[name].raise_(); _save_layout_state()
+        except Exception as exc:                          # noqa: BLE001
+            _log_soft_failure("could not show the %s panel" % name, exc)
+    # ★2026-11-13: Program 欄がどちらの書き方か(パイプライン / Python)を、パネルの題と窓の下の状態の帯にも出す。
+    #   パネルの題の帯に状態を並べる側は、ここ(_pm_panel_title)で受け取る文字列か win._pymode.mode_title() を使う。
+    _mode_status = QtWidgets.QLabel()
+    _mode_status.setObjectName("program_mode_status")
+    win.statusBar().addPermanentWidget(_mode_status)
+    win._mode_status = _mode_status
+
+    def _pm_status_mode(text):
+        _mode_status.setText(text)
+
+    _PROGRAM_TITLES = ("Program (code)", "Program (code) — Python", "Program (code) — Pipeline")
+
+    def _pm_panel_title(en_title):
+        """Program のパネルの題を「Program (code) — Python / Pipeline」にする(英語の原文を言語の表に登録し直す)。"""
+        entry = {dock_code: ("wtitle", en_title)}
+        for obj, (kind, en) in list(win._label_en.items()):   # 表示メニューの「このパネルを出す」も同じ名前で呼ぶ
+            if kind == "text" and en in _PROGRAM_TITLES:
+                entry[obj] = (kind, en_title)
+        win._label_en.update(entry)
+        _apply_labels(entry)
+
+    # F5 の説明(実行の入口)もモードに合わせる: Python のモードでは F5 / Ctrl+R / Ctrl+Return は Python として走る
+    _RUN_PY_EN = ((act_runall, "Run as Python", "Run the Program text as Python. Also F5 or Ctrl+R from any panel"),
+                  (act_dbg_run, "Run as Python (F5 / Ctrl+R)",
+                   "Run the Program text as Python (debugger Run); when stopped at a breakpoint: continue"),
+                  (b_runall, None, "Run the Program text as Python (Ctrl+Enter)"))
+    _run_base = {}
+
+    def _pm_run_hints(py):
+        """実行の入口(Run all・F5 の動作・Ctrl+Return のボタン)の名前と説明を Program 欄のモードに合わせる。英語の
+        原文を言語の表に登録し直す(言語を切り替えても今のモードの文が訳される)。パイプラインの側は元の文に戻す。"""
+        if not _run_base:
+            for obj, _text, _tip in _RUN_PY_EN:
+                _run_base[obj] = (win._label_en.get(obj), win._tt_en.get(obj))
+        labels, tips = {}, {}
+        for obj, text_py, tip_py in _RUN_PY_EN:
+            base_label, base_tip = _run_base[obj]
+            if base_label is not None:
+                labels[obj] = win._label_en[obj] = (base_label[0], text_py) if (py and text_py) else base_label
+            if base_tip is not None:
+                tips[obj] = win._tt_en[obj] = tip_py if py else base_tip
+        _apply_labels(labels)
+        _apply_tooltips(tips)
+        _keymap = getattr(win, "_keymap", None)
+        if _keymap is not None:                                # D123: モードで文を戻した後も、帯は名前 — 効果 (キー)
+            import studio_keymap as _keymap_text
+            act_runall.setToolTip(_keymap_text.tooltip_text(
+                act_runall.text().replace("&", "").replace("…", ""), act_runall.statusTip(),
+                _keymap.keymap.keys("run_all")))
+
+    def _pm_first_steps(py):
+        """起動時の案内(最初の 3 手)を Program 欄のモードに合わせる: Python のモードでは「F5 で例を実行」、
+        パイプラインのモードでは今までの「サンプルを開く → op を足す → 実行」。英語の原文を言語の表に登録し直す
+        (言語を切り替えても、今のモードの文が訳される)。"""
+        texts = FIRST_STEPS_PYTHON if py else FIRST_STEPS_PIPELINE
+        labels, tips = {}, {}
+        for lab, en in zip(win._first_steps_labels, texts):
+            labels[lab] = win._label_en[lab] = ("text", en)
+            tips[lab] = win._tt_en[lab] = en
+        _apply_labels(labels)
+        _apply_tooltips(tips)
+    studio_pymode.install(win, {
+        "first_steps": _pm_first_steps,
+        "set_panel_title": _pm_panel_title, "status_mode": _pm_status_mode, "run_hints": _pm_run_hints,
+        "confirm_action": lambda t_, x_, a_: confirm_action(win, t_, x_, a_),
+        "generated_text": _generated_program_text,
+        "on_text_document": lambda d_: d_.contentsChanged.connect(_syntax_timer.start),
+        "sync_undo_actions": _sync_undo_actions,
+        "tr": tr, "lang": lambda: _UI_LANG.get("code", "en"), "flash": flash, "settings": _settings,
+        "edit": code_edit, "status": code_status, "code_layout": cvl,
+        "pipeline_buttons": (c_run, c_cont, c_step, c_reset, c_apply, c_sync),
+        "model": model, "state": state, "show_value": _pm_show_value, "stage_list": stage_list,
+        "dock_vars": dock_vars, "refresh_problems": _refresh_problems_only, "check": check_program_syntax,
+        "sync_program": lambda: sync_program(force=True), "pipeline_text": program_text_from_model,
+        "project_root": lambda: (win._project["root"]() if getattr(win, "_project", None) else None),
+        "proj_path": _proj_path, "set_title": _set_title, "show_panel": _pm_show_panel,
+        "report_error": lambda t_, x_: report_error(t_, x_), "demo_image": demo_image,
+        "act": _act, "menus": win._menus, "actions": win._actions, "palette_words": PALETTE_WORDS,
+    }, start_mode=start_mode)
+    # 2026-11-15 (integration of the look branch): the Python mode was built after the scheme / density pass.
+    # Its popups and the variables' message speak the scheme's roles (filled again on each switch), and the
+    # pass runs again so its rows, gaps and code font come from the one table too.
+    for _pop in win.findChildren(QtWidgets.QFrame, "pyeditCompletionPopup"):
+        _themed_style(_pop, "#pyeditCompletionPopup {{ background: {editor}; border: 1px solid {muted}; }}"
+                            "QListWidget {{ background: {editor}; color: {text}; border: 0; }}"
+                            "QLabel {{ background: {curline}; color: {text}; }}")
+    for _tip in win.findChildren(QtWidgets.QFrame, "pyeditSignatureTip"):
+        _themed_style(_tip, "#pyeditSignatureTip {{ background: {curline}; border: 1px solid {muted}; }}"
+                            "QLabel {{ color: {text}; }}")
+    import studio_pyedit_vars_qt as _pvq
+    for _vp in win.findChildren(_pvq.VariablesPanel):
+        _themed_style(_vp.message, "color: {err}; font-weight: bold;")
+    apply_theme(save=False)
+    # ---- キーの割り当て(利用者が決められるショートカット)。studio_keymap_qt が後付けする(キーの枝 WIRING.txt 1 章。
+    #      2026-11-15 統合: F1 は初回の枝の selected_help をそのまま help_here に使う = studio_keymap.ADOPTED) ----
+    import studio_keymap_qt as _kq
+    win._keymap = _kq.install(win, settings=_settings, tr=tr, lang=lambda: _UI_LANG.get("code", "en"),
+                              palette_words=PALETTE_WORDS, model=model)
+    _quiesce_runs = win.quiesce
+
+    def _quiesce_all(timeout_ms=5000):
+        try:
+            win._pymode.shutdown()
+        except Exception as exc:                          # noqa: BLE001
+            _log_soft_failure("could not stop the Python program before close", exc)
+        return _quiesce_runs(timeout_ms)
+    win.quiesce = _quiesce_all
     refresh_stage_list(); show_result()      # refresh_stage_list syncs the knob panel
     state["dirty"] = False                   # a freshly-built window has nothing to lose
     state["renders"] = 0
+    studio_theme.release_layout_item_wrappers()   # the build put filled layouts together (studio_theme.LayoutEntry)
     return win, model
 
 
@@ -15960,17 +18861,20 @@ def main(argv=None) -> int:
 
     try:
         app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
-        win, _ = build_window()
+        win, _ = build_window(start_mode="auto")   # 初回は設定に従う / honour the saved first-launch mode
         win.show()
+        # M2: 最初の画面は同梱の coins。show 後に読んで状態欄との重なりを避ける。
+        # Open the bundled coins sample after show() so the status widgets keep their layout.
+        win._first_launch_scene()
         return app.exec()
     except (ImportError, OSError, UnicodeError) as exc:
         from fullseye import startup_errors
         _msg = startup_errors.report(exc, "Studio")
         try:
-            QtWidgets.QMessageBox.critical(None, "Fullseye Studio", _msg)
+            _default_error(None, "Fullseye Studio", _msg)
         except Exception:
-            if startup_errors.is_consoleless_windows():
-                startup_errors.show_windows_message(_msg, "Fullseye Studio")
+                 if startup_errors.is_consoleless_windows():
+                     startup_errors.show_windows_message(_msg, "Fullseye Studio")
         return 1
 
 

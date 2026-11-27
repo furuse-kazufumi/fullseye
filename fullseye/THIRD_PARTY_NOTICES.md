@@ -119,6 +119,7 @@ The following direct dependencies are not copied into the Fullseye wheel. Their 
 - `pytest-timeout` — MIT (permissive)
 - `pytest-xdist` — MIT (permissive)
 - `pywavelets` — MIT AND BSD-3-Clause (permissive)
+- `pyyaml` — MIT (permissive)
 - `ruff` — MIT (permissive)
 - `scikit-image` — BSD-3-Clause (permissive)
 - `scipy` — BSD-3-Clause (permissive)

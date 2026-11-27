@@ -35,7 +35,7 @@
 
 Keine dieser Zahlen ist von Hand geschrieben: `tools/gen_trust_block.py` erzeugt diesen Abschnitt aus Messdateien in `docs/` (`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`), und `tests/test_trust_block.py` schlägt fehl, wenn er davon abweicht. Jede Zahl trägt Version und Datum ihrer Messung.
 
-**29,285 Regressionstests** — in 1.1.1 enthalten, Commit `d62109bb65`, am 2026-11-13 mit `pytest --collect-only` gezählt, mit allen optionalen Backends installiert (ohne sie werden die Tests der fehlenden Backends nicht gesammelt und die Zahl ist kleiner).
+**32,138 Regressionstests** — in 1.2.0 enthalten, Commit `06ed5bcd72`, am 2026-11-26 mit `pytest --collect-only` gezählt, mit allen optionalen Backends installiert (ohne sie werden die Tests der fehlenden Backends nicht gesammelt und die Zahl ist kleiner).
 
 ### Was einen neu hinzugefügten Operator prüft
 
@@ -59,7 +59,7 @@ Nicht gemessen: plausible, aber falsche Werte (Abstand zur Grundwahrheit), Gesch
 
 ### Verifikationsstufe
 
-Die 101 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 1.1.1) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
+Die 101 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 1.2.0) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
 
 | Stufe | Bedeutung | Fähigkeiten |
 |---|---|---|
@@ -88,7 +88,7 @@ Von 507 Beispielen werden 502 tatsächlich von einem Gate ausgeführt.
 | 0.9.0 | 2026-11-04 | 3,752 | 2,788 | 966 | 297 | 26,045 |
 | 1.0.0 | 2026-11-06 | 3,811 | 2,847 | 1,017 | 299 | 27,660 |
 | 1.1.0 | 2026-11-12 | 3,838 | 2,874 | 1,017 | 315 | 28,758 |
-| 1.1.1 | 2026-11-13 | 3,838 | 2,874 | 1,017 | 315 | 29,285 |
+| 1.2.0 | 2026-11-26 | 3,853 | 2,889 | 1,017 | 318 | 32,138 |
 
 - Der HALCON-Wert 323 für 0.1.0–0.1.8 ist der damals festgehaltene Wert; ab 0.1.9 beträgt er nach geänderter Zählung 979 (keine 656 neuen Implementierungen).
 - 0.2.0 ist die erste Version, deren Index das typisierte Register enthält: 918 → 1,942 ist eine Änderung der Zählweise, keine neue Implementierung (das Register gab es ab 0.1.6, aber außerhalb des Index).
@@ -151,7 +151,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 **3,859 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **73 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2889/2889, Fassade `fullseye.<name>` 774/1614 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 947/947, typisiertes Ledger 2889/2889, Fassade `fullseye.<name>` 774/1629 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
 **Gemessener Inhalt**: von 3859 Notizen verweisen **3820** auf mindestens ein lauffähiges Beispiel (39 ohne), **3660** haben einen Nutzungsabschnitt ab 120 Zeichen (199 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3859.
 
@@ -315,11 +315,11 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 348
+## Dokumentkarte — alle 353
 
 Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,859 Operator-Notizen und 73 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
-**Getting started**(12)
+**Getting started**(13)
 
 | Dokument | Inhalt |
 |---|---|
@@ -335,6 +335,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`3DGS_USAGE.md`](3DGS_USAGE.md) | Fullseye 3DGS – Anwendung (ein einziger Befehl) → [`3DGS_USAGE.de.md`](3DGS_USAGE.de.md) · Original _(ja)_ |
 | [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | Walking a Character Over Terrain (sim-native, no GPU required) → [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) · Original _(ja)_ |
 | [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure → [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) · Original _(ja)_ |
+| [`PARAM_BUNDLE.md`](PARAM_BUNDLE.md) | パラメータを束で持ち、ファイルから読んで op に渡す _(ja)_ |
 
 **Operator reference**(11)
 
@@ -460,7 +461,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(262)
+**Other**(266)
 
 | Dokument | Inhalt |
 |---|---|
@@ -541,12 +542,16 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`RECIPE_COVERAGE.md`](RECIPE_COVERAGE.md) | レシピの網羅(族・課題・型の繋がり・GPU 経路) _(ja)_ |
 | [`REGULATED_EXECUTION.md`](REGULATED_EXECUTION.md) | 規制実行記録の保証境界 / Regulated execution-record assurance boundary _(ja)_ |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
+| [`STUDIO_EDITOR_KEYS.md`](STUDIO_EDITOR_KEYS.md) | Studio のコードエディタ: 編集の操作とキー _(ja)_ |
 | [`STUDIO_GUIDE.de.md`](STUDIO_GUIDE.de.md) | Vollständiger Leitfaden zu Fullseye Studio |
 | [`STUDIO_GUIDE.en.md`](STUDIO_GUIDE.en.md) | The complete guide to Fullseye Studio |
 | [`STUDIO_GUIDE.hi.md`](STUDIO_GUIDE.hi.md) | Fullseye Studio की पूरी गाइड |
 | [`STUDIO_GUIDE.ko.md`](STUDIO_GUIDE.ko.md) | Fullseye Studio 완전 가이드 |
 | [`STUDIO_GUIDE.tw.md`](STUDIO_GUIDE.tw.md) | Fullseye Studio 完全指南 _(tw)_ |
 | [`STUDIO_GUIDE.zh.md`](STUDIO_GUIDE.zh.md) | Fullseye Studio 完全指南 _(zh)_ |
+| [`STUDIO_KEYBOARD.md`](STUDIO_KEYBOARD.md) | Studio のキーボードのショートカット(キーを自分で決める) _(ja)_ |
+| [`STUDIO_PARAMS_WINDOW.md`](STUDIO_PARAMS_WINDOW.md) | パラメータの窓(束を並べて見る・直す) _(ja)_ |
+| [`STUDIO_PROGRAM_LANGUAGE.md`](STUDIO_PROGRAM_LANGUAGE.md) | Studio の Program 欄: 従来のモードと Python のモード _(ja)_ |
 | [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) | Walking a Character Over Terrain (sim-native, no GPU required) |
 | [`TROUBLESHOOTING.en.md`](TROUBLESHOOTING.en.md) | Windows troubleshooting |
 | [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) | Windows troubleshooting → [`TROUBLESHOOTING.en.md`](TROUBLESHOOTING.en.md) · Original _(ja)_ |

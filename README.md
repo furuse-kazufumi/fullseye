@@ -83,7 +83,7 @@ on plain numpy arrays, so other projects can drop it into a vision pipeline dire
 
 None of these numbers is typed by hand: `tools/gen_trust_block.py` renders them from measurement files in `docs/` (`test_count.json`, `gate_inventory.json`, `maturity.json`, `op_count_history.json`), and `tests/test_trust_block.py` fails if this section drifts from them. Every number carries the version and date it was measured at.
 
-**29,285 regression tests** — included in 1.1.1, commit `d62109bb65`, counted with `pytest --collect-only` on 2026-11-13 with every optional backend installed (without them, tests for the missing backends are not collected and the count is lower).
+**32,138 regression tests** — included in 1.2.0, commit `06ed5bcd72`, counted with `pytest --collect-only` on 2026-11-26 with every optional backend installed (without them, tests for the missing backends are not collected and the count is lower).
 
 ### If you add one operator, what checks it
 
@@ -107,7 +107,7 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 1.1.1); stage definitions in [MATURITY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MATURITY.md)).
+The 101 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 1.2.0); stage definitions in [MATURITY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
@@ -136,7 +136,7 @@ Of 507 examples, 502 are actually run by a gate.
 | 0.9.0 | 2026-11-04 | 3,752 | 2,788 | 966 | 297 | 26,045 |
 | 1.0.0 | 2026-11-06 | 3,811 | 2,847 | 1,017 | 299 | 27,660 |
 | 1.1.0 | 2026-11-12 | 3,838 | 2,874 | 1,017 | 315 | 28,758 |
-| 1.1.1 | 2026-11-13 | 3,838 | 2,874 | 1,017 | 315 | 29,285 |
+| 1.2.0 | 2026-11-26 | 3,853 | 2,889 | 1,017 | 318 | 32,138 |
 
 - The HALCON figure 323 for 0.1.0–0.1.8 is the value recorded at the time; from 0.1.9 it is 979 under a revised count (not 656 new implementations).
 - 0.2.0 is the first version whose index includes the typed ledger: 918 → 1,942 is a change in what is counted, not new implementation (the ledger existed from 0.1.6 but sat outside the index).
@@ -183,7 +183,9 @@ fullseye setup --yes         # try every remaining backend independently + RAG; 
 
 `gui` remains a compatibility alias, so `pip install "fullseye[gui]"` still works but adds no
 duplicate dependency. `PySide6-Essentials` provides Studio's required Qt modules; its optional 3-D
-surface and audio playback features stay unavailable when their Qt add-ons are not installed.
+surface and audio playback features stay unavailable when their Qt add-ons are not installed. The
+standard requirement is `PySide6-Essentials>=6.5,!=6.12.0`; 6.12.0 is excluded because the Linux
+Studio A/B run reproduced a process-level SIGABRT only with that release.
 
 `export-verify` is deliberately outside the full default: it contains `plyfile` (GPL-3.0-or-later) solely for independent export verification; install it only when needed with `pip install "fullseye[export-verify]"`.
 
@@ -316,6 +318,14 @@ fullseye.fallbacks()                                     #   recorded + one warn
 
 `apply(image, name, a=0.5, b=0.5)` and `run_pipeline` take an operator name and two
 knobs in `[0, 1]`. Feature operators return a Python float; contour operators a dict.
+
+Parameter bundles (a file of named values, handed to an operator as keyword arguments — guide: `docs/PARAM_BUNDLE.md`):
+
+```python
+p   = fullseye.load_params("rig.toml")                              # JSON / TOML / YAML -> a bundle / ファイルから束を読む
+out = fullseye.undistort_image(img, **p.for_op("undistort_image"))   # only that op's arguments, units converted once / その op の引数だけ渡す
+cmp = fullseye.params_compare([p, p.with_(**{"camera.fx": 820})])   # bundles side by side / 束を並べて比べる
+```
 
 ## Operator library
 

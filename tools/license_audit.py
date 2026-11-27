@@ -210,7 +210,7 @@ def capture_resolution(report_path: Path) -> None:
     environment = report.get("environment", {})
     snapshot = {
         "schema": 1,
-        "command": "py -3.11 -m pip install --dry-run --ignore-installed --report <file> .[all-extras]",
+        "command": "py -3.11 -m pip install --dry-run --ignore-installed --report <file> .[all,dev,export-verify]",
         "environment": {
             "implementation_name": environment.get("implementation_name", ""),
             "python_version": environment.get("python_version", ""),

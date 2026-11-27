@@ -125,15 +125,20 @@ def test_overlapping_workers_close_cleanly_in_fresh_process():
     env = os.environ.copy()
     env.setdefault("QT_QPA_PLATFORM", "offscreen")
     repeats = env.setdefault("FULLSEYE_STUDIO_SHUTDOWN_REPEATS", "30")
-    # The child dumps all thread stacks at 100 s and exits; the parent waits
+    # The child dumps all thread stacks at the deadline below and exits; the parent waits
     # longer so that dump (not an empty kill) is what a stall reports.  60 s
     # was hit once on a loaded CI runner with no output at all (2026-10-23).
-    env["FULLSEYE_STUDIO_SHUTDOWN_DUMP_AFTER"] = "100"
+    # 2026-11-26: Studio 1.2.0 の窓は部品が増え、CI の機械では 1 反復が約 3.3 秒かかる(30 反復で約 99 秒 +
+    # 起動)。100 秒の「固まったら stack を出して終わる」締切を、固まっていない実行が踏んでいた
+    # (PR #374 の shard 5/6)。固まりの検出は反復ごとの締切(初回 20 秒・以後 5 秒)が受け持つので、
+    # 全体の締切は「反復の締切の合計」より上に置く。/ The whole-run deadline must sit above the sum of
+    # the per-iteration deadlines; a healthy 30-iteration run took ~99 s on the CI runner.
+    env["FULLSEYE_STUDIO_SHUTDOWN_DUMP_AFTER"] = "240"
     try:
         result = subprocess.run(
             [sys.executable, "-X", "faulthandler", "-c", code],
             cwd=os.path.dirname(os.path.dirname(__file__)), env=env,
-            capture_output=True, text=True, timeout=150,
+            capture_output=True, text=True, timeout=300,
         )
     except subprocess.TimeoutExpired as exc:
         out = exc.stdout or ""
@@ -142,7 +147,7 @@ def test_overlapping_workers_close_cleanly_in_fresh_process():
             out = out.decode("utf-8", "replace")
         if isinstance(err, bytes):
             err = err.decode("utf-8", "replace")
-        pytest.fail("Studio worker child did not finish in 150 s\n"
+        pytest.fail("Studio worker child did not finish in 300 s\n"
                     + out + err[-8000:])
     assert result.returncode == 0, result.stdout + result.stderr
     assert "codex_last: %s/%s passed" % (repeats, repeats) in result.stdout
