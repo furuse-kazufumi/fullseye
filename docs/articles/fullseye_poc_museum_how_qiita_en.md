@@ -24,21 +24,21 @@ Deblurring depends on estimating motion direction and length correctly. Known li
 
 *↑ **How Much Camera Shake Can Be Undone — Make the Kernel, Apply It, Invert It, Compare** ―― A known linear blur kernel applied and inverted, with the ceiling set by noise and by kernel estimation error. Without noise the image recovers from 22.38 to 56.41 dB; at 20 dB SNR the gain is 1.82 dB. A kernel angle off by 19.4 degrees is beaten by doing nothing, and undoing rotational blur with a single kernel makes the centre of rotation worse by -49.41 dB.*
 
-[![4 枚目は「復元した」形をしているが、ゼロ点(観測そのもの)より悪い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/02_deblur_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/02_deblur.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/02_deblur_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/02_deblur.png)
 
 *↑ The measurement ―― 4 枚目は「復元した」形をしているが、ゼロ点(観測そのもの)より悪い。絵の見た目では区別できない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![交点が現場で効く数字。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/03_kernel_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/03_kernel_error.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/03_kernel_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/03_kernel_error.png)
 
-*↑ 交点が現場で効く数字。*
+*↑ Figure from this exhibit ―― 交点が現場で効く数字。 (figure labels are in Japanese; the numbers are the same)*
 
-[![核を作った右側だけが正。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/04_rotational_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/04_rotational.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/04_rotational_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/04_rotational.png)
 
-*↑ 核を作った右側だけが正。*
+*↑ Figure from this exhibit ―― 核を作った右側だけが正。 (figure labels are in Japanese; the numbers are the same)*
 
-[![15 px・20 度の直線ブレに SNR 40 dB の雑音を載せた観測を、角度を 0〜30 度ずらした核で Wiener 復元し直していく(正則化量は毎回神託で最良化)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.gif)
 
-*↑ The animation ―― 15 px・20 度の直線ブレに SNR 40 dB の雑音を載せた観測を、角度を 0〜30 度ずらした核で Wiener 復元し直していく(正則化量は毎回神託で最良化)。ずれ 0 度で 28.87 dB、20 度で 22.31 dB。0.5 度刻みで追うと 19.2 度でアンシャープマスク(22.40 dB)に、19.4 度で「何もしない」(22.38 dB)に抜かれる(本文の表の補間では 19.2 / 19.4 度)。抜かれた後の復元も「復元した」形をしている —— 右の誤差地図でだけ、縞状のリンギングが真値からのずれとして見える。*
+*↑ The animation ―― 15 px・20 度の直線ブレに SNR 40 dB の雑音を載せた観測を、角度を 0〜30 度ずらした核で Wiener 復元し直していく(正則化量は毎回神託で最良化)。ずれ 0 度で 28.87 dB、20 度で 22.31 dB。0.5 度刻みで追うと 19.2 度でアンシャープマスク(22.40 dB)に、19.4 度で「何もしない」(22.38 dB)に抜かれる(本文の表の補間では 19.2 / 19.4 度)。抜かれた後の復元も「復元した」形をしている —— 右の誤差地図でだけ、縞状のリンギングが真値からのずれとして見える。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_camera_shake_deblur.py
@@ -60,25 +60,25 @@ A smooth field with provably zero steps was painted and the false edges counted 
 
 Terms: CIEDE2000 — A CIE colour-difference formula in CIELAB that corrects the lightness, chroma, and hue terms to better follow visual differences.
 
-[![平らなら偽の境目は立たない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/01_gain_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/01_gain_profile.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/01_gain_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/01_gain_profile.png)
 
 *↑ The measurement ―― 平らなら偽の境目は立たない。jet と hsv の山がそのまま『見えてしまう帯』になる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/02_lightness_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/02_lightness_profile.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/02_lightness_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/02_lightness_profile.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![jet の**輪**が偽の境目。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/06_false_edge_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/06_false_edge_map.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/06_false_edge_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/06_false_edge_map.png)
 
-*↑ jet の**輪**が偽の境目。*
+*↑ Figure from this exhibit ―― jet の**輪**が偽の境目。 (figure labels are in Japanese; the numbers are the same)*
 
-[![左は範囲外と『ちょうど端』が同じ色。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/09_range_sentinel_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/09_range_sentinel.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/09_range_sentinel_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/09_range_sentinel.png)
 
-*↑ 左は範囲外と『ちょうど端』が同じ色。*
+*↑ Figure from this exhibit ―― 左は範囲外と『ちょうど端』が同じ色。 (figure labels are in Japanese; the numbers are the same)*
 
-[![番号の大小に意味は無いのに、連続マップは『近い番号 = 近い領域』と読ませる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/12_categorical_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/12_categorical.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/12_categorical_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/12_categorical.png)
 
-*↑ 番号の大小に意味は無いのに、連続マップは『近い番号 = 近い領域』と読ませる。*
+*↑ Figure from this exhibit ―― 番号の大小に意味は無いのに、連続マップは『近い番号 = 近い領域』と読ませる。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_colormap_readability.py
@@ -102,13 +102,13 @@ A fly's compound eye can be treated as a light-field sensor that views each poin
 
 *↑ The measurement (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/03_compound_eye_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/03_compound_eye_depth.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/03_compound_eye_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/03_compound_eye_depth.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/04_compound_eye_occlusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/04_compound_eye_occlusion.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/04_compound_eye_occlusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/04_compound_eye_occlusion.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
 ```
 py -3.11 examples/poc_compound_eye.py
@@ -128,21 +128,21 @@ A hazy image built from depth, airlight and extinction so that the true transmis
 
 *↑ **Removing Haze — Ground Truth From the Scattering Model, Transmission and Airlight Scored Apart** ―― A hazy image built from depth, airlight and extinction so that the true transmission and the true scene are both known, then dehazed and scored. The overall +4.04 dB hides a -1.49 dB degradation of the near field covered by +4.03 dB mid and +11.28 dB far. Above 782 m visibility dehazing does harm, and adding noise raises PSNR (an accidental cancellation).*
 
-[![空では過大評価(明るい側)、近景では過小評価(暗い側)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/02_transmission_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/02_transmission.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/02_transmission_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/02_transmission.png)
 
 *↑ The measurement ―― 空では過大評価(明るい側)、近景では過小評価(暗い側)。全体の平均バイアスでは打ち消し合って見えない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![全体 +4.04 dB の正体。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/03_bands_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/03_bands.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/03_bands_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/03_bands.png)
 
-*↑ 全体 +4.04 dB の正体。*
+*↑ Figure from this exhibit ―― 全体 +4.04 dB の正体。 (figure labels are in Japanese; the numbers are the same)*
 
-[![左端(薄い霞 = 視程が長い側)で利得が 0 を割る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/04_haze_density_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/04_haze_density.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/04_haze_density_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/04_haze_density.png)
 
-*↑ 左端(薄い霞 = 視程が長い側)で利得が 0 を割る。*
+*↑ Figure from this exhibit ―― 左端(薄い霞 = 視程が長い側)で利得が 0 を割る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画(110 コマ、120 × 160 px を 2 倍で表示): 消散係数 beta を 0.0025(視程 1565 m)から 0.08(視程 49 m)まで連続に振る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/05_haze_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/05_haze_sweep.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/05_haze_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/05_haze_sweep.gif)
 
-*↑ The animation ―― 動画(110 コマ、120 × 160 px を 2 倍で表示): 消散係数 beta を 0.0025(視程 1565 m)から 0.08(視程 49 m)まで連続に振る。上段は霞んだ観測・暗チャネル除霞・真値、下段は推定した透過率・真の透過率と、暗チャネル除霞の PSNR 利得(対 何もしない)の曲線。利得は beta ≦ 0.0065(視程 606 m 以上)で負 = 薄い霞では除霞が害になる(5 節の 7 点の表では 0.0050 と 0.0075 の間)。濃霧の端では +2.98 dB。真の A と t を与えたオラクルの PSNR は中央上の板に併記。表示は 8 bit に丸めた観測をそのまま使っている。*
+*↑ The animation ―― 動画(110 コマ、120 × 160 px を 2 倍で表示): 消散係数 beta を 0.0025(視程 1565 m)から 0.08(視程 49 m)まで連続に振る。上段は霞んだ観測・暗チャネル除霞・真値、下段は推定した透過率・真の透過率と、暗チャネル除霞の PSNR 利得(対 何もしない)の曲線。利得は beta ≦ 0.0065(視程 606 m 以上)で負 = 薄い霞では除霞が害になる(5 節の 7 点の表では 0.0050 と 0.0075 の間)。濃霧の端では +2.98 dB。真の A と t を与えたオラクルの PSNR は中央上の板に併記。表示は 8 bit に丸めた観測をそのまま使っている。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_dehazing.py
@@ -162,25 +162,25 @@ One eye assembled from a 721-ommatidium hexagonal lattice → acceptance functio
 
 *↑ **The Fly's Visual Front End as a Chain of Operators — Turning and Walking Through a Synthetic Sky, What Can and Cannot Be Read** ―― One eye assembled from a 721-ommatidium hexagonal lattice → acceptance function → lamina DC removal → Hassenstein-Reichardt correlators → HS opponent sum, turning under a 1/f banded sky. The direction and waveform of self-rotation are readable (correlation with the true yaw rate +0.785, +0.880 with a membrane low-pass, sign agreement 0.92), but skipping the lamina DC removal makes the correlator emit a DC × high-pass ripple and the correlation drops to +0.504. Walking forward without turning, the full-field readout turns into a −0.689 'rotation'; restricting to the upper field still leaks −0.221 because acceptance functions straddle the horizon (0.000 above el = 2Δρ). The opponent ratio discards speed, so a 1.4°/s flow from a dome 20 m away reads −0.612. The LGMD η peak comes α·l/|v| before collision (−0.1570 s, predicted −0.1567 s) at θ = 23.97° (predicted 24.02°; 24.6° for the exact subtense of a sphere, a quartic root), the sphere τ rides d/|v| with RMS 1e-5 s, and the disk formula misapplied to a sphere reads cos²(θ/2) = 0.75× at 60°. Twelve grating directions give DSI 0.798 with preferred direction 0°.*
 
-[![相関 +0.785(膜 LP つき +0.880、ラミナ段なし +0.504)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/02_fly_vision_rotation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/02_fly_vision_rotation.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/02_fly_vision_rotation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/02_fly_vision_rotation.png)
 
 *↑ The measurement ―― 相関 +0.785(膜 LP つき +0.880、ラミナ段なし +0.504)。対向比は符号の一致度なので、尺度 k は最小二乗で合わせてある。 (figure labels are in Japanese; the numbers are the same)*
 
-[![偏り: 全視野 -0.689 / 上半 el>0 -0.221 / el>2Δρ +0.000 / ドーム -0.612](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/03_fly_vision_forward_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/03_fly_vision_forward.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/03_fly_vision_forward_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/03_fly_vision_forward.png)
 
-*↑ 偏り: 全視野 -0.689 / 上半 el>0 -0.221 / el>2Δρ +0.000 / ドーム -0.612*
+*↑ Figure from this exhibit ―― 偏り: 全視野 -0.689 / 上半 el>0 -0.221 / el>2Δρ +0.000 / ドーム -0.612 (figure labels are in Japanese; the numbers are the same)*
 
-[![ピーク -0.157 s(予測 -0.157 s)、θ_peak 24.0°(予測 24.0°)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/04_fly_vision_looming_eta_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/04_fly_vision_looming_eta.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/04_fly_vision_looming_eta_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/04_fly_vision_looming_eta.png)
 
-*↑ ピーク -0.157 s(予測 -0.157 s)、θ_peak 24.0°(予測 24.0°)。*
+*↑ Figure from this exhibit ―― ピーク -0.157 s(予測 -0.157 s)、θ_peak 24.0°(予測 24.0°)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![球式は RMS 0.00001 s で真値に乗る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/05_fly_vision_looming_tau_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/05_fly_vision_looming_tau.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/05_fly_vision_looming_tau_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/05_fly_vision_looming_tau.png)
 
-*↑ 球式は RMS 0.00001 s で真値に乗る。*
+*↑ Figure from this exhibit ―― 球式は RMS 0.00001 s で真値に乗る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![負の応答(逆向き)は fly_dsi が 0 に切る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/06_fly_vision_dsi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/06_fly_vision_dsi.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/06_fly_vision_dsi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/06_fly_vision_dsi.png)
 
-*↑ 負の応答(逆向き)は fly_dsi が 0 に切る。*
+*↑ Figure from this exhibit ―― 負の応答(逆向き)は fly_dsi が 0 に切る。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_fly_vision.py
@@ -200,21 +200,21 @@ A stack of photos focused at different depths is fused into an all-in-focus imag
 
 *↑ **Focus Stacking — The All-in-Focus Image and the Depth Map Are Different Things** ―― An all-in-focus image and a depth map pulled from 17 frames blurred by the closed-form circle of confusion. The all-in-focus image reaches 33.69 dB (null = the middle frame, 28.52 dB), yet the depth from the same fusion loses to the null by 6x (0.16x) in textureless regions. A relative confidence scores 0.9575 there, higher than the 0.9381 of textured regions; rejecting by absolute value (1038x apart) brings the RMS from 0.918 to 0.817 mm.*
 
-[![合焦点法は全焦点画像と同時に距離画像も出す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/02_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/02_depth_map.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/02_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/02_depth_map.png)
 
 *↑ The measurement ―― 合焦点法は全焦点画像と同時に距離画像も出す。ただし左下の無テクスチャの四角だけ、誤差が掃引全域にばらけた乱数になっている(段差帯のハローも見える)—— 絵ほど距離は当てにならない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![左下の無テクスチャの四角が、相対量(0.90-1.00 に切って表示)では最も明るい = 自信ありに見え、絶対量(対数)でだけ「何も見えていない」と出る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/03_confidence_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/03_confidence.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/03_confidence_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/03_confidence.png)
 
-*↑ 左下の無テクスチャの四角が、相対量(0.90-1.00 に切って表示)では最も明るい = 自信ありに見え、絶対量(対数)でだけ「何も見えていない」と出る。*
+*↑ Figure from this exhibit ―― 左下の無テクスチャの四角が、相対量(0.90-1.00 に切って表示)では最も明るい = 自信ありに見え、絶対量(対数)でだけ「何も見えていない」と出る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![2 本が離れていく = 残りの誤差は標本化ではなく焦点評価が持っている。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/04_frames_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/04_frames_floor.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/04_frames_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/04_frames_floor.png)
 
-*↑ 2 本が離れていく = 残りの誤差は標本化ではなく焦点評価が持っている。*
+*↑ Figure from this exhibit ―― 2 本が離れていく = 残りの誤差は標本化ではなく焦点評価が持っている。 (figure labels are in Japanese; the numbers are the same)*
 
-[![焦点を 196.23〜203.00 mm で 17 枚掃引し、1 枚進むたびに「ここまでで焦点評価が最大のフレーム」を画素ごとに選び直す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/05_focus_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/05_focus_sweep.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/05_focus_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/05_focus_sweep.gif)
 
-*↑ The animation ―― 焦点を 196.23〜203.00 mm で 17 枚掃引し、1 枚進むたびに「ここまでで焦点評価が最大のフレーム」を画素ごとに選び直す。左 = いまの 1 枚(橙 = この 1 枚で最良が更新された画素)、中 = ここまでの全焦点画像、右 = ここまでの距離画像。全焦点画像の PSNR は 22.17 dB から 33.69 dB へ育ち、中央の 1 枚(28.52 dB)を上回る。一方、左下の無地の四角は最後まで掃引のたびに塗り替わり(最後の 1 枚でも無地の 12 % が入れ替わる。テクスチャ有は 4 %)、距離誤差は 2.203 mm(テクスチャ有 0.467 mm)で終わる。*
+*↑ The animation ―― 焦点を 196.23〜203.00 mm で 17 枚掃引し、1 枚進むたびに「ここまでで焦点評価が最大のフレーム」を画素ごとに選び直す。左 = いまの 1 枚(橙 = この 1 枚で最良が更新された画素)、中 = ここまでの全焦点画像、右 = ここまでの距離画像。全焦点画像の PSNR は 22.17 dB から 33.69 dB へ育ち、中央の 1 枚(28.52 dB)を上回る。一方、左下の無地の四角は最後まで掃引のたびに塗り替わり(最後の 1 枚でも無地の 12 % が入れ替わる。テクスチャ有は 4 %)、距離誤差は 2.203 mm(テクスチャ有 0.467 mm)で終わる。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_focus_stacking.py
@@ -236,17 +236,17 @@ The truth here is a real photograph (scikit-image camera, CC0) and only the degr
 
 Terms: Wiener — A linear filter that uses signal and noise statistics to minimize mean squared estimation error.
 
-[![固定した nsr で比べると、正しい PSF でもゼロ点に負ける。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/02_nsr_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/02_nsr.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/02_nsr_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/02_nsr.png)
 
 *↑ The measurement ―― 固定した nsr で比べると、正しい PSF でもゼロ点に負ける。 (figure labels are in Japanese; the numbers are the same)*
 
-[![σ=0 で +1.52 dB、σ=0.016 で +0.05 dB。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/03_cliffs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/03_cliffs.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/03_cliffs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/03_cliffs.png)
 
-*↑ σ=0 で +1.52 dB、σ=0.016 で +0.05 dB。*
+*↑ Figure from this exhibit ―― σ=0 で +1.52 dB、σ=0.016 で +0.05 dB。 (figure labels are in Japanese; the numbers are the same)*
 
-[![参照なし指標が選ぶ手法は PSNR で 3〜5 dB 劣る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/04_metrics_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/04_metrics.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/04_metrics_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/04_metrics.png)
 
-*↑ 参照なし指標が選ぶ手法は PSNR で 3〜5 dB 劣る。*
+*↑ Figure from this exhibit ―― 参照なし指標が選ぶ手法は PSNR で 3〜5 dB 劣る。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_real_deblur_honesty.py
@@ -266,21 +266,21 @@ Observations made by downsampling the truth, with single-image upscaling, iterat
 
 *↑ **Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count** ―― Observations made by downsampling the truth, with single-image upscaling, iterative back-projection and drizzle scored on a resolution table. No single-image upscaler beats the bicubic null by more than +0.036 dB. Drizzling 16 sub-pixel-shifted frames gains +13.96 dB in the undersampled condition, and the modulation of a period-6 pattern beyond Nyquist rises from 0.03 to 0.38.*
 
-[![鮮鋭化だけがナイキスト(周期 8)より細かい列にも縞を作る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/01_upscale_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/01_upscale.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/01_upscale_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/01_upscale.png)
 
 *↑ The measurement ―― 鮮鋭化だけがナイキスト(周期 8)より細かい列にも縞を作る。それは分解能ではなく**無い縞**。 (figure labels are in Japanese; the numbers are the same)*
 
-[![IBP は周期 12 以上の落ちた変調を戻すが、8 より細かい列は1 本も戻らない(順モデルの零空間)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/02_modulation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/02_modulation.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/02_modulation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/02_modulation.png)
 
-*↑ IBP は周期 12 以上の落ちた変調を戻すが、8 より細かい列は1 本も戻らない(順モデルの零空間)。*
+*↑ Figure from this exhibit ―― IBP は周期 12 以上の落ちた変調を戻すが、8 より細かい列は1 本も戻らない(順モデルの零空間)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![上限の線がレンズの許す限界。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/04_multiframe_modulation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/04_multiframe_modulation.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/04_multiframe_modulation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/04_multiframe_modulation.png)
 
-*↑ 上限の線がレンズの許す限界。*
+*↑ Figure from this exhibit ―― 上限の線がレンズの許す限界。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画(61 コマ、縞の群を 2 倍で表示): 前半は単一画像の IBP を 0 → 24 回。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/05_growth.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/05_growth.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/05_growth.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/05_growth.gif)
 
-*↑ The animation ―― 動画(61 コマ、縞の群を 2 倍で表示): 前半は単一画像の IBP を 0 → 24 回。周期 12 の変調度は 0.78 → 0.96 と戻るが、ナイキスト(周期 8)より細かい列の最大は 0.03 → 0.04 にとどまる —— 順モデルの零空間に落ちた縞は何回回しても立たない(PSNR も 21.10 → 21.09 dB で動かない)。後半は標本化不足(σ = 0.30)の 16 枚を 1 枚ずつ drizzle に足す(ずれは相互相関で推定、pixfrac は枚数に合わせて 1.0 → 0.4、被覆の穴は単一画像の bicubic で埋めて割合を表示)。周期 6 の変調度は単一画像の 0.03 から 16 枚で 0.38 まで立ち上がる(レンズの上限 0.46)。PSNR は 28.27 → 42.24 dB。*
+*↑ The animation ―― 動画(61 コマ、縞の群を 2 倍で表示): 前半は単一画像の IBP を 0 → 24 回。周期 12 の変調度は 0.78 → 0.96 と戻るが、ナイキスト(周期 8)より細かい列の最大は 0.03 → 0.04 にとどまる —— 順モデルの零空間に落ちた縞は何回回しても立たない(PSNR も 21.10 → 21.09 dB で動かない)。後半は標本化不足(σ = 0.30)の 16 枚を 1 枚ずつ drizzle に足す(ずれは相互相関で推定、pixfrac は枚数に合わせて 1.0 → 0.4、被覆の穴は単一画像の bicubic で埋めて割合を表示)。周期 6 の変調度は単一画像の 0.03 から 16 枚で 0.38 まで立ち上がる(レンズの上限 0.46)。PSNR は 28.27 → 42.24 dB。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_superresolution_limits.py
@@ -300,25 +300,25 @@ The first image-side PoC under the new rule of bringing the truth in from outsid
 
 *↑ **Measuring Image-Quality Metrics Against a Public Ground Truth — TID2013's 3,000 Images × 971 Observers and the Authors' Published Values as the Gate** ―― The first image-side PoC under the new rule of bringing the truth in from outside. Truth = TID2013 (Ponomarenko et al., 25 references × 24 distortions × 5 levels = 3,000 images, MOS from 971 observers); reference = the 14 metric value files the authors ship with the data (psnr.txt, ssim.txt, …) and their published rank-correlation table. The new module iqatid (11 ops): the authors' luminance convention (BT.601 limited-range integer Y′, not stated on the page and found by measurement; full-range Y is 1.321 dB off), Spearman with average ranks and Kendall τ_b (these two reproduce all 14 published rows), the published table, the index reader with validation (3,000 rows, the name set must match the files on disk, case-insensitive), evaluation, comparison with the authors' values and per-distortion correlation. Figures: MOS vs PSNR / SSIM scatter, SROCC per distortion type (local block distortion 0.15 / 0.63, contrast 0.44 / 0.45 and saturation 0.22 / 0.22 are weak), histograms of the differences to the authors' values, a table of published / reproduced / Fullseye values for 14 metrics, and one reference–distorted pair with its SSIM map. 21 gates: closed forms for the rank correlations (monotone 1, reversed −1, hand-computed ties ρ = 8.5/√95 and τ_b = 7/√90, 1e-12 against the second implementation in graphinv), Y′ endpoints 16 / 235, PSNR of a 1-LSB shift = 48.13 dB, SSIM identity 1, the 14-row published table. Real data, 3,000 pairs in 110 s: Fullseye's RGB PSNR matches the authors' PSNRc to four decimals (max 0.00005 dB), luminance PSNR matches to 0.00017 dB on the 2,774 pairs outside reference I12 (I12's 115 pairs have 28 pixels whose luminance lands exactly on .5 and round the other way, 0.00058 dB; reported as a separate gate rather than silently dropped), SSIM on Y′ to 0.000051, rank correlations PSNR 0.6395 / 0.4699 (published 0.640 / 0.470) and SSIM 0.6370 / 0.4635 (0.637 / 0.464), and the 14 authors' rows reproduced to 0.00048. The authors write exact matches of luminance PSNR as 100000.0 (111 rows, all saturation changes). Honestly: the four-decimal agreement comes from following the same original implementation's conventions (the old ssim_index.m: 11×11 Gaussian σ 1.5, borders cropped, no downsampling), not from SSIM being good (it ranks 10th of 14). FSIM / FSIMc / VIF / GMSD are not implemented; only their published values are tabulated. Images and MOS are not committed (research-and-education-only terms, FULLSEYE_TID2013_DATA). CI runs the synthetic gates only.*
 
-[![971 人の MOS と Fullseye の PSNR(作者の輝度規約 Y′、psnr.txt と 4 桁一致)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/01_tid2013_mos_vs_psnr_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/01_tid2013_mos_vs_psnr.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/01_tid2013_mos_vs_psnr_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/01_tid2013_mos_vs_psnr.png)
 
 *↑ The measurement ―― 971 人の MOS と Fullseye の PSNR(作者の輝度規約 Y′、psnr.txt と 4 桁一致)。順位相関は公表値どおり低い —— PSNR は歪み種が混ざると主観に合わない。 彩度変化で Y′ が変わらない 106 組(PSNR = inf、MOS 3.4〜6.0)は図に載らない(順位相関には最大の順位で入れてある)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じ 3,000 組と Fullseye の SSIM(Wang 2004 の既定、ssim.txt と 4 桁一致)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/02_tid2013_mos_vs_ssim_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/02_tid2013_mos_vs_ssim.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/02_tid2013_mos_vs_ssim_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/02_tid2013_mos_vs_ssim.png)
 
-*↑ 同じ 3,000 組と Fullseye の SSIM(Wang 2004 の既定、ssim.txt と 4 桁一致)。*
+*↑ Figure from this exhibit ―― 同じ 3,000 組と Fullseye の SSIM(Wang 2004 の既定、ssim.txt と 4 桁一致)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![歪み種ごとの順位相関(各 25 参照 × 5 段)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/03_tid2013_srocc_by_distortion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/03_tid2013_srocc_by_distortion.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/03_tid2013_srocc_by_distortion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/03_tid2013_srocc_by_distortion.png)
 
-*↑ 歪み種ごとの順位相関(各 25 参照 × 5 段)。*
+*↑ Figure from this exhibit ―― 歪み種ごとの順位相関(各 25 参照 × 5 段)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![作者値との行ごとの差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/04_tid2013_author_diff_hist_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/04_tid2013_author_diff_hist.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/04_tid2013_author_diff_hist_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/04_tid2013_author_diff_hist.png)
 
-*↑ 作者値との行ごとの差。*
+*↑ Figure from this exhibit ―― 作者値との行ごとの差。 (figure labels are in Japanese; the numbers are the same)*
 
-[![公表表(ページ / readme TABLE III・IV)と、同梱の作者値 + mos.txt から平均順位・τ_b で再現した値、Fullseye 実装がある 3 本の自前値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/05_tid2013_published_vs_reproduced_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/05_tid2013_published_vs_reproduced.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/05_tid2013_published_vs_reproduced_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/05_tid2013_published_vs_reproduced.png)
 
-*↑ 公表表(ページ / readme TABLE III・IV)と、同梱の作者値 + mos.txt から平均順位・τ_b で再現した値、Fullseye 実装がある 3 本の自前値。*
+*↑ Figure from this exhibit ―― 公表表(ページ / readme TABLE III・IV)と、同梱の作者値 + mos.txt から平均順位・τ_b で再現した値、Fullseye 実装がある 3 本の自前値。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_iqa_tid2013.py
@@ -340,25 +340,25 @@ The second exhibit of the IQA series (the first covered PSNR / SSIM (structural 
 
 Terms: FSIM — An image-similarity index using phase congruency as the primary feature and gradient magnitude as a secondary feature.; FSIMc — The colour extension of FSIM, adding chromatic-difference terms to the feature-similarity score.; GMSD — An image-quality metric defined as the standard deviation of a gradient-magnitude similarity map between reference and test images.; SSIM — An image-quality index comparing local luminance, contrast, and structure between two images.; VIFP — A pixel-domain image-quality metric measuring the fraction of reference information preserved through a natural-image and visual-system model.
 
-[![FSIMC と 971 人の MOS(3,000 組)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/02_iqa_tid2013_mos_vs_fsimc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/02_iqa_tid2013_mos_vs_fsimc.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/02_iqa_tid2013_mos_vs_fsimc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/02_iqa_tid2013_mos_vs_fsimc.png)
 
 *↑ The measurement ―― FSIMC と 971 人の MOS(3,000 組)。作者値 FSIMc.txt と 4 桁一致(色画像 → YIQ full range)。TID2013 全体で 1 位の指標。 (figure labels are in Japanese; the numbers are the same)*
 
-[![VIFP と 971 人の MOS(3,000 組)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/03_iqa_tid2013_mos_vs_vifp_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/03_iqa_tid2013_mos_vs_vifp.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/03_iqa_tid2013_mos_vs_vifp_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/03_iqa_tid2013_mos_vs_vifp.png)
 
-*↑ VIFP と 971 人の MOS(3,000 組)。*
+*↑ Figure from this exhibit ―― VIFP と 971 人の MOS(3,000 組)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![GMSD と 971 人の MOS(3,000 組)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/04_iqa_tid2013_mos_vs_gmsd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/04_iqa_tid2013_mos_vs_gmsd.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/04_iqa_tid2013_mos_vs_gmsd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/04_iqa_tid2013_mos_vs_gmsd.png)
 
-*↑ GMSD と 971 人の MOS(3,000 組)。*
+*↑ Figure from this exhibit ―― GMSD と 971 人の MOS(3,000 組)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![歪み種ごとの順位相関。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/05_iqa_tid2013_srocc_by_distortion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/05_iqa_tid2013_srocc_by_distortion.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/05_iqa_tid2013_srocc_by_distortion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/05_iqa_tid2013_srocc_by_distortion.png)
 
-*↑ 歪み種ごとの順位相関。*
+*↑ Figure from this exhibit ―― 歪み種ごとの順位相関。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真値の等級を列にした: FSIM / FSIMc / VIFP は作者値ファイル(4 桁)と行ごとに比べられる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/06_iqa_tid2013_published_vs_reproduced_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/06_iqa_tid2013_published_vs_reproduced.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/06_iqa_tid2013_published_vs_reproduced_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/06_iqa_tid2013_published_vs_reproduced.png)
 
-*↑ 真値の等級を列にした: FSIM / FSIMc / VIFP は作者値ファイル(4 桁)と行ごとに比べられる。*
+*↑ Figure from this exhibit ―― 真値の等級を列にした: FSIM / FSIMc / VIFP は作者値ファイル(4 桁)と行ごとに比べられる。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_iqa_fsim_gmsd_vif.py
@@ -378,25 +378,25 @@ A vehicle whose heading drifts under a disturbance, carrying nothing but a compo
 
 *↑ **Holding a Course with a Fly's Optic Lobe Alone — From the Lamina to the Steering, Without Learning** ―― A vehicle whose heading drifts under a disturbance, carrying nothing but a compound eye and closed-form circuitry, holds its course: the fly's optomotor response built out of fullseye operators alone and measured next to a ground-truth gyro. Every stage is a closed form and nothing is trained: hexagonal sampling (fly_hex_resample), lamina adaptation and band-pass (fly_lamina_filter), the ON/OFF split (fly_onoff_split), direction selectivity in all six lattice directions (fly_t4t5_field), the local flow (fly_flow_from_directions), a linear fit against the matched filter (fly_matched_filter / fly_egomotion_from_flow), and a six-neuron, eight-synapse steering circuit run as conductances (graph_conductance_states). Each stage has an exact identity: brightening the whole scene ten thousand times leaves the lamina output unchanged (Weber, 7e-16), the three-arm T4 model with Haag et al. 2016's verbatim constants (tau = 250 ms, k = 5/5/10) returns the paper's 24.9636 and 0.8195 on its two-column stimulus, and the paper's claim that the two mechanisms are complementary becomes a product identity (4.161 x 7.321 = 30.461 = the whole model) that holds to machine precision; the matched filter's 1.7 rad/s comes back to nine digits. The limits are measured too: on the classical striped drum the estimate tracks a time-varying rotation at 0.976 correlation, in a natural 1/f scene at 0.897, and the single calibration gain it needs is 2.64 on the drum against 6.76 and 7.88 in natural scenes - 3.0x between kinds of scene and 1.16x between two scenes of identical statistics, because a correlation detector reports contrast-weighted motion rather than velocity. A single 80-degree eye measuring the same +0.5 rad/s across twelve scenes scatters by 1.05 of its mean and gets the sign of the rotation wrong in four of them; merging three eyes into 250 degrees with fly_eye_merge drops the scatter to 0.44 and the sign errors to zero - the width of a compound eye is not decoration. In closed loop (calibrated in scene A, flown in an unseen scene B) the open loop drifts 51 degrees, the visual reflex 33, and the ground-truth gyro 23: a reflex has no absolute heading and cannot null the drift, which is where the central complex would come in. Writing the steering on the connectome side gives the same 33 degrees, and the membrane potential is a convex combination of the reversal potentials so it cannot diverge. No data ships; the scenes are generated from seeds by fly_sky_1f.*
 
-[![left to right, top to bottom: what the ommatidia see, the lamina's contrast (brightness thrown away), the ON and OFF channels, and the direction-selective field read as a local flow.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/01_pathway_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/01_pathway.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/01_pathway_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/01_pathway.png)
 
 *↑ The measurement ―― left to right, top to bottom: what the ommatidia see, the lamina's contrast (brightness thrown away), the ON and OFF channels, and the direction-selective field read as a local flow. The eye is turning at 0.5 rad/s in a 1/f panorama; nothing here was trained. (figure labels are in Japanese; the numbers are the same)*
 
-[![each scene is fitted with its own single gain; the striped drum is nearly linear, and a natural 1/f scene needs a gain 3.0x larger — a correlation det…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/02_tuning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/02_tuning.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/02_tuning_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/02_tuning.png)
 
-*↑ each scene is fitted with its own single gain; the striped drum is nearly linear, and a natural 1/f scene needs a gain 3.0x larger — a correlation det…*
+*↑ Figure from this exhibit ―― each scene is fitted with its own single gain; the striped drum is nearly linear, and a natural 1/f scene needs a gain 3.0x larger — a correlation det… (figure labels are in Japanese; the numbers are the same)*
 
-[![a narrow eye is at the mercy of whichever few large features are in front of it: over eight scenes of identical statistics it scatters and gets the si…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/03_wide_eye_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/03_wide_eye.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/03_wide_eye_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/03_wide_eye.png)
 
-*↑ a narrow eye is at the mercy of whichever few large features are in front of it: over eight scenes of identical statistics it scatters and gets the si…*
+*↑ Figure from this exhibit ―― a narrow eye is at the mercy of whichever few large features are in front of it: over eight scenes of identical statistics it scatters and gets the si… (figure labels are in Japanese; the numbers are the same)*
 
-[![the disturbance has a steady bias, so the open loop drifts away; the optomotor reflex cuts the drift but cannot null it — a reflex has no absolute hea…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/04_closed_loop_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/04_closed_loop.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/04_closed_loop_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/04_closed_loop.png)
 
-*↑ the disturbance has a steady bias, so the open loop drifts away; the optomotor reflex cuts the drift but cannot null it — a reflex has no absolute hea…*
+*↑ Figure from this exhibit ―― the disturbance has a steady bias, so the open loop drifts away; the optomotor reflex cuts the drift but cannot null it — a reflex has no absolute hea… (figure labels are in Japanese; the numbers are the same)*
 
-[![the wiring is written by hand as a synapse table and run as a conductance circuit; the state is a convex combination of the reversal potentials, so it…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/05_circuit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/05_circuit.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/05_circuit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/05_circuit.png)
 
-*↑ the wiring is written by hand as a synapse table and run as a conductance circuit; the state is a convex combination of the reversal potentials, so it…*
+*↑ Figure from this exhibit ―― the wiring is written by hand as a synapse table and run as a conductance circuit; the state is a convex combination of the reversal potentials, so it… (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_fly_optomotor_steering.py
@@ -416,29 +416,29 @@ Both a picture that mixes high and low frequencies and a shape that morphs smoot
 
 *↑ **The Exact Distance at Which Detail Vanishes, and the Area of a Changing Shape** ―― Both a picture that mixes high and low frequencies and a shape that morphs smoothly carry exact truths that can be measured straight off the image - and the customary way of making them is the one that misses those truths. The first concerns orthogonality. Splitting an image into low and high parts with an ideal frequency mask makes the two exactly orthogonal, so the energies add: across four cut-off frequencies the relative discrepancy in E(low) + E(high) - E(original) is 1.9e-16. The textbook construction - blur with a Gaussian, call the remainder the high part - misses by 0.53 % to 3.10 %, even though both reconstruct the original exactly when added back: being invertible and being orthogonal are different properties. The discrepancy is also not monotone in the blur: the worst case is the weakest blur and the best is in the middle of the range, so neither strengthening nor weakening it fixes the problem. The second concerns distance. Binning k pixels - what moving away does - has the transfer function sin(pi f k)/(k sin(pi f)), which is exactly zero when f times k is an integer, so a pattern of period p pixels vanishes exactly when binned at p pixels (1.4e-14 over five periods). More strongly, the binned picture can be written pixel by pixel in closed form - the amplitude and the fact that the binned pixel's centre shifts by (k-1)/2 - agreeing to 2.8e-14 over every pixel for bin widths 1 through 48. The third concerns shape. Interpolating polygon vertices linearly makes the enclosed area an exact quadratic in t, so three frames predict all of them (2.4e-15 across three shapes), and this survives measurement from the picture: rasterising the polygon and counting brings the deviation from 1.10 % on a 128 grid down to 0.053 % on a 512 grid with each pixel split four ways - and splitting a pixel into 4x4 gives exactly the same number as using a four times finer grid. The fourth is where measurement from a picture breaks. Morphing to the same polygon with its vertices reversed makes the signed area linear in t, vanishing at t = 0.5 where the polygon collapses to a line, and the quadratic prediction holds to 3.4e-15; but a picture only yields positive area, so the parabola folds and the three-frame prediction is off by exactly one quarter of the maximum - measured at 25.0 % for two different shapes. Even the size of the error has a closed form. The fifth pairs two exact spline properties: Catmull-Rom passes through its control points at distance 0.0e+00, while a Bezier curve does not pass through them but never leaves their convex hull (401 of 401 points across four sets) - exactly complementary guarantees. Three predictions were wrong and have been left in: that the bin width at which a hybrid image switches could be predicted from the cut-off frequency as 1/(2 fc), when in fact tripling the cut-off barely moves the measured switch because what governs it is the period the high-frequency picture actually contains; that the Gaussian discrepancy would grow with the blur; and that reading amplitude off the picture's maximum and minimum would match the closed form, when at a bin width of six it reads 20.7 % low because the pixels never land on the crest - the formula is right even where no pixel sits. No new operator was added.*
 
-[![低い周波数に粗い模様、高い周波数に細かい模様を入れた 1 枚を、束ねながら見たもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/01_hybrid_near_far_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/01_hybrid_near_far.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/01_hybrid_near_far_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/01_hybrid_near_far.png)
 
 *↑ The measurement ―― 低い周波数に粗い模様、高い周波数に細かい模様を入れた 1 枚を、束ねながら見たもの。**束ねるのは「遠ざかる」こと**で、細かいほうが先に消える。ただし ★**いつ消えるかは遮断周波数では決まらない** —— 下の数表の「外した予言」を参照。 (figure labels are in Japanese; the numbers are the same)*
 
-[![**どちらも足せば元に戻る**(再構成の誤差は両方 1e-13 未満)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/02_orthogonal_split_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/02_orthogonal_split.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/02_orthogonal_split_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/02_orthogonal_split.png)
 
-*↑ **どちらも足せば元に戻る**(再構成の誤差は両方 1e-13 未満)。*
+*↑ Figure from this exhibit ―― **どちらも足せば元に戻る**(再構成の誤差は両方 1e-13 未満)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![k = 24 と k = 48(f·k が整数)で **厳密に 0**、その間では戻る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/05_transfer_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/05_transfer_curve.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/05_transfer_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/05_transfer_curve.png)
 
-*↑ k = 24 と k = 48(f·k が整数)で **厳密に 0**、その間では戻る。*
+*↑ Figure from this exhibit ―― k = 24 と k = 48(f·k が整数)で **厳密に 0**、その間では戻る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![閉形式なら 2.4e-15。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/09_area_from_picture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/09_area_from_picture.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/09_area_from_picture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/09_area_from_picture.png)
 
-*↑ 閉形式なら 2.4e-15。*
+*↑ Figure from this exhibit ―― 閉形式なら 2.4e-15。 (figure labels are in Japanese; the numbers are the same)*
 
-[![薄い折れ線が制御点をつないだもの、濃い線が Catmull-Rom。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/12_catmull_through_points_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/12_catmull_through_points.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/12_catmull_through_points_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/12_catmull_through_points.png)
 
-*↑ 薄い折れ線が制御点をつないだもの、濃い線が Catmull-Rom。*
+*↑ Figure from this exhibit ―― 薄い折れ線が制御点をつないだもの、濃い線が Catmull-Rom。 (figure labels are in Japanese; the numbers are the same)*
 
-[![6 角形が別の 6 角形へ変わって戻るところ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/06_morph_loop.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/06_morph_loop.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/06_morph_loop.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/06_morph_loop.gif)
 
-*↑ The animation ―― 6 角形が別の 6 角形へ変わって戻るところ。★見た目は連続に変わるが、**囲む面積は t の 厳密な 2 次式**に乗っている(次の図)。*
+*↑ The animation ―― 6 角形が別の 6 角形へ変わって戻るところ。★見た目は連続に変わるが、**囲む面積は t の 厳密な 2 次式**に乗っている(次の図)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_vanishing_detail_and_morphing_area.py
@@ -460,49 +460,49 @@ Before adding segmentation methods, the measures and the ground truth come first
 
 Terms: Dice — A 0-to-1 overlap score equal to twice the intersection size divided by the sum of the two region sizes.; Jaccard — A 0-to-1 set-similarity score equal to intersection size divided by union size.; Hausdorff — A distance between two point sets given by the larger of their two directed maximum nearest-neighbour distances.; Otsu — A histogram thresholding method that chooses the threshold maximizing the variance between the two resulting classes.; Niblack — A local thresholding method that sets each pixel's threshold from the mean and standard deviation in its neighbourhood.; Sauvola — A document-oriented refinement of Niblack thresholding that uses the local mean and a normalized local standard deviation.
 
-[![Jaccard は物体マスク(格子を返す手法は —)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/02_scores_blobs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/02_scores_blobs.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/02_scores_blobs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/02_scores_blobs.png)
 
 *↑ The measurement ―― Jaccard は物体マスク(格子を返す手法は —)。VI = Meilă の情報の変分(0 が一致)、ARI = 補正 Rand、境界 F は τ = 2 px、HD95 = 境界の Hausdorff の 95 % 点。過分割/未分割は分割表の多数決の多重度、一致/分裂/融合/欠落/偽は主に重なる辺の次数。最後の行はルールの直し方。 (figure labels are in Japanese; the numbers are the same)*
 
-[![Jaccard は物体マスク(格子を返す手法は —)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/03_scores_voronoi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/03_scores_voronoi.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/03_scores_voronoi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/03_scores_voronoi.png)
 
-*↑ Jaccard は物体マスク(格子を返す手法は —)。*
+*↑ Figure from this exhibit ―― Jaccard は物体マスク(格子を返す手法は —)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![Jaccard は物体マスク(格子を返す手法は —)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/04_scores_parts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/04_scores_parts.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/04_scores_parts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/04_scores_parts.png)
 
-*↑ Jaccard は物体マスク(格子を返す手法は —)。*
+*↑ Figure from this exhibit ―― Jaccard は物体マスク(格子を返す手法は —)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![Jaccard は物体マスク(格子を返す手法は —)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/05_scores_texture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/05_scores_texture.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/05_scores_texture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/05_scores_texture.png)
 
-*↑ Jaccard は物体マスク(格子を返す手法は —)。*
+*↑ Figure from this exhibit ―― Jaccard は物体マスク(格子を返す手法は —)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![Jaccard は物体マスク(格子を返す手法は —)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/06_scores_gradient_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/06_scores_gradient.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/06_scores_gradient_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/06_scores_gradient.png)
 
-*↑ Jaccard は物体マスク(格子を返す手法は —)。*
+*↑ Figure from this exhibit ―― Jaccard は物体マスク(格子を返す手法は —)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![触れ合う粒: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/08_gauntlet_blobs.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/08_gauntlet_blobs.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/08_gauntlet_blobs.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/08_gauntlet_blobs.gif)
 
-*↑ The animation ―― 触れ合う粒: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, edt_watershed)。*
+*↑ The animation ―― 触れ合う粒: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, edt_watershed)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![結晶粒(ボロノイ): 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/09_gauntlet_voronoi.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/09_gauntlet_voronoi.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/09_gauntlet_voronoi.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/09_gauntlet_voronoi.gif)
 
-*↑ The animation ―― 結晶粒(ボロノイ): 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。*
+*↑ The animation ―― 結晶粒(ボロノイ): 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![影のある部品: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/10_gauntlet_parts.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/10_gauntlet_parts.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/10_gauntlet_parts.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/10_gauntlet_parts.gif)
 
-*↑ The animation ―― 影のある部品: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。*
+*↑ The animation ―― 影のある部品: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![質感だけ違う領域: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/11_gauntlet_texture.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/11_gauntlet_texture.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/11_gauntlet_texture.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/11_gauntlet_texture.gif)
 
-*↑ The animation ―― 質感だけ違う領域: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, texture_kmeans)。*
+*↑ The animation ―― 質感だけ違う領域: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, texture_kmeans)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![照明の勾配: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/12_gauntlet_gradient.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/12_gauntlet_gradient.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/12_gauntlet_gradient.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/12_gauntlet_gradient.gif)
 
-*↑ The animation ―― 照明の勾配: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, flat_field_otsu)。*
+*↑ The animation ―― 照明の勾配: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, flat_field_otsu)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![細い構造: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/13_gauntlet_thin.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/13_gauntlet_thin.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/13_gauntlet_thin.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/13_gauntlet_thin.gif)
 
-*↑ The animation ―― 細い構造: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。*
+*↑ The animation ―― 細い構造: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_segmentation_gauntlet.py
@@ -524,33 +524,33 @@ Active contours segment an object by moving a curve step by step onto its edge. 
 
 Terms: GVF — An external force for active contours that diffuses image gradients into a smooth vector field, extending capture range and reaching concavities.; DRLSE — A level-set evolution method whose distance regularization keeps the level-set function near a signed-distance function without reinitialization.; Dice — A 0-to-1 overlap score equal to twice the intersection size divided by the sum of the two region sizes.
 
-[![c の更新(内外の平均)と、c を固定した凸緩和(Chan–Esedoglu–Nikolova)の交互最小化。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/02_cv_energy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/02_cv_energy.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/02_cv_energy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/02_cv_energy.png)
 
 *↑ The measurement ―― c の更新(内外の平均)と、c を固定した凸緩和(Chan–Esedoglu–Nikolova)の交互最小化。どの世界でも1 度も増えず、分割が変わらなくなった所で止まる(門 5)。止まった所が真値に近いかは別(表を見る)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![γ = 1 ≥ L = 0.463(外力の勾配の Lipschitz 定数)なので降下補題により全体は増えない(実測 増加 0 回)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/03_snake_energy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/03_snake_energy.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/03_snake_energy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/03_snake_energy.png)
 
-*↑ γ = 1 ≥ L = 0.463(外力の勾配の Lipschitz 定数)なので降下補題により全体は増えない(実測 増加 0 回)。*
+*↑ Figure from this exhibit ―― γ = 1 ≥ L = 0.463(外力の勾配の Lipschitz 定数)なので降下補題により全体は増えない(実測 増加 0 回)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![dA/dt = −∮κ ds = −2π。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/04_curvature_area_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/04_curvature_area.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/04_curvature_area_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/04_curvature_area.png)
 
-*↑ dA/dt = −∮κ ds = −2π。*
+*↑ Figure from this exhibit ―― dA/dt = −∮κ ds = −2π。 (figure labels are in Japanese; the numbers are the same)*
 
-[![Jaccard/Dice は物体マスク、境界 F は τ = 2 px。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/05_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/05_scores.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/05_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/05_scores.png)
 
-*↑ Jaccard/Dice は物体マスク、境界 F は τ = 2 px。*
+*↑ Figure from this exhibit ―― Jaccard/Dice は物体マスク、境界 F は τ = 2 px。 (figure labels are in Japanese; the numbers are the same)*
 
-[![U 字の凹部: 同じ α・β・γ で外力だけ違う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/06_u_shape_snakes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/06_u_shape_snakes.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/06_u_shape_snakes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/06_u_shape_snakes.gif)
 
-*↑ The animation ―― U 字の凹部: 同じ α・β・γ で外力だけ違う。古典(赤)は凹部の口に橋を架けて止まり、辺の途中も外に浮いたまま(エッジの勾配の力は辺の近くにしか届かない)、GVF(青)は奥まで入る。緑 = 真の縁。1 コマ = 20 反復。*
+*↑ The animation ―― U 字の凹部: 同じ α・β・γ で外力だけ違う。古典(赤)は凹部の口に橋を架けて止まり、辺の途中も外に浮いたまま(エッジの勾配の力は辺の近くにしか届かない)、GVF(青)は奥まで入る。緑 = 真の縁。1 コマ = 20 反復。 (figure labels are in Japanese; the numbers are the same)*
 
-[![照明の勾配の上の暗い物体(反転して渡す)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/07_gradient_world_contours.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/07_gradient_world_contours.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/07_gradient_world_contours.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/07_gradient_world_contours.gif)
 
-*↑ The animation ―― 照明の勾配の上の暗い物体(反転して渡す)。全画面の矩形から 4 手法の輪郭が動く。大域の 2 平均(Chan–Vese・形態学的 CV)は明るい側の背景ごと切り、エッジで止まる GAC・DRLSE は物体に貼り付く(GAC は雑音の粒を数十個残す = 表の予測の個数)。緑 = 真の縁、各手法のコマは反復数に比例して間引いて 40 コマに揃えた。*
+*↑ The animation ―― 照明の勾配の上の暗い物体(反転して渡す)。全画面の矩形から 4 手法の輪郭が動く。大域の 2 平均(Chan–Vese・形態学的 CV)は明るい側の背景ごと切り、エッジで止まる GAC・DRLSE は物体に貼り付く(GAC は雑音の粒を数十個残す = 表の予測の個数)。緑 = 真の縁、各手法のコマは反復数に比例して間引いて 40 コマに揃えた。 (figure labels are in Japanese; the numbers are the same)*
 
-[![凹んだ星形の平均曲率流。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/08_curvature_flow_star.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/08_curvature_flow_star.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/08_curvature_flow_star.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/08_curvature_flow_star.gif)
 
-*↑ The animation ―― 凹んだ星形の平均曲率流。凹部は外へ、凸部は内へ動き、丸くなりながら面積は毎時間 2π ずつ減る。*
+*↑ The animation ―― 凹んだ星形の平均曲率流。凹部は外へ、凸部は内へ動き、丸くなりながら面積は毎時間 2π ずつ減る。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_active_contours.py
@@ -572,37 +572,37 @@ Segmentation expansion, batch 3 — new module seggraph, 16 ops. Gates: graph cu
 
 Terms: SNIC — A priority-queue region-growing method that produces connected superpixels without iterative clustering.; SLIC — A local clustering method that groups pixels into approximately uniform superpixels using a distance over colour and image position.
 
-[![−距離変換の地形の 1 本の最小全域森を、dynamics ≤ θ の辺で結ぶ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/02_watershed_theta_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/02_watershed_theta.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/02_watershed_theta_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/02_watershed_theta.png)
 
 *↑ The measurement ―― −距離変換の地形の 1 本の最小全域森を、dynamics ≤ θ の辺で結ぶ。θ = 0 は雑音の凹みまで盆地にして過分割、θ = 0.5〜3 px で粒の数ちょうど、くびれの深さ(重なり 20 %)を超えると隣の粒と融合する。 (figure labels are in Japanese; the numbers are the same)*
 
-[![エネルギーは毎回厳密に最小(最大フロー = 最小カット)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/03_graph_cut_lambda_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/03_graph_cut_lambda.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/03_graph_cut_lambda_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/03_graph_cut_lambda.png)
 
-*↑ エネルギーは毎回厳密に最小(最大フロー = 最小カット)。*
+*↑ Figure from this exhibit ―― エネルギーは毎回厳密に最小(最大フロー = 最小カット)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![結晶粒は q = 256 付近で VI が 1 bit を切る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/04_srm_q_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/04_srm_q.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/04_srm_q_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/04_srm_q.png)
 
-*↑ 結晶粒は q = 256 付近で VI が 1 bit を切る。*
+*↑ Figure from this exhibit ―― 結晶粒は q = 256 付近で VI が 1 bit を切る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![Kittler は 2 クラスの分散を別々に持つので Bayes の最小誤差の閾値(2 次方程式の根)に乗る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/05_thresholds_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/05_thresholds.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/05_thresholds_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/05_thresholds.png)
 
-*↑ Kittler は 2 クラスの分散を別々に持つので Bayes の最小誤差の閾値(2 次方程式の根)に乗る。*
+*↑ Figure from this exhibit ―― Kittler は 2 クラスの分散を別々に持つので Bayes の最小誤差の閾値(2 次方程式の根)に乗る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![照明の勾配では背景の裾が長く、2 平均の中点(isodata)は背景の中に落ちる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/06_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/06_scores.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/06_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/06_scores.png)
 
-*↑ 照明の勾配では背景の裾が長く、2 平均の中点(isodata)は背景の中に落ちる。*
+*↑ Figure from this exhibit ―― 照明の勾配では背景の裾が長く、2 平均の中点(isodata)は背景の中に落ちる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![触れ合う粒の階層分水嶺。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.gif)
 
-*↑ The animation ―― 触れ合う粒の階層分水嶺。θ を大 → 小 → 大に振る: 1 領域から粒の数ちょうどを経て雑音の凹みで過分割へ、そして戻る。どのコマも同じ 1 本の木の切り方(入れ子)。*
+*↑ The animation ―― 触れ合う粒の階層分水嶺。θ を大 → 小 → 大に振る: 1 領域から粒の数ちょうどを経て雑音の凹みで過分割へ、そして戻る。どのコマも同じ 1 本の木の切り方(入れ子)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![結晶粒の SRM。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/09_srm_q_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/09_srm_q_sweep.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/09_srm_q_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/09_srm_q_sweep.gif)
 
-*↑ The animation ―― 結晶粒の SRM。q = 1(全部 1 領域)から 1024(細切れ)へ。q = 256 前後で粒界に沿う。*
+*↑ The animation ―― 結晶粒の SRM。q = 1(全部 1 領域)から 1024(細切れ)へ。q = 256 前後で粒界に沿う。 (figure labels are in Japanese; the numbers are the same)*
 
-[![graph cut の λ を 0 → 0.3。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/10_graph_cut_lambda_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/10_graph_cut_lambda_sweep.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/10_graph_cut_lambda_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/10_graph_cut_lambda_sweep.gif)
 
-*↑ The animation ―― graph cut の λ を 0 → 0.3。黄 = 正解の物体、赤 = 余計、青 = 取り逃し。左の雑音の点は消え、右の細い線も同じ λ で途切れて消える。*
+*↑ The animation ―― graph cut の λ を 0 → 0.3。黄 = 正解の物体、赤 = 余計、青 = 取り逃し。左の雑音の点は消え、右の細い線も同じ λ で途切れて消える。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_graph_hierarchy_segmentation.py
@@ -622,21 +622,21 @@ Tabanid flies cannot slow down in a controlled way before zebra stripes (Caro et
 
 *↑ **A Fly's Eye Closing In on Stripes — Do Zebra Stripes Really Spoil a Compound Eye's Sense of Distance, and Would a Fibonacci Eye Do Better?** ―― Tabanid flies cannot slow down in a controlled way before zebra stripes (Caro et al. 2019) and fly faster, keep away and do not land near stripes or checkerboards (How et al. 2020). This PoC counts how much of the folk claim that stripes spoil the sense of distance can be explained by the closed forms of a compound eye and a Hassenstein–Reichardt correlator. Six new ops: `fly_view_plane_texture` samples a periodic frontal surface analytically under the hexagonal lattice and a Gaussian acceptance function (no image resampling, 1e-9 against the closed form), `sampling_alias_distance` returns the distance P cos^2(theta)/(sqrt(3) dphi) beyond which a period P aliases on a lattice of pitch dphi (also the working-distance rule of an inspection camera), `fly_expansion_readout` reads tau from the flow over the whole eye, `traj_tau_dot` gives tau and tau-dot along a measured trajectory, `fly_vogel_lattice` is a Fibonacci (Vogel-spiral) eye and `lattice_moire_peak` the sharpness of the moire. A 7 cm stripe aliases for a tabanid eye (dphi 1.1 deg) beyond 2.105 m head-on and 0.526 m at 60 deg, while a Drosophila eye (4.63 / 8.23 deg) blurs it away (MTF 0.024). The HR sign reversal agrees with the closed form in more than 97 % of ommatidia, retreats to the periphery on approach, and the azimuthal pairs switch from 'receding' to 'approaching' at 1.71 m against a predicted 1.65 to 1.77 m. The aperture effect of vertical stripes returns exactly 2 tau in both the radial fit and the divergence (closed form 2, measured 1.992) and a checkerboard restores tau, which reproduces in numbers the logic of How et al. 2020 that avoidance of checkerboards rules out the aperture effect. The temporal frequency v tan(theta)/P during the approach does not depend on distance, so the correlator loses the range. The Fibonacci eye (same 721 ommatidia, same mean spacing) wins on moire diffusion (peak sharpness 2521 hexagonal / 4.3 Vogel / 5.2 jittered hexagonal), the hexagon resolves best just below Nyquist (residual 0.021 / 0.035 / 0.022), false flow is set by pair spacing rather than by lattice regularity (every azimuthal pair of the hexagon is reversed, every diagonal pair is correct), and a fovea (density power 0.5 to 0.8) sharpens the true-frequency peak from 5.2 to 11.0. The external truth (How et al. 2020's Dryad 3-D trajectories, CC0) runs when placed and is skipped with an explicit 'not placed' otherwise. Dettlaff 2026 (arXiv:2605.17049, preprint, single author, code not public) is named as the moire hypothesis this is compared against. Nothing is learned; one gain is calibrated.*
 
-[![the alias distance P/(sqrt3 dphi) for a 7 cm period against the inter-ommatidial angle; the acceptance ratio changes onl…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/01_nyquist_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/01_nyquist_sweep.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/01_nyquist_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/01_nyquist_sweep.png)
 
 *↑ The measurement ―― the alias distance P/(sqrt3 dphi) for a 7 cm period against the inter-ommatidial angle; the acceptance ratio changes only the contrast left at Nyquist, not the distance (figure labels are in Japanese; the numbers are the same)*
 
-[![moire sharpness = strongest peak / median of the sub-Nyquist spectrum; false flow = energy of HR pair responses with the wrong sign / total, and the c…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/04_lattices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/04_lattices.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/04_lattices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/04_lattices.png)
 
-*↑ moire sharpness = strongest peak / median of the sub-Nyquist spectrum; false flow = energy of HR pair responses with the wrong sign / total, and the c…*
+*↑ Figure from this exhibit ―― moire sharpness = strongest peak / median of the sub-Nyquist spectrum; false flow = energy of HR pair responses with the wrong sign / total, and the c… (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/05_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/05_numbers.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/05_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/05_numbers.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![the time-to-contact read by the HR pathway…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/03_tau_readout.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/03_tau_readout.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/03_tau_readout.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/03_tau_readout.gif)
 
-*↑ The animation ―― the time-to-contact read by the HR pathway (radial fit of the flow over the eye, one gain calibrated on the first checkerboard window) against the true tau during an approach at 0.5 m/s: over vertical stripes it reads longer than over a checkerboard (median ratio 1.52; the closed-form aperture effect says 2) while the checkerboard itself drifts from tau as the correlator's phase moves with distance. The 1/f texture is left off the axes: with the same single gain it reads 14 to 28 tau, because its flow energy is a thousandth of the checkerboard's — a correlator is not a speedometer*
+*↑ The animation ―― the time-to-contact read by the HR pathway (radial fit of the flow over the eye, one gain calibrated on the first checkerboard window) against the true tau during an approach at 0.5 m/s: over vertical stripes it reads longer than over a checkerboard (median ratio 1.52; the closed-form aperture effect says 2) while the checkerboard itself drifts from tau as the correlator's phase moves with distance. The 1/f texture is left off the axes: with the same single gain it reads 14 to 28 tau, because its flow energy is a thousandth of the checkerboard's — a correlator is not a speedometer (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_zebra_stripes_fly_eye.py
@@ -656,25 +656,25 @@ Sim-to-real calibration (simcal) of pixel-shift offsets, pixel aperture and the 
 
 *↑ **Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only** ―― Sim-to-real calibration (simcal) of pixel-shift offsets, pixel aperture and the lens Q = λN/p from the captured frames, refusing numbers that the data cannot fix. The centrepiece is an 'undetermined map' of a Siemens star cut into 8-pixel tiles: on the spokes the shift is fixed only along the tangent, the Cramér-Rao ellipses stretch radially, and the 'determined combination' simcal returns lies within 2.5 degrees of the closed-form tangent. This chapter found a bug in simcal (the determined combination was divided by the sensitivity column norms instead of multiplied), now fixed with a regression test. Injected ±0.1 px shifts are recovered at the Cramér-Rao bound (Fisher-distance chi-square p = 0.62); a noise model off by 4x fails the same gate (p = 3e-21). A rotated frame fitted by translation only is rejected by the residual PCA and the absolute chi-square gate. With half-pixel shifts the fitted aperture and Q give a resolution gain of 1.420 ± 0.005 (closed form 1.414), and Q = 2.5 is lens-limited with gain 1; a stuck row actuator and a 60 DN dim capture both make it refuse the gain. On real raw frames (PixelShift200, Qian et al., ICCP 2022, CC BY 4.0) the G-to-G diagonal pairs agree tile by tile with phase correlation (paired t-test p = 0.22 / 0.30) and the cross-colour pair is refused (chi-square per dof 31). No training.*
 
-[![【1 章】同じ 4 つのつまみ(フレームのずれ dr・dc・回転・露出)を、縞の向きだけが違う 6 種の被写体で Morris のふるいにかけた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/01_screen_by_stripe_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/01_screen_by_stripe_direction.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/01_screen_by_stripe_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/01_screen_by_stripe_direction.png)
 
 *↑ The measurement ―― 【1 章】同じ 4 つのつまみ(フレームのずれ dr・dc・回転・露出)を、縞の向きだけが違う 6 種の被写体で Morris のふるいにかけた。撮れた生の画像(32 × 32 画素を 8 倍、灰色は白の釣り合いを戻した値)と、dr・dc の分類。縦縞では縞に沿った dr が画像を変えず「効かない」、斜めの縞では dr と dc が縞を横切る組(右上がりは dr + dc、右下がりは dr − dc)でしか決まらない —— 開口問題。 (figure labels are in Japanese; the numbers are the same)*
 
-[![【2 章】3 枚のフレームに dr・dc ∈ ±0.1 px、回転 ±2 mrad、露出 ±2 % を注入し、物理の経路(ポアソン + 読み出し雑音 + 丸め)で撮って合わせた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/03_recovery_vs_crlb_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/03_recovery_vs_crlb.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/03_recovery_vs_crlb_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/03_recovery_vs_crlb.png)
 
-*↑ 【2 章】3 枚のフレームに dr・dc ∈ ±0.1 px、回転 ±2 mrad、露出 ±2 % を注入し、物理の経路(ポアソン + 読み出し雑音 + 丸め)で撮って合わせた。*
+*↑ Figure from this exhibit ―― 【2 章】3 枚のフレームに dr・dc ∈ ±0.1 px、回転 ±2 mrad、露出 ±2 % を注入し、物理の経路(ポアソン + 読み出し雑音 + 丸め)で撮って合わせた。 (figure labels are in Japanese; the numbers are the same)*
 
-[![【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。赤 = 正、青 = 負)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/04_poor_model_residuals.png)
 
-*↑ 【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。赤 = 正、青 = 負)。*
+*↑ Figure from this exhibit ―― 【4 章】3 mrad 回ったフレームを 2 つのモデルで合わせた残差(雑音の標準偏差で割り、5 × 5 で平均、8 倍。赤 = 正、青 = 負)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![【5 章】半画素シフト 4 枚(白黒)で、開口率・レンズの Q = λN/p・3 枚のずれを合わせ、pixel_shift_resolution_budget の閉形式(|sinc(f·開口率)| × 回折の MTF)に入れた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/05_resolution_budget.png)
 
-*↑ 【5 章】半画素シフト 4 枚(白黒)で、開口率・レンズの Q = λN/p・3 枚のずれを合わせ、pixel_shift_resolution_budget の閉形式(|sinc(f·開口率)| × 回折の MTF)に入れた。*
+*↑ Figure from this exhibit ―― 【5 章】半画素シフト 4 枚(白黒)で、開口率・レンズの Q = λN/p・3 枚のずれを合わせ、pixel_shift_resolution_budget の閉形式(|sinc(f·開口率)| × 回折の MTF)に入れた。 (figure labels are in Japanese; the numbers are the same)*
 
-[![【実データ】ピクセルシフト 4 枚の未加工 RAW の 1 枚目(白の釣り合いを掛けたモザイクのまま、256 × 1152 画素を 2 倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/06_real_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/06_real_tiles.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/06_real_tiles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/06_real_tiles.png)
 
-*↑ 【実データ】ピクセルシフト 4 枚の未加工 RAW の 1 枚目(白の釣り合いを掛けたモザイクのまま、256 × 1152 画素を 2 倍)。*
+*↑ Figure from this exhibit ―― 【実データ】ピクセルシフト 4 枚の未加工 RAW の 1 枚目(白の釣り合いを掛けたモザイクのまま、256 × 1152 画素を 2 倍)。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -698,29 +698,29 @@ Water is a moving lens seen from above and a colour filter that thickens with di
 
 *↑ **Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations** ―― Water is a moving lens seen from above and a colour filter that thickens with distance seen from below. Ten new ops (`watermedia`, category `watermedia` of `opsoptics`): `ocean_spectrum` (S(omega) of Pierson-Moskowitz and JONSWAP, significant height and period), `ocean_height_field` (a Tessendorf FFT sea: height, slopes, normals, choppiness, depth), `fresnel_water_air` (the index of water is the real part of the material table with dispersion; flags total internal reflection), `snell_window` (window radius and apparent depth), `refracted_view` (where an underwater point appears, as a stationary point of the optical path: bisection on a flat surface, Newton iteration on a wavy one with the vector Snell law verified and failures returned as NaN), `water_attenuation` (Pope & Fry pure-water absorption, Smith & Baker scattering, Solonenko & Mobley a, b and Kd of the Jerlov types), `underwater_image` (Akkaynak & Treibitz image formation: direct signal plus backscatter), `phase_function_hg` / `scattering_phase_petzold` (the Petzold volume scattering function) and `cylinder_lens_caustic` (paraxial focus and real-ray caustic of a cylinder). (1) A Pierson-Moskowitz sea at 8 m/s: significant height 1.3656 m (0.21 U^2/g = 1.3705 m, 0.36 %), peak 1.0753 rad/s (0.877 g/U = 1.0751, 2e-4), JONSWAP with gamma = 1 equals PM to 1e-9, the height is real (imaginary part 3.5e-16), the spatial variance is within 0.02 % of the integral of the spectrum (8 seeds) and a single mode has the period 2 pi / omega to 2.8e-16. Against Cox & Munk (0.003 + 0.00512 U) the slope variance of the resolved waves alone is 11 % at 5 m/s and 16 % at 10 m/s (PM has no capillary waves); carrying the saturation range to the capillary wave number 370 /m gives 98 % (-2.5 %) at 5 m/s but 61 % (-38.7 %) at 10 m/s, kept in the gates as the limit that the constant alpha of PM does not grow with the wind. (2) A checkerboard on the bottom of a 2 m pool: the apparent depth straight above is d / n to 0, the found path satisfies Snell's law to 7.8e-16, the flat refraction point agrees with the quartic to 1e-15 and with a direct minimisation of the optical path to 2.8e-8, and on a wavy surface the backward ray trace that builds the image returns to the same bottom point within 9.6e-9 m. In a fisheye looking up from under water the total internal reflection starts within one pixel (1.5 degrees) after the critical angle 48.59 degrees. (3) A water-filled bottle (R = 30 mm, n = 1.52, wall 1.5 mm, water 1.333): paraxial focus 61.24 mm, marginal ray 40.01 mm (spherical aberration 21.23 mm); the paraxial focus of a rod matches n R / (2 (n - 1)) and the real-ray focus matches the trigonometric chord to 3.6e-14. The power is 0.01633 /mm filled and -0.00120 /mm empty (ratio 13.6); on a screen 50 mm behind, the centre is 4.88 times the incident light where there is water (peak 13.97) and 0.94 times where the bottle is empty. (4) A colour chart at 1, 5 and 15 m: the Pope & Fry absorption has its minimum 0.00442 /m at 417.5 nm and 0.624 /m at 700 nm (table values), Beer-Lambert agrees with glassmirror to 1.1e-16, a count of 200,000 photons follows the exponential law to 0.2 sigma, Kd at 500 nm is 0.029 < 0.064 < 0.109 < 0.120 (I < II < III < 1C), red decays 12.2 times faster than blue in Jerlov I (transmission over 10 m: red 0.074, green 0.557, blue 0.807) and the R of the red patch at 15 m is 0.010. (5) Limits: the flat-surface apparent depth d / n is wrong the more obliquely one looks (7 % too deep at 30 degrees, 52 % at 60). The probes that break the answer on purpose (an index of 1.4, alpha changed by 10 %, Snell's law reversed) turn a gate red. No learning, no calibration, 43 gates.*
 
-[![Tessendorf の FFT。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/01_ocean_field_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/01_ocean_field.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/01_ocean_field_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/01_ocean_field.png)
 
 *↑ The measurement ―― Tessendorf の FFT。有義波高 1.37 m、周期 5.8 s。波は +x(右)へ進む。 (figure labels are in Japanese; the numbers are the same)*
 
-[![JONSWAP はピークを γ 倍に尖らせる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/03_ocean_spectrum_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/03_ocean_spectrum.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/03_ocean_spectrum_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/03_ocean_spectrum.png)
 
-*↑ JONSWAP はピークを γ 倍に尖らせる。*
+*↑ Figure from this exhibit ―― JONSWAP はピークを γ 倍に尖らせる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![空の瓶はほとんど曲げない(屈折力は水入りの 1/14)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/06_bottle_caustic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/06_bottle_caustic.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/06_bottle_caustic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/06_bottle_caustic.png)
 
-*↑ 空の瓶はほとんど曲げない(屈折力は水入りの 1/14)。*
+*↑ Figure from this exhibit ―― 空の瓶はほとんど曲げない(屈折力は水入りの 1/14)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![上: 外洋(ジャーロフ I)、下: 沿岸(3C)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/08_diver_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/08_diver_chart.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/08_diver_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/08_diver_chart.png)
 
-*↑ 上: 外洋(ジャーロフ I)、下: 沿岸(3C)。*
+*↑ Figure from this exhibit ―― 上: 外洋(ジャーロフ I)、下: 沿岸(3C)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![純水の吸収の最小は 417.5 nm の 0.00442 /m、700 nm で 0.624 /m。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/10_water_spectra_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/10_water_spectra.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/10_water_spectra_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/10_water_spectra.png)
 
-*↑ 純水の吸収の最小は 417.5 nm の 0.00442 /m、700 nm で 0.624 /m。*
+*↑ Figure from this exhibit ―― 純水の吸収の最小は 417.5 nm の 0.00442 /m、700 nm で 0.624 /m。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じFFT海面の時刻を進めると波面が風下へ動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/02_ocean_surface_motion.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/02_ocean_surface_motion.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/02_ocean_surface_motion.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/02_ocean_surface_motion.gif)
 
-*↑ The animation ―― 同じFFT海面の時刻を進めると波面が風下へ動く。*
+*↑ The animation ―― 同じFFT海面の時刻を進めると波面が風下へ動く。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_water_transparent_media.py
@@ -740,29 +740,29 @@ Water changes what an inspection camera records in four ways: a wavy surface lay
 
 *↑ **How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods** ―― Water changes what an inspection camera records in four ways: a wavy surface lays a bright web of caustics over the pattern on the floor, a bottle with liquid is a cylindrical lens, a wet surface is darker and glossier, and in murky water a lamp beside the lens makes a veil of backscatter. Seven new ops (`watervision`, category `watervision` of `opsoptics`): `caustic_irradiance` (the irradiance on a floor by a photon count and by the Jacobian of the surface-to-floor map), `bottle_image` (a side view of a bottle ray-cast in the horizontal section of every row, backlit or frontlit, with bubbles and a meniscus), `fill_level_from_image` (the fill line read back from the image), `wet_surface_appearance` (the Lekner and Dorf wet surface), `wet_dry_inspection_pair` (one plate rendered dry and wet, with the defect contrast), `underwater_inspection_image` (a hull seen with a lamp at the camera, and the per-pixel SNR) and `caustic_floor_segmentation` (the caustic lines as a mask). (1) Pool floor: a flat surface gives a uniform cos(theta) T to 1e-9, the photon total equals the incident beam times the mean transmittance to 1e-6 (periodic wrap), the photon count and the Jacobian agree to 0.30 % relative RMS on a smooth surface, at the folds (66 pixels on a surface of 0.2 m waves) the wavefront method returns inf and a flag while the photons count a finite value 5.0 times the mean, and doubling the ray density changes the result by 0.85 %. The crack detector (the registry's `canny`) fires on the edges of the caustics at 3 m/s and its precision falls to 0.05 (1.00 on a plate without them); removing the edges with the caustic segmentation brings it back to 1.00 (recall 1.00 to 0.45). At 6 m/s the relative threshold loses to the gradient of the caustic edges (recall 0.15), masking does not bring the crack back (0.00), and dividing by the irradiance does (1.00 / 1.00). (2) Bottle (R = 30 mm, n = 1.52, water 1.333): rows above and below the line are bit identical to the empty and the full section, the central brightness ratio 1.0816 matches the ratio of the Fresnel transmittance products of the four interfaces to 1e-9, the half width of the lit band of the filled section is 9.50 mm (9.91 mm predicted from the paraxial focus of 62.13 mm, -4.1 %), the fill line is within 1 pixel for five fills and two lights (difference 0), and the outer diameter of the dark ring of a bubble is 54 pixels (53.3 from the paraxial 2 x 2 matrix, magnification 1.333). (3) Wet surface: a film of 0 leaves the albedo unchanged, the closed form agrees with an independent quadrature to 1.1e-16, wet over dry is 0.673 at a = 0.5, the diffuse contrast of a scratch goes from 0.411 to 0.494 (0.494 predicted), the total from 0.449 to 0.558, and the glint pixels from 361 to 127. (4) Hull (1, 3 and 6 m, Jerlov I and 3C): the SNR falls monotonically with distance, pure water as the distance tends to 0 equals the clear-water case to 2.7e-11, and the veil in the centre is about 5 times that in the corner. (5) Limit: the bottle is traced section by section and ignores the vertical tilt of the rays; at a tilt of 40 degrees the half width of the band moves by 29 % (a vertical cylinder is exact with effective indices, a shoulder is not covered). No learning, no calibration, 39 gates.*
 
-[![照度の最大 3.0 倍(3 m/s)・7.7 倍(6 m/s)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/01_pool_caustics_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/01_pool_caustics.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/01_pool_caustics_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/01_pool_caustics.png)
 
 *↑ The measurement ―― 照度の最大 3.0 倍(3 m/s)・7.7 倍(6 m/s)。分割は床の 29 %・21 %。傾きの RMS は手で 0.06・0.10 に合わせた。 (figure labels are in Japanese; the numbers are the same)*
 
-[![上: 3 m/s は分割で縁を除くと適合率が戻る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/02_crack_detector_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/02_crack_detector.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/02_crack_detector_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/02_crack_detector.png)
 
-*↑ 上: 3 m/s は分割で縁を除くと適合率が戻る。*
+*↑ Figure from this exhibit ―― 上: 3 m/s は分割で縁を除くと適合率が戻る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![空の瓶は縁近くまで明るい。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/05_focal_band_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/05_focal_band.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/05_focal_band_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/05_focal_band.png)
 
-*↑ 空の瓶は縁近くまで明るい。*
+*↑ Figure from this exhibit ―― 空の瓶は縁近くまで明るい。 (figure labels are in Japanese; the numbers are the same)*
 
-[![全体のコントラスト 0.449 → 0.558。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/08_wet_dry_plate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/08_wet_dry_plate.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/08_wet_dry_plate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/08_wet_dry_plate.png)
 
-*↑ 全体のコントラスト 0.449 → 0.558。*
+*↑ Figure from this exhibit ―― 全体のコントラスト 0.449 → 0.558。 (figure labels are in Japanese; the numbers are the same)*
 
-[![内部反射 r = 0.476 の水–空気界面が光を膜に閉じ込め、基板に吸わせる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/11_wet_ratio_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/11_wet_ratio.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/11_wet_ratio_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/11_wet_ratio.png)
 
-*↑ 内部反射 r = 0.476 の水–空気界面が光を膜に閉じ込め、基板に吸わせる。*
+*↑ Figure from this exhibit ―― 内部反射 r = 0.476 の水–空気界面が光を膜に閉じ込め、基板に吸わせる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![照明角を動かすと濡れた板のてかりが移動する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/10_wet_highlight_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/10_wet_highlight_sweep.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/10_wet_highlight_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/10_wet_highlight_sweep.gif)
 
-*↑ The animation ―― 照明角を動かすと濡れた板のてかりが移動する。*
+*↑ The animation ―― 照明角を動かすと濡れた板のてかりが移動する。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_water_inspection_images.py
@@ -782,25 +782,25 @@ A transparent bottle distorts the stripes behind it. For each pixel we find wher
 
 *↑ **Reading a Glass Bottle Back from Background Stripes (a Simulation Under Shared Assumptions) — Scored Against the Simulated Truth, with What Cannot Be Separated and a Model Error the Residual Does Not Show** ―― A transparent bottle distorts the stripes behind it. For every pixel the map u says where on the background the ray lands, and radius, wall, n_glass, n_liquid and the fill line are fitted back from it (all in simulation). Two new ops (`watervision`, category `watervision` of `opsoptics`): `bottle_background_map` (the same bottle and camera as `bottle_image`, returning the background coordinate u instead of a brightness) and `bottle_fit_from_pattern` (a fit of the u map returning standard deviations, the correlation matrix, a condition number, the weakest direction and a `separated` flag). Disclosure of the truth and of the shared assumptions: the truth is the input of a simulation made here (R 30 mm, wall 1.5 mm, n_glass 1.52, water 1.333 or oil 1.47, five fills), not a measurement of a real bottle. The observation (a vector-Snell trace) and the forward model of the fit (a closed form on concentric circles) are separate derivations, but both assume the same world: concentric circles with a uniform wall, a horizontal 2-D section, an ideal pinhole, a perfectly flat background, exactly known distances and pixel pitch, no dispersion, a flat liquid surface and point sampling. The result is a recovery under the same assumptions, not evidence that a real bottle can be measured. A paraxial 2x2 ray matrix checks the centre slope (2.2e-5). (1) Without noise all 10 configurations come back to a relative 9.5e-13 and the fill line is exactly on the row boundary; an empty and a full bottle return no fill line. (2) Four-step stripes of periods 256, 32 and 4 mm, shot at 8 bit with 1.5 grey levels of noise, give u back (noise 7.1 um = 0.11 px): R within 1.4e-6, n_liquid within 2.8e-6, fill line 0 px. With 300 noise trials on one row the worst case is 1.8e-5 for R and 1.7e-5 for n_liquid; the sigma predicted from the covariance is 0.67 to 1.00 of the empirical one, so it leans towards an underestimate. (3) The two readings of the fill line (the jump between rows of the stripe map and the backlit brightness) agree to 0 px, but they share the same row split, so this is not an independent measurement; with a 3 mm meniscus the two brightness readings split by 1.15 mm, and the stripe side has no meniscus, so it is unchecked. (4) What cannot be separated: wall and n_glass correlate at -0.92 (cond 11). With the edge pixels even a 0.1 mm wall comes back, but with the usable window narrowed to the middle 25 % the relative sigma of the wall grows 800 times and a 0.1 mm wall does not come back (0.05). The `separated` flag is a rule of thumb for noise-only error, not a guarantee: its threshold was set to 1 % after looking at 1600 trials (at 0.25 it missed 15-20 % of the wrong wall estimates and 73-76 % of the trials with n_glass off by 0.02; at 1 % it missed 0 of the 92 wrong trials of this sweep). With the pattern distance unknown its correlation with n_liquid is -0.999. (5) Precision is not accuracy: noise alone gives n_glass a sigma of 3e-5, but a 1 mm error of the pattern distance moves it by 0.011 (355 times) and a 1 mm error of the camera distance by 0.0029. (6) A model error (eccentricity), compared like for like: an inner wall shifted 0.3 mm (20 % of the wall) along the line of sight in a full bottle (an independently written scalar trace) moves n_glass by -0.095 when both fits are noise-free, but the residual also grows from 0 to 0.008 mm, so without noise the residual shows it. With 1.5 grey levels of noise on both (60 trials each, same noise realisations) the residual ratio is 1.00 and cannot tell the two apart, the n_glass bias of +0.020 is about the single-fit sigma of 0.017 (1.2 times; separated is false in all 60 trials with and without the shift: in a full bottle the flag already says n_glass is not separated), and the wall estimate is biased by -0.20 mm (2.6 times its sigma of 0.075 mm). The fit's `poorly_determined` flag names the wall as not determined in all 60 trials with and without the shift (its 1-sigma is about 5 % of the value), but it does not tell the direction or size of this bias, and the residual does not change either. Noise-free, the same shift moves the wall the other way, by +0.53 mm (the table of figure 10 has both rows). The earlier wording, n_glass moving by -0.095 unnoticed by residual and flags, mixed a noise-free fit with a noisy residual floor and is withdrawn (2026-11-13, after a review independent of the author). In a half-filled bottle the residual grows 8 times and gives the shift away, but the flag knows nothing of eccentricity. (7) Break-it probes: fixing n_glass at 1.4 raises the residual 414 times and reversing Snell's law 80,000 times. Vertical refraction is not modelled. No learning, no calibration (distances are known), 40 gates. Where the numbers come from: the full run. CI's reduced run uses fewer noise trials (150 instead of 300 on one row per section, 40 instead of 60 on all rows), which moves values such as the worst cases in (2); the like-for-like eccentricity comparison in (6) uses 60 trials each in both and prints the same values.*
 
-[![縞の位相を 8 bit・雑音つきで撮ってほどいた u から直線(瓶なし)を引いた量(シミュレーション)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/02_profile_fit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/02_profile_fit.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/02_profile_fit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/02_profile_fit.png)
 
 *↑ The measurement ―― 縞の位相を 8 bit・雑音つきで撮ってほどいた u から直線(瓶なし)を引いた量(シミュレーション)。破線(液)と点線(空)が閉形式の当てはめで、観測に重なる。縦軸が ±200 mm なので 0.4 µm の残差は見えない(数字は題)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![8 bit・雑音 1.5 階調。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/03_recovery_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/03_recovery_table.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/03_recovery_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/03_recovery_table.png)
 
-*↑ 8 bit・雑音 1.5 階調。*
+*↑ Figure from this exhibit ―― 8 bit・雑音 1.5 階調。 (figure labels are in Japanese; the numbers are the same)*
 
-[![共分散から予測した 1σ(窓 1.0 は全幅)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/05_window_sigma_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/05_window_sigma.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/05_window_sigma_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/05_window_sigma.png)
 
-*↑ 共分散から予測した 1σ(窓 1.0 は全幅)。*
+*↑ Figure from this exhibit ―― 共分散から予測した 1σ(窓 1.0 は全幅)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![色は残差 / 雑音の床(倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/07_wall_glass_valley_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/07_wall_glass_valley.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/07_wall_glass_valley_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/07_wall_glass_valley.png)
 
-*↑ 色は残差 / 雑音の床(倍)。*
+*↑ Figure from this exhibit ―― 色は残差 / 雑音の床(倍)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![2 つは同じ行分割を共有するので、一致(0 画素差)は独立の測定ではなく構成上のもの(液面はちょうど行境界)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/09_level_two_ways_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/09_level_two_ways.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/09_level_two_ways_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bottle_pattern_inverse/09_level_two_ways.png)
 
-*↑ 2 つは同じ行分割を共有するので、一致(0 画素差)は独立の測定ではなく構成上のもの(液面はちょうど行境界)。*
+*↑ Figure from this exhibit ―― 2 つは同じ行分割を共有するので、一致(0 画素差)は独立の測定ではなく構成上のもの(液面はちょうど行境界)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_bottle_pattern_inverse.py
@@ -822,25 +822,25 @@ A lens-design screen reports spot diagrams and MTF (modulation transfer function
 
 Terms: MTF — The magnitude of the optical transfer function, showing how image contrast is transferred at each spatial frequency.
 
-[![同じチャートを良好な処方からずらした処方へ連続的に比較する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/02_prescription_detune_morph.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/02_prescription_detune_morph.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/02_prescription_detune_morph.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/02_prescription_detune_morph.gif)
 
 *↑ The measurement ―― 同じチャートを良好な処方からずらした処方へ連続的に比較する。 (figure labels are in Japanese; the numbers are the same)*
 
-[![RMS スポットは raytrace.spot_stats、光量は lensimage、刃は edgesfr で同じ絵から測った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/03_quality_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/03_quality_table.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/03_quality_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/03_quality_table.png)
 
-*↑ RMS スポットは raytrace.spot_stats、光量は lensimage、刃は edgesfr で同じ絵から測った。*
+*↑ Figure from this exhibit ―― RMS スポットは raytrace.spot_stats、光量は lensimage、刃は edgesfr で同じ絵から測った。 (figure labels are in Japanese; the numbers are the same)*
 
-[![遮光筒が隅の斜めの光束を削り、瞳の通過率は 90 %(形は円から外れる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/05_cats_eye_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/05_cats_eye.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/05_cats_eye_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/05_cats_eye.png)
 
-*↑ 遮光筒が隅の斜めの光束を削り、瞳の通過率は 90 %(形は円から外れる)。*
+*↑ Figure from this exhibit ―― 遮光筒が隅の斜めの光束を削り、瞳の通過率は 90 %(形は円から外れる)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![絞りを前に置いた単玉(樽型 -6.6 %)で撮った 30 mm 格子の絵。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/08_distortion_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/08_distortion_grid.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/08_distortion_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/08_distortion_grid.png)
 
-*↑ 絞りを前に置いた単玉(樽型 -6.6 %)で撮った 30 mm 格子の絵。*
+*↑ Figure from this exhibit ―― 絞りを前に置いた単玉(樽型 -6.6 %)で撮った 30 mm 格子の絵。 (figure labels are in Japanese; the numbers are the same)*
 
-[![良い三枚玉では傷の中心の画素が 55 % 暗くなるが、ずらした方では 26 % しか暗くならず、周りの画素と区別がつきにくい。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/10_scratch_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/10_scratch_profile.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/10_scratch_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/10_scratch_profile.png)
 
-*↑ 良い三枚玉では傷の中心の画素が 55 % 暗くなるが、ずらした方では 26 % しか暗くならず、周りの画素と区別がつきにくい。*
+*↑ Figure from this exhibit ―― 良い三枚玉では傷の中心の画素が 55 % 暗くなるが、ずらした方では 26 % しか暗くならず、周りの画素と区別がつきにくい。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_photograph_through_prescription.py
@@ -862,25 +862,25 @@ A walnut was really scanned in a cone beam and reconstructed with FDK and iterat
 
 Terms: cone-beam CT — A CT geometry in which a point source illuminates a flat-panel detector with a cone of X-rays, so one rotation records a whole volume.; FDK — An approximate cone-beam reconstruction that weights the projections, ramp-filters them row by row and back-projects them; it is exact only in the mid-plane of the orbit.; SIRT — An iterative reconstruction that back-projects the residual of all projections at once and corrects the image step by step, usable where no inversion formula exists.; OS-SART — An iterative method that splits the projections into ordered subsets and applies the SIRT update one subset at a time, which converges faster early on.; total variation — The sum of gradient magnitudes of an image; regularising with it favours piecewise-constant images and fills missing data with flat patches.
 
-[![行 = 全周 150 枚 / 全周 25 枚 / 150° / 90°、列 = FDK / SIRT / TV / TV − 参照(差、±0.03 /mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/01_methods_sparse_limited.png)
 
 *↑ The measurement ―― 行 = 全周 150 枚 / 全周 25 枚 / 150° / 90°、列 = FDK / SIRT / TV / TV − 参照(差、±0.03 /mm)。参照は配布元が 3 軌道 3600 枚から作った再構成(図 2)。濃淡は差の列を除き全パネル共通の 0〜0.062 /mm。90° の TV は平らな塊を描き足すが、差の列で形が参照と違うのが見える。 (figure labels are in Japanese; the numbers are the same)*
 
-[![中央面(線源の高さ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/02_reference_vs_fdk_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/02_reference_vs_fdk.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/02_reference_vs_fdk_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/02_reference_vs_fdk.png)
 
-*↑ 中央面(線源の高さ)。*
+*↑ Figure from this exhibit ―― 中央面(線源の高さ)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![TV の重みは 50 枚の条件で、使わなかった 250 枚への再投影誤差が最小の 1e-05(参照は見ない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/03_rmse_vs_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/03_rmse_vs_views.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/03_rmse_vs_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/03_rmse_vs_views.png)
 
-*↑ TV の重みは 50 枚の条件で、使わなかった 250 枚への再投影誤差が最小の 1e-05(参照は見ない)。*
+*↑ Figure from this exhibit ―― TV の重みは 50 枚の条件で、使わなかった 250 枚への再投影誤差が最小の 1e-05(参照は見ない)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![0.4 mm、150 枚。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/05_cone_vertical_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/05_cone_vertical.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/05_cone_vertical_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/05_cone_vertical.png)
 
-*↑ 0.4 mm、150 枚。*
+*↑ Figure from this exhibit ―― 0.4 mm、150 枚。 (figure labels are in Japanese; the numbers are the same)*
 
-[![低い側は実データ、高い側は閉形式の合成 + 実測の 2 枚から作った雑音。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/08_dual_energy_synthetic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/08_dual_energy_synthetic.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/08_dual_energy_synthetic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_walnut_cbct/08_dual_energy_synthetic.png)
 
-*↑ 低い側は実データ、高い側は閉形式の合成 + 実測の 2 枚から作った雑音。*
+*↑ Figure from this exhibit ―― 低い側は実データ、高い側は閉形式の合成 + 実測の 2 枚から作った雑音。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -918,25 +918,25 @@ Terms: PIV — A flow-measurement method that estimates a velocity field from th
 
 *↑ The measurement (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/03_zero_point_spectrum_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/03_zero_point_spectrum.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/03_zero_point_spectrum_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/03_zero_point_spectrum.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/05_tip_waveform_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/05_tip_waveform.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/05_tip_waveform_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/05_tip_waveform.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/08_cliff_frequency_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/08_cliff_frequency.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/08_cliff_frequency_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/08_cliff_frequency.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/11_fps_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/11_fps_sweep.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/11_fps_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/11_fps_sweep.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![動画(640 × 502、24 fps、292 コマ): 片持ち梁の自由減衰(A_1 = 0.2 px、雑音・照明ちらつき・手ぶれ・ローリングシャッター入り、撮影 128 fps を 5.3 倍のスローで再生)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/14_beam_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/14_beam_video.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/14_beam_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/14_beam_video.gif)
 
-*↑ The animation ―― 動画(640 × 502、24 fps、292 コマ): 片持ち梁の自由減衰(A_1 = 0.2 px、雑音・照明ちらつき・手ぶれ・ローリングシャッター入り、撮影 128 fps を 5.3 倍のスローで再生)。画面のままでは梁は動いて見えないので、12 測点のたわみを 50 倍に誇張して重ねた(白 = 真値、青 = 位相法の測定)。下段は先端の変位が時刻とともに伸びる(白 = 真値、青 = 位相法、朱 = PIV)。最後のコマが同定結果: f_1 は 3.013 Hz(真 3.000)と当たるが、同じ時系列から出した ζ_1 は 半値幅 0.0778 / 包絡線 0.0188 / 当てはめ 0.0181(真 0.020)と方法で 3 通りに割れる。*
+*↑ The animation ―― 動画(640 × 502、24 fps、292 コマ): 片持ち梁の自由減衰(A_1 = 0.2 px、雑音・照明ちらつき・手ぶれ・ローリングシャッター入り、撮影 128 fps を 5.3 倍のスローで再生)。画面のままでは梁は動いて見えないので、12 測点のたわみを 50 倍に誇張して重ねた(白 = 真値、青 = 位相法の測定)。下段は先端の変位が時刻とともに伸びる(白 = 真値、青 = 位相法、朱 = PIV)。最後のコマが同定結果: f_1 は 3.013 Hz(真 3.000)と当たるが、同じ時系列から出した ζ_1 は 半値幅 0.0778 / 包絡線 0.0188 / 当てはめ 0.0181(真 0.020)と方法で 3 通りに割れる。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_beam_modal_video.py
@@ -960,21 +960,21 @@ The question is whether one temperature record represents every product in a col
 
 *↑ The measurement (figure labels are in Japanese; the numbers are the same)*
 
-[![扉前の空気は跳ねるが製品には届かない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/03_traces_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/03_traces.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/03_traces_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/03_traces.png)
 
-*↑ 扉前の空気は跳ねるが製品には届かない。*
+*↑ Figure from this exhibit ―― 扉前の空気は跳ねるが製品には届かない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/06_sweep_tau_positions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/06_sweep_tau_positions.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/06_sweep_tau_positions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/06_sweep_tau_positions.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/10_control_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/10_control_maps.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/10_control_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/10_control_maps.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![1 枚目は render_volume_projection を幅方向から掛けた xray 投影(明るいほど幅方向に厚い)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/13_excursion_body_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/13_excursion_body.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/13_excursion_body_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/13_excursion_body.png)
 
-*↑ 1 枚目は render_volume_projection を幅方向から掛けた xray 投影(明るいほど幅方向に厚い)。*
+*↑ Figure from this exhibit ―― 1 枚目は render_volume_projection を幅方向から掛けた xray 投影(明るいほど幅方向に厚い)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_cold_chain_excursion.py
@@ -994,29 +994,29 @@ The same wall is photographed again over the years to measure how fast a crack w
 
 *↑ **Measuring the Growth, Not the Width — Rephotographing the Same Wall Changes What the Error Is** ―― A wall at 1 px = 0.15 mm, rephotographed for twelve epochs over three years, with a crack opening at a true 0.040 mm/yr. Thresholding and counting pixels understates the width by 25.0 % yet overstates the growth rate by +153.0 %, and invents +0.0117 mm/yr of growth in a control where the width is frozen (the culprit is blur, isolated by switching one nuisance at a time). Integrating the intensity deficit gives +3.1 % on the rate and +0.0005 mm/yr on the control. The thresholded rate swings from 0.0241 to 0.1038 mm/yr on initial width alone — it depends on whether a one-pixel step happens to fall inside the observation window.*
 
-[![2 値化は幅の偏りより**期ごとの跳ね**が問題。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/02_timeseries_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/02_timeseries.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/02_timeseries_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/02_timeseries.png)
 
 *↑ The measurement ―― 2 値化は幅の偏りより**期ごとの跳ね**が問題。跳ねの正体はぼけと画素位相で、4 節と 3 節で分けて数える。 (figure labels are in Japanese; the numbers are the same)*
 
-[![ここに出る傾きはすべて『見かけの成長』。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/03_control_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/03_control.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/03_control_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/03_control.png)
 
-*↑ ここに出る傾きはすべて『見かけの成長』。*
+*↑ Figure from this exhibit ―― ここに出る傾きはすべて『見かけの成長』。 (figure labels are in Japanese; the numbers are the same)*
 
-[![傾きが 0 に近いほど列方向の画素位相が揃い、2 値化は画面ごと 1 画素単位で跳ぶ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/05_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/05_phase.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/05_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/05_phase.png)
 
-*↑ 傾きが 0 に近いほど列方向の画素位相が揃い、2 値化は画面ごと 1 画素単位で跳ぶ。*
+*↑ Figure from this exhibit ―― 傾きが 0 に近いほど列方向の画素位相が揃い、2 値化は画面ごと 1 画素単位で跳ぶ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![横線を下回った時点で 0.040 mm/年 を 2σ で言える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/07_cliff_epochs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/07_cliff_epochs.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/07_cliff_epochs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/07_cliff_epochs.png)
 
-*↑ 横線を下回った時点で 0.040 mm/年 を 2σ で言える。*
+*↑ Figure from this exhibit ―― 横線を下回った時点で 0.040 mm/年 を 2σ で言える。 (figure labels are in Japanese; the numbers are the same)*
 
-[![2 値化は臨界幅より細いと 0(未検出)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/09_cliff_width_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/09_cliff_width.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/09_cliff_width_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/09_cliff_width.png)
 
-*↑ 2 値化は臨界幅より細いと 0(未検出)。*
+*↑ Figure from this exhibit ―― 2 値化は臨界幅より細いと 0(未検出)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画(576 × 456、12 fps、378 コマ): 同じ壁を 3 年 12 期撮り返す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/11_series_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/11_series_video.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/11_series_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/11_series_video.gif)
 
-*↑ The animation ―― 動画(576 × 456、12 fps、378 コマ): 同じ壁を 3 年 12 期撮り返す。各期で中心線に直交する断面を 24 本、左から順に切り(橙 = いま切っている断面、右下が拡大)、下段左がその断面の輝度欠損 —— その面積が幅そのもの。24 本の平均が積分法の幅(青、測りかけの期は橙の輪で途中平均)、朱のマスクの画素を数えたのが 2 値化(朱)。真の幅は 1 期 0.010 mm ずつ伸びる(0.067 画素)。最後の当てはめで成長率は 真値 0.0400 / 積分法 0.0412 / 2 値化 0.1012 mm/年。2 値化は期ごとに跳ね(0.0185〜0.3386 mm)、跳ねの正体はぼけ(PSF σ 0.75〜1.24 px)と据え直しの画素位相。*
+*↑ The animation ―― 動画(576 × 456、12 fps、378 コマ): 同じ壁を 3 年 12 期撮り返す。各期で中心線に直交する断面を 24 本、左から順に切り(橙 = いま切っている断面、右下が拡大)、下段左がその断面の輝度欠損 —— その面積が幅そのもの。24 本の平均が積分法の幅(青、測りかけの期は橙の輪で途中平均)、朱のマスクの画素を数えたのが 2 値化(朱)。真の幅は 1 期 0.010 mm ずつ伸びる(0.067 画素)。最後の当てはめで成長率は 真値 0.0400 / 積分法 0.0412 / 2 値化 0.1012 mm/年。2 値化は期ごとに跳ね(0.0185〜0.3386 mm)、跳ねの正体はぼけ(PSF σ 0.75〜1.24 px)と据え直しの画素位相。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_crack_width_timeseries.py
@@ -1036,21 +1036,21 @@ A vibration of known amplitude 0.02 px at 3.7 Hz, synthesised to test whether mo
 
 *↑ **Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure?** ―― A vibration of known amplitude 0.02 px at 3.7 Hz, synthesised to test whether motion magnification helps measurement. Exact to machine precision up to α = 200. But magnification does not improve measurement precision — multiplying the phase by α multiplies the noise by α. On a cantilever, phase correlation returns 0.15 px, the area average of 0.30 and 0.00 px, a number that exists nowhere.*
 
-[![剛体を仮定する位相相関が返す 0.150 px は 0.30 と 0.00 の面積平均で、どの列の真値とも違う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/02_beam_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/02_beam_profile.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/02_beam_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/02_beam_profile.png)
 
 *↑ The measurement ―― 剛体を仮定する位相相関が返す 0.150 px は 0.30 と 0.00 の面積平均で、どの列の真値とも違う。 (figure labels are in Japanese; the numbers are the same)*
 
-[![3.7 Hz を含む帯だけが 0 dB。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/03_band_selectivity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/03_band_selectivity.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/03_band_selectivity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/03_band_selectivity.png)
 
-*↑ 3.7 Hz を含む帯だけが 0 dB。*
+*↑ Figure from this exhibit ―― 3.7 Hz を含む帯だけが 0 dB。 (figure labels are in Japanese; the numbers are the same)*
 
-[![3.05 px までは機械精度、3.10 px で崩壊。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/04_amplitude_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/04_amplitude_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/04_amplitude_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/04_amplitude_cliff.png)
 
-*↑ 3.05 px までは機械精度、3.10 px で崩壊。*
+*↑ Figure from this exhibit ―― 3.05 px までは機械精度、3.10 px で崩壊。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画(480 × 480、12 fps、124 コマ): 3.7 Hz・0.1 px で揺れる表面(雑音 σ 0.01)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/05_magnify_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/05_magnify_video.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/05_magnify_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/05_magnify_video.gif)
 
-*↑ The animation ―― 動画(480 × 480、12 fps、124 コマ): 3.7 Hz・0.1 px で揺れる表面(雑音 σ 0.01)。左が生の映像、右が 10 倍に拡大した映像で、朱の細い縦線は静止時の縞の山。生では揺れが表示 0.3 px で目に見えず、拡大後は 1 px 相当で見える。下段は変位の時系列: 白 = 真値、青 = 生の映像から測った値、橙 = 拡大後に測って 10 で割った値。振幅は 真 0.1000 / 生から 0.10012 / 拡大後 0.10013 px で、拡大しても測定は良くならない(見せるための道具)。*
+*↑ The animation ―― 動画(480 × 480、12 fps、124 コマ): 3.7 Hz・0.1 px で揺れる表面(雑音 σ 0.01)。左が生の映像、右が 10 倍に拡大した映像で、朱の細い縦線は静止時の縞の山。生では揺れが表示 0.3 px で目に見えず、拡大後は 1 px 相当で見える。下段は変位の時系列: 白 = 真値、青 = 生の映像から測った値、橙 = 拡大後に測って 10 で割った値。振幅は 真 0.1000 / 生から 0.10012 / 拡大後 0.10013 px で、拡大しても測定は良くならない(見せるための道具)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_motion_magnification.py
@@ -1070,21 +1070,21 @@ A video of 400 particles tracked, with the diffusion coefficient D read from the
 
 *↑ **Particle Tracking as a (row, column, time) Volume — Mislinks Come in Two Directions** ―― A video of 400 particles tracked, with the diffusion coefficient D read from the trajectories. Ambiguous mislinks pull D down to 0.925x; mislinks caused by missing targets push it up to 3.429x in the same video — one error rate cannot tell you the direction. What helps is not a one-to-one constraint but a single line imposing a maximum link distance (3.429 → 1.304).*
 
-[![時間最大投影では粒子が尾を引く(= 軌跡)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/01_spacetime_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/01_spacetime.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/01_spacetime_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/01_spacetime.png)
 
 *↑ The measurement ―― 時間最大投影では粒子が尾を引く(= 軌跡)。kymograph は行 90-101 の帯を縦(時間)へ積んだもので、筋の傾きがそのまま列方向の速度。縦は 5 倍に拡大。 (figure labels are in Japanese; the numbers are the same)*
 
-[![縦軸は常用対数(0 が真値)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/02_density_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/02_density_bias.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/02_density_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/02_density_bias.png)
 
-*↑ 縦軸は常用対数(0 が真値)。*
+*↑ Figure from this exhibit ―― 縦軸は常用対数(0 が真値)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真値で割った比。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/03_msd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/03_msd.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/03_msd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/03_msd.png)
 
-*↑ 真値で割った比。*
+*↑ Figure from this exhibit ―― 真値で割った比。 (figure labels are in Japanese; the numbers are the same)*
 
-[![曖昧と欠測を分けて数えると、D の外れる向きが説明できる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/04_density_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/04_density_table.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/04_density_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/04_density_table.png)
 
-*↑ 曖昧と欠測を分けて数えると、D の外れる向きが説明できる。*
+*↑ Figure from this exhibit ―― 曖昧と欠測を分けて数えると、D の外れる向きが説明できる。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_particle_tracking.py
@@ -1104,25 +1104,25 @@ A 24 x 16 m road surface settling above a tunnel drive, measured from two epochs
 
 *↑ **Did It Settle, or Did We Just Scan It Again — What Changes When You Cut at the Detection Limit** ―― A 24 x 16 m road surface settling above a tunnel drive, measured from two epochs of point cloud. The nearest-neighbour baseline (C2C) returns a median of 47.74 mm even with zero change — that is just the point spacing — and carries no sign. M3C2 averages -2.43 mm, matching the truth, but only 275 of 551 cores (49.9 %) exceed their level of detection, and those average -4.34 mm: the single averaged number agrees with neither. LoD is a map of the surface, not of the settlement, ranging 0.51 to 3.58 mm across zones. Summing only the significant cores shrinks the volume from 0.8569 to 0.7643 m3, and that shortfall is predictable in advance from the per-core LoD (0.867 predicted versus 0.892 measured).*
 
-[![有意の地図は真値の地図をよく復元する(TPR 88.7 % / FPR 3.6 %)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/02_map_change_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/02_map_change.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/02_map_change_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/02_map_change.png)
 
 *↑ The measurement ―― 有意の地図は真値の地図をよく復元する(TPR 88.7 % / FPR 3.6 %)。ただし縁が痩せる —— そこが 7 節の体積の話。 (figure labels are in Japanese; the numbers are the same)*
 
-[![上の帯(砂利の路肩)は粗さ 15 mm・密度半分なので LoD が跳ね上がる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/03_map_lod_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/03_map_lod.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/03_map_lod_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/03_map_lod.png)
 
-*↑ 上の帯(砂利の路肩)は粗さ 15 mm・密度半分なので LoD が跳ね上がる。*
+*↑ Figure from this exhibit ―― 上の帯(砂利の路肩)は粗さ 15 mm・密度半分なので LoD が跳ね上がる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![予測は 1.96·σ·sqrt(1/na+1/nb)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/04_lod_by_zone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/04_lod_by_zone.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/04_lod_by_zone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/04_lod_by_zone.png)
 
-*↑ 予測は 1.96·σ·sqrt(1/na+1/nb)。*
+*↑ Figure from this exhibit ―― 予測は 1.96·σ·sqrt(1/na+1/nb)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![LoD は雑音しか見ていないので、系統誤差はそのまま「有意な沈下」として通る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/05_map_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/05_map_bias.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/05_map_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/05_map_bias.png)
 
-*↑ LoD は雑音しか見ていないので、系統誤差はそのまま「有意な沈下」として通る。*
+*↑ Figure from this exhibit ―― LoD は雑音しか見ていないので、系統誤差はそのまま「有意な沈下」として通る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![崖の位置はそのゾーンの LoD で決まる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/06_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/06_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/06_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/06_cliff.png)
 
-*↑ 崖の位置はそのゾーンの LoD で決まる。*
+*↑ Figure from this exhibit ―― 崖の位置はそのゾーンの LoD で決まる。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_settlement_significance.py
@@ -1142,25 +1142,25 @@ When identical parts sit side by side, template correlation differs only slightl
 
 *↑ **Template Tracking Drifts Quietly Before It Ever Loses the Target** ―― A camera moved by a known similarity transform, exposing the three ways template tracking fails: losing the target, drifting quietly, and being confidently wrong. In the synthetic scene all 152 of the 152 drifted frames passed the peak threshold calibrated without occlusion and reported 'found'. On a real photo (4 identical candles from VisA, translated within a single photo), while both are in view the target always scores higher than its neighbour, but by only 0.0097 on average; once the target's template window leaves the frame (the full search does not test positions where the window sticks out) the tracker jumps to the neighbour, a threshold fixed in advance as the value at which all candles in 20 other photos are found reports 'found' in 14 of 14 frames (0 of 14 with a threshold set after seeing the answer). Since that threshold is built to pass all 80 identical candles, passing the identical neighbour is nearly guaranteed; the template is cut from the target itself, so the target's correlation runs high. The only absolute quantity measurable without ground truth is forward-backward inconsistency.*
 
-[![2 位の相関は 一意 0.556 / 繰返 1.000 / 直線縁 1.000 / 片側 0.998。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps.png)
 
 *↑ The measurement ―― 2 位の相関は 一意 0.556 / 繰返 1.000 / 直線縁 1.000 / 片側 0.998。繰返 は同じ高さの峰が周期的に並び、直線縁 は縁に沿った尾根になる(その方向は位置が決まらない)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じ遮蔽率でも、そっくりな別物体が視野に居るだけで崖がはるかに手前へ来る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/02_occlusion_vs_twin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/02_occlusion_vs_twin.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/02_occlusion_vs_twin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/02_occlusion_vs_twin.png)
 
-*↑ 同じ遮蔽率でも、そっくりな別物体が視野に居るだけで崖がはるかに手前へ来る。*
+*↑ Figure from this exhibit ―― 同じ遮蔽率でも、そっくりな別物体が視野に居るだけで崖がはるかに手前へ来る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![更新なしは平らなまま。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/03_drift_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/03_drift_curves.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/03_drift_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/03_drift_curves.png)
 
-*↑ 更新なしは平らなまま。*
+*↑ Figure from this exhibit ―― 更新なしは平らなまま。 (figure labels are in Japanese; the numbers are the same)*
 
-[![得意な崖が逆。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/04_confidence_auc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/04_confidence_auc.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/04_confidence_auc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/04_confidence_auc.png)
 
-*↑ 得意な崖が逆。*
+*↑ Figure from this exhibit ―― 得意な崖が逆。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画(30 フレーム + 最後で 2 秒止め、5 fps): 同じ 1 枚目のテンプレートを更新なし全域探索で追う(ゼロ点)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/05_twin_vs_flat_occluder.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/05_twin_vs_flat_occluder.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/05_twin_vs_flat_occluder.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/05_twin_vs_flat_occluder.gif)
 
-*↑ The animation ―― 動画(30 フレーム + 最後で 2 秒止め、5 fps): 同じ 1 枚目のテンプレートを更新なし全域探索で追う(ゼロ点)。3 フレーム目から真の対象の 70 % を左から隠す。左 = 平坦な遮蔽物: ピークは平均 0.745 まで下がってしきい値 0.843 を割る(「見失った?」と正直に言う)が、位置は平均 0.78 px で追えている(見失い 0 / 27)。右 = そっくりな別物体が 51 px 離れて一緒に流れる: 最初の遮蔽フレームで複製に乗り換え、平均誤差 46.13 px、見失い 27 / 27 —— それなのにピークは平均 0.856 でしきい値を超え、27 / 27 フレームで「見つけた」と報告する。下段の紫(突出度)は右で平均 0.111 としきい値 0.304 を割って取り違えを疑うが、追えている左でも平均 0.203 で同じく割る —— 突出度が測っているのは曖昧さで、正しさではない*
+*↑ The animation ―― 動画(30 フレーム + 最後で 2 秒止め、5 fps): 同じ 1 枚目のテンプレートを更新なし全域探索で追う(ゼロ点)。3 フレーム目から真の対象の 70 % を左から隠す。左 = 平坦な遮蔽物: ピークは平均 0.745 まで下がってしきい値 0.843 を割る(「見失った?」と正直に言う)が、位置は平均 0.78 px で追えている(見失い 0 / 27)。右 = そっくりな別物体が 51 px 離れて一緒に流れる: 最初の遮蔽フレームで複製に乗り換え、平均誤差 46.13 px、見失い 27 / 27 —— それなのにピークは平均 0.856 でしきい値を超え、27 / 27 フレームで「見つけた」と報告する。下段の紫(突出度)は右で平均 0.111 としきい値 0.304 を割って取り違えを疑うが、追えている左でも平均 0.203 で同じく割る —— 突出度が測っているのは曖昧さで、正しさではない (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -1184,21 +1184,21 @@ A video of colonies spreading and merging, read as a (t, y, x) volume with 3-D c
 
 *↑ **A Growth Time-Lapse as Space-Time Connected Components** ―― A video of colonies spreading and merging, read as a (t, y, x) volume with 3-D connected components. Pixel area makes merging look early (-1.16 frames for pair 0-1) while rounding onto the frame grid makes it look late (+0.94); the two oppose, so the sum looks small. The default 26-connectivity of `vol_label` merged a near miss with a gap of 0.92.*
 
-[![縦が時間(下向き、4 倍に拡大)、横が列。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/02_ystructure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/02_ystructure.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/02_ystructure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/02_ystructure.png)
 
 *↑ The measurement ―― 縦が時間(下向き、4 倍に拡大)、横が列。2 本の管が合わさる高さがそのまま合体時刻。色は 3-D ラベル。 (figure labels are in Japanese; the numbers are the same)*
 
-[![横軸はどちらも『何倍粗くしたか』。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/03_sampling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/03_sampling.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/03_sampling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/03_sampling.png)
 
-*↑ 横軸はどちらも『何倍粗くしたか』。*
+*↑ Figure from this exhibit ―― 横軸はどちらも『何倍粗くしたか』。 (figure labels are in Japanese; the numbers are the same)*
 
-[![空間側は格子の位相でこれだけ動く(偏りより大きい)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/04_sampling_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/04_sampling_table.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/04_sampling_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/04_sampling_table.png)
 
-*↑ 空間側は格子の位相でこれだけ動く(偏りより大きい)。*
+*↑ Figure from this exhibit ―― 空間側は格子の位相でこれだけ動く(偏りより大きい)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画(48 フレーム): 左は二値のフレームを 3-D の家族ラベルで塗ったもの(白の細線 = 真の連続円。色は体積全体で決まる家族なので、合体する 2 個は合体の前から同じ色)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/05_growth_merge.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/05_growth_merge.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/05_growth_merge.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/05_growth_merge.gif)
 
-*↑ The animation ―― 動画(48 フレーム): 左は二値のフレームを 3-D の家族ラベルで塗ったもの(白の細線 = 真の連続円。色は体積全体で決まる家族なので、合体する 2 個は合体の前から同じ色)。右は合体する 2 組の中心を通る行の時空間断面が時刻とともに現れ、Y 字の分かれ目が合体時刻になる(白の点線 = 閉形式の真値 7.99 / 30.09、橙 = 観測 7 / 31)。下はフレームを独立に数えた塊の数で、減ったのは t = 7, 31, 47。最後の t = 47 の減少はニアミス 4-5(最終フレームでも隙間 0.92)を 8 近傍が繋いだ偽の合体で、真の個数は 5 のまま。*
+*↑ The animation ―― 動画(48 フレーム): 左は二値のフレームを 3-D の家族ラベルで塗ったもの(白の細線 = 真の連続円。色は体積全体で決まる家族なので、合体する 2 個は合体の前から同じ色)。右は合体する 2 組の中心を通る行の時空間断面が時刻とともに現れ、Y 字の分かれ目が合体時刻になる(白の点線 = 閉形式の真値 7.99 / 30.09、橙 = 観測 7 / 31)。下はフレームを独立に数えた塊の数で、減ったのは t = 7, 31, 47。最後の t = 47 の減少はニアミス 4-5(最終フレームでも隙間 0.92)を 8 近傍が繋いだ偽の合体で、真の個数は 5 のまま。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_timelapse_growth.py
@@ -1222,17 +1222,17 @@ A synthetic traffic video counted per frame, by a virtual loop, and by connected
 
 *↑ The measurement (figure labels are in Japanese; the numbers are the same)*
 
-[![トラックは画像の 50 行から 99 行を占めるので、遠い車線の計数行 63 を横切る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/03_tall_vehicles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/03_tall_vehicles.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/03_tall_vehicles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/03_tall_vehicles.png)
 
-*↑ トラックは画像の 50 行から 99 行を占めるので、遠い車線の計数行 63 を横切る。*
+*↑ Figure from this exhibit ―― トラックは画像の 50 行から 99 行を占めるので、遠い車線の計数行 63 を横切る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![全部の帯を数えると千切れて過大に(実測は最大 67 だが、他の系列が潰れるので 20 で頭打ちにして描いている)、計数列と交わる帯だけなら見逃しだけ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/04_framerate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/04_framerate.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/04_framerate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/04_framerate.png)
 
-*↑ 全部の帯を数えると千切れて過大に(実測は最大 67 だが、他の系列が潰れるので 20 で頭打ちにして描いている)、計数列と交わる帯だけなら見逃しだけ。*
+*↑ Figure from this exhibit ―― 全部の帯を数えると千切れて過大に(実測は最大 67 だが、他の系列が潰れるので 20 で頭打ちにして描いている)、計数列と交わる帯だけなら見逃しだけ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画(768 × 422、10 fps、210 コマ = 撮った速さ): 2 車線の道路を 18 秒。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/05_counting_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/05_counting_video.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/05_counting_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/05_counting_video.gif)
 
-*↑ The animation ―― 動画(768 × 422、10 fps、210 コマ = 撮った速さ): 2 車線の道路を 18 秒。上段はカメラの画に前景マスク(橙)と計数列(黄の縦線)を重ねたもの、下段は 2 車線の計数行を時間方向に積んだスリット画像 (t, x) が上から伸びていく —— 車 1 台が斜めの帯 1 本になり、傾きが速度。見出しの数字は時刻までの累積で、最後は 真値 10 / 仮想ループ 10 / スリット法 10 台と同点(途中で真値が遅れて見えるのは、真値を車体の中心で、ループとスリットを車体の先端で数えるため)。フレームごとに連結成分を数えるゼロ点は最大 7 で、「いま写っている数」を数えているだけ。*
+*↑ The animation ―― 動画(768 × 422、10 fps、210 コマ = 撮った速さ): 2 車線の道路を 18 秒。上段はカメラの画に前景マスク(橙)と計数列(黄の縦線)を重ねたもの、下段は 2 車線の計数行を時間方向に積んだスリット画像 (t, x) が上から伸びていく —— 車 1 台が斜めの帯 1 本になり、傾きが速度。見出しの数字は時刻までの累積で、最後は 真値 10 / 仮想ループ 10 / スリット法 10 台と同点(途中で真値が遅れて見えるのは、真値を車体の中心で、ループとスリットを車体の先端で数えるため)。フレームごとに連結成分を数えるゼロ点は最大 7 で、「いま写っている数」を数えているだけ。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_traffic_counting.py
@@ -1252,25 +1252,25 @@ A synthetic warehouse floor plan with 26 tracked workers and AGVs, in which repl
 
 *↑ **Where the Warehouse Dwell Came From — Count Waiting Without Its Kind and Everything Is Just Congestion** ―― A synthetic warehouse floor plan with 26 tracked workers and AGVs, in which replenishment waits, queueing, aisle interference, system waits and stockouts were planted with known times and durations, then read as one (t, y, x) volume. Of the naive 321.5 s of "total dwell", only 198.0 s (61.6 %) is real waiting; the rest is productive work and creep. Removing all queueing or all aisle interference moves that single number by -39.0 s versus -38.0 s, so it cannot say which to fix, while the per-kind counts drop to zero only for the kind that was removed. A stockout moves dwell by -17.0 s but adds 94.6 m of walking, and the three degradation axes each kill a different kind: sampling interval kills the short waits, occlusion kills the waits pressed against racks, and ID merging kills the two kinds defined by a relation between two people.*
 
-[![ヒートマップは場所を当てるが、「1 人が長く待った」と「何人も短く止まった」を分けない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/01_heat_ambiguity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/01_heat_ambiguity.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/01_heat_ambiguity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/01_heat_ambiguity.png)
 
 *↑ The measurement ―― ヒートマップは場所を当てるが、「1 人が長く待った」と「何人も短く止まった」を分けない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![ゼロ点はこの表を 1 つの数字に畳む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/02_types_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/02_types.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/02_types_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/02_types.png)
 
-*↑ ゼロ点はこの表を 1 つの数字に畳む。*
+*↑ Figure from this exhibit ―― ゼロ点はこの表を 1 つの数字に畳む。 (figure labels are in Japanese; the numbers are the same)*
 
-[![短い待ち(通路の干渉・欠品)から先に消える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/04_sweep_interval_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/04_sweep_interval.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/04_sweep_interval_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/04_sweep_interval.png)
 
-*↑ 短い待ち(通路の干渉・欠品)から先に消える。*
+*↑ Figure from this exhibit ―― 短い待ち(通路の干渉・欠品)から先に消える。 (figure labels are in Japanese; the numbers are the same)*
 
-[![天井カメラ 2 台。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/07_sweep_occlusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/07_sweep_occlusion.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/07_sweep_occlusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/07_sweep_occlusion.png)
 
-*↑ 天井カメラ 2 台。*
+*↑ Figure from this exhibit ―― 天井カメラ 2 台。 (figure labels are in Japanese; the numbers are the same)*
 
-[![上段は通路が明るい(人が通っただけ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/10_xyt_projection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/10_xyt_projection.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/10_xyt_projection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/10_xyt_projection.png)
 
-*↑ 上段は通路が明るい(人が通っただけ)。*
+*↑ Figure from this exhibit ―― 上段は通路が明るい(人が通っただけ)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_warehouse_flow.py
@@ -1290,29 +1290,29 @@ The arrival-time surface of wavefronts spreading from point sources, extracted a
 
 *↑ **The Arrival-Time Surface as an Isosurface in (x, y, t)** ―― The left panel of the lead image shows only the last 1 ms at a display time of 3 ms (5.9 px of travel): sparse moving-edge ON events are orange, OFF events cyan, and no-event pixels grey. The middle panel is the time surface and the right panel keeps the whole-clip count. The arrival video has 171 frames at 624 x 586 and 20 fps.*
 
-[![方向反転では速度が下がりイベント率も下がる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_event_rate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_event_rate.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_event_rate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/02_event_rate.png)
 
 *↑ The measurement ―― 方向反転では速度が下がりイベント率も下がる。静止背景はイベントを出さない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![両対数。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/03_dt_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/03_dt_sweep.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/03_dt_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/03_dt_sweep.png)
 
-*↑ 両対数。*
+*↑ Figure from this exhibit ―― 両対数。 (figure labels are in Japanese; the numbers are the same)*
 
-[![変曲点 θ=0.6065 では線形が 3.8 倍勝ち、θ=0.2 では放物線が 3.6 倍勝つ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/04_threshold_crossover_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/04_threshold_crossover.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/04_threshold_crossover_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/04_threshold_crossover.png)
 
-*↑ 変曲点 θ=0.6065 では線形が 3.8 倍勝ち、θ=0.2 では放物線が 3.6 倍勝つ。*
+*↑ Figure from this exhibit ―― 変曲点 θ=0.6065 では線形が 3.8 倍勝ち、θ=0.2 では放物線が 3.6 倍勝つ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![各帯の中央値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/05_merge_line_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/05_merge_line_speed.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/05_merge_line_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/05_merge_line_speed.png)
 
-*↑ 各帯の中央値。*
+*↑ Figure from this exhibit ―― 各帯の中央値。 (figure labels are in Japanese; the numbers are the same)*
 
-[![差は上下 99 % 分位(±0.0327 ms)で切った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/06_arrival_surface_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/06_arrival_surface.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/06_arrival_surface_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/06_arrival_surface.png)
 
-*↑ 差は上下 99 % 分位(±0.0327 ms)で切った。*
+*↑ Figure from this exhibit ―― 差は上下 99 % 分位(±0.0327 ms)で切った。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画(624 × 586、20 fps、171 コマ): 2 つの点源から波面が広がる(源 B は 4 ms 遅れて点火)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/07_arrival_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/07_arrival_video.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/07_arrival_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/07_arrival_video.gif)
 
-*↑ The animation ―― 動画(624 × 586、20 fps、171 コマ): 2 つの点源から波面が広がる(源 B は 4 ms 遅れて点火)。左が波面の強度、右は線形補間で出した到達時刻を、波面が通り過ぎた画素から順に塗ったもの —— 動画 (t, y, x) を1 つの体積とみなしたときの等値面が、こうして 1 枚の面になる。点線は撮る前に閉形式で予測した合流線。下段は行 72 の断面で、白 = 真値、橙 = ゼロ点(初めてしきい値を超えたコマの時刻、1 ms の階段)、青 = 線形補間。最後に全画素の誤差: ゼロ点 RMS 0.568 ms(偏り +0.489)、線形補間 RMS 0.0209 ms(27 倍)。*
+*↑ The animation ―― 動画(624 × 586、20 fps、171 コマ): 2 つの点源から波面が広がる(源 B は 4 ms 遅れて点火)。左が波面の強度、右は線形補間で出した到達時刻を、波面が通り過ぎた画素から順に塗ったもの —— 動画 (t, y, x) を1 つの体積とみなしたときの等値面が、こうして 1 枚の面になる。点線は撮る前に閉形式で予測した合流線。下段は行 72 の断面で、白 = 真値、橙 = ゼロ点(初めてしきい値を超えたコマの時刻、1 ms の階段)、青 = 線形補間。最後に全画素の誤差: ゼロ点 RMS 0.568 ms(偏り +0.489)、線形補間 RMS 0.0209 ms(27 倍)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_xyt_event_surface.py
@@ -1332,29 +1332,29 @@ Video Summagator (Nguyen, Niu and Liu, ACM CHI 2012) turns a clip into an (x, y,
 
 *↑ **A Clip as a Space-Time Cube — What Passed Where, and When, in One Solid** ―― Video Summagator (Nguyen, Niu and Liu, ACM CHI 2012) turns a clip into an (x, y, t) cube, renders the static background faintly and moving objects densely, and lets you cut and rotate the cube to jump to a scene. The new family videocube re-implements it in 6 ops (numpy + scipy only, no new types): frame-difference magnitude as opacity (video_spacetime_cube), front-to-back alpha compositing from any viewpoint with trails coloured by time (blue = start, red = end; vol_render_transfer), cuts (video_cube_cut: x-t slit scans), orbits (video_cube_orbit), keyframes (video_summary_keyframes) and animated GIF export (video_write_gif, the reusable exit). On a synthetic surveillance clip with three objects of known row, onset and speed, the onset read from the first row of each slit-scan streak and the speed read from its slope match the truth exactly (±0 frames; +2.00 / −1.50 / +1.00 px/frame), and the keyframes catch all three onsets (a random choice of 4 frames catches 0.21 on average). The same operators applied to a z-stack of fly-brain EM sections (CREMI sample A, 32 sections, raw data never committed) turn membranes into depth-coloured tubes with neurites running through the stack. In Studio, Tools ▸ Video cube runs it interactively (drag to orbit, slide the cut plane, click the slit scan to jump to that frame, open .npy / GIF / video / .hdf stacks, Save GIF).*
 
-[![the clip as a space-time cube (time = depth to the right): moving objects leave trails coloured by time…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/01_cube_time_coloured_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/01_cube_time_coloured.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/01_cube_time_coloured_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/01_cube_time_coloured.png)
 
 *↑ The measurement ―― the clip as a space-time cube (time = depth to the right): moving objects leave trails coloured by time (blue = start, red = end); the static background is a faint grey (figure labels are in Japanese; the numbers are the same)*
 
-[![x-t slit scans of the three rows: a streak's first row is the onset, its slope is the speed (yellow line = injected onset)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/03_slit_scans_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/03_slit_scans.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/03_slit_scans_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/03_slit_scans.png)
 
-*↑ x-t slit scans of the three rows: a streak's first row is the onset, its slope is the speed (yellow line = injected onset)*
+*↑ Figure from this exhibit ―― x-t slit scans of the three rows: a streak's first row is the onset, its slope is the speed (yellow line = injected onset) (figure labels are in Japanese; the numbers are the same)*
 
-[![video_summary_keyframes picks the frames right after each object appears; the head-on cube is the whole clip in one image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/04_keyframes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/04_keyframes.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/04_keyframes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/04_keyframes.png)
 
-*↑ video_summary_keyframes picks the frames right after each object appears; the head-on cube is the whole clip in one image*
+*↑ Figure from this exhibit ―― video_summary_keyframes picks the frames right after each object appears; the head-on cube is the whole clip in one image (figure labels are in Japanese; the numbers are the same)*
 
-[![a real clip from this repo (a turntable GIF, 40 frames of 160x160): a rotating object becomes a helix in the space-time cube](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/05_turntable_cube_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/05_turntable_cube.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/05_turntable_cube_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/05_turntable_cube.png)
 
-*↑ a real clip from this repo (a turntable GIF, 40 frames of 160x160): a rotating object becomes a helix in the space-time cube*
+*↑ Figure from this exhibit ―― a real clip from this repo (a turntable GIF, 40 frames of 160x160): a rotating object becomes a helix in the space-time cube (figure labels are in Japanese; the numbers are the same)*
 
-[![the same cube operators on a z-stack of EM sections (CREMI sample A, 32 sections of 256^2 (adult Drosophila FAFB)): membranes become tubes running thr…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/06_em_stack_cube_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/06_em_stack_cube.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/06_em_stack_cube_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/06_em_stack_cube.png)
 
-*↑ the same cube operators on a z-stack of EM sections (CREMI sample A, 32 sections of 256^2 (adult Drosophila FAFB)): membranes become tubes running thr…*
+*↑ Figure from this exhibit ―― the same cube operators on a z-stack of EM sections (CREMI sample A, 32 sections of 256^2 (adult Drosophila FAFB)): membranes become tubes running thr… (figure labels are in Japanese; the numbers are the same)*
 
-[![the EM stack rotating: neurites are the tubes, coloured by depth; the same operator that rotated the surveillance clip](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/07_em_stack_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/07_em_stack_orbit.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/07_em_stack_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/07_em_stack_orbit.gif)
 
-*↑ The animation ―― the EM stack rotating: neurites are the tubes, coloured by depth; the same operator that rotated the surveillance clip*
+*↑ The animation ―― the EM stack rotating: neurites are the tubes, coloured by depth; the same operator that rotated the surveillance clip (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_video_cube.py
@@ -1374,37 +1374,37 @@ A video generator invents plausible motion. The new family live4d (14 ops, numpy
 
 *↑ **Living Tissue in 3D+t Without a Generator — Magnify, Flow, Interpolate, Height, All Against Truth** ―― A video generator invents plausible motion. The new family live4d (14 ops, numpy + scipy only, one new word: volseq = a volume series (T, Z, Y, X)) invents nothing; instead it offers four ways to make real motion visible, each pinned to numbers on synthetic series with known truth. (1) Magnify: a shell whose radius beats by 0.1 voxel (invisible) is magnified x8 by volseq_magnify_motion (a 3-D version of Wu et al.'s linear Eulerian magnification); the radius amplitude read back is 7.89 x and the period is unchanged. (2) Flow: the displacement field of two blobs separating at a known ±0.75 voxel/frame (vol_flow_3d, 3-D Lucas–Kanade) reads +0.776 / −0.776 where there is gradient, and the pathlines (volseq_pathline_render) become one solid coloured by time. (3) Interpolate: a series made at twice the rate, halved and refilled by volseq_interpolate_flow, matches the removed frames with RMSE 0.0016 when the motion per step is twice the blob size (a linear blend: 0.0207) — while below about 0.8 sigma per step the blend is as good and the warp's resampling costs a little (plotted honestly). (4) Height: from a focus-sweep series (a moving bump) focus_sweep_height_video recovers the height field with RMSE 0.31 planes. Live cells in 3D+t from the Cell Tracking Challenge (Fluo-N3DH-CHO, raw data never committed) run through the same path.*
 
-[![radius of the shell read from each volume: the measured beat (0.10 voxel) is below one voxel; after magnification it fol…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/02_radius_trace_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/02_radius_trace.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/02_radius_trace_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/02_radius_trace.png)
 
 *↑ The measurement ―― radius of the shell read from each volume: the measured beat (0.10 voxel) is below one voxel; after magnification it follows alpha x truth (figure labels are in Japanese; the numbers are the same)*
 
-[![pathlines of particles carried by the 3-D flow of the dividing blob, coloured by time (blue = start, red = end); the faint grey is the first volume](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/03_pathlines_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/03_pathlines.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/03_pathlines_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/03_pathlines.png)
 
-*↑ pathlines of particles carried by the 3-D flow of the dividing blob, coloured by time (blue = start, red = end); the faint grey is the first volume*
+*↑ Figure from this exhibit ―― pathlines of particles carried by the 3-D flow of the dividing blob, coloured by time (blue = start, red = end); the faint grey is the first volume (figure labels are in Japanese; the numbers are the same)*
 
-[![a frame removed from a 2x-rate series (motion 5 voxel = 2 sigma per step) re-created two ways (max projections): the linear blend shows two ghosts per…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/05_interpolation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/05_interpolation.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/05_interpolation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/05_interpolation.png)
 
-*↑ a frame removed from a 2x-rate series (motion 5 voxel = 2 sigma per step) re-created two ways (max projections): the linear blend shows two ghosts per…*
+*↑ Figure from this exhibit ―― a frame removed from a 2x-rate series (motion 5 voxel = 2 sigma per step) re-created two ways (max projections): the linear blend shows two ghosts per… (figure labels are in Japanese; the numbers are the same)*
 
-[![error of the re-created frames against the removed ones, as the motion per step grows: below about one blob width a linear blend is as good…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/06_interpolation_regimes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/06_interpolation_regimes.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/06_interpolation_regimes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/06_interpolation_regimes.png)
 
-*↑ error of the re-created frames against the removed ones, as the motion per step grows: below about one blob width a linear blend is as good…*
+*↑ Figure from this exhibit ―― error of the re-created frames against the removed ones, as the motion per step grows: below about one blob width a linear blend is as good… (figure labels are in Japanese; the numbers are the same)*
 
-[![Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4): pathlines of the 3-D flow between consecutive volumes, coloured by time](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/09_ctc_pathlines_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/09_ctc_pathlines.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/09_ctc_pathlines_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/09_ctc_pathlines.png)
 
-*↑ Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4): pathlines of the 3-D flow between consecutive volumes, coloured by time*
+*↑ Figure from this exhibit ―― Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4): pathlines of the 3-D flow between consecutive volumes, coloured by time (figure labels are in Japanese; the numbers are the same)*
 
-[![the same pathlines orbited: two straight bundles leaving the split point at +/-0.75 voxel/frame](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/04_pathlines_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/04_pathlines_orbit.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/04_pathlines_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/04_pathlines_orbit.gif)
 
-*↑ The animation ―― the same pathlines orbited: two straight bundles leaving the split point at +/-0.75 voxel/frame*
+*↑ The animation ―― the same pathlines orbited: two straight bundles leaving the split point at +/-0.75 voxel/frame (figure labels are in Japanese; the numbers are the same)*
 
-[![height field recovered from a focus sweep series (a moving bump, 11 planes), shaded and coloured by height…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/07_focus_surface.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/07_focus_surface.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/07_focus_surface.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/07_focus_surface.gif)
 
-*↑ The animation ―― height field recovered from a focus sweep series (a moving bump, 11 planes), shaded and coloured by height (blue = low, red = high); RMSE 0.31 planes*
+*↑ The animation ―― height field recovered from a focus sweep series (a moving bump, 11 planes), shaded and coloured by height (blue = low, red = high); RMSE 0.31 planes (figure labels are in Japanese; the numbers are the same)*
 
-[![Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4): the live volumes orbited while time advances…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/08_ctc_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/08_ctc_orbit.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/08_ctc_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/08_ctc_orbit.gif)
 
-*↑ The animation ―― Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4): the live volumes orbited while time advances (intensity as opacity)*
+*↑ The animation ―― Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4): the live volumes orbited while time advances (intensity as opacity) (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_live4d.py
@@ -1424,29 +1424,29 @@ The physics-simulation × Fullseye series. The primary source is the LaTeX sourc
 
 *↑ **Transcribing a Diabolo Model from the Paper and Checking It, then Reading Axis, Spin and Tension from Synthetic Video — Eq. (1b) as Printed Is Dimensionally Wrong and Gives NaN at the Real Dimensions; Closed Forms, an Exact String and MuJoCo as the Truth** ―― The physics-simulation × Fullseye series. The primary source is the LaTeX source of an analytic diabolo model for robot learning (von Drigalski et al., ICRA 2021, arXiv:2011.09068; the state-transition conditions exist only in a figure, which was read as an image). The public implementation (BSD-3) was read for comparison only; no code was copied. The model is a point mass + an auxiliary spheroid formed by the string + gravity; one step = forward Euler → project back if outside the spheroid → spin by eq. (2) ω_t = ω_{t−1} + μ Δ_string. Learning-free, all rules. New module diabolo, 16 ops plus 1 mujoco facade. ★Where the paper as printed does not hold (found by transcribing it and putting gates on it): (1) eq. (1b) b = √(a² − |x_L − x_R|/2) subtracts a length from a squared length; at the paper's real dimensions (string 1.45 m, stick gap 1.10 m) the radicand is negative = NaN. Fixed with the ellipse identity a² = b² + c² (at 0.3 m the printed form gives 0.613 m, the correct value is 0.709 m). (2) LOOSE → ON with s < c_F as drawn overlaps the ON → LOOSE band and flips every step → read as s ≤ c_L. (3) Eq. (2) telescopes and is step-independent (16.57 → 16.59 rad/s for 2 → 1 ms steps), whereas the public implementation's spin rule scales inversely with the step (ratio 2.02); with μ = 1/r, eq. (2) equals rolling without slipping. (4) The public implementation's normal is not the gradient and is off by up to 12.2° — here the nearest point and the true normal are used, as in the text. Ground truth comes from outside on three fronts. (1) Closed forms: the focal identity d_L + d_R = l (7.5e-16), the forward-Euler drift g t dt/2 in flight, pendulum periods 2π√(b/g) = 1.379 s sideways and 2π√(a²/(bg)) = 2.116 s lengthwise, the static tension m g a/(2b), and the catch time of parabola × spheroid × the plane through the sticks (closed form 0.7214 s, paper model 0.7230 s). (2) An exact string model (our addition): the unilateral constraint d_L + d_R ≤ l of an inextensible string by RATTLE, with an energy spread of 5.3e-6, a power balance of 1.1e-4 and the tension multiplier matching the closed form to 3.6e-11. (3) A second implementation = MuJoCo spatial tendons (--full): within 0.62 / 1.15 / 3.10 mm of the exact string for linear acceleration / swing / throw (excluding 0.3 s after the catch — MuJoCo's soft constraint bounces 40 mm), static tension 3.5e-7. Vision is learning-free (ray-traced synthetic video): the axis and centre come from fitting the exact perspective polygon moments of two circles — the near cup rim and the bottom plate — to the mask moments (42 poses, 0–38° from the line of sight × 6 azimuths: max 0.295°, median 0.059°, centre 0.7 mm); at 45° the bottom plate is hidden by the wall and a 2.80 px residual raises the alarm. Spin comes from the phase of markers on the inner surface plus the width of the motion-blur arc to pick the branch (120 fps, 2 ms exposure: 10–110 rev/s within 0.81 %; phase alone folds 70 / 90 / 110 rev/s, beyond the 60 rev/s Nyquist, to −50 / −30 / −10 = the wagon-wheel illusion). Tension comes from the V of stick-tip markers and the axle (0.46 % from the closed form). Tracking a throw (3 m away, 41 frames) gives a centre RMS of 8.9 mm and a median axis error of 1.71°, and the state machine run on the tracked positions agrees 100 % with the true states. Figures: a GIF of the throw with the axis read from the image, the true axis, the state and a 3× inset; the sag (fixed vs printed equation, the NaN boundary); tension (closed form, exact string, image, MuJoCo); heights and differences of the three models; the step dependence of the spin rules; with --full: a GIF of the spin illusion (phase only vs branch picked by the blur arc), a table of axis errors (tilt × azimuth) and a table of where it breaks. 18 gates (default, 3.1 s) plus 7 with --full (42 s). Honestly: the outside truths are the paper's equations, closed forms and MuJoCo only; nothing is matched against real footage or public data (errors in the equations were found, but whether the model fits a real diabolo is not checked). The μ and damping of eq. (2) and the attitude (tilt and precession) are in neither the paper nor the model; the axis read from the image is the pose given at render time, not a result of the dynamics. Rendering is idealised (flat colours, Lambert shading, plain background), and the axis estimate needs the inside of the near cup to be visible (up to 38°). The string is a point; wrapping on the axle, string mass and stretch are not modelled. Traps we hit: the throw-tracking centre error was printed in metres labelled as mm (100× better than at close range was the giveaway), threshold-based marker detection dropped to zero above 30 rev/s under motion blur, and the exact model and MuJoCo were first built as a bead threaded on the string, which bounced at the apex.*
 
-[![式 (1b) の原文 √(a² − d/2) は長さと長さの 2 乗の差で次元が合わず、d > 2a² = 1.051 m で NaN(論文の実機の間隔 1.10 m は NaN の側)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/02_diabolo_sag_corrected_vs_printed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/02_diabolo_sag_corrected_vs_printed.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/02_diabolo_sag_corrected_vs_printed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/02_diabolo_sag_corrected_vs_printed.png)
 
 *↑ The measurement ―― 式 (1b) の原文 √(a² − d/2) は長さと長さの 2 乗の差で次元が合わず、d > 2a² = 1.051 m で NaN(論文の実機の間隔 1.10 m は NaN の側)。直した √(a² − c²)(楕円の恒等式)が実線。 (figure labels are in Japanese; the numbers are the same)*
 
-[![閉形式 T = m g a/(2b)(破線)に、厳密な糸の模型の乗数と、合成映像の棒の先と軸の V 字から読んだ張力(最大 0.46 % 差)を重ねる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/03_diabolo_tension_closed_form_vs_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/03_diabolo_tension_closed_form_vs_image.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/03_diabolo_tension_closed_form_vs_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/03_diabolo_tension_closed_form_vs_image.png)
 
-*↑ 閉形式 T = m g a/(2b)(破線)に、厳密な糸の模型の乗数と、合成映像の棒の先と軸の V 字から読んだ張力(最大 0.46 % 差)を重ねる。*
+*↑ Figure from this exhibit ―― 閉形式 T = m g a/(2b)(破線)に、厳密な糸の模型の乗数と、合成映像の棒の先と軸の V 字から読んだ張力(最大 0.46 % 差)を重ねる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じ棒の動き(0.30〜0.50 s で開いて持ち上げ、張りつめたまま受ける)での高さ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/04_diabolo_throw_height_three_models_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/04_diabolo_throw_height_three_models.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/04_diabolo_throw_height_three_models_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/04_diabolo_throw_height_three_models.png)
 
-*↑ 同じ棒の動き(0.30〜0.50 s で開いて持ち上げ、張りつめたまま受ける)での高さ。*
+*↑ Figure from this exhibit ―― 同じ棒の動き(0.30〜0.50 s で開いて持ち上げ、張りつめたまま受ける)での高さ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![式 (2) は望遠鏡和なので刻み 1 ms と 0.5 ms の線が重なる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/06_diabolo_spin_law_step_dependence_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/06_diabolo_spin_law_step_dependence.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/06_diabolo_spin_law_step_dependence_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/06_diabolo_spin_law_step_dependence.png)
 
-*↑ 式 (2) は望遠鏡和なので刻み 1 ms と 0.5 ms の線が重なる。*
+*↑ Figure from this exhibit ―― 式 (2) は望遠鏡和なので刻み 1 ms と 0.5 ms の線が重なる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![視線からの傾き × 像の上の方位で、画像だけから読んだ軸と描いた時の軸の角(縁の半径 ≈ 48 px)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/08_diabolo_axis_error_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/08_diabolo_axis_error_table.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/08_diabolo_axis_error_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/08_diabolo_axis_error_table.png)
 
-*↑ 視線からの傾き × 像の上の方位で、画像だけから読んだ軸と描いた時の軸の角(縁の半径 ≈ 48 px)。*
+*↑ Figure from this exhibit ―― 視線からの傾き × 像の上の方位で、画像だけから読んだ軸と描いた時の軸の角(縁の半径 ≈ 48 px)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![回転を上げると 120 fps の像ではマーカーが止まり、逆に回って見える(車輪の錯視)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/07_diabolo_spin_aliasing_and_smear.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/07_diabolo_spin_aliasing_and_smear.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/07_diabolo_spin_aliasing_and_smear.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/07_diabolo_spin_aliasing_and_smear.gif)
 
-*↑ The animation ―― 回転を上げると 120 fps の像ではマーカーが止まり、逆に回って見える(車輪の錯視)。位相だけの読みはナイキスト 60 rev/s で折り返し、回転ぶれの弧の幅で枝を選んだ読みは真値に付いていく(320 × 240、等倍)。*
+*↑ The animation ―― 回転を上げると 120 fps の像ではマーカーが止まり、逆に回って見える(車輪の錯視)。位相だけの読みはナイキスト 60 rev/s で折り返し、回転ぶれの弧の幅で枝を選んだ読みは真値に付いていく(320 × 240、等倍)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_diabolo_model_and_vision.py
@@ -1468,21 +1468,21 @@ Move the robots of a swarm as SPH (smoothed-particle hydrodynamics) particles an
 
 Terms: PIV — A flow-measurement method that estimates a velocity field from the displacement of particle patterns between images separated by a short time.
 
-[![群れ(白い点、1692 個体)が左から右へ流れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/01_swarmflow_hidden_obstacle_emerges.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/01_swarmflow_hidden_obstacle_emerges.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/01_swarmflow_hidden_obstacle_emerges.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/01_swarmflow_hidden_obstacle_emerges.gif)
 
 *↑ The measurement ―― 群れ(白い点、1692 個体)が左から右へ流れる。障害物は描いていない —— 群れには当たる壁として効くだけ。直近 10 コマの個体の追跡から速度場を作り、自由流より遅い所を橙、速い所を青で塗る。上流だけの当てはめで推定した障害物の輪郭(水色の輪)と衝突点(桃色の×)が浮かび上がる。最後の 8 コマで真の障害物を白の破線で重ねる(半径は 1 割ほど小さめに出る —— 群れの流れは厳密なポテンシャル流ではないため)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![中心線の上の欠損 d = R²/(x − x_c)² は 1/√d にすると直線になり(傾き −1/R)、1/√d = 1 の所がよどみ点(衝突点)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/03_swarmflow_centerline_linearised_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/03_swarmflow_centerline_linearised.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/03_swarmflow_centerline_linearised_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/03_swarmflow_centerline_linearised.png)
 
-*↑ 中心線の上の欠損 d = R²/(x − x_c)² は 1/√d にすると直線になり(傾き −1/R)、1/√d = 1 の所がよどみ点(衝突点)。*
+*↑ Figure from this exhibit ―― 中心線の上の欠損 d = R²/(x − x_c)² は 1/√d にすると直線になり(傾き −1/R)、1/√d = 1 の所がよどみ点(衝突点)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![個体を減らすと間隔 s が広がる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/04_swarmflow_density_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/04_swarmflow_density_limit.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/04_swarmflow_density_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/04_swarmflow_density_limit.png)
 
-*↑ 個体を減らすと間隔 s が広がる。*
+*↑ Figure from this exhibit ―― 個体を減らすと間隔 s が広がる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![ゲートを開けた群れの広がりの模型(1 次元 SPH の浅水、400 粒子)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/05_swarmflow_dam_break_ritter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/05_swarmflow_dam_break_ritter.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/05_swarmflow_dam_break_ritter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/05_swarmflow_dam_break_ritter.png)
 
-*↑ ゲートを開けた群れの広がりの模型(1 次元 SPH の浅水、400 粒子)。*
+*↑ Figure from this exhibit ―― ゲートを開けた群れの広がりの模型(1 次元 SPH の浅水、400 粒子)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_swarm_obstacle_from_flow.py
@@ -1502,33 +1502,33 @@ Robot table tennis has had the same visual stance since 1988: find the ball in s
 
 *↑ **Measuring a Table-Tennis Ball the Way the Pioneers Did — Multi-Camera Tracking, Triangulation, Trajectory Prediction, Bounce and Spin, Scored by Theorems on a Table with Ground Truth** ―― Robot table tennis has had the same visual stance since 1988: find the ball in several cameras, triangulate it into a 3-D point, look ahead with an equation of motion that includes drag and Magnus lift, predict across the bounce and, if you can, measure spin from the markings. This exhibit builds that whole chain from numpy ops and scores it against a truth the world itself holds (ball centre, pose, contact time and angular velocity are formulas fixed at generation). First the theorems of mechanics: with drag and Magnus set to zero the RK4 flight matches the closed-form parabola to 1e-12, and the least-squares parabola returns g = 9.81 to 4.0e-15. Over 500 random impacts (e ∈ [0.3, 1], μ ∈ [0, 0.6]) the angular momentum about the contact point is conserved to a relative 4.9e-16 at worst, 136 impacts reach rolling and 364 keep sliding. Dropped from 30.5 cm with e = 0.90 the apexes are 24.7, 20.0, 16.2 and 13.1 cm, within 3.0e-07 of the closed form e^{2k}h₀; the first bounce of 24.7 cm sits inside the ITTF 24–26 cm rule, both the apex list and the contact intervals give back e = 0.900000, and the total time to rest, 4.736 s, sits beside the closed-form 4.738 s. Then a 40 mm ball with 14 markings is placed on an ITTF table and a topspin shot (ω = 240 rad/s) is filmed at 100 fps for 0.6 s by two cameras plus one close-up (rendering 61 frames × 2 cameras took 22.0 s). The true contact is at t = 0.3094 s, point (0.507, 0.052), v [5.15, −0.28, −2.65] → [5.01, −0.17, 2.39], ω [0, 240, 0] → [8.5, 250.6, 0] (grip). Chromaticity detection finds the ball in 122 / 122 frames with a centre error of 0.152 px at the median, 0.299 px at the 90th percentile and 2.094 px at worst (image radius ≈ 4.3 px). DLT triangulation is 3.8e-15 m from the truth's own projections and, from the detections, 1.61 mm at the median, 4.25 mm at the 90th percentile and 23.56 mm at worst (median reprojection rms 0.094 px). The constant-acceleration Kalman filter is exact for a parabola, so its innovation on the parabolic truth is at most 8.2e-09 m (2.3e-03 m on the drag-plus-Magnus truth, which lies outside the model), and its velocity from the detections is off by 0.074 m/s at the median (|v| ≈ 5.9 m/s). The local minimum of z lands at t = 0.31, 0.6 ms from the truth. Fitting the initial state by a 6-parameter Gauss–Newton to the 15 frames (0.15 s) before the bounce (the true trajectory comes back to 3.2e-13) and predicting across the bounce puts the landing point 0.4 cm off (0.5 ms in time) when the true spin is known, 20.2 cm off when spin is ignored, and 6.6 cm off with a parabola even given the true spin — the difference is the Magnus term. On the close-up camera at the bounce (1000 fps, strobe) 19 / 19 frame pairs pair at least two markings, and the Kabsch rotation gives a median angular velocity of [1.7, 256.6, −2.1] rad/s against the truth [8.5, 250.6, 0] (|ω| 2394 rpm), a relative error of 3.7 %. The coefficient of restitution from equation-of-motion fits to 12 frames on each side gives v_z −2.637 → 2.403, e = 0.9114 (truth 0.90). Honestly: a parabolic fit gives 0.9398, 4.4 % off, because it absorbs drag and Magnus into g; the ball detection runs on synthetic footage with a known colour and no real lighting, blur or background; and the aerodynamic coefficients are textbook values with the truth built from the same formula (this is not a test of aerodynamics). 10 gates, 42.0 s. Finally two freely moving rackets (15 × 16 cm blades, ≤ 6 m/s) rally against each other: a feeder that returns near its previous target keeps the rally to the 12-hit cap, while an attacker aiming fast at the far corners ends it after 9 hits (a rewind mechanism previews each shot with the true physics and retries a miss; the attacker still misses after 99 rewinds). Gaussian noise on the perceived position leaves the rally length unchanged up to 5 cm (the blade's margin) and cuts it to 2 hits at 10 cm — the rally length scores perception, prediction and control as one number.*
 
-[![カメラ 1 の像での球の軌跡: 真値の投影(線)と検出(点)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/02_tracks_2d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/02_tracks_2d.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/02_tracks_2d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/02_tracks_2d.png)
 
 *↑ The measurement ―― カメラ 1 の像での球の軌跡: 真値の投影(線)と検出(点)。中心の誤差の中央値 0.15 px。 (figure labels are in Japanese; the numbers are the same)*
 
-[![x–z 面の軌跡。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/03_trajectory_xz_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/03_trajectory_xz.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/03_trajectory_xz_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/03_trajectory_xz.png)
 
-*↑ x–z 面の軌跡。*
+*↑ Figure from this exhibit ―― x–z 面の軌跡。 (figure labels are in Japanese; the numbers are the same)*
 
-[![30.5 cm から落とした球(e = 0.90)の頂点: 閉形式 e^{2k}h₀ と 1e-6 で一致し、最初の跳ね 24.7 cm は ITTF の規格 24〜26 cm の中。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/04_drop_apexes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/04_drop_apexes.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/04_drop_apexes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/04_drop_apexes.png)
 
-*↑ 30.5 cm から落とした球(e = 0.90)の頂点: 閉形式 e^{2k}h₀ と 1e-6 で一致し、最初の跳ね 24.7 cm は ITTF の規格 24〜26 cm の中。*
+*↑ Figure from this exhibit ―― 30.5 cm から落とした球(e = 0.90)の頂点: 閉形式 e^{2k}h₀ と 1e-6 で一致し、最初の跳ね 24.7 cm は ITTF の規格 24〜26 cm の中。 (figure labels are in Japanese; the numbers are the same)*
 
-[![跳ね際の近接カメラ(1000 fps、256 × 256、20°)の 4 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/05_spin_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/05_spin_frames.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/05_spin_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/05_spin_frames.png)
 
-*↑ 跳ね際の近接カメラ(1000 fps、256 × 256、20°)の 4 コマ。*
+*↑ Figure from this exhibit ―― 跳ね際の近接カメラ(1000 fps、256 × 256、20°)の 4 コマ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![知覚(球の位置)にガウス雑音を足したときのラリーの本数(送り合い、上限 8 本): 0 mm → 8 本、50 mm → 8 本、100 mm → 2 本。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/08_rally_vs_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/08_rally_vs_noise.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/08_rally_vs_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/08_rally_vs_noise.png)
 
-*↑ 知覚(球の位置)にガウス雑音を足したときのラリーの本数(送り合い、上限 8 本): 0 mm → 8 本、50 mm → 8 本、100 mm → 2 本。*
+*↑ Figure from this exhibit ―― 知覚(球の位置)にガウス雑音を足したときのラリーの本数(送り合い、上限 8 本): 0 mm → 8 本、50 mm → 8 本、100 mm → 2 本。 (figure labels are in Japanese; the numbers are the same)*
 
-[![追跡カメラ 1(2 × 2 平均で 512 × 400)、100 fps を 1/10 速で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/06_rally_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/06_rally_gif.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/06_rally_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/06_rally_gif.gif)
 
-*↑ The animation ―― 追跡カメラ 1(2 × 2 平均で 512 × 400)、100 fps を 1/10 速で。橙の十字は検出、緑は Kalman の状態の投影、赤は跳ねる前の 15 コマから予測した着地点。球は 2291 rpm のトップスピンで、台で 1 度跳ねる(e = 0.90)。*
+*↑ The animation ―― 追跡カメラ 1(2 × 2 平均で 512 × 400)、100 fps を 1/10 速で。橙の十字は検出、緑は Kalman の状態の投影、赤は跳ねる前の 15 コマから予測した着地点。球は 2291 rpm のトップスピンで、台で 1 度跳ねる(e = 0.90)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![自由に動く 2 本のラケット(板 15 × 16 cm、速さ ≤ 6 m/s、加速度 ≤ 60 m/s²)の送り合い(前回に近い少しずらした位置へ返す)、最初の 3 秒を 1/5 速で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/07_rally_two_rackets.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/07_rally_two_rackets.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/07_rally_two_rackets.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/07_rally_two_rackets.gif)
 
-*↑ The animation ―― 自由に動く 2 本のラケット(板 15 × 16 cm、速さ ≤ 6 m/s、加速度 ≤ 60 m/s²)の送り合い(前回に近い少しずらした位置へ返す)、最初の 3 秒を 1/5 速で。相手コートに 1 度跳ねた球を面 x = ±1.55 m で迎え撃ち、狙った点へ運動方程式で返す。この設定では上限 12 本まで続く。攻める側(遠い隅を速く)が入ると 9 本で終わる(out)。*
+*↑ The animation ―― 自由に動く 2 本のラケット(板 15 × 16 cm、速さ ≤ 6 m/s、加速度 ≤ 60 m/s²)の送り合い(前回に近い少しずらした位置へ返す)、最初の 3 秒を 1/5 速で。相手コートに 1 度跳ねた球を面 x = ±1.55 m で迎え撃ち、狙った点へ運動方程式で返す。この設定では上限 12 本まで続く。攻める側(遠い隅を速く)が入ると 9 本で終わる(out)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_ball_bounce.py
@@ -1548,33 +1548,33 @@ Robots have played kendama for thirty years (via-points from a human demonstrati
 
 *↑ **Kendama the Way the Pioneers Did It — A True-to-Shape Kendama Filmed by Two Cameras, the Ball's Flight Predicted from Images Alone and Caught in the Big, Small and Base Cups** ―― Robots have played kendama for thirty years (via-points from a human demonstration in 1996, DMPs plus reinforcement learning for ball-in-a-cup in 2009, the 2020 split into offline swing-up and online catching). This exhibit rebuilds that stance from numpy ops. Shape: from the Japan Kendama Association's published values (60 mm ball, 70 mm across the cups, 180 mm assembled) and a user-supplied description of the JKA 16-2 model (160 mm ken, cups of 42 / 38 / 35 mm, string from the cross-piece hole; primary source not checked), the ken (spike, neck, shaft through the cross piece, stepped and ringed grip, base cup) and the cross piece (flaring like trumpets into the big and small cups) are built as solids of revolution, plus a ball with a 17 mm hole; every dimension measured from the vertices matches to 1e-9, and with the spike pushed to the bottom of the hole the assembly is 180 mm long (the 40 mm hole depth is derived as 160 + 60 − 180). Theorems: the AGM returns K(0.5) = 1.685750354812596 to 1e-12; the period 4√(L/g)K(sin θ₀/2) is recovered to 3.0e-4 by the string (effective length 0.42 m) and 8.9e-11 by a rod; tension matches its closed form to 0.26 %; the slack angle is 125.04° (closed form 125.26°); the projection's dissipation is first order in dt (ratio 9.7); the snap loss equals ½mv_r² to 0.2 %. The closed loop acts on images only: two cameras (480 × 360, 100 fps) render the world, the ball is found by chromaticity and triangulated (median error 0.51 mm), slack is declared when the ball is 5 mm closer to the cross-piece hole than the string length for two frames in a row (truth 0.077 s, images 0.100 s), and a gravity-known parabola (6 unknowns) fitted to the frames after that gives the landing point. The true (p, v) is used only to render the world. The controller's stages are explicit: lift straight up (4.9 g, the ken dodges 10 cm towards the string hole) → wait for slack → wait until the ball's underside clears the kendama → carry the cup horizontally under the ball → lower it at touchdown. Only gravity and string tension move the ball; if the kendama touches it the trial fails (a lift without the dodge hits the cross piece at 0.260 s). The same plan with only the trick's pose switched gives, over 20 trials, big cup truth 1.00 / images 1.00 (lateral 2.40 mm), small cup 1.00 / 1.00, base cup 0.95 / 0.95, candle (truth) 0.95; lowering at touchdown cuts the mean relative speed from 0.91 to 0.61 m/s (big cup). The landing-point error falls with the number of post-slack frames, 10.51 mm (3 frames) → 0.98 mm (44). Pixel noise of 0 / 0.5 / 1 / 2 / 8 / 16 px gives 1.00 / 1.00 / 1.00 / 1.00 / 0.90 / 0.40 — flat up to 2 px because the 21 mm cup rim absorbs it, while the lateral offset grows 2.40 → 4.12 → 12.05 mm. The recommended model (49 mm big cup) also scores 1.00. For a stationary ball the hole direction from two views is off by 1.8° at the median and 4.7° at worst. The world was also turned into 3D Gaussian Splatting before recognition (gsplatnp: Gaussians attached to the world's faces, rendered by EWA projection, front-to-back alpha compositing and Mip-Splatting's opacity compensation; the Gaussians are built from the true shape rather than learned from photos, and reconstruction imperfections are imitated with spacing and error knobs): on 3DGS images at 4 mm spacing the closed loop caught 1 + 2 trials out of 1 + 2 (median triangulation error 0.30 mm); spacing from 2 to 64 mm leaves ball detection at 1.00 (the curvature cap keeps at least 146 Gaussians on the ball), while position error (0.25 at 20 mm) and colour error (0.00 at 0.3) break it. At 480 × 360 the ball's hole is smeared away by the 3DGS blur (1 of 40 poses, mesh 14); at twice the resolution and 2 mm spacing it is read in 16 (median error 2.3°), at 4 mm in none — reading the hole needs pixels on the ball and Gaussians inside the hole. The hole is built as a 40 mm deep cavity, not a disc on the surface (as a disc it vanished under the ball's own Gaussians in 3DGS). Consecutive tricks were added too (the user: "after a catch, carry on from that state and catch in another cup", "10 successes is enough"): the ball is tossed from the cup it sits in (accelerate the cup up and stop it harder than g, and the ball leaves; the apex matches v²/2g to 2e-6 m), the kendama is turned in flight (wrist ≤ 30 rad/s, assumed) to bring the next cup under the landing point, and a hand controller that targets position and velocity matches the ball's speed at the catch (a position-only controller catches nothing with a 20 cm apex). On images alone, moshikame (big ↔ base cup) and the three-cup sequence (big → small → base) both run 10 in a row (grade 5 on the association's moshikame table), relative speed at touchdown 0.41–0.48 m/s, every flight start found from images. Honestly: without noise, 100 in a row is the same cycle repeated; with 2 px of pixel noise moshikame breaks after 3 and the three cups after 6. Honestly: synthetic footage with ground truth, not real video; ball rotation is not simulated (it keeps its last pose once slack); a catch is a geometric test at the moment the ball touches the rim (lateral ≤ rim radius, relative speed ≤ 1 m/s as an assumed threshold, descending) with no bounce or rolling; the 15° tilt of the cup grip, cup depths and the 75 g ball are assumptions. In flight the hole faces down and is almost never seen by both eye-level cameras (0 of 54 frames). Why the candle is harder than the base cup cannot be expressed by a rigid, translating hand. 16 gates, 171.0 s.*
 
-[![近接カメラ(図のためだけ、けん玉から 0.36 m)で見た 4 技の持ち方の姿勢(けんと皿胴は 1 つの剛体、持つ所だけが違う)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/02_kendama_closeup_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/02_kendama_closeup.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/02_kendama_closeup_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/02_kendama_closeup.png)
 
 *↑ The measurement ―― 近接カメラ(図のためだけ、けん玉から 0.36 m)で見た 4 技の持ち方の姿勢(けんと皿胴は 1 つの剛体、持つ所だけが違う)。けん(けん先 → 細い首 → 皿胴を貫く胴 → 段と輪のある握り → 中皿)、皿胴の両端がラッパのように開いた大皿(赤)・小皿(紫)、中皿(青)、直径 17 mm・深さ 40 mm の穴(くぼみ)のある玉、皿胴の糸穴から出る糸。寸法は JKA 16-2 型(けん 160 mm、横幅 70 mm、皿 42 / 38 / 35 mm)。玉の位置と向きは見せるために置いたもの。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真下から 150° 相当の速さ(3.92 m/s)で打ち出した玉のひも(有効長 0.42 m)の張力。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/03_tension_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/03_tension_closed_form.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/03_tension_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/03_tension_closed_form.png)
 
-*↑ 真下から 150° 相当の速さ(3.92 m/s)で打ち出した玉のひも(有効長 0.42 m)の張力。*
+*↑ Figure from this exhibit ―― 真下から 150° 相当の速さ(3.92 m/s)で打ち出した玉のひも(有効長 0.42 m)の張力。 (figure labels are in Japanese; the numbers are the same)*
 
-[![y–z 面(手元を逃がす向き)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/04_catch_yz_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/04_catch_yz.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/04_catch_yz_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/04_catch_yz.png)
 
-*↑ y–z 面(手元を逃がす向き)。*
+*↑ Figure from this exhibit ―― y–z 面(手元を逃がす向き)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![画像だけの閉ループの成功率(大皿、各 20 試行): 0 px → 1.00、0.5 px → 1.00、1 px → 1.00、2 px → 1.00、8 px → 0.90、16 px → 0.40。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/07_success_vs_pixel_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/07_success_vs_pixel_noise.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/07_success_vs_pixel_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/07_success_vs_pixel_noise.png)
 
-*↑ 画像だけの閉ループの成功率(大皿、各 20 試行): 0 px → 1.00、0.5 px → 1.00、1 px → 1.00、2 px → 1.00、8 px → 0.90、16 px → 0.40。*
+*↑ Figure from this exhibit ―― 画像だけの閉ループの成功率(大皿、各 20 試行): 0 px → 1.00、0.5 px → 1.00、1 px → 1.00、2 px → 1.00、8 px → 0.90、16 px → 0.40。 (figure labels are in Japanese; the numbers are the same)*
 
-[![3DGS の世界の捕球の試行(弛み → 捕球の 12 コマ)を、つまみを振った 3DGS で描き直して色度の検出(balltrack.ball_detect)にかけた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/09_gs_noise_knobs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/09_gs_noise_knobs.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/09_gs_noise_knobs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/09_gs_noise_knobs.png)
 
-*↑ 3DGS の世界の捕球の試行(弛み → 捕球の 12 コマ)を、つまみを振った 3DGS で描き直して色度の検出(balltrack.ball_detect)にかけた。*
+*↑ Figure from this exhibit ―― 3DGS の世界の捕球の試行(弛み → 捕球の 12 コマ)を、つまみを振った 3DGS で描き直して色度の検出(balltrack.ball_detect)にかけた。 (figure labels are in Japanese; the numbers are the same)*
 
-[![カメラ 2、100 fps を 1/10 速で(最後のコマで 1 秒止める)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/05_catch_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/05_catch_gif.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/05_catch_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/05_catch_gif.gif)
 
-*↑ The animation ―― カメラ 2、100 fps を 1/10 速で(最後のコマで 1 秒止める)。振り上げ → t = 0.077 s にひもが弛む(画像での検出 0.100 s)→ 玉がけんを越えるまで待つ → 皿を水平に運ぶ → 着地で下げる → t = 0.540 s に大皿で受ける。十字は画像の予測(弛んだ後のコマに当てた重力つきの放物線)から読んだ着地点、枠の中は同じカメラでけん玉のまわりを 3 倍の解像度に描き直した窓。t ≈ 0.3 s に玉がけんに重なって見えるのはカメラから見た重なりで、けんは糸穴の側へ 10 cm 逃げて玉の奥にある(その間の隙間の最小 41 mm)。正直に: 捕球は「縁に触れた瞬間に横ずれ ≤ 21 mm・相対速さ ≤ 1 m/s・下降中」の判定で、縁での跳ねと転がりは描いていない。*
+*↑ The animation ―― カメラ 2、100 fps を 1/10 速で(最後のコマで 1 秒止める)。振り上げ → t = 0.077 s にひもが弛む(画像での検出 0.100 s)→ 玉がけんを越えるまで待つ → 皿を水平に運ぶ → 着地で下げる → t = 0.540 s に大皿で受ける。十字は画像の予測(弛んだ後のコマに当てた重力つきの放物線)から読んだ着地点、枠の中は同じカメラでけん玉のまわりを 3 倍の解像度に描き直した窓。t ≈ 0.3 s に玉がけんに重なって見えるのはカメラから見た重なりで、けんは糸穴の側へ 10 cm 逃げて玉の奥にある(その間の隙間の最小 41 mm)。正直に: 捕球は「縁に触れた瞬間に横ずれ ≤ 21 mm・相対速さ ≤ 1 m/s・下降中」の判定で、縁での跳ねと転がりは描いていない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![右 = 閉ループの知覚が実際に見た画像(世界を 3DGS にして描いたもの、カメラ 2、100 fps を 1/10 速)、左 = 同じ瞬間のメッシュ(真の形)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/10_gs_catch_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/10_gs_catch_gif.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/10_gs_catch_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/10_gs_catch_gif.gif)
 
-*↑ The animation ―― 右 = 閉ループの知覚が実際に見た画像(世界を 3DGS にして描いたもの、カメラ 2、100 fps を 1/10 速)、左 = 同じ瞬間のメッシュ(真の形)。右上の窓 = 同じカメラでけん玉のまわりを 3 倍の解像度に描き直したもの(左はメッシュ、右は同じ 3DGS)。青の輪 = 色度で検出した玉、十字 = 弛んだ後のコマに当てた重力つきの放物線から読んだ着地点。t = 0.541 s に大皿で受ける(横ずれ 4.34 mm、推定 391 回は全部 3DGS の画像から)。*
+*↑ The animation ―― 右 = 閉ループの知覚が実際に見た画像(世界を 3DGS にして描いたもの、カメラ 2、100 fps を 1/10 速)、左 = 同じ瞬間のメッシュ(真の形)。右上の窓 = 同じカメラでけん玉のまわりを 3 倍の解像度に描き直したもの(左はメッシュ、右は同じ 3DGS)。青の輪 = 色度で検出した玉、十字 = 弛んだ後のコマに当てた重力つきの放物線から読んだ着地点。t = 0.541 s に大皿で受ける(横ずれ 4.34 mm、推定 391 回は全部 3DGS の画像から)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_kendama.py
@@ -1594,21 +1594,21 @@ Two table-tennis balls launched at the same speed and angle land in different pl
 
 *↑ **Filming a Spinning Table-Tennis Ball and Reading Its Spin Two Ways — From the Curve and From the Markings** ―― Two table-tennis balls launched at the same speed and angle land in different places if they spin differently: topspin dips and lands short, backspin floats and lands long, sidespin curves sideways (the Magnus effect, force along ω × v). This exhibit films four balls that differ only in spin (150 rad/s ≈ 1,430 rpm) with two 240 fps cameras and **reads the spin in two ways**. From the curve: fit the drag + Magnus equation of motion to the triangulated pre-bounce track with 9 parameters (position, velocity, spin) — the new op fit_spin, a damped least-squares fit. The perpendicular-spin error is 3.9 % (top), 0.9 % (back), 1.7 % (side), and the landing point predicted from the read spin is within 2 cm of the truth for all four (x = [0.488, 0.754, 1.124] m; top < none < back). From the markings: film the same ball with a 1000 fps close-up camera (20 frames) and fit the motion of the 14 black marks with Kabsch — 4.8 %, 3.2 %, 0.9 %. The two readings are independent (one sees only the track, the other only the marks) and agree within 10 % (a second-implementation gate). Theorem gate: Magnus force is ω × v, so spin parallel to the direction of travel produces no force — the instantaneous acceleration differs by less than 1e-12, and after 0.25 s of flight the track moves 7.1 mm (versus 5.4 cm for perpendicular spin). fit_spin therefore returns this component separately, and the 22 rad/s the fit reports for the no-spin ball lies almost entirely along that unreadable direction. With a short track the curve is buried in detection error and the spin cannot be read (400.3 % → 4.0 %). Found on the way: from the server-side camera the net's white band hides the top half of a low ball beyond the net and shifts the detected centre (up to 26 mm after triangulation) — detections whose radius is under 0.8× their neighbours' are dropped. The op that turns a mark into a direction (marker_direction) assumed the ball sits on the optical axis, so for a ball crossing the frame the change of line of sight showed up as apparent spin (0.01 rad per ms, 7 % of one frame's rotation) — given the camera K it now solves the perspective exactly. Honestly: synthetic video (known colour, no real lighting or blur); the aerodynamic coefficients (C_d = 0.4, spin-ratio C_L) are the same in truth and fit; spin is constant in flight. 8 gates, 34.4 s.*
 
-[![同じ速さ・同じ向き(v₀ = (6.0, 0, 1.3) m/s)で打ち出した 3 本を横から: トップスピン(橙)は沈んで x = 0.49 m、無回転(黄)は 0.75 m、バックスピン(青)は浮いて 1.12 m に落ちる(台の中心から)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/01_side_three_serves.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/01_side_three_serves.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/01_side_three_serves.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/01_side_three_serves.gif)
 
 *↑ The measurement ―― 同じ速さ・同じ向き(v₀ = (6.0, 0, 1.3) m/s)で打ち出した 3 本を横から: トップスピン(橙)は沈んで x = 0.49 m、無回転(黄)は 0.75 m、バックスピン(青)は浮いて 1.12 m に落ちる(台の中心から)。球は見やすさのため 1.6 倍で描いた。MP4 = 240 fps の全コマ(1/8 スロー)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![曲がり方(軌跡に運動方程式を当てる)と模様(近接カメラの Kabsch)は独立。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/04_two_readings_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/04_two_readings.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/04_two_readings_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/04_two_readings.png)
 
-*↑ 曲がり方(軌跡に運動方程式を当てる)と模様(近接カメラの Kabsch)は独立。*
+*↑ Figure from this exhibit ―― 曲がり方(軌跡に運動方程式を当てる)と模様(近接カメラの Kabsch)は独立。 (figure labels are in Japanese; the numbers are the same)*
 
-[![跳ねる前の先頭 n コマだけで回転を読む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/05_error_vs_length_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/05_error_vs_length.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/05_error_vs_length_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/05_error_vs_length.png)
 
-*↑ 跳ねる前の先頭 n コマだけで回転を読む。*
+*↑ Figure from this exhibit ―― 跳ねる前の先頭 n コマだけで回転を読む。 (figure labels are in Japanese; the numbers are the same)*
 
-[![近接カメラ(1000 fps、20 コマ = 20 ms)のトップスピン。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/02_spin_closeup.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/02_spin_closeup.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/02_spin_closeup.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/02_spin_closeup.gif)
 
-*↑ The animation ―― 近接カメラ(1000 fps、20 コマ = 20 ms)のトップスピン。黒い模様(14 個、見えるのは 4〜6 個)を前のコマと向きで対応づけ、Kabsch で回転を当てる: ω = [-0.7, 150.1, -7.2] rad/s(真値 (0, 150, 0))。1/100 スロー、3 回繰り返し。*
+*↑ The animation ―― 近接カメラ(1000 fps、20 コマ = 20 ms)のトップスピン。黒い模様(14 個、見えるのは 4〜6 個)を前のコマと向きで対応づけ、Kabsch で回転を当てる: ω = [-0.7, 150.1, -7.2] rad/s(真値 (0, 150, 0))。1/100 スロー、3 回繰り返し。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_table_tennis_spin.py
@@ -1628,25 +1628,25 @@ Can the drag coefficient C_d and the spin ω of a table-tennis ball be read from
 
 *↑ **Reading Drag and Spin from a Trajectory at Once — A Missed C_L Coefficient Drags the Spin Along, and a Narrow Spin-Ratio Range Cannot Separate Them (Measuring When It Can Be Read in a Self-Made, Different-Model World)** ―― C_d and ω read in two divisions of labour (a self-made world: Re-dependent C_d and a C_L dip; the fit uses constants; every true value is the world's own). ω from the pattern with C_d, C_L from the trajectory lands within 2 % of the world's effective values; reading everything from the trajectory gets C_d right but ω about half too small.*
 
-[![観測を作る世界(実線)は S = 0.5 付近に谷があり、当てはめの模型(破線)にはない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/02_cl_world_vs_model_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/02_cl_world_vs_model.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/02_cl_world_vs_model_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/02_cl_world_vs_model.png)
 
 *↑ The measurement ―― 観測を作る世界(実線)は S = 0.5 付近に谷があり、当てはめの模型(破線)にはない。卓球の 150 rad/s・6 m/s は S ≈ 0.5 で、谷の真ん中に当たる。谷の位置・深さは仮の値。 (figure labels are in Japanese; the numbers are the same)*
 
-[![トップスピンを軌跡だけ(C_d と ω を同時、κ = 1、雑音なしの軌跡)で読んだ ω の誤差(実線)と、世界の C_L が当てはめの模型に足りない割合(破線)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/03_omega_bias_vs_dip_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/03_omega_bias_vs_dip.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/03_omega_bias_vs_dip_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/03_omega_bias_vs_dip.png)
 
-*↑ トップスピンを軌跡だけ(C_d と ω を同時、κ = 1、雑音なしの軌跡)で読んだ ω の誤差(実線)と、世界の C_L が当てはめの模型に足りない割合(破線)。*
+*↑ Figure from this exhibit ―― トップスピンを軌跡だけ(C_d と ω を同時、κ = 1、雑音なしの軌跡)で読んだ ω の誤差(実線)と、世界の C_L が当てはめの模型に足りない割合(破線)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![κ も自由にすると、初期値によって ω は 44〜72 rad/s と違う答えになるのに、rms は 2.556〜2.556 mm で同じ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/04_degeneracy_valley_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/04_degeneracy_valley.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/04_degeneracy_valley_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/04_degeneracy_valley.png)
 
-*↑ κ も自由にすると、初期値によって ω は 44〜72 rad/s と違う答えになるのに、rms は 2.556〜2.556 mm で同じ。*
+*↑ Figure from this exhibit ―― κ も自由にすると、初期値によって ω は 44〜72 rad/s と違う答えになるのに、rms は 2.556〜2.556 mm で同じ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![位置雑音 σ を 3 通りに振り、軌跡の先頭 n コマで C_d と ω を同時に当てたときの C_d のばらつき(モンテカルロ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/06_cd_scatter_vs_length_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/06_cd_scatter_vs_length.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/06_cd_scatter_vs_length_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/06_cd_scatter_vs_length.png)
 
-*↑ 位置雑音 σ を 3 通りに振り、軌跡の先頭 n コマで C_d と ω を同時に当てたときの C_d のばらつき(モンテカルロ)。*
+*↑ Figure from this exhibit ―― 位置雑音 σ を 3 通りに振り、軌跡の先頭 n コマで C_d と ω を同時に当てたときの C_d のばらつき(モンテカルロ)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![偏りの原因は谷そのものではなく、当てはめの C_L 模型が世界の係数を外すこと。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/08_coefficient_shift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/08_coefficient_shift.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/08_coefficient_shift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cd_spin_joint/08_coefficient_shift.png)
 
-*↑ 偏りの原因は谷そのものではなく、当てはめの C_L 模型が世界の係数を外すこと。*
+*↑ Figure from this exhibit ―― 偏りの原因は谷そのものではなく、当てはめの C_L 模型が世界の係数を外すこと。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_cd_spin_joint.py
@@ -1666,21 +1666,21 @@ When a table-tennis ball bounces on the table, restitution e decides how much ve
 
 *↑ **Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution and Friction — Checked Against Published Values** ―― When a table-tennis ball bounces on the table, restitution e decides how much vertical speed survives and friction trades horizontal speed against spin. If the contact point slides only a little the sliding stops during the bounce and the ball **leaves rolling**; if it slides a lot it **leaves still sliding**. This exhibit films 22 bounces with one high-speed camera from the side (1000 fps, ROI readout) and reads e, the friction coefficient μ and the kind of bounce **from the images alone**, checking them against published values. The plane of motion is known, so one camera gives positions (the centre pixel's line of sight meets that plane). The drag + Magnus equation of motion is fitted before and after the bounce to get the velocities at contact, and the spin is read from the ball's marks in two stages (the new op spin_from_marker_sequence). Gates: the closed forms of Cross 2002 (thin shell: a bounce ending rolling has v_x' = 0.6 v_x + 0.4 rω, one still sliding has Δv_t = μ(1+e)|v_z|, the boundary is (2/5)|s| = μ(1+e)|v_z|) agree with the impulse implementation over 300 random impacts / the ITTF table bounce (Laws 2.1.3: 30 cm → about 23 cm) is 23.0 cm from the video / the slope of e against impact speed, -0.00572 per km/h, is within 1.4 % of the −0.0058 measured by Inaba et al. 2017 / sliding bounces give μ = 0.2500 (truth 0.25) / the kind of bounce agrees with the closed-form boundary (15 / 15) / bounces that end rolling have rω' within 3 % of v_x' / on a frictionless table neither horizontal speed nor spin changes. Found on the way: reading 30 → 23 cm as e = √(23/30) = 0.876 drops the air drag — that table bounces only 21.7 cm, and the e that gives about 23 cm with drag is 0.9019. The formula of Inaba et al. itself (intercept 1.0002) makes a table that bounces 25.5 cm from 30 cm, so the two published values disagree (lab table versus standard, or method, not checked). The apparent μ of a bounce that ends rolling is only a lower bound. Honestly: synthetic video; the table's e(v) joins the ITTF intercept and the slope of Inaba et al.; μ is constant (their measurements rise with contact-point speed); the ball does not deform (buckling from 5.5 m/s). 7 gates, 21.6 s.*
 
-[![ITTF の台の跳ねの試験(Laws 2.1.3: 30 cm から落として約 23 cm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/01_drop_test.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/01_drop_test.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/01_drop_test.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/01_drop_test.gif)
 
 *↑ The measurement ―― ITTF の台の跳ねの試験(Laws 2.1.3: 30 cm から落として約 23 cm)。球の下端を 30 cm から落とし、動画から読んだ跳ねの高さは 23.0 cm(世界の真値 23.0 cm)。物差しは 1 cm 刻み。MP4 = 240 fps の全コマ(1/8 スロー)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画から読んだ e(22 本)と公表値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/04_restitution_vs_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/04_restitution_vs_speed.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/04_restitution_vs_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/04_restitution_vs_speed.png)
 
-*↑ 動画から読んだ e(22 本)と公表値。*
+*↑ Figure from this exhibit ―― 動画から読んだ e(22 本)と公表値。 (figure labels are in Japanese; the numbers are the same)*
 
-[![バックスピン(ω = −150 rad/s)の跳ね(当たる瞬間 v = (4.9, −4.3) m/s)、1000 fps を 1/40 スローで。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/02_backspin_bounce.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/02_backspin_bounce.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/02_backspin_bounce.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/02_backspin_bounce.gif)
 
-*↑ The animation ―― バックスピン(ω = −150 rad/s)の跳ね(当たる瞬間 v = (4.9, −4.3) m/s)、1000 fps を 1/40 スローで。接地点が大きく滑ったまま離れる(滑り +7.89 → +2.89 m/s)。模様から読んだ回転 -150 → +0 rad/s、横の速さの減り 1.997 m/s → 見かけの μ 0.250。*
+*↑ The animation ―― バックスピン(ω = −150 rad/s)の跳ね(当たる瞬間 v = (4.9, −4.3) m/s)、1000 fps を 1/40 スローで。接地点が大きく滑ったまま離れる(滑り +7.89 → +2.89 m/s)。模様から読んだ回転 -150 → +0 rad/s、横の速さの減り 1.997 m/s → 見かけの μ 0.250。 (figure labels are in Japanese; the numbers are the same)*
 
-[![トップスピン(ω = +200 rad/s)の跳ね(当たる瞬間 v = (2.9, −3.1) m/s)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/03_topspin_bounce.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/03_topspin_bounce.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/03_topspin_bounce.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/03_topspin_bounce.gif)
 
-*↑ The animation ―― トップスピン(ω = +200 rad/s)の跳ね(当たる瞬間 v = (2.9, −3.1) m/s)。接地点の滑りが小さいので跳ねの途中で止まり、転がりに移って離れる(滑り -1.17 → -0.01 m/s、跳ねた後の rω' = 3.320 m/s と v_x' = 3.312 m/s)。*
+*↑ The animation ―― トップスピン(ω = +200 rad/s)の跳ね(当たる瞬間 v = (2.9, −3.1) m/s)。接地点の滑りが小さいので跳ねの途中で止まり、転がりに移って離れる(滑り -1.17 → -0.01 m/s、跳ねた後の rω' = 3.320 m/s と v_x' = 3.312 m/s)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_table_tennis_bounce.py
@@ -1700,17 +1700,17 @@ A table-tennis robot reads where the ball is, then computes a return that lands 
 
 *↑ **Reading Errors End the Table-Tennis Rally — How Much Noise and Latency Move the Landing Point, in Closed Form Before the Shot** ―― A table-tennis robot reads where the ball is, then computes a return that lands on a chosen point of the opponent's half. If the reading is off by δ, the shot is computed **from the misread position** but the ball leaves **from the true one**, so the landing point moves; past the margin to the edge the ball is out and the rally ends. This exhibit works out, before the shot, how a reading error becomes a landing error (the Jacobian J, 2 × 3) and checks whether noise, latency and broken rallies are explained by it. Gates: without air, the numerical J through aiming, racket planning, impact and flight differs from the closed form ΔL_xy = −δ_xy − (v_xy/|v_z(T)|)δ_z by 2.5e-06 (a 1 cm height error moves the landing 2.1 cm along the table) / with drag and Magnus, the spread of 300 shots with σ = 2 cm readings (along 4.6, across 2.0 cm) is within 1.0 and 0.8 % of J Σ Jᵀ / aiming 6 cm from the edge with σ = 3 cm, the out probability is predicted 0.043 and 300 shots give 0.060 (1.5 σ binomial) / the landing error for latency τ = 5, 10, 20 ms matches J · (−vτ − ½gτ² ẑ) within 0.2–0.6 % / noise-free rallies reach the cap of 10 shots all 4 times, while σ = 6 cm (1.2 × the bound σ* = 5.2 cm from the margin) ends after 9, 8, 2, 7 shots, all out / with no error the ball lands 0.52 mm from the target. Found on the way: the height of the "reading τ old" was written with + ½gτ² (it is −). The gate puts the same reading error on both sides, so the mistake passed; a numerical integral caught it. With large noise (12 cm from the edge, σ = 5 cm) the prediction is 0.017 and the shots give 0.003; an earlier seed missed by 2.7 σ the other way, so 300 shots cannot tell which way the linearisation errs. Honestly: only the ball position is misread (velocity and spin are true), the noise is independent Gaussian per frame, the racket hits exactly as planned, and an out is judged only by the edge margin. 6 gates, 289 s.*
 
-[![高さを 5 cm 高く読むと、狙いの計算(灰)は低い弾道を選び、本当の位置から打った球(赤)は狙いより 10.2 cm 手前に落ちる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/02_height_misread.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/02_height_misread.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/02_height_misread.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/02_height_misread.gif)
 
 *↑ The measurement ―― 高さを 5 cm 高く読むと、狙いの計算(灰)は低い弾道を選び、本当の位置から打った球(赤)は狙いより 10.2 cm 手前に落ちる。J の前後の増幅 2.06 × 5 cm = 10.3 cm(一次の予測)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![読みの雑音は 3 方向に同じ大きさでも、着地点のずれは前後に 2.2 倍伸びる(高さの読み違いが落ちる角の分だけ増える)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/04_spread_vs_prediction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/04_spread_vs_prediction.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/04_spread_vs_prediction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/04_spread_vs_prediction.png)
 
-*↑ 読みの雑音は 3 方向に同じ大きさでも、着地点のずれは前後に 2.2 倍伸びる(高さの読み違いが落ちる角の分だけ増える)。*
+*↑ Figure from this exhibit ―― 読みの雑音は 3 方向に同じ大きさでも、着地点のずれは前後に 2.2 倍伸びる(高さの読み違いが落ちる角の分だけ増える)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![上から見た送り合い(1/2 速)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/03_rally_compare.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/03_rally_compare.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/03_rally_compare.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/03_rally_compare.gif)
 
-*↑ The animation ―― 上から見た送り合い(1/2 速)。上 = 読みの雑音 0 で上限の 10 本、下 = 毎コマの読みに σ = 6 cm で 9 本(アウト)。ラケットは届いている —— 途切れる理由は空振りでなく、読み違いから狙った打球のアウト。*
+*↑ The animation ―― 上から見た送り合い(1/2 速)。上 = 読みの雑音 0 で上限の 10 本、下 = 毎コマの読みに σ = 6 cm で 9 本(アウト)。ラケットは届いている —— 途切れる理由は空振りでなく、読み違いから狙った打球のアウト。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_table_tennis_rally_loop.py
@@ -1730,29 +1730,29 @@ Periodic material carries an exact invariant that any temporal operator must sat
 
 *↑ **Testing the Periodic Boundary of Temporal Operators with a Seamless Loop** ―― Periodic material carries an exact invariant that any temporal operator must satisfy: for a video of period T, an operator that handles the periodic boundary correctly obeys op(roll(v,k)) == roll(op(v),k) exactly, and any implementation that pads the ends by replication, clamping or truncation breaks it. Because perpetual_loop makes every time-dependent quantity a function of theta, the seam is never created rather than removed (seam ratio 1.0509, where 1 and not 0 is the correct answer), so the truth for that equality is exactly zero difference. No new operator was added. The core finding is that a perfect score came out of an empty output: run with its defaults, three_frame_difference reports a maximum difference of 0.0e+00 and zero contaminated frames, yet only 0 of 32 frames carry any content - the default threshold of 0.1 exceeds the material's largest frame-to-frame change of 0.0841, so nothing is detected at all, and an empty output shifts to another empty output, agreeing trivially. Lowering the threshold to 0.03 gives the same operator 30 of 32 frames of content, 4 contaminated frames and a maximum difference of 1.000 - the perfect score was a lie. Scanning all sixteen single-input video-to-video operators in the ledger splits them into three groups: windowed operators contaminate only the ends (2 frames for causal frame differencing and optical-flow magnitude, 4 for the moving average, 8 for windowed background subtraction, temporal bilateral and temporal median), so trimming that many frames leaves the rest exactly equivariant; recursive or globally normalising operators contaminate all 32 frames and trimming does not help; and three operators return almost nothing, which reads as zero contamination but is not a pass. The contaminated frames are predictable not merely in count but as a set: a window of width w contaminates roll(B,k) union B, and across w = 3, 5, 7, 9, 11 and 13 the predicted set matched exactly (4, 8, 12, 16, 19, 21). The naive prediction of w-1 frames fails in all six cases and 2(w-1) fails at w = 11, where the two bands overlap by exactly one frame at T = 32 with a shift of 9. The first prediction assumed a centred window and was wrong; subtracting the mismatched sets showed contamination only at the head with the tail untouched, which means the window is trailing rather than centred - the orientation of a window can be read off the shape of the contaminated set without reading the implementation.*
 
-[![`perpetual_loop("plasma_orbit")` の 4 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/01_loop_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/01_loop_frames.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/01_loop_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/01_loop_frames.png)
 
 *↑ The measurement ―― `perpetual_loop("plasma_orbit")` の 4 コマ。時間に依る量をすべて θ の関数にしてあるので、**t = T は t = 0 と同じ式**です ---- 継ぎ目は消したのではなく最初から作られていません(継ぎ目の比 1.0509、**0 ではなく 1 が正解**)。★だから「巡回シフトしても同じ動画」という**厳密な真値**が素材の側に立ちます。 (figure labels are in Japanese; the numbers are the same)*
 
-[![`three_frame_difference` の同じコマです。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/03_empty_output_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/03_empty_output.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/03_empty_output_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/03_empty_output.png)
 
-*↑ `three_frame_difference` の同じコマです。*
+*↑ Figure from this exhibit ―― `three_frame_difference` の同じコマです。 (figure labels are in Japanese; the numbers are the same)*
 
-[![継ぎ目の無い動画 32 コマを巡回シフトして測った全数走査です。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/04_scan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/04_scan.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/04_scan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/04_scan.png)
 
-*↑ 継ぎ目の無い動画 32 コマを巡回シフトして測った全数走査です。*
+*↑ Figure from this exhibit ―― 継ぎ目の無い動画 32 コマを巡回シフトして測った全数走査です。 (figure labels are in Japanese; the numbers are the same)*
 
-[![窓幅 7 のときに汚れたフレームの位置。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/07_bad_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/07_bad_frames.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/07_bad_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/07_bad_frames.png)
 
-*↑ 窓幅 7 のときに汚れたフレームの位置。*
+*↑ Figure from this exhibit ―― 窓幅 7 のときに汚れたフレームの位置。 (figure labels are in Japanese; the numbers are the same)*
 
-[![端だけが汚れる 6 本について、汚れたフレーム数を少ない順に並べたもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/08_trim_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/08_trim.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/08_trim_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/08_trim.png)
 
-*↑ 端だけが汚れる 6 本について、汚れたフレーム数を少ない順に並べたもの。*
+*↑ Figure from this exhibit ―― 端だけが汚れる 6 本について、汚れたフレーム数を少ない順に並べたもの。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じ動画を実際に回したもの(32 コマ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/02_loop.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/02_loop.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/02_loop.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/02_loop.gif)
 
-*↑ The animation ―― 同じ動画を実際に回したもの(32 コマ)。**最後のコマから最初のコマへ戻るところに継ぎ目が見えません** ---- 消したのではなく、時間に依る量をすべて θ の関数にしてあるので**最初から存在しない**からです。★この性質があるので「巡回シフトしても同じ動画」が**厳密な真値**になり、時間方向 op の周期境界を数で採点できます。*
+*↑ The animation ―― 同じ動画を実際に回したもの(32 コマ)。**最後のコマから最初のコマへ戻るところに継ぎ目が見えません** ---- 消したのではなく、時間に依る量をすべて θ の関数にしてあるので**最初から存在しない**からです。★この性質があるので「巡回シフトしても同じ動画」が**厳密な真値**になり、時間方向 op の周期境界を数で採点できます。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_periodic_video_boundary.py
@@ -1774,33 +1774,33 @@ Three indoor sequences of LASIESTA (Universidad Politécnica de Madrid, CC BY-SA
 
 *This figure is adapted from LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (source: https://www.gti.ssr.upm.es/data/lasiesta_database) and licensed CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), not Apache-2.0; changes are listed in [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE).*
 
-[![I_OC_01 を 4 コマおきに再生。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/02_tracking_movie.gif)
 
 *↑ The measurement ―― I_OC_01 を 4 コマおきに再生。空色 = 観測で更新、橙 = 更新に使わなかったコマを、そのコマまでの観測で kalman_smooth が推定し直した位置、赤紫の点線 = その場の予測(filter_kalman)、予測なしの最近傍(黄の破線)。柱の裏では橙と点線が重なって進み、出てきた人を拾い直すと橙だけが引き直される。LASIESTA の実写のコマに線を重ねた動画で、この GIF は CC BY-SA 4.0(https://creativecommons.org/licenses/by-sa/4.0/、Apache-2.0 ではない、NOTICE に列挙)。 (figure labels are in Japanese; the numbers are the same)*
 
 *This figure is adapted from LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (source: https://www.gti.ssr.upm.es/data/lasiesta_database) and licensed CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), not Apache-2.0; changes are listed in [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE).*
 
-[![I_OC_01 の第 151 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/03_masks_i_oc_01.png)
 
-*↑ I_OC_01 の第 151 コマ。*
-
-*This figure is adapted from LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (source: https://www.gti.ssr.upm.es/data/lasiesta_database) and licensed CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), not Apache-2.0; changes are listed in [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE).*
-
-[![I_OC_02 の第 111 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02.png)
-
-*↑ I_OC_02 の第 111 コマ。*
+*↑ Figure from this exhibit ―― I_OC_01 の第 151 コマ。 (figure labels are in Japanese; the numbers are the same)*
 
 *This figure is adapted from LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (source: https://www.gti.ssr.upm.es/data/lasiesta_database) and licensed CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), not Apache-2.0; changes are listed in [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE).*
 
-[![I_OC_01 の背景。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/04_masks_i_oc_02.png)
 
-*↑ I_OC_01 の背景。*
+*↑ Figure from this exhibit ―― I_OC_02 の第 111 コマ。 (figure labels are in Japanese; the numbers are the same)*
 
 *This figure is adapted from LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (source: https://www.gti.ssr.upm.es/data/lasiesta_database) and licensed CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), not Apache-2.0; changes are listed in [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE).*
 
-[![真値の物体が見えているコマだけを打った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/05_background.png)
 
-*↑ 真値の物体が見えているコマだけを打った。*
+*↑ Figure from this exhibit ―― I_OC_01 の背景。 (figure labels are in Japanese; the numbers are the same)*
+
+*This figure is adapted from LASIESTA (C. Cuevas, E. M. Yáñez, N. García, CVIU 152, 2016; GTI, Universidad Politécnica de Madrid) (source: https://www.gti.ssr.upm.es/data/lasiesta_database) and licensed CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), not Apache-2.0; changes are listed in [NOTICE](https://github.com/furuse-kazufumi/fullseye/blob/master/NOTICE).*
+
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_bg_kalman_tracking/06_track_error.png)
+
+*↑ Figure from this exhibit ―― 真値の物体が見えているコマだけを打った。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -1836,25 +1836,25 @@ A small reprojection error does not guarantee a correct focal length. Re-renderi
 
 *↑ **A Reprojection Error of 0.05 px Guarantees Nothing** ―― Grid points projected with known intrinsics and poses, re-calibrated, and the error split by component. With the board tilted 32 / 8 / 2 degrees the reprojection RMS spans 0.0688 to 0.0690 px (ratio 1.00) while the focal-length error spans 0.026 to 7.326 % (281x). On a real calibration board (the 13 photos OpenCV distributes), four-photo subsets containing the one outlier photo (left02) have a large reprojection RMS; the other 495 subsets keep the RMS at 0.148 to 0.318 px while the focal length scatters -1.46 to +2.53 % around the 12-photo estimate (correlation of RMS with |deviation| -0.045; it changes with the choice of reference). The cluster near 0.3 px RMS is the 165 subsets containing the second outlier, left13; dropping the 1 / 2 / 3 worst photos gives correlations of -0.045 / -0.055 / +0.244. Taking the 13-photo estimate as the truth and re-rendering the same 3 layouts with the real board texture keeps the reprojection RMS at 0.146 to 0.154 px while the focal-length error over 5 noise seeds is 0.02-0.08 / 0.22-0.43 / 2.1-7.4 % (the smallest 2-degree value is still 28 times the largest 32-degree value). The re-rendering path is sensitive: moving the truth by 1e-5 px moves the corners and changes the noise realisation, so read the values as ranges. With a distorting camera the rank-ratio degeneracy gate never fires (the noise-aware gate stops a 5-degree tilt but passes 8 degrees with an 18.5 % focal-length error), and the non-linear optimiser returns an answer even for a fronto-parallel board.*
 
-[![RMS は 1.00 倍しか動かないのに fx 誤差は 281 倍動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/01_reproj_vs_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/01_reproj_vs_truth.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/01_reproj_vs_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/01_reproj_vs_truth.png)
 
 *↑ The measurement ―― RMS は 1.00 倍しか動かないのに fx 誤差は 281 倍動く。配置の良し悪しを映すのは sigma_fx のほう。 (figure labels are in Japanese; the numbers are the same)*
 
-[![2 本は重なる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/02_fx_z_coupling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/02_fx_z_coupling.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/02_fx_z_coupling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/02_fx_z_coupling.png)
 
-*↑ 2 本は重なる。*
+*↑ Figure from this exhibit ―― 2 本は重なる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![RMS はどの行も 0.067 px(= 0.05·√2)で動かない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill.png)
 
-*↑ RMS はどの行も 0.067 px(= 0.05·√2)で動かない。*
+*↑ Figure from this exhibit ―― RMS はどの行も 0.067 px(= 0.05·√2)で動かない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![どちらも雑音 0 では真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/04_noise_amplification_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/04_noise_amplification.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/04_noise_amplification_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/04_noise_amplification.png)
 
-*↑ どちらも雑音 0 では真値。*
+*↑ Figure from this exhibit ―― どちらも雑音 0 では真値。 (figure labels are in Japanese; the numbers are the same)*
 
-[![第 1 部: 同じ雑音 0.05 px の観測を、傾き 32 度(左)と 2 度(右)の配置で解く反復。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/05_calibration_convergence.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/05_calibration_convergence.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/05_calibration_convergence.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/05_calibration_convergence.gif)
 
-*↑ The animation ―― 第 1 部: 同じ雑音 0.05 px の観測を、傾き 32 度(左)と 2 度(右)の配置で解く反復。再投影 RMS はどちらも 0.069 / 0.069 px まで下がるが、fx は左が 1199.7(誤差 0.026 %)、右が 1112.0(誤差 7.33 %)で止まる。第 2 部: fx を真値の 0.92〜1.08 倍に固定して残りを解き直すと、左は RMS が 0.54 / 0.45 px(両端)まで跳ね上がるのに、右は 0.069 / 0.069 px とほとんど動かない —— 板までの距離 Z が fx と同じ比で動いて(Z 比 0.920 / 1.080)、画素の位置を保つため。右の配置では再投影誤差が焦点距離について何も言っていない。*
+*↑ The animation ―― 第 1 部: 同じ雑音 0.05 px の観測を、傾き 32 度(左)と 2 度(右)の配置で解く反復。再投影 RMS はどちらも 0.069 / 0.069 px まで下がるが、fx は左が 1199.7(誤差 0.026 %)、右が 1112.0(誤差 7.33 %)で止まる。第 2 部: fx を真値の 0.92〜1.08 倍に固定して残りを解き直すと、左は RMS が 0.54 / 0.45 px(両端)まで跳ね上がるのに、右は 0.069 / 0.069 px とほとんど動かない —— 板までの距離 Z が fx と同じ比で動いて(Z 比 0.920 / 1.080)、画素の位置を保つため。右の配置では再投影誤差が焦点距離について何も言っていない。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_camera_calibration.py
@@ -1874,21 +1874,21 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 *↑ **Chain the Neighbours Together and You Cannot Get Back Where You Started** ―― 36 frames cut from a cylindrical panorama by a known rotation sequence and chained pairwise around a full turn. Adjacent seams agree to 0.12 px, yet the one closing seam opens by 1.5 px (13x). The buried `bundle_adjust_mosaic` did not beat the chain (30 of 36 frames were left as the identity); the worst pose error goes from 1.65 px for the chain to 0.56 px with global optimisation.*
 
-[![系 2(等分)は閉ループ誤差を下げるのに姿勢はかえって悪化する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/02_pose_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/02_pose_error.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/02_pose_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/02_pose_error.png)
 
 *↑ The measurement ―― 系 2(等分)は閉ループ誤差を下げるのに姿勢はかえって悪化する。新しい観測を足さずに効くのは系 3。 (figure labels are in Japanese; the numbers are the same)*
 
-[![上 2 枚はどちらも継ぎ目が綺麗に見える(後勝ちの上書きで混合しないため)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/03_mosaic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/03_mosaic.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/03_mosaic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/03_mosaic.png)
 
-*↑ 上 2 枚はどちらも継ぎ目が綺麗に見える(後勝ちの上書きで混合しないため)。*
+*↑ Figure from this exhibit ―― 上 2 枚はどちらも継ぎ目が綺麗に見える(後勝ちの上書きで混合しないため)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![実測 log-log 傾き 0.89。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/04_drift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/04_drift.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/04_drift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/04_drift.png)
 
-*↑ 実測 log-log 傾き 0.89。*
+*↑ Figure from this exhibit ―― 実測 log-log 傾き 0.89。 (figure labels are in Japanese; the numbers are the same)*
 
-[![鎖(隣どうしの相対回転を掛けるだけ)で 36 枚を円筒に 1 枚ずつ貼る過程。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/05_chain_drift_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/05_chain_drift_video.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/05_chain_drift_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/05_chain_drift_video.gif)
 
-*↑ The animation ―― 鎖(隣どうしの相対回転を掛けるだけ)で 36 枚を円筒に 1 枚ずつ貼る過程。白い枠が真の位置、橙の枠が鎖の推定位置(ずれを 20 倍に誇張)。隣どうしの継ぎ目は平均 0.119 px で合っているのに、真の姿勢からのずれ(右下の曲線)は積み上がって最悪 1.65 px(フレーム 16)。一周して 0 枚目(赤紫)と35 枚目(緑)を重ねると閉じる継ぎ目が 1.50 px 開き、縁に色の縞(二重像)が出る(左下、4 倍拡大)。最後に同じ 36 本の辺を閉ループ拘束で解き直すと(水色)、姿勢のずれは最悪 1.18 px、閉じる継ぎ目は 0.11 px。*
+*↑ The animation ―― 鎖(隣どうしの相対回転を掛けるだけ)で 36 枚を円筒に 1 枚ずつ貼る過程。白い枠が真の位置、橙の枠が鎖の推定位置(ずれを 20 倍に誇張)。隣どうしの継ぎ目は平均 0.119 px で合っているのに、真の姿勢からのずれ(右下の曲線)は積み上がって最悪 1.65 px(フレーム 16)。一周して 0 枚目(赤紫)と35 枚目(緑)を重ねると閉じる継ぎ目が 1.50 px 開き、縁に色の縞(二重像)が出る(左下、4 倍拡大)。最後に同じ 36 本の辺を閉ループ拘束で解き直すと(水色)、姿勢のずれは最悪 1.18 px、閉じる継ぎ目は 0.11 px。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_panorama_drift.py
@@ -1910,25 +1910,25 @@ One deterministically selected first image from each of all 20 BOP19 test_primes
 
 Terms: ICP — A registration method that alternates nearest-point correspondence with rigid-transform estimation between two point clouds.
 
-[![欠測 1164 px、孤立飛び候補 0 px。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/02_rgb_depth.png)
 
 *↑ The measurement ―― 欠測 1164 px、孤立飛び候補 0 px。 BOP T-LESS, CC BY 4.0。 (figure labels are in Japanese; the numbers are the same)*
 
-[![20場面の標本を obj_id ごとに平均。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/03_mssd_by_object.png)
 
-*↑ 20場面の標本を obj_id ごとに平均。*
+*↑ Figure from this exhibit ―― 20場面の標本を obj_id ごとに平均。 (figure labels are in Japanese; the numbers are the same)*
 
-[![合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/04_synthetic_vs_real.png)
 
-*↑ 合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。*
+*↑ Figure from this exhibit ―― 合成 MSSD 0.985 / 合成 MSPD 0.985 / 実機 MSSD 0.197 / 実機 MSPD 0.220。 (figure labels are in Japanese; the numbers are the same)*
 
-[![橙=推定、青=真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/05_failure.png)
 
-*↑ 橙=推定、青=真値。*
+*↑ Figure from this exhibit ―― 橙=推定、青=真値。 (figure labels are in Japanese; the numbers are the same)*
 
-[![180/160、500/500、1000/1000は132対象の完走値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tless_6dof/06_density_vs_ar_time.png)
 
-*↑ 180/160、500/500、1000/1000は132対象の完走値。*
+*↑ Figure from this exhibit ―― 180/160、500/500、1000/1000は132対象の完走値。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -1952,21 +1952,21 @@ A public real stereo photograph with true disparity is used to check depth measu
 
 *↑ **Measuring on a Real Stereo Photograph — Three Stumbles Synthesis Never Produces** ―― The first exhibit in this museum measured on a **real photograph** (Middlebury 2014 motorcycle, with ground-truth disparity). The distributor's own note says the holes in the truth are NaN; they are +inf, so np.nanmedian reports a median disparity of 44.97 px instead of 42.55 px, while fill_disparity and apply_cmap — which test with isfinite — handle them correctly. The default max_disp=16 scores bad2 95.06 %: any search range below the true maximum of 59.91 px loses the whole foreground, so the cliff sits between 48 and 64, which geometry predicts before any measurement. Against a 94.04 % null, SGM scores 15.81 %, and discarding the least confident 40 % takes it to 6.80 %. Converting to metric depth bends the scene: depth_from_disparity had no principal-point offset, and ignoring the real doffs of 31.086 px puts points 1.519 to 5.243 times too far — no single scale repairs it, since the best factor of 0.3733 still leaves 958.3 mm RMS over a 2889 mm range, pushing far surfaces +1676 mm out and pulling near ones -926 mm in. The argument was added here, and it reproduces the closed form exactly.*
 
-[![下位 4 割を捨てると bad2 は 26.75 % -> 6.80 %。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/02_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/02_error.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/02_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/02_error.png)
 
 *↑ The measurement ―― 下位 4 割を捨てると bad2 は 26.75 % -> 6.80 %。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真の最大視差を下回る設定は前景を丸ごと失う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/03_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/03_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/03_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/03_cliff.png)
 
-*↑ 真の最大視差を下回る設定は前景を丸ごと失う。*
+*↑ Figure from this exhibit ―― 真の最大視差を下回る設定は前景を丸ごと失う。 (figure labels are in Japanese; the numbers are the same)*
 
-[![単一のスケールでは直らない(最良でも残差 958 mm RMS)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/04_depth_bend_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/04_depth_bend.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/04_depth_bend_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/04_depth_bend.png)
 
-*↑ 単一のスケールでは直らない(最良でも残差 958 mm RMS)。*
+*↑ Figure from this exhibit ―― 単一のスケールでは直らない(最良でも残差 958 mm RMS)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![census が最下位なのは窓が 64 bit で頭打ちだから。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/05_methods_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/05_methods.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/05_methods_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/05_methods.png)
 
-*↑ census が最下位なのは窓が 64 bit で頭打ちだから。*
+*↑ Figure from this exhibit ―― census が最下位なのは窓が 64 bit で頭打ちだから。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_real_stereo_depth.py
@@ -1988,29 +1988,29 @@ On a measured part and a synthetic bracket, we tested how far registration can s
 
 Terms: ICP — A registration method that alternates nearest-point correspondence with rigid-transform estimation between two point clouds.
 
-[![100 % から 0 % へ落ちる位置が収束域の縁(並進ずれ 0 の行で 50 % を切るのは 90 度)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin.png)
 
 *↑ The measurement ―― 100 % から 0 % へ落ちる位置が収束域の縁(並進ずれ 0 の行で 50 % を切るのは 90 度)。並進ずれ(直径の 0〜50 %)による縁の動きは、1 点 15 試行の誤差(標準誤差 最大 13 点)の内で、この図からは言えない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![非対称性が消えると 4 候補が形として区別できず、選択が崩れる(選ばれた解が第 1 候補から離れる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant.png)
 
-*↑ 非対称性が消えると 4 候補が形として区別できず、選択が崩れる(選ばれた解が第 1 候補から離れる)。*
+*↑ Figure from this exhibit ―― 非対称性が消えると 4 候補が形として区別できず、選択が崩れる(選ばれた解が第 1 候補から離れる)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![平らな線ほど「広い」。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/03_width_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/03_width.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/03_width_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/03_width.png)
 
-*↑ 平らな線ほど「広い」。*
+*↑ Figure from this exhibit ―― 平らな線ほど「広い」。 (figure labels are in Japanese; the numbers are the same)*
 
-[![球・円柱は残差が小さいまま姿勢が任意。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/04_symmetry_lies_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/04_symmetry_lies.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/04_symmetry_lies_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/04_symmetry_lies.png)
 
-*↑ 球・円柱は残差が小さいまま姿勢が任意。*
+*↑ Figure from this exhibit ―― 球・円柱は残差が小さいまま姿勢が任意。 (figure labels are in Japanese; the numbers are the same)*
 
-[![サムネイル用の静止画。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/07_real_scan_still_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/07_real_scan_still.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/07_real_scan_still_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/07_real_scan_still.png)
 
-*↑ サムネイル用の静止画。*
+*↑ Figure from this exhibit ―― サムネイル用の静止画。 (figure labels are in Japanese; the numbers are the same)*
 
-[![点対点 ICP を 1 反復ずつ動かす(fs.icp(max_iter=1) を前回の姿勢から連鎖)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/05_icp_basin_iterations.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/05_icp_basin_iterations.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/05_icp_basin_iterations.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/05_icp_basin_iterations.gif)
 
-*↑ The animation ―― 点対点 ICP を 1 反復ずつ動かす(fs.icp(max_iter=1) を前回の姿勢から連鎖)。灰 = 目標の点群、色 = 動かしている点群(斜めから見た正射影)。同じ回転軸で初期回転ずれだけを 30 / 90 / 150 度と変え、並進ずれは直径の 10 %。反復予算は本文の点対点 ICP と同じ 60 回で、その後の回転誤差: 30 度 → 0.6 度(成功)、90 度 → 0.6 度(成功)、150 度 → 179.5 度(失敗)。下の曲線は回転誤差の推移(対数、灰線 = 成功のしきい値 3 度)。動画専用に取り直した 1 組の点群での 1 試行の軌跡で、成功率は第 2 章の表。*
+*↑ The animation ―― 点対点 ICP を 1 反復ずつ動かす(fs.icp(max_iter=1) を前回の姿勢から連鎖)。灰 = 目標の点群、色 = 動かしている点群(斜めから見た正射影)。同じ回転軸で初期回転ずれだけを 30 / 90 / 150 度と変え、並進ずれは直径の 10 %。反復予算は本文の点対点 ICP と同じ 60 回で、その後の回転誤差: 30 度 → 0.6 度(成功)、90 度 → 0.6 度(成功)、150 度 → 179.5 度(失敗)。下の曲線は回転誤差の推移(対数、灰線 = 成功のしきい値 3 度)。動画専用に取り直した 1 組の点群での 1 試行の軌跡で、成功率は第 2 章の表。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -2034,7 +2034,7 @@ Shape features are routinely called rotation-invariant, but the pixel grid is no
 
 *↑ **Which Quantities Really Survive a Rotation — Auditing Invariance on a Real Coin** ―― Shape features are routinely called rotation-invariant, but the pixel grid is not invariant under rotation, so the claim usually breaks at a helper — how the boundary is counted, how the image is interpolated, where the threshold lands. A real photograph (scikit-image `coins`, Greek coins from Pompeii, British Museum) is turned through a full circle in 5-degree steps and the wobble is split into three arms: **A** rotate the greyscale and re-threshold (what people actually do), **B** rotate the 0-degree binary mask with nearest neighbour (re-rasterisation only), **C** multiples of 90 degrees via `np.rot90` (exact). The rotation itself is done with scipy, not with fullseye — measuring your own invariance with your own rotation hides errors that lean the same way. **Arm C is exactly 0.00 % for all seven quantities**: the measurements carry no orientation bias at all, so every bit of the wobble is the cost of re-laying the boundary on the grid. **The prediction was wrong**: rotating the *binary mask* turns out to be far worse than interpolating the grey — perimeter 2.52 % (A) vs 9.47 % (B), circularity 4.82 % vs 20.45 %. Nearest-neighbour rotation re-lays a staircase; interpolating the grey re-derives the boundary from the underlying continuous signal. **Rotate the greyscale, never the mask.** A synthetic square anchors the closed form: the 4-connected staircase perimeter of a square rotated 45 degrees is bounded by `4L → 4L√2` (+41.4 %), but the measured swing is 7.91 % because `regionprops` applies a Crofton-style correction — the closed form is a ceiling, not a prediction. Finally, check the denominator: Hu[1] is ~0 for a near-circular blob (3.9e-04), so its 29.6 % relative spread means nothing at all.*
 
-[![実写の硬貨を 5 度ずつ 1 周。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rotation_invariance_audit/02_rotating_coin.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rotation_invariance_audit/02_rotating_coin.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rotation_invariance_audit/02_rotating_coin.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rotation_invariance_audit/02_rotating_coin.gif)
 
 *↑ The measurement ―― 実写の硬貨を 5 度ずつ 1 周。地がモノクロなので輪郭は彩度のある色で描いている(灰色には彩度が無いので、どの階調とも色相で区別がつく)。右の表の数字がどれだけ揺れるかが見える。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -2056,17 +2056,17 @@ The author's wish: "put the finished form of everything we built into the most r
 
 *↑ **One Scene, Two Worlds — Scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World** ―― The author's wish: "put the finished form of everything we built into the most realistic environment there is" — so, both environments. Our own world (all ground truth, not photoreal) and the external photoreal simulator CARLA 0.9.16 (code MIT, assets CC-BY; photoreal, but its formulas are hidden) are joined by a bridge, carlabridge (25 ops, numpy only). On a straight in Town04 a lead car is placed 8–64 m ahead and RGB, depth and semantic images are captured; the recorded poses (left-handed, degrees) are mapped to our right-handed frame and the image-plane distance to the rear face is computed in closed form; the same rule-based perception (median depth over car-labelled pixels) is applied to CARLA's image and to our own world re-rendered with the same intrinsics and mounting. CARLA's depth sits +0.10 m from the truth in every frame (bounding-box origin offset), our re-render within ±0.3 m, the car pixel count follows 1/d² in both (log-log slopes −1.94 / −1.99) with pixel ratios 0.90–1.08. Gates: rotation matrices equal CARLA's own get_matrix, camera pose equals look_at, depth round-trips within one quantisation step, world → record → re-render is pixel-identical. Honestly: CARLA's truth itself cannot be verified — what is verified is that the conventions are invertible and agree with the closed form; agreement is not proof of correctness. CARLA imagery uses CC-BY assets (CARLA team).*
 
-[![先行車の後ろ面までの像面距離の真値は記録の姿勢から閉形式で出す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/02_carla_depth_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/02_carla_depth_error.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/02_carla_depth_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/02_carla_depth_error.png)
 
 *↑ The measurement ―― 先行車の後ろ面までの像面距離の真値は記録の姿勢から閉形式で出す。車のラベルの画素の深度の中央値は CARLA で全コマ +0.1 m、自前の描き直しで ±0.3 m。最下行から平らな路面の式で出す距離は後輪の接地を見るのでバンパーより 0.5 m ほど先を指す。 (figure labels are in Japanese; the numbers are the same)*
 
-[![像面に平行な後ろ面の面積は距離の 2 乗に反比例する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/03_carla_pixels_inverse_square_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/03_carla_pixels_inverse_square.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/03_carla_pixels_inverse_square_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/03_carla_pixels_inverse_square.png)
 
-*↑ 像面に平行な後ろ面の面積は距離の 2 乗に反比例する。*
+*↑ Figure from this exhibit ―― 像面に平行な後ろ面の面積は距離の 2 乗に反比例する。 (figure labels are in Japanese; the numbers are the same)*
 
-[![コマごとの数字。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/04_carla_pair_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/04_carla_pair_table.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/04_carla_pair_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/04_carla_pair_table.png)
 
-*↑ コマごとの数字。*
+*↑ Figure from this exhibit ―― コマごとの数字。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -2090,29 +2090,29 @@ The foundation for the author's plan "one capstone per PoC series, driving first
 
 *↑ **Assembling One Town — Auto-Joining Driving-School Elements, Driving Through from Entry to Exit, and Scoring Every Stop Line on the Way** ―― The foundation for the author's plan "one capstone per PoC series, driving first". The intersection, railway crossing, slope and parallel-parking bay that earlier PoCs placed and scored one at a time are joined into a single road by the new module drivetown (10 ops): element k+1's entry is placed onto element k's exit in closed form with a 0.05 m overlap. The default town has 9 elements over 235.1 m. A longitudinal-only driver follows the centreline, treats the next stop line as a stationary lead vehicle for IDM braking, waits 2 s at the intersection and looks left and right at the crossing before moving on, and if the warning is active it waits until the barrier is up (the crossing carries gated warning posts, booms and a train driven by the interpretation-standard state machine). The rule pack town_rules gives JP = left-hand traffic with a mandatory stop and look at crossings, US and DE = right-hand traffic stopping only while the warning is active; packs other than JP are marked verified False because their primary sources have not been checked. Figures: the town from above (polygons, centreline, stop lines, stopping positions, signals), speed and acceleration over time, an on-board drive-through (stopped at red → moving on green → booms down → train passing → booms up and moving → before the slope), and a table of 9 rule-pack runs, and the 159-scene curriculum ledger. 38 gates: with a train warning at 20 s the car leaves the crossing at 65.50 s ≥ booms fully up at 65.45 s with zero time on the crossing while forbidden, JP stops twice while US/DE stop once without a train, the right-hand stop line mirrors about the intersection centre (s 40.95 ↔ 65.95), the boom covers 1078 pixels and the train 46,129 pixels in the on-board frames, joint position error minus overlap 1.1e-14 at all 8 joints with zero heading error, total length equals Σ centerline_length − 0.05 × 8 exactly, stop-line positions in closed form from the regulation dimensions, stops 0.537 / 0.536 m short of the lines, |a| at most 1.877 ≤ 3, trapezoidal ∫v dt matches s to 3.9e-11 m, braking distance ≥ v²/2b, the existing crossing_stop_check passes, and the same commands fed to long_simulate (RK4) stop within 0.002 m. Honestly: lateral motion is pinned to the centreline, the signal is "green after 2 s" without reading the lamp, there are no other vehicles or pedestrians, and the US/DE hold times reuse the JP values.*
 
-[![IDM(a_max 1.5、b_max 3.0、v_max 8)で停止線の手前に止まる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/02_town_speed_time_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/02_town_speed_time.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/02_town_speed_time_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/02_town_speed_time.png)
 
 *↑ The measurement ―― IDM(a_max 1.5、b_max 3.0、v_max 8)で停止線の手前に止まる。交差点は 2 秒。踏切は左右確認 4 秒の後、警報 20 s に始まった状態機械(降下 → 遮断 → 列車 → 上昇)が idle に戻る 65.5 s まで待って発進。下の帯 = 警報中の区間と列車が踏切に居る区間。|a| の最大 1.88 m/s²。 (figure labels are in Japanese; the numbers are the same)*
 
-[![止まった位置は停止線の 0.54, 0.54 m 手前。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/03_town_speed_distance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/03_town_speed_distance.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/03_town_speed_distance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/03_town_speed_distance.png)
 
-*↑ 止まった位置は停止線の 0.54, 0.54 m 手前。*
+*↑ Figure from this exhibit ―― 止まった位置は停止線の 0.54, 0.54 m 手前。 (figure labels are in Japanese; the numbers are the same)*
 
-[![GIF の 6 コマ(静止画)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/05_town_camera_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/05_town_camera_frames.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/05_town_camera_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/05_town_camera_frames.png)
 
-*↑ GIF の 6 コマ(静止画)。*
+*↑ Figure from this exhibit ―― GIF の 6 コマ(静止画)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![JP = 左側通行・踏切は常に停止 + 左右確認(道路交通法 33 条 1 項、本文で確認)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/06_town_rules_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/06_town_rules_table.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/06_town_rules_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/06_town_rules_table.png)
 
-*↑ JP = 左側通行・踏切は常に停止 + 左右確認(道路交通法 33 条 1 項、本文で確認)。*
+*↑ Figure from this exhibit ―― JP = 左側通行・踏切は常に停止 + 左右確認(道路交通法 33 条 1 項、本文で確認)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![docs/drive/kyosoku_scenarios.json の件数。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/07_town_kyosoku_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/07_town_kyosoku_table.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/07_town_kyosoku_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/07_town_kyosoku_table.png)
 
-*↑ docs/drive/kyosoku_scenarios.json の件数。*
+*↑ Figure from this exhibit ―― docs/drive/kyosoku_scenarios.json の件数。 (figure labels are in Japanese; the numbers are the same)*
 
-[![車載カメラ(640×400、13 コマ)で町を通し走行。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/04_town_drive_through.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/04_town_drive_through.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/04_town_drive_through.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/04_town_drive_through.gif)
 
-*↑ The animation ―― 車載カメラ(640×400、13 コマ)で町を通し走行。赤信号で止まり、青で発進、踏切で止まって左右を見て、下りた遮断かんと点滅する警報灯の前で列車が過ぎて上がるまで待ってから渡り、坂を越えて縦列駐車の前を抜ける。*
+*↑ The animation ―― 車載カメラ(640×400、13 コマ)で町を通し走行。赤信号で止まり、青で発進、踏切で止まって左右を見て、下りた遮断かんと点滅する警報灯の前で列車が過ぎて上がるまで待ってから渡り、坂を越えて縦列駐車の前を抜ける。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_driving_town.py
@@ -2132,29 +2132,29 @@ The author's wish: "if possible, do it on a Japanese map". The bundled maps of e
 
 *↑ **Building a Real Japanese Town in Our Own World and Driving It — Roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules** ―― The author's wish: "if possible, do it on a Japanese map". The bundled maps of external photoreal simulators are European or American towns with right-hand traffic, and adding a Japanese town would need an editor build and Japanese assets, so we build Japan in our own world instead. The road network is an OpenStreetMap extract (equirectangular projection; widths from OSM tags or the Road Structure Ordinance lane widths as defaults). The road shape is the raster union of edges drawn as width-carrying segments, traced into boundary loops by Fullseye's own contour tracer (contours_xld, whose area equals the pixel count exactly); the holes are city blocks, given pavements and kerbs. Buildings come from MLIT's Project PLATEAU CityGML (LOD1 footprint and height → extruded prisms, driveplateau). The street furniture follows the regulation dimensions: the stop sign (330-A, 80 cm side), the stop line (45 cm), the road lettering 止まれ (Traffic Regulation Standard figure (1): 240 × 80 cm per character, 1 m apart, vertical), Japanese crosswalks with 45 cm stripes parallel to travel, crossbucks, utility poles and curve mirrors. The route is the shortest path (respecting one-way streets) shifted to the left-hand lane centre, with signals, stop signs and level crossings as stop lines, driven by drivetown's through-run under the JP rule pack. Figures: Ginza 0.7 × 0.6 km from above, a bird's-eye view with 852 PLATEAU buildings, an on-board drive-through (stop at red → go on green → stop sign), the same run's frames, the furniture before a stop sign with its label image, the road-network table and the speed profile. 24 gates: 0.001° of latitude = 111.3195 m and agreement with a second implementation to 1e-9, straight-road union area = L w + π(w/2)² within 0.04 %, loop area = pixel count × step² within 1.5e-11 m², 4 holes in the 3 × 3 grid, shortest path 160 m with stop lines at 76.25 / 156.25 m in closed form, right-hand route mirrored, a 320 m detour around a reversed one-way street, two stops 0.54 m short of their lines with town_checks ok, the stop-sign plate 0.8 m on a side with its top at 2.5 m, the 止まれ column 9.2 m long, sign and lettering visible in the frame before the stop sign, and a 30 m synthetic CityGML prism. On real data: 586 OSM edges, 122 blocks, 852 buildings, area gate 5e-8 m², and a 461 m route to a signalled junction driven with 7 stops, ok. Honestly: 60 % of widths are class defaults where OSM has no tag; no lane assignment, signal phases, other vehicles or pedestrians; the 止まれ glyphs are polyline approximations (official dimensions); crossbuck plate sizes are assumed; slivers under 4 m² are not built; PLATEAU ground relief is ignored. Figure credits: roads © OpenStreetMap contributors (ODbL), buildings: MLIT Project PLATEAU. The data themselves are not committed.*
 
-[![銀座 0.7 × 0.6 km の俯瞰: OSM の道路網を幅つきでラスタ化した和集合の穴 = 街区(歩道 + 縁石)、信号・横断歩道・電柱。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/01_japan_town_topdown_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/01_japan_town_topdown.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/01_japan_town_topdown_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/01_japan_town_topdown.png)
 
 *↑ The measurement ―― 銀座 0.7 × 0.6 km の俯瞰: OSM の道路網を幅つきでラスタ化した和集合の穴 = 街区(歩道 + 縁石)、信号・横断歩道・電柱。 道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Project PLATEAU (figure labels are in Japanese; the numbers are the same)*
 
-[![PLATEAU(国交省 3D 都市モデル、LOD1 の足元と高さ)の建物 852 棟を押し出し柱で立てた銀座。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/02_japan_town_bird_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/02_japan_town_bird.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/02_japan_town_bird_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/02_japan_town_bird.png)
 
-*↑ PLATEAU(国交省 3D 都市モデル、LOD1 の足元と高さ)の建物 852 棟を押し出し柱で立てた銀座。*
+*↑ Figure from this exhibit ―― PLATEAU(国交省 3D 都市モデル、LOD1 の足元と高さ)の建物 852 棟を押し出し柱で立てた銀座。 (figure labels are in Japanese; the numbers are the same)*
 
-[![日本の道具立て(寸法は道路標識令 別表第二 / 交通規制基準 第 46 図例(1))。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/05_japan_furniture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/05_japan_furniture.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/05_japan_furniture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/05_japan_furniture.png)
 
-*↑ 日本の道具立て(寸法は道路標識令 別表第二 / 交通規制基準 第 46 図例(1))。*
+*↑ Figure from this exhibit ―― 日本の道具立て(寸法は道路標識令 別表第二 / 交通規制基準 第 46 図例(1))。 (figure labels are in Japanese; the numbers are the same)*
 
-[![幅の由来: {'lanes': 192, 'default': 375, 'width': 19}(width タグ / lanes × 車線幅 / 種別の既定)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/06_japan_road_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/06_japan_road_table.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/06_japan_road_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/06_japan_road_table.png)
 
-*↑ 幅の由来: {'lanes': 192, 'default': 375, 'width': 19}(width タグ / lanes × 車線幅 / 種別の既定)。*
+*↑ Figure from this exhibit ―― 幅の由来: {'lanes': 192, 'default': 375, 'width': 19}(width タグ / lanes × 車線幅 / 種別の既定)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![停止線: [(3.3, 'intersection'), (15.2, 'intersection'), (133.1, 'intersection'), (396.4, 'intersection'), (419.3, 'intersection'), (432.1, 'intersection'), (453.6, 'intersection'))](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed.png)
 
-*↑ 停止線: [(3.3, 'intersection'), (15.2, 'intersection'), (133.1, 'intersection'), (396.4, 'intersection'), (419.3, 'intersection'), (432.1, 'intersection'), (453.6, 'intersection')]*
+*↑ Figure from this exhibit ―― 停止線: [(3.3, 'intersection'), (15.2, 'intersection'), (133.1, 'intersection'), (396.4, 'intersection'), (419.3, 'intersection'), (432.1, 'intersection'), (453.6, 'intersection')] (figure labels are in Japanese; the numbers are the same)*
 
-[![左の車線中心を通して走る車載カメラ(JP 法規パック): 赤で停止 → 2 秒で青 → 発進、一時停止では止まって確認。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)
 
-*↑ The animation ―― 左の車線中心を通して走る車載カメラ(JP 法規パック): 赤で停止 → 2 秒で青 → 発進、一時停止では止まって確認。道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Project PLATEAU*
+*↑ The animation ―― 左の車線中心を通して走る車載カメラ(JP 法規パック): 赤で停止 → 2 秒で青 → 発進、一時停止では止まって確認。道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Project PLATEAU (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -2178,25 +2178,25 @@ The user's remark "setting your own traps and clearing them yourself has its lim
 
 *↑ **Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge — CommonRoad Public Scenarios and TUM's Official Checker** ―― The user's remark "setting your own traps and clearing them yourself has its limits" led to a new rule: bring at least one of the truth, the gate or the subject in from outside. Earlier driving PoCs planted their own ground truth in a synthetic world, wrote their own gates and scored their own driver. Here the scenario is a public CommonRoad (TUM) scenario (BSD-3), the judge is TUM's drivability-checker (it does not install on Windows, so it runs in WSL and tools/check_solution_json.py writes the verdict as JSON), and only the driver is ours. The new module drivecommonroad (10 ops) reads 2020a XML itself (lanelet boundaries, dynamic obstacles, planning problem, sign 274 speed limits, stopLine), chains lanelets by successor, drives with IDM longitudinally and pure pursuit laterally under kinematic single-track (KS) dynamics (rear-axle reference, RK4, BMW_320i parameters copied from commonroad-vehicle-models' parameters_vehicle2), stops at stop lines and writes the official solution XML (ksTrajectory). It also carries a second implementation of the judge (feasibility by re-integrating the recorded inputs to 2 cm / 0.03 rad, collision by separating axes, road boundary by point-in-polygon) to set beside the official JSON. Figures: a bird's-eye view (lanelets, obstacle tracks, ego, goal lanelet), speed and acceleration, gaps to each obstacle, six frames (start, before the junction, turning left, closest to oncoming, entering the goal lanelet, stopped), a table of our verdicts against the official ones, and the sweep table. 22 gates: on the synthetic T-junction the reader (4 lanelets, 1 obstacle, 274 → 13.89 m/s), route 98.84 m = Σ centrelines (1e-6), KS straight line to 1e-9 and circle radius l_wb/tan δ (1e-6), goal reached with |a| ≤ 3 and v ≤ limit, stop 0.90 m short of the stop line, feasible (max_pos_err 0), no collision, a driver that ignores the car ahead collides at (step 52, obstacle 2), the blocked scene stops short, 201 ksStates = steps with positions = rear axle + b (1e-12). On the real ZAM_Tjunction-1_1_T-1 (12 lanelets, 5 obstacles, limit 14.0, route 347.6 m) the default IDM hits oncoming car 1; the 14th gap-acceptance setting (a_lat 8.0, lookahead 5.0) yields a 148-state run (v_max 9.82 m/s, 0.83 m lateral error) that the official checker accepts: valid, goal reached, feasible, no collision, n_states 148. The negative control (the gentle default driver) collides at (68, 1) in our check and the official checker also reports obstacle_collision true and valid false (feasible true), so our five verdicts agree with the official ones for both runs. Honestly: ZAM is not solvable by IDM alone and was solved by the sweep (no yielding behaviour; waiting would miss the goal time window); 8 m/s² lateral is uncomfortable though inside the checker's friction circle (8.1 < 11.5); the public 2020a scenarios contain no traffic lights, stop lines or stop signs 206, so rule scoring is synthetic only; the official verdict is the WSL JSON (our feasibility re-integrates the recorded inputs with the same RK4, hence zero error); a longitudinal-only driver still collides in Speyer and Moabit. Source: CommonRoad scenarios (TUM, BSD-3). The data are not committed (FULLSEYE_COMMONROAD_DATA).*
 
-[![IDM の希望速度 v₀ = min(制限, 曲率の許容 √(a_lat/|κ|))。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/02_commonroad_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/02_commonroad_speed.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/02_commonroad_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/02_commonroad_speed.png)
 
 *↑ The measurement ―― IDM の希望速度 v₀ = min(制限, 曲率の許容 √(a_lat/|κ|))。a は区分一定(RK4 の 1 step ごと)。|a| ≤ max(a_max 1.5, b_max 3.0)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![近似(中心間距離 − 両車の半長)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/03_commonroad_gap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/03_commonroad_gap.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/03_commonroad_gap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/03_commonroad_gap.png)
 
-*↑ 近似(中心間距離 − 両車の半長)。*
+*↑ Figure from this exhibit ―― 近似(中心間距離 − 両車の半長)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![俯瞰の 6 コマ(matplotlib で描いた PNG)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/04_commonroad_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/04_commonroad_frames.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/04_commonroad_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/04_commonroad_frames.png)
 
-*↑ 俯瞰の 6 コマ(matplotlib で描いた PNG)。*
+*↑ Figure from this exhibit ―― 俯瞰の 6 コマ(matplotlib で描いた PNG)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![公式 = commonroad-drivability-checker 2025.4.0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/05_commonroad_checks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/05_commonroad_checks.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/05_commonroad_checks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/05_commonroad_checks.png)
 
-*↑ 公式 = commonroad-drivability-checker 2025.4.0。*
+*↑ Figure from this exhibit ―― 公式 = commonroad-drivability-checker 2025.4.0。 (figure labels are in Japanese; the numbers are the same)*
 
-[![IDM だけでは対向車 obs 1 より先に左折できず、曲がりの許容横加速度と見通しを順に上げた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/06_commonroad_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/06_commonroad_sweep.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/06_commonroad_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/06_commonroad_sweep.png)
 
-*↑ IDM だけでは対向車 obs 1 より先に左折できず、曲がりの許容横加速度と見通しを順に上げた。*
+*↑ Figure from this exhibit ―― IDM だけでは対向車 obs 1 より先に左折できず、曲がりの許容横加速度と見通しを順に上げた。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_driving_commonroad.py
@@ -2216,25 +2216,25 @@ A robot whose wrist is compliant measures the hole with its wrist camera and ins
 
 *↑ **Peg-in-Hole with a Compliant Wrist — Whitney's Quasi-Static Geometry as the Gate, a Wrist Camera to Centre the Peg, MuJoCo Contacts to Check It** ―― The first exhibit of the physics-simulation × Fullseye series (the physics side of the rule 'home-made traps have a ceiling: bring in the truth, the gate or the subject from outside'). Two things come from outside. The theorem: Whitney 1982 (ASME J. Dyn. Sys. Meas. Control 104(1), DOI 10.1115/1.3149634; the paper itself is paywalled and was not read — the formulas are taken from the author's own MIT OCW 2.875 Class 3 slides: two-point contact depth l/d = c/θ, θ_m = √(2c), wedging if θ > c/μ, the jamming parallelogram with λ = l/(2rμ)). The contact physics: MuJoCo (contact points, normal forces, mj_geomDistance). No learning — only the rule measure → correct → descend → slow down on force. Three things are our own: the two-point depth made exact for a 3-D cylinder, l tan θ = 2R − r(cos θ + sec θ) (derived; l sin θ ≈ 2c_r to fourth order), a second implementation that predicts the number of contact points from the true pose by geometry alone, and a measurement that reads the hole centre (anti-aliased edge lifted onto the plate plane, then a circle fit) and the peg tip (known-radius cylinder on the depth points, the tip from the silhouette end matched against the projected rim circle) in 3-D from one wrist RGB-D frame. New module pegsim, 18 ops (plus 9 facade functions that need mujoco). Figures: wrist-camera overlay (green = truth, red = estimate, yellow = edge points, 3× inset), insertion GIF with correction, GIF of the peg sliding down the chamfer without correction, three theoretical l₂ curves with the MuJoCo measurements, the jamming diagram at l = 2 / 8 mm, and the success table. 23 gates: Whitney's quantities by hand (c = 0.0385, θ_m = 15.9°, chamfer tolerance 1.2 mm, c/μ = 7.35°), l₂ sin θ = 0.3977–0.3999 mm (2c_r = 0.400), the 2-D rectangle approximation is 0.52 mm off at 6° (counter-example), the second implementation switches from one to two points at l₂ ∓ 0.05 mm, PnP identity to 1e-9, the known-radius circle fit agrees with measure.fit_circle to 1e-9 on a full circle and has a median centre error of 0.15 px on a 25° arc (free fit 3.3 px), the synthetic RGB-D (analytic ray cast, no mujoco) gives the hole centre to 0.004 px and the offset to 0.0004 mm, and the image-plane ellipse centre is 0.80 px away from the projected circle centre (why we fit in 3-D). MuJoCo gates: the depth buffer under MSAA holds sample 0 at (−0.125, +0.375) px (pixel centre with offsamples=0); over 8 poses (|ε| ≤ 3 mm, |θ| ≤ 3°) the hole centre is within 0.18 px (free circle) / 0.045 px (drawing radius R + W), the offset within 0.024 / 0.010 mm, the tip's lateral error 0.003 px; l₂ measured by bisection on mj_geomDistance matches the closed form to 0.017–0.070 mm (1.5–6°) with l₂ sin θ = 0.396–0.398 mm; the contact state switches one-point / two-point at l₂ ∓ 0.3 mm; the insertion with ε = (2, 1) mm and θ = 2° succeeds and the first two-point tick has l sin θ = 0.400 mm; 7 servo iterations take the true offset from 2.24 to 0.03 mm; without correction ε₀ = 1 mm is pushed in by the chamfer; the grid ε₀ {0, 1, 2, 3} mm × θ₀ {0, 1.5, 3}° succeeds up to 1 mm without correction (2 mm and more stop at the mouth — the chamfer tolerance is 1.2 mm) and 12 / 12 with it. Honestly: the tip's axial position comes from the coverage of one silhouette pixel and is off by up to 0.50 px (the 0.3 px target is not met); the raw agreement between predicted and simulated contact counts is 0.69 (0.96 within ±1 — soft contacts flicker between 0/1 and 1/2 points); the wrist is a rigid body on springs with no actuator lag, flex or calibration error; wedging cannot occur at θ ≤ 3° with μ = 0.3 and was not provoked; the original paper was not read. Traps: MuJoCo's 4× MSAA depth is the depth at sample 0, not at the pixel centre (measured on a tilted plane; depth is rendered from a second compile with offsamples=0), the default 28 slices of a cylinder pull the radius 0.04 mm inwards (numslices=128), and the first 2-D rectangle approximation D = d/cos θ + l tan θ is 0.5 mm wrong at θ = 6°. Without mujoco the MuJoCo gates are skipped and the 12 numpy gates decide. 37 s.*
 
-[![傾き θ で二点接触が始まる深さ l₂(最狭部から)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/01_pegsim_two_point_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/01_pegsim_two_point_depth.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/01_pegsim_two_point_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/01_pegsim_two_point_depth.png)
 
 *↑ The measurement ―― 傾き θ で二点接触が始まる深さ l₂(最狭部から)。3-D の円柱で厳密にした (1′) と小角の式 l₂ sin θ = 2c_r は重なり、2-D の長方形近似は θ = 6° で 0.5 mm 浅い。点は MuJoCo の mj_geomDistance の二分法で測った値(閉形式と 0.07 mm 以内)。1° では 22.9 mm と穴の深さ 20 mm を超え、二点接触は起きない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![Whitney のかじりの図(OCW p.34): 二点接触中にペグが進むのは加える力の比がこの平行四辺形の内側にあるとき。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/02_pegsim_jamming_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/02_pegsim_jamming_diagram.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/02_pegsim_jamming_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/02_pegsim_jamming_diagram.png)
 
-*↑ Whitney のかじりの図(OCW p.34): 二点接触中にペグが進むのは加える力の比がこの平行四辺形の内側にあるとき。*
+*↑ Figure from this exhibit ―― Whitney のかじりの図(OCW p.34): 二点接触中にペグが進むのは加える力の比がこの平行四辺形の内側にあるとき。 (figure labels are in Japanese; the numbers are the same)*
 
-[![初期横ずれ ε₀ × 傾き θ₀ の成功 / 失敗(各 1 走行、ずれの向きは 30°)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/06_pegsim_success_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/06_pegsim_success_grid.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/06_pegsim_success_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/06_pegsim_success_grid.png)
 
-*↑ 初期横ずれ ε₀ × 傾き θ₀ の成功 / 失敗(各 1 走行、ずれの向きは 30°)。*
+*↑ Figure from this exhibit ―― 初期横ずれ ε₀ × 傾き θ₀ の成功 / 失敗(各 1 走行、ずれの向きは 30°)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![補正ありの挿入(ε₀ = (2, 1) mm、θ₀ = 2°、側面カメラ、0.15 s ごと): サーボで穴の上に寄せ、下げ、一点 → 二点接触を経て 15 mm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif)
 
-*↑ The animation ―― 補正ありの挿入(ε₀ = (2, 1) mm、θ₀ = 2°、側面カメラ、0.15 s ごと): サーボで穴の上に寄せ、下げ、一点 → 二点接触を経て 15 mm。*
+*↑ The animation ―― 補正ありの挿入(ε₀ = (2, 1) mm、θ₀ = 2°、側面カメラ、0.15 s ごと): サーボで穴の上に寄せ、下げ、一点 → 二点接触を経て 15 mm。 (figure labels are in Japanese; the numbers are the same)*
 
-[![補正なし(ε₀ = 1 mm < 面取りの許容 1.2 mm、θ₀ = 2°): 面取りが柔らかい手首を横へ押し、ペグが滑り込む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/05_pegsim_chamfer_slide_no_correction.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/05_pegsim_chamfer_slide_no_correction.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/05_pegsim_chamfer_slide_no_correction.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/05_pegsim_chamfer_slide_no_correction.gif)
 
-*↑ The animation ―― 補正なし(ε₀ = 1 mm < 面取りの許容 1.2 mm、θ₀ = 2°): 面取りが柔らかい手首を横へ押し、ペグが滑り込む。2 mm では入口で止まる。*
+*↑ The animation ―― 補正なし(ε₀ = 1 mm < 面取りの許容 1.2 mm、θ₀ = 2°): 面取りが柔らかい手首を横へ押し、ペグが滑り込む。2 mm では入口で止まる。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_pegsim_insertion.py
@@ -2254,25 +2254,25 @@ The third exhibit of the physics-simulation × Fullseye series (the first was pe
 
 *↑ **Tracking, Predicting and Returning an Air-Hockey Puck with a Five-Bar Linkage — No Learning, Closed Forms and an External Simulator as the Gates** ―― The third exhibit of the physics-simulation × Fullseye series (the first was peg-in-hole, the second the three visuotactile exhibits). The subject is a low-cost air-hockey robot (Shinjo, Beltran-Hernandez, Hamaya, Tanaka, IROS 2024, doi 10.1109/iros58592.2024.10801458): a five-bar linkage driven by position-control servos, with the chain camera → puck detection → velocity estimation → trajectory prediction → motion planning. The chain is rebuilt with existing Fullseye parts (balltrack.ball_detect / ball_track / kalman_ca, ballistics.slide_stop_distance, calib.image_to_world_plane) and the new module puck (26 ops), learning-free and rule-based throughout, with ground truth brought in from outside on three fronts. (1) Closed forms: sliding on the air cushion is Coulomb's uniform deceleration a = μg (stopping distance v₀²/(2μg)); a wall flips the normal component by −e and keeps kₜ of the tangential one (two coefficients of restitution; the notation follows Cross 2022, Eur. J. Phys., doi 10.1088/1361-6404/ac4b47, oblique impact of a disc; the Spong 2001 impact model could not be read and is unverified); between walls the path is stitched from per-segment closed forms (a quadratic or a logarithm) — against the mirror method as a second implementation (no friction, e = kₜ = 1) it agrees to 3e-15 m over 200 launches with up to 17 reflections, and to 1.5e-5 m against semi-implicit Euler at dt = 1e-5. (2) Five-bar kinematics: the closed form of two two-link arms meeting at the striker (circle–circle intersections); FK∘IK returns to 2e-15 m on 400 workspace points and the reach circle l₁ + l₂ separates inside from outside at ±1e-6 m. (3) An external simulator: the table MJCF of the Robot Air Hockey Challenge (Liu et al., arXiv 2411.05718, MIT; the file is not bundled, it lives under the environment variable FULLSEYE_AIRHOCKEY_DATA and is used only with --full). ★The second implementation exposed a model difference: this table excludes the puck–surface contact and slows the puck through joint viscous damping c = 0.005 N·s/m (m = 0.01 kg → c/m = 0.5 /s, a 2 s time constant). It is not Coulomb deceleration (measured log-speed slope −0.4999 /s). The rims are soft contacts, so e and kₜ are not parameters but measured outcomes (e_n = 0.739, kₜ = 0.852). Adding model="viscous" to the predictor matches MuJoCo to 0.110 mm before the first wall and, with the measured e and kₜ, to 0.4 mm 0.4 s after one bounce. Our own Coulomb MJCF (a cylinder on a frictional plane) decelerates 3.3 % away from μg (whether MuJoCo's soft-contact friction or our MJCF settings is not resolved). The synthetic top-down camera draws the puck with coverage anti-aliasing and adds motion during the exposure as the mean of sub-exposures: the blurred centroid advances by v·τ/2 (closed form, matched to 0.004 px — it vanishes if the frame is stamped at mid-exposure). Detection is a facade over ball_detect with the threshold just below the table value, 0.85 — the weight is (threshold − pixel), so at 0.5 the edge pixels are cut and a phase-dependent bias of 0.08 px appears (measured; 0.005 px at 0.85). Velocity is a least-squares fit of the uniform-deceleration model with the direction û fixed (û iterated three times; the viscous case is linear in the basis (1 − e^{−kτ})/k) and σ_v comes from σ²(AᵀA)⁻¹. The striker plan is a rule: IK to the crossing point, each servo at a constant rate ≤ 6 rad/s, too_late if it cannot arrive first, unreachable outside the workspace, no_crossing if the path never crosses (fail-closed). Figures: a 343 px/m frame with the 16 detections, the predicted path and the crossing point (0.0 mm from the truth, 756 ms ahead) next to a 1:1 crop of the puck (nearest neighbour ×8) with the sub-pixel centroid (0.004 px from the truth); a GIF where the 95 % band of the crossing narrows as frames accumulate on a coarse camera (100 px/m, noise σ 0.06); velocity error vs N inside 3σ; a GIF of the five-bar linkage arriving first (move 256 ms, crossing 883 ms); where it breaks (blur, an unknown wall kₜ fans the prediction after a bounce, 45 px per frame breaks ball_track's association); MuJoCo vs the viscous closed form vs Coulomb (three curves with --full). 16 gates (numpy only, 1.6 s, 7 s with figures) plus 6 with --full (MuJoCo, 13 s): stopping distance = ballistics (0), wall energy ratio e², mirror method 3e-15 m, self-consistency + Euler 1.5e-5 m, FK∘IK 2e-15 m, the reach boundary and the reachable interval |y| ≤ 0.369 on the defence line x = −0.75 (the puck can be at |y| ≤ 0.487, so the corners are out of reach — stated honestly), detection centroids over 50 positions max 0.0059 px / rms 0.0024 px (0.012 mm), velocity from exact positions 7e-16 and from detections at N = 12 0.01 % (σ_v 0.2 mm/s), crossing points from noisy detections over 20 launches rms 0.2 mm / max 0.5 mm (threshold 3σ_mc + a 2 mm floor because the 60-sample Monte-Carlo σ itself wobbles by ±10 %), the plan E = (−0.750, 0.350) with a 0.256 s move, 8 m/s → too_late, y = 0.47 → unreachable, blur 0.004 px, six spelling-breaks plus None without a crossing, μ to 0.7 % (the 0.3 s bend is 0.8 px), e 0.7999 and kₜ 0.9001, fast puck 10/10 at 20 and 35 px per frame but 1/10 at 45 and 80 (max_jump 40 px, 27 m/s at 120 fps), kalman_ca innovation 2.7e-13 m; --full: viscous slope −0.4999 /s, closed form 0.110 mm, 0.4 mm after the bounce, Coulomb MJCF 3.3 %, render → colour detection → pinhole bias (−2.6, 2.3) mm and scatter 0.35 mm (0.12 px; the bias comes from the site height and render quantisation and is subtracted in the chain), the full chain over 20 launches: 14 crossed the defence line, all 12 within reach were intercepted, 2 in the corners were declined, crossing error median 1.2 mm / max 14.9 mm (inside the 71.65 mm puck + mallet radius), timing max 21 ms. Honestly: the linkage dimensions (d 0.30, l₁ 0.25, l₂ 0.35 m), the 6 rad/s servo rate, the 40 mm mallet, the defence line x = −0.75 and the closed-form defaults μ 0.02 / e 0.8 / kₜ 0.9 are all assumptions (the paper's hardware numbers could not be read); no real footage is used (synthetic + MuJoCo, no lighting, lens distortion or rolling shutter; the synthetic detection error of 0.006 px is more than an order of magnitude better than reality); the slip/grip regimes and spin of a wall impact are not implemented; e and kₜ are estimated by splitting the track at the frame where the heading changes most (a single bounce only).*
 
-[![粗いカメラ(100 px/m、雑音 σ 0.06)でも、コマが増えるほど守備線上の交点の 95 % 帯(赤)が細る: N = 3 で 145 mm → N = 16 で 7 mm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/02_airhockey_prediction_cone_narrows.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/02_airhockey_prediction_cone_narrows.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/02_airhockey_prediction_cone_narrows.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/02_airhockey_prediction_cone_narrows.gif)
 
 *↑ The measurement ―― 粗いカメラ(100 px/m、雑音 σ 0.06)でも、コマが増えるほど守備線上の交点の 95 % 帯(赤)が細る: N = 3 で 145 mm → N = 16 で 7 mm。緑の十字 = 真の交点。 (figure labels are in Japanese; the numbers are the same)*
 
-[![検出から最小二乗で出した速度の誤差は N とともに縮み、最小二乗の分散の 3σ(破線)の内側に収まる(N = 12 で 0.01 %、N = 24 で 0.01 %)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/03_airhockey_velocity_error_vs_N_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/03_airhockey_velocity_error_vs_N.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/03_airhockey_velocity_error_vs_N_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/03_airhockey_velocity_error_vs_N.png)
 
-*↑ 検出から最小二乗で出した速度の誤差は N とともに縮み、最小二乗の分散の 3σ(破線)の内側に収まる(N = 12 で 0.01 %、N = 24 で 0.01 %)。*
+*↑ Figure from this exhibit ―― 検出から最小二乗で出した速度の誤差は N とともに縮み、最小二乗の分散の 3σ(破線)の内側に収まる(N = 12 で 0.01 %、N = 24 で 0.01 %)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![どこで壊れるか。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/05_airhockey_where_it_breaks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/05_airhockey_where_it_breaks.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/05_airhockey_where_it_breaks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/05_airhockey_where_it_breaks.png)
 
-*↑ どこで壊れるか。*
+*↑ Figure from this exhibit ―― どこで壊れるか。 (figure labels are in Japanese; the numbers are the same)*
 
-[![Challenge の台では速さが指数で落ちる(粘性減衰 c/m = 0.5 /s、実測の傾き -0.4999 /s)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/06_airhockey_mujoco_vs_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/06_airhockey_mujoco_vs_closed_form.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/06_airhockey_mujoco_vs_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/06_airhockey_mujoco_vs_closed_form.png)
 
-*↑ Challenge の台では速さが指数で落ちる(粘性減衰 c/m = 0.5 /s、実測の傾き -0.4999 /s)。*
+*↑ Figure from this exhibit ―― Challenge の台では速さが指数で落ちる(粘性減衰 c/m = 0.5 /s、実測の傾き -0.4999 /s)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![8 コマで予測した交点へ、5 節リンク(一定角速度 ≤ 6 rad/s、寸法は仮定)が 191 ms で先回りして打具(緑の円、半径 40 mm は仮定)を置く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/04_airhockey_fivebar_intercept.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/04_airhockey_fivebar_intercept.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/04_airhockey_fivebar_intercept.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/04_airhockey_fivebar_intercept.gif)
 
-*↑ The animation ―― 8 コマで予測した交点へ、5 節リンク(一定角速度 ≤ 6 rad/s、寸法は仮定)が 191 ms で先回りして打具(緑の円、半径 40 mm は仮定)を置く。交点の到着は 823 ms 先。*
+*↑ The animation ―― 8 コマで予測した交点へ、5 節リンク(一定角速度 ≤ 6 rad/s、寸法は仮定)が 191 ms で先回りして打具(緑の円、半径 40 mm は仮定)を置く。交点の到着は 823 ms 先。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_air_hockey_intercept.py
@@ -2292,25 +2292,25 @@ The capstone of the peg-in-hole thread of the physics-simulation × Fullseye ser
 
 *↑ **Detecting and Recovering Peg-Insertion Failures with a Rule Table — Whitney's Contact States Instead of a VLM, MuJoCo as the Truth** ―― The capstone of the peg-in-hole thread of the physics-simulation × Fullseye series (pegsim, soft-wrist insertion, 2026.195). The prior work (Shirasaka, Beltran-Hernandez, Hamaya, Ushiku, arXiv:2509.17666, ICRA 2026, code unpublished) structures soft-wrist insertion as contact formation — a sequence of contact states that constrain the degrees of freedom one by one — and lets a VLM judge the failure mode from the final pose and an image before picking a recovery skill. Here the VLM is replaced by a rule table: the observation (contact kind none / plate / chamfer / one_point / two_point / floor, depth band above / mouth / hole / bottom, stall, whether the tilt at the onset of two-point contact is above c/μ, whether the force ratio lies inside the jamming parallelogram, whether the tip offset from the hole centre is within W + c_r) is discretised into a six-field signature and looked up in a 12-row table. At most one row matches (a validator first checks pairwise exclusivity and that all 8 classes are reachable); if none does the answer is unknown (the table decides 362 of the 576 signatures in the vocabulary and never guesses the rest: fail-closed). Ground truth comes from outside on two fronts. (1) The theorem: Whitney 1982 (the original is paywalled and unread; the equations are from the author's own MIT OCW 2.875 Class 3 slides): wedging θ > c/μ (p.28), the jamming parallelogram λ = l/(2rμ) (p.34). The four vertices are re-derived from the planar statics of two-point contact (both points sliding down with Coulomb friction: F_x = f₂ − f₁, F_z = μ(f₁ + f₂), M = μrf₁ − (μr + l)f₂) and agree with pegsim's vertices (the OCW values) to 2.2e-16 — this derivation fixes the sign convention of the force ratios (e_x from the wall the tip touches towards the opposite mouth edge, F_z positive when pushing, M = M⃗·(e_x × ẑ)). (2) The physics engine: MuJoCo's contact points, normal forces and the wrist force sensor (--full). The tip load (F⃗, M⃗_tip) is read from the deflection of the wrist springs (a rule that needs no external F/T sensor): over the 3,458 quasi-static ticks spent stalled, the estimated load plus gravity balances the sum of the contact forces to 0.35 N, and agrees with the wrist force sensor (site frame → world) to 0.026 N. Failures are injected on purpose: an offset of 2.5 mm the chamfer cannot catch (> W + c_r = 1.2 mm), wedging with μ 0.8 and θ₀ 4.5° (> c/μ = 2.76°), jamming with θ₀ 3° and a +3 mm lateral target shift towards the tilt once the tip is 4 mm in, a plug at 6 mm depth, a decoy hole 26 mm away. The chain is descend (slow at 2.5 N, 12 N cap) → stall (advance < 0.05 mm over a 30-tick window, armed after 0.5 mm of progress) → signature → table → recovery primitive (lift 6 mm and re-centre with the wrist RGB-D / lift 10 mm and return to the fixture target / retract 4 mm and undo the measured tilt / pick the 0.5 mm carriage × 0.5° wrist step that maximises the parallelogram margin in a linear model / lift and abort). Figures: the flip probability of the offset field when σ = 0.05 mm noise is added at the W + c_r = 1.2 mm boundary (0.508 at the boundary, 0.168 / 0.157 at ±1σ, within 0.03 of Φ(−1); dashed = theory), the confusion matrix of the 6 injected classes (6 / 6 from truth signatures, 6 / 6 from the vision signatures), the jamming diagram with the trajectory of force ratios estimated from the wrist load (the tick where the jam stall is detected lies outside its own-depth parallelogram at l = 5.3 mm with margin −0.50, the 321 ticks of nominal two-point sliding lie inside with min 0.18 / median 0.20 — the diagram widens with depth, so two parallelograms are drawn), depth vs tick for the wedge (stall → wedging in the same tick → retract + tilt reset → re-descend and succeed), a 48-frame wrist-camera GIF ('detected: wedging -> retract_reduce_tilt' appears, then the re-descent), and the release-probe table. ★The release probe shows Whitney's distinction physically: the wedge (μ 0.8, θ 4.7°) stays at 5.90 mm when the push is removed (F_z 2.03 → 0.64 N) and even when pulled by 2 mm (F_z −0.39 N) — compression is stored inside; the jam (μ 0.3, θ 4.4°, F_x 1.3 N) advances under its own weight from 6.25 to 7.21 mm once the lateral force is also removed and comes back to 5.30 mm when pulled — a matter of force direction. 12 gates (numpy only, 0.6 s) plus 8 with --full (MuJoCo, 14 s, 35 s with figures): table completeness and exclusivity, parallelogram vertices 2.2e-16, the wedging boundary at c/μ ∓ 1e-9 rad (7.353° at μ 0.3, 2.755° at 0.8), stall detection (no false alarm on three monotone descents plus a hover, onset 27 ticks after the true stop, armed at tick 17), all 362 row signatures classify to their row, three unknown signatures and four spelling breaks, the closed-form wrist load to 1e-12, flip probability = Φ(−|z|), synthetic RGB-D (analytic ray cast, no mujoco) offsets at four poses to 0.002 mm → field → class = truth, discretisation boundaries, the summary latency of 30 ticks and the confusion matrix, the MJCF (two force/torque sensors, the plug, 109 decoy geoms plus a 4-box frame, ValueError for a plug outside the hole or an overlapping decoy); --full: force closure, the injection grid 6 classes × {no recovery, recovery} with 6 / 6 from truth and from vision signatures and 0/5 → 5/5 (the blocked hole is correctly aborted = success), detection latencies of 32–33 ticks (= 30-tick window + ≤ 10 confirmation), 9 for the plug and 18 for the decoy, the release probe, the jamming-diagram margin (the "inside" threshold 0.15 sits between the stalled −0.50 and the sliding 0.18 — MuJoCo's sliding boundary is ≈ 0.15 inside Whitney's line: a 36-gon wall and soft contact), wedging only above the boundary (μ 0.8 at θ₀ 2.0° inserts, μ 0.3 at θ₀ 4.5° jams instead), the vision anchor (0.016 mm with one hole, perturbed to 0.47 mm by the decoy — stated honestly), and the recorded run. Honestly: no VLM baseline is built (nothing is lined up against something that does not exist). The 5/5 is one condition per class and is not comparable with the paper's real-robot success rate. The "vision signature" is the hover-time wrist RGB-D anchor plus encoder integration (the tip is invisible once inside the hole). The jam test is valid only while stalled with F_z ≥ 1 N (while moving the ratios are ill-conditioned and the margin reaches −1.6 although the peg advances). A +1.6 mm shift stalls at the force cap with the ratio inside — unknown, and the table stays silent. The recovery primitives are scripted (lifts of 4 / 6 / 10 mm, ≤ 6 iterations, ≤ 3 recoveries per run). Only one jam direction (the opposite side slides in). The compliant-support condition for avoiding wedging (S = L_g/(L_g² + K_θ/K_x)) is not used because the inequality cannot be read from the slides. No tactile sensing (tacslip).*
 
-[![注入した失敗 6 クラスと表の分類(真値署名): 対角 6 / 6。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/02_pegfail_failure_confusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/02_pegfail_failure_confusion.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/02_pegfail_failure_confusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/02_pegfail_failure_confusion.png)
 
 *↑ The measurement ―― 注入した失敗 6 クラスと表の分類(真値署名): 対角 6 / 6。右列は視覚のずれ(構え時の RGB-D + エンコーダ積分)で作った署名の正答 6 / 6。 (figure labels are in Japanese; the numbers are the same)*
 
-[![手首ばねのたわみから推定した先端の力の比。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/03_pegfail_jamming_diagram_measured_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/03_pegfail_jamming_diagram_measured.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/03_pegfail_jamming_diagram_measured_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/03_pegfail_jamming_diagram_measured.png)
 
-*↑ 手首ばねのたわみから推定した先端の力の比。*
+*↑ Figure from this exhibit ―― 手首ばねのたわみから推定した先端の力の比。 (figure labels are in Japanese; the numbers are the same)*
 
-[![μ = 0.8・θ₀ = 4.5° のくさび。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/04_pegfail_depth_vs_tick_stall_detection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/04_pegfail_depth_vs_tick_stall_detection.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/04_pegfail_depth_vs_tick_stall_detection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/04_pegfail_depth_vs_tick_stall_detection.png)
 
-*↑ μ = 0.8・θ₀ = 4.5° のくさび。*
+*↑ Figure from this exhibit ―― μ = 0.8・θ₀ = 4.5° のくさび。 (figure labels are in Japanese; the numbers are the same)*
 
-[![くさびは力を抜いても引いても動かない(深さ 5.90 → 5.90 mm、内部圧縮)、詰まりは横の力を抜くと自重で進み(6.25 → 7.21 mm)引けば戻る(5.30 mm、力の向きの問題)—— Whitney の区別を MuJoCo で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/06_pegfail_release_probe_wedge_vs_jam_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/06_pegfail_release_probe_wedge_vs_jam.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/06_pegfail_release_probe_wedge_vs_jam_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/06_pegfail_release_probe_wedge_vs_jam.png)
 
-*↑ くさびは力を抜いても引いても動かない(深さ 5.90 → 5.90 mm、内部圧縮)、詰まりは横の力を抜くと自重で進み(6.25 → 7.21 mm)引けば戻る(5.30 mm、力の向きの問題)—— Whitney の区別を MuJoCo で。*
+*↑ Figure from this exhibit ―― くさびは力を抜いても引いても動かない(深さ 5.90 → 5.90 mm、内部圧縮)、詰まりは横の力を抜くと自重で進み(6.25 → 7.21 mm)引けば戻る(5.30 mm、力の向きの問題)—— Whitney の区別を MuJoCo で。 (figure labels are in Japanese; the numbers are the same)*
 
-[![手首カメラ(640×480、0.1 s ごと、48 コマ): 降下 → くさびで止まる → 'detected: wedging' → 退避して傾きを戻す → 再降下で成功。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/05_pegfail_wrist_camera_wedging_detect_recover.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/05_pegfail_wrist_camera_wedging_detect_recover.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/05_pegfail_wrist_camera_wedging_detect_recover.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/05_pegfail_wrist_camera_wedging_detect_recover.gif)
 
-*↑ The animation ―― 手首カメラ(640×480、0.1 s ごと、48 コマ): 降下 → くさびで止まる → 'detected: wedging' → 退避して傾きを戻す → 再降下で成功。*
+*↑ The animation ―― 手首カメラ(640×480、0.1 s ごと、48 コマ): 降下 → くさびで止まる → 'detected: wedging' → 退避して傾きを戻す → 再降下で成功。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_peg_failure_recovery.py
@@ -2330,29 +2330,29 @@ The physics-simulation × Fullseye series continues from tacsim (elastic membran
 
 *↑ **Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a Gradient LUT as the Second Implementation — the Ball Radius and Hand-Marked Circles as the Truth** ―― The physics-simulation × Fullseye series continues from tacsim (elastic membrane + camera, 2026.196). tacsim synthesised its own three-colour Lambertian images and inverted them itself — the truth and the subject were both home-made. This exhibit brings in real images (the calibration packs published under the MIT licence by the authors of arXiv:2109.04027), calibrates the forward map (normal → colour) and solves the inverse along two independent routes: a linear 12-parameter illumination I_c = a_c + l_c · n (inverted by photometric_stereo = the subject) and an example-based gradient LUT (tilt θ and azimuth φ cut into 125 × 125 bins, mean colour per bin, also a version with a quadratic in position). New module tacscalib, 10 ops, numpy only. Two truths come from outside: the known ball radius (inside the contact circle the membrane follows the sphere, so the normal is the closed form n = (−x, −y, √(R² − r²))/R) and hand-marked contact circles (integer pixels, radii in 2 px steps = a weak truth). R enters both calibration and evaluation, so the gates test whether the calibration generalises to other images, not R itself — calibrate on the 24 even frames, measure on the 24 odd ones. ★A dead band in the prototype was fixed: fitting the position quadratic only to well-populated bins dropped every low-tilt bin, and pixels with tilt 0–15° snapped to 0 or 15° (barely visible in the median angular error; only the profile plot showed it). Sparse bins now borrow the position terms of the angularly nearest polynomial bin and fit only their own constant — on the real hold-out, the median |Δθ| for true tilt < 15° drops from 4.84° to 1.89°. The price: the tilt floor on flat ground rises from 0.4° to 3.3° (the colour difference between a small tilt and flat sinks into the 3.6 DN background noise = a resolution limit). Single-row bins carry pure noise and bias the depth by +18.5 %; a minimum of 10 rows gives +6.0 %. ★The inverse lookup rewrites the distance as one feature inner product (|k|² = AᵀQA) and runs coarse → fine (pick the top two 3 × 3-bin blocks by their representatives): the same bin as brute force for 90.0 % of pixels, median angular error within 0.10°, 2.4× faster. 9 gates (synthetic, 1.3 s) plus 10 with --full (real data, 42 s): illumination round trip 4.8e-15, quantisation floor 0.430°, with ±40 % position gain 0.726° with position terms vs 4.600° without, dead band 13.24° → 0.58°, coefficients mapped in closed form to an external quadratic-LUT format agree to 7.1e-15 DN; real hold-out of 24 frames: RGB residual linear 7.92 DN (72-parameter position model 4.63, background noise 3.60), median angular error linear 10.71° / LUT without position 8.58° / LUT with position 4.17° / the external pre-calibrated LUT 3.57°*, contact_radius_ring (the subject) radius −0.25 px (−12.9 px with its default search radius), depth +4.7 % against 595 µm with a profile RMS of 7.1 µm, 7.59 / 8.83 / 3.70° for the position LUT with 1 / 4 / 24 calibration frames, and the second sensor's linear residual 30.8 DN = 3.9× the first. Figures: a synthetic press with the error maps of three routes, a GIF circling the light (reconstruction vs the true spherical cap), the dead band before and after; with --full: a real frame → reconstruction → true cap, a real-data GIF, profiles, residual maps, error maps, the sensor-plane error map, the position scatter, the calibration-count curve and the radial tilt. All at 1:1. Honestly: there is no truth for force or indentation depth. Angular errors are for the nearest-bin LUT (no interpolation). *The external LUT was built from the same 48 frames, so it is a reference, not a hold-out. The second pack has no primary source for ball diameter or pixel pitch (only a code comment giving 0.0266 mm/px), so only radius-independent quantities (the ratio of linear residuals) are gated and the angular errors are ranked only. The position LUT breaks in the image corners (extrapolation where few calibration balls landed). Trap we hit: with all centres on integer pixels the synthetic data never produces sparse bins, so the dead band is invisible in principle (reproduced with sub-pixel offsets). Two issues in existing ops (contact_radius_ring's default search radius cuts the circle at a quarter of the window; photometric.angular_error_deg's 1.15e-4° floor) were fixed in a later commit (default search radius: −12.9 px → −0.25 px, and the default is now part of gate 12).*
 
-[![位置つき LUT の法線を Frankot–Chellappa で積分した面に光を 1 周させる(中央)、右は真の球冠。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/02_tacscalib_synthetic_relight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/02_tacscalib_synthetic_relight.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/02_tacscalib_synthetic_relight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/02_tacscalib_synthetic_relight.gif)
 
 *↑ The measurement ―― 位置つき LUT の法線を Frankot–Chellappa で積分した面に光を 1 周させる(中央)、右は真の球冠。等倍 89×89、24 コマ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![合成の 1 球、真の傾き < 15° の画素。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/03_tacscalib_deadband_before_after_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/03_tacscalib_deadband_before_after.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/03_tacscalib_deadband_before_after_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/03_tacscalib_deadband_before_after.png)
 
-*↑ 合成の 1 球、真の傾き < 15° の画素。*
+*↑ Figure from this exhibit ―― 合成の 1 球、真の傾き < 15° の画素。 (figure labels are in Japanese; the numbers are the same)*
 
-[![法線の半径スロープを方位平均して 1D 積分した断面と真の球冠(破線)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/06_tacscalib_height_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/06_tacscalib_height_profile.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/06_tacscalib_height_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/06_tacscalib_height_profile.png)
 
-*↑ 法線の半径スロープを方位平均して 1D 積分した断面と真の球冠(破線)。*
+*↑ Figure from this exhibit ―― 法線の半径スロープを方位平均して 1D 積分した断面と真の球冠(破線)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![法線の角誤差 0〜20°(同じ hold-out 1 枚、等倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/08_tacscalib_angle_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/08_tacscalib_angle_error_maps.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/08_tacscalib_angle_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/08_tacscalib_angle_error_maps.png)
 
-*↑ 法線の角誤差 0〜20°(同じ hold-out 1 枚、等倍)。*
+*↑ Figure from this exhibit ―― 法線の角誤差 0〜20°(同じ hold-out 1 枚、等倍)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![接触中心の画像中心からの距離 vs 角誤差の中央値(hold-out 各 1 点)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/10_tacscalib_position_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/10_tacscalib_position_scatter.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/10_tacscalib_position_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/10_tacscalib_position_scatter.png)
 
-*↑ 接触中心の画像中心からの距離 vs 角誤差の中央値(hold-out 各 1 点)。*
+*↑ Figure from this exhibit ―― 接触中心の画像中心からの距離 vs 角誤差の中央値(hold-out 各 1 点)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![実機の 1 枚から復元した面に光を 1 周させる(中央)、右は真の球冠。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/05_tacscalib_real_relight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/05_tacscalib_real_relight.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/05_tacscalib_real_relight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/05_tacscalib_real_relight.gif)
 
-*↑ The animation ―― 実機の 1 枚から復元した面に光を 1 周させる(中央)、右は真の球冠。等倍 201×201、24 コマ。*
+*↑ The animation ―― 実機の 1 枚から復元した面に光を 1 周させる(中央)、右は真の球冠。等倍 201×201、24 コマ。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_tacscalib_sphere_lut.py
@@ -2372,33 +2372,33 @@ The capstone of the physics-simulation × Fullseye series (pegsim 2026.195, pegf
 
 *↑ **Reading Peg-in-Hole Insertion through Two Fingertip Membranes — Contact Wrench, Whitney's Contact States, Wall Friction and Wrist Stiffness from Shear Images; at the Wedging Boundary the Wrench Alone Is Blind** ―― The capstone of the physics-simulation × Fullseye series (pegsim 2026.195, pegfail 2026.201) and of the three vision-based tactile exhibits (tacsim, tacslip, tactorque). Elastic membranes are mounted on the two fingertips; the contact wrench the peg receives from the hole is recovered from the two membrane images alone, and Whitney's contact states (none / chamfer / one point / two points, and wedging or jamming once stalled) are called by learning-free rules. In the same insertion the wrist stiffness k is identified from wrist-camera deflection × tactile force, and the symmetry of the peg shape (n-fold) and of the apparatus (two fingers are not rotationally symmetric) is measured by equivariance gates. New module pegtactile, 19 ops, plus 2 added to existing modules (tacsim.contact_radius_fit_pixelwise = contact radius without radial bins; tacslip.mindlin_fit_vector = a two-coefficient Mindlin fit for directed shear) and 4 mujoco facades. Ground truth comes from outside on four fronts. (1) The theorem: Whitney 1982 (paywalled and unread; the equations are from the author's own MIT OCW 2.875 Class 3 slides): the two-point depth l₂(θ) = (2R − r(cosθ + secθ))/tanθ and the wedging boundary θ = c/μ. (2) Contact-mechanics closed forms (Johnson 1985): Hertz, Cattaneo–Mindlin, Cerruti, no-slip torsion and the full-slip torque (since 2026-10-06 torsion is synthesised and read with a numerical partial-slip solution whose two limits are these; the 0.4.0 no-slip reading over-reads partial-slip images by +33 % at half the full-slip torque and the gates missed it because the synthesis was no-slip too — gate 2b). (3) Group actions (rotate the shape or the scene and the answer rotates by the same amount). (4) MuJoCo's contact points and forces, the wrist force/torque sensor and the set wrist-spring values (--full). MuJoCo has no membrane, so the pad loads are a statics map that distributes the exposure-averaged contact wrench plus gravity to the two pads. ★The wedging boundary is the blind spot of a wrench-only rule: where the slope c/θ of the line from mouth to tip equals μ, the edge of the tip's friction cone passes through the mouth contact and a two-point wrench is indistinguishable from a single mouth contact (2 of 36 closed-form cases, θ 3°, μ 0.8). Adding Whitney's geometry (force two-point when depth ≥ W + l₂(θ)) gives 36/36. ★Rotating the scene by 90° moves the tilting moment from a shear couple to pad torsion: reading torsion keeps the agreement at 97.6 → 96.8 %; dropping it gives 47.6 %. Figures: the two membrane images and their readings, a GIF of Whitney's closed-form insertion read through the membranes, the radial-bin trap, the wrench-only blind spot, shape orientation (Fourier phase vs second moments); with --full: an insertion GIF (hole cross-section, wrist camera, both membranes, state band), time series of four runs, wrist stiffness F = kΔx, the two-point onset, and the agreement after a 90° rotation. 11 gates (numpy, 3.5 s) plus 12 with --full (3 heavy numpy + 9 MuJoCo): statics round trip 4.4e-16; membrane round trip P 0.011 %, q 2.8 mN (4.4 mN over 20 cases), torsion 0.015 mN·m, direction 0.12°; false shear at zero load 12.1 mN on a regular marker grid → 0.7 mN with jitter; slope error of P̂ 8.5 % with bins → 0.018 % per pixel; Whitney's 36 cases 34 with the wrench only → 36 with geometry; two-point μ within 0.0008 (normal force 0.6 N); n-fold symmetry 0/3/4/6/1; Fourier-phase orientation 0.001–0.018° (keyed 0.59°) vs second moments off by 10–59°; wrist RGB-D equivariance 3.2 µm (0.000 µm under the mirror); MuJoCo: map vs force sensor 0.41 mN and 0.023 mN·m, tactile wrench |ΔF| median 2.7 / max 7.0 mN, state agreement 97.7 % (98.2 % with the true wrench), two-point onset within 0.04 mm of the closed form, wall μ 0.292 from one-point and 0.2998 from two-point sliding (set 0.3), wedging / jamming 2/2, wrist camera 1.2 µm, k_t 599.9–601.1 N/m (set 600), k_r 1.496–1.512 N·m/rad (set 1.5). Honestly: MuJoCo has no membrane, so the pad loads come from a statics map (symmetric left/right split assumed, peg inertia ignored — 11.7 mN vertical lies outside it). Synthesis and inversion use the same closed-form family, so errors of the membrane model (finite thickness, large deformation) are invisible to these gates (tacslip's finite-element comparison covers that). k is identified only in two-point intervals. Each condition is run once. There is no MuJoCo insertion of square or hexagonal pegs (symmetry is gated on the perception ops only). Traps we hit: pixel locking of a regular marker grid, radial-bin contact radii that skew the slope of P̂ by 40 % and k by +3.7 % through the two-pad difference, instantaneous contact forces are impulses (averaged over the exposure), and without pruning the candidate points a two-point line of action reads as one point.*
 
-[![Whitney の二点接触(θ 3°、μ 0.8 = くさびの境目の近く)を 2 本の指の膜で見た像(等倍 256 px = 16 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/01_pegtactile_two_membranes_read_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/01_pegtactile_two_membranes_read.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/01_pegtactile_two_membranes_read_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/01_pegtactile_two_membranes_read.png)
 
 *↑ The measurement ―― Whitney の二点接触(θ 3°、μ 0.8 = くさびの境目の近く)を 2 本の指の膜で見た像(等倍 256 px = 16 mm)。矢印はマーカーの変位 ×12、円は読んだ接触円。真値の荷重 L: P 4.093 N・q (-0.000, 0.344) N、R: P 3.907 N・q (-0.000, 0.398) N。左右でせん断の v 成分が逆向き = モーメントは偶力で運ばれる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じ二点接触の接触レンチ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/02_pegtactile_wrench_truth_vs_membranes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/02_pegtactile_wrench_truth_vs_membranes.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/02_pegtactile_wrench_truth_vs_membranes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/02_pegtactile_wrench_truth_vs_membranes.png)
 
-*↑ 同じ二点接触の接触レンチ。*
+*↑ Figure from this exhibit ―― 同じ二点接触の接触レンチ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![二点接触(閉形式)をレンチだけの規則に通すと、口と先端を結ぶ線の傾き c/θ が μ に等しい線(破線、Whitney のくさびの境目そのもの)の近くでだけ口の一点と読む(12 組中 2 組)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/05_pegtactile_wrench_only_blind_band_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/05_pegtactile_wrench_only_blind_band.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/05_pegtactile_wrench_only_blind_band_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/05_pegtactile_wrench_only_blind_band.png)
 
-*↑ 二点接触(閉形式)をレンチだけの規則に通すと、口と先端を結ぶ線の傾き c/θ が μ に等しい線(破線、Whitney のくさびの境目そのもの)の近くでだけ口の一点と読む(12 組中 2 組)。*
+*↑ Figure from this exhibit ―― 二点接触(閉形式)をレンチだけの規則に通すと、口と先端を結ぶ線の傾き c/θ が μ に等しい線(破線、Whitney のくさびの境目そのもの)の近くでだけ口の一点と読む(12 組中 2 組)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![走行 B の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/09_pegtactile_timeline_run_B_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/09_pegtactile_timeline_run_B.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/09_pegtactile_timeline_run_B_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/09_pegtactile_timeline_run_B.png)
 
-*↑ 走行 B の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。*
+*↑ Figure from this exhibit ―― 走行 B の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![走行 D の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/11_pegtactile_timeline_run_D_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/11_pegtactile_timeline_run_D.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/11_pegtactile_timeline_run_D_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/11_pegtactile_timeline_run_D.png)
 
-*↑ 走行 D の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。*
+*↑ Figure from this exhibit ―― 走行 D の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![Whitney の閉形式の挿入(θ 3°、μ 0.3)を膜 2 枚で読む動く図: 先端が壁に一点で触れたまま深くなり、深さ W + l₂(θ) = 8.63 mm で胴が口の縁にも触れて二点へ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/03_pegtactile_whitney_insertion_through_membranes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/03_pegtactile_whitney_insertion_through_membranes.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/03_pegtactile_whitney_insertion_through_membranes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/03_pegtactile_whitney_insertion_through_membranes.gif)
 
-*↑ The animation ―― Whitney の閉形式の挿入(θ 3°、μ 0.3)を膜 2 枚で読む動く図: 先端が壁に一点で触れたまま深くなり、深さ W + l₂(θ) = 8.63 mm で胴が口の縁にも触れて二点へ。上の文字の色 = 膜からの判定が真値と一致(全 14 コマ)。*
+*↑ The animation ―― Whitney の閉形式の挿入(θ 3°、μ 0.3)を膜 2 枚で読む動く図: 先端が壁に一点で触れたまま深くなり、深さ W + l₂(θ) = 8.63 mm で胴が口の縁にも触れて二点へ。上の文字の色 = 膜からの判定が真値と一致(全 14 コマ)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![挿入の動く図(θ 3°、横ずれ 0.6 mm、48 コマ = 0.08 s ごと): 左 = 穴の断面(板を半透明、緑の円 = MuJoCo の接触点、大きさ ∝ 力、桃の × = 膜 2 枚から読んだ接触点)、中 = 手首カメラ、右 = 2 本の指の膜(矢印 ×12)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/07_pegtactile_insertion_section_wrist_membranes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/07_pegtactile_insertion_section_wrist_membranes.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/07_pegtactile_insertion_section_wrist_membranes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/07_pegtactile_insertion_section_wrist_membranes.gif)
 
-*↑ The animation ―― 挿入の動く図(θ 3°、横ずれ 0.6 mm、48 コマ = 0.08 s ごと): 左 = 穴の断面(板を半透明、緑の円 = MuJoCo の接触点、大きさ ∝ 力、桃の × = 膜 2 枚から読んだ接触点)、中 = 手首カメラ、右 = 2 本の指の膜(矢印 ×12)。下の帯 = 状態(灰 無接触・青 面取り・橙 一点・赤 二点)の MuJoCo と触覚。*
+*↑ The animation ―― 挿入の動く図(θ 3°、横ずれ 0.6 mm、48 コマ = 0.08 s ごと): 左 = 穴の断面(板を半透明、緑の円 = MuJoCo の接触点、大きさ ∝ 力、桃の × = 膜 2 枚から読んだ接触点)、中 = 手首カメラ、右 = 2 本の指の膜(矢印 ×12)。下の帯 = 状態(灰 無接触・青 面取り・橙 一点・赤 二点)の MuJoCo と触覚。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_peg_insertion_tactile.py
@@ -2418,29 +2418,29 @@ The physics-simulation × Fullseye series continues (soft-wrist peg insertion, f
 
 *↑ **Cutting a Peg's Rotation Search to 1/n with Its Symmetry — Inserting Square, Hexagonal and Keyed Pegs Checked by Group Identities, Closed Forms and MuJoCo; Friction Shrinks the Hexagon's Chamfer Window from 20.9° to 6.8°** ―― The physics-simulation × Fullseye series continues (soft-wrist peg insertion, failure classification, two-finger membranes). The subject is research that uses symmetry for learning (Symmetry-aware RL, ICRA 2024, arXiv:2402.18002; the abstract was read as the primary source); here the group identities themselves are the gates, building the parts that remain without learning. Regular n-gon prisms (n = 3, 4, 6) and a keyed square with one corner cut by 1.8 mm (symmetry n = 1) are inserted into holes of the same shape offset outward by 0.2 mm (45° chamfer, 0.5 mm). New module pegsym, 15 ops plus 6 mujoco facades. (1) Reading orientation: images are rectified to a top view of the plane (the hole mouth from the wrist camera, the peg end face from an upward camera), and the complex Fourier phase of the contour gives the angle modulo 2π/n. Second moments are isotropic for n ≥ 3 and carry no orientation (a trap). Synthetic equivariance over 40 angles per period: 0.054° for regular polygons, 0.19° keyed; from MuJoCo images the relative angle is within 0.05° (regular) and 0.70° keyed (bias from a hole that is not similar). (2) Rotation window (derived): φ = π/n − arccos((A + δ + W)cos(π/n)/A) (written with atan2) matches a linear program with free translation (second implementation) to 2.8e-11 rad; windows are 4.75° triangle, 8.72° square, 20.85° hexagon. (3) The friction limit (derived, found in MuJoCo): only the hexagon captured just 7.25° in MuJoCo. For a vertex resting on the mouth to slide down the chamfer the peg must turn, and the moment balance about the axis says it turns only if sin²β > (√(1 + 8μ²) − 1)/2. Within 0.5° of MuJoCo at six points μ = 0–0.5 (μ = 0.3: closed form 6.76°, MuJoCo 7.25°). (4) Number of tries: the closed-form expectation of sweeping one period with steps at most twice the window agrees within 3 % with an error grid judged by a linear program on the mouth (triangle 6.97 / 6.96, square 3.36 / 3.29, hexagon 1.31 / 1.29, keyed 10.98 / 11.02). Blind searches in MuJoCo (12 hole orientations × 4 shapes) match the predicted tries in 47 / 48, with means of 3.50 (square) and 11.00 (keyed). Using the image reading as the estimate inserts 16 / 16 on the first try; rebuilding the hole rotated by an extra 2πk/n gives the same tries (6 / 6). (5) Two-point contact of polygons: no closed form was found, so an exact solution was built from a linear program on convex-hull vertices plus bisection. A square tilted about an axis parallel to a face matches Whitney's cylinder formula to 3.4e-11 m and the small-angle limit of eq. (2.28) of Goli et al. 2024 (R. Soc. Open Sci.) to 1.00000; a second implementation with MuJoCo's distance function agrees within 6.5 µm of lateral clearance. (6) Spiral: at first the search skipped turns near the centre and left 64 / 11,285 holes in the cover → arc length is now accumulated on a fine grid. With steps meeting the sufficient condition there are no holes, and the expected count is within 3.6 % of the swept-area approximation. Figures: a GIF of three rotating shapes and their readings, tries vs symmetry, window margin, two-point depth vs tilt direction, spiral cover; with --full: a GIF of the MuJoCo blind search, window vs friction, and the rectified wrist and upward views. 10 gates (default, 1.8 s) plus 7 with --full (42 s with figures). Honestly: the peg orientation is read by a fixed upward camera mid-process (the wrist camera alone cannot see the end face). The friction limit is derived for a 45° chamfer, quasi-statics and a weak spring about the axis; for the square at μ ≥ 0.5 MuJoCo is 0.7° wider (shown as a breakdown, not gated). Sturges's square-peg wedging was not read. The nested count for searching translation and rotation together is an independence approximation and is not gated.*
 
-[![線 = 窓 5° を共通にした時の閉形式 E(n)、破線 = 対称を知らない探索の E を n で割ったもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/02_pegsym_expected_tries_vs_symmetry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/02_pegsym_expected_tries_vs_symmetry.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/02_pegsym_expected_tries_vs_symmetry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/02_pegsym_expected_tries_vs_symmetry.png)
 
 *↑ The measurement ―― 線 = 窓 5° を共通にした時の閉形式 E(n)、破線 = 対称を知らない探索の E を n で割ったもの。点 = この装置(窓は形ごとに違う)の閉形式と、一様な誤差の格子で口への線形計画が判定した平均。キー付きは n = 1。 (figure labels are in Japanese; the numbers are the same)*
 
-[![平行移動も自由にした時の口の中の最良の余裕(線形計画)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/03_pegsym_rotation_window_margin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/03_pegsym_rotation_window_margin.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/03_pegsym_rotation_window_margin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/03_pegsym_rotation_window_margin.png)
 
-*↑ 平行移動も自由にした時の口の中の最良の余裕(線形計画)。*
+*↑ Figure from this exhibit ―― 平行移動も自由にした時の口の中の最良の余裕(線形計画)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![傾き 3° の二点接触の深さ(厳密、凸包の頂点の線形計画)を内接円の円柱の Whitney の式で割ったもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/04_pegsym_two_point_depth_vs_tilt_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/04_pegsym_two_point_depth_vs_tilt_direction.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/04_pegsym_two_point_depth_vs_tilt_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/04_pegsym_two_point_depth_vs_tilt_direction.png)
 
-*↑ 傾き 3° の二点接触の深さ(厳密、凸包の頂点の線形計画)を内接円の円柱の Whitney の式で割ったもの。*
+*↑ Figure from this exhibit ―― 傾き 3° の二点接触の深さ(厳密、凸包の頂点の線形計画)を内接円の円柱の Whitney の式で割ったもの。 (figure labels are in Japanese; the numbers are the same)*
 
-[![Archimedes のらせん。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/05_pegsym_spiral_search_cover_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/05_pegsym_spiral_search_cover.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/05_pegsym_spiral_search_cover_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/05_pegsym_spiral_search_cover.png)
 
-*↑ Archimedes のらせん。*
+*↑ Figure from this exhibit ―― Archimedes のらせん。 (figure labels are in Japanese; the numbers are the same)*
 
-[![面取りが回して入れる最大の向きの誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/07_pegsym_capture_window_vs_friction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/07_pegsym_capture_window_vs_friction.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/07_pegsym_capture_window_vs_friction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/07_pegsym_capture_window_vs_friction.png)
 
-*↑ 面取りが回して入れる最大の向きの誤差。*
+*↑ Figure from this exhibit ―― 面取りが回して入れる最大の向きの誤差。 (figure labels are in Japanese; the numbers are the same)*
 
-[![正方形のペグの盲目の回転探索(MuJoCo、斜め上の固定カメラ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/06_pegsym_mujoco_blind_rotation_search.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/06_pegsym_mujoco_blind_rotation_search.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/06_pegsym_mujoco_blind_rotation_search.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/06_pegsym_mujoco_blind_rotation_search.gif)
 
-*↑ The animation ―― 正方形のペグの盲目の回転探索(MuJoCo、斜め上の固定カメラ)。候補は 90° の 1 周期を 6 等分(刻み 15.0°、面取りの窓 ±8.72°)。下の帯 = 試行(赤 = 面取りか襟で止まった、緑 = 入った)。6 回目で入り、予言も 6 回。*
+*↑ The animation ―― 正方形のペグの盲目の回転探索(MuJoCo、斜め上の固定カメラ)。候補は 90° の 1 周期を 6 等分(刻み 15.0°、面取りの窓 ±8.72°)。下の帯 = 試行(赤 = 面取りか襟で止まった、緑 = 入った)。6 回目で入り、予言も 6 回。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_peg_symmetry_search.py
@@ -2460,25 +2460,25 @@ The same 200,000-point cloud, with only the point order shuffled, is fed to Kabs
 
 *↑ **Registration That Does Not Move by a Single Bit When the Points Are Shuffled — FP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps under a Guaranteed Bound; Slow on the CPU, and GPU Speed Is Left to cuBLAS Emulation** ―― The same 200,000-point cloud, with only the point order shuffled, is fed to Kabsch. An ordinary FP64 matrix product (DGEMM) moves its low bits with the summation order, so 11 shuffles gave 12 different rotations (largest difference 1.7e-15). The new module ozakimm (6 ops) splits the reduction into exact integer partial products (Ozaki-I = fixed-point slices of 7 bits, Ozaki-II = Chinese remainder theorem) and returns one set of bits regardless of point order or BLAS thread count 1/2/4/8. Each extra slice drops the error by about 2⁻⁷ until it reaches the FP64 level (the reference is the exact product computed with Python integers), and the slice count is chosen from a guaranteed error bound (9 / 11 / 13 slices for φ = 0.5 / 2 / 4). The bound is never violated over 9,216 elements. Scaling the input by a power of two scales the answer exactly, so the defect reported in arXiv 2606.29129 for the old fast mode — the answer breaking under a mere constant factor — is absent. The ICP family (five functions in registration / match3d / gicp) gained reproducible=True: aligning a 20,000-point wavy surface in 5 point orders gives 5 different poses by default for every one of them and a single pose with reproducible=True (difference from the default |ΔR| ≤ 3.3e-15; the whole ICP is 2-5 times slower, so the default stays as it was). Honestly: it is not faster on the CPU (11-60 times slower than DGEMM for square matrices; 0.68 ms → 170 ms for the 3×3 cross-covariance of 200,000 points). To make FP64 fast on a GPU, cuBLAS 13.4 FP64 emulation (opt-in) reached 17.8-23.8 TFLOPS at n = 8192 on one local machine (native 1.67; 13.3 fell back to native for inputs with a wide exponent span). cuBLAS does not guarantee bitwise reproducibility while emulating, so: speed from cuBLAS, reproducibility from here.*
 
-[![Ozaki-II は積の回数 = 法の数。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/02_error_staircase_ozaki2_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/02_error_staircase_ozaki2.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/02_error_staircase_ozaki2_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/02_error_staircase_ozaki2.png)
 
 *↑ The measurement ―― Ozaki-II は積の回数 = 法の数。φ が広いと同じ法の数では FP64 に届かない(φ=4 で 20 法 4.9e-16)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![点の順を入れ替えるだけで、普通の FP64 の回転は 12 通りに分かれた(最大の差 1.7e-15)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/03_kabsch_rotation_under_shuffles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/03_kabsch_rotation_under_shuffles.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/03_kabsch_rotation_under_shuffles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/03_kabsch_rotation_under_shuffles.png)
 
-*↑ 点の順を入れ替えるだけで、普通の FP64 の回転は 12 通りに分かれた(最大の差 1.7e-15)。*
+*↑ Figure from this exhibit ―― 点の順を入れ替えるだけで、普通の FP64 の回転は 12 通りに分かれた(最大の差 1.7e-15)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![違う結果の数(1 = どの条件でも同じビット)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/04_same_bits_or_not_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/04_same_bits_or_not.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/04_same_bits_or_not_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/04_same_bits_or_not.png)
 
-*↑ 違う結果の数(1 = どの条件でも同じビット)。*
+*↑ Figure from this exhibit ―― 違う結果の数(1 = どの条件でも同じビット)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![手元の 1 台での測定(2026-10-05)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/05_gpu_fp64_emulation_phi_0_5_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/05_gpu_fp64_emulation_phi_0_5.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/05_gpu_fp64_emulation_phi_0_5_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/05_gpu_fp64_emulation_phi_0_5.png)
 
-*↑ 手元の 1 台での測定(2026-10-05)。*
+*↑ Figure from this exhibit ―― 手元の 1 台での測定(2026-10-05)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![手元の 1 台での測定(2026-10-05)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/06_gpu_fp64_emulation_phi_4_0_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/06_gpu_fp64_emulation_phi_4_0.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/06_gpu_fp64_emulation_phi_4_0_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/06_gpu_fp64_emulation_phi_4_0.png)
 
-*↑ 手元の 1 台での測定(2026-10-05)。*
+*↑ Figure from this exhibit ―― 手元の 1 台での測定(2026-10-05)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_reproducible_icp.py
@@ -2498,21 +2498,21 @@ Public fixed cameras (road, weather, tourism) publish their position but not the
 
 *↑ **Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself** ―― Public fixed cameras (road, weather, tourism) publish their position but not their orientation, or only a coarse one (a road direction code, an id hash, a manual gizmo); without the orientation a frame cannot be placed on a map, a DEM or a 3-D city. The new geocam family (7 ops, numpy + scipy) recovers the (yaw, pitch, roll) of a camera at a known position from the picture itself, with no learning, from two independent cues that check each other. (1) Skyline: the 360-degree ridge rendered from a DEM at the camera position (dem_skyline, with earth curvature and refraction and the horizon dip as the floor outside the DEM) is matched against the sky/terrain boundary extracted by dynamic programming (skyline_extract, Lie et al. 2005); camera_orientation_from_skyline returns the whole residual curve over yaw and the margin to the runner-up valley. (2) Sun: the apparent sun position is a closed form of time and place (sun_position, NOAA, checked against equinox and solstice values); two or more saturated sun discs picked from time-stamped frames (sun_pixel_position, which refuses clouds and sky bands by their fill ratio) fix the rotation exactly as the SVD solution of Wahba's problem (camera_orientation_from_sun). On a synthetic camera with a known pose (synthetic DEM, sky, a cloud, a foreground pole, noise, known intrinsics) the skyline route errs by 0.058 / 0.030 / 0.006 deg, the sun route by 0.002 / 0.001 / 0.009 deg (5 frames; the first and last frame alone give a yaw error of 0.001 deg), and the two routes agree to 0.061 deg. Controls: a road-direction prior of the kind public metadata gives is off by 7.5 deg, and on a flat DEM the ridge is the same in every direction so the op returns ambiguous instead of being silently 137 deg wrong. Prior work: Lalonde et al. IJCV 2010 (sun and sky, 3 deg on 22 webcams) and Baatz et al. ECCV 2012 (skylines, the large-scale position-unknown version). Honest breakdown: synthetic only (real data - Fintraffic weather cameras + NLS elevation in Finland, Statens vegvesen + Kartverket DTM10 in Norway - is the next step and raw frames are never committed), the intrinsics K are required (an error in K turns into pitch and roll), skylines need mountains and the sun needs to be in the picture.*
 
-[![the DEM ridge drawn at the estimated yaw / pitch / roll lies on the extracted skyline; errors 0.06 / 0.03 / 0.01 deg](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/01_skyline_lock_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/01_skyline_lock.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/01_skyline_lock_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/01_skyline_lock.png)
 
 *↑ The measurement ―― the DEM ridge drawn at the estimated yaw / pitch / roll lies on the extracted skyline; errors 0.06 / 0.03 / 0.01 deg (figure labels are in Japanese; the numbers are the same)*
 
-[![the op returns the whole residual curve so that the ambiguity is visible: a runner-up valley at 15 deg is 1.28 deg worse; the flat DEM curve is level](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/03_yaw_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/03_yaw_profile.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/03_yaw_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/03_yaw_profile.png)
 
-*↑ the op returns the whole residual curve so that the ambiguity is visible: a runner-up valley at 15 deg is 1.28 deg worse; the flat DEM curve is level*
+*↑ Figure from this exhibit ―― the op returns the whole residual curve so that the ambiguity is visible: a runner-up valley at 15 deg is 1.28 deg worse; the flat DEM curve is level (figure labels are in Japanese; the numbers are the same)*
 
-[![the sun's path over the day where it is above the ridge (yellow, projected with the pose estimated from the sun) and the 5 sun discs picked by sun_pix…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/04_sun_track_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/04_sun_track.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/04_sun_track_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/04_sun_track.png)
 
-*↑ the sun's path over the day where it is above the ridge (yellow, projected with the pose estimated from the sun) and the 5 sun discs picked by sun_pix…*
+*↑ Figure from this exhibit ―― the sun's path over the day where it is above the ridge (yellow, projected with the pose estimated from the sun) and the 5 sun discs picked by sun_pix… (figure labels are in Japanese; the numbers are the same)*
 
-[![both routes recover the pose to well under a degree and agree with each other; the public-metadata prior is off by ten degrees and the flat-ground cas…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/05_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/05_numbers.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/05_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/05_numbers.png)
 
-*↑ both routes recover the pose to well under a degree and agree with each other; the public-metadata prior is off by ten degrees and the flat-ground cas…*
+*↑ Figure from this exhibit ―― both routes recover the pose to well under a degree and agree with each other; the public-metadata prior is off by ten degrees and the flat-ground cas… (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_public_camera_heading.py
@@ -2532,25 +2532,25 @@ The synthetic PoC (poc_public_camera_heading) got away with 'the sun is a small 
 
 *↑ **Where Is the Public Camera Looking, for Real — Hunting the Sun in 807 Road Cameras, Fixing the Heading from One Sunset and Checking It Against the Road** ―― The synthetic PoC (poc_public_camera_heading) got away with 'the sun is a small saturated disc'; real road cameras did not. Probing the 24 hours of 20-21 September from Finland's 807 Fintraffic weather cameras (CC BY 4.0, no key) at sun elevations of 2-12 degrees, the look-alone gate (sun_pixel_position) called station-name text, signs, white cars and lens droplets the sun (24/24 wrong on the first probe), the sun is not a disc but a bloom whose size depends on exposure and which the station-name band clips, and the cameras look down at the road with sky in the top third only. Two ops were added to geocam: sun_bloom_fit (a Kasa circle fitted to the unclipped rim of the largest saturated blob; the centroid sits 12 px off on average, away from the cut) and camera_orientation_from_sun_candidates (RANSAC over per-frame candidates for the one blob that moves at the sun's rate in a fixed camera, with road-camera priors |roll| <= 12 deg, pitch -40..0 deg, HFOV 25-120 deg rejecting unphysical hypotheses, the focal length searched at the same time, and no votes from below-horizon times). Over 807 stations x 24 h exactly one sunset could be tracked (E18, Hamina; official metadata says direction UNKNOWN): from 5 frames (15:01-16:01 UTC) yaw 267.9, pitch -4.6, roll 0.9 deg, f 1439 px (HFOV 48 deg), residual 0.34 deg. Independent check: the lane vanishing point (medoid over several daytime frames) turned into a world bearing with the same pose is 272.7 deg against 275.3 deg for the E18 segment in OpenStreetMap - 2.5 deg apart. The weak degrees of freedom are not hidden: under leave-one-out yaw moves 1.3 deg but roll 10 deg and f 2 % (the limit of a one-hour low-elevation arc). On the same frames the look-alone gate said 'sun' 22 times: 3 exact, 2 on the sun but off-centre, 17 something else. Raw frames are never committed; only the aggregate (times, circle fits, vanishing point, road bearing) ships. Sources: Fintraffic / Digitraffic (CC BY 4.0), OpenStreetMap (ODbL).*
 
-[![the sunset seen by C0362200 (E18, Hamina, Finland; metadata says direction UNKNOWN): the sun's path for the evening draw…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/01_sunset_track_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/01_sunset_track.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/01_sunset_track_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/01_sunset_track.png)
 
 *↑ The measurement ―― the sunset seen by C0362200 (E18, Hamina, Finland; metadata says direction UNKNOWN): the sun's path for the evening drawn from the fitted pose (magenta) and the 5 blooms fitted with a circle (cyan); yaw 267.9, pitch -4.6, roll 0.9, HFOV 48 (figure labels are in Japanese; the numbers are the same)*
 
-[![what the look-alone detector (sun_pixel_position, built for synthetic discs) called the sun in the same camera: 22 picks, 3 exactly the sun, 2 on the…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/03_naive_picks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/03_naive_picks.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/03_naive_picks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/03_naive_picks.png)
 
-*↑ what the look-alone detector (sun_pixel_position, built for synthetic discs) called the sun in the same camera: 22 picks, 3 exactly the sun, 2 on the…*
+*↑ Figure from this exhibit ―― what the look-alone detector (sun_pixel_position, built for synthetic discs) called the sun in the same camera: 22 picks, 3 exactly the sun, 2 on the… (figure labels are in Japanese; the numbers are the same)*
 
-[![refit with each sun frame removed: yaw barely moves, roll and the focal length are the weak directions of a 1-hour low-elevation arc — this is why the…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/04_jackknife_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/04_jackknife.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/04_jackknife_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/04_jackknife.png)
 
-*↑ refit with each sun frame removed: yaw barely moves, roll and the focal length are the weak directions of a 1-hour low-elevation arc — this is why the…*
+*↑ Figure from this exhibit ―― refit with each sun frame removed: yaw barely moves, roll and the focal length are the weak directions of a 1-hour low-elevation arc — this is why the… (figure labels are in Japanese; the numbers are the same)*
 
-[![for blooms cut by the station-name band the centroid sits 12.4 px (mean) away from the circle fitted to the unclipped rim; the fit uses the circle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/05_bloom_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/05_bloom_bias.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/05_bloom_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/05_bloom_bias.png)
 
-*↑ for blooms cut by the station-name band the centroid sits 12.4 px (mean) away from the circle fitted to the unclipped rim; the fit uses the circle*
+*↑ Figure from this exhibit ―― for blooms cut by the station-name band the centroid sits 12.4 px (mean) away from the circle fitted to the unclipped rim; the fit uses the circle (figure labels are in Japanese; the numbers are the same)*
 
-[![one camera out of 807 stations gave a sun track of 4 or more frames on 2026-09-20/21 (2 more had 3 frames and were left out); the vanishing point of i…](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/06_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/06_numbers.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/06_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/06_numbers.png)
 
-*↑ one camera out of 807 stations gave a sun track of 4 or more frames on 2026-09-20/21 (2 more had 3 frames and were left out); the vanishing point of i…*
+*↑ Figure from this exhibit ―― one camera out of 807 stations gave a sun track of 4 or more frames on 2026-09-20/21 (2 more had 3 frames and were left out); the vanishing point of i… (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -2574,25 +2574,25 @@ Fit the coefficients of a thin-film forward model to real images, and give no nu
 
 *↑ **Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine** ―― Fit the coefficients of a thin-film forward model to real images, and give no number to a coefficient the data do not determine (sim-to-real calibration with the `simcal` ops, planned and screened with `multivar`). Model: transfer matrix (`filmoptics`) x black-body illuminant (`spectralrad`) x CIE 1931 to sRGB x gain, gamma and vignetting. Planning: seven knobs on an L18 array; Morris screening puts illumination x gain into one combination (sensitivity ratio 1.0000) and a 500 nm film seen at one wavelength fixes only A^1 d^0.93 (optical path n d); for the 98 nm film the interface reflectance dominates and the exponent departs from n d, stated. Core, public measured data (Schwarz et al. 2024, CC BY 4.0): fitting thickness, Cauchy A and B, NA and gain to the 100 % coverage microspectroscopy gives no point estimate (local collinearity gamma > 10) but a 95 % profile-likelihood interval of [94.6, 99.0] nm (width 4.4 nm) that contains the paper's 98.5 nm reference; the noise comes from a separate measurement (bare silicon) and all six over-fitting gates pass on held-out wavelengths. The normal-incidence model with the table index gives a narrow [93.02, 93.07] nm that misses the reference and is rejected by the absolute chi-square gate (chi2/nu 1.98). On the real micrograph only the colour temperature and the vignetting are determined; thickness, index, dispersion, gain and gamma are combinations - a point versus grooves in the chi-square landscape. Fixing the index gives d = 86.65 nm within 0.2 nm but 12 % low, and the absolute gate (chi2/nu 11.7) and the residual PCA (two components) reject it: the camera's spectral sensitivities are missing from the model. Synthetic: 40 of 40 seeds within 3 CRLB; the residual PCA finds a dispersion-free model at 500 nm and four angles. Honest limit: a constant index with free A is not rejectable on a 98 nm film (B has only an upper limit). Four probes flip the gates. Nothing learned, 17 gates.*
 
-[![Si 上の SiO₂(基準 98.5 nm)の実測の反射率に、5 本のつまみの模型(実線)と直入射・材料表の n の模型(破線)を合わせた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/01_real_spectrum_fits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/01_real_spectrum_fits.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/01_real_spectrum_fits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/01_real_spectrum_fits.png)
 
 *↑ The measurement ―― Si 上の SiO₂(基準 98.5 nm)の実測の反射率に、5 本のつまみの模型(実線)と直入射・材料表の n の模型(破線)を合わせた。どちらも見た目はよく重なる —— 違いは残差を雑音の床 σ = 0.00054(裸の Si の別の測定から)で割ると見える(次の図)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![豊かな模型の χ²/ν は 0.29、直入射・材料表の n は 1.98(絶対の χ² の門で p < 1e-3 → 拒否)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/02_real_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/02_real_residuals.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/02_real_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/02_real_residuals.png)
 
-*↑ 豊かな模型の χ²/ν は 0.29、直入射・材料表の n は 1.98(絶対の χ² の門で p < 1e-3 → 拒否)。*
+*↑ Figure from this exhibit ―― 豊かな模型の χ²/ν は 0.29、直入射・材料表の n は 1.98(絶対の χ² の門で p < 1e-3 → 拒否)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![膜厚を固定して A・B・NA・利得を合わせ直したときの χ² の増え方(プロファイル尤度)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/03_real_profile_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/03_real_profile_thickness.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/03_real_profile_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/03_real_profile_thickness.png)
 
-*↑ 膜厚を固定して A・B・NA・利得を合わせ直したときの χ² の増え方(プロファイル尤度)。*
+*↑ Figure from this exhibit ―― 膜厚を固定して A・B・NA・利得を合わせ直したときの χ² の増え方(プロファイル尤度)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![実測と同じ波長・同じ雑音 σ で、膜厚 98.5 nm・利得 1 を作って合わせた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/05_synthetic_recovery_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/05_synthetic_recovery_z.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/05_synthetic_recovery_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/05_synthetic_recovery_z.png)
 
-*↑ 実測と同じ波長・同じ雑音 σ で、膜厚 98.5 nm・利得 1 を作って合わせた。*
+*↑ Figure from this exhibit ―― 実測と同じ波長・同じ雑音 σ で、膜厚 98.5 nm・利得 1 を作って合わせた。 (figure labels are in Japanese; the numbers are the same)*
 
-[![材料表の n を固定し、膜厚・色温度・利得・ガンマ・周辺減光を区画(40 px 角)の平均に合わせた: d = 86.6 nm(基準 98.5 nm と -12 %)、T = 6224 K、γ = 2.51。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/07_real_micrograph_calibration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/07_real_micrograph_calibration.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/07_real_micrograph_calibration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/07_real_micrograph_calibration.png)
 
-*↑ 材料表の n を固定し、膜厚・色温度・利得・ガンマ・周辺減光を区画(40 px 角)の平均に合わせた: d = 86.6 nm(基準 98.5 nm と -12 %)、T = 6224 K、γ = 2.51。*
+*↑ Figure from this exhibit ―― 材料表の n を固定し、膜厚・色温度・利得・ガンマ・周辺減光を区画(40 px 角)の平均に合わせた: d = 86.6 nm(基準 98.5 nm と -12 %)、T = 6224 K、γ = 2.51。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -2618,13 +2618,13 @@ A calibration plate with circular marks is imaged and taken from point detection
 
 *↑ **A Circle-Mark Calibration Plate End to End (Synthetic Imaging): Binary-Centroid Quantisation Sets an fx Floor of About 0.2 % rms (−0.45 to +0.33 % Without Noise, Depending on the Layout)** ―― A create_caltab circle-mark plate (7x9, 15 mm pitch) is imaged by a synthetic camera with a true K, barrel distortion (k1 = −0.18) and eight poses. The image is rendered by tracing each pixel back to the plate (3x3 samples, 0.7 px blur); the lens is the same Brown–Conrady four-coefficient family as the estimator (implemented separately), so what is independent is the shape of the circle's image and the area sampling. find_caltab finds all 63 marks and camera_calibration_lm calibrates from them. Without noise the detected marks are 0.0939 px off, 1.01 times the quantisation of a binary centroid, 1/sqrt(6πρ) = 0.0934 px for ρ = 6.08 px, and 0.95-1.02 times it with the plate moved up to 0.6 mm. That quantisation sets a floor of about 0.2 % rms on fx: without noise the fx error is −0.45 % for these eight views, but over 19 layouts with the plate moved it is −0.45 to +0.33 % (rms 0.198 %, 0.96 of the floor prediction), and its sign changes with the layout. Calibrating 40 seeds at image noise σ_I = 0.05, all eight intrinsic and distortion errors are within 4 σ of the LM covariance (largest 3.44 σ; 22 seeds exceed 2 σ; seed 1 alone gives 1.96 σ), and the whitened distance d² is at most 18.2 against the χ²₈ 99.9 % point of 26.1. Pose errors are at most 0.83 of the tolerance propagated from the intrinsic 1 σ. Sweeping the noise from 0.02 to 0.2, the fx deviation grows in proportion to the detection deviation (log-log slope 1.15, 1.04-1.29 over four seed bases) at 0.82-1.14 of the gain predicted by the covariance (this comparison uses no truth: it is self-consistency, and the three checks before it are the ones against the truth). The detection deviation grows only as the 0.57 power of the image noise, so halving the image noise shrinks the part of the calibration error that noise adds by just 1/√2. k2 has a 1 σ of 0.051, as large as its true value of 0.06, and came out with the wrong sign in this layout at seed 1 and in 26 of 40 seeds. A uniform shift of all points (below about 0.07 px) or a uniform magnification is absorbed by cx and fx and cannot be seen.*
 
-[![all 40 seeds inside 4 sigma of the LM covariance (largest 3.44 sigma)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/02_caltab_chain_params_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/02_caltab_chain_params.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/02_caltab_chain_params_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/02_caltab_chain_params.png)
 
 *↑ The measurement ―― all 40 seeds inside 4 sigma of the LM covariance (largest 3.44 sigma) (figure labels are in Japanese; the numbers are the same)*
 
-[![image noise sigma_I 0.02-0.2, deviations from the noise-free run; fitted slope 1.15](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/03_caltab_chain_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/03_caltab_chain_noise.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/03_caltab_chain_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_caltab_chain_truth/03_caltab_chain_noise.png)
 
-*↑ image noise sigma_I 0.02-0.2, deviations from the noise-free run; fitted slope 1.15*
+*↑ Figure from this exhibit ―― image noise sigma_I 0.02-0.2, deviations from the noise-free run; fitted slope 1.15 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_caltab_chain_truth.py
@@ -2644,13 +2644,13 @@ A checkerboard is rendered with a true K, barrel distortion (k1 = −0.21) and s
 
 *↑ **Camera Calibration with Ground Truth: 0.044 px Reprojection, Yet 0.568 px Wrong in the Corner** ―― A checkerboard is rendered with a true K, barrel distortion (k1 = −0.21) and six poses; find_checkerboard_corners recovers 324 corners at 0.046 px rms from the rendered truth. The fx error is 12.89 % with Zhang's closed form (K only) and 0.133 % with camera_calibration_lm, which refines K, distortion and every pose together; the covariance gives 1σ = 0.85 px and the estimate of 798.94 lies inside it. Reprojection rms is a small 0.044 px, yet the error map against the truth is 0.094 px in the centre and up to 0.568 px in a corner (0.413 mm at 500 mm). The uncertainty map propagated from the covariance needs no truth and averages 0.225 px. Asked for the next view after four centred ones, the recommender picks a corner; Monte Carlo gives an actual error of 1.41 px, against 3.13 px for a frontal centre view and 3.98 px for a far centre view. The ranking among the corners is within the noise.*
 
-[![calibration_next_pose prediction vs Monte Carlo error against the truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/02_calibration_next_pose_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/02_calibration_next_pose.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/02_calibration_next_pose_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/02_calibration_next_pose.png)
 
 *↑ The measurement ―― calibration_next_pose prediction vs Monte Carlo error against the truth (figure labels are in Japanese; the numbers are the same)*
 
-[![6 candidate poses; the linear prediction ranks the far centre worst and the corners best](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/03_calibration_next_pose_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/03_calibration_next_pose_scatter.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/03_calibration_next_pose_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calibration_truth_map/03_calibration_next_pose_scatter.png)
 
-*↑ 6 candidate poses; the linear prediction ranks the far centre worst and the corners best*
+*↑ Figure from this exhibit ―― 6 candidate poses; the linear prediction ranks the far centre worst and the corners best (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_calibration_truth_map.py
@@ -2674,9 +2674,9 @@ A sheet-metal part drawn from a dimension table (four holes, a slot, a chamfer a
 
 *↑ The measurement (figure labels are in Japanese; the numbers are the same)*
 
-[![80 px overlap, 9 true pairs: corner error per model](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/03_part_locate_stitch_models_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/03_part_locate_stitch_models.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/03_part_locate_stitch_models_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_part_locate_features/03_part_locate_stitch_models.png)
 
-*↑ 80 px overlap, 9 true pairs: corner error per model*
+*↑ Figure from this exhibit ―― 80 px overlap, 9 true pairs: corner error per model (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_part_locate_features.py
@@ -2696,7 +2696,7 @@ A board drawn from a dimension table is imaged twice: as visible reflectance and
 
 *↑ **Visible and Thermal Board Images Correlate at −0.74; Mutual Information Aligns Them to 0.170 px** ―― A board drawn from a dimension table is imaged twice: as visible reflectance and as thermal emission εT⁴ + (1−ε)T_amb⁴. Copper is bright in the visible (0.80) and dark in the infrared (emissivity 0.07); the IC is dark in the visible (0.07) and bright in the infrared (emissivity 0.95 at 352 K). At the true alignment the correlation coefficient is −0.7435, so brightness does not map monotonically. register_mi (normalised mutual information, affine) recovers the true affine to a four-corner error of 0.170 px. register_ecc refuses because the denominator of its quadratic correlation approximation is −557, rather than reporting a false fit, and the phase-correlation aoi.register_image returns residual 2.12 with consistent=False. The MI success rate by initial offset (eight directions, corner error < 0.5 px) is 1.000 at 2 and 4 px, 0.875 at 8 px and 0.625 at 16 px.*
 
-[![register_mi: success rate per initial offset (8 directions)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/02_multimodal_mi_capture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/02_multimodal_mi_capture.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/02_multimodal_mi_capture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multimodal_mi_registration/02_multimodal_mi_capture.png)
 
 *↑ The measurement ―― register_mi: success rate per initial offset (8 directions) (figure labels are in Japanese; the numbers are the same)*
 
@@ -2740,25 +2740,25 @@ Using a real pair of stereo images, we compute disparity, distance, surfaces and
 
 *↑ **Disparity, Distance, Surface and Circle Pose from a Real Stereo Pair — Scored Against Ground-Truth Disparity, with a Map of Where It Breaks** ―― A map of where it breaks, scored against ground-truth disparity. Top: classes (orange occluded, yellow near depth edges, blue textureless, pink view-dependent surfaces); bottom: errors (orange) and invalid pixels (black). bad-2 4.67% (SGBM 7.27%), 14.2% with invalid pixels counted as errors (18.0%). Errors remain near depth edges and on glossy surfaces, and on textureless pixels it loses to SGBM. bad-2 counts errors above 2 px at quarter resolution (8 px at full resolution, bad 8.0 in full-resolution terms; not the official tables' bad 2.0).*
 
-[![bad2 4.67 %(有効だけ)/ 密度 90.0 %。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/01_scene.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/01_scene.png)
 
 *↑ The measurement ―― bad2 4.67 %(有効だけ)/ 密度 90.0 %。OpenCV SGBM は 7.27 % / 88.4 %。bad2 = 1/4 解像度の画素で 2 px 超(原寸の 8 px に相当。Middlebury の公式の表の bad 2.0 は原寸で数えるので別の閾値 —— 原寸換算の呼び方なら bad 8.0)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真値に近い解: 中心 23.5 mm・法線 7.74°。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/03_wheel_pose_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/03_wheel_pose.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/03_wheel_pose_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/03_wheel_pose.png)
 
-*↑ 真値に近い解: 中心 23.5 mm・法線 7.74°。*
+*↑ Figure from this exhibit ―― 真値に近い解: 中心 23.5 mm・法線 7.74°。 (figure labels are in Japanese; the numbers are the same)*
 
-[![Lepetit 点 bad2 13.8 %、でたらめな画素 16.3 %。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/04_sparse_ncc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/04_sparse_ncc.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/04_sparse_ncc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/04_sparse_ncc.png)
 
-*↑ Lepetit 点 bad2 13.8 %、でたらめな画素 16.3 %。*
+*↑ Figure from this exhibit ―― Lepetit 点 bad2 13.8 %、でたらめな画素 16.3 %。 (figure labels are in Japanese; the numbers are the same)*
 
-[![遮蔽は真値から幾何で数えた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/05_classes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/05_classes.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/05_classes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/05_classes.png)
 
-*↑ 遮蔽は真値から幾何で数えた。*
+*↑ Figure from this exhibit ―― 遮蔽は真値から幾何で数えた。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/06_middeval3_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/06_middeval3.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/06_middeval3_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_multiscanline/06_middeval3.png)
 
-*↑ 同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。*
+*↑ Figure from this exhibit ―― 同じ探索範囲・窓・左右一致の OpenCV SGBM と同じ画素で採点。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_real_stereo_multiscanline.py
@@ -2778,13 +2778,13 @@ Thirteen calibration-board photos distributed with OpenCV (640x480, 9x6 inner co
 
 *↑ **Undistorting 13 Real Calibration-Board Photos and Rectifying Them to a Front View — Scored by Straightness and Grid Spacing** ―― The most distorted photo: original, distortion removed by change_radial_distortion_image, rectify_to_world_plane front view (orange: 40 px grid; blue: re-detected corners), and the difference after minus before.*
 
-[![直線性 = 角の 6 行・9 列に当てた直線からの垂直距離の RMS。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/02_per_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/02_per_image.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/02_per_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/02_per_image.png)
 
 *↑ The measurement ―― 直線性 = 角の 6 行・9 列に当てた直線からの垂直距離の RMS。 (figure labels are in Japanese; the numbers are the same)*
 
-[![応答の山は角の真上でなく脇に立つ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/03_lepetit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/03_lepetit.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/03_lepetit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_chessboard_undistort/03_lepetit.png)
 
-*↑ 応答の山は角の真上でなく脇に立つ。*
+*↑ Figure from this exhibit ―― 応答の山は角の真上でなく脇に立つ。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_real_chessboard_undistort.py
@@ -2804,17 +2804,17 @@ Knowing where a towel's edges meet tells a robot where to grasp. In rendered ima
 
 *↑ **Finding Towel Corners, Sides and Creases with Classical Image Processing (Synthetic Rendering): A Plain Rectangle Fit Is Best, the General Polygon Only Ties It in Chroma, and Everything Degrades with Close Table Colours and Wrinkles of 3 mm or More** ―― Rectangular towels folded 0-2 times and laid on a table are rendered with our own geometry (MuJoCo's cloth penetrated the table, and three more contact settings did not fix it). Thickness, wrinkles, stripes and hem stitching, table grain and shadows are drawn. The true corners belong to the renderer and are projected at the corner height (projected on the table plane instead, the order of the proposed RGB pipeline and the rectangle flips, so differences near 1 mm depend on the truth definition). Detection uses gaussian, otsu, fill_up, sk_find_contours and xg_gen_polygons for the region and sides and takes the intersections of the fitted side lines as corners (the proposal). The baselines are sk_corner_harris alone, hull vertices alone, the four points farthest from the centroid, and the minimum-area rectangle. Over 20 seeds x 4 folds (80 images) the median corner error is 1.08 mm for the chroma proposal, 1.14 mm for the rectangle, 1.55 mm for the RGB proposal, 3.62 mm for Harris and 4.16 mm for the hull. The 90th percentile is 3.00 mm for the RGB proposal against 2.01 mm for the rectangle, so where a rectangle prior applies the plain baseline beats the RGB proposal. Recall within 5 mm is kept as a secondary number: even the crude four-farthest-points baseline reaches 0.944, against 0.991 / 0.997 for the proposals. The lowest colour difference dE at which recall reaches 0.9 is 46 for the RGB proposal and the RGB rectangle, 32 for both chroma methods and 57 for Harris; at dE 0 the proposals and the rectangles (RGB and chroma) are all at 0.15 or below, and Harris, which needs no region, is best at 0.61. At wrinkles of 3 mm / 4 mm recall is 0.50 / 0.30 for the RGB proposal, 0.82 / 0.55 for the RGB rectangle, 0.80 / 0.68 for the chroma proposal and 0.51 / 0.33 for Harris. Taking the polygon vertices as corners without intersecting side lines rises to 0.84 at 4 mm (but the error worsens to 2.4 mm at 0 mm), a hint that part of the wrinkle loss lies in the line fit (untested). Ranking the grasp corner by hem stitching 8 mm inside each side gives 0.917 against a chance level of 0.417, and 0.267 on seeds 0-19 when the stitching is not drawn (0.348 pooled over 10 seed sets). The stitching is a cue we put in the renderer; real towels may differ. The numbers are one set of seeds 0-19; over ten seed sets the chroma proposal and the rectangle swap places in one set (by 0.002 mm), and the other orderings given here hold.*
 
-[![half fold, wrinkle 1 mm, 20 seeds per point.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/02_towel_contrast.png)
 
 *↑ The measurement ―― half fold, wrinkle 1 mm, 20 seeds per point. hull vertices and 4-farthest are in the table, not drawn (figure labels are in Japanese; the numbers are the same)*
 
-[![half fold, dE 69, 20 seeds per point.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/03_towel_wrinkle.png)
 
-*↑ half fold, dE 69, 20 seeds per point.*
+*↑ Figure from this exhibit ―― half fold, dE 69, 20 seeds per point. (figure labels are in Japanese; the numbers are the same)*
 
-[![median error: min-area rectangle (RGB) 1.14 mm, proposed (chroma) 1.08 mm, proposed (RGB) 1.55 mm.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cloth_towel_corners_synth/04_towel_summary.png)
 
-*↑ median error: min-area rectangle (RGB) 1.14 mm, proposed (chroma) 1.08 mm, proposed (RGB) 1.55 mm.*
+*↑ Figure from this exhibit ―― median error: min-area rectangle (RGB) 1.14 mm, proposed (chroma) 1.08 mm, proposed (RGB) 1.55 mm. (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_cloth_towel_corners_synth.py
@@ -2842,17 +2842,17 @@ A spectral cube of ground, underdrawing, glaze and fading stacked in layers, the
 
 *↑ **Peeling Layers With Many Wavelengths — Underdrawing, Ground, Glaze and Fading, Truth in Hand** ―― A spectral cube of ground, underdrawing, glaze and fading stacked in layers, then unmixed. Splitting the visible range into 16 bands does no better than RGB (recall 0.118 versus 0.119); what won was adding near-infrared. The same detector scores an AUC of 1.000 on ultramarine, 0.630 on azurite and 0.013 on losses — averaged, all of that vanishes. Restoring the unfaded colour barely beat the null, ΔE00 16.79 → 16.46.*
 
-[![近赤外の差分は剥落部(楕円)で消え、近赤外 1 枚は面ごとに水準が違う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/02_detector_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/02_detector_maps.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/02_detector_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/02_detector_maps.png)
 
 *↑ The measurement ―― 近赤外の差分は剥落部(楕円)で消え、近赤外 1 枚は面ごとに水準が違う。塗り分けは 1–99 分位でクリップした表示のみ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![半分を割るのは tau 0.30–0.60 のあいだ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/03_thickness_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/03_thickness_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/03_thickness_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/03_thickness_cliff.png)
 
-*↑ 半分を割るのは tau 0.30–0.60 のあいだ。*
+*↑ Figure from this exhibit ―― 半分を割るのは tau 0.30–0.60 のあいだ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![ゼロ点の線より下に来た復元が 1 本も無い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/04_restoration_vs_null_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/04_restoration_vs_null.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/04_restoration_vs_null_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/04_restoration_vs_null.png)
 
-*↑ ゼロ点の線より下に来た復元が 1 本も無い。*
+*↑ Figure from this exhibit ―― ゼロ点の線より下に来た復元が 1 本も無い。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_pigment_unmixing.py
@@ -2872,17 +2872,17 @@ Colour deconvolution of a real immunostain (haematoxylin plus DAB). On synthetic
 
 *↑ **Separating a Real Immunostain by Colour — The Watchdog Was Blind to Exactly the Error It Should Catch** ―― Colour deconvolution of a real immunostain (haematoxylin plus DAB). On synthetic data it separates perfectly — recompose one stain at unit concentration, solve again, and recovery is 1.0000 with 0.0000 crosstalk — so anyone looking only at synthesis concludes the problem is solved. On the real slide the haematoxylin concentration runs down to -4.446 and 11.51 % of pixels are negative, which is physically impossible: a negative concentration means the dye emitted light. Rotating the stain vectors within their plane by plus or minus twenty degrees moves the haematoxylin median from 0.0471 to 0.1348, a factor of 2.86, and DAB from 0.3590 to 0.1836 — while the residual channel, the quantity everyone reads as goodness of fit, stays at 0.0345 with a total spread of 3.3e-16. The geometry says why: the plane the two stains span is unchanged by a rotation inside it, so the component orthogonal to that plane cannot move. The negative fraction of the rotated stain is equally blind, fixed at 11.51 %, because its dual vector changes length but not direction. Only the partner moves, from 0.00 % at minus twenty degrees to 30.38 % at plus twenty: the watchdog has to watch the other stain, not itself, and being monotone it bounds the error from one side only. The round trip through recompose closes to 1e-06, which refutes none of this.*
 
-[![H の中央値は 0.0656 -> 0.1348。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/02_blind_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/02_blind.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/02_blind_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/02_blind.png)
 
 *↑ The measurement ―― H の中央値は 0.0656 -> 0.1348。残差の絶対中央値は 0.0345 のまま。 (figure labels are in Japanese; the numbers are the same)*
 
-[![残差と自分の負率は平坦。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/03_diagnostics_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/03_diagnostics.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/03_diagnostics_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/03_diagnostics.png)
 
-*↑ 残差と自分の負率は平坦。*
+*↑ Figure from this exhibit ―― 残差と自分の負率は平坦。 (figure labels are in Japanese; the numbers are the same)*
 
-[![濃度は 2.9 倍動くのに残差は 4 桁目まで同じ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/04_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/04_sweep.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/04_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/04_sweep.png)
 
-*↑ 濃度は 2.9 倍動くのに残差は 4 桁目まで同じ。*
+*↑ Figure from this exhibit ―― 濃度は 2.9 倍動くのに残差は 4 桁目まで同じ。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_real_stain_unmix.py
@@ -2902,17 +2902,17 @@ Linear RGB synthesised from 24 known spectral reflectances and known illuminants
 
 *↑ **Colour Constancy (White Balance) — No Method Works, Only Conditions Do** ―― Linear RGB synthesised from 24 known spectral reflectances and known illuminants, with illuminant estimation scored by recovery angular error. Max-RGB is best at a median of 1.06 degrees over 11 illuminants, but removing the single brightest patch takes it to 8.45 degrees, and tripling exposure to saturate 43 % of pixels takes it to 13.61 degrees, identical to doing nothing. Even a diagonal correction with the true illuminant leaves a mean ΔE00 of 5.07 at 2500 K.*
 
-[![灰色世界はゼロ点(何もしない)の線を 0.1〜0.2 の間で上抜けする = そこから先は回すだけ損。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/02_bias_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/02_bias_cliff.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/02_bias_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/02_bias_cliff.png)
 
 *↑ The measurement ―― 灰色世界はゼロ点(何もしない)の線を 0.1〜0.2 の間で上抜けする = そこから先は回すだけ損。白パッチ法には崖が無い。 (figure labels are in Japanese; the numbers are the same)*
 
-[![露出 3 以上で白パッチ法の線が「何もしない」に重なる(max が (1,1,1) に張り付く)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/03_saturation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/03_saturation.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/03_saturation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/03_saturation.png)
 
-*↑ 露出 3 以上で白パッチ法の線が「何もしない」に重なる(max が (1,1,1) に張り付く)。*
+*↑ Figure from this exhibit ―― 露出 3 以上で白パッチ法の線が「何もしない」に重なる(max が (1,1,1) に張り付く)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![最右列が推定誤差の実費。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/04_angle_to_de_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/04_angle_to_de.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/04_angle_to_de_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/04_angle_to_de.png)
 
-*↑ 最右列が推定誤差の実費。*
+*↑ Figure from this exhibit ―― 最右列が推定誤差の実費。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_white_balance.py
@@ -2932,29 +2932,29 @@ So that the observing optics (lenses, windows, mirrors, films) and the observed 
 
 *↑ **A Material Optical-Property Library — 86 Glasses, Crystals, Semiconductors, Metals, Liquids and Plastics in One Table, Scored on Catalogue Values and a Second Implementation** ―― So that the observing optics (lenses, windows, mirrors, films) and the observed object (wafer, mould, solder) can read the same material table, 86 glasses, crystals, semiconductors, metals, liquids and plastics are put into one record type. Sixteen new ops (`materials`, category `matprop` of `opsoptics`): `material_table` / `material_record`, `material_optical_constants` (n, k, α, ε and normal reflectance at one wavelength, with the source), `material_dispersion` / `material_extinction` / `material_absorption` / `material_transmittance` / `material_reflectance` (all as pairs (λ nm, value), the same shape as source and QE curves), `abbe_number` / `glass_map`, `thermo_optic_coefficient` (catalogue formula A), `plate_focus_shift` (focus shift and longitudinal spherical aberration of a plane-parallel plate), `silicon_free_carrier_absorption` (Schroder 1978), `material_from_sellmeier` / `material_from_curves` and `read_glass_catalog_agf` (the user's own .agf, all 13 dispersion formulas of that format). The numbers are the primary literature of the refractiveindex.info database (CC0) only; vendor catalogues are not bundled. The n_d / V_d of all 46 glasses agree with the catalogue values to 4e-6 / 0.005, and the second implementation optiland 0.6.3 agrees at 23 points to 5e-10. Silicon (Green 2008) reproduces the three-decade drop k(1.0 µm) 5.09e-4 to k(1.2 µm) 2.1e-7, so a 775 µm wafer transmits 0.3 % at 1.0 µm and 52 % at 1.2 µm (closed form to 1e-9). Silver reflects 0.982 at 500 nm, aluminium dips to 0.866 at 820 nm, gold rises from 0.475 at 500 nm to 0.971 at 700 nm, and the colours come from the colour-matching functions, not from paint. Polycarbonate disperses 2.3 times more than BK7-class glass, which has dn/dT 1.62e-6 /K at the e line. Step 2 makes the lens (`raytrace`), mirror (`glassmirror`) and scene (`optscene.scene_material`) ops read the same table: lenses of other makers' glasses and plastics match the thick-lens closed form at the F, d and C lines to 1e-14 mm, and axial colour follows 1/V_d within 3 % for five materials; the 20 Sellmeier sets raytrace had copied by hand are the same curves to 4e-16. Finding: the first table used REELS-derived data for W and Pt, with 550 nm reflectances of 0.84 / 0.93 against 0.50 / 0.64-0.73 from other measurements; W now uses Weaver, Pt Tselin 2024, and a gate checks against an independent dataset. Nothing learned, nothing calibrated, 46 gates.*
 
-[![4 つの公開カタログ(記号 A〜D)の Sellmeier 式とべき級数の分散式を同じレコード型で評価した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/02_glass_catalogue_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/02_glass_catalogue.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/02_glass_catalogue_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/02_glass_catalogue.png)
 
 *↑ The measurement ―― 4 つの公開カタログ(記号 A〜D)の Sellmeier 式とべき級数の分散式を同じレコード型で評価した。硝材コードは n_d − 1 の小数 3 桁と V_d × 10(係数の出どころは公開の硝材カタログ値)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じ一次文献を optiland(MIT)が別のコードで評価した値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/03_second_implementation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/03_second_implementation.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/03_second_implementation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/03_second_implementation.png)
 
-*↑ 同じ一次文献を optiland(MIT)が別のコードで評価した値。*
+*↑ Figure from this exhibit ―― 同じ一次文献を optiland(MIT)が別のコードで評価した値。 (figure labels are in Japanese; the numbers are the same)*
 
-[![吸収端の上は厚さに関わらず 0、下は (1−R)²/(1−R²) ≈ 0.53 に漸近(n ≈ 3.5 の Fresnel 損失)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/06_silicon_transmittance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/06_silicon_transmittance.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/06_silicon_transmittance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/06_silicon_transmittance.png)
 
-*↑ 吸収端の上は厚さに関わらず 0、下は (1−R)²/(1−R²) ≈ 0.53 に漸近(n ≈ 3.5 の Fresnel 損失)。*
+*↑ Figure from this exhibit ―― 吸収端の上は厚さに関わらず 0、下は (1−R)²/(1−R²) ≈ 0.53 に漸近(n ≈ 3.5 の Fresnel 損失)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![n,k → 分光反射率 → CIE 等色関数 → sRGB。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/11_mirror_colours_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/11_mirror_colours.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/11_mirror_colours_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/11_mirror_colours.png)
 
-*↑ n,k → 分光反射率 → CIE 等色関数 → sRGB。*
+*↑ Figure from this exhibit ―― n,k → 分光反射率 → CIE 等色関数 → sRGB。 (figure labels are in Japanese; the numbers are the same)*
 
-[![R = ±50 mm・厚さ 4 mm の両凸レンズ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/14_lens_axial_colour_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/14_lens_axial_colour.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/14_lens_axial_colour_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/14_lens_axial_colour.png)
 
-*↑ R = ±50 mm・厚さ 4 mm の両凸レンズ。*
+*↑ Figure from this exhibit ―― R = ±50 mm・厚さ 4 mm の両凸レンズ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![厚さ 0.05 → 3 mm: 吸収端が長波長側へ押され、1.1 µm の肩が消えていく。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/07_silicon_window_thickness.gif)
 
-*↑ The animation ―― 厚さ 0.05 → 3 mm: 吸収端が長波長側へ押され、1.1 µm の肩が消えていく。薄いダイなら 1.0 µm 台でも透け、厚いウェハは 1.2 µm 以上。*
+*↑ The animation ―― 厚さ 0.05 → 3 mm: 吸収端が長波長側へ押され、1.1 µm の肩が消えていく。薄いダイなら 1.0 µm 台でも透け、厚いウェハは 1.2 µm 以上。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -2978,29 +2978,29 @@ The back side of a silicon die is inspected with near-infrared light, where sili
 
 *↑ **Near-Infrared Inspection Through a Silicon Wafer — Choosing the LED Wavelength from the Source × Wafer × Sensor Integral** ―― The back side of a silicon die is inspected with near-infrared light, where silicon is transparent; but those wavelengths are also where a silicon sensor stops responding, so the same absorption edge is a window for the object and a wall for the sensor. One Si record of the material table (Green 2008) is used for both the wafer transmittance and the photodiode QE. Nine new ops (`spectralrad`, category `spectral` of `opsoptics`), all returning pairs (λ nm, value) like the material curves: blackbody, CIE illuminant A, LED, band-pass, Si photodiode QE, energy-to-photon conversion, curve product, integral and summary. CIE A matches its table to 1.6e-6, the blackbody obeys Wien and Stefan–Boltzmann, and the QE matches its closed form to 4e-19. The best LED peak moves to longer wavelengths as the wafer thickens (50 µm: 935 nm, 775 µm: 1065 nm). The usual 1050 nm LED is within 5 % of the best for a thick wafer but yields 3.4 times fewer electrons through a 50 µm die; 1200 nm, where the wafer is most transparent, gives 28 times fewer with a silicon sensor (for an Ohno-shaped LED with a 50 nm FWHM; the 1200 nm LED's electrons come from the short-wavelength tail of its spectrum, so a 30-100 nm FWHM gives 75 to 6.6 times and a 50 nm Gaussian 58 times). A deeper collecting sensor (3 to 50 µm) gives 16 times more signal without moving the optimum, which the wafer sets. A CNR of 20 through 775 µm needs 1.2e6 photons per open pixel, and the CNR measured in chapter 4's images (no PSF applied) matches the closed form e/√(e + read²) within 10 %. Lowering the focus mechanically by the wafer thickness misses by t(1 − 1/n) = 557 µm (W20 = 2.6 waves, diffraction PSF) and widens edges eightfold. Chapter 6 (2026-10-15) puts the same wafer and back-side wiring into a 3-D scene and images it with rays through `optscene`'s wavelength integral (the LED spectrum split into 15 wavelengths, silicon n and k from the material table, a telecentric lens, the silicon sensor's QE). The open pixels match an independently written integral ∫LED·λ·(1 − R)²e^{−αt}·QE to 0.3 % (2.8 % at 1200 nm), the wafer is opaque at 850 nm (5e-9), and the wiring shadows fall on exactly the pixels the geometry predicts. Nothing learned, nothing calibrated, 34 gates (33 in CI without the photograph). Chapter 7 (2026-11-08): with real wiring from a public die photograph (CC BY 3.0) behind the wafer, at 775 um the best LED and 1050 nm are nearly equal (shape IoU 0.943 / 0.943 after a sigma-1 blur; the truth mask drops the photograph's grain, holes and islands under 8 um); 1200 nm gives 0.889, and the same shape (IoU 0.9) needs 32x the photons of the best LED on a power-of-two grid. Adding the 28x electron ratio in light makes the open-pixel electrons equal to the best LED by construction (only the PSF wavelength differs, so it is not a gate). The image CNR matches the noiseless-image-plus-Poisson formula within 1.0 % and is 5-30 % below the closed form because of the diffraction PSF tail. At 850 nm the wafer is opaque and nothing can be measured. On a 50 um die, with the same photons, the best LED (935 nm) reaches CNR 60.6 against 38.9 at 1050 nm; at the least light where the best LED reaches IoU 0.9 (1/256 of chapter 4) the shapes score 0.929 against 0.839. Mechanical focus gives 0.172.*
 
-[![ウェハは 1.1 µm より長波長で透け、Si センサは同じ波長で感じなくなる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction.png)
 
 *↑ The measurement ―― ウェハは 1.1 µm より長波長で透け、Si センサは同じ波長で感じなくなる。積は 1065 nm 付近で最大 4.6e-04 —— 光子 1 万個で電子 3〜4 個。1e-7 未満は図の床に置いた。 (figure labels are in Japanese; the numbers are the same)*
 
-[![最良のピーク: 50 µm → 935 nm、150 µm → 1000 nm、300 µm → 1030 nm、775 µm → 1065 nm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/02_best_led_vs_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/02_best_led_vs_thickness.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/02_best_led_vs_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/02_best_led_vs_thickness.png)
 
-*↑ 最良のピーク: 50 µm → 935 nm、150 µm → 1000 nm、300 µm → 1030 nm、775 µm → 1065 nm。*
+*↑ Figure from this exhibit ―― 最良のピーク: 50 µm → 935 nm、150 µm → 1000 nm、300 µm → 1030 nm、775 µm → 1065 nm。 (figure labels are in Japanese; the numbers are the same)*
 
-[![775 µm の Si ウェハの裏の配線を、同じ光子数(開口 1 画素に 1.2e+06)の 3 つの LED で撮った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/03_three_leds_through_wafer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/03_three_leds_through_wafer.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/03_three_leds_through_wafer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/03_three_leds_through_wafer.png)
 
-*↑ 775 µm の Si ウェハの裏の配線を、同じ光子数(開口 1 画素に 1.2e+06)の 3 つの LED で撮った。*
+*↑ Figure from this exhibit ―― 775 µm の Si ウェハの裏の配線を、同じ光子数(開口 1 画素に 1.2e+06)の 3 つの LED で撮った。 (figure labels are in Japanese; the numbers are the same)*
 
-[![左: ウェハの厚さだけ機械的に下げた焦点(像は 557 µm ずれ、W20 = 2.6 波長、回折の PSF で計算)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/04_focus_through_wafer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/04_focus_through_wafer.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/04_focus_through_wafer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/04_focus_through_wafer.png)
 
-*↑ 左: ウェハの厚さだけ機械的に下げた焦点(像は 557 µm ずれ、W20 = 2.6 波長、回折の PSF で計算)。*
+*↑ Figure from this exhibit ―― 左: ウェハの厚さだけ機械的に下げた焦点(像は 557 µm ずれ、W20 = 2.6 波長、回折の PSF で計算)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じ 775 µm のウェハと裏の配線を 3-D のシーンに置き、光線で撮った(optscene の波長積分、テレセンのレンズ、Si センサ、第 4 章と同じ光子数)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/06_scene_through_wafer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/06_scene_through_wafer.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/06_scene_through_wafer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/06_scene_through_wafer.png)
 
-*↑ 同じ 775 µm のウェハと裏の配線を 3-D のシーンに置き、光線で撮った(optscene の波長積分、テレセンのレンズ、Si センサ、第 4 章と同じ光子数)。*
+*↑ Figure from this exhibit ―― 同じ 775 µm のウェハと裏の配線を 3-D のシーンに置き、光線で撮った(optscene の波長積分、テレセンのレンズ、Si センサ、第 4 章と同じ光子数)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![ウェハを 30 µm から 1.5 mm まで厚くすると、最良の LED が長波長へ滑っていく。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/05_best_led_sweep.gif)
 
-*↑ The animation ―― ウェハを 30 µm から 1.5 mm まで厚くすると、最良の LED が長波長へ滑っていく。*
+*↑ The animation ―― ウェハを 30 µm から 1.5 mm まで厚くすると、最良の LED が長波長へ滑っていく。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -3024,25 +3024,25 @@ Inspection light travels in light guides (fibre bundles) and interferometric or 
 
 *↑ **Optical Fibres and Light Guides — From the Material Table's Fused Silica to Modes, Dispersion, Mode Field and Illumination Efficiency** ―― Inspection light travels in light guides (fibre bundles) and interferometric or spectroscopic light in single-mode fibre; both are set by the dispersion of the glass (the material table) and the guiding equations. Seven new ops (`fiberoptics`, category `fiber` of `opsoptics`): group index, material dispersion, numerical aperture, V number, LP_lm modes from the weakly guiding characteristic equation, the LP01 mode field diameter and light-guide efficiency. Fused silica has group index 1.4626 at 1.55 µm, its material-dispersion zero at 1272.8 nm and D = 21.9 ps/(nm km) at 1.55 µm, all within the published ranges. The mode count switches from 2 to 6 within 0.001 of the Bessel zero 2.4048, reaches 456 at V = 30 against V²/2 = 450, and the LP01 b(V) agrees with the Rudolph-Neumann fit to 0.24 %. LP02 is bound only exponentially weakly just above its cutoff and becomes resolvable in floating point about 0.05 above it, a limit now written into the operator. The mode field diameter agrees with Marcuse's 1977 fit to 0.8 %, while the second-moment definition is 11 % larger at V = 1.2, so an MFD means nothing without its definition. A core radius of 4.1 µm and NA 0.12 give a cutoff of 1285 nm and an MFD of 9.06 µm at 1310 nm, inside the ITU-T G.652 range of 8.6 to 9.5 µm. A Lambertian LED fills a bundle of smaller NA as (NA_bundle/NA_source)², and the chain LED, 2 m light guide, 775 µm silicon wafer and silicon sensor yields 2.2e-4 electrons per photon. Nothing learned, nothing calibrated, 17 gates.*
 
-[![パルスの包絡は c/n_g で進む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/01_silica_dispersion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/01_silica_dispersion.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/01_silica_dispersion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/01_silica_dispersion.png)
 
 *↑ The measurement ―― パルスの包絡は c/n_g で進む。材料表の溶融石英(Malitson 1965)から差分で求めた。 (figure labels are in Japanese; the numbers are the same)*
 
-[![零点より短い波長は正常分散(青が遅い)、長い波長は異常分散。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/02_silica_gvd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/02_silica_gvd.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/02_silica_gvd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/02_silica_gvd.png)
 
-*↑ 零点より短い波長は正常分散(青が遅い)、長い波長は異常分散。*
+*↑ Figure from this exhibit ―― 零点より短い波長は正常分散(青が遅い)、長い波長は異常分散。 (figure labels are in Japanese; the numbers are the same)*
 
-[![V が小さいほど場がクラッドへ染み出し、指数関数の裾が 2 次モーメントを押し上げる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/04_mode_field_diameter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/04_mode_field_diameter.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/04_mode_field_diameter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/04_mode_field_diameter.png)
 
-*↑ V が小さいほど場がクラッドへ染み出し、指数関数の裾が 2 次モーメントを押し上げる。*
+*↑ Figure from this exhibit ―― V が小さいほど場がクラッドへ染み出し、指数関数の裾が 2 次モーメントを押し上げる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![コアの中は J0、外は K0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/05_lp01_field_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/05_lp01_field.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/05_lp01_field_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/05_lp01_field.png)
 
-*↑ コアの中は J0、外は K0。*
+*↑ Figure from this exhibit ―― コアの中は J0、外は K0。 (figure labels are in Japanese; the numbers are the same)*
 
-[![光源より NA の小さい束は、立体角の比 (NA_束/NA_光源)² しか受け取らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/06_light_guide_acceptance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/06_light_guide_acceptance.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/06_light_guide_acceptance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/06_light_guide_acceptance.png)
 
-*↑ 光源より NA の小さい束は、立体角の比 (NA_束/NA_光源)² しか受け取らない。*
+*↑ Figure from this exhibit ―― 光源より NA の小さい束は、立体角の比 (NA_束/NA_光源)² しか受け取らない。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_fiber_light_guide.py
@@ -3064,25 +3064,25 @@ The plain-text prescription (.zmx) that commercial sequential ray-tracing progra
 
 Terms: PSF — The spatial response of an imaging system to a point object, describing how that point is blurred in the image.; MTF — The magnitude of the optical transfer function, showing how image contrast is transferred at each spatial frequency.
 
-[![読み込んだ処方の子午断面図(optdraw)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/01_layout_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/01_layout.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/01_layout_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/01_layout.png)
 
 *↑ The measurement ―― 読み込んだ処方の子午断面図(optdraw)。視野 0・14・20° の実光線 5 本ずつ、寸法は EFL・BFL・全長・像高。 (figure labels are in Japanese; the numbers are the same)*
 
-[![S_I 球面、S_II コマ、S_III 非点、S_IV ペッツバール、S_V 歪曲。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/03_seidel_bars_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/03_seidel_bars.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/03_seidel_bars_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/03_seidel_bars.png)
 
-*↑ S_I 球面、S_II コマ、S_III 非点、S_IV ペッツバール、S_V 歪曲。*
+*↑ Figure from this exhibit ―― S_I 球面、S_II コマ、S_III 非点、S_IV ペッツバール、S_V 歪曲。 (figure labels are in Japanese; the numbers are the same)*
 
-[![実収差の瞳(OPD)から PSF を FFT で作り、その FFT が MTF。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/04_mtf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/04_mtf.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/04_mtf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/04_mtf.png)
 
-*↑ 実収差の瞳(OPD)から PSF を FFT で作り、その FFT が MTF。*
+*↑ Figure from this exhibit ―― 実収差の瞳(OPD)から PSF を FFT で作り、その FFT が MTF。 (figure labels are in Japanese; the numbers are the same)*
 
-[![中央の負レンズを重いフリント 648/338 に差し替えて崩れた三枚玉を、6 面の曲率を変数に EFL を元の値に固定して直す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/05_optimisation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/05_optimisation.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/05_optimisation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/05_optimisation.png)
 
-*↑ 中央の負レンズを重いフリント 648/338 に差し替えて崩れた三枚玉を、6 面の曲率を変数に EFL を元の値に固定して直す。*
+*↑ Figure from this exhibit ―― 中央の負レンズを重いフリント 648/338 に差し替えて崩れた三枚玉を、6 面の曲率を変数に EFL を元の値に固定して直す。 (figure labels are in Japanese; the numbers are the same)*
 
-[![記録値(tests/data/lensfile/second_recorded.json)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/06_second_implementations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/06_second_implementations.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/06_second_implementations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/06_second_implementations.png)
 
-*↑ 記録値(tests/data/lensfile/second_recorded.json)。*
+*↑ Figure from this exhibit ―― 記録値(tests/data/lensfile/second_recorded.json)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_lens_file_roundtrip.py
@@ -3140,7 +3140,7 @@ A designer's merit function is a table of requirements: "edge thickness at least
 
 *↑ **Designing a Triplet from a Table of Requirements — A Merit Function with Edge-Thickness, Centre-Thickness and Air-Gap Bounds, Scored Against Closed Forms and an Independent Implementation** ―― A designer's merit function is a table of requirements: "edge thickness at least 1 mm here, EFL 50 mm, a small wavefront". Keep that table as rows, each with a target, a weight and, for a bound, a one-sided form, and say what pulls the optimiser as a percentage per row. Six new ops (`lensmerit`, category `lensmerit` of `opsoptics`): `merit_operands_list` (name, meaning, unit and arguments of 32 operands; the 7th slice added `ANGM` / `RSAN` for afocal systems) / `merit_evaluate` (per row value, target, weight, contribution (w (value - target))^2 and share; a bound row contributes 0 while it holds) / `merit_default` (whole-pupil ray rows plus the EFL hold; spot or wavefront, chief-ray or centroid reference) / `merit_boundary_operands` (edge thickness of every glass, centre-thickness and air-gap bounds) / `optimize_lens_operands` (the variables, damped least squares and step sizes of `lensopt` unchanged, plus an outer discrete loop that picks the glass of `g<i>` from a candidate list) / `merit_contributions` (which row dominates, as percentages). The edge thickness is t - sag_i(h_i) + sag_(i+1)(h_(i+1)) at the clear semi-diameters of both surfaces, conic and even aspheric terms included. Scored against closed forms: the thin-achromat power split phi1 = phi V1/(V1 - V2), phi2 = -phi V2/(V1 - V2) (an EFFL + AXCL = 0 optimisation lands on it to 1.7e-14 relative), the plano-convex edge thickness to 1.8e-15, the real ray height and angle of incidence after a refracting sphere against Snell's law to 1.1e-13, the working F-number of an ideal lens against f/2h to 1.2e-7. The default table (spot, chief-ray reference) equals `lensopt.merit_function` to 0.0 relative (the gate is 1e-9). Against the recorded numbers of an independent implementation (an MIT-licensed open-source library) the EFL agrees to 1.4e-14, the real ray positions at the image to 1.8e-14 mm and the on-axis OPD to 8.5e-11 waves; the off-axis OPD differs by 0.03 % of the peak at 14 deg and 0.25 % at 20 deg (a convention: the other implementation's reference sphere has the distance from the image point to the exit-pupil centre as its radius, `raytrace.opd_samples` the axial distance only). A Cooke-type triplet (the classic 40-degree radii moved by 7-10 %, thin edges, EFL 58 mm) is optimised with a table of wavefront (3 fields x F, d, C) + an EFL hold of 50 mm + bounds (edge thickness >= 1 mm, centre thickness 2-8 mm, air gap >= 0.5 mm): merit 1.03e5 -> 33.9 (1/3041), EFL 57.98 -> 50.0015 mm, edge thickness 1.83 / 2.38 / 0.10 -> 3.37 / 3.78 / 1.00 mm, RMS spot (on axis, 8.4 deg, 12 deg) 25 / 13 / 22 -> 5.8 / 8.4 / 12 um. The dominant row moves from the EFL hold (82 %) to the wavefront row at 12 deg (71 %). From a start whose negative lens has the wrong glass (a crown), with axial- and lateral-colour rows added, the continuous variables alone leave the axial colour at -1.02 mm (glass cannot be fixed by continuous variables). Letting `g2` choose among 6 model glasses picks a dense flint: AXCL -1.02 -> -0.059 mm (1/17), LACL at 12 deg -0.051 -> -3.3e-4 mm (1/154), merit 1.26e4 -> 47 (1/265). Honest notes: with bound weight 10 the centre thickness stopped 0.06 mm short, so 100 is used; the optimisation spends its 40 iterations at the active edge bound (1.001 mm); the reduced CI budget (one outer loop) ends at merit 45.6, AXCL 1/18 and LACL 1/167. Learning 0, calibration 0, 25 gates.*
 
-[![最適化に伴い12度視野のスポットが収束する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/02_merit_spot_optimization.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/02_merit_spot_optimization.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/02_merit_spot_optimization.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/02_merit_spot_optimization.gif)
 
 *↑ The measurement ―― 最適化に伴い12度視野のスポットが収束する。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -3162,7 +3162,7 @@ A design is a bundle of relations, not a list of numbers. Keep "the image plane 
 
 *↑ **Keeping a Design's Relations as Solves — A Double-Gauss Type Whose Focus and F-Number Follow the Stop, Afocal Telescopes, a Curved Image Surface and Odd Aspheres** ―― A design is a bundle of relations, not a list of numbers. Keep "the image plane is the paraxial focus", "F/# is 5" and "this surface is concentric with the previous one" as rules on the surface, so that changing the stop radius or a glass lets the rest settle again. Nine new ops (`lenssolve`, category `lenssolve` of `opsoptics`): `lens_apply_solves` (a copy with every solve resolved) / `lens_solve_set` / `lens_solve_clear` / `lens_solves_list` (rule, solved value, achieved quantity and error) / `afocal_system` / `lens_afocal_report` (angular magnification, exit pupil and angular aberration per field in arcminutes) / `lens_image_surface` / `lens_petzval_radius` / `lens_zmx_solves_roundtrip`. A rule sits in `solve` of the surface dict (`R` / `t` next to it hold the solved value) and every `raytrace` trace resolves it first. `raytrace` gained an image-surface curvature `image_R`, `afocal`, and the aspheric terms `a2` (r^2) and `odd` (r^i, i = 1..8); `lensmerit` gained the angular magnification `ANGM` and the angular spot `RSAN`. Scored against closed forms: the chief-ray height and marginal-ray angle solves equal the hand solution of one linear equation (error 0), the F/# solve has two roots (positive and negative power) and matches both closed-form roots to 3e-17, the aplanatic surface images its object point exactly (spot RMS 3.4e-16 mm; an ordinary R = -3 mm surface 0.51 mm), a concentric ball does not bend a ray aimed at its centre (2.2e-16). A double-Gauss type (an F/# = 5 solve on the front curvature of the last element, a paraxial-image solve on the image distance) re-settles as the stop radius moves from 5.0 to 7.6 mm: the F/# stays 5 (error 8.9e-16) and the image distance follows the paraxial focus (4.4e-16); the last curvature moves R 79 -> 768 mm, the EFL 78.9 -> 119.9 mm, the image distance 47.5 -> 74.6 mm. The frozen-numbers version drifts from F/# 6.34 to 4.17. Honest limit: holding the F/# while the stop opens without redesigning the other surfaces, the RMS spot at 10 deg is 65.8 -> 25.6 um and worse in between (a solve keeps a relation, not the image quality). The F/# solve has two roots (curvature -0.046711 and +0.005637 /mm); the other is a diverging system of EFL -100 mm. Afocal: the ideal-lens Keplerian (f1 = 100, f2 = 25) and Galilean (f2 = -25) telescopes have angular magnification -4 / +4 exactly (EFL = inf does not raise) and angular aberration below 7.5e-13 arcmin. A real telescope of two achromatic doublets (separation 119.9076 mm, angular magnification -4.026, exit pupil of radius 2.48 mm at 30.4 mm) has angular spot RMS 0.60 / 0.71 / 1.05 / 1.63 / 2.55 arcmin at 0 / 0.25 / 0.5 / 0.75 / 1 deg, an on-axis wavefront of 0.041 waves (diffraction limited) and an angular-magnification distortion of 0.85 % at 1 deg. The afocal flag round-trips through a NOTE line of the `.zmx` (the format's own afocal line cannot be established from a real file, so none is invented). Curved image surface: for a thin meniscus (concave to the object, f = 99.8 mm) at zero Seidel astigmatism, the image surface of the Petzval radius -151.68 mm (equal to the thin-lens closed form -N f and to the Seidel sum) shrinks the RMS spot at 0.7 field from 1.94 um on the flat plane to 0.226 um (the best-plane floor is 0.222 um); the field-curvature term goes 1.93 -> 0.046 um (1/42). Odd aspheres: the sag matches the hand-written polynomial to 2.2e-16, the intersection satisfies the surface equation to 2.8e-16, and B = 0 is bit-identical to the even asphere. A conical (r^1) plate focuses rays onto a line 102 mm long instead of a point, and the axis crossings match the Snell closed form to 7.1e-14. One term added to a spherical-aberration corrector plate: r^4 takes the on-axis RMS 14.0 -> 0.030 um (1/467), r^3 to 1.97 um (1/7.1), r^1 to 8.3 um, r^2 to 11.5 um. `.zmx`: three pickups (`CURV c 4 source scale offset`, `PZUP`, `PPAR`) and three rules written as NOTE lines make write -> read -> write a fixed point (difference 1.4e-14); no solve is frozen and dropped. Limits: only the pickups have a form that real files show, so the other kinds (chief / marginal ray, F/#, concentric, aplanatic) round-trip through NOTE lines; odd terms (r^1 above all) are not smooth at the vertex, the r^1 term has no paraxial power, and the Seidel sums, the non-coaxial tracer and PSF / MTF refuse a2 / odd and afocal. Learning 0, calibration 0, 35 gates.*
 
-[![解いた曲面像面で視野角を掃引したスポット。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/02_solved_surface_field_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/02_solved_surface_field_sweep.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/02_solved_surface_field_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/02_solved_surface_field_sweep.gif)
 
 *↑ The measurement ―― 解いた曲面像面で視野角を掃引したスポット。 (figure labels are in Japanese; the numbers are the same)*
 
@@ -3186,29 +3186,29 @@ Public real images were used as near-infrared spectral data to classify debris l
 
 Terms: SAM — A classifier that compares spectra by the angle between their vectors, making it invariant to a common multiplicative scale.
 
-[![実線: 実データの PP / PET / PE の画素の平均(連続体除去)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/02_real_vs_model_band_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/02_real_vs_model_band_depth.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/02_real_vs_model_band_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/02_real_vs_model_band_depth.png)
 
 *↑ The measurement ―― 実線: 実データの PP / PET / PE の画素の平均(連続体除去)。破線: この PoC の材料表(吸収帯 + Kubelka–Munk)。谷の位置は合い、深さと幅は合わない(模型の強さは推定)。物理モデルだけをライブラリにした 3 種の再現率 0.628、別撮影の基準試料 0.878。出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。改変: 試験ヘッダの fwhm を 360 帯に切り詰め、1100〜2400 nm を切り出し、連続体除去。 (figure labels are in Japanese; the numbers are the same)*
 
-[![出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/03_real_polymer_confusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/03_real_polymer_confusion.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/03_real_polymer_confusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/03_real_polymer_confusion.png)
 
-*↑ 出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。*
+*↑ Figure from this exhibit ―― 出典: E. Arbash ら, Polymers Hyperspectral Imaging, RODARE (HZDR), doi:10.14278/rodare.3390, CC BY 4.0。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じトレイ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/07_tray_rgb_vs_hyperspectral_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/07_tray_rgb_vs_hyperspectral.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/07_tray_rgb_vs_hyperspectral_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/07_tray_rgb_vs_hyperspectral.png)
 
-*↑ 同じトレイ。*
+*↑ Figure from this exhibit ―― 同じトレイ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![行 = 真値、列 = 判定。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/11_confusion_food_tray_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/11_confusion_food_tray.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/11_confusion_food_tray_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/11_confusion_food_tray.png)
 
-*↑ 行 = 真値、列 = 判定。*
+*↑ Figure from this exhibit ―― 行 = 真値、列 = 判定。 (figure labels are in Japanese; the numbers are the same)*
 
-[![露光 = 画素の長さ 0.5 mm / 搬送速度。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/15_failure_photons_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/15_failure_photons.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/15_failure_photons_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/15_failure_photons.png)
 
-*↑ 露光 = 画素の長さ 0.5 mm / 搬送速度。*
+*↑ Figure from this exhibit ―― 露光 = 画素の長さ 0.5 mm / 搬送速度。 (figure labels are in Japanese; the numbers are the same)*
 
-[![0.95〜1.65 µm を 20 nm おきに掃く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/19_band_sweep.gif)
 
-*↑ The animation ―― 0.95〜1.65 µm を 20 nm おきに掃く。1.2 µm 付近で樹脂片が明るく、1.45 µm(水)で殻と木片が暗く沈む —— 1 帯域では分からない異物が、帯域を動かすと順に浮かぶ。*
+*↑ The animation ―― 0.95〜1.65 µm を 20 nm おきに掃く。1.2 µm 付近で樹脂片が明るく、1.45 µm(水)で殻と木片が暗く沈む —— 1 帯域では分からない異物が、帯域を動かすと順に浮かぶ。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -3234,25 +3234,25 @@ Four prescriptions are calculated with a separate reader and ray tracer, compari
 
 Terms: MTF — The magnitude of the optical transfer function, showing how image contrast is transferred at each spatial frequency.
 
-[![2 処方、3 視野。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/02_spot_diagrams_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/02_spot_diagrams.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/02_spot_diagrams_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/02_spot_diagrams.png)
 
 *↑ The measurement ―― 2 処方、3 視野。各パネルの RMS は同じ実光線から計算。 (figure labels are in Japanese; the numbers are the same)*
 
-[![合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_inspection_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_inspection_scores.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_inspection_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/04_inspection_scores.png)
 
-*↑ 合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。*
+*↑ Figure from this exhibit ―― 合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。 (figure labels are in Japanese; the numbers are the same)*
 
-[![出力から測った傷 contrast は -0.424〜-0.397。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_scratch_visibility_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_scratch_visibility.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_scratch_visibility_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/05_scratch_visibility.png)
 
-*↑ 出力から測った傷 contrast は -0.424〜-0.397。*
+*↑ Figure from this exhibit ―― 出力から測った傷 contrast は -0.424〜-0.397。 (figure labels are in Japanese; the numbers are the same)*
 
-[![光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/06_opd_convention_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/06_opd_convention_limit.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/06_opd_convention_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/06_opd_convention_limit.png)
 
-*↑ 光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。*
+*↑ Figure from this exhibit ―― 光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じ処方のスポットを軸上から最大視野まで掃引する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_spot_field_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_spot_field_sweep.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_spot_field_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/03_spot_field_sweep.gif)
 
-*↑ The animation ―― 同じ処方のスポットを軸上から最大視野まで掃引する。*
+*↑ The animation ―― 同じ処方のスポットを軸上から最大視野まで掃引する。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_zmx_public_verify.py
@@ -3280,17 +3280,17 @@ A document imaged under a known homography and lighting, rectified, and scored b
 
 *↑ **Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth** ―― A document imaged under a known homography and lighting, rectified, and scored by corner and grid error in pixels. The estimate reaches a grid RMS of 1.091 px (doing nothing: 37.376 px), but swapping in the same-named function with a different model (affine) is 32x worse and raises no exception. Shadow strength 0.45 gives a corner RMS of 6.81 px; 0.55 gives 66.06 px — a cliff.*
 
-[![平坦・薄字・誤検出なしを同時に満たす行は 1 つも無い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/02_shadow_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/02_shadow_tradeoff.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/02_shadow_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/02_shadow_tradeoff.png)
 
 *↑ The measurement ―― 平坦・薄字・誤検出なしを同時に満たす行は 1 つも無い。窓 9 が fs.op で届く上限、窓 61 は自前。図の階調は真値で 217 段。 (figure labels are in Japanese; the numbers are the same)*
 
-[![下寄りの横長の帯が図の階調。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/03_shadow_removal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/03_shadow_removal.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/03_shadow_removal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/03_shadow_removal.png)
 
-*↑ 下寄りの横長の帯が図の階調。*
+*↑ Figure from this exhibit ―― 下寄りの横長の帯が図の階調。 (figure labels are in Japanese; the numbers are the same)*
 
-[![60 度でも 2 px 台。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/04_tilt_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/04_tilt_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/04_tilt_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/04_tilt_cliff.png)
 
-*↑ 60 度でも 2 px 台。*
+*↑ Figure from this exhibit ―― 60 度でも 2 px 台。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_document_scan.py
@@ -3312,17 +3312,17 @@ Ten forgeries made by pasting a JPEG q60 patch onto a q92 background and saving 
 
 Terms: ROC — A curve of true-positive rate against false-positive rate as the decision threshold varies, showing a binary detector's trade-off.
 
-[![凡例の数字は AUC。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/02_roc_tampered_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/02_roc_tampered.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/02_roc_tampered_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/02_roc_tampered.png)
 
 *↑ The measurement ―― 凡例の数字は AUC。乱数が対角線に乗ることで測り方に偏りが無いと言える。ゴーストA は乱数と重なる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![凡例の数字は AUC。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/03_roc_postprocess_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/03_roc_postprocess.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/03_roc_postprocess_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/03_roc_postprocess.png)
 
-*↑ 凡例の数字は AUC。*
+*↑ Figure from this exhibit ―― 凡例の数字は AUC。 (figure labels are in Japanese; the numbers are the same)*
 
-[![保存ボタン 1 回(q60 再圧縮)で ゴーストV は乱数以下。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/04_breaking_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/04_breaking_conditions.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/04_breaking_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/04_breaking_conditions.png)
 
-*↑ 保存ボタン 1 回(q60 再圧縮)で ゴーストV は乱数以下。*
+*↑ Figure from this exhibit ―― 保存ボタン 1 回(q60 再圧縮)で ゴーストV は乱数以下。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_forensics_roc.py
@@ -3342,25 +3342,25 @@ A Voronoi crack network is drawn in closed form for two ground-truth types — d
 
 *↑ **Craquelure networks — of three indicators, only junction degree breaks under imaging conditions** ―― A Voronoi crack network is drawn in closed form for two ground-truth types — drying cracks (small tortuous cells) and age cracks (large grid-like cells) — with paint blotches, varnish gloss, raking light, blur and noise, then measured with a ridge op → skeleton → junction chain. Truth separates the types on all three indicators (cell diameter 18.0 vs 45.2 px, straightness 0.960 vs 1.000, degree-4 fraction 0.20 vs 0.83), yet the age type's degree-4 fraction drifts toward the drying value under texture (0.87 → 0.64) and raking light (0.70) while diameter and straightness stay put. Both predicted cliffs failed to appear: recall is still 0.696 at 0.15 px width and false positives only 0.382 at texture contrast 0.64. Raking light widens cracks one-sidedly by +0.37 px and shifts the centreline 0.75 px toward the light.*
 
-[![Frangi は分岐点で応答が落ち、斜光でセルが崩れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/01_ridge_ops_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/01_ridge_ops.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/01_ridge_ops_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/01_ridge_ops.png)
 
 *↑ The measurement ―― Frangi は分岐点で応答が落ち、斜光でセルが崩れる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真値は幾何(ボロノイの頂点・辺)から。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/02_indicators_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/02_indicators.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/02_indicators_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/02_indicators.png)
 
-*↑ 真値は幾何(ボロノイの頂点・辺)から。*
+*↑ Figure from this exhibit ―― 真値は幾何(ボロノイの頂点・辺)から。 (figure labels are in Japanese; the numbers are the same)*
 
-[![ひびの深さ 0.55。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/04_texture_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/04_texture_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/04_texture_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/04_texture_cliff.png)
 
-*↑ ひびの深さ 0.55。*
+*↑ Figure from this exhibit ―― ひびの深さ 0.55。 (figure labels are in Japanese; the numbers are the same)*
 
-[![ぼけが大きいほど小さいセルから消える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/06_blur_cell_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/06_blur_cell_limit.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/06_blur_cell_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/06_blur_cell_limit.png)
 
-*↑ ぼけが大きいほど小さいセルから消える。*
+*↑ Figure from this exhibit ―― ぼけが大きいほど小さいセルから消える。 (figure labels are in Japanese; the numbers are the same)*
 
-[![縁に触れるセルは統計から外す(真値も同じ規約)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/09_map_cells_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/09_map_cells.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/09_map_cells_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/09_map_cells.png)
 
-*↑ 縁に触れるセルは統計から外す(真値も同じ規約)。*
+*↑ Figure from this exhibit ―― 縁に触れるセルは統計から外す(真値も同じ規約)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_fresco_craquelure.py
@@ -3382,25 +3382,25 @@ Two virtual cameras carry a fixed sensitivity pattern K; the fingerprint is esti
 
 Terms: PRNU — Spatial pixel-to-pixel variation in an image sensor's response under uniform illumination.; PCE — A camera-fingerprint matching score that normalizes the main correlation peak by the correlation energy away from that peak.
 
-[![場面が毎枚違えば生の平均でも指紋は出る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/02_estimators_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/02_estimators.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/02_estimators_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/02_estimators.png)
 
 *↑ The measurement ―― 場面が毎枚違えば生の平均でも指紋は出る。差は PCE の桁に出る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![別カメラのピークは毎回別の位置に立つ((0,0) は 0/30)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/03_match_pce_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/03_match_pce.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/03_match_pce_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/03_match_pce.png)
 
-*↑ 別カメラのピークは毎回別の位置に立つ((0,0) は 0/30)。*
+*↑ Figure from this exhibit ―― 別カメラのピークは毎回別の位置に立つ((0,0) は 0/30)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/05_n_sweep_pce_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/05_n_sweep_pce.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/05_n_sweep_pce_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/05_n_sweep_pce.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![幾何の上限 = K 自身を同じ往復に通した相関²。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/08_resize_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/08_resize_sweep.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/08_resize_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/08_resize_sweep.png)
 
-*↑ 幾何の上限 = K 自身を同じ往復に通した相関²。*
+*↑ Figure from this exhibit ―― 幾何の上限 = K 自身を同じ往復に通した相関²。 (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/10_controls_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/10_controls_map.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/10_controls_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/10_controls_map.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
 ```
 py -3.11 examples/poc_prnu_camera_fingerprint.py
@@ -3420,25 +3420,25 @@ A synthetic car box filmed by a monocular camera 45 m away (960 × 540, 30 fps, 
 
 *↑ **Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched?** ―― A synthetic car box filmed by a monocular camera 45 m away (960 × 540, 30 fps, one pixel ≈ 7.5 cm) is tracked by its bounding box and scaled by the known car size; the planar track sits 2.8 cm (median) from the truth. Fitting gravity + drag against gravity + drag + constant thrust and choosing by the AIC difference classifies 79 of 80 clips (40 ballistic, 40 thrusted): thrusted ΔAIC is at least 382, while one ballistic clip reaches 10.4 and is misjudged (noise alone scatters around −4 with a χ² width). Thrust magnitude comes back with a median estimate/truth ratio of 1.022, and 2.5 % of g (0.25 m/s²) is still visible with a median ΔAIC of 79. Stretching the clock by k makes g look like g/k², so k is inverted in closed form: at most 0.32 % error for k in [0.5, 4], position 1.000 against a 200-clip clean null, and 2 false positives in 100 further clean clips. A ballistic clip slowed 1.5× reads as an upward thrust of 5.46 m/s² (closed form g(1 − 1/k²) = 5.45): vertical thrust and time stretch are degenerate in a monocular view. No learning, no real footage.*
 
-[![推力 4 m/s² の車を 45 m 先の単眼カメラで写した合成映像(960 × 540、30 fps)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif)
 
 *↑ The measurement ―― 推力 4 m/s² の車を 45 m 先の単眼カメラで写した合成映像(960 × 540、30 fps)。箱の影絵と bbox、bbox と車の寸法から起こした位置の軌跡(点)、地面の線。 (figure labels are in Japanese; the numbers are the same)*
 
-[![点は bbox から、破線は世界の真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/02_trajectories_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/02_trajectories.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/02_trajectories_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/02_trajectories.png)
 
-*↑ 点は bbox から、破線は世界の真値。*
+*↑ Figure from this exhibit ―― 点は bbox から、破線は世界の真値。 (figure labels are in Japanese; the numbers are the same)*
 
-[![雑音だけなら ΔAIC は −2Δk = −4 を中心に χ²(2) の幅で散る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/03_delta_aic_ballistic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/03_delta_aic_ballistic.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/03_delta_aic_ballistic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/03_delta_aic_ballistic.png)
 
-*↑ 雑音だけなら ΔAIC は −2Δk = −4 を中心に χ²(2) の幅で散る。*
+*↑ Figure from this exhibit ―― 雑音だけなら ΔAIC は −2Δk = −4 を中心に χ²(2) の幅で散る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![g の 2.5 % の推力でも床の 10 を超える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/05_detection_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/05_detection_floor.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/05_detection_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/05_detection_floor.png)
 
-*↑ g の 2.5 % の推力でも床の 10 を超える。*
+*↑ Figure from this exhibit ―― g の 2.5 % の推力でも床の 10 を超える。 (figure labels are in Japanese; the numbers are the same)*
 
-[![k = √(g_ref / g_fit)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/06_time_stretch_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/06_time_stretch.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/06_time_stretch_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/06_time_stretch.png)
 
-*↑ k = √(g_ref / g_fit)。*
+*↑ Figure from this exhibit ―― k = √(g_ref / g_fit)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_video_physics_consistency.py
@@ -3468,25 +3468,25 @@ In synthetic prismatic cells whose swelling was scaled so their exteriors match,
 
 Terms: FBP — A tomographic reconstruction method that filters projection data and then back-projects it over all measured angles.
 
-[![真正面(0 度)なら空隙の影までは見える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/01_xray_projection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/01_xray_projection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png)
 
 *↑ The measurement ―― 真正面(0 度)なら空隙の影までは見える。ただし奥行きに積算されているので厚みも深さも出ない。22 度傾けると層の縞そのものが重なって消える —— 投影では姿勢が結果を決めてしまう。だから断層に落とす。 (figure labels are in Japanese; the numbers are the same)*
 
-[![缶(明)・電極(中)・電解液(暗)・ガス(最暗)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene.png)
 
-*↑ 缶(明)・電極(中)・電解液(暗)・ガス(最暗)。*
+*↑ Figure from this exhibit ―― 缶(明)・電極(中)・電解液(暗)・ガス(最暗)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![17 本の山が電極。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/05_profile_layers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/05_profile_layers.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/05_profile_layers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/05_profile_layers.png)
 
-*↑ 17 本の山が電極。*
+*↑ Figure from this exhibit ―― 17 本の山が電極。 (figure labels are in Japanese; the numbers are the same)*
 
-[![位置は当たる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/09_void_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/09_void_map.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/09_void_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/09_void_map.png)
 
-*↑ 位置は当たる。*
+*↑ Figure from this exhibit ―― 位置は当たる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![空隙体積は崖の手前から単調に痩せる(部分体積効果)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/13_sweep_resolution_err_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/13_sweep_resolution_err.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/13_sweep_resolution_err_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/13_sweep_resolution_err.png)
 
-*↑ 空隙体積は崖の手前から単調に痩せる(部分体積効果)。*
+*↑ Figure from this exhibit ―― 空隙体積は崖の手前から単調に痩せる(部分体積効果)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_battery_ct_degradation.py
@@ -3508,25 +3508,25 @@ For distant vehicles, a small image calibration error becomes a physical shift i
 
 Terms: LiDAR — A sensor that measures range using laser light, commonly by time of flight, to produce a three-dimensional point cloud.; IoU — A 0-to-1 overlap score equal to the area of the intersection of two regions divided by the area of their union.
 
-[![横に 1.80 m 離した 2 センサの「自由と言い切れた領域」。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/02_shadow_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/02_shadow_map.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/02_shadow_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/02_shadow_map.png)
 
 *↑ The measurement ―― 横に 1.80 m 離した 2 センサの「自由と言い切れた領域」。青い帯が LiDAR にしか見えない所、橙の帯がカメラにしか見えない所、灰色は両方。白は真値の障害物。22 m の 2 台は**互いの影に 1 台ずつ入っている**。 (figure labels are in Japanese; the numbers are the same)*
 
-[![画像 320 x 240 px、焦点距離 265 px。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/03_reprojection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/03_reprojection.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/03_reprojection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/03_reprojection.png)
 
-*↑ 画像 320 x 240 px、焦点距離 265 px。*
+*↑ Figure from this exhibit ―― 画像 320 x 240 px、焦点距離 265 px。 (figure labels are in Japanese; the numbers are the same)*
 
-[![誤差はカメラ側の外部パラメータにだけ入れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/04_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/04_conditions.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/04_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/04_conditions.png)
 
-*↑ 誤差はカメラ側の外部パラメータにだけ入れる。*
+*↑ Figure from this exhibit ―― 誤差はカメラ側の外部パラメータにだけ入れる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![LiDAR は 22 m の車を 1 セルも返せない(先行車の陰)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/06_fusion_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/06_fusion_map.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/06_fusion_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/06_fusion_map.png)
 
-*↑ LiDAR は 22 m の車を 1 セルも返せない(先行車の陰)。*
+*↑ Figure from this exhibit ―― LiDAR は 22 m の車を 1 セルも返せない(先行車の陰)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![水平の 2 本は単センサのゼロ点。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/08_cliff_rotation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/08_cliff_rotation.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/08_cliff_rotation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/08_cliff_rotation.png)
 
-*↑ 水平の 2 本は単センサのゼロ点。*
+*↑ Figure from this exhibit ―― 水平の 2 本は単センサのゼロ点。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_bev_sensor_fusion.py
@@ -3546,29 +3546,29 @@ Aligning a scan to its design absorbs part of the deviation and moves where it l
 
 *↑ **CAD-to-scan deviation inspection — the fit absorbs the defect and invents a dent** ―― An analytic machined part carries a known local dent, a bow and a wear band, all applied as exact displacements along the surface normal, and the scan is synthesized with a known pose, noise and one-sided occlusion. After alignment the signed deviation and the out-of-tolerance area show that the local dent is diluted by only 3.7 %, while a 121 um dent appears at the centre of the part where the truth is just 1.2 um (closed form predicts -120 um). What survives depends on how much the defect resembles the six rigid-body degrees of freedom; along the edges the nearest neighbour jumps to the adjacent face, producing 66.5 mm^2 of false out-of-tolerance area even in a defect-free control. Where the numbers come from: synthetic; this PoC has no reduced version, so CI runs the same code (an independent rerun on 2026-11-13 reproduced -121.1 µm and 66.5 mm^2).*
 
-[![真の姿勢を与えた最終行が推定器そのものの床。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/02_methods_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/02_methods.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/02_methods_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/02_methods.png)
 
 *↑ The measurement ―― 真の姿勢を与えた最終行が推定器そのものの床。点-面 ICP との差は姿勢ではなく datum の取り方の差。 (figure labels are in Japanese; the numbers are the same)*
 
-[![3 枚目が一様に色づくのが第 6 章の主張 —— 位置合わせが反りの平均を吸って、部品全体が下へずれて読める。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/03_deviation_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/03_deviation_maps.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/03_deviation_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/03_deviation_maps.png)
 
-*↑ 3 枚目が一様に色づくのが第 6 章の主張 —— 位置合わせが反りの平均を吸って、部品全体が下へずれて読める。*
+*↑ Figure from this exhibit ―― 3 枚目が一様に色づくのが第 6 章の主張 —— 位置合わせが反りの平均を吸って、部品全体が下へずれて読める。 (figure labels are in Japanese; the numbers are the same)*
 
-[![2 次元 Poisson 点過程の最近傍距離の平均 = 0.5/√ρ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/05_density_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/05_density_bias.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/05_density_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/05_density_bias.png)
 
-*↑ 2 次元 Poisson 点過程の最近傍距離の平均 = 0.5/√ρ。*
+*↑ Figure from this exhibit ―― 2 次元 Poisson 点過程の最近傍距離の平均 = 0.5/√ρ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![深さを 30 倍にしても割合は動かないが、広がりを変えると比例して増える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/08_dent_area_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/08_dent_area.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/08_dent_area_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/08_dent_area.png)
 
-*↑ 深さを 30 倍にしても割合は動かないが、広がりを変えると比例して増える。*
+*↑ Figure from this exhibit ―― 深さを 30 倍にしても割合は動かないが、広がりを変えると比例して増える。 (figure labels are in Japanese; the numbers are the same)*
 
-[![上面だけを見ている。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/11_warp_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/11_warp_maps.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/11_warp_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/11_warp_maps.png)
 
-*↑ 上面だけを見ている。*
+*↑ Figure from this exhibit ―― 上面だけを見ている。 (figure labels are in Japanese; the numbers are the same)*
 
-[![主図(動画、640 × 360・30 fps・12 秒): 前半は実測点群(だいだい)が CAD の参照点(灰)に重なるまで —— 位置合わせなし → FPFH 粗合わせ → 点-面 ICP の推定姿勢の間を補間して動かす(偏差 RMS 18285.3 → 105.4 → 81.7 µm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/14_align_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/14_align_orbit.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/14_align_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/14_align_orbit.gif)
 
-*↑ The animation ―― 主図(動画、640 × 360・30 fps・12 秒): 前半は実測点群(だいだい)が CAD の参照点(灰)に重なるまで —— 位置合わせなし → FPFH 粗合わせ → 点-面 ICP の推定姿勢の間を補間して動かす(偏差 RMS 18285.3 → 105.4 → 81.7 µm)。後半は重なった点群を一周し、符号付き偏差(±0.40 mm、だいだい = 足りない / 青 = 余る)で塗る(形が読めるよう陰影を薄く足した)。公差 ±0.10 mm を外れた面積は推定 2300.6 mm²、真値 2514.5 mm²。左手前の 3 本の線は CAD の x・y・z 軸。*
+*↑ The animation ―― 主図(動画、640 × 360・30 fps・12 秒): 前半は実測点群(だいだい)が CAD の参照点(灰)に重なるまで —— 位置合わせなし → FPFH 粗合わせ → 点-面 ICP の推定姿勢の間を補間して動かす(偏差 RMS 18285.3 → 105.4 → 81.7 µm)。後半は重なった点群を一周し、符号付き偏差(±0.40 mm、だいだい = 足りない / 青 = 余る)で塗る(形が読めるよう陰影を薄く足した)。公差 ±0.10 mm を外れた面積は推定 2300.6 mm²、真値 2514.5 mm²。左手前の 3 本の線は CAD の x・y・z 軸。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_cad_scan_deviation.py
@@ -3590,25 +3590,25 @@ A maize canopy built from analytic leaf surfaces (one-sided area pi/4·L·W, lea
 
 Terms: Beer–Lambert — The law stating that transmission through a homogeneous absorbing medium decreases exponentially with concentration and optical path length.
 
-[![閉形式 2 pi r h + 4 pi r^2 / pi r^2 h + 4/3 pi r^3 と比べる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/01_capsule_calibration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/01_capsule_calibration.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/01_capsule_calibration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/01_capsule_calibration.png)
 
 *↑ The measurement ―― 閉形式 2 pi r h + 4 pi r^2 / pi r^2 h + 4/3 pi r^3 と比べる。2 値化を挟むと面積だけが一方向に膨らむ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![稈カプセルの符号付き距離場(縦断面、中心が内側 = 負)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/02_capsule_sdf_slice_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/02_capsule_sdf_slice.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/02_capsule_sdf_slice_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/02_capsule_sdf_slice.png)
 
-*↑ 稈カプセルの符号付き距離場(縦断面、中心が内側 = 負)*
+*↑ Figure from this exhibit ―― 稈カプセルの符号付き距離場(縦断面、中心が内側 = 負) (figure labels are in Japanese; the numbers are the same)*
 
-[![重なりの枚数(遮蔽を無視して全部数えた場合)は真値に乗る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/05_cliff_estimators_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/05_cliff_estimators.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/05_cliff_estimators_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/05_cliff_estimators.png)
 
-*↑ 重なりの枚数(遮蔽を無視して全部数えた場合)は真値に乗る。*
+*↑ Figure from this exhibit ―― 重なりの枚数(遮蔽を無視して全部数えた場合)は真値に乗る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/10_sweep_beta_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/10_sweep_beta.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/10_sweep_beta_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/10_sweep_beta.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/14_wind_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/14_wind.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/14_wind_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/14_wind.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
 ```
 py -3.11 examples/poc_crop_phenotyping.py
@@ -3630,29 +3630,29 @@ Voids in an electronics bond line are imaged by X-ray CT and summed up as a sing
 
 Terms: PSF — The spatial response of an imaging system to a point object, describing how that point is blurred in the image.
 
-[![疑似カラーはラベル番号を並べ替えたもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/02_void_label_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/02_void_label_map.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/02_void_label_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/02_void_label_map.png)
 
 *↑ The measurement ―― 疑似カラーはラベル番号を並べ替えたもの。側面図で界面(上端)に貼りついているのが見える。 (figure labels are in Japanese; the numbers are the same)*
 
-[![ボイド率の列だけを見ると 5 条件は区別できない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/03_controls_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/03_controls_table.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/03_controls_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/03_controls_table.png)
 
-*↑ ボイド率の列だけを見ると 5 条件は区別できない。*
+*↑ Figure from this exhibit ―― ボイド率の列だけを見ると 5 条件は区別できない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![界面欠損率は 球/中央/散 0.0 % / 球/界面/散 6.9 % / 扁平/界面/散 14.5 % / 球/中央/連 0.0 % / 扁平/界面/連 14.7 % —— 体積率が同じでも 0 から 14.7 % まで動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/05_controls_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/05_controls_section.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/05_controls_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/05_controls_section.png)
 
-*↑ 界面欠損率は 球/中央/散 0.0 % / 球/界面/散 6.9 % / 扁平/界面/散 14.5 % / 球/中央/連 0.0 % / 扁平/界面/連 14.7 % —— 体積率が同じでも 0 から 14.7 % まで動く。*
+*↑ Figure from this exhibit ―― 界面欠損率は 球/中央/散 0.0 % / 球/界面/散 6.9 % / 扁平/界面/散 14.5 % / 球/中央/連 0.0 % / 扁平/界面/連 14.7 % —— 体積率が同じでも 0 から 14.7 % まで動く。 (figure labels are in Japanese; the numbers are the same)*
 
-[![60 µm では扁平度が測れない(nan なので描けない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/08_voxel_cliff_shape_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/08_voxel_cliff_shape.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/08_voxel_cliff_shape_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/08_voxel_cliff_shape.png)
 
-*↑ 60 µm では扁平度が測れない(nan なので描けない)。*
+*↑ Figure from this exhibit ―― 60 µm では扁平度が測れない(nan なので描けない)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![塊の数が 24 から落ちた瞬間、最近接間隔は『隣のボイドまで』から『隣の鎖まで』に黙って入れ替わる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/10_threshold_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/10_threshold_sweep.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/10_threshold_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/10_threshold_sweep.png)
 
-*↑ 塊の数が 24 から落ちた瞬間、最近接間隔は『隣のボイドまで』から『隣の鎖まで』に黙って入れ替わる。*
+*↑ Figure from this exhibit ―― 塊の数が 24 から落ちた瞬間、最近接間隔は『隣のボイドまで』から『隣の鎖まで』に黙って入れ替わる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![主図(動画、640 × 360・30 fps・11 秒): 同じボイド率の 2 条件(球・散在・層中央 2.46 % / 扁平・連なり・界面接触 2.63 %)で、xz 断面(橙の枠)を y 方向に掃引しながら 3-D のボイド(2 値化の結果を marching cubes で面に)を回す。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/13_section_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/13_section_sweep.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/13_section_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/13_section_sweep.gif)
 
-*↑ The animation ―― 主図(動画、640 × 360・30 fps・11 秒): 同じボイド率の 2 条件(球・散在・層中央 2.46 % / 扁平・連なり・界面接触 2.63 %)で、xz 断面(橙の枠)を y 方向に掃引しながら 3-D のボイド(2 値化の結果を marching cubes で面に)を回す。色はダイ側界面までの距離 —— 前者は層の中ほど(界面離隔の中央値 60.0 µm)、後者は界面に貼りつく(10.0 µm)。下は同じ断面の観測 CT(上 = ダイ)。合否の 1 個の数字(ボイド率)は 2 つを分けない。z は画面上だけ 2 倍。*
+*↑ The animation ―― 主図(動画、640 × 360・30 fps・11 秒): 同じボイド率の 2 条件(球・散在・層中央 2.46 % / 扁平・連なり・界面接触 2.63 %)で、xz 断面(橙の枠)を y 方向に掃引しながら 3-D のボイド(2 値化の結果を marching cubes で面に)を回す。色はダイ側界面までの距離 —— 前者は層の中ほど(界面離隔の中央値 60.0 µm)、後者は界面に貼りつく(10.0 µm)。下は同じ断面の観測 CT(上 = ダイ)。合否の 1 個の数字(ボイド率)は 2 つを分けない。z は画面上だけ 2 倍。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_ct_void_morphology.py
@@ -3672,25 +3672,25 @@ A synthetic part with known design values (thin walls, a slot, ribs near 45 deg,
 
 *↑ **Manufacturability from geometry alone — faces that sit on the threshold flip when you smooth them** ―― A synthetic part with known design values (thin walls, a slot, ribs near 45 deg, holes) is voxelised, then wall thickness, support area and tool clearance are measured. Across the 45 deg threshold the support area jumps 185.22 -> 576.10 mm^2 — 3.11x for 0.2 deg — and that step vanishes entirely when the isosurface is taken from a distance field, and loses 12 % under smoothing. Thickness collapses onto a 2-voxel lattice (the inscribed sphere does not help), and clearance errors go both ways: at 0.500 mm voxels the slot appears 2.000 mm wide and admits a tool that does not fit.*
 
-[![上: 左端の 2 本が薄壁(1.500 mm)とそのあいだのスロット(1.500 mm)、右の三角が補強。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/02_sections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/02_sections.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/02_sections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/02_sections.png)
 
 *↑ The measurement ―― 上: 左端の 2 本が薄壁(1.500 mm)とそのあいだのスロット(1.500 mm)、右の三角が補強。下: リブと薄壁の footprint。 (figure labels are in Japanese; the numbers are the same)*
 
-[![右ほど粗い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/03_thickness_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/03_thickness_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/03_thickness_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/03_thickness_cliff.png)
 
-*↑ 右ほど粗い。*
+*↑ Figure from this exhibit ―― 右ほど粗い。 (figure labels are in Japanese; the numbers are the same)*
 
-[![解析は階段。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/04_threshold_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/04_threshold_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/04_threshold_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/04_threshold_cliff.png)
 
-*↑ 解析は階段。*
+*↑ Figure from this exhibit ―― 解析は階段。 (figure labels are in Japanese; the numbers are the same)*
 
-[![左 = 水平からの傾き(暗い = 0 度 = 最悪、明るい = 90 度 = 垂直)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/06_overhang_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/06_overhang_map.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/06_overhang_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/06_overhang_map.png)
 
-*↑ 左 = 水平からの傾き(暗い = 0 度 = 最悪、明るい = 90 度 = 垂直)。*
+*↑ Figure from this exhibit ―― 左 = 水平からの傾き(暗い = 0 度 = 最悪、明るい = 90 度 = 垂直)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![1.600 mm を超えると入らない工具を通し、1.200 mm を切ると入る工具を落とす。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/08_reach_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/08_reach_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/08_reach_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/08_reach_cliff.png)
 
-*↑ 1.600 mm を超えると入らない工具を通し、1.200 mm を切ると入る工具を落とす。*
+*↑ Figure from this exhibit ―― 1.600 mm を超えると入らない工具を通し、1.200 mm を切ると入る工具を落とす。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_dfm_thickness_overhang.py
@@ -3712,29 +3712,29 @@ Subtracting public airborne LiDAR of one park from two years makes the whole are
 
 Terms: LiDAR — A sensor that measures range using laser light, commonly by time of flight, to produce a three-dimensional point cloud.
 
-[![傾斜を 0 から 40 度まで振っても体積の誤差に傾向が無い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/01_geometry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/01_geometry.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/01_geometry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/01_geometry.png)
 
 *↑ The measurement ―― 傾斜を 0 から 40 度まで振っても体積の誤差に傾向が無い。cos は積分で約分する。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真の掘削は 164.2 m3。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/02_controls_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/02_controls.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/02_controls_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/02_controls.png)
 
-*↑ 真の掘削は 164.2 m3。*
+*↑ Figure from this exhibit ―― 真の掘削は 164.2 m3。 (figure labels are in Japanese; the numbers are the same)*
 
-[![変化ゼロの対照で測った検出限界。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/05_density_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/05_density_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/05_density_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/05_density_cliff.png)
 
-*↑ 変化ゼロの対照で測った検出限界。*
+*↑ Figure from this exhibit ―― 変化ゼロの対照で測った検出限界。 (figure labels are in Japanese; the numbers are the same)*
 
-[![取りこぼしは 1 % 未満でも、樹冠は数 m 高いので標準偏差だけが桁で跳ねる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/08_occlusion_lod_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/08_occlusion_lod.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/08_occlusion_lod_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/08_occlusion_lod.png)
 
-*↑ 取りこぼしは 1 % 未満でも、樹冠は数 m 高いので標準偏差だけが桁で跳ねる。*
+*↑ Figure from this exhibit ―― 取りこぼしは 1 % 未満でも、樹冠は数 m 高いので標準偏差だけが桁で跳ねる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![地面点(分類 2)の 1 m セル平均の差(Fullseye の elevation_map。表示は 2 m 角 = 1 m セル 4 つのうち値のあるものの平均)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/13_real_dod_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/13_real_dod.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/13_real_dod_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/13_real_dod.png)
 
-*↑ 地面点(分類 2)の 1 m セル平均の差(Fullseye の elevation_map。表示は 2 m 角 = 1 m セル 4 つのうち値のあるものの平均)。*
+*↑ Figure from this exhibit ―― 地面点(分類 2)の 1 m セル平均の差(Fullseye の elevation_map。表示は 2 m 角 = 1 m セル 4 つのうち値のあるものの平均)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![主図(動画、640 × 360・30 fps・12 秒): 前半は傾斜 25 度の斜面を北の上空から横切り、時期 1 の点群(8 pt/m²、樹冠に当たった点 = 緑)を見せる(動画専用の乱数で作った別の標本)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/12_flight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/12_flight.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/12_flight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/12_flight.gif)
 
-*↑ The animation ―― 主図(動画、640 × 360・30 fps・12 秒): 前半は傾斜 25 度の斜面を北の上空から横切り、時期 1 の点群(8 pt/m²、樹冠に当たった点 = 緑)を見せる(動画専用の乱数で作った別の標本)。後半は時期 2 の地形の周りを回り、色を DoD の鉛直差から M3C2 の法線距離へ塗り替える(同じ尺度 ±1.2 m、青 = 下がった)。崩壊中心の深さは DoD 1.212 m / M3C2 1.096 m で比 1.105(sec 25 度 = 1.103)。有意な core の M3C2 土量は掘削 142.3 / 堆積 107.7 m³(真値 164.2 / 133.7)。黒っぽい所は測れなかった core。*
+*↑ The animation ―― 主図(動画、640 × 360・30 fps・12 秒): 前半は傾斜 25 度の斜面を北の上空から横切り、時期 1 の点群(8 pt/m²、樹冠に当たった点 = 緑)を見せる(動画専用の乱数で作った別の標本)。後半は時期 2 の地形の周りを回り、色を DoD の鉛直差から M3C2 の法線距離へ塗り替える(同じ尺度 ±1.2 m、青 = 下がった)。崩壊中心の深さは DoD 1.212 m / M3C2 1.096 m で比 1.105(sec 25 度 = 1.103)。有意な core の M3C2 土量は掘削 142.3 / 堆積 107.7 m³(真値 164.2 / 133.7)。黒っぽい所は測れなかった core。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -3758,29 +3758,29 @@ Estimate an animal's volume from the intersection of multi-view silhouettes (the
 
 *↑ **Weighing an Animal from Silhouettes — The Error You Can Buy Down, and the One You Cannot** ―― Estimate an animal's volume from the intersection of multi-view silhouettes (the visual hull) and convert it to weight. A visual hull is always an upper bound, so the question is not whether it is good but that it is always high. The closed form corrected the field rule of thumb: K cameras do not give a K-gon. Under parallel projection each camera contributes two support lines perpendicular to its line of sight, and two opposing cameras contribute the same pair, so the number of distinct tangents is K for even K and 2K for odd K. Three cameras and six cameras are therefore geometrically identical (closed form 1.16772 both times, the measured 0.013 difference being discretisation only), half of an even rig is wasted, and 13 cameras (1.03056) beat 16 (1.04768). Requiring 2 % on weight needs 13 cameras if odd counts are allowed and 24 if not — the naive circular reading of (K/pi)tan(pi/K) says 13, so a team building an even-numbered rig is short by 11. Against the exact ellipse (a/b = 2.76) the measurements sit just above the closed form at every K, confirming it as a lower bound. The centre of this exhibit is separating the error you can buy down from the one you cannot: the phantom between the legs falls from 7.13 % to 1.37 % going from 4 to 48 cameras, while the hollow of the back falls only 3.8 points (56.4 % to 52.6 %) for the same twelvefold increase, because a concavity that never reaches the outline leaves no trace in any silhouette. One pixel of segmentation error is likewise unbuyable, worth +3.21 % per pixel (23.7 kg), matching Steiner's dV/V = (S/V)delta to a ratio of 1.04 — though the text records that two opposing effects happened to cancel there. The rulers disagree on the winner: volume-derived and allometric weight both prefer 24 cameras with a two-pixel erosion, while the height of the centroid prefers no erosion at all, since the thin legs disappear first. One prediction was wrong: a tape measure wraps the body, so the 3-D convex hull was expected to be the strong method for heart girth, but it measured +55.2 % — the hull of the whole body fills in under the belly and drags the cross-section down to the ground. The convex hull of a section and the section of a convex hull are not the same object. A tooling hole was found and closed on the way: the OpenCV-convention pose helper that space carving requires was unreachable from every public tier, while the name look_at in the public API belonged to the OpenGL-convention version, so grabbing the wrong one returned an empty hull with no exception at all.*
 
-[![真値 0.7238 m^3 / 738 kg。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/01_null_baseline_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/01_null_baseline.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/01_null_baseline_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/01_null_baseline.png)
 
 *↑ The measurement ―― 真値 0.7238 m^3 / 738 kg。外接直方体と OBB は上界の中でもいちばん粗い。 (figure labels are in Japanese; the numbers are the same)*
 
-[![法線は方位 ± 90 度。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/02_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/02_closed_form.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/02_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/02_closed_form.png)
 
-*↑ 法線は方位 ± 90 度。*
+*↑ Figure from this exhibit ―― 法線は方位 ± 90 度。 (figure labels are in Japanese; the numbers are the same)*
 
-[![くぼみ(輪郭に出ない凹み)は台数に鈍感、脚の間(輪郭に出る凹み)は台数に敏感。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/04_persistent_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/04_persistent.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/04_persistent_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/04_persistent.png)
 
-*↑ くぼみ(輪郭に出ない凹み)は台数に鈍感、脚の間(輪郭に出る凹み)は台数に敏感。*
+*↑ Figure from this exhibit ―― くぼみ(輪郭に出ない凹み)は台数に鈍感、脚の間(輪郭に出る凹み)は台数に敏感。 (figure labels are in Japanese; the numbers are the same)*
 
-[![K=12・4.0 mm/px。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/07_controls_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/07_controls.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/07_controls_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/07_controls.png)
 
-*↑ K=12・4.0 mm/px。*
+*↑ Figure from this exhibit ―― K=12・4.0 mm/px。 (figure labels are in Japanese; the numbers are the same)*
 
-[![脚の間の空隙はどの 1 枚にも写っている(だから彫れる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/11_silhouettes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/11_silhouettes.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/11_silhouettes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/11_silhouettes.png)
 
-*↑ 脚の間の空隙はどの 1 枚にも写っている(だから彫れる)。*
+*↑ Figure from this exhibit ―― 脚の間の空隙はどの 1 枚にも写っている(だから彫れる)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画(270 コマ、560 × 420 px): 牛の周りを 1 周しながら、彫刻に使うカメラの台数を 4 → 48 台(軸周り等間隔、8 m 先)へ増やす。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/14_hull_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/14_hull_orbit.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/14_hull_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/14_hull_orbit.gif)
 
-*↑ The animation ―― 動画(270 コマ、560 × 420 px): 牛の周りを 1 周しながら、彫刻に使うカメラの台数を 4 → 48 台(軸周り等間隔、8 m 先)へ増やす。表示は §4 で数えた視体積交差の占有の表面で、真の体に接する面は灰、真に空の所に立つ面(余分)はだいだい。最初の段は真の占有。横腹の帯と脚の間の幽霊(7.13 % → 1.37 %)は台数とともに消えるが、背中のくぼみに被さる蓋は K = 48 でも 52.6 % 埋まったまま(K = 4 で 56.4 %)—— 輪郭に出ない凹みはシルエットに情報が無い。体積は真値の 1.2255 → 1.0339 倍。カメラの仰角は 20 → 46 度へ上げていき、台数の多い段ほど背中の蓋が見える。左下の 3 本は x(体長)・y(体幅)・z(上)、灰の細線は地面の x 軸・y 軸。*
+*↑ The animation ―― 動画(270 コマ、560 × 420 px): 牛の周りを 1 周しながら、彫刻に使うカメラの台数を 4 → 48 台(軸周り等間隔、8 m 先)へ増やす。表示は §4 で数えた視体積交差の占有の表面で、真の体に接する面は灰、真に空の所に立つ面(余分)はだいだい。最初の段は真の占有。横腹の帯と脚の間の幽霊(7.13 % → 1.37 %)は台数とともに消えるが、背中のくぼみに被さる蓋は K = 48 でも 52.6 % 埋まったまま(K = 4 で 56.4 %)—— 輪郭に出ない凹みはシルエットに情報が無い。体積は真値の 1.2255 → 1.0339 倍。カメラの仰角は 20 → 46 度へ上げていき、台数の多い段ほど背中の蓋が見える。左下の 3 本は x(体長)・y(体幅)・z(上)、灰の細線は地面の x 軸・y 軸。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_livestock_body_volume.py
@@ -3800,29 +3800,29 @@ A closed triangle mesh is built from the boolean union of a sphere, a torus and 
 
 *↑ **Repair the mesh, then measure — the defect count clears, the quantity does not** ―― A closed triangle mesh is built from the boolean union of a sphere, a torus and a box, then seeded with a known count of each defect class — holes, flipped faces, non-manifold edges, degenerate slivers, duplicated vertices and self-intersection — and tracked with both the topological counts and the volume/area. The Euler characteristic does not move at all for 5 of the 6 classes, and 6 holes plus 6 duplicated faces leave the vertex, edge, face and chi counts identical to the healthy part. Repair does not bring the quantities back: filling a 45-degree cap hole on a sphere changes the surface area by +6.868 % where the closed form predicts -2.145 % (the rim is a staircase, not a circle), and pushing just 6 vertices inward passes all three topological checks while the area is +4.414 % and the volume -0.332 % — a 13-fold disagreement.*
 
-[![健全な部品の χ は 0(種数 1)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/02_euler_blindspots_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/02_euler_blindspots.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/02_euler_blindspots_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/02_euler_blindspots.png)
 
 *↑ The measurement ―― 健全な部品の χ は 0(種数 1)。χ=2 を合格条件にすると健全品が落ちる。最終行は打ち消し。 (figure labels are in Japanese; the numbers are the same)*
 
-[![ただし順番が両向きに効く —— 溶接前は割れの境界を穴として数え、溶接後は退化三角形を数え損ねる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/03_defect_counts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/03_defect_counts.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/03_defect_counts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/03_defect_counts.png)
 
-*↑ ただし順番が両向きに効く —— 溶接前は割れの境界を穴として数え、溶接後は退化三角形を数え損ねる。*
+*↑ Figure from this exhibit ―― ただし順番が両向きに効く —— 溶接前は割れの境界を穴として数え、溶接後は退化三角形を数え損ねる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![幅ゼロの割れ(重複頂点 18 個)を直した結果。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/05_repair_vs_restore_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/05_repair_vs_restore.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/05_repair_vs_restore_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/05_repair_vs_restore.png)
 
-*↑ 幅ゼロの割れ(重複頂点 18 個)を直した結果。*
+*↑ Figure from this exhibit ―― 幅ゼロの割れ(重複頂点 18 個)を直した結果。 (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/08_hole_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/08_hole_frames.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/08_hole_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/08_hole_frames.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![面積 0 の判定に引っかかるずっと手前で、潰れ面の法線は使いものにならなくなる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/11_sliver_threshold_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/11_sliver_threshold.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/11_sliver_threshold_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/11_sliver_threshold.png)
 
-*↑ 面積 0 の判定に引っかかるずっと手前で、潰れ面の法線は使いものにならなくなる。*
+*↑ Figure from this exhibit ―― 面積 0 の判定に引っかかるずっと手前で、潰れ面の法線は使いものにならなくなる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画(272 コマ、480 × 480 px): 健全な部品(面 11208 枚)の周りを 1.5 周しながら、QEM 簡略化の削減率を 0 → 98 % へ 8 段で上げる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/14_decimate_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/14_decimate_orbit.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/14_decimate_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/14_decimate_orbit.gif)
 
-*↑ The animation ―― 動画(272 コマ、480 × 480 px): 健全な部品(面 11208 枚)の周りを 1.5 周しながら、QEM 簡略化の削減率を 0 → 98 % へ 8 段で上げる。面は平らに塗り、色は面の 3 頂点の平均曲率 |H|(尺度は削減前の 99 パーセンタイル 12.6 /mm で固定)。50 % 削減で体積の誤差は -0.019 % しかないのに曲率の 95 パーセンタイルは 5.89 → 7.72(+31 %)—— 明るい(尖った)面が先に増える。98 % 削減でようやく体積 -4.199 %。左下の 3 本は配列の軸(0 = 貫通穴の軸 = 画面の上、2 = 角柱ボスの側)。*
+*↑ The animation ―― 動画(272 コマ、480 × 480 px): 健全な部品(面 11208 枚)の周りを 1.5 周しながら、QEM 簡略化の削減率を 0 → 98 % へ 8 段で上げる。面は平らに塗り、色は面の 3 頂点の平均曲率 |H|(尺度は削減前の 99 パーセンタイル 12.6 /mm で固定)。50 % 削減で体積の誤差は -0.019 % しかないのに曲率の 95 パーセンタイルは 5.89 → 7.72(+31 %)—— 明るい(尖った)面が先に増える。98 % 削減でようやく体積 -4.199 %。左下の 3 本は配列の軸(0 = 貫通穴の軸 = 画面の上、2 = 角柱ボスの側)。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_mesh_quality_repair.py
@@ -3846,21 +3846,21 @@ Two loads with opposite defects sit on a 1200 x 1000 mm pallet: load A hides a 4
 
 *↑ The measurement (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/03_zero_points_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/03_zero_points.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/03_zero_points_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/03_zero_points.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/04_breakdown_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/04_breakdown.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/04_breakdown_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/04_breakdown.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/06_heightmap_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/06_heightmap_frames.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/06_heightmap_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/06_heightmap_frames.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/07_gsd_false_overhang_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/07_gsd_false_overhang.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/07_gsd_false_overhang_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/07_gsd_false_overhang.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
 ```
 py -3.11 examples/poc_pallet_load_utilization.py
@@ -3880,25 +3880,25 @@ A synthetic pipe carries a pit, a full-circumference thinning band, invert corro
 
 *↑ **Pipe Wall Loss on the Unwrapped Map — The Axis You Choose Eats the Invert Corrosion** ―― A synthetic pipe carries a pit, a full-circumference thinning band, invert corrosion, a weld bead, ovality and a sagging axis, all at known depths; the in-pipe range sensor is then deliberately run off-axis before the bore is unwrapped. A 4.0 mm axis offset alone flags 44.8 % of a corrosion-free round pipe as wall loss — within 1.84 points of the geometric prediction that an offset e appears as a one-cycle sinusoid of amplitude e — and the fictitious loss volume is 149.9 times the real pit. Removing the one-cycle term removes the fiction, but 79 % of invert corrosion (the commonest defect in sewers) lives in that same harmonic, so its detection falls from 100.0 % to 34.4 %; only constraining the axis the way physics does (a straight line plus a sag) keeps both.*
 
-[![下の帯の細くなっている所が管底腐食。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/02_scene_polar_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/02_scene_polar.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/02_scene_polar_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/02_scene_polar.png)
 
 *↑ The measurement ―― 下の帯の細くなっている所が管底腐食。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真の減肉 [mm)(縦 = z 0..300 mm、横 = θ 0..360 度。±1.6 mm で切って塗った。正 = 肉が減った、溶接ビードは負)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/03_map_truth.png)
 
-*↑ 真の減肉 [mm](縦 = z 0..300 mm、横 = θ 0..360 度。±1.6 mm で切って塗った。正 = 肉が減った、溶接ビードは負)*
+*↑ Figure from this exhibit ―― 真の減肉 [mm](縦 = z 0..300 mm、横 = θ 0..360 度。±1.6 mm で切って塗った。正 = 肉が減った、溶接ビードは負) (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/07_map_false_flag_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/07_map_false_flag.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/07_map_false_flag_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/07_map_false_flag.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![楕円化は k=2 に立つので分離できる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/11_spectrum_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/11_spectrum_defects.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/11_spectrum_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/11_spectrum_defects.png)
 
-*↑ 楕円化は k=2 に立つので分離できる。*
+*↑ Figure from this exhibit ―― 楕円化は k=2 に立つので分離できる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/15_defect_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/15_defect_table.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/15_defect_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/15_defect_table.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
 ```
 py -3.11 examples/poc_pipe_wall_loss.py
@@ -3918,25 +3918,25 @@ Seven synthetic parts are sliced into layers with a known constant per-layer shr
 
 *↑ **Warpage lives in the layer history — averaging the area throws the placement away** ―― Seven synthetic parts are sliced into layers with a known constant per-layer shrinkage strain; warpage is first predicted in closed form from the layer-area history alone, then measured with an incremental layer-birth finite-element solve. A predictor that looks only at the final shape returns exactly zero (2.712e-21), and the history-based closed form lands within 0.4 % on 4 of the 7 shapes — but the moment the area is averaged along the length, where the material sits is lost. Three parts whose layer-area histories match to the last square millimetre bow by 0.4109 / 0.3809 / 0.3271 mm (a 26 % spread), and the force peeling them off the build plate differs by 48x (11.8 vs 573.5 N), flipping the pass/fail verdict.*
 
-[![この断面の面積の列だけが、閉形式の入力になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/02_layer_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/02_layer_frames.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/02_layer_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/02_layer_frames.png)
 
 *↑ The measurement ―― この断面の面積の列だけが、閉形式の入力になる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/03_shapes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/03_shapes.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/03_shapes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/03_shapes.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![断面 2 次モーメントが層数の 3 乗で増えるのに、腕は 1 乗でしか伸びないため。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/07_saturation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/07_saturation.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/07_saturation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/07_saturation.png)
 
-*↑ 断面 2 次モーメントが層数の 3 乗で増えるのに、腕は 1 乗でしか伸びないため。*
+*↑ Figure from this exhibit ―― 断面 2 次モーメントが層数の 3 乗で増えるのに、腕は 1 乗でしか伸びないため。 (figure labels are in Japanese; the numbers are the same)*
 
-[![首の細さでは崩れない(別図)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/12_cliff_aspect_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/12_cliff_aspect.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/12_cliff_aspect_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/12_cliff_aspect.png)
 
-*↑ 首の細さでは崩れない(別図)。*
+*↑ Figure from this exhibit ―― 首の細さでは崩れない(別図)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![正 = 接着剤が引っ張られる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/16_peel_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/16_peel_profile.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/16_peel_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/16_peel_profile.png)
 
-*↑ 正 = 接着剤が引っ張られる。*
+*↑ Figure from this exhibit ―― 正 = 接着剤が引っ張られる。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_print_warpage_risk.py
@@ -3956,25 +3956,25 @@ A ten-capsule articulated body and a moving arm are synthesised so that the true
 
 *↑ **Human-machine clearance — swap the body for a point, and the hazard vanishes with it** ―― A ten-capsule articulated body and a moving arm are synthesised so that the true surface-to-surface minimum separation is known in closed form at every instant, and the speed-and-separation-monitoring verdict is then scored against it. Representing the person by one centroid inside a 0.30 m sphere reports the distance +0.166 m too far while a hazard is present and misses 14.3 % of the dangerous frames (28.6 % for a foot-level scanner) — with almost no false alarms, so the failure is strictly one-sided. With a single camera behind the person, 48.6 % of the dangerous frames have the estimate decided by a body part that is not the true nearest one, and 18.1 % are missed; a second camera restores 0 %, but the uncertainty claimed from repeatability, 0.036 m, is only one fifth of the 0.178 m bias that occlusion actually produces.*
 
-[![危険 = 真の距離 < 0.640 m、停止判定 = 推定 < 0.690 m。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/01_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/01_conditions.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/01_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/01_conditions.png)
 
 *↑ The measurement ―― 危険 = 真の距離 < 0.640 m、停止判定 = 推定 < 0.690 m。 (figure labels are in Japanese; the numbers are the same)*
 
-[![疎にするほど推定は遠くなるので、誤検知が減って見落としが増える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/03_sweep_density_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/03_sweep_density.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/03_sweep_density_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/03_sweep_density.png)
 
-*↑ 疎にするほど推定は遠くなるので、誤検知が減って見落としが増える。*
+*↑ Figure from this exhibit ―― 疎にするほど推定は遠くなるので、誤検知が減って見落としが増える。 (figure labels are in Japanese; the numbers are the same)*
 
-[![横 = x [-0.2, 2.2) m、縦 = y [-1.1, 1.1) m。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/06_map_miss_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/06_map_miss.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/06_map_miss_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/06_map_miss.png)
 
-*↑ 横 = x [-0.2, 2.2] m、縦 = y [-1.1, 1.1] m。*
+*↑ Figure from this exhibit ―― 横 = x [-0.2, 2.2] m、縦 = y [-1.1, 1.1] m。 (figure labels are in Japanese; the numbers are the same)*
 
-[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/09_grid_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/09_grid_bias.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/09_grid_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/09_grid_bias.png)
 
-*↑ この回の図*
+*↑ Figure from this exhibit*
 
-[![人は 10 本のカプセル、機械は 2 本のリンク + 基台、手前は治具台。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/12_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/12_scene.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/12_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/12_scene.png)
 
-*↑ 人は 10 本のカプセル、機械は 2 本のリンク + 基台、手前は治具台。*
+*↑ Figure from this exhibit ―― 人は 10 本のカプセル、機械は 2 本のリンク + 基台、手前は治具台。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_safety_clearance.py
@@ -3994,25 +3994,25 @@ A synthetic room carries known construction errors — leaning walls, a sloping 
 
 *↑ **As-built deviation of a room — the compromise pose is handed to the innocent element** ―― A synthetic room carries known construction errors — leaning walls, a sloping and sagging floor, off-size columns, displaced openings — and is re-measured by a simulated scan from three stations with column shadows, incidence-dependent noise, mixed pixels and registration error. One number for the whole building (mean distance to the design model) moves by only 1.41 mm between a perfect building and a defective one; aligning the cloud in one piece shrinks the wall lean to 69 % of truth and hands 0.89 mrad of tilt to a ceiling that is perfectly level (a closed-form prediction of what the fit absorbs matches the measurement to 0.05 mrad). The cliff is set by the height of the surviving surface rather than by the dropout rate: at the same 90 % loss, dropping points at random costs 0.098 mrad while keeping only the lower band costs 1.234 mrad — 12.6 times worse.*
 
-[![いちばん暗い所は 1 か所も見ていない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/02_station_coverage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/02_station_coverage.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/02_station_coverage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/02_station_coverage.png)
 
 *↑ The measurement ―― いちばん暗い所は 1 か所も見ていない。柱の影はスキャン位置から放射状に伸びる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![(a) と (c) の差は平均で 1.41 mm、Chamfer で 0.50 mm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/03_one_number_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/03_one_number.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/03_one_number_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/03_one_number.png)
 
-*↑ (a) と (c) の差は平均で 1.41 mm、Chamfer で 0.50 mm。*
+*↑ Figure from this exhibit ―― (a) と (c) の差は平均で 1.41 mm、Chamfer で 0.50 mm。 (figure labels are in Japanese; the numbers are the same)*
 
-[![左端の帯が色目盛り(上 +12 mm / 下 -12 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/06_deviation_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/06_deviation_map.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/06_deviation_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/06_deviation_map.png)
 
-*↑ 左端の帯が色目盛り(上 +12 mm / 下 -12 mm)。*
+*↑ Figure from this exhibit ―― 左端の帯が色目盛り(上 +12 mm / 下 -12 mm)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![「偽の誤差」列は設計どおりに建った建物を同じ手順で測った値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/09_element_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/09_element_verdicts.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/09_element_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/09_element_verdicts.png)
 
-*↑ 「偽の誤差」列は設計どおりに建った建物を同じ手順で測った値。*
+*↑ Figure from this exhibit ―― 「偽の誤差」列は設計どおりに建った建物を同じ手順で測った値。 (figure labels are in Japanese; the numbers are the same)*
 
-[![点を増やしても系統誤差は薄まらない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/12_cliff_registration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/12_cliff_registration.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/12_cliff_registration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/12_cliff_registration.png)
 
-*↑ 点を増やしても系統誤差は薄まらない。*
+*↑ Figure from this exhibit ―― 点を増やしても系統誤差は薄まらない。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_scan_to_bim_asbuilt.py
@@ -4032,29 +4032,29 @@ A bridge girder (7 planes + 2 cylinders) carries known deflection, section loss,
 
 *↑ **Re-surveying a structure year by year — when the vantage moves, decay appears to advance** ―― A bridge girder (7 planes + 2 cylinders) carries known deflection, section loss, bearing settlement and a crack across three epochs, re-scanned each time from different positions, densities and poses. Re-measuring with zero deterioration already yields a nearest-neighbour "change" of 21.07 mm median and 42.64 mm max, and the false repair volume above a 1 mm threshold (5.098 L) reaches 87 % of the real one (5.882 L). Registering on all points absorbs 0.689 of the mid-span deflection (closed form 2/3) and invents a -1.737 mm uplift at the supports, while the undetermined along-span direction shows up not on the girder planes but only on the bearing cylinder, as a spurious 41.2 mm horizontal shift.*
 
-[![下フランジの暗い窪みが断面欠損、面全体の淡い変化がたわみ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/02_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/02_frames.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/02_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/02_frames.png)
 
 *↑ The measurement ―― 下フランジの暗い窪みが断面欠損、面全体の淡い変化がたわみ。腹板(法線が水平)にはたわみが出ない ——同じ劣化でも面の向きで見え方が変わる。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じ構造物を 3 回測る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/03_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/03_conditions.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/03_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/03_conditions.png)
 
-*↑ 同じ構造物を 3 回測る。*
+*↑ Figure from this exhibit ―― 同じ構造物を 3 回測る。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真のたわみは中央 3.00 mm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/05_scope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/05_scope.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/05_scope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/05_scope.png)
 
-*↑ 真のたわみは中央 3.00 mm。*
+*↑ Figure from this exhibit ―― 真のたわみは中央 3.00 mm。 (figure labels are in Japanese; the numbers are the same)*
 
-[![予測は (ω×(p-c))·n を core 上で積んだだけ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/07_cliff_angle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/07_cliff_angle.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/07_cliff_angle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/07_cliff_angle.png)
 
-*↑ 予測は (ω×(p-c))·n を core 上で積んだだけ。*
+*↑ Figure from this exhibit ―― 予測は (ω×(p-c))·n を core 上で積んだだけ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![押し出し形状の平面は法線に x 成分を持たない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/09_prism_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/09_prism.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/09_prism_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/09_prism.png)
 
-*↑ 押し出し形状の平面は法線に x 成分を持たない。*
+*↑ Figure from this exhibit ―― 押し出し形状の平面は法線に x 成分を持たない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![動画(640 × 530、15 fps、135 コマ): 橋桁を 2 年で 3 回点検する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/12_years_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/12_years_video.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/12_years_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/12_years_video.gif)
 
-*↑ The animation ―― 動画(640 × 530、15 fps、135 コマ): 橋桁を 2 年で 3 回点検する。左は真の法線方向変化(展開図、真値は 3 時点だけ定義なので点検の間は直線で補間して描いた)、右は法線方向に測った変化で、点検(1 年・2 年)が来たときだけ更新される。下段は代表 3 点の時系列(線 = 真値、点 = 測定)。灰の帯は t2 の差の誤差 RMS の ±2 倍(±3.45 mm)で、代表 3 点のうち欠損の谷(真 -21.4 mm)だけが帯を大きく越える。速度の誤差 RMS は 0.863 mm/年 で、1 mm/年 の進行は 2σ = 1.726 mm/年 の下に沈む。*
+*↑ The animation ―― 動画(640 × 530、15 fps、135 コマ): 橋桁を 2 年で 3 回点検する。左は真の法線方向変化(展開図、真値は 3 時点だけ定義なので点検の間は直線で補間して描いた)、右は法線方向に測った変化で、点検(1 年・2 年)が来たときだけ更新される。下段は代表 3 点の時系列(線 = 真値、点 = 測定)。灰の帯は t2 の差の誤差 RMS の ±2 倍(±3.45 mm)で、代表 3 点のうち欠損の谷(真 -21.4 mm)だけが帯を大きく越える。速度の誤差 RMS は 0.863 mm/年 で、1 mm/年 の進行は 2σ = 1.726 mm/年 の下に沈む。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_structure_4d_deterioration.py
@@ -4074,25 +4074,25 @@ A bilaterally symmetric mask is synthesised so that both the complete shape and 
 
 *↑ **Restoring what is missing by symmetry — the plane you assume is the lie you get** ―― A bilaterally symmetric mask is synthesised so that both the complete shape and the true mirror plane are known, then one side is broken off with a sphere. With the true plane, symmetric restoration reaches 0.81 mm RMS and beats harmonic hole filling (1.60 mm) — but it loses the moment the plane is off by 1.39 deg (84 arcmin) or 1.41 mm. The error is predicted by the surface-normal component of the mirror displacement (4.6 % relative error; the naive 2d sin a misses by 50.6 %), so the cliff follows from geometry alone. Losing 3.1 % of the points already flips the PCA candidate ranking onto a 90-degree-wrong axis, and on a shape that is not truly symmetric the restoration fabricates 3436 mm3 of ornament or erases 3495 mm3 — even with the exact plane.*
 
-[![失われた真値の点から復元点群までの距離(符号なし、6 mm で頭打ち)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/02_restore_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/02_restore_error_maps.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/02_restore_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/02_restore_error_maps.png)
 
 *↑ The measurement ―― 失われた真値の点から復元点群までの距離(符号なし、6 mm で頭打ち)。対称復元だけが眼窩の形を取り戻す。 (figure labels are in Japanese; the numbers are the same)*
 
-[![崖は alpha = 1.39 deg(84 分角)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/03_angle_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/03_angle_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/03_angle_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/03_angle_cliff.png)
 
-*↑ 崖は alpha = 1.39 deg(84 分角)。*
+*↑ Figure from this exhibit ―― 崖は alpha = 1.39 deg(84 分角)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![鏡像点は厳密に 2t 動くが、表面誤差になるのはその法線成分(|n.x| の RMS = 0.50)だけ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/05_offset_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/05_offset_cliff.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/05_offset_cliff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/05_offset_cliff.png)
 
-*↑ 鏡像点は厳密に 2t 動くが、表面誤差になるのはその法線成分(|n.x| の RMS = 0.50)だけ。*
+*↑ Figure from this exhibit ―― 鏡像点は厳密に 2t 動くが、表面誤差になるのはその法線成分(|n.x| の RMS = 0.50)だけ。 (figure labels are in Japanese; the numbers are the same)*
 
-[![欠損のまま推定した面で復元すると、欠損部の全体が一様にずれる(位置ずれの署名)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/07_controls_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/07_controls_maps.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/07_controls_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/07_controls_maps.png)
 
-*↑ 欠損のまま推定した面で復元すると、欠損部の全体が一様にずれる(位置ずれの署名)。*
+*↑ Figure from this exhibit ―― 欠損のまま推定した面で復元すると、欠損部の全体が一様にずれる(位置ずれの署名)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![色は「鏡像 - 真値」。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/09_false_symmetry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/09_false_symmetry.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/09_false_symmetry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/09_false_symmetry.png)
 
-*↑ 色は「鏡像 - 真値」。*
+*↑ Figure from this exhibit ―― 色は「鏡像 - 真値」。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_symmetry_restoration.py
@@ -4112,33 +4112,33 @@ Motion that never ends still carries equations you can score without watching it
 
 *↑ **Endless Zooms and Turning Solids: Making the Return Itself the Ground Truth** ―― Motion that never ends still carries equations you can score without watching it end: an infinite zoom returns to the identical picture once you have zoomed by the self-similarity ratio, and a rotating solid returns after 2 pi. Neither loop is made by cutting back to the first frame; both follow from the construction, so the truth is exactly zero difference. The material is Pascal's triangle mod 2 - the same truth that rule 90 satisfies - and the hierarchy of its gaps has a closed form: with I = floor(u*2^D), J = floor(v*2^D) and b the position of the highest set bit of I & J, the depth is d = D - b. Halving u shifts I right by one, so b drops by one and d rises by exactly one, which is why zooming never costs resolution: every pixel is decided by an integer bit test rather than by magnifying a raster. Over a loop that zooms eight-fold, frame(T) and frame(0) differ by 0.0e+00. The first core finding is that the measured dimension does not move at all under zoom: the existing fractal_dimension operator returns the same value across six zoom levels with a standard deviation of exactly zero, and where the depth of the approximant matches the pixel grid it equals log2(3) = 1.584962500721 to within 8.9e-16 - an agreement, not an approximation. The second is that the same operator returns 0.0 when handed an approximant finer than the pixels; that zero does not mean there is no structure, it means the structure is finer than the sampling, and indeed the level-9 approximant has zero foreground pixels out of 262,144. The third is that 2 pi does not close in floating point: building the rotation from the angle 2*pi*i/T leaves 1.40e-12 in the normals at i = T because sin(2 pi) is -2.45e-16, while closing the period on the integer index instead gives exactly zero. The fourth is a prediction that was wrong and has been left in: the silhouette area of a cube under orthographic projection is a^2(|cos| + |sin|), and the measured two per cent residual was read as the bevel that marching cubes puts on the corners - but pushing the camera from a distance of 6 to 96 dropped the residual from 0.128 to 0.004 for the exact cube and the marching-cubes cube alike, so the floor was perspective, not the mesh. The bevel shows up instead in a quantity that distance does not fix: the ratio of maximum to minimum silhouette area converges to sqrt(2) = 1.4142 for the exact cube but stops at 1.3958 for the extracted surface. Separating one residual into two causes came from sweeping the distance. Two smaller findings: the four-fold symmetry of the depth field is exact while the rendered image breaks it by 1.1e-16, which is the order of summation in a 2x2 average rather than any mathematics; and the two labyrinths of the gyroid have a volume ratio of 0.500000000000, which follows from the odd symmetry. No new operator was added.*
 
-[![右は 2 枚の差をそのまま出したもので、**全画素が 0**(最大差 0.0e+00)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/02_zoom_seam_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/02_zoom_seam.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/02_zoom_seam_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/02_zoom_seam.png)
 
 *↑ The measurement ―― 右は 2 枚の差をそのまま出したもので、**全画素が 0**(最大差 0.0e+00)。倍率を 8 倍にしたのに同じ絵になるのは、色の巡回(周期 3)が深さの巡回とちょうど噛み合うから。 (figure labels are in Japanese; the numbers are the same)*
 
-[![**空隙の深さ(色 = 深さ、深いほど濃い)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/04_zoom_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/04_zoom_depth.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/04_zoom_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/04_zoom_depth.png)
 
-*↑ **空隙の深さ(色 = 深さ、深いほど濃い)。*
+*↑ Figure from this exhibit ―― **空隙の深さ(色 = 深さ、深いほど濃い)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![左から深さ 5..9。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/06_dimension_vs_level_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/06_dimension_vs_level.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/06_dimension_vs_level_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/06_dimension_vs_level.png)
 
-*↑ 左から深さ 5..9。*
+*↑ Figure from this exhibit ―― 左から深さ 5..9。 (figure labels are in Japanese; the numbers are the same)*
 
-[![正射影ならシルエット面積は `a²(|cosθ| + |sinθ|)` で、45 度が最大(√2 倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/10_cube_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/10_cube_steps.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/10_cube_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/10_cube_steps.png)
 
-*↑ 正射影ならシルエット面積は `a²(|cosθ| + |sinθ|)` で、45 度が最大(√2 倍)。*
+*↑ Figure from this exhibit ―― 正射影ならシルエット面積は `a²(|cosθ| + |sinθ|)` で、45 度が最大(√2 倍)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![厳密な立方体は √2 = 1.4142 に収束する(1.4167)のに、marching cubes で取り出した面は **1.3958 で止まる**。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/13_mesh_is_not_a_cube_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/13_mesh_is_not_a_cube.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/13_mesh_is_not_a_cube_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/13_mesh_is_not_a_cube.png)
 
-*↑ 厳密な立方体は √2 = 1.4142 に収束する(1.4167)のに、marching cubes で取り出した面は **1.3958 で止まる**。*
+*↑ Figure from this exhibit ―― 厳密な立方体は √2 = 1.4142 に収束する(1.4167)のに、marching cubes で取り出した面は **1.3958 で止まる**。 (figure labels are in Japanese; the numbers are the same)*
 
-[![止めどきは呼んだ側が決める。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif)
 
-*↑ The animation ―― 止めどきは呼んだ側が決める。24 コマで 1 周(8 倍)、そこから先は同じ絵が続く。*
+*↑ The animation ―― 止めどきは呼んだ側が決める。24 コマで 1 周(8 倍)、そこから先は同じ絵が続く。 (figure labels are in Japanese; the numbers are the same)*
 
-[![1 周 18 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/08_solid_loop.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/08_solid_loop.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/08_solid_loop.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/08_solid_loop.gif)
 
-*↑ The animation ―― 1 周 18 コマ。添字の剰余で角度を作っているので、18 コマ目は 0 コマ目と画素単位で同じ。*
+*↑ The animation ―― 1 周 18 コマ。添字の剰余で角度を作っているので、18 コマ目は 0 コマ目と画素単位で同じ。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_endless_zoom_and_turning_solids.py
@@ -4158,37 +4158,37 @@ The topology and algebra of four dimensions can be scored exactly by ordinary th
 
 *↑ **Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators** ―― The topology and algebra of four dimensions can be scored exactly by ordinary three-dimensional operators already in the box: fitting a circle to a point cloud, the signed volume of a closed mesh, tube meshing and rasterising. The Hopf fibration splits the three-sphere into circles indexed by points of the two-sphere: viewing a point of S^3 as a pair of complex numbers, the fibre over a point of S^2 is the circle q(t) = (cos(theta/2) e^{it}, sin(theta/2) e^{i(t+phi)}), and stereographic projection carries it to an exact circle in space - a Villarceau circle. The first finding is that a four-dimensional circle becomes a two-dimensional point: pushing one fibre through the Hopf map leaves a spread of 8.9e-16 on the sphere, so all 256 sampled points collapse onto one. The second is that the circle-fitting operator recognises it: the projected radius ranges from 0.70 to 7.34 across latitudes, yet the fit residual and the departure from a single plane both stay in the 1e-14 range - a theorem, not an approximation. The third is that two distinct fibres always link exactly once, that the integer emerges from the Gauss integral, and that even the rate of convergence is predictable: doubling the discretisation divides the error by exactly four, measured at 4.01, 4.00, 4.00 and 4.00, confirming the predicted second order. The fourth concerns rotation: in four dimensions a rotation acts in two planes at once, and the motion closes only for rational ratios. A tesseract - 16 vertices, 32 edges, 24 faces, 8 cells, Euler characteristic exactly 0, hypervolume exactly 16 for edge 2 - turned simultaneously in the xy and zw planes returns after sixty steps for ratios 1:2, 2:3 and 3:4 with a difference of 0.0e+00, while the minimum separation along the way stays above 0.23, so it is not the trivial case of nothing having moved. For the golden ratio, refining the step to 400 and running twenty thousand steps still leaves a minimum separation of 0.0257. The period closes because the angle is built from an integer remainder rather than accumulated arithmetic. The fifth finding separates two sources of error in the volume of a tube. Writing two closed forms - one for a circular cross-section on a circular centreline, one for a regular m-gon cross-section on a circular centreline - makes the discrepancy against the second completely independent of m: for a fixed centreline the three cross-sections agree to 7.8e-16. The cross-section's own contribution then vanishes as 1/m^2 exactly as its closed form says, with ratios 3.99 and 4.00. One prediction was wrong and has been left in: the centreline's contribution was expected to vanish as 1/n^2, but doubling and quadrupling the sample count divides it by only 2.09 and 4.15, that is as 1/n - and since the perimeter of the inscribed polygon converges as 1/n^2, the residue cannot come from the perimeter but from the thickness at the joints. Consequently neither knob alone suffices: 96 sides alone stalls at -0.001588 and 1600 centreline points alone at -0.003064, while turning both reaches -0.000925. No new operator was added.*
 
-[![ホップ束の繊維 4 本を立体射影して管にしたもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/01_hopf_fibers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/01_hopf_fibers.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/01_hopf_fibers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/01_hopf_fibers.png)
 
 *↑ The measurement ―― ホップ束の繊維 4 本を立体射影して管にしたもの。★**4 次元では 4 本とも同じ大きさの円**なのに、3 次元へ写すと大きさが変わる —— それでも `fit_circle_3d` は 4 本すべてを **残差 1.4e-14** で円と認める。どの 2 本も**必ず 1 回だけ絡む**。 (figure labels are in Japanese; the numbers are the same)*
 
-[![`fit_circle_3d` に 200 点を食わせた残差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/04_circle_fit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/04_circle_fit.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/04_circle_fit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/04_circle_fit.png)
 
-*↑ `fit_circle_3d` に 200 点を食わせた残差。*
+*↑ Figure from this exhibit ―― `fit_circle_3d` に 200 点を食わせた残差。 (figure labels are in Japanese; the numbers are the same)*
 
-[![ガウスの積分で求めた絡み数の、**整数 1** からの差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/05_linking_vs_n_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/05_linking_vs_n.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/05_linking_vs_n_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/05_linking_vs_n.png)
 
-*↑ ガウスの積分で求めた絡み数の、**整数 1** からの差。*
+*↑ Figure from this exhibit ―― ガウスの積分で求めた絡み数の、**整数 1** からの差。 (figure labels are in Japanese; the numbers are the same)*
 
-[![真値 B は「**正 m 角形**断面・円中心線」の体積。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/08_tube_error_split_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/08_tube_error_split.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/08_tube_error_split_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/08_tube_error_split.png)
 
-*↑ 真値 B は「**正 m 角形**断面・円中心線」の体積。*
+*↑ Figure from this exhibit ―― 真値 B は「**正 m 角形**断面・円中心線」の体積。 (figure labels are in Japanese; the numbers are the same)*
 
-[![断面の効果は閉形式どおり **1/m²**(比 3.99 / 4.00)で消えるのに、中心線の効果は **1/n**(比 2.09 / 4.15)でしか消えない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/09_tube_two_knobs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/09_tube_two_knobs.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/09_tube_two_knobs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/09_tube_two_knobs.png)
 
-*↑ 断面の効果は閉形式どおり **1/m²**(比 3.99 / 4.00)で消えるのに、中心線の効果は **1/n**(比 2.09 / 4.15)でしか消えない。*
+*↑ Figure from this exhibit ―― 断面の効果は閉形式どおり **1/m²**(比 3.99 / 4.00)で消えるのに、中心線の効果は **1/n**(比 2.09 / 4.15)でしか消えない。 (figure labels are in Japanese; the numbers are the same)*
 
-[![同じ 4 本を視点だけ回して見たもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif)
 
-*↑ The animation ―― 同じ 4 本を視点だけ回して見たもの。★**視点の周期は角度でなく整数の剰余で閉じている**(24 コマ目が 0 コマ目と同じ式になる)ので、継ぎ目が出ない。絡み方は視点を変えても変わらない —— 絡み数は**位相の量**だから。*
+*↑ The animation ―― 同じ 4 本を視点だけ回して見たもの。★**視点の周期は角度でなく整数の剰余で閉じている**(24 コマ目が 0 コマ目と同じ式になる)ので、継ぎ目が出ない。絡み方は視点を変えても変わらない —— 絡み数は**位相の量**だから。 (figure labels are in Japanese; the numbers are the same)*
 
-[![比 **1 : 2**(有理)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/06_tesseract_rational.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/06_tesseract_rational.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/06_tesseract_rational.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/06_tesseract_rational.gif)
 
-*↑ The animation ―― 比 **1 : 2**(有理)。60 コマでちょうど元に戻る —— 戻ったときの差は **0.0e+00**。★角度は**整数の剰余**で作っているので、有理な比なら継ぎ目が出ない。描いているのは 4 次元の超立方体を**2 枚の面で同時に回して**から w を落とした影。辺は 32 本とも同じ長さなのに、影では伸び縮みする。*
+*↑ The animation ―― 比 **1 : 2**(有理)。60 コマでちょうど元に戻る —— 戻ったときの差は **0.0e+00**。★角度は**整数の剰余**で作っているので、有理な比なら継ぎ目が出ない。描いているのは 4 次元の超立方体を**2 枚の面で同時に回して**から w を落とした影。辺は 32 本とも同じ長さなのに、影では伸び縮みする。 (figure labels are in Japanese; the numbers are the same)*
 
-[![比 **1 : φ**(無理、黄金比)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/07_tesseract_irrational.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/07_tesseract_irrational.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/07_tesseract_irrational.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/07_tesseract_irrational.gif)
 
-*↑ The animation ―― 比 **1 : φ**(無理、黄金比)。この 60 コマでは戻らない。別に**刻みを 400 に細かくして 20,000 歩**まで回しても、最小の隔たりは **0.0257** で 0 に落ちない。★角度は**整数の剰余**で作っているので、有理な比なら継ぎ目が出ない。描いているのは 4 次元の超立方体を**2 枚の面で同時に回して**から w を落とした影。辺は 32 本とも同じ長さなのに、影では伸び縮みする。*
+*↑ The animation ―― 比 **1 : φ**(無理、黄金比)。この 60 コマでは戻らない。別に**刻みを 400 に細かくして 20,000 歩**まで回しても、最小の隔たりは **0.0257** で 0 に落ちない。★角度は**整数の剰余**で作っているので、有理な比なら継ぎ目が出ない。描いているのは 4 次元の超立方体を**2 枚の面で同時に回して**から w を落とした影。辺は 32 本とも同じ長さなのに、影では伸び縮みする。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_four_dimensions_by_three_d_tools.py
@@ -4208,7 +4208,7 @@ The author's idea: put Itokawa (about 535 m) next to the venue buildings and the
 
 *↑ **The Venue Buildings and Asteroid Itokawa on One Ruler — Turning PLATEAU CityGML LOD2 into a Triangle Mesh** ―― The author's idea: put Itokawa (about 535 m) next to the venue buildings and the size becomes tangible. A new op, plateau_lod2_mesh, reads the ViEW2026 venue (Pacifico Yokohama, Minato Mirai) from MLIT's Project PLATEAU 3D city model (CityGML 2.0, LOD2): the building body and each BuildingPart become one part, and the thematic surfaces (ground, wall, roof) are triangulated (holes bridged to the outer ring and ear-clipped, outward orientation kept). Coordinates go exactly from EPSG:6697 (latitude, longitude, height) through GRS80 Earth-centred Cartesian coordinates into the ENU frame [m] of the tangent plane at the ground centroid. A CRS other than 6697, unknown geometry, a thematic surface not in the table, an unresolved xlink or a height unit other than metres is refused rather than skipped (fail-closed). The seven venue parts (hotel tower with the conference centre = one PLATEAU part, the National Convention Hall, the exhibition hall, the annex hall, the North building and two low-rise annexes) ship as a 112 kB npz; the recipe and its gates stay in the tool. Gates: a synthetic gabled building gives heights of 12 / 4 m, volumes of 2000 / 144 m³ (divergence theorem) and a holed-roof area of 2·20·√41 + 36 − 4 m² in closed form (1e-5), the ellipsoid round trip holds to 1e-6 m, over the seven venue parts the mesh height (highest roof point minus lowest ground point) differs from CityGML measuredHeight by at most 0.045 m (within half the 0.1 m rounding step), the extents measured by a second formula (equirectangular) on coordinates pulled from the raw bytes by regex differ by 0.005 m, and every face points outward. Itokawa's 535 m length is 2.0 times the exhibition hall's long side of 263 m and 3.8 hotel-tower heights of 142.1 m. Figures: the venue (left) and Itokawa (right) dropped onto the same 2 m grid seen from above, and a silhouette from the south. Honestly: the bundled 3000-point cloud spans 562 × 298 × 244 m along its principal axes, 1 to 17 % more than the published 535 × 294 × 209 m, a difference in how axes and extents are taken, so it is not a gate. This PLATEAU vintage carries no building names, so the parts were identified by coordinates and checked against public map positions. The geoid height is ignored (6e-6 relative horizontal error). Attribution: processed from the 3D City Model (Project PLATEAU), Yokohama City (FY2020), MLIT Japan (https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020), PDL1.0, compatible with CC BY 4.0. The extraction of seven parts, the coordinate conversion and the triangulation are Fullseye's own processing, not an MLIT product. The Itokawa points are decimated from the Gaskell shape model (PDS Small Bodies Node).*
 
-[![南から見た影絵。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/02_venue_itokawa_side_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/02_venue_itokawa_side.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/02_venue_itokawa_side_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/02_venue_itokawa_side.png)
 
 *↑ The measurement ―― 南から見た影絵。ホテル棟 142 m とイトカワの厚み(約 209〜244 m)を同じ縮尺で (figure labels are in Japanese; the numbers are the same)*
 
@@ -4236,13 +4236,13 @@ A seeded 196-star synthetic catalogue and a 128 by 128 synthetic image with PSF 
 
 Terms: PSF — The spatial response of an imaging system to a point object, describing how that point is blurred in the image.
 
-[![三角形の角距離で全196星表を探索し、ホットピクセル2個を外れ値として棄却した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections.png)
 
 *↑ The measurement ―― 三角形の角距離で全196星表を探索し、ホットピクセル2個を外れ値として棄却した。 (figure labels are in Japanese; the numbers are the same)*
 
-[![推定値は合成像の検出点から計算し、真値は採点だけに使った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates.png)
 
-*↑ 推定値は合成像の検出点から計算し、真値は採点だけに使った。*
+*↑ Figure from this exhibit ―― 推定値は合成像の検出点から計算し、真値は採点だけに使った。 (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_star_tracker.py
@@ -4284,29 +4284,29 @@ In this simulation, models of several depth-sensing methods measure one part in 
 
 *↑ **One Part, Five 3-D Sensing Methods, Simulated — Where Fringe Projection, Indirect ToF, Light Section, Photometric Stereo and Stereo Break, Material by Material** ―― The same part in four materials measured in simulation (not on real instruments) by stereo, fringe projection, indirect ToF, light section and photometric stereo, rendered obliquely (grey: missing, orange: off by more than a common 0.1 mm). Top row: ground truth. Photometric stereo's height offset is fitted to the truth.*
 
-[![装置が撮る生の画像(上 = つや消し、下 = 金属光沢)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/02_raw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/02_raw.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/02_raw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/02_raw.png)
 
 *↑ The measurement ―― 装置が撮る生の画像(上 = つや消し、下 = 金属光沢)。ステレオの左、縞投影の 1 枚(周期 1 mm)、ToF の振幅(画素 0.4 mm)、光切断の 1 コマ(部屋の明かりつき)、照度差ステレオの 1 灯目。カメラの像はレンズのぼけと周辺減光を通してある。 (figure labels are in Japanese; the numbers are the same)*
 
-[![雑音 = 平らな所の真値との差の頑健な標準偏差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/03_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/03_numbers.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/03_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/03_numbers.png)
 
-*↑ 雑音 = 平らな所の真値との差の頑健な標準偏差。*
+*↑ Figure from this exhibit ―― 雑音 = 平らな所の真値との差の頑健な標準偏差。 (figure labels are in Japanese; the numbers are the same)*
 
-[![ステレオの輻輳角・カメラの画素・ToF の画素を振った雑音。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/04_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/04_conditions.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/04_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/04_conditions.png)
 
-*↑ ステレオの輻輳角・カメラの画素・ToF の画素を振った雑音。*
+*↑ Figure from this exhibit ―― ステレオの輻輳角・カメラの画素・ToF の画素を振った雑音。 (figure labels are in Japanese; the numbers are the same)*
 
-[![VDI/VDE 2634 Part 2 の考え方の評価量(準拠ではない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/05_acceptance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/05_acceptance.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/05_acceptance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/05_acceptance.png)
 
-*↑ VDI/VDE 2634 Part 2 の考え方の評価量(準拠ではない)。*
+*↑ Figure from this exhibit ―― VDI/VDE 2634 Part 2 の考え方の評価量(準拠ではない)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![実データ: 同じ場面を構造化光と ToF の深度センサで撮った深度(T-LESS)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/06_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/06_real.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/06_real_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/06_real.png)
 
-*↑ 実データ: 同じ場面を構造化光と ToF の深度センサで撮った深度(T-LESS)。*
+*↑ Figure from this exhibit ―― 実データ: 同じ場面を構造化光と ToF の深度センサで撮った深度(T-LESS)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![何を入れ(同じ部品・4 材質)→ 何を比べ(5 方式の生の画像と測った形)→ 何が分かったか(どこで壊れるか)を約 51 秒で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/07_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/07_explained.gif)
+[![animation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/07_explained.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_3d_sensor_modalities/07_explained.gif)
 
-*↑ The animation ―― 何を入れ(同じ部品・4 材質)→ 何を比べ(5 方式の生の画像と測った形)→ 何が分かったか(どこで壊れるか)を約 51 秒で。*
+*↑ The animation ―― 何を入れ(同じ部品・4 材質)→ 何を比べ(5 方式の生の画像と測った形)→ 何が分かったか(どこで壊れるか)を約 51 秒で。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 
@@ -4330,25 +4330,25 @@ On one public desk depth sequence, frame-to-frame alignment was checked against 
 
 *↑ **Scoring a Real Depth Camera's Trajectory and Plane Residuals Against External Truth — Better Than Not Aligning and 0.45 to 0.82 Times a Constant-Velocity Guess Depending on How the Split Picks the Tuning (One Sequence of 32 Frames), and Window Residuals Cannot Settle the Square Law (TUM RGB-D)** ―― Depth in metres of the fifth of the 32 bundled frames (black = missing) and the plane-fit residual in mm per 24 x 24 pixel window (black = no window). Windows exclude missing pixels, occlusion edges and steep slopes.*
 
-[![カメラ位置の軌跡を真値の主軸 2 本へ投影した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png)
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/02_trajectory.png)
 
 *↑ The measurement ―― カメラ位置の軌跡を真値の主軸 2 本へ投影した。ICP の鎖は誤差が溜まる(ドリフト)。右端の跳ねは分割の直後の組 16〜18 で ICP が外れた所。比べる相手は等速(直前の組の真値の相対姿勢を使う oracle)の鎖で、これは真値を 1 組ぶん遅らせた物なので、空間に描くと真値の線にほぼ重なる(ATE は同じ時刻どうしの差なので 1 組ぶんの動きが残る。線は描いていない)。「合わせない」の ATE 156 mm は真値の経路の広がりそのもので、比べる相手にならない。1 系列 32 枚の結果。 (figure labels are in Japanese; the numbers are the same)*
 
-[![破線は「合わせない」の誤差(= 真値の 1 組あたりの動き、約 60 mm)と、直前の真値を使う等速の誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/03_rpe_steps.png)
 
-*↑ 破線は「合わせない」の誤差(= 真値の 1 組あたりの動き、約 60 mm)と、直前の真値を使う等速の誤差。*
+*↑ Figure from this exhibit ―― 破線は「合わせない」の誤差(= 真値の 1 組あたりの動き、約 60 mm)と、直前の真値を使う等速の誤差。 (figure labels are in Japanese; the numbers are the same)*
 
-[![点は 24×24 画素の窓の残差の中央値(センサの雑音だけではなく、視差の量子化・窓の中の凹凸・窓の広さを含む)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/04_sigma_vs_z.png)
 
-*↑ 点は 24×24 画素の窓の残差の中央値(センサの雑音だけではなく、視差の量子化・窓の中の凹凸・窓の広さを含む)。*
+*↑ Figure from this exhibit ―― 点は 24×24 画素の窓の残差の中央値(センサの雑音だけではなく、視差の量子化・窓の中の凹凸・窓の広さを含む)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![結果を見てから置いた門を含む(docstring の限界を参照)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/05_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/05_verdicts.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/05_verdicts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/05_verdicts.png)
 
-*↑ 結果を見てから置いた門を含む(docstring の限界を参照)。*
+*↑ Figure from this exhibit ―― 結果を見てから置いた門を含む(docstring の限界を参照)。 (figure labels are in Japanese; the numbers are the same)*
 
-[![trim は選ぶ側の RMS が最小のものを選び、採点する側の RMS を「合わせない」(最弱の基準)と比べた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/06_splits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/06_splits.png)
+[![figure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/06_splits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_tum_rgbd_slam/06_splits.png)
 
-*↑ trim は選ぶ側の RMS が最小のものを選び、採点する側の RMS を「合わせない」(最弱の基準)と比べた。*
+*↑ Figure from this exhibit ―― trim は選ぶ側の RMS が最小のものを選び、採点する側の RMS を「合わせない」(最弱の基準)と比べた。 (figure labels are in Japanese; the numbers are the same)*
 
 ### Figure provenance
 

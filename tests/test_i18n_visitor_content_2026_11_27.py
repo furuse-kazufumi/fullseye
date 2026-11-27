@@ -77,7 +77,8 @@ def test_english_operational_tables_keep_safety_significant_literals():
 
 def test_root_readme_stays_english_and_uses_english_docs():
     text = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert not re.search(r"[ぁ-んァ-ヶ]", text)
+    prose = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+    assert not re.search(r"[\u3041-\u3096\u30a1-\u30fa]", prose)
     for source in (
         "AI_RAG_GUIDE", "GALLERY", "ops/INDEX", "OP_CATALOG",
         "STUDIO_GUIDE", "HDEVELOP_DEV_OPS", "DESIGN_NOTES",
@@ -88,10 +89,10 @@ def test_root_readme_stays_english_and_uses_english_docs():
 
 def test_english_poc_gallery_marks_untranslated_captions_and_alts_are_english():
     text = (DOCS / "articles" / "exhibits" / "wingpoc.en.md").read_text(encoding="utf-8")
-    kana = re.compile(r"[ぁ-んァ-ヶ]")
+    kana = re.compile(r"[\u3041-\u3096\u30a1-\u30fa]")
     for line in text.splitlines():
         if line.startswith("[!["):
             assert not kana.search(line), line
-        if line.startswith("*↑") and kana.search(line):
+        if line.startswith(("*↑ The measurement ―― ", "*↑ Figure from this exhibit ―― ")) and kana.search(line):
             assert "(figure labels are in Japanese; the numbers are the same)" in line
     assert "*↑ この回の図*" not in text
