@@ -789,7 +789,7 @@ def main() -> int:
 
 def _second_figure_alt(ex: dict, caption: str, lang: str) -> str:
     """2枚目のaltを英語化する / Return localized alt text for the second figure."""
-    source = caption if lang == "ja" else (ex.get("second_figure_caption_en") or "measurement")
+    source = (caption or "測定の図") if lang == "ja" else (ex.get("second_figure_caption_en") or "measurement")
     return _first_sentence(source, 120).replace("]", ")")
 
 
