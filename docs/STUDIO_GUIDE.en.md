@@ -6,11 +6,13 @@ lang: en
 <!-- i18n-source-sha: ff004dd0e885 -->
 # The complete guide to Fullseye Studio
 
+<!-- i18n-switcher -->
+[日本語](./STUDIO_GUIDE.md) · **English** · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
+
 A purpose search groups candidates by whether they fit the current input, need preprocessing, or belong elsewhere. You can try a candidate once without adding a stage. Failures in the Problems pane show the cause, location, and concrete next actions for reselecting input, comparing values, opening the log, editing a knob, or finding a suggested stage.
 
 Heavy work runs without freezing the window. The bottom area shows the active stage and progress; a stop request is acknowledged at the next stage boundary. If settings change during a run, the displayed generation remains identified and you can either view the completed older result or run the current settings.
 
-[日本語](./STUDIO_GUIDE.md) · **English** · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 **Fullseye Studio** is an HDevelop-style visual pipeline workbench. You search for operators and
 line them up, turn two knobs with sliders, run one stage at a time while looking at the

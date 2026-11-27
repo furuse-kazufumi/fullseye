@@ -1,5 +1,8 @@
 # Fullseye 統一インターフェース — 要件定義書 (v0.1, 2026-08-18)
 
+<!-- i18n-switcher -->
+**日本語** · [English](./UNIFIED_API_REQUIREMENTS.en.md)
+
 > 2026-08-17〜18 のディレクションを踏まえた要件定義。方針正本 = raptor memory
 > `project_fullseye_mission_unified_vision_2026_08_18`、gap 分析 = `EVIS_VISION_OSS_GAP.md`。
 > 本書は **何を・なぜ**(要件)を定める。**どう作るか**(実装)は本書合意後の設計/spike で。

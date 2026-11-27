@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 37bc63784e56 -->
 # Fullseye 3DGS —— 使用方法（单条命令）
 
+<!-- i18n-switcher -->
 [日本語](./3DGS_USAGE.md) · [English](./3DGS_USAGE.en.md) · **简体中文** · [繁體中文](./3DGS_USAGE.tw.md) · [한국어](./3DGS_USAGE.ko.md) · [Deutsch](./3DGS_USAGE.de.md)
+
 
 将 MuJoCo 的仿真场景转换为 **3D Gaussian Splatting**，生成可以全方位旋转查看的 GIF 以及新视角图像。相机位姿使用仿真的真值，因此**不需要 COLMAP**。
 

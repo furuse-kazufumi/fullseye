@@ -6,11 +6,13 @@ lang: ko
 <!-- i18n-source-sha: ff004dd0e885 -->
 # Fullseye Studio 완전 가이드
 
+<!-- i18n-switcher -->
+[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · **한국어** · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
+
 무거운 처리는 창을 멈추지 않고 실행됩니다. 아래 영역에는 현재 단계와 진행률이 표시되며, 중지 요청은 다음 단계 경계에서 확인됩니다. 실행 중 설정이 바뀌면 표시 결과의 세대를 밝히고, 이전 설정의 완료 결과를 보거나 현재 설정으로 다시 실행할 수 있습니다.
 
 처리 목적을 검색하면 후보가 현재 입력에 적용 가능, 전처리 필요, 기타의 세 그룹으로 나뉩니다. 단계를 추가하지 않고 후보를 한 번 실행해 볼 수 있습니다. 실행에 실패하면 Problems 창에 원인, 위치, 다음 작업이 표시되며 입력 재선택, 나란히 비교, 상세 로그 열기, 매개변수 편집, 제안 단계 검색으로 이동할 수 있습니다.
 
-[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · **한국어** · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 **Fullseye Studio**는 HDevelop풍의 시각적 파이프라인 워크벤치입니다. 연산자를 검색해 배치하고, 2개의 다이얼을 슬라이더로 돌리고, 중간 결과를 확대/축소·패닝하며 한 단계씩 실행하고, 완성된 파이프라인을 `--ops` 문자열 / Python / JSON으로 내보낼 수 있습니다. 실체는 `fullseye` API의 얇은 GUI 프런트엔드이며, 파이프라인 로직(`PipelineModel`)·Inspector(`inspect_result`)·샘플 모음(`recipes`)은 모두 Qt에 의존하지 않고 개별적으로 단위 테스트되어 있습니다.
 

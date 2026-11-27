@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 082bd7431e41 -->
 # GPU Optimization Design-Pattern Catalog (for RTX 5090 / Blackwell sm_120)
 
+<!-- i18n-switcher -->
 [日本語](./GPU_OPTIMIZATION_PATTERNS.md) · **English**
+
 
 **Target GPU (confirmed)**: NVIDIA RTX 5090, Blackwell, compute capability **sm_120**, 32 GB VRAM, driver 610.74.
 **Current state (confirmed)**: Only `torch 2.11.0+cpu` and `jax 0.7.1` (CpuDevice) are installed, so **nothing runs on the GPU right now**. sm_120 requires a build from the CUDA 12.8+ generation.

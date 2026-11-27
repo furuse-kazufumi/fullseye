@@ -6,11 +6,13 @@ lang: zh-Hant
 <!-- i18n-source-sha: ff004dd0e885 -->
 # Fullseye Studio 完全指南
 
+<!-- i18n-switcher -->
+[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · **繁體中文** · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
+
 繁重處理不會凍結視窗。底部區域顯示目前階段與進度；停止要求會在下一個階段邊界確認。若執行期間設定有變，介面會標示顯示結果的世代，並可選擇查看舊設定的完成結果或用目前設定重新執行。
 
 依處理目的搜尋時，候選項會分為適用於目前輸入、需要前處理和其他三組。候選項可在不新增處理階段的情況下試跑一次。執行失敗時，Problems 面板會顯示原因、位置與下一步操作，可重新選擇輸入、並排比較、查看詳細記錄、編輯參數或搜尋建議的處理階段。
 
-[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · **繁體中文** · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 **Fullseye Studio** 是一個類似 HDevelop 的視覺化流水線工作台。你可以搜尋並排列運算子，用兩個旋鈕滑桿調整參數，一邊縮放/平移檢視中間結果一邊逐段執行，最後把建好的流水線匯出成 `--ops` 字串 / Python / JSON。它的實體是 `fullseye` API 的一層薄 GUI 前端，流水線邏輯（`PipelineModel`）·Inspector（`inspect_result`）·範例集（`recipes`）皆不依賴 Qt，並且都有各自的單元測試。
 

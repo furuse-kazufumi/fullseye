@@ -5,6 +5,9 @@ lang: ja
 ---
 # はじめかた（5分で動かす）
 
+<!-- i18n-switcher -->
+**日本語** · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
+
 ## どれが自分の仕事か(3 つの入口)
 
 Fullseye は広いので、**最初に開く 1 本**を決められないと止まります。ここに挙げるのは

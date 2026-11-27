@@ -1,5 +1,8 @@
 # Fullseye Script — 言語 / ランタイム / ウォッチ IDE 設計仕様(北極星)
 
+<!-- i18n-switcher -->
+**日本語** · [English](./FSCRIPT_LANGUAGE.en.md)
+
 > 目的 = Fullseye Studio の Program を「線形 (op,a,b) パイプラインにスクリプトの皮を被せたもの」から、
 > **HALCON HDevelop 級の本物のプログラミング環境**へ進化させる。ユーザー確定の方向性(2026-08-15 対話):
 > 1. **専用言語**(HDevEngine 構文が第一希望、C/C++ 風でも可)で、名前付き変数 + 実 if/for/while(**測定値で分岐**)+ per-object 反復 + I/O。

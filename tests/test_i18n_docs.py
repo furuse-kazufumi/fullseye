@@ -41,6 +41,34 @@ def test_at_least_one_translation_exists():
     assert fresh >= 1, "fresh な訳が 1 本も無い(第一陣 GETTING_STARTED.en が消えた?)"
 
 
+def test_translated_families_have_generated_language_navigation():
+    """訳がある正本と訳の双方に、指紋から除外した言語切り替えを置く。"""
+    for stem, langs in D.prose_docs().items():
+        if len(langs) == 1:
+            continue
+        for lang, path in langs.items():
+            text = open(path, encoding="utf-8").read()
+            if "<!-- i18n-switcher -->" not in text:
+                # 既存の手書き切り替えも許す。 / Existing hand-written navigation is valid too.
+                target = stem + (".en.md" if lang == "ja" else ".md")
+                assert target in text, (stem, lang)
+            assert ("日本語" if lang == "ja" else "[日本語]") in text, (stem, lang)
+
+
+def test_language_navigation_does_not_change_the_source_fingerprint():
+    before = "# 題\n\n本文。\n"
+    after = "# 題\n\n<!-- i18n-switcher -->\n**日本語** · [English](./X.en.md)\n\n本文。\n"
+    assert D._sha(before) == D._sha(after)
+
+
+def test_translated_indexes_do_not_claim_that_only_the_index_is_translated():
+    stale_notes = ("only this index page", "只有本索引", "只有這份索引", "이 색인 페이지뿐", "nur diese Indexseite")
+    for lang in ("en", "zh", "tw", "ko", "de"):
+        text = open(os.path.join(ROOT, "docs", "README.%s.md" % lang), encoding="utf-8").read()
+        assert not any(note in text for note in stale_notes), lang
+        assert "_(ja)_" in text, lang
+
+
 def test_generated_stems_are_produced_by_the_chain():
     """★`GENERATED` と `regen_all.CHAIN` が drift しないこと。
 

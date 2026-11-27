@@ -6,7 +6,9 @@ lang: de
 <!-- i18n-source-sha: 018e1a97157e -->
 # Erste Schritte (in 5 Minuten startklar)
 
+<!-- i18n-switcher -->
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · **Deutsch** · [हिन्दी](./GETTING_STARTED.hi.md)
+
 
 ## Welcher Einstieg passt zu Ihnen (3 Einstiegspunkte)
 

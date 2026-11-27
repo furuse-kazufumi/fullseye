@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 335f07da75d7 -->
 # Evolutionary Algorithm Development Environment — Expand, Contract, Promote
 
+<!-- i18n-switcher -->
 [日本語](./EVOLUTION_ENVIRONMENT.md) · **English**
+
 
 Instead of composing ops by hand, **compose them mechanically (expand), narrow down
 to the useful ones (contract), and add the ones that pass into the vocabulary

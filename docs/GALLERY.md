@@ -1,5 +1,8 @@
 # Fullseye ギャラリー / Gallery
 
+<!-- i18n-switcher -->
+**日本語** · [English](./GALLERY.en.md)
+
 このページの位置づけ(Purpose of this page): ここに載っている図版はすべて
 `tools/gen_article_assets.py`(記事用モンタージュ・hero コピー・サムネ)および
 `tools/gen_showcase_gifs.py`(ターンテーブル GIF)を実行すれば**再生成できる実出力**です。

@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: b9433dbfb62f -->
 # HDevelop `dev_*` operator family — the UI/display control surface (Studio north star)
 
+<!-- i18n-switcher -->
 [日本語](./HDEVELOP_DEV_OPS.md) · **English**
+
 
 > User note (2026-08-16): "In HALCON, **whether the display updates or not** can also be controlled by op" and "the **display range of the image** can likewise be handled by op" → HDevelop controls **the entire display (graphics windows, variable windows, execution cursor, display range, drawing style) through `dev_*` operators**. Fullseye Studio (`studio.py`) should stay faithful to this HDevelop model.
 >

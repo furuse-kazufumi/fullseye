@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 6946b0bc470f -->
 # Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code)
 
+<!-- i18n-switcher -->
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./AI_RAG_GUIDE.hi.md)
+
 
 Die empfohlene Nutzung von Fullseye besteht darin, es **als Wissensbasis (RAG) eines KI-Coding-Assistenten** einzusetzen. Da jeder op eine maschinenlesbare Markdown-Notiz besitzt (`docs/ops`, die einzige Quelle der Wahrheit), ist **keine** zusätzliche Vektordatenbank oder kein Embedding-Dienst nötig. Jede Umgebung, in der grep möglich ist, ist bereits ein RAG.
 

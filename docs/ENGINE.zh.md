@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 8d925234d62d -->
 # FullseyeEngine — 运行已设计管道的运行时
 
+<!-- i18n-switcher -->
 [日本語](./ENGINE.md) · [English](./ENGINE.en.md) · **简体中文** · [繁體中文](./ENGINE.tw.md) · [한국어](./ENGINE.ko.md) · [Deutsch](./ENGINE.de.md)
+
 
 `FullseyeEngine`（`engine.py`）是一个运行时，用于**执行**在 Fullseye Studio 中**搭建**好的图像算子管道——无论是从自己的代码还是从 CLI 调用。它相当于 MVTec 的 **HDevEngine**——用可视化工具设计流程，再原封不动地从应用程序中调用，这正是两段式流程中后半段的角色。
 

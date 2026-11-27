@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 673abba3a20e -->
 # evis Vision Components — OSS/ROS2 Gap Analysis (2026-08-17)
 
+<!-- i18n-switcher -->
 [日本語](./EVIS_VISION_OSS_GAP.md) · **English**
+
 
 Purpose: In building the **vision function components** for evis (the MS-Human-700 musculoskeletal humanoid),
 a sorting exercise to strictly hold the line of "don't reinvent what OSS/ROS2 already covers." Each perception module is

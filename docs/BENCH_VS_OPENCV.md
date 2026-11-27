@@ -1,5 +1,8 @@
 # imgevolve GPU op vs OpenCV(CPU)処理速度ベンチ
 
+<!-- i18n-switcher -->
+**日本語** · [English](./BENCH_VS_OPENCV.en.md)
+
 - GPU: **NVIDIA GeForce RTX 5090** / torch 2.11.0+cu128
 - OpenCV: cv2 4.11.0(CPU、単画像 API をバッチループ)
 - 計測: warmup 後 中央値、CUDA synchronize。speedup = cv2CPU / GPU。

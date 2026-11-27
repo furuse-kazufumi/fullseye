@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: de960d71d9b6 -->
 # Walking a Character Over Terrain (sim-native, no GPU required)
 
+<!-- i18n-switcher -->
 [日本語](./TERRAIN_WALK.md) · **English**
+
 
 The full flow from building a **mesh terrain** out of a sim scene to letting a **walker (quadruped / humanoid)** walk across it and rendering it **headless into a GIF**. Meshing the terrain (TSDF) and the walking GIF are **GPU-free** (they run under `py -3.11`). Only the SuGaR path, which inserts 3DGS training, requires a GPU (`.venv-gsplat`).
 

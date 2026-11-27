@@ -6,7 +6,9 @@ lang: de
 <!-- i18n-source-sha: 9f0dbf51f0cb -->
 # Installations- und Einrichtungshandbuch
 
+<!-- i18n-switcher -->
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch** · [हिन्दी](./INSTALL.hi.md)
+
 
 Dieses Handbuch beschreibt, wie Fullseye (Arbeitstitel imgevolve) je nach Einsatzzweck eingerichtet wird — von der Entwicklungsmaschine bis zu eingebettetem Linux. Wer es nur in 5 Minuten zum Laufen bringen möchte, findet in [GETTING_STARTED.md](GETTING_STARTED.md) den schnelleren Weg.
 

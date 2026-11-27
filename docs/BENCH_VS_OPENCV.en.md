@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: da764c32164c -->
 # imgevolve GPU op vs OpenCV (CPU) throughput benchmark
 
+<!-- i18n-switcher -->
 [日本語](./BENCH_VS_OPENCV.md) · **English**
+
 
 - GPU: **NVIDIA GeForce RTX 5090** / torch 2.11.0+cu128
 - OpenCV: cv2 4.11.0 (CPU, single-image API driven in a batch loop)

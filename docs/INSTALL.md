@@ -5,6 +5,9 @@ lang: ja
 ---
 # インストール / 環境構築 完全ガイド
 
+<!-- i18n-switcher -->
+**日本語** · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
+
 Fullseye（作業名 imgevolve）を、開発機から組み込み Linux まで、目的に応じて構築するためのガイドです。5 分で動かすだけなら [GETTING_STARTED.md](GETTING_STARTED.md) が近道です。
 
 Fullseye の Python API の核は **numpy + scipy** で動きます。標準の `pip install fullseye` は Studio

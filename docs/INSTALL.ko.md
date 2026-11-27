@@ -6,7 +6,9 @@ lang: ko
 <!-- i18n-source-sha: 9f0dbf51f0cb -->
 # 설치 / 환경 구축 완전 가이드
 
+<!-- i18n-switcher -->
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
+
 
 개발 머신부터 임베디드 Linux까지, 목적에 맞게 Fullseye(작업명 imgevolve)를 구축하기 위한 가이드입니다. 5분 만에 바로 실행해 보고 싶다면 [GETTING_STARTED.md](GETTING_STARTED.md)가 지름길입니다.
 

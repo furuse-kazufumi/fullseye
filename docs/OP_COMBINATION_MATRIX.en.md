@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: e1b504a1e060 -->
 # fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation)
 
+<!-- i18n-switcher -->
 [日本語](./OP_COMBINATION_MATRIX.md) · **English**
+
 
 **Core idea**: The 214 3D ops (the `ops3d.py` registry, 49 categories) can be chained whenever one op's output type matches another op's input type.
 Type-consistent op→op chains number **5,246 (2-stage, measured via `ops3d.compatible()`)**, and grow **exponentially** at 3+ stages

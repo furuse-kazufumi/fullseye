@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: b2e247e3558a -->
 # Sample images — provenance, source papers & public repositories
 
+<!-- i18n-switcher -->
 [日本語](./SAMPLE_IMAGE_REFERENCES.md) · **English**
+
 
 > User note (2026-08-16): "There must be plenty of source papers and GitHub repos behind these."
 > Following Fullseye's public-disclosure policy ([[project_imgevolve_goal_knowledge_layer_2026_08_13]]),

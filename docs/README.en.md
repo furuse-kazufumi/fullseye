@@ -14,7 +14,7 @@ lang: en
 
 > **Presenting at ViEW2026 (3–4 December 2026, Pacifico Yokohama) → [ViEW2026 page](view2026/en/)** (moving PoC results, viewers you can use in the browser, the paper)
 
-> **Please note:** only this index page is translated. The individual documents it links to are, for the moment, available in Japanese only.
+> **Languages:** links open a translation when one is available; documents available only in Japanese are marked _(ja)_.
 
 
 ![Six acts, all real operator output: edge orientation, blob selection, sub-pixel calipers, SDF to mesh, LiDAR clustering, lens defocus.](articles/assets/fullseye_hero.gif)

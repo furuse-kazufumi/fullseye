@@ -6,7 +6,9 @@ lang: hi
 <!-- i18n-source-sha: 9f0dbf51f0cb -->
 # Installation / Environment Setup — पूरी गाइड
 
+<!-- i18n-switcher -->
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · **हिन्दी**
+
 
 यह गाइड Fullseye (working name imgevolve) को किसी भी उद्देश्य के लिए setup करने के बारे में है, development
 machine से लेकर embedded Linux तक। अगर आप बस इसे पाँच मिनट में चलाना चाहते हैं, तो

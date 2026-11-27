@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: d3311f3c10f1 -->
 # Fullseye Script — Language / Runtime / Watch IDE Design Specification (North Star)
 
+<!-- i18n-switcher -->
 [日本語](./FSCRIPT_LANGUAGE.md) · **English**
+
 
 > Goal = evolve Fullseye Studio's Program from "a linear (op,a,b) pipeline wearing a scripting skin"
 > into a **real programming environment on par with HALCON HDevelop**. User-decided direction (2026-08-15 dialogue):

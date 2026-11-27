@@ -6,7 +6,9 @@ lang: zh-CN
 <!-- i18n-source-sha: 9f0dbf51f0cb -->
 # 安装 / 环境搭建完全指南
 
+<!-- i18n-switcher -->
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · **简体中文** · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
+
 
 面向从开发机到嵌入式 Linux、按用途搭建 Fullseye(工作代号 imgevolve)的指南。若只想在 5 分钟内跑起来，[GETTING_STARTED.md](GETTING_STARTED.md) 是更快的路径。
 

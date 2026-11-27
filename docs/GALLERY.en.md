@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: e681bce98cb4 -->
 # Fullseye Gallery
 
+<!-- i18n-switcher -->
 [日本語](./GALLERY.md) · **English**
+
 
 Purpose of this page: every figure shown here is a **real output that can be regenerated** by running
 `tools/gen_article_assets.py` (article montages, hero copies, thumbnails) and

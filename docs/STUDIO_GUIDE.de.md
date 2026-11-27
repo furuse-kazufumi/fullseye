@@ -6,11 +6,13 @@ lang: de
 <!-- i18n-source-sha: ff004dd0e885 -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
+<!-- i18n-switcher -->
+[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./STUDIO_GUIDE.hi.md)
+
 Aufwendige Verarbeitung blockiert das Fenster nicht. Unten werden die aktive Stufe und der Fortschritt angezeigt; eine Stoppanforderung wird an der nächsten Stufengrenze bestätigt. Ändern sich Einstellungen während eines Laufs, bleibt die Generation des angezeigten Ergebnisses sichtbar und man kann das ältere Ergebnis ansehen oder mit den aktuellen Einstellungen neu starten.
 
 Die Suche nach einem Verarbeitungsziel gruppiert Treffer danach, ob sie zur aktuellen Eingabe passen, eine Vorverarbeitung benötigen oder anderweitig einzuordnen sind. Ein Treffer lässt sich einmal testen, ohne eine Stufe hinzuzufügen. Bei einem Fehler zeigt der Problembereich Ursache, Ort und konkrete nächste Schritte zum erneuten Auswählen, Vergleichen, Öffnen des Protokolls, Bearbeiten eines Reglers oder Suchen einer vorgeschlagenen Stufe.
 
-[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 **Fullseye Studio** ist eine visuelle Pipeline-Werkbank im Stil von HDevelop. Man sucht Operatoren, ordnet sie an,
 dreht an zwei Reglern per Schieberegler, verfolgt Zwischenergebnisse mit Zoom/Pan Stufe für Stufe und exportiert die

@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 6946b0bc470f -->
 # Fullseye को AI assistant के RAG के रूप में इस्तेमाल करना (Claude Code के लिए)
 
+<!-- i18n-switcher -->
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · **हिन्दी**
+
 
 Fullseye चलाने का सुझाया गया तरीका है **किसी AI coding assistant के knowledge base (RAG) के
 रूप में**। क्योंकि हर op के साथ एक machine-readable Markdown note होता है (`docs/ops`, एक single

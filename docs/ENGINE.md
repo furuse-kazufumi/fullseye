@@ -1,5 +1,8 @@
 # FullseyeEngine — 設計したパイプラインを実行するランタイム
 
+<!-- i18n-switcher -->
+**日本語** · [English](./ENGINE.en.md) · [简体中文](./ENGINE.zh.md) · [繁體中文](./ENGINE.tw.md) · [한국어](./ENGINE.ko.md) · [Deutsch](./ENGINE.de.md)
+
 `FullseyeEngine`（`engine.py`）は、Fullseye Studio で**組んだ**画像オペレータ・パイプラインを、自分のコードや CLI から**実行する**ためのランタイムです。MVTec の **HDevEngine** に相当します — ビジュアルツールで手順を設計し、書き直すことなくそのままアプリから呼び出す、という 2 段構えの後半を担います。
 
 - **設計（author）**: Fullseye Studio → `Save pipeline` で JSON を書き出す（[STUDIO_GUIDE.md](STUDIO_GUIDE.md)）。

@@ -1,5 +1,8 @@
 # Fullseye 3DGS ― 使い方(1コマンド)
 
+<!-- i18n-switcher -->
+**日本語** · [English](./3DGS_USAGE.en.md) · [简体中文](./3DGS_USAGE.zh.md) · [繁體中文](./3DGS_USAGE.tw.md) · [한국어](./3DGS_USAGE.ko.md) · [Deutsch](./3DGS_USAGE.de.md)
+
 MuJoCo の sim シーンを **3D Gaussian Splatting** にして、全周ぐるぐる回せる GIF と新規視点画像を作ります。カメラ姿勢は sim の真値を使うので **COLMAP 不要**。
 
 ## いちばん簡単な使い方

@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 8d925234d62d -->
 # FullseyeEngine — 설계한 파이프라인을 실행하는 런타임
 
+<!-- i18n-switcher -->
 [日本語](./ENGINE.md) · [English](./ENGINE.en.md) · [简体中文](./ENGINE.zh.md) · [繁體中文](./ENGINE.tw.md) · **한국어** · [Deutsch](./ENGINE.de.md)
+
 
 `FullseyeEngine`(`engine.py`)은 Fullseye Studio에서 **구성한** 이미지 오퍼레이터 파이프라인을 자신의 코드나 CLI에서 **실행하기** 위한 런타임입니다. MVTec의 **HDevEngine**에 해당하며, 시각적 도구로 절차를 설계하고 다시 작성할 필요 없이 그대로 애플리케이션에서 호출한다는 2단계 구조의 후반부를 담당합니다.
 

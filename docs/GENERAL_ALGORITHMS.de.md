@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: bd321cfbdaaa -->
 # Allgemeine Algorithmen implementierbar machen — algo-c Kompatibilitäts-Roadmap
 
+<!-- i18n-switcher -->
 [日本語](./GENERAL_ALGORITHMS.md) · [English](./GENERAL_ALGORITHMS.en.md) · [简体中文](./GENERAL_ALGORITHMS.zh.md) · [繁體中文](./GENERAL_ALGORITHMS.tw.md) · [한국어](./GENERAL_ALGORITHMS.ko.md) · **Deutsch**
+
 
 > Nutzerwunsch (2026-08-16): Wie bei <https://github.com/okumuralab/algo-c> (Haruhiko Okumura,
 > vollständiger Quellcode zu „[Revidierte Neuauflage] Standard-Algorithmen-Lexikon in der Sprache C")
