@@ -3,7 +3,7 @@ title: "Getting started (running in 5 minutes)"
 description: "Install Fullseye and run your first operator in five minutes."
 lang: en
 ---
-<!-- i18n-source-sha: 9490788b3ffb -->
+<!-- i18n-source-sha: 23d8d444e717 -->
 # Getting started (running in 5 minutes)
 
 [日本語](./GETTING_STARTED.md) · **English** · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -45,8 +45,8 @@ Python + numpy.
 Prerequisite: **Python 3.11** (`py -3.11` on Windows, `python3.11` on Linux).
 
 ```powershell
-cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # Python API + Studio + Pillow; add heavy backends only when needed
+py -3.11 -m pip install fullseye
+fullseye --version
 ```
 
 The core API runs on **numpy and scipy**, and a standard `pip install fullseye` also installs
@@ -55,13 +55,20 @@ and scikit-image are optional; if one isn't installed, only that backend's own o
 disabled (graceful degradation).
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # OpenCV-only image API and cv_* operators
-py -3.11 -m pip install -e ".[all]"       # every additional backend
+py -3.11 -m pip install "fullseye[opencv]" # OpenCV-only image API and cv_* operators
 fullseye-studio                            # Studio starts after the standard install
 ```
 
 The list of extras and what each means is collected in [INSTALL.md](INSTALL.md). `gui` and `pil`
 are empty compatibility aliases for existing install commands.
+
+Developers working on Fullseye should clone the repository and use an editable install:
+
+```powershell
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 -m pip install -e .
+```
 
 > You can also try it without installing. Make the repository root (`<path-to-fullseye>`) your
 > working directory and put that path on the `PYTHONPATH` environment variable, and `import

@@ -3,7 +3,7 @@ title: "शुरुआत करें (5 मिनट में चालू)"
 description: "Fullseye इंस्टॉल करके पाँच मिनट में अपना पहला operator चलाने की प्रक्रिया।"
 lang: hi
 ---
-<!-- i18n-source-sha: 9490788b3ffb -->
+<!-- i18n-source-sha: 23d8d444e717 -->
 # शुरुआत करें (5 मिनट में चालू)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · **हिन्दी**
@@ -45,8 +45,8 @@ Python + numpy में दोहराता है।
 Prerequisite: **Python 3.11** (Windows पर `py -3.11`, Linux पर `python3.11`)।
 
 ```powershell
-cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # Python API + Studio + Pillow; heavy backends only when needed
+py -3.11 -m pip install fullseye
+fullseye --version
 ```
 
 Core API **numpy और scipy** पर चलता है, और सामान्य `pip install fullseye` Studio के लिए
@@ -54,12 +54,19 @@ PySide6-Essentials तथा image I/O के लिए Pillow भी install �
 भारी backends optional हैं; अगर कोई नहीं है तो केवल उसी backend के operators बंद होते हैं (graceful degradation)।
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # OpenCV-only image API and cv_* operators
-py -3.11 -m pip install -e ".[all]"       # all additional backends
+py -3.11 -m pip install "fullseye[opencv]" # OpenCV-only image API and cv_* operators
 fullseye-studio                            # Studio starts after standard installation
 ```
 
 Extras की list और हर एक का मतलब [INSTALL.md](INSTALL.md) में इकट्ठा है। `gui` और `pil` पुराने install commands के लिए खाली compatibility aliases हैं।
+
+Fullseye पर development करने वाले लोग repository कोclone करकेeditable install का उपयोग करें:
+
+```powershell
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 -m pip install -e .
+```
 
 > आप install किए बिना भी आज़मा सकते हैं। Repository root (`<path-to-fullseye>`) को अपनी
 > working directory बनाएँ और उस path को `PYTHONPATH` environment variable में डालें, तो `import

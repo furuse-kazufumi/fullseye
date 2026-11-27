@@ -3,7 +3,7 @@ title: "시작하기 (5분 만에 실행하기)"
 description: "Fullseye를 설치하고5분 안에 첫 연산자를 실행하는 방법을 설명합니다."
 lang: ko
 ---
-<!-- i18n-source-sha: 9490788b3ffb -->
+<!-- i18n-source-sha: 23d8d444e717 -->
 # 시작하기 (5분 만에 실행하기)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · **한국어** · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -42,8 +42,8 @@ Fullseye는 **numpy 배열을 입력·출력으로 하는 이미지 처리 연�
 전제 조건: **Python 3.11**(Windows는 `py -3.11`, Linux는 `python3.11`).
 
 ```powershell
-cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # Python API + Studio + Pillow; 무거운 backend는 필요할 때만 extra로 추가
+py -3.11 -m pip install fullseye
+fullseye --version
 ```
 
 코어 API는 **numpy와 scipy**로 동작하며, 표준 `pip install fullseye`는 Studio용 PySide6-Essentials와 이미지 I/O용
@@ -51,12 +51,19 @@ Pillow도 설치합니다. OpenCV / scikit-image 같은 무거운 추가 백엔�
 연산자만 비활성화됩니다(우아한 저하, graceful degradation).
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # OpenCV 전용 이미지 API와 cv_* 연산자
-py -3.11 -m pip install -e ".[all]"       # 모든 추가 백엔드
+py -3.11 -m pip install "fullseye[opencv]" # OpenCV 전용 이미지 API와 cv_* 연산자
 fullseye-studio                            # 표준 설치 뒤 Studio를 바로 시작
 ```
 
 extras 목록과 의미는 [INSTALL.md](INSTALL.md)에 정리되어 있습니다. `gui`와 `pil`은 기존 설치 명령을 위한 빈 호환 별칭입니다.
+
+Fullseye를 개발할 때는 저장소를clone하고editable install을 사용합니다.
+
+```powershell
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 -m pip install -e .
+```
 
 > 설치하지 않고 시험해 볼 수도 있습니다. 저장소 최상위 디렉터리(`<path-to-fullseye>`)를 작업 디렉터리로 하고, 환경 변수
 > `PYTHONPATH`에 그 경로를 등록하면 `import fullseye`는 동작합니다. 다만 `fullseye` / `fullseye-studio`라는 명령(콘솔

@@ -3,7 +3,7 @@ title: "快速上手（5 分钟运行起来）"
 description: "本页介绍如何安装Fullseye并在五分钟内运行第一个算子。"
 lang: zh-CN
 ---
-<!-- i18n-source-sha: 9490788b3ffb -->
+<!-- i18n-source-sha: 23d8d444e717 -->
 # 快速上手（5 分钟运行起来）
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · **简体中文** · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -36,19 +36,26 @@ Fullseye 是一个**以 numpy 数组为输入输出的图像处理算子库**，
 前提: **Python 3.11**（Windows 用 `py -3.11`，Linux 用 `python3.11`）。
 
 ```powershell
-cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # Python API + Studio + Pillow；重型后端按需以 extra 添加
+py -3.11 -m pip install fullseye
+fullseye --version
 ```
 
 核心 API 以 **numpy 和 scipy** 运行，标准 `pip install fullseye` 还会安装 Studio 的 PySide6-Essentials 与图像 I/O 的 Pillow。只有 OpenCV / scikit-image 等较重的后端是可选的；未安装时仅该后端特有的算子会被禁用（优雅降级）。
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # OpenCV 专用图像 API 与 cv_* 算子
-py -3.11 -m pip install -e ".[all]"       # 所有额外后端
+py -3.11 -m pip install "fullseye[opencv]" # OpenCV 专用图像 API 与 cv_* 算子
 fullseye-studio                            # 标准安装后即可启动 Studio
 ```
 
 extras 的清单和含义汇总在 [INSTALL.md](INSTALL.md)。`gui` 与 `pil` 是兼容旧安装命令的空别名。
+
+开发Fullseye时，请clone仓库并使用editable install：
+
+```powershell
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 -m pip install -e .
+```
 
 > 也可以不安装就试用。把仓库根目录（`<path-to-fullseye>`）设为工作目录，并把该路径加入环境变量 `PYTHONPATH`，`import fullseye` 就能工作。不过 `fullseye` / `fullseye-studio` 这两个命令（控制台脚本）只有执行了 `pip install -e .` 之后才能使用。
 

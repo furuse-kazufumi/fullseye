@@ -33,19 +33,26 @@ Fullseye は **numpy 配列を入力・出力とする画像処理オペレー�
 前提: **Python 3.11**（Windows は `py -3.11`、Linux は `python3.11`）。
 
 ```powershell
-cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # Python API + Studio + Pillow。重い backend は必要な時だけ extra で足す
+py -3.11 -m pip install fullseye
+fullseye --version
 ```
 
 コア API は **numpy と scipy**で動き、標準の `pip install fullseye` は Studio 用の PySide6-Essentials と画像 I/O 用 Pillow も導入します。OpenCV / scikit-image など重い追加バックエンドだけが任意で、入っていなくても、そのバックエンド固有のオペレータだけが無効になるだけです（graceful degradation）。
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # OpenCV 固有の画像 API と cv_* 系
-py -3.11 -m pip install -e ".[all]"       # 全ての追加バックエンド
+py -3.11 -m pip install "fullseye[opencv]" # OpenCV 固有の画像 API と cv_* 系
 fullseye-studio                            # Studio は標準インストール直後に起動できる
 ```
 
 extras の一覧と意味は [INSTALL.md](INSTALL.md) にまとめてあります。`gui` と `pil` は既存の install 指定を壊さない空の互換別名です。
+
+開発する人は、リポジトリを checkout して editable install を使います。
+
+```powershell
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 -m pip install -e .
+```
 
 > インストールせずに試すこともできます。リポジトリ直下（`<path-to-fullseye>`）を作業ディレクトリにし、環境変数 `PYTHONPATH` にそのパスを通せば `import fullseye` は動きます。ただし `fullseye` / `fullseye-studio` というコマンド（コンソールスクリプト）は `pip install -e .` を実行して初めて使えるようになります。
 

@@ -3,7 +3,7 @@ title: "Erste Schritte (in 5 Minuten startklar)"
 description: "Installieren Sie Fullseye und führen Sie in fünf Minuten Ihren ersten Operator aus."
 lang: de
 ---
-<!-- i18n-source-sha: 9490788b3ffb -->
+<!-- i18n-source-sha: 23d8d444e717 -->
 # Erste Schritte (in 5 Minuten startklar)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · **Deutsch** · [हिन्दी](./GETTING_STARTED.hi.md)
@@ -45,8 +45,8 @@ unverändert mit Python + numpy nachgebildet.
 Voraussetzung: **Python 3.11** (unter Windows `py -3.11`, unter Linux `python3.11`).
 
 ```powershell
-cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # Python-API + Studio + Pillow; schwere Backends nur bei Bedarf per Extra ergänzen
+py -3.11 -m pip install fullseye
+fullseye --version
 ```
 
 Die Kern-API läuft mit **numpy und scipy**, und ein normales `pip install fullseye` installiert zusätzlich
@@ -54,13 +54,20 @@ PySide6-Essentials für Studio und Pillow für Bild-I/O. Nur schwerere Backends 
 fehlen sie, werden lediglich die für dieses Backend spezifischen Operatoren deaktiviert (graceful degradation).
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # OpenCV-exklusive Bild-API und cv_*-Operatoren
-py -3.11 -m pip install -e ".[all]"       # alle zusätzlichen Backends
+py -3.11 -m pip install "fullseye[opencv]" # OpenCV-exklusive Bild-API und cv_*-Operatoren
 fullseye-studio                            # Studio startet nach der Standardinstallation
 ```
 
 Die Liste der Extras samt Bedeutung ist in [INSTALL.md](INSTALL.md) zusammengefasst. `gui` und `pil` sind leere
 Kompatibilitätsaliase für bestehende Installationsbefehle.
+
+Wer Fullseye entwickelt, klont das Repository und verwendet eine bearbeitbare Installation:
+
+```powershell
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 -m pip install -e .
+```
 
 > Man kann es auch ohne Installation ausprobieren. Setzen Sie das Repository-Wurzelverzeichnis
 > (`<path-to-fullseye>`) als Arbeitsverzeichnis und tragen Sie diesen Pfad in die Umgebungsvariable `PYTHONPATH`
