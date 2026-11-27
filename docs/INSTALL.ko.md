@@ -3,7 +3,7 @@ title: "설치 / 환경 구축 완전 가이드"
 description: "Fullseye 설치 방법, 선택 의존성, 설치 확인 절차를 설명합니다."
 lang: ko
 ---
-<!-- i18n-source-sha: d8305ffb363f -->
+<!-- i18n-source-sha: 9f0dbf51f0cb -->
 # 설치 / 환경 구축 완전 가이드
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -36,16 +36,42 @@ py -3.11 -m pip install -e .            # 표준: Python API + Studio + Pillow. 
 
 추가 백엔드는 **extras**로 선택합니다(`pyproject.toml`의 `[project.optional-dependencies]`가 실체입니다).
 
-| extras | 추가되는 의존성 | 활성화되는 내용 |
-|---|---|---|
-| `opencv` | `opencv-python>=4.8.1.78` | 이미지 파일 I/O(`apply`/`pipeline` CLI가 필수로 요구), `cv_*` 계열 오퍼레이터 |
-| `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` 계열(다수의 자동 생성 오퍼레이터의 기반) |
-| `pil` | 없음(Pillow는 표준 의존성) | 호환 별칭. 이미지 I/O 대체 수단과 `xpil_*` 계열을 기본으로 사용 가능 |
-| `wavelets` | `PyWavelets>=1.4` | 웨이블릿 계열(VisuShrink/서브밴드/패킷 등) |
-| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU 배치 백엔드(`accel.py`/`bench.py`), `xkor_*`(kornia) 계열 |
-| `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 등), mahotas 유래(Zernike/pftas 등) |
-| `gui` | 없음(Studio는 표준 의존성) | 호환 별칭. `pip install fullseye`만으로 **Fullseye Studio**를 시작할 수 있음 |
-| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`(CuPy 제외. GPU 일체는 `fullseye[gpu]`. PyTorch 설치 안내에 따르면 Linux의 기본 torch는 CUDA 빌드이며 CUDA 구성 요소(nvidia-* wheel)가 함께 설치될 수 있다. CPU만 쓴다면 먼저 CPU 전용 인덱스에서 torch를 설치한다: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | 모든 오퍼레이터·백엔드 |
+<!-- extras-table:start -->
+| extra | pyproject.toml이 추가하는 의존성 |
+|---|---|
+| `native` | — |
+| `opencv` | `opencv-python>=4.8.1.78` |
+| `skimage` | — |
+| `pil` | — |
+| `yaml` | `PyYAML>=6.0` |
+| `wavelets` | `PyWavelets>=1.4` |
+| `gpu` | `torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'` |
+| `gi` | `mitsuba>=3.5` |
+| `extra` | `mahotas>=1.4`<br>`SimpleITK>=2.2` |
+| `gui` | — |
+| `handpose` | `mediapipe>=0.10` |
+| `video` | — |
+| `audio` | — |
+| `volume` | `SimpleITK>=2.2` |
+| `raster` | — |
+| `gltf` | — |
+| `lidar` | — |
+| `pcd` | — |
+| `xlsx` | — |
+| `e57` | `pye57>=0.4` |
+| `export-verify` | `pye57>=0.4`<br>`astropy>=7.0`<br>`plyfile>=1.0` |
+| `polygon` | — |
+| `threed` | `torch>=2.13`<br>`SimpleITK>=2.2` |
+| `serial` | — |
+| `modbus` | — |
+| `symbols` | — |
+| `mqtt` | — |
+| `opcua` | — |
+| `dev` | `pytest>=9.0.3`<br>`pytest-cov>=4`<br>`ruff>=0.4`<br>`pytest-timeout>=2.3`<br>`hypothesis>=6.100`<br>`pytest-randomly>=3.15`<br>`pytest-xdist>=3.5`<br>`pip-audit>=2.7` |
+| `all-cpu` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+| `all` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+<!-- extras-table:end -->
+
 
 Studio의 표준 요구 사항은 `PySide6-Essentials>=6.5,!=6.12.0`이다. Linux에서 SIGABRT가 재현되므로 6.12.0은 제외한다.
 

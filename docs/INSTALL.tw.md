@@ -3,7 +3,7 @@ title: "安裝 / 環境建置完整指南"
 description: "本頁說明Fullseye的安裝方式、選用相依套件與驗證步驟。"
 lang: zh-Hant
 ---
-<!-- i18n-source-sha: d8305ffb363f -->
+<!-- i18n-source-sha: 9f0dbf51f0cb -->
 # 安裝 / 環境建置完整指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -36,16 +36,42 @@ py -3.11 -m pip install -e .            # 標準：Python API + Studio + Pillow�
 
 額外的後端透過 **extras** 選擇(實際定義在 `pyproject.toml` 的 `[project.optional-dependencies]` 中)。
 
-| extras | 新增的相依套件 | 啟用的內容 |
-|---|---|---|
-| `opencv` | `opencv-python>=4.8.1.78` | 影像檔案 I/O(`apply`/`pipeline` CLI 必需)、`cv_*` 系列運算子 |
-| `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` 系列(眾多自動產生運算子的基礎) |
-| `pil` | 無（Pillow 為標準相依套件） | 相容別名；影像 I/O 備援方案與 `xpil_*` 系列預設可用 |
-| `wavelets` | `PyWavelets>=1.4` | 小波系列(VisuShrink/子頻帶/小波封包等) |
-| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU 批次後端(`accel.py`/`bench.py`)、`xkor_*`(kornia)系列 |
-| `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 等)、源自 mahotas(Zernike/pftas 等) |
-| `gui` | 無（Studio 為標準相依套件） | 相容別名；`pip install fullseye` 後即可啟動 **Fullseye Studio** |
-| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`(不含 CuPy；完整的 GPU 套件請用 `fullseye[gpu]`。依 PyTorch 的安裝說明，Linux 上預設的 torch 是 CUDA 版，可能會一併裝入 CUDA 元件(nvidia-* 的 wheel)。只用 CPU 時，請先從 CPU 版的來源安裝 torch：`pip install torch --index-url https://download.pytorch.org/whl/cpu`) | 全部運算子與後端 |
+<!-- extras-table:start -->
+| extra | pyproject.toml 加入的相依套件 |
+|---|---|
+| `native` | — |
+| `opencv` | `opencv-python>=4.8.1.78` |
+| `skimage` | — |
+| `pil` | — |
+| `yaml` | `PyYAML>=6.0` |
+| `wavelets` | `PyWavelets>=1.4` |
+| `gpu` | `torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'` |
+| `gi` | `mitsuba>=3.5` |
+| `extra` | `mahotas>=1.4`<br>`SimpleITK>=2.2` |
+| `gui` | — |
+| `handpose` | `mediapipe>=0.10` |
+| `video` | — |
+| `audio` | — |
+| `volume` | `SimpleITK>=2.2` |
+| `raster` | — |
+| `gltf` | — |
+| `lidar` | — |
+| `pcd` | — |
+| `xlsx` | — |
+| `e57` | `pye57>=0.4` |
+| `export-verify` | `pye57>=0.4`<br>`astropy>=7.0`<br>`plyfile>=1.0` |
+| `polygon` | — |
+| `threed` | `torch>=2.13`<br>`SimpleITK>=2.2` |
+| `serial` | — |
+| `modbus` | — |
+| `symbols` | — |
+| `mqtt` | — |
+| `opcua` | — |
+| `dev` | `pytest>=9.0.3`<br>`pytest-cov>=4`<br>`ruff>=0.4`<br>`pytest-timeout>=2.3`<br>`hypothesis>=6.100`<br>`pytest-randomly>=3.15`<br>`pytest-xdist>=3.5`<br>`pip-audit>=2.7` |
+| `all-cpu` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+| `all` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+<!-- extras-table:end -->
+
 
 Studio 的標準需求是 `PySide6-Essentials>=6.5,!=6.12.0`。由於 6.12.0 在 Linux 上可重現 SIGABRT，因此予以排除。
 

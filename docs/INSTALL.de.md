@@ -3,7 +3,7 @@ title: "Installations- und Einrichtungshandbuch"
 description: "Installationswege, optionale Abhängigkeiten und Prüfschritte für Fullseye."
 lang: de
 ---
-<!-- i18n-source-sha: d8305ffb363f -->
+<!-- i18n-source-sha: 9f0dbf51f0cb -->
 # Installations- und Einrichtungshandbuch
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch** · [हिन्दी](./INSTALL.hi.md)
@@ -36,16 +36,42 @@ py -3.11 -m pip install -e .            # Standard: Python-API + Studio + Pillow
 
 Zusätzliche Backends werden über **Extras** ausgewählt (definiert unter `[project.optional-dependencies]` in `pyproject.toml`).
 
-| Extra | zusätzliche Abhängigkeit | was dadurch aktiviert wird |
-|---|---|---|
-| `opencv` | `opencv-python>=4.8.1.78` | Datei-I/O für Bilder (von der CLI `apply`/`pipeline` vorausgesetzt), `cv_*`-Operatoren |
-| `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*`-Reihen (Grundlage vieler automatisch generierter Operatoren) |
-| `pil` | keine (Pillow ist Standardabhängigkeit) | Kompatibilitätsalias; Bild-I/O-Fallback und `xpil_*`-Reihe sind standardmäßig verfügbar |
-| `wavelets` | `PyWavelets>=1.4` | Wavelet-Verfahren (VisuShrink/Subband/Packet usw.) |
-| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU-Batch-Backend (`accel.py`/`bench.py`), `xkor_*`(kornia)-Reihe |
-| `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow usw.), von mahotas abgeleitet (Zernike/pftas usw.) |
-| `gui` | keine (Studio ist Standardabhängigkeit) | Kompatibilitätsalias; **Fullseye Studio** startet nach `pip install fullseye` |
-| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile` (ohne CuPy; den vollständigen GPU-Satz liefert `fullseye[gpu]`. Laut der Installationsanleitung von PyTorch ist das Standard-torch unter Linux der CUDA-Build und kann CUDA-Komponenten (nvidia-*-Wheels) mitbringen. Für reinen CPU-Betrieb torch vorher aus dem CPU-Index installieren: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | alle Operatoren und Backends |
+<!-- extras-table:start -->
+| Extra | Von pyproject.toml hinzugefügte Abhängigkeiten |
+|---|---|
+| `native` | — |
+| `opencv` | `opencv-python>=4.8.1.78` |
+| `skimage` | — |
+| `pil` | — |
+| `yaml` | `PyYAML>=6.0` |
+| `wavelets` | `PyWavelets>=1.4` |
+| `gpu` | `torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'` |
+| `gi` | `mitsuba>=3.5` |
+| `extra` | `mahotas>=1.4`<br>`SimpleITK>=2.2` |
+| `gui` | — |
+| `handpose` | `mediapipe>=0.10` |
+| `video` | — |
+| `audio` | — |
+| `volume` | `SimpleITK>=2.2` |
+| `raster` | — |
+| `gltf` | — |
+| `lidar` | — |
+| `pcd` | — |
+| `xlsx` | — |
+| `e57` | `pye57>=0.4` |
+| `export-verify` | `pye57>=0.4`<br>`astropy>=7.0`<br>`plyfile>=1.0` |
+| `polygon` | — |
+| `threed` | `torch>=2.13`<br>`SimpleITK>=2.2` |
+| `serial` | — |
+| `modbus` | — |
+| `symbols` | — |
+| `mqtt` | — |
+| `opcua` | — |
+| `dev` | `pytest>=9.0.3`<br>`pytest-cov>=4`<br>`ruff>=0.4`<br>`pytest-timeout>=2.3`<br>`hypothesis>=6.100`<br>`pytest-randomly>=3.15`<br>`pytest-xdist>=3.5`<br>`pip-audit>=2.7` |
+| `all-cpu` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+| `all` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+<!-- extras-table:end -->
+
 
 Die Standardanforderung von Studio ist `PySide6-Essentials>=6.5,!=6.12.0`. Version 6.12.0 ist ausgeschlossen, da sie unter Linux reproduzierbar SIGABRT verursacht.
 

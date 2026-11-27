@@ -3,7 +3,7 @@ title: "Installation / Environment Setup — पूरी गाइड"
 description: "Fullseye के installation विकल्प, optional dependencies और verification steps।"
 lang: hi
 ---
-<!-- i18n-source-sha: d8305ffb363f -->
+<!-- i18n-source-sha: 9f0dbf51f0cb -->
 # Installation / Environment Setup — पूरी गाइड
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · **हिन्दी**
@@ -41,16 +41,42 @@ py -3.11 -m pip install -e .            # standard: Python API + Studio + Pillow
 अतिरिक्त backends **extras** के ज़रिए चुने जाते हैं (`pyproject.toml` के
 `[project.optional-dependencies]` में defined)।
 
-| extras | जुड़ने वाली dependencies | क्या चालू होता है |
-|---|---|---|
-| `opencv` | `opencv-python>=4.8.1.78` | image file I/O (`apply`/`pipeline` CLI के लिए ज़रूरी), `cv_*` operators |
-| `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` families (कई auto-generated operators का आधार) |
-| `pil` | none (Pillow standard है) | compatibility alias; image I/O fallback और `xpil_*` family default से उपलब्ध |
-| `wavelets` | `PyWavelets>=1.4` | wavelet family (VisuShrink / subbands / packets आदि) |
-| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU batch backend (`accel.py`/`bench.py`), `xkor_*` (kornia) family |
-| `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow आदि), mahotas से बने (Zernike / pftas आदि) |
-| `gui` | none (Studio standard है) | compatibility alias; `pip install fullseye` के बाद **Fullseye Studio** शुरू होता है |
-| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile` (CuPy नहीं; पूरा GPU set `fullseye[gpu]` से। PyTorch के install guide के अनुसार Linux पर default torch CUDA build है और साथ में CUDA components (nvidia-* wheels) भी आ सकते हैं। केवल CPU के लिए पहले CPU-only index से torch install करें: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | सभी operators और backends |
+<!-- extras-table:start -->
+| Extra | pyproject.toml द्वारा जोड़ी गई dependencies |
+|---|---|
+| `native` | — |
+| `opencv` | `opencv-python>=4.8.1.78` |
+| `skimage` | — |
+| `pil` | — |
+| `yaml` | `PyYAML>=6.0` |
+| `wavelets` | `PyWavelets>=1.4` |
+| `gpu` | `torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'` |
+| `gi` | `mitsuba>=3.5` |
+| `extra` | `mahotas>=1.4`<br>`SimpleITK>=2.2` |
+| `gui` | — |
+| `handpose` | `mediapipe>=0.10` |
+| `video` | — |
+| `audio` | — |
+| `volume` | `SimpleITK>=2.2` |
+| `raster` | — |
+| `gltf` | — |
+| `lidar` | — |
+| `pcd` | — |
+| `xlsx` | — |
+| `e57` | `pye57>=0.4` |
+| `export-verify` | `pye57>=0.4`<br>`astropy>=7.0`<br>`plyfile>=1.0` |
+| `polygon` | — |
+| `threed` | `torch>=2.13`<br>`SimpleITK>=2.2` |
+| `serial` | — |
+| `modbus` | — |
+| `symbols` | — |
+| `mqtt` | — |
+| `opcua` | — |
+| `dev` | `pytest>=9.0.3`<br>`pytest-cov>=4`<br>`ruff>=0.4`<br>`pytest-timeout>=2.3`<br>`hypothesis>=6.100`<br>`pytest-randomly>=3.15`<br>`pytest-xdist>=3.5`<br>`pip-audit>=2.7` |
+| `all-cpu` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+| `all` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+<!-- extras-table:end -->
+
 
 Studio की standard requirement `PySide6-Essentials>=6.5,!=6.12.0` है। Linux पर SIGABRT दोहराए जाने के कारण version 6.12.0 को बाहर रखा गया है।
 
