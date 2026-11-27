@@ -40,5 +40,6 @@ def test_generated_indexes_only_name_declared_extras_and_public_history():
         text = path.read_text(encoding="utf-8")
         assert "SESSION_SUMMARY.md" not in text, path.name
         assert "| title:" not in text, path.name
+        assert "| id:" not in text, path.name
         for extra in re.findall(r"fullseye\[([^\]]+)\]", text):
             assert extra in optional, (path.name, extra)

@@ -492,20 +492,20 @@ DOC_L10N = {
 
 
 def _doc_title(rel: str) -> str:
-    """front matterか本文の題を返す / Return the front-matter or body title."""
+    """front matterか本文の題を返す /
+    Return the front-matter or body title."""
     path = os.path.join(_ROOT, "docs", rel)
-    title = _frontmatter_title(path)
+    title, body = _frontmatter(path)
     if title:
         return title.replace("|", "/")
-    with io.open(path, encoding="utf-8") as f:
-        for line in f:
-            t = line.strip()
-            if t.startswith("# "):
-                t = t[2:].strip()
-            elif (not t) or t.startswith(("<", "---", "!", "[", "#", "**")):
-                continue
-            t = t.replace("|", "/")
-            return t if len(t) <= 150 else t[:147] + "..."
+    for line in body:
+        t = line.strip()
+        if t.startswith("# "):
+            t = t[2:].strip()
+        elif (not t) or t.startswith(("<", "---", "!", "[", "#", "**")):
+            continue
+        t = t.replace("|", "/")
+        return t if len(t) <= 150 else t[:147] + "..."
     return ""
 
 
@@ -731,18 +731,20 @@ def _articles_title(rel: str) -> str:
     return ""
 
 
-def _frontmatter_title(path: str) -> str:
-    """front matterのtitleを返す / Return the title from front matter."""
+def _frontmatter(path: str) -> tuple[str, list[str]]:
+    """front matterのtitleと本文を返す / Return its title and body."""
     with io.open(path, encoding="utf-8") as f:
-        if f.readline().strip() != "---":
-            return ""
-        for line in f:
-            text = line.strip()
-            if text == "---":
-                return ""
-            if text.startswith("title:"):
-                return text.split(":", 1)[1].strip().strip("\"'")
-    return ""
+        lines = f.readlines()
+    if not lines or lines[0].strip() != "---":
+        return "", lines
+    title = ""
+    for index, line in enumerate(lines[1:], 1):
+        text = line.strip()
+        if text == "---":
+            return title, lines[index + 1:]
+        if text.startswith("title:"):
+            title = text.split(":", 1)[1].strip().strip("\"'")
+    return "", lines
 
 
 def write_articles() -> None:
