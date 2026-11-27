@@ -367,18 +367,14 @@ RAG_L10N = {
           "[AI_RAG_GUIDE.en.md](AI_RAG_GUIDE.en.md) "
           "(`pip install fullseye`, then `fullseye-rag search \"edge\"`).",
     "zh": "**供 AI 检索**: 机器可读索引 [`OP_INDEX.json`](OP_INDEX.json)，"
-          "用法见 [AI_RAG_GUIDE.zh.md](AI_RAG_GUIDE.zh.md)"
-          "（`pip install fullseye`，然后运行 `fullseye-rag search \"edge\"`）。",
+          "用法见 [AI_RAG_GUIDE.zh.md](AI_RAG_GUIDE.zh.md)（`pip install fullseye`，然后运行 `fullseye-rag search \"edge\"`）。",
     "tw": "**供 AI 檢索**: 機器可讀索引 [`OP_INDEX.json`](OP_INDEX.json)，"
-          "用法見 [AI_RAG_GUIDE.tw.md](AI_RAG_GUIDE.tw.md)"
-          "（`pip install fullseye`，再執行 `fullseye-rag search \"edge\"`）。",
+          "用法見 [AI_RAG_GUIDE.tw.md](AI_RAG_GUIDE.tw.md)（`pip install fullseye`，再執行 `fullseye-rag search \"edge\"`）。",
     "ko": "**AI 검색용**: 기계가 읽는 색인 [`OP_INDEX.json`](OP_INDEX.json), "
-          "사용법은 [AI_RAG_GUIDE.ko.md](AI_RAG_GUIDE.ko.md)"
-          " (`pip install fullseye`, `fullseye-rag search \"edge\"`).",
+          "사용법은 [AI_RAG_GUIDE.ko.md](AI_RAG_GUIDE.ko.md) (`pip install fullseye`, `fullseye-rag search \"edge\"`).",
     "de": "**Abruf durch KI-Assistenten**: der maschinenlesbare Index ist "
           "[`OP_INDEX.json`](OP_INDEX.json), die Anleitung steht in "
-          "[AI_RAG_GUIDE.de.md](AI_RAG_GUIDE.de.md) "
-          "(`pip install fullseye`, dann `fullseye-rag search \"edge\"`).",
+          "[AI_RAG_GUIDE.de.md](AI_RAG_GUIDE.de.md) (`pip install fullseye`, dann `fullseye-rag search \"edge\"`).",
 }
 
 
@@ -496,25 +492,13 @@ DOC_L10N = {
 
 
 def _doc_title(rel: str) -> str:
-    """front matterのtitleか先頭の見出しを1行の説明として使う。
-    Use the front-matter title or first heading as the one-line description.
-
-    HTML の行(`<div ...>` など)と太字だけの言語切替行は題にしない。
-    """
+    """front matterか本文の題を返す / Return the front-matter or body title."""
     path = os.path.join(_ROOT, "docs", rel)
+    title = _frontmatter_title(path)
+    if title:
+        return title.replace("|", "/")
     with io.open(path, encoding="utf-8") as f:
-        lines = f.readlines()
-        body = lines
-        if lines and lines[0].strip() == "---":
-            for i, line in enumerate(lines[1:], 1):
-                t = line.strip()
-                if t == "---":
-                    body = lines[i + 1:]
-                    break
-                if t.startswith("title:"):
-                    title = t.split(":", 1)[1].strip().strip("\"'")
-                    return title.replace("|", "/")
-        for line in body:
+        for line in f:
             t = line.strip()
             if t.startswith("# "):
                 t = t[2:].strip()
@@ -577,10 +561,7 @@ _ORIGINAL = {"en": "original", "zh": "原文", "tw": "原文", "ko": "원문", "
 
 
 #: 地図から外す部分木。**それぞれ専用の節が面倒を見る**もの以外は外さない。
-_DOCMAP_SKIP = ("ops", "articles")
-# 公開サイトから除外された作業メモは索引にも載せない。
-# Do not link working notes that the public site excludes.
-_DOCMAP_FILE_SKIP = {"SESSION_SUMMARY.md"}
+_DOCMAP_SKIP, _DOCMAP_FILE_SKIP = ("ops", "articles"), {"SESSION_SUMMARY.md"}
 
 
 def _all_docs() -> list:
@@ -599,8 +580,7 @@ def _all_docs() -> list:
             dirs[:] = [d for d in dirs if d not in _DOCMAP_SKIP]
         dirs.sort()
         for f in sorted(files):
-            if (not f.endswith(".md") or f.startswith("README")
-                    or f in _DOCMAP_FILE_SKIP):
+            if not f.endswith(".md") or f.startswith("README") or f in _DOCMAP_FILE_SKIP:
                 continue
             rel = f if rel_root == "." else rel_root + "/" + f
             out.append(rel)
@@ -748,6 +728,20 @@ def _articles_title(rel: str) -> str:
             continue
         t = t.replace("|", "/")
         return t if len(t) <= 120 else t[:117] + "..."
+    return ""
+
+
+def _frontmatter_title(path: str) -> str:
+    """front matterのtitleを返す / Return the title from front matter."""
+    with io.open(path, encoding="utf-8") as f:
+        if f.readline().strip() != "---":
+            return ""
+        for line in f:
+            text = line.strip()
+            if text == "---":
+                return ""
+            if text.startswith("title:"):
+                return text.split(":", 1)[1].strip().strip("\"'")
     return ""
 
 
