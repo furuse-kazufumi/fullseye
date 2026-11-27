@@ -27,7 +27,7 @@ Fullseye 涵蓋範圍很廣，如果不能先決定「第一個要打開哪一�
 
 ---
 
-這是讓 Fullseye(內部代號 imgevolve)以最短路徑跑起來的指南。依照**安裝 → 建立第一個流水線 → 執行 → 檢視結果**的順序，走一條不會卡住的路線。更詳細的環境建置請見 [INSTALL.md](INSTALL.md)，Studio 的完整功能請見 [STUDIO_GUIDE.md](STUDIO_GUIDE.md)，從程式呼叫請見 [ENGINE.md](ENGINE.md)。
+這是讓 Fullseye(內部代號 imgevolve)以最短路徑跑起來的指南。依照**安裝 → 建立第一個流水線 → 執行 → 檢視結果**的順序，走一條不會卡住的路線。更詳細的環境建置請見 [INSTALL.md](INSTALL.tw.md)，Studio 的完整功能請見 [STUDIO_GUIDE.md](STUDIO_GUIDE.tw.md)，從程式呼叫請見 [ENGINE.md](ENGINE.tw.md)。
 
 Fullseye 是一個**以 numpy 陣列作為輸入輸出的影像處理運算子函式庫**，其上搭載了 **類似 HDevelop 的視覺化流水線設計環境（Fullseye Studio）** 與 **執行期環境（FullseyeEngine）**。用 HALCON/HDevelop 的說法來說，就是「在 HDevelop 中建立流程，在 HDevEngine 中從自己的應用程式呼叫」這種兩段式架構，原封不動用 Python + numpy 重現出來。
 
@@ -49,7 +49,7 @@ py -3.11 -m pip install "fullseye[opencv]" # OpenCV 專用影像 API 與 cv_* �
 fullseye-studio                            # 標準安裝後即可啟動 Studio
 ```
 
-extras 的清單與說明整理在 [INSTALL.md](INSTALL.md)。`gui` 與 `pil` 是相容舊安裝命令的空別名。
+extras 的清單與說明整理在 [INSTALL.md](INSTALL.tw.md)。`gui` 與 `pil` 是相容舊安裝命令的空別名。
 
 開發Fullseye時，請clone儲存庫並使用editable install：
 
@@ -136,7 +136,7 @@ py -3.11 studio.py          # 或者已安裝的話: fullseye-studio
 - **中央（Pipeline）**: 已排列階段的清單。可拖曳或用 Ctrl+↑/↓ 調整順序，調整選取階段的**旋鈕 a / b**。旋鈕永遠是 0..1 的值，但**對於有專屬顯示規格的運算子（`param_specs.py`）可依實際單位操作** — `gaussian` 用 σ（px，滑桿 + 帶單位的數值輸入框），`median` 用 3/5/7/9 的下拉選單選核心大小，`reg_erode` 用整數輸入框指定疊代次數，`aug_barrel` 的 b 用「pincushion」核取方塊表示。右側的 0..1 數值輸入框永遠是原始值（供精確輸入）。這些規格是依 ops.py 中的換算公式（如 `0.3 + 2.7·a`）手寫，並透過測試與實作互相核對（`tests/test_studio_params.py`）。沒有規格的運算子仍是原本的 2 個 0..1 滑桿。階段清單也會以顯示單位書寫（`gaussian (blur σ=1.08 px, b=–)`）。**Reset（Home）→ Step（Ctrl+→）→ Run all（Ctrl+Enter）**可逐段執行，也可以一次執行到底。
 - **右側（Image / Perception / Analysis）**: 縮放/平移顯示結果影像、直方圖、Inspector（檢查 image / region / feature 的值）、v14 的感知面板（光流 / 立體深度等）。**在影像檢視上按右鍵**可執行 Fit / 1:1 / Zoom / Save result / Save view as shown / Copy / Display mode / 3D surface（與選單相同的動作）。另外開啟的繪圖視窗也附有 Fit·1:1·±·Save 的小工具列與相同的右鍵選單，3-D 檢視器（Ctrl+4）可透過右鍵切換 Reset view / 第一人稱(透視) / Wireframe / Save screenshot。
 
-建好的流水線可用 **Export（Ctrl+E）** 匯出為 `--ops` 字串或 Python 程式碼，也可用 **Save pipeline（Ctrl+Shift+S）** 儲存為 JSON。完整功能與快捷鍵請見 [STUDIO_GUIDE.md](STUDIO_GUIDE.md)，應用程式內按 **Ctrl+F1** 顯示快捷鍵一覽，按 **F1** 顯示目前所選 op 的說明。
+建好的流水線可用 **Export（Ctrl+E）** 匯出為 `--ops` 字串或 Python 程式碼，也可用 **Save pipeline（Ctrl+Shift+S）** 儲存為 JSON。完整功能與快捷鍵請見 [STUDIO_GUIDE.md](STUDIO_GUIDE.tw.md)，應用程式內按 **Ctrl+F1** 顯示快捷鍵一覽，按 **F1** 顯示目前所選 op 的說明。
 
 ---
 
@@ -158,7 +158,7 @@ py -3.11 imgevolve.py run edge.json in.png --stepwise --out step.png
 py -3.11 imgevolve.py run "gaussian,sobel_amp,otsu" --to-python
 ```
 
-從程式執行時使用 `FullseyeEngine`（詳見 [ENGINE.md](ENGINE.md)）。
+從程式執行時使用 `FullseyeEngine`（詳見 [ENGINE.md](ENGINE.tw.md)）。
 
 ```python
 import fullseye
@@ -195,11 +195,11 @@ py -3.11 imgevolve.py pipeline in.png out.png --ops "gaussian,sobel_amp,otsu"
 | `apply` / `pipeline` 出現 `cannot read ...` | 標準 Pillow 相依套件損壞或影像損壞。重裝 Fullseye 後檢查影像 |
 | 額外後端的運算子顯示為「unknown」 | 該後端尚未安裝。追加 `.[skimage]` `.[wavelets]` `.[extra]` 等 |
 
-更詳細的疑難排解請參考 [INSTALL.md](INSTALL.md)。
+更詳細的疑難排解請參考 [INSTALL.md](INSTALL.tw.md)。
 
 ## 接下來閱讀
 
-- **[INSTALL.md](INSTALL.md)** — 環境建置完全指南（extras 的使用區分、Windows/Linux 安裝程式、最小配置·嵌入）
-- **[STUDIO_GUIDE.md](STUDIO_GUIDE.md)** — Fullseye Studio 完全指南
-- **[ENGINE.md](ENGINE.md)** — FullseyeEngine（設計 → 執行）指南
-- **[README.md](README.md)** — 文件索引
+- **[INSTALL.md](INSTALL.tw.md)** — 環境建置完全指南（extras 的使用區分、Windows/Linux 安裝程式、最小配置·嵌入）
+- **[STUDIO_GUIDE.md](STUDIO_GUIDE.tw.md)** — Fullseye Studio 完全指南
+- **[ENGINE.md](ENGINE.tw.md)** — FullseyeEngine（設計 → 執行）指南
+- **[README.md](README.tw.md)** — 文件索引

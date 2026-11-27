@@ -291,6 +291,32 @@ Nach Namen suchen mit `py -3.11 imgevolve.py ops --search edge`; die vollständi
 
 ## Schnellbefehle
 
+### Die erste Minute nach `pip install`
+
+Führen Sie nach der Installation zuerst Folgendes aus:
+
+```bash
+fullseye setup          # prüft die Umgebung und fragt Punkt für Punkt; Enter übernimmt den Standard
+```
+
+Der Befehl meldet den Zustand von Python, Fullseye, Qt, optionalen Abhängigkeiten und der
+Claude-Code-Integration, registriert bei Bedarf den Studio-Menüeintrag und zeigt den Plan.
+`--yes` übernimmt alle Standardwerte, `--dry-run` zeigt nur den Plan und `--lang ja|en` wählt die
+Dialogsprache. Studio gehört zur Standardinstallation mit `pip install fullseye`; starten Sie es
+direkt mit `fullseye-studio`.
+
+### Deinstallation
+
+```bash
+fullseye setup --uninstall      # zeigt und bestätigt die Einträge, entfernt sie und führt zuletzt pip uninstall aus
+```
+
+Entfernt werden nur Einträge, die im Installationsverzeichnis stehen und die Positivliste bestehen.
+Studio-Einstellungen und Cache bleiben standardmäßig erhalten; `--yes` und `--dry-run` funktionieren
+ebenfalls. Wurde `pip uninstall fullseye` bereits von Hand ausgeführt, bleiben Verknüpfungen und das
+Setup-Verzeichnis zurück. Entfernen Sie sie anhand der
+[englischen Prüfliste](README.en.md#if-you-already-ran-pip-uninstall-fullseye-by-hand) von Hand.
+
 ```powershell
 py -3.11 -m pip install -e ".[opencv,gui]"     # Installation (Bild-I/O + Studio)
 py -3.11 studio.py                              # Fullseye Studio starten (= fullseye-studio)

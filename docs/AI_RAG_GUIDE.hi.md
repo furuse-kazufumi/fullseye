@@ -143,3 +143,12 @@ Optical metrology और inspection की विश्वसनीयता (PO
 4. **Display तक end to end**: Studio (`py -3.11 studio.py`) खोलें, और AI ने जो जोड़ा है उसे इंसान
    उसी screen पर image windows और 3-D views के रूप में देख सकता है (scripts `dev_open_window` आदि से कई
    windows रख सकती हैं)।
+
+## op graph इस्तेमाल करने का तरीका
+
+Input और output type मालूम हों तो पहले `plan(have, want, goal, direction=...)` इस्तेमाल करें। Default में
+यह केवल MCP pipeline से चल सकने वाली edges का DAG बनाता है। सिर्फ ledger में मौजूद research op की जाँच
+करते समय Python API का `constraints={"executable_only": false}` इस्तेमाल करें; यह option AI के MCP
+schema में नहीं दिया जाता। `describe` सभी types की असीमित सूची के बजाय केवल एक item लौटाता है। Comparable
+measurement न हो तो `choose` candidates को rank नहीं करता। Knob ranges `docs/op_knob.json` के measurements
+और input context पर आधारित हैं; जिन knobs का असर नहीं पड़ा, उन्हें exploration से बाहर रखा जाता है।

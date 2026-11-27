@@ -10,7 +10,7 @@ lang: zh-CN
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · **简体中文** · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
 
 
-面向从开发机到嵌入式 Linux、按用途搭建 Fullseye(工作代号 imgevolve)的指南。若只想在 5 分钟内跑起来，[GETTING_STARTED.md](GETTING_STARTED.md) 是更快的路径。
+面向从开发机到嵌入式 Linux、按用途搭建 Fullseye(工作代号 imgevolve)的指南。若只想在 5 分钟内跑起来，[GETTING_STARTED.md](GETTING_STARTED.zh.md) 是更快的路径。
 
 Fullseye 的 Python API 核心使用 **numpy + scipy**。标准的 `pip install fullseye` 还会安装 Studio（PySide6-Essentials）和 Pillow；重量级图像处理后端仍为可选。没有额外后端时，只会禁用该后端专属的算子（优雅降级）。
 
@@ -109,11 +109,9 @@ $env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 ```
 
-`pip install fullseye` 后，首次在终端交互执行 `fullseye` 或 `fullseye-studio` 时，会在 Windows 开始菜单或 Linux 应用菜单中一次性注册 **Fullseye Studio**。虚拟环境的条目会使用该环境的 Python；用户后来删除该条目时，普通命令不会重建它。成功时显示：
+`pip install fullseye` 后，首次在终端交互执行 `fullseye` 或 `fullseye-studio` 时，会在 Windows 开始菜单或 Linux 应用菜单中一次性注册 **Fullseye Studio**。虚拟环境的条目会使用该环境的 Python；用户后来删除该条目时，普通命令不会重建它。成功时程序目前会显示下面的日文（意思是已注册 Studio，并给出移除命令）：
 
-```text
-已在开始菜单中注册 Fullseye Studio（移除：fullseye-studio --remove-shortcuts）
-```
+`スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)` _(ja)_
 
 可设置 `FULLSEYE_NO_SHORTCUTS=1`，或在 `FULLSEYE_STUDIO_SETTINGS` 指定的 INI（Linux 默认 `~/.config/Fullseye/Studio.conf`）中设置以下项来停止自动注册。CI、无终端执行和隐藏开始菜单程序的 Windows 管理员策略都不会写入。详细的可选配置使用 `fullseye setup`。
 
@@ -184,7 +182,7 @@ python3.11 -m pip install -e .        # 标准安装含 Studio/Pillow；不需�
   ```
 
 - **需要文件 I/O 时**(`fullseye.load` / `fullseye.save`、`imgevolve.py run`、examples)，具备 **OpenCV 或 Pillow 其中之一** 即可运行(`imgio` 会自动进行回退)；Pillow 已是标准依赖。
-- 可以实现 **设计在开发机、执行在嵌入式机** 的分工。在开发机的 Studio 中搭建管道并导出 JSON，嵌入式机上只需 `FullseyeEngine.load("pipeline.json").run(frame)` 即可执行(不需要 GUI)。详情参见 [ENGINE.md](ENGINE.md)。
+- 可以实现 **设计在开发机、执行在嵌入式机** 的分工。在开发机的 Studio 中搭建管道并导出 JSON，嵌入式机上只需 `FullseyeEngine.load("pipeline.json").run(frame)` 即可执行(不需要 GUI)。详情参见 [ENGINE.md](ENGINE.zh.md)。
 - **感知栈**(stereo / terrain / flow / detect / registration / pose)同样仅靠 numpy + scipy 运行(如 `fullseye.disparity_map`)。在机器人/视觉用途中无需额外依赖即可使用。
 
 > GPU(`torch`)终究只是 **批处理加速的可选项**。嵌入式的单张图像处理不需要它，即使不安装，所有算子也都能在 CPU 上运行。

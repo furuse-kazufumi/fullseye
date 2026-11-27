@@ -29,8 +29,8 @@ Fullseye는 범위가 넓어서, 맨 처음 "무엇을 먼저 열어볼지"를 �
 ---
 
 이 문서는 Fullseye(작업명 imgevolve)를 최단 경로로 실행하기 위한 가이드입니다. **설치 → 첫 파이프라인 만들기 → 실행 → 결과 확인**의
-순서로, 막히지 않는 동선을 따라 진행합니다. 더 상세한 환경 구축은 [INSTALL.md](INSTALL.md), Studio의 전체 기능은
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md), 코드에서의 실행은 [ENGINE.md](ENGINE.md)를 참조하세요.
+순서로, 막히지 않는 동선을 따라 진행합니다. 더 상세한 환경 구축은 [INSTALL.md](INSTALL.ko.md), Studio의 전체 기능은
+[STUDIO_GUIDE.md](STUDIO_GUIDE.ko.md), 코드에서의 실행은 [ENGINE.md](ENGINE.ko.md)를 참조하세요.
 
 Fullseye는 **numpy 배열을 입력·출력으로 하는 이미지 처리 연산자 라이브러리**이며, 그 위에 **HDevelop풍의 시각적
 파이프라인 설계 환경(Fullseye Studio)**과 **실행 런타임(FullseyeEngine)**이 얹혀 있습니다. HALCON/HDevelop 식으로 말하면
@@ -57,7 +57,7 @@ py -3.11 -m pip install "fullseye[opencv]" # OpenCV 전용 이미지 API와 cv_*
 fullseye-studio                            # 표준 설치 뒤 Studio를 바로 시작
 ```
 
-extras 목록과 의미는 [INSTALL.md](INSTALL.md)에 정리되어 있습니다. `gui`와 `pil`은 기존 설치 명령을 위한 빈 호환 별칭입니다.
+extras 목록과 의미는 [INSTALL.md](INSTALL.ko.md)에 정리되어 있습니다. `gui`와 `pil`은 기존 설치 명령을 위한 빈 호환 별칭입니다.
 
 Fullseye를 개발할 때는 저장소를clone하고editable install을 사용합니다.
 
@@ -175,7 +175,7 @@ py -3.11 studio.py          # 또는 설치되어 있다면: fullseye-studio
   뷰어(Ctrl+4)는 우클릭으로 Reset view / 1인칭(원근) 전환 / Wireframe / Save screenshot을 할 수 있습니다.
 
 조립한 파이프라인은 **Export(Ctrl+E)**로 `--ops` 문자열이나 Python 코드로 내보낼 수 있고, **Save pipeline
-(Ctrl+Shift+S)**로 JSON으로 저장할 수 있습니다. 전체 기능과 단축키는 [STUDIO_GUIDE.md](STUDIO_GUIDE.md)를 참고하세요. 앱
+(Ctrl+Shift+S)**로 JSON으로 저장할 수 있습니다. 전체 기능과 단축키는 [STUDIO_GUIDE.md](STUDIO_GUIDE.ko.md)를 참고하세요. 앱
 내에서는 **Ctrl+F1**로 단축키 목록을 열고, **F1**로 선택한 op의 도움말을 엽니다.
 
 ---
@@ -199,7 +199,7 @@ py -3.11 imgevolve.py run edge.json in.png --stepwise --out step.png
 py -3.11 imgevolve.py run "gaussian,sobel_amp,otsu" --to-python
 ```
 
-코드에서 실행할 때는 `FullseyeEngine`을 사용합니다(자세한 내용은 [ENGINE.md](ENGINE.md)).
+코드에서 실행할 때는 `FullseyeEngine`을 사용합니다(자세한 내용은 [ENGINE.md](ENGINE.ko.md)).
 
 ```python
 import fullseye
@@ -237,11 +237,11 @@ py -3.11 imgevolve.py pipeline in.png out.png --ops "gaussian,sobel_amp,otsu"
 | `apply` / `pipeline`에서 `cannot read ...` | 표준 Pillow 의존성 또는 이미지가 손상됨. Fullseye 재설치 후 이미지를 확인 |
 | 추가 백엔드의 연산자가 "unknown"으로 표시됨 | 해당 백엔드가 미설치. `.[skimage]` `.[wavelets]` `.[extra]` 등을 추가 |
 
-더 상세한 문제 해결은 [INSTALL.md](INSTALL.md)를 참조하세요.
+더 상세한 문제 해결은 [INSTALL.md](INSTALL.ko.md)를 참조하세요.
 
 ## 다음으로 읽을 것
 
-- **[INSTALL.md](INSTALL.md)** — 환경 구축 완전 가이드(extras 사용 구분, Windows/Linux 설치 도구, 최소 구성·임베딩)
-- **[STUDIO_GUIDE.md](STUDIO_GUIDE.md)** — Fullseye Studio 완전 가이드
-- **[ENGINE.md](ENGINE.md)** — FullseyeEngine(설계 → 실행) 가이드
-- **[README.md](README.md)** — 문서 색인
+- **[INSTALL.md](INSTALL.ko.md)** — 환경 구축 완전 가이드(extras 사용 구분, Windows/Linux 설치 도구, 최소 구성·임베딩)
+- **[STUDIO_GUIDE.md](STUDIO_GUIDE.ko.md)** — Fullseye Studio 완전 가이드
+- **[ENGINE.md](ENGINE.ko.md)** — FullseyeEngine(설계 → 실행) 가이드
+- **[README.md](README.ko.md)** — 문서 색인

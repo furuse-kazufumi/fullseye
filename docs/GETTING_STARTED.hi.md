@@ -31,8 +31,8 @@ Fullseye बहुत बड़ा है, इसलिए अगर आप त�
 
 यह गाइड Fullseye (working name imgevolve) को सबसे छोटे रास्ते से चालू करती है: **install → अपनी
 पहली pipeline बनाएँ → चलाएँ → result देखें**, ऐसे क्रम में जिसमें आप अटकें नहीं। पूरे setup के लिए
-[INSTALL.md](INSTALL.md) देखें, Studio की सारी सुविधाओं के लिए
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md), और code से चलाने के लिए [ENGINE.md](ENGINE.md)।
+[INSTALL.md](INSTALL.hi.md) देखें, Studio की सारी सुविधाओं के लिए
+[STUDIO_GUIDE.md](STUDIO_GUIDE.hi.md), और code से चलाने के लिए [ENGINE.md](ENGINE.md)।
 
 Fullseye एक **image-processing operator library है जिसके inputs और outputs numpy arrays हैं**,
 और इसके ऊपर एक **HDevelop-style visual pipeline-design environment (Fullseye Studio)** और एक **execution
@@ -60,7 +60,7 @@ py -3.11 -m pip install "fullseye[opencv]" # OpenCV-only image API and cv_* oper
 fullseye-studio                            # Studio starts after standard installation
 ```
 
-Extras की list और हर एक का मतलब [INSTALL.md](INSTALL.md) में इकट्ठा है। `gui` और `pil` पुराने install commands के लिए खाली compatibility aliases हैं।
+Extras की list और हर एक का मतलब [INSTALL.md](INSTALL.hi.md) में इकट्ठा है। `gui` और `pil` पुराने install commands के लिए खाली compatibility aliases हैं।
 
 Fullseye पर development करने वाले लोग repository कोclone करकेeditable install का उपयोग करें:
 
@@ -191,7 +191,7 @@ py -3.11 studio.py          # or, if installed: fullseye-studio
 
 जोड़ी गई pipeline को आप `--ops` string या Python code के रूप में **Export (Ctrl+E)** कर सकते हैं, और **Save
 pipeline (Ctrl+Shift+S)** से JSON के रूप में save कर सकते हैं। सारी सुविधाएँ और shortcuts
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md) में हैं; app के अंदर **Ctrl+F1** shortcut list और **F1** चुने हुए op की help दिखाता है।
+[STUDIO_GUIDE.md](STUDIO_GUIDE.hi.md) में हैं; app के अंदर **Ctrl+F1** shortcut list और **F1** चुने हुए op की help दिखाता है।
 
 ---
 
@@ -253,11 +253,11 @@ py -3.11 imgevolve.py pipeline in.png out.png --ops "gaussian,sobel_amp,otsu"
 | `apply` / `pipeline` में `cannot read ...` | standard Pillow dependency या image टूटी है। Fullseye reinstall करके image जाँचें |
 | किसी extra backend का operator "unknown" है | वह backend install नहीं है। `.[skimage]` `.[wavelets]` `.[extra]` आदि जोड़ें |
 
-ज़्यादा विस्तृत troubleshooting के लिए [INSTALL.md](INSTALL.md) देखें।
+ज़्यादा विस्तृत troubleshooting के लिए [INSTALL.md](INSTALL.hi.md) देखें।
 
 ## आगे क्या पढ़ें
 
-- **[INSTALL.md](INSTALL.md)** — पूरी setup गाइड (extras चुनना, Windows/Linux installers, minimal/embedded configs)
-- **[STUDIO_GUIDE.md](STUDIO_GUIDE.md)** — Fullseye Studio की पूरी गाइड
+- **[INSTALL.md](INSTALL.hi.md)** — पूरी setup गाइड (extras चुनना, Windows/Linux installers, minimal/embedded configs)
+- **[STUDIO_GUIDE.md](STUDIO_GUIDE.hi.md)** — Fullseye Studio की पूरी गाइड
 - **[ENGINE.md](ENGINE.md)** — FullseyeEngine (design → run) गाइड
 - **[README.md](README.md)** — documentation index

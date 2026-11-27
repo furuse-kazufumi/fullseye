@@ -111,3 +111,15 @@ Optische Messtechnik und Zuverlässigkeit der Sichtprüfung (POD, Laser-Speckle,
 2. **Typ-(Sort-)Vertrag**: Jede Notiz trägt `in:`/`out:` sowie "verwandte Ops, deren Typen zusammenpassen", sodass die KI eine Pipeline **unter gleichzeitiger Typprüfung** zusammensetzen kann.
 3. **Verifizierbar**: Jeder Op verfügt über ein Worked Example mit Ground Truth (`examples/` / `examples_3d/`), sodass die KI ihren eigenen Vorschlag selbst ausführen und überprüfen kann.
 4. **Durchgängig bis zur Anzeige**: Öffnet man Studio (`py -3.11 studio.py`), kann ein Mensch das von der KI zusammengestellte Ergebnis als Bildfenster bzw. 3D-Ansicht auf demselben Bildschirm prüfen (über `dev_open_window` u. Ä. lassen sich auch mehrere Fenster aus einem Skript heraus anordnen).
+
+## Verwendung des Op-Graphen
+
+Wenn Ein- und Ausgabetyp bekannt sind, verwenden Sie zuerst
+`plan(have, want, goal, direction=...)`. Standardmäßig plant die Funktion einen DAG nur mit Kanten,
+die aus einer MCP-Pipeline ausführbar sind. Verwenden Sie
+`constraints={"executable_only": false}` der Python-API nur zur Untersuchung von Forschungs-Ops,
+die ausschließlich im Verzeichnis stehen; diese Option erscheint absichtlich nicht im MCP-Schema
+für KI-Assistenten. `describe` gibt genau einen Eintrag statt einer unbegrenzten Liste aller Typen
+zurück. `choose` ordnet Kandidaten ohne vergleichbare Messungen nicht. Reglerbereiche beruhen auf
+den Messungen in `docs/op_knob.json` und dem Eingabekontext; wirkungslose Regler werden von der
+Suche ausgeschlossen.

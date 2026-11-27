@@ -18,9 +18,9 @@ breaks, CI goes red).
 
 | Way in | Who it's for | 5 min: just run it | 30 min: follow the internals | Half a day: on your own data |
 |---|---|---|---|---|
-| **Explainable visual inspection** | inspection / QA | `py -3.11 examples/poc_solder_fillet_aoi.py` — AOI of a solder fillet | `py -3.11 examples/poc_fabric_defect.py` — count misses and false alarms separately | "Detect" in [CAPABILITIES.md](CAPABILITIES.md) → your own image in Studio |
+| **Explainable visual inspection** | inspection / QA | `py -3.11 examples/poc_solder_fillet_aoi.py` — AOI of a solder fillet | `py -3.11 examples/poc_fabric_defect.py` — count misses and false alarms separately | "Detect" in [CAPABILITIES.md](CAPABILITIES.en.md) → your own image in Studio |
 | **3-D for robots** | robotics / 3-D metrology | `py -3.11 examples/perception_pipeline.py` — stereo → depth → point cloud → traversability | `py -3.11 examples/grasp_pose.py` — fit a point cloud to a model for 6-DoF pose and grasp direction | [EXAMPLES_3D.md](EXAMPLES_3D.md) → feed your own cloud/mesh |
-| **Physics-based NDT** | X-ray / optics / metrology | `py -3.11 examples/ct_reconstruction.py` — projection → reconstruction → dimensions in mm and defect count | `py -3.11 examples/poc_ct_void_morphology.py` — why a single pass/fail number is blind to shape | "Shape" in [CAPABILITIES.md](CAPABILITIES.md) → your own volume |
+| **Physics-based NDT** | X-ray / optics / metrology | `py -3.11 examples/ct_reconstruction.py` — projection → reconstruction → dimensions in mm and defect count | `py -3.11 examples/poc_ct_void_morphology.py` — why a single pass/fail number is blind to shape | "Shape" in [CAPABILITIES.md](CAPABILITIES.en.md) → your own volume |
 
 Every example **carries ground truth** (closed-form or synthetic). It always prints the null case
 (doing nothing), so you can judge for yourself whether something "worked". The ledger of how far
@@ -31,8 +31,8 @@ from the gates that run and whether real data was involved.
 
 This guide gets Fullseye (working name imgevolve) running by the shortest path: **install → build
 your first pipeline → run it → look at the result**, in an order that doesn't get you stuck. For
-fuller setup see [INSTALL.md](INSTALL.md), for everything Studio does see
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md), and for running from code see [ENGINE.md](ENGINE.md).
+fuller setup see [INSTALL.md](INSTALL.en.md), for everything Studio does see
+[STUDIO_GUIDE.md](STUDIO_GUIDE.en.md), and for running from code see [ENGINE.md](ENGINE.en.md).
 
 Fullseye is an **image-processing operator library whose inputs and outputs are numpy arrays**,
 with an **HDevelop-style visual pipeline-design environment (Fullseye Studio)** and an **execution
@@ -61,7 +61,7 @@ py -3.11 -m pip install "fullseye[opencv]" # OpenCV-only image API and cv_* oper
 fullseye-studio                            # Studio starts after the standard install
 ```
 
-The list of extras and what each means is collected in [INSTALL.md](INSTALL.md). `gui` and `pil`
+The list of extras and what each means is collected in [INSTALL.md](INSTALL.en.md). `gui` and `pil`
 are empty compatibility aliases for existing install commands.
 
 Developers working on Fullseye should clone the repository and use an editable install:
@@ -195,7 +195,7 @@ It has three panels.
 
 You can **Export (Ctrl+E)** the assembled pipeline as an `--ops` string or Python code, and **Save
 pipeline (Ctrl+Shift+S)** it as JSON. All features and shortcuts are in
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md); inside the app, **Ctrl+F1** shows the shortcut list and **F1** shows help for the selected op.
+[STUDIO_GUIDE.md](STUDIO_GUIDE.en.md); inside the app, **Ctrl+F1** shows the shortcut list and **F1** shows help for the selected op.
 
 ---
 
@@ -218,7 +218,7 @@ py -3.11 imgevolve.py run edge.json in.png --stepwise --out step.png
 py -3.11 imgevolve.py run "gaussian,sobel_amp,otsu" --to-python
 ```
 
-To run from code, use `FullseyeEngine` (details in [ENGINE.md](ENGINE.md)).
+To run from code, use `FullseyeEngine` (details in [ENGINE.md](ENGINE.en.md)).
 
 ```python
 import fullseye
@@ -257,11 +257,11 @@ stage, use `run_pipeline` (Python) above, or Studio.
 | `cannot read ...` in `apply` / `pipeline` | broken standard Pillow dependency, or a damaged image. Reinstall Fullseye, then inspect the image |
 | an extra backend's operator is "unknown" | that backend isn't installed. Add `.[skimage]` `.[wavelets]` `.[extra]`, etc. |
 
-For fuller troubleshooting see [INSTALL.md](INSTALL.md).
+For fuller troubleshooting see [INSTALL.md](INSTALL.en.md).
 
 ## What to read next
 
-- **[INSTALL.md](INSTALL.md)** — complete setup guide (choosing extras, Windows/Linux installers, minimal/embedded configs)
-- **[STUDIO_GUIDE.md](STUDIO_GUIDE.md)** — complete Fullseye Studio guide
-- **[ENGINE.md](ENGINE.md)** — FullseyeEngine (design → run) guide
-- **[README.md](README.md)** — documentation index
+- **[INSTALL.md](INSTALL.en.md)** — complete setup guide (choosing extras, Windows/Linux installers, minimal/embedded configs)
+- **[STUDIO_GUIDE.md](STUDIO_GUIDE.en.md)** — complete Fullseye Studio guide
+- **[ENGINE.md](ENGINE.en.md)** — FullseyeEngine (design → run) guide
+- **[README.md](README.en.md)** — documentation index

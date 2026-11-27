@@ -115,11 +115,9 @@ $env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 ```
 
-`pip install fullseye` के बाद `fullseye` या `fullseye-studio` को पहली बार interactive terminal में चलाने पर Windows Start menu या Linux application menu में **Fullseye Studio** एक बार register होता है। virtual environment का entry उसी environment का Python चलाता है। बाद में user के entry मिटाने पर सामान्य command उसे फिर नहीं बनाता। सफलता पर यह एक पंक्ति दिखती है:
+`pip install fullseye` के बाद `fullseye` या `fullseye-studio` को पहली बार interactive terminal में चलाने पर Windows Start menu या Linux application menu में **Fullseye Studio** एक बार register होता है। virtual environment का entry उसी environment का Python चलाता है। बाद में user के entry मिटाने पर सामान्य command उसे फिर नहीं बनाता। सफलता पर program अभी नीचे दी गई Japanese पंक्ति दिखाता है; इसका अर्थ registration सफल होना और removal command बताना है:
 
-```text
-Fullseye Studio को Start menu में दर्ज किया गया (हटाने के लिए: fullseye-studio --remove-shortcuts)
-```
+`スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)` _(ja)_
 
 इसे रोकने के लिए `FULLSEYE_NO_SHORTCUTS=1` set करें, या `FULLSEYE_STUDIO_SETTINGS` के INI (Linux में सामान्यतः `~/.config/Fullseye/Studio.conf`) में नीचे का item डालें। CI, terminal रहित command और Start-menu programs छिपाने वाली Windows administrator policy कोई entry नहीं बनाती। विस्तृत optional setup के लिए `fullseye setup` चलाएँ।
 

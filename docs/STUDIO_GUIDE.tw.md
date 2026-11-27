@@ -331,7 +331,7 @@ Studio 已經超越「只能從流水線呼叫程式碼」的階段，也可以�
 | Python 函式 | Export（Ctrl+E） | 以 `fullseye.run_pipeline(...)` 的形式嵌入自己的程式碼 |
 | JSON | Save pipeline（Ctrl+Shift+S） | 用 `FullseyeEngine.load(...)` / `imgevolve.py run pipeline.json` 執行 |
 
-**設計在 Studio 完成，執行交給程式碼/CLI**這種相當於 HDevelop→HDevEngine 的流程，是透過 JSON 完成的。接收 JSON 並執行的一方請參見 [ENGINE.md](ENGINE.md)。
+**設計在 Studio 完成，執行交給程式碼/CLI**這種相當於 HDevelop→HDevEngine 的流程，是透過 JSON 完成的。接收 JSON 並執行的一方請參見 [ENGINE.md](ENGINE.tw.md)。
 
 ---
 
@@ -339,6 +339,6 @@ Studio 已經超越「只能從流水線呼叫程式碼」的階段，也可以�
 
 - [STUDIO_UX.md](STUDIO_UX.md) — 設計系統·UX 改善的意圖與背景（設計視角）
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — 感知面板的內容（flow / stereo / terrain）
-- [ENGINE.md](ENGINE.md) — 執行匯出的流水線
-- [GETTING_STARTED.md](GETTING_STARTED.md) — 5 分鐘入門
+- [ENGINE.md](ENGINE.tw.md) — 執行匯出的流水線
+- [GETTING_STARTED.md](GETTING_STARTED.tw.md) — 5 分鐘入門
 - **驗證匯出的 Python（Run ▸ Verify exported Python / Ctrl+Shift+R）**：在隔離的 Python 程序中執行可編輯的匯出程式碼，逐階段與 GUI 中間結果比較。可設定絕對、相對容差，以及 NaN 必須同位置、忽略或禁止。shape 與 dtype 一律必須相同。不一致會加入 Problems，並定位到第一個不同階段；Studio 只報告，不修改數值。

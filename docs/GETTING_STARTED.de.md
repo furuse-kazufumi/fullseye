@@ -31,8 +31,8 @@ Hand geschrieben, sondern automatisch aus den tatsächlich laufenden Gates und d
 
 Dies ist die Anleitung, um Fullseye (Arbeitsname imgevolve) auf dem kürzesten Weg zum Laufen zu bringen. In der
 Reihenfolge **Installation → erste Pipeline bauen → ausführen → Ergebnis ansehen** geht es einen Weg ohne
-Stolperfallen. Eine ausführlichere Einrichtung findet sich in [INSTALL.md](INSTALL.md), sämtliche Funktionen von
-Studio in [STUDIO_GUIDE.md](STUDIO_GUIDE.md), die Ausführung aus eigenem Code in [ENGINE.md](ENGINE.md).
+Stolperfallen. Eine ausführlichere Einrichtung findet sich in [INSTALL.md](INSTALL.de.md), sämtliche Funktionen von
+Studio in [STUDIO_GUIDE.md](STUDIO_GUIDE.de.md), die Ausführung aus eigenem Code in [ENGINE.md](ENGINE.de.md).
 
 Fullseye ist eine **Bildverarbeitungs-Operatorbibliothek, die numpy-Arrays als Ein- und Ausgabe verwendet**, auf der
 eine **visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio)** sowie eine
@@ -60,7 +60,7 @@ py -3.11 -m pip install "fullseye[opencv]" # OpenCV-exklusive Bild-API und cv_*-
 fullseye-studio                            # Studio startet nach der Standardinstallation
 ```
 
-Die Liste der Extras samt Bedeutung ist in [INSTALL.md](INSTALL.md) zusammengefasst. `gui` und `pil` sind leere
+Die Liste der Extras samt Bedeutung ist in [INSTALL.md](INSTALL.de.md) zusammengefasst. `gui` und `pil` sind leere
 Kompatibilitätsaliase für bestehende Installationsbefehle.
 
 Wer Fullseye entwickelt, klont das Repository und verwendet eine bearbeitbare Installation:
@@ -194,7 +194,7 @@ Der Aufbau besteht aus 3 Bereichen.
 
 Die aufgebaute Pipeline lässt sich mit **Export (Strg+E)** als `--ops`-String oder als Python-Code exportieren und
 mit **Save pipeline (Strg+Umschalt+S)** als JSON speichern. Sämtliche Funktionen und Tastenkürzel finden sich in
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md); in der Anwendung zeigt **Strg+F1** die Tastenkürzel und **F1** die Hilfe zum ausgewählten op.
+[STUDIO_GUIDE.md](STUDIO_GUIDE.de.md); in der Anwendung zeigt **Strg+F1** die Tastenkürzel und **F1** die Hilfe zum ausgewählten op.
 
 ---
 
@@ -217,7 +217,7 @@ py -3.11 imgevolve.py run edge.json in.png --stepwise --out step.png
 py -3.11 imgevolve.py run "gaussian,sobel_amp,otsu" --to-python
 ```
 
-Zur Ausführung aus Code wird `FullseyeEngine` verwendet (Details in [ENGINE.md](ENGINE.md)).
+Zur Ausführung aus Code wird `FullseyeEngine` verwendet (Details in [ENGINE.md](ENGINE.de.md)).
 
 ```python
 import fullseye
@@ -256,11 +256,11 @@ verwenden Sie stattdessen `run_pipeline` (Python) oder Studio, wie oben beschrie
 | `apply` / `pipeline` meldet `cannot read ...` | Standard-Pillow-Abhängigkeit oder Bild beschädigt. Fullseye neu installieren und Bild prüfen |
 | Operatoren eines zusätzlichen Backends erscheinen als "unknown" | Das betreffende Backend ist nicht installiert. `.[skimage]`, `.[wavelets]`, `.[extra]` usw. ergänzen |
 
-Eine ausführlichere Fehlersuche findet sich in [INSTALL.md](INSTALL.md).
+Eine ausführlichere Fehlersuche findet sich in [INSTALL.md](INSTALL.de.md).
 
 ## Weiterführende Lektüre
 
-- **[INSTALL.md](INSTALL.md)** — vollständiger Leitfaden zur Einrichtung (Einsatz der Extras, Installationsprogramme für Windows/Linux, Minimalkonfiguration · Einbettung)
-- **[STUDIO_GUIDE.md](STUDIO_GUIDE.md)** — vollständiger Leitfaden zu Fullseye Studio
-- **[ENGINE.md](ENGINE.md)** — Leitfaden zu FullseyeEngine (Entwurf → Ausführung)
-- **[README.md](README.md)** — Dokumentationsindex
+- **[INSTALL.md](INSTALL.de.md)** — vollständiger Leitfaden zur Einrichtung (Einsatz der Extras, Installationsprogramme für Windows/Linux, Minimalkonfiguration · Einbettung)
+- **[STUDIO_GUIDE.md](STUDIO_GUIDE.de.md)** — vollständiger Leitfaden zu Fullseye Studio
+- **[ENGINE.md](ENGINE.de.md)** — Leitfaden zu FullseyeEngine (Entwurf → Ausführung)
+- **[README.md](README.de.md)** — Dokumentationsindex

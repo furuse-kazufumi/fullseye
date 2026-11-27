@@ -10,7 +10,7 @@ lang: ko
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
 
 
-개발 머신부터 임베디드 Linux까지, 목적에 맞게 Fullseye(작업명 imgevolve)를 구축하기 위한 가이드입니다. 5분 만에 바로 실행해 보고 싶다면 [GETTING_STARTED.md](GETTING_STARTED.md)가 지름길입니다.
+개발 머신부터 임베디드 Linux까지, 목적에 맞게 Fullseye(작업명 imgevolve)를 구축하기 위한 가이드입니다. 5분 만에 바로 실행해 보고 싶다면 [GETTING_STARTED.md](GETTING_STARTED.ko.md)가 지름길입니다.
 
 Fullseye의 Python API 코어는 **numpy + scipy**로 동작합니다. 표준 `pip install fullseye`에는 Studio(PySide6-Essentials)와 Pillow도 포함되며, 무거운 이미지 처리 백엔드는 선택 사항으로 남습니다. 추가 백엔드가 없어도 해당 백엔드 전용 오퍼레이터만 비활성화됩니다(graceful degradation).
 
@@ -109,11 +109,9 @@ $env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 ```
 
-`pip install fullseye` 뒤 처음으로 대화형 터미널에서 `fullseye` 또는 `fullseye-studio`를 실행하면 Windows 시작 메뉴 또는 Linux 애플리케이션 메뉴에 **Fullseye Studio**를 한 번 등록합니다. 가상 환경 항목은 그 환경의 Python을 사용하며, 사용자가 나중에 항목을 지워도 일반 명령이 다시 만들지 않습니다. 성공하면 다음 한 줄을 표시합니다.
+`pip install fullseye` 뒤 처음으로 대화형 터미널에서 `fullseye` 또는 `fullseye-studio`를 실행하면 Windows 시작 메뉴 또는 Linux 애플리케이션 메뉴에 **Fullseye Studio**를 한 번 등록합니다. 가상 환경 항목은 그 환경의 Python을 사용하며, 사용자가 나중에 항목을 지워도 일반 명령이 다시 만들지 않습니다. 성공하면 현재 프로그램은 등록과 제거 명령을 뜻하는 다음 일본어 한 줄을 표시합니다.
 
-```text
-시작 메뉴에 Fullseye Studio를 등록했습니다(제거: fullseye-studio --remove-shortcuts)
-```
+`スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)` _(ja)_
 
 `FULLSEYE_NO_SHORTCUTS=1`을 설정하거나 `FULLSEYE_STUDIO_SETTINGS`가 가리키는 INI(Linux 기본값은 `~/.config/Fullseye/Studio.conf`)에 다음 항목을 넣으면 중지할 수 있습니다. CI, 터미널 없는 실행, 시작 메뉴 프로그램을 숨기는 Windows 관리자 정책에서는 만들지 않습니다. 상세 선택 설정에는 `fullseye setup`을 사용하십시오.
 
@@ -184,7 +182,7 @@ python3.11 -m pip install -e .        # 표준 설치에는 Studio/Pillow 포함
   ```
 
 - **파일 I/O가 필요할 때**(`fullseye.load` / `fullseye.save`, `imgevolve.py run`, examples)는 **OpenCV 또는 Pillow 둘 중 하나**만 있으면 동작합니다(`imgio`가 자동으로 대체 처리). Pillow는 이미 표준 의존성입니다.
-- **설계는 개발 머신, 실행은 임베디드 머신**이라는 역할 분담이 가능합니다. 개발 머신의 Studio에서 파이프라인을 구성해 JSON을 내보내고, 임베디드 머신에서는 `FullseyeEngine.load("pipeline.json").run(frame)`으로 실행하기만 하면 됩니다(GUI 불필요). 자세한 내용은 [ENGINE.md](ENGINE.md)를 참고하십시오.
+- **설계는 개발 머신, 실행은 임베디드 머신**이라는 역할 분담이 가능합니다. 개발 머신의 Studio에서 파이프라인을 구성해 JSON을 내보내고, 임베디드 머신에서는 `FullseyeEngine.load("pipeline.json").run(frame)`으로 실행하기만 하면 됩니다(GUI 불필요). 자세한 내용은 [ENGINE.md](ENGINE.ko.md)를 참고하십시오.
 - **지각 스택**(stereo / terrain / flow / detect / registration / pose)도 numpy + scipy만으로 동작합니다(`fullseye.disparity_map` 등). 로봇/비전 용도에서 추가 의존성 없이 사용할 수 있습니다.
 
 > GPU(`torch`)는 어디까지나 **배치 가속을 위한 선택 사항(opt-in)**입니다. 임베디드의 단일 이미지 처리에는 불필요하며, 설치하지 않아도 모든 오퍼레이터가 CPU에서 동작합니다.

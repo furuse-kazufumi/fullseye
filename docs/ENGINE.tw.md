@@ -202,6 +202,6 @@ def perceive(frame):                            # frame: 自行準備的 float64
 
 ## 相關文件
 
-- [STUDIO_GUIDE.md](STUDIO_GUIDE.md) —— 建立管線並匯出 JSON
-- [GETTING_STARTED.md](GETTING_STARTED.md) —— 5 分鐘快速上手
-- [INSTALL.md](INSTALL.md) —— 環境建置(包括嵌入式與最小配置)
+- [STUDIO_GUIDE.md](STUDIO_GUIDE.tw.md) —— 建立管線並匯出 JSON
+- [GETTING_STARTED.md](GETTING_STARTED.tw.md) —— 5 分鐘快速上手
+- [INSTALL.md](INSTALL.tw.md) —— 環境建置(包括嵌入式與最小配置)

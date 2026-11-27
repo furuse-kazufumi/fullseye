@@ -291,6 +291,29 @@ lang: zh-CN
 
 ## 快捷命令
 
+### `pip install` 后的第一分钟
+
+安装完成后先运行：
+
+```bash
+fullseye setup          # 检查环境并逐项询问；Enter 采用默认值
+```
+
+它会报告 Python、Fullseye、Qt、可选依赖和 Claude Code 集成的状态，按需注册 Studio
+菜单项并显示执行计划。`--yes` 接受默认值，`--dry-run` 只显示计划，`--lang ja|en`
+选择交互语言。Studio 已包含在标准的 `pip install fullseye` 中，可直接运行
+`fullseye-studio`。
+
+### 卸载
+
+```bash
+fullseye setup --uninstall      # 先列出并确认，再删除 setup 登记的项目，最后运行 pip uninstall
+```
+
+该命令只删除安装台账记录且经过允许列表验证的项目。默认保留 Studio 设置和缓存；
+`--yes` 和 `--dry-run` 同样有效。若已手动运行 `pip uninstall fullseye`，快捷方式和
+setup 台账不会自动删除，请按 [英文版的清理清单](README.en.md#if-you-already-ran-pip-uninstall-fullseye-by-hand) 手动清理。
+
 ```powershell
 py -3.11 -m pip install -e ".[opencv,gui]"     # 安装（图像 I/O + Studio）
 py -3.11 studio.py                              # 启动 Fullseye Studio（= fullseye-studio）

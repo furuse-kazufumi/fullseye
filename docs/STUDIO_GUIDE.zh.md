@@ -331,7 +331,7 @@ Studio 已经超越了"只能从流水线调用代码"的阶段，也可以作�
 | Python 函数 | Export（Ctrl+E） | 以 `fullseye.run_pipeline(...)` 的形式嵌入自己的代码 |
 | JSON | Save pipeline（Ctrl+Shift+S） | 用 `FullseyeEngine.load(...)` / `imgevolve.py run pipeline.json` 执行 |
 
-**设计在 Studio 中完成，执行由代码/CLI 负责**这种相当于 HDevelop→HDevEngine 的流程，是通过 JSON 完成的。接收 JSON 并执行的一方请参见 [ENGINE.md](ENGINE.md)。
+**设计在 Studio 中完成，执行由代码/CLI 负责**这种相当于 HDevelop→HDevEngine 的流程，是通过 JSON 完成的。接收 JSON 并执行的一方请参见 [ENGINE.md](ENGINE.zh.md)。
 
 ---
 
@@ -339,6 +339,6 @@ Studio 已经超越了"只能从流水线调用代码"的阶段，也可以作�
 
 - [STUDIO_UX.md](STUDIO_UX.md) — 设计系统·UX 改进的意图与背景（设计视角）
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — 感知面板的内容（flow / stereo / terrain）
-- [ENGINE.md](ENGINE.md) — 执行导出的流水线
-- [GETTING_STARTED.md](GETTING_STARTED.md) — 5 分钟入门
+- [ENGINE.md](ENGINE.zh.md) — 执行导出的流水线
+- [GETTING_STARTED.md](GETTING_STARTED.zh.md) — 5 分钟入门
 - **验证导出的 Python（Run ▸ Verify exported Python / Ctrl+Shift+R）**：在隔离的 Python 进程中运行可编辑的导出代码，并逐阶段与 GUI 中间结果比较。可设置绝对、相对容差，以及 NaN 必须同位置、忽略或禁止。shape 和 dtype 始终必须一致。不一致会加入 Problems，并定位到首个不同阶段；Studio 只报告，不修改数值。

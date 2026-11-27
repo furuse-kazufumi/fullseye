@@ -106,3 +106,12 @@ op 筆記回答「這個 op 做什麼」，卻不回答「在這道工序、這�
 2. **型別（sort）契約**：每篇筆記都帶有 `in:`/`out:` 以及「型別相銜接的相關 op」，因此 AI 能在**進行型別檢查的同時**組裝管線。
 3. **可驗證**：所有 op 都附有帶 ground truth 的 worked example（`examples/` / `examples_3d/`），AI 可以自行執行其提案並加以確認。
 4. **一路貫通到顯示**：開啟 Studio（`py -3.11 studio.py`），人類就能在同一畫面上以影像視窗、3D 顯示的形式檢查 AI 組裝的結果（也能透過 `dev_open_window` 等從指令碼中配置多個視窗）。
+
+## op 圖的使用步驟
+
+已知輸入與輸出型別時，先使用 `plan(have, want, goal, direction=...)`。預設只用 MCP 管線
+能執行的邊來規劃 DAG。只有在調查僅存在於台帳中的研究用 op 時，才使用 Python API 的
+`constraints={"executable_only": false}`；此選項不會出現在面向 AI 的 MCP schema 中。
+`describe` 只傳回一項，不會無限制列出所有型別。沒有可比較的實測資料時，`choose` 不會
+替候選項排序。旋鈕範圍依據 `docs/op_knob.json` 的實測與輸入脈絡；實測中不起作用的旋鈕
+不會進入探索範圍。

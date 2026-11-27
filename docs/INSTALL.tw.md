@@ -10,7 +10,7 @@ lang: zh-Hant
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
 
 
-這是一份從開發機到嵌入式 Linux、依用途建置 Fullseye(工作代號 imgevolve)的指南。若只想在 5 分鐘內跑起來，[GETTING_STARTED.md](GETTING_STARTED.md) 是比較快的捷徑。
+這是一份從開發機到嵌入式 Linux、依用途建置 Fullseye(工作代號 imgevolve)的指南。若只想在 5 分鐘內跑起來，[GETTING_STARTED.md](GETTING_STARTED.tw.md) 是比較快的捷徑。
 
 Fullseye 的 Python API 核心使用 **numpy + scipy**。標準的 `pip install fullseye` 也會安裝 Studio（PySide6-Essentials）與 Pillow；重量級影像處理後端仍為選用。沒有額外後端時，只會停用該後端專屬的運算子（優雅降級）。
 
@@ -109,11 +109,9 @@ $env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 ```
 
-`pip install fullseye` 後，第一次在互動式終端執行 `fullseye` 或 `fullseye-studio` 時，會在 Windows 開始功能表或 Linux 應用程式選單一次註冊 **Fullseye Studio**。虛擬環境的項目會使用該環境的 Python；使用者後來刪除項目時，一般指令不會重建它。成功時顯示：
+`pip install fullseye` 後，第一次在互動式終端執行 `fullseye` 或 `fullseye-studio` 時，會在 Windows 開始功能表或 Linux 應用程式選單一次註冊 **Fullseye Studio**。虛擬環境的項目會使用該環境的 Python；使用者後來刪除項目時，一般指令不會重建它。成功時程式目前會顯示下列日文（表示已註冊 Studio，並列出移除指令）：
 
-```text
-已在開始功能表中註冊 Fullseye Studio（移除：fullseye-studio --remove-shortcuts）
-```
+`スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)` _(ja)_
 
 設定 `FULLSEYE_NO_SHORTCUTS=1`，或在 `FULLSEYE_STUDIO_SETTINGS` 指定的 INI（Linux 預設是 `~/.config/Fullseye/Studio.conf`）加入下列項目即可停用。CI、沒有端末的執行、以及隱藏開始功能表程式的 Windows 管理員原則都不會寫入。詳細的選用設定請使用 `fullseye setup`。
 
@@ -184,7 +182,7 @@ python3.11 -m pip install -e .        # 標準安裝含 Studio/Pillow；不需�
   ```
 
 - **需要檔案 I/O 時**(`fullseye.load` / `fullseye.save`、`imgevolve.py run`、examples)，具備 **OpenCV 或 Pillow 其中之一** 即可運作(`imgio` 會自動回退)；Pillow 已是標準相依套件。
-- 可以做到 **設計在開發機、執行在嵌入式機** 的分工。在開發機的 Studio 中建立管線並匯出 JSON，嵌入式機上只需 `FullseyeEngine.load("pipeline.json").run(frame)` 即可執行(不需要 GUI)。詳情請參見 [ENGINE.md](ENGINE.md)。
+- 可以做到 **設計在開發機、執行在嵌入式機** 的分工。在開發機的 Studio 中建立管線並匯出 JSON，嵌入式機上只需 `FullseyeEngine.load("pipeline.json").run(frame)` 即可執行(不需要 GUI)。詳情請參見 [ENGINE.md](ENGINE.tw.md)。
 - **感知堆疊**(stereo / terrain / flow / detect / registration / pose)同樣僅靠 numpy + scipy 運作(如 `fullseye.disparity_map`)。在機器人/視覺用途中無需額外相依套件即可使用。
 
 > GPU(`torch`)終究只是 **批次加速的選用項目**。嵌入式的單張影像處理不需要它，即使不安裝，所有運算子也都能在 CPU 上運作。

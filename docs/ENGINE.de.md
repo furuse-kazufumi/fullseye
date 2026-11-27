@@ -202,6 +202,6 @@ Der Wahrnehmungs-Stack (stereo / terrain / flow / detect / registration / pose) 
 
 ## Verwandte Dokumente
 
-- [STUDIO_GUIDE.md](STUDIO_GUIDE.md) — Pipeline erstellen und als JSON exportieren
-- [GETTING_STARTED.md](GETTING_STARTED.md) — In 5 Minuten loslegen
-- [INSTALL.md](INSTALL.md) — Umgebung einrichten (inklusive Embedded und Minimalkonfiguration)
+- [STUDIO_GUIDE.md](STUDIO_GUIDE.de.md) — Pipeline erstellen und als JSON exportieren
+- [GETTING_STARTED.md](GETTING_STARTED.de.md) — In 5 Minuten loslegen
+- [INSTALL.md](INSTALL.de.md) — Umgebung einrichten (inklusive Embedded und Minimalkonfiguration)

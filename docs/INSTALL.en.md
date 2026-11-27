@@ -120,12 +120,11 @@ py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 After `pip install fullseye`, the first interactive execution of `fullseye` or
 `fullseye-studio` registers **Fullseye Studio** once in the Windows Start menu or Linux
 application menu. A virtual environment's menu entry starts that environment's Python. Deleting
-the entry later does not cause an ordinary command to recreate it. The successful registration
-prints this one line:
+the entry later does not cause an ordinary command to recreate it. The program currently prints
+this Japanese line on successful registration (meaning that Studio was registered and naming the
+removal command):
 
-```text
-Registered Fullseye Studio in the Start menu (remove: fullseye-studio --remove-shortcuts)
-```
+`スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)` _(ja)_
 
 Set `FULLSEYE_NO_SHORTCUTS=1` to suppress it, or add this setting to the INI named by
 `FULLSEYE_STUDIO_SETTINGS` (the normal Linux Studio file is `~/.config/Fullseye/Studio.conf`).
@@ -209,7 +208,7 @@ Key points for embedded use:
   and the `cv_*` family.
 - You can split the work as **design on the dev machine, execution on the embedded machine.** Build
   the pipeline in Studio on the dev machine and export the JSON; on the embedded machine you just run
-  `FullseyeEngine.load("pipeline.json").run(frame)` (no GUI). See [ENGINE.md](ENGINE.md) for details.
+  `FullseyeEngine.load("pipeline.json").run(frame)` (no GUI). See [ENGINE.md](ENGINE.en.md) for details.
 - **The perception stack** (stereo / terrain / flow / detect / registration / pose) also runs on
   numpy + scipy (`fullseye.disparity_map`, etc.). It is usable for robotics/vision without extra
   dependencies.

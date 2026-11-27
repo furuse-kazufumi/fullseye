@@ -309,7 +309,7 @@ Python / fullseye / Qt / 任意依存 / Claude Code 連携の状態を表示し�
 
 | やりたいこと | 実行 |
 |---|---|
-| 画面で触る | `fullseye-studio`(`pip install "fullseye[gui]"` が必要) |
+| 画面で触る | `fullseye-studio`（標準の `pip install fullseye` に含まれる） |
 | スタートメニュー / デスクトップに置く | `fullseye-studio --install-shortcuts`(`--desktop` を足すとデスクトップにも)、戻す = `--remove-shortcuts` |
 | Python から 3 行で | `import fullseye, numpy as np` / `img = np.random.rand(64, 64)` / `fullseye.apply(img, "sobel_amp")` |
 | AI(Claude Code)から | `fullseye-rag`(skill)と `claude mcp add fullseye -- fullseye-mcp` (`claude mcp add fullseye -- python -P -m fullseye.mcp` も可) |

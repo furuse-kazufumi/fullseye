@@ -401,7 +401,7 @@ A pipeline built in Studio can be taken out in three forms.
 | JSON | Save pipeline (Ctrl+Shift+S) | run with `FullseyeEngine.load(...)` / `imgevolve.py run pipeline.json` |
 
 The HDevelop→HDevEngine-equivalent flow of **design in Studio, execute in code/CLI** is done via
-the JSON. For the side that receives and executes the JSON, see [ENGINE.md](ENGINE.md).
+the JSON. For the side that receives and executes the JSON, see [ENGINE.md](ENGINE.en.md).
 
 ---
 
@@ -409,6 +409,6 @@ the JSON. For the side that receives and executes the JSON, see [ENGINE.md](ENGI
 
 - [STUDIO_UX.md](STUDIO_UX.md) — the intent and background of the design system and UX improvements (the design view)
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — what's inside the perception panel (flow / stereo / terrain)
-- [ENGINE.md](ENGINE.md) — execute the pipeline you exported
-- [GETTING_STARTED.md](GETTING_STARTED.md) — get going in 5 minutes
+- [ENGINE.md](ENGINE.en.md) — execute the pipeline you exported
+- [GETTING_STARTED.md](GETTING_STARTED.en.md) — get going in 5 minutes
 - **Verify exported Python (Run ▸ Verify exported Python / Ctrl+Shift+R)**: runs the editable export in an isolated Python process and compares every intermediate stage with the GUI. Choose absolute/relative tolerances and whether NaNs must occupy the same positions, are ignored, or are forbidden. Shape and dtype must always match. A failure is added to Problems and points to the first differing stage; Studio reports it without changing values.

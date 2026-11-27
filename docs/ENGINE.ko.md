@@ -202,6 +202,6 @@ def perceive(frame):                            # frame: 직접 준비한 float6
 
 ## 관련 문서
 
-- [STUDIO_GUIDE.md](STUDIO_GUIDE.md) — 파이프라인을 구성하고 JSON을 내보내기
-- [GETTING_STARTED.md](GETTING_STARTED.md) — 5분 만에 시작하기
-- [INSTALL.md](INSTALL.md) — 환경 구축(임베디드·최소 구성 포함)
+- [STUDIO_GUIDE.md](STUDIO_GUIDE.ko.md) — 파이프라인을 구성하고 JSON을 내보내기
+- [GETTING_STARTED.md](GETTING_STARTED.ko.md) — 5분 만에 시작하기
+- [INSTALL.md](INSTALL.ko.md) — 환경 구축(임베디드·최소 구성 포함)

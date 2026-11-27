@@ -409,5 +409,5 @@ JSON के ज़रिए होता है। JSON लेकर execute क
 - [STUDIO_UX.md](STUDIO_UX.md) — design system और UX सुधारों का इरादा और पृष्ठभूमि (design view)
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — perception panel के अंदर क्या है (flow / stereo / terrain)
 - [ENGINE.md](ENGINE.md) — export की गई pipeline execute करें
-- [GETTING_STARTED.md](GETTING_STARTED.md) — 5 मिनट में शुरू करें
+- [GETTING_STARTED.md](GETTING_STARTED.hi.md) — 5 मिनट में शुरू करें
 - **निर्यातित Python जाँचें (Run ▸ Verify exported Python / Ctrl+Shift+R)**: संपादन योग्य निर्यात को अलग Python प्रक्रिया में चलाकर हर मध्यवर्ती चरण की GUI से तुलना करता है। absolute/relative tolerance और NaN के लिए समान स्थान, ignore या strict नीति चुन सकते हैं। shape और dtype हमेशा समान होने चाहिए। अंतर Problems में जुड़ता है और पहले अलग चरण पर ले जाता है; Studio केवल रिपोर्ट करता है, मान नहीं बदलता।

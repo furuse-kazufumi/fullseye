@@ -156,7 +156,7 @@ lang: ko
 
 **3,859개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **73개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 947/947, 타입 台帳 2889/2889, 한 줄 파사드 `fullseye.<이름>` 774/1629 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 947/947, 타입 원장 2889/2889, 한 줄 파사드 `fullseye.<이름>` 774/1629 — **파사드는 아직 절반**.
 
 **내용 실측**: 3859건 중 실행 가능한 예제가 붙은 것은 **3820**건(39건은 없음), 사용법이 120자 이상인 것은 **3660**건(199건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3859건 모두.
 
@@ -290,6 +290,30 @@ lang: ko
 ---
 
 ## 빠른 명령
+
+### `pip install` 후 첫 1분
+
+설치가 끝나면 먼저 다음을 실행하십시오.
+
+```bash
+fullseye setup          # 환경을 확인하고 항목별로 질문합니다. Enter는 기본값입니다.
+```
+
+Python, Fullseye, Qt, 선택 의존성과 Claude Code 연동 상태를 보고하고, 필요에 따라 Studio
+메뉴 항목을 등록하며 실행 계획을 보여 줍니다. `--yes`는 기본값을 승인하고 `--dry-run`은
+계획만 표시하며 `--lang ja|en`은 대화 언어를 정합니다. Studio는 표준
+`pip install fullseye`에 포함되므로 `fullseye-studio`를 바로 실행할 수 있습니다.
+
+### 제거
+
+```bash
+fullseye setup --uninstall      # setup이 기록한 항목을 확인한 뒤 지우고 마지막에 pip uninstall을 실행합니다.
+```
+
+설치 원장에 기록되고 허용 목록 검사를 통과한 항목만 삭제합니다. Studio 설정과 캐시는
+기본적으로 유지하며 `--yes`와 `--dry-run`도 사용할 수 있습니다. 이미
+`pip uninstall fullseye`를 직접 실행했다면 바로 가기와 setup 원장은 남으므로
+[영문 정리 목록](README.en.md#if-you-already-ran-pip-uninstall-fullseye-by-hand)에 따라 수동으로 정리하십시오.
 
 ```powershell
 py -3.11 -m pip install -e ".[opencv,gui]"     # 설치(이미지 I/O + Studio)

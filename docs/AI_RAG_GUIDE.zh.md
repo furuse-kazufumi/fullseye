@@ -106,3 +106,12 @@ op 笔记回答「这个 op 做什么」，却不回答「在这道工序、这�
 2. **类型（sort）契约**：每条笔记都带有 `in:`/`out:` 以及"类型相衔接的相关 op"，因此 AI 可以在**进行类型检查的同时**组装流水线。
 3. **可验证**：所有 op 都配有带 ground truth 的 worked example（`examples/` / `examples_3d/`），AI 可以自行执行其提案并加以确认。
 4. **一直贯通到显示**：打开 Studio（`py -3.11 studio.py`），人类就能在同一屏幕上以图像窗口、3D 显示的形式检查 AI 组装的结果（也可以通过 `dev_open_window` 等从脚本中配置多个窗口）。
+
+## op 图的使用步骤
+
+已知输入输出类型时，先使用 `plan(have, want, goal, direction=...)`。默认只用 MCP 流水线
+可以执行的边来规划 DAG。仅在调查只存在于台账中的研究用 op 时，才使用 Python API 的
+`constraints={"executable_only": false}`；该选项不会出现在面向 AI 的 MCP schema 中。
+`describe` 只返回一项，不会无限制地列出所有类型。没有可比较实测数据时，`choose` 不会
+给候选项排序。旋钮范围依据 `docs/op_knob.json` 中的实测数据和输入上下文；实测中不起作用的
+旋钮不会进入探索范围。

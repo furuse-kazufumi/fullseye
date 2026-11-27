@@ -338,7 +338,7 @@ Studio에서 구성한 파이프라인은 3가지 형태로 가지고 나갈 수
 | Python 함수 | Export(Ctrl+E) | 자신의 코드에 `fullseye.run_pipeline(...)`로 내장 |
 | JSON | Save pipeline(Ctrl+Shift+S) | `FullseyeEngine.load(...)` / `imgevolve.py run pipeline.json`으로 실행 |
 
-**설계는 Studio에서, 실행은 코드/CLI에서**라는 HDevelop→HDevEngine에 해당하는 흐름은 JSON을 매개로 이루어집니다. JSON을 받아 실행하는 쪽은 [ENGINE.md](ENGINE.md)를 참조하세요.
+**설계는 Studio에서, 실행은 코드/CLI에서**라는 HDevelop→HDevEngine에 해당하는 흐름은 JSON을 매개로 이루어집니다. JSON을 받아 실행하는 쪽은 [ENGINE.md](ENGINE.ko.md)를 참조하세요.
 
 ---
 
@@ -346,6 +346,6 @@ Studio에서 구성한 파이프라인은 3가지 형태로 가지고 나갈 수
 
 - [STUDIO_UX.md](STUDIO_UX.md) — 디자인 시스템·UX 개선의 의도와 배경(디자인 관점)
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — 지각 패널의 내용(flow / stereo / terrain)
-- [ENGINE.md](ENGINE.md) — 내보낸 파이프라인 실행하기
-- [GETTING_STARTED.md](GETTING_STARTED.md) — 5분 만에 시작하기
+- [ENGINE.md](ENGINE.ko.md) — 내보낸 파이프라인 실행하기
+- [GETTING_STARTED.md](GETTING_STARTED.ko.md) — 5분 만에 시작하기
 - **내보낸 Python 검증(Run ▸ Verify exported Python / Ctrl+Shift+R)**: 편집 가능한 내보내기 코드를 격리된 Python 프로세스에서 실행하고 모든 중간 단계를 GUI 결과와 비교합니다. 절대·상대 허용 오차와 NaN을 같은 위치로 제한할지, 무시할지, 금지할지를 선택할 수 있습니다. shape와 dtype은 항상 같아야 합니다. 불일치는 Problems에 추가되어 처음 다른 단계로 이동할 수 있으며 Studio는 값을 바꾸지 않고 보고만 합니다.

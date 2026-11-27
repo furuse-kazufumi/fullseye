@@ -10,7 +10,7 @@ lang: de
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch** · [हिन्दी](./INSTALL.hi.md)
 
 
-Dieses Handbuch beschreibt, wie Fullseye (Arbeitstitel imgevolve) je nach Einsatzzweck eingerichtet wird — von der Entwicklungsmaschine bis zu eingebettetem Linux. Wer es nur in 5 Minuten zum Laufen bringen möchte, findet in [GETTING_STARTED.md](GETTING_STARTED.md) den schnelleren Weg.
+Dieses Handbuch beschreibt, wie Fullseye (Arbeitstitel imgevolve) je nach Einsatzzweck eingerichtet wird — von der Entwicklungsmaschine bis zu eingebettetem Linux. Wer es nur in 5 Minuten zum Laufen bringen möchte, findet in [GETTING_STARTED.md](GETTING_STARTED.de.md) den schnelleren Weg.
 
 Der Python-API-Kern von Fullseye läuft mit **numpy + scipy**. Ein normales `pip install fullseye` installiert außerdem Studio (PySide6-Essentials) und Pillow; die schweren Bildverarbeitungs-Backends bleiben optional. Fehlt ein zusätzliches Backend, werden nur dessen spezifische Operatoren deaktiviert (graceful degradation).
 
@@ -109,11 +109,9 @@ $env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 ```
 
-Nach `pip install fullseye` registriert die erste interaktive Ausführung von `fullseye` oder `fullseye-studio` **Fullseye Studio** einmalig im Windows-Startmenü beziehungsweise im Linux-Anwendungsmenü. Ein Eintrag aus einer virtuellen Umgebung startet deren Python. Wird der Eintrag später gelöscht, erstellt ein normaler Befehl ihn nicht erneut. Bei Erfolg erscheint diese Zeile:
+Nach `pip install fullseye` registriert die erste interaktive Ausführung von `fullseye` oder `fullseye-studio` **Fullseye Studio** einmalig im Windows-Startmenü beziehungsweise im Linux-Anwendungsmenü. Ein Eintrag aus einer virtuellen Umgebung startet deren Python. Wird der Eintrag später gelöscht, erstellt ein normaler Befehl ihn nicht erneut. Bei Erfolg gibt das Programm derzeit die folgende japanische Zeile aus; sie bestätigt die Registrierung und nennt den Befehl zum Entfernen:
 
-```text
-Fullseye Studio wurde im Startmenü registriert (entfernen: fullseye-studio --remove-shortcuts)
-```
+`スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)` _(ja)_
 
 Zum Unterdrücken `FULLSEYE_NO_SHORTCUTS=1` setzen oder diesen Wert in die durch `FULLSEYE_STUDIO_SETTINGS` benannte INI schreiben (unter Linux normalerweise `~/.config/Fullseye/Studio.conf`). CI, Befehle ohne Terminal und eine Windows-Administratorrichtlinie, die Startmenüprogramme ausblendet, erstellen keinen Eintrag. Für die detaillierte optionale Einrichtung dient `fullseye setup`.
 
@@ -184,7 +182,7 @@ Wichtige Punkte für den Einsatz im eingebetteten Umfeld:
   ```
 
 - **Wird Datei-I/O benötigt** (`fullseye.load` / `fullseye.save`, `imgevolve.py run`, examples), genügt **entweder OpenCV oder Pillow** (`imgio` wählt automatisch das verfügbare aus). Pillow ist bereits Standardabhängigkeit.
-- Eine Arbeitsteilung **Entwurf auf der Entwicklungsmaschine, Ausführung auf dem eingebetteten Gerät** ist möglich. Auf der Entwicklungsmaschine wird die Pipeline in Studio erstellt und als JSON exportiert; auf dem eingebetteten Gerät genügt `FullseyeEngine.load("pipeline.json").run(frame)` zur Ausführung (keine GUI nötig). Details siehe [ENGINE.md](ENGINE.md).
+- Eine Arbeitsteilung **Entwurf auf der Entwicklungsmaschine, Ausführung auf dem eingebetteten Gerät** ist möglich. Auf der Entwicklungsmaschine wird die Pipeline in Studio erstellt und als JSON exportiert; auf dem eingebetteten Gerät genügt `FullseyeEngine.load("pipeline.json").run(frame)` zur Ausführung (keine GUI nötig). Details siehe [ENGINE.md](ENGINE.de.md).
 - **Der Wahrnehmungs-Stack** (stereo / terrain / flow / detect / registration / pose) läuft ebenfalls allein mit numpy + scipy (z. B. `fullseye.disparity_map`). Für Robotik-/Vision-Anwendungen ohne zusätzliche Abhängigkeiten nutzbar.
 
 > GPU (`torch`) ist ausschließlich eine **optionale Beschleunigung für Batch-Verarbeitung**. Für die Verarbeitung einzelner Bilder im eingebetteten Umfeld wird sie nicht benötigt — auch ohne Installation laufen alle Operatoren auf der CPU.
