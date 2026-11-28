@@ -2,6 +2,7 @@
 title: "Fullseye ドキュメント索引"
 description: "Fullseyeの文書索引と、導入・実行・Studio利用の入口をまとめています。"
 lang: ja
+permalink: /
 ---
 # Fullseye ドキュメント索引
 
