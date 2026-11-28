@@ -1,11 +1,18 @@
-<!-- i18n-source-sha: 1e1e22bcd08c -->
+---
+title: "Vollständiger Leitfaden zu Fullseye Studio"
+description: "Ein Leitfaden zu den Funktionen und Tastaturbefehlen von Fullseye Studio."
+lang: de
+---
+<!-- i18n-source-sha: ff004dd0e885 -->
 # Vollständiger Leitfaden zu Fullseye Studio
+
+<!-- i18n-switcher -->
+[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 Aufwendige Verarbeitung blockiert das Fenster nicht. Unten werden die aktive Stufe und der Fortschritt angezeigt; eine Stoppanforderung wird an der nächsten Stufengrenze bestätigt. Ändern sich Einstellungen während eines Laufs, bleibt die Generation des angezeigten Ergebnisses sichtbar und man kann das ältere Ergebnis ansehen oder mit den aktuellen Einstellungen neu starten.
 
 Die Suche nach einem Verarbeitungsziel gruppiert Treffer danach, ob sie zur aktuellen Eingabe passen, eine Vorverarbeitung benötigen oder anderweitig einzuordnen sind. Ein Treffer lässt sich einmal testen, ohne eine Stufe hinzuzufügen. Bei einem Fehler zeigt der Problembereich Ursache, Ort und konkrete nächste Schritte zum erneuten Auswählen, Vergleichen, Öffnen des Protokolls, Bearbeiten eines Reglers oder Suchen einer vorgeschlagenen Stufe.
 
-[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 **Fullseye Studio** ist eine visuelle Pipeline-Werkbank im Stil von HDevelop. Man sucht Operatoren, ordnet sie an,
 dreht an zwei Reglern per Schieberegler, verfolgt Zwischenergebnisse mit Zoom/Pan Stufe für Stufe und exportiert die
@@ -110,10 +117,10 @@ eingestellt wird, lässt sich am Detail-Label der Stufe und am Tooltip ablesen.
 
 ### IMAGE (Ergebnisansicht)
 - **Load image … (Strg+O)** — lädt eine Bilddatei als Referenzbild (png/jpg/bmp/tif).
-- **Synthetic demo (Strg+D)** — lädt das synthetische Demobild.
+- **Synthetic demo** — lädt das synthetische Demobild.
 - **Save result … (Strg+S)** — speichert das aktuell angezeigte Ergebnis als PNG.
 - **Zoom**: Mausrad zoomt an der Cursorposition, Ziehen verschiebt (Pan). **Zoom + (Strg+=) / Zoom − (Strg+-) /
-  Fit (Strg+0) / 1:1 (Strg+1)**.
+  Fit (Strg+0) / 1:1 (Strg+Alt+1)**.
 - Bei skalaren feature-Ergebnissen, contour-Ergebnissen oder wenn kein Bild geladen ist, zeigt die Mitte der Ansicht
   eine Meldung an (kein leerer Bildschirm).
 - Beim Überfahren mit der Maus zeigt die Statusleiste `x, y, value` (bei Farbbildern RGB).
@@ -121,7 +128,7 @@ eingestellt wird, lässt sich am Detail-Label der Stufe und am Tooltip ablesen.
 ### DISPLAY & PERCEPTION (v14)
 - **Display (Farbabbildung)** — koloriert 2D-Ergebnisse für die Anzeige: `gray` / `shaded relief` /
   `height (color)` / diverse Colormaps (jet, viridis, turbo, magma, plasma, inferno …).
-- **3D surface (Strg+3)** — zeigt das aktuelle Ergebnis als drehbare 3D-Oberfläche (nur wenn
+- **3D surface (Strg+Alt+3)** — zeigt das aktuelle Ergebnis als drehbare 3D-Oberfläche (nur wenn
   `QtDataVisualization` vorhanden ist / best effort). Nützlich zur Kontrolle von Höhen-/Tiefenkarten.
 - **Wahrnehmungspanel (2 Frames)** — mit **Load frame B…** ein zweites Bild laden, Modus wählen und **Run**:
   - `optical flow` — visualisiert den dichten optischen Fluss zwischen zwei Bildern über den Farbton.
@@ -388,7 +395,7 @@ Eine in Studio aufgebaute Pipeline lässt sich in 3 Formen mitnehmen.
 | JSON | Save pipeline (Strg+Umschalt+S) | zur Ausführung mit `FullseyeEngine.load(...)` / `imgevolve.py run pipeline.json` |
 
 Der zu HDevelop→HDevEngine äquivalente Ablauf **"Entwurf in Studio, Ausführung in Code/CLI"** läuft über das JSON.
-Für die Seite, die das JSON entgegennimmt und ausführt, siehe [ENGINE.md](ENGINE.md).
+Für die Seite, die das JSON entgegennimmt und ausführt, siehe [ENGINE.md](ENGINE.de.md).
 
 ---
 
@@ -396,6 +403,6 @@ Für die Seite, die das JSON entgegennimmt und ausführt, siehe [ENGINE.md](ENGI
 
 - [STUDIO_UX.md](STUDIO_UX.md) — Absicht und Hintergrund von Designsystem und UX-Verbesserungen (Design-Perspektive)
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — Inhalt der Wahrnehmungspanels (flow / stereo / terrain)
-- [ENGINE.md](ENGINE.md) — exportierte Pipelines ausführen
-- [GETTING_STARTED.md](GETTING_STARTED.md) — in 5 Minuten loslegen
+- [ENGINE.md](ENGINE.de.md) — exportierte Pipelines ausführen
+- [GETTING_STARTED.md](GETTING_STARTED.de.md) — in 5 Minuten loslegen
 - **Exportiertes Python prüfen (Run ▸ Verify exported Python / Ctrl+Shift+R)**: Führt den bearbeitbaren Export in einem isolierten Python-Prozess aus und vergleicht jede Zwischenstufe mit der GUI. Einstellbar sind absolute und relative Toleranz sowie gleiche NaN-Positionen, Ignorieren oder ein NaN-Verbot. Form und Datentyp müssen immer übereinstimmen. Eine Abweichung erscheint in Problems und führt zur ersten abweichenden Stufe; Studio meldet nur und verändert keine Werte.

@@ -1,5 +1,8 @@
 # GPU 最適化デザインパターン・カタログ(RTX 5090 / Blackwell sm_120 向け)
 
+<!-- i18n-switcher -->
+**日本語** · [English](./GPU_OPTIMIZATION_PATTERNS.en.md)
+
 **対象 GPU(確認済み)**: NVIDIA RTX 5090、Blackwell、compute capability **sm_120**、VRAM 32GB、driver 610.74。
 **現状(確認済み)**: `torch 2.11.0+cpu` と `jax 0.7.1`(CpuDevice)しか入っておらず、**いま GPU では走らない**。sm_120 は CUDA 12.8+ 世代のビルドが要る。
 **このカタログの性格**: Web 検索は使わず、RAD コーパス(**repo の外**に置いた `*_corpus_v2`、実在確認済み)+ 知識ベースで書いた。**推測は「(推測)」と明示**する。実コード(`physarum_search.py` / `shapematch.py` / `afterman/eco_world.py`)を読んで各ワークロードに紐づけた。

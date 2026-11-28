@@ -1,5 +1,8 @@
 # Sample images — provenance, source papers & public repositories
 
+<!-- i18n-switcher -->
+**日本語** · [English](./SAMPLE_IMAGE_REFERENCES.en.md)
+
 > ユーザー指摘(2026-08-16): 「元になった論文とか、GitHub にもいっぱいあるだろう」。
 > Fullseye の公開開示ポリシー([[project_imgevolve_goal_knowledge_layer_2026_08_13]])に従い、
 > 収集したサンプル画像の**出所・ライセンス・元論文・公開リポジトリ**を監査可能な形で記録する。

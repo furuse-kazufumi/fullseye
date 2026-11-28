@@ -1,4 +1,12 @@
+---
+title: "インストール / 環境構築 完全ガイド"
+description: "Fullseyeのインストール方法、追加依存関係、導入確認を説明します。"
+lang: ja
+---
 # インストール / 環境構築 完全ガイド
+
+<!-- i18n-switcher -->
+**日本語** · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
 
 Fullseye（作業名 imgevolve）を、開発機から組み込み Linux まで、目的に応じて構築するためのガイドです。5 分で動かすだけなら [GETTING_STARTED.md](GETTING_STARTED.md) が近道です。
 
@@ -29,16 +37,42 @@ py -3.11 -m pip install -e .            # 標準: Python API + Studio + Pillow�
 
 追加バックエンドは **extras** で選びます（`pyproject.toml` の `[project.optional-dependencies]` が実体）。
 
-| extras | 追加される依存 | 何が有効になるか |
-|---|---|---|
-| `opencv` | `opencv-python>=4.8.1.78` | 画像ファイル I/O（`apply`/`pipeline` CLI が必須とする）、`cv_*` 系オペレータ |
-| `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` 系（多数の自動生成オペレータの土台） |
-| `pil` | なし（Pillow は標準依存） | 互換別名。画像 I/O のフォールバック、`xpil_*` 系（emboss/posterize/solarize 等）は標準で使える |
-| `wavelets` | `PyWavelets>=1.4` | ウェーブレット系（VisuShrink/サブバンド/パケット等） |
-| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU バッチバックエンド（`accel.py`/`bench.py`）、`xkor_*`（kornia）系 |
-| `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`（curvature flow 等）、mahotas 由来（Zernike/pftas 等） |
-| `gui` | なし（Studio は標準依存） | 互換別名。**Fullseye Studio**（`studio.py` / `fullseye-studio`）は `pip install fullseye` だけで起動できる |
-| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`（CuPy は入らない。GPU 一式は `fullseye[gpu]`。PyTorch の案内では Linux の既定の torch は CUDA 版で、CUDA の部品(nvidia-* の wheel)も一緒に入ることがある。CPU だけで使うなら、先に CPU 版の入手先から `pip install torch --index-url https://download.pytorch.org/whl/cpu` で torch を入れておく） | 全オペレータ・バックエンド |
+<!-- extras-table:start -->
+| extras | pyproject.toml が追加する依存 |
+|---|---|
+| `native` | — |
+| `opencv` | `opencv-python>=4.8.1.78` |
+| `skimage` | — |
+| `pil` | — |
+| `yaml` | `PyYAML>=6.0` |
+| `wavelets` | `PyWavelets>=1.4` |
+| `gpu` | `torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'` |
+| `gi` | `mitsuba>=3.5` |
+| `extra` | `mahotas>=1.4`<br>`SimpleITK>=2.2` |
+| `gui` | — |
+| `handpose` | `mediapipe>=0.10` |
+| `video` | — |
+| `audio` | — |
+| `volume` | `SimpleITK>=2.2` |
+| `raster` | — |
+| `gltf` | — |
+| `lidar` | — |
+| `pcd` | — |
+| `xlsx` | — |
+| `e57` | `pye57>=0.4` |
+| `export-verify` | `pye57>=0.4`<br>`astropy>=7.0`<br>`plyfile>=1.0` |
+| `polygon` | — |
+| `threed` | `torch>=2.13`<br>`SimpleITK>=2.2` |
+| `serial` | — |
+| `modbus` | — |
+| `symbols` | — |
+| `mqtt` | — |
+| `opcua` | — |
+| `dev` | `pytest>=9.0.3`<br>`pytest-cov>=4`<br>`ruff>=0.4`<br>`pytest-timeout>=2.3`<br>`hypothesis>=6.100`<br>`pytest-randomly>=3.15`<br>`pytest-xdist>=3.5`<br>`pip-audit>=2.7` |
+| `all-cpu` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+| `all` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+<!-- extras-table:end -->
+
 
 Studio の標準要件は `PySide6-Essentials>=6.5,!=6.12.0` です。Linux で SIGABRT が再現した 6.12.0 は除外しています。
 

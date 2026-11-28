@@ -1,5 +1,8 @@
 # gsplat native を Windows(RTX 5090 / torch cu128)でビルドする — 実証済み手順
 
+<!-- i18n-switcher -->
+**日本語** · [English](./GSPLAT_NATIVE_WINDOWS.en.md)
+
 2026-08-19 に RTX 5090 上でネイティブ gsplat のビルド成功(1532 rasterizations/s)。要点と“詰まり”の解を残す。
 
 ## 環境

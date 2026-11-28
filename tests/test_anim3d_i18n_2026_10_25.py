@@ -261,7 +261,9 @@ def test_entry_pages_build_with_no_public_anim3d():
     assert len(d["langs"]) == 8
     for lang in d["langs"]:
         page = G.build(d, lang)
-        assert page.startswith('<div class="vlang" markdown="1">')
+        assert page.startswith("---\n") and "\n---\n" in page   # front matter: title / description / lang
+        body = page.split("\n---\n", 1)[1].lstrip()
+        assert body.startswith('<div class="vlang" markdown="1">')
 
 
 def test_try_it_viewer_entry_accepts_ja_en_and_falls_back_to_english(tmp_path):

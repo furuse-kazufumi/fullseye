@@ -1,7 +1,14 @@
-<!-- i18n-source-sha: a41db9bf8a6f -->
+---
+title: "Installation / Environment Setup — पूरी गाइड"
+description: "Fullseye के installation विकल्प, optional dependencies और verification steps।"
+lang: hi
+---
+<!-- i18n-source-sha: 9f0dbf51f0cb -->
 # Installation / Environment Setup — पूरी गाइड
 
+<!-- i18n-switcher -->
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · **हिन्दी**
+
 
 यह गाइड Fullseye (working name imgevolve) को किसी भी उद्देश्य के लिए setup करने के बारे में है, development
 machine से लेकर embedded Linux तक। अगर आप बस इसे पाँच मिनट में चलाना चाहते हैं, तो
@@ -36,16 +43,42 @@ py -3.11 -m pip install -e .            # standard: Python API + Studio + Pillow
 अतिरिक्त backends **extras** के ज़रिए चुने जाते हैं (`pyproject.toml` के
 `[project.optional-dependencies]` में defined)।
 
-| extras | जुड़ने वाली dependencies | क्या चालू होता है |
-|---|---|---|
-| `opencv` | `opencv-python>=4.8.1.78` | image file I/O (`apply`/`pipeline` CLI के लिए ज़रूरी), `cv_*` operators |
-| `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` families (कई auto-generated operators का आधार) |
-| `pil` | none (Pillow standard है) | compatibility alias; image I/O fallback और `xpil_*` family default से उपलब्ध |
-| `wavelets` | `PyWavelets>=1.4` | wavelet family (VisuShrink / subbands / packets आदि) |
-| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU batch backend (`accel.py`/`bench.py`), `xkor_*` (kornia) family |
-| `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow आदि), mahotas से बने (Zernike / pftas आदि) |
-| `gui` | none (Studio standard है) | compatibility alias; `pip install fullseye` के बाद **Fullseye Studio** शुरू होता है |
-| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile` (CuPy नहीं; पूरा GPU set `fullseye[gpu]` से। PyTorch के install guide के अनुसार Linux पर default torch CUDA build है और साथ में CUDA components (nvidia-* wheels) भी आ सकते हैं। केवल CPU के लिए पहले CPU-only index से torch install करें: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | सभी operators और backends |
+<!-- extras-table:start -->
+| Extra | pyproject.toml द्वारा जोड़ी गई dependencies |
+|---|---|
+| `native` | — |
+| `opencv` | `opencv-python>=4.8.1.78` |
+| `skimage` | — |
+| `pil` | — |
+| `yaml` | `PyYAML>=6.0` |
+| `wavelets` | `PyWavelets>=1.4` |
+| `gpu` | `torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'` |
+| `gi` | `mitsuba>=3.5` |
+| `extra` | `mahotas>=1.4`<br>`SimpleITK>=2.2` |
+| `gui` | — |
+| `handpose` | `mediapipe>=0.10` |
+| `video` | — |
+| `audio` | — |
+| `volume` | `SimpleITK>=2.2` |
+| `raster` | — |
+| `gltf` | — |
+| `lidar` | — |
+| `pcd` | — |
+| `xlsx` | — |
+| `e57` | `pye57>=0.4` |
+| `export-verify` | `pye57>=0.4`<br>`astropy>=7.0`<br>`plyfile>=1.0` |
+| `polygon` | — |
+| `threed` | `torch>=2.13`<br>`SimpleITK>=2.2` |
+| `serial` | — |
+| `modbus` | — |
+| `symbols` | — |
+| `mqtt` | — |
+| `opcua` | — |
+| `dev` | `pytest>=9.0.3`<br>`pytest-cov>=4`<br>`ruff>=0.4`<br>`pytest-timeout>=2.3`<br>`hypothesis>=6.100`<br>`pytest-randomly>=3.15`<br>`pytest-xdist>=3.5`<br>`pip-audit>=2.7` |
+| `all-cpu` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+| `all` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+<!-- extras-table:end -->
+
 
 Studio की standard requirement `PySide6-Essentials>=6.5,!=6.12.0` है। Linux पर SIGABRT दोहराए जाने के कारण version 6.12.0 को बाहर रखा गया है।
 
@@ -82,11 +115,9 @@ $env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 ```
 
-`pip install fullseye` के बाद `fullseye` या `fullseye-studio` को पहली बार interactive terminal में चलाने पर Windows Start menu या Linux application menu में **Fullseye Studio** एक बार register होता है। virtual environment का entry उसी environment का Python चलाता है। बाद में user के entry मिटाने पर सामान्य command उसे फिर नहीं बनाता। सफलता पर यह एक पंक्ति दिखती है:
+`pip install fullseye` के बाद `fullseye` या `fullseye-studio` को पहली बार interactive terminal में चलाने पर Windows Start menu या Linux application menu में **Fullseye Studio** एक बार register होता है। virtual environment का entry उसी environment का Python चलाता है। बाद में user के entry मिटाने पर सामान्य command उसे फिर नहीं बनाता। सफलता पर program अभी नीचे दी गई Japanese पंक्ति दिखाता है; इसका अर्थ registration सफल होना और removal command बताना है:
 
-```text
-Fullseye Studio को Start menu में दर्ज किया गया (हटाने के लिए: fullseye-studio --remove-shortcuts)
-```
+`スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)` _(ja)_
 
 इसे रोकने के लिए `FULLSEYE_NO_SHORTCUTS=1` set करें, या `FULLSEYE_STUDIO_SETTINGS` के INI (Linux में सामान्यतः `~/.config/Fullseye/Studio.conf`) में नीचे का item डालें। CI, terminal रहित command और Start-menu programs छिपाने वाली Windows administrator policy कोई entry नहीं बनाती। विस्तृत optional setup के लिए `fullseye setup` चलाएँ।
 

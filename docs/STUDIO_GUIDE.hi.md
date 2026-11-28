@@ -1,11 +1,18 @@
-<!-- i18n-source-sha: 1e1e22bcd08c -->
+---
+title: "Fullseye Studio की पूरी गाइड"
+description: "Fullseye Studio की सुविधाओं और keyboard controls की मार्गदर्शिका।"
+lang: hi
+---
+<!-- i18n-source-sha: ff004dd0e885 -->
 # Fullseye Studio की पूरी गाइड
+
+<!-- i18n-switcher -->
+[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · **हिन्दी**
 
 भारी प्रक्रिया के दौरान विंडो चलती रहती है। नीचे सक्रिय चरण और प्रगति दिखती है; रोकने का अनुरोध अगले चरण की सीमा पर स्वीकार होता है। चलाते समय सेटिंग बदलने पर दिखाए गए परिणाम की पीढ़ी स्पष्ट रहती है और पुराने परिणाम को देखने या वर्तमान सेटिंग से फिर चलाने का विकल्प मिलता है।
 
 काम के उद्देश्य से खोजने पर विकल्प मौजूदा इनपुट पर लागू, पूर्व-प्रसंस्करण आवश्यक और अन्य समूहों में दिखते हैं। किसी विकल्प को चरण जोड़े बिना एक बार चलाया जा सकता है। विफलता पर Problems पैन कारण, स्थान और अगले ठोस कदम दिखाता है: इनपुट फिर चुनना, मान साथ-साथ देखना, विस्तृत लॉग खोलना, पैरामीटर संपादित करना या सुझाया चरण खोजना।
 
-[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · **हिन्दी**
 
 **Fullseye Studio** एक HDevelop-style visual pipeline workbench है। आप operators search करके उन्हें
 क्रम से लगाते हैं, sliders से दो knobs घुमाते हैं, zoom/pan के साथ intermediate results देखते हुए
@@ -402,5 +409,5 @@ JSON के ज़रिए होता है। JSON लेकर execute क
 - [STUDIO_UX.md](STUDIO_UX.md) — design system और UX सुधारों का इरादा और पृष्ठभूमि (design view)
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — perception panel के अंदर क्या है (flow / stereo / terrain)
 - [ENGINE.md](ENGINE.md) — export की गई pipeline execute करें
-- [GETTING_STARTED.md](GETTING_STARTED.md) — 5 मिनट में शुरू करें
+- [GETTING_STARTED.md](GETTING_STARTED.hi.md) — 5 मिनट में शुरू करें
 - **निर्यातित Python जाँचें (Run ▸ Verify exported Python / Ctrl+Shift+R)**: संपादन योग्य निर्यात को अलग Python प्रक्रिया में चलाकर हर मध्यवर्ती चरण की GUI से तुलना करता है। absolute/relative tolerance और NaN के लिए समान स्थान, ignore या strict नीति चुन सकते हैं। shape और dtype हमेशा समान होने चाहिए। अंतर Problems में जुड़ता है और पहले अलग चरण पर ले जाता है; Studio केवल रिपोर्ट करता है, मान नहीं बदलता।

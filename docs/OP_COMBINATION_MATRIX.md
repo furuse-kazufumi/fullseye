@@ -1,5 +1,8 @@
 # fullseye 3D op × op 組み合わせマトリクス(実現性 × 差別化で優先度化)
 
+<!-- i18n-switcher -->
+**日本語** · [English](./OP_COMBINATION_MATRIX.en.md)
+
 **核心**: 214 個の 3D op(`ops3d.py` レジストリ、49 カテゴリ)は、出力種別 = 別 op の入力種別が合えば連結できる。
 型整合な op→op 連結は **5,246 通り(2 段、`ops3d.compatible()` 実測)**、3 段以上で **指数的**に増える
 (第2〜5波で photometric/range_image/preprocess/structured_light/deform/medial/metrics/robust_fit/edges/

@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: bd321cfbdaaa -->
 # 범용 알고리즘을 구현 가능하게 만들기 — algo-c 대응 로드맵
 
+<!-- i18n-switcher -->
 [日本語](./GENERAL_ALGORITHMS.md) · [English](./GENERAL_ALGORITHMS.en.md) · [简体中文](./GENERAL_ALGORITHMS.zh.md) · [繁體中文](./GENERAL_ALGORITHMS.tw.md) · **한국어** · [Deutsch](./GENERAL_ALGORITHMS.de.md)
+
 
 > 사용자 요청(2026-08-16): <https://github.com/okumuralab/algo-c>(오쿠무라 하루히코(奥村晴彦)
 > 『[개정신판] C언어에 의한 표준 알고리즘 사전』전체 소스)에 있는 것과 같은 **범용 알고리즘**도

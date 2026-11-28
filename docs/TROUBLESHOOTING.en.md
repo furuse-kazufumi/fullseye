@@ -1,6 +1,9 @@
 <!-- i18n-source-sha: 7b8e76645291 -->
 # Windows troubleshooting
 
+<!-- i18n-switcher -->
+[日本語](./TROUBLESHOOTING.md) · **English**
+
 Run the doctor with **the same Python that failed**. Its `Checked` field is an observed value, not a guess. `fullseye doctor --json` is for automation or a support ticket. `--fix` shows its plan first and makes only a reversible repair after confirmation in an interactive terminal: it removes only missing `QT_PLUGIN_PATH` entries from the per-user value and current process, preserving valid entries. It makes no change in CI or a pipe. A console-less launch reports through a dialog and otherwise returns the location of a UTF-8 log.
 
 ```powershell
@@ -13,7 +16,7 @@ CLI, Studio, and MCP startup errors keep the original exception as detail and po
 | ID | Symptom | Cause | Check | Repair command / action |
 |---|---|---|---|---|
 | <!-- doctor: console_encoding --> `console_encoding` | `UnicodeEncodeError` when Japanese text or `—` is piped | cp932 output | doctor: `stdout encoding` | `chcp 65001; $env:PYTHONUTF8='1'` in the same PowerShell |
-| <!-- doctor: long_path --> `long_path` | deep venv/extraction fails near 260 characters | MAX_PATH / Win32 long paths disabled | `LongPathsEnabled=0` | Enable Windows long paths as Administrator and reboot; meanwhile use a short root such as `$env:SystemDrive\src` |
+| <!-- doctor: long_path --> `long_path` | deep venv/extraction reports `File name too long` or fails near 260 characters | MAX_PATH / Win32 long paths disabled | `LongPathsEnabled=0` | Enable Windows long paths as Administrator and reboot; meanwhile use a short root such as `$env:SystemDrive\src` |
 | <!-- doctor: unicode_space_path --> `unicode_space_path` | only a native helper fails to start | unquoted Unicode or space-containing path | doctor: `Python path` | Quote paths as `"..."`; for an old DLL that still fails, make the venv at `$env:USERPROFILE\fullseye-venv` |
 | <!-- doctor: onedrive_known_folders --> `onedrive_known_folders` | Desktop/Documents input disappears or saving fails during sync | OneDrive known-folder redirection | doctor: `OneDrive path detected` | `New-Item -ItemType Directory -Force $env:SystemDrive\src, $env:SystemDrive\data`; move your projects and input files there and reselect them in Studio |
 | <!-- doctor: store_python --> `store_python` | Start menu/Apps registration is missing or writes fail | Microsoft Store Python sandbox/redirection | executable contains `WindowsApps` | Use python.org Python or a venv: `py -3.11 -m venv $env:USERPROFILE\fullseye-venv` |
@@ -24,7 +27,7 @@ CLI, Studio, and MCP startup errors keep the original exception as detail and po
 | <!-- doctor: native_dll --> `native_dll` | `DLL load failed`, `Qt platform plugin`, or missing `python3XX.dll` | VC++ runtime, Qt plugin path, or Python DLL | `PySide6` and `QT_PLUGIN_PATH` | `<python> -m pip install --upgrade fullseye[gui]`; install VC++ 2015–2022 x64: `winget install Microsoft.VCRedist.2015+.x64`; follow SDK doctor for `python3XX.dll` |
 | <!-- doctor: antivirus_lock --> `antivirus_lock` | `PermissionError` while installing, or an exe/DLL is quarantined | Defender/AV lock or quarantine | `Get-MpThreatDetection`, Protection history | Verify source/hash, then restore/exclude only the Fullseye venv/project; never exclude all Python |
 | <!-- doctor: powershell_policy --> `powershell_policy` | `.ps1 cannot be loaded because running scripts is disabled` | execution policy | `Get-ExecutionPolicy -List` | Inspect first, then only for this process: `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned` |
-| <!-- doctor: proxy_certificate --> `proxy_certificate` | pip/MCP TLS certificate failure on a corporate network | proxy or corporate CA | doctor: `proxy configured` | Obtain the PEM from IT and set `$env:REQUESTS_CA_BUNDLE = Join-Path $env:USERPROFILE 'company-root.pem'`; do not routinely disable TLS |
+| <!-- doctor: proxy_certificate --> `proxy_certificate` | pip/MCP TLS certificate failure on a corporate network | proxy or corporate CA | doctor: `proxy configured` | Obtain the PEM from IT and set `$env:REQUESTS_CA_BUNDLE = Join-Path $env:USERPROFILE 'company-root.pem'`; do not routinely use `--trusted-host` or disable TLS |
 | <!-- doctor: write_permission --> `write_permission` | install/settings write fails under `Program Files` | protected directory | `Python under Program Files=True` | Use a user venv, not Administrator: `py -3.11 -m venv $env:USERPROFILE\fullseye-venv` |
 | <!-- doctor: high_dpi --> `high_dpi` | Studio text/figures are tiny or blurry | high-DPI scaling / Qt combination | doctor `DPI scale`, Windows Display settings | Test **Settings > System > Display > Scale** at 100%, restart Studio, then keep the readable value |
 | <!-- doctor: cuda_driver --> `cuda_driver` | `CUDA is not available` or torch/CUDA DLL failure | GPU driver and torch CUDA build mismatch | `nvidia-smi` and doctor’s `torch.version.cuda` | Update to a supported NVIDIA driver or use CPU; do not mix an arbitrary CUDA toolkit into the venv |

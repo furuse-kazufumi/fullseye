@@ -270,6 +270,8 @@ def test_site_top_page_opens_with_the_three_words(lang: str) -> None:
 def test_site_top_page_english_summary_uses_the_three_words():
     """日本語のトップに置いた英語の要約(英語で来た人が最初に読む段落)も同じ 3 語。"""
     text = _read("docs/README.md")
+    if text.startswith("---"):                       # Jekyll front matter (title / description / lang)
+        text = text.split("\n---\n", 1)[1]
     head = text.split("\n---\n", 1)[0]
     quotes = [b for b in re.split(r"\n\s*\n", head) if b.lstrip().startswith("> **Fullseye is")]
     assert len(quotes) == 1, "英語の要約の段落が見つからない(%d 個)" % len(quotes)

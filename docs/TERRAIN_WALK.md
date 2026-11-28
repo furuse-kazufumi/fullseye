@@ -1,5 +1,8 @@
 # 地形の上を歩かせる(sim-native, GPU 不要)
 
+<!-- i18n-switcher -->
+**日本語** · [English](./TERRAIN_WALK.en.md)
+
 sim シーンから **メッシュ地形** を作り、その上を **walker(四足/人型)** に歩かせて
 **headless で GIF 化** するまでの一連。地形メッシュ化(TSDF)と歩行 GIF は **GPU 不要**
 (`py -3.11` で動く)。3DGS 学習を挟む SuGaR 経路のみ GPU(`.venv-gsplat`)が要る。

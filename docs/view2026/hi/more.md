@@ -1,3 +1,10 @@
+---
+title: "अतिरिक्त पृष्ठ: और PoC — ViEW2026"
+description: "इस पृष्ठ पर ऐसे उदाहरण भी हैं जो मुख्य पृष्ठ के प्रदर्शनों जितने परिष्कृत नहीं हैं। हर प्रदर्शन की संख्याएँ उसके PoC के run record से ली गई हैं।"
+lang: hi
+image: /view2026/thumbs/fullseye_intro.jpg
+---
+
 <div class="vlang" markdown="1">
 
 [日本語](../more.md) · [English](../en/more.md) · [简体中文](../zh/more.md) · [繁體中文](../tw/more.md) · [한국어](../ko/more.md) · [Deutsch](../de/more.md) · **हिन्दी** · [Français](../fr/more.md)

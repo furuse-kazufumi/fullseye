@@ -1,7 +1,14 @@
-<!-- i18n-source-sha: a41db9bf8a6f -->
+---
+title: "Installation / Environment Setup — Complete Guide"
+description: "Fullseye installation options, optional dependencies, and verification steps."
+lang: en
+---
+<!-- i18n-source-sha: 9f0dbf51f0cb -->
 # Installation / Environment Setup — Complete Guide
 
+<!-- i18n-switcher -->
 [日本語](./INSTALL.md) · **English** · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
+
 
 A guide to setting up Fullseye (working name imgevolve) for any purpose, from a development
 machine to embedded Linux. If you only want it running in five minutes,
@@ -37,16 +44,42 @@ py -3.11 -m pip install -e .            # standard: Python API + Studio + Pillow
 Additional backends are selected through **extras** (defined in `pyproject.toml`'s
 `[project.optional-dependencies]`).
 
-| extras | Dependencies added | What it enables |
-|---|---|---|
-| `opencv` | `opencv-python>=4.8.1.78` | image file I/O (required by the `apply`/`pipeline` CLI), the `cv_*` operators |
-| `skimage` | `scikit-image>=0.20` | the `sk_*` / `xsk_*` families (the base for many auto-generated operators) |
-| `pil` | none (Pillow is standard) | compatibility alias; image I/O fallback and the `xpil_*` family are ready by default |
-| `wavelets` | `PyWavelets>=1.4` | the wavelet family (VisuShrink / subbands / packets, etc.) |
-| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | the GPU batch backend (`accel.py`/`bench.py`), the `xkor_*` (kornia) family |
-| `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow, etc.), mahotas-derived (Zernike / pftas, etc.) |
-| `gui` | none (Studio is standard) | compatibility alias; **Fullseye Studio** (`studio.py` / `fullseye-studio`) starts after `pip install fullseye` |
-| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile` (no CuPy; the full GPU set is `fullseye[gpu]`. Per PyTorch's install guide, the default torch on Linux is the CUDA build and may bring CUDA components (nvidia-* wheels) with it. For CPU-only use, install torch first from the CPU-only index: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | all operators and backends |
+<!-- extras-table:start -->
+| Extra | Dependencies added by pyproject.toml |
+|---|---|
+| `native` | — |
+| `opencv` | `opencv-python>=4.8.1.78` |
+| `skimage` | — |
+| `pil` | — |
+| `yaml` | `PyYAML>=6.0` |
+| `wavelets` | `PyWavelets>=1.4` |
+| `gpu` | `torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'` |
+| `gi` | `mitsuba>=3.5` |
+| `extra` | `mahotas>=1.4`<br>`SimpleITK>=2.2` |
+| `gui` | — |
+| `handpose` | `mediapipe>=0.10` |
+| `video` | — |
+| `audio` | — |
+| `volume` | `SimpleITK>=2.2` |
+| `raster` | — |
+| `gltf` | — |
+| `lidar` | — |
+| `pcd` | — |
+| `xlsx` | — |
+| `e57` | `pye57>=0.4` |
+| `export-verify` | `pye57>=0.4`<br>`astropy>=7.0`<br>`plyfile>=1.0` |
+| `polygon` | — |
+| `threed` | `torch>=2.13`<br>`SimpleITK>=2.2` |
+| `serial` | — |
+| `modbus` | — |
+| `symbols` | — |
+| `mqtt` | — |
+| `opcua` | — |
+| `dev` | `pytest>=9.0.3`<br>`pytest-cov>=4`<br>`ruff>=0.4`<br>`pytest-timeout>=2.3`<br>`hypothesis>=6.100`<br>`pytest-randomly>=3.15`<br>`pytest-xdist>=3.5`<br>`pip-audit>=2.7` |
+| `all-cpu` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+| `all` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+<!-- extras-table:end -->
+
 
 Studio's standard requirement is `PySide6-Essentials>=6.5,!=6.12.0`. Version 6.12.0 is excluded because it reproducibly causes SIGABRT on Linux.
 
@@ -87,12 +120,11 @@ py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 After `pip install fullseye`, the first interactive execution of `fullseye` or
 `fullseye-studio` registers **Fullseye Studio** once in the Windows Start menu or Linux
 application menu. A virtual environment's menu entry starts that environment's Python. Deleting
-the entry later does not cause an ordinary command to recreate it. The successful registration
-prints this one line:
+the entry later does not cause an ordinary command to recreate it. The program currently prints
+this Japanese line on successful registration (meaning that Studio was registered and naming the
+removal command):
 
-```text
-Registered Fullseye Studio in the Start menu (remove: fullseye-studio --remove-shortcuts)
-```
+`スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)` _(ja)_
 
 Set `FULLSEYE_NO_SHORTCUTS=1` to suppress it, or add this setting to the INI named by
 `FULLSEYE_STUDIO_SETTINGS` (the normal Linux Studio file is `~/.config/Fullseye/Studio.conf`).
@@ -176,7 +208,7 @@ Key points for embedded use:
   and the `cv_*` family.
 - You can split the work as **design on the dev machine, execution on the embedded machine.** Build
   the pipeline in Studio on the dev machine and export the JSON; on the embedded machine you just run
-  `FullseyeEngine.load("pipeline.json").run(frame)` (no GUI). See [ENGINE.md](ENGINE.md) for details.
+  `FullseyeEngine.load("pipeline.json").run(frame)` (no GUI). See [ENGINE.md](ENGINE.en.md) for details.
 - **The perception stack** (stereo / terrain / flow / detect / registration / pose) also runs on
   numpy + scipy (`fullseye.disparity_map`, etc.). It is usable for robotics/vision without extra
   dependencies.

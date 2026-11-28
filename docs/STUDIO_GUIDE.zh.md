@@ -1,11 +1,18 @@
-<!-- i18n-source-sha: 1e1e22bcd08c -->
+---
+title: "Fullseye Studio 完全指南"
+description: "本指南介绍Fullseye Studio的功能和键盘操作。"
+lang: zh-CN
+---
+<!-- i18n-source-sha: ff004dd0e885 -->
 # Fullseye Studio 完全指南
+
+<!-- i18n-switcher -->
+[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · **简体中文** · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 繁重处理不会冻结窗口。底部区域显示当前阶段和进度；停止请求会在下一个阶段边界得到确认。若运行期间设置发生变化，界面会标明显示结果的代次，并可选择查看旧设置的完成结果或用当前设置重新运行。
 
 按处理目的搜索时，候选项会分为适用于当前输入、需要预处理和其他三组。候选项可在不添加处理阶段的情况下试运行一次。运行失败时，Problems 面板会显示原因、位置和下一步操作，可重新选择输入、并排比较、查看详细日志、编辑参数或搜索建议的处理阶段。
 
-[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · **简体中文** · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 **Fullseye Studio** 是一个类似 HDevelop 的可视化流水线工作台。你可以搜索并排列算子，用两个旋钮滑块调节参数，一边缩放/平移查看中间结果一边逐段执行，最终把搭建好的流水线导出为 `--ops` 字符串 / Python / JSON。它的实体是 `fullseye` API 的一层薄 GUI 前端，流水线逻辑（`PipelineModel`）·Inspector（`inspect_result`）·示例集（`recipes`）都不依赖 Qt，并且都有独立的单元测试。
 
@@ -324,7 +331,7 @@ Studio 已经超越了"只能从流水线调用代码"的阶段，也可以作�
 | Python 函数 | Export（Ctrl+E） | 以 `fullseye.run_pipeline(...)` 的形式嵌入自己的代码 |
 | JSON | Save pipeline（Ctrl+Shift+S） | 用 `FullseyeEngine.load(...)` / `imgevolve.py run pipeline.json` 执行 |
 
-**设计在 Studio 中完成，执行由代码/CLI 负责**这种相当于 HDevelop→HDevEngine 的流程，是通过 JSON 完成的。接收 JSON 并执行的一方请参见 [ENGINE.md](ENGINE.md)。
+**设计在 Studio 中完成，执行由代码/CLI 负责**这种相当于 HDevelop→HDevEngine 的流程，是通过 JSON 完成的。接收 JSON 并执行的一方请参见 [ENGINE.md](ENGINE.zh.md)。
 
 ---
 
@@ -332,6 +339,6 @@ Studio 已经超越了"只能从流水线调用代码"的阶段，也可以作�
 
 - [STUDIO_UX.md](STUDIO_UX.md) — 设计系统·UX 改进的意图与背景（设计视角）
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — 感知面板的内容（flow / stereo / terrain）
-- [ENGINE.md](ENGINE.md) — 执行导出的流水线
-- [GETTING_STARTED.md](GETTING_STARTED.md) — 5 分钟入门
+- [ENGINE.md](ENGINE.zh.md) — 执行导出的流水线
+- [GETTING_STARTED.md](GETTING_STARTED.zh.md) — 5 分钟入门
 - **验证导出的 Python（Run ▸ Verify exported Python / Ctrl+Shift+R）**：在隔离的 Python 进程中运行可编辑的导出代码，并逐阶段与 GUI 中间结果比较。可设置绝对、相对容差，以及 NaN 必须同位置、忽略或禁止。shape 和 dtype 始终必须一致。不一致会加入 Problems，并定位到首个不同阶段；Studio 只报告，不修改数值。

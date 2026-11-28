@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 37bc63784e56 -->
 # Fullseye 3DGS – Anwendung (ein einziger Befehl)
 
+<!-- i18n-switcher -->
 [日本語](./3DGS_USAGE.md) · [English](./3DGS_USAGE.en.md) · [简体中文](./3DGS_USAGE.zh.md) · [繁體中文](./3DGS_USAGE.tw.md) · [한국어](./3DGS_USAGE.ko.md) · **Deutsch**
+
 
 Verwandelt eine MuJoCo-Simulationsszene in ein **3D-Gaussian-Splatting**-Modell und erzeugt ein rundum drehbares GIF sowie Bilder aus neuen Blickwinkeln. Die Kameraposen stammen aus den Ground-Truth-Daten der Simulation, daher wird **kein COLMAP benötigt**.
 

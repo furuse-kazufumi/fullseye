@@ -1,9 +1,16 @@
-<!-- i18n-source-sha: a41db9bf8a6f -->
+---
+title: "설치 / 환경 구축 완전 가이드"
+description: "Fullseye 설치 방법, 선택 의존성, 설치 확인 절차를 설명합니다."
+lang: ko
+---
+<!-- i18n-source-sha: 9f0dbf51f0cb -->
 # 설치 / 환경 구축 완전 가이드
 
+<!-- i18n-switcher -->
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
 
-개발 머신부터 임베디드 Linux까지, 목적에 맞게 Fullseye(작업명 imgevolve)를 구축하기 위한 가이드입니다. 5분 만에 바로 실행해 보고 싶다면 [GETTING_STARTED.md](GETTING_STARTED.md)가 지름길입니다.
+
+개발 머신부터 임베디드 Linux까지, 목적에 맞게 Fullseye(작업명 imgevolve)를 구축하기 위한 가이드입니다. 5분 만에 바로 실행해 보고 싶다면 [GETTING_STARTED.md](GETTING_STARTED.ko.md)가 지름길입니다.
 
 Fullseye의 Python API 코어는 **numpy + scipy**로 동작합니다. 표준 `pip install fullseye`에는 Studio(PySide6-Essentials)와 Pillow도 포함되며, 무거운 이미지 처리 백엔드는 선택 사항으로 남습니다. 추가 백엔드가 없어도 해당 백엔드 전용 오퍼레이터만 비활성화됩니다(graceful degradation).
 
@@ -31,16 +38,42 @@ py -3.11 -m pip install -e .            # 표준: Python API + Studio + Pillow. 
 
 추가 백엔드는 **extras**로 선택합니다(`pyproject.toml`의 `[project.optional-dependencies]`가 실체입니다).
 
-| extras | 추가되는 의존성 | 활성화되는 내용 |
-|---|---|---|
-| `opencv` | `opencv-python>=4.8.1.78` | 이미지 파일 I/O(`apply`/`pipeline` CLI가 필수로 요구), `cv_*` 계열 오퍼레이터 |
-| `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` 계열(다수의 자동 생성 오퍼레이터의 기반) |
-| `pil` | 없음(Pillow는 표준 의존성) | 호환 별칭. 이미지 I/O 대체 수단과 `xpil_*` 계열을 기본으로 사용 가능 |
-| `wavelets` | `PyWavelets>=1.4` | 웨이블릿 계열(VisuShrink/서브밴드/패킷 등) |
-| `gpu` | `torch>=2.13`, `kornia>=0.9`, `cupy-cuda12x>=14` (not macOS) | GPU 배치 백엔드(`accel.py`/`bench.py`), `xkor_*`(kornia) 계열 |
-| `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 등), mahotas 유래(Zernike/pftas 등) |
-| `gui` | 없음(Studio는 표준 의존성) | 호환 별칭. `pip install fullseye`만으로 **Fullseye Studio**를 시작할 수 있음 |
-| `all` | `opencv-python`, `scikit-image`, `PyWavelets`, `torch`, `kornia`, `mahotas`, `SimpleITK`, `imageio`, `imageio-ffmpeg`, `tifffile`(CuPy 제외. GPU 일체는 `fullseye[gpu]`. PyTorch 설치 안내에 따르면 Linux의 기본 torch는 CUDA 빌드이며 CUDA 구성 요소(nvidia-* wheel)가 함께 설치될 수 있다. CPU만 쓴다면 먼저 CPU 전용 인덱스에서 torch를 설치한다: `pip install torch --index-url https://download.pytorch.org/whl/cpu`) | 모든 오퍼레이터·백엔드 |
+<!-- extras-table:start -->
+| extra | pyproject.toml이 추가하는 의존성 |
+|---|---|
+| `native` | — |
+| `opencv` | `opencv-python>=4.8.1.78` |
+| `skimage` | — |
+| `pil` | — |
+| `yaml` | `PyYAML>=6.0` |
+| `wavelets` | `PyWavelets>=1.4` |
+| `gpu` | `torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'` |
+| `gi` | `mitsuba>=3.5` |
+| `extra` | `mahotas>=1.4`<br>`SimpleITK>=2.2` |
+| `gui` | — |
+| `handpose` | `mediapipe>=0.10` |
+| `video` | — |
+| `audio` | — |
+| `volume` | `SimpleITK>=2.2` |
+| `raster` | — |
+| `gltf` | — |
+| `lidar` | — |
+| `pcd` | — |
+| `xlsx` | — |
+| `e57` | `pye57>=0.4` |
+| `export-verify` | `pye57>=0.4`<br>`astropy>=7.0`<br>`plyfile>=1.0` |
+| `polygon` | — |
+| `threed` | `torch>=2.13`<br>`SimpleITK>=2.2` |
+| `serial` | — |
+| `modbus` | — |
+| `symbols` | — |
+| `mqtt` | — |
+| `opcua` | — |
+| `dev` | `pytest>=9.0.3`<br>`pytest-cov>=4`<br>`ruff>=0.4`<br>`pytest-timeout>=2.3`<br>`hypothesis>=6.100`<br>`pytest-randomly>=3.15`<br>`pytest-xdist>=3.5`<br>`pip-audit>=2.7` |
+| `all-cpu` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+| `all` | `opencv-python>=4.8.1.78`<br>`PyWavelets>=1.4`<br>`torch>=2.13`<br>`kornia>=0.9`<br>`cupy-cuda12x>=14; platform_system != 'Darwin'`<br>`mitsuba>=3.5`<br>`mahotas>=1.4`<br>`SimpleITK>=2.2`<br>`mediapipe>=0.10`<br>`pye57>=0.4`<br>`astropy>=7.0` |
+<!-- extras-table:end -->
+
 
 Studio의 표준 요구 사항은 `PySide6-Essentials>=6.5,!=6.12.0`이다. Linux에서 SIGABRT가 재현되므로 6.12.0은 제외한다.
 
@@ -76,11 +109,9 @@ $env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 ```
 
-`pip install fullseye` 뒤 처음으로 대화형 터미널에서 `fullseye` 또는 `fullseye-studio`를 실행하면 Windows 시작 메뉴 또는 Linux 애플리케이션 메뉴에 **Fullseye Studio**를 한 번 등록합니다. 가상 환경 항목은 그 환경의 Python을 사용하며, 사용자가 나중에 항목을 지워도 일반 명령이 다시 만들지 않습니다. 성공하면 다음 한 줄을 표시합니다.
+`pip install fullseye` 뒤 처음으로 대화형 터미널에서 `fullseye` 또는 `fullseye-studio`를 실행하면 Windows 시작 메뉴 또는 Linux 애플리케이션 메뉴에 **Fullseye Studio**를 한 번 등록합니다. 가상 환경 항목은 그 환경의 Python을 사용하며, 사용자가 나중에 항목을 지워도 일반 명령이 다시 만들지 않습니다. 성공하면 현재 프로그램은 등록과 제거 명령을 뜻하는 다음 일본어 한 줄을 표시합니다.
 
-```text
-시작 메뉴에 Fullseye Studio를 등록했습니다(제거: fullseye-studio --remove-shortcuts)
-```
+`スタートメニューに Fullseye Studio を登録しました(外す: fullseye-studio --remove-shortcuts)` _(ja)_
 
 `FULLSEYE_NO_SHORTCUTS=1`을 설정하거나 `FULLSEYE_STUDIO_SETTINGS`가 가리키는 INI(Linux 기본값은 `~/.config/Fullseye/Studio.conf`)에 다음 항목을 넣으면 중지할 수 있습니다. CI, 터미널 없는 실행, 시작 메뉴 프로그램을 숨기는 Windows 관리자 정책에서는 만들지 않습니다. 상세 선택 설정에는 `fullseye setup`을 사용하십시오.
 
@@ -151,7 +182,7 @@ python3.11 -m pip install -e .        # 표준 설치에는 Studio/Pillow 포함
   ```
 
 - **파일 I/O가 필요할 때**(`fullseye.load` / `fullseye.save`, `imgevolve.py run`, examples)는 **OpenCV 또는 Pillow 둘 중 하나**만 있으면 동작합니다(`imgio`가 자동으로 대체 처리). Pillow는 이미 표준 의존성입니다.
-- **설계는 개발 머신, 실행은 임베디드 머신**이라는 역할 분담이 가능합니다. 개발 머신의 Studio에서 파이프라인을 구성해 JSON을 내보내고, 임베디드 머신에서는 `FullseyeEngine.load("pipeline.json").run(frame)`으로 실행하기만 하면 됩니다(GUI 불필요). 자세한 내용은 [ENGINE.md](ENGINE.md)를 참고하십시오.
+- **설계는 개발 머신, 실행은 임베디드 머신**이라는 역할 분담이 가능합니다. 개발 머신의 Studio에서 파이프라인을 구성해 JSON을 내보내고, 임베디드 머신에서는 `FullseyeEngine.load("pipeline.json").run(frame)`으로 실행하기만 하면 됩니다(GUI 불필요). 자세한 내용은 [ENGINE.md](ENGINE.ko.md)를 참고하십시오.
 - **지각 스택**(stereo / terrain / flow / detect / registration / pose)도 numpy + scipy만으로 동작합니다(`fullseye.disparity_map` 등). 로봇/비전 용도에서 추가 의존성 없이 사용할 수 있습니다.
 
 > GPU(`torch`)는 어디까지나 **배치 가속을 위한 선택 사항(opt-in)**입니다. 임베디드의 단일 이미지 처리에는 불필요하며, 설치하지 않아도 모든 오퍼레이터가 CPU에서 동작합니다.

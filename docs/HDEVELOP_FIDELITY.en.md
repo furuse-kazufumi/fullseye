@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 66216f7cdde8 -->
 # Fullseye Studio — HDevelop Fidelity Spec (North Star)
 
+<!-- i18n-switcher -->
 [日本語](./HDEVELOP_FIDELITY.md) · **English**
+
 
 > Goal = make Fullseye Studio (`studio.py`) an **image-processing IDE faithful to MVTec HDevelop**.
 > Principle = **"the IDE screen is simple yet multifunctional," "high information density"** (user, 2026-08-15, [[feedback_ide_design_simple_multifunctional]]).

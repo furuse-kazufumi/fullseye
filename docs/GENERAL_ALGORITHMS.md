@@ -1,5 +1,8 @@
 # 汎用アルゴリズムを実装可能にする — algo-c 対応ロードマップ
 
+<!-- i18n-switcher -->
+**日本語** · [English](./GENERAL_ALGORITHMS.en.md) · [简体中文](./GENERAL_ALGORITHMS.zh.md) · [繁體中文](./GENERAL_ALGORITHMS.tw.md) · [한국어](./GENERAL_ALGORITHMS.ko.md) · [Deutsch](./GENERAL_ALGORITHMS.de.md)
+
 > ユーザー要望(2026-08-16): <https://github.com/okumuralab/algo-c>(奥村晴彦
 > 『[改訂新版] C言語による標準アルゴリズム事典』全ソース)にあるような**汎用アルゴリズム**も
 > Fullseye で実装できるようにしたい。

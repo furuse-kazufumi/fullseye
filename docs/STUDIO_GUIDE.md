@@ -1,5 +1,12 @@
-<!-- i18n-source-sha: 18a15e4f1562 -->
+---
+title: "Fullseye Studio 完全ガイド"
+description: "Fullseye Studioの機能とキーボード操作を説明します。"
+lang: ja
+---
 # Fullseye Studio 完全ガイド
+
+<!-- i18n-switcher -->
+**日本語** · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 目的を検索すると、候補は現在の入力に使えるもの、前処理が必要なもの、その他に分かれます。候補は処理列へ追加せず一度だけ試せます。実行に失敗したときはProblems欄に原因・場所・次の操作が表示され、入力の選び直し、前後比較、詳細ログ、つまみ編集、候補段の検索へ進めます。
 

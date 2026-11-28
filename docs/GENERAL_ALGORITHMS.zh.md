@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: bd321cfbdaaa -->
 # 让通用算法也能实现 — algo-c 对应路线图
 
+<!-- i18n-switcher -->
 [日本語](./GENERAL_ALGORITHMS.md) · [English](./GENERAL_ALGORITHMS.en.md) · **简体中文** · [繁體中文](./GENERAL_ALGORITHMS.tw.md) · [한국어](./GENERAL_ALGORITHMS.ko.md) · [Deutsch](./GENERAL_ALGORITHMS.de.md)
+
 
 > 用户需求(2026-08-16):<https://github.com/okumuralab/algo-c>(奥村晴彦
 > 《[修订新版] C语言标准算法辞典》全部源码)中出现的**通用算法**,

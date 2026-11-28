@@ -1,5 +1,8 @@
 # 連鎖ファザー(chain fuzz)— op を鎖にして揺さぶる第三の品質保証層
 
+<!-- i18n-switcher -->
+**日本語** · [English](./CHAIN_FUZZ.en.md)
+
 `tools/chain_fuzz.py`。単体テスト・敵対的検証に続く 3 番目の層で、狙う不具合は
 **「単体では全部通るのに、op を鎖にしたときだけ現れるもの」**です。
 

@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: e49e5ba8de03 -->
 # fullseye 3D Vision Toolkit (for Physical AI, differentiating from HALCON/OpenCV)
 
+<!-- i18n-switcher -->
 [日本語](./MATCH_3D_MATRIX.md) · **English**
+
 
 We systematize 3D object matching on a grid of **"input data structure" × "methods established in 2D"**, and exhaustively expand it via the **data transforms** that connect the two (splat / projection / FFT / gradient field / distance field / PCA canonicalization). Core idea:
 **many 3D methods can be built by "transforming 3D data into a representation where a known 2D method works."**

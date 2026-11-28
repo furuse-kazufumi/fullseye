@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 8d925234d62d -->
 # FullseyeEngine — 執行已設計管線的執行環境
 
+<!-- i18n-switcher -->
 [日本語](./ENGINE.md) · [English](./ENGINE.en.md) · [简体中文](./ENGINE.zh.md) · **繁體中文** · [한국어](./ENGINE.ko.md) · [Deutsch](./ENGINE.de.md)
+
 
 `FullseyeEngine`(`engine.py`)是一個執行環境，用於**執行**在 Fullseye Studio 中**建立**的影像運算子管線——無論是從自己的程式碼還是從命令列呼叫。它相當於 MVTec 的 **HDevEngine**——用視覺化工具設計流程，再原封不動地從應用程式呼叫，這正是兩段式流程中後半段的角色。
 
@@ -200,6 +202,6 @@ def perceive(frame):                            # frame: 自行準備的 float64
 
 ## 相關文件
 
-- [STUDIO_GUIDE.md](STUDIO_GUIDE.md) —— 建立管線並匯出 JSON
-- [GETTING_STARTED.md](GETTING_STARTED.md) —— 5 分鐘快速上手
-- [INSTALL.md](INSTALL.md) —— 環境建置(包括嵌入式與最小配置)
+- [STUDIO_GUIDE.md](STUDIO_GUIDE.tw.md) —— 建立管線並匯出 JSON
+- [GETTING_STARTED.md](GETTING_STARTED.tw.md) —— 5 分鐘快速上手
+- [INSTALL.md](INSTALL.tw.md) —— 環境建置(包括嵌入式與最小配置)

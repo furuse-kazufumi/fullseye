@@ -319,7 +319,7 @@ def _honest(lang: str) -> str:
                "单行门面 `fullseye.<名称>` {f[1]}/{f[0]} —— **门面侧仅覆盖一半**。",
          "tw": "**實測涵蓋**: 演化運算子 {r[1]}/{r[0]}、型別台帳 {l[1]}/{l[0]}、"
                "單行門面 `fullseye.<名稱>` {f[1]}/{f[0]} —— **門面側僅涵蓋一半**。",
-         "ko": "**실측 커버리지**: 진화 연산자 {r[1]}/{r[0]}, 타입 台帳 {l[1]}/{l[0]}, "
+         "ko": "**실측 커버리지**: 진화 연산자 {r[1]}/{r[0]}, 타입 원장 {l[1]}/{l[0]}, "
                "한 줄 파사드 `fullseye.<이름>` {f[1]}/{f[0]} — **파사드는 아직 절반**.",
          "de": "**Gemessene Abdeckung**: evolvierbare Ops {r[1]}/{r[0]}, typisiertes "
                "Ledger {l[1]}/{l[0]}, Fassade `fullseye.<name>` {f[1]}/{f[0]} — "
@@ -360,21 +360,21 @@ def _honest(lang: str) -> str:
 RAG_L10N = {
     "": "**AI から引くなら**: 機械可読の索引 [`OP_INDEX.json`](OP_INDEX.json)、"
         "使い方は [AI_RAG_GUIDE.md](AI_RAG_GUIDE.md)"
-        "(`pip install fullseye[rag]` → `fullseye-rag search \"エッジ\"`、"
+        "(`pip install fullseye` → `fullseye-rag search \"エッジ\"`、"
         "Claude Code なら `py -3.11 tools/setup_claude_rag.py`)。",
     "en": "**Retrieving from an AI assistant**: the machine-readable index is "
           "[`OP_INDEX.json`](OP_INDEX.json); how to use it is in "
-          "[AI_RAG_GUIDE.md](AI_RAG_GUIDE.md) "
-          "(`pip install fullseye[rag]`, then `fullseye-rag search \"edge\"`).",
+          "[AI_RAG_GUIDE.en.md](AI_RAG_GUIDE.en.md) "
+          "(`pip install fullseye`, then `fullseye-rag search \"edge\"`).",
     "zh": "**供 AI 检索**: 机器可读索引 [`OP_INDEX.json`](OP_INDEX.json)，"
-          "用法见 [AI_RAG_GUIDE.md](AI_RAG_GUIDE.md)。",
+          "用法见 [AI_RAG_GUIDE.zh.md](AI_RAG_GUIDE.zh.md)（`pip install fullseye`，然后运行 `fullseye-rag search \"edge\"`）。",
     "tw": "**供 AI 檢索**: 機器可讀索引 [`OP_INDEX.json`](OP_INDEX.json)，"
-          "用法見 [AI_RAG_GUIDE.md](AI_RAG_GUIDE.md)。",
+          "用法見 [AI_RAG_GUIDE.tw.md](AI_RAG_GUIDE.tw.md)（`pip install fullseye`，再執行 `fullseye-rag search \"edge\"`）。",
     "ko": "**AI 검색용**: 기계가 읽는 색인 [`OP_INDEX.json`](OP_INDEX.json), "
-          "사용법은 [AI_RAG_GUIDE.md](AI_RAG_GUIDE.md).",
+          "사용법은 [AI_RAG_GUIDE.ko.md](AI_RAG_GUIDE.ko.md) (`pip install fullseye`, `fullseye-rag search \"edge\"`).",
     "de": "**Abruf durch KI-Assistenten**: der maschinenlesbare Index ist "
           "[`OP_INDEX.json`](OP_INDEX.json), die Anleitung steht in "
-          "[AI_RAG_GUIDE.md](AI_RAG_GUIDE.md).",
+          "[AI_RAG_GUIDE.de.md](AI_RAG_GUIDE.de.md) (`pip install fullseye`, dann `fullseye-rag search \"edge\"`).",
 }
 
 
@@ -445,7 +445,7 @@ DOC_GROUPS = [
         "EVIS_VISION_OSS_GAP.md", "INDUSTRY_SIGNALS.md"]),
     ("history", "作業記録・計画(履歴。**その日付時点の値**で、いまの値ではない)",
      "Working notes and plans (historical; numbers are as of their date)", [
-        "V13.md", "V14.md", "SESSION_SUMMARY.md", "SESSION_2026_08_14.md",
+        "V13.md", "V14.md", "SESSION_2026_08_14.md",
         "STUDIO_REVIEW_2026_08_14.md", "NEXT_SESSION.md",
         "NEXT_OPS_PLAN_2026-08-31.md", "PLAN_0_1_9.md",
         "ARTICLE_INTEGRATION_TODO.md", "ARTICLE_RESTRUCTURE_PLAN.md",
@@ -492,20 +492,20 @@ DOC_L10N = {
 
 
 def _doc_title(rel: str) -> str:
-    """先頭の `# 見出し` を 1 行の説明として使う。無ければ最初の本文行。
-
-    HTML の行(`<div ...>` など)と太字だけの言語切替行は題にしない。
-    """
+    """front matterか本文の題を返す /
+    Return the front-matter or body title."""
     path = os.path.join(_ROOT, "docs", rel)
-    with io.open(path, encoding="utf-8") as f:
-        for line in f:
-            t = line.strip()
-            if t.startswith("# "):
-                t = t[2:].strip()
-            elif (not t) or t.startswith(("<", "---", "!", "[", "#", "**")):
-                continue
-            t = t.replace("|", "/")
-            return t if len(t) <= 150 else t[:147] + "..."
+    title, body = _frontmatter(path)
+    if title:
+        return title.replace("|", "/")
+    for line in body:
+        t = line.strip()
+        if t.startswith("# "):
+            t = t[2:].strip()
+        elif (not t) or t.startswith(("<", "---", "!", "[", "#", "**")):
+            continue
+        t = t.replace("|", "/")
+        return t if len(t) <= 150 else t[:147] + "..."
     return ""
 
 
@@ -561,7 +561,7 @@ _ORIGINAL = {"en": "original", "zh": "原文", "tw": "原文", "ko": "원문", "
 
 
 #: 地図から外す部分木。**それぞれ専用の節が面倒を見る**もの以外は外さない。
-_DOCMAP_SKIP = ("ops", "articles")
+_DOCMAP_SKIP, _DOCMAP_FILE_SKIP = ("ops", "articles"), {"SESSION_SUMMARY.md"}
 
 
 def _all_docs() -> list:
@@ -580,7 +580,7 @@ def _all_docs() -> list:
             dirs[:] = [d for d in dirs if d not in _DOCMAP_SKIP]
         dirs.sort()
         for f in sorted(files):
-            if not f.endswith(".md") or f.startswith("README"):
+            if not f.endswith(".md") or f.startswith("README") or f in _DOCMAP_FILE_SKIP:
                 continue
             rel = f if rel_root == "." else rel_root + "/" + f
             out.append(rel)
@@ -729,6 +729,22 @@ def _articles_title(rel: str) -> str:
         t = t.replace("|", "/")
         return t if len(t) <= 120 else t[:117] + "..."
     return ""
+
+
+def _frontmatter(path: str) -> tuple[str, list[str]]:
+    """front matterのtitleと本文を返す / Return its title and body."""
+    with io.open(path, encoding="utf-8") as f:
+        lines = f.readlines()
+    if not lines or lines[0].strip() != "---":
+        return "", lines
+    title = ""
+    for index, line in enumerate(lines[1:], 1):
+        text = line.strip()
+        if text == "---":
+            return title, lines[index + 1:]
+        if text.startswith("title:"):
+            title = text.split(":", 1)[1].strip().strip("\"'")
+    return "", lines
 
 
 def write_articles() -> None:

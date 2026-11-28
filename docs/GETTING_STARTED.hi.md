@@ -1,7 +1,14 @@
-<!-- i18n-source-sha: 4d7dab5a96bd -->
+---
+title: "शुरुआत करें (5 मिनट में चालू)"
+description: "Fullseye इंस्टॉल करके पाँच मिनट में अपना पहला operator चलाने की प्रक्रिया।"
+lang: hi
+---
+<!-- i18n-source-sha: e8f52b68c5e9 -->
 # शुरुआत करें (5 मिनट में चालू)
 
+<!-- i18n-switcher -->
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · **हिन्दी**
+
 
 ## आपका काम कौन-सा है? (शुरू करने के तीन रास्ते)
 
@@ -24,8 +31,8 @@ Fullseye बहुत बड़ा है, इसलिए अगर आप त�
 
 यह गाइड Fullseye (working name imgevolve) को सबसे छोटे रास्ते से चालू करती है: **install → अपनी
 पहली pipeline बनाएँ → चलाएँ → result देखें**, ऐसे क्रम में जिसमें आप अटकें नहीं। पूरे setup के लिए
-[INSTALL.md](INSTALL.md) देखें, Studio की सारी सुविधाओं के लिए
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md), और code से चलाने के लिए [ENGINE.md](ENGINE.md)।
+[INSTALL.md](INSTALL.hi.md) देखें, Studio की सारी सुविधाओं के लिए
+[STUDIO_GUIDE.md](STUDIO_GUIDE.hi.md), और code से चलाने के लिए [ENGINE.md](ENGINE.md)।
 
 Fullseye एक **image-processing operator library है जिसके inputs और outputs numpy arrays हैं**,
 और इसके ऊपर एक **HDevelop-style visual pipeline-design environment (Fullseye Studio)** और एक **execution
@@ -40,8 +47,8 @@ Python + numpy में दोहराता है।
 Prerequisite: **Python 3.11** (Windows पर `py -3.11`, Linux पर `python3.11`)।
 
 ```powershell
-cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # Python API + Studio + Pillow; heavy backends only when needed
+py -3.11 -m pip install fullseye
+fullseye --version
 ```
 
 Core API **numpy और scipy** पर चलता है, और सामान्य `pip install fullseye` Studio के लिए
@@ -49,12 +56,19 @@ PySide6-Essentials तथा image I/O के लिए Pillow भी install �
 भारी backends optional हैं; अगर कोई नहीं है तो केवल उसी backend के operators बंद होते हैं (graceful degradation)।
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # OpenCV-only image API and cv_* operators
-py -3.11 -m pip install -e ".[all]"       # all additional backends
+py -3.11 -m pip install "fullseye[opencv]" # OpenCV-only image API and cv_* operators
 fullseye-studio                            # Studio starts after standard installation
 ```
 
-Extras की list और हर एक का मतलब [INSTALL.md](INSTALL.md) में इकट्ठा है। `gui` और `pil` पुराने install commands के लिए खाली compatibility aliases हैं।
+Extras की list और हर एक का मतलब [INSTALL.md](INSTALL.hi.md) में इकट्ठा है। `gui` और `pil` पुराने install commands के लिए खाली compatibility aliases हैं।
+
+Fullseye पर development करने वाले लोग repository कोclone करकेeditable install का उपयोग करें:
+
+```powershell
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 -m pip install -e .
+```
 
 > आप install किए बिना भी आज़मा सकते हैं। Repository root (`<path-to-fullseye>`) को अपनी
 > working directory बनाएँ और उस path को `PYTHONPATH` environment variable में डालें, तो `import
@@ -73,7 +87,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image (gradient magnitude)
 seg   = fullseye.apply(frame, "otsu")          # image → region (0/1 binary)
 n     = fullseye.apply(seg,   "count_obj")     # region → feature (object count = Python float)
-print(n)                                       # e.g. 316.0
+print(n)                                       # e.g. 25.0
 ```
 
 > **Argument का क्रम `apply(image, name, a, b)` है** — पहला argument array है,
@@ -106,10 +120,10 @@ print(n)                                       # e.g. 316.0
 कौन-कौन से operators मौजूद हैं, यह आप ऐसे पता कर सकते हैं:
 
 ```python
-fullseye.op_names()                 # all registry operator names (860, as of 2026-09-03)
+fullseye.op_names()                 # all registry operator names
 fullseye.list_ops(search="edge")    # substring search over name / HALCON name / category
 fullseye.list_ops(sort="region")    # filter by input sort
-fullseye.categories()               # 47 categories
+fullseye.categories()               # list of categories
 ```
 
 ---
@@ -128,7 +142,7 @@ out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
 यह "smooth → edge magnitude → Otsu threshold" है, image को
-binary edge map में बदलने का एक आम example। इसके साथ **20** तैयार combinations (recipes) आते हैं।
+binary edge map में बदलने का एक आम example। शामिल recipes की सूची `recipes.names()` से देखें।
 
 ```python
 import recipes
@@ -177,7 +191,7 @@ py -3.11 studio.py          # or, if installed: fullseye-studio
 
 जोड़ी गई pipeline को आप `--ops` string या Python code के रूप में **Export (Ctrl+E)** कर सकते हैं, और **Save
 pipeline (Ctrl+Shift+S)** से JSON के रूप में save कर सकते हैं। सारी सुविधाएँ और shortcuts
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md) में हैं; app के अंदर **F1** list दिखाता है।
+[STUDIO_GUIDE.md](STUDIO_GUIDE.hi.md) में हैं; app के अंदर **Ctrl+F1** shortcut list और **F1** चुने हुए op की help दिखाता है।
 
 ---
 
@@ -239,11 +253,11 @@ py -3.11 imgevolve.py pipeline in.png out.png --ops "gaussian,sobel_amp,otsu"
 | `apply` / `pipeline` में `cannot read ...` | standard Pillow dependency या image टूटी है। Fullseye reinstall करके image जाँचें |
 | किसी extra backend का operator "unknown" है | वह backend install नहीं है। `.[skimage]` `.[wavelets]` `.[extra]` आदि जोड़ें |
 
-ज़्यादा विस्तृत troubleshooting के लिए [INSTALL.md](INSTALL.md) देखें।
+ज़्यादा विस्तृत troubleshooting के लिए [INSTALL.md](INSTALL.hi.md) देखें।
 
 ## आगे क्या पढ़ें
 
-- **[INSTALL.md](INSTALL.md)** — पूरी setup गाइड (extras चुनना, Windows/Linux installers, minimal/embedded configs)
-- **[STUDIO_GUIDE.md](STUDIO_GUIDE.md)** — Fullseye Studio की पूरी गाइड
+- **[INSTALL.md](INSTALL.hi.md)** — पूरी setup गाइड (extras चुनना, Windows/Linux installers, minimal/embedded configs)
+- **[STUDIO_GUIDE.md](STUDIO_GUIDE.hi.md)** — Fullseye Studio की पूरी गाइड
 - **[ENGINE.md](ENGINE.md)** — FullseyeEngine (design → run) गाइड
 - **[README.md](README.md)** — documentation index

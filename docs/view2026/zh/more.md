@@ -1,3 +1,10 @@
+---
+title: "附加页:其他 PoC — ViEW2026"
+description: "本页也包含不如主页展品完善的示例。各展品的数字取自其 PoC 的运行记录。"
+lang: zh-CN
+image: /view2026/thumbs/fullseye_intro.jpg
+---
+
 <div class="vlang" markdown="1">
 
 [日本語](../more.md) · [English](../en/more.md) · **简体中文** · [繁體中文](../tw/more.md) · [한국어](../ko/more.md) · [Deutsch](../de/more.md) · [हिन्दी](../hi/more.md) · [Français](../fr/more.md)

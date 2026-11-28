@@ -1,14 +1,16 @@
 <!-- i18n-source-sha: 8d925234d62d -->
 # FullseyeEngine — the runtime that executes a pipeline you designed
 
+<!-- i18n-switcher -->
 [日本語](./ENGINE.md) · **English** · [简体中文](./ENGINE.zh.md) · [繁體中文](./ENGINE.tw.md) · [한국어](./ENGINE.ko.md) · [Deutsch](./ENGINE.de.md)
+
 
 `FullseyeEngine` (`engine.py`) is the runtime for **executing** — from your own code or the CLI —
 an image-operator pipeline you **built** in Fullseye Studio. It is the counterpart of MVTec's
 **HDevEngine**: it plays the second half of the two-step story where you design the procedure in
 a visual tool and then call it straight from your app without rewriting it.
 
-- **Author**: Fullseye Studio → `Save pipeline` writes out JSON ([STUDIO_GUIDE.md](STUDIO_GUIDE.md)).
+- **Author**: Fullseye Studio → `Save pipeline` writes out JSON ([STUDIO_GUIDE.md](STUDIO_GUIDE.en.md)).
 - **Execute**: `FullseyeEngine.load("pipeline.json").run(frame)` — **numpy array in, numpy array
   out**. No file I/O and no GUI needed.
 
@@ -226,6 +228,6 @@ in the same way (`fullseye.disparity_map`, etc.). For usage examples see `exampl
 
 ## Related documents
 
-- [STUDIO_GUIDE.md](STUDIO_GUIDE.md) — build a pipeline and write out the JSON
-- [GETTING_STARTED.md](GETTING_STARTED.md) — get going in 5 minutes
-- [INSTALL.md](INSTALL.md) — environment setup (including embedded and minimal configurations)
+- [STUDIO_GUIDE.md](STUDIO_GUIDE.en.md) — build a pipeline and write out the JSON
+- [GETTING_STARTED.md](GETTING_STARTED.en.md) — get going in 5 minutes
+- [INSTALL.md](INSTALL.en.md) — environment setup (including embedded and minimal configurations)

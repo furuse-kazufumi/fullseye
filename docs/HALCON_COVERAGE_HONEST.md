@@ -1,5 +1,8 @@
 # HALCON カバレッジ — honest な分母(2026-08-18 更新)
 
+<!-- i18n-switcher -->
+**日本語** · [English](./HALCON_COVERAGE_HONEST.en.md)
+
 > 2026-11-02 追記: 下の 2026-08 の分類は名前を 1 つずつ見直して更新した。最新の 4 分類は [HALCON_GAP_2026-11-02.md](HALCON_GAP_2026-11-02.md)。
 
 `halcon_coverage.py` は全 2313 operator を分母に **31.5%(728/2313)** と報告する。しかし

@@ -1,3 +1,9 @@
+---
+title: "Fullseye ドキュメント索引"
+description: "Fullseyeの文書索引と、導入・実行・Studio利用の入口をまとめています。"
+lang: ja
+permalink: /
+---
 # Fullseye ドキュメント索引
 
 <img src="assets/img/fullseye_256.png" alt="Fullseye のロゴ" width="80" height="80">
@@ -223,7 +229,7 @@
 
 名前で引くなら `py -3.11 imgevolve.py ops --search edge`、全 op の対応表は [OP_CATALOG.md](OP_CATALOG.md)、次元をまたぐ入口は [ops/INDEX.md](ops/INDEX.md)。
 
-**AI から引くなら**: 機械可読の索引 [`OP_INDEX.json`](OP_INDEX.json)、使い方は [AI_RAG_GUIDE.md](AI_RAG_GUIDE.md)(`pip install fullseye[rag]` → `fullseye-rag search "エッジ"`、Claude Code なら `py -3.11 tools/setup_claude_rag.py`)。
+**AI から引くなら**: 機械可読の索引 [`OP_INDEX.json`](OP_INDEX.json)、使い方は [AI_RAG_GUIDE.md](AI_RAG_GUIDE.md)(`pip install fullseye` → `fullseye-rag search "エッジ"`、Claude Code なら `py -3.11 tools/setup_claude_rag.py`)。
 
 <!-- ops-index:end -->
 
@@ -304,7 +310,7 @@ Python / fullseye / Qt / 任意依存 / Claude Code 連携の状態を表示し�
 
 | やりたいこと | 実行 |
 |---|---|
-| 画面で触る | `fullseye-studio`(`pip install "fullseye[gui]"` が必要) |
+| 画面で触る | `fullseye-studio`（標準の `pip install fullseye` に含まれる） |
 | スタートメニュー / デスクトップに置く | `fullseye-studio --install-shortcuts`(`--desktop` を足すとデスクトップにも)、戻す = `--remove-shortcuts` |
 | Python から 3 行で | `import fullseye, numpy as np` / `img = np.random.rand(64, 64)` / `fullseye.apply(img, "sobel_amp")` |
 | AI(Claude Code)から | `fullseye-rag`(skill)と `claude mcp add fullseye -- fullseye-mcp` (`claude mcp add fullseye -- python -P -m fullseye.mcp` も可) |
@@ -381,7 +387,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 353 本
+## ドキュメント地図 — 全 352 本
 
 **索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,859 本と族ガイド 73 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
@@ -510,13 +516,12 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`EVIS_VISION_OSS_GAP.md`](EVIS_VISION_OSS_GAP.md) | evis の視覚部品 — OSS/ROS2 ギャップ分析 (2026-08-17) |
 | [`INDUSTRY_SIGNALS.md`](INDUSTRY_SIGNALS.md) | 業界シグナル — 展示会・アワードを op 発想の恒常的な入力にする |
 
-**作業記録・計画(履歴。**その日付時点の値**で、いまの値ではない)**(12)
+**作業記録・計画(履歴。**その日付時点の値**で、いまの値ではない)**(11)
 
 | 文書 | 内容 |
 |---|---|
 | [`V13.md`](V13.md) | v13 — production hardening, cross-project packaging, perception stack |
 | [`V14.md`](V14.md) | v14 — perception-stack completion: motion + robustness |
-| [`SESSION_SUMMARY.md`](SESSION_SUMMARY.md) | Session Summary (auto-generated) |
 | [`SESSION_2026_08_14.md`](SESSION_2026_08_14.md) | Session 2026-08-14 — Data-format expansion + Studio UI review |
 | [`STUDIO_REVIEW_2026_08_14.md`](STUDIO_REVIEW_2026_08_14.md) | Fullseye Studio — verified UI review (2026-08-14) |
 | [`NEXT_SESSION.md`](NEXT_SESSION.md) | 次セッション引き継ぎ — 高速化・省メモリ・動画 + 解像度管理 + 図注(2026-09-03 午前〜) |
@@ -624,143 +629,143 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`TYPE_CONNECTIVITY.md`](TYPE_CONNECTIVITY.md) | 型のつながり ―― 全型の役割と処置 |
 | [`UNIFIED_API_REQUIREMENTS.en.md`](UNIFIED_API_REQUIREMENTS.en.md) | Fullseye Unified Interface — Requirements Specification (v0.1, 2026-08-18) |
 | [`VALIDATION_CONTRIBUTING.en.md`](VALIDATION_CONTRIBUTING.en.md) | Reporting validation on real hardware or real data |
-| [`capabilities/align-and-stack.md`](capabilities/align-and-stack.md) | id: align-and-stack |
-| [`capabilities/beamforming-and-range-doppler.md`](capabilities/beamforming-and-range-doppler.md) | id: beamforming-and-range-doppler |
-| [`capabilities/beats-fringes-and-screens.md`](capabilities/beats-fringes-and-screens.md) | id: beats-fringes-and-screens |
-| [`capabilities/blob-and-region.md`](capabilities/blob-and-region.md) | id: blob-and-region |
-| [`capabilities/camera-intrinsics-calibration.md`](capabilities/camera-intrinsics-calibration.md) | id: camera-intrinsics-calibration |
-| [`capabilities/chromatic-confocal-sensor.md`](capabilities/chromatic-confocal-sensor.md) | id: chromatic-confocal-sensor |
-| [`capabilities/colour-and-delta-e.md`](capabilities/colour-and-delta-e.md) | id: colour-and-delta-e |
-| [`capabilities/complex-plane-fields.md`](capabilities/complex-plane-fields.md) | id: complex-plane-fields |
-| [`capabilities/compound-eye-aliasing-and-ttc.md`](capabilities/compound-eye-aliasing-and-ttc.md) | id: compound-eye-aliasing-and-ttc |
-| [`capabilities/convergent-forward-models.md`](capabilities/convergent-forward-models.md) | id: convergent-forward-models |
-| [`capabilities/convert-between-representations.md`](capabilities/convert-between-representations.md) | id: convert-between-representations |
-| [`capabilities/crop-weed-cover-grade.md`](capabilities/crop-weed-cover-grade.md) | id: crop-weed-cover-grade |
-| [`capabilities/ct-scan-modes.md`](capabilities/ct-scan-modes.md) | id: ct-scan-modes |
-| [`capabilities/dual-energy-xray-material-discrimination.md`](capabilities/dual-energy-xray-material-discrimination.md) | id: dual-energy-xray-material-discrimination |
-| [`capabilities/emva1288-camera-datasheets.md`](capabilities/emva1288-camera-datasheets.md) | id: emva1288-camera-datasheets |
-| [`capabilities/estimate-lens-distortion.md`](capabilities/estimate-lens-distortion.md) | id: estimate-lens-distortion |
-| [`capabilities/fiber-and-light-guide.md`](capabilities/fiber-and-light-guide.md) | id: fiber-and-light-guide |
-| [`capabilities/figures-and-annotation.md`](capabilities/figures-and-annotation.md) | id: figures-and-annotation |
-| [`capabilities/fix-text-in-images.md`](capabilities/fix-text-in-images.md) | id: fix-text-in-images |
-| [`capabilities/fourier-ptychography.md`](capabilities/fourier-ptychography.md) | id: fourier-ptychography |
-| [`capabilities/geodetic-frames.md`](capabilities/geodetic-frames.md) | id: geodetic-frames |
-| [`capabilities/golden-compare.md`](capabilities/golden-compare.md) | id: golden-compare |
-| [`capabilities/good-sample-variation-model.md`](capabilities/good-sample-variation-model.md) | id: good-sample-variation-model |
-| [`capabilities/grating-interferometry.md`](capabilities/grating-interferometry.md) | id: grating-interferometry |
-| [`capabilities/grating-spectrometer-and-illumination.md`](capabilities/grating-spectrometer-and-illumination.md) | id: grating-spectrometer-and-illumination |
-| [`capabilities/gw-interferometer-quantum-noise-and-matched-filter.md`](capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) | id: gw-interferometer-quantum-noise-and-matched-filter |
-| [`capabilities/illumination-cone-vs-na.md`](capabilities/illumination-cone-vs-na.md) | id: illumination-cone-vs-na |
-| [`capabilities/industrial-oct.md`](capabilities/industrial-oct.md) | id: industrial-oct |
-| [`capabilities/inner-diameter-in-mm.md`](capabilities/inner-diameter-in-mm.md) | id: inner-diameter-in-mm |
-| [`capabilities/inspection-fixture.md`](capabilities/inspection-fixture.md) | id: inspection-fixture |
-| [`capabilities/inspection-workflow.md`](capabilities/inspection-workflow.md) | id: inspection-workflow |
-| [`capabilities/interactive-poc-viewer.md`](capabilities/interactive-poc-viewer.md) | id: interactive-poc-viewer |
-| [`capabilities/interreflection-to-convergence.md`](capabilities/interreflection-to-convergence.md) | id: interreflection-to-convergence |
-| [`capabilities/inverted-colour-overlays.md`](capabilities/inverted-colour-overlays.md) | id: inverted-colour-overlays |
-| [`capabilities/itof-multifreq.md`](capabilities/itof-multifreq.md) | id: itof-multifreq |
-| [`capabilities/laser-speckle-floor.md`](capabilities/laser-speckle-floor.md) | id: laser-speckle-floor |
-| [`capabilities/lens-distortion-correction.md`](capabilities/lens-distortion-correction.md) | id: lens-distortion-correction |
-| [`capabilities/lens-prescription-files.md`](capabilities/lens-prescription-files.md) | id: lens-prescription-files |
-| [`capabilities/lens-tolerancing.md`](capabilities/lens-tolerancing.md) | id: lens-tolerancing |
-| [`capabilities/light-transport.md`](capabilities/light-transport.md) | id: light-transport |
-| [`capabilities/lockin-demodulation.md`](capabilities/lockin-demodulation.md) | id: lockin-demodulation |
-| [`capabilities/material-optical-property-library.md`](capabilities/material-optical-property-library.md) | id: material-optical-property-library |
-| [`capabilities/measurement-system-and-uncertainty.md`](capabilities/measurement-system-and-uncertainty.md) | id: measurement-system-and-uncertainty |
-| [`capabilities/moire-alignment.md`](capabilities/moire-alignment.md) | id: moire-alignment |
-| [`capabilities/nir-hyperspectral-sorting.md`](capabilities/nir-hyperspectral-sorting.md) | id: nir-hyperspectral-sorting |
-| [`capabilities/noncoaxial-optics.md`](capabilities/noncoaxial-optics.md) | id: noncoaxial-optics |
-| [`capabilities/ocr-preprocessing.md`](capabilities/ocr-preprocessing.md) | id: ocr-preprocessing |
-| [`capabilities/one-stroke-drawing.md`](capabilities/one-stroke-drawing.md) | id: one-stroke-drawing |
-| [`capabilities/optics-and-materials.md`](capabilities/optics-and-materials.md) | id: optics-and-materials |
-| [`capabilities/optics-drawings.md`](capabilities/optics-drawings.md) | id: optics-drawings |
-| [`capabilities/patch-feature-anomaly-detection.md`](capabilities/patch-feature-anomaly-detection.md) | id: patch-feature-anomaly-detection |
-| [`capabilities/periodic-defects-in-1d-signals.md`](capabilities/periodic-defects-in-1d-signals.md) | id: periodic-defects-in-1d-signals |
-| [`capabilities/phase-measuring-deflectometry.md`](capabilities/phase-measuring-deflectometry.md) | id: phase-measuring-deflectometry |
-| [`capabilities/photoelasticity.md`](capabilities/photoelasticity.md) | id: photoelasticity |
-| [`capabilities/photograph-through-prescription.md`](capabilities/photograph-through-prescription.md) | id: photograph-through-prescription |
-| [`capabilities/pictures-that-carry-their-own-truth.md`](capabilities/pictures-that-carry-their-own-truth.md) | id: pictures-that-carry-their-own-truth |
-| [`capabilities/pixel-shift-imaging.md`](capabilities/pixel-shift-imaging.md) | id: pixel-shift-imaging |
-| [`capabilities/pl-carrier-diffusion-visibility.md`](capabilities/pl-carrier-diffusion-visibility.md) | id: pl-carrier-diffusion-visibility |
-| [`capabilities/planarity-from-point-cloud.md`](capabilities/planarity-from-point-cloud.md) | id: planarity-from-point-cloud |
-| [`capabilities/plenoptic-camera.md`](capabilities/plenoptic-camera.md) | id: plenoptic-camera |
-| [`capabilities/point-cloud-to-picture.md`](capabilities/point-cloud-to-picture.md) | id: point-cloud-to-picture |
-| [`capabilities/point-target-detection.md`](capabilities/point-target-detection.md) | id: point-target-detection |
-| [`capabilities/polarisation-specular-removal.md`](capabilities/polarisation-specular-removal.md) | id: polarisation-specular-removal |
-| [`capabilities/polarization-imaging.md`](capabilities/polarization-imaging.md) | id: polarization-imaging |
-| [`capabilities/probability-of-detection.md`](capabilities/probability-of-detection.md) | id: probability-of-detection |
-| [`capabilities/raw-to-display-isp.md`](capabilities/raw-to-display-isp.md) | id: raw-to-display-isp |
-| [`capabilities/reuse-computation-results.md`](capabilities/reuse-computation-results.md) | id: reuse-computation-results |
-| [`capabilities/robust-code-matching.md`](capabilities/robust-code-matching.md) | id: robust-code-matching |
-| [`capabilities/robust-gaussian-spline-profile-filter.md`](capabilities/robust-gaussian-spline-profile-filter.md) | id: robust-gaussian-spline-profile-filter |
-| [`capabilities/sam-bond-voids.md`](capabilities/sam-bond-voids.md) | id: sam-bond-voids |
-| [`capabilities/scientific-data-files.md`](capabilities/scientific-data-files.md) | id: scientific-data-files |
-| [`capabilities/scratch-detection-and-width.md`](capabilities/scratch-detection-and-width.md) | id: scratch-detection-and-width |
-| [`capabilities/sem-edge-effect-metrology.md`](capabilities/sem-edge-effect-metrology.md) | id: sem-edge-effect-metrology |
-| [`capabilities/sem-tem-same-particle.md`](capabilities/sem-tem-same-particle.md) | id: sem-tem-same-particle |
-| [`capabilities/sequential-lens-design-metrics.md`](capabilities/sequential-lens-design-metrics.md) | id: sequential-lens-design-metrics |
-| [`capabilities/shape-from-polarization.md`](capabilities/shape-from-polarization.md) | id: shape-from-polarization |
-| [`capabilities/sim-to-real-calibration.md`](capabilities/sim-to-real-calibration.md) | id: sim-to-real-calibration |
-| [`capabilities/six-dof-surface-pose.md`](capabilities/six-dof-surface-pose.md) | id: six-dof-surface-pose |
-| [`capabilities/spectral-radiometry-chain.md`](capabilities/spectral-radiometry-chain.md) | id: spectral-radiometry-chain |
-| [`capabilities/subpixel-2d-metrology.md`](capabilities/subpixel-2d-metrology.md) | id: subpixel-2d-metrology |
-| [`capabilities/surface-defects-with-lighting.md`](capabilities/surface-defects-with-lighting.md) | id: surface-defects-with-lighting |
-| [`capabilities/tdi-linescan-and-lens.md`](capabilities/tdi-linescan-and-lens.md) | id: tdi-linescan-and-lens |
-| [`capabilities/telecentric-metrology.md`](capabilities/telecentric-metrology.md) | id: telecentric-metrology |
-| [`capabilities/tem-phase-contrast-and-ctf.md`](capabilities/tem-phase-contrast-and-ctf.md) | id: tem-phase-contrast-and-ctf |
-| [`capabilities/template-alignment.md`](capabilities/template-alignment.md) | id: template-alignment |
-| [`capabilities/terrain-and-visibility.md`](capabilities/terrain-and-visibility.md) | id: terrain-and-visibility |
-| [`capabilities/text-and-tables-on-images.md`](capabilities/text-and-tables-on-images.md) | id: text-and-tables-on-images |
-| [`capabilities/theorems-as-pictures.md`](capabilities/theorems-as-pictures.md) | id: theorems-as-pictures |
-| [`capabilities/thin-film-reflectometry.md`](capabilities/thin-film-reflectometry.md) | id: thin-film-reflectometry |
-| [`capabilities/tof-camera.md`](capabilities/tof-camera.md) | id: tof-camera |
-| [`capabilities/tomography-reconstruction.md`](capabilities/tomography-reconstruction.md) | id: tomography-reconstruction |
-| [`capabilities/typed-results-as-json.md`](capabilities/typed-results-as-json.md) | id: typed-results-as-json |
-| [`capabilities/typed-results-as-markdown.md`](capabilities/typed-results-as-markdown.md) | id: typed-results-as-markdown |
-| [`capabilities/vibration-and-acoustics.md`](capabilities/vibration-and-acoustics.md) | id: vibration-and-acoustics |
-| [`capabilities/virtual-sem-monte-carlo.md`](capabilities/virtual-sem-monte-carlo.md) | id: virtual-sem-monte-carlo |
-| [`capabilities/visual-hull-from-silhouettes.md`](capabilities/visual-hull-from-silhouettes.md) | id: visual-hull-from-silhouettes |
-| [`capabilities/volume-from-3d-scan.md`](capabilities/volume-from-3d-scan.md) | id: volume-from-3d-scan |
-| [`capabilities/water-inspection-images.md`](capabilities/water-inspection-images.md) | id: water-inspection-images |
-| [`capabilities/water-transparent-media.md`](capabilities/water-transparent-media.md) | id: water-transparent-media |
-| [`capabilities/what-a-picture-cannot-check.md`](capabilities/what-a-picture-cannot-check.md) | id: what-a-picture-cannot-check |
-| [`capabilities/xlsx-report.md`](capabilities/xlsx-report.md) | id: xlsx-report |
-| [`hardening/carve-look-at-unreachable-and-silent.md`](hardening/carve-look-at-unreachable-and-silent.md) | id: carve-look-at-unreachable-and-silent |
-| [`hardening/cli-help-and-subcommands-broke-in-the-wheel.md`](hardening/cli-help-and-subcommands-broke-in-the-wheel.md) | id: cli-help-and-subcommands-broke-in-the-wheel |
-| [`hardening/compactness-saturated-at-one.md`](hardening/compactness-saturated-at-one.md) | id: compactness-saturated-at-one |
-| [`hardening/dem-viewshed-self-occlusion.md`](hardening/dem-viewshed-self-occlusion.md) | id: dem-viewshed-self-occlusion |
-| [`hardening/dimensional-features-were-normalised.md`](hardening/dimensional-features-were-normalised.md) | id: dimensional-features-were-normalised |
-| [`hardening/ecef-to-geodetic-returned-latitude-180.md`](hardening/ecef-to-geodetic-returned-latitude-180.md) | id: ecef-to-geodetic-returned-latitude-180 |
-| [`hardening/empty-and-tiny-inputs-raised-raw-library-errors.md`](hardening/empty-and-tiny-inputs-raised-raw-library-errors.md) | id: empty-and-tiny-inputs-raised-raw-library-errors |
-| [`hardening/empty-name-resolved-and-narrow-floats-not-upcast.md`](hardening/empty-name-resolved-and-narrow-floats-not-upcast.md) | id: empty-name-resolved-and-narrow-floats-not-upcast |
-| [`hardening/engine-load-on-an-instance-was-silently-ignored.md`](hardening/engine-load-on-an-instance-was-silently-ignored.md) | id: engine-load-on-an-instance-was-silently-ignored |
-| [`hardening/features-saturated-at-one.md`](hardening/features-saturated-at-one.md) | id: features-saturated-at-one |
-| [`hardening/frame-align-inlier-ratio-is-not-confidence.md`](hardening/frame-align-inlier-ratio-is-not-confidence.md) | id: frame-align-inlier-ratio-is-not-confidence |
-| [`hardening/functional-gate-did-not-know-the-match-sort.md`](hardening/functional-gate-did-not-know-the-match-sort.md) | id: functional-gate-did-not-know-the-match-sort |
-| [`hardening/halcon-named-shape-factors.md`](hardening/halcon-named-shape-factors.md) | id: halcon-named-shape-factors |
-| [`hardening/image-io-dropped-write-failures-and-crushed-16-bit.md`](hardening/image-io-dropped-write-failures-and-crushed-16-bit.md) | id: image-io-dropped-write-failures-and-crushed-16-bit |
-| [`hardening/inputs-without-a-conversion-were-not-refused.md`](hardening/inputs-without-a-conversion-were-not-refused.md) | id: inputs-without-a-conversion-were-not-refused |
-| [`hardening/itk-threshold-ops-returned-the-dark-side.md`](hardening/itk-threshold-ops-returned-the-dark-side.md) | id: itk-threshold-ops-returned-the-dark-side |
-| [`hardening/ledger-evicted-silently-and-studio-help-aborted.md`](hardening/ledger-evicted-silently-and-studio-help-aborted.md) | id: ledger-evicted-silently-and-studio-help-aborted |
-| [`hardening/ledger-lookups-returned-empty-for-unknown-names.md`](hardening/ledger-lookups-returned-empty-for-unknown-names.md) | id: ledger-lookups-returned-empty-for-unknown-names |
-| [`hardening/mcp-facade-layer-listed-classes-as-ops.md`](hardening/mcp-facade-layer-listed-classes-as-ops.md) | id: mcp-facade-layer-listed-classes-as-ops |
-| [`hardening/moment-invariants-two-families-same-name.md`](hardening/moment-invariants-two-families-same-name.md) | id: moment-invariants-two-families-same-name |
-| [`hardening/nary-ops-unlisted-and-knobs-unstated.md`](hardening/nary-ops-unlisted-and-knobs-unstated.md) | id: nary-ops-unlisted-and-knobs-unstated |
-| [`hardening/no-gate-knew-what-dimension-a-feature-has.md`](hardening/no-gate-knew-what-dimension-a-feature-has.md) | id: no-gate-knew-what-dimension-a-feature-has |
-| [`hardening/noise-sigma-mad-collapses-on-quantised-data.md`](hardening/noise-sigma-mad-collapses-on-quantised-data.md) | id: noise-sigma-mad-collapses-on-quantised-data |
-| [`hardening/nonfinite-output-was-sanitized-silently.md`](hardening/nonfinite-output-was-sanitized-silently.md) | id: nonfinite-output-was-sanitized-silently |
-| [`hardening/op-find-blind-to-japanese-queries.md`](hardening/op-find-blind-to-japanese-queries.md) | id: op-find-blind-to-japanese-queries |
-| [`hardening/otsu-threshold-at-the-bin-midpoint.md`](hardening/otsu-threshold-at-the-bin-midpoint.md) | id: otsu-threshold-at-the-bin-midpoint |
-| [`hardening/pfm-default-wrote-8-bit-values-into-a-float-format.md`](hardening/pfm-default-wrote-8-bit-values-into-a-float-format.md) | id: pfm-default-wrote-8-bit-values-into-a-float-format |
-| [`hardening/pose-helpers-could-not-take-their-own-matrix.md`](hardening/pose-helpers-could-not-take-their-own-matrix.md) | id: pose-helpers-could-not-take-their-own-matrix |
-| [`hardening/refract-one-way-reference.md`](hardening/refract-one-way-reference.md) | id: refract-one-way-reference |
-| [`hardening/run-pipeline-stage-forms-fail-obscurely.md`](hardening/run-pipeline-stage-forms-fail-obscurely.md) | id: run-pipeline-stage-forms-fail-obscurely |
-| [`hardening/stage-forms-read-differently-by-four-entry-points.md`](hardening/stage-forms-read-differently-by-four-entry-points.md) | id: stage-forms-read-differently-by-four-entry-points |
-| [`hardening/strict-mode-only-covered-some-of-the-guards.md`](hardening/strict-mode-only-covered-some-of-the-guards.md) | id: strict-mode-only-covered-some-of-the-guards |
-| [`hardening/studio-run-key-ignored-unapplied-edits.md`](hardening/studio-run-key-ignored-unapplied-edits.md) | id: studio-run-key-ignored-unapplied-edits |
-| [`hardening/table-sort-mixes-rows-and-spec-dicts.md`](hardening/table-sort-mixes-rows-and-spec-dicts.md) | id: table-sort-mixes-rows-and-spec-dicts |
-| [`hardening/unknown-operator-hides-missing-backend.md`](hardening/unknown-operator-hides-missing-backend.md) | id: unknown-operator-hides-missing-backend |
-| [`hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md`](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) | id: wrappers-were-scalars-and-hints-were-raw-type-errors |
+| [`capabilities/align-and-stack.md`](capabilities/align-and-stack.md) | 位置を合わせて重ねる |
+| [`capabilities/beamforming-and-range-doppler.md`](capabilities/beamforming-and-range-doppler.md) | 配列で方向を測り、距離と速度を分ける |
+| [`capabilities/beats-fringes-and-screens.md`](capabilities/beats-fringes-and-screens.md) | うなりは一つ(膜のモード・干渉縞・回折次数・印刷のモアレ・墨に落とす) |
+| [`capabilities/blob-and-region.md`](capabilities/blob-and-region.md) | 領域を切り出して、選んで、数える |
+| [`capabilities/camera-intrinsics-calibration.md`](capabilities/camera-intrinsics-calibration.md) | 平面ターゲットの多視点から内部行列 K を推定する(Zhang 法) |
+| [`capabilities/chromatic-confocal-sensor.md`](capabilities/chromatic-confocal-sensor.md) | クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ) |
+| [`capabilities/colour-and-delta-e.md`](capabilities/colour-and-delta-e.md) | 色を測る(XYZ / Lab / 色差) |
+| [`capabilities/complex-plane-fields.md`](capabilities/complex-plane-fields.md) | 複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ) |
+| [`capabilities/compound-eye-aliasing-and-ttc.md`](capabilities/compound-eye-aliasing-and-ttc.md) | 周期パターンが標本化格子で折り返す距離と、縞の上で狂う衝突時間を閉形式で測る(複眼・検査カメラ) |
+| [`capabilities/convergent-forward-models.md`](capabilities/convergent-forward-models.md) | 多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない |
+| [`capabilities/convert-between-representations.md`](capabilities/convert-between-representations.md) | 画像を点・点群・体積・メッシュ・グラフへ渡して戻す |
+| [`capabilities/crop-weed-cover-grade.md`](capabilities/crop-weed-cover-grade.md) | 圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし) |
+| [`capabilities/ct-scan-modes.md`](capabilities/ct-scan-modes.md) | コーンビーム・ヘリカル・ラミノグラフィを 1 つの幾何で再構成する(工業用 CT) |
+| [`capabilities/dual-energy-xray-material-discrimination.md`](capabilities/dual-energy-xray-material-discrimination.md) | X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z) |
+| [`capabilities/emva1288-camera-datasheets.md`](capabilities/emva1288-camera-datasheets.md) | カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General) |
+| [`capabilities/estimate-lens-distortion.md`](capabilities/estimate-lens-distortion.md) | 本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要) |
+| [`capabilities/fiber-and-light-guide.md`](capabilities/fiber-and-light-guide.md) | 光ファイバとライトガイド(ガラスの分散 → LP モード → モード径 → 照明の効率) |
+| [`capabilities/figures-and-annotation.md`](capabilities/figures-and-annotation.md) | 結果を人が読める図にする |
+| [`capabilities/fix-text-in-images.md`](capabilities/fix-text-in-images.md) | 画像の中の文字を、正しい文字列に合わせて直す |
+| [`capabilities/fourier-ptychography.md`](capabilities/fourier-ptychography.md) | フーリエ・タイコグラフィ(LED の斜め照明の像の組 → 位相回復で高 NA の振幅と位相、収束しなければ拒否) |
+| [`capabilities/geodetic-frames.md`](capabilities/geodetic-frames.md) | 地球規模の座標に載せる(ECEF・高さの基準・局所 ENU) |
+| [`capabilities/golden-compare.md`](capabilities/golden-compare.md) | 基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する |
+| [`capabilities/good-sample-variation-model.md`](capabilities/good-sample-variation-model.md) | 良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき) |
+| [`capabilities/grating-interferometry.md`](capabilities/grating-interferometry.md) | 格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける |
+| [`capabilities/grating-spectrometer-and-illumination.md`](capabilities/grating-spectrometer-and-illumination.md) | 回折格子の分光器と顕微鏡の照明系(帯域の幅・smile / keystone・ケーラー / クリティカル・同軸のハーフミラー) |
+| [`capabilities/gw-interferometer-quantum-noise-and-matched-filter.md`](capabilities/gw-interferometer-quantum-noise-and-matched-filter.md) | 干渉計の共振器・量子雑音の予算・色つき雑音の中の既知波形を閉形式で設計する(重力波望遠鏡の式を検査装置の干渉計・振動計・AE に) |
+| [`capabilities/illumination-cone-vs-na.md`](capabilities/illumination-cone-vs-na.md) | 照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地) |
+| [`capabilities/industrial-oct.md`](capabilities/industrial-oct.md) | 工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚) |
+| [`capabilities/inner-diameter-in-mm.md`](capabilities/inner-diameter-in-mm.md) | 円形部品の内径を mm まで測る |
+| [`capabilities/inspection-fixture.md`](capabilities/inspection-fixture.md) | 既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る |
+| [`capabilities/inspection-workflow.md`](capabilities/inspection-workflow.md) | フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す |
+| [`capabilities/interactive-poc-viewer.md`](capabilities/interactive-poc-viewer.md) | 結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語) |
+| [`capabilities/interreflection-to-convergence.md`](capabilities/interreflection-to-convergence.md) | 凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画) |
+| [`capabilities/inverted-colour-overlays.md`](capabilities/inverted-colour-overlays.md) | 地の色を知らずに線と領域を描く(反転色) |
+| [`capabilities/itof-multifreq.md`](capabilities/itof-multifreq.md) | 間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光) |
+| [`capabilities/laser-speckle-floor.md`](capabilities/laser-speckle-floor.md) | レーザー光切断の誤差の床はスペックルが決める(コヒーレント結像・スペックルの統計・三角測量の不確かさ) |
+| [`capabilities/lens-distortion-correction.md`](capabilities/lens-distortion-correction.md) | レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線) |
+| [`capabilities/lens-prescription-files.md`](capabilities/lens-prescription-files.md) | 光学設計ファイル(.zmx の逐次処方を読む・書く・分類する) |
+| [`capabilities/lens-tolerancing.md`](capabilities/lens-tolerancing.md) | レンズの製造公差を、MTF と歩留まりで決める |
+| [`capabilities/light-transport.md`](capabilities/light-transport.md) | 凹みの相互反射で縞投影と ToF が外れる量を、撮る前に予測する(大域光輸送・直接と大域の分離・マイクロ位相シフト) |
+| [`capabilities/lockin-demodulation.md`](capabilities/lockin-demodulation.md) | 画素ごとの直交復調(ロックイン・時間相関イメージセンサ → 振幅・位相・直流、リング照明の法線・符号化照明の分離・熱波) |
+| [`capabilities/material-optical-property-library.md`](capabilities/material-optical-property-library.md) | 材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口) |
+| [`capabilities/measurement-system-and-uncertainty.md`](capabilities/measurement-system-and-uncertainty.md) | その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ) |
+| [`capabilities/moire-alignment.md`](capabilities/moire-alignment.md) | モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ) |
+| [`capabilities/nir-hyperspectral-sorting.md`](capabilities/nir-hyperspectral-sorting.md) | 近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数) |
+| [`capabilities/noncoaxial-optics.md`](capabilities/noncoaxial-optics.md) | 非共軸の光学系(折り返しミラー・半透鏡・傾いた平板・シャインプルーフ・ゴースト) |
+| [`capabilities/ocr-preprocessing.md`](capabilities/ocr-preprocessing.md) | OCR の前処理(傾き補正・局所 2 値化・行の切り出し) |
+| [`capabilities/one-stroke-drawing.md`](capabilities/one-stroke-drawing.md) | 写真を 1 本の線にする(点描 → 巡回路 → 回る円) |
+| [`capabilities/optics-and-materials.md`](capabilities/optics-and-materials.md) | 光の反射・屈折・干渉を計算する |
+| [`capabilities/optics-drawings.md`](capabilities/optics-drawings.md) | 光学系の図面(レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で) |
+| [`capabilities/patch-feature-anomaly-detection.md`](capabilities/patch-feature-anomaly-detection.md) | 良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点) |
+| [`capabilities/periodic-defects-in-1d-signals.md`](capabilities/periodic-defects-in-1d-signals.md) | 1-D 信号の周期欠陥を見つける |
+| [`capabilities/phase-measuring-deflectometry.md`](capabilities/phase-measuring-deflectometry.md) | 光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率) |
+| [`capabilities/photoelasticity.md`](capabilities/photoelasticity.md) | 光弾性で応力を測る(応力場 → 縞 → 偏光像 → 位相差と主軸) |
+| [`capabilities/photograph-through-prescription.md`](capabilities/photograph-through-prescription.md) | 処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト) |
+| [`capabilities/pictures-that-carry-their-own-truth.md`](capabilities/pictures-that-carry-their-own-truth.md) | 目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画) |
+| [`capabilities/pixel-shift-imaging.md`](capabilities/pixel-shift-imaging.md) | ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで) |
+| [`capabilities/pl-carrier-diffusion-visibility.md`](capabilities/pl-carrier-diffusion-visibility.md) | PL 像で細い溝が見えなくなる理由を、キャリア拡散の PSF と欠陥の種類で切り分ける(Si ウェハ・太陽電池の PL/EL 検査) |
+| [`capabilities/planarity-from-point-cloud.md`](capabilities/planarity-from-point-cloud.md) | 3-D 点群から平面度を出す |
+| [`capabilities/plenoptic-camera.md`](capabilities/plenoptic-camera.md) | 処方から撮るプレノプティックカメラ |
+| [`capabilities/point-cloud-to-picture.md`](capabilities/point-cloud-to-picture.md) | 点群をそのまま色の絵にする |
+| [`capabilities/point-target-detection.md`](capabilities/point-target-detection.md) | 小さな点状の目標を見つけて、副画素で位置を出す |
+| [`capabilities/polarisation-specular-removal.md`](capabilities/polarisation-specular-removal.md) | 偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける) |
+| [`capabilities/polarization-imaging.md`](capabilities/polarization-imaging.md) | 偏光カメラの生フレームを Stokes・DoLP・Mueller に読む |
+| [`capabilities/probability-of-detection.md`](capabilities/probability-of-detection.md) | どの大きさなら見つかるか(検出確率 POD と a90/95、MIL-HDBK-1823A) |
+| [`capabilities/raw-to-display-isp.md`](capabilities/raw-to-display-isp.md) | Bayer の生フレームを、段ごとに説明できる式で表示画像にする |
+| [`capabilities/reuse-computation-results.md`](capabilities/reuse-computation-results.md) | 同じ入力の検証・近傍探索・変換核を一度だけ計算する |
+| [`capabilities/robust-code-matching.md`](capabilities/robust-code-matching.md) | 照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する) |
+| [`capabilities/robust-gaussian-spline-profile-filter.md`](capabilities/robust-gaussian-spline-profile-filter.md) | 傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面) |
+| [`capabilities/sam-bond-voids.md`](capabilities/sam-bond-voids.md) | ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD) |
+| [`capabilities/scientific-data-files.md`](capabilities/scientific-data-files.md) | 科学データのファイルを読む(FITS・NIfTI・MRC・OME-TIFF・E57) |
+| [`capabilities/scratch-detection-and-width.md`](capabilities/scratch-detection-and-width.md) | 微細スクラッチを見つけて、幅を測る |
+| [`capabilities/sem-edge-effect-metrology.md`](capabilities/sem-edge-effect-metrology.md) | SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る |
+| [`capabilities/sem-tem-same-particle.md`](capabilities/sem-tem-same-particle.md) | 同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる |
+| [`capabilities/sequential-lens-design-metrics.md`](capabilities/sequential-lens-design-metrics.md) | 逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF) |
+| [`capabilities/shape-from-polarization.md`](capabilities/shape-from-polarization.md) | 黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定) |
+| [`capabilities/sim-to-real-calibration.md`](capabilities/sim-to-real-calibration.md) | 実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す |
+| [`capabilities/six-dof-surface-pose.md`](capabilities/six-dof-surface-pose.md) | 既知の 3-D 部品を点群から 6 自由度で見つける |
+| [`capabilities/spectral-radiometry-chain.md`](capabilities/spectral-radiometry-chain.md) | 光源 × 対象 × センサの分光の鎖(Planck・CIE A・LED・フィルタ・Si の QE、曲線の積と積分) |
+| [`capabilities/subpixel-2d-metrology.md`](capabilities/subpixel-2d-metrology.md) | 画像から寸法をサブピクセルで測る |
+| [`capabilities/surface-defects-with-lighting.md`](capabilities/surface-defects-with-lighting.md) | 表面の凹凸欠陥を、照明の設計から検出まで |
+| [`capabilities/tdi-linescan-and-lens.md`](capabilities/tdi-linescan-and-lens.md) | TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF) |
+| [`capabilities/telecentric-metrology.md`](capabilities/telecentric-metrology.md) | テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ) |
+| [`capabilities/tem-phase-contrast-and-ctf.md`](capabilities/tem-phase-contrast-and-ctf.md) | 仮想の透過電子顕微鏡(電子の波長 → CTF → 位相コントラストの像 → Thon リングから焦点外れを推定 → 補正) |
+| [`capabilities/template-alignment.md`](capabilities/template-alignment.md) | 位置決め(テンプレート照合で測定線を追従させる) |
+| [`capabilities/terrain-and-visibility.md`](capabilities/terrain-and-visibility.md) | 地形の傾き・水の流れ・見通しを測る |
+| [`capabilities/text-and-tables-on-images.md`](capabilities/text-and-tables-on-images.md) | 画像の上に、文字と表を置きたい場所へ置く |
+| [`capabilities/theorems-as-pictures.md`](capabilities/theorems-as-pictures.md) | 定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線) |
+| [`capabilities/thin-film-reflectometry.md`](capabilities/thin-film-reflectometry.md) | 薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ) |
+| [`capabilities/tof-camera.md`](capabilities/tof-camera.md) | 同じ3次元場面を間接ToFと直接ToFで測る |
+| [`capabilities/tomography-reconstruction.md`](capabilities/tomography-reconstruction.md) | 投影から断面を再構成する(CT) |
+| [`capabilities/typed-results-as-json.md`](capabilities/typed-results-as-json.md) | op の返り値(型付き)を JSON に出し、bit そのままで戻す |
+| [`capabilities/typed-results-as-markdown.md`](capabilities/typed-results-as-markdown.md) | op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す |
+| [`capabilities/vibration-and-acoustics.md`](capabilities/vibration-and-acoustics.md) | 振動と音から異常を診断する |
+| [`capabilities/virtual-sem-monte-carlo.md`](capabilities/virtual-sem-monte-carlo.md) | 仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る |
+| [`capabilities/visual-hull-from-silhouettes.md`](capabilities/visual-hull-from-silhouettes.md) | シルエットから立体を彫り出す(視体積交差) |
+| [`capabilities/volume-from-3d-scan.md`](capabilities/volume-from-3d-scan.md) | 3-D スキャンから体積・土量を出す |
+| [`capabilities/water-inspection-images.md`](capabilities/water-inspection-images.md) | 水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像) |
+| [`capabilities/water-transparent-media.md`](capabilities/water-transparent-media.md) | 水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用) |
+| [`capabilities/what-a-picture-cannot-check.md`](capabilities/what-a-picture-cannot-check.md) | 絵では確かめられないもの(積分器の次数・リアプノフ指数・分岐・相関次元・極小曲面) |
+| [`capabilities/xlsx-report.md`](capabilities/xlsx-report.md) | 型付きの検査結果を Excel(.xlsx)レポートに書き出す |
+| [`hardening/carve-look-at-unreachable-and-silent.md`](hardening/carve-look-at-unreachable-and-silent.md) | 空間彫刻の姿勢ヘルパが引けず、同名の別規約を掴むと例外なく空の hull が返った |
+| [`hardening/cli-help-and-subcommands-broke-in-the-wheel.md`](hardening/cli-help-and-subcommands-broke-in-the-wheel.md) | 配布物の CLI で、help が別の入口を案内し、3 つのサブコマンドが使えなかった |
+| [`hardening/compactness-saturated-at-one.md`](hardening/compactness-saturated-at-one.md) | `compactness` が 1.0 で頭打ちし、長い傷を区別しなくなっていた |
+| [`hardening/dem-viewshed-self-occlusion.md`](hardening/dem-viewshed-self-occlusion.md) | 可視領域が、目線より高いセルを軒並み「見えない」と返していた |
+| [`hardening/dimensional-features-were-normalised.md`](hardening/dimensional-features-were-normalised.md) | 寸法を持つ特徴が画像サイズで正規化されていて、HALCON の数と合わなかった |
+| [`hardening/ecef-to-geodetic-returned-latitude-180.md`](hardening/ecef-to-geodetic-returned-latitude-180.md) | ECEF→測地座標が、自分の逆関数が拒否する緯度 180 度を黙って返していた |
+| [`hardening/empty-and-tiny-inputs-raised-raw-library-errors.md`](hardening/empty-and-tiny-inputs-raised-raw-library-errors.md) | 空・極小の入力が、op ごとにばらばらな生エラーで落ちていた |
+| [`hardening/empty-name-resolved-and-narrow-floats-not-upcast.md`](hardening/empty-name-resolved-and-narrow-floats-not-upcast.md) | 空の op 名が lowpass に解決し、float16 / float32 が契約の float64 に昇格されていなかった |
+| [`hardening/engine-load-on-an-instance-was-silently-ignored.md`](hardening/engine-load-on-an-instance-was-silently-ignored.md) | `engine.load(path)` がインスタンスでは何もせず、空のエンジンが入力をそのまま返していた |
+| [`hardening/features-saturated-at-one.md`](hardening/features-saturated-at-one.md) | 特徴が 1.0 で頭打ちし、形が違うのに同じ数を返していた(9 op) |
+| [`hardening/frame-align-inlier-ratio-is-not-confidence.md`](hardening/frame-align-inlier-ratio-is-not-confidence.md) | 位置合わせが、賛成率 1.00 のまま 80.85 px 外していた |
+| [`hardening/functional-gate-did-not-know-the-match-sort.md`](hardening/functional-gate-did-not-know-the-match-sort.md) | 機能ゲートが `match` ソートを知らず、正しい op を「実装されていない」と数えていた |
+| [`hardening/halcon-named-shape-factors.md`](hardening/halcon-named-shape-factors.md) | HALCON と同じ名前の形状係数が、HALCON と**別の量**を返していた |
+| [`hardening/image-io-dropped-write-failures-and-crushed-16-bit.md`](hardening/image-io-dropped-write-failures-and-crushed-16-bit.md) | write_image が書けなかった事実を捨てて無言で戻り、uint16 が 8 bit に潰れ、読めない理由が全部「無い」だった |
+| [`hardening/inputs-without-a-conversion-were-not-refused.md`](hardening/inputs-without-a-conversion-were-not-refused.md) | 変換の定義が無い入力が、黙って「それらしい」出力になっていた |
+| [`hardening/itk-threshold-ops-returned-the-dark-side.md`](hardening/itk-threshold-ops-returned-the-dark-side.md) | SimpleITK 由来の 3 つのしきい値 op が、兄弟 op の**補集合**を返していた |
+| [`hardening/ledger-evicted-silently-and-studio-help-aborted.md`](hardening/ledger-evicted-silently-and-studio-help-aborted.md) | 台帳が黙って古い事象を捨て、studio の `--help` が abort し、facade に import の道具が漏れていた |
+| [`hardening/ledger-lookups-returned-empty-for-unknown-names.md`](hardening/ledger-lookups-returned-empty-for-unknown-names.md) | 台帳の引き方が未知の名前に黙って空を返し、write_wav の path が台帳でデータ扱いされていた |
+| [`hardening/mcp-facade-layer-listed-classes-as-ops.md`](hardening/mcp-facade-layer-listed-classes-as-ops.md) | MCP カタログの facade 層がクラス 41 個を op として並べていた |
+| [`hardening/moment-invariants-two-families-same-name.md`](hardening/moment-invariants-two-families-same-name.md) | 「モーメント不変量」が 2 つの族にあり、名前だけで選ぶと落ちる |
+| [`hardening/nary-ops-unlisted-and-knobs-unstated.md`](hardening/nary-ops-unlisted-and-knobs-unstated.md) | n-ary op は呼べるのに一覧に無く、つまみ a / b が効くかは文でしか分からず、CLI からは 2 入力の op を呼べなかった |
+| [`hardening/no-gate-knew-what-dimension-a-feature-has.md`](hardening/no-gate-knew-what-dimension-a-feature-has.md) | どの門も「その特徴が何の次元を持つか」を知らなかった |
+| [`hardening/noise-sigma-mad-collapses-on-quantised-data.md`](hardening/noise-sigma-mad-collapses-on-quantised-data.md) | 頑健な雑音推定が整数画像で 0 に潰れ、点目標検出が黙って何も返さなくなっていた |
+| [`hardening/nonfinite-output-was-sanitized-silently.md`](hardening/nonfinite-output-was-sanitized-silently.md) | NaN を含む画像がフィルタを通ると、NaN が黙って消えて有限の画像になっていた |
+| [`hardening/op-find-blind-to-japanese-queries.md`](hardening/op-find-blind-to-japanese-queries.md) | op_find が和文の複数語クエリに構造的に盲目だった |
+| [`hardening/otsu-threshold-at-the-bin-midpoint.md`](hardening/otsu-threshold-at-the-bin-midpoint.md) | 大津のしきい値をビンの**中点**で取るので、背景の山を含むビンの画素が前景に入る |
+| [`hardening/pfm-default-wrote-8-bit-values-into-a-float-format.md`](hardening/pfm-default-wrote-8-bit-values-into-a-float-format.md) | PFM の既定が 8 bit 値を float 形式に書き、壊れた pipeline 設定が「成功」し、無い GPU が生の torch 文で報告されていた |
+| [`hardening/pose-helpers-could-not-take-their-own-matrix.md`](hardening/pose-helpers-could-not-take-their-own-matrix.md) | pose ヘルパが、自分の出力(4×4 同次行列)を受け取れなかった |
+| [`hardening/refract-one-way-reference.md`](hardening/refract-one-way-reference.md) | ベクトル版 refract が、per-ray 版 refract_rays の存在に触れていなかった |
+| [`hardening/run-pipeline-stage-forms-fail-obscurely.md`](hardening/run-pipeline-stage-forms-fail-obscurely.md) | run_pipeline の「外した書き方」が原因の読めない例外になっていた |
+| [`hardening/stage-forms-read-differently-by-four-entry-points.md`](hardening/stage-forms-read-differently-by-four-entry-points.md) | 同じ段を 4 つの入口が別々に読んでいた |
+| [`hardening/strict-mode-only-covered-some-of-the-guards.md`](hardening/strict-mode-only-covered-some-of-the-guards.md) | `strict_mode()` が経路の一部しか厳密にしていなかった(+ 0.2.1 再測定の 4 件) |
+| [`hardening/studio-run-key-ignored-unapplied-edits.md`](hardening/studio-run-key-ignored-unapplied-edits.md) | Studio の実行キーが、Program に書いたばかりの編集を無視して古いパイプラインを走らせていた |
+| [`hardening/table-sort-mixes-rows-and-spec-dicts.md`](hardening/table-sort-mixes-rows-and-spec-dicts.md) | sort `table` が「行のリスト」と「諸元 dict」の両方を指し、消費 op が口ごもって落ちた |
+| [`hardening/unknown-operator-hides-missing-backend.md`](hardening/unknown-operator-hides-missing-backend.md) | 「unknown operator」が backend 不足を隠し、存在しない CLI を案内していた |
+| [`hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md`](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) | `Image` が 0 次元のスカラーになり、入力不足が生の TypeError で、`op_find` の doc が空だった |
 | [`licenses/DEPENDENCY_INVENTORY.md`](licenses/DEPENDENCY_INVENTORY.md) | Dependency licence inventory |
 | [`licenses/THIRD_PARTY_INVENTORY.md`](licenses/THIRD_PARTY_INVENTORY.md) | Third-party material inventory |
 | [`literature/convergent_numerics_light_transport.md`](literature/convergent_numerics_light_transport.md) | 文献層: 収束型数値計算と光輸送(厳選) |
@@ -780,22 +785,22 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`perf/pipeline_routes.md`](perf/pipeline_routes.md) | レシピの GPU 経路(生成物) |
 | [`poc_compendial_particle_microscopy_quality.md`](poc_compendial_particle_microscopy_quality.md) | 顕微鏡粒径 PoC の質の門 |
 | [`view2026/about.md`](view2026/about.md) | Fullseye |
-| [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
-| [`view2026/de/more.md`](view2026/de/more.md) | Zusatzseite: weitere PoCs |
+| [`view2026/de/index.md`](view2026/de/index.md) | ViEW2026-Präsentation — Fullseye |
+| [`view2026/de/more.md`](view2026/de/more.md) | Zusatzseite: weitere PoCs — ViEW2026 |
 | [`view2026/en/about.md`](view2026/en/about.md) | Fullseye |
-| [`view2026/en/index.md`](view2026/en/index.md) | Fullseye — ViEW2026 |
-| [`view2026/en/more.md`](view2026/en/more.md) | Extras: more PoCs |
-| [`view2026/fr/index.md`](view2026/fr/index.md) | Fullseye — ViEW2026 |
-| [`view2026/fr/more.md`](view2026/fr/more.md) | Suppléments : autres PoC |
-| [`view2026/hi/index.md`](view2026/hi/index.md) | Fullseye — ViEW2026 |
-| [`view2026/hi/more.md`](view2026/hi/more.md) | अतिरिक्त पृष्ठ: और PoC |
-| [`view2026/index.md`](view2026/index.md) | Fullseye — ViEW2026 |
-| [`view2026/ko/index.md`](view2026/ko/index.md) | Fullseye — ViEW2026 |
-| [`view2026/ko/more.md`](view2026/ko/more.md) | 덤: 그 밖의 PoC |
-| [`view2026/more.md`](view2026/more.md) | おまけ:そのほかの PoC |
-| [`view2026/tw/index.md`](view2026/tw/index.md) | Fullseye — ViEW2026 |
-| [`view2026/tw/more.md`](view2026/tw/more.md) | 附加頁:其他 PoC |
-| [`view2026/zh/index.md`](view2026/zh/index.md) | Fullseye — ViEW2026 |
-| [`view2026/zh/more.md`](view2026/zh/more.md) | 附加页:其他 PoC |
+| [`view2026/en/index.md`](view2026/en/index.md) | ViEW2026 presentation — Fullseye |
+| [`view2026/en/more.md`](view2026/en/more.md) | Extras: more PoCs — ViEW2026 |
+| [`view2026/fr/index.md`](view2026/fr/index.md) | Présentation ViEW2026 — Fullseye |
+| [`view2026/fr/more.md`](view2026/fr/more.md) | Suppléments : autres PoC — ViEW2026 |
+| [`view2026/hi/index.md`](view2026/hi/index.md) | ViEW2026 प्रस्तुति — Fullseye |
+| [`view2026/hi/more.md`](view2026/hi/more.md) | अतिरिक्त पृष्ठ: और PoC — ViEW2026 |
+| [`view2026/index.md`](view2026/index.md) | ViEW2026 発表 — Fullseye |
+| [`view2026/ko/index.md`](view2026/ko/index.md) | ViEW2026 발표 — Fullseye |
+| [`view2026/ko/more.md`](view2026/ko/more.md) | 덤: 그 밖의 PoC — ViEW2026 |
+| [`view2026/more.md`](view2026/more.md) | おまけ:そのほかの PoC — ViEW2026 |
+| [`view2026/tw/index.md`](view2026/tw/index.md) | ViEW2026 發表 — Fullseye |
+| [`view2026/tw/more.md`](view2026/tw/more.md) | 附加頁:其他 PoC — ViEW2026 |
+| [`view2026/zh/index.md`](view2026/zh/index.md) | ViEW2026 发表 — Fullseye |
+| [`view2026/zh/more.md`](view2026/zh/more.md) | 附加页:其他 PoC — ViEW2026 |
 
 <!-- docmap:end -->

@@ -1,7 +1,14 @@
-<!-- i18n-source-sha: 4d7dab5a96bd -->
+---
+title: "시작하기 (5분 만에 실행하기)"
+description: "Fullseye를 설치하고5분 안에 첫 연산자를 실행하는 방법을 설명합니다."
+lang: ko
+---
+<!-- i18n-source-sha: e8f52b68c5e9 -->
 # 시작하기 (5분 만에 실행하기)
 
+<!-- i18n-switcher -->
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · **한국어** · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
+
 
 ## 어느 것이 내 업무에 맞는가(3개의 진입점)
 
@@ -22,8 +29,8 @@ Fullseye는 범위가 넓어서, 맨 처음 "무엇을 먼저 열어볼지"를 �
 ---
 
 이 문서는 Fullseye(작업명 imgevolve)를 최단 경로로 실행하기 위한 가이드입니다. **설치 → 첫 파이프라인 만들기 → 실행 → 결과 확인**의
-순서로, 막히지 않는 동선을 따라 진행합니다. 더 상세한 환경 구축은 [INSTALL.md](INSTALL.md), Studio의 전체 기능은
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md), 코드에서의 실행은 [ENGINE.md](ENGINE.md)를 참조하세요.
+순서로, 막히지 않는 동선을 따라 진행합니다. 더 상세한 환경 구축은 [INSTALL.md](INSTALL.ko.md), Studio의 전체 기능은
+[STUDIO_GUIDE.md](STUDIO_GUIDE.ko.md), 코드에서의 실행은 [ENGINE.md](ENGINE.ko.md)를 참조하세요.
 
 Fullseye는 **numpy 배열을 입력·출력으로 하는 이미지 처리 연산자 라이브러리**이며, 그 위에 **HDevelop풍의 시각적
 파이프라인 설계 환경(Fullseye Studio)**과 **실행 런타임(FullseyeEngine)**이 얹혀 있습니다. HALCON/HDevelop 식으로 말하면
@@ -37,8 +44,8 @@ Fullseye는 **numpy 배열을 입력·출력으로 하는 이미지 처리 연�
 전제 조건: **Python 3.11**(Windows는 `py -3.11`, Linux는 `python3.11`).
 
 ```powershell
-cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # Python API + Studio + Pillow; 무거운 backend는 필요할 때만 extra로 추가
+py -3.11 -m pip install fullseye
+fullseye --version
 ```
 
 코어 API는 **numpy와 scipy**로 동작하며, 표준 `pip install fullseye`는 Studio용 PySide6-Essentials와 이미지 I/O용
@@ -46,12 +53,19 @@ Pillow도 설치합니다. OpenCV / scikit-image 같은 무거운 추가 백엔�
 연산자만 비활성화됩니다(우아한 저하, graceful degradation).
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # OpenCV 전용 이미지 API와 cv_* 연산자
-py -3.11 -m pip install -e ".[all]"       # 모든 추가 백엔드
+py -3.11 -m pip install "fullseye[opencv]" # OpenCV 전용 이미지 API와 cv_* 연산자
 fullseye-studio                            # 표준 설치 뒤 Studio를 바로 시작
 ```
 
-extras 목록과 의미는 [INSTALL.md](INSTALL.md)에 정리되어 있습니다. `gui`와 `pil`은 기존 설치 명령을 위한 빈 호환 별칭입니다.
+extras 목록과 의미는 [INSTALL.md](INSTALL.ko.md)에 정리되어 있습니다. `gui`와 `pil`은 기존 설치 명령을 위한 빈 호환 별칭입니다.
+
+Fullseye를 개발할 때는 저장소를clone하고editable install을 사용합니다.
+
+```powershell
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 -m pip install -e .
+```
 
 > 설치하지 않고 시험해 볼 수도 있습니다. 저장소 최상위 디렉터리(`<path-to-fullseye>`)를 작업 디렉터리로 하고, 환경 변수
 > `PYTHONPATH`에 그 경로를 등록하면 `import fullseye`는 동작합니다. 다만 `fullseye` / `fullseye-studio`라는 명령(콘솔
@@ -69,7 +83,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image(그래디언트 강도)
 seg   = fullseye.apply(frame, "otsu")          # image → region(0/1 이진)
 n     = fullseye.apply(seg,   "count_obj")     # region → feature(객체 수 = Python float)
-print(n)                                       # 예: 316.0
+print(n)                                       # 예: 25.0
 ```
 
 > **인자 순서는 `apply(image, name, a, b)`** — 첫 번째 인자가 배열, 두 번째 인자가 연산자 이름입니다. 반대로
@@ -99,10 +113,10 @@ print(n)                                       # 예: 316.0
 어떤 연산자가 있는지는 다음으로 찾을 수 있습니다.
 
 ```python
-fullseye.op_names()                 # 전체 레지스트리 연산자 이름(860개, 2026-09-03 기준)
+fullseye.op_names()                 # 전체 레지스트리 연산자 이름
 fullseye.list_ops(search="edge")    # 이름 / HALCON 이름 / 카테고리로 부분 일치 검색
 fullseye.list_ops(sort="region")    # 입력 sort로 필터링
-fullseye.categories()               # 47개 카테고리
+fullseye.categories()               # 카테고리 목록
 ```
 
 ---
@@ -120,7 +134,7 @@ out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
 이것은 "smooth(평활화) → 에지 강도 → Otsu 이진화"로, 이미지에서 이진 에지 맵을 만드는 전형적인 예입니다.
-바로 쓸 수 있는 조합(레시피)이 **20개** 동봉되어 있습니다.
+동봉된 레시피 목록은 `recipes.names()`로 확인할 수 있습니다.
 
 ```python
 import recipes
@@ -161,8 +175,8 @@ py -3.11 studio.py          # 또는 설치되어 있다면: fullseye-studio
   뷰어(Ctrl+4)는 우클릭으로 Reset view / 1인칭(원근) 전환 / Wireframe / Save screenshot을 할 수 있습니다.
 
 조립한 파이프라인은 **Export(Ctrl+E)**로 `--ops` 문자열이나 Python 코드로 내보낼 수 있고, **Save pipeline
-(Ctrl+Shift+S)**로 JSON으로 저장할 수 있습니다. 전체 기능과 단축키는 [STUDIO_GUIDE.md](STUDIO_GUIDE.md)를, 앱
-내에서는 **F1**로 목록이 나옵니다.
+(Ctrl+Shift+S)**로 JSON으로 저장할 수 있습니다. 전체 기능과 단축키는 [STUDIO_GUIDE.md](STUDIO_GUIDE.ko.md)를 참고하세요. 앱
+내에서는 **Ctrl+F1**로 단축키 목록을 열고, **F1**로 선택한 op의 도움말을 엽니다.
 
 ---
 
@@ -185,7 +199,7 @@ py -3.11 imgevolve.py run edge.json in.png --stepwise --out step.png
 py -3.11 imgevolve.py run "gaussian,sobel_amp,otsu" --to-python
 ```
 
-코드에서 실행할 때는 `FullseyeEngine`을 사용합니다(자세한 내용은 [ENGINE.md](ENGINE.md)).
+코드에서 실행할 때는 `FullseyeEngine`을 사용합니다(자세한 내용은 [ENGINE.md](ENGINE.ko.md)).
 
 ```python
 import fullseye
@@ -223,11 +237,11 @@ py -3.11 imgevolve.py pipeline in.png out.png --ops "gaussian,sobel_amp,otsu"
 | `apply` / `pipeline`에서 `cannot read ...` | 표준 Pillow 의존성 또는 이미지가 손상됨. Fullseye 재설치 후 이미지를 확인 |
 | 추가 백엔드의 연산자가 "unknown"으로 표시됨 | 해당 백엔드가 미설치. `.[skimage]` `.[wavelets]` `.[extra]` 등을 추가 |
 
-더 상세한 문제 해결은 [INSTALL.md](INSTALL.md)를 참조하세요.
+더 상세한 문제 해결은 [INSTALL.md](INSTALL.ko.md)를 참조하세요.
 
 ## 다음으로 읽을 것
 
-- **[INSTALL.md](INSTALL.md)** — 환경 구축 완전 가이드(extras 사용 구분, Windows/Linux 설치 도구, 최소 구성·임베딩)
-- **[STUDIO_GUIDE.md](STUDIO_GUIDE.md)** — Fullseye Studio 완전 가이드
-- **[ENGINE.md](ENGINE.md)** — FullseyeEngine(설계 → 실행) 가이드
-- **[README.md](README.md)** — 문서 색인
+- **[INSTALL.md](INSTALL.ko.md)** — 환경 구축 완전 가이드(extras 사용 구분, Windows/Linux 설치 도구, 최소 구성·임베딩)
+- **[STUDIO_GUIDE.md](STUDIO_GUIDE.ko.md)** — Fullseye Studio 완전 가이드
+- **[ENGINE.md](ENGINE.ko.md)** — FullseyeEngine(설계 → 실행) 가이드
+- **[README.md](README.ko.md)** — 문서 색인

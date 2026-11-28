@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 6946b0bc470f -->
 # Using Fullseye as an AI assistant's RAG (for Claude Code)
 
+<!-- i18n-switcher -->
 [日本語](./AI_RAG_GUIDE.md) · **English** · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
+
 
 The recommended way to run Fullseye is **as the knowledge base (RAG) of an AI coding
 assistant**. Because every op carries a machine-readable Markdown note (`docs/ops`, a single
@@ -141,3 +143,13 @@ Optical metrology and inspection reliability (POD, laser speckle, shape from pol
 4. **End to end through to display**: open Studio (`py -3.11 studio.py`) and a human can inspect what
    the AI assembled as image windows and 3-D views on the same screen (scripts can place multiple
    windows via `dev_open_window`, etc.).
+
+## How to use the op graph
+
+When the input and output types are known, start with `plan(have, want, goal, direction=...)`.
+By default it plans a DAG using only edges executable from an MCP pipeline. Use the Python API's
+`constraints={"executable_only": false}` only when investigating research ops that exist solely in
+the ledger; this option is intentionally absent from the MCP schema for AI assistants. `describe`
+returns one item rather than an unbounded list of every type. `choose` does not rank candidates
+without comparable measurements. Knob ranges come from measurements in `docs/op_knob.json` and
+the input context, and knobs that had no effect are excluded from exploration.

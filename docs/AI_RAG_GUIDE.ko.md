@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 6946b0bc470f -->
 # Fullseye를 AI 어시스턴트의 RAG로 사용하는 방법(Claude Code용)
 
+<!-- i18n-switcher -->
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · **한국어** · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
+
 
 Fullseye의 권장 운용 방식은 "**AI 코딩 어시스턴트의 지식 베이스(RAG)로 사용**"하는 것입니다. 모든 op가 기계가 읽을 수 있는 Markdown 노트(`docs/ops`, 단일 진실 원천)를 가지고 있으므로, 추가적인 벡터 DB나 임베딩 서비스는 **필요하지 않습니다**. grep이 가능한 환경이라면 그 자체가 곧 RAG가 됩니다.
 
@@ -105,3 +107,12 @@ op 노트(타입 계약·실행 가능한 예)→ 구현」. 초록은 옮기지
 2. **타입(sort) 계약**: 각 노트는 `in:`/`out:`과 "타입이 이어지는 관련 op"를 가지고 있어, AI가 **타입을 검사하면서** 파이프라인을 구성할 수 있습니다.
 3. **검증 가능**: 모든 op에는 ground truth가 포함된 worked example(`examples/` / `examples_3d/`)이 있어, AI가 스스로 자신의 제안을 실행해 확인할 수 있습니다.
 4. **표시까지 일관되게 이어짐**: Studio(`py -3.11 studio.py`)를 열면, AI가 구성한 결과를 이미지 창·3D 표시로 사람이 같은 화면에서 검사할 수 있습니다(`dev_open_window` 등을 통해 스크립트에서 여러 창을 배치할 수도 있습니다).
+
+## op 그래프 사용 절차
+
+입출력 타입을 알고 있다면 먼저 `plan(have, want, goal, direction=...)`을 사용합니다. 기본적으로
+MCP 파이프라인에서 실행할 수 있는 간선만 사용해 DAG를 계획합니다. 원장에만 있는 연구용 op를
+조사할 때에만 Python API의 `constraints={"executable_only": false}`를 사용합니다. 이 옵션은
+AI용 MCP schema에는 노출하지 않습니다. `describe`는 모든 타입을 제한 없이 나열하지 않고 한 항목만
+반환합니다. `choose`는 비교 가능한 실측값이 없는 후보의 순위를 매기지 않습니다. 노브 범위는
+`docs/op_knob.json`의 실측값과 입력 맥락을 따르며, 효과가 없었던 노브는 탐색에서 제외합니다.

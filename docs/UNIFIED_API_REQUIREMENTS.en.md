@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 9fa4a77c68d2 -->
 # Fullseye Unified Interface — Requirements Specification (v0.1, 2026-08-18)
 
+<!-- i18n-switcher -->
 [日本語](./UNIFIED_API_REQUIREMENTS.md) · **English**
+
 
 > Requirements specification based on the direction from 2026-08-17–18. Canonical policy = raptor memory
 > `project_fullseye_mission_unified_vision_2026_08_18`, gap analysis = `EVIS_VISION_OSS_GAP.md`.

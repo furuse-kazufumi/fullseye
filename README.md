@@ -200,7 +200,7 @@ If Windows startup behaves unexpectedly, run **`fullseye doctor`** for checked c
 PyPI: <https://pypi.org/project/fullseye/> · Source / issues / operator corpus:
 GitHub (linked from the PyPI sidebar). After installing, `fullseye-rag` sets up the
 Claude Code RAG skill; `py -3.11 tools/update_fullseye.py` updates a checkout without
-touching your environment (see `docs/AI_RAG_GUIDE.md`). The [portable-wheel audit](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/INSTALLATION.md)
+touching your environment (see `docs/AI_RAG_GUIDE.en.md`). The [portable-wheel audit](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/INSTALLATION.md)
 lists the standard dependencies, the packages that remain opt-in, and the exact
 OS/Python wheel criterion. GPU, specialised renderers, hand-pose models, and packages
 without a wheel for every supported target remain opt-in.
@@ -342,7 +342,7 @@ fingerprint) — a single source of truth that generates the Studio help pages a
 doubles as a **retrieval (RAG) corpus for AI coding assistants**: an agent such as
 Claude Code can look up operators by contract, chain them by sort, and inspect every
 intermediate result. One command installs the bundled Claude Code skill and pins the
-corpus path (`py -3.11 tools/setup_claude_rag.py` — see `docs/AI_RAG_GUIDE.md`).
+corpus path (`py -3.11 tools/setup_claude_rag.py` — see `docs/AI_RAG_GUIDE.en.md`).
 Coverage against HALCON's 2313 operators is measured, not asserted
 (`py -3.11 imgevolve.py coverage`).
 
@@ -472,12 +472,12 @@ Everything below lives in the repo — start at the guide that matches what you 
 | You want to… | Read |
 |---|---|
 | **Read the whole story end to end (long-form)** | [`docs/articles/fullseye_overview_qiita_en.md`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md) |
-| See what the operators produce (result gallery) | `docs/GALLERY.md` |
+| See what the operators produce (result gallery) | `docs/GALLERY.en.md` |
 | Browse the paper exhibits (op demos and the PoC museum, en/ja; accession numbers in `exhibit_numbers.json`) | `docs/articles/exhibits/` |
-| Look up any of the 3,853 operators in the machine-readable index | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Look up any of the 3,853 operators in the machine-readable index | `docs/ops/INDEX.en.md` (full TOC) · `docs/OP_CATALOG.en.md` (one-page catalog) |
 | Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
-| Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
-| Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |
+| Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.en.md` (+ `fullseye-rag`) |
+| Drive the Studio IDE | `docs/STUDIO_GUIDE.en.md` · `docs/HDEVELOP_DEV_OPS.en.md` (dev_* window ops) |
 | Add an operator | `docs/ADDING_OPS.md` · `CONTRIBUTING.md` |
 | Read the Studio and its operator help in your language | Studio ▸ Tools ▸ Language — **日本語 / English / 简体中文 / 繁體中文 / 한국어 / Deutsch** |
 | Understand the language policy and what is *not* translated | `docs/I18N.md` |
@@ -485,7 +485,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | **See what is actually verified (and how)** | `docs/MATURITY.md` + `docs/maturity.json` (generated, not written) |
 | **Report results from real hardware or real data** (data may stay private) | `docs/VALIDATION_CONTRIBUTING.en.md` · [issue form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) |
 | **Report a security vulnerability** (privately) · SBOM | [SECURITY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/SECURITY.md) · [`docs/sbom/fullseye.cdx.json`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/sbom/fullseye.cdx.json) |
-| **Read why it is built this way** | `docs/DESIGN_NOTES.md` — the load-bearing `★` comments collected from the source (generated; the count is `total` in `docs/design_notes.json`), in 6 languages (translated as we go; untranslated entries are shown as such) |
+| **Read why it is built this way** | `docs/DESIGN_NOTES.en.md` — the load-bearing `★` comments collected from the source (generated; the count is `total` in `docs/design_notes.json`), in 6 languages (translated as we go; untranslated entries are shown as such) |
 | Cite Fullseye | `CITATION.cff` |
 
 ## Design principles
@@ -513,32 +513,6 @@ Everything below lives in the repo — start at the guide that matches what you 
   templates rendered from the font, not a neural network.
 - Some HALCON names are only **partial** analogues and are not counted as covered — see the
   "Partial analogues" table in [docs/HALCON_COVERAGE.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/HALCON_COVERAGE.md).
-
-## ViEW2026 入口メディアの検証(2026-11-01)
-
-### `poc_interferometry_step` — `09_csi_scan_explained`
-
-| 門 | 判定 |
-|---|---|
-| 解像度・コマ数・fps | 実測: 1280×720、48 コマ、12 fps |
-| 文字のはみ出し | 描画前に全ラベルを `measure_text` で測定。はみ出し 0、最小 22 px |
-| データ面の最近傍拡大 | なし。512→560、512→300/260 は双一次補間 |
-| 画面の数字 = 実行の数字 | assert: 傾斜補正後の段差 0.661020 µm、真値 0.650000 µm、差 +11.020 nm |
-| 追加の門 | assert: 差は 20 nm 以内。最終コマは有限な高さ 241,172 画素を全数着色 |
-| 決定性 | 2 回描画した MP4/GIF の SHA-256 がそれぞれ一致 |
-| `regen_all.py --check` | 緑 |
-
-### `poc_polarization_specular` — `08_analyzer_sweep_explained`
-
-| 門 | 判定 |
-|---|---|
-| 解像度・コマ数・fps | 実測: 1280×720、72 コマ、12 fps |
-| 文字のはみ出し | 描画前に全ラベルを `measure_text` で測定。はみ出し 0、最小 22 px |
-| データ面の最近傍拡大 | 1024→560 と 512→300/230 は双一次。DoFP の 24×24 crop だけ「拡大 12×」と明記して整数最近傍 |
-| 画面の数字 = 実行の数字 | 同じ `r` から DoLP A/B/C = 0.900024 / 0.155788 / 0.000314 を取得 |
-| 追加の門 | assert: 最大/最小比 A/B/C = 23.9563 / 1.35288 / 1.00000。A ≥ 5、C ≤ 1.1 |
-| 決定性 | 2 回描画した MP4/GIF の SHA-256 がそれぞれ一致 |
-| `regen_all.py --check` | 緑 |
 
 ## License
 

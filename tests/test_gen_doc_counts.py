@@ -27,7 +27,8 @@ def test_replacement_is_narrow_and_requires_exactly_one_match(tmp_path):
 
 def test_generate_repairs_stale_counts_and_is_idempotent(tmp_path, monkeypatch):
     (tmp_path / "README.md").write_text(
-        "intro **939** registry\n---\ngenerated **939** stays owned elsewhere\n", encoding="utf-8")
+        "---\ntitle: docs\nlang: ja\n---\nintro **939** registry\n---\n"
+        "generated **939** stays owned elsewhere\n", encoding="utf-8")
     (tmp_path / "AI_RAG_GUIDE.md").write_text("ノート **3,496 枚**\n", encoding="utf-8")
     (tmp_path / "AI_RAG_GUIDE.en.md").write_text("**3,496 notes**\n", encoding="utf-8")
     (tmp_path / "AI_RAG_GUIDE.de.md").write_text("**3.496 Notizen**\n", encoding="utf-8")
@@ -43,7 +44,10 @@ def test_generate_repairs_stale_counts_and_is_idempotent(tmp_path, monkeypatch):
     twice = {p.name: p.read_text(encoding="utf-8") for p in tmp_path.glob("*.md")}
 
     assert once == twice
-    assert once["README.md"] == "intro **940** registry\n---\ngenerated **939** stays owned elsewhere\n"
+    assert once["README.md"] == (
+        "---\ntitle: docs\nlang: ja\n---\nintro **940** registry\n---\n"
+        "generated **939** stays owned elsewhere\n"
+    )
     assert "3,535 枚" in once["AI_RAG_GUIDE.md"]
     assert "3,535 notes" in once["AI_RAG_GUIDE.en.md"]
     assert "3.535 Notizen" in once["AI_RAG_GUIDE.de.md"]

@@ -1,3 +1,10 @@
+---
+title: "Zusatzseite: weitere PoCs — ViEW2026"
+description: "Diese Seite enthält auch Beispiele, die weniger ausgearbeitet sind als die Exponate der Hauptseite. Die Zahlen jedes Exponats stammen aus dem Ausführungsprotokoll seines PoC."
+lang: de
+image: /view2026/thumbs/fullseye_intro.jpg
+---
+
 <div class="vlang" markdown="1">
 
 [日本語](../more.md) · [English](../en/more.md) · [简体中文](../zh/more.md) · [繁體中文](../tw/more.md) · [한국어](../ko/more.md) · **Deutsch** · [हिन्दी](../hi/more.md) · [Français](../fr/more.md)

@@ -45,6 +45,14 @@ from conftest import requires_full_registry
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = sorted((ROOT / "docs").glob("README*.md"))
 
+
+def _intro(text: str) -> str:
+    """Jekyll front matterを除き、生成索引より前の導入部を返す。
+    Return the introduction before the generated index, excluding front matter.
+    """
+    text = re.sub(r"\A---\n.*?\n---\n", "", text, count=1, flags=re.DOTALL)
+    return text.split("\n---\n", 1)[0]
+
 #: 索引に書いてある数 → いまの値を返す呼び出し。ここが「一次情報」。
 def _registry_ops() -> int:
     import ops
@@ -79,7 +87,7 @@ def test_the_index_operator_count_is_current(path):
     requires_full_registry()
     n = _registry_ops()
     md = path.read_text(encoding="utf-8")
-    head = md.split("\n---\n", 1)[0]
+    head = _intro(md)
     assert "**%d**" % n in head, (
         "%s の op 数が古い(いまは %d)。索引の冒頭を直すこと —— "
         "6 言語すべて同じ数字にする。" % (path.name, n))
@@ -90,7 +98,7 @@ def test_the_index_category_count_is_current(path):
     requires_full_registry()
     n = _registry_categories()
     md = path.read_text(encoding="utf-8")
-    assert re.search(r"(?<![0-9])%d(?![0-9])" % n, md.split("\n---\n", 1)[0]), (
+    assert re.search(r"(?<![0-9])%d(?![0-9])" % n, _intro(md)), (
         "%s のカテゴリ数が古い(いまは %d)" % (path.name, n))
 
 
@@ -111,7 +119,7 @@ def test_every_language_carries_the_same_numbers():
     """片方の言語だけ直す事故を止める(前回は 6 言語まとめて古かった)。"""
     seen = {}
     for p in INDEX:
-        head = p.read_text(encoding="utf-8").split("\n---\n", 1)[0]
+        head = _intro(p.read_text(encoding="utf-8"))
         seen[p.name] = sorted(set(re.findall(r"\*\*([\d,./]+)\*\*", head)))
     ref = seen["README.md"]
     bad = {k: v for k, v in seen.items() if v != ref}

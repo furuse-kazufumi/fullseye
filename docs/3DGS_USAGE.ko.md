@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 37bc63784e56 -->
 # Fullseye 3DGS — 사용법(명령어 한 줄)
 
+<!-- i18n-switcher -->
 [日本語](./3DGS_USAGE.md) · [English](./3DGS_USAGE.en.md) · [简体中文](./3DGS_USAGE.zh.md) · [繁體中文](./3DGS_USAGE.tw.md) · **한국어** · [Deutsch](./3DGS_USAGE.de.md)
+
 
 MuJoCo의 시뮬레이션 장면을 **3D Gaussian Splatting**으로 만들어, 전방위로 돌려볼 수 있는 GIF와 새로운 시점 이미지를 생성합니다. 카메라 자세는 시뮬레이션의 실제 값(ground truth)을 사용하므로 **COLMAP이 필요 없습니다**.
 

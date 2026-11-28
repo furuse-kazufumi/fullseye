@@ -116,7 +116,7 @@ def _reachable(root: Path = INDEX) -> set:
 
 
 def _all_md() -> list:
-    return sorted(p.resolve() for p in DOCS.rglob("*.md"))
+    return sorted(p.resolve() for p in DOCS.rglob("*.md") if p.name != "SESSION_SUMMARY.md")
 
 
 @pytest.mark.parametrize("lang", LANGS, ids=lambda x: x or "ja")

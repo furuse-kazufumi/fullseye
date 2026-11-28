@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 54e2143f95c2 -->
 # Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains
 
+<!-- i18n-switcher -->
 [日本語](./CHAIN_FUZZ.md) · **English**
+
 
 `tools/chain_fuzz.py`. The third layer, following unit tests and adversarial validation. The defects it targets are
 **"the ones that pass everything in isolation but surface only when ops are wired into a chain."**
@@ -94,6 +96,7 @@ after separation, 58/58 (100%)**. For the same reason, the pool's type selection
 | Wave 3 | — | 22 type lies; promoted `RESULT_ADAPTERS`+`call()` to a first-class feature |
 | wave-4 | 103 | TYPEMISS on 7 ops, 9 kinds of SUSPECT, a 6th family "small input → huge internal allocation" (TPS 12GB / PSF 64GB / CPD) |
 | wave-5 | 4 | silent NaN from float32 overflow, `sdf_smooth_union`'s inf→NaN, 2 lineages of entry-point contract holes |
+| wave-6 | **non-CONTRACT 0** | converged (only 63 WHITE signatures remained) |
 | math addition | 2 | detected the type lies of `mat_svd`/`mat_eigh` immediately on the first run |
 | wave-7 | 172 (NONFINITE 2) | made argument-selection randomness position-independent = **the exploration path changed and produced new findings**. `poly_eval`'s silent inf from float64 overflow, `chamfer_distance`'s silent NaN from an empty point cloud (→ swept the 5 siblings in metrics3d) |
 | optics addition | 18 (all CONTRACT) | registered 18 optics ops (`opsoptics`, new vocabularies `jones`/`stokes`). **Non-CONTRACT 0** — the bugs had all been caught, 6 of them, in the pre-registration adversarial audit (a string passing as a length / MTF's silent NaN / determinant's silent inf / cancellation in high-order Zernike bases / a 108GB internal allocation / an unreported quadrature error). For ops with fixed matrix shapes — `abcd_trace`/`jones_apply`/`mueller_apply` — uniform selection never once traverses the real path (measured: 0 times in 800 chains), so `OP_ARG_BUILDERS` synthesizes valid matrices for half of them |

@@ -1,3 +1,10 @@
+---
+title: "ViEW2026 발표 — Fullseye"
+description: "ViEW2026에서 발표하는Fullseye의 영상 검사·3차원 계측·물리 시뮬레이션 사례를 소개합니다."
+lang: ko
+image: /view2026/thumbs/fullseye_intro.jpg
+---
+
 <div class="vlang" markdown="1">
 
 [日本語](../index.md) · [English](../en/index.md) · [简体中文](../zh/index.md) · [繁體中文](../tw/index.md) · **한국어** · [Deutsch](../de/index.md) · [हिन्दी](../hi/index.md) · [Français](../fr/index.md)

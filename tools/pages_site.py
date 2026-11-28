@@ -36,7 +36,8 @@ repo からは消さない(Qiita が読む)。配備物からだけ外す。
           足したときから)のうちサイト内を指すものが全部実在し、ルート相対の参照が ``/fullseye/`` で
           始まるページが 0(baseurl が repo 名に倒れた印)。サイト内の stylesheet が 0 本のサイトも落とす
           (空を通さない)。アイコンには床を置かない(本数と見本のページの href を要約に出す)。
-    報告だけ: assets 以外で解決できない内部リンク(元からある切れたリンク)の件数と一覧。
+    門 6: assets 以外で解決できない内部リンクが、2026-11-27 の応急修正後の実測 6,554 件以下。
+          残件は生成器を直す 1.2.2 の作業まで許すが、1 本でも増えれば落とす。
 
 対象外(読まない): JS が文字列を組み立てて作る URL、fetch した JSON の中身から作る URL。prune は json・js の
 字句を緩く拾うので多くは残るが、check はそれを検めない(2026-11-11 の調査では view2026 に無かった)。
@@ -70,6 +71,10 @@ ASSETS_PREFIX = "articles/assets/"
 #: 門 2 で足す、配備の tar の 1 ファイルあたりの見出しの見積もり(ustar の 512 B の見出し + 末尾の詰め物
 #: の平均 512 B)。GitHub の 1 GB の上限は tar の大きさに掛かるので、中身の合計だけでは甘い。
 TAR_HEADER_BYTES = 1024
+
+#: 2026-11-27 の Pages 成果物で 6,582 件を実測し、GALLERY 2ページの28件を絶対URLへ直した後の上限。
+#: Measured ratchet after replacing the 28 broken GALLERY image references.
+MAX_BROKEN_INTERNAL_LINKS = 6554
 
 #: 緩い読み方で読むテキストの拡張子。
 TEXT_EXT = (".html", ".htm", ".css", ".js", ".mjs", ".cjs", ".json", ".jsonl", ".svg", ".xml",
@@ -788,6 +793,7 @@ def run_check(site: str, source_docs: str, max_bytes: int, min_pages: int, min_k
     gates["gate4_page_wiring"] = wiring.pop("ok")
     broken_assets = [b for b in broken if b["target"].startswith(ASSETS_PREFIX)]
     gates["gate5_no_broken_asset_links"] = not broken_assets
+    gates["gate6_internal_link_ratchet"] = len(broken) <= MAX_BROKEN_INTERNAL_LINKS
     return {
         **wiring,
         "site": os.path.abspath(site),
@@ -859,8 +865,8 @@ def check_summary(rep: dict) -> str:
         f"- 門 5 repo にも無い assets への参照が 0 件: {mark[g['gate5_no_broken_asset_links']]}"
         f"({rep['broken_asset_links_count']:,} 件"
         + "".join(f"、`{b['page']}` → `{b['url']}`" for b in rep["broken_asset_links"][:3]) + ")",
-        f"- 報告だけ: 解決できない内部リンク(assets 以外) "
-        f"{rep['broken_internal_links_count'] - rep['broken_asset_links_count']:,} 件",
+        f"- 門 6 解決できない内部リンク {rep['broken_internal_links_count']:,} 件 ≤ "
+        f"{MAX_BROKEN_INTERNAL_LINKS:,} 件: {mark[g['gate6_internal_link_ratchet']]}",
         f"- 報告だけ: repo にあるが組んだ直後のサイトにも無い assets への参照(Jekyll が配信しない名前)"
         f" {rep['not_built_assets_count']:,} 件",
         f"- 所要 {rep['seconds']:.1f} 秒",

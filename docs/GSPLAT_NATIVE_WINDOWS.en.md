@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 53e725af1ba9 -->
 # Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure
 
+<!-- i18n-switcher -->
 [日本語](./GSPLAT_NATIVE_WINDOWS.md) · **English**
+
 
 On 2026-08-19, native gsplat was built successfully on an RTX 5090 (1532 rasterizations/s). This note records the key points and the fixes for the sticking points.
 

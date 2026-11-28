@@ -1,7 +1,9 @@
 <!-- i18n-source-sha: 8d925234d62d -->
 # FullseyeEngine — Laufzeitumgebung zur Ausführung entworfener Pipelines
 
+<!-- i18n-switcher -->
 [日本語](./ENGINE.md) · [English](./ENGINE.en.md) · [简体中文](./ENGINE.zh.md) · [繁體中文](./ENGINE.tw.md) · [한국어](./ENGINE.ko.md) · **Deutsch**
+
 
 `FullseyeEngine` (`engine.py`) ist eine Laufzeitumgebung, mit der eine in Fullseye Studio **erstellte** Bildoperator-Pipeline aus eigenem Code oder über die CLI **ausgeführt** wird. Sie entspricht der **HDevEngine** von MVTec — der Ablauf wird mit einem visuellen Werkzeug entworfen und anschließend unverändert aus der Anwendung heraus aufgerufen; das ist die zweite Hälfte dieses zweistufigen Modells.
 
@@ -200,6 +202,6 @@ Der Wahrnehmungs-Stack (stereo / terrain / flow / detect / registration / pose) 
 
 ## Verwandte Dokumente
 
-- [STUDIO_GUIDE.md](STUDIO_GUIDE.md) — Pipeline erstellen und als JSON exportieren
-- [GETTING_STARTED.md](GETTING_STARTED.md) — In 5 Minuten loslegen
-- [INSTALL.md](INSTALL.md) — Umgebung einrichten (inklusive Embedded und Minimalkonfiguration)
+- [STUDIO_GUIDE.md](STUDIO_GUIDE.de.md) — Pipeline erstellen und als JSON exportieren
+- [GETTING_STARTED.md](GETTING_STARTED.de.md) — In 5 Minuten loslegen
+- [INSTALL.md](INSTALL.de.md) — Umgebung einrichten (inklusive Embedded und Minimalkonfiguration)

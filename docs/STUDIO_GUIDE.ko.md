@@ -1,11 +1,18 @@
-<!-- i18n-source-sha: 1e1e22bcd08c -->
+---
+title: "Fullseye Studio 완전 가이드"
+description: "Fullseye Studio 기능과 키보드 조작을 설명하는 안내서입니다."
+lang: ko
+---
+<!-- i18n-source-sha: ff004dd0e885 -->
 # Fullseye Studio 완전 가이드
+
+<!-- i18n-switcher -->
+[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · **한국어** · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 무거운 처리는 창을 멈추지 않고 실행됩니다. 아래 영역에는 현재 단계와 진행률이 표시되며, 중지 요청은 다음 단계 경계에서 확인됩니다. 실행 중 설정이 바뀌면 표시 결과의 세대를 밝히고, 이전 설정의 완료 결과를 보거나 현재 설정으로 다시 실행할 수 있습니다.
 
 처리 목적을 검색하면 후보가 현재 입력에 적용 가능, 전처리 필요, 기타의 세 그룹으로 나뉩니다. 단계를 추가하지 않고 후보를 한 번 실행해 볼 수 있습니다. 실행에 실패하면 Problems 창에 원인, 위치, 다음 작업이 표시되며 입력 재선택, 나란히 비교, 상세 로그 열기, 매개변수 편집, 제안 단계 검색으로 이동할 수 있습니다.
 
-[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · **한국어** · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 **Fullseye Studio**는 HDevelop풍의 시각적 파이프라인 워크벤치입니다. 연산자를 검색해 배치하고, 2개의 다이얼을 슬라이더로 돌리고, 중간 결과를 확대/축소·패닝하며 한 단계씩 실행하고, 완성된 파이프라인을 `--ops` 문자열 / Python / JSON으로 내보낼 수 있습니다. 실체는 `fullseye` API의 얇은 GUI 프런트엔드이며, 파이프라인 로직(`PipelineModel`)·Inspector(`inspect_result`)·샘플 모음(`recipes`)은 모두 Qt에 의존하지 않고 개별적으로 단위 테스트되어 있습니다.
 
@@ -331,7 +338,7 @@ Studio에서 구성한 파이프라인은 3가지 형태로 가지고 나갈 수
 | Python 함수 | Export(Ctrl+E) | 자신의 코드에 `fullseye.run_pipeline(...)`로 내장 |
 | JSON | Save pipeline(Ctrl+Shift+S) | `FullseyeEngine.load(...)` / `imgevolve.py run pipeline.json`으로 실행 |
 
-**설계는 Studio에서, 실행은 코드/CLI에서**라는 HDevelop→HDevEngine에 해당하는 흐름은 JSON을 매개로 이루어집니다. JSON을 받아 실행하는 쪽은 [ENGINE.md](ENGINE.md)를 참조하세요.
+**설계는 Studio에서, 실행은 코드/CLI에서**라는 HDevelop→HDevEngine에 해당하는 흐름은 JSON을 매개로 이루어집니다. JSON을 받아 실행하는 쪽은 [ENGINE.md](ENGINE.ko.md)를 참조하세요.
 
 ---
 
@@ -339,6 +346,6 @@ Studio에서 구성한 파이프라인은 3가지 형태로 가지고 나갈 수
 
 - [STUDIO_UX.md](STUDIO_UX.md) — 디자인 시스템·UX 개선의 의도와 배경(디자인 관점)
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — 지각 패널의 내용(flow / stereo / terrain)
-- [ENGINE.md](ENGINE.md) — 내보낸 파이프라인 실행하기
-- [GETTING_STARTED.md](GETTING_STARTED.md) — 5분 만에 시작하기
+- [ENGINE.md](ENGINE.ko.md) — 내보낸 파이프라인 실행하기
+- [GETTING_STARTED.md](GETTING_STARTED.ko.md) — 5분 만에 시작하기
 - **내보낸 Python 검증(Run ▸ Verify exported Python / Ctrl+Shift+R)**: 편집 가능한 내보내기 코드를 격리된 Python 프로세스에서 실행하고 모든 중간 단계를 GUI 결과와 비교합니다. 절대·상대 허용 오차와 NaN을 같은 위치로 제한할지, 무시할지, 금지할지를 선택할 수 있습니다. shape와 dtype은 항상 같아야 합니다. 불일치는 Problems에 추가되어 처음 다른 단계로 이동할 수 있으며 Studio는 값을 바꾸지 않고 보고만 합니다.

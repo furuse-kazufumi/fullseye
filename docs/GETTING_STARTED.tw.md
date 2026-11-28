@@ -1,7 +1,14 @@
-<!-- i18n-source-sha: 4d7dab5a96bd -->
+---
+title: "快速上手（5 分鐘跑起來）"
+description: "本頁說明如何安裝Fullseye，並在五分鐘內執行第一個運算子。"
+lang: zh-Hant
+---
+<!-- i18n-source-sha: e8f52b68c5e9 -->
 # 快速上手（5 分鐘跑起來）
 
+<!-- i18n-switcher -->
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · **繁體中文** · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
+
 
 ## 哪個入口適合你的工作(3 個入口)
 
@@ -20,7 +27,7 @@ Fullseye 涵蓋範圍很廣，如果不能先決定「第一個要打開哪一�
 
 ---
 
-這是讓 Fullseye(內部代號 imgevolve)以最短路徑跑起來的指南。依照**安裝 → 建立第一個流水線 → 執行 → 檢視結果**的順序，走一條不會卡住的路線。更詳細的環境建置請見 [INSTALL.md](INSTALL.md)，Studio 的完整功能請見 [STUDIO_GUIDE.md](STUDIO_GUIDE.md)，從程式呼叫請見 [ENGINE.md](ENGINE.md)。
+這是讓 Fullseye(內部代號 imgevolve)以最短路徑跑起來的指南。依照**安裝 → 建立第一個流水線 → 執行 → 檢視結果**的順序，走一條不會卡住的路線。更詳細的環境建置請見 [INSTALL.md](INSTALL.tw.md)，Studio 的完整功能請見 [STUDIO_GUIDE.md](STUDIO_GUIDE.tw.md)，從程式呼叫請見 [ENGINE.md](ENGINE.tw.md)。
 
 Fullseye 是一個**以 numpy 陣列作為輸入輸出的影像處理運算子函式庫**，其上搭載了 **類似 HDevelop 的視覺化流水線設計環境（Fullseye Studio）** 與 **執行期環境（FullseyeEngine）**。用 HALCON/HDevelop 的說法來說，就是「在 HDevelop 中建立流程，在 HDevEngine 中從自己的應用程式呼叫」這種兩段式架構，原封不動用 Python + numpy 重現出來。
 
@@ -31,19 +38,26 @@ Fullseye 是一個**以 numpy 陣列作為輸入輸出的影像處理運算子�
 前提: **Python 3.11**（Windows 用 `py -3.11`，Linux 用 `python3.11`）。
 
 ```powershell
-cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # Python API + Studio + Pillow；重型後端按需以 extra 加入
+py -3.11 -m pip install fullseye
+fullseye --version
 ```
 
 核心 API 以 **numpy 與 scipy** 運作，標準 `pip install fullseye` 還會安裝 Studio 的 PySide6-Essentials 與影像 I/O 的 Pillow。只有 OpenCV / scikit-image 等較重後端是選配；未安裝時僅該後端專屬的運算子會停用（優雅降級）。
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # OpenCV 專用影像 API 與 cv_* 運算子
-py -3.11 -m pip install -e ".[all]"       # 所有額外後端
+py -3.11 -m pip install "fullseye[opencv]" # OpenCV 專用影像 API 與 cv_* 運算子
 fullseye-studio                            # 標準安裝後即可啟動 Studio
 ```
 
-extras 的清單與說明整理在 [INSTALL.md](INSTALL.md)。`gui` 與 `pil` 是相容舊安裝命令的空別名。
+extras 的清單與說明整理在 [INSTALL.md](INSTALL.tw.md)。`gui` 與 `pil` 是相容舊安裝命令的空別名。
+
+開發Fullseye時，請clone儲存庫並使用editable install：
+
+```powershell
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 -m pip install -e .
+```
 
 > 也可以不安裝直接試用。把儲存庫根目錄（`<path-to-fullseye>`）設為工作目錄，並將該路徑加入環境變數 `PYTHONPATH`，`import fullseye` 就能運作。不過 `fullseye` / `fullseye-studio` 這兩個指令（主控台腳本）只有執行過 `pip install -e .` 之後才能使用。
 
@@ -59,7 +73,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image（梯度強度）
 seg   = fullseye.apply(frame, "otsu")          # image → region（0/1 二值）
 n     = fullseye.apply(seg,   "count_obj")     # region → feature（物件數＝Python float）
-print(n)                                       # 例如: 316.0
+print(n)                                       # 例如: 25.0
 ```
 
 > **參數順序是 `apply(image, name, a, b)`** — 第 1 個參數是陣列，第 2 個參數是運算子名稱。反過來傳的話，
@@ -77,10 +91,10 @@ print(n)                                       # 例如: 316.0
 可以用下面的方式查詢有哪些運算子。
 
 ```python
-fullseye.op_names()                 # 全部已註冊的運算子名稱（860 個，截至 2026-09-03）
+fullseye.op_names()                 # 全部已註冊的運算子名稱
 fullseye.list_ops(search="edge")    # 依名稱 / HALCON 名稱 / 分類做部分比對搜尋
 fullseye.list_ops(sort="region")    # 依輸入 sort 篩選
-fullseye.categories()               # 47 個分類
+fullseye.categories()               # 分類清單
 ```
 
 ---
@@ -97,7 +111,7 @@ out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
-這是「smooth（平滑）→ 邊緣強度 → Otsu 二值化」，從影像產生二值邊緣圖的典型範例。系統內建了 **20 個**可直接使用的組合(範例配方)。
+這是「smooth（平滑）→ 邊緣強度 → Otsu 二值化」，從影像產生二值邊緣圖的典型範例。可用 `recipes.names()` 查看內建配方清單。
 
 ```python
 import recipes
@@ -122,7 +136,7 @@ py -3.11 studio.py          # 或者已安裝的話: fullseye-studio
 - **中央（Pipeline）**: 已排列階段的清單。可拖曳或用 Ctrl+↑/↓ 調整順序，調整選取階段的**旋鈕 a / b**。旋鈕永遠是 0..1 的值，但**對於有專屬顯示規格的運算子（`param_specs.py`）可依實際單位操作** — `gaussian` 用 σ（px，滑桿 + 帶單位的數值輸入框），`median` 用 3/5/7/9 的下拉選單選核心大小，`reg_erode` 用整數輸入框指定疊代次數，`aug_barrel` 的 b 用「pincushion」核取方塊表示。右側的 0..1 數值輸入框永遠是原始值（供精確輸入）。這些規格是依 ops.py 中的換算公式（如 `0.3 + 2.7·a`）手寫，並透過測試與實作互相核對（`tests/test_studio_params.py`）。沒有規格的運算子仍是原本的 2 個 0..1 滑桿。階段清單也會以顯示單位書寫（`gaussian (blur σ=1.08 px, b=–)`）。**Reset（Home）→ Step（Ctrl+→）→ Run all（Ctrl+Enter）**可逐段執行，也可以一次執行到底。
 - **右側（Image / Perception / Analysis）**: 縮放/平移顯示結果影像、直方圖、Inspector（檢查 image / region / feature 的值）、v14 的感知面板（光流 / 立體深度等）。**在影像檢視上按右鍵**可執行 Fit / 1:1 / Zoom / Save result / Save view as shown / Copy / Display mode / 3D surface（與選單相同的動作）。另外開啟的繪圖視窗也附有 Fit·1:1·±·Save 的小工具列與相同的右鍵選單，3-D 檢視器（Ctrl+4）可透過右鍵切換 Reset view / 第一人稱(透視) / Wireframe / Save screenshot。
 
-建好的流水線可用 **Export（Ctrl+E）** 匯出為 `--ops` 字串或 Python 程式碼，也可用 **Save pipeline（Ctrl+Shift+S）** 儲存為 JSON。完整功能與快捷鍵請見 [STUDIO_GUIDE.md](STUDIO_GUIDE.md)，應用程式內按 **F1** 即可顯示一覽表。
+建好的流水線可用 **Export（Ctrl+E）** 匯出為 `--ops` 字串或 Python 程式碼，也可用 **Save pipeline（Ctrl+Shift+S）** 儲存為 JSON。完整功能與快捷鍵請見 [STUDIO_GUIDE.md](STUDIO_GUIDE.tw.md)，應用程式內按 **Ctrl+F1** 顯示快捷鍵一覽，按 **F1** 顯示目前所選 op 的說明。
 
 ---
 
@@ -144,7 +158,7 @@ py -3.11 imgevolve.py run edge.json in.png --stepwise --out step.png
 py -3.11 imgevolve.py run "gaussian,sobel_amp,otsu" --to-python
 ```
 
-從程式執行時使用 `FullseyeEngine`（詳見 [ENGINE.md](ENGINE.md)）。
+從程式執行時使用 `FullseyeEngine`（詳見 [ENGINE.md](ENGINE.tw.md)）。
 
 ```python
 import fullseye
@@ -181,11 +195,11 @@ py -3.11 imgevolve.py pipeline in.png out.png --ops "gaussian,sobel_amp,otsu"
 | `apply` / `pipeline` 出現 `cannot read ...` | 標準 Pillow 相依套件損壞或影像損壞。重裝 Fullseye 後檢查影像 |
 | 額外後端的運算子顯示為「unknown」 | 該後端尚未安裝。追加 `.[skimage]` `.[wavelets]` `.[extra]` 等 |
 
-更詳細的疑難排解請參考 [INSTALL.md](INSTALL.md)。
+更詳細的疑難排解請參考 [INSTALL.md](INSTALL.tw.md)。
 
 ## 接下來閱讀
 
-- **[INSTALL.md](INSTALL.md)** — 環境建置完全指南（extras 的使用區分、Windows/Linux 安裝程式、最小配置·嵌入）
-- **[STUDIO_GUIDE.md](STUDIO_GUIDE.md)** — Fullseye Studio 完全指南
-- **[ENGINE.md](ENGINE.md)** — FullseyeEngine（設計 → 執行）指南
-- **[README.md](README.md)** — 文件索引
+- **[INSTALL.md](INSTALL.tw.md)** — 環境建置完全指南（extras 的使用區分、Windows/Linux 安裝程式、最小配置·嵌入）
+- **[STUDIO_GUIDE.md](STUDIO_GUIDE.tw.md)** — Fullseye Studio 完全指南
+- **[ENGINE.md](ENGINE.tw.md)** — FullseyeEngine（設計 → 執行）指南
+- **[README.md](README.tw.md)** — 文件索引

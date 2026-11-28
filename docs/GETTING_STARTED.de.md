@@ -1,7 +1,14 @@
-<!-- i18n-source-sha: 4d7dab5a96bd -->
+---
+title: "Erste Schritte (in 5 Minuten startklar)"
+description: "Installieren Sie Fullseye und führen Sie in fünf Minuten Ihren ersten Operator aus."
+lang: de
+---
+<!-- i18n-source-sha: e8f52b68c5e9 -->
 # Erste Schritte (in 5 Minuten startklar)
 
+<!-- i18n-switcher -->
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · **Deutsch** · [हिन्दी](./GETTING_STARTED.hi.md)
+
 
 ## Welcher Einstieg passt zu Ihnen (3 Einstiegspunkte)
 
@@ -24,8 +31,8 @@ Hand geschrieben, sondern automatisch aus den tatsächlich laufenden Gates und d
 
 Dies ist die Anleitung, um Fullseye (Arbeitsname imgevolve) auf dem kürzesten Weg zum Laufen zu bringen. In der
 Reihenfolge **Installation → erste Pipeline bauen → ausführen → Ergebnis ansehen** geht es einen Weg ohne
-Stolperfallen. Eine ausführlichere Einrichtung findet sich in [INSTALL.md](INSTALL.md), sämtliche Funktionen von
-Studio in [STUDIO_GUIDE.md](STUDIO_GUIDE.md), die Ausführung aus eigenem Code in [ENGINE.md](ENGINE.md).
+Stolperfallen. Eine ausführlichere Einrichtung findet sich in [INSTALL.md](INSTALL.de.md), sämtliche Funktionen von
+Studio in [STUDIO_GUIDE.md](STUDIO_GUIDE.de.md), die Ausführung aus eigenem Code in [ENGINE.md](ENGINE.de.md).
 
 Fullseye ist eine **Bildverarbeitungs-Operatorbibliothek, die numpy-Arrays als Ein- und Ausgabe verwendet**, auf der
 eine **visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio)** sowie eine
@@ -40,8 +47,8 @@ unverändert mit Python + numpy nachgebildet.
 Voraussetzung: **Python 3.11** (unter Windows `py -3.11`, unter Linux `python3.11`).
 
 ```powershell
-cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # Python-API + Studio + Pillow; schwere Backends nur bei Bedarf per Extra ergänzen
+py -3.11 -m pip install fullseye
+fullseye --version
 ```
 
 Die Kern-API läuft mit **numpy und scipy**, und ein normales `pip install fullseye` installiert zusätzlich
@@ -49,13 +56,20 @@ PySide6-Essentials für Studio und Pillow für Bild-I/O. Nur schwerere Backends 
 fehlen sie, werden lediglich die für dieses Backend spezifischen Operatoren deaktiviert (graceful degradation).
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # OpenCV-exklusive Bild-API und cv_*-Operatoren
-py -3.11 -m pip install -e ".[all]"       # alle zusätzlichen Backends
+py -3.11 -m pip install "fullseye[opencv]" # OpenCV-exklusive Bild-API und cv_*-Operatoren
 fullseye-studio                            # Studio startet nach der Standardinstallation
 ```
 
-Die Liste der Extras samt Bedeutung ist in [INSTALL.md](INSTALL.md) zusammengefasst. `gui` und `pil` sind leere
+Die Liste der Extras samt Bedeutung ist in [INSTALL.md](INSTALL.de.md) zusammengefasst. `gui` und `pil` sind leere
 Kompatibilitätsaliase für bestehende Installationsbefehle.
+
+Wer Fullseye entwickelt, klont das Repository und verwendet eine bearbeitbare Installation:
+
+```powershell
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 -m pip install -e .
+```
 
 > Man kann es auch ohne Installation ausprobieren. Setzen Sie das Repository-Wurzelverzeichnis
 > (`<path-to-fullseye>`) als Arbeitsverzeichnis und tragen Sie diesen Pfad in die Umgebungsvariable `PYTHONPATH`
@@ -74,7 +88,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image (Gradientenstärke)
 seg   = fullseye.apply(frame, "otsu")          # image → region (0/1-Binärbild)
 n     = fullseye.apply(seg,   "count_obj")     # region → feature (Objektanzahl = Python float)
-print(n)                                       # z. B.: 316.0
+print(n)                                       # z. B.: 25.0
 ```
 
 > **Die Argumentreihenfolge lautet `apply(image, name, a, b)`** — das erste Argument ist das Array, das zweite der
@@ -108,10 +122,10 @@ print(n)                                       # z. B.: 316.0
 Welche Operatoren es gibt, lässt sich so herausfinden:
 
 ```python
-fullseye.op_names()                 # alle registrierten Operatornamen (860 Stück, Stand 2026-09-03)
+fullseye.op_names()                 # alle registrierten Operatornamen
 fullseye.list_ops(search="edge")    # Teilstring-Suche über Name / HALCON-Name / Kategorie
 fullseye.list_ops(sort="region")    # Filterung nach Eingabe-sort
-fullseye.categories()               # 47 Kategorien
+fullseye.categories()               # Liste der Kategorien
 ```
 
 ---
@@ -130,8 +144,7 @@ out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
 Das ist "Smoothing (Glättung) → Kantenstärke → Otsu-Binarisierung", ein typisches Beispiel dafür, wie aus einem
-Bild eine binäre Kantenkarte erzeugt wird. **20 sofort einsatzbereite Kombinationen** (Rezepte) sind bereits
-mitgeliefert.
+Bild eine binäre Kantenkarte erzeugt wird. Mit `recipes.names()` lassen sich die mitgelieferten Rezepte auflisten.
 
 ```python
 import recipes
@@ -181,7 +194,7 @@ Der Aufbau besteht aus 3 Bereichen.
 
 Die aufgebaute Pipeline lässt sich mit **Export (Strg+E)** als `--ops`-String oder als Python-Code exportieren und
 mit **Save pipeline (Strg+Umschalt+S)** als JSON speichern. Sämtliche Funktionen und Tastenkürzel finden sich in
-[STUDIO_GUIDE.md](STUDIO_GUIDE.md), innerhalb der Anwendung zeigt **F1** eine Übersicht.
+[STUDIO_GUIDE.md](STUDIO_GUIDE.de.md); in der Anwendung zeigt **Strg+F1** die Tastenkürzel und **F1** die Hilfe zum ausgewählten op.
 
 ---
 
@@ -204,7 +217,7 @@ py -3.11 imgevolve.py run edge.json in.png --stepwise --out step.png
 py -3.11 imgevolve.py run "gaussian,sobel_amp,otsu" --to-python
 ```
 
-Zur Ausführung aus Code wird `FullseyeEngine` verwendet (Details in [ENGINE.md](ENGINE.md)).
+Zur Ausführung aus Code wird `FullseyeEngine` verwendet (Details in [ENGINE.md](ENGINE.de.md)).
 
 ```python
 import fullseye
@@ -243,11 +256,11 @@ verwenden Sie stattdessen `run_pipeline` (Python) oder Studio, wie oben beschrie
 | `apply` / `pipeline` meldet `cannot read ...` | Standard-Pillow-Abhängigkeit oder Bild beschädigt. Fullseye neu installieren und Bild prüfen |
 | Operatoren eines zusätzlichen Backends erscheinen als "unknown" | Das betreffende Backend ist nicht installiert. `.[skimage]`, `.[wavelets]`, `.[extra]` usw. ergänzen |
 
-Eine ausführlichere Fehlersuche findet sich in [INSTALL.md](INSTALL.md).
+Eine ausführlichere Fehlersuche findet sich in [INSTALL.md](INSTALL.de.md).
 
 ## Weiterführende Lektüre
 
-- **[INSTALL.md](INSTALL.md)** — vollständiger Leitfaden zur Einrichtung (Einsatz der Extras, Installationsprogramme für Windows/Linux, Minimalkonfiguration · Einbettung)
-- **[STUDIO_GUIDE.md](STUDIO_GUIDE.md)** — vollständiger Leitfaden zu Fullseye Studio
-- **[ENGINE.md](ENGINE.md)** — Leitfaden zu FullseyeEngine (Entwurf → Ausführung)
-- **[README.md](README.md)** — Dokumentationsindex
+- **[INSTALL.md](INSTALL.de.md)** — vollständiger Leitfaden zur Einrichtung (Einsatz der Extras, Installationsprogramme für Windows/Linux, Minimalkonfiguration · Einbettung)
+- **[STUDIO_GUIDE.md](STUDIO_GUIDE.de.md)** — vollständiger Leitfaden zu Fullseye Studio
+- **[ENGINE.md](ENGINE.de.md)** — Leitfaden zu FullseyeEngine (Entwurf → Ausführung)
+- **[README.md](README.de.md)** — Dokumentationsindex

@@ -1,4 +1,12 @@
+---
+title: "はじめかた（5分で動かす）"
+description: "Fullseyeをインストールし、最初のオペレータを5分で実行する手順です。"
+lang: ja
+---
 # はじめかた（5分で動かす）
+
+<!-- i18n-switcher -->
+**日本語** · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
 
 ## どれが自分の仕事か(3 つの入口)
 
@@ -28,19 +36,26 @@ Fullseye は **numpy 配列を入力・出力とする画像処理オペレー�
 前提: **Python 3.11**（Windows は `py -3.11`、Linux は `python3.11`）。
 
 ```powershell
-cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # Python API + Studio + Pillow。重い backend は必要な時だけ extra で足す
+py -3.11 -m pip install fullseye
+fullseye --version
 ```
 
 コア API は **numpy と scipy**で動き、標準の `pip install fullseye` は Studio 用の PySide6-Essentials と画像 I/O 用 Pillow も導入します。OpenCV / scikit-image など重い追加バックエンドだけが任意で、入っていなくても、そのバックエンド固有のオペレータだけが無効になるだけです（graceful degradation）。
 
 ```powershell
-py -3.11 -m pip install -e ".[opencv]"    # OpenCV 固有の画像 API と cv_* 系
-py -3.11 -m pip install -e ".[all]"       # 全ての追加バックエンド
+py -3.11 -m pip install "fullseye[opencv]" # OpenCV 固有の画像 API と cv_* 系
 fullseye-studio                            # Studio は標準インストール直後に起動できる
 ```
 
 extras の一覧と意味は [INSTALL.md](INSTALL.md) にまとめてあります。`gui` と `pil` は既存の install 指定を壊さない空の互換別名です。
+
+開発する人は、リポジトリを checkout して editable install を使います。
+
+```powershell
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 -m pip install -e .
+```
 
 > インストールせずに試すこともできます。リポジトリ直下（`<path-to-fullseye>`）を作業ディレクトリにし、環境変数 `PYTHONPATH` にそのパスを通せば `import fullseye` は動きます。ただし `fullseye` / `fullseye-studio` というコマンド（コンソールスクリプト）は `pip install -e .` を実行して初めて使えるようになります。
 
@@ -56,7 +71,7 @@ frame = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)   # gray H×W i
 edges = fullseye.apply(frame, "sobel_amp")     # image → image（勾配強度）
 seg   = fullseye.apply(frame, "otsu")          # image → region（0/1 の二値）
 n     = fullseye.apply(seg,   "count_obj")     # region → feature（オブジェクト数＝Python float）
-print(n)                                       # 例: 316.0
+print(n)                                       # 例: 25.0
 ```
 
 > **引数の順は `apply(image, name, a, b)`** — 第 1 引数が配列、第 2 引数が op 名です。逆に渡すと
@@ -74,10 +89,10 @@ print(n)                                       # 例: 316.0
 どんなオペレータがあるかは次で探せます。
 
 ```python
-fullseye.op_names()                 # 全レジストリ・オペレータ名（860 個、2026-09-03 時点）
+fullseye.op_names()                 # 全レジストリ・オペレータ名
 fullseye.list_ops(search="edge")    # 名前 / HALCON 名 / カテゴリを部分一致で検索
 fullseye.list_ops(sort="region")    # 入力 sort で絞り込み
-fullseye.categories()               # 47 カテゴリ
+fullseye.categories()               # カテゴリの一覧
 ```
 
 ---
@@ -94,7 +109,7 @@ out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 out = fullseye.run_pipeline(frame, [("gaussian", 0.3, 0.5), ("otsu", 0.4, 0.5)])
 ```
 
-これは「smooth（平滑化）→ エッジ強度 → Otsu 二値化」で、画像から二値のエッジマップを作る典型例です。すぐ使える組み合わせ（レシピ）は **20 個**同梱されています。
+これは「smooth（平滑化）→ エッジ強度 → Otsu 二値化」で、画像から二値のエッジマップを作る典型例です。同梱レシピの一覧は `recipes.names()` で確認できます。
 
 ```python
 import recipes
@@ -119,7 +134,7 @@ py -3.11 studio.py          # または、インストール済みなら: fullse
 - **中央（Pipeline）**: 並べた段の一覧。ドラッグや Ctrl+↑/↓ で並べ替え、選択した段の **つまみ a / b** を調整。つまみは常に 0..1 の値ですが、**op ごとの表示仕様（`param_specs.py`）があるものは実際の単位で操作できます** — `gaussian` なら σ を px で（スライダー + 単位付きスピン）、`median` なら核サイズを 3/5/7/9 のコンボで、`reg_erode` なら反復回数を整数スピンで、`aug_barrel` の b は「pincushion」チェックボックスで。右端の 0..1 スピンは常に生の値（正確な入力用）。仕様は ops.py の変換式（`0.3 + 2.7·a` など）から手書きし、テストで実装と突き合わせています（`tests/test_studio_params.py`）。仕様の無い op は従来どおり 0..1 のスライダー 2 本。段の一覧も表示単位で書かれます（`gaussian (blur σ=1.08 px, b=–)`）。**Reset（Home）→ Step（Ctrl+→）→ Run all（Ctrl+Enter）** で 1 段ずつ、または一気に実行。
 - **右（Image / Perception / Analysis）**: 結果画像をズーム・パン表示、ヒストグラム、Inspector（image / region / feature の値を検査）、v14 の知覚パネル（オプティカルフロー / ステレオ深度など）。**画像ビューは右クリック**で Fit / 1:1 / Zoom / Save result / Save view as shown / Copy / Display mode / 3D surface（メニューと同じアクション）。追加で開いたグラフィックスウィンドウにも Fit・1:1・±・Save の小さなストリップと同じ右クリックメニューが付き、3-D ビューア（Ctrl+4）は右クリックで Reset view / 一人称（透視）切替 / Wireframe / Save screenshot。
 
-組んだパイプラインは **Export（Ctrl+E）** で `--ops` 文字列や Python コードとして書き出せ、**Save pipeline（Ctrl+Shift+S）** で JSON 保存できます。全機能とショートカットは [STUDIO_GUIDE.md](STUDIO_GUIDE.md)、アプリ内では **F1** で一覧が出ます。
+組んだパイプラインは **Export（Ctrl+E）** で `--ops` 文字列や Python コードとして書き出せ、**Save pipeline（Ctrl+Shift+S）** で JSON 保存できます。全機能とショートカットは [STUDIO_GUIDE.md](STUDIO_GUIDE.md)、アプリ内では **Ctrl+F1** でショートカット一覧、**F1** で選択中の op のヘルプが出ます。
 
 ---
 

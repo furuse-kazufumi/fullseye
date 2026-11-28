@@ -1,5 +1,8 @@
 # HDevelop `dev_*` operator family — the UI/display control surface (Studio 北極星)
 
+<!-- i18n-switcher -->
+**日本語** · [English](./HDEVELOP_DEV_OPS.en.md)
+
 > ユーザー指摘(2026-08-16): 「HALCON では**描画の更新有無も** op で制御できる」「**画像の描画範囲**の設定とかも op で対応できる」→ HDevelop は **表示(グラフィクス窓・変数窓・実行カーソル・表示範囲・描画スタイル)をすべて `dev_*` operator で制御**する。Fullseye Studio(`studio.py`)はこの HDevelop モデルに忠実であるべき。
 >
 > 一次情報 = MVTec 公式 Operator Reference の実スクレイプ `data/halcon_operators.json`(HALCON 26.05, **43 個の `dev_*` op** / Graphics 章 174 op)。裏取り URL は各 op の `url`。

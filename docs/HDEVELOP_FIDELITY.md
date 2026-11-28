@@ -1,5 +1,8 @@
 # Fullseye Studio — HDevelop 忠実化スペック(北極星)
 
+<!-- i18n-switcher -->
+**日本語** · [English](./HDEVELOP_FIDELITY.en.md)
+
 > 目的 = Fullseye Studio（`studio.py`）を **MVTec HDevelop に忠実な画像処理 IDE** にする。
 > 原則 = **「IDE の画面はシンプルかつ多機能」「情報密度が高い」**（ユーザー 2026-08-15、[[feedback_ide_design_simple_multifunctional]]）。
 > 本ドキュメントは複数セッション横断の実装スペック。各セッションはここを読んで続きを実装する。

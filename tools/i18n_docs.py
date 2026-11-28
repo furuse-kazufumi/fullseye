@@ -48,9 +48,14 @@ GENERATED = {
 }
 
 _SHA_RE = re.compile(r"<!--\s*i18n-source-sha:\s*([0-9a-f]{12})\s*-->")
+_SWITCHER_RE = re.compile(
+    r"(?m)^<!-- i18n-switcher -->\r?\n[^\r\n]*\r?\n(?:\r?\n)?"
+)
 
 
 def _sha(text: str) -> str:
+    # 言語の追加・削除は翻訳本文を古びさせない。 / Language navigation is not translated prose.
+    text = _SWITCHER_RE.sub("", text, count=1)
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:12]
 
 

@@ -1,3 +1,10 @@
+---
+title: "덤: 그 밖의 PoC — ViEW2026"
+description: "이 페이지에는 본 페이지의 전시만큼 다듬지 않은 예도 들어 있습니다. 각 전시의 숫자는 해당 PoC의 실행 기록에서 가져왔습니다."
+lang: ko
+image: /view2026/thumbs/fullseye_intro.jpg
+---
+
 <div class="vlang" markdown="1">
 
 [日本語](../more.md) · [English](../en/more.md) · [简体中文](../zh/more.md) · [繁體中文](../tw/more.md) · **한국어** · [Deutsch](../de/more.md) · [हिन्दी](../hi/more.md) · [Français](../fr/more.md)
